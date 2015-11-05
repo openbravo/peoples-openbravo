@@ -53,6 +53,7 @@ public class PrinterReports extends HttpSecureAppServlet {
       String strPDFPath = vars.getStringParameter("inppdfpath");
       String strKeyColumnId = vars.getStringParameter("inpkeyColumnId");
       String strHiddenKey = vars.getStringParameter("inphiddenkey");
+      String strButtonType = vars.getStringParameter("inpButtonType");
       if (strHiddenKey == null || "".equals(strHiddenKey)) {
         strHiddenKey = "inp" + Sqlc.TransformaNombreColumna(strKeyColumnId);
       }
@@ -62,15 +63,19 @@ public class PrinterReports extends HttpSecureAppServlet {
           + strKeyColumnId);
       String strIsDirectPDF = vars.getStringParameter("inpIsDirectPDF");
       Window window = OBDal.getInstance().get(Window.class, strWindowId);
-      String directAttachPref = isDirectAttach(OBContext.getOBContext(), window);
-      if (strIsDirectPDF == null || "".equals(strIsDirectPDF)) {
-        strIsDirectPDF = "N".equals(directAttachPref) ? "true" : "false";
-      }
       String strIsDirectAttach = vars.getStringParameter("inpIsDirectAttach");
-      if (strIsDirectAttach == null || "".equals(strIsDirectAttach)) {
-        strIsDirectAttach = "Y".equals(directAttachPref) ? "true" : "false";
+      if ("printButton".equals(strButtonType)) {
+        String directAttachPref = isDirectAttach(OBContext.getOBContext(), window);
+        if (strIsDirectPDF == null || "".equals(strIsDirectPDF)) {
+          strIsDirectPDF = "N".equals(directAttachPref) ? "true" : "false";
+        }
+        if (strIsDirectAttach == null || "".equals(strIsDirectAttach)) {
+          strIsDirectAttach = "Y".equals(directAttachPref) ? "true" : "false";
+        }
+      } else {
+        strIsDirectPDF = "false";
+        strIsDirectAttach = "false";
       }
-
       printPage(response, vars, strDirectPrint, strPDFPath, strHiddenKey, strHiddenValue, inptabId,
           strIsDirectPDF, strIsDirectAttach);
     } else
