@@ -45,6 +45,7 @@ import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
+import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.service.OBDal;
@@ -469,6 +470,8 @@ public class ImportEntryManager {
 
       Thread.currentThread().setName("Import Entry Manager Main");
 
+      boolean isTest = OBPropertiesProvider.getInstance().getBooleanProperty("test.environment");
+
       // don't start right away at startup, give the system time to
       // really start
       log.debug("Started, first sleep " + manager.initialWaitTime);
@@ -570,7 +573,13 @@ public class ImportEntryManager {
               try {
                 // wait one second per 30 records, somewhat arbitrary
                 // but high enough for most cases
-                Thread.sleep(Math.max(2000, 1000 * (entryCount / 30)));
+                if (isTest) {
+                  // in case of test don't wait minimal 2 seconds
+                  Thread.sleep(1000 * (entryCount / 30));
+                } else {
+                  // wait minimal 2 seconds or based on entry count
+                  Thread.sleep(Math.max(2000, 1000 * (entryCount / 30)));
+                }
               } catch (Exception ignored) {
               }
             } else {
