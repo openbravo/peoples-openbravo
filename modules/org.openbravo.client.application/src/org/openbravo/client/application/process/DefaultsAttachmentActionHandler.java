@@ -62,10 +62,10 @@ public class DefaultsAttachmentActionHandler extends BaseActionHandler {
       final String strAttachmentId = (String) parameters.get("attachmentId");
       final String strAction = (String) parameters.get("action");
       final String strKeyId = (String) parameters.get("keyId");
-      final Tab tab = OBDal.getInstance().get(Tab.class, strTabId);
+      final Tab tab = (Tab) OBDal.getInstance().getProxy(Tab.ENTITY_NAME, strTabId);
       final Attachment attachment = OBDal.getInstance().get(Attachment.class, strAttachmentId);
-      final AttachmentMethod attMethod = OBDal.getInstance().get(AttachmentMethod.class,
-          strAttMethodID);
+      final AttachmentMethod attMethod = (AttachmentMethod) OBDal.getInstance().getProxy(
+          AttachmentMethod.ENTITY_NAME, strAttMethodID);
       JSONObject context = new JSONObject(content);
       final Map<String, String> fixedParameters = fixRequestMap(parameters, context);
 
@@ -130,7 +130,7 @@ public class DefaultsAttachmentActionHandler extends BaseActionHandler {
 
       }
 
-      log.debug("Defaults for tab {} \n {}", tab, defaults.toString());
+      log.debug("Defaults for tab {} \n {}", tab, defaults);
       JSONObject results = new JSONObject();
       results.put("defaults", defaults);
 
