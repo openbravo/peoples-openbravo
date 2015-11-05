@@ -1261,9 +1261,7 @@ enyo.kind({
               me.order.get('undo').text = text;
             }
           } else {
-            me.order.deleteLine(lineToCheck[0], true, null, {
-              makeUndo: false
-            });
+            me.order.deleteLine(lineToCheck[0], true);
           }
         });
       }

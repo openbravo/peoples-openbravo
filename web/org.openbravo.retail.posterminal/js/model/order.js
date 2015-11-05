@@ -1001,21 +1001,16 @@
     deleteLines: function (lines, idx, length, callback) {
       var me = this,
           line = lines[idx],
-          i, cancelReplaceLine = false;
+          i;
       if (idx === 0) {
         for (i = 0; i < lines.length; i++) {
           if (me.get('replacedorder') && lines[i].get('remainingQuantity')) {
-            cancelReplaceLine = true;
-            break;
+            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_CancelReplaceDeleteLine'));
+            if (callback) {
+              callback();
+            }
+            return;
           }
-        }
-
-        if (cancelReplaceLine) {
-          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_CancelReplaceDeleteLine'));
-          if (callback) {
-            callback();
-          }
-          return;
         }
         this.set('undo', null);
       }
@@ -1046,9 +1041,8 @@
     },
 
     deleteLine: function (line, doNotSave, callback) {
-      var me = this;
-      var index = this.get('lines').indexOf(line);
-      var pack = line.isAffectedByPack(),
+      var me = this,
+          pack = line.isAffectedByPack(),
           productId = line.get('product').id;
 
       if (pack) {
