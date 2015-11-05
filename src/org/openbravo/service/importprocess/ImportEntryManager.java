@@ -512,6 +512,9 @@ public class ImportEntryManager {
               // don't block eachother with the limited batch size
               // being read
               for (String typeOfData : typesOfData) {
+
+                log.debug("Reading import entries for type of data " + typeOfData);
+
                 final String importEntryQryStr = "from " + ImportEntry.ENTITY_NAME + " where "
                     + ImportEntry.PROPERTY_TYPEOFDATA + "='" + typeOfData + "' and "
                     + ImportEntry.PROPERTY_IMPORTSTATUS + "='Initial' order by "
@@ -528,11 +531,18 @@ public class ImportEntryManager {
                   while (entries.next()) {
                     entryCount++;
                     final ImportEntry entry = (ImportEntry) entries.get(0);
+
+                    if (log.isDebugEnabled()) {
+                      log.debug("Handle import entry " + entry.getIdentifier());
+                    }
+
                     try {
                       manager.handleImportEntry(entry);
                       // remove it from the internal cache to keep it small
                       OBDal.getInstance().getSession().evict(entry);
                     } catch (Throwable t) {
+                      ImportProcessUtils.logError(log, t);
+
                       // ImportEntryProcessors are custom implementations which can cause
                       // errors, so always catch them to prevent other import entries
                       // from not getting processed
@@ -555,9 +565,9 @@ public class ImportEntryManager {
               // give the threads time to process it all before trying
               // a next batch of entries
               try {
-                // wait one second per 50 records, somewhat arbitrary
+                // wait one second per 30 records, somewhat arbitrary
                 // but high enough for most cases
-                Thread.sleep(1000 * (entryCount / 50));
+                Thread.sleep(Math.max(2000, 1000 * (entryCount / 30)));
               } catch (Exception ignored) {
               }
             } else {

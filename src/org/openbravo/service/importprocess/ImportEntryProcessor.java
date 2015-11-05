@@ -303,7 +303,18 @@ public abstract class ImportEntryProcessor {
 
               // not changed, process
               final String typeOfData = localImportEntry.getTypeofdata();
+
+              if (logger.isDebugEnabled()) {
+                logger.debug("Processing entry " + localImportEntry.getIdentifier() + " "
+                    + typeOfData);
+              }
+
               processEntry(localImportEntry);
+
+              if (logger.isDebugEnabled()) {
+                logger.debug("Finished Processing entry " + localImportEntry.getIdentifier() + " "
+                    + typeOfData);
+              }
 
               // don't use the import entry anymore, touching methods on it
               // may re-open a session
@@ -341,6 +352,8 @@ public abstract class ImportEntryProcessor {
               }
 
             } catch (Throwable t) {
+              ImportProcessUtils.logError(logger, t);
+
               // bit rough but ensures that the connection is released/closed
               try {
                 OBDal.getInstance().rollbackAndClose();
@@ -381,6 +394,8 @@ public abstract class ImportEntryProcessor {
             OBDal.getInstance().commitAndClose();
           } catch (Exception ignored) {
           }
+
+          logger.debug("Trying to deregister process " + key);
 
           // no more entries and deregistered
           if (importEntryProcessor.deregisterProcessThread(this)) {
