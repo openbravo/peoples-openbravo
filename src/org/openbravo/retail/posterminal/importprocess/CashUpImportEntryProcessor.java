@@ -64,6 +64,8 @@ public class CashUpImportEntryProcessor extends ImportEntryProcessor {
         }
         if (json.has("isprocessed") && "Y".equals(json.getString("isprocessed"))
             && thereIsDataInImportQueue(importEntry)) {
+          // close and commit
+          OBDal.getInstance().commitAndClose();
           return;
         }
 
