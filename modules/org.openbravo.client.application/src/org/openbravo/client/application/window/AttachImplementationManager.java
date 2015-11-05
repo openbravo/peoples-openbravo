@@ -68,6 +68,13 @@ import org.openbravo.utils.FileUtility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Class that centralizes the Attachment Management. Any action to manage an attachment in Openbravo
+ * should be done through this class.
+ * 
+ * The class checks what is the Attachment Method to use and calls the needed handler on each case.
+ *
+ */
 public class AttachImplementationManager {
 
   private static final Logger log = LoggerFactory.getLogger(AttachImplementationManager.class);
@@ -99,12 +106,12 @@ public class AttachImplementationManager {
    */
   public void upload(Map<String, String> requestParams, String strTab, String strKey,
       String strDocumentOrganization, File file) throws OBException {
-    Organization org = OBDal.getInstance().get(Organization.class, strDocumentOrganization);
-
-    Tab tab = OBDal.getInstance().get(Tab.class, strTab);
     if (file == null) {
       throw new OBException(OBMessageUtils.messageBD("OBUIAPP_NoFileToAttach"));
     }
+
+    Organization org = OBDal.getInstance().get(Organization.class, strDocumentOrganization);
+    Tab tab = OBDal.getInstance().get(Tab.class, strTab);
 
     String strName = file.getName();
 
