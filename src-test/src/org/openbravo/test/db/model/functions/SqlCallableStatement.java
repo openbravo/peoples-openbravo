@@ -88,8 +88,12 @@ public class SqlCallableStatement extends OBBaseTest {
     Connection con = DriverManager.getConnection(props.getProperty("bbdd.url"),
         props.getProperty("bbdd.systemUser"), props.getProperty("bbdd.systemPassword"));
 
-    String query = "select count(*) from v$open_cursor where sql_text like 'CALL AD_Sequence_DocType%'";
+    String query = "select count(*) from v$open_cursor where sql_text like 'CALL AD_Sequence_DocType%' and upper(user_name) = upper(?)";
     PreparedStatement st = con.prepareStatement(query);
+
+    // connecting as DBA, restrict query to only the DB user creating the cursors
+    st.setString(1, props.getProperty("bbdd.user"));
+
     ResultSet rs = st.executeQuery();
     rs.next();
     int openCursors = rs.getInt(1);
@@ -99,5 +103,4 @@ public class SqlCallableStatement extends OBBaseTest {
 
     assertThat("# of open cursors for the statement", openCursors, is(lessThanOrEqualTo(1)));
   }
-
 }
