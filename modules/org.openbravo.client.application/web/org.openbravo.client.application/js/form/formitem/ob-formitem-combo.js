@@ -35,5 +35,12 @@ isc.OBComboBoxItem.addProperties({
     ret = this.Super('filterComplete', arguments);
     delete this.preventValidation;
     return ret;
+  },
+
+  // Override showPicker to ensure that we select the text when clicking on the drop-down
+  // See issue #31274
+  showPicker: function () {
+    this.selectValue();
+    this.Super('showPicker', arguments);
   }
 });
