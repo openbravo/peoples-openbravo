@@ -485,7 +485,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                 receipt.trigger('print', orderToPrint, {
                   offline: true
                 });
-                orderList.deleteCurrent(true);
+                orderList.deleteCurrent();
                 orderList.synchronizeCurrentOrder();
               }
               enyo.$.scrim.hide();
@@ -512,7 +512,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                 receipt.trigger('print', orderToPrint, {
                   offline: true
                 });
-                orderList.deleteCurrent(true);
+                orderList.deleteCurrent();
                 orderList.synchronizeCurrentOrder();
               }
               enyo.$.scrim.hide();
