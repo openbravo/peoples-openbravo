@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2014 Openbravo SLU
+ * All portions are Copyright (C) 2013-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -174,10 +174,10 @@ isc.OBCalendar.addProperties({
           // handle error
           if (data && data.response && data.response.error) {
             showDSAlert(data.response.error.message);
-            calendar.filterData();
+            return;
           } else if (data && data.response && data.response.errors) {
             showDSAlert(JSON.stringify(data.response.errors));
-            calendar.filterData();
+            return;
           } else {
             if (records && calendar.eventsAdaptationRequired) {
               records = calendar.adaptEvents(records);
