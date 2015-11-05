@@ -568,9 +568,9 @@ public class ImportEntryManager {
               // give the threads time to process it all before trying
               // a next batch of entries
               try {
-                // wait one second per 50 records, somewhat arbitrary
+                // wait one second per 30 records, somewhat arbitrary
                 // but high enough for most cases
-                Thread.sleep(Math.max(2000, 1000 * (entryCount / 50)));
+                Thread.sleep(Math.max(2000, 1000 * (entryCount / 30)));
               } catch (Exception ignored) {
               }
             } else {
