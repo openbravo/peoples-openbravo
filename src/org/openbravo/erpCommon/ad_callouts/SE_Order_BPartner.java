@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2014 Openbravo SLU
+ * All portions are Copyright (C) 2001-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -62,9 +62,11 @@ public class SE_Order_BPartner extends SimpleCallout {
       if (docTypeData != null && docTypeData.length > 0) {
         docSubTypeSO = docTypeData[0].docsubtypeso;
       }
-      strInvoiceRule = (docSubTypeSO.equals("PR") || docSubTypeSO.equals("WI")
-          || data[0].invoicerule.equals("") ? info.vars.getStringParameter("inpinvoicerule")
-          : data[0].invoicerule);
+      // Incase of purchase flow set Invoice Rule as "I":Immediate
+      strInvoiceRule = strIsSOTrx.equals("Y") ? (docSubTypeSO.equals("PR")
+          || docSubTypeSO.equals("WI") || data[0].invoicerule.equals("") ? info.vars
+          .getStringParameter("inpinvoicerule") : data[0].invoicerule) : "I";
+
       strPaymentrule = (strIsSOTrx.equals("Y") ? data[0].paymentrule : data[0].paymentrulepo);
       strPaymentrule = strPaymentrule.equals("") ? info.vars.getStringParameter("inppaymentrule")
           : strPaymentrule;
