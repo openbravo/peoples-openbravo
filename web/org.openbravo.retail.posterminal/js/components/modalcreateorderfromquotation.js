@@ -26,8 +26,8 @@ enyo.kind({
   },
   tap: function () {
     var checked = !this.owner.$.updateprices.checked;
-    this.parent.parent.parent.parent.theQuotation.createOrderFromQuotation(checked);
     this.doHideThisPopup();
+    this.parent.parent.parent.parent.theQuotation.createOrderFromQuotation(checked);
   }
 });
 

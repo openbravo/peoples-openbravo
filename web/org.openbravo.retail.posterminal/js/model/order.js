@@ -3679,120 +3679,135 @@
       }
     },
 
-    createOrderFromQuotation: function (updatePrices) {
+    createOrderFromQuotation: function (updatePrices, callback) {
       var idMap = {},
           oldIdMap = {},
-          oldId, me = this,
-          productHasAttribute = false,
+          oldId, productHasAttribute = false,
           productWithAttributeValue = [],
           needAttributeWhenCreatingQuotation = OB.MobileApp.model.hasPermission('OBPOS_AskForAttributesWhenCreatingQuotation', true),
-          attributeSearchAllowed = OB.MobileApp.model.hasPermission('OBPOS_EnableSupportForProductAttributes', true);
-      this.get('lines').each(function (line) {
-        oldId = line.get('id');
-        line.set('id', OB.UTIL.get_UUID());
-        //issue 25055 -> If we don't do the following prices and taxes are calculated
-        //wrongly because the calculation starts with discountedNet instead of
-        //the real net.
-        //It only happens if the order is created from quotation just after save the quotation
-        //(without load the quotation from quotations window)
-        if (!this.get('priceIncludesTax')) {
-          line.set('net', line.get('nondiscountednet'));
+          attributeSearchAllowed = OB.MobileApp.model.hasPermission('OBPOS_EnableSupportForProductAttributes', true),
+          callQuotationAttrs;
+      OB.UTIL.HookManager.executeHooks('OBPOS_PreCreateOrderFromQuotation', {
+        updatePrices: updatePrices,
+        order: this
+      }, function (args) {
+        if (args && args.cancelOperation && args.cancelOperation === true) {
+          if (callback) {
+            callback(false);
+          }
+          return;
         }
+        this.get('lines').each(function (line) {
+          oldId = line.get('id');
+          line.set('id', OB.UTIL.get_UUID());
+          //issue 25055 -> If we don't do the following prices and taxes are calculated
+          //wrongly because the calculation starts with discountedNet instead of
+          //the real net.
+          //It only happens if the order is created from quotation just after save the quotation
+          //(without load the quotation from quotations window)
+          if (!this.get('priceIncludesTax')) {
+            line.set('net', line.get('nondiscountednet'));
+          }
 
-        //issues 24994 & 24993
-        //if the order is created from quotation just after save the quotation
-        //(without load the quotation from quotations window). The order has the fields added
-        //by adjust prices. We need to work without these values
-        //price not including taxes
-        line.unset('nondiscountedprice');
-        line.unset('nondiscountednet');
-        //price including taxes
-        line.unset('netFull');
-        line.unset('grossListPrice');
-        line.unset('grossUnitPrice');
-        line.unset('lineGrossAmount');
-        idMap[line.get('id')] = OB.UTIL.get_UUID();
-        line.set('id', idMap[line.get('id')]);
-        if (line.get('hasRelatedServices')) {
-          oldIdMap[oldId] = line.get('id');
+          //issues 24994 & 24993
+          //if the order is created from quotation just after save the quotation
+          //(without load the quotation from quotations window). The order has the fields added
+          //by adjust prices. We need to work without these values
+          //price not including taxes
+          line.unset('nondiscountedprice');
+          line.unset('nondiscountednet');
+          //price including taxes
+          line.unset('netFull');
+          line.unset('grossListPrice');
+          line.unset('grossUnitPrice');
+          line.unset('lineGrossAmount');
+          idMap[line.get('id')] = OB.UTIL.get_UUID();
+          line.set('id', idMap[line.get('id')]);
+          if (line.get('hasRelatedServices')) {
+            oldIdMap[oldId] = line.get('id');
+          }
+        }, args.order);
+
+        args.order.set('oldId', args.order.get('id'));
+        args.order.set('id', null);
+        args.order.set('isQuotation', false);
+        args.order.set('orderType', OB.MobileApp.model.get('terminal').terminalType.layawayorder ? 2 : 0);
+        args.order.set('generateInvoice', OB.MobileApp.model.get('terminal').terminalType.generateInvoice);
+        args.order.set('documentType', OB.MobileApp.model.get('terminal').terminalType.documentType);
+        args.order.set('createdBy', OB.MobileApp.model.get('orgUserId'));
+        if (OB.MobileApp.model.get('context').user.isSalesRepresentative) {
+          args.order.set('salesRepresentative', OB.MobileApp.model.get('context').user.id);
+        } else {
+          args.order.set('salesRepresentative', null);
         }
-      }, this);
+        args.order.set('hasbeenpaid', 'N');
+        args.order.set('skipApplyPromotions', false);
+        args.order.set('isPaid', false);
+        args.order.set('isEditable', true);
+        args.order.set('orderDate', OB.I18N.normalizeDate(new Date()));
+        args.order.set('creationDate', null);
+        var nextDocumentno = OB.MobileApp.model.getNextDocumentno();
+        args.order.set('documentnoPrefix', OB.MobileApp.model.get('terminal').docNoPrefix);
+        args.order.set('documentnoSuffix', nextDocumentno.documentnoSuffix);
+        args.order.set('quotationnoPrefix', -1);
+        args.order.set('quotationnoSuffix', -1);
+        args.order.set('returnnoPrefix', -1);
+        args.order.set('returnnoSuffix', -1);
+        args.order.set('documentNo', nextDocumentno.documentNo);
+        args.order.set('posTerminal', OB.MobileApp.model.get('terminal').id);
+        args.order.set('session', OB.MobileApp.model.get('session'));
+        args.order.unset('deletedLines');
+        args.order.save();
 
-      this.set('oldId', this.get('id'));
-      this.set('id', null);
-      this.set('isQuotation', false);
-      this.set('orderType', OB.MobileApp.model.get('terminal').terminalType.layawayorder ? 2 : 0);
-      this.set('generateInvoice', OB.MobileApp.model.get('terminal').terminalType.generateInvoice);
-      this.set('documentType', OB.MobileApp.model.get('terminal').terminalType.documentType);
-      this.set('createdBy', OB.MobileApp.model.get('orgUserId'));
-      if (OB.MobileApp.model.get('context').user.isSalesRepresentative) {
-        this.set('salesRepresentative', OB.MobileApp.model.get('context').user.id);
-      } else {
-        this.set('salesRepresentative', null);
-      }
-      this.set('hasbeenpaid', 'N');
-      this.set('skipApplyPromotions', false);
-      this.set('isPaid', false);
-      this.set('isEditable', true);
-      this.set('orderDate', OB.I18N.normalizeDate(new Date()));
-      this.set('creationDate', null);
-      var nextDocumentno = OB.MobileApp.model.getNextDocumentno();
-      this.set('documentnoPrefix', OB.MobileApp.model.get('terminal').docNoPrefix);
-      this.set('documentnoSuffix', nextDocumentno.documentnoSuffix);
-      this.set('quotationnoPrefix', -1);
-      this.set('quotationnoSuffix', -1);
-      this.set('returnnoPrefix', -1);
-      this.set('returnnoSuffix', -1);
-      this.set('documentNo', nextDocumentno.documentNo);
-      this.set('posTerminal', OB.MobileApp.model.get('terminal').id);
-      this.set('session', OB.MobileApp.model.get('session'));
-      this.unset('deletedLines');
-      this.save();
+        args.order.get('lines').each(function (line) {
+          if (line.get('relatedLines')) {
+            line.get('relatedLines').forEach(function (rl) {
+              rl.orderId = args.order.get('id');
+              rl.orderDocumentNo = args.order.get('documentNo');
+              if (oldIdMap[rl.orderlineId]) {
+                rl.orderlineId = oldIdMap[rl.orderlineId];
+              }
+            });
+          }
+        }, args.order);
 
-      this.get('lines').each(function (line) {
-        if (line.get('relatedLines')) {
-          line.get('relatedLines').forEach(function (rl) {
-            rl.orderId = me.get('id');
-            rl.orderDocumentNo = me.get('documentNo');
-            if (oldIdMap[rl.orderlineId]) {
-              rl.orderlineId = oldIdMap[rl.orderlineId];
-            }
-          });
-        }
-      }, this);
-
-      this.get('lines').each(function (theLine) {
-        var productAttributes = theLine.get('product').get('hasAttributes');
-        if (OB.UTIL.isNullOrUndefined(productAttributes) === false && productAttributes) {
-          productWithAttributeValue.push(theLine);
-          productHasAttribute = productAttributes;
-        }
-      });
-      if (updatePrices) {
-        this.updatePrices(function (order) {
-          order.calculateReceipt(function () {
-            OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_QuotationCreatedOrder'));
-            // This event is used in stock validation module.
-            order.trigger('orderCreatedFromQuotation');
-          });
+        args.order.get('lines').each(function (theLine) {
+          var productAttributes = theLine.get('product').get('hasAttributes');
+          if (OB.UTIL.isNullOrUndefined(productAttributes) === false && productAttributes) {
+            productWithAttributeValue.push(theLine);
+            productHasAttribute = productAttributes;
+          }
         });
-      } else {
-        this.set('skipApplyPromotions', true);
-        this.calculateReceipt(function () {
-          me.unset('skipApplyPromotions');
+
+        callQuotationAttrs = function (order) {
           OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_QuotationCreatedOrder'));
-          me.trigger('orderCreatedFromQuotation');
-        });
-      }
-      this.calculateReceipt(function () {
-        //call quotation attributes popup
-        if (attributeSearchAllowed && needAttributeWhenCreatingQuotation === false && productHasAttribute) {
-          OB.MobileApp.view.waterfall('onShowPopup', {
-            popup: 'modalQuotationProductAttributes',
-            args: {
-              lines: productWithAttributeValue,
-              quotationProductAttribute: me
-            }
+          // This event is used in stock validation module.
+          order.trigger('orderCreatedFromQuotation');
+          //call quotation attributes popup
+          if (attributeSearchAllowed && needAttributeWhenCreatingQuotation === false && productHasAttribute) {
+            OB.MobileApp.view.waterfall('onShowPopup', {
+              popup: 'modalQuotationProductAttributes',
+              args: {
+                lines: productWithAttributeValue,
+                quotationProductAttribute: args.order
+              }
+            });
+          }
+          if (callback) {
+            callback(true);
+          }
+        };
+        if (updatePrices) {
+          args.order.updatePrices(function (order) {
+            order.calculateReceipt(function () {
+              callQuotationAttrs(order);
+            });
+          });
+        } else {
+          args.order.set('skipApplyPromotions', true);
+          args.order.calculateReceipt(function () {
+            args.order.unset('skipApplyPromotions');
+            callQuotationAttrs(args.order);
           });
         }
       });

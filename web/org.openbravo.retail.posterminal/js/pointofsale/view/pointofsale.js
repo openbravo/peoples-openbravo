@@ -694,8 +694,12 @@ enyo.kind({
   },
 
   createOrderFromQuotation: function () {
-    this.model.get('order').createOrderFromQuotation();
-    this.model.get('orderList').saveCurrent();
+    var me = this;
+    this.model.get('order').createOrderFromQuotation(false, function (success) {
+      if (success) {
+        me.model.get('orderList').saveCurrent();
+      }
+    });
     return true;
   },
 
