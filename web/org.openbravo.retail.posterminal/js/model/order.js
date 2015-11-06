@@ -265,11 +265,11 @@
     printForeignAmount: function () {
       return '(' + OB.I18N.formatCurrency(this.get('amount')) + ' ' + this.get('isocode') + ')';
     },
-    printAmountWithSignum: function () {
+    printAmountWithSignum: function (negate) {
       if (this.get('rate')) {
-        return OB.I18N.formatCurrency(OB.DEC.mul(this.get('amount'), this.get('rate')));
+        return OB.I18N.formatCurrency(negate ? OB.DEC.mul(OB.DEC.mul(this.get('amount'), this.get('rate')), -1) : OB.DEC.mul(this.get('amount'), this.get('rate')));
       } else {
-        return OB.I18N.formatCurrency(this.get('amount'));
+        return OB.I18N.formatCurrency(negate ? OB.DEC.mul(this.get('amount'), -1) : this.get('amount'));
       }
     }
   });
@@ -3177,9 +3177,11 @@
         'origAmount': OB.DEC.sub(0, payment.get('origAmount')),
         'paid': OB.DEC.sub(0, payment.get('paid')),
         'reversedPaymentId': payment.get('paymentId'),
-        'index': OB.DEC.add(1, payments.indexOf(payment))
+        'index': OB.DEC.add(1, payments.indexOf(payment)),
+        'isNegative': this.getGross() < 0 ? true : false
       }));
       payment.set('isReversed', true);
+      payment.set('isNegative', this.getGross() < 0 ? true : false);
       this.save();
     },
 

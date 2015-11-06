@@ -402,10 +402,10 @@ enyo.kind({
     this.inherited(arguments);
     if (this.model.get('reversedPaymentId')) {
       this.$.name.setContent((OB.MobileApp.model.getPaymentName(this.model.get('kind')) || this.model.get('name')) + OB.I18N.getLabel('OBPOS_ReversedPayment'));
-      this.$.amount.setContent(this.model.printAmountWithSignum(this.model.get('isNegativeOrder')));
+      this.$.amount.setContent(this.model.printAmountWithSignum(this.model.get('isNegative')));
     } else if (this.model.get('isReversed')) {
       this.$.name.setContent('*' + (OB.MobileApp.model.getPaymentName(this.model.get('kind')) || this.model.get('name')));
-      this.$.amount.setContent(this.model.printAmountWithSignum(this.model.get('isNegativeOrder')));
+      this.$.amount.setContent(this.model.printAmountWithSignum(this.model.get('isNegative')));
     } else {
       this.$.name.setContent(OB.MobileApp.model.getPaymentName(this.model.get('kind')) || this.model.get('name'));
       this.$.amount.setContent(this.model.printAmount());
