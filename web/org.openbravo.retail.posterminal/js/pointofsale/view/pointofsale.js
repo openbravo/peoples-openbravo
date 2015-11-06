@@ -399,7 +399,7 @@ enyo.kind({
       var isPaidQuotation = (context.model.get('order').has('isQuotation') && context.model.get('order').get('isQuotation') && context.model.get('order').has('hasbeenpaid') && context.model.get('order').get('hasbeenpaid') === 'Y');
       var receipt = context.model.get('order');
       if (receipt.get('id') && !isPaidQuotation && receipt.get('lines') && receipt.get('lines').length > 0) {
-        if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
+        if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true) && !inEvent.originator.hasClass('paidticket')) {
           receipt.setIsCalculateGrossLockState(true);
           receipt.set('obposIsDeleted', true);
           var i;
