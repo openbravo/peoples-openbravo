@@ -576,7 +576,7 @@ public class CostingUtils {
    * Returns the Fix Backdated From of a Costing Rule, if is null returns 01/01/1900
    */
   public static Date getCostingRuleFixBackdatedFrom(CostingRule rule) {
-    if (rule.getStartingDate() == null) {
+    if (rule.getFixbackdatedfrom() == null) {
       SimpleDateFormat outputFormat = new SimpleDateFormat("dd-MM-yyyy");
       try {
         return outputFormat.parse("01-01-1900");
@@ -586,7 +586,7 @@ public class CostingUtils {
         return null;
       }
     }
-    return rule.getStartingDate();
+    return rule.getFixbackdatedfrom();
   }
 
   /**

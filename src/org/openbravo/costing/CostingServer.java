@@ -235,20 +235,23 @@ public class CostingServer {
     if (StringUtils.equals(transaction.getCostingAlgorithm().getJavaClassName(),
         "org.openbravo.costing.StandardAlgorithm")) {
 
-      if (transaction.getMovementDate().after(
-          CostingUtils.getCostingRuleStartingDate(getCostingRule()))
-          && CostAdjustmentUtils.isNeededBackdatedCostAdjustment(transaction, getCostingRule()
-              .isWarehouseDimension(), CostingUtils.getCostingRuleStartingDate(getCostingRule()))) {
+      if (CostAdjustmentUtils.isNeededBackdatedCostAdjustment(transaction, getCostingRule()
+          .isWarehouseDimension(), CostingUtils.getCostingRuleStartingDate(getCostingRule()))) {
 
         // Case transaction backdated (modifying the stock in the past)
-        if (trxType != TrxType.InventoryClosing && trxType != TrxType.InventoryOpening
-            && getCostingRule().isBackdatedTransactionsFixed()) {
+        if (trxType != TrxType.InventoryClosing
+            && trxType != TrxType.InventoryOpening
+            && getCostingRule().isBackdatedTransactionsFixed()
+            && transaction.getMovementDate().compareTo(
+                CostingUtils.getCostingRuleFixBackdatedFrom(getCostingRule())) >= 0) {
           // BDT = Backdated transaction
           createAdjustment("BDT", BigDecimal.ZERO);
         }
 
         // Case Inventory Amount Update backdated (modifying the cost in the past)
-        if (trxType == TrxType.InventoryOpening) {
+        if (trxType == TrxType.InventoryOpening
+            && transaction.getMovementDate().compareTo(
+                CostingUtils.getCostingRuleStartingDate(getCostingRule())) >= 0) {
           OBDal.getInstance().refresh(transaction.getPhysicalInventoryLine().getPhysInventory());
           if (transaction.getPhysicalInventoryLine().getPhysInventory()
               .getInventoryAmountUpdateLineInventoriesInitInventoryList().size() > 0
@@ -269,8 +272,8 @@ public class CostingServer {
     }
 
     if (getCostingRule().isBackdatedTransactionsFixed()
-        && transaction.getMovementDate().after(
-            CostingUtils.getCostingRuleStartingDate(getCostingRule()))
+        && transaction.getMovementDate().compareTo(
+            CostingUtils.getCostingRuleFixBackdatedFrom(getCostingRule())) >= 0
         && CostAdjustmentUtils.isNeededBackdatedCostAdjustment(transaction, getCostingRule()
             .isWarehouseDimension(), CostingUtils.getCostingRuleStartingDate(getCostingRule()))) {
       // BDT = Backdated transaction
