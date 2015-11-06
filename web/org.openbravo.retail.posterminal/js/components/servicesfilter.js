@@ -168,7 +168,7 @@ enyo.kind({
         columns: [],
         operator: OB.Dal.FILTER,
         value: (this.orderlineList.length > 1 ? 'Services_Filter_Multi' : 'Services_Filter'),
-        params: [prodList.join("','"), catList.join("','"), prodList.length, catList.length, existingServices.join("','")]
+        params: [prodList.join("','"), catList.join("','"), prodList.length, catList.length, (existingServices.length > 0 ? existingServices.join("','") : '-')]
       }, {
         columns: ['ispack'],
         operator: 'equals',
@@ -190,7 +190,7 @@ enyo.kind({
         columns: [],
         operator: OB.Dal.FILTER,
         value: 'Services_Filter',
-        params: [product.get('forceFilterId') ? product.get('forceFilterId') : product.get('id'), product.get('productCategory'), '', '', existingServices.join("','")]
+        params: [product.get('forceFilterId') ? product.get('forceFilterId') : product.get('id'), product.get('productCategory'), '', '', (existingServices.length > 0 ? existingServices.join("','") : '-')]
       }, {
         columns: ['ispack'],
         operator: 'equals',
