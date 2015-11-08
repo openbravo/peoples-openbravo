@@ -1493,7 +1493,7 @@
 
           }, function () {
             OB.error(arguments);
-          }, true);
+          });
 
         } else { //Location have changed
           var location = oldbp.get('locationModel');
