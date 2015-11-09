@@ -212,6 +212,13 @@
   }
 }
 
+.onyx-menu-item {
+  cursor: pointer;
+  user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+}
+
 .onyx-menu-item:hover {
   background-color: #e2e2e2 !important;
 }.paymentmethoditemstext {
