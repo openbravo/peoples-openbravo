@@ -444,18 +444,21 @@
           SET PriceList=ROUND((
           CASE Cur_DiscountLine.List_Base WHEN 'C' THEN PriceList*(1+Cur_DiscountLine.LIST_MARGIN/100) 
                                           WHEN 'FC' THEN CASE WHEN Cur_DiscountLine.List_Fixed >= PriceList THEN Cur_DiscountLine.List_Fixed ELSE PriceList*(1+Cur_DiscountLine.LIST_MARGIN/100) END
+					  WHEN 'FCM' THEN CASE WHEN Cur_DiscountLine.List_Fixed >= PriceList*(1+Cur_DiscountLine.LIST_MARGIN/100) THEN Cur_DiscountLine.List_Fixed ELSE PriceList*(1+Cur_DiscountLine.LIST_MARGIN/100) END
                                           ELSE PriceList
           END
           ), v_StdPrecision),
           PriceStd=ROUND((
           CASE Cur_DiscountLine.Std_Base WHEN 'C' THEN PriceStd*(1+Cur_DiscountLine.STD_MARGIN/100) 
                                          WHEN 'FC' THEN CASE WHEN Cur_DiscountLine.Std_Fixed >= PriceStd THEN Cur_DiscountLine.Std_Fixed ELSE PriceStd*(1+Cur_DiscountLine.STD_MARGIN/100) END
+					 WHEN 'FCM' THEN CASE WHEN Cur_DiscountLine.Std_Fixed >= PriceStd*(1+Cur_DiscountLine.STD_MARGIN/100) THEN Cur_DiscountLine.Std_Fixed ELSE PriceStd*(1+Cur_DiscountLine.STD_MARGIN/100) END
                                          ELSE PriceStd 
           END
           ), v_StdPrecision),
           PriceLimit=ROUND((
           CASE Cur_DiscountLine.Limit_Base WHEN 'C' THEN PriceLimit*(1+Cur_DiscountLine.LIMIT_MARGIN/100) 
                                            WHEN 'FC' THEN CASE WHEN Cur_DiscountLine.List_Fixed >= PriceLimit THEN Cur_DiscountLine.Limit_Fixed ELSE PriceLimit*(1+Cur_DiscountLine.LIST_MARGIN/100) END
+					   WHEN 'FCM' THEN CASE WHEN Cur_DiscountLine.List_Fixed >= PriceLimit*(1+Cur_DiscountLine.LIST_MARGIN/100) THEN Cur_DiscountLine.Limit_Fixed ELSE PriceLimit*(1+Cur_DiscountLine.LIST_MARGIN/100) END
                                            ELSE PriceLimit
           END
           ), v_StdPrecision),
