@@ -40,6 +40,7 @@ public class CheckTerminalAuth extends JSONProcessSimple {
       final String terminalName = jsonsent.getString("terminalName");
       final String terminalKeyIdentifier = jsonsent.getString("terminalKeyIdentifier");
       final String terminalAuthentication = jsonsent.getString("terminalAuthentication");
+      final String currentCacheSessionId = jsonsent.getString("cacheSessionId");
 
       final OBCriteria<OBPOSApplications> qApp = OBDal.getInstance().createCriteria(
           OBPOSApplications.class);
@@ -47,7 +48,8 @@ public class CheckTerminalAuth extends JSONProcessSimple {
       final List<OBPOSApplications> apps = qApp.list();
       if (apps.size() == 1) {
         final OBPOSApplications terminal = (apps.get(0));
-        if (!terminal.isLinked() || !terminal.getTerminalKey().equals(terminalKeyIdentifier)) {
+        if (!terminal.isLinked() || !terminal.getTerminalKey().equals(terminalKeyIdentifier)
+            || !terminal.getCurrentCacheSession().equals(currentCacheSessionId)) {
           respArray.put("isLinked", false);
         }
         try {
