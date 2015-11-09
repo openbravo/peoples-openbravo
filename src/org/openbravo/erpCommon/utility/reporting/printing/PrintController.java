@@ -322,7 +322,7 @@ public class PrintController extends HttpSecureAppServlet {
           if (request.getServletPath().toLowerCase().indexOf(PRINT_PATH) != -1)
             createPrintOptionsPage(request, response, vars, documentType,
                 getComaSeparatedString(documentIds), reports);
-          else if (request.getServletPath().toLowerCase().indexOf(SEND_PATH) != -1) {
+          else {
             createEmailOptionsPage(request, response, vars, documentType,
                 getComaSeparatedString(documentIds), reports, checks, fullDocumentIdentifier);
           }
