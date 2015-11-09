@@ -279,6 +279,7 @@ public class CostingRuleProcess implements Process {
         trx.setCostingStatus("CC");
         trx.setTransactionCost(BigDecimal.ZERO);
         trx.setCurrency(trx.getClient().getCurrency());
+        trx.setProcessed(true);
         OBDal.getInstance().save(trx);
 
         if ((i % 100) == 0) {
