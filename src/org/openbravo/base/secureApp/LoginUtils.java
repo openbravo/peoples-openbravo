@@ -11,12 +11,18 @@
  */
 package org.openbravo.base.secureApp;
 
+import java.io.File;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.log4j.Logger;
+import org.openbravo.base.HttpBaseUtils;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.dal.core.OBContext;
@@ -24,6 +30,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.businessUtility.Preferences;
+import org.openbravo.erpCommon.security.SessionLogin;
 import org.openbravo.erpCommon.utility.DimensionDisplayUtility;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.access.RoleOrganization;
@@ -31,6 +38,10 @@ import org.openbravo.model.ad.domain.Preference;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.utils.FormatUtilities;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 public class LoginUtils {
 
@@ -432,5 +443,132 @@ public class LoginUtils {
     public String client;
     public String org;
     public String warehouse;
+  }
+
+  /**
+   * It saves session in the DB when login
+   * 
+   */
+  public static void saveLoginBD(HttpServletRequest request, VariablesSecureApp vars,
+      String strCliente, String strOrganizacion) throws ServletException {
+
+    if ("Y".equals(request.getSession().getAttribute("forceLogin"))) {
+      // don't create a DB session for bypass authentication resources
+      // log4j.debug("Bypass session " + request.getRequestURI());
+      return;
+    }
+
+    final SessionLogin sl = new SessionLogin(request, strCliente, strOrganizacion,
+        vars.getSessionValue("#AD_User_ID"));
+
+    // session_ID should have been created in LoginHandler
+    String sessionId = vars.getDBSession();
+    sl.setServerUrl(HttpBaseUtils.getLocalAddress(request));
+    sl.setSessionID(sessionId);
+
+    if (sessionId == null || sessionId.equals("")) {
+      sl.setStatus("S");
+      sl.save();
+      vars.setSessionValue("#AD_Session_ID", sl.getSessionID());
+    }
+  }
+
+  /**
+   * It reads number format configuration
+   * 
+   */
+  public static void readNumberFormat(VariablesSecureApp vars, String strFormatFile) {
+    String strNumberFormat = "###,##0.00"; // Default number format
+    String strGroupingSeparator = ","; // Default grouping separator
+    String strDecimalSeparator = "."; // Default decimal separator
+    final String formatNameforJrxml = "euroInform"; // Name of the format to use
+    final HashMap<String, String> formatMap = new HashMap<String, String>();
+
+    try {
+      // Reading number format configuration
+      final DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
+      final DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
+      final Document doc = docBuilder.parse(new File(strFormatFile));
+      doc.getDocumentElement().normalize();
+      final NodeList listOfNumbers = doc.getElementsByTagName("Number");
+      final int totalNumbers = listOfNumbers.getLength();
+      for (int s = 0; s < totalNumbers; s++) {
+        final Node NumberNode = listOfNumbers.item(s);
+        if (NumberNode.getNodeType() == Node.ELEMENT_NODE) {
+          final Element NumberElement = (Element) NumberNode;
+          final String strNumberName = NumberElement.getAttributes().getNamedItem("name")
+              .getNodeValue();
+          // store in session all the formats
+          final String strFormatOutput = NumberElement.getAttributes().getNamedItem("formatOutput")
+              .getNodeValue();
+          formatMap.put(strNumberName, strFormatOutput);
+          vars.setSessionValue("#FormatOutput|" + strNumberName, strFormatOutput);
+          vars.setSessionValue("#DecimalSeparator|" + strNumberName, NumberElement.getAttributes()
+              .getNamedItem("decimal").getNodeValue());
+          vars.setSessionValue("#GroupSeparator|" + strNumberName, NumberElement.getAttributes()
+              .getNamedItem("grouping").getNodeValue());
+          // set the numberFormat to be used in the renderJR function
+          if (strNumberName.equals(formatNameforJrxml)) {
+            strDecimalSeparator = NumberElement.getAttributes().getNamedItem("decimal")
+                .getNodeValue();
+            strGroupingSeparator = NumberElement.getAttributes().getNamedItem("grouping")
+                .getNodeValue();
+            strNumberFormat = strFormatOutput;
+          }
+        }
+      }
+    } catch (final Exception e) {
+      // log4j.error("error reading number format", e);
+    }
+    vars.setSessionObject("#FormatMap", formatMap);
+    vars.setSessionValue("#AD_ReportNumberFormat", strNumberFormat);
+    vars.setSessionValue("#AD_ReportGroupingSeparator", strGroupingSeparator);
+    vars.setSessionValue("#AD_ReportDecimalSeparator", strDecimalSeparator);
+  }
+
+  /**
+   * It reads number format configuration
+   * 
+   * @return
+   * @throws ServletException
+   * 
+   */
+  public static String getDefaultLanguage(ConnectionProvider connectionProvider, String aduserid)
+      throws ServletException {
+
+    DefaultOptionsData dataLanguage[] = DefaultOptionsData.defaultLanguage(connectionProvider,
+        aduserid);
+    if (dataLanguage != null && dataLanguage.length > 0) {
+      return dataLanguage[0].getField("DEFAULT_AD_LANGUAGE");
+    }
+    dataLanguage = DefaultOptionsData.getDefaultLanguage(connectionProvider);
+    if (dataLanguage != null && dataLanguage.length > 0) {
+      return dataLanguage[0].getField("DEFAULT_AD_LANGUAGE");
+    }
+    return null;
+
+  }
+
+  /**
+   * It reads number format configuration
+   * 
+   * @return
+   * @throws ServletException
+   * 
+   */
+  public static String isDefaultRtl(ConnectionProvider connectionProvider, String aduserid)
+      throws ServletException {
+
+    DefaultOptionsData dataLanguage[] = DefaultOptionsData.defaultLanguage(connectionProvider,
+        aduserid);
+    if (dataLanguage != null && dataLanguage.length > 0) {
+      return dataLanguage[0].getField("ISRTL");
+    }
+    dataLanguage = DefaultOptionsData.getDefaultLanguage(connectionProvider);
+    if (dataLanguage != null && dataLanguage.length > 0) {
+      return dataLanguage[0].getField("ISRTL");
+    }
+    return null;
+
   }
 }

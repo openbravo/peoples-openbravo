@@ -31,10 +31,6 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
-import net.sf.jasperreports.engine.JRDataSource;
 
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
@@ -56,7 +52,6 @@ import org.openbravo.database.SessionInfo;
 import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.obps.ActivationKey.FeatureRestriction;
 import org.openbravo.erpCommon.obps.ActivationKey.LicenseRestriction;
-import org.openbravo.erpCommon.security.SessionLogin;
 import org.openbravo.erpCommon.security.UsageAudit;
 import org.openbravo.erpCommon.utility.JRFieldProviderDataSource;
 import org.openbravo.erpCommon.utility.JRScrollableFieldProviderDataSource;
@@ -74,10 +69,8 @@ import org.openbravo.model.ad.ui.WindowTrl;
 import org.openbravo.utils.FileUtility;
 import org.openbravo.utils.Replace;
 import org.openbravo.xmlEngine.XmlDocument;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+
+import net.sf.jasperreports.engine.JRDataSource;
 
 public class HttpSecureAppServlet extends HttpBaseServlet {
   private static final long serialVersionUID = 1L;
@@ -298,8 +291,8 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
           if (LoginUtils.fillSessionArguments(this, vars, strUserAuth, strLanguage, strIsRTL,
               strRole, strClient, strOrg, strWarehouse)) {
             readProperties(vars);
-            readNumberFormat(vars, globalParameters.getFormatPath());
-            saveLoginBD(request, vars, "0", "0");
+            LoginUtils.readNumberFormat(vars, globalParameters.getFormatPath());
+            LoginUtils.saveLoginBD(request, vars, "0", "0");
           } else {
             // Re-login
             log4j.error("Unable to fill session Arguments for: " + strUserAuth);
@@ -1105,79 +1098,6 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
       log4j.debug("sqlDateFormat: " + sqlDateFormat);
       log4j.debug("pentahoServer: " + pentahoServer);
       log4j.debug("sourcePath: " + sourcePath);
-    }
-  }
-
-  protected void readNumberFormat(VariablesSecureApp vars, String strFormatFile) {
-    String strNumberFormat = "###,##0.00"; // Default number format
-    String strGroupingSeparator = ","; // Default grouping separator
-    String strDecimalSeparator = "."; // Default decimal separator
-    final String formatNameforJrxml = "euroInform"; // Name of the format to use
-    final HashMap<String, String> formatMap = new HashMap<String, String>();
-
-    try {
-      // Reading number format configuration
-      final DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
-      final DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
-      final Document doc = docBuilder.parse(new File(strFormatFile));
-      doc.getDocumentElement().normalize();
-      final NodeList listOfNumbers = doc.getElementsByTagName("Number");
-      final int totalNumbers = listOfNumbers.getLength();
-      for (int s = 0; s < totalNumbers; s++) {
-        final Node NumberNode = listOfNumbers.item(s);
-        if (NumberNode.getNodeType() == Node.ELEMENT_NODE) {
-          final Element NumberElement = (Element) NumberNode;
-          final String strNumberName = NumberElement.getAttributes().getNamedItem("name")
-              .getNodeValue();
-          // store in session all the formats
-          final String strFormatOutput = NumberElement.getAttributes().getNamedItem("formatOutput")
-              .getNodeValue();
-          formatMap.put(strNumberName, strFormatOutput);
-          vars.setSessionValue("#FormatOutput|" + strNumberName, strFormatOutput);
-          vars.setSessionValue("#DecimalSeparator|" + strNumberName, NumberElement.getAttributes()
-              .getNamedItem("decimal").getNodeValue());
-          vars.setSessionValue("#GroupSeparator|" + strNumberName, NumberElement.getAttributes()
-              .getNamedItem("grouping").getNodeValue());
-          // set the numberFormat to be used in the renderJR function
-          if (strNumberName.equals(formatNameforJrxml)) {
-            strDecimalSeparator = NumberElement.getAttributes().getNamedItem("decimal")
-                .getNodeValue();
-            strGroupingSeparator = NumberElement.getAttributes().getNamedItem("grouping")
-                .getNodeValue();
-            strNumberFormat = strFormatOutput;
-          }
-        }
-      }
-    } catch (final Exception e) {
-      log4j.error("error reading number format", e);
-    }
-    vars.setSessionObject("#FormatMap", formatMap);
-    vars.setSessionValue("#AD_ReportNumberFormat", strNumberFormat);
-    vars.setSessionValue("#AD_ReportGroupingSeparator", strGroupingSeparator);
-    vars.setSessionValue("#AD_ReportDecimalSeparator", strDecimalSeparator);
-  }
-
-  private void saveLoginBD(HttpServletRequest request, VariablesSecureApp vars, String strCliente,
-      String strOrganizacion) throws ServletException {
-
-    if ("Y".equals(request.getSession().getAttribute("forceLogin"))) {
-      // don't create a DB session for bypass authentication resources
-      log4j.debug("Bypass session " + request.getRequestURI());
-      return;
-    }
-
-    final SessionLogin sl = new SessionLogin(request, strCliente, strOrganizacion,
-        vars.getSessionValue("#AD_User_ID"));
-
-    // session_ID should have been created in LoginHandler
-    String sessionId = vars.getDBSession();
-    sl.setServerUrl(strDireccion);
-    sl.setSessionID(sessionId);
-
-    if (sessionId == null || sessionId.equals("")) {
-      sl.setStatus("S");
-      sl.save();
-      vars.setSessionValue("#AD_Session_ID", sl.getSessionID());
     }
   }
 

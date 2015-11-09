@@ -467,7 +467,7 @@ public class UserInfoWidgetActionHandler extends BaseActionHandler implements Po
         throw new IllegalArgumentException("Error when saving default values");
       }
       readProperties(vars);
-      readNumberFormat(vars, KernelServlet.getGlobalParameters().getFormatPath());
+      LoginUtils.readNumberFormat(vars, KernelServlet.getGlobalParameters().getFormatPath());
     }
 
     private String toSaveStr(String value) {
