@@ -1207,7 +1207,7 @@ enyo.kind({
           text, linesToDelete, relations;
 
       if (!me.order.get('undo')) {
-        text = OB.I18N.getLabel('OBRECP_UndoComplementary') + ': ' + model.get('qty') + ' x ' + model.get('product').get('_identifier');
+        text = OB.I18N.getLabel('OBPOS_DeleteLine') + ': ' + model.get('qty') + ' x ' + model.get('product').get('_identifier');
         linesToDelete = [model];
         relations = [];
         me.order.setUndo('DeleteLine', {
@@ -1225,7 +1225,7 @@ enyo.kind({
         if (text) {
           text += ', ' + model.get('qty') + ' x ' + model.get('product').get('_identifier');
         } else {
-          text = OB.I18N.getLabel('OBRECP_UndoComplementary') + ': ' + model.get('qty') + ' x ' + model.get('product').get('_identifier');
+          text = OB.I18N.getLabel('OBPOS_DeleteLine') + ': ' + model.get('qty') + ' x ' + model.get('product').get('_identifier');
         }
         relations = me.order.get('undo').relations;
         if (!relations) {
