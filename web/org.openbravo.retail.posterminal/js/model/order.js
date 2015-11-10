@@ -1000,20 +1000,11 @@
 
     deleteLines: function (lines, idx, length, callback) {
       var me = this,
-          line = lines[idx],
-          i;
+          line = lines[idx];
       if (idx === 0) {
-        for (i = 0; i < lines.length; i++) {
-          if (me.get('replacedorder') && lines[i].get('remainingQuantity')) {
-            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_CancelReplaceDeleteLine'));
-            if (callback) {
-              callback();
-            }
-            return;
-          }
-        }
         this.set('undo', null);
       }
+      idx++;
       if (this.get('lines').get(line)) {
         if (idx < length) {
           this.deleteLine(line, true);
