@@ -89,8 +89,8 @@ enyo.kind({
         'asc': true
       }]
     };
+    var products = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.products;
     if (!OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
-      var products = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.products;
       if (products.collection.length > 0) {
         // There are products in search
         // Get all the products id
@@ -118,15 +118,17 @@ enyo.kind({
           brandfilter = {},
           productText;
       criteria = {};
-      if (productFilterText !== "" || productcategory !== "__all__") {
-        brandfilter.columns = [];
-        brandfilter.operator = OB.Dal.FILTER;
-        brandfilter.value = 'PBrand_Filter';
-        productText = (OB.MobileApp.model.hasPermission('OBPOS_remote.product' + OB.Dal.USESCONTAINS, true) ? '%' : '') + productFilterText + '%';
-        brandfilter.params = [productText, productcategory];
-        remoteCriteria.push(brandfilter);
+      if (products.collection.length > 0) {
+        if (productFilterText !== "" || productcategory !== "__all__") {
+          brandfilter.columns = [];
+          brandfilter.operator = OB.Dal.FILTER;
+          brandfilter.value = 'PBrand_Filter';
+          productText = (OB.MobileApp.model.hasPermission('OBPOS_remote.product' + OB.Dal.USESCONTAINS, true) ? '%' : '') + productFilterText + '%';
+          brandfilter.params = [productText, productcategory];
+          remoteCriteria.push(brandfilter);
+        }
+        criteria.remoteFilters = remoteCriteria;
       }
-      criteria.remoteFilters = remoteCriteria;
       OB.Dal.find(OB.Model.Brand, criteria, successCallbackBrands, errorCallback);
     }
     return true;

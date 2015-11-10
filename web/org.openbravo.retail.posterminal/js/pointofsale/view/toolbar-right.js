@@ -309,7 +309,7 @@ enyo.kind({
   tabPanel: 'catalog',
   i18nLabel: 'OBMOBC_LblBrowse',
   tap: function () {
-    OB.MobileApp.view.scanningFocus(false);
+    OB.MobileApp.view.scanningFocus(true);
     if (!this.disabled) {
       this.doTabChange({
         tabPanel: this.tabPanel,

@@ -129,8 +129,8 @@ public class Product extends ProcessHQLQuery {
         extensionsDisc, args);
 
     Long lastUpdated = jsonsent.has("lastUpdated")
-        && !jsonsent.get("lastUpdated").equals("undefined") ? jsonsent.getLong("lastUpdated")
-        : null;
+        && !jsonsent.get("lastUpdated").equals("undefined")
+        && !jsonsent.get("lastUpdated").equals("null") ? jsonsent.getLong("lastUpdated") : null;
     // regular products
     String hql = "select"
         + regularProductsHQLProperties.getHqlSelect()

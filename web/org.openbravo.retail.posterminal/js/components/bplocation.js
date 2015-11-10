@@ -391,7 +391,7 @@ enyo.kind({
     return true;
   },
   executeOnHide: function () {
-    this.$.body.$.listBpsLoc.$.bpsloclistitemprinter.$.theader.$.modalBpLocScrollableHeader.clearAction();
+    this.$.body.$.listBpsLoc.$.bpsloclistitemprinter.$.theader.$.modalBpLocScrollableHeader.$.bpsLocationSearchfilterText.setValue('');
   },
   i18nHeader: 'OBPOS_LblAssignCustomerAddress',
   body: {

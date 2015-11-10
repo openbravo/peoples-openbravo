@@ -518,7 +518,7 @@ public class ProcessCashClose extends POSDataSynchronizationProcess implements
         jsonCashup.getString("paymentMethodId"));
     newPaymentMethodCashUp.setPaymentType(appPayment);
 
-    String name = appPayment.getPaymentMethod().getName();
+    String name = appPayment.getCommercialName();
     newPaymentMethodCashUp.setName(name);
     OBDal.getInstance().save(newPaymentMethodCashUp);
   }

@@ -559,8 +559,10 @@ enyo.kind({
     this.order.on('change:orderType', function (model) {
       if (model.get('orderType') === 1) {
         this.$.divText.addStyles('width: 50%; color: #f8941d;');
-        this.$.divText.setContent(OB.I18N.getLabel('OBPOS_ToBeReturned'));
-        this.$.divText.show();
+        if (model.get('isPaid') !== true) {
+          this.$.divText.setContent(OB.I18N.getLabel('OBPOS_ToBeReturned'));
+          this.$.divText.show();
+        }
       } else if (model.get('orderType') === 2) {
         this.$.divText.addStyles('width: 60%; color: lightblue;');
         this.$.divText.setContent(OB.I18N.getLabel('OBPOS_ToBeLaidaway'));

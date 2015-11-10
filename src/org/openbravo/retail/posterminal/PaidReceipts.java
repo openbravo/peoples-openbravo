@@ -353,8 +353,6 @@ public class PaidReceipts extends JSONProcessSimple {
         result.put(JsonConstants.RESPONSE_DATA, respArray);
         result.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
       }
-    } catch (Exception e) {
-      e.printStackTrace();
     } finally {
 
       OBContext.restorePreviousMode();

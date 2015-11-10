@@ -12,7 +12,7 @@
 enyo.kind({
   kind: 'OB.UI.SmallButton',
   name: 'OB.UI.RenderProductCh',
-  style: 'width: 86%; padding: 0px',
+  style: 'width: 86%; padding: 0px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;',
   classes: 'btnlink-white-simple',
   events: {
     onShowPopup: ''

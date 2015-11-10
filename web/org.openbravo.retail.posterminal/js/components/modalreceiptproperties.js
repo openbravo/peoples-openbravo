@@ -16,7 +16,8 @@ enyo.kind({
     kind: 'OB.UI.renderTextProperty',
     name: 'receiptDescription',
     modelProperty: 'description',
-    i18nLabel: 'OBPOS_LblDescription'
+    i18nLabel: 'OBPOS_LblDescription',
+    maxLength: 255
   }, {
     kind: 'OB.UI.renderBooleanProperty',
     name: 'printBox',

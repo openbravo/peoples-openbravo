@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2013 Openbravo SLU
+ * All portions are Copyright (C) 2012-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -134,7 +134,7 @@ public class ApplicationCacheComponent extends MobileCoreApplicationCacheCompone
 
   private List<String> getFileList(String[] extensions) {
 
-    final String relativePath = PATH_PREFIX + getModulePackageName();
+    final String relativePath = "/" + PATH_PREFIX + getModulePackageName();
 
     List<String> fileList = new ArrayList<String>();
 

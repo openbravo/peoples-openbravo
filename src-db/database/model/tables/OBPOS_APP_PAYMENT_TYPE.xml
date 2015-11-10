@@ -225,6 +225,12 @@
       <index name="OBPOS_APPPAYTYPE_TERM" unique="false">
         <index-column name="OBPOS_TERMINALTYPE_ID"/>
       </index>
+      <unique name="OBPOS_APP_PAYMENT_TYPE_VALUE">
+        <unique-column name="OBPOS_TERMINALTYPE_ID"/>
+        <unique-column name="AD_CLIENT_ID"/>
+        <unique-column name="AD_ORG_ID"/>
+        <unique-column name="VALUE"/>
+      </unique>
       <check name="OBPOS_APP_PAYTYPE_CLOSEGL_CHK"><![CDATA[AUTOMATEMOVEMENTTOOTHER = 'N' OR C_GLITEM_DROPDEP_ID IS NOT NULL]]></check>
       <check name="OBPOS_APP_PAYTYPE_DEPGL_CHK"><![CDATA[ALLOWDEPOSITS = 'N' OR C_GLITEM_DEPOSITS_ID IS NOT NULL]]></check>
       <check name="OBPOS_APP_PAYTYPE_DROPGL_CHK"><![CDATA[ALLOWDROPS = 'N' OR C_GLITEM_DROPS_ID IS NOT NULL]]></check>

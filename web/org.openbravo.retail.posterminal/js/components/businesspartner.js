@@ -382,6 +382,9 @@ enyo.kind({
       var remoteCriteria = [filterIdentifier];
       criteria.remoteFilters = remoteCriteria;
     }
+    if (OB.MobileApp.model.hasPermission('OBPOS_customerLimit', true)) {
+      criteria._limit = OB.DEC.abs(OB.MobileApp.model.hasPermission('OBPOS_customerLimit', true));
+    }
     OB.Dal.find(OB.Model.BusinessPartner, criteria, successCallbackBPs, errorCallback);
     return true;
   },

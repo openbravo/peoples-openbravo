@@ -26,11 +26,12 @@ OB.Model.Executor = Backbone.Model.extend({
     this.set('eventQueue', eventQueue);
     this.set('actionQueue', new Backbone.Collection());
 
-    eventQueue.on('add', function () {
-      if (!this.get('executing')) {
+    eventQueue.on('add', function (event) {
+      if (!this.get('executing') && !event.get('avoidTrigger')) {
         // Adding an event to an empty queue, firing it
         this.nextEvent();
       }
+      event.set('avoidTrigger', false);
     }, this);
   },
   removeGroup: function (groupId) {
@@ -117,7 +118,7 @@ OB.Model.Executor = Backbone.Model.extend({
   nextAction: function (event) {
     var action = this.get('actionQueue').shift();
     if (action) {
-      action.get('action').call(this, action.get('args'), event);
+      action.get('action').call(this, action.get('args'), event, action.get('promCandidates'));
     } else {
       // queue of action is empty
       this.postAction(event);
@@ -215,7 +216,7 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
       params: this.convertParams(evt, line, receipt, this.paramsTranslation)
     };
 
-    OB.Dal.find(OB.Model.Discount, criteria, function (d) {
+    OB.Dal.findUsingCache('discountsCache', OB.Model.Discount, criteria, function (d) {
       if (d.size() === 0) {
         line.set('noDiscountCandidates', true, {
           silent: true
@@ -224,7 +225,9 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
       d.forEach(function (disc) {
         actionQueue.add({
           action: me.applyRule,
-          args: disc
+          args: disc,
+          promCandidates: d,
+          avoidTrigger: true
         });
       });
       evt.trigger('actionsCreated');
@@ -233,7 +236,7 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
     });
   },
 
-  applyRule: function (disc, evt) {
+  applyRule: function (disc, evt, promCandidates) {
     var receipt = evt.get('receipt'),
         line = evt.get('line'),
         rule = OB.Model.Discounts.discountRules[disc.get('discountType')],
@@ -262,7 +265,7 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
           this.nextAction(evt);
         }, this);
       }
-      ds = rule.implementation(disc, receipt, line, ruleListener);
+      ds = rule.implementation(disc, receipt, line, ruleListener, promCandidates);
       if (ds && ds.alerts) {
         // in the new flow discount, the messages are stored in array, so only will be displayed the first time
         if (OB.MobileApp.model.hasPermission('OBPOS_discount.newFlow', true)) {

@@ -313,9 +313,13 @@ enyo.kind({
         existentOrders.push(this.model.get('orderList').models[i].get('id'));
       }
     }
+    var limit = OB.Model.Order.prototype.dataLimit;
+    if (OB.MobileApp.model.hasPermission('OBPOS_orderLimit', true)) {
+      limit = OB.DEC.abs(OB.MobileApp.model.hasPermission('OBPOS_orderLimit', true));
+    }
     process.exec({
       filters: me.filters,
-      _limit: OB.Model.Order.prototype.dataLimit,
+      _limit: limit,
       _dateFormat: OB.Format.date
     }, function (data) {
       if (data) {

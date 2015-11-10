@@ -64,7 +64,8 @@ enyo.kind({
     var terminalData = {
       terminalKeyIdentifier: this.owner.$.terminalKeyIdentifier.getValue(),
       username: this.owner.$.username.getValue(),
-      password: this.owner.$.password.getValue()
+      password: this.owner.$.password.getValue(),
+      cacheSessionId: window.localStorage.getItem('cacheSessionId')
     };
     this.doHideThisPopup();
     this.owner.owner.context.linkTerminal(JSON.stringify(terminalData), this.owner.owner.callback);

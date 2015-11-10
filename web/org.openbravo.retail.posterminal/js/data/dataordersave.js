@@ -52,8 +52,8 @@
           }
           difference = OB.DEC.sub(difference, fieldValue);
         });
-        if (!isFieldUndefined && difference !== 0) {
-          OB.error(enyo.format("%s: total gross does not equal the sum of the gross of each line. event: '%s', gross: %s, difference: %s", errorHeader, eventParams, gross, difference));
+        if (difference !== 0) {
+          OB.error(enyo.format("%s: [" + this.get('documentNo') + "] total gross does not equal the sum of the gross of each line. event: '%s', gross: %s, difference: %s", errorHeader, eventParams, gross, difference));
         }
 
         // 4. verify that a cashupId is available
@@ -77,6 +77,7 @@
     // finished receipt verifications
     this.receipt.on('closed', function (eventParams) {
       this.receipt = model.get('order');
+
 
       if (this.receipt.get('isbeingprocessed') === 'Y') {
         //The receipt has already been sent, it should not be sent again
@@ -117,13 +118,14 @@
         }
 
         OB.trace('Execution of pre order save hook OK.');
-
         delete receipt.attributes.json;
         receipt.set('creationDate', normalizedCreationDate);
         receipt.set('timezoneOffset', creationDate.getTimezoneOffset());
         receipt.set('created', creationDate.getTime());
         receipt.set('obposCreatedabsolute', OB.I18N.formatDateISO(creationDate));
         receipt.set('orderDate', orderDate);
+        receipt.set('movementDate', OB.I18N.normalizeDate(new Date()));
+        receipt.set('accountingDate', OB.I18N.normalizeDate(new Date()));
 
         // multiterminal support
         // be sure that the active terminal is the one set as the order proprietary
@@ -270,6 +272,8 @@
       }
 
       this.receipt.set('creationDate', normalizedCreationDate);
+      this.receipt.set('movementDate', OB.I18N.normalizeDate(new Date()));
+      this.receipt.set('accountingDate', OB.I18N.normalizeDate(new Date()));
       this.receipt.set('hasbeenpaid', 'Y');
       this.context.get('multiOrders').trigger('integrityOk', this.receipt);
       OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(this.receipt.get('documentnoSuffix'), this.receipt.get('quotationnoSuffix'));
