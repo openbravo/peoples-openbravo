@@ -306,6 +306,7 @@ public class OBViewTab extends BaseTemplateComponent {
       emailBtn.label = Utility.messageBD(new DalConnectionProvider(false), "Email", OBContext
           .getOBContext().getLanguage().getLanguage());
       emailBtn.action = printBtn.action.replace("print.html", "send.html");
+      emailBtn.action = emailBtn.action.replace("printButton", "emailButton");
       btns.add(emailBtn);
     }
 
@@ -1070,7 +1071,7 @@ public class OBViewTab extends BaseTemplateComponent {
 
       type = "print";
       action = "OB.ToolbarUtils.print(this.view, '" + processUrl + "', " + process.isDirectPrint()
-          + ");";
+          + ", 'printButton');";
       label = Utility.messageBD(new DalConnectionProvider(false), "Print", OBContext.getOBContext()
           .getLanguage().getLanguage());
     }

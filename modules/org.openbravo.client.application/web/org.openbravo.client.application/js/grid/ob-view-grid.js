@@ -2013,9 +2013,11 @@ isc.OBViewGrid.addProperties({
     callback = function () {
       delete me.isFilteringExternally;
     };
-    if (this.data.willFetchData(this.convertCriteria(criteria))) {
+    if (isc.isAn.Array(this.data) || this.data.willFetchData(this.convertCriteria(criteria))) {
       // Use this flag when a filter editor submit results a datasource request
       // This flag will be used to prevent unneeded datasource requests, see https://issues.openbravo.com/view.php?id=29896
+      // this.data is an empty array in case of lazy filtering is set and no data
+      // has been fetched yet
       this.isFilteringExternally = true;
     }
     this.Super('handleFilterEditorSubmit', [criteria, context, callback]);
@@ -3716,6 +3718,14 @@ isc.OBViewGrid.addProperties({
         }
       }
     }
+  },
+
+  // Set "allowEditCellRefresh" parameter to force a completely
+  // redrawn in combo type fields when refreshing an editing cell
+  // with the the focus on it.
+  // See issue https://issues.openbravo.com/view.php?id=31198
+  refreshCell: function (rowNum, colNum, refreshingRow) {
+    return this.Super('refreshCell', [rowNum, colNum, refreshingRow, true]);
   },
 
   // having a valueMap property results in setValueMap to be called

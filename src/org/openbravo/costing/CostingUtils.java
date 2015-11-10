@@ -490,7 +490,7 @@ public class CostingUtils {
     where.append(" and (" + CostingRule.PROPERTY_STARTINGDATE + " is null ");
     where.append("   or " + CostingRule.PROPERTY_STARTINGDATE + " <= :startdate)");
     where.append(" and (" + CostingRule.PROPERTY_ENDINGDATE + " is null");
-    where.append("   or " + CostingRule.PROPERTY_ENDINGDATE + " > :enddate )");
+    where.append("   or " + CostingRule.PROPERTY_ENDINGDATE + " >= :enddate )");
     where.append(" and " + CostingRule.PROPERTY_VALIDATED + " = true");
     where.append(" order by case when " + CostingRule.PROPERTY_STARTINGDATE
         + " is null then 1 else 0 end, " + CostingRule.PROPERTY_STARTINGDATE + " desc");

@@ -528,12 +528,11 @@ public class AdvancedQueryBuilder {
       throws JSONException {
 
     // note: code duplicated in parseSingleClause
-    List<Property> properties = JsonUtils.getPropertiesOnPath(getEntity(), fieldName);
+    final List<Property> properties = JsonUtils.getPropertiesOnPath(getEntity(), fieldName);
     if (properties.isEmpty()) {
       return null;
     }
-    properties = getPropertyForTableReference(properties);
-    Property property = properties.get(properties.size() - 1);
+    final Property property = properties.get(properties.size() - 1);
 
     if (property == null) {
       return null;
@@ -632,7 +631,12 @@ public class AdvancedQueryBuilder {
           useProperty = property.getEntity().getProperty(Table.PROPERTY_NAME);
           final int index = useFieldName.indexOf(DalUtil.DOT);
           useFieldName = useFieldName.substring(0, index + 1) + useProperty.getName();
-        } else {
+        } else if (fieldName.contains(JsonConstants.IDENTIFIER)) {
+          // After solving issue https://issues.openbravo.com/view.php?id=30800, the displayed
+          // property of table references is sent from the client side when filtering.
+          // So, the property used to filter the table reference (displayed property) is replaced
+          // just in case the _identifier value is sent in some case as part of the fieldName.
+
           // read the reference to get the table reference
           final Reference reference = OBDal.getInstance().get(Reference.class,
               refProperty.getDomainType().getReference().getId());

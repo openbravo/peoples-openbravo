@@ -100,6 +100,10 @@ public class ReportingUtils {
    * Used to set the parameter with the URI to retrieve images in HTML reports.
    */
   public static final String IMAGES_URI = "Images URI";
+  /**
+   * Used to set Javascript content inside a PDF report.
+   */
+  public static final String PDF_JAVASCRIPT = "PDF Javascript";
 
   private static final double TEXT_CHAR_HEIGHT = 10;
   private static final double TEXT_CHAR_WIDTH = 10;
@@ -377,7 +381,7 @@ public class ReportingUtils {
       saveHTMLReportToOutputStream(jasperPrint, exportParameters, outputStream);
       break;
     case PDF:
-      JasperExportManager.exportReportToPdfStream(jasperPrint, outputStream);
+      savePDFReportToOutputStream(jasperPrint, exportParameters, outputStream);
       break;
     case TXT:
       saveTxtReportToOutputStream(jasperPrint, outputStream);
@@ -490,6 +494,40 @@ public class ReportingUtils {
     htmlExporter.setExporterOutput(exporterOutput);
     htmlExporter.setConfiguration(exportConfiguration);
     htmlExporter.exportReport();
+  }
+
+  /**
+   * Generates a PDF report from a pre-compiled report and returns it into an output stream.
+   * 
+   * @param jasperPrint
+   *          JasperPrint object which contains a compiled report.
+   * @param exportParameters
+   *          Export parameters than can be added to configure the resulting report.
+   * @param outputStream
+   *          The output stream used to return the report.
+   * @throws JRException
+   *           In case there is any error generating the report an exception is thrown with the
+   *           error message.
+   */
+  public static void savePDFReportToOutputStream(JasperPrint jasperPrint,
+      Map<Object, Object> exportParameters, OutputStream outputStream) throws JRException {
+    if (exportParameters != null && exportParameters.size() > 0) {
+      final JRPdfExporter exporter = new JRPdfExporter();
+      SimpleExporterInput exporterInput = new SimpleExporterInput(jasperPrint);
+      SimpleOutputStreamExporterOutput exporterOutput = new SimpleOutputStreamExporterOutput(
+          outputStream);
+      SimplePdfExporterConfiguration configuration = new SimplePdfExporterConfiguration();
+      String jsContent = (String) exportParameters.get(PDF_JAVASCRIPT);
+      if (jsContent != null) {
+        configuration.setPdfJavaScript(jsContent);
+      }
+      exporter.setExporterInput(exporterInput);
+      exporter.setExporterOutput(exporterOutput);
+      exporter.setConfiguration(configuration);
+      exporter.exportReport();
+    } else {
+      JasperExportManager.exportReportToPdfStream(jasperPrint, outputStream);
+    }
   }
 
   /**
@@ -1089,6 +1127,15 @@ public class ReportingUtils {
   }
 
   /**
+   * @see ReportingUtils#concatPDFReport(List<JasperPrint>, boolean, OutputStream,
+   *      SimplePdfExporterConfiguration)
+   */
+  public static void concatPDFReport(List<JasperPrint> jasperPrintList, boolean createBookmarks,
+      OutputStream outputStream) throws JRException {
+    concatPDFReport(jasperPrintList, createBookmarks, outputStream, null);
+  }
+
+  /**
    * Returns a PDF file into an output stream as result of the concatenation of the JasperPrint
    * objects list passed as parameter.
    * 
@@ -1099,20 +1146,24 @@ public class ReportingUtils {
    *          each individual document that was part of the initial document list.
    * @param outputStream
    *          The output stream used for returning the report.
+   * @param reportConfiguration
+   *          An optional configuration for the report.
    * @throws JRException
    *           In case there is any error compiling the report an exception is thrown with the error
    *           message.
    */
   public static void concatPDFReport(List<JasperPrint> jasperPrintList, boolean createBookmarks,
-      OutputStream outputStream) throws JRException {
+      OutputStream outputStream, SimplePdfExporterConfiguration reportConfiguration)
+      throws JRException {
 
     JRPdfExporter exporter = new JRPdfExporter();
     SimpleOutputStreamExporterOutput exporterOutput = new SimpleOutputStreamExporterOutput(
         outputStream);
-    SimplePdfExporterConfiguration reportConfiguration = new SimplePdfExporterConfiguration();
+    SimplePdfExporterConfiguration configuration = reportConfiguration != null ? reportConfiguration
+        : new SimplePdfExporterConfiguration();
 
     reportConfiguration.setCreatingBatchModeBookmarks(createBookmarks);
-    exporter.setConfiguration(reportConfiguration);
+    exporter.setConfiguration(configuration);
     exporter.setExporterInput(SimpleExporterInput.getInstance(jasperPrintList));
     exporter.setExporterOutput(exporterOutput);
 

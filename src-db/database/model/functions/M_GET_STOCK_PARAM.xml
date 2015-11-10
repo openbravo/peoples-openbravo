@@ -527,7 +527,7 @@ DBMS_OUTPUT.PUT_LINE( 'v_warehouse_rule_id: ' || coalesce(v_warehouse_rule_id,''
         IF (AD_GET_RDBMS() = 'ORACLE') THEN
           v_Sql := 'CALL ' || cur_warehouse.procedurename || ' (' || v_parameters ||', v_auxresult, v_auxmessage)';
         ELSE
-          v_Sql := 'SELECT ' || cur_warehouse.procedurename || ' (' || v_parameters ||') ';
+          v_Sql := 'SELECT * FROM ' || cur_warehouse.procedurename || ' (' || v_parameters ||') ';
         END IF;
         BEGIN
         IF (AD_GET_RDBMS() = 'ORACLE') THEN

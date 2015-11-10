@@ -44,6 +44,7 @@ import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
 import org.openbravo.erpCommon.utility.NavigationBar;
+import org.openbravo.erpCommon.utility.OBCurrencyUtils;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.erpCommon.utility.ToolBar;
@@ -293,6 +294,16 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
           strShown, strDateFromRef, strDateToRef, strDateFromRef2, strDateToRef2, strDateFromRef3,
           strDateToRef3, strOrg, strsalesrepId, strcProjectId, strProducttype, strcDocTypeId,
           strOrder, strMayor, strMenor, strPartnerSalesrepId, strCurrencyId, strVoid, "xls");
+    } else if (vars.commandIn("CUR")) {
+      String orgId = vars.getStringParameter("inpOrg");
+      String strOrgCurrencyId = OBCurrencyUtils.getOrgCurrency(orgId);
+      if (StringUtils.isEmpty(strOrgCurrencyId)) {
+        strOrgCurrencyId = strUserCurrencyId;
+      }
+      response.setContentType("text/html; charset=UTF-8");
+      PrintWriter out = response.getWriter();
+      out.print(strOrgCurrencyId);
+      out.close();
     } else
       pageErrorPopUp(response);
   }

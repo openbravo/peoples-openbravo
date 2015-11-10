@@ -1690,7 +1690,7 @@ isc.OBToolbarTextButton.addProperties({
 
 OB.ToolbarUtils = {};
 
-OB.ToolbarUtils.print = function (view, url, directPrint) {
+OB.ToolbarUtils.print = function (view, url, directPrint, type) {
   var selectedRecords = view.viewGrid.getSelectedRecords(),
       length = selectedRecords.length;
 
@@ -1708,7 +1708,8 @@ OB.ToolbarUtils.print = function (view, url, directPrint) {
     Command: 'DEFAULT',
     inppdfpath: url,
     inphiddenkey: view.standardProperties.inpKeyName,
-    inpdirectprint: (directPrint ? 'Y' : 'N')
+    inpdirectprint: (directPrint ? 'Y' : 'N'),
+    inpButtonType: type
   };
 
   for (param in allProperties) {

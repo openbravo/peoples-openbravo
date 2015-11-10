@@ -41,6 +41,7 @@ import org.openbravo.test.dal.MappingGenerationTest;
 import org.openbravo.test.dal.OBContextTest;
 import org.openbravo.test.dal.ReadByNameTest;
 import org.openbravo.test.dal.ValidationTest;
+import org.openbravo.test.db.model.functions.SqlCallableStatement;
 import org.openbravo.test.expression.EvaluationTest;
 import org.openbravo.test.model.ClassLoaderTest;
 import org.openbravo.test.model.OneToManyTest;
@@ -143,6 +144,9 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
 
     // cdi
     CdiInfrastructure.class,
+
+    // db
+    SqlCallableStatement.class
 
 })
 public class AntTaskTests {
