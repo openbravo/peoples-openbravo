@@ -58,6 +58,49 @@ public class ProductProperties extends ModelExtension {
     }
     final String posPrecision = localPosPrecision;
 
+    List<HQLProperty> list = ProductProperties.getMainProductHQLProperties(params);
+
+    list.addAll(new ArrayList<HQLProperty>() {
+      private static final long serialVersionUID = 1L;
+      {
+        try {
+          if ("Y".equals(Preferences.getPreferenceValue("OBPOS_retail.productImages", true,
+              OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
+                  .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
+                  .getOBContext().getRole(), null))) {
+          } else {
+            add(new HQLProperty("img.bindaryData", "img"));
+          }
+        } catch (PropertyException e) {
+          add(new HQLProperty("img.bindaryData", "img"));
+        }
+        add(new HQLProperty("pli.bestseller", "bestseller"));
+        add(new HQLProperty("'false'", "ispack"));
+        if (posPrecision != null && !"".equals(posPrecision)) {
+          add(new HQLProperty("round(ppp.listPrice, " + posPrecision + ")", "listPrice"));
+        } else {
+          add(new HQLProperty("ppp.listPrice", "listPrice"));
+        }
+        if (posPrecision != null && !"".equals(posPrecision)) {
+          add(new HQLProperty("round(ppp.standardPrice, " + posPrecision + ")", "standardPrice"));
+        } else {
+          add(new HQLProperty("ppp.standardPrice", "standardPrice"));
+        }
+
+        add(new HQLProperty("ppp.priceLimit", "priceLimit"));
+        add(new HQLProperty("ppp.cost", "cost"));
+        Entity ProductPrice = ModelProvider.getInstance().getEntity(ProductPrice.class);
+        if (ProductPrice.hasProperty("algorithm") == true) {
+          add(new HQLProperty("ppp.algorithm", "algorithm"));
+        }
+      }
+    });
+
+    return list;
+
+  }
+
+  public static List<HQLProperty> getMainProductHQLProperties(Object params) {
     // Build Product Tax Category select clause
     final Dialect dialect = ((SessionFactoryImpl) ((SessionImpl) OBDal.getInstance().getSession())
         .getSessionFactory()).getDialect();
@@ -78,8 +121,8 @@ public class ProductProperties extends ModelExtension {
     // Date, shipfrom and shipto as null
     taxCategoryQry.append("', null, null, null)");
     final String strTaxCategoryQry = taxCategoryQry.toString();
-    ArrayList<HQLProperty> list = null;
 
+    ArrayList<HQLProperty> list = null;
     try {
       list = new ArrayList<HQLProperty>() {
         private static final long serialVersionUID = 1L;
@@ -117,17 +160,6 @@ public class ProductProperties extends ModelExtension {
           add(new HQLProperty("product.uOM.id", "uOM"));
           add(new HQLProperty("product.uOM.symbol", "uOMsymbol"));
           add(new HQLProperty("upper(product.uPCEAN)", "uPCEAN"));
-          try {
-            if ("Y".equals(Preferences.getPreferenceValue("OBPOS_retail.productImages", true,
-                OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
-                    .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
-                    .getOBContext().getRole(), null))) {
-            } else {
-              add(new HQLProperty("img.bindaryData", "img"));
-            }
-          } catch (PropertyException e) {
-            add(new HQLProperty("img.bindaryData", "img"));
-          }
           add(new HQLProperty("product.description", "description"));
           add(new HQLProperty("product.obposGroupedproduct", "groupProduct"));
           add(new HQLProperty("product.stocked", "stocked"));
@@ -147,30 +179,11 @@ public class ProductProperties extends ModelExtension {
           add(new HQLProperty("product.ispricerulebased", "isPriceRuleBased"));
           add(new HQLProperty("product.obposProposalType", "proposalType"));
           add(new HQLProperty("product.obposIsmultiselectable", "availableForMultiline"));
-          add(new HQLProperty("pli.bestseller", "bestseller"));
           add(new HQLProperty("product.linkedToProduct", "isLinkedToProduct"));
           add(new HQLProperty("product.allowDeferredSell", "allowDeferredSell"));
           add(new HQLProperty("product.deferredSellMaxDays", "deferredSellMaxDays"));
           add(new HQLProperty("product.quantityRule", "quantityRule"));
           add(new HQLProperty("product.obposPrintservices", "isPrintServices"));
-          add(new HQLProperty("'false'", "ispack"));
-          if (posPrecision != null && !"".equals(posPrecision)) {
-            add(new HQLProperty("round(ppp.listPrice, " + posPrecision + ")", "listPrice"));
-          } else {
-            add(new HQLProperty("ppp.listPrice", "listPrice"));
-          }
-          if (posPrecision != null && !"".equals(posPrecision)) {
-            add(new HQLProperty("round(ppp.standardPrice, " + posPrecision + ")", "standardPrice"));
-          } else {
-            add(new HQLProperty("ppp.standardPrice", "standardPrice"));
-          }
-
-          add(new HQLProperty("ppp.priceLimit", "priceLimit"));
-          add(new HQLProperty("ppp.cost", "cost"));
-          Entity ProductPrice = ModelProvider.getInstance().getEntity(ProductPrice.class);
-          if (ProductPrice.hasProperty("algorithm") == true) {
-            add(new HQLProperty("ppp.algorithm", "algorithm"));
-          }
           add(new HQLProperty("product.active", "active"));
         }
       };
