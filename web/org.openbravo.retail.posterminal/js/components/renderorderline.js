@@ -20,6 +20,9 @@ enyo.kind({
     onkeyup: 'keyupHandler'
   },
   tap: function () {
+    if (OB.MobileApp.model.get('serviceSearchMode')) {
+      return;
+    }
     this.model.trigger('selected', this.model);
     this.model.trigger('click', this.model);
     this.bubble('onReceiptLineSelected', {
