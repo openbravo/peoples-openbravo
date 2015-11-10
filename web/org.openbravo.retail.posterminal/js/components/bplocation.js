@@ -212,7 +212,7 @@ enyo.kind({
           kind: 'OB.UI.SmallButton',
           classes: 'btnlink-yellow btn-icon-small btn-icon-search',
           style: 'width: 100px; margin: 0px 0px 8px 5px;',
-          name: 'bpsLocationSearchButton', 
+          name: 'bpsLocationSearchButton',
           ontap: 'searchAction'
         }]
       }]
