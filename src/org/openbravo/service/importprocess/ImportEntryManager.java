@@ -572,13 +572,16 @@ public class ImportEntryManager {
               // a next batch of entries
               try {
                 // wait one second per 30 records, somewhat arbitrary
-                // but high enough for most cases
+                // but high enough for most cases, also always wait 300 millis additional to
+                // start up threads etc.
+                // note computation of timing ensures that int rounding is done on 1000* entrycount
                 if (isTest) {
                   // in case of test don't wait minimal 2 seconds
-                  Thread.sleep(1000 * (entryCount / 30));
+                  Thread.sleep(300 + ((1000 * entryCount) / 30));
                 } else {
+                  log.debug("Entries have been processed, wait a shorter time, and try again to capture new entries which have been added");
                   // wait minimal 2 seconds or based on entry count
-                  Thread.sleep(Math.max(2000, 1000 * (entryCount / 30)));
+                  Thread.sleep(Math.max(2000, 300 + ((1000 * entryCount) / 30)));
                 }
               } catch (Exception ignored) {
               }
