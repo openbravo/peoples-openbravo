@@ -339,6 +339,8 @@ public class CancelAndReplaceUtils {
       inverseOrder.setSummedLineAmount(BigDecimal.ZERO);
     }
     inverseOrder.setOrderDate(today);
+    inverseOrder.setCreationDate(today);
+    inverseOrder.setUpdated(today);
     inverseOrder.setScheduledDeliveryDate(today);
     String newDocumentNo = documentNo;
     if (newDocumentNo == null) {
