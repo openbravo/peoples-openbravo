@@ -183,7 +183,7 @@ public class Role extends HttpSecureAppServlet {
     if (!result)
       return false;
     readProperties(vars);
-    LoginUtils.readNumberFormat(vars, globalParameters.getFormatPath());
+    readNumberFormat(vars, globalParameters.getFormatPath());
     return true;
   }
 
