@@ -1724,7 +1724,7 @@
       this.set('generateInvoice', OB.MobileApp.model.get('terminal').terminalType.generateInvoice);
       this.set('documentType', OB.MobileApp.model.get('terminal').terminalType.documentType);
       this.set('createdBy', OB.MobileApp.model.get('orgUserId'));
-      if (OB.MobileApp.model.get('context').isSalesRepresentative) {
+      if (OB.MobileApp.model.get('context').user.isSalesRepresentative) {
         this.set('salesRepresentative', OB.MobileApp.model.get('context').user.id);
       } else {
         this.set('salesRepresentative', null);
@@ -2520,7 +2520,7 @@
       order.set('currency', OB.MobileApp.model.get('terminal').currency);
       order.set('currency' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, OB.MobileApp.model.get('terminal')['currency' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER]);
       order.set('warehouse', OB.MobileApp.model.get('terminal').warehouse);
-      if (OB.MobileApp.model.get('context').isSalesRepresentative) {
+      if (OB.MobileApp.model.get('context').user.isSalesRepresentative) {
         order.set('salesRepresentative', OB.MobileApp.model.get('context').user.id);
         order.set('salesRepresentative' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, OB.MobileApp.model.get('context').user._identifier);
       } else {

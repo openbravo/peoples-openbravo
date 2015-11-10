@@ -427,6 +427,19 @@
       } else {
         run();
       }
+      this.postSyncProcessActions();
+    },
+
+    postSyncProcessActions: function () {
+      OB.Dal.get(OB.Model.SalesRepresentative, OB.MobileApp.model.usermodel.get('id'), function (salesrepresentative) {
+        if (!salesrepresentative) {
+          OB.MobileApp.model.get('context').user.isSalesRepresentative = false;
+        } else {
+          OB.MobileApp.model.get('context').user.isSalesRepresentative = true;
+        }
+      }, function () {}, function () {
+        OB.MobileApp.model.get('context').user.isSalesRepresentative = false;
+      });
     },
 
     returnToOnline: function () {
