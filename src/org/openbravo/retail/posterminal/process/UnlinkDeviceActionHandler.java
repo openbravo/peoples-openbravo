@@ -33,6 +33,7 @@ public class UnlinkDeviceActionHandler extends BaseActionHandler {
       terminalId = selectedObject.getString("inpobposApplicationsId");
       OBPOSApplications terminal = OBDal.getInstance().get(OBPOSApplications.class, terminalId);
       terminal.setLinked(false);
+      terminal.setCurrentCacheSession(null);
       OBDal.getInstance().save(terminal);
       OBDal.getInstance().getConnection().commit();
 
