@@ -1080,16 +1080,48 @@ enyo.kind({
     });
   },
   updateVisibility: function () {
-    var isPaidReceipt, isLayaway, isReturn, receipt;
+    var isPaidReceipt, isLayaway, isReturn, haspayments, receiptLines, receipt;
 
     receipt = this.model.get('order');
 
     isPaidReceipt = receipt.get('isPaid') === true && !receipt.get('isQuotation');
     isLayaway = receipt.get('isLayaway') && receipt.get('orderType') !== 3;
     isReturn = receipt.get('orderType') === 1 || receipt.get('documentType') === OB.MobileApp.model.get('terminal').terminalType.documentTypeForReturns || receipt.get('documentType') === 'VBS RFC Order';
+    haspayments = receipt.get('payments').length > 0;
+    receiptLines = OB.MobileApp.model.receipt.get('receiptLines');
 
+    function delivered() {
+      var shipqty = OB.DEC.Zero;
+      var qty = OB.DEC.Zero;
+      _.each(receipt.get('lines').models, function (line) {
+        qty += line.get('qty');
+      });
+      if (receiptLines) {
+        _.each(receiptLines, function (line) {
+          _.each(line.shipmentlines, function (shipline) {
+            shipqty += shipline.qty;
+          });
+        });
+      } else {
+        return 'udf';
+      }
+      if (shipqty === qty) { //totally delivered
+        return 'TD';
+      }
+      if (shipqty === 0) { //no deliveries
+        return 'ND';
+      }
+      return 'DN';
+    }
     if (!receipt.get('replacedorder') && (isPaidReceipt || isLayaway)) {
-      this.show();
+      var deliveredresult = delivered();
+      if (isPaidReceipt && !OB.MobileApp.model.hasPermission('OBPOS_receipt.CancelReplacePaidOrders', true) && deliveredresult === 'TD') {
+        this.hide();
+      } else if (isLayaway && !OB.MobileApp.model.hasPermission('OBPOS_receipt.CancelReplaceLayaways', true) && (deliveredresult === 'ND' || !haspayments)) {
+        this.hide();
+      } else {
+        this.show();
+      }
     } else {
       this.hide();
     }
@@ -1115,7 +1147,7 @@ enyo.kind({
       me.hide();
     }, this);
 
-    receipt.on('change:isLayaway change:isPaid change:isQuotation change:replacedorder change:orderType', function () {
+    receipt.on('change:isLayaway change:isPaid change:isQuotation change:replacedorder change:orderType change:receiptLines', function () {
       this.updateVisibility();
     }, this);
 
