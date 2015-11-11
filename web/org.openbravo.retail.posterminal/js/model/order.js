@@ -3448,7 +3448,7 @@
             me.doRemoteBPSettings(OB.MobileApp.model.get('businessPartner'));
           }
         }
-        me.current = me.at(me.length - 1);
+        me.current = me.at(0);
         me.loadCurrent(createNew);
       }
 
