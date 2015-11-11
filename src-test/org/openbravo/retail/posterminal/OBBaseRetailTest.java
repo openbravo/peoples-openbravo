@@ -22,6 +22,7 @@ package org.openbravo.retail.posterminal;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.test.base.OBBaseTest;
 
 /**
  * Base unit test for retail
