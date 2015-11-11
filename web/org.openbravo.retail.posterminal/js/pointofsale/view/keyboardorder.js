@@ -251,7 +251,11 @@ enyo.kind({
           _.each(me.selectedModels, function (model) {
             selection.push(model);
             keyboard.line = model;
-            toadd = value - keyboard.line.get('qty');
+            if (keyboard.receipt.get('orderType') === 1) {
+              toadd = value - (-keyboard.line.get('qty'));
+            } else {
+              toadd = value - keyboard.line.get('qty');
+            }
             if (toadd !== 0) {
               if (value === 0) { // If final quantity will be 0 then request approval
                 OB.UTIL.Approval.requestApproval(me.model, 'OBPOS_approval.deleteLine', function (approved, supervisor, approvalType) {
