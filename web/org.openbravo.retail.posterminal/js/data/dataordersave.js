@@ -53,7 +53,7 @@
           difference = OB.DEC.sub(difference, fieldValue);
         });
         if (difference !== 0) {
-          OB.error(enyo.format("%s: [" + this.get('documentNo') + "] total gross does not equal the sum of the gross of each line. event: '%s', gross: %s, difference: %s", errorHeader, eventParams, gross, difference));
+          OB.error(enyo.format("%s: [%s] total gross does not equal the sum of the gross of each line. event: '%s', gross: %s, difference: %s", errorHeader, this.get('documentNo'), eventParams, gross, difference));
         }
 
         // 4. verify that a cashupId is available
