@@ -3572,6 +3572,7 @@ isc.OBViewGrid.addProperties({
       return;
     }
     this._hidingInlineEditor = true;
+    this.view.isEditingGrid = false;
     if (record && (rowNum === 0 || rowNum)) {
       if (!this.rowHasErrors(rowNum)) {
         record[this.recordBaseStyleProperty] = null;
@@ -3585,7 +3586,6 @@ isc.OBViewGrid.addProperties({
       } else {
         isc.Log.logDebug('hideInlineEditor has NO record and editColumnLayout', 'OB');
       }
-      this.view.isEditingGrid = false;
       // Update the tab title after the record has been saved or canceled
       // to get rid of the '*' in the tab title
       // See https://issues.openbravo.com/view.php?id=21709
