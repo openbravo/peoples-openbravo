@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014 Openbravo SLU
+ * All portions are Copyright (C) 2014-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -49,6 +49,8 @@ import org.openbravo.model.materialmgmt.cost.CostAdjustment;
 import org.openbravo.model.materialmgmt.cost.CostAdjustmentLine;
 import org.openbravo.model.materialmgmt.cost.CostingRule;
 import org.openbravo.model.materialmgmt.cost.TransactionCost;
+import org.openbravo.model.materialmgmt.transaction.InventoryCount;
+import org.openbravo.model.materialmgmt.transaction.InventoryCountLine;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
@@ -249,16 +251,15 @@ public class CostAdjustmentUtils {
     Set<String> orgs = OBContext.getOBContext().getOrganizationStructureProvider()
         .getChildTree(org.getId(), true);
 
-    StringBuffer select = new StringBuffer();
     StringBuffer subSelect = new StringBuffer();
-    select
-        .append(" select sum(trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + ") as stock");
-    select.append(" from " + MaterialTransaction.ENTITY_NAME + " as trx");
-    select.append("   join trx." + MaterialTransaction.PROPERTY_STORAGEBIN + " as locator");
-    select.append(" where trx." + MaterialTransaction.PROPERTY_PRODUCT + ".id = :product");
-    subSelect.append("select min(trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + ")");
+    subSelect.append(" select min(case when coalesce(i." + InventoryCount.PROPERTY_INVENTORYTYPE
+        + ", 'N') <> 'N' then trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " else trx."
+        + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " end)");
     subSelect.append(" from " + MaterialTransaction.ENTITY_NAME + " as trx");
     subSelect.append("   join trx." + MaterialTransaction.PROPERTY_STORAGEBIN + " as locator");
+    subSelect.append("   left join trx." + MaterialTransaction.PROPERTY_PHYSICALINVENTORYLINE
+        + " as il");
+    subSelect.append("   left join il." + InventoryCountLine.PROPERTY_PHYSINVENTORY + " as i");
     subSelect.append(" where trx." + MaterialTransaction.PROPERTY_PRODUCT + ".id = :product");
     subSelect.append(" and trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " > :date");
     // Include only transactions that have its cost calculated
@@ -275,22 +276,34 @@ public class CostAdjustmentUtils {
       trxsubQry.setParameter("warehouse", costDimensions.get(CostDimension.Warehouse).getId());
     }
     trxsubQry.setParameterList("orgs", orgs);
+    Object trxprocessDate = trxsubQry.uniqueResult();
+
+    StringBuffer select = new StringBuffer();
+    select
+        .append(" select sum(trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + ") as stock");
+    select.append(" from " + MaterialTransaction.ENTITY_NAME + " as trx");
+    select.append("   join trx." + MaterialTransaction.PROPERTY_STORAGEBIN + " as locator");
+
     Date backdatedTrxFrom = null;
     if (backdatedTransactionsFixed) {
       CostingRule costRule = CostingUtils.getCostDimensionRule(org, date);
       backdatedTrxFrom = CostingUtils.getCostingRuleFixBackdatedFrom(costRule);
     }
 
-    Object trxprocessDate = trxsubQry.uniqueResult();
     if (trxprocessDate != null
         && (!backdatedTransactionsFixed || ((Date) trxprocessDate).before(backdatedTrxFrom))) {
       date = (Date) trxprocessDate;
-      select.append("   and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
-          + " < :date");
+      select.append(" left join trx." + MaterialTransaction.PROPERTY_PHYSICALINVENTORYLINE
+          + " as il");
+      select.append(" left join il." + InventoryCountLine.PROPERTY_PHYSINVENTORY + " as i");
+      select.append(" where case when coalesce(i." + InventoryCount.PROPERTY_INVENTORYTYPE
+          + ", 'N') <> 'N' then trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " else trx."
+          + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " end < :date");
     } else {
-      select.append("   and trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " <= :date");
+      select.append(" where trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " <= :date");
     }
 
+    select.append(" and trx." + MaterialTransaction.PROPERTY_PRODUCT + ".id = :product");
     // Include only transactions that have its cost calculated
     select.append("   and trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = true");
     if (costDimensions.get(CostDimension.Warehouse) != null) {
@@ -458,29 +471,15 @@ public class CostAdjustmentUtils {
       costDimensions = CostingUtils.getEmptyDimensions();
     }
 
-    StringBuffer select = new StringBuffer();
     StringBuffer subSelect = new StringBuffer();
-    select.append(" select sum(case");
-    select.append("     when trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY
-        + " < 0 then -tc." + TransactionCost.PROPERTY_COST);
-    select.append("     else tc." + TransactionCost.PROPERTY_COST + " end ) as cost");
-    select.append(" , tc." + TransactionCost.PROPERTY_CURRENCY + ".id as currency");
-    select.append(" , coalesce(sr." + ShipmentInOut.PROPERTY_ACCOUNTINGDATE + ", trx."
-        + MaterialTransaction.PROPERTY_MOVEMENTDATE + ") as mdate");
-    select.append(" , sum(trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + ") as stock");
-
-    select.append(" from " + TransactionCost.ENTITY_NAME + " as tc");
-    select.append("  join tc." + TransactionCost.PROPERTY_INVENTORYTRANSACTION + " as trx");
-    select.append("  join trx." + MaterialTransaction.PROPERTY_STORAGEBIN + " as locator");
-    select.append("  left join trx." + MaterialTransaction.PROPERTY_GOODSSHIPMENTLINE + " as line");
-    select.append("  left join line." + ShipmentInOutLine.PROPERTY_SHIPMENTRECEIPT + " as sr");
-
-    select.append(" where trx." + MaterialTransaction.PROPERTY_PRODUCT + " = :product");
-    // Include only transactions that have its cost calculated
-    select.append("   and trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = true");
-    subSelect.append("select min(trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + ")");
+    subSelect.append(" select min(case when coalesce(i." + InventoryCount.PROPERTY_INVENTORYTYPE
+        + ", 'N') <> 'N' then trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " else trx."
+        + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " end)");
     subSelect.append(" from " + MaterialTransaction.ENTITY_NAME + " as trx");
     subSelect.append("   join trx." + MaterialTransaction.PROPERTY_STORAGEBIN + " as locator");
+    subSelect.append("   left join trx." + MaterialTransaction.PROPERTY_PHYSICALINVENTORYLINE
+        + " as il");
+    subSelect.append("   left join il." + InventoryCountLine.PROPERTY_PHYSINVENTORY + " as i");
     subSelect.append(" where trx." + MaterialTransaction.PROPERTY_PRODUCT + ".id = :product");
     subSelect.append(" and trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " > :date");
     // Include only transactions that have its cost calculated
@@ -497,21 +496,47 @@ public class CostAdjustmentUtils {
       trxsubQry.setParameter("warehouse", costDimensions.get(CostDimension.Warehouse).getId());
     }
     trxsubQry.setParameterList("orgs", orgs);
+    Object trxprocessDate = trxsubQry.uniqueResult();
+
+    StringBuffer select = new StringBuffer();
+    select.append(" select sum(case");
+    select.append("     when trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY
+        + " < 0 then -tc." + TransactionCost.PROPERTY_COST);
+    select.append("     else tc." + TransactionCost.PROPERTY_COST + " end ) as cost");
+    select.append(" , tc." + TransactionCost.PROPERTY_CURRENCY + ".id as currency");
+    select.append(" , coalesce(sr." + ShipmentInOut.PROPERTY_ACCOUNTINGDATE + ", trx."
+        + MaterialTransaction.PROPERTY_MOVEMENTDATE + ") as mdate");
+    select.append(" , sum(trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + ") as stock");
+
+    select.append(" from " + TransactionCost.ENTITY_NAME + " as tc");
+    select.append("  join tc." + TransactionCost.PROPERTY_INVENTORYTRANSACTION + " as trx");
+    select.append("  join trx." + MaterialTransaction.PROPERTY_STORAGEBIN + " as locator");
+    select.append("  left join trx." + MaterialTransaction.PROPERTY_GOODSSHIPMENTLINE + " as line");
+    select.append("  left join line." + ShipmentInOutLine.PROPERTY_SHIPMENTRECEIPT + " as sr");
+
     Date backdatedTrxFrom = null;
     if (backdatedTransactionsFixed) {
       CostingRule costRule = CostingUtils.getCostDimensionRule(org, date);
       backdatedTrxFrom = CostingUtils.getCostingRuleFixBackdatedFrom(costRule);
     }
 
-    Object trxprocessDate = trxsubQry.uniqueResult();
     if (trxprocessDate != null
         && (!backdatedTransactionsFixed || ((Date) trxprocessDate).before(backdatedTrxFrom))) {
       date = (Date) trxprocessDate;
-      select.append("   and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
-          + " < :date");
+      select.append(" left join trx." + MaterialTransaction.PROPERTY_PHYSICALINVENTORYLINE
+          + " as il");
+      select.append(" left join il." + InventoryCountLine.PROPERTY_PHYSINVENTORY + " as i");
+      select.append(" where case when coalesce(i." + InventoryCount.PROPERTY_INVENTORYTYPE
+          + ", 'N') <> 'N' then trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " else trx."
+          + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " end < :date");
     } else {
-      select.append("   and trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " <= :date");
+      select.append(" where trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " <= :date");
     }
+
+    select.append(" and trx." + MaterialTransaction.PROPERTY_PRODUCT + " = :product");
+    // Include only transactions that have its cost calculated
+    select.append("   and trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = true");
+
     if (costDimensions.get(CostDimension.Warehouse) != null) {
       select.append("  and locator." + Locator.PROPERTY_WAREHOUSE + ".id = :warehouse");
     }
