@@ -3294,8 +3294,9 @@ isc.OBViewGrid.addProperties({
       if (record && record._new) {
         // after cancelling a not saved record, the value for the selected record should be cleared
         // see issue https://issues.openbravo.com/view.php?id=31434
-        if (me.selection && me.getSelectedRecord()) {
-          me.selection.deselect(me.getSelectedRecord());
+        var selectedRecord = me.getSelectedRecord();
+        if (me.selection && selectedRecord) {
+          me.selection.deselect(selectedRecord);
         }
         totalRows = me.data.totalRows;
         me.data.handleUpdate('remove', [{
