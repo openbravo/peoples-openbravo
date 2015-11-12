@@ -830,7 +830,11 @@ public class DefaultJsonDataService implements JsonDataService {
             .getCause();
         localThrowable = batchException.getNextException();
       }
-      log.error(localThrowable.getMessage(), localThrowable);
+      if (!(localThrowable instanceof OBException)
+          || (localThrowable instanceof OBException && ((OBException) localThrowable)
+              .isLogExceptionNeeded())) {
+        log.error(localThrowable.getMessage(), localThrowable);
+      }
       return JsonUtils.convertExceptionToJson(localThrowable);
     }
 
