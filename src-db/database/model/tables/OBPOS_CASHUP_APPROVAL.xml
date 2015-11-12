@@ -68,6 +68,9 @@
       <foreign-key foreignTable="AD_USER" name="OBPOS_CASHUP_APPROVAL_USER">
         <reference local="AD_USER_ID" foreign="AD_USER_ID"/>
       </foreign-key>
+      <index name="OBPOS_CSHPAPPROVAL_CASHUP_IDX" unique="false">
+        <index-column name="OBPOS_APP_CASHUP_ID"/>
+      </index>
       <check name="OBPOS_CASHUP_APPROVAL_ACT_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>
