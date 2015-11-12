@@ -118,7 +118,7 @@ enyo.kind({
   displayLogic: function () {
     var haspayments;
 
-    if (this.model.get('order').get('isLayaway') && this.model.get('order').get('orderType') !== 3) {
+    if (this.model.get('order').get('isLayaway') && this.model.get('order').get('orderType') !== 3 && ((OB.MobileApp.model.hasPermission('OBPOS_payments.voidLayaway', true) && this.model.get('orderList').current.get('payment') === 0) || !OB.MobileApp.model.hasPermission('OBPOS_payments.voidLayaway', true))) {
       this.show();
       this.adjustVisibilityBasedOnPermissions();
     } else {
@@ -134,7 +134,7 @@ enyo.kind({
     this.model = model;
     var receipt = model.get('order');
     this.setShowing(false);
-    receipt.on('change:isLayaway', function (model) {
+    receipt.on('change:isLayaway change:receiptLines', function (model) {
       this.displayLogic();
     }, this);
 
@@ -259,7 +259,7 @@ enyo.kind({
     }
   },
   displayLogic: function () {
-    if (this.model.get('order').get('isLayaway') && this.model.get('order').get('orderType') !== 3) {
+    if (this.model.get('order').get('isLayaway') && this.model.get('order').get('orderType') !== 3 && ((OB.MobileApp.model.hasPermission('OBPOS_payments.cancelLayaway', true) && this.model.get('orderList').current.get('payment') > 0) || !OB.MobileApp.model.hasPermission('OBPOS_payments.cancelLayaway', true))) {
       this.show();
       this.adjustVisibilityBasedOnPermissions();
     } else {
@@ -270,7 +270,7 @@ enyo.kind({
     this.model = model;
     var receipt = model.get('order'),
         me = this;
-    receipt.on('change:isLayaway', function (model) {
+    receipt.on('change:isLayaway change:receiptLines', function (model) {
       this.displayLogic();
     }, this);
 
