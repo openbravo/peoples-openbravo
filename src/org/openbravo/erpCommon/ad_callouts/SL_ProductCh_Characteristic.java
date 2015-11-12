@@ -35,6 +35,7 @@ public class SL_ProductCh_Characteristic extends SimpleCallout {
     if (StringUtils.isNotBlank(strCharacteristicId)) {
       Characteristic ch = OBDal.getInstance().get(Characteristic.class, strCharacteristicId);
       info.addResult("inpisvariant", ch.isVariant() ? "Y" : "N");
+      info.addResult("inpisexplodeconf", ch.isExplodeConfigurationTab() ? "Y" : "N");
     }
   }
 
