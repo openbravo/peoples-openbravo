@@ -158,7 +158,7 @@
                 data: data[0].terminal.id
               });
               // If the hardware url is set
-              if (OB.POS.hwserver.url) {
+              if (OB.POS.hwserver.url && OB.POS.modelterminal.get('terminal').terminalType.userfid) {
                 var startRfidWebSocket = function startRfidWebSocket(webSocketServerLocation, reconnectTimeout, currentRetrials, retrialsBeforeWarning) {
                   var ws = new WebSocket(webSocketServerLocation);
 
@@ -167,7 +167,7 @@
                     if (currentRetrials >= retrialsBeforeWarning) {
                       currentRetrials = 0;
                       OB.UTIL.showSuccess('Connected with RFID');
-                      OB.info('Connected with RFID websocket');
+                      OB.info('Connected with RFID');
                     }
                   };
 
@@ -193,8 +193,8 @@
                   ws.onclose = function () {
                     currentRetrials++;
                     if (currentRetrials === retrialsBeforeWarning) {
-                      OB.UTIL.showWarning('Disconnected from RFID');
-                      OB.warn('Disconnected from RFID websocket');
+                      OB.UTIL.showWarning('RFID not available');
+                      OB.warn('RFID not available');
                     }
                     setTimeout(function () {
                       startRfidWebSocket(webSocketServerLocation, reconnectTimeout, currentRetrials, retrialsBeforeWarning);
