@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, _, enyo, BigDecimal, localStorage */
+/*global OB, _, enyo, BigDecimal, localStorage, WebSocket */
 
 (function () {
   // initialize the WebPOS terminal model that extends the core terminal model. after this, OB.MobileApp.model will be available
@@ -157,6 +157,55 @@
               OB.UTIL.HookManager.executeHooks('OBPOS_TerminalLoadedFromBackend', {
                 data: data[0].terminal.id
               });
+              // If the hardware url is set
+              if (OB.POS.hwserver.url) {
+                var startRfidWebSocket = function startRfidWebSocket(webSocketServerLocation, reconnectTimeout, currentRetrials, retrialsBeforeWarning) {
+                  var ws = new WebSocket(webSocketServerLocation);
+
+                  // Called when socket connection is established
+                  ws.onopen = function () {
+                    if (currentRetrials >= retrialsBeforeWarning) {
+                      currentRetrials = 0;
+                      OB.UTIL.showSuccess('Connected with RFID');
+                      OB.info('Connected with RFID websocket');
+                    }
+                  };
+
+                  // Called when a message is received from server
+                  ws.onmessage = function (evt) {
+                    var criteria = {
+                      uPCEAN: evt.data
+                    };
+                    OB.Dal.find(OB.Model.Product, criteria, function (products) {
+                      if (products.length > 0) {
+                        // If the product is found
+                        OB.MobileApp.model.receipt.addProduct(products.at(0), '1');
+                      } else {
+                        OB.UTIL.showWarning('RFID code not recognized');
+                      }
+                    }, function (tx, error) {
+                      // If the product is not found
+                      OB.UTIL.showError('Error in RFID product finding');
+                    });
+                  };
+
+                  // Called when socket connection closed
+                  ws.onclose = function () {
+                    currentRetrials++;
+                    if (currentRetrials === retrialsBeforeWarning) {
+                      OB.UTIL.showWarning('Disconnected from RFID');
+                      OB.warn('Disconnected from RFID websocket');
+                    }
+                    setTimeout(function () {
+                      startRfidWebSocket(webSocketServerLocation, reconnectTimeout, currentRetrials, retrialsBeforeWarning);
+                    }, reconnectTimeout);
+                  };
+
+                  // Called in case of an error
+                  ws.onerror = function (err) {};
+                };
+                startRfidWebSocket('ws://' + OB.POS.hwserver.url.split('/')[2] + '/rfid', 2000, 0, 5);
+              }
             } else {
               OB.UTIL.showError("Terminal does not exists: " + 'params.terminal');
             }
