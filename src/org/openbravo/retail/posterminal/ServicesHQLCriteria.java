@@ -18,7 +18,7 @@ import org.openbravo.mobile.core.process.HQLCriteriaProcess;
 @Qualifier("Services_Filter")
 public class ServicesHQLCriteria extends HQLCriteriaProcess {
 
-  public String getHQLFilter() {
+  public String getHQLFilter(String params) {
     return " (product.productType = 'S' and product.linkedToProduct = 'Y' and "
         + "((product.includedProducts = 'Y' and not exists (select 1 from ServiceProduct sp where product.id = sp.product.id and sp.relatedProduct.id = '$1' )) "
         + "or (product.includedProducts = 'N' and exists (select 1 from ServiceProduct sp where product.id = sp.product.id and sp.relatedProduct.id = '$1' )) "

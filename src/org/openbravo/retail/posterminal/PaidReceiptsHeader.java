@@ -22,9 +22,6 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
-import org.openbravo.dal.core.OBContext;
-import org.openbravo.erpCommon.businessUtility.Preferences;
-import org.openbravo.erpCommon.utility.PropertyException;
 
 public class PaidReceiptsHeader extends ProcessHQLQuery {
   public static final Logger log = Logger.getLogger(PaidReceiptsHeader.class);
@@ -56,7 +53,6 @@ public class PaidReceiptsHeader extends ProcessHQLQuery {
     // OBContext.setAdminMode(true);
     JSONObject json = jsonsent.getJSONObject("filters");
     String strIsLayaway = "false";
-    boolean isHgvol = false;
     if (json.getBoolean("isLayaway")) {
       strIsLayaway = "true";
     }
@@ -72,16 +68,16 @@ public class PaidReceiptsHeader extends ProcessHQLQuery {
 
     if (!json.getString("filterText").isEmpty()) {
       String hqlFilter = "ord.documentNo like :filterT1 or REPLACE(ord.documentNo, '/', '') like :filterT1 or upper(ord.businessPartner.name) like upper(:filterT1)";
-        for (PaidReceiptsHeaderHook hook : paidReceiptHeaderHooks) {
-          try {
+      for (PaidReceiptsHeaderHook hook : paidReceiptHeaderHooks) {
+        try {
           String hql = hook.exec(hqlFilter, json.getString("filterText"));
-            hqlFilter = hql;
-          } catch (Exception e) {
-            throw new OBException("An error happened when computing a filter in PaidReceipts", e);
-          }
+          hqlFilter = hql;
+        } catch (Exception e) {
+          throw new OBException("An error happened when computing a filter in PaidReceipts", e);
         }
-        hqlPaidReceipts += " and (" + hqlFilter + ") ";
-       }
+      }
+      hqlPaidReceipts += " and (" + hqlFilter + ") ";
+    }
     if (!json.isNull("documentType")) {
       JSONArray docTypes = json.getJSONArray("documentType");
       hqlPaidReceipts += " and ( ";

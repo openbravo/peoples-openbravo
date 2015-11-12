@@ -18,7 +18,7 @@ import org.openbravo.mobile.core.process.HQLCriteriaProcess;
 @Qualifier("ServicePriceRuleVersion_DateFilter")
 public class ServicePriceRuleVersionHQLCriteria extends HQLCriteriaProcess {
 
-  public String getHQLFilter() {
+  public String getHQLFilter(String params) {
     return " (sprv.validFromDate <= current_date())";
   }
 }

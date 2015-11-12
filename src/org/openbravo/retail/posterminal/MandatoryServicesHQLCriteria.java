@@ -18,7 +18,7 @@ import org.openbravo.mobile.core.process.HQLCriteriaProcess;
 @Qualifier("Mandatory_Services")
 public class MandatoryServicesHQLCriteria extends HQLCriteriaProcess {
 
-  public String getHQLFilter() {
+  public String getHQLFilter(String params) {
     return " (product.obposProposalType = 'MP') ";
   }
 }
