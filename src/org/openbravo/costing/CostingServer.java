@@ -294,7 +294,9 @@ public class CostingServer {
         && !adjustmentAlreadyCreated
         && (currentStock.compareTo(transaction.getMovementQuantity()) < 0 || (trxType != TrxType.InventoryOpening
             && currentStock.compareTo(transaction.getMovementQuantity()) == 0 && CostingUtils
-              .existsProcessedTransactions(transaction.getProduct())))) {
+              .existsProcessedTransactions(transaction.getProduct(),
+                  getCostingAlgorithm().costDimensions, getOrganization(), transaction, transaction
+                      .getProduct().isProduction())))) {
 
       CostAdjustment costAdjustmentHeader = CostAdjustmentUtils.insertCostAdjustmentHeader(
           transaction.getOrganization(), "NSC"); // NSC= Negative Stock Correction

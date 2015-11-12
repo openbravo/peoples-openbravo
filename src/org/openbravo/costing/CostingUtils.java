@@ -608,11 +608,30 @@ public class CostingUtils {
   /**
    * Check if exists processed transactions for this product
    */
-  public static boolean existsProcessedTransactions(Product product) {
+  public static boolean existsProcessedTransactions(Product product,
+      HashMap<CostDimension, BaseOBObject> _costDimensions, Organization costorg,
+      MaterialTransaction trx, boolean isManufacturingProduct) {
+
+    // Get child tree of organizations.
+    OrganizationStructureProvider osp = OBContext.getOBContext().getOrganizationStructureProvider(
+        trx.getClient().getId());
+    Set<String> orgs = osp.getChildTree(costorg.getId(), true);
+    HashMap<CostDimension, BaseOBObject> costDimensions = _costDimensions;
+    if (isManufacturingProduct) {
+      orgs = osp.getChildTree("0", false);
+      costDimensions = CostingUtils.getEmptyDimensions();
+    }
+
     OBCriteria<MaterialTransaction> criteria = OBDal.getInstance().createCriteria(
         MaterialTransaction.class);
     criteria.add(Restrictions.eq(MaterialTransaction.PROPERTY_PRODUCT, product));
     criteria.add(Restrictions.eq(MaterialTransaction.PROPERTY_ISPROCESSED, true));
+    criteria.add(Restrictions.in(MaterialTransaction.PROPERTY_ORGANIZATION + ".id", orgs));
+    if (costDimensions.get(CostDimension.Warehouse) != null) {
+      criteria.add(Restrictions
+          .eq(MaterialTransaction.PROPERTY_STORAGEBIN + "." + Locator.PROPERTY_WAREHOUSE + ".id",
+              costDimensions.get(CostDimension.Warehouse).getId()));
+    }
     criteria.setFilterOnReadableOrganization(false);
     criteria.setMaxResults(1);
     return criteria.uniqueResult() != null;
