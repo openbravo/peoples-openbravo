@@ -158,6 +158,7 @@
         OB.info("[receipt.closed] Starting transaction. ReceiptId: " + receipt.get('id'));
         OB.Dal.transaction(function (tx) {
           receipt.set('hasbeenpaid', 'Y');
+          frozenReceipt.set('hasbeenpaid', 'Y');
           // when all the properties of the receipt have been set, keep a copy
           OB.UTIL.cashUpReport(receipt, function () {
             OB.UTIL.calculateCurrentCash(null, tx);
@@ -174,6 +175,7 @@
           OB.error("[receipt.closed] The transaction failed to be commited. ReceiptId: " + receipt.get('id'));
           // rollback other changes
           receipt.set('hasbeenpaid', 'N');
+          frozenReceipt.set('hasbeenpaid', 'N');
           if (eventParams && eventParams.callback) {
             eventParams.callback({
               frozenReceipt: frozenReceipt,

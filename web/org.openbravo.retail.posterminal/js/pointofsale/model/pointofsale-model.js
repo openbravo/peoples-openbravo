@@ -334,7 +334,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                   silent: true
                 });
               });
-              orderToPrint.set('hasbeenpaid', 'Y');
               receipt.trigger('print', orderToPrint, {
                 offline: true
               });
