@@ -54,7 +54,10 @@ BEGIN
       pch.m_product_ch_id, :new.m_ch_value_id, :new.skcode
       FROM m_product_ch pch
       WHERE pch.m_characteristic_id = v_characteristic_id
-        AND pch.m_ch_subset_id = :new.m_ch_subset_id;
+        AND pch.m_ch_subset_id = :new.m_ch_subset_id
+        AND exists (select 1 from  m_product where m_product_id=pch.m_product_id AND isgeneric='Y')
+        AND pch.isvariant='Y'
+        AND pch.isexplodeconf = 'Y';
   END IF;
 END M_CH_SUBSET_VALUE_TRG
 ]]></body>

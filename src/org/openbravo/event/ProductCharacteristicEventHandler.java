@@ -56,8 +56,7 @@ public class ProductCharacteristicEventHandler extends EntityPersistenceEventObs
     return entities;
   }
 
-  public void onDelete(@Observes
-  EntityDeleteEvent event) {
+  public void onDelete(@Observes EntityDeleteEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
@@ -69,8 +68,7 @@ public class ProductCharacteristicEventHandler extends EntityPersistenceEventObs
     deleteProductCharacteristicValue(prCh);
   }
 
-  public void onSave(@Observes
-  EntityNewEvent event) {
+  public void onSave(@Observes EntityNewEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
@@ -108,29 +106,30 @@ public class ProductCharacteristicEventHandler extends EntityPersistenceEventObs
       final Entity prodCharEntity = ModelProvider.getInstance().getEntity(
           ProductCharacteristic.ENTITY_NAME);
 
-      final Property charConfListProperty = prodCharEntity
-          .getProperty(ProductCharacteristic.PROPERTY_PRODUCTCHARACTERISTICCONFLIST);
-      @SuppressWarnings("unchecked")
-      List<ProductCharacteristicConf> prChConfs = (List<ProductCharacteristicConf>) event
-          .getCurrentState(charConfListProperty);
+      if (prCh.isExplodeConfigurationTab()) {
+        final Property charConfListProperty = prodCharEntity
+            .getProperty(ProductCharacteristic.PROPERTY_PRODUCTCHARACTERISTICCONFLIST);
+        @SuppressWarnings("unchecked")
+        List<ProductCharacteristicConf> prChConfs = (List<ProductCharacteristicConf>) event
+            .getCurrentState(charConfListProperty);
 
-      ScrollableResults scroll = getValuesToAdd(prCh);
-      try {
-        while (scroll.next()) {
-          Object[] strChValue = scroll.get();
-          String chValueId = (String) strChValue[0];
-          String chValueCode = (String) strChValue[1];
-          Boolean chValueActive = (Boolean) strChValue[2];
-          prChConfs.add(getCharacteristicConf(prCh, chValueId, chValueCode, chValueActive));
+        ScrollableResults scroll = getValuesToAdd(prCh);
+        try {
+          while (scroll.next()) {
+            Object[] strChValue = scroll.get();
+            String chValueId = (String) strChValue[0];
+            String chValueCode = (String) strChValue[1];
+            Boolean chValueActive = (Boolean) strChValue[2];
+            prChConfs.add(getCharacteristicConf(prCh, chValueId, chValueCode, chValueActive));
+          }
+        } finally {
+          scroll.close();
         }
-      } finally {
-        scroll.close();
       }
     }
   }
 
-  public void onUpdate(@Observes
-  EntityUpdateEvent event) {
+  public void onUpdate(@Observes EntityUpdateEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
@@ -196,67 +195,70 @@ public class ProductCharacteristicEventHandler extends EntityPersistenceEventObs
         }
       }
 
-      final Property charConfListProperty = prodCharEntity
-          .getProperty(ProductCharacteristic.PROPERTY_PRODUCTCHARACTERISTICCONFLIST);
-      @SuppressWarnings("unchecked")
-      List<ProductCharacteristicConf> prChConfs = (List<ProductCharacteristicConf>) event
-          .getCurrentState(charConfListProperty);
+      if (prCh.isExplodeConfigurationTab()) {
+        final Property charConfListProperty = prodCharEntity
+            .getProperty(ProductCharacteristic.PROPERTY_PRODUCTCHARACTERISTICCONFLIST);
+        @SuppressWarnings("unchecked")
+        List<ProductCharacteristicConf> prChConfs = (List<ProductCharacteristicConf>) event
+            .getCurrentState(charConfListProperty);
 
-      StringBuffer hql = new StringBuffer();
-      hql.append(" select cv." + CharacteristicValue.PROPERTY_ID);
-      hql.append(" from " + ProductCharacteristicConf.ENTITY_NAME + " as pcc");
-      hql.append(" join pcc." + ProductCharacteristicConf.PROPERTY_CHARACTERISTICVALUE + " as cv");
-      hql.append(" where pcc." + ProductCharacteristicConf.PROPERTY_CHARACTERISTICOFPRODUCT
-          + " = :pc");
-      Query query = OBDal.getInstance().getSession().createQuery(hql.toString());
-      query.setParameter("pc", prCh);
-      @SuppressWarnings("unchecked")
-      final List<String> existingValues = query.list();
+        StringBuffer hql = new StringBuffer();
+        hql.append(" select cv." + CharacteristicValue.PROPERTY_ID);
+        hql.append(" from " + ProductCharacteristicConf.ENTITY_NAME + " as pcc");
+        hql.append(" join pcc." + ProductCharacteristicConf.PROPERTY_CHARACTERISTICVALUE + " as cv");
+        hql.append(" where pcc." + ProductCharacteristicConf.PROPERTY_CHARACTERISTICOFPRODUCT
+            + " = :pc");
+        Query query = OBDal.getInstance().getSession().createQuery(hql.toString());
+        query.setParameter("pc", prCh);
+        @SuppressWarnings("unchecked")
+        final List<String> existingValues = query.list();
 
-      ScrollableResults scroll = getValuesToAdd(prCh);
-      try {
-        while (scroll.next()) {
-          Object[] strChValue = scroll.get();
-          String chValueId = (String) strChValue[0];
-          String chValueCode = (String) strChValue[1];
-          Boolean chValueActive = (Boolean) strChValue[2];
+        ScrollableResults scroll = getValuesToAdd(prCh);
+        try {
+          while (scroll.next()) {
+            Object[] strChValue = scroll.get();
+            String chValueId = (String) strChValue[0];
+            String chValueCode = (String) strChValue[1];
+            Boolean chValueActive = (Boolean) strChValue[2];
 
-          if (existingValues.remove(chValueId)) {
+            if (existingValues.remove(chValueId)) {
+              OBCriteria<ProductCharacteristicConf> prChConfCrit = OBDal.getInstance()
+                  .createCriteria(ProductCharacteristicConf.class);
+              prChConfCrit.add(Restrictions.eq(
+                  ProductCharacteristicConf.PROPERTY_CHARACTERISTICOFPRODUCT, prCh));
+              prChConfCrit.add(Restrictions.eq(
+                  ProductCharacteristicConf.PROPERTY_CHARACTERISTICVALUE,
+                  OBDal.getInstance().get(CharacteristicValue.class, chValueId)));
+              prChConfCrit.setFilterOnActive(false);
+              ProductCharacteristicConf prChConf = (ProductCharacteristicConf) prChConfCrit
+                  .uniqueResult();
+              prChConf.setCode(chValueCode);
+              prChConf.setActive(chValueActive);
+              continue;
+            }
+            prChConfs.add(getCharacteristicConf(prCh, chValueId, chValueCode, chValueActive));
+          }
+        } finally {
+          scroll.close();
+        }
+
+        // remove not needed
+        if (!existingValues.isEmpty()) {
+          for (String strChValueId : existingValues) {
             OBCriteria<ProductCharacteristicConf> prChConfCrit = OBDal.getInstance()
                 .createCriteria(ProductCharacteristicConf.class);
             prChConfCrit.add(Restrictions.eq(
                 ProductCharacteristicConf.PROPERTY_CHARACTERISTICOFPRODUCT, prCh));
             prChConfCrit.add(Restrictions.eq(
                 ProductCharacteristicConf.PROPERTY_CHARACTERISTICVALUE,
-                OBDal.getInstance().get(CharacteristicValue.class, chValueId)));
+                OBDal.getInstance().get(CharacteristicValue.class, strChValueId)));
             prChConfCrit.setFilterOnActive(false);
             ProductCharacteristicConf prChConf = (ProductCharacteristicConf) prChConfCrit
                 .uniqueResult();
-            prChConf.setCode(chValueCode);
-            prChConf.setActive(chValueActive);
-            continue;
+
+            prChConfs.remove(prChConf);
+            OBDal.getInstance().remove(prChConf);
           }
-          prChConfs.add(getCharacteristicConf(prCh, chValueId, chValueCode, chValueActive));
-        }
-      } finally {
-        scroll.close();
-      }
-
-      // remove not needed
-      if (!existingValues.isEmpty()) {
-        for (String strChValueId : existingValues) {
-          OBCriteria<ProductCharacteristicConf> prChConfCrit = OBDal.getInstance().createCriteria(
-              ProductCharacteristicConf.class);
-          prChConfCrit.add(Restrictions.eq(
-              ProductCharacteristicConf.PROPERTY_CHARACTERISTICOFPRODUCT, prCh));
-          prChConfCrit.add(Restrictions.eq(ProductCharacteristicConf.PROPERTY_CHARACTERISTICVALUE,
-              OBDal.getInstance().get(CharacteristicValue.class, strChValueId)));
-          prChConfCrit.setFilterOnActive(false);
-          ProductCharacteristicConf prChConf = (ProductCharacteristicConf) prChConfCrit
-              .uniqueResult();
-
-          prChConfs.remove(prChConf);
-          OBDal.getInstance().remove(prChConf);
         }
       }
     }
