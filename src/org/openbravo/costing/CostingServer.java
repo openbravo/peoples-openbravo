@@ -288,10 +288,15 @@ public class CostingServer {
     BigDecimal currentStock = CostAdjustmentUtils.getStockOnTransactionDate(getOrganization(),
         transaction, getCostingAlgorithm().costDimensions, transaction.getProduct().isProduction(),
         costingRule.isBackdatedTransactionsFixed());
-    // the stock previous to transaction was negative
+    // the stock previous to transaction was zero or negative
     if (checkNegativeStockCorrectionTrxs
-        && currentStock.compareTo(transaction.getMovementQuantity()) < 0 && modifiesAvg
-        && !adjustmentAlreadyCreated) {
+        && modifiesAvg
+        && !adjustmentAlreadyCreated
+        && (currentStock.compareTo(transaction.getMovementQuantity()) < 0 || (trxType != TrxType.InventoryOpening
+            && currentStock.compareTo(transaction.getMovementQuantity()) == 0 && CostingUtils
+              .existsProcessedTransactions(transaction.getProduct(),
+                  getCostingAlgorithm().costDimensions, getOrganization(), transaction, transaction
+                      .getProduct().isProduction())))) {
 
       CostAdjustment costAdjustmentHeader = CostAdjustmentUtils.insertCostAdjustmentHeader(
           transaction.getOrganization(), "NSC"); // NSC= Negative Stock Correction
