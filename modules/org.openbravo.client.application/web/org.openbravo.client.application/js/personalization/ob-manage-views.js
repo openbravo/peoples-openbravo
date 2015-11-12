@@ -183,6 +183,11 @@ OB.Personalization.applyViewDefinitionToView = function (view, viewTabDefinition
   }
 
   if (viewTabDefinition.grid) {
+    // check if the view to be applied adds new fields into the grid
+    // in that case, we invalidate the cache to bring the data of the new fields when refreshing
+    if (view.viewGrid.viewHasFieldsNotInGrid(viewTabDefinition.grid)) {
+      view.viewGrid.invalidateCache();
+    }
     //clear grouping, will be applied later
     view.viewGrid.clearGroupBy();
     view.viewGrid.setViewState(viewTabDefinition.grid);

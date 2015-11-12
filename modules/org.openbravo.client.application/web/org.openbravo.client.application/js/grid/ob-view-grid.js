@@ -933,6 +933,10 @@ isc.OBViewGrid.addProperties({
     return this.Super('getCellAlign', arguments);
   },
 
+  getFieldByName: function (fieldName) {
+    return this.getFields().find('name', fieldName);
+  },
+
   // overridden to support hover on the header for the checkbox field
   setFieldProperties: function (field, properties) {
     var localField = field;
@@ -1141,6 +1145,21 @@ isc.OBViewGrid.addProperties({
       this.initialCriteriaSetBySavedView = true;
       this.setCriteria(localState.filter);
     }
+  },
+
+  viewHasFieldsNotInGrid: function (viewGridDefinition) {
+    var state = this.evalViewState(viewGridDefinition, 'viewState'), i;
+    if (state && state.field) {
+      var viewGridDefinitionFields = isc.JSON.decode(state.field) || [];
+      for (i = 0; i < viewGridDefinitionFields.length; i++) {
+        var name = viewGridDefinitionFields[i].name;
+        var isVisible = viewGridDefinitionFields[i].visible;
+        if (isVisible !== false && !this.getFieldByName(name)) {
+          return true;
+        }
+      }
+    }
+    return false;
   },
 
   // loads the foreign key filter auxiliary cache of all the filter fields that were using the 'id' filter type when the view was saved
