@@ -676,6 +676,7 @@ public class CancelAndReplaceUtils {
           FIN_PaymentSchedule.class);
       paymentScheduleCriteria.add(Restrictions.eq(FIN_PaymentSchedule.PROPERTY_ORDER, oldOrder));
       List<FIN_PaymentSchedule> paymentScheduleList = paymentScheduleCriteria.list();
+      boolean inversePaymentCreated = false;
       if (paymentScheduleList.size() != 0) {
         paymentSchedule = paymentScheduleList.get(0);
         // Get the payment schedule detail of the order
@@ -735,11 +736,12 @@ public class CancelAndReplaceUtils {
             }
           }
 
-          if (negativeAmount.compareTo(BigDecimal.ZERO) != 0) {
+          if (negativeAmount.compareTo(BigDecimal.ZERO) != 0 && !inversePaymentCreated) {
             // Duplicate payment with negative amount
             newPayment = createPayment(newPayment, inverseOrder, paymentPaymentMethod,
                 negativeAmount, paymentDocumentType, financialAccount, paymentDocumentNo);
             paymentTotalAmount = paymentTotalAmount.add(negativeAmount);
+            inversePaymentCreated = true;
           }
 
           // Create if needed a second payment for the partially paid
