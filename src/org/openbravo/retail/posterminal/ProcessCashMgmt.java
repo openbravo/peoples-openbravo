@@ -52,12 +52,14 @@ public class ProcessCashMgmt extends POSDataSynchronizationProcess implements
     TerminalTypePaymentMethod terminalPaymentMethod = paymentMethod.getPaymentMethod();
     GLItem glItemMain;
     GLItem glItemSecondary;
+    // The GL/item in both transactions must be the same, and it must be the original type of
+    // transaction
     if (type.equals("drop")) {
       glItemMain = terminalPaymentMethod.getGLItemForDrops();
-      glItemSecondary = terminalPaymentMethod.getGLItemForDeposits();
+      glItemSecondary = terminalPaymentMethod.getGLItemForDrops();
     } else {
       glItemMain = terminalPaymentMethod.getGLItemForDeposits();
-      glItemSecondary = terminalPaymentMethod.getGLItemForDrops();
+      glItemSecondary = terminalPaymentMethod.getGLItemForDeposits();
     }
     if (jsonsent.has("glItem")) {
       glItemMain = OBDal.getInstance().get(GLItem.class, jsonsent.getString("glItem"));

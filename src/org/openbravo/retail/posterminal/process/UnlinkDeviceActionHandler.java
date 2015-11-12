@@ -13,15 +13,15 @@ import java.util.Map;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.openbravo.client.kernel.BaseActionHandler;
+import org.openbravo.client.application.process.BaseProcessActionHandler;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.retail.posterminal.OBPOSApplications;
 
-public class UnlinkDeviceActionHandler extends BaseActionHandler {
+public class UnlinkDeviceActionHandler extends BaseProcessActionHandler {
 
   @Override
-  protected JSONObject execute(Map<String, Object> parameters, String content) {
+  protected JSONObject doExecute(Map<String, Object> parameters, String content) {
     JSONObject selectedObject = null;
     String terminalId = null;
     JSONObject result = new JSONObject();
@@ -33,6 +33,7 @@ public class UnlinkDeviceActionHandler extends BaseActionHandler {
       terminalId = selectedObject.getString("inpobposApplicationsId");
       OBPOSApplications terminal = OBDal.getInstance().get(OBPOSApplications.class, terminalId);
       terminal.setLinked(false);
+      terminal.setCurrentCacheSession(null);
       OBDal.getInstance().save(terminal);
       OBDal.getInstance().getConnection().commit();
 

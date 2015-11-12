@@ -2218,7 +2218,7 @@
       this.set('generateInvoice', OB.MobileApp.model.get('terminal').terminalType.generateInvoice);
       this.set('documentType', OB.MobileApp.model.get('terminal').terminalType.documentType);
       this.set('createdBy', OB.MobileApp.model.get('orgUserId'));
-      if (OB.MobileApp.model.get('context').isSalesRepresentative) {
+      if (OB.MobileApp.model.get('context').user.isSalesRepresentative) {
         this.set('salesRepresentative', OB.MobileApp.model.get('context').user.id);
       } else {
         this.set('salesRepresentative', null);
@@ -2924,26 +2924,26 @@
     },
 
     getOrderDescription: function () {
-      var desc = '{id: \'' + this.get('id') + '\', Docno: \'' + this.get('documentNo') + '\', Total gross: ' + this.get('gross') + ', Lines: [';
+      var desc = "{id: '" + this.get('id') + "', Docno: '" + this.get('documentNo') + "', Total gross: '" + this.get('gross') + "', Lines: ['";
       var i = 0;
       var propt;
       this.get('lines').forEach(function (l) {
         if (i !== 0) {
           desc += ",";
         }
-        desc += '{Product: \'' + l.get('product').get('_identifier') + '\', Quantity: ' + l.get('qty') + ', Gross: ' + l.get('gross') + ', LineGrossAmount: ' + l.get('lineGrossAmount') + ', DiscountedGross: ' + l.get('discountedGross') + ', Net: ' + l.get('net') + ', DiscountedNet: ' + l.get('discountedNet') + ', NonDiscountedNet: ' + l.get('nondiscountednet') + ', TaxAmount: ' + l.get('taxAmount') + ', GrossUnitPrice: ' + l.get('grossUnitPrice') + '}';
+        desc += "'{Product: '" + l.get('product').get('_identifier') + "', Quantity: '" + l.get('qty') + "', Gross: '" + l.get('gross') + "', LineGrossAmount: '" + l.get('lineGrossAmount') + "', DiscountedGross: '" + l.get('discountedGross') + "', Net: '" + l.get('net') + "', DiscountedNet: '" + l.get('discountedNet') + "', NonDiscountedNet: '" + l.get('nondiscountednet') + "', TaxAmount: '" + l.get('taxAmount') + "', GrossUnitPrice: '" + l.get('grossUnitPrice') + "'}";
         i++;
       });
-      desc += '], Payments: [';
+      desc += "], Payments: [";
       i = 0;
       this.get('payments').forEach(function (l) {
         if (i !== 0) {
           desc += ",";
         }
-        desc += '{PaymentMethod: \'' + l.get('kind') + '\', Amount: ' + l.get('amount') + ', OrigAmount: ' + l.get('origAmount') + ', Date: \'' + l.get('date') + '\', isocode: \'' + l.get('isocode') + '\'}';
+        desc += "{PaymentMethod: '" + l.get('kind') + "', Amount: '" + l.get('amount') + "', OrigAmount: '" + l.get('origAmount') + "', Date: '" + l.get('date') + "', isocode: '" + l.get('isocode') + "'}";
         i++;
       });
-      desc += '], Taxes: [';
+      desc += "], Taxes: [";
       i = 0;
       for (propt in this.get('taxes')) {
         if (this.get('taxes').hasOwnProperty(propt)) {
@@ -2951,12 +2951,12 @@
           if (i !== 0) {
             desc += ",";
           }
-          desc += '{TaxId: \'' + propt + '\', TaxRate: ' + obj.rate + ', TaxNet: ' + obj.net + ', TaxAmount: ' + obj.amount + ', TaxName: \'' + obj.name + '\'}';
+          desc += "{TaxId: '" + propt + "', TaxRate: '" + obj.rate + "', TaxNet: '" + obj.net + "', TaxAmount: '" + obj.amount + "', TaxName: '" + obj.name + "'}";
           i++;
         }
       }
-      desc += ']';
-      desc += '}';
+      desc += "]";
+      desc += "}";
       return desc;
     },
 
@@ -3090,7 +3090,7 @@
       order.set('currency', OB.MobileApp.model.get('terminal').currency);
       order.set('currency' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, OB.MobileApp.model.get('terminal')['currency' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER]);
       order.set('warehouse', OB.MobileApp.model.get('terminal').warehouse);
-      if (OB.MobileApp.model.get('context').isSalesRepresentative) {
+      if (OB.MobileApp.model.get('context').user.isSalesRepresentative) {
         order.set('salesRepresentative', OB.MobileApp.model.get('context').user.id);
         order.set('salesRepresentative' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, OB.MobileApp.model.get('context').user._identifier);
       } else {

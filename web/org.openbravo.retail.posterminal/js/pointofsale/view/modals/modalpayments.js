@@ -112,7 +112,7 @@ enyo.kind({
         payments = OB.POS.modelterminal.get('payments'),
         filterBy = this.$.body.$.paymentname.getValue().toUpperCase();
     enyo.forEach(payments, function (payment) {
-      if (payment.paymentMethod.paymentMethodCategory && payment.paymentMethod.paymentMethodCategory === this.args.idCategory) {
+      if (payment.paymentMethod.paymentMethodCategory && payment.paymentMethod.paymentMethodCategory === this.args.idCategory && OB.MobileApp.model.hasPermission(payment.payment.searchKey)) {
         if (filterBy === '' || payment.paymentMethod._identifier.toUpperCase().indexOf(filterBy) >= 0) {
           items.push({
             name: payment.paymentMethod._identifier,
