@@ -337,7 +337,9 @@ public class ImportEntryManager {
       start();
     }
 
-    managerThread.doNotify();
+    if (managerThread != null) {
+      managerThread.doNotify();
+    }
   }
 
   private void handleImportEntry(ImportEntry importEntry) {
