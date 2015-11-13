@@ -231,9 +231,40 @@ public class CostingServer {
       }
     }
 
-    // With Standard Algorithm, no cost adjustment is needed
+    // With Standard Algorithm, only BDT are checked
     if (StringUtils.equals(transaction.getCostingAlgorithm().getJavaClassName(),
         "org.openbravo.costing.StandardAlgorithm")) {
+
+      if (transaction.getMovementDate().after(
+          CostingUtils.getCostingRuleStartingDate(getCostingRule()))
+          && CostAdjustmentUtils.isNeededBackdatedCostAdjustment(transaction, getCostingRule()
+              .isWarehouseDimension(), CostingUtils.getCostingRuleStartingDate(getCostingRule()))) {
+
+        // Case transaction backdated (modifying the stock in the past)
+        if (trxType != TrxType.InventoryClosing && trxType != TrxType.InventoryOpening
+            && getCostingRule().isBackdatedTransactionsFixed()) {
+          // BDT = Backdated transaction
+          createAdjustment("BDT", BigDecimal.ZERO);
+        }
+
+        // Case Inventory Amount Update backdated (modifying the cost in the past)
+        if (trxType == TrxType.InventoryOpening) {
+          OBDal.getInstance().refresh(transaction.getPhysicalInventoryLine().getPhysInventory());
+          if (transaction.getPhysicalInventoryLine().getPhysInventory()
+              .getInventoryAmountUpdateLineInventoriesInitInventoryList().size() > 0
+              && CostingUtils.isLastOpeningTransaction(transaction, getCostingRule()
+                  .isWarehouseDimension())) {
+            // BDT = Backdated transaction
+            createAdjustment("BDT", BigDecimal.ZERO);
+          }
+        }
+      }
+
+      // update trxCost after cost adjustments
+      transaction = OBDal.getInstance().get(MaterialTransaction.class, transaction.getId());
+      trxCost = CostAdjustmentUtils.getTrxCost(transaction, false, getCostCurrency());
+
+      // With Standard Algorithm, no more adjustments are needed
       return;
     }
 
@@ -242,27 +273,8 @@ public class CostingServer {
             CostingUtils.getCostingRuleStartingDate(getCostingRule()))
         && CostAdjustmentUtils.isNeededBackdatedCostAdjustment(transaction, getCostingRule()
             .isWarehouseDimension(), CostingUtils.getCostingRuleStartingDate(getCostingRule()))) {
-      // BDT= Backdated transaction
-      CostAdjustment costAdjustmentHeader = CostAdjustmentUtils.insertCostAdjustmentHeader(
-          transaction.getOrganization(), "BDT");
-
-      CostAdjustmentLine cal = CostAdjustmentUtils.insertCostAdjustmentLine(transaction,
-          costAdjustmentHeader, null, Boolean.TRUE, transaction.getMovementDate());
-      cal.setBackdatedTrx(Boolean.TRUE);
-      OBDal.getInstance().save(cal);
-
-      OBDal.getInstance().flush();
-      JSONObject message = CostAdjustmentProcess.doProcessCostAdjustment(costAdjustmentHeader);
-
-      try {
-        if (message.get("severity") != "success") {
-          throw new OBException(OBMessageUtils.parseTranslation("@ErrorProcessingCostAdj@") + ": "
-              + costAdjustmentHeader.getDocumentNo() + " - " + message.getString("text"));
-        }
-        adjustmentAlreadyCreated = true;
-      } catch (JSONException ignore) {
-        throw new OBException(OBMessageUtils.parseTranslation("@ErrorProcessingCostAdj@"));
-      }
+      // BDT = Backdated transaction
+      adjustmentAlreadyCreated = createAdjustment("BDT", null);
     }
 
     // check if negative stock correction should be done
@@ -290,27 +302,8 @@ public class CostingServer {
                   getCostingAlgorithm().costDimensions, getOrganization(), transaction, transaction
                       .getProduct().isProduction())))) {
 
-      CostAdjustment costAdjustmentHeader = CostAdjustmentUtils.insertCostAdjustmentHeader(
-          transaction.getOrganization(), "NSC"); // NSC= Negative Stock Correction
-
-      Date acctDate = transaction.getMovementDate();
-      CostAdjustmentLine cal = CostAdjustmentUtils.insertCostAdjustmentLine(transaction,
-          costAdjustmentHeader, null, Boolean.TRUE, acctDate);
-      cal.setNegativeStockCorrection(Boolean.TRUE);
-      cal.setUnitCost(Boolean.FALSE);
-      OBDal.getInstance().save(cal);
-      OBDal.getInstance().flush();
-
-      JSONObject message = CostAdjustmentProcess.doProcessCostAdjustment(costAdjustmentHeader);
-
-      try {
-        if (!"success".equals(message.get("severity"))) {
-          throw new OBException(OBMessageUtils.parseTranslation("@ErrorProcessingCostAdj@") + ": "
-              + costAdjustmentHeader.getDocumentNo() + " - " + message.getString("text"));
-        }
-      } catch (JSONException e) {
-        throw new OBException(OBMessageUtils.parseTranslation("@ErrorProcessingCostAdj@"));
-      }
+      // NSC = Negative Stock Correction
+      createAdjustment("NSC", null);
     }
 
     // check if closing inventory needs to be adjusted due to a remainder value
@@ -322,34 +315,43 @@ public class CostingServer {
               .getCurrency());
 
       if (BigDecimal.ZERO.compareTo(currentValuedStock) != 0) {
-
-        CostAdjustment costAdjustmentHeader = CostAdjustmentUtils.insertCostAdjustmentHeader(
-            transaction.getOrganization(), "NSC");
-
-        Date acctDate = transaction.getMovementDate();
-        CostAdjustmentLine cal = CostAdjustmentUtils.insertCostAdjustmentLine(transaction,
-            costAdjustmentHeader, currentValuedStock, Boolean.TRUE, acctDate);
-        cal.setNegativeStockCorrection(Boolean.TRUE);
-        cal.setUnitCost(Boolean.FALSE);
-        OBDal.getInstance().save(cal);
-        OBDal.getInstance().flush();
-
-        JSONObject message = CostAdjustmentProcess.doProcessCostAdjustment(costAdjustmentHeader);
-
-        try {
-          if (!"success".equals(message.get("severity"))) {
-            throw new OBException(OBMessageUtils.parseTranslation("@ErrorProcessingCostAdj@")
-                + ": " + costAdjustmentHeader.getDocumentNo() + " - " + message.getString("text"));
-          }
-        } catch (JSONException e) {
-          throw new OBException(OBMessageUtils.parseTranslation("@ErrorProcessingCostAdj@"));
-        }
+        // NSC = Negative Stock Correction
+        createAdjustment("NSC", currentValuedStock);
       }
     }
 
     // update trxCost after cost adjustments
     transaction = OBDal.getInstance().get(MaterialTransaction.class, transaction.getId());
     trxCost = CostAdjustmentUtils.getTrxCost(transaction, false, getCostCurrency());
+  }
+
+  private boolean createAdjustment(String type, BigDecimal amount) {
+
+    CostAdjustment costAdjustmentHeader = CostAdjustmentUtils.insertCostAdjustmentHeader(
+        transaction.getOrganization(), type);
+    CostAdjustmentLine cal = CostAdjustmentUtils.insertCostAdjustmentLine(transaction,
+        costAdjustmentHeader, amount, Boolean.TRUE, transaction.getMovementDate());
+
+    if (StringUtils.equals(type, "BDT")) {
+      cal.setBackdatedTrx(Boolean.TRUE);
+    } else if (StringUtils.equals(type, "NSC")) {
+      cal.setNegativeStockCorrection(Boolean.TRUE);
+      cal.setUnitCost(Boolean.FALSE);
+    }
+
+    OBDal.getInstance().save(cal);
+    OBDal.getInstance().flush();
+    JSONObject message = CostAdjustmentProcess.doProcessCostAdjustment(costAdjustmentHeader);
+
+    try {
+      if (message.get("severity") != "success") {
+        throw new OBException(OBMessageUtils.parseTranslation("@ErrorProcessingCostAdj@") + ": "
+            + costAdjustmentHeader.getDocumentNo() + " - " + message.getString("text"));
+      }
+      return true;
+    } catch (JSONException ignore) {
+      throw new OBException(OBMessageUtils.parseTranslation("@ErrorProcessingCostAdj@"));
+    }
   }
 
   private void setNotPostedTransaction() {
