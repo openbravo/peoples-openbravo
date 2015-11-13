@@ -830,33 +830,44 @@
         OB.UTIL.showError(OB.I18N.getLabel('OBPOS_QuotationClosed'));
         return;
       }
-      options = options || {};
-      options.setUndo = (_.isUndefined(options.setUndo) || _.isNull(options.setUndo) || options.setUndo !== false) ? true : options.setUndo;
-
-      if (!OB.UTIL.isNullOrUndefined(line.get('originalOrderLineId'))) {
-        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_CannotChangePrice'));
-      } else if (OB.DEC.isNumber(price)) {
-        var oldprice = line.get('price');
-        if (OB.DEC.compare(price) >= 0) {
-          var me = this;
-          // sets the new price
-          line.set('price', price);
-          // sets the undo action
-          if (options.setUndo) {
-            this.set('undo', {
-              text: OB.I18N.getLabel('OBPOS_SetPrice', [line.printPrice(), line.get('product').get('_identifier')]),
-              oldprice: oldprice,
-              line: line,
-              undo: function () {
-                line.set('price', oldprice);
-                me.set('undo', null);
-              }
-            });
-          }
+      OB.UTIL.HookManager.executeHooks('OBPOS_PreSetPrice', {
+        context: this,
+        line: line,
+        price: price,
+        options: options
+      }, function (args) {
+        var me = args.context;
+        if (args.cancellation && args.cancellation === true) {
+          return;
         }
-        this.adjustPayment();
-      }
-      this.save();
+
+        options = args.options || {};
+        options.setUndo = (_.isUndefined(options.setUndo) || _.isNull(options.setUndo) || options.setUndo !== false) ? true : options.setUndo;
+
+        if (!OB.UTIL.isNullOrUndefined(args.line.get('originalOrderLineId'))) {
+          OB.UTIL.showError(OB.I18N.getLabel('OBPOS_CannotChangePrice'));
+        } else if (OB.DEC.isNumber(args.price)) {
+          var oldprice = line.get('price');
+          if (OB.DEC.compare(args.price) >= 0) {
+            // sets the new price
+            args.line.set('price', args.price);
+            // sets the undo action
+            if (options.setUndo) {
+              me.set('undo', {
+                text: OB.I18N.getLabel('OBPOS_SetPrice', [args.line.printPrice(), args.line.get('product').get('_identifier')]),
+                oldprice: oldprice,
+                line: args.line,
+                undo: function () {
+                  args.line.set('price', oldprice);
+                  me.set('undo', null);
+                }
+              });
+            }
+          }
+          me.adjustPayment();
+        }
+        me.save();
+      });
     },
 
     setLineProperty: function (line, property, value) {
