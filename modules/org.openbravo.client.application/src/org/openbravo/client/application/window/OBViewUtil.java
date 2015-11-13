@@ -133,16 +133,18 @@ public class OBViewUtil {
    */
   private static String getLabel(BaseOBObject owner, List<?> trlObjects,
       String primaryPropertyName, String secondaryPropertyName) {
-    final String userLanguageId = OBContext.getOBContext().getLanguage().getId();
-    for (Object o : trlObjects) {
-      final BaseOBObject trlObject = (BaseOBObject) o;
-      final String trlLanguageId = (String) DalUtil
-          .getId(trlObject.get(FieldTrl.PROPERTY_LANGUAGE));
-      if (trlLanguageId.equals(userLanguageId)) {
-        if (secondaryPropertyName == null || trlObject.get(primaryPropertyName) != null) {
-          return (String) trlObject.get(primaryPropertyName);
+    if (false || OBContext.hasTranslationInstalled()) {
+      final String userLanguageId = OBContext.getOBContext().getLanguage().getId();
+      for (Object o : trlObjects) {
+        final BaseOBObject trlObject = (BaseOBObject) o;
+        final String trlLanguageId = (String) DalUtil.getId(trlObject
+            .get(FieldTrl.PROPERTY_LANGUAGE));
+        if (trlLanguageId.equals(userLanguageId)) {
+          if (secondaryPropertyName == null || trlObject.get(primaryPropertyName) != null) {
+            return (String) trlObject.get(primaryPropertyName);
+          }
+          return (String) trlObject.get(secondaryPropertyName);
         }
-        return (String) trlObject.get(secondaryPropertyName);
       }
     }
 

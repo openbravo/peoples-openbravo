@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -180,18 +180,20 @@ public class DataSourceProperty {
       }
     }
 
-    // set the default if no translation found
-    final String hql = "select al.searchKey, trl.name from ADList al, ADListTrl trl where "
-        + " al.reference.id=? and trl.listReference=al and trl.language.id=?"
-        + " and al.active=true and trl.active=true";
-    final Query qry = OBDal.getInstance().getSession().createQuery(hql);
-    qry.setString(0, referenceId);
-    qry.setString(1, userLanguageId);
-    for (Object o : qry.list()) {
-      final Object[] row = (Object[]) o;
-      for (RefListEntry entry : translatedValues) {
-        if (entry.getValue().equalsIgnoreCase((String) row[0])) {
-          entry.setLabel((String) row[1]);
+    if (OBContext.hasTranslationInstalled()) {
+      // set the default if no translation found
+      final String hql = "select al.searchKey, trl.name from ADList al, ADListTrl trl where "
+          + " al.reference.id=? and trl.listReference=al and trl.language.id=?"
+          + " and al.active=true and trl.active=true";
+      final Query qry = OBDal.getInstance().getSession().createQuery(hql);
+      qry.setString(0, referenceId);
+      qry.setString(1, userLanguageId);
+      for (Object o : qry.list()) {
+        final Object[] row = (Object[]) o;
+        for (RefListEntry entry : translatedValues) {
+          if (entry.getValue().equalsIgnoreCase((String) row[0])) {
+            entry.setLabel((String) row[1]);
+          }
         }
       }
     }
