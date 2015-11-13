@@ -87,7 +87,7 @@ public class ConnectionProviderImpl implements ConnectionProvider {
     int maxConns = 10;
     double maxConnTime = 0.5;
     String dbSessionConfig = null;
-    String rdbms = null;
+    String _rdbms = null;
 
     poolName = properties.getProperty("bbdd.poolName", "myPool");
     externalPoolClassName = properties.getProperty("db.externalPoolClassName");
@@ -99,8 +99,8 @@ public class ConnectionProviderImpl implements ConnectionProvider {
     maxConns = new Integer(properties.getProperty("bbdd.maxConns", "10"));
     maxConnTime = new Double(properties.getProperty("maxConnTime", "0.5"));
     dbSessionConfig = properties.getProperty("bbdd.sessionConfig");
-    rdbms = properties.getProperty("bbdd.rdbms");
-    if (rdbms.equalsIgnoreCase("POSTGRE"))
+    _rdbms = properties.getProperty("bbdd.rdbms");
+    if (_rdbms.equalsIgnoreCase("POSTGRE"))
       dbServer += "/" + properties.getProperty("bbdd.sid");
 
     if (log4j.isDebugEnabled()) {
@@ -114,7 +114,7 @@ public class ConnectionProviderImpl implements ConnectionProvider {
       log4j.debug("maxConns: " + maxConns);
       log4j.debug("maxConnTime: " + Double.toString(maxConnTime));
       log4j.debug("dbSessionConfig: " + dbSessionConfig);
-      log4j.debug("rdbms: " + rdbms);
+      log4j.debug("rdbms: " + _rdbms);
     }
 
     if (externalPoolClassName != null && !"".equals(externalPoolClassName)) {
@@ -128,7 +128,7 @@ public class ConnectionProviderImpl implements ConnectionProvider {
 
     try {
       addNewPool(dbDriver, dbServer, dbLogin, dbPassword, minConns, maxConns, maxConnTime,
-          dbSessionConfig, rdbms, poolName);
+          dbSessionConfig, _rdbms, poolName);
     } catch (Exception e) {
       log4j.error(e);
       throw new PoolNotFoundException("Failed when creating database connections pool", e);
@@ -155,13 +155,13 @@ public class ConnectionProviderImpl implements ConnectionProvider {
   }
 
   public void addNewPool(String dbDriver, String dbServer, String dbLogin, String dbPassword,
-      int minConns, int maxConns, double maxConnTime, String dbSessionConfig, String rdbms,
+      int minConns, int maxConns, double maxConnTime, String dbSessionConfig, String _rdbms,
       String name) throws Exception {
 
     if (this.defaultPoolName == null || this.defaultPoolName.equals("")) {
       this.defaultPoolName = name;
       this.bbdd = dbServer;
-      this.rdbms = rdbms;
+      this.rdbms = _rdbms;
     }
     if (externalConnectionPool != null) {
       // No need to create and add a new pool
@@ -185,7 +185,7 @@ public class ConnectionProviderImpl implements ConnectionProvider {
 
     KeyedObjectPoolFactory keyedObject = new StackKeyedObjectPoolFactory();
     ConnectionFactory connectionFactory = new OpenbravoDriverManagerConnectionFactory(dbServer,
-        dbLogin, dbPassword, dbSessionConfig, rdbms);
+        dbLogin, dbPassword, dbSessionConfig, _rdbms);
     @SuppressWarnings("unused")
     // required by dbcp
     PoolableConnectionFactory poolableConnectionFactory = new PoolableConnectionFactory(

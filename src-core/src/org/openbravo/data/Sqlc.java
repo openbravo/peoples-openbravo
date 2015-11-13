@@ -1045,7 +1045,7 @@ public class Sqlc extends DefaultHandler {
             !parameter.strInOut.equals("out")) {
           int posFinalAfter = posFinal(sql.strSQL, parameter.strAfter);
           if (posFinalAfter != -1) {
-            imprimirSubstring(sql.strSQL, posSQL, posFinalAfter, out);
+            imprimirSubstring(sql.strSQL, posSQL, posFinalAfter);
             posSQL = posFinalAfter
                 + (parameter.strInOut.equals("replace") ? parameter.strText.length() : 0);
             if (parameter.strInOut.equals("none")) {
@@ -1088,7 +1088,7 @@ public class Sqlc extends DefaultHandler {
         }
       }
     }
-    imprimirSubstring(sql.strSQL, posSQL, sql.strSQL.length(), out);
+    imprimirSubstring(sql.strSQL, posSQL, sql.strSQL.length());
 
     out2.append("\n");
 
@@ -1742,8 +1742,7 @@ public class Sqlc extends DefaultHandler {
     return index;
   }
 
-  private void imprimirSubstring(String strSQL, int posIni, int posFin, OutputStreamWriter out)
-      throws IOException {
+  private void imprimirSubstring(String strSQL, int posIni, int posFin) throws IOException {
     final String[] strSqlVector = stringToVector(strSQL.substring(posIni, posFin), true);
     for (int i = 0; i < strSqlVector.length; i++) {
       if (i == 0) {
