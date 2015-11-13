@@ -539,7 +539,12 @@ public abstract class ImportEntryProcessor {
         importEntryId = importEntry.getId();
         userId = (String) DalUtil.getId(importEntry.getCreatedBy());
         orgId = (String) DalUtil.getId(importEntry.getOrganization());
-        roleId = (String) DalUtil.getId(importEntry.getRole());
+        if (importEntry.getRole() != null) {
+          roleId = (String) DalUtil.getId(importEntry.getRole());
+        } else {
+          // will use the default role of the user
+          roleId = null;
+        }
         clientId = (String) DalUtil.getId(importEntry.getClient());
       }
     }
