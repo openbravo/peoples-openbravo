@@ -125,20 +125,18 @@ enyo.kind({
             return true;
           }
           if (keyboard.line) {
-            if ((_.isNaN(value) || value > 0) && keyboard.line.get('product').get('groupProduct') === false) {
-              me.doShowPopup({
-                popup: 'modalProductCannotBeGroup'
-              });
+            if (_.isNaN(value)) {
               return true;
+            } else {
+              me.doAddProduct({
+                product: keyboard.line.get('product'),
+                qty: value,
+                options: {
+                  line: keyboard.line
+                }
+              });
+              keyboard.receipt.trigger('scan');
             }
-            me.doAddProduct({
-              product: keyboard.line.get('product'),
-              qty: value,
-              options: {
-                line: keyboard.line
-              }
-            });
-            keyboard.receipt.trigger('scan');
           }
         } else {
           keyboard.line.unset('notReturnThisLine');
@@ -601,6 +599,7 @@ enyo.kind({
     this.addToolbar(OB.OBPOSPointOfSale.UI.ToolbarScan);
     this.addToolbar(OB.OBPOSPointOfSale.UI.ToolbarDiscounts);
   },
+
 
   init: function (model) {
     this.model = model;
