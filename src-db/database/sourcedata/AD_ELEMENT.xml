@@ -1164,8 +1164,8 @@ So, if this field is set to 60, the master data will be refreshed every 60 minut
 <!--8EF287DE154A4FA78BE398218208F6AA-->  <COLUMNNAME><![CDATA[EM_Obpos_Printservices]]></COLUMNNAME>
 <!--8EF287DE154A4FA78BE398218208F6AA-->  <NAME><![CDATA[Printable Service]]></NAME>
 <!--8EF287DE154A4FA78BE398218208F6AA-->  <PRINTNAME><![CDATA[Printable Service]]></PRINTNAME>
-<!--8EF287DE154A4FA78BE398218208F6AA-->  <DESCRIPTION><![CDATA[is field validated if this service will be printed on receipt of webpos.]]></DESCRIPTION>
-<!--8EF287DE154A4FA78BE398218208F6AA-->  <HELP><![CDATA[This field validated if this service will be printed on receipt of webpos. By default the services will be printed.]]]></HELP>
+<!--8EF287DE154A4FA78BE398218208F6AA-->  <DESCRIPTION><![CDATA[This field validated if this service will be printed on receipt of webpos.]]></DESCRIPTION>
+<!--8EF287DE154A4FA78BE398218208F6AA-->  <HELP><![CDATA[This field validated if this service will be printed on receipt of webpos. By default the services will be printed.]]></HELP>
 <!--8EF287DE154A4FA78BE398218208F6AA-->  <AD_MODULE_ID><![CDATA[FF808181326CC34901326D53DBCF0018]]></AD_MODULE_ID>
 <!--8EF287DE154A4FA78BE398218208F6AA-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--8EF287DE154A4FA78BE398218208F6AA--></AD_ELEMENT>
