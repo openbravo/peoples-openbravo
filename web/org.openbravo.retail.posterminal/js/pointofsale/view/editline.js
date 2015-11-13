@@ -139,7 +139,12 @@ enyo.kind({
           var lineDisc = line.printDiscount();
           this.$.propertyValue.setContent(line.get('hasDiscount') ? lineDisc + (lineDisc !== '' ? ' ' + OB.I18N.getLabel('OBPOS_lblMultiSelectPerLines') : '') : OB.I18N.getLabel('OBPOS_lblMultiSelectDiscount'));
         } else {
-          this.$.propertyValue.setContent(line.printDiscount());
+          var discount = line.getTotalAmountOfPromotions();
+          if (discount === 0) {
+            this.$.propertyValue.setContent('');
+          } else {
+            this.$.propertyValue.setContent(OB.I18N.formatCurrency(discount));
+          }
         }
       } else {
         this.$.propertyValue.setContent('');

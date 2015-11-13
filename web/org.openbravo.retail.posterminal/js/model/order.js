@@ -116,19 +116,7 @@
     },
 
     getDiscount: function () {
-      var disc = OB.DEC.mul(OB.DEC.sub(this.get('product').get('standardPrice'), this.get('price')), this.get('qty'));
-      var prom = this.getTotalAmountOfPromotions();
-      // if there is a discount no promotion then only discount no promotion is shown
-      // if there is not a discount no promotion and there is a promotion then promotion is shown
-      if (OB.DEC.compare(disc) === 0) {
-        if (OB.DEC.compare(prom) === 0) {
-          return '';
-        } else {
-          return prom;
-        }
-      } else {
-        return disc;
-      }
+      return this.getTotalAmountOfPromotions();
     },
 
     printDiscount: function () {
