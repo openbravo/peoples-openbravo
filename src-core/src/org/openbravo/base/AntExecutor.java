@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -118,12 +118,13 @@ public class AntExecutor {
   /**
    * Executes an ant task
    * 
-   * @param task
+   * @param _task
    *          - Name of the task to execute
    * @throws Exception
    *           - In case the project is not loaded
    */
-  public void runTask(String task) throws Exception {
+  public void runTask(String _task) throws Exception {
+    String task = _task;
     if (project == null)
       throw new Exception("NoProjectLoaded");
     if (task == null)

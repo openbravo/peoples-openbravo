@@ -287,7 +287,8 @@ public class Sqlc extends DefaultHandler {
    */
 
   private static void parseSqlFile(File fileParsing, Sqlc sqlc, XMLReader parser, String strFilter,
-      File fileFin, String parent) {
+      File fileFin, String _parent) {
+    String parent = _parent;
     parent = parent.replace("\\", "/");
     final String strFileName = fileParsing.getName();
     if (log4j.isDebugEnabled())
