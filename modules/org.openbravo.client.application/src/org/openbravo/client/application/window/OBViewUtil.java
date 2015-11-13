@@ -133,7 +133,7 @@ public class OBViewUtil {
    */
   private static String getLabel(BaseOBObject owner, List<?> trlObjects,
       String primaryPropertyName, String secondaryPropertyName) {
-    if (false || OBContext.hasTranslationInstalled()) {
+    if (OBContext.hasTranslationInstalled()) {
       final String userLanguageId = OBContext.getOBContext().getLanguage().getId();
       for (Object o : trlObjects) {
         final BaseOBObject trlObject = (BaseOBObject) o;
