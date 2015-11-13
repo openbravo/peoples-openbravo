@@ -406,17 +406,18 @@ enyo.kind({
       }, this);
 
       if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
-        criteria.hgVolFilters = [];
-        criteria.hgVolFilters.push({
-          columns: ['productType'],
-          operator: 'equals',
-          value: 'S'
+        criteria.remoteFilters = [];
+        criteria.remoteFilters.push({
+          columns: [],
+          operator: OB.Dal.FILTER,
+          value: 'Final_Services',
+          params: []
         });
-
-        criteria.hgVolFilters.push({
-          columns: ['proposalType'],
+        criteria.remoteFilters.push({
+          columns: ['ispack'],
           operator: 'equals',
-          value: 'FMA'
+          value: false,
+          isId: true
         });
       } else {
         criteria.productType = 'S';
