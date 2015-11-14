@@ -242,8 +242,9 @@ public class Reconciliation extends HttpSecureAppServlet {
           return;
         }
 
-        boolean orgLegalWithAccounting = FIN_Utility.periodControlOpened(reconciliation.TABLE_NAME,
-            reconciliation.getId(), reconciliation.TABLE_NAME + "_ID", "LE");
+        boolean orgLegalWithAccounting = FIN_Utility.periodControlOpened(
+            FIN_Reconciliation.TABLE_NAME, reconciliation.getId(), FIN_Reconciliation.TABLE_NAME
+                + "_ID", "LE");
         boolean documentEnabled = getDocumentConfirmation(this, reconciliation.getId());
         if (documentEnabled
             && !FIN_Utility.isPeriodOpen(reconciliation.getClient().getId(),
