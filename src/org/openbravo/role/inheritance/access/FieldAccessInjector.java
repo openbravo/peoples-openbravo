@@ -96,7 +96,7 @@ public class FieldAccessInjector extends AccessTypeInjector {
   public void removeReferenceInParentList(InheritedAccessEnabled access) {
     FieldAccess fa = (FieldAccess) access;
     boolean accessExists = OBDal.getInstance().exists(TabAccess.ENTITY_NAME,
-        (String) DalUtil.getId(fa.getTabAccess()));
+        DalUtil.getId(fa.getTabAccess()));
     if (accessExists) {
       fa.getTabAccess().getADFieldAccessList().remove(fa);
     }

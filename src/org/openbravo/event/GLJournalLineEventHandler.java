@@ -63,14 +63,14 @@ public class GLJournalLineEventHandler extends EntityPersistenceEventObserver {
           .getPreviousState(credit)) != 0
           || ((BigDecimal) event.getCurrentState(debit)).compareTo((BigDecimal) event
               .getPreviousState(debit)) != 0
-          || !((Boolean) event.getCurrentState(openItems)).equals((Boolean) event
-              .getPreviousState(openItems))) {
-        logger.info("Current credit: " + (BigDecimal) event.getCurrentState(credit)
-            + ". Previous Credit: " + (BigDecimal) event.getPreviousState(credit));
-        logger.info("Current debit: " + (BigDecimal) event.getCurrentState(debit)
-            + ". Previous Debit: " + (BigDecimal) event.getPreviousState(debit));
-        logger.info("Current Open items: " + (Boolean) event.getCurrentState(openItems)
-            + ". Previous Open items: " + (Boolean) event.getPreviousState(openItems));
+          || !((Boolean) event.getCurrentState(openItems))
+              .equals(event.getPreviousState(openItems))) {
+        logger.info("Current credit: " + event.getCurrentState(credit) + ". Previous Credit: "
+            + event.getPreviousState(credit));
+        logger.info("Current debit: " + event.getCurrentState(debit) + ". Previous Debit: "
+            + event.getPreviousState(debit));
+        logger.info("Current Open items: " + event.getCurrentState(openItems)
+            + ". Previous Open items: " + event.getPreviousState(openItems));
         throw new OBException("@ModifyGLJournalLine@");
       }
     }
