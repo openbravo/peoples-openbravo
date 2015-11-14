@@ -1127,7 +1127,7 @@ public class ReportingUtils {
   }
 
   /**
-   * @see ReportingUtils#concatPDFReport(List<JasperPrint>, boolean, OutputStream,
+   * @see ReportingUtils#concatPDFReport(List, boolean, OutputStream,
    *      SimplePdfExporterConfiguration)
    */
   public static void concatPDFReport(List<JasperPrint> jasperPrintList, boolean createBookmarks,
