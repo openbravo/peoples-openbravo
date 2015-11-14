@@ -104,7 +104,7 @@ public class CloneOrderActionHandler extends BaseActionHandler {
         objCloneOrdLine.setReservedQuantity(new BigDecimal("0"));
         objCloneOrdLine.setDeliveredQuantity(new BigDecimal("0"));
         objCloneOrdLine.setInvoicedQuantity(new BigDecimal("0"));
-        if (!"".equals(bdPriceList) || bdPriceList != null
+        if (!"".equals(bdPriceList) && bdPriceList != null
             || !bdPriceList.equals(BigDecimal.ZERO.setScale(bdPriceList.scale()))) {
           objCloneOrdLine.setListPrice(bdPriceList);
         }
