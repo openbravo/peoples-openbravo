@@ -1520,7 +1520,7 @@ public class AdvPaymentMngtDao {
     }
   }
 
-  private void addPaymentMethodList(OBCriteria obc, List<String> paymentMethods) {
+  private void addPaymentMethodList(OBCriteria<FIN_PaymentMethod> obc, List<String> paymentMethods) {
     List<String> paymentMethodsToRemove;
     Criterion compoundExp = null;
     while (paymentMethods.size() > 999) {
