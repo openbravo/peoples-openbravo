@@ -85,6 +85,9 @@ public class ImportEntryArchiveManager {
   }
 
   public void shutdown() {
+    if (executorService == null) {
+      return;
+    }
     isShutDown = true;
     log.debug("Shutting down Import Entry Archive Framework");
     executorService.shutdownNow();

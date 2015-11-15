@@ -224,11 +224,16 @@ public class ImportEntryManager {
    * Shutdown all the threads being used by the import framework
    */
   public void shutdown() {
+    if (!threadsStarted) {
+      return;
+    }
     log.debug("Shutting down Import Entry Framework");
 
     isShutDown = true;
 
-    executorService.shutdownNow();
+    if (executorService != null) {
+      executorService.shutdownNow();
+    }
 
     for (ImportEntryProcessor importEntryProcessor : importEntryProcessors.values()) {
       importEntryProcessor.shutdown();
