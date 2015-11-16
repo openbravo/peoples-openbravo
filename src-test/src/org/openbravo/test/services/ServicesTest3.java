@@ -171,7 +171,7 @@ public class ServicesTest3 extends WeldBaseTest {
         }
         OBDal.getInstance().flush();
         OBDal.getInstance().getSession().clear();
-        // OBDal.getInstance().remove(OBDal.getInstance().get(Order.class, testOrderId));
+        OBDal.getInstance().remove(OBDal.getInstance().get(Order.class, testOrderId));
         OBDal.getInstance().flush();
       }
     }

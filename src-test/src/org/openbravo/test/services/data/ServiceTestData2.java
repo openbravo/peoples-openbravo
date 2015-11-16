@@ -37,8 +37,8 @@ public class ServiceTestData2 extends ServiceTestData {
     });
     setQuantity(BigDecimal.ONE);
     setPrice(new BigDecimal("200.00"));
-    setServicePriceResult(new BigDecimal("201.47"));
-    setServiceAmountResult(new BigDecimal("604.41"));
+    setServicePriceResult(new BigDecimal("204.40"));
+    setServiceAmountResult(new BigDecimal("613.20"));
     setServiceQtyResult(new BigDecimal("3"));
     setPricelistId(PRICELIST_SALES);
   }
