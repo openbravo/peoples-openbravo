@@ -412,6 +412,11 @@
                   isocode: payment.isocode,
                   cashup_id: cashUp.at(0).get('id')
                 }), null, null, true);
+              } else if (!OB.UTIL.isNullOrUndefined(pAux)) {
+                if (pAux.get("name") !== payment.payment._identifier) {
+                  pAux.set("name", payment.payment._identifier);
+                  OB.Dal.save(pAux);
+                }
               }
             }
           }, function (lastCashUpPayments) {
