@@ -131,8 +131,12 @@ public class StandardCostAdjustment extends CostingAlgorithmAdjustmentImp {
 
     final OrganizationStructureProvider osp = OBContext.getOBContext()
         .getOrganizationStructureProvider(trx.getClient().getId());
-    final Set<String> orgs = osp.getChildTree(strCostOrgId, true);
-    final HashMap<CostDimension, BaseOBObject> costDimensions = getCostDimensions();
+    Set<String> orgs = osp.getChildTree(strCostOrgId, true);
+    HashMap<CostDimension, BaseOBObject> costDimensions = getCostDimensions();
+    if (trx.getProduct().isProduction()) {
+      orgs = osp.getChildTree("0", false);
+      costDimensions = CostingUtils.getEmptyDimensions();
+    }
     final Warehouse warehouse = (Warehouse) costDimensions.get(CostDimension.Warehouse);
 
     // Get the movement date of the first Inventory Amount Update after trx
@@ -234,8 +238,12 @@ public class StandardCostAdjustment extends CostingAlgorithmAdjustmentImp {
 
     final OrganizationStructureProvider osp = OBContext.getOBContext()
         .getOrganizationStructureProvider(trx.getClient().getId());
-    final Set<String> orgs = osp.getChildTree(strCostOrgId, true);
-    final HashMap<CostDimension, BaseOBObject> costDimensions = getCostDimensions();
+    Set<String> orgs = osp.getChildTree(strCostOrgId, true);
+    HashMap<CostDimension, BaseOBObject> costDimensions = getCostDimensions();
+    if (trx.getProduct().isProduction()) {
+      orgs = osp.getChildTree("0", false);
+      costDimensions = CostingUtils.getEmptyDimensions();
+    }
     final Warehouse warehouse = (Warehouse) costDimensions.get(CostDimension.Warehouse);
 
     StringBuffer where = new StringBuffer();
