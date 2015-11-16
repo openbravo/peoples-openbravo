@@ -1148,7 +1148,8 @@ isc.OBViewGrid.addProperties({
   },
 
   viewHasFieldsNotInGrid: function (viewGridDefinition) {
-    var state = this.evalViewState(viewGridDefinition, 'viewState'), i;
+    var state = this.evalViewState(viewGridDefinition, 'viewState'),
+        i;
     if (state && state.field) {
       var viewGridDefinitionFields = isc.JSON.decode(state.field) || [];
       for (i = 0; i < viewGridDefinitionFields.length; i++) {
