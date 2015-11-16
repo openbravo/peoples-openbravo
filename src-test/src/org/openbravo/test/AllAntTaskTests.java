@@ -77,6 +77,9 @@ import org.openbravo.test.security.AccessLevelTest;
 import org.openbravo.test.security.AllowedOrganizationsTest;
 import org.openbravo.test.security.EntityAccessTest;
 import org.openbravo.test.security.WritableReadableOrganizationClientTest;
+import org.openbravo.test.services.ServicesTest;
+import org.openbravo.test.services.ServicesTest2;
+import org.openbravo.test.services.ServicesTest3;
 import org.openbravo.test.system.ErrorTextParserTest;
 import org.openbravo.test.system.ImportEntrySizeTest;
 import org.openbravo.test.system.Issue29934Test;
@@ -209,7 +212,12 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     RoleInheritanceTestSuite.class, //
 
     // db
-    SqlCallableStatement.class
+    SqlCallableStatement.class, //
+
+    // Product Services
+    ServicesTest.class, //
+    ServicesTest2.class, //
+    ServicesTest3.class
 
 })
 public class AllAntTaskTests {
