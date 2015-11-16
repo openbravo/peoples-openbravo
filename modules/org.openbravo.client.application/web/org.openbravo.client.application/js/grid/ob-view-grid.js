@@ -3274,7 +3274,8 @@ isc.OBViewGrid.addProperties({
     var localArguments = arguments,
         editForm = this.getEditForm(),
         totalRows, me = this,
-        record = this.getRecord(rowNum);
+        record = this.getRecord(rowNum),
+        selectedRecord = this.getSelectedRecord();
 
     if (record) {
       this.removeRecordFromValidationErrorList(record);
@@ -3313,7 +3314,6 @@ isc.OBViewGrid.addProperties({
       if (record && record._new) {
         // after cancelling a not saved record, the value for the selected record should be cleared
         // see issue https://issues.openbravo.com/view.php?id=31434
-        var selectedRecord = me.getSelectedRecord();
         if (me.selection && selectedRecord) {
           me.selection.deselect(selectedRecord);
         }
