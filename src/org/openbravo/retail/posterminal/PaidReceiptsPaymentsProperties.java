@@ -38,7 +38,7 @@ public class PaidReceiptsPaymentsProperties extends ModelExtension {
             "reversalPayment"));
         add(new HQLProperty(
             "(case when scheduleDetail.orderPaymentSchedule.order.grandTotalAmount < 0 then true else false end)",
-            "isNegative"));
+            "isNegativeOrder"));
       }
     };
 

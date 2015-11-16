@@ -3178,10 +3178,10 @@
         'paid': OB.DEC.sub(0, payment.get('paid')),
         'reversedPaymentId': payment.get('paymentId'),
         'index': OB.DEC.add(1, payments.indexOf(payment)),
-        'isNegative': this.getGross() < 0 ? true : false
+        'isNegativeOrder': this.getGross() < 0 ? true : false
       }));
       payment.set('isReversed', true);
-      payment.set('isNegative', this.getGross() < 0 ? true : false);
+      payment.set('isNegativeOrder', this.getGross() < 0 ? true : false);
       this.save();
     },
 

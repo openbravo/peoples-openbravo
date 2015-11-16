@@ -1191,10 +1191,10 @@ enyo.kind({
     this.addStyles('min-height: 29px;');
     if (this.model.get('reversedPaymentId')) {
       this.$.name.setContent('*' + (OB.MobileApp.model.getPaymentName(this.model.get('kind')) || this.model.get('name')));
-      this.$.amount.setContent(this.model.printAmountWithSignum(this.model.get('isNegative')));
+      this.$.amount.setContent(this.model.printAmountWithSignum(this.model.get('isNegativeOrder')));
     } else if (this.model.get('isReversed')) {
       this.$.name.setContent((OB.MobileApp.model.getPaymentName(this.model.get('kind')) || this.model.get('name')) + OB.I18N.getLabel('OBPOS_ReversedPayment'));
-      this.$.amount.setContent(this.model.printAmountWithSignum(this.model.get('isNegative')));
+      this.$.amount.setContent(this.model.printAmountWithSignum(this.model.get('isNegativeOrder')));
     } else {
       this.$.name.setContent(OB.MobileApp.model.getPaymentName(this.model.get('kind')) || this.model.get('name'));
       this.$.amount.setContent(this.model.printAmount());
