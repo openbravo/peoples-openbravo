@@ -144,13 +144,6 @@ public class CostAdjustmentProcess {
     }
   }
 
-  /**
-   * Permanently adjusted Transactions with and adjustment amount different than zero should not be
-   * adjusted. The only exception are the Opening Inventories. Due to backdated Transactions that
-   * can modify the stock or the stock valuation, it is necessary to adjust this Opening Inventories
-   * to fix rounding issues.
-   */
-
   private void checkPermanentelyAdjustedTrx(String strCostAdjId) throws OBException {
     StringBuffer where = new StringBuffer();
     where.append(" as cal");
