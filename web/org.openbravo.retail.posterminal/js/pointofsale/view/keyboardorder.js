@@ -393,6 +393,9 @@ enyo.kind({
       stateless: true,
       action: function (keyboard, txt) {
         var qty = 1;
+        if (!me.selectedModels || !keyboard.line) {
+          return;
+        }
 
         function callback() {
           OB.UTIL.HookManager.executeHooks('OBPOS_PostDeleteLine', {
@@ -424,6 +427,9 @@ enyo.kind({
       action: function (keyboard, txt) {
         var qty = 1,
             value, i, j, k, h, line, relatedLine, lineFromSelected;
+        if (!me.selectedModels || !keyboard.line) {
+          return;
+        }
 
         function callback() {
           OB.UTIL.HookManager.executeHooks('OBPOS_PostDeleteLine', {
