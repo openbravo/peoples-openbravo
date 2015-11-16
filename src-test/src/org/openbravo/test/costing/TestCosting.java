@@ -8339,6 +8339,8 @@ public class TestCosting extends WeldBaseTest {
     final int day1 = 5;
     final int day2 = 10;
     final int day3 = 15;
+    final int day4 = 20;
+    final int day5 = 25;
     final BigDecimal price1 = new BigDecimal("4.00");
     final BigDecimal price2 = new BigDecimal("3.00");
     final BigDecimal price3 = new BigDecimal("3.3333");
@@ -8359,33 +8361,33 @@ public class TestCosting extends WeldBaseTest {
       // Create purchase order and book it
       Order purchaseOrder1 = createPurchaseOrder(product, price1, quantity1, day0);
 
-      // Create purchase order and book it
-      Order purchaseOrder2 = createPurchaseOrder(product, price2, quantity1, day0);
-
-      // Create purchase order and book it
-      Order purchaseOrder3 = createPurchaseOrder(product, price2, quantity1, day0);
-
       // Create goods receipt, run costing background, post it and assert it
-      ShipmentInOut goodsReceipt1 = createGoodsReceipt(purchaseOrder1, price1, quantity1, day1);
+      ShipmentInOut goodsReceipt1 = createGoodsReceipt(purchaseOrder1, price1, quantity1, day0);
+
+      // Create purchase order and book it
+      Order purchaseOrder2 = createPurchaseOrder(product, price2, quantity1, day1);
 
       // Create goods receipt, run costing background, post it and assert it
       ShipmentInOut goodsReceipt2 = createGoodsReceipt(purchaseOrder2, price2, quantity1, day1);
 
+      // Create purchase order and book it
+      Order purchaseOrder3 = createPurchaseOrder(product, price2, quantity1, day2);
+
       // Create goods receipt, run costing background, post it and assert it
-      ShipmentInOut goodsReceipt3 = createGoodsReceipt(purchaseOrder3, price2, quantity1, day1);
+      ShipmentInOut goodsReceipt3 = createGoodsReceipt(purchaseOrder3, price2, quantity1, day2);
 
       // Create goods shipment, run costing background, post it and assert it
-      ShipmentInOut goodsShipment1 = createGoodsShipment(product, price3, quantity1, day2);
+      ShipmentInOut goodsShipment1 = createGoodsShipment(product, price3, quantity1, day3);
 
       // Create goods shipment, run costing background, post it and assert it
-      ShipmentInOut goodsShipment2 = createGoodsShipment(product, price3, quantity1, day2);
+      ShipmentInOut goodsShipment2 = createGoodsShipment(product, price3, quantity1, day4);
 
       // Add sleep to avoid assert errors
       Thread.sleep(1000);
 
       // Create inventory amount update and run costing background
       InventoryAmountUpdate inventoryAmountUpdate = createInventoryAmountUpdate(product, price3,
-          price4, price5, quantity1, day3);
+          price4, price5, quantity1, day5);
 
       // Assert product transactions
       List<ProductTransactionAssert> productTransactionAssertList = new ArrayList<ProductTransactionAssert>();
@@ -8430,7 +8432,7 @@ public class TestCosting extends WeldBaseTest {
       List<List<CostAdjustmentAssert>> costAdjustmentAssertList = new ArrayList<List<CostAdjustmentAssert>>();
       List<CostAdjustmentAssert> costAdjustmentAssertLineList1 = new ArrayList<CostAdjustmentAssert>();
       costAdjustmentAssertLineList1.add(new CostAdjustmentAssert(transactionList.get(5), "NSC",
-          quantity1.multiply(price4).add(quantity1.multiply(price3).negate()), day3, true, false));
+          quantity1.multiply(price4).add(quantity1.multiply(price3).negate()), day5, true, false));
       costAdjustmentAssertList.add(costAdjustmentAssertLineList1);
       assertCostAdjustment(costAdjustmentList, costAdjustmentAssertList);
 
