@@ -139,9 +139,8 @@ public abstract class CostingAlgorithmAdjustmentImp {
       costAdjLine = getCostAdjLine();
     }
 
-    // Backdated transactions are inserted with a null adjustment amount, in case we are not
-    // adjusting a Inventory Amount Update transaction.
-    if (costAdjLine.isBackdatedTrx() && costAdjLine.getAdjustmentAmount() == null) {
+    // Backdated transactions are inserted with a null adjustment amount.
+    if (costAdjLine.isBackdatedTrx()) {
       calculateBackdatedTrxAdjustment(costAdjLine);
     }
 

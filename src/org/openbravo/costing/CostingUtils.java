@@ -52,17 +52,13 @@ import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.enterprise.Locator;
 import org.openbravo.model.common.enterprise.Organization;
-import org.openbravo.model.common.enterprise.Warehouse;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.financialmgmt.calendar.Period;
 import org.openbravo.model.materialmgmt.cost.Costing;
 import org.openbravo.model.materialmgmt.cost.CostingRule;
-import org.openbravo.model.materialmgmt.cost.InvAmtUpdLnInventories;
 import org.openbravo.model.materialmgmt.cost.TransactionCost;
-import org.openbravo.model.materialmgmt.transaction.InventoryCount;
-import org.openbravo.model.materialmgmt.transaction.InventoryCountLine;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
@@ -639,39 +635,5 @@ public class CostingUtils {
     criteria.setFilterOnReadableOrganization(false);
     criteria.setMaxResults(1);
     return criteria.uniqueResult() != null;
-  }
-
-  /**
-   * Check if trx is the last opening one of an Inventory Amount Update
-   */
-  public static boolean isLastOpeningTransaction(MaterialTransaction trx,
-      boolean includeWarehouseDimension) {
-
-    StringBuffer where = new StringBuffer();
-    where.append(" select trx." + MaterialTransaction.PROPERTY_ID + " as trxid");
-    where.append(" from " + MaterialTransaction.ENTITY_NAME + " as trx");
-    where.append(" join trx." + MaterialTransaction.PROPERTY_PHYSICALINVENTORYLINE + " as il");
-    where.append(" join il." + InventoryCountLine.PROPERTY_PHYSINVENTORY + " as i");
-    where.append(" join i."
-        + InventoryCount.PROPERTY_INVENTORYAMOUNTUPDATELINEINVENTORIESINITINVENTORYLIST
-        + " as iaui");
-    where.append(" join iaui." + InvAmtUpdLnInventories.PROPERTY_WAREHOUSE + " as w");
-    where.append(" where i." + InventoryCount.PROPERTY_INVENTORYTYPE + " = 'O'");
-    where.append(" and iaui." + InvAmtUpdLnInventories.PROPERTY_CAINVENTORYAMTLINE + " = :iaul");
-    if (includeWarehouseDimension) {
-      where.append(" and iaui." + InvAmtUpdLnInventories.PROPERTY_WAREHOUSE + " = :warehouse");
-    }
-    where.append(" order by w." + Warehouse.PROPERTY_NAME + " desc");
-    where.append(" , il." + InventoryCountLine.PROPERTY_LINENO + " desc");
-
-    Query qry = OBDal.getInstance().getSession().createQuery(where.toString());
-    OBDal.getInstance().refresh(trx.getPhysicalInventoryLine().getPhysInventory());
-    qry.setParameter("iaul", trx.getPhysicalInventoryLine().getPhysInventory()
-        .getInventoryAmountUpdateLineInventoriesInitInventoryList().get(0).getCaInventoryamtline());
-    if (includeWarehouseDimension) {
-      qry.setParameter("warehouse", trx.getStorageBin().getWarehouse());
-    }
-    qry.setMaxResults(1);
-    return StringUtils.equals(trx.getId(), (String) qry.uniqueResult());
   }
 }

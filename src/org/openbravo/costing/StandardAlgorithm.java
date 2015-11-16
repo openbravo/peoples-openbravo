@@ -20,10 +20,8 @@ package org.openbravo.costing;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.Date;
 
 import org.openbravo.base.exception.OBException;
-import org.openbravo.costing.CostingServer.TrxType;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBDateUtils;
@@ -47,15 +45,8 @@ public class StandardAlgorithm extends CostingAlgorithm {
   }
 
   protected BigDecimal getOutgoingTransactionCost() {
-    Date date;
-    if (costingRule.isBackdatedTransactionsFixed() || trxType == TrxType.InventoryOpening
-        || trxType == TrxType.InventoryClosing) {
-      date = transaction.getMovementDate();
-    } else {
-      date = transaction.getTransactionProcessDate();
-    }
-    BigDecimal standardCost = CostingUtils.getStandardCost(transaction.getProduct(), costOrg, date,
-        costDimensions, costCurrency);
+    BigDecimal standardCost = CostingUtils.getStandardCost(transaction.getProduct(), costOrg,
+        transaction.getTransactionProcessDate(), costDimensions, costCurrency);
     return standardCost.multiply(transaction.getMovementQuantity().abs());
   }
 
@@ -69,18 +60,18 @@ public class StandardAlgorithm extends CostingAlgorithm {
     BigDecimal unitCost = transaction.getPhysicalInventoryLine().getCost()
         .setScale(costCurrency.getCostingPrecision().intValue(), RoundingMode.HALF_UP);
     Costing stdCost = CostingUtils.getStandardCostDefinition(transaction.getProduct(), costOrg,
-        transaction.getMovementDate(), costDimensions);
+        transaction.getTransactionProcessDate(), costDimensions);
 
     if (stdCost == null) {
       // If no standard cost is found throw an exception.
       throw new OBException("@NoStandardCostDefined@ @Organization@:" + costOrg.getName()
           + ", @Product@: " + transaction.getProduct().getName() + ", @Date@: "
-          + OBDateUtils.formatDate(transaction.getMovementDate()));
+          + OBDateUtils.formatDate(transaction.getTransactionProcessDate()));
     }
     BigDecimal currentCost = stdCost.getCost();
     if (stdCost.getCurrency().getId().equals(costCurrency.getId())) {
       currentCost = FinancialUtils.getConvertedAmount(currentCost, stdCost.getCurrency(),
-          costCurrency, transaction.getMovementDate(), costOrg, "C");
+          costCurrency, transaction.getTransactionProcessDate(), costOrg, "C");
     }
     if (currentCost.compareTo(unitCost) == 0) {
       // Unit cost and current cost don't change return regular outgoing cost and do not create a
@@ -88,15 +79,26 @@ public class StandardAlgorithm extends CostingAlgorithm {
       return getOutgoingTransactionCost();
     }
     BigDecimal trxCost = unitCost.multiply(transaction.getMovementQuantity().abs());
-    insertCost(stdCost, unitCost);
+    // If it is a backdated transaction do not insert a new costing.
+    if (isNotBackdatedTrx()) {
+      insertCost(stdCost, unitCost);
+    }
 
     return trxCost;
+  }
+
+  private boolean isNotBackdatedTrx() {
+    if (!costingRule.isBackdatedTransactionsFixed()) {
+      return true;
+    }
+    return !CostAdjustmentUtils.isNeededBackdatedCostAdjustment(transaction,
+        costingRule.isWarehouseDimension(), CostingUtils.getCostingRuleStartingDate(costingRule));
   }
 
   private void insertCost(Costing currentCosting, BigDecimal newCost) {
     Costing costing = (Costing) DalUtil.copy(currentCosting, false);
     costing.setCost(newCost);
-    costing.setStartingDate(transaction.getMovementDate());
+    costing.setStartingDate(transaction.getTransactionProcessDate());
     costing.setCurrency(costCurrency);
     costing.setInventoryTransaction(transaction);
     if (transaction.getProduct().isProduction()) {
@@ -109,7 +111,7 @@ public class StandardAlgorithm extends CostingAlgorithm {
     costing.setPermanent(true);
     OBDal.getInstance().save(costing);
 
-    currentCosting.setEndingDate(transaction.getMovementDate());
+    currentCosting.setEndingDate(transaction.getTransactionProcessDate());
     OBDal.getInstance().save(currentCosting);
   }
 
