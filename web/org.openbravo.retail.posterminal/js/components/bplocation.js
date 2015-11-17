@@ -92,13 +92,17 @@ enyo.kind({
   i18nLabel: 'OBPOS_LblNewCustomerAddress',
   handlers: {
     onSetModel: 'setModel',
-    onNewBPLocDisabled: 'doDisableNewBPLoc'
+    onNewBPLocDisabled: 'doDisableNewBPLoc',
+    onSetBusinessPartner: 'setBusinessPartner'
   },
   setModel: function (inSender, inEvent) {
     this.model = inEvent.model;
   },
   doDisableNewBPLoc: function (inSender, inEvent) {
     this.putDisabled(inEvent.status);
+  },
+  setBusinessPartner: function (inSender, inEvent) {
+    this.bPartner = inEvent.bPartner;
   },
   tap: function (model) {
     if (this.disabled) {
@@ -123,7 +127,12 @@ enyo.kind({
         }
       });
     }
-    OB.Dal.get(OB.Model.BusinessPartner, this.model.get('order').get('bp').get('id'), successCallbackBPs, errorCallback);
+
+    if (this.bPartner) {
+      successCallbackBPs(this.bPartner);
+    } else {
+      OB.Dal.get(OB.Model.BusinessPartner, this.model.get('order').get('bp').get('id'), successCallbackBPs, errorCallback);
+    }
   },
   putDisabled: function (status) {
     if (status === false) {
@@ -147,13 +156,17 @@ enyo.kind({
   disabled: false,
   handlers: {
     onSetModel: 'setModel',
-    onNewBPLocDisabled: 'doDisableNewBPLoc'
+    onNewBPLocDisabled: 'doDisableNewBPLoc',
+    onSetBusinessPartner: 'setBusinessPartner'
   },
   doDisableNewBPLoc: function (inSender, inEvent) {
     this.putDisabled(inEvent.status);
   },
   setModel: function (inSender, inEvent) {
     this.model = inEvent.model;
+  },
+  setBusinessPartner: function (inSender, inEvent) {
+    this.bPartner = inEvent.bPartner;
   },
   events: {
     onHideThisPopup: ''
@@ -167,7 +180,7 @@ enyo.kind({
       name: 'customerAddressSearch',
       params: {
         caller: 'mainSubWindow',
-        bPartner: this.model.get('order').get('bp').get('id')
+        bPartner: this.bPartner ? this.bPartner.get('id') : this.model.get('order').get('bp').get('id')
       }
     });
   },
@@ -435,10 +448,13 @@ enyo.kind({
     this.waterfall('onSetShow', {
       visibility: this.args.visibilityButtons
     });
+    this.waterfall('onSetBusinessPartner', {
+      bPartner: this.args.businessPartner ? this.args.businessPartner : this.model.get('order').get('bp')
+    });
     this.bubble('onSetBusinessPartnerTarget', {
       target: this.args.target
     });
-    this.changedTitle(this.model.get('order').get('bp'));
+    this.changedTitle(this.args.businessPartner ? this.args.businessPartner : this.model.get('order').get('bp'));
     this.$.body.$.listBpsLoc.setBPartner(this.args.businessPartner ? this.args.businessPartner : this.model.get('order').get('bp'));
     this.$.body.$.listBpsLoc.$.bpsloclistitemprinter.$.theader.$.modalBpLocScrollableHeader.searchAction();
     this.$.body.$.listBpsLoc.$.bpsloclistitemprinter.$.theader.$.modalBpLocScrollableHeader.$.newAction.putDisabled(!OB.MobileApp.model.hasPermission('OBPOS_retail.editCustomers'));
