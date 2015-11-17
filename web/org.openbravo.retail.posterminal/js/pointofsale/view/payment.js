@@ -1002,7 +1002,7 @@ enyo.kind({
   kind: 'OB.OBPOSPointOfSale.UI.ProcessButton',
   i18nLabel: 'OBPOS_LblCreditSales',
   classes: 'btn-icon-small btnlink-green',
-  style: 'width: 120px; float: right; margin: 10px 5px 5px 0px; height: 2.0em; display:block; clear: right',
+  style: 'width: 120px; float: right; margin: 10px 5px 5px 0px; height: 2.0em; display:block; clear: right; font-style: normal;',
   permission: 'OBPOS_receipt.creditsales',
   events: {
     onShowPopup: ''
