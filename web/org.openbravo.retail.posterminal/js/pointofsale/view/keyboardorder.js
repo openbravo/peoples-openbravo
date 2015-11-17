@@ -246,6 +246,9 @@ enyo.kind({
         if (value || value === 0) {
           keyboard.receipt.set('undo', null);
           var selection = [];
+          if (me.selectedModels && me.selectedModels.length > 1) {
+            keyboard.receipt.set('multipleUndo', true);
+          }
           _.each(me.selectedModels, function (model) {
             selection.push(model);
             keyboard.line = model;
