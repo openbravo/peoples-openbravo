@@ -393,7 +393,8 @@
         process.exec({
           terminalName: window.localStorage.getItem('terminalName'),
           terminalKeyIdentifier: window.localStorage.getItem('terminalKeyIdentifier'),
-          terminalAuthentication: window.localStorage.getItem('terminalAuthentication')
+          terminalAuthentication: window.localStorage.getItem('terminalAuthentication'),
+          cacheSessionId: window.localStorage.getItem('cacheSessionId')
         }, function (data) {
           if (data && data.exception) {
             //ERROR or no connection
@@ -426,6 +427,19 @@
       } else {
         run();
       }
+      this.postSyncProcessActions();
+    },
+
+    postSyncProcessActions: function () {
+      OB.Dal.get(OB.Model.SalesRepresentative, OB.MobileApp.model.usermodel.get('id'), function (salesrepresentative) {
+        if (!salesrepresentative) {
+          OB.MobileApp.model.get('context').user.isSalesRepresentative = false;
+        } else {
+          OB.MobileApp.model.get('context').user.isSalesRepresentative = true;
+        }
+      }, function () {}, function () {
+        OB.MobileApp.model.get('context').user.isSalesRepresentative = false;
+      });
     },
 
     returnToOnline: function () {
@@ -500,7 +514,8 @@
           process.exec({
             terminalName: window.localStorage.getItem('terminalName'),
             terminalKeyIdentifier: window.localStorage.getItem('terminalKeyIdentifier'),
-            terminalAuthentication: window.localStorage.getItem('terminalAuthentication')
+            terminalAuthentication: window.localStorage.getItem('terminalAuthentication'),
+            cacheSessionId: window.localStorage.getItem('cacheSessionId')
           }, function (data) {
             if (data && data.exception) {
               //ERROR or no connection
@@ -854,11 +869,19 @@
     initActions: function (callback) {
       var params = this.get('loginUtilsParams') || {},
           me = this;
+      var cacheSessionId = null;
+      if (window.localStorage.getItem('cacheSessionId') && window.localStorage.getItem('cacheSessionId').length === 32) {
+        cacheSessionId = window.localStorage.getItem('cacheSessionId');
+      }
+      params.cacheSessionId = cacheSessionId;
       params.command = 'initActions';
       new OB.OBPOSLogin.UI.LoginRequest({
         url: '../../org.openbravo.retail.posterminal.service.loginutils'
       }).response(this, function (inSender, inResponse) {
         window.localStorage.setItem('terminalAuthentication', inResponse.terminalAuthentication);
+        if (!(window.localStorage.getItem('cacheSessionId') && window.localStorage.getItem('cacheSessionId').length === 32)) {
+          window.localStorage.setItem('cacheSessionId', inResponse.cacheSessionId);
+        }
         //Save available servers and services and initialize Request Router layer
         if (inResponse.servers && inResponse.services) {
           localStorage.servers = JSON.stringify(inResponse.servers);

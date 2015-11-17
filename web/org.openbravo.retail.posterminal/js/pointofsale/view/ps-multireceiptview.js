@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013 Openbravo S.L.U.
+ * Copyright (C) 2013-2015 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -19,7 +19,7 @@ enyo.kind({
   components: [{
     style: 'margin: 5px',
     components: [{
-      style: 'position: relative;background-color: #ffffff; color: black;overflow-y: auto; max-height:622px',
+      style: 'position: relative; background-color: #ffffff; color: black; overflow-y: auto; max-height: 622px',
       components: [{
         style: 'padding: 5px;',
         components: [{

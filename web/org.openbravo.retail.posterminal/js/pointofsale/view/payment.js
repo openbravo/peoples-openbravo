@@ -80,7 +80,9 @@ enyo.kind({
       } else if (!_.isNull(pending) && pending) {
         this.setTotalPending(pending, payment.mulrate, payment.symbol, payment.currencySymbolAtTheRight, inSender, inEvent);
       }
-      this.checkValidPayments(paymentstatus, payment);
+      if (paymentstatus) {
+        this.checkValidPayments(paymentstatus, payment);
+      }
       if (!_.isNull(this.receipt) && this.receipt.get('isLayaway') && this.receipt.get('orderType') !== 3) {
         this.$.layawayaction.updateVisibility(true);
       }

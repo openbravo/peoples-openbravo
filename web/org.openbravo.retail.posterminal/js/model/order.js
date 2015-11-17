@@ -245,7 +245,7 @@
     },
     printAmount: function () {
       if (this.get('rate')) {
-        return OB.I18N.formatCurrency(OB.DEC.mul(this.get('amount') < 0 ? OB.DEC.mul(this.get('amount'), -1) : this.get('amount'), this.get('rate')));
+        return OB.I18N.formatCurrency(OB.DEC.mul(this.get('amount'), this.get('rate')));
       } else {
         return OB.I18N.formatCurrency(this.get('amount'));
       }
@@ -830,33 +830,44 @@
         OB.UTIL.showError(OB.I18N.getLabel('OBPOS_QuotationClosed'));
         return;
       }
-      options = options || {};
-      options.setUndo = (_.isUndefined(options.setUndo) || _.isNull(options.setUndo) || options.setUndo !== false) ? true : options.setUndo;
-
-      if (!OB.UTIL.isNullOrUndefined(line.get('originalOrderLineId'))) {
-        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_CannotChangePrice'));
-      } else if (OB.DEC.isNumber(price)) {
-        var oldprice = line.get('price');
-        if (OB.DEC.compare(price) >= 0) {
-          var me = this;
-          // sets the new price
-          line.set('price', price);
-          // sets the undo action
-          if (options.setUndo) {
-            this.set('undo', {
-              text: OB.I18N.getLabel('OBPOS_SetPrice', [line.printPrice(), line.get('product').get('_identifier')]),
-              oldprice: oldprice,
-              line: line,
-              undo: function () {
-                line.set('price', oldprice);
-                me.set('undo', null);
-              }
-            });
-          }
+      OB.UTIL.HookManager.executeHooks('OBPOS_PreSetPrice', {
+        context: this,
+        line: line,
+        price: price,
+        options: options
+      }, function (args) {
+        var me = args.context;
+        if (args.cancellation && args.cancellation === true) {
+          return;
         }
-        this.adjustPayment();
-      }
-      this.save();
+
+        options = args.options || {};
+        options.setUndo = (_.isUndefined(options.setUndo) || _.isNull(options.setUndo) || options.setUndo !== false) ? true : options.setUndo;
+
+        if (!OB.UTIL.isNullOrUndefined(args.line.get('originalOrderLineId'))) {
+          OB.UTIL.showError(OB.I18N.getLabel('OBPOS_CannotChangePrice'));
+        } else if (OB.DEC.isNumber(args.price)) {
+          var oldprice = line.get('price');
+          if (OB.DEC.compare(args.price) >= 0) {
+            // sets the new price
+            args.line.set('price', args.price);
+            // sets the undo action
+            if (options.setUndo) {
+              me.set('undo', {
+                text: OB.I18N.getLabel('OBPOS_SetPrice', [args.line.printPrice(), args.line.get('product').get('_identifier')]),
+                oldprice: oldprice,
+                line: args.line,
+                undo: function () {
+                  args.line.set('price', oldprice);
+                  me.set('undo', null);
+                }
+              });
+            }
+          }
+          me.adjustPayment();
+        }
+        me.save();
+      });
     },
 
     setLineProperty: function (line, property, value) {
@@ -1521,7 +1532,7 @@
 
           }, function () {
             OB.error(arguments);
-          }, true);
+          });
 
         } else if (businessPartner.get('locationModel')) { //Location has changed or we are assigning current bp
           var location = oldbp.get('locationModel');
@@ -1724,7 +1735,7 @@
       this.set('generateInvoice', OB.MobileApp.model.get('terminal').terminalType.generateInvoice);
       this.set('documentType', OB.MobileApp.model.get('terminal').terminalType.documentType);
       this.set('createdBy', OB.MobileApp.model.get('orgUserId'));
-      if (OB.MobileApp.model.get('context').isSalesRepresentative) {
+      if (OB.MobileApp.model.get('context').user.isSalesRepresentative) {
         this.set('salesRepresentative', OB.MobileApp.model.get('context').user.id);
       } else {
         this.set('salesRepresentative', null);
@@ -2403,26 +2414,26 @@
     },
 
     getOrderDescription: function () {
-      var desc = '{id: \'' + this.get('id') + '\', Docno: \'' + this.get('documentNo') + '\', Total gross: ' + this.get('gross') + ', Lines: [';
+      var desc = "{id: '" + this.get('id') + "', Docno: '" + this.get('documentNo') + "', Total gross: '" + this.get('gross') + "', Lines: ['";
       var i = 0;
       var propt;
       this.get('lines').forEach(function (l) {
         if (i !== 0) {
           desc += ",";
         }
-        desc += '{Product: \'' + l.get('product').get('_identifier') + '\', Quantity: ' + l.get('qty') + ', Gross: ' + l.get('gross') + ', LineGrossAmount: ' + l.get('lineGrossAmount') + ', DiscountedGross: ' + l.get('discountedGross') + ', Net: ' + l.get('net') + ', DiscountedNet: ' + l.get('discountedNet') + ', NonDiscountedNet: ' + l.get('nondiscountednet') + ', TaxAmount: ' + l.get('taxAmount') + ', GrossUnitPrice: ' + l.get('grossUnitPrice') + '}';
+        desc += "'{Product: '" + l.get('product').get('_identifier') + "', Quantity: '" + l.get('qty') + "', Gross: '" + l.get('gross') + "', LineGrossAmount: '" + l.get('lineGrossAmount') + "', DiscountedGross: '" + l.get('discountedGross') + "', Net: '" + l.get('net') + "', DiscountedNet: '" + l.get('discountedNet') + "', NonDiscountedNet: '" + l.get('nondiscountednet') + "', TaxAmount: '" + l.get('taxAmount') + "', GrossUnitPrice: '" + l.get('grossUnitPrice') + "'}";
         i++;
       });
-      desc += '], Payments: [';
+      desc += "], Payments: [";
       i = 0;
       this.get('payments').forEach(function (l) {
         if (i !== 0) {
           desc += ",";
         }
-        desc += '{PaymentMethod: \'' + l.get('kind') + '\', Amount: ' + l.get('amount') + ', OrigAmount: ' + l.get('origAmount') + ', Date: \'' + l.get('date') + '\', isocode: \'' + l.get('isocode') + '\'}';
+        desc += "{PaymentMethod: '" + l.get('kind') + "', Amount: '" + l.get('amount') + "', OrigAmount: '" + l.get('origAmount') + "', Date: '" + l.get('date') + "', isocode: '" + l.get('isocode') + "'}";
         i++;
       });
-      desc += '], Taxes: [';
+      desc += "], Taxes: [";
       i = 0;
       for (propt in this.get('taxes')) {
         if (this.get('taxes').hasOwnProperty(propt)) {
@@ -2430,12 +2441,12 @@
           if (i !== 0) {
             desc += ",";
           }
-          desc += '{TaxId: \'' + propt + '\', TaxRate: ' + obj.rate + ', TaxNet: ' + obj.net + ', TaxAmount: ' + obj.amount + ', TaxName: \'' + obj.name + '\'}';
+          desc += "{TaxId: '" + propt + "', TaxRate: '" + obj.rate + "', TaxNet: '" + obj.net + "', TaxAmount: '" + obj.amount + "', TaxName: '" + obj.name + "'}";
           i++;
         }
       }
-      desc += ']';
-      desc += '}';
+      desc += "]";
+      desc += "}";
       return desc;
     }
   });
@@ -2520,7 +2531,7 @@
       order.set('currency', OB.MobileApp.model.get('terminal').currency);
       order.set('currency' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, OB.MobileApp.model.get('terminal')['currency' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER]);
       order.set('warehouse', OB.MobileApp.model.get('terminal').warehouse);
-      if (OB.MobileApp.model.get('context').isSalesRepresentative) {
+      if (OB.MobileApp.model.get('context').user.isSalesRepresentative) {
         order.set('salesRepresentative', OB.MobileApp.model.get('context').user.id);
         order.set('salesRepresentative' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, OB.MobileApp.model.get('context').user._identifier);
       } else {
@@ -2600,7 +2611,7 @@
         }
         order.set('id', model.orderid);
         if (order.get('documentType') === OB.MobileApp.model.get('terminal').terminalType.documentTypeForReturns) {
-          //return
+          //It's a return
           order.set('orderType', 1);
         }
       }
@@ -2653,9 +2664,6 @@
                 if (numberOfLines === 0) {
                   order.set('lines', lines);
                   order.set('qty', orderQty);
-                  if (order.get('orderType') === 1) {
-                    order.changeSignToShowReturns();
-                  }
                   order.set('json', JSON.stringify(order.toJSON()));
                   callback(order);
                   enyo.$.scrim.hide();

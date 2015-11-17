@@ -53,7 +53,7 @@
           difference = OB.DEC.sub(difference, fieldValue);
         });
         if (difference !== 0) {
-          OB.error(enyo.format("%s: [" + this.get('documentNo') + "] total gross does not equal the sum of the gross of each line. event: '%s', gross: %s, difference: %s", errorHeader, eventParams, gross, difference));
+          OB.error(enyo.format("%s: [%s] total gross does not equal the sum of the gross of each line. event: '%s', gross: %s, difference: %s", errorHeader, this.get('documentNo'), eventParams, gross, difference));
         }
 
         // 4. verify that a cashupId is available
@@ -158,6 +158,7 @@
         OB.info("[receipt.closed] Starting transaction. ReceiptId: " + receipt.get('id'));
         OB.Dal.transaction(function (tx) {
           receipt.set('hasbeenpaid', 'Y');
+          frozenReceipt.set('hasbeenpaid', 'Y');
           // when all the properties of the receipt have been set, keep a copy
           OB.UTIL.cashUpReport(receipt, function () {
             OB.UTIL.calculateCurrentCash(null, tx);
@@ -174,6 +175,7 @@
           OB.error("[receipt.closed] The transaction failed to be commited. ReceiptId: " + receipt.get('id'));
           // rollback other changes
           receipt.set('hasbeenpaid', 'N');
+          frozenReceipt.set('hasbeenpaid', 'N');
           if (eventParams && eventParams.callback) {
             eventParams.callback({
               frozenReceipt: frozenReceipt,

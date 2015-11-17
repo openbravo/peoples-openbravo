@@ -197,6 +197,13 @@
         OB.Dal.save(taxModel, null, null, true);
       });
 
+      // Create Cash Management
+      _.each(cashup.get('cashMgmInfo'), function (cashMgm) {
+        var cashMgmModel = new OB.Model.CashManagement();
+        cashMgmModel.set(cashMgm);
+        OB.Dal.save(cashMgmModel, null, null, true);
+      });
+
       //current cashup
       if (cashup.get('cashPaymentMethodInfo').length !== 0) {
         _.each(cashup.get('cashPaymentMethodInfo'), function (paymentMethodCashUp) {
@@ -412,6 +419,11 @@
                   isocode: payment.isocode,
                   cashup_id: cashUp.at(0).get('id')
                 }), null, null, true);
+              } else if (!OB.UTIL.isNullOrUndefined(pAux)) {
+                if (pAux.get("name") !== payment.payment._identifier) {
+                  pAux.set("name", payment.payment._identifier);
+                  OB.Dal.save(pAux);
+                }
               }
             }
           }, function (lastCashUpPayments) {

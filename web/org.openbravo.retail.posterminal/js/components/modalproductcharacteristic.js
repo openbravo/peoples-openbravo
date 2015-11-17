@@ -114,9 +114,10 @@ enyo.kind({
   searchAction: function (inSender, inEvent) {
     var me = this,
         i, j, whereClause = '',
-        params = [];
+        params = [],
+        products = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.products;
+
     if (!OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
-      var products = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.products;
       var sql, productsIdsList;
 
       if (products.collection.length > 0) {
@@ -164,6 +165,7 @@ enyo.kind({
       return true;
 
     } else {
+
       var productFilterText, productcategory, productCharacteristicModel, productCharacteristic;
 
       productFilterText = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.searchProductCharacteristicHeader.$.productFilterText.getValue();
@@ -176,52 +178,56 @@ enyo.kind({
       var productFilter = {},
           criteria = {},
           brandfilter = {},
+          characteristicValuefilter = {},
           productText, characteristicfilter = {
           columns: ['characteristic_id'],
           operator: 'equals',
           value: this.parent.parent.characteristic.get('id'),
           isId: true
           };
-      if (productCharacteristicModel.get('brandFilter').length > 0) {
-        for (i = 0; i < productCharacteristicModel.get('brandFilter').length; i++) {
-          if (productCharacteristicModel.get('brandFilter')[i]) {
-            brandparams.push("'" + productCharacteristicModel.get('brandFilter')[i].id + "'");
+
+      if (products.collection.length > 0) {
+        if (productCharacteristicModel.get('brandFilter').length > 0) {
+          for (i = 0; i < productCharacteristicModel.get('brandFilter').length; i++) {
+            if (productCharacteristicModel.get('brandFilter')[i]) {
+              brandparams.push("'" + productCharacteristicModel.get('brandFilter')[i].id + "'");
+            }
           }
         }
-      }
 
-      if (productFilterText !== "" || productcategory !== "__all__") {
-        productFilter.columns = [];
-        productFilter.operator = OB.Dal.FILTER;
-        productFilter.value = 'ProductCH_Filter';
-        productText = (OB.MobileApp.model.hasPermission('OBPOS_remote.product' + OB.Dal.USESCONTAINS, true) ? '%' : '') + productFilterText + '%';
-        productFilter.params = [productText, productcategory];
-        remoteCriteria.push(productFilter);
-      }
-      if (brandparams.length > 0) {
-        brandfilter.columns = [];
-        brandfilter.operator = OB.Dal.FILTER;
-        brandfilter.value = 'BChV_Filter';
-        brandfilter.params = [brandparams.toString()];
-        remoteCriteria.push(brandfilter);
-      }
-
-      criteria.hqlCriteria = [];
-      productCharacteristic.customFilters.forEach(function (hqlFilter) {
-        if (!_.isUndefined(hqlFilter.hqlCriteriaCharacteristicsValue)) {
-          var hqlCriteriaFilter = hqlFilter.hqlCriteriaCharacteristicsValue();
-          if (!_.isUndefined(hqlCriteriaFilter)) {
-            hqlCriteriaFilter.forEach(function (filter) {
-              if (filter) {
-                remoteCriteria.push(filter);
-              }
-            });
-          }
+        if (productFilterText !== "" || productcategory !== "__all__") {
+          productFilter.columns = [];
+          productFilter.operator = OB.Dal.FILTER;
+          productFilter.value = 'ProductCH_Filter';
+          productText = (OB.MobileApp.model.hasPermission('OBPOS_remote.product' + OB.Dal.USESCONTAINS, true) ? '%' : '') + productFilterText + '%';
+          productFilter.params = [productText, productcategory];
+          remoteCriteria.push(productFilter);
         }
-      });
+        if (brandparams.length > 0) {
+          brandfilter.columns = [];
+          brandfilter.operator = OB.Dal.FILTER;
+          brandfilter.value = 'BChV_Filter';
+          brandfilter.params = [brandparams.toString()];
+          remoteCriteria.push(brandfilter);
+        }
 
+        criteria.hqlCriteria = [];
+        productCharacteristic.customFilters.forEach(function (hqlFilter) {
+          if (!_.isUndefined(hqlFilter.hqlCriteriaCharacteristicsValue)) {
+            var hqlCriteriaFilter = hqlFilter.hqlCriteriaCharacteristicsValue();
+            if (!_.isUndefined(hqlCriteriaFilter)) {
+              hqlCriteriaFilter.forEach(function (filter) {
+                if (filter) {
+                  remoteCriteria.push(filter);
+                }
+              });
+            }
+          }
+        });
+      }
       remoteCriteria.push(characteristicfilter);
       criteria.remoteFilters = remoteCriteria;
+
       OB.Dal.find(OB.Model.CharacteristicValue, criteria, function (dataValues) {
         if (dataValues && dataValues.length > 0) {
           for (i = 0; i < dataValues.length; i++) {
