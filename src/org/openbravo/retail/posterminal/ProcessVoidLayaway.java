@@ -189,9 +189,9 @@ public class ProcessVoidLayaway extends JSONProcessSimple {
         transaction.setBusinessPartner(order.getBusinessPartner());
         OBDal.getInstance().save(transaction);
         acc.setCurrentBalance(account.getCurrentBalance().subtract(foreignAmount.negate()));
-
-        OBDal.getInstance().getConnection(true).commit();
       }
+
+      OBDal.getInstance().getConnection(true).commit();
     } catch (Exception e) {
       throw new OBException("There was an error voiding the orde Layaway: ", e);
     } finally {
