@@ -1117,7 +1117,7 @@ enyo.kind({
       var deliveredresult = delivered();
       if (isPaidReceipt && !OB.MobileApp.model.hasPermission('OBPOS_receipt.CancelReplacePaidOrders', true) && deliveredresult === 'TD') {
         this.hide();
-      } else if (isLayaway && !OB.MobileApp.model.hasPermission('OBPOS_receipt.CancelReplaceLayaways', true) && (deliveredresult === 'ND' || !haspayments)) {
+      } else if (isLayaway && !OB.MobileApp.model.hasPermission('OBPOS_receipt.CancelReplaceLayaways', true) && (deliveredresult === 'ND' && !haspayments)) {
         this.hide();
       } else {
         this.show();
