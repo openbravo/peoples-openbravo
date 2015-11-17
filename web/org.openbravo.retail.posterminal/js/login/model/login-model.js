@@ -161,6 +161,7 @@
               if (OB.POS.hwserver.url && OB.POS.modelterminal.get('terminal').terminalType.userfid) {
                 var startRfidWebSocket = function startRfidWebSocket(webSocketServerLocation, reconnectTimeout, currentRetrials, retrialsBeforeWarning) {
                     var ws = new WebSocket(webSocketServerLocation);
+                    var barcodeActionHandler;
 
                     // Called when socket connection is established
                     ws.onopen = function () {
@@ -169,23 +170,13 @@
                         OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_ConnectedWithRFID'));
                         OB.info(OB.I18N.getLabel('OBPOS_ConnectedWithRFID'));
                       }
+                      barcodeActionHandler = new OB.UI.BarcodeActionHandler();
                     };
 
                     // Called when a message is received from server
                     ws.onmessage = function (evt) {
-                      var criteria = {
-                        uPCEAN: evt.data
-                      };
-                      OB.Dal.find(OB.Model.Product, criteria, function (products) {
-                        if (products.length > 0) {
-                          // If the product is found
-                          OB.MobileApp.model.receipt.addProduct(products.at(0), '1');
-                        } else {
-                          OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_RFIDCodeNotRecognized'));
-                        }
-                      }, function (tx, error) {
-                        // If the product is not found
-                        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_ErrorInRFIDProductFinding'));
+                      barcodeActionHandler.findProductByBarcode(evt.data, function (product) {
+                        OB.MobileApp.model.receipt.addProduct(product, '1');
                       });
                     };
 
