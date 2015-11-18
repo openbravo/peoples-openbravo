@@ -29,6 +29,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.provider.OBNotSingleton;
 import org.openbravo.base.provider.OBProvider;
@@ -272,7 +273,7 @@ public class SessionHandler implements OBNotSingleton {
       tx = null;
       err = false;
     } catch (SQLException e) {
-      log.error("Error while closing the connection", e);
+      log.error("Error while closing the connection", OBException.getCausingException(e));
     } finally {
       if (err) {
         try {
