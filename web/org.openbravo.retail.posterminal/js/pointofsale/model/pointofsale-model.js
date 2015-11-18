@@ -618,7 +618,10 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
       var auxReceipt = new OB.Model.Order();
       OB.UTIL.clone(receipt, auxReceipt);
       process.exec({
-        order: receipt
+        messageId: OB.UTIL.get_UUID(),
+        data: [{
+          order: receipt
+        }]
       }, function (data) {
         if (data && data.exception) {
           OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorVoidLayaway'));

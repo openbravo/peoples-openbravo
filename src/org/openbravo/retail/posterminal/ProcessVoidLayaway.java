@@ -19,11 +19,8 @@ import java.util.List;
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
-import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
-import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.advpaymentmngt.dao.TransactionsDao;
 import org.openbravo.advpaymentmngt.process.FIN_AddPayment;
@@ -39,6 +36,7 @@ import org.openbravo.dal.core.TriggerHandler;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.ad_forms.AcctServer;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.mobile.core.process.DataSynchronizationImportProcess;
 import org.openbravo.model.ad.access.OrderLineTax;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.enterprise.Organization;
@@ -54,21 +52,21 @@ import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.json.JsonConstants;
 
-public class ProcessVoidLayaway extends JSONProcessSimple {
+public class ProcessVoidLayaway extends POSDataSynchronizationProcess implements
+    DataSynchronizationImportProcess {
 
   HashMap<String, DocumentType> paymentDocTypes = new HashMap<String, DocumentType>();
   String paymentDescription = null;
-  private static final Logger log = Logger.getLogger(ProcessVoidLayaway.class);
 
   @Inject
   @Any
   private Instance<VoidLayawayHook> layawayhooks;
 
   @Override
-  public JSONObject exec(JSONObject jsonsent) throws JSONException, ServletException {
+  public JSONObject saveRecord(JSONObject jsonRecord) throws Exception {
 
     JSONArray respArray = new JSONArray();
-    JSONObject jsonorder = (JSONObject) jsonsent.get("order");
+    JSONObject jsonorder = (JSONObject) jsonRecord.get("order");
     try {
 
       Order order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
@@ -205,6 +203,10 @@ public class ProcessVoidLayaway extends JSONProcessSimple {
     result.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
     return result;
 
+  }
+
+  protected String getImportQualifier() {
+    return "OBPOS_VoidLayaway";
   }
 
   protected DocumentType getPaymentDocumentType(Organization org) {
