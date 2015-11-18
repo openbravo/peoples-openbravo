@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2013 Openbravo SLU
+ * All portions are Copyright (C) 2010-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -37,6 +37,7 @@ import org.openbravo.base.model.domaintype.DomainType;
 import org.openbravo.base.model.domaintype.LongDomainType;
 import org.openbravo.base.model.domaintype.StringDomainType;
 import org.openbravo.base.util.Check;
+import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 
 /**
@@ -82,9 +83,9 @@ public class ParameterUtils {
     }
   }
 
-  private static DomainType getParameterDomainType(Parameter parameter) {
-    return ModelProvider.getInstance().getReference(parameter.getReference().getId())
-        .getDomainType();
+  public static DomainType getParameterDomainType(Parameter parameter) {
+    String referenceId = (String) DalUtil.getId(parameter.getReference());
+    return ModelProvider.getInstance().getReference(referenceId).getDomainType();
   }
 
   /**
