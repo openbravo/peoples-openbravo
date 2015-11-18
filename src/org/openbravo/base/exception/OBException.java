@@ -11,13 +11,15 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 
 package org.openbravo.base.exception;
+
+import java.sql.BatchUpdateException;
 
 import org.apache.log4j.Logger;
 
@@ -30,6 +32,7 @@ import org.apache.log4j.Logger;
 public class OBException extends RuntimeException {
 
   private static final long serialVersionUID = 1L;
+  private boolean logExceptionNeeded;
 
   public OBException() {
     super();
@@ -40,8 +43,17 @@ public class OBException extends RuntimeException {
     this(message, cause, true);
   }
 
+  public OBException(String message, boolean logException) {
+    super(message);
+    logExceptionNeeded = logException;
+    if (logException) {
+      getLogger().error(message, this);
+    }
+  }
+
   public OBException(String message, Throwable cause, boolean logException) {
     super(message, cause);
+    logExceptionNeeded = logException;
     if (logException) {
       getLogger().error(message, cause);
     }
@@ -54,7 +66,13 @@ public class OBException extends RuntimeException {
 
   public OBException(Throwable cause) {
     super(cause);
-    getLogger().error(cause.getMessage(), cause);
+    Throwable foundCause = getCausingException(cause);
+    if (foundCause != cause) {
+      // passing foundCause ensures that the underlying stack trace is printed
+      getLogger().error(cause.getMessage() + " - " + foundCause.getMessage(), foundCause);
+    } else {
+      getLogger().error(cause.getMessage(), cause);
+    }
   }
 
   /**
@@ -65,5 +83,33 @@ public class OBException extends RuntimeException {
    */
   protected Logger getLogger() {
     return Logger.getLogger(this.getClass());
+  }
+
+  /**
+   * This method returns if log exception is needed.
+   * 
+   * @return the logExceptionNeeded
+   */
+  public boolean isLogExceptionNeeded() {
+    return logExceptionNeeded;
+  }
+
+  /**
+   * Hibernate and JDBC will wrap the exception thrown by triggers/constraints in another exception
+   * (the java.sql.BatchUpdateException) and this exception is sometimes wrapped again. Also the
+   * java.sql.BatchUpdateException stores the underlying exception in the nextException and not in
+   * the cause property. This method retrieves the original cause of the exception in this type of
+   * cases.
+   * 
+   * @return a Throwable object with the causing exception
+   */
+  public static Throwable getCausingException(Throwable t) {
+    if (t instanceof BatchUpdateException) {
+      return ((BatchUpdateException) t).getNextException();
+    } else if (t.getCause() instanceof BatchUpdateException
+        && ((BatchUpdateException) t.getCause()).getNextException() != null) {
+      return ((BatchUpdateException) t.getCause()).getNextException();
+    }
+    return t;
   }
 }

@@ -85,7 +85,7 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider {
           // so we need to obtain the path through getClass method
           java.net.URL url = this.getClass().getResource("/");
           String mSchemaPath = url.getFile();
-          if (mSchemaPath != null || !mSchemaPath.equals("")) {
+          if (mSchemaPath != null && !mSchemaPath.equals("")) {
             String separator = "/";
             int lastSlash = mSchemaPath.lastIndexOf(separator);
             if (lastSlash == -1) {

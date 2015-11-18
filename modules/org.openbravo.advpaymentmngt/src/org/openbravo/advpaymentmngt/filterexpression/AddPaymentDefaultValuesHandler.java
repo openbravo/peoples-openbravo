@@ -511,6 +511,6 @@ public abstract class AddPaymentDefaultValuesHandler {
       qry.setNamedParameter("currency", OBDal.getInstance().get(Currency.class, currencyId));
     }
 
-    return (FinAccPaymentMethod) qry.uniqueResult();
+    return qry.uniqueResult();
   }
 }

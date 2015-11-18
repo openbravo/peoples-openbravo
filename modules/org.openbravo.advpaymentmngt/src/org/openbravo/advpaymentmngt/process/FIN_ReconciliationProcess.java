@@ -71,10 +71,11 @@ public class FIN_ReconciliationProcess implements org.openbravo.scheduling.Proce
       OBDal.getInstance().flush();
       if (strAction.equals("P")) {
         for (FIN_ReconciliationLine_v recLine : reconciliation.getFINReconciliationLineVList()) {
-          boolean orgLegalWithAccounting = FIN_Utility.periodControlOpened(recLine
-              .getFinancialAccountTransaction().getReconciliation().TABLE_NAME, recLine
-              .getFinancialAccountTransaction().getReconciliation().getId(), recLine
-              .getFinancialAccountTransaction().getReconciliation().TABLE_NAME + "_ID", "LE");
+          recLine.getFinancialAccountTransaction().getReconciliation();
+          recLine.getFinancialAccountTransaction().getReconciliation();
+          boolean orgLegalWithAccounting = FIN_Utility.periodControlOpened(
+              FIN_Reconciliation.TABLE_NAME, recLine.getFinancialAccountTransaction()
+                  .getReconciliation().getId(), FIN_Reconciliation.TABLE_NAME + "_ID", "LE");
           if (!FIN_Utility.isPeriodOpen(recLine.getFinancialAccountTransaction().getClient()
               .getId(), AcctServer.DOCTYPE_Reconciliation, recLine.getFinancialAccountTransaction()
               .getOrganization().getId(),
@@ -131,10 +132,11 @@ public class FIN_ReconciliationProcess implements org.openbravo.scheduling.Proce
           return;
         }
         for (FIN_ReconciliationLine_v recLine : reconciliation.getFINReconciliationLineVList()) {
-          boolean orgLegalWithAccounting = FIN_Utility.periodControlOpened(recLine
-              .getFinancialAccountTransaction().getReconciliation().TABLE_NAME, recLine
-              .getFinancialAccountTransaction().getReconciliation().getId(), recLine
-              .getFinancialAccountTransaction().getReconciliation().TABLE_NAME + "_ID", "LE");
+          recLine.getFinancialAccountTransaction().getReconciliation();
+          recLine.getFinancialAccountTransaction().getReconciliation();
+          boolean orgLegalWithAccounting = FIN_Utility.periodControlOpened(
+              FIN_Reconciliation.TABLE_NAME, recLine.getFinancialAccountTransaction()
+                  .getReconciliation().getId(), FIN_Reconciliation.TABLE_NAME + "_ID", "LE");
           if (!FIN_Utility.isPeriodOpen(recLine.getFinancialAccountTransaction().getClient()
               .getId(), AcctServer.DOCTYPE_Reconciliation, recLine.getFinancialAccountTransaction()
               .getOrganization().getId(),

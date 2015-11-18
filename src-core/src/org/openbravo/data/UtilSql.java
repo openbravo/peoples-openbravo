@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2010 Openbravo S.L.U.
+ * Copyright (C) 2001-2015 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -24,7 +24,8 @@ public class UtilSql {
   // setValue and getValue method to be used in sqlc
 
   public static boolean setValue(PreparedStatement ps, int posicion, int tipo, String strDefault,
-      String strValor) {
+      String _strValor) {
+    String strValor = _strValor;
     try {
       if (strValor == null) {
         strValor = strDefault;

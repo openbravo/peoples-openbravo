@@ -474,15 +474,17 @@ public class EntityXMLConverter implements OBNotSingleton {
         for (final Object o : childObjects) {
           // embed in the parent
           if (isOptionEmbedChildren()) {
-            final DataSetTable dst = (getDataSet() != null && obObject.getEntity() != null) ? dataSetTablesByEntity
-                .get(obObject.getEntity()) : null;
-            if ((excludeAuditInfo != null && excludeAuditInfo)
-                || (dst != null && dst.isExcludeAuditInfo())) {
-              export((BaseOBObject) o, false, true, exportedPropertyName);
-            } else {
-              String nextExportedPropertyName = (exportedPropertyName.isEmpty() ? p.getName()
-                  : exportedPropertyName + DalUtil.DOT + p.getName());
-              export((BaseOBObject) o, false, null, nextExportedPropertyName);
+            if (objectBelongsToCurrentClient((BaseOBObject) o)) {
+              final DataSetTable dst = (getDataSet() != null && obObject.getEntity() != null) ? dataSetTablesByEntity
+                  .get(obObject.getEntity()) : null;
+              if ((excludeAuditInfo != null && excludeAuditInfo)
+                  || (dst != null && dst.isExcludeAuditInfo())) {
+                export((BaseOBObject) o, false, true, exportedPropertyName);
+              } else {
+                String nextExportedPropertyName = (exportedPropertyName.isEmpty() ? p.getName()
+                    : exportedPropertyName + DalUtil.DOT + p.getName());
+                export((BaseOBObject) o, false, null, nextExportedPropertyName);
+              }
             }
           } else {
             // add the child as a tag, the child entityname is
@@ -586,8 +588,7 @@ public class EntityXMLConverter implements OBNotSingleton {
 
   protected void addToExportList(BaseOBObject bob) {
     // only export references if belonging to the current client
-    if (getClient() != null && bob instanceof ClientEnabled
-        && !((ClientEnabled) bob).getClient().getId().equals(getClient().getId())) {
+    if (!objectBelongsToCurrentClient(bob)) {
       return;
     }
 
@@ -597,6 +598,16 @@ public class EntityXMLConverter implements OBNotSingleton {
     }
     getToProcess().add(bob);
     allToProcessObjects.add(bob);
+  }
+
+  private boolean objectBelongsToCurrentClient(BaseOBObject bob) {
+    Client currentClient = getClient();
+    if (currentClient != null && bob instanceof ClientEnabled) {
+      String currentClientId = (String) DalUtil.getId(currentClient);
+      String bobClientId = (String) DalUtil.getId(((ClientEnabled) bob).getClient());
+      return currentClientId.equals(bobClientId);
+    }
+    return true;
   }
 
   /**

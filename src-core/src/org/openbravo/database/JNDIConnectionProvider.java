@@ -36,6 +36,7 @@ public class JNDIConnectionProvider implements ConnectionProvider {
   protected String defaultPoolName = "";
 
   protected class PoolInfo implements Serializable {
+    private static final long serialVersionUID = 1L;
     public String name = null;
     public DataSource ds = null;
     public String rdbms = null;

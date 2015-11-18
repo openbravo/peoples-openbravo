@@ -1234,11 +1234,7 @@ isc.OBToolbar.addProperties({
       }
     }
 
-    if (buttons.length === 0) {
-      if (!noSetSession && this.view.viewGrid && this.view.viewGrid.getSelectedRecord()) {
-        this.view.setContextInfo();
-      }
-    } else {
+    if (buttons.length !== 0) {
       length = buttons.length;
       for (i = 0; i < length; i++) {
         if (!currentContext || currentContext !== buttons[i].contextView) {

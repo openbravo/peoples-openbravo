@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2010 Openbravo S.L.U.
+ * Copyright (C) 2001-2015 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -51,7 +51,6 @@ public class XmlTemplate extends DefaultHandler implements XmlComponentTemplate,
   String fileConfiguration;
   String[] discard;
   String prefix;
-  String uri;
   String strCharacters = "";
 
   static Logger log4jXmlTemplate = Logger.getLogger(XmlTemplate.class);
@@ -106,38 +105,38 @@ public class XmlTemplate extends DefaultHandler implements XmlComponentTemplate,
     stcElement = new Stack<Object>();
   }
 
-  private void pushElement(StackElement stackElement) {
-    stcElement.push(stackElement);
-    strElement = stackElement.name();
+  private void pushElement(StackElement _stackElement) {
+    stcElement.push(_stackElement);
+    strElement = _stackElement.name();
   }
 
   private StackElement popElement() {
     if (stcElement.isEmpty())
       return null;
-    StackElement stackElement = (StackElement) stcElement.pop();
+    StackElement _stackElement = (StackElement) stcElement.pop();
     if (stcElement.isEmpty()) {
       strElement = null;
     } else {
       strElement = ((StackElement) stcElement.peek()).name();
     }
-    return stackElement;
+    return _stackElement;
   }
 
   private StackElement peekElement() {
-    StackElement stackElement;
+    StackElement _stackElement;
     if (stcElement.isEmpty()) {
-      stackElement = null;
+      _stackElement = null;
     } else {
-      stackElement = (StackElement) stcElement.peek();
+      _stackElement = (StackElement) stcElement.peek();
     }
-    return stackElement;
+    return _stackElement;
   }
 
-  public void startPrefixMapping(java.lang.String prefix, java.lang.String uri) {
+  public void startPrefixMapping(java.lang.String _prefix, java.lang.String uri) {
     if (log4jXmlTemplate.isDebugEnabled())
-      log4jXmlTemplate.debug("XmlTemplate: startPrefixMapping is called, prefix:" + prefix
+      log4jXmlTemplate.debug("XmlTemplate: startPrefixMapping is called, prefix:" + _prefix
           + " uri: " + uri);
-    this.prefix = prefix;
+    this.prefix = _prefix;
   }
 
   public void startElement(java.lang.String uri, java.lang.String name, java.lang.String qName,

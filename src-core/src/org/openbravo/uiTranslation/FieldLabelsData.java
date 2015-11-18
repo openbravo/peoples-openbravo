@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2008-2010 Openbravo S.L.U.
+ * Copyright (C) 2008-2015 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -36,29 +36,29 @@ class FieldLabelsData implements FieldProvider {
   public String elmttrlName;
   public String elmttrlPrintname;
 
-  public String getField(String fieldName) {
-    if (fieldName.equalsIgnoreCase("AD_COLUMN_ID") || fieldName.equals("adColumnId"))
+  public String getField(String _fieldName) {
+    if (_fieldName.equalsIgnoreCase("AD_COLUMN_ID") || _fieldName.equals("adColumnId"))
       return adColumnId;
-    else if (fieldName.equalsIgnoreCase("COL_NAME") || fieldName.equals("colName"))
+    else if (_fieldName.equalsIgnoreCase("COL_NAME") || _fieldName.equals("colName"))
       return colName;
-    else if (fieldName.equalsIgnoreCase("COL_COLUMNNAME") || fieldName.equals("colColumnname"))
+    else if (_fieldName.equalsIgnoreCase("COL_COLUMNNAME") || _fieldName.equals("colColumnname"))
       return colColumnname;
-    else if (fieldName.equalsIgnoreCase("ELEMENT_NAME") || fieldName.equals("elementName"))
+    else if (_fieldName.equalsIgnoreCase("ELEMENT_NAME") || _fieldName.equals("elementName"))
       return elementName;
-    else if (fieldName.equalsIgnoreCase("ELEMENT_PRINTNAME")
-        || fieldName.equals("elementPrintname"))
+    else if (_fieldName.equalsIgnoreCase("ELEMENT_PRINTNAME")
+        || _fieldName.equals("elementPrintname"))
       return elementPrintname;
-    else if (fieldName.equalsIgnoreCase("FIELD_NAME") || fieldName.equals("fieldName"))
-      return fieldName;
-    else if (fieldName.equalsIgnoreCase("FIELDTRL_NAME") || fieldName.equals("fieldtrlName"))
+    else if (_fieldName.equalsIgnoreCase("FIELD_NAME") || _fieldName.equals("fieldName"))
+      return _fieldName;
+    else if (_fieldName.equalsIgnoreCase("FIELDTRL_NAME") || _fieldName.equals("fieldtrlName"))
       return fieldtrlName;
-    else if (fieldName.equalsIgnoreCase("ELMTTRL_NAME") || fieldName.equals("elmttrlName"))
+    else if (_fieldName.equalsIgnoreCase("ELMTTRL_NAME") || _fieldName.equals("elmttrlName"))
       return elmttrlName;
-    else if (fieldName.equalsIgnoreCase("ELMTTRL_PRINTNAME")
-        || fieldName.equals("elmttrlPrintname"))
+    else if (_fieldName.equalsIgnoreCase("ELMTTRL_PRINTNAME")
+        || _fieldName.equals("elmttrlPrintname"))
       return elmttrlPrintname;
     else {
-      log4j.debug("Field does not exist: " + fieldName);
+      log4j.debug("Field does not exist: " + _fieldName);
       return null;
     }
   }

@@ -42,6 +42,13 @@ import org.openbravo.model.ad.domain.Reference;
  */
 public class ImportProcessUtils {
 
+  /**
+   * Returns true if the import.disable.process property is set to true, false otherwise
+   */
+  public static boolean isImportProcessDisabled() {
+    return OBPropertiesProvider.getInstance().getBooleanProperty("import.disable.process");
+  }
+
   public static List<String> getOrderedTypesOfData() {
     final Reference reference = OBDal.getInstance().get(Reference.class,
         "11F86B630ECB4A57B28927193F8AB99D");

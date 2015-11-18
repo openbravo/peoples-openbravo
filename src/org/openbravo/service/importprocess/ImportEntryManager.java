@@ -172,10 +172,16 @@ public class ImportEntryManager {
   }
 
   public synchronized void start() {
+    if (ImportProcessUtils.isImportProcessDisabled()) {
+      log.debug("Import process disabled, not starting it");
+      return;
+    }
+
     if (threadsStarted) {
       return;
     }
     threadsStarted = true;
+
     log.debug("Starting Import Entry Framework");
 
     // same as fixed threadpool, will only stop accepting new tasks (throw an exception)
@@ -223,6 +229,9 @@ public class ImportEntryManager {
    * Shutdown all the threads being used by the import framework
    */
   public void shutdown() {
+    if (!threadsStarted) {
+      return;
+    }
     log.debug("Shutting down Import Entry Framework");
 
     isShutDown = true;
@@ -328,7 +337,9 @@ public class ImportEntryManager {
       start();
     }
 
-    managerThread.doNotify();
+    if (managerThread != null) {
+      managerThread.doNotify();
+    }
   }
 
   private void handleImportEntry(ImportEntry importEntry) {

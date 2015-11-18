@@ -271,7 +271,7 @@ public class CostingMigrationProcess implements Process {
         phql.setNamedParameter("date", new Date());
         phql.setNamedParameter("org", organization);
         phql.setMaxResult(1);
-        PeriodControl period = (PeriodControl) phql.uniqueResult();
+        PeriodControl period = phql.uniqueResult();
         if (period == null) {
           throw new OBException(String.format(OBMessageUtils.messageBD("PeriodClosedForMMI"),
               organization.getName()));
@@ -319,7 +319,7 @@ public class CostingMigrationProcess implements Process {
     sdphql.setFilterOnReadableClients(false);
     sdphql.setFilterOnReadableOrganization(false);
     sdphql.setMaxResult(1);
-    StorageDetail storageDetailProduct = (StorageDetail) sdphql.uniqueResult();
+    StorageDetail storageDetailProduct = sdphql.uniqueResult();
     if (storageDetailProduct != null) {
       throw new OBException("@ProductStockInDifferentUOM@");
     }

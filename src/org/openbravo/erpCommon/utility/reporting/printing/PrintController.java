@@ -383,7 +383,8 @@ public class PrintController extends HttpSecureAppServlet {
                   // Save the report as a attachment because it is
                   // being transferred to the user
                   try {
-                    reportManager.createAttachmentForReport(this, report, tableId, vars);
+                    reportManager.createAttachmentForReport(this, report, tableId, vars,
+                        ReportManager.GENERATED_BY_EMAILING);
                   } catch (final ReportingException exception) {
                     throw new ServletException(exception);
                   }
