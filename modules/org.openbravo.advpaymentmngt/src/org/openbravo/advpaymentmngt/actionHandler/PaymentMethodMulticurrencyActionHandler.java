@@ -26,6 +26,7 @@ import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.client.kernel.BaseActionHandler;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.financial.FinancialUtils;
@@ -119,14 +120,19 @@ public class PaymentMethodMulticurrencyActionHandler extends BaseActionHandler {
 
   private FinAccPaymentMethod getFinancialAccountPaymentMethod(String paymentMethodId,
       String financialAccountId) {
-    OBCriteria<FinAccPaymentMethod> obc = OBDal.getInstance().createCriteria(
-        FinAccPaymentMethod.class);
-    obc.setFilterOnReadableOrganization(false);
-    obc.setMaxResults(1);
-    obc.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT,
-        OBDal.getInstance().get(FIN_FinancialAccount.class, financialAccountId)));
-    obc.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD,
-        OBDal.getInstance().get(FIN_PaymentMethod.class, paymentMethodId)));
-    return (FinAccPaymentMethod) obc.uniqueResult();
+    OBContext.setAdminMode(true);
+    try {
+      OBCriteria<FinAccPaymentMethod> obc = OBDal.getInstance().createCriteria(
+          FinAccPaymentMethod.class);
+      obc.setFilterOnReadableOrganization(false);
+      obc.setMaxResults(1);
+      obc.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_ACCOUNT,
+          OBDal.getInstance().get(FIN_FinancialAccount.class, financialAccountId)));
+      obc.add(Restrictions.eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD,
+          OBDal.getInstance().get(FIN_PaymentMethod.class, paymentMethodId)));
+      return (FinAccPaymentMethod) obc.uniqueResult();
+    } finally {
+      OBContext.restorePreviousMode();
+    }
   }
 }
