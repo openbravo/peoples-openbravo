@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2011-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2011-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,6 +19,7 @@
 package org.openbravo.common.actionhandler;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -97,6 +98,7 @@ public class RMInOutPickEditLines extends BaseProcessActionHandler {
       removeNonSelectedLines(idList, inOut);
       return;
     }
+    Map<OrderLine, ShipmentInOutLine> orderLineShipmentLineRef = new HashMap<OrderLine, ShipmentInOutLine>();
     for (long i = 0; i < selectedLines.length(); i++) {
       JSONObject selectedLine = selectedLines.getJSONObject((int) i);
       log.debug(selectedLine);
@@ -137,10 +139,20 @@ public class RMInOutPickEditLines extends BaseProcessActionHandler {
         inOutLines.add(newInOutLine);
         inOut.setMaterialMgmtShipmentInOutLineList(inOutLines);
       }
-
+      if (orderLine.isExplode()) {
+        newInOutLine.setExplode(true);
+      } else {
+        orderLineShipmentLineRef.put(orderLine, newInOutLine);
+      }
       OBDal.getInstance().save(newInOutLine);
       OBDal.getInstance().save(inOut);
       OBDal.getInstance().flush();
+    }
+    for (ShipmentInOutLine inOutLine : inOut.getMaterialMgmtShipmentInOutLineList()) {
+      if (inOutLine.getSalesOrderLine().getBOMParent() != null) {
+        inOutLine.setBOMParent(orderLineShipmentLineRef.get(inOutLine.getSalesOrderLine()));
+        OBDal.getInstance().save(inOutLine);
+      }
     }
 
     removeNonSelectedLines(idList, inOut);
