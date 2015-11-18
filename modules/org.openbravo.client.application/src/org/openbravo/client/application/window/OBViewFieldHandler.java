@@ -98,6 +98,15 @@ public class OBViewFieldHandler {
     return false;
   }
 
+  public boolean getHasFieldsWithShowIf() {
+    for (OBViewFieldDefinition viewField : getFields()) {
+      if (viewField.getShowIf() != null && viewField.getShowIf().trim().length() > 0) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   public List<OBViewFieldDefinition> getFields() {
     final Entity entity = ModelProvider.getInstance().getEntityByTableId(
         getTab().getTable().getId());
