@@ -274,10 +274,14 @@ enyo.kind({
       }
       var payment = OB.MobileApp.model.paymentnames[OB.MobileApp.model.get('paymentcash')];
       if ((model.get('orderType') === 2 || (model.get('isLayaway'))) && model.get('orderType') !== 3 && !model.getPaymentStatus().done) {
-        this.$.creditsalesaction.hide();
+        this.$.creditsalesaction.show();
         this.$.layawayaction.setContent(OB.I18N.getLabel('OBPOS_LblLayaway'));
         this.$.layawayaction.show();
-        this.$.exactbutton.hide();
+        if (model.changed.orderType === 2) {
+          this.$.creditsalesaction.hide();
+          this.$.layawayaction.show();
+          this.$.exactbutton.hide();
+        }
       } else if (model.get('orderType') === 3) {
         this.$.creditsalesaction.hide();
         this.$.layawayaction.hide();
@@ -1006,7 +1010,7 @@ enyo.kind({
   kind: 'OB.OBPOSPointOfSale.UI.ProcessButton',
   i18nLabel: 'OBPOS_LblCreditSales',
   classes: 'btn-icon-small btnlink-green',
-  style: 'width: 120px; float: right; margin: 10px 5px 5px 0px; height: 2.0em; display:block; clear: right',
+  style: 'width: 120px; float: right; margin: 10px 5px 5px 0px; height: 2.0em; display:block; clear: right; font-style: normal;',
   permission: 'OBPOS_receipt.creditsales',
   events: {
     onShowPopup: ''

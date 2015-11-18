@@ -10,10 +10,13 @@ package org.openbravo.retail.posterminal.master;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.TimeZone;
 
 import javax.servlet.ServletException;
+import javax.xml.bind.DatatypeConverter;
 
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
@@ -28,6 +31,9 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.mobile.core.process.SimpleQueryBuilder;
+import org.openbravo.model.financialmgmt.gl.GLItem;
+import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
+import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.retail.posterminal.JSONProcessSimple;
 import org.openbravo.retail.posterminal.OBPOSAppCashup;
 import org.openbravo.retail.posterminal.OBPOSPaymentMethodCashup;
@@ -99,6 +105,11 @@ public class Cashup extends JSONProcessSimple {
         // Get Taxes
         JSONArray cashTaxInfo = getTaxes((String) cashup[0], converter);
         cashupJSON.put("cashTaxInfo", cashTaxInfo);
+
+        // Get CashManagement
+        JSONArray cashMgmtInfo = getCashMgmt((String) cashup[0], converter);
+        cashupJSON.put("cashMgmInfo", cashMgmtInfo);
+
         respArray.put(cashupJSON);
       }
       result.put(JsonConstants.RESPONSE_DATA, respArray);
@@ -155,5 +166,108 @@ public class Cashup extends JSONProcessSimple {
     }
 
     return respArray;
+  }
+
+  public JSONArray getCashMgmt(String cashupId, DataToJsonConverter converter) throws JSONException {
+    JSONArray respArray = new JSONArray();
+    String posId = RequestContext.get().getSessionAttribute("POSTerminal").toString();
+
+    // Get GL Items associated to the payment methods of this terminal
+    String[] paymentTypes = { "fmgi.oBPOSAppPaymentTypeCGlitemDropdepIDList",
+        "fmgi.oBPOSAppPaymentTypeCGlitemWriteoffIDList",
+        "fmgi.oBPOSAppPaymentTypeCashDifferencesList",
+        "fmgi.oBPOSAppPaymentTypeGLItemForDepositsList",
+        "fmgi.oBPOSAppPaymentTypeGLItemForDropsList" };
+    List<GLItem> glItemList = new ArrayList<GLItem>();
+    for (int i = 0; i < paymentTypes.length; i++) {
+      String hqlglItem = "select distinct fmgi from FinancialMgmtGLItem fmgi join "
+          + paymentTypes[i] + " as oapt " + "where oapt.id in (select oap.paymentMethod.id "
+          + "from OBPOS_App_Payment oap where oap.obposApplications.id = :terminal)";
+      SimpleQueryBuilder querybuilder = new SimpleQueryBuilder(hqlglItem, OBContext.getOBContext()
+          .getCurrentClient().getId(), OBContext.getOBContext().getCurrentOrganization().getId(),
+          null, null, null);
+
+      final Session session = OBDal.getInstance().getSession();
+      final Query glitemquery = session.createQuery(querybuilder.getHQLQuery());
+      glitemquery.setParameter("terminal", posId);
+
+      @SuppressWarnings("unchecked")
+      List<GLItem> glList = glitemquery.list();
+      for (GLItem glItem : glList) {
+        glItemList.add(glItem);
+      }
+    }
+
+    // Get Financial Accounts
+    String hqlFinanAcct = "from FIN_Financial_Account ffa where ffa.id in (select oap.financialAccount.id from OBPOS_App_Payment oap where oap.obposApplications.id = :terminal)";
+    SimpleQueryBuilder querybuilder = new SimpleQueryBuilder(hqlFinanAcct, OBContext.getOBContext()
+        .getCurrentClient().getId(), OBContext.getOBContext().getCurrentOrganization().getId(),
+        null, null, null);
+
+    final Session session = OBDal.getInstance().getSession();
+    final Query finacctquery = session.createQuery(querybuilder.getHQLQuery());
+    finacctquery.setParameter("terminal", posId);
+    @SuppressWarnings("unchecked")
+    List<FIN_FinancialAccount> finAcctList = finacctquery.list();
+
+    // Get Transactions from that cashupId and for the GL Items of the actual organization
+    OBPOSAppCashup cashupObj = OBDal.getInstance().get(OBPOSAppCashup.class, cashupId);
+    OBCriteria<FIN_FinaccTransaction> cashMgmTransCriteria = OBDal.getInstance().createCriteria(
+        FIN_FinaccTransaction.class);
+    cashMgmTransCriteria.add(Restrictions.eq(FIN_FinaccTransaction.PROPERTY_OBPOSAPPCASHUP,
+        cashupObj));
+    cashMgmTransCriteria.add(Restrictions.in(FIN_FinaccTransaction.PROPERTY_GLITEM,
+        glItemList.toArray()));
+    cashMgmTransCriteria.add(Restrictions.in(FIN_FinaccTransaction.PROPERTY_ACCOUNT,
+        finAcctList.toArray()));
+
+    List<FIN_FinaccTransaction> cashMgmtList = cashMgmTransCriteria.list();
+    for (BaseOBObject cashMgmt : cashMgmtList) {
+      JSONObject cashMgmtJSON = converter.toJsonObject(cashMgmt, DataResolvingMode.FULL);
+      JSONObject result = new JSONObject();
+      Float totalamt = Float.parseFloat(cashMgmtJSON.get("paymentAmount").toString())
+          + Float.parseFloat(cashMgmtJSON.get("depositAmount").toString());
+      Calendar c = DatatypeConverter.parseDateTime(cashMgmtJSON.get("creationDate").toString());
+      int hour = c.get(Calendar.HOUR_OF_DAY);
+      int minute = c.get(Calendar.MINUTE);
+      String creationDate = hour + ":" + minute;
+
+      // Get Payment Method ID and Reason ID
+      String financialacct = cashMgmtJSON.get("account").toString();
+      String hqlPaymentMethod = "select oap.id as id, oap.obretcoCmevents.id as reason from OBPOS_App_Payment oap where oap.financialAccount.id = :financialacct and oap.obposApplications.id = :terminal";
+      SimpleQueryBuilder paymentMethodbuilder = new SimpleQueryBuilder(hqlPaymentMethod, OBContext
+          .getOBContext().getCurrentClient().getId(), OBContext.getOBContext()
+          .getCurrentOrganization().getId(), null, null, null);
+
+      final Session paymentsession = OBDal.getInstance().getSession();
+      final Query paymentfinacctquery = paymentsession.createQuery(paymentMethodbuilder
+          .getHQLQuery());
+      paymentfinacctquery.setParameter("terminal", posId);
+      paymentfinacctquery.setParameter("financialacct", financialacct);
+      Object[] paymentmethod = (Object[]) paymentfinacctquery.uniqueResult();
+      String paymentmethodId = (String) paymentmethod[0];
+      String reasonId = (String) paymentmethod[1];
+
+      // Set the cashManagement data
+      result.put("id", cashMgmtJSON.get("id"));
+      result.put("description", cashMgmtJSON.get("description"));
+      result.put("amount", totalamt.toString());
+      result.put("origAmount", totalamt.toString());
+      result.put("type", cashMgmtJSON.get("paymentAmount").toString().equals("0") ? "deposit"
+          : "drop");
+      result.put("reasonId", reasonId);
+      result.put("paymentMethodId", paymentmethodId);
+      result.put("time", creationDate);
+      result.put("userId", cashMgmtJSON.get("createdBy"));
+      result.put("user", cashMgmtJSON.get("createdBy$_identifier"));
+      result.put("isocode", cashMgmtJSON.get("currency$_identifier"));
+      result.put("cashup_id", cashMgmtJSON.get("obposAppCashup"));
+      result.put("glItem", cashMgmtJSON.get("gLItem"));
+      result.put("isbeingprocessed", cashMgmtJSON.get("aprmProcessed").equals("P") ? "Y" : "N");
+      result.put("_idx", "");
+      respArray.put(result);
+    }
+    return respArray;
+
   }
 }

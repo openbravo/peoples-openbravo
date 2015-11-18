@@ -1106,6 +1106,14 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     } else {
       addDocumentNoHandler(shipment, shpEntity, null, shipment.getDocumentType());
     }
+
+    if (shipment.getMovementDate() == null) {
+      shipment.setMovementDate(order.getOrderDate());
+    }
+    if (shipment.getAccountingDate() == null) {
+      shipment.setAccountingDate(order.getOrderDate());
+    }
+
     shipment.setPartnerAddress(OBDal.getInstance().get(Location.class,
         jsonorder.getJSONObject("bp").getString("locId")));
     shipment.setSalesTransaction(true);
@@ -1272,8 +1280,10 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
   protected void createOrder(Order order, JSONObject jsonorder) throws JSONException {
     Entity orderEntity = ModelProvider.getInstance().getEntity(Order.class);
-    if (jsonorder.has("description") && StringUtils.length(jsonorder.getString("description")) > 255) {
-      jsonorder.put("description", StringUtils.substring(jsonorder.getString("description"), 0, 255));
+    if (jsonorder.has("description")
+        && StringUtils.length(jsonorder.getString("description")) > 255) {
+      jsonorder.put("description",
+          StringUtils.substring(jsonorder.getString("description"), 0, 255));
     }
     JSONPropertyToEntity.fillBobFromJSON(orderEntity, order, jsonorder,
         jsonorder.getLong("timezoneOffset"));

@@ -52,6 +52,7 @@ enyo.kind({
     this.header = OB.I18N.getLabel('OBPOS_SelectTerminalHeader');
     this.inherited(arguments);
     this.$.headerCloseButton.hide();
+    OB.MobileApp.view.currentWindow = 'terminalAuthentication';
   }
 });
 

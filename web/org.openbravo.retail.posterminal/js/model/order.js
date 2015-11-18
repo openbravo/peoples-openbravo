@@ -911,62 +911,73 @@
         OB.UTIL.showError(OB.I18N.getLabel('OBPOS_QuotationClosed'));
         return;
       }
-      options = options || {};
-      options.setUndo = (_.isUndefined(options.setUndo) || _.isNull(options.setUndo) || options.setUndo !== false) ? true : options.setUndo;
+      OB.UTIL.HookManager.executeHooks('OBPOS_PreSetPrice', {
+        context: this,
+        line: line,
+        price: price,
+        options: options
+      }, function (args) {
+        var me = args.context;
+        if (args.cancellation && args.cancellation === true) {
+          return;
+        }
 
-      if (!OB.UTIL.isNullOrUndefined(line.get('originalOrderLineId'))) {
-        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_CannotChangePrice'));
-      } else if (OB.DEC.isNumber(price)) {
-        var oldprice = line.get('price');
-        if (OB.DEC.compare(price) >= 0) {
-          var me = this;
-          // sets the new price
-          line.set('price', price);
-          // sets the undo action
-          if (options.setUndo) {
-            if (this.get('multipleUndo')) {
-              var text = '',
-                  oldprices = [],
-                  lines = [],
-                  undo = this.get('undo');
-              if (undo && undo.oldprices) {
-                text = undo.text + ', ';
-                oldprices = undo.oldprices;
-                lines = undo.lines;
-              }
-              text += OB.I18N.getLabel('OBPOS_SetPrice', [line.printPrice(), line.get('product').get('_identifier')]);
-              oldprices.push(oldprice);
-              lines.push(line);
-              this.setUndo('EditLine', {
-                text: text,
-                oldprices: oldprices,
-                lines: lines,
-                undo: function () {
-                  var i;
-                  for (i = 0; i < me.get('undo').lines.length; i++) {
-                    me.get('undo').lines[i].set('price', me.get('undo').oldprices[i]);
+        options = args.options || {};
+        options.setUndo = (_.isUndefined(options.setUndo) || _.isNull(options.setUndo) || options.setUndo !== false) ? true : options.setUndo;
+
+        if (!OB.UTIL.isNullOrUndefined(args.line.get('originalOrderLineId'))) {
+          OB.UTIL.showError(OB.I18N.getLabel('OBPOS_CannotChangePrice'));
+        } else if (OB.DEC.isNumber(args.price)) {
+          var oldprice = line.get('price');
+          if (OB.DEC.compare(args.price) >= 0) {
+            // sets the new price
+            args.line.set('price', args.price);
+            // sets the undo action
+            if (options.setUndo) {
+              if (this.get('multipleUndo')) {
+                var text = '',
+                    oldprices = [],
+                    lines = [],
+                    undo = this.get('undo');
+                if (undo && undo.oldprices) {
+                  text = undo.text + ', ';
+                  oldprices = undo.oldprices;
+                  lines = undo.lines;
+                }
+                text += OB.I18N.getLabel('OBPOS_SetPrice', [line.printPrice(), line.get('product').get('_identifier')]);
+                oldprices.push(oldprice);
+                lines.push(line);
+                this.setUndo('EditLine', {
+                  text: text,
+                  oldprices: oldprices,
+                  lines: lines,
+                  undo: function () {
+                    var i;
+                    for (i = 0; i < me.get('undo').lines.length; i++) {
+                      me.get('undo').lines[i].set('price', me.get('undo').oldprices[i]);
+                    }
+                    me.calculateGross();
+                    me.set('undo', null);
                   }
-                  me.calculateGross();
-                  me.set('undo', null);
-                }
-              });
-            } else {
-              this.setUndo('EditLine', {
-                text: OB.I18N.getLabel('OBPOS_SetPrice', [line.printPrice(), line.get('product').get('_identifier')]),
-                oldprice: oldprice,
-                line: line,
-                undo: function () {
-                  line.set('price', oldprice);
-                  me.calculateGross();
-                  me.set('undo', null);
-                }
-              });
+                });
+              } else {
+                this.setUndo('EditLine', {
+                  text: OB.I18N.getLabel('OBPOS_SetPrice', [line.printPrice(), line.get('product').get('_identifier')]),
+                  oldprice: oldprice,
+                  line: args.line,
+                  undo: function () {
+                    args.line.set('price', oldprice);
+                    me.calculateGross();
+                    me.set('undo', null);
+                  }
+                });
+              }
             }
           }
+          this.adjustPayment();
         }
-        this.adjustPayment();
-      }
-      this.save();
+        this.save();
+      });
     },
 
     setLineProperty: function (line, property, value) {
@@ -2300,15 +2311,14 @@
       var process = new OB.DS.Process('org.openbravo.retail.posterminal.QuotationsReject');
       OB.UTIL.showLoading(true);
       process.exec({
-        orderid: this.get('id'),
-        rejectReasonId: rejectReasonId
+        messageId: OB.UTIL.get_UUID(),
+        data: [{
+          orderid: this.get('id'),
+          rejectReasonId: rejectReasonId
+        }]
       }, function (data) {
         OB.UTIL.showLoading(false);
-        if (!data || data.exception) {
-          OB.UTIL.showError(OB.I18N.getLabel('OBPOS_ErrRejectQuotation'));
-        } else {
-          OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_SuccessRejectQuotation'));
-        }
+        OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_SuccessRejectQuotation'));
         if (callback) {
           callback.call(scope, data !== null);
         }
