@@ -1804,15 +1804,14 @@
       var process = new OB.DS.Process('org.openbravo.retail.posterminal.QuotationsReject');
       OB.UTIL.showLoading(true);
       process.exec({
-        orderid: this.get('id'),
-        rejectReasonId: rejectReasonId
+        messageId: OB.UTIL.get_UUID(),
+        data: [{
+          orderid: this.get('id'),
+          rejectReasonId: rejectReasonId
+        }]
       }, function (data) {
         OB.UTIL.showLoading(false);
-        if (!data || data.exception) {
-          OB.UTIL.showError(OB.I18N.getLabel('OBPOS_ErrRejectQuotation'));
-        } else {
-          OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_SuccessRejectQuotation'));
-        }
+        OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_SuccessRejectQuotation'));
         if (callback) {
           callback.call(scope, data !== null);
         }
