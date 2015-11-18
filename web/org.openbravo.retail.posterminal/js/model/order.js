@@ -928,26 +928,26 @@
         if (!OB.UTIL.isNullOrUndefined(args.line.get('originalOrderLineId'))) {
           OB.UTIL.showError(OB.I18N.getLabel('OBPOS_CannotChangePrice'));
         } else if (OB.DEC.isNumber(args.price)) {
-          var oldprice = line.get('price');
+          var oldprice = args.line.get('price');
           if (OB.DEC.compare(args.price) >= 0) {
             // sets the new price
             args.line.set('price', args.price);
             // sets the undo action
             if (options.setUndo) {
-              if (this.get('multipleUndo')) {
+              if (me.get('multipleUndo')) {
                 var text = '',
                     oldprices = [],
                     lines = [],
-                    undo = this.get('undo');
+                    undo = me.get('undo');
                 if (undo && undo.oldprices) {
                   text = undo.text + ', ';
                   oldprices = undo.oldprices;
                   lines = undo.lines;
                 }
-                text += OB.I18N.getLabel('OBPOS_SetPrice', [line.printPrice(), line.get('product').get('_identifier')]);
+                text += OB.I18N.getLabel('OBPOS_SetPrice', [args.line.printPrice(), args.line.get('product').get('_identifier')]);
                 oldprices.push(oldprice);
-                lines.push(line);
-                this.setUndo('EditLine', {
+                lines.push(args.line);
+                me.setUndo('EditLine', {
                   text: text,
                   oldprices: oldprices,
                   lines: lines,
@@ -961,8 +961,8 @@
                   }
                 });
               } else {
-                this.setUndo('EditLine', {
-                  text: OB.I18N.getLabel('OBPOS_SetPrice', [line.printPrice(), line.get('product').get('_identifier')]),
+                me.setUndo('EditLine', {
+                  text: OB.I18N.getLabel('OBPOS_SetPrice', [args.line.printPrice(), args.line.get('product').get('_identifier')]),
                   oldprice: oldprice,
                   line: args.line,
                   undo: function () {
@@ -974,9 +974,9 @@
               }
             }
           }
-          this.adjustPayment();
+          me.adjustPayment();
         }
-        this.save();
+        me.save();
       });
     },
 
