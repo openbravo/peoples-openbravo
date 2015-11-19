@@ -602,6 +602,9 @@ OB.POS.registerWindow({
     } else {
       OB.MobileApp.model.navigate(me.route);
     }
+  },
+  menuItemDisplayLogic: function () {
+    return OB.MobileApp.model.get('payments').length > 0;
   }
 });
 
@@ -624,5 +627,8 @@ OB.POS.registerWindow({
   menuPosition: 21,
   menuI18NLabel: 'OBPOS_LblCloseCashPartial',
   permission: 'OBPOS_retail.cashuppartial',
-  approvalType: 'OBPOS_approval.cashuppartial'
+  approvalType: 'OBPOS_approval.cashuppartial',
+  menuItemDisplayLogic: function () {
+    return OB.MobileApp.model.get('payments').length > 0;
+  }
 });

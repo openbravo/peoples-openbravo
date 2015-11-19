@@ -575,6 +575,10 @@ enyo.kind({
   },
 
   checkValidCashOverpayment: function (paymentstatus, selectedPayment) {
+    if (!selectedPayment) {
+      return false;
+    }
+
     var currentCash = OB.DEC.Zero,
         requiredCash;
 
@@ -608,6 +612,10 @@ enyo.kind({
   },
 
   checkValidPaymentMethod: function (paymentstatus, selectedPayment) {
+    if (!selectedPayment) {
+      return false;
+    }
+
     var change = this.model.getChange();
     var check = true;
     var currentcash = selectedPayment.currentCash;

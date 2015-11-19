@@ -529,8 +529,14 @@ enyo.kind({
   kind: 'OB.UI.MenuAction',
   permission: 'OBPOS_retail.opendrawerfrommenu',
   i18nLabel: 'OBPOS_LblOpenDrawer',
+  updateVisibility: function () {
+    if (OB.MobileApp.model.get('payments').length <= 0) {
+      this.hide();
+    }
+  },
   init: function (model) {
     this.model = model;
+    this.updateVisibility();
   },
   tap: function () {
     var me = this;
@@ -970,6 +976,15 @@ enyo.kind({
     if (OB.MobileApp.model.hasPermission(this.permission)) {
       this.doMultiOrders();
     }
+  },
+  updateVisibility: function () {
+    if (OB.MobileApp.model.get('payments').length <= 0) {
+      this.hide();
+    }
+  },
+  init: function (model) {
+    this.model = model;
+    this.updateVisibility();
   }
 });
 

@@ -214,5 +214,8 @@ OB.POS.registerWindow({
   menuPosition: 10,
   menuI18NLabel: 'OBPOS_LblCashManagement',
   permission: 'OBPOS_retail.cashmanagement',
-  approvalType: 'OBPOS_approval.cashmgmt'
+  approvalType: 'OBPOS_approval.cashmgmt',
+  menuItemDisplayLogic: function () {
+    return OB.MobileApp.model.get('payments').length > 0;
+  }
 });
