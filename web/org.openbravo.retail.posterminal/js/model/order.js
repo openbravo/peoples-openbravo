@@ -1316,7 +1316,6 @@
         line.get('product').set('ignorePromotions', false);
       }
       line.set('qty', -line.get('qty'));
-      line.calculateGross();
 
       // set the undo action
       this.set('undo', {
@@ -1331,7 +1330,6 @@
       if (line.get('promotions')) {
         line.unset('promotions');
       }
-      me.calculateGross();
       this.save();
 
     },
