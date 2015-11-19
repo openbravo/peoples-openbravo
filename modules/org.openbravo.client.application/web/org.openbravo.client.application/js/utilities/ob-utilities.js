@@ -27,6 +27,11 @@ if (navigator.userAgent.toUpperCase().indexOf("MSIE") !== -1 && (document.docume
   OB.Utilities.isIE9Strict = true;
 }
 
+OB.Utilities.isIE11 = false;
+if (navigator.userAgent.toUpperCase().indexOf("TRIDENT") !== -1 && navigator.userAgent.toUpperCase().indexOf("RV:11") !== -1) {
+  OB.Utilities.isIE11 = true;
+}
+
 OB.Utilities.isEdge = false;
 if (navigator.userAgent.toUpperCase().indexOf("EDGE") !== -1) {
   OB.Utilities.isEdge = true;
