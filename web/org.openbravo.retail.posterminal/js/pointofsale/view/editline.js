@@ -552,8 +552,12 @@ enyo.kind({
       return;
     }
     this.selectedModels = inEvent.models;
-    this.$.linePropertiesContainer.$.priceLine.multiSelection = inEvent.models.length > 1;
-    this.$.linePropertiesContainer.$.qtyLine.multiSelection = inEvent.models.length > 1;
+    if (this.$.linePropertiesContainer.$.priceLine) {
+      this.$.linePropertiesContainer.$.priceLine.multiSelection = inEvent.models.length > 1;
+    }
+    if (this.$.linePropertiesContainer.$.qtyLine) {
+      this.$.linePropertiesContainer.$.qtyLine.multiSelection = inEvent.models.length > 1;
+    }
     this.$.linePropertiesContainer.$.discountedAmountLine.multiSelection = inEvent.models.length > 1;
     this.selectedListener(this.selectedModels.length > 0 ? this.selectedModels[0] : undefined);
     this.render();
@@ -875,8 +879,12 @@ enyo.kind({
         orderLine.unset('warehouse');
       }
       this.$.linePropertiesContainer.$.descLine.render(orderLine);
-      this.$.linePropertiesContainer.$.qtyLine.render(orderLine);
-      this.$.linePropertiesContainer.$.priceLine.render(orderLine);
+      if (this.$.linePropertiesContainer.$.qtyLine) {
+        this.$.linePropertiesContainer.$.qtyLine.render(orderLine);
+      }
+      if (this.$.linePropertiesContainer.$.priceLine) {
+        this.$.linePropertiesContainer.$.priceLine.render(orderLine);
+      }
       this.$.linePropertiesContainer.$.discountedAmountLine.render(orderLine);
       this.$.linePropertiesContainer.$.warehouseLine.render(orderLine);
       orderLine.get('product').set('standardPrice', priceTotal);
