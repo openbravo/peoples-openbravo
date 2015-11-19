@@ -54,12 +54,14 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
         model = this,
         criteria = {
         'hasbeenpaid': 'N'
-        //,'session': OB.MobileApp.model.get('session')
+        // 'session' has been commented because to get the max of Document No, Quotation No from unpaid orders irrespective of users session
+        // 'session': OB.MobileApp.model.get('session')
         };
     OB.Dal.find(OB.Model.Order, criteria, function (ordersNotPaid) { //OB.Dal.find success
       var currentOrder = {},
           loadOrderStr;
 
+      // Getting Max Document No, Quotation No from Unpaid orders
       var maxDocumentNo = 0,
           maxQuotationNo = 0;
       _.each(ordersNotPaid.models, function (order) {
@@ -72,6 +74,8 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
           }
         }
       });
+
+      // Setting the Max Document No, Quotation No to their respective Threshold
       if (maxDocumentNo > 0 && OB.MobileApp.model.documentnoThreshold < maxDocumentNo) {
         OB.MobileApp.model.documentnoThreshold = maxDocumentNo;
       }
@@ -79,6 +83,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
         OB.MobileApp.model.quotationnoThreshold = maxQuotationNo;
       }
 
+      // Removing Orders which are created in other users session 
       var outOfSessionOrder = _.filter(ordersNotPaid.models, function (order) {
         if (order && order.get('session') !== OB.MobileApp.model.get('session')) {
           return true;
