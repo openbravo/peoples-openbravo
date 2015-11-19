@@ -94,6 +94,19 @@ public class DefaultAuthenticationManager extends AuthenticationManager {
       throw new AuthenticationException("IDENTIFICATION_FAILURE_TITLE", errorMsg);
     }
 
+    // Check if password valid date is reached
+    String strUPD = LoginUtils.getUpdatePasswordDate(conn, strUser, strPass);
+
+    // Needs to check if password is reached too
+    if (strUPD == null) {
+      log4j.debug("Failed user/password. Username: " + strUser + " - Session ID:" + sessionId);
+      OBError errorMsg = new OBError();
+      errorMsg.setType("Error");
+      errorMsg.setTitle("IDENTIFICATION_FAILURE_TITLE");
+      errorMsg.setMessage("IDENTIFICATION_FAILURE_MSG");
+      throw new AuthenticationException("IDENTIFICATION_FAILURE_TITLE", errorMsg);
+    }
+
     // Using the Servlet API instead of vars.setSessionValue to avoid breaking code
     // vars.setSessionValue always transform the key to upper-case
     request.getSession(true).setAttribute("#Authenticated_user", userId);

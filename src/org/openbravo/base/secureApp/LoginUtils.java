@@ -89,6 +89,26 @@ public class LoginUtils {
     }
   }
 
+  public static String getUpdatePasswordDate(ConnectionProvider connectionProvider, String login,
+      String unHashedPassword) {
+    try {
+      // Get the Update password date
+      UserLock lockSettings = new UserLock(login);
+      lockSettings.delayResponse();
+      if (lockSettings.isLockedUser()) {
+        return null;
+      }
+      final String hashedPassword = FormatUtilities.sha1Base64(unHashedPassword);
+      String valid = SeguridadData.validityDatePassword(connectionProvider, login, hashedPassword);
+      if (valid == null) {
+        log4j.error("Valid password date is reached");
+      }
+      return valid;
+    } catch (final Exception e) {
+      throw new OBException(e);
+    }
+  }
+
   /**
    * Similar to {@link LoginUtils#getValidUserId(ConnectionProvider, String, String)} but not
    * blocking user accounts.
