@@ -174,9 +174,10 @@
                     };
 
                     // Called when a message is received from server
-                    ws.onmessage = function (evt) {
-                      barcodeActionHandler.findProductByBarcode(evt.data, function (product) {
-                        OB.MobileApp.model.receipt.addProduct(product, '1');
+                    ws.onmessage = function (event) {
+                      var message = JSON.parse(event.data);
+                      barcodeActionHandler.findProductByBarcode(message.uPCEAN, function (product) {
+                    	  OB.MobileApp.model.receipt.addProduct(product, '1', null, message.dataToSave);
                       });
                     };
 
