@@ -53,12 +53,40 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     var orderlist = this.get('orderList'),
         model = this,
         criteria = {
-        'hasbeenpaid': 'N',
-        'session': OB.MobileApp.model.get('session')
+        'hasbeenpaid': 'N'
+        //,'session': OB.MobileApp.model.get('session')
         };
     OB.Dal.find(OB.Model.Order, criteria, function (ordersNotPaid) { //OB.Dal.find success
       var currentOrder = {},
           loadOrderStr;
+
+      var maxDocumentNo = 0,
+          maxQuotationNo = 0;
+      _.each(ordersNotPaid.models, function (order) {
+        if (order) {
+          if (order.get('documentnoSuffix') > maxDocumentNo) {
+            maxDocumentNo = order.get('documentnoSuffix');
+          }
+          if (order.get('quotationnoSuffix') > maxQuotationNo) {
+            maxQuotationNo = order.get('quotationnoSuffix');
+          }
+        }
+      });
+      if (maxDocumentNo > 0 && OB.MobileApp.model.documentnoThreshold < maxDocumentNo) {
+        OB.MobileApp.model.documentnoThreshold = maxDocumentNo;
+      }
+      if (maxQuotationNo > 0 && OB.MobileApp.model.quotationnoThreshold < maxQuotationNo) {
+        OB.MobileApp.model.quotationnoThreshold = maxQuotationNo;
+      }
+
+      var outOfSessionOrder = _.filter(ordersNotPaid.models, function (order) {
+        if (order && order.get('session') !== OB.MobileApp.model.get('session')) {
+          return true;
+        }
+      });
+      _.each(outOfSessionOrder, function (orderToRemove) {
+        ordersNotPaid.remove(orderToRemove);
+      });
 
       OB.UTIL.HookManager.executeHooks('OBPOS_PreLoadUnpaidOrdersHook', {
         ordersNotPaid: ordersNotPaid,
