@@ -18,7 +18,6 @@
  */
 package org.openbravo.client.application.window;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.codehaus.jettison.json.JSONException;
@@ -188,237 +187,182 @@ public class OBViewUtil {
    * @return the grid configuration
    */
   private static JSONObject getGridConfigurationSettings(Field field, Tab tab) {
-    Boolean canSort = null;
-    Boolean canFilter = null;
-    Boolean filterOnChange = null;
-    Boolean lazyFiltering = null;
-    Boolean allowFkFilterByIdentifier = null;
-    Boolean showFkDropdownUnfiltered = null;
-    Boolean disableFkDropdown = null;
-    String operator = null;
-    Long thresholdToFilter = null;
-    JSONObject result = new JSONObject();
+    GridConfigSettings settings = new GridConfigSettings();
 
-    if (field != null && field.getId() != null) {
-      if (canSort == null || canFilter == null || operator == null || filterOnChange == null
-          || thresholdToFilter == null || allowFkFilterByIdentifier == null
-          || showFkDropdownUnfiltered == null || disableFkDropdown == null) {
-        List<Object> fieldParams = new ArrayList<Object>();
-        String fieldConfsHql = " as p where p.field.id = ? ";
-        fieldParams.add(field.getId());
-        // Trying to get parameters from "Grid Configuration (Tab/Field)" -> "Field" window
-        List<GCField> fieldConfs = OBDal.getInstance()
-            .createQuery(GCField.class, fieldConfsHql, fieldParams).list();
-        if (!fieldConfs.isEmpty()) {
-          if (canSort == null) {
-            if ("Y".equals(fieldConfs.get(0).getSortable())) {
-              canSort = true;
-            } else if ("N".equals(fieldConfs.get(0).getSortable())) {
-              canSort = false;
-            }
-          }
-          if (canFilter == null) {
-            if ("Y".equals(fieldConfs.get(0).getFilterable())) {
-              canFilter = true;
-            } else if ("N".equals(fieldConfs.get(0).getFilterable())) {
-              canFilter = false;
-            }
-          }
-          if (operator == null) {
-            if (fieldConfs.get(0).getTextFilterBehavior() != null
-                && !"D".equals(fieldConfs.get(0).getTextFilterBehavior())) {
-              operator = fieldConfs.get(0).getTextFilterBehavior();
-            }
-          }
-          if (filterOnChange == null) {
-            if ("Y".equals(fieldConfs.get(0).getFilterOnChange())) {
-              filterOnChange = true;
-            } else if ("N".equals(fieldConfs.get(0).getFilterOnChange())) {
-              filterOnChange = false;
-            }
-          }
-          if (allowFkFilterByIdentifier == null) {
-            if ("Y".equals(fieldConfs.get(0).getAllowFilterByIdentifier())) {
-              allowFkFilterByIdentifier = true;
-            } else if ("N".equals(fieldConfs.get(0).getAllowFilterByIdentifier())) {
-              allowFkFilterByIdentifier = false;
-            }
-          }
-          if (showFkDropdownUnfiltered == null) {
-            if ("Y".equals(fieldConfs.get(0).getIsFkDropdownUnfiltered())) {
-              showFkDropdownUnfiltered = true;
-            } else if ("N".equals(fieldConfs.get(0).getIsFkDropdownUnfiltered())) {
-              showFkDropdownUnfiltered = false;
-            }
-          }
-          if (disableFkDropdown == null) {
-            if ("Y".equals(fieldConfs.get(0).getDisableFkCombo())) {
-              disableFkDropdown = true;
-            } else if ("N".equals(fieldConfs.get(0).getDisableFkCombo())) {
-              disableFkDropdown = false;
-            }
-          }
-          if (thresholdToFilter == null) {
-            thresholdToFilter = fieldConfs.get(0).getThresholdToFilter();
-          }
+    GCTab tabConf = null;
+    for (GCTab t : tab.getOBUIAPPGCTabList()) {
+      tabConf = t;
+      break;
+    }
+
+    if (tabConf != null && field != null && field.getId() != null) {
+      GCField fieldConf = null;
+      for (GCField fc : tabConf.getOBUIAPPGCFieldList()) {
+        // field list is cached in memory, so can be reused for all fields without the need of reach
+        // DB again
+        if (DalUtil.getId(fc.getField()).equals(DalUtil.getId(field))) {
+          fieldConf = fc;
+          break;
         }
+      }
+
+      // Trying to get parameters from "Grid Configuration (Tab/Field)" -> "Field" window
+      if (fieldConf != null) {
+        settings.processConfig(fieldConf);
       }
     }
 
-    if (canSort == null || canFilter == null || operator == null || filterOnChange == null
-        || thresholdToFilter == null || allowFkFilterByIdentifier == null
-        || showFkDropdownUnfiltered == null) {
-      List<Object> tabParams = new ArrayList<Object>();
-      String tabConfsHql = " as p where p.tab.id = ? ";
-      tabParams.add(tab.getId());
+    if (tabConf != null && settings.shouldContinueProcessing()) {
       // Trying to get parameters from "Grid Configuration (Tab/Field)" -> "Tab" window
-      List<GCTab> tabConfs = OBDal.getInstance().createQuery(GCTab.class, tabConfsHql, tabParams)
-          .list();
-      if (!tabConfs.isEmpty()) {
-        if (canSort == null) {
-          if ("Y".equals(tabConfs.get(0).getSortable())) {
-            canSort = true;
-          } else if ("N".equals(tabConfs.get(0).getSortable())) {
-            canSort = false;
-          }
-        }
-        if (canFilter == null) {
-          if ("Y".equals(tabConfs.get(0).getFilterable())) {
-            canFilter = true;
-          } else if ("N".equals(tabConfs.get(0).getFilterable())) {
-            canFilter = false;
-          }
-        }
-        if (operator == null) {
-          if (tabConfs.get(0).getTextFilterBehavior() != null
-              && !"D".equals(tabConfs.get(0).getTextFilterBehavior())) {
-            operator = tabConfs.get(0).getTextFilterBehavior();
-          }
-        }
-        if (filterOnChange == null) {
-          if ("Y".equals(tabConfs.get(0).getFilterOnChange())) {
-            filterOnChange = true;
-          } else if ("N".equals(tabConfs.get(0).getFilterOnChange())) {
-            filterOnChange = false;
-          }
-        }
-        if (lazyFiltering == null) {
-          if ("Y".equals(tabConfs.get(0).getIsLazyFiltering())) {
-            lazyFiltering = true;
-          } else if ("N".equals(tabConfs.get(0).getIsLazyFiltering())) {
-            lazyFiltering = false;
-          }
-        }
-        if (allowFkFilterByIdentifier == null) {
-          if ("Y".equals(tabConfs.get(0).getAllowFilterByIdentifier())) {
-            allowFkFilterByIdentifier = true;
-          } else if ("N".equals(tabConfs.get(0).getAllowFilterByIdentifier())) {
-            allowFkFilterByIdentifier = false;
-          }
-        }
-        if (showFkDropdownUnfiltered == null) {
-          if ("Y".equals(tabConfs.get(0).getIsFkDropDownUnfiltered())) {
-            showFkDropdownUnfiltered = true;
-          } else if ("N".equals(tabConfs.get(0).getIsFkDropDownUnfiltered())) {
-            showFkDropdownUnfiltered = false;
-          }
-        }
-        if (disableFkDropdown == null) {
-          if ("Y".equals(tabConfs.get(0).getDisableFkCombo())) {
-            disableFkDropdown = true;
-          } else if ("N".equals(tabConfs.get(0).getDisableFkCombo())) {
-            disableFkDropdown = false;
-          }
-        }
-        if (thresholdToFilter == null) {
-          thresholdToFilter = tabConfs.get(0).getThresholdToFilter();
-        }
-      }
+      settings.processConfig(tabConf);
     }
 
-    if (canSort == null || canFilter == null || operator == null || filterOnChange == null
-        || thresholdToFilter == null || showFkDropdownUnfiltered == null) {
+    if (settings.shouldContinueProcessing()) {
       // Trying to get parameters from "Grid Configuration (System)" window
       List<GCSystem> sysConfs = OBDal.getInstance().createQuery(GCSystem.class, "").list();
       if (!sysConfs.isEmpty()) {
+        settings.processConfig(sysConfs.get(0));
+      }
+    }
+
+    return settings.processJSONResult();
+  }
+
+  private static class GridConfigSettings {
+    private Boolean canSort = null;
+    private Boolean canFilter = null;
+    private Boolean filterOnChange = null;
+    private Boolean lazyFiltering = null;
+    private Boolean allowFkFilterByIdentifier = null;
+    private Boolean showFkDropdownUnfiltered = null;
+    private Boolean disableFkDropdown = null;
+    private String operator = null;
+    private Long thresholdToFilter = null;
+
+    private boolean shouldContinueProcessing() {
+      return canSort == null || canFilter == null || operator == null || filterOnChange == null
+          || thresholdToFilter == null || allowFkFilterByIdentifier == null
+          || showFkDropdownUnfiltered == null || disableFkDropdown == null || lazyFiltering == null;
+    }
+
+    private Boolean convertBoolean(BaseOBObject gcItem, String property) {
+      Boolean isPropertyEnabled = true;
+      Class<? extends BaseOBObject> itemClass = gcItem.getClass();
+      try {
+        if (gcItem instanceof GCSystem) {
+          if (gcItem.get(itemClass.getField(property).get(gcItem).toString()).equals(true)) {
+            isPropertyEnabled = true;
+          } else if (gcItem.get(itemClass.getField(property).get(gcItem).toString()).equals(false)) {
+            isPropertyEnabled = false;
+          }
+        } else {
+          if ("Y".equals(gcItem.get(itemClass.getField(property).get(gcItem).toString()))) {
+            isPropertyEnabled = true;
+          } else if ("N".equals(gcItem.get(itemClass.getField(property).get(gcItem).toString()))) {
+            isPropertyEnabled = false;
+          } else if ("D".equals(gcItem.get(itemClass.getField(property).get(gcItem).toString()))) {
+            isPropertyEnabled = null;
+          }
+        }
+      } catch (Exception e) {
+        log.error("Error while converting a value to boolean", e);
+      }
+      return isPropertyEnabled;
+    }
+
+    private void processConfig(BaseOBObject gcItem) {
+      Class<? extends BaseOBObject> itemClass = gcItem.getClass();
+      try {
         if (canSort == null) {
-          canSort = sysConfs.get(0).isSortable();
+          canSort = convertBoolean(gcItem, "PROPERTY_SORTABLE");
         }
         if (canFilter == null) {
-          canFilter = sysConfs.get(0).isFilterable();
+          canFilter = convertBoolean(gcItem, "PROPERTY_FILTERABLE");
         }
         if (operator == null) {
-          operator = sysConfs.get(0).getTextFilterBehavior();
+          if (gcItem.get(itemClass.getField("PROPERTY_TEXTFILTERBEHAVIOR").get(gcItem).toString()) != null
+              && !"D".equals(gcItem.get(itemClass.getField("PROPERTY_TEXTFILTERBEHAVIOR")
+                  .get(gcItem).toString()))) {
+            operator = (String) gcItem.get(itemClass.getField("PROPERTY_TEXTFILTERBEHAVIOR")
+                .get(gcItem).toString());
+          }
         }
         if (filterOnChange == null) {
-          filterOnChange = sysConfs.get(0).isFilterOnChange();
-        }
-        if (lazyFiltering == null) {
-          lazyFiltering = sysConfs.get(0).isLazyFiltering();
-        }
-        if (thresholdToFilter == null) {
-          thresholdToFilter = sysConfs.get(0).getThresholdToFilter();
+          filterOnChange = convertBoolean(gcItem, "PROPERTY_FILTERONCHANGE");
         }
         if (allowFkFilterByIdentifier == null) {
-          allowFkFilterByIdentifier = sysConfs.get(0).isAllowFilterByIdentifier();
+          allowFkFilterByIdentifier = convertBoolean(gcItem, "PROPERTY_ALLOWFILTERBYIDENTIFIER");
         }
         if (showFkDropdownUnfiltered == null) {
-          showFkDropdownUnfiltered = sysConfs.get(0).isFkDropDownUnfiltered();
+          showFkDropdownUnfiltered = convertBoolean(gcItem, "PROPERTY_ISFKDROPDOWNUNFILTERED");
         }
         if (disableFkDropdown == null) {
-          disableFkDropdown = sysConfs.get(0).isDisableFkCombo();
+          disableFkDropdown = convertBoolean(gcItem, "PROPERTY_DISABLEFKCOMBO");
+        }
+        if (thresholdToFilter == null) {
+          thresholdToFilter = (Long) gcItem.get(itemClass.getField("PROPERTY_THRESHOLDTOFILTER")
+              .get(gcItem).toString());
+        }
+        if (lazyFiltering == null && !(gcItem instanceof GCField)) {
+          lazyFiltering = convertBoolean(gcItem, "PROPERTY_ISLAZYFILTERING");
+        }
+      } catch (Exception e) {
+        log.error("Error while getting the properties of " + gcItem, e);
+      }
+    }
+
+    public JSONObject processJSONResult() {
+      if (operator != null) {
+        if ("IC".equals(operator)) {
+          operator = "iContains";
+        } else if ("IS".equals(operator)) {
+          operator = "iStartsWith";
+        } else if ("IE".equals(operator)) {
+          operator = "iEquals";
+        } else if ("C".equals(operator)) {
+          operator = "contains";
+        } else if ("S".equals(operator)) {
+          operator = "startsWith";
+        } else if ("E".equals(operator)) {
+          operator = "equals";
         }
       }
-    }
 
-    if (operator != null) {
-      if ("IC".equals(operator)) {
-        operator = "iContains";
-      } else if ("IS".equals(operator)) {
-        operator = "iStartsWith";
-      } else if ("IE".equals(operator)) {
-        operator = "iEquals";
-      } else if ("C".equals(operator)) {
-        operator = "contains";
-      } else if ("S".equals(operator)) {
-        operator = "startsWith";
-      } else if ("E".equals(operator)) {
-        operator = "equals";
+      JSONObject result = new JSONObject();
+      try {
+        if (canSort != null) {
+          result.put("canSort", canSort);
+        }
+        if (canFilter != null) {
+          result.put("canFilter", canFilter);
+        }
+        if (operator != null) {
+          result.put("operator", operator);
+        }
+        // If the tab uses lazy filtering, the fields should not filter on change
+        if (Boolean.TRUE.equals(lazyFiltering)) {
+          filterOnChange = false;
+        }
+        if (filterOnChange != null) {
+          result.put("filterOnChange", filterOnChange);
+        }
+        if (thresholdToFilter != null) {
+          result.put("thresholdToFilter", thresholdToFilter);
+        }
+        if (allowFkFilterByIdentifier != null) {
+          result.put("allowFkFilterByIdentifier", allowFkFilterByIdentifier);
+        }
+        if (showFkDropdownUnfiltered != null) {
+          result.put("showFkDropdownUnfiltered", showFkDropdownUnfiltered);
+        }
+        if (disableFkDropdown != null) {
+          result.put("disableFkDropdown", disableFkDropdown);
+        }
+      } catch (JSONException e) {
+        log.error("Couldn't get field property value", e);
       }
-    }
 
-    try {
-      if (canSort != null) {
-        result.put("canSort", canSort);
-      }
-      if (canFilter != null) {
-        result.put("canFilter", canFilter);
-      }
-      if (operator != null) {
-        result.put("operator", operator);
-      }
-      // If the tab uses lazy filtering, the fields should not filter on change
-      if (Boolean.TRUE.equals(lazyFiltering)) {
-        filterOnChange = false;
-      }
-      if (filterOnChange != null) {
-        result.put("filterOnChange", filterOnChange);
-      }
-      if (thresholdToFilter != null) {
-        result.put("thresholdToFilter", thresholdToFilter);
-      }
-      if (allowFkFilterByIdentifier != null) {
-        result.put("allowFkFilterByIdentifier", allowFkFilterByIdentifier);
-      }
-      if (showFkDropdownUnfiltered != null) {
-        result.put("showFkDropdownUnfiltered", showFkDropdownUnfiltered);
-      }
-      if (disableFkDropdown != null) {
-        result.put("disableFkDropdown", disableFkDropdown);
-      }
-    } catch (JSONException e) {
-      log.error("Couldn't get field property value");
+      return result;
     }
-    return result;
   }
 }
