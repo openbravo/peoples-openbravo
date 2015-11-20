@@ -953,7 +953,7 @@ OB.ViewFormProperties = {
 
     if (this.callSaveAfterFICReturn) {
       delete this.callSaveAfterFICReturn;
-      this.saveRow(true);
+      this.saveRow();
     }
     if (this.expandAttachments) {
       this.getItem('_attachments_').expandSection();
@@ -1594,9 +1594,9 @@ OB.ViewFormProperties = {
     this.view.standardWindow.setDirtyEditForm(null);
   },
 
-  autoSave: function () {
+  autoSave: function (parameters) {
     if (this.isViewForm) {
-      this.saveRow();
+      this.saveRow(parameters);
     } else {
       // grid editing, forward to the grid
       this.view.viewGrid.autoSave();
@@ -1616,7 +1616,7 @@ OB.ViewFormProperties = {
   // Note: saveRow is not called in case of grid editing
   // there the save call is done through the grid saveEditedValues
   // function
-  saveRow: function () {
+  saveRow: function (parameters) {
     var savingNewRecord = this.isNew,
         storedFocusItem, i, length, flds, form = this,
         ficCallDone, record, recordIndex, callback, viewsNotToRefresh;
@@ -1846,11 +1846,11 @@ OB.ViewFormProperties = {
       }
       this.previousExplicitOffline = isc.Offline.explicitOffline;
       isc.Offline.explicitOffline = false;
+      parameters = parameters || {};
+      parameters.willHandleError = true;
+      parameters.formSave = true;
       // last parameter true prevents additional validation
-      this.saveData(callback, {
-        willHandleError: true,
-        formSave: true
-      }, true);
+      this.saveData(callback, parameters, true);
     }
   },
 

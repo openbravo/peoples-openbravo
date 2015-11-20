@@ -319,19 +319,30 @@ isc.OBTreeFilterItem.addProperties({
   },
 
   init: function () {
-    var field;
+    var field, treeGridFields, treeReferenceId, dataSourceId, view;
     this.pickerIconSrc = OB.Styles.OBFormField.DefaultSearch.pickerIconSrc;
     this.Super('init', arguments);
     field = this.grid.getField(this.name);
     this.criteriaField = field.displayField;
+    if (this.selectorWindow) {
+      treeGridFields = this.selectorWindow.selectorGridFields.find('name', this.name).treeGridFields;
+      treeReferenceId = this.selectorWindow.selectorGridFields.find('name', this.name).treeReferenceId;
+      dataSourceId = this.selectorWindow.selectorGridFields.find('name', this.name).dataSourceId;
+      view = this.selectorWindow.selectorGrid.selector.form.view;
+    } else {
+      treeGridFields = field.editorProperties.treeGridFields;
+      treeReferenceId = field.editorProperties.treeReferenceId;
+      dataSourceId = field.editorProperties.dataSourceId;
+      view = this.grid.parentElement.view;
+    }
     this.addAutoChild('filterDialog', {
       title: this.title,
       filterItem: this,
-      treeGridFields: field.editorProperties.treeGridFields,
-      treeReferenceId: field.editorProperties.treeReferenceId,
-      dataSourceId: field.editorProperties.dataSourceId,
+      treeGridFields: treeGridFields,
+      treeReferenceId: treeReferenceId,
+      dataSourceId: dataSourceId,
       fieldName: field.name,
-      view: this.grid.parentElement.view,
+      view: view,
       changeCriteriacallback: this.getID() + '.filterDialogCallback(value)'
     }, 'isc.OBTreeItemPopupFilterWindow');
   },

@@ -23,6 +23,7 @@ import java.util.List;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.Hibernate;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.client.application.GCField;
 import org.openbravo.client.application.GCSystem;
@@ -44,11 +45,24 @@ import org.slf4j.LoggerFactory;
  * @author mtaal
  */
 public class OBViewUtil {
+  public static final Element createdElement;
+  public static final Element createdByElement;
+  public static final Element updatedElement;
+  public static final Element updatedByElement;
 
-  public static final Element createdElement = OBDal.getInstance().get(Element.class, "245");
-  public static final Element createdByElement = OBDal.getInstance().get(Element.class, "246");
-  public static final Element updatedElement = OBDal.getInstance().get(Element.class, "607");
-  public static final Element updatedByElement = OBDal.getInstance().get(Element.class, "608");
+  static {
+    createdElement = OBDal.getInstance().get(Element.class, "245");
+    createdByElement = OBDal.getInstance().get(Element.class, "246");
+    updatedElement = OBDal.getInstance().get(Element.class, "607");
+    updatedByElement = OBDal.getInstance().get(Element.class, "608");
+
+    // force loading translations for these fields as they might be used for labels
+    Hibernate.initialize(createdElement.getADElementTrlList());
+    Hibernate.initialize(createdByElement.getADElementTrlList());
+    Hibernate.initialize(updatedElement.getADElementTrlList());
+    Hibernate.initialize(updatedByElement.getADElementTrlList());
+  }
+
   private static Logger log = LoggerFactory.getLogger(OBViewUtil.class);
 
   /**
@@ -119,16 +133,18 @@ public class OBViewUtil {
    */
   private static String getLabel(BaseOBObject owner, List<?> trlObjects,
       String primaryPropertyName, String secondaryPropertyName) {
-    final String userLanguageId = OBContext.getOBContext().getLanguage().getId();
-    for (Object o : trlObjects) {
-      final BaseOBObject trlObject = (BaseOBObject) o;
-      final String trlLanguageId = (String) DalUtil
-          .getId(trlObject.get(FieldTrl.PROPERTY_LANGUAGE));
-      if (trlLanguageId.equals(userLanguageId)) {
-        if (secondaryPropertyName == null || trlObject.get(primaryPropertyName) != null) {
-          return (String) trlObject.get(primaryPropertyName);
+    if (OBContext.hasTranslationInstalled()) {
+      final String userLanguageId = OBContext.getOBContext().getLanguage().getId();
+      for (Object o : trlObjects) {
+        final BaseOBObject trlObject = (BaseOBObject) o;
+        final String trlLanguageId = (String) DalUtil.getId(trlObject
+            .get(FieldTrl.PROPERTY_LANGUAGE));
+        if (trlLanguageId.equals(userLanguageId)) {
+          if (secondaryPropertyName == null || trlObject.get(primaryPropertyName) != null) {
+            return (String) trlObject.get(primaryPropertyName);
+          }
+          return (String) trlObject.get(secondaryPropertyName);
         }
-        return (String) trlObject.get(secondaryPropertyName);
       }
     }
 

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2011-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2011-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  Mallikarjun M
  ************************************************************************
@@ -104,8 +104,7 @@ public class CloneOrderActionHandler extends BaseActionHandler {
         objCloneOrdLine.setReservedQuantity(new BigDecimal("0"));
         objCloneOrdLine.setDeliveredQuantity(new BigDecimal("0"));
         objCloneOrdLine.setInvoicedQuantity(new BigDecimal("0"));
-        if (!"".equals(bdPriceList) || bdPriceList != null
-            || !bdPriceList.equals(BigDecimal.ZERO.setScale(bdPriceList.scale()))) {
+        if (bdPriceList != null && bdPriceList.compareTo(BigDecimal.ZERO) != 0) {
           objCloneOrdLine.setListPrice(bdPriceList);
         }
         objCloneOrdLine.setCreationDate(new Date());

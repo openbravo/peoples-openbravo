@@ -456,14 +456,12 @@ public class DataImportService implements OBSingleton {
       boolean isBatchUpdateException = false;
       // We need to capture nested exception of BatchUpdate exception.
       Throwable cause = t.getCause();
-      if (cause instanceof BatchUpdateException) {
-        BatchUpdateException batchUpdateException = (BatchUpdateException) cause;
-        if (batchUpdateException.getNextException() != null) {
-          String errorMessage = batchUpdateException.getNextException().getMessage();
-          String messageKey = errorMessage.substring("ERROR:".length()).trim();
-          isBatchUpdateException = true;
-          ir.setErrorMessages("isBatchUpdateException:" + messageKey);
-        }
+      Throwable foundCause = DbUtility.getUnderlyingSQLException(t);
+      if (cause instanceof BatchUpdateException && t != foundCause) {
+        String errorMessage = foundCause.getMessage();
+        String messageKey = errorMessage.substring("ERROR:".length()).trim();
+        isBatchUpdateException = true;
+        ir.setErrorMessages("isBatchUpdateException:" + messageKey);
       }
       OBDal.getInstance().rollbackAndClose();
       rolledBack = true;

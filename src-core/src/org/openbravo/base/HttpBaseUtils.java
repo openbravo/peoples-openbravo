@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2010 Openbravo S.L.U.
+ * Copyright (C) 2001-2015 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -44,7 +44,8 @@ public class HttpBaseUtils {
     return host + request.getContextPath();
   }
 
-  public static String getRelativeUrl(HttpServletRequest request, String url) {
+  public static String getRelativeUrl(HttpServletRequest request, String _url) {
+    String url = _url;
     if (!url.startsWith(getLocalHostAddress(request, true) + "/"))
       return url;
     url = url.replace((getLocalHostAddress(request, true) + "/"), "");

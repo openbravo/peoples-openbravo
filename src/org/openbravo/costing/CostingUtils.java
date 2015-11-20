@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2014 Openbravo SLU
+ * All portions are Copyright (C) 2012-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -28,6 +28,7 @@ import java.util.Set;
 
 import javax.servlet.ServletException;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
@@ -51,13 +52,17 @@ import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.enterprise.Locator;
 import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.model.common.enterprise.Warehouse;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.financialmgmt.calendar.Period;
 import org.openbravo.model.materialmgmt.cost.Costing;
 import org.openbravo.model.materialmgmt.cost.CostingRule;
+import org.openbravo.model.materialmgmt.cost.InvAmtUpdLnInventories;
 import org.openbravo.model.materialmgmt.cost.TransactionCost;
+import org.openbravo.model.materialmgmt.transaction.InventoryCount;
+import org.openbravo.model.materialmgmt.transaction.InventoryCountLine;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
@@ -489,7 +494,7 @@ public class CostingUtils {
     where.append(" and (" + CostingRule.PROPERTY_STARTINGDATE + " is null ");
     where.append("   or " + CostingRule.PROPERTY_STARTINGDATE + " <= :startdate)");
     where.append(" and (" + CostingRule.PROPERTY_ENDINGDATE + " is null");
-    where.append("   or " + CostingRule.PROPERTY_ENDINGDATE + " > :enddate )");
+    where.append("   or " + CostingRule.PROPERTY_ENDINGDATE + " >= :enddate )");
     where.append(" and " + CostingRule.PROPERTY_VALIDATED + " = true");
     where.append(" order by case when " + CostingRule.PROPERTY_STARTINGDATE
         + " is null then 1 else 0 end, " + CostingRule.PROPERTY_STARTINGDATE + " desc");
@@ -571,7 +576,7 @@ public class CostingUtils {
    * Returns the Fix Backdated From of a Costing Rule, if is null returns 01/01/1900
    */
   public static Date getCostingRuleFixBackdatedFrom(CostingRule rule) {
-    if (rule.getStartingDate() == null) {
+    if (rule.getFixbackdatedfrom() == null) {
       SimpleDateFormat outputFormat = new SimpleDateFormat("dd-MM-yyyy");
       try {
         return outputFormat.parse("01-01-1900");
@@ -581,6 +586,92 @@ public class CostingUtils {
         return null;
       }
     }
-    return rule.getStartingDate();
+    return rule.getFixbackdatedfrom();
+  }
+
+  /**
+   * Throws an OBException when the processId is the CostingBackground and it is being executed by
+   * an organization which has a legal entity as an ancestor.
+   * 
+   * @param processId
+   *          This is the process Id being executed. The method only runs the validation when the
+   *          process ID is equal to CostingBackground.AD_PROCESS_ID
+   * @param scheduledOrg
+   *          the organization that runs the process
+   */
+  public static void checkValidOrganization(final String processId, final Organization scheduledOrg) {
+    if (StringUtils.equals(processId, CostingBackground.AD_PROCESS_ID)) {
+      final Organization legalEntity = OBContext.getOBContext().getOrganizationStructureProvider()
+          .getLegalEntity(scheduledOrg);
+      if (legalEntity != null && !StringUtils.equals(legalEntity.getId(), scheduledOrg.getId())) {
+        throw new OBException(OBMessageUtils.messageBD("CostBackgroundWrongOrganization"));
+      }
+    }
+  }
+
+  /**
+   * Check if exists processed transactions for this product
+   */
+  public static boolean existsProcessedTransactions(Product product,
+      HashMap<CostDimension, BaseOBObject> _costDimensions, Organization costorg,
+      MaterialTransaction trx, boolean isManufacturingProduct) {
+
+    // Get child tree of organizations.
+    OrganizationStructureProvider osp = OBContext.getOBContext().getOrganizationStructureProvider(
+        trx.getClient().getId());
+    Set<String> orgs = osp.getChildTree(costorg.getId(), true);
+    HashMap<CostDimension, BaseOBObject> costDimensions = _costDimensions;
+    if (isManufacturingProduct) {
+      orgs = osp.getChildTree("0", false);
+      costDimensions = CostingUtils.getEmptyDimensions();
+    }
+
+    OBCriteria<MaterialTransaction> criteria = OBDal.getInstance().createCriteria(
+        MaterialTransaction.class);
+    criteria.add(Restrictions.eq(MaterialTransaction.PROPERTY_PRODUCT, product));
+    criteria.add(Restrictions.eq(MaterialTransaction.PROPERTY_ISPROCESSED, true));
+    criteria.add(Restrictions.in(MaterialTransaction.PROPERTY_ORGANIZATION + ".id", orgs));
+    if (costDimensions.get(CostDimension.Warehouse) != null) {
+      criteria.add(Restrictions
+          .eq(MaterialTransaction.PROPERTY_STORAGEBIN + "." + Locator.PROPERTY_WAREHOUSE + ".id",
+              costDimensions.get(CostDimension.Warehouse).getId()));
+    }
+    criteria.setFilterOnReadableOrganization(false);
+    criteria.setMaxResults(1);
+    return criteria.uniqueResult() != null;
+  }
+
+  /**
+   * Check if trx is the last opening one of an Inventory Amount Update
+   */
+  public static boolean isLastOpeningTransaction(MaterialTransaction trx,
+      boolean includeWarehouseDimension) {
+
+    StringBuffer where = new StringBuffer();
+    where.append(" select trx." + MaterialTransaction.PROPERTY_ID + " as trxid");
+    where.append(" from " + MaterialTransaction.ENTITY_NAME + " as trx");
+    where.append(" join trx." + MaterialTransaction.PROPERTY_PHYSICALINVENTORYLINE + " as il");
+    where.append(" join il." + InventoryCountLine.PROPERTY_PHYSINVENTORY + " as i");
+    where.append(" join i."
+        + InventoryCount.PROPERTY_INVENTORYAMOUNTUPDATELINEINVENTORIESINITINVENTORYLIST
+        + " as iaui");
+    where.append(" join iaui." + InvAmtUpdLnInventories.PROPERTY_WAREHOUSE + " as w");
+    where.append(" where i." + InventoryCount.PROPERTY_INVENTORYTYPE + " = 'O'");
+    where.append(" and iaui." + InvAmtUpdLnInventories.PROPERTY_CAINVENTORYAMTLINE + " = :iaul");
+    if (includeWarehouseDimension) {
+      where.append(" and iaui." + InvAmtUpdLnInventories.PROPERTY_WAREHOUSE + " = :warehouse");
+    }
+    where.append(" order by w." + Warehouse.PROPERTY_NAME + " desc");
+    where.append(" , il." + InventoryCountLine.PROPERTY_LINENO + " desc");
+
+    Query qry = OBDal.getInstance().getSession().createQuery(where.toString());
+    OBDal.getInstance().refresh(trx.getPhysicalInventoryLine().getPhysInventory());
+    qry.setParameter("iaul", trx.getPhysicalInventoryLine().getPhysInventory()
+        .getInventoryAmountUpdateLineInventoriesInitInventoryList().get(0).getCaInventoryamtline());
+    if (includeWarehouseDimension) {
+      qry.setParameter("warehouse", trx.getStorageBin().getWarehouse());
+    }
+    qry.setMaxResults(1);
+    return StringUtils.equals(trx.getId(), (String) qry.uniqueResult());
   }
 }

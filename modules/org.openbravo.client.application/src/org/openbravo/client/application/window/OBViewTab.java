@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2015 Openbravo SLU 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -306,6 +306,7 @@ public class OBViewTab extends BaseTemplateComponent {
       emailBtn.label = Utility.messageBD(new DalConnectionProvider(false), "Email", OBContext
           .getOBContext().getLanguage().getLanguage());
       emailBtn.action = printBtn.action.replace("print.html", "send.html");
+      emailBtn.action = emailBtn.action.replace("printButton", "emailButton");
       btns.add(emailBtn);
     }
 
@@ -463,11 +464,13 @@ public class OBViewTab extends BaseTemplateComponent {
 
   public String getTabTitle() {
     if (tabTitle == null) {
-      final String userLanguageId = OBContext.getOBContext().getLanguage().getId();
-      for (TabTrl tabTrl : tab.getADTabTrlList()) {
-        final String trlLanguageId = (String) DalUtil.getId(tabTrl.getLanguage());
-        if (trlLanguageId.equals(userLanguageId)) {
-          tabTitle = tabTrl.getName();
+      if (OBContext.hasTranslationInstalled()) {
+        final String userLanguageId = OBContext.getOBContext().getLanguage().getId();
+        for (TabTrl tabTrl : tab.getADTabTrlList()) {
+          final String trlLanguageId = (String) DalUtil.getId(tabTrl.getLanguage());
+          if (trlLanguageId.equals(userLanguageId)) {
+            tabTitle = tabTrl.getName();
+          }
         }
       }
       if (tabTitle == null) {
@@ -1070,7 +1073,7 @@ public class OBViewTab extends BaseTemplateComponent {
 
       type = "print";
       action = "OB.ToolbarUtils.print(this.view, '" + processUrl + "', " + process.isDirectPrint()
-          + ");";
+          + ", 'printButton');";
       label = Utility.messageBD(new DalConnectionProvider(false), "Print", OBContext.getOBContext()
           .getLanguage().getLanguage());
     }

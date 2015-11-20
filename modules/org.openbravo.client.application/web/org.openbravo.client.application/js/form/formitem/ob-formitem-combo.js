@@ -35,5 +35,32 @@ isc.OBComboBoxItem.addProperties({
     ret = this.Super('filterComplete', arguments);
     delete this.preventValidation;
     return ret;
+  },
+
+  // Override showPicker to ensure that we select the text when clicking on the drop-down
+  // See issue #31274
+  showPicker: function () {
+    this.selectValue();
+    this.Super('showPicker', arguments);
+  },
+
+  // Override handleKeyPress to ensure that we select the text when pressing the keyboard shortcut of the drop-down
+  // See issue #31377
+  handleKeyPress: function () {
+    if (this.keyboardShortcutPressed()) {
+      this.selectValue();
+    }
+    return this.Super('handleKeyPress', arguments);
+  },
+
+  // Checks if the ALT + keyboard down key combination has been pressed on a valid state of the combo box
+  keyboardShortcutPressed: function () {
+    if (this.hasFocus && !this.isReadOnly()) {
+      var keyName = isc.EH.lastEvent.keyName;
+      if (keyName === 'Arrow_Down' && isc.EH.altKeyDown()) {
+        return true;
+      }
+    }
+    return false;
   }
 });

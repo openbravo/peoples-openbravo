@@ -45,6 +45,7 @@ import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
+import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.service.OBDal;
@@ -171,10 +172,16 @@ public class ImportEntryManager {
   }
 
   public synchronized void start() {
+    if (ImportProcessUtils.isImportProcessDisabled()) {
+      log.debug("Import process disabled, not starting it");
+      return;
+    }
+
     if (threadsStarted) {
       return;
     }
     threadsStarted = true;
+
     log.debug("Starting Import Entry Framework");
 
     // same as fixed threadpool, will only stop accepting new tasks (throw an exception)
@@ -222,6 +229,9 @@ public class ImportEntryManager {
    * Shutdown all the threads being used by the import framework
    */
   public void shutdown() {
+    if (!threadsStarted) {
+      return;
+    }
     log.debug("Shutting down Import Entry Framework");
 
     isShutDown = true;
@@ -327,7 +337,9 @@ public class ImportEntryManager {
       start();
     }
 
-    managerThread.doNotify();
+    if (managerThread != null) {
+      managerThread.doNotify();
+    }
   }
 
   private void handleImportEntry(ImportEntry importEntry) {
@@ -469,6 +481,8 @@ public class ImportEntryManager {
 
       Thread.currentThread().setName("Import Entry Manager Main");
 
+      boolean isTest = OBPropertiesProvider.getInstance().getBooleanProperty("test.environment");
+
       // don't start right away at startup, give the system time to
       // really start
       log.debug("Started, first sleep " + manager.initialWaitTime);
@@ -515,6 +529,9 @@ public class ImportEntryManager {
               // don't block eachother with the limited batch size
               // being read
               for (String typeOfData : typesOfData) {
+
+                log.debug("Reading import entries for type of data " + typeOfData);
+
                 final String importEntryQryStr = "from " + ImportEntry.ENTITY_NAME + " where "
                     + ImportEntry.PROPERTY_TYPEOFDATA + "='" + typeOfData + "' and "
                     + ImportEntry.PROPERTY_IMPORTSTATUS + "='Initial' order by "
@@ -531,11 +548,18 @@ public class ImportEntryManager {
                   while (entries.next()) {
                     entryCount++;
                     final ImportEntry entry = (ImportEntry) entries.get(0);
+
+                    if (log.isDebugEnabled()) {
+                      log.debug("Handle import entry " + entry.getIdentifier());
+                    }
+
                     try {
                       manager.handleImportEntry(entry);
                       // remove it from the internal cache to keep it small
                       OBDal.getInstance().getSession().evict(entry);
                     } catch (Throwable t) {
+                      ImportProcessUtils.logError(log, t);
+
                       // ImportEntryProcessors are custom implementations which can cause
                       // errors, so always catch them to prevent other import entries
                       // from not getting processed
@@ -558,9 +582,18 @@ public class ImportEntryManager {
               // give the threads time to process it all before trying
               // a next batch of entries
               try {
-                // wait one second per 50 records, somewhat arbitrary
-                // but high enough for most cases
-                Thread.sleep(1000 * (entryCount / 50));
+                // wait one second per 30 records, somewhat arbitrary
+                // but high enough for most cases, also always wait 300 millis additional to
+                // start up threads etc.
+                // note computation of timing ensures that int rounding is done on 1000* entrycount
+                if (isTest) {
+                  // in case of test don't wait minimal 2 seconds
+                  Thread.sleep(300 + ((1000 * entryCount) / 30));
+                } else {
+                  log.debug("Entries have been processed, wait a shorter time, and try again to capture new entries which have been added");
+                  // wait minimal 2 seconds or based on entry count
+                  Thread.sleep(Math.max(2000, 300 + ((1000 * entryCount) / 30)));
+                }
               } catch (Exception ignored) {
               }
             } else {

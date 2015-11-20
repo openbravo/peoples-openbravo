@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -20,6 +20,7 @@
 package org.openbravo.base.exception;
 
 import org.apache.log4j.Logger;
+import org.openbravo.service.db.DbUtility;
 
 /**
  * This is the base exception for all exceptions in Openbravo. It is an unchecked exception which
@@ -30,6 +31,7 @@ import org.apache.log4j.Logger;
 public class OBException extends RuntimeException {
 
   private static final long serialVersionUID = 1L;
+  private boolean logExceptionNeeded;
 
   public OBException() {
     super();
@@ -40,8 +42,17 @@ public class OBException extends RuntimeException {
     this(message, cause, true);
   }
 
+  public OBException(String message, boolean logException) {
+    super(message);
+    logExceptionNeeded = logException;
+    if (logException) {
+      getLogger().error(message, this);
+    }
+  }
+
   public OBException(String message, Throwable cause, boolean logException) {
     super(message, cause);
+    logExceptionNeeded = logException;
     if (logException) {
       getLogger().error(message, cause);
     }
@@ -54,7 +65,13 @@ public class OBException extends RuntimeException {
 
   public OBException(Throwable cause) {
     super(cause);
-    getLogger().error(cause.getMessage(), cause);
+    Throwable foundCause = DbUtility.getUnderlyingSQLException(cause);
+    if (foundCause != cause) {
+      // passing foundCause ensures that the underlying stack trace is printed
+      getLogger().error(cause.getMessage() + " - " + foundCause.getMessage(), foundCause);
+    } else {
+      getLogger().error(cause.getMessage(), cause);
+    }
   }
 
   /**
@@ -65,5 +82,14 @@ public class OBException extends RuntimeException {
    */
   protected Logger getLogger() {
     return Logger.getLogger(this.getClass());
+  }
+
+  /**
+   * This method returns if log exception is needed.
+   * 
+   * @return the logExceptionNeeded
+   */
+  public boolean isLogExceptionNeeded() {
+    return logExceptionNeeded;
   }
 }

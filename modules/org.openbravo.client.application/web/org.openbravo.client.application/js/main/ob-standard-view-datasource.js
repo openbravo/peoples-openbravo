@@ -222,7 +222,7 @@ isc.OBViewDataSource.addProperties({
         // errors make it available through the response object
         dsResponse.dataObject = jsonData;
 
-        if ((dsRequest.operationType === 'update' || dsRequest.operationType === 'add') && this.view.viewForm && jsonData.response && jsonData.response.data && jsonData.response.data.length === 1) {
+        if ((dsRequest.operationType === 'update' || dsRequest.operationType === 'add') && this.view.viewForm && jsonData.response && jsonData.response.data && jsonData.response.data.length === 1 && dsRequest.isNewDocument !== true) {
           // adding or updating a single record: at this point it is possible valueMap for
           // some fields not to contain current entry, let's add it now so it is properly
           // displayed

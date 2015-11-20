@@ -473,6 +473,12 @@ public class OBViewFieldHandler {
         continue;
       }
 
+      if (!field.isActive()) {
+        // If the field is not marked as active then is not shown in status bar
+        // See issue https://issues.openbravo.com/view.php?id=30825
+        continue;
+      }
+
       final Property property;
       if (field.getProperty() != null) {
         property = DalUtil.getPropertyFromPath(entity, field.getProperty());

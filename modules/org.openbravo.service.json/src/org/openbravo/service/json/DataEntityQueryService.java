@@ -118,11 +118,15 @@ public class DataEntityQueryService {
     return qry.scroll(ScrollMode.FORWARD_ONLY);
   }
 
+  public String getWhereClause() {
+    return queryBuilder.getJoinClause() + queryBuilder.getWhereClause();
+  }
+
   /**
    * Build an OBQuery object using the generated where, order by and select clauses.
    */
   public OBQuery<BaseOBObject> buildOBQuery() {
-    final String whereOrderBy = queryBuilder.getJoinClause() + queryBuilder.getWhereClause()
+    final String whereOrderBy = getWhereClause()
         + (getSummarySettings() == null ? queryBuilder.getOrderByClause() : "");
 
     log.debug("Querying for " + entityName + " " + whereOrderBy);
@@ -162,7 +166,7 @@ public class DataEntityQueryService {
     return obq;
   }
 
-  AdvancedQueryBuilder getQueryBuilder() {
+  public AdvancedQueryBuilder getQueryBuilder() {
     return queryBuilder;
   }
 

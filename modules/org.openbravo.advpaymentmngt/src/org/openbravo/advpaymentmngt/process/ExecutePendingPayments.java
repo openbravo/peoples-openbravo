@@ -1,3 +1,21 @@
+/*
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License.
+ * The Original Code is Openbravo ERP.
+ * The Initial Developer of the Original Code is Openbravo SLU
+ * All portions are Copyright (C) 2010-2015 Openbravo SLU
+ * All Rights Reserved.
+ * Contributor(s):  ______________________________________.
+ *************************************************************************
+ */
 package org.openbravo.advpaymentmngt.process;
 
 import java.util.ArrayList;
@@ -7,6 +25,7 @@ import org.openbravo.advpaymentmngt.APRMPendingPaymentFromInvoice;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.common.enterprise.Organization;
@@ -36,9 +55,13 @@ public class ExecutePendingPayments extends DalBaseProcess {
       List<APRMPendingPaymentFromInvoice> pendingPayments = dao.getPendingPayments();
       List<FIN_Payment> payments = new ArrayList<FIN_Payment>();
       // If there are no pending payments to process, return and skip this process.
-      if (pendingPayments.size() == 0) {
+      if (pendingPayments.isEmpty()) {
         return;
       }
+      // FIXME: this code is not properly written and it's impossible to understand.
+      // The comparations of objects are wrong (!=), probably they are always false in runtime.
+      // The first time we iterate the for, the executionProcess is null, so it won't enter the if.
+      // Is it right?
       try {
         for (APRMPendingPaymentFromInvoice pendingPayment : pendingPayments) {
           if (executionProcess != null
@@ -58,8 +81,12 @@ public class ExecutePendingPayments extends DalBaseProcess {
           }
           executionProcess = pendingPayment.getPaymentExecutionProcess();
           organization = pendingPayment.getOrganization();
-          payments.add(pendingPayment.getPayment());
-
+          FIN_Payment payment = pendingPayment.getPayment();
+          if (payment.getStatus().equals("RPAE")) {
+            payments.add(pendingPayment.getPayment());
+          } else {
+            OBDal.getInstance().remove(pendingPayment);
+          }
         }
         logger.logln(executionProcess.getIdentifier());
         if (dao.isAutomaticExecutionProcess(executionProcess)) {

@@ -15,7 +15,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2010 Openbravo SLU
+* All portions are Copyright (C) 2010-2015 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -39,6 +39,29 @@ BEGIN
         AND isindevelopment = 'N';
       IF (vAux!=0) THEN
         RAISE_APPLICATION_ERROR(-20000, '@ChangeNotInDevModule@');
+      END IF;
+    END IF;
+    IF (COALESCE(:NEW.VISIBLEAT_ROLE_ID , '.') != COALESCE(:OLD.VISIBLEAT_ROLE_ID , '.')) THEN
+      SELECT COUNT(*)
+        INTO vAux
+        FROM dual
+      WHERE EXISTS (SELECT 1 FROM AD_ROLE_INHERITANCE
+                    WHERE INHERIT_FROM = :OLD.VISIBLEAT_ROLE_ID OR INHERIT_FROM = :NEW.VISIBLEAT_ROLE_ID);
+      IF (vAux!=0) THEN
+        RAISE_APPLICATION_ERROR(-20000, '@CannotChangeVisibleAtTemplate@');
+      END IF;
+    END IF;
+    IF (COALESCE(:NEW.VISIBLEAT_CLIENT_ID , '.') != COALESCE(:OLD.VISIBLEAT_CLIENT_ID , '.') OR
+        COALESCE(:NEW.VISIBLEAT_ORG_ID , '.') != COALESCE(:OLD.VISIBLEAT_ORG_ID , '.') OR
+        COALESCE(:NEW.AD_USER_ID , '.') != COALESCE(:OLD.AD_USER_ID , '.') OR
+        COALESCE(:NEW.AD_WINDOW_ID , '.') != COALESCE(:OLD.AD_WINDOW_ID , '.')) THEN
+      SELECT COUNT(*)
+        INTO vAux
+        FROM dual
+      WHERE EXISTS (SELECT 1 FROM AD_ROLE_INHERITANCE
+                    WHERE INHERIT_FROM = :NEW.VISIBLEAT_ROLE_ID);
+      IF (vAux!=0) THEN
+        RAISE_APPLICATION_ERROR(-20000, '@CannotChangeVisibilityTemplate@');
       END IF;
     END IF;
   END IF;

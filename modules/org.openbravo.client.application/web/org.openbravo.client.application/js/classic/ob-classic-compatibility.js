@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2013 Openbravo SLU
+ * All portions are Copyright (C) 2010-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -446,8 +446,8 @@
         if (!cPopup.areParamsSet) {
           if (!postParams) {
             cPopup.getIframeHtmlObj().contentWindow.frames[0].location.href = cPopup.popupURL;
-            if (OB.Utilities.isIE9Strict) {
-              // In IE9 Strict, when the location.href or .src is defined, the previous defined opener is lost, and it should be defined again
+            if (OB.Utilities.isIE9Strict || OB.Utilities.isIE11 || OB.Utilities.isEdge) {
+              // In IE9 Strict, IE11 and Edge, when the location.href or .src is defined, the previous defined opener is lost, and it should be defined again
               cPopup.getIframeHtmlObj().contentWindow.frames[0].opener = cPopup.theOpener;
               var setOpenerInterval;
               setOpenerInterval = setInterval(

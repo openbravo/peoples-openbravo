@@ -233,11 +233,11 @@ public class DataToJsonConverter {
       if (StringUtils.isNotEmpty(displayProperty)) {
         if (jsonObject.has(displayProperty + DalUtil.FIELDSEPARATOR + JsonConstants.IDENTIFIER)
             && !jsonObject.get(displayProperty + DalUtil.FIELDSEPARATOR + JsonConstants.IDENTIFIER)
-                .equals(jsonObject.NULL)) {
+                .equals(JSONObject.NULL)) {
           jsonObject.put(JsonConstants.IDENTIFIER,
               jsonObject.get(displayProperty + DalUtil.FIELDSEPARATOR + JsonConstants.IDENTIFIER));
         } else if (jsonObject.has(displayProperty)
-            && !jsonObject.get(displayProperty).equals(jsonObject.NULL)) {
+            && !jsonObject.get(displayProperty).equals(JSONObject.NULL)) {
           jsonObject.put(JsonConstants.IDENTIFIER, jsonObject.get(displayProperty));
         }
       }

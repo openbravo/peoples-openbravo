@@ -223,4 +223,13 @@ public class FKTreeUIDefinition extends ForeignKeyUIDefinition {
     Check.fail("No valid tree reference for field " + field);
     return null;
   }
+
+  public static ReferencedTree getReferencedTreeFromReference(Reference reference) {
+    for (ReferencedTree treeReference : reference.getADReferencedTreeList()) {
+      if (treeReference.isActive()) {
+        return treeReference;
+      }
+    }
+    return null;
+  }
 }

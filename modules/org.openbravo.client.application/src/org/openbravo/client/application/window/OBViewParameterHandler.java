@@ -206,14 +206,16 @@ public class OBViewParameterHandler {
 
     public void addListValueReference(org.openbravo.model.ad.domain.List listValue) {
       String name = listValue.getName();
-      final String languageId = OBContext.getOBContext().getLanguage().getId();
-      for (ListTrl listTrl : listValue.getADListTrlList()) {
-        if (!listTrl.isActive()) {
-          continue;
-        }
-        if (DalUtil.getId(listTrl.getLanguage()).equals(languageId)) {
-          name = listTrl.getName();
-          break;
+      if (OBContext.hasTranslationInstalled()) {
+        final String languageId = OBContext.getOBContext().getLanguage().getId();
+        for (ListTrl listTrl : listValue.getADListTrlList()) {
+          if (!listTrl.isActive()) {
+            continue;
+          }
+          if (DalUtil.getId(listTrl.getLanguage()).equals(languageId)) {
+            name = listTrl.getName();
+            break;
+          }
         }
       }
       final ValueMapValue vmv = new ValueMapValue(listValue.getSearchKey(), name,

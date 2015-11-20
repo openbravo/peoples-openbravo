@@ -214,12 +214,12 @@ public class ConvertQuotationIntoOrder extends DalBaseProcess {
         objCloneOrder.getOrderDiscountList().add(objCloneDiscount);
         if (!recalculatePrices) {
           // Copy the Invoice Lines that are created from the Discounts
-          Iterator it = taxForDiscounts.entrySet().iterator();
+          Iterator<Entry<String, BigDecimal>> it = taxForDiscounts.entrySet().iterator();
           OBDal.getInstance().flush();
           try {
             OBContext.setAdminMode(true);
             while (it.hasNext()) {
-              Map.Entry e = (Map.Entry) it.next();
+              Map.Entry<String, BigDecimal> e = it.next();
               BigDecimal discountAmount = BigDecimal.ZERO;
 
               if (objCloneDiscount.isCascade()) {
@@ -483,11 +483,11 @@ public class ConvertQuotationIntoOrder extends DalBaseProcess {
   /**
    * Create a new Invoice Line related to the Discount.
    */
-  private OrderLine generateOrderLineDiscount(Entry e, OrderDiscount objCloneDiscount,
-      Order objOrder, Order objCloneOrder, int lineNo, BigDecimal cumulativeDiscount,
-      BigDecimal discountAmount) {
+  private OrderLine generateOrderLineDiscount(Entry<String, BigDecimal> e,
+      OrderDiscount objCloneDiscount, Order objOrder, Order objCloneOrder, int lineNo,
+      BigDecimal cumulativeDiscount, BigDecimal discountAmount) {
 
-    BigDecimal amount = (BigDecimal) e.getValue();
+    BigDecimal amount = e.getValue();
     BigDecimal discountedAmount = amount.multiply(discountAmount).divide(new BigDecimal(100));
 
     OrderLine olDiscount = OBProvider.getInstance().get(OrderLine.class);

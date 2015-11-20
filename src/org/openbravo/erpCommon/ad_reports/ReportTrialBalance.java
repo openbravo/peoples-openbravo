@@ -469,7 +469,7 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
             Utility.getContext(this, vars, "#User_Client", ""), strcProjectIdAux));
 
     if (data != null && data.length > 0) {
-      if ("Y".equals(strIncludeZeroFigures))
+      if ("Y".equals(strIncludeZeroFigures) &&  "S".equals(strLevel))
         data = includeZeroFigures(data, strcAcctSchemaId, strOrg, strAccountFromValue,
             strAccountToValue);
       xmlDocument.setData("structure1", data);
@@ -555,7 +555,7 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
             Utility.messageBD(this, "ProcessStatus-E", vars.getLanguage()),
             Utility.messageBD(this, "numberOfRowsExceeded", vars.getLanguage()));
       } else {
-        if ("Y".equals(strIncludeZeroFigures)) {
+        if ("Y".equals(strIncludeZeroFigures) && "S".equals(strLevel)) {
           data = includeZeroFigures(data, strcAcctSchemaId, strOrg, strAccountFromValue,
               strAccountToValue);
         }
@@ -663,7 +663,7 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
             Utility.messageBD(this, "ProcessStatus-W", vars.getLanguage()),
             Utility.messageBD(this, "NoDataFound", vars.getLanguage()));
       } else {
-        if ("Y".equals(strIncludeZeroFigures)) {
+        if ("Y".equals(strIncludeZeroFigures) &&  "S".equals(strLevel)) {
           data = includeZeroFigures(data, strcAcctSchemaId, strOrg, strAccountFromValue,
               strAccountToValue);
         }

@@ -13,8 +13,6 @@
 package org.openbravo.base;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.Properties;
 
 import javax.servlet.ServletContext;
@@ -70,7 +68,8 @@ public class ConnectionProviderContextListener implements ServletContextListener
       ConfigParameters configParameters = ConfigParameters.retrieveFrom(context);
       String strPoolFile = configParameters.getPoolFilePath();
       boolean isRelative = !strPoolFile.startsWith("/") && !strPoolFile.substring(1, 1).equals(":");
-      ((ConnectionProviderImpl) connectionPool).reload(strPoolFile, isRelative, configParameters.strContext);
+      ((ConnectionProviderImpl) connectionPool).reload(strPoolFile, isRelative,
+          configParameters.strContext);
       ;
     }
   }
@@ -85,29 +84,31 @@ public class ConnectionProviderContextListener implements ServletContextListener
     try {
       String strPoolFile = configParameters.getPoolFilePath();
       boolean isRelative = !strPoolFile.startsWith("/") && !strPoolFile.substring(1, 1).equals(":");
-      if (isJndiModeOn(strPoolFile)) {
+
+      if (useJNDIConnProvider(strPoolFile)) {
         return new JNDIConnectionProvider(strPoolFile, isRelative);
       } else {
         return new ConnectionProviderImpl(strPoolFile, isRelative, configParameters.strContext);
       }
 
     } catch (Exception ex) {
-      throw new PoolNotFoundException(ex.getMessage());
+      throw new PoolNotFoundException(ex.getMessage(), ex);
     }
   }
 
-  private static boolean isJndiModeOn(String strPoolFile) {
+  private static boolean useJNDIConnProvider(String strPoolFile) {
     Properties properties = new Properties();
     String jndiUsage = null;
     try {
       properties.load(new FileInputStream(strPoolFile));
+      String externalPool = properties.getProperty("db.externalPoolClassName");
+      if (externalPool != null && !"".equals(externalPool)) {
+        // external pools should handle jndi datasources
+        return false;
+      }
       jndiUsage = properties.getProperty("JNDI.usage");
-    } catch (FileNotFoundException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+    } catch (Exception e) {
+      log4j.error("Error checking JNDI mode file:" + strPoolFile, e);
     }
     return ("yes".equals(jndiUsage) ? true : false);
   }

@@ -12,8 +12,6 @@
 package org.openbravo.base;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.StringReader;
@@ -23,7 +21,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Properties;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
@@ -41,7 +38,6 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.database.ConnectionProviderImpl;
-import org.openbravo.database.JNDIConnectionProvider;
 import org.openbravo.exception.NoConnectionAvailableException;
 import org.openbravo.exception.PoolNotFoundException;
 import org.openbravo.xmlEngine.XmlEngine;
@@ -66,9 +62,7 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider {
   private String strBaseConfigPath;
   private static String strContext = null;
   private static String prefix = null;
-  private boolean isJNDIModeOn;
   protected Logger log4j = Logger.getLogger(this.getClass());
-  private String PoolFileName;
 
   protected ConfigParameters globalParameters;
 
@@ -91,7 +85,7 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider {
           // so we need to obtain the path through getClass method
           java.net.URL url = this.getClass().getResource("/");
           String mSchemaPath = url.getFile();
-          if (mSchemaPath != null || !mSchemaPath.equals("")) {
+          if (mSchemaPath != null && !mSchemaPath.equals("")) {
             String separator = "/";
             int lastSlash = mSchemaPath.lastIndexOf(separator);
             if (lastSlash == -1) {
@@ -102,7 +96,8 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider {
             prefix = prefix.substring(0, prefix.lastIndexOf(separator));
             prefix = prefix.substring(0, prefix.lastIndexOf(separator) + 1);
             // lastSlash = mSchemaPath.lastIndexOf(separator);
-            // mSchemaPath = mSchemaPath.substring(0, lastSlash);
+            // mSchemaPath = mSchemaPath.substring(0,
+            // lastSlash);
             // lastSlash = mSchemaPath.lastIndexOf(separator);
             // prefix = mSchemaPath.substring(0, lastSlash+1);
           }
@@ -139,9 +134,6 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider {
 
       if (myPool == null) {
         try {
-          PoolFileName = config.getServletContext().getInitParameter("PoolFile");
-          String strPoolFile = prefix + "/" + strBaseConfigPath + "/" + PoolFileName;
-          isJNDIModeOn = isJndiModeOn(strPoolFile);
           makeConnection(config);
         } catch (Exception ex) {
           ex.printStackTrace();
@@ -709,38 +701,8 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider {
       }
       myPool = null;
     }
-    try {
-      String strPoolFile = prefix + "/" + strBaseConfigPath + "/" + PoolFileName;
-      // myPool = new ConnectionProviderImpl(strPoolFile,
-      // (!strPoolFile.startsWith("/") &&
-      // !strPoolFile.substring(1,1).equals(":")), strContext);
-      // Now pool take datasources from a JNDI resource file
-      if (isJNDIModeOn) {
-        myPool = new JNDIConnectionProvider(strPoolFile,
-            (!strPoolFile.startsWith("/") && !strPoolFile.substring(1, 1).equals(":")));
-      } else {
-        myPool = ConnectionProviderContextListener.getPool(config.getServletContext());
-      }
-    } catch (Exception e) {
-      e.printStackTrace();
-      throw new PoolNotFoundException(e.getMessage());
-    }
-  }
 
-  private static boolean isJndiModeOn(String strPoolFile) {
-    Properties properties = new Properties();
-    String jndiUsage = null;
-    try {
-      properties.load(new FileInputStream(strPoolFile));
-      jndiUsage = properties.getProperty("JNDI.usage");
-    } catch (FileNotFoundException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
-    return ("yes".equals(jndiUsage) ? true : false);
+    myPool = ConnectionProviderContextListener.getPool(config.getServletContext());
   }
 
   public String getStatus() {

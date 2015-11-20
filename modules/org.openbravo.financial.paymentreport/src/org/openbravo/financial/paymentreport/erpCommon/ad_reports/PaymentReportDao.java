@@ -687,8 +687,12 @@ public class PaymentReportDao {
         if (i % 100 == 0) {
           OBDal.getInstance().getSession().clear();
         }
-        OBDal.getInstance().getSession().buildLockRequest(LockOptions.NONE)
-            .lock(FIN_PaymentScheduleDetail.ENTITY_NAME, FIN_PaymentScheduleDetail);
+        OBDal
+            .getInstance()
+            .getSession()
+            .buildLockRequest(LockOptions.NONE)
+            .lock(org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail.ENTITY_NAME,
+                FIN_PaymentScheduleDetail);
 
         // search for fin_finacc_transaction for this payment
         FIN_FinaccTransaction trx = null;

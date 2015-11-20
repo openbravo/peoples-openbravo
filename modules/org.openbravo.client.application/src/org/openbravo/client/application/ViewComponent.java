@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2013 Openbravo SLU
+ * All portions are Copyright (C) 2010-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -44,6 +44,8 @@ import org.openbravo.erpCommon.obps.ActivationKey.FeatureRestriction;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.Window;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Reads the view and generates it.
@@ -52,6 +54,8 @@ import org.openbravo.model.ad.ui.Window;
  */
 @RequestScoped
 public class ViewComponent extends BaseComponent {
+  private static Logger log = LoggerFactory.getLogger(ViewComponent.class);
+
   @Inject
   private StandardWindowComponent standardWindowComponent;
 
@@ -63,7 +67,7 @@ public class ViewComponent extends BaseComponent {
 
   @Override
   public String generate() {
-
+    long t = System.currentTimeMillis();
     final String viewId = getParameter("viewId");
     if (viewId == null) {
       throw new IllegalArgumentException("viewId parameter not found, it is mandatory");
@@ -93,6 +97,7 @@ public class ViewComponent extends BaseComponent {
       }
     } finally {
       OBContext.restorePreviousMode();
+      log.debug("View {} generated in {} ms", viewId, System.currentTimeMillis() - t);
     }
   }
 

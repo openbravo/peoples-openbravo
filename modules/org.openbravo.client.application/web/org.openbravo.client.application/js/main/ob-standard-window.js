@@ -830,7 +830,11 @@ isc.OBStandardWindow.addProperties({
 
       me.isAutoSaving = true;
       me.forceDialogOnFailure = forceDialogOnFailure;
-      dirtyEditForm.autoSave();
+      if (action && action.parameters) {
+        dirtyEditForm.autoSave(action.parameters);
+      } else {
+        dirtyEditForm.autoSave(null);
+      }
     };
 
     if (this.getClass().autoSave && this.getClass().showAutoSaveConfirmation) {

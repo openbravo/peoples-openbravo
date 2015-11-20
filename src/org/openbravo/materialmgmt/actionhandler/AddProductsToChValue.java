@@ -11,13 +11,14 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2013 Openbravo SLU 
+ * All portions are Copyright (C) 2013-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.materialmgmt.actionhandler;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,19 +26,13 @@ import java.util.Map;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.criterion.Restrictions;
-import org.openbravo.base.provider.OBProvider;
 import org.openbravo.client.application.process.BaseProcessActionHandler;
 import org.openbravo.dal.core.OBContext;
-import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.materialmgmt.CharacteristicsUtils;
-import org.openbravo.model.common.plm.Characteristic;
 import org.openbravo.model.common.plm.CharacteristicValue;
 import org.openbravo.model.common.plm.Product;
-import org.openbravo.model.common.plm.ProductCharacteristic;
-import org.openbravo.model.common.plm.ProductCharacteristicValue;
 import org.openbravo.service.db.DbUtility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,98 +42,73 @@ public class AddProductsToChValue extends BaseProcessActionHandler {
 
   @Override
   protected JSONObject doExecute(Map<String, Object> parameters, String content) {
-    JSONObject jsonRequest = null;
+    JSONObject jsonResponse = new JSONObject();
     OBContext.setAdminMode(true);
     try {
-      jsonRequest = new JSONObject(content);
+      JSONObject jsonRequest = new JSONObject(content);
       JSONObject params = jsonRequest.getJSONObject("_params");
+      JSONObject view = params.getJSONObject("m_prodchview_v");
+      JSONArray selected = view.getJSONArray("_selection");
       log.debug("{}", jsonRequest);
       final String strChValueId = jsonRequest.getString("inpmChValueId");
       CharacteristicValue chValue = OBDal.getInstance()
           .get(CharacteristicValue.class, strChValueId);
 
-      JSONArray productIds = params.getJSONArray("M_Product_ID");
-      int count = addProducts(chValue, productIds);
+      int total = processProducts(chValue, selected);
 
       Map<String, String> map = new HashMap<String, String>();
-      map.put("productNumer", Integer.toString(count));
+      map.put("productNumer", Integer.toString(total));
       map.put("chValueName", chValue.getName());
 
       String messageText = OBMessageUtils.messageBD("AddProductsResult");
       JSONObject msg = new JSONObject();
       msg.put("severity", "success");
       msg.put("text", OBMessageUtils.parseTranslation(messageText, map));
-      jsonRequest.put("message", msg);
+      jsonResponse.put("message", msg);
 
     } catch (Exception e) {
       log.error("Error in Add Products to Ch Value Action Handler", e);
 
       try {
-        jsonRequest = new JSONObject();
         Throwable ex = DbUtility.getUnderlyingSQLException(e);
         String message = OBMessageUtils.translateError(ex.getMessage()).getMessage();
         JSONObject errorMessage = new JSONObject();
         errorMessage.put("severity", "error");
         errorMessage.put("text", message);
-        jsonRequest.put("message", errorMessage);
-      } catch (Exception e2) {
-        log.error(e.getMessage(), e2);
+        jsonResponse.put("message", errorMessage);
+      } catch (JSONException e2) {
         // do nothing, give up
       }
     } finally {
       OBContext.restorePreviousMode();
     }
-    return jsonRequest;
+
+    return jsonResponse;
   }
 
-  private int addProducts(CharacteristicValue chValue, JSONArray productIds) throws JSONException {
+  private int processProducts(CharacteristicValue chValue, JSONArray selected) {
     int count = 0;
-    for (int i = 0; i < productIds.length(); i++) {
-      final String strProductId = productIds.getString(i);
-      final Product product = OBDal.getInstance().get(Product.class, strProductId);
-      if (CharacteristicsUtils.getCharacteristicValue(product, chValue.getCharacteristic()) != null) {
-        // The product already has a value the characteristic, skip it.
-        continue;
-      }
-      ProductCharacteristicValue newPrChValue = OBProvider.getInstance().get(
-          ProductCharacteristicValue.class);
-      newPrChValue.setCharacteristic(chValue.getCharacteristic());
-      newPrChValue.setCharacteristicValue(chValue);
-      newPrChValue.setProduct(product);
-      newPrChValue.setOrganization(product.getOrganization());
-      OBDal.getInstance().save(newPrChValue);
-
-      if (doesNotHaveCharacteristic(product, chValue.getCharacteristic())) {
-        ProductCharacteristic newPrCh = OBProvider.getInstance().get(ProductCharacteristic.class);
-        newPrCh.setProduct(product);
-        newPrCh.setCharacteristic(chValue.getCharacteristic());
-        newPrCh.setOrganization(product.getOrganization());
-        newPrCh.setVariant(false);
-        newPrCh.setSequenceNumber((product.getProductCharacteristicList().size() + 1) * 10L);
-        OBDal.getInstance().save(newPrCh);
-      }
-
-      if (product.isGeneric()) {
-        List<Product> variants = product.getProductGenericProductList();
-        JSONArray variantsArray = new JSONArray();
-        for (Product variant : variants) {
-          variantsArray.put(variant.getId());
+    List<String> selectedProductIds = new ArrayList<String>();
+    try {
+      for (int i = 0; i < selected.length(); i++) {
+        JSONObject productJSON = selected.getJSONObject(i);
+        String strProductId;
+        strProductId = productJSON.getString("product");
+        final Product product = OBDal.getInstance().get(Product.class, strProductId);
+        CharacteristicsUtils.setCharacteristicValue(product, chValue);
+        selectedProductIds.add(strProductId);
+        count++;
+        for (Product variant : product.getProductGenericProductList()) {
+          if (selectedProductIds.contains(variant.getId())) {
+            continue;
+          }
+          CharacteristicsUtils.setCharacteristicValue(variant, chValue);
+          count++;
         }
-        count += addProducts(chValue, variantsArray);
       }
-
-      count++;
+    } catch (JSONException ignore) {
     }
     return count;
-  }
 
-  private boolean doesNotHaveCharacteristic(Product product, Characteristic characteristic) {
-    OBCriteria<ProductCharacteristic> prChCrit = OBDal.getInstance().createCriteria(
-        ProductCharacteristic.class);
-    prChCrit.add(Restrictions.eq(ProductCharacteristic.PROPERTY_CHARACTERISTIC, characteristic));
-    prChCrit.add(Restrictions.eq(ProductCharacteristic.PROPERTY_PRODUCT, product));
-    prChCrit.setFilterOnReadableOrganization(false);
-    prChCrit.setFilterOnActive(false);
-    return prChCrit.count() == 0;
   }
 }

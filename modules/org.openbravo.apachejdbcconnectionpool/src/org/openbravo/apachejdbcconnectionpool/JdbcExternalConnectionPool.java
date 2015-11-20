@@ -22,10 +22,14 @@ import java.sql.Connection;
 import java.util.List;
 import java.util.Properties;
 
+import javax.naming.Context;
+import javax.naming.InitialContext;
+
 import org.apache.tomcat.jdbc.pool.DataSource;
 import org.apache.tomcat.jdbc.pool.PoolProperties;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.session.OBPropertiesProvider;
+import org.openbravo.base.session.SessionFactoryController;
 import org.openbravo.database.ExternalConnectionPool;
 import org.openbravo.database.PoolInterceptorProvider;
 import org.slf4j.Logger;
@@ -88,20 +92,35 @@ public class JdbcExternalConnectionPool extends ExternalConnectionPool {
   }
 
   private PoolProperties getPoolProperties() {
-    String obUrl = (String) OBPropertiesProvider.getInstance().getOpenbravoProperties()
-        .get("bbdd.url");
-    String sid = (String) OBPropertiesProvider.getInstance().getOpenbravoProperties()
-        .get("bbdd.sid");
-    String driver = (String) OBPropertiesProvider.getInstance().getOpenbravoProperties()
-        .get("bbdd.driver");
-    String username = (String) OBPropertiesProvider.getInstance().getOpenbravoProperties()
-        .get("bbdd.user");
-    String password = (String) OBPropertiesProvider.getInstance().getOpenbravoProperties()
-        .get("bbdd.password");
-    String rbdms = (String) OBPropertiesProvider.getInstance().getOpenbravoProperties()
-        .get("bbdd.rdbms");
+    Properties poolPropertiesConfig = OBPropertiesProvider.getInstance().getOpenbravoProperties();
 
     PoolProperties poolProperties = new PoolProperties();
+
+    poolProperties.setJdbcInterceptors("org.apache.tomcat.jdbc.pool.interceptor.ConnectionState;"
+        + "org.apache.tomcat.jdbc.pool.interceptor.StatementFinalizer;"
+        + "org.openbravo.apachejdbcconnectionpool.ConnectionInitializerInterceptor;");
+
+    if (SessionFactoryController.isJNDIModeOn(poolPropertiesConfig)) {
+      try {
+        Context initctx = new InitialContext();
+        Context ctx = (Context) initctx.lookup("java:/comp/env");
+        javax.sql.DataSource ds = (javax.sql.DataSource) ctx.lookup(poolPropertiesConfig
+            .getProperty("JNDI.resourceName"));
+        poolProperties.setDataSource(ds);
+        return poolProperties;
+      } catch (Exception e) {
+        log.error("Error trying to get JNDI datasource, trying to get direct DB connection", e);
+        poolProperties = new PoolProperties();
+      }
+    }
+
+    String obUrl = poolPropertiesConfig.getProperty("bbdd.url");
+    String sid = poolPropertiesConfig.getProperty("bbdd.sid");
+    String driver = poolPropertiesConfig.getProperty("bbdd.driver");
+    String username = poolPropertiesConfig.getProperty("bbdd.user");
+    String password = poolPropertiesConfig.getProperty("bbdd.password");
+    String rbdms = poolPropertiesConfig.getProperty("bbdd.rdbms");
+
     if ("POSTGRE".equals(rbdms)) {
       poolProperties.setUrl(obUrl + "/" + sid);
     } else {
@@ -111,8 +130,6 @@ public class JdbcExternalConnectionPool extends ExternalConnectionPool {
     poolProperties.setUsername(username);
     poolProperties.setPassword(password);
 
-    Properties poolPropertiesConfig = new Properties();
-    poolPropertiesConfig = OBPropertiesProvider.getInstance().getOpenbravoProperties();
     if (poolPropertiesConfig.getProperty("db.pool.initialSize") != null) {
       poolProperties.setInitialSize(getIntProperty(poolPropertiesConfig, "db.pool.initialSize"));
     }
@@ -209,9 +226,7 @@ public class JdbcExternalConnectionPool extends ExternalConnectionPool {
     if (poolPropertiesConfig.getProperty("db.pool.name") != null) {
       poolProperties.setName(poolPropertiesConfig.getProperty("db.pool.name"));
     }
-    poolProperties.setJdbcInterceptors("org.apache.tomcat.jdbc.pool.interceptor.ConnectionState;"
-        + "org.apache.tomcat.jdbc.pool.interceptor.StatementFinalizer;"
-        + "org.openbravo.apachejdbcconnectionpool.ConnectionInitializerInterceptor;");
+
     return poolProperties;
   }
 

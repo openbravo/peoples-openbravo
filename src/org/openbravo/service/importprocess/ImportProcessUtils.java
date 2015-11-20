@@ -20,7 +20,6 @@ package org.openbravo.service.importprocess;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.sql.BatchUpdateException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -34,6 +33,7 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.domain.Reference;
+import org.openbravo.service.db.DbUtility;
 
 /**
  * Utility methods used in the import process.
@@ -41,6 +41,13 @@ import org.openbravo.model.ad.domain.Reference;
  * @author mtaal
  */
 public class ImportProcessUtils {
+
+  /**
+   * Returns true if the import.disable.process property is set to true, false otherwise
+   */
+  public static boolean isImportProcessDisabled() {
+    return OBPropertiesProvider.getInstance().getBooleanProperty("import.disable.process");
+  }
 
   public static List<String> getOrderedTypesOfData() {
     final Reference reference = OBDal.getInstance().get(Reference.class,
@@ -98,10 +105,7 @@ public class ImportProcessUtils {
   }
 
   public static void logError(Logger log, Throwable t) {
-    Throwable toReport = t;
-    if (t.getCause() instanceof BatchUpdateException) {
-      toReport = ((BatchUpdateException) t.getCause()).getNextException();
-    }
+    Throwable toReport = DbUtility.getUnderlyingSQLException(t);
     log.error(toReport.getMessage(), toReport);
   }
 
@@ -111,13 +115,10 @@ public class ImportProcessUtils {
     PrintWriter pw = new PrintWriter(sb);
 
     e.printStackTrace(pw);
-
-    if (e.getCause() instanceof BatchUpdateException) {
-      final BatchUpdateException batchException = (BatchUpdateException) e.getCause();
-      if (batchException.getNextException() != null) {
-        pw.write("\n >>>> Next Exception:\n");
-        batchException.getNextException().printStackTrace(pw);
-      }
+    Throwable foundCause = DbUtility.getUnderlyingSQLException(e);
+    if (e != foundCause) {
+      pw.write("\n >>>> Next Exception:\n");
+      foundCause.printStackTrace(pw);
     }
 
     return sb.toString();

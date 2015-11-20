@@ -243,6 +243,85 @@ public class Preferences {
   }
 
   /**
+   * Utility method to determine if exists a preference with the same settings passed as parameters
+   * 
+   * @param property
+   *          Name of the property or attribute for the preference.
+   * @param isListProperty
+   *          Determines whether list of properties or attribute should be used.
+   * @param clientId
+   *          Client visibility.
+   * @param orgId
+   *          Organization visibility.
+   * @param userId
+   *          User visibility.
+   * @param roleId
+   *          Role visibility.
+   * @param windowId
+   *          Window visibility.
+   * @return true if exists a preference with the same settings passed as parameters, false
+   *         otherwise
+   */
+  public static boolean existsPreference(String property, boolean isListProperty, String clientId,
+      String orgId, String userId, String roleId, String windowId) {
+    List<Preference> prefs = getPreferences(property, isListProperty, clientId, orgId, userId,
+        roleId, windowId, true, true);
+    return (prefs.size() > 0);
+  }
+
+  /**
+   * Utility method to determine if exists a preference with the same settings as the preference
+   * passed as parameter
+   * 
+   * @param preference
+   *          the preference to check
+   * @return true if exists a preference with the same settings passed as parameters, false
+   *         otherwise
+   */
+  public static boolean existsPreference(Preference preference) {
+    String property = preference.isPropertyList() ? preference.getProperty() : preference
+        .getAttribute();
+    String clientId = preference.getVisibleAtClient() != null ? (String) DalUtil.getId(preference
+        .getVisibleAtClient()) : null;
+    String orgId = preference.getVisibleAtOrganization() != null ? (String) DalUtil
+        .getId(preference.getVisibleAtOrganization()) : null;
+    String userId = preference.getUserContact() != null ? (String) DalUtil.getId(preference
+        .getUserContact()) : null;
+    String roleId = preference.getVisibleAtRole() != null ? (String) DalUtil.getId(preference
+        .getVisibleAtRole()) : null;
+    String windowId = preference.getWindow() != null ? (String) DalUtil.getId(preference
+        .getWindow()) : null;
+    return existsPreference(property, preference.isPropertyList(), clientId, orgId, userId, roleId,
+        windowId);
+  }
+
+  /**
+   * Utility method which returns a list of preferences with the settings passed as parameters
+   * 
+   * @param property
+   *          Name of the property or attribute for the preference.
+   * @param isListProperty
+   *          Determines whether list of properties or attribute should be used.
+   * @param clientId
+   *          Client visibility.
+   * @param orgId
+   *          Organization visibility.
+   * @param userId
+   *          User visibility.
+   * @param roleId
+   *          Role visibility.
+   * @param windowId
+   *          Window visibility.
+   * @return a list of preference with the same settings as those passed as parameters
+   */
+  public static List<Preference> getPreferences(String property, boolean isListProperty,
+      String clientId, String orgId, String userId, String roleId, String windowId) {
+    List<Preference> prefs = getPreferences(property, isListProperty, clientId, orgId, userId,
+        roleId, windowId, true, true, false);
+    return prefs;
+  }
+
+  /**
    * Stores the preference as a session value
    * 
    * @param vars
@@ -259,6 +338,17 @@ public class Preferences {
   }
 
   /**
+   * @see Preferences#getPreferences(String, boolean, String, String, String , String , String ,
+   *      boolean , boolean , boolean)
+   */
+  private static List<Preference> getPreferences(String property, boolean isListProperty,
+      String client, String org, String user, String role, String window, boolean exactMatch,
+      boolean checkWindow) {
+    return getPreferences(property, isListProperty, client, org, user, role, window, exactMatch,
+        checkWindow, true);
+  }
+
+  /**
    * Obtains a list of preferences. All the parameters can be null; when a parameter is null, it
    * will not be used in the filtering for the preference.
    * <p>
@@ -270,7 +360,7 @@ public class Preferences {
    */
   private static List<Preference> getPreferences(String property, boolean isListProperty,
       String client, String org, String user, String role, String window, boolean exactMatch,
-      boolean checkWindow) {
+      boolean checkWindow, boolean activeFilterEnabled) {
 
     List<Object> parameters = new ArrayList<Object>();
     StringBuilder hql = new StringBuilder();
@@ -361,6 +451,7 @@ public class Preferences {
 
     OBQuery<Preference> qPref = OBDal.getInstance().createQuery(Preference.class, hql.toString());
     qPref.setParameters(parameters);
+    qPref.setFilterOnActive(activeFilterEnabled);
     List<Preference> preferences = qPref.list();
 
     if (org != null) {

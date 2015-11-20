@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2014 Openbravo S.L.U.
+ * Copyright (C) 2001-2015 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -1501,11 +1501,12 @@ public class VariablesBase {
    * individual values. Strips parentheses and single quotes. For example, a string like ('1000022',
    * '1000344') becomes a Vector with two values: 1000022 and 1000344.
    * 
-   * @param strList
+   * @param _strList
    *          String representing a comma separated list of values.
    * @return A Vector of individual values.
    */
-  public Vector<String> getListFromInString(String strList) {
+  public Vector<String> getListFromInString(String _strList) {
+    String strList = _strList;
     Vector<String> fields = new Vector<String>();
     if (strList == null || strList.length() == 0)
       return fields;

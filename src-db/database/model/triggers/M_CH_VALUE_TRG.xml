@@ -90,8 +90,9 @@ BEGIN
       FROM m_product_ch pch
       WHERE pch.m_characteristic_id = :new.m_characteristic_id
         AND pch.m_ch_subset_id IS NULL
-		AND exists (select 1 from  m_product where m_product_id=pch.m_product_id AND isgeneric='Y')
-		AND pch.isvariant='Y';
+        AND exists (select 1 from  m_product where m_product_id=pch.m_product_id AND isgeneric='Y')
+        AND pch.isvariant='Y'
+        AND pch.isexplodeconf = 'Y';
   END IF;
 
   IF DELETING THEN

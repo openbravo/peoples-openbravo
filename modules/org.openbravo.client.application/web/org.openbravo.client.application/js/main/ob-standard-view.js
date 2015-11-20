@@ -1837,7 +1837,7 @@ isc.OBStandardView.addProperties({
         postFix;
     var suffix = '';
     var hasChanged = this.isShowingForm && (this.viewForm.isNew || this.viewForm.hasChanged);
-    hasChanged = hasChanged || (this.isEditingGrid && (this.viewGrid.hasErrors() || this.viewGrid.getEditForm().isNew || this.viewGrid.getEditForm().hasChanged));
+    hasChanged = hasChanged || (this.isEditingGrid && this.viewGrid.getEditForm() && (this.viewGrid.hasErrors() || this.viewGrid.getEditForm().isNew || this.viewGrid.getEditForm().hasChanged));
     if (hasChanged) {
       prefix = '* ';
     }
@@ -2289,7 +2289,9 @@ isc.OBStandardView.addProperties({
     var actionObject = {
       target: this,
       method: this.editRecord,
-      parameters: null
+      parameters: {
+        isNewDocument: true
+      }
     };
     this.standardWindow.doActionAfterAutoSave(actionObject, false);
   },

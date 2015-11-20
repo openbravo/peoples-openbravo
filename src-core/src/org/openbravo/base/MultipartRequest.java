@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2010 Openbravo S.L.U.
+ * Copyright (C) 2001-2015 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -90,24 +90,24 @@ public class MultipartRequest implements FieldProvider {
       return lineSeparatorFormated(linea);
   }
 
-  public void init(VariablesBase vars, String filename, boolean firstLineHeads, String format,
+  public void init(VariablesBase _vars, String _filename, boolean firstLineHeads, String _format,
       FieldProvider[] data) throws IOException {
-    if (vars == null)
+    if (_vars == null)
       throw new IllegalArgumentException("VariablesBase cannot be null");
     // if (filename==null || filename.equals("")) throw new
     // IllegalArgumentException("filename cannot be null");
-    this.vars = vars;
-    this.filename = filename;
+    this.vars = _vars;
+    this.filename = _filename;
     this.firstRowHeads = firstLineHeads;
-    this.format = setFormatSeparator(format);
+    this.format = setFormatSeparator(_format);
     this.rows = data;
   }
 
-  private void init(String filename, boolean firstLineHeads, String format, FieldProvider[] data)
+  private void init(String _filename, boolean firstLineHeads, String _format, FieldProvider[] data)
       throws IOException {
-    this.filename = filename;
+    this.filename = _filename;
     this.firstRowHeads = firstLineHeads;
-    this.format = setFormatSeparator(format);
+    this.format = setFormatSeparator(_format);
     this.rows = data;
   }
 
@@ -152,7 +152,7 @@ public class MultipartRequest implements FieldProvider {
 
   protected void readSubmittedFile(InputStream in) throws IOException {
 
-    Vector<FieldProvider> vector = new Vector<FieldProvider>();
+    Vector<FieldProvider> _vector = new Vector<FieldProvider>();
     int result = 0;
     String linea = "";
     Vector<Byte> vectorInt = new Vector<Byte>();
@@ -169,7 +169,7 @@ public class MultipartRequest implements FieldProvider {
           linea = new String(b, "UTF-8");
           if (!isFirstRow || !firstRowHeads) {
             FieldProvider fieldProvider = setFieldProvider(linea);
-            vector.addElement(fieldProvider);
+            _vector.addElement(fieldProvider);
           }
         }
         isFirstRow = false;
@@ -187,10 +187,10 @@ public class MultipartRequest implements FieldProvider {
       vectorInt = new Vector<Byte>();
       linea = new String(b);
       FieldProvider fieldProvider = setFieldProvider(linea);
-      vector.addElement(fieldProvider);
+      _vector.addElement(fieldProvider);
     }
-    objectFieldProvider = new FieldProvider[vector.size()];
-    vector.copyInto(objectFieldProvider);
+    objectFieldProvider = new FieldProvider[_vector.size()];
+    _vector.copyInto(objectFieldProvider);
   }
 
   protected void readSubmittedFile() throws IOException {

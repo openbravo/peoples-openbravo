@@ -22,6 +22,7 @@ package org.openbravo.advpaymentmngt.filterexpression;
 import java.math.BigDecimal;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -201,7 +202,17 @@ public class AddTransactionFilterExpression implements FilterExpression {
     String bankStatementLineId = context.getString("bankStatementLineId");
     FIN_BankStatementLine bankstatementline = OBDal.getInstance().get(FIN_BankStatementLine.class,
         bankStatementLineId);
-    return bankstatementline.getDescription();
+    String bpname = bankstatementline.getBpartnername();
+    String description = bankstatementline.getDescription();
+    if (StringUtils.isNotBlank(bpname)) {
+      if (StringUtils.isNotBlank(description)) {
+        return bpname + "\n" + description;
+      } else {
+        return bpname;
+      }
+    } else {
+      return description;
+    }
   }
 
   public String getDefaulDocumentCategory() {

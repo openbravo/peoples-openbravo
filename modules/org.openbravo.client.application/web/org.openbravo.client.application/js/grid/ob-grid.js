@@ -517,9 +517,19 @@ isc.OBGrid.addProperties({
             continue;
           }
           fullPropName = prop;
-          if (prop.endsWith(OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER)) {
+          if (prop.lastIndexOf(OB.Constants.FIELDSEPARATOR) > 0) {
             var index = prop.lastIndexOf(OB.Constants.FIELDSEPARATOR);
-            prop = prop.substring(0, index);
+            var propName = prop.substring(0, index);
+            if (prop.endsWith(OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER)) {
+              prop = propName;
+            } else {
+              // for Table reference the displayProperty is used in the filtering criteria instead of OB.Constants.IDENTIFIER
+              // see issue https://issues.openbravo.com/view.php?id=30800
+              var propField = this.getEditForm().getField(propName);
+              if (propField && propField.displayProperty && prop.endsWith(OB.Constants.FIELDSEPARATOR + propField.displayProperty)) {
+                prop = propName;
+              }
+            }
           }
           var fnd = false,
               j;

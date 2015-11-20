@@ -204,6 +204,7 @@ public class DalWebService implements WebService {
             if (request.getParameter(PARAMETER_PROPERTIES) != null) {
               addSelectedPropertiesToEXC(exc, request.getParameter(PARAMETER_PROPERTIES), entity);
             }
+            exc.setClient(OBContext.getOBContext().getCurrentClient());
             exc.setOptionEmbedChildren(true);
             exc.setOptionIncludeChildren(includeChildren);
             exc.setOptionIncludeReferenced(false);
@@ -236,6 +237,7 @@ public class DalWebService implements WebService {
         }
         final StringWriter sw = new StringWriter();
         final EntityXMLConverter exc = EntityXMLConverter.newInstance();
+        exc.setClient(OBContext.getOBContext().getCurrentClient());
         exc.setOptionEmbedChildren(true);
         exc.setOptionIncludeChildren(includeChildren);
         exc.setOptionIncludeReferenced(false);

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012 Openbravo SLU
+ * All portions are Copyright (C) 2012-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -22,17 +22,23 @@ import java.util.List;
 
 import javax.enterprise.event.Observes;
 
+import org.apache.commons.lang.StringUtils;
+import org.hibernate.Query;
+import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
+import org.openbravo.base.model.Property;
 import org.openbravo.client.kernel.event.EntityDeleteEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
+import org.openbravo.client.kernel.event.EntityUpdateEvent;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentDetail;
+import org.openbravo.model.financialmgmt.payment.PaymentExecutionProcess;
 import org.openbravo.service.db.DalConnectionProvider;
 
 public class FIN_PaymentEventListener extends EntityPersistenceEventObserver {
@@ -44,8 +50,15 @@ public class FIN_PaymentEventListener extends EntityPersistenceEventObserver {
     return entities;
   }
 
-  public void onDelete(@Observes
-  EntityDeleteEvent event) {
+  public void onUpdate(@Observes EntityUpdateEvent event) {
+    if (!isValidEvent(event)) {
+      return;
+    }
+
+    manageAPRMPendingPaymentFromInvoiceRecord(event);
+  }
+
+  public void onDelete(@Observes EntityDeleteEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
@@ -56,5 +69,100 @@ public class FIN_PaymentEventListener extends EntityPersistenceEventObserver {
       ConnectionProvider conn = new DalConnectionProvider(false);
       throw new OBException(Utility.messageBD(conn, "ForeignKeyViolation", language));
     }
+  }
+
+  /**
+   * Manages the APRMPendingPaymentFromInvoice record linked to the payment:
+   * 
+   * If the current payment status is Awaiting Execution, it updates the Payment Execution Process
+   * Id of the APRMPendingPaymentFromInvoice record to point to the current Payment Execution
+   * Process Id. If the current Payment Execution Process Id is null (because, for example, the
+   * payment is associated to another payment method without payment process), then we delete the
+   * APRMPendingPaymentFromInvoice record.
+   * 
+   * The APRMPendingPaymentFromInvoice record is also deleted when the payment status has evolved
+   * from Awaiting Execution to Awaiting Payment or Voided (i.e. a reactivation has taken place).
+   * This way the behavior is exactly the same as when creating a manual payment in awaiting
+   * execution.
+   * 
+   * Returns the number of records updated or deleted (0 or 1)
+   * 
+   */
+  private int manageAPRMPendingPaymentFromInvoiceRecord(final EntityUpdateEvent event) {
+    try {
+      OBContext.setAdminMode(true);
+
+      int rowCount = 0;
+
+      final FIN_Payment payment = (FIN_Payment) event.getTargetInstance();
+      final Entity paymentEntity = ModelProvider.getInstance().getEntity(FIN_Payment.ENTITY_NAME);
+      final Property paymentStatusProperty = paymentEntity.getProperty(FIN_Payment.PROPERTY_STATUS);
+      final String currentPaymentStatus = (String) event.getCurrentState(paymentStatusProperty);
+      final String oldPaymentStatus = (String) event.getPreviousState(paymentStatusProperty);
+
+      if (StringUtils.equals("RPAE", currentPaymentStatus)) {
+        final PaymentExecutionProcess executionProcess = new AdvPaymentMngtDao()
+            .getExecutionProcess(payment);
+        if (executionProcess == null) {
+          rowCount = deleteAPRMPendingPaymentFromInvoiceRecord(payment);
+        } else {
+          rowCount = updateAPRMPendingPaymentFromInvoiceRecord(payment, executionProcess);
+        }
+      } else if (StringUtils.equals("RPAE", oldPaymentStatus)
+          && (StringUtils.equals(currentPaymentStatus, "RPAP") || StringUtils.equals(
+              currentPaymentStatus, "RPVOID"))) {
+        rowCount = deleteAPRMPendingPaymentFromInvoiceRecord(payment);
+      }
+
+      return rowCount;
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
+  /**
+   * Updates the APRMPendingPaymentFromInvoice record setting the given Payment Execution Process Id
+   * 
+   * Returns the number of records updated (0 or 1)
+   */
+  private int updateAPRMPendingPaymentFromInvoiceRecord(final FIN_Payment payment,
+      final PaymentExecutionProcess executionProcess) {
+    if (executionProcess == null || payment == null) {
+      return 0;
+    }
+
+    int rowCount;
+    final StringBuffer hql = new StringBuffer();
+    hql.append("update APRM_PendingPaymentInvoice ");
+    hql.append("set paymentExecutionProcess.id = :paymentExecutionProcessId ");
+    hql.append("where paymentExecutionProcess.id <> :paymentExecutionProcessId ");
+    hql.append("and payment.id = :paymentId ");
+
+    Query updateQry = OBDal.getInstance().getSession().createQuery(hql.toString());
+    updateQry.setString("paymentExecutionProcessId", executionProcess.getId());
+    updateQry.setString("paymentId", payment.getId());
+    rowCount = updateQry.executeUpdate();
+    return rowCount;
+  }
+
+  /**
+   * Updates the APRMPendingPaymentFromInvoice record linked to the given payment
+   * 
+   * Returns the number of records deleted (0 or 1)
+   */
+  private int deleteAPRMPendingPaymentFromInvoiceRecord(final FIN_Payment payment) {
+    if (payment == null) {
+      return 0;
+    }
+
+    int rowCount;
+    final StringBuffer hql = new StringBuffer();
+    hql.append("delete from APRM_PendingPaymentInvoice ");
+    hql.append("where payment.id = :paymentId ");
+
+    Query updateQry = OBDal.getInstance().getSession().createQuery(hql.toString());
+    updateQry.setString("paymentId", payment.getId());
+    rowCount = updateQry.executeUpdate();
+    return rowCount;
   }
 }

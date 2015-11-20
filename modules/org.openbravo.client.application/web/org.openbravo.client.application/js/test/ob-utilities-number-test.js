@@ -22,7 +22,7 @@
 QUnit.module('org.openbravo.client.application1');
 
 QUnit.test('OB.Utilities.Number. ScientificToDecimal, OBMaskedToOBPlain and roundJSNumber functions', function () {
-  QUnit.expect(6);
+  QUnit.expect(7);
 
   var outputText = '';
   var decSeparator = '.';
@@ -117,6 +117,38 @@ QUnit.test('OB.Utilities.Number. ScientificToDecimal, OBMaskedToOBPlain and roun
       if (normalizedDisplayFormat !== list[i][1]) {
         success = false;
         failureText = failureText + ' normalizeDisplayFormat(\'' + list[i][0] + '\') === \'' + list[i][1] + '\' (returned: ' + normalizedDisplayFormat + ') &';
+      }
+    }
+    if (success) {
+      outputText = successText;
+    } else {
+      failureText = failureText.substring(0, failureText.length - 2);
+      outputText = failureText;
+    }
+    return success;
+  }()), outputText);
+
+  QUnit.ok((function () {
+    var i;
+    var successText = 'OB.Utilities.Number.ScientificToDecimal works properly with numbers with leading zeros';
+    var failureText = 'OB.Utilities.Number.ScientificToDecimal does not work properly with numbers with leading zeros';
+    var success = true;
+    var normalizedDisplayFormat0;
+    var normalizedDisplayFormat1;
+    var list = [
+      ['03.4e-2', '3.4e-2'],
+      ['03.4e+2', '3.4e+2'],
+      ['03.4e2', '3.4e2'],
+      ['03.4E-2', '3.4E-2'],
+      ['03.4E+2', '3.4E+2'],
+      ['03.4E2', '3.4E2']
+    ];
+    for (i = 0; i < list.length; i++) {
+      normalizedDisplayFormat0 = OB.Utilities.Number.ScientificToDecimal(list[i][0], decSeparator);
+      normalizedDisplayFormat1 = OB.Utilities.Number.ScientificToDecimal(list[i][1], decSeparator);
+      if (normalizedDisplayFormat0 !== normalizedDisplayFormat1) {
+        success = false;
+        failureText = failureText + ' normalizeDisplayFormat(\'' + list[i][0] + '\') === \'' + normalizedDisplayFormat1 + '\' (returned: ' + normalizedDisplayFormat0 + ') &';
       }
     }
     if (success) {

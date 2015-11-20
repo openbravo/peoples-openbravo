@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2014 Openbravo SLU
+ * All portions are Copyright (C) 2001-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -29,6 +29,12 @@ function utilsJSDirectExecution() {
   if (navigator.userAgent.toUpperCase().indexOf("MSIE") !== -1 && getBrowserInfo('documentMode') >= 9 && parseInt(getBrowserInfo('majorVersion'), 10) >= 9) {
     isIE9Strict = true;
   }
+  if (navigator.userAgent.toUpperCase().indexOf("TRIDENT") !== -1 && parseInt(getBrowserInfo('majorVersion'), 10) == 11) {
+    isIE11 = true;
+  }
+  if (navigator.userAgent.toUpperCase().indexOf("EDGE") !== -1) {
+    isEdge = true;
+  }
   isWindowInMDIPopup = checkWindowInMDIPopup();
   isWindowInMDITab = checkWindowInMDITab();
   isWindowInMDIPage = checkWindowInMDIPage();
@@ -40,6 +46,8 @@ function utilsJSDirectExecution() {
 }
 
 var isIE9Strict = false;
+var isIE11 = false;
+var isEdge = false;
 var isRTL = false;
 var isWindowInMDIPopup = false;
 var isWindowInMDITab = false;
@@ -101,7 +109,7 @@ function isDebugEnabled() {
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '27290';
+  var number = '27919';
   return number;
 }
 

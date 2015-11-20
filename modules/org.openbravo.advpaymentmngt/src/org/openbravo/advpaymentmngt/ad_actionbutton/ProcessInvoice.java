@@ -44,10 +44,13 @@ import org.openbravo.advpaymentmngt.process.FIN_AddPayment;
 import org.openbravo.advpaymentmngt.process.FIN_PaymentProcess;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.filter.IsIDFilter;
+import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.security.OrganizationStructureProvider;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBDao;
 import org.openbravo.data.FieldProvider;
@@ -66,8 +69,10 @@ import org.openbravo.model.ad.ui.Process;
 import org.openbravo.model.common.currency.ConversionRate;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.invoice.Invoice;
+import org.openbravo.model.common.invoice.ReversedInvoice;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
+import org.openbravo.model.financialmgmt.payment.FIN_PaymentDetail;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentDetailV;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentSchedule;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
@@ -182,10 +187,10 @@ public class ProcessInvoice extends HttpSecureAppServlet {
           OBContext.restorePreviousMode();
         }
 
+        Date voidDate = null;
+        Date voidAcctDate = null;
         Map<String, String> parameters = null;
         if (!strVoidInvoiceDate.isEmpty() && !strVoidInvoiceAcctDate.isEmpty()) {
-          Date voidDate = null;
-          Date voidAcctDate = null;
           try {
             voidDate = OBDateUtils.getDate(strVoidInvoiceDate);
             voidAcctDate = OBDateUtils.getDate(strVoidInvoiceAcctDate);
@@ -199,6 +204,107 @@ public class ProcessInvoice extends HttpSecureAppServlet {
           parameters.put("voidedDocumentDate", OBDateUtils.formatDate(voidDate, "yyyy-MM-dd"));
           parameters.put("voidedDocumentAcctDate",
               OBDateUtils.formatDate(voidAcctDate, "yyyy-MM-dd"));
+
+        }
+
+        // In case of void a non paid invoice, create a dummy payment related to it with zero amount
+        FIN_Payment dummyPayment = null;
+        if ("RC".equals(strdocaction) && !invoice.isPaymentComplete()
+            && invoice.getTotalPaid().compareTo(BigDecimal.ZERO) == 0) {
+          try {
+            OBContext.setAdminMode(true);
+            final boolean isSOTrx = invoice.isSalesTransaction();
+            final DocumentType docType = FIN_Utility.getDocumentType(invoice.getOrganization(),
+                isSOTrx ? AcctServer.DOCTYPE_ARReceipt : AcctServer.DOCTYPE_APPayment);
+            final String strPaymentDocumentNo = FIN_Utility.getDocumentNo(docType,
+                docType.getTable() != null ? docType.getTable().getDBTableName() : "");
+            final OrganizationStructureProvider osp = OBContext.getOBContext()
+                .getOrganizationStructureProvider(invoice.getClient().getId());
+
+            // Get default Financial Account as it is done in Add Payment
+            FIN_FinancialAccount bpFinAccount = null;
+            if (isSOTrx
+                && invoice.getBusinessPartner().getAccount() != null
+                && FIN_Utility.getFinancialAccountPaymentMethod(invoice.getPaymentMethod().getId(),
+                    invoice.getBusinessPartner().getAccount().getId(), isSOTrx, invoice
+                        .getCurrency().getId()) != null
+                && osp.isInNaturalTree(invoice.getBusinessPartner().getAccount().getOrganization(),
+                    invoice.getOrganization())) {
+              bpFinAccount = invoice.getBusinessPartner().getAccount();
+            } else if (!isSOTrx
+                && invoice.getBusinessPartner().getPOFinancialAccount() != null
+                && FIN_Utility.getFinancialAccountPaymentMethod(invoice.getPaymentMethod().getId(),
+                    invoice.getBusinessPartner().getPOFinancialAccount().getId(), isSOTrx, invoice
+                        .getCurrency().getId()) != null
+                && osp.isInNaturalTree(invoice.getBusinessPartner().getPOFinancialAccount()
+                    .getOrganization(), invoice.getOrganization())) {
+              bpFinAccount = invoice.getBusinessPartner().getPOFinancialAccount();
+            } else {
+              FinAccPaymentMethod fpm = FIN_Utility.getFinancialAccountPaymentMethod(invoice
+                  .getPaymentMethod().getId(), null, isSOTrx, invoice.getCurrency().getId());
+              if (fpm != null
+                  && osp.isInNaturalTree(fpm.getAccount().getOrganization(),
+                      invoice.getOrganization())) {
+                bpFinAccount = fpm.getAccount();
+              }
+            }
+
+            // If no Financial Account exists, show an Error
+            if (bpFinAccount == null) {
+              msg = new OBError();
+              msg.setType("Error");
+              msg.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
+              msg.setMessage(OBMessageUtils.messageBD("APRM_NoFinancialAccountAvailable"));
+              vars.setMessage(strTabId, msg);
+              printPageClosePopUp(response, vars, Utility.getTabURL(strTabId, "R", true));
+              return;
+            }
+
+            // Calculate Conversion Rate
+            Date date = voidDate != null ? voidDate : invoice.getInvoiceDate();
+            BigDecimal rate = null;
+            if (!StringUtils.equals(invoice.getCurrency().getId(), bpFinAccount.getCurrency()
+                .getId())) {
+              final ConversionRate conversionRate = FinancialUtils.getConversionRate(date,
+                  invoice.getCurrency(), bpFinAccount.getCurrency(), invoice.getOrganization(),
+                  invoice.getClient());
+              if (conversionRate != null) {
+                rate = conversionRate.getMultipleRateBy();
+              }
+            }
+
+            // Create dummy payment
+            dummyPayment = dao
+                .getNewPayment(isSOTrx, invoice.getOrganization(), docType, strPaymentDocumentNo,
+                    invoice.getBusinessPartner(), invoice.getPaymentMethod(), bpFinAccount, "0",
+                    date, invoice.getDocumentNo(), invoice.getCurrency(), rate, null);
+            OBDal.getInstance().save(dummyPayment);
+
+            List<FIN_PaymentDetail> paymentDetails = new ArrayList<FIN_PaymentDetail>();
+            List<FIN_PaymentScheduleDetail> paymentScheduleDetails = dao
+                .getInvoicePendingScheduledPaymentDetails(invoice);
+            for (FIN_PaymentScheduleDetail psd : paymentScheduleDetails) {
+              FIN_PaymentDetail pd = OBProvider.getInstance().get(FIN_PaymentDetail.class);
+              pd.setFinPayment(dummyPayment);
+              pd.setAmount(psd.getAmount());
+              pd.setRefund(false);
+              OBDal.getInstance().save(pd);
+
+              paymentDetails.add(pd);
+              psd.setPaymentDetails(pd);
+              pd.getFINPaymentScheduleDetailList().add(psd);
+              OBDal.getInstance().save(psd);
+            }
+            dummyPayment.setFINPaymentDetailList(paymentDetails);
+            OBDal.getInstance().save(dummyPayment);
+
+          } catch (final Exception e) {
+            log4j.error("Exception while creating dummy payment for the invoice: "
+                + strC_Invoice_ID);
+            e.printStackTrace();
+          } finally {
+            OBContext.restorePreviousMode();
+          }
         }
 
         final ProcessInstance pinstance = CallProcess.getInstance().call(process, strC_Invoice_ID,
@@ -206,6 +312,56 @@ public class ProcessInvoice extends HttpSecureAppServlet {
 
         OBDal.getInstance().getSession().refresh(invoice);
         invoice.setAPRMProcessinvoice(invoice.getDocumentAction());
+
+        if ("RC".equals(strdocaction) && pinstance.getResult() != 0L) {
+          try {
+            OBContext.setAdminMode(true);
+
+            // Get reversed payment
+            OBCriteria<ReversedInvoice> revInvoiceCriteria = OBDal.getInstance().createCriteria(
+                ReversedInvoice.class);
+            revInvoiceCriteria.add(Restrictions.eq(ReversedInvoice.PROPERTY_REVERSEDINVOICE,
+                invoice));
+            revInvoiceCriteria.setMaxResults(1);
+            ReversedInvoice revInvoice = (ReversedInvoice) revInvoiceCriteria.uniqueResult();
+
+            if (revInvoice != null && dummyPayment != null) {
+
+              List<FIN_PaymentDetail> paymentDetails = new ArrayList<FIN_PaymentDetail>();
+              List<FIN_PaymentScheduleDetail> paymentScheduleDetails = dao
+                  .getInvoicePendingScheduledPaymentDetails(revInvoice.getInvoice());
+              for (FIN_PaymentScheduleDetail psd : paymentScheduleDetails) {
+                FIN_PaymentDetail pd = OBProvider.getInstance().get(FIN_PaymentDetail.class);
+                pd.setFinPayment(dummyPayment);
+                pd.setAmount(psd.getAmount());
+                pd.setRefund(false);
+                OBDal.getInstance().save(pd);
+
+                paymentDetails.add(pd);
+                psd.setPaymentDetails(pd);
+                pd.getFINPaymentScheduleDetailList().add(psd);
+                OBDal.getInstance().save(psd);
+              }
+              dummyPayment.getFINPaymentDetailList().addAll(paymentDetails);
+              OBDal.getInstance().save(dummyPayment);
+
+              // Process dummy payment related with both actual invoice and reversed invoice
+              OBError message = FIN_AddPayment.processPayment(vars, this, "P", dummyPayment);
+              if ("Error".equals(message.getType())) {
+                message.setMessage(OBMessageUtils.messageBD("PaymentError") + " "
+                    + message.getMessage());
+                vars.setMessage(strTabId, message);
+              }
+            }
+          } catch (final Exception e) {
+            log4j.error("Exception while creating dummy payment for the invoice: "
+                + strC_Invoice_ID);
+            e.printStackTrace();
+          } finally {
+            OBContext.restorePreviousMode();
+          }
+        }
+
         // Remove invoice's used credit description
         if ("RE".equals(strdocaction) && pinstance.getResult() != 0L) {
           final String invDesc = invoice.getDescription();

@@ -232,7 +232,7 @@ isc.OBPickAndExecuteGrid.addProperties({
 
   evaluateDisplayLogicForGridColumns: function () {
     var currentValues = (this.contentView.view.theForm && this.contentView.view.theForm.getValues()) || {},
-        contextInfo = (this.view.buttonOwnerView && this.view.buttonOwnerView.getContextInfo(false, true, true, true)) || {},
+        contextInfo = this.view.getUnderLyingRecordContext(false, true, true, true),
         i, fieldVisibility;
     // TODO: parse currentValues properly 
     isc.addProperties(contextInfo, currentValues);

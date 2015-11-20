@@ -91,6 +91,7 @@ import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.enterprise.OrganizationInformation;
 import org.openbravo.model.common.geography.Country;
 import org.openbravo.model.common.geography.Location;
+import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.utils.FileUtility;
 import org.openbravo.utils.FormatUtilities;
 
@@ -315,6 +316,18 @@ public class Utility {
    */
   public static String formatMessageBDToHtml(String message) {
     return BasicUtility.formatMessageBDToHtml(message);
+  }
+
+  /**
+   * Throws an OBException with a message in the right language.
+   * 
+   * @param message
+   *          the key of the message
+   */
+  public static void throwErrorMessage(String message) {
+    String language = OBContext.getOBContext().getLanguage().getLanguage();
+    ConnectionProvider conn = new DalConnectionProvider(false);
+    throw new OBException(messageBD(conn, message, language));
   }
 
   /**
@@ -1922,7 +1935,7 @@ public class Utility {
 
   /**
    * Adds a new property in a merge of properties file
-   *
+   * 
    * @param pathFile
    *          properties file path
    * @param propertyName
