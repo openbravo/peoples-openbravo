@@ -38,7 +38,7 @@ var baseDirectory = "../../../../../web/";
   <script language="javascript">
     function onLoadDo() {
       moreOnLoadDoFunctions();
-      if (isIE9Strict || isEdge) {
+      if (isIE9Strict || isIE11 || isEdge) {
         var i=0;
         var setOpenerInterval = setInterval(
           function() {
