@@ -768,7 +768,7 @@ enyo.kind({
   findProductByBarcode: function (code, callback) {
     var me = this;
     OB.debug('BarcodeActionHandler - id: ' + code);
-    OB.UTIL.HookManager.executeHooks('OBPOS_PostBarcodeScan', {
+    OB.UTIL.HookManager.executeHooks('OBPOS_BarcodeScan', {
       context: me,
       code: code,
       callback: callback
@@ -805,13 +805,22 @@ enyo.kind({
   },
 
   successCallbackProducts: function (dataProducts, code, callback) {
-    if (dataProducts && dataProducts.length > 0) {
-      OB.debug('productfound');
-      callback(dataProducts.at(0));
-    } else {
-      // 'UPC/EAN code not found'
-      OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_KbUPCEANCodeNotFound', [code]));
-    }
+    OB.UTIL.HookManager.executeHooks('OBPOS_BarcodeSearch', {
+      dataProducts: dataProducts,
+      code: code,
+      callback: callback
+    }, function (args) {
+      if (args.cancellation) {
+        return;
+      }
+      if (args.dataProducts && args.dataProducts.length > 0) {
+        OB.debug('productfound');
+        args.callback(args.dataProducts.at(0));
+      } else {
+        // 'UPC/EAN code not found'
+        OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_KbUPCEANCodeNotFound', [args.code]));
+      }
+    });
   },
 
   addProductToReceipt: function (keyboard, product) {
