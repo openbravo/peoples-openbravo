@@ -271,6 +271,9 @@ enyo.kind({
     this.otherStoresStockModel = null;
     if (params.warehouse) {
       this.warehouse = params.warehouse;
+      if (this.warehouse && this.warehouse.id) {
+        this.warehouse.warehouseid = this.warehouse.id;
+      }
     } else {
       this.warehouse = OB.MobileApp.model.get('warehouses')[0];
     }

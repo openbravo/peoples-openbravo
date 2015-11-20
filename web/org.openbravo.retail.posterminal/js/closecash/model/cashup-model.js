@@ -68,7 +68,10 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
         newstep, expected = 0,
         startings = [],
         cashUpReport, tempList = new Backbone.Collection(),
-        activePaymentsList = [];
+        activePaymentsList = [],
+        finish, synch1 = false,
+        synch2 = false,
+        synch3 = false;
 
     this.cashupStepsDefinition[this.stepIndex('OB.CashUp.Master')].active = OB.POS.modelterminal.get('terminal').ismaster;
     this.cashupStepsDefinition[this.stepIndex('OB.CashUp.StepPendingOrders')].loaded = false;
@@ -169,7 +172,8 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
         }, this);
         me.cashupStepsDefinition[me.stepIndex('OB.CashUp.CashPayments')].loaded = true;
         me.cashupStepsDefinition[me.stepIndex('OB.CashUp.PaymentMethods')].loaded = true;
-        me.finishLoad();
+        synch1 = true;
+        finish();
         OB.UTIL.SynchronizationHelper.finished(synchId1, 'cashup-model.init1');
       }, function () {
         OB.UTIL.SynchronizationHelper.finished(synchId1, 'cashup-model.init1');
@@ -330,6 +334,8 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
           cashUpReport: cashUpReport
         }, function (args) {
           me.get('cashUpReport').add(args.cashUpReport);
+          synch2 = true;
+          finish();
           OB.UTIL.SynchronizationHelper.finished(synchId2, 'cashup-model.init2');
         });
       }, this);
@@ -349,7 +355,9 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
     }, this);
 
     OB.Dal.find(OB.Model.Order, {
-      hasbeenpaid: 'N'
+      hasbeenpaid: 'N',
+      // Adding 'session' to criteria in order the remove empty orders based on user session
+      'session': OB.MobileApp.model.get('session')
     }, function (pendingOrderList, me) {
       var emptyOrders;
       // Detect empty orders and remove them from here
@@ -371,12 +379,19 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
       var indexStepPendingOrders = me.stepIndex('OB.CashUp.StepPendingOrders');
       me.cashupStepsDefinition[indexStepPendingOrders].active = pendingOrderList.length > 0;
       me.cashupStepsDefinition[indexStepPendingOrders].loaded = true;
+      synch3 = true;
+      finish();
     }, function (tx, error) {
       OB.UTIL.showError("OBDAL error: " + error);
     }, this);
 
     this.printCashUp = new OB.OBPOSCashUp.Print.CashUp();
 
+    finish = function () {
+      if (synch1 && synch2 && synch3) {
+        me.finishLoad();
+      }
+    };
   },
   loadModels: function (loadModelsCallback) {
     loadModelsCallback();
@@ -667,8 +682,8 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
     }, function (cashUp) {
       OB.UTIL.composeCashupInfo(cashUp, currentMe, function (me) {
         var i, paymentMethodInfo, objToSend = JSON.parse(cashUp.at(0).get('objToSend'));
-        objToSend.cashUpDate = OB.I18N.formatDate(new Date());
-        objToSend.currentDate = OB.I18N.formatDate(new Date());
+        objToSend.cashUpDate = OB.I18N.normalizeDate(new Date());
+        objToSend.currentDate = OB.I18N.normalizeDate(new Date());
         for (i = 0; i < me.additionalProperties.length; i++) {
           objToSend[me.additionalProperties[i]] = me.propertyFunctions[i](OB.POS.modelterminal.get('terminal').id, cashUp.at(0));
         }

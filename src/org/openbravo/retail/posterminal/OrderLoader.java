@@ -24,6 +24,7 @@ import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
@@ -372,9 +373,10 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           return paymentResponse;
         }
 
-        // Call all OrderProcess injected.
-        executeHooks(orderProcesses, jsonorder, order, shipment, invoice);
       }
+      // Call all OrderProcess injected.
+      executeHooks(orderProcesses, jsonorder, order, shipment, invoice);
+
       if (log.isDebugEnabled()) {
         t6 = System.currentTimeMillis();
       }
@@ -1073,8 +1075,13 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       addDocumentNoHandler(shipment, shpEntity, null, shipment.getDocumentType());
     }
 
-    shipment.setAccountingDate(order.getOrderDate());
-    shipment.setMovementDate(order.getOrderDate());
+    if (shipment.getMovementDate() == null) {
+      shipment.setMovementDate(order.getOrderDate());
+    }
+    if (shipment.getAccountingDate() == null) {
+      shipment.setAccountingDate(order.getOrderDate());
+    }
+
     shipment.setPartnerAddress(OBDal.getInstance().get(Location.class,
         jsonorder.getJSONObject("bp").getString("locId")));
     shipment.setSalesTransaction(true);
@@ -1178,6 +1185,11 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
   protected void createOrder(Order order, JSONObject jsonorder) throws JSONException {
     Entity orderEntity = ModelProvider.getInstance().getEntity(Order.class);
+    if (jsonorder.has("description")
+        && StringUtils.length(jsonorder.getString("description")) > 255) {
+      jsonorder.put("description",
+          StringUtils.substring(jsonorder.getString("description"), 0, 255));
+    }
     JSONPropertyToEntity.fillBobFromJSON(orderEntity, order, jsonorder,
         jsonorder.getLong("timezoneOffset"));
     order.setNewOBObject(true);
@@ -1535,6 +1547,30 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           paymentScheduleDetail.setInvoicePaymentSchedule(paymentScheduleInvoice);
         }
         OBDal.getInstance().save(paymentScheduleDetail);
+      } else if (notpaidLayaway || fullypaidLayaway) {
+        // Unlinked PaymentScheduleDetail records will be recreated
+        // First all non linked PaymentScheduleDetail records are deleted
+        List<FIN_PaymentScheduleDetail> pScheduleDetails = new ArrayList<FIN_PaymentScheduleDetail>();
+        pScheduleDetails.addAll(paymentSchedule
+            .getFINPaymentScheduleDetailOrderPaymentScheduleList());
+        for (FIN_PaymentScheduleDetail pSched : pScheduleDetails) {
+          if (pSched.getPaymentDetails() == null) {
+            paymentSchedule.getFINPaymentScheduleDetailOrderPaymentScheduleList().remove(pSched);
+            OBDal.getInstance().remove(pSched);
+          }
+        }
+        // Then a new one for the amount remaining to be paid is created if there is still something
+        // to be paid
+        if (diffPaid.compareTo(BigDecimal.ZERO) != 0) {
+          FIN_PaymentScheduleDetail paymentScheduleDetail = OBProvider.getInstance().get(
+              FIN_PaymentScheduleDetail.class);
+          paymentScheduleDetail.setOrderPaymentSchedule(paymentSchedule);
+          paymentScheduleDetail.setAmount(diffPaid);
+          if (paymentScheduleInvoice != null) {
+            paymentScheduleDetail.setInvoicePaymentSchedule(paymentScheduleInvoice);
+          }
+          OBDal.getInstance().save(paymentScheduleDetail);
+        }
       }
 
       return null;
