@@ -102,11 +102,11 @@
     }
     <#elseif field.readOnlyIf == "" && field.showIf != "">
     if (form.getField('${field.name}') && form.getField('${field.name}').setDisabled) {
-       form.getField('${field.name}').setDisabled(${field.showIf} === false);
+       form.getField('${field.name}').setDisabled((${field.showIf}) === false);
     }
     <#elseif field.readOnlyIf != "" && field.showIf != "">
     if (form.getField('${field.name}') && form.getField('${field.name}').setDisabled) {
-       form.getField('${field.name}').setDisabled(${field.readOnlyIf} || (${field.showIf} === false));
+       form.getField('${field.name}').setDisabled((${field.readOnlyIf}) || (${field.showIf}) === false);
     }
     </#if>
     </#list>

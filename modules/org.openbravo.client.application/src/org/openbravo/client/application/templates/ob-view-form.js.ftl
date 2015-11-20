@@ -39,26 +39,18 @@
             disabledFields, i;
             OB.Utilities.fixNull250(currentValues);
         <#list data.fieldHandler.fields as field>
-        <#if field.readOnlyIf != "">
-        // Applying readonly in form.
-        if (this.view.isShowingForm) {
-           f.disableItem('${field.name}', ${field.readOnlyIf});
-        }
-        </#if>
         <#if field.readOnlyIf != "" && field.showIf == "">
-        // Applying readonly in grid.
-        if (!this.view.isShowingForm) {
+        // Applying readonly.
            f.disableItem('${field.name}', ${field.readOnlyIf});
-        }
         <#elseif field.readOnlyIf == "" && field.showIf != "">
         // Applying display logic in grid.
         if (!this.view.isShowingForm) {
-           f.disableItem('${field.name}', (${field.showIf} === false));
+           f.disableItem('${field.name}', (${field.showIf}) === false);
         }
         <#elseif field.readOnlyIf != "" && field.showIf != "">
         // Applying display logic and readonly in grid.
         if (!this.view.isShowingForm) {
-           f.disableItem('${field.name}', (${field.readOnlyIf} || (${field.showIf} === false)));
+           f.disableItem('${field.name}', (${field.readOnlyIf}) || (${field.showIf}) === false);
         }
         </#if>
         </#list>

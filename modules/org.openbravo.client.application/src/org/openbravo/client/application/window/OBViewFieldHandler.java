@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -91,7 +92,7 @@ public class OBViewFieldHandler {
 
   public boolean getHasFieldsWithReadOnlyIf() {
     for (OBViewFieldDefinition viewField : getFields()) {
-      if (viewField.getReadOnlyIf() != null && viewField.getReadOnlyIf().trim().length() > 0) {
+      if (StringUtils.isNotBlank(viewField.getReadOnlyIf())) {
         return true;
       }
     }
@@ -100,7 +101,7 @@ public class OBViewFieldHandler {
 
   public boolean getHasFieldsWithShowIf() {
     for (OBViewFieldDefinition viewField : getFields()) {
-      if (viewField.getShowIf() != null && viewField.getShowIf().trim().length() > 0) {
+      if (StringUtils.isNotBlank(viewField.getShowIf())) {
         return true;
       }
     }
