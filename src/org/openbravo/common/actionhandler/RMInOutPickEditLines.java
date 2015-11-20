@@ -19,7 +19,6 @@
 package org.openbravo.common.actionhandler;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -98,7 +97,8 @@ public class RMInOutPickEditLines extends BaseProcessActionHandler {
       removeNonSelectedLines(idList, inOut);
       return;
     }
-    Map<OrderLine, ShipmentInOutLine> orderLineShipmentLineRef = new HashMap<OrderLine, ShipmentInOutLine>();
+
+    ShipmentInOutLine parentInOutLine = null;
     for (long i = 0; i < selectedLines.length(); i++) {
       JSONObject selectedLine = selectedLines.getJSONObject((int) i);
       log.debug(selectedLine);
@@ -141,8 +141,7 @@ public class RMInOutPickEditLines extends BaseProcessActionHandler {
       }
       if (orderLine.isExplode()) {
         newInOutLine.setExplode(true);
-      } else {
-        orderLineShipmentLineRef.put(orderLine, newInOutLine);
+        parentInOutLine = newInOutLine;
       }
       OBDal.getInstance().save(newInOutLine);
       OBDal.getInstance().save(inOut);
@@ -150,7 +149,7 @@ public class RMInOutPickEditLines extends BaseProcessActionHandler {
     }
     for (ShipmentInOutLine inOutLine : inOut.getMaterialMgmtShipmentInOutLineList()) {
       if (inOutLine.getSalesOrderLine().getBOMParent() != null) {
-        inOutLine.setBOMParent(orderLineShipmentLineRef.get(inOutLine.getSalesOrderLine()));
+        inOutLine.setBOMParent(parentInOutLine);
         OBDal.getInstance().save(inOutLine);
       }
     }
