@@ -19,35 +19,35 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.mobile.core.process.DataSynchronizationProcess;
 import org.openbravo.mobile.core.process.MobileImportEntryProcessorRunnable;
-import org.openbravo.retail.posterminal.QuotationsReject;
+import org.openbravo.retail.posterminal.ProcessVoidLayaway;
 import org.openbravo.service.importprocess.ImportEntry;
 import org.openbravo.service.importprocess.ImportEntryManager.ImportEntryQualifier;
 import org.openbravo.service.importprocess.ImportEntryProcessor;
 
 /**
- * Encapsulates the {@link QuotationsReject} in a thread.
+ * Encapsulates the {@link ProcessVoidLayaway} in a thread.
  * 
  * @author mdejuana
  */
-@ImportEntryQualifier(entity = "OBPOS_RejectQuotation")
+@ImportEntryQualifier(entity = "OBPOS_VoidLayaway")
 @ApplicationScoped
-public class QuotationsRejectEntryProcessor extends ImportEntryProcessor {
+public class VoidLayawayEntryProcessor extends ImportEntryProcessor {
 
   protected ImportEntryProcessRunnable createImportEntryProcessRunnable() {
-    return WeldUtils.getInstanceFromStaticBeanManager(QuotationsRejectRunnable.class);
+    return WeldUtils.getInstanceFromStaticBeanManager(VoidLayawayRunnable.class);
   }
 
   protected boolean canHandleImportEntry(ImportEntry importEntryInformation) {
-    return "OBPOS_RejectQuotation".equals(importEntryInformation.getTypeofdata());
+    return "OBPOS_VoidLayaway".equals(importEntryInformation.getTypeofdata());
   }
 
   protected String getProcessSelectionKey(ImportEntry importEntry) {
     return (String) DalUtil.getId(importEntry.getOrganization());
   }
 
-  private static class QuotationsRejectRunnable extends MobileImportEntryProcessorRunnable {
+  private static class VoidLayawayRunnable extends MobileImportEntryProcessorRunnable {
     protected Class<? extends DataSynchronizationProcess> getDataSynchronizationClass() {
-      return QuotationsReject.class;
+      return ProcessVoidLayaway.class;
     }
 
     protected void processEntry(ImportEntry importEntry) throws Exception {
