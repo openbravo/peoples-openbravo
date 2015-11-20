@@ -24,6 +24,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Arrays;
 import java.util.List;
 
@@ -144,11 +145,13 @@ public class ServicesTest3 extends WeldBaseTest {
             new BigDecimal(product[2]));
 
         try {
-          ServicePriceUtils
-              .getServiceAmount(
-                  serviceOrderLine,
-                  isPriceIncludingTaxes ? orderLine.getLineGrossAmount() : orderLine
-                      .getLineNetAmount(), null, null, null, null);
+          ServicePriceUtils.getServiceAmount(
+              serviceOrderLine,
+              isPriceIncludingTaxes ? orderLine.getLineGrossAmount().setScale(
+                  orderLine.getCurrency().getStandardPrecision().intValue(), RoundingMode.HALF_UP)
+                  : orderLine.getLineNetAmount().setScale(
+                      orderLine.getCurrency().getStandardPrecision().intValue(),
+                      RoundingMode.HALF_UP), null, null, null, null);
         } catch (OBException e) {
           assertEquals("ServicePriceUtils.getServiceAmount not properly handled error",
               e.getMessage(), parameter.getErrorMessage());

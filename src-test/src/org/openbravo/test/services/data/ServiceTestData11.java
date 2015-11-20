@@ -44,7 +44,7 @@ public class ServiceTestData11 extends ServiceTestData {
     setServiceId(SERVICE_WARRANTY);
     setProducts(new String[][] {//
     // ProductId, quantity, price, amount
-    { PRODUCT_DISTRIBUTION_GOOD_A, "1", "10", "10" } //
+    { PRODUCT_DISTRIBUTION_GOOD_A, "1", "10.00", "10.00" } //
     });
     setQuantity(BigDecimal.ONE);
     setPrice(new BigDecimal("250.00"));
