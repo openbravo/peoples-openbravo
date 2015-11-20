@@ -18,7 +18,6 @@
  */
 package org.openbravo.service.json;
 
-import java.sql.BatchUpdateException;
 import java.sql.SQLTimeoutException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -44,6 +43,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.service.db.DalConnectionProvider;
+import org.openbravo.service.db.DbUtility;
 import org.postgresql.util.PSQLException;
 
 /**
@@ -200,11 +200,7 @@ public class JsonUtils {
    * @return the resulting json string
    */
   public static String convertExceptionToJson(Throwable throwable) {
-    Throwable localThrowable = throwable;
-    if (throwable.getCause() instanceof BatchUpdateException) {
-      final BatchUpdateException batchException = (BatchUpdateException) throwable.getCause();
-      localThrowable = batchException.getNextException();
-    }
+    Throwable localThrowable = DbUtility.getUnderlyingSQLException(throwable);
 
     try {
       final JSONObject jsonResult = new JSONObject();

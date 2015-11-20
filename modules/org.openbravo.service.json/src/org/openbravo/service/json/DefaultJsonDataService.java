@@ -18,7 +18,6 @@
  */
 package org.openbravo.service.json;
 
-import java.sql.BatchUpdateException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -48,6 +47,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.SessionInfo;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
+import org.openbravo.service.db.DbUtility;
 import org.openbravo.service.json.JsonToDataConverter.JsonConversionError;
 import org.openbravo.userinterface.selector.SelectorConstants;
 
@@ -824,12 +824,7 @@ public class DefaultJsonDataService implements JsonDataService {
         return result;
       }
     } catch (Throwable t) {
-      Throwable localThrowable = t;
-      if (localThrowable.getCause() instanceof BatchUpdateException) {
-        final BatchUpdateException batchException = (BatchUpdateException) localThrowable
-            .getCause();
-        localThrowable = batchException.getNextException();
-      }
+      Throwable localThrowable = DbUtility.getUnderlyingSQLException(t);
       if (!(localThrowable instanceof OBException)
           || (localThrowable instanceof OBException && ((OBException) localThrowable)
               .isLogExceptionNeeded())) {
