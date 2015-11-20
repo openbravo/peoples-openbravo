@@ -29,6 +29,9 @@ function utilsJSDirectExecution() {
   if (navigator.userAgent.toUpperCase().indexOf("MSIE") !== -1 && getBrowserInfo('documentMode') >= 9 && parseInt(getBrowserInfo('majorVersion'), 10) >= 9) {
     isIE9Strict = true;
   }
+  if (navigator.userAgent.toUpperCase().indexOf("TRIDENT") !== -1 && parseInt(getBrowserInfo('majorVersion'), 10) == 11) {
+    isIE11 = true;
+  }
   if (navigator.userAgent.toUpperCase().indexOf("EDGE") !== -1) {
     isEdge = true;
   }
@@ -43,6 +46,7 @@ function utilsJSDirectExecution() {
 }
 
 var isIE9Strict = false;
+var isIE11 = false;
 var isEdge = false;
 var isRTL = false;
 var isWindowInMDIPopup = false;
@@ -105,7 +109,7 @@ function isDebugEnabled() {
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '27851';
+  var number = '27919';
   return number;
 }
 

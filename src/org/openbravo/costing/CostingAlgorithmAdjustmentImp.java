@@ -52,6 +52,7 @@ import org.openbravo.model.materialmgmt.transaction.InternalConsumptionLine;
 import org.openbravo.model.materialmgmt.transaction.InventoryCountLine;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 import org.openbravo.model.materialmgmt.transaction.ProductionLine;
+import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -410,8 +411,10 @@ public abstract class CostingAlgorithmAdjustmentImp {
     StringBuffer where = new StringBuffer();
     where.append(" as trx");
     where.append(" join trx." + MaterialTransaction.PROPERTY_GOODSSHIPMENTLINE + " as iol");
+    where.append(" join iol." + ShipmentInOutLine.PROPERTY_SHIPMENTRECEIPT + " as io");
     where.append(" join iol." + ShipmentInOutLine.PROPERTY_SALESORDERLINE + " as ol");
     where.append(" where ol." + OrderLine.PROPERTY_GOODSSHIPMENTLINE + " = :shipment");
+    where.append(" and io." + ShipmentInOut.PROPERTY_DOCUMENTSTATUS + " <> 'VO'");
     OBQuery<MaterialTransaction> qryTrx = OBDal.getInstance().createQuery(
         MaterialTransaction.class, where.toString());
     qryTrx.setFilterOnReadableOrganization(false);

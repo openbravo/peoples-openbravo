@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2011-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2011-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -97,6 +97,8 @@ public class RMInOutPickEditLines extends BaseProcessActionHandler {
       removeNonSelectedLines(idList, inOut);
       return;
     }
+
+    ShipmentInOutLine parentInOutLine = null;
     for (long i = 0; i < selectedLines.length(); i++) {
       JSONObject selectedLine = selectedLines.getJSONObject((int) i);
       log.debug(selectedLine);
@@ -137,10 +139,19 @@ public class RMInOutPickEditLines extends BaseProcessActionHandler {
         inOutLines.add(newInOutLine);
         inOut.setMaterialMgmtShipmentInOutLineList(inOutLines);
       }
-
+      if (orderLine.isExplode()) {
+        newInOutLine.setExplode(true);
+        parentInOutLine = newInOutLine;
+      }
       OBDal.getInstance().save(newInOutLine);
       OBDal.getInstance().save(inOut);
       OBDal.getInstance().flush();
+    }
+    for (ShipmentInOutLine inOutLine : inOut.getMaterialMgmtShipmentInOutLineList()) {
+      if (inOutLine.getSalesOrderLine().getBOMParent() != null) {
+        inOutLine.setBOMParent(parentInOutLine);
+        OBDal.getInstance().save(inOutLine);
+      }
     }
 
     removeNonSelectedLines(idList, inOut);
