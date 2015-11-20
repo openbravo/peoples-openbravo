@@ -251,7 +251,9 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           }
         } else if (partialpaidLayaway) {
           order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
-          order.setObposAppCashup(jsonorder.getString("obposAppCashup"));
+          if (jsonorder.has("obposAppCashup")) {
+            order.setObposAppCashup(jsonorder.getString("obposAppCashup"));
+          }
         } else {
           order = OBProvider.getInstance().get(Order.class);
           createOrder(order, jsonorder);
@@ -427,10 +429,12 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
   private void updateAuditInfo(Order order, Invoice invoice, JSONObject jsonorder)
       throws JSONException {
-    Long value = jsonorder.getLong("created");
-    order.set("creationDate", new Date(value));
-    if (invoice != null) {
-      invoice.set("creationDate", new Date(value));
+    if (jsonorder.has("created")) {
+      Long value = jsonorder.getLong("created");
+      order.set("creationDate", new Date(value));
+      if (invoice != null) {
+        invoice.set("creationDate", new Date(value));
+      }
     }
   }
 
@@ -1214,7 +1218,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         RoundingMode.HALF_UP));
 
     order.setSalesTransaction(true);
-    if (jsonorder.getBoolean("isQuotation")) {
+    if (jsonorder.has("isQuotation") && jsonorder.getBoolean("isQuotation")) {
       order.setDocumentStatus("UE");
     } else {
       order.setDocumentStatus("CO");
@@ -1227,7 +1231,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     long documentno = Long.parseLong(order.getDocumentNo().substring(
         order.getDocumentNo().lastIndexOf("/") + 1));
 
-    if (jsonorder.getBoolean("isQuotation")) {
+    if (jsonorder.has("isQuotation") && jsonorder.getBoolean("isQuotation")) {
       if (order.getObposApplications().getQuotationslastassignednum() == null
           || documentno > order.getObposApplications().getQuotationslastassignednum()) {
         OBPOSApplications terminal = order.getObposApplications();
@@ -1732,12 +1736,14 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       vars.setSessionValue("POSOrder", "Y");
 
       // retrieve the transactions of this payment and set the cashupId to those transactions
-      OBDal.getInstance().refresh(finPayment);
-      final List<FIN_FinaccTransaction> transactions = finPayment.getFINFinaccTransactionList();
-      final String cashupId = jsonorder.getString("obposAppCashup");
-      final OBPOSAppCashup cashup = OBDal.getInstance().get(OBPOSAppCashup.class, cashupId);
-      for (FIN_FinaccTransaction transaction : transactions) {
-        transaction.setObposAppCashup(cashup);
+      if (jsonorder.has("obposAppCashup")) {
+        OBDal.getInstance().refresh(finPayment);
+        final List<FIN_FinaccTransaction> transactions = finPayment.getFINFinaccTransactionList();
+        final String cashupId = jsonorder.getString("obposAppCashup");
+        final OBPOSAppCashup cashup = OBDal.getInstance().get(OBPOSAppCashup.class, cashupId);
+        for (FIN_FinaccTransaction transaction : transactions) {
+          transaction.setObposAppCashup(cashup);
+        }
       }
 
     } finally {
