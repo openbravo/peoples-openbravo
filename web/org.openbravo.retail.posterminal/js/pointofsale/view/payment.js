@@ -1224,9 +1224,12 @@ enyo.kind({
     if ((this.model.get('isPrePayment') && (this.model.get('reversedPaymentId'))) || this.model.get('isReversed')) {
       this.$.removePayment.hide();
       this.$.reversePayment.hide();
-    } else if (this.model.get('isPrePayment')) {
+    } else if (this.model.get('isPrePayment') && OB.MobileApp.model.hasPermission("OBPOS_EnableReversePayments")) {
       this.$.removePayment.hide();
       this.$.reversePayment.show();
+    } else if (this.model.get('isPrePayment') && !OB.MobileApp.model.hasPermission("OBPOS_EnableReversePayments")) {
+      this.$.removePayment.hide();
+      this.$.reversePayment.hide();
     } else {
       this.$.removePayment.show();
       this.$.reversePayment.hide();
@@ -1274,26 +1277,37 @@ enyo.kind({
   classes: 'btnlink-darkgray btnlink-payment-clear btn-icon-small btn-icon-reversePayment',
   tap: function () {
     var me = this;
-    if ((_.isUndefined(this.deleting) || this.deleting === false)) {
-      this.deleting = true;
-      this.removeClass('btn-icon-reversePayment');
-      this.addClass('btn-icon-loading');
-      this.bubble('onMaxLimitAmountError', {
-        show: false,
-        maxLimitAmount: 0,
-        currency: '',
-        symbolAtRight: true
-      });
-      this.bubble('onClearPaymentSelect');
-      this.doReversePayment({
-        payment: this.owner.model,
-        removeCallback: function () {
-          me.deleting = false;
-          me.removeClass('btn-icon-loading');
-          me.addClass('btn-icon-reversePayment');
+
+    OB.UTIL.showConfirmation.display(
+    OB.I18N.getLabel('OBPOS_LblReverse'), OB.I18N.getLabel('OBPOS_ReverseConform'), [{
+      label: OB.I18N.getLabel('OBPOS_LblOk'),
+      action: function () {
+        if ((_.isUndefined(me.deleting) || me.deleting === false)) {
+          me.deleting = true;
+          me.removeClass('btn-icon-reversePayment');
+          me.addClass('btn-icon-loading');
+          me.bubble('onMaxLimitAmountError', {
+            show: false,
+            maxLimitAmount: 0,
+            currency: '',
+            symbolAtRight: true
+          });
+          me.bubble('onClearPaymentSelect');
+          me.doReversePayment({
+            payment: me.owner.model,
+            removeCallback: function () {
+              me.deleting = false;
+              me.removeClass('btn-icon-loading');
+              me.addClass('btn-icon-reversePayment');
+            }
+          });
         }
-      });
-    }
+      }
+    }, {
+      label: OB.I18N.getLabel('OBMOBC_LblCancel')
+    }]);
+
+
   }
 });
 
