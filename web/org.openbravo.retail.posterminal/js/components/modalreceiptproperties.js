@@ -66,6 +66,10 @@ enyo.kind({
           return;
         }
         if (data.length > 0) {
+          data.unshift({
+            id: null,
+            _identifier: null
+          });
           me.dataReadyFunction(data, args);
         } else {
           actualUser = new OB.Model.SalesRepresentative();
