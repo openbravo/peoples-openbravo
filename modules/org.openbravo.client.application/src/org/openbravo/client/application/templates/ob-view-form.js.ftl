@@ -51,7 +51,7 @@
         // Applying display logic and readonly in grid/form.
         if (!this.view.isShowingForm) {
            f.disableItem('${field.name}', (${field.readOnlyIf}) || (${field.showIf}) === false);
-        }else{
+        } else {
            f.disableItem('${field.name}', ${field.readOnlyIf});
         }
         </#if>
