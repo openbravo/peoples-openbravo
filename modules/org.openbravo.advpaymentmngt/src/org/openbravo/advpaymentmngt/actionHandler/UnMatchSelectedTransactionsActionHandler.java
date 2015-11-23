@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014 Openbravo SLU
+ * All portions are Copyright (C) 2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  Cleardrop_____________________________.
  ************************************************************************
@@ -26,6 +26,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
+import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.advpaymentmngt.utility.APRM_MatchingUtility;
 import org.openbravo.client.kernel.BaseActionHandler;
@@ -56,52 +58,71 @@ public class UnMatchSelectedTransactionsActionHandler extends BaseActionHandler 
 
       List<String> errorLines = new ArrayList<String>();
 
-      for (int i = 0; i < jsonData.getJSONArray("bankStatementLineIds").length(); i++) {
-        JSONObject bankStatementLine = jsonData.getJSONArray("bankStatementLineIds").getJSONObject(
-            i);
-        if (bankStatementLine.getString("matchedDocument").equals("")) {
-          errorLines.add(bankStatementLine.getString("referenceNo"));
-          continue;
-        }
-        try {
-          Date date = xmlDateTimeFormat.parse(bankStatementLine.getString("bslUpdated"));
-          final FIN_BankStatementLine bsline = OBDal.getInstance().get(FIN_BankStatementLine.class,
-              bankStatementLine.getString("id"));
-          Date bbddBSLUpdated = bsline.getUpdated();
-          // Remove milis
-          Calendar calendar = Calendar.getInstance();
-          calendar.setTime(OBDateUtils.convertDateToUTC(bbddBSLUpdated));
-          calendar.setLenient(true);
-          calendar.set(Calendar.MILLISECOND, 0);
-          if (date.getTime() != calendar.getTimeInMillis()) {
-            throw new OBStaleObjectException("@APRM_StaleDate@");
+      final JSONArray bankStatementLineIds = jsonData.getJSONArray("bankStatementLineIds");
+      int bankStatementLineIdsLength = bankStatementLineIds != null ? bankStatementLineIds.length()
+          : 0;
+      int alreadyCleared = 0;
+      for (int i = 0; i < bankStatementLineIdsLength; i++) {
+        JSONObject bankStatementLine = bankStatementLineIds.getJSONObject(i);
+        if (!bankStatementLine.getBoolean("cleared")) {
+          log.info("Skipping " + bankStatementLine.getString("referenceNo")
+              + " line as it's not matched");
+          alreadyCleared++;
+        } else {
+          try {
+            Date date = xmlDateTimeFormat.parse(bankStatementLine.getString("bslUpdated"));
+            final FIN_BankStatementLine bsline = OBDal.getInstance().get(
+                FIN_BankStatementLine.class, bankStatementLine.getString("id"));
+            Date bbddBSLUpdated = bsline.getUpdated();
+            // Remove milis
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(OBDateUtils.convertDateToUTC(bbddBSLUpdated));
+            calendar.setLenient(true);
+            calendar.set(Calendar.MILLISECOND, 0);
+            if (date.getTime() != calendar.getTimeInMillis()) {
+              log.error("The record " + bankStatementLine.getString("referenceNo")
+                  + " is newer in the database. Avoid unmatching it");
+              throw new OBStaleObjectException("@APRM_StaleDate@");
+            }
+            final FIN_FinaccTransaction transaction = bsline.getFinancialAccountTransaction();
+            if (transaction != null) {
+              APRM_MatchingUtility.unmatch(bsline);
+            }
+          } catch (Exception e) {
+            errorLines.add(bankStatementLine.getString("referenceNo"));
           }
-          final FIN_FinaccTransaction transaction = bsline.getFinancialAccountTransaction();
-          if (transaction != null) {
-            APRM_MatchingUtility.unmatch(bsline);
-          }
-        } catch (Exception e) {
-          errorLines.add(bankStatementLine.getString("referenceNo"));
         }
       }
 
-      errorMessage = new JSONObject();
-      String severity = "success";
-      String title = "Success";
-      String msg = OBMessageUtils.getI18NMessage(
-          "APRM_UnmatchedRecords",
-          new String[] { String.valueOf(jsonData.getJSONArray("bankStatementLineIds").length()
-              - errorLines.size()) });
-      if (errorLines.size() > 0) {
-        severity = "warning";
-        title = "Warning";
-        msg += "<br>"
-            + OBMessageUtils.getI18NMessage("APRM_ErrorOnUnmatchingRecords",
-                new String[] { String.valueOf(errorLines.size()) });
-        for (String string : errorLines) {
-          msg += string + ",";
+      /* Build Message */
+      int totalSuccess = bankStatementLineIdsLength - errorLines.size() - alreadyCleared;
+      String severity = "error";
+      String title = "";
+      String msg = "";
+      if (totalSuccess > 0) {
+        severity = "success";
+        title = OBMessageUtils.messageBD("Success");
+        msg = OBMessageUtils.getI18NMessage("APRM_UnmatchedRecords",
+            new String[] { String.valueOf(totalSuccess) });
+      }
+      if (!errorLines.isEmpty()) {
+        if (totalSuccess > 0) {
+          severity = "warning";
+          title = OBMessageUtils.messageBD("Warning");
+        } else {
+          severity = "error";
+          title = OBMessageUtils.messageBD("Error");
         }
-        msg = msg.substring(0, msg.length() - 1);
+
+        if (StringUtils.isNotBlank(msg)) {
+          msg += "<br/>";
+        }
+        msg += OBMessageUtils.getI18NMessage("APRM_ErrorOnUnmatchingRecords",
+            new String[] { String.valueOf(errorLines.size()) });
+        for (String string : errorLines) {
+          msg += string + ", ";
+        }
+        msg = msg.substring(0, msg.length() - 2);
       }
       errorMessage.put("severity", severity);
       errorMessage.put("title", title);
@@ -116,7 +137,7 @@ public class UnMatchSelectedTransactionsActionHandler extends BaseActionHandler 
         String message = OBMessageUtils.translateError(ex.getMessage()).getMessage();
         errorMessage = new JSONObject();
         errorMessage.put("severity", "error");
-        errorMessage.put("title", "Error");
+        errorMessage.put("title", OBMessageUtils.messageBD("Error"));
         errorMessage.put("text", message);
         result.put("message", errorMessage);
       } catch (Exception e2) {
@@ -127,5 +148,4 @@ public class UnMatchSelectedTransactionsActionHandler extends BaseActionHandler 
     }
     return result;
   }
-
 }
