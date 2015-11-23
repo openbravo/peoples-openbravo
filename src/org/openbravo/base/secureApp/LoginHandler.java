@@ -22,6 +22,7 @@ import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.authentication.AuthenticationException;
+import org.openbravo.authentication.AuthenticationExpiryPasswordException;
 import org.openbravo.authentication.AuthenticationManager;
 import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.dal.core.OBContext;
@@ -112,6 +113,17 @@ public class LoginHandler extends HttpBaseServlet {
 
           } else {
             throw new ServletException("Error"); // FIXME
+          }
+        } catch (AuthenticationExpiryPasswordException aepe) {
+
+          final OBError errorMsg = aepe.getOBError();
+
+          if (errorMsg != null) {
+            vars.removeSessionValue("#LoginErrorMsg");
+
+            goToUpdatePassword(res, vars, "Update your password", "Password is expired", "Error",
+                "../security/Login_FS.html", doRedirect);
+
           }
         }
       }
@@ -413,6 +425,60 @@ public class LoginHandler extends HttpBaseServlet {
       xmlDocument.setParameter("messageTitle", title);
       xmlDocument.setParameter("messageMessage", msg.replaceAll("\\\\n", "<br>"));
 
+      response.setContentType("text/html");
+      final PrintWriter out = response.getWriter();
+      out.println(xmlDocument.print());
+      out.close();
+    }
+  }
+
+  protected final void goToUpdatePassword(HttpServletResponse response, VariablesSecureApp vars,
+      String message, String title, String msgType, String action, boolean doRedirect)
+      throws IOException, ServletException {
+    String msg = (message != null && !message.equals("")) ? message
+        : "Please enter your username and password.";
+
+    if (OBVersion.getInstance().is30() && !doRedirect) {
+      // 3.0 instances show the message in the same login window, return a json object with the info
+      // to print the message
+      try {
+        JSONObject jsonMsg = new JSONObject();
+        jsonMsg.put("showMessage", true);
+        jsonMsg.put("target", action);
+        jsonMsg.put("messageType", msgType);
+        jsonMsg.put("messageTitle", title);
+        jsonMsg.put("messageText", msg);
+
+        if ("Confirmation".equals(msgType)) {
+          jsonMsg.put("command", "FORCE_NAMED_USER");
+        }
+        response.setContentType("application/json;charset=UTF-8");
+        final PrintWriter out = response.getWriter();
+        out.print(jsonMsg.toString());
+        out.close();
+      } catch (JSONException e) {
+        log4j.error("Error setting login msg", e);
+        throw new ServletException(e);
+      }
+    } else {
+      // 2.50 instances show the message in a new window, print that window
+      String discard[] = { "" };
+
+      if (msgType.equals("Error")) {
+        discard[0] = "continueButton";
+      } else {
+        discard[0] = "backButton";
+      }
+
+      final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+          "org/openbravo/base/secureApp/HtmlErrorLogin", discard).createXmlDocument();
+
+      // pass relevant mesasge to show inside the error page
+      xmlDocument.setParameter("theme", vars.getTheme());
+      xmlDocument.setParameter("messageType", msgType);
+      xmlDocument.setParameter("action", action);
+      xmlDocument.setParameter("messageTitle", title);
+      xmlDocument.setParameter("messageMessage", msg.replaceAll("\\\\n", "<br>"));
       response.setContentType("text/html");
       final PrintWriter out = response.getWriter();
       out.println(xmlDocument.print());
