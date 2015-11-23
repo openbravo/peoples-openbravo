@@ -201,8 +201,8 @@
          END IF;
 
       END LOOP; -- Create New Lines
+      UPDATE c_orderline set explode='Y' where c_orderline_id = v_Record_ID;
     END LOOP; -- Replace Lines
-    UPDATE c_orderline set explode='Y' where c_orderline_id = v_Record_ID;
 
     IF (v_orderline_ID IS NOT NULL) THEN
       M_EXPLODEBOMNOTSTOCK(null, v_orderline_ID); 

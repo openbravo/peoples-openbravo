@@ -49,6 +49,10 @@ public class DbUtility implements OBSingleton {
    */
   public static Throwable getUnderlyingSQLException(Throwable throwable) {
 
+    if (throwable instanceof BatchUpdateException
+        && ((BatchUpdateException) throwable).getNextException() != null) {
+      return ((BatchUpdateException) throwable).getNextException();
+    }
     if (throwable.getCause() instanceof BatchUpdateException
         && ((BatchUpdateException) throwable.getCause()).getNextException() != null) {
       final BatchUpdateException bue = (BatchUpdateException) throwable.getCause();

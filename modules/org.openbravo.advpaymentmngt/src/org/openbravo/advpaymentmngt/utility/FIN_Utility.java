@@ -20,7 +20,6 @@
 package org.openbravo.advpaymentmngt.utility;
 
 import java.math.BigDecimal;
-import java.sql.BatchUpdateException;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
@@ -80,6 +79,7 @@ import org.openbravo.model.financialmgmt.payment.FIN_PaymentSchedule;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
 import org.openbravo.model.financialmgmt.payment.FinAccPaymentMethod;
 import org.openbravo.service.db.CallStoredProcedure;
+import org.openbravo.service.db.DbUtility;
 import org.openbravo.utils.Replace;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -260,12 +260,8 @@ public class FIN_Utility {
    * @return the underlying trigger message.
    */
   public static String getExceptionMessage(Throwable t) {
-    if (t.getCause() instanceof BatchUpdateException
-        && ((BatchUpdateException) t.getCause()).getNextException() != null) {
-      final BatchUpdateException bue = (BatchUpdateException) t.getCause();
-      return bue.getNextException().getMessage();
-    }
-    return t.getMessage();
+    Throwable throwable = DbUtility.getUnderlyingSQLException(t);
+    return throwable.getMessage();
   }
 
   /**
