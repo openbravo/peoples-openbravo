@@ -23,6 +23,32 @@
         report: report,
         summary: sumary
       }
+    }, function (result) {
+      if (result && result.exception) {
+        OB.MobileApp.view.$.confirmationContainer.setAttribute('openedPopup', OB.I18N.getLabel('OBPOS_MsgPrintAgainCashUp'));
+        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_MsgHardwareServerNotAvailable'), OB.I18N.getLabel('OBPOS_MsgPrintAgainCashUp'), [{
+          label: OB.I18N.getLabel('OBMOBC_LblOk'),
+          isConfirmButton: true,
+          action: function () {
+            var printCashUp = new OB.OBPOSCashUp.Print.CashUp();
+            printCashUp.print(report, sumary, closed);
+            return true;
+          }
+        }, {
+          label: OB.I18N.getLabel('OBMOBC_LblCancel'),
+          action: function () {
+            OB.POS.navigate('retail.pointofsale');
+            OB.MobileApp.view.$.confirmationContainer.setAttribute('openedPopup', '');
+            return true;
+          }
+        }], {
+          autoDismiss: false,
+          onHideFunction: function (dialog) {
+            OB.POS.navigate('retail.pointofsale');
+            OB.MobileApp.view.$.confirmationContainer.setAttribute('openedPopup', '');
+          }
+        });
+      }
     });
   };
 
