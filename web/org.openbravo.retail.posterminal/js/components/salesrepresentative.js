@@ -182,6 +182,11 @@ enyo.kind({
 
     function successCallbackBPs(dataSrs) {
       if (dataSrs && dataSrs.length > 0) {
+        dataSrs.unshift({
+          id: null,
+          _identifier: null,
+          name: OB.I18N.getLabel('OBPOS_None')
+        });
         me.srsList.reset(dataSrs.models);
       } else {
         me.srsList.reset();
@@ -214,6 +219,9 @@ enyo.kind({
     this.srsList = new Backbone.Collection();
     this.$.srslistitemprinter.setCollection(this.srsList);
     this.srsList.on('click', function (model) {
+      if (model.attributes.name === OB.I18N.getLabel('OBPOS_None')) {
+        model.attributes.name = null;
+      }
       this.doChangeSalesRepresentative({
         salesRepresentative: model
       });
