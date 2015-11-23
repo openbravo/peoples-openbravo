@@ -618,7 +618,9 @@
       <![CDATA[
         SELECT (l.MovementQty - sum(COALESCE(CASE WHEN i.docstatus = 'CO' THEN il.qtyinvoiced ELSE 0 END, 0))) AS ID,
         l.C_UOM_ID,uom.UOMSymbol, l.M_Product_ID,Ad_Column_Identifier(to_char('M_Product'), to_char(l.m_product_id), to_char(?)) AS NAME, l.M_InOutLine_ID,l.Line,
-        l.C_OrderLine_ID, max(uom.STDPRECISION) as stdprecision, l.Description,l.quantityOrder, l.M_Product_UOM_ID,
+        l.C_OrderLine_ID, max(uom.STDPRECISION) as stdprecision, l.Description,
+		(l.quantityOrder - sum(COALESCE(CASE WHEN i.docstatus = 'CO' THEN il.quantityorder ELSE 0 END, 0))) AS quantityOrder, 
+		l.M_Product_UOM_ID,
         l.M_ATTRIBUTESETINSTANCE_ID, l.ad_org_id,
         COALESCE(l.A_Asset_ID, s.A_Asset_ID) AS A_Asset_ID, COALESCE(l.C_Project_ID, s.C_Project_ID) AS C_Project_ID, 
         COALESCE(l.C_Costcenter_ID, s.C_Costcenter_ID) AS C_Costcenter_ID,
