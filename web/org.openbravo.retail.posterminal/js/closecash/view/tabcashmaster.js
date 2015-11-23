@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global enyo, Backbone, _ */
+/*global OB, enyo, Backbone, _ */
 
 enyo.kind({
   name: 'OB.OBPOSCashUp.UI.RenderCashMasterLine',
@@ -20,18 +20,18 @@ enyo.kind({
         style: 'float: left; display:table; width: 100%; ',
         components: [{
           style: 'padding: 10px 10px 10px 10px; display: table-cell; width: 70%;',
-          name: 'name'
+          name: 'slaveTerminalName'
         }, {
           style: 'padding: 10px 10px 10px 0px; display: table-cell; width: 30%; ',
-          name: 'cashUp'
+          name: 'slaveCashUpIsClosed'
         }]
       }]
     }]
   }],
   create: function () {
     this.inherited(arguments);
-    this.$.name.setContent(this.model.get('name'));
-    this.$.cashUp.setContent(this.model.get('finish') ? OB.I18N.getLabel('OBMOBC_LblYes') : OB.I18N.getLabel('OBMOBC_LblNo'));
+    this.$.slaveTerminalName.setContent(this.model.get('name'));
+    this.$.slaveCashUpIsClosed.setContent(this.model.get('finish') ? OB.I18N.getLabel('OBMOBC_LblYes') : OB.I18N.getLabel('OBMOBC_LblNo'));
   }
 });
 
