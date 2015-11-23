@@ -177,7 +177,7 @@
                     ws.onmessage = function (event) {
                       var message = JSON.parse(event.data);
                       barcodeActionHandler.findProductByBarcode(message.uPCEAN, function (product) {
-                    	  OB.MobileApp.model.receipt.addProduct(product, '1', null, message.dataToSave);
+                    	  OB.MobileApp.model.receipt.addProduct(product, '1', {rfid: true}, message.dataToSave);
                       });
                     };
 
