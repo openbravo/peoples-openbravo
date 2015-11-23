@@ -386,7 +386,14 @@ public class SystemService implements OBSingleton {
     }
   }
 
-  private void resetSafeMode(Connection con) {
+  /**
+   * Callend after killConnectionsAndSafeMode, it disables the restriction to log only with the
+   * System Administrator role
+   * 
+   * @param con
+   *          Connection used to make the queries
+   */
+  public void resetSafeMode(Connection con) {
 
     try {
       PreparedStatement ps2 = null;
@@ -403,7 +410,14 @@ public class SystemService implements OBSingleton {
     }
   }
 
-  private void killConnectionsAndSafeMode(Connection con) {
+  /**
+   * Kills the active sessions for the current user and sets the System Admin role as the only one
+   * available
+   * 
+   * @param con
+   *          the Connection used to execute the queries
+   */
+  public void killConnectionsAndSafeMode(Connection con) {
     try {
       PreparedStatement updateSession = null;
       try {
@@ -452,10 +466,7 @@ public class SystemService implements OBSingleton {
 
   private void disableConstraints(Platform platform) throws FileNotFoundException, IOException {
     log4j.info("Disabling constraints...");
-    ExcludeFilter excludeFilter = DBSMOBUtil.getInstance().getExcludeFilter(
-        new File(OBPropertiesProvider.getInstance().getOpenbravoProperties()
-            .getProperty("source.path")));
-    Database xmlModel = platform.loadModelFromDatabase(excludeFilter);
+    Database xmlModel = getModelFromDatabase(platform);
     Connection con = null;
     try {
       con = platform.borrowConnection();
@@ -472,6 +483,17 @@ public class SystemService implements OBSingleton {
         platform.returnConnection(con);
       }
     }
+  }
+
+  /**
+   * Given a org.apache.ddlutils.Platform, builds a org.apache.ddlutils.model.Database after
+   * applying the exclude filters
+   */
+  public Database getModelFromDatabase(Platform platform) {
+    ExcludeFilter excludeFilter = DBSMOBUtil.getInstance().getExcludeFilter(
+        new File(OBPropertiesProvider.getInstance().getOpenbravoProperties()
+            .getProperty("source.path")));
+    return platform.loadModelFromDatabase(excludeFilter);
   }
 
   private void enableConstraints(Platform platform) {
