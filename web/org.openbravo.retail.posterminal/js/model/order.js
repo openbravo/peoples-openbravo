@@ -890,7 +890,7 @@
 
       // remove the line
       if (OB.POS.hwserver.url && OB.POS.modelterminal.get('terminal').terminalType.userfid && line.get('obposEpccode')) {
-        OB.UTIL.rfidWebsocket.send('erase:' + line.get('obposEpccode'));
+        OB.UTIL.eraseEpcLineFromDeviceBuffer(line);
       }
       this.get('lines').remove(line);
       // set the undo action
@@ -899,8 +899,11 @@
         line: line,
         undo: function () {
           if (OB.POS.hwserver.url && OB.POS.modelterminal.get('terminal').terminalType.userfid && line.get('obposEpccode')) {
-              OB.UTIL.rfidWebsocket.send('add:' + line.get('obposEpccode'));
+            // TODO
+            if (OB.POS.hwserver.url && OB.POS.modelterminal.get('terminal').terminalType.userfid && line.get('obposEpccode')) {
+              OB.UTIL.addEpcLineFromDeviceBuffer(line);
             }
+          }
           me.get('lines').add(line, {
             at: index
           });
@@ -1408,7 +1411,7 @@
           OB.UTIL.Approval.requestApproval((modelObj ? modelObj : this.model), 'OBPOS_approval.deleteLine', function (approved) {
             if (approved) {
               if (OB.POS.hwserver.url && OB.POS.modelterminal.get('terminal').terminalType.userfid && newline.get('obposEpccode')) {
-                OB.UTIL.rfidWebsocket.send('erase:' + newline.get('obposEpccode'));
+                OB.UTIL.eraseEpcLineFromDeviceBuffer(newline);
               }
               me.get('lines').remove(newline);
               me.calculateGross();

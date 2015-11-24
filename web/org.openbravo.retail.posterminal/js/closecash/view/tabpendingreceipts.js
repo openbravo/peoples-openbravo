@@ -165,6 +165,9 @@ enyo.kind({
     this.model, 'OBPOS_approval.cashupremovereceipts', function (approved, supervisor, approvalType) {
       if (approved) {
         // approved so remove the entry
+        if (OB.POS.hwserver.url && OB.POS.modelterminal.get('terminal').terminalType.userfid) {
+          OB.UTIL.eraseEpcOrderFromDeviceBuffer(model);
+        }
         OB.Dal.remove(model, function () {
           me.collection.remove(model);
         }, OB.UTIL.showError);
@@ -187,6 +190,9 @@ enyo.kind({
     var me = this;
 
     function removeOneModel(collection, model) {
+      if (OB.POS.hwserver.url && OB.POS.modelterminal.get('terminal').terminalType.userfid) {
+        OB.UTIL.eraseEpcOrderFromDeviceBuffer(model);
+      }
       OB.Dal.remove(model, function () {
         collection.remove(model);
       }, OB.UTIL.showError);
