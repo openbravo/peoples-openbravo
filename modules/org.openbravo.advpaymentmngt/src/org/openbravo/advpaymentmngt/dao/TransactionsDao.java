@@ -109,11 +109,13 @@ public class TransactionsDao {
       newTransaction.setStDimension(payment.getStDimension());
       newTransaction.setNdDimension(payment.getNdDimension());
       newTransaction.setCurrency(payment.getAccount().getCurrency());
-      newTransaction.setDescription(payment
-          .getDescription()
-          .replace("\n", ". ")
-          .substring(0,
-              payment.getDescription().length() > 254 ? 254 : payment.getDescription().length()));
+      String desc = "";
+      if(payment.getDescription()!=null && !payment.getDescription().isEmpty()){
+    	  desc = payment.getDescription()
+    	          .replace("\n", ". ")
+    	          .substring(0, payment.getDescription().length() > 254 ? 254 : payment.getDescription().length());
+      }
+      newTransaction.setDescription(desc);
       newTransaction.setClient(payment.getClient());
       newTransaction.setLineNo(getTransactionMaxLineNo(payment.getAccount()) + 10);
 

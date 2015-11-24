@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014 Openbravo SLU
+ * All portions are Copyright (C) 2014-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -22,6 +22,7 @@ package org.openbravo.advpaymentmngt.event;
 import javax.enterprise.event.Observes;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.openbravo.advpaymentmngt.utility.APRMConstants;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
@@ -38,6 +39,7 @@ public class FIN_FinaccTransactionEventListener extends EntityPersistenceEventOb
 
   private static Entity[] entities = { ModelProvider.getInstance().getEntity(
       FIN_FinaccTransaction.ENTITY_NAME) };
+  protected Logger logger = Logger.getLogger(this.getClass());
 
   @Override
   protected Entity[] getObservedEntities() {
@@ -79,7 +81,8 @@ public class FIN_FinaccTransactionEventListener extends EntityPersistenceEventOb
         .equals(transactionType, APRMConstants.TRXTYPE_BPWithdrawal))
         && glItem == null
         && payment == null) {
-      throw new OBException("@APRM_INVALID_TRANSACTION@");
+      logger.debug("@APRM_INVALID_TRANSACTION@");
+      throw new OBException("@APRM_INVALID_TRANSACTION@", false);
     }
   }
 }

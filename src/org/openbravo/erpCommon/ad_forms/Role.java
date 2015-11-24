@@ -233,7 +233,8 @@ public class Role extends HttpSecureAppServlet {
           || limitation == LicenseRestriction.MODULE_EXPIRED
           || limitation == LicenseRestriction.NOT_MATCHED_INSTANCE
           || limitation == LicenseRestriction.HB_NOT_ACTIVE
-          || limitation == LicenseRestriction.ON_DEMAND_OFF_PLATFORM || !correctSystemStatus) {
+          || limitation == LicenseRestriction.ON_DEMAND_OFF_PLATFORM
+          || limitation == LicenseRestriction.POS_TERMINALS_EXCEEDED || !correctSystemStatus) {
         // allow only system login
         datarole = RoleComboData.selectSystem(this, vars.getUser());
       } else {

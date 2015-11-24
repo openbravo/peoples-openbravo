@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2013 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -51,6 +51,8 @@ import java.util.UUID;
 import java.util.zip.CRC32;
 
 import javax.crypto.Cipher;
+import javax.enterprise.inject.spi.Bean;
+import javax.enterprise.inject.spi.BeanManager;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Appender;
@@ -64,14 +66,18 @@ import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.session.OBPropertiesProvider;
+import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.dal.core.DalContextListener;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.obps.DisabledModules.Artifacts;
+import org.openbravo.erpCommon.obps.ModuleLicenseRestrictions.ActivationMsg;
+import org.openbravo.erpCommon.obps.ModuleLicenseRestrictions.MsgSeverity;
 import org.openbravo.erpCommon.utility.HttpsUtils;
 import org.openbravo.erpCommon.utility.OBError;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.SystemInfo;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.access.Session;
@@ -81,6 +87,7 @@ import org.openbravo.model.ad.system.SystemInformation;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.service.db.DalConnectionProvider;
+import org.openbravo.xmlEngine.XmlEngine;
 
 public class ActivationKey {
   private final static String OB_PUBLIC_KEY = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCPwCM5RfisLvWhujHajnLEjEpLC7DOXLySuJmHBqcQ8AQ63yZjlcv3JMkHMsPqvoHF3s2ztxRcxBRLc9C2T3uXQg0PTH5IAxsV4tv05S+tNXMIajwTeYh1LCoQyeidiid7FwuhtQNQST9/FqffK1oVFBnWUfgZKLMO2ZSHoEAORwIDAQAB";
@@ -117,6 +124,8 @@ public class ActivationKey {
   private boolean limitNamedUsers = false;
   private boolean outOfPlatform = false;
   private Long maxUsers;
+  private Long posTerminals;
+  private Long posTerminalsWarn;
 
   private boolean notActiveYet = false;
   private boolean inconsistentInstance = false;
@@ -139,7 +148,7 @@ public class ActivationKey {
   private static final int REFRESH_MIN_TIME = 60;
 
   public enum LicenseRestriction {
-    NO_RESTRICTION, OPS_INSTANCE_NOT_ACTIVE, NUMBER_OF_SOFT_USERS_REACHED, NUMBER_OF_CONCURRENT_USERS_REACHED, MODULE_EXPIRED, NOT_MATCHED_INSTANCE, HB_NOT_ACTIVE, EXPIRED_GOLDEN, CONCURRENT_NAMED_USER, ON_DEMAND_OFF_PLATFORM
+    NO_RESTRICTION, OPS_INSTANCE_NOT_ACTIVE, NUMBER_OF_SOFT_USERS_REACHED, NUMBER_OF_CONCURRENT_USERS_REACHED, MODULE_EXPIRED, NOT_MATCHED_INSTANCE, HB_NOT_ACTIVE, EXPIRED_GOLDEN, CONCURRENT_NAMED_USER, ON_DEMAND_OFF_PLATFORM, POS_TERMINALS_EXCEEDED
   }
 
   public enum CommercialModuleStatus {
@@ -225,6 +234,7 @@ public class ActivationKey {
   /**
    * Session types that are considered for user concurrency
    */
+  @SuppressWarnings("serial")
   private static final List<String> ACTIVE_SESSION_TYPES = new ArrayList<String>() {
     {
       add("S");
@@ -232,6 +242,7 @@ public class ActivationKey {
       add("SUR");
     }
   };
+  public static final Long NO_LIMIT = -1L;
 
   private static ActivationKey instance = new ActivationKey();
 
@@ -500,6 +511,31 @@ public class ActivationKey {
       log.error(e.getMessage(), e);
       setLogger();
       return;
+    }
+
+    if (instanceProperties.containsKey("posTerminals")
+        && !StringUtils.isBlank(getProperty("posTerminals"))) {
+      try {
+        posTerminals = new Long(getProperty("posTerminals"));
+      } catch (Exception e) {
+        log.error("Couldn't read number of terminals " + getProperty("posTerminals"), e);
+        posTerminals = 0L;
+      }
+    } else {
+      // it can be old license without terminal info, or terminal being empty which stands for no
+      // terminal allowed
+      posTerminals = 0L;
+    }
+
+    if (instanceProperties.containsKey("posTerminalsWarn")
+        && !StringUtils.isBlank(getProperty("posTerminalsWarn"))) {
+      try {
+        posTerminalsWarn = new Long(getProperty("posTerminalsWarn"));
+      } catch (Exception e) {
+        log.error("Couldn't read number of terminals warn " + getProperty("posTerminalsWarn"), e);
+      }
+    } else {
+      posTerminalsWarn = null;
     }
 
     checkDates();
@@ -799,6 +835,47 @@ public class ActivationKey {
     return messageType;
   }
 
+  /** activation message to be displayed in Instance Activation window */
+  public ActivationMsg getActivationMessage() {
+    if (StringUtils.isNotEmpty(errorMessage)) {
+      // there is a core message (expiration, etc.), return it
+      return new ActivationMsg(MsgSeverity.valueOf(messageType), errorMessage);
+    }
+
+    // look for messages defined by modules
+    String customMsg = "";
+    MsgSeverity severity = MsgSeverity.ERROR;
+    for (ModuleLicenseRestrictions moduleRestriction : getModuleLicenseRestrictions()) {
+      ActivationMsg moduleMsg = moduleRestriction.getActivationMessage(this, OBContext
+          .getOBContext().getLanguage().getLanguage());
+
+      if (moduleMsg != null) {
+        customMsg += moduleMsg.getMsgText();
+        severity = moduleMsg.getSeverity();
+      }
+    }
+
+    if (StringUtils.isEmpty(customMsg)) {
+      return null;
+    }
+
+    return new ActivationMsg(severity, customMsg);
+  }
+
+  /** gets HTML to be injected in Instance Activation window with additional actions to be performed */
+  public String getInstanceActivationExtraActionsHtml(XmlEngine xmlEngine) {
+    String html = "";
+
+    for (ModuleLicenseRestrictions moduleRestriction : getModuleLicenseRestrictions()) {
+      String moduleHtml = moduleRestriction.getInstanceActivationExtraActionsHtml(xmlEngine);
+      if (moduleHtml != null) {
+        html += moduleHtml;
+      }
+    }
+
+    return html;
+  }
+
   /**
    * Deprecated, use instead {@link ActivationKey#checkOPSLimitations(String)}
    * 
@@ -879,6 +956,18 @@ public class ActivationKey {
     if (licenseType == LicenseType.ON_DEMAND && outOfPlatform
         && !"true".equals(getProperty("limited.on.demand"))) {
       result = LicenseRestriction.ON_DEMAND_OFF_PLATFORM;
+    }
+
+    if (result == LicenseRestriction.NO_RESTRICTION) {
+      // no restrictions so far, checking now if any of the installed modules adds a new restriction
+      for (ModuleLicenseRestrictions moduleRestriction : getModuleLicenseRestrictions()) {
+        result = moduleRestriction.checkRestrictions(this, currentSession);
+        if (result == null) {
+          result = LicenseRestriction.NO_RESTRICTION;
+        } else if (result != LicenseRestriction.NO_RESTRICTION) {
+          return result;
+        }
+      }
     }
 
     return result;
@@ -1100,6 +1189,11 @@ public class ActivationKey {
       sb.append(getWSExplanation(conn, lang));
       sb.append("</td></tr>");
 
+      sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSPOSLimitation", lang))
+          .append("</td><td>");
+      sb.append(getPOSTerminalsExplanation());
+      sb.append("</td></tr>");
+
     } else {
       sb.append(Utility.messageBD(conn, "OPSNonActiveInstance", lang));
     }
@@ -1119,9 +1213,7 @@ public class ActivationKey {
     }
   }
 
-  /**
-   * Returns a message explaining WS call limitations
-   */
+  /** Returns a message explaining WS call limitations */
   public String getWSExplanation(ConnectionProvider conn, String lang) {
     if (!limitedWsAccess) {
       return Utility.messageBD(conn, "OPSWSUnlimited", lang);
@@ -1130,6 +1222,17 @@ public class ActivationKey {
       String unitsPack = getProperty("wsUnitsPerUnit");
       return Utility.messageBD(conn, "OPWSLimited", lang).replace("@packs@", packs)
           .replace("@unitsPerPack@", unitsPack);
+    }
+  }
+
+  /** Returns a message for POS Terminals limitations */
+  public String getPOSTerminalsExplanation() {
+    if (posTerminals == 0) {
+      return OBMessageUtils.messageBD("OPSNone");
+    } else if (posTerminals == NO_LIMIT) {
+      return OBMessageUtils.messageBD("OPSWSUnlimited");
+    } else {
+      return posTerminals.toString();
     }
   }
 
@@ -1314,7 +1417,9 @@ public class ActivationKey {
     if (hasActivationKey
         && !subscriptionConvertedProperty
         && !trial
-        && (hasExpired || checkNewWSCall(false) != WSRestriction.NO_RESTRICTION || checkOPSLimitations(null) == LicenseRestriction.NUMBER_OF_CONCURRENT_USERS_REACHED)) {
+        && (hasExpired || checkNewWSCall(false) != WSRestriction.NO_RESTRICTION
+            || checkOPSLimitations(null) == LicenseRestriction.NUMBER_OF_CONCURRENT_USERS_REACHED || !instanceProperties
+              .containsKey("posTerminals"))) {
       refreshLicense(24 * 60);
     } else {
       if (licenseType == LicenseType.ON_DEMAND && outOfPlatform) {
@@ -1552,7 +1657,8 @@ public class ActivationKey {
   }
 
   /**
-   * Returns a JSONObject with a message warning about near expiration or already expired instance.
+   * Returns a JSONObject with a message warning about near expiration or already expired instance
+   * to be displayed in Login page.
    * 
    */
   public JSONObject getExpirationMessage(String lang) {
@@ -1567,6 +1673,16 @@ public class ActivationKey {
 
       // Community or professional without expiration
       if (pendingTime == null || subscriptionActuallyConverted) {
+        // no restrictions so far, checking now if any of the installed modules adds a new
+        // restriction
+        for (ModuleLicenseRestrictions moduleRestriction : getModuleLicenseRestrictions()) {
+          ActivationMsg msg = moduleRestriction.getActivationMessage(this, lang);
+
+          if (msg != null) {
+            result.put("type", "Error"); // always error for login page (warn is shown as an alert)
+            result.put("text", msg.getMsgText());
+          }
+        }
         return result;
       }
 
@@ -1796,5 +1912,24 @@ public class ActivationKey {
 
   public boolean isOffPlatform() {
     return outOfPlatform;
+  }
+
+  public Long getAllowedPosTerminals() {
+    // posTerminals not set if community: do not apply restriction
+    return posTerminals == null ? NO_LIMIT : posTerminals;
+  }
+
+  public Long getPosTerminalsWarn() {
+    return posTerminalsWarn;
+  }
+
+  private List<ModuleLicenseRestrictions> getModuleLicenseRestrictions() {
+    List<ModuleLicenseRestrictions> result = new ArrayList<ModuleLicenseRestrictions>();
+    BeanManager bm = WeldUtils.getStaticInstanceBeanManager();
+    for (Bean<?> restrictionBean : bm.getBeans(ModuleLicenseRestrictions.class)) {
+      result.add((ModuleLicenseRestrictions) bm.getReference(restrictionBean,
+          ModuleLicenseRestrictions.class, bm.createCreationalContext(restrictionBean)));
+    }
+    return result;
   }
 }

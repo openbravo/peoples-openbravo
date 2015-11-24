@@ -247,7 +247,8 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
               || limitation == LicenseRestriction.MODULE_EXPIRED
               || limitation == LicenseRestriction.NOT_MATCHED_INSTANCE
               || limitation == LicenseRestriction.HB_NOT_ACTIVE
-              || limitation == LicenseRestriction.ON_DEMAND_OFF_PLATFORM || !correctSystemStatus) {
+              || limitation == LicenseRestriction.ON_DEMAND_OFF_PLATFORM
+              || limitation == LicenseRestriction.POS_TERMINALS_EXCEEDED || !correctSystemStatus) {
             // it is only allowed to log as system administrator
             strRole = DefaultOptionsData.getDefaultSystemRole(this, strUserAuth);
             if (strRole == null || strRole.equals("")) {

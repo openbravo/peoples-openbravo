@@ -281,7 +281,8 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
             strDocBaseType, org.getId(), OBDateUtils.formatDate(paymentDate))
         && orgLegalWithAccounting) {
       String messag = OBMessageUtils.messageBD("PeriodNotAvailable");
-      throw new OBException(messag);
+      log.debug(messag);
+      throw new OBException(messag, false);
     }
 
     String strPaymentAmount = "0";

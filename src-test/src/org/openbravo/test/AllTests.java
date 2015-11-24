@@ -48,6 +48,7 @@ import org.openbravo.test.security.AccessLevelTest;
 import org.openbravo.test.security.AllowedOrganizationsTest;
 import org.openbravo.test.security.EntityAccessTest;
 import org.openbravo.test.security.WritableReadableOrganizationClientTest;
+import org.openbravo.test.views.ViewGenerationWithDifferentConfigLevelTest;
 import org.openbravo.test.xml.DefaultsDataset;
 import org.openbravo.test.xml.EntityXMLImportTestBusinessObject;
 import org.openbravo.test.xml.EntityXMLImportTestReference;
@@ -103,6 +104,9 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     ClassicSelectorTest.class,
 
     // cdi
-    CdiInfrastructure.class })
+    CdiInfrastructure.class,
+
+    // view generation
+    ViewGenerationWithDifferentConfigLevelTest.class })
 public class AllTests {
 }
