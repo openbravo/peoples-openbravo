@@ -39,7 +39,7 @@ public class Characteristic extends ProcessHQLQuery {
   private Instance<ModelExtension> extensions;
 
   @Override
-  protected List<HQLPropertyList> getHqlProperties() {
+  protected List<HQLPropertyList> getHqlProperties(JSONObject jsonsent) {
     // Get Product Properties
     List<HQLPropertyList> propertiesList = new ArrayList<HQLPropertyList>();
     Map<String, Object> args = new HashMap<String, Object>();

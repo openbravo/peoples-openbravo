@@ -41,6 +41,7 @@ public class LoadedProduct extends ProcessHQLQuery {
 
     List<String> products = new ArrayList<String>();
     Map<String, Object> args = new HashMap<String, Object>();
+    args.put("multiPriceList", false);
     HQLPropertyList regularProductsHQLProperties = ModelExtensionUtils.getPropertyExtensions(
         extensions, args);
     regularProductsHQLProperties.addAll(ProductProperties.getMainProductHQLProperties(args));

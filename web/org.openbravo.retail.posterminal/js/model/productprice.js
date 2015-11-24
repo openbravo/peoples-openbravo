@@ -16,7 +16,8 @@
     tableName: 'm_productprice',
     entityName: 'ProductPrice',
     source: 'org.openbravo.retail.posterminal.master.ProductPrice',
-    includeTerminalDate: true
+    includeTerminalDate: true,
+    remote: 'OBPOS_remote.product'
   });
 
   ProductPrice.addProperties([{

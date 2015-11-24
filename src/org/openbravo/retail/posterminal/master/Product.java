@@ -52,7 +52,7 @@ public class Product extends ProcessHQLQuery {
   private Instance<ModelExtension> extensionsDisc;
 
   @Override
-  protected List<HQLPropertyList> getHqlProperties() {
+  protected List<HQLPropertyList> getHqlProperties(JSONObject jsonsent) {
     // Get Product Properties
     List<HQLPropertyList> propertiesList = new ArrayList<HQLPropertyList>();
     String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
@@ -68,8 +68,44 @@ public class Product extends ProcessHQLQuery {
     } finally {
       OBContext.restorePreviousMode();
     }
+    boolean isRemote = false;
+    try {
+      OBContext.setAdminMode(false);
+      posPrecision = (priceList.getCurrency().getObposPosprecision() == null ? priceList
+          .getCurrency().getPricePrecision() : priceList.getCurrency().getObposPosprecision())
+          .toString();
+      isRemote = "Y".equals(Preferences.getPreferenceValue("OBPOS_remote.product", true, OBContext
+          .getOBContext().getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(),
+          OBContext.getOBContext().getUser(), OBContext.getOBContext().getRole(), null));
+    } catch (PropertyException e) {
+      log.error("Error getting preference OBPOS_remote.product " + e.getMessage(), e);
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+    boolean isMultipricelist = false;
+    try {
+      OBContext.setAdminMode(false);
+      isMultipricelist = "Y".equals(Preferences.getPreferenceValue("OBPOS_EnableMultiPriceList",
+          true, OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
+              .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
+              .getOBContext().getRole(), null));
+    } catch (PropertyException e) {
+      log.error("Error getting preference EnableMultiPriceList " + e.getMessage(), e);
+    } finally {
+      OBContext.restorePreviousMode();
+    }
     Map<String, Object> args = new HashMap<String, Object>();
     args.put("posPrecision", posPrecision);
+    try {
+      if (isRemote && isMultipricelist && jsonsent.has("remoteParams")
+          && jsonsent.getJSONObject("remoteParams").getString("currentPriceList") != null) {
+        args.put("multiPriceList", true);
+      } else {
+        args.put("multiPriceList", false);
+      }
+    } catch (JSONException e) {
+      e.printStackTrace();
+    }
 
     HQLPropertyList regularProductsHQLProperties = ModelExtensionUtils.getPropertyExtensions(
         extensions, args);
@@ -119,9 +155,30 @@ public class Product extends ProcessHQLQuery {
     } finally {
       OBContext.restorePreviousMode();
     }
-
+    boolean isMultipricelist = false;
+    try {
+      OBContext.setAdminMode(false);
+      isMultipricelist = "Y".equals(Preferences.getPreferenceValue("OBPOS_EnableMultiPriceList",
+          true, OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
+              .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
+              .getOBContext().getRole(), null));
+    } catch (PropertyException e) {
+      log.error("Error getting preference EnableMultiPriceList " + e.getMessage(), e);
+    } finally {
+      OBContext.restorePreviousMode();
+    }
     Map<String, Object> args = new HashMap<String, Object>();
     args.put("posPrecision", posPrecision);
+    try {
+      if (isRemote && isMultipricelist && jsonsent.has("remoteParams")
+          && jsonsent.getJSONObject("remoteParams").getString("currentPriceList") != null) {
+        args.put("multiPriceList", true);
+      } else {
+        args.put("multiPriceList", false);
+      }
+    } catch (JSONException e) {
+      e.printStackTrace();
+    }
 
     HQLPropertyList regularProductsHQLProperties = ModelExtensionUtils.getPropertyExtensions(
         extensions, args);
@@ -131,12 +188,23 @@ public class Product extends ProcessHQLQuery {
     Long lastUpdated = jsonsent.has("lastUpdated")
         && !jsonsent.get("lastUpdated").equals("undefined")
         && !jsonsent.get("lastUpdated").equals("null") ? jsonsent.getLong("lastUpdated") : null;
+
     // regular products
     String hql = "select"
         + regularProductsHQLProperties.getHqlSelect()
         + "FROM OBRETCO_Prol_Product as pli left outer join pli.product.image img inner join pli.product as product, "
-        + "PricingProductPrice ppp, " + "PricingPriceListVersion pplv "
-        + "WHERE  $filtersCriteria AND $hqlCriteria AND (pli.obretcoProductlist = '"
+        + "PricingProductPrice ppp, " + "PricingPriceListVersion pplv ";
+    if (isRemote && isMultipricelist && jsonsent.has("remoteParams")) {
+      String multipriceListVersionId = POSUtils.getPriceListVersionForPriceList(
+          jsonsent.getJSONObject("remoteParams").getString("currentPriceList"), terminalDate)
+          .getId();
+      hql += ", PricingProductPrice pp WHERE pp.product=pli.product and pp.priceListVersion='"
+          + multipriceListVersionId + "'";
+    } else {
+      hql += " WHERE 1=1";
+    }
+
+    hql += " AND $filtersCriteria AND $hqlCriteria AND (pli.obretcoProductlist = '"
         + productList.getId() + "') " + "AND (" + "pplv.id='" + priceListVersion.getId() + "'"
         + ") AND (" + "ppp.priceListVersion.id = pplv.id" + ") AND ("
         + "pli.product.id = ppp.product.id" + ") ";
