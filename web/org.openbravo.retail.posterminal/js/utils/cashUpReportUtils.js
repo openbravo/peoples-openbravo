@@ -223,7 +223,7 @@
           }
           if (pAux.payment.active === true || (pAux.payment.active === false && paymentMethodCashUpModel.get('totalSales') !== 0 && paymentMethodCashUpModel.get('totalReturns') !== 0 && paymentMethodCashUpModel.get('totalDepostis') !== 0 && paymentMethodCashUpModel.get('totalDrops') !== 0)) {
             OB.Dal.save(paymentMethodCashUpModel, null, function () {
-                OB.error(OB.I18N.getLabel('OBPOS_DalSaveError'));
+              OB.error(OB.I18N.getLabel('OBPOS_DalSaveError'));
             }, true);
           }
           //end if
