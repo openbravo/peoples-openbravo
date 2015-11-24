@@ -1112,6 +1112,12 @@ isc.OBStandardView.addProperties({
     }
   },
 
+  clearTargetRecordInWindow: function () {
+    if (this.isActiveView()) {
+      this.standardWindow.clearTargetInformation();
+    }
+  },
+
   setRecentDocument: function (record) {
     var params = this.standardWindow.getBookMarkParams();
     params.targetTabId = this.tabId;

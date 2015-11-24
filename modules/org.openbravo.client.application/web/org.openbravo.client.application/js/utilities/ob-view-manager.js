@@ -351,8 +351,8 @@
 
           if (direct) {
             // set directly opened tab and all its ancestors as directNavigation
-            if (params && params.id) {
-              var tabId = params.id;
+            if (params && (params.id || params.targetTabId)) {
+              var tabId = params.id || params.targetTabId;
 
               if (viewInstance.view && viewInstance.view.tabId === tabId) {
                 viewInstance.view.directNavigation = true;
@@ -455,6 +455,7 @@
               message: 'The view ' + viewName + ' not defined'
             };
           }
+          direct = direct || (params.targetRecordId !== undefined && params.targetRecordId !== null);
           showTab(viewName, params, null, direct);
         }
         if (isc[viewName]) {

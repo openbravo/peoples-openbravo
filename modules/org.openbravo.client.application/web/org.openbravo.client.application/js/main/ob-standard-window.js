@@ -1237,6 +1237,12 @@ isc.OBStandardWindow.addProperties({
     OB.Layout.HistoryManager.updateHistory();
   },
 
+  clearTargetInformation: function () {
+    this.targetTabId = null;
+    this.targetRecordId = null;
+    OB.Layout.HistoryManager.updateHistory();
+  },
+
   getView: function (tabId) {
     // find is a SC extension on arrays
     return this.views.find('tabId', tabId);
