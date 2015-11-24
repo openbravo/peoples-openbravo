@@ -1401,10 +1401,31 @@
       OB.debug('_addProduct');
       var me = this;
       if (OB.MobileApp.model.hasPermission('EnableMultiPriceList', true) && this.get('priceList') !== OB.MobileApp.model.get('terminal').priceList) {
-        OB.Dal.find(OB.Model.ProductPrice, {
-          m_pricelist_id: this.get('priceList'),
-          m_product_id: p.id
-        }, function (productPrices) {
+        var criteria = {};
+        if (!OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
+          criteria = {
+            m_pricelist_id: this.get('priceList'),
+            m_product_id: p.id
+          };
+        } else {
+          var remoteCriteria = [];
+          var productId = {
+            columns: ['m_product_id'],
+            operator: 'equals',
+            value: p.id,
+            isId: true
+          },
+              pricelistId = {
+              columns: ['m_pricelist_id'],
+              operator: 'equals',
+              value: this.get('priceList'),
+              isId: true
+              };
+          remoteCriteria.push(productId);
+          remoteCriteria.push(pricelistId);
+          criteria.remoteFilters = remoteCriteria;
+        }
+        OB.Dal.find(OB.Model.ProductPrice, criteria, function (productPrices) {
           if (productPrices.length > 0) {
             p = p.clone();
             p.set('standardPrice', productPrices.at(0).get('pricestd'));
@@ -2018,6 +2039,21 @@
       var me = this;
       // Remove all lines and insert again with new prices
       var orderlines = [];
+      var addProductsOfLines = null;
+
+      addProductsOfLines = function (receipt, lines, index, callback) {
+        if (index === lines.length) {
+          if (callback) {
+            callback();
+          }
+          return;
+        }
+        OB.Dal.get(OB.Model.Product, lines[index].get('product').id, function (product) {
+          me.addProduct(product, lines[index].get('qty'), undefined, undefined, function () {
+            addProductsOfLines(receipt, lines, index + 1, callback);
+          });
+        });
+      };
       _.each(me.get('lines').models, function (line) {
         orderlines.push(line);
       });
@@ -2030,19 +2066,8 @@
       this.unset('deleting');
       this.get('lines').trigger('updateRelations');
       var productAdded = 0;
-      _.each(orderlines, function (line) {
-        // TODO: Lost options and attributes, maybe has problems with other modules (like Complementary Products)
-        OB.Dal.get(OB.Model.Product, line.get('product').id, function (product) {
-          me.addProduct(product, line.get('qty'), undefined, undefined, function () {
-            productAdded++;
-            if (productAdded === orderlines.length) {
-              if (callback) {
-                callback();
-              }
-            }
-          });
-        });
-      });
+      // TODO: Lost options and attributes, maybe has problems with other modules (like Complementary Products)
+      addProductsOfLines(me, orderlines, 0, callback);
     },
 
     setOrderType: function (permission, orderType, options) {

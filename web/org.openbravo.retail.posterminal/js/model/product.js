@@ -133,6 +133,10 @@
     filter: true,
     type: 'TEXT'
   }, {
+    name: 'currentStandardPrice',
+    column: 'currentStandardPrice',
+    type: 'NUMERIC'
+  }, {
     name: 'productType',
     column: 'productType',
     type: 'TEXT'

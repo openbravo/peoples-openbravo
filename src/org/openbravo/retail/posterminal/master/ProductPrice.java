@@ -10,7 +10,9 @@ package org.openbravo.retail.posterminal.master;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
@@ -35,6 +37,16 @@ public class ProductPrice extends ProcessHQLQuery {
   @Any
   @Qualifier(productPricePropertyExtension)
   private Instance<ModelExtension> extensions;
+
+  protected List<HQLPropertyList> getHqlProperties(JSONObject jsonsent) {
+    List<HQLPropertyList> propertiesList = new ArrayList<HQLPropertyList>();
+    Map<String, Object> args = new HashMap<String, Object>();
+    HQLPropertyList ProductPriceProperties = ModelExtensionUtils.getPropertyExtensions(extensions,
+        args);
+    propertiesList.add(ProductPriceProperties);
+
+    return propertiesList;
+  }
 
   @Override
   protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
@@ -61,7 +73,7 @@ public class ProductPrice extends ProcessHQLQuery {
             + productList.getId()
             + "' and ppp.priceListVersion.id in ("
             + PriceList.getSelectPriceListVersionIds(orgId, terminalDate)
-            + ") "
+            + ") and $filtersCriteria AND $hqlCriteria "
             + "and pli.$naturalOrgCriteria and pli.$readableClientCriteria and (ppp.$incrementalUpdateCriteria)");
 
     return hqlQueries;

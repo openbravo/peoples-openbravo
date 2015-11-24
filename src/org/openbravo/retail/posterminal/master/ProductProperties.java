@@ -52,6 +52,7 @@ public class ProductProperties extends ModelExtension {
         @SuppressWarnings("unchecked")
         HashMap<String, Object> localParams = (HashMap<String, Object>) params;
         localPosPrecision = (String) localParams.get("posPrecision");
+
       }
     } catch (Exception e) {
       log.error("Error getting posPrecision: " + e.getMessage(), e);
@@ -102,6 +103,20 @@ public class ProductProperties extends ModelExtension {
   }
 
   public static List<HQLProperty> getMainProductHQLProperties(Object params) {
+
+    Boolean localmultiPriceList = false;
+    try {
+      if (params != null) {
+        @SuppressWarnings("unchecked")
+        HashMap<String, Object> localParams = (HashMap<String, Object>) params;
+        localmultiPriceList = (Boolean) localParams.get("multiPriceList");
+
+      }
+    } catch (Exception e) {
+      log.error("Error getting posPrecision: " + e.getMessage(), e);
+    }
+    final boolean multiPriceList = localmultiPriceList;
+
     // Build Product Tax Category select clause
     final Dialect dialect = ((SessionFactoryImpl) ((SessionImpl) OBDal.getInstance().getSession())
         .getSessionFactory()).getDialect();
@@ -186,6 +201,9 @@ public class ProductProperties extends ModelExtension {
           add(new HQLProperty("product.quantityRule", "quantityRule"));
           add(new HQLProperty("product.obposPrintservices", "isPrintServices"));
           add(new HQLProperty("product.active", "active"));
+          if (multiPriceList) {
+            add(new HQLProperty("pp.standardPrice", "currentStandardPrice"));
+          }
         }
       };
 

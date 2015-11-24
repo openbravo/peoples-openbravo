@@ -83,9 +83,6 @@ enyo.kind({
       if (paymentstatus) {
         this.checkValidPayments(paymentstatus, payment);
       }
-      if (!_.isNull(this.receipt) && this.receipt.get('isLayaway') && this.receipt.get('orderType') !== 3) {
-        this.$.layawayaction.updateVisibility(true);
-      }
       if (inEvent.value.amount) {
         this.doPaymentActionPay({
           amount: inEvent.value.amount,
