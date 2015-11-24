@@ -41,9 +41,9 @@ public class ProductPrice extends ProcessHQLQuery {
   protected List<HQLPropertyList> getHqlProperties(JSONObject jsonsent) {
     List<HQLPropertyList> propertiesList = new ArrayList<HQLPropertyList>();
     Map<String, Object> args = new HashMap<String, Object>();
-    HQLPropertyList LevelProductPriceProperties = ModelExtensionUtils.getPropertyExtensions(
-        extensions, args);
-    propertiesList.add(LevelProductPriceProperties);
+    HQLPropertyList ProductPriceProperties = ModelExtensionUtils.getPropertyExtensions(extensions,
+        args);
+    propertiesList.add(ProductPriceProperties);
 
     return propertiesList;
   }
