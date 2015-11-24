@@ -193,7 +193,7 @@ BEGIN
 	SELECT  distinct AD_IsOrgIncluded(:new.AD_ORG_ID, a.AD_Org_ID, :new.AD_Client_ID), 
   a.ad_sequence_pr_id,a.isprnewaccount,a.acct_length,a.subacct_length, d.ad_client_id, 
   d.p_revenue_acct, d.p_def_revenue_acct, d.p_expense_acct, d.p_def_expense_acct, d.p_asset_acct, d.p_cogs_acct, d.P_PurchasePriceVariance_Acct, d.P_InvoicePriceVariance_Acct,
-  d.P_TradeDiscountRec_Acct, d.P_TradeDiscountGrant_Acct, d.P_COGS_Return_Acct, d.P_Revenue_Return_Acct, a.createdby, a.updatedby, a.C_AcctSchema_ID, d.ISACTIVE
+  d.P_TradeDiscountRec_Acct, d.P_TradeDiscountGrant_Acct, d.P_COGS_Return_Acct, d.P_Revenue_Return_Acct, a.C_AcctSchema_ID, d.ISACTIVE
   FROM  M_Product_Category_Acct d, ad_Org_AcctSchema a
 	WHERE  d.M_Product_Category_ID=:new.M_Product_Category_ID
 	AND d.C_AcctSchema_ID = a.C_AcctSchema_ID
