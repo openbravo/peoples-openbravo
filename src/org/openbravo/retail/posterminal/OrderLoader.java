@@ -1919,16 +1919,17 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       if (paid.compareTo(BigDecimal.ZERO) == 0 && !isReversalPayment) {
         continue;
       }
-      String paymentTypeName = payment.getString("kind");
+      String[] paymentTypeName = payment.getString("kind").split(":");
       for (OBPOSAppPayment type : posTerminal.getOBPOSAppPaymentList()) {
-        if (type.getSearchKey().equals(paymentTypeName)) {
+        if (type.getSearchKey().equals(paymentTypeName[0])) {
           paymentType = type;
+          break;
         }
       }
       if (paymentType == null) {
         @SuppressWarnings("unchecked")
         Class<PaymentProcessor> paymentclazz = (Class<PaymentProcessor>) Class
-            .forName(paymentTypeName);
+            .forName(paymentTypeName[0]);
         PaymentProcessor paymentinst = paymentclazz.newInstance();
         paymentinst.process(payment, order, invoice, writeoffAmt);
       } else {
