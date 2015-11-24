@@ -38,7 +38,7 @@ public class POSProdFiles extends ProcessHQLQuery {
   private Instance<ModelExtension> extensions;
 
   @Override
-  protected List<HQLPropertyList> getHqlProperties() {
+  protected List<HQLPropertyList> getHqlProperties(JSONObject jsonsent) {
     List<HQLPropertyList> propertiesList = new ArrayList<HQLPropertyList>();
     HQLPropertyList posProdFilesHQLProperties = ModelExtensionUtils
         .getPropertyExtensions(extensions);

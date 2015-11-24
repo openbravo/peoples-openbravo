@@ -38,7 +38,7 @@ public class ServicePriceRuleRangePrices extends ProcessHQLQuery {
   SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd");
 
   @Override
-  protected List<HQLPropertyList> getHqlProperties() {
+  protected List<HQLPropertyList> getHqlProperties(JSONObject jsonsent) {
     List<HQLPropertyList> propertiesList = new ArrayList<HQLPropertyList>();
     HQLPropertyList regularPriceRuleRangePricesHQLProperties = ModelExtensionUtils
         .getPropertyExtensions(extensions);
