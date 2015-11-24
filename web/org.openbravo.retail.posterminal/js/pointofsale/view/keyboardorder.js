@@ -321,6 +321,9 @@ enyo.kind({
     this.addCommand('line:delete', {
       stateless: true,
       action: function (keyboard) {
+        if (!keyboard.line) {
+          return;
+        }
         OB.UTIL.Approval.requestApproval(me.model, 'OBPOS_approval.deleteLine', function (approved, supervisor, approvalType) {
           if (approved) {
             keyboard.line.set('deleteApproved', true);

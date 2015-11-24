@@ -889,12 +889,18 @@
       line.trigger('removed', line);
 
       // remove the line
+      if (OB.POS.hwserver.url && OB.POS.modelterminal.get('terminal').terminalType.userfid && line.get('obposEpccode')) {
+        OB.UTIL.rfidWebsocket.send('erase:' + line.get('obposEpccode'));
+      }
       this.get('lines').remove(line);
       // set the undo action
       this.set('undo', {
         text: OB.I18N.getLabel('OBPOS_DeleteLine', [line.get('qty'), line.get('product').get('_identifier')]),
         line: line,
         undo: function () {
+          if (OB.POS.hwserver.url && OB.POS.modelterminal.get('terminal').terminalType.userfid && line.get('obposEpccode')) {
+              OB.UTIL.rfidWebsocket.send('add:' + line.get('obposEpccode'));
+            }
           me.get('lines').add(line, {
             at: index
           });
@@ -1401,6 +1407,9 @@
         undo: function (modelObj) {
           OB.UTIL.Approval.requestApproval((modelObj ? modelObj : this.model), 'OBPOS_approval.deleteLine', function (approved) {
             if (approved) {
+              if (OB.POS.hwserver.url && OB.POS.modelterminal.get('terminal').terminalType.userfid && newline.get('obposEpccode')) {
+                OB.UTIL.rfidWebsocket.send('erase:' + newline.get('obposEpccode'));
+              }
               me.get('lines').remove(newline);
               me.calculateGross();
               me.set('undo', null);
@@ -3178,8 +3187,8 @@
       }
     }
   });
-  // order model is not registered using standard Registry method becasue list is
-  // becasue collection is specific
+  // order model is not registered using standard Registry method because list is
+  // because collection is specific
   window.OB.Model.Order = Order;
   window.OB.Collection.OrderList = OrderList;
   window.OB.Model.TaxLine = TaxLine;

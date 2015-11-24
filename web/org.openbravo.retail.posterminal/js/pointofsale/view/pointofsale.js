@@ -369,6 +369,18 @@ enyo.kind({
   deleteCurrentOrder: function (inSender, inEvent) {
     function removeOrder(context) {
       var isPaidQuotation = (context.model.get('order').has('isQuotation') && context.model.get('order').get('isQuotation') && context.model.get('order').has('hasbeenpaid') && context.model.get('order').get('hasbeenpaid') === 'Y');
+      if (OB.POS.hwserver.url && OB.POS.modelterminal.get('terminal').terminalType.userfid) {
+        var epcCodes = '';
+        _.each(context.model.get('order').get('lines').models, function (line) {
+          if (line.get('obposEpccode')) {
+            epcCodes = epcCodes + line.get('obposEpccode') + ',';
+          }
+
+        });
+        if (epcCodes) {
+          OB.UTIL.rfidWebsocket.send('erase:' + epcCodes.substring(0, epcCodes.length - 1));
+        }
+      }
       if (context.model.get('order').get('id') && !isPaidQuotation) {
         context.model.get('orderList').saveCurrent();
         OB.Dal.remove(context.model.get('orderList').current, null, null);

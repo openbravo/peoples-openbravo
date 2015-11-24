@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, _, enyo, BigDecimal, localStorage, WebSocket */
+/*global OB, _, enyo, BigDecimal, localStorage */
 
 (function () {
   // initialize the WebPOS terminal model that extends the core terminal model. after this, OB.MobileApp.model will be available
@@ -157,55 +157,18 @@
               OB.UTIL.HookManager.executeHooks('OBPOS_TerminalLoadedFromBackend', {
                 data: data[0].terminal.id
               });
-              // If the hardware URL is set
+              // If the hardware URL is set and the terminal uses RFID
               if (OB.POS.hwserver.url && OB.POS.modelterminal.get('terminal').terminalType.userfid) {
-                var startRfidWebSocket = function startRfidWebSocket(webSocketServerLocation, reconnectTimeout, currentRetrials, retrialsBeforeWarning) {
-                    var ws = new WebSocket(webSocketServerLocation);
-                    var barcodeActionHandler;
-
-                    // Called when socket connection is established
-                    ws.onopen = function () {
-                      if (currentRetrials >= retrialsBeforeWarning) {
-                        currentRetrials = 0;
-                        OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_ConnectedWithRFID'));
-                        OB.info(OB.I18N.getLabel('OBPOS_ConnectedWithRFID'));
-                      }
-                      barcodeActionHandler = new OB.UI.BarcodeActionHandler();
-                    };
-
-                    // Called when a message is received from server
-                    ws.onmessage = function (event) {
-                      var message = JSON.parse(event.data);
-                      barcodeActionHandler.findProductByBarcode(message.uPCEAN, function (product) {
-                    	  OB.MobileApp.model.receipt.addProduct(product, '1', {rfid: true}, message.dataToSave);
-                      });
-                    };
-
-                    // Called when socket connection closed
-                    ws.onclose = function () {
-                      currentRetrials++;
-                      if (currentRetrials === retrialsBeforeWarning) {
-                        OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_RFIDNotAvailable'));
-                        OB.warn(OB.I18N.getLabel('OBPOS_RFIDNotAvailable'));
-                      }
-                      setTimeout(function () {
-                        startRfidWebSocket(webSocketServerLocation, reconnectTimeout, currentRetrials, retrialsBeforeWarning);
-                      }, reconnectTimeout);
-                    };
-
-                    // Called in case of an error
-                    ws.onerror = function (err) {};
-                    };
                 var protocol = OB.POS.hwserver.url.split('/')[0];
-                var webSocketServerLocation;
+                var websocketServerLocation;
                 if (protocol === 'http:') {
-                  webSocketServerLocation = 'ws://' + OB.POS.hwserver.url.split('/')[2] + '/rfid';
+                  websocketServerLocation = 'ws://' + OB.POS.hwserver.url.split('/')[2] + '/rfid';
                 } else if (protocol === 'https:') {
-                  webSocketServerLocation = 'wss://' + OB.POS.hwserver.url.split('/')[2] + '/rfid';
+                  websocketServerLocation = 'wss://' + OB.POS.hwserver.url.split('/')[2] + '/rfid';
                 } else {
                   OB.UTIL.showError(OB.I18N.getLabel('OBPOS_WrongHardwareManagerProtocol'));
                 }
-                startRfidWebSocket(webSocketServerLocation, 2000, 0, 5);
+                OB.UTIL.startRfidWebsocket(websocketServerLocation, 2000, 0, 5);
               }
             } else {
               OB.UTIL.showError("Terminal does not exists: " + 'params.terminal');
