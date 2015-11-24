@@ -928,7 +928,9 @@
         qtyToAdd: qty,
         options: options,
         newLine: newLine
-      }, function (args) {});
+      }, function (args) {
+        args.receipt.calculateGross();
+      });
     },
 
     _drawLinesDistribution: function (data) {
