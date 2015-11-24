@@ -308,7 +308,6 @@ enyo.kind({
   tabPanel: 'catalog',
   i18nLabel: 'OBMOBC_LblBrowse',
   tap: function () {
-    OB.MobileApp.view.scanningFocus(true);
     if (!this.disabled) {
       this.doTabChange({
         tabPanel: this.tabPanel,
@@ -316,6 +315,7 @@ enyo.kind({
         edit: false
       });
     }
+    OB.MobileApp.view.scanningFocus(true);
   },
   initComponents: function () {
     this.inherited(arguments);
@@ -356,7 +356,6 @@ enyo.kind({
     }
   },
   tap: function () {
-    OB.MobileApp.view.scanningFocus(false);
     if (this.disabled === false) {
       OB.UI.SearchProductCharacteristic.prototype.filtersCustomClear();
       this.doTabChange({
@@ -364,6 +363,7 @@ enyo.kind({
         keyboard: false,
         edit: false
       });
+      OB.MobileApp.view.scanningFocus(true);
     }
   },
   initComponents: function () {
@@ -435,7 +435,6 @@ enyo.kind({
       }
       OB.MobileApp.model.unset('serviceSearchMode');
     } else {
-      OB.MobileApp.view.scanningFocus(true);
       if (!options.isManual) {
         // The tap was not manual. So consider the last line added
         var lines = this.model.get('order').get('lines');
@@ -454,6 +453,7 @@ enyo.kind({
           edit: true
         });
       }
+      OB.MobileApp.view.scanningFocus(true);
     }
   },
   restoreStatus: function () {

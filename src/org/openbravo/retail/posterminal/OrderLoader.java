@@ -241,6 +241,17 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           createShipment &= jsonorder.getBoolean("generateShipment");
           createInvoice &= jsonorder.getBoolean("generateShipment");
         }
+
+        // We have to check if there is any line in the order which have been already invoiced. If
+        // it is the case we will not create the invoice.
+        List<Invoice> lstInvoice = getInvoicesRelatedToOrder(jsonorder.getString("id"));
+        if (lstInvoice != null) {
+          // We have found and invoice, so it will be used to assign payments
+          // TODO several invoices involved
+          invoice = lstInvoice.get(0);
+          createInvoice = false;
+        }
+
         // Order header
         if (log.isDebugEnabled()) {
           t111 = System.currentTimeMillis();
@@ -777,6 +788,33 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     }
     if (multipleShipmentsLines) {
       updateTaxes(invoice);
+    }
+  }
+
+  protected List<Invoice> getInvoicesRelatedToOrder(String orderId) {
+    List<String> lstInvoicesIds = new ArrayList<String>();
+    List<Invoice> lstInvoices = new ArrayList<Invoice>();
+    StringBuffer involvedInvoicedHqlQueryWhereStr = new StringBuffer();
+    involvedInvoicedHqlQueryWhereStr
+        .append("SELECT il.invoice.id FROM InvoiceLine il WHERE il.salesOrderLine.salesOrder.id = :orderid ORDER BY il.invoice.creationDate ASC");
+    Query qryRelatedInvoices = OBDal.getInstance().getSession()
+        .createQuery(involvedInvoicedHqlQueryWhereStr.toString());
+    qryRelatedInvoices.setParameter("orderid", orderId);
+
+    ScrollableResults relatedInvoices = qryRelatedInvoices.scroll(ScrollMode.FORWARD_ONLY);
+
+    while (relatedInvoices.next()) {
+      lstInvoicesIds.add((String) relatedInvoices.get(0));
+    }
+
+    if (lstInvoicesIds.size() > 0 && lstInvoicesIds.size() <= 1) {
+      lstInvoices.add(OBDal.getInstance().get(Invoice.class, lstInvoicesIds.get(0)));
+      return lstInvoices;
+    } else if (lstInvoices.size() > 1) {
+      // TODO several invoices
+      return null;
+    } else {
+      return null;
     }
   }
 

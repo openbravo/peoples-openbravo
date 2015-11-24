@@ -330,19 +330,24 @@ enyo.kind({
       }
 
       OB.UTIL.HookManager.executeHooks(me.cashupSentHook, {}, function () {
-        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_LblGoodjob'), content, [{
-          label: OB.I18N.getLabel('OBMOBC_LblOk'),
-          isConfirmButton: true,
-          action: function () {
-            me.finalAction();
-            return true;
-          }
-        }], {
-          autoDismiss: false,
-          onHideFunction: function () {
-            me.finalAction();
-          }
-        });
+
+        if (OB.MobileApp.view.$.confirmationContainer.getAttribute('openedPopup') !== OB.I18N.getLabel('OBPOS_MsgPrintAgainCashUp')) {
+          // Only display the good job message if there are no components displayed
+          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_LblGoodjob'), content, [{
+            label: OB.I18N.getLabel('OBMOBC_LblOk'),
+            isConfirmButton: true,
+            action: function () {
+              me.finalAction();
+              return true;
+            }
+          }], {
+            autoDismiss: false,
+            onHideFunction: function () {
+              me.finalAction();
+            }
+          });
+
+        }
       });
 
     }, this);

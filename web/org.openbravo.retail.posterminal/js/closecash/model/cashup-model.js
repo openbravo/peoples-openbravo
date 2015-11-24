@@ -356,7 +356,6 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
 
     OB.Dal.find(OB.Model.Order, {
       hasbeenpaid: 'N',
-      // Adding 'session' to criteria in order the remove empty orders based on user session
       'session': OB.MobileApp.model.get('session')
     }, function (pendingOrderList, me) {
       var emptyOrders;

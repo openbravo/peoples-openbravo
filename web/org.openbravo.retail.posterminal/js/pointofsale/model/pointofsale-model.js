@@ -53,8 +53,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
         model = this,
         criteria = {
         'hasbeenpaid': 'N'
-        // 'session' has been commented because to get the max of Document No, Quotation No from unpaid orders irrespective of users session
-        // 'session': OB.MobileApp.model.get('session')
         };
     OB.Dal.find(OB.Model.Order, criteria, function (ordersNotPaid) { //OB.Dal.find success
       var currentOrder = {},
