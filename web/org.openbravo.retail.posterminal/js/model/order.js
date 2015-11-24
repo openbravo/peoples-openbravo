@@ -3344,7 +3344,7 @@
       return this.getPaymentStatus().overpayment ? true : false;
     },
 
-    removePayment: function (payment) {
+    removePayment: function (payment, removeCallback) {
       var payments = this.get('payments'),
           max, i, p;
       OB.UTIL.HookManager.executeHooks('OBPOS_preRemovePayment', {
@@ -3353,6 +3353,9 @@
         receipt: this
       }, function (args) {
         if (args.cancellation) {
+          if (removeCallback) {
+            removeCallback();
+          }
           return true;
         }
         payments.remove(payment);

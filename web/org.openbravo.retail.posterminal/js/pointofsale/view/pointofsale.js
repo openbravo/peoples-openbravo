@@ -932,12 +932,12 @@ enyo.kind({
         //        me.model.get('multiOrders').removePayment(inEvent.payment);
         //      }
         if (me.model.get('leftColumnViewManager').isOrder()) {
-          me.model.get('order').removePayment(inEvent.payment);
+          me.model.get('order').removePayment(inEvent.payment, inEvent.removeCallback);
           me.model.get('order').trigger('displayTotal');
           return;
         }
         if (me.model.get('leftColumnViewManager').isMultiOrder()) {
-          me.model.get('multiOrders').removePayment(inEvent.payment);
+          me.model.get('multiOrders').removePayment(inEvent.payment, inEvent.removeCallback);
           me.model.get('multiOrders').trigger('displayTotal');
           return;
         }

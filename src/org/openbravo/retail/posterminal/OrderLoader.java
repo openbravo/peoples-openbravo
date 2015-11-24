@@ -220,6 +220,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       Order order = null;
       OrderLine orderLine = null;
       ShipmentInOut shipment = null;
+      FIN_PaymentSchedule paymentSchedule = null;
       Invoice invoice = null;
       boolean createInvoice = false;
       boolean wasPaidOnCredit = false;
@@ -476,10 +477,10 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
       if (!isQuotation && !isDeleted) {
         // Payment
-        JSONObject paymentResponse = handlePayments(jsonorder, order, invoice, wasPaidOnCredit,
-            createInvoice);
-        if (paymentResponse != null) {
-          return paymentResponse;
+        HandlePaymentResult paymentResult = handlePayments(jsonorder, order, invoice,
+            wasPaidOnCredit, createInvoice);
+        if (paymentResult.getError() != null) {
+          return paymentResult.getError();
         }
 
         if (doCancelAndReplace && order.getReplacedorder() != null) {
@@ -495,6 +496,14 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
             throw new OBException("CancelAndReplaceUtils.cancelAndReplaceOrder: ", ex);
           } finally {
             TriggerHandler.getInstance().enable();
+          }
+        }
+
+        for (OrderLoaderHook hook : orderProcesses) {
+          if (hook instanceof OrderLoaderPaymentHook) {
+            ((OrderLoaderPaymentHook) hook).setPaymentSchedule(paymentResult.getPaymentSchedule());
+            ((OrderLoaderPaymentHook) hook).setPaymentScheduleInvoice(paymentResult
+                .getPaymentScheduleInvoice());
           }
         }
 
@@ -1773,7 +1782,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     return calculatedDueDate.getTime();
   }
 
-  public JSONObject handlePayments(JSONObject jsonorder, Order order, Invoice invoice,
+  public HandlePaymentResult handlePayments(JSONObject jsonorder, Order order, Invoice invoice,
       boolean wasPaidOnCredit, boolean createInvoice) throws Exception {
     String posTerminalId = jsonorder.getString("posTerminal");
     OBPOSApplications posTerminal = OBDal.getInstance().get(OBPOSApplications.class, posTerminalId);
@@ -1782,209 +1791,209 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_FAILURE);
       jsonResponse.put(JsonConstants.RESPONSE_ERRORMESSAGE, "The POS terminal with id "
           + posTerminalId + " couldn't be found");
-      return jsonResponse;
-    } else {
-      JSONArray payments = jsonorder.getJSONArray("payments");
+      HandlePaymentResult paymentResult = new HandlePaymentResult();
+      paymentResult.setError(jsonResponse);
+      return paymentResult;
+    }
 
-      // Create a unique payment schedule for all payments
-      BigDecimal amt = BigDecimal.valueOf(jsonorder.getDouble("payment"));
-      FIN_PaymentSchedule paymentSchedule = OBProvider.getInstance().get(FIN_PaymentSchedule.class);
-      int pricePrecision = order.getCurrency().getObposPosprecision() == null ? order.getCurrency()
-          .getPricePrecision().intValue() : order.getCurrency().getObposPosprecision().intValue();
-      BigDecimal amountPaidWithCredit = BigDecimal.ZERO;
-      if (wasPaidOnCredit) {
-        amountPaidWithCredit = (BigDecimal.valueOf(jsonorder.getDouble("gross"))
-            .subtract(BigDecimal.valueOf(jsonorder.getDouble("payment")))).setScale(pricePrecision,
-            RoundingMode.HALF_UP);
+    JSONArray payments = jsonorder.getJSONArray("payments");
+
+    // Create a unique payment schedule for all payments
+    BigDecimal amt = BigDecimal.valueOf(jsonorder.getDouble("payment"));
+    FIN_PaymentSchedule paymentSchedule = OBProvider.getInstance().get(FIN_PaymentSchedule.class);
+    int pricePrecision = order.getCurrency().getObposPosprecision() == null ? order.getCurrency()
+        .getPricePrecision().intValue() : order.getCurrency().getObposPosprecision().intValue();
+    BigDecimal amountPaidWithCredit = BigDecimal.ZERO;
+    if (wasPaidOnCredit) {
+      amountPaidWithCredit = (BigDecimal.valueOf(jsonorder.getDouble("gross")).subtract(BigDecimal
+          .valueOf(jsonorder.getDouble("payment")))).setScale(pricePrecision, RoundingMode.HALF_UP);
+    }
+    if ((!newLayaway && (notpaidLayaway || creditpaidLayaway || fullypaidLayaway))
+        || partialpaidLayaway || paidReceipt) {
+      paymentSchedule = order.getFINPaymentScheduleList().get(0);
+    } else {
+      paymentSchedule = OBProvider.getInstance().get(FIN_PaymentSchedule.class);
+      paymentSchedule.setId(order.getId());
+      paymentSchedule.setNewOBObject(true);
+      paymentSchedule.setCurrency(order.getCurrency());
+      paymentSchedule.setOrder(order);
+      paymentSchedule.setFinPaymentmethod(order.getPaymentMethod());
+      // paymentSchedule.setPaidAmount(new BigDecimal(0));
+      paymentSchedule.setAmount(BigDecimal.valueOf(jsonorder.getDouble("gross")).setScale(
+          pricePrecision, RoundingMode.HALF_UP));
+      // Sept 2012 -> gross because outstanding is not allowed in Openbravo Web POS
+      paymentSchedule.setOutstandingAmount(BigDecimal.valueOf(jsonorder.getDouble("gross"))
+          .setScale(pricePrecision, RoundingMode.HALF_UP));
+      paymentSchedule.setDueDate(order.getOrderDate());
+      paymentSchedule.setExpectedDate(order.getOrderDate());
+      if (ModelProvider.getInstance().getEntity(FIN_PaymentSchedule.class)
+          .hasProperty("origDueDate")) {
+        // This property is checked and set this way to force compatibility with both MP13, MP14
+        // and
+        // later releases of Openbravo. This property is mandatory and must be set. Check issue
+        paymentSchedule.set("origDueDate", paymentSchedule.getDueDate());
       }
-      if ((!newLayaway && (notpaidLayaway || creditpaidLayaway || fullypaidLayaway))
-          || partialpaidLayaway || paidReceipt) {
-        paymentSchedule = order.getFINPaymentScheduleList().get(0);
+      paymentSchedule.setFINPaymentPriority(order.getFINPaymentPriority());
+      OBDal.getInstance().save(paymentSchedule);
+    }
+    Boolean isInvoicePaymentScheduleNew = false;
+    FIN_PaymentSchedule paymentScheduleInvoice = null;
+    if (invoice != null && invoice.getGrandTotalAmount().compareTo(BigDecimal.ZERO) != 0) {
+      List<FIN_PaymentSchedule> invoicePaymentSchedules = invoice.getFINPaymentScheduleList();
+      if (invoicePaymentSchedules.size() > 0) {
+        if (invoicePaymentSchedules.size() == 1) {
+          paymentScheduleInvoice = invoicePaymentSchedules.get(0);
+        } else {
+          paymentScheduleInvoice = invoicePaymentSchedules.get(0);
+          log.warn("Invoice have more than one payment schedule. First one was selected");
+        }
       } else {
-        paymentSchedule = OBProvider.getInstance().get(FIN_PaymentSchedule.class);
-        paymentSchedule.setId(order.getId());
-        paymentSchedule.setNewOBObject(true);
-        paymentSchedule.setCurrency(order.getCurrency());
-        paymentSchedule.setOrder(order);
-        paymentSchedule.setFinPaymentmethod(order.getPaymentMethod());
-        // paymentSchedule.setPaidAmount(new BigDecimal(0));
-        paymentSchedule.setAmount(BigDecimal.valueOf(jsonorder.getDouble("gross")).setScale(
+        paymentScheduleInvoice = OBProvider.getInstance().get(FIN_PaymentSchedule.class);
+        isInvoicePaymentScheduleNew = true;
+      }
+      // If is not a reverse payment, set attributes to the paymentScheduleInvoice
+      if (createInvoice) {
+        paymentScheduleInvoice.setCurrency(order.getCurrency());
+        paymentScheduleInvoice.setInvoice(invoice);
+        paymentScheduleInvoice.setFinPaymentmethod(order.getPaymentMethod());
+        paymentScheduleInvoice.setAmount(BigDecimal.valueOf(jsonorder.getDouble("gross")).setScale(
             pricePrecision, RoundingMode.HALF_UP));
-        // Sept 2012 -> gross because outstanding is not allowed in Openbravo Web POS
-        paymentSchedule.setOutstandingAmount(BigDecimal.valueOf(jsonorder.getDouble("gross"))
-            .setScale(pricePrecision, RoundingMode.HALF_UP));
-        paymentSchedule.setDueDate(order.getOrderDate());
-        paymentSchedule.setExpectedDate(order.getOrderDate());
+        paymentScheduleInvoice.setOutstandingAmount(BigDecimal
+            .valueOf(jsonorder.getDouble("gross")).setScale(pricePrecision, RoundingMode.HALF_UP));
+        // TODO: If the payment terms is configured to work with fractionated payments, we should
+        // generate several payment schedules
+        if (wasPaidOnCredit) {
+          paymentScheduleInvoice.setDueDate(getCalculatedDueDateBasedOnPaymentTerms(
+              order.getOrderDate(), order.getPaymentTerms()));
+          paymentScheduleInvoice.setExpectedDate(paymentScheduleInvoice.getDueDate());
+        } else {
+          paymentScheduleInvoice.setDueDate(order.getOrderDate());
+          paymentScheduleInvoice.setExpectedDate(order.getOrderDate());
+        }
+
         if (ModelProvider.getInstance().getEntity(FIN_PaymentSchedule.class)
             .hasProperty("origDueDate")) {
           // This property is checked and set this way to force compatibility with both MP13, MP14
-          // and
-          // later releases of Openbravo. This property is mandatory and must be set. Check issue
-          paymentSchedule.set("origDueDate", paymentSchedule.getDueDate());
+          // and later releases of Openbravo. This property is mandatory and must be set. Check
+          // issue
+          paymentScheduleInvoice.set("origDueDate", paymentScheduleInvoice.getDueDate());
         }
-        paymentSchedule.setFINPaymentPriority(order.getFINPaymentPriority());
-        OBDal.getInstance().save(paymentSchedule);
-      }
-      Boolean isInvoicePaymentScheduleNew = false;
-      FIN_PaymentSchedule paymentScheduleInvoice = null;
-      if (invoice != null && invoice.getGrandTotalAmount().compareTo(BigDecimal.ZERO) != 0) {
-        List<FIN_PaymentSchedule> invoicePaymentSchedules = invoice.getFINPaymentScheduleList();
-        if (invoicePaymentSchedules.size() > 0) {
-          if (invoicePaymentSchedules.size() == 1) {
-            paymentScheduleInvoice = invoicePaymentSchedules.get(0);
-          } else {
-            paymentScheduleInvoice = invoicePaymentSchedules.get(0);
-            log.warn("Invoice have more than one payment schedule. First one was selected");
-          }
-        } else {
-          paymentScheduleInvoice = OBProvider.getInstance().get(FIN_PaymentSchedule.class);
-          isInvoicePaymentScheduleNew = true;
-        }
-        // If is not a reverse payment, set attributes to the paymentScheduleInvoice
-        if (createInvoice) {
-          paymentScheduleInvoice.setCurrency(order.getCurrency());
-          paymentScheduleInvoice.setInvoice(invoice);
-          paymentScheduleInvoice.setFinPaymentmethod(order.getPaymentMethod());
-          paymentScheduleInvoice.setAmount(BigDecimal.valueOf(jsonorder.getDouble("gross"))
-              .setScale(pricePrecision, RoundingMode.HALF_UP));
-          paymentScheduleInvoice.setOutstandingAmount(BigDecimal.valueOf(
-              jsonorder.getDouble("gross")).setScale(pricePrecision, RoundingMode.HALF_UP));
-          // TODO: If the payment terms is configured to work with fractionated payments, we should
-          // generate several payment schedules
-          if (wasPaidOnCredit) {
-            paymentScheduleInvoice.setDueDate(getCalculatedDueDateBasedOnPaymentTerms(
-                order.getOrderDate(), order.getPaymentTerms()));
-            paymentScheduleInvoice.setExpectedDate(paymentScheduleInvoice.getDueDate());
-          } else {
-            paymentScheduleInvoice.setDueDate(order.getOrderDate());
-            paymentScheduleInvoice.setExpectedDate(order.getOrderDate());
-          }
-
-          if (ModelProvider.getInstance().getEntity(FIN_PaymentSchedule.class)
-              .hasProperty("origDueDate")) {
-            // This property is checked and set this way to force compatibility with both MP13, MP14
-            // and later releases of Openbravo. This property is mandatory and must be set. Check
-            // issue
-            paymentScheduleInvoice.set("origDueDate", paymentScheduleInvoice.getDueDate());
-          }
-          paymentScheduleInvoice.setFINPaymentPriority(order.getFINPaymentPriority());
-          if (isInvoicePaymentScheduleNew) {
-            invoice.getFINPaymentScheduleList().add(paymentScheduleInvoice);
-            OBDal.getInstance().save(paymentScheduleInvoice);
-          }
-        } else if (wasPaidOnCredit) {
-          // If the invoice already exists and is paid in credit (by reverse payments), the received
-          // and outstanding amount must be updated with the quantity paid on credit
-          paymentScheduleInvoice.setPaidAmount(paymentScheduleInvoice.getAmount()
-              .subtract(amountPaidWithCredit).setScale(pricePrecision, RoundingMode.HALF_UP));
-          paymentScheduleInvoice.setOutstandingAmount(amountPaidWithCredit.setScale(pricePrecision,
-              RoundingMode.HALF_UP));
-        } else if (notpaidLayaway || partialpaidLayaway || fullypaidLayaway) {
-          // If the order was an existing layaway that previously had an invoice, the received and
-          // outstanding amounts must be updated
-          paymentScheduleInvoice.setPaidAmount(BigDecimal.valueOf(jsonorder.getDouble("payment"))
-              .setScale(pricePrecision, RoundingMode.HALF_UP));
-          paymentScheduleInvoice.setOutstandingAmount(paymentScheduleInvoice.getAmount()
-              .subtract(paymentScheduleInvoice.getPaidAmount())
-              .setScale(pricePrecision, RoundingMode.HALF_UP));
-        }
-      }
-
-      BigDecimal gross = BigDecimal.valueOf(jsonorder.getDouble("gross"));
-      BigDecimal writeoffAmt = amt.subtract(gross.abs());
-
-      for (int i = 0; i < payments.length(); i++) {
-        JSONObject payment = payments.getJSONObject(i);
-        OBPOSAppPayment paymentType = null;
-        if (payment.has("isPrePayment") && payment.getBoolean("isPrePayment")) {
-          continue;
-        }
-        // When doing a reverse payment, normally the reversal payment has the 'paid' property to 0,
-        // because this 'paid' property is the sum of the total amount paid by this payment method
-        // (normally a payment is reversed to set the total quantity of that payment method to 0).
-        // Because of that, the next condition must be ignored to reversal payments
-        BigDecimal paid = BigDecimal.valueOf(payment.getDouble("paid"));
-        boolean isReversalPayment = payment.has("reversedPaymentId");
-        if (paid.compareTo(BigDecimal.ZERO) == 0 && !isReversalPayment) {
-          continue;
-        }
-        String paymentTypeName = payment.getString("kind");
-        for (OBPOSAppPayment type : posTerminal.getOBPOSAppPaymentList()) {
-          if (type.getSearchKey().equals(paymentTypeName)) {
-            paymentType = type;
-          }
-        }
-        if (paymentType == null) {
-          @SuppressWarnings("unchecked")
-          Class<PaymentProcessor> paymentclazz = (Class<PaymentProcessor>) Class
-              .forName(paymentTypeName);
-          PaymentProcessor paymentinst = paymentclazz.newInstance();
-          paymentinst.process(payment, order, invoice, writeoffAmt);
-        } else {
-          if (paymentType.getFinancialAccount() == null) {
-            continue;
-          }
-          BigDecimal amount = BigDecimal.valueOf(payment.getDouble("origAmount")).setScale(
-              pricePrecision, RoundingMode.HALF_UP);
-          BigDecimal tempWriteoffAmt = new BigDecimal(writeoffAmt.toString());
-          if (writeoffAmt.compareTo(BigDecimal.ZERO) != 0
-              && writeoffAmt.compareTo(amount.abs()) == 1) {
-            // In case writeoff is higher than amount, we put 1 as payment and rest as overpayment
-            // because the payment cannot be 0 (It wouldn't be created)
-            tempWriteoffAmt = amount.abs().subtract(BigDecimal.ONE);
-          }
-          processPayments(paymentSchedule, paymentScheduleInvoice, order, invoice, paymentType,
-              payment, tempWriteoffAmt, jsonorder);
-          writeoffAmt = writeoffAmt.subtract(tempWriteoffAmt);
-        }
-      }
-
-      boolean checkPaidOnCreditChecked = (jsonorder.has("paidOnCredit") && jsonorder
-          .getBoolean("paidOnCredit"));
-      if (invoice != null
-          && (creditpaidLayaway || fullypaidLayaway || checkPaidOnCreditChecked || paidReceipt)) {
-        for (int j = 0; j < paymentSchedule.getFINPaymentScheduleDetailOrderPaymentScheduleList()
-            .size(); j++) {
-          if (paymentSchedule.getFINPaymentScheduleDetailOrderPaymentScheduleList().get(j)
-              .getInvoicePaymentSchedule() == null) {
-            paymentSchedule.getFINPaymentScheduleDetailOrderPaymentScheduleList().get(j)
-                .setInvoicePaymentSchedule(paymentScheduleInvoice);
-          }
-        }
-
-        invoice.setTotalPaid(invoice.getGrandTotalAmount().subtract(amountPaidWithCredit));
-        invoice.setOutstandingAmount(amountPaidWithCredit);
-        invoice.setDueAmount(amountPaidWithCredit);
-        invoice.setPaymentComplete(amountPaidWithCredit.compareTo(BigDecimal.ZERO) == 0);
-        invoice.setDaysTillDue(FIN_Utility.getDaysToDue(paymentScheduleInvoice == null ? invoice
-            .getInvoiceDate() : paymentScheduleInvoice.getDueDate()));
-        if (paymentScheduleInvoice != null) {
-          paymentScheduleInvoice.setOutstandingAmount(amountPaidWithCredit);
-          paymentScheduleInvoice.setPaidAmount(invoice.getGrandTotalAmount().subtract(
-              amountPaidWithCredit));
+        paymentScheduleInvoice.setFINPaymentPriority(order.getFINPaymentPriority());
+        if (isInvoicePaymentScheduleNew) {
           invoice.getFINPaymentScheduleList().add(paymentScheduleInvoice);
           OBDal.getInstance().save(paymentScheduleInvoice);
         }
-        OBDal.getInstance().save(invoice);
+      } else if (wasPaidOnCredit) {
+        // If the invoice already exists and is paid in credit (by reverse payments), the received
+        // and outstanding amount must be updated with the quantity paid on credit
+        paymentScheduleInvoice.setPaidAmount(paymentScheduleInvoice.getAmount()
+            .subtract(amountPaidWithCredit).setScale(pricePrecision, RoundingMode.HALF_UP));
+        paymentScheduleInvoice.setOutstandingAmount(amountPaidWithCredit.setScale(pricePrecision,
+            RoundingMode.HALF_UP));
+      } else if (notpaidLayaway || partialpaidLayaway || fullypaidLayaway) {
+        // If the order was an existing layaway that previously had an invoice, the received and
+        // outstanding amounts must be updated
+        paymentScheduleInvoice.setPaidAmount(BigDecimal.valueOf(jsonorder.getDouble("payment"))
+            .setScale(pricePrecision, RoundingMode.HALF_UP));
+        paymentScheduleInvoice.setOutstandingAmount(paymentScheduleInvoice.getAmount()
+            .subtract(paymentScheduleInvoice.getPaidAmount())
+            .setScale(pricePrecision, RoundingMode.HALF_UP));
       }
-
-      BigDecimal diffPaid = BigDecimal.ZERO;
-      if ((gross.compareTo(BigDecimal.ZERO) > 0) && (gross.compareTo(amt) > 0)) {
-        diffPaid = gross.subtract(amt);
-      } else if ((gross.compareTo(BigDecimal.ZERO) < 0)
-          && (gross.compareTo(amt.multiply(new BigDecimal("-1"))) < 0)) {
-        diffPaid = gross.subtract(amt.multiply(new BigDecimal("-1")));
-      }
-      // if (payments.length() == 0 ) or (writeoffAmt<0) means that use credit was used
-      if ((payments.length() == 0 || diffPaid.compareTo(BigDecimal.ZERO) != 0) && invoice != null
-          && invoice.getGrandTotalAmount().compareTo(BigDecimal.ZERO) != 0) {
-        setRemainingPayment(order, paymentSchedule, paymentScheduleInvoice, diffPaid, true);
-      } else if (notpaidLayaway || fullypaidLayaway) {
-        setRemainingPayment(order, paymentSchedule, paymentScheduleInvoice, diffPaid, false);
-      }
-
-      return null;
     }
+
+    BigDecimal gross = BigDecimal.valueOf(jsonorder.getDouble("gross"));
+    BigDecimal writeoffAmt = amt.subtract(gross.abs());
+
+    for (int i = 0; i < payments.length(); i++) {
+      JSONObject payment = payments.getJSONObject(i);
+      OBPOSAppPayment paymentType = null;
+      if (payment.has("isPrePayment") && payment.getBoolean("isPrePayment")) {
+        continue;
+      }
+      // When doing a reverse payment, normally the reversal payment has the 'paid' property to 0,
+      // because this 'paid' property is the sum of the total amount paid by this payment method
+      // (normally a payment is reversed to set the total quantity of that payment method to 0).
+      // Because of that, the next condition must be ignored to reversal payments
+      BigDecimal paid = BigDecimal.valueOf(payment.getDouble("paid"));
+      boolean isReversalPayment = payment.has("reversedPaymentId");
+      if (paid.compareTo(BigDecimal.ZERO) == 0 && !isReversalPayment) {
+        continue;
+      }
+      String paymentTypeName = payment.getString("kind");
+      for (OBPOSAppPayment type : posTerminal.getOBPOSAppPaymentList()) {
+        if (type.getSearchKey().equals(paymentTypeName)) {
+          paymentType = type;
+        }
+      }
+      if (paymentType == null) {
+        @SuppressWarnings("unchecked")
+        Class<PaymentProcessor> paymentclazz = (Class<PaymentProcessor>) Class
+            .forName(paymentTypeName);
+        PaymentProcessor paymentinst = paymentclazz.newInstance();
+        paymentinst.process(payment, order, invoice, writeoffAmt);
+      } else {
+        if (paymentType.getFinancialAccount() == null) {
+          continue;
+        }
+        BigDecimal amount = BigDecimal.valueOf(payment.getDouble("origAmount")).setScale(
+            pricePrecision, RoundingMode.HALF_UP);
+        BigDecimal tempWriteoffAmt = new BigDecimal(writeoffAmt.toString());
+        if (writeoffAmt.compareTo(BigDecimal.ZERO) != 0 && writeoffAmt.compareTo(amount.abs()) == 1) {
+          // In case writeoff is higher than amount, we put 1 as payment and rest as overpayment
+          // because the payment cannot be 0 (It wouldn't be created)
+          tempWriteoffAmt = amount.abs().subtract(BigDecimal.ONE);
+        }
+        processPayments(paymentSchedule, paymentScheduleInvoice, order, invoice, paymentType,
+            payment, tempWriteoffAmt, jsonorder);
+        writeoffAmt = writeoffAmt.subtract(tempWriteoffAmt);
+      }
+    }
+
+    boolean checkPaidOnCreditChecked = (jsonorder.has("paidOnCredit") && jsonorder
+        .getBoolean("paidOnCredit"));
+    if (invoice != null
+        && (creditpaidLayaway || fullypaidLayaway || checkPaidOnCreditChecked || paidReceipt)) {
+      for (int j = 0; j < paymentSchedule.getFINPaymentScheduleDetailOrderPaymentScheduleList()
+          .size(); j++) {
+        if (paymentSchedule.getFINPaymentScheduleDetailOrderPaymentScheduleList().get(j)
+            .getInvoicePaymentSchedule() == null) {
+          paymentSchedule.getFINPaymentScheduleDetailOrderPaymentScheduleList().get(j)
+              .setInvoicePaymentSchedule(paymentScheduleInvoice);
+        }
+      }
+
+      invoice.setTotalPaid(invoice.getGrandTotalAmount().subtract(amountPaidWithCredit));
+      invoice.setOutstandingAmount(amountPaidWithCredit);
+      invoice.setDueAmount(amountPaidWithCredit);
+      invoice.setPaymentComplete(amountPaidWithCredit.compareTo(BigDecimal.ZERO) == 0);
+      invoice.setDaysTillDue(FIN_Utility.getDaysToDue(paymentScheduleInvoice == null ? invoice
+          .getInvoiceDate() : paymentScheduleInvoice.getDueDate()));
+      if (paymentScheduleInvoice != null) {
+        paymentScheduleInvoice.setOutstandingAmount(amountPaidWithCredit);
+        paymentScheduleInvoice.setPaidAmount(invoice.getGrandTotalAmount().subtract(
+            amountPaidWithCredit));
+        invoice.getFINPaymentScheduleList().add(paymentScheduleInvoice);
+        OBDal.getInstance().save(paymentScheduleInvoice);
+      }
+      OBDal.getInstance().save(invoice);
+    }
+
+    BigDecimal diffPaid = BigDecimal.ZERO;
+    if ((gross.compareTo(BigDecimal.ZERO) > 0) && (gross.compareTo(amt) > 0)) {
+      diffPaid = gross.subtract(amt);
+    } else if ((gross.compareTo(BigDecimal.ZERO) < 0)
+        && (gross.compareTo(amt.multiply(new BigDecimal("-1"))) < 0)) {
+      diffPaid = gross.subtract(amt.multiply(new BigDecimal("-1")));
+    }
+    // if (payments.length() == 0 ) or (writeoffAmt<0) means that use credit was used
+    if ((payments.length() == 0 || diffPaid.compareTo(BigDecimal.ZERO) != 0) && invoice != null
+        && invoice.getGrandTotalAmount().compareTo(BigDecimal.ZERO) != 0) {
+      setRemainingPayment(order, paymentSchedule, paymentScheduleInvoice, diffPaid, true);
+    } else if (notpaidLayaway || fullypaidLayaway) {
+      setRemainingPayment(order, paymentSchedule, paymentScheduleInvoice, diffPaid, false);
+    }
+
+    return new HandlePaymentResult(paymentSchedule, paymentScheduleInvoice);
 
   }
 
@@ -2380,4 +2389,37 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       OBContext.restorePreviousMode();
     }
   }
+
+  private class HandlePaymentResult {
+    FIN_PaymentSchedule paymentSchedule;
+    FIN_PaymentSchedule paymentScheduleInvoice;
+    JSONObject error;
+
+    public HandlePaymentResult() {
+    }
+
+    public HandlePaymentResult(FIN_PaymentSchedule paymentSchedule,
+        FIN_PaymentSchedule paymentScheduleInvoice) {
+      this.paymentSchedule = paymentSchedule;
+      this.paymentScheduleInvoice = paymentScheduleInvoice;
+    }
+
+    public FIN_PaymentSchedule getPaymentSchedule() {
+      return paymentSchedule;
+    }
+
+    public FIN_PaymentSchedule getPaymentScheduleInvoice() {
+      return paymentScheduleInvoice;
+    }
+
+    public JSONObject getError() {
+      return error;
+    }
+
+    public void setError(JSONObject error) {
+      this.error = error;
+    }
+
+  }
+
 }
