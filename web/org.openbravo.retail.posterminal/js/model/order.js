@@ -384,10 +384,22 @@
     },
 
     save: function (callback) {
-      var undoCopy = this.get('undo');
+      var undoCopy = this.get('undo'),
+	  me = this,
+	  previousOrder;
       this.set('json', JSON.stringify(this.serializeToJSON()));
       if (callback === undefined || !callback instanceof Function) {
         callback = function () {};
+      }
+      if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
+        previousOrder = _.max(_.filter(OB.MobileApp.model.orderList.models, function (previousOrder) {
+          return previousOrder.get('documentnoSuffix') < me.get('documentnoSuffix') && previousOrder.get('session') === OB.MobileApp.model.get('session');
+        }), function (maxDocumentNoOrder) {
+          return maxDocumentNoOrder.get('documentnoSuffix');
+        });
+        if (previousOrder) {
+          previousOrder.save();
+        }
       }
       if (!OB.MobileApp.model.get('preventOrderSave')) {
         OB.Dal.save(this, function () {
@@ -3355,9 +3367,6 @@
       }
       this.saveCurrent();
       this.current = this.newOrder();
-      if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
-        this.current.save();
-      }
       this.unshift(this.current);
       this.loadCurrent(true);
     },
