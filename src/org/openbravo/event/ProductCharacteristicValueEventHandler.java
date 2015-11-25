@@ -18,11 +18,12 @@
  */
 package org.openbravo.event;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import javax.enterprise.event.Observes;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -45,7 +46,7 @@ public class ProductCharacteristicValueEventHandler extends EntityPersistenceEve
   protected Logger logger = Logger.getLogger(this.getClass());
   private static Entity[] entities = { ModelProvider.getInstance().getEntity(
       ProductCharacteristicValue.ENTITY_NAME) };
-  private static ThreadLocal<String> prodchvalueUpdated = new ThreadLocal<String>();
+  private static ThreadLocal<List<String>> prodchvalueUpdated = new ThreadLocal<List<String>>();
 
   @Override
   protected Entity[] getObservedEntities() {
@@ -62,7 +63,7 @@ public class ProductCharacteristicValueEventHandler extends EntityPersistenceEve
       return;
     }
     final ProductCharacteristicValue pchv = (ProductCharacteristicValue) event.getTargetInstance();
-    prodchvalueUpdated.set(pchv.getProduct().getId());
+    addProductToList(pchv);
   }
 
   public void onUpdate(@Observes EntityUpdateEvent event) {
@@ -70,7 +71,8 @@ public class ProductCharacteristicValueEventHandler extends EntityPersistenceEve
       return;
     }
     final ProductCharacteristicValue pchv = (ProductCharacteristicValue) event.getTargetInstance();
-    prodchvalueUpdated.set(pchv.getProduct().getId());
+    prodchvalueUpdated.get().add(pchv.getProduct().getId());
+    addProductToList(pchv);
   }
 
   public void onDelete(@Observes EntityDeleteEvent event) {
@@ -78,14 +80,14 @@ public class ProductCharacteristicValueEventHandler extends EntityPersistenceEve
       return;
     }
     final ProductCharacteristicValue pchv = (ProductCharacteristicValue) event.getTargetInstance();
-    prodchvalueUpdated.set(pchv.getProduct().getId());
+    addProductToList(pchv);
   }
 
   public void onTransactionCompleted(@Observes TransactionCompletedEvent event) {
-    String strProductId = prodchvalueUpdated.get();
+    List<String> productList = prodchvalueUpdated.get();
     prodchvalueUpdated.set(null);
     prodchvalueUpdated.remove();
-    if (StringUtils.isBlank(strProductId) || event.getTransaction().wasRolledBack()) {
+    if (productList == null || productList.isEmpty() || event.getTransaction().wasRolledBack()) {
       return;
     }
     try {
@@ -99,15 +101,26 @@ public class ProductCharacteristicValueEventHandler extends EntityPersistenceEve
             OBContext.getOBContext().getLanguage().getLanguage());
       }
 
-      ProcessBundle pb = new ProcessBundle(VariantChDescUpdateProcess.AD_PROCESS_ID, vars)
-          .init(new DalConnectionProvider(false));
-      HashMap<String, Object> parameters = new HashMap<String, Object>();
-      parameters.put("mProductId", strProductId);
-      parameters.put("mChValueId", null);
-      pb.setParams(parameters);
-      OBScheduler.getInstance().schedule(pb);
+      for (String strProductId : productList) {
+        ProcessBundle pb = new ProcessBundle(VariantChDescUpdateProcess.AD_PROCESS_ID, vars)
+            .init(new DalConnectionProvider(false));
+        HashMap<String, Object> parameters = new HashMap<String, Object>();
+        parameters.put("mProductId", strProductId);
+        parameters.put("mChValueId", null);
+        pb.setParams(parameters);
+        OBScheduler.getInstance().schedule(pb);
+      }
     } catch (Exception e) {
       logger.error("Error executing process", e);
     }
+  }
+
+  private void addProductToList(ProductCharacteristicValue pchv) {
+    List<String> productList = prodchvalueUpdated.get();
+    if (productList == null) {
+      productList = new ArrayList<String>();
+    }
+    productList.add(pchv.getProduct().getId());
+    prodchvalueUpdated.set(productList);
   }
 }
