@@ -27,6 +27,11 @@ OB.UTIL.startRfidWebsocket = function startRfidWebsocket(websocketServerLocation
   // Called when a message is received from server
   OB.UTIL.rfidWebsocket.onmessage = function (event) {
     var message = JSON.parse(event.data);
+    _.each(OB.MobileApp.model.receipt.get('lines').models, function (line) {
+      if (line.get('obposEpccode') === message.dataToSave.obposEpccode) {
+        return;
+      }
+    });
     barcodeActionHandler.findProductByBarcode(message.uPCEAN, function (product) {
       OB.MobileApp.model.receipt.addProduct(product, '1', {
         rfid: true
@@ -50,6 +55,10 @@ OB.UTIL.startRfidWebsocket = function startRfidWebsocket(websocketServerLocation
   OB.UTIL.rfidWebsocket.onerror = function (err) {};
 };
 
+OB.UTIL.addEpcLineFromDeviceBuffer = function (line) {
+  OB.UTIL.rfidWebsocket.send('add:' + line.get('obposEpccode'));
+};
+
 OB.UTIL.eraseEpcOrderFromDeviceBuffer = function (order) {
   var epcCodes = '';
   _.each(order.get('lines').models, function (line) {
@@ -67,6 +76,19 @@ OB.UTIL.eraseEpcLineFromDeviceBuffer = function (line) {
   OB.UTIL.rfidWebsocket.send('erase:' + line.get('obposEpccode'));
 };
 
-OB.UTIL.addEpcLineFromDeviceBuffer = function (line) {
-  OB.UTIL.rfidWebsocket.send('add:' + line.get('obposEpccode'));
+OB.UTIL.eraseEpcOrderFromDeviceBufferBecauseTicketIsCompleted = function () {
+  OB.UTIL.rfidWebsocket.send('erase2:');
+};
+
+OB.UTIL.checkEpcOrderInDeviceBuffer = function (order) {
+  var epcCodes = '';
+  _.each(order.get('lines').models, function (line) {
+    if (line.get('obposEpccode')) {
+      epcCodes = epcCodes + line.get('obposEpccode') + ',';
+    }
+
+  });
+  if (epcCodes) {
+    OB.UTIL.rfidWebsocket.send('check:' + epcCodes.substring(0, epcCodes.length - 1));
+  }
 };

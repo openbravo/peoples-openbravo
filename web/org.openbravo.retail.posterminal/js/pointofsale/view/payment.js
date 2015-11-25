@@ -830,6 +830,12 @@ enyo.kind({
     var myModel = this.owner.model,
         me = this,
         payments;
+
+    if (OB.POS.hwserver.url && OB.POS.modelterminal.get('terminal').terminalType.userfid) {
+      OB.UTIL.checkEpcOrderInDeviceBuffer(myModel.get('order'));
+      OB.UTIL.eraseEpcOrderFromDeviceBufferBecauseTicketIsCompleted();
+    }
+
     this.allowOpenDrawer = false;
 
     if (this.disabled) {
