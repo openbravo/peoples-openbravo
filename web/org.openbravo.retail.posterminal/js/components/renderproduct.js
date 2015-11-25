@@ -113,8 +113,6 @@ enyo.kind({
     }
 
     if (!this.model.get('bestseller')) {
-      this.$.bestseller.applyStyle('min-width', '0px !important');
-      this.$.bestseller.applyStyle('width', '0px');
       this.$.bestseller.$.image.hide();
     }
 
