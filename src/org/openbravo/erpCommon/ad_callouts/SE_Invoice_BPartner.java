@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2014 Openbravo SLU
+ * All portions are Copyright (C) 2001-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -27,6 +27,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
@@ -110,6 +111,9 @@ public class SE_Invoice_BPartner extends HttpSecureAppServlet {
     else {
       resultado.append("var respuesta = new Array(");
       strUserRep = SEOrderBPartnerData.userIdSalesRep(this, data[0].salesrepId);
+      if (StringUtils.isEmpty(strUserRep)) {
+        strUserRep = vars.getUser();
+      }
       String strPriceList = (strIsSOTrx.equals("Y") ? data[0].mPricelistId : data[0].poPricelistId);
       if (strPriceList.equalsIgnoreCase("")) {
         strPriceList = SEOrderBPartnerData.defaultPriceList(this, strIsSOTrx, vars.getClient());
