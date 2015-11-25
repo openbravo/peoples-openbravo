@@ -1442,6 +1442,9 @@ isc.OBViewGrid.addProperties({
     ksAction_CancelEditing = function () {
       if (me.getEditForm()) {
         me.cancelEditing();
+        // force update of toolbar buttons state
+        // https://issues.openbravo.com/view.php?id=31567
+        me.view.toolBar.updateButtonState(true);
         return false; // To avoid keyboard shortcut propagation
       } else {
         return true;
@@ -4327,6 +4330,9 @@ isc.OBGridButtonsComponent.addProperties({
 
   doCancel: function () {
     this.grid.cancelEditing();
+    // force update of toolbar buttons state
+    // https://issues.openbravo.com/view.php?id=31567
+    this.grid.view.toolBar.updateButtonState(true);
   },
 
   hideMember: function (memberNo) {
