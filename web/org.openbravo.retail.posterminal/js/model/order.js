@@ -2077,6 +2077,7 @@
       this.unset('preventServicesUpdate');
       this.unset('deleting');
       this.get('lines').trigger('updateRelations');
+      this.calculateGross();
       var productAdded = 0;
       // TODO: Lost options and attributes, maybe has problems with other modules (like Complementary Products)
       addProductsOfLines(me, orderlines, 0, callback);
