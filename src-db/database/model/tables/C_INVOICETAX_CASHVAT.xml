@@ -53,6 +53,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="ISMANUALSETTLEMENT" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="C_INVOICETAXCASHVAT_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -69,5 +73,6 @@
         <index-column name="C_INVOICETAX_ID"/>
       </index>
       <check name="C_INVOICETAXCASHVAT_ACTIVE_CH"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="C_INVOICETAXCVAT_MANUALSET_CH"><![CDATA[ISMANUALSETTLEMENT IN ('Y', 'N')]]></check>
     </table>
   </database>

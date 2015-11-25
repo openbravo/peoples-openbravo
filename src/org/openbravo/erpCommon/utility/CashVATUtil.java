@@ -442,13 +442,24 @@ public class CashVATUtil {
   }
 
   /**
+   * @deprecated use
+   *             {@link #createFactCashVAT(AcctSchema, ConnectionProvider, Fact, String, DocLineCashVATReady_PaymentTransactionReconciliation, Invoice, String, String)}
+   *             instead
+   */
+  public static String createFactCashVAT(AcctSchema as, ConnectionProvider conn, Fact fact,
+      String Fact_Acct_Group_ID, DocLineCashVATReady_PaymentTransactionReconciliation line,
+      Invoice invoice, final String documentType, final String cCurrencyID, final String SeqNo) {
+    return createFactCashVAT(as, conn, fact, Fact_Acct_Group_ID, line, invoice, documentType, SeqNo);
+  }
+
+  /**
    * Create the accounting fact lines related to Cash VAT for payments, transactions and
    * reconciliations that come from a cash VAT invoice
    * 
    */
   public static String createFactCashVAT(AcctSchema as, ConnectionProvider conn, Fact fact,
       String Fact_Acct_Group_ID, DocLineCashVATReady_PaymentTransactionReconciliation line,
-      Invoice invoice, final String documentType, final String cCurrencyID, final String SeqNo) {
+      Invoice invoice, final String documentType, final String SeqNo) {
     try {
       if (invoice.isCashVAT() && !line.getInvoiceTaxCashVAT_V().isEmpty()) {
         FactLine factLine2 = null;
@@ -513,13 +524,13 @@ public class CashVATUtil {
                       conn), invoice.getCurrency().getId(), "", taxAmt.toString(),
                       Fact_Acct_Group_ID, nextSeqNo(factLine1.m_SeqNo), documentType, conn);
                 } else {
-                  final FactLine factLine1 = fact.createLine(line,
-                      m_tax.getAccount(DocTax.ACCTTYPE_TaxCredit_Trans, as, conn), cCurrencyID, "",
-                      taxAmountConverted, Fact_Acct_Group_ID, nextSeqNo(SeqNo), documentType, conn);
-                  factLine2 = fact.createLine(line,
-                      m_tax.getAccount(DocTax.ACCTTYPE_TaxCredit, as, conn), cCurrencyID,
-                      taxAmt.toString(), "", Fact_Acct_Group_ID, nextSeqNo(factLine1.m_SeqNo),
-                      documentType, conn);
+                  final FactLine factLine1 = fact.createLine(line, m_tax.getAccount(
+                      DocTax.ACCTTYPE_TaxCredit_Trans, as, conn), invoice.getCurrency().getId(),
+                      "", taxAmountConverted, Fact_Acct_Group_ID, nextSeqNo(SeqNo), documentType,
+                      conn);
+                  factLine2 = fact.createLine(line, m_tax.getAccount(DocTax.ACCTTYPE_TaxCredit, as,
+                      conn), invoice.getCurrency().getId(), taxAmt.toString(), "",
+                      Fact_Acct_Group_ID, nextSeqNo(factLine1.m_SeqNo), documentType, conn);
                 }
               }
               // APC
