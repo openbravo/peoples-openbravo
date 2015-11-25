@@ -3399,7 +3399,7 @@ isc.OBViewGrid.addProperties({
     }
 
 
-    if (this.getEditForm().dynamicCols) {
+    if (this.getEditForm() && this.getEditForm().dynamicCols) {
       for (i = 0; i < this.getEditForm().dynamicCols.length; i++) {
         if (this.getEditForm().dynamicCols[i] === focusItem.inpColumnName) {
           isDynamicCol = true;
@@ -3408,7 +3408,7 @@ isc.OBViewGrid.addProperties({
       }
     }
 
-    if (newRow && this.getEditForm().isNew && this.getEditForm().inFicCall && isDynamicCol && editCompletionEvent === 'tab' && !ficCallDone) {
+    if (newRow && this.getEditForm() && this.getEditForm().isNew && this.getEditForm().inFicCall && isDynamicCol && editCompletionEvent === 'tab' && !ficCallDone) {
       this.setEditValue(rowNum, 'actionAfterFicReturn', {
         target: this,
         method: this.cellEditEnd,
