@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, _, moment, Backbone, enyo, BigDecimal, alert, localStorage */
+/*global OB, _, moment, Backbone, enyo, BigDecimal, localStorage */
 
 (function () {
 
@@ -2490,8 +2490,7 @@
     },
 
     removePayment: function (payment) {
-      var payments = this.get('payments'),
-          i, max, p;
+      var payments = this.get('payments');
       OB.UTIL.HookManager.executeHooks('OBPOS_preRemovePayment', {
         paymentToRem: payment,
         payments: payments,
