@@ -43,7 +43,7 @@ OB.Reservation.QuantityValidate = function (item, validator, value, record) {
     return false;
   }
   quantity = new BigDecimal(String(value));
-  if (quantity.compareTo(availableQty.subtract(reservedinothersQty)) > 0) {
+  if (quantity.subtract(releasedQty).compareTo(availableQty.subtract(reservedinothersQty)) > 0) {
     isc.warn(OB.I18N.getLabel('OBUIAPP_Res_MoreQtyThanAvailable', [record.availableQty, record.reservedinothers]));
     return false;
   }
