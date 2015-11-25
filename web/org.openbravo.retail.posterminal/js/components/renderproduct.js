@@ -138,7 +138,6 @@ enyo.kind({
   drawImage: function () {
     this.inherited(arguments);
     this.$.image.applyStyle('background-position', '0px 0px');
-    this.$.image.applyStyle('background-color', 'transparent');
     this.$.image.applyStyle('background-size', '14px 16px !important');
   },
   initComponents: function () {
