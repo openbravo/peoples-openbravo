@@ -13,56 +13,45 @@ enyo.kind({
   name: 'OB.UI.RenderProduct',
   kind: 'OB.UI.listItemButton',
   components: [{
-    style: 'max-width: 100%;',
+    style: 'float: left; width: 25%',
     components: [{
-      style: 'display: table-cell; vertical-align: top;  width: 50px;',
+      tag: 'div',
+      classes: 'image-wrap',
+      contentType: 'image/png',
+      style: 'width: 49px; height: 49px',
       components: [{
-        tag: 'div',
-        classes: 'image-wrap',
-        contentType: 'image/png',
-        style: 'width: 49px; height: 49px;',
-        components: [{
-          tag: 'img',
-          name: 'icon',
-          style: 'margin: auto; height: 100%; width: 100%; background-size: contain; background-repeat:no-repeat; background-position:center;'
-        }]
-      }, {
-        kind: 'OB.UI.Thumbnail',
-        name: 'thumbnail'
+        tag: 'img',
+        name: 'icon',
+        style: 'margin: auto; height: 100%; width: 100%; background-size: contain; background-repeat:no-repeat; background-position:center;'
       }]
     }, {
-      style: 'display: table-cell; min-width: 10px;'
+      kind: 'OB.UI.Thumbnail',
+      name: 'thumbnail'
+    }]
+  }, {
+    style: 'float: left;',
+    name: 'identifierContainer',
+    components: [{
+      name: 'identifier'
     }, {
-      style: 'display: table-cell; vertical-align: top; width: 100%; word-break: break-word;',
-      name: 'identifierContainer',
-      components: [{
-        name: 'identifier',
-        style: 'max-height: 70px; overflow: hidden;'
-      }, {
-        style: 'color: #888888',
-        name: 'filterAttr',
-        allowHtml: true
-      }]
-    }, {
-      style: 'display: table-cell; min-width: 10px;'
-    }, {
+      style: 'color: #888888',
+      name: 'filterAttr',
+      allowHtml: true
+    }]
+  }, {
+    style: 'float: right; width: 32%;',
+    components: [{
       name: 'bestseller',
-      style: 'display: table-cell; min-width: 21px; height: 16px;',
-      kind: 'OB.UI.Thumbnail.Bestseller',
+      style: 'width: 14px; height: 16px;',
+      kind: 'OB.UI.Thumbnail',
       'default': 'img/iconBestsellerSmall.png',
       showing: false
     }, {
-      style: 'display: table-cell; vertical-align: top; ',
-      components: [{
-        style: 'width: 100%;',
-        components: [{
-          name: 'price',
-          style: 'float: right; text-align: right; font-weight: bold;'
-        }, {
-          name: 'priceList',
-          style: 'width: 100%; text-align: right; font-weight: bold; color: grey; font-size: 14px;'
-        }]
-      }]
+      name: 'price',
+      style: 'float: right; text-align: right; font-weight: bold;'
+    }, {
+      name: 'priceList',
+      style: 'width: 100%; text-align: right; font-weight: bold; color: grey; font-size: 14px;'
     }]
   }, {
     style: 'clear:both;'
@@ -112,8 +101,8 @@ enyo.kind({
       this.$.icon.parent.hide();
     }
 
-    if (!this.model.get('bestseller')) {
-      this.$.bestseller.$.image.hide();
+    if (this.model.get('bestseller')) {
+      this.$.bestseller.show();
     }
 
     if (OB.MobileApp.model.hasPermission('OBPOS_HideProductImagesInSearchAndBrowse', true)) {
@@ -129,19 +118,5 @@ enyo.kind({
   },
   setIdentifierContent: function () {
     return this.model.get('_identifier');
-  }
-});
-
-enyo.kind({
-  name: 'OB.UI.Thumbnail.Bestseller',
-  kind: 'OB.UI.Thumbnail',
-  drawImage: function () {
-    this.inherited(arguments);
-    this.$.image.applyStyle('background-position', '0px 0px');
-    this.$.image.applyStyle('background-size', '14px 16px !important');
-  },
-  initComponents: function () {
-    this.inherited(arguments);
-    this.removeClass('image-wrap');
   }
 });
