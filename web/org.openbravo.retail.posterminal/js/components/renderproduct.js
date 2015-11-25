@@ -39,19 +39,13 @@ enyo.kind({
       allowHtml: true
     }]
   }, {
-    style: 'float: right; width: 32%;',
+    style: 'float: right; width: 27%;',
     components: [{
-      name: 'bestseller',
-      style: 'width: 14px; height: 16px;',
-      kind: 'OB.UI.Thumbnail',
-      'default': 'img/iconBestsellerSmall.png',
-      showing: false
-    }, {
-      name: 'price',
-      style: 'float: right; text-align: right; font-weight: bold;'
+      style: 'width: 100%; text-align: right; font-weight:bold;',
+      name: 'price'
     }, {
       name: 'priceList',
-      style: 'width: 100%; text-align: right; font-weight: bold; color: grey; font-size: 14px;'
+      style: 'width: 100%; text-align: right; font-weight:bold; color: grey; font-size: 14px;'
     }]
   }, {
     style: 'clear:both;'
@@ -99,10 +93,6 @@ enyo.kind({
     } else {
       this.$.thumbnail.setImg(this.model.get('img'));
       this.$.icon.parent.hide();
-    }
-
-    if (this.model.get('bestseller')) {
-      this.$.bestseller.show();
     }
 
     if (OB.MobileApp.model.hasPermission('OBPOS_HideProductImagesInSearchAndBrowse', true)) {
