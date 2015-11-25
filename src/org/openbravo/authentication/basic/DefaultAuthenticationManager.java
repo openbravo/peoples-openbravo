@@ -13,19 +13,15 @@
 package org.openbravo.authentication.basic;
 
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.openbravo.authentication.AuthenticationException;
-import org.openbravo.authentication.AuthenticationExpiryPasswordException;
 import org.openbravo.authentication.AuthenticationManager;
 import org.openbravo.base.HttpBaseUtils;
 import org.openbravo.base.secureApp.LoginUtils;
@@ -33,8 +29,6 @@ import org.openbravo.base.secureApp.VariablesHistory;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
-
-import com.sun.xml.internal.ws.util.StringUtils;
 
 /**
  * 
@@ -98,29 +92,6 @@ public class DefaultAuthenticationManager extends AuthenticationManager {
 
       // throw error message will be caught by LoginHandler
       throw new AuthenticationException("IDENTIFICATION_FAILURE_TITLE", errorMsg);
-    }
-
-    // Check if password valid date is reached
-    String strUPD = LoginUtils.getUpdatePasswordDate(conn, strUser, strPass);
-    Date formattedUPD = null;
-    if (!strUPD.isEmpty()) {
-      DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-      try {
-        formattedUPD = df.parse(strUPD);
-      } catch (ParseException e) {
-        e.printStackTrace();
-      }
-      // Checks if password
-      Calendar currentDate = Calendar.getInstance();
-      Date today = new Date(currentDate.getTimeInMillis());
-      if (formattedUPD.compareTo(today) <= 0) {
-        log4j.debug("Failed user/password. Username: " + strUser + " - Session ID:" + sessionId);
-        OBError errorMsg = new OBError();
-        errorMsg.setType("Error");
-        errorMsg.setTitle("IDENTIFICATION_FAILURE_TITLE");
-        errorMsg.setMessage("IDENTIFICATION_FAILURE_MSG");
-        throw new AuthenticationExpiryPasswordException("IDENTIFICATION_FAILURE_TITLE", errorMsg);
-      }
     }
 
     // Using the Servlet API instead of vars.setSessionValue to avoid breaking code
