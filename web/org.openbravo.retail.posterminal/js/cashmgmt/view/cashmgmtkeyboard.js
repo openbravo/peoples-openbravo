@@ -125,9 +125,18 @@ enyo.kind({
       }
     }, this);
 
-    this.addToolbar({
-      name: 'cashMgmtToolbar',
-      buttons: buttons
+    OB.UTIL.HookManager.executeHooks('OBPOS_AddButtonToCashManagement', {
+      context: this,
+      buttons: []
+    }, function (args) {
+      _.each(args.buttons, function (btn) {
+        buttons.push(btn);
+      });
+      args.context.addToolbar({
+        name: 'cashMgmtToolbar',
+        buttons: buttons
+      });
+      args.context.showToolbar('cashMgmtToolbar');
     });
     this.showToolbar('cashMgmtToolbar');
   }
