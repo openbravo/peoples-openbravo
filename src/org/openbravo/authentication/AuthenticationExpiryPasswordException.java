@@ -15,9 +15,23 @@ package org.openbravo.authentication;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.erpCommon.utility.OBError;
 
+/**
+ * 
+ * @author jbu
+ */
 public class AuthenticationExpiryPasswordException extends OBException {
   private static final long serialVersionUID = 1L;
   private OBError error;
+
+  public AuthenticationExpiryPasswordException(String msg) {
+    super(msg);
+    this.error = null;
+  }
+
+  public AuthenticationExpiryPasswordException(String msg, Throwable cause) {
+    super(msg, cause);
+    this.error = null;
+  }
 
   public AuthenticationExpiryPasswordException(String msg, OBError error) {
     super(msg);
@@ -27,5 +41,4 @@ public class AuthenticationExpiryPasswordException extends OBException {
   public OBError getOBError() {
     return error;
   }
-
 }

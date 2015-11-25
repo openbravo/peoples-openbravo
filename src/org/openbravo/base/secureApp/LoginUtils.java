@@ -12,9 +12,12 @@
 package org.openbravo.base.secureApp;
 
 import java.io.File;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -22,10 +25,12 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.log4j.Logger;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.HttpBaseUtils;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.database.ConnectionProvider;
@@ -34,6 +39,7 @@ import org.openbravo.erpCommon.security.SessionLogin;
 import org.openbravo.erpCommon.utility.DimensionDisplayUtility;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.access.RoleOrganization;
+import org.openbravo.model.ad.access.User;
 import org.openbravo.model.ad.domain.Preference;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.service.db.DalConnectionProvider;
@@ -84,6 +90,38 @@ public class LoginUtils {
         lockSettings.addFail();
       }
       return userId;
+    } catch (final Exception e) {
+      throw new OBException(e);
+    }
+  }
+
+  public static Date getUpdatePasswordDate(ConnectionProvider connectionProvider, String login,
+      String unHashedPassword) {
+    try {
+      // Get the Update password date
+      UserLock lockSettings = new UserLock(login);
+      lockSettings.delayResponse();
+      if (lockSettings.isLockedUser()) {
+        return null;
+      }
+      Date total;
+
+      final OBCriteria<User> obc = OBDal.getInstance().createCriteria(User.class);
+      obc.add(Restrictions.like("username", login));
+
+      final List<User> listUser = obc.list();
+      User userOB = listUser.get(0);
+      Date lastUpdateDate = userOB.getUpdatePasswordDate();
+      Long validityDays = userOB.getClient().getValiddays();
+      if (validityDays != 0) {
+        Calendar currentDate = Calendar.getInstance();
+        currentDate
+            .setTimeInMillis(lastUpdateDate.getTime() + TimeUnit.DAYS.toMillis(validityDays));
+        total = new Date(currentDate.getTimeInMillis());
+        return total;
+      } else {
+        return null;
+      }
     } catch (final Exception e) {
       throw new OBException(e);
     }
