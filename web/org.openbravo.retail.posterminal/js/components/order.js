@@ -661,6 +661,12 @@ enyo.kind({
         this.$.divText.show();
         this.$.listPaymentLines.show();
         this.$.paymentBreakdown.show();
+      } else if (model.get('orderType') === 2) {
+        this.$.divText.addStyles('width: 60%; color: lightblue;');
+        this.$.divText.setContent(OB.I18N.getLabel('OBPOS_ToBeLaidaway'));
+        this.$.divText.show();
+        this.$.listPaymentLines.hide();
+        this.$.paymentBreakdown.hide();
       } else if (this.$.divText.content.indexOf(OB.I18N.getLabel('OBPOS_CancelReplace')) !== -1) {
         this.$.divText.hide();
         this.$.listPaymentLines.hide();
