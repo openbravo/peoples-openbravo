@@ -2466,64 +2466,68 @@
       var documentseq, documentseqstr, idMap = {},
           me = this;
 
-      this.get('lines').each(function (line) {
-        idMap[line.get('id')] = OB.Dal.get_uuid();
-        line.set('replacedorderline', line.get('id'));
-        line.set('id', idMap[line.get('id')]);
-      }, this);
+      OB.Dal.remove(this, function () {
+        me.get('lines').each(function (line) {
+          idMap[line.get('id')] = OB.Dal.get_uuid();
+          line.set('replacedorderline', line.get('id'));
+          line.set('id', idMap[line.get('id')]);
+        }, me);
 
-      this.set('replacedorder_documentNo', this.get('documentNo'));
-      this.set('replacedorder', this.get('id'));
-      this.set('id', null);
-      this.set('session', OB.MobileApp.model.get('session'));
+        me.set('replacedorder_documentNo', me.get('documentNo'));
+        me.set('replacedorder', me.get('id'));
+        me.set('id', null);
+        me.set('session', OB.MobileApp.model.get('session'));
 
-      this.set('generateInvoice', OB.MobileApp.model.get('terminal').terminalType.generateInvoice);
-      this.set('documentType', OB.MobileApp.model.get('terminal').terminalType.documentType);
+        me.set('generateInvoice', OB.MobileApp.model.get('terminal').terminalType.generateInvoice);
+        me.set('documentType', OB.MobileApp.model.get('terminal').terminalType.documentType);
 
-      if (this.get('isLayaway')) {
-        this.set('orderType', 2);
-      }
-      this.set('isLayaway', false);
-
-      this.set('createdBy', OB.MobileApp.model.get('orgUserId'));
-      if (!this.get('salesRepresentative')) {
-        if (OB.MobileApp.model.get('context').isSalesRepresentative) {
-          this.set('salesRepresentative', OB.MobileApp.model.get('context').user.id);
-        } else {
-          this.set('salesRepresentative', null);
+        if (me.get('isLayaway')) {
+          me.set('orderType', 2);
         }
-      }
+        me.set('isLayaway', false);
 
-      this.set('hasbeenpaid', 'N');
-      this.set('isPaid', false);
-      this.set('isEditable', true);
-
-      this.set('orderDate', new Date());
-      this.set('creationDate', null);
-
-      var nextDocumentno = OB.MobileApp.model.getNextDocumentno();
-
-      this.set('negativeDocNo', nextDocumentno);
-
-      this.set('documentnoPrefix', OB.MobileApp.model.get('terminal').docNoPrefix);
-      this.set('documentnoSuffix', nextDocumentno.documentnoSuffix + 1);
-      this.set('documentNo', OB.MobileApp.model.get('terminal').docNoPrefix + '/' + OB.UTIL.padNumber(nextDocumentno.documentnoSuffix + 1, 7));
-      this.set('posTerminal', OB.MobileApp.model.get('terminal').id);
-      this.save();
-
-      this.get('lines').each(function (line) {
-        if (line.get('relatedLines')) {
-          line.get('relatedLines').forEach(function (rl) {
-            rl.orderId = me.get('id');
-            if (idMap[rl.orderlineId]) {
-              rl.orderlineId = idMap[rl.orderlineId];
-            }
-          });
+        me.set('createdBy', OB.MobileApp.model.get('orgUserId'));
+        if (!me.get('salesRepresentative')) {
+          if (OB.MobileApp.model.get('context').isSalesRepresentative) {
+            me.set('salesRepresentative', OB.MobileApp.model.get('context').user.id);
+          } else {
+            me.set('salesRepresentative', null);
+          }
         }
-      }, this);
 
-      OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_OrderReplaced', [this.get('replacedorder_documentNo'), this.get('documentNo')]));
-      this.calculateGross();
+        me.set('hasbeenpaid', 'N');
+        me.set('isPaid', false);
+        me.set('isEditable', true);
+
+        me.set('orderDate', new Date());
+        me.set('creationDate', null);
+
+        var nextDocumentno = OB.MobileApp.model.getNextDocumentno();
+
+        me.set('negativeDocNo', nextDocumentno);
+
+        me.set('documentnoPrefix', OB.MobileApp.model.get('terminal').docNoPrefix);
+        me.set('documentnoSuffix', nextDocumentno.documentnoSuffix + 1);
+        me.set('documentNo', OB.MobileApp.model.get('terminal').docNoPrefix + '/' + OB.UTIL.padNumber(nextDocumentno.documentnoSuffix + 1, 7));
+        me.set('posTerminal', OB.MobileApp.model.get('terminal').id);
+        me.save();
+
+        me.get('lines').each(function (line) {
+          if (line.get('relatedLines')) {
+            line.get('relatedLines').forEach(function (rl) {
+              rl.orderId = me.get('id');
+              if (idMap[rl.orderlineId]) {
+                rl.orderlineId = idMap[rl.orderlineId];
+              }
+            });
+          }
+        }, me);
+
+        OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_OrderReplaced', [me.get('replacedorder_documentNo'), me.get('documentNo')]));
+        me.calculateGross();
+      }, function () {
+        OB.UTIL.showError('Error removing');
+      });
     },
 
     createQuotation: function () {
