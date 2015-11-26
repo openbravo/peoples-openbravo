@@ -317,7 +317,7 @@
         this.set('salesRepresentative' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, attributes['salesRepresentative' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER]);
         this.set('posTerminal', attributes.posTerminal);
         this.set('posTerminal' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, attributes['posTerminal' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER]);
-        this.set('orderDate', new Date(attributes.orderDate));
+        this.set('orderDate', OB.I18N.normalizeDate(attributes.orderDate));
         this.set('creationDate', OB.I18N.normalizeDate(attributes.creationDate));
         this.set('documentnoPrefix', attributes.documentnoPrefix);
         this.set('quotationnoPrefix', attributes.quotationnoPrefix);
@@ -681,7 +681,7 @@
       this.set('salesRepresentative' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, null);
       this.set('posTerminal', null);
       this.set('posTerminal' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, null);
-      this.set('orderDate', new Date());
+      this.set('orderDate', OB.I18N.normalizeDate(new Date()));
       this.set('creationDate', null);
       this.set('documentnoPrefix', -1);
       this.set('quotationnoPrefix', -1);
@@ -1769,7 +1769,7 @@
       this.set('hasbeenpaid', 'N');
       this.set('isPaid', false);
       this.set('isEditable', true);
-      this.set('orderDate', new Date());
+      this.set('orderDate', OB.I18N.normalizeDate(new Date()));
       this.set('creationDate', null);
       var nextDocumentno = OB.MobileApp.model.getNextDocumentno();
       this.set('documentnoPrefix', OB.MobileApp.model.get('terminal').docNoPrefix);
@@ -2570,7 +2570,7 @@
       }
       order.set('posTerminal', OB.MobileApp.model.get('terminal').id);
       order.set('posTerminal' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, OB.MobileApp.model.get('terminal')._identifier);
-      order.set('orderDate', new Date());
+      order.set('orderDate', OB.I18N.normalizeDate(new Date()));
       order.set('creationDate', null);
       order.set('isPaid', false);
       order.set('paidOnCredit', false);
@@ -2615,7 +2615,7 @@
       order.set('hasbeenpaid', 'Y');
       order.set('isEditable', false);
       order.set('checked', model.checked); //TODO: what is this for, where it comes from?
-      order.set('orderDate', moment(model.orderDate.toString(), "YYYY-MM-DD").toDate());
+      order.set('orderDate', OB.I18N.normalizeDate(model.orderDate));
       order.set('creationDate', OB.I18N.normalizeDate(model.creationDate));
       order.set('paidOnCredit', false);
       if (model.isQuotation) {
