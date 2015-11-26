@@ -560,7 +560,7 @@ public class DocFINFinAccTransaction extends AcctServer {
 
             // Cash VAT
             SeqNo = CashVATUtil.createFactCashVAT(as, conn, fact, Fact_Acct_Group_ID, line,
-                invoice, DocumentType, C_Currency_ID, SeqNo);
+                invoice, DocumentType, SeqNo);
           }
           if (isPrepayment) {
             // To force opposite posting isReceipt is opposite as well. this is required when
