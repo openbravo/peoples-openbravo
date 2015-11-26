@@ -306,8 +306,17 @@
           || ' AND h.ISSOTRX = ''Y'''
           || ' AND h.AD_Client_ID = '':1''';
           IF (v_BasisStatus='F') THEN
-            v_Cmd:= v_Cmd || ' AND psv.LastPayment >= to_date('':2'')'
-            || ' AND psv.LastPayment < to_date('':3'') +1';
+            v_Cmd:= v_Cmd || ' and exists ('
+                          || '              select 1 from fin_payment_sched_inv_v psv1 '
+                          || '              where psv1.c_invoice_id = psv.c_invoice_id '
+                          || '              and psv1.lastpayment >= to_date('':2'') '
+                          || '              and psv1.lastpayment < to_date('':3'') + 1 '
+                          || '             ) '
+                          || ' and to_date('':3'') + 1 > ALL ( '
+                          || '                                select psv2.lastpayment '
+                          || '                                from fin_payment_sched_inv_v psv2 '
+                          || '                                where psv2.c_invoice_id = h.c_invoice_id '
+                          || '                                ) ';
           ELSE
             v_Cmd:= v_Cmd || ' AND h.DateInvoiced >= to_date('':2'')'
             || ' AND h.DateInvoiced < to_date('':3'') +1';
