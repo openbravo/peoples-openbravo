@@ -265,7 +265,7 @@ enyo.kind({
     }
     this.receipt.on('change:orderType change:isLayaway change:payment', function (model) {
       if (this.model.get('leftColumnViewManager').isMultiOrder()) {
-        this.$.creditsalesaction.hide();
+        this.updateCreditSalesAction();
         this.$.layawayaction.hide();
         return;
       }
@@ -273,17 +273,15 @@ enyo.kind({
       if ((model.get('orderType') === 2 || (model.get('isLayaway'))) && model.get('orderType') !== 3 && !model.getPaymentStatus().done) {
         this.$.layawayaction.setContent(OB.I18N.getLabel('OBPOS_LblLayaway'));
         this.$.layawayaction.show();
-        if (model.changed.orderType === 2) {
-          this.$.layawayaction.show();
+        if (model.get('orderType') === 2) {
           this.$.exactbutton.hide();
         }
-        this.updateCreditSalesAction();
       } else if (model.get('orderType') === 3) {
-        this.$.creditsalesaction.hide();
         this.$.layawayaction.hide();
       } else {
         this.$.layawayaction.hide();
       }
+      this.updateCreditSalesAction();
     }, this);
     this.$.extrainfo.setContent('');
     this.receipt.on('extrainfo', function (info) {
@@ -357,7 +355,7 @@ enyo.kind({
       if (!_.isEmpty(OB.MobileApp.model.paymentnames)) {
         this.$.donebutton.show();
       }
-      this.$.creditsalesaction.hide();
+      this.updateCreditSalesAction();
       this.$.layawayaction.hide();
     } else {
       this.setTotalPending(this.receipt.getPending(), rate, symbol, symbolAtRight);
@@ -462,7 +460,7 @@ enyo.kind({
       if (!_.isEmpty(OB.MobileApp.model.paymentnames)) {
         this.$.donebutton.show();
       }
-      this.$.creditsalesaction.hide();
+      this.updateCreditSalesAction();
       //            this.$.layawayaction.hide();
     } else {
       this.setTotalPending(OB.DEC.sub(paymentstatus.get('total'), paymentstatus.get('payment')), rate, symbol, symbolAtRight);
@@ -475,7 +473,7 @@ enyo.kind({
       }
     }
 
-    this.$.creditsalesaction.hide();
+    this.updateCreditSalesAction();
     this.$.layawayaction.hide();
     if (paymentstatus.get('multiOrdersList').length > 0 && OB.DEC.compare(paymentstatus.get('total')) >= 0 && (OB.DEC.compare(OB.DEC.sub(paymentstatus.get('payment'), paymentstatus.get('total'))) >= 0 || paymentstatus.get('total') === 0)) {
       this.$.exactbutton.hide();
