@@ -565,7 +565,7 @@ enyo.kind({
           inEvent.callback.call(inEvent.context, success);
         }
       });
-      if (args.productToAdd.get('groupProduct')) {
+      if (args.productToAdd.get('groupProduct') && !(args.productToAdd.get('productType') === 'S') && !args.productToAdd.get('isLinkedToProduct')) {
         // The product added is grouped, so enable the quantity button
         args.context.waterfall('onEnableQtyButton', {
           enable: true
@@ -1162,7 +1162,7 @@ enyo.kind({
     this.waterfall('onChangePricelist', inEvent);
   },
   receiptLineSelected: function (inSender, inEvent) {
-    if (inEvent.product.get('groupProduct')) {
+    if (inEvent.product.get('groupProduct') && !(inEvent.product.get('productType') === 'S') && !inEvent.product.get('isLinkedToProduct')) {
       // The line selected is a grouped product, so enable the quantity button
       this.waterfall('onEnableQtyButton', {
         enable: true
