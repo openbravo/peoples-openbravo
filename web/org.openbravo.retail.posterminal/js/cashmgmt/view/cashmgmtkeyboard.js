@@ -138,6 +138,6 @@ enyo.kind({
       });
       args.context.showToolbar('cashMgmtToolbar');
     });
-    this.showToolbar('cashMgmtToolbar');
+
   }
 });
