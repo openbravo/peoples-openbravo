@@ -11,16 +11,16 @@
 
 (function () {
 
-  var SubscribeToCalculateGross = function (receipt, f) {
+  var subscribeToCalculateGross = function (receipt, f) {
       this.f = f;
       this.receipt = receipt;
       };
 
-  SubscribeToCalculateGross.prototype.doSubscription = function () {
+  subscribeToCalculateGross.prototype.doSubscription = function () {
     this.receipt.on('saveCurrent', this._callback, this);
   };
 
-  SubscribeToCalculateGross.prototype._callback = function () {
+  subscribeToCalculateGross.prototype._callback = function () {
     this.receipt.off('saveCurrent', this._callback);
     this.f();
   };
@@ -1267,7 +1267,7 @@
           if (callback) {
             callback(true);
           }
-          var subs = new SubscribeToCalculateGross(me, function () {
+          var subs = new subscribeToCalculateGross(me, function () {
             if (args.newLine && me.get('lines').contains(line)) {
               // Display related services after calculate gross, if it is new line and if the line has not been deleted.
               // The line might has been deleted during calculate gross for examples if there was an error in taxes.
