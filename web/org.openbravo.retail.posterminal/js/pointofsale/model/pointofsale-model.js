@@ -683,6 +683,9 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
             successCallbackBPLoc = function (bpLoc) {
               dataBps.set('locId', bpLoc.get('id'));
               dataBps.set('locName', bpLoc.get('name'));
+              dataBps.set('cityName', bpLoc.get('cityName'));
+              dataBps.set('countryName', bpLoc.get('countryName'));
+              dataBps.set('postalCode', bpLoc.get('postalCode'));
               dataBps.set('locationModel', bpLoc);
               OB.MobileApp.model.set('businessPartner', dataBps);
               me.loadUnpaidOrders(callback);
@@ -694,6 +697,9 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
               successCallbackBPLoc = function (bpLoc) {
                 dataBps.set('locId', bpLoc.get('id'));
                 dataBps.set('locName', bpLoc.get('name'));
+                dataBps.set('cityName', bpLoc.get('cityName'));
+                dataBps.set('countryName', bpLoc.get('countryName'));
+                dataBps.set('postalCode', bpLoc.get('postalCode'));
                 dataBps.set('locationModel', bpLoc);
                 OB.MobileApp.model.set('businessPartner', dataBps);
                 me.loadUnpaidOrders(callback);
