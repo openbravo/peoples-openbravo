@@ -386,6 +386,10 @@ enyo.kind({
     this.setDisabled(inEvent.status);
   },
   tap: function (options) {
+    this.model.get('order').get('lines').on('selected', function (lineSelected) {
+      this.currentLine = lineSelected;
+    }, this);
+    
     if (!options.isManual) {
       // The tap was not manual. So consider the last line added
       var lines = this.model.get('order').get('lines');
@@ -393,7 +397,9 @@ enyo.kind({
       if (lines && lines.length > 0) {
         lastLine = lines.models[lines.length - 1];
       }
-      if (lastLine) {
+      if (this.currentLine) {
+        this.currentLine.trigger('selected', this.currentLine);
+      } else if (lastLine) {
         lastLine.trigger('selected', lastLine);
       }
     }
