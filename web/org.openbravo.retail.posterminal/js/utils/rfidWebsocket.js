@@ -33,6 +33,7 @@ OB.UTIL.startRfidWebsocket = function startRfidWebsocket(websocketServerLocation
       }
     });
     barcodeActionHandler.findProductByBarcode(message.uPCEAN, function (product) {
+      product.set('groupProduct', false)
       OB.MobileApp.model.receipt.addProduct(product, '1', {
         rfid: true
       }, message.dataToSave);
@@ -55,7 +56,7 @@ OB.UTIL.startRfidWebsocket = function startRfidWebsocket(websocketServerLocation
   OB.UTIL.rfidWebsocket.onerror = function (err) {};
 };
 
-OB.UTIL.addEpcLineFromDeviceBuffer = function (line) {
+OB.UTIL.addEpcLineToDeviceBuffer = function (line) {
   OB.UTIL.rfidWebsocket.send('add:' + line.get('obposEpccode'));
 };
 
@@ -80,6 +81,15 @@ OB.UTIL.eraseEpcOrderFromDeviceBufferBecauseTicketIsCompleted = function () {
   OB.UTIL.rfidWebsocket.send('erase2:');
 };
 
+OB.UTIL.eraseEpcBuffer = function () {
+  this.waitForConnection(function () {
+    OB.UTIL.rfidWebsocket.send('erase3:');
+    if (typeof callback !== 'undefined') {
+      callback();
+    }
+  }, 1000);
+};
+
 OB.UTIL.checkEpcOrderInDeviceBuffer = function (order) {
   var epcCodes = '';
   _.each(order.get('lines').models, function (line) {
@@ -90,5 +100,16 @@ OB.UTIL.checkEpcOrderInDeviceBuffer = function (order) {
   });
   if (epcCodes) {
     OB.UTIL.rfidWebsocket.send('check:' + epcCodes.substring(0, epcCodes.length - 1));
+  }
+};
+
+OB.UTIL.waitForConnection = function (callback, interval) {
+  if (OB.UTIL.rfidWebsocket.readyState === 1) {
+    callback();
+  } else {
+    var that = this;
+    setTimeout(function () {
+      that.waitForConnection(callback, interval);
+    }, interval);
   }
 };

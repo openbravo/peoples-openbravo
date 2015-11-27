@@ -899,9 +899,8 @@
         line: line,
         undo: function () {
           if (OB.POS.hwserver.url && OB.POS.modelterminal.get('terminal').terminalType.userfid && line.get('obposEpccode')) {
-            // TODO
             if (OB.POS.hwserver.url && OB.POS.modelterminal.get('terminal').terminalType.userfid && line.get('obposEpccode')) {
-              OB.UTIL.addEpcLineFromDeviceBuffer(line);
+              OB.UTIL.addEpcLineToDeviceBuffer(line);
             }
           }
           me.get('lines').add(line, {
