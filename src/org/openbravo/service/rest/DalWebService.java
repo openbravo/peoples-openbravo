@@ -80,6 +80,7 @@ public class DalWebService implements WebService {
   // Parameter to specify the list of properties to be returned
   public static final String PARAMETER_PROPERTIES = "_selectedProperties";
   public static final String PARAMETER_NO_ACTIVE_FILTER = "_noActiveFilter";
+  private static final String ID = "id";
 
   /**
    * Performs the GET REST operation. This service handles multiple types of request: the request
@@ -229,7 +230,10 @@ public class DalWebService implements WebService {
           }
         }
       } else {
-        final BaseOBObject result = OBDal.getInstance().get(entityName, id);
+        final OBQuery<BaseOBObject> obq = OBDal.getInstance().createQuery(entityName,
+            ID + " = '" + id + "'");
+        obq.setMaxResult(1);
+        final BaseOBObject result = obq.uniqueResult();
 
         if (result == null) {
           throw new ResourceNotFoundException("No resource found for entity " + entityName
