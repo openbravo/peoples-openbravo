@@ -69,8 +69,18 @@ public class LoginHandler extends HttpBaseServlet {
     req.getSession().removeAttribute("#Authenticated_user");
     vars.removeSessionValue("#AD_Role_ID");
     vars.setSessionObject("#loggingIn", "Y");
-
-    final String strUser = vars.getStringParameter("user");
+    final Boolean resetPassword = Boolean.parseBoolean(vars.getStringParameter("resetPassword"));
+    final String strUser;
+    final String strPass;
+    if (resetPassword) {
+      strPass = vars.getStringParameter("user");
+      strUser = vars.getStringParameter("loggedUser");
+      OBContext.setAdminMode();
+      LoginUtils.updatePassword(strUser, strPass);
+      OBContext.restorePreviousMode();
+    } else {
+      strUser = vars.getStringParameter("user");
+    }
 
     // When redirect parameter is true, instead of returning a json object with the login result and
     // target, a redirect to the application or error page is done.
@@ -448,7 +458,8 @@ public class LoginHandler extends HttpBaseServlet {
         jsonMsg.put("messageType", msgType);
         jsonMsg.put("messageTitle", title);
         jsonMsg.put("messageText", msg);
-
+        jsonMsg.put("resetPassword", true);
+        jsonMsg.put("loggedUser", vars.getStringParameter("user"));
         if ("Confirmation".equals(msgType)) {
           jsonMsg.put("command", "FORCE_NAMED_USER");
         }
@@ -460,29 +471,6 @@ public class LoginHandler extends HttpBaseServlet {
         log4j.error("Error setting login msg", e);
         throw new ServletException(e);
       }
-    } else {
-      // 2.50 instances show the message in a new window, print that window
-      String discard[] = { "" };
-
-      if (msgType.equals("Error")) {
-        discard[0] = "continueButton";
-      } else {
-        discard[0] = "backButton";
-      }
-
-      final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-          "org/openbravo/base/secureApp/HtmlErrorLogin", discard).createXmlDocument();
-
-      // pass relevant mesasge to show inside the error page
-      xmlDocument.setParameter("theme", vars.getTheme());
-      xmlDocument.setParameter("messageType", msgType);
-      xmlDocument.setParameter("action", action);
-      xmlDocument.setParameter("messageTitle", title);
-      xmlDocument.setParameter("messageMessage", msg.replaceAll("\\\\n", "<br>"));
-      response.setContentType("text/html");
-      final PrintWriter out = response.getWriter();
-      out.println(xmlDocument.print());
-      out.close();
     }
   }
 

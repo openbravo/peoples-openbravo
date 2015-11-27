@@ -97,8 +97,9 @@ public class LoginUtils {
 
   public static Date getUpdatePasswordDate(ConnectionProvider connectionProvider, String login,
       String unHashedPassword) {
+    // Gets the expiry password date
     try {
-      // Get the Update password date
+
       UserLock lockSettings = new UserLock(login);
       lockSettings.delayResponse();
       if (lockSettings.isLockedUser()) {
@@ -122,6 +123,30 @@ public class LoginUtils {
       } else {
         return null;
       }
+    } catch (final Exception e) {
+      throw new OBException(e);
+    }
+
+  }
+
+  public static Boolean updatePassword(String login, String unHashedPassword) {
+    // Set the Updated password date
+    try {
+
+      UserLock lockSettings = new UserLock(login);
+      lockSettings.delayResponse();
+      if (lockSettings.isLockedUser()) {
+        return null;
+      }
+
+      final OBCriteria<User> obc = OBDal.getInstance().createCriteria(User.class);
+      obc.add(Restrictions.like("username", login));
+
+      final List<User> listUser = obc.list();
+      User userOB = listUser.get(0);
+      userOB.setPassword(FormatUtilities.sha1Base64(unHashedPassword));
+      OBDal.getInstance().save(userOB);
+      return true;
     } catch (final Exception e) {
       throw new OBException(e);
     }

@@ -13,8 +13,6 @@
 package org.openbravo.authentication.basic;
 
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -56,20 +54,34 @@ public class DefaultAuthenticationManager extends AuthenticationManager {
       throws AuthenticationException, ServletException, IOException {
 
     final VariablesSecureApp vars = new VariablesSecureApp(request, false);
-    final String sUserId = (String) request.getSession().getAttribute("#Authenticated_user");
-    final String strAjax = vars.getStringParameter("IsAjaxCall");
+    final Boolean resetPassword = Boolean.parseBoolean(vars.getStringParameter("resetPassword"));
+    final String sUserId;
+    if (resetPassword) {
+      final String userId = LoginUtils.getValidUserId(conn, vars.getStringParameter("loggedUser"),
+          vars.getStringParameter("user"));
+      sUserId = userId;
+    } else {
+      sUserId = (String) request.getSession().getAttribute("#Authenticated_user");
 
-    if (!StringUtils.isEmpty(sUserId)) {
+    }
+    final String strAjax = vars.getStringParameter("IsAjaxCall");
+    if (!StringUtils.isEmpty(sUserId) && !resetPassword) {
       return sUserId;
     }
 
     VariablesHistory variables = new VariablesHistory(request);
-
+    final String strUser;
+    final String strPass;
     // Begins code related to login process
-
-    final String strUser = vars.getStringParameter("user");
-    final String strPass = vars.getStringParameter("password");
-    username = strUser;
+    if (resetPassword) {
+      strUser = vars.getStringParameter("loggedUser");
+      strPass = vars.getStringParameter("password");
+      username = strUser;
+    } else {
+      strUser = vars.getStringParameter("user");
+      strPass = vars.getStringParameter("password");
+      username = strUser;
+    }
 
     if (StringUtils.isEmpty(strUser)) {
       // redirects to the menu or the menu with the target
@@ -102,7 +114,6 @@ public class DefaultAuthenticationManager extends AuthenticationManager {
     Date dateUPD = LoginUtils.getUpdatePasswordDate(conn, strUser, strPass);
 
     if (dateUPD != null) {
-      DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 
       // Checks if password
       Calendar currentDate = Calendar.getInstance();
