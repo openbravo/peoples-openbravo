@@ -22,7 +22,8 @@ enyo.kind({
     onButtonStatusChanged: 'buttonStatusChanged',
     onMaxLimitAmountError: 'maxLimitAmountError',
     onButtonPaymentChanged: 'paymentChanged',
-    onClearPaymentMethodSelect: 'clearPaymentMethodSelect'
+    onClearPaymentMethodSelect: 'clearPaymentMethodSelect',
+    onCheckValidPaymentList: 'checkValidPaymentList'
   },
   getSelectedPayment: function () {
     if (this.receipt && this.receipt.selectedPayment) {
@@ -48,7 +49,7 @@ enyo.kind({
       });
     } else {
       var payment, change, pending, isMultiOrders, paymentstatus;
-      payment = inEvent.value.payment || OB.MobileApp.model.paymentnames[OB.MobileApp.model.get('paymentcash')];
+      payment = inEvent.value.payment || OB.MobileApp.model.paymentnames[this.receipt.selectedPayment || OB.MobileApp.model.get('paymentcash')];
       if (_.isUndefined(payment)) {
         return true;
       }
@@ -586,8 +587,31 @@ enyo.kind({
     return check;
   },
 
+  checkValidPaymentList: function (inSender, inEvent) {
+    var me = this,
+        checkPayment = true;
+    // Validating Payment
+    me.receipt.get('payments').each(function (payment) {
+      if (checkPayment) {
+        var paymentModal = OB.MobileApp.model.paymentnames[payment.get('kind')];
+        // Checking payment is valid
+        var returnCheck = me.checkValidPayments(me.receipt.getPaymentStatus(), paymentModal);
+        if (!returnCheck.enoughCashAvailable) {
+          OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_NoEnoughCash'));
+          checkPayment = false;
+        }
+      }
+    });
+    return true;
+  },
+
   checkValidPayments: function (paymentstatus, selectedPayment) {
     var resultOK;
+    var returnCheck = {
+      validCashOverpayment: false,
+      enoughCashAvailable: false,
+      validPaymentMethod: false
+    };
 
     // Hide all error labels. Error labels are shown by check... functions
     this.$.overpaymentnotavailable.hide();
@@ -598,10 +622,15 @@ enyo.kind({
     // Do the checkins
     resultOK = this.checkValidCashOverpayment(paymentstatus, selectedPayment);
     if (resultOK) {
+      returnCheck.validCashOverpayment = true;
       resultOK = this.checkEnoughCashAvailable(paymentstatus, selectedPayment, this, function (success) {
         var lsuccess = success;
         if (lsuccess) {
+          returnCheck.enoughCashAvailable = true;
           lsuccess = this.checkValidPaymentMethod(paymentstatus, selectedPayment);
+          if (lsuccess) {
+            returnCheck.validPaymentMethod = true;
+          }
         }
         this.setStatusButtons(lsuccess);
       });
@@ -612,6 +641,7 @@ enyo.kind({
     if (!resultOK && !selectedPayment.paymentMethod.iscash) {
       this.$.noenoughchangelbl.hide();
     }
+    return returnCheck;
   },
 
   setStatusButtons: function (resultOK) {
@@ -829,6 +859,9 @@ enyo.kind({
         me = this,
         payments;
     this.allowOpenDrawer = false;
+
+    // Checking Payment before Process
+    this.bubble('onCheckValidPaymentList');
 
     if (this.disabled) {
       return true;
