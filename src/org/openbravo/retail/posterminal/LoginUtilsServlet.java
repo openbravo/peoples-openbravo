@@ -27,6 +27,7 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.businessUtility.Preferences;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.mobile.core.MobileServerDefinition;
@@ -331,7 +332,9 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
       value = Preferences.getPreferenceValue("OBPOS_TerminalAuthentication", true, null, null,
           null, null, (String) null);
     } catch (PropertyException e) {
-      result.put("terminalAuthentication", "N");
+      result.put("terminalAuthentication", "Y");
+      result.put("errorReadingTerminalAuthentication",
+          OBMessageUtils.messageBD("OBPOS_errorWhileReadingTerminalAuthenticationPreference"));
       return result;
     }
     result.put("terminalAuthentication", value);

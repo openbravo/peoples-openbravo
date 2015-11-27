@@ -20,6 +20,7 @@ import org.hibernate.criterion.Restrictions;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.Preferences;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.service.json.JsonConstants;
@@ -56,16 +57,11 @@ public class CheckTerminalAuth extends JSONProcessSimple {
           value = Preferences.getPreferenceValue("OBPOS_TerminalAuthentication", true, null, null,
               null, null, (String) null);
         } catch (final PropertyException e) {
-          if (!terminalAuthentication.equals("N")) {
-            respArray.put("terminalAuthentication", terminalAuthentication);
-            result.put(JsonConstants.RESPONSE_DATA, respArray);
-            return result;
-          }
-          if (!terminalAuthentication.equals(value)) {
-            respArray.put("terminalAuthentication", terminalAuthentication);
-            result.put(JsonConstants.RESPONSE_DATA, respArray);
-            return result;
-          }
+          respArray.put("terminalAuthentication", "Y");
+          respArray.put("errorReadingTerminalAuthentication",
+              OBMessageUtils.messageBD("OBPOS_errorWhileReadingTerminalAuthenticationPreference"));
+          result.put(JsonConstants.RESPONSE_DATA, respArray);
+          return result;
         }
       }
     } catch (final Exception e) {

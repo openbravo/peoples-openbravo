@@ -407,6 +407,9 @@
             if (data.terminalAuthentication) {
               window.localStorage.setItem('terminalAuthentication', data.terminalAuthentication);
             }
+            if (data && data.errorReadingTerminalAuthentication) {
+              OB.UTIL.showWarning(data.errorReadingTerminalAuthentication);
+            }
             OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_TerminalAuthChange'), OB.I18N.getLabel('OBPOS_TerminalAuthChangeMsg'), [{
               label: OB.I18N.getLabel('OBMOBC_LblOk'),
               isConfirmButton: true,
@@ -527,6 +530,9 @@
               }
               if (data.terminalAuthentication) {
                 window.localStorage.setItem('terminalAuthentication', data.terminalAuthentication);
+              }
+              if (data && data.errorReadingTerminalAuthentication) {
+                OB.UTIL.showWarning(data.errorReadingTerminalAuthentication);
               }
               OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_TerminalAuthChange'), OB.I18N.getLabel('OBPOS_TerminalAuthChangeMsg'), [{
                 label: OB.I18N.getLabel('OBMOBC_LblOk'),
@@ -878,6 +884,9 @@
       new OB.OBPOSLogin.UI.LoginRequest({
         url: '../../org.openbravo.retail.posterminal.service.loginutils'
       }).response(this, function (inSender, inResponse) {
+        if (inResponse && inResponse.errorReadingTerminalAuthentication) {
+          OB.UTIL.showWarning(inResponse.errorReadingTerminalAuthentication);
+        }
         window.localStorage.setItem('terminalAuthentication', inResponse.terminalAuthentication);
         if (!(window.localStorage.getItem('cacheSessionId') && window.localStorage.getItem('cacheSessionId').length === 32)) {
           window.localStorage.setItem('cacheSessionId', inResponse.cacheSessionId);
