@@ -23,6 +23,7 @@ import java.util.List;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Hibernate;
+import org.hibernate.criterion.Order;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.client.application.GCField;
 import org.openbravo.client.application.GCSystem;
@@ -30,6 +31,7 @@ import org.openbravo.client.application.GCTab;
 import org.openbravo.client.application.Parameter;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.ui.Element;
 import org.openbravo.model.ad.ui.Field;
@@ -189,11 +191,12 @@ public class OBViewUtil {
   private static JSONObject getGridConfigurationSettings(Field field, Tab tab) {
     GridConfigSettings settings = new GridConfigSettings();
 
-    GCTab tabConf = null;
-    for (GCTab t : tab.getOBUIAPPGCTabList()) {
-      tabConf = t;
-      break;
-    }
+    OBCriteria<GCTab> gcTabCriteria = OBDal.getInstance().createCriteria(GCTab.class);
+    gcTabCriteria.addOrder(Order.desc(GCTab.PROPERTY_SEQNO));
+    gcTabCriteria.addOrder(Order.desc(GCTab.PROPERTY_ID));
+    gcTabCriteria.setMaxResults(1);
+    gcTabCriteria.list();
+    GCTab tabConf = (GCTab) gcTabCriteria.uniqueResult();
 
     if (tabConf != null && field != null && field.getId() != null) {
       GCField fieldConf = null;
@@ -219,7 +222,12 @@ public class OBViewUtil {
 
     if (settings.shouldContinueProcessing()) {
       // Trying to get parameters from "Grid Configuration (System)" window
-      List<GCSystem> sysConfs = OBDal.getInstance().createQuery(GCSystem.class, "").list();
+      OBCriteria<GCSystem> gcSystemCriteria = OBDal.getInstance().createCriteria(GCSystem.class);
+      gcSystemCriteria.addOrder(Order.desc(GCTab.PROPERTY_SEQNO));
+      gcSystemCriteria.addOrder(Order.desc(GCTab.PROPERTY_ID));
+      gcSystemCriteria.setMaxResults(1);
+      List<GCSystem> sysConfs = gcSystemCriteria.list();
+
       if (!sysConfs.isEmpty()) {
         settings.processConfig(sysConfs.get(0));
       }
