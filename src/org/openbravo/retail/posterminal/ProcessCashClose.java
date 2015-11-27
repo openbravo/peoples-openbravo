@@ -173,50 +173,51 @@ public class ProcessCashClose extends POSDataSynchronizationProcess implements
     for (OBPOSAppCashup appCashup : cashupList) {
       cashUpIds.add(appCashup.getId());
     }
-
-    // Sum shared PaymentMethodCashup
-    String query = "select searchkey, sum(startingcash), sum(totalDeposits), sum(totalDrops), sum(totalreturns), sum(totalsales) "
-        + "from OBPOS_Paymentmethodcashup "
-        + "where cashUp.id in :cashUpIds and paymentType.paymentMethod.isshared = 'Y'"
-        + "group by searchkey";
-    final Session session = OBDal.getInstance().getSession();
-    final Query paymentQuery = session.createQuery(query);
-    paymentQuery.setParameterList("cashUpIds", cashUpIds);
-    List<?> paymentList = paymentQuery.list();
-    for (int i = 0; i < paymentList.size(); i++) {
-      Object[] item = (Object[]) paymentList.get(i);
-      // Get master payment method cashup
-      OBPOSPaymentMethodCashup masterCashup = getPaymentMethodCashup(cashUpId, (String) item[0]);
-      if (masterCashup != null) {
-        masterCashup.setStartingcash(masterCashup.getStartingcash().add((BigDecimal) item[1]));
-        masterCashup.setTotalDeposits(masterCashup.getTotalDeposits().add((BigDecimal) item[2]));
-        masterCashup.setTotalDrops(masterCashup.getTotalDrops().add((BigDecimal) item[3]));
-        masterCashup.setTotalreturns(masterCashup.getTotalreturns().add((BigDecimal) item[4]));
-        masterCashup.setTotalsales(masterCashup.getTotalsales().add((BigDecimal) item[5]));
-        OBDal.getInstance().save(masterCashup);
-      } else {
-        throw new OBException(
-            "Cash up can not proceed, not found all slave terminal shared payment methods on master terminal: "
-                + (String) item[0]);
-      }
-    }
-
-    // Remove shared PaymentMethodCashup
-    List<String> paymentMethodCashupIds = new ArrayList<String>();
-    for (OBPOSAppCashup appCashup : cashupList) {
-      List<OBPOSPaymentMethodCashup> paymentMethodCashupList = appCashup
-          .getOBPOSPaymentmethodcashupList();
-      for (OBPOSPaymentMethodCashup paymentMethodCashup : paymentMethodCashupList) {
-        if (paymentMethodCashup.getPaymentType().getPaymentMethod().isShared()) {
-          paymentMethodCashupIds.add(paymentMethodCashup.getId());
+    if (!cashUpIds.isEmpty()) {
+      // Sum shared PaymentMethodCashup
+      String query = "select searchkey, sum(startingcash), sum(totalDeposits), sum(totalDrops), sum(totalreturns), sum(totalsales) "
+          + "from OBPOS_Paymentmethodcashup "
+          + "where cashUp.id in :cashUpIds and paymentType.paymentMethod.isshared = 'Y'"
+          + "group by searchkey";
+      final Session session = OBDal.getInstance().getSession();
+      final Query paymentQuery = session.createQuery(query);
+      paymentQuery.setParameterList("cashUpIds", cashUpIds);
+      List<?> paymentList = paymentQuery.list();
+      for (int i = 0; i < paymentList.size(); i++) {
+        Object[] item = (Object[]) paymentList.get(i);
+        // Get master payment method cashup
+        OBPOSPaymentMethodCashup masterCashup = getPaymentMethodCashup(cashUpId, (String) item[0]);
+        if (masterCashup != null) {
+          masterCashup.setStartingcash(masterCashup.getStartingcash().add((BigDecimal) item[1]));
+          masterCashup.setTotalDeposits(masterCashup.getTotalDeposits().add((BigDecimal) item[2]));
+          masterCashup.setTotalDrops(masterCashup.getTotalDrops().add((BigDecimal) item[3]));
+          masterCashup.setTotalreturns(masterCashup.getTotalreturns().add((BigDecimal) item[4]));
+          masterCashup.setTotalsales(masterCashup.getTotalsales().add((BigDecimal) item[5]));
+          OBDal.getInstance().save(masterCashup);
+        } else {
+          throw new OBException(
+              "Cash up can not proceed, not found all slave terminal shared payment methods on master terminal: "
+                  + (String) item[0]);
         }
       }
-    }
-    if (!paymentMethodCashupIds.isEmpty()) {
-      String delete = "delete from OBPOS_Paymentmethodcashup where id in :paymentMethodCashupIds";
-      final Query paymentDelete = session.createQuery(delete);
-      paymentDelete.setParameterList("paymentMethodCashupIds", paymentMethodCashupIds);
-      paymentDelete.executeUpdate();
+
+      // Remove shared PaymentMethodCashup
+      List<String> paymentMethodCashupIds = new ArrayList<String>();
+      for (OBPOSAppCashup appCashup : cashupList) {
+        List<OBPOSPaymentMethodCashup> paymentMethodCashupList = appCashup
+            .getOBPOSPaymentmethodcashupList();
+        for (OBPOSPaymentMethodCashup paymentMethodCashup : paymentMethodCashupList) {
+          if (paymentMethodCashup.getPaymentType().getPaymentMethod().isShared()) {
+            paymentMethodCashupIds.add(paymentMethodCashup.getId());
+          }
+        }
+      }
+      if (!paymentMethodCashupIds.isEmpty()) {
+        String delete = "delete from OBPOS_Paymentmethodcashup where id in :paymentMethodCashupIds";
+        final Query paymentDelete = session.createQuery(delete);
+        paymentDelete.setParameterList("paymentMethodCashupIds", paymentMethodCashupIds);
+        paymentDelete.executeUpdate();
+      }
     }
   }
 
@@ -473,6 +474,16 @@ public class ProcessCashClose extends POSDataSynchronizationProcess implements
     cashup.setProcessed(jsonCashup.getString("isprocessed").equalsIgnoreCase("Y"));
     cashup.setCashUpDate(cashUpDate);
     OBDal.getInstance().save(cashup);
+    if (cashup.isProcessed()) {
+      // In case of Slave/Master Check if slave is processed or not
+      for (OBPOSAppCashup slaveCashup : cashup.getOBPOSAppCashupObposParentCashupIDList()) {
+        if (!slaveCashup.isProcessed()) {
+          slaveCashup.setObposParentCashup(null);
+          OBDal.getInstance().save(slaveCashup);
+        }
+      }
+    }
+
   }
 
   /**

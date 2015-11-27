@@ -31,7 +31,16 @@ enyo.kind({
   create: function () {
     this.inherited(arguments);
     this.$.slaveTerminalName.setContent(this.model.get('name'));
-    this.$.slaveCashUpIsClosed.setContent(this.model.get('finish') ? OB.I18N.getLabel('OBMOBC_LblYes') : OB.I18N.getLabel('OBMOBC_LblNo'));
+    if(this.model.get('finish')) {
+      this.$.slaveCashUpIsClosed.setContent(OB.I18N.getLabel('OBMOBC_LblYes'));
+      this.$.slaveCashUpIsClosed.addStyles("color: green");
+    } else if ((!this.model.get('finish')) && (this.model.get('noOfTransactions') === 0)) {
+      this.$.slaveCashUpIsClosed.setContent(OB.I18N.getLabel('OBPOS_LblNotNeeded'));
+      this.$.slaveCashUpIsClosed.addStyles("color: green");
+    } else {
+      this.$.slaveCashUpIsClosed.setContent(OB.I18N.getLabel('OBMOBC_LblNo'));
+      this.$.slaveCashUpIsClosed.addStyles("color: red");
+    }
   }
 });
 
