@@ -1277,24 +1277,27 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     order.setProcessNow(false);
     order.setObposSendemail((jsonorder.has("sendEmail") && jsonorder.getBoolean("sendEmail")));
 
-    long documentno = Long.parseLong(order.getDocumentNo().substring(
-        order.getDocumentNo().lastIndexOf("/") + 1));
+    if (order.getDocumentNo().indexOf("/") > -1) {
+      long documentno = Long.parseLong(order.getDocumentNo().substring(
+          order.getDocumentNo().lastIndexOf("/") + 1));
 
-    if (jsonorder.has("isQuotation") && jsonorder.getBoolean("isQuotation")) {
-      if (order.getObposApplications().getQuotationslastassignednum() == null
-          || documentno > order.getObposApplications().getQuotationslastassignednum()) {
-        OBPOSApplications terminal = order.getObposApplications();
-        terminal.setQuotationslastassignednum(documentno);
-        OBDal.getInstance().save(terminal);
-      }
-    } else {
-      if (order.getObposApplications().getLastassignednum() == null
-          || documentno > order.getObposApplications().getLastassignednum()) {
-        OBPOSApplications terminal = order.getObposApplications();
-        terminal.setLastassignednum(documentno);
-        OBDal.getInstance().save(terminal);
+      if (jsonorder.has("isQuotation") && jsonorder.getBoolean("isQuotation")) {
+        if (order.getObposApplications().getQuotationslastassignednum() == null
+            || documentno > order.getObposApplications().getQuotationslastassignednum()) {
+          OBPOSApplications terminal = order.getObposApplications();
+          terminal.setQuotationslastassignednum(documentno);
+          OBDal.getInstance().save(terminal);
+        }
+      } else {
+        if (order.getObposApplications().getLastassignednum() == null
+            || documentno > order.getObposApplications().getLastassignednum()) {
+          OBPOSApplications terminal = order.getObposApplications();
+          terminal.setLastassignednum(documentno);
+          OBDal.getInstance().save(terminal);
+        }
       }
     }
+
     if (!bp.getADUserList().isEmpty()) {
       String userHqlWhereClause = " usr where usr.businessPartner = :bp and usr.organization.id in (:orgs) order by username";
       OBQuery<User> queryUser = OBDal.getInstance().createQuery(User.class, userHqlWhereClause);
