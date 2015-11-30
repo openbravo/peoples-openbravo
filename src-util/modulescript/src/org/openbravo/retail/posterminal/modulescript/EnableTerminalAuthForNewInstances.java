@@ -61,7 +61,7 @@ public class EnableTerminalAuthForNewInstances extends ModuleScript {
             int prefs = EnableTerminalAuthForNewInstancesData
                 .insertNewTerminalAuthenticationPreference(cp, clientId, "N", "0");
             log4j
-                .warn("-EnableTerminalAuthForNewInstances- " + prefs + " Preference -OBPOS_TerminalAuthentication- with value 'Y' have been created for client "
+                .debug("-EnableTerminalAuthForNewInstances- " + prefs + " Preference -OBPOS_TerminalAuthentication- with value 'Y' have been created for client "
                     + clientId + ".");
           }
         } else if (definedPrefs == 0) {
@@ -69,15 +69,15 @@ public class EnableTerminalAuthForNewInstances extends ModuleScript {
           int prefs = EnableTerminalAuthForNewInstancesData
               .insertNewTerminalAuthenticationPreference(cp, "0", "Y", null);
           log4j
-          .warn("-EnableTerminalAuthForNewInstances- There are no preferences for property -OBPOS_TerminalAuthentication- Defaut one was created.");
+          .debug("-EnableTerminalAuthForNewInstances- There are no preferences for property -OBPOS_TerminalAuthentication- Defaut one was created.");
         } else {
           //Customer has already defined preference for this functionality. The MS will not do nothing.
           log4j
-              .warn("-EnableTerminalAuthForNewInstances- There are preferences for property -OBPOS_TerminalAuthentication- alredy defined. Nothing was done.");
+              .debug("-EnableTerminalAuthForNewInstances- There are preferences for property -OBPOS_TerminalAuthentication- alredy defined. Nothing was done.");
         }
       } else {
         log4j
-            .warn("-EnableTerminalAuthForNewInstances- Module script executed but nothing was done because there are no terminals in this instance.");
+            .debug("-EnableTerminalAuthForNewInstances- Module script executed but nothing was done because there are no terminals in this instance.");
       }
       EnableTerminalAuthForNewInstancesData.insertExecutionPreference(cp);
     } catch (Exception e) {
