@@ -73,8 +73,15 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.WindowModel.extend({
             glItem: p.glItem,
             cashup_id: cashUp.at(0).get('id'),
             posTerminal: OB.MobileApp.model.get('terminal').id,
-            isbeingprocessed: 'N'
+            isbeingprocessed: 'N',
+            defaultProcess: p.defaultProcess,
+            extendedType: p.extendedType
           });
+          if (p.extendedProp || _.isObject(p.extendedProp)) {
+            _.each(_.keys(p.extendedProp), function (key) {
+              addedCashMgmt.set(key, p.extendedProp[key]);
+            });
+          }
           me.depsdropstosave.add(addedCashMgmt);
 
           var selectedPayment = me.payments.filter(function (payment) {

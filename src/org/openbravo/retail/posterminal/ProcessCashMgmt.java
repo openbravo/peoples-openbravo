@@ -75,7 +75,7 @@ public class ProcessCashMgmt extends POSDataSynchronizationProcess implements
               + "' does not exists in the system. Please synchronize it first and then process this entry.");
     }
     TerminalTypePaymentMethod terminalPaymentMethod = paymentMethod.getPaymentMethod();
-    if (type.equals("drop") || type.equals("deposit")) {
+    if (!jsonsent.has("defaultProcess") || "Y".equals(jsonsent.getString("defaultProcess"))) {
       GLItem glItemMain;
       GLItem glItemSecondary;
       // The GL/item in both transactions must be the same, and it must be the original type of
@@ -183,7 +183,9 @@ public class ProcessCashMgmt extends POSDataSynchronizationProcess implements
       }
     }
     // Call all OrderProcess injected.
-    executeHooks(cashMgmtProcesses, jsonsent, type, paymentMethod, cashup, amount, origAmount);
+    String extendedType = jsonsent.has("extendedType") ? jsonsent.getString("extendedType") : "";
+    executeHooks(cashMgmtProcesses, jsonsent, extendedType, paymentMethod, cashup, amount,
+        origAmount);
 
     JSONObject result = new JSONObject();
     result.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);

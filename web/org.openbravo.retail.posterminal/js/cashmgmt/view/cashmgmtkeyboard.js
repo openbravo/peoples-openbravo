@@ -38,7 +38,9 @@ enyo.kind({
           iscash: iscash,
           allowopendrawer: allowopendrawer,
           glItem: glItem,
-          paymentMethod: paymentMethod
+          paymentMethod: paymentMethod,
+          defaultProcess: 'Y',
+          extendedType: ''
         };
         // Restore CashMgmtDropDepositEvents
         me.owner.owner.owner.model.attributes.cashMgmtDropEvents.reset(OB.MobileApp.model.attributes.cashMgmtDropEvents);
