@@ -2954,24 +2954,74 @@ public abstract class AcctServer {
   public HashMap<String, BigDecimal> getPaymentDetailWriteOffAndAmount(
       List<FIN_PaymentDetail> paymentDetails, FIN_PaymentSchedule ps, FIN_PaymentSchedule psi,
       FIN_PaymentSchedule pso, int currentPaymentDetailIndex, final FieldProvider fieldProvider) {
+    FIN_PaymentDetail paymentDetail = OBDal.getInstance().get(FIN_PaymentDetail.class,
+        paymentDetails.get(currentPaymentDetailIndex));
+    String paymentDetailNextId = null;
+    String paymentDetailPreviousId = null;
+    if (currentPaymentDetailIndex < paymentDetails.size() - 1) {
+      paymentDetailNextId = paymentDetails.get(currentPaymentDetailIndex + 1).getId();
+    }
+    if (currentPaymentDetailIndex > 0) {
+      paymentDetailPreviousId = paymentDetails.get(currentPaymentDetailIndex - 1).getId();
+    }
+    return getPaymentDetailWriteOffAndAmount(paymentDetail, paymentDetailNextId,
+        paymentDetailPreviousId, ps, psi, pso, fieldProvider);
+  }
+
+  /**
+   * Returns the writeoff and the amount of a Payment Detail. In case the related Payment Schedule
+   * Detail was generated for compensate the difference between an Order and a related Invoice, it
+   * merges it's amount with the next Payment Schedule Detail. Issue 19567:
+   * https://issues.openbravo.com/view.php?id=19567 <br />
+   * It does exactly the same as the
+   * {@link #getPaymentDetailWriteOffAndAmount(List, FIN_PaymentSchedule, FIN_PaymentSchedule, FIN_PaymentSchedule, int)}
+   * method, but it also stores a new field "MergedPaymentDetailId" inside the fieldProvider with
+   * the merged payment detail id (if any).
+   * 
+   * @param paymentDetail
+   *          Payment Detail
+   * @param paymentDetailNextId
+   *          Next Payment Detail id
+   * @param paymentDetailPreviousId
+   *          Previous Payment Detail id
+   * @param ps
+   *          Previous Payment Schedule
+   * @param psi
+   *          Invoice Payment Schedule of actual Payment Detail
+   * @param pso
+   *          Order Payment Schedule of actual Payment Detail
+   * @param fieldProvider
+   *          contains the FieldProvider with the Payment Detail currently being processed. Used to
+   *          store the "MergedPaymentDetailId" (if any) as a new field of the fieldProvider
+   */
+  public HashMap<String, BigDecimal> getPaymentDetailWriteOffAndAmount(
+      FIN_PaymentDetail paymentDetail, String paymentDetailNextId, String paymentDetailPreviousId,
+      FIN_PaymentSchedule ps, FIN_PaymentSchedule psi, FIN_PaymentSchedule pso,
+      final FieldProvider fieldProvider) {
     HashMap<String, BigDecimal> amountAndWriteOff = new HashMap<String, BigDecimal>();
 
     // Default return values
-    amountAndWriteOff.put("amount", paymentDetails.get(currentPaymentDetailIndex).getAmount());
-    amountAndWriteOff.put("writeoff", paymentDetails.get(currentPaymentDetailIndex)
-        .getWriteoffAmount());
+    amountAndWriteOff.put("amount", paymentDetail.getAmount());
+    amountAndWriteOff.put("writeoff", paymentDetail.getWriteoffAmount());
 
     // If the Payment Detail has either an Invoice or an Order associated to it
     if (psi != null || pso != null) {
       // If the Payment Detail has no Order associated to it, or it has an Invoice associated and is
       // the same one as the previous Payment Detail
       if ((psi != null && psi.equals(ps)) || pso == null) {
-        FIN_PaymentScheduleDetail psdNext = (currentPaymentDetailIndex == paymentDetails.size() - 1) ? null
-            : paymentDetails.get(currentPaymentDetailIndex + 1).getFINPaymentScheduleDetailList()
-                .get(0);
-        FIN_PaymentScheduleDetail psdPrevious = (currentPaymentDetailIndex == 0) ? null
-            : paymentDetails.get(currentPaymentDetailIndex - 1).getFINPaymentScheduleDetailList()
-                .get(0);
+        FIN_PaymentDetail paymentDetailNext = null;
+        FIN_PaymentDetail paymentDetailPrevious = null;
+        FIN_PaymentScheduleDetail psdNext = null;
+        FIN_PaymentScheduleDetail psdPrevious = null;
+        if (paymentDetailNextId != null) {
+          paymentDetailNext = OBDal.getInstance().get(FIN_PaymentDetail.class, paymentDetailNextId);
+          psdNext = paymentDetailNext.getFINPaymentScheduleDetailList().get(0);
+        }
+        if (paymentDetailPreviousId != null) {
+          paymentDetailPrevious = OBDal.getInstance().get(FIN_PaymentDetail.class,
+              paymentDetailPreviousId);
+          psdPrevious = paymentDetailPrevious.getFINPaymentScheduleDetailList().get(0);
+        }
         // If the Payment Detail has no Order associated, and the next Payment Detail belongs to the
         // same Invoice and it has an Order related, then return null
         if (pso == null && psdNext != null && psdNext.getInvoicePaymentSchedule() == psi
@@ -2982,15 +3032,13 @@ public abstract class AcctServer {
           // related to it, return the sum of amounts.
         } else if (psdPrevious != null && psdPrevious.getInvoicePaymentSchedule() == psi
             && psdPrevious.getOrderPaymentSchedule() == null) {
-          amountAndWriteOff.put("amount", paymentDetails.get(currentPaymentDetailIndex).getAmount()
-              .add(paymentDetails.get(currentPaymentDetailIndex - 1).getAmount()));
-          amountAndWriteOff.put(
-              "writeoff",
-              paymentDetails.get(currentPaymentDetailIndex).getWriteoffAmount()
-                  .add(paymentDetails.get(currentPaymentDetailIndex - 1).getWriteoffAmount()));
+          amountAndWriteOff.put("amount",
+              paymentDetail.getAmount().add(paymentDetailPrevious.getAmount()));
+          amountAndWriteOff.put("writeoff",
+              paymentDetail.getWriteoffAmount().add(paymentDetailPrevious.getWriteoffAmount()));
           if (fieldProvider != null) {
-            FieldProviderFactory.setField(fieldProvider, "MergedPaymentDetailId", paymentDetails
-                .get(currentPaymentDetailIndex - 1).getId());
+            FieldProviderFactory.setField(fieldProvider, "MergedPaymentDetailId",
+                paymentDetailPreviousId);
           }
         }
       }
