@@ -82,6 +82,19 @@ enyo.kind({
         }]
       });
     }
+    if (this.model.get('serialNumber')) {
+      this.createComponent({
+        style: 'display: block;',
+        components: [{
+          content: OB.I18N.getLabel('OBPOS_SerialNumber', [this.model.get('serialNumber')]),
+          attributes: {
+            style: 'float: left; width: 80%;'
+          }
+        }, {
+          style: 'clear: both;'
+        }]
+      });
+    }
     if (this.model.get('promotions')) {
       enyo.forEach(this.model.get('promotions'), function (d) {
         if (d.hidden) {
