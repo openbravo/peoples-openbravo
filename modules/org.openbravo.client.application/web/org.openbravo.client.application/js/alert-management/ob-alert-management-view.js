@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2013 Openbravo SLU
+ * All portions are Copyright (C) 2011-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -38,7 +38,6 @@ isc.OBUIAPP_AlertManagement.addProperties({
   sectionStack: null,
   grids: {},
   sections: {},
-  alertRules: null,
   //Section header controls:
   NewAcknowledged: null,
   NewSuppressed: null,
@@ -84,7 +83,7 @@ isc.OBUIAPP_AlertManagement.addProperties({
     this.addMember(this.sectionStack);
 
     this.Super('initWidget', arguments);
-    this.getAlertRules();
+    OB.AlertManagement.checkInitializeStatus();
   },
 
   tabSelected: function (tabNum, tabPane, ID, tab) {
@@ -97,20 +96,9 @@ isc.OBUIAPP_AlertManagement.addProperties({
     }
   },
 
-  getAlertRules: function () {
-    var post = {
-      'eventType': 'getAlertRules'
-    };
-
-    OB.RemoteCallManager.call('org.openbravo.client.application.AlertManagementActionHandler', post, {}, function (rpcResponse, data, rpcRequest) {
-      OB.AlertManagement.alertRules = data.alertRules;
-      OB.AlertManagement.checkInitializeStatus();
-    });
-  },
-
   checkInitializeStatus: function () {
-    if (OB.AlertManagement.translatedStatus.New !== '' && OB.AlertManagement.translatedStatus.Acknowledged !== '' && OB.AlertManagement.translatedStatus.Suppressed !== '' && OB.AlertManagement.translatedStatus.Solved !== '' && OB.AlertManagement.alertRules !== null) {
-      // Sections are created after alertRules are created and status translations are set.
+    if (OB.AlertManagement.translatedStatus.New !== '' && OB.AlertManagement.translatedStatus.Acknowledged !== '' && OB.AlertManagement.translatedStatus.Suppressed !== '' && OB.AlertManagement.translatedStatus.Solved !== '' && OB.AlertManagement.sectionStack) {
+      // Sections are created after status translations are set.
       // This is needed to be able to filter properly the grids of the sections.
       OB.AlertManagement.createSections();
     }
