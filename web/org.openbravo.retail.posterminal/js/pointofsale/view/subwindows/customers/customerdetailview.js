@@ -227,6 +227,9 @@ enyo.kind({
     }
   }, {
     kind: 'OB.UI.CustomerTextPropertyAddr',
+    modelProperty: 'locShipId'
+  }, {
+    kind: 'OB.UI.CustomerTextPropertyAddr',
     name: 'customerLocName',
     modelProperty: 'locShipName',
     i18nLabel: 'OBPOS_LblAddress',
