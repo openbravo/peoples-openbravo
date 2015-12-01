@@ -235,7 +235,7 @@ enyo.kind({
       return OB.MobileApp.model.hasPermission('OBPOS_ShowBusinessPartnerBirthInfo', true);
     }
   }, {
-    kind: 'onyx.DatePicker',
+    kind: 'OB.UI.DatePicker',
     name: 'birthDay',
     modelProperty: 'birthDay',
     i18nLabel: 'OBPOS_LblBirthday',
@@ -250,19 +250,26 @@ enyo.kind({
       this.setLocale(OB.Application.language_string);
       if (inEvent.customer && inEvent.customer.get(this.modelProperty)) {
         this.setValue(new Date(inEvent.customer.get(this.modelProperty)));
+      } else {
+        // this.setValue(new Date());
+        this.setValue(null);
       }
     },
     saveChange: function (inSender, inEvent) {
-      var value = this.getValue(),
-          fragments = [
-        value.getFullYear(), value.getMonth() + 1, value.getDate()];
-      if (fragments[1] < 10) {
-        fragments[1] = '0' + fragments[1];
+      var value = this.getValue();
+      var fragments;
+      if (value === null) {
+        inEvent.customer.set(this.modelProperty, null);
+      } else {
+        fragments = [value.getFullYear(), value.getMonth() + 1, value.getDate()];
+        if (fragments[1] < 10) {
+          fragments[1] = '0' + fragments[1];
+        }
+        if (fragments[2] < 10) {
+          fragments[2] = '0' + fragments[2];
+        }
+        inEvent.customer.set(this.modelProperty, fragments.join('-'));
       }
-      if (fragments[2] < 10) {
-        fragments[2] = '0' + fragments[2];
-      }
-      inEvent.customer.set(this.modelProperty, fragments.join('-'));
     }
   }, {
     kind: 'OB.UI.CustomerComboProperty',
