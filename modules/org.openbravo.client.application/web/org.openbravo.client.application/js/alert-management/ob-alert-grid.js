@@ -37,6 +37,7 @@ isc.OBAlertGrid.addProperties({
   showCellContextMenus: true,
   selectOnEdit: false,
   dataPageSize: 100,
+  isRefreshing: false,
 
   arrowKeyAction: 'select',
 
@@ -155,6 +156,11 @@ isc.OBAlertGrid.addProperties({
 
   dataArrived: function (startRow, endRow) {
     this.getGridTotalRows();
+    // we notify the data arrival so the view can check if the refresh button can be enabled
+    if (this.isRefreshing) {
+      this.isRefreshing = false;
+      OB.AlertManagement.notifyRefreshEnd();
+    }
     return this.Super('dataArrived', arguments);
   },
 

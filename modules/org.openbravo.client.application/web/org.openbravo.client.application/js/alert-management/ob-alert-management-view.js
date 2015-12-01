@@ -73,9 +73,11 @@ isc.OBUIAPP_AlertManagement.addProperties({
       }
     }, 'setTranslatedStatus');
 
+    this.refreshButton = isc.OBToolbarIconButton.create(isc.OBToolbar.REFRESH_BUTTON_PROPERTIES);
+
     this.addMember(isc.OBToolbar.create({
       view: this,
-      leftMembers: [isc.OBToolbarIconButton.create(isc.OBToolbar.REFRESH_BUTTON_PROPERTIES)],
+      leftMembers: [this.refreshButton],
       rightMembers: []
     }));
 
@@ -268,6 +270,22 @@ isc.OBUIAPP_AlertManagement.addProperties({
       if (!OB.AlertManagement.sections[alertStatus[i]].expanded) {
         OB.AlertManagement.grids[alertStatus[i]].getGridTotalRows();
       }
+      if (OB.AlertManagement.grids[alertStatus[i]].isDrawn()) {
+        OB.AlertManagement.grids[alertStatus[i]].isRefreshing = true;
+      }
+    }
+  },
+
+  notifyRefreshEnd: function () {
+    var i, alertStatus = ['New', 'Acknowledged', 'Suppressed', 'Solved'];
+    for (i = 0; i < 4; i++) {
+      if (OB.AlertManagement.grids[alertStatus[i]].isRefreshing) {
+        return;
+      }
+    }
+    if (this.isRefreshing) {
+      delete this.isRefreshing;
+      this.refreshButton.setDisabled(false);
     }
   }
 });
