@@ -231,7 +231,8 @@ public class DalWebService implements WebService {
         }
       } else {
         final OBQuery<BaseOBObject> obq = OBDal.getInstance().createQuery(entityName,
-            ID + " = '" + id + "'");
+            ID + " = :bobId");
+        obq.setNamedParameter("bobId", id);
         obq.setMaxResult(1);
         final BaseOBObject result = obq.uniqueResult();
 
