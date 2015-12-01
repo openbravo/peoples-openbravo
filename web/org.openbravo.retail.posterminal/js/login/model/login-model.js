@@ -572,9 +572,14 @@
             return;
           }
           OB.MobileApp.model.set('minIncRefreshSynchronized', true);
+          if (OB.MobileApp.model.get('FullRefreshWasDone')) {
+            return;
+          }
           OB.MobileApp.model.loadModels(null, true);
         });
+      }
 
+      if (minIncRefresh) {
         loadModelsIncFunc = function () {
           OB.MobileApp.model.loadModels(null, true);
         };
