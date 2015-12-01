@@ -39,7 +39,7 @@ public class EnableTerminalAuthForNewInstances extends ModuleScript {
       String moduleScriptAlreadyExecuted = EnableTerminalAuthForNewInstancesData.selectExecutionPreference(cp);
       if (moduleScriptAlreadyExecuted.equals("1")) {
         log4j
-        .warn("-EnableTerminalAuthForNewInstances- This modules script have been already executed");
+        .debug("-EnableTerminalAuthForNewInstances- This modules script have been already executed");
         return;
       }
 
