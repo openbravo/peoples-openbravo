@@ -123,7 +123,7 @@ BEGIN
         v_PriceActual := v_NetActual / :new.qtyinvoiced;     
       ELSE
         -- Regular taxes
-        v_PriceActual := C_GET_NET_PRICE_FROM_GROSS(:new.c_tax_id, :new.line_gross_amount, :new.line_gross_amount, v_price_prec, :NEW.qtyinvoiced);    
+        v_PriceActual := C_GET_NET_PRICE_FROM_GROSS(:new.c_tax_id, :new.gross_unit_price * :new.qtyinvoiced, :new.taxbaseamt, v_price_prec, :new.qtyinvoiced);
         v_NetActual := ROUND(:new.Qtyinvoiced * v_PriceActual, v_std_Prec);
       END IF;      
       
