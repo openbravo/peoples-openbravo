@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2013 Openbravo SLU
+ * All portions are Copyright (C) 2011-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -125,7 +125,7 @@ isc.OBAlertGrid.addProperties({
       items: []
     });
 
-    OB.Datasource.get('ADAlert', this, null, true);
+    OB.Datasource.get('DB9F062472294F12A0291A7BD203F922', this, null, true);
 
     this.Super('initWidget', arguments);
   },
@@ -165,7 +165,7 @@ isc.OBAlertGrid.addProperties({
     if (!OB.AlertManagement.sections[this.alertStatus].expanded) {
       // fetch to the datasource with an empty criteria to get all the rows
       requestProperties.params = requestProperties.params || {};
-      requestProperties.params[OB.Constants.WHERE_PARAMETER] = this.getFilterClause();
+      requestProperties.params._alertStatus = this.alertStatus;
       requestProperties.params._startRow = 0;
       requestProperties.params._endRow = this.dataPageSize;
       requestProperties.clientContext = {
@@ -180,70 +180,19 @@ isc.OBAlertGrid.addProperties({
     }
   },
 
+  getFetchRequestParams: function (params) {
+    // include alertStatus in the request in order to identify the grid being filtered
+    // this allows to display the correct values on the Alert Rule filter drop-down
+    params = params || {};
+    params._alertStatus = this.alertStatus;
+    return params;
+  },
+
   onFetchData: function (criteria, requestProperties) {
     requestProperties = requestProperties || {};
     requestProperties.params = requestProperties.params || {};
 
-    requestProperties.params[OB.Constants.WHERE_PARAMETER] = this.getFilterClause();
-  },
-
-  getAlertsWithFilterClause: function (alertRule) {
-    var filterClause, alerts = alertRule.alerts.split(','),
-        alertsNum = alerts.length,
-        i, chunksOfAlerts = [],
-        j, chunkSize = 1000;
-    filterClause = ' and (e.alertRule.id != \'' + alertRule.alertRuleId + '\'';
-
-    if (alertsNum <= chunkSize) {
-      filterClause += ' or e.id in (' + alertRule.alerts + '))';
-      return filterClause;
-    }
-
-    // there are more than 1000 alerts to include in the where clause, Oracle doesn't
-    // support it, so let's split them in chunks with <=1000 elements each
-    for (i = 0; i < alertsNum; i += chunkSize) {
-      chunksOfAlerts.push(alerts.slice(i, i + chunkSize));
-    }
-
-    for (i = 0; i < chunksOfAlerts.length; i++) {
-      filterClause += ' or e.id in (';
-      for (j = 0; j < chunksOfAlerts[i].length; j++) {
-        filterClause += j > 0 ? ',' : '';
-        filterClause += chunksOfAlerts[i][j];
-      }
-      filterClause += ')';
-    }
-    filterClause += ')';
-    return filterClause;
-  },
-
-  getFilterClause: function () {
-    var i, filterClause = '',
-        alertRuleIds = '',
-        arlength = OB.AlertManagement.alertRules.length,
-        whereClause = 'coalesce(to_char(status), \'NEW\') = upper(\'' + this.alertStatus + '\')';
-
-    for (i = 0; i < arlength; i++) {
-      if (alertRuleIds !== '') {
-        alertRuleIds += ',';
-      }
-      alertRuleIds += '\'' + OB.AlertManagement.alertRules[i].alertRuleId + '\'';
-      // if an alertRule has some alerts to filter by, add them to the where clause as:
-      // alerts are of a different alertRule or only the alerts predefined
-      // this only happens if the alertRule has an SQL filter expression defined
-      if (OB.AlertManagement.alertRules[i].alerts) {
-        filterClause += this.getAlertsWithFilterClause(OB.AlertManagement.alertRules[i]);
-      }
-    }
-    if (alertRuleIds !== '') {
-      whereClause += ' and e.alertRule.id in (' + alertRuleIds + ')';
-    } else {
-      whereClause += ' and 1=2';
-    }
-    if (filterClause !== '') {
-      whereClause += filterClause;
-    }
-    return whereClause;
+    requestProperties.params._alertStatus = this.alertStatus;
   },
 
   headerClick: function (fieldNum, header, autoSaveDone) {
@@ -558,12 +507,7 @@ isc.OBAlertGridCanvasItem_Link.addProperties({
     this.setTitle(this.grid.formatLinkValue(this.record, this.field, this.colNum, this.rowNum, this.record[this.field.name]));
   },
   doAction: function () {
-    var i, tabId, length = OB.AlertManagement.alertRules.length;
-    for (i = 0; i < length; i++) {
-      if (OB.AlertManagement.alertRules[i].alertRuleId === this.record.alertRule) {
-        tabId = OB.AlertManagement.alertRules[i].tabId;
-      }
-    }
+    var tabId = this.record['alertRule' + OB.Constants.FIELDSEPARATOR + 'tab' + OB.Constants.FIELDSEPARATOR + OB.Constants.ID];
     if (tabId && tabId !== '') {
       OB.Utilities.openDirectTab(tabId, this.record.referenceSearchKey);
     }
