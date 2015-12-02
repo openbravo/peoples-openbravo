@@ -94,21 +94,26 @@ public class ADAlertDatasourceService extends DefaultDataSourceService {
 
   private List<String> getAlertIds() {
     // Get alert rules visible for context's the role/user.
-    StringBuffer whereClause = new StringBuffer();
-    whereClause.append(" as ar ");
-    whereClause.append("\nwhere exists (select 1 from ar."
-        + AlertRule.PROPERTY_ADALERTRECIPIENTLIST + " as arr");
-    whereClause.append("\n    where arr." + AlertRecipient.PROPERTY_USERCONTACT + ".id = :user");
-    whereClause.append("\n      or (");
-    whereClause.append("arr." + AlertRecipient.PROPERTY_USERCONTACT + " is null");
-    whereClause.append("\n          and arr." + AlertRecipient.PROPERTY_ROLE + ".id = :role))");
+    try {
+      OBContext.setAdminMode(false);
+      StringBuffer whereClause = new StringBuffer();
+      whereClause.append(" as ar ");
+      whereClause.append("\nwhere exists (select 1 from ar."
+          + AlertRule.PROPERTY_ADALERTRECIPIENTLIST + " as arr");
+      whereClause.append("\n    where arr." + AlertRecipient.PROPERTY_USERCONTACT + ".id = :user");
+      whereClause.append("\n      or (");
+      whereClause.append("arr." + AlertRecipient.PROPERTY_USERCONTACT + " is null");
+      whereClause.append("\n          and arr." + AlertRecipient.PROPERTY_ROLE + ".id = :role))");
 
-    OBQuery<AlertRule> alertRulesQuery = OBDal.getInstance().createQuery(AlertRule.class,
-        whereClause.toString());
-    alertRulesQuery.setNamedParameter("user", DalUtil.getId(OBContext.getOBContext().getUser()));
-    alertRulesQuery.setNamedParameter("role", DalUtil.getId(OBContext.getOBContext().getRole()));
+      OBQuery<AlertRule> alertRulesQuery = OBDal.getInstance().createQuery(AlertRule.class,
+          whereClause.toString());
+      alertRulesQuery.setNamedParameter("user", DalUtil.getId(OBContext.getOBContext().getUser()));
+      alertRulesQuery.setNamedParameter("role", DalUtil.getId(OBContext.getOBContext().getRole()));
 
-    return getAlertIdsFromAlertRules(alertRulesQuery.list());
+      return getAlertIdsFromAlertRules(alertRulesQuery.list());
+    } finally {
+      OBContext.restorePreviousMode();
+    }
   }
 
   private List<String> getAlertIdsFromAlertRules(List<AlertRule> alertRules) {
@@ -157,8 +162,8 @@ public class ADAlertDatasourceService extends DefaultDataSourceService {
   private String buildWhereClause(String alertStatus, List<String> alertList) {
     int chunkSize = 1000;
     String filterClause;
-    String whereClause = "coalesce(to_char(status), 'NEW') = upper('"
-        + StringEscapeUtils.escapeSql(alertStatus) + "')";
+    String whereClause = "coalesce(to_char(status), 'NEW') = '"
+        + StringEscapeUtils.escapeSql(alertStatus) + "'";
     ArrayList<String> alertListToRemove;
 
     if (alertList.size() == 0) {
