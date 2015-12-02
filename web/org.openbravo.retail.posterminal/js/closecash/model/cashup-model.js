@@ -791,7 +791,6 @@ OB.OBPOSCashUp.Model.CashUpPartial = OB.OBPOSCashUp.Model.CashUp.extend({
             isocode: ''
           }));
         } else {
-          var fromCurrencyId = model.get('paymentMethod').currency;
           switch (enumSummarys[counter]) {
           case 'qtyToKeepSummary':
             if (model.get(enumSecondConcepts[counter]) !== null && model.get(enumSecondConcepts[counter]) !== undf) {
