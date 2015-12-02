@@ -10,8 +10,7 @@ package org.openbravo.retail.posterminal;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
@@ -24,7 +23,6 @@ import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
-import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.TriggerHandler;
@@ -34,6 +32,7 @@ import org.openbravo.mobile.core.process.DataSynchronizationImportProcess;
 import org.openbravo.mobile.core.process.DataSynchronizationProcess.DataSynchronization;
 import org.openbravo.mobile.core.process.JSONPropertyToEntity;
 import org.openbravo.mobile.core.process.PropertyByType;
+import org.openbravo.mobile.core.utils.OBMOBCUtils;
 import org.openbravo.model.financialmgmt.payment.FIN_Reconciliation;
 import org.openbravo.service.json.JsonConstants;
 import org.openbravo.service.json.JsonToDataConverter;
@@ -54,34 +53,46 @@ public class ProcessCashClose extends POSDataSynchronizationProcess implements
     JSONObject jsonData = new JSONObject();
     Date cashUpDate = new Date();
     Date currentDate = new Date();
+    long timezoneOffset = -((Calendar.getInstance().get(Calendar.ZONE_OFFSET) + Calendar
+        .getInstance().get(Calendar.DST_OFFSET)) / (60 * 1000));
     OBPOSApplications posTerminal = OBDal.getInstance().get(OBPOSApplications.class,
         jsonCashup.getString("posterminal"));
 
     try {
+      // get the timezoneOffset
+      if (jsonCashup.has("timezoneOffset") && jsonCashup.get("timezoneOffset") != null
+          && StringUtils.isNotEmpty(jsonCashup.getString("timezoneOffset"))) {
+        timezoneOffset = Long.parseLong(jsonCashup.getString("timezoneOffset"));
+      } else {
+        log.debug("Error processing cash close (1): error retrieving the timezoneOffset. Using the current timezoneOffset");
+      }
+      // get and prepare the cashUpDate
       if (jsonCashup.has("cashUpDate") && jsonCashup.get("cashUpDate") != null
           && StringUtils.isNotEmpty(jsonCashup.getString("cashUpDate"))) {
-        String strCashUpDate = (String) jsonCashup.getString("cashUpDate");
-        cashUpDate = (Date) JsonToDataConverter.convertJsonToPropertyValue(PropertyByType.DATETIME,
-            ((String) strCashUpDate).subSequence(0, ((String) strCashUpDate).lastIndexOf(".")));
+        String strCashUpDate = jsonCashup.getString("cashUpDate");
+        if (strCashUpDate.substring(strCashUpDate.length() - 2).equals("Z")) {
+          log.error(String
+              .format(
+                  "The cashup date must be provided in ISO 8601 format and be an UTC date (value: '%s')",
+                  strCashUpDate));
+        }
+        cashUpDate = OBMOBCUtils.calculateClientDatetime(strCashUpDate, timezoneOffset);
       } else {
-        log.debug("Error processing cash close: error retrieving cashUp date. Using current date");
+        log.debug("Error processing cash close (2): error retrieving cashUp date. Using current date");
       }
+      // get and prepare the currentDate
       if (jsonCashup.has("currentDate") && jsonCashup.get("currentDate") != null
           && StringUtils.isNotEmpty(jsonCashup.getString("currentDate"))) {
         String strCurrentDate = (String) jsonCashup.getString("currentDate");
-        String dateFormatStr = posTerminal.getOrganization().getObposDateFormat();
-        if (dateFormatStr == null) {
-          dateFormatStr = OBPropertiesProvider.getInstance().getOpenbravoProperties()
-              .getProperty("dateFormat.java");
-        }
-
-        DateFormat isodatefmt = new SimpleDateFormat(dateFormatStr);
-        currentDate = isodatefmt.parse(strCurrentDate);
+        currentDate = OBMOBCUtils.calculateClientDatetime(strCurrentDate, timezoneOffset);
       } else {
-        log.debug("Error processing cash close: error retrieving current date. Using server current date");
+        log.debug("Error processing cash close (3): error retrieving current date. Using server current date");
       }
     } catch (Exception e) {
-      log.debug("Error processing cash close: error retrieving cashUp date. Using current date");
+      log.debug(String
+          .format(
+              "Error processing cash close (4): error retrieving cashup dates. Using server date. Error: %s",
+              e.getMessage()));
     }
 
     OBContext.setOBContext(jsonCashup.getString("userId"), OBContext.getOBContext().getRole()
