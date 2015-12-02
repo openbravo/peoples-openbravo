@@ -2466,6 +2466,11 @@
       var documentseq, documentseqstr, idMap = {},
           me = this;
 
+      //Cloning order to be canceled
+      var clonedreceipt = new OB.Model.Order();
+      OB.UTIL.clone(me, clonedreceipt);
+      me.set('canceledorder', clonedreceipt);
+
       OB.Dal.remove(this, function () {
         me.get('lines').each(function (line) {
           idMap[line.get('id')] = OB.Dal.get_uuid();
