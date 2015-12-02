@@ -22,6 +22,8 @@ import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.businessUtility.Preferences;
+import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.mobile.core.process.SimpleQueryBuilder;
 import org.openbravo.service.json.DataResolvingMode;
 import org.openbravo.service.json.DataToJsonConverter;
@@ -35,6 +37,31 @@ public class Payments extends JSONTerminalProperty {
     OBContext.setAdminMode(true);
 
     try {
+      // Add Filter for payment based on Preference
+      String filterPaymentBasedonPreference = "";
+      try {
+        OBContext.setAdminMode(false);
+        final String[] preferencePOSPayment = new String[] { "OBPOS_payment.cash",
+            "OBPOS_payment.card", "OBPOS_payment.voucher" };
+
+        for (int i = 0; i < preferencePOSPayment.length; i++) {
+          boolean preferenveValue = true;
+          try {
+            preferenveValue = "Y".equals(Preferences.getPreferenceValue(preferencePOSPayment[i],
+                true, OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
+                    .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
+                    .getOBContext().getRole(), null));
+          } catch (PropertyException e) {
+            e.printStackTrace();
+          }
+          if (!preferenveValue) {
+            filterPaymentBasedonPreference += "and p.searchKey != '" + preferencePOSPayment[i]
+                + "' ";
+          }
+        }
+      } finally {
+        OBContext.restorePreviousMode();
+      }
 
       JSONArray respArray = new JSONArray();
       String posId = RequestContext.get().getSessionAttribute("POSTerminal").toString();
@@ -47,7 +74,8 @@ public class Payments extends JSONTerminalProperty {
           + "img.bindaryData as image, img.mimetype as mimetype "
           + "from OBPOS_App_Payment as p left join p.financialAccount as f left join f.currency as c "
           + "left outer join p.paymentMethod as pm left outer join pm.image as img "
-          + "where p.obposApplications.id=? and p.$readableSimpleCriteria and p.$activeCriteria order by p.line, p.commercialName";
+          + "where p.obposApplications.id=? and p.$readableSimpleCriteria and p.$activeCriteria "
+          + filterPaymentBasedonPreference + "order by p.line, p.commercialName";
 
       SimpleQueryBuilder querybuilder = new SimpleQueryBuilder(hqlPayments, OBContext
           .getOBContext().getCurrentClient().getId(), OBContext.getOBContext()
