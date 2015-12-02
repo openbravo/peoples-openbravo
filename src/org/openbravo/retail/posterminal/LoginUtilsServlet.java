@@ -27,6 +27,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.PropertyException;
+import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.mobile.core.login.MobileCoreLoginUtilsServlet;
 import org.openbravo.model.ad.access.FormAccess;
 import org.openbravo.model.ad.access.User;
@@ -216,6 +217,7 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
     String terminalKeyIdentifier = obj.getString("terminalKeyIdentifier");
     String username = obj.getString("username");
     String password = obj.getString("password");
+    String cacheSessionId = obj.getString("cacheSessionId");
 
     OBCriteria<OBPOSApplications> qApp = OBDal.getInstance()
         .createCriteria(OBPOSApplications.class);
@@ -272,6 +274,7 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
               + terminal.getOrganization().getIdentifier());
 
           terminal.setLinked(true);
+          terminal.setCurrentCacheSession(cacheSessionId);
           OBDal.getInstance().save(terminal);
           try {
             OBDal.getInstance().getConnection().commit();
@@ -298,6 +301,8 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
   @Override
   protected JSONObject initActions(HttpServletRequest request) throws JSONException {
     JSONObject result = super.initActions(request);
+
+    final String cacheSessionId = request.getParameter("cacheSessionId");
     String value;
     try {
       value = Preferences.getPreferenceValue("OBPOS_TerminalAuthentication", true, null, null,
@@ -307,6 +312,10 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
       return result;
     }
     result.put("terminalAuthentication", value);
+    if (cacheSessionId == null) {
+      String generatedCacheSessionId = SequenceIdData.getUUID();
+      result.put("cacheSessionId", generatedCacheSessionId);
+    }
     return result;
   }
 
