@@ -38,8 +38,12 @@ isc.OBParameterWindowForm.addProperties({
 
   setItems: function (itemList) {
     itemList.forEach(function (item) {
-      item.setValueProgrammatically = function () {
-        this.Super('setValue', arguments);
+      item.setValueProgrammatically = function (value) {
+        if (this.setDateParameterValue) {
+          this.setDateParameterValue(value);
+        } else if (this.setValue) {
+          this.setValue(value);
+        }
         if (this.onChangeFunction && this.view && this.view.theForm) {
           this.view.theForm.handleItemChange(item);
         }
