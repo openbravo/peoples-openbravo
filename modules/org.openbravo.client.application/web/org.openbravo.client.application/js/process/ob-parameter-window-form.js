@@ -38,14 +38,12 @@ isc.OBParameterWindowForm.addProperties({
 
   setItems: function (itemList) {
     itemList.forEach(function (item) {
-      if (item.onChangeFunction) {
-        item.setValueAndHandleItemChange = function () {
-          this.Super('setValue', arguments);
-          if (this.view && this.view.theForm) {
-            this.view.theForm.handleItemChange(item);
-          }
-        };
-      }
+      item.setValueProgrammatically = function () {
+        this.Super('setValue', arguments);
+        if (this.onChangeFunction && this.view && this.view.theForm) {
+          this.view.theForm.handleItemChange(item);
+        }
+      };
     });
     this.Super('setItems', arguments);
   },
