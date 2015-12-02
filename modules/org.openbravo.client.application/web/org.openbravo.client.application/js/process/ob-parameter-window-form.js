@@ -36,6 +36,20 @@ isc.OBParameterWindowForm.addProperties({
     this.paramWindow.handleButtonsStatus();
   },
 
+  setItems: function (itemList) {
+    itemList.forEach(function (item) {
+      if (item.onChangeFunction) {
+        item.setValueAndHandleItemChange = function () {
+          this.Super('setValue', arguments);
+          if (this.view && this.view.theForm) {
+            this.view.theForm.handleItemChange(item);
+          }
+        };
+      }
+    });
+    this.Super('setItems', arguments);
+  },
+
   // this function is invoked on the blur action of the formitems
   // this is the proper place to execute the client-side callouts
   handleItemChange: function (item) {
