@@ -220,6 +220,16 @@ public class ExternalOrderLoader extends OrderLoader {
       messageOut.put("appName", APP_NAME);
 
       final OBPOSApplications posTerminal = getPOSTerminal(messageOut);
+
+      if (!posTerminal.getOrganization().getId()
+          .equals(OBContext.getOBContext().getCurrentOrganization().getId())) {
+        throw new OBException("Organization ("
+            + OBContext.getOBContext().getCurrentOrganization().getIdentifier() + ") of the user "
+            + OBContext.getOBContext().getUser().getIdentifier()
+            + " is unequal to the organization (" + posTerminal.getOrganization().getIdentifier()
+            + ") of the pos terminal " + posTerminal.getIdentifier());
+      }
+
       messageOut.put("posTerminal", posTerminal.getId());
       messageOut.put("pos", posTerminal.getId());
       setClientOrg(messageOut);
@@ -456,6 +466,7 @@ public class ExternalOrderLoader extends OrderLoader {
     validatePayment(payment);
 
     copyPropertyValue(payment, "paidAmount", "amount");
+    final boolean hasOriginalAmount = payment.has("origAmount");
     copyPropertyValue(payment, "paidAmount", "origAmount");
     copyPropertyValue(payment, "paidAmount", "paid");
     final Object rate = payment.get("rate");
@@ -470,6 +481,12 @@ public class ExternalOrderLoader extends OrderLoader {
       if (!(mulRate instanceof String)) {
         payment.put("mulrate", mulRate.toString());
       }
+    }
+    if (!hasOriginalAmount) {
+      payment.put(
+          "origAmount",
+          new BigDecimal(payment.getString("mulrate")).multiply(
+              new BigDecimal(payment.getDouble("origAmount"))).doubleValue());
     }
     if (!payment.has("date")) {
       payment.put("date", JsonUtils.createDateTimeFormat().format(new Date()));
