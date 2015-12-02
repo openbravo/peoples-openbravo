@@ -57,12 +57,13 @@
         });
         _.each(lines.models, function (element, index, list) {
           var product = element.get('product');
+          var taxCategory = product.get('taxCategory');
 
           var sql = "select c_tax.c_tax_id, c_tax.name,  c_tax.description, c_tax.taxindicator, c_tax.validfrom, c_tax.issummary, c_tax.rate, c_tax.parent_tax_id, (case when c_tax.c_country_id = '" + fromCountryOrg + "' then c_tax.c_country_id else tz.from_country_id end) as c_country_id, (case when c_tax.c_region_id = '" + fromRegionOrg + "' then c_tax.c_region_id else tz.from_region_id end) as c_region_id, (case when c_tax.to_country_id = bpl.countryId then c_tax.to_country_id else tz.to_country_id end) as to_country_id, (case when c_tax.to_region_id = bpl.regionId then c_tax.to_region_id else tz.to_region_id end)  as to_region_id, c_tax.c_taxcategory_id, c_tax.isdefault, c_tax.istaxexempt, c_tax.sopotype, c_tax.cascade, c_tax.c_bp_taxcategory_id,  c_tax.line, c_tax.iswithholdingtax, c_tax.isnotaxable, c_tax.deducpercent, c_tax.originalrate, c_tax.istaxundeductable,  c_tax.istaxdeductable, c_tax.isnovat, c_tax.baseamount, c_tax.c_taxbase_id, c_tax.doctaxamount, c_tax.iscashvat,  c_tax._identifier,  c_tax._idx,  (case when (c_tax.to_country_id = bpl.countryId or tz.to_country_id= bpl.countryId) then 0 else 1 end) as orderCountryTo,  (case when (c_tax.to_region_id = bpl.regionId or tz.to_region_id = bpl.regionId) then 0 else 1 end) as orderRegionTo,  (case when coalesce(c_tax.c_country_id, tz.from_country_id) is null then 1 else 0 end) as orderCountryFrom,  (case when coalesce(c_tax.c_region_id, tz.from_region_id) is null then 1 else 0 end) as orderRegionFrom  from c_tax left join c_tax_zone tz on tz.c_tax_id = c_tax.c_tax_id  join c_bpartner_location bpl on bpl.c_bpartner_location_id = '" + me.get('bp').get('locId') + "'   where c_tax.sopotype in ('B', 'S') ";
           if (bpIsExempt) {
             sql = sql + " and c_tax.istaxexempt = 'true'";
           } else {
-            sql = sql + " and c_tax.c_taxCategory_id = '" + product.get('taxCategory') + "'";
+            sql = sql + " and c_tax.c_taxCategory_id = '" + taxCategory + "'";
             if (bpTaxCategory) {
               sql = sql + " and c_tax.c_bp_taxcategory_id = '" + bpTaxCategory + "'";
             } else {
@@ -85,7 +86,7 @@
             line: element,
             sql: sql
           }, function (args) {
-            OB.Dal.queryUsingCache(OB.Model.TaxRate, args.sql, [], function (coll, args) { // success
+            OB.Dal.queryUsingCache(OB.Model.TaxRate, args.sql, [], function (coll, args2) { // success
               var rate, taxAmt, net, gross, pricenet, pricenetcascade, amount, taxId, collClone, baseTax, baseTaxAmt, baseTaxdcAmt;
               if (coll && coll.length > 0) {
 
@@ -366,7 +367,7 @@
                   popup: 'OB_UI_MessageDialog',
                   args: {
                     header: OB.I18N.getLabel('OBPOS_TaxNotFound_Header'),
-                    message: OB.I18N.getLabel('OBPOS_TaxNotFound_Message', [args.get('_identifier')])
+                    message: OB.I18N.getLabel('OBPOS_TaxNotFound_Message', [args.line.get('product').get('_identifier')])
                   }
                 });
               }
@@ -393,6 +394,7 @@
         //In case the pricelist doesn't include taxes, the way to calculate taxes is different
         _.each(lines.models, function (element, index, list) {
           var product = element.get('product');
+          var taxCategory = product.get('taxCategory');
           if (element.get('ignoreTaxes') === true || product.get('ignoreTaxes') === true) {
             var taxLine = {};
             taxLine[OB.MobileApp.model.get('terminal').taxexempid] = {
@@ -418,7 +420,7 @@
             if (bpIsExempt) {
               sql = sql + " and c_tax.istaxexempt = 'true'";
             } else {
-              sql = sql + " and c_tax.c_taxCategory_id = '" + product.get('taxCategory') + "'";
+              sql = sql + " and c_tax.c_taxCategory_id = '" + taxCategory + "'";
               if (bpTaxCategory) {
                 sql = sql + " and c_tax.c_bp_taxcategory_id = '" + bpTaxCategory + "'";
               } else {
@@ -441,7 +443,7 @@
               line: element,
               sql: sql
             }, function (args) {
-              OB.Dal.queryUsingCache(OB.Model.TaxRate, args.sql, [], function (coll, args) { // success
+              OB.Dal.queryUsingCache(OB.Model.TaxRate, args.sql, [], function (coll, args2) { // success
                 var rate, taxAmt, net, pricenet, pricenetcascade, amount, taxId, roundingLoses, pricenetAux, baseTax, collClone, baseAmount, discBaseAmount;
                 if (coll && coll.length > 0) {
 
@@ -616,7 +618,7 @@
                     popup: 'OB_UI_MessageDialog',
                     args: {
                       header: OB.I18N.getLabel('OBPOS_TaxNotFound_Header'),
-                      message: OB.I18N.getLabel('OBPOS_TaxNotFound_Message', [args.get('_identifier')])
+                      message: OB.I18N.getLabel('OBPOS_TaxNotFound_Message', [args.line.get('product').get('_identifier')])
                     }
                   });
                 }
