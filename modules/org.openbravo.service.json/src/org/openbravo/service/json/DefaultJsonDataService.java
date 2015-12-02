@@ -45,6 +45,7 @@ import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBQuery;
 import org.openbravo.database.SessionInfo;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.service.db.DbUtility;
@@ -131,7 +132,11 @@ public class DefaultJsonDataService implements JsonDataService {
       // if the id is set that's a special case of one object being requested
       if (id != null) {
         bobs = new ArrayList<BaseOBObject>();
-        final BaseOBObject bob = OBDal.getInstance().get(entityName, id);
+        final OBQuery<BaseOBObject> obq = OBDal.getInstance().createQuery(entityName,
+            JsonConstants.ID + " = :bobId");
+        obq.setNamedParameter("bobId", id);
+        obq.setMaxResult(1);
+        final BaseOBObject bob = obq.uniqueResult();
         if (bob != null) {
           bobs.add(bob);
         }

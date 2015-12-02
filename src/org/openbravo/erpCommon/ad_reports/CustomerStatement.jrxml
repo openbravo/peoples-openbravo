@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Customer Statement" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="497a0ae3-5aac-448b-a8a4-4b6619407498">
+<!-- Created with Jaspersoft Studio version 6.0.0.final using JasperReports Library version 6.0.0  -->
+<!-- 2015-11-26T18:11:29 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Customer Statement" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="497a0ae3-5aac-448b-a8a4-4b6619407498">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.2100000000000006"/>
@@ -339,7 +341,7 @@ ORDER BY f.dateacct, f.created]]>
 	<pageHeader>
 		<band height="146" splitType="Stretch">
 			<rectangle>
-				<reportElement x="0" y="0" width="559" height="77" forecolor="#FFFFFF" backcolor="#FFFFFF" uuid="a61f942d-14ea-46fc-865a-0fd446b65e6f"/>
+				<reportElement key="" x="0" y="0" width="559" height="77" isPrintInFirstWholeBand="true" forecolor="#FFFFFF" backcolor="#FFFFFF" uuid="a61f942d-14ea-46fc-865a-0fd446b65e6f"/>
 			</rectangle>
 			<image scaleImage="RetainShape" hAlign="Center" vAlign="Middle" isUsingCache="true">
 				<reportElement key="image-1" x="10" y="4" width="205" height="55" uuid="73a5995d-9060-4607-b691-814fd83574d6"/>
@@ -353,19 +355,19 @@ ORDER BY f.dateacct, f.created]]>
 				<textFieldExpression><![CDATA[DateFormat.getDateInstance(DateFormat.SHORT,
         $P{LOCALE}).format(new Date())]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement x="0" y="101" width="371" height="12" uuid="9c171589-afee-4689-82e1-1bf6ef256481"/>
 				<textElement textAlignment="Left" verticalAlignment="Bottom">
 					<font fontName="DejaVu Sans" size="10" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{bpname}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement x="10" y="59" width="301" height="12" isPrintInFirstWholeBand="true" isPrintWhenDetailOverflows="true" forecolor="#595959" uuid="714e47f3-816e-4fc3-ae02-57bb0a15be40"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="9"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{org_address} + " " + $F{org_postal}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($F{org_address}.equals(null)?" ":$F{org_address}) + " " + ($F{org_postal}.equals(null)?" ":$F{org_postal})]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="236" y="4" width="313" height="20" forecolor="#595959" uuid="d4dc815c-b252-4559-ad05-71cf8cb0029a">
@@ -425,7 +427,7 @@ ORDER BY f.dateacct, f.created]]>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{DateFrom} != null ? DateFormat.getDateInstance(DateFormat.SHORT,$P{LOCALE}).format($P{DATEFORMAT}.parse($P{DateFrom}))  : DateFormat.getDateInstance(DateFormat.SHORT,$P{LOCALE}).format($V{DateFrom})]]></textFieldExpression>
 			</textField>
-			<textField evaluationTime="Report">
+			<textField evaluationTime="Report" isBlankWhenNull="true">
 				<reportElement x="96" y="124" width="45" height="12" uuid="92cbe9ad-289f-4912-b262-215fae340e01"/>
 				<textElement verticalAlignment="Bottom">
 					<font fontName="DejaVu Sans" size="10" isBold="false"/>

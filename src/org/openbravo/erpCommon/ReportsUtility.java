@@ -63,11 +63,15 @@ public class ReportsUtility {
       // do nothing
     }
     if (isCustomer) {
-      obc.add(Restrictions.in(AccountingFact.PROPERTY_ACCOUNT,
-          getValidAccountsList(acctSchemaId, bpartnerId)));
+      List<ElementValue> accL = getValidAccountsList(acctSchemaId, bpartnerId);
+      if (!accL.isEmpty()) {
+        obc.add(Restrictions.in(AccountingFact.PROPERTY_ACCOUNT, accL));
+      }
     } else {
-      obc.add(Restrictions.in(AccountingFact.PROPERTY_ACCOUNT,
-          getValidAccountsListVendor(acctSchemaId, bpartnerId)));
+      List<ElementValue> accListV = getValidAccountsListVendor(acctSchemaId, bpartnerId);
+      if (!accListV.isEmpty()) {
+        obc.add(Restrictions.in(AccountingFact.PROPERTY_ACCOUNT, accListV));
+      }
     }
     obc.setFilterOnReadableOrganization(false);
 

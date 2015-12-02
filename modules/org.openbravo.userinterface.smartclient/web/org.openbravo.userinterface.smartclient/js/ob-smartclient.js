@@ -592,6 +592,7 @@ isc.FormItem.addProperties({
       this.dataSource.destroy();
       this.dataSource = null;
     }
+    this.isBeingDestroyed = true;
     this._original_destroy();
   },
 

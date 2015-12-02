@@ -591,8 +591,9 @@ public class LoginUtils {
             new OrgTree(connectionProvider, strClient).getAccessibleTree(connectionProvider,
                 strRole).toString());
       }
-    } else
+    } else {
       strWarehouse = "";
+    }
     return strWarehouse;
   }
 }
