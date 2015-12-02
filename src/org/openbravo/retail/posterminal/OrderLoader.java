@@ -1482,10 +1482,21 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         paymentSchedule.setFINPaymentPriority(order.getFINPaymentPriority());
         OBDal.getInstance().save(paymentSchedule);
       }
-
+      Boolean isInvoicePaymentScheduleNew = false;
       FIN_PaymentSchedule paymentScheduleInvoice = null;
       if (invoice != null && invoice.getGrandTotalAmount().compareTo(BigDecimal.ZERO) != 0) {
-        paymentScheduleInvoice = OBProvider.getInstance().get(FIN_PaymentSchedule.class);
+        List<FIN_PaymentSchedule> invoicePaymentSchedules = invoice.getFINPaymentScheduleList();
+        if (invoicePaymentSchedules.size() > 0) {
+          if (invoicePaymentSchedules.size() == 1) {
+            paymentScheduleInvoice = invoicePaymentSchedules.get(0);
+          } else {
+            paymentScheduleInvoice = invoicePaymentSchedules.get(0);
+            log.warn("Invoice have more than one payment schedule. First one was selected");
+          }
+        } else {
+          paymentScheduleInvoice = OBProvider.getInstance().get(FIN_PaymentSchedule.class);
+          isInvoicePaymentScheduleNew = true;
+        }
         paymentScheduleInvoice.setCurrency(order.getCurrency());
         paymentScheduleInvoice.setInvoice(invoice);
         paymentScheduleInvoice.setFinPaymentmethod(order.getBusinessPartner().getPaymentMethod());
@@ -1512,9 +1523,10 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           paymentScheduleInvoice.set("origDueDate", paymentScheduleInvoice.getDueDate());
         }
         paymentScheduleInvoice.setFINPaymentPriority(order.getFINPaymentPriority());
-        invoice.getFINPaymentScheduleList().add(paymentScheduleInvoice);
-        OBDal.getInstance().save(paymentScheduleInvoice);
-        OBDal.getInstance().save(invoice);
+        if (isInvoicePaymentScheduleNew) {
+          invoice.getFINPaymentScheduleList().add(paymentScheduleInvoice);
+          OBDal.getInstance().save(paymentScheduleInvoice);
+        }
       }
 
       BigDecimal gross = BigDecimal.valueOf(jsonorder.getDouble("gross"));
@@ -1612,6 +1624,14 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         for (FIN_PaymentScheduleDetail pSched : pScheduleDetails) {
           if (pSched.getPaymentDetails() == null) {
             paymentSchedule.getFINPaymentScheduleDetailOrderPaymentScheduleList().remove(pSched);
+            if (paymentScheduleInvoice != null
+                && paymentScheduleInvoice.getFINPaymentScheduleDetailInvoicePaymentScheduleList() != null
+                && paymentScheduleInvoice.getFINPaymentScheduleDetailInvoicePaymentScheduleList()
+                    .size() > 0) {
+              paymentScheduleInvoice.getFINPaymentScheduleDetailInvoicePaymentScheduleList()
+                  .remove(pSched);
+            }
+
             OBDal.getInstance().remove(pSched);
           }
         }
