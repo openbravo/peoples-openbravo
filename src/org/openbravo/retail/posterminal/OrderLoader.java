@@ -140,6 +140,10 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
   @Any
   private Instance<OrderLoaderPreProcessHook> orderPreProcesses;
 
+  @Inject
+  @Any
+  private Instance<OrderLoaderHookForQuotations> quotationProcesses;
+
   private boolean useOrderDocumentNoForRelatedDocs = false;
 
   protected String getImportQualifier() {
@@ -389,9 +393,12 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           return paymentResponse;
         }
 
+        // Call all OrderProcess injected.
+        executeHooks(orderProcesses, jsonorder, order, shipment, invoice);
+      } else {
+        // Call all OrderProcess injected when order is a quotation
+        executeHooks(quotationProcesses, jsonorder, order, shipment, invoice);
       }
-      // Call all OrderProcess injected.
-      executeHooks(orderProcesses, jsonorder, order, shipment, invoice);
 
       if (log.isDebugEnabled()) {
         t6 = System.currentTimeMillis();
