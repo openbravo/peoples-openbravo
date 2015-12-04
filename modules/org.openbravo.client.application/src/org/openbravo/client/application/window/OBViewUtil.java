@@ -190,13 +190,20 @@ public class OBViewUtil {
    */
   private static JSONObject getGridConfigurationSettings(Field field, Tab tab) {
     GridConfigSettings settings = new GridConfigSettings();
-
-    OBCriteria<GCTab> gcTabCriteria = OBDal.getInstance().createCriteria(GCTab.class);
-    gcTabCriteria.addOrder(Order.desc(GCTab.PROPERTY_SEQNO));
-    gcTabCriteria.addOrder(Order.desc(GCTab.PROPERTY_ID));
-    gcTabCriteria.setMaxResults(1);
-    gcTabCriteria.list();
-    GCTab tabConf = (GCTab) gcTabCriteria.uniqueResult();
+    GCTab tabConf = null;
+    if (tab.getOBUIAPPGCTabList().size() > 1) {
+      OBCriteria<GCTab> gcTabCriteria = OBDal.getInstance().createCriteria(GCTab.class);
+      gcTabCriteria.addOrder(Order.desc(GCTab.PROPERTY_SEQNO));
+      gcTabCriteria.addOrder(Order.desc(GCTab.PROPERTY_ID));
+      gcTabCriteria.setMaxResults(1);
+      gcTabCriteria.list();
+      tabConf = (GCTab) gcTabCriteria.uniqueResult();
+    } else {
+      for (GCTab t : tab.getOBUIAPPGCTabList()) {
+        tabConf = t;
+        break;
+      }
+    }
 
     if (tabConf != null && field != null && field.getId() != null) {
       GCField fieldConf = null;
