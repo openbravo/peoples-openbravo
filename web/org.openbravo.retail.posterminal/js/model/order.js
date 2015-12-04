@@ -1945,9 +1945,14 @@
         return;
       }
 
+      order = this;
+      if (order.get('orderType') === 3 && order.getGross() === 0) {
+        OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_MsgVoidLayawayPaymentError'));
+        return;
+      }
+
       payments = this.get('payments');
       total = OB.DEC.abs(this.getTotal());
-      order = this;
       OB.UTIL.HookManager.executeHooks('OBPOS_preAddPayment', {
         paymentToAdd: payment,
         payments: payments,
