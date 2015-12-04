@@ -299,7 +299,12 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           t113 = System.currentTimeMillis();
         }
         if (createShipment) {
-          if (order.getWarehouse().getLocatorList().isEmpty()) {
+
+          OBCriteria<Locator> locators = OBDal.getInstance().createCriteria(Locator.class);
+          locators.add(Restrictions.eq(Locator.PROPERTY_ACTIVE, true));
+          locators.add(Restrictions.eq(Locator.PROPERTY_WAREHOUSE, order.getWarehouse()));
+
+          if (locators.list().isEmpty()) {
             throw new OBException(Utility.messageBD(new DalConnectionProvider(false),
                 "OBPOS_WarehouseNotStorageBin", OBContext.getOBContext().getLanguage()
                     .getLanguage()));
