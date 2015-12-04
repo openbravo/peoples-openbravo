@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global $ */
+/*global $, _ */
 
 (function () {
 
@@ -30,26 +30,63 @@
       }
     }, function (result) {
       if (result && result.exception) {
-        OB.MobileApp.view.$.confirmationContainer.setAttribute('openedPopup', OB.I18N.getLabel('OBPOS_MsgPrintAgainCashUp'));
-        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_MsgHardwareServerNotAvailable'), OB.I18N.getLabel('OBPOS_MsgPrintAgainCashUp'), [{
-          label: OB.I18N.getLabel('OBMOBC_LblOk'),
-          isConfirmButton: true,
-          action: function () {
+        // callbacks definition
+        var successfunc = function () {
             var printCashUp = new OB.OBPOSCashUp.Print.CashUp();
             printCashUp.print(report, sumary, closed);
             return true;
-          }
-        }, {
-          label: OB.I18N.getLabel('OBMOBC_LblCancel'),
-          action: function () {
-            me.cancelOrDismiss();
+            };
+        var cancelfunc = function () {
+            OB.POS.navigate('retail.pointofsale');
+            OB.MobileApp.view.$.confirmationContainer.setAttribute('openedPopup', '');
             return true;
-          }
-        }], {
-          autoDismiss: false,
-          onHideFunction: function (dialog) {
-            me.cancelOrDismiss();
-          }
+            };
+        var hidefunc = function () {
+            OB.POS.navigate('retail.pointofsale');
+            OB.MobileApp.view.$.confirmationContainer.setAttribute('openedPopup', '');
+            };
+        // Create dialog buttons
+        var dialogbuttons = [];
+        dialogbuttons.push({
+          label: OB.I18N.getLabel('OBPOS_LblRetry'),
+          isConfirmButton: true,
+          action: successfunc
+        });
+        if (OB.POS.modelterminal.hasPermission('OBPOS_retail.selectprinter') && _.any(OB.POS.modelterminal.get('hardwareURL'), function (printer) {
+          return printer.active && printer.hasReceiptPrinter;
+        })) {
+          // Show this button entry only if there are 
+          dialogbuttons.push({
+            label: OB.I18N.getLabel('OBPOS_SelectAnotherPrinter'),
+            action: function () {
+              OB.MobileApp.view.$.containerWindow.getRoot().doShowPopup({
+                popup: 'modalSelectPrinters',
+                args: {
+                  title: OB.I18N.getLabel('OBPOS_SelectPrintersTitle'),
+                  hasPrinterProperty: 'hasReceiptPrinter',
+                  serverURLProperty: 'activeurl',
+                  serverURLSetter: 'setActiveURL',
+                  onSuccess: successfunc,
+                  onCancel: cancelfunc,
+                  onHide: hidefunc
+                }
+              });
+              return true;
+            }
+          });
+        }
+        dialogbuttons.push({
+          label: OB.I18N.getLabel('OBMOBC_LblCancel'),
+          action: cancelfunc
+        });
+
+
+        OB.MobileApp.view.$.confirmationContainer.setAttribute('openedPopup', OB.I18N.getLabel('OBPOS_MsgPrintAgainCashUp'));
+
+        // Display error message
+        OB.UTIL.showConfirmation.display(
+        OB.I18N.getLabel('OBPOS_MsgHardwareServerNotAvailable'), OB.I18N.getLabel('OBPOS_MsgPrintAgainCashUp', [OB.POS.hwserver.activeidentifier]), dialogbuttons, {
+          onHideFunction: hidefunc
         });
       }
     });
