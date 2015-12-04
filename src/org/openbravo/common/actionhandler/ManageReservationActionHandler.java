@@ -76,17 +76,10 @@ public class ManageReservationActionHandler extends BaseProcessActionHandler {
         final OrderLine sol = OBDal.getInstance().get(OrderLine.class, strOrderLineId);
         reservation = ReservationUtils.getReservationFromOrder(sol);
 
+        OBDal.getInstance().refresh(reservation);
         processReservation = reservation.getRESStatus().equals("DR");
       }
-      if (processReservation) {
-        OBError result = ReservationUtils.processReserve(reservation, "PR");
-        if (result.getType().equals("Error")) {
-          JSONObject errorMessage = new JSONObject();
-          errorMessage.put("severity", result.getType().toLowerCase());
-          errorMessage.put("text", result.getMessage());
-          jsonRequest.put("message", errorMessage);
-        }
-      }
+
       if (reservation != null) {
         // FIXME: Replace with OBDao method when handler is merged with latest pi.
         // List<String> idList = OBDao.getIDListFromOBObject(reservation
@@ -96,6 +89,16 @@ public class ManageReservationActionHandler extends BaseProcessActionHandler {
           idList.add(resStock.getId());
         }
         manageReservedStockLines(jsonRequest, reservation, idList);
+
+        if (processReservation) {
+          OBError result = ReservationUtils.processReserve(reservation, "PR");
+          if (result.getType().equals("Error")) {
+            JSONObject errorMessage = new JSONObject();
+            errorMessage.put("severity", result.getType().toLowerCase());
+            errorMessage.put("text", result.getMessage());
+            jsonRequest.put("message", errorMessage);
+          }
+        }
       }
 
     } catch (Exception e) {
