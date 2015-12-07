@@ -3172,28 +3172,41 @@
       });
     },
 
-    reversePayment: function (payment) {
-      var payments = this.get('payments');
-      this.addPayment(new OB.Model.PaymentLine({
-        'kind': payment.get('kind'),
-        'amount': OB.DEC.sub(0, payment.get('amount')),
-        'name': payment.get('name'),
-        'rate': payment.get('rate'),
-        'mulrate': payment.get('mulrate'),
-        'isocode': payment.get('isocode'),
-        'allowOpenDrawer': payment.get('allowOpenDrawer'),
-        'isCash': payment.get('isCash'),
-        'openDrawer': payment.get('openDrawer'),
-        'printtwice': payment.get('printtwice'),
-        'origAmount': OB.DEC.sub(0, payment.get('origAmount')),
-        'paid': OB.DEC.sub(0, payment.get('paid')),
-        'reversedPaymentId': payment.get('paymentId'),
-        'index': OB.DEC.add(1, payments.indexOf(payment)),
-        'isNegativeOrder': this.getGross() < 0 ? true : false
-      }));
-      payment.set('isReversed', true);
-      payment.set('isNegativeOrder', this.getGross() < 0 ? true : false);
-      this.save();
+    reversePayment: function (payment, reverseCallback) {
+      var payments = this.get('payments'),
+          me = this;
+      OB.UTIL.HookManager.executeHooks('OBPOS_preReversePayment', {
+        paymentToReverse: payment,
+        payments: payments,
+        receipt: me
+      }, function (args) {
+        if (args.cancellation) {
+          if (reverseCallback) {
+            reverseCallback();
+          }
+          return true;
+        }
+        me.addPayment(new OB.Model.PaymentLine({
+          'kind': payment.get('kind'),
+          'amount': OB.DEC.sub(0, payment.get('amount')),
+          'name': payment.get('name'),
+          'rate': payment.get('rate'),
+          'mulrate': payment.get('mulrate'),
+          'isocode': payment.get('isocode'),
+          'allowOpenDrawer': payment.get('allowOpenDrawer'),
+          'isCash': payment.get('isCash'),
+          'openDrawer': payment.get('openDrawer'),
+          'printtwice': payment.get('printtwice'),
+          'origAmount': OB.DEC.sub(0, payment.get('origAmount')),
+          'paid': OB.DEC.sub(0, payment.get('paid')),
+          'reversedPaymentId': payment.get('paymentId'),
+          'index': OB.DEC.add(1, payments.indexOf(payment)),
+          'isNegativeOrder': me.getGross() < 0 ? true : false
+        }));
+        payment.set('isReversed', true);
+        payment.set('isNegativeOrder', me.getGross() < 0 ? true : false);
+        me.save();
+      });
     },
 
     serializeToJSON: function () {
