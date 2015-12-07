@@ -800,15 +800,19 @@
       return this.get('payment');
     },
 
+    getCredit: function () {
+      return this.get('creditAmount');
+    },
+
     getChange: function () {
       return this.get('change');
     },
 
     getPending: function () {
       if (_.isUndefined(this.get('paidInNegativeStatusAmt'))) {
-        return OB.DEC.sub(OB.DEC.abs(this.getTotal()), this.getPayment());
+        return OB.DEC.sub(OB.DEC.abs(OB.DEC.sub(this.getTotal(), this.getCredit())), this.getPayment());
       } else {
-        return OB.DEC.abs(OB.DEC.sub(OB.DEC.abs(this.getTotal()), this.get('paidInNegativeStatusAmt')));
+        return OB.DEC.abs(OB.DEC.sub(OB.DEC.abs(OB.DEC.sub(this.getTotal(), this.getCredit())), this.get('paidInNegativeStatusAmt')));
       }
     },
 
@@ -823,6 +827,8 @@
     getPaymentStatus: function () {
       var total = OB.DEC.abs(this.getTotal()),
           pay = this.getPayment(),
+          credit = this.getCredit(),
+          payAndCredit = OB.DEC.add(pay, credit),
           isReturn = true,
           isReversal = false,
           processedPaymentsAmount = OB.DEC.Zero,
@@ -856,10 +862,10 @@
 
       if (_.isUndefined(paidInNegativeStatus)) {
         this.unset('paidInNegativeStatusAmt');
-        done = this.get('lines').length > 0 && OB.DEC.compare(OB.DEC.sub(pay, total)) >= 0;
-        pending = OB.DEC.compare(OB.DEC.sub(pay, total)) >= 0 ? OB.I18N.formatCurrency(OB.DEC.Zero) : OB.I18N.formatCurrency(OB.DEC.sub(total, pay));
-        overpayment = OB.DEC.compare(OB.DEC.sub(pay, total)) > 0 ? OB.I18N.formatCurrency(OB.DEC.sub(pay, total)) : null;
-        pendingAmt = OB.DEC.compare(OB.DEC.sub(pay, total)) >= 0 ? OB.DEC.Zero : OB.DEC.sub(total, pay);
+        done = this.get('lines').length > 0 && OB.DEC.compare(OB.DEC.sub(payAndCredit, total)) >= 0;
+        pending = OB.DEC.compare(OB.DEC.sub(payAndCredit, total)) >= 0 ? OB.I18N.formatCurrency(OB.DEC.Zero) : OB.I18N.formatCurrency(OB.DEC.sub(total, payAndCredit));
+        overpayment = OB.DEC.compare(OB.DEC.sub(payAndCredit, total)) > 0 ? OB.I18N.formatCurrency(OB.DEC.sub(payAndCredit, total)) : null;
+        pendingAmt = OB.DEC.compare(OB.DEC.sub(payAndCredit, total)) >= 0 ? OB.DEC.Zero : OB.DEC.sub(total, payAndCredit);
       } else {
         this.set('paidInNegativeStatusAmt', paidInNegativeStatus);
         done = this.get('lines').length > 0 && OB.DEC.compare(OB.DEC.sub(paymentsAmount, totalToReturn)) >= 0;
@@ -877,7 +883,7 @@
         'isReturn': isReturn,
         'isNegative': isNegative,
         'changeAmt': this.getChange(),
-        'pendingAmt': OB.DEC.compare(OB.DEC.sub(pay, total)) >= 0 ? OB.DEC.Zero : OB.DEC.sub(total, pay),
+        'pendingAmt': OB.DEC.compare(OB.DEC.sub(payAndCredit, total)) >= 0 ? OB.DEC.Zero : OB.DEC.sub(total, payAndCredit),
         'payments': this.get('payments'),
         'isReversal': isReversal
       };
@@ -940,6 +946,8 @@
       this.set('print', true);
       this.set('sendEmail', false);
       this.set('isPaid', false);
+      this.set('creditAmount', OB.DEC.Zero);
+      this.set('paidPartiallyOnCredit', false);
       this.set('paidOnCredit', false);
       this.set('isLayaway', false);
       this.set('isEditable', true);
@@ -969,6 +977,8 @@
       this.set('preventServicesUpdate', true);
 
       this.set('isPaid', _order.get('isPaid'));
+      this.set('creditAmount', _order.get('creditAmount'));
+      this.set('paidPartiallyOnCredit', _order.get('paidPartiallyOnCredit'));
       this.set('paidOnCredit', _order.get('paidOnCredit'));
       this.set('isLayaway', _order.get('isLayaway'));
       this.set('isPartiallyDelivered', _order.get('isPartiallyDelivered'));
@@ -4070,6 +4080,8 @@
       order.set('orderDate', OB.I18N.normalizeDate(new Date()));
       order.set('creationDate', null);
       order.set('isPaid', false);
+      order.set('creditAmount', OB.DEC.Zero);
+      order.set('paidPartiallyOnCredit', false);
       order.set('paidOnCredit', false);
       order.set('isLayaway', false);
       order.set('isPartiallyDelivered', false);
@@ -4119,6 +4131,7 @@
       order.set('checked', model.checked); //TODO: what is this for, where it comes from?
       order.set('orderDate', OB.I18N.normalizeDate(model.orderDate));
       order.set('creationDate', OB.I18N.normalizeDate(model.creationDate));
+      order.set('paidPartiallyOnCredit', false);
       order.set('paidOnCredit', false);
       order.set('session', OB.MobileApp.model.get('session'));
       order.set('skipApplyPromotions', true);
@@ -4140,7 +4153,15 @@
         order.set('hasbeenpaid', 'N');
       } else {
         order.set('isPaid', true);
-        if (model.receiptPayments.length === 0 && model.totalamount > 0 && !model.isQuotation) {
+        var paidByPayments = 0;
+        _.each(model.receiptPayments, function (receiptPayment) {
+          paidByPayments = +receiptPayment.amount;
+        });
+        if (model.totalamount > 0 && model.totalamount > paidByPayments && !model.isQuotation) {
+          order.set('creditAmount', model.totalamount - paidByPayments);
+          if (paidByPayments) {
+            order.set('paidPartiallyOnCredit', true);
+          }
           order.set('paidOnCredit', true);
         }
         order.set('id', model.orderid);
@@ -4642,17 +4663,19 @@
       this.get('multiOrdersList').off();
     },
     getPaymentStatus: function () {
-      var total = OB.DEC.abs(this.getTotal());
-      var pay = this.getPayment();
+      var total = OB.DEC.abs(this.getTotal()),
+          pay = this.getPayment(),
+          credit = this.getCredit(),
+          payAndCredit = OB.DEC.add(pay, credit);
       return {
         'total': OB.I18N.formatCurrency(total),
-        'pending': OB.DEC.compare(OB.DEC.sub(pay, total)) >= 0 ? OB.I18N.formatCurrency(OB.DEC.Zero) : OB.I18N.formatCurrency(OB.DEC.sub(total, pay)),
+        'pending': OB.DEC.compare(OB.DEC.sub(payAndCredit, total)) >= 0 ? OB.I18N.formatCurrency(OB.DEC.Zero) : OB.I18N.formatCurrency(OB.DEC.sub(total, payAndCredit)),
         'change': OB.DEC.compare(this.getChange()) > 0 ? OB.I18N.formatCurrency(this.getChange()) : null,
-        'overpayment': OB.DEC.compare(OB.DEC.sub(pay, total)) > 0 ? OB.I18N.formatCurrency(OB.DEC.sub(pay, total)) : null,
+        'overpayment': OB.DEC.compare(OB.DEC.sub(payAndCredit, total)) > 0 ? OB.I18N.formatCurrency(OB.DEC.sub(payAndCredit, total)) : null,
         'isReturn': this.get('gross') < 0 ? true : false,
         'isNegative': this.get('gross') < 0 ? true : false,
         'changeAmt': this.getChange(),
-        'pendingAmt': OB.DEC.compare(OB.DEC.sub(pay, total)) >= 0 ? OB.DEC.Zero : OB.DEC.sub(total, pay),
+        'pendingAmt': OB.DEC.compare(OB.DEC.sub(payAndCredit, total)) >= 0 ? OB.DEC.Zero : OB.DEC.sub(total, payAndCredit),
         'payments': this.get('payments')
       };
     },
@@ -4872,8 +4895,11 @@
     getPayment: function () {
       return this.get('payment');
     },
+    getCredit: function () {
+      return this.get('creditAmount');
+    },
     getPending: function () {
-      return OB.DEC.sub(OB.DEC.abs(this.getTotal()), this.getPayment());
+      return OB.DEC.sub(OB.DEC.abs(OB.DEC.sub(this.getTotal(), this.getCredit())), this.getPayment());
     },
     toInvoice: function (status) {
       if (status === false) {

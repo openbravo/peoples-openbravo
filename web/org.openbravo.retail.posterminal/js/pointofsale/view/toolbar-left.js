@@ -268,7 +268,8 @@ enyo.kind({
         isReceiptLinesLengthGreaterThanZero: undefined,
         isReceiptHasbeenpaidEqualToN: undefined,
         isToolbarEnabled: undefined,
-        isDisabledRequest: undefined
+        isDisabledRequest: undefined,
+        isCreditAndNotPartialCredit: undefined
       };
 
       // If any requirement is not met, return false
@@ -309,6 +310,10 @@ enyo.kind({
       if (OB.UTIL.isNullOrUndefined(requirements.receiptBpId) || !requirements.isReceiptDocnoLengthGreaterThanThree || !requirements.isReceiptLinesLengthGreaterThanZero || !requirements.isReceiptHasbeenpaidEqualToN) {
         return false;
       }
+      requirements.isCreditAndNotPartialCredit = receipt.get('paidOnCredit') && !receipt.get('paidPartiallyOnCredit');
+      if (requirements.isCreditAndNotPartialCredit) {
+        return false;
+      }
       // All requirements are met
       return true;
     }
@@ -342,7 +347,7 @@ enyo.kind({
     // view of which requirements haven't been met if the button is disabled.
     // The enabling/disabling flow MUST go through this point to ensure that all requests are logged
     var msg = enyo.format("Pay button is %s", (newIsDisabledState ? 'disabled' : 'enabled'));
-    if (newIsDisabledState === true && requirements.isReceiptLinesLengthGreaterThanZero && requirements.isReceiptHasbeenpaidEqualToN) {
+    if (newIsDisabledState === true && requirements.isReceiptLinesLengthGreaterThanZero && requirements.isReceiptHasbeenpaidEqualToN && !requirements.isCreditAndNotPartialCredit) {
       msg += " and should be enabled";
       OB.error(msg, requirements);
       OB.UTIL.Debug.execute(function () {
@@ -354,7 +359,7 @@ enyo.kind({
 
     this.disabled = newIsDisabledState; // for getDisabled() to return the correct value
     this.setAttribute('disabled', newIsDisabledState); // to effectively turn the button enabled or disabled
-    if (hasBeenPaid) {
+    if (hasBeenPaid && !newIsDisabledState) {
       this.$.totalPrinter.removeClass('whitecolor');
       this.addClass('btnlink-gray');
     } else {

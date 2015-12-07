@@ -620,11 +620,15 @@ enyo.kind({
         this.$.divText.setContent(OB.I18N.getLabel('OBPOS_QuotationDraft'));
       }
     }, this);
-    this.order.on('change:isPaid change:paidOnCredit change:isQuotation change:documentNo', function (model) {
+    this.order.on('change:isPaid change:paidOnCredit change:isQuotation change:documentNo change:paidPartiallyOnCredit', function (model) {
       if (model.get('isPaid') === true && !model.get('isQuotation')) {
         this.$.divText.addStyles('width: 50%; color: #f8941d;');
         if (model.get('paidOnCredit')) {
-          this.$.divText.setContent(OB.I18N.getLabel('OBPOS_paidOnCredit'));
+          if (model.get('paidPartiallyOnCredit')) {
+            this.$.divText.setContent(OB.I18N.getLabel('OBPOS_paidPartiallyOnCredit', [model.get('creditAmount')]));
+          } else {
+            this.$.divText.setContent(OB.I18N.getLabel('OBPOS_paidOnCredit'));
+          }
         } else if (model.get('documentType') === OB.MobileApp.model.get('terminal').terminalType.documentTypeForReturns) {
           this.$.divText.setContent(OB.I18N.getLabel('OBPOS_paidReturn'));
         } else {
@@ -634,7 +638,7 @@ enyo.kind({
         this.$.listPaymentLines.show();
         this.$.paymentBreakdown.show();
         //We have to ensure that there is not another handler showing this div
-      } else if (this.$.divText.content === OB.I18N.getLabel('OBPOS_paid') || this.$.divText.content === OB.I18N.getLabel('OBPOS_paidReturn') || this.$.divText.content === OB.I18N.getLabel('OBPOS_paidOnCredit') || (this.$.divText.content.indexOf(OB.I18N.getLabel('OBPOS_CancelReplace')) !== -1 && !model.get('replacedorder'))) {
+      } else if (this.$.divText.content === OB.I18N.getLabel('OBPOS_paid') || this.$.divText.content === OB.I18N.getLabel('OBPOS_paidReturn') || this.$.divText.content === OB.I18N.getLabel('OBPOS_paidOnCredit') || this.$.divText.content === OB.I18N.getLabel('OBPOS_paidPartiallyOnCredit', [model.get('creditAmount')]) || (this.$.divText.content.indexOf(OB.I18N.getLabel('OBPOS_CancelReplace')) !== -1 && !model.get('replacedorder'))) {
         this.$.divText.hide();
         this.$.listPaymentLines.hide();
         this.$.paymentBreakdown.hide();
