@@ -28,6 +28,7 @@ OB.UTIL.startRfidWebsocket = function startRfidWebsocket(websocketServerLocation
   OB.UTIL.rfidWebsocket.onmessage = function (event) {
     var message = JSON.parse(event.data);
     var existingEpc = false;
+    var ean;
     _.each(OB.MobileApp.model.receipt.get('lines').models, function (line) {
       if (line.get('obposEpccode') === message.dataToSave.obposEpccode) {
         existingEpc = true;
@@ -37,7 +38,8 @@ OB.UTIL.startRfidWebsocket = function startRfidWebsocket(websocketServerLocation
     if (existingEpc) {
       return;
     }
-    barcodeActionHandler.findProductByBarcode(message.uPCEAN, function (product) {
+    ean = message.gtin.substring(1, message.gtin.length);
+    barcodeActionHandler.findProductByBarcode(ean, function (product) {
       product.set('groupProduct', false);
       OB.MobileApp.model.receipt.addProduct(product, '1', {
         rfid: true
