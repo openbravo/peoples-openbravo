@@ -144,6 +144,73 @@ enyo.kind({
 });
 
 enyo.kind({
+  name: 'OB.UI.MenuReceiptLayaway',
+  kind: 'OB.UI.MenuAction',
+  permission: 'OBPOS_receipt.receiptLayaway',
+  events: {
+    onShowDivText: ''
+  },
+  i18nLabel: 'OBPOS_LblReceiptLayaway',
+  tap: function () {
+    var receiptAllowed = true,
+        notValid = {};
+    if (this.disabled) {
+      return true;
+    }
+    this.inherited(arguments); // Manual dropdown menu closure
+    // check if this order has been voided previously
+    if (this.model.get('order').get('orderType') === 3) {
+      return;
+    }
+    var order = this.model.get('order');
+    enyo.forEach(this.model.get('order').get('payments').models, function (curPayment) {
+      receiptAllowed = false;
+      return;
+    }, this);
+
+    if (receiptAllowed) {
+      this.doShowDivText({
+        permission: this.permission,
+        orderType: 0
+      });
+    } else {
+      OB.UTIL.showError(OB.I18N.getLabel('OBPOS_LayawayHasPayment'));
+    }
+  },
+  displayLogic: function () {
+    if (this.model.get('order').get('orderType') === 2) {
+      this.show();
+      this.adjustVisibilityBasedOnPermissions();
+    } else {
+      this.hide();
+    }
+  },
+  init: function (model) {
+    this.model = model;
+    var receipt = model.get('order'),
+        me = this;
+    this.setShowing(false);
+    receipt.on('change:orderType', function (model) {
+      this.displayLogic();
+    }, this);
+    receipt.on('change:isLayaway', function (model) {
+      this.displayLogic();
+    }, this);
+
+    this.model.get('leftColumnViewManager').on('change:currentView', function (changedModel) {
+      if (changedModel.isOrder()) {
+        this.displayLogic();
+        return;
+      }
+      if (changedModel.isMultiOrder()) {
+        this.setShowing(false);
+        return;
+      }
+    }, this);
+  }
+});
+
+enyo.kind({
   name: 'OB.UI.MenuLayaway',
   kind: 'OB.UI.MenuAction',
   permission: 'OBPOS_receipt.layawayReceipt',

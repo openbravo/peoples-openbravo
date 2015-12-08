@@ -279,6 +279,9 @@ enyo.kind({
         }
       } else if (model.get('orderType') === 3) {
         this.$.layawayaction.hide();
+      } else if (model.get('orderType') === 0) {
+        this.$.layawayaction.hide();
+        this.$.exactbutton.show();
       } else {
         this.$.layawayaction.hide();
       }
