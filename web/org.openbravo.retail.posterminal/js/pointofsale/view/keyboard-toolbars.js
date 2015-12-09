@@ -461,11 +461,8 @@ enyo.kind({
   tap: function () {
     // this.toolbar.keyboard
     // this.dialogbuttons
-    if (this.activegreen) {
-      this.toolbar.keyboard.setStatus('');
-    } else {
-      this.doShowAllButtons();
-    }
+    this.toolbar.keyboard.setStatus('');
+    this.doShowAllButtons();
   },
   buttonStatusChanged: function (inSender, inEvent) {
     var status = inEvent.value.status;
@@ -477,7 +474,7 @@ enyo.kind({
     }
 
     if (this.dialogbuttons[status]) {
-      this.$.btn.setContent(this.dialogbuttons[status]);
+      this.$.btn.setContent(OB.I18N.getLabel('OBPOS_MorePayments') + ' (' + this.dialogbuttons[status] + ')');
       this.$.btn.addClass('btnactive-green');
       this.activegreen = true;
     }
