@@ -198,6 +198,7 @@ enyo.kind({
     maxlength: 20
   }, {
     kind: 'OB.UI.CustomerTextPropertyAddr',
+    name: 'customerLocShipId',
     modelProperty: 'locShipId'
   }, {
     kind: 'OB.UI.CustomerTextPropertyAddr',

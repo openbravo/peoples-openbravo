@@ -387,6 +387,13 @@ enyo.kind({
             name: 'line_' + natt.name,
             newAttribute: natt
           });
+        } else if (natt.name === "customerLocShipId") {
+          this.$.customerAttributes.createComponent({
+            kind: 'OB.UI.CustomerPropertyLine',
+            name: 'line_' + natt.name,
+            newAttribute: natt,
+            style: 'display: none;'
+          });
         } else {
           this.$.customerAttributes.createComponent({
             kind: 'OB.UI.CustomerPropertyLine',
