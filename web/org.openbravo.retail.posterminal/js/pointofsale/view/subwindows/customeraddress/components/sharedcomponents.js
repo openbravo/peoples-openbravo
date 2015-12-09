@@ -194,7 +194,8 @@ enyo.kind({
               me.customer.set('locationModel', customerAddr);
               OB.Dal.save(me.customer, function success(tx) {
                 me.doChangeBusinessPartner({
-                  businessPartner: me.customer
+                  businessPartner: me.customer,
+                  target: 'order'
                 });
               }, function error(tx) {
                 OB.error(tx);
