@@ -1227,9 +1227,9 @@ public class ActivationKey {
 
   /** Returns a message for POS Terminals limitations */
   public String getPOSTerminalsExplanation() {
-    if (posTerminals == 0) {
+    if (posTerminals == null || posTerminals.equals(0L)) {
       return OBMessageUtils.messageBD("OPSNone");
-    } else if (posTerminals == NO_LIMIT) {
+    } else if (posTerminals.equals(NO_LIMIT)) {
       return OBMessageUtils.messageBD("OPSWSUnlimited");
     } else {
       return posTerminals.toString();
