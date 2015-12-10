@@ -157,8 +157,8 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault><![CDATA['N']]></onCreateDefault>
       </column>
-      <column name="UPDATEPASSWORDDATE" primaryKey="false" required="true" type="TIMESTAMP" size="7" autoIncrement="false">
-        <default><![CDATA['1970-01-01 00:00:00'::timestamp without time zone]]></default>
+      <column name="UPDATEPASSWORDDATE" primaryKey="false" required="false" type="TIMESTAMP" size="7" autoIncrement="false">
+        <default><![CDATA[SYSDATE]]></default>
         <onCreateDefault/>
       </column>
       <foreign-key foreignTable="AD_ORG" name="AD_USER_AD_ORGTRX">

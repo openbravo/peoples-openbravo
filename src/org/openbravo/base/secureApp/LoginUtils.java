@@ -144,9 +144,18 @@ public class LoginUtils {
 
       final List<User> listUser = obc.list();
       User userOB = listUser.get(0);
-      userOB.setPassword(FormatUtilities.sha1Base64(unHashedPassword));
-      OBDal.getInstance().save(userOB);
-      return true;
+      String oldPassword = userOB.getPassword();
+      String newPassword = FormatUtilities.sha1Base64(unHashedPassword);
+      if (oldPassword.equals(newPassword)) {
+
+        return true;
+      } else {
+        userOB.setPassword(newPassword);
+        OBDal.getInstance().save(userOB);
+        OBDal.getInstance().flush();
+        OBDal.getInstance().commitAndClose();
+        return false;
+      }
     } catch (final Exception e) {
       throw new OBException(e);
     }
@@ -160,8 +169,17 @@ public class LoginUtils {
   public static String checkUserPassword(ConnectionProvider connectionProvider, String login,
       String unHashedPassword) {
     try {
-      final String hashedPassword = FormatUtilities.sha1Base64(unHashedPassword);
-      final String userId = SeguridadData.valido(connectionProvider, login, hashedPassword);
+      String hashedPassword = FormatUtilities.sha1Base64(unHashedPassword);
+      final OBCriteria<User> obc = OBDal.getInstance().createCriteria(User.class);
+      obc.add(Restrictions.like("username", login));
+      obc.add(Restrictions.like("password", hashedPassword));
+      final List<User> listUser = obc.list();
+      String userId = "-1";
+
+      if (listUser.size() > 0) {
+        User userOB = listUser.get(0);
+        userId = userOB.getId();
+      }
       if (userId.equals("-1")) {
         return null;
       }

@@ -187,7 +187,7 @@ var recBrowserSafari = '8.0.0.0';
 </script>
 <script type="text/javascript">
 function buttonOK_click() {
-	if (document.getElementById('resetPassword').value =='true' && document.getElementById('user').value !== document.getElementById('password').value){
+    if (document.getElementById('resetPassword').value =='true' && document.getElementById('user').value !== document.getElementById('password').value){
         setLoginMessage('Error', "Passwords must be the same", "The password must be the same in both fields");
         return true;
     }
@@ -232,12 +232,14 @@ function buttonOK_click() {
       shouldContinue = setLoginMessage(result.messageType, result.messageTitle, result.messageText);
       if (!shouldContinue) {
         document.getElementById('password').value = '';
+        document.getElementById('user').value = '';
       }
     }
-    if (result.resetPassword){
+    if (result.resetPassword && document.getElementById('loggedUser').value===''){
         document.getElementById('loggedUser').value=result.loggedUser;
         document.getElementById('resetPassword').value=result.resetPassword;
         document.getElementById('user').value = '';
+        document.getElementById('user').type = 'password';
         document.getElementById('userlabel').innerHTML = 'New Password';
         document.getElementById('passwordlabel').innerHTML = 'Confirm Password';
         setWindowElementFocus('user');

@@ -70,13 +70,15 @@ public class LoginHandler extends HttpBaseServlet {
     vars.removeSessionValue("#AD_Role_ID");
     vars.setSessionObject("#loggingIn", "Y");
     final Boolean resetPassword = Boolean.parseBoolean(vars.getStringParameter("resetPassword"));
+    Boolean sameOldPassword = false;
     final String strUser;
     final String strPass;
     if (resetPassword) {
       strPass = vars.getStringParameter("user");
       strUser = vars.getStringParameter("loggedUser");
       OBContext.setAdminMode();
-      LoginUtils.updatePassword(strUser, strPass);
+      sameOldPassword = LoginUtils.updatePassword(strUser, strPass);
+
       OBContext.restorePreviousMode();
     } else {
       strUser = vars.getStringParameter("user");
@@ -98,6 +100,13 @@ public class LoginHandler extends HttpBaseServlet {
         res.sendRedirect(res.encodeRedirectURL(strDireccion + "/security/Login_F1.html"));
       } else {
         try {
+          if (sameOldPassword) {
+            OBError errorMsg = new OBError();
+            errorMsg.setType("Error");
+            errorMsg.setTitle("Password must be different from the previous one");
+            errorMsg.setMessage("Write a new password");
+            throw new AuthenticationExpiryPasswordException("Same password than old one", errorMsg);
+          }
           AuthenticationManager authManager = AuthenticationManager.getAuthenticationManager(this);
 
           final String strUserAuth = authManager.authenticate(req, res);
@@ -127,13 +136,16 @@ public class LoginHandler extends HttpBaseServlet {
         } catch (AuthenticationExpiryPasswordException aepe) {
 
           final OBError errorMsg = aepe.getOBError();
-
           if (errorMsg != null) {
             vars.removeSessionValue("#LoginErrorMsg");
-
-            goToUpdatePassword(res, vars, "Update your password", "Password is expired", "Error",
-                "../security/Login_FS.html", doRedirect);
-
+            if (errorMsg.getMessage().equalsIgnoreCase("Write a new password")) {
+              goToUpdatePassword(res, vars, "Write a new password",
+                  "Password must be different from the previous one", "Error",
+                  "../security/Login_FS.html", doRedirect);
+            } else {
+              goToUpdatePassword(res, vars, "Update your password", "Password is expired", "Error",
+                  "../security/Login_FS.html", doRedirect);
+            }
           }
         }
       }
