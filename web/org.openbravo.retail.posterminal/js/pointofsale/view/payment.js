@@ -741,6 +741,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.ProcessButton',
   kind: 'OB.UI.RegularButton',
+  style: 'width: 120px; float: right; margin: 5px 5px 10px 0px; height: 2.5em; display:block; clear: right; font-weight: normal; padding: 0px',
   processdisabled: false,
   localdisabled: false,
   setLocalDisabled: function (value) {
@@ -762,7 +763,6 @@ enyo.kind({
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.DoneButton',
   kind: 'OB.OBPOSPointOfSale.UI.ProcessButton',
-  style: 'width: 120px; float: right; margin: 5px 5px 15px 0px; height: 2.5em; display:block; clear: right; font-weight: normal;',
   handlers: {
     synchronizing: 'isSynchronizing',
     synchronized: 'isSynchronized'
@@ -909,7 +909,6 @@ enyo.kind({
     onExactPayment: ''
   },
   classes: 'btn-icon-adaptative btn-icon-check btnlink-green',
-  style: 'width: 120px; float: right; margin: 5px 5px 15px 0px; height: 2.5em; display:block; clear: right; font-weight: normal;',
   tap: function () {
     if (this.disabled) {
       return true;
@@ -1005,7 +1004,6 @@ enyo.kind({
   kind: 'OB.OBPOSPointOfSale.UI.ProcessButton',
   i18nLabel: 'OBPOS_LblCreditSales',
   classes: 'btn-icon-small btnlink-green',
-  style: 'width: 120px; float: right; margin: 10px 5px 5px 0px; height: 2.0em; display:block; clear: right; font-weight: normal;',
   permission: 'OBPOS_receipt.creditsales',
   events: {
     onShowPopup: ''
@@ -1098,7 +1096,6 @@ enyo.kind({
   kind: 'OB.OBPOSPointOfSale.UI.ProcessButton',
   content: '',
   classes: 'btn-icon-small btnlink-green',
-  style: 'width: 120px;float: right; margin: 10px 5px 5px 0px; height: 2.0em; display:block; clear: right; font-weight: normal;',
   permission: 'OBPOS_receipt.layawayReceipt',
   show: function () {
     this.inherited(arguments);
