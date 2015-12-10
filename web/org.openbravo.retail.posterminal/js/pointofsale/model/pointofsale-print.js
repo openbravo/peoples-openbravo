@@ -305,7 +305,7 @@
       if (args.template.ispdf) {
         args.template.dateFormat = OB.Format.date;
         printPDF(receipt, args);
-        if (receipt.get('orderType') === 1 && !OB.MobileApp.model.hasPermission('OBPOS_print.once')) {
+        if ((receipt.get('orderType') === 1 && !OB.MobileApp.model.hasPermission('OBPOS_print.once')) || OB.MobileApp.model.get('terminal').terminalType.printTwice) {
           printPDF(receipt, args);
         }
         printFiles(receipt, args);
@@ -375,7 +375,7 @@
             if (iter.get('printtwice')) {
               return iter;
             }
-          }).length > 0) {
+          }).length > 0 || OB.MobileApp.model.get('terminal').terminalType.printTwice) {
             OB.POS.hwserver.print(args.template, {
               order: receipt
             }, function (result) {
