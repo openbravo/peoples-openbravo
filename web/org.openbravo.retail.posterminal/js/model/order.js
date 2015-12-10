@@ -2761,6 +2761,10 @@
             }
           });
           order.set('taxes', taxes);
+
+          if (model.totalamount > 0 && order.get('payment') < model.totalamount && !model.isLayaway && !model.isQuotation) {
+            order.set('paidOnCredit', true);
+          }
         }, function () {
           // TODO: Report errors properly
         });
