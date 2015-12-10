@@ -565,6 +565,16 @@
           minTotalRefresh = this.get('terminal').terminalType.minutestorefreshdatatotal * 60 * 1000,
           lastTotalRefresh = window.localStorage.getItem('POSLastTotalRefresh'),
           lastIncRefresh = window.localStorage.getItem('POSLastIncRefresh');
+
+      function setTerminalLockTimeout(sessionTimeoutMinutes, sessionTimeoutMilliseconds) {
+        OB.debug("Terminal lock timer reset (" + sessionTimeoutMinutes + " minutes)");
+        clearTimeout(this.timeoutId);
+        this.timeoutId = setTimeout(function () {
+          OB.warn("The terminal was not used for " + sessionTimeoutMinutes + " minutes. Locking the terminal");
+          OB.MobileApp.model.lock();
+        }, sessionTimeoutMilliseconds);
+      }
+
       if ((minTotalRefresh || minIncRefresh) && (lastTotalRefresh || lastIncRefresh)) {
         OB.MobileApp.model.set('minIncRefreshSynchronized', false);
         OB.MobileApp.model.on('synchronized', function () {
@@ -586,10 +596,25 @@
         setInterval(loadModelsIncFunc, minIncRefresh);
       }
 
-      if (!this.sessionPing && this.get('terminal').sessionTimeout) {
+      var sessionTimeoutMinutes = this.get('terminal').sessionTimeout;
+      if (!this.sessionPing && sessionTimeoutMinutes) {
+        var sessionTimeoutMilliseconds = sessionTimeoutMinutes * 60 * 1000;
         this.sessionPing = setInterval(function () {
           new OB.DS.Process('org.openbravo.mobile.core.login.ContextInformation').exec(null, function () {});
-        }, this.get('terminal').sessionTimeout * 60 * 1000);
+        }, sessionTimeoutMilliseconds);
+
+        // set the terminal lock timeout
+        setTerminalLockTimeout(sessionTimeoutMinutes, sessionTimeoutMilliseconds);
+        // FIXME: hack: inject javascript in the enyo.gesture.down so we can create a terminal timeout
+        enyo.gesture.down = function(inEvent) {
+          // start of Openbravo injected code
+          setTerminalLockTimeout(sessionTimeoutMinutes, sessionTimeoutMilliseconds);
+          // end of Openbravo injected code
+          // cancel any hold since it's possible in corner cases to get a down without an up
+          var e = this.makeEvent("down", inEvent);
+          enyo.dispatch(e);
+          this.downEvent = e;
+        };
       }
     },
 
