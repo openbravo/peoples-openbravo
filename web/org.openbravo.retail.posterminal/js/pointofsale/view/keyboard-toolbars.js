@@ -260,13 +260,56 @@ enyo.kind({
       }
       allpayments[payment.payment.searchKey] = payment;
 
-      // Check for payment method category
-      if (payment.paymentMethod.paymentMethodCategory) {
-        btncomponent = null;
-        if (paymentCategories.indexOf(payment.paymentMethod.paymentMethodCategory) === -1) {
+      OB.UTIL.HookManager.executeHooks('OBPOS_PreAddPaymentButton', {
+        payment: payment,
+        sidebuttons: this.sideButtons
+      }, function (args) {
+        if (args && args.cancelOperation) {
+          return;
+        }
+        // Check for payment method category
+        if (payment.paymentMethod.paymentMethodCategory) {
+          btncomponent = null;
+          if (paymentCategories.indexOf(payment.paymentMethod.paymentMethodCategory) === -1) {
+            btncomponent = me.getButtonComponent({
+              command: 'paymentMethodCategory.showitems.' + payment.paymentMethod.paymentMethodCategory,
+              label: payment.paymentMethod.paymentMethodCategory$_identifier,
+              stateless: false,
+              action: function (keyboard, txt) {
+                var options = {},
+                    amount = 0;
+                if (txt) {
+                  if (_.last(txt) === '%') {
+                    options.percentaje = true;
+                  }
+                  amount = OB.DEC.number(OB.I18N.parseNumber(txt));
+                  if (_.isNaN(amount)) {
+                    OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_NotValidNumber', [txt]));
+                    return;
+                  }
+                }
+                var buttonClass = keyboard.buttons['paymentMethodCategory.showitems.' + payment.paymentMethod.paymentMethodCategory].attributes['class'];
+                if (me.currentPayment && buttonClass.indexOf('btnactive-green') > 0) {
+                  me.pay(amount, me.currentPayment.payment.searchKey, me.currentPayment.payment._identifier, me.currentPayment.paymentMethod, me.currentPayment.rate, me.currentPayment.mulrate, me.currentPayment.isocode, options);
+                } else {
+                  me.doShowPopup({
+                    popup: 'modalPaymentsSelect',
+                    args: {
+                      idCategory: payment.paymentMethod.paymentMethodCategory,
+                      amount: amount,
+                      options: options
+                    }
+                  });
+                }
+              }
+            });
+            paymentCategories.push(payment.paymentMethod.paymentMethodCategory);
+          }
+        } else {
           btncomponent = me.getButtonComponent({
-            command: 'paymentMethodCategory.showitems.' + payment.paymentMethod.paymentMethodCategory,
-            label: payment.paymentMethod.paymentMethodCategory$_identifier,
+            command: payment.payment.searchKey,
+            label: payment.payment._identifier + (payment.paymentMethod.paymentMethodCategory ? '*' : ''),
+            permission: payment.payment.searchKey,
             stateless: false,
             action: function (keyboard, txt) {
               var options = {},
@@ -281,65 +324,23 @@ enyo.kind({
                   return;
                 }
               }
-              var buttonClass = keyboard.buttons['paymentMethodCategory.showitems.' + payment.paymentMethod.paymentMethodCategory].attributes['class'];
-              if (me.currentPayment && buttonClass.indexOf('btnactive-green') > 0) {
-                me.pay(amount, me.currentPayment.payment.searchKey, me.currentPayment.payment._identifier, me.currentPayment.paymentMethod, me.currentPayment.rate, me.currentPayment.mulrate, me.currentPayment.isocode, options);
-              } else {
-                me.doShowPopup({
-                  popup: 'modalPaymentsSelect',
-                  args: {
-                    idCategory: payment.paymentMethod.paymentMethodCategory,
-                    amount: amount,
-                    options: options
-                  }
-                });
-              }
-            }
-          });
-          paymentCategories.push(payment.paymentMethod.paymentMethodCategory);
-        }
-      } else {
-        OB.UTIL.HookManager.executeHooks('OBPOS_PreAddPaymentButton', {
-          payment: payment,
-          sidebuttons: this.sideButtons
-        }, function (args) {
-          if (args && args.cancelOperation) {
-            return;
-          }
-          btncomponent = me.getButtonComponent({
-            command: payment.payment.searchKey,
-            label: payment.payment._identifier + (payment.paymentMethod.paymentMethodCategory ? '*' : ''),
-            permission: payment.payment.searchKey,
-            stateless: false,
-            action: function (keyboard, txt) {
-              var options = {};
-              if (_.last(txt) === '%') {
-                options.percentaje = true;
-              }
-              var amount = OB.DEC.number(OB.I18N.parseNumber(txt));
-              if (_.isNaN(amount)) {
-                OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_NotValidNumber', [txt]));
-                return;
-              }
               me.pay(amount, payment.payment.searchKey, payment.payment._identifier, payment.paymentMethod, payment.rate, payment.mulrate, payment.isocode, options);
             }
-
           });
-
-          if (btncomponent !== null) {
-            if (payment.paymentMethod.paymentMethodCategory) {
-              me.addPaymentButton(btncomponent, countbuttons++, paymentsbuttons, dialogbuttons, {
-                payment: {
-                  searchKey: 'paymentMethodCategory.showitems.' + payment.paymentMethod.paymentMethodCategory,
-                  _identifier: payment.paymentMethod.paymentMethodCategory$_identifier
-                }
-              });
-            } else {
-              me.addPaymentButton(btncomponent, countbuttons++, paymentsbuttons, dialogbuttons, payment);
-            }
+        }
+        if (btncomponent !== null) {
+          if (payment.paymentMethod.paymentMethodCategory) {
+            me.addPaymentButton(btncomponent, countbuttons++, paymentsbuttons, dialogbuttons, {
+              payment: {
+                searchKey: 'paymentMethodCategory.showitems.' + payment.paymentMethod.paymentMethodCategory,
+                _identifier: payment.paymentMethod.paymentMethodCategory$_identifier
+              }
+            });
+          } else {
+            me.addPaymentButton(btncomponent, countbuttons++, paymentsbuttons, dialogbuttons, payment);
           }
-        });
-      }
+        }
+      });
     }, this);
 
     // Fallback assign of the payment for the exact command.
