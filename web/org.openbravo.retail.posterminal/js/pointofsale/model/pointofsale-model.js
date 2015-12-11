@@ -399,17 +399,23 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
           label: OB.I18N.getLabel('OBMOBC_LblOk'),
           isConfirmButton: true,
           action: function () {
-            if (openDrawer) {
-              OB.POS.hwserver.openDrawer({
-                openFirst: false,
-                receipt: receipt
-              }, OB.MobileApp.model.get('permissions').OBPOS_timeAllowedDrawerSales);
+            if (receipt.get('orderType') === 3) {
+              receipt.trigger('voidLayaway');
+            } else {
+              if (openDrawer) {
+                OB.POS.hwserver.openDrawer({
+                  openFirst: false,
+                  receipt: receipt
+                }, OB.MobileApp.model.get('permissions').OBPOS_timeAllowedDrawerSales);
+              }
+              receipt.trigger('paymentAccepted');
             }
-            receipt.trigger('paymentAccepted');
           }
         }, {
           label: OB.I18N.getLabel('OBMOBC_LblCancel')
         }]);
+      } else if (receipt.get('orderType') === 3) {
+        receipt.trigger('voidLayaway');
       } else if ((OB.DEC.abs(receipt.getPayment()) !== OB.DEC.abs(receipt.getGross())) && (!receipt.isLayaway() && !receipt.get('paidOnCredit'))) {
         OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_PaymentAmountDistinctThanReceiptAmountTitle'), OB.I18N.getLabel('OBPOS_PaymentAmountDistinctThanReceiptAmountBody'), [{
           label: OB.I18N.getLabel('OBMOBC_LblOk'),

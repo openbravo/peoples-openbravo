@@ -882,13 +882,9 @@ enyo.kind({
     if (myModel.get('leftColumnViewManager').isOrder()) {
       if (this.drawerpreference && this.allowOpenDrawer) {
         if (this.drawerOpened) {
-          if (this.owner.receipt.get('orderType') === 3) {
-            this.owner.receipt.trigger('voidLayaway');
-          } else {
-            this.setDisabled(true);
-            enyo.$.scrim.show();
-            me.owner.model.get('order').trigger('paymentDone', false);
-          }
+          this.setDisabled(true);
+          enyo.$.scrim.show();
+          me.owner.model.get('order').trigger('paymentDone', false);
           this.drawerOpened = false;
           this.setContent(OB.I18N.getLabel('OBPOS_LblOpen'));
         } else {
@@ -900,14 +896,9 @@ enyo.kind({
           this.setContent(OB.I18N.getLabel('OBPOS_LblDone'));
         }
       } else {
-        //Void Layaway
-        if (this.owner.receipt.get('orderType') === 3) {
-          this.owner.receipt.trigger('voidLayaway');
-        } else {
-          this.setDisabled(true);
-          enyo.$.scrim.show();
-          me.owner.receipt.trigger('paymentDone', this.allowOpenDrawer);
-        }
+        this.setDisabled(true);
+        enyo.$.scrim.show();
+        me.owner.receipt.trigger('paymentDone', this.allowOpenDrawer);
       }
     } else {
       if (this.drawerpreference && this.allowOpenDrawer) {
