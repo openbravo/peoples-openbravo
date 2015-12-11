@@ -53,12 +53,43 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     var orderlist = this.get('orderList'),
         model = this,
         criteria = {
-        'hasbeenpaid': 'N',
-        'session': OB.MobileApp.model.get('session')
+        'hasbeenpaid': 'N'
         };
     OB.Dal.find(OB.Model.Order, criteria, function (ordersNotPaid) { //OB.Dal.find success
       var currentOrder = {},
           loadOrderStr;
+
+      // Getting Max Document No, Quotation No from Unpaid orders
+      var maxDocumentNo = 0,
+          maxQuotationNo = 0;
+      _.each(ordersNotPaid.models, function (order) {
+        if (order) {
+          if (order.get('documentnoSuffix') > maxDocumentNo) {
+            maxDocumentNo = order.get('documentnoSuffix');
+          }
+          if (order.get('quotationnoSuffix') > maxQuotationNo) {
+            maxQuotationNo = order.get('quotationnoSuffix');
+          }
+        }
+      });
+
+      // Setting the Max Document No, Quotation No to their respective Threshold
+      if (maxDocumentNo > 0 && OB.MobileApp.model.documentnoThreshold < maxDocumentNo) {
+        OB.MobileApp.model.documentnoThreshold = maxDocumentNo;
+      }
+      if (maxQuotationNo > 0 && OB.MobileApp.model.quotationnoThreshold < maxQuotationNo) {
+        OB.MobileApp.model.quotationnoThreshold = maxQuotationNo;
+      }
+
+      // Removing Orders which are created in other users session 
+      var outOfSessionOrder = _.filter(ordersNotPaid.models, function (order) {
+        if (order && order.get('session') !== OB.MobileApp.model.get('session')) {
+          return true;
+        }
+      });
+      _.each(outOfSessionOrder, function (orderToRemove) {
+        ordersNotPaid.remove(orderToRemove);
+      });
 
       OB.UTIL.HookManager.executeHooks('OBPOS_PreLoadUnpaidOrdersHook', {
         ordersNotPaid: ordersNotPaid,
@@ -368,17 +399,23 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
           label: OB.I18N.getLabel('OBMOBC_LblOk'),
           isConfirmButton: true,
           action: function () {
-            if (openDrawer) {
-              OB.POS.hwserver.openDrawer({
-                openFirst: false,
-                receipt: receipt
-              }, OB.MobileApp.model.get('permissions').OBPOS_timeAllowedDrawerSales);
+            if (receipt.get('orderType') === 3) {
+              receipt.trigger('voidLayaway');
+            } else {
+              if (openDrawer) {
+                OB.POS.hwserver.openDrawer({
+                  openFirst: false,
+                  receipt: receipt
+                }, OB.MobileApp.model.get('permissions').OBPOS_timeAllowedDrawerSales);
+              }
+              receipt.trigger('paymentAccepted');
             }
-            receipt.trigger('paymentAccepted');
           }
         }, {
           label: OB.I18N.getLabel('OBMOBC_LblCancel')
         }]);
+      } else if (receipt.get('orderType') === 3) {
+        receipt.trigger('voidLayaway');
       } else if ((OB.DEC.abs(receipt.getPayment()) !== OB.DEC.abs(receipt.getGross())) && (!receipt.isLayaway() && !receipt.get('paidOnCredit'))) {
         OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_PaymentAmountDistinctThanReceiptAmountTitle'), OB.I18N.getLabel('OBPOS_PaymentAmountDistinctThanReceiptAmountBody'), [{
           label: OB.I18N.getLabel('OBMOBC_LblOk'),
@@ -585,7 +622,10 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
       var auxReceipt = new OB.Model.Order();
       OB.UTIL.clone(receipt, auxReceipt);
       process.exec({
-        order: receipt
+        messageId: OB.UTIL.get_UUID(),
+        data: [{
+          order: receipt
+        }]
       }, function (data) {
         if (data && data.exception) {
           OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorVoidLayaway'));
@@ -649,6 +689,9 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
             successCallbackBPLoc = function (bpLoc) {
               dataBps.set('locId', bpLoc.get('id'));
               dataBps.set('locName', bpLoc.get('name'));
+              dataBps.set('cityName', bpLoc.get('cityName'));
+              dataBps.set('countryName', bpLoc.get('countryName'));
+              dataBps.set('postalCode', bpLoc.get('postalCode'));
               dataBps.set('locationModel', bpLoc);
               OB.MobileApp.model.set('businessPartner', dataBps);
               me.loadUnpaidOrders(callback);
@@ -660,6 +703,9 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
               successCallbackBPLoc = function (bpLoc) {
                 dataBps.set('locId', bpLoc.get('id'));
                 dataBps.set('locName', bpLoc.get('name'));
+                dataBps.set('cityName', bpLoc.get('cityName'));
+                dataBps.set('countryName', bpLoc.get('countryName'));
+                dataBps.set('postalCode', bpLoc.get('postalCode'));
                 dataBps.set('locationModel', bpLoc);
                 OB.MobileApp.model.set('businessPartner', dataBps);
                 me.loadUnpaidOrders(callback);

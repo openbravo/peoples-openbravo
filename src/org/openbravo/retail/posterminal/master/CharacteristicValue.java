@@ -37,7 +37,7 @@ public class CharacteristicValue extends ProcessHQLQuery {
   private Instance<ModelExtension> extensions;
 
   @Override
-  protected List<HQLPropertyList> getHqlProperties() {
+  protected List<HQLPropertyList> getHqlProperties(JSONObject jsonsent) {
     // Get Product Properties
     List<HQLPropertyList> propertiesList = new ArrayList<HQLPropertyList>();
     Map<String, Object> args = new HashMap<String, Object>();
@@ -60,6 +60,7 @@ public class CharacteristicValue extends ProcessHQLQuery {
             + regularProductsChValueHQLProperties.getHqlSelect()
             + "from CharacteristicValue cv, ADTreeNode node "
             + "where cv.characteristic.tree =  node.tree and cv.id = node.node and  $filtersCriteria AND $hqlCriteria "
+            + "and cv.characteristic.obposUseonwebpos = true "
             + "and cv.$naturalOrgCriteria and cv.$readableSimpleClientCriteria and (cv.$incrementalUpdateCriteria) "
             + "order by cv.name");
 

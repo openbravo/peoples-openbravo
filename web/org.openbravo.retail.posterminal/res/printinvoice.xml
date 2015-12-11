@@ -154,7 +154,13 @@
       <%
           }
         }
-      %>   
+      %>
+    <% if (order.get('hasbeenpaid') === 'Y' && order.get('paidOnCredit')) { %>
+    <line>
+      <text align="left" length="20"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_paidOnCredit')) %></text>
+      <text align="right" length="20"><%= OB.I18N.formatCurrency(order.getGross() - order.get('payment'))%></text>
+    </line>
+    <% } %>
     <line>
       <text align="left" length="20"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_ticketChange')) %></text>
       <text align="right" length="20"><%= OB.I18N.formatCurrency(order.get('change'))%></text>
@@ -162,11 +168,7 @@
     <line></line>
     <line size="1">
       <% if (order.get('hasbeenpaid') === 'Y') { %>
-        <% if (order.get('paidOnCredit')){ %>
-          <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_paidOnCredit')) %></text>
-        <% } else { %>
-          <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_tckfooter_line1')) %></text>
-        <% } %>
+        <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_tckfooter_line1')) %></text>
       <% } else { %>
         <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_tckfooter_draft'))  %></text>
       <% } %>

@@ -355,7 +355,8 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
     }, this);
 
     OB.Dal.find(OB.Model.Order, {
-      hasbeenpaid: 'N'
+      hasbeenpaid: 'N',
+      'session': OB.MobileApp.model.get('session')
     }, function (pendingOrderList, me) {
       var emptyOrders;
       // Detect empty orders and remove them from here
@@ -680,8 +681,9 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
     }, function (cashUp) {
       OB.UTIL.composeCashupInfo(cashUp, currentMe, function (me) {
         var i, paymentMethodInfo, objToSend = JSON.parse(cashUp.at(0).get('objToSend'));
-        objToSend.cashUpDate = OB.I18N.normalizeDate(new Date());
-        objToSend.currentDate = OB.I18N.normalizeDate(new Date());
+        var now = new Date();
+        objToSend.cashUpDate = OB.I18N.normalizeDate(now);
+        objToSend.timezoneOffset = now.getTimezoneOffset();
         for (i = 0; i < me.additionalProperties.length; i++) {
           objToSend[me.additionalProperties[i]] = me.propertyFunctions[i](OB.POS.modelterminal.get('terminal').id, cashUp.at(0));
         }
@@ -790,7 +792,6 @@ OB.OBPOSCashUp.Model.CashUpPartial = OB.OBPOSCashUp.Model.CashUp.extend({
             isocode: ''
           }));
         } else {
-          var fromCurrencyId = model.get('paymentMethod').currency;
           switch (enumSummarys[counter]) {
           case 'qtyToKeepSummary':
             if (model.get(enumSecondConcepts[counter]) !== null && model.get(enumSecondConcepts[counter]) !== undf) {

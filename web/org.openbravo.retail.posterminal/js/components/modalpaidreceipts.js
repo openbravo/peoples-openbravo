@@ -316,10 +316,11 @@ enyo.kind({
     var limit = OB.Model.Order.prototype.dataLimit;
     if (OB.MobileApp.model.hasPermission('OBPOS_orderLimit', true)) {
       limit = OB.DEC.abs(OB.MobileApp.model.hasPermission('OBPOS_orderLimit', true));
+      OB.Model.Order.prototype.tempDataLimit = OB.DEC.abs(OB.MobileApp.model.hasPermission('OBPOS_orderLimit', true));
     }
     process.exec({
       filters: me.filters,
-      _limit: limit,
+      _limit: limit + 1,
       _dateFormat: OB.Format.date
     }, function (data) {
       if (data) {

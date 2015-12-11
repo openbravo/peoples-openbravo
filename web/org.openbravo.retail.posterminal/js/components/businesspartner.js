@@ -344,7 +344,7 @@ enyo.kind({
   },
   searchAction: function (inSender, inEvent) {
     var me = this,
-        filter = inEvent.bpName;
+        filter = OB.UTIL.unAccent(inEvent.bpName);
 
     this.$.stBPAssignToReceipt.$.tempty.hide();
     this.$.stBPAssignToReceipt.$.tbody.hide();
