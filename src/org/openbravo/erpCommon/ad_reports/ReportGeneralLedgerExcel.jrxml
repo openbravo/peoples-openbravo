@@ -5,6 +5,7 @@
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
+	<property name="net.sf.jasperreports.export.xls.detect.cell.type" value="true"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -350,7 +351,8 @@ ORDER BY VALUE, NAME, ID, DATEACCT, FACT_ACCT_GROUP_ID, bpname, bpid, pdname, pd
 				<textElement textAlignment="Right">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[($F{AMTACCTCR}!=null)?$P{NUMBERFORMAT}.format($F{AMTACCTCR}):new String("0")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{AMTACCTCR}]]></textFieldExpression>
+				<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
 				<reportElement key="textField-21" stretchType="RelativeToBandHeight" x="350" y="0" width="80" height="13" uuid="61ebce32-48ca-4823-911f-c009e581b4e1"/>
@@ -363,7 +365,8 @@ ORDER BY VALUE, NAME, ID, DATEACCT, FACT_ACCT_GROUP_ID, bpname, bpid, pdname, pd
 				<textElement textAlignment="Right">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[($F{AMTACCTDR}!=null)?$P{NUMBERFORMAT}.format($F{AMTACCTDR}):new String("0")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{AMTACCTDR}]]></textFieldExpression>
+				<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="false">
 				<reportElement key="textField-22" stretchType="RelativeToBandHeight" x="280" y="0" width="70" height="13" uuid="5afdc4b7-edf6-4e06-960b-ca4914f50e5c"/>

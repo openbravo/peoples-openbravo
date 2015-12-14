@@ -518,7 +518,6 @@ public class ReportingUtils {
       SimpleXlsReportConfiguration reportExportConfiguration = new SimpleXlsReportConfiguration();
       reportExportConfiguration.setOnePagePerSheet(false);
       reportExportConfiguration.setRemoveEmptySpaceBetweenRows(true);
-      reportExportConfiguration.setDetectCellType(true);
       excelExporter.setConfiguration(reportExportConfiguration);
     }
     excelExporter.setExporterInput(exporterInput);
@@ -553,7 +552,6 @@ public class ReportingUtils {
       SimpleXlsReportConfiguration reportExportConfiguration = new SimpleXlsReportConfiguration();
       reportExportConfiguration.setOnePagePerSheet(false);
       reportExportConfiguration.setRemoveEmptySpaceBetweenRows(true);
-      reportExportConfiguration.setDetectCellType(true);
       excelExporter.setConfiguration(reportExportConfiguration);
     }
     excelExporter.setExporterInput(exporterInput);
