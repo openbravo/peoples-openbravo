@@ -5,6 +5,7 @@
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
+	<property name="net.sf.jasperreports.export.xls.detect.cell.type" value="true"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -381,7 +382,8 @@
 				<textElement textAlignment="Right">
 					<font size="10"/>
 				</textElement>
-				<textFieldExpression><![CDATA[($F{SALDO_FINAL})!=null?$P{NUMBERFORMAT}.format($F{SALDO_FINAL}):new String(" ")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{SALDO_FINAL}]]></textFieldExpression>
+				<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="false">
 				<reportElement key="textField-20" stretchType="RelativeToBandHeight" x="460" y="0" width="85" height="13" uuid="ece58c00-da3b-409b-b21e-ef1e34ac0039"/>
@@ -394,7 +396,8 @@
 				<textElement textAlignment="Right">
 					<font size="10"/>
 				</textElement>
-				<textFieldExpression><![CDATA[($F{AMTACCTCR})!=null?$P{NUMBERFORMAT}.format($F{AMTACCTCR}):new String(" ")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{AMTACCTCR}]]></textFieldExpression>
+				<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
 				<reportElement key="textField-21" stretchType="RelativeToBandHeight" x="375" y="0" width="85" height="13" uuid="66e1e5da-791a-421e-a4d7-bb3987eba601"/>
@@ -407,7 +410,8 @@
 				<textElement textAlignment="Right">
 					<font size="10"/>
 				</textElement>
-				<textFieldExpression><![CDATA[($F{AMTACCTDR})!=null?$P{NUMBERFORMAT}.format($F{AMTACCTDR}):new String(" ")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{AMTACCTDR}]]></textFieldExpression>
+				<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="false">
 				<reportElement key="textField-22" stretchType="RelativeToBandHeight" x="279" y="0" width="96" height="13" uuid="9fead840-b567-4904-925a-e1264cef905a"/>
@@ -420,7 +424,8 @@
 				<textElement textAlignment="Right">
 					<font size="10"/>
 				</textElement>
-				<textFieldExpression><![CDATA[($F{SALDO_INICIAL})!=null?$P{NUMBERFORMAT}.format($F{SALDO_INICIAL}):new String(" ")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{SALDO_INICIAL}]]></textFieldExpression>
+				<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement key="textField" stretchType="RelativeToBandHeight" x="641" y="0" width="189" height="13" uuid="9b147e4b-23d1-4eb4-9e35-ee119ae34967">
