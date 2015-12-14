@@ -40,20 +40,33 @@
             OB.Utilities.fixNull250(currentValues);
         <#list data.fieldHandler.fields as field>
         <#if field.readOnlyIf != "" && field.showIf == "">
-        // Applying readonly.
+        // Applying read only.
            f.disableItem('${field.name}', ${field.readOnlyIf});
-        <#elseif field.readOnlyIf == "" && field.showIf != "">
+        <#else>
+        <#if field.readOnlyIf == "" && field.showIf != "">
         // Applying display logic in grid.
         if (!this.view.isShowingForm) {
+        <#if field.showIf == "false">
+           f.disableItem('${field.name}', true);
+        <#else>
            f.disableItem('${field.name}', (${field.showIf}) === false);
+        </#if>
         }
-        <#elseif field.readOnlyIf != "" && field.showIf != "">
-        // Applying display logic and readonly in grid/form.
+        <#else>
+        <#if field.readOnlyIf != "" && field.showIf != "">
+        // Applying display logic and read only in grid/form.
         if (!this.view.isShowingForm) {
+        <#if field.showIf == "false">
+           // If display logic has a false value, it is only necessary take into account the read only logic.
+           f.disableItem('${field.name}', (${field.readOnlyIf}));
+        <#else>
            f.disableItem('${field.name}', (${field.readOnlyIf}) || (${field.showIf}) === false);
+        </#if>
         } else {
            f.disableItem('${field.name}', ${field.readOnlyIf});
         }
+        </#if>
+        </#if>
         </#if>
         </#list>
         // disable forced in case the fields are set as read only per role
