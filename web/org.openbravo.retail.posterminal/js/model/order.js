@@ -1632,7 +1632,6 @@
       _.each(orderlines, function (line) {
         me.deleteLine(line, true);
       });
-      var productAdded = 0;
       // TODO: Lost options and attributes, maybe has problems with other modules (like Complementary Products)
       addProductsOfLines(me, orderlines, 0, callback);
     },
