@@ -30,6 +30,7 @@ public class PaidReceiptLinesProperties extends ModelExtension {
   public List<HQLProperty> getHQLProperties(Object params) {
     ArrayList<HQLProperty> list = new ArrayList<HQLProperty>() {
       private static final long serialVersionUID = 1L;
+
       {
         add(new HQLProperty("ordLine.product.id", "id"));
         add(new HQLProperty("ordLine.product.name", "name"));
@@ -47,6 +48,7 @@ public class PaidReceiptLinesProperties extends ModelExtension {
         add(new HQLProperty(
             "(ordLine.deliveredQuantity - (select coalesce(abs(sum(deliveredQuantity)),0) from OrderLine where goodsShipmentLine.salesOrderLine.id =ordLine.id))",
             "remainingQuantity"));
+        add(new HQLProperty("ordLine.obposSerialnumber", "obposSerialnumber"));
       }
     };
 
