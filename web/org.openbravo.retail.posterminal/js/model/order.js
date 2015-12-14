@@ -4155,7 +4155,7 @@
         order.set('isPaid', true);
         var paidByPayments = 0;
         _.each(model.receiptPayments, function (receiptPayment) {
-          paidByPayments = +receiptPayment.amount;
+          paidByPayments += receiptPayment.amount;
         });
         if (model.totalamount > 0 && model.totalamount > paidByPayments && !model.isQuotation) {
           order.set('creditAmount', model.totalamount - paidByPayments);
