@@ -55,6 +55,10 @@ enyo.kind({
       this.hide();
       return;
     }
+    if (OB.MobileApp.model.get('payments').length <= 0) {
+      this.hide();
+      return;
+    }
 
     this.adjustVisibilityBasedOnPermissions();
   },
