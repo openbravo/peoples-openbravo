@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -226,6 +226,8 @@ public class SystemService implements OBSingleton {
       TriggerHandler.getInstance().enable();
       OBDal.getInstance().commitAndClose();
     } finally {
+      // always clear the threadlocal
+      TriggerHandler.getInstance().clear();
       OBContext.restorePreviousMode();
     }
   }

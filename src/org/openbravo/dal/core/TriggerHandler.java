@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -24,6 +24,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 import org.apache.log4j.Logger;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.util.Check;
 import org.openbravo.dal.service.OBDal;
@@ -68,7 +69,7 @@ public class TriggerHandler {
       ps.executeUpdate();
       sessionStatus.set(Boolean.TRUE);
     } catch (Exception e) {
-      log.error("Couldn't disable triggers: ", e);
+      throw new OBException("Couldn't disable triggers: ", e);
     } finally {
       try {
         ps.close();
@@ -105,10 +106,11 @@ public class TriggerHandler {
     try {
       ps = con.prepareStatement("DELETE FROM AD_SESSION_STATUS");
       ps.executeUpdate();
-      sessionStatus.set(null);
     } catch (Exception e) {
-      log.error("Couldn't enable triggers: ", e);
+      throw new OBException("Couldn't disable triggers: ", e);
     } finally {
+      // always clear the threadlocal
+      clear();
       try {
         ps.close();
       } catch (SQLException e) {
