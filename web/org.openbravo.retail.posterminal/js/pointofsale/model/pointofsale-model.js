@@ -768,6 +768,8 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
           }, function () {
             OB.error(arguments);
           });
+          receipt.set('negativeDocNo', docNo.documentNo);
+          receipt.trigger('print');
         }
       }, function () {
         OB.error(arguments);

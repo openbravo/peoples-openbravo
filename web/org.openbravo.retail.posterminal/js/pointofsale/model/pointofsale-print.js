@@ -180,7 +180,7 @@
 
       if (args.forcedtemplate) {
         args.template = args.forcedtemplate;
-      } else if (receipt.get('ordercanceled')) {
+      } else if (receipt.get('ordercanceled') || receipt.get('cancelLayaway')) {
         args.template = me.templatecanceledreceipt;
       } else if (receipt.get('generateInvoice') && receipt.get('orderType') !== 2 && receipt.get('orderType') !== 3 && !receipt.get('isLayaway')) {
         if (receipt.get('orderType') === 1 || hasNegativeLines) {
