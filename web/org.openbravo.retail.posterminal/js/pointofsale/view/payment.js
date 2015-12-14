@@ -1097,10 +1097,6 @@ enyo.kind({
   content: '',
   classes: 'btn-icon-small btnlink-green',
   permission: 'OBPOS_receipt.layawayReceipt',
-  show: function () {
-    this.inherited(arguments);
-    this.setDisabled(false);
-  },
   init: function (model) {
     this.model = model;
     this.setContent(OB.I18N.getLabel('OBPOS_LblLayaway'));
@@ -1123,7 +1119,7 @@ enyo.kind({
         payments;
     this.allowOpenDrawer = false;
 
-    if (this.disabled) {
+    if (!this.showing) {
       return true;
     }
 
@@ -1151,7 +1147,7 @@ enyo.kind({
         receipt.set('generateInvoice', false);
       }
     }
-    this.setDisabled(true);
+    this.hide();
     enyo.$.scrim.show();
     receipt.trigger('paymentDone', me.allowOpenDrawer);
   }
