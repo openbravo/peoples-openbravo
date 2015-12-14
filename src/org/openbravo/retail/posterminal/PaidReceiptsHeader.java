@@ -8,11 +8,7 @@
  */
 package org.openbravo.retail.posterminal;
 
-import java.sql.Timestamp;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,7 +22,6 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
-import org.openbravo.base.session.OBPropertiesProvider;
 
 public class PaidReceiptsHeader extends ProcessHQLQuery {
   public static final Logger log = Logger.getLogger(PaidReceiptsHeader.class);
@@ -98,37 +93,12 @@ public class PaidReceiptsHeader extends ProcessHQLQuery {
       hqlPaidReceipts += " and ord.documentStatus='" + json.getString("docstatus") + "'";
     }
     if (!json.getString("startDate").isEmpty()) {
-      if (OBPropertiesProvider.getInstance().getOpenbravoProperties().getProperty("bbdd.rdbms")
-          .equalsIgnoreCase("oracle")) {
-        hqlPaidReceipts += " and ord.orderDate >= to_date('" + json.getString("startDate")
-            + " 00:00:00', 'YYYY-MM-DD HH24:MI:SS')";
-      } else {
-        try {
-          DateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-          Date date = format.parse(json.getString("startDate") + " 00:00:00");
-          Timestamp sqlTimestamp = new java.sql.Timestamp(date.getTime());
-          hqlPaidReceipts += " and ord.orderDate >= '" + sqlTimestamp.toString() + "'";
-        } catch (Exception e) {
-          throw new JSONException("There was a problem with the startDate format");
-        }
-      }
+      hqlPaidReceipts += " and ord.orderDate >= to_date('" + json.getString("startDate")
+          + "', 'YYYY/MM/DD')";
     }
-
     if (!json.getString("endDate").isEmpty()) {
-      if (OBPropertiesProvider.getInstance().getOpenbravoProperties().getProperty("bbdd.rdbms")
-          .equalsIgnoreCase("oracle")) {
-        hqlPaidReceipts += " and ord.orderDate <= to_date('" + json.getString("endDate")
-            + " 23:59:59', 'YYYY-MM-DD HH24:MI:SS')";
-      } else {
-        try {
-          DateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-          Date date = format.parse(json.getString("endDate") + " 23:59:59");
-          Timestamp sqlTimestamp = new java.sql.Timestamp(date.getTime());
-          hqlPaidReceipts += " and ord.orderDate <= '" + sqlTimestamp.toString() + "'";
-        } catch (Exception e) {
-          throw new JSONException("There was a problem with the endDate format");
-        }
-      }
+      hqlPaidReceipts += " and ord.orderDate <= to_date('" + json.getString("endDate")
+          + "', 'YYYY/MM/DD')";
     }
 
     if (json.has("isQuotation") && json.getBoolean("isQuotation")) {
