@@ -211,9 +211,10 @@ public class OBViewUtil {
       fieldColumn = field.getColumn();
       settings.canSort = field.getColumn().isAllowsorting();
       settings.canFilter = field.getColumn().isAllowfiltering();
-      settings.isFilteringColumnConfig = true;
-      settings.isSortingColumnConfig = true;
     }
+
+    settings.canOverwriteFilteringConfig = true;
+    settings.canOverwriteSortingConfig = true;
 
     if (tabConf != null && field != null && field.getId() != null) {
       GCField fieldConf = null;
@@ -264,8 +265,8 @@ public class OBViewUtil {
     private Boolean disableFkDropdown = null;
     private String operator = null;
     private Long thresholdToFilter = null;
-    private boolean isSortingColumnConfig;
-    private boolean isFilteringColumnConfig;
+    private boolean canOverwriteSortingConfig;
+    private boolean canOverwriteFilteringConfig;
 
     private boolean shouldContinueProcessing() {
       return canSort == null || canFilter == null || operator == null || filterOnChange == null
@@ -306,22 +307,21 @@ public class OBViewUtil {
         if (gcItem instanceof GCField) {
           sortingConfiguration = convertBoolean(gcItem, "PROPERTY_SORTABLE");
           if (sortingConfiguration != null) {
-            isSortingColumnConfig = false;
+            canOverwriteSortingConfig = false;
             canSort = sortingConfiguration;
           }
         } else if (gcItem instanceof GCTab) {
-          if (isSortingColumnConfig == true) {
+          if (canOverwriteSortingConfig == true) {
             sortingConfiguration = convertBoolean(gcItem, "PROPERTY_SORTABLE");
             if (sortingConfiguration != null) {
-              isSortingColumnConfig = false;
+              canOverwriteSortingConfig = false;
               if (sortingConfiguration == false) {
-                isSortingColumnConfig = false;
                 canSort = sortingConfiguration;
               }
             }
           }
         } else if (gcItem instanceof GCSystem) {
-          if (isSortingColumnConfig == true) {
+          if (canOverwriteSortingConfig == true) {
             sortingConfiguration = convertBoolean(gcItem, "PROPERTY_SORTABLE");
             if (sortingConfiguration != null && sortingConfiguration == false) {
               canSort = sortingConfiguration;
@@ -332,22 +332,21 @@ public class OBViewUtil {
         if (gcItem instanceof GCField) {
           filteringConfiguration = convertBoolean(gcItem, "PROPERTY_FILTERABLE");
           if (filteringConfiguration != null) {
-            isFilteringColumnConfig = false;
+            canOverwriteFilteringConfig = false;
             canFilter = filteringConfiguration;
           }
         } else if (gcItem instanceof GCTab) {
-          if (isFilteringColumnConfig == true) {
+          if (canOverwriteFilteringConfig == true) {
             filteringConfiguration = convertBoolean(gcItem, "PROPERTY_FILTERABLE");
             if (filteringConfiguration != null) {
-              isFilteringColumnConfig = false;
+              canOverwriteFilteringConfig = false;
               if (filteringConfiguration == false) {
-                isFilteringColumnConfig = false;
                 canFilter = filteringConfiguration;
               }
             }
           }
         } else if (gcItem instanceof GCSystem) {
-          if (isFilteringColumnConfig == true) {
+          if (canOverwriteFilteringConfig == true) {
             filteringConfiguration = convertBoolean(gcItem, "PROPERTY_FILTERABLE");
             if (filteringConfiguration != null && filteringConfiguration == false) {
               canFilter = filteringConfiguration;
