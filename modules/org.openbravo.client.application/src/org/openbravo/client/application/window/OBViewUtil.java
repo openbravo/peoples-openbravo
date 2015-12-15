@@ -33,6 +33,7 @@ import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.ad.ui.Element;
 import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.FieldTrl;
@@ -190,6 +191,7 @@ public class OBViewUtil {
    */
   private static JSONObject getGridConfigurationSettings(Field field, Tab tab) {
     GridConfigSettings settings = new GridConfigSettings();
+    Column fieldColumn = null;
     GCTab tabConf = null;
     if (tab.getOBUIAPPGCTabList().size() > 1) {
       OBCriteria<GCTab> gcTabCriteria = OBDal.getInstance().createCriteria(GCTab.class);
@@ -205,6 +207,14 @@ public class OBViewUtil {
       }
     }
 
+    if (field != null) {
+      fieldColumn = field.getColumn();
+      settings.canSort = field.getColumn().isAllowsorting();
+      settings.canFilter = field.getColumn().isAllowfiltering();
+      settings.isFilteringColumnConfig = true;
+      settings.isSortingColumnConfig = true;
+    }
+
     if (tabConf != null && field != null && field.getId() != null) {
       GCField fieldConf = null;
       for (GCField fc : tabConf.getOBUIAPPGCFieldList()) {
@@ -218,13 +228,14 @@ public class OBViewUtil {
 
       // Trying to get parameters from "Grid Configuration (Tab/Field)" -> "Field" window
       if (fieldConf != null) {
-        settings.processConfig(fieldConf);
+        settings.processConfig(fieldConf, fieldColumn);
+
       }
     }
 
     if (tabConf != null && settings.shouldContinueProcessing()) {
       // Trying to get parameters from "Grid Configuration (Tab/Field)" -> "Tab" window
-      settings.processConfig(tabConf);
+      settings.processConfig(tabConf, fieldColumn);
     }
 
     if (settings.shouldContinueProcessing()) {
@@ -236,7 +247,7 @@ public class OBViewUtil {
       List<GCSystem> sysConfs = gcSystemCriteria.list();
 
       if (!sysConfs.isEmpty()) {
-        settings.processConfig(sysConfs.get(0));
+        settings.processConfig(sysConfs.get(0), fieldColumn);
       }
     }
 
@@ -253,6 +264,8 @@ public class OBViewUtil {
     private Boolean disableFkDropdown = null;
     private String operator = null;
     private Long thresholdToFilter = null;
+    private boolean isSortingColumnConfig;
+    private boolean isFilteringColumnConfig;
 
     private boolean shouldContinueProcessing() {
       return canSort == null || canFilter == null || operator == null || filterOnChange == null
@@ -285,15 +298,63 @@ public class OBViewUtil {
       return isPropertyEnabled;
     }
 
-    private void processConfig(BaseOBObject gcItem) {
+    private void processConfig(BaseOBObject gcItem, Column fieldColumn) {
+      Boolean sortingConfiguration = null;
+      Boolean filteringConfiguration = null;
       Class<? extends BaseOBObject> itemClass = gcItem.getClass();
       try {
-        if (canSort == null) {
-          canSort = convertBoolean(gcItem, "PROPERTY_SORTABLE");
+        if (gcItem instanceof GCField) {
+          sortingConfiguration = convertBoolean(gcItem, "PROPERTY_SORTABLE");
+          if (sortingConfiguration != null) {
+            isSortingColumnConfig = false;
+            canSort = sortingConfiguration;
+          }
+        } else if (gcItem instanceof GCTab) {
+          if (isSortingColumnConfig == true) {
+            sortingConfiguration = convertBoolean(gcItem, "PROPERTY_SORTABLE");
+            if (sortingConfiguration != null) {
+              isSortingColumnConfig = false;
+              if (sortingConfiguration == false) {
+                isSortingColumnConfig = false;
+                canSort = sortingConfiguration;
+              }
+            }
+          }
+        } else if (gcItem instanceof GCSystem) {
+          if (isSortingColumnConfig == true) {
+            sortingConfiguration = convertBoolean(gcItem, "PROPERTY_SORTABLE");
+            if (sortingConfiguration != null && sortingConfiguration == false) {
+              canSort = sortingConfiguration;
+            }
+          }
         }
-        if (canFilter == null) {
-          canFilter = convertBoolean(gcItem, "PROPERTY_FILTERABLE");
+
+        if (gcItem instanceof GCField) {
+          filteringConfiguration = convertBoolean(gcItem, "PROPERTY_FILTERABLE");
+          if (filteringConfiguration != null) {
+            isFilteringColumnConfig = false;
+            canFilter = filteringConfiguration;
+          }
+        } else if (gcItem instanceof GCTab) {
+          if (isFilteringColumnConfig == true) {
+            filteringConfiguration = convertBoolean(gcItem, "PROPERTY_FILTERABLE");
+            if (filteringConfiguration != null) {
+              isFilteringColumnConfig = false;
+              if (filteringConfiguration == false) {
+                isFilteringColumnConfig = false;
+                canFilter = filteringConfiguration;
+              }
+            }
+          }
+        } else if (gcItem instanceof GCSystem) {
+          if (isFilteringColumnConfig == true) {
+            filteringConfiguration = convertBoolean(gcItem, "PROPERTY_FILTERABLE");
+            if (filteringConfiguration != null && filteringConfiguration == false) {
+              canFilter = filteringConfiguration;
+            }
+          }
         }
+
         if (operator == null) {
           if (gcItem.get(itemClass.getField("PROPERTY_TEXTFILTERBEHAVIOR").get(gcItem).toString()) != null
               && !"D".equals(gcItem.get(itemClass.getField("PROPERTY_TEXTFILTERBEHAVIOR")
