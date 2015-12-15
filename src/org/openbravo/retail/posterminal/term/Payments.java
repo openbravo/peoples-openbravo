@@ -47,10 +47,10 @@ public class Payments extends JSONTerminalProperty {
           + "from OBPOS_App_Payment as p left join p.financialAccount as f left join f.currency as c "
           + "left outer join p.paymentMethod as pm left outer join pm.image as img "
           + "where p.obposApplications.id=? and p.$readableSimpleCriteria and p.$activeCriteria "
-          + "and not exists (from ADPreference as prf, ADUser user "
-          + "where prf.property = p.searchKey and prf.active = true and user.id=? "
-          + "and to_char(prf.searchKey) = 'N' and (prf.userContact = user or exists (from ADUserRoles r where r.role = prf.visibleAtRole and r.userContact = user)) "
-          + "and (prf.visibleAtOrganization = p.organization or ad_isorgincluded(p.organization, prf.visibleAtOrganization, p.client.id) <> -1 or prf.visibleAtOrganization is null)) "
+          + "and not exists (from ADPreference as prf where prf.property = p.searchKey and prf.active = true "
+          + "and to_char(prf.searchKey) = 'N' and (prf.visibleAtClient is null or prf.visibleAtClient = p.client) "
+          + "and (prf.visibleAtOrganization = p.organization or ad_isorgincluded(p.organization.id, prf.visibleAtOrganization.id, p.client.id) <> -1 or prf.visibleAtOrganization is null) "
+          + "and (prf.userContact is null or prf.userContact.id=?) and (prf.visibleAtRole is null or exists (from ADUserRoles r where r.role = prf.visibleAtRole and r.userContact.id=?))) "
           + "order by p.line, p.commercialName";
 
       SimpleQueryBuilder querybuilder = new SimpleQueryBuilder(hqlPayments, OBContext
@@ -61,6 +61,7 @@ public class Payments extends JSONTerminalProperty {
       final Query paymentsquery = session.createQuery(querybuilder.getHQLQuery());
       paymentsquery.setString(0, posId);
       paymentsquery.setString(1, OBContext.getOBContext().getUser().getId());
+      paymentsquery.setString(2, OBContext.getOBContext().getUser().getId());
 
       DataToJsonConverter converter = new DataToJsonConverter();
 
