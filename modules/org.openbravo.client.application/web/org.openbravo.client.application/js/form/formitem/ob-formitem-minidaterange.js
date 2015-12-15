@@ -476,6 +476,9 @@ isc.OBMiniDateRangeItem.addProperties({}, OB.DateItemProperties, {
     this.singleDateDisplayValue = displayValue;
     this.singleDateMode = true;
     this.setElementValue(displayValue, displayValue);
+    // Use setValue() to prevent the clearing of the filter when reapplying the criteria of the form
+    // See issue https://issues.openbravo.com/view.php?id=31705
+    this.setValue(displayValue);
   },
 
   blur: function () {
