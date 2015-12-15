@@ -9,6 +9,7 @@
 package org.openbravo.retail.posterminal;
 
 import java.math.BigDecimal;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -74,7 +75,13 @@ public class PaidReceipts extends JSONProcessSimple {
         Object[] objpaidReceipts = (Object[]) obj;
         JSONObject paidReceipt = hqlProperties.getJSONObjectRow(objpaidReceipts);
         paidReceipt.put("orderid", orderid);
-
+        // orderDate is a date so we don't need to transform the time information
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
+        int orderDatePropertyIndex = hqlProperties.getHqlPropertyIndex("orderDate");
+        if (orderDatePropertyIndex != -1) {
+          String nowAsISO = df.format(objpaidReceipts[orderDatePropertyIndex]);
+          paidReceipt.put("orderDate", nowAsISO);
+        }
         // get the Invoice for the Order
         String hqlPaidReceiptsInvoice = "select inv.id from Invoice as inv where inv.salesOrder.id = :orderId";
         Query PaidReceiptsInvoiceQuery = OBDal.getInstance().getSession()
