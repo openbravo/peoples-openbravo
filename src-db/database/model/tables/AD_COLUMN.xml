@@ -209,6 +209,14 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="ALLOWSORTING" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[Y]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="ALLOWFILTERING" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[Y]]></default>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CALLOUT" name="AD_COLUMN_AD_CALLOUT">
         <reference local="AD_CALLOUT_ID" foreign="AD_CALLOUT_ID"/>
       </foreign-key>
