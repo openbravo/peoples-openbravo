@@ -52,7 +52,6 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.ad_forms.AcctServer;
-import org.openbravo.erpCommon.businessUtility.CancelAndReplaceUtils;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.PropertyException;
@@ -135,6 +134,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
   private boolean createShipment = true;
   private Locator binForRetuns = null;
   private boolean isQuotation = false;
+  private boolean isDeleted = false;
 
   @Inject
   @Any
@@ -188,6 +188,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     fullypaidLayaway = (jsonorder.getBoolean("isLayaway") || jsonorder.optLong("orderType") == 2)
         && jsonorder.getDouble("payment") >= jsonorder.getDouble("gross");
 
+    isDeleted = jsonorder.has("obposIsDeleted") && jsonorder.getBoolean("obposIsDeleted");
+
     createShipment = !isQuotation && !notpaidLayaway;
     if (jsonorder.has("generateShipment")) {
       createShipment &= jsonorder.getBoolean("generateShipment");
@@ -204,7 +206,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       initializeVariables(jsonorder);
       executeHooks(orderPreProcesses, jsonorder, null, null, null);
       boolean wasPaidOnCredit = false;
-      boolean isDeleted = false;
 
       if (jsonorder.has("deletedLines")) {
         mergeDeletedLines(jsonorder);
@@ -239,8 +240,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         if (log.isDebugEnabled()) {
           t1 = System.currentTimeMillis();
         }
-        // Getting if the order is deleted or not
-        isDeleted = jsonorder.has("obposIsDeleted") && jsonorder.getBoolean("obposIsDeleted");
         // An invoice will be automatically created if:
         // - The order is not a layaway and is not completely paid (ie. it's paid on credit)
         // - Or, the order is a normal order or a fully paid layaway, and has the "generateInvoice"
