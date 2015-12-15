@@ -44,7 +44,7 @@ BEGIN
     C_PaymentTerm_ID=:new.C_PaymentTerm_ID,
     DateAcct=:new.DateAcct
   WHERE C_Order_ID=:new.C_Order_ID
-    AND DocStatus NOT IN('RE', 'CL', 'CO') ;
+    AND DocStatus NOT IN('RE', 'CL', 'CO', 'VO') ;
   END IF;
  END IF;
  
