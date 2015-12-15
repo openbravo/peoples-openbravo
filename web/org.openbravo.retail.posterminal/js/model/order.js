@@ -2761,8 +2761,12 @@
           });
           order.set('taxes', taxes);
 
-          if (model.totalamount > 0 && order.get('payment') < model.totalamount && !model.isLayaway && !model.isQuotation) {
-            order.set('paidOnCredit', true);
+          if (!model.isLayaway && !model.isQuotation) {
+            if (model.totalamount > 0 && order.get('payment') < model.totalamount) {
+              order.set('paidOnCredit', true);
+            } else if (model.totalamount < 0 && (order.get('payment') === 0 || (order.get('payment') > model.totalamount))) {
+              order.set('paidOnCredit', true);
+            }
           }
         }, function () {
           // TODO: Report errors properly
