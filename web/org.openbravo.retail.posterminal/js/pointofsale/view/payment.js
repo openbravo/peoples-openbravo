@@ -860,7 +860,7 @@ enyo.kind({
         payments;
 
     if (OB.POS.hwserver.url && OB.POS.modelterminal.get('terminal').terminalType.userfid) {
-      OB.UTIL.checkEpcOrderInDeviceBuffer(myModel.get('order'));
+      OB.UTIL.processRemainingCodes(myModel.get('order'));
       OB.UTIL.eraseEpcOrderFromDeviceBufferBecauseTicketIsCompleted();
     }
 

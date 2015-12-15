@@ -102,15 +102,28 @@ OB.UTIL.eraseEpcBuffer = function () {
   }, 1000);
 };
 
-OB.UTIL.checkEpcOrderInDeviceBuffer = function (order) {
+OB.UTIL.processRemainingCodes = function (order) {
   var epcCodesToAdd = '',
-      epcCodesToErase = '';
+      saleEpcCodesToSend = '',
+      epcCodesToErase = '',
+      returnEpcCodesToSend = '',
+      saleGtinAndSerialCodesToSend = '',
+      returnGtinAndSerialCodesToSend = '',
+      codesToSend = {};
   _.each(order.get('lines').models, function (line) {
     if (line.get('obposEpccode')) {
       if (line.get('qty') > 0) {
         epcCodesToAdd = epcCodesToAdd + line.get('obposEpccode') + ',';
+        saleEpcCodesToSend = saleEpcCodesToSend + line.get('obposEpccode') + ',';
       } else {
         epcCodesToErase = epcCodesToErase + line.get('obposEpccode') + ',';
+        returnEpcCodesToSend = returnEpcCodesToSend + line.get('obposEpccode') + ',';
+      }
+    } else if (line.get('obposSerialnumber')) {
+      if (line.get('qty') > 0) {
+        saleGtinAndSerialCodesToSend = saleGtinAndSerialCodesToSend + '010' + line.get('product').get('UPCEAN') + '21' + line.get('obposSerialnumber') + ',';
+      } else {
+        returnGtinAndSerialCodesToSend = returnGtinAndSerialCodesToSend + '010' + line.get('product').get('UPCEAN') + '21' + line.get('obposSerialnumber') + ',';
       }
     }
   });
@@ -124,6 +137,13 @@ OB.UTIL.checkEpcOrderInDeviceBuffer = function (order) {
       OB.UTIL.rfidWebsocket.send('erase:' + epcCodesToErase.substring(0, epcCodesToErase.length - 1));
     }, 1000);
   }
+  codesToSend.set('saleEpcCodesToSend', saleEpcCodesToSend.substring(0, saleEpcCodesToSend.length - 1));
+  codesToSend.set('returnEpcCodesToSend', returnEpcCodesToSend.substring(0, returnEpcCodesToSend.length - 1));
+  codesToSend.set('saleGtinAndSerialCodesToSend', saleGtinAndSerialCodesToSend.substring(0, saleGtinAndSerialCodesToSend.length - 1));
+  codesToSend.set('returnGtinAndSerialCodesToSend', returnGtinAndSerialCodesToSend.substring(0, returnGtinAndSerialCodesToSend.length - 1));
+  this.waitForConnection(function () {
+    OB.UTIL.rfidWebsocket.send('send:' + JSON.stringify(codesToSend));
+  }, 1000);
 };
 
 OB.UTIL.waitForConnection = function (callback, interval) {
