@@ -84,6 +84,8 @@ import org.openbravo.test.system.SystemServiceTest;
 import org.openbravo.test.system.SystemValidatorTest;
 import org.openbravo.test.system.TestInfrastructure;
 import org.openbravo.test.taxes.TaxesTest;
+import org.openbravo.test.views.CombinationsForFilteringColumns;
+import org.openbravo.test.views.CombinationsForSortingColumns;
 import org.openbravo.test.views.ViewGenerationWithDifferentConfigLevelTest;
 import org.openbravo.test.xml.ClientExportImportTest;
 import org.openbravo.test.xml.DatasetExportTest;
@@ -105,7 +107,7 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
 
-// dal
+    // dal
     DalComplexQueryRequisitionTest.class, //
     DalComplexQueryTestOrderLine.class, //
     DalPerformanceInventoryLineTest.class, //
@@ -213,7 +215,8 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     SqlCallableStatement.class,
 
     // grid configuration
-    ViewGenerationWithDifferentConfigLevelTest.class
+    ViewGenerationWithDifferentConfigLevelTest.class, CombinationsForSortingColumns.class,
+    CombinationsForFilteringColumns.class
 
 })
 public class AllAntTaskTests {
