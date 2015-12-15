@@ -312,10 +312,8 @@ enyo.kind({
 
           return;
         }
-        receipt.calculateTaxes(function () {
-          receipt.trigger('print', receipt, {
-            forcePrint: true
-          });
+        receipt.trigger('print', receipt, {
+          forcePrint: true
         });
         return;
       }

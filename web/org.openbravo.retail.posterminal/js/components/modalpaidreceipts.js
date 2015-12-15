@@ -383,6 +383,7 @@ enyo.kind({
                   newPaidReceipt: order
                 });
                 OB.UTIL.SynchronizationHelper.finished(synchId, 'clickSearchNewReceipt');
+
               });
             }
           });
@@ -417,6 +418,7 @@ enyo.kind({
   },
   changePaidReceipt: function (inSender, inEvent) {
     this.model.get('orderList').addPaidReceipt(inEvent.newPaidReceipt);
+    this.model.attributes.order.calculateReceipt();
     return true;
   },
   executeOnShow: function () {

@@ -282,6 +282,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     });
 
     receipt.on('paymentAccepted', function () {
+      receipt.setIsCalculateReceiptLockState(true);
       receipt.setIsCalculateGrossLockState(true);
       receipt.prepareToSend(function () {
         //Create the negative payment for change
@@ -378,11 +379,12 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
               if (diffStringified !== '{}') {
                 OB.error("The receipt has been modified while it was being closed:\n" + diffStringified + "\n");
               }
+              receipt.setIsCalculateReceiptLockState(false);
+              receipt.setIsCalculateGrossLockState(false);
 
               orderList.deleteCurrent();
               orderList.synchronizeCurrentOrder();
             }
-            receipt.setIsCalculateGrossLockState(false);
             enyo.$.scrim.hide();
           }
         });
@@ -595,14 +597,16 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
       if (receipt.get('cloningReceipt') || receipt.get('skipApplyPromotions') || line.get('skipApplyPromotions')) {
         return;
       }
-      OB.Model.Discounts.applyPromotions(receipt, line);
+      // Calculate the receipt
+      receipt.calculateReceipt(null, line);
     }, this);
 
     receipt.get('lines').on('remove', function () {
       if (!receipt.get('isEditable')) {
         return;
       }
-      OB.Model.Discounts.applyPromotions(receipt);
+      // Calculate the receipt
+      receipt.calculateReceipt();
     });
 
     receipt.on('change:bp', function () {
@@ -614,7 +618,8 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
           silent: true
         });
       });
-      OB.Model.Discounts.applyPromotions(receipt);
+      // Calculate the receipt
+      receipt.calculateReceipt();
     }, this);
 
     receipt.on('voidLayaway', function () {
@@ -630,9 +635,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
         if (data && data.exception) {
           OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorVoidLayaway'));
         } else {
-          auxReceipt.calculateTaxes = receipt.calculateTaxes;
-          auxReceipt.calculateTaxes(function () {
-            auxReceipt.adjustPrices();
+          auxReceipt.prepareToSend(function () {
             OB.UTIL.cashUpReport(auxReceipt);
           });
           OB.Dal.remove(receipt, null, function (tx, err) {

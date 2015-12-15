@@ -57,6 +57,7 @@
     applyPromotionsLat: function (receipt, line) {
       var me = this;
       if (receipt.get('skipApplyPromotions') || receipt.get('cloningReceipt') || this.preventApplyPromotions) {
+        receipt.trigger('applyPromotionsFinished');
         return;
       }
 
@@ -174,7 +175,6 @@
           OB.Model.Discounts.finishPromotions(receipt, line);
         });
         this.applyPromotionsImp(receipt, line, false);
-        receipt.calculateGross();
       }
     },
 
@@ -185,7 +185,7 @@
       }
 
       if (receipt && (!receipt.get('isEditable') || (!OB.UTIL.isNullOrUndefined(receipt.get('isNewReceipt')) && receipt.get('isNewReceipt')))) {
-        return;
+        receipt.trigger('discountsApplied');
       }
 
       if (line) {
@@ -240,7 +240,7 @@
 
       if (!promotion.alreadyCalculated) {
         // Recalculate all promotions again
-        OB.Model.Discounts.applyPromotions(receipt);
+        receipt.calculateReceipt();
       }
     },
 

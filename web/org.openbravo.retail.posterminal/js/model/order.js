@@ -347,6 +347,7 @@
         this.set('openDrawer', attributes.openDrawer);
         this.set('isBeingDiscounted', false);
         this.set('reApplyDiscounts', false);
+        this.set('calculateReceiptCallbacks', []);
         _.each(_.keys(attributes), function (key) {
           if (!this.has(key)) {
             this.set(key, attributes[key]);
@@ -377,16 +378,15 @@
     },
 
     calculateTaxes: function (callback) {
-      OB.DATA.OrderTaxes(this);
-      this.calculateTaxes(callback);
-    },
-
-    prepareToSend: function (callback) {
       var me = this;
-      this.calculateTaxes(function () {
-        me.adjustPrices();
-        callback(me);
-      });
+      OB.DATA.OrderTaxes(me);
+      me.calculateTaxes(callback);
+    },
+    prepareToSend: function (callback) {
+      this.adjustPrices();
+      if (!OB.UTIL.isNullOrUndefined(callback)) {
+        callback(this);
+      }
     },
 
     adjustPrices: function () {
@@ -496,28 +496,45 @@
 
     isCalculateGrossLocked: null,
 
+    isCalculateReceiptLocked: null,
+
     setIsCalculateGrossLockState: function (state) {
       this.isCalculateGrossLocked = state;
     },
 
-    calculateGross: function () {
-      var me = this;
+    setIsCalculateReceiptLockState: function (state) {
+      this.isCalculateReceiptLocked = state;
+    },
 
-      // verify that the ui receipt is the only one in which calculateGross is executed
-      OB.UTIL.Debug.execute(function () {
-        var isTheUIReceipt = this.cid === OB.MobileApp.model.receipt.cid;
-        if (!isTheUIReceipt) {
-          OB.error("calculateGross should only be called by the UI receipt");
-        }
-      }, this);
+    calculateGross: function () {
+      // check if it's all ok and calculateGross is being called from where it's supposed to
+      var stack = OB.UTIL.getStackTrace('Backbone.Model.extend.calculateGross', false);
+      if (stack.indexOf('Backbone.Model.extend.calculateGross') > -1 && stack.indexOf('Backbone.Model.extend.calculateReceipt') > -1) {
+        OB.error("It's forbidden to use calculateGross from outside of calculateReceipt");
+      }
 
       // verify that the calculateGross is not locked
       if (this.isCalculateGrossLocked === true) {
         OB.error("calculateGross execution is forbidden right now");
-      } else if (this.isCalculateGrossLocked !== false) {
+        return;
+      } else if (this.isCalculateGrossLocked !== false && !this.get('belongsToMultiOrder')) {
         OB.error("setting the isCalculateGrossLocked state is mandatory before executing it the first time");
       }
 
+      // verify that there is no other calculatingGross running
+      if (this.calculatingGross) {
+        this.pendingCalculateGross = true;
+        return;
+      }
+
+      // verify that the ui receipt is the only one in which calculateGross is executed
+      var isTheUIReceipt = this === OB.MobileApp.model.receipt || this.get('belongsToMultiOrder');
+      if (!isTheUIReceipt) {
+        OB.error("calculateGross should only be called by the UI receipt");
+      }
+
+      this.calculatingGross = true;
+      var me = this;
       var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('calculateGross');
 
       // reset some vital receipt values because, at this point, they are obsolete. do not fire the change event
@@ -557,8 +574,18 @@
 
           me.adjustPayment();
           me.save(function () {
-            me.trigger('saveCurrent');
             OB.UTIL.SynchronizationHelper.finished(synchId, 'calculateGross');
+            // Reset the flag that protects reentrant invocations to calculateGross().
+            // And if there is pending any execution of calculateGross(), do it and do not continue.
+            me.calculatingGross = false;
+            me.calculatingReceipt = false;
+            if (me.pendingCalculateGross) {
+              me.pendingCalculateGross = false;
+              me.calculateGross();
+              return;
+            }
+            me.trigger('calculategross');
+            me.trigger('saveCurrent');
           });
           };
 
@@ -595,6 +622,84 @@
           }, OB.DEC.Zero);
           saveAndTriggerEvents(gross);
         });
+      }
+    },
+
+    addToListOfCallbacks: function (callback) {
+      if (OB.UTIL.isNullOrUndefined(this.get('calculateReceiptCallbacks'))) {
+        this.set('calculateReceiptCallbacks', []);
+      }
+      if (!OB.UTIL.isNullOrUndefined(callback)) {
+        var list = this.get('calculateReceiptCallbacks');
+        list.push(callback);
+      }
+    },
+
+    // This function calculate the promotions, taxes and gross of all the receipt
+    calculateReceipt: function (callback, line) {
+      // verify if we are cloning the receipt
+      if (this.get('cloningReceipt')) {
+        this.addToListOfCallbacks(callback);
+        return;
+      }
+
+      // verify that calculateReceipt it's not been executed
+      if (this.calculatingReceipt) {
+        this.pendingCalculateReceipt = true;
+        this.addToListOfCallbacks(callback);
+        return;
+      }
+      // verify that the calculateReceipt is not locked
+      if (this.isCalculateReceiptLocked === true) {
+        OB.error("calculateReceipt execution is forbidden right now");
+        return;
+      } else if (this.isCalculateReceiptLocked !== false && !this.get('belongsToMultiOrder')) {
+        OB.error("setting the isCalculateGrossLocked state is mandatory before executing it the first time");
+      }
+      // verify that the ui receipt is the only one in which calculateReceipt is executed
+      var isTheUIReceipt = this === OB.MobileApp.model.receipt || this.get('belongsToMultiOrder');
+      if (!isTheUIReceipt) {
+        OB.error("calculateReceipt should only be called by the UI receipt");
+      }
+
+      this.calculatingReceipt = true;
+
+      this.addToListOfCallbacks(callback);
+      var executeCallback;
+      executeCallback = function (listOfCallbacks, callback) {
+        if (listOfCallbacks.length === 0) {
+          callback();
+          listOfCallbacks = null;
+          return;
+        }
+        var callbackToExe = listOfCallbacks.shift();
+        callbackToExe();
+        executeCallback(listOfCallbacks, callback);
+      };
+      var me = this;
+      this.on('applyPromotionsFinished', function () {
+        me.off('applyPromotionsFinished');
+        me.on('calculategross', function () {
+          me.off('calculategross');
+          if (me.pendingCalculateReceipt) {
+            me.pendingCalculateReceipt = false;
+            me.calculateReceipt();
+            return;
+          } else {
+            if (me.get('calculateReceiptCallbacks') && me.get('calculateReceiptCallbacks').length > 0) {
+              executeCallback(me.get('calculateReceiptCallbacks'), function () {
+                me.calculatingReceipt = false;
+              });
+            }
+          }
+        });
+        me.calculateGross();
+      });
+      // If line is null or undefined, we calculate the Promotions of the receipt
+      if (OB.UTIL.isNullOrUndefined(line)) {
+        OB.Model.Discounts.applyPromotions(this);
+      } else {
+        OB.Model.Discounts.applyPromotions(this, line);
       }
     },
 
@@ -909,7 +1014,6 @@
           me.get('lines').add(line, {
             at: index
           });
-          me.calculateGross();
           me.set('undo', null);
         }
       });
@@ -1186,9 +1290,6 @@
           merged = true;
         }
       }, this);
-      if (merged) {
-        line.calculateGross();
-      }
     },
 
     /**
@@ -1215,7 +1316,6 @@
 
           if ((!line.get('promotions') || line.get('promotions').length === 0) && (!otherLine.get('promotions') || otherLine.get('promotions').length === 0)) {
             line.set('qty', line.get('qty') + otherLine.get('qty'));
-            line.calculateGross();
             toRemove.push(otherLine);
           } else if (line.get('promotions') && otherLine.get('promotions') && line.get('promotions').length === otherLine.get('promotions').length && line.get('price') === otherLine.get('price')) {
             matches = true;
@@ -1235,7 +1335,6 @@
                 line.get('promotions')[k].displayedTotalAmount += found.displayedTotalAmount;
               }
               toRemove.push(otherLine);
-              line.calculateGross();
             }
           }
         }
@@ -1359,17 +1458,6 @@
         line.trigger('change');
         this.save();
 
-        // Recalculate promotions for all lines affected by this same rule,
-        // because this rule could have prevented other ones to be applied
-        this.get('lines').forEach(function (ln) {
-          if (ln.get('promotionCandidates')) {
-            ln.get('promotionCandidates').forEach(function (candidateRule) {
-              if (candidateRule === ruleId) {
-                OB.Model.Discounts.applyPromotions(this, line);
-              }
-            }, this);
-          }
-        }, this);
       }
     },
     //Attrs is an object of attributes that will be set in order line
@@ -1415,8 +1503,6 @@
         });
       }
 
-      newline.calculateGross();
-
       //issue 25448: Show stock screen is just shown when a new line is created.
       if (newline.get('product').get("showstock") === true) {
         newline.get('product').set("showstock", false);
@@ -1434,7 +1520,6 @@
           OB.UTIL.Approval.requestApproval((modelObj ? modelObj : this.model), 'OBPOS_approval.deleteLine', function (approved) {
             if (approved) {
               me.get('lines').remove(newline);
-              me.calculateGross();
               me.set('undo', null);
             }
           });
@@ -1659,10 +1744,6 @@
         this.set('payment', OB.DEC.Zero);
         this.get('payments').reset();
       }
-      // remove promotions
-      if (!(options && !OB.UTIL.isNullOrUndefined(options.applyPromotions) && options.applyPromotions === false)) {
-        OB.Model.Discounts.applyPromotions(this);
-      }
     },
 
     // returns the ordertype: 0: Sales order, 1: Return order, 2: Layaway, 3: Void Layaway
@@ -1782,12 +1863,10 @@
       this.save();
       if (updatePrices) {
         this.updatePrices(function (order) {
-          OB.Model.Discounts.applyPromotions(order);
           OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_QuotationCreatedOrder'));
         });
       } else {
         OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_QuotationCreatedOrder'));
-        this.calculateGross();
       }
     },
 
@@ -2331,7 +2410,6 @@
       }, {
         silent: true
       });
-      this.calculateGross();
       this.trigger('promotionsUpdated');
     },
     // for each line, decrease the qtyOffer of promotions and remove the lines with qty 0
@@ -2686,7 +2764,6 @@
                   }
                 });
 
-                newline.calculateGross();
                 // add the created line
                 lines.add(newline);
                 numberOfLines--;
@@ -2837,6 +2914,7 @@
           OB.error(arguments);
         }, true);
       }
+
     },
     addMultiReceipt: function (model) {
       OB.Dal.save(model, function () {}, function () {
@@ -2981,6 +3059,7 @@
         this.modelorder.clearWith(this.current);
         this.modelorder.set('isNewReceipt', false);
         this.modelorder.trigger('paintTaxes');
+        this.modelorder.setIsCalculateReceiptLockState(false);
         this.modelorder.setIsCalculateGrossLockState(false);
       }
     },

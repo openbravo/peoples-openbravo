@@ -263,8 +263,6 @@ enyo.kind({
     tap: function () {
       if (this.owner.owner && this.owner.owner.line && this.owner.owner.line.get('promotions')) {
         this.owner.owner.line.unset('promotions');
-        OB.Model.Discounts.applyPromotions(this.model.get('order'));
-        this.model.get('order').calculateGross();
         this.hide();
       }
     },
