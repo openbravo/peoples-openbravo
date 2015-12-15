@@ -818,7 +818,7 @@ public class CancelAndReplaceUtils {
       financialAccount = oldOrder.getBusinessPartner().getAccount();
     }
 
-    BigDecimal negativeAmount = paymentSchedule.getAmount().negate();
+    BigDecimal negativeAmount = paymentSchedule.getOutstandingAmount().negate();
     BigDecimal outstandingAmount = paymentSchedule.getOutstandingAmount();
     final DocumentType paymentDocumentType = FIN_Utility.getDocumentType(
         oldOrder.getOrganization(), AcctServer.DOCTYPE_ARReceipt);
