@@ -851,7 +851,7 @@
           isReversal = true;
         }
       });
-      pay = (this.get('gross') < 0 || (this.get('gross') > 0 && this.get('orderType') === 3)) ? OB.DEC.abs(pay) : pay;
+      payAndCredit = (this.get('gross') < 0 || (this.get('gross') > 0 && this.get('orderType') === 3)) ? OB.DEC.abs(payAndCredit) : payAndCredit;
       isNegative = this.get('gross') < 0 || (this.get('gross') > 0 && this.get('orderType') === 3 && (!this.get('isPartiallyDelivered') || (this.get('isPartiallyDelivered') && this.get('isDeliveredGreaterThanGross'))));
       // Check if the total amount is lower than the already paid (processed)
       if (!isNegative && this.get('gross') >= 0 && OB.DEC.compare(OB.DEC.sub(processedPaymentsAmount, total)) === 1) {
@@ -4664,18 +4664,16 @@
     },
     getPaymentStatus: function () {
       var total = OB.DEC.abs(this.getTotal()),
-          pay = this.getPayment(),
-          credit = this.getCredit(),
-          payAndCredit = OB.DEC.add(pay, credit);
+          pay = this.getPayment();
       return {
         'total': OB.I18N.formatCurrency(total),
-        'pending': OB.DEC.compare(OB.DEC.sub(payAndCredit, total)) >= 0 ? OB.I18N.formatCurrency(OB.DEC.Zero) : OB.I18N.formatCurrency(OB.DEC.sub(total, payAndCredit)),
+        'pending': OB.DEC.compare(OB.DEC.sub(pay, total)) >= 0 ? OB.I18N.formatCurrency(OB.DEC.Zero) : OB.I18N.formatCurrency(OB.DEC.sub(total, pay)),
         'change': OB.DEC.compare(this.getChange()) > 0 ? OB.I18N.formatCurrency(this.getChange()) : null,
-        'overpayment': OB.DEC.compare(OB.DEC.sub(payAndCredit, total)) > 0 ? OB.I18N.formatCurrency(OB.DEC.sub(payAndCredit, total)) : null,
+        'overpayment': OB.DEC.compare(OB.DEC.sub(pay, total)) > 0 ? OB.I18N.formatCurrency(OB.DEC.sub(pay, total)) : null,
         'isReturn': this.get('gross') < 0 ? true : false,
         'isNegative': this.get('gross') < 0 ? true : false,
         'changeAmt': this.getChange(),
-        'pendingAmt': OB.DEC.compare(OB.DEC.sub(payAndCredit, total)) >= 0 ? OB.DEC.Zero : OB.DEC.sub(total, payAndCredit),
+        'pendingAmt': OB.DEC.compare(OB.DEC.sub(pay, total)) >= 0 ? OB.DEC.Zero : OB.DEC.sub(total, pay),
         'payments': this.get('payments')
       };
     },
@@ -4740,6 +4738,7 @@
       var pcash;
       var precision;
       var multiCurrencyDifference;
+      var origAmount;
 
       for (i = 0, max = payments.length; i < max; i++) {
         p = payments.at(i);
@@ -4762,18 +4761,19 @@
           p.set('origAmount', p.get('amount'));
         }
         p.set('paid', p.get('origAmount'));
+        origAmount = p.get('isNegativeOrder') ? -p.get('amount') : p.get('amount');
         if (p.get('kind') === OB.MobileApp.model.get('paymentcash')) {
           // The default cash method
-          cash = OB.DEC.add(cash, p.get('origAmount'));
+          cash = OB.DEC.add(cash, origAmount);
           pcash = p;
-          paidCash = OB.DEC.add(paidCash, p.get('origAmount'));
+          paidCash = OB.DEC.add(paidCash, origAmount);
         } else if (OB.MobileApp.model.hasPayment(p.get('kind')) && OB.MobileApp.model.hasPayment(p.get('kind')).paymentMethod.iscash) {
           // Another cash method
-          origCash = OB.DEC.add(origCash, p.get('origAmount'));
+          origCash = OB.DEC.add(origCash, origAmount);
           pcash = p;
-          paidCash = OB.DEC.add(paidCash, p.get('origAmount'));
+          paidCash = OB.DEC.add(paidCash, origAmount);
         } else {
-          nocash = OB.DEC.add(nocash, p.get('origAmount'));
+          nocash = OB.DEC.add(nocash, origAmount);
         }
       }
 
@@ -4895,11 +4895,8 @@
     getPayment: function () {
       return this.get('payment');
     },
-    getCredit: function () {
-      return this.get('creditAmount');
-    },
     getPending: function () {
-      return OB.DEC.sub(OB.DEC.abs(OB.DEC.sub(this.getTotal(), this.getCredit())), this.getPayment());
+      return OB.DEC.sub(OB.DEC.abs(this.getTotal()), this.getPayment());
     },
     toInvoice: function (status) {
       if (status === false) {
