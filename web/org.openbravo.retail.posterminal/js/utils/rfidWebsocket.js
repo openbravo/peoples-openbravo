@@ -137,10 +137,10 @@ OB.UTIL.processRemainingCodes = function (order) {
       OB.UTIL.rfidWebsocket.send('erase:' + epcCodesToErase.substring(0, epcCodesToErase.length - 1));
     }, 1000);
   }
-  codesToSend.set('saleEpcCodesToSend', saleEpcCodesToSend.substring(0, saleEpcCodesToSend.length - 1));
-  codesToSend.set('returnEpcCodesToSend', returnEpcCodesToSend.substring(0, returnEpcCodesToSend.length - 1));
-  codesToSend.set('saleGtinAndSerialCodesToSend', saleGtinAndSerialCodesToSend.substring(0, saleGtinAndSerialCodesToSend.length - 1));
-  codesToSend.set('returnGtinAndSerialCodesToSend', returnGtinAndSerialCodesToSend.substring(0, returnGtinAndSerialCodesToSend.length - 1));
+  codesToSend.saleEpcCodesToSend = saleEpcCodesToSend.substring(0, saleEpcCodesToSend.length - 1);
+  codesToSend.returnEpcCodesToSend = returnEpcCodesToSend.substring(0, returnEpcCodesToSend.length - 1);
+  codesToSend.saleGtinAndSerialCodesToSend = saleGtinAndSerialCodesToSend.substring(0, saleGtinAndSerialCodesToSend.length - 1);
+  codesToSend.returnGtinAndSerialCodesToSend = returnGtinAndSerialCodesToSend.substring(0, returnGtinAndSerialCodesToSend.length - 1);
   this.waitForConnection(function () {
     OB.UTIL.rfidWebsocket.send('send:' + JSON.stringify(codesToSend));
   }, 1000);
