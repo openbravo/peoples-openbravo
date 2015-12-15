@@ -89,6 +89,10 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
+      <column name="PRODUCT_SRCH_CONF" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
+        <default><![CDATA[STD]]></default>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="C_DOCTYPE" name="OBPOS_DOCTYPE_QUOT_ID">
         <reference local="C_DOCTYPEQUOT_ID" foreign="C_DOCTYPE_ID"/>
       </foreign-key>
