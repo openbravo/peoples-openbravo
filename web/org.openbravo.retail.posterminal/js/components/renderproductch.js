@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2015 Openbravo S.L.U.
+ * Copyright (C) 2013 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -12,7 +12,7 @@
 enyo.kind({
   kind: 'OB.UI.SmallButton',
   name: 'OB.UI.RenderProductCh',
-  style: 'width: 86%; padding: 0px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;',
+  style: 'width: 86%; padding: 0px',
   classes: 'btnlink-white-simple',
   events: {
     onShowPopup: ''
@@ -43,7 +43,7 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.SmallButton',
   name: 'OB.UI.RenderEmptyCh',
-  style: 'width: 86%; border: 2px solid #cccccc;',
+  style: 'width: 150px; border: 2px solid #cccccc;',
   classes: 'btnlink-white',
   events: {
     onClearAction: ''

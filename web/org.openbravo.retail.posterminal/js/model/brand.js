@@ -15,8 +15,8 @@
     modelName: 'Brand',
     tableName: 'm_brand',
     entityName: 'Brand',
-    remote: 'OBPOS_remote.product',
     source: 'org.openbravo.retail.posterminal.master.Brand',
+    remote: 'OBPOS_remote.product',
     dataLimit: OB.Dal.DATALIMIT
   });
 

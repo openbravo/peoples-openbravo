@@ -33,7 +33,7 @@
         supportsOffline: true,
         loginUtilsUrl: '../../org.openbravo.retail.posterminal.service.loginutils',
         loginHandlerUrl: '../../org.openbravo.retail.posterminal/POSLoginHandler',
-        applicationFormatUrl: '../../org.openbravo.mobile.core/OBPOS_Main/ApplicationFormats',
+        applicationFormatUrl: '../../org.openbravo.client.kernel/OBPOS_Main/ApplicationFormats',
         logoutUrlParams: window.localStorage.getItem('terminalAuthentication') === 'Y' ? {} : {
           terminal: OB.UTIL.getParameterByName("terminal")
         },
@@ -313,7 +313,7 @@
         timePerRecord: 10000,
         criteria: {},
         getIdentifier: function (model) {
-          return OB.I18N.formatDateISO(new Date(model.creationDate));
+          return model.creationDate;
         },
         changesPendingCriteria: {
           'isprocessed': 'Y'
@@ -393,8 +393,7 @@
         process.exec({
           terminalName: window.localStorage.getItem('terminalName'),
           terminalKeyIdentifier: window.localStorage.getItem('terminalKeyIdentifier'),
-          terminalAuthentication: window.localStorage.getItem('terminalAuthentication'),
-          cacheSessionId: window.localStorage.getItem('cacheSessionId')
+          terminalAuthentication: window.localStorage.getItem('terminalAuthentication')
         }, function (data) {
           if (data && data.exception) {
             //ERROR or no connection
@@ -406,9 +405,6 @@
             }
             if (data.terminalAuthentication) {
               window.localStorage.setItem('terminalAuthentication', data.terminalAuthentication);
-            }
-            if (data && data.errorReadingTerminalAuthentication) {
-              OB.UTIL.showWarning(data.errorReadingTerminalAuthentication);
             }
             OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_TerminalAuthChange'), OB.I18N.getLabel('OBPOS_TerminalAuthChangeMsg'), [{
               label: OB.I18N.getLabel('OBMOBC_LblOk'),
@@ -430,19 +426,6 @@
       } else {
         run();
       }
-      this.postSyncProcessActions();
-    },
-
-    postSyncProcessActions: function () {
-      OB.Dal.get(OB.Model.SalesRepresentative, OB.MobileApp.model.usermodel.get('id'), function (salesrepresentative) {
-        if (!salesrepresentative) {
-          OB.MobileApp.model.get('context').user.isSalesRepresentative = false;
-        } else {
-          OB.MobileApp.model.get('context').user.isSalesRepresentative = true;
-        }
-      }, function () {}, function () {
-        OB.MobileApp.model.get('context').user.isSalesRepresentative = false;
-      });
     },
 
     returnToOnline: function () {
@@ -517,8 +500,7 @@
           process.exec({
             terminalName: window.localStorage.getItem('terminalName'),
             terminalKeyIdentifier: window.localStorage.getItem('terminalKeyIdentifier'),
-            terminalAuthentication: window.localStorage.getItem('terminalAuthentication'),
-            cacheSessionId: window.localStorage.getItem('cacheSessionId')
+            terminalAuthentication: window.localStorage.getItem('terminalAuthentication')
           }, function (data) {
             if (data && data.exception) {
               //ERROR or no connection
@@ -530,9 +512,6 @@
               }
               if (data.terminalAuthentication) {
                 window.localStorage.setItem('terminalAuthentication', data.terminalAuthentication);
-              }
-              if (data && data.errorReadingTerminalAuthentication) {
-                OB.UTIL.showWarning(data.errorReadingTerminalAuthentication);
               }
               OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_TerminalAuthChange'), OB.I18N.getLabel('OBPOS_TerminalAuthChangeMsg'), [{
                 label: OB.I18N.getLabel('OBMOBC_LblOk'),
@@ -565,16 +544,6 @@
           minTotalRefresh = this.get('terminal').terminalType.minutestorefreshdatatotal * 60 * 1000,
           lastTotalRefresh = window.localStorage.getItem('POSLastTotalRefresh'),
           lastIncRefresh = window.localStorage.getItem('POSLastIncRefresh');
-
-      function setTerminalLockTimeout(sessionTimeoutMinutes, sessionTimeoutMilliseconds) {
-        OB.debug("Terminal lock timer reset (" + sessionTimeoutMinutes + " minutes)");
-        clearTimeout(this.timeoutId);
-        this.timeoutId = setTimeout(function () {
-          OB.warn("The terminal was not used for " + sessionTimeoutMinutes + " minutes. Locking the terminal");
-          OB.MobileApp.model.lock();
-        }, sessionTimeoutMilliseconds);
-      }
-
       if ((minTotalRefresh || minIncRefresh) && (lastTotalRefresh || lastIncRefresh)) {
         OB.MobileApp.model.set('minIncRefreshSynchronized', false);
         OB.MobileApp.model.on('synchronized', function () {
@@ -582,39 +551,19 @@
             return;
           }
           OB.MobileApp.model.set('minIncRefreshSynchronized', true);
-          if (OB.MobileApp.model.get('FullRefreshWasDone')) {
-            return;
-          }
           OB.MobileApp.model.loadModels(null, true);
         });
-      }
 
-      if (minIncRefresh) {
         loadModelsIncFunc = function () {
           OB.MobileApp.model.loadModels(null, true);
         };
         setInterval(loadModelsIncFunc, minIncRefresh);
       }
 
-      var sessionTimeoutMinutes = this.get('terminal').sessionTimeout;
-      if (!this.sessionPing && sessionTimeoutMinutes) {
-        var sessionTimeoutMilliseconds = sessionTimeoutMinutes * 60 * 1000;
+      if (!this.sessionPing && this.get('terminal').sessionTimeout) {
         this.sessionPing = setInterval(function () {
           new OB.DS.Process('org.openbravo.mobile.core.login.ContextInformation').exec(null, function () {});
-        }, sessionTimeoutMilliseconds);
-
-        // set the terminal lock timeout
-        setTerminalLockTimeout(sessionTimeoutMinutes, sessionTimeoutMilliseconds);
-        // FIXME: hack: inject javascript in the enyo.gesture.down so we can create a terminal timeout
-        enyo.gesture.down = function(inEvent) {
-          // start of Openbravo injected code
-          setTerminalLockTimeout(sessionTimeoutMinutes, sessionTimeoutMilliseconds);
-          // end of Openbravo injected code
-          // cancel any hold since it's possible in corner cases to get a down without an up
-          var e = this.makeEvent("down", inEvent);
-          enyo.dispatch(e);
-          this.downEvent = e;
-        };
+        }, this.get('terminal').sessionTimeout * 60 * 1000);
       }
     },
 
@@ -889,9 +838,6 @@
         } else {
           OB.appCaption = inResponse.appCaption;
           me.setTerminalName(inResponse.terminalName);
-          if (me.get('logConfiguration') && me.get('logConfiguration').deviceIdentifier === null) {
-            me.get('logConfiguration').deviceIdentifier = inResponse.terminalName;
-          }
           window.localStorage.setItem('terminalName', inResponse.terminalName);
           window.localStorage.setItem('terminalKeyIdentifier', inResponse.terminalKeyIdentifier);
           callback();
@@ -905,22 +851,11 @@
     initActions: function (callback) {
       var params = this.get('loginUtilsParams') || {},
           me = this;
-      var cacheSessionId = null;
-      if (window.localStorage.getItem('cacheSessionId') && window.localStorage.getItem('cacheSessionId').length === 32) {
-        cacheSessionId = window.localStorage.getItem('cacheSessionId');
-      }
-      params.cacheSessionId = cacheSessionId;
       params.command = 'initActions';
       new OB.OBPOSLogin.UI.LoginRequest({
         url: '../../org.openbravo.retail.posterminal.service.loginutils'
       }).response(this, function (inSender, inResponse) {
-        if (inResponse && inResponse.errorReadingTerminalAuthentication) {
-          OB.UTIL.showWarning(inResponse.errorReadingTerminalAuthentication);
-        }
         window.localStorage.setItem('terminalAuthentication', inResponse.terminalAuthentication);
-        if (!(window.localStorage.getItem('cacheSessionId') && window.localStorage.getItem('cacheSessionId').length === 32)) {
-          window.localStorage.setItem('cacheSessionId', inResponse.cacheSessionId);
-        }
         //Save available servers and services and initialize Request Router layer
         if (inResponse.servers && inResponse.services) {
           localStorage.servers = JSON.stringify(inResponse.servers);

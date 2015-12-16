@@ -409,8 +409,9 @@
       // Calculate product, orggross, and discountedGross.
       var product = line.get('product');
       var orggross = line.get('gross');
-      var discountedGross = line.get('gross');
+      var discountedGross = null;
       if (line.get('promotions')) {
+        discountedGross = line.get('gross');
         discountedGross = line.get('promotions').reduce(function (memo, element) {
           return OB.DEC.sub(memo, element.actualAmt || element.amt || 0);
         }, discountedGross);

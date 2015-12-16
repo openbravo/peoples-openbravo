@@ -171,7 +171,7 @@ enyo.kind({
     name: 'bodyheader'
   }, {
     name: 'customerAttributes',
-    style: 'overflow-x: hidden; overflow-y: auto; max-height: 622px;'
+    style: 'overflow-x:hidden; overflow-y:auto; max-height:622px;'
   }],
   setCustomer: function (inSender, inEvent) {
     this.customer = inEvent.customer;
@@ -240,7 +240,7 @@ enyo.kind({
       var success = this.model.get('customer').saveCustomer();
       if (success) {
         goToViewWindow(sw, {
-          customer: OB.UTIL.clone(this.model.get('customer'))
+          customer: this.model.get('customer')
         });
       }
     } else {

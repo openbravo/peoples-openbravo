@@ -9,25 +9,26 @@
 
 package org.openbravo.retail.posterminal;
 
+import javax.servlet.ServletException;
+
 import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.mobile.core.process.DataSynchronizationImportProcess;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.RejectReason;
 import org.openbravo.service.json.JsonConstants;
 
-public class QuotationsReject extends POSDataSynchronizationProcess implements
-    DataSynchronizationImportProcess {
+public class QuotationsReject extends JSONProcessSimple {
 
   @Override
-  public JSONObject saveRecord(JSONObject jsonRecord) throws Exception {
+  public JSONObject exec(JSONObject jsonsent) throws JSONException, ServletException {
     JSONObject result = new JSONObject();
     OBContext.setAdminMode(true);
     try {
-      String orderid = jsonRecord.getString("orderid");
-      String rejectReasonId = jsonRecord.getString("rejectReasonId");
+      String orderid = jsonsent.getString("orderid");
+      String rejectReasonId = jsonsent.getString("rejectReasonId");
       Order order = OBDal.getInstance().get(Order.class, orderid);
       RejectReason reason = OBDal.getInstance().get(RejectReason.class, rejectReasonId);
       if (order != null && reason != null) {
@@ -43,10 +44,6 @@ public class QuotationsReject extends POSDataSynchronizationProcess implements
       OBContext.restorePreviousMode();
     }
     return result;
-  }
-
-  protected String getImportQualifier() {
-    return "OBPOS_RejectQuotation";
   }
 
 }

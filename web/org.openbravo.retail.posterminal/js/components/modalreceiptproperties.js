@@ -16,8 +16,7 @@ enyo.kind({
     kind: 'OB.UI.renderTextProperty',
     name: 'receiptDescription',
     modelProperty: 'description',
-    i18nLabel: 'OBPOS_LblDescription',
-    maxLength: 255
+    i18nLabel: 'OBPOS_LblDescription'
   }, {
     kind: 'OB.UI.renderBooleanProperty',
     name: 'printBox',
@@ -66,10 +65,6 @@ enyo.kind({
           return;
         }
         if (data.length > 0) {
-          data.unshift({
-            id: null,
-            _identifier: null
-          });
           me.dataReadyFunction(data, args);
         } else {
           actualUser = new OB.Model.SalesRepresentative();

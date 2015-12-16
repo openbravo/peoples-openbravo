@@ -46,50 +46,19 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     generatedModel: true,
     modelName: 'DiscountFilterCharacteristic'
   },
-  OB.Model.CurrencyPanel, OB.Model.SalesRepresentative, OB.Model.Brand, OB.Model.ProductCharacteristicValue, OB.Model.CharacteristicValue, OB.Model.Characteristic, OB.Model.ReturnReason, OB.Model.CashUp, OB.Model.OfflinePrinter, OB.Model.PaymentMethodCashUp, OB.Model.TaxCashUp],
+  OB.Model.CurrencyPanel, OB.Model.SalesRepresentative, OB.Model.Brand, OB.Model.ProductCharacteristicValue, OB.Model.CharacteristicValue, OB.Model.ReturnReason, OB.Model.CashUp, OB.Model.OfflinePrinter, OB.Model.PaymentMethodCashUp, OB.Model.TaxCashUp],
 
   loadUnpaidOrders: function (loadUnpaidOrdersCallback) {
     // Shows a modal window with the orders pending to be paid
     var orderlist = this.get('orderList'),
         model = this,
         criteria = {
-        'hasbeenpaid': 'N'
+        'hasbeenpaid': 'N',
+        'session': OB.MobileApp.model.get('session')
         };
     OB.Dal.find(OB.Model.Order, criteria, function (ordersNotPaid) { //OB.Dal.find success
       var currentOrder = {},
           loadOrderStr;
-
-      // Getting Max Document No, Quotation No from Unpaid orders
-      var maxDocumentNo = 0,
-          maxQuotationNo = 0;
-      _.each(ordersNotPaid.models, function (order) {
-        if (order) {
-          if (order.get('documentnoSuffix') > maxDocumentNo) {
-            maxDocumentNo = order.get('documentnoSuffix');
-          }
-          if (order.get('quotationnoSuffix') > maxQuotationNo) {
-            maxQuotationNo = order.get('quotationnoSuffix');
-          }
-        }
-      });
-
-      // Setting the Max Document No, Quotation No to their respective Threshold
-      if (maxDocumentNo > 0 && OB.MobileApp.model.documentnoThreshold < maxDocumentNo) {
-        OB.MobileApp.model.documentnoThreshold = maxDocumentNo;
-      }
-      if (maxQuotationNo > 0 && OB.MobileApp.model.quotationnoThreshold < maxQuotationNo) {
-        OB.MobileApp.model.quotationnoThreshold = maxQuotationNo;
-      }
-
-      // Removing Orders which are created in other users session 
-      var outOfSessionOrder = _.filter(ordersNotPaid.models, function (order) {
-        if (order && order.get('session') !== OB.MobileApp.model.get('session')) {
-          return true;
-        }
-      });
-      _.each(outOfSessionOrder, function (orderToRemove) {
-        ordersNotPaid.remove(orderToRemove);
-      });
 
       OB.UTIL.HookManager.executeHooks('OBPOS_PreLoadUnpaidOrdersHook', {
         ordersNotPaid: ordersNotPaid,
@@ -282,7 +251,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     });
 
     receipt.on('paymentAccepted', function () {
-      receipt.setIsCalculateReceiptLockState(true);
       receipt.setIsCalculateGrossLockState(true);
       receipt.prepareToSend(function () {
         //Create the negative payment for change
@@ -305,11 +273,11 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
             });
           }
         }
-        receipt.get('payments').each(function (model) {
-          clonedCollection.add(new Backbone.Model(model.toJSON()));
-        });
         if (!_.isUndefined(receipt.selectedPayment) && receipt.getChange() > 0) {
           var payment = OB.MobileApp.model.paymentnames[receipt.selectedPayment];
+          receipt.get('payments').each(function (model) {
+            clonedCollection.add(new Backbone.Model(model.toJSON()));
+          });
           if (!payment.paymentMethod.iscash) {
             payment = OB.MobileApp.model.paymentnames[OB.MobileApp.model.get('paymentcash')];
           }
@@ -335,6 +303,12 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
               receipt.set('paidOnCredit', true);
             }
           }
+          receipt.get('payments').reset();
+          clonedCollection.each(function (model) {
+            receipt.get('payments').add(new Backbone.Model(model.toJSON()), {
+              silent: true
+            });
+          });
         } else {
           for (i = 0; i < receipt.get('payments').length; i++) {
             paymentKind = OB.MobileApp.model.paymentnames[receipt.get('payments').models[i].get('kind')];
@@ -360,12 +334,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
             // verify that the receipt was not cancelled
             if (args.isCancelled !== true) {
               var orderToPrint = OB.UTIL.clone(args.frozenReceipt);
-              orderToPrint.get('payments').reset();
-              clonedCollection.each(function (model) {
-                orderToPrint.get('payments').add(new Backbone.Model(model.toJSON()), {
-                  silent: true
-                });
-              });
               receipt.trigger('print', orderToPrint, {
                 offline: true
               });
@@ -379,12 +347,11 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
               if (diffStringified !== '{}') {
                 OB.error("The receipt has been modified while it was being closed:\n" + diffStringified + "\n");
               }
-              receipt.setIsCalculateReceiptLockState(false);
-              receipt.setIsCalculateGrossLockState(false);
 
               orderList.deleteCurrent();
               orderList.synchronizeCurrentOrder();
             }
+            receipt.setIsCalculateGrossLockState(false);
             enyo.$.scrim.hide();
           }
         });
@@ -401,23 +368,17 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
           label: OB.I18N.getLabel('OBMOBC_LblOk'),
           isConfirmButton: true,
           action: function () {
-            if (receipt.get('orderType') === 3) {
-              receipt.trigger('voidLayaway');
-            } else {
-              if (openDrawer) {
-                OB.POS.hwserver.openDrawer({
-                  openFirst: false,
-                  receipt: receipt
-                }, OB.MobileApp.model.get('permissions').OBPOS_timeAllowedDrawerSales);
-              }
-              receipt.trigger('paymentAccepted');
+            if (openDrawer) {
+              OB.POS.hwserver.openDrawer({
+                openFirst: false,
+                receipt: receipt
+              }, OB.MobileApp.model.get('permissions').OBPOS_timeAllowedDrawerSales);
             }
+            receipt.trigger('paymentAccepted');
           }
         }, {
           label: OB.I18N.getLabel('OBMOBC_LblCancel')
         }]);
-      } else if (receipt.get('orderType') === 3) {
-        receipt.trigger('voidLayaway');
       } else if ((OB.DEC.abs(receipt.getPayment()) !== OB.DEC.abs(receipt.getGross())) && (!receipt.isLayaway() && !receipt.get('paidOnCredit'))) {
         OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_PaymentAmountDistinctThanReceiptAmountTitle'), OB.I18N.getLabel('OBPOS_PaymentAmountDistinctThanReceiptAmountBody'), [{
           label: OB.I18N.getLabel('OBMOBC_LblOk'),
@@ -597,16 +558,14 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
       if (receipt.get('cloningReceipt') || receipt.get('skipApplyPromotions') || line.get('skipApplyPromotions')) {
         return;
       }
-      // Calculate the receipt
-      receipt.calculateReceipt(null, line);
+      OB.Model.Discounts.applyPromotions(receipt, line);
     }, this);
 
     receipt.get('lines').on('remove', function () {
       if (!receipt.get('isEditable')) {
         return;
       }
-      // Calculate the receipt
-      receipt.calculateReceipt();
+      OB.Model.Discounts.applyPromotions(receipt);
     });
 
     receipt.on('change:bp', function () {
@@ -618,8 +577,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
           silent: true
         });
       });
-      // Calculate the receipt
-      receipt.calculateReceipt();
+      OB.Model.Discounts.applyPromotions(receipt);
     }, this);
 
     receipt.on('voidLayaway', function () {
@@ -627,15 +585,14 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
       var auxReceipt = new OB.Model.Order();
       OB.UTIL.clone(receipt, auxReceipt);
       process.exec({
-        messageId: OB.UTIL.get_UUID(),
-        data: [{
-          order: receipt
-        }]
+        order: receipt
       }, function (data) {
         if (data && data.exception) {
           OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorVoidLayaway'));
         } else {
-          auxReceipt.prepareToSend(function () {
+          auxReceipt.calculateTaxes = receipt.calculateTaxes;
+          auxReceipt.calculateTaxes(function () {
+            auxReceipt.adjustPrices();
             OB.UTIL.cashUpReport(auxReceipt);
           });
           OB.Dal.remove(receipt, null, function (tx, err) {
@@ -692,9 +649,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
             successCallbackBPLoc = function (bpLoc) {
               dataBps.set('locId', bpLoc.get('id'));
               dataBps.set('locName', bpLoc.get('name'));
-              dataBps.set('cityName', bpLoc.get('cityName'));
-              dataBps.set('countryName', bpLoc.get('countryName'));
-              dataBps.set('postalCode', bpLoc.get('postalCode'));
               dataBps.set('locationModel', bpLoc);
               OB.MobileApp.model.set('businessPartner', dataBps);
               me.loadUnpaidOrders(callback);
@@ -706,9 +660,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
               successCallbackBPLoc = function (bpLoc) {
                 dataBps.set('locId', bpLoc.get('id'));
                 dataBps.set('locName', bpLoc.get('name'));
-                dataBps.set('cityName', bpLoc.get('cityName'));
-                dataBps.set('countryName', bpLoc.get('countryName'));
-                dataBps.set('postalCode', bpLoc.get('postalCode'));
                 dataBps.set('locationModel', bpLoc);
                 OB.MobileApp.model.set('businessPartner', dataBps);
                 me.loadUnpaidOrders(callback);

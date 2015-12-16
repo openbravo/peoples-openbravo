@@ -404,10 +404,6 @@ enyo.kind({
     splitFilterLength = splitFilter.length;
     _operator = inEvent.operator;
 
-    if (OB.MobileApp.model.hasPermission('OBPOS_customerLimit', true)) {
-      criteria._limit = OB.DEC.abs(OB.MobileApp.model.hasPermission('OBPOS_customerLimit', true));
-    }
-
     if (filter && filter !== '') {
       for (i = 0; i < splitFilter.length; i++) {
         // with starts with always search using identifier
@@ -426,7 +422,7 @@ enyo.kind({
         }
         if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
           var filterIdentifier = {
-            columns: ['_filter'],
+            columns: ['_identifier', 'searchKey'],
             operator: 'startsWith',
             value: splitFilter[i]
           };

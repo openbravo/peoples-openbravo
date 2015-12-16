@@ -31,7 +31,7 @@ public class DiscountFilterBusinessPartner extends Discount {
   private Instance<ModelExtension> extensions;
 
   @Override
-  protected List<HQLPropertyList> getHqlProperties(JSONObject jsonsent) {
+  protected List<HQLPropertyList> getHqlProperties() {
     List<HQLPropertyList> propertiesList = new ArrayList<HQLPropertyList>();
     HQLPropertyList regularDiscountFilterBPHQLProperties = ModelExtensionUtils
         .getPropertyExtensions(extensions);

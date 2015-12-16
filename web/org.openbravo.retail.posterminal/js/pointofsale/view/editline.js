@@ -96,24 +96,12 @@ enyo.kind({
     }
   }, {
     kind: 'OB.OBPOSPointOfSale.UI.LineProperty',
-    position: 25,
-    name: 'priceStdLine',
-    I18NLabel: 'OBPOS_LinePriceStd',
-    render: function (line) {
-      if (line) {
-        this.$.propertyValue.setContent(OB.I18N.formatCurrency(line.get('product').get('standardPrice')));
-      } else {
-        this.$.propertyValue.setContent('');
-      }
-    }
-  }, {
-    kind: 'OB.OBPOSPointOfSale.UI.LineProperty',
     position: 30,
     name: 'priceLine',
     I18NLabel: 'OBPOS_LinePrice',
     render: function (line) {
       if (line) {
-        this.$.propertyValue.setContent(line.printPrice());
+        this.$.propertyValue.setContent(OB.I18N.formatCurrency(line.get('priceList')));
       } else {
         this.$.propertyValue.setContent('');
       }
@@ -125,12 +113,7 @@ enyo.kind({
     I18NLabel: 'OBPOS_LineDiscount',
     render: function (line) {
       if (line) {
-        var discount = line.getTotalAmountOfPromotions();
-        if (discount === 0) {
-          this.$.propertyValue.setContent('');
-        } else {
-          this.$.propertyValue.setContent(OB.I18N.formatCurrency(discount));
-        }
+        this.$.propertyValue.setContent(line.printDiscount());
       } else {
         this.$.propertyValue.setContent('');
       }
@@ -143,9 +126,9 @@ enyo.kind({
     render: function (line) {
       if (line) {
         if (line.get('priceIncludesTax')) {
-          this.$.propertyValue.setContent(OB.I18N.formatCurrency(OB.DEC.sub(line.get('gross'), line.getTotalAmountOfPromotions())));
+          this.$.propertyValue.setContent(line.printTotalLine());
         } else {
-          this.$.propertyValue.setContent(OB.I18N.formatCurrency(OB.DEC.sub(line.get('net'), line.getTotalAmountOfPromotions())));
+          this.$.propertyValue.setContent(line.printNet());
         }
       } else {
         this.$.propertyValue.setContent('');
@@ -263,6 +246,8 @@ enyo.kind({
     tap: function () {
       if (this.owner.owner && this.owner.owner.line && this.owner.owner.line.get('promotions')) {
         this.owner.owner.line.unset('promotions');
+        OB.Model.Discounts.applyPromotions(this.model.get('order'));
+        this.model.get('order').calculateGross();
         this.hide();
       }
     },
@@ -284,8 +269,7 @@ enyo.kind({
     onShowPopup: ''
   },
   handlers: {
-    onCheckBoxBehaviorForTicketLine: 'checkBoxBehavior',
-    onHideReturnLineButton: 'hideReturnLineButton'
+    onCheckBoxBehaviorForTicketLine: 'checkBoxBehavior'
   },
   checkBoxBehavior: function (inSender, inEvent) {
     if (inEvent.status) {
@@ -304,13 +288,6 @@ enyo.kind({
         var line = this.receipt.get('lines').at(0);
         line.trigger('selected', line);
       }
-    }
-  },
-  hideReturnLineButton: function (inSender, inEvent) {
-    if (inEvent.hide) {
-      this.$.actionButtonsContainer.$.returnLine.hide();
-    } else {
-      this.$.actionButtonsContainer.$.returnLine.show();
     }
   },
   executeOnShow: function (args) {
@@ -445,8 +422,6 @@ enyo.kind({
           //lines with just discrectionary discounts can be removed.
           this.$.actionButtonsContainer.$.removeDiscountButton.show();
         }
-      } else {
-        this.$.actionButtonsContainer.$.removeDiscountButton.hide();
       }
     } else {
       this.$.actionButtonsContainer.$.removeDiscountButton.hide();

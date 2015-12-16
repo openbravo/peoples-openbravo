@@ -31,7 +31,7 @@ enyo.kind({
         style: 'display: table-cell; width: 100%;',
         components: [{
           kind: 'OB.UI.SearchInputAutoFilter',
-          name: 'customerAddressSearchfilterText',
+          name: 'filterText',
           style: 'width: 100%',
           isFirstFocus: true
         }]
@@ -49,19 +49,18 @@ enyo.kind({
           kind: 'OB.UI.SmallButton',
           classes: 'btnlink-yellow btn-icon-small btn-icon-search',
           style: 'width: 100px; margin: 0px 0px 8px 5px;',
-          name: 'CustomerAddressSearchButton',
           ontap: 'searchAction'
         }]
       }]
     }]
   }],
   clearAction: function () {
-    this.$.customerAddressSearchfilterText.setValue('');
+    this.$.filterText.setValue('');
     this.doClearAction();
   },
   searchAction: function () {
     this.doSearchAction({
-      locName: this.$.customerAddressSearchfilterText.getValue(),
+      locName: this.$.filterText.getValue(),
       operator: OB.Dal.CONTAINS
     });
     return true;
@@ -236,7 +235,7 @@ enyo.kind({
     criteria.bpartner = this.bPartnerId;
     if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
       var filterIdentifier = {
-        columns: ['_filter'],
+        columns: ['_identifier'],
         operator: 'startsWith',
         value: filter
       },

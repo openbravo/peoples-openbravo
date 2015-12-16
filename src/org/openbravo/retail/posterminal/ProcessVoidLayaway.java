@@ -19,13 +19,15 @@ import java.util.List;
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
+import javax.servlet.ServletException;
 
+import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.advpaymentmngt.dao.TransactionsDao;
 import org.openbravo.advpaymentmngt.process.FIN_AddPayment;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
-import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.provider.OBProvider;
@@ -36,7 +38,6 @@ import org.openbravo.dal.core.TriggerHandler;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.ad_forms.AcctServer;
 import org.openbravo.erpCommon.utility.Utility;
-import org.openbravo.mobile.core.process.DataSynchronizationImportProcess;
 import org.openbravo.model.ad.access.OrderLineTax;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.enterprise.Organization;
@@ -52,21 +53,21 @@ import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.json.JsonConstants;
 
-public class ProcessVoidLayaway extends POSDataSynchronizationProcess implements
-    DataSynchronizationImportProcess {
+public class ProcessVoidLayaway extends JSONProcessSimple {
 
   HashMap<String, DocumentType> paymentDocTypes = new HashMap<String, DocumentType>();
   String paymentDescription = null;
+  private static final Logger log = Logger.getLogger(ProcessVoidLayaway.class);
 
   @Inject
   @Any
   private Instance<VoidLayawayHook> layawayhooks;
 
   @Override
-  public JSONObject saveRecord(JSONObject jsonRecord) throws Exception {
+  public JSONObject exec(JSONObject jsonsent) throws JSONException, ServletException {
 
     JSONArray respArray = new JSONArray();
-    JSONObject jsonorder = (JSONObject) jsonRecord.get("order");
+    JSONObject jsonorder = (JSONObject) jsonsent.get("order");
     try {
 
       Order order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
@@ -187,13 +188,12 @@ public class ProcessVoidLayaway extends POSDataSynchronizationProcess implements
         transaction.setBusinessPartner(order.getBusinessPartner());
         OBDal.getInstance().save(transaction);
         acc.setCurrentBalance(account.getCurrentBalance().subtract(foreignAmount.negate()));
-      }
 
-      OBDal.getInstance().getConnection(true).commit();
+      }
     } catch (Exception e) {
-      throw new OBException("There was an error voiding the orde Layaway: ", e);
+      log.error("There was an error voiding the orde Layaway: ", e);
     } finally {
-      OBDal.getInstance().rollbackAndClose();
+      OBDal.getInstance().flush();
       OBContext.restorePreviousMode();
       TriggerHandler.getInstance().enable();
     }
@@ -203,10 +203,6 @@ public class ProcessVoidLayaway extends POSDataSynchronizationProcess implements
     result.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
     return result;
 
-  }
-
-  protected String getImportQualifier() {
-    return "OBPOS_VoidLayaway";
   }
 
   protected DocumentType getPaymentDocumentType(Organization org) {

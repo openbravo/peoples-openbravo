@@ -132,10 +132,6 @@
     column: '_identifier',
     filter: true,
     type: 'TEXT'
-  }, {
-    name: 'currentStandardPrice',
-    column: 'currentStandardPrice',
-    type: 'NUMERIC'
   }]);
 
   Product.addIndex([{

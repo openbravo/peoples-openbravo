@@ -14,8 +14,6 @@ import org.codehaus.jettison.json.JSONException;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
-import org.openbravo.erpCommon.businessUtility.Preferences;
-import org.openbravo.erpCommon.utility.PropertyException;
 
 public class InitialValidations {
 
@@ -114,21 +112,6 @@ public class InitialValidations {
             throw new JSONException("OBPOS_FinAccSharedPayment");
           }
         }
-      }
-    }
-
-    if (posTerminal.getObposTerminaltype().isLayawayorder()) {
-      try {
-        String generateLayawaysPref = Preferences
-            .getPreferenceValue("OBPOS_receipt.layawayReceipt", true, OBContext.getOBContext()
-                .getCurrentClient().getId(), OBContext.getOBContext().getCurrentOrganization()
-                .getId(), OBContext.getOBContext().getUser().getId(), OBContext.getOBContext()
-                .getRole().getId(), null);
-        if (generateLayawaysPref.equals("N")) {
-          throw new JSONException("OBPOS_LayawayTerminalNoLayawayPermission");
-        }
-      } catch (PropertyException e) {
-        // Preferences wrongly defined. Process will fail later on, so no need to do anything here.
       }
     }
 

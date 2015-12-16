@@ -21,6 +21,7 @@ import org.openbravo.client.kernel.event.EntityNewEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
 import org.openbravo.client.kernel.event.EntityUpdateEvent;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.model.common.plm.Product;
@@ -58,16 +59,15 @@ public class ProductListEventHandler extends EntityPersistenceEventObserver {
       Product product = (Product) event.getTargetInstance().get("product");
       OBRETCOProductList assortment = (OBRETCOProductList) event.getTargetInstance().get(
           "obretcoProductlist");
-      final List<OBRETCOProductcategory> filterproductcategorylist = assortment
-          .getOBRETCOProductcategoryList();
-      if (!existProductCategory(product.getProductCategory(), filterproductcategorylist)) {
+      if (!existProductCategory(product.getProductCategory(),
+          assortment.getOBRETCOProductcategoryList())) {
         final OBRETCOProductcategory productCategoryElement = OBProvider.getInstance().get(
             OBRETCOProductcategory.class);
         productCategoryElement.setClient(assortment.getClient());
         productCategoryElement.setOrganization(assortment.getOrganization());
         productCategoryElement.setProductCategory(product.getProductCategory());
         productCategoryElement.setObretcoProductlist(assortment);
-        filterproductcategorylist.add(productCategoryElement);
+        OBDal.getInstance().save(productCategoryElement);
       }
     }
   }
@@ -91,16 +91,15 @@ public class ProductListEventHandler extends EntityPersistenceEventObserver {
       Product product = (Product) event.getTargetInstance().get("product");
       OBRETCOProductList assortment = (OBRETCOProductList) event.getTargetInstance().get(
           "obretcoProductlist");
-      final List<OBRETCOProductcategory> filterproductcategorylist = assortment
-          .getOBRETCOProductcategoryList();
-      if (!existProductCategory(product.getProductCategory(), filterproductcategorylist)) {
+      if (!existProductCategory(product.getProductCategory(),
+          assortment.getOBRETCOProductcategoryList())) {
         final OBRETCOProductcategory productCategoryElement = OBProvider.getInstance().get(
             OBRETCOProductcategory.class);
         productCategoryElement.setClient(assortment.getClient());
         productCategoryElement.setOrganization(assortment.getOrganization());
         productCategoryElement.setProductCategory(product.getProductCategory());
         productCategoryElement.setObretcoProductlist(assortment);
-        filterproductcategorylist.add(productCategoryElement);
+        OBDal.getInstance().save(productCategoryElement);
       }
     }
   }

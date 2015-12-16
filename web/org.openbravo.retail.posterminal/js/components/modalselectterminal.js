@@ -52,7 +52,6 @@ enyo.kind({
     this.header = OB.I18N.getLabel('OBPOS_SelectTerminalHeader');
     this.inherited(arguments);
     this.$.headerCloseButton.hide();
-    OB.MobileApp.view.currentWindow = 'terminalAuthentication';
   }
 });
 
@@ -65,8 +64,7 @@ enyo.kind({
     var terminalData = {
       terminalKeyIdentifier: this.owner.$.terminalKeyIdentifier.getValue(),
       username: this.owner.$.username.getValue(),
-      password: this.owner.$.password.getValue(),
-      cacheSessionId: window.localStorage.getItem('cacheSessionId')
+      password: this.owner.$.password.getValue()
     };
     this.doHideThisPopup();
     this.owner.owner.context.linkTerminal(JSON.stringify(terminalData), this.owner.owner.callback);

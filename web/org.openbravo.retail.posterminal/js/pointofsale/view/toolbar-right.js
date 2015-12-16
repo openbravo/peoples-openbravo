@@ -91,13 +91,13 @@ enyo.kind({
     }
   },
   manualTap: function (tabName, options) {
-    var tab, defaultTab;
+    var tab;
 
     function getButtonByName(name, me) {
       var componentArray = me.$.toolbar.getComponents(),
           i;
       for (i = 0; i < componentArray.length; i++) {
-        if (componentArray[i].$.theButton.getComponents()[0].tabToOpen === name && componentArray[i].$.theButton.getComponents()[0].showing) {
+        if (componentArray[i].$.theButton.getComponents()[0].tabToOpen === name) {
           return componentArray[i].$.theButton.getComponents()[0];
         }
       }
@@ -105,31 +105,15 @@ enyo.kind({
     }
 
     tab = getButtonByName(tabName, this);
-    if (options) {
-      options.isManual = true;
-    } else {
-      options = {
-        isManual: true
-      };
-    }
-
     if (tab) {
       tab.tap(options);
-    } else {
-      defaultTab = _.find(this.$.toolbar.getComponents(), function (component) {
-        if (component.button.defaultTab) {
-          return component;
-        }
-      }).$.theButton.getComponents()[0];
-      defaultTab.tap(options);
     }
   },
   kind: 'OB.UI.MultiColumn.Toolbar',
   buttons: [{
     kind: 'OB.OBPOSPointOfSale.UI.ButtonTabScan',
     name: 'toolbarBtnScan',
-    tabToOpen: 'scan',
-    defaultTab: true
+    tabToOpen: 'scan'
   }, {
     kind: 'OB.OBPOSPointOfSale.UI.ButtonTabBrowse',
     name: 'toolbarBtnCatalog',
@@ -154,7 +138,16 @@ enyo.kind({
       if (this.receipt.get('isEditable') === false) {
         this.manualTap('edit');
       } else {
-        this.manualTap(OB.MobileApp.model.get('terminal').defaultwebpostab);
+        if (OB.MobileApp.model.get('terminal').defaultwebpostab) {
+          if (OB.MobileApp.model.get('terminal').defaultwebpostab !== '') {
+            this.manualTap(OB.MobileApp.model.get('terminal').defaultwebpostab);
+          } else {
+            this.manualTap('scan');
+          }
+        } else {
+          this.manualTap('scan');
+        }
+
       }
     }, this);
 
@@ -291,6 +284,7 @@ enyo.kind({
   tabPanel: 'catalog',
   i18nLabel: 'OBMOBC_LblBrowse',
   tap: function () {
+    OB.MobileApp.view.scanningFocus(false);
     if (!this.disabled) {
       this.doTabChange({
         tabPanel: this.tabPanel,
@@ -298,7 +292,6 @@ enyo.kind({
         edit: false
       });
     }
-    OB.MobileApp.view.scanningFocus(true);
   },
   initComponents: function () {
     this.inherited(arguments);
@@ -339,6 +332,7 @@ enyo.kind({
     }
   },
   tap: function () {
+    OB.MobileApp.view.scanningFocus(false);
     if (this.disabled === false) {
       OB.UI.SearchProductCharacteristic.prototype.filtersCustomClear();
       this.doTabChange({
@@ -346,7 +340,6 @@ enyo.kind({
         keyboard: false,
         edit: false
       });
-      OB.MobileApp.view.scanningFocus(true);
     }
   },
   initComponents: function () {
@@ -385,24 +378,8 @@ enyo.kind({
   disabledButton: function (inSender, inEvent) {
     this.setDisabled(inEvent.status);
   },
-  tap: function (options) {
-    this.model.get('order').get('lines').on('selected', function (lineSelected) {
-      this.currentLine = lineSelected;
-    }, this);
-    
-    if (!options.isManual) {
-      // The tap was not manual. So consider the last line added
-      var lines = this.model.get('order').get('lines');
-      var lastLine;
-      if (lines && lines.length > 0) {
-        lastLine = lines.models[lines.length - 1];
-      }
-      if (this.currentLine) {
-        this.currentLine.trigger('selected', this.currentLine);
-      } else if (lastLine) {
-        lastLine.trigger('selected', lastLine);
-      }
-    }
+  tap: function () {
+    OB.MobileApp.view.scanningFocus(true);
     if (!this.disabled) {
       this.doTabChange({
         tabPanel: this.tabPanel,
@@ -410,7 +387,6 @@ enyo.kind({
         edit: true
       });
     }
-    OB.MobileApp.view.scanningFocus(true);
   }
 });
 

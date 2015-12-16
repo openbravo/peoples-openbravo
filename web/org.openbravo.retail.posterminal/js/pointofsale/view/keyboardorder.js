@@ -101,18 +101,20 @@ enyo.kind({
           return true;
         }
         if (keyboard.line) {
-          if (_.isNaN(value)) {
-            return true;
-          } else {
-            me.doAddProduct({
-              product: keyboard.line.get('product'),
-              qty: value,
-              options: {
-                line: keyboard.line
-              }
+          if ((_.isNaN(value) || value > 0) && keyboard.line.get('product').get('groupProduct') === false) {
+            me.doShowPopup({
+              popup: 'modalProductCannotBeGroup'
             });
-            keyboard.receipt.trigger('scan');
+            return true;
           }
+          me.doAddProduct({
+            product: keyboard.line.get('product'),
+            qty: value,
+            options: {
+              line: keyboard.line
+            }
+          });
+          keyboard.receipt.trigger('scan');
         }
         };
 
@@ -168,20 +170,20 @@ enyo.kind({
           } else {
             toadd = value - keyboard.line.get('qty');
           }
-        }
-        if (toadd === 0) { // If nothing to add then return
-          return;
-        }
+          if (toadd === 0) { // If nothing to add then return
+            return;
+          }
 
-        if (value === 0) { // If final quantity will be 0 then request approval
-          OB.UTIL.Approval.requestApproval(me.model, 'OBPOS_approval.deleteLine', function (approved, supervisor, approvalType) {
-            if (approved) {
-              keyboard.line.set('deleteApproved', true);
-              actionAddProduct(keyboard, toadd);
-            }
-          });
-        } else {
-          actionAddProduct(keyboard, toadd);
+          if (value === 0) { // If final quantity will be 0 then request approval
+            OB.UTIL.Approval.requestApproval(me.model, 'OBPOS_approval.deleteLine', function (approved, supervisor, approvalType) {
+              if (approved) {
+                keyboard.line.set('deleteApproved', true);
+                actionAddProduct(keyboard, toadd);
+              }
+            });
+          } else {
+            actionAddProduct(keyboard, toadd);
+          }
         }
       }
     });
@@ -495,18 +497,8 @@ enyo.kind({
   },
 
   findProductByBarcode: function (code, callback) {
-    var me = this;
     OB.debug('BarcodeActionHandler - id: ' + code);
-    OB.UTIL.HookManager.executeHooks('OBPOS_BarcodeScan', {
-      context: me,
-      code: code,
-      callback: callback
-    }, function (args) {
-      if (args.cancellation) {
-        return;
-      }
-      me.searchProduct(args.code, args.callback);
-    });
+    this.searchProduct(code, callback);
   },
 
   searchProduct: function (code, callback) {
@@ -534,22 +526,13 @@ enyo.kind({
   },
 
   successCallbackProducts: function (dataProducts, code, callback) {
-    OB.UTIL.HookManager.executeHooks('OBPOS_BarcodeSearch', {
-      dataProducts: dataProducts,
-      code: code,
-      callback: callback
-    }, function (args) {
-      if (args.cancellation) {
-        return;
-      }
-      if (args.dataProducts && args.dataProducts.length > 0) {
-        OB.debug('productfound');
-        args.callback(args.dataProducts.at(0));
-      } else {
-        // 'UPC/EAN code not found'
-        OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_KbUPCEANCodeNotFound', [args.code]));
-      }
-    });
+    if (dataProducts && dataProducts.length > 0) {
+      OB.debug('productfound');
+      callback(dataProducts.at(0));
+    } else {
+      // 'UPC/EAN code not found'
+      OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_KbUPCEANCodeNotFound', [code]));
+    }
   },
 
   addProductToReceipt: function (keyboard, product) {
