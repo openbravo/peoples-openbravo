@@ -102,9 +102,11 @@ public class LoginHandler extends HttpBaseServlet {
         try {
           if (sameOldPassword) {
             OBError errorMsg = new OBError();
+            String msg = Utility.messageBD(myPool, "CPUpdatePassword", vars.getLanguage());
+            String title = Utility.messageBD(myPool, "CPDifferentPassword", vars.getLanguage());
             errorMsg.setType("Error");
-            errorMsg.setTitle("Password must be different from the previous one");
-            errorMsg.setMessage("Write a new password");
+            errorMsg.setTitle(title);
+            errorMsg.setMessage(msg);
             throw new AuthenticationExpiryPasswordException("Same password than old one", errorMsg);
           }
           AuthenticationManager authManager = AuthenticationManager.getAuthenticationManager(this);
@@ -138,13 +140,17 @@ public class LoginHandler extends HttpBaseServlet {
           final OBError errorMsg = aepe.getOBError();
           if (errorMsg != null) {
             vars.removeSessionValue("#LoginErrorMsg");
+
             if (errorMsg.getMessage().equalsIgnoreCase("Write a new password")) {
-              goToUpdatePassword(res, vars, "Write a new password",
-                  "Password must be different from the previous one", "Error",
-                  "../security/Login_FS.html", doRedirect);
+              String msg = Utility.messageBD(myPool, "CPUpdatePassword", vars.getLanguage());
+              String title = Utility.messageBD(myPool, "CPDifferentPassword", vars.getLanguage());
+              goToUpdatePassword(res, vars, msg, title, "Error", "../security/Login_FS.html",
+                  doRedirect);
             } else {
-              goToUpdatePassword(res, vars, "Update your password", "Password is expired", "Error",
-                  "../security/Login_FS.html", doRedirect);
+              String msg = Utility.messageBD(myPool, "CPUpdatePassword", vars.getLanguage());
+              String title = Utility.messageBD(myPool, "CPExpiryPassword", vars.getLanguage());
+              goToUpdatePassword(res, vars, msg, title, "Error", "../security/Login_FS.html",
+                  doRedirect);
             }
           }
         }

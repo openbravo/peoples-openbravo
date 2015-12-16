@@ -109,7 +109,7 @@ public class LoginUtils {
 
       final OBCriteria<User> obc = OBDal.getInstance().createCriteria(User.class);
       obc.add(Restrictions.like("username", login));
-
+      obc.setFilterOnReadableClients(false);
       final List<User> listUser = obc.list();
       User userOB = listUser.get(0);
       Date lastUpdateDate = userOB.getUpdatePasswordDate();
@@ -141,7 +141,7 @@ public class LoginUtils {
 
       final OBCriteria<User> obc = OBDal.getInstance().createCriteria(User.class);
       obc.add(Restrictions.like("username", login));
-
+      obc.setFilterOnReadableClients(false);
       final List<User> listUser = obc.list();
       User userOB = listUser.get(0);
       String oldPassword = userOB.getPassword();
@@ -173,6 +173,7 @@ public class LoginUtils {
       final OBCriteria<User> obc = OBDal.getInstance().createCriteria(User.class);
       obc.add(Restrictions.like("username", login));
       obc.add(Restrictions.like("password", hashedPassword));
+      obc.setFilterOnReadableClients(false);
       final List<User> listUser = obc.list();
       String userId = "-1";
 
