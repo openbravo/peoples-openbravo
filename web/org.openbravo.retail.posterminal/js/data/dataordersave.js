@@ -117,6 +117,11 @@
           return true;
         }
 
+        if (OB.POS.hwserver.url && OB.POS.modelterminal.get('terminal').terminalType.userfid) {
+          OB.UTIL.processRemainingCodes(model.get('order'));
+          OB.UTIL.eraseEpcOrderFromDeviceBufferBecauseTicketIsCompleted();
+        }
+
         OB.trace('Execution of pre order save hook OK.');
         delete receipt.attributes.json;
         receipt.set('creationDate', normalizedCreationDate);

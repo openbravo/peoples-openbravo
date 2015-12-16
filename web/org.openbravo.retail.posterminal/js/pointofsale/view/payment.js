@@ -859,11 +859,6 @@ enyo.kind({
         me = this,
         payments;
 
-    if (OB.POS.hwserver.url && OB.POS.modelterminal.get('terminal').terminalType.userfid) {
-      OB.UTIL.processRemainingCodes(myModel.get('order'));
-      OB.UTIL.eraseEpcOrderFromDeviceBufferBecauseTicketIsCompleted();
-    }
-
     this.allowOpenDrawer = false;
 
     // Checking Payment before Process
