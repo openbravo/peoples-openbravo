@@ -22,6 +22,10 @@
     preventApplyPromotions: false,
     applyPromotionsTimeout: {},
     applyPromotions: function (receipt, line) {
+      var stack = OB.UTIL.getStackTrace('OB.Model.Discounts.applyPromotions', false);
+      if (stack.indexOf('OB.Model.Discounts.applyPromotions') > -1 && stack.indexOf('Backbone.Model.extend.calculateReceipt') > -1) {
+        OB.error("It's forbidden to use applyPromotions from outside of calculateReceipt");
+      }
       var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('applyPromotions');
       if (!receipt.get('isBeingDiscounted')) {
         receipt.set('isBeingDiscounted', true, {
