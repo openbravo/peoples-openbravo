@@ -12,6 +12,7 @@ import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
@@ -75,6 +76,22 @@ public class ProcessCashMgmt extends POSDataSynchronizationProcess implements
               + "' does not exists in the system. Please synchronize it first and then process this entry.");
     }
     TerminalTypePaymentMethod terminalPaymentMethod = paymentMethod.getPaymentMethod();
+    // Save cash up events for payment method status
+    OBPOSPaymentcashupEvents paymentcashupEvent = null;
+    List<OBPOSPaymentMethodCashup> paymentmethodcashupList = cashup
+        .getOBPOSPaymentmethodcashupList();
+    for (OBPOSPaymentMethodCashup paymentmethodcashup : paymentmethodcashupList) {
+      if (paymentmethodcashup.getPaymentType().getId().equals(paymentMethod.getId())) {
+        paymentcashupEvent = OBProvider.getInstance().get(OBPOSPaymentcashupEvents.class);
+        paymentcashupEvent.setObposPaymentmethodcashup(paymentmethodcashup);
+        paymentcashupEvent.setName(description);
+        paymentcashupEvent.setAmount(amount);
+        paymentcashupEvent.setType(type);
+        paymentcashupEvent.setCurrency(jsonsent.getString("isocode"));
+        paymentcashupEvent.setRate(origAmount.divide(amount, 2, BigDecimal.ROUND_HALF_UP));
+        OBDal.getInstance().save(paymentcashupEvent);
+      }
+    }
     if (!jsonsent.has("defaultProcess") || jsonsent.getString("defaultProcess").equals("null")
         || "Y".equals(jsonsent.getString("defaultProcess"))) {
       GLItem glItemMain;
@@ -148,6 +165,8 @@ public class ProcessCashMgmt extends POSDataSynchronizationProcess implements
       transaction.setTransactionDate(cashMgmtTrxDate);
 
       OBDal.getInstance().save(transaction);
+      paymentcashupEvent.setFINFinaccTransaction(transaction);
+      OBDal.getInstance().save(paymentcashupEvent);
 
       CashManagementEvents event = OBDal.getInstance().get(CashManagementEvents.class,
           cashManagementReasonId);
@@ -185,8 +204,8 @@ public class ProcessCashMgmt extends POSDataSynchronizationProcess implements
     }
     // Call all OrderProcess injected.
     String extendedType = jsonsent.has("extendedType") ? jsonsent.getString("extendedType") : "";
-    executeHooks(cashMgmtProcesses, jsonsent, extendedType, paymentMethod, cashup, amount,
-        origAmount);
+    executeHooks(cashMgmtProcesses, jsonsent, extendedType, paymentMethod, cashup,
+        paymentcashupEvent, amount, origAmount);
 
     JSONObject result = new JSONObject();
     result.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
@@ -199,12 +218,14 @@ public class ProcessCashMgmt extends POSDataSynchronizationProcess implements
   }
 
   protected void executeHooks(Instance<? extends Object> hooks, JSONObject jsonsent, String type,
-      OBPOSAppPayment paymentMethod, OBPOSAppCashup cashup, BigDecimal amount, BigDecimal origAmount)
+      OBPOSAppPayment paymentMethod, OBPOSAppCashup cashup,
+      OBPOSPaymentcashupEvents paymentcashupEvent, BigDecimal amount, BigDecimal origAmount)
       throws Exception {
 
     for (Iterator<? extends Object> procIter = hooks.iterator(); procIter.hasNext();) {
       Object proc = procIter.next();
-      ((ProcessCashMgmtHook) proc).exec(jsonsent, type, paymentMethod, cashup, amount, origAmount);
+      ((ProcessCashMgmtHook) proc).exec(jsonsent, type, paymentMethod, cashup, paymentcashupEvent,
+          amount, origAmount);
     }
   }
 }

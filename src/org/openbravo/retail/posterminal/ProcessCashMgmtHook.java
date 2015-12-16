@@ -16,5 +16,6 @@ import org.codehaus.jettison.json.JSONObject;
 public interface ProcessCashMgmtHook {
 
   public void exec(JSONObject jsonsent, String type, OBPOSAppPayment paymentMethod,
-      OBPOSAppCashup cashup, BigDecimal amount, BigDecimal origAmount) throws Exception;
+      OBPOSAppCashup cashup, OBPOSPaymentcashupEvents paymentcashupEvent, BigDecimal amount,
+      BigDecimal origAmount) throws Exception;
 }
