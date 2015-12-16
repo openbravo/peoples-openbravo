@@ -904,7 +904,7 @@
           this.get('lines').trigger('updateRelations');
         } else {
           // We don't have the approval to delete the line yet; request it
-          OB.UTIL.Approval.requestApproval(OB.MobileApp.view.$.containerWindow.$.pointOfSale.model, 'OBPOS_approval.deleteLine', function (approved) {
+          OB.UTIL.Approval.requestApproval(OB.MobileApp.view.$.containerWindow.getRoot().model, 'OBPOS_approval.deleteLine', function (approved) {
             if (approved) {
               me.set('preventServicesUpdate', true);
               me.set('deleting', true);
@@ -1293,7 +1293,7 @@
       }
       if (((options && options.line) ? options.line.get('qty') + qty : qty) < 0 && p.get('productType') === 'S') {
         OB.UTIL.Approval.requestApproval(
-        OB.MobileApp.view.$.containerWindow.$.pointOfSale.model, 'OBPOS_approval.returnService', function (approved, supervisor, approvalType) {
+        OB.MobileApp.view.$.containerWindow.getRoot().model, 'OBPOS_approval.returnService', function (approved, supervisor, approvalType) {
           if (approved) {
             addProductToOrder();
           }
@@ -2136,7 +2136,7 @@
           }
           if (approvalNeeded) {
             OB.UTIL.Approval.requestApproval(
-            OB.MobileApp.view.$.containerWindow.$.pointOfSale.model, [{
+            OB.MobileApp.view.$.containerWindow.getRoot().model, [{
               approval: 'OBPOS_approval.returnService',
               message: 'OBPOS_approval.returnService',
               params: [servicesToApprove]

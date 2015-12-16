@@ -963,7 +963,7 @@ enyo.kind({
 
       if (approvalNeeded) {
         OB.UTIL.Approval.requestApproval(
-        OB.MobileApp.view.$.containerWindow.$.pointOfSale.model, [{
+        OB.MobileApp.view.$.containerWindow.getRoot().model, [{
           approval: 'OBPOS_approval.returnService',
           message: 'OBPOS_approval.returnService',
           params: [servicesToApprove]
