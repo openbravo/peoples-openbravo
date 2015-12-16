@@ -457,7 +457,6 @@ isc.OBMiniDateRangeItem.addProperties({}, OB.DateItemProperties, {
   clearFilterValues: function () {
     this.singleDateValue = null;
     this.singleDateDisplayValue = '';
-    this.singleDateMode = true;
     this.rangeItemValue = null;
     this.rangeItem.setValue(null);
     this.setElementValue('', '');
