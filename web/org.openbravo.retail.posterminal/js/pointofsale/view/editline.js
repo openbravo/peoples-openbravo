@@ -198,7 +198,7 @@ enyo.kind({
           order.unset('preventServicesUpdate');
           order.unset('deleting');
           order.get('lines').trigger('updateRelations');
-          order.calculateGross();
+          order.calculateReceipt();
           enyo.$.scrim.hide();
         });
       }

@@ -83,7 +83,7 @@ enyo.kind({
         });
         this.owner.owner.args.callback = null;
         if (this.owner.owner.$.bodyContent.$.chkSelectOpenedReceiptModal.checked) {
-          orderModel.calculateGross();
+          orderModel.calculateReceipt();
           var me = this,
               onCalculategross;
 

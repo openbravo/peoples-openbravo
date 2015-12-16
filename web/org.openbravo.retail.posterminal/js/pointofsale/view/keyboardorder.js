@@ -189,7 +189,7 @@ enyo.kind({
             keyboard.receipt.unset('preventServicesUpdate');
             keyboard.receipt.unset('deleting');
             keyboard.receipt.get('lines').trigger('updateRelations');
-            keyboard.receipt.calculateGross();
+            keyboard.receipt.calculateReceipt();
             enyo.$.scrim.hide();
           });
         }
@@ -235,7 +235,7 @@ enyo.kind({
             keyboard.receipt.unset('preventServicesUpdate');
             keyboard.receipt.unset('deleting');
             keyboard.receipt.get('lines').trigger('updateRelations');
-            keyboard.receipt.calculateGross();
+            keyboard.receipt.calculateReceipt();
             enyo.$.scrim.hide();
           });
         }
@@ -322,7 +322,7 @@ enyo.kind({
               } else {
                 keyboard.receipt.setPrice(keyboard.line, price);
               }
-              keyboard.receipt.calculateGross();
+              keyboard.receipt.calculateReceipt();
               keyboard.receipt.trigger('scan');
             }
           });
@@ -405,7 +405,7 @@ enyo.kind({
             keyboard.receipt.unset('preventServicesUpdate');
             keyboard.receipt.unset('deleting');
             keyboard.receipt.get('lines').trigger('updateRelations');
-            keyboard.receipt.calculateGross();
+            keyboard.receipt.calculateReceipt();
             enyo.$.scrim.hide();
           });
         }
@@ -439,7 +439,7 @@ enyo.kind({
             keyboard.receipt.unset('preventServicesUpdate');
             keyboard.receipt.unset('deleting');
             keyboard.receipt.get('lines').trigger('updateRelations');
-            keyboard.receipt.calculateGross();
+            keyboard.receipt.calculateReceipt();
             enyo.$.scrim.hide();
           });
         }

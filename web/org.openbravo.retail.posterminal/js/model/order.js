@@ -970,7 +970,7 @@
                   //Changing the qty of a line modifies the undo attribute, so we need a copy
                   thisUndo.lines[i].set('qty', thisUndo.oldqtys[i]);
                 }
-                me.calculateGross();
+                me.calculateReceipt();
                 me.set('undo', null);
               }
             });
@@ -981,7 +981,7 @@
               line: line,
               undo: function () {
                 line.set('qty', oldqty);
-                me.calculateGross();
+                me.calculateReceipt();
                 me.set('undo', null);
               }
             });
@@ -1067,7 +1067,7 @@
                     for (i = 0; i < me.get('undo').lines.length; i++) {
                       me.get('undo').lines[i].set('price', me.get('undo').oldprices[i]);
                     }
-                    me.calculateGross();
+                    me.calculateReceipt();
                     me.set('undo', null);
                   }
                 });
@@ -1078,7 +1078,7 @@
                   line: args.line,
                   undo: function () {
                     args.line.set('price', oldprice);
-                    me.calculateGross();
+                    me.calculateReceipt();
                     me.set('undo', null);
                   }
                 });
@@ -1217,7 +1217,7 @@
             me.unset('preventServicesUpdate');
             me.unset('deleting');
             me.get('lines').trigger('updateRelations');
-            me.calculateGross();
+            me.calculateReceipt();
             enyo.$.scrim.hide();
           }
         });
@@ -1974,7 +1974,7 @@
             _.each(lines, function (line) {
               line.set('qty', -line.get('qty'));
             });
-            me.calculateGross();
+            me.calculateReceipt();
             me.set('undo', null);
           }
         });
