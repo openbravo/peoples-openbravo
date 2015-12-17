@@ -204,7 +204,8 @@ BEGIN
       WHERE ps.fin_payment_schedule_id = psd.fin_payment_schedule_order
         AND ps.c_order_id = p_record_id
         AND psd.fin_payment_detail_id = pd.fin_payment_detail_id
-        AND pd.fin_payment_id = p.fin_payment_id;
+        AND pd.fin_payment_id = p.fin_payment_id
+        AND p.status <> 'RPAP';
       IF (v_count <> 0) THEN
         RAISE_APPLICATION_ERROR(-20000, '@APRM_OrderWithPayments@'||v_DocumentNo);
       END IF;
