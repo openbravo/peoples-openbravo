@@ -105,9 +105,10 @@ public class ProcessCashCloseMaster extends JSONProcessSimple {
         + OBPOSPaymentMethodCashup.PROPERTY_TOTALDROPS + "), sum("
         + OBPOSPaymentMethodCashup.PROPERTY_TOTALRETURNS + "), sum("
         + OBPOSPaymentMethodCashup.PROPERTY_TOTALSALES + "), sum( "
-        + OBPOSPaymentMethodCashup.PROPERTY_AMOUNTTOKEEP + ") " + "from OBPOS_Paymentmethodcashup "
-        + "where cashUp.id in :cashUpIds and paymentType.paymentMethod.isshared = 'Y'"
-        + "group by 1";
+        + OBPOSPaymentMethodCashup.PROPERTY_AMOUNTTOKEEP + ")"
+        + " from OBPOS_Paymentmethodcashup" //
+        + " where cashUp.id in (:cashUpIds) and paymentType.paymentMethod.isshared = 'Y'"
+        + " group by " + OBPOSPaymentMethodCashup.PROPERTY_SEARCHKEY;
     final Session session = OBDal.getInstance().getSession();
     final Query paymentQuery = session.createQuery(query);
     paymentQuery.setParameterList("cashUpIds", cashUpIds);
