@@ -140,6 +140,10 @@ enyo.kind({
       + "   AND AD_ROLE_ID = '" + OB.MobileApp.model.get('context').role.id + "'" //
       + " )))" //
     }, function (promos) {
+      promos.comparator = function (model) {
+        return model.get('_identifier');
+      };
+      promos.sort();
       me.discounts.reset(promos.models);
       me.ticketLineChecked({}, {
         checkedLines: me.checkedLines

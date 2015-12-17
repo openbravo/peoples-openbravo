@@ -20,6 +20,7 @@ import org.hibernate.criterion.Restrictions;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.Preferences;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.service.json.JsonConstants;
@@ -31,50 +32,43 @@ public class CheckTerminalAuth extends JSONProcessSimple {
   private static final Logger log = Logger.getLogger(CheckTerminalAuth.class);
 
   @Override
-  public JSONObject exec(JSONObject jsonsent) throws JSONException, ServletException {
+  public JSONObject exec(final JSONObject jsonsent) throws JSONException, ServletException {
     String value = new String();
-    JSONObject respArray = new JSONObject();
-    JSONObject result = new JSONObject();
+    final JSONObject respArray = new JSONObject();
+    final JSONObject result = new JSONObject();
     result.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
     try {
-      String terminalName = jsonsent.getString("terminalName");
-      String terminalKeyIdentifier = jsonsent.getString("terminalKeyIdentifier");
-      String terminalAuthentication = jsonsent.getString("terminalAuthentication");
+      final String terminalName = jsonsent.getString("terminalName");
+      final String terminalKeyIdentifier = jsonsent.getString("terminalKeyIdentifier");
+      final String terminalAuthentication = jsonsent.getString("terminalAuthentication");
+      final String currentCacheSessionId = jsonsent.getString("cacheSessionId");
 
-      OBCriteria<OBPOSApplications> qApp = OBDal.getInstance().createCriteria(
+      final OBCriteria<OBPOSApplications> qApp = OBDal.getInstance().createCriteria(
           OBPOSApplications.class);
       qApp.add(Restrictions.eq(OBPOSApplications.PROPERTY_SEARCHKEY, terminalName));
-      List<OBPOSApplications> apps = qApp.list();
+      final List<OBPOSApplications> apps = qApp.list();
       if (apps.size() == 1) {
-        OBPOSApplications terminal = ((OBPOSApplications) apps.get(0));
-        if (!terminal.isLinked() || !terminal.getTerminalKey().equals(terminalKeyIdentifier)) {
+        final OBPOSApplications terminal = (apps.get(0));
+        if (!terminal.isLinked() || !terminal.getTerminalKey().equals(terminalKeyIdentifier)
+            || !terminal.getCurrentCacheSession().equals(currentCacheSessionId)) {
           respArray.put("isLinked", false);
         }
         try {
           value = Preferences.getPreferenceValue("OBPOS_TerminalAuthentication", true, null, null,
               null, null, (String) null);
-        } catch (PropertyException e) {
-          if (!terminalAuthentication.equals("N")) {
-            respArray.put("terminalAuthentication", terminalAuthentication);
-            result.put(JsonConstants.RESPONSE_DATA, respArray);
-            return result;
-          }
-          if (!terminalAuthentication.equals(value)) {
-            respArray.put("terminalAuthentication", terminalAuthentication);
-            result.put(JsonConstants.RESPONSE_DATA, respArray);
-            return result;
-          }
+        } catch (final PropertyException e) {
+          respArray.put("terminalAuthentication", "Y");
+          respArray.put("errorReadingTerminalAuthentication",
+              OBMessageUtils.messageBD("OBPOS_errorWhileReadingTerminalAuthenticationPreference"));
+          result.put(JsonConstants.RESPONSE_DATA, respArray);
+          return result;
         }
       }
-    } catch (Exception e) {
+    } catch (final Exception e) {
       log.error("There was an error Checking Terminal Authentication: ", e);
     }
     result.put(JsonConstants.RESPONSE_DATA, respArray);
     return result;
   }
 
-  @Override
-  protected String getProperty() {
-    return "OBPOS_receipt.voidLayaway";
-  }
 }

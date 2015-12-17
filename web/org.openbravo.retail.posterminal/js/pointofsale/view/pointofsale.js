@@ -81,7 +81,8 @@ enyo.kind({
     onWarehouseSelected: 'warehouseSelected',
     onClearUserInput: 'clearUserInput',
     onPricelistChanged: 'pricelistChanged',
-    onChangeDiscount: 'changeDiscount'
+    onChangeDiscount: 'changeDiscount',
+    onReceiptLineSelected: 'receiptLineSelected'
   },
   events: {
     onShowPopup: '',
@@ -311,10 +312,8 @@ enyo.kind({
 
           return;
         }
-        receipt.calculateTaxes(function () {
-          receipt.trigger('print', receipt, {
-            forcePrint: true
-          });
+        receipt.trigger('print', receipt, {
+          forcePrint: true
         });
         return;
       }
@@ -417,7 +416,7 @@ enyo.kind({
       context: this,
       receipt: this.model.get('order'),
       productToAdd: inEvent.product,
-      qtyToAdd: inEvent.qty,
+      qtyToAdd: inEvent.qty ? inEvent.qty : 1,
       options: inEvent.options,
       attrs: inEvent.attrs
     }, function (args) {
@@ -425,6 +424,17 @@ enyo.kind({
         return true;
       }
       args.context.model.get('order').addProduct(args.productToAdd, args.qtyToAdd, args.options, args.attrs, null);
+      if (args.productToAdd.get('groupProduct')) {
+        // The product added is grouped, so enable the quantity button
+        args.context.waterfall('onEnableQtyButton', {
+          enable: true
+        });
+      } else {
+        // The product added is not grouped, so disable the quantity button
+        args.context.waterfall('onEnableQtyButton', {
+          enable: false
+        });
+      }
     });
     return true;
   },
@@ -970,6 +980,23 @@ enyo.kind({
   },
   pricelistChanged: function (inSender, inEvent) {
     this.waterfall('onChangePricelist', inEvent);
+  },
+  receiptLineSelected: function (inSender, inEvent) {
+    if (inEvent.product.get('groupProduct')) {
+      // The line selected is a grouped product, so enable the quantity button
+      this.waterfall('onEnableQtyButton', {
+        enable: true
+      });
+    } else {
+      // The line selected is not a grouped product, so disable the quantity button
+      this.waterfall('onEnableQtyButton', {
+        enable: false
+      });
+    }
+    OB.UTIL.HookManager.executeHooks('OBPOS_LineSelected', {
+      product: inEvent.product,
+      context: this
+    }, function (args) {});
   },
   init: function () {
     var receipt, receiptList, LeftColumnCurrentView;

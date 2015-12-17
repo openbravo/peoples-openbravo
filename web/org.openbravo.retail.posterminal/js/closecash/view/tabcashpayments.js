@@ -165,7 +165,7 @@ enyo.kind({
             }]
           }]
         }, {
-          style: 'background-color: #ffffff; color: black;',
+          style: 'background-color: #ffffff; color: black; height: 100%; width:100%',
           components: [{
             components: [{
               classes: 'row-fluid',
@@ -190,12 +190,13 @@ enyo.kind({
                 }]
               }]
             }, {
-              style: 'overflow:auto; height: 454px; align:left; width:100%',
+              style: 'background-color: #ffffff; height: 454px; clear:left; width:100%',
               components: [{
                 name: 'paymentsList',
-                kind: 'OB.UI.Table',
+                kind: 'OB.UI.ScrollableTable',
                 renderLine: 'OB.OBPOSCashUp.UI.RenderCashPaymentsLine',
                 renderEmpty: 'OB.UI.RenderEmpty',
+                scrollAreaMaxHeight: '454px',
                 listStyle: 'list'
               }, {
                 name: 'renderLoading',

@@ -15,8 +15,8 @@
     modelName: 'CharacteristicValue',
     tableName: 'm_ch_value',
     entityName: 'CharacteristicValue',
-    source: 'org.openbravo.retail.posterminal.master.CharacteristicValue',
-    remote: 'OBPOS_remote.product'
+    remote: 'OBPOS_remote.product',
+    source: 'org.openbravo.retail.posterminal.master.CharacteristicValue'
   });
 
   CharacteristicValue.addProperties([{

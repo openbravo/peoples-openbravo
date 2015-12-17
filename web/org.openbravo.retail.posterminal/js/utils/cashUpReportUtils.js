@@ -194,7 +194,18 @@
       _.each(cashup.get('cashTaxInfo'), function (taxCashup) {
         var taxModel = new OB.Model.TaxCashUp();
         taxModel.set(taxCashup);
-        OB.Dal.save(taxModel, null, null, true);
+        OB.Dal.save(taxModel, null, function () {
+          OB.error(OB.I18N.getLabel('OBPOS_DalSaveError'));
+        }, true);
+      });
+
+      // Create Cash Management
+      _.each(cashup.get('cashMgmInfo'), function (cashMgm) {
+        var cashMgmModel = new OB.Model.CashManagement();
+        cashMgmModel.set(cashMgm);
+        OB.Dal.save(cashMgmModel, null, function () {
+          OB.error(OB.I18N.getLabel('OBPOS_DalSaveError'));
+        }, true);
       });
 
       //current cashup
@@ -211,7 +222,9 @@
             return;
           }
           if (pAux.payment.active === true || (pAux.payment.active === false && paymentMethodCashUpModel.get('totalSales') !== 0 && paymentMethodCashUpModel.get('totalReturns') !== 0 && paymentMethodCashUpModel.get('totalDepostis') !== 0 && paymentMethodCashUpModel.get('totalDrops') !== 0)) {
-            OB.Dal.save(paymentMethodCashUpModel, null, null, true);
+            OB.Dal.save(paymentMethodCashUpModel, null, function () {
+              OB.error(OB.I18N.getLabel('OBPOS_DalSaveError'));
+            }, true);
           }
           //end if
           //OB.UTIL.deleteUnactivePaymentMethod(paymentMethodCashUpModel);
@@ -412,6 +425,11 @@
                   isocode: payment.isocode,
                   cashup_id: cashUp.at(0).get('id')
                 }), null, null, true);
+              } else if (!OB.UTIL.isNullOrUndefined(pAux)) {
+                if (pAux.get("name") !== payment.payment._identifier) {
+                  pAux.set("name", payment.payment._identifier);
+                  OB.Dal.save(pAux);
+                }
               }
             }
           }, function (lastCashUpPayments) {

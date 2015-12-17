@@ -29,7 +29,7 @@ enyo.kind({
     this.preSetContentDetail(order, docNo);
   },
   preSetContentDetail: function (order, docNo) {
-    var orderDate = order.get('orderDate');
+    var orderDate = new Date(order.get('orderDate'));
     if (order.get('hasbeenpaid') === 'Y' || order.get('isLayaway')) {
       orderDate = OB.I18N.normalizeDate(this.order.get('creationDate'));
       if (_.isNull(orderDate)) {
@@ -38,12 +38,7 @@ enyo.kind({
         orderDate = new Date(orderDate);
       }
     }
-    var content;
-    if (orderDate instanceof Date) {
-      content = OB.I18N.formatHour(orderDate) + ' - ' + docNo;
-    } else {
-      content = orderDate + ' - ' + docNo;
-    }
+    var content = OB.I18N.formatHour(orderDate) + ' - ' + docNo;
     this.setContentDetail(content, docNo, orderDate);
   },
   setContentDetail: function (content, docNo, orderDate) {

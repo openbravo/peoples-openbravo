@@ -67,7 +67,8 @@ public class UpdateProductCategoryByAssortmentBackground extends DalBaseProcess 
             OBRETCOProductList.class);
         assortmentList.add(Restrictions.eq(OBRETCOProductList.PROPERTY_CLIENT, client));
         if (!org.getId().equals("0")) {
-          assortmentList.add(Restrictions.in(OBRETCOProductList.PROPERTY_ORGANIZATION, orgtree));
+          assortmentList.add(Restrictions.in(OBRETCOProductList.PROPERTY_ORGANIZATION + ".id",
+              orgtree));
         }
         for (OBRETCOProductList assortment : assortmentList.list()) {
           assortment.getOBRETCOProductcategoryList().clear();

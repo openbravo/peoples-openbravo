@@ -57,6 +57,7 @@
     applyPromotionsLat: function (receipt, line) {
       var me = this;
       if (receipt.get('skipApplyPromotions') || receipt.get('cloningReceipt') || this.preventApplyPromotions) {
+        receipt.trigger('applyPromotionsFinished');
         return;
       }
 
@@ -91,7 +92,6 @@
               for (i = 0; i < auxReceipt.get('lines').size(); i++) {
                 if (auxReceipt.isSimilarLine(ol, auxReceipt.get('lines').at(i))) {
                   oldLines.remove(ol);
-                  break;
                 }
               }
             });
@@ -110,7 +110,9 @@
               if (auxReceipt.get('lines').length > 0) {
                 oldLines = new Backbone.Collection();
                 auxReceipt.get('lines').forEach(function (l) {
-                  oldLines.push(l.clone());
+                  var clonedLine = l.clone();
+                  clonedLine.set('promotions', _.clone(clonedLine.get('promotions')));
+                  oldLines.push(clonedLine);
                 });
                 me.applyPromotionsImp(auxReceipt, undefined, true);
               } else {
@@ -176,14 +178,14 @@
       }
     },
 
-    applyPromotionsImp: function (receipt, line, skipSave) {
+    applyPromotionsImp: function (receipt, line, skipSave, avoidTrigger) {
       var lines, linesWithoutNoDiscCandidated;
       if (this.preventApplyPromotions) {
         return;
       }
 
       if (receipt && (!receipt.get('isEditable') || (!OB.UTIL.isNullOrUndefined(receipt.get('isNewReceipt')) && receipt.get('isNewReceipt')))) {
-        return;
+        receipt.trigger('discountsApplied');
       }
 
       if (line) {
@@ -192,7 +194,8 @@
           groupId: 'discounts',
           receipt: receipt,
           line: line,
-          skipSave: skipSave
+          skipSave: skipSave,
+          avoidTrigger: avoidTrigger
         }), true);
       } else {
         lines = _.sortBy(receipt.get('lines').models, function (lo) {
@@ -208,9 +211,10 @@
             // with new flow discounts -> skipSave =true
             // in other case -> false
             if (l.get('noDiscountCandidates') !== true) {
-              this.applyPromotionsImp(receipt, l, OB.MobileApp.model.hasPermission('OBPOS_discount.newFlow', true));
+              this.applyPromotionsImp(receipt, l, OB.MobileApp.model.hasPermission('OBPOS_discount.newFlow', true), true);
             }
           }, this);
+          this.executor.nextEvent();
         }
       }
     },
@@ -236,7 +240,7 @@
 
       if (!promotion.alreadyCalculated) {
         // Recalculate all promotions again
-        OB.Model.Discounts.applyPromotions(receipt);
+        receipt.calculateReceipt();
       }
     },
 

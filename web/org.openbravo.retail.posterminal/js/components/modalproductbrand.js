@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013 Openbravo S.L.U.
+ * Copyright (C) 2013-2015 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -89,22 +89,46 @@ enyo.kind({
         'asc': true
       }]
     };
-
     var products = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.products;
-    if (products.collection.length > 0) {
-      // There are products in search
-      // Get all the products id
-      var productsIdsList = "('";
-      for (i = 0; i < products.collection.length; i++) {
-        productsIdsList += products.collection.models[i].id + "'";
-        if (i < products.collection.length - 1) {
-          productsIdsList += ",'";
+    if (!OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
+      if (products.collection.length > 0) {
+        // There are products in search
+        // Get all the products id
+        var productsIdsList = "('";
+        for (i = 0; i < products.collection.length; i++) {
+          productsIdsList += products.collection.models[i].id + "'";
+          if (i < products.collection.length - 1) {
+            productsIdsList += ",'";
+          }
         }
+        productsIdsList += ")";
+
+        OB.Dal.query(OB.Model.Brand, "select distinct(b.m_product_id),b.name,b._identifier,b._filter,b._idx from m_brand b left join m_product p on p.brand=b.m_product_id where p.m_product_id in " + productsIdsList + " order by UPPER(name) asc", null, successCallbackBrands, errorCallback, this);
+
+      } else {
+        // There are no products in search
+        OB.Dal.find(OB.Model.Brand, criteria, successCallbackBrands, errorCallback);
       }
-      productsIdsList += ")";
-      OB.Dal.query(OB.Model.Brand, "select distinct(b.m_product_id),b.name,b._identifier,b._filter,b._idx from m_brand b left join m_product p on p.brand=b.m_product_id where p.m_product_id in " + productsIdsList + " order by UPPER(name) asc", null, successCallbackBrands, errorCallback, this);
     } else {
-      // There are no products in search
+      var productFilterText = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.searchProductCharacteristicHeader.$.productFilterText.getValue();
+      var productcategory = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.searchProductCharacteristicHeader.$.productcategory.getValue();
+      var productCharacteristicModel = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.searchProductCharacteristicHeader.parent.model;
+
+      var remoteCriteria = [],
+          brandfilter = {},
+          productText;
+      criteria = {};
+      if (products.collection.length > 0) {
+        if (productFilterText !== "" || productcategory !== "__all__") {
+          brandfilter.columns = [];
+          brandfilter.operator = OB.Dal.FILTER;
+          brandfilter.value = 'PBrand_Filter';
+          productText = (OB.MobileApp.model.hasPermission('OBPOS_remote.product' + OB.Dal.USESCONTAINS, true) ? '%' : '') + productFilterText + '%';
+          brandfilter.params = [productText, productcategory];
+          remoteCriteria.push(brandfilter);
+        }
+        criteria.remoteFilters = remoteCriteria;
+      }
       OB.Dal.find(OB.Model.Brand, criteria, successCallbackBrands, errorCallback);
     }
     return true;

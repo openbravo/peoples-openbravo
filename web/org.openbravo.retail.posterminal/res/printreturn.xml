@@ -115,15 +115,15 @@
       %>
         <line>
           <text align="left" length="15"><%= payments.at(i).get('name') %></text>
-          <text align="right" length="12"><%= '('+OB.I18N.formatCurrency(payments.at(i).get('amount'))+' '+payments.at(i).get('isocode')+')' %></text>
-          <text align="right" length="13"><%= OB.I18N.formatCurrency(payments.at(i).get('origAmount')) %></text>
+          <text align="right" length="12"><%= '('+OB.I18N.formatCurrency(OB.DEC.abs(payments.at(i).get('amount')))+' '+payments.at(i).get('isocode')+')' %></text>
+          <text align="right" length="13"><%= OB.I18N.formatCurrency(OB.DEC.abs(payments.at(i).get('origAmount'))) %></text>
         </line>
      <%
          }else {
      %>
         <line>
           <text align="left" length="20"><%= payments.at(i).get('name') %></text>
-          <text align="right" length="20"><%= OB.I18N.formatCurrency(payments.at(i).get('amount')) %></text>
+          <text align="right" length="20"><%= OB.I18N.formatCurrency(OB.DEC.abs(payments.at(i).get('amount'))) %></text>
         </line>
       <%
         }
@@ -158,6 +158,12 @@
           }
         }
       %>   
+    <% if (order.get('hasbeenpaid') === 'Y' && order.get('paidOnCredit')) { %>
+    <line>
+      <text align="left" length="20"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_paidOnCredit')) %></text>
+      <text align="right" length="20"><%= OB.I18N.formatCurrency(OB.DEC.abs(order.getGross() + order.get('payment'))) %></text>
+    </line>
+    <% } %>
     <line>
       <text align="left" length="20"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_ticketChange')) %></text>
       <text align="right" length="20"><%= OB.I18N.formatCurrency(order.get('change'))%></text>

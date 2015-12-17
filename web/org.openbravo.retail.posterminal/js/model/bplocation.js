@@ -124,6 +124,7 @@
   }, {
     name: '_identifier',
     column: '_identifier',
+    filter: true,
     type: 'TEXT'
   }]);
 

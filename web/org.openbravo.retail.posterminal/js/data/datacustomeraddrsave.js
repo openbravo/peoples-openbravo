@@ -103,7 +103,7 @@
           }, function () {
             //error saving BP changes with changes in changedbusinesspartners
             OB.UTIL.showError(OB.I18N.getLabel('OBPOS_errorSavingCustomerAddrChn', [me.customerAddr.get('_identifier')]));
-          }, isNew);
+          });
         }, function () {
           //error saving BP Location with new values in c_bpartner_location
           OB.error(arguments);

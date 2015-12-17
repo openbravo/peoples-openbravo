@@ -9,6 +9,7 @@
 package org.openbravo.retail.posterminal;
 
 import java.math.BigDecimal;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -64,7 +65,7 @@ public class PaidReceipts extends JSONProcessSimple {
       // get the orderId
       HQLPropertyList hqlProperties = ModelExtensionUtils.getPropertyExtensions(extensions);
       String hqlPaidReceipts = "select " + hqlProperties.getHqlSelect() + //
-          " from Order as ord LEFT OUTER JOIN ord.obposApplications AS pos" + //
+          " from Order as ord LEFT OUTER JOIN ord.obposApplications AS pos LEFT OUTER JOIN ord.salesRepresentative as salesRepresentative" + //
           " where ord.id = :orderId";
       Query paidReceiptsQuery = OBDal.getInstance().getSession().createQuery(hqlPaidReceipts);
       paidReceiptsQuery.setString("orderId", orderid);
@@ -74,7 +75,13 @@ public class PaidReceipts extends JSONProcessSimple {
         Object[] objpaidReceipts = (Object[]) obj;
         JSONObject paidReceipt = hqlProperties.getJSONObjectRow(objpaidReceipts);
         paidReceipt.put("orderid", orderid);
-
+        // orderDate is a date so we don't need to transform the time information
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
+        int orderDatePropertyIndex = hqlProperties.getHqlPropertyIndex("orderDate");
+        if (orderDatePropertyIndex != -1) {
+          String nowAsISO = df.format(objpaidReceipts[orderDatePropertyIndex]);
+          paidReceipt.put("orderDate", nowAsISO);
+        }
         // get the Invoice for the Order
         String hqlPaidReceiptsInvoice = "select inv.id from Invoice as inv where inv.salesOrder.id = :orderId";
         Query PaidReceiptsInvoiceQuery = OBDal.getInstance().getSession()
@@ -183,7 +190,7 @@ public class PaidReceipts extends JSONProcessSimple {
         JSONArray listPaymentsIn = new JSONArray();
 
         // TODO: make this extensible
-        String hqlPaymentsIn = "select scheduleDetail.paymentDetails.finPayment.amount, scheduleDetail.paymentDetails.finPayment.account.id, scheduleDetail.paymentDetails.finPayment.paymentDate "
+        String hqlPaymentsIn = "select scheduleDetail.paymentDetails.finPayment.amount, scheduleDetail.paymentDetails.finPayment.account.id, scheduleDetail.paymentDetails.finPayment.paymentDate, scheduleDetail.paymentDetails.finPayment.id "
             + "from FIN_Payment_ScheduleDetail as scheduleDetail where scheduleDetail.orderPaymentSchedule.order.id=? "
             + "order by scheduleDetail.paymentDetails.finPayment.documentNo";
         Query paymentsInQuery = OBDal.getInstance().getSession().createQuery(hqlPaymentsIn);
@@ -197,6 +204,7 @@ public class PaidReceipts extends JSONProcessSimple {
           String dateFormat = "yyyy-MM-dd";
           SimpleDateFormat outputFormat = new SimpleDateFormat(dateFormat);
           paymentsIn.put("paymentDate", outputFormat.format(((Date) objPaymentsIn[2])));
+          paymentsIn.put("paymentId", objPaymentsIn[3]);
           listPaymentsIn.put(paymentsIn);
         }
 
@@ -227,6 +235,7 @@ public class PaidReceipts extends JSONProcessSimple {
         }
         for (int i = 0; i < listPaymentsIn.length(); i++) {
           JSONObject objectIn = (JSONObject) listPaymentsIn.get(i);
+          boolean added = false;
           for (int j = 0; j < listPaymentsType.length(); j++) {
             JSONObject objectType = (JSONObject) listPaymentsType.get(j);
             if (objectIn.get("account").equals(objectType.get("account"))) {
@@ -243,8 +252,51 @@ public class PaidReceipts extends JSONProcessSimple {
               paidReceiptPayment.put("isocode", objectType.get("isocode"));
               paidReceiptPayment.put("openDrawer", objectType.get("openDrawer"));
               paidReceiptPayment.put("isPrePayment", true);
+              added = true;
               listpaidReceiptsPayments.put(paidReceiptPayment);
             }
+          }
+          if (!added) {
+            // The payment type of the current payment is not configured for the webpos
+
+            String hqlPaymentType = "select p.paymentMethod.name as name, p.account.id as account, "
+                + "c_currency_rate(p.account.currency, p.organization.currency, null, null, p.client.id, p.organization.id) as rate, "
+                + "c_currency_rate(p.organization.currency, p.account.currency, null, null, p.client.id, p.organization.id) as mulrate, "
+                + "p.account.currency.iSOCode as isocode " + " from FIN_Payment as p where p.id=?)";
+            Query paymentTypeQuery = OBDal.getInstance().getSession().createQuery(hqlPaymentType);
+            // paidReceiptsQuery.setString(0, id);
+            paymentTypeQuery.setString(0, objectIn.getString("paymentId"));
+
+            if (paymentTypeQuery.list().size() > 0) {
+
+              Object objPaymentType = paymentTypeQuery.list().get(0);
+              Object[] objPaymentsType = (Object[]) objPaymentType;
+              JSONObject paymentsType = new JSONObject();
+              paymentsType.put("name", objPaymentsType[0]);
+              paymentsType.put("account", objPaymentsType[1]);
+              paymentsType.put("kind", "");
+              paymentsType.put("rate", objPaymentsType[2]);
+              paymentsType.put("mulrate", objPaymentsType[3]);
+              paymentsType.put("isocode", objPaymentsType[4]);
+              paymentsType.put("openDrawer", "N");
+
+              JSONObject paidReceiptPayment = new JSONObject();
+              // FIXME: Multicurrency problem, amount always in terminal currency
+              paidReceiptPayment.put("amount", new BigDecimal((String) objectIn.get("amount")
+                  .toString()).multiply(new BigDecimal((String) paymentsType.get("mulrate")
+                  .toString())));
+              paidReceiptPayment.put("paymentDate", objectIn.get("paymentDate"));
+              paidReceiptPayment.put("name", paymentsType.get("name"));
+              paidReceiptPayment.put("kind", paymentsType.get("kind"));
+              paidReceiptPayment.put("rate", paymentsType.get("rate"));
+              paidReceiptPayment.put("mulrate", paymentsType.get("mulrate"));
+              paidReceiptPayment.put("isocode", paymentsType.get("isocode"));
+              paidReceiptPayment.put("openDrawer", paymentsType.get("openDrawer"));
+              paidReceiptPayment.put("isPrePayment", true);
+              added = true;
+              listpaidReceiptsPayments.put(paidReceiptPayment);
+            }
+
           }
         }
 
@@ -276,6 +328,7 @@ public class PaidReceipts extends JSONProcessSimple {
         result.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
       }
     } finally {
+
       OBContext.restorePreviousMode();
     }
     return result;

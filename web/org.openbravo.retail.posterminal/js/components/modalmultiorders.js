@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013 Openbravo S.L.U.
+ * Copyright (C) 2013-2015 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -224,10 +224,14 @@ enyo.kind({
         re, actualDate, i, processHeader = new OB.DS.Process('org.openbravo.retail.posterminal.PaidReceiptsHeader'),
         negativeLines;
     me.filters = inEvent.filters;
+    var limit = OB.Model.Order.prototype.dataLimit;
+    if (OB.MobileApp.model.hasPermission('OBPOS_orderLimit', true)) {
+      limit = OB.DEC.abs(OB.MobileApp.model.hasPermission('OBPOS_orderLimit', true));
+    }
     this.clearAction();
     processHeader.exec({
       filters: me.filters,
-      _limit: OB.Model.Order.prototype.dataLimit
+      _limit: limit
     }, function (data) {
       if (data) {
         _.each(me.model.get('orderList').models, function (iter) {
@@ -355,13 +359,16 @@ enyo.kind({
               order.set('loadedFromServer', true);
               order.set('checked', iter.get('checked'));
               OB.DATA.OrderTaxes(order);
-              order.save();
-              selectedMultiOrders.push(order);
-              if (selectedMultiOrders.length === checkedMultiOrders.length) {
-                me.doSelectMultiOrders({
-                  value: selectedMultiOrders
-                });
-              }
+              order.set('belongsToMultiOrder', true);
+              order.calculateReceipt(function () {
+                selectedMultiOrders.push(order);
+                order.save();
+                if (selectedMultiOrders.length === checkedMultiOrders.length) {
+                  me.doSelectMultiOrders({
+                    value: selectedMultiOrders
+                  });
+                }
+              });
             });
           } else {
             OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorDropDep'));

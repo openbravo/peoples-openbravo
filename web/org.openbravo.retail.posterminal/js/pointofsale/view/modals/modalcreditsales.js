@@ -63,7 +63,6 @@ enyo.kind({
 
     this.doHideThisPopup();
     this.model.get('order').set('paidOnCredit', true);
-    this.model.get('order').trigger('paymentDone');
     this.allowOpenDrawer = false;
     var payments = this.model.get('order').get('payments');
     var me = this;
@@ -90,6 +89,7 @@ enyo.kind({
       bp.set('creditUsed', bpCreditUsed + totalPending);
     }
     OB.Dal.save(bp, null, error);
+    this.model.get('order').trigger('paymentDone');
   }
 });
 
