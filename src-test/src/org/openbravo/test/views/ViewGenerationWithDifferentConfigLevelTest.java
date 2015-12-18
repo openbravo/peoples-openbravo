@@ -35,7 +35,7 @@ import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.common.enterprise.Organization;
-import org.openbravo.test.datasource.BaseDataSourceTestDal;
+import org.openbravo.test.base.OBBaseTest;
 
 /**
  * Test cases for check if the correct configurations are set, with the different grid
@@ -44,7 +44,7 @@ import org.openbravo.test.datasource.BaseDataSourceTestDal;
  * @author NaroaIriarte
  *
  */
-public class ViewGenerationWithDifferentConfigLevelTest extends BaseDataSourceTestDal {
+public class ViewGenerationWithDifferentConfigLevelTest extends OBBaseTest {
   private static final String CLIENT_FOR_GC_SYSTEM_FIELD_TAB = "0";
   private static final String ZERO_ORGANIZATION = "0";
   private static final String BUSINESS_PARTNER_TAB_ID = "220";
