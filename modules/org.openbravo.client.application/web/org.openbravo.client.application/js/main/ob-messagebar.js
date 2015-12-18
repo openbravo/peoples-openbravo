@@ -114,7 +114,7 @@ isc.OBMessageBar.addProperties({
       text = newText + '</ul>';
     }
 
-    if ((form && form.isSaving) || (grid && grid.isSaving)) {
+    if (((form && form.isSaving) || (grid && grid.isSaving)) && type === isc.OBMessageBar.TYPE_ERROR) {
       text = OB.I18N.getLabel('OBUIAPP_ErrorSavingFailed') + ' ' + text;
     }
 
