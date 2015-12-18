@@ -63,6 +63,7 @@ public class CombinationsForFilteringColumns extends OBBaseTest {
   private static final String YES = "Y";
   private static final String NO = "N";
   private static final String DEFAULT = "D";
+  private static final long SEQUENCE = 10;
 
   private String gcFieldFilteringConfig;
   private String gcTabFilteringConfig;
@@ -319,6 +320,7 @@ public class CombinationsForFilteringColumns extends OBBaseTest {
         gcsystem.setClient(OBDal.getInstance().get(Client.class, CLIENT_FOR_GC_SYSTEM_FIELD_TAB));
         gcsystem.setOrganization(OBDal.getInstance().get(Organization.class, ZERO_ORGANIZATION));
         gcsystem.setFilterable(gcSystemConfig);
+        gcsystem.setSeqno(SEQUENCE);
         OBDal.getInstance().save(gcsystem);
         OBDal.getInstance().flush();
       }
@@ -327,6 +329,7 @@ public class CombinationsForFilteringColumns extends OBBaseTest {
         gctab.setClient(OBDal.getInstance().get(Client.class, CLIENT_FOR_GC_SYSTEM_FIELD_TAB));
         gctab.setOrganization(OBDal.getInstance().get(Organization.class, ZERO_ORGANIZATION));
         gctab.setFilterable(gcTabConfig);
+        gctab.setSeqno(SEQUENCE);
         Tab tab = OBDal.getInstance().get(Tab.class, BUSINESS_PARTNER_TAB_ID);
         tab.getOBUIAPPGCTabList().add(gctab);
         OBDal.getInstance().save(gctab);
