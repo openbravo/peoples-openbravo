@@ -24,6 +24,7 @@ import static org.junit.Assert.assertThat;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 
 import org.codehaus.jettison.json.JSONObject;
 import org.junit.Test;
@@ -59,6 +60,9 @@ public class CombinationsForSortingColumns extends OBBaseTest {
   private static final String BUSINESS_PARTNER_CATEGORY_FIELD_ID = "3955";
   private static final String CAN_SORT_FALSE = "\"canSort\":false";
   private static final String CAN_SORT_TRUE = "\"canSort\":true";
+  private static final String YES = "Y";
+  private static final String NO = "N";
+  private static final String DEFAULT = "D";
 
   private String gcFieldSortingConfig;
   private String gcTabSortingConfig;
@@ -68,6 +72,7 @@ public class CombinationsForSortingColumns extends OBBaseTest {
 
   public CombinationsForSortingColumns(Boolean gcSystemSortingConfig, String gcTabSortingConfig,
       String gcFieldSortingConfig, boolean columnSortingConfig, String expectedResult) {
+
     this.gcSystemSortingConfig = gcSystemSortingConfig;
     this.gcTabSortingConfig = gcTabSortingConfig;
     this.gcFieldSortingConfig = gcFieldSortingConfig;
@@ -77,41 +82,172 @@ public class CombinationsForSortingColumns extends OBBaseTest {
 
   @Parameters
   public static Collection<Object[]> data() {
-    return Arrays.asList(new Object[][] { { false, "N", "N", false, CAN_SORT_FALSE },
-        { false, "N", "N", true, CAN_SORT_FALSE }, { false, "N", "Y", false, CAN_SORT_TRUE },
-        { false, "N", "Y", true, CAN_SORT_TRUE }, { false, "Y", "N", false, CAN_SORT_FALSE },
-        { false, "Y", "N", true, CAN_SORT_FALSE }, { false, "Y", "Y", false, CAN_SORT_TRUE },
-        { false, "Y", "Y", true, CAN_SORT_TRUE }, { true, "N", "N", false, CAN_SORT_FALSE },
-        { true, "N", "N", true, CAN_SORT_FALSE }, { true, "N", "Y", false, CAN_SORT_TRUE },
-        { true, "N", "Y", true, CAN_SORT_TRUE }, { true, "Y", "N", false, CAN_SORT_FALSE },
-        { true, "Y", "N", true, CAN_SORT_FALSE }, { true, "Y", "Y", false, CAN_SORT_TRUE },
-        { true, "Y", "Y", true, CAN_SORT_TRUE }, { false, "N", "D", false, CAN_SORT_FALSE },
-        { false, "N", "D", true, CAN_SORT_FALSE }, { false, "Y", "D", true, CAN_SORT_TRUE },
-        { false, "Y", "D", false, CAN_SORT_FALSE }, { true, "N", "D", true, CAN_SORT_FALSE },
-        { true, "N", "D", false, CAN_SORT_FALSE }, { true, "Y", "D", true, CAN_SORT_TRUE },
-        { true, "Y", "D", false, CAN_SORT_FALSE }, { false, "D", "D", true, CAN_SORT_FALSE },
-        { false, "D", "D", false, CAN_SORT_FALSE }, { true, "D", "D", false, CAN_SORT_FALSE },
-        { true, "D", "D", true, CAN_SORT_TRUE }, { null, null, null, true, CAN_SORT_TRUE },
-        { null, null, null, false, CAN_SORT_FALSE }, { null, "D", "Y", true, CAN_SORT_TRUE },
-        { null, "D", "Y", false, CAN_SORT_TRUE }, { null, "D", "N", true, CAN_SORT_FALSE },
-        { null, "D", "N", false, CAN_SORT_FALSE }, { null, "Y", "N", true, CAN_SORT_FALSE },
-        { null, "Y", "N", false, CAN_SORT_FALSE }, { null, "Y", "Y", true, CAN_SORT_TRUE },
-        { null, "Y", "Y", false, CAN_SORT_TRUE }, { null, "N", "N", true, CAN_SORT_FALSE },
-        { null, "N", "N", false, CAN_SORT_FALSE }, { null, "N", "Y", true, CAN_SORT_TRUE },
-        { null, "N", "Y", false, CAN_SORT_TRUE }, { null, "Y", "D", true, CAN_SORT_TRUE },
-        { null, "Y", "D", false, CAN_SORT_FALSE }, { null, "N", "D", true, CAN_SORT_FALSE },
-        { null, "N", "D", false, CAN_SORT_FALSE }, { true, null, null, true, CAN_SORT_TRUE },
-        { true, null, null, false, CAN_SORT_FALSE }, { false, null, null, true, CAN_SORT_FALSE },
-        { false, null, null, false, CAN_SORT_FALSE }, { false, "D", null, true, CAN_SORT_FALSE },
-        { false, "D", null, false, CAN_SORT_FALSE }, { false, "Y", null, true, CAN_SORT_TRUE },
-        { false, "Y", null, false, CAN_SORT_FALSE }, { false, "N", null, true, CAN_SORT_FALSE },
-        { false, "N", null, false, CAN_SORT_FALSE }, { true, "D", null, true, CAN_SORT_TRUE },
-        { true, "D", null, false, CAN_SORT_FALSE }, { true, "Y", null, true, CAN_SORT_TRUE },
-        { true, "Y", null, false, CAN_SORT_FALSE }, { true, "N", null, true, CAN_SORT_FALSE },
-        { true, "N", null, false, CAN_SORT_FALSE }, { null, "D", null, true, CAN_SORT_TRUE },
-        { null, "D", null, false, CAN_SORT_FALSE }, { null, "Y", null, true, CAN_SORT_TRUE },
-        { null, "Y", null, false, CAN_SORT_FALSE }, { null, "N", null, true, CAN_SORT_FALSE },
-        { null, "N", null, false, CAN_SORT_FALSE } });
+    HashMap<String, Object> valuesMap = new HashMap<String, Object>() {
+      private static final long serialVersionUID = 1L;
+
+      {
+        put("SystemCanSort", true);
+        put("TabCanSort", YES);
+        put("FieldCanSort", YES);
+        put("ColumnCanSort", true);
+        put("SystemCannotSort", false);
+        put("TabCannotSort", NO);
+        put("FieldCannotSort", NO);
+        put("ColumnCannotSort", false);
+        put("SystemConfigNull", null);
+        put("TabConfigNull", null);
+        put("FieldConfigNull", null);
+        put("TabConfigDefault", DEFAULT);
+        put("FieldConfigDefault", DEFAULT);
+      }
+    };
+
+    return Arrays
+        .asList(new Object[][] {
+            { valuesMap.get("SystemCannotSort"), valuesMap.get("TabCannotSort"),
+                valuesMap.get("FieldCannotSort"), valuesMap.get("ColumnCannotSort"), CAN_SORT_FALSE },
+            { valuesMap.get("SystemCannotSort"), valuesMap.get("TabCannotSort"),
+                valuesMap.get("FieldCannotSort"), valuesMap.get("ColumnCanSort"), CAN_SORT_FALSE },
+            { valuesMap.get("SystemCannotSort"), valuesMap.get("TabCannotSort"),
+                valuesMap.get("FieldCanSort"), valuesMap.get("ColumnCannotSort"), CAN_SORT_TRUE },
+            { valuesMap.get("SystemCannotSort"), valuesMap.get("TabCannotSort"),
+                valuesMap.get("FieldCanSort"), valuesMap.get("ColumnCanSort"), CAN_SORT_TRUE },
+            { valuesMap.get("SystemCannotSort"), valuesMap.get("TabCanSort"),
+                valuesMap.get("FieldCannotSort"), valuesMap.get("ColumnCannotSort"), CAN_SORT_FALSE },
+            { valuesMap.get("SystemCannotSort"), valuesMap.get("TabCanSort"),
+                valuesMap.get("FieldCannotSort"), valuesMap.get("ColumnCanSort"), CAN_SORT_FALSE },
+            { valuesMap.get("SystemCannotSort"), valuesMap.get("TabCanSort"),
+                valuesMap.get("FieldCanSort"), valuesMap.get("ColumnCannotSort"), CAN_SORT_TRUE },
+            { valuesMap.get("SystemCannotSort"), valuesMap.get("TabCanSort"),
+                valuesMap.get("FieldCanSort"), valuesMap.get("ColumnCanSort"), CAN_SORT_TRUE },
+            { valuesMap.get("SystemCanSort"), valuesMap.get("TabCannotSort"),
+                valuesMap.get("FieldCannotSort"), valuesMap.get("ColumnCannotSort"), CAN_SORT_FALSE },
+            { valuesMap.get("SystemCanSort"), valuesMap.get("TabCannotSort"),
+                valuesMap.get("FieldCannotSort"), valuesMap.get("ColumnCanSort"), CAN_SORT_FALSE },
+            { valuesMap.get("SystemCanSort"), valuesMap.get("TabCannotSort"),
+                valuesMap.get("FieldCanSort"), valuesMap.get("ColumnCannotSort"), CAN_SORT_TRUE },
+            { valuesMap.get("SystemCanSort"), valuesMap.get("TabCannotSort"),
+                valuesMap.get("FieldCanSort"), valuesMap.get("ColumnCanSort"), CAN_SORT_TRUE },
+            { valuesMap.get("SystemCanSort"), valuesMap.get("TabCanSort"),
+                valuesMap.get("FieldCannotSort"), valuesMap.get("ColumnCannotSort"), CAN_SORT_FALSE },
+            { valuesMap.get("SystemCanSort"), valuesMap.get("TabCanSort"),
+                valuesMap.get("FieldCannotSort"), valuesMap.get("ColumnCanSort"), CAN_SORT_FALSE },
+            { valuesMap.get("SystemCanSort"), valuesMap.get("TabCanSort"),
+                valuesMap.get("FieldCanSort"), valuesMap.get("ColumnCannotSort"), CAN_SORT_TRUE },
+            { valuesMap.get("SystemCanSort"), valuesMap.get("TabCanSort"),
+                valuesMap.get("FieldCanSort"), valuesMap.get("ColumnCanSort"), CAN_SORT_TRUE },
+            { valuesMap.get("SystemCannotSort"), valuesMap.get("TabCannotSort"),
+                valuesMap.get("FieldConfigDefault"), valuesMap.get("ColumnCannotSort"),
+                CAN_SORT_FALSE },
+            { valuesMap.get("SystemCannotSort"), valuesMap.get("TabCannotSort"),
+                valuesMap.get("FieldConfigDefault"), valuesMap.get("ColumnCanSort"), CAN_SORT_FALSE },
+            { valuesMap.get("SystemCannotSort"), valuesMap.get("TabCanSort"),
+                valuesMap.get("FieldConfigDefault"), valuesMap.get("ColumnCanSort"), CAN_SORT_TRUE },
+            { valuesMap.get("SystemCannotSort"), valuesMap.get("TabCanSort"),
+                valuesMap.get("FieldConfigDefault"), valuesMap.get("ColumnCannotSort"),
+                CAN_SORT_FALSE },
+            { valuesMap.get("SystemCanSort"), valuesMap.get("TabCannotSort"),
+                valuesMap.get("FieldConfigDefault"), valuesMap.get("ColumnCanSort"), CAN_SORT_FALSE },
+            { valuesMap.get("SystemCanSort"), valuesMap.get("TabCannotSort"),
+                valuesMap.get("FieldConfigDefault"), valuesMap.get("ColumnCannotSort"),
+                CAN_SORT_FALSE },
+            { valuesMap.get("SystemCanSort"), valuesMap.get("TabCanSort"),
+                valuesMap.get("FieldConfigDefault"), valuesMap.get("ColumnCanSort"), CAN_SORT_TRUE },
+            { valuesMap.get("SystemCanSort"), valuesMap.get("TabCanSort"),
+                valuesMap.get("FieldConfigDefault"), valuesMap.get("ColumnCannotSort"),
+                CAN_SORT_FALSE },
+            { valuesMap.get("SystemCannotSort"), valuesMap.get("TabConfigDefault"),
+                valuesMap.get("FieldConfigDefault"), valuesMap.get("ColumnCanSort"), CAN_SORT_FALSE },
+            { valuesMap.get("SystemCannotSort"), valuesMap.get("TabConfigDefault"),
+                valuesMap.get("FieldConfigDefault"), valuesMap.get("ColumnCannotSort"),
+                CAN_SORT_FALSE },
+            { valuesMap.get("SystemCanSort"), valuesMap.get("TabConfigDefault"),
+                valuesMap.get("FieldConfigDefault"), valuesMap.get("ColumnCannotSort"),
+                CAN_SORT_FALSE },
+            { valuesMap.get("SystemCanSort"), valuesMap.get("TabConfigDefault"),
+                valuesMap.get("FieldConfigDefault"), valuesMap.get("ColumnCanSort"), CAN_SORT_TRUE },
+            { valuesMap.get("SystemConfigNull"), valuesMap.get("TabConfigNull"),
+                valuesMap.get("FieldConfigNull"), valuesMap.get("ColumnCanSort"), CAN_SORT_TRUE },
+            { valuesMap.get("SystemConfigNull"), valuesMap.get("TabConfigNull"),
+                valuesMap.get("FieldConfigNull"), valuesMap.get("ColumnCannotSort"), CAN_SORT_FALSE },
+            { valuesMap.get("SystemConfigNull"), valuesMap.get("TabConfigDefault"),
+                valuesMap.get("FieldCanSort"), valuesMap.get("ColumnCanSort"), CAN_SORT_TRUE },
+            { valuesMap.get("SystemConfigNull"), valuesMap.get("TabConfigDefault"),
+                valuesMap.get("FieldCanSort"), valuesMap.get("ColumnCannotSort"), CAN_SORT_TRUE },
+            { valuesMap.get("SystemConfigNull"), valuesMap.get("TabConfigDefault"),
+                valuesMap.get("FieldCannotSort"), valuesMap.get("ColumnCanSort"), CAN_SORT_FALSE },
+            { valuesMap.get("SystemConfigNull"), valuesMap.get("TabConfigDefault"),
+                valuesMap.get("FieldCannotSort"), valuesMap.get("ColumnCannotSort"), CAN_SORT_FALSE },
+            { valuesMap.get("SystemConfigNull"), valuesMap.get("TabCanSort"),
+                valuesMap.get("FieldCannotSort"), valuesMap.get("ColumnCanSort"), CAN_SORT_FALSE },
+            { valuesMap.get("SystemConfigNull"), valuesMap.get("TabCanSort"),
+                valuesMap.get("FieldCannotSort"), valuesMap.get("ColumnCannotSort"), CAN_SORT_FALSE },
+            { valuesMap.get("SystemConfigNull"), valuesMap.get("TabCanSort"),
+                valuesMap.get("FieldCanSort"), valuesMap.get("ColumnCanSort"), CAN_SORT_TRUE },
+            { valuesMap.get("SystemConfigNull"), valuesMap.get("TabCanSort"),
+                valuesMap.get("FieldCanSort"), valuesMap.get("ColumnCannotSort"), CAN_SORT_TRUE },
+            { valuesMap.get("SystemConfigNull"), valuesMap.get("TabCannotSort"),
+                valuesMap.get("FieldCannotSort"), valuesMap.get("ColumnCanSort"), CAN_SORT_FALSE },
+            { valuesMap.get("SystemConfigNull"), valuesMap.get("TabCannotSort"),
+                valuesMap.get("FieldCannotSort"), valuesMap.get("ColumnCannotSort"), CAN_SORT_FALSE },
+            { valuesMap.get("SystemConfigNull"), valuesMap.get("TabCannotSort"),
+                valuesMap.get("FieldCanSort"), valuesMap.get("ColumnCanSort"), CAN_SORT_TRUE },
+            { valuesMap.get("SystemConfigNull"), valuesMap.get("TabCannotSort"),
+                valuesMap.get("FieldCanSort"), valuesMap.get("ColumnCannotSort"), CAN_SORT_TRUE },
+            { valuesMap.get("SystemConfigNull"), valuesMap.get("TabCanSort"),
+                valuesMap.get("FieldConfigDefault"), valuesMap.get("ColumnCanSort"), CAN_SORT_TRUE },
+            { valuesMap.get("SystemConfigNull"), valuesMap.get("TabCanSort"),
+                valuesMap.get("FieldConfigDefault"), valuesMap.get("ColumnCannotSort"),
+                CAN_SORT_FALSE },
+            { valuesMap.get("SystemConfigNull"), valuesMap.get("TabCannotSort"),
+                valuesMap.get("FieldConfigDefault"), valuesMap.get("ColumnCanSort"), CAN_SORT_FALSE },
+            { valuesMap.get("SystemConfigNull"), valuesMap.get("TabCannotSort"),
+                valuesMap.get("FieldConfigDefault"), valuesMap.get("ColumnCannotSort"),
+                CAN_SORT_FALSE },
+            { valuesMap.get("SystemCanSort"), valuesMap.get("TabConfigNull"),
+                valuesMap.get("FieldConfigNull"), valuesMap.get("ColumnCanSort"), CAN_SORT_TRUE },
+            { valuesMap.get("SystemCanSort"), valuesMap.get("TabConfigNull"),
+                valuesMap.get("FieldConfigNull"), valuesMap.get("ColumnCannotSort"), CAN_SORT_FALSE },
+            { valuesMap.get("SystemCannotSort"), valuesMap.get("TabConfigNull"),
+                valuesMap.get("FieldConfigNull"), valuesMap.get("ColumnCanSort"), CAN_SORT_FALSE },
+            { valuesMap.get("SystemCannotSort"), valuesMap.get("TabConfigNull"),
+                valuesMap.get("FieldConfigNull"), valuesMap.get("ColumnCannotSort"), CAN_SORT_FALSE },
+            { valuesMap.get("SystemCannotSort"), valuesMap.get("TabConfigDefault"),
+                valuesMap.get("FieldConfigNull"), valuesMap.get("ColumnCanSort"), CAN_SORT_FALSE },
+            { valuesMap.get("SystemCannotSort"), valuesMap.get("TabConfigDefault"),
+                valuesMap.get("FieldConfigNull"), valuesMap.get("ColumnCannotSort"), CAN_SORT_FALSE },
+            { valuesMap.get("SystemCannotSort"), valuesMap.get("TabCanSort"),
+                valuesMap.get("FieldConfigNull"), valuesMap.get("ColumnCanSort"), CAN_SORT_TRUE },
+            { valuesMap.get("SystemCannotSort"), valuesMap.get("TabCanSort"),
+                valuesMap.get("FieldConfigNull"), valuesMap.get("ColumnCannotSort"), CAN_SORT_FALSE },
+            { valuesMap.get("SystemCannotSort"), valuesMap.get("TabCannotSort"),
+                valuesMap.get("FieldConfigNull"), valuesMap.get("ColumnCanSort"), CAN_SORT_FALSE },
+            { valuesMap.get("SystemCannotSort"), valuesMap.get("TabCannotSort"),
+                valuesMap.get("FieldConfigNull"), valuesMap.get("ColumnCannotSort"), CAN_SORT_FALSE },
+            { valuesMap.get("SystemCanSort"), valuesMap.get("TabConfigDefault"),
+                valuesMap.get("FieldConfigNull"), valuesMap.get("ColumnCanSort"), CAN_SORT_TRUE },
+            { valuesMap.get("SystemCanSort"), valuesMap.get("TabConfigDefault"),
+                valuesMap.get("FieldConfigNull"), valuesMap.get("ColumnCannotSort"), CAN_SORT_FALSE },
+            { valuesMap.get("SystemCanSort"), valuesMap.get("TabCanSort"),
+                valuesMap.get("FieldConfigNull"), valuesMap.get("ColumnCanSort"), CAN_SORT_TRUE },
+            { valuesMap.get("SystemCanSort"), valuesMap.get("TabCanSort"),
+                valuesMap.get("FieldConfigNull"), valuesMap.get("ColumnCannotSort"), CAN_SORT_FALSE },
+            { valuesMap.get("SystemCanSort"), valuesMap.get("TabCannotSort"),
+                valuesMap.get("FieldConfigNull"), valuesMap.get("ColumnCanSort"), CAN_SORT_FALSE },
+            { valuesMap.get("SystemCanSort"), valuesMap.get("TabCannotSort"),
+                valuesMap.get("FieldConfigNull"), valuesMap.get("ColumnCannotSort"), CAN_SORT_FALSE },
+            { valuesMap.get("SystemConfigNull"), valuesMap.get("TabConfigDefault"),
+                valuesMap.get("FieldConfigNull"), valuesMap.get("ColumnCanSort"), CAN_SORT_TRUE },
+            { valuesMap.get("SystemConfigNull"), valuesMap.get("TabConfigDefault"),
+                valuesMap.get("FieldConfigNull"), valuesMap.get("ColumnCannotSort"), CAN_SORT_FALSE },
+            { valuesMap.get("SystemConfigNull"), valuesMap.get("TabCanSort"),
+                valuesMap.get("FieldConfigNull"), valuesMap.get("ColumnCanSort"), CAN_SORT_TRUE },
+            { valuesMap.get("SystemConfigNull"), valuesMap.get("TabCanSort"),
+                valuesMap.get("FieldConfigNull"), valuesMap.get("ColumnCannotSort"), CAN_SORT_FALSE },
+            { valuesMap.get("SystemConfigNull"), valuesMap.get("TabCannotSort"),
+                valuesMap.get("FieldConfigNull"), valuesMap.get("ColumnCanSort"), CAN_SORT_FALSE },
+            { valuesMap.get("SystemConfigNull"), valuesMap.get("TabCannotSort"),
+                valuesMap.get("FieldConfigNull"), valuesMap.get("ColumnCannotSort"), CAN_SORT_FALSE } });
   }
 
   @Test

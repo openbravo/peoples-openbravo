@@ -215,7 +215,8 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     SqlCallableStatement.class,
 
     // grid configuration
-    ViewGenerationWithDifferentConfigLevelTest.class, CombinationsForSortingColumns.class,
+    ViewGenerationWithDifferentConfigLevelTest.class,
+    CombinationsForSortingColumns.class,
     CombinationsForFilteringColumns.class
 
 })
