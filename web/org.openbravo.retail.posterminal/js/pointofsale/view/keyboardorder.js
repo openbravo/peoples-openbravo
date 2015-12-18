@@ -497,16 +497,18 @@ enyo.kind({
   findProductByBarcode: function (code, callback) {
     var me = this;
     OB.debug('BarcodeActionHandler - id: ' + code);
-    OB.UTIL.HookManager.executeHooks('OBPOS_BarcodeScan', {
-      context: me,
-      code: code,
-      callback: callback
-    }, function (args) {
-      if (args.cancellation) {
-        return;
-      }
-      me.searchProduct(args.code, args.callback);
-    });
+    if (code.length > 0) {
+      OB.UTIL.HookManager.executeHooks('OBPOS_BarcodeScan', {
+        context: me,
+        code: code,
+        callback: callback
+      }, function (args) {
+        if (args.cancellation) {
+          return;
+        }
+        me.searchProduct(args.code, args.callback);
+      });
+    }
   },
 
   searchProduct: function (code, callback) {
