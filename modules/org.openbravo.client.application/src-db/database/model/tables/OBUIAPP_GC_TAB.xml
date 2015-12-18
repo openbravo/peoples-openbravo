@@ -74,8 +74,8 @@
         <onCreateDefault/>
       </column>
       <column name="SEQNO" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false">
-        <default><![CDATA[100::numeric]]></default>
-        <onCreateDefault><![CDATA['100']]></onCreateDefault>
+        <default/>
+        <onCreateDefault><![CDATA['10']]></onCreateDefault>
       </column>
       <foreign-key foreignTable="AD_CLIENT" name="OBUIAPP_GC_TAB_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
