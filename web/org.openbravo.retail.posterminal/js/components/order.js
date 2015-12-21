@@ -1268,6 +1268,14 @@ enyo.kind({
         });
       }
     }, this);
+    this.order.on('change:selectedPayment', function (model) {
+      OB.UTIL.HookManager.executeHooks('OBPOS_PaymentSelected', {
+        order: this.order,
+        paymentSelected: OB.MobileApp.model.paymentnames[model.get('selectedPayment')]
+      }, function (args) {
+        //All should be done in module side
+      });
+    }, this);
   }
 });
 enyo.kind({

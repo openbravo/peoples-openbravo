@@ -322,8 +322,8 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
         receipt.get('payments').each(function (model) {
           clonedCollection.add(new Backbone.Model(model.toJSON()));
         });
-        if (!_.isUndefined(receipt.selectedPayment) && receipt.getChange() > 0) {
-          var payment = OB.MobileApp.model.paymentnames[receipt.selectedPayment];
+        if (!_.isUndefined(receipt.get('selectedPayment')) && receipt.getChange() > 0) {
+          var payment = OB.MobileApp.model.paymentnames[receipt.get('selectedPayment')];
           if (!payment.paymentMethod.iscash) {
             payment = OB.MobileApp.model.paymentnames[OB.MobileApp.model.get('paymentcash')];
           }
