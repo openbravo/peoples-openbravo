@@ -25,21 +25,19 @@ enyo.kind({
   classes: 'row-fluid',
   components: [{
     classes: 'span12',
-    components: [{
-      components: [{
-        //tableview
-        name: 'eventList',
-        kind: 'OB.UI.Table',
-        style: 'overflow: auto; max-height: 600px',
-        renderLine: 'OB.OBPOSCashMgmt.UI.ListEventLine',
-        renderEmpty: 'OB.UI.RenderEmpty'
-      }]
-    }]
+    components: [{}]
   }],
 
   init: function (model) {
+    this.createComponent({
+      name: this.owner.owner.type,
+      kind: 'OB.UI.Table',
+      style: 'overflow: auto; max-height: 600px',
+      renderLine: 'OB.OBPOSCashMgmt.UI.ListEventLine',
+      renderEmpty: 'OB.UI.RenderEmpty'
+    });
     this.model = model;
-    this.$.eventList.setCollection(this.model.get(this.owner.owner.type));
+    this.$[this.owner.owner.type].setCollection(this.model.get(this.owner.owner.type));
   }
 });
 
