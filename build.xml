@@ -554,13 +554,29 @@ export.database: exports database structure and data to xml files.
   </target>
 
   <target name="generate.java.doc">
-    <javadoc sourcepath="${base.src}:${base.src.test}:${build.AD}:${base.src.core}/src:${base.src.gen}:build/javasqlc/src/:build/javasqlc/srcAD" Windowtitle="${title}" access="protected" Header="${header}" Footer="${footer}" destdir="${build.docs}" linksource="no" maxmemory="1024M">
+    <javadoc Windowtitle="${title}" access="protected" Header="${header}" Footer="${footer}" destdir="${build.docs}" maxmemory="1024M">
+      <sourcepath>
+        <pathelement path="${base.src}" />
+        <pathelement path="${base.src.test}/src" />
+        <pathelement path="${build.AD}" />
+        <pathelement path="${base.src.core}/src" />
+        <pathelement path="${base.src.gen}" />
+        <pathelement path="build/javasqlc/src" />
+        <pathelement path="build/javasqlc/srcAD" />
+        <dirset dir="${base.modules}">
+          <include name="*/src" />
+          <include name="*/src-test" />
+        </dirset>
+      </sourcepath>
       <excludepackage name="org.openbravo.erpWindows.*"/>
       <classpath>
         <path refid="project.class.path"/>
         <pathelement path="lib/build/js.jar" />
+        <fileset dir="${base.modules}">
+          <include name="*/lib/test/*.jar" />
+        </fileset>
       </classpath>
-      <link href="http://java.sun.com/javase/6/docs/api/"/>
+      <link href="http://docs.oracle.com/javase/6/docs/api/"/>
     </javadoc>
   </target>
 

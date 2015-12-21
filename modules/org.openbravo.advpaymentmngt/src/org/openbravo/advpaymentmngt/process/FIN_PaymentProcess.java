@@ -217,7 +217,8 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
           // Show error message when payment has no lines
           if (paymentDetails.size() == 0) {
             msg = OBMessageUtils.messageBD("APRM_PaymentNoLines");
-            throw new OBException(msg);
+            log4j.debug(msg);
+            throw new OBException(msg, false);
           }
           for (FIN_PaymentDetail paymentDetail : paymentDetails) {
             for (FIN_PaymentScheduleDetail paymentScheduleDetail : paymentDetail

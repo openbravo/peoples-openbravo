@@ -103,6 +103,8 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     ClassicSelectorTest.class,
 
     // cdi
-    CdiInfrastructure.class })
+    CdiInfrastructure.class
+
+})
 public class AllTests {
 }

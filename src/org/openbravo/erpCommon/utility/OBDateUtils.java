@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2012 Openbravo SLU
+ * All portions are Copyright (C) 2012-2015 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -46,6 +46,23 @@ public class OBDateUtils {
   public static String formatDate(Date date) {
     final String pattern = OBPropertiesProvider.getInstance().getOpenbravoProperties()
         .getProperty("dateFormat.java");
+    final SimpleDateFormat dateFormatter = new SimpleDateFormat(pattern);
+    return dateFormatter.format(date);
+  }
+
+  /**
+   * Returns an String with the date in the <i>dateTimeFormat.java</i> format defined in
+   * Openbravo.properties
+   * 
+   * @see OBDateUtils#formatDate(Date, String)
+   * 
+   * @param date
+   *          Date to be formatted.
+   * @return String formatted.
+   */
+  public static String formatDateTime(Date date) {
+    final String pattern = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+        .getProperty("dateTimeFormat.java");
     final SimpleDateFormat dateFormatter = new SimpleDateFormat(pattern);
     return dateFormatter.format(date);
   }

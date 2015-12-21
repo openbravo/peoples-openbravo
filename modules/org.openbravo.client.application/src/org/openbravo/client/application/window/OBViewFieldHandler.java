@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -91,7 +92,16 @@ public class OBViewFieldHandler {
 
   public boolean getHasFieldsWithReadOnlyIf() {
     for (OBViewFieldDefinition viewField : getFields()) {
-      if (viewField.getReadOnlyIf() != null && viewField.getReadOnlyIf().trim().length() > 0) {
+      if (StringUtils.isNotBlank(viewField.getReadOnlyIf())) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  public boolean getHasFieldsWithShowIf() {
+    for (OBViewFieldDefinition viewField : getFields()) {
+      if (StringUtils.isNotBlank(viewField.getShowIf())) {
         return true;
       }
     }
@@ -470,6 +480,12 @@ public class OBViewFieldHandler {
       }
 
       if (field.isShownInStatusBar() == null || !field.isShownInStatusBar()) {
+        continue;
+      }
+
+      if (!field.isActive()) {
+        // If the field is not marked as active then is not shown in status bar
+        // See issue https://issues.openbravo.com/view.php?id=30825
         continue;
       }
 

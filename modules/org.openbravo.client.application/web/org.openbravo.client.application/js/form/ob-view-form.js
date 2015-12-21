@@ -1592,6 +1592,7 @@ OB.ViewFormProperties = {
     }
 
     this.view.standardWindow.setDirtyEditForm(null);
+    this.view.clearTargetRecordInWindow();
   },
 
   autoSave: function (parameters) {

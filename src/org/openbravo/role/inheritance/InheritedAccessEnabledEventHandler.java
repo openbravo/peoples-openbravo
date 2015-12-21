@@ -135,6 +135,6 @@ public class InheritedAccessEnabledEventHandler extends EntityPersistenceEventOb
     if (role == null) {
       return true;
     }
-    return OBDal.getInstance().exists(Role.ENTITY_NAME, (String) DalUtil.getId(role));
+    return OBDal.getInstance().exists(Role.ENTITY_NAME, DalUtil.getId(role));
   }
 }

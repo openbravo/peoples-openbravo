@@ -57,7 +57,7 @@
       },
     </#if>
     <#if param.length != -1>
-      length: ${param.length},
+      length: ${param.length?c},
     </#if>
     required: ${param.required?string}
     ${param.parameterProperties}

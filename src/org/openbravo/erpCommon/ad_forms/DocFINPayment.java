@@ -399,7 +399,7 @@ public class DocFINPayment extends AcctServer {
                 fact, Fact_Acct_Group_ID, nextSeqNo(SeqNo), conn).toString();
             // Cash VAT
             SeqNo = CashVATUtil.createFactCashVAT(as, conn, fact, Fact_Acct_Group_ID, line,
-                invoice, DocumentType, C_Currency_ID, SeqNo);
+                invoice, DocumentType, SeqNo);
             if (!isPrepayment) {
               if (line.getDoubtFulDebtAmount().signum() != 0) {
                 BigDecimal doubtFulDebtAmount = convertAmount(line.getDoubtFulDebtAmount(),

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2011 Openbravo SLU
+ * All portions are Copyright (C) 2010-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -37,6 +37,8 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
+import org.openbravo.base.model.domaintype.BooleanDomainType;
+import org.openbravo.base.model.domaintype.DomainType;
 import org.openbravo.base.model.domaintype.EnumerateDomainType;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.client.application.Parameter;
@@ -176,7 +178,15 @@ public abstract class WidgetProvider {
           continue;
         }
         if (parameter.getDefaultValue() != null) {
-          defaultParameters.put(parameter.getDBColumnName(), parameter.getDefaultValue());
+          DomainType domainType = ParameterUtils.getParameterDomainType(parameter);
+          if (domainType.getClass().equals(BooleanDomainType.class)) {
+            // boolean default value for widget parameters is not returned as string but as boolean
+            // see issue https://issues.openbravo.com/view.php?id=29027
+            defaultParameters.put(parameter.getDBColumnName(),
+                getBooleanValueFromString(parameter.getDefaultValue()));
+          } else {
+            defaultParameters.put(parameter.getDBColumnName(), parameter.getDefaultValue());
+          }
         }
         final JSONObject fieldDefinition = new JSONObject();
         fieldDefinition.put(PARAMETERID, parameter.getId());
@@ -439,6 +449,13 @@ public abstract class WidgetProvider {
 
   public void setWidgetClass(WidgetClass widgetClass) {
     this.widgetClass = widgetClass;
+  }
+
+  private boolean getBooleanValueFromString(String value) {
+    if ("true".equals(value) || "Y".equals(value) || "'Y'".equals(value)) {
+      return true;
+    }
+    return false;
   }
 
   /**

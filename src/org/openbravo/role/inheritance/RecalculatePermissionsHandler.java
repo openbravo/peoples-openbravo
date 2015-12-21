@@ -131,7 +131,7 @@ public class RecalculatePermissionsHandler extends BaseActionHandler {
     String text = "";
     try {
       for (String className : map.keySet()) {
-        CalculationResult counters = (CalculationResult) map.get(className);
+        CalculationResult counters = map.get(className);
         if (counters.getUpdated() > 0 || counters.getCreated() > 0) {
           Class<?> myClass = Class.forName(className);
           Entity entity = ModelProvider.getInstance().getEntity(myClass);

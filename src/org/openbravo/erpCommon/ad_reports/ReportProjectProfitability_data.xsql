@@ -12,7 +12,7 @@
     * under the License. 
     * The Original Code is Openbravo ERP. 
     * The Initial Developer of the Original Code is Openbravo SLU 
-    * All portions are Copyright (C) 2001-2012 Openbravo SLU 
+    * All portions are Copyright (C) 2001-2015 Openbravo SLU 
     * All Rights Reserved. 
     * Contributor(s):  ______________________________________.
     ************************************************************************
@@ -64,7 +64,7 @@
 
                       LEFT JOIN (SELECT c_Project, sum(amount) as amount
            FROM (
-           SELECT CASE WHEN ila.C_InvoiceLine_AcctDimension_ID IS NULL THEN ia.c_project_id ELSE ila.c_project_id END AS C_Project,
+           SELECT CASE WHEN ila.C_InvoiceLine_AcctDimension_ID IS NULL THEN COALESCE(il.c_project_id, ia.c_project_id) ELSE ila.c_project_id END AS C_Project,
                   CASE WHEN ila.C_InvoiceLine_AcctDimension_ID IS NULL 
                   THEN COALESCE(C_CURRENCY_CONVERT(il.linenetamt, ia.C_CURRENCY_ID, ?, TO_DATE(COALESCE(ia.DATEINVOICED, NOW())), NULL, il.AD_CLIENT_ID, il.AD_ORG_ID),0) * 
                   (1 + (CASE WHEN ia.totallines IS NULL OR disc.dis_amt IS NULL THEN 0 ELSE (COALESCE(disc.dis_amt,0)/(C_CURRENCY_CONVERT(ia.totallines, ia.C_CURRENCY_ID, ?, TO_DATE(COALESCE(ia.DATEINVOICED, NOW())), NULL, ia.AD_CLIENT_ID, ia.AD_ORG_ID) - disc.dis_amt)) END)) 
@@ -85,13 +85,13 @@
              AND 2=2
              AND ia.AD_Org_ID IN ('1')
              AND ia.AD_Client_ID IN ('1')
-             AND (ila.c_project_id IS NOT NULL OR ia.c_project_id IS NOT NULL)
+             AND (ila.c_project_id IS NOT NULL OR ia.c_project_id IS NOT NULL OR il.c_project_id IS NOT NULL)
              AND il.c_invoice_discount_id IS NULL
              AND p.producttype = 'S') AAA
            GROUP BY c_Project) serrev ON p.C_Project_ID = serrev.C_Project
                       LEFT JOIN (SELECT c_Project, sum(amount) as amount
            FROM (
-           SELECT CASE WHEN ila.C_InvoiceLine_AcctDimension_ID IS NULL THEN ib.c_project_id ELSE ila.c_project_id END AS C_Project,
+           SELECT CASE WHEN ila.C_InvoiceLine_AcctDimension_ID IS NULL THEN COALESCE(il.c_project_id, ib.c_project_id) ELSE ila.c_project_id END AS C_Project,
                   CASE WHEN ila.C_InvoiceLine_AcctDimension_ID IS NULL 
                   THEN COALESCE(C_CURRENCY_CONVERT(il.linenetamt, ib.C_CURRENCY_ID, ?, TO_DATE(COALESCE(ib.DATEINVOICED, NOW())), NULL, il.AD_CLIENT_ID, il.AD_ORG_ID),0) * 
                   (1 + (CASE WHEN ib.totallines IS NULL OR disc.dis_amt IS NULL THEN 0 ELSE (COALESCE(disc.dis_amt,0)/(C_CURRENCY_CONVERT(ib.totallines, ib.C_CURRENCY_ID, ?, TO_DATE(COALESCE(ib.DATEINVOICED, NOW())), NULL, ib.AD_CLIENT_ID, ib.AD_ORG_ID) - disc.dis_amt)) END)) 
@@ -112,14 +112,14 @@
              AND 3=3
              AND ib.AD_Org_ID IN ('2')
              AND ib.AD_Client_ID IN ('2')
-             AND (ila.c_project_id IS NOT NULL OR ib.c_project_id IS NOT NULL)
+             AND (ila.c_project_id IS NOT NULL OR ib.c_project_id IS NOT NULL OR il.c_project_id IS NOT NULL)
              AND il.c_invoice_discount_id IS NULL
              AND p.producttype <> 'S') BBB
            GROUP BY c_Project) exprei ON p.C_Project_ID = exprei.C_Project
 
                       LEFT JOIN (SELECT c_Project, sum(amount) as amount
            FROM (
-           SELECT CASE WHEN ila.C_InvoiceLine_AcctDimension_ID IS NULL THEN ic.c_project_id ELSE ila.c_project_id END AS C_Project,
+           SELECT CASE WHEN ila.C_InvoiceLine_AcctDimension_ID IS NULL THEN COALESCE(il.c_project_id, ic.c_project_id) ELSE ila.c_project_id END AS C_Project,
                   CASE WHEN ila.C_InvoiceLine_AcctDimension_ID IS NULL 
                   THEN COALESCE(C_CURRENCY_CONVERT(il.linenetamt, ic.C_CURRENCY_ID, ?, TO_DATE(COALESCE(ic.DATEINVOICED, NOW())), NULL, il.AD_CLIENT_ID, il.AD_ORG_ID),0) * 
                   (1 + (CASE WHEN ic.totallines IS NULL OR disc.dis_amt IS NULL THEN 0 ELSE (COALESCE(disc.dis_amt,0)/(C_CURRENCY_CONVERT(ic.totallines, ic.C_CURRENCY_ID, ?, TO_DATE(COALESCE(ic.DATEINVOICED, NOW())), NULL, ic.AD_CLIENT_ID, ic.AD_ORG_ID) - disc.dis_amt)) END)) 
@@ -140,14 +140,14 @@
              AND 4=4
              AND ic.AD_Org_ID IN ('3')
              AND ic.AD_Client_ID IN ('3')
-             AND (ila.c_project_id IS NOT NULL OR ic.c_project_id IS NOT NULL)
+             AND (ila.c_project_id IS NOT NULL OR ic.c_project_id IS NOT NULL OR il.c_project_id IS NOT NULL)
              AND ic.issotrx = 'N'
              AND Coalesce(p.producttype,'') <> 'S') CCC
            GROUP BY c_Project) expexp ON p.C_Project_ID = expexp.C_Project
 
                       LEFT JOIN (SELECT c_Project, sum(amount) as amount
            FROM (
-           SELECT CASE WHEN ila.C_InvoiceLine_AcctDimension_ID IS NULL THEN ie.c_project_id ELSE ila.c_project_id END AS C_Project,
+           SELECT CASE WHEN ila.C_InvoiceLine_AcctDimension_ID IS NULL THEN COALESCE(il.c_project_id, ie.c_project_id) ELSE ila.c_project_id END AS C_Project,
                   CASE WHEN ila.C_InvoiceLine_AcctDimension_ID IS NULL
                   THEN COALESCE(C_CURRENCY_CONVERT(il.linenetamt, ie.C_CURRENCY_ID, ?, TO_DATE(COALESCE(ie.DATEINVOICED, NOW())), NULL, il.AD_CLIENT_ID, il.AD_ORG_ID),0) *
                   (1 + (CASE WHEN ie.totallines IS NULL OR disc.dis_amt IS NULL THEN 0 ELSE (COALESCE(disc.dis_amt,0)/(C_CURRENCY_CONVERT(ie.totallines, ie.C_CURRENCY_ID, ?, TO_DATE(COALESCE(ie.DATEINVOICED, NOW())), NULL, ie.AD_CLIENT_ID, ie.AD_ORG_ID) - disc.dis_amt)) END))
@@ -165,7 +165,7 @@
              AND 7=7
              AND ie.AD_Org_ID IN ('7')
              AND ie.AD_Client_ID IN ('7')
-             AND (ila.c_project_id IS NOT NULL OR ie.c_project_id IS NOT NULL)
+             AND (ila.c_project_id IS NOT NULL OR ie.c_project_id IS NOT NULL OR il.c_project_id IS NOT NULL)
              AND ie.issotrx = 'N'
              AND p.producttype = 'S') CCC
            GROUP BY c_Project) serout ON p.C_Project_ID = serout.C_Project
@@ -175,7 +175,7 @@
 
                       LEFT JOIN (SELECT c_Project, sum(amount) as amount
            FROM (
-           SELECT CASE WHEN ila.C_InvoiceLine_AcctDimension_ID IS NULL THEN id.c_project_id ELSE ila.c_project_id END AS C_Project,
+           SELECT CASE WHEN ila.C_InvoiceLine_AcctDimension_ID IS NULL THEN COALESCE(il.c_project_id, id.c_project_id) ELSE ila.c_project_id END AS C_Project,
                   CASE WHEN ila.C_InvoiceLine_AcctDimension_ID IS NULL 
                   THEN C_CURRENCY_CONVERT(il.linenetamt, id.C_CURRENCY_ID, ?, TO_DATE(COALESCE(id.DATEINVOICED, NOW())), NULL, il.AD_CLIENT_ID, il.AD_ORG_ID) * (CASE WHEN id.grandtotal=0 THEN 0 ELSE (id.totalpaid/id.grandtotal) END) 
                   ELSE C_CURRENCY_CONVERT(ila.amt, id.C_CURRENCY_ID, ?, TO_DATE(COALESCE(id.DATEINVOICED, NOW())), NULL, ila.AD_CLIENT_ID, ila.AD_ORG_ID) * (CASE WHEN id.grandtotal=0 THEN 0 ELSE (id.totalpaid/id.grandtotal) END) END AS amount
@@ -187,7 +187,7 @@
              AND 5=5
              AND id.AD_Org_ID IN ('4')
              AND id.AD_Client_ID IN ('4')
-             AND (ila.c_project_id IS NOT NULL OR id.c_project_id IS NOT NULL)
+             AND (ila.c_project_id IS NOT NULL OR id.c_project_id IS NOT NULL OR il.c_project_id IS NOT NULL)
              AND id.issotrx = 'Y') DDD
            GROUP BY c_Project) collected ON p.C_Project_ID = collected.C_Project
         WHERE p.C_BPartner_ID = bpclient.C_BPartner_ID

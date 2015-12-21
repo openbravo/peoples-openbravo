@@ -25,8 +25,9 @@ import org.openbravo.data.UtilSql;
 public class RDBMSIndependent {
 
   public static Vector<String> getCallableResult(Connection conn,
-      ConnectionProvider connectionProvider, String sql, Vector<String> parameters,
+      ConnectionProvider connectionProvider, String _sql, Vector<String> parameters,
       Vector<String> types, int totalOutParameters) throws Exception {
+    String sql = _sql;
     StringBuffer strSql = new StringBuffer();
     sql = sql.toUpperCase().replace("CALL ", "SELECT * FROM ");
     sql = sql.toUpperCase().replace("ALL TRIGGERS", "TRIGGER ALL");

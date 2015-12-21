@@ -20,7 +20,6 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class TranslationHandler {
 
   public static final int ADWINDOW = 1, MANWINDOW = 2, PROCESS = 3;
-  private int xmlDocumentType;
 
   private static final Logger log4j = Logger.getLogger(TranslationHandler.class);
   private XmlDocument xmlDocument;
@@ -86,7 +85,7 @@ public class TranslationHandler {
   }
 
   public void setXmlDocumentType(int type) {
-    xmlDocumentType = type;
+    // not used
   }
 
   public void setXmlDocumentTypeId(String id) {

@@ -12,7 +12,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2011 Openbravo SLU
+ * All portions are Copyright (C) 2010-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -23,14 +23,14 @@
     <#--
     // this this is the view    
     -->
-    statusBarFields: this.statusBarFields<#if data.fieldHandler.hasFieldsWithReadOnlyIf>,</#if>
+    statusBarFields: this.statusBarFields<#if data.fieldHandler.hasFieldsWithReadOnlyIf || data.fieldHandler.hasFieldsWithShowIf>,</#if>
     </#if>
     
 <#--
     // except for the fields all other form properties should be added to the formProperties
     // the formProperties are re-used for inline grid editing
 -->
-   <#if data.fieldHandler.hasFieldsWithReadOnlyIf>
+   <#if data.fieldHandler.hasFieldsWithReadOnlyIf || data.fieldHandler.hasFieldsWithShowIf>
     obFormProperties: {
       onFieldChanged: function(form, item, value) {
         var f = form || this,
@@ -39,11 +39,36 @@
             disabledFields, i;
             OB.Utilities.fixNull250(currentValues);
         <#list data.fieldHandler.fields as field>
-        <#if field.readOnlyIf != "">
-            f.disableItem('${field.name}', ${field.readOnlyIf});
+        <#if field.readOnlyIf != "" && field.showIf == "">
+        // Applying read only.
+           f.disableItem('${field.name}', ${field.readOnlyIf});
+        <#else>
+        <#if field.readOnlyIf == "" && field.showIf != "">
+        // Applying display logic in grid.
+        if (!this.view.isShowingForm) {
+        <#if field.showIf == "false">
+           f.disableItem('${field.name}', true);
+        <#else>
+           f.disableItem('${field.name}', (${field.showIf}) === false);
+        </#if>
+        }
+        <#else>
+        <#if field.readOnlyIf != "" && field.showIf != "">
+        // Applying display logic and read only in grid/form.
+        if (!this.view.isShowingForm) {
+        <#if field.showIf == "false">
+           // If display logic has a false value, it is only necessary take into account the read only logic.
+           f.disableItem('${field.name}', (${field.readOnlyIf}));
+        <#else>
+           f.disableItem('${field.name}', (${field.readOnlyIf}) || (${field.showIf}) === false);
+        </#if>
+        } else {
+           f.disableItem('${field.name}', ${field.readOnlyIf});
+        }
+        </#if>
+        </#if>
         </#if>
         </#list>
-
         // disable forced in case the fields are set as read only per role
         disabledFields = form.view.disabledFields;
         if (disabledFields) {

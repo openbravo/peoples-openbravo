@@ -431,6 +431,7 @@ public class ProductMultiple extends HttpSecureAppServlet {
    * Currently this is only being used when the selector is called from: - Sales Dimensional Report
    * - Shipments Dimensional Report - Sales Order Report
    */
+  @SuppressWarnings("rawtypes")
   private boolean isCalledFromSoTrx(HttpServletRequest request) {
     HashMap parameters = (HashMap) request.getParameterMap();
     Iterator it = parameters.keySet().iterator();

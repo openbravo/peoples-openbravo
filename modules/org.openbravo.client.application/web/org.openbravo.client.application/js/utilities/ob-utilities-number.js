@@ -423,6 +423,9 @@ OB.Utilities.Number.Grouping = {
 OB.Utilities.Number.ScientificToDecimal = function (number, decSeparator) {
 
   number = number.toString();
+  // remove leading zeros
+  // see issue https://issues.openbravo.com/view.php?id=28561
+  number = number.replace(/^0+/, '');
   var coeficient, exponent, numberOfZeros, zeros = '',
       i, split, index, sign;
 

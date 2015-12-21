@@ -20,7 +20,6 @@
 package org.openbravo.advpaymentmngt.utility;
 
 import java.math.BigDecimal;
-import java.sql.BatchUpdateException;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
@@ -80,6 +79,7 @@ import org.openbravo.model.financialmgmt.payment.FIN_PaymentSchedule;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
 import org.openbravo.model.financialmgmt.payment.FinAccPaymentMethod;
 import org.openbravo.service.db.CallStoredProcedure;
+import org.openbravo.service.db.DbUtility;
 import org.openbravo.utils.Replace;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -260,12 +260,8 @@ public class FIN_Utility {
    * @return the underlying trigger message.
    */
   public static String getExceptionMessage(Throwable t) {
-    if (t.getCause() instanceof BatchUpdateException
-        && ((BatchUpdateException) t.getCause()).getNextException() != null) {
-      final BatchUpdateException bue = (BatchUpdateException) t.getCause();
-      return bue.getNextException().getMessage();
-    }
-    return t.getMessage();
+    Throwable throwable = DbUtility.getUnderlyingSQLException(t);
+    return throwable.getMessage();
   }
 
   /**
@@ -1530,5 +1526,61 @@ public class FIN_Utility {
 
   private static void decreaseCustomerCredit(BusinessPartner businessPartner, BigDecimal amount) {
     updateCustomerCredit(businessPartner, amount, false);
+  }
+
+  /**
+   * Get an active FinAccPaymentMethod related to paymentMethodId FIN_PaymentMethod and
+   * financialAccountId FIN_FinancialAccount, if exists. If paymentMethodId is null it will retrieve
+   * any FinAccPaymentMethod related to paymentMethodId FIN_PaymentMethod ordered by default field.
+   * FinAccPaymentMethod must have pay in/out active and must be compatible with currencyId Currency
+   * if currencyId is not null.
+   * 
+   * @param paymentMethodId
+   * @param financialAccountId
+   * @param issotrx
+   * @param currencyId
+   * @return
+   */
+  public static FinAccPaymentMethod getFinancialAccountPaymentMethod(String paymentMethodId,
+      String financialAccountId, boolean issotrx, String currencyId) {
+    StringBuffer where = new StringBuffer();
+    where.append(" as fapm");
+    where.append(" join fapm." + FinAccPaymentMethod.PROPERTY_ACCOUNT + " as fa");
+    where.append(" where fapm." + FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD + " = :paymentMethod");
+    where.append(" and fa." + FIN_FinancialAccount.PROPERTY_ACTIVE + " = true");
+    if (issotrx) {
+      where.append(" and fapm." + FinAccPaymentMethod.PROPERTY_PAYINALLOW + " = true");
+    } else {
+      where.append(" and fapm." + FinAccPaymentMethod.PROPERTY_PAYOUTALLOW + " = true");
+    }
+    if (!StringUtils.isEmpty(financialAccountId)) {
+      where.append(" and fapm." + FinAccPaymentMethod.PROPERTY_ACCOUNT + " = :financialAccount");
+    }
+    if (!StringUtils.isEmpty(currencyId)) {
+      where.append(" and (fa." + FIN_FinancialAccount.PROPERTY_CURRENCY + " = :currency");
+      if (issotrx) {
+        where.append(" or fapm." + FinAccPaymentMethod.PROPERTY_PAYINISMULTICURRENCY + " = true)");
+      } else {
+        where.append(" or fapm." + FinAccPaymentMethod.PROPERTY_PAYOUTISMULTICURRENCY + " = true)");
+      }
+    }
+    where.append(" order by fapm." + FinAccPaymentMethod.PROPERTY_DEFAULT + " desc");
+
+    OBQuery<FinAccPaymentMethod> qry = OBDal.getInstance().createQuery(FinAccPaymentMethod.class,
+        where.toString());
+    qry.setFilterOnReadableOrganization(false);
+    qry.setMaxResult(1);
+
+    qry.setNamedParameter("paymentMethod",
+        OBDal.getInstance().get(FIN_PaymentMethod.class, paymentMethodId));
+    if (!StringUtils.isEmpty(financialAccountId)) {
+      qry.setNamedParameter("financialAccount",
+          OBDal.getInstance().get(FIN_FinancialAccount.class, financialAccountId));
+    }
+    if (!StringUtils.isEmpty(currencyId)) {
+      qry.setNamedParameter("currency", OBDal.getInstance().get(Currency.class, currencyId));
+    }
+
+    return (FinAccPaymentMethod) qry.uniqueResult();
   }
 }

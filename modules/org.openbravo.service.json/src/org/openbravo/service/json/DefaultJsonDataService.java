@@ -18,7 +18,6 @@
  */
 package org.openbravo.service.json;
 
-import java.sql.BatchUpdateException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -46,8 +45,10 @@ import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBQuery;
 import org.openbravo.database.SessionInfo;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
+import org.openbravo.service.db.DbUtility;
 import org.openbravo.service.json.JsonToDataConverter.JsonConversionError;
 import org.openbravo.userinterface.selector.SelectorConstants;
 
@@ -131,7 +132,11 @@ public class DefaultJsonDataService implements JsonDataService {
       // if the id is set that's a special case of one object being requested
       if (id != null) {
         bobs = new ArrayList<BaseOBObject>();
-        final BaseOBObject bob = OBDal.getInstance().get(entityName, id);
+        final OBQuery<BaseOBObject> obq = OBDal.getInstance().createQuery(entityName,
+            JsonConstants.ID + " = :bobId");
+        obq.setNamedParameter("bobId", id);
+        obq.setMaxResult(1);
+        final BaseOBObject bob = obq.uniqueResult();
         if (bob != null) {
           bobs.add(bob);
         }
@@ -824,13 +829,12 @@ public class DefaultJsonDataService implements JsonDataService {
         return result;
       }
     } catch (Throwable t) {
-      Throwable localThrowable = t;
-      if (localThrowable.getCause() instanceof BatchUpdateException) {
-        final BatchUpdateException batchException = (BatchUpdateException) localThrowable
-            .getCause();
-        localThrowable = batchException.getNextException();
+      Throwable localThrowable = DbUtility.getUnderlyingSQLException(t);
+      if (!(localThrowable instanceof OBException)
+          || (localThrowable instanceof OBException && ((OBException) localThrowable)
+              .isLogExceptionNeeded())) {
+        log.error(localThrowable.getMessage(), localThrowable);
       }
-      log.error(localThrowable.getMessage(), localThrowable);
       return JsonUtils.convertExceptionToJson(localThrowable);
     }
 

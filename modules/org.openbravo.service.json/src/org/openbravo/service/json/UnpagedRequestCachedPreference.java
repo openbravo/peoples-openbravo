@@ -32,9 +32,10 @@ import org.openbravo.model.common.enterprise.Organization;
  * 'Allow Unpaged Datasource Manual Request' preference in cache during the application life cycle,
  * avoiding the time spent to compute the preference value.
  * 
- * This class it is also used by the {@link PreferenceEventHandler} class to detect changes in the
- * preference value, and it that case it invalidates the stored value. This way the next time it is
- * requested, the current value will be retrieved from database again.
+ * This class it is also used by the
+ * {@link org.openbravo.client.application.event.PreferenceEventHandler} class to detect changes in
+ * the preference value, and it that case it invalidates the stored value. This way the next time it
+ * is requested, the current value will be retrieved from database again.
  * 
  * This mechanism for automatic refresh the preference value, only works on environments with a
  * single JVM. In case of Tomcat clustering environments (multiple JVM) it will be necessary to

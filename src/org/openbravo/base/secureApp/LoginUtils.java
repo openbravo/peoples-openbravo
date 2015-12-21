@@ -649,4 +649,33 @@ public class LoginUtils {
     return null;
 
   }
+
+  /**
+   * Returns default warehouse for a given organization
+   * 
+   * @throws ServletException
+   * 
+   */
+  public static String getDefaultWarehouse(ConnectionProvider connectionProvider, String strClient,
+      String strOrg, String strRole) throws ServletException {
+
+    String strWarehouse;
+    if (!strRole.equals("0")) {
+      // Pick the warehouse using the given organization
+      strWarehouse = DefaultOptionsData.getDefaultWarehouse(connectionProvider, strClient, "'"
+          + strOrg + "'");
+      if (strWarehouse == null || strWarehouse.isEmpty()) {
+        // If no warehouse for the default organization is available, pick using using the
+        // accessible tree
+        strWarehouse = DefaultOptionsData.getDefaultWarehouse(
+            connectionProvider,
+            strClient,
+            new OrgTree(connectionProvider, strClient).getAccessibleTree(connectionProvider,
+                strRole).toString());
+      }
+    } else {
+      strWarehouse = "";
+    }
+    return strWarehouse;
+  }
 }

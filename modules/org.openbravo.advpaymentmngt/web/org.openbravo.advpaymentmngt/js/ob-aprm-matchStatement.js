@@ -26,9 +26,36 @@ OB.APRM.MatchStatement.addPreference = function (view) {
 };
 
 OB.APRM.MatchStatement.onLoad = function (view) {
-  var execute, grid = view.theForm.getItem('match_statement').canvas.viewGrid;
+  var execute, grid = view.theForm.getItem('match_statement').canvas.viewGrid,
+      buttons = view.popupButtons.members[0].members,
+      i, button, propertyButtonValue = '_buttonValue';
   view.cancelButton.hide();
   view.parentElement.parentElement.closeButton.hide();
+
+  for (i = 0; i < buttons.length; i++) {
+    button = buttons[i];
+    if (button[propertyButtonValue] === 'UN') {
+      view.unmatchButton = button;
+      button.hide();
+      break;
+    }
+  }
+
+  button.action = function () {
+    var callback = function (response, data, request) {
+        view.onRefreshFunction(view);
+        if (data && data.message && data.message.severity === 'error') {
+          view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, data.message.title, data.message.text);
+        } else if (data && data.message && data.message.severity === 'success') {
+          view.messageBar.setMessage(isc.OBMessageBar.TYPE_SUCCESS, data.message.title, data.message.text);
+        } else if (data && data.message && data.message.severity === 'warning') {
+          view.messageBar.setMessage(isc.OBMessageBar.TYPE_WARNING, data.message.title, data.message.text);
+        }
+        };
+    OB.RemoteCallManager.call('org.openbravo.advpaymentmngt.actionHandler.UnMatchSelectedTransactionsActionHandler', {
+      bankStatementLineIds: grid.getSelectedRecords()
+    }, {}, callback);
+  };
 
   grid.dataSourceOrig = grid.dataSource;
   grid.dataSource = null;
@@ -73,6 +100,24 @@ OB.APRM.MatchStatement.onProcess = function (view, actionHandlerCall, clientSide
   actionHandlerCall();
 };
 
+OB.APRM.MatchStatement.selectionChanged = function (grid, changedRecord, recordList) {
+  if (changedRecord.obSelected && changedRecord.cleared) {
+    grid.view.unmatchButton.show();
+    return;
+  } else {
+    var i, record, selection = grid.getSelectedRecords() || [],
+        len = selection.length;
+    for (i = 0; i < len; i++) {
+      record = grid.getEditedRecord(grid.getRecordIndex(selection[i]));
+      if (record && record.obSelected && record.cleared) {
+        grid.view.unmatchButton.show();
+        return;
+      }
+    }
+  }
+
+  grid.view.unmatchButton.hide();
+};
 
 isc.ClassFactory.defineClass('APRMMatchStatGridButtonsComponent', isc.HLayout);
 
@@ -128,7 +173,9 @@ isc.APRMMatchStatGridButtonsComponent.addProperties({
       }
     });
     // Disable searchButton button if record is linked to a transaction
+    // and update Unmatch All button
     searchButton.setDisabled(me.record.cleared);
+    OB.APRM.MatchStatement.selectionChanged(me.grid, me.record);
 
     addButton = isc.OBGridToolStripIcon.create({
       buttonType: 'add',
@@ -168,7 +215,9 @@ isc.APRMMatchStatGridButtonsComponent.addProperties({
       }
     });
     // Disable addButton button if record is linked to a transaction
+    // and update Unmatch All button
     addButton.setDisabled(me.record.cleared);
+    OB.APRM.MatchStatement.selectionChanged(me.grid, me.record);
 
     clearButton = isc.OBGridToolStripIcon.create({
       buttonType: 'clearRight',
@@ -197,7 +246,9 @@ isc.APRMMatchStatGridButtonsComponent.addProperties({
     buttonSeparator2 = isc.OBGridToolStripSeparator.create({});
 
     // Disable clear button if record is not linked to a transaction
+    // and update Unmatch All button
     clearButton.setDisabled(!me.record.cleared);
+    OB.APRM.MatchStatement.selectionChanged(me.grid, me.record);
 
     this.addMembers([searchButton, buttonSeparator1, addButton, buttonSeparator2, clearButton]);
     this.Super('initWidget', arguments);

@@ -174,7 +174,7 @@ public class ConfigParameters {
     MessageHandler.setScreenLogger(fopLogger);
   }
 
-  private void configureLog4j(ServletContext context, String strBaseConfigPath) {
+  private void configureLog4j(ServletContext context, String _strBaseConfigPath) {
     String file = getResolvedParameter(context, "log4j-init-file");
 
     // if the log4j-init-file is not set, then no point in trying
@@ -183,7 +183,7 @@ public class ConfigParameters {
         // Configure using resource url.. That way we don't need to
         // worry about
         // the real path
-        InputStream resource = context.getResourceAsStream("/" + strBaseConfigPath + "/" + file);
+        InputStream resource = context.getResourceAsStream("/" + _strBaseConfigPath + "/" + file);
         if (resource != null) {
           Properties config = new Properties();
           config.load(resource);
@@ -220,17 +220,17 @@ public class ConfigParameters {
     }
   }
 
-  private String extractContext(String prefix) {
+  private String extractContext(String _prefix) {
     String path = "/";
     int secondPath = -1;
-    int firstPath = prefix.lastIndexOf(path);
+    int firstPath = _prefix.lastIndexOf(path);
     if (firstPath == -1) {
       path = "\\";
-      firstPath = prefix.lastIndexOf(path);
+      firstPath = _prefix.lastIndexOf(path);
     }
     if (firstPath != -1) {
-      secondPath = prefix.lastIndexOf(path, firstPath - 1);
-      return prefix.substring(secondPath + 1, firstPath);
+      secondPath = _prefix.lastIndexOf(path, firstPath - 1);
+      return _prefix.substring(secondPath + 1, firstPath);
     }
     return null;
   }

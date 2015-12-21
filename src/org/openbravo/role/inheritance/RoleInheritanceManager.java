@@ -236,7 +236,7 @@ public class RoleInheritanceManager {
       if (ri.isActive()) {
         Map<String, CalculationResult> result = recalculateAllAccessesForRole(ri.getRole());
         for (String accessClassName : result.keySet()) {
-          CalculationResult counters = (CalculationResult) result.get(accessClassName);
+          CalculationResult counters = result.get(accessClassName);
           if (counters.getUpdated() > 0 || counters.getCreated() > 0) {
             updatedRoles.add(ri.getRole());
           }
@@ -689,8 +689,7 @@ public class RoleInheritanceManager {
     final OBCriteria<RoleInheritance> obCriteria = OBDal.getInstance().createCriteria(
         RoleInheritance.class);
     obCriteria.add(Restrictions.eq(RoleInheritance.PROPERTY_ROLE, inheritance.getRole()));
-    obCriteria
-        .add(Restrictions.ne(RoleInheritance.PROPERTY_ID, (String) DalUtil.getId(inheritance)));
+    obCriteria.add(Restrictions.ne(RoleInheritance.PROPERTY_ID, DalUtil.getId(inheritance)));
     obCriteria.addOrderBy(RoleInheritance.PROPERTY_SEQUENCENUMBER, true);
     boolean added = false;
     for (RoleInheritance rh : obCriteria.list()) {

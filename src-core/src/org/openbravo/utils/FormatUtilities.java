@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2014 Openbravo S.L.U.
+ * Copyright (C) 2001-2015 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -18,7 +18,8 @@ import org.apache.log4j.Logger;
 public class FormatUtilities {
   static Logger log4j = Logger.getLogger(FormatUtilities.class);
 
-  public static String truncate(String s, int i) {
+  public static String truncate(String _s, int i) {
+    String s = _s;
     if (s == null || s.length() == 0)
       return "";
     if (i < s.length())

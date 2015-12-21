@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2013 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -41,6 +41,7 @@ import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.obps.ActivationKey.LicenseRestriction;
 import org.openbravo.erpCommon.obps.ActiveInstanceProcess;
+import org.openbravo.erpCommon.obps.ModuleLicenseRestrictions.ActivationMsg;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
 import org.openbravo.erpCommon.utility.NavigationBar;
@@ -322,20 +323,20 @@ public class InstanceManagement extends HttpSecureAppServlet {
     // Message
     {
       OBError myMessage = null;
-      if (activationKey.isActive() || activationKey.getErrorMessage() == null
-          || activationKey.getErrorMessage().equals("")) {
+      ActivationMsg msg = activationKey.getActivationMessage();
+      if (msg == null) {
         myMessage = vars.getMessage("InstanceManagement");
       } else {
         myMessage = new OBError();
         myMessage.setType(activationKey.getMessageType());
-        String msgTxt = Utility.parseTranslation(this, vars, vars.getLanguage(),
-            activationKey.getErrorMessage());
+        String msgTxt = Utility.parseTranslation(this, vars, vars.getLanguage(), msg.getMsgText());
 
         OBError originalMessage = vars.getMessage("InstanceManagement");
         if (originalMessage != null) {
           msgTxt = originalMessage.getMessage() + "<br/>" + msgTxt;
         }
         myMessage.setMessage(msgTxt);
+        myMessage.setType(msg.getSeverity().toString());
       }
 
       if (myMessage == null
@@ -343,7 +344,6 @@ public class InstanceManagement extends HttpSecureAppServlet {
         myMessage = new OBError();
         myMessage.setType("Warning");
         myMessage.setMessage(Utility.messageBD(this, "OffDemandPlatform", vars.getLanguage()));
-
       }
 
       vars.removeMessage("InstanceManagement");
@@ -367,6 +367,9 @@ public class InstanceManagement extends HttpSecureAppServlet {
         xmlDocument.setParameter("OPSdaysLeft",
             Utility.messageBD(this, "OPSUnlimitedUsers", vars.getLanguage()).replace("\\n", "\n"));
     }
+
+    xmlDocument.setParameter("moduleActions",
+        activationKey.getInstanceActivationExtraActionsHtml(xmlEngine));
 
     String cacheMsg = Utility.messageBD(this, "OUTDATED_FILES_CACHED", vars.getLanguage()).replace(
         "\\n", "\n");

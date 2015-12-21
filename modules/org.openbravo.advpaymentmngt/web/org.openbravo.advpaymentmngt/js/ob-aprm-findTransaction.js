@@ -36,7 +36,7 @@ OB.APRM.FindTransactions.onProcess = function (view, actionHandlerCall, clientSi
     if (trxSelection && trxSelection[0]) {
       var trxDepositAmt = trxSelection[0].depositAmount,
           trxPaymentAmt = trxSelection[0].paymentAmount,
-          blineAmt = view.callerField.view.getContextInfo().match_statement._selection[0].amount,
+          blineAmt = view.callerField.record.amount,
           trxAmt = trxDepositAmt - trxPaymentAmt,
           hideSplitConfirmation = OB.PropertyStore.get('APRM_MATCHSTATEMENT_HIDE_PARTIALMATCH_POPUP', view.windowId);
 

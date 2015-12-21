@@ -348,10 +348,6 @@ public class FinancialUtils {
 
   /**
    * Get all the payment details with available credit
-   * 
-   * @param businessPartner
-   * @param currency
-   * @return
    */
   public static ScrollableResults getPaymentsWithCredit(String businessPartnerId, String currencyId) {
     StringBuilder hql = new StringBuilder();

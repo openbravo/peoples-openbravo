@@ -275,6 +275,12 @@ public class LoginHandler extends HttpBaseServlet {
         log4j.warn("On demand off platform");
         goToRetry(res, vars, msg, title, msgType, action, doRedirect);
         return;
+      case POS_TERMINALS_EXCEEDED:
+        msg = Utility.messageBD(myPool, "OPS_POS_TERMINALS_EXCEEDED", vars.getLanguage());
+        title = Utility.messageBD(myPool, "OPS_POS_TERMINALS_EXCEEDED_TITLE", vars.getLanguage());
+        log4j.warn("Exceeded maximum number of pos terminals");
+        goToRetry(res, vars, msg, title, msgType, action, doRedirect);
+        return;
       case NO_RESTRICTION:
         break;
       }

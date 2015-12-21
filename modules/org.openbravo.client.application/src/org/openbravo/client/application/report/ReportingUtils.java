@@ -556,7 +556,6 @@ public class ReportingUtils {
       SimpleXlsReportConfiguration reportExportConfiguration = new SimpleXlsReportConfiguration();
       reportExportConfiguration.setOnePagePerSheet(false);
       reportExportConfiguration.setRemoveEmptySpaceBetweenRows(true);
-      reportExportConfiguration.setDetectCellType(true);
       excelExporter.setConfiguration(reportExportConfiguration);
     }
     excelExporter.setExporterInput(exporterInput);
@@ -591,7 +590,6 @@ public class ReportingUtils {
       SimpleXlsReportConfiguration reportExportConfiguration = new SimpleXlsReportConfiguration();
       reportExportConfiguration.setOnePagePerSheet(false);
       reportExportConfiguration.setRemoveEmptySpaceBetweenRows(true);
-      reportExportConfiguration.setDetectCellType(true);
       excelExporter.setConfiguration(reportExportConfiguration);
     }
     excelExporter.setExporterInput(exporterInput);
@@ -1127,7 +1125,7 @@ public class ReportingUtils {
   }
 
   /**
-   * @see ReportingUtils#concatPDFReport(List<JasperPrint>, boolean, OutputStream,
+   * @see ReportingUtils#concatPDFReport(List, boolean, OutputStream,
    *      SimplePdfExporterConfiguration)
    */
   public static void concatPDFReport(List<JasperPrint> jasperPrintList, boolean createBookmarks,

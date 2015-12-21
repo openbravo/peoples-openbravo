@@ -23,7 +23,7 @@
 OB.Utilities = {};
 
 OB.Utilities.isIE9Strict = false;
-if (navigator.userAgent.toUpperCase().indexOf("MSIE") !== -1 && (document.documentMode && document.documentMode >= 9)) {
+if ((navigator.userAgent.toUpperCase().indexOf("MSIE") !== -1 || navigator.userAgent.toUpperCase().indexOf("TRIDENT") !== -1) && (document.documentMode && document.documentMode >= 9)) {
   OB.Utilities.isIE9Strict = true;
 }
 

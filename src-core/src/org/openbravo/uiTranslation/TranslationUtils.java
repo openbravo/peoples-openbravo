@@ -34,7 +34,6 @@ class TranslationUtils {
   }
 
   public static InterfaceInfo getModuleLang(ConnectionProvider con, InterfaceInfo info) {
-    String lang = "";
     try {
       if (info.getId() != null && !info.getId().equals("")) {
         InterfaceModuleInfoData[] moduleInfo;
@@ -43,7 +42,6 @@ class TranslationUtils {
           for (int i = 0; i < moduleInfo.length; i++) {
             InterfaceModuleInfoData module = moduleInfo[i];
             if (module != null && module.modulelanguage != null) {
-              lang = module.modulelanguage;
               defineInterfaceInfo(info, module);
             }
           }
@@ -52,7 +50,6 @@ class TranslationUtils {
           for (int i = 0; i < moduleInfo.length; i++) {
             InterfaceModuleInfoData module = moduleInfo[i];
             if (module != null && module.modulelanguage != null) {
-              lang = module.modulelanguage;
               defineInterfaceInfo(info, module);
             }
           }

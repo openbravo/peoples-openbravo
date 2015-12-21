@@ -159,6 +159,9 @@ public class DalUtil {
    * @return the found value
    */
   public static Object getValueFromPath(BaseOBObject bob, String propertyPath) {
+    if (bob == null) {
+      return null;
+    }
     final String[] parts = propertyPath.replace(FIELDSEPARATOR, DOT).split("\\" + DOT);
     BaseOBObject currentBob = bob;
     Object value = null;

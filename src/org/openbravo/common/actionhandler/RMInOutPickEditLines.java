@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2011-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2011-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,9 +26,11 @@ import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.client.application.process.BaseProcessActionHandler;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBDao;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
@@ -97,6 +99,7 @@ public class RMInOutPickEditLines extends BaseProcessActionHandler {
       removeNonSelectedLines(idList, inOut);
       return;
     }
+
     for (long i = 0; i < selectedLines.length(); i++) {
       JSONObject selectedLine = selectedLines.getJSONObject((int) i);
       log.debug(selectedLine);
@@ -137,10 +140,23 @@ public class RMInOutPickEditLines extends BaseProcessActionHandler {
         inOutLines.add(newInOutLine);
         inOut.setMaterialMgmtShipmentInOutLineList(inOutLines);
       }
-
+      if (orderLine.isExplode()) {
+        newInOutLine.setExplode(true);
+      }
       OBDal.getInstance().save(newInOutLine);
       OBDal.getInstance().save(inOut);
       OBDal.getInstance().flush();
+    }
+    for (ShipmentInOutLine inOutLine : inOut.getMaterialMgmtShipmentInOutLineList()) {
+      if (inOutLine.getSalesOrderLine().getBOMParent() != null) {
+        OBCriteria<ShipmentInOutLine> obc = OBDal.getInstance().createCriteria(
+            ShipmentInOutLine.class);
+        obc.add(Restrictions.eq(ShipmentInOutLine.PROPERTY_SALESORDERLINE, inOutLine
+            .getSalesOrderLine().getBOMParent()));
+        ShipmentInOutLine parentInOutLine = (ShipmentInOutLine) obc.uniqueResult();
+        inOutLine.setBOMParent(parentInOutLine);
+        OBDal.getInstance().save(inOutLine);
+      }
     }
 
     removeNonSelectedLines(idList, inOut);

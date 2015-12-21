@@ -32,13 +32,10 @@ import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.dal.service.OBQuery;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
-import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
-import org.openbravo.model.financialmgmt.payment.FIN_PaymentMethod;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentSchedule;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
 import org.openbravo.model.financialmgmt.payment.FinAccPaymentMethod;
@@ -303,14 +300,14 @@ public abstract class AddPaymentDefaultValuesHandler {
             strBPartnerId);
         if (isSOTrx
             && businessPartner.getAccount() != null
-            && getFinancialAccountPaymentMethod(paymentMethodId, businessPartner.getAccount()
-                .getId(), isSOTrx, currencyId) != null
+            && FIN_Utility.getFinancialAccountPaymentMethod(paymentMethodId, businessPartner
+                .getAccount().getId(), isSOTrx, currencyId) != null
             && osp.isInNaturalTree(businessPartner.getAccount().getOrganization(), OBDal
                 .getInstance().get(Organization.class, context.getString("inpadOrgId")))) {
           return businessPartner.getAccount().getId();
         } else if (!isSOTrx
             && businessPartner.getPOFinancialAccount() != null
-            && getFinancialAccountPaymentMethod(paymentMethodId, businessPartner
+            && FIN_Utility.getFinancialAccountPaymentMethod(paymentMethodId, businessPartner
                 .getPOFinancialAccount().getId(), isSOTrx, currencyId) != null
             && osp.isInNaturalTree(businessPartner.getPOFinancialAccount().getOrganization(), OBDal
                 .getInstance().get(Organization.class, context.getString("inpadOrgId")))) {
@@ -318,8 +315,8 @@ public abstract class AddPaymentDefaultValuesHandler {
         }
       }
 
-      FinAccPaymentMethod fpm = getFinancialAccountPaymentMethod(paymentMethodId, null, isSOTrx,
-          currencyId);
+      FinAccPaymentMethod fpm = FIN_Utility.getFinancialAccountPaymentMethod(paymentMethodId, null,
+          isSOTrx, currencyId);
       if (fpm != null
           && osp.isInNaturalTree(fpm.getAccount().getOrganization(),
               OBDal.getInstance().get(Organization.class, context.getString("inpadOrgId")))) {
@@ -371,8 +368,8 @@ public abstract class AddPaymentDefaultValuesHandler {
     boolean isSOTrx = "Y".equals(getDefaultIsSOTrx(requestMap));
     strFinancialAccountId = getContextFinancialAccount(requestMap);
     if (strFinPaymentMethodId != null
-        && getFinancialAccountPaymentMethod(strFinPaymentMethodId, strFinancialAccountId, isSOTrx,
-            null) != null) {
+        && FIN_Utility.getFinancialAccountPaymentMethod(strFinPaymentMethodId,
+            strFinancialAccountId, isSOTrx, null) != null) {
       return strFinPaymentMethodId;
     }
 
@@ -387,8 +384,8 @@ public abstract class AddPaymentDefaultValuesHandler {
 
       if (isSOTrx
           && businessPartner.getPaymentMethod() != null
-          && getFinancialAccountPaymentMethod(businessPartner.getPaymentMethod().getId(),
-              strFinancialAccountId, isSOTrx, null) != null
+          && FIN_Utility.getFinancialAccountPaymentMethod(businessPartner.getPaymentMethod()
+              .getId(), strFinancialAccountId, isSOTrx, null) != null
           && osp.isInNaturalTree(businessPartner.getPaymentMethod().getOrganization(), OBDal
               .getInstance().get(Organization.class, context.getString("inpadOrgId")))) {
         return businessPartner.getPaymentMethod().getId();
@@ -396,8 +393,8 @@ public abstract class AddPaymentDefaultValuesHandler {
 
       else if (!isSOTrx
           && businessPartner.getPOPaymentMethod() != null
-          && getFinancialAccountPaymentMethod(businessPartner.getPOPaymentMethod().getId(),
-              strFinancialAccountId, isSOTrx, null) != null
+          && FIN_Utility.getFinancialAccountPaymentMethod(businessPartner.getPOPaymentMethod()
+              .getId(), strFinancialAccountId, isSOTrx, null) != null
           && osp.isInNaturalTree(businessPartner.getPOPaymentMethod().getOrganization(), OBDal
               .getInstance().get(Organization.class, context.getString("inpadOrgId")))) {
         return businessPartner.getPOPaymentMethod().getId();
@@ -469,48 +466,5 @@ public abstract class AddPaymentDefaultValuesHandler {
     } else {
       return null;
     }
-  }
-
-  private FinAccPaymentMethod getFinancialAccountPaymentMethod(String paymentMethodId,
-      String financialAccountId, boolean issotrx, String currencyId) {
-    StringBuffer where = new StringBuffer();
-    where.append(" as fapm");
-    where.append(" join fapm." + FinAccPaymentMethod.PROPERTY_ACCOUNT + " as fa");
-    where.append(" where fapm." + FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD + " = :paymentMethod");
-    where.append(" and fa." + FIN_FinancialAccount.PROPERTY_ACTIVE + " = true");
-    if (issotrx) {
-      where.append(" and fapm." + FinAccPaymentMethod.PROPERTY_PAYINALLOW + " = true");
-    } else {
-      where.append(" and fapm." + FinAccPaymentMethod.PROPERTY_PAYOUTALLOW + " = true");
-    }
-    if (!StringUtils.isEmpty(financialAccountId)) {
-      where.append(" and fapm." + FinAccPaymentMethod.PROPERTY_ACCOUNT + " = :financialAccount");
-    }
-    if (!StringUtils.isEmpty(currencyId)) {
-      where.append(" and (fa." + FIN_FinancialAccount.PROPERTY_CURRENCY + " = :currency");
-      if (issotrx) {
-        where.append(" or fapm." + FinAccPaymentMethod.PROPERTY_PAYINISMULTICURRENCY + " = true)");
-      } else {
-        where.append(" or fapm." + FinAccPaymentMethod.PROPERTY_PAYOUTISMULTICURRENCY + " = true)");
-      }
-    }
-    where.append(" order by fapm." + FinAccPaymentMethod.PROPERTY_DEFAULT + " desc");
-
-    OBQuery<FinAccPaymentMethod> qry = OBDal.getInstance().createQuery(FinAccPaymentMethod.class,
-        where.toString());
-    qry.setFilterOnReadableOrganization(false);
-    qry.setMaxResult(1);
-
-    qry.setNamedParameter("paymentMethod",
-        OBDal.getInstance().get(FIN_PaymentMethod.class, paymentMethodId));
-    if (!StringUtils.isEmpty(financialAccountId)) {
-      qry.setNamedParameter("financialAccount",
-          OBDal.getInstance().get(FIN_FinancialAccount.class, financialAccountId));
-    }
-    if (!StringUtils.isEmpty(currencyId)) {
-      qry.setNamedParameter("currency", OBDal.getInstance().get(Currency.class, currencyId));
-    }
-
-    return (FinAccPaymentMethod) qry.uniqueResult();
   }
 }

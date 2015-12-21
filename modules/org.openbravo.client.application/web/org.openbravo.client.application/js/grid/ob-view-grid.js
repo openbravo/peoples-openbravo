@@ -933,6 +933,10 @@ isc.OBViewGrid.addProperties({
     return this.Super('getCellAlign', arguments);
   },
 
+  getFieldByName: function (fieldName) {
+    return this.getFields().find('name', fieldName);
+  },
+
   // overridden to support hover on the header for the checkbox field
   setFieldProperties: function (field, properties) {
     var localField = field;
@@ -1141,6 +1145,22 @@ isc.OBViewGrid.addProperties({
       this.initialCriteriaSetBySavedView = true;
       this.setCriteria(localState.filter);
     }
+  },
+
+  viewHasFieldsNotInGrid: function (viewGridDefinition) {
+    var state = this.evalViewState(viewGridDefinition, 'viewState'),
+        i;
+    if (state && state.field) {
+      var viewGridDefinitionFields = isc.JSON.decode(state.field) || [];
+      for (i = 0; i < viewGridDefinitionFields.length; i++) {
+        var name = viewGridDefinitionFields[i].name;
+        var isVisible = viewGridDefinitionFields[i].visible;
+        if (isVisible !== false && !this.getFieldByName(name)) {
+          return true;
+        }
+      }
+    }
+    return false;
   },
 
   // loads the foreign key filter auxiliary cache of all the filter fields that were using the 'id' filter type when the view was saved
@@ -1422,6 +1442,9 @@ isc.OBViewGrid.addProperties({
     ksAction_CancelEditing = function () {
       if (me.getEditForm()) {
         me.cancelEditing();
+        // force update of toolbar buttons state
+        // https://issues.openbravo.com/view.php?id=31567
+        me.view.toolBar.updateButtonState(true);
         return false; // To avoid keyboard shortcut propagation
       } else {
         return true;
@@ -3255,7 +3278,8 @@ isc.OBViewGrid.addProperties({
     var localArguments = arguments,
         editForm = this.getEditForm(),
         totalRows, me = this,
-        record = this.getRecord(rowNum);
+        record = this.getRecord(rowNum),
+        selectedRecord = this.getSelectedRecord();
 
     if (record) {
       this.removeRecordFromValidationErrorList(record);
@@ -3292,6 +3316,11 @@ isc.OBViewGrid.addProperties({
 
       // remove the record if new
       if (record && record._new) {
+        // after cancelling a not saved record, the value for the selected record should be cleared
+        // see issue https://issues.openbravo.com/view.php?id=31434
+        if (me.selection && selectedRecord) {
+          me.selection.deselect(selectedRecord);
+        }
         totalRows = me.data.totalRows;
         me.data.handleUpdate('remove', [{
           id: record.id
@@ -3370,7 +3399,7 @@ isc.OBViewGrid.addProperties({
     }
 
 
-    if (this.getEditForm().dynamicCols) {
+    if (this.getEditForm() && this.getEditForm().dynamicCols) {
       for (i = 0; i < this.getEditForm().dynamicCols.length; i++) {
         if (this.getEditForm().dynamicCols[i] === focusItem.inpColumnName) {
           isDynamicCol = true;
@@ -3379,7 +3408,7 @@ isc.OBViewGrid.addProperties({
       }
     }
 
-    if (newRow && this.getEditForm().isNew && this.getEditForm().inFicCall && isDynamicCol && editCompletionEvent === 'tab' && !ficCallDone) {
+    if (newRow && this.getEditForm() && this.getEditForm().isNew && this.getEditForm().inFicCall && isDynamicCol && editCompletionEvent === 'tab' && !ficCallDone) {
       this.setEditValue(rowNum, 'actionAfterFicReturn', {
         target: this,
         method: this.cellEditEnd,
@@ -3572,6 +3601,7 @@ isc.OBViewGrid.addProperties({
       return;
     }
     this._hidingInlineEditor = true;
+    this.view.isEditingGrid = false;
     if (record && (rowNum === 0 || rowNum)) {
       if (!this.rowHasErrors(rowNum)) {
         record[this.recordBaseStyleProperty] = null;
@@ -3585,7 +3615,6 @@ isc.OBViewGrid.addProperties({
       } else {
         isc.Log.logDebug('hideInlineEditor has NO record and editColumnLayout', 'OB');
       }
-      this.view.isEditingGrid = false;
       // Update the tab title after the record has been saved or canceled
       // to get rid of the '*' in the tab title
       // See https://issues.openbravo.com/view.php?id=21709
@@ -4301,6 +4330,9 @@ isc.OBGridButtonsComponent.addProperties({
 
   doCancel: function () {
     this.grid.cancelEditing();
+    // force update of toolbar buttons state
+    // https://issues.openbravo.com/view.php?id=31567
+    this.grid.view.toolBar.updateButtonState(true);
   },
 
   hideMember: function (memberNo) {

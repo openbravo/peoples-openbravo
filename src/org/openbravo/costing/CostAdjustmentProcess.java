@@ -41,12 +41,15 @@ import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.financial.FinancialUtils;
 import org.openbravo.model.financialmgmt.calendar.Period;
 import org.openbravo.model.materialmgmt.cost.CostAdjustment;
 import org.openbravo.model.materialmgmt.cost.CostAdjustmentLine;
 import org.openbravo.model.materialmgmt.cost.TransactionCost;
+import org.openbravo.model.materialmgmt.transaction.InventoryCount;
+import org.openbravo.model.materialmgmt.transaction.InventoryCountLine;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -141,19 +144,32 @@ public class CostAdjustmentProcess {
     }
   }
 
-  private void checkPermanentelyAdjustedTrx(String strCostAdjId) throws OBException {
-    OBCriteria<CostAdjustmentLine> critLines = OBDal.getInstance().createCriteria(
-        CostAdjustmentLine.class);
-    critLines.createAlias(CostAdjustmentLine.PROPERTY_INVENTORYTRANSACTION, "trx");
-    critLines.createAlias(CostAdjustmentLine.PROPERTY_COSTADJUSTMENT, "ca");
-    critLines.add(Restrictions.eq("ca.id", strCostAdjId));
-    critLines.add(Restrictions.eq("trx." + MaterialTransaction.PROPERTY_ISCOSTPERMANENT,
-        Boolean.TRUE));
-    critLines.add(Restrictions.ne(CostAdjustmentLine.PROPERTY_ADJUSTMENTAMOUNT, BigDecimal.ZERO));
-    critLines.add(Restrictions.eq(CostAdjustmentLine.PROPERTY_UNITCOST, Boolean.TRUE));
-    critLines.addOrder(Order.asc(CostAdjustmentLine.PROPERTY_LINENO));
+  /**
+   * Permanently adjusted Transactions with and adjustment amount different than zero should not be
+   * adjusted. The only exception are the Opening Inventories. Due to backdated Transactions that
+   * can modify the stock or the stock valuation, it is necessary to adjust this Opening Inventories
+   * to fix rounding issues.
+   */
 
-    ScrollableResults lines = critLines.scroll(ScrollMode.FORWARD_ONLY);
+  private void checkPermanentelyAdjustedTrx(String strCostAdjId) throws OBException {
+    StringBuffer where = new StringBuffer();
+    where.append(" as cal");
+    where.append(" join cal." + CostAdjustmentLine.PROPERTY_COSTADJUSTMENT + " as ca");
+    where.append(" join cal." + CostAdjustmentLine.PROPERTY_INVENTORYTRANSACTION + " as trx");
+    where.append(" left join trx." + MaterialTransaction.PROPERTY_PHYSICALINVENTORYLINE + " as il");
+    where.append(" left join il." + InventoryCountLine.PROPERTY_PHYSINVENTORY + " as i");
+    where.append(" where ca." + CostAdjustment.PROPERTY_ID + " = :strCostAdjId");
+    where.append(" and coalesce(i." + InventoryCount.PROPERTY_INVENTORYTYPE + ", 'N') <> 'O'");
+    where.append(" and trx." + MaterialTransaction.PROPERTY_ISCOSTPERMANENT + " = true");
+    where.append(" and cal." + CostAdjustmentLine.PROPERTY_ADJUSTMENTAMOUNT + " <> 0");
+    where.append(" and cal." + CostAdjustmentLine.PROPERTY_UNITCOST + " = true");
+    where.append(" order by cal." + CostAdjustmentLine.PROPERTY_LINENO);
+
+    OBQuery<CostAdjustmentLine> qry = OBDal.getInstance().createQuery(CostAdjustmentLine.class,
+        where.toString());
+    qry.setNamedParameter("strCostAdjId", strCostAdjId);
+
+    ScrollableResults lines = qry.scroll(ScrollMode.FORWARD_ONLY);
     long count = 1L;
     try {
       String strLines = "";

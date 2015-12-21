@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2012 Openbravo SLU
+ * All portions are Copyright (C) 2010-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -58,7 +58,7 @@
     updateHistory: function () {
 
       var state = {},
-          stateStr, data, i, tabsLength, tab, tabObject;
+          stateStr, data, i, tabsLength, tab, tabObject, tabWidgetNumber, previousWidgetsInTab = 0;
 
       if (L.ViewManager.inStateHandling) {
         return;
@@ -76,28 +76,46 @@
       for (i = 0; i < tabsLength; i++) {
         tab = OB.MainView.TabSet.tabs[i];
 
-        state.bm[i] = {};
+        if (tab.viewName !== 'OBQueryListView' && tab.viewName !== 'OBCalendarWidgetView') {
+          state.bm[i] = {};
 
-        // get the original tab object
-        tabObject = OB.MainView.TabSet.getTabObject(tab);
+          // get the original tab object
+          tabObject = OB.MainView.TabSet.getTabObject(tab);
 
-        state.bm[i] = {
-          viewId: tabObject.viewName
-        };
+          state.bm[i] = {
+            viewId: tabObject.viewName
+          };
 
-        // store the bookmark parameters
-        if (tabObject.pane && tabObject.pane.getBookMarkParams) {
-          state.bm[i].params = tabObject.pane.getBookMarkParams();
-          if (!state.bm[i].params.tabTitle) {
-            state.bm[i].params.tabTitle = tabObject.title;
+          // store the bookmark parameters
+          if (tabObject.pane && tabObject.pane.getBookMarkParams) {
+            state.bm[i].params = tabObject.pane.getBookMarkParams();
+            if (!state.bm[i].params.tabTitle) {
+              state.bm[i].params.tabTitle = tabObject.title;
+            }
+          }
+
+          // let tabs store extra data
+          if (tabObject.pane && tabObject.pane.getState) {
+            data[i] = tabObject.pane.getState();
+          }
+        } else {
+          // Not updating history in case of query-list and calendar widgets
+          // https://issues.openbravo.com/view.php?id=29025
+          tabWidgetNumber = OB.MainView.TabSet.getTabNumber(tab);
+          if (tabWidgetNumber <= state.st) {
+            previousWidgetsInTab = previousWidgetsInTab + 1;
           }
         }
-
-        // let tabs store extra data
-        if (tabObject.pane && tabObject.pane.getState) {
-          data[i] = tabObject.pane.getState();
-        }
       }
+
+      // update the selected tab to be stored in the state
+      // this is because query-list and calendar widgets are not reopened after refreshing
+      state.st = state.st - previousWidgetsInTab;
+
+      // remove possible undefined values from bm array
+      state.bm = state.bm.filter(function (elem) {
+        return elem !== undefined;
+      });
 
       // now encode the state as a json string
       // which is used as a the id in the url
