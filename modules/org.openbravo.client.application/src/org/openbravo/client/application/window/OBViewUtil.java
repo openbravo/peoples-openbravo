@@ -213,8 +213,7 @@ public class OBViewUtil {
       settings.canFilter = field.getColumn().isAllowfiltering();
     }
 
-    settings.canOverwriteFilteringConfig = true;
-    settings.canOverwriteSortingConfig = true;
+    settings.canOverwritePropertyConfig = true;
 
     if (tabConf != null && field != null && field.getId() != null) {
       GCField fieldConf = null;
@@ -265,8 +264,7 @@ public class OBViewUtil {
     private Boolean disableFkDropdown = null;
     private String operator = null;
     private Long thresholdToFilter = null;
-    private boolean canOverwriteSortingConfig;
-    private boolean canOverwriteFilteringConfig;
+    private boolean canOverwritePropertyConfig;
 
     private boolean shouldContinueProcessing() {
       return canSort == null || canFilter == null || operator == null || filterOnChange == null
@@ -299,60 +297,55 @@ public class OBViewUtil {
       return isPropertyEnabled;
     }
 
+    // This method is created to get the value of the properties "canSort"
+    // and "canFilter".
+    private void getPropertyValue(String property, BaseOBObject gcItem) {
+      Boolean propertyValue = null;
+      if (gcItem instanceof GCField) {
+        propertyValue = convertBoolean(gcItem, property);
+        if (propertyValue != null) {
+          canOverwritePropertyConfig = false;
+          if (property.equals("PROPERTY_SORTABLE")) {
+            canSort = propertyValue;
+          } else if (property.equals("PROPERTY_FILTERABLE")) {
+            canFilter = propertyValue;
+          }
+        }
+      } else if (gcItem instanceof GCTab) {
+        if (canOverwritePropertyConfig == true) {
+          propertyValue = convertBoolean(gcItem, property);
+          if (propertyValue != null) {
+            canOverwritePropertyConfig = false;
+            if (propertyValue == false) {
+              if (property.equals("PROPERTY_SORTABLE")) {
+                canSort = propertyValue;
+              } else if (property.equals("PROPERTY_FILTERABLE")) {
+                canFilter = propertyValue;
+              }
+            }
+          }
+        }
+      } else if (gcItem instanceof GCSystem) {
+        if (canOverwritePropertyConfig == true) {
+          propertyValue = convertBoolean(gcItem, property);
+          if (propertyValue != null && propertyValue == false) {
+            if (property.equals("PROPERTY_SORTABLE")) {
+              canSort = propertyValue;
+            } else if (property.equals("PROPERTY_FILTERABLE")) {
+              canFilter = propertyValue;
+            }
+          }
+        }
+      }
+    }
+
     private void processConfig(BaseOBObject gcItem, Column fieldColumn) {
-      Boolean sortingConfiguration = null;
-      Boolean filteringConfiguration = null;
+      String sortingProperty = "PROPERTY_SORTABLE";
+      String filteringProperty = "PROPERTY_FILTERABLE";
       Class<? extends BaseOBObject> itemClass = gcItem.getClass();
       try {
-        if (gcItem instanceof GCField) {
-          sortingConfiguration = convertBoolean(gcItem, "PROPERTY_SORTABLE");
-          if (sortingConfiguration != null) {
-            canOverwriteSortingConfig = false;
-            canSort = sortingConfiguration;
-          }
-        } else if (gcItem instanceof GCTab) {
-          if (canOverwriteSortingConfig == true) {
-            sortingConfiguration = convertBoolean(gcItem, "PROPERTY_SORTABLE");
-            if (sortingConfiguration != null) {
-              canOverwriteSortingConfig = false;
-              if (sortingConfiguration == false) {
-                canSort = sortingConfiguration;
-              }
-            }
-          }
-        } else if (gcItem instanceof GCSystem) {
-          if (canOverwriteSortingConfig == true) {
-            sortingConfiguration = convertBoolean(gcItem, "PROPERTY_SORTABLE");
-            if (sortingConfiguration != null && sortingConfiguration == false) {
-              canSort = sortingConfiguration;
-            }
-          }
-        }
-
-        if (gcItem instanceof GCField) {
-          filteringConfiguration = convertBoolean(gcItem, "PROPERTY_FILTERABLE");
-          if (filteringConfiguration != null) {
-            canOverwriteFilteringConfig = false;
-            canFilter = filteringConfiguration;
-          }
-        } else if (gcItem instanceof GCTab) {
-          if (canOverwriteFilteringConfig == true) {
-            filteringConfiguration = convertBoolean(gcItem, "PROPERTY_FILTERABLE");
-            if (filteringConfiguration != null) {
-              canOverwriteFilteringConfig = false;
-              if (filteringConfiguration == false) {
-                canFilter = filteringConfiguration;
-              }
-            }
-          }
-        } else if (gcItem instanceof GCSystem) {
-          if (canOverwriteFilteringConfig == true) {
-            filteringConfiguration = convertBoolean(gcItem, "PROPERTY_FILTERABLE");
-            if (filteringConfiguration != null && filteringConfiguration == false) {
-              canFilter = filteringConfiguration;
-            }
-          }
-        }
+        getPropertyValue(sortingProperty, gcItem);
+        getPropertyValue(filteringProperty, gcItem);
 
         if (operator == null) {
           if (gcItem.get(itemClass.getField("PROPERTY_TEXTFILTERBEHAVIOR").get(gcItem).toString()) != null
