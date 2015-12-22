@@ -126,10 +126,7 @@ public class TabAttachments extends HttpSecureAppServlet {
             String buttonId = vars.getStringParameter("buttonId");
             response.setContentType("text/html; charset=UTF-8");
             Writer writer = response.getWriter();
-            writer.write("<HTML><BODY><script type=\"text/javascript\">");
-            writer.write("top.OB.Utilities.uploadFinished(\"" + buttonId + "\"," + obj.toString()
-                + ");");
-            writer.write("</SCRIPT></BODY></HTML>");
+            writer.write(getUploadFinishedScript(buttonId, obj));
           } finally {
             OBContext.restorePreviousMode();
           }
@@ -679,14 +676,22 @@ public class TabAttachments extends HttpSecureAppServlet {
       String buttonId = vars.getStringParameter("buttonId");
       response.setContentType("text/html; charset=UTF-8");
       Writer writer = response.getWriter();
-      writer.write("<HTML><BODY><script type=\"text/javascript\">");
-      writer.write("top.OB.Utilities.uploadFinished(\"" + buttonId + "\"," + obj.toString() + ");");
-      writer.write("</SCRIPT></BODY></HTML>");
+      writer.write(getUploadFinishedScript(buttonId, obj));
     } catch (Exception e) {
       log4j.debug("Problem saving attachment: " + e.getMessage());
     } finally {
       OBContext.restorePreviousMode();
     }
+  }
+
+  private String getUploadFinishedScript(String buttonId, JSONObject obj) {
+    StringBuilder script = new StringBuilder();
+    script.append("<HTML><BODY><script type=\"text/javascript\">");
+    script.append("var iscWindow = top.OB || parent.OB;\n");
+    script.append("iscWindow.Utilities.uploadFinished(\"" + buttonId + "\"," + obj.toString()
+        + ");");
+    script.append("</SCRIPT></BODY></HTML>");
+    return script.toString();
   }
 
   /**
