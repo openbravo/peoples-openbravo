@@ -12,7 +12,6 @@ import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.dal.core.OBContext;
-import org.openbravo.dal.core.TriggerHandler;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.CancelAndReplaceUtils;
 import org.openbravo.erpCommon.businessUtility.Preferences;
@@ -42,7 +41,6 @@ public class CancelLayawayLoader extends POSDataSynchronizationProcess implement
           "Error getting OBPOS_UseOrderDocumentNoForRelatedDocs preference: " + e1.getMessage(), e1);
     }
 
-    TriggerHandler.getInstance().disable();
     try {
       Order order = OBDal.getInstance().get(Order.class, json.getString("orderId"));
       POSUtils.setDefaultPaymentType(json, order);
@@ -50,8 +48,6 @@ public class CancelLayawayLoader extends POSDataSynchronizationProcess implement
           useOrderDocumentNoForRelatedDocs);
     } catch (Exception ex) {
       throw new OBException("CancelLayawayLoader.cancelOrder: ", ex);
-    } finally {
-      TriggerHandler.getInstance().enable();
     }
 
     final JSONObject jsonResponse = new JSONObject();

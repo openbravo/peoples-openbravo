@@ -354,8 +354,7 @@ enyo.kind({
     } else {
       this.setTotalPending(this.receipt.getPending(), rate, symbol, symbolAtRight);
       this.$.totalpending.show();
-      //      if (this.receipt.get('orderType') === 1 || this.receipt.get('orderType') === 3) {
-      if (paymentstatus.isNegative || this.receipt.get('orderType') === 3) {
+      if (paymentstatus.isNegative) {
         this.$.totalpendinglbl.setContent(OB.I18N.getLabel('OBPOS_ReturnRemaining'));
       } else {
         this.$.totalpendinglbl.setContent(OB.I18N.getLabel('OBPOS_PaymentsRemaining'));

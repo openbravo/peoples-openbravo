@@ -235,6 +235,10 @@ enyo.kind({
       return true;
     }
     this.inherited(arguments); // Manual dropdown menu closure
+    if (this.model.get('order').get('isFullyDelivered')) {
+      OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_FullyDeliveredHeader'), OB.I18N.getLabel('OBPOS_FullyDelivered'));
+      return;
+    }
     enyo.forEach(this.model.get('order').get('payments').models, function (curPayment) {
       if (_.isUndefined(curPayment.get('isPrePayment')) || _.isNull(curPayment.get('isPrePayment'))) {
         cancelAllowed = false;
@@ -249,6 +253,10 @@ enyo.kind({
         permission: this.permission,
         orderType: 3
       });
+      if (this.model.get('order').get('isPartiallyDelivered')) {
+        this.model.get('order').set('gross', OB.DEC.sub(this.model.get('order').get('deliveredQuantityAmount'), this.model.get('order').get('gross')));
+        this.model.get('order').set('payment', OB.DEC.Zero);
+      }
       this.doTabChange({
         tabPanel: 'payment',
         keyboard: 'toolbarpayment',

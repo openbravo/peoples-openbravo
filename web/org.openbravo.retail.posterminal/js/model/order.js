@@ -804,6 +804,11 @@
     getPending: function () {
       return OB.DEC.sub(OB.DEC.abs(this.getTotal()), this.getPayment());
     },
+
+    getDeliveredQuantityAmount: function () {
+      return this.get('deliveredQuantityAmount') ? this.get('deliveredQuantityAmount') : 0;
+    },
+
     printPending: function () {
       return OB.I18N.formatCurrency(this.getPending());
     },
@@ -818,6 +823,7 @@
           isReturn = false;
         }
       }, this);
+
       return {
         'done': (this.get('lines').length > 0 && OB.DEC.compare(total) >= 0 && OB.DEC.compare(OB.DEC.sub(pay, total)) >= 0),
         'total': OB.I18N.formatCurrency(total),
@@ -825,7 +831,7 @@
         'change': OB.DEC.compare(this.getChange()) > 0 ? OB.I18N.formatCurrency(this.getChange()) : null,
         'overpayment': OB.DEC.compare(OB.DEC.sub(pay, total)) > 0 ? OB.I18N.formatCurrency(OB.DEC.sub(pay, total)) : null,
         'isReturn': isReturn,
-        'isNegative': (this.get('gross') < 0 || (this.get('gross') > 0 && this.get('orderType') === 3)) ? true : false,
+        'isNegative': (this.get('gross') < 0 || (this.get('gross') > 0 && this.get('orderType') === 3 && (!this.get('isPartiallyDelivered') || (this.get('isPartiallyDelivered') && this.get('isDelivererdGreaterThanGross'))))) ? true : false,
         'changeAmt': this.getChange(),
         'pendingAmt': OB.DEC.compare(OB.DEC.sub(pay, total)) >= 0 ? OB.DEC.Zero : OB.DEC.sub(total, pay),
         'payments': this.get('payments')
@@ -895,6 +901,7 @@
       this.set('openDrawer', false);
       this.set('totalamount', null);
       this.set('approvals', []);
+      this.set('isPartiallyDelivered', false);
     },
 
     clearWith: function (_order) {
@@ -919,6 +926,7 @@
       this.set('isPaid', _order.get('isPaid'));
       this.set('paidOnCredit', _order.get('paidOnCredit'));
       this.set('isLayaway', _order.get('isLayaway'));
+      this.set('isPartiallyDelivered', _order.get('isPartiallyDelivered'));
       if (!_order.get('isEditable')) {
         // keeping it no editable as much as possible, to prevent
         // modifications to trigger editable events incorrectly
@@ -3506,6 +3514,7 @@
       order.set('isPaid', false);
       order.set('paidOnCredit', false);
       order.set('isLayaway', false);
+      order.set('isPartiallyDelivered', false);
       order.set('taxes', {});
 
       var nextDocumentno = OB.MobileApp.model.getNextDocumentno();
@@ -3590,7 +3599,9 @@
               order.set('gross', model.totalamount);
               order.set('net', model.totalNetAmount);
 
-              var linepos = 0;
+              var linepos = 0,
+                  hasDeliveredProducts = false,
+                  hasNotDeliveredProducts = false;
               _.each(model.receiptLines, function (iter) {
                 var price;
                 iter.linepos = linepos;
@@ -3690,6 +3701,15 @@
                   price = OB.DEC.number(iter.baseNetUnitPrice);
                 }
 
+                if (!iter.remainingQuantity) {
+                  hasNotDeliveredProducts = true;
+                } else {
+                  hasDeliveredProducts = true;
+                  if (iter.remainingQuantity < iter.quantity) {
+                    hasNotDeliveredProducts = true;
+                  }
+                }
+
                 OB.Dal.get(OB.Model.Product, iter.id, function (product) {
                   addLineForProduct(product);
                 }, null, function () {
@@ -3710,6 +3730,24 @@
                 });
                 linepos++;
               });
+              order.set('isPartiallyDelivered', hasDeliveredProducts && hasNotDeliveredProducts ? true : false);
+              if (hasDeliveredProducts && !hasNotDeliveredProducts) {
+                order.set('isFullyDelivered', true);
+              }
+              if (order.get('isPartiallyDelivered')) {
+                var partiallyPaid = 0;
+                _.each(_.filter(order.get('receiptLines'), function (reciptLine) {
+                  return reciptLine.remainingQuantity;
+                }), function (deliveredLine) {
+                  partiallyPaid += deliveredLine.remainingQuantity * deliveredLine.unitPrice;
+                });
+                if (partiallyPaid) {
+                  order.set('deliveredQuantityAmount', partiallyPaid);
+                }
+                if (order.get('deliveredQuantityAmount') && order.get('deliveredQuantityAmount') > order.get('gross')) {
+                  order.set('isDeliveredGreaterThanGross', true);
+                }
+              }
               //order.set('payments', model.receiptPayments);
               payments = new PaymentLineList();
               _.each(model.receiptPayments, function (iter) {

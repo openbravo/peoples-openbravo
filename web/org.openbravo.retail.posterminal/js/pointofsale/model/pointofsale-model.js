@@ -758,7 +758,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
               cancelLayawayObj.negativeDocNo = docNo;
               cancelLayawayObj.orderId = receipt.get('id');
               cancelLayawayObj.payments = JSON.parse(JSON.stringify(receipt.get('payments')));
-              cancelLayawayObj.gross = -receipt.get('gross');
+              cancelLayawayObj.gross = receipt.getPaymentStatus().isNegative ? OB.DEC.mul(receipt.get('gross'), -1) : receipt.get('gross');
               cancelLayawayObj.paidOnCredit = receipt.get("paidOnCredit");
               cancelLayawayObj.posTerminal = receipt.get("posTerminal");
               cancelLayawayObj.payment = receipt.get("payment");
@@ -769,10 +769,13 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
               cancelLayawayObj.paidOnCredit = receipt.get("paidOnCredit");
               cancelLayawayObj.defaultPaymentType = receipt.get("defaultPaymentType");
               cancelLayawayObj.timezoneOffset = new Date().getTimezoneOffset();
+              if (receipt.get('deliveredQuantityAmount')) {
+                cancelLayawayObj.deliveredQuantityAmount = OB.I18N.formatCurrency(receipt.getDeliveredQuantityAmount());
+              }
 
               cancelLayawayObj.payments.forEach(function (payment) {
-                payment.origAmount = -payment.origAmount;
-                payment.paid = -payment.paid;
+                payment.origAmount = receipt.getPaymentStatus().isNegative ? OB.DEC.mul(payment.origAmount, -1) : payment.origAmount;
+                payment.paid = receipt.getPaymentStatus().isNegative ? OB.DEC.mul(payment.paid, -1) : payment.paid;
               });
 
               cancelLayawayModel.set('json', JSON.stringify(cancelLayawayObj));
