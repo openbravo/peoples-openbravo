@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014 Openbravo SLU
+ * All portions are Copyright (C) 2014-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -23,6 +23,7 @@ import java.math.BigDecimal;
 import java.util.Map;
 
 import org.codehaus.jettison.json.JSONObject;
+import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
@@ -46,8 +47,10 @@ public class AddTransactionOnChangePaymentActionHandler extends BaseActionHandle
     try {
       OBContext.setAdminMode(true);
       final JSONObject jsonData = new JSONObject(data);
+      String description = jsonData.getString("strDescription");
       if (jsonData.isNull("strPaymentId")) {
-        result.put("description", "");
+        description = FIN_Utility.getFinAccTransactionDescription(description, "", "");
+        result.put("description", description);
         result.put("depositamt", BigDecimal.ZERO);
         result.put("paymentamt", BigDecimal.ZERO);
       } else {
@@ -65,7 +68,9 @@ public class AddTransactionOnChangePaymentActionHandler extends BaseActionHandle
           result.put("cBpartnerId", payment.getBusinessPartner().getId());
         }
         if (payment.getDescription() != null) {
-          result.put("description", payment.getDescription());
+          description = FIN_Utility.getFinAccTransactionDescription(description, "",
+              payment.getDescription());
+          result.put("description", description);
         }
       }
     } catch (Exception e) {

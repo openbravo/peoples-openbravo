@@ -1583,4 +1583,32 @@ public class FIN_Utility {
 
     return (FinAccPaymentMethod) qry.uniqueResult();
   }
+
+  /**
+   * Appends existing Financial Account Transaction description with either GL Item Description or
+   * Payment description in a new line
+   * 
+   * @param description
+   * @param descriptionToAppend
+   * @return returnDescription
+   */
+
+  public static String getFinAccTransactionDescription(String description,
+      String removeDescription, String appendDescription) {
+    String returnDescription = description;
+    if (description != null && !description.equals("null") && !StringUtils.isBlank(description)) {
+      if (!StringUtils.isBlank(removeDescription) && description.indexOf(removeDescription) != -1) {
+        returnDescription = returnDescription.substring(0, description.indexOf(removeDescription))
+            + appendDescription;
+      } else {
+        if (returnDescription.indexOf("\n") != -1) {
+          returnDescription = returnDescription.substring(0, returnDescription.indexOf("\n"));
+        }
+        returnDescription = returnDescription + "\n" + appendDescription;
+      }
+    } else {
+      returnDescription = appendDescription;
+    }
+    return returnDescription;
+  }
 }
