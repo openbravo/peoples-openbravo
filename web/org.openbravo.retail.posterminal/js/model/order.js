@@ -1632,7 +1632,6 @@
             OB.Dal.saveTemporally(location, function () {
               businessPartner.set('locationModel', location);
               me.set('bp', businessPartner);
-              me.save();
             }, function () {
               OB.error(arguments);
             }, true);
@@ -1648,7 +1647,6 @@
           });
           OB.Dal.saveTemporally(businessPartner.get('locationModel'), function () {
             me.set('bp', businessPartner);
-            me.save();
           }, function () {
             OB.error(arguments);
           }, true);
