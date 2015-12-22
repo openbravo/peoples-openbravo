@@ -22,6 +22,7 @@ import java.math.BigDecimal;
 
 import javax.servlet.ServletException;
 
+import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
@@ -35,8 +36,10 @@ public class SE_Payment_Transaction extends SimpleCallout {
     try {
       final String strPaymentId = info.getStringParameter("inpfinPaymentId", IsIDFilter.instance);
       final String strcGlitemId = info.getStringParameter("inpcGlitemId", IsIDFilter.instance);
+      String description = info.getStringParameter("inpdescription", null);
       if ("".equals(strPaymentId) && "".equals(strcGlitemId)) {
-        info.addResult("inpdescription", "");
+        description = FIN_Utility.getFinAccTransactionDescription(description, "", "");
+        info.addResult("inpdescription", description);
         info.addResult("inpdepositamt", BigDecimal.ZERO);
         info.addResult("inppaymentamt", BigDecimal.ZERO);
       }
@@ -59,7 +62,9 @@ public class SE_Payment_Transaction extends SimpleCallout {
         info.addResult("inpcBpartnerId", payment.getBusinessPartner().getId());
       }
       if (payment.getDescription() != null) {
-        info.addResult("inpdescription", payment.getDescription());
+        description = FIN_Utility.getFinAccTransactionDescription(description, "",
+            payment.getDescription());
+        info.addResult("inpdescription", description);
       }
     } catch (Exception e) {
       return;
