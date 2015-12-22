@@ -2891,7 +2891,7 @@
       this.set('oldId', this.get('id'));
       this.set('id', null);
       this.set('isQuotation', false);
-      this.set('orderType', OB.MobileApp.model.get('terminal').terminalType.layawayorder || OB.MobileApp.model.get('payments').length <= 0 ? 2 : 0);
+      this.set('orderType', OB.MobileApp.model.get('terminal').terminalType.layawayorder ? 2 : 0);
       this.set('generateInvoice', OB.MobileApp.model.get('terminal').terminalType.generateInvoice);
       this.set('documentType', OB.MobileApp.model.get('terminal').terminalType.documentType);
       this.set('createdBy', OB.MobileApp.model.get('orgUserId'));
@@ -4381,7 +4381,7 @@
       order.set('createdBy', OB.MobileApp.model.get('orgUserId'));
       order.set('updatedBy', OB.MobileApp.model.get('orgUserId'));
       order.set('documentType', OB.MobileApp.model.get('terminal').terminalType.documentType);
-      order.set('orderType', (OB.MobileApp.model.get('terminal').terminalType.layawayorder || OB.MobileApp.model.get('payments').length <= 0) ? 2 : 0); // 0: Sales order, 1: Return order, 2: Layaway, 3: Void Layaway
+      order.set('orderType', OB.MobileApp.model.get('terminal').terminalType.layawayorder ? 2 : 0); // 0: Sales order, 1: Return order, 2: Layaway, 3: Void Layaway
       order.set('generateInvoice', false);
       order.set('isQuotation', false);
       order.set('oldId', null);
