@@ -792,3 +792,32 @@ enyo.kind({
     }
   }
 });
+
+enyo.kind({
+  name: 'OB.UI.MenuDisableEnableRFIDReader',
+  kind: 'OB.UI.MenuAction',
+  permission: 'OBPOS_retail.disableEnableRFIDReader',
+  i18nLabel: 'OBPOS_DisableRFIDReader',
+  tap: function () {
+    this.inherited(arguments);
+    if (this.disabled) {
+      return true;
+    }
+    if (OB.MobileApp.model.hasPermission(this.permission)) {
+      if (OB.MobileApp.model.isRFIDEnabled) {
+        this.setLabel(OB.I18N.getLabel('OBPOS_EnableRFIDReader'));
+        OB.MobileApp.model.isRFIDEnabled = false;
+        OB.UTIL.disconnectRFIDDevice();
+      } else {
+        this.setLabel(OB.I18N.getLabel('OBPOS_DisableRFIDReader'));
+        OB.MobileApp.model.isRFIDEnabled = true;
+        OB.UTIL.connectRFIDDevice();
+      }
+    }
+  },
+  init: function (model) {
+    if (!OB.MobileApp.model.get('terminal').terminalType.userfid) {
+      this.hide();
+    }
+  }
+});

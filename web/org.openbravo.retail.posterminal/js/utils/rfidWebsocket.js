@@ -22,6 +22,7 @@ OB.UTIL.startRfidWebsocket = function startRfidWebsocket(websocketServerLocation
       OB.info(OB.I18N.getLabel('OBPOS_ConnectedWithRFID'));
     }
     barcodeActionHandler = new OB.UI.BarcodeActionHandler();
+    OB.MobileApp.model.isRFIDEnabled = true;
   };
 
   // Called when a message is received from server
@@ -126,6 +127,18 @@ OB.UTIL.processRemainingCodes = function (order) {
   }
   this.waitForConnection(function () {
     OB.UTIL.rfidWebsocket.send('send:' + JSON.stringify(order));
+  }, 1000);
+};
+
+OB.UTIL.disconnectRFIDDevice = function () {
+  this.waitForConnection(function () {
+    OB.UTIL.rfidWebsocket.send('disconnect:');
+  }, 1000);
+};
+
+OB.UTIL.connectRFIDDevice = function () {
+  this.waitForConnection(function () {
+    OB.UTIL.rfidWebsocket.send('connect:');
   }, 1000);
 };
 
