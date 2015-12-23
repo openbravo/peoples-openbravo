@@ -42,19 +42,20 @@ public class GLItemTransactionActionHandler extends BaseActionHandler {
       OBContext.setAdminMode(true);
       final JSONObject jsonData = new JSONObject(data);
       String description = jsonData.getString("strDescription");
+      final String glitemPrefix = OBMessageUtils.messageBD("APRM_GLItem");
       if (jsonData.isNull("strGLItemId")) {
-        description = FIN_Utility.getFinAccTransactionDescription(description, "", "");
+        description = FIN_Utility.getFinAccTransactionDescription(description, "\n" + glitemPrefix,
+            "");
+        description = FIN_Utility.getFinAccTransactionDescription(description, glitemPrefix, "");
         result.put("description", description);
       } else {
         final String strGLItemId = jsonData.getString("strGLItemId");
         if (StringUtils.isNotBlank(strGLItemId)) {
           final GLItem glItem = OBDal.getInstance().get(GLItem.class, strGLItemId);
           if (glItem != null) {
-            String glItemDescription = OBMessageUtils.messageBD("APRM_GLItem") + ": "
-                + glItem.getName();
-            String oldGLItemDescription = OBMessageUtils.messageBD("APRM_GLItem");
-            description = FIN_Utility.getFinAccTransactionDescription(description,
-                oldGLItemDescription, glItemDescription);
+            String glItemDescription = glitemPrefix + ": " + glItem.getName();
+            description = FIN_Utility.getFinAccTransactionDescription(description, glitemPrefix,
+                glItemDescription);
           }
         }
         result.put("description", description);

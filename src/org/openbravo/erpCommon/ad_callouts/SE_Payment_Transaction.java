@@ -22,9 +22,12 @@ import java.math.BigDecimal;
 
 import javax.servlet.ServletException;
 
+import org.apache.commons.lang.StringUtils;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.filter.IsIDFilter;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
 
 public class SE_Payment_Transaction extends SimpleCallout {
@@ -34,15 +37,37 @@ public class SE_Payment_Transaction extends SimpleCallout {
   @Override
   protected void execute(CalloutInfo info) throws ServletException {
     try {
+      OBContext.setAdminMode(true);
       final String strPaymentId = info.getStringParameter("inpfinPaymentId", IsIDFilter.instance);
       final String strcGlitemId = info.getStringParameter("inpcGlitemId", IsIDFilter.instance);
       String description = info.getStringParameter("inpdescription", null);
+
       if ("".equals(strPaymentId) && "".equals(strcGlitemId)) {
-        description = FIN_Utility.getFinAccTransactionDescription(description, "", "");
-        info.addResult("inpdescription", description);
         info.addResult("inpdepositamt", BigDecimal.ZERO);
         info.addResult("inppaymentamt", BigDecimal.ZERO);
       }
+
+      // Delete only previous Payment description. This can only work when the transaction has
+      // been already saved and we are changing the payment afterwards
+      if (StringUtils.isBlank(strPaymentId)) {
+        String descToRemove = "";
+        final String strTransactionId = info.getStringParameter("Fin_Finacc_Transaction_ID", null);
+        if (StringUtils.isNotBlank(strTransactionId)) {
+          final FIN_Payment oldPayment = OBDal.getInstance()
+              .get(FIN_FinaccTransaction.class, strTransactionId).getFinPayment();
+          if (oldPayment != null) {
+            descToRemove = oldPayment.getDescription();
+            if (StringUtils.isNotBlank(descToRemove)) {
+              description = FIN_Utility.getFinAccTransactionDescription(description, "\n"
+                  + descToRemove, "");
+            }
+          }
+        }
+
+        description = FIN_Utility.getFinAccTransactionDescription(description, descToRemove, "");
+        info.addResult("inpdescription", description);
+      }
+
       FIN_Payment payment = OBDal.getInstance().get(FIN_Payment.class, strPaymentId);
       if ((payment.isReceipt() && payment.getAmount().compareTo(BigDecimal.ZERO) > 0)
           || (!payment.isReceipt() && payment.getAmount().compareTo(BigDecimal.ZERO) < 0)) {
@@ -61,6 +86,7 @@ public class SE_Payment_Transaction extends SimpleCallout {
       if (payment.getBusinessPartner() != null) {
         info.addResult("inpcBpartnerId", payment.getBusinessPartner().getId());
       }
+      // Write description for selected Payment
       if (payment.getDescription() != null) {
         description = FIN_Utility.getFinAccTransactionDescription(description, "",
             payment.getDescription());
@@ -68,6 +94,8 @@ public class SE_Payment_Transaction extends SimpleCallout {
       }
     } catch (Exception e) {
       return;
+    } finally {
+      OBContext.restorePreviousMode();
     }
   }
 }

@@ -20,13 +20,13 @@ package org.openbravo.erpCommon.ad_callouts;
 
 import javax.servlet.ServletException;
 
+import org.apache.commons.lang.StringUtils;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.filter.IsIDFilter;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
-import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.financialmgmt.gl.GLItem;
-import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 
 public class SE_GLItem_Transaction extends SimpleCallout {
 
@@ -34,45 +34,35 @@ public class SE_GLItem_Transaction extends SimpleCallout {
 
   @Override
   protected void execute(CalloutInfo info) throws ServletException {
-    try {
-      final String strGLItemId = info.getStringParameter("inpcGlitemId", IsIDFilter.instance);
-      final String strTransactionId = info.getStringParameter("Fin_Finacc_Transaction_ID",
-          IsIDFilter.instance);
-      String description = info.getStringParameter("inpdescription", null);
-      if ("".equals(strGLItemId)) {
-        description = FIN_Utility.getFinAccTransactionDescription(description, "", "");
-        info.addResult("inpdescription", description);
-      }
-      GLItem glItem = OBDal.getInstance().get(GLItem.class, strGLItemId);
-      String newGlItemString = Utility.messageBD(this, "APRM_GLItem", info.vars.getLanguage())
-          + ": " + glItem.getName();
-      FIN_FinaccTransaction transaction = OBDal.getInstance().get(FIN_FinaccTransaction.class,
-          strTransactionId);
-      if (transaction != null) {
-        GLItem oldGLItem = transaction.getGLItem();
-        description = transaction.getDescription();
-        String oldGlItemString = Utility.messageBD(this, "APRM_GLItem", info.vars.getLanguage())
-            + ": " + oldGLItem.getName();
+    final String strGLItemId = info.getStringParameter("inpcGlitemId", IsIDFilter.instance);
+    String description = info.getStringParameter("inpdescription", null);
 
-        if (description != null && !description.isEmpty()) {
-          description = description.indexOf(oldGlItemString) != -1 ? (description
-              .indexOf(oldGlItemString) == 0 ? "" : description.substring(0,
-              description.indexOf(oldGlItemString) - 1)
-              + "\n")
-              + newGlItemString
-              + description.substring(
-                  oldGlItemString.length() + description.indexOf(oldGlItemString),
-                  description.length()) : description;
-        }
-        description = FIN_Utility.getFinAccTransactionDescription(description, "", newGlItemString);
-      } else {
-        String glItemDescription = OBMessageUtils.messageBD("APRM_GLItem");
-        description = FIN_Utility.getFinAccTransactionDescription(description, glItemDescription,
-            newGlItemString);
+    try {
+      OBContext.setAdminMode(true);
+
+      final String glItemDescPrefix = OBMessageUtils.messageBD("APRM_GLItem");
+
+      // Delete only previous GL Item description
+      if (StringUtils.isBlank(strGLItemId)) {
+        description = FIN_Utility.getFinAccTransactionDescription(description, "\n"
+            + glItemDescPrefix, "");
+        description = FIN_Utility
+            .getFinAccTransactionDescription(description, glItemDescPrefix, "");
       }
+
+      // Write description for selected GL Item
+      final GLItem glItem = OBDal.getInstance().get(GLItem.class, strGLItemId);
+      if (glItem != null) {
+        final String newGlItemDesc = glItemDescPrefix + ": " + glItem.getName();
+        description = FIN_Utility.getFinAccTransactionDescription(description, glItemDescPrefix,
+            newGlItemDesc);
+      }
+
       info.addResult("inpdescription", description);
     } catch (Exception e) {
       return;
+    } finally {
+      OBContext.restorePreviousMode();
     }
   }
 }
