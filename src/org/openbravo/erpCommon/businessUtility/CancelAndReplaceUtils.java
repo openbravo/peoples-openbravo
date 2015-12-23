@@ -115,9 +115,9 @@ public class CancelAndReplaceUtils {
     ScrollableResults orderLines = null;
     try {
 
-      boolean webPOSExecution = false;
-      if (jsonorder != null) {
-        webPOSExecution = true;
+      boolean triggersDisabled = false;
+      if (jsonorder != null && replaceOrder) {
+        triggersDisabled = true;
       }
 
       Order newOrder = null;
@@ -136,7 +136,7 @@ public class CancelAndReplaceUtils {
       }
 
       // Added check in case Cancel and Replace button is hit more than once
-      if (!webPOSExecution && oldOrder.isCancelled()) {
+      if (jsonorder == null && oldOrder.isCancelled()) {
         throw new OBException("@APRM_Order@ " + oldOrder.getDocumentNo() + " @IsCancelled@");
       }
 
@@ -146,12 +146,12 @@ public class CancelAndReplaceUtils {
           oldOrder.getOrganization().getClient().getId());
 
       // Release old reservations
-      if (!webPOSExecution) {
+      if (!triggersDisabled) {
         releaseOldReservations(oldOrder);
       }
 
       // Get documentNo for the inverse Order Header coming from jsonorder, if exists
-      JSONObject negativeDocumentNoJSON = webPOSExecution && jsonorder != null
+      JSONObject negativeDocumentNoJSON = triggersDisabled && jsonorder != null
           && jsonorder.has("negativeDocNo") ? jsonorder.getJSONObject("negativeDocNo") : null;
       String negativeDocNo = negativeDocumentNoJSON != null
           && negativeDocumentNoJSON.has("documentNo")
@@ -159,7 +159,7 @@ public class CancelAndReplaceUtils {
           .getString("documentNo") : null;
 
       // Create inverse Order header
-      Order inverseOrder = createOrder(oldOrder, negativeDocNo, webPOSExecution);
+      Order inverseOrder = createOrder(oldOrder, negativeDocNo, triggersDisabled);
 
       // Define netting goods shipment and its lines
       ShipmentInOut nettingGoodsShipment = null;
@@ -172,7 +172,7 @@ public class CancelAndReplaceUtils {
         OrderLine oldOrderLine = (OrderLine) orderLines.get(0);
 
         // Create inverse Order line
-        OrderLine inverseOrderLine = createOrderLine(oldOrderLine, inverseOrder, webPOSExecution);
+        OrderLine inverseOrderLine = createOrderLine(oldOrderLine, inverseOrder, triggersDisabled);
 
         // Get Shipment lines of old order line
         OBCriteria<ShipmentInOutLine> goodsShipmentLineCriteria = OBDal.getInstance()
@@ -192,7 +192,7 @@ public class CancelAndReplaceUtils {
           createNettingGoodsShipment = false;
         }
 
-        if (createNettingGoodsShipment) {
+        if (createNettingGoodsShipment && inverseOrderLine != null) {
           // Create Netting goods shipment Header
           if (nettingGoodsShipment == null) {
             nettingGoodsShipment = createShipment(oldOrder, goodsShipmentLineList);
@@ -213,14 +213,14 @@ public class CancelAndReplaceUtils {
           if (movementQty.compareTo(BigDecimal.ZERO) != 0) {
             newGoodsShipmentLine1 = createShipmentLine(nettingGoodsShipment,
                 goodsShipmentLineList.size() > 0 ? goodsShipmentLineList.get(0) : null,
-                oldOrderLine, lineNoCounter++, movementQty, updateStockStatement, webPOSExecution);
+                oldOrderLine, lineNoCounter++, movementQty, updateStockStatement, triggersDisabled);
           }
           // Create Netting goods shipment Line for the inverse order line
           movementQty = inverseOrderLine.getOrderedQuantity().subtract(
               inverseOrderLine.getDeliveredQuantity());
           if (movementQty.compareTo(BigDecimal.ZERO) != 0) {
             createShipmentLine(nettingGoodsShipment, newGoodsShipmentLine1, inverseOrderLine,
-                lineNoCounter++, movementQty, updateStockStatement, webPOSExecution);
+                lineNoCounter++, movementQty, updateStockStatement, triggersDisabled);
           }
 
           if (replaceOrder) {
@@ -239,7 +239,7 @@ public class CancelAndReplaceUtils {
               OBDal.getInstance().flush();
               if (movementQty.compareTo(BigDecimal.ZERO) != 0) {
                 createShipmentLine(nettingGoodsShipment, newGoodsShipmentLine1, newOrderLine,
-                    lineNoCounter++, movementQty, updateStockStatement, webPOSExecution);
+                    lineNoCounter++, movementQty, updateStockStatement, triggersDisabled);
               }
               if (newOrderLineDeliveredQty == null
                   || newOrderLineDeliveredQty.compareTo(BigDecimal.ZERO) == 0) {
@@ -262,8 +262,10 @@ public class CancelAndReplaceUtils {
         OBDal.getInstance().save(oldOrderLine);
 
         // Set inverse order delivered quantity to ordered quantity
-        inverseOrderLine.setDeliveredQuantity(inverseOrderLine.getOrderedQuantity());
-        OBDal.getInstance().save(inverseOrderLine);
+        if (inverseOrderLine != null) {
+          inverseOrderLine.setDeliveredQuantity(inverseOrderLine.getOrderedQuantity());
+          OBDal.getInstance().save(inverseOrderLine);
+        }
       }
       if (nettingGoodsShipment != null) {
         processShipment(nettingGoodsShipment);
@@ -287,7 +289,7 @@ public class CancelAndReplaceUtils {
       // Set Stardard Order to new order document type
 
       // Complete new order and generate good shipment and sales invoice
-      if (!webPOSExecution && replaceOrder) {
+      if (!triggersDisabled && replaceOrder) {
         newOrder.setDocumentStatus("DR");
         OBDal.getInstance().save(newOrder);
         callCOrderPost(newOrder);
@@ -301,7 +303,7 @@ public class CancelAndReplaceUtils {
       // Payment Creation
       // Get the payment schedule detail of the oldOrder
       createPayments(oldOrder, newOrder, inverseOrder, jsonorder, useOrderDocumentNoForRelatedDocs,
-          replaceOrder, webPOSExecution);
+          replaceOrder, triggersDisabled);
 
     } catch (Exception e1) {
       try {
@@ -326,14 +328,14 @@ public class CancelAndReplaceUtils {
     CallStoredProcedure.getInstance().call(procedureName, parameters, null, true, false);
   }
 
-  private static Order createOrder(Order oldOrder, String documentNo, boolean webPOSExecution) {
+  private static Order createOrder(Order oldOrder, String documentNo, boolean triggersDisabled) {
     Order inverseOrder = (Order) DalUtil.copy(oldOrder, false, true);
     // Change order values
     inverseOrder.setPosted("N");
     inverseOrder.setProcessed(false);
     inverseOrder.setDocumentStatus("DR");
     inverseOrder.setDocumentAction("CO");
-    if (webPOSExecution) {
+    if (triggersDisabled) {
       inverseOrder.setGrandTotalAmount(oldOrder.getGrandTotalAmount().negate());
       inverseOrder.setSummedLineAmount(oldOrder.getSummedLineAmount().negate());
     } else {
@@ -354,7 +356,7 @@ public class CancelAndReplaceUtils {
 
     // Copy old order taxes to inverse, it is done when is executed from Web POS because triggers
     // are disabled
-    if (webPOSExecution) {
+    if (triggersDisabled) {
       createOrderTaxes(oldOrder, inverseOrder);
     }
 
@@ -376,24 +378,33 @@ public class CancelAndReplaceUtils {
   }
 
   protected static OrderLine createOrderLine(OrderLine oldOrderLine, Order inverseOrder,
-      boolean webPOSExecution) {
+      boolean triggersDisabled) {
+    if (oldOrderLine.getDeliveredQuantity().compareTo(oldOrderLine.getOrderedQuantity()) == 0) {
+      return null;
+    }
     OrderLine inverseOrderLine = (OrderLine) DalUtil.copy(oldOrderLine, false, true);
     inverseOrderLine.setSalesOrder(inverseOrder);
-    BigDecimal inverseOrderedQuantity = oldOrderLine.getOrderedQuantity().negate();
-    inverseOrderLine.setOrderedQuantity(inverseOrderedQuantity);
-    if (webPOSExecution) {
+    if (oldOrderLine.getDeliveredQuantity().compareTo(BigDecimal.ZERO) == 1) {
+      BigDecimal inverseOrderedQuantity = oldOrderLine.getOrderedQuantity()
+          .subtract(oldOrderLine.getDeliveredQuantity()).negate();
+      inverseOrderLine.setOrderedQuantity(inverseOrderedQuantity);
+    } else {
+      inverseOrderLine.setOrderedQuantity(inverseOrderLine.getOrderedQuantity().negate());
+    }
+    if (triggersDisabled) {
       inverseOrderLine.setLineGrossAmount(oldOrderLine.getLineGrossAmount().negate());
       inverseOrderLine.setLineNetAmount(oldOrderLine.getLineNetAmount().negate());
     }
     // Set inverse order delivered quantity zero
     inverseOrderLine.setDeliveredQuantity(BigDecimal.ZERO);
     inverseOrderLine.setReservedQuantity(BigDecimal.ZERO);
+
     inverseOrder.getOrderLineList().add(inverseOrderLine);
     OBDal.getInstance().save(inverseOrderLine);
 
     // Copy old order taxes to inverse, it is done when is executed from Web POS because triggers
     // are disabled
-    if (webPOSExecution) {
+    if (triggersDisabled) {
       createOrderLineTaxes(oldOrderLine, inverseOrderLine, inverseOrder);
     }
 
@@ -403,7 +414,8 @@ public class CancelAndReplaceUtils {
   protected static void createOrderLineTaxes(OrderLine oldOrderLine, OrderLine inverseOrderLine,
       Order inverseOrder) {
     for (OrderLineTax orderLineTax : oldOrderLine.getOrderLineTaxList()) {
-      OrderLineTax inverseOrderLineTax = (OrderLineTax) DalUtil.copy(orderLineTax, false, true);
+      final OrderLineTax inverseOrderLineTax = (OrderLineTax) DalUtil.copy(orderLineTax, false,
+          true);
       BigDecimal inverseTaxAmount = orderLineTax.getTaxAmount().negate();
       BigDecimal inverseTaxableAmount = orderLineTax.getTaxableAmount().negate();
       inverseOrderLineTax.setTaxAmount(inverseTaxAmount);
@@ -481,7 +493,7 @@ public class CancelAndReplaceUtils {
 
   protected static ShipmentInOutLine createShipmentLine(ShipmentInOut nettingGoodsShipment,
       ShipmentInOutLine nettingGoodsShipmentLine, OrderLine orderLine, long lineNoCounter,
-      BigDecimal movementQty, CallableStatement updateStockStatement, boolean webPOSExecution) {
+      BigDecimal movementQty, CallableStatement updateStockStatement, boolean triggersDisabled) {
     ShipmentInOutLine newGoodsShipmentLine = null;
     if (nettingGoodsShipmentLine == null) {
       newGoodsShipmentLine = OBProvider.getInstance().get(ShipmentInOutLine.class);
@@ -501,7 +513,7 @@ public class CancelAndReplaceUtils {
     newGoodsShipmentLine.setMovementQuantity(movementQty);
 
     // Create Material Transaction record
-    createMTransaction(newGoodsShipmentLine, updateStockStatement, webPOSExecution);
+    createMTransaction(newGoodsShipmentLine, updateStockStatement, triggersDisabled);
 
     OBDal.getInstance().save(newGoodsShipmentLine);
     return newGoodsShipmentLine;
@@ -585,7 +597,7 @@ public class CancelAndReplaceUtils {
   }
 
   protected static void createMTransaction(ShipmentInOutLine line,
-      CallableStatement updateStockStatement, boolean webPOSExecution) {
+      CallableStatement updateStockStatement, boolean triggersDisabled) {
     if (line.getProduct().getProductType().equals("I") && line.getProduct().isStocked()) {
       // Stock is changed only for stocked products of type "Item"
       MaterialTransaction transaction = OBProvider.getInstance().get(MaterialTransaction.class);
@@ -603,7 +615,7 @@ public class CancelAndReplaceUtils {
 
       // Execute M_UPDATE_INVENTORY stored procedure, it is done when is executed from Web POS
       // because triggers are disabled
-      if (webPOSExecution) {
+      if (triggersDisabled) {
         updateInventory(transaction, updateStockStatement);
       }
 
@@ -671,7 +683,7 @@ public class CancelAndReplaceUtils {
 
   protected static void createPayments(Order oldOrder, Order newOrder, Order inverseOrder,
       JSONObject jsonorder, boolean useOrderDocumentNoForRelatedDocs, boolean replaceOrder,
-      boolean webPOSExecution) {
+      boolean triggersDisabled) {
     try {
       FIN_PaymentSchedule paymentSchedule;
       OBCriteria<FIN_PaymentSchedule> paymentScheduleCriteria = OBDal.getInstance().createCriteria(
@@ -714,7 +726,7 @@ public class CancelAndReplaceUtils {
             String description = getPaymentDescription();
             description += ": " + inverseOrder.getDocumentNo();
 
-            if (!webPOSExecution) {
+            if (!triggersDisabled) {
               // Only for BackEnd WorkFlow
               // Get the payment schedule of the new order to check the outstanding amount, could
               // have been automatically paid on C_ORDER_POST if is automatically invoiced and the
@@ -771,7 +783,7 @@ public class CancelAndReplaceUtils {
           // completely.
           if (paymentScheduleDetailList.size() == 0) {
             finishOrderPayments(jsonorder, oldOrder, inverseOrder, paymentSchedule,
-                useOrderDocumentNoForRelatedDocs, webPOSExecution);
+                useOrderDocumentNoForRelatedDocs, triggersDisabled);
           }
         } else {
           // To only cancel a layaway two payments must be added to fully pay the old order and add
@@ -781,7 +793,7 @@ public class CancelAndReplaceUtils {
           orderLoader.handlePayments(jsonorder, inverseOrder, null, false);
 
           finishOrderPayments(jsonorder, oldOrder, inverseOrder, paymentSchedule,
-              useOrderDocumentNoForRelatedDocs, webPOSExecution);
+              useOrderDocumentNoForRelatedDocs, triggersDisabled);
         }
 
       } else {
@@ -803,12 +815,12 @@ public class CancelAndReplaceUtils {
   // Create payments to pay complete fully the order, in the inverse order and old order
   private static void finishOrderPayments(JSONObject jsonorder, Order oldOrder, Order inverseOrder,
       FIN_PaymentSchedule paymentSchedule, boolean useOrderDocumentNoForRelatedDocs,
-      boolean webPOSExecution) throws Exception {
+      boolean triggersDisabled) throws Exception {
     FIN_Payment newPayment = null;
     String paymentDocumentNo = null;
     FIN_PaymentMethod paymentPaymentMethod = null;
     FIN_FinancialAccount financialAccount = null;
-    if (webPOSExecution && jsonorder != null) {
+    if (jsonorder != null) {
       paymentPaymentMethod = (FIN_PaymentMethod) jsonorder.getJSONObject("defaultPaymentType").get(
           "paymentMethod");
       financialAccount = (FIN_FinancialAccount) jsonorder.getJSONObject("defaultPaymentType").get(
