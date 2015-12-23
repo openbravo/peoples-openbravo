@@ -107,7 +107,8 @@ public class LoginHandler extends HttpBaseServlet {
             errorMsg.setType("Error");
             errorMsg.setTitle(title);
             errorMsg.setMessage(msg);
-            throw new AuthenticationExpiryPasswordException("Same password than old one", errorMsg);
+            throw new AuthenticationExpiryPasswordException(Utility.messageBD(myPool,
+                "CPSamePasswordThanOld", vars.getLanguage()), errorMsg);
           }
           AuthenticationManager authManager = AuthenticationManager.getAuthenticationManager(this);
 

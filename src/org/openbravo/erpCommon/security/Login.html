@@ -206,7 +206,6 @@ function buttonOK_click() {
           setLoginMessage('Error', identificationFailureTitle, errorEmptyContent);
         return true;
       }   
-
       disableButton('buttonOK');
       submitXmlHttpRequest(loginResult, document.frmIdentificacion, 'DEFAULT', '../secureApp/LoginHandler.html', false, null, null);
     }
@@ -236,13 +235,12 @@ function buttonOK_click() {
       }
     }
     if (result.resetPassword && document.getElementById('loggedUser').value===''){
-        document.getElementById('loggedUser').value=result.loggedUser;
-        document.getElementById('resetPassword').value=result.resetPassword;
-        document.getElementById('user').value = '';
-        document.getElementById('user').type = 'password';
-        document.getElementById('userlabel').innerHTML = 'New Password';
-        document.getElementById('passwordlabel').innerHTML = 'Confirm Password';
-        setWindowElementFocus('user');
+      document.getElementById('loggedUser').value=result.loggedUser;
+      document.getElementById('resetPassword').value=result.resetPassword;
+      document.getElementById('user').value = '';
+      document.getElementById('user').type = 'password';
+      document.getElementById('userlabel').innerHTML = 'New Password';
+      document.getElementById('passwordlabel').innerHTML = 'Confirm Password';
     }
     if (shouldContinue) {
       try {
@@ -256,6 +254,9 @@ function buttonOK_click() {
       }
       command = result.command || 'DEFAULT';
       submitCommandForm(command, false, null, result.target, target, true);
+    }else if (result.resetPassword){
+      enableButton('buttonOK');
+      setWindowElementFocus('user', 'id');
     } else {
       enableButton('buttonOK');
       setWindowElementFocus('password', 'id');

@@ -95,6 +95,20 @@ public class LoginUtils {
     }
   }
 
+  /**
+   * Returns the last update password date from login and unHashedPassword parameters
+   * 
+   * 
+   * 
+   * @param connectionProvider
+   *          , see the {@link DalConnectionProvider} for an instance of a ConnectionProvider for
+   *          the DAL.
+   * @param login
+   *          the login
+   * @param unHashedPassword
+   *          the password, the unhashed password as it is entered by the user.
+   * @return the last password update date from the user
+   */
   public static Date getUpdatePasswordDate(ConnectionProvider connectionProvider, String login,
       String unHashedPassword) {
     // Gets the expiry password date
@@ -129,6 +143,18 @@ public class LoginUtils {
 
   }
 
+  /**
+   * Returns a boolean indicating if password has been changed for user. The password must be
+   * different from previous one, otherwise method will return false
+   * 
+   * 
+   * 
+   * @param login
+   *          the login
+   * @param unHashedPassword
+   *          the password, the unhashed password as it is entered by the user.
+   * @return true in case that password has changed succesfully, false in other case
+   */
   public static Boolean updatePassword(String login, String unHashedPassword) {
     // Set the Updated password date
     try {
