@@ -359,13 +359,16 @@ enyo.kind({
               order.set('loadedFromServer', true);
               order.set('checked', iter.get('checked'));
               OB.DATA.OrderTaxes(order);
-              order.save();
-              selectedMultiOrders.push(order);
-              if (selectedMultiOrders.length === checkedMultiOrders.length) {
-                me.doSelectMultiOrders({
-                  value: selectedMultiOrders
-                });
-              }
+              order.set('belongsToMultiOrder', true);
+              order.calculateReceipt(function () {
+                selectedMultiOrders.push(order);
+                order.save();
+                if (selectedMultiOrders.length === checkedMultiOrders.length) {
+                  me.doSelectMultiOrders({
+                    value: selectedMultiOrders
+                  });
+                }
+              });
             });
           } else {
             OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorDropDep'));

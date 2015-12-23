@@ -312,10 +312,8 @@ enyo.kind({
 
           return;
         }
-        receipt.calculateTaxes(function () {
-          receipt.trigger('print', receipt, {
-            forcePrint: true
-          });
+        receipt.trigger('print', receipt, {
+          forcePrint: true
         });
         return;
       }
@@ -815,7 +813,11 @@ enyo.kind({
       voidConfirmation = inEvent.payment.get('paymentData').voidConfirmation;
 
       if (voidConfirmation === false) {
-        callVoidTransaction();
+        if (voidTransaction !== undefined) {
+          callVoidTransaction();
+        } else {
+          removeTransaction();
+        }
         return;
       }
 
@@ -823,7 +825,11 @@ enyo.kind({
         label: OB.I18N.getLabel('OBMOBC_LblOk'),
         isConfirmButton: true,
         action: function () {
-          callVoidTransaction();
+          if (voidTransaction !== undefined) {
+            callVoidTransaction();
+          } else {
+            removeTransaction();
+          }
           return true;
         }
       }, {

@@ -188,6 +188,23 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.WindowModel.extend({
   loadModels: function (loadModelsCallback) {
     var me = this;
 
+    function updateCashMgmEvents(paymentMethodList) {
+      var i;
+      var paymentMethodId;
+      for (i = 0; i < me.attributes.cashMgmtDepositEvents.models.length; i++) {
+        paymentMethodId = me.attributes.cashMgmtDepositEvents.models[i].attributes.paymentmethod;
+        if (paymentMethodList.indexOf(paymentMethodId) === -1) {
+          me.attributes.cashMgmtDepositEvents.remove(me.attributes.cashMgmtDepositEvents.at(i));
+        }
+      }
+      for (i = 0; i < me.attributes.cashMgmtDropEvents.models.length; i++) {
+        paymentMethodId = me.attributes.cashMgmtDropEvents.models[i].attributes.paymentmethod;
+        if (paymentMethodList.indexOf(paymentMethodId) === -1) {
+          me.attributes.cashMgmtDropEvents.remove(me.attributes.cashMgmtDropEvents.at(i));
+        }
+      }
+    }
+
     function loadCashup(callback, args) {
       // argument checks
       OB.UTIL.Debug.execute(function () {
@@ -226,6 +243,7 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.WindowModel.extend({
                 paymentMth = OB.MobileApp.model.get('payments').filter(function (payment) {
                   return payment.payment.id === pay.get('paymentmethod_id');
                 })[0].paymentMethod;
+                me.set('listpaymentmethodid', []);
                 if (OB.POS.modelterminal.get('terminal').isslave && paymentMth.isshared) {
                   resolve();
                   return;
@@ -247,6 +265,9 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.WindowModel.extend({
                         }
                       });
                     }
+                    if (me.get('listpaymentmethodid').indexOf(paymentMth.paymentMethod) === -1) {
+                      me.get('listpaymentmethodid').push(paymentMth.paymentMethod);
+                    }
                     me.get('payments').add(pay);
                     resolve();
                   }, reject, pay);
@@ -261,6 +282,7 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.WindowModel.extend({
               paymentsToLoad.push(updatePaymentMethod(pay));
             });
             Promise.all(paymentsToLoad).then(function () {
+              updateCashMgmEvents(me.get('listpaymentmethodid'));
               resolve();
             }, function () {
               OB.error("Could not load the payment method's information");

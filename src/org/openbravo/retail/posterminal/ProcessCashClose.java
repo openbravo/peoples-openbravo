@@ -156,7 +156,7 @@ public class ProcessCashClose extends POSDataSynchronizationProcess implements
     String query = "select searchkey, sum(startingcash), sum(totalDeposits), sum(totalDrops), sum(totalreturns), sum(totalsales) "
         + "from OBPOS_Paymentmethodcashup "
         + "where cashUp.id in :cashUpIds and paymentType.paymentMethod.isshared = 'Y'"
-        + "group by 1";
+        + "group by searchkey";
     final Session session = OBDal.getInstance().getSession();
     final Query paymentQuery = session.createQuery(query);
     paymentQuery.setParameterList("cashUpIds", cashUpIds);

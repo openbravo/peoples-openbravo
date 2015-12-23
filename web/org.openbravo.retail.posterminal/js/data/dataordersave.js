@@ -114,6 +114,8 @@
               isCancelled: true
             });
           }
+          args.context.receipt.setIsCalculateReceiptLockState(false);
+          args.context.receipt.setIsCalculateGrossLockState(false);
           return true;
         }
 

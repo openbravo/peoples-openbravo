@@ -723,13 +723,39 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
           cashUp.at(0).set('isprocessed', 'Y');
 
           OB.Dal.save(cashUp.at(0), function () {
+            var updateNewCashup = function (callback) {
+                var criteria = {
+                  'isprocessed': 'N',
+                  '_orderByClause': 'creationDate desc'
+                };
+                OB.Dal.find(OB.Model.CashUp, criteria, function (cashUp) { //OB.Dal.find success
+                  if (cashUp.length === 0) {
+                    OB.UTIL.initCashUp(function () {
+                      callback();
+                    }, null, true);
+                  } else {
+                    OB.UTIL.deleteCashUps(cashUp);
+                    if (!cashUp.at(0).get('objToSend')) {
+                      OB.UTIL.composeCashupInfo(cashUp, null, function () {
+                        OB.MobileApp.model.runSyncProcess();
+                        callback();
+                      });
+                    } else {
+                      callback();
+                    }
+                  }
+                });
+                };
             var callbackFunc = function () {
                 OB.UTIL.initCashUp(function () {
                   OB.MobileApp.model.runSyncProcess();
                   OB.UTIL.SynchronizationHelper.finished(synchId, 'processAndFinishCashUp');
                   OB.UTIL.calculateCurrentCash();
-                  OB.UTIL.showLoading(false);
-                  me.set('finished', true);
+                  // update and sync the new cashup
+                  updateNewCashup(function () {
+                    OB.UTIL.showLoading(false);
+                    me.set('finished', true);
+                  });
                 }, function () {
                   OB.MobileApp.model.runSyncProcess();
                   OB.UTIL.showLoading(false);

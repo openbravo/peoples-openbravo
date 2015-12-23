@@ -237,12 +237,20 @@ enyo.kind({
         customer: this.model.get('customer')
       });
       this.adjustNames(this.model.get('customer'));
-      var success = this.model.get('customer').saveCustomer();
-      if (success) {
-        goToViewWindow(sw, {
-          customer: OB.UTIL.clone(this.model.get('customer'))
-        });
-      }
+      OB.UTIL.HookManager.executeHooks('OBPOS_BeforeCustomerSave', {
+        customer: this.model.get('customer'),
+        isNew: true
+      }, function (args) {
+        if (args && args.cancellation && args.cancellation === true) {
+          return true;
+        }
+        var success = args.customer.saveCustomer();
+        if (success) {
+          goToViewWindow(sw, {
+            customer: OB.UTIL.clone(args.customer)
+          });
+        }
+      });
     } else {
       var that = this;
       this.model.get('customer').loadById(this.customer.get('id'), function (customer) {
@@ -250,12 +258,20 @@ enyo.kind({
           customer: customer
         });
         that.adjustNames(customer);
-        var success = customer.saveCustomer();
-        if (success) {
-          goToViewWindow(sw, {
-            customer: customer
-          });
-        }
+        OB.UTIL.HookManager.executeHooks('OBPOS_BeforeCustomerSave', {
+          customer: customer,
+          isNew: false
+        }, function (args) {
+          if (args && args.cancellation && args.cancellation === true) {
+            return true;
+          }
+          var success = args.customer.saveCustomer();
+          if (success) {
+            goToViewWindow(sw, {
+              customer: args.customer
+            });
+          }
+        });
       });
     }
   },
