@@ -1595,20 +1595,29 @@ public class FIN_Utility {
 
   public static String getFinAccTransactionDescription(String description,
       String removeDescription, String appendDescription) {
-    String returnDescription = description;
-    if (description != null && !description.equals("null") && !StringUtils.isBlank(description)) {
-      if (!StringUtils.isBlank(removeDescription) && description.indexOf(removeDescription) != -1) {
-        returnDescription = returnDescription.substring(0, description.indexOf(removeDescription))
-            + appendDescription;
-      } else {
-        if (returnDescription.indexOf("\n") != -1) {
-          returnDescription = returnDescription.substring(0, returnDescription.indexOf("\n"));
-        }
-        returnDescription = returnDescription + "\n" + appendDescription;
+    try {
+      String returnDescription = description == null ? "" : description;
+      if (StringUtils.isBlank(removeDescription)
+          && StringUtils.contains(description, StringUtils.trim(appendDescription))) {
+        return description;
       }
-    } else {
-      returnDescription = appendDescription;
+      if (description != null && !description.equals("null") && !StringUtils.isBlank(description)) {
+        if (!StringUtils.isBlank(removeDescription) && description.indexOf(removeDescription) != -1) {
+          returnDescription = returnDescription
+              .substring(0, description.indexOf(removeDescription)) + appendDescription;
+        } else if (StringUtils.isNotBlank(appendDescription)) {
+          returnDescription = returnDescription + "\n" + appendDescription;
+        }
+      } else {
+        returnDescription = appendDescription;
+      }
+      return returnDescription;
+    } catch (Exception e) {
+      if (StringUtils.isNotBlank(appendDescription)) {
+        return appendDescription;
+      } else {
+        return description;
+      }
     }
-    return returnDescription;
   }
 }
