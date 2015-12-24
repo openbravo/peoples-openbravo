@@ -32,7 +32,7 @@ OB.UTIL.startRfidWebsocket = function startRfidWebsocket(websocketServerLocation
     var ean;
     var i;
     var line;
-    for(i = 0; i < OB.MobileApp.model.receipt.get('lines').length; i++) {
+    for (i = 0; i < OB.MobileApp.model.receipt.get('lines').length; i++) {
       line = OB.MobileApp.model.receipt.get('lines').models[i];
       if (line.get('obposEpccode') === message.dataToSave.obposEpccode) {
         existingEpc = true;
