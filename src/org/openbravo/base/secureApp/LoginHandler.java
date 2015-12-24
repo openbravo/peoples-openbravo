@@ -415,8 +415,8 @@ public class LoginHandler extends HttpBaseServlet {
   protected final void goToRetry(HttpServletResponse response, VariablesSecureApp vars,
       String message, String title, String msgType, String action, boolean doRedirect)
       throws IOException, ServletException {
-    String msg = (message != null && !message.equals("")) ? message
-        : "Please enter your username and password.";
+    String msg = (message != null && !message.equals("")) ? message : Utility.messageBD(myPool,
+        "CPEmptyUserPassword", vars.getLanguage());
 
     if (OBVersion.getInstance().is30() && !doRedirect) {
       // 3.0 instances show the message in the same login window, return a json object with the info
@@ -470,8 +470,9 @@ public class LoginHandler extends HttpBaseServlet {
   protected final void goToUpdatePassword(HttpServletResponse response, VariablesSecureApp vars,
       String message, String title, String msgType, String action, boolean doRedirect)
       throws IOException, ServletException {
-    String msg = (message != null && !message.equals("")) ? message
-        : "Please enter your username and password.";
+    String msg = (message != null && !message.equals("")) ? message : Utility.messageBD(myPool,
+        "CPEmptyUserPassword", vars.getLanguage());
+    ;
 
     if (OBVersion.getInstance().is30() && !doRedirect) {
       // 3.0 instances show the message in the same login window, return a json object with the info

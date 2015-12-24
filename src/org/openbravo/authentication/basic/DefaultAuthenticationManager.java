@@ -13,7 +13,6 @@
 package org.openbravo.authentication.basic;
 
 import java.io.IOException;
-import java.util.Calendar;
 import java.util.Date;
 
 import javax.servlet.ServletException;
@@ -75,14 +74,11 @@ public class DefaultAuthenticationManager extends AuthenticationManager {
     // Begins code related to login process
     if (resetPassword) {
       strUser = vars.getStringParameter("loggedUser");
-      strPass = vars.getStringParameter("password");
-      username = strUser;
     } else {
       strUser = vars.getStringParameter("user");
-      strPass = vars.getStringParameter("password");
-      username = strUser;
     }
-
+    strPass = vars.getStringParameter("password");
+    username = strUser;
     if (StringUtils.isEmpty(strUser)) {
       // redirects to the menu or the menu with the target
       setTargetInfoInVariables(request, variables);
@@ -111,14 +107,13 @@ public class DefaultAuthenticationManager extends AuthenticationManager {
       throw new AuthenticationException("IDENTIFICATION_FAILURE_TITLE", errorMsg);
     }
     // Check if password valid date is reached
-    Date dateUPD = LoginUtils.getUpdatePasswordDate(conn, strUser, strPass);
+    Date lastUpdatePasswordDate = LoginUtils.getUpdatePasswordDate(conn, strUser, strPass);
 
-    if (dateUPD != null) {
+    if (lastUpdatePasswordDate != null) {
 
       // Checks if password
-      Calendar currentDate = Calendar.getInstance();
-      Date today = new Date(currentDate.getTimeInMillis());
-      if (dateUPD.compareTo(today) <= 0) {
+      Date today = new Date();
+      if (lastUpdatePasswordDate.compareTo(today) <= 0) {
         log4j.debug("Failed user/password. Username: " + strUser + " - Session ID:" + sessionId);
         OBError errorMsg = new OBError();
         errorMsg.setType("Error");

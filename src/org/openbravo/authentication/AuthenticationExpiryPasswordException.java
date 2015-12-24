@@ -16,8 +16,9 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.erpCommon.utility.OBError;
 
 /**
+ * This exception is used in case password for user has expired. Exception is launched in case that
+ * last update password date for user plus validity days defined for client has been reached
  * 
- * @author jbu
  */
 public class AuthenticationExpiryPasswordException extends OBException {
   private static final long serialVersionUID = 1L;

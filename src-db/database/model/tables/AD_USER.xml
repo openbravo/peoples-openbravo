@@ -157,7 +157,7 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault><![CDATA['N']]></onCreateDefault>
       </column>
-      <column name="UPDATEPASSWORDDATE" primaryKey="false" required="false" type="TIMESTAMP" size="7" autoIncrement="false">
+      <column name="LASTUPDATEPASSWORDDATE" primaryKey="false" required="false" type="TIMESTAMP" size="7" autoIncrement="false">
         <default><![CDATA[SYSDATE]]></default>
         <onCreateDefault/>
       </column>
