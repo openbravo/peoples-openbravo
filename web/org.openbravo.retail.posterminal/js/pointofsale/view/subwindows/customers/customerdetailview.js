@@ -226,28 +226,6 @@ enyo.kind({
       return OB.MobileApp.model.get('terminal').bp_showtaxid;
     }
   }, {
-    kind: 'OB.UI.CustomerTextPropertyAddr',
-    name: 'customerLocShipId',
-    modelProperty: 'locShipId'
-  }, {
-    kind: 'OB.UI.CustomerTextPropertyAddr',
-    name: 'customerLocName',
-    modelProperty: 'locShipName',
-    i18nLabel: 'OBPOS_LblAddress',
-    readOnly: true
-  }, {
-    kind: 'OB.UI.CustomerTextPropertyAddr',
-    name: 'customerPostalCode',
-    modelProperty: 'postalCode',
-    i18nLabel: 'OBPOS_LblPostalCode',
-    readOnly: true
-  }, {
-    kind: 'OB.UI.CustomerTextPropertyAddr',
-    name: 'customerCity',
-    modelProperty: 'cityName',
-    i18nLabel: 'OBPOS_LblCity',
-    readOnly: true
-  }, {
     kind: 'OB.UI.CustomerTextProperty',
     name: 'customerPhone',
     modelProperty: 'phone',
@@ -298,5 +276,27 @@ enyo.kind({
     displayLogic: function () {
       return OB.MobileApp.model.hasPermission('EnableMultiPriceList', true);
     }
+  }, {
+    kind: 'OB.UI.CustomerTextPropertyAddr',
+    name: 'customerLocShipId',
+    modelProperty: 'locShipId'
+  }, {
+    kind: 'OB.UI.CustomerTextPropertyAddr',
+    name: 'customerLocName',
+    modelProperty: 'locShipName',
+    i18nLabel: 'OBPOS_LblAddress',
+    readOnly: true
+  }, {
+    kind: 'OB.UI.CustomerTextPropertyAddr',
+    name: 'customerPostalCode',
+    modelProperty: 'postalCode',
+    i18nLabel: 'OBPOS_LblPostalCode',
+    readOnly: true
+  }, {
+    kind: 'OB.UI.CustomerTextPropertyAddr',
+    name: 'customerCity',
+    modelProperty: 'cityName',
+    i18nLabel: 'OBPOS_LblCity',
+    readOnly: true
   }]
 });

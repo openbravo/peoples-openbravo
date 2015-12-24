@@ -260,7 +260,7 @@ enyo.kind({
     name: 'bodyheader'
   }, {
     name: 'customerAttributes',
-    style: 'overflow-x: hidden; overflow-y: auto; max-height: 622px;'
+    style: 'overflow-x: hidden; overflow-y: auto; max-height: 580px;'
   }],
   setCustomer: function (inSender, inEvent) {
     this.customer = inEvent.customer;
