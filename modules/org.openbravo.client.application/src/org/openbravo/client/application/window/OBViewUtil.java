@@ -33,7 +33,6 @@ import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.ad.ui.Element;
 import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.FieldTrl;
@@ -191,7 +190,6 @@ public class OBViewUtil {
    */
   private static JSONObject getGridConfigurationSettings(Field field, Tab tab) {
     GridConfigSettings settings = new GridConfigSettings();
-    Column fieldColumn = null;
     GCTab tabConf = null;
     if (tab.getOBUIAPPGCTabList().size() > 1) {
       OBCriteria<GCTab> gcTabCriteria = OBDal.getInstance().createCriteria(GCTab.class);
@@ -208,7 +206,6 @@ public class OBViewUtil {
     }
 
     if (field != null) {
-      fieldColumn = field.getColumn();
       settings.canSort = field.getColumn().isAllowsorting();
       settings.canFilter = field.getColumn().isAllowfiltering();
     }
@@ -229,14 +226,13 @@ public class OBViewUtil {
 
       // Trying to get parameters from "Grid Configuration (Tab/Field)" -> "Field" window
       if (fieldConf != null) {
-        settings.processConfig(fieldConf, fieldColumn);
-
+        settings.processConfig(fieldConf);
       }
     }
 
     if (tabConf != null && settings.shouldContinueProcessing()) {
       // Trying to get parameters from "Grid Configuration (Tab/Field)" -> "Tab" window
-      settings.processConfig(tabConf, fieldColumn);
+      settings.processConfig(tabConf);
     }
 
     if (settings.shouldContinueProcessing()) {
@@ -248,7 +244,7 @@ public class OBViewUtil {
       List<GCSystem> sysConfs = gcSystemCriteria.list();
 
       if (!sysConfs.isEmpty()) {
-        settings.processConfig(sysConfs.get(0), fieldColumn);
+        settings.processConfig(sysConfs.get(0));
       }
     }
 
@@ -274,7 +270,7 @@ public class OBViewUtil {
           || showFkDropdownUnfiltered == null || disableFkDropdown == null || lazyFiltering == null;
     }
 
-    private void processConfig(BaseOBObject gcItem, Column fieldColumn) {
+    private void processConfig(BaseOBObject gcItem) {
       Class<? extends BaseOBObject> itemClass = gcItem.getClass();
       try {
         sortingPropertyValue(gcItem);
