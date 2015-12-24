@@ -361,6 +361,8 @@ enyo.kind({
     var me = this,
         filter = OB.UTIL.unAccent(inEvent.bpName);
 
+    this.$.stBPAssignToReceipt.$.theader.$.modalBpScrollableHeader.$.newAction.setDisabled(false);
+
     this.$.stBPAssignToReceipt.$.tempty.hide();
     this.$.stBPAssignToReceipt.$.tbody.hide();
     this.$.stBPAssignToReceipt.$.tlimit.hide();
@@ -436,6 +438,9 @@ enyo.kind({
       target: this.args.target
     });
     this.$.body.$.listBps.$.stBPAssignToReceipt.$.theader.$.modalBpScrollableHeader.$.newAction.putDisabled(!OB.MobileApp.model.hasPermission('OBPOS_retail.editCustomers'));
+    if (OB.MobileApp.model.hasPermission('OBPOS_retail.hideNewBPButton', true)) {
+      this.$.body.$.listBps.$.stBPAssignToReceipt.$.theader.$.modalBpScrollableHeader.$.newAction.setDisabled(true);
+    }
     if (this.args.businessPartner) {
       this.$.body.$.listBps.$.stBPAssignToReceipt.$.theader.$.modalBpScrollableHeader.searchAction();
       this.$.body.$.listBps.$.stBPAssignToReceipt.bPartner = this.args.businessPartner;
