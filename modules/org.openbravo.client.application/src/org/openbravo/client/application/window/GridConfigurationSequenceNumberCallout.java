@@ -23,7 +23,6 @@
  *
  * @author NaroaIriarte
  */
-
 package org.openbravo.client.application.window;
 
 import javax.servlet.ServletException;
