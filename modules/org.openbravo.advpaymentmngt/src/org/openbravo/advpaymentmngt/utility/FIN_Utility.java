@@ -1545,7 +1545,8 @@ public class FIN_Utility {
       if (description != null && !description.equals("null") && !StringUtils.isBlank(description)) {
         if (!StringUtils.isBlank(removeDescription) && description.indexOf(removeDescription) != -1) {
           returnDescription = returnDescription
-              .substring(0, description.indexOf(removeDescription)) + appendDescription;
+              .substring(0, description.indexOf(removeDescription))
+              + (StringUtils.isBlank(appendDescription) ? "" : appendDescription);
         } else if (StringUtils.isNotBlank(appendDescription)) {
           returnDescription = returnDescription + "\n" + appendDescription;
         }
