@@ -556,7 +556,8 @@ enyo.kind({
 
   addProductToReceipt: function (keyboard, product) {
     keyboard.doAddProduct({
-      product: product
+      product: product,
+      ignoreStockTab: true
     });
     keyboard.receipt.trigger('scan');
   }
