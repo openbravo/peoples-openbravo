@@ -803,6 +803,26 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                     OB.Dal.get(OB.Model.Order, orderId, function (model) {
                       function cancelAndNew() {
                         OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgSuccessCancelLayaway', [documentNo]));
+                        if (OB.MobileApp.model.hasPermission('OBPOS_cancelLayawayAndNew')) {
+                          var cloneOrder = new OB.Model.Order();
+                          OB.UTIL.clone(receipt, cloneOrder);
+                          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_cancelLayawayAndNewHeader'), OB.I18N.getLabel('OBPOS_cancelLayawayAndNewBody'), [{
+                            label: OB.I18N.getLabel('OBPOS_LblOk'),
+                            action: function () {
+                              OB.UTIL.showError(OB.I18N.getLabel('Muestro Error'));
+                              _.each(cloneOrder.get('lines').models, function (line) {
+                                OB.MobileApp.model.receipt.addProduct(line.get('product'), line.get('qty'));
+                              });
+                            }
+                          }, {
+                            label: OB.I18N.getLabel('OBPOS_Cancel')
+                          }], {
+                            onShowFunction: function (popup) {
+                              popup.$.headerCloseButton.hide();
+                            },
+                            autoDismiss: false
+                          });
+                        }
                       }
                       if (model) {
                         OB.Dal.remove(model, function (tx) {
