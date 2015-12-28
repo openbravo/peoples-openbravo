@@ -75,7 +75,8 @@ public class ProcessCashMgmt extends POSDataSynchronizationProcess implements
               + "' does not exists in the system. Please synchronize it first and then process this entry.");
     }
     TerminalTypePaymentMethod terminalPaymentMethod = paymentMethod.getPaymentMethod();
-    if (!jsonsent.has("defaultProcess") || "Y".equals(jsonsent.getString("defaultProcess"))) {
+    if (!jsonsent.has("defaultProcess") || jsonsent.getString("defaultProcess").equals("null")
+        || "Y".equals(jsonsent.getString("defaultProcess"))) {
       GLItem glItemMain;
       GLItem glItemSecondary;
       // The GL/item in both transactions must be the same, and it must be the original type of
