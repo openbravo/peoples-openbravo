@@ -268,7 +268,7 @@ public class CombinationsForSortingColumns extends OBBaseTest {
     OBContext.setAdminMode(false);
     try {
       Field field = OBDal.getInstance().get(Field.class, BUSINESS_PARTNER_CATEGORY_FIELD_ID);
-      field.getColumn().setAllowsorting(columnConfig);
+      field.getColumn().setAllowSorting(columnConfig);
       if (gcSystemConfig != null) {
         gcsystem = OBProvider.getInstance().get(GCSystem.class);
         gcsystem.setClient(OBDal.getInstance().get(Client.class, CLIENT_FOR_GC_SYSTEM_FIELD_TAB));
@@ -297,7 +297,7 @@ public class CombinationsForSortingColumns extends OBBaseTest {
         gcfield.setSortable(gcFieldConfig);
         gctab.getOBUIAPPGCFieldList().add(gcfield);
         OBDal.getInstance().save(gcfield);
-        field.getColumn().setAllowsorting(columnConfig);
+        field.getColumn().setAllowSorting(columnConfig);
       }
       fieldConfig = OBViewUtil.getGridConfigurationSettings(OBDal.getInstance().get(Field.class,
           BUSINESS_PARTNER_CATEGORY_FIELD_ID));

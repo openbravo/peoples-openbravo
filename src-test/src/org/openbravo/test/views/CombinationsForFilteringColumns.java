@@ -314,7 +314,7 @@ public class CombinationsForFilteringColumns extends OBBaseTest {
     OBContext.setAdminMode(false);
     try {
       Field field = OBDal.getInstance().get(Field.class, BUSINESS_PARTNER_CATEGORY_FIELD_ID);
-      field.getColumn().setAllowfiltering(columnConfig);
+      field.getColumn().setAllowFiltering(columnConfig);
       if (gcSystemConfig != null) {
         gcsystem = OBProvider.getInstance().get(GCSystem.class);
         gcsystem.setClient(OBDal.getInstance().get(Client.class, CLIENT_FOR_GC_SYSTEM_FIELD_TAB));
