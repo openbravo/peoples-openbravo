@@ -2205,7 +2205,7 @@ This will retrieve the session variable SESSIONVAR and use it as default value f
 <!--48F0784AC02247D8A430B56CE4813834-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--48F0784AC02247D8A430B56CE4813834-->  <NAME><![CDATA[Sequence Number]]></NAME>
 <!--48F0784AC02247D8A430B56CE4813834-->  <DESCRIPTION><![CDATA[The sequence indicates the priority of the grid configuration.]]></DESCRIPTION>
-<!--48F0784AC02247D8A430B56CE4813834-->  <HELP><![CDATA[The grid configuration which has the higher sequence number will be the one which applies.]]></HELP>
+<!--48F0784AC02247D8A430B56CE4813834-->  <HELP><![CDATA[The grid configuration which has the highest sequence number will be the one which applies.]]></HELP>
 <!--48F0784AC02247D8A430B56CE4813834-->  <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
 <!--48F0784AC02247D8A430B56CE4813834-->  <AD_TAB_ID><![CDATA[13FE911F7F684A47801DF55525BAD4A1]]></AD_TAB_ID>
 <!--48F0784AC02247D8A430B56CE4813834-->  <AD_COLUMN_ID><![CDATA[C308A7C1514D4A42B91EDF2ECC555EC6]]></AD_COLUMN_ID>
@@ -3886,7 +3886,7 @@ The 'Compatibility with Legacy Grids' flag should only be checked if its handler
 <!--9145212310304016B8ED131671BBFDD4-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--9145212310304016B8ED131671BBFDD4-->  <NAME><![CDATA[Sequence Number]]></NAME>
 <!--9145212310304016B8ED131671BBFDD4-->  <DESCRIPTION><![CDATA[The sequence indicates the priority of the grid configuration.]]></DESCRIPTION>
-<!--9145212310304016B8ED131671BBFDD4-->  <HELP><![CDATA[The grid configuration which has the higher sequence number will be the one which applies.]]></HELP>
+<!--9145212310304016B8ED131671BBFDD4-->  <HELP><![CDATA[The grid configuration which has the highest sequence number will be the one which applies.]]></HELP>
 <!--9145212310304016B8ED131671BBFDD4-->  <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
 <!--9145212310304016B8ED131671BBFDD4-->  <AD_TAB_ID><![CDATA[49B33DC2EDFD45A48EECE139AD5E9AC9]]></AD_TAB_ID>
 <!--9145212310304016B8ED131671BBFDD4-->  <AD_COLUMN_ID><![CDATA[B02AA8716EDF46F1A9D65BA838EF3EAB]]></AD_COLUMN_ID>

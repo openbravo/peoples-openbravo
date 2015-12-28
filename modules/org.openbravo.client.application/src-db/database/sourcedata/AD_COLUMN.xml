@@ -8432,7 +8432,7 @@ This will retrieve the session variable SESSIONVAR and use it as default value f
 <!--B02AA8716EDF46F1A9D65BA838EF3EAB-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--B02AA8716EDF46F1A9D65BA838EF3EAB-->  <NAME><![CDATA[Seqno]]></NAME>
 <!--B02AA8716EDF46F1A9D65BA838EF3EAB-->  <DESCRIPTION><![CDATA[The sequence indicates the priority of the grid configuration.]]></DESCRIPTION>
-<!--B02AA8716EDF46F1A9D65BA838EF3EAB-->  <HELP><![CDATA[The grid configuration which has the higher sequence number will be the one which applies.]]></HELP>
+<!--B02AA8716EDF46F1A9D65BA838EF3EAB-->  <HELP><![CDATA[The grid configuration which has the highest sequence number will be the one which applies.]]></HELP>
 <!--B02AA8716EDF46F1A9D65BA838EF3EAB-->  <COLUMNNAME><![CDATA[Seqno]]></COLUMNNAME>
 <!--B02AA8716EDF46F1A9D65BA838EF3EAB-->  <AD_TABLE_ID><![CDATA[8A16662B37184121A1EDAA89890E160C]]></AD_TABLE_ID>
 <!--B02AA8716EDF46F1A9D65BA838EF3EAB-->  <AD_REFERENCE_ID><![CDATA[11]]></AD_REFERENCE_ID>
@@ -8921,7 +8921,7 @@ This will retrieve the session variable SESSIONVAR and use it as default value f
 <!--C308A7C1514D4A42B91EDF2ECC555EC6-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--C308A7C1514D4A42B91EDF2ECC555EC6-->  <NAME><![CDATA[Seqno]]></NAME>
 <!--C308A7C1514D4A42B91EDF2ECC555EC6-->  <DESCRIPTION><![CDATA[The sequence indicates the priority of the grid configuration.]]></DESCRIPTION>
-<!--C308A7C1514D4A42B91EDF2ECC555EC6-->  <HELP><![CDATA[The grid configuration which has the higher sequence number will be the one which applies.]]></HELP>
+<!--C308A7C1514D4A42B91EDF2ECC555EC6-->  <HELP><![CDATA[The grid configuration which has the highest sequence number will be the one which applies.]]></HELP>
 <!--C308A7C1514D4A42B91EDF2ECC555EC6-->  <COLUMNNAME><![CDATA[Seqno]]></COLUMNNAME>
 <!--C308A7C1514D4A42B91EDF2ECC555EC6-->  <AD_TABLE_ID><![CDATA[5D50320222DD4865ADFD50364C84291D]]></AD_TABLE_ID>
 <!--C308A7C1514D4A42B91EDF2ECC555EC6-->  <AD_REFERENCE_ID><![CDATA[11]]></AD_REFERENCE_ID>

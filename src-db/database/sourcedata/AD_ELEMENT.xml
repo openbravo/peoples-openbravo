@@ -31793,7 +31793,7 @@ If this flag is checked the creation and deletion of tree nodes will be handled 
 <!--C9C41FA962E34C52B1BC48C2879371BA-->  <NAME><![CDATA[Sequence Number]]></NAME>
 <!--C9C41FA962E34C52B1BC48C2879371BA-->  <PRINTNAME><![CDATA[Sequence Number]]></PRINTNAME>
 <!--C9C41FA962E34C52B1BC48C2879371BA-->  <DESCRIPTION><![CDATA[The sequence indicates the priority of the grid configuration.]]></DESCRIPTION>
-<!--C9C41FA962E34C52B1BC48C2879371BA-->  <HELP><![CDATA[The grid configuration which has the higher sequence number will be the one which applies.]]></HELP>
+<!--C9C41FA962E34C52B1BC48C2879371BA-->  <HELP><![CDATA[The grid configuration which has the highest sequence number will be the one which applies.]]></HELP>
 <!--C9C41FA962E34C52B1BC48C2879371BA-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--C9C41FA962E34C52B1BC48C2879371BA-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--C9C41FA962E34C52B1BC48C2879371BA--></AD_ELEMENT>
