@@ -128,7 +128,7 @@ public class LoginUtils {
       User userOB = listUser.get(0);
       Date lastUpdateDate = userOB.getLastupdatepassworddate();
       Long validityDays = userOB.getClient().getDaystopasswordexpiration();
-      if (validityDays != null && validityDays >= 0) {
+      if (validityDays != null && validityDays > 0) {
         Calendar currentDate = Calendar.getInstance();
         currentDate
             .setTimeInMillis(lastUpdateDate.getTime() + TimeUnit.DAYS.toMillis(validityDays));
