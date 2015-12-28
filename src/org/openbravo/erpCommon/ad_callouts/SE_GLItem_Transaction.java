@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013 Openbravo SLU
+ * All portions are Copyright (C) 2013-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -20,11 +20,13 @@ package org.openbravo.erpCommon.ad_callouts;
 
 import javax.servlet.ServletException;
 
+import org.apache.commons.lang.StringUtils;
+import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.filter.IsIDFilter;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.financialmgmt.gl.GLItem;
-import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 
 public class SE_GLItem_Transaction extends SimpleCallout {
 
@@ -32,44 +34,35 @@ public class SE_GLItem_Transaction extends SimpleCallout {
 
   @Override
   protected void execute(CalloutInfo info) throws ServletException {
+    final String strGLItemId = info.getStringParameter("inpcGlitemId", IsIDFilter.instance);
+    String description = info.getStringParameter("inpdescription", null);
+
     try {
-      final String strGLItemId = info.getStringParameter("inpcGlitemId", IsIDFilter.instance);
-      final String strTransactionId = info.getStringParameter("Fin_Finacc_Transaction_ID",
-          IsIDFilter.instance);
-      if ("".equals(strGLItemId)) {
-        info.addResult("inpdescription", "");
+      OBContext.setAdminMode(true);
+
+      final String glItemDescPrefix = OBMessageUtils.messageBD("APRM_GLItem");
+
+      // Delete only previous GL Item description
+      if (StringUtils.isBlank(strGLItemId)) {
+        description = FIN_Utility.getFinAccTransactionDescription(description, "\n"
+            + glItemDescPrefix, "");
+        description = FIN_Utility
+            .getFinAccTransactionDescription(description, glItemDescPrefix, "");
       }
-      GLItem glItem = OBDal.getInstance().get(GLItem.class, strGLItemId);
-      FIN_FinaccTransaction transaction = OBDal.getInstance().get(FIN_FinaccTransaction.class,
-          strTransactionId);
-      String description = "";
-      if (transaction != null) {
-        GLItem oldGLItem = transaction.getGLItem();
-        description = transaction.getDescription();
-        String oldGlItemString = Utility.messageBD(this, "APRM_GLItem", info.vars.getLanguage())
-            + ": " + oldGLItem.getName();
-        String newGlItemString = Utility.messageBD(this, "APRM_GLItem", info.vars.getLanguage())
-            + ": " + glItem.getName();
-        if (description != null && !description.isEmpty()) {
-          description = description.indexOf(oldGlItemString) != -1 ? (description
-              .indexOf(oldGlItemString) == 0 ? "" : description.substring(0,
-              description.indexOf(oldGlItemString) - 1)
-              + "\n")
-              + newGlItemString
-              + description.substring(
-                  oldGlItemString.length() + description.indexOf(oldGlItemString),
-                  description.length()) : description;
-        }
-        description = (description == null || description.isEmpty()) ? newGlItemString
-            : description;
-      } else {
-        description = Utility.messageBD(this, "APRM_GLItem", info.vars.getLanguage()) + ": "
-            + glItem.getName();
-        ;
+
+      // Write description for selected GL Item
+      final GLItem glItem = OBDal.getInstance().get(GLItem.class, strGLItemId);
+      if (glItem != null) {
+        final String newGlItemDesc = glItemDescPrefix + ": " + glItem.getName();
+        description = FIN_Utility.getFinAccTransactionDescription(description, glItemDescPrefix,
+            newGlItemDesc);
       }
+
       info.addResult("inpdescription", description);
     } catch (Exception e) {
       return;
+    } finally {
+      OBContext.restorePreviousMode();
     }
   }
 }
