@@ -606,7 +606,7 @@
         // set the terminal lock timeout
         setTerminalLockTimeout(sessionTimeoutMinutes, sessionTimeoutMilliseconds);
         // FIXME: hack: inject javascript in the enyo.gesture.down so we can create a terminal timeout
-        enyo.gesture.down = function(inEvent) {
+        enyo.gesture.down = function (inEvent) {
           // start of Openbravo injected code
           setTerminalLockTimeout(sessionTimeoutMinutes, sessionTimeoutMilliseconds);
           // end of Openbravo injected code

@@ -607,10 +607,10 @@ enyo.kind({
     this.$.expectedTable.setCollection(this.summary.expectedSummary);
     this.$.expectedTable.setValue('totalexpected', this.summary.totalExpected);
     if (OB.MobileApp.view.currentWindow === 'retail.cashuppartial') {
-     this.$.countedTable.hide();
-     this.$.differenceTable.hide();
-     this.$.qtyToKeepTable.hide();
-     this.$.qtyToDepoTable.hide();
+      this.$.countedTable.hide();
+      this.$.differenceTable.hide();
+      this.$.qtyToKeepTable.hide();
+      this.$.qtyToDepoTable.hide();
     } else {
       this.$.countedTable.setCollection(this.summary.countedSummary);
       this.$.countedTable.setValue('totalcounted', this.summary.totalCounted);

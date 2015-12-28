@@ -389,7 +389,7 @@ enyo.kind({
     this.model.get('order').get('lines').on('selected', function (lineSelected) {
       this.currentLine = lineSelected;
     }, this);
-    
+
     if (!options.isManual) {
       // The tap was not manual. So consider the last line added
       var lines = this.model.get('order').get('lines');
