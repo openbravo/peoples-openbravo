@@ -258,8 +258,8 @@ enyo.kind({
           difference = OB.DEC.abs(payment.get('difference'));
       if (difference !== 0) {
         totalCashDiff += difference;
-        var countDiffLimit = paymentMethod.countDiffLimit ? paymentMethod.countDiffLimit : 0;
-        if (difference > countDiffLimit) {
+        var countDiffLimit = paymentMethod.countDiffLimit;
+        if (!OB.UTIL.isNullOrUndefined(countDiffLimit) && difference >= countDiffLimit) {
           cashDiff.push({
             _identifier: paymentMethod._identifier,
             searchKey: paymentMethod.searchKey,
@@ -291,8 +291,8 @@ enyo.kind({
       });
       serverMsg = OB.I18N.getLabel('OBPOS_approval.cashupdifferences') + "\r\n" + serverMsg;
     } else {
-      var organizationCountDiffLimit = OB.MobileApp.model.get('terminal').organizationCountDiffLimit ? OB.MobileApp.model.get('terminal').organizationCountDiffLimit : 0;
-      if (totalCashDiff > organizationCountDiffLimit) {
+      var organizationCountDiffLimit = OB.MobileApp.model.get('terminal').organizationCountDiffLimit;
+      if (!OB.UTIL.isNullOrUndefined(organizationCountDiffLimit) && totalCashDiff >= organizationCountDiffLimit) {
         approvals.push({
           approval: 'OBPOS_approval.cashupdifferences',
           message: 'OBPOS_approval.global.countdifferences',
