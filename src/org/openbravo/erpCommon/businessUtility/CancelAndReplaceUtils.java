@@ -151,7 +151,7 @@ public class CancelAndReplaceUtils {
       }
 
       // Get documentNo for the inverse Order Header coming from jsonorder, if exists
-      JSONObject negativeDocumentNoJSON = triggersDisabled && jsonorder != null
+      JSONObject negativeDocumentNoJSON = jsonorder != null
           && jsonorder.has("negativeDocNo") ? jsonorder.getJSONObject("negativeDocNo") : null;
       String negativeDocNo = negativeDocumentNoJSON != null
           && negativeDocumentNoJSON.has("documentNo")
