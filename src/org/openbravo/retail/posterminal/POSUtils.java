@@ -735,13 +735,20 @@ public class POSUtils {
 
   public static void setDefaultPaymentType(JSONObject jsonorder, Order order) {
     try {
+      TerminalTypePaymentMethod defaultPaymentMethod = order.getObposApplications()
+          .getObposTerminaltype().getPaymentMethod();
       OBCriteria<OBPOSAppPayment> paymentTypes = OBDal.getInstance().createCriteria(
           OBPOSAppPayment.class);
       paymentTypes.add(Restrictions.eq(OBPOSAppPayment.PROPERTY_OBPOSAPPLICATIONS,
           order.getObposApplications()));
+      if (defaultPaymentMethod != null) {
+        paymentTypes.add(Restrictions.eq(OBPOSAppPayment.PROPERTY_PAYMENTMETHOD,
+            defaultPaymentMethod));
+      }
       paymentTypes.addOrderBy(OBPOSAppPayment.PROPERTY_ID, false);
       paymentTypes.setMaxResults(1);
       OBPOSAppPayment defaultPaymentType = (OBPOSAppPayment) paymentTypes.uniqueResult();
+
       if (defaultPaymentType != null) {
         JSONObject paymentTypeValues = new JSONObject();
         paymentTypeValues.put("paymentMethod", defaultPaymentType.getPaymentMethod()
