@@ -206,8 +206,8 @@ public class OBViewUtil {
     }
 
     if (field != null) {
-      settings.canSort = field.getColumn().isAllowsorting();
-      settings.canFilter = field.getColumn().isAllowfiltering();
+      settings.canSort = field.getColumn().isAllowSorting();
+      settings.canFilter = field.getColumn().isAllowFiltering();
     }
 
     settings.isFilteringColumnConfig = true;
