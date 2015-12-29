@@ -100,14 +100,16 @@ public class Category extends ProcessHQLQuery {
     } else {
       hqlQueries.add("select"
           + regularProductsCategoriesHQLProperties.getHqlSelect() //
-          + "from ProductCategory as pCat left outer join pCat.image as img  " + " where exists("
+          + "from ProductCategory as pCat left outer join pCat.image as img  " + " where (exists("
           + "from OBRETCO_Prol_Product pli, " + "PricingProductPrice ppp, "
           + "PricingPriceListVersion pplv "
           + "WHERE pCat=pli.product.productCategory and (pli.obretcoProductlist = '"
           + productList.getId() + "') " + "AND (pplv.id='" + priceListVersion.getId() + "') AND ("
           + "ppp.priceListVersion.id = pplv.id" + ") AND (" + "pli.product.id = ppp.product.id"
-          + ") AND (" + "pli.product.active = true" + ")) OR pCat.summaryLevel = 'Y') "
-          + " AND pCat.$incrementalUpdateCriteria" + " order by pCat.name");
+          + ") AND (" + "pli.product.active = true)) "
+          + "OR (pCat.summaryLevel = 'Y' AND pCat.$naturalOrgCriteria AND "
+          + "pCat.$readableSimpleClientCriteria)) AND pCat.$incrementalUpdateCriteria "
+          + "order by pCat.name");
     }
 
     String promoNameTrl;
