@@ -198,7 +198,7 @@ public class OBViewUtil {
    * @return the grid configuration
    */
   private static JSONObject getGridConfigurationSettings(Field field, Tab tab) {
-    GridConfigSettings settings = new GridConfigSettings();
+    GridConfigSettings settings = new GridConfigSettings(field);
     GCTab tabConf = null;
     if (tab.getOBUIAPPGCTabList().size() > 1) {
       OBCriteria<GCTab> gcTabCriteria = OBDal.getInstance().createCriteria(GCTab.class);
@@ -212,11 +212,6 @@ public class OBViewUtil {
         tabConf = t;
         break;
       }
-    }
-
-    if (field != null) {
-      settings.canSort = field.getColumn().isAllowSorting();
-      settings.canFilter = field.getColumn().isAllowFiltering();
     }
 
     settings.isFilteringColumnConfig = true;
@@ -272,6 +267,15 @@ public class OBViewUtil {
     private Long thresholdToFilter = null;
     private boolean isSortingColumnConfig;
     private boolean isFilteringColumnConfig;
+    private Field theField;
+
+    private GridConfigSettings(Field field) {
+      this.theField = field;
+      if (theField != null) {
+        canSort = theField.getColumn().isAllowSorting();
+        canFilter = theField.getColumn().isAllowFiltering();
+      }
+    }
 
     private boolean shouldContinueProcessing() {
       return canSort == null || canFilter == null || operator == null || filterOnChange == null
