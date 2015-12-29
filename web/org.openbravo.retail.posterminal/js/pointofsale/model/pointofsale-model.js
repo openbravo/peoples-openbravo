@@ -392,7 +392,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
       });
     }, this);
 
-    receipt.on('paymentDone', function (openDrawer) {
+    receipt.on('paymentDone', function (openDrawer, doneProcessCallback) {
       if (receipt.overpaymentExists()) {
         var symbol = OB.MobileApp.model.get('terminal').symbol;
         var symbolAtRight = OB.MobileApp.model.get('terminal').currencySymbolAtTheRight;
@@ -415,7 +415,13 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
           }
         }, {
           label: OB.I18N.getLabel('OBMOBC_LblCancel')
-        }]);
+        }], {
+          onHideFunction: function () {
+            if (!_.isUndefined(doneProcessCallback)) {
+              doneProcessCallback(false);
+            }
+          }
+        });
       } else if (receipt.get('orderType') === 3) {
         receipt.trigger('voidLayaway');
       } else if ((OB.DEC.abs(receipt.getPayment()) !== OB.DEC.abs(receipt.getGross())) && (!receipt.isLayaway() && !receipt.get('paidOnCredit'))) {
@@ -427,7 +433,13 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
           }
         }, {
           label: OB.I18N.getLabel('OBMOBC_LblCancel')
-        }]);
+        }], {
+          onHideFunction: function () {
+            if (!_.isUndefined(doneProcessCallback)) {
+              doneProcessCallback(false);
+            }
+          }
+        });
       } else {
         if (openDrawer) {
           OB.POS.hwserver.openDrawer({
