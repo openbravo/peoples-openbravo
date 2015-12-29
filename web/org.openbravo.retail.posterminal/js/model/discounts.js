@@ -66,7 +66,6 @@
       }
 
       if (OB.MobileApp.model.hasPermission('OBPOS_discount.newFlow', true)) {
-        OB.UTIL.VersionManagement.deprecated(31753, function () {});
         var auxReceipt = new OB.Model.Order(),
             auxLine, hasPromotions, oldLines, oldLines2, actualLines, auxReceipt2, isFirstExecution = true;
         OB.UTIL.clone(receipt, auxReceipt);
@@ -176,6 +175,7 @@
         }
         this.applyPromotionsImp(auxReceipt, null, true);
       } else {
+        OB.UTIL.VersionManagement.deprecated(31753, function () {});
         receipt.on('discountsApplied', function () {
           OB.Model.Discounts.finishPromotions(receipt, line);
         });
