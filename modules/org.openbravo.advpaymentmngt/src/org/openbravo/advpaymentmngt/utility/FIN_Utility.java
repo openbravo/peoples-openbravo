@@ -1353,15 +1353,15 @@ public class FIN_Utility {
 
     List<String> pdList = null;
 
-    OBContext.setAdminMode();
+    OBContext.setAdminMode(true);
     try {
       final StringBuilder whereClause = new StringBuilder();
       whereClause.append(" select pd." + FIN_PaymentDetail.PROPERTY_ID);
       whereClause.append(" from " + FIN_PaymentDetail.ENTITY_NAME + " as pd");
       whereClause.append(" left join pd." + FIN_PaymentDetail.PROPERTY_FINPAYMENTSCHEDULEDETAILLIST
           + " as psd");
-      whereClause.append(" where pd." + FIN_PaymentDetail.PROPERTY_FINPAYMENT + ".id = '"
-          + paymentId + "'");
+      whereClause
+          .append(" where pd." + FIN_PaymentDetail.PROPERTY_FINPAYMENT + ".id = :paymentId ");
       whereClause.append(" and pd." + FIN_PaymentDetail.PROPERTY_ACTIVE + " = true");
       whereClause.append(" order by psd."
           + FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE);
@@ -1369,6 +1369,7 @@ public class FIN_Utility {
           + FIN_PaymentScheduleDetail.PROPERTY_ORDERPAYMENTSCHEDULE + ",'0')");
 
       Query query = OBDal.getInstance().getSession().createQuery(whereClause.toString());
+      query.setParameter("paymentId", paymentId);
       pdList = query.list();
 
     } finally {
