@@ -214,9 +214,6 @@ public class OBViewUtil {
       }
     }
 
-    settings.isFilteringColumnConfig = true;
-    settings.isSortingColumnConfig = true;
-
     if (tabConf != null && field != null && field.getId() != null) {
       GCField fieldConf = null;
       for (GCField fc : tabConf.getOBUIAPPGCFieldList()) {
@@ -275,6 +272,8 @@ public class OBViewUtil {
         canSort = theField.getColumn().isAllowSorting();
         canFilter = theField.getColumn().isAllowFiltering();
       }
+      isFilteringColumnConfig = true;
+      isSortingColumnConfig = true;
     }
 
     private boolean shouldContinueProcessing() {
