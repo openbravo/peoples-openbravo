@@ -50,6 +50,15 @@ public class OBViewUtil {
   public static final Element createdByElement;
   public static final Element updatedElement;
   public static final Element updatedByElement;
+  private static final String SORTABLE_PROPERTY = "PROPERTY_SORTABLE";
+  private static final String FILTERABLE_PROPERTY = "PROPERTY_FILTERABLE";
+  private static final String TEXTFILTERBEHAVIOR_PROPERTY = "PROPERTY_TEXTFILTERBEHAVIOR";
+  private static final String FILTERONCHANGE_PROPERTY = "PROPERTY_FILTERONCHANGE";
+  private static final String ALLOWFILTERBYIDENTIFIER_PROPERTY = "PROPERTY_ALLOWFILTERBYIDENTIFIER";
+  private static final String ISFKDROPDOWNUNFILTERED_PROPERTY = "PROPERTY_ISFKDROPDOWNUNFILTERED";
+  private static final String DISABLEFKCOMBO_PROPERTY = "PROPERTY_DISABLEFKCOMBO";
+  private static final String THRESHOLDTOFILTER_PROPERTY = "PROPERTY_THRESHOLDTOFILTER";
+  private static final String ISLAZYFILTERING_PROPERTY = "PROPERTY_ISLAZYFILTERING";
 
   static {
     createdElement = OBDal.getInstance().get(Element.class, "245");
@@ -276,31 +285,31 @@ public class OBViewUtil {
         sortingPropertyValue(gcItem);
         filteringPropertyValue(gcItem);
         if (operator == null) {
-          if (gcItem.get(itemClass.getField("PROPERTY_TEXTFILTERBEHAVIOR").get(gcItem).toString()) != null
-              && !"D".equals(gcItem.get(itemClass.getField("PROPERTY_TEXTFILTERBEHAVIOR")
-                  .get(gcItem).toString()))) {
-            operator = (String) gcItem.get(itemClass.getField("PROPERTY_TEXTFILTERBEHAVIOR")
+          if (gcItem.get(itemClass.getField(TEXTFILTERBEHAVIOR_PROPERTY).get(gcItem).toString()) != null
+              && !"D".equals(gcItem.get(itemClass.getField(TEXTFILTERBEHAVIOR_PROPERTY).get(gcItem)
+                  .toString()))) {
+            operator = (String) gcItem.get(itemClass.getField(TEXTFILTERBEHAVIOR_PROPERTY)
                 .get(gcItem).toString());
           }
         }
         if (filterOnChange == null) {
-          filterOnChange = convertBoolean(gcItem, "PROPERTY_FILTERONCHANGE");
+          filterOnChange = convertBoolean(gcItem, FILTERONCHANGE_PROPERTY);
         }
         if (allowFkFilterByIdentifier == null) {
-          allowFkFilterByIdentifier = convertBoolean(gcItem, "PROPERTY_ALLOWFILTERBYIDENTIFIER");
+          allowFkFilterByIdentifier = convertBoolean(gcItem, ALLOWFILTERBYIDENTIFIER_PROPERTY);
         }
         if (showFkDropdownUnfiltered == null) {
-          showFkDropdownUnfiltered = convertBoolean(gcItem, "PROPERTY_ISFKDROPDOWNUNFILTERED");
+          showFkDropdownUnfiltered = convertBoolean(gcItem, ISFKDROPDOWNUNFILTERED_PROPERTY);
         }
         if (disableFkDropdown == null) {
-          disableFkDropdown = convertBoolean(gcItem, "PROPERTY_DISABLEFKCOMBO");
+          disableFkDropdown = convertBoolean(gcItem, DISABLEFKCOMBO_PROPERTY);
         }
         if (thresholdToFilter == null) {
-          thresholdToFilter = (Long) gcItem.get(itemClass.getField("PROPERTY_THRESHOLDTOFILTER")
+          thresholdToFilter = (Long) gcItem.get(itemClass.getField(THRESHOLDTOFILTER_PROPERTY)
               .get(gcItem).toString());
         }
         if (lazyFiltering == null && !(gcItem instanceof GCField)) {
-          lazyFiltering = convertBoolean(gcItem, "PROPERTY_ISLAZYFILTERING");
+          lazyFiltering = convertBoolean(gcItem, ISLAZYFILTERING_PROPERTY);
         }
       } catch (Exception e) {
         log.error("Error while getting the properties of " + gcItem, e);
@@ -333,7 +342,7 @@ public class OBViewUtil {
     }
 
     private void sortingPropertyValue(BaseOBObject gcItem) {
-      Boolean sortingConfiguration = convertBoolean(gcItem, "PROPERTY_SORTABLE");
+      Boolean sortingConfiguration = convertBoolean(gcItem, SORTABLE_PROPERTY);
       if (sortingConfiguration == null) {
         return;
       }
@@ -352,7 +361,7 @@ public class OBViewUtil {
     }
 
     private void filteringPropertyValue(BaseOBObject gcItem) {
-      Boolean filteringConfiguration = convertBoolean(gcItem, "PROPERTY_FILTERABLE");
+      Boolean filteringConfiguration = convertBoolean(gcItem, FILTERABLE_PROPERTY);
       if (filteringConfiguration == null) {
         return;
       }
