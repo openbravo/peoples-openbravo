@@ -583,7 +583,7 @@ enyo.kind({
         this.$.divText.setContent(OB.I18N.getLabel('OBPOS_LblLayaway'));
         this.$.divText.show();
         //We have to ensure that there is not another handler showing this div
-      } else if (this.$.divText.content === OB.I18N.getLabel('OBPOS_ToBeReturned') || this.$.divText.content === OB.I18N.getLabel('OBPOS_ToBeLaidaway') || this.$.divText.content === OB.I18N.getLabel('OBPOS_VoidLayaway') || this.$.divText.content === OB.I18N.getLabel('OBPOS_CancelLayaway') || this.$.divText.content.indexOf(OB.I18N.getLabel('OBPOS_CancelReplace')) !== -1) {
+      } else if (this.$.divText.content === OB.I18N.getLabel('OBPOS_ToBeReturned') || this.$.divText.content === OB.I18N.getLabel('OBPOS_ToBeLaidaway') || this.$.divText.content === OB.I18N.getLabel('OBPOS_VoidLayaway') || this.$.divText.content === OB.I18N.getLabel('OBPOS_CancelLayaway') || (this.$.divText.content.indexOf(OB.I18N.getLabel('OBPOS_CancelReplace')) !== -1 && !model.get('replacedorder'))) {
         this.$.divText.hide();
       }
     }, this);
