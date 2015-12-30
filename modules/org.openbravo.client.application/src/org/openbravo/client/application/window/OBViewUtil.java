@@ -267,13 +267,16 @@ public class OBViewUtil {
     private Field theField;
 
     private GridConfigSettings(Field field) {
+      isFilteringColumnConfig = true;
+      isSortingColumnConfig = true;
       this.theField = field;
       if (theField != null) {
         canSort = theField.getColumn().isAllowSorting();
         canFilter = theField.getColumn().isAllowFiltering();
+      } else {
+        canSort = true;
+        canFilter = true;
       }
-      isFilteringColumnConfig = true;
-      isSortingColumnConfig = true;
     }
 
     private boolean shouldContinueProcessing() {
