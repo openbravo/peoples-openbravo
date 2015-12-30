@@ -2947,6 +2947,8 @@
         }, function () {
           OB.error(arguments);
         });
+      } else {
+        OB.UTIL.showLoading(false);
       }
     },
 
