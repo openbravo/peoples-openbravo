@@ -12,7 +12,7 @@
 enyo.kind({
   name: 'OB.UI.ListContextMenuItem',
   kind: 'onyx.MenuItem',
-  selectItem: function (product) {
+  selectItem: function (model) {
 
   }
 });
@@ -70,7 +70,7 @@ enyo.kind({
     onSelect: 'itemSelected'
   },
   published: {
-    product: null
+    model: null
   },
   components: [{
     kind: 'onyx.MenuDecorator',
@@ -84,7 +84,7 @@ enyo.kind({
     }]
   }],
   itemSelected: function (sender, event) {
-    event.originator.selectItem(this.product);
+    event.originator.selectItem(this.model);
     return true;
   }
 });

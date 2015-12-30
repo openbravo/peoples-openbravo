@@ -276,24 +276,99 @@ enyo.kind({
   }
 });
 
+enyo.kind({
+  kind: 'OB.UI.ListContextMenuItem',
+  name: 'OB.UI.BPDetailsContextMenuItem',
+  i18NLabel: 'OBPOS_BPViewDetails',
+  selectItem: function (bp) {
+    bp.set('ignoreSetBP', true, {
+      silent: true
+    });
+    OB.MobileApp.view.$.containerWindow.$.pointOfSale.model.attributes.subWindowManager.set('currentWindow', {
+      name: 'customerView',
+      params: {
+        businessPartner: bp,
+        navigateOnClose: 'mainSubWindow'
+      }
+    });
+    return true;
+  },
+  create: function () {
+    this.inherited(arguments);
+    this.setContent(OB.I18N.getLabel(this.i18NLabel));
+  }
+});
+
+enyo.kind({
+  kind: 'OB.UI.ListContextMenuItem',
+  name: 'OB.UI.BPEditContextMenuItem',
+  i18NLabel: 'OBPOS_BPEdit',
+  selectItem: function (bp) {
+    bp.set('ignoreSetBP', true, {
+      silent: true
+    });
+    OB.MobileApp.view.$.containerWindow.$.pointOfSale.model.attributes.subWindowManager.set('currentWindow', {
+      name: 'customerCreateAndEdit',
+      params: {
+        businessPartner: bp,
+        navigateOnClose: 'mainSubWindow'
+      }
+    });
+    return true;
+  },
+  create: function () {
+    this.inherited(arguments);
+    this.setContent(OB.I18N.getLabel(this.i18NLabel));
+  }
+});
+
+enyo.kind({
+  kind: 'OB.UI.ListContextMenu',
+  name: 'OB.UI.BusinessPartnerContextMenu',
+  initComponents: function () {
+    this.inherited(arguments);
+    var menuOptions = [],
+        extraOptions = OB.MobileApp.model.get('extraBPContextMenuOptions') || [];
+
+    menuOptions.push({
+      kind: 'OB.UI.BPDetailsContextMenuItem',
+      permission: 'OBPOS_receipt.customers'
+    }, {
+      kind: 'OB.UI.BPEditContextMenuItem',
+      permission: 'OBPOS_retail.editCustomers'
+    });
+
+    menuOptions = menuOptions.concat(extraOptions);
+    this.$.menu.setItems(menuOptions);
+  }
+});
+
 /*items of collection*/
 enyo.kind({
   name: 'OB.UI.ListBpsLine',
   kind: 'OB.UI.listItemButton',
   components: [{
     name: 'line',
-    style: 'line-height: 23px;',
+    style: 'line-height: 23px; width: 100%',
     components: [{
-      style: 'display: inline-block;',
-      name: 'identifier'
+      name: 'textInfo',
+      style: 'float: left; ',
+      components: [{
+        style: 'display: inline-block;',
+        name: 'identifier'
+      }, {
+        style: 'display: inline-block; font-weight: bold; color: red; padding-left:5px;',
+        name: 'onHold'
+      }, {
+        style: 'clear: left; color: #888888',
+        name: 'address'
+      }, {
+        style: 'clear: both;'
+      }]
     }, {
-      style: 'display: inline-block; font-weight: bold; color: red; padding-left:5px;',
-      name: 'onHold'
-    }, {
-      style: 'clear: left; color: #888888',
-      name: 'address'
-    }, {
-      style: 'clear: both;'
+      kind: 'OB.UI.BusinessPartnerContextMenu',
+      name: 'btnContextMenu',
+      style: 'float: right'
     }]
   }],
   events: {
@@ -313,6 +388,12 @@ enyo.kind({
     var bPartner = this.owner.owner.owner.bPartner;
     if (bPartner && bPartner.get('id') === this.model.get('id')) {
       this.applyStyle('background-color', '#fbf6d1');
+    }
+    // Context menu
+    if (this.$.btnContextMenu.$.menu.itemsCount === 0) {
+      this.$.btnContextMenu.hide();
+    } else {
+      this.$.btnContextMenu.setModel(this.model);
     }
   }
 });
@@ -414,7 +495,7 @@ enyo.kind({
     this.bpsList.on('click', function (model) {
       if (model.get('customerBlocking') && model.get('salesOrderBlocking')) {
         OB.UTIL.showError(OB.I18N.getLabel('OBPOS_BPartnerOnHold', [model.get('_identifier')]));
-      } else {
+      } else if (!model.get('ignoreSetBP')) {
         this.doChangeBusinessPartner({
           businessPartner: model,
           target: this.owner.owner.args.target
