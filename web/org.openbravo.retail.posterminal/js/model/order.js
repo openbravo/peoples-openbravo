@@ -3370,12 +3370,13 @@
           executeFinalCallback(false);
           return;
         }
-        if (!payment.get('paymentData') && !payment.get('reversedPaymentId')) {
-          // search for an existing payment only if there is not paymentData info.
-          // this avoids to merge for example card payments of different cards.
+        if (!payment.get('reversedPaymentId')) {
+          // search for an existing payment only if is not a reverser payment.
           for (i = 0, max = payments.length; i < max; i++) {
             p = payments.at(i);
-            if (p.get('kind') === payment.get('kind') && !p.get('isPrePayment') && !p.get('reversedPaymentId')) {
+            // search for an existing payment only if there is not paymentData info or if there is, when there is any with exactly same paymentData info.
+            // this avoids to merge for example card payments of different cards.
+            if ((p.get('kind') === payment.get('kind') && (!payment.get('paymentData') || (JSON.stringify(p.get('paymentData')) === JSON.stringify(payment.get('paymentData'))))) && !p.get('isPrePayment') && !p.get('reversedPaymentId')) {
               p.set('amount', OB.DEC.add(payment.get('amount'), p.get('amount')));
               if (p.get('rate') && p.get('rate') !== '1') {
                 p.set('origAmount', OB.DEC.add(payment.get('origAmount'), OB.DEC.mul(p.get('origAmount'), p.get('rate'))));
