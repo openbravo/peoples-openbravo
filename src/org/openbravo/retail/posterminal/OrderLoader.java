@@ -269,7 +269,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           }
         } else if (partialpaidLayaway) {
           order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
-          if (jsonorder.has("obposAppCashup")) {
+          if (!jsonorder.has("channel")) {
             order.setObposAppCashup(jsonorder.getString("obposAppCashup"));
           }
         } else {
@@ -455,12 +455,10 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
   private void updateAuditInfo(Order order, Invoice invoice, JSONObject jsonorder)
       throws JSONException {
-    if (jsonorder.has("created")) {
-      Long value = jsonorder.getLong("created");
-      order.set("creationDate", new Date(value));
-      if (invoice != null) {
-        invoice.set("creationDate", new Date(value));
-      }
+    Long value = jsonorder.getLong("created");
+    order.set("creationDate", new Date(value));
+    if (invoice != null) {
+      invoice.set("creationDate", new Date(value));
     }
   }
 
@@ -1824,7 +1822,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       vars.setSessionValue("POSOrder", "Y");
 
       // retrieve the transactions of this payment and set the cashupId to those transactions
-      if (jsonorder.has("obposAppCashup")) {
+      if (!jsonorder.has("channel")) {
         OBDal.getInstance().refresh(finPayment);
         final List<FIN_FinaccTransaction> transactions = finPayment.getFINFinaccTransactionList();
         final String cashupId = jsonorder.getString("obposAppCashup");
