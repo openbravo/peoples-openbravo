@@ -599,7 +599,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     BigDecimal ratio = movQty.divide(lineReferences.get(numIter).getOrderedQuantity(), 32,
         RoundingMode.HALF_UP);
 
-    Entity promotionLineEntity = ModelProvider.getInstance().getEntity(OrderLineOffer.class);
+    Entity promotionLineEntity = ModelProvider.getInstance().getEntity(InvoiceLineOffer.class);
     InvoiceLine line = OBProvider.getInstance().get(InvoiceLine.class);
     Entity inlineEntity = ModelProvider.getInstance().getEntity(InvoiceLine.class);
     JSONPropertyToEntity.fillBobFromJSON(inlineEntity, line, orderlines.getJSONObject(numIter),
