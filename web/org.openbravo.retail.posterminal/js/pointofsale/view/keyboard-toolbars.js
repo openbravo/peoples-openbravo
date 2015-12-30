@@ -216,9 +216,7 @@ enyo.kind({
     payments = OB.MobileApp.model.get('payments');
 
     if (payments.length === 0) {
-      enyo.forEach(OB.OBPOSPointOfSale.UI.ToolbarPayment.prototype.sideButtons, function (paymentButton) {
-        OB.OBPOSPointOfSale.UI.ToolbarPayment.prototype.sideButtons.pop(0);
-      });
+      this.sideButtons = [];
     }
 
     // Count payment buttons checking payment method category  
