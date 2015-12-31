@@ -261,19 +261,27 @@ enyo.kind({
   kind: 'OB.UI.SelectButton',
   components: [{
     name: 'line',
-    style: 'line-height: 30px;',
+    style: 'line-height: 30px; width: 100%; ',
     components: [{
-      style: 'display: table;',
+      name: 'textInfo',
+      style: 'float: left; ',
       components: [{
-        name: 'identifier',
-        style: 'display: table-cell;'
-      }, {
-        name: 'bottomShipIcon'
-      }, {
-        name: 'bottomBillIcon'
-      }, {
-        style: 'clear: both;'
+        style: 'display: table;',
+        components: [{
+          name: 'identifier',
+          style: 'display: table-cell;'
+        }, {
+          name: 'bottomShipIcon'
+        }, {
+          name: 'bottomBillIcon'
+        }, {
+          style: 'clear: both;'
+        }]
       }]
+    }, {
+      kind: 'OB.UI.BPLocationContextMenu',
+      name: 'btnContextMenu',
+      style: 'float: right'
     }]
   }],
   events: {
@@ -297,6 +305,13 @@ enyo.kind({
       this.$.bottomBillIcon.addClass('addressbillitems');
     } else if (this.model.get('isShipTo')) {
       this.$.bottomShipIcon.addClass('addresshipitems');
+    }
+    // Context menu
+    if (this.$.btnContextMenu.$.menu.itemsCount === 0) {
+      this.$.btnContextMenu.hide();
+    } else {
+      this.$.btnContextMenu.setModel(this.model);
+      this.$.btnContextMenu.bPartner = this.owner.owner.owner.owner.bPartner;
     }
   }
 });

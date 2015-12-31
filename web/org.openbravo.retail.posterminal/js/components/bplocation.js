@@ -283,25 +283,105 @@ enyo.kind({
   }
 });
 
+
+enyo.kind({
+  kind: 'OB.UI.ListContextMenuItem',
+  name: 'OB.UI.BPLocDetailsContextMenuItem',
+  i18NLabel: 'OBPOS_BPViewDetails',
+  selectItem: function (bploc) {
+    var me = this;
+    bploc.set('ignoreSetBPLoc', true, {
+      silent: true
+    });
+    OB.MobileApp.view.$.containerWindow.$.pointOfSale.model.attributes.subWindowManager.set('currentWindow', {
+      name: 'customerAddressView',
+      params: {
+        businessPartner: me.owner.owner.bPartner,
+        bPLocation: bploc,
+        navigateOnClose: 'mainSubWindow'
+      }
+    });
+    return true;
+  },
+  create: function () {
+    this.inherited(arguments);
+    this.setContent(OB.I18N.getLabel(this.i18NLabel));
+  }
+});
+
+enyo.kind({
+  kind: 'OB.UI.ListContextMenuItem',
+  name: 'OB.UI.BPLocEditContextMenuItem',
+  i18NLabel: 'OBPOS_BPEdit',
+  selectItem: function (bploc) {
+    var me = this;
+    bploc.set('ignoreSetBPLoc', true, {
+      silent: true
+    });
+    OB.MobileApp.view.$.containerWindow.$.pointOfSale.model.attributes.subWindowManager.set('currentWindow', {
+      name: 'customerAddrCreateAndEdit',
+      params: {
+        businessPartner: me.owner.owner.bPartner,
+        bPLocation: bploc,
+        navigateOnClose: 'mainSubWindow'
+      }
+    });
+    return true;
+  },
+  create: function () {
+    this.inherited(arguments);
+    this.setContent(OB.I18N.getLabel(this.i18NLabel));
+  }
+});
+
+enyo.kind({
+  kind: 'OB.UI.ListContextMenu',
+  name: 'OB.UI.BPLocationContextMenu',
+  initComponents: function () {
+    this.inherited(arguments);
+    var menuOptions = [],
+        extraOptions = OB.MobileApp.model.get('extraBPLocContextMenuOptions') || [];
+
+    menuOptions.push({
+      kind: 'OB.UI.BPLocDetailsContextMenuItem',
+      permission: 'OBPOS_receipt.customers'
+    }, {
+      kind: 'OB.UI.BPLocEditContextMenuItem',
+      permission: 'OBPOS_retail.editCustomers'
+    });
+
+    menuOptions = menuOptions.concat(extraOptions);
+    this.$.menu.setItems(menuOptions);
+  }
+});
+
 /*items of collection*/
 enyo.kind({
   name: 'OB.UI.ListBpsLocLine',
   kind: 'OB.UI.SelectButton',
   components: [{
     name: 'line',
-    style: 'line-height: 30px;',
+    style: 'line-height: 30px; width: 100%',
     components: [{
-      style: 'display: table;',
+      name: 'textInfo',
+      style: 'float: left; ',
       components: [{
-        name: 'identifier',
-        style: 'display: table-cell;'
-      }, {
-        name: 'bottomShipIcon'
-      }, {
-        name: 'bottomBillIcon'
-      }, {
-        style: 'clear: both;'
+        style: 'display: table;',
+        components: [{
+          name: 'identifier',
+          style: 'display: table-cell;'
+        }, {
+          name: 'bottomShipIcon'
+        }, {
+          name: 'bottomBillIcon'
+        }, {
+          style: 'clear: both;'
+        }]
       }]
+    }, {
+      kind: 'OB.UI.BPLocationContextMenu',
+      name: 'btnContextMenu',
+      style: 'float: right'
     }]
   }],
   events: {
@@ -325,6 +405,13 @@ enyo.kind({
       this.$.bottomBillIcon.addClass('addressbillitems');
     } else if (this.model.get('isShipTo')) {
       this.$.bottomShipIcon.addClass('addresshipitems');
+    }
+    // Context menu
+    if (this.$.btnContextMenu.$.menu.itemsCount === 0) {
+      this.$.btnContextMenu.hide();
+    } else {
+      this.$.btnContextMenu.setModel(this.model);
+      this.$.btnContextMenu.bPartner = this.owner.owner.owner.owner.bPartner;
     }
   }
 });
@@ -431,7 +518,9 @@ enyo.kind({
           target: me.owner.owner.args.target
         });
       }
-      OB.Dal.get(OB.Model.BusinessPartner, this.bPartner.get('id'), successCallbackBPs, errorCallback);
+      if (!model.get('ignoreSetBPLoc')) {
+        OB.Dal.get(OB.Model.BusinessPartner, this.bPartner.get('id'), successCallbackBPs, errorCallback);
+      }
     }, this);
   }
 });
