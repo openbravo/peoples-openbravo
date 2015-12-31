@@ -28,7 +28,7 @@
    IF :OLD.password<>:NEW.password THEN
      
    UPDATE ad_user
-   SET lastupdatepassworddate='now()'
+   SET lastupdatepassworddate = now()
    WHERE ad_user_id=:NEW.ad_user_id;
 
    ELSE RETURN NEW; END IF;
