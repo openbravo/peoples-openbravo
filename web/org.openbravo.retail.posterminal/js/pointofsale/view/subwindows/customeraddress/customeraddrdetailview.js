@@ -48,11 +48,9 @@ enyo.kind({
   }
 });
 
-
-/**/
 enyo.kind({
   kind: 'OB.UI.Button',
-  name: 'OB.OBPOSPointOfSale.UI.customeraddr.assigncustomeraddrtoticket',
+  name: 'OB.OBPOSPointOfSale.UI.customeraddr.AssignAddrButton',
   style: 'margin: 0px 0px 8px 5px;',
   classes: 'btnlink btnlink-small',
   handlers: {
@@ -71,35 +69,30 @@ enyo.kind({
   setBPartnerTarget: function (inSender, inEvent) {
     this.target = inEvent.target;
   },
+  init: function (model) {
+    this.inherited(arguments);
+    var me = this;
+    this.model = model;
+    this.model.get('customerAddr').on('customerAddrSaved', function () {
+      me.waterfall('onAddressChanged', {
+        address: this
+      });
+    });
+  }
+});
+
+enyo.kind({
+  kind: 'OB.OBPOSPointOfSale.UI.customeraddr.AssignAddrButton',
+  name: 'OB.OBPOSPointOfSale.UI.customeraddr.assigncustomeraddrtoticket',
   tap: function () {
     var me = this;
-    if (me.customerAddr.get('isBillTo') && me.customerAddr.get('isShipTo')) {
-      me.customer.set('locId', me.customerAddr.get('id'));
-      me.customer.set('locName', me.customerAddr.get('name'));
-      me.customer.set('locShipId', me.customerAddr.get('id'));
-      me.customer.set('locShipName', me.customerAddr.get('name'));
-      me.customer.set('postalCode', me.customerAddr.get('postalCode'));
-      me.customer.set('cityName', me.customerAddr.get('cityName'));
-      me.customer.set('locationModel', me.customerAddr);
-    } else if (me.customerAddr.get('isBillTo')) {
-      me.customer.set('locId', me.customerAddr.get('id'));
-      me.customer.set('locName', me.customerAddr.get('name'));
-      if (me.customer.get('locId') === me.customer.get('locShipId')) {
-        me.customer.set('locShipId', null);
-        me.customer.set('locShipName', null);
-      }
-    } else if (me.customerAddr.get('isShipTo')) {
-      me.customer.set('locShipId', me.customerAddr.get('id'));
-      me.customer.set('locShipName', me.customerAddr.get('name'));
-      me.customer.set('postalCode', me.customerAddr.get('postalCode'));
-      me.customer.set('cityName', me.customerAddr.get('cityName'));
-      if (me.customer.get('locShipId') === me.customer.get('locId')) {
-        me.customer.set('locId', null);
-        me.customer.set('locName', null);
-      }
-      me.customer.set('locationModel', me.customerAddr);
-    }
-
+    me.customer.set('locId', me.customerAddr.get('id'));
+    me.customer.set('locName', me.customerAddr.get('name'));
+    me.customer.set('locShipId', me.customerAddr.get('id'));
+    me.customer.set('locShipName', me.customerAddr.get('name'));
+    me.customer.set('postalCode', me.customerAddr.get('postalCode'));
+    me.customer.set('cityName', me.customerAddr.get('cityName'));
+    me.customer.set('locationModel', me.customerAddr);
     me.customer.set('countryName', me.customerAddr.get('countryName'));
     me.model.get('order').trigger('change:bp', me.model.get('order'));
     me.doChangeBusinessPartner({
@@ -113,32 +106,91 @@ enyo.kind({
       }
     });
   },
-  init: function (model) {
-    this.inherited(arguments);
-    var me = this;
-    this.model = model;
-    this.model.get('customerAddr').on('customerAddrSaved', function () {
-      me.waterfall('onAddressChanged', {
-        address: this
-      });
-    });
-  },
-  renderAssignToticket: function (newLabel) {
-    this.setContent(newLabel);
-  },
   addressChanged: function (inSender, inEvent) {
     var customerAddr = inEvent.address;
-    if (customerAddr.get('isBillTo') && !customerAddr.get('isShipTo')) {
-      this.renderAssignToticket(OB.I18N.getLabel('OBPOS_LblAssignBillAddress'));
-    } else if (customerAddr.get('isShipTo') && !customerAddr.get('isBillTo')) {
-      this.renderAssignToticket(OB.I18N.getLabel('OBPOS_LblAssignShipAddress'));
+    if (customerAddr.get('isBillTo') && customerAddr.get('isShipTo')) {
+      this.show();
     } else {
-      this.renderAssignToticket(OB.I18N.getLabel('OBPOS_LblAssignAddress'));
+      this.hide();
     }
   },
   initComponents: function () {
     this.inherited(arguments);
     this.setContent(OB.I18N.getLabel('OBPOS_LblAssignAddress'));
+  }
+});
+
+enyo.kind({
+  kind: 'OB.OBPOSPointOfSale.UI.customeraddr.AssignAddrButton',
+  name: 'OB.OBPOSPointOfSale.UI.customeraddr.assigncustomeraddrtoticketship',
+  tap: function () {
+    var me = this;
+    me.customer.set('locShipId', me.customerAddr.get('id'));
+    me.customer.set('locShipName', me.customerAddr.get('name'));
+    me.customer.set('postalCode', me.customerAddr.get('postalCode'));
+    me.customer.set('cityName', me.customerAddr.get('cityName'));
+    me.customer.set('locationModel', me.customerAddr);
+    me.customer.set('countryName', me.customerAddr.get('countryName'));
+    me.model.get('order').trigger('change:bp', me.model.get('order'));
+    me.doChangeBusinessPartner({
+      businessPartner: me.customer,
+      target: this.target
+    });
+    var sw = me.subWindow;
+    sw.doChangeSubWindow({
+      newWindow: {
+        name: 'mainSubWindow'
+      }
+    });
+  },
+  addressChanged: function (inSender, inEvent) {
+    var customerAddr = inEvent.address;
+    if (customerAddr.get('isShipTo')) {
+      this.show();
+    } else {
+      this.hide();
+    }
+  },
+  initComponents: function () {
+    this.inherited(arguments);
+    this.setContent(OB.I18N.getLabel('OBPOS_LblAssignShipAddress'));
+  }
+});
+
+enyo.kind({
+  kind: 'OB.OBPOSPointOfSale.UI.customeraddr.AssignAddrButton',
+  name: 'OB.OBPOSPointOfSale.UI.customeraddr.assigncustomeraddrtoticketinv',
+  tap: function () {
+    var me = this;
+    me.customer.set('locId', me.customerAddr.get('id'));
+    me.customer.set('locName', me.customerAddr.get('name'));
+    me.customer.set('postalCode', me.customerAddr.get('postalCode'));
+    me.customer.set('cityName', me.customerAddr.get('cityName'));
+    me.customer.set('locationModel', me.customerAddr);
+    me.customer.set('countryName', me.customerAddr.get('countryName'));
+    me.model.get('order').trigger('change:bp', me.model.get('order'));
+    me.doChangeBusinessPartner({
+      businessPartner: me.customer,
+      target: this.target
+    });
+    var sw = me.subWindow;
+    sw.doChangeSubWindow({
+      newWindow: {
+        name: 'mainSubWindow'
+      }
+    });
+  },
+  addressChanged: function (inSender, inEvent) {
+    var customerAddr = inEvent.address;
+    if (customerAddr.get('isBillTo')) {
+      this.show();
+    } else {
+      this.hide();
+    }
+  },
+  initComponents: function () {
+    this.inherited(arguments);
+    this.setContent(OB.I18N.getLabel('OBPOS_LblAssignBillAddress'));
   }
 });
 
@@ -193,6 +245,10 @@ enyo.kind({
       }, {
         style: 'display: table-cell;',
         components: [{
+          kind: 'OB.OBPOSPointOfSale.UI.customeraddr.assigncustomeraddrtoticketship'
+        }, {
+          kind: 'OB.OBPOSPointOfSale.UI.customeraddr.assigncustomeraddrtoticketinv'
+        }, {
           kind: 'OB.OBPOSPointOfSale.UI.customeraddr.assigncustomeraddrtoticket'
         }]
       }]
