@@ -189,15 +189,15 @@
         SELECT O.AD_ORG_ID AS PADRE, Y.C_YEAR_ID AS ID, Y.YEAR || ' (' || C.NAME || ')' AS NAME
         FROM C_YEAR Y, C_CALENDAR C, AD_ORG O
         WHERE C.C_CALENDAR_ID = Y.C_CALENDAR_ID
-          AND C.AD_CLIENT_ID = ?
+          AND C.AD_CLIENT_ID = '1'
           AND EXISTS (
                         SELECT 1 FROM AD_ORG ORG
-                        WHERE AD_ORG_ISINNATURALTREE(O.AD_ORG_ID, ORG.AD_ORG_ID, ?) = 'Y'
+                        WHERE AD_ORG_ISINNATURALTREE(O.AD_ORG_ID, ORG.AD_ORG_ID, '1') = 'Y'
                         AND C.C_CALENDAR_ID = ORG.C_CALENDAR_ID
                       )
         ORDER BY O.NAME, Y.YEAR
         ]]></Sql>
-    <Parameter name="Client" />
-    <Parameter name="Client" />
+    <Parameter name="Client" type="replace" optional="false"  after="AND C.AD_CLIENT_ID = " text="'1'"></Parameter>
+    <Parameter name="Client" type="replace" optional="false"  after="WHERE AD_ORG_ISINNATURALTREE(O.AD_ORG_ID, ORG.AD_ORG_ID, " text="'1'"></Parameter>
    </SqlMethod>
 </SqlClass>
