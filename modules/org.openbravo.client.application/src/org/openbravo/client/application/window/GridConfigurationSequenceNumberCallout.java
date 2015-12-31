@@ -58,27 +58,27 @@ public class GridConfigurationSequenceNumberCallout extends SimpleCallout {
         OBCriteria<GCTab> gcTabCriteria = OBDal.getInstance().createCriteria(GCTab.class);
         gcTabCriteria.add(Restrictions.and(Restrictions.eq(GCTab.PROPERTY_TAB, myTab),
             Restrictions.eq(GCTab.PROPERTY_SEQNO, mySeq)));
-
-        if (gcTabCriteria.count() > 0) {
-          String parsedMessage = Utility.messageBD(this, warningMessage, OBContext.getOBContext()
-              .getLanguage().getId());
-          info.addResult("WARNING", parsedMessage);
-        }
-
+        int countGCTabCriteria = gcTabCriteria.count();
+        createWarningMessage(info, countGCTabCriteria);
       }
 
       if (info.getTabId().equals(GC_SYSTEM_TAB_ID)) {
 
         OBCriteria<GCSystem> gcSystemCriteria = OBDal.getInstance().createCriteria(GCSystem.class);
         gcSystemCriteria.add(Restrictions.eq(GCSystem.PROPERTY_SEQNO, mySeq));
-        if (gcSystemCriteria.count() > 0) {
-          String parsedMessage = Utility.messageBD(this, warningMessage, OBContext.getOBContext()
-              .getLanguage().getId());
-          info.addResult("WARNING", parsedMessage);
-        }
+        int countGCSystemCriteria = gcSystemCriteria.count();
+        createWarningMessage(info, countGCSystemCriteria);
       }
     } catch (NumberFormatException e) {
       return;
+    }
+  }
+
+  private void createWarningMessage(CalloutInfo info, int gcCount) {
+    if (gcCount > 0) {
+      String parsedMessage = Utility.messageBD(this, warningMessage, OBContext.getOBContext()
+          .getLanguage().getId());
+      info.addResult("WARNING", parsedMessage);
     }
   }
 }
