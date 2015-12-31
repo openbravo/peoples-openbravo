@@ -1884,6 +1884,7 @@
       this.set('hasbeenpaid', 'N');
       this.set('isEditable', true);
       this.set('createdBy', OB.MobileApp.model.get('orgUserId'));
+      this.set('session', OB.MobileApp.model.get('session'));
       this.set('orderDate', new Date());
       //Sometimes the Id of Quotation is null.
       if (this.get('id') && !_.isNull(this.get('id'))) {

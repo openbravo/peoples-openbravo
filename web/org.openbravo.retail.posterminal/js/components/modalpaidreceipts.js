@@ -396,7 +396,12 @@ enyo.kind({
           } else if (me.model.get('orderList').models[i].get('isQuotation')) {
             orderTypeMsg = OB.I18N.getLabel('OBPOS_Quotation');
           }
-          OB.UTIL.showWarning(enyo.format(OB.I18N.getLabel('OBPOS_ticketAlreadyOpened'), orderTypeMsg, model.get('documentNo')));
+          me.doShowPopup({
+            popup: 'OB_UI_MessageDialog',
+            args: {
+              message: (enyo.format(OB.I18N.getLabel('OBPOS_ticketAlreadyOpened'), orderTypeMsg, model.get('documentNo')))
+            }
+          });
           if (OB.MobileApp.model.receipt.get('documentNo') !== model.get('documentNo')) {
             me.doChangeCurrentOrder({
               newCurrentOrder: me.model.get('orderList').models[i]
@@ -411,36 +416,49 @@ enyo.kind({
         'hasbeenpaid': 'N'
       }, function (ordersNotProcessed) {
         if (ordersNotProcessed.length > 0) {
-          var orderExists = false;
-          _.each(ordersNotProcessed.models, function (order) {
-            if (order && order.get('id') === model.get('id') && ((order.get('isLayaway') && !order.get('isPaid')) || (order.get('isQuotation') && order.get('hasbeenpaid') === 'N'))) {
-              var orderTypeMsg = OB.I18N.getLabel('OBPOS_ticket');
-              if (order.get('isLayaway')) {
-                orderTypeMsg = OB.I18N.getLabel('OBPOS_LblLayaway');
-              } else if (order.get('isQuotation')) {
-                orderTypeMsg = OB.I18N.getLabel('OBPOS_Quotation');
-              }
-              // Getting Other Session User's username
-              OB.Dal.find(OB.Model.User, {
-                'id': order.get('createdBy')
-              }, function (users) {
-                if (users.length > 0) {
-                  me.doShowPopup({
-                    popup: 'OB_UI_MessageDialog',
-                    args: {
-                      message: (enyo.format(OB.I18N.getLabel('OBPOS_ticketAlreadyOpenedInSession'), orderTypeMsg, order.get('documentNo'), users.models[0].get('name')))
-                    }
-                  });
-                }
-              });
-              orderExists = true;
-            }
+          var existingOrder = _.find(ordersNotProcessed.models, function (order) {
+            return order.get('id') === model.get('id') || order.get('oldId') === model.get('id');
           });
-          if (orderExists) {
-            return true;
+          if (existingOrder) {
+            var orderTypeMsg = OB.I18N.getLabel('OBPOS_ticket');
+            if (existingOrder.get('isLayaway')) {
+              orderTypeMsg = OB.I18N.getLabel('OBPOS_LblLayaway');
+            } else if (existingOrder.get('isQuotation')) {
+              orderTypeMsg = OB.I18N.getLabel('OBPOS_Quotation');
+            }
+            // Getting Other Session User's username
+            OB.Dal.find(OB.Model.Session, {
+              'id': existingOrder.get('session')
+            }, function (sessions) {
+              if (sessions.length > 0) {
+                OB.Dal.find(OB.Model.User, {
+                  'id': sessions.models[0].get('user')
+                }, function (users) {
+                  if (users.length > 0) {
+                    OB.UTIL.showConfirmation.display(enyo.format(OB.I18N.getLabel('OBPOS_ticketAlreadyOpenedInSession'), orderTypeMsg, model.get('documentNo'), users.models[0].get('name')), enyo.format(OB.I18N.getLabel('OBPOS_MsgConfirmSaveInCurrentSession'), users.models[0].get('name')), [{
+                      label: OB.I18N.getLabel('OBMOBC_LblOk'),
+                      action: function () {
+                        OB.Dal.remove(existingOrder, function () {
+                          loadOrder(model);
+                        }, OB.UTIL.showError);
+                      }
+                    }, {
+                      label: OB.I18N.getLabel('OBMOBC_LblCancel')
+                    }], {
+                      onHideFunction: function (dialog) {
+                        return true;
+                      }
+                    });
+                  }
+                });
+              }
+            });
+          } else {
+            return loadOrder(model);
           }
+        } else {
+          return loadOrder(model);
         }
-        return loadOrder(model);
       });
 
       return true;
