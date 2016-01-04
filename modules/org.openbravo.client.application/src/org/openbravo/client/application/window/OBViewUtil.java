@@ -18,6 +18,8 @@
  */
 package org.openbravo.client.application.window;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.codehaus.jettison.json.JSONException;
@@ -199,14 +201,12 @@ public class OBViewUtil {
    */
   private static JSONObject getGridConfigurationSettings(Field field, Tab tab) {
     GridConfigSettings settings = new GridConfigSettings(field);
+    int gcTabIndex = 0;
     GCTab tabConf = null;
     if (tab.getOBUIAPPGCTabList().size() > 1) {
-      OBCriteria<GCTab> gcTabCriteria = OBDal.getInstance().createCriteria(GCTab.class);
-      gcTabCriteria.addOrder(Order.desc(GCTab.PROPERTY_SEQNO));
-      gcTabCriteria.addOrder(Order.desc(GCTab.PROPERTY_ID));
-      gcTabCriteria.setMaxResults(1);
-      gcTabCriteria.list();
-      tabConf = (GCTab) gcTabCriteria.uniqueResult();
+      Collections.sort(tab.getOBUIAPPGCTabList(), new CustomComparator());
+      gcTabIndex = tab.getOBUIAPPGCTabList().size() - 1;
+      tabConf = tab.getOBUIAPPGCTabList().get(gcTabIndex);
     } else {
       for (GCTab t : tab.getOBUIAPPGCTabList()) {
         tabConf = t;
@@ -250,6 +250,17 @@ public class OBViewUtil {
     }
 
     return settings.processJSONResult();
+  }
+
+  private static class CustomComparator implements Comparator<GCTab> {
+    @Override
+    public int compare(GCTab o1, GCTab o2) {
+      if (o1.getSeqno().compareTo(o2.getSeqno()) != 0) {
+        return o1.getSeqno().compareTo(o2.getSeqno());
+      } else {
+        return o1.getId().compareTo(o2.getId());
+      }
+    }
   }
 
   private static class GridConfigSettings {
