@@ -190,23 +190,23 @@ enyo.kind({
     style: 'width: 75%; float: left; ',
     components: [{
       name: 'infotext',
-      style: 'display: table-cell; vertical-align: middle; height: 30px; padding: 4px; ',
-      content: 'Use the same address for shipping and invoicing'
+      style: 'display: table-cell; vertical-align: middle; height: 30px; padding: 4px; '
     }]
   }, {
     style: 'clear:both'
   }, {
     name: 'shipLbl',
-    content: 'Shipping Address',
     classes: 'twoAddrLayoutHeader'
   }, {
     name: 'invLbl',
-    content: 'Invoicing Address',
     classes: 'twoAddrLayoutHeader'
   }],
   initComponents: function () {
     this.inherited(arguments);
     this.owner.owner.$.labelLine.hide();
+    this.$.infotext.setContent(OB.I18N.getLabel('OBPOS_SameAddrInfo'));
+    this.$.shipLbl.setContent(OB.I18N.getLabel('OBPOS_LblShipAddr'));
+    this.$.invLbl.setContent(OB.I18N.getLabel('OBPOS_LblBillAddr'));
   },
   rendered: function () {
     this.inherited(arguments);
