@@ -308,14 +308,10 @@ enyo.kind({
     hideShow: function (inSender, inEvent) {
       if (inEvent.checked) {
         this.owner.removeClass('width52');
-        this.owner.owner.$.bottomShipIcon.removeClass('width6');
-        this.owner.owner.$.bottomBillIcon.removeClass('width6');
-        this.owner.owner.$.labelLine.removeClass('width26');
+        this.owner.owner.$.labelLine.removeClass('width40');
       } else {
         this.owner.addClass('width52');
-        this.owner.owner.$.bottomShipIcon.addClass('width6');
-        this.owner.owner.$.bottomBillIcon.addClass('width6');
-        this.owner.owner.$.labelLine.addClass('width26');
+        this.owner.owner.$.labelLine.addClass('width40');
       }
     }
   }, {
@@ -359,15 +355,11 @@ enyo.kind({
     hideShow: function (inSender, inEvent) {
       if (inEvent.checked) {
         this.owner.removeClass('width52');
-        this.owner.owner.$.bottomShipIcon.removeClass('width6');
-        this.owner.owner.$.bottomBillIcon.removeClass('width6');
-        this.owner.owner.$.labelLine.removeClass('width26');
+        this.owner.owner.$.labelLine.removeClass('width40');
         this.owner.owner.hide();
       } else {
         this.owner.addClass('width52');
-        this.owner.owner.$.bottomShipIcon.addClass('width6');
-        this.owner.owner.$.bottomBillIcon.addClass('width6');
-        this.owner.owner.$.labelLine.addClass('width26');
+        this.owner.owner.$.labelLine.addClass('width40');
         this.owner.owner.show();
 
       }
