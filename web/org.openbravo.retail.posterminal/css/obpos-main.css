@@ -111,6 +111,35 @@
   background-color: #fff;
   height: 34px;
   color: black;
+}
+
+.width6{
+  width: 6% !important;
+}
+
+.width26{
+  width: 26% !important;
+}
+
+.width40{
+  width: 40% !important;
+}
+
+.width52{
+  width: 52% !important;
+}
+
+.twoAddrLayout{
+  width: 50%;
+  float: left;
+}
+
+.twoAddrLayoutHeader{
+  width: 50%;
+  float: left;
+  font-weight: bold;
+  font-size: 22px;
+  line-height: 30px;
   font-size: 16px;
   padding-top: 1px;
 }

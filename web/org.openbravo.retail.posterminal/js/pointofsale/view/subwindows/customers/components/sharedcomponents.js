@@ -146,7 +146,8 @@ enyo.kind({
   name: 'OB.UI.CustomerTextPropertyAddr',
   kind: 'OB.UI.CustomerTextProperty',
   handlers: {
-    onLoadValue: 'loadValue'
+    onLoadValue: 'loadValue',
+    onHideShow: 'hideShow'
   },
   loadValue: function (inSender, inEvent) {
     if (inEvent.customer !== undefined) {
@@ -165,6 +166,72 @@ enyo.kind({
       this.setValue('');
       this.setAttribute('readonly', '');
     }
+  }
+});
+
+enyo.kind({
+  name: 'OB.UI.SwitchShippingInvoicingAddr',
+  handlers: {
+    onLoadValue: 'loadValue'
+  },
+  events: {
+    onHideShowFields: ''
+  },
+  components: [{
+    name: 'useSameCheck',
+    style: 'text-align: right; width: 20%; float: left; padding: 0px 5px 1px 0px',
+    components: [{
+      name: 'btnUseSameCheck',
+      kind: 'OB.UI.CheckboxButton',
+      style: 'background-position: 0px 5px; height: 38px; margin-left: 5px; '
+    }]
+  }, {
+    name: 'info',
+    style: 'width: 75%; float: left; ',
+    components: [{
+      name: 'infotext',
+      style: 'display: table-cell; vertical-align: middle; height: 30px; padding: 4px; ',
+      content: 'Use the same address for shipping and invoicing'
+    }]
+  }, {
+    style: 'clear:both'
+  }, {
+    name: 'shipLbl',
+    content: 'Shipping Address',
+    classes: 'twoAddrLayoutHeader'
+  }, {
+    name: 'invLbl',
+    content: 'Invoicing Address',
+    classes: 'twoAddrLayoutHeader'
+  }],
+  initComponents: function () {
+    this.inherited(arguments);
+    this.owner.owner.$.labelLine.hide();
+  },
+  rendered: function () {
+    this.inherited(arguments);
+    this.owner.applyStyle('width', '100%');
+  },
+  loadValue: function (inSender, inEvent) {
+    if (inEvent.customer !== undefined) {
+      this.hide();
+    } else {
+      this.show();
+      this.$.btnUseSameCheck.checked = true;
+      this.$.btnUseSameCheck.addClass('active');
+      this.doHideShowFields({
+        checked: this.$.btnUseSameCheck.checked
+      });
+      this.$.shipLbl.hide();
+      this.$.invLbl.hide();
+    }
+  },
+  tap: function () {
+    this.doHideShowFields({
+      checked: this.$.btnUseSameCheck.checked
+    });
+    this.$.shipLbl.setShowing(!this.$.btnUseSameCheck.checked);
+    this.$.invLbl.setShowing(!this.$.btnUseSameCheck.checked);
   }
 });
 
@@ -253,15 +320,30 @@ enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.customers.edit_createcustomers',
   handlers: {
     onSetCustomer: 'setCustomer',
-    onSaveCustomer: 'preSaveCustomer'
+    onSaveCustomer: 'preSaveCustomer',
+    onHideShowFields: 'hideShowFields'
   },
   events: {},
   components: [{
     name: 'bodyheader'
   }, {
     name: 'customerAttributes',
-    style: 'overflow-x: hidden; overflow-y: auto; max-height: 580px;'
+    style: 'overflow-x: hidden; overflow-y: auto; max-height: 580px;',
+    components: [{
+      name: 'customerOnlyFields'
+    }, {
+      name: 'shippingAddrFields'
+    }, {
+      name: 'invoicingAddrFields'
+    }]
   }],
+  hideShowFields: function (inSender, inEvent) {
+    this.$.shippingAddrFields.addRemoveClass('twoAddrLayout', !inEvent.checked);
+    this.$.invoicingAddrFields.addRemoveClass('twoAddrLayout', !inEvent.checked);
+    this.waterfall('onHideShow', {
+      checked: inEvent.checked
+    });
+  },
   setCustomer: function (inSender, inEvent) {
     this.customer = inEvent.customer;
     this.waterfall('onLoadValue', {
@@ -365,6 +447,7 @@ enyo.kind({
     }
   },
   initComponents: function () {
+    var me = this;
     this.inherited(arguments);
     this.$.bodyheader.createComponent({
       kind: this.windowHeader
@@ -381,27 +464,83 @@ enyo.kind({
         }
       }
       if (resultDisplay) {
-        if (natt.name === "customerLocName") {
-          this.$.customerAttributes.createComponent({
+        if (natt.hasAddrIcons) {
+          this.$.customerOnlyFields.createComponent({
             kind: 'OB.UI.CustomerPropertyLineAddr',
             name: 'line_' + natt.name,
             newAttribute: natt
-          });
-        } else if (natt.name === "customerLocShipId") {
-          this.$.customerAttributes.createComponent({
-            kind: 'OB.UI.CustomerPropertyLine',
-            name: 'line_' + natt.name,
-            newAttribute: natt,
-            style: 'display: none;'
+          }, {
+            owner: me.attributeContainer
           });
         } else {
-          this.$.customerAttributes.createComponent({
+          this.$.customerOnlyFields.createComponent({
             kind: 'OB.UI.CustomerPropertyLine',
             name: 'line_' + natt.name,
             newAttribute: natt
+          }, {
+            owner: me.attributeContainer
           });
         }
-
+      }
+    }, this);
+    enyo.forEach(this.shipAddrAttributes, function (natt) {
+      var resultDisplay = true,
+          undf;
+      if (natt.displayLogic !== undf && natt.displayLogic !== null) {
+        if (enyo.isFunction(natt.displayLogic)) {
+          resultDisplay = natt.displayLogic(this);
+        } else {
+          resultDisplay = natt.displayLogic;
+        }
+      }
+      if (resultDisplay) {
+        if (natt.hasAddrIcons) {
+          this.$.shippingAddrFields.createComponent({
+            kind: 'OB.UI.CustomerPropertyLineAddr',
+            name: 'line_' + natt.name,
+            newAttribute: natt
+          }, {
+            owner: me.attributeContainer
+          });
+        } else {
+          this.$.shippingAddrFields.createComponent({
+            kind: 'OB.UI.CustomerPropertyLine',
+            name: 'line_' + natt.name,
+            newAttribute: natt
+          }, {
+            owner: me.attributeContainer
+          });
+        }
+      }
+    }, this);
+    enyo.forEach(this.invAddrAttributes, function (natt) {
+      var resultDisplay = true,
+          undf;
+      if (natt.displayLogic !== undf && natt.displayLogic !== null) {
+        if (enyo.isFunction(natt.displayLogic)) {
+          resultDisplay = natt.displayLogic(this);
+        } else {
+          resultDisplay = natt.displayLogic;
+        }
+      }
+      if (resultDisplay) {
+        if (natt.hasAddrIcons) {
+          this.$.invoicingAddrFields.createComponent({
+            kind: 'OB.UI.CustomerPropertyLineAddr',
+            name: 'line_' + natt.name,
+            newAttribute: natt
+          }, {
+            owner: me.attributeContainer
+          });
+        } else {
+          this.$.invoicingAddrFields.createComponent({
+            kind: 'OB.UI.CustomerPropertyLine',
+            name: 'line_' + natt.name,
+            newAttribute: natt
+          }, {
+            owner: me.attributeContainer
+          });
+        }
       }
     }, this);
   },
