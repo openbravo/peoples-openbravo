@@ -94,6 +94,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "model/bplocation", // Model for Customer
                             // Address
         "model/currencypanel",
+        "model/country",
         "model/salesrepresentative",
         "model/productcharacteristicvalue",
         "model/characteristicvalue",

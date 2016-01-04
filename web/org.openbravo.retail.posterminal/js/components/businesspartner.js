@@ -137,14 +137,14 @@ enyo.kind({
   },
   putDisabled: function (status) {
     if (status === false) {
-      this.disabled = false;
       this.setDisabled(false);
       this.removeClass('disabled');
+      this.disabled = false;
       return;
     }
-    this.disabled = true;
     this.setDisabled(true);
     this.addClass('disabled');
+    this.disabled = true;
   }
 });
 
@@ -182,14 +182,14 @@ enyo.kind({
   },
   putDisabled: function (status) {
     if (status === false) {
-      this.disabled = false;
       this.setDisabled(false);
       this.removeClass('disabled');
+      this.disabled = false;
       return;
     }
-    this.disabled = true;
     this.setDisabled(true);
     this.addClass('disabled');
+    this.disabled = true;
   },
   initComponents: function () {
     this.inherited(arguments);
