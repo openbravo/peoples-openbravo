@@ -76,18 +76,7 @@ enyo.kind({
       if (!args.cancelOperation) {
         var i;
         if (me.model.get('leftColumnViewManager').isMultiOrder()) {
-          for (i = 0; me.model.get('multiOrders').get('multiOrdersList').length > i; i++) {
-            if (!me.model.get('multiOrders').get('multiOrdersList').at(i).get('isLayaway')) { //if it is not true, means that iti is a new order (not a loaded layaway)
-              me.model.get('multiOrders').get('multiOrdersList').at(i).unset('amountToLayaway');
-              me.model.get('multiOrders').get('multiOrdersList').at(i).set('orderType', 0);
-              continue;
-            }
-            me.model.get('orderList').current = me.model.get('multiOrders').get('multiOrdersList').at(i);
-            me.model.get('orderList').deleteCurrent();
-            if (!_.isNull(this.model.get('multiOrders').get('multiOrdersList').at(i).id)) {
-              me.model.get('orderList').deleteCurrentFromDatabase(me.model.get('multiOrders').get('multiOrdersList').at(i));
-            }
-          }
+          me.model.deleteMultiOrderList();
           me.model.get('multiOrders').resetValues();
           me.model.get('leftColumnViewManager').setOrderMode();
         } else {
@@ -132,18 +121,7 @@ enyo.kind({
     var i, me = this;
 
     if (me.model.get('leftColumnViewManager').isMultiOrder()) {
-      for (i = 0; me.model.get('multiOrders').get('multiOrdersList').length > i; i++) {
-        if (!me.model.get('multiOrders').get('multiOrdersList').at(i).get('isLayaway')) { //if it is not true, means that iti is a new order (not a loaded layaway)
-          me.model.get('multiOrders').get('multiOrdersList').at(i).unset('amountToLayaway');
-          me.model.get('multiOrders').get('multiOrdersList').at(i).set('orderType', 0);
-          continue;
-        }
-        me.model.get('orderList').current = me.model.get('multiOrders').get('multiOrdersList').at(i);
-        me.model.get('orderList').deleteCurrent();
-        if (!_.isNull(me.model.get('multiOrders').get('multiOrdersList').at(i).id)) {
-          me.model.get('orderList').deleteCurrentFromDatabase(me.model.get('multiOrders').get('multiOrdersList').at(i));
-        }
-      }
+      me.model.deleteMultiOrderList();
       me.model.get('multiOrders').resetValues();
       me.model.get('leftColumnViewManager').setOrderMode();
       return true;

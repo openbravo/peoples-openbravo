@@ -345,6 +345,7 @@ enyo.kind({
     if (checkedMultiOrders.length === 0) {
       return true;
     }
+    me.owner.owner.model.deleteMultiOrderList();
     _.each(checkedMultiOrders, function (iter) {
       if (_.indexOf(me.owner.owner.model.get('orderList').models, iter) !== -1) {
         iter.save();

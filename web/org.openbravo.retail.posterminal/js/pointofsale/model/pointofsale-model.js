@@ -185,6 +185,21 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
 
     modelToIncludePayment.addPayment(payment);
   },
+  deleteMultiOrderList: function () {
+    var i;
+    for (i = 0; this.get('multiOrders').get('multiOrdersList').length > i; i++) {
+      if (!this.get('multiOrders').get('multiOrdersList').at(i).get('isLayaway')) { //if it is not true, means that iti is a new order (not a loaded layaway)
+        this.get('multiOrders').get('multiOrdersList').at(i).unset('amountToLayaway');
+        this.get('multiOrders').get('multiOrdersList').at(i).set('orderType', 0);
+        continue;
+      }
+      this.get('orderList').current = this.get('multiOrders').get('multiOrdersList').at(i);
+      this.get('orderList').deleteCurrent();
+      if (!_.isNull(this.get('multiOrders').get('multiOrdersList').at(i).id)) {
+        this.get('orderList').deleteCurrentFromDatabase(this.get('multiOrders').get('multiOrdersList').at(i));
+      }
+    }
+  },
   init: function () {
     OB.error("This init method should never be called for this model. Call initModels and loadModels instead");
     this.initModels(function () {});
