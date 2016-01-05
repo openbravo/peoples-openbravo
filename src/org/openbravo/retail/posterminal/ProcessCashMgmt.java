@@ -9,8 +9,10 @@
 package org.openbravo.retail.posterminal;
 
 import java.math.BigDecimal;
+import java.util.Calendar;
 import java.util.Date;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.advpaymentmngt.dao.TransactionsDao;
@@ -19,6 +21,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.mobile.core.process.DataSynchronizationImportProcess;
 import org.openbravo.mobile.core.process.DataSynchronizationProcess.DataSynchronization;
+import org.openbravo.mobile.core.utils.OBMOBCUtils;
 import org.openbravo.model.financialmgmt.gl.GLItem;
 import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
@@ -64,6 +67,32 @@ public class ProcessCashMgmt extends POSDataSynchronizationProcess implements
     if (jsonsent.has("glItem")) {
       glItemMain = OBDal.getInstance().get(GLItem.class, jsonsent.getString("glItem"));
     }
+
+    // get and prepare the cashMgmtTrxDate
+    Date cashMgmtTrxDate = new Date();
+    if (jsonsent.has("dateTime") && jsonsent.get("dateTime") != null
+        && StringUtils.isNotEmpty(jsonsent.getString("dateTime"))) {
+      final String strCashMgmtTrxDate = jsonsent.getString("dateTime");
+      if (!strCashMgmtTrxDate.substring(strCashMgmtTrxDate.length() - 1).equals("Z")) {
+        log.error(String.format(
+            "The cashup date must be provided in ISO 8601 format and be an UTC date (value: '%s')",
+            strCashMgmtTrxDate));
+      }
+      // get the timezoneOffset
+      final long timezoneOffset;
+      if (jsonsent.has("timezoneOffset") && jsonsent.get("timezoneOffset") != null
+          && StringUtils.isNotEmpty(jsonsent.getString("timezoneOffset"))) {
+        timezoneOffset = Long.parseLong(jsonsent.getString("timezoneOffset"));
+      } else {
+        timezoneOffset = -((Calendar.getInstance().get(Calendar.ZONE_OFFSET) + Calendar
+            .getInstance().get(Calendar.DST_OFFSET)) / (60 * 1000));
+        log.error("Error processing cash close (1): error retrieving the timezoneOffset. Using the current timezoneOffset");
+      }
+      cashMgmtTrxDate = OBMOBCUtils.calculateClientDatetime(strCashMgmtTrxDate, timezoneOffset);
+    } else {
+      log.debug("Error processing cash close (2): error retrieving cashUp date. Using current server date");
+    }
+
     FIN_FinancialAccount account = paymentMethod.getFinancialAccount();
 
     FIN_FinaccTransaction transaction = OBProvider.getInstance().get(FIN_FinaccTransaction.class);
@@ -84,8 +113,8 @@ public class ProcessCashMgmt extends POSDataSynchronizationProcess implements
     transaction.setProcessed(true);
     transaction.setTransactionType("BPW");
     transaction.setDescription(description);
-    transaction.setDateAcct(new Date());
-    transaction.setTransactionDate(new Date());
+    transaction.setDateAcct(cashMgmtTrxDate);
+    transaction.setTransactionDate(cashMgmtTrxDate);
     transaction.setStatus("RDNC");
 
     OBDal.getInstance().save(transaction);
@@ -116,8 +145,8 @@ public class ProcessCashMgmt extends POSDataSynchronizationProcess implements
       secondTransaction.setProcessed(true);
       secondTransaction.setTransactionType("BPW");
       secondTransaction.setDescription(description);
-      secondTransaction.setDateAcct(new Date());
-      secondTransaction.setTransactionDate(new Date());
+      secondTransaction.setDateAcct(cashMgmtTrxDate);
+      secondTransaction.setTransactionDate(cashMgmtTrxDate);
       secondTransaction.setStatus("RDNC");
       OBDal.getInstance().save(secondTransaction);
     }

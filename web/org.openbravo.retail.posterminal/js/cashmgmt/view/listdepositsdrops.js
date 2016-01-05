@@ -57,10 +57,10 @@ enyo.kind({
         amnt = OB.I18N.formatCurrency(OB.DEC.add(0, this.model.get('amount')));
       }
     }
-
+    var creationDate = new Date(this.model.get('creationDate'));
     this.$.description.setContent(lbl + this.model.get('description'));
     this.$.user.setContent(this.model.get('user'));
-    this.$.time.setContent(this.model.get('time'));
+    this.$.time.setContent(OB.UTIL.padNumber(creationDate.getHours(), 2) + ':' + OB.UTIL.padNumber(creationDate.getMinutes(), 2));
     if (foreignAmt && ((this.model.get('rate') && this.model.get('rate') !== '1') || amnt !== foreignAmt)) {
       this.$.foreignAmt.setContent('(' + foreignAmt + ' ' + this.model.get('isocode') + ')');
     }

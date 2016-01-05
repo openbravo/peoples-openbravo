@@ -11,12 +11,10 @@ package org.openbravo.retail.posterminal.master;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 import java.util.TimeZone;
 
 import javax.servlet.ServletException;
-import javax.xml.bind.DatatypeConverter;
 
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
@@ -227,10 +225,6 @@ public class Cashup extends JSONProcessSimple {
       JSONObject result = new JSONObject();
       Float totalamt = Float.parseFloat(cashMgmtJSON.get("paymentAmount").toString())
           + Float.parseFloat(cashMgmtJSON.get("depositAmount").toString());
-      Calendar c = DatatypeConverter.parseDateTime(cashMgmtJSON.get("creationDate").toString());
-      int hour = c.get(Calendar.HOUR_OF_DAY);
-      int minute = c.get(Calendar.MINUTE);
-      String creationDate = hour + ":" + minute;
 
       // Get Payment Method ID and Reason ID
       String financialacct = cashMgmtJSON.get("account").toString();
@@ -257,7 +251,8 @@ public class Cashup extends JSONProcessSimple {
           : "drop");
       result.put("reasonId", reasonId);
       result.put("paymentMethodId", paymentmethodId);
-      result.put("time", creationDate);
+      result.put("creationDate", cashMgmtJSON.get("creationDate").toString());
+      result.put("timezoneOffset", "0");
       result.put("userId", cashMgmtJSON.get("createdBy"));
       result.put("user", cashMgmtJSON.get("createdBy$_identifier"));
       result.put("isocode", cashMgmtJSON.get("currency$_identifier"));

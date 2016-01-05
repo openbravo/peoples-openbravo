@@ -48,6 +48,7 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.WindowModel.extend({
       OB.Dal.find(OB.Model.CashUp, {
         'isprocessed': 'N'
       }, function (cashUp) {
+        var now = new Date();
         var addedCashMgmt = new OB.Model.CashManagement({
           id: OB.UTIL.get_UUID(),
           description: p.identifier + ' - ' + model.get('name'),
@@ -58,7 +59,8 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.WindowModel.extend({
           paymentMethodId: p.id,
           user: OB.MobileApp.model.get('context').user._identifier,
           userId: OB.MobileApp.model.get('context').user.id,
-          time: new Date().toString().substring(16, 21),
+          creationDate: OB.I18N.normalizeDate(now),
+          timezoneOffset: now.getTimezoneOffset(),
           isocode: p.isocode,
           glItem: p.glItem,
           cashup_id: cashUp.at(0).get('id'),
