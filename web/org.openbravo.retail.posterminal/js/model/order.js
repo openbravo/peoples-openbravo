@@ -490,6 +490,15 @@
         OB.error("setting the isCalculateGrossLocked state is mandatory before executing it the first time");
       }
 
+      // verify that there is no other calculatingGross running
+      if (this.calculatingGross) {
+        this.pendingCalculateGross = true;
+        return;
+      }
+
+      this.calculatingGross = true;
+      var me = this;
+
       var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('calculateGross');
 
       // reset some vital receipt values because, at this point, they are obsolete. do not fire the change event
@@ -529,8 +538,17 @@
 
           me.adjustPayment();
           me.save(function () {
-            me.trigger('saveCurrent');
             OB.UTIL.SynchronizationHelper.finished(synchId, 'calculateGross');
+            // Reset the flag that protects reentrant invocations to calculateGross().
+            // And if there is pending any execution of calculateGross(), do it and do not continue.
+            me.calculatingGross = false;
+            if (me.pendingCalculateGross) {
+              me.pendingCalculateGross = false;
+              me.calculateGross();
+              return;
+            }
+            me.trigger('calculategross');
+            me.trigger('saveCurrent');
           });
           };
 
