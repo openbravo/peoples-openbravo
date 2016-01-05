@@ -198,8 +198,7 @@ public class ImportEntryArchiveManager {
       // copy properties with the same name
       for (Property sourceProperty : entryEntity.getProperties()) {
         // ignore these ones
-        if (sourceProperty.isOneToMany() || sourceProperty.isId()
-            || !archiveEntity.hasProperty(sourceProperty.getName())) {
+        if (sourceProperty.isOneToMany() || !archiveEntity.hasProperty(sourceProperty.getName())) {
           continue;
         }
         Property targetProperty = archiveEntity.getProperty(sourceProperty.getName());
@@ -209,6 +208,8 @@ public class ImportEntryArchiveManager {
         }
         archiveEntry.set(targetProperty.getName(), importEntry.getValue(sourceProperty.getName()));
       }
+      // as the id is also copied set it explicitly to new
+      archiveEntry.setNewOBObject(true);
       return archiveEntry;
     }
   }
