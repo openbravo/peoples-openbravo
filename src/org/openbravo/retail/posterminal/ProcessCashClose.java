@@ -32,6 +32,7 @@ import org.openbravo.dal.core.TriggerHandler;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.mobile.core.process.DataSynchronizationImportProcess;
 import org.openbravo.mobile.core.process.DataSynchronizationProcess.DataSynchronization;
 import org.openbravo.mobile.core.process.JSONPropertyToEntity;
@@ -46,7 +47,8 @@ import org.openbravo.service.json.JsonToDataConverter;
 public class ProcessCashClose extends POSDataSynchronizationProcess implements
     DataSynchronizationImportProcess {
 
-  public static final String CASHUP_COUNT_DIFF = "CASHUP_COUNT_DIFF";
+  public static final String CASHUP_COUNT_DIFF = OBMessageUtils.getI18NMessage(
+      "OBPOS_CashupCountDiff", null);
 
   private static final Logger log = Logger.getLogger(ProcessCashClose.class);
   JSONObject jsonResponse = new JSONObject();
@@ -61,7 +63,7 @@ public class ProcessCashClose extends POSDataSynchronizationProcess implements
     Date cashUpDate = new Date();
     OBPOSApplications posTerminal = OBDal.getInstance().get(OBPOSApplications.class,
         jsonCashup.getString("posterminal"));
-    
+
     // get and prepare the cashUpDate
     if (jsonCashup.has("cashUpDate") && jsonCashup.get("cashUpDate") != null
         && StringUtils.isNotEmpty(jsonCashup.getString("cashUpDate"))) {
