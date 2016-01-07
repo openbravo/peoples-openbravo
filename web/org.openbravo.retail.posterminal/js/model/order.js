@@ -1408,11 +1408,7 @@
       for (i = 0; i < promotions.length; i++) {
         if (disc._idx !== -1 && disc._idx < promotions[i]._idx) {
           // Trying to apply promotions in incorrect order: recalculate whole line again
-          if (OB.MobileApp.model.hasPermission('OBPOS_discount.newFlow', true)) {
-            OB.Model.Discounts.applyPromotionsImp(this, line, true);
-          } else {
-            OB.Model.Discounts.applyPromotionsImp(this, line, false);
-          }
+          OB.Model.Discounts.applyPromotionsImp(this, line, true);
           return;
         }
       }
