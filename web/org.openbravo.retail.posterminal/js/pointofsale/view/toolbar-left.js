@@ -56,8 +56,8 @@ enyo.kind({
     onLeftToolbarDisabled: 'disabledButton'
   },
   disabledButton: function (inSender, inEvent) {
-    this.isEnabled = !inEvent.status;
-    this.setDisabled(inEvent.status);
+    this.isEnabled = inEvent.disableButtonNew || !inEvent.status;
+    this.setDisabled(inEvent.disableButtonNew || inEvent.status);
     if (!this.isEnabled) {
       this.removeClass('btn-icon-new');
     } else {

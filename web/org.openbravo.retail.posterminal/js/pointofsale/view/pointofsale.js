@@ -652,7 +652,10 @@ enyo.kind({
     this.tabChange(inSender, inEvent);
   },
   tabChange: function (inSender, inEvent) {
-
+    this.leftToolbarDisabled(inSender, {
+      status: false,
+      disableButtonNew: (this.model.get('leftColumnViewManager').isMultiOrder() ? true : false)
+    });
     this.waterfall('onTabButtonTap', {
       tabPanel: inEvent.tabPanel,
       options: inEvent.options
