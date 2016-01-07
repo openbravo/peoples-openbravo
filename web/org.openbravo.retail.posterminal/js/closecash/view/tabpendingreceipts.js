@@ -166,7 +166,7 @@ enyo.kind({
       if (approved) {
         // approved so remove the entry
         if (OB.POS.hwserver.url && OB.POS.modelterminal.get('terminal').terminalType.userfid) {
-          OB.UTIL.eraseEpcOrderFromDeviceBuffer(model);
+          OB.UTIL.eraseEpcOrder(model);
         }
         OB.Dal.remove(model, function () {
           me.collection.remove(model);
@@ -191,7 +191,7 @@ enyo.kind({
 
     function removeOneModel(collection, model) {
       if (OB.POS.hwserver.url && OB.POS.modelterminal.get('terminal').terminalType.userfid) {
-        OB.UTIL.eraseEpcOrderFromDeviceBuffer(model);
+        OB.UTIL.eraseEpcOrder(model);
       }
       OB.Dal.remove(model, function () {
         collection.remove(model);

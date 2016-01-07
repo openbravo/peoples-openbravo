@@ -854,8 +854,8 @@ This path should be relative to web/org.openbravo.retail.posterminal]]></HELP>
 <!--71E2A8BE410A4F7EAFA5D50D069000AE-->  <COLUMNNAME><![CDATA[EM_Obpos_Serialnumber]]></COLUMNNAME>
 <!--71E2A8BE410A4F7EAFA5D50D069000AE-->  <NAME><![CDATA[Serial Number]]></NAME>
 <!--71E2A8BE410A4F7EAFA5D50D069000AE-->  <PRINTNAME><![CDATA[Serial Number]]></PRINTNAME>
-<!--71E2A8BE410A4F7EAFA5D50D069000AE-->  <DESCRIPTION><![CDATA[This field holds the serial number of the product]]></DESCRIPTION>
-<!--71E2A8BE410A4F7EAFA5D50D069000AE-->  <HELP><![CDATA[This field holds the serial number of the product]]></HELP>
+<!--71E2A8BE410A4F7EAFA5D50D069000AE-->  <DESCRIPTION><![CDATA[This field stores the information of the unique serial number received from the RFID reader]]></DESCRIPTION>
+<!--71E2A8BE410A4F7EAFA5D50D069000AE-->  <HELP><![CDATA[This field stores the information of the unique serial number received from the RFID reader]]></HELP>
 <!--71E2A8BE410A4F7EAFA5D50D069000AE-->  <AD_MODULE_ID><![CDATA[FF808181326CC34901326D53DBCF0018]]></AD_MODULE_ID>
 <!--71E2A8BE410A4F7EAFA5D50D069000AE-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--71E2A8BE410A4F7EAFA5D50D069000AE--></AD_ELEMENT>
@@ -1440,8 +1440,8 @@ In case this value is not set, it will be defaulted to the one defined in Openbr
 <!--BBA0F8938F9E4820953FD7778BA71348-->  <COLUMNNAME><![CDATA[EM_Obpos_Epccode]]></COLUMNNAME>
 <!--BBA0F8938F9E4820953FD7778BA71348-->  <NAME><![CDATA[EPC Code]]></NAME>
 <!--BBA0F8938F9E4820953FD7778BA71348-->  <PRINTNAME><![CDATA[EPC Code]]></PRINTNAME>
-<!--BBA0F8938F9E4820953FD7778BA71348-->  <DESCRIPTION><![CDATA[This field holds the EPC code in case the product was bought through an RFID reader]]></DESCRIPTION>
-<!--BBA0F8938F9E4820953FD7778BA71348-->  <HELP><![CDATA[This field holds the EPC code in case the product was bought through an RFID reader]]></HELP>
+<!--BBA0F8938F9E4820953FD7778BA71348-->  <DESCRIPTION><![CDATA[This field stores the information of the unique EPC code received from the RFID reader]]></DESCRIPTION>
+<!--BBA0F8938F9E4820953FD7778BA71348-->  <HELP><![CDATA[This field stores the information of the unique EPC code received from the RFID reader]]></HELP>
 <!--BBA0F8938F9E4820953FD7778BA71348-->  <AD_MODULE_ID><![CDATA[FF808181326CC34901326D53DBCF0018]]></AD_MODULE_ID>
 <!--BBA0F8938F9E4820953FD7778BA71348-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--BBA0F8938F9E4820953FD7778BA71348--></AD_ELEMENT>

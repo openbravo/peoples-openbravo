@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2014-2015 Openbravo S.L.U.
+ * Copyright (C) 2014-2016 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -44,11 +44,12 @@ public class PaidReceiptLinesProperties extends ModelExtension {
         add(new HQLProperty("ordLine.warehouse.id", "warehouse"));
         add(new HQLProperty("ordLine.warehouse.name", "warehousename"));
         add(new HQLProperty("ordLine.description", "description"));
+        add(new HQLProperty("ordLine.obposSerialnumber", "obposSerialnumber"));
+        add(new HQLProperty("ordLine.obposEpccode", "obposEpccode"));
         // Only used for returns
         add(new HQLProperty(
             "(ordLine.deliveredQuantity - (select coalesce(abs(sum(deliveredQuantity)),0) from OrderLine where goodsShipmentLine.salesOrderLine.id =ordLine.id))",
             "remainingQuantity"));
-        add(new HQLProperty("ordLine.obposSerialnumber", "obposSerialnumber"));
       }
     };
 

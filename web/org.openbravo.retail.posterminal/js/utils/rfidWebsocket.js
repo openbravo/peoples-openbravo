@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2015 Openbravo S.L.U.
+ * Copyright (C) 2015-2016 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -27,22 +27,15 @@ OB.UTIL.startRfidWebsocket = function startRfidWebsocket(websocketServerLocation
 
   // Called when a message is received from server
   OB.UTIL.rfidWebsocket.onmessage = function (event) {
-    var message = JSON.parse(event.data);
-    var existingEpc = false;
-    var ean;
-    var i;
-    var line;
+    var data = JSON.parse(event.data),
+        ean, i, line;
     for (i = 0; i < OB.MobileApp.model.receipt.get('lines').length; i++) {
       line = OB.MobileApp.model.receipt.get('lines').models[i];
-      if (line.get('obposEpccode') === message.dataToSave.obposEpccode) {
-        existingEpc = true;
-        break;
+      if (line.get('obposEpccode') === data.dataToSave.obposEpccode) {
+        return;
       }
     }
-    if (existingEpc) {
-      return;
-    }
-    ean = message.gtin.substring(1, message.gtin.length);
+    ean = data.gtin.substring(1, data.gtin.length);
     barcodeActionHandler.findProductByBarcode(ean, function (product) {
       product.set('groupProduct', false);
       OB.MobileApp.model.receipt.addProduct(product, '1', {
@@ -55,7 +48,7 @@ OB.UTIL.startRfidWebsocket = function startRfidWebsocket(websocketServerLocation
   OB.UTIL.rfidWebsocket.onclose = function () {
     currentRetrials++;
     if (currentRetrials === retrialsBeforeWarning) {
-      OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_RFIDNotAvailable'));
+      OB.UTIL.showI18NWarning('OBPOS_RFIDNotAvailable');
       OB.warn(OB.I18N.getLabel('OBPOS_RFIDNotAvailable'));
     }
     setTimeout(function () {
@@ -64,16 +57,18 @@ OB.UTIL.startRfidWebsocket = function startRfidWebsocket(websocketServerLocation
   };
 
   // Called in case of an error
-  OB.UTIL.rfidWebsocket.onerror = function (err) {};
+  OB.UTIL.rfidWebsocket.onerror = function (err) {
+	  OB.warn(err.data);
+  };
 };
 
-OB.UTIL.addEpcLineToDeviceBuffer = function (line) {
+OB.UTIL.addEpcLine = function (line) {
   this.waitForConnection(function () {
-    OB.UTIL.rfidWebsocket.send('add:' + line.get('obposEpccode'));
+    OB.UTIL.rfidWebsocket.send('addEpcs:' + line.get('obposEpccode'));
   }, 1000);
 };
 
-OB.UTIL.eraseEpcOrderFromDeviceBuffer = function (order) {
+OB.UTIL.eraseEpcOrder = function (order) {
   var epcCodes = '';
   _.each(order.get('lines').models, function (line) {
     if (line.get('obposEpccode')) {
@@ -83,26 +78,26 @@ OB.UTIL.eraseEpcOrderFromDeviceBuffer = function (order) {
   });
   if (epcCodes) {
     this.waitForConnection(function () {
-      OB.UTIL.rfidWebsocket.send('erase:' + epcCodes.substring(0, epcCodes.length - 1));
+      OB.UTIL.rfidWebsocket.send('removeEpcs:' + epcCodes.substring(0, epcCodes.length - 1));
     }, 1000);
   }
 };
 
-OB.UTIL.eraseEpcLineFromDeviceBuffer = function (line) {
+OB.UTIL.removeEpcLine = function (line) {
   this.waitForConnection(function () {
-    OB.UTIL.rfidWebsocket.send('erase:' + line.get('obposEpccode'));
+    OB.UTIL.rfidWebsocket.send('removeEpcs:' + line.get('obposEpccode'));
   }, 1000);
 };
 
-OB.UTIL.eraseEpcOrderFromDeviceBufferBecauseTicketIsCompleted = function () {
+OB.UTIL.updateEpcBuffers = function () {
   this.waitForConnection(function () {
-    OB.UTIL.rfidWebsocket.send('erase2:');
+    OB.UTIL.rfidWebsocket.send('updateEpcBuffers:');
   }, 1000);
 };
 
-OB.UTIL.eraseEpcBuffer = function () {
+OB.UTIL.removeAllEpcs = function () {
   this.waitForConnection(function () {
-    OB.UTIL.rfidWebsocket.send('erase3:');
+    OB.UTIL.rfidWebsocket.send('removeAllEpcs:');
   }, 1000);
 };
 
@@ -120,12 +115,12 @@ OB.UTIL.processRemainingCodes = function (order) {
   });
   if (epcCodesToAdd) {
     this.waitForConnection(function () {
-      OB.UTIL.rfidWebsocket.send('add:' + epcCodesToAdd.substring(0, epcCodesToAdd.length - 1));
+      OB.UTIL.rfidWebsocket.send('addEpc:' + epcCodesToAdd.substring(0, epcCodesToAdd.length - 1));
     }, 1000);
   }
   if (epcCodesToErase) {
     this.waitForConnection(function () {
-      OB.UTIL.rfidWebsocket.send('erase:' + epcCodesToErase.substring(0, epcCodesToErase.length - 1));
+      OB.UTIL.rfidWebsocket.send('removeEpc:' + epcCodesToErase.substring(0, epcCodesToErase.length - 1));
     }, 1000);
   }
   this.waitForConnection(function () {

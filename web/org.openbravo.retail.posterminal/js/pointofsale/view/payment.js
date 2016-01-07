@@ -858,7 +858,6 @@ enyo.kind({
     var myModel = this.owner.model,
         me = this,
         payments;
-
     this.allowOpenDrawer = false;
 
     // Checking Payment before Process

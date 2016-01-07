@@ -3397,8 +3397,8 @@ This path should be relative to web/org.openbravo.retail.posterminal]]></HELP>
 <!--505F943E6B474D218CFEBF82416DAEFB-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--505F943E6B474D218CFEBF82416DAEFB-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--505F943E6B474D218CFEBF82416DAEFB-->  <NAME><![CDATA[EM_Obpos_Epccode]]></NAME>
-<!--505F943E6B474D218CFEBF82416DAEFB-->  <DESCRIPTION><![CDATA[This field holds the EPC code in case the product was bought through an RFID reader]]></DESCRIPTION>
-<!--505F943E6B474D218CFEBF82416DAEFB-->  <HELP><![CDATA[This field holds the EPC code in case the product was bought through an RFID reader]]></HELP>
+<!--505F943E6B474D218CFEBF82416DAEFB-->  <DESCRIPTION><![CDATA[This field stores the information of the unique EPC code received from the RFID reader]]></DESCRIPTION>
+<!--505F943E6B474D218CFEBF82416DAEFB-->  <HELP><![CDATA[This field stores the information of the unique EPC code received from the RFID reader]]></HELP>
 <!--505F943E6B474D218CFEBF82416DAEFB-->  <COLUMNNAME><![CDATA[EM_Obpos_Epccode]]></COLUMNNAME>
 <!--505F943E6B474D218CFEBF82416DAEFB-->  <AD_TABLE_ID><![CDATA[260]]></AD_TABLE_ID>
 <!--505F943E6B474D218CFEBF82416DAEFB-->  <AD_REFERENCE_ID><![CDATA[10]]></AD_REFERENCE_ID>
@@ -7646,8 +7646,8 @@ In case this value is not set, it will be defaulted to the one defined in Openbr
 <!--BB90F14F687F4056ACDBF372F1073681-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--BB90F14F687F4056ACDBF372F1073681-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--BB90F14F687F4056ACDBF372F1073681-->  <NAME><![CDATA[EM_Obpos_Serialnumber]]></NAME>
-<!--BB90F14F687F4056ACDBF372F1073681-->  <DESCRIPTION><![CDATA[This field holds the serial number of the product]]></DESCRIPTION>
-<!--BB90F14F687F4056ACDBF372F1073681-->  <HELP><![CDATA[This field holds the serial number of the product]]></HELP>
+<!--BB90F14F687F4056ACDBF372F1073681-->  <DESCRIPTION><![CDATA[This field stores the information of the unique serial number received from the RFID reader]]></DESCRIPTION>
+<!--BB90F14F687F4056ACDBF372F1073681-->  <HELP><![CDATA[This field stores the information of the unique serial number received from the RFID reader]]></HELP>
 <!--BB90F14F687F4056ACDBF372F1073681-->  <COLUMNNAME><![CDATA[EM_Obpos_Serialnumber]]></COLUMNNAME>
 <!--BB90F14F687F4056ACDBF372F1073681-->  <AD_TABLE_ID><![CDATA[260]]></AD_TABLE_ID>
 <!--BB90F14F687F4056ACDBF372F1073681-->  <AD_REFERENCE_ID><![CDATA[10]]></AD_REFERENCE_ID>

@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2015 Openbravo S.L.U.
+ * Copyright (C) 2012-2016 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -162,14 +162,14 @@
                 var protocol = OB.POS.hwserver.url.split('/')[0];
                 var websocketServerLocation;
                 if (protocol === 'http:') {
-                  websocketServerLocation = 'ws://' + OB.POS.hwserver.url.split('/')[2] + '/rfid';
+                  websocketServerLocation = 'ws:' + OB.POS.hwserver.url.substring(protocol.lenght, OB.POS.hwserver.url.length).split('/printer')[0] + '/rfid';
                 } else if (protocol === 'https:') {
-                  websocketServerLocation = 'wss://' + OB.POS.hwserver.url.split('/')[2] + '/rfid';
+                  websocketServerLocation = 'wss:' + OB.POS.hwserver.url.substring(protocol.lenght, OB.POS.hwserver.url.length).split('/printer')[0] + '/rfid';
                 } else {
                   OB.UTIL.showError(OB.I18N.getLabel('OBPOS_WrongHardwareManagerProtocol'));
                 }
                 OB.UTIL.startRfidWebsocket(websocketServerLocation, 2000, 0, 5);
-                OB.UTIL.eraseEpcBuffer();
+                OB.UTIL.removeAllEpcs();
               }
             } else {
               OB.UTIL.showError("Terminal does not exists: " + 'params.terminal');

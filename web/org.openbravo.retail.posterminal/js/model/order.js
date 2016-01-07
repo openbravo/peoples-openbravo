@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2015 Openbravo S.L.U.
+ * Copyright (C) 2013-2016 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -1006,7 +1006,7 @@
 
       // remove the line
       if (OB.POS.hwserver.url && OB.POS.modelterminal.get('terminal').terminalType.userfid && line.get('obposEpccode')) {
-        OB.UTIL.eraseEpcLineFromDeviceBuffer(line);
+        OB.UTIL.removeEpcLine(line);
       }
       this.get('lines').remove(line);
       // set the undo action
@@ -1015,9 +1015,7 @@
         line: line,
         undo: function () {
           if (OB.POS.hwserver.url && OB.POS.modelterminal.get('terminal').terminalType.userfid && line.get('obposEpccode')) {
-            if (OB.POS.hwserver.url && OB.POS.modelterminal.get('terminal').terminalType.userfid && line.get('obposEpccode')) {
-              OB.UTIL.addEpcLineToDeviceBuffer(line);
-            }
+            OB.UTIL.addEpcLine(line);
           }
           me.get('lines').add(line, {
             at: index
@@ -1528,7 +1526,7 @@
           OB.UTIL.Approval.requestApproval((modelObj ? modelObj : this.model), 'OBPOS_approval.deleteLine', function (approved) {
             if (approved) {
               if (OB.POS.hwserver.url && OB.POS.modelterminal.get('terminal').terminalType.userfid && newline.get('obposEpccode')) {
-                OB.UTIL.eraseEpcLineFromDeviceBuffer(newline);
+                OB.UTIL.removeEpcLine(newline);
               }
               me.get('lines').remove(newline);
               me.set('undo', null);

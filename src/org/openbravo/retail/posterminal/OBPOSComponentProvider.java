@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2015 Openbravo SLU
+ * All portions are Copyright (C) 2013-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -79,8 +79,17 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
 
     final String prefix = "web/" + POSUtils.MODULE_JAVA_PACKAGE + "/js/";
 
-    final String[] resourceDependency = { "main", "model/changedbusinesspartners",
-        "model/changedbplocation", "model/order", "model/cashup", "model/cashmanagement",
+    final String[] resourceDependency = { "main",
+
+        "model/changedbusinesspartners",
+
+        "model/changedbplocation",
+
+        "model/order",
+
+        "model/cashup",
+
+        "model/cashmanagement",
 
         // Websockets
         "utils/rfidWebsocket",
@@ -98,51 +107,181 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         // "model/order",
         // "model/terminal",
         // "model/user",
-        "utils/ob-utilitiesuipos", "model/bpcategory", "model/bplocation", // Model for Customer
-                                                                           // Address
-        "model/currencypanel", "model/salesrepresentative", "model/productcharacteristicvalue",
-        "model/characteristicvalue", "model/characteristic", "model/brand", "model/returnreasons",
-        "model/executor", "model/terminal-model", "model/paymentmethodcashup", "model/taxcashup",
-        "model/returnreasons", "model/offlineprinter", "model/productbom", "model/taxcategorybom",
-        "components/modalcancel", "components/subwindow", "components/leftsubwindow",
-        "components/modalreceiptproperties", "components/modalreceiptlineproperties",
-        "components/modalnoteditableorder", "components/modalnoteditableline",
+        "utils/ob-utilitiesuipos",
+
+        "model/bpcategory",
+
+        "model/bplocation", // Model for Customer
+                            // Address
+        "model/currencypanel",
+
+        "model/salesrepresentative",
+
+        "model/productcharacteristicvalue",
+
+        "model/characteristicvalue",
+
+        "model/characteristic",
+
+        "model/brand",
+
+        "model/returnreasons",
+
+        "model/executor",
+
+        "model/terminal-model",
+
+        "model/paymentmethodcashup",
+
+        "model/taxcashup",
+
+        "model/returnreasons",
+
+        "model/offlineprinter",
+
+        "model/productbom",
+
+        "model/taxcategorybom",
+
+        "components/modalcancel",
+
+        "components/subwindow",
+
+        "components/leftsubwindow",
+
+        "components/modalreceiptproperties",
+
+        "components/modalreceiptlineproperties",
+
+        "components/modalnoteditableorder",
+
+        "components/modalnoteditableline",
+
         "components/modalmodulesindev",
         // Web POS window
-        "utils/eventbus", "utils/cashUpReportUtils", "components/keypadcoins", "data/dataordersave",
-        "data/dataordertaxes", "data/datacustomersave", "data/datacustomeraddrsave",
-        "data/dataorderdiscount", "components/modalreceipts", "components/modalmultiorderslayaway",
-        "components/rendercategory", "components/renderproduct", "components/renderproductch",
-        "components/total", "components/modalpayment", "components/renderorderline",
-        "components/rendermultiorderline", "components/order", "components/orderdetails",
-        "components/businesspartner", "components/bplocation", // Button for selecting customer
-                                                               // address
-        "components/salesrepresentative", "components/listreceiptscounter", "components/menu",
-        "components/modalselectterminal", "components/popupdraweropened",
+        "utils/eventbus",
+
+        "utils/cashUpReportUtils",
+
+        "components/keypadcoins",
+
+        "data/dataordersave",
+
+        "data/dataordertaxes",
+
+        "data/datacustomersave",
+
+        "data/datacustomeraddrsave",
+
+        "data/dataorderdiscount",
+
+        "components/modalreceipts",
+
+        "components/modalmultiorderslayaway",
+
+        "components/rendercategory",
+
+        "components/renderproduct",
+
+        "components/renderproductch",
+
+        "components/total",
+
+        "components/modalpayment",
+
+        "components/renderorderline",
+
+        "components/rendermultiorderline",
+
+        "components/order",
+
+        "components/orderdetails",
+
+        "components/businesspartner",
+
+        "components/bplocation", // Button for selecting customer
+                                 // address
+        "components/salesrepresentative",
+
+        "components/listreceiptscounter",
+
+        "components/menu",
+
+        "components/modalselectterminal",
+
+        "components/popupdraweropened",
         // Old Tickets
-        "components/modalpaidreceipts", "components/modalmultiorders",
+        "components/modalpaidreceipts",
+
+        "components/modalmultiorders",
         // Quotations
-        "components/modalcreateorderfromquotation", "components/modalreactivatequotation",
+        "components/modalcreateorderfromquotation",
+
+        "components/modalreactivatequotation",
+
         "components/modalrejectquotation",
         // Detection of change in context
-        "components/modalcontextchanged", "components/modalproductcharacteristic",
+        "components/modalcontextchanged",
+
+        "components/modalproductcharacteristic",
+
         "components/modalproductbrand",
 
         // Point of sale models
-        "model/pricelist", "model/product-category", "model/product", "model/productprice",
-        "model/offerpricelist", "model/businesspartner", "model/document-sequence", "model/taxRate",
-        "model/taxZone", "model/promotions",
+        "model/pricelist",
+
+        "model/product-category",
+
+        "model/product",
+
+        "model/productprice",
+
+        "model/offerpricelist",
+
+        "model/businesspartner",
+
+        "model/document-sequence",
+
+        "model/taxRate",
+
+        "model/taxZone",
+
+        "model/promotions",
 
         "model/obpos-supervisor-model",
 
         // Point of sale
-        "pointofsale/model/pointofsale-print", "pointofsale/model/pointofsale-model",
-        "pointofsale/model/localstock", "pointofsale/model/otherstoresstock",
-        "pointofsale/view/pointofsale", "pointofsale/view/ps-receiptview",
-        "pointofsale/view/ps-multireceiptview", "pointofsale/view/ps-productdetailsview",
-        "pointofsale/view/toolbar-left", "pointofsale/view/toolbar-right", "pointofsale/view/scan",
-        "pointofsale/view/editline", "pointofsale/view/payment", "pointofsale/view/ticketdiscount",
-        "pointofsale/view/keyboard-toolbars", "pointofsale/view/keyboardorder",
+        "pointofsale/model/pointofsale-print",
+
+        "pointofsale/model/pointofsale-model",
+
+        "pointofsale/model/localstock",
+
+        "pointofsale/model/otherstoresstock",
+
+        "pointofsale/view/pointofsale",
+
+        "pointofsale/view/ps-receiptview",
+
+        "pointofsale/view/ps-multireceiptview",
+
+        "pointofsale/view/ps-productdetailsview",
+
+        "pointofsale/view/toolbar-left",
+
+        "pointofsale/view/toolbar-right",
+
+        "pointofsale/view/scan",
+
+        "pointofsale/view/editline",
+
+        "pointofsale/view/payment",
+
+        "pointofsale/view/ticketdiscount",
+
+        "pointofsale/view/keyboard-toolbars",
+
+        "pointofsale/view/keyboardorder",
         // Point of sale subwindows
         "pointofsale/view/subwindows/customers/components/sharedcomponents",
         "pointofsale/view/subwindows/customers/customersadvancedsearch",
@@ -156,27 +295,60 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         // Point of sale modals
         "pointofsale/view/modals/modalstockinstore",
         "pointofsale/view/modals/modalstockinstoreclickable",
-        "pointofsale/view/modals/modalstockinotherstore", "pointofsale/view/modals/modalpayments",
+        "pointofsale/view/modals/modalstockinotherstore",
+
+        "pointofsale/view/modals/modalpayments",
         "pointofsale/view/modals/modalproductcannotbegroup",
         "pointofsale/view/modals/modalwarehousesrequired",
-        "pointofsale/view/modals/modalcreditsales", "pointofsale/view/modals/modaldiscountneedqty",
+        "pointofsale/view/modals/modalcreditsales",
+
+        "pointofsale/view/modals/modaldiscountneedqty",
+
         "pointofsale/view/modals/modalmessage",
 
         // Cash Management window
-        "cashmgmt/model/cashmgmt-print", "cashmgmt/model/cashmgmt-model",
+        "cashmgmt/model/cashmgmt-print",
 
-        "cashmgmt/view/cashmgmtkeyboard", "cashmgmt/view/listevents", "cashmgmt/view/cashmgmtinfo",
-        "cashmgmt/view/listdepositsdrops", "cashmgmt/view/cashmgmt",
+        "cashmgmt/model/cashmgmt-model",
+
+        "cashmgmt/view/cashmgmtkeyboard",
+
+        "cashmgmt/view/listevents",
+
+        "cashmgmt/view/cashmgmtinfo",
+
+        "cashmgmt/view/listdepositsdrops",
+
+        "cashmgmt/view/cashmgmt",
 
         "cashmgmt/components/cashmgmt-modals",
 
         // Cash Up window
-        "closecash/model/cashup-steps", "closecash/model/cashup-print",
-        "closecash/model/cashup-model", "closecash/view/closecash", "closecash/view/closekeyboard",
-        "closecash/view/closeinfo", "closecash/view/tabpendingreceipts",
-        "closecash/view/tabcashmaster", "closecash/view/tabcashpayments",
-        "closecash/view/tabcountcash", "closecash/view/tabcashtokeep",
-        "closecash/view/tabpostprintclose", "closecash/components/cashup-modals",
+        "closecash/model/cashup-steps",
+
+        "closecash/model/cashup-print",
+
+        "closecash/model/cashup-model",
+
+        "closecash/view/closecash",
+
+        "closecash/view/closekeyboard",
+
+        "closecash/view/closeinfo",
+
+        "closecash/view/tabpendingreceipts",
+
+        "closecash/view/tabcashmaster",
+
+        "closecash/view/tabcashpayments",
+
+        "closecash/view/tabcountcash",
+
+        "closecash/view/tabcashtokeep",
+
+        "closecash/view/tabpostprintclose",
+
+        "closecash/components/cashup-modals",
 
         "closecash/model/daycash",
         // Core resources

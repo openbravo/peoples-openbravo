@@ -368,7 +368,7 @@ enyo.kind({
     function removeOrder(context) {
       var isPaidQuotation = (context.model.get('order').has('isQuotation') && context.model.get('order').get('isQuotation') && context.model.get('order').has('hasbeenpaid') && context.model.get('order').get('hasbeenpaid') === 'Y');
       if (OB.POS.hwserver.url && OB.POS.modelterminal.get('terminal').terminalType.userfid) {
-    	OB.UTIL.eraseEpcOrderFromDeviceBuffer(context.model.get('order'));
+    	OB.UTIL.eraseEpcOrder(context.model.get('order'));
       }
       if (context.model.get('order').get('id') && !isPaidQuotation) {
         context.model.get('orderList').saveCurrent();
