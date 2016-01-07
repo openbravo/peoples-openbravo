@@ -472,6 +472,7 @@ public abstract class UIDefinition {
       // If there is a previous 'canSort' set, remove it to avoid collision when the new one is set
       // later
       result = result.replaceAll("(,)( *?)(canSort)( *?)(:)( *?)(false|true)( *?)", "");
+      result = result.replaceAll("(,)( *?)(canFilter)( *?)(:)( *?)(false|true)( *?)", "");
     }
     return result;
 
