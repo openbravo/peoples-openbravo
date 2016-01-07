@@ -284,7 +284,7 @@ enyo.kind({
     bp.set('ignoreSetBP', true, {
       silent: true
     });
-    OB.MobileApp.view.$.containerWindow.$.pointOfSale.model.attributes.subWindowManager.set('currentWindow', {
+    OB.MobileApp.view.$.containerWindow.getRoot().model.attributes.subWindowManager.set('currentWindow', {
       name: 'customerView',
       params: {
         businessPartner: bp,
@@ -307,7 +307,7 @@ enyo.kind({
     bp.set('ignoreSetBP', true, {
       silent: true
     });
-    OB.MobileApp.view.$.containerWindow.$.pointOfSale.model.attributes.subWindowManager.set('currentWindow', {
+    OB.MobileApp.view.$.containerWindow.getRoot().model.attributes.subWindowManager.set('currentWindow', {
       name: 'customerCreateAndEdit',
       params: {
         businessPartner: bp,

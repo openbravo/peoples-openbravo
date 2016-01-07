@@ -293,7 +293,7 @@ enyo.kind({
     bploc.set('ignoreSetBPLoc', true, {
       silent: true
     });
-    OB.MobileApp.view.$.containerWindow.$.pointOfSale.model.attributes.subWindowManager.set('currentWindow', {
+    OB.MobileApp.view.$.containerWindow.getRoot().model.attributes.subWindowManager.set('currentWindow', {
       name: 'customerAddressView',
       params: {
         businessPartner: me.owner.owner.bPartner,
@@ -318,7 +318,7 @@ enyo.kind({
     bploc.set('ignoreSetBPLoc', true, {
       silent: true
     });
-    OB.MobileApp.view.$.containerWindow.$.pointOfSale.model.attributes.subWindowManager.set('currentWindow', {
+    OB.MobileApp.view.$.containerWindow.getRoot().model.attributes.subWindowManager.set('currentWindow', {
       name: 'customerAddrCreateAndEdit',
       params: {
         businessPartner: me.owner.owner.bPartner,
