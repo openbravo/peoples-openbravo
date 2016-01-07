@@ -19,9 +19,6 @@ enyo.kind({
     this.waterfall('onSetCustomer', {
       customer: params.businessPartner
     });
-    this.waterfall('onSwitchImg', {
-      customer: params.businessPartner
-    });
     return true;
   },
   defaultNavigateOnClose: 'customerAdvancedSearch',
@@ -276,23 +273,5 @@ enyo.kind({
     displayLogic: function () {
       return OB.MobileApp.model.hasPermission('EnableMultiPriceList', true);
     }
-  }, {
-    kind: 'OB.UI.CustomerTextPropertyAddr',
-    name: 'customerLocName',
-    modelProperty: 'locShipName',
-    i18nLabel: 'OBPOS_LblAddress',
-    readOnly: true
-  }, {
-    kind: 'OB.UI.CustomerTextPropertyAddr',
-    name: 'customerPostalCode',
-    modelProperty: 'postalCode',
-    i18nLabel: 'OBPOS_LblPostalCode',
-    readOnly: true
-  }, {
-    kind: 'OB.UI.CustomerTextPropertyAddr',
-    name: 'customerCity',
-    modelProperty: 'cityName',
-    i18nLabel: 'OBPOS_LblCity',
-    readOnly: true
   }]
 });
