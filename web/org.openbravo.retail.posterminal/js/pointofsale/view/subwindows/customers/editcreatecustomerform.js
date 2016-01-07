@@ -24,6 +24,9 @@ enyo.kind({
       if (params.businessPartner) {
         this.$.subWindowBody.$.edit_createcustomers_impl.$.invoicingAddrFields.hide();
         this.$.subWindowBody.$.edit_createcustomers_impl.$.shippingAddrFields.hide();
+      } else {
+        this.$.subWindowBody.$.edit_createcustomers_impl.$.invoicingAddrFields.show();
+        this.$.subWindowBody.$.edit_createcustomers_impl.$.shippingAddrFields.show();
       }
       //show
       return true;
