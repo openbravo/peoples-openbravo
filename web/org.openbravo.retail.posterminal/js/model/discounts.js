@@ -206,9 +206,8 @@
         } else {
           lines.forEach(function (l) {
             // with new flow discounts -> skipSave =true
-            // in other case -> false
             if (l.get('noDiscountCandidates') !== true) {
-              this.applyPromotionsImp(receipt, l, OB.MobileApp.model.hasPermission('OBPOS_discount.newFlow', true), true);
+              this.applyPromotionsImp(receipt, l, true, true);
             }
           }, this);
           this.executor.nextEvent();
