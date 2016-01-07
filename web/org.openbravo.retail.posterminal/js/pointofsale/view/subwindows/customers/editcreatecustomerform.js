@@ -306,7 +306,7 @@ enyo.kind({
   shipAddrAttributes: [{
     kind: 'OB.UI.CustomerTextPropertyAddr',
     name: 'customerLocName',
-    modelProperty: 'locShipName',
+    modelProperty: 'shipLocName',
     i18nLabel: 'OBPOS_LblAddress',
     hasAddrIcons: true,
     maxlength: 60,
@@ -314,39 +314,45 @@ enyo.kind({
       if (inEvent.checked) {
         this.owner.removeClass('width52');
         this.owner.owner.$.labelLine.removeClass('width40');
+        this.owner.owner.hide();
       } else {
         this.owner.addClass('width52');
         this.owner.owner.$.labelLine.addClass('width40');
+        this.owner.owner.show();
       }
     }
   }, {
     kind: 'OB.UI.CustomerTextPropertyAddr',
     name: 'customerPostalCode',
-    modelProperty: 'postalCode',
+    modelProperty: 'shipPostalCode',
     i18nLabel: 'OBPOS_LblPostalCode',
     maxlength: 10,
     hideShow: function (inSender, inEvent) {
       if (inEvent.checked) {
         this.owner.removeClass('width52');
         this.owner.owner.$.labelLine.removeClass('width40');
+        this.owner.owner.hide();
       } else {
         this.owner.addClass('width52');
         this.owner.owner.$.labelLine.addClass('width40');
+        this.owner.owner.show();
       }
     }
   }, {
     kind: 'OB.UI.CustomerTextPropertyAddr',
     name: 'customerCity',
-    modelProperty: 'cityName',
+    modelProperty: 'shipCityName',
     i18nLabel: 'OBPOS_LblCity',
     maxlength: 60,
     hideShow: function (inSender, inEvent) {
       if (inEvent.checked) {
         this.owner.removeClass('width52');
         this.owner.owner.$.labelLine.removeClass('width40');
+        this.owner.owner.hide();
       } else {
         this.owner.addClass('width52');
         this.owner.owner.$.labelLine.addClass('width40');
+        this.owner.owner.show();
       }
     }
   }],
@@ -361,46 +367,39 @@ enyo.kind({
       if (inEvent.checked) {
         this.owner.removeClass('width52');
         this.owner.owner.$.labelLine.removeClass('width40');
-        this.owner.owner.hide();
       } else {
         this.owner.addClass('width52');
         this.owner.owner.$.labelLine.addClass('width40');
-        this.owner.owner.show();
-
       }
     }
   }, {
     kind: 'OB.UI.CustomerTextPropertyAddr',
     name: 'customerInvPostalCode',
-    modelProperty: 'invPostalCode',
+    modelProperty: 'postalCode',
     i18nLabel: 'OBPOS_LblPostalCode',
     maxlength: 10,
     hideShow: function (inSender, inEvent) {
       if (inEvent.checked) {
         this.owner.removeClass('width52');
         this.owner.owner.$.labelLine.removeClass('width40');
-        this.owner.owner.hide();
       } else {
         this.owner.addClass('width52');
         this.owner.owner.$.labelLine.addClass('width40');
-        this.owner.owner.show();
       }
     }
   }, {
     kind: 'OB.UI.CustomerTextPropertyAddr',
     name: 'customerInvCity',
-    modelProperty: 'invCityName',
+    modelProperty: 'cityName',
     i18nLabel: 'OBPOS_LblCity',
     maxlength: 60,
     hideShow: function (inSender, inEvent) {
       if (inEvent.checked) {
         this.owner.removeClass('width52');
         this.owner.owner.$.labelLine.removeClass('width40');
-        this.owner.owner.hide();
       } else {
         this.owner.addClass('width52');
         this.owner.owner.$.labelLine.addClass('width40');
-        this.owner.owner.show();
       }
     }
   }]

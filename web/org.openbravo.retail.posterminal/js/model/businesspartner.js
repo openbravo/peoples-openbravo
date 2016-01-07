@@ -27,22 +27,27 @@
         return false;
       }
 
-      if (!this.get('locShipName')) {
-        OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_NameReqForBPAddress'));
-        return false;
-      } else if (this.get('locShipName') === OB.I18N.getLabel('OBPOS_LblEmptyAddress')) {
-        this.set('locShipId', null);
-        this.set('locShipName', null);
-      } else if (!this.get('locShipId')) {
-        this.set('locShipId', OB.UTIL.get_UUID());
-      }
-
-      if (!this.get("locId") && !this.get('id')) {
-        this.set('locId', this.get('locShipId'));
-      }
-
-      if (!this.get('locName') && !this.get('id')) {
-        this.set('locName', this.get('locShipName'));
+      if (!this.get('id')) {
+        if (this.get('useSameAddrForShipAndInv')) {
+          //Create 1 address for shipping and invoicing
+          if (!this.get('locName')) {
+            OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_BPartnerAddressRequired'));
+            return false;
+          }
+          this.set('locId', OB.UTIL.get_UUID());
+          this.set('shipLocId', this.get('locId'));
+          this.set('shipLocName', this.get('locName'));
+          this.set('shipPostalCode', this.get('postalCode'));
+          this.set('shipCityName', this.get('cityName'));
+        } else {
+          //Create 1 address for shipping and 1 for invoicing
+          if (!this.get('locName') || !this.get('shipLocName')) {
+            OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_BPartnerAddressRequired'));
+            return false;
+          }
+          this.set('locId', OB.UTIL.get_UUID());
+          this.set('shipLocId', OB.UTIL.get_UUID());
+        }
       }
 
       if (!this.get('contactId')) {
@@ -231,15 +236,6 @@
     column: 'invoicerule',
     type: 'TEXT'
   }, {
-    name: 'locShipId',
-    column: 'locShipId',
-    type: 'TEXT'
-  }, {
-    name: 'locShipName',
-    column: 'locShipName',
-    filter: true,
-    type: 'TEXT'
-  }, {
     name: 'locId',
     column: 'c_bpartnerlocation_id',
     type: 'TEXT'
@@ -260,6 +256,25 @@
   }, {
     name: 'countryName',
     column: 'countryName',
+    type: 'TEXT'
+  }, {
+    name: 'shipLocId',
+    column: 'shipLocId',
+    type: 'TEXT'
+  }, {
+    name: 'shipLocName',
+    column: 'shipLocName',
+    filter: true,
+    type: 'TEXT'
+  }, {
+    name: 'shipPostalCode',
+    column: 'shipPostalCode',
+    filter: true,
+    type: 'TEXT'
+  }, {
+    name: 'shipCityName',
+    column: 'shipCityName',
+    filter: true,
     type: 'TEXT'
   }, {
     name: 'contactId',

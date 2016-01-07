@@ -109,7 +109,8 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.SwitchShippingInvoicingAddr',
   handlers: {
-    onLoadValue: 'loadValue'
+    onLoadValue: 'loadValue',
+    onSaveChange: 'saveChange'
   },
   events: {
     onHideShowFields: ''
@@ -162,6 +163,9 @@ enyo.kind({
       this.$.shipLbl.hide();
       this.$.invLbl.hide();
     }
+  },
+  saveChange: function (inSender, inEvent) {
+    inEvent.customer.set('useSameAddrForShipAndInv', this.$.btnUseSameCheck.checked);
   },
   tap: function () {
     this.doHideShowFields({
@@ -373,11 +377,11 @@ enyo.kind({
             return true;
           }
           args.customer.saveCustomer(function () {
-        	if (!inEvent.silent) {  
-        	  goToViewWindow(sw, {
+            if (!inEvent.silent) {
+              goToViewWindow(sw, {
                 customer: args.customer
               });
-        	}
+            }
           });
         });
       });
