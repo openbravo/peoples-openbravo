@@ -223,6 +223,10 @@
   background-color: #e2e2e2 !important;
 }
 
+.onyx-toolbar-inline > * {
+  margin: 0px 6px !important;
+}
+
 .paymentmethoditemstext {
   font-family: 'Helvetica Neue', 'Nimbus Sans L', Arial, sans-serif;
   font-size: 16px;
