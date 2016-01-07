@@ -20,6 +20,11 @@ enyo.kind({
       this.waterfall('onSetCustomer', {
         customer: params.businessPartner
       });
+      //hide address fields while editing customers
+      if (params.businessPartner) {
+        this.$.subWindowBody.$.edit_createcustomers_impl.$.invoicingAddrFields.hide();
+        this.$.subWindowBody.$.edit_createcustomers_impl.$.shippingAddrFields.hide();
+      }
       //show
       return true;
     } else {
