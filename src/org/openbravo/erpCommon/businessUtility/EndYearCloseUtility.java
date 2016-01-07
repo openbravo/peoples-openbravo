@@ -384,7 +384,7 @@ public class EndYearCloseUtility {
       String strRegFactAcctGroupId, String strCloseFactAcctGroupId,
       String strDivideUpFactAcctGroupId, String strOpenUpFactAcctGroupId, String strOrgClosingId)
       throws ServletException {
-    boolean isYearNotAllowed = EndYearCloseUtilityData.selectUndoAllowed(conn, strYearId);
+    boolean isYearNotAllowed = EndYearCloseUtilityData.selectUndoAllowed(conn, strYearId, stradOrgId);
     if (isYearNotAllowed) {
       return "UndoNotAllowedForYear";
     }

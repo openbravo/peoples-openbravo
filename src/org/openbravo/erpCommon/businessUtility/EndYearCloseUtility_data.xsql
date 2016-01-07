@@ -579,11 +579,13 @@
             where c_year_close_v.c_year_id = c_year.c_year_id
             and c_year_close_v.c_calendar_id = (select c_calendar_id from c_year where c_year_id = ?)
             and c_year.year > (select year from c_year where c_year_id = ?)
-            and c_year_close_v.status <> 'O')
+            and c_year_close_v.status <> 'O'
+            and c_year_close_v.ad_org_id = ?)
       ]]>
     </Sql>
     <Parameter name="cYearId"/>
     <Parameter name="cYearId"/>
+    <Parameter name="cOrgId"/>
   </SqlMethod>
   <SqlMethod name="updatePeriodsOpen" type="preparedStatement" connection="true" return="rowCount">
     <SqlMethodComment></SqlMethodComment>
