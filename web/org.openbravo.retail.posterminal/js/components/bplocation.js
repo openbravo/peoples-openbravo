@@ -13,19 +13,8 @@
 
 enyo.kind({
   kind: 'OB.UI.SmallButton',
-  name: 'OB.UI.BPLocation',
-  classes: 'btnlink-gray',
+  name: 'OB.UI.SmallBPButton',
   style: 'display: table; float: right;',
-  components: [{
-    name: 'bottomAddrIcon',
-    classes: 'addressbillbutton',
-    showing: false
-  }, {
-    name: 'identifier',
-    classes: 'addressbilltext'
-  }, {
-    style: 'clear: both;'
-  }],
   published: {
     order: null
   },
@@ -46,6 +35,47 @@ enyo.kind({
       this.addClass('btnlink');
     }
   },
+  initComponents: function () {
+    this.inherited(arguments);
+  },
+  renderBPLocation: function (newLocation) {
+    this.$.identifier.setContent(newLocation);
+  },
+  orderChanged: function (oldValue) {
+    if (this.order.get('bp')) {
+      this.renderBPLocation(_.isNull(this.order.get('bp').get(this.locName)) ? OB.I18N.getLabel('OBPOS_LblEmptyAddress') : this.order.get('bp').get(this.locName));
+    } else {
+      this.renderBPLocation(OB.I18N.getLabel('OBPOS_LblEmptyAddress'));
+    }
+
+    this.order.on('change:bp', function (model) {
+      if (model.get('bp')) {
+        if (this.buttonShowing) {
+          this.buttonShowing(model.get('bp'));
+        }
+        this.renderBPLocation(_.isNull(model.get('bp').get(this.locName)) ? OB.I18N.getLabel('OBPOS_LblEmptyAddress') : model.get('bp').get(this.locName));
+      } else {
+        this.renderBPLocation(OB.I18N.getLabel('OBPOS_LblEmptyAddress'));
+      }
+    }, this);
+  }
+});
+
+enyo.kind({
+  kind: 'OB.UI.SmallBPButton',
+  name: 'OB.UI.BPLocation',
+  classes: 'btnlink-gray',
+  locName: 'locName',
+  components: [{
+    name: 'bottomAddrIcon',
+    classes: 'addressbillbutton',
+    showing: false
+  }, {
+    name: 'identifier',
+    classes: 'addressbilltext'
+  }, {
+    style: 'clear: both;'
+  }],
   tap: function () {
     if (!this.disabled) {
       this.doShowPopup({
@@ -55,27 +85,77 @@ enyo.kind({
         }
       });
     }
-  },
-  initComponents: function () {
-    this.inherited(arguments);
-  },
-  renderBPLocation: function (newLocation) {
-    this.$.identifier.setContent(newLocation);
-  },
-  orderChanged: function (oldValue) {
-    if (this.order.get('bp')) {
-      this.renderBPLocation(_.isNull(this.order.get('bp').get('locName')) ? OB.I18N.getLabel('OBPOS_LblEmptyAddress') : this.order.get('bp').get('locName'));
-    } else {
-      this.renderBPLocation(OB.I18N.getLabel('OBPOS_LblEmptyAddress'));
-    }
+  }
+});
 
-    this.order.on('change:bp', function (model) {
-      if (model.get('bp')) {
-        this.renderBPLocation(_.isNull(model.get('bp').get('locName')) ? OB.I18N.getLabel('OBPOS_LblEmptyAddress') : model.get('bp').get('locName'));
-      } else {
-        this.renderBPLocation(OB.I18N.getLabel('OBPOS_LblEmptyAddress'));
+enyo.kind({
+  kind: 'OB.UI.SmallBPButton',
+  name: 'OB.UI.BPLocationShip',
+  classes: 'btnlink-gray addressshipbutton_fixpadding',
+  showing: false,
+  locName: 'shipLocName',
+  components: [{
+    name: 'bottomAddrIcon',
+    classes: 'addressshipbutton'
+  }, {
+    name: 'identifier',
+    classes: 'addressshiptext'
+  }, {
+    style: 'clear: both;'
+  }],
+  changeStyle: function (status) {
+    var me = this;
+    if (!status) {
+      me.setShowing(status);
+      me.parent.$.bplocbutton.$.bottomAddrIcon.applyStyle('display', 'none');
+      me.parent.$.bplocbutton.removeClass('addressbillbutton_fixpadding');
+      me.parent.$.bplocbutton.$.identifier.applyStyle('max-width', '200px');
+    } else {
+      me.setShowing(status);
+      me.parent.$.bplocbutton.$.bottomAddrIcon.applyStyle('display', '');
+      me.parent.$.bplocbutton.addClass('addressbillbutton_fixpadding');
+      me.parent.$.bplocbutton.$.identifier.applyStyle('max-width', '70px');
+    }
+  },
+  buttonShowing: function (bp) {
+    var criteria = {},
+        me = this;
+    if (!bp.get('shipLocId') && !bp.get('locId')) {
+      me.changeStyle(false);
+    } else {
+      criteria.bpartner = bp.get('id');
+      if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
+        var bPartnerId = {
+          columns: ['bpartner'],
+          operator: 'equals',
+          value: bp.get('id'),
+          isId: true
+        };
+        var remoteCriteria = [bPartnerId];
+        criteria.remoteFilters = remoteCriteria;
       }
-    }, this);
+      OB.Dal.find(OB.Model.BPLocation, criteria, function (dataBps) {
+        if (dataBps && dataBps.length > 1) {
+          me.changeStyle(true);
+        } else if ((dataBps.models[0].get('isBillTo') && !dataBps.models[0].get('isShipTo')) || (!dataBps.models[0].get('isBillTo') && dataBps.models[0].get('isShipTo'))) {
+          me.changeStyle(true);
+        } else {
+          me.changeStyle(false);
+        }
+      }, function (tx, error) {
+        OB.UTIL.showError("OBDAL error: " + error);
+      });
+    }
+  },
+  tap: function () {
+    if (!this.disabled) {
+      this.doShowPopup({
+        popup: 'modalcustomershipaddress',
+        args: {
+          target: 'order'
+        }
+      });
+    }
   }
 });
 

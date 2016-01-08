@@ -213,7 +213,6 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "pointofsale/view/subwindows/customeraddress/components/sharedcomponents",
         "pointofsale/view/subwindows/customeraddress/editcreatecustomeraddress",
         "pointofsale/view/subwindows/customeraddress/customeraddrsearch",
-        "pointofsale/view/subwindows/customeraddress/customeraddrshipsearch",
         "pointofsale/view/subwindows/customeraddress/customeraddrdetailview",
         // Point of sale modals
         "pointofsale/view/modals/modalstockinstore",

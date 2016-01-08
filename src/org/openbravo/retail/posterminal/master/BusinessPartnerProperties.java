@@ -44,7 +44,7 @@ public class BusinessPartnerProperties extends ModelExtension {
         add(new HQLProperty(
             "(select max(bpls.id) as bpLocId from BusinessPartnerLocation AS bpls where bpls.businessPartner.id=bpl.businessPartner.id and bpls.shipToAddress = true and bpls.$readableSimpleClientCriteria AND "
                 + " bpls.$naturalOrgCriteria group by bpls.businessPartner.id)",
-            "locShipId"));
+            "shipLocId"));
         add(new HQLProperty(
             "(select max(COALESCE(bpls.locationAddress.addressLine1, bpls.locationAddress.addressLine2, bpls.locationAddress.postalCode, bpls.locationAddress.cityName)) from BusinessPartnerLocation AS bpls where bpls.businessPartner.id=bpl.businessPartner.id and bpls.invoiceToAddress = true and bpls.$readableSimpleClientCriteria AND "
                 + " bpls.$naturalOrgCriteria group by bpls.businessPartner.id)",
@@ -52,7 +52,7 @@ public class BusinessPartnerProperties extends ModelExtension {
         add(new HQLProperty(
             "(select max(COALESCE(bpls.locationAddress.addressLine1, bpls.locationAddress.addressLine2, bpls.locationAddress.postalCode, bpls.locationAddress.cityName)) as nameShipTo from BusinessPartnerLocation AS bpls where bpls.businessPartner.id=bpl.businessPartner.id and bpls.shipToAddress = true and bpls.$readableSimpleClientCriteria AND "
                 + " bpls.$naturalOrgCriteria group by bpls.businessPartner.id)",
-            "locShipName"));
+            "shipLocName"));
         add(new HQLProperty("ulist.email", "email"));
         add(new HQLProperty("ulist.id", "contactId"));
         add(new HQLProperty("ulist.phone", "phone"));

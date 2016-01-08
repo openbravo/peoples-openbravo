@@ -123,9 +123,6 @@ enyo.kind({
       kind: 'OB.OBPOSPointOfSale.UI.customeraddr.cas',
       name: 'customerAddressSearch'
     }, {
-      kind: 'OB.OBPOSPointOfSale.UI.customershipaddr.cas',
-      name: 'customerShipAddressSearch'
-    }, {
       kind: 'OB.OBPOSPointOfSale.UI.customeraddr.newcustomeraddr',
       name: 'customerAddrCreateAndEdit'
     }, {
