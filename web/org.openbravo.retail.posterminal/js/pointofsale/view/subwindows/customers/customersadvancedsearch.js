@@ -123,9 +123,6 @@ enyo.kind({
       name: 'onHold'
     }, {
       style: 'float: left;',
-      name: 'address'
-    }, {
-      style: 'float: left;',
       name: 'phone'
     }, {
       style: 'float: left;',
@@ -143,7 +140,6 @@ enyo.kind({
     if (this.model.get('customerBlocking') && this.model.get('salesOrderBlocking')) {
       this.$.onHold.setContent(' (' + OB.I18N.getLabel('OBPOS_OnHold') + ') ');
     }
-    this.$.address.setContent(!_.isNull(this.model.get('locShipName')) ? ' / ' + this.model.get('locShipName') : '');
     if (this.model.get('phone')) {
       this.$.phone.setContent(' / ' + this.model.get('phone'));
     }
