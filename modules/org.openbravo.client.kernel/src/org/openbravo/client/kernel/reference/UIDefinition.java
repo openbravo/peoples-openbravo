@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -469,8 +469,8 @@ public abstract class UIDefinition {
   protected String removeAttributeFromString(String inpString, String attr) {
     String result = inpString;
     if (result.indexOf(attr) != -1) {
-      // If there is a previous 'canSort' set, remove it to avoid collision when the new one is set
-      // later
+      // If there is a previous 'canSort' or 'canFilter' set, remove it to avoid collision when the
+      // new one is set later
       result = result.replaceAll("(,)( *?)(canSort)( *?)(:)( *?)(false|true)( *?)", "");
       result = result.replaceAll("(,)( *?)(canFilter)( *?)(:)( *?)(false|true)( *?)", "");
     }
