@@ -162,9 +162,9 @@
                 var protocol = OB.POS.hwserver.url.split('/')[0];
                 var websocketServerLocation;
                 if (protocol === 'http:') {
-                  websocketServerLocation = 'ws:' + OB.POS.hwserver.url.substring(protocol.lenght, OB.POS.hwserver.url.length).split('/printer')[0] + '/rfid';
+                  websocketServerLocation = 'ws:' + OB.POS.hwserver.url.substring(protocol.length, OB.POS.hwserver.url.length).split('/printer')[0] + '/rfid';
                 } else if (protocol === 'https:') {
-                  websocketServerLocation = 'wss:' + OB.POS.hwserver.url.substring(protocol.lenght, OB.POS.hwserver.url.length).split('/printer')[0] + '/rfid';
+                  websocketServerLocation = 'wss:' + OB.POS.hwserver.url.substring(protocol.length, OB.POS.hwserver.url.length).split('/printer')[0] + '/rfid';
                 } else {
                   OB.UTIL.showError(OB.I18N.getLabel('OBPOS_WrongHardwareManagerProtocol'));
                 }

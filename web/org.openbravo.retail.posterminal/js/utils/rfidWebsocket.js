@@ -40,7 +40,7 @@ OB.UTIL.startRfidWebsocket = function startRfidWebsocket(websocketServerLocation
       product.set('groupProduct', false);
       OB.MobileApp.model.receipt.addProduct(product, '1', {
         rfid: true
-      }, message.dataToSave);
+      }, data.dataToSave);
     });
   };
 
