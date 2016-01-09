@@ -140,7 +140,7 @@ enyo.kind({
           changeOption: function (inSender, inEvent) {
             this.$.allowvariableamount.tap();
           },
-          disableControls: function () {
+          disableControls: function (modelToDraw) {
             //remove selected RButtons
             //reset UI and model.
             this.$.keepfixedamount.disableRadio();
@@ -149,9 +149,14 @@ enyo.kind({
             this.$.allowvariableamount.disableRadio();
 
             this.$.variableInput.setContent('');
-            this.doResetQtyToKeep({
-              qtyToKeep: null
-            });
+            if (modelToDraw) {
+              var paymentMethod = modelToDraw.get('paymentMethod');
+              if (paymentMethod && paymentMethod.allowvariableamount) {
+                this.doResetQtyToKeep({
+                  qtyToKeep: null
+                });
+              }
+            }
           },
           renderFixedAmount: function (modelToDraw) {
             var udfn, cnted;
@@ -184,7 +189,7 @@ enyo.kind({
             if (!paymentMethod.automatemovementtoother) {
               return true;
             }
-            this.disableControls();
+            this.disableControls(modelToDraw);
             //draw
             this.renderFixedAmount(modelToDraw);
 
