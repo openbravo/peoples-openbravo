@@ -12,57 +12,6 @@
 /*global enyo, Backbone, _ */
 
 enyo.kind({
-  kind: 'OB.UI.Button',
-  name: 'OB.UI.SearchCustomerShipAddressWindowButton',
-  style: 'width: 170px; margin: 0px 0px 8px 5px;',
-  classes: 'btnlink-yellow btnlink btnlink-small',
-  i18nLabel: 'OBPOS_LblAdvancedSearch',
-  disabled: false,
-  handlers: {
-    onSetModel: 'setModel',
-    onNewBPLocDisabled: 'doDisableNewBPLoc'
-  },
-  doDisableNewBPLoc: function (inSender, inEvent) {
-    this.putDisabled(inEvent.status);
-  },
-  setModel: function (inSender, inEvent) {
-    this.model = inEvent.model;
-  },
-  events: {
-    onHideThisPopup: ''
-  },
-  tap: function () {
-    if (this.disabled) {
-      return true;
-    }
-    this.doHideThisPopup();
-    this.model.get('subWindowManager').set('currentWindow', {
-      name: 'customerAddressSearch',
-      params: {
-        caller: 'mainSubWindow',
-        bPartner: this.model.get('order').get('bp').get('id')
-      }
-    });
-  },
-  putDisabled: function (status) {
-    if (status === false) {
-      this.disabled = false;
-      this.setDisabled(false);
-      this.removeClass('disabled');
-      return;
-    } else {
-      this.disabled = true;
-      this.setDisabled(true);
-      this.addClass('disabled');
-    }
-  },
-  initComponents: function () {
-    this.inherited(arguments);
-    this.putDisabled(!OB.MobileApp.model.hasPermission('OBPOS_receipt.customers'));
-  }
-});
-
-enyo.kind({
   name: 'OB.UI.ModalBpShipLocScrollableHeader',
   kind: 'OB.UI.ScrollableTableHeader',
   events: {
@@ -122,7 +71,7 @@ enyo.kind({
       }, {
         style: 'display: table-cell;',
         components: [{
-          kind: 'OB.UI.SearchCustomerShipAddressWindowButton'
+          kind: 'OB.UI.SearchCustomerAddressWindowButton'
         }]
       }]
     }]
