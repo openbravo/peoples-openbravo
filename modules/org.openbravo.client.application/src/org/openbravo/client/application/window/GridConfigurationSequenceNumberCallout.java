@@ -45,10 +45,10 @@ public class GridConfigurationSequenceNumberCallout extends SimpleCallout {
 
   @Override
   public void execute(CalloutInfo info) throws ServletException {
-    Long mySeq;
+    Long longSeqNum;
     try {
       String seq = info.getStringParameter("inpseqno", null);
-      mySeq = Long.parseLong(seq);
+      longSeqNum = Long.parseLong(seq);
     } catch (NumberFormatException ignore) {
       return;
     }
@@ -58,12 +58,12 @@ public class GridConfigurationSequenceNumberCallout extends SimpleCallout {
       Tab myTab = OBDal.getInstance().get(Tab.class, tabOfGcTabId);
       OBCriteria<GCTab> gcTabCriteria = OBDal.getInstance().createCriteria(GCTab.class);
       gcTabCriteria.add(Restrictions.and(Restrictions.eq(GCTab.PROPERTY_TAB, myTab),
-          Restrictions.eq(GCTab.PROPERTY_SEQNO, mySeq)));
+          Restrictions.eq(GCTab.PROPERTY_SEQNO, longSeqNum)));
       int countGCTabCriteria = gcTabCriteria.count();
       createWarningMessage(info, countGCTabCriteria);
     } else if (info.getTabId().equals(GC_SYSTEM_TAB_ID)) {
       OBCriteria<GCSystem> gcSystemCriteria = OBDal.getInstance().createCriteria(GCSystem.class);
-      gcSystemCriteria.add(Restrictions.eq(GCSystem.PROPERTY_SEQNO, mySeq));
+      gcSystemCriteria.add(Restrictions.eq(GCSystem.PROPERTY_SEQNO, longSeqNum));
       int countGCSystemCriteria = gcSystemCriteria.count();
       createWarningMessage(info, countGCSystemCriteria);
     }
