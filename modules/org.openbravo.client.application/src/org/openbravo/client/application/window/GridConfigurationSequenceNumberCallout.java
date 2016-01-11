@@ -16,13 +16,6 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
-
-/**
- * Checks if there are more than one grid configuration with the same sequence number.
- * If there are, a warning message is shown.
- *
- * @author NaroaIriarte
- */
 package org.openbravo.client.application.window;
 
 import javax.servlet.ServletException;
@@ -37,6 +30,12 @@ import org.openbravo.erpCommon.ad_callouts.SimpleCallout;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.ui.Tab;
 
+/**
+ * Checks if there are more than one grid configuration with the same sequence number. If there are,
+ * a warning message is shown.
+ *
+ * @author NaroaIriarte
+ */
 public class GridConfigurationSequenceNumberCallout extends SimpleCallout {
 
   private static final long serialVersionUID = 1L;
