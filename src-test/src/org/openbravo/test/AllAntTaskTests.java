@@ -107,7 +107,7 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
 
-    // dal
+// dal
     DalComplexQueryRequisitionTest.class, //
     DalComplexQueryTestOrderLine.class, //
     DalPerformanceInventoryLineTest.class, //
@@ -215,7 +215,8 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     SqlCallableStatement.class,
 
     // grid configuration
-    ViewGenerationWithDifferentConfigLevelTest.class, GCSequenceNumberTests.class,
+    ViewGenerationWithDifferentConfigLevelTest.class, //
+    GCSequenceNumberTests.class, //
     SortingFilteringGridConfiguration.class
 
 })
