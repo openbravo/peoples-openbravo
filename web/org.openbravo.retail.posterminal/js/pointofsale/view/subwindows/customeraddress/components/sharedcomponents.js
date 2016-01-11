@@ -48,9 +48,6 @@ enyo.kind({
       }
     } else {
       this.setValue('');
-      if (this.modelProperty === 'countryName') {
-        this.setValue(OB.MobileApp.model.get('terminal').defaultbp_bpcountry_name);
-      }
     }
     if (this.modelProperty === 'customerName' && inEvent.customer !== undefined && inEvent.customer.get('name') !== undefined) {
       this.setValue(inEvent.customer.get('name'));
@@ -175,21 +172,36 @@ enyo.kind({
               customerAddr: customerAddr
             });
             if (customerAddr.get('id') === me.customer.get("locId") || customerAddr.get('id') === me.customer.get("shipLocId")) {
-              if (!customerAddr.get('isBillTo')) {
-                me.customer.set('locId', null);
-                me.customer.set('locName', null);
-              }
-              if (!customerAddr.get('isShipTo')) {
-                me.customer.set('shipLocId', null);
-                me.customer.set('shipLocName', null);
-                me.customer.set('postalCode', null);
-                me.customer.set('cityName', null);
-              }
               if (customerAddr.get('id') === me.customer.get('locId')) {
                 me.customer.set('locName', customerAddr.get('name'));
+                if (!customerAddr.get('isBillTo')) {
+                  me.customer.set('locId', null);
+                  me.customer.set('locName', null);
+                  me.customer.set('postalCode', null);
+                  me.customer.set('cityName', null);
+                  me.customer.set('countryName', null);
+                } else {
+                  me.customer.set('locId', customerAddr.get('name'));
+                  me.customer.set('locName', customerAddr.get('name'));
+                  me.customer.set('postalCode', customerAddr.get('postalCode'));
+                  me.customer.set('cityName', customerAddr.get('cityName'));
+                  me.customer.set('countryName', customerAddr.get('countryName'));
+                }
               }
               if (customerAddr.get('id') === me.customer.get('shipLocId')) {
-                me.customer.set('shipLocName', customerAddr.get('name'));
+                if (!customerAddr.get('isBillTo')) {
+                  me.customer.set('shipLocId', null);
+                  me.customer.set('shipLocName', null);
+                  me.customer.set('shipPostalCode', null);
+                  me.customer.set('shipCityName', null);
+                  me.customer.set('shipCountryName', null);
+                } else {
+                  me.customer.set('shipLocId', customerAddr.get('name'));
+                  me.customer.set('shipLocName', customerAddr.get('name'));
+                  me.customer.set('shipPostalCode', customerAddr.get('postalCode'));
+                  me.customer.set('shipCityName', customerAddr.get('cityName'));
+                  me.customer.set('shipCountryName', customerAddr.get('countryName'));
+                }
               }
               me.customer.set('locationModel', customerAddr);
               OB.Dal.save(me.customer, function success(tx) {
@@ -296,6 +308,87 @@ enyo.kind({
     }
     if (this.maxlength) {
       this.setAttribute('maxlength', this.maxlength);
+    }
+  }
+});
+
+enyo.kind({
+  name: 'OB.UI.CustomerAddrComboProperty',
+  handlers: {
+    onLoadValue: 'loadValue',
+    onSaveChange: 'saveChange'
+  },
+  events: {
+    onSaveProperty: ''
+  },
+  components: [{
+    kind: 'OB.UI.List',
+    name: 'customerAddrCombo',
+    classes: 'combo',
+    style: 'width: 101%; margin:0;',
+    renderLine: enyo.kind({
+      kind: 'enyo.Option',
+      initComponents: function () {
+        this.inherited(arguments);
+        this.setValue(this.model.get(this.parent.parent.retrievedPropertyForValue));
+        this.setContent(this.model.get(this.parent.parent.retrievedPropertyForText));
+      }
+    }),
+    renderEmpty: 'enyo.Control'
+  }],
+  loadValue: function (inSender, inEvent) {
+    this.$.customerAddrCombo.setCollection(this.collection);
+    this.fetchDataFunction(inEvent);
+  },
+  dataReadyFunction: function (data, inEvent) {
+    var index = 0,
+        result = null;
+    if (this.destroyed) {
+      return;
+    }
+    if (data) {
+      this.collection.reset(data.models);
+    } else {
+      this.collection.reset(null);
+      return;
+    }
+
+    result = _.find(this.collection.models, function (categ) {
+      if (inEvent.customerAddr) {
+        //Edit: select actual value
+        if (categ.get(this.retrievedPropertyForValue) === inEvent.customerAddr.get(this.modelProperty)) {
+          return true;
+        }
+      } else {
+        //New: select default value
+        if (categ.get(this.retrievedPropertyForValue) === this.defaultValue()) {
+          return true;
+        }
+      }
+      index += 1;
+    }, this);
+    if (result) {
+      this.$.customerAddrCombo.setSelected(index);
+    } else {
+      this.$.customerAddrCombo.setSelected(0);
+    }
+  },
+  saveChange: function (inSender, inEvent) {
+    var selected = this.collection.at(this.$.customerAddrCombo.getSelected());
+    inEvent.customerAddr.set(this.modelProperty, selected.get(this.retrievedPropertyForValue));
+    if (this.modelPropertyText) {
+      inEvent.customerAddr.set(this.modelPropertyText, selected.get(this.retrievedPropertyForText));
+    }
+  },
+  initComponents: function () {
+    if (this.collectionName && OB && OB.Collection && OB.Collection[this.collectionName]) {
+      this.collection = new OB.Collection[this.collectionName]();
+    } else {
+      OB.info('OB.UI.CustomerAddrComboProperty: Collection is required');
+    }
+    this.inherited(arguments);
+    if (this.readOnly) {
+      this.setAttribute('readonly', 'readonly');
     }
   }
 });

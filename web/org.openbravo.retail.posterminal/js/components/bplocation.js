@@ -492,7 +492,7 @@ enyo.kind({
       this.$.btnContextMenu.hide();
     } else {
       this.$.btnContextMenu.setModel(this.model);
-      this.$.btnContextMenu.bPartner = this.owner.owner.owner.owner.bPartner;
+      this.$.btnContextMenu.bPartner = new OB.Model.BusinessPartner(this.owner.owner.owner.owner.bPartner);
     }
   }
 });

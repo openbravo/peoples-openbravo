@@ -174,11 +174,36 @@ enyo.kind({
     i18nLabel: 'OBPOS_LblCity',
     maxlength: 60
   }, {
-    kind: 'OB.UI.CustomerAddrTextProperty',
+    kind: 'OB.UI.CustomerAddrComboProperty',
     name: 'customerAddrCountry',
-    modelProperty: 'countryName',
+    modelProperty: 'countryId',
+    modelPropertyText: 'countryName',
+    collectionName: 'CountryList',
     i18nLabel: 'OBPOS_LblCountry',
-    readOnly: true
+    defaultValue: function () {
+      return OB.MobileApp.model.get('terminal').defaultbp_bpcountry;
+    },
+    //Default value for new lines
+    retrievedPropertyForValue: 'id',
+    //property of the retrieved model to get the value of the combo item
+    retrievedPropertyForText: '_identifier',
+    //property of the retrieved model to get the text of the combo item
+    //function to retrieve the data
+    fetchDataFunction: function (args) {
+      var me = this,
+          criteria;
+      criteria = {
+        _orderByClause: '_identifier asc'
+      };
+      OB.Dal.find(OB.Model.Country, criteria, function (data, args) {
+        //This function must be called when the data is ready
+        me.dataReadyFunction(data, args);
+      }, function (error) {
+        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_ErrorGettingCountries'));
+        //This function must be called when the data is ready
+        me.dataReadyFunction(null, args);
+      }, args);
+    }
   }, {
     kind: 'OB.UI.CustomerAddrCheckProperty',
     name: 'customerAddrShip',
