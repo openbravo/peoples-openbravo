@@ -2901,7 +2901,7 @@
 
       if (model.get('isLayaway')) {
         synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('addPaidReceipt');
-        // OB.Dal.save is done here because we want to force to save with the original od, only this time.
+        // OB.Dal.save is done here because we want to force to save with the original id, only this time.
         OB.Dal.save(model, function () {
           enyo.$.scrim.hide();
           OB.UTIL.SynchronizationHelper.finished(synchId, 'addPaidReceipt');
