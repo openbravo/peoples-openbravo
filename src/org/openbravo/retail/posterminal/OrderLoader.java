@@ -986,11 +986,12 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       if (negativeLine) {
         lineNo += 10;
         addShipmentline(shipment, shplineentity, orderlines.getJSONObject(i), orderLine, jsonorder,
-            lineNo, pendingQty.negate(), getBinForReturns(jsonorder.getString("posTerminal")), null);
+            lineNo, pendingQty.negate(), getBinForReturns(jsonorder.getString("posTerminal")),
+            null, i);
       } else if (useSingleBin) {
         lineNo += 10;
         addShipmentline(shipment, shplineentity, orderlines.getJSONObject(i), orderLine, jsonorder,
-            lineNo, pendingQty, foundSingleBin, null);
+            lineNo, pendingQty, foundSingleBin, null, i);
       } else {
         HashMap<String, ShipmentInOutLine> usedBins = new HashMap<String, ShipmentInOutLine>();
         if (pendingQty.compareTo(BigDecimal.ZERO) > 0) {
@@ -1041,7 +1042,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
               ShipmentInOutLine objShipmentLine = addShipmentline(shipment, shplineentity,
                   orderlines.getJSONObject(i), orderLine, jsonorder, lineNo, qty, stock
                       .getStorageDetail().getStorageBin(), stock.getStorageDetail()
-                      .getAttributeSetValue());
+                      .getAttributeSetValue(), i);
 
               usedBins.put(stock.getStorageDetail().getStorageBin().getId(), objShipmentLine);
 
@@ -1087,7 +1088,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
             OBDal.getInstance().save(objShipmentInOutLine);
           } else {
             addShipmentline(shipment, shplineentity, orderlines.getJSONObject(i), orderLine,
-                jsonorder, lineNo, pendingQty, queryLoc.list().get(0), oldAttributeSetValues);
+                jsonorder, lineNo, pendingQty, queryLoc.list().get(0), oldAttributeSetValues, i);
           }
         }
       }
@@ -1096,9 +1097,12 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
   private ShipmentInOutLine addShipmentline(ShipmentInOut shipment, Entity shplineentity,
       JSONObject jsonOrderLine, OrderLine orderLine, JSONObject jsonorder, long lineNo,
-      BigDecimal qty, Locator bin, AttributeSetInstance attributeSetInstance) throws JSONException {
+      BigDecimal qty, Locator bin, AttributeSetInstance attributeSetInstance, int i)
+      throws JSONException {
     ShipmentInOutLine line = OBProvider.getInstance().get(ShipmentInOutLine.class);
-
+    String shipmentLineId = OBMOBCUtils.getUUIDbyString(orderLine.getId() + i);
+    line.setId(shipmentLineId);
+    line.setNewOBObject(true);
     JSONPropertyToEntity.fillBobFromJSON(shplineentity, line, jsonOrderLine,
         jsonorder.getLong("timezoneOffset"));
     JSONPropertyToEntity.fillBobFromJSON(
@@ -1172,6 +1176,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           orderline, jsonorder, jsonorder.getLong("timezoneOffset"));
       JSONPropertyToEntity.fillBobFromJSON(orderLineEntity, orderline, jsonOrderLine,
           jsonorder.getLong("timezoneOffset"));
+      orderline.setId(jsonOrderLine.get("id"));
+      orderline.setNewOBObject(true);
 
       orderline.setActive(true);
       orderline.setSalesOrder(order);
