@@ -368,11 +368,10 @@ public class OBViewUtil {
         canSort = sortingConfiguration;
       } else if (gcItem instanceof GCTab && isSortingColumnConfig) {
         isSortingColumnConfig = false;
-        if (sortingConfiguration == false) {
+        if (!sortingConfiguration) {
           canSort = sortingConfiguration;
         }
-      } else if (gcItem instanceof GCSystem && isSortingColumnConfig
-          && sortingConfiguration == false) {
+      } else if (gcItem instanceof GCSystem && isSortingColumnConfig && !sortingConfiguration) {
         canSort = sortingConfiguration;
       }
     }
@@ -387,11 +386,10 @@ public class OBViewUtil {
         canFilter = filteringConfiguration;
       } else if (gcItem instanceof GCTab && isFilteringColumnConfig) {
         isFilteringColumnConfig = false;
-        if (filteringConfiguration == false) {
+        if (!filteringConfiguration) {
           canFilter = filteringConfiguration;
         }
-      } else if (gcItem instanceof GCSystem && isFilteringColumnConfig
-          && filteringConfiguration == false) {
+      } else if (gcItem instanceof GCSystem && isFilteringColumnConfig && !filteringConfiguration) {
         canFilter = filteringConfiguration;
       }
     }
