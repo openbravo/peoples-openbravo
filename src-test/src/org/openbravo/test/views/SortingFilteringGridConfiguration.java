@@ -44,6 +44,11 @@ import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.test.base.OBBaseTest;
 
+/**
+ * Test cases to check if the correct behavior with different combinations of sorting and filtering
+ * properties in grid configurations at tab, field, system and column level are correct.
+ * 
+ */
 @RunWith(Parameterized.class)
 public class SortingFilteringGridConfiguration extends OBBaseTest {
   private enum ColumnLevel {

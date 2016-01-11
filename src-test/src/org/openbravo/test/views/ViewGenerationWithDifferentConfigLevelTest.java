@@ -38,8 +38,8 @@ import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.test.base.OBBaseTest;
 
 /**
- * Test cases for check if the correct configurations are set, with the different grid
- * configurations in tab, field and in system level.
+ * Test cases to check if the correct configurations are set, with the different grid configurations
+ * in tab, field and in system level.
  * 
  * @author NaroaIriarte
  *
