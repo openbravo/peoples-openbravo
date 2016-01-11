@@ -325,7 +325,11 @@ isc.OBPickAndExecuteGrid.addProperties({
 
     actualRecord = isc.isA.Number(recordNo) ? this.getRecord(recordNo) : recordNo;
 
-    this.pneSelectionUpdated(actualRecord, selected);
+    if (actualRecord) {
+      // execute pneSelectionUpdated() if actualRecord exists
+      // see issue https://issues.openbravo.com/view.php?id=31647
+      this.pneSelectionUpdated(actualRecord, selected);
+    }
 
     this.Super('selectRecord', arguments);
   },
