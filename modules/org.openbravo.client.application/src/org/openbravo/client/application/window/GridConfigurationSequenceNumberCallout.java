@@ -56,7 +56,6 @@ public class GridConfigurationSequenceNumberCallout extends SimpleCallout {
     if (info.getTabId().equals(GC_TAB_TAB_ID)) {
       String tabOfGcTabId = info.getStringParameter("inpadTabId", null);
       Tab myTab = OBDal.getInstance().get(Tab.class, tabOfGcTabId);
-
       OBCriteria<GCTab> gcTabCriteria = OBDal.getInstance().createCriteria(GCTab.class);
       gcTabCriteria.add(Restrictions.and(Restrictions.eq(GCTab.PROPERTY_TAB, myTab),
           Restrictions.eq(GCTab.PROPERTY_SEQNO, mySeq)));
@@ -65,7 +64,6 @@ public class GridConfigurationSequenceNumberCallout extends SimpleCallout {
     }
 
     if (info.getTabId().equals(GC_SYSTEM_TAB_ID)) {
-
       OBCriteria<GCSystem> gcSystemCriteria = OBDal.getInstance().createCriteria(GCSystem.class);
       gcSystemCriteria.add(Restrictions.eq(GCSystem.PROPERTY_SEQNO, mySeq));
       int countGCSystemCriteria = gcSystemCriteria.count();
