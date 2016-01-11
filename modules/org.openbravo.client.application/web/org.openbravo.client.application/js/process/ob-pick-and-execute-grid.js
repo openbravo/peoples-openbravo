@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2015 Openbravo SLU
+ * All portions are Copyright (C) 2011-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -101,7 +101,7 @@ isc.OBPickAndExecuteGrid.addProperties({
             len = orig.length,
             crit, i;
 
-        if (criteria._OrExpression) {
+        if (criteria && criteria._OrExpression) {
           for (i = 0; i < len; i++) {
             if (orig[i].fieldName && orig[i].fieldName === 'id') {
               continue;
@@ -460,7 +460,7 @@ isc.OBPickAndExecuteGrid.addProperties({
 
       if (!found) {
 
-        if (!criteria) {
+        if (!criteria || isc.isA.emptyObject(criteria)) {
           criteria = {
             _constructor: 'AdvancedCriteria',
             operator: 'and',
@@ -481,7 +481,7 @@ isc.OBPickAndExecuteGrid.addProperties({
 
     if (this._cleaningFilter) {
       // Always refresh when cleaning the filter
-      if (!criteria) {
+      if (!criteria || isc.isA.emptyObject(criteria)) {
         criteria = {
           _constructor: 'AdvancedCriteria',
           operator: 'and',
@@ -951,6 +951,47 @@ isc.OBPickAndExecuteGrid.addProperties({
   refreshGrid: function () {
     // fetch the data with the current criteria and context info
     this.filterData(this.getCriteria(), null, this.getContextInfo());
+  },
+
+  bodyKeyPress: function (event, eventInfo) {
+    var response = OB.KeyboardManager.Shortcuts.monitor('OBPickAndExecuteGrid.body', this);
+    if (response !== false) {
+      response = this.Super('bodyKeyPress', arguments);
+    }
+    return response;
+  },
+
+  enableShortcuts: function () {
+    var ksAction_PickAndExecuteNewRow, ksAction_PickAndExecuteEliminate;
+
+    ksAction_PickAndExecuteNewRow = function (caller) {
+      var pickAndEditGrid;
+      if (caller && caller.grid && caller.grid.getPrototype().Class === 'OBPickAndExecuteGrid') {
+        pickAndEditGrid = caller.grid;
+        if (pickAndEditGrid.contentView && pickAndEditGrid.viewProperties && pickAndEditGrid.viewProperties.allowAdd) {
+          pickAndEditGrid.contentView.addNewButton.action();
+        }
+      }
+      return false; //To avoid keyboard shortcut propagation
+    };
+
+    ksAction_PickAndExecuteEliminate = function (caller) {
+      var selectedRecords, i;
+      if (caller && caller.getPrototype().Class === 'OBPickAndExecuteGrid' && caller.getSelectedRecords() && caller.viewProperties && caller.viewProperties.allowDelete) {
+        selectedRecords = caller.getSelectedRecords();
+        for (i = 0; i < selectedRecords.length; i++) {
+          caller.removeRecord(caller.getRecordIndex(selectedRecords[i]));
+        }
+      }
+      return false; //To avoid keyboard shortcut propagation
+    };
+
+    // The Ctrl + i is being always captured at Canvas level, for this reason we register the 'new record' event at this very same level
+    OB.KeyboardManager.Shortcuts.set('ToolBar_NewRow', ['Canvas'], ksAction_PickAndExecuteNewRow);
+    OB.KeyboardManager.Shortcuts.set('ToolBar_Eliminate', ['OBPickAndExecuteGrid.body'], ksAction_PickAndExecuteEliminate);
+    OB.KeyboardManager.Shortcuts.set('ViewGrid_DeleteSelectedRecords', ['OBPickAndExecuteGrid.body'], ksAction_PickAndExecuteEliminate);
+
+    this.Super('enableShortcuts', arguments);
   }
 
 });
