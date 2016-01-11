@@ -304,6 +304,48 @@ enyo.kind({
     name: 'useSameAddrCheck'
   }],
   shipAddrAttributes: [{
+    kind: 'OB.UI.CustomerComboProperty',
+    name: 'customerShipCountry',
+    modelProperty: 'shipCountryId',
+    modelPropertyText: 'shipCountryName',
+    collectionName: 'CountryList',
+    i18nLabel: 'OBPOS_LblCountry',
+    defaultValue: function () {
+      return OB.MobileApp.model.get('terminal').defaultbp_bpcountry;
+    },
+    //Default value for new lines
+    retrievedPropertyForValue: 'id',
+    //property of the retrieved model to get the value of the combo item
+    retrievedPropertyForText: '_identifier',
+    //property of the retrieved model to get the text of the combo item
+    //function to retrieve the data
+    fetchDataFunction: function (args) {
+      var me = this,
+          criteria;
+      criteria = {
+        _orderByClause: '_identifier asc'
+      };
+      OB.Dal.find(OB.Model.Country, criteria, function (data, args) {
+        //This function must be called when the data is ready
+        me.dataReadyFunction(data, args);
+      }, function (error) {
+        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_ErrorGettingCountries'));
+        //This function must be called when the data is ready
+        me.dataReadyFunction(null, args);
+      }, args);
+    },
+    hideShow: function (inSender, inEvent) {
+      if (inEvent.checked) {
+        this.owner.removeClass('width52');
+        this.owner.owner.$.labelLine.removeClass('width40');
+        this.owner.owner.hide();
+      } else {
+        this.owner.addClass('width52');
+        this.owner.owner.$.labelLine.addClass('width40');
+        this.owner.owner.show();
+      }
+    }
+  }, {
     kind: 'OB.UI.CustomerTextPropertyAddr',
     name: 'customerLocName',
     modelProperty: 'shipLocName',
@@ -357,6 +399,46 @@ enyo.kind({
     }
   }],
   invAddrAttributes: [{
+    kind: 'OB.UI.CustomerComboProperty',
+    name: 'customerCountry',
+    modelProperty: 'countryId',
+    modelPropertyText: 'countryName',
+    collectionName: 'CountryList',
+    i18nLabel: 'OBPOS_LblCountry',
+    defaultValue: function () {
+      return OB.MobileApp.model.get('terminal').defaultbp_bpcountry;
+    },
+    //Default value for new lines
+    retrievedPropertyForValue: 'id',
+    //property of the retrieved model to get the value of the combo item
+    retrievedPropertyForText: '_identifier',
+    //property of the retrieved model to get the text of the combo item
+    //function to retrieve the data
+    fetchDataFunction: function (args) {
+      var me = this,
+          criteria;
+      criteria = {
+        _orderByClause: '_identifier asc'
+      };
+      OB.Dal.find(OB.Model.Country, criteria, function (data, args) {
+        //This function must be called when the data is ready
+        me.dataReadyFunction(data, args);
+      }, function (error) {
+        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_ErrorGettingCountries'));
+        //This function must be called when the data is ready
+        me.dataReadyFunction(null, args);
+      }, args);
+    },
+    hideShow: function (inSender, inEvent) {
+      if (inEvent.checked) {
+        this.owner.removeClass('width52');
+        this.owner.owner.$.labelLine.removeClass('width40');
+      } else {
+        this.owner.addClass('width52');
+        this.owner.owner.$.labelLine.addClass('width40');
+      }
+    }
+  }, {
     kind: 'OB.UI.CustomerTextPropertyAddr',
     name: 'customerInvLocName',
     modelProperty: 'locName',

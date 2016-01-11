@@ -185,6 +185,8 @@ public class CustomerAddrLoader extends POSDataSynchronizationProcess implements
         }
         rootLocation.setPostalCode(jsonCustomerAddr.getString("postalCode"));
         rootLocation.setCityName(jsonCustomerAddr.getString("cityName"));
+        rootLocation.setCountry(OBDal.getInstance().get(Country.class,
+            jsonCustomerAddr.getString("countryId")));
         if (jsonCustomerAddr.getBoolean("isBillTo")) {
           location.setInvoiceToAddress(true);
         } else {

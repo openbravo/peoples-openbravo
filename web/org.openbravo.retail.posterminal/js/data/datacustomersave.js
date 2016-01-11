@@ -67,8 +67,8 @@
           bpLocation.set('postalCode', customer.get('postalCode'));
           bpLocation.set('cityName', customer.get('cityName'));
           bpLocation.set('_identifier', customer.get('locName'));
-          bpLocation.set('countryName', OB.MobileApp.model.get('terminal').defaultbp_bpcountry_name);
-          bpLocation.set('countryId', OB.MobileApp.model.get('terminal').defaultbp_bpcountry);
+          bpLocation.set('countryName', me.customer.get('countryName'));
+          bpLocation.set('countryId', me.customer.get('countryId'));
           bpToSave.set('locationModel', bpLocation);
         }
 
@@ -142,8 +142,8 @@
               bpLocToSave.set('postalCode', me.customer.get('postalCode'));
               bpLocToSave.set('cityName', me.customer.get('cityName'));
               bpLocToSave.set('_identifier', me.customer.get('locName'));
-              bpLocToSave.set('countryName', OB.MobileApp.model.get('terminal').defaultbp_bpcountry_name);
-              bpLocToSave.set('countryId', OB.MobileApp.model.get('terminal').defaultbp_bpcountry);
+              bpLocToSave.set('countryName', me.customer.get('countryName'));
+              bpLocToSave.set('countryId', me.customer.get('countryId'));
               OB.Dal.save(bpLocToSave, function () {
                 //customer location created successfully. Nothing to do here.
               }, function () {
@@ -158,8 +158,8 @@
               bpLocToSave.set('postalCode', me.customer.get('postalCode'));
               bpLocToSave.set('cityName', me.customer.get('cityName'));
               bpLocToSave.set('_identifier', me.customer.get('locName'));
-              bpLocToSave.set('countryName', OB.MobileApp.model.get('terminal').defaultbp_bpcountry_name);
-              bpLocToSave.set('countryId', OB.MobileApp.model.get('terminal').defaultbp_bpcountry);
+              bpLocToSave.set('countryName', me.customer.get('countryName'));
+              bpLocToSave.set('countryId', me.customer.get('countryId'));
 
               bpShipLocToSave.set('id', me.customer.get('shipLocId'));
               bpShipLocToSave.set('bpartner', me.customer.get('id'));
@@ -169,8 +169,8 @@
               bpShipLocToSave.set('postalCode', me.customer.get('shipPostalCode'));
               bpShipLocToSave.set('cityName', me.customer.get('shipCityName'));
               bpShipLocToSave.set('_identifier', me.customer.get('shipLocName'));
-              bpShipLocToSave.set('countryName', OB.MobileApp.model.get('terminal').defaultbp_bpcountry_name);
-              bpShipLocToSave.set('countryId', OB.MobileApp.model.get('terminal').defaultbp_bpcountry);
+              bpShipLocToSave.set('countryName', me.customer.get('shipCountryName'));
+              bpShipLocToSave.set('countryId', me.customer.get('shipCountryId'));
 
               OB.Dal.save(bpLocToSave, function () {
                 //customer billing location created successfully. Nothing to do here.

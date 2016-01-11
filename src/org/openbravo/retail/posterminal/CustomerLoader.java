@@ -36,6 +36,7 @@ import org.openbravo.mobile.core.process.JSONPropertyToEntity;
 import org.openbravo.mobile.core.utils.OBMOBCUtils;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.businesspartner.Location;
+import org.openbravo.model.common.geography.Country;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.json.JsonConstants;
 
@@ -312,6 +313,7 @@ public class CustomerLoader extends POSDataSynchronizationProcess
     String locId = (isInvoicing ? "locId" : "shipLocId");
     String postalCode = (isInvoicing ? "postalCode" : "shipPostalCode");
     String cityName = (isInvoicing ? "cityName" : "shipCityName");
+    String country = (isInvoicing ? "countryId" : "shipCountryId");
 
     JSONPropertyToEntity.fillBobFromJSON(baseLocationEntity, location, jsonCustomer);
 
@@ -329,6 +331,8 @@ public class CustomerLoader extends POSDataSynchronizationProcess
         && !jsonCustomer.getString(cityName).equals("")) {
       location.setCityName(jsonCustomer.getString(cityName));
     }
+
+    location.setCountry(OBDal.getInstance().get(Country.class, jsonCustomer.getString(country)));
 
     OBDal.getInstance().save(location);
 

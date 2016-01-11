@@ -70,8 +70,6 @@
 
         OB.UTIL.clone(new OB.Model.BPLocation(), this);
 
-        this.set('countryId', OB.MobileApp.model.get('terminal').defaultbp_bpcountry);
-        this.set('countryName', OB.MobileApp.model.get('terminal').defaultbp_bpcountry_name);
         this.set('client', OB.MobileApp.model.get('terminal').client);
         this.set('organization', OB.MobileApp.model.get('terminal').defaultbp_bporg);
       } else {

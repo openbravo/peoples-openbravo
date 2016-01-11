@@ -39,6 +39,8 @@
           this.set('shipLocName', this.get('locName'));
           this.set('shipPostalCode', this.get('postalCode'));
           this.set('shipCityName', this.get('cityName'));
+          this.set('shipCountryName', this.get('countryName'));
+          this.set('shipCountryId', this.get('countryId'));
         } else {
           //Create 1 address for shipping and 1 for invoicing
           if (!this.get('locName') || !this.get('shipLocName')) {
@@ -116,8 +118,6 @@
         this.set('paymentTerms', OB.MobileApp.model.get('terminal').defaultbp_paymentterm);
         this.set('invoiceTerms', OB.MobileApp.model.get('terminal').defaultbp_invoiceterm);
         this.set('priceList', OB.MobileApp.model.get('pricelist').id);
-        this.set('country', OB.MobileApp.model.get('terminal').defaultbp_bpcountry);
-        this.set('countryName', OB.MobileApp.model.get('terminal').defaultbp_bpcountry_name);
         this.set('client', OB.MobileApp.model.get('terminal').client);
         this.set('organization', OB.MobileApp.model.get('terminal').defaultbp_bporg);
         this.set('creditLimit', OB.DEC.Zero);

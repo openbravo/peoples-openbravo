@@ -180,7 +180,8 @@ enyo.kind({
   name: 'OB.UI.CustomerComboProperty',
   handlers: {
     onLoadValue: 'loadValue',
-    onSaveChange: 'saveChange'
+    onSaveChange: 'saveChange',
+    onHideShow: 'hideShow'
   },
   events: {
     onSaveProperty: ''
