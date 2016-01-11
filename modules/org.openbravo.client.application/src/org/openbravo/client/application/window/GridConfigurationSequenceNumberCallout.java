@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2015 Openbravo SLU
+ * All portions are Copyright (C) 2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -45,31 +45,31 @@ public class GridConfigurationSequenceNumberCallout extends SimpleCallout {
 
   @Override
   public void execute(CalloutInfo info) throws ServletException {
+    Long mySeq;
     try {
-
       String seq = info.getStringParameter("inpseqno", null);
-      Long mySeq = Long.parseLong(seq);
-
-      if (info.getTabId().equals(GC_TAB_TAB_ID)) {
-        String tabOfGcTabId = info.getStringParameter("inpadTabId", null);
-        Tab myTab = OBDal.getInstance().get(Tab.class, tabOfGcTabId);
-
-        OBCriteria<GCTab> gcTabCriteria = OBDal.getInstance().createCriteria(GCTab.class);
-        gcTabCriteria.add(Restrictions.and(Restrictions.eq(GCTab.PROPERTY_TAB, myTab),
-            Restrictions.eq(GCTab.PROPERTY_SEQNO, mySeq)));
-        int countGCTabCriteria = gcTabCriteria.count();
-        createWarningMessage(info, countGCTabCriteria);
-      }
-
-      if (info.getTabId().equals(GC_SYSTEM_TAB_ID)) {
-
-        OBCriteria<GCSystem> gcSystemCriteria = OBDal.getInstance().createCriteria(GCSystem.class);
-        gcSystemCriteria.add(Restrictions.eq(GCSystem.PROPERTY_SEQNO, mySeq));
-        int countGCSystemCriteria = gcSystemCriteria.count();
-        createWarningMessage(info, countGCSystemCriteria);
-      }
-    } catch (NumberFormatException e) {
+      mySeq = Long.parseLong(seq);
+    } catch (NumberFormatException ignore) {
       return;
+    }
+
+    if (info.getTabId().equals(GC_TAB_TAB_ID)) {
+      String tabOfGcTabId = info.getStringParameter("inpadTabId", null);
+      Tab myTab = OBDal.getInstance().get(Tab.class, tabOfGcTabId);
+
+      OBCriteria<GCTab> gcTabCriteria = OBDal.getInstance().createCriteria(GCTab.class);
+      gcTabCriteria.add(Restrictions.and(Restrictions.eq(GCTab.PROPERTY_TAB, myTab),
+          Restrictions.eq(GCTab.PROPERTY_SEQNO, mySeq)));
+      int countGCTabCriteria = gcTabCriteria.count();
+      createWarningMessage(info, countGCTabCriteria);
+    }
+
+    if (info.getTabId().equals(GC_SYSTEM_TAB_ID)) {
+
+      OBCriteria<GCSystem> gcSystemCriteria = OBDal.getInstance().createCriteria(GCSystem.class);
+      gcSystemCriteria.add(Restrictions.eq(GCSystem.PROPERTY_SEQNO, mySeq));
+      int countGCSystemCriteria = gcSystemCriteria.count();
+      createWarningMessage(info, countGCSystemCriteria);
     }
   }
 
