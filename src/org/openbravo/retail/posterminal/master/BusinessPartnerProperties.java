@@ -61,13 +61,21 @@ public class BusinessPartnerProperties extends ModelExtension {
         add(new HQLProperty("plist.priceIncludesTax", "priceIncludesTax"));
         add(new HQLProperty("plist.name", "priceListName"));
         add(new HQLProperty(
-            "(select max(bpls.locationAddress.cityName) from BusinessPartnerLocation AS bpls where bpls.businessPartner.id=bpl.businessPartner.id and bpls.shipToAddress = true and bpls.$readableSimpleClientCriteria AND "
+            "(select max(bpls.locationAddress.cityName) from BusinessPartnerLocation AS bpls where bpls.businessPartner.id=bpl.businessPartner.id and bpls.invoiceToAddress = true and bpls.$readableSimpleClientCriteria AND "
                 + " bpls.$naturalOrgCriteria group by bpls.businessPartner.id)",
             "cityName"));
         add(new HQLProperty(
-            "(select max(bpls.locationAddress.postalCode) from BusinessPartnerLocation AS bpls where bpls.businessPartner.id=bpl.businessPartner.id and bpls.shipToAddress = true and bpls.$readableSimpleClientCriteria AND "
+            "(select max(bpls.locationAddress.cityName) from BusinessPartnerLocation AS bpls where bpls.businessPartner.id=bpl.businessPartner.id and bpls.shipToAddress = true and bpls.$readableSimpleClientCriteria AND "
+                + " bpls.$naturalOrgCriteria group by bpls.businessPartner.id)",
+            "shipCityName"));
+        add(new HQLProperty(
+            "(select max(bpls.locationAddress.postalCode) from BusinessPartnerLocation AS bpls where bpls.businessPartner.id=bpl.businessPartner.id and bpls.invoiceToAddress = true and bpls.$readableSimpleClientCriteria AND "
                 + " bpls.$naturalOrgCriteria group by bpls.businessPartner.id)",
             "postalCode"));
+        add(new HQLProperty(
+            "(select max(bpls.locationAddress.postalCode) from BusinessPartnerLocation AS bpls where bpls.businessPartner.id=bpl.businessPartner.id and bpls.shipToAddress = true and bpls.$readableSimpleClientCriteria AND "
+                + " bpls.$naturalOrgCriteria group by bpls.businessPartner.id)",
+            "shipPostalCode"));
         add(new HQLProperty("bpl.locationAddress.country.name", "countryName"));
         add(new HQLProperty("bpl.businessPartner.businessPartnerCategory.id",
             "businessPartnerCategory"));

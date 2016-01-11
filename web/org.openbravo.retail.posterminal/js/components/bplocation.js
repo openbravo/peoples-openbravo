@@ -439,6 +439,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.ListBpsLocLine',
   kind: 'OB.UI.SelectButton',
+  locId: 'locId',
   components: [{
     name: 'line',
     style: 'line-height: 30px; width: 100%',
@@ -474,7 +475,7 @@ enyo.kind({
   create: function () {
     this.inherited(arguments);
     this.$.identifier.setContent(this.model.get('name'));
-    var locId = this.owner.owner.owner.owner.bPartner.get('locId');
+    var locId = this.owner.owner.owner.owner.bPartner.get(this.locId);
     if (locId === this.model.get('id')) {
       this.applyStyle('background-color', '#fbf6d1');
     }
@@ -593,6 +594,10 @@ enyo.kind({
       function successCallbackBPs(dataBps) {
         dataBps.set('locId', model.get('id'));
         dataBps.set('locName', model.get('name'));
+        dataBps.set('locationModel', model);
+        dataBps.set('postalCode', model.get('postalCode'));
+        dataBps.set('cityName', model.get('cityName'));
+        dataBps.set('countryName', model.get('countryName'));
         me.doChangeBusinessPartner({
           businessPartner: dataBps,
           target: me.owner.owner.args.target

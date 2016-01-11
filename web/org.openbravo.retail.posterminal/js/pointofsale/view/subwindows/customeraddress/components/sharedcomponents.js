@@ -174,22 +174,22 @@ enyo.kind({
               customer: me.customer,
               customerAddr: customerAddr
             });
-            if (customerAddr.get('id') === me.customer.get("locId") || customerAddr.get('id') === me.customer.get("locShipId")) {
+            if (customerAddr.get('id') === me.customer.get("locId") || customerAddr.get('id') === me.customer.get("shipLocId")) {
               if (!customerAddr.get('isBillTo')) {
                 me.customer.set('locId', null);
                 me.customer.set('locName', null);
               }
               if (!customerAddr.get('isShipTo')) {
-                me.customer.set('locShipId', null);
-                me.customer.set('locShipName', null);
+                me.customer.set('shipLocId', null);
+                me.customer.set('shipLocName', null);
                 me.customer.set('postalCode', null);
                 me.customer.set('cityName', null);
               }
               if (customerAddr.get('id') === me.customer.get('locId')) {
                 me.customer.set('locName', customerAddr.get('name'));
               }
-              if (customerAddr.get('id') === me.customer.get('locShipId')) {
-                me.customer.set('locShipName', customerAddr.get('name'));
+              if (customerAddr.get('id') === me.customer.get('shipLocId')) {
+                me.customer.set('shipLocName', customerAddr.get('name'));
               }
               me.customer.set('locationModel', customerAddr);
               OB.Dal.save(me.customer, function success(tx) {

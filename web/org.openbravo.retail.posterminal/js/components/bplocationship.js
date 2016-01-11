@@ -11,145 +11,11 @@
 
 /*global enyo, Backbone, _ */
 
-enyo.kind({
-  name: 'OB.UI.ModalBpShipLocScrollableHeader',
-  kind: 'OB.UI.ScrollableTableHeader',
-  events: {
-    onSearchAction: '',
-    onClearAction: ''
-  },
-  handlers: {
-    onSearchActionByKey: 'searchAction',
-    onFiltered: 'searchAction'
-  },
-  components: [{
-    style: 'padding: 10px;',
-    components: [{
-      style: 'display: table;',
-      components: [{
-        style: 'display: table-cell; width: 100%;',
-        components: [{
-          kind: 'OB.UI.SearchInputAutoFilter',
-          name: 'filterText',
-          style: 'width: 100%'
-        }]
-      }, {
-        style: 'display: table-cell;',
-        components: [{
-          kind: 'OB.UI.SmallButton',
-          classes: 'btnlink-gray btn-icon-small btn-icon-clear',
-          style: 'width: 100px; margin: 0px 5px 8px 19px;',
-          ontap: 'clearAction'
-        }]
-      }, {
-        style: 'display: table-cell;',
-        components: [{
-          kind: 'OB.UI.SmallButton',
-          classes: 'btnlink-yellow btn-icon-small btn-icon-search',
-          style: 'width: 100px; margin: 0px 0px 8px 5px;',
-          ontap: 'searchAction'
-        }]
-      }]
-    }]
-  }, {
-    style: 'padding: 10px;',
-    showing: true,
-    handlers: {
-      onSetShow: 'setShow'
-    },
-    setShow: function (inSender, inEvent) {
-      this.setShowing(inEvent.visibility);
-    },
-    components: [{
-      style: 'display: table;',
-      components: [{
-        style: 'display: table-cell;',
-        components: [{
-          kind: 'OB.UI.NewCustomerAddressWindowButton',
-          name: 'newAction'
-        }]
-      }, {
-        style: 'display: table-cell;',
-        components: [{
-          kind: 'OB.UI.SearchCustomerAddressWindowButton'
-        }]
-      }]
-    }]
-  }],
-  clearAction: function () {
-    this.$.filterText.setValue('');
-    this.doSearchAction({
-      locName: this.$.filterText.getValue()
-    });
-    return true;
-  },
-  searchAction: function () {
-    this.doSearchAction({
-      locName: this.$.filterText.getValue()
-    });
-    return true;
-  }
-});
-
 /*items of collection*/
 enyo.kind({
   name: 'OB.UI.ListBpsShipLocLine',
-  kind: 'OB.UI.SelectButton',
-  components: [{
-    name: 'line',
-    style: 'line-height: 30px; width: 100%; ',
-    components: [{
-      name: 'textInfo',
-      style: 'float: left; ',
-      components: [{
-        style: 'display: table;',
-        components: [{
-          name: 'identifier',
-          style: 'display: table-cell;'
-        }, {
-          name: 'bottomShipIcon'
-        }, {
-          name: 'bottomBillIcon'
-        }, {
-          style: 'clear: both;'
-        }]
-      }]
-    }, {
-      kind: 'OB.UI.BPLocationContextMenu',
-      name: 'btnContextMenu',
-      style: 'float: right'
-    }]
-  }],
-  events: {
-    onHideThisPopup: ''
-  },
-  tap: function () {
-    this.inherited(arguments);
-    this.doHideThisPopup();
-  },
-  create: function () {
-    this.inherited(arguments);
-    this.$.identifier.setContent(this.model.get('name'));
-    var locId = this.owner.owner.owner.owner.bPartner.get('shipLocId');
-    if (locId === this.model.get('id')) {
-      this.applyStyle('background-color', '#fbf6d1');
-    }
-    if (this.model.get('isBillTo') && this.model.get('isShipTo')) {
-      this.$.bottomShipIcon.addClass('addresshipitems');
-      this.$.bottomBillIcon.addClass('addressbillitems');
-    } else if (this.model.get('isBillTo')) {
-      this.$.bottomBillIcon.addClass('addressbillitems');
-    } else if (this.model.get('isShipTo')) {
-      this.$.bottomShipIcon.addClass('addresshipitems');
-    }
-    // Context menu
-    if (this.$.btnContextMenu.$.menu.itemsCount === 0) {
-      this.$.btnContextMenu.hide();
-    } else {
-      this.$.btnContextMenu.setModel(this.model);
-      this.$.btnContextMenu.bPartner = this.owner.owner.owner.owner.bPartner;
-    }
-  }
+  kind: 'OB.UI.ListBpsLocLine',
+  locId: 'shipLocId'
 });
 
 /*scrollable table (body of modal)*/
@@ -177,7 +43,7 @@ enyo.kind({
           name: 'bpsloclistitemprinter',
           kind: 'OB.UI.ScrollableTable',
           scrollAreaMaxHeight: '400px',
-          renderHeader: 'OB.UI.ModalBpShipLocScrollableHeader',
+          renderHeader: 'OB.UI.ModalBpLocScrollableHeader',
           renderLine: 'OB.UI.ListBpsShipLocLine',
           renderEmpty: 'OB.UI.RenderEmpty'
         }]
@@ -212,7 +78,7 @@ enyo.kind({
     criteria.isShipTo = true;
     if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
       var filterIdentifier = {
-        columns: ['_identifier'],
+        columns: ['_filter'],
         operator: 'startsWith',
         value: filter
       },
@@ -250,15 +116,17 @@ enyo.kind({
         dataBps.set('shipLocId', model.get('id'));
         dataBps.set('shipLocName', model.get('name'));
         dataBps.set('locationModel', model);
-        dataBps.set('postalCode', model.get('postalCode'));
-        dataBps.set('cityName', model.get('cityName'));
-        dataBps.set('countryName', model.get('countryName'));
+        dataBps.set('shipPostalCode', model.get('postalCode'));
+        dataBps.set('shipCityName', model.get('cityName'));
+        dataBps.set('shipCountryName', model.get('countryName'));
         me.doChangeBusinessPartner({
           businessPartner: dataBps,
           target: me.owner.owner.args.target
         });
       }
-      OB.Dal.get(OB.Model.BusinessPartner, this.bPartner.get('id'), successCallbackBPs, errorCallback);
+      if (!model.get('ignoreSetBPLoc')) {
+        OB.Dal.get(OB.Model.BusinessPartner, this.bPartner.get('id'), successCallbackBPs, errorCallback);
+      }
     }, this);
   }
 });
@@ -279,12 +147,12 @@ enyo.kind({
       target: this.args.target
     });
     this.$.body.$.listBpsShipLoc.setBPartner(this.model.get('order').get('bp'));
-    this.$.body.$.listBpsShipLoc.$.bpsloclistitemprinter.$.theader.$.modalBpShipLocScrollableHeader.searchAction();
-    this.$.body.$.listBpsShipLoc.$.bpsloclistitemprinter.$.theader.$.modalBpShipLocScrollableHeader.$.newAction.putDisabled(!OB.MobileApp.model.hasPermission('OBPOS_retail.editCustomers'));
+    this.$.body.$.listBpsShipLoc.$.bpsloclistitemprinter.$.theader.$.modalBpLocScrollableHeader.searchAction();
+    this.$.body.$.listBpsShipLoc.$.bpsloclistitemprinter.$.theader.$.modalBpLocScrollableHeader.$.newAction.putDisabled(!OB.MobileApp.model.hasPermission('OBPOS_retail.editCustomers'));
     return true;
   },
   executeOnHide: function () {
-    this.$.body.$.listBpsShipLoc.$.bpsloclistitemprinter.$.theader.$.modalBpShipLocScrollableHeader.clearAction();
+    this.$.body.$.listBpsShipLoc.$.bpsloclistitemprinter.$.theader.$.modalBpLocScrollableHeader.clearAction();
   },
   i18nHeader: 'OBPOS_LblAssignCustomerShipAddress',
   body: {
