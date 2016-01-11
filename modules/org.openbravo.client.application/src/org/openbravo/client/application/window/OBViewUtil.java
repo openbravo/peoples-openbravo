@@ -204,7 +204,7 @@ public class OBViewUtil {
     int gcTabIndex = 0;
     GCTab tabConf = null;
     if (tab.getOBUIAPPGCTabList().size() > 1) {
-      Collections.sort(tab.getOBUIAPPGCTabList(), new CustomComparator());
+      Collections.sort(tab.getOBUIAPPGCTabList(), new GCTabComparator());
       gcTabIndex = tab.getOBUIAPPGCTabList().size() - 1;
       tabConf = tab.getOBUIAPPGCTabList().get(gcTabIndex);
     } else {
@@ -252,7 +252,7 @@ public class OBViewUtil {
     return settings.processJSONResult();
   }
 
-  private static class CustomComparator implements Comparator<GCTab> {
+  private static class GCTabComparator implements Comparator<GCTab> {
     @Override
     public int compare(GCTab o1, GCTab o2) {
       if (o1.getSeqno().compareTo(o2.getSeqno()) != 0) {
