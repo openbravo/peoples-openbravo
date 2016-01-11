@@ -81,8 +81,8 @@
         if (!customerCol || customerCol.length === 0) {
           me.clearModelWith(null);
           userCallback(me);
-        } else if (!_.isNull(customerCol.get('locShipId'))) {
-          OB.Dal.get(OB.Model.BPLocation, customerCol.get('locShipId'), function (location) { //OB.Dal.find success
+        } else if (!_.isNull(customerCol.get('shipLocId'))) {
+          OB.Dal.get(OB.Model.BPLocation, customerCol.get('shipLocId'), function (location) { //OB.Dal.find success
             customerCol.set('locationModel', location);
             me.clearModelWith(customerCol);
             userCallback(me);

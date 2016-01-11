@@ -591,11 +591,11 @@ enyo.kind({
       if (OB.MobileApp.model.get('terminal').businessPartner === inEvent.businessPartner.get('id')) {
         if (!_.isUndefined(inEvent.businessPartner.get('locationModel')) && OB.MobileApp.model.get('terminal').partnerAddress === inEvent.businessPartner.get('locationModel').get('id')) {
           if (inEvent.businessPartner.get('locationModel').get('isShipTo')) {
-            OB.MobileApp.model.get('businessPartner').set('locShipId', inEvent.businessPartner.get('locationModel').get('id'));
-            OB.MobileApp.model.get('businessPartner').set('locShipName', inEvent.businessPartner.get('locationModel').get('name'));
+            OB.MobileApp.model.get('businessPartner').set('shipLocId', inEvent.businessPartner.get('locationModel').get('id'));
+            OB.MobileApp.model.get('businessPartner').set('shipLocName', inEvent.businessPartner.get('locationModel').get('name'));
           } else {
-            OB.MobileApp.model.get('businessPartner').set('locShipId', null);
-            OB.MobileApp.model.get('businessPartner').set('locShipName', null);
+            OB.MobileApp.model.get('businessPartner').set('shipLocId', null);
+            OB.MobileApp.model.get('businessPartner').set('shipLocName', null);
           }
           if (inEvent.businessPartner.get('locationModel').get('isBillTo')) {
             OB.MobileApp.model.get('businessPartner').set('locId', inEvent.businessPartner.get('locationModel').get('id'));

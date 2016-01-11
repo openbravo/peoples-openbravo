@@ -85,13 +85,13 @@ enyo.kind({
   },
   orderChanged: function (oldValue) {
     if (this.order.get('bp')) {
-      this.renderAddrShip(this.order.get('bp').get('locShipName'));
+      this.renderAddrShip(this.order.get('bp').get('shipLocName'));
     } else {
       this.renderAddrShip('');
     }
     this.order.on('change:bp', function (model) {
       if (model.get('bp')) {
-        this.renderAddrShip(model.get('bp').get('locShipName'));
+        this.renderAddrShip(model.get('bp').get('shipLocName'));
       } else {
         this.renderAddrShip('');
       }

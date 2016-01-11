@@ -2215,7 +2215,7 @@
             });
           }
 
-          OB.Dal.get(OB.Model.BPLocation, businessPartner.get('locShipId'), function (location) {
+          OB.Dal.get(OB.Model.BPLocation, businessPartner.get('shipLocId'), function (location) {
 
             OB.Dal.saveIfNew(location, function () {
               businessPartner.set('locationModel', location);

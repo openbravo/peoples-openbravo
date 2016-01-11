@@ -208,7 +208,7 @@ enyo.kind({
           customerAddr: customerAddr
         });
 
-        if (OB.MobileApp.model.receipt.get('lines').length > 0 && OB.MobileApp.model.receipt.get('bp').get('locShipId') === customerAddr.get('id') && !customerAddr.get('isShipTo')) {
+        if (OB.MobileApp.model.receipt.get('lines').length > 0 && OB.MobileApp.model.receipt.get('bp').get('shipLocId') === customerAddr.get('id') && !customerAddr.get('isShipTo')) {
           OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_InformationTitle'), OB.I18N.getLabel('OBPOS_UncheckShipToText'), [{
             label: OB.I18N.getLabel('OBPOS_LblOk'),
             isConfirmButton: true,

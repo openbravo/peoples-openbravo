@@ -130,7 +130,7 @@ enyo.kind({
   create: function () {
     this.inherited(arguments);
     this.$.identifier.setContent(this.model.get('name'));
-    var locId = this.owner.owner.owner.owner.bPartner.get('locShipId');
+    var locId = this.owner.owner.owner.owner.bPartner.get('shipLocId');
     if (locId === this.model.get('id')) {
       this.applyStyle('background-color', '#fbf6d1');
     }
@@ -247,8 +247,8 @@ enyo.kind({
       }
 
       function successCallbackBPs(dataBps) {
-        dataBps.set('locShipId', model.get('id'));
-        dataBps.set('locShipName', model.get('name'));
+        dataBps.set('shipLocId', model.get('id'));
+        dataBps.set('shipLocName', model.get('name'));
         dataBps.set('locationModel', model);
         dataBps.set('postalCode', model.get('postalCode'));
         dataBps.set('cityName', model.get('cityName'));

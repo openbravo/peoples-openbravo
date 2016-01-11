@@ -384,7 +384,7 @@ enyo.kind({
     if (this.model.get('customerBlocking') && this.model.get('salesOrderBlocking')) {
       this.$.onHold.setContent('(' + OB.I18N.getLabel('OBPOS_OnHold') + ')');
     }
-    this.$.address.setContent(this.model.get('locShipName'));
+    this.$.address.setContent(this.model.get('shipLocName'));
     var bPartner = this.owner.owner.owner.bPartner;
     if (bPartner && bPartner.get('id') === this.model.get('id')) {
       this.applyStyle('background-color', '#fbf6d1');

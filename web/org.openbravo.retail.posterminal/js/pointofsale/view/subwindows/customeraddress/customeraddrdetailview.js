@@ -88,8 +88,8 @@ enyo.kind({
     var me = this;
     me.customer.set('locId', me.customerAddr.get('id'));
     me.customer.set('locName', me.customerAddr.get('name'));
-    me.customer.set('locShipId', me.customerAddr.get('id'));
-    me.customer.set('locShipName', me.customerAddr.get('name'));
+    me.customer.set('shipLocId', me.customerAddr.get('id'));
+    me.customer.set('shipLocName', me.customerAddr.get('name'));
     me.customer.set('postalCode', me.customerAddr.get('postalCode'));
     me.customer.set('cityName', me.customerAddr.get('cityName'));
     me.customer.set('locationModel', me.customerAddr);
@@ -125,8 +125,8 @@ enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.customeraddr.assigncustomeraddrtoticketship',
   tap: function () {
     var me = this;
-    me.customer.set('locShipId', me.customerAddr.get('id'));
-    me.customer.set('locShipName', me.customerAddr.get('name'));
+    me.customer.set('shipLocId', me.customerAddr.get('id'));
+    me.customer.set('shipLocName', me.customerAddr.get('name'));
     me.customer.set('postalCode', me.customerAddr.get('postalCode'));
     me.customer.set('cityName', me.customerAddr.get('cityName'));
     me.customer.set('locationModel', me.customerAddr);
