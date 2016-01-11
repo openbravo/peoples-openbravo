@@ -43,8 +43,9 @@
       } else {
         isNew = true;
       }
-      if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) { //With high volume we only save adress we it is assigned to the order
+      if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) { //With high volume we only save address we it is assigned to the order
         if (isNew) {
+          me.receipt.get('bp').set('moreaddress', true); // For to show two address buttons in receipt
           customerAddr.set('posTerminal', OB.MobileApp.model.get('terminal').id);
           var uuid = OB.UTIL.get_UUID();
           customerAddr.set('id', uuid);
@@ -52,6 +53,7 @@
           bpLocToSave.set('json', JSON.stringify(customerAddr.serializeToJSON()));
           bpLocToSave.set('id', customerAddr.get('id'));
         }
+        me.receipt.trigger('change:bp', me.receipt);
         bpLocToSave.set('isbeingprocessed', 'Y');
         OB.Dal.save(bpLocToSave, function () {
           bpLocToSave.set('json', JSON.stringify(customerAddr.serializeToJSON()));
