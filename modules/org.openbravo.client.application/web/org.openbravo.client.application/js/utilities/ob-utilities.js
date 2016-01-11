@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2015 Openbravo SLU
+ * All portions are Copyright (C) 2011-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -1310,4 +1310,11 @@ OB.Utilities.createResultSetManually = function (grid) {
   grid.dataProperties.manualResultSet = true;
   grid.setData(grid.createDataModel());
   grid.serverDataNotLoaded = true;
+};
+
+//** {{{ OB.Utilities.getTemporaryId }}} **
+//
+// Returns a temporary id that starts with _
+OB.Utilities.getTemporaryId = function () {
+  return '_' + new Date().getTime();
 };
