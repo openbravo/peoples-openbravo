@@ -61,9 +61,7 @@ public class GridConfigurationSequenceNumberCallout extends SimpleCallout {
           Restrictions.eq(GCTab.PROPERTY_SEQNO, mySeq)));
       int countGCTabCriteria = gcTabCriteria.count();
       createWarningMessage(info, countGCTabCriteria);
-    }
-
-    if (info.getTabId().equals(GC_SYSTEM_TAB_ID)) {
+    } else if (info.getTabId().equals(GC_SYSTEM_TAB_ID)) {
       OBCriteria<GCSystem> gcSystemCriteria = OBDal.getInstance().createCriteria(GCSystem.class);
       gcSystemCriteria.add(Restrictions.eq(GCSystem.PROPERTY_SEQNO, mySeq));
       int countGCSystemCriteria = gcSystemCriteria.count();
