@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2015 Openbravo S.L.U.
+ * Copyright (C) 2012-2016 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -798,20 +798,32 @@ enyo.kind({
   kind: 'OB.UI.MenuAction',
   permission: 'OBPOS_retail.disableEnableRFIDReader',
   i18nLabel: 'OBPOS_DisableRFIDReader',
+  handlers: {
+    onDisconnectRfidDevice: 'disconnectRfidDevice'
+  },
   tap: function () {
     this.inherited(arguments);
     if (this.disabled) {
       return true;
     }
     if (OB.MobileApp.model.hasPermission(this.permission)) {
-      if (OB.MobileApp.model.isRFIDEnabled) {
+      if (OB.UTIL.isRFIDEnabled) {
         this.setLabel(OB.I18N.getLabel('OBPOS_EnableRFIDReader'));
-        OB.MobileApp.model.isRFIDEnabled = false;
+        OB.UTIL.isRFIDEnabled = false;
         OB.UTIL.disconnectRFIDDevice();
+        if (OB.UTIL.rfidTimeout) {
+          clearTimeout(OB.UTIL.rfidTimeout);
+        }
       } else {
         this.setLabel(OB.I18N.getLabel('OBPOS_DisableRFIDReader'));
-        OB.MobileApp.model.isRFIDEnabled = true;
+        OB.UTIL.isRFIDEnabled = true;
         OB.UTIL.connectRFIDDevice();
+        if (OB.UTIL.rfidTimeout) {
+          clearTimeout(OB.UTIL.rfidTimeout);
+        }
+        OB.UTIL.rfidTimeout = setTimeout(function () {
+          OB.MobileApp.view.waterfall('onDisconnectRfidDevice');
+        }, OB.POS.modelterminal.get('terminal').terminalType.rfidtimeout * 1000 * 60);
       }
     }
   },
@@ -819,5 +831,10 @@ enyo.kind({
     if (!OB.MobileApp.model.get('terminal').terminalType.userfid) {
       this.hide();
     }
+  },
+  disconnectRfidDevice: function (inSender, inEvent) {
+    this.setLabel(OB.I18N.getLabel('OBPOS_EnableRFIDReader'));
+    OB.UTIL.isRFIDEnabled = false;
+    OB.UTIL.disconnectRFIDDevice();
   }
 });
