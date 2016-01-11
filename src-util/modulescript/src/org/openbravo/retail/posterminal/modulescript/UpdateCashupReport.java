@@ -15,11 +15,8 @@ public class UpdateCashupReport extends ModuleScript {
     log4j.info("Update CashUpReport structure ...");
     try {
       ConnectionProvider cp = getConnectionProvider();
-      UpdateCashupReportData[] cashUps = getPaymentMethodCashup(cp);
-      for (int i = 0; i < cashUps.length; i++) {
-        log4j.info("UpdateCashupReport: "+cashUps[i].obposPaymentmethodcashupId+", "+cashUps[i].name+", "+cashUps[i].totalcounted);
-        UpdateCashupReportData.updateCashupStartingCash(cp.getConnection(), cp, cashUps[i].totalcounted, cashUps[i].obposPaymentmethodcashupId);
-      }
+      UpdateCashupReportData.updateCashupStartingCash(cp.getConnection(), cp);
+      UpdateCashupReportData.insertCashManagementEvents(cp.getConnection(), cp);
     } catch (Exception e) {
       handleError(e);
     }
@@ -31,7 +28,4 @@ public class UpdateCashupReport extends ModuleScript {
 //        new OpenbravoVersion(1,2,3110));
 //  }
   
-  private UpdateCashupReportData[] getPaymentMethodCashup(ConnectionProvider cp) throws Exception {
-    return UpdateCashupReportData.selectPaymentMethodCashup(cp);
-  }
 }
