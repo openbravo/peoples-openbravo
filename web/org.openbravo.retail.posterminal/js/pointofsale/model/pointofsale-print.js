@@ -215,7 +215,16 @@
       }
       if (args.template.ispdf) {
         args.template.dateFormat = OB.Format.date;
-        printPDF(receipt, args);
+        if (receipt.get('canceledorder')) {
+          var clonedreceipt = new OB.Model.Order();
+          OB.UTIL.clone(receipt, clonedreceipt);
+          clonedreceipt.unset("canceledorder", {
+            silent: true
+          });
+          printPDF(clonedreceipt, args);
+        } else {
+          printPDF(receipt, args);
+        }
         if ((receipt.get('orderType') === 1 && !OB.MobileApp.model.hasPermission('OBPOS_print.once')) || OB.MobileApp.model.get('terminal').terminalType.printTwice) {
           printPDF(receipt, args);
         }
