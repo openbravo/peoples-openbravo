@@ -9,6 +9,11 @@
 package org.openbravo.retail.posterminal;
 
 import java.util.Date;
+import java.util.Iterator;
+
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
 
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
@@ -31,10 +36,14 @@ import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.json.JsonConstants;
 
 @DataSynchronization(entity = "BusinessPartnerLocation")
-public class CustomerAddrLoader extends POSDataSynchronizationProcess implements
-    DataSynchronizationImportProcess {
+public class CustomerAddrLoader extends POSDataSynchronizationProcess
+    implements DataSynchronizationImportProcess {
 
   private static final Logger log = Logger.getLogger(CustomerAddrLoader.class);
+
+  @Inject
+  @Any
+  private Instance<CustomerAddrCreationHook> customerAddrCreations;
 
   protected String getImportQualifier() {
     return "BusinessPartnerLocation";
@@ -66,6 +75,8 @@ public class CustomerAddrLoader extends POSDataSynchronizationProcess implements
         location = editBPartnerAddr(customer, location, jsonCustomerAddr);
       }
 
+      executeAddrHooks(customerAddrCreations, jsonCustomerAddr, customer, location);
+
       OBDal.getInstance().flush();
     } finally {
       OBContext.restorePreviousMode();
@@ -89,8 +100,8 @@ public class CustomerAddrLoader extends POSDataSynchronizationProcess implements
       throws JSONException {
     try {
       Entity locationEntity = ModelProvider.getInstance().getEntity(Location.class);
-      Entity baseLocationEntity = ModelProvider.getInstance().getEntity(
-          org.openbravo.model.common.geography.Location.class);
+      Entity baseLocationEntity = ModelProvider.getInstance()
+          .getEntity(org.openbravo.model.common.geography.Location.class);
       final org.openbravo.model.common.geography.Location rootLocation = OBProvider.getInstance()
           .get(org.openbravo.model.common.geography.Location.class);
 
@@ -105,8 +116,8 @@ public class CustomerAddrLoader extends POSDataSynchronizationProcess implements
       }
 
       if (jsonCustomerAddr.has("countryId")) {
-        rootLocation.setCountry(OBDal.getInstance().get(Country.class,
-            jsonCustomerAddr.getString("countryId")));
+        rootLocation.setCountry(
+            OBDal.getInstance().get(Country.class, jsonCustomerAddr.getString("countryId")));
       } else {
         String errorMessage = "Country ID is a mandatory field to create a new customer address from Web Pos";
         log.error(errorMessage);
@@ -185,8 +196,8 @@ public class CustomerAddrLoader extends POSDataSynchronizationProcess implements
         }
         rootLocation.setPostalCode(jsonCustomerAddr.getString("postalCode"));
         rootLocation.setCityName(jsonCustomerAddr.getString("cityName"));
-        rootLocation.setCountry(OBDal.getInstance().get(Country.class,
-            jsonCustomerAddr.getString("countryId")));
+        rootLocation.setCountry(
+            OBDal.getInstance().get(Country.class, jsonCustomerAddr.getString("countryId")));
         if (jsonCustomerAddr.getBoolean("isBillTo")) {
           location.setInvoiceToAddress(true);
         } else {
@@ -197,8 +208,8 @@ public class CustomerAddrLoader extends POSDataSynchronizationProcess implements
         } else {
           location.setShipToAddress(false);
         }
-        Entity baseLocationEntity = ModelProvider.getInstance().getEntity(
-            org.openbravo.model.common.geography.Location.class);
+        Entity baseLocationEntity = ModelProvider.getInstance()
+            .getEntity(org.openbravo.model.common.geography.Location.class);
         JSONPropertyToEntity.fillBobFromJSON(baseLocationEntity, rootLocation, jsonCustomerAddr);
 
         Entity bpLocationEntity = ModelProvider.getInstance().getEntity(Location.class);
@@ -216,5 +227,13 @@ public class CustomerAddrLoader extends POSDataSynchronizationProcess implements
   @Override
   protected String getProperty() {
     return "OBPOS_receipt.customers";
+  }
+
+  private void executeAddrHooks(Instance<CustomerAddrCreationHook> hooks,
+      JSONObject jsonCustomerAddr, BusinessPartner customer, Location location) throws Exception {
+    for (Iterator<CustomerAddrCreationHook> procIter = hooks.iterator(); procIter.hasNext();) {
+      CustomerAddrCreationHook proc = procIter.next();
+      proc.exec(jsonCustomerAddr, customer, location);
+    }
   }
 }
