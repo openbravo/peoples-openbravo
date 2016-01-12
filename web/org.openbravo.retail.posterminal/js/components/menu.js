@@ -799,7 +799,9 @@ enyo.kind({
   permission: 'OBPOS_retail.disableEnableRFIDReader',
   i18nLabel: 'OBPOS_DisableRFIDReader',
   handlers: {
-    onDisconnectRfidDevice: 'disconnectRfidDevice'
+    onDisconnectRfidDevice: 'disconnectRfidDevice',
+    onRfidConnectionLost: 'rfidConnectionLost',
+    onRfidConnectionRecovered: 'rfidConnectionRecovered'
   },
   tap: function () {
     this.inherited(arguments);
@@ -836,5 +838,16 @@ enyo.kind({
     this.setLabel(OB.I18N.getLabel('OBPOS_EnableRFIDReader'));
     OB.UTIL.isRFIDEnabled = false;
     OB.UTIL.disconnectRFIDDevice();
+  },
+  rfidConnectionLost: function (inSender, inEvent) {
+    this.setLabel(OB.I18N.getLabel('OBPOS_RfidConnectionLost'));
+  },
+  rfidConnectionRecovered: function (inSender, inEvent) {
+    if (OB.UTIL.isRFIDEnabled) {
+      this.setLabel(OB.I18N.getLabel('OBPOS_DisableRFIDReader'));
+    } else {
+      this.setLabel(OB.I18N.getLabel('OBPOS_EnableRFIDReader'));
+      OB.UTIL.disconnectRFIDDevice();
+    }
   }
 });
