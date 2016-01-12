@@ -3066,14 +3066,14 @@
       // 2. and have no lines (no product added, etc)
       // 3. if the order suffix is lower than the minNumbers
       // 4. delete the orders
-      var orderlist = this;
-      if (orderlist && orderlist.models.length === 1 && orderlist.current) {
-        if (orderlist.current.get('lines') && orderlist.current.get('lines').length === 0) {
-          if (orderlist.current.get('documentnoSuffix') <= OB.MobileApp.model.documentnoThreshold || OB.MobileApp.model.documentnoThreshold === 0) {
-            orderlist.deleteCurrent(true);
-          }
-        }
-      }
+      //      var orderlist = this;
+      //      if (orderlist && orderlist.models.length === 1 && orderlist.current) {
+      //        if (orderlist.current.get('lines') && orderlist.current.get('lines').length === 0) {
+      //          if (orderlist.current.get('documentnoSuffix') <= OB.MobileApp.model.documentnoThreshold || OB.MobileApp.model.documentnoThreshold === 0) {
+      //            orderlist.deleteCurrent(true);
+      //          }
+      //        }
+      //      }
     }
 
   });
