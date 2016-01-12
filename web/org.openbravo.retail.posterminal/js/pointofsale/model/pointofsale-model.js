@@ -810,7 +810,9 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                             label: OB.I18N.getLabel('OBPOS_LblOk'),
                             action: function () {
                               _.each(cloneOrder.get('lines').models, function (line) {
-                                OB.MobileApp.model.receipt.addProduct(line.get('product'), line.get('qty'));
+                                if (line.get('remainingQuantity') < line.get('qty')) {
+                                  OB.MobileApp.model.receipt.addProduct(line.get('product'), OB.DEC.sub(line.get('qty'), line.get('remainingQuantity')));
+                                }
                               });
                             }
                           }, {
