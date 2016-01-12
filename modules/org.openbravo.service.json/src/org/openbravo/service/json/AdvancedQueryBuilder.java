@@ -969,7 +969,7 @@ public class AdvancedQueryBuilder {
     final int index = leftWherePart.lastIndexOf(DalUtil.DOT);
     if (key.equals(JsonConstants.IDENTIFIER)) {
       prefix = getMainAlias() + DalUtil.DOT;
-    } else if (key.endsWith(JsonConstants.IDENTIFIER)) {
+    } else if (key.endsWith(JsonConstants.IDENTIFIER) && !creatingJoinsInWhereClauseIsPrevented) {
       final String propPath = key.substring(0, key.indexOf(JsonConstants.IDENTIFIER) - 1);
       boolean fromCriteria = true;
       final String join = resolveJoins(
@@ -2043,6 +2043,9 @@ public class AdvancedQueryBuilder {
    * Allows preventing the creation of new join alias when the where clause is built. This is useful
    * when the AdvancedQueryBuilder is used to obtain the WHERE clause, but when the FROM clause
    * built is not used (i.e. en HQLDataSourceService)
+   * 
+   * @param preventedCreatingJoinsInWhereClause
+   *          If true, the creation of new join alias is prevented when the where clause is built
    * 
    */
   public void preventCreatingJoinsInWhereClause(boolean preventedCreatingJoinsInWhereClause) {
