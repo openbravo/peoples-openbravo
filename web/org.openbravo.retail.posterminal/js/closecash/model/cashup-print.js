@@ -14,9 +14,14 @@
   var PrintCashUp = function () {
       var terminal = OB.MobileApp.model.get('terminal');
       this.templatecashup = new OB.DS.HWResource(terminal.printCashUpTemplate || OB.OBPOSPointOfSale.Print.CashUpTemplate);
+      this.cancelOrDismiss = function () {
+        OB.POS.navigate('retail.pointofsale');
+        OB.MobileApp.view.$.confirmationContainer.setAttribute('openedPopup', '');
+      };
       };
 
   PrintCashUp.prototype.print = function (report, sumary, closed) {
+    var me = this;
     OB.POS.hwserver.print(this.templatecashup, {
       cashup: {
         closed: closed,
@@ -37,15 +42,13 @@
         }, {
           label: OB.I18N.getLabel('OBMOBC_LblCancel'),
           action: function () {
-            OB.POS.navigate('retail.pointofsale');
-            OB.MobileApp.view.$.confirmationContainer.setAttribute('openedPopup', '');
+            me.cancelOrDismiss();
             return true;
           }
         }], {
           autoDismiss: false,
           onHideFunction: function (dialog) {
-            OB.POS.navigate('retail.pointofsale');
-            OB.MobileApp.view.$.confirmationContainer.setAttribute('openedPopup', '');
+            me.cancelOrDismiss();
           }
         });
       }
