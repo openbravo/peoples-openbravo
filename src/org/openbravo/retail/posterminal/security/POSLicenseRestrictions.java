@@ -64,7 +64,8 @@ public class POSLicenseRestrictions implements ModuleLicenseRestrictions {
   public LicenseRestriction checkRestrictions(ActivationKey activationKey, String currentSession) {
     Long allowedNumberOfTerminals = activationKey.getAllowedPosTerminals();
 
-    if (allowedNumberOfTerminals != ActivationKey.NO_LIMIT
+    if (allowedNumberOfTerminals != null
+        && !allowedNumberOfTerminals.equals(ActivationKey.NO_LIMIT)
         && getNumberOfActiveTerminals() > allowedNumberOfTerminals) {
       return LicenseRestriction.POS_TERMINALS_EXCEEDED;
     } else {
@@ -118,7 +119,7 @@ public class POSLicenseRestrictions implements ModuleLicenseRestrictions {
   public String getPOSTerminalsWarningMsg(ActivationKey activationKey, String lang) {
     Long totalAllowed = activationKey.getAllowedPosTerminals();
     Long warnLimit = activationKey.getPosTerminalsWarn();
-    if (warnLimit == null || totalAllowed == ActivationKey.NO_LIMIT) {
+    if (warnLimit == null || totalAllowed.equals(ActivationKey.NO_LIMIT)) {
       return "";
     }
 
@@ -140,7 +141,7 @@ public class POSLicenseRestrictions implements ModuleLicenseRestrictions {
   private String getPOSTerminalRestrictionMsg(ActivationKey activationKey, String lang,
       int addingTerminals) {
     Long allowedNumberOfTerminals = activationKey.getAllowedPosTerminals();
-    if (allowedNumberOfTerminals == ActivationKey.NO_LIMIT || allowedNumberOfTerminals == null) {
+    if (allowedNumberOfTerminals == null || allowedNumberOfTerminals.equals(ActivationKey.NO_LIMIT)) {
       return "";
     }
 

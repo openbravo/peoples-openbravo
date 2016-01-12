@@ -253,13 +253,9 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
         ruleListener.on('completed', function (obj) {
           if (obj && obj.alerts) {
             // in the new flow discount, the messages are stored in array, so only will be displayed the first time
-            if (OB.MobileApp.model.hasPermission('OBPOS_discount.newFlow', true)) {
-              var localArrayMessages = line.get('promotionMessages') || [];
-              localArrayMessages.push(obj.alerts);
-              line.set('promotionMessages', localArrayMessages);
-            } else {
-              OB.UTIL.showAlert.display(obj.alerts);
-            }
+            var localArrayMessages = line.get('promotionMessages') || [];
+            localArrayMessages.push(obj.alerts);
+            line.set('promotionMessages', localArrayMessages);
           }
           ruleListener.off('completed');
           this.nextAction(evt);
@@ -268,13 +264,9 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
       ds = rule.implementation(disc, receipt, line, ruleListener, promCandidates);
       if (ds && ds.alerts) {
         // in the new flow discount, the messages are stored in array, so only will be displayed the first time
-        if (OB.MobileApp.model.hasPermission('OBPOS_discount.newFlow', true)) {
-          var localArrayMessages = line.get('promotionMessages') || [];
-          localArrayMessages.push(ds.alerts);
-          line.set('promotionMessages', localArrayMessages);
-        } else {
-          OB.UTIL.showAlert.display(ds.alerts);
-        }
+        var localArrayMessages = line.get('promotionMessages') || [];
+        localArrayMessages.push(ds.alerts);
+        line.set('promotionMessages', localArrayMessages);
       }
 
       if (!rule.async) {
@@ -357,22 +349,11 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
   },
 
   postAction: function (evt) {
-    // if new flow of discounts, then discountsApplied is triggered
-    if (OB.MobileApp.model.hasPermission('OBPOS_discount.newFlow', true)) {
-      if (this.get('eventQueue').filter(function (p) {
-        return p.get('receipt') === evt.get('receipt');
-      }).length === 0) {
-        evt.get('receipt').trigger('discountsApplied');
-      }
-    } else {
-      if (this.get('eventQueue').filter(function (p) {
-        return p.get('receipt') === evt.get('receipt');
-      }).length === 0) {
-        evt.get('receipt').calculateGross();
-        evt.get('receipt').trigger('discountsApplied');
-      }
+    if (this.get('eventQueue').filter(function (p) {
+      return p.get('receipt') === evt.get('receipt');
+    }).length === 0) {
+      evt.get('receipt').trigger('discountsApplied');
     }
-
     // Forcing local db save. Rule implementations could (should!) do modifications
     // without persisting them improving performance in this manner.
     if (!evt.get('skipSave') && evt.get('receipt') && evt.get('receipt').get('lines') && evt.get('receipt').get('lines').length > 0) {

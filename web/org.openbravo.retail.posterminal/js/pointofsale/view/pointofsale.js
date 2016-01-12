@@ -326,10 +326,8 @@ enyo.kind({
 
           return;
         }
-        receipt.calculateTaxes(function () {
-          receipt.trigger('print', receipt, {
-            forcePrint: true
-          });
+        receipt.trigger('print', receipt, {
+          forcePrint: true
         });
         return;
       }
@@ -565,7 +563,7 @@ enyo.kind({
           inEvent.callback.call(inEvent.context, success);
         }
       });
-      if (args.productToAdd.get('groupProduct') && !(args.productToAdd.get('productType') === 'S') && !args.productToAdd.get('isLinkedToProduct')) {
+      if (args.productToAdd.get('groupProduct') && args.productToAdd.get('productType') !== 'S' && !args.productToAdd.get('isLinkedToProduct')) {
         // The product added is grouped, so enable the quantity button
         args.context.waterfall('onEnableQtyButton', {
           enable: true
@@ -831,7 +829,10 @@ enyo.kind({
     this.waterfall('onShowingActionIcons', inEvent);
   },
   tabChange: function (inSender, inEvent) {
-
+    this.leftToolbarDisabled(inSender, {
+      status: false,
+      disableButtonNew: (this.model.get('leftColumnViewManager').isMultiOrder() ? true : false)
+    });
     this.waterfall('onTabButtonTap', {
       tabPanel: inEvent.tabPanel,
       options: inEvent.options
@@ -989,7 +990,11 @@ enyo.kind({
       voidConfirmation = inEvent.payment.get('paymentData').voidConfirmation;
 
       if (voidConfirmation === false) {
-        callVoidTransaction();
+        if (voidTransaction !== undefined) {
+          callVoidTransaction();
+        } else {
+          removeTransaction();
+        }
         return;
       }
 
@@ -997,7 +1002,11 @@ enyo.kind({
         label: OB.I18N.getLabel('OBMOBC_LblOk'),
         isConfirmButton: true,
         action: function () {
-          callVoidTransaction();
+          if (voidTransaction !== undefined) {
+            callVoidTransaction();
+          } else {
+            removeTransaction();
+          }
           return true;
         }
       }, {
@@ -1162,7 +1171,7 @@ enyo.kind({
     this.waterfall('onChangePricelist', inEvent);
   },
   receiptLineSelected: function (inSender, inEvent) {
-    if (inEvent.product.get('groupProduct') && !(inEvent.product.get('productType') === 'S') && !inEvent.product.get('isLinkedToProduct')) {
+    if (inEvent.product.get('groupProduct') && inEvent.product.get('productType') !== 'S' && !inEvent.product.get('isLinkedToProduct')) {
       // The line selected is a grouped product, so enable the quantity button
       this.waterfall('onEnableQtyButton', {
         enable: true

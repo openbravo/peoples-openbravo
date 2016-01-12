@@ -475,8 +475,6 @@ enyo.kind({
           }
         }
       });
-      OB.Model.Discounts.applyPromotions(this.model.get('order'));
-      this.model.get('order').calculateGross();
       this.hide();
     },
     init: function (model) {

@@ -5,6 +5,11 @@
         <default><![CDATA[Y]]></default>
         <onCreateDefault><![CDATA['Y']]></onCreateDefault>
       </column>
+      <column name="EM_OBPOS_USEONWEBPOS" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[Y]]></default>
+        <onCreateDefault><![CDATA['Y']]></onCreateDefault>
+      </column>
       <check name="EM_OBPOS_FILTERONWEBPOS_CHECK"><![CDATA[EM_OBPOS_FILTERONWEBPOS IN ('Y', 'N')]]></check>
+      <check name="EM_OBPOS_USEONWEBPOS_CHECK"><![CDATA[EM_OBPOS_USEONWEBPOS IN ('Y', 'N')]]></check>
     </table>
   </database>

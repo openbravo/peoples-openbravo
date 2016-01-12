@@ -79,7 +79,9 @@ enyo.kind({
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.ProductDetailsView_ButtonClose',
   style: 'float: right; cursor: pointer; font-size: 150%; font-weight: bold; color: #CCCCCC; width: 40px; height: 40px; margin: -10px; text-align: right; padding: 8px;',
-  content: '×',
+  init: function () {
+    this.setContent(OB.I18N.getLabel('OBMOBC_Character')[2]);
+  },
   tap: function () {
     this.leftSubWindow.doCloseLeftSubWindow();
   }
@@ -92,7 +94,8 @@ enyo.kind({
     name: 'productName',
     style: 'float: left;'
   }, {
-    kind: 'OB.OBPOSPointOfSale.UI.ProductDetailsView_ButtonClose'
+    kind: 'OB.OBPOSPointOfSale.UI.ProductDetailsView_ButtonClose',
+    name: 'buttonClose'
   }]
 });
 

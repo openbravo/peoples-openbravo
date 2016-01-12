@@ -66,6 +66,7 @@ public class ProductCharacteristicValue extends ProcessHQLQuery {
             + "AND exists (select 1 from PricingProductPrice ppp WHERE (ppp.priceListVersion.id='"
             + priceListVersion.getId()
             + "') AND (ppp.product.id=pcv.product.id) ) "
+            + "and pcv.characteristicValue.characteristic.obposUseonwebpos = true "
             + "and $naturalOrgCriteria and $readableSimpleClientCriteria and (pcv.$incrementalUpdateCriteria"
             + "OR pcv.characteristic.$incrementalUpdateCriteria OR pcv.characteristicValue.$incrementalUpdateCriteria)");
 

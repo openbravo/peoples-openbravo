@@ -419,6 +419,10 @@ enyo.kind({
     });
   },
   tap: function (options) {
+    this.model.get('order').get('lines').on('selected', function (lineSelected) {
+      this.currentLine = lineSelected;
+    }, this);
+
     if (OB.MobileApp.model.get('serviceSearchMode')) {
       this.$.lbl.setContent(OB.I18N.getLabel('OBPOS_LblEdit'));
       this.doEnableUserInterface();
@@ -442,7 +446,9 @@ enyo.kind({
         if (lines && lines.length > 0) {
           lastLine = lines.models[lines.length - 1];
         }
-        if (lastLine) {
+        if (this.currentLine) {
+          this.currentLine.trigger('selected', this.currentLine);
+        } else if (lastLine) {
           lastLine.trigger('selected', lastLine);
         }
       }

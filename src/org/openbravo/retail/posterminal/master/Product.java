@@ -212,8 +212,9 @@ public class Product extends ProcessHQLQuery {
     if (lastUpdated != null) {
       hql += "AND ((pli.product.$incrementalUpdateCriteria) OR (pli.$incrementalUpdateCriteria) OR (ppp.$incrementalUpdateCriteria)) ";
     } else {
-      hql += "AND (pli.product.$incrementalUpdateCriteria) ";
+      hql += "AND ((pli.product.$incrementalUpdateCriteria) AND (pli.$incrementalUpdateCriteria)) ";
     }
+
     hql += "order by pli.product.name";
     products.add(hql);
     // Packs, combos...

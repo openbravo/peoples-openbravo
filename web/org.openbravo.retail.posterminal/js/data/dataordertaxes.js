@@ -673,7 +673,7 @@
         // Initialize line calculations
         line.set({
           'discountedNet': discountedNet,
-          'discountedNetPrice': discountedprice,
+          'discountedNetPrice': OB.DEC.toNumber(discountedprice),
           'gross': linenet,
           'discountedGross': discountedNet
         }, {

@@ -9,6 +9,7 @@
 package org.openbravo.retail.posterminal;
 
 import java.math.BigDecimal;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -80,7 +81,13 @@ public class PaidReceipts extends JSONProcessSimple {
         Object[] objpaidReceipts = (Object[]) obj;
         JSONObject paidReceipt = hqlProperties.getJSONObjectRow(objpaidReceipts);
         paidReceipt.put("orderid", orderid);
-
+        // orderDate is a date so we don't need to transform the time information
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
+        int orderDatePropertyIndex = hqlProperties.getHqlPropertyIndex("orderDate");
+        if (orderDatePropertyIndex != -1) {
+          String nowAsISO = df.format(objpaidReceipts[orderDatePropertyIndex]);
+          paidReceipt.put("orderDate", nowAsISO);
+        }
         // get the Invoice for the Order
         String hqlPaidReceiptsInvoice = "select inv.id from Invoice as inv where inv.salesOrder.id = :orderId";
         Query PaidReceiptsInvoiceQuery = OBDal.getInstance().getSession()
@@ -243,7 +250,11 @@ public class PaidReceipts extends JSONProcessSimple {
             + "c_currency_rate(p.obposApplications.organization.currency, p.financialAccount.currency, null, null, p.obposApplications.client.id, p.obposApplications.organization.id) as mulrate, "
             + "p.financialAccount.currency.iSOCode as isocode, "
             + "p.paymentMethod.openDrawer as openDrawer "
-            + " from OBPOS_App_Payment as p where p.financialAccount.id in (select scheduleDetail.paymentDetails.finPayment.account.id from FIN_Payment_ScheduleDetail as scheduleDetail where scheduleDetail.orderPaymentSchedule.order.id=?)";
+            + " from OBPOS_App_Payment as p where p.financialAccount.id in (select scheduleDetail.paymentDetails.finPayment.account.id from FIN_Payment_ScheduleDetail as scheduleDetail where scheduleDetail.orderPaymentSchedule.order.id=?)"
+            + "group by  p.financialAccount.id, p.commercialName ,p.searchKey,"
+            + "c_currency_rate(p.financialAccount.currency, p.obposApplications.organization.currency, null, null, p.obposApplications.client.id, p.obposApplications.organization.id),"
+            + "c_currency_rate(p.obposApplications.organization.currency, p.financialAccount.currency, null, null, p.obposApplications.client.id, p.obposApplications.organization.id),"
+            + "p.financialAccount.currency.iSOCode ,p.paymentMethod.openDrawer";
         Query paymentsTypeQuery = OBDal.getInstance().getSession().createQuery(hqlPaymentsType);
         // paidReceiptsQuery.setString(0, id);
         paymentsTypeQuery.setString(0, orderid);

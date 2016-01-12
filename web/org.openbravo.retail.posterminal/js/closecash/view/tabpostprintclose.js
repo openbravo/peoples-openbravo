@@ -606,18 +606,24 @@ enyo.kind({
   summaryChanged: function () {
     this.$.expectedTable.setCollection(this.summary.expectedSummary);
     this.$.expectedTable.setValue('totalexpected', this.summary.totalExpected);
+    if (OB.MobileApp.view.currentWindow === 'retail.cashuppartial') {
+      this.$.countedTable.hide();
+      this.$.differenceTable.hide();
+      this.$.qtyToKeepTable.hide();
+      this.$.qtyToDepoTable.hide();
+    } else {
+      this.$.countedTable.setCollection(this.summary.countedSummary);
+      this.$.countedTable.setValue('totalcounted', this.summary.totalCounted);
 
-    this.$.countedTable.setCollection(this.summary.countedSummary);
-    this.$.countedTable.setValue('totalcounted', this.summary.totalCounted);
+      this.$.differenceTable.setCollection(this.summary.differenceSummary);
+      this.$.differenceTable.setValue('totaldifference', this.summary.totalDifference);
 
-    this.$.differenceTable.setCollection(this.summary.differenceSummary);
-    this.$.differenceTable.setValue('totaldifference', this.summary.totalDifference);
+      this.$.qtyToKeepTable.setCollection(this.summary.qtyToKeepSummary);
+      this.$.qtyToKeepTable.setValue('totalqtyToKeep', this.summary.totalQtyToKeep);
 
-    this.$.qtyToKeepTable.setCollection(this.summary.qtyToKeepSummary);
-    this.$.qtyToKeepTable.setValue('totalqtyToKeep', this.summary.totalQtyToKeep);
-
-    this.$.qtyToDepoTable.setCollection(this.summary.qtyToDepoSummary);
-    this.$.qtyToDepoTable.setValue('totalqtyToDepo', this.summary.totalQtyToDepo);
+      this.$.qtyToDepoTable.setCollection(this.summary.qtyToDepoSummary);
+      this.$.qtyToDepoTable.setValue('totalqtyToDepo', this.summary.totalQtyToDepo);
+    }
   },
 
   modelChanged: function () {

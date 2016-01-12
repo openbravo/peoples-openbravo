@@ -556,7 +556,7 @@ enyo.kind({
     this.order.on('change:qty', function (model) {
       this.$.totalReceiptLine.renderQty(model.getQty());
     }, this);
-    this.order.on('change:orderType', function (model) {
+    this.order.on('change:orderType change:documentNo', function (model) {
       if (model.get('orderType') === 1) {
         this.$.divText.addStyles('width: 50%; color: #f8941d;');
         if (model.get('isPaid') !== true) {

@@ -407,6 +407,9 @@
             if (data.terminalAuthentication) {
               window.localStorage.setItem('terminalAuthentication', data.terminalAuthentication);
             }
+            if (data && data.errorReadingTerminalAuthentication) {
+              OB.UTIL.showWarning(data.errorReadingTerminalAuthentication);
+            }
             OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_TerminalAuthChange'), OB.I18N.getLabel('OBPOS_TerminalAuthChangeMsg'), [{
               label: OB.I18N.getLabel('OBMOBC_LblOk'),
               isConfirmButton: true,
@@ -528,6 +531,9 @@
               if (data.terminalAuthentication) {
                 window.localStorage.setItem('terminalAuthentication', data.terminalAuthentication);
               }
+              if (data && data.errorReadingTerminalAuthentication) {
+                OB.UTIL.showWarning(data.errorReadingTerminalAuthentication);
+              }
               OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_TerminalAuthChange'), OB.I18N.getLabel('OBPOS_TerminalAuthChangeMsg'), [{
                 label: OB.I18N.getLabel('OBMOBC_LblOk'),
                 isConfirmButton: true,
@@ -559,6 +565,16 @@
           minTotalRefresh = this.get('terminal').terminalType.minutestorefreshdatatotal * 60 * 1000,
           lastTotalRefresh = window.localStorage.getItem('POSLastTotalRefresh'),
           lastIncRefresh = window.localStorage.getItem('POSLastIncRefresh');
+
+      function setTerminalLockTimeout(sessionTimeoutMinutes, sessionTimeoutMilliseconds) {
+        OB.debug("Terminal lock timer reset (" + sessionTimeoutMinutes + " minutes)");
+        clearTimeout(this.timeoutId);
+        this.timeoutId = setTimeout(function () {
+          OB.warn("The terminal was not used for " + sessionTimeoutMinutes + " minutes. Locking the terminal");
+          OB.MobileApp.model.lock();
+        }, sessionTimeoutMilliseconds);
+      }
+
       if ((minTotalRefresh || minIncRefresh) && (lastTotalRefresh || lastIncRefresh)) {
         OB.MobileApp.model.set('minIncRefreshSynchronized', false);
         OB.MobileApp.model.on('synchronized', function () {
@@ -566,19 +582,39 @@
             return;
           }
           OB.MobileApp.model.set('minIncRefreshSynchronized', true);
+          if (OB.MobileApp.model.get('FullRefreshWasDone')) {
+            return;
+          }
           OB.MobileApp.model.loadModels(null, true);
         });
+      }
 
+      if (minIncRefresh) {
         loadModelsIncFunc = function () {
           OB.MobileApp.model.loadModels(null, true);
         };
         setInterval(loadModelsIncFunc, minIncRefresh);
       }
 
-      if (!this.sessionPing && this.get('terminal').sessionTimeout) {
+      var sessionTimeoutMinutes = this.get('terminal').sessionTimeout;
+      if (!this.sessionPing && sessionTimeoutMinutes) {
+        var sessionTimeoutMilliseconds = sessionTimeoutMinutes * 60 * 1000;
         this.sessionPing = setInterval(function () {
           new OB.DS.Process('org.openbravo.mobile.core.login.ContextInformation').exec(null, function () {});
-        }, this.get('terminal').sessionTimeout * 60 * 1000);
+        }, sessionTimeoutMilliseconds);
+
+        // set the terminal lock timeout
+        setTerminalLockTimeout(sessionTimeoutMinutes, sessionTimeoutMilliseconds);
+        // FIXME: hack: inject javascript in the enyo.gesture.down so we can create a terminal timeout
+        enyo.gesture.down = function (inEvent) {
+          // start of Openbravo injected code
+          setTerminalLockTimeout(sessionTimeoutMinutes, sessionTimeoutMilliseconds);
+          // end of Openbravo injected code
+          // cancel any hold since it's possible in corner cases to get a down without an up
+          var e = this.makeEvent("down", inEvent);
+          enyo.dispatch(e);
+          this.downEvent = e;
+        };
       }
     },
 
@@ -919,6 +955,9 @@
       new OB.OBPOSLogin.UI.LoginRequest({
         url: '../../org.openbravo.retail.posterminal.service.loginutils'
       }).response(this, function (inSender, inResponse) {
+        if (inResponse && inResponse.errorReadingTerminalAuthentication) {
+          OB.UTIL.showWarning(inResponse.errorReadingTerminalAuthentication);
+        }
         window.localStorage.setItem('terminalAuthentication', inResponse.terminalAuthentication);
         if (!(window.localStorage.getItem('cacheSessionId') && window.localStorage.getItem('cacheSessionId').length === 32)) {
           window.localStorage.setItem('cacheSessionId', inResponse.cacheSessionId);

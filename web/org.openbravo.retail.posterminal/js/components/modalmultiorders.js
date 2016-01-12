@@ -345,6 +345,7 @@ enyo.kind({
     if (checkedMultiOrders.length === 0) {
       return true;
     }
+    me.owner.owner.model.deleteMultiOrderList();
     _.each(checkedMultiOrders, function (iter) {
       if (_.indexOf(me.owner.owner.model.get('orderList').models, iter) !== -1) {
         iter.save();
@@ -359,13 +360,16 @@ enyo.kind({
               order.set('loadedFromServer', true);
               order.set('checked', iter.get('checked'));
               OB.DATA.OrderTaxes(order);
-              order.save();
-              selectedMultiOrders.push(order);
-              if (selectedMultiOrders.length === checkedMultiOrders.length) {
-                me.doSelectMultiOrders({
-                  value: selectedMultiOrders
-                });
-              }
+              order.set('belongsToMultiOrder', true);
+              order.calculateReceipt(function () {
+                selectedMultiOrders.push(order);
+                order.save();
+                if (selectedMultiOrders.length === checkedMultiOrders.length) {
+                  me.doSelectMultiOrders({
+                    value: selectedMultiOrders
+                  });
+                }
+              });
             });
           } else {
             OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorDropDep'));

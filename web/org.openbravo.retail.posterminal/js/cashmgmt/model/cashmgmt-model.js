@@ -48,6 +48,7 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.WindowModel.extend({
       OB.Dal.find(OB.Model.CashUp, {
         'isprocessed': 'N'
       }, function (cashUp) {
+        var now = new Date();
         var addedCashMgmt = new OB.Model.CashManagement({
           id: OB.UTIL.get_UUID(),
           description: p.identifier + ' - ' + model.get('name'),
@@ -58,7 +59,8 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.WindowModel.extend({
           paymentMethodId: p.id,
           user: OB.MobileApp.model.get('context').user._identifier,
           userId: OB.MobileApp.model.get('context').user.id,
-          time: new Date().toString().substring(16, 21),
+          creationDate: OB.I18N.normalizeDate(now),
+          timezoneOffset: now.getTimezoneOffset(),
           isocode: p.isocode,
           glItem: p.glItem,
           cashup_id: cashUp.at(0).get('id'),
@@ -182,11 +184,27 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.WindowModel.extend({
     this.set('payments', new Backbone.Collection());
     this.set('cashMgmtDropEvents', new Backbone.Collection(OB.MobileApp.model.get('cashMgmtDropEvents')));
     this.set('cashMgmtDepositEvents', new Backbone.Collection(OB.MobileApp.model.get('cashMgmtDepositEvents')));
-
     initModelsCallback();
   },
   loadModels: function (loadModelsCallback) {
     var me = this;
+
+    function updateCashMgmEvents(paymentMethodList) {
+      var i;
+      var paymentMethodId;
+      for (i = 0; i < me.attributes.cashMgmtDepositEvents.models.length; i++) {
+        paymentMethodId = me.attributes.cashMgmtDepositEvents.models[i].attributes.paymentmethod;
+        if (paymentMethodList.indexOf(paymentMethodId) === -1) {
+          me.attributes.cashMgmtDepositEvents.remove(me.attributes.cashMgmtDepositEvents.at(i));
+        }
+      }
+      for (i = 0; i < me.attributes.cashMgmtDropEvents.models.length; i++) {
+        paymentMethodId = me.attributes.cashMgmtDropEvents.models[i].attributes.paymentmethod;
+        if (paymentMethodList.indexOf(paymentMethodId) === -1) {
+          me.attributes.cashMgmtDropEvents.remove(me.attributes.cashMgmtDropEvents.at(i));
+        }
+      }
+    }
 
     function loadCashup(callback, args) {
       // argument checks
@@ -215,6 +233,7 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.WindowModel.extend({
             'cashup_id': cashUp.at(0).get('id'),
             _orderByClause: 'searchKey desc'
           }, function (pays) {
+            me.set('listpaymentmethodid', []);
             me.payments = pays;
 
             function updatePaymentMethod(pay) {
@@ -226,11 +245,15 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.WindowModel.extend({
                 paymentMth = OB.MobileApp.model.get('payments').filter(function (payment) {
                   return payment.payment.id === pay.get('paymentmethod_id');
                 })[0].paymentMethod;
+
                 if (OB.POS.modelterminal.get('terminal').isslave && paymentMth.isshared) {
                   resolve();
                   return;
                 }
                 if (paymentMth.allowdeposits || paymentMth.allowdrops) {
+                  if (me.get('listpaymentmethodid').indexOf(paymentMth.paymentMethod) === -1) {
+                    me.get('listpaymentmethodid').push(paymentMth.paymentMethod);
+                  }
                   OB.Dal.find(OB.Model.CashManagement, criteria, function (cashmgmt, pay) {
                     if (cashmgmt.length > 0) {
                       pay.set('listdepositsdrops', cashmgmt.models);
@@ -261,6 +284,7 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.WindowModel.extend({
               paymentsToLoad.push(updatePaymentMethod(pay));
             });
             Promise.all(paymentsToLoad).then(function () {
+              updateCashMgmEvents(me.get('listpaymentmethodid'));
               resolve();
             }, function () {
               OB.error("Could not load the payment method's information");
