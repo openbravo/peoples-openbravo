@@ -89,8 +89,12 @@ public class SL_InOut_BPartner extends HttpSecureAppServlet {
     BpartnerMiscData[] data = BpartnerMiscData.select(this, strBPartner);
 
     String strUserRep = "";
-    if (data != null && data.length > 0)
+    if (data != null && data.length > 0) {
       strUserRep = SEOrderBPartnerData.userIdSalesRep(this, data[0].salesrepId);
+    }
+    if (StringUtils.isEmpty(strUserRep)) {
+      strUserRep = vars.getUser();
+    }
 
     StringBuffer resultado = new StringBuffer();
     resultado.append("var calloutName='SL_InOut_BPartner';\n\n");

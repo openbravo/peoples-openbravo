@@ -29,6 +29,7 @@ import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.costing.CostingBackground;
 import org.openbravo.costing.CostingStatus;
+import org.openbravo.costing.CostingUtils;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
@@ -49,6 +50,7 @@ import org.openbravo.model.common.enterprise.Locator;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.enterprise.Warehouse;
 import org.openbravo.model.common.plm.Product;
+import org.openbravo.model.materialmgmt.cost.CostingRule;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 import org.openbravo.xmlEngine.XmlDocument;
 
@@ -119,13 +121,29 @@ public class ReportValuationStock extends HttpSecureAppServlet {
         Organization legalEntity = OBContext.getOBContext()
             .getOrganizationStructureProvider(wh.getClient().getId())
             .getLegalEntity(wh.getOrganization());
+        String strDateFrom = DateTimeData.nDaysAfter(this, strDate, "1");
         if (legalEntity == null) {
           advise(request, response, "ERROR",
               Utility.messageBD(this, "WarehouseNotInLE", vars.getLanguage()), "");
+        } else {
+          try {
+            CostingRule costingRule = CostingUtils.getCostDimensionRule(legalEntity,
+                OBDateUtils.getDate(strDate));
+            strDateFrom = OBDateUtils.formatDateTime(CostingUtils
+                .getCostingRuleStartingDate(costingRule));
+          } catch (Exception exception) {
+            advise(
+                request,
+                response,
+                "ERROR",
+                Utility.messageBD(this, "NoCostingRuleFoundForOrganizationAndDate",
+                    vars.getLanguage()), "");
+          }
         }
         data = ReportValuationStockData.select(this, vars.getLanguage(), strCurrencyId,
             (legalEntity == null) ? null : legalEntity.getId(),
-            DateTimeData.nDaysAfter(this, strDate, "1"), strWarehouse, strCategoryProduct);
+            DateTimeData.nDaysAfter(this, strDate, "1"), strDateFrom, strWarehouse,
+            strCategoryProduct);
         boolean hasTrxWithNoCost = hasTrxWithNoCost(strDate, strWarehouse, strCategoryProduct);
         if (hasTrxWithNoCost) {
           OBError warning = new OBError();

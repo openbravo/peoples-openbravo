@@ -87,7 +87,8 @@ OB.APRM.AddTransaction.trxTypeOnChangeFunction = function (item, view, form, gri
 };
 
 OB.APRM.AddTransaction.paymentOnChangeFunction = function (item, view, form, grid) {
-  var callback, strPaymentId = item.getValue();
+  var callback, strPaymentId = item.getValue(),
+      strDescription = form.getItem('description').getValue();
 
   callback = function (response, data, request) {
     form.getItem('description').setValue(data.description);
@@ -97,19 +98,22 @@ OB.APRM.AddTransaction.paymentOnChangeFunction = function (item, view, form, gri
   };
 
   OB.RemoteCallManager.call('org.openbravo.advpaymentmngt.actionHandler.AddTransactionOnChangePaymentActionHandler', {
-    strPaymentId: strPaymentId
+    strPaymentId: strPaymentId,
+    strDescription: strDescription
   }, {}, callback);
 };
 
 OB.APRM.AddTransaction.glitemOnChangeFunction = function (item, view, form, grid) {
-  var callback, strGLItemId = item.getValue();
+  var callback, strGLItemId = item.getValue(),
+      strDescription = form.getItem('description').getValue();
 
   callback = function (response, data, request) {
     form.getItem('description').setValue(data.description);
   };
 
   OB.RemoteCallManager.call('org.openbravo.advpaymentmngt.actionHandler.GLItemTransactionActionHandler', {
-    strGLItemId: strGLItemId
+    strGLItemId: strGLItemId,
+    strDescription: strDescription
   }, {}, callback);
 };
 

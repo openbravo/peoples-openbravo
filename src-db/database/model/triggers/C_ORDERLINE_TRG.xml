@@ -233,7 +233,7 @@ IF (UPDATING) THEN
       v_PriceActual := ROUND(v_NetActual / :new.qtyordered, v_price_prec);     
     ELSE
       -- Regular taxes
-      v_PriceActual := C_GET_NET_PRICE_FROM_GROSS(:new.c_tax_id, :new.line_gross_amount, :new.taxbaseamt, v_price_prec, :NEW.qtyordered);    
+      v_PriceActual := C_GET_NET_PRICE_FROM_GROSS(:new.c_tax_id, :new.gross_unit_price * :new.qtyordered, :new.taxbaseamt, v_price_prec, :new.qtyordered);
       v_NetActual := ROUND(:new.QtyOrdered * v_PriceActual, v_Prec);
     END IF;      
     

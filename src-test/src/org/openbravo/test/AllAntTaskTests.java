@@ -87,6 +87,7 @@ import org.openbravo.test.system.SystemServiceTest;
 import org.openbravo.test.system.SystemValidatorTest;
 import org.openbravo.test.system.TestInfrastructure;
 import org.openbravo.test.taxes.TaxesTest;
+import org.openbravo.test.views.ViewGenerationWithDifferentConfigLevelTest;
 import org.openbravo.test.xml.ClientExportImportTest;
 import org.openbravo.test.xml.DatasetExportTest;
 import org.openbravo.test.xml.DefaultsDataset;
@@ -214,6 +215,9 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     // db
     SqlCallableStatement.class, //
 
+    // grid configuration
+    ViewGenerationWithDifferentConfigLevelTest.class, //
+    
     // Product Services
     ServicesTest.class, //
     ServicesTest2.class, //

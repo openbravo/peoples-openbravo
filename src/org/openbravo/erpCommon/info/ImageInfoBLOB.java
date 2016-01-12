@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2015 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -282,8 +282,9 @@ public class ImageInfoBLOB extends HttpSecureAppServlet {
   private void writeRedirectOB3(PrintWriter writer, String selectorId, String imageId,
       String imageSizeAction, Long[] sizeOld, Long[] sizeNew, String msg) {
     writer.write("<HTML><BODY><script type=\"text/javascript\">");
-    writer.write("top." + selectorId + ".callback('" + imageId + "', '" + imageSizeAction + "', '"
-        + sizeOld[0] + "' ,'" + sizeOld[1] + "' ,'" + sizeNew[0] + "' ,'" + sizeNew[1] + "'");
+    writer.write("var selector = top." + selectorId + " || parent." + selectorId + ";\n");
+    writer.write("selector.callback('" + imageId + "', '" + imageSizeAction + "', '" + sizeOld[0]
+        + "' ,'" + sizeOld[1] + "' ,'" + sizeNew[0] + "' ,'" + sizeNew[1] + "'");
 
     if (StringUtils.isNotEmpty(msg)) {
       writer.write(", '" + StringEscapeUtils.escapeJavaScript(msg) + "'");

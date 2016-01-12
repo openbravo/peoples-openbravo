@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2014 Openbravo SLU
+ * All portions are Copyright (C) 2011-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -178,6 +178,9 @@ isc.OBPickAndExecuteView.addProperties({
       },
       formatEditorValue: function (value, record, rowNum, colNum, grid) {
         return this.formatCellValue(arguments);
+      },
+      filterEditorProperties: {
+        canFocus: false
       }
     });
   },

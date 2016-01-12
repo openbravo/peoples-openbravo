@@ -22,6 +22,7 @@ import java.math.BigDecimal;
 
 import javax.servlet.ServletException;
 
+import org.apache.commons.lang.StringUtils;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
@@ -58,6 +59,9 @@ public class SE_Order_BPartner extends SimpleCallout {
       strDeliveryRule = data[0].deliveryrule.equals("") ? info.vars
           .getStringParameter("inpdeliveryrule") : data[0].deliveryrule;
       strUserRep = SEOrderBPartnerData.userIdSalesRep(this, data[0].salesrepId);
+      if (StringUtils.isEmpty(strUserRep)) {
+        strUserRep = info.vars.getUser();
+      }
       SLOrderDocTypeData[] docTypeData = SLOrderDocTypeData.select(this, strDocTypeTarget);
       if (docTypeData != null && docTypeData.length > 0) {
         docSubTypeSO = docTypeData[0].docsubtypeso;

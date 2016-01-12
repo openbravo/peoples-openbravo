@@ -25,7 +25,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2012-2015 Openbravo SLU
+* All portions are Copyright (C) 2012-2016 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -115,7 +115,6 @@ BEGIN
       v_linecount             NUMBER;
       v_creservedcount        NUMBER;
       v_preservedcount        NUMBER;
-      v_reservedqty           NUMBER;
       v_qtytoreserve          NUMBER;
       v_aux                   NUMBER;
       v_res_stock_id          VARCHAR2(32);
@@ -245,7 +244,7 @@ BEGIN
         END IF;
   
         UPDATE c_orderline
-        SET so_res_status = CASE WHEN v_quantity = v_reservedqty THEN 'CR'
+        SET so_res_status = CASE WHEN v_quantity <= v_reservedqty THEN 'CR'
                                  WHEN v_reservedqty > 0 THEN 'PR'
                                  ELSE 'NR'
                             END
@@ -256,8 +255,12 @@ BEGIN
         WHERE c_orderline_id = v_orderline_id;
         SELECT COUNT(*), SUM(CASE so_res_status WHEN 'CR' THEN 1 ELSE 0 END), SUM(CASE so_res_status WHEN 'PR' THEN 1 ELSE 0 END)
           INTO v_linecount, v_creservedcount, v_preservedcount
-        FROM c_orderline
-        WHERE c_order_id = v_sales_order_id;
+        FROM c_orderline ol
+        JOIN m_product p ON ol.m_product_id = p.m_product_id
+        WHERE ol.c_order_id = v_sales_order_id
+        AND ol.qtyordered > 0
+        AND p.isstocked = 'Y'
+        AND p.producttype = 'I';
   
         UPDATE c_order
         SET so_res_status = CASE WHEN v_linecount = v_creservedcount THEN 'CR'

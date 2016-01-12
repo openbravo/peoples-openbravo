@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2009-2014 Openbravo SLU
+ * All portions are Copyright (C) 2009-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -115,10 +115,14 @@ public class AcctServerProcess extends DalBaseProcess {
     }
     try {
       final AcctServerProcessData[] data;
-      if ("0".equals(ctx.getClient()))
+      if ("0".equals(ctx.getClient())) {
         data = AcctServerProcessData.selectAcctTable(connection);
-      else
+      } else if ("0".equals(ctx.getOrganization())) {
         data = AcctServerProcessData.selectAcctTable(connection, ctx.getClient());
+      } else {
+        data = AcctServerProcessData.selectAcctTable(connection, ctx.getClient(),
+            ctx.getOrganization());
+      }
       final ArrayList<Object> vTableIds = new ArrayList<Object>();
       for (int i = 0; i < data.length; i++) {
         vTableIds.add(data[i].adTableId);

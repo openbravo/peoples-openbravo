@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014 Openbravo SLU
+ * All portions are Copyright (C) 2014-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,6 +21,7 @@ package org.openbravo.advpaymentmngt.actionHandler;
 
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.client.application.Parameter;
@@ -30,6 +31,7 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.ad.system.Language;
+import org.openbravo.model.ad.ui.Element;
 import org.openbravo.model.ad.ui.ElementTrl;
 import org.openbravo.service.db.DbUtility;
 import org.slf4j.Logger;
@@ -50,53 +52,38 @@ public class AddPaymentReloadLabelsActionHandler extends BaseActionHandler {
       final String strFinancialAccount = (String) parameters.get("financialAccount");
       final String strIssotrx = (String) parameters.get("issotrx");
       boolean issotrx = "true".equals(strIssotrx) ? true : false;
-      final Parameter businessPartner = OBDal.getInstance()
-          .get(Parameter.class, strBusinessPartner);
-      final Parameter financialAccount = OBDal.getInstance().get(Parameter.class,
-          strFinancialAccount);
-      final Language language = OBContext.getOBContext().getLanguage();
 
-      final OBCriteria<ElementTrl> obcBP = OBDal.getInstance().createCriteria(ElementTrl.class);
-      obcBP.add(Restrictions.eq(ElementTrl.PROPERTY_ID, businessPartner.getApplicationElement()
-          .getId()));
-      obcBP.add(Restrictions.eq(ElementTrl.PROPERTY_LANGUAGE, language));
-      obcBP.setMaxResults(1);
-      final ElementTrl elementBP = (ElementTrl) obcBP.uniqueResult();
-      if (elementBP != null) {
-        if (issotrx) {
-          values.put("businessPartner", elementBP.getName());
-        } else {
-          values.put("businessPartner", elementBP.getPurchaseOrderName());
+      final String labelProperty = issotrx ? Element.PROPERTY_NAME
+          : Element.PROPERTY_PURCHASEORDERNAME;
+      final Language lang = OBContext.getOBContext().getLanguage();
+
+      final Element businessPartnerElement = OBDal.getInstance()
+          .get(Parameter.class, strBusinessPartner).getApplicationElement();
+      final Element financialAccountElement = OBDal.getInstance()
+          .get(Parameter.class, strFinancialAccount).getApplicationElement();
+
+      values.put("businessPartner", businessPartnerElement.get(labelProperty));
+      values.put("financialAccount", financialAccountElement.get(labelProperty));
+      if (!StringUtils.equals(lang.getLanguage(), "en_US")) {
+        final OBCriteria<ElementTrl> obcBP = OBDal.getInstance().createCriteria(ElementTrl.class);
+        obcBP.add(Restrictions.eq(ElementTrl.PROPERTY_APPLICATIONELEMENT, businessPartnerElement));
+        obcBP.add(Restrictions.eq(ElementTrl.PROPERTY_LANGUAGE, lang));
+        obcBP.setMaxResults(1);
+        final ElementTrl elementBP = (ElementTrl) obcBP.uniqueResult();
+        if (elementBP != null) {
+          values.put("businessPartner", elementBP.get(labelProperty));
         }
-      } else {
-        if (issotrx) {
-          values.put("businessPartner", businessPartner.getApplicationElement().getName());
-        } else {
-          values.put("businessPartner", businessPartner.getApplicationElement()
-              .getPurchaseOrderName());
+
+        final OBCriteria<ElementTrl> obcFA = OBDal.getInstance().createCriteria(ElementTrl.class);
+        obcFA.add(Restrictions.eq(ElementTrl.PROPERTY_APPLICATIONELEMENT, financialAccountElement));
+        obcFA.add(Restrictions.eq(ElementTrl.PROPERTY_LANGUAGE, lang));
+        obcFA.setMaxResults(1);
+        final ElementTrl elementFA = (ElementTrl) obcFA.uniqueResult();
+        if (elementFA != null) {
+          values.put("financialAccount", elementFA.get(labelProperty));
         }
       }
 
-      final OBCriteria<ElementTrl> obcFA = OBDal.getInstance().createCriteria(ElementTrl.class);
-      obcFA.add(Restrictions.eq(ElementTrl.PROPERTY_ID, financialAccount.getApplicationElement()
-          .getId()));
-      obcFA.add(Restrictions.eq(ElementTrl.PROPERTY_LANGUAGE, language));
-      obcFA.setMaxResults(1);
-      final ElementTrl elementFA = (ElementTrl) obcFA.uniqueResult();
-      if (elementFA != null) {
-        if (issotrx) {
-          values.put("financialAccount", elementFA.getName());
-        } else {
-          values.put("financialAccount", elementFA.getPurchaseOrderName());
-        }
-      } else {
-        if (issotrx) {
-          values.put("financialAccount", financialAccount.getApplicationElement().getName());
-        } else {
-          values.put("financialAccount", financialAccount.getApplicationElement()
-              .getPurchaseOrderName());
-        }
-      }
       result.put("values", values);
     } catch (Exception e) {
       OBDal.getInstance().rollbackAndClose();

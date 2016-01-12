@@ -22,7 +22,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2015 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2001-2016 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -119,7 +119,7 @@
     v_IsQtyVariable M_Product.IsQuantityVariable%TYPE;
     v_IsReversedDoc CHAR(1);
 
-    v_uuid VARCHAR2(32) := get_uuid();
+    v_uuid VARCHAR2(32);
     v_qtyordered NUMBER;
 
   BEGIN
@@ -1178,6 +1178,8 @@
 	    LOOP
 	      IF (Cur_Reservation.Res_Status = 'CL') THEN
 
+		v_uuid := get_uuid();
+
 		-- Get the ordered quantity from the order line
 	        SELECT qtyordered
 	        INTO v_qtyordered
@@ -1200,20 +1202,19 @@
 		  Cur_Reservation.managereservation_pe, Cur_Reservation.reservedgoodmnt_pe
 	        );
 
-           -- Add a reservation stock with the ordered quantity
-      	   INSERT INTO M_RESERVATION_STOCK (
-     	      m_reservation_stock_id, ad_client_id, ad_org_id, isactive,
-   	        created, createdby, updated, updatedby,
-		        m_reservation_id, c_orderline_id, quantity, isallocated,
-		        m_locator_id, m_attributesetinstance_id
-	        )
-          SELECT get_uuid(), ad_client_id, ad_org_id, 'Y',
-            now(), v_user, now(), v_user,
-            v_uuid, c_orderline_id, v_qtyordered, isallocated,
-            m_locator_id, m_attributesetinstance_id
-          FROM M_RESERVATION_STOCK
-          WHERE M_RESERVATION_STOCK.M_Reservation_ID=Cur_Reservation.M_Reservation_ID
-          AND IsActive='Y';
+		-- Add a reservation stock with the ordered quantity
+		INSERT INTO M_RESERVATION_STOCK (
+		  m_reservation_stock_id, ad_client_id, ad_org_id, isactive,
+   	          created, createdby, updated, updatedby,
+		  m_reservation_id, c_orderline_id, quantity, isallocated,
+		  m_locator_id, m_attributesetinstance_id )
+		SELECT get_uuid(), ad_client_id, ad_org_id, 'Y',
+		  now(), v_user, now(), v_user,
+		  v_uuid, c_orderline_id, v_qtyordered, isallocated,
+		  m_locator_id, m_attributesetinstance_id
+		FROM M_RESERVATION_STOCK
+		WHERE M_RESERVATION_STOCK.M_Reservation_ID=Cur_Reservation.M_Reservation_ID
+		AND IsActive='Y';
 
 	        -- Process the reservation
 	        M_RESERVATION_POST(null, v_uuid, 'PR', v_user);

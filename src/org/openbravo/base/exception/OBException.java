@@ -51,10 +51,10 @@ public class OBException extends RuntimeException {
   }
 
   public OBException(String message, Throwable cause, boolean logException) {
-    super(message, cause);
+    super(message, DbUtility.getUnderlyingSQLException(cause));
     logExceptionNeeded = logException;
     if (logException) {
-      getLogger().error(message, cause);
+      getLogger().error(message, DbUtility.getUnderlyingSQLException(cause));
     }
   }
 

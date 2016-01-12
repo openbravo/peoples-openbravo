@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014 Openbravo SLU
+ * All portions are Copyright (C) 2014-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -25,6 +25,7 @@ import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.advpaymentmngt.utility.APRM_MatchingUtility;
+import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
@@ -40,17 +41,25 @@ public class GLItemTransactionActionHandler extends BaseActionHandler {
     try {
       OBContext.setAdminMode(true);
       final JSONObject jsonData = new JSONObject(data);
-      final String strGLItemId = jsonData.getString("strGLItemId");
-
-      String description = "";
-      if (StringUtils.isNotBlank(strGLItemId)) {
-        final GLItem glItem = OBDal.getInstance().get(GLItem.class, strGLItemId);
-        if (glItem != null) {
-          description = OBMessageUtils.messageBD("APRM_GLItem") + ": " + glItem.getName();
+      String description = jsonData.getString("strDescription");
+      final String glitemPrefix = OBMessageUtils.messageBD("APRM_GLItem");
+      if (jsonData.isNull("strGLItemId")) {
+        description = FIN_Utility.getFinAccTransactionDescription(description, "\n" + glitemPrefix,
+            "");
+        description = FIN_Utility.getFinAccTransactionDescription(description, glitemPrefix, "");
+        result.put("description", description);
+      } else {
+        final String strGLItemId = jsonData.getString("strGLItemId");
+        if (StringUtils.isNotBlank(strGLItemId)) {
+          final GLItem glItem = OBDal.getInstance().get(GLItem.class, strGLItemId);
+          if (glItem != null) {
+            String glItemDescription = glitemPrefix + ": " + glItem.getName();
+            description = FIN_Utility.getFinAccTransactionDescription(description, glitemPrefix,
+                glItemDescription);
+          }
         }
+        result.put("description", description);
       }
-
-      result.put("description", description);
     } catch (Exception e) {
       try {
         final JSONArray actions = APRM_MatchingUtility.createMessageInProcessView(e.getMessage(),

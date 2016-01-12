@@ -257,6 +257,17 @@ public class ImportEntryManager {
    * Note will commit the session/connection using {@link OBDal#commitAndClose()}
    */
   public void createImportEntry(String id, String typeOfData, String json) {
+    createImportEntry(id, typeOfData, json, true);
+  }
+
+  /**
+   * Creates and saves the import entry, calls the
+   * {@link ImportEntryPreProcessor#beforeCreate(ImportEntry)} on the
+   * {@link ImportEntryPreProcessor} instances.
+   * 
+   * Note will commit the session/connection using {@link OBDal#commitAndClose()}
+   */
+  public void createImportEntry(String id, String typeOfData, String json, boolean commitAndClose) {
     OBContext.setAdminMode(true);
     try {
       // check if it is not there already or already archived
@@ -297,10 +308,11 @@ public class ImportEntryManager {
         processor.beforeCreate(importEntry);
       }
       OBDal.getInstance().save(importEntry);
-      OBDal.getInstance().commitAndClose();
+      if (commitAndClose) {
+        OBDal.getInstance().commitAndClose();
 
-      notifyNewImportEntryCreated();
-
+        notifyNewImportEntryCreated();
+      }
     } finally {
       OBContext.restorePreviousMode();
     }
