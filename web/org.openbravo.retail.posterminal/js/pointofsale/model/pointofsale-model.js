@@ -809,7 +809,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                           OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_cancelLayawayAndNewHeader'), OB.I18N.getLabel('OBPOS_cancelLayawayAndNewBody'), [{
                             label: OB.I18N.getLabel('OBPOS_LblOk'),
                             action: function () {
-                              OB.UTIL.showError(OB.I18N.getLabel('Muestro Error'));
                               _.each(cloneOrder.get('lines').models, function (line) {
                                 OB.MobileApp.model.receipt.addProduct(line.get('product'), line.get('qty'));
                               });
