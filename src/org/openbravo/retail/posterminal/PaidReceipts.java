@@ -61,6 +61,7 @@ public class PaidReceipts extends JSONProcessSimple {
       JSONArray respArray = new JSONArray();
 
       String orderid = jsonsent.getString("orderid");
+      String posTerminalId = jsonsent.getString("pos");
 
       // get the orderId
       HQLPropertyList hqlProperties = ModelExtensionUtils.getPropertyExtensions(extensions);
@@ -78,6 +79,7 @@ public class PaidReceipts extends JSONProcessSimple {
         Object[] objpaidReceipts = (Object[]) obj;
         JSONObject paidReceipt = hqlProperties.getJSONObjectRow(objpaidReceipts);
         paidReceipt.put("orderid", orderid);
+
         // orderDate is a date so we don't need to transform the time information
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
         int orderDatePropertyIndex = hqlProperties.getHqlPropertyIndex("orderDate");
@@ -90,7 +92,11 @@ public class PaidReceipts extends JSONProcessSimple {
         Query PaidReceiptsInvoiceQuery = OBDal.getInstance().getSession()
             .createQuery(hqlPaidReceiptsInvoice);
         PaidReceiptsInvoiceQuery.setString("orderId", orderid);
-        if (!PaidReceiptsInvoiceQuery.list().isEmpty())
+        OBPOSApplications posTerminal = OBDal.getInstance().get(OBPOSApplications.class,
+            posTerminalId);
+        if (!PaidReceiptsInvoiceQuery.list().isEmpty()
+            || (paidReceipt.getBoolean("isLayaway") && posTerminal.getObposTerminaltype()
+                .isGenerateInvoice()))
           paidReceipt.put("generateInvoice", true);
 
         JSONArray listpaidReceiptsLines = new JSONArray();
