@@ -172,7 +172,8 @@ public class CancelAndReplaceUtils {
         OrderLine oldOrderLine = (OrderLine) orderLines.get(0);
 
         // Create inverse Order line
-        OrderLine inverseOrderLine = createOrderLine(oldOrderLine, inverseOrder, triggersDisabled);
+        OrderLine inverseOrderLine = createOrderLine(oldOrderLine, inverseOrder, replaceOrder,
+            triggersDisabled);
 
         // Get Shipment lines of old order line
         OBCriteria<ShipmentInOutLine> goodsShipmentLineCriteria = OBDal.getInstance()
@@ -378,8 +379,9 @@ public class CancelAndReplaceUtils {
   }
 
   protected static OrderLine createOrderLine(OrderLine oldOrderLine, Order inverseOrder,
-      boolean triggersDisabled) {
-    if (oldOrderLine.getDeliveredQuantity().compareTo(oldOrderLine.getOrderedQuantity()) == 0) {
+      boolean replaceOrder, boolean triggersDisabled) {
+    if (!replaceOrder
+        && oldOrderLine.getDeliveredQuantity().compareTo(oldOrderLine.getOrderedQuantity()) == 0) {
       return null;
     }
     OrderLine inverseOrderLine = (OrderLine) DalUtil.copy(oldOrderLine, false, true);
