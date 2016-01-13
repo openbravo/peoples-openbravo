@@ -84,6 +84,8 @@ import org.openbravo.test.system.SystemServiceTest;
 import org.openbravo.test.system.SystemValidatorTest;
 import org.openbravo.test.system.TestInfrastructure;
 import org.openbravo.test.taxes.TaxesTest;
+import org.openbravo.test.views.GCSequenceNumberTests;
+import org.openbravo.test.views.SortingFilteringGridConfiguration;
 import org.openbravo.test.views.ViewGenerationWithDifferentConfigLevelTest;
 import org.openbravo.test.xml.ClientExportImportTest;
 import org.openbravo.test.xml.DatasetExportTest;
@@ -213,7 +215,9 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     SqlCallableStatement.class,
 
     // grid configuration
-    ViewGenerationWithDifferentConfigLevelTest.class
+    ViewGenerationWithDifferentConfigLevelTest.class, //
+    GCSequenceNumberTests.class, //
+    SortingFilteringGridConfiguration.class
 
 })
 public class AllAntTaskTests {
