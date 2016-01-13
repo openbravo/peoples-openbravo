@@ -151,8 +151,8 @@ public class CancelAndReplaceUtils {
       }
 
       // Get documentNo for the inverse Order Header coming from jsonorder, if exists
-      JSONObject negativeDocumentNoJSON = jsonorder != null
-          && jsonorder.has("negativeDocNo") ? jsonorder.getJSONObject("negativeDocNo") : null;
+      JSONObject negativeDocumentNoJSON = jsonorder != null && jsonorder.has("negativeDocNo") ? jsonorder
+          .getJSONObject("negativeDocNo") : null;
       String negativeDocNo = negativeDocumentNoJSON != null
           && negativeDocumentNoJSON.has("documentNo")
           && negativeDocumentNoJSON.get("documentNo") != JSONObject.NULL ? negativeDocumentNoJSON
@@ -386,7 +386,7 @@ public class CancelAndReplaceUtils {
     }
     OrderLine inverseOrderLine = (OrderLine) DalUtil.copy(oldOrderLine, false, true);
     inverseOrderLine.setSalesOrder(inverseOrder);
-    if (oldOrderLine.getDeliveredQuantity().compareTo(BigDecimal.ZERO) == 1) {
+    if (!replaceOrder && oldOrderLine.getDeliveredQuantity().compareTo(BigDecimal.ZERO) == 1) {
       BigDecimal inverseOrderedQuantity = oldOrderLine.getOrderedQuantity()
           .subtract(oldOrderLine.getDeliveredQuantity()).negate();
       inverseOrderLine.setOrderedQuantity(inverseOrderedQuantity);
