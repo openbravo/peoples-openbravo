@@ -71,7 +71,6 @@ public class ProductCharacteristicValueEventHandler extends EntityPersistenceEve
       return;
     }
     final ProductCharacteristicValue pchv = (ProductCharacteristicValue) event.getTargetInstance();
-    prodchvalueUpdated.get().add(pchv.getProduct().getId());
     addProductToList(pchv);
   }
 
