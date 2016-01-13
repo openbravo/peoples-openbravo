@@ -23,6 +23,11 @@ enyo.kind({
         customer: params.businessPartner,
         customerAddr: params.bPLocation
       });
+      if (params.bPLocation) {
+        this.$.subWindowHeader.$['OB.OBPOSPointOfSale.UI.customeraddr.newcustomerheader'].$.headermessage.setContent(OB.I18N.getLabel('OBPOS_TitleEditCustomerAddress'));
+      } else {
+        this.$.subWindowHeader.$['OB.OBPOSPointOfSale.UI.customeraddr.newcustomerheader'].$.headermessage.setContent(OB.I18N.getLabel('OBPOS_TitleNewCustomerAddress'));
+      }
       //show
       return true;
     } else {
