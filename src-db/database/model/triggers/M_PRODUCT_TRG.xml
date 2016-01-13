@@ -62,8 +62,8 @@ BEGIN
   UPDATE M_PRODUCT_ACCT SET AD_ORG_ID = :new.AD_ORG_ID
   WHERE M_PRODUCT_ID = :new.M_PRODUCT_ID;
 
- -- Do not allow to set the product as stocked if it appears in
- -- processed documents which generate inventory transactions
+ -- Do not allow to change the product stocked flag if it appears in
+ -- any core's document (processed or not)
   IF (:old.isStocked <> :new.isStocked) THEN
     SELECT count(*) 
     INTO v_Count
