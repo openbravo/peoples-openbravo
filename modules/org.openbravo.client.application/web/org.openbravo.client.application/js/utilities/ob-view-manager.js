@@ -118,7 +118,7 @@
       var layout = OB.Utilities.createLoadingLayout();
       // is used to prevent history updating
       layout.isLoadingTab = true;
-      viewTabId = viewTabId || params.currentViewTabId || '_' + new Date().getTime();
+      viewTabId = viewTabId || params.currentViewTabId || OB.Utilities.getTemporaryId();
       params.loadingTabId = viewTabId;
       this.createTab(viewId, viewTabId, layout, params);
       return params;

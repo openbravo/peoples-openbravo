@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2015 Openbravo SLU
+ * All portions are Copyright (C) 2012-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -339,6 +339,7 @@ isc.OBParameterWindowView.addProperties({
         this.closeClick = function () {
           return true;
         }; // To avoid loop when "Super call"
+        this.enableParentViewShortcuts(); // restore active view shortcuts before closing
         if (this.isExpandedRecord) {
           this.callerField.grid.collapseRecord(this.callerField.record);
         } else {
@@ -359,6 +360,8 @@ isc.OBParameterWindowView.addProperties({
     if (this.callerField && this.callerField.view && this.callerField.view.getContextInfo) {
       isc.addProperties(context || {}, this.callerField.view.getContextInfo(true /*excludeGrids*/ ));
     }
+
+    this.disableParentViewShortcuts();
 
     OB.RemoteCallManager.call('org.openbravo.client.application.process.DefaultsProcessActionHandler', context, {
       processId: this.processId,
@@ -473,6 +476,7 @@ isc.OBParameterWindowView.addProperties({
       this.closeClick = function () {
         return true;
       }; // To avoid loop when "Super call"
+      this.enableParentViewShortcuts(); // restore active view shortcuts before closing
       if (this.isExpandedRecord) {
         this.callerField.grid.collapseRecord(this.callerField.record);
       } else {
@@ -766,5 +770,28 @@ isc.OBParameterWindowView.addProperties({
       }
     }
     return true;
+  },
+
+  getParentActiveView: function () {
+    if (this.buttonOwnerView && this.buttonOwnerView.standardWindow) {
+      return this.buttonOwnerView.standardWindow.activeView;
+    }
+    return null;
+  },
+
+  disableParentViewShortcuts: function () {
+    var activeView = this.getParentActiveView();
+    if (activeView && activeView.viewGrid && activeView.toolBar) {
+      activeView.viewGrid.disableShortcuts();
+      activeView.toolBar.disableShortcuts();
+    }
+  },
+
+  enableParentViewShortcuts: function () {
+    var activeView = this.getParentActiveView();
+    if (activeView && activeView.viewGrid && activeView.toolBar) {
+      activeView.viewGrid.enableShortcuts();
+      activeView.toolBar.enableShortcuts();
+    }
   }
 });

@@ -1310,8 +1310,11 @@ public class FIN_Utility {
   }
 
   /**
-   * Returns Payment Details from a Payment ordered by Invoice and Order
+   * Returns Payment Details from a Payment ordered by Invoice and Order. This method is deprecated
+   * as it does not perform well. Use {@link #getOrderedPaymentDetailList(String paymentId)} instead
+   * 
    */
+  @Deprecated
   public static List<FIN_PaymentDetail> getOrderedPaymentDetailList(FIN_Payment payment) {
 
     List<FIN_PaymentDetail> pdList = null;
@@ -1333,6 +1336,40 @@ public class FIN_Utility {
           whereClause.toString());
       query.setFilterOnReadableClients(false);
       query.setFilterOnReadableOrganization(false);
+      pdList = query.list();
+
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+
+    return pdList;
+  }
+
+  /**
+   * Returns Payment Details from a Payment ordered by Invoice and Order
+   */
+  @SuppressWarnings("unchecked")
+  public static List<String> getOrderedPaymentDetailList(String paymentId) {
+
+    List<String> pdList = null;
+
+    OBContext.setAdminMode(true);
+    try {
+      final StringBuilder whereClause = new StringBuilder();
+      whereClause.append(" select pd." + FIN_PaymentDetail.PROPERTY_ID);
+      whereClause.append(" from " + FIN_PaymentDetail.ENTITY_NAME + " as pd");
+      whereClause.append(" left join pd." + FIN_PaymentDetail.PROPERTY_FINPAYMENTSCHEDULEDETAILLIST
+          + " as psd");
+      whereClause
+          .append(" where pd." + FIN_PaymentDetail.PROPERTY_FINPAYMENT + ".id = :paymentId ");
+      whereClause.append(" and pd." + FIN_PaymentDetail.PROPERTY_ACTIVE + " = true");
+      whereClause.append(" order by psd."
+          + FIN_PaymentScheduleDetail.PROPERTY_INVOICEPAYMENTSCHEDULE);
+      whereClause.append(", coalesce(psd."
+          + FIN_PaymentScheduleDetail.PROPERTY_ORDERPAYMENTSCHEDULE + ",'0')");
+
+      Query query = OBDal.getInstance().getSession().createQuery(whereClause.toString());
+      query.setParameter("paymentId", paymentId);
       pdList = query.list();
 
     } finally {
