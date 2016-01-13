@@ -24,9 +24,11 @@ enyo.kind({
       if (params.businessPartner) {
         this.$.subWindowBody.$.edit_createcustomers_impl.$.invoicingAddrFields.hide();
         this.$.subWindowBody.$.edit_createcustomers_impl.$.shippingAddrFields.hide();
+        this.$.subWindowHeader.$['OB.OBPOSPointOfSale.UI.customers.newcustomerheader'].$.headermessage.setContent(OB.I18N.getLabel('OBPOS_TitleEditCustomer'));
       } else {
         this.$.subWindowBody.$.edit_createcustomers_impl.$.invoicingAddrFields.show();
         this.$.subWindowBody.$.edit_createcustomers_impl.$.shippingAddrFields.show();
+        this.$.subWindowHeader.$['OB.OBPOSPointOfSale.UI.customers.newcustomerheader'].$.headermessage.setContent(OB.I18N.getLabel('OBPOS_TitleNewCustomer'));
       }
       //show
       return true;
@@ -45,7 +47,6 @@ enyo.kind({
     handlers: {
       onSetCustomer: 'setCustomer'
     },
-    i18nHeaderMessage: 'OBPOS_TitleEditNewCustomer',
     setCustomer: function (inSender, inEvent) {
       this.customer = inEvent.customer;
     },
