@@ -58,7 +58,7 @@ Copyright © 2003-2004 Softcomplex Inc.
 
 # jdt-compiler-4.4.2.jar
 Eclipse Public License 1.0 (license available at
-http://www.eclipse.org/legal/cpl-v10.html) or in the file EPL-1.0.txt in this folder
+http://www.eclipse.org/legal/epl-v10.html) or in the file EPL-1.0.txt in this folder
 
 # Eclipse icons 
 # wsdl4j-1.5.1.jar
