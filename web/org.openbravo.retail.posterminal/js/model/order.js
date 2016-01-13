@@ -3080,7 +3080,7 @@
           if (!OB.UTIL.isNullOrUndefined(product.get('deferredSellMaxDays'))) {
             var oneDay = 24 * 60 * 60 * 1000,
                 today = new Date(),
-                orderDate = this.get('orderDate');
+                orderDate = new Date(this.get('orderDate'));
             today.setHours(0, 0, 0, 0);
             orderDate.setHours(0, 0, 0, 0);
             var diffDays = Math.round(OB.DEC.abs(today.getTime() - orderDate.getTime()) / oneDay);
