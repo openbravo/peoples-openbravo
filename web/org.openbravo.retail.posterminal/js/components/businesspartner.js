@@ -320,10 +320,10 @@ enyo.kind({
   name: 'OB.UI.BPDetailsContextMenuItem',
   i18NLabel: 'OBPOS_BPViewDetails',
   selectItem: function (bpartner) {
+    bpartner.set('ignoreSetBP', true, {
+      silent: true
+    });
     OB.Dal.get(OB.Model.BusinessPartner, bpartner.get('bpartnerId'), function (bp) {
-      bp.set('ignoreSetBP', true, {
-        silent: true
-      });
       OB.MobileApp.view.$.containerWindow.getRoot().model.attributes.subWindowManager.set('currentWindow', {
         name: 'customerView',
         params: {
@@ -345,10 +345,10 @@ enyo.kind({
   name: 'OB.UI.BPEditContextMenuItem',
   i18NLabel: 'OBPOS_BPEdit',
   selectItem: function (bpartner) {
+    bpartner.set('ignoreSetBP', true, {
+      silent: true
+    });
     OB.Dal.get(OB.Model.BusinessPartner, bpartner.get('bpartnerId'), function (bp) {
-      bp.set('ignoreSetBP', true, {
-        silent: true
-      });
       OB.MobileApp.view.$.containerWindow.getRoot().model.attributes.subWindowManager.set('currentWindow', {
         name: 'customerCreateAndEdit',
         params: {
