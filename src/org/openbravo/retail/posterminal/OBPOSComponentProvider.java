@@ -90,6 +90,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         // "model/terminal",
         // "model/user",
         "utils/ob-utilitiesuipos",
+        "model/bpartnerfilter",
         "model/bpcategory",
         "model/bplocation", // Model for Customer
                             // Address

@@ -213,7 +213,43 @@ enyo.kind({
     components: [{
       style: 'display: table;',
       components: [{
-        style: 'display: table-cell; width: 100%;',
+        style: 'display: table-cell; width: 30%;',
+        components: [{
+          kind: 'OB.UI.List',
+          name: 'customerFilterColumn',
+          classes: 'combo',
+          style: 'width: 95%',
+          handlers: {
+            onchange: 'changeColumn'
+          },
+          renderLine: enyo.kind({
+            kind: 'enyo.Option',
+            initComponents: function () {
+              this.inherited(arguments);
+              this.setValue(this.model.get('id'));
+              this.setContent(this.model.get('name'));
+            }
+          }),
+          renderEmpty: 'enyo.Control',
+          changeColumn: function () {
+            this.owner.doClearAction();
+          },
+          initComponents: function () {
+            var columns = [];
+            _.each(OB.Model.BPartnerFilter.getProperties(), function (prop) {
+              if (prop.filter) {
+                columns.push({
+                  id: prop.column,
+                  name: OB.I18N.getLabel(prop.caption)
+                });
+              }
+            });
+            this.setCollection(new Backbone.Collection());
+            this.getCollection().reset(columns);
+          }
+        }]
+      }, {
+        style: 'display: table-cell; width: 70%;',
         components: [{
           kind: 'OB.UI.SearchInputAutoFilter',
           name: 'customerFilterText',
@@ -226,7 +262,7 @@ enyo.kind({
           kind: 'OB.UI.SmallButton',
           name: 'OB.UI.Bp.Modal.search',
           classes: 'btnlink-gray btn-icon-small btn-icon-clear',
-          style: 'width: 100px; margin: 0px 5px 8px 19px;',
+          style: 'width: 40px; margin: 0px 5px 8px 19px;',
           ontap: 'clearAction'
         }]
       }, {
@@ -234,7 +270,7 @@ enyo.kind({
         components: [{
           kind: 'OB.UI.SmallButton',
           classes: 'btnlink-yellow btn-icon-small btn-icon-search',
-          style: 'width: 100px; margin: 0px 0px 8px 5px;',
+          style: 'width: 40px; margin: 0px 0px 8px 5px;',
           ontap: 'searchAction'
         }]
       }]
@@ -270,7 +306,10 @@ enyo.kind({
   },
   searchAction: function () {
     this.doSearchAction({
-      bpName: this.$.customerFilterText.getValue()
+      filters: [{
+        column: this.$.customerFilterColumn.getValue(),
+        text: this.$.customerFilterText.getValue()
+      }]
     });
     return true;
   }
@@ -280,16 +319,18 @@ enyo.kind({
   kind: 'OB.UI.ListContextMenuItem',
   name: 'OB.UI.BPDetailsContextMenuItem',
   i18NLabel: 'OBPOS_BPViewDetails',
-  selectItem: function (bp) {
-    bp.set('ignoreSetBP', true, {
-      silent: true
-    });
-    OB.MobileApp.view.$.containerWindow.getRoot().model.attributes.subWindowManager.set('currentWindow', {
-      name: 'customerView',
-      params: {
-        businessPartner: bp,
-        navigateOnClose: 'mainSubWindow'
-      }
+  selectItem: function (bpartner) {
+    OB.Dal.get(OB.Model.BusinessPartner, bpartner.get('bpartnerId'), function (bp) {
+      bp.set('ignoreSetBP', true, {
+        silent: true
+      });
+      OB.MobileApp.view.$.containerWindow.getRoot().model.attributes.subWindowManager.set('currentWindow', {
+        name: 'customerView',
+        params: {
+          businessPartner: bp,
+          navigateOnClose: 'mainSubWindow'
+        }
+      });
     });
     return true;
   },
@@ -303,16 +344,18 @@ enyo.kind({
   kind: 'OB.UI.ListContextMenuItem',
   name: 'OB.UI.BPEditContextMenuItem',
   i18NLabel: 'OBPOS_BPEdit',
-  selectItem: function (bp) {
-    bp.set('ignoreSetBP', true, {
-      silent: true
-    });
-    OB.MobileApp.view.$.containerWindow.getRoot().model.attributes.subWindowManager.set('currentWindow', {
-      name: 'customerCreateAndEdit',
-      params: {
-        businessPartner: bp,
-        navigateOnClose: 'mainSubWindow'
-      }
+  selectItem: function (bpartner) {
+    OB.Dal.get(OB.Model.BusinessPartner, bpartner.get('bpartnerId'), function (bp) {
+      bp.set('ignoreSetBP', true, {
+        silent: true
+      });
+      OB.MobileApp.view.$.containerWindow.getRoot().model.attributes.subWindowManager.set('currentWindow', {
+        name: 'customerCreateAndEdit',
+        params: {
+          businessPartner: bp,
+          navigateOnClose: 'mainSubWindow'
+        }
+      });
     });
     return true;
   },
@@ -360,9 +403,6 @@ enyo.kind({
         style: 'display: inline-block; font-weight: bold; color: red; padding-left:5px;',
         name: 'onHold'
       }, {
-        style: 'clear: left; color: #888888',
-        name: 'address'
-      }, {
         style: 'clear: both;'
       }]
     }, {
@@ -384,7 +424,6 @@ enyo.kind({
     if (this.model.get('customerBlocking') && this.model.get('salesOrderBlocking')) {
       this.$.onHold.setContent('(' + OB.I18N.getLabel('OBPOS_OnHold') + ')');
     }
-    this.$.address.setContent(this.model.get('shipLocName'));
     var bPartner = this.owner.owner.owner.bPartner;
     if (bPartner && bPartner.get('id') === this.model.get('id')) {
       this.applyStyle('background-color', '#fbf6d1');
@@ -439,8 +478,7 @@ enyo.kind({
     return true;
   },
   searchAction: function (inSender, inEvent) {
-    var me = this,
-        filter = OB.UTIL.unAccent(inEvent.bpName);
+    var me = this;
 
     if (OB.MobileApp.model.hasPermission('OBPOS_retail.editCustomers')) {
       this.$.stBPAssignToReceipt.$.theader.$.modalBpScrollableHeader.$.newAction.setDisabled(false);
@@ -451,6 +489,15 @@ enyo.kind({
     this.$.stBPAssignToReceipt.$.tlimit.hide();
     this.$.renderLoading.show();
 
+    function hasLocationInFilter() {
+      return _.some(inEvent.filters, function (flt) {
+        var column = _.find(OB.Model.BPartnerFilter.getProperties(), function (col) {
+          return col.column === flt.column;
+        });
+        return column && column.location;
+      });
+    }
+
     function errorCallback(tx, error) {
       OB.UTIL.showError("OBDAL error: " + error);
     }
@@ -458,6 +505,24 @@ enyo.kind({
     function successCallbackBPs(dataBps) {
       me.$.renderLoading.hide();
       if (dataBps && dataBps.length > 0) {
+        _.each(dataBps.models, function (bp) {
+          var _identifier = bp.get('bpName'),
+              location = hasLocationInFilter();
+          if (location) {
+            _identifier += ' / ' + bp.get('locName');
+          }
+          _.each(inEvent.filters, function (flt, index) {
+            if (flt.column !== 'bp.name' && flt.column !== 'loc.name') {
+              var column = _.find(OB.Model.BPartnerFilter.getProperties(), function (col) {
+                return col.column === flt.column;
+              });
+              if (column) {
+                _identifier += ' / ' + (bp.get(column.name) ? bp.get(column.name) : '');
+              }
+            }
+          });
+          bp.set('_identifier', _identifier);
+        });
         me.bpsList.reset(dataBps.models);
         me.$.stBPAssignToReceipt.$.tbody.show();
       } else {
@@ -466,26 +531,67 @@ enyo.kind({
       }
     }
 
-    var criteria = {};
-    if (filter && filter !== '') {
-      criteria._filter = {
-        operator: OB.Dal.CONTAINS,
-        value: filter
-      };
-    }
     if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
-      var filterIdentifier = {
-        columns: ['_filter'],
-        operator: 'startsWith',
-        value: filter
-      };
-      var remoteCriteria = [filterIdentifier];
-      criteria.remoteFilters = remoteCriteria;
+      var criteria = {};
+      criteria.remoteFilters = [];
+      _.each(inEvent.filters, function (flt) {
+        var column = _.find(OB.Model.BPartnerFilter.getProperties(), function (col) {
+          return col.column === flt.column;
+        });
+        if (column) {
+          criteria.remoteFilters.push({
+            columns: [column.name],
+            operator: OB.Dal.CONTAINS,
+            value: OB.UTIL.unAccent(flt.text),
+            location: column.location
+          });
+        }
+      });
+      if (OB.MobileApp.model.hasPermission('OBPOS_customerLimit', true)) {
+        criteria._limit = OB.DEC.abs(OB.MobileApp.model.hasPermission('OBPOS_customerLimit', true));
+      }
+      OB.Dal.find(OB.Model.BPartnerFilter, criteria, successCallbackBPs, errorCallback, this);
+    } else {
+      var index = 0,
+          params = [],
+          location = hasLocationInFilter(),
+          select = 'select ',
+          orderby = ' order by bp.name';
+
+      _.each(OB.Model.BPartnerFilter.getProperties(), function (prop) {
+        if (prop.column !== '_filter' && prop.column !== '_idx' && prop.column !== '_identifier') {
+          if (index !== 0) {
+            select += ', ';
+          }
+          if (prop.column === 'id') {
+            select += (location ? 'loc.c_bpartner_location_id' : 'bp.c_bpartner_id') + ' as ' + prop.name;
+          } else {
+            if (!location && prop.location) {
+              select += "'' as " + prop.name;
+            } else {
+              select += prop.column + ' as ' + prop.name;
+            }
+          }
+          index++;
+        }
+      });
+      select += ' from c_bpartner bp ' + (location ? 'left join c_bpartner_location loc on bp.c_bpartner_id = loc.c_bpartner_id ' : '');
+
+      if (inEvent.filters.length > 0) {
+        select += 'where ';
+        _.each(inEvent.filters, function (flt, index) {
+          if (index !== 0) {
+            select += ' and ';
+          }
+          select += flt.column + ' like ? ';
+          params.push('%' + OB.UTIL.unAccent(flt.text) + '%');
+          if (flt.orderby) {
+            orderby = ' order by ' + flt.column;
+          }
+        });
+      }
+      OB.Dal.query(OB.Model.BPartnerFilter, select + orderby, params, successCallbackBPs, errorCallback, null, null, OB.Model.BPartnerFilter.prototype.dataLimit);
     }
-    if (OB.MobileApp.model.hasPermission('OBPOS_customerLimit', true)) {
-      criteria._limit = OB.DEC.abs(OB.MobileApp.model.hasPermission('OBPOS_customerLimit', true));
-    }
-    OB.Dal.find(OB.Model.BusinessPartner, criteria, successCallbackBPs, errorCallback);
     return true;
   },
   bpsList: null,
@@ -496,9 +602,12 @@ enyo.kind({
       if (model.get('customerBlocking') && model.get('salesOrderBlocking')) {
         OB.UTIL.showError(OB.I18N.getLabel('OBPOS_BPartnerOnHold', [model.get('_identifier')]));
       } else if (!model.get('ignoreSetBP')) {
-        this.doChangeBusinessPartner({
-          businessPartner: model,
-          target: this.owner.owner.args.target
+        var me = this;
+        OB.Dal.get(OB.Model.BusinessPartner, model.get('bpartnerId'), function (bp) {
+          me.doChangeBusinessPartner({
+            businessPartner: bp,
+            target: me.owner.owner.args.target
+          });
         });
       }
     }, this);
