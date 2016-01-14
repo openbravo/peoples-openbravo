@@ -173,7 +173,7 @@ public class SetNewBPCurrency extends BaseProcessActionHandler {
             OBDal.getInstance().save(payment1);
             OBDal.getInstance().save(paymentDetail1);
             OBDal.getInstance().save(paymentScheduleDetail1);
-            FIN_PaymentProcess.doProcessPayment(payment1, "D", false, null, null);
+            FIN_PaymentProcess.doProcessPayment(payment1, "D", null, null);
 
             // Modify description of original credit payment
             String paymentCreditDesc = paymentCredit.getDescription()
