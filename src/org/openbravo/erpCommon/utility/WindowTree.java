@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2013 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -456,7 +456,8 @@ public class WindowTree extends HttpSecureAppServlet {
     }
 
     // Calculating the TreeID
-    {
+    try {
+      OBContext.setAdminMode();
 
       Tab tab = OBDal.getInstance().get(Tab.class, strTabId);
       Table table = tab.getTable();
@@ -481,7 +482,10 @@ public class WindowTree extends HttpSecureAppServlet {
         }
       }
 
+    } finally {
+      OBContext.restorePreviousMode();
     }
+
     // Calculating the parent
     if (!strTop.equals("0")) {
       WindowTreeData[] data = WindowTreeUtility.getTree(this, vars, TreeType, TreeID, editable, "",
