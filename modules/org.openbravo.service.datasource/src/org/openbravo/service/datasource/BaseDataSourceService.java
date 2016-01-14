@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,6 +26,7 @@ import org.apache.log4j.Logger;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.client.kernel.Template;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 
 /**
@@ -36,6 +37,10 @@ import org.openbravo.dal.service.OBDal;
  */
 public abstract class BaseDataSourceService implements DataSourceService {
   private static final Logger log = Logger.getLogger(BaseDataSourceService.class);
+
+  protected static final String WRITABLE_ENTITY = "writable";
+  protected static final String DERIVED_READABLE_ENTITY = "derivedReadable";
+  protected static final String SELECTOR_DERIVED_ENTITY = "selectorDerived";
 
   private String name;
   private Template template;
@@ -113,6 +118,37 @@ public abstract class BaseDataSourceService implements DataSourceService {
       setEntity(ModelProvider.getInstance().getEntity(dataSource.getTable().getName()));
     }
     setWhereClause(dataSource.getHQLWhereClause());
+  }
+
+  public void checkEntityAccess(Entity entityToCheck, String typeOfChecking) {
+    if (typeOfChecking == WRITABLE_ENTITY) {
+      isWritableEntitySecurity(entityToCheck);
+    } else if (typeOfChecking == DERIVED_READABLE_ENTITY) {
+      isDerivedReadableEntitySecurity(entityToCheck);
+    } else if (typeOfChecking == SELECTOR_DERIVED_ENTITY) {
+      isSelectorDerivedEntitySecurity(entityToCheck);
+    }
+  }
+
+  private void isWritableEntitySecurity(Entity isWritableEntity) {
+    final OBContext obContext = OBContext.getOBContext();
+    if (isWritableEntity != null) {
+      obContext.getEntityAccessChecker().checkWritableEntity(isWritableEntity);
+    }
+  }
+
+  private void isDerivedReadableEntitySecurity(Entity isDerivedOrReadedEntity) {
+    final OBContext obContext = OBContext.getOBContext();
+    if (isDerivedOrReadedEntity != null) {
+      obContext.getEntityAccessChecker().checkDerivedReadableEntity(isDerivedOrReadedEntity);
+    }
+  }
+
+  protected void isSelectorDerivedEntitySecurity(Entity isSelectorDerived) {
+    final OBContext obContext = OBContext.getOBContext();
+    if (isSelectorDerived != null) {
+      obContext.getEntityAccessChecker().checkSelectorDerivedEntity(isSelectorDerived);
+    }
   }
 
   public Entity getEntity() {

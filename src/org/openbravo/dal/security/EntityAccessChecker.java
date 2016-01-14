@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -345,6 +345,68 @@ public class EntityAccessChecker implements OBNotSingleton {
     }
   }
 
+  public void checkEntityAccess(Entity entity) {
+    // prevent infinite looping
+    if (!isInitialized) {
+      return;
+    }
+
+    if (nonReadableEntities.contains(entity)) {
+      throw new OBSecurityException("Entity " + entity + " is not readable by the user.");
+    }
+
+    if (derivedReadableEntities.contains(entity)) {
+      return;
+    }
+
+    if (!readableEntities.contains(entity)) {
+      return;
+    }
+
+    if (!writableEntities.contains(entity)) {
+      throw new OBSecurityException("Entity " + entity + " is not writable by the user.");
+    }
+  }
+
+  /**
+   * Checks if an entity is writable for this user. If not then a OBSecurityException is thrown.
+   *
+   * @param entity
+   *          the entity to check
+   * @throws OBSecurityException
+   */
+  public void checkDerivedReadableEntity(Entity entity) {
+    if (!isDerivedReadableEntity(entity)) {
+      throw new OBSecurityException("Entity " + entity + " is not derived or redeable by this user");
+    }
+  }
+
+  /**
+   * Checks if an entity is derived for this user. If not then a OBSecurityException is thrown.
+   *
+   * @param entity
+   *          the entity to check
+   * @throws OBSecurityException
+   */
+  public void checkSelectorDerivedEntity(Entity entity) {
+    if (!isDerivedReadableSelectorEntity(entity)) {
+      throw new OBSecurityException("Entity " + entity + " is not derived by this user");
+    }
+  }
+
+  /**
+   * Checks if an entity is writable for this user. If not then a OBSecurityException is thrown.
+   *
+   * @param entity
+   *          the entity to check
+   * @throws OBSecurityException
+   */
+  public void checkWritableEntity(Entity entity) {
+    if (!isWritableEntity(entity)) {
+      throw new OBSecurityException("Entity " + entity + " is not writable by this user");
+    }
+  }
+
   public String getRoleId() {
     return roleId;
   }
@@ -367,6 +429,65 @@ public class EntityAccessChecker implements OBNotSingleton {
 
   public Set<Entity> getWritableEntities() {
     return writableEntities;
+  }
+
+  /**
+   *
+   * @param entity
+   * @return true if the entity is derived readable for this user, otherwise false is returned.
+   */
+  private boolean isDerivedReadableEntity(Entity entity) {
+    // prevent infinite looping
+    if (!isInitialized) {
+      return true;
+    }
+
+    if (writableEntities.contains(entity)) {
+      return true;
+    }
+
+    if (nonReadableEntities.contains(entity)) {
+      return false;
+    }
+
+    if (!readableEntities.contains(entity)) {
+      return false;
+    }
+
+    if (derivedReadableEntities.contains(entity)) {
+      return false;
+    }
+    return true;
+  }
+
+  /**
+   *
+   * @param entity
+   * @return true if the entity is derived readable for this user, otherwise false is returned.
+   */
+  private boolean isDerivedReadableSelectorEntity(Entity entity) {
+    // prevent infinite looping
+    if (!isInitialized) {
+      return false;
+    }
+    return derivedReadableEntities.contains(entity);
+  }
+
+  /**
+   *
+   * @param entity
+   * @return true if the entity is writable for this user, otherwise false is returned.
+   */
+  private boolean isWritableEntity(Entity entity) {
+    // prevent infinite looping
+    if (!isInitialized) {
+      return true;
+    }
+
+    if (!writableEntities.contains(entity)) {
+      return false;
+    }
+    return true;
   }
 
 }

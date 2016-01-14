@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -114,6 +114,8 @@ public interface DataSourceService {
   public Entity getEntity();
 
   public void setEntity(Entity entity);
+
+  public void checkEntityAccess(Entity entity, String typeCheck);
 
   public String getWhereClause();
 

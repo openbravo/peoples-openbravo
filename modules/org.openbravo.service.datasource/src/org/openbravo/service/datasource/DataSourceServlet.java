@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2015 Openbravo SLU
+ * All portions are Copyright (C) 2009-2016 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -207,13 +207,17 @@ public class DataSourceServlet extends BaseKernelServlet {
       }
 
       String filterClass = parameters.get(DataSourceConstants.DS_FILTERCLASS_PARAM);
+      String typeOfChecking = null;
       if (filterClass != null) {
         try {
           DataSourceFilter filter = (DataSourceFilter) Class.forName(filterClass).newInstance();
+          typeOfChecking = BaseDataSourceService.SELECTOR_DERIVED_ENTITY;
           filter.doFilter(parameters, request);
         } catch (Exception e) {
           log.error("Error trying to apply datasource filter with class: " + filterClass, e);
         }
+      } else {
+        typeOfChecking = BaseDataSourceService.DERIVED_READABLE_ENTITY;
       }
       // now do the action
       boolean isExport = "true".equals(parameters.get("exportToFile"));
@@ -265,6 +269,8 @@ public class DataSourceServlet extends BaseKernelServlet {
           log.error("Unsupported export format: " + exportAs);
         }
       } else {
+        getDataSource(request)
+            .checkEntityAccess(getDataSource(request).getEntity(), typeOfChecking);
         String result = getDataSource(request).fetch(parameters);
         writeResult(response, result);
       }
@@ -783,7 +789,8 @@ public class DataSourceServlet extends BaseKernelServlet {
       if (id == null) {
         throw new InvalidRequestException("No id parameter");
       }
-
+      getDataSource(request).checkEntityAccess(getDataSource(request).getEntity(),
+          BaseDataSourceService.WRITABLE_ENTITY);
       final String result = getDataSource(request).remove(parameters);
       writeResult(response, result);
     } catch (Exception e) {
@@ -819,6 +826,8 @@ public class DataSourceServlet extends BaseKernelServlet {
 
       // note if clause updates parameter map
       if (checkSetIDDataSourceName(request, response, parameters)) {
+        getDataSource(request).checkEntityAccess(getDataSource(request).getEntity(),
+            BaseDataSourceService.WRITABLE_ENTITY);
         final String result = getDataSource(request).update(parameters, getRequestContent(request));
         writeResult(response, result);
       }
