@@ -2232,7 +2232,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       finPayment.setDescription(description);
 
       long t1 = System.currentTimeMillis();
-      FIN_PaymentProcess.doProcessPayment(finPayment, "D", true, null, null);
+      FIN_PaymentProcess.doProcessPayment(finPayment, "P", null, null);
       ImportEntryManager.getInstance().reportStats("processPayments",
           (System.currentTimeMillis() - t1));
 
