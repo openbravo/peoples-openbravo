@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013 Openbravo SLU
+ * All portions are Copyright (C) 2013-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -20,7 +20,6 @@ package org.openbravo.erpCommon.businessUtility;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -29,6 +28,7 @@ import java.util.Set;
 import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.security.OrganizationStructureProvider;
@@ -70,10 +70,7 @@ public class EndYearCloseUtility {
     try {
       boolean isYearNotClose = EndYearCloseUtilityData.selectYearNotClosed(conn, strYearId);
       if (isYearNotClose) {
-        myError.setType("Error");
-        myError.setTitle("");
-        myError.setMessage(Utility.messageBD(conn, "YearNotClose", vars.getLanguage()));
-        return myError;
+        throw new OBException(Utility.messageBD(conn, "YearNotClose", vars.getLanguage()));
       }
       EndYearCloseUtilityData[] dataOrgs = EndYearCloseUtilityData.treeOrg(conn, vars.getClient(),
           strOrgId);
@@ -88,9 +85,6 @@ public class EndYearCloseUtility {
             acctSchema[j].id,
             Utility.getInStrSet(new OrganizationStructureProvider().getChildTree(strOrgId, true)));
         if (BigDecimal.ZERO.compareTo(new BigDecimal(balanceAmount)) != 0) {
-          conn.releaseRollbackConnection(con);
-          myError.setType("Error");
-          myError.setTitle("");
           Map<String, String> parameters = new HashMap<String, String>();
           try {
             OBContext.setAdminMode();
@@ -99,10 +93,9 @@ public class EndYearCloseUtility {
           } finally {
             OBContext.restorePreviousMode();
           }
-
-          myError.setMessage(Utility.parseTranslation(conn, vars, parameters, vars.getLanguage(),
+          throw new OBException(Utility.parseTranslation(conn, vars, parameters,
+              vars.getLanguage(),
               Utility.messageBD(conn, "BalanceIsNotBalanced", vars.getLanguage())));
-          return myError;
         }
         String strRegId = SequenceIdData.getUUID();
         String strCloseId = SequenceIdData.getUUID();
@@ -123,12 +116,8 @@ public class EndYearCloseUtility {
           String regCount = EndYearCloseUtilityData.getRegCount(conn, vars.getClient(),
               dataOrgs[i].org, acctSchema[j].id, strPediodId);
           if (new Integer(regCount).intValue() > 0) {
-            conn.releaseRollbackConnection(con);
-            myError.setType("Error");
-            myError.setTitle("");
-            myError.setMessage(Utility.messageBD(conn, "RegularizationDoneAlready",
+            throw new OBException(Utility.messageBD(conn, "RegularizationDoneAlready",
                 vars.getLanguage()));
-            return myError;
           }
           String strRegOut = processButtonReg(strYearId, dataOrgs[i].org, strRegId,
               acctSchema[j].id, strDivideUpId, retainedEarningAccount);
@@ -139,11 +128,10 @@ public class EndYearCloseUtility {
             strOpenId = "";
           }
           if (!strRegOut.equals("Success")) {
-            conn.releaseRollbackConnection(con);
-            return Utility.translateError(conn, vars, vars.getLanguage(), "ProcessRunError");
+            throw new OBException(Utility.messageBD(conn, "ProcessRunError", vars.getLanguage()));
           } else if (!strCloseOut.equals("Success")) {
-            return Utility.translateError(conn, vars, vars.getLanguage(),
-                Utility.messageBD(conn, "ProcessRunError_CreateNextPeriod", vars.getLanguage()));
+            throw new OBException(Utility.messageBD(conn, "ProcessRunError_CreateNextPeriod",
+                vars.getLanguage()));
           }
           ExpenseAmtDr = BigDecimal.ZERO;
           ExpenseAmtCr = BigDecimal.ZERO;
@@ -156,15 +144,15 @@ public class EndYearCloseUtility {
           if (strOrgSchemaId != null && !strOrgSchemaId.equals("")) {
             if (EndYearCloseUtilityData.insertOrgClosing(con, conn, vars.getClient(), strOrgId,
                 vars.getUser(), strYearId, strOrgSchemaId, strRegId, strCloseId, strDivideUpId,
-                strOpenId) == 0)
-              return Utility.translateError(conn, vars, vars.getLanguage(), "ProcessRunError");
+                strOpenId) == 0) {
+              throw new OBException(Utility.messageBD(conn, "ProcessRunError", vars.getLanguage()));
+            }
           }
         }
         if (!closedOrganizations.contains(strOrgId)) {
           if (EndYearCloseUtilityData.updateClose(con, conn, vars.getUser(), strYearId, strOrgId) == 0) {
-            String strAllPeriodsErr = Utility.messageBD(conn, "AllPeriodsPermanentClosed",
-                vars.getLanguage());
-            return Utility.translateError(conn, vars, vars.getLanguage(), strAllPeriodsErr);
+            throw new OBException(Utility.messageBD(conn, "AllPeriodsPermanentClosed",
+                vars.getLanguage()));
           }
         }
         closedOrganizations.add(strOrgId);
@@ -175,7 +163,7 @@ public class EndYearCloseUtility {
       myError.setTitle("");
       myError.setMessage(Utility.messageBD(conn, "Success", vars.getLanguage()));
     } catch (Exception e) {
-      log4j.warn(e);
+      log4j.error(e);
       try {
         conn.releaseRollbackConnection(con);
       } catch (Exception ignored) {
@@ -318,12 +306,7 @@ public class EndYearCloseUtility {
     String strOpeningEntry = Utility.messageBD(conn, "OpeningEntry", vars.getLanguage());
     String strClosingEntry = Utility.messageBD(conn, "ClosingEntry", vars.getLanguage());
     if (newPeriod.equals("")) {
-      try {
-        conn.releaseRollbackConnection(con);
-      } catch (SQLException e) {
-        log4j.error("Next Period does not exist", e);
-      }
-      return "ProcessRunError";
+      throw new OBException("ProcessRunError");
     }
 
     String currency = EndYearCloseUtilityData.cCurrencyId(conn, strAcctSchema);
@@ -371,21 +354,14 @@ public class EndYearCloseUtility {
                 strCloseFactAcctGroupId, strDivideUpFactAcctGroupId, strOpenUpFactAcctGroupId,
                 strOrgClosingId);
             if (!"ProcessOK".equals(strResult)) {
-              myError = new OBError();
-              myError.setType("Error");
-              myError.setTitle("Error");
-              myError.setMessage(Utility.messageBD(conn, strResult, vars.getLanguage()));
-              conn.releaseRollbackConnection(con);
-              return myError;
+              throw new OBException(Utility.messageBD(conn, strResult, vars.getLanguage()));
             }
           }
           EndYearCloseUtilityData.updatePeriodsOpen(con, conn, vars.getUser(), strYearId,
               stradOrgId);
         }
       } catch (ServletException ex) {
-        myError = Utility.translateError(conn, vars, vars.getLanguage(), ex.getMessage());
-        conn.releaseRollbackConnection(con);
-        return myError;
+        throw new OBException(Utility.messageBD(conn, ex.getMessage(), vars.getLanguage()));
       }
 
       conn.releaseCommitConnection(con);
@@ -394,12 +370,12 @@ public class EndYearCloseUtility {
       myError.setTitle("");
       myError.setMessage(Utility.messageBD(conn, "Success", vars.getLanguage()));
     } catch (Exception e) {
-      log4j.warn(e);
+      log4j.error(e);
       try {
         conn.releaseRollbackConnection(con);
       } catch (Exception ignored) {
       }
-      myError = Utility.translateError(conn, vars, vars.getLanguage(), "ProcessRunError");
+      myError = Utility.translateError(conn, vars, vars.getLanguage(), e.getMessage());
     }
     return myError;
   }
