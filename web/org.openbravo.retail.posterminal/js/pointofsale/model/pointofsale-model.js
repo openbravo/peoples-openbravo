@@ -768,6 +768,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
               cancelLayawayObj.isLayaway = receipt.get("isLayaway");
               cancelLayawayObj.paidOnCredit = receipt.get("paidOnCredit");
               cancelLayawayObj.defaultPaymentType = receipt.get("defaultPaymentType");
+              cancelLayawayObj.obposAppCashup = OB.MobileApp.model.get('terminal').cashUpId;
               cancelLayawayObj.timezoneOffset = new Date().getTimezoneOffset();
               if (receipt.get('deliveredQuantityAmount')) {
                 cancelLayawayObj.deliveredQuantityAmount = OB.I18N.formatCurrency(receipt.getDeliveredQuantityAmount());
