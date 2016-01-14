@@ -142,13 +142,16 @@ enyo.kind({
       name: 'modalNotEditableLine'
     }, {
       kind: 'OB.UI.ModalBusinessPartners',
-      name: "modalcustomer"
+      name: 'modalcustomer'
+    }, {
+      kind: 'OB.UI.ModalAdvancedFilterBP',
+      name: 'modalAdvancedFilterBP'
     }, {
       kind: 'OB.UI.ModalBPLocation',
-      name: "modalcustomeraddress"
+      name: 'modalcustomeraddress'
     }, {
       kind: 'OB.UI.ModalBPLocationShip',
-      name: "modalcustomershipaddress"
+      name: 'modalcustomershipaddress'
     }, {
       kind: 'OB.UI.ModalReceipts',
       name: 'modalreceipts'

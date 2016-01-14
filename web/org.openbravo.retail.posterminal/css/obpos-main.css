@@ -351,3 +351,25 @@ button.btnbp:disabled {
   background-image: url('./../../org.openbravo.retail.posterminal/img/iconContextMenu_pressed.png');
   background-repeat: no-repeat;
 } 
+
+.iconSortNone {
+  width: 30px;
+  height: 30px;
+  background-image: url('./../img/iconSelectorSortDisabled.png');
+  background-repeat: no-repeat;
+}
+
+.iconSortAsc {
+  width: 30px;
+  height: 30px;
+  background-image: url('./../img/iconSelectorSortAscending.png');
+  background-repeat: no-repeat;
+}
+
+.iconSortDesc {
+  width: 30px;
+  height: 30px;
+  background-image: url('./../img/iconSelectorSortDescending.png');
+  background-repeat: no-repeat;
+}
+

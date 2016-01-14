@@ -58,6 +58,20 @@
     caption: 'OBPOS_LblName',
     location: false
   }, {
+    name: 'bpCategory',
+    column: 'bp.c_bp_group_name',
+    filter: true,
+    type: 'TEXT',
+    caption: 'OBPOS_BPCategory',
+    location: false
+  }, {
+    name: 'taxID',
+    column: 'bp.taxID',
+    filter: true,
+    type: 'TEXT',
+    caption: 'OBPOS_LblTaxId',
+    location: false
+  }, {
     name: 'phone',
     column: 'bp.phone',
     filter: true,
@@ -72,6 +86,13 @@
     caption: 'OBPOS_LblEmail',
     location: false
   }, {
+    name: 'locName',
+    column: 'loc.name',
+    filter: true,
+    type: 'TEXT',
+    caption: 'OBPOS_LblAddress',
+    location: true
+  }, {
     name: 'postalCode',
     column: 'loc.postalCode',
     filter: true,
@@ -79,11 +100,11 @@
     caption: 'OBPOS_LblPostalCode',
     location: true
   }, {
-    name: 'locName',
-    column: 'loc.name',
+    name: 'cityName',
+    column: 'loc.cityName',
     filter: true,
     type: 'TEXT',
-    caption: 'OBPOS_LblAddress',
+    caption: 'OBPOS_LblCity',
     location: true
   }]);
 
