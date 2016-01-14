@@ -726,14 +726,6 @@ public class CancelAndReplaceUtils {
             FIN_FinancialAccount financialAccount = payment.getAccount();
             BigDecimal paymentTotalAmount = BigDecimal.ZERO;
 
-            // retrieve the transactions of this payment and set the cashupId to those transactions
-            final List<FIN_FinaccTransaction> transactions = payment.getFINFinaccTransactionList();
-            final String cashupId = jsonorder.getString("obposAppCashup");
-            final OBPOSAppCashup cashup = OBDal.getInstance().get(OBPOSAppCashup.class, cashupId);
-            for (FIN_FinaccTransaction transaction : transactions) {
-              transaction.setObposAppCashup(cashup);
-            }
-
             paymentDocumentNo = getPaymentDocumentNo(useOrderDocumentNoForRelatedDocs, oldOrder,
                 paymentDocumentType);
 
@@ -793,6 +785,18 @@ public class CancelAndReplaceUtils {
 
             // Call to processPayment in order to process it
             FIN_PaymentProcess.doProcessPayment(newPayment, "P", true, null, null);
+
+            if (jsonorder != null && jsonorder.has("obposAppCashup")) {
+              // retrieve the transactions of this payment and set the cashupId to those
+              // transactions
+              final List<FIN_FinaccTransaction> newTransactions = newPayment
+                  .getFINFinaccTransactionList();
+              final String cashupId = jsonorder.getString("obposAppCashup");
+              final OBPOSAppCashup cashup = OBDal.getInstance().get(OBPOSAppCashup.class, cashupId);
+              for (FIN_FinaccTransaction transaction : newTransactions) {
+                transaction.setObposAppCashup(cashup);
+              }
+            }
           }
           // There aren't any payments on original order, pay original order and inverse order
           // completely.
