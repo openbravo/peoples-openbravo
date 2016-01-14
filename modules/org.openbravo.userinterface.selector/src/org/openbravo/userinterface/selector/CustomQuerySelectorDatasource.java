@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2015 Openbravo SLU
+ * All portions are Copyright (C) 2011-2016 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -38,6 +38,7 @@ import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
+import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.domaintype.BigDecimalDomainType;
 import org.openbravo.base.model.domaintype.BooleanDomainType;
@@ -275,6 +276,13 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
     }
     HQL = HQL.replace(ADDITIONAL_FILTERS, additionalFilter.toString());
     return HQL;
+  }
+
+  @Override
+  public void checkEntityAccess(Entity isDerivedOrReadedEntity, String typeOfChecking) {
+    // CustomQuerySelectorDatasource should checked if entity target of this selector is a derived
+    // entity.
+    super.checkEntityAccess(isDerivedOrReadedEntity, SELECTOR_DERIVED_ENTITY);
   }
 
   /**
