@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2015 Openbravo SLU
+ * All portions are Copyright (C) 2015-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -58,7 +58,7 @@ public class NoteDataSource extends DefaultDataSourceService {
       notesCriteria = jsonCriteria.getJSONArray("criteria");
       tableId = notesCriteria.getJSONObject(0).getString("value");
       recordId = notesCriteria.getJSONObject(1).getString("value");
-      readableAccesForUser(tableId, recordId);
+      readableAccesForUser(tableId, recordId, BaseDataSourceService.DERIVED_READABLE_ENTITY);
       noteFetch = super.fetch(parameters, false);
     } catch (JSONException ex) {
       log.error("Exception while trying to perform a fetch", ex);
@@ -79,7 +79,7 @@ public class NoteDataSource extends DefaultDataSourceService {
       noteData = jsonObject.getJSONObject("data");
       tableId = noteData.getString("table");
       recordId = noteData.getString("record");
-      readableAccesForUser(tableId, recordId);
+      readableAccesForUser(tableId, recordId, BaseDataSourceService.WRITABLE_ENTITY);
       noteAdd = super.add(parameters, content, false);
     } catch (JSONException ex) {
       log.error("Exception while trying to add a new note", ex);
@@ -98,7 +98,7 @@ public class NoteDataSource extends DefaultDataSourceService {
       Table table = note.getTable();
       String tableId = table.getId();
       String recordId = note.getRecord();
-      readableAccesForUser(tableId, recordId);
+      readableAccesForUser(tableId, recordId, BaseDataSourceService.WRITABLE_ENTITY);
       noteRemove = super.remove(parameters, false);
     } catch (Exception ex) {
       log.error("Exception while trying to remove a note", ex);
@@ -109,11 +109,19 @@ public class NoteDataSource extends DefaultDataSourceService {
     return noteRemove;
   }
 
+  @Override
+  public void checkEntityAccess(Entity isDerivedOrReadedEntity, String typeOfChecking) {
+    // NoteDataSource implements its own security. It is overridden to avoid execute this
+    // checkEntityAccess super method.
+  }
+
   /**
    * Checks if the user has readable access to the record where the note is
    */
-  private void readableAccesForUser(String tableId, String recordId) {
+  private void readableAccesForUser(String tableId, String recordId, String typeEntityAccess) {
     Entity entity = ModelProvider.getInstance().getEntityByTableId(tableId);
+    // It is needed to check if this entity is readeable/writable
+    super.checkEntityAccess(entity, typeEntityAccess);
     if (entity != null) {
       Object object = OBDal.getInstance().get(entity.getMappingClass(), recordId);
       if (object instanceof OrganizationEnabled) {

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2014 Openbravo SLU
+ * All portions are Copyright (C) 2010-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -43,6 +43,7 @@ import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.exception.OBSecurityException;
+import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.domaintype.BigDecimalDomainType;
 import org.openbravo.base.model.domaintype.BooleanDomainType;
@@ -86,6 +87,12 @@ public class QueryListDataSource extends ReadOnlyDataSourceService implements Po
   private static final String OPTIONAL_FILTERS = "@optional_filters@";
   private static final Logger log = Logger.getLogger(QueryListDataSource.class);
   private static final String OPERATOR = "$OPERATOR";
+
+  @Override
+  public void checkEntityAccess(Entity isDerivedOrReadedEntity, String typeOfChecking) {
+    // QueryListDataSource implements its own security. It is overridden to avoid execute this
+    // checkEntityAccess super method.
+  }
 
   /**
    * Returns the count of objects based on the passed parameters.

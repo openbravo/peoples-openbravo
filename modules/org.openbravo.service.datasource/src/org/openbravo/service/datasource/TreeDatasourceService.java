@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2015 Openbravo SLU
+ * All portions are Copyright (C) 2013-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -143,6 +143,12 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
 
     // This is called from TreeTablesEventHandler, no need to return anything
     return "";
+  }
+
+  @Override
+  public void checkEntityAccess(Entity isDerivedOrReadedEntity, String typeOfChecking) {
+    // TreeDatasourceService implements its own security. It is overridden to avoid execute this
+    // checkEntityAccess super method.
   }
 
   /**

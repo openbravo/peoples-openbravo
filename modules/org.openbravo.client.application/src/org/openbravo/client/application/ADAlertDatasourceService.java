@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2015 Openbravo SLU
+ * All portions are Copyright (C) 2015-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -90,6 +90,12 @@ public class ADAlertDatasourceService extends DefaultDataSourceService {
       log.debug("Alert list with status {} retrieved in {} ms", alertStatus,
           System.currentTimeMillis() - t);
     }
+  }
+
+  @Override
+  public void checkEntityAccess(Entity isDerivedOrReadedEntity, String typeOfChecking) {
+    // ADAlertDatasourceService implements its own security. It is overridden to avoid execute this
+    // checkEntityAccess super method.
   }
 
   private List<String> getAlertIds() {
