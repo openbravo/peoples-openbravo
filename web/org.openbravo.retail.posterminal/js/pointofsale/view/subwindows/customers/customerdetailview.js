@@ -275,6 +275,17 @@ enyo.kind({
     readOnly: true,
     displayLogic: function () {
       return OB.MobileApp.model.hasPermission('OBPOS_ShowBusinessPartnerBirthInfo', true);
+    },
+    loadValue: function (inSender, inEvent) {
+      if (inEvent.customer !== undefined) {
+        if (!OB.UTIL.isNullOrUndefined(inEvent.customer.get(this.modelProperty)) && inEvent.customer.get(this.modelProperty) !== '') {
+          this.setValue(OB.I18N.formatDate(new Date(inEvent.customer.get(this.modelProperty))));
+        } else {
+          this.setValue('');
+        }
+      } else {
+        this.setValue('');
+      }
     }
   }, {
     kind: 'OB.UI.CustomerTextProperty',

@@ -9,9 +9,6 @@
 package org.openbravo.retail.posterminal;
 
 import java.math.BigDecimal;
-import java.text.ParsePosition;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Iterator;
 
 import javax.enterprise.inject.Any;
@@ -63,17 +60,6 @@ public class CustomerLoader extends POSDataSynchronizationProcess
     BusinessPartner customer = null;
     OBContext.setAdminMode(false);
     try {
-      if (jsoncustomer.has("birthDay")) {
-        SimpleDateFormat dFormat = new SimpleDateFormat("yyyy-MM-dd");
-        ParsePosition pos = new ParsePosition(0);
-        Date birthDay = dFormat.parse(jsoncustomer.getString("birthDay"), pos);
-        if (birthDay != null) {
-          dFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
-          jsoncustomer.put("birthDay", dFormat.format(birthDay));
-        } else {
-          jsoncustomer.remove("birthDay");
-        }
-      }
       customer = getCustomer(jsoncustomer.getString("id"));
       if (customer.getId() == null) {
         customer = createBPartner(jsoncustomer);

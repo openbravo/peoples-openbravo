@@ -280,23 +280,15 @@ enyo.kind({
       if (inEvent.customer && inEvent.customer.get(this.modelProperty)) {
         this.setValue(new Date(inEvent.customer.get(this.modelProperty)));
       } else {
-        this.setValue(null);
+        this.setValue('');
       }
     },
     saveChange: function (inSender, inEvent) {
       var value = this.getValue();
-      var fragments;
       if (value) {
-        fragments = [value.getFullYear(), value.getMonth() + 1, value.getDate()];
-        if (fragments[1] < 10) {
-          fragments[1] = '0' + fragments[1];
-        }
-        if (fragments[2] < 10) {
-          fragments[2] = '0' + fragments[2];
-        }
-        inEvent.customer.set(this.modelProperty, fragments.join('-'));
+        inEvent.customer.set(this.modelProperty, value);
       } else {
-        inEvent.customer.set(this.modelProperty, null);
+        inEvent.customer.set(this.modelProperty, '');
       }
     }
   }, {
