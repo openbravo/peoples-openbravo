@@ -1807,6 +1807,7 @@
 
     createOrderFromQuotation: function (updatePrices) {
       this.get('lines').each(function (line) {
+        line.set('id', OB.UTIL.get_UUID());
         //issue 25055 -> If we don't do the following prices and taxes are calculated
         //wrongly because the calculation starts with discountedNet instead of
         //the real net.

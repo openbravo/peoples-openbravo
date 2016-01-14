@@ -1100,7 +1100,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       BigDecimal qty, Locator bin, AttributeSetInstance attributeSetInstance, int i)
       throws JSONException {
     ShipmentInOutLine line = OBProvider.getInstance().get(ShipmentInOutLine.class);
-    String shipmentLineId = OBMOBCUtils.getUUIDbyString(orderLine.getId() + i);
+    String shipmentLineId = OBMOBCUtils.getUUIDbyString(orderLine.getId() + lineNo + i);
     line.setId(shipmentLineId);
     line.setNewOBObject(true);
     JSONPropertyToEntity.fillBobFromJSON(shplineentity, line, jsonOrderLine,
