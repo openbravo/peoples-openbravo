@@ -433,9 +433,13 @@ enyo.kind({
             });
           });
         } else {
+          context.model.get('orderList').saveCurrent();
+          OB.Dal.remove(context.model.get('orderList').current, null, null);
           context.model.get('orderList').deleteCurrent();
         }
       } else {
+        context.model.get('orderList').saveCurrent();
+        OB.Dal.remove(context.model.get('orderList').current, null, null);
         context.model.get('orderList').deleteCurrent();
       }
     }
