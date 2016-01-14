@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Query;
 import org.hibernate.ScrollMode;
@@ -56,6 +57,7 @@ import org.openbravo.model.common.enterprise.Locator;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.common.order.OrderTax;
+import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentDetail;
@@ -67,6 +69,7 @@ import org.openbravo.model.materialmgmt.onhandquantity.ReservationStock;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
+import org.openbravo.retail.posterminal.OBPOSAppCashup;
 import org.openbravo.retail.posterminal.OrderLoader;
 import org.openbravo.service.db.CallStoredProcedure;
 import org.openbravo.service.db.DalConnectionProvider;
@@ -159,7 +162,7 @@ public class CancelAndReplaceUtils {
           .getString("documentNo") : null;
 
       // Create inverse Order header
-      Order inverseOrder = createOrder(oldOrder, negativeDocNo, triggersDisabled);
+      Order inverseOrder = createOrder(oldOrder, jsonorder, negativeDocNo, triggersDisabled);
 
       // Define netting goods shipment and its lines
       ShipmentInOut nettingGoodsShipment = null;
@@ -329,7 +332,8 @@ public class CancelAndReplaceUtils {
     CallStoredProcedure.getInstance().call(procedureName, parameters, null, true, false);
   }
 
-  private static Order createOrder(Order oldOrder, String documentNo, boolean triggersDisabled) {
+  private static Order createOrder(Order oldOrder, JSONObject jsonorder, String documentNo,
+      boolean triggersDisabled) throws JSONException {
     Order inverseOrder = (Order) DalUtil.copy(oldOrder, false, true);
     // Change order values
     inverseOrder.setPosted("N");
@@ -353,6 +357,7 @@ public class CancelAndReplaceUtils {
     }
     inverseOrder.setDocumentNo(newDocumentNo);
     inverseOrder.setCancelledorder(oldOrder);
+    inverseOrder.setObposAppCashup(jsonorder.getString("obposAppCashup"));
     OBDal.getInstance().save(inverseOrder);
 
     // Copy old order taxes to inverse, it is done when is executed from Web POS because triggers
@@ -720,6 +725,14 @@ public class CancelAndReplaceUtils {
             DocumentType paymentDocumentType = payment.getDocumentType();
             FIN_FinancialAccount financialAccount = payment.getAccount();
             BigDecimal paymentTotalAmount = BigDecimal.ZERO;
+
+            // retrieve the transactions of this payment and set the cashupId to those transactions
+            final List<FIN_FinaccTransaction> transactions = payment.getFINFinaccTransactionList();
+            final String cashupId = jsonorder.getString("obposAppCashup");
+            final OBPOSAppCashup cashup = OBDal.getInstance().get(OBPOSAppCashup.class, cashupId);
+            for (FIN_FinaccTransaction transaction : transactions) {
+              transaction.setObposAppCashup(cashup);
+            }
 
             paymentDocumentNo = getPaymentDocumentNo(useOrderDocumentNoForRelatedDocs, oldOrder,
                 paymentDocumentType);
