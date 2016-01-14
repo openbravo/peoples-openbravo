@@ -1868,6 +1868,7 @@
     reactivateQuotation: function () {
       var nextQuotationno;
       this.get('lines').each(function (line) {
+        line.set('id', OB.UTIL.get_UUID());
         if (!this.get('priceIncludesTax')) {
           line.set('net', line.get('nondiscountednet'));
         }

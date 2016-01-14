@@ -1176,9 +1176,10 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           orderline, jsonorder, jsonorder.getLong("timezoneOffset"));
       JSONPropertyToEntity.fillBobFromJSON(orderLineEntity, orderline, jsonOrderLine,
           jsonorder.getLong("timezoneOffset"));
-      orderline.setId(jsonOrderLine.get("id"));
-      orderline.setNewOBObject(true);
-
+      if (jsonOrderLine.has("id")) {
+        orderline.setId(jsonOrderLine.get("id"));
+        orderline.setNewOBObject(true);
+      }
       orderline.setActive(true);
       orderline.setSalesOrder(order);
       orderline.setLineNetAmount(BigDecimal.valueOf(jsonOrderLine.getDouble("net")).setScale(
