@@ -1628,6 +1628,7 @@
             OB.Dal.saveTemporally(location, function () {
               businessPartner.set('locationModel', location);
               me.set('bp', businessPartner);
+              me.save();
             }, function () {
               OB.error(arguments);
             }, true);
@@ -1643,12 +1644,14 @@
           });
           OB.Dal.saveTemporally(businessPartner.get('locationModel'), function () {
             me.set('bp', businessPartner);
+            me.save();
           }, function () {
             OB.error(arguments);
           }, true);
         }
       } else {
         this.set('bp', businessPartner);
+        this.save();
       }
       // set the undo action
       if (showNotif === undef || showNotif === true) {
@@ -1657,6 +1660,7 @@
           bp: businessPartner,
           undo: function () {
             me.set('bp', oldbp);
+            me.save();
             me.set('undo', null);
           }
         });
