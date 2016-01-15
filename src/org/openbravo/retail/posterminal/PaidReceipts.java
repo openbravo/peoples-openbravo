@@ -14,6 +14,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.TimeZone;
 
 import javax.enterprise.inject.Any;
@@ -67,6 +68,10 @@ public class PaidReceipts extends JSONProcessSimple {
   @Any
   @Qualifier(paidReceiptsPaymentsPropertyExtension)
   private Instance<ModelExtension> extensionsPayments;
+
+  @Inject
+  @Any
+  private Instance<PaidReceiptsPaymentsInHook> paymentsInProcesses;
 
   @Override
   public JSONObject exec(JSONObject jsonsent) throws JSONException, ServletException {
@@ -332,6 +337,9 @@ public class PaidReceipts extends JSONProcessSimple {
               if (objectIn.has("reversedPaymentId")) {
                 paidReceiptPayment.put("reversedPaymentId", objectIn.get("reversedPaymentId"));
               }
+              // Call all payments in processes injected.
+              executeHooks(paymentsInProcesses, paidReceiptPayment,
+                  (String) objectIn.get("paymentId"));
               added = true;
               listpaidReceiptsPayments.put(paidReceiptPayment);
             }
@@ -454,6 +462,15 @@ public class PaidReceipts extends JSONProcessSimple {
       OBContext.restorePreviousMode();
     }
     return result;
+  }
+
+  protected void executeHooks(Instance<? extends Object> hooks, JSONObject paymentsIn,
+      String paymentId) throws Exception {
+
+    for (Iterator<? extends Object> procIter = hooks.iterator(); procIter.hasNext();) {
+      Object proc = procIter.next();
+      ((PaidReceiptsPaymentsInHook) proc).exec(paymentsIn, paymentId);
+    }
   }
 
   @Override
