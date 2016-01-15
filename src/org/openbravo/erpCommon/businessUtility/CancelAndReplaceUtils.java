@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2015 Openbravo SLU
+ * All portions are Copyright (C) 2015-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -70,7 +70,6 @@ import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 import org.openbravo.retail.posterminal.OBPOSAppCashup;
-import org.openbravo.retail.posterminal.OrderLoader;
 import org.openbravo.service.db.CallStoredProcedure;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.db.DbUtility;
@@ -807,9 +806,8 @@ public class CancelAndReplaceUtils {
         } else {
           // To only cancel a layaway two payments must be added to fully pay the old order and add
           // the same quantity in negative to the inverse order
-          OrderLoader orderLoader = WeldUtils.getInstanceFromStaticBeanManager(OrderLoader.class);
-          orderLoader.initializeVariables(jsonorder);
-          orderLoader.handlePayments(jsonorder, inverseOrder, null, false);
+          WeldUtils.getInstanceFromStaticBeanManager(CancelLayawayPaymentsHookCaller.class)
+              .executeHook(jsonorder, inverseOrder);
 
           finishOrderPayments(jsonorder, oldOrder, inverseOrder, paymentSchedule,
               useOrderDocumentNoForRelatedDocs, triggersDisabled);
