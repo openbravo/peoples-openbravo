@@ -169,8 +169,6 @@
                   OB.UTIL.showError(OB.I18N.getLabel('OBPOS_WrongHardwareManagerProtocol'));
                 }
                 OB.UTIL.startRfidWebsocket(websocketServerLocation, 2000, 0, 5);
-                OB.UTIL.rfidThreadsActive = true;
-                OB.UTIL.removeAllEpcs();
               }
             } else {
               OB.UTIL.showError("Terminal does not exists: " + 'params.terminal');
