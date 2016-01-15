@@ -457,7 +457,7 @@ public class WindowTree extends HttpSecureAppServlet {
 
     // Calculating the TreeID
     try {
-      OBContext.setAdminMode();
+      OBContext.setAdminMode(true);
 
       Tab tab = OBDal.getInstance().get(Tab.class, strTabId);
       Table table = tab.getTable();
