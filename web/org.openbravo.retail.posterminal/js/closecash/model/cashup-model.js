@@ -737,8 +737,17 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
                     OB.UTIL.deleteCashUps(cashUp);
                     if (!cashUp.at(0).get('objToSend')) {
                       OB.UTIL.composeCashupInfo(cashUp, null, function () {
-                        OB.MobileApp.model.runSyncProcess();
-                        callback();
+                        OB.MobileApp.model.runSyncProcess(function () {
+                          callback();
+                          if (OB.MobileApp.model.hasPermission('OBPOS_print.cashup')) {
+                            me.printCashUp.print(me.get('cashUpReport').at(0), me.getCountCashSummary(), true);
+                          }
+                        }, function () {
+                          callback();
+                          if (OB.MobileApp.model.hasPermission('OBPOS_print.cashup')) {
+                            me.printCashUp.print(me.get('cashUpReport').at(0), me.getCountCashSummary(), true);
+                          }
+                        });
                       });
                     } else {
                       callback();
@@ -746,9 +755,16 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
                   }
                 });
                 };
+            var callbackFinishedWrongly = function () {
+                OB.UTIL.showLoading(false);
+                me.set('finishedWrongly', true);
+                OB.UTIL.SynchronizationHelper.finished(synchId, 'processAndFinishCashUp');
+                if (OB.MobileApp.model.hasPermission('OBPOS_print.cashup')) {
+                  me.printCashUp.print(me.get('cashUpReport').at(0), me.getCountCashSummary(), true);
+                }
+                };
             var callbackFunc = function () {
                 OB.UTIL.initCashUp(function () {
-                  OB.MobileApp.model.runSyncProcess();
                   OB.UTIL.SynchronizationHelper.finished(synchId, 'processAndFinishCashUp');
                   OB.UTIL.calculateCurrentCash();
                   // update and sync the new cashup
@@ -757,15 +773,13 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
                     me.set('finished', true);
                   });
                 }, function () {
-                  OB.MobileApp.model.runSyncProcess();
-                  OB.UTIL.showLoading(false);
-                  me.set('finishedWrongly', true);
-                  OB.UTIL.SynchronizationHelper.finished(synchId, 'processAndFinishCashUp');
+                  OB.MobileApp.model.runSyncProcess(function () {
+                    callbackFinishedWrongly();
+                  }, function () {
+                    callbackFinishedWrongly();
+                  });
                 }, true);
                 };
-            if (OB.MobileApp.model.hasPermission('OBPOS_print.cashup')) {
-              me.printCashUp.print(me.get('cashUpReport').at(0), me.getCountCashSummary(), true);
-            }
             callbackFunc();
           }, null);
         }, null, this);
