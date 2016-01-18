@@ -160,17 +160,21 @@ enyo.kind({
   },
   events: {
     onShowPopup: '',
-    onFiltered: ''
+    onFiltered: '',
+    onHideBPSelector: '',
+    onShowBPSelector: ''
   },
   tap: function () {
     if (this.disabled) {
       return true;
     }
     var me = this;
+    this.doHideBPSelector();
     this.doShowPopup({
       popup: 'modalAdvancedFilterBP',
       args: {
         callback: function (result) {
+          me.doShowBPSelector();
           if (result) {
             me.doFiltered({
               filters: result.filters,
@@ -227,7 +231,7 @@ enyo.kind({
           style: 'width: 100%;',
           name: 'filterInputs',
           components: [{
-            style: 'display: table-cell; width: 40%;',
+            style: 'display: table-cell; width: 150px;',
             name: 'customerFilterColumnContainer',
             components: [{
               kind: 'OB.UI.List',
@@ -264,7 +268,7 @@ enyo.kind({
               }
             }]
           }, {
-            style: 'display: table-cell; width: 60%;',
+            style: 'display: table-cell; width: 275px;',
             name: 'customerSearchContainer',
             components: [{
               kind: 'OB.UI.SearchInputAutoFilter',
@@ -279,7 +283,7 @@ enyo.kind({
           kind: 'OB.UI.SmallButton',
           classes: 'btnlink-yellow btn-icon-small btn-icon-search',
           style: 'width: 40px; margin: 0px 5px 8px 19px;',
-          ontap: 'searchAction'
+          ontap: 'clearAction'
         }]
       }, {
         style: 'display: table-cell;',
@@ -430,7 +434,7 @@ enyo.kind({
     style: 'line-height: 23px; width: 100%',
     components: [{
       name: 'textInfo',
-      style: 'float: left; ',
+      style: 'float: left; width: 91%',
       components: [{
         style: 'display: inline-block;',
         name: 'identifier'
@@ -438,7 +442,7 @@ enyo.kind({
         style: 'display: inline-block; color: #888888; padding-left:5px;',
         name: 'filter'
       }, {
-        style: 'display: inline-block; font-weight: bold; color: red; padding-left:5px;',
+        style: 'display: inline-block; float: left; font-weight: bold; color: red; padding-left:5px;',
         name: 'onHold'
       }, {
         style: 'clear: both;'
@@ -516,6 +520,7 @@ enyo.kind({
     this.bpsList.reset();
     this.$.stBPAssignToReceipt.$.theader.$.modalBpScrollableHeader.$.advancedFilterInfo.setShowing(false);
     this.$.stBPAssignToReceipt.$.theader.$.modalBpScrollableHeader.$.filterInputs.setShowing(true);
+    this.$.stBPAssignToReceipt.$.theader.$.modalBpScrollableHeader.$.customerSearchBtn.putDisabled(false);
     return true;
   },
   searchAction: function (inSender, inEvent) {
@@ -656,14 +661,99 @@ enyo.kind({
         OB.UTIL.showError(OB.I18N.getLabel('OBPOS_BPartnerOnHold', [model.get('_identifier')]));
       } else if (!model.get('ignoreSetBP')) {
         var me = this;
-        OB.Dal.get(OB.Model.BusinessPartner, model.get('bpartnerId'), function (bp) {
-          me.doChangeBusinessPartner({
-            businessPartner: bp,
-            target: me.owner.owner.args.target
+        if (model.get('bpLocactionId')) {
+          OB.Dal.get(OB.Model.BPLocation, model.get('bpLocactionId'), function (loc) {
+            var shipping = null,
+                billing = null;
+            if (loc) {
+              if (!billing && loc.get('isBillTo')) {
+                billing = loc;
+              }
+              if (!shipping && loc.get('isShipTo')) {
+                shipping = loc;
+              }
+            }
+            me.loadBPLocations(model, shipping, billing);
           });
-        });
+        } else {
+          me.loadBPLocations(model, null, null);
+        }
       }
     }, this);
+  },
+  loadBPLocations: function (bpartner, shipping, billing) {
+    var me = this;
+    if (shipping && billing) {
+      this.setBPLocation(bpartner, shipping, billing);
+    } else {
+      var criteria = {
+        bpartner: {
+          operator: OB.Dal.EQ,
+          value: bpartner.get('bpartnerId')
+        }
+      };
+      if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
+        var filterBpartnerId = {
+          columns: ['bpartner'],
+          operator: OB.Dal.EQ,
+          value: bpartner.get('bpartnerId')
+        };
+        criteria.remoteFilters = [filterBpartnerId];
+      }
+      OB.Dal.find(OB.Model.BPLocation, criteria, function (collection) {
+        if (!billing) {
+          billing = _.find(collection.models, function (loc) {
+            return loc.get('isBillTo');
+          });
+        }
+        if (!shipping) {
+          shipping = _.find(collection.models, function (loc) {
+            return loc.get('isShipTo');
+          });
+        }
+        me.setBPLocation(bpartner, shipping, billing);
+      });
+    }
+  },
+  setBPLocation: function (bpartner, shipping, billing) {
+    if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
+      if (!shipping) {
+        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_BPartnerNoShippingAddress', [bpartner.get('_identifier')]));
+        return;
+      }
+      if (!billing) {
+        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_BPartnerNoInvoiceAddress', [bpartner.get('_identifier')]));
+        return;
+      }
+    }
+    var me = this;
+    OB.Dal.get(OB.Model.BusinessPartner, bpartner.get('bpartnerId'), function (bp) {
+      if (shipping) {
+        bp.set('shipLocId', shipping.get('id'));
+        bp.set('shipLocName', shipping.get('name'));
+        bp.set('shipCityName', shipping.get('cityName'));
+        bp.set('shipPostalCode', shipping.get('postalCode'));
+      } else {
+        bp.set('shipLocId', null);
+        bp.set('shipLocName', null);
+        bp.set('shipCityName', null);
+        bp.set('shipPostalCode', null);
+      }
+      if (billing) {
+        bp.set("locId", billing.get("id"));
+        bp.set("locName", billing.get("name"));
+      } else {
+        bp.set("locId", null);
+        bp.set("locName", null);
+      }
+      if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
+        bp.set('locationModel', shipping);
+      }
+      me.doChangeBusinessPartner({
+        businessPartner: bp,
+        target: me.owner.owner.args.target
+      });
+    });
   }
 });
 
@@ -672,6 +762,16 @@ enyo.kind({
   name: 'OB.UI.ModalBusinessPartners',
   topPosition: '100px',
   kind: 'OB.UI.Modal',
+  handlers: {
+    onHideBPSelector: 'hideBPSelector',
+    onShowBPSelector: 'showBPSelector'
+  },
+  hideBPSelector: function () {
+    this.hide();
+  },
+  showBPSelector: function () {
+    this.show();
+  },
   executeOnShow: function () {
     if (_.isUndefined(this.args.visibilityButtons)) {
       this.args.visibilityButtons = true;
@@ -682,6 +782,7 @@ enyo.kind({
     this.bubble('onSetBusinessPartnerTarget', {
       target: this.args.target
     });
+    this.$.body.$.listBps.$.stBPAssignToReceipt.$.theader.$.modalBpScrollableHeader.$.customerSearchBtn.putDisabled(false);
     this.$.body.$.listBps.$.stBPAssignToReceipt.$.theader.$.modalBpScrollableHeader.$.newAction.putDisabled(!OB.MobileApp.model.hasPermission('OBPOS_retail.editCustomers'));
     if (!OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
       this.$.body.$.listBps.$.stBPAssignToReceipt.$.theader.$.modalBpScrollableHeader.$.customerFilterColumnContainer.setStyle('display: none');

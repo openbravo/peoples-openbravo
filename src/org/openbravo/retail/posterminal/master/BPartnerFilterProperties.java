@@ -36,6 +36,7 @@ public class BPartnerFilterProperties extends ModelExtension {
           add(new HQLProperty("bpl.businessPartner.businessPartnerCategory.name", "bpCategory"));
           add(new HQLProperty("ulist.email", "email"));
           add(new HQLProperty("ulist.phone", "phone"));
+          add(new HQLProperty("bpl.id", "bpLocactionId"));
           add(new HQLProperty("bpl.name", "locName"));
           add(new HQLProperty("bpl.locationAddress.postalCode", "postalCode"));
           add(new HQLProperty("bpl.locationAddress.cityName", "cityName"));
@@ -49,6 +50,7 @@ public class BPartnerFilterProperties extends ModelExtension {
           add(new HQLProperty("bp.businessPartnerCategory.name", "bpCategory"));
           add(new HQLProperty("ulist.email", "email"));
           add(new HQLProperty("ulist.phone", "phone"));
+          add(new HQLProperty("''", "bpLocactionId"));
           add(new HQLProperty("''", "locName"));
           add(new HQLProperty("''", "postalCode"));
           add(new HQLProperty("''", "cityName"));

@@ -86,6 +86,12 @@
     caption: 'OBPOS_LblEmail',
     location: false
   }, {
+    name: 'bpLocactionId',
+    column: 'loc.c_bpartner_location_id',
+    filter: false,
+    type: 'TEXT',
+    location: true
+  }, {
     name: 'locName',
     column: 'loc.name',
     filter: true,

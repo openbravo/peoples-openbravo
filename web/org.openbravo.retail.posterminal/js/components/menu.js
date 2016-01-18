@@ -558,7 +558,7 @@ enyo.kind({
   kind: 'OB.UI.MenuAction',
   permission: 'OBPOS_receipt.customers',
   events: {
-    onChangeSubWindow: ''
+    onShowPopup: ''
   },
   i18nLabel: 'OBPOS_LblCustomers',
   tap: function () {
@@ -566,12 +566,10 @@ enyo.kind({
       return true;
     }
     this.inherited(arguments); // Manual dropdown menu closure
-    this.doChangeSubWindow({
-      newWindow: {
-        name: 'customerAdvancedSearch',
-        params: {
-          navigateOnClose: 'mainSubWindow'
-        }
+    this.doShowPopup({
+      popup: 'modalcustomer',
+      args: {
+        target: 'order'
       }
     });
   },
