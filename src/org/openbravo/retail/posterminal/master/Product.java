@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2013 Openbravo S.L.U.
+ * Copyright (C) 2012-2016 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -36,6 +36,7 @@ import org.openbravo.model.pricing.pricelist.PriceListVersion;
 import org.openbravo.retail.config.OBRETCOProductList;
 import org.openbravo.retail.posterminal.POSUtils;
 import org.openbravo.retail.posterminal.ProcessHQLQuery;
+import org.openbravo.retail.posterminal.TerminalType;
 
 public class Product extends ProcessHQLQuery {
   public static final String productPropertyExtension = "OBPOS_ProductExtension";
@@ -215,7 +216,7 @@ public class Product extends ProcessHQLQuery {
       hql += "AND ((pli.product.$incrementalUpdateCriteria) AND (pli.$incrementalUpdateCriteria)) ";
     }
 
-    hql += "order by pli.product.name";
+    hql += "order by pli.product.name asc";
     products.add(hql);
     // Packs, combos...
     products.add("select "
@@ -238,7 +239,7 @@ public class Product extends ProcessHQLQuery {
         + "')) " + "   or (p.includedOrganizations='N' " + "  and  exists (select 1 "
         + "         from PricingAdjustmentOrganization o" + "        where active = true"
         + "          and o.priceAdjustment = p" + "          and o.organization.id ='" + orgId
-        + "')) " + "    ) ");
+        + "')) " + "    ) order by p.name asc");
 
     // generic products
     if (!isRemote) {// BROWSE tab is hidden, we do not need to send generic products
@@ -247,7 +248,7 @@ public class Product extends ProcessHQLQuery {
               + regularProductsHQLProperties.getHqlSelect()
               + " from Product product left outer join product.image img left join product.oBRETCOProlProductList as pli left outer join product.pricingProductPriceList ppp where $filtersCriteria AND (product.$incrementalUpdateCriteria) and exists (select 1 from Product product2 left join product2.oBRETCOProlProductList as pli2, PricingProductPrice ppp2 where product.id = product2.genericProduct.id and product2 = ppp2.product and ppp2.priceListVersion.id = '"
               + priceListVersion.getId() + "' and pli2.obretcoProductlist.id = '"
-              + productList.getId() + "')");
+              + productList.getId() + "') order by product.name asc");
     }
 
     return products;
@@ -257,5 +258,15 @@ public class Product extends ProcessHQLQuery {
   @Override
   protected boolean bypassPreferenceCheck() {
     return true;
+  }
+
+  public final static boolean hasBestSellersModule() {
+    // Check whether there is the BestSellers module installed or not.
+    try {
+      TerminalType.class.getField("PROPERTY_BESTHASBESTSELLERS");
+      return true;
+    } catch (Exception e) {
+      return false;
+    }
   }
 }

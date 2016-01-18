@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2015 Openbravo S.L.U.
+ * Copyright (C) 2013-2016 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -44,7 +44,11 @@ public class ProductProperties extends ModelExtension {
 
   @Override
   public List<HQLProperty> getHQLProperties(Object params) {
-
+    final OBPOSApplications posDetail = POSUtils.getTerminalById(RequestContext.get()
+        .getSessionAttribute("POSTerminal").toString());
+    if (posDetail == null) {
+      throw new OBException("terminal id is not present in session ");
+    }
     // Calculate POS Precision
     String localPosPrecision = "";
     try {
@@ -75,7 +79,19 @@ public class ProductProperties extends ModelExtension {
         } catch (PropertyException e) {
           add(new HQLProperty("img.bindaryData", "img"));
         }
-        add(new HQLProperty("pli.bestseller", "bestseller"));
+        if (Product.hasBestSellersModule()) {
+          add(new HQLProperty(
+              "(case when (select count(tt) from OBPOS_TerminalType tt where tt.id = '"
+                  + posDetail.getObposTerminaltype().getId()
+                  + "' and bestHasbestsellers = true) = 1 "
+                  + "then (case when (select count(bstptt) from BEST_PRODUCT_TTYPE_VIEW bstptt where bstptt.pOSTerminalType.id = '"
+                  + posDetail.getObposTerminaltype().getId()
+                  + "' and bstptt.obretcoProlProduct = pli and bstptt.bestseller = true) = 0 "
+                  + "then 'false' else 'true' end) else (case when pli.bestseller = true then 'true' else 'false' end) end)",
+              "bestseller"));
+        } else {
+          add(new HQLProperty("pli.bestseller", "bestseller"));
+        }
         add(new HQLProperty("'false'", "ispack"));
         if (posPrecision != null && !"".equals(posPrecision)) {
           add(new HQLProperty("round(ppp.listPrice, " + posPrecision + ")", "listPrice"));

@@ -109,7 +109,14 @@ public class SaveDataActionHandler extends BaseActionHandler {
       }
     } catch (Exception e) {// won't' happen
       log.error("Error while processing the record", e);
+      JSONObject result = new JSONObject();
+      try {
+        result.put("message", Utility.messageBD(new DalConnectionProvider(false),
+            "OBPOS_ErrorWhileSaving", RequestContext.get().getVariablesSecureApp().getLanguage()));
+      } catch (JSONException je) {
+        // won't happen
+      }
+      return result;
     }
-    return null;
   }
 }
