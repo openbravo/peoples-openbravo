@@ -12,11 +12,8 @@
 (function () {
 
   OB.Model.BPartnerFilter = OB.Data.ExtensibleModel.extend({
-    modelName: 'BPartnerFilter',
-    entityName: 'BPartnerFilter',
     remote: 'OBPOS_remote.customer',
-    source: 'org.openbravo.retail.posterminal.master.BPartnerFilter',
-    dataLimit: OB.Dal.DATALIMIT
+    source: 'org.openbravo.retail.posterminal.master.BPartnerFilter'
   });
 
   OB.Model.BPartnerFilter.addProperties([{
@@ -28,7 +25,7 @@
     location: false
   }, {
     name: 'bpartnerId',
-    column: 'bp.c_bpartner_id',
+    column: 'c_bpartner_id',
     filter: false,
     type: 'TEXT',
     location: false
@@ -40,74 +37,74 @@
     location: false
   }, {
     name: 'customerBlocking',
-    column: 'bp.customerBlocking',
+    column: 'customerBlocking',
     filter: false,
     type: 'TEXT',
     location: false
   }, {
     name: 'salesOrderBlocking',
-    column: 'bp.salesOrderBlocking',
+    column: 'salesOrderBlocking',
     filter: false,
     type: 'TEXT',
     location: false
   }, {
     name: 'bpName',
-    column: 'bp.name',
+    column: 'name',
     filter: true,
     type: 'TEXT',
     caption: 'OBPOS_LblName',
     location: false
   }, {
     name: 'bpCategory',
-    column: 'bp.c_bp_group_name',
+    column: 'c_bp_group_name',
     filter: true,
     type: 'TEXT',
     caption: 'OBPOS_BPCategory',
     location: false
   }, {
     name: 'taxID',
-    column: 'bp.taxID',
+    column: 'taxID',
     filter: true,
     type: 'TEXT',
     caption: 'OBPOS_LblTaxId',
     location: false
   }, {
     name: 'phone',
-    column: 'bp.phone',
+    column: 'phone',
     filter: true,
     type: 'TEXT',
     caption: 'OBPOS_LblPhone',
     location: false
   }, {
     name: 'email',
-    column: 'bp.email',
+    column: 'email',
     filter: true,
     type: 'TEXT',
     caption: 'OBPOS_LblEmail',
     location: false
   }, {
     name: 'bpLocactionId',
-    column: 'loc.c_bpartner_location_id',
+    column: 'c_bpartner_location_id',
     filter: false,
     type: 'TEXT',
     location: true
   }, {
     name: 'locName',
-    column: 'loc.name',
+    column: 'locName',
     filter: true,
     type: 'TEXT',
     caption: 'OBPOS_LblAddress',
     location: true
   }, {
     name: 'postalCode',
-    column: 'loc.postalCode',
+    column: 'postalCode',
     filter: true,
     type: 'TEXT',
     caption: 'OBPOS_LblPostalCode',
     location: true
   }, {
     name: 'cityName',
-    column: 'loc.cityName',
+    column: 'cityName',
     filter: true,
     type: 'TEXT',
     caption: 'OBPOS_LblCity',
