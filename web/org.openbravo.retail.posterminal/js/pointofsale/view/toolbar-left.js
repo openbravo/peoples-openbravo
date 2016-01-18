@@ -437,69 +437,19 @@ enyo.kind({
 });
 
 enyo.kind({
-  name: 'OB.UI.ButtonRFID',
-  kind: 'OB.UI.ToolbarButton',
-  icon: 'btn-rfid-on',
-  events: {},
-  status: false,
-  handlers: {
-    onConnectRfidDevice: 'connectRfidDevice',
-    onDisconnectRfidDevice: 'disconnectRfidDevice',
-    onRfidConnectionLost: 'rfidConnectionLost',
-    onRfidConnectionRecovered: 'rfidConnectionRecovered'
-  },
-  tap: function () {
-    this.inherited(arguments);
-    if (this.disabled) {
-      return true;
-    }
-    if (OB.UTIL.isRFIDEnabled) {
-      this.setDisabled(true);
-      OB.UTIL.disconnectRFIDDevice();
-      if (OB.UTIL.rfidTimeout) {
-        clearTimeout(OB.UTIL.rfidTimeout);
-      }
-    } else {
-      this.setDisabled(true);
-      OB.UTIL.connectRFIDDevice();
-      if (OB.UTIL.rfidTimeout) {
-        clearTimeout(OB.UTIL.rfidTimeout);
-      }
-      OB.UTIL.rfidTimeout = setTimeout(function () {
-        OB.UTIL.disconnectRFIDDevice();
-      }, OB.POS.modelterminal.get('terminal').terminalType.rfidtimeout * 1000 * 60);
-    }
-  },
-  connectRfidDevice: function (inSender, inEvent) {
-    OB.UTIL.isRFIDEnabled = true;
-    this.removeClass('btn-rfid-off');
-    this.addClass('btn-rfid-on');
-    this.setDisabled(false);
-  },
-  disconnectRfidDevice: function (inSender, inEvent) {
-    OB.UTIL.isRFIDEnabled = false;
-    this.removeClass('btn-rfid-on');
-    this.addClass('btn-rfid-off');
-    this.setDisabled(false);
-  },
-  rfidConnectionLost: function (inSender, inEvent) {
-    // New images
-    this.setDisabled(false);
-  },
-  rfidConnectionRecovered: function (inSender, inEvent) {
-    if (!OB.UTIL.isRFIDEnabled) {
-      OB.UTIL.disconnectRFIDDevice();
-      this.removeClass('btn-rfid-on');
-      this.addClass('btn-rfid-off');
-    }
-    this.setDisabled(false);
-  }
-});
-
-enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.LeftToolbarImpl',
   kind: 'OB.UI.MultiColumn.Toolbar',
-  menuEntries: [],
+  menuEntries: [{
+    kind: 'OB.UI.MenuDisableEnableRFIDReader'
+  }, {
+    kind: 'OB.UI.MenuSeparator',
+    name: 'sep0',
+    init: function (model) {
+      if (!OB.MobileApp.model.get('terminal').terminalType.userfid || !OB.POS.hwserver.url) {
+        this.hide();
+      }
+    }
+  }],
   buttons: [{
     kind: 'OB.UI.ButtonNew',
     span: 3
@@ -598,15 +548,6 @@ enyo.kind({
     this.menuEntries = _.uniq(this.menuEntries, false, function (p) {
       return p.kind + p.name;
     });
-    if (OB.POS.modelterminal.get('terminal').terminalType.userfid && OB.MobileApp.model.hasPermission('OBPOS_retail.disableEnableRFIDReader')) {
-      this.buttons.unshift({
-        kind: 'OB.UI.ButtonRFID',
-        span: 2
-      });
-      this.buttons[1].span = 2;
-      this.buttons[2].span = 2;
-      this.buttons[3].span = 6;
-    }
     this.inherited(arguments);
   }
 });

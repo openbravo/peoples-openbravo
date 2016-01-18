@@ -157,6 +157,7 @@ OB.UTIL.connectRFIDDevice = function () {
   OB.UTIL.waitForAck(function (uuid) {
     OB.UTIL.rfidWebsocket.send('connect:' + uuid);
   }, function () {
+    OB.UTIL.isRFIDEnabled = true;
     OB.MobileApp.view.waterfall('onConnectRfidDevice');
   }, function () {
     OB.MobileApp.view.waterfall('onRfidConnectionLost');
@@ -174,6 +175,7 @@ OB.UTIL.disconnectRFIDDevice = function () {
   OB.UTIL.waitForAck(function (uuid) {
     OB.UTIL.rfidWebsocket.send('disconnect:' + uuid);
   }, function () {
+    OB.UTIL.isRFIDEnabled = false;
     OB.MobileApp.view.waterfall('onDisconnectRfidDevice');
   }, function () {
     OB.MobileApp.view.waterfall('onRfidConnectionLost');

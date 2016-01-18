@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2015 Openbravo S.L.U.
+ * Copyright (C) 2012-2016 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -216,24 +216,30 @@ enyo.kind({
     onRightToolbarDisabled: ''
   },
   handlers: {
-    onRightToolbarDisabled: 'disabledButton'
+    onRightToolbarDisabled: 'disabledButton',
+    onConnectRfidDevice: 'connectRfidDevice',
+    onDisconnectRfidDevice: 'disconnectRfidDevice',
+    onRfidConnectionLost: 'rfidConnectionLost',
+    onRfidConnectionRecovered: 'rfidConnectionRecovered'
   },
+  rfidOnIcon: 'btn-icon-rfidon',
+  rfidOffIcon: 'btn-icon-rfidoff',
+  rfidOfflineIcon: 'btn-icon-rfidoffline',
+  components: [{
+    name: 'status',
+    classes: 'btn-icon-toolbartab',
+    components: [{
+      name: 'rfidIcon',
+      showing: false,
+      classes: 'btn-icon-toolbartabrfid'
+    }]
+  }],
   init: function (model) {
     this.model = model;
-    //    var me = this;
-    //    this.model.get('multiOrders').on('change:isMultiOrders', function (model) {
-    //      if (!model.get('isMultiOrders')) {
-    //        this.doTabChange({
-    //          tabPanel: this.tabPanel,
-    //          keyboard: 'toolbarscan',
-    //          edit: false,
-    //          status: ''
-    //        });
-    //      }
-    //      me.doRightToolbarDisabled({
-    //        status: model.get('isMultiOrders')
-    //      });
-    //    }, this);
+    if (OB.MobileApp.model.get('terminal').terminalType.userfid && OB.POS.hwserver.url) {
+      this.$.rfidIcon.show();
+      this.$.rfidIcon.addClass(this.rfidOfflineIcon);
+    }
   },
   disabledButton: function (inSender, inEvent) {
     this.isEnabled = !inEvent.status;
@@ -257,6 +263,30 @@ enyo.kind({
     OB.MobileApp.view.scanningFocus(true);
 
     return true;
+  },
+  connectRfidDevice: function (inSender, inEvent) {
+    this.$.rfidIcon.removeClass(this.rfidOffIcon);
+    this.$.rfidIcon.removeClass(this.rfidOfflineIcon);
+    this.$.rfidIcon.addClass(this.rfidOnIcon);
+  },
+  disconnectRfidDevice: function (inSender, inEvent) {
+    this.$.rfidIcon.removeClass(this.rfidOnIcon);
+    this.$.rfidIcon.addClass(this.rfidOffIcon);
+  },
+  rfidConnectionLost: function (inSender, inEvent) {
+    this.$.rfidIcon.removeClass(this.rfidOnIcon);
+    this.$.rfidIcon.removeClass(this.rfidOffIcon);
+    this.$.rfidIcon.addClass(this.rfidOfflineIcon);
+  },
+  rfidConnectionRecovered: function (inSender, inEvent) {
+    this.$.rfidIcon.removeClass(this.rfidOfflineIcon);
+    if (!OB.UTIL.isRFIDEnabled) {
+      this.$.rfidIcon.removeClass(this.rfidOnIcon);
+      this.$.rfidIcon.addClass(this.rfidOffIcon);
+    } else {
+      this.$.rfidIcon.removeClass(this.rfidOffIcon);
+      this.$.rfidIcon.addClass(this.rfidOnIcon);
+    }
   }
 });
 
@@ -389,7 +419,7 @@ enyo.kind({
     this.model.get('order').get('lines').on('selected', function (lineSelected) {
       this.currentLine = lineSelected;
     }, this);
-    
+
     if (!options.isManual) {
       // The tap was not manual. So consider the last line added
       var lines = this.model.get('order').get('lines');

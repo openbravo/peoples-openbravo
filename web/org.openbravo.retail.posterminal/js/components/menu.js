@@ -792,3 +792,79 @@ enyo.kind({
     }
   }
 });
+
+enyo.kind({
+  name: 'OB.UI.MenuDisableEnableRFIDReader',
+  kind: 'OB.UI.MenuAction',
+  permission: 'OBPOS_retail.disableEnableRFIDReader',
+  i18nLabel: 'OBPOS_RFID',
+  classes: 'menu-switch btn-icon-switchoffline',
+  handlers: {
+    onConnectRfidDevice: 'connectRfidDevice',
+    onDisconnectRfidDevice: 'disconnectRfidDevice',
+    onRfidConnectionLost: 'rfidConnectionLost',
+    onRfidConnectionRecovered: 'rfidConnectionRecovered'
+  },
+  tap: function () {
+    this.inherited(arguments);
+    if (this.disabled) {
+      return true;
+    }
+    this.setDisabled(true);
+    if (OB.MobileApp.model.hasPermission(this.permission)) {
+      if (OB.UTIL.isRFIDEnabled) {
+        this.setLabel(OB.I18N.getLabel('OBPOS_RFID'));
+        OB.UTIL.disconnectRFIDDevice();
+        if (OB.UTIL.rfidTimeout) {
+          clearTimeout(OB.UTIL.rfidTimeout);
+        }
+      } else {
+        this.setLabel(OB.I18N.getLabel('OBPOS_RFID'));
+        OB.UTIL.connectRFIDDevice();
+        if (OB.UTIL.rfidTimeout) {
+          clearTimeout(OB.UTIL.rfidTimeout);
+        }
+        OB.UTIL.rfidTimeout = setTimeout(function () {
+          OB.UTIL.disconnectRFIDDevice();
+        }, OB.POS.modelterminal.get('terminal').terminalType.rfidtimeout * 1000 * 60);
+      }
+    }
+  },
+  init: function (model) {
+    if (!OB.MobileApp.model.get('terminal').terminalType.userfid || !OB.POS.hwserver.url) {
+      this.hide();
+    }
+  },
+  connectRfidDevice: function (inSender, inEvent) {
+    OB.UTIL.isRFIDEnabled = true;
+    this.removeClass('btn-icon-switchoff');
+    this.removeClass('btn-icon-switchoffline');
+    this.addClass('btn-icon-switchon');
+    this.setDisabled(false);
+  },
+  disconnectRfidDevice: function (inSender, inEvent) {
+    OB.UTIL.isRFIDEnabled = false;
+    this.removeClass('btn-icon-switchon');
+    this.removeClass('btn-icon-switchoffline');
+    this.addClass('btn-icon-switchoff');
+    this.setDisabled(false);
+  },
+  rfidConnectionLost: function (inSender, inEvent) {
+    this.removeClass('btn-icon-switchon');
+    this.removeClass('btn-icon-switchoff');
+    this.addClass('btn-icon-switchoffline');
+    this.setDisabled(false);
+  },
+  rfidConnectionRecovered: function (inSender, inEvent) {
+    this.removeClass('btn-icon-switchoffline');
+    if (!OB.UTIL.isRFIDEnabled) {
+      OB.UTIL.disconnectRFIDDevice();
+      this.removeClass('btn-icon-switchon');
+      this.addClass('btn-icon-switchoff');
+    } else {
+      this.addClass('btn-icon-switchon');
+      this.removeClass('btn-icon-switchoff');
+    }
+    this.setDisabled(false);
+  }
+});
