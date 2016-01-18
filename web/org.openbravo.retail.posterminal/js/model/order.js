@@ -1782,10 +1782,26 @@
         //remove promotions
         line.unset('promotions');
 
-        var successCallbackPrices, criteria = {
-          'id': line.get('product').get('id')
-        };
-        successCallbackPrices = function (dataPrices, line) {
+        var successCallbackPrices, criteria = {};
+
+        if (!OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
+          criteria = {
+            'id': line.get('product').get('id')
+          };
+        } else {
+          criteria = {};
+          var remoteCriteria = [];
+          var productId = {
+            columns: ['id'],
+            operator: 'equals',
+            value: line.get('product').get('id'),
+            isId: true
+          };
+          remoteCriteria.push(productId);
+          criteria.remoteFilters = remoteCriteria;
+        }
+
+        successCallbackPrices = function (dataPrices) {
           dataPrices.each(function (price) {
             order.setPrice(line, price.get('standardPrice', {
               setUndo: false
