@@ -472,10 +472,11 @@ enyo.kind({
     }
 
     if (this.dialogbuttons[status]) {
-      this.$.btn.setContent(OB.I18N.getLabel('OBPOS_MorePayments') + ' (' + this.dialogbuttons[status] + ')');
+      this.$.btn.setContent((OB.I18N.getLabel('OBPOS_MorePayments').substr(0, OB.I18N.getLabel('OBPOS_MorePayments').length-3)) + ' (' + this.dialogbuttons[status] + ')');
       this.$.btn.addClass('btnactive-green');
       this.activegreen = true;
     }
+    OB.UTIL.createElipsisEffect(this.$.btn);
   }
 });
 
