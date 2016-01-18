@@ -17,7 +17,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2015 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2001-2016 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -62,23 +62,21 @@ BEGIN
   UPDATE M_PRODUCT_ACCT SET AD_ORG_ID = :new.AD_ORG_ID
   WHERE M_PRODUCT_ID = :new.M_PRODUCT_ID;
 
- -- Do not allow to set the product as stocked if it appears in
- -- processed documents which generate inventory transactions
-  IF (:old.isStocked = 'N' AND :new.isStocked = 'Y') THEN
+ -- Do not allow to change the product stocked flag if it appears in
+ -- any core's document (processed or not)
+  IF (:old.isStocked <> :new.isStocked) THEN
     SELECT count(*) 
     INTO v_Count
     FROM dual
-    WHERE EXISTS ( SELECT 1 FROM M_Inventory iv JOIN M_InventoryLine ivl ON iv.m_inventory_id = ivl.m_inventory_id 
-	 	   WHERE ivl.m_product_id = :new.m_product_id AND iv.processed = 'Y' )
-       OR EXISTS ( SELECT 1 FROM M_Movement mv JOIN M_MovementLine mvl ON mv.m_movement_id = mvl.m_movement_id 
-		   WHERE mvl.m_product_id = :new.m_product_id AND mv.processed = 'Y' )
-       OR EXISTS ( SELECT 1 FROM M_Inout io JOIN M_InoutLine iol ON io.m_inout_id = iol.m_inout_id 
-		   WHERE iol.m_product_id = :new.m_product_id AND io.docstatus = 'CO' )
-       OR EXISTS ( SELECT 1 FROM M_Production pr JOIN M_ProductionPlan pp ON pr.m_production_id = pp.m_production_id 
-		   JOIN M_ProductionLine prl ON pp.m_productionplan_id = prl.m_productionplan_id 
-		   WHERE prl.m_product_id = :new.m_product_id AND pr.processed = 'Y' );
+    WHERE EXISTS ( SELECT 1 FROM C_OrderLine WHERE m_product_id = :new.m_product_id )
+       OR EXISTS ( SELECT 1 FROM C_InvoiceLine WHERE m_product_id = :new.m_product_id )
+       OR EXISTS ( SELECT 1 FROM M_InventoryLine WHERE m_product_id = :new.m_product_id )
+       OR EXISTS ( SELECT 1 FROM M_MovementLine WHERE m_product_id = :new.m_product_id )
+       OR EXISTS ( SELECT 1 FROM M_InoutLine WHERE m_product_id = :new.m_product_id )
+       OR EXISTS ( SELECT 1 FROM M_ProductionLine WHERE m_product_id = :new.m_product_id )
+       OR EXISTS ( SELECT 1 FROM M_Internal_ConsumptionLine WHERE m_product_id = :new.m_product_id );
     IF (v_count > 0) THEN
-      RAISE_APPLICATION_ERROR(-20000, '@NonStockedProductWithTransactions@');
+      RAISE_APPLICATION_ERROR(-20000, '@StockedFlagWithDocuments@');
     END IF;
   END IF;
   
@@ -87,7 +85,6 @@ BEGIN
   IF ((:new.IsActive='N' AND :old.IsActive='Y')
       OR (COALESCE(:new.m_attributeset_id,'null') <> COALESCE(:old.m_attributeset_id,'null'))
       OR (COALESCE(:new.c_uom_id,'null') <> COALESCE(:old.c_uom_id,'null'))
-      OR (:old.isStocked='Y' AND :new.isStocked='N')
       OR (:old.Production <> :new.Production)) THEN
    SELECT  COALESCE(SUM(QtyOnHand)+SUM(QtyReserved)*.111+SUM(QtyOrdered)*999, 0) ,
    COALESCE(sum(QtyOnHand),0), COALESCE(SUM(QtyReserved),0) , COALESCE(SUM(QtyOrdered),0)
@@ -105,8 +102,6 @@ BEGIN
 				RAISE_APPLICATION_ERROR(-20000, '@20633@');
 			ELSIF (COALESCE(:new.c_uom_id,'null') <> COALESCE(:old.c_uom_id,'null')) THEN
 				RAISE_APPLICATION_ERROR(-20000, '@20634@');
-			ELSIF (:old.isStocked = 'Y' AND :new.isStocked = 'N') THEN
-				RAISE_APPLICATION_ERROR(-20000, '@StockedProductWithMovements@');
 			ELSIF (:old.Production <> :new.Production) THEN
 				RAISE_APPLICATION_ERROR(-20000, '@ManufacturingFlagWithStock@');
 			ELSE

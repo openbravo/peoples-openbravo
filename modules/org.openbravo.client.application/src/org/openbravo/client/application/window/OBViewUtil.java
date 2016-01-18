@@ -11,18 +11,21 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2015 Openbravo SLU
+ * All portions are Copyright (C) 2010-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.client.application.window;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Hibernate;
+import org.hibernate.criterion.Order;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.client.application.GCField;
 import org.openbravo.client.application.GCSystem;
@@ -30,6 +33,7 @@ import org.openbravo.client.application.GCTab;
 import org.openbravo.client.application.Parameter;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.ui.Element;
 import org.openbravo.model.ad.ui.Field;
@@ -48,6 +52,15 @@ public class OBViewUtil {
   public static final Element createdByElement;
   public static final Element updatedElement;
   public static final Element updatedByElement;
+  private static final String SORTABLE_PROPERTY = "PROPERTY_SORTABLE";
+  private static final String FILTERABLE_PROPERTY = "PROPERTY_FILTERABLE";
+  private static final String TEXTFILTERBEHAVIOR_PROPERTY = "PROPERTY_TEXTFILTERBEHAVIOR";
+  private static final String FILTERONCHANGE_PROPERTY = "PROPERTY_FILTERONCHANGE";
+  private static final String ALLOWFILTERBYIDENTIFIER_PROPERTY = "PROPERTY_ALLOWFILTERBYIDENTIFIER";
+  private static final String ISFKDROPDOWNUNFILTERED_PROPERTY = "PROPERTY_ISFKDROPDOWNUNFILTERED";
+  private static final String DISABLEFKCOMBO_PROPERTY = "PROPERTY_DISABLEFKCOMBO";
+  private static final String THRESHOLDTOFILTER_PROPERTY = "PROPERTY_THRESHOLDTOFILTER";
+  private static final String ISLAZYFILTERING_PROPERTY = "PROPERTY_ISLAZYFILTERING";
 
   static {
     createdElement = OBDal.getInstance().get(Element.class, "245");
@@ -187,12 +200,18 @@ public class OBViewUtil {
    * @return the grid configuration
    */
   private static JSONObject getGridConfigurationSettings(Field field, Tab tab) {
-    GridConfigSettings settings = new GridConfigSettings();
-
+    GridConfigSettings settings = new GridConfigSettings(field);
+    int gcTabIndex = 0;
     GCTab tabConf = null;
-    for (GCTab t : tab.getOBUIAPPGCTabList()) {
-      tabConf = t;
-      break;
+    if (tab.getOBUIAPPGCTabList().size() > 1) {
+      Collections.sort(tab.getOBUIAPPGCTabList(), new GCTabComparator());
+      gcTabIndex = tab.getOBUIAPPGCTabList().size() - 1;
+      tabConf = tab.getOBUIAPPGCTabList().get(gcTabIndex);
+    } else {
+      for (GCTab t : tab.getOBUIAPPGCTabList()) {
+        tabConf = t;
+        break;
+      }
     }
 
     if (tabConf != null && field != null && field.getId() != null) {
@@ -219,13 +238,29 @@ public class OBViewUtil {
 
     if (settings.shouldContinueProcessing()) {
       // Trying to get parameters from "Grid Configuration (System)" window
-      List<GCSystem> sysConfs = OBDal.getInstance().createQuery(GCSystem.class, "").list();
+      OBCriteria<GCSystem> gcSystemCriteria = OBDal.getInstance().createCriteria(GCSystem.class);
+      gcSystemCriteria.addOrder(Order.desc(GCTab.PROPERTY_SEQNO));
+      gcSystemCriteria.addOrder(Order.desc(GCTab.PROPERTY_ID));
+      gcSystemCriteria.setMaxResults(1);
+      List<GCSystem> sysConfs = gcSystemCriteria.list();
+
       if (!sysConfs.isEmpty()) {
         settings.processConfig(sysConfs.get(0));
       }
     }
 
     return settings.processJSONResult();
+  }
+
+  private static class GCTabComparator implements Comparator<GCTab> {
+    @Override
+    public int compare(GCTab o1, GCTab o2) {
+      if (o1.getSeqno().compareTo(o2.getSeqno()) != 0) {
+        return o1.getSeqno().compareTo(o2.getSeqno());
+      } else {
+        return o1.getId().compareTo(o2.getId());
+      }
+    }
   }
 
   private static class GridConfigSettings {
@@ -238,11 +273,64 @@ public class OBViewUtil {
     private Boolean disableFkDropdown = null;
     private String operator = null;
     private Long thresholdToFilter = null;
+    private boolean isSortingColumnConfig;
+    private boolean isFilteringColumnConfig;
+    private Field theField;
+
+    private GridConfigSettings(Field field) {
+      isFilteringColumnConfig = true;
+      isSortingColumnConfig = true;
+      this.theField = field;
+      if (theField != null) {
+        canSort = theField.getColumn().isAllowSorting();
+        canFilter = theField.getColumn().isAllowFiltering();
+      } else {
+        canSort = true;
+        canFilter = true;
+      }
+    }
 
     private boolean shouldContinueProcessing() {
       return canSort == null || canFilter == null || operator == null || filterOnChange == null
           || thresholdToFilter == null || allowFkFilterByIdentifier == null
           || showFkDropdownUnfiltered == null || disableFkDropdown == null || lazyFiltering == null;
+    }
+
+    private void processConfig(BaseOBObject gcItem) {
+      Class<? extends BaseOBObject> itemClass = gcItem.getClass();
+      try {
+        sortingPropertyValue(gcItem);
+        filteringPropertyValue(gcItem);
+        if (operator == null) {
+          if (gcItem.get(itemClass.getField(TEXTFILTERBEHAVIOR_PROPERTY).get(gcItem).toString()) != null
+              && !"D".equals(gcItem.get(itemClass.getField(TEXTFILTERBEHAVIOR_PROPERTY).get(gcItem)
+                  .toString()))) {
+            operator = (String) gcItem.get(itemClass.getField(TEXTFILTERBEHAVIOR_PROPERTY)
+                .get(gcItem).toString());
+          }
+        }
+        if (filterOnChange == null) {
+          filterOnChange = convertBoolean(gcItem, FILTERONCHANGE_PROPERTY);
+        }
+        if (allowFkFilterByIdentifier == null) {
+          allowFkFilterByIdentifier = convertBoolean(gcItem, ALLOWFILTERBYIDENTIFIER_PROPERTY);
+        }
+        if (showFkDropdownUnfiltered == null) {
+          showFkDropdownUnfiltered = convertBoolean(gcItem, ISFKDROPDOWNUNFILTERED_PROPERTY);
+        }
+        if (disableFkDropdown == null) {
+          disableFkDropdown = convertBoolean(gcItem, DISABLEFKCOMBO_PROPERTY);
+        }
+        if (thresholdToFilter == null) {
+          thresholdToFilter = (Long) gcItem.get(itemClass.getField(THRESHOLDTOFILTER_PROPERTY)
+              .get(gcItem).toString());
+        }
+        if (lazyFiltering == null && !(gcItem instanceof GCField)) {
+          lazyFiltering = convertBoolean(gcItem, ISLAZYFILTERING_PROPERTY);
+        }
+      } catch (Exception e) {
+        log.error("Error while getting the properties of " + gcItem, e);
+      }
     }
 
     private Boolean convertBoolean(BaseOBObject gcItem, String property) {
@@ -270,44 +358,39 @@ public class OBViewUtil {
       return isPropertyEnabled;
     }
 
-    private void processConfig(BaseOBObject gcItem) {
-      Class<? extends BaseOBObject> itemClass = gcItem.getClass();
-      try {
-        if (canSort == null) {
-          canSort = convertBoolean(gcItem, "PROPERTY_SORTABLE");
+    private void sortingPropertyValue(BaseOBObject gcItem) {
+      Boolean sortingConfiguration = convertBoolean(gcItem, SORTABLE_PROPERTY);
+      if (sortingConfiguration == null) {
+        return;
+      }
+      if (gcItem instanceof GCField) {
+        isSortingColumnConfig = false;
+        canSort = sortingConfiguration;
+      } else if (gcItem instanceof GCTab && isSortingColumnConfig) {
+        isSortingColumnConfig = false;
+        if (!sortingConfiguration) {
+          canSort = sortingConfiguration;
         }
-        if (canFilter == null) {
-          canFilter = convertBoolean(gcItem, "PROPERTY_FILTERABLE");
+      } else if (gcItem instanceof GCSystem && isSortingColumnConfig && !sortingConfiguration) {
+        canSort = sortingConfiguration;
+      }
+    }
+
+    private void filteringPropertyValue(BaseOBObject gcItem) {
+      Boolean filteringConfiguration = convertBoolean(gcItem, FILTERABLE_PROPERTY);
+      if (filteringConfiguration == null) {
+        return;
+      }
+      if (gcItem instanceof GCField) {
+        isFilteringColumnConfig = false;
+        canFilter = filteringConfiguration;
+      } else if (gcItem instanceof GCTab && isFilteringColumnConfig) {
+        isFilteringColumnConfig = false;
+        if (!filteringConfiguration) {
+          canFilter = filteringConfiguration;
         }
-        if (operator == null) {
-          if (gcItem.get(itemClass.getField("PROPERTY_TEXTFILTERBEHAVIOR").get(gcItem).toString()) != null
-              && !"D".equals(gcItem.get(itemClass.getField("PROPERTY_TEXTFILTERBEHAVIOR")
-                  .get(gcItem).toString()))) {
-            operator = (String) gcItem.get(itemClass.getField("PROPERTY_TEXTFILTERBEHAVIOR")
-                .get(gcItem).toString());
-          }
-        }
-        if (filterOnChange == null) {
-          filterOnChange = convertBoolean(gcItem, "PROPERTY_FILTERONCHANGE");
-        }
-        if (allowFkFilterByIdentifier == null) {
-          allowFkFilterByIdentifier = convertBoolean(gcItem, "PROPERTY_ALLOWFILTERBYIDENTIFIER");
-        }
-        if (showFkDropdownUnfiltered == null) {
-          showFkDropdownUnfiltered = convertBoolean(gcItem, "PROPERTY_ISFKDROPDOWNUNFILTERED");
-        }
-        if (disableFkDropdown == null) {
-          disableFkDropdown = convertBoolean(gcItem, "PROPERTY_DISABLEFKCOMBO");
-        }
-        if (thresholdToFilter == null) {
-          thresholdToFilter = (Long) gcItem.get(itemClass.getField("PROPERTY_THRESHOLDTOFILTER")
-              .get(gcItem).toString());
-        }
-        if (lazyFiltering == null && !(gcItem instanceof GCField)) {
-          lazyFiltering = convertBoolean(gcItem, "PROPERTY_ISLAZYFILTERING");
-        }
-      } catch (Exception e) {
-        log.error("Error while getting the properties of " + gcItem, e);
+      } else if (gcItem instanceof GCSystem && isFilteringColumnConfig && !filteringConfiguration) {
+        canFilter = filteringConfiguration;
       }
     }
 

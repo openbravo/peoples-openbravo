@@ -209,6 +209,14 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="ALLOWSORTING" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[Y]]></default>
+        <onCreateDefault><![CDATA['Y']]></onCreateDefault>
+      </column>
+      <column name="ALLOWFILTERING" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[Y]]></default>
+        <onCreateDefault><![CDATA['Y']]></onCreateDefault>
+      </column>
       <column name="FILEEXTENSIONS" primaryKey="false" required="false" type="VARCHAR" size="2000" autoIncrement="false">
         <default/>
         <onCreateDefault/>
@@ -268,6 +276,8 @@
         <unique-column name="AD_TABLE_ID"/>
         <unique-column name="NAME"/>
       </unique>
+      <check name="AD_COLUMN_ALLOWFILTERING_CHK"><![CDATA[ALLOWFILTERING IN ('Y', 'N')]]></check>
+      <check name="AD_COLUMN_ALLOWSORTING_CHK"><![CDATA[ALLOWSORTING IN ('Y', 'N')]]></check>
       <check name="AD_COLUMN_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="AD_COLUMN_ISAUTOSAVE_CHK"><![CDATA[ISAUTOSAVE IN ('Y', 'N')]]></check>
       <check name="AD_COLUMN_ISDESENCRYPTABLE_CHK"><![CDATA[ISDESENCRYPTABLE IN ('Y', 'N')]]></check>

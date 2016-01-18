@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2015 Openbravo SLU
+ * All portions are Copyright (C) 2014-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -666,15 +666,6 @@ OB.APRM.AddPayment.updateActualExpected = function (form) {
         actualPayment.setValue(Number('0'));
       } else {
         actualPayment.setValue(Number(actpayment.subtract(credit)));
-      }
-    }
-    if (bslamount.compareTo(BigDecimal.prototype.ZERO) !== 0) {
-      if (actpayment.compareTo(BigDecimal.prototype.ZERO) === 0) {
-        actpayment = actpayment.add(bslamount.abs());
-        actualPayment.setValue(Number(actpayment));
-      } else if (actpayment.compareTo(bslamount.abs()) < 0) {
-        actpayment = bslamount.abs();
-        actualPayment.setValue(Number(actpayment));
       }
     }
     OB.APRM.AddPayment.updateDifference(form);

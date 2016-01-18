@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2015 Openbravo SLU
+ * All portions are Copyright (C) 2011-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -518,7 +518,8 @@ isc.OBSelectorItem.addProperties({
   setEntries: function (entries) {
     var length = entries.length,
         i, id, identifier, valueMap = {},
-        valueMapData = [];
+        valueMapElement, valueField = this.getValueFieldName(),
+        valueFieldContent, valueMapData = [];
 
     if (!this.setValueMap) {
       return;
@@ -529,10 +530,20 @@ isc.OBSelectorItem.addProperties({
       identifier = entries[i][OB.Constants.IDENTIFIER] || '';
       valueMap[id] = identifier;
 
-      valueMapData.push({
-        _identifier: identifier,
-        id: id
-      });
+      valueMapElement = {};
+      valueMapElement[OB.Constants.IDENTIFIER] = identifier;
+      valueMapElement[OB.Constants.ID] = id;
+
+      // We include the value field into the entry.
+      // With this we avoid to retrieve an incorrect value from mapValueToDisplay() when looking for undefined values.
+      // This could happen when creating a new record in form view, after clearing the values.
+      // See issue https://issues.openbravo.com/view.php?id=31331
+      if (valueField) {
+        valueFieldContent = entries[i][valueField] || '';
+        valueMapElement[valueField] = valueFieldContent;
+      }
+
+      valueMapData.push(valueMapElement);
     }
 
     this.wholeMapSet = true; // flag to use local filtering from now on
