@@ -306,7 +306,7 @@ public class EndYearCloseUtility {
     String strOpeningEntry = Utility.messageBD(conn, "OpeningEntry", vars.getLanguage());
     String strClosingEntry = Utility.messageBD(conn, "ClosingEntry", vars.getLanguage());
     if (newPeriod.equals("")) {
-      throw new OBException("ProcessRunError");
+      return "ProcessRunError";
     }
 
     String currency = EndYearCloseUtilityData.cCurrencyId(conn, strAcctSchema);
