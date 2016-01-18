@@ -26,6 +26,8 @@ isc.OBViewGrid.addClassProperties({
   ARROW_UP_KEY_NAME: 'Arrow_Up',
   ARROW_DOWN_KEY_NAME: 'Arrow_Down',
   ERROR_MESSAGE_PROP: '_hasErrors',
+  EXISTS_FILTER_CLAUSE: 'hasFilterClause',
+  IS_FILTER_CLAUSE_APPLIED: 'isFilterApplied',
   ICONS: {
     PROGRESS: 0,
     OPEN_IN_FORM: 1,
@@ -2262,7 +2264,6 @@ isc.OBViewGrid.addProperties({
 
   getFetchRequestParams: function (params, isExporting) {
     var i, len, first, selectedProperties;
-    var hasFilterClause = 'hasFilterClause';
     params = params || {};
 
     if (this.targetRecordId) {
@@ -2294,12 +2295,9 @@ isc.OBViewGrid.addProperties({
 
     // add all the new session properties context info to the requestProperties
     isc.addProperties(params, this.view.getContextInfo(true, false));
-  
-    if (this.filterClause || this.whereClause) {
-        params[hasFilterClause] = this.filterClause;
-    } else {
-      params[hasFilterClause] = null;
-    }
+
+    params[isc.OBViewGrid.EXISTS_FILTER_CLAUSE] = this.tabHasFilterClause();
+    params[isc.OBViewGrid.IS_FILTER_CLAUSE_APPLIED] = this.tabHasFilterClauseApplied();
 
     if (this.isSorting) {
       params.isSorting = true;
@@ -2329,6 +2327,22 @@ isc.OBViewGrid.addProperties({
       params._selectedProperties = selectedProperties;
     }
     return params;
+  },
+
+  tabHasFilterClause: function () {
+    if (this.filterClause || this.whereClause) {
+      return true;
+    } else {
+      return false;
+    }
+  },
+
+  tabHasFilterClauseApplied: function () {
+    if (this.filterClause) {
+      return true;
+    } else {
+      return false;
+    }
   },
 
   createNew: function () {
