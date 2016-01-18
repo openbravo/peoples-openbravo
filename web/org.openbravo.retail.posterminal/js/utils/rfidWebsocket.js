@@ -85,9 +85,9 @@ OB.UTIL.startRfidWebsocket = function startRfidWebsocket(websocketServerLocation
 };
 
 OB.UTIL.addEpcLine = function (line) {
-  this.waitForAck(function (uuid) {
+  OB.UTIL.waitForAck(function (uuid) {
     OB.UTIL.rfidWebsocket.send('addEpcs:' + uuid + ':' + line.get('obposEpccode'));
-  }, function () {}, function () {}, 3000, OB.UTIL.get_UUID(), 5);
+  }, function () {}, function () {}, 2000, OB.UTIL.get_UUID(), 5);
 };
 
 OB.UTIL.eraseEpcOrder = function (order) {
@@ -99,28 +99,28 @@ OB.UTIL.eraseEpcOrder = function (order) {
 
   });
   if (epcCodes) {
-    this.waitForAck(function (uuid) {
+    OB.UTIL.waitForAck(function (uuid) {
       OB.UTIL.rfidWebsocket.send('removeEpcs:' + uuid + ':' + epcCodes.substring(0, epcCodes.length - 1));
-    }, function () {}, function () {}, 3000, OB.UTIL.get_UUID(), 5);
+    }, function () {}, function () {}, 2000, OB.UTIL.get_UUID(), 5);
   }
 };
 
 OB.UTIL.removeEpcLine = function (line) {
-  this.waitForAck(function (uuid) {
+  OB.UTIL.waitForAck(function (uuid) {
     OB.UTIL.rfidWebsocket.send('removeEpcs:' + uuid + ':' + line.get('obposEpccode'));
-  }, function () {}, function () {}, 3000, OB.UTIL.get_UUID(), 5);
+  }, function () {}, function () {}, 2000, OB.UTIL.get_UUID(), 5);
 };
 
 OB.UTIL.updateEpcBuffers = function () {
-  this.waitForAck(function (uuid) {
+  OB.UTIL.waitForAck(function (uuid) {
     OB.UTIL.rfidWebsocket.send('updateEpcBuffers:' + uuid);
-  }, function () {}, function () {}, 3000, OB.UTIL.get_UUID(), 5);
+  }, function () {}, function () {}, 2000, OB.UTIL.get_UUID(), 5);
 };
 
 OB.UTIL.removeAllEpcs = function () {
-  this.waitForAck(function (uuid) {
+  OB.UTIL.waitForAck(function (uuid) {
     OB.UTIL.rfidWebsocket.send('removeAllEpcs:' + uuid);
-  }, function () {}, function () {}, 3000, OB.UTIL.get_UUID(), 5);
+  }, function () {}, function () {}, 2000, OB.UTIL.get_UUID(), 5);
 };
 
 OB.UTIL.processRemainingCodes = function (order) {
@@ -136,41 +136,55 @@ OB.UTIL.processRemainingCodes = function (order) {
     }
   });
   if (epcCodesToAdd) {
-    this.waitForAck(function (uuid) {
+    OB.UTIL.waitForAck(function (uuid) {
       OB.UTIL.rfidWebsocket.send('addEpc:' + uuid + ':' + epcCodesToAdd.substring(0, epcCodesToAdd.length - 1));
-    }, function () {}, function () {}, 3000, OB.UTIL.get_UUID(), 5);
+    }, function () {}, function () {}, 2000, OB.UTIL.get_UUID(), 5);
   }
   if (epcCodesToErase) {
-    this.waitForAck(function (uuid) {
+    OB.UTIL.waitForAck(function (uuid) {
       OB.UTIL.rfidWebsocket.send('removeEpc:' + uuid + ':' + epcCodesToErase.substring(0, epcCodesToErase.length - 1));
-    }, function () {}, function () {}, 3000, OB.UTIL.get_UUID(), 5);
+    }, function () {}, function () {}, 2000, OB.UTIL.get_UUID(), 5);
   }
   //Only if useSecurityGate check is enabled
   if (OB.POS.modelterminal.get('terminal').terminalType.usesecuritygate) {
-    this.waitForAck(function (uuid) {
+    OB.UTIL.waitForAck(function (uuid) {
       OB.UTIL.rfidWebsocket.send('send:' + uuid + ':' + JSON.stringify(order));
-    }, function () {}, function () {}, 3000, OB.UTIL.get_UUID(), 5);
+    }, function () {}, function () {}, 2000, OB.UTIL.get_UUID(), 5);
   }
 };
 
 OB.UTIL.connectRFIDDevice = function () {
-  this.waitForAck(function (uuid) {
+  OB.UTIL.waitForAck(function (uuid) {
     OB.UTIL.rfidWebsocket.send('connect:' + uuid);
   }, function () {
     OB.MobileApp.view.waterfall('onConnectRfidDevice');
   }, function () {
     OB.MobileApp.view.waterfall('onRfidConnectionLost');
-  }, 3000, OB.UTIL.get_UUID());
+    OB.UTIL.waitForAck(function (uuid) {
+      OB.UTIL.rfidWebsocket.send('connect:' + uuid);
+    }, function () {
+      OB.MobileApp.view.waterfall('onConnectRfidDevice');
+    }, function () {
+      OB.MobileApp.view.waterfall('onRfidConnectionLost');
+    }, 2000, OB.UTIL.get_UUID());
+  }, 2000, OB.UTIL.get_UUID(), 3);
 };
 
 OB.UTIL.disconnectRFIDDevice = function () {
-  this.waitForAck(function (uuid) {
+  OB.UTIL.waitForAck(function (uuid) {
     OB.UTIL.rfidWebsocket.send('disconnect:' + uuid);
   }, function () {
     OB.MobileApp.view.waterfall('onDisconnectRfidDevice');
   }, function () {
     OB.MobileApp.view.waterfall('onRfidConnectionLost');
-  }, 3000, OB.UTIL.get_UUID());
+    OB.UTIL.waitForAck(function (uuid) {
+      OB.UTIL.rfidWebsocket.send('disconnect:' + uuid);
+    }, function () {
+      OB.MobileApp.view.waterfall('onDisconnectRfidDevice');
+    }, function () {
+      OB.MobileApp.view.waterfall('onRfidConnectionLost');
+    }, 2000, OB.UTIL.get_UUID());
+  }, 2000, OB.UTIL.get_UUID(), 3);
 };
 
 OB.UTIL.waitForAck = function (functionToExecute, callback, errorCallback, interval, uuid, trials) {
