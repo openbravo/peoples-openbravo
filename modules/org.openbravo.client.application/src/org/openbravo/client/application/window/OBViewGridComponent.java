@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -166,6 +167,16 @@ public class OBViewGridComponent extends BaseTemplateComponent {
       return addTransactionalFilter(tab.getHqlfilterclause());
     }
     return addTransactionalFilter("");
+  }
+
+  public boolean getHasFilterClause() {
+    boolean existsFilterClause = false;
+    if (StringUtils.isBlank(getFilterClause())) {
+      existsFilterClause = false;
+    } else {
+      existsFilterClause = true;
+    }
+    return existsFilterClause;
   }
 
   public String getFilterClauseSQL() {

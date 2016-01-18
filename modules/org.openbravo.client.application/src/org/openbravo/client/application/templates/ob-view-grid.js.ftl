@@ -12,7 +12,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2013 Openbravo SLU
+ * All portions are Copyright (C) 2010-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -32,8 +32,11 @@ isc.OBViewGrid.create({
     <#if data.sortField != "">
         sortField: '${data.sortField?js_string}',
     </#if>
-    <#if data.filterClause != "">
-        filterClause: '${data.filterClause?js_string}',
+    <#if data.hasFilterClause == true>
+        filterClause: true,
+    </#if>
+    <#if data.hasFilterClause == false>
+        filterClause: false,
     </#if>
     <#if data.filterName != "">
         filterName: '${data.filterName?js_string}',

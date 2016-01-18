@@ -56,7 +56,6 @@ isc.OBViewGrid.addProperties({
   // handles this form
   // and the grid and other related components.
   view: null,
-
   // ** {{{ editGrid }}} **
   // Controls if an edit link column is created in the grid, set to false to
   // prevent this.
@@ -2263,6 +2262,7 @@ isc.OBViewGrid.addProperties({
 
   getFetchRequestParams: function (params, isExporting) {
     var i, len, first, selectedProperties;
+    var hasFilterClause = 'hasFilterClause';
     params = params || {};
 
     if (this.targetRecordId) {
@@ -2294,17 +2294,11 @@ isc.OBViewGrid.addProperties({
 
     // add all the new session properties context info to the requestProperties
     isc.addProperties(params, this.view.getContextInfo(true, false));
-
-    if (this.filterClause) {
-      if (this.whereClause) {
-        params[OB.Constants.WHERE_PARAMETER] = ' ((' + this.whereClause + ') and (' + this.filterClause + ')) ';
-      } else {
-        params[OB.Constants.WHERE_PARAMETER] = this.filterClause;
-      }
-    } else if (this.whereClause) {
-      params[OB.Constants.WHERE_PARAMETER] = this.whereClause;
+  
+    if (this.filterClause || this.whereClause) {
+        params[hasFilterClause] = this.filterClause;
     } else {
-      params[OB.Constants.WHERE_PARAMETER] = null;
+      params[hasFilterClause] = null;
     }
 
     if (this.isSorting) {
