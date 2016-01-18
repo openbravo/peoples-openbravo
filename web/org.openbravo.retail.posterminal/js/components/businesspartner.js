@@ -173,6 +173,7 @@ enyo.kind({
     this.doShowPopup({
       popup: 'modalAdvancedFilterBP',
       args: {
+        lastFilters: this.owner.lastFilters,
         callback: function (result) {
           me.doShowBPSelector();
           if (result) {
@@ -345,6 +346,7 @@ enyo.kind({
       }];
       inEvent.advanced = false;
     }
+    this.lastFilters = inEvent.filters;
     this.doSearchAction({
       filters: inEvent.filters,
       orderby: inEvent.orderby,
@@ -405,6 +407,36 @@ enyo.kind({
 });
 
 enyo.kind({
+  kind: 'OB.UI.ListContextMenuItem',
+  name: 'OB.UI.BPAddressContextMenuItem',
+  i18NLabel: 'OBPOS_BPAddress',
+  events: {
+    onShowPopup: '',
+    onHideBPSelector: ''
+  },
+  selectItem: function (bpartner) {
+    var me = this;
+    bpartner.set('ignoreSetBP', true, {
+      silent: true
+    });
+    OB.Dal.get(OB.Model.BusinessPartner, bpartner.get('bpartnerId'), function (bp) {
+      OB.MobileApp.view.$.containerWindow.$.pointOfSale.bubble('onShowPopup', {
+        popup: 'modalcustomeraddress',
+        args: {
+          target: bp.get('selectorTarget'),
+          businessPartner: bp
+        }
+      });
+    });
+    return true;
+  },
+  create: function () {
+    this.inherited(arguments);
+    this.setContent(OB.I18N.getLabel(this.i18NLabel));
+  }
+});
+
+enyo.kind({
   kind: 'OB.UI.ListContextMenu',
   name: 'OB.UI.BusinessPartnerContextMenu',
   initComponents: function () {
@@ -417,6 +449,9 @@ enyo.kind({
       permission: 'OBPOS_receipt.customers'
     }, {
       kind: 'OB.UI.BPEditContextMenuItem',
+      permission: 'OBPOS_retail.editCustomers'
+    }, {
+      kind: 'OB.UI.BPAddressContextMenuItem',
       permission: 'OBPOS_retail.editCustomers'
     });
 
@@ -486,7 +521,8 @@ enyo.kind({
   classes: 'row-fluid',
   handlers: {
     onSearchAction: 'searchAction',
-    onClearAction: 'clearAction'
+    onClearAction: 'clearAction',
+    onSetBusinessPartnerTarget: 'setBusinessPartnerTarget'
   },
   events: {
     onChangeBusinessPartner: ''
@@ -516,6 +552,9 @@ enyo.kind({
       }]
     }]
   }],
+  setBusinessPartnerTarget: function (inSender, inEvent) {
+    this.target = inEvent.target;
+  },
   clearAction: function (inSender, inEvent) {
     this.bpsList.reset();
     this.$.stBPAssignToReceipt.$.theader.$.modalBpScrollableHeader.$.advancedFilterInfo.setShowing(false);
@@ -571,6 +610,7 @@ enyo.kind({
           });
           bp.set('_identifier', bp.get('bpName'));
           bp.set('filter', filter);
+          bp.set('selectorTarget', me.target);
         });
         me.bpsList.reset(dataBps.models);
         me.$.stBPAssignToReceipt.$.tbody.show();
@@ -782,6 +822,9 @@ enyo.kind({
     this.bubble('onSetBusinessPartnerTarget', {
       target: this.args.target
     });
+    this.waterfall('onSetBusinessPartnerTarget', {
+      target: this.args.target
+    });
     this.$.body.$.listBps.$.stBPAssignToReceipt.$.theader.$.modalBpScrollableHeader.$.customerSearchBtn.putDisabled(false);
     this.$.body.$.listBps.$.stBPAssignToReceipt.$.theader.$.modalBpScrollableHeader.$.newAction.putDisabled(!OB.MobileApp.model.hasPermission('OBPOS_retail.editCustomers'));
     if (!OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
@@ -892,7 +935,7 @@ enyo.kind({
             var buttonClasses = this.getClassAttribute().split(' '),
                 buttonClass = buttonClasses[buttonClasses.length - 1];
             this.owner.setSortNone();
-            this.addClass(buttonClass === 'iconSortAsc' ? 'iconSortDesc' : 'iconSortAsc');
+            this.addClass(buttonClass === 'iconSortAsc' ? 'iconSortDesc' : (buttonClass === 'iconSortDesc' ? 'iconSortNone' : 'iconSortAsc'));
           }
         }]
       }]
@@ -993,6 +1036,14 @@ enyo.kind({
   },
 
   executeOnShow: function () {
+    if (this.args.lastFilters) {
+      _.each(this.$.body.$.filters.filters, function (filter) {
+        var lastFlt = _.find(this.args.lastFilters, function (last) {
+          return last.column === filter.filter.column;
+        });
+        filter.owner.$['input' + filter.filter.name].setValue(lastFlt ? lastFlt.text : '');
+      }, this);
+    }
     this.filtersToApply = null;
     return true;
   },
