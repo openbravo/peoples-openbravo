@@ -211,6 +211,7 @@ enyo.kind({
   kind: 'OB.UI.ToolbarButtonTab',
   tabPanel: 'scan',
   i18nLabel: 'OBMOBC_LblScan',
+  style: 'position: relative;',
   events: {
     onTabChange: '',
     onRightToolbarDisabled: ''
@@ -236,6 +237,7 @@ enyo.kind({
   }],
   init: function (model) {
     this.model = model;
+    this.$.lbl.addClass('btn-label');
     if (OB.MobileApp.model.get('terminal').terminalType.userfid && OB.POS.hwserver.url) {
       this.$.rfidIcon.show();
       this.$.rfidIcon.addClass(this.rfidOfflineIcon);
