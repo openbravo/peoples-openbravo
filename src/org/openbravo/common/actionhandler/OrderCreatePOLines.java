@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2013 Openbravo SLU 
+ * All portions are Copyright (C) 2013-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -154,7 +154,7 @@ public class OrderCreatePOLines extends BaseProcessActionHandler {
       newOrderLine.setTax(tax);
 
       // Price
-      BigDecimal unitPrice, netPrice, grossPrice, stdPrice, limitPrice, grossAmt, netListPrice, grossListPrice;
+      BigDecimal unitPrice, netPrice, grossPrice, stdPrice, limitPrice, grossAmt, netListPrice, grossListPrice, grossStdPrice;
       stdPrice = BigDecimal.ZERO;
       final int pricePrecision = order.getCurrency().getPricePrecision().intValue();
       final int stdPrecision = order.getCurrency().getStandardPrecision().intValue();
@@ -168,11 +168,12 @@ public class OrderCreatePOLines extends BaseProcessActionHandler {
         netPrice = FinancialUtils.calculateNetFromGross(tax.getId(), grossAmt, pricePrecision,
             grossAmt, qtyOrdered);
         limitPrice = netPrice;
-        stdPrice = netPrice;
+        // selected line standard price is Gross Std Price in this case
+        grossStdPrice = unitPrice;
         netListPrice = netPrice;
       } else {
         netPrice = unitPrice;
-        grossListPrice = grossAmt = grossPrice = BigDecimal.ZERO;
+        grossListPrice = grossAmt = grossPrice = grossStdPrice = BigDecimal.ZERO;
       }
 
       newOrderLine.setUnitPrice(netPrice);
@@ -181,6 +182,8 @@ public class OrderCreatePOLines extends BaseProcessActionHandler {
       newOrderLine.setGrossListPrice(grossListPrice);
       newOrderLine.setPriceLimit(limitPrice);
       newOrderLine.setStandardPrice(stdPrice);
+      // Set Base Gross Unit Price thats is Gross Standard Price
+      newOrderLine.setBaseGrossUnitPrice(grossStdPrice);
       newOrderLine.setLineNetAmount(netPrice.multiply(qtyOrdered).setScale(stdPrecision,
           BigDecimal.ROUND_HALF_UP));
       newOrderLine.setLineGrossAmount(grossAmt);
