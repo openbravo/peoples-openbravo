@@ -189,7 +189,7 @@ enyo.kind({
                 }
               }
               if (customerAddr.get('id') === me.customer.get('shipLocId')) {
-                if (!customerAddr.get('isBillTo')) {
+                if (!customerAddr.get('isShipTo')) {
                   me.customer.set('shipLocId', null);
                   me.customer.set('shipLocName', null);
                   me.customer.set('shipPostalCode', null);
