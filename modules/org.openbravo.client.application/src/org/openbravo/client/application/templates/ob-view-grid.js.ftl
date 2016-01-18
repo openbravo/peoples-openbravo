@@ -32,11 +32,14 @@ isc.OBViewGrid.create({
     <#if data.sortField != "">
         sortField: '${data.sortField?js_string}',
     </#if>
+    <#if data.filterClause != "">
+        filterClause: '${data.filterClause?js_string}',
+    </#if>
     <#if data.hasFilterClause == true>
-        filterClause: true,
+        existsFilterClause: true,
     </#if>
     <#if data.hasFilterClause == false>
-        filterClause: false,
+        existsFilterClause: false,
     </#if>
     <#if data.filterName != "">
         filterName: '${data.filterName?js_string}',
