@@ -1,13 +1,13 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2015 Openbravo S.L.U.
+ * Copyright (C) 2012-2016 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
  ************************************************************************************
  */
 
-/*global OB, $, Backbone, _, enyo, Audio, setTimeout, setInterval, clearTimeout, clearInterval */
+/*global OB, $, Backbone, _, enyo, Audio, setTimeout, setInterval, clearTimeout, clearInterval, Promise */
 
 // HWServer: TODO: this should be implemented in HW Manager module
 OB.DS.HWResource = function (res) {
@@ -217,10 +217,49 @@ OB.DS.HWServer.prototype.print = function (template, params, callback) {
 };
 
 OB.DS.HWServer.prototype._print = function (templatedata, params, callback) {
+
+  var promisedata = function (template) {
+      return new Promise(function (resolve, reject) {
+        template.getData(function () {
+          resolve();
+        });
+      });
+
+      };
   var computeddata;
   try {
-    computeddata = this._template(templatedata, params);
-    this._send(computeddata, callback);
+    computeddata = this._template(templatedata, params).trim();
+
+    if (computeddata.substr(0, 6) === 'jrxml:') {
+      // Print a jasper PDF report. We need to rebuild the parameters to adjust the _printPDF() call...
+      var returnedparams = JSON.parse(computeddata.substr(6));
+      var getdatas = [];
+      var i = 0;
+      var me = this;
+
+      var newtemplate = new OB.DS.HWResource(returnedparams.report);
+      newtemplate.ispdf = true;
+      newtemplate.printer = returnedparams.printer || 1;
+      newtemplate.dateFormat = OB.Format.date;
+      getdatas.push(promisedata(newtemplate));
+      newtemplate.subreports = [];
+
+      for (i = 0; i < returnedparams.subreports.length; i++) {
+        newtemplate.subreports[i] = new OB.DS.HWResource(returnedparams.subreports[i]);
+        getdatas.push(promisedata(newtemplate.subreports[i]));
+      }
+
+      Promise.all(getdatas).then(function () {
+        me._printPDF({
+          param: params.order.serializeToJSON(),
+          mainReport: newtemplate,
+          subReports: newtemplate.subreports
+        }, callback);
+      });
+    } else {
+      // Print the computed receipt as usual
+      this._send(computeddata, callback);
+    }
   } catch (ex) {
     OB.error('Error computing the template to print.', ex);
     callback({
