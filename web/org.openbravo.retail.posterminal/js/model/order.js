@@ -1403,7 +1403,7 @@
     },
 
     _loadRelatedServices: function (productType, productId, productCategory, callback, line) {
-      if (productType !== 'S' && !line.get('originalOrderLineId')) {
+      if (productType !== 'S' && (!line || !line.get('originalOrderLineId'))) {
         if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
           var process = new OB.DS.Process('org.openbravo.retail.posterminal.process.HasServices');
           var params = {},
