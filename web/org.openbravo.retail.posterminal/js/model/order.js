@@ -3292,9 +3292,11 @@
       var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('newPaidReceipt');
       enyo.$.scrim.show();
       var order = new Order(),
-          lines, newline, payments, curPayment, taxes, bpId, bpLocId, numberOfLines = model.receiptLines.length,
+          lines, newline, payments, curPayment, taxes, bpId, bpLocId, bpLoc, numberOfLines = model.receiptLines.length,
           orderQty = 0,
-          NoFoundProduct = true;
+          NoFoundProduct = true,
+          NoFoundCustomer = true,
+          isLoadedPartiallyFromBackend = false;
 
 
       // Call orderLoader plugings to adjust remote model to local model first
@@ -3347,147 +3349,173 @@
       }
       bpLocId = model.bpLocId;
       bpId = model.bp;
-      OB.Dal.get(OB.Model.BusinessPartner, bpId, function (bp) {
-        OB.Dal.get(OB.Model.BPLocation, bpLocId, function (bpLoc) {
-          bp.set('locName', bpLoc.get('name'));
-          bp.set('locId', bpLoc.get('id'));
-          bp.set('locationModel', bpLoc);
-          order.set('bp', bp);
-          order.set('gross', model.totalamount);
-          order.set('net', model.totalNetAmount);
+      var bpartnerForProduct = function (bp) {
+          var locationForBpartner = function (bpLoc) {
+              bp.set('locName', bpLoc.get('name'));
+              bp.set('locId', bpLoc.get('id'));
+              bp.set('locationModel', bpLoc);
+              order.set('bp', bp);
+              order.set('gross', model.totalamount);
+              order.set('net', model.totalNetAmount);
 
-          var linepos = 0;
-          _.each(model.receiptLines, function (iter) {
-            var price;
-            iter.linepos = linepos;
-            var addLineForProduct = function (prod) {
-                if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
-                  OB.Dal.saveTemporally(prod, function () {}, function () {
-                    OB.error(arguments);
-                  }, true);
+              var linepos = 0;
+              _.each(model.receiptLines, function (iter) {
+                var price;
+                iter.linepos = linepos;
+                var addLineForProduct = function (prod) {
+                    if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
+                      OB.Dal.saveTemporally(prod, function () {}, function () {
+                        OB.error(arguments);
+                      }, true);
+                    }
+                    // Set product services
+                    order._loadRelatedServices(prod.get('productType'), prod.get('id'), prod.get('productCategory'), function (data) {
+                      var hasservices;
+                      if (!OB.UTIL.isNullOrUndefined(data) && OB.DEC.number(iter.quantity) > 0) {
+                        hasservices = data.hasservices;
+                      }
+                      newline = new OrderLine({
+                        id: iter.lineId,
+                        product: prod,
+                        uOM: iter.uOM,
+                        qty: OB.DEC.number(iter.quantity),
+                        price: price,
+                        priceList: prod.get('listPrice'),
+                        promotions: iter.promotions,
+                        description: iter.description,
+                        priceIncludesTax: order.get('priceIncludesTax'),
+                        hasRelatedServices: hasservices,
+                        warehouse: {
+                          id: iter.warehouse,
+                          warehousename: iter.warehousename
+                        },
+                        relatedLines: iter.relatedLines
+                      });
+
+                      // copy verbatim not owned properties -> modular properties.
+                      _.each(iter, function (value, key) {
+                        if (!newline.ownProperties[key]) {
+                          newline.set(key, value);
+                        }
+                      });
+
+                      // add the created line
+                      lines.add(newline, {
+                        at: iter.linepos
+                      });
+                      numberOfLines--;
+                      orderQty = OB.DEC.add(iter.quantity, orderQty);
+                      if (numberOfLines === 0) {
+                        order.set('lines', lines);
+                        order.set('qty', orderQty);
+                        order.set('json', JSON.stringify(order.toJSON()));
+                        callback(order);
+                        enyo.$.scrim.hide();
+                        OB.UTIL.SynchronizationHelper.finished(synchId, 'newPaidReceipt');
+                      }
+                    });
+                    };
+
+                if (order.get('priceIncludesTax')) {
+                  price = OB.DEC.number(iter.unitPrice);
+                } else {
+                  price = OB.DEC.number(iter.baseNetUnitPrice);
                 }
-                // Set product services
-                order._loadRelatedServices(prod.get('productType'), prod.get('id'), prod.get('productCategory'), function (data) {
-                  var hasservices;
-                  if (!OB.UTIL.isNullOrUndefined(data) && OB.DEC.number(iter.quantity) > 0) {
-                    hasservices = data.hasservices;
-                  }
-                  newline = new OrderLine({
-                    id: iter.lineId,
-                    product: prod,
-                    uOM: iter.uOM,
-                    qty: OB.DEC.number(iter.quantity),
-                    price: price,
-                    priceList: prod.get('listPrice'),
-                    promotions: iter.promotions,
-                    description: iter.description,
-                    priceIncludesTax: order.get('priceIncludesTax'),
-                    hasRelatedServices: hasservices,
-                    warehouse: {
-                      id: iter.warehouse,
-                      warehousename: iter.warehousename
-                    },
-                    relatedLines: iter.relatedLines
-                  });
 
-                  // copy verbatim not owned properties -> modular properties.
-                  _.each(iter, function (value, key) {
-                    if (!newline.ownProperties[key]) {
-                      newline.set(key, value);
+                OB.Dal.get(OB.Model.Product, iter.id, function (product) {
+                  addLineForProduct(product);
+                }, null, function () {
+                  //Empty
+                  new OB.DS.Request('org.openbravo.retail.posterminal.master.LoadedProduct').exec({
+                    productId: iter.id
+                  }, function (data) {
+                    addLineForProduct(OB.Dal.transform(OB.Model.Product, data[0]));
+                  }, function () {
+                    if (NoFoundProduct) {
+                      NoFoundProduct = false;
+                      OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_InformationTitle'), OB.I18N.getLabel('OBPOS_NoReceiptLoadedText'), [{
+                        label: OB.I18N.getLabel('OBPOS_LblOk'),
+                        isConfirmButton: true
+                      }]);
                     }
                   });
-
-                  // add the created line
-                  lines.add(newline, {
-                    at: iter.linepos
-                  });
-                  numberOfLines--;
-                  orderQty = OB.DEC.add(iter.quantity, orderQty);
-                  if (numberOfLines === 0) {
-                    order.set('lines', lines);
-                    order.set('qty', orderQty);
-                    order.set('json', JSON.stringify(order.toJSON()));
-                    callback(order);
-                    enyo.$.scrim.hide();
-                    OB.UTIL.SynchronizationHelper.finished(synchId, 'newPaidReceipt');
-                  }
                 });
-                };
+                linepos++;
+              });
+              //order.set('payments', model.receiptPayments);
+              payments = new PaymentLineList();
+              _.each(model.receiptPayments, function (iter) {
+                var paymentProp;
+                curPayment = new PaymentLine();
+                for (paymentProp in iter) {
+                  if (iter.hasOwnProperty(paymentProp)) {
+                    if (paymentProp === "paymentDate") {
+                      if (!OB.UTIL.isNullOrUndefined(iter[paymentProp]) && moment(iter[paymentProp]).isValid()) {
+                        curPayment.set(paymentProp, new Date(iter[paymentProp]));
+                      } else {
+                        curPayment.set(paymentProp, null);
+                      }
+                    } else {
+                      curPayment.set(paymentProp, iter[paymentProp]);
+                    }
+                  }
+                }
+                payments.add(curPayment);
+              });
+              order.set('payments', payments);
+              order.adjustPayment();
 
-            if (order.get('priceIncludesTax')) {
-              price = OB.DEC.number(iter.unitPrice);
-            } else {
-              price = OB.DEC.number(iter.baseNetUnitPrice);
-            }
-
-            OB.Dal.get(OB.Model.Product, iter.id, function (product) {
-              addLineForProduct(product);
-            }, null, function () {
-              //Empty
-              new OB.DS.Request('org.openbravo.retail.posterminal.master.LoadedProduct').exec({
-                productId: iter.id
-              }, function (data) {
-                addLineForProduct(OB.Dal.transform(OB.Model.Product, data[0]));
-              }, function () {
-                if (NoFoundProduct) {
-                  NoFoundProduct = false;
-                  OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_InformationTitle'), OB.I18N.getLabel('OBPOS_NoReceiptLoadedText'), [{
-                    label: OB.I18N.getLabel('OBPOS_LblOk'),
-                    isConfirmButton: true
-                  }]);
+              taxes = {};
+              _.each(model.receiptTaxes, function (iter) {
+                var taxProp;
+                taxes[iter.taxid] = {};
+                for (taxProp in iter) {
+                  if (iter.hasOwnProperty(taxProp)) {
+                    taxes[iter.taxid][taxProp] = iter[taxProp];
+                  }
                 }
               });
-            });
-            linepos++;
-          });
-          //order.set('payments', model.receiptPayments);
-          payments = new PaymentLineList();
-          _.each(model.receiptPayments, function (iter) {
-            var paymentProp;
-            curPayment = new PaymentLine();
-            for (paymentProp in iter) {
-              if (iter.hasOwnProperty(paymentProp)) {
-                if (paymentProp === "paymentDate") {
-                  if (!OB.UTIL.isNullOrUndefined(iter[paymentProp]) && moment(iter[paymentProp]).isValid()) {
-                    curPayment.set(paymentProp, new Date(iter[paymentProp]));
-                  } else {
-                    curPayment.set(paymentProp, null);
-                  }
-                } else {
-                  curPayment.set(paymentProp, iter[paymentProp]);
+              order.set('taxes', taxes);
+
+              if (!model.isLayaway && !model.isQuotation) {
+                if (model.totalamount > 0 && order.get('payment') < model.totalamount) {
+                  order.set('paidOnCredit', true);
+                } else if (model.totalamount < 0 && (order.get('payment') === 0 || (order.get('payment') > model.totalamount))) {
+                  order.set('paidOnCredit', true);
                 }
               }
-            }
-            payments.add(curPayment);
-          });
-          order.set('payments', payments);
-          order.adjustPayment();
+              };
 
-          taxes = {};
-          _.each(model.receiptTaxes, function (iter) {
-            var taxProp;
-            taxes[iter.taxid] = {};
-            for (taxProp in iter) {
-              if (iter.hasOwnProperty(taxProp)) {
-                taxes[iter.taxid][taxProp] = iter[taxProp];
-              }
-            }
-          });
-          order.set('taxes', taxes);
-
-          if (!model.isLayaway && !model.isQuotation) {
-            if (model.totalamount > 0 && order.get('payment') < model.totalamount) {
-              order.set('paidOnCredit', true);
-            } else if (model.totalamount < 0 && (order.get('payment') === 0 || (order.get('payment') > model.totalamount))) {
-              order.set('paidOnCredit', true);
-            }
+          if (isLoadedPartiallyFromBackend) {
+            locationForBpartner(bpLoc);
+          } else {
+            OB.Dal.get(OB.Model.BPLocation, bpLocId, function (bpLoc) {
+              locationForBpartner(bpLoc);
+            }, function () {
+              // TODO: Report errors properly
+            });
           }
+          };
+      OB.Dal.get(OB.Model.BusinessPartner, bpId, function (bp) {
+        bpartnerForProduct(bp);
+      }, null, function () {
+        //Empty
+        new OB.DS.Request('org.openbravo.retail.posterminal.master.LoadedCustomer').exec({
+          bpartnerId: bpId,
+          bpLocationId: bpLocId
+        }, function (data) {
+          isLoadedPartiallyFromBackend = true;
+          bpLoc = OB.Dal.transform(OB.Model.BPLocation, data[1]);
+          bpartnerForProduct(OB.Dal.transform(OB.Model.BusinessPartner, data[0]));
         }, function () {
-          // TODO: Report errors properly
+          if (NoFoundCustomer) {
+            NoFoundCustomer = false;
+            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_InformationTitle'), OB.I18N.getLabel('OBPOS_NoReceiptLoadedText'), [{
+              label: OB.I18N.getLabel('OBPOS_LblOk'),
+              isConfirmButton: true
+            }]);
+          }
         });
-
-      }, function () {
-        // TODO: Report errors properly
       });
     },
     newDynamicOrder: function (model, callback) {
