@@ -9,15 +9,23 @@
 -->
 <SqlClass name="UpdateCashupReportData" package="org.openbravo.retail.posterminal.modulescript">
    <SqlClassComment></SqlClassComment>
+   <SqlMethod name="select" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        select 1 as totalcounted from dual
+      ]]>
+    </Sql>
+  </SqlMethod>
    <SqlMethod name="updateCashupStartingCash" type="preparedStatement" connection="true" return="rowCount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
       update obpos_paymentmethodcashup set totalcounted =(
-        select cashup.startingcash + cashup.totalsales + cashup.totaldeposits - cashup.totalreturns - cashup.totaldrops + coalesce((select trans.depositamt - trans.paymentamt as totalcounted
+        select coalesce(cashup.startingcash, 0) + coalesce(cashup.totalsales, 0) + coalesce(cashup.totaldeposits, 0) - coalesce(cashup.totalreturns, 0) - coalesce(cashup.totaldrops, 0) + coalesce((select trans.depositamt - trans.paymentamt
                                                 from fin_finacc_transaction trans where trans.fin_financial_account_id = payment.fin_financial_account_id
                                                 and  trans.fin_reconciliation_id = recon.fin_reconciliation_id
-                                                and trans.c_glitem_id = paymenttype.c_glitem_diff_id),0) as totalcounted
+                                                and trans.c_glitem_id = paymenttype.c_glitem_diff_id),0)
         from  obpos_app_payment payment, 
                  obpos_app_payment_type paymenttype,  
                  obpos_app_cash_reconcil recon,
