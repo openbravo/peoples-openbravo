@@ -386,8 +386,8 @@
 
     save: function (callback) {
       var undoCopy = this.get('undo'),
-	  me = this,
-	  previousOrder;
+          me = this,
+          previousOrder;
       this.set('json', JSON.stringify(this.serializeToJSON()));
       if (callback === undefined || !callback instanceof Function) {
         callback = function () {};
