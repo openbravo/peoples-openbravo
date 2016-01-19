@@ -279,10 +279,15 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
   }
 
   @Override
-  public void checkEntityAccess(Entity isDerivedOrReadedEntity, String typeOfChecking) {
-    // CustomQuerySelectorDatasource should checked if entity target of this selector is a derived
-    // entity.
-    super.checkEntityAccess(isDerivedOrReadedEntity, SELECTOR_DERIVED_ENTITY);
+  public void checkFetchDatasourceAccess(Entity isDerivedOrReadedEntity,
+      Map<String, String> parameter) {
+    super.checkFetchDatasourceAccess(isDerivedOrReadedEntity, parameter);
+  }
+
+  @Override
+  public void checkEditDatasourceAccess(Entity isDerivedOrReadedEntity,
+      Map<String, String> parameter) {
+    super.checkEditDatasourceAccess(isDerivedOrReadedEntity, parameter);
   }
 
   /**

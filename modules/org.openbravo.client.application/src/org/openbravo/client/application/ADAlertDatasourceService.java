@@ -93,9 +93,9 @@ public class ADAlertDatasourceService extends DefaultDataSourceService {
   }
 
   @Override
-  public void checkEntityAccess(Entity isDerivedOrReadedEntity, String typeOfChecking) {
-    // ADAlertDatasourceService implements its own security. It is overridden to avoid execute this
-    // checkEntityAccess super method.
+  public void checkFetchDatasourceAccess(Entity isDerivedOrReadedEntity,
+      Map<String, String> parameter) {
+    // Avoids execute this checkFetchDatasourceAccess super method.
   }
 
   private List<String> getAlertIds() {

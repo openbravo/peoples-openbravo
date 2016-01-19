@@ -146,9 +146,8 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
   }
 
   @Override
-  public void checkEntityAccess(Entity isDerivedOrReadedEntity, String typeOfChecking) {
-    // TreeDatasourceService implements its own security. It is overridden to avoid execute this
-    // checkEntityAccess super method.
+  public void checkEditDatasourceAccess(Entity isDerivedOrReadedEntity,
+      Map<String, String> parameter) {
   }
 
   /**
@@ -318,6 +317,13 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
       OBContext.restorePreviousMode();
     }
     return jsonResult.toString();
+  }
+
+  @Override
+  public void checkFetchDatasourceAccess(Entity isDerivedOrReadedEntity,
+      Map<String, String> parameter) {
+    // Avoids execute this checkFetchDatasourceAccess super method. Security is implemented inside
+    // fetch ds method.
   }
 
   protected abstract Map<String, Object> getDatasourceSpecificParams(Map<String, String> parameters);

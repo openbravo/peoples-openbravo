@@ -89,36 +89,13 @@ public class QueryListDataSource extends ReadOnlyDataSourceService implements Po
   private static final String OPERATOR = "$OPERATOR";
 
   @Override
-  public void checkEntityAccess(Entity isDerivedOrReadedEntity, String typeOfChecking) {
-    // QueryListDataSource implements its own security. It is overridden to avoid execute this
-    // checkEntityAccess super method.
-  }
-
-  /**
-   * Returns the count of objects based on the passed parameters.
-   * 
-   * @param parameters
-   *          the parameters passed in from the request
-   * @return the total number of objects
-   */
-  @Override
-  protected int getCount(Map<String, String> parameters) {
-    return getData(parameters, 0, -1).size();
-  }
-
-  @Override
-  protected List<Map<String, Object>> getData(Map<String, String> parameters, int startRow,
-      int endRow) {
-    // creation of formats is done here because they are not thread safe
-    final SimpleDateFormat xmlDateFormat = JsonUtils.createDateFormat();
-    final SimpleDateFormat xmlDateTimeFormat = JsonUtils.createDateTimeFormat();
-
+  public void checkFetchDatasourceAccess(Entity isDerivedOrReadedEntity,
+      Map<String, String> parameters) {
     OBContext.setAdminMode();
     try {
+      // Check security: continue only if the widget instance is visible for current user/role
       WidgetClass widgetClass = OBDal.getInstance().get(WidgetClass.class,
           parameters.get("widgetId"));
-
-      // Check security: continue only if the widget instance is visible for current user/role
       WidgetInstance wi = OBDal.getInstance().get(WidgetInstance.class,
           parameters.get("widgetInstanceId"));
 
@@ -148,6 +125,34 @@ public class QueryListDataSource extends ReadOnlyDataSourceService implements Po
         throw new OBSecurityException(OBMessageUtils.getI18NMessage("OBCQL_NoAccessToWidget",
             new String[] { widgetClass.getWidgetTitle() }));
       }
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
+  /**
+   * Returns the count of objects based on the passed parameters.
+   * 
+   * @param parameters
+   *          the parameters passed in from the request
+   * @return the total number of objects
+   */
+  @Override
+  protected int getCount(Map<String, String> parameters) {
+    return getData(parameters, 0, -1).size();
+  }
+
+  @Override
+  protected List<Map<String, Object>> getData(Map<String, String> parameters, int startRow,
+      int endRow) {
+    // creation of formats is done here because they are not thread safe
+    final SimpleDateFormat xmlDateFormat = JsonUtils.createDateFormat();
+    final SimpleDateFormat xmlDateTimeFormat = JsonUtils.createDateTimeFormat();
+
+    OBContext.setAdminMode();
+    try {
+      WidgetClass widgetClass = OBDal.getInstance().get(WidgetClass.class,
+          parameters.get("widgetId"));
 
       boolean isExport = "true".equals(parameters.get("exportToFile"));
       boolean showAll = "true".equals(parameters.get("showAll"));
