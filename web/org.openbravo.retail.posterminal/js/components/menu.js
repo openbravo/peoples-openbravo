@@ -805,6 +805,11 @@ enyo.kind({
     onRfidConnectionLost: 'rfidConnectionLost',
     onRfidConnectionRecovered: 'rfidConnectionRecovered'
   },
+  components: [{
+    name: 'lbl',
+    allowHtml: true,
+    style: 'padding: 12px 5px 12px 15px;'
+  }],
   tap: function () {
     this.inherited(arguments);
     if (this.disabled) {
