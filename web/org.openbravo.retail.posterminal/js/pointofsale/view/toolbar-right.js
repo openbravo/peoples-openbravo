@@ -240,7 +240,6 @@ enyo.kind({
     this.$.lbl.addClass('btn-label');
     if (OB.MobileApp.model.get('terminal').terminalType.userfid && OB.POS.hwserver.url) {
       this.$.rfidIcon.show();
-      this.$.rfidIcon.addClass(this.rfidOfflineIcon);
     }
   },
   disabledButton: function (inSender, inEvent) {
@@ -273,6 +272,7 @@ enyo.kind({
   },
   disconnectRfidDevice: function (inSender, inEvent) {
     this.$.rfidIcon.removeClass(this.rfidOnIcon);
+    this.$.rfidIcon.removeClass(this.rfidOfflineIcon);
     this.$.rfidIcon.addClass(this.rfidOffIcon);
   },
   rfidConnectionLost: function (inSender, inEvent) {

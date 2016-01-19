@@ -798,7 +798,7 @@ enyo.kind({
   kind: 'OB.UI.MenuAction',
   permission: 'OBPOS_retail.disableEnableRFIDReader',
   i18nLabel: 'OBPOS_RFID',
-  classes: 'menu-switch btn-icon-switchoffline',
+  classes: 'menu-switch',
   handlers: {
     onConnectRfidDevice: 'connectRfidDevice',
     onDisconnectRfidDevice: 'disconnectRfidDevice',
