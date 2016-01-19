@@ -138,11 +138,15 @@ public class OrderGroupingProcessor {
 
       OrderLine[] orderLinesSplittedByShipmentLine = splitOrderLineByShipmentLine(orderLine);
       if (orderLinesSplittedByShipmentLine.length > 1) {
-        InvoiceLine oldInvoiceLine = orderLine.getInvoiceLineList().get(0);
-        Invoice invoice = oldInvoiceLine.getInvoice();
-        Long lineno = oldInvoiceLine.getLineNo();
-        OBDal.getInstance().remove(oldInvoiceLine);
 
+        Invoice invoice = null;
+        for (int i = 0; i < orderLine.getInvoiceLineList().size(); i++) {
+          InvoiceLine oldInvoiceLine = orderLine.getInvoiceLineList().get(i);
+          invoice = oldInvoiceLine.getInvoice();
+          OBDal.getInstance().remove(oldInvoiceLine);
+        }
+
+        Long lineno = (long) 10;
         for (int i = 0; i < orderLinesSplittedByShipmentLine.length; i++) {
           OrderLine olSplitted = orderLinesSplittedByShipmentLine[i];
 
