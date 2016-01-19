@@ -272,12 +272,11 @@ public class EntityAccessChecker implements OBNotSingleton {
     if (!isInitialized) {
       return false;
     }
-
     // false is the allow read reply
     if (obContext.isInAdministratorMode()) {
       return false;
     }
-    return derivedReadableEntities.contains(entity);
+    return isDerivedWithoutAdminMode(entity);
   }
 
   /**
@@ -288,17 +287,12 @@ public class EntityAccessChecker implements OBNotSingleton {
   public boolean isWritable(Entity entity) {
     // prevent infinite looping
     if (!isInitialized) {
-      return true;
+      return false;
     }
-
     if (obContext.isInAdministratorMode()) {
       return true;
     }
-
-    if (!writableEntities.contains(entity)) {
-      return false;
-    }
-    return true;
+    return isWritableWithoutAdminMode(entity);
   }
 
   /**
@@ -345,65 +339,39 @@ public class EntityAccessChecker implements OBNotSingleton {
     }
   }
 
-  public void checkEntityAccess(Entity entity) {
-    // prevent infinite looping
-    if (!isInitialized) {
-      return;
-    }
-
-    if (nonReadableEntities.contains(entity)) {
-      throw new OBSecurityException("Entity " + entity + " is not readable by the user.");
-    }
-
-    if (derivedReadableEntities.contains(entity)) {
-      return;
-    }
-
-    if (!readableEntities.contains(entity)) {
-      return;
-    }
-
-    if (!writableEntities.contains(entity)) {
-      throw new OBSecurityException("Entity " + entity + " is not writable by the user.");
+  /**
+   * Checks if an entity is readable for current user. It is not take into account admin mode.
+   * 
+   * @param entity
+   *          the entity to check
+   */
+  public void checkReadableAccess(Entity entity) {
+    if (!isReadableWithoutAdminMode(entity)) {
+      throw new OBSecurityException("Entity " + entity + " is not accessible by this user.");
     }
   }
 
   /**
-   * Checks if an entity is writable for this user. If not then a OBSecurityException is thrown.
-   *
+   * Checks if an entity is derived for current user. It is not take into account admin mode.
+   * 
    * @param entity
    *          the entity to check
-   * @throws OBSecurityException
    */
-  public void checkDerivedReadableEntity(Entity entity) {
-    if (!isDerivedReadableEntity(entity)) {
-      throw new OBSecurityException("Entity " + entity + " is not derived or redeable by this user");
+  public void checkDerivedAccess(Entity entity) {
+    if (!isDerivedWithoutAdminMode(entity)) {
+      throw new OBSecurityException("Entity " + entity + " is not accessible by this user.");
     }
   }
 
   /**
-   * Checks if an entity is derived for this user. If not then a OBSecurityException is thrown.
-   *
+   * Checks if an entity is writable for current user. It is not take into account admin mode.
+   * 
    * @param entity
    *          the entity to check
-   * @throws OBSecurityException
    */
-  public void checkSelectorDerivedEntity(Entity entity) {
-    if (!isDerivedReadableSelectorEntity(entity)) {
-      throw new OBSecurityException("Entity " + entity + " is not derived by this user");
-    }
-  }
-
-  /**
-   * Checks if an entity is writable for this user. If not then a OBSecurityException is thrown.
-   *
-   * @param entity
-   *          the entity to check
-   * @throws OBSecurityException
-   */
-  public void checkWritableEntity(Entity entity) {
-    if (!isWritableEntity(entity)) {
-      throw new OBSecurityException("Entity " + entity + " is not writable by this user");
+  public void checkWritableAccess(Entity entity) {
+    if (!isWritableWithoutAdminMode(entity)) {
+      throw new OBSecurityException("Entity " + entity + " is not writable by this user.");
     }
   }
 
@@ -431,12 +399,7 @@ public class EntityAccessChecker implements OBNotSingleton {
     return writableEntities;
   }
 
-  /**
-   *
-   * @param entity
-   * @return true if the entity is derived readable for this user, otherwise false is returned.
-   */
-  private boolean isDerivedReadableEntity(Entity entity) {
+  private boolean isReadableWithoutAdminMode(Entity entity) {
     // prevent infinite looping
     if (!isInitialized) {
       return true;
@@ -460,12 +423,7 @@ public class EntityAccessChecker implements OBNotSingleton {
     return true;
   }
 
-  /**
-   *
-   * @param entity
-   * @return true if the entity is derived readable for this user, otherwise false is returned.
-   */
-  private boolean isDerivedReadableSelectorEntity(Entity entity) {
+  private boolean isDerivedWithoutAdminMode(Entity entity) {
     // prevent infinite looping
     if (!isInitialized) {
       return false;
@@ -473,21 +431,14 @@ public class EntityAccessChecker implements OBNotSingleton {
     return derivedReadableEntities.contains(entity);
   }
 
-  /**
-   *
-   * @param entity
-   * @return true if the entity is writable for this user, otherwise false is returned.
-   */
-  private boolean isWritableEntity(Entity entity) {
+  private boolean isWritableWithoutAdminMode(Entity entity) {
     // prevent infinite looping
     if (!isInitialized) {
       return true;
     }
-
     if (!writableEntities.contains(entity)) {
       return false;
     }
     return true;
   }
-
 }

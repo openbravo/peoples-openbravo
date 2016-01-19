@@ -115,7 +115,9 @@ public interface DataSourceService {
 
   public void setEntity(Entity entity);
 
-  public void checkEntityAccess(Entity entity, String typeCheck);
+  public void checkFetchDatasourceAccess(Entity entity, Map<String, String> parameter);
+
+  public void checkEditDatasourceAccess(Entity entity, Map<String, String> parameter);
 
   public String getWhereClause();
 

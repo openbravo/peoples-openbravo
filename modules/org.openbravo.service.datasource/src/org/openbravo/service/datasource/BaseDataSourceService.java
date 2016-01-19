@@ -22,12 +22,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
+import org.openbravo.base.model.Property;
 import org.openbravo.client.kernel.Template;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.userinterface.selector.SelectorConstants;
 
 /**
  * A base data source service which can be extended. It combines the common parts for data sources
@@ -120,34 +123,35 @@ public abstract class BaseDataSourceService implements DataSourceService {
     setWhereClause(dataSource.getHQLWhereClause());
   }
 
-  public void checkEntityAccess(Entity entityToCheck, String typeOfChecking) {
-    if (typeOfChecking == WRITABLE_ENTITY) {
-      isWritableEntitySecurity(entityToCheck);
-    } else if (typeOfChecking == DERIVED_READABLE_ENTITY) {
-      isDerivedReadableEntitySecurity(entityToCheck);
-    } else if (typeOfChecking == SELECTOR_DERIVED_ENTITY) {
-      isSelectorDerivedEntitySecurity(entityToCheck);
+  public void checkEditDatasourceAccess(Entity entityToCheck, Map<String, String> parameters) {
+    final OBContext obContext = OBContext.getOBContext();
+    if (entity != null) {
+      obContext.getEntityAccessChecker().checkWritableAccess(entityToCheck);
     }
   }
 
-  private void isWritableEntitySecurity(Entity isWritableEntity) {
+  public void checkFetchDatasourceAccess(Entity entityToCheck, Map<String, String> parameters) {
     final OBContext obContext = OBContext.getOBContext();
-    if (isWritableEntity != null) {
-      obContext.getEntityAccessChecker().checkWritableEntity(isWritableEntity);
-    }
-  }
-
-  private void isDerivedReadableEntitySecurity(Entity isDerivedOrReadedEntity) {
-    final OBContext obContext = OBContext.getOBContext();
-    if (isDerivedOrReadedEntity != null) {
-      obContext.getEntityAccessChecker().checkDerivedReadableEntity(isDerivedOrReadedEntity);
-    }
-  }
-
-  protected void isSelectorDerivedEntitySecurity(Entity isSelectorDerived) {
-    final OBContext obContext = OBContext.getOBContext();
-    if (isSelectorDerived != null) {
-      obContext.getEntityAccessChecker().checkSelectorDerivedEntity(isSelectorDerived);
+    String selectorId = parameters.get(SelectorConstants.DS_REQUEST_SELECTOR_ID_PARAMETER);
+    if (StringUtils.isNotBlank(selectorId)) {
+      // selectors
+      String tableId = parameters.get("inpTableId");
+      String targetPropertyName = parameters.get(SelectorConstants.PARAM_TARGET_PROPERTY_NAME);
+      OBContext.setAdminMode();
+      try {
+        Entity parentEntity = ModelProvider.getInstance().getEntityByTableId(tableId);
+        Property p = parentEntity.getProperty(targetPropertyName);
+        Entity entitySelector = p.getReferencedProperty().getEntity();
+        if (entitySelector != null) {
+          obContext.getEntityAccessChecker().checkDerivedAccess(entitySelector);
+        }
+      } finally {
+        OBContext.restorePreviousMode();
+      }
+    } else {
+      if (entityToCheck != null) {
+        obContext.getEntityAccessChecker().checkReadableAccess(entityToCheck);
+      }
     }
   }
 
