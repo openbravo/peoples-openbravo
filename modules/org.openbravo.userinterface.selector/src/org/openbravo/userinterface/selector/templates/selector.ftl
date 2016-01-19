@@ -71,7 +71,10 @@
         this.Super('init', arguments);
     },
     <#if data.whereClause != "">
-        whereClause: '${data.whereClause?js_string}',
+        whereClause: true,
+    </#if>
+    <#if data.whereClause == "">
+        whereClause: false,
     </#if>
     <#if data.outHiddenInputPrefix != "">
         outHiddenInputPrefix: '${data.outHiddenInputPrefix}'
@@ -126,7 +129,10 @@ sc_${data.columnName} = isc.OBSelectorWidget.create({
     extraSearchFields: [${data.extraSearchFields}],
     dataSource: ${data.dataSourceJavascript},
     <#if data.whereClause != "">
-        whereClause: '${data.whereClause?js_string}',
+        whereClause: true,
+    </#if>
+    <#if data.whereClause == "">
+        whereClause: false,
     </#if>
     callOut: ${data.callOut},
     title : '${data.title}',

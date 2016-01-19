@@ -1107,6 +1107,7 @@ isc.OBSelectorItem.addClassMethods({
   // to prepare filters 
   prepareDSRequest: function (params, selector) {
     // on purpose not passing the third boolean param
+    var hasFilterClause;
     if (selector.form && selector.form.view && selector.form.view.getContextInfo) {
       // for table and table dir reference values needs to be transformed to classic (ex.: true -> Y)
       isc.addProperties(params, selector.form.view.getContextInfo(false, true, null, selector.isComboReference));
@@ -1168,8 +1169,14 @@ isc.OBSelectorItem.addClassMethods({
       params.filterClass = 'org.openbravo.userinterface.selector.SelectorDataSourceFilter';
     }
 
+    if (selector.whereClause) {
+      hasFilterClause = true;
+    } else {
+      hasFilterClause = false;
+    }
+
     // the additional where clause
-    params[OB.Constants.WHERE_PARAMETER] = selector.whereClause;
+    params[isc.OBViewGrid.IS_FILTER_CLAUSE_APPLIED] = hasFilterClause;
 
     // and sort according to the display field
     // initially
