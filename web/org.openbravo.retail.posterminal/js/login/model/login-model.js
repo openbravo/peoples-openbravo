@@ -168,6 +168,7 @@
                 } else {
                   OB.UTIL.showError(OB.I18N.getLabel('OBPOS_WrongHardwareManagerProtocol'));
                 }
+                OB.UTIL.isRFIDEnabled = true;
                 OB.UTIL.startRfidWebsocket(websocketServerLocation, 2000, 0, 5);
               }
             } else {

@@ -32,7 +32,6 @@ OB.UTIL.startRfidWebsocket = function startRfidWebsocket(websocketServerLocation
     }
     barcodeActionHandler = new OB.UI.BarcodeActionHandler();
     OB.UTIL.removeAllEpcs();
-    OB.UTIL.isRFIDEnabled = true;
     OB.MobileApp.view.waterfall('onRfidConnectionRecovered');
   };
 
