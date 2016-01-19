@@ -232,6 +232,7 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.WindowModel.extend({
             'cashup_id': cashUp.at(0).get('id'),
             _orderByClause: 'searchKey desc'
           }, function (pays) {
+            me.set('listpaymentmethodid', []);
             me.payments = pays;
 
             function updatePaymentMethod(pay) {
@@ -249,6 +250,9 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.WindowModel.extend({
                   return;
                 }
                 if (paymentMth.allowdeposits || paymentMth.allowdrops) {
+                  if (me.get('listpaymentmethodid').indexOf(paymentMth.paymentMethod) === -1) {
+                    me.get('listpaymentmethodid').push(paymentMth.paymentMethod);
+                  }
                   OB.Dal.find(OB.Model.CashManagement, criteria, function (cashmgmt, pay) {
                     if (cashmgmt.length > 0) {
                       pay.set('listdepositsdrops', cashmgmt.models);
@@ -264,9 +268,6 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.WindowModel.extend({
                           pay.set('totalSales', OB.DEC.add(pay.get('totalSales'), slavePay.totalSales));
                         }
                       });
-                    }
-                    if (me.get('listpaymentmethodid').indexOf(paymentMth.paymentMethod) === -1) {
-                      me.get('listpaymentmethodid').push(paymentMth.paymentMethod);
                     }
                     me.get('payments').add(pay);
                     resolve();
