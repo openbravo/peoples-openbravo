@@ -195,18 +195,8 @@ public class LoginUtils {
   public static String checkUserPassword(ConnectionProvider connectionProvider, String login,
       String unHashedPassword) {
     try {
-      String hashedPassword = FormatUtilities.sha1Base64(unHashedPassword);
-      final OBCriteria<User> obc = OBDal.getInstance().createCriteria(User.class);
-      obc.add(Restrictions.like("username", login));
-      obc.add(Restrictions.like("password", hashedPassword));
-      obc.setFilterOnReadableClients(false);
-      final List<User> listUser = obc.list();
-      String userId = "-1";
-
-      if (listUser.size() > 0) {
-        User userOB = listUser.get(0);
-        userId = userOB.getId();
-      }
+      final String hashedPassword = FormatUtilities.sha1Base64(unHashedPassword);
+      final String userId = SeguridadData.valido(connectionProvider, login, hashedPassword);
       if (userId.equals("-1")) {
         return null;
       }
