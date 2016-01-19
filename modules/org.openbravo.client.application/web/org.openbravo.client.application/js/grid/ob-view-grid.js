@@ -2296,7 +2296,6 @@ isc.OBViewGrid.addProperties({
     // add all the new session properties context info to the requestProperties
     isc.addProperties(params, this.view.getContextInfo(true, false));
 
-    params[isc.OBViewGrid.EXISTS_FILTER_CLAUSE] = this.tabHasFilterClause();
     params[isc.OBViewGrid.IS_FILTER_CLAUSE_APPLIED] = this.tabHasFilterClauseApplied();
 
     if (this.isSorting) {
@@ -2327,14 +2326,6 @@ isc.OBViewGrid.addProperties({
       params._selectedProperties = selectedProperties;
     }
     return params;
-  },
-
-  tabHasFilterClause: function () {
-    if (this.filterClause || this.whereClause) {
-      return true;
-    } else {
-      return false;
-    }
   },
 
   tabHasFilterClauseApplied: function () {

@@ -23,23 +23,17 @@ isc.OBViewGrid.create({
     view: this,
     uiPattern: '${data.uiPattern}', 
      
-    <#if data.whereClause != "">
-        whereClause: '${data.whereClause?js_string}',
-    </#if>
     <#if data.orderByClause != "">
         orderByClause: '${data.orderByClause?js_string}',
     </#if>
     <#if data.sortField != "">
         sortField: '${data.sortField?js_string}',
     </#if>
-    <#if data.filterClause != "">
-        filterClause: '${data.filterClause?js_string}',
-    </#if>
     <#if data.hasFilterClause == true>
-        existsFilterClause: true,
+        filterClause: true,
     </#if>
     <#if data.hasFilterClause == false>
-        existsFilterClause: false,
+        filterClause: false,
     </#if>
     <#if data.filterName != "">
         filterName: '${data.filterName?js_string}',
