@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2015 Openbravo S.L.U.
+ * Copyright (C) 2012-2016 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -497,24 +497,25 @@ enyo.kind({
     OB.UTIL.showError("OBDAL error: " + error);
   },
 
-  findProductByBarcode: function (code, callback) {
+  findProductByBarcode: function (code, callback, attrs) {
     var me = this;
     OB.debug('BarcodeActionHandler - id: ' + code);
     if (code.length > 0) {
       OB.UTIL.HookManager.executeHooks('OBPOS_BarcodeScan', {
         context: me,
         code: code,
-        callback: callback
+        callback: callback,
+        attrs: attrs
       }, function (args) {
         if (args.cancellation) {
           return;
         }
-        me.searchProduct(args.code, args.callback);
+        me.searchProduct(args.code, args.callback, args.attrs);
       });
     }
   },
 
-  searchProduct: function (code, callback) {
+  searchProduct: function (code, callback, attrs) {
     var me = this,
         criteria = {
         uPCEAN: code
@@ -530,19 +531,20 @@ enyo.kind({
     }
 
     OB.Dal.find(OB.Model.Product, criteria, function (data) {
-      me.searchProductCallback(data, code, callback);
+      me.searchProductCallback(data, code, callback, attrs);
     }, me.errorCallback, this);
   },
 
-  searchProductCallback: function (data, code, callback) {
-    this.successCallbackProducts(data, code, callback);
+  searchProductCallback: function (data, code, callback, attrs) {
+    this.successCallbackProducts(data, code, callback, attrs);
   },
 
-  successCallbackProducts: function (dataProducts, code, callback) {
+  successCallbackProducts: function (dataProducts, code, callback, attrs) {
     OB.UTIL.HookManager.executeHooks('OBPOS_BarcodeSearch', {
       dataProducts: dataProducts,
       code: code,
-      callback: callback
+      callback: callback,
+      attrs: attrs
     }, function (args) {
       if (args.cancellation) {
         return;
@@ -551,8 +553,16 @@ enyo.kind({
         OB.debug('productfound');
         args.callback(args.dataProducts.at(0));
       } else {
+        // If rfid has been used remove code from buffer
+        if (args.attrs && args.attrs.obposEpccode) {
+          OB.UTIL.removeEpc(args.attrs.obposEpccode);
+        }
         // 'UPC/EAN code not found'
-        OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_KbUPCEANCodeNotFound', [args.code]));
+        if (OB.MobileApp.model.get('permissions').OBPOS_showPopupEANNotFound) {
+          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_KbUPCEANCodeNotFound', [args.code]));
+        } else {
+          OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_KbUPCEANCodeNotFound', [args.code]));
+        }
       }
     });
   },

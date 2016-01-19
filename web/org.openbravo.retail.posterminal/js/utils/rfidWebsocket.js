@@ -62,7 +62,7 @@ OB.UTIL.startRfidWebsocket = function startRfidWebsocket(websocketServerLocation
       OB.MobileApp.model.receipt.addProduct(product, '1', {
         rfid: true
       }, data.dataToSave);
-    });
+    }, data.dataToSave);
   };
 
   // Called when socket connection closed
@@ -103,6 +103,12 @@ OB.UTIL.eraseEpcOrder = function (order) {
       OB.UTIL.rfidWebsocket.send('removeEpcs:' + uuid + ':' + epcCodes.substring(0, epcCodes.length - 1));
     }, function () {}, function () {}, 2000, OB.UTIL.get_UUID(), 5);
   }
+};
+
+OB.UTIL.removeEpc = function (epc) {
+  OB.UTIL.waitForAck(function (uuid) {
+    OB.UTIL.rfidWebsocket.send('removeEpcs:' + uuid + ':' + epc);
+  }, function () {}, function () {}, 2000, OB.UTIL.get_UUID(), 5);
 };
 
 OB.UTIL.removeEpcLine = function (line) {
