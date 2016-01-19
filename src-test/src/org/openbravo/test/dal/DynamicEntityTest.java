@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -20,7 +20,6 @@
 package org.openbravo.test.dal;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
@@ -85,18 +84,6 @@ public class DynamicEntityTest extends OBBaseTest {
     final OBContext obContext = OBContext.getOBContext();
     assertEquals(obContext.getUser().getId(), bog.getCreatedBy().getId());
     assertEquals(obContext.getUser().getId(), bog.getUpdatedBy().getId());
-    // update and create have occured less than one second ago
-    // note that if the delete fails for other reasons that you will have a
-    // currency in the database which has for sure a created/updated time
-    // longer in the past, You need to manually delete the currency record
-    // NOTE: disabled for now as it is to sensitive if there is time between a
-    // failed testcase and a retry
-    if (false) {
-      assertTrue("Created time not updated", (System.currentTimeMillis() - bog.getCreationDate()
-          .getTime()) < 2000);
-      assertTrue("Updated time not updated", (System.currentTimeMillis() - bog.getUpdated()
-          .getTime()) < 2000);
-    }
 
     // first delete the related accounts
     final OBCriteria<CategoryAccounts> obc2 = OBDal.getInstance().createCriteria(

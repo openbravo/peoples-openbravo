@@ -12,7 +12,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SLU
- * Contributions are Copyright (C) 2001-2015 Openbravo S.L.U.
+ * Contributions are Copyright (C) 2001-2016 Openbravo S.L.U.
  ******************************************************************************
 -->
 
@@ -98,16 +98,19 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-    SELECT FIN_PAYMENT_SCHEDULEDETAIL.AMOUNT AS PREPAIDAMT, FIN_PAYMENT_DETAIL.FIN_PAYMENT_ID
-    FROM FIN_PAYMENT_SCHEDULE 
-    LEFT JOIN FIN_PAYMENT_SCHEDULEDETAIL ON FIN_PAYMENT_SCHEDULE.FIN_PAYMENT_SCHEDULE_ID = FIN_PAYMENT_SCHEDULEDETAIL.FIN_PAYMENT_SCHEDULE_ORDER
-    LEFT JOIN FIN_PAYMENT_DETAIL ON FIN_PAYMENT_SCHEDULEDETAIL.FIN_PAYMENT_DETAIL_ID = FIN_PAYMENT_DETAIL.FIN_PAYMENT_DETAIL_ID
-    WHERE COALESCE(FIN_PAYMENT_DETAIL.ISPREPAYMENT,'N') = 'Y'
-    AND FIN_PAYMENT_SCHEDULEDETAIL.ISCANCELED = 'N'
-    AND FIN_PAYMENT_SCHEDULE.FIN_PAYMENT_SCHEDULE_ID = ?
+    SELECT PSDO.AMOUNT AS PREPAIDAMT, PD.FIN_PAYMENT_ID
+    FROM FIN_PAYMENT_SCHEDULE FPSO
+    INNER JOIN FIN_PAYMENT_SCHEDULEDETAIL PSDO ON FPSO.FIN_PAYMENT_SCHEDULE_ID = PSDO.FIN_PAYMENT_SCHEDULE_ORDER
+    INNER JOIN FIN_PAYMENT_SCHEDULE FPSI ON PSDO.FIN_PAYMENT_SCHEDULE_INVOICE = FPSI.FIN_PAYMENT_SCHEDULE_ID
+    INNER JOIN FIN_PAYMENT_DETAIL PD ON PSDO.FIN_PAYMENT_DETAIL_ID = PD.FIN_PAYMENT_DETAIL_ID
+    WHERE COALESCE(PD.ISPREPAYMENT,'N') = 'Y'
+    AND PSDO.ISCANCELED = 'N'
+    AND FPSO.FIN_PAYMENT_SCHEDULE_ID = ?
+    AND FPSI.C_INVOICE_ID = ?
      ]]>
      </Sql>
      <Parameter name="paymentSchedule"/>
+     <Parameter name="invoiceId"/>
    </SqlMethod>    
    <SqlMethod name="selectProductAcct" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>

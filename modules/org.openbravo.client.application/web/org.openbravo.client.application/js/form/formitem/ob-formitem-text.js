@@ -128,8 +128,12 @@ isc.OBTextFilterItem.addProperties({
 
   init: function () {
     var field = this.grid.getField(this.name);
-    if (field && field.gridProps && field.gridProps.filterOnChange === false) {
+    if (field && field.gridProps && field.gridProps.filterEditorProperties && field.gridProps.filterEditorProperties.filterOnChange === false) {
       this.actOnKeypress = false;
+      // Explicitly sets the filterOnKeypress property of the field.
+      // This prevents the restoring of this.actOnKeypress to true when it should remain false.
+      // See issue https://issues.openbravo.com/view.php?id=31904
+      field.filterOnKeypress = false;
     }
     this.Super('init', arguments);
   },
