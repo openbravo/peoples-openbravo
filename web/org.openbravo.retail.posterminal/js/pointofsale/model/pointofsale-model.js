@@ -583,6 +583,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     receipt.on('voidLayaway', function () {
       var process = new OB.DS.Process('org.openbravo.retail.posterminal.ProcessVoidLayaway');
       var auxReceipt = new OB.Model.Order();
+      receipt.set('obposAppCashup', OB.MobileApp.model.get('terminal').cashUpId);
       OB.UTIL.clone(receipt, auxReceipt);
       process.exec({
         order: receipt

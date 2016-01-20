@@ -168,9 +168,13 @@ public class ProcessVoidLayaway extends JSONProcessSimple {
 
         OBDal.getInstance().save(finPayment);
 
+        OBPOSAppCashup cashupID = OBDal.getInstance().get(OBPOSAppCashup.class,
+            order.getObposAppCashup());
+
         FIN_FinancialAccount acc = paymentType.getFinancialAccount();
         FIN_FinaccTransaction transaction = OBProvider.getInstance().get(
             FIN_FinaccTransaction.class);
+        transaction.setObposAppCashup(cashupID);
         transaction.setCurrency(acc.getCurrency());
         transaction.setAccount(acc);
         transaction.setLineNo(TransactionsDao.getTransactionMaxLineNo(account) + 10);
