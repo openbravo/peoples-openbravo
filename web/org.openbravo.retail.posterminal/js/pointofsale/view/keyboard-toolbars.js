@@ -476,6 +476,7 @@ enyo.kind({
       this.$.btn.addClass('btnactive-green');
       this.activegreen = true;
     }
+    OB.UTIL.createElipsisEffect(this.$.btn);
   }
 });
 
