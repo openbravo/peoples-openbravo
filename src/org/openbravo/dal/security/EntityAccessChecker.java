@@ -272,11 +272,13 @@ public class EntityAccessChecker implements OBNotSingleton {
     if (!isInitialized) {
       return false;
     }
+
     // false is the allow read reply
     if (obContext.isInAdministratorMode()) {
       return false;
     }
-    return isDerivedWithoutAdminMode(entity);
+
+    return derivedReadableEntities.contains(entity);
   }
 
   /**
@@ -409,18 +411,11 @@ public class EntityAccessChecker implements OBNotSingleton {
       return true;
     }
 
-    if (nonReadableEntities.contains(entity)) {
-      return false;
+    if (readableEntities.contains(entity)) {
+      return true;
     }
 
-    if (!readableEntities.contains(entity)) {
-      return false;
-    }
-
-    if (derivedReadableEntities.contains(entity)) {
-      return false;
-    }
-    return true;
+    return !derivedReadableEntities.contains(entity);
   }
 
   private boolean isDerivedWithoutAdminMode(Entity entity) {
@@ -428,6 +423,15 @@ public class EntityAccessChecker implements OBNotSingleton {
     if (!isInitialized) {
       return false;
     }
+
+    if (writableEntities.contains(entity)) {
+      return true;
+    }
+
+    if (readableEntities.contains(entity)) {
+      return true;
+    }
+
     return derivedReadableEntities.contains(entity);
   }
 
@@ -436,9 +440,6 @@ public class EntityAccessChecker implements OBNotSingleton {
     if (!isInitialized) {
       return true;
     }
-    if (!writableEntities.contains(entity)) {
-      return false;
-    }
-    return true;
+    return writableEntities.contains(entity);
   }
 }
