@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2014 Openbravo S.L.U.
+ * Copyright (C) 2001-2015 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -12,9 +12,12 @@
 package org.openbravo.base.secureApp;
 
 import java.io.File;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -22,10 +25,12 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.log4j.Logger;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.HttpBaseUtils;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.database.ConnectionProvider;
@@ -34,6 +39,7 @@ import org.openbravo.erpCommon.security.SessionLogin;
 import org.openbravo.erpCommon.utility.DimensionDisplayUtility;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.access.RoleOrganization;
+import org.openbravo.model.ad.access.User;
 import org.openbravo.model.ad.domain.Preference;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.service.db.DalConnectionProvider;
@@ -84,6 +90,98 @@ public class LoginUtils {
         lockSettings.addFail();
       }
       return userId;
+    } catch (final Exception e) {
+      throw new OBException(e);
+    }
+  }
+
+  /**
+   * Returns the last update password date from login and unHashedPassword parameters
+   * 
+   * 
+   * 
+   * @param connectionProvider
+   *          , see the {@link DalConnectionProvider} for an instance of a ConnectionProvider for
+   *          the DAL.
+   * @param login
+   *          the login
+   * @param unHashedPassword
+   *          the password, the unhashed password as it is entered by the user.
+   * @return the last password update date from the user
+   */
+  public static Date getUpdatePasswordDate(ConnectionProvider connectionProvider, String login,
+      String unHashedPassword) {
+    // Gets the expiry password date
+    try {
+
+      UserLock lockSettings = new UserLock(login);
+      lockSettings.delayResponse();
+      if (lockSettings.isLockedUser()) {
+        return null;
+      }
+      Date total;
+
+      final OBCriteria<User> obc = OBDal.getInstance().createCriteria(User.class);
+      obc.add(Restrictions.like("username", login));
+      obc.setFilterOnReadableClients(false);
+      final List<User> listUser = obc.list();
+      User userOB = listUser.get(0);
+      Date lastUpdateDate = userOB.getLastupdatepassworddate();
+      Long validityDays = userOB.getClient().getDaystopasswordexpiration();
+      if (validityDays != null && validityDays > 0) {
+        Calendar currentDate = Calendar.getInstance();
+        currentDate
+            .setTimeInMillis(lastUpdateDate.getTime() + TimeUnit.DAYS.toMillis(validityDays));
+        total = new Date(currentDate.getTimeInMillis());
+        return total;
+      } else {
+        return null;
+      }
+    } catch (final Exception e) {
+      throw new OBException(e);
+    }
+
+  }
+
+  /**
+   * Returns a boolean indicating if password has been changed for user. The password must be
+   * different from previous one, otherwise method will return false
+   * 
+   * 
+   * 
+   * @param login
+   *          the login
+   * @param unHashedPassword
+   *          the password, the unhashed password as it is entered by the user.
+   * @return true in case that password has changed succesfully, false in other case
+   */
+  public static Boolean updatePassword(String login, String unHashedPassword) {
+    // Set the Updated password date
+    try {
+
+      UserLock lockSettings = new UserLock(login);
+      lockSettings.delayResponse();
+      if (lockSettings.isLockedUser()) {
+        return null;
+      }
+
+      final OBCriteria<User> obc = OBDal.getInstance().createCriteria(User.class);
+      obc.add(Restrictions.like("username", login));
+      obc.setFilterOnReadableClients(false);
+      final List<User> listUser = obc.list();
+      User userOB = listUser.get(0);
+      String oldPassword = userOB.getPassword();
+      String newPassword = FormatUtilities.sha1Base64(unHashedPassword);
+      if (oldPassword.equals(newPassword)) {
+
+        return true;
+      } else {
+        userOB.setPassword(newPassword);
+        OBDal.getInstance().save(userOB);
+        OBDal.getInstance().flush();
+        OBDal.getInstance().commitAndClose();
+        return false;
+      }
     } catch (final Exception e) {
       throw new OBException(e);
     }

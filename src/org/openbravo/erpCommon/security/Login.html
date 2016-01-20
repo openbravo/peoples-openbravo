@@ -187,6 +187,10 @@ var recBrowserSafari = '9.0.0.0';
 </script>
 <script type="text/javascript">
 function buttonOK_click() {
+    if (document.getElementById('resetPassword').value =='true' && document.getElementById('user').value !== document.getElementById('password').value){
+        setLoginMessage('Error', "Passwords must be the same", "The password must be the same in both fields");
+        return true;
+    }
     if (focusedWindowElement.id === 'user' && document.getElementById('user').value !== '' && document.getElementById('password').value === '') {
       setTimeout(function() { // To manage browser autocomplete feature if it is active
        if (focusedWindowElement.id === 'user' && document.getElementById('password').value === '') {
@@ -201,10 +205,11 @@ function buttonOK_click() {
       if (document.getElementById('user').value === '' || document.getElementById('password').value === '') {
           setLoginMessage('Error', identificationFailureTitle, errorEmptyContent);
         return true;
-      }     
+      }   
       disableButton('buttonOK');
       submitXmlHttpRequest(loginResult, document.frmIdentificacion, 'DEFAULT', '../secureApp/LoginHandler.html', false, null, null);
     }
+    
     return false;
   }
 
@@ -226,9 +231,17 @@ function buttonOK_click() {
       shouldContinue = setLoginMessage(result.messageType, result.messageTitle, result.messageText);
       if (!shouldContinue) {
         document.getElementById('password').value = '';
+        document.getElementById('user').value = '';
       }
     }
-
+    if (result.resetPassword && document.getElementById('loggedUser').value===''){
+      document.getElementById('loggedUser').value=result.loggedUser;
+      document.getElementById('resetPassword').value=result.resetPassword;
+      document.getElementById('user').value = '';
+      document.getElementById('user').type = 'password';
+      document.getElementById('userlabel').innerHTML = 'New Password';
+      document.getElementById('passwordlabel').innerHTML = 'Confirm Password';
+    }
     if (shouldContinue) {
       try {
         if (parent.frameMenu) {
@@ -241,6 +254,9 @@ function buttonOK_click() {
       }
       command = result.command || 'DEFAULT';
       submitCommandForm(command, false, null, result.target, target, true);
+    }else if (result.resetPassword){
+      enableButton('buttonOK');
+      setWindowElementFocus('user', 'id');
     } else {
       enableButton('buttonOK');
       setWindowElementFocus('password', 'id');
@@ -444,20 +460,21 @@ function buttonOK_click() {
       <div class="Login_LogForm">
         <form method="post" action="../secureApp/LoginHandler.html" name="frmIdentificacion" id="frmFormulario" autocomplete="off">
           <input type="hidden" name="Command" value="" />
-
+          <input type="hidden" name="loggedUser" id="loggedUser" value="" />
+          <input type="hidden" name="resetPassword" id="resetPassword" value="" />
           <div class="Login_LogForm_CompanyLogo_Container">
             <div class="Login_LogForm_CompanyLogo" id="CompanyLogo_Container" style="display: none;"><img class="Login_Logo_Company" src="../../../../../web/images/blank.gif" /></div>
           </div>
           <div class="Login_LogForm_Input_Container">
             <dl>
               <dt>
-                <label for="user" class="LabelText Login_LabelText">User Name</label>
+                <label for="user" class="LabelText Login_LabelText" id="userlabel" >User Name</label>
               </dt>
               <dd>
                 <input class="dojoValidateValid Login_TextBox" type="text" maxlength="60" name="user" id="user" />
               </dd>
               <dt>
-                <label for="password" class="LabelText Login_LabelText">Password</label>
+                <label for="password" class="LabelText Login_LabelText" id="passwordlabel" >Password</label>
               </dt>
               <dd>
                 <input class="dojoValidateValid Login_TextBox" type="password" maxlength="40" name="password" id="password" />

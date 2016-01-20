@@ -22,6 +22,7 @@ import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.authentication.AuthenticationException;
+import org.openbravo.authentication.AuthenticationExpiryPasswordException;
 import org.openbravo.authentication.AuthenticationManager;
 import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.dal.core.OBContext;
@@ -68,8 +69,20 @@ public class LoginHandler extends HttpBaseServlet {
     req.getSession().removeAttribute("#Authenticated_user");
     vars.removeSessionValue("#AD_Role_ID");
     vars.setSessionObject("#loggingIn", "Y");
+    final Boolean resetPassword = Boolean.parseBoolean(vars.getStringParameter("resetPassword"));
+    Boolean sameOldPassword = false;
+    final String strUser;
+    final String strPass;
+    if (resetPassword) {
+      strPass = vars.getStringParameter("user");
+      strUser = vars.getStringParameter("loggedUser");
+      OBContext.setAdminMode();
+      sameOldPassword = LoginUtils.updatePassword(strUser, strPass);
 
-    final String strUser = vars.getStringParameter("user");
+      OBContext.restorePreviousMode();
+    } else {
+      strUser = vars.getStringParameter("user");
+    }
 
     // When redirect parameter is true, instead of returning a json object with the login result and
     // target, a redirect to the application or error page is done.
@@ -87,6 +100,16 @@ public class LoginHandler extends HttpBaseServlet {
         res.sendRedirect(res.encodeRedirectURL(strDireccion + "/security/Login_F1.html"));
       } else {
         try {
+          if (sameOldPassword) {
+            OBError errorMsg = new OBError();
+            String msg = Utility.messageBD(myPool, "CPUpdatePassword", vars.getLanguage());
+            String title = Utility.messageBD(myPool, "CPDifferentPassword", vars.getLanguage());
+            errorMsg.setType("Error");
+            errorMsg.setTitle(title);
+            errorMsg.setMessage(msg);
+            throw new AuthenticationExpiryPasswordException(Utility.messageBD(myPool,
+                "CPSamePasswordThanOld", vars.getLanguage()), errorMsg);
+          }
           AuthenticationManager authManager = AuthenticationManager.getAuthenticationManager(this);
 
           final String strUserAuth = authManager.authenticate(req, res);
@@ -112,6 +135,24 @@ public class LoginHandler extends HttpBaseServlet {
 
           } else {
             throw new ServletException("Error"); // FIXME
+          }
+        } catch (AuthenticationExpiryPasswordException aepe) {
+
+          final OBError errorMsg = aepe.getOBError();
+          if (errorMsg != null) {
+            vars.removeSessionValue("#LoginErrorMsg");
+
+            if (errorMsg.getMessage().equalsIgnoreCase("Write a new password")) {
+              String msg = Utility.messageBD(myPool, "CPUpdatePassword", vars.getLanguage());
+              String title = Utility.messageBD(myPool, "CPDifferentPassword", vars.getLanguage());
+              goToUpdatePassword(res, vars, msg, title, "Error", "../security/Login_FS.html",
+                  doRedirect);
+            } else {
+              String msg = Utility.messageBD(myPool, "CPUpdatePassword", vars.getLanguage());
+              String title = Utility.messageBD(myPool, "CPExpiryPassword", vars.getLanguage());
+              goToUpdatePassword(res, vars, msg, title, "Error", "../security/Login_FS.html",
+                  doRedirect);
+            }
           }
         }
       }
@@ -374,8 +415,8 @@ public class LoginHandler extends HttpBaseServlet {
   protected final void goToRetry(HttpServletResponse response, VariablesSecureApp vars,
       String message, String title, String msgType, String action, boolean doRedirect)
       throws IOException, ServletException {
-    String msg = (message != null && !message.equals("")) ? message
-        : "Please enter your username and password.";
+    String msg = (message != null && !message.equals("")) ? message : Utility.messageBD(myPool,
+        "CPEmptyUserPassword", vars.getLanguage());
 
     if (OBVersion.getInstance().is30() && !doRedirect) {
       // 3.0 instances show the message in the same login window, return a json object with the info
@@ -423,6 +464,39 @@ public class LoginHandler extends HttpBaseServlet {
       final PrintWriter out = response.getWriter();
       out.println(xmlDocument.print());
       out.close();
+    }
+  }
+
+  protected final void goToUpdatePassword(HttpServletResponse response, VariablesSecureApp vars,
+      String message, String title, String msgType, String action, boolean doRedirect)
+      throws IOException, ServletException {
+    String msg = (message != null && !message.equals("")) ? message : Utility.messageBD(myPool,
+        "CPEmptyUserPassword", vars.getLanguage());
+    ;
+
+    if (OBVersion.getInstance().is30() && !doRedirect) {
+      // 3.0 instances show the message in the same login window, return a json object with the info
+      // to print the message
+      try {
+        JSONObject jsonMsg = new JSONObject();
+        jsonMsg.put("showMessage", true);
+        jsonMsg.put("target", action);
+        jsonMsg.put("messageType", msgType);
+        jsonMsg.put("messageTitle", title);
+        jsonMsg.put("messageText", msg);
+        jsonMsg.put("resetPassword", true);
+        jsonMsg.put("loggedUser", vars.getStringParameter("user"));
+        if ("Confirmation".equals(msgType)) {
+          jsonMsg.put("command", "FORCE_NAMED_USER");
+        }
+        response.setContentType("application/json;charset=UTF-8");
+        final PrintWriter out = response.getWriter();
+        out.print(jsonMsg.toString());
+        out.close();
+      } catch (JSONException e) {
+        log4j.error("Error setting login msg", e);
+        throw new ServletException(e);
+      }
     }
   }
 

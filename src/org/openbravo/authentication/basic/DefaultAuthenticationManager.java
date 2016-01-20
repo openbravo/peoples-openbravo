@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2012 Openbravo S.L.U.
+ * Copyright (C) 2001-2015 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -13,6 +13,7 @@
 package org.openbravo.authentication.basic;
 
 import java.io.IOException;
+import java.util.Date;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -22,6 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.openbravo.authentication.AuthenticationException;
+import org.openbravo.authentication.AuthenticationExpiryPasswordException;
 import org.openbravo.authentication.AuthenticationManager;
 import org.openbravo.base.HttpBaseUtils;
 import org.openbravo.base.secureApp.LoginUtils;
@@ -51,21 +53,32 @@ public class DefaultAuthenticationManager extends AuthenticationManager {
       throws AuthenticationException, ServletException, IOException {
 
     final VariablesSecureApp vars = new VariablesSecureApp(request, false);
-    final String sUserId = (String) request.getSession().getAttribute("#Authenticated_user");
-    final String strAjax = vars.getStringParameter("IsAjaxCall");
+    final Boolean resetPassword = Boolean.parseBoolean(vars.getStringParameter("resetPassword"));
+    final String sUserId;
+    if (resetPassword) {
+      final String userId = LoginUtils.getValidUserId(conn, vars.getStringParameter("loggedUser"),
+          vars.getStringParameter("user"));
+      sUserId = userId;
+    } else {
+      sUserId = (String) request.getSession().getAttribute("#Authenticated_user");
 
-    if (!StringUtils.isEmpty(sUserId)) {
+    }
+    final String strAjax = vars.getStringParameter("IsAjaxCall");
+    if (!StringUtils.isEmpty(sUserId) && !resetPassword) {
       return sUserId;
     }
 
     VariablesHistory variables = new VariablesHistory(request);
-
+    final String strUser;
+    final String strPass;
     // Begins code related to login process
-
-    final String strUser = vars.getStringParameter("user");
-    final String strPass = vars.getStringParameter("password");
+    if (resetPassword) {
+      strUser = vars.getStringParameter("loggedUser");
+    } else {
+      strUser = vars.getStringParameter("user");
+    }
+    strPass = vars.getStringParameter("password");
     username = strUser;
-
     if (StringUtils.isEmpty(strUser)) {
       // redirects to the menu or the menu with the target
       setTargetInfoInVariables(request, variables);
@@ -92,6 +105,22 @@ public class DefaultAuthenticationManager extends AuthenticationManager {
 
       // throw error message will be caught by LoginHandler
       throw new AuthenticationException("IDENTIFICATION_FAILURE_TITLE", errorMsg);
+    }
+    // Check if password valid date is reached
+    Date lastUpdatePasswordDate = LoginUtils.getUpdatePasswordDate(conn, strUser, strPass);
+
+    if (lastUpdatePasswordDate != null) {
+
+      // Checks if password
+      Date today = new Date();
+      if (lastUpdatePasswordDate.compareTo(today) <= 0) {
+        log4j.debug("Failed user/password. Username: " + strUser + " - Session ID:" + sessionId);
+        OBError errorMsg = new OBError();
+        errorMsg.setType("Error");
+        errorMsg.setTitle("IDENTIFICATION_FAILURE_TITLE");
+        errorMsg.setMessage("IDENTIFICATION_FAILURE_MSG");
+        throw new AuthenticationExpiryPasswordException("IDENTIFICATION_FAILURE_TITLE", errorMsg);
+      }
     }
 
     // Using the Servlet API instead of vars.setSessionValue to avoid breaking code
