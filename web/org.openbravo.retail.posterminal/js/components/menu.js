@@ -858,7 +858,7 @@ enyo.kind({
     this.removeClass('btn-icon-switchon');
     this.removeClass('btn-icon-switchoff');
     this.addClass('btn-icon-switchoffline');
-    this.setDisabled(false);
+    this.setDisabled(true);
   },
   rfidConnectionRecovered: function (inSender, inEvent) {
     this.removeClass('btn-icon-switchoffline');
