@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2014 Openbravo SLU 
+ * All portions are Copyright (C) 2014-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -75,6 +75,9 @@ public class ProductSelectorDataSourceTest extends BaseDataSourceTestNoDal {
     params.put("_startRow", "0");
     params.put("_endRow", "75");
     params.put("_textMatchStyle", "substring");
+
+    params.put("targetProperty", "product");
+    params.put("inpTableId", "FF8080812E381D1E012E3898C5DD0010");
 
     if (addFilter) {
       JSONObject criteria = new JSONObject();
