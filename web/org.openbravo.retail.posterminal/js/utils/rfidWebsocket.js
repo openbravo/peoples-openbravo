@@ -38,9 +38,15 @@ OB.UTIL.startRfidWebsocket = function startRfidWebsocket(websocketServerLocation
   // Called when a message is received from server
   OB.UTIL.rfidWebsocket.onmessage = function (event) {
     var data, ean, i, line;
+    if (event.data.startsWith('doNotReconnect')){
+    	OB.UTIL.rfidWebsocket.onclose = function () {};
+    	OB.MobileApp.view.waterfall('onRfidConnectionLost');
+    	OB.UTIL.rfidWebsocket.close();
+    	return;
+    }
     if (event.data.startsWith('uuid:')) {
       OB.UTIL.rfidAckArray.push(event.data.split(':')[1]);
-      return
+      return;
     }
     data = JSON.parse(event.data)
     if (OB.UTIL.rfidTimeout) {
