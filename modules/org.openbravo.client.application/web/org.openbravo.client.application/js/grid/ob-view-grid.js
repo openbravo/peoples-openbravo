@@ -2329,7 +2329,7 @@ isc.OBViewGrid.addProperties({
   },
 
   tabHasFilterClauseApplied: function () {
-    if (this.filterClause !== null) {
+    if (this.filterClause) {
       return this.filterClause;
     } else {
       return false;

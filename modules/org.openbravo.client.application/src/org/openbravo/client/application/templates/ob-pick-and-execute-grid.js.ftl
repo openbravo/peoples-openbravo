@@ -21,9 +21,6 @@
 
 {
 <@compress single_line=true>
-  <#if data.whereClause != "">
-  whereClause: '${data.whereClause?js_string}',
-  </#if>
   <#if data.whereClauseSQL != "">
   sqlWhereClause: '${data.whereClauseSQL?js_string}',
   </#if>  
