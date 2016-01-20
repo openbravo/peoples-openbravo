@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2012-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2012-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,6 +21,7 @@ package org.openbravo.erpCommon.ad_process;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -30,6 +31,7 @@ import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
@@ -108,7 +110,7 @@ public class ConvertQuotationIntoOrder extends DalBaseProcess {
       objCloneOrder.setProcessed(false);
       objCloneOrder.setSalesTransaction(true);
       objCloneOrder.setDocumentNo(null);
-      objCloneOrder.setOrderDate(new Date());
+      objCloneOrder.setOrderDate(DateUtils.truncate(new Date(), Calendar.DATE));
       objCloneOrder.setRejectReason(null);
       objCloneOrder.setValidUntil(null);
       objCloneOrder.setSummedLineAmount(BigDecimal.ZERO);
