@@ -234,12 +234,10 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
   }
 
   @Override
-  public void checkFetchDatasourceAccess(Entity isDerivedOrReadedEntity,
-      Map<String, String> parameters) {
+  public void checkFetchDatasourceAccess(Map<String, String> parameters) {
   }
 
   @Override
-  public void checkEditDatasourceAccess(Entity isDerivedOrReadedEntity,
-      Map<String, String> parameters) {
+  public void checkEditDatasourceAccess(Map<String, String> parameters) {
   }
 }

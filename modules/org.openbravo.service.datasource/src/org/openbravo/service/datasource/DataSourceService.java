@@ -21,6 +21,7 @@ package org.openbravo.service.datasource;
 import java.util.List;
 import java.util.Map;
 
+import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.client.kernel.Template;
 
@@ -115,9 +116,9 @@ public interface DataSourceService {
 
   public void setEntity(Entity entity);
 
-  public void checkFetchDatasourceAccess(Entity entity, Map<String, String> parameter);
+  public void checkFetchDatasourceAccess(Map<String, String> parameter) throws OBSecurityException;
 
-  public void checkEditDatasourceAccess(Entity entity, Map<String, String> parameter);
+  public void checkEditDatasourceAccess(Map<String, String> parameter) throws OBSecurityException;
 
   public String getWhereClause();
 

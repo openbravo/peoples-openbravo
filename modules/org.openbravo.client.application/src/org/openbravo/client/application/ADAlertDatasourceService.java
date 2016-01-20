@@ -93,8 +93,7 @@ public class ADAlertDatasourceService extends DefaultDataSourceService {
   }
 
   @Override
-  public void checkFetchDatasourceAccess(Entity isDerivedOrReadedEntity,
-      Map<String, String> parameter) {
+  public void checkFetchDatasourceAccess(Map<String, String> parameter) {
     // Avoids execute this checkFetchDatasourceAccess super method.
   }
 

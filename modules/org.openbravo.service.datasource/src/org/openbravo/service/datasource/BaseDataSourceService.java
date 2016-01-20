@@ -123,14 +123,19 @@ public abstract class BaseDataSourceService implements DataSourceService {
     setWhereClause(dataSource.getHQLWhereClause());
   }
 
-  public void checkEditDatasourceAccess(Entity entityToCheck, Map<String, String> parameters) {
+  public void checkEditDatasourceAccess(Map<String, String> parameters) {
+    Entity entityToCheck = getEntity();
     final OBContext obContext = OBContext.getOBContext();
     if (entity != null) {
       obContext.getEntityAccessChecker().checkWritableAccess(entityToCheck);
     }
   }
 
-  public void checkFetchDatasourceAccess(Entity entityToCheck, Map<String, String> parameters) {
+  public void checkFetchDatasourceAccess(Map<String, String> parameters) {
+    Entity entityToCheck = getEntity();
+    if (entityToCheck == null) {
+      System.out.println("null en entity");
+    }
     final OBContext obContext = OBContext.getOBContext();
     String selectorId = parameters.get(SelectorConstants.DS_REQUEST_SELECTOR_ID_PARAMETER);
     if (StringUtils.isNotBlank(selectorId)) {
@@ -148,10 +153,9 @@ public abstract class BaseDataSourceService implements DataSourceService {
       } finally {
         OBContext.restorePreviousMode();
       }
-    } else {
-      if (entityToCheck != null) {
-        obContext.getEntityAccessChecker().checkReadableAccess(entityToCheck);
-      }
+    } else if (entityToCheck != null) {
+      obContext.getEntityAccessChecker().checkReadableAccess(entityToCheck);
+
     }
   }
 

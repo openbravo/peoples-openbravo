@@ -267,8 +267,7 @@ public class DataSourceServlet extends BaseKernelServlet {
         }
       } else {
         // Check security: continue only if the entity is accessible for current user/role.
-        getDataSource(request).checkFetchDatasourceAccess(getDataSource(request).getEntity(),
-            parameters);
+        getDataSource(request).checkFetchDatasourceAccess(parameters);
         String result = getDataSource(request).fetch(parameters);
         writeResult(response, result);
       }
@@ -787,8 +786,7 @@ public class DataSourceServlet extends BaseKernelServlet {
       if (id == null) {
         throw new InvalidRequestException("No id parameter");
       }
-      getDataSource(request).checkEditDatasourceAccess(getDataSource(request).getEntity(),
-          parameters);
+      getDataSource(request).checkEditDatasourceAccess(parameters);
       final String result = getDataSource(request).remove(parameters);
       writeResult(response, result);
     } catch (Exception e) {
@@ -824,8 +822,7 @@ public class DataSourceServlet extends BaseKernelServlet {
 
       // note if clause updates parameter map
       if (checkSetIDDataSourceName(request, response, parameters)) {
-        getDataSource(request).checkEditDatasourceAccess(getDataSource(request).getEntity(),
-            parameters);
+        getDataSource(request).checkEditDatasourceAccess(parameters);
         final String result = getDataSource(request).update(parameters, getRequestContent(request));
         writeResult(response, result);
       }

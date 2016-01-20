@@ -43,7 +43,6 @@ import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.exception.OBSecurityException;
-import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.domaintype.BigDecimalDomainType;
 import org.openbravo.base.model.domaintype.BooleanDomainType;
@@ -89,8 +88,7 @@ public class QueryListDataSource extends ReadOnlyDataSourceService implements Po
   private static final String OPERATOR = "$OPERATOR";
 
   @Override
-  public void checkFetchDatasourceAccess(Entity isDerivedOrReadedEntity,
-      Map<String, String> parameters) {
+  public void checkFetchDatasourceAccess(Map<String, String> parameters) {
     OBContext.setAdminMode();
     try {
       // Check security: continue only if the widget instance is visible for current user/role

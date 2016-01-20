@@ -98,13 +98,11 @@ public class NoteDataSource extends DefaultDataSourceService {
   }
 
   @Override
-  public void checkEditDatasourceAccess(Entity isDerivedOrReadedEntity,
-      Map<String, String> parameter) {
+  public void checkEditDatasourceAccess(Map<String, String> parameter) {
   }
 
   @Override
-  public void checkFetchDatasourceAccess(Entity isDerivedOrReadedEntity,
-      Map<String, String> parameter) {
+  public void checkFetchDatasourceAccess(Map<String, String> parameter) {
     try {
       JSONObject jsonCriteria = JsonUtils.buildCriteria(parameter);
       JSONArray notesCriteria;

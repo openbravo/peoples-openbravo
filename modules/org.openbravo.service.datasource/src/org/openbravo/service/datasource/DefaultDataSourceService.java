@@ -89,13 +89,13 @@ public class DefaultDataSourceService extends BaseDataSourceService {
   }
 
   @Override
-  public void checkFetchDatasourceAccess(Entity entityToCheck, Map<String, String> parameter) {
-    super.checkFetchDatasourceAccess(entityToCheck, parameter);
+  public void checkFetchDatasourceAccess(Map<String, String> parameter) {
+    super.checkFetchDatasourceAccess(parameter);
   }
 
   @Override
-  public void checkEditDatasourceAccess(Entity entityToCheck, Map<String, String> parameter) {
-    super.checkEditDatasourceAccess(entityToCheck, parameter);
+  public void checkEditDatasourceAccess(Map<String, String> parameter) {
+    super.checkEditDatasourceAccess(parameter);
   }
 
   private void addFetchParameters(Map<String, String> parameters) {

@@ -38,7 +38,6 @@ import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
-import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.domaintype.BigDecimalDomainType;
 import org.openbravo.base.model.domaintype.BooleanDomainType;
@@ -279,15 +278,13 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
   }
 
   @Override
-  public void checkFetchDatasourceAccess(Entity isDerivedOrReadedEntity,
-      Map<String, String> parameter) {
-    super.checkFetchDatasourceAccess(isDerivedOrReadedEntity, parameter);
+  public void checkFetchDatasourceAccess(Map<String, String> parameter) {
+    super.checkFetchDatasourceAccess(parameter);
   }
 
   @Override
-  public void checkEditDatasourceAccess(Entity isDerivedOrReadedEntity,
-      Map<String, String> parameter) {
-    super.checkEditDatasourceAccess(isDerivedOrReadedEntity, parameter);
+  public void checkEditDatasourceAccess(Map<String, String> parameter) {
+    super.checkEditDatasourceAccess(parameter);
   }
 
   /**
