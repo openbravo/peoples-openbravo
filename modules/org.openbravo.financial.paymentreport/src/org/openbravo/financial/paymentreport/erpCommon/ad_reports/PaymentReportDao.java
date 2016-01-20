@@ -97,14 +97,14 @@ public class PaymentReportDao {
       String strcBPartnerIdIN, String strcBPGroupIdIN, String strcProjectIdIN, String strfinPaymSt,
       String strPaymentMethodId, String strFinancialAccountId, String strcCurrency,
       String strConvertCurrency, String strConversionDate, String strPaymType, String strOverdue,
-      String strGroupCrit, String strOrdCrit) {
+      String strBAZero, String strGroupCrit, String strOrdCrit) {
 
     try {
       return getPaymentReport(vars, strOrg, strInclSubOrg, strDueDateFrom, strDueDateTo,
           strAmountFrom, strAmountTo, strDocumentDateFrom, strDocumentDateTo, strcBPartnerIdIN,
           strcBPGroupIdIN, "include", strcProjectIdIN, strfinPaymSt, strPaymentMethodId,
           strFinancialAccountId, strcCurrency, strConvertCurrency, strConversionDate, strPaymType,
-          strOverdue, strGroupCrit, strOrdCrit, "Y", "", "");
+          strOverdue, strBAZero, strGroupCrit, strOrdCrit, "Y", "", "");
     } catch (OBException e) {
       FieldProvider[] fp = new FieldProvider[1];
       HashMap<String, String> hm = new HashMap<String, String>();
@@ -126,14 +126,14 @@ public class PaymentReportDao {
       String strcBPartnerIdIN, String strcBPGroupIdIN, String strcProjectIdIN, String strfinPaymSt,
       String strPaymentMethodId, String strFinancialAccountId, String strcCurrency,
       String strConvertCurrency, String strConversionDate, String strPaymType, String strOverdue,
-      String strGroupCrit, String strOrdCrit, String strInclPaymentUsingCredit) {
+      String strBAZero, String strGroupCrit, String strOrdCrit, String strInclPaymentUsingCredit) {
 
     try {
       return getPaymentReport(vars, strOrg, strInclSubOrg, strDueDateFrom, strDueDateTo,
           strAmountFrom, strAmountTo, strDocumentDateFrom, strDocumentDateTo, strcBPartnerIdIN,
           strcBPGroupIdIN, "include", strcProjectIdIN, strfinPaymSt, strPaymentMethodId,
           strFinancialAccountId, strcCurrency, strConvertCurrency, strConversionDate, strPaymType,
-          strOverdue, strGroupCrit, strOrdCrit, strInclPaymentUsingCredit, "", "");
+          strOverdue, strBAZero, strGroupCrit, strOrdCrit, strInclPaymentUsingCredit, "", "");
     } catch (OBException e) {
       FieldProvider[] fp = new FieldProvider[1];
       HashMap<String, String> hm = new HashMap<String, String>();
@@ -155,16 +155,16 @@ public class PaymentReportDao {
       String strcBPartnerIdIN, String strcBPGroupIdIN, String strcNoBusinessPartner,
       String strcProjectIdIN, String strfinPaymSt, String strPaymentMethodId,
       String strFinancialAccountId, String strcCurrency, String strConvertCurrency,
-      String strConversionDate, String strPaymType, String strOverdue, String strGroupCrit,
-      String strOrdCrit, String strInclPaymentUsingCredit, String strPaymentDateFrom,
-      String strPaymentDateTo) {
+      String strConversionDate, String strPaymType, String strOverdue, String strBAZero,
+      String strGroupCrit, String strOrdCrit, String strInclPaymentUsingCredit,
+      String strPaymentDateFrom, String strPaymentDateTo) {
 
     try {
       return getPaymentReport(vars, strOrg, strInclSubOrg, strDueDateFrom, strDueDateTo,
           strAmountFrom, strAmountTo, strDocumentDateFrom, strDocumentDateTo, strcBPartnerIdIN,
           strcBPGroupIdIN, "include", strcProjectIdIN, strfinPaymSt, strPaymentMethodId,
           strFinancialAccountId, strcCurrency, strConvertCurrency, strConversionDate, strPaymType,
-          strOverdue, strGroupCrit, strOrdCrit, strInclPaymentUsingCredit, "", "");
+          strOverdue, strBAZero, strGroupCrit, strOrdCrit, strInclPaymentUsingCredit, "", "");
     } catch (OBException e) {
       FieldProvider[] fp = new FieldProvider[1];
       HashMap<String, String> hm = new HashMap<String, String>();
@@ -188,16 +188,16 @@ public class PaymentReportDao {
       String strcBPartnerIdIN, String strcBPGroupIdIN, String strcNoBusinessPartner,
       String strcProjectIdIN, String strfinPaymSt, String strPaymentMethodId,
       String strFinancialAccountId, String strcCurrency, String strConvertCurrency,
-      String strConversionDate, String strPaymType, String strOverdue, String strGroupCrit,
-      String strOrdCrit, String strInclPaymentUsingCredit, String strPaymentDateFrom,
-      String strPaymentDateTo, String strExpectedDateFrom, String strExpectedDateTo)
-      throws OBException {
+      String strConversionDate, String strPaymType, String strOverdue, String strBAZero,
+      String strGroupCrit, String strOrdCrit, String strInclPaymentUsingCredit,
+      String strPaymentDateFrom, String strPaymentDateTo, String strExpectedDateFrom,
+      String strExpectedDateTo) throws OBException {
     return getPaymentReport(vars, strOrg, strInclSubOrg, strDueDateFrom, strDueDateTo,
         strAmountFrom, strAmountTo, strDocumentDateFrom, strDocumentDateTo, strcBPartnerIdIN,
         strcBPGroupIdIN, strcNoBusinessPartner, strcProjectIdIN, strfinPaymSt, strPaymentMethodId,
         strFinancialAccountId, strcCurrency, strConvertCurrency, strConversionDate, strPaymType,
-        strOverdue, strGroupCrit, strOrdCrit, strInclPaymentUsingCredit, strPaymentDateFrom,
-        strPaymentDateTo, strExpectedDateFrom, strExpectedDateTo, "dummy");
+        strOverdue, strBAZero, strGroupCrit, strOrdCrit, strInclPaymentUsingCredit,
+        strPaymentDateFrom, strPaymentDateTo, strExpectedDateFrom, strExpectedDateTo, "dummy");
   }
 
   FieldProvider[] getPaymentReport(VariablesSecureApp vars, String strOrg, String strInclSubOrg,
@@ -206,9 +206,9 @@ public class PaymentReportDao {
       String strcBPGroupIdIN, String strcNoBusinessPartner, String strcProjectIdIN,
       String strfinPaymSt, String strPaymentMethodId, String strFinancialAccountId,
       String strcCurrency, String strConvertCurrency, String strConversionDate, String strPaymType,
-      String strOverdue, String strGroupCrit, String strOrdCrit, String strInclPaymentUsingCredit,
-      String strPaymentDateFrom, String strPaymentDateTo, String strExpectedDateFrom,
-      String strExpectedDateTo, String strOutput) throws OBException {
+      String strOverdue, String strBAZero, String strGroupCrit, String strOrdCrit,
+      String strInclPaymentUsingCredit, String strPaymentDateFrom, String strPaymentDateTo,
+      String strExpectedDateFrom, String strExpectedDateTo, String strOutput) throws OBException {
 
     StringBuilder hsqlScript = new StringBuilder();
     final java.util.List<Object> parameters = new ArrayList<Object>();
@@ -513,6 +513,12 @@ public class PaymentReportDao {
         hsqlScript.append(FIN_PaymentSchedule.PROPERTY_DUEDATE);
         hsqlScript.append(" <  ?");
         parameters.add(DateUtils.truncate(new Date(), Calendar.DATE));
+      }
+
+      if (!"Y".equals(strBAZero)) {
+        hsqlScript.append(" and not (pay.");
+        hsqlScript.append(FIN_Payment.PROPERTY_AMOUNT);
+        hsqlScript.append(" = 0 )");
       }
 
       if ("HTML".equals(strOutput)) {
