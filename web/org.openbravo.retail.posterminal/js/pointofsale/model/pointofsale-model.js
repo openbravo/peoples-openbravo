@@ -809,11 +809,66 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                           OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_cancelLayawayAndNewHeader'), OB.I18N.getLabel('OBPOS_cancelLayawayAndNewBody'), [{
                             label: OB.I18N.getLabel('OBPOS_LblOk'),
                             action: function () {
+                              orderList.addNewOrder();
+                              var length = cloneOrder.get('lines').length,
+                                  linesMap = {},
+                                  order = orderList.modelorder;
+
+                              function addRelatedLines(index) {
+                                var line = cloneOrder.get('lines').at(index),
+                                    nextLine = function () {
+                                    if (index + 1 < length) {
+                                      addRelatedLines(index + 1);
+                                    } else {
+                                      order.unset('preventServicesUpdate');
+                                    }
+                                    };
+                                if (line.get('remainingQuantity') < line.get('qty')) {
+                                  var newLine = _.find(order.get('lines').models, function (orderline) {
+                                    return orderline.id === linesMap[line.id];
+                                  });
+                                  if (line.get('relatedLines')) {
+                                    newLine.set('relatedLines', []);
+                                    _.each(line.get('relatedLines'), function (relatedLine) {
+                                      var newRelatedLine = _.clone(relatedLine);
+                                      // If the service is not a deferred service, the related line, documentNo and orderId must be actualized. If it is, is must be marked as deferred
+                                      if (!newRelatedLine.otherTicket) {
+                                        newRelatedLine.orderDocumentNo = order.get('documentNo');
+                                        newRelatedLine.orderId = order.id;
+                                        newRelatedLine.orderlineId = linesMap[newRelatedLine.orderlineId];
+                                      } else {
+                                        newRelatedLine.deferred = true;
+                                      }
+                                      newLine.get('relatedLines').push(newRelatedLine);
+                                    });
+                                  }
+                                  OB.UTIL.HookManager.executeHooks('OBPOS_CancelAndNewAddLineRelation', {
+                                    order: order,
+                                    cloneOrder: cloneOrder,
+                                    line: line,
+                                    newLine: newLine,
+                                    linesMap: linesMap
+                                  }, function (args) {
+                                    nextLine();
+                                  });
+                                } else {
+                                  nextLine();
+                                }
+                              }
+
+                              order.set('preventServicesUpdate', true);
                               _.each(cloneOrder.get('lines').models, function (line) {
                                 if (line.get('remainingQuantity') < line.get('qty')) {
-                                  OB.MobileApp.model.receipt.addProduct(line.get('product'), OB.DEC.sub(line.get('qty'), line.get('remainingQuantity')));
+                                  order.addProduct(line.get('product'), OB.DEC.sub(line.get('qty'), line.get('remainingQuantity')));
+                                  linesMap[line.id] = order.get('lines').at(order.get('lines').length - 1).id;
                                 }
                               });
+
+                              if (length > 0) {
+                                addRelatedLines(0);
+                              } else {
+                                order.unset('preventServicesUpdate');
+                              }
                             }
                           }, {
                             label: OB.I18N.getLabel('OBPOS_Cancel')
