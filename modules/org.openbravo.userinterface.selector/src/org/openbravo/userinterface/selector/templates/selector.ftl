@@ -70,10 +70,10 @@
         this.optionDataSource = ${data.dataSourceJavascript};
         this.Super('init', arguments);
     },
-    <#if data.whereClause != "">
+    <#if data.hasWhereClause == true>
         whereClause: true,
     </#if>
-    <#if data.whereClause == "">
+    <#if data.hasWhereClause == false>
         whereClause: false,
     </#if>
     <#if data.outHiddenInputPrefix != "">
@@ -128,10 +128,10 @@ sc_${data.columnName} = isc.OBSelectorWidget.create({
     },
     extraSearchFields: [${data.extraSearchFields}],
     dataSource: ${data.dataSourceJavascript},
-    <#if data.whereClause != "">
+    <#if data.hasWhereClause == true>
         whereClause: true,
     </#if>
-    <#if data.whereClause == "">
+    <#if data.hasWhereClause == false>
         whereClause: false,
     </#if>
     callOut: ${data.callOut},
