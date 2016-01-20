@@ -340,11 +340,6 @@ enyo.kind({
           kind: 'OB.UI.NewCustomerAddressWindowButton',
           name: 'newAction'
         }]
-      }, {
-        style: 'display: table-cell;',
-        components: [{
-          kind: 'OB.UI.SearchCustomerAddressWindowButton'
-        }]
       }]
     }]
   }],
@@ -415,11 +410,155 @@ enyo.kind({
 });
 
 enyo.kind({
+  kind: 'OB.UI.ListContextMenuItem',
+  name: 'OB.UI.BPLocAssignToReceiptContextMenuItem',
+  i18NLabel: 'OBPOS_BPLocAssignToReceipt',
+  selectItem: function (bploc) {
+    var contextMenu = this.owner.owner;
+    bploc.set('ignoreSetBPLoc', true, {
+      silent: true
+    });
+
+    function errorCallback(tx, error) {
+      OB.error(tx);
+      OB.error(error);
+    }
+
+    function successCallbackBPs(dataBps) {
+      dataBps.set('locationModel', bploc);
+      dataBps.set('locId', bploc.get('id'));
+      dataBps.set('locName', bploc.get('name'));
+      dataBps.set('postalCode', bploc.get('postalCode'));
+      dataBps.set('cityName', bploc.get('cityName'));
+      dataBps.set('countryName', bploc.get('countryName'));
+
+      dataBps.set('shipLocId', bploc.get('id'));
+      dataBps.set('shipLocName', bploc.get('name'));
+      dataBps.set('shipPostalCode', bploc.get('postalCode'));
+      dataBps.set('shipCityName', bploc.get('cityName'));
+      dataBps.set('shipCountryName', bploc.get('countryName'));
+
+      contextMenu.dialog.doChangeBusinessPartner({
+        businessPartner: dataBps,
+        target: contextMenu.dialog.target
+      });
+    }
+    contextMenu.dialog.menuSelected = true;
+    OB.Dal.get(OB.Model.BusinessPartner, contextMenu.bPartner.get('id'), successCallbackBPs, errorCallback);
+    return true;
+  },
+  create: function () {
+    this.inherited(arguments);
+    this.setContent(OB.I18N.getLabel(this.i18NLabel));
+  }
+});
+
+enyo.kind({
+  kind: 'OB.UI.ListContextMenuItem',
+  name: 'OB.UI.BPLocAssignToReceiptShippingContextMenuItem',
+  i18NLabel: 'OBPOS_BPLocAssignToReceiptShipping',
+  selectItem: function (bploc) {
+    var contextMenu = this.owner.owner;
+    bploc.set('ignoreSetBPLoc', true, {
+      silent: true
+    });
+
+    function errorCallback(tx, error) {
+      OB.error(tx);
+      OB.error(error);
+    }
+
+    function successCallbackBPs(dataBps) {
+      dataBps.set('locationModel', bploc);
+      dataBps.set('shipLocId', bploc.get('id'));
+      dataBps.set('shipLocName', bploc.get('name'));
+      dataBps.set('shipPostalCode', bploc.get('postalCode'));
+      dataBps.set('shipCityName', bploc.get('cityName'));
+      dataBps.set('shipCountryName', bploc.get('countryName'));
+
+      //Keep the other address:
+      if (!contextMenu.bPartner.get('locId')) {
+        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_BPartnerNoInvoiceAddress', [contextMenu.bPartner.get('_identifier')]));
+        return;
+      }
+      dataBps.set('locId', contextMenu.bPartner.get('locId'));
+      dataBps.set('locName', contextMenu.bPartner.get('locName'));
+      dataBps.set('postalCode', contextMenu.bPartner.get('postalCode'));
+      dataBps.set('cityName', contextMenu.bPartner.get('cityName'));
+      dataBps.set('countryName', contextMenu.bPartner.get('countryName'));
+
+      contextMenu.dialog.doChangeBusinessPartner({
+        businessPartner: dataBps,
+        target: contextMenu.dialog.target
+      });
+    }
+
+    contextMenu.dialog.menuSelected = true;
+    OB.Dal.get(OB.Model.BusinessPartner, contextMenu.bPartner.get('id'), successCallbackBPs, errorCallback);
+    return true;
+  },
+  create: function () {
+    this.inherited(arguments);
+    this.setContent(OB.I18N.getLabel(this.i18NLabel));
+  }
+});
+
+enyo.kind({
+  kind: 'OB.UI.ListContextMenuItem',
+  name: 'OB.UI.BPLocAssignToReceiptInvoicingContextMenuItem',
+  i18NLabel: 'OBPOS_BPLocAssignToReceiptInvoicing',
+  selectItem: function (bploc) {
+    var contextMenu = this.owner.owner;
+    bploc.set('ignoreSetBPLoc', true, {
+      silent: true
+    });
+
+    function errorCallback(tx, error) {
+      OB.error(tx);
+      OB.error(error);
+    }
+
+    function successCallbackBPs(dataBps) {
+      dataBps.set('locationModel', bploc);
+      dataBps.set('locId', bploc.get('id'));
+      dataBps.set('locName', bploc.get('name'));
+      dataBps.set('postalCode', bploc.get('postalCode'));
+      dataBps.set('cityName', bploc.get('cityName'));
+      dataBps.set('countryName', bploc.get('countryName'));
+
+      //Keep the other address:
+      if (!contextMenu.bPartner.get('shipLocId')) {
+        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_BPartnerNoShippingAddress', [contextMenu.bPartner.get('_identifier')]));
+        return;
+      }
+      dataBps.set('shipLocId', contextMenu.bPartner.get('shipLocId'));
+      dataBps.set('shipLocName', contextMenu.bPartner.get('shipLocName'));
+      dataBps.set('shipPostalCode', contextMenu.bPartner.get('shipPostalCode'));
+      dataBps.set('shipCityName', contextMenu.bPartner.get('shipPostalCode'));
+      dataBps.set('shipCountryName', contextMenu.bPartner.get('shipCountryName'));
+
+      contextMenu.dialog.doChangeBusinessPartner({
+        businessPartner: dataBps,
+        target: contextMenu.dialog.target
+      });
+    }
+    contextMenu.dialog.menuSelected = true;
+    OB.Dal.get(OB.Model.BusinessPartner, contextMenu.bPartner.get('id'), successCallbackBPs, errorCallback);
+    return true;
+  },
+  create: function () {
+    this.inherited(arguments);
+    this.setContent(OB.I18N.getLabel(this.i18NLabel));
+  }
+});
+
+enyo.kind({
   kind: 'OB.UI.ListContextMenu',
   name: 'OB.UI.BPLocationContextMenu',
   initComponents: function () {
     this.inherited(arguments);
     var menuOptions = [],
+        bpLoc = this.owner.model,
         extraOptions = OB.MobileApp.model.get('extraBPLocContextMenuOptions') || [];
 
     menuOptions.push({
@@ -429,6 +568,25 @@ enyo.kind({
       kind: 'OB.UI.BPLocEditContextMenuItem',
       permission: 'OBPOS_retail.editCustomers'
     });
+
+    if (bpLoc.get('isBillTo') && bpLoc.get('isShipTo')) {
+      menuOptions.push({
+        kind: 'OB.UI.BPLocAssignToReceiptContextMenuItem',
+        permission: 'OBPOS_retail.editCustomers'
+      });
+    }
+    if (bpLoc.get('isShipTo')) {
+      menuOptions.push({
+        kind: 'OB.UI.BPLocAssignToReceiptShippingContextMenuItem',
+        permission: 'OBPOS_retail.editCustomers'
+      });
+    }
+    if (bpLoc.get('isBillTo')) {
+      menuOptions.push({
+        kind: 'OB.UI.BPLocAssignToReceiptInvoicingContextMenuItem',
+        permission: 'OBPOS_retail.editCustomers'
+      });
+    }
 
     menuOptions = menuOptions.concat(extraOptions);
     this.$.menu.setItems(menuOptions);
@@ -462,7 +620,7 @@ enyo.kind({
     }, {
       kind: 'OB.UI.BPLocationContextMenu',
       name: 'btnContextMenu',
-      style: 'float: right'
+      style: 'float: right;'
     }]
   }],
   events: {
@@ -470,7 +628,9 @@ enyo.kind({
   },
   tap: function () {
     this.inherited(arguments);
-    this.doHideThisPopup();
+    if (!this.$.btnContextMenu.dialog.manageAddress || this.$.btnContextMenu.dialog.menuSelected) {
+      this.doHideThisPopup();
+    }
   },
   create: function () {
     this.inherited(arguments);
@@ -492,6 +652,8 @@ enyo.kind({
       this.$.btnContextMenu.hide();
     } else {
       this.$.btnContextMenu.setModel(this.model);
+      this.$.btnContextMenu.dialog = this.owner.owner.owner.owner;
+      this.$.btnContextMenu.dialog.menuSelected = false;
       this.$.btnContextMenu.bPartner = new OB.Model.BusinessPartner(this.owner.owner.owner.owner.bPartner);
     }
   }
@@ -502,7 +664,9 @@ enyo.kind({
   name: 'OB.UI.ListBpsLoc',
   classes: 'row-fluid',
   published: {
-    bPartner: null
+    bPartner: null,
+    manageAddress: false,
+    target: 'order'
   },
   handlers: {
     onSearchAction: 'searchAction',
@@ -566,14 +730,16 @@ enyo.kind({
           operator: 'equals',
           value: this.bPartner.get('id'),
           isId: true
-          },
-          isBillTo = {
+          };
+      var remoteCriteria = [filterIdentifier, bPartnerId];
+      if (!this.manageAddress) {
+        remoteCriteria.push({
           columns: ['isBillTo'],
           operator: 'equals',
           value: true,
           boolean: true
-          };
-      var remoteCriteria = [filterIdentifier, bPartnerId, isBillTo];
+        });
+      }
       criteria.remoteFilters = remoteCriteria;
     }
     OB.Dal.find(OB.Model.BPLocation, criteria, successCallbackBPsLoc, errorCallback);
@@ -592,25 +758,33 @@ enyo.kind({
       }
 
       function successCallbackBPs(dataBps) {
+        dataBps.set('locationModel', model);
         dataBps.set('locId', model.get('id'));
         dataBps.set('locName', model.get('name'));
-        dataBps.set('locationModel', model);
         dataBps.set('postalCode', model.get('postalCode'));
         dataBps.set('cityName', model.get('cityName'));
         dataBps.set('countryName', model.get('countryName'));
+
+        //Keep the other address:
+        dataBps.set('shipLocId', me.bPartner.get('shipLocId'));
+        dataBps.set('shipLocName', me.bPartner.get('shipLocName'));
+        dataBps.set('shipPostalCode', me.bPartner.get('shipPostalCode'));
+        dataBps.set('shipCityName', me.bPartner.get('shipPostalCode'));
+        dataBps.set('shipCountryName', me.bPartner.get('shipCountryName'));
+
         me.doChangeBusinessPartner({
           businessPartner: dataBps,
           target: me.owner.owner.args.target
         });
       }
-      if (!model.get('ignoreSetBPLoc')) {
+      if (!model.get('ignoreSetBPLoc') && !this.manageAddress) {
         OB.Dal.get(OB.Model.BusinessPartner, this.bPartner.get('id'), successCallbackBPs, errorCallback);
       }
     }, this);
   }
 });
 
-/*Modal definiton*/
+/*Modal definition*/
 enyo.kind({
   name: 'OB.UI.ModalBPLocation',
   topPosition: '125px',
@@ -622,14 +796,17 @@ enyo.kind({
     this.waterfall('onSetShow', {
       visibility: this.args.visibilityButtons
     });
+    this.bPartner = this.args.businessPartner ? this.args.businessPartner : this.model.get('order').get('bp');
     this.waterfall('onSetBusinessPartner', {
-      bPartner: this.args.businessPartner ? this.args.businessPartner : this.model.get('order').get('bp')
+      bPartner: this.bPartner
     });
     this.bubble('onSetBusinessPartnerTarget', {
       target: this.args.target
     });
-    this.changedTitle(this.args.businessPartner ? this.args.businessPartner : this.model.get('order').get('bp'));
-    this.$.body.$.listBpsLoc.setBPartner(this.args.businessPartner ? this.args.businessPartner : this.model.get('order').get('bp'));
+    this.changedTitle(this.bPartner);
+    this.$.body.$.listBpsLoc.setManageAddress(this.args.manageAddress);
+    this.$.body.$.listBpsLoc.setBPartner(this.bPartner);
+    this.$.body.$.listBpsLoc.setTarget(this.args.target);
     this.$.body.$.listBpsLoc.$.bpsloclistitemprinter.$.theader.$.modalBpLocScrollableHeader.searchAction();
     this.$.body.$.listBpsLoc.$.bpsloclistitemprinter.$.theader.$.modalBpLocScrollableHeader.$.newAction.putDisabled(!OB.MobileApp.model.hasPermission('OBPOS_retail.editCustomers'));
     return true;
@@ -638,6 +815,11 @@ enyo.kind({
     this.$.body.$.listBpsLoc.$.bpsloclistitemprinter.$.theader.$.modalBpLocScrollableHeader.$.bpsLocationSearchfilterText.setValue('');
   },
   changedTitle: function (bp) {
+    if (this.args.manageAddress) {
+      this.$.header.setContent(OB.I18N.getLabel('OBPOS_LblManageCustomerAddresses', [(this.args.businessPartner ? this.args.businessPartner : this.model.get('order').get('bp')).get('name')]));
+      return;
+    }
+
     var me = this,
         criteria = {};
 

@@ -23,7 +23,9 @@ enyo.kind({
   name: 'OB.UI.ListBpsShipLoc',
   classes: 'row-fluid',
   published: {
-    bPartner: null
+    bPartner: null,
+    manageAddress: false,
+    target: 'order'
   },
   handlers: {
     onSearchAction: 'searchAction',
@@ -113,12 +115,20 @@ enyo.kind({
       }
 
       function successCallbackBPs(dataBps) {
+        dataBps.set('locationModel', model);
         dataBps.set('shipLocId', model.get('id'));
         dataBps.set('shipLocName', model.get('name'));
-        dataBps.set('locationModel', model);
         dataBps.set('shipPostalCode', model.get('postalCode'));
         dataBps.set('shipCityName', model.get('cityName'));
         dataBps.set('shipCountryName', model.get('countryName'));
+
+        //Keep the other address:
+        dataBps.set('locId', me.bPartner.get('locId'));
+        dataBps.set('locName', me.bPartner.get('locName'));
+        dataBps.set('postalCode', me.bPartner.get('postalCode'));
+        dataBps.set('cityName', me.bPartner.get('cityName'));
+        dataBps.set('countryName', me.bPartner.get('countryName'));
+
         me.doChangeBusinessPartner({
           businessPartner: dataBps,
           target: me.owner.owner.args.target
@@ -147,6 +157,7 @@ enyo.kind({
       target: this.args.target
     });
     this.$.body.$.listBpsShipLoc.setBPartner(this.model.get('order').get('bp'));
+    this.$.body.$.listBpsShipLoc.setTarget(this.args.target);
     this.$.body.$.listBpsShipLoc.$.bpsloclistitemprinter.$.theader.$.modalBpLocScrollableHeader.searchAction();
     this.$.body.$.listBpsShipLoc.$.bpsloclistitemprinter.$.theader.$.modalBpLocScrollableHeader.$.newAction.putDisabled(!OB.MobileApp.model.hasPermission('OBPOS_retail.editCustomers'));
     return true;

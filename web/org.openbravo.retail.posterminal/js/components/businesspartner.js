@@ -415,7 +415,7 @@ enyo.kind({
     onHideBPSelector: ''
   },
   selectItem: function (bpartner) {
-    var me = this;
+    var target = this.owner.owner.dialog.target;
     bpartner.set('ignoreSetBP', true, {
       silent: true
     });
@@ -423,8 +423,9 @@ enyo.kind({
       OB.MobileApp.view.$.containerWindow.$.pointOfSale.bubble('onShowPopup', {
         popup: 'modalcustomeraddress',
         args: {
-          target: bp.get('selectorTarget'),
-          businessPartner: bp
+          target: target,
+          businessPartner: bp,
+          manageAddress: true
         }
       });
     });
@@ -510,6 +511,7 @@ enyo.kind({
     if (this.$.btnContextMenu.$.menu.itemsCount === 0) {
       this.$.btnContextMenu.hide();
     } else {
+      this.$.btnContextMenu.dialog = this.owner.owner.owner.owner;
       this.$.btnContextMenu.setModel(this.model);
     }
   }
@@ -610,7 +612,6 @@ enyo.kind({
           });
           bp.set('_identifier', bp.get('bpName'));
           bp.set('filter', filter);
-          bp.set('selectorTarget', me.target);
         });
         me.bpsList.reset(dataBps.models);
         me.$.stBPAssignToReceipt.$.tbody.show();
