@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 
 import net.sf.jasperreports.engine.JRDataSource;
@@ -67,6 +68,7 @@ import net.sf.jasperreports.export.type.HtmlSizeUnitEnum;
 import net.sf.jasperreports.j2ee.servlets.ImageServlet;
 import net.sf.jasperreports.web.util.WebHtmlResourceHandler;
 
+import org.openbravo.base.ConfigParameters;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.client.kernel.reference.UIDefinitionController;
@@ -940,7 +942,7 @@ public class ReportingUtils {
       }
 
       if (jasperFilePath.endsWith("jrxml")) {
-        String strBaseDesign = DalContextListener.getServletContext().getRealPath("");
+        String strBaseDesign = getBaseDesignPath();
         JasperReport jReport = getTranslatedJasperReport(new DalConnectionProvider(false),
             jasperFilePath, language, strBaseDesign);
         if (connectionProvider != null) {
@@ -1468,5 +1470,18 @@ public class ReportingUtils {
     final String tmpFolder = System.getProperty("java.io.tmpdir");
 
     return tmpFolder;
+  }
+
+  private static String getBaseDesignPath() {
+    ServletContext servletContext = DalContextListener.getServletContext();
+    ConfigParameters configParameters = ConfigParameters.retrieveFrom(servletContext);
+
+    String base = configParameters.strBaseDesignPath;
+    String design = configParameters.strDefaultDesignPath;
+
+    if (!base.startsWith("/")) {
+      base = "/" + base;
+    }
+    return servletContext.getRealPath(base + "/" + design);
   }
 }

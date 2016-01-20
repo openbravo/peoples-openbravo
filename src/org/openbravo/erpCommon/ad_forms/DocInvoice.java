@@ -11,7 +11,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SLU
- * Contributions are Copyright (C) 2001-2015 Openbravo S.L.U.
+ * Contributions are Copyright (C) 2001-2016 Openbravo S.L.U.
  ******************************************************************************
  */
 package org.openbravo.erpCommon.ad_forms;
@@ -344,7 +344,7 @@ public class DocInvoice extends AcctServer {
           } else if (!m_payments[i].C_Currency_ID_From.equals(as.m_C_Currency_ID)) {
             try {
               DocInvoiceData[] prepayments = DocInvoiceData.selectPrepayments(connectionProvider,
-                  m_payments[i].Line_ID);
+                  m_payments[i].Line_ID, Record_ID);
               for (int j = 0; j < prepayments.length; j++) {
                 BigDecimal prePaymentAmt = convertAmount(new BigDecimal(prepayments[j].prepaidamt),
                     true, DateAcct, TABLEID_Payment, prepayments[j].finPaymentId,
@@ -581,7 +581,7 @@ public class DocInvoice extends AcctServer {
           } else if (!m_payments[i].C_Currency_ID_From.equals(as.m_C_Currency_ID)) {
             try {
               DocInvoiceData[] prepayments = DocInvoiceData.selectPrepayments(connectionProvider,
-                  m_payments[i].Line_ID);
+                  m_payments[i].Line_ID, Record_ID);
               for (int j = 0; j < prepayments.length; j++) {
                 BigDecimal prePaymentAmt = convertAmount(
                     new BigDecimal(prepayments[j].prepaidamt).negate(), true, DateAcct,
@@ -713,7 +713,7 @@ public class DocInvoice extends AcctServer {
           } else if (!m_payments[i].C_Currency_ID_From.equals(as.m_C_Currency_ID)) {
             try {
               DocInvoiceData[] prepayments = DocInvoiceData.selectPrepayments(connectionProvider,
-                  m_payments[i].Line_ID);
+                  m_payments[i].Line_ID, Record_ID);
               for (int j = 0; j < prepayments.length; j++) {
                 BigDecimal prePaymentAmt = convertAmount(new BigDecimal(prepayments[j].prepaidamt),
                     false, DateAcct, TABLEID_Payment, prepayments[j].finPaymentId,
@@ -1019,7 +1019,7 @@ public class DocInvoice extends AcctServer {
           } else if (!m_payments[i].C_Currency_ID_From.equals(as.m_C_Currency_ID)) {
             try {
               DocInvoiceData[] prepayments = DocInvoiceData.selectPrepayments(connectionProvider,
-                  m_payments[i].Line_ID);
+                  m_payments[i].Line_ID, Record_ID);
               for (int j = 0; j < prepayments.length; j++) {
                 BigDecimal prePaymentAmt = convertAmount(
                     new BigDecimal(prepayments[j].prepaidamt).negate(), false, DateAcct,
