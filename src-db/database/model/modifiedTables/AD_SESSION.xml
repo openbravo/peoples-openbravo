@@ -5,5 +5,8 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <foreign-key foreignTable="AD_ORG" name="EM_OBPOS_AD_SESSION_STORE">
+        <reference local="EM_OBPOS_STORE_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
     </table>
   </database>
