@@ -17,21 +17,23 @@
 * The Initial Developer of the Original Code is Openbravo SLU
 * All portions are Copyright (C) 2015 Openbravo SLU
 * All Rights Reserved.
-* Contributor(s):  __JBU____________________________________.
+* Contributor(s):  ______________________________________.
 ************************************************************************/
  
  BEGIN
  
-   IF AD_isTriggerEnabled()='N' THEN IF UPDATING THEN RETURN OLD; ELSE RETURN NEW; END IF; 
+   IF AD_isTriggerEnabled()='N' THEN RETURN;
    END IF;
 
-   IF :OLD.password<>:NEW.password THEN
+   IF (:OLD.password<>:NEW.password) THEN
      
-   UPDATE ad_user
-   SET lastupdatepassworddate = now()
-   WHERE ad_user_id=:NEW.ad_user_id;
+     UPDATE ad_user
+     SET lastupdatepassworddate = now()
+     WHERE ad_user_id=:NEW.ad_user_id;
 
-   ELSE RETURN NEW; END IF;
+   ELSE 
+     RETURN NEW; 
+   END IF;
  
    END AD_USER_EXPIRYPASS_TRG
 ]]></body>
