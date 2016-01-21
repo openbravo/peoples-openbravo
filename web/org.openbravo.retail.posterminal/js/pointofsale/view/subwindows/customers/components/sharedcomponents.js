@@ -257,7 +257,6 @@ enyo.kind({
     }
   }
 });
-
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.customers.edit_createcustomers',
   handlers: {
@@ -321,27 +320,15 @@ enyo.kind({
     }
 
     function goToViewWindow(sw, params) {
-      if (sw.caller === 'mainSubWindow') {
-        sw.doChangeSubWindow({
-          newWindow: {
-            name: 'customerView',
-            params: {
-              navigateOnClose: 'mainSubWindow',
-              businessPartner: params.customer
-            }
+      sw.doChangeSubWindow({
+        newWindow: {
+          name: 'customerView',
+          params: {
+            navigateOnClose: 'mainSubWindow',
+            businessPartner: params.customer
           }
-        });
-      } else {
-        sw.doChangeSubWindow({
-          newWindow: {
-            name: 'customerView',
-            params: {
-              navigateOnClose: 'customerAdvancedSearch',
-              businessPartner: params.customer
-            }
-          }
-        });
-      }
+        }
+      });
     }
 
     if (this.customer === undefined) {

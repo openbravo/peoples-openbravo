@@ -9,6 +9,8 @@
 
 /*global B, Backbone, $, _, enyo */
 
+/* Deprecated: Deprecated: Not used, only for backward compatibility */
+
 //Modal pop up
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.customers.cas',

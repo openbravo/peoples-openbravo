@@ -31,7 +31,7 @@
         if (this.get('useSameAddrForShipAndInv')) {
           //Create 1 address for shipping and invoicing
           if (!this.get('locName')) {
-            OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_BPartnerAddressRequired'));
+            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_BPartnerAddressRequired'));
             return false;
           }
           this.set('locId', OB.UTIL.get_UUID());
@@ -44,7 +44,7 @@
         } else {
           //Create 1 address for shipping and 1 for invoicing
           if (!this.get('locName') || !this.get('shipLocName')) {
-            OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_BPartnerAddressRequired'));
+            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_BPartnerAddressRequired'));
             return false;
           }
           this.set('locId', OB.UTIL.get_UUID());

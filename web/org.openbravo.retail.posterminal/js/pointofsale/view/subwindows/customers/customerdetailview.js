@@ -21,7 +21,7 @@ enyo.kind({
     });
     return true;
   },
-  defaultNavigateOnClose: 'customerAdvancedSearch',
+  defaultNavigateOnClose: 'mainSubWindow',
   header: {
     kind: 'OB.UI.SubwindowHeader',
     i18nHeaderMessage: 'OBPOS_TitleViewCustomer',
@@ -54,6 +54,8 @@ enyo.kind({
     onSetBPartnerTarget: 'setBPartnerTarget'
   },
   events: {
+	onHideThisPopup: '',
+	onShowPopup: '',
     onChangeBusinessPartner: ''
   },
   setCustomer: function (inSender, inEvent) {

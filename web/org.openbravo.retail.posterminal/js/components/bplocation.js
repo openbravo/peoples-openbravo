@@ -368,10 +368,12 @@ enyo.kind({
     bploc.set('ignoreSetBPLoc', true, {
       silent: true
     });
+    var contextMenu = this.owner.owner;
+    contextMenu.dialog.menuSelected = true;
     OB.MobileApp.view.$.containerWindow.getRoot().model.attributes.subWindowManager.set('currentWindow', {
       name: 'customerAddressView',
       params: {
-        businessPartner: me.owner.owner.bPartner,
+        businessPartner: contextMenu.bPartner,
         bPLocation: bploc,
         navigateOnClose: 'mainSubWindow'
       }
@@ -393,10 +395,12 @@ enyo.kind({
     bploc.set('ignoreSetBPLoc', true, {
       silent: true
     });
+    var contextMenu = this.owner.owner;
+    contextMenu.dialog.menuSelected = true;
     OB.MobileApp.view.$.containerWindow.getRoot().model.attributes.subWindowManager.set('currentWindow', {
       name: 'customerAddrCreateAndEdit',
       params: {
-        businessPartner: me.owner.owner.bPartner,
+        businessPartner: contextMenu.bPartner,
         bPLocation: bploc,
         navigateOnClose: 'mainSubWindow'
       }
