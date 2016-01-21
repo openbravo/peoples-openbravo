@@ -59,7 +59,7 @@ OB.UTIL.startRfidWebsocket = function startRfidWebsocket(websocketServerLocation
     }
     for (i = 0; i < OB.MobileApp.model.receipt.get('lines').length; i++) {
       line = OB.MobileApp.model.receipt.get('lines').models[i];
-      if (line.get('obposEpccode') === data.dataToSave.obposEpccode) {
+      if (line.get('obposEpccode') === data.dataToSave.obposEpccode || ('0' + line.get('product').get('uPCEAN') === data.gtin && line.get('obposSerialnumber') === data.dataToSave.obposSerialnumber)) {
         return;
       }
     }
