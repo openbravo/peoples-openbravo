@@ -106,6 +106,9 @@ public class ManageVariants extends BaseProcessActionHandler {
 
   private void createVariant(JSONObject variantProperties, Product generic) throws JSONException {
     Product variant = (Product) DalUtil.copy(generic);
+    if (generic.getClient().isMultilingualDocuments()) {
+      variant.getProductTrlList().clear();
+    }
 
     variant.setGenericProduct(generic);
     variant.setProductAccountsList(Collections.<ProductAccounts> emptyList());
@@ -121,20 +124,20 @@ public class ManageVariants extends BaseProcessActionHandler {
     OBDal.getInstance().flush();
     for (int i = 0; i < variantValues.length(); i++) {
       JSONObject chValue = variantValues.getJSONObject(i);
-      ProductCharacteristicValue newPrChValue = OBProvider.getInstance().get(
-          ProductCharacteristicValue.class);
-      newPrChValue.setCharacteristic((Characteristic) OBDal.getInstance().getProxy(
-          Characteristic.ENTITY_NAME, chValue.getString("characteristic")));
-      newPrChValue.setCharacteristicValue((CharacteristicValue) OBDal.getInstance().getProxy(
-          CharacteristicValue.ENTITY_NAME, chValue.getString("characteristicValue")));
+      ProductCharacteristicValue newPrChValue = OBProvider.getInstance()
+          .get(ProductCharacteristicValue.class);
+      newPrChValue.setCharacteristic((Characteristic) OBDal.getInstance()
+          .getProxy(Characteristic.ENTITY_NAME, chValue.getString("characteristic")));
+      newPrChValue.setCharacteristicValue((CharacteristicValue) OBDal.getInstance()
+          .getProxy(CharacteristicValue.ENTITY_NAME, chValue.getString("characteristicValue")));
       newPrChValue.setProduct(variant);
       OBDal.getInstance().save(newPrChValue);
       ProductCharacteristicConf prChConf = OBDal.getInstance().get(ProductCharacteristicConf.class,
           chValue.getString("characteristicConf"));
       if (prChConf.getCharacteristicOfProduct().isDefinesPrice()
           && prChConf.getNetUnitPrice() != null) {
-        setPrice(variant, prChConf.getNetUnitPrice(), prChConf.getCharacteristicOfProduct()
-            .getPriceListType());
+        setPrice(variant, prChConf.getNetUnitPrice(),
+            prChConf.getCharacteristicOfProduct().getPriceListType());
       }
       if (prChConf.getCharacteristicOfProduct().isDefinesImage() && prChConf.getImage() != null) {
         Image newImage = (Image) DalUtil.copy(prChConf.getImage(), false);
