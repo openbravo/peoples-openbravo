@@ -38,23 +38,25 @@ OB.UTIL.startRfidWebsocket = function startRfidWebsocket(websocketServerLocation
   // Called when a message is received from server
   OB.UTIL.rfidWebsocket.onmessage = function (event) {
     var data, ean, i, line;
-    if (event.data.startsWith('doNotReconnect')){
-    	OB.UTIL.rfidWebsocket.onclose = function () {};
-    	OB.MobileApp.view.waterfall('onRfidConnectionLost');
-    	OB.UTIL.rfidWebsocket.close();
-    	return;
+    if (event.data.startsWith('doNotReconnect')) {
+      OB.UTIL.rfidWebsocket.onclose = function () {};
+      OB.MobileApp.view.waterfall('onRfidConnectionLost');
+      OB.UTIL.rfidWebsocket.close();
+      return;
     }
     if (event.data.startsWith('uuid:')) {
       OB.UTIL.rfidAckArray.push(event.data.split(':')[1]);
       return;
     }
     data = JSON.parse(event.data)
-    if (OB.UTIL.rfidTimeout) {
-      clearTimeout(OB.UTIL.rfidTimeout);
+    if (OB.POS.modelterminal.get('terminal').terminalType.rfidtimeout) {
+      if (OB.UTIL.rfidTimeout) {
+        clearTimeout(OB.UTIL.rfidTimeout);
+      }
+      OB.UTIL.rfidTimeout = setTimeout(function () {
+        OB.UTIL.disconnectRFIDDevice();
+      }, OB.POS.modelterminal.get('terminal').terminalType.rfidtimeout * 1000 * 60);
     }
-    OB.UTIL.rfidTimeout = setTimeout(function () {
-      OB.UTIL.disconnectRFIDDevice();
-    }, OB.POS.modelterminal.get('terminal').terminalType.rfidtimeout * 1000 * 60);
     for (i = 0; i < OB.MobileApp.model.receipt.get('lines').length; i++) {
       line = OB.MobileApp.model.receipt.get('lines').models[i];
       if (line.get('obposEpccode') === data.dataToSave.obposEpccode) {
