@@ -21,6 +21,7 @@ package org.openbravo.service.datasource;
 
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -47,63 +48,67 @@ import org.slf4j.LoggerFactory;
 public class NoteDataSource extends DefaultDataSourceService {
   private static final Logger log = LoggerFactory.getLogger(NoteDataSource.class);
 
-  @Override
-  public String fetch(Map<String, String> parameters) {
-    String noteFetch = "";
-    noteFetch = super.fetch(parameters, false);
-    return noteFetch;
-  }
-
-  @Override
-  public String add(Map<String, String> parameters, String content) {
-    String noteAdd = "";
-    try {
-      JSONObject noteData;
-      String tableId;
-      String recordId;
-
-      final JSONObject jsonObject = new JSONObject(content);
-      noteData = jsonObject.getJSONObject("data");
-      tableId = noteData.getString("table");
-      recordId = noteData.getString("record");
-      readableAccesForUser(tableId, recordId);
-      noteAdd = super.add(parameters, content, false);
-    } catch (JSONException ex) {
-      log.error("Exception while trying to add a new note", ex);
-      throw new OBException(ex);
-    }
-    return noteAdd;
-  }
-
-  @Override
-  public String remove(Map<String, String> parameters) {
-    String noteRemove = "";
-    OBContext.setAdminMode(false);
-    try {
-      String noteId = parameters.get("id");
-      Note note = OBDal.getInstance().get(Note.class, noteId);
-      Table table = note.getTable();
-      String tableId = table.getId();
-      String recordId = note.getRecord();
-      readableAccesForUser(tableId, recordId);
-      noteRemove = super.remove(parameters, false);
-
-    } catch (Exception ex) {
-      log.error("Exception while trying to remove a note", ex);
-      throw new OBException(ex);
-    } finally {
-      OBContext.restorePreviousMode();
-    }
-    return noteRemove;
-  }
+  // @Override
+  // public String fetch(Map<String, String> parameters) {
+  // String noteFetch = "";
+  // noteFetch = super.fetch(parameters, false);
+  // return noteFetch;
+  // }
+  //
+  // @Override
+  // public String add(Map<String, String> parameters, String content) {
+  // String noteAdd = "";
+  // noteAdd = super.add(parameters, content, false);
+  // return noteAdd;
+  // }
+  //
+  // @Override
+  // public String remove(Map<String, String> parameters) {
+  // String noteRemove = "";
+  // noteRemove = super.remove(parameters, false);
+  // return noteRemove;
+  // }
 
   @Override
   public void checkEditDatasourceAccess(Map<String, String> parameter) {
+    String operationType = parameter.get(DataSourceConstants.OPERATION_TYPE_PARAM);
+    if (StringUtils.isNotBlank(operationType)
+        && operationType.equals(DataSourceConstants.REMOVE_OPERATION)) {
+      // Removing a Note: Remove operation type
+      OBContext.setAdminMode(false);
+      try {
+        String noteId = parameter.get("id");
+        Note note = OBDal.getInstance().get(Note.class, noteId);
+        Table table = note.getTable();
+        String tableId = table.getId();
+        String recordId = note.getRecord();
+        readableAccesForUser(tableId, recordId);
+      } catch (Exception ex) {
+        log.error("Exception while trying to remove a note", ex);
+        throw new OBException(ex);
+      } finally {
+        OBContext.restorePreviousMode();
+      }
+    } else {
+      // Adding a Note: Add operation type
+      try {
+        String content = parameter.get(DataSourceConstants.ADD_CONTENT_OPERATION);
+        final JSONObject jsonObject = new JSONObject(content);
+        JSONObject noteData = jsonObject.getJSONObject("data");
+        String tableId = noteData.getString("table");
+        String recordId = noteData.getString("record");
+        readableAccesForUser(tableId, recordId);
+      } catch (JSONException ex) {
+        log.error("Exception while trying to add a new note", ex);
+        throw new OBException(ex);
+      }
+    }
   }
 
   @Override
   public void checkFetchDatasourceAccess(Map<String, String> parameter) {
     try {
+      // Fetching Notes: Fetch operation type
       JSONObject jsonCriteria = JsonUtils.buildCriteria(parameter);
       JSONArray notesCriteria;
       String tableId;
