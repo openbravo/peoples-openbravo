@@ -25,7 +25,7 @@
     location: false
   }, {
     name: 'bpartnerId',
-    column: 'c_bpartner_id',
+    column: 'bp.c_bpartner_id',
     filter: false,
     type: 'TEXT',
     location: false
@@ -37,74 +37,74 @@
     location: false
   }, {
     name: 'customerBlocking',
-    column: 'customerBlocking',
+    column: 'bp.customerBlocking',
     filter: false,
     type: 'TEXT',
     location: false
   }, {
     name: 'salesOrderBlocking',
-    column: 'salesOrderBlocking',
+    column: 'bp.salesOrderBlocking',
     filter: false,
     type: 'TEXT',
     location: false
   }, {
     name: 'bpName',
-    column: 'name',
+    column: 'bp.name',
     filter: true,
     type: 'TEXT',
     caption: 'OBPOS_LblName',
     location: false
   }, {
     name: 'bpCategory',
-    column: 'c_bp_group_name',
+    column: 'bp.c_bp_group_name',
     filter: true,
     type: 'TEXT',
     caption: 'OBPOS_BPCategory',
     location: false
   }, {
     name: 'taxID',
-    column: 'taxID',
+    column: 'bp.taxID',
     filter: true,
     type: 'TEXT',
     caption: 'OBPOS_LblTaxId',
     location: false
   }, {
     name: 'phone',
-    column: 'phone',
+    column: 'bp.phone',
     filter: true,
     type: 'TEXT',
     caption: 'OBPOS_LblPhone',
     location: false
   }, {
     name: 'email',
-    column: 'email',
+    column: 'bp.email',
     filter: true,
     type: 'TEXT',
     caption: 'OBPOS_LblEmail',
     location: false
   }, {
     name: 'bpLocactionId',
-    column: 'c_bpartner_location_id',
+    column: 'loc.c_bpartner_location_id',
     filter: false,
     type: 'TEXT',
     location: true
   }, {
     name: 'locName',
-    column: 'locName',
+    column: 'loc.name',
     filter: true,
     type: 'TEXT',
     caption: 'OBPOS_LblAddress',
     location: true
   }, {
     name: 'postalCode',
-    column: 'postalCode',
+    column: 'loc.postalCode',
     filter: true,
     type: 'TEXT',
     caption: 'OBPOS_LblPostalCode',
     location: true
   }, {
     name: 'cityName',
-    column: 'cityName',
+    column: 'loc.cityName',
     filter: true,
     type: 'TEXT',
     caption: 'OBPOS_LblCity',
