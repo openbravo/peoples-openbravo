@@ -12,7 +12,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2009-2014 Openbravo SLU
+ * All portions are Copyright (C) 2009-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -70,12 +70,6 @@
         this.optionDataSource = ${data.dataSourceJavascript};
         this.Super('init', arguments);
     },
-    <#if data.hasWhereClause == true>
-        whereClause: true,
-    </#if>
-    <#if data.hasWhereClause == false>
-        whereClause: false,
-    </#if>
     <#if data.outHiddenInputPrefix != "">
         outHiddenInputPrefix: '${data.outHiddenInputPrefix}'
     </#if>
@@ -128,12 +122,6 @@ sc_${data.columnName} = isc.OBSelectorWidget.create({
     },
     extraSearchFields: [${data.extraSearchFields}],
     dataSource: ${data.dataSourceJavascript},
-    <#if data.hasWhereClause == true>
-        whereClause: true,
-    </#if>
-    <#if data.hasWhereClause == false>
-        whereClause: false,
-    </#if>
     callOut: ${data.callOut},
     title : '${data.title}',
     comboReload: ${data.comboReload}
