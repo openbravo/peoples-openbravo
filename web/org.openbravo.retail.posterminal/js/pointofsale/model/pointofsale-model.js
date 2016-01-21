@@ -803,7 +803,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                     OB.Dal.get(OB.Model.Order, orderId, function (model) {
                       function cancelAndNew() {
                         OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgSuccessCancelLayaway', [documentNo]));
-                        if (OB.MobileApp.model.hasPermission('OBPOS_cancelLayawayAndNew')) {
+                        if (OB.MobileApp.model.hasPermission('OBPOS_cancelLayawayAndNew', true)) {
                           var cloneOrder = new OB.Model.Order();
                           OB.UTIL.clone(receipt, cloneOrder);
                           OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_cancelLayawayAndNewHeader'), OB.I18N.getLabel('OBPOS_cancelLayawayAndNewBody'), [{
