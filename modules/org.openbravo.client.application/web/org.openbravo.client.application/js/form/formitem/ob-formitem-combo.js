@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2015 Openbravo SLU
+ * All portions are Copyright (C) 2015-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,9 +28,12 @@ isc.OBComboBoxItem.addProperties({
   // Prevents validation of this item while filtering because real value is not 
   // set yet.
   // see issues #26189 and #28651
-  filterComplete: function () {
+  filterComplete: function (response, data, request, fromSharedPickList) {
     var ret;
 
+    if (request && request.params && request.params.recordIdInForm && request.params.recordIdInForm !== this.form.recordIdInForm) {
+      return;
+    }
     this.preventValidation = true;
     ret = this.Super('filterComplete', arguments);
     delete this.preventValidation;
@@ -62,5 +65,17 @@ isc.OBComboBoxItem.addProperties({
       }
     }
     return false;
+  },
+
+  // This function will fall through to filterComplete() when the filter operation returns
+  filterDataBoundPickList: function (requestProperties, dropCache) {
+    if (this.form && this.form.view && this.form.view.isShowingForm) {
+      // Identify the record being currently edited in form view and include it in the request.
+      // It will be used to avoid problems when a new record is opened in form view before filterComplete() finishes
+      // See issue https://issues.openbravo.com/view.php?id=31331
+      requestProperties.params = requestProperties.params || {};
+      requestProperties.params.recordIdInForm = this.form.recordIdInForm;
+    }
+    return this.Super('filterDataBoundPickList', [requestProperties, dropCache]);
   }
 });

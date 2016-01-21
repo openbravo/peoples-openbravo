@@ -333,7 +333,7 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
         // Manage negative amounts
         if ((remainingAmount.signum() > 0 && remainingAmount.compareTo(outstandingAmount) >= 0)
             || ((remainingAmount.signum() < 0 && outstandingAmount.signum() < 0) && (remainingAmount
-                .compareTo(outstandingAmount) <= 0))) {
+                .compareTo(outstandingAmount) >= 0))) {
           assignAmount = outstandingAmount;
           remainingAmount = remainingAmount.subtract(outstandingAmount);
         } else {

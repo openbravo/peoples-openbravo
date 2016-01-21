@@ -35,16 +35,16 @@ import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.common.enterprise.Organization;
-import org.openbravo.test.datasource.BaseDataSourceTestDal;
+import org.openbravo.test.base.OBBaseTest;
 
 /**
- * Test cases for check if the correct configurations are set, with the different grid
- * configurations in tab, field and in system level.
+ * Test cases to check if the correct configurations are set, with the different grid configurations
+ * in tab, field and in system level.
  * 
  * @author NaroaIriarte
  *
  */
-public class ViewGenerationWithDifferentConfigLevelTest extends BaseDataSourceTestDal {
+public class ViewGenerationWithDifferentConfigLevelTest extends OBBaseTest {
   private static final String CLIENT_FOR_GC_SYSTEM_FIELD_TAB = "0";
   private static final String ZERO_ORGANIZATION = "0";
   private static final String BUSINESS_PARTNER_TAB_ID = "220";
@@ -54,6 +54,7 @@ public class ViewGenerationWithDifferentConfigLevelTest extends BaseDataSourceTe
   private static final String CAN_SORT_TRUE = "\"canSort\":true";
   private static final String CAN_FILTER_FALSE = "\"canFilter\":false";
   private static final String CAN_FILTER_TRUE = "\"canFilter\":true";
+  private static final long SEQUENCE = 10;
 
   /**
    * Having only grid configuration in System level. In the configuration, the
@@ -69,6 +70,7 @@ public class ViewGenerationWithDifferentConfigLevelTest extends BaseDataSourceTe
       gcsystem.setClient(OBDal.getInstance().get(Client.class, CLIENT_FOR_GC_SYSTEM_FIELD_TAB));
       gcsystem.setOrganization(OBDal.getInstance().get(Organization.class, ZERO_ORGANIZATION));
       gcsystem.setFilterable(true);
+      gcsystem.setSeqno(SEQUENCE);
       OBDal.getInstance().save(gcsystem);
       OBDal.getInstance().flush();
 
@@ -97,6 +99,7 @@ public class ViewGenerationWithDifferentConfigLevelTest extends BaseDataSourceTe
       gctab.setClient(OBDal.getInstance().get(Client.class, CLIENT_FOR_GC_SYSTEM_FIELD_TAB));
       gctab.setOrganization(OBDal.getInstance().get(Organization.class, ZERO_ORGANIZATION));
       gctab.setFilterable("N");
+      gctab.setSeqno(SEQUENCE);
       Tab tab = OBDal.getInstance().get(Tab.class, BUSINESS_PARTNER_TAB_ID);
       tab.getOBUIAPPGCTabList().add(gctab);
       OBDal.getInstance().save(gctab);
@@ -131,12 +134,14 @@ public class ViewGenerationWithDifferentConfigLevelTest extends BaseDataSourceTe
       gcsystem.setClient(OBDal.getInstance().get(Client.class, CLIENT_FOR_GC_SYSTEM_FIELD_TAB));
       gcsystem.setOrganization(OBDal.getInstance().get(Organization.class, ZERO_ORGANIZATION));
       gcsystem.setSortable(true);
+      gcsystem.setSeqno(SEQUENCE);
       OBDal.getInstance().save(gcsystem);
       OBDal.getInstance().flush();
 
       gctab.setClient(OBDal.getInstance().get(Client.class, CLIENT_FOR_GC_SYSTEM_FIELD_TAB));
       gctab.setOrganization(OBDal.getInstance().get(Organization.class, ZERO_ORGANIZATION));
       gctab.setFilterable("N");
+      gctab.setSeqno(SEQUENCE);
       Tab tab = OBDal.getInstance().get(Tab.class, BUSINESS_PARTNER_TAB_ID);
       tab.getOBUIAPPGCTabList().add(gctab);
       OBDal.getInstance().save(gctab);
@@ -173,6 +178,7 @@ public class ViewGenerationWithDifferentConfigLevelTest extends BaseDataSourceTe
       gcfield = OBProvider.getInstance().get(GCField.class);
       gctab.setClient(OBDal.getInstance().get(Client.class, CLIENT_FOR_GC_SYSTEM_FIELD_TAB));
       gctab.setOrganization(OBDal.getInstance().get(Organization.class, ZERO_ORGANIZATION));
+      gctab.setSeqno(SEQUENCE);
       Tab tab = OBDal.getInstance().get(Tab.class, BUSINESS_PARTNER_TAB_ID);
       tab.getOBUIAPPGCTabList().add(gctab);
       OBDal.getInstance().save(gctab);
@@ -215,12 +221,14 @@ public class ViewGenerationWithDifferentConfigLevelTest extends BaseDataSourceTe
       gcsystem.setClient(OBDal.getInstance().get(Client.class, CLIENT_FOR_GC_SYSTEM_FIELD_TAB));
       gcsystem.setOrganization(OBDal.getInstance().get(Organization.class, ZERO_ORGANIZATION));
       gcsystem.setSortable(true);
+      gcsystem.setSeqno(SEQUENCE);
       OBDal.getInstance().save(gcsystem);
       OBDal.getInstance().flush();
 
       gctab = OBProvider.getInstance().get(GCTab.class);
       gctab.setClient(OBDal.getInstance().get(Client.class, CLIENT_FOR_GC_SYSTEM_FIELD_TAB));
       gctab.setOrganization(OBDal.getInstance().get(Organization.class, ZERO_ORGANIZATION));
+      gctab.setSeqno(SEQUENCE);
       Tab tab = OBDal.getInstance().get(Tab.class, BUSINESS_PARTNER_TAB_ID);
       tab.getOBUIAPPGCTabList().add(gctab);
       OBDal.getInstance().save(gctab);
@@ -267,6 +275,7 @@ public class ViewGenerationWithDifferentConfigLevelTest extends BaseDataSourceTe
       gctab.setClient(OBDal.getInstance().get(Client.class, CLIENT_FOR_GC_SYSTEM_FIELD_TAB));
       gctab.setOrganization(OBDal.getInstance().get(Organization.class, ZERO_ORGANIZATION));
       gctab.setFilterable("N");
+      gctab.setSeqno(SEQUENCE);
       Tab tab = OBDal.getInstance().get(Tab.class, BUSINESS_PARTNER_TAB_ID);
       tab.getOBUIAPPGCTabList().add(gctab);
       OBDal.getInstance().save(gctab);

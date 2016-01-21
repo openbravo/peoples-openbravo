@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):
  *   Martin Taal <martin.taal@openbravo.com>,
@@ -166,16 +166,6 @@ public class DalQueryTest extends OBBaseTest {
     final OBContext obContext = OBContext.getOBContext();
     assertEquals(obContext.getUser().getId(), bpg.getCreatedBy().getId());
     assertEquals(obContext.getUser().getId(), bpg.getUpdatedBy().getId());
-    // update and create have occured less than one second ago
-    // note that if the delete fails for other reasons that you will have a
-    // currency in the database which has for sure a created/updated time
-    // longer in the past, You need to manually delete the currency record
-    if (false) {
-      assertTrue("Created time not updated", (System.currentTimeMillis() - bpg.getCreationDate()
-          .getTime()) < 2000);
-      assertTrue("Updated time not updated", (System.currentTimeMillis() - bpg.getUpdated()
-          .getTime()) < 2000);
-    }
 
     // first delete the related accounts
     final List<Object> parameters = new ArrayList<Object>();

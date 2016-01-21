@@ -114,38 +114,48 @@ public class DocFINFinAccTransaction extends AcctServer {
   public FieldProviderFactory[] loadLinesPaymentDetailsFieldProvider(
       FIN_FinaccTransaction transaction) {
     FIN_Payment payment = transaction.getFinPayment();
-    List<FIN_PaymentDetail> paymentDetails = FIN_Utility.getOrderedPaymentDetailList(payment);
+    List<String> paymentDetails = FIN_Utility.getOrderedPaymentDetailList(payment.getId());
     FieldProviderFactory[] data = new FieldProviderFactory[paymentDetails.size()];
     FIN_PaymentSchedule ps = null;
     FIN_PaymentDetail pd = null;
     OBContext.setAdminMode();
     try {
       for (int i = 0; i < data.length; i++) {
+        FIN_PaymentDetail paymentDetail = OBDal.getInstance().get(FIN_PaymentDetail.class,
+            paymentDetails.get(i));
         /*
          * if (!getPaymentConfirmation(payment)) continue;
          */
         // Details refunded used credit are excluded as the entry will be created using the credit
         // used
-        if (paymentDetails.get(i).isRefund() && paymentDetails.get(i).isPrepayment()) {
+        if (paymentDetail.isRefund() && paymentDetail.isPrepayment()) {
           continue;
         }
 
         // If the Payment Detail has already been processed, skip it
-        if (paymentDetails.get(i).equals(pd)) {
+        if (paymentDetail.equals(pd)) {
           continue;
         }
-        pd = paymentDetails.get(i);
+        pd = paymentDetail;
 
         data[i] = new FieldProviderFactory(null);
-        FIN_PaymentSchedule psi = paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
+        FIN_PaymentSchedule psi = paymentDetail.getFINPaymentScheduleDetailList().get(0)
             .getInvoicePaymentSchedule();
-        FIN_PaymentSchedule pso = paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
+        FIN_PaymentSchedule pso = paymentDetail.getFINPaymentScheduleDetailList().get(0)
             .getOrderPaymentSchedule();
         // Related to Issue Issue 19567. Some Payment Detail's amount and writeoff amount are merged
         // into one.
         // https://issues.openbravo.com/view.php?id=19567
+        String paymentDetailNextId = null;
+        String paymentDetailPreviousId = null;
+        if (i < paymentDetails.size() - 1) {
+          paymentDetailNextId = paymentDetails.get(i + 1);
+        }
+        if (i > 0) {
+          paymentDetailPreviousId = paymentDetails.get(i - 1);
+        }
         HashMap<String, BigDecimal> amountAndWriteOff = getPaymentDetailWriteOffAndAmount(
-            paymentDetails, ps, psi, pso, i, data[i]);
+            paymentDetail, paymentDetailNextId, paymentDetailPreviousId, ps, psi, pso, data[i]);
         BigDecimal amount = amountAndWriteOff.get("amount");
         BigDecimal writeOff = amountAndWriteOff.get("writeoff");
         if (amount == null) {
@@ -158,150 +168,131 @@ public class DocFINFinAccTransaction extends AcctServer {
         ps = psi;
 
         FieldProviderFactory.setField(data[i], "FIN_Finacc_Transaction_ID", transaction.getId());
-        FieldProviderFactory.setField(data[i], "AD_Client_ID", paymentDetails.get(i).getClient()
-            .getId());
-        FieldProviderFactory.setField(data[i], "AD_Org_ID", paymentDetails.get(i).getOrganization()
-            .getId());
-        FieldProviderFactory.setField(data[i], "FIN_Payment_Detail_ID", paymentDetails.get(i)
-            .getId());
+        FieldProviderFactory.setField(data[i], "AD_Client_ID", paymentDetail.getClient().getId());
+        FieldProviderFactory
+            .setField(data[i], "AD_Org_ID", paymentDetail.getOrganization().getId());
+        FieldProviderFactory.setField(data[i], "FIN_Payment_Detail_ID", paymentDetail.getId());
         FieldProviderFactory.setField(data[i], "FIN_Payment_ID", payment.getId());
         FieldProviderFactory.setField(data[i], "DepositAmount", transaction.getDepositAmount()
             .toString());
         FieldProviderFactory.setField(data[i], "PaymentAmount", transaction.getPaymentAmount()
             .toString());
-        FieldProviderFactory.setField(data[i], "DoubtFulDebtAmount", paymentDetails.get(i)
+        FieldProviderFactory.setField(data[i], "DoubtFulDebtAmount", paymentDetail
             .getFINPaymentScheduleDetailList().get(0).getDoubtfulDebtAmount().toString());
-        FieldProviderFactory.setField(data[i], "isprepayment",
-            paymentDetails.get(i).isPrepayment() ? "Y" : "N");
+        FieldProviderFactory.setField(data[i], "isprepayment", paymentDetail.isPrepayment() ? "Y"
+            : "N");
         // Check if payment against invoice is in a previous date than invoice accounting date
-        boolean isPaymentDatePriorToInvoiceDate = isPaymentDatePriorToInvoiceDate(paymentDetails
-            .get(i));
+        boolean isPaymentDatePriorToInvoiceDate = isPaymentDatePriorToInvoiceDate(paymentDetail);
         FieldProviderFactory.setField(data[i], "isPaymentDatePriorToInvoiceDate",
-            isPaymentDatePriorToInvoiceDate && !paymentDetails.get(i).isPrepayment() ? "Y" : "N");
+            isPaymentDatePriorToInvoiceDate && !paymentDetail.isPrepayment() ? "Y" : "N");
         FieldProviderFactory.setField(data[i], "WriteOffAmt", writeOff.toString());
         FieldProviderFactory.setField(data[i], "cGlItemId",
-            paymentDetails.get(i).getGLItem() != null ? paymentDetails.get(i).getGLItem().getId()
-                : "");
+            paymentDetail.getGLItem() != null ? paymentDetail.getGLItem().getId() : "");
         // Calculate Business Partner from payment header or from details if header is null
         BusinessPartner bPartner = payment.getBusinessPartner() != null ? payment
-            .getBusinessPartner() : (paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
-            .getInvoicePaymentSchedule() != null ? paymentDetails.get(i)
-            .getFINPaymentScheduleDetailList().get(0).getInvoicePaymentSchedule().getInvoice()
-            .getBusinessPartner() : (paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
-            .getOrderPaymentSchedule() != null ? paymentDetails.get(i)
-            .getFINPaymentScheduleDetailList().get(0).getOrderPaymentSchedule().getOrder()
-            .getBusinessPartner() : (paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
-            .getBusinessPartner())));
+            .getBusinessPartner()
+            : (paymentDetail.getFINPaymentScheduleDetailList().get(0).getInvoicePaymentSchedule() != null ? paymentDetail
+                .getFINPaymentScheduleDetailList().get(0).getInvoicePaymentSchedule().getInvoice()
+                .getBusinessPartner()
+                : (paymentDetail.getFINPaymentScheduleDetailList().get(0).getOrderPaymentSchedule() != null ? paymentDetail
+                    .getFINPaymentScheduleDetailList().get(0).getOrderPaymentSchedule().getOrder()
+                    .getBusinessPartner()
+                    : (paymentDetail.getFINPaymentScheduleDetailList().get(0).getBusinessPartner())));
         FieldProviderFactory.setField(data[i], "cBpartnerId", bPartner != null ? bPartner.getId()
             : "");
-        FieldProviderFactory.setField(data[i], "Refund", paymentDetails.get(i).isRefund() ? "Y"
-            : "N");
-        FieldProviderFactory.setField(data[i], "adOrgId", paymentDetails.get(i).getOrganization()
-            .getId());
+        FieldProviderFactory.setField(data[i], "Refund", paymentDetail.isRefund() ? "Y" : "N");
+        FieldProviderFactory.setField(data[i], "adOrgId", paymentDetail.getOrganization().getId());
         FieldProviderFactory.setField(data[i], "description", transaction.getDescription());
         FieldProviderFactory.setField(data[i], "cCurrencyId", transaction.getCurrency().getId());
-        FieldProviderFactory.setField(data[i], "cProjectId", paymentDetails.get(i)
+        FieldProviderFactory.setField(data[i], "cProjectId", paymentDetail
             .getFINPaymentScheduleDetailList().get(0).getInvoicePaymentSchedule() != null
-            && paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
-                .getInvoicePaymentSchedule().getInvoice().getProject() != null ? paymentDetails
-            .get(i).getFINPaymentScheduleDetailList().get(0).getInvoicePaymentSchedule()
-            .getInvoice().getProject().getId() : (paymentDetails.get(i)
-            .getFINPaymentScheduleDetailList().get(0).getOrderPaymentSchedule() != null
-            && paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
-                .getOrderPaymentSchedule().getOrder().getProject() != null ? paymentDetails.get(i)
-            .getFINPaymentScheduleDetailList().get(0).getOrderPaymentSchedule().getOrder()
-            .getProject().getId() : (paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
-            .getProject() != null ? paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
-            .getProject().getId() : "")));
-        FieldProviderFactory
-            .setField(
-                data[i],
-                "cCampaignId",
-                paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
-                    .getInvoicePaymentSchedule() != null
-                    && paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
-                        .getInvoicePaymentSchedule().getInvoice().getSalesCampaign() != null ? paymentDetails
-                    .get(i).getFINPaymentScheduleDetailList().get(0).getInvoicePaymentSchedule()
-                    .getInvoice().getSalesCampaign().getId()
-                    : (paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
-                        .getOrderPaymentSchedule() != null
-                        && paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
-                            .getOrderPaymentSchedule().getOrder().getSalesCampaign() != null ? paymentDetails
-                        .get(i).getFINPaymentScheduleDetailList().get(0).getOrderPaymentSchedule()
-                        .getOrder().getSalesCampaign().getId()
-                        : (paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
-                            .getSalesCampaign() != null ? paymentDetails.get(i)
-                            .getFINPaymentScheduleDetailList().get(0).getSalesCampaign().getId()
-                            : "")));
-        FieldProviderFactory.setField(data[i], "cActivityId", paymentDetails.get(i)
+            && paymentDetail.getFINPaymentScheduleDetailList().get(0).getInvoicePaymentSchedule()
+                .getInvoice().getProject() != null ? paymentDetail
+            .getFINPaymentScheduleDetailList().get(0).getInvoicePaymentSchedule().getInvoice()
+            .getProject().getId() : (paymentDetail.getFINPaymentScheduleDetailList().get(0)
+            .getOrderPaymentSchedule() != null
+            && paymentDetail.getFINPaymentScheduleDetailList().get(0).getOrderPaymentSchedule()
+                .getOrder().getProject() != null ? paymentDetail.getFINPaymentScheduleDetailList()
+            .get(0).getOrderPaymentSchedule().getOrder().getProject().getId() : (paymentDetail
+            .getFINPaymentScheduleDetailList().get(0).getProject() != null ? paymentDetail
+            .getFINPaymentScheduleDetailList().get(0).getProject().getId() : "")));
+        FieldProviderFactory.setField(data[i], "cCampaignId", paymentDetail
             .getFINPaymentScheduleDetailList().get(0).getInvoicePaymentSchedule() != null
-            && paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
-                .getInvoicePaymentSchedule().getInvoice().getActivity() != null ? paymentDetails
-            .get(i).getFINPaymentScheduleDetailList().get(0).getInvoicePaymentSchedule()
-            .getInvoice().getActivity().getId() : (paymentDetails.get(i)
-            .getFINPaymentScheduleDetailList().get(0).getOrderPaymentSchedule() != null
-            && paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
-                .getOrderPaymentSchedule().getOrder().getActivity() != null ? paymentDetails.get(i)
+            && paymentDetail.getFINPaymentScheduleDetailList().get(0).getInvoicePaymentSchedule()
+                .getInvoice().getSalesCampaign() != null ? paymentDetail
+            .getFINPaymentScheduleDetailList().get(0).getInvoicePaymentSchedule().getInvoice()
+            .getSalesCampaign().getId() : (paymentDetail.getFINPaymentScheduleDetailList().get(0)
+            .getOrderPaymentSchedule() != null
+            && paymentDetail.getFINPaymentScheduleDetailList().get(0).getOrderPaymentSchedule()
+                .getOrder().getSalesCampaign() != null ? paymentDetail
             .getFINPaymentScheduleDetailList().get(0).getOrderPaymentSchedule().getOrder()
-            .getActivity().getId() : (paymentDetails.get(i).getFINPaymentScheduleDetailList()
-            .get(0).getActivity() != null ? paymentDetails.get(i).getFINPaymentScheduleDetailList()
-            .get(0).getActivity().getId() : "")));
-        FieldProviderFactory.setField(data[i], "mProductId", paymentDetails.get(i)
-            .getFINPaymentScheduleDetailList().get(0).getProduct() != null ? paymentDetails.get(i)
+            .getSalesCampaign().getId() : (paymentDetail.getFINPaymentScheduleDetailList().get(0)
+            .getSalesCampaign() != null ? paymentDetail.getFINPaymentScheduleDetailList().get(0)
+            .getSalesCampaign().getId() : "")));
+        FieldProviderFactory.setField(data[i], "cActivityId", paymentDetail
+            .getFINPaymentScheduleDetailList().get(0).getInvoicePaymentSchedule() != null
+            && paymentDetail.getFINPaymentScheduleDetailList().get(0).getInvoicePaymentSchedule()
+                .getInvoice().getActivity() != null ? paymentDetail
+            .getFINPaymentScheduleDetailList().get(0).getInvoicePaymentSchedule().getInvoice()
+            .getActivity().getId() : (paymentDetail.getFINPaymentScheduleDetailList().get(0)
+            .getOrderPaymentSchedule() != null
+            && paymentDetail.getFINPaymentScheduleDetailList().get(0).getOrderPaymentSchedule()
+                .getOrder().getActivity() != null ? paymentDetail.getFINPaymentScheduleDetailList()
+            .get(0).getOrderPaymentSchedule().getOrder().getActivity().getId() : (paymentDetail
+            .getFINPaymentScheduleDetailList().get(0).getActivity() != null ? paymentDetail
+            .getFINPaymentScheduleDetailList().get(0).getActivity().getId() : "")));
+        FieldProviderFactory.setField(data[i], "mProductId", paymentDetail
+            .getFINPaymentScheduleDetailList().get(0).getProduct() != null ? paymentDetail
             .getFINPaymentScheduleDetailList().get(0).getProduct().getId() : "");
-        FieldProviderFactory.setField(data[i], "cSalesregionId", paymentDetails.get(i)
-            .getFINPaymentScheduleDetailList().get(0).getSalesRegion() != null ? paymentDetails
-            .get(i).getFINPaymentScheduleDetailList().get(0).getSalesRegion().getId() : "");
+        FieldProviderFactory.setField(data[i], "cSalesregionId", paymentDetail
+            .getFINPaymentScheduleDetailList().get(0).getSalesRegion() != null ? paymentDetail
+            .getFINPaymentScheduleDetailList().get(0).getSalesRegion().getId() : "");
         FieldProviderFactory.setField(data[i], "lineno", transaction.getLineNo().toString());
 
-        FieldProviderFactory.setField(data[i], "user1Id", paymentDetails.get(i)
+        FieldProviderFactory.setField(data[i], "user1Id", paymentDetail
             .getFINPaymentScheduleDetailList().get(0).getInvoicePaymentSchedule() != null
-            && paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
-                .getInvoicePaymentSchedule().getInvoice().getStDimension() != null ? paymentDetails
-            .get(i).getFINPaymentScheduleDetailList().get(0).getInvoicePaymentSchedule()
-            .getInvoice().getStDimension().getId() : (paymentDetails.get(i)
-            .getFINPaymentScheduleDetailList().get(0).getOrderPaymentSchedule() != null
-            && paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
-                .getOrderPaymentSchedule().getOrder().getStDimension() != null ? paymentDetails
-            .get(i).getFINPaymentScheduleDetailList().get(0).getOrderPaymentSchedule().getOrder()
-            .getStDimension().getId() : (paymentDetails.get(i).getFINPaymentScheduleDetailList()
-            .get(0).getStDimension() != null ? paymentDetails.get(i)
-            .getFINPaymentScheduleDetailList().get(0).getStDimension().getId() : "")));
-        FieldProviderFactory.setField(data[i], "user2Id", paymentDetails.get(i)
+            && paymentDetail.getFINPaymentScheduleDetailList().get(0).getInvoicePaymentSchedule()
+                .getInvoice().getStDimension() != null ? paymentDetail
+            .getFINPaymentScheduleDetailList().get(0).getInvoicePaymentSchedule().getInvoice()
+            .getStDimension().getId() : (paymentDetail.getFINPaymentScheduleDetailList().get(0)
+            .getOrderPaymentSchedule() != null
+            && paymentDetail.getFINPaymentScheduleDetailList().get(0).getOrderPaymentSchedule()
+                .getOrder().getStDimension() != null ? paymentDetail
+            .getFINPaymentScheduleDetailList().get(0).getOrderPaymentSchedule().getOrder()
+            .getStDimension().getId() : (paymentDetail.getFINPaymentScheduleDetailList().get(0)
+            .getStDimension() != null ? paymentDetail.getFINPaymentScheduleDetailList().get(0)
+            .getStDimension().getId() : "")));
+        FieldProviderFactory.setField(data[i], "user2Id", paymentDetail
             .getFINPaymentScheduleDetailList().get(0).getInvoicePaymentSchedule() != null
-            && paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
-                .getInvoicePaymentSchedule().getInvoice().getNdDimension() != null ? paymentDetails
-            .get(i).getFINPaymentScheduleDetailList().get(0).getInvoicePaymentSchedule()
-            .getInvoice().getNdDimension().getId() : (paymentDetails.get(i)
-            .getFINPaymentScheduleDetailList().get(0).getOrderPaymentSchedule() != null
-            && paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
-                .getOrderPaymentSchedule().getOrder().getNdDimension() != null ? paymentDetails
-            .get(i).getFINPaymentScheduleDetailList().get(0).getOrderPaymentSchedule().getOrder()
-            .getNdDimension().getId() : (paymentDetails.get(i).getFINPaymentScheduleDetailList()
-            .get(0).getNdDimension() != null ? paymentDetails.get(i)
-            .getFINPaymentScheduleDetailList().get(0).getNdDimension().getId() : "")));
-        FieldProviderFactory
-            .setField(
-                data[i],
-                "cCostcenterId",
-                paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
-                    .getInvoicePaymentSchedule() != null
-                    && paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
-                        .getInvoicePaymentSchedule().getInvoice().getCostcenter() != null ? paymentDetails
-                    .get(i).getFINPaymentScheduleDetailList().get(0).getInvoicePaymentSchedule()
-                    .getInvoice().getCostcenter().getId()
-                    : (paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
-                        .getOrderPaymentSchedule() != null
-                        && paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
-                            .getOrderPaymentSchedule().getOrder().getCostcenter() != null ? paymentDetails
-                        .get(i).getFINPaymentScheduleDetailList().get(0).getOrderPaymentSchedule()
-                        .getOrder().getCostcenter().getId()
-                        : (paymentDetails.get(i).getFINPaymentScheduleDetailList().get(0)
-                            .getCostCenter() != null ? paymentDetails.get(i)
-                            .getFINPaymentScheduleDetailList().get(0).getCostCenter().getId() : "")));
-        FieldProviderFactory.setField(data[i], "recordId2",
-            paymentDetails.get(i).isPrepayment() ? (pso != null ? pso.getId() : "")
-                : (psi != null ? psi.getId() : ""));
+            && paymentDetail.getFINPaymentScheduleDetailList().get(0).getInvoicePaymentSchedule()
+                .getInvoice().getNdDimension() != null ? paymentDetail
+            .getFINPaymentScheduleDetailList().get(0).getInvoicePaymentSchedule().getInvoice()
+            .getNdDimension().getId() : (paymentDetail.getFINPaymentScheduleDetailList().get(0)
+            .getOrderPaymentSchedule() != null
+            && paymentDetail.getFINPaymentScheduleDetailList().get(0).getOrderPaymentSchedule()
+                .getOrder().getNdDimension() != null ? paymentDetail
+            .getFINPaymentScheduleDetailList().get(0).getOrderPaymentSchedule().getOrder()
+            .getNdDimension().getId() : (paymentDetail.getFINPaymentScheduleDetailList().get(0)
+            .getNdDimension() != null ? paymentDetail.getFINPaymentScheduleDetailList().get(0)
+            .getNdDimension().getId() : "")));
+        FieldProviderFactory.setField(data[i], "cCostcenterId", paymentDetail
+            .getFINPaymentScheduleDetailList().get(0).getInvoicePaymentSchedule() != null
+            && paymentDetail.getFINPaymentScheduleDetailList().get(0).getInvoicePaymentSchedule()
+                .getInvoice().getCostcenter() != null ? paymentDetail
+            .getFINPaymentScheduleDetailList().get(0).getInvoicePaymentSchedule().getInvoice()
+            .getCostcenter().getId() : (paymentDetail.getFINPaymentScheduleDetailList().get(0)
+            .getOrderPaymentSchedule() != null
+            && paymentDetail.getFINPaymentScheduleDetailList().get(0).getOrderPaymentSchedule()
+                .getOrder().getCostcenter() != null ? paymentDetail
+            .getFINPaymentScheduleDetailList().get(0).getOrderPaymentSchedule().getOrder()
+            .getCostcenter().getId() : (paymentDetail.getFINPaymentScheduleDetailList().get(0)
+            .getCostCenter() != null ? paymentDetail.getFINPaymentScheduleDetailList().get(0)
+            .getCostCenter().getId() : "")));
+        FieldProviderFactory.setField(
+            data[i],
+            "recordId2",
+            paymentDetail.isPrepayment() ? (pso != null ? pso.getId() : "") : (psi != null ? psi
+                .getId() : ""));
 
       }
     } finally {
