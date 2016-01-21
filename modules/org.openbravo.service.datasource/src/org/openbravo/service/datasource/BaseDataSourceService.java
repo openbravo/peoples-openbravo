@@ -133,9 +133,6 @@ public abstract class BaseDataSourceService implements DataSourceService {
 
   public void checkFetchDatasourceAccess(Map<String, String> parameters) {
     Entity entityToCheck = getEntity();
-    if (entityToCheck == null) {
-      System.out.println("null en entity");
-    }
     final OBContext obContext = OBContext.getOBContext();
     String selectorId = parameters.get(SelectorConstants.DS_REQUEST_SELECTOR_ID_PARAMETER);
     if (StringUtils.isNotBlank(selectorId)) {
