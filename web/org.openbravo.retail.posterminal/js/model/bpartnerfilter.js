@@ -52,19 +52,19 @@
     column: 'bp.name',
     filter: true,
     type: 'TEXT',
-    caption: 'OBPOS_LblName',
+    caption: 'OBPOS_LblFullName',
     location: false
   }, {
     name: 'bpCategory',
     column: 'bp.c_bp_group_name',
-    filter: true,
+    filter: false,
     type: 'TEXT',
     caption: 'OBPOS_BPCategory',
     location: false
   }, {
     name: 'taxID',
     column: 'bp.taxID',
-    filter: true,
+    filter: false,
     type: 'TEXT',
     caption: 'OBPOS_LblTaxId',
     location: false

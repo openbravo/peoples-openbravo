@@ -1030,6 +1030,13 @@ enyo.kind({
   initComponents: function () {
     this.inherited(arguments);
     _.each(OB.Model.BPartnerFilter.getProperties(), function (prop) {
+      // Set filter options for bpCategory and taxID
+      if (prop.name === 'bpCategory') {
+        prop.filter = OB.MobileApp.model.get('terminal').bp_showcategoryselector;
+      }
+      if (prop.name === 'taxID') {
+        prop.filter = OB.MobileApp.model.get('terminal').bp_showtaxid;
+      }
       if (prop.filter) {
         this.$.body.$.filters.addFilter(prop);
       }
