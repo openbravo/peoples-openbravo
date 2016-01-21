@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2015 Openbravo SLU
+ * All portions are Copyright (C) 2010-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -27,6 +27,7 @@ import java.util.List;
 
 import javax.servlet.ServletException;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
@@ -91,8 +92,8 @@ public class DocFINPayment extends AcctServer {
       return null;
 
     FieldProviderFactory[] data = new FieldProviderFactory[paymentDetails.size()];
-    FIN_PaymentSchedule ps = null;
-    FIN_PaymentDetail pd = null;
+    String psId = null;
+    String pdId = null;
     OBContext.setAdminMode();
     try {
       for (int i = 0; i < data.length; i++) {
@@ -106,10 +107,10 @@ public class DocFINPayment extends AcctServer {
         }
 
         // If the Payment Detail has already been processed, skip it
-        if (paymentDetail.equals(pd)) {
+        if (StringUtils.equals(paymentDetail.getId(), pdId)) {
           continue;
         }
-        pd = paymentDetail;
+        pdId = paymentDetail.getId();
 
         data[i] = new FieldProviderFactory(null);
         FIN_PaymentSchedule psi = paymentDetail.getFINPaymentScheduleDetailList().get(0)
@@ -128,17 +129,18 @@ public class DocFINPayment extends AcctServer {
           paymentDetailPreviousId = paymentDetails.get(i - 1);
         }
         HashMap<String, BigDecimal> amountAndWriteOff = getPaymentDetailWriteOffAndAmount(
-            paymentDetail, paymentDetailNextId, paymentDetailPreviousId, ps, psi, pso, data[i]);
+            paymentDetail, paymentDetailNextId, paymentDetailPreviousId, psId != null ? OBDal
+                .getInstance().get(FIN_PaymentSchedule.class, psId) : null, psi, pso, data[i]);
         BigDecimal amount = amountAndWriteOff.get("amount");
         BigDecimal writeOff = amountAndWriteOff.get("writeoff");
         if (amount == null) {
           data[i] = null;
-          ps = psi;
+          psId = psi != null ? psi.getId() : null;
           continue;
         } else {
           FieldProviderFactory.setField(data[i], "Amount", amount.toString());
         }
-        ps = psi;
+        psId = psi != null ? psi.getId() : null;
 
         FieldProviderFactory.setField(data[i], "AD_Client_ID", paymentDetail.getClient().getId());
         FieldProviderFactory
@@ -169,6 +171,8 @@ public class DocFINPayment extends AcctServer {
             : (isPaymentDatePriorToInvoiceDate ? "Y" : "N"));
         FieldProviderFactory.setField(data[i], "isPaymentDatePriorToInvoiceDate",
             isPaymentDatePriorToInvoiceDate && !paymentDetail.isPrepayment() ? "Y" : "N");
+        FieldProviderFactory.setField(data[i], "cInvoiceId", psi != null
+            && psi.getInvoice() != null ? psi.getInvoice().getId() : null);
         FieldProviderFactory.setField(data[i], "cProjectId", paymentDetail
             .getFINPaymentScheduleDetailList().get(0).getInvoicePaymentSchedule() != null
             && paymentDetail.getFINPaymentScheduleDetailList().get(0).getInvoicePaymentSchedule()
@@ -258,6 +262,9 @@ public class DocFINPayment extends AcctServer {
             paymentDetail.isPrepayment() ? (pso != null ? pso.getId() : "") : (psi != null ? psi
                 .getId() : ""));
 
+        if (i % 100 == 0) {
+          OBDal.getInstance().getSession().clear();
+        }
       }
     } finally {
       OBContext.restorePreviousMode();
@@ -276,7 +283,6 @@ public class DocFINPayment extends AcctServer {
       String Line_ID = data[i].getField("FIN_Payment_Detail_ID");
       OBContext.setAdminMode();
       try {
-        FIN_PaymentDetail detail = OBDal.getInstance().get(FIN_PaymentDetail.class, Line_ID);
         DocLine_FINPayment docLine = new DocLine_FINPayment(DocumentType, Record_ID, Line_ID);
         docLine.loadAttributes(data[i], this);
         docLine.setAmount(data[i].getField("Amount"));
@@ -286,11 +292,7 @@ public class DocFINPayment extends AcctServer {
         docLine.setC_GLItem_ID(data[i].getField("C_GLItem_ID"));
         docLine.setPrepaymentAgainstInvoice("Y".equals(data[i]
             .getField("isPaymentDatePriorToInvoiceDate")) ? true : false);
-        docLine
-            .setInvoice(detail.getFINPaymentScheduleDetailList() != null
-                && detail.getFINPaymentScheduleDetailList().get(0).getInvoicePaymentSchedule() != null ? detail
-                .getFINPaymentScheduleDetailList().get(0).getInvoicePaymentSchedule().getInvoice()
-                : null);
+        docLine.setInvoiceId(data[i].getField("cInvoiceId"));
         docLine.m_Record_Id2 = data[i].getField("recordId2");
         docLine.setInvoiceTaxCashVAT_V(Line_ID);
         docLine.setInvoiceTaxCashVAT_V(data[i].getField("MergedPaymentDetailId"));
@@ -471,6 +473,10 @@ public class DocFINPayment extends AcctServer {
               getAccountGLItem(OBDal.getInstance().get(GLItem.class, line.getC_GLItem_ID()), as,
                   isReceipt, conn), C_Currency_ID, (isReceipt ? "" : bpAmount),
               (isReceipt ? bpAmount : ""), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
+        }
+
+        if (i % 100 == 0) {
+          OBDal.getInstance().getSession().clear();
         }
       }
       FIN_Payment payment = OBDal.getInstance().get(FIN_Payment.class, Record_ID);

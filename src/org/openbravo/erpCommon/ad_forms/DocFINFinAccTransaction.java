@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2015 Openbravo SLU
+ * All portions are Copyright (C) 2010-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -29,6 +29,7 @@ import java.util.Map;
 
 import javax.servlet.ServletException;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
@@ -116,8 +117,8 @@ public class DocFINFinAccTransaction extends AcctServer {
     FIN_Payment payment = transaction.getFinPayment();
     List<String> paymentDetails = FIN_Utility.getOrderedPaymentDetailList(payment.getId());
     FieldProviderFactory[] data = new FieldProviderFactory[paymentDetails.size()];
-    FIN_PaymentSchedule ps = null;
-    FIN_PaymentDetail pd = null;
+    String psId = null;
+    String pdId = null;
     OBContext.setAdminMode();
     try {
       for (int i = 0; i < data.length; i++) {
@@ -133,10 +134,10 @@ public class DocFINFinAccTransaction extends AcctServer {
         }
 
         // If the Payment Detail has already been processed, skip it
-        if (paymentDetail.equals(pd)) {
+        if (StringUtils.equals(paymentDetail.getId(), pdId)) {
           continue;
         }
-        pd = paymentDetail;
+        pdId = paymentDetail.getId();
 
         data[i] = new FieldProviderFactory(null);
         FIN_PaymentSchedule psi = paymentDetail.getFINPaymentScheduleDetailList().get(0)
@@ -155,17 +156,18 @@ public class DocFINFinAccTransaction extends AcctServer {
           paymentDetailPreviousId = paymentDetails.get(i - 1);
         }
         HashMap<String, BigDecimal> amountAndWriteOff = getPaymentDetailWriteOffAndAmount(
-            paymentDetail, paymentDetailNextId, paymentDetailPreviousId, ps, psi, pso, data[i]);
+            paymentDetail, paymentDetailNextId, paymentDetailPreviousId, psId != null ? OBDal
+                .getInstance().get(FIN_PaymentSchedule.class, psId) : null, psi, pso, data[i]);
         BigDecimal amount = amountAndWriteOff.get("amount");
         BigDecimal writeOff = amountAndWriteOff.get("writeoff");
         if (amount == null) {
           data[i] = null;
-          ps = psi;
+          psId = psi != null ? psi.getId() : null;
           continue;
         } else {
           FieldProviderFactory.setField(data[i], "Amount", amount.toString());
         }
-        ps = psi;
+        psId = psi != null ? psi.getId() : null;
 
         FieldProviderFactory.setField(data[i], "FIN_Finacc_Transaction_ID", transaction.getId());
         FieldProviderFactory.setField(data[i], "AD_Client_ID", paymentDetail.getClient().getId());
@@ -204,6 +206,8 @@ public class DocFINFinAccTransaction extends AcctServer {
         FieldProviderFactory.setField(data[i], "adOrgId", paymentDetail.getOrganization().getId());
         FieldProviderFactory.setField(data[i], "description", transaction.getDescription());
         FieldProviderFactory.setField(data[i], "cCurrencyId", transaction.getCurrency().getId());
+        FieldProviderFactory.setField(data[i], "cInvoiceId", psi != null
+            && psi.getInvoice() != null ? psi.getInvoice().getId() : null);
         FieldProviderFactory.setField(data[i], "cProjectId", paymentDetail
             .getFINPaymentScheduleDetailList().get(0).getInvoicePaymentSchedule() != null
             && paymentDetail.getFINPaymentScheduleDetailList().get(0).getInvoicePaymentSchedule()
@@ -294,6 +298,9 @@ public class DocFINFinAccTransaction extends AcctServer {
             paymentDetail.isPrepayment() ? (pso != null ? pso.getId() : "") : (psi != null ? psi
                 .getId() : ""));
 
+        if (i % 100 == 0) {
+          OBDal.getInstance().getSession().clear();
+        }
       }
     } finally {
       OBContext.restorePreviousMode();
@@ -368,14 +375,7 @@ public class DocFINFinAccTransaction extends AcctServer {
         if (strPaymentId != null && !strPaymentId.equals("")) {
           docLine.setFinPaymentId(strPaymentId);
           // docLine.m_Record_Id2 = strPaymentId;
-          FIN_PaymentDetail detail = OBDal.getInstance().get(FIN_PaymentDetail.class,
-              paymentDetail_ID);
-          docLine
-              .setInvoice(detail.getFINPaymentScheduleDetailList() != null
-                  && detail.getFINPaymentScheduleDetailList().get(0).getInvoicePaymentSchedule() != null ? detail
-                  .getFINPaymentScheduleDetailList().get(0).getInvoicePaymentSchedule()
-                  .getInvoice()
-                  : null);
+          docLine.setInvoiceId(data[i].getField("cInvoiceId"));
           docLine.setDoubtFulDebtAmount(new BigDecimal(data[i].getField("DoubtFulDebtAmount")));
 
           docLine.setInvoiceTaxCashVAT_V(paymentDetail_ID);
@@ -630,6 +630,10 @@ public class DocFINFinAccTransaction extends AcctServer {
                   nextSeqNo(SeqNo), DocumentType, conn);
             }
           }
+        }
+
+        if (i % 100 == 0) {
+          OBDal.getInstance().getSession().clear();
         }
       }
       // Pre-payment is consumed when Used Credit Amount not equals Zero. When consuming Credit no
