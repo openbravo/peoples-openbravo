@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
   <database name="TRIGGER AD_USER_EXPIRYPASS_TRG">
-    <trigger name="AD_USER_EXPIRYPASS_TRG" table="AD_USER" fires="after" insert="false" update="true" delete="false" foreach="row">
+    <trigger name="AD_USER_EXPIRYPASS_TRG" table="AD_USER" fires="before" insert="false" update="true" delete="false" foreach="row">
       <body><![CDATA[
       
 /*************************************************************************
@@ -27,10 +27,8 @@
 
    IF (:OLD.password<>:NEW.password) THEN
      
-     UPDATE ad_user
-     SET lastupdatepassworddate = now()
-     WHERE ad_user_id=:NEW.ad_user_id;
-
+     :NEW.lastupdatepassworddate := now();
+     
    END IF;
  
    END AD_USER_EXPIRYPASS_TRG
