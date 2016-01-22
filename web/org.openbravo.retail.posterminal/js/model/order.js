@@ -4074,7 +4074,7 @@
       var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('newPaidReceipt');
       enyo.$.scrim.show();
       var order = new Order(),
-          lines, newline, payments, curPayment, taxes, bpId, bpLocId, bpLoc, numberOfLines = model.receiptLines.length,
+          lines, newline, payments, curPayment, taxes, bpId, bpLocId, bpLoc, bpBillLocId, numberOfLines = model.receiptLines.length,
           orderQty = 0,
           NoFoundProduct = true,
           NoFoundCustomer = true,
@@ -4131,15 +4131,21 @@
         }
       }
       bpLocId = model.bpLocId;
+      bpBillLocId = model.bpBillLocId;
       bpId = model.bp;
       var bpartnerForProduct = function (bp) {
           var locationForBpartner = function (bpLoc) {
-              bp.set('locName', bpLoc.get('name'));
-              bp.set('locId', bpLoc.get('id'));
+              bp.set('shipLocName', bpLoc.get('name'));
+              bp.set('shipLocId', bpLoc.get('id'));
               bp.set('locationModel', bpLoc);
               order.set('bp', bp);
               order.set('gross', model.totalamount);
               order.set('net', model.totalNetAmount);
+              OB.Dal.get(OB.Model.BPLocation, bpBillLocId, function (bpLoc) {
+                bp.set('locName', bpLoc.get('name'));
+                bp.set('locId', bpLoc.get('id'));
+                OB.MobileApp.model.receipt.trigger('change:bp', order);
+              }, null, null);
 
               var linepos = 0,
                   hasDeliveredProducts = false,

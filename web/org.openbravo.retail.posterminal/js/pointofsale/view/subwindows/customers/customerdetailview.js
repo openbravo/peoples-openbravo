@@ -54,8 +54,8 @@ enyo.kind({
     onSetBPartnerTarget: 'setBPartnerTarget'
   },
   events: {
-	onHideThisPopup: '',
-	onShowPopup: '',
+    onHideThisPopup: '',
+    onShowPopup: '',
     onChangeBusinessPartner: ''
   },
   setCustomer: function (inSender, inEvent) {
