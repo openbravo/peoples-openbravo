@@ -963,8 +963,10 @@
           window.localStorage.setItem('cacheSessionId', inResponse.cacheSessionId);
         }
         //Save available servers and services and initialize Request Router layer
-        if (inResponse.servers && inResponse.services) {
+        if (inResponse.servers) {
           localStorage.servers = JSON.stringify(inResponse.servers);
+        }
+        if (inResponse.services) {
           localStorage.services = JSON.stringify(inResponse.services);
         }
         OB.RR.RequestRouter.initialize();
