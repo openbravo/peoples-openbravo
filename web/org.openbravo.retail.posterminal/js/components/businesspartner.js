@@ -792,7 +792,7 @@ enyo.kind({
       }
       me.doChangeBusinessPartner({
         businessPartner: bp,
-        target: me.owner.owner.args.target
+        target: me.target
       });
     });
   }
@@ -816,6 +816,9 @@ enyo.kind({
   executeOnShow: function () {
     if (_.isUndefined(this.args.visibilityButtons)) {
       this.args.visibilityButtons = true;
+    }
+    if (_.isUndefined(this.args.target)) {
+      this.args.target = 'order';
     }
     this.waterfall('onSetShow', {
       visibility: this.args.visibilityButtons
