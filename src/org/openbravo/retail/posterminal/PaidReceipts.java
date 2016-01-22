@@ -29,6 +29,7 @@ import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Query;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
@@ -68,6 +69,9 @@ public class PaidReceipts extends JSONProcessSimple {
   @Any
   @Qualifier(paidReceiptsPaymentsPropertyExtension)
   private Instance<ModelExtension> extensionsPayments;
+  @Inject
+  @Any
+  private Instance<PaidReceiptsPaymentsTypeHook> paymentsTypeInProcesses;
 
   @Inject
   @Any
@@ -292,6 +296,8 @@ public class PaidReceipts extends JSONProcessSimple {
           paymentsType.put("openDrawer", objPaymentsType[6]);
           listPaymentsType.put(paymentsType);
         }
+        executeHooks(paymentsTypeInProcesses, null, listPaymentsType, orderid);
+
         for (int i = 0; i < listPaymentsIn.length(); i++) {
           JSONObject objectIn = (JSONObject) listPaymentsIn.get(i);
 
@@ -457,6 +463,8 @@ public class PaidReceipts extends JSONProcessSimple {
         result.put(JsonConstants.RESPONSE_DATA, respArray);
         result.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
       }
+    } catch (Exception e) {
+      throw new OBException("Error in PaidReceips: ", e);
     } finally {
 
       OBContext.restorePreviousMode();
@@ -464,12 +472,16 @@ public class PaidReceipts extends JSONProcessSimple {
     return result;
   }
 
-  protected void executeHooks(Instance<? extends Object> hooks, JSONObject paymentsIn,
-      String paymentId) throws Exception {
+  protected void executeHooks(Instance<? extends Object> hooks, JSONObject paymentIn,
+      JSONArray paymentsTypes, String id) throws Exception {
 
     for (Iterator<? extends Object> procIter = hooks.iterator(); procIter.hasNext();) {
       Object proc = procIter.next();
-      ((PaidReceiptsPaymentsInHook) proc).exec(paymentsIn, paymentId);
+      if (proc instanceof PaidReceiptsPaymentsInHook) {
+        ((PaidReceiptsPaymentsInHook) proc).exec(paymentIn, id);
+      } else if (proc instanceof PaidReceiptsPaymentsTypeHook) {
+        ((PaidReceiptsPaymentsTypeHook) proc).exec(paymentsTypes, id);
+      }
     }
   }
 
