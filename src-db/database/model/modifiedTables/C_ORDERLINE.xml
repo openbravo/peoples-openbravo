@@ -21,6 +21,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="EM_OBPOS_QTYTODELIVER" primaryKey="false" required="true" type="DECIMAL" autoIncrement="false">
+        <default><![CDATA[0]]></default>
+        <onCreateDefault><![CDATA[0]]></onCreateDefault>
+      </column>
       <index name="EM_OBPOS_DELIVEREDQTY" unique="false">
         <index-column name="C_ORDER_ID"/>
         <index-column name="QTYDELIVERED"/>

@@ -160,6 +160,10 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
   @Inject
   @Any
+  private Instance<OrderLoaderCreateOrderlineHook> orderCreateOrderLineProcesses;
+
+  @Inject
+  @Any
   private Instance<OrderLoaderHookForQuotations> quotationProcesses;
 
   @Inject
@@ -1289,7 +1293,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     }
     for (int i = 0; i < orderlines.length(); i++) {
       OrderLine orderLine = lineReferences.get(i);
-      BigDecimal pendingQty = orderLine.getOrderedQuantity().abs();
+      BigDecimal pendingQty = orderLine.getDeliveredQuantity().abs();
       if (orderlines.getJSONObject(i).has("deliveredQuantity")
           && orderlines.getJSONObject(i).get("deliveredQuantity") != JSONObject.NULL) {
         pendingQty = pendingQty.subtract(new BigDecimal(orderlines.getJSONObject(i).getLong(
@@ -1600,6 +1604,13 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           || (doCancelAndReplace && !newLayaway && !notpaidLayaway && !partialpaidLayaway)) {
         // shipment is created or is a C&R and is not a layaway, so all is delivered
         orderline.setDeliveredQuantity(orderline.getOrderedQuantity());
+      }
+
+      orderline.setObposQtytodeliver(orderline.getOrderedQuantity());
+      try {
+        executeHooks(orderCreateOrderLineProcesses, jsonOrderLine, null, null, null, orderline);
+      } catch (Exception e) {
+        throw new OBException("Error in OrderLoader Create OrderLines Hook: ", e);
       }
 
       lineReferences.add(orderline);
