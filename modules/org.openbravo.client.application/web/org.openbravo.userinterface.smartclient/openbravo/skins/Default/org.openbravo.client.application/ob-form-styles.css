@@ -24,6 +24,7 @@
  * Date Picker
  * Form Buttons
  * Image Item
+ * File Item
  * LinkButton Item
  * SectionItem Button
  * Dialog
@@ -872,6 +873,95 @@ html[data-useragent*='MSIE 7.0'] .OBFormFieldError .OBFormFieldDateInputHint {
 /*=======================================================================
  * Image Item
 =======================================================================*/
+
+/*=======================================================================
+ * File Item
+=======================================================================*/
+
+.OBFileItemLink {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+  font-family: arial, sans-serif;
+  font-size: 12px;
+  text-decoration: none;
+  color: #58A618;
+  padding: 3px 2px 2px 2px;
+}
+
+.OBFileItemLink:hover {
+  cursor: pointer;
+  color: #58A618;
+  text-decoration: underline;
+}
+
+.OBFileItemLink:active {
+  color: #004E27;
+}
+
+.OBFileItemLink:focus {
+  color: #fa962f;
+}
+
+.OBFileItemSize {
+  white-space: nowrap;
+  font-family: arial, sans-serif;
+  font-size: 12px;
+  color: #333333;
+  vertical-align: middle;
+  background: transparent;
+  padding: 1px 4px 0px 1px;
+}
+
+.OBFileItemExt {
+  white-space: nowrap;
+  font-family: 'lucida sans', sans-serif;
+  font-size: 10px;
+  color: #333333;
+  vertical-align: middle;
+  background-color: #CBCBCB;
+  padding: 1px 4px 0px 4px;
+}
+
+.OBFileItemExt_ {
+  background: transparent;
+}
+
+.OBFileItemExt_PDF {
+  color: #FFFFFF;
+  background-color: #FF002A;
+}
+
+.OBFileItemExt_DOC {
+  color: #FFFFFF;
+  background-color: #19478A;
+}
+
+.OBFileItemExt_XLS {
+  color: #FFFFFF;
+  background-color: #0A6332;
+}
+
+.OBFileItemExt_PPT {
+  color: #FFFFFF;
+  background-color: #B83B1D;
+}
+
+.OBFileItemExt_PNG,
+.OBFileItemExt_JPG,
+.OBFileItemExt_JPE,
+.OBFileItemExt_GIF,
+.OBFileItemExt_BMP {
+  color: #333333;
+  background-color: #FAC74C;
+}
+
+.OBFileItemExt_TXT {
+  color: #333333;
+  background-color: #FFFFFF;
+  border: 1px solid #DCDCDC;
+}
 
 /*=======================================================================
  * LinkButton Item
