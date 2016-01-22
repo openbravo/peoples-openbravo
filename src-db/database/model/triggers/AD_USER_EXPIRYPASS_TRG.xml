@@ -31,8 +31,6 @@
      SET lastupdatepassworddate = now()
      WHERE ad_user_id=:NEW.ad_user_id;
 
-   ELSE 
-     RETURN NEW; 
    END IF;
  
    END AD_USER_EXPIRYPASS_TRG
