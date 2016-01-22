@@ -523,14 +523,13 @@ enyo.kind({
     }
 
     function successCallbackBPs(dataBps) {
-      dataBps.set('locationModel', bploc);
       dataBps.set('locId', bploc.get('id'));
       dataBps.set('locName', bploc.get('name'));
       dataBps.set('postalCode', bploc.get('postalCode'));
       dataBps.set('cityName', bploc.get('cityName'));
       dataBps.set('countryName', bploc.get('countryName'));
 
-      //Keep the other address:
+      // Keep the other address:
       if (!contextMenu.bPartner.get('shipLocId')) {
         OB.UTIL.showError(OB.I18N.getLabel('OBPOS_BPartnerNoShippingAddress', [contextMenu.bPartner.get('_identifier')]));
         return;
@@ -663,7 +662,7 @@ enyo.kind({
   }
 });
 
-/*scrollable table (body of modal)*/
+/* scrollable table (body of modal) */
 enyo.kind({
   name: 'OB.UI.ListBpsLoc',
   classes: 'row-fluid',
@@ -762,14 +761,13 @@ enyo.kind({
       }
 
       function successCallbackBPs(dataBps) {
-        dataBps.set('locationModel', model);
         dataBps.set('locId', model.get('id'));
         dataBps.set('locName', model.get('name'));
         dataBps.set('postalCode', model.get('postalCode'));
         dataBps.set('cityName', model.get('cityName'));
         dataBps.set('countryName', model.get('countryName'));
 
-        //Keep the other address:
+        // Keep the other address:
         dataBps.set('shipLocId', me.bPartner.get('shipLocId'));
         dataBps.set('shipLocName', me.bPartner.get('shipLocName'));
         dataBps.set('shipPostalCode', me.bPartner.get('shipPostalCode'));
