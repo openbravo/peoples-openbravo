@@ -971,6 +971,10 @@ enyo.kind({
         payments;
     this.allowOpenDrawer = false;
 
+    if (!this.showing) {
+      return true;
+    }
+
     if (myModel.get('leftColumnViewManager').isOrder()) {
       payments = this.owner.receipt.get('payments');
     } else {
@@ -995,6 +999,8 @@ enyo.kind({
         receipt.set('generateInvoice', false);
       }
     }
+    this.hide();
+    enyo.$.scrim.show();
     receipt.trigger('paymentDone', me.allowOpenDrawer);
   }
 });
