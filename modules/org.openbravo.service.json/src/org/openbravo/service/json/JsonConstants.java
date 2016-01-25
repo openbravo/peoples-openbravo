@@ -54,6 +54,7 @@ public class JsonConstants {
 
   public static final String FILTERBYPARENTPROPERTY_PARAMETER = "_filterByParentProperty";
   public static final String WHERE_PARAMETER = "_where";
+  public static final String FILTER_APPLIED_PARAMETER = "isFilterApplied";
   public static final String SELECTEDPROPERTIES_PARAMETER = "_selectedProperties";
   public static final String DISTINCT_PARAMETER = "_distinct";
   public static final String SHOW_FK_DROPDOWN_UNFILTERED_PARAMETER = "_showFkDropdownUnfiltered";
