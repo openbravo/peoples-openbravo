@@ -806,23 +806,27 @@ public class CancelAndReplaceUtils {
         } else {
           // To only cancel a layaway two payments must be added to fully pay the old order and add
           // the same quantity in negative to the inverse order
-          WeldUtils.getInstanceFromStaticBeanManager(CancelLayawayPaymentsHookCaller.class)
-              .executeHook(jsonorder, inverseOrder);
+          if (jsonorder.getJSONArray("payments").length() > 0) {
+            WeldUtils.getInstanceFromStaticBeanManager(CancelLayawayPaymentsHookCaller.class)
+                .executeHook(jsonorder, inverseOrder);
 
-          // In a cancel layaway the gross value of the jsonorder was the quantity amount to return
-          // to the customer, not the quantity amount of the ticket. This generates that the amount
-          // and outstandig amount of the payment schedule is wrong
-          // The amount and outstanding amount are corrected
-          OBCriteria<FIN_PaymentSchedule> newPaymentScheduleList = OBDal.getInstance()
-              .createCriteria(FIN_PaymentSchedule.class);
-          newPaymentScheduleList.add(Restrictions.eq(FIN_PaymentSchedule.PROPERTY_ORDER,
-              inverseOrder));
-          newPaymentScheduleList.setMaxResults(1);
-          FIN_PaymentSchedule newPaymentSchedule = (FIN_PaymentSchedule) newPaymentScheduleList
-              .uniqueResult();
-          newPaymentSchedule.setAmount(paymentSchedule.getAmount().negate());
-          newPaymentSchedule.setOutstandingAmount(newPaymentSchedule.getAmount().subtract(
-              newPaymentSchedule.getPaidAmount()));
+            // In a cancel layaway the gross value of the jsonorder was the quantity amount to
+            // return
+            // to the customer, not the quantity amount of the ticket. This generates that the
+            // amount
+            // and outstandig amount of the payment schedule is wrong
+            // The amount and outstanding amount are corrected
+            OBCriteria<FIN_PaymentSchedule> newPaymentScheduleList = OBDal.getInstance()
+                .createCriteria(FIN_PaymentSchedule.class);
+            newPaymentScheduleList.add(Restrictions.eq(FIN_PaymentSchedule.PROPERTY_ORDER,
+                inverseOrder));
+            newPaymentScheduleList.setMaxResults(1);
+            FIN_PaymentSchedule newPaymentSchedule = (FIN_PaymentSchedule) newPaymentScheduleList
+                .uniqueResult();
+            newPaymentSchedule.setAmount(paymentSchedule.getAmount().negate());
+            newPaymentSchedule.setOutstandingAmount(newPaymentSchedule.getAmount().subtract(
+                newPaymentSchedule.getPaidAmount()));
+          }
 
           finishOrderPayments(jsonorder, oldOrder, inverseOrder, paymentSchedule,
               useOrderDocumentNoForRelatedDocs, triggersDisabled);
