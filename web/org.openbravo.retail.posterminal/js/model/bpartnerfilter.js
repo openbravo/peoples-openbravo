@@ -109,6 +109,18 @@
     type: 'TEXT',
     caption: 'OBPOS_LblCity',
     location: true
+  }, {
+    name: 'isBillTo',
+    column: 'loc.isBillTo',
+    filter: false,
+    type: 'TEXT',
+    location: true
+  }, {
+    name: 'isShipTo',
+    column: 'loc.isShipTo',
+    filter: false,
+    type: 'TEXT',
+    location: true
   }]);
 
 }());

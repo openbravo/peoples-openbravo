@@ -331,6 +331,7 @@ button.btnbp:disabled {
   background-size: 22px 22px;
   background-position: 17px 3px;
   width: 45px;
+  height: 24px;
 }
 
 .addressbillitems {
@@ -340,6 +341,7 @@ button.btnbp:disabled {
   background-size: 22px 22px;
   background-position: center 3px;
   width: 28px;
+  height: 24px;
 }
 
 .listcontextmenu-icon {

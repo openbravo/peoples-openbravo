@@ -40,6 +40,8 @@ public class BPartnerFilterProperties extends ModelExtension {
           add(new HQLProperty("bpl.name", "locName"));
           add(new HQLProperty("bpl.locationAddress.postalCode", "postalCode"));
           add(new HQLProperty("bpl.locationAddress.cityName", "cityName"));
+          add(new HQLProperty("bpl.invoiceToAddress", "isBillTo"));
+          add(new HQLProperty("bpl.shipToAddress", "isShipTo"));
         } else {
           add(new HQLProperty("bp.id", "id"));
           add(new HQLProperty("bp.id", "bpartnerId"));
@@ -54,6 +56,8 @@ public class BPartnerFilterProperties extends ModelExtension {
           add(new HQLProperty("''", "locName"));
           add(new HQLProperty("''", "postalCode"));
           add(new HQLProperty("''", "cityName"));
+          add(new HQLProperty("''", "isBillTo"));
+          add(new HQLProperty("''", "isShipTo"));
         }
       }
     };

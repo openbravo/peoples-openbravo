@@ -721,7 +721,9 @@ enyo.kind({
       value: filter
     };
     criteria.bpartner = this.bPartner.get('id');
-    criteria.isBillTo = true;
+    if (!this.manageAddress) {
+      criteria.isBillTo = true;
+    }
     if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
       var filterIdentifier = {
         columns: ['_filter'],

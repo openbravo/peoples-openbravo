@@ -472,11 +472,20 @@ enyo.kind({
       name: 'textInfo',
       style: 'float: left; width: 91%',
       components: [{
-        style: 'display: inline-block;',
+        style: 'float: left; display: inline-block;',
         name: 'identifier'
       }, {
-        style: 'display: inline-block; color: #888888; padding-left:5px;',
+        style: 'float: left; display: inline-block; color: #888888; padding-left:5px;',
         name: 'filter'
+      }, {
+        style: 'float: left;',
+        components: [{
+          style: 'float: left;',
+          name: 'bottomShipIcon'
+        }, {
+          style: 'float: left;',
+          name: 'bottomBillIcon'
+        }]
       }, {
         style: 'display: inline-block; float: left; font-weight: bold; color: red; padding-left:5px;',
         name: 'onHold'
@@ -502,6 +511,14 @@ enyo.kind({
     this.$.filter.setContent(this.model.get('filter'));
     if (this.model.get('customerBlocking') && this.model.get('salesOrderBlocking')) {
       this.$.onHold.setContent('(' + OB.I18N.getLabel('OBPOS_OnHold') + ')');
+    }
+    if (this.model.get('isBillTo') && this.model.get('isShipTo')) {
+      this.$.bottomShipIcon.addClass('addresshipitems');
+      this.$.bottomBillIcon.addClass('addressbillitems');
+    } else if (this.model.get('isBillTo')) {
+      this.$.bottomBillIcon.addClass('addressbillitems');
+    } else if (this.model.get('isShipTo')) {
+      this.$.bottomShipIcon.addClass('addresshipitems');
     }
     var bPartner = this.owner.owner.owner.bPartner;
     if (bPartner && bPartner.get('id') === this.model.get('id')) {
