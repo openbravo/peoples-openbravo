@@ -1581,7 +1581,7 @@
           }
           return;
         }
-        if (OB.MobileApp.model.get('terminal').businessPartner === me.get('bp').get('id') && args && args.productToAdd && !args.productToAdd.get('oBPOSAllowAnonymousSale')) {
+        if (OB.MobileApp.model.get('terminal').businessPartner === me.get('bp').get('id') && args && args.productToAdd && args.productToAdd.has('oBPOSAllowAnonymousSale') && !args.productToAdd.get('oBPOSAllowAnonymousSale')) {
           if (args.receipt && args.receipt.get('deferredOrder')) {
             args.receipt.unset("deferredOrder", {
               silent: true
