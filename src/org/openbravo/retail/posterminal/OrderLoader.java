@@ -2227,10 +2227,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
       OBDal.getInstance().save(finPayment);
 
-      String description = getPaymentDescription();
-      description += ": " + order.getDocumentNo() + "\n";
-      finPayment.setDescription(description);
-
       long t1 = System.currentTimeMillis();
       FIN_PaymentProcess.doProcessPayment(finPayment, "P", null, null);
       ImportEntryManager.getInstance().reportStats("processPayments",
