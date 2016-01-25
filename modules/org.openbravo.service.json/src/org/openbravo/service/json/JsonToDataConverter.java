@@ -43,7 +43,6 @@ import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.model.domaintype.AbsoluteDateTimeDomainType;
 import org.openbravo.base.model.domaintype.AbsoluteTimeDomainType;
-import org.openbravo.base.model.domaintype.BigDecimalDomainType;
 import org.openbravo.base.model.domaintype.BinaryDomainType;
 import org.openbravo.base.model.domaintype.EncryptedStringDomainType;
 import org.openbravo.base.model.domaintype.HashedStringDomainType;
@@ -194,7 +193,7 @@ public class JsonToDataConverter {
         }
         return Boolean.parseBoolean((String) value);
       } else if (value instanceof Double) {
-        return new BigDecimal((Double) value);
+        return BigDecimal.valueOf((Double) value);
       } else if (value instanceof Integer && property.getPrimitiveObjectType() == Long.class) {
         return new Long((Integer) value);
       } else if (value instanceof Integer && property.getPrimitiveObjectType() == Float.class) {
@@ -434,19 +433,6 @@ public class JsonToDataConverter {
             setValue(obObject, property, valCleartext);
           } else {
             // no _cleartext value found -> skipping field
-          }
-        } else if (property.getDomainType() instanceof BigDecimalDomainType
-            && jsonObject.has(keyName + "_textualValue")) {
-          final String strValue = (String) jsonObject.get(keyName + "_textualValue");
-          try {
-            if (strValue == null || strValue.trim().length() == 0) {
-              setValue(obObject, property, null);
-            } else {
-              setValue(obObject, property, new BigDecimal(strValue));
-            }
-          } catch (Exception e) {
-            throw new OBException("Exception while trying to convert value:-->" + strValue + "<-- "
-                + e.getMessage(), e);
           }
         } else {
           setValue(obObject, property, jsonObject.get(keyName));
