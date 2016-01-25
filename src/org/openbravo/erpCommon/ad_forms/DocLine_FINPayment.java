@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2013 Openbravo SLU
+ * All portions are Copyright (C) 2010-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -20,6 +20,9 @@ package org.openbravo.erpCommon.ad_forms;
 
 import java.math.BigDecimal;
 
+import org.apache.commons.lang.StringUtils;
+import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.common.order.Order;
 
@@ -32,22 +35,59 @@ public class DocLine_FINPayment extends DocLineCashVATReady_PaymentTransactionRe
   String C_GLItem_ID = "";
   String isPrepayment = "";
   boolean isPrepaymentAgainstInvoice = false;
-  Invoice invoice = null;
   BigDecimal doubtFulDebtAmount = BigDecimal.ZERO;
+
+  @Deprecated
+  Invoice invoice = null;
+  private String invoiceId;
+  @Deprecated
   Order order = null;
+  private String orderId;
 
   public Invoice getInvoice() {
-    return invoice;
+    if (invoice != null) {
+      return invoice;
+    } else if (StringUtils.isNotBlank(invoiceId)) {
+      try {
+        OBContext.setAdminMode(false);
+        return OBDal.getInstance().get(Invoice.class, invoiceId);
+      } finally {
+        OBContext.restorePreviousMode();
+      }
+    } else {
+      return null;
+    }
   }
 
+  /**
+   * @deprecated Use {@link #setInvoiceId(String)} instead, which avoids to store a object in memory
+   *             so we can control from outside when to flush and/or clear the session to avoid Out
+   *             Of Memory errors
+   */
   public void setInvoice(Invoice invoice) {
     this.invoice = invoice;
   }
 
   public Order getOrder() {
-    return order;
+    if (order != null) {
+      return order;
+    } else if (StringUtils.isNotBlank(orderId)) {
+      try {
+        OBContext.setAdminMode(false);
+        return OBDal.getInstance().get(Order.class, orderId);
+      } finally {
+        OBContext.restorePreviousMode();
+      }
+    } else {
+      return null;
+    }
   }
 
+  /**
+   * @deprecated Use {@link #setOrderId(String)} instead, which avoids to store a object in memory
+   *             so we can control from outside when to flush and/or clear the session to avoid Out
+   *             Of Memory errors
+   */
   public void setOrder(Order order) {
     this.order = order;
   }
@@ -175,4 +215,20 @@ public class DocLine_FINPayment extends DocLineCashVATReady_PaymentTransactionRe
   public String getServletInfo() {
     return "Servlet for accounting";
   } // end of getServletInfo() method
+
+  public String getInvoiceId() {
+    return invoiceId;
+  }
+
+  public void setInvoiceId(String invoiceId) {
+    this.invoiceId = invoiceId;
+  }
+
+  public String getOrderId() {
+    return orderId;
+  }
+
+  public void setOrderId(String orderId) {
+    this.orderId = orderId;
+  }
 }

@@ -184,6 +184,8 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
         "web/org.openbravo.client.application/js/form/formitem/ob-formitem-tree-filter.js", true));
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/navbar/ob-quickrun-widget.js", false));
+    globalResources.add(createStaticResource(
+        "web/org.openbravo.client.application/js/form/formitem/ob-formitem-file.js", true));
 
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/utilities/ob-property-store.js", false));
@@ -470,6 +472,9 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
     globalResources.add(createStaticResource("web/js/recalculatePermissionsProcess.js", true));
     globalResources.add(createStaticResource("web/js/validateCostingRuleProcess.js", true));
     globalResources.add(createStaticResource("web/js/checkAvailableCredit.js", true));
+
+    // Product Services
+    globalResources.add(createStaticResource("web/js/productServices.js", true));
 
     return globalResources;
   }
