@@ -645,7 +645,7 @@ isc.OBPickAndExecuteGrid.addProperties({
     // prevent the count operation
     params[isc.OBViewGrid.NO_COUNT_PARAMETER] = 'true';
 
-    params[isc.OBViewGrid.IS_FILTER_CLAUSE_APPLIED] = this.pickAndExecuteHasFilterClauseApplied();
+    params[isc.OBViewGrid.IS_FILTER_CLAUSE_APPLIED] = this.isFilterClauseApplied();
 
     if (this.sqlFilterClause) {
       if (props.sqlWhereClause) {
@@ -660,14 +660,6 @@ isc.OBPickAndExecuteGrid.addProperties({
     }
 
     return params;
-  },
-
-  pickAndExecuteHasFilterClauseApplied: function () {
-    if (this.filterClause) {
-      return this.filterClause;
-    } else {
-      return false;
-    }
   },
 
   getFieldByColumnName: function (columnName) {

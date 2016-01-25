@@ -90,6 +90,14 @@ isc.OBGrid.addProperties({
     return this.fetchingData;
   },
 
+  isFilterClauseApplied: function () {
+    if (this.filterClause) {
+      return this.filterClause;
+    } else {
+      return false;
+    }
+  },
+
   cellHoverHTML: function (record, rowNum, colNum) {
 
     var ret, field = this.getField(colNum),
