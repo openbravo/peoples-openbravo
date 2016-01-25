@@ -439,6 +439,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         if (log.isDebugEnabled()) {
           t113 = System.currentTimeMillis();
         }
+        createShipment = goodsToDeliver(order);
         if (createShipment) {
 
           OBCriteria<Locator> locators = OBDal.getInstance().createCriteria(Locator.class);
@@ -675,6 +676,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       Object proc = procIter.next();
       if (proc instanceof OrderLoaderHook) {
         ((OrderLoaderHook) proc).exec(jsonorder, order, shipment, invoice);
+      } else if (proc instanceof OrderLoaderCreateOrderlineHook) {
+        ((OrderLoaderCreateOrderlineHook) proc).exec(jsonorder, orderLine);
       } else if (proc instanceof OrderLoaderHookForQuotations) {
         ((OrderLoaderHookForQuotations) proc).exec(jsonorder, order, shipment, invoice);
       }
@@ -1299,182 +1302,186 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         pendingQty = pendingQty.subtract(new BigDecimal(orderlines.getJSONObject(i).getLong(
             "deliveredQuantity")).abs());
       }
-      boolean negativeLine = orderLine.getOrderedQuantity().compareTo(BigDecimal.ZERO) < 0;
+      if (pendingQty.compareTo(BigDecimal.ZERO) != 0) {
+        boolean negativeLine = orderLine.getOrderedQuantity().compareTo(BigDecimal.ZERO) < 0;
 
-      final Warehouse warehouse = (orderLine.getWarehouse() != null ? orderLine.getWarehouse()
-          : order.getWarehouse());
-      if (!warehouse.equals(shipment.getWarehouse())) {
-        shipment.setWarehouse(warehouse);
-      }
-
-      boolean useSingleBin = foundSingleBin != null && orderLine.getAttributeSetValue() == null
-          && orderLine.getWarehouseRule() == null
-          && (order.getWarehouse().getId().equals(warehouse.getId()))
-          && orderLine.getProduct().getAttributeSet() == null;
-
-      if (negativeLine && pendingQty.compareTo(BigDecimal.ZERO) > 0) {
-        OrderLoaderPreAddShipmentLineHook_Response returnBinHookResponse;
-        lineNo += 10;
-        Locator binForReturn = null;
-        if (orderLine.getWarehouse() != null && orderLine.getWarehouse().getReturnlocator() != null) {
-          binForReturn = orderLine.getWarehouse().getReturnlocator();
-        } else {
-          binForReturn = getBinForReturns(jsonorder.getString("posTerminal"));
+        final Warehouse warehouse = (orderLine.getWarehouse() != null ? orderLine.getWarehouse()
+            : order.getWarehouse());
+        if (!warehouse.equals(shipment.getWarehouse())) {
+          shipment.setWarehouse(warehouse);
         }
 
-        try {
-          returnBinHookResponse = executeOrderLoaderPreAddShipmentLineHook(preAddShipmentLine,
-              OrderLoaderPreAddShipmentLineHook_Actions.ACTION_RETURN, orderlines.getJSONObject(i),
-              orderLine, jsonorder, order, binForReturn);
-        } catch (Exception e) {
-          log.error("An error happened executing hook OrderLoaderPreAddShipmentLineHook for Return action "
-              + e.getMessage());
-          returnBinHookResponse = null;
-        }
-        if (returnBinHookResponse != null) {
-          if (!returnBinHookResponse.isValid()) {
-            throw new OBException(returnBinHookResponse.getMsg());
-          } else if (returnBinHookResponse.getNewLocator() != null) {
-            binForReturn = returnBinHookResponse.getNewLocator();
-          }
-        }
-        addShipmentline(shipment, shplineentity, orderlines.getJSONObject(i), orderLine, jsonorder,
-            lineNo, pendingQty.negate(), binForReturn, null, i);
-      } else if (useSingleBin && pendingQty.compareTo(BigDecimal.ZERO) > 0) {
-        OrderLoaderPreAddShipmentLineHook_Response singleBinHookResponse = null;
-        lineNo += 10;
+        boolean useSingleBin = foundSingleBin != null && orderLine.getAttributeSetValue() == null
+            && orderLine.getWarehouseRule() == null
+            && (order.getWarehouse().getId().equals(warehouse.getId()))
+            && orderLine.getProduct().getAttributeSet() == null;
 
-        try {
-          singleBinHookResponse = executeOrderLoaderPreAddShipmentLineHook(preAddShipmentLine,
-              OrderLoaderPreAddShipmentLineHook_Actions.ACTION_SINGLEBIN,
-              orderlines.getJSONObject(i), orderLine, jsonorder, order, foundSingleBin);
-        } catch (Exception e) {
-          log.error("An error happened executing hook OrderLoaderPreAddShipmentLineHook for SingleBin action"
-              + e.getMessage());
-          singleBinHookResponse = null;
-        }
-        if (singleBinHookResponse != null) {
-          if (!singleBinHookResponse.isValid()) {
-            throw new OBException(singleBinHookResponse.getMsg());
-          } else if (singleBinHookResponse.getNewLocator() != null) {
-            foundSingleBin = singleBinHookResponse.getNewLocator();
-          }
-        }
-        addShipmentline(shipment, shplineentity, orderlines.getJSONObject(i), orderLine, jsonorder,
-            lineNo, pendingQty, foundSingleBin, null, i);
-      } else {
-        HashMap<String, ShipmentInOutLine> usedBins = new HashMap<String, ShipmentInOutLine>();
-        if (pendingQty.compareTo(BigDecimal.ZERO) > 0) {
-
-          String id = callProcessGetStock(orderLine.getId(), orderLine.getClient().getId(),
-              orderLine.getOrganization().getId(), orderLine.getProduct().getId(), orderLine
-                  .getUOM().getId(), warehouse.getId(),
-              orderLine.getAttributeSetValue() != null ? orderLine.getAttributeSetValue().getId()
-                  : null, pendingQty, orderLine.getWarehouseRule() != null ? orderLine
-                  .getWarehouseRule().getId() : null, null);
-
-          OBCriteria<StockProposed> stockProposed = OBDal.getInstance().createCriteria(
-              StockProposed.class);
-          stockProposed.add(Restrictions.eq(StockProposed.PROPERTY_PROCESSINSTANCE, id));
-          stockProposed.addOrderBy(StockProposed.PROPERTY_PRIORITY, true);
-
-          ScrollableResults bins = stockProposed.scroll(ScrollMode.FORWARD_ONLY);
-
-          try {
-            while (pendingQty.compareTo(BigDecimal.ZERO) > 0 && bins.next()) {
-              // TODO: Can we safely clear session here?
-              StockProposed stock = (StockProposed) bins.get(0);
-              BigDecimal qty;
-              OrderLoaderPreAddShipmentLineHook_Response standardSaleBinHookResponse = null;
-
-              try {
-                standardSaleBinHookResponse = executeOrderLoaderPreAddShipmentLineHook(
-                    preAddShipmentLine,
-                    OrderLoaderPreAddShipmentLineHook_Actions.ACTION_STANDARD_SALE,
-                    orderlines.getJSONObject(i), orderLine, jsonorder, order, stock
-                        .getStorageDetail().getStorageBin());
-              } catch (Exception e) {
-                log.error("An error happened executing hook OrderLoaderPreAddShipmentLineHook for SimpleSale action "
-                    + e.getMessage());
-                standardSaleBinHookResponse = null;
-              }
-              if (standardSaleBinHookResponse != null) {
-                if (!standardSaleBinHookResponse.isValid()) {
-                  if (standardSaleBinHookResponse.isCancelExecution()) {
-                    throw new OBException(standardSaleBinHookResponse.getMsg());
-                  }
-                  continue;
-                }
-              }
-
-              Object stockQty = stock.get("quantity");
-              if (stockQty instanceof Long) {
-                stockQty = new BigDecimal((Long) stockQty);
-              }
-              if (pendingQty.compareTo((BigDecimal) stockQty) > 0) {
-                qty = (BigDecimal) stockQty;
-                pendingQty = pendingQty.subtract(qty);
-              } else {
-                qty = pendingQty;
-                pendingQty = BigDecimal.ZERO;
-              }
-              lineNo += 10;
-              if (negativeLine) {
-                qty = qty.negate();
-              }
-              ShipmentInOutLine objShipmentLine = addShipmentline(shipment, shplineentity,
-                  orderlines.getJSONObject(i), orderLine, jsonorder, lineNo, qty, stock
-                      .getStorageDetail().getStorageBin(), stock.getStorageDetail()
-                      .getAttributeSetValue(), i);
-
-              usedBins.put(stock.getStorageDetail().getStorageBin().getId(), objShipmentLine);
-
-            }
-          } finally {
-            bins.close();
-          }
-        }
-
-        if (pendingQty.compareTo(BigDecimal.ZERO) != 0) {
-          // still qty to ship or return: let's use the bin with highest prio
-          OrderLoaderPreAddShipmentLineHook_Response lastAttemptBinHookResponse = null;
-          JSONObject jsonorderline = orderlines.getJSONObject(i);
-          Locator loc = null;
-          if (jsonorderline.has("overissueStoreBin")) {
-            loc = OBDal.getInstance().get(Locator.class, jsonorderline.get("overissueStoreBin"));
-          } else {
-            loc = locatorList.get(0);
-          }
-
-          try {
-            lastAttemptBinHookResponse = executeOrderLoaderPreAddShipmentLineHook(
-                preAddShipmentLine, OrderLoaderPreAddShipmentLineHook_Actions.ACTION_LAST_ATTEMPT,
-                orderlines.getJSONObject(i), orderLine, jsonorder, order, loc);
-          } catch (Exception e) {
-            log.error("An error happened executing hook OrderLoaderPreAddShipmentLineHook for SimpleSaleLastAttempt action "
-                + e.getMessage());
-            lastAttemptBinHookResponse = null;
-          }
-          if (lastAttemptBinHookResponse != null) {
-            if (!lastAttemptBinHookResponse.isValid()) {
-              throw new OBException(lastAttemptBinHookResponse.getMsg());
-            } else if (lastAttemptBinHookResponse.getNewLocator() != null) {
-              loc = lastAttemptBinHookResponse.getNewLocator();
-            }
-          }
-
+        if (negativeLine && pendingQty.compareTo(BigDecimal.ZERO) > 0) {
+          OrderLoaderPreAddShipmentLineHook_Response returnBinHookResponse;
           lineNo += 10;
-          if (jsonorder.getLong("orderType") == 1) {
-            pendingQty = pendingQty.negate();
-          }
-          ShipmentInOutLine objShipmentInOutLine = usedBins.get(loc.getId());
-          if (objShipmentInOutLine != null) {
-            objShipmentInOutLine.setMovementQuantity(objShipmentInOutLine.getMovementQuantity()
-                .add(pendingQty));
-            OBDal.getInstance().save(objShipmentInOutLine);
+          Locator binForReturn = null;
+          if (orderLine.getWarehouse() != null
+              && orderLine.getWarehouse().getReturnlocator() != null) {
+            binForReturn = orderLine.getWarehouse().getReturnlocator();
           } else {
-            addShipmentline(shipment, shplineentity, orderlines.getJSONObject(i), orderLine,
-                jsonorder, lineNo, pendingQty, loc, null, i);
+            binForReturn = getBinForReturns(jsonorder.getString("posTerminal"));
+          }
+
+          try {
+            returnBinHookResponse = executeOrderLoaderPreAddShipmentLineHook(preAddShipmentLine,
+                OrderLoaderPreAddShipmentLineHook_Actions.ACTION_RETURN,
+                orderlines.getJSONObject(i), orderLine, jsonorder, order, binForReturn);
+          } catch (Exception e) {
+            log.error("An error happened executing hook OrderLoaderPreAddShipmentLineHook for Return action "
+                + e.getMessage());
+            returnBinHookResponse = null;
+          }
+          if (returnBinHookResponse != null) {
+            if (!returnBinHookResponse.isValid()) {
+              throw new OBException(returnBinHookResponse.getMsg());
+            } else if (returnBinHookResponse.getNewLocator() != null) {
+              binForReturn = returnBinHookResponse.getNewLocator();
+            }
+          }
+          addShipmentline(shipment, shplineentity, orderlines.getJSONObject(i), orderLine,
+              jsonorder, lineNo, pendingQty.negate(), binForReturn, null, i);
+        } else if (useSingleBin && pendingQty.compareTo(BigDecimal.ZERO) > 0) {
+          OrderLoaderPreAddShipmentLineHook_Response singleBinHookResponse = null;
+          lineNo += 10;
+
+          try {
+            singleBinHookResponse = executeOrderLoaderPreAddShipmentLineHook(preAddShipmentLine,
+                OrderLoaderPreAddShipmentLineHook_Actions.ACTION_SINGLEBIN,
+                orderlines.getJSONObject(i), orderLine, jsonorder, order, foundSingleBin);
+          } catch (Exception e) {
+            log.error("An error happened executing hook OrderLoaderPreAddShipmentLineHook for SingleBin action"
+                + e.getMessage());
+            singleBinHookResponse = null;
+          }
+          if (singleBinHookResponse != null) {
+            if (!singleBinHookResponse.isValid()) {
+              throw new OBException(singleBinHookResponse.getMsg());
+            } else if (singleBinHookResponse.getNewLocator() != null) {
+              foundSingleBin = singleBinHookResponse.getNewLocator();
+            }
+          }
+          addShipmentline(shipment, shplineentity, orderlines.getJSONObject(i), orderLine,
+              jsonorder, lineNo, pendingQty, foundSingleBin, null, i);
+        } else {
+          HashMap<String, ShipmentInOutLine> usedBins = new HashMap<String, ShipmentInOutLine>();
+          if (pendingQty.compareTo(BigDecimal.ZERO) > 0) {
+
+            String id = callProcessGetStock(orderLine.getId(), orderLine.getClient().getId(),
+                orderLine.getOrganization().getId(), orderLine.getProduct().getId(), orderLine
+                    .getUOM().getId(), warehouse.getId(),
+                orderLine.getAttributeSetValue() != null ? orderLine.getAttributeSetValue().getId()
+                    : null, pendingQty, orderLine.getWarehouseRule() != null ? orderLine
+                    .getWarehouseRule().getId() : null, null);
+
+            OBCriteria<StockProposed> stockProposed = OBDal.getInstance().createCriteria(
+                StockProposed.class);
+            stockProposed.add(Restrictions.eq(StockProposed.PROPERTY_PROCESSINSTANCE, id));
+            stockProposed.addOrderBy(StockProposed.PROPERTY_PRIORITY, true);
+
+            ScrollableResults bins = stockProposed.scroll(ScrollMode.FORWARD_ONLY);
+
+            try {
+              while (pendingQty.compareTo(BigDecimal.ZERO) > 0 && bins.next()) {
+                // TODO: Can we safely clear session here?
+                StockProposed stock = (StockProposed) bins.get(0);
+                BigDecimal qty;
+                OrderLoaderPreAddShipmentLineHook_Response standardSaleBinHookResponse = null;
+
+                try {
+                  standardSaleBinHookResponse = executeOrderLoaderPreAddShipmentLineHook(
+                      preAddShipmentLine,
+                      OrderLoaderPreAddShipmentLineHook_Actions.ACTION_STANDARD_SALE,
+                      orderlines.getJSONObject(i), orderLine, jsonorder, order, stock
+                          .getStorageDetail().getStorageBin());
+                } catch (Exception e) {
+                  log.error("An error happened executing hook OrderLoaderPreAddShipmentLineHook for SimpleSale action "
+                      + e.getMessage());
+                  standardSaleBinHookResponse = null;
+                }
+                if (standardSaleBinHookResponse != null) {
+                  if (!standardSaleBinHookResponse.isValid()) {
+                    if (standardSaleBinHookResponse.isCancelExecution()) {
+                      throw new OBException(standardSaleBinHookResponse.getMsg());
+                    }
+                    continue;
+                  }
+                }
+
+                Object stockQty = stock.get("quantity");
+                if (stockQty instanceof Long) {
+                  stockQty = new BigDecimal((Long) stockQty);
+                }
+                if (pendingQty.compareTo((BigDecimal) stockQty) > 0) {
+                  qty = (BigDecimal) stockQty;
+                  pendingQty = pendingQty.subtract(qty);
+                } else {
+                  qty = pendingQty;
+                  pendingQty = BigDecimal.ZERO;
+                }
+                lineNo += 10;
+                if (negativeLine) {
+                  qty = qty.negate();
+                }
+                ShipmentInOutLine objShipmentLine = addShipmentline(shipment, shplineentity,
+                    orderlines.getJSONObject(i), orderLine, jsonorder, lineNo, qty, stock
+                        .getStorageDetail().getStorageBin(), stock.getStorageDetail()
+                        .getAttributeSetValue(), i);
+
+                usedBins.put(stock.getStorageDetail().getStorageBin().getId(), objShipmentLine);
+
+              }
+            } finally {
+              bins.close();
+            }
+          }
+
+          if (pendingQty.compareTo(BigDecimal.ZERO) != 0) {
+            // still qty to ship or return: let's use the bin with highest prio
+            OrderLoaderPreAddShipmentLineHook_Response lastAttemptBinHookResponse = null;
+            JSONObject jsonorderline = orderlines.getJSONObject(i);
+            Locator loc = null;
+            if (jsonorderline.has("overissueStoreBin")) {
+              loc = OBDal.getInstance().get(Locator.class, jsonorderline.get("overissueStoreBin"));
+            } else {
+              loc = locatorList.get(0);
+            }
+
+            try {
+              lastAttemptBinHookResponse = executeOrderLoaderPreAddShipmentLineHook(
+                  preAddShipmentLine,
+                  OrderLoaderPreAddShipmentLineHook_Actions.ACTION_LAST_ATTEMPT,
+                  orderlines.getJSONObject(i), orderLine, jsonorder, order, loc);
+            } catch (Exception e) {
+              log.error("An error happened executing hook OrderLoaderPreAddShipmentLineHook for SimpleSaleLastAttempt action "
+                  + e.getMessage());
+              lastAttemptBinHookResponse = null;
+            }
+            if (lastAttemptBinHookResponse != null) {
+              if (!lastAttemptBinHookResponse.isValid()) {
+                throw new OBException(lastAttemptBinHookResponse.getMsg());
+              } else if (lastAttemptBinHookResponse.getNewLocator() != null) {
+                loc = lastAttemptBinHookResponse.getNewLocator();
+              }
+            }
+
+            lineNo += 10;
+            if (jsonorder.getLong("orderType") == 1) {
+              pendingQty = pendingQty.negate();
+            }
+            ShipmentInOutLine objShipmentInOutLine = usedBins.get(loc.getId());
+            if (objShipmentInOutLine != null) {
+              objShipmentInOutLine.setMovementQuantity(objShipmentInOutLine.getMovementQuantity()
+                  .add(pendingQty));
+              OBDal.getInstance().save(objShipmentInOutLine);
+            } else {
+              addShipmentline(shipment, shplineentity, orderlines.getJSONObject(i), orderLine,
+                  jsonorder, lineNo, pendingQty, loc, null, i);
+            }
           }
         }
       }
@@ -1604,9 +1611,9 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           || (doCancelAndReplace && !newLayaway && !notpaidLayaway && !partialpaidLayaway)) {
         // shipment is created or is a C&R and is not a layaway, so all is delivered
         orderline.setDeliveredQuantity(orderline.getOrderedQuantity());
+        orderline.setObposQtytodeliver(orderline.getOrderedQuantity());
       }
 
-      orderline.setObposQtytodeliver(orderline.getOrderedQuantity());
       try {
         executeHooks(orderCreateOrderLineProcesses, jsonOrderLine, null, null, null, orderline);
       } catch (Exception e) {
@@ -3095,6 +3102,17 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     } finally {
       OBContext.restorePreviousMode();
     }
+  }
+
+  protected boolean goodsToDeliver(Order order) {
+    for (OrderLine line : order.getOrderLineList()) {
+      if (line.getObposQtytodeliver().compareTo(BigDecimal.ZERO) == 0) {
+        continue;
+      } else {
+        return true;
+      }
+    }
+    return false;
   }
 
 }
