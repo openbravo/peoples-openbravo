@@ -119,29 +119,16 @@ enyo.kind({
     }
 
     function goToViewWindow(sw, params) {
-      if (sw.caller === 'mainSubWindow') {
-        sw.doChangeSubWindow({
-          newWindow: {
-            name: 'customerAddressView',
-            params: {
-              navigateOnClose: 'mainSubWindow',
-              businessPartner: params.customer,
-              bPLocation: params.customerAddr
-            }
+      sw.doChangeSubWindow({
+        newWindow: {
+          name: 'customerAddressView',
+          params: {
+            navigateOnClose: 'mainSubWindow',
+            businessPartner: params.customer,
+            bPLocation: params.customerAddr
           }
-        });
-      } else {
-        sw.doChangeSubWindow({
-          newWindow: {
-            name: 'customerAddressView',
-            params: {
-              navigateOnClose: 'customerAddressSearch',
-              businessPartner: params.customer,
-              bPLocation: params.customerAddr
-            }
-          }
-        });
-      }
+        }
+      });
     }
 
     if (this.customerAddr === undefined) {

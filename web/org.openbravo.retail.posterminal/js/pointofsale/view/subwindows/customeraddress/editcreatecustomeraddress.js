@@ -38,7 +38,7 @@ enyo.kind({
       return false;
     }
   },
-  defaultNavigateOnClose: 'customerAddressView',
+  defaultNavigateOnClose: 'mainSubWindow',
   header: {
     kind: 'OB.UI.SubwindowHeader',
     name: 'OB.OBPOSPointOfSale.UI.customeraddr.newcustomerheader',
@@ -60,24 +60,16 @@ enyo.kind({
         customer = this.customer;
         customerAddr = this.customerAddr;
       }
-      if (subWindow.caller === 'mainSubWindow') {
-        subWindow.doChangeSubWindow({
-          newWindow: {
-            name: subWindow.caller
+      subWindow.doChangeSubWindow({
+        newWindow: {
+          name: subWindow.caller,
+          params: {
+            navigateOnClose: 'mainSubWindow',
+            businessPartner: customer,
+            bPLocation: customerAddr
           }
-        });
-      } else {
-        subWindow.doChangeSubWindow({
-          newWindow: {
-            name: subWindow.caller,
-            params: {
-              navigateOnClose: 'customerAddressSearch',
-              businessPartner: customer,
-              bPLocation: customerAddr
-            }
-          }
-        });
-      }
+        }
+      });
     }
   },
   body: {
@@ -123,25 +115,16 @@ enyo.kind({
             this.customerAddr = inEvent.customerAddr;
           },
           tap: function () {
-            var subWindow = this.subWindow;
-            if (subWindow.caller === 'mainSubWindow') {
-              subWindow.doChangeSubWindow({
-                newWindow: {
-                  name: subWindow.caller
+            this.subWindow.doChangeSubWindow({
+              newWindow: {
+                name: 'customerAddressView',
+                params: {
+                  navigateOnClose: 'mainSubWindow',
+                  businessPartner: this.customer,
+                  bPLocation: this.customerAddr
                 }
-              });
-            } else {
-              subWindow.doChangeSubWindow({
-                newWindow: {
-                  name: subWindow.caller,
-                  params: {
-                    navigateOnClose: 'customerAddressSearch',
-                    businessPartner: this.customer,
-                    bPLocation: this.customerAddr
-                  }
-                }
-              });
-            }
+              }
+            });
           }
         }]
       }]

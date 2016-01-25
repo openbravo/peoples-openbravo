@@ -27,7 +27,7 @@ enyo.kind({
     });
     return true;
   },
-  defaultNavigateOnClose: 'customerAddressSearch',
+  defaultNavigateOnClose: 'mainSubWindow',
   header: {
     kind: 'OB.UI.SubwindowHeader',
     i18nHeaderMessage: 'OBPOS_TitleViewCustomerAddress',
