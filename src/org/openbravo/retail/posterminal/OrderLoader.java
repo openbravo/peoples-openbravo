@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2015 Openbravo S.L.U.
+ * Copyright (C) 2012-2016 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -127,13 +127,14 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
   HashMap<String, DocumentType> shipmentDocTypes = new HashMap<String, DocumentType>();
   HashMap<String, JSONArray> orderLineServiceList;
   String paymentDescription = null;
-  boolean newLayaway = false;
-  boolean notpaidLayaway = false;
-  boolean creditpaidLayaway = false;
-  boolean partialpaidLayaway = false;
-  boolean fullypaidLayaway = false;
-  boolean createShipment = true;
-  Locator binForRetuns = null;
+  private boolean newLayaway = false;
+  private boolean notpaidLayaway = false;
+  private boolean creditpaidLayaway = false;
+  private boolean partialpaidLayaway = false;
+  private boolean fullypaidLayaway = false;
+  private boolean createShipment = true;
+  private Locator binForRetuns = null;
+  private boolean isQuotation = false;
 
   @Inject
   @Any
@@ -153,10 +154,15 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     return "Order";
   }
 
-  @Override
-  public JSONObject saveRecord(JSONObject jsonorder) throws Exception {
-    long t0 = 0, t1 = 0, t11 = 0, t2 = 0, t3 = 0, t4 = 0, t5 = 0, t6 = 0, t111 = 0, t112 = 0, t113 = 0, t115 = 0, t116 = 0;
-
+  /**
+   * Method to initialize the global variables needed during the synchronization process
+   * 
+   * @param jsonorder
+   *          JSONObject which contains the order to be synchronized. This object is generated in
+   *          Web POS
+   * @return
+   */
+  public void initializeVariables(JSONObject jsonorder) throws JSONException {
     try {
       useOrderDocumentNoForRelatedDocs = "Y".equals(Preferences.getPreferenceValue(
           "OBPOS_UseOrderDocumentNoForRelatedDocs", true, OBContext.getOBContext()
@@ -167,13 +173,38 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           "Error getting OBPOS_UseOrderDocumentNoForRelatedDocs preference: " + e1.getMessage(), e1);
     }
 
-    boolean isDeleted = false;
     documentNoHandlers.set(new ArrayList<OrderLoader.DocumentNoHandler>());
+
+    isQuotation = jsonorder.has("isQuotation") && jsonorder.getBoolean("isQuotation");
+
+    newLayaway = jsonorder.has("orderType") && jsonorder.getLong("orderType") == 2;
+    notpaidLayaway = (jsonorder.getBoolean("isLayaway") || jsonorder.optLong("orderType") == 2)
+        && jsonorder.getDouble("payment") < jsonorder.getDouble("gross")
+        && !jsonorder.optBoolean("paidOnCredit");
+    creditpaidLayaway = (jsonorder.getBoolean("isLayaway") || jsonorder.optLong("orderType") == 2)
+        && jsonorder.getDouble("payment") < jsonorder.getDouble("gross")
+        && jsonorder.optBoolean("paidOnCredit");
+    partialpaidLayaway = jsonorder.getBoolean("isLayaway")
+        && jsonorder.getDouble("payment") < jsonorder.getDouble("gross");
+    fullypaidLayaway = (jsonorder.getBoolean("isLayaway") || jsonorder.optLong("orderType") == 2)
+        && jsonorder.getDouble("payment") >= jsonorder.getDouble("gross");
+
+    createShipment = !isQuotation && !notpaidLayaway;
+    if (jsonorder.has("generateShipment")) {
+      createShipment &= jsonorder.getBoolean("generateShipment");
+    }
+  }
+
+  @Override
+  public JSONObject saveRecord(JSONObject jsonorder) throws Exception {
+    long t0 = 0, t1 = 0, t11 = 0, t2 = 0, t3 = 0, t4 = 0, t5 = 0, t6 = 0, t111 = 0, t112 = 0, t113 = 0, t115 = 0, t116 = 0;
+
     orderLineServiceList = new HashMap<String, JSONArray>();
     try {
+      initializeVariables(jsonorder);
       executeHooks(orderPreProcesses, jsonorder, null, null, null);
       boolean wasPaidOnCredit = false;
-      boolean isQuotation = jsonorder.has("isQuotation") && jsonorder.getBoolean("isQuotation");
+      boolean isDeleted = false;
 
       if (jsonorder.has("deletedLines")) {
         mergeDeletedLines(jsonorder);
@@ -196,17 +227,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       Invoice invoice = null;
       boolean createInvoice = false;
       TriggerHandler.getInstance().disable();
-      newLayaway = jsonorder.has("orderType") && jsonorder.getLong("orderType") == 2;
-      notpaidLayaway = (jsonorder.getBoolean("isLayaway") || jsonorder.optLong("orderType") == 2)
-          && jsonorder.getDouble("payment") < jsonorder.getDouble("gross")
-          && !jsonorder.optBoolean("paidOnCredit");
-      creditpaidLayaway = (jsonorder.getBoolean("isLayaway") || jsonorder.optLong("orderType") == 2)
-          && jsonorder.getDouble("payment") < jsonorder.getDouble("gross")
-          && jsonorder.optBoolean("paidOnCredit");
-      partialpaidLayaway = jsonorder.getBoolean("isLayaway")
-          && jsonorder.getDouble("payment") < jsonorder.getDouble("gross");
-      fullypaidLayaway = (jsonorder.getBoolean("isLayaway") || jsonorder.optLong("orderType") == 2)
-          && jsonorder.getDouble("payment") >= jsonorder.getDouble("gross");
       try {
         if (jsonorder.has("oldId") && !jsonorder.getString("oldId").equals("null")
             && jsonorder.has("isQuotation") && jsonorder.getBoolean("isQuotation")) {
@@ -240,9 +260,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
                   .getBoolean("generateInvoice")));
         }
 
-        createShipment = !isQuotation && !notpaidLayaway && !isDeleted;
         if (jsonorder.has("generateShipment")) {
-          createShipment &= jsonorder.getBoolean("generateShipment");
           createInvoice &= jsonorder.getBoolean("generateShipment");
         }
 
@@ -1384,7 +1402,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         RoundingMode.HALF_UP));
 
     order.setSalesTransaction(true);
-    if (jsonorder.has("obposIsDeleted") && jsonorder.has("isQuotation") && jsonorder.getBoolean("obposIsDeleted")) {
+    if (jsonorder.has("obposIsDeleted") && jsonorder.has("isQuotation")
+        && jsonorder.getBoolean("obposIsDeleted")) {
       order.setDocumentStatus("CL");
       order.setGrandTotalAmount(BigDecimal.ZERO);
       order.setSummedLineAmount(BigDecimal.ZERO);
@@ -1558,7 +1577,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     return calculatedDueDate.getTime();
   }
 
-  protected JSONObject handlePayments(JSONObject jsonorder, Order order, Invoice invoice,
+  public JSONObject handlePayments(JSONObject jsonorder, Order order, Invoice invoice,
       Boolean wasPaidOnCredit) throws Exception {
     String posTerminalId = jsonorder.getString("posTerminal");
     OBPOSApplications posTerminal = OBDal.getInstance().get(OBPOSApplications.class, posTerminalId);

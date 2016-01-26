@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2015 Openbravo S.L.U.
+ * Copyright (C) 2012-2016 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -632,36 +632,62 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     }, this);
 
     receipt.on('voidLayaway', function () {
-      var process = new OB.DS.Process('org.openbravo.retail.posterminal.ProcessVoidLayaway');
-      var auxReceipt = new OB.Model.Order();
-      OB.UTIL.clone(receipt, auxReceipt);
-      process.exec({
-        messageId: OB.UTIL.get_UUID(),
-        data: [{
-          order: receipt
-        }]
-      }, function (data) {
-        if (data && data.exception) {
-          OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorVoidLayaway'));
-        } else {
-          auxReceipt.prepareToSend(function () {
-            OB.UTIL.cashUpReport(auxReceipt);
+      var finishVoidLayaway = function () {
+          var process = new OB.DS.Process('org.openbravo.retail.posterminal.ProcessVoidLayaway');
+          var auxReceipt = new OB.Model.Order();
+          OB.UTIL.clone(receipt, auxReceipt);
+          receipt.set('obposAppCashup', OB.MobileApp.model.get('terminal').cashUpId);
+          receipt.set('timezoneOffset', new Date().getTimezoneOffset());
+          receipt.set('gross', OB.DEC.mul(receipt.get('gross'), -1));
+          receipt.get('payments').forEach(function (payment) {
+            payment.set('origAmount', OB.DEC.mul(payment.get('origAmount'), -1));
+            payment.set('paid', OB.DEC.mul(payment.get('paid'), -1));
           });
-          OB.Dal.remove(receipt, null, function (tx, err) {
-            OB.UTIL.showError(err);
-          });
-          receipt.trigger('print');
-          if (receipt.get('layawayGross')) {
-            receipt.set('layawayGross', null);
-          }
-          orderList.deleteCurrent();
-          receipt.trigger('change:gross', receipt);
+          process.exec({
+            messageId: OB.UTIL.get_UUID(),
+            data: [{
+              order: receipt
+            }]
+          }, function (data) {
+            if (data && data.exception) {
+              OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorVoidLayaway'));
+            } else {
+              auxReceipt.prepareToSend(function () {
+                OB.UTIL.cashUpReport(auxReceipt);
+              });
+              OB.Dal.remove(receipt, null, function (tx, err) {
+                OB.UTIL.showError(err);
+              });
+              receipt.trigger('print');
+              if (receipt.get('layawayGross')) {
+                receipt.set('layawayGross', null);
+              }
+              orderList.deleteCurrent();
+              receipt.trigger('change:gross', receipt);
 
-          OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgSuccessVoidLayaway'));
-        }
-      }, function () {
-        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_OfflineWindowRequiresOnline'));
-      });
+              OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgSuccessVoidLayaway'));
+            }
+          }, function () {
+            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_OfflineWindowRequiresOnline'));
+          });
+          };
+
+      if (receipt.overpaymentExists()) {
+        var symbol = OB.MobileApp.model.get('terminal').symbol;
+        var symbolAtRight = OB.MobileApp.model.get('terminal').currencySymbolAtTheRight;
+        var amount = receipt.getPaymentStatus().overpayment;
+        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_OverpaymentWarningTitle'), OB.I18N.getLabel('OBPOS_OverpaymentWarningBody', [OB.I18N.formatCurrencyWithSymbol(amount, symbol, symbolAtRight)]), [{
+          label: OB.I18N.getLabel('OBMOBC_LblOk'),
+          isConfirmButton: true,
+          action: function () {
+            finishVoidLayaway();
+          }
+        }, {
+          label: OB.I18N.getLabel('OBMOBC_LblCancel')
+        }]);
+      } else {
+        finishVoidLayaway();
+      }
     }, this);
 
     callback();
