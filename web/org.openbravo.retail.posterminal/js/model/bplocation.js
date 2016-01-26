@@ -28,7 +28,7 @@
         return;
       }
       if (this.get('name') === '') {
-        OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_NameReqForBPAddress'));
+        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_NameReqForBPAddress'));
         return false;
       }
       this.set('_identifier', this.get('name'));

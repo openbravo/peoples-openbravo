@@ -138,7 +138,7 @@ enyo.kind({
         customerAddr: this.model.get('customerAddr')
       });
       if (this.model.get('customerAddr').get('name') === '') {
-        OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_NameReqForBPAddress'));
+        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_NameReqForBPAddress'));
         return false;
       } else {
         var callback = function () {
