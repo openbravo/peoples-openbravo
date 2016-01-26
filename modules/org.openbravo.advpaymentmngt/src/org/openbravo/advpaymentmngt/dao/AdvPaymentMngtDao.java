@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2015 Openbravo SLU
+ * All portions are Copyright (C) 2010-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  Enterprise Intelligence Systems (http://www.eintel.com.au).
  *************************************************************************
@@ -528,6 +528,13 @@ public class AdvPaymentMngtDao {
   public FIN_PaymentDetail getNewPaymentDetail(FIN_Payment payment,
       FIN_PaymentScheduleDetail paymentScheduleDetail, BigDecimal paymentDetailAmount,
       BigDecimal writeoffAmount, boolean isRefund, GLItem glitem) {
+    return getNewPaymentDetail(payment, paymentScheduleDetail, paymentDetailAmount, writeoffAmount,
+        isRefund, glitem, true);
+  }
+
+  public FIN_PaymentDetail getNewPaymentDetail(FIN_Payment payment,
+      FIN_PaymentScheduleDetail paymentScheduleDetail, BigDecimal paymentDetailAmount,
+      BigDecimal writeoffAmount, boolean isRefund, GLItem glitem, boolean doFlush) {
     try {
       OBContext.setAdminMode(true);
       final FIN_PaymentDetail newPaymentDetail = OBProvider.getInstance().get(
@@ -561,7 +568,9 @@ public class AdvPaymentMngtDao {
       OBDal.getInstance().save(payment);
       OBDal.getInstance().save(newPaymentDetail);
       OBDal.getInstance().save(paymentScheduleDetail);
-      OBDal.getInstance().flush();
+      if (doFlush) {
+        OBDal.getInstance().flush();
+      }
 
       if (payment.getDocumentType().getDocumentSequence() != null) {
         OBContext.getOBContext().removeWritableOrganization(
