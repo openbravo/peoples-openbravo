@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2015 Openbravo SLU
+ * All portions are Copyright (C) 2013-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -144,7 +144,7 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
    *          table whose ADTree TableTree will be returned
    * @return the ADTree TableTree associated with the given table
    */
-  private TableTree getTableTree(Table table) {
+  protected TableTree getTableTree(Table table) {
     TableTree tableTree = null;
     OBCriteria<TableTree> criteria = OBDal.getInstance().createCriteria(TableTree.class);
     criteria.add(Restrictions.eq(TableTree.PROPERTY_TABLE, table));
@@ -172,7 +172,9 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
   }
 
   /**
-   * 
+   * @param parameters
+   * @param datasourceParameters
+   *          specific datasource parameters
    * @param parentId
    *          id of the node whose children are to be retrieved
    * @param hqlWhereClause
@@ -503,7 +505,7 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
   }
 
   /**
-   * Returns a Tree given the referencedTableId and the parentRecordId
+   * Returns a Tree given the referencedTableId
    */
   private Tree getTree(String referencedTableId) {
     Table referencedTable = OBDal.getInstance().get(Table.class, referencedTableId);
@@ -589,7 +591,8 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
       }
     }
 
-    Tree tree = this.getTree(tableId);
+    Map<String, Object> datasourceParameters = this.getDatasourceSpecificParams(parameters);
+    Tree tree = (Tree) datasourceParameters.get("tree");
     boolean isOrdered = this.isOrdered(tree);
     Long seqNo = null;
     if (isOrdered) {

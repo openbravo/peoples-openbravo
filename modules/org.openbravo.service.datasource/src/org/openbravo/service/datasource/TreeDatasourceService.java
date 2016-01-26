@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2015 Openbravo SLU
+ * All portions are Copyright (C) 2013-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -760,6 +760,7 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
 
   /**
    * @param parameters
+   * @param datasourceParameters
    * @param nodeId
    * @return returns a json object with the definition of a node give its record id
    */
@@ -768,6 +769,7 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
 
   /**
    * @param parameters
+   * @param datasourceParameters
    * @param nodeId
    * @return returns a json object with the definition of a node give its node id
    */
@@ -777,6 +779,8 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
   /**
    * 
    * @param parameters
+   * @param datasourceParameters
+   *          specific datasource parameters
    * @param parentId
    *          id of the node whose children are to be retrieved
    * @param hqlWhereClause

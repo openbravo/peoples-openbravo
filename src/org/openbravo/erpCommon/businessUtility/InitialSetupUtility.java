@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2012 Openbravo SLU
+ * All portions are Copyright (C) 2010-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -81,6 +81,7 @@ import org.openbravo.model.financialmgmt.accounting.coa.ElementValueOperand;
 import org.openbravo.model.financialmgmt.calendar.Calendar;
 import org.openbravo.model.financialmgmt.calendar.Year;
 import org.openbravo.model.financialmgmt.gl.GLCategory;
+import org.openbravo.service.datasource.DataSource;
 import org.openbravo.service.db.DataImportService;
 import org.openbravo.service.db.ImportResult;
 
@@ -326,7 +327,15 @@ public class InitialSetupUtility {
    */
   public static List<TableTree> tableTreeRelation() throws Exception {
     final OBCriteria<TableTree> obcTableTree = OBDal.getInstance().createCriteria(TableTree.class);
-    obcTableTree.add(Restrictions.eq(TableTree.PROPERTY_TREESTRUCTURE, "ADTree"));
+    // Together with those trees that use the ADTree tree structure, we also include in the list the
+    // tree for account elements because it makes use of a custom extension of the ADTree structure.
+    // See issue https://issues.openbravo.com/view.php?id=31856
+    DataSource accountTreeDatasource = OBDal.getInstance().get(DataSource.class,
+        "D2F94DC86DEC48D69E4BFCE59DC670CF");
+    obcTableTree.add(Restrictions.or(
+        //
+        Restrictions.eq(TableTree.PROPERTY_TREESTRUCTURE, "ADTree"),
+        Restrictions.eq(TableTree.PROPERTY_DATASOURCE, accountTreeDatasource)));
     obcTableTree.addOrder(Order.asc(TableTree.PROPERTY_NAME));
     return obcTableTree.list();
   }
