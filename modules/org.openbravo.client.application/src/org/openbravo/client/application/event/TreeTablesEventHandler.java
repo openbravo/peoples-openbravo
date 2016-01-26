@@ -64,7 +64,6 @@ public class TreeTablesEventHandler extends EntityPersistenceEventObserver {
   private static final String TREENODE_STRUCTURE = "ADTree";
   private static final String LINKTOPARENT_STRUCTURE = "LinkToParent";
   private static final String CUSTOM_STRUCTURE = "Custom";
-  // private static final String CUSTOM_STRUCTURE = "Custom";
   private static Logger logger = LoggerFactory.getLogger(TreeTablesEventHandler.class);
 
   @Inject

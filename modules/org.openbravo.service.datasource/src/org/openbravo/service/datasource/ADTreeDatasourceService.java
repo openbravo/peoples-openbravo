@@ -173,8 +173,10 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
 
   /**
    * @param parameters
+   *          a map with the parameters of the request
    * @param datasourceParameters
-   *          specific datasource parameters
+   *          specific datasource parameters obtained using method
+   *          {@link #getDatasourceSpecificParams(Map)}
    * @param parentId
    *          id of the node whose children are to be retrieved
    * @param hqlWhereClause
