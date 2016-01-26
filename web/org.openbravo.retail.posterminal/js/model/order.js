@@ -2008,6 +2008,10 @@
           }
         }
       }
+      if (OB.UTIL.isNullOrUndefined(businessPartner.get('paymentTerms'))) {
+        OB.UTIL.showWarning(enyo.format(OB.I18N.getLabel('OBPOS_MsgBPNotPaymentTerm'), businessPartner.get('name')));
+        businessPartner.set('paymentTerms', OB.MobileApp.model.get('terminal').defaultbp_paymentterm);
+      }
       if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
         if (oldbp.id !== businessPartner.id) { //Business Partner have changed
           OB.Dal.removeTemporally(new OB.Model.BusinessPartner(oldbp), function () {}, function () {

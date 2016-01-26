@@ -1371,7 +1371,12 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         jsonorder.getJSONObject("bp").getString("locId")));
     order.setInvoiceAddress(order.getPartnerAddress());
     order.setPaymentMethod((FIN_PaymentMethod) bp.getPaymentMethod());
-    order.setPaymentTerms((PaymentTerm) bp.getPaymentTerms());
+    if (bp.getPaymentTerms() != null) {
+      order.setPaymentTerms((PaymentTerm) bp.getPaymentTerms());
+    } else {
+      order.setPaymentTerms(OBDal.getInstance().get(PaymentTerm.class,
+          jsonorder.getJSONObject("bp").getString("paymentTerms")));
+    }
     order.setInvoiceTerms(bp.getInvoiceTerms());
     order.setGrandTotalAmount(BigDecimal.valueOf(jsonorder.getDouble("gross")).setScale(
         stdPrecision, RoundingMode.HALF_UP));
