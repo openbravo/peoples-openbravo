@@ -49,7 +49,7 @@ public class StoreDetailedStock extends JSONProcessSimple {
           + "') "
           + "and ms.product.id = '"
           + prodId
-          + "'"
+          + "' "
           + "group by ms.storageBin.warehouse.id, ms.storageBin.warehouse.name, ms.storageBin.warehouse.id, ms.storageBin.id, ms.storageBin.searchKey "
           + "order by ms.storageBin.warehouse.name";
 
