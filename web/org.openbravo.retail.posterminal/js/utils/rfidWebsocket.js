@@ -12,6 +12,9 @@
 OB.UTIL.startRfidWebsocket = function startRfidWebsocket(websocketServerLocation, reconnectTimeout, currentRetrials, retrialsBeforeWarning) {
   var barcodeActionHandler, retrialsBeforeThreadCancellation = 100;
   OB.UTIL.rfidWebsocket = new WebSocket(websocketServerLocation);
+  OB.UTIL.rfidWebsocket.events = {
+    onAddProduct: ''
+  };
   OB.UTIL.rfidAckArray = [];
   OB.UTIL.isRFIDEnabled = true;
 
@@ -66,10 +69,16 @@ OB.UTIL.startRfidWebsocket = function startRfidWebsocket(websocketServerLocation
     ean = data.gtin.substring(1, data.gtin.length);
     barcodeActionHandler.findProductByBarcode(ean, function (product) {
       product.set('groupProduct', false);
-      OB.MobileApp.model.receipt.addProduct(product, '1', {
-        rfid: true
-      }, data.dataToSave);
-    }, data.dataToSave);
+
+      OB.MobileApp.view.waterfall('onAddProduct', {
+        product: product,
+        qty: 1,
+        options: {
+          rfid: true
+        },
+        attrs: data.dataToSave
+      });
+    });
   };
 
   // Called when socket connection closed
