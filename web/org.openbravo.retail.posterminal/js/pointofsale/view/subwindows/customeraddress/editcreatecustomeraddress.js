@@ -115,16 +115,25 @@ enyo.kind({
             this.customerAddr = inEvent.customerAddr;
           },
           tap: function () {
-            this.subWindow.doChangeSubWindow({
-              newWindow: {
-                name: 'customerAddressView',
-                params: {
-                  navigateOnClose: 'mainSubWindow',
-                  businessPartner: this.customer,
-                  bPLocation: this.customerAddr
+            var subWindow = this.subWindow;
+            if (subWindow.caller === 'mainSubWindow') {
+              subWindow.doChangeSubWindow({
+                newWindow: {
+                  name: subWindow.caller
                 }
-              }
-            });
+              });
+            } else {
+              subWindow.doChangeSubWindow({
+                newWindow: {
+                  name: 'customerAddressView',
+                  params: {
+                    navigateOnClose: 'mainSubWindow',
+                    businessPartner: this.customer,
+                    bPLocation: this.customerAddr
+                  }
+                }
+              });
+            }
           }
         }]
       }]
