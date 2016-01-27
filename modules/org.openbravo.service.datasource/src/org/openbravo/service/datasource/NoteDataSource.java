@@ -48,26 +48,26 @@ import org.slf4j.LoggerFactory;
 public class NoteDataSource extends DefaultDataSourceService {
   private static final Logger log = LoggerFactory.getLogger(NoteDataSource.class);
 
-  // @Override
-  // public String fetch(Map<String, String> parameters) {
-  // String noteFetch = "";
-  // noteFetch = super.fetch(parameters, false);
-  // return noteFetch;
-  // }
-  //
-  // @Override
-  // public String add(Map<String, String> parameters, String content) {
-  // String noteAdd = "";
-  // noteAdd = super.add(parameters, content, false);
-  // return noteAdd;
-  // }
-  //
-  // @Override
-  // public String remove(Map<String, String> parameters) {
-  // String noteRemove = "";
-  // noteRemove = super.remove(parameters, false);
-  // return noteRemove;
-  // }
+  @Override
+  public String fetch(Map<String, String> parameters) {
+    String noteFetch = "";
+    noteFetch = super.fetch(parameters, false);
+    return noteFetch;
+  }
+
+  @Override
+  public String add(Map<String, String> parameters, String content) {
+    String noteAdd = "";
+    noteAdd = super.add(parameters, content, false);
+    return noteAdd;
+  }
+
+  @Override
+  public String remove(Map<String, String> parameters) {
+    String noteRemove = "";
+    noteRemove = super.remove(parameters, false);
+    return noteRemove;
+  }
 
   @Override
   public void checkEditDatasourceAccess(Map<String, String> parameter) {
