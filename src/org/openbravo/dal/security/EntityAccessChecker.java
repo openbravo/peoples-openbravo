@@ -25,6 +25,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.openbravo.base.exception.OBSecurityException;
@@ -32,10 +33,17 @@ import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.provider.OBNotSingleton;
+import org.openbravo.client.application.Parameter;
+import org.openbravo.client.application.Process;
+import org.openbravo.client.application.ProcessAccess;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.access.TableAccess;
+import org.openbravo.model.ad.datamodel.Column;
+import org.openbravo.model.ad.domain.Reference;
 import org.openbravo.model.ad.ui.Tab;
+import org.openbravo.userinterface.selector.Selector;
 
 /**
  * This class is responsible for determining the allowed read/write access for a combination of user
@@ -92,7 +100,8 @@ public class EntityAccessChecker implements OBNotSingleton {
   /**
    * Reads the windows from the database using the current role of the user. Then it iterates
    * through the windows and tabs to determine which entities are readable/writable for that user.
-   * In addition non-readable and derived-readable entities are computed.
+   * In addition non-readable and derived-readable entities are computed. Besides derived entities
+   * from process definition are being computed too.
    * 
    * @see ModelProvider
    */
@@ -170,6 +179,36 @@ public class EntityAccessChecker implements OBNotSingleton {
             addDerivedReadableIdentifierProperties(p.getTargetEntity());
           }
         }
+      }
+
+      // and take into account derived entities from process definition
+      // union of writableEntities and readableEntities
+      List<Entity> processEntities = new ArrayList<Entity>(writableEntities);
+      for (final Entity readableEntity : readableEntities) {
+        if (!processEntities.contains(readableEntity)) {
+          processEntities.add(readableEntity);
+        }
+      }
+      for (final Entity entity : processEntities) {
+        for (final Property property : entity.getProperties()) {
+          if (property != null && StringUtils.isNotBlank(property.getColumnId())) {
+            // getting all process definition
+            Column col = OBDal.getInstance().get(Column.class, property.getColumnId());
+            if (col != null && col.getOBUIAPPProcess() != null) {
+              addDerivedEtityFromProcess(col.getOBUIAPPProcess());
+            }
+          }
+        }
+      }
+
+      // and take into account explicit process access
+      final String processAccessQryStr = "select p from " + ProcessAccess.class.getName()
+          + " p where p.role.id='" + getRoleId() + "'";
+      @SuppressWarnings("unchecked")
+      final List<ProcessAccess> processAccessQuery = SessionHandler.getInstance()
+          .createQuery(processAccessQryStr).list();
+      for (final ProcessAccess processAccess : processAccessQuery) {
+        addDerivedEtityFromProcess(processAccess.getObuiappProcess());
       }
 
       isInitialized = true;
@@ -441,5 +480,26 @@ public class EntityAccessChecker implements OBNotSingleton {
       return true;
     }
     return writableEntities.contains(entity);
+  }
+
+  private void addDerivedEtityFromProcess(Process process) {
+    final ModelProvider mp = ModelProvider.getInstance();
+    // any selector in a process definition is checked
+    for (Parameter param : process.getOBUIAPPParameterList()) {
+      Reference ref = param.getReferenceSearchKey();
+      if (ref != null) {
+        for (Selector sel : ref.getOBUISELSelectorList()) {
+          // obtain entity from selector and added to derivedReadableEntities to take into
+          // account as a derived entity.
+          final String tableNameSelector = sel.getTable().getName();
+          final Entity derivedEntity = mp.getEntity(tableNameSelector);
+          if (!writableEntities.contains(derivedEntity)
+              && !readableEntities.contains(derivedEntity)
+              && !derivedReadableEntities.contains(derivedEntity)) {
+            derivedReadableEntities.add(derivedEntity);
+          }
+        }
+      }
+    }
   }
 }
