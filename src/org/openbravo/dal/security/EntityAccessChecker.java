@@ -388,7 +388,8 @@ public class EntityAccessChecker implements OBNotSingleton {
    */
   public void checkReadableAccess(Entity entity) {
     if (!isReadableWithoutAdminMode(entity)) {
-      throw new OBSecurityException("Entity " + entity + " is not accessible by this user.");
+      throw new OBSecurityException("Entity " + entity + " is not accessible by this role/user: "
+          + obContext.getRole().getName() + "/" + obContext.getUser().getName() + ".");
     }
   }
 
@@ -400,7 +401,8 @@ public class EntityAccessChecker implements OBNotSingleton {
    */
   public void checkDerivedAccess(Entity entity) {
     if (!isDerivedWithoutAdminMode(entity)) {
-      throw new OBSecurityException("Entity " + entity + " is not accessible by this user.");
+      throw new OBSecurityException("Entity " + entity + " is not accessible by this role/user: "
+          + obContext.getRole().getName() + "/" + obContext.getUser().getName() + ".");
     }
   }
 
@@ -412,7 +414,8 @@ public class EntityAccessChecker implements OBNotSingleton {
    */
   public void checkWritableAccess(Entity entity) {
     if (!isWritableWithoutAdminMode(entity)) {
-      throw new OBSecurityException("Entity " + entity + " is not writable by this user.");
+      throw new OBSecurityException("Entity " + entity + " is not writable by this role/user: "
+          + obContext.getRole().getName() + "/" + obContext.getUser().getName() + ".");
     }
   }
 
