@@ -137,22 +137,30 @@ public abstract class BaseDataSourceService implements DataSourceService {
     String selectorId = parameters.get(SelectorConstants.DS_REQUEST_SELECTOR_ID_PARAMETER);
     if (StringUtils.isNotBlank(selectorId)) {
       // selectors
-      String tableId = parameters.get("inpTableId");
-      String targetPropertyName = parameters.get(SelectorConstants.PARAM_TARGET_PROPERTY_NAME);
-      OBContext.setAdminMode();
-      try {
-        Entity parentEntity = ModelProvider.getInstance().getEntityByTableId(tableId);
-        Property p = parentEntity.getProperty(targetPropertyName);
-        Entity entitySelector = p.getReferencedProperty().getEntity();
-        if (entitySelector != null) {
-          obContext.getEntityAccessChecker().checkDerivedAccess(entitySelector);
+      String processId = parameters.get(SelectorConstants.DS_REQUEST_PROCESS_DEFINITION_ID);
+      if (StringUtils.isNotBlank(processId)) {
+        // selectors defined in a process definition
+        if (entityToCheck != null) {
+          obContext.getEntityAccessChecker().checkDerivedAccess(entityToCheck);
         }
-      } finally {
-        OBContext.restorePreviousMode();
+      } else {
+        // rest of the selectors
+        String tableId = parameters.get("inpTableId");
+        String targetPropertyName = parameters.get(SelectorConstants.PARAM_TARGET_PROPERTY_NAME);
+        OBContext.setAdminMode();
+        try {
+          Entity parentEntity = ModelProvider.getInstance().getEntityByTableId(tableId);
+          Property p = parentEntity.getProperty(targetPropertyName);
+          Entity entitySelector = p.getReferencedProperty().getEntity();
+          if (entitySelector != null) {
+            obContext.getEntityAccessChecker().checkDerivedAccess(entitySelector);
+          }
+        } finally {
+          OBContext.restorePreviousMode();
+        }
       }
     } else if (entityToCheck != null) {
       obContext.getEntityAccessChecker().checkReadableAccess(entityToCheck);
-
     }
   }
 
