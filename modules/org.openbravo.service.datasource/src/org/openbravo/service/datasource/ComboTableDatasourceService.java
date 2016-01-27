@@ -75,12 +75,10 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
 
     OBContext.setAdminMode(true);
     try {
-      // check access to current entity
       field = OBDal.getInstance().get(Field.class, fieldId);
       column = field.getColumn();
       targetEntity = ModelProvider.getInstance().getEntityByTableId(
           (String) DalUtil.getId(column.getTable()));
-      OBContext.getOBContext().getEntityAccessChecker().checkReadable(targetEntity);
 
       if (!StringUtils.isEmpty(parameters.get("criteria"))) {
         String criteria = parameters.get("criteria");
@@ -235,9 +233,26 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
 
   @Override
   public void checkFetchDatasourceAccess(Map<String, String> parameters) {
+    Field field = null;
+    Column column = null;
+    String fieldId = parameters.get("fieldId");
+    Entity targetEntity = null;
+
+    OBContext.setAdminMode(true);
+    try {
+      // check access to current entity
+      field = OBDal.getInstance().get(Field.class, fieldId);
+      column = field.getColumn();
+      targetEntity = ModelProvider.getInstance().getEntityByTableId(
+          (String) DalUtil.getId(column.getTable()));
+      OBContext.getOBContext().getEntityAccessChecker().checkReadable(targetEntity);
+    } finally {
+      OBContext.restorePreviousMode();
+    }
   }
 
   @Override
   public void checkEditDatasourceAccess(Map<String, String> parameters) {
+    throw new OBException("Method not implemented");
   }
 }
