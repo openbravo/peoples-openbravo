@@ -12,9 +12,6 @@
 OB.UTIL.startRfidWebsocket = function startRfidWebsocket(websocketServerLocation, reconnectTimeout, currentRetrials, retrialsBeforeWarning) {
   var barcodeActionHandler, retrialsBeforeThreadCancellation = 100;
   OB.UTIL.rfidWebsocket = new WebSocket(websocketServerLocation);
-  OB.UTIL.rfidWebsocket.events = {
-    onAddProduct: ''
-  };
   OB.UTIL.rfidAckArray = [];
   OB.UTIL.isRFIDEnabled = true;
 
