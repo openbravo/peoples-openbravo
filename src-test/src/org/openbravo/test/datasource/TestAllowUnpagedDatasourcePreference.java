@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2015 Openbravo SLU 
+ * All portions are Copyright (C) 2015-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -63,6 +63,11 @@ public class TestAllowUnpagedDatasourcePreference extends BaseDataSourceTestDal 
   protected Logger logger = Logger.getLogger(this.getClass());
   private String preferenceValue;
 
+  private static final String ROLE_SYSTEM = "0";
+  private static final String ORGANIZATION = "0";
+  private static final String LANGUAGE_ID = "192";
+  private static final String WAREHOUSE_ID = "B2D40D8A5D644DD89E329DC297309055";
+
   /**
    * @param preferenceValue
    *          value to be assigned to the preference
@@ -80,7 +85,7 @@ public class TestAllowUnpagedDatasourcePreference extends BaseDataSourceTestDal 
   }
 
   @Test
-  public void testDatasourceRequest() {
+  public void testDatasourceRequest() throws Exception {
     OBContext.setAdminMode();
     User user = null;
     String defaultClient = null;
@@ -100,6 +105,9 @@ public class TestAllowUnpagedDatasourcePreference extends BaseDataSourceTestDal 
       user.setDefaultOrganization(OBDal.getInstance().get(Organization.class, "0"));
       user.setDefaultRole(OBDal.getInstance().get(Role.class, "0"));
       OBDal.getInstance().commitAndClose();
+
+      // ensures a role with an access to a UOM entity
+      changeProfile(ROLE_SYSTEM, LANGUAGE_ID, ORGANIZATION, WAREHOUSE_ID);
 
       // Create the 'Allow Unpaged Datasource In Manual Request' preference
       preferenceId = createPreference(preferenceValue);
