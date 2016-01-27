@@ -770,7 +770,12 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
 
   /**
    * @param parameters
+   *          a map with the parameters of the request
+   * @param datasourceParameters
+   *          specific datasource parameters obtained using method
+   *          {@link #getDatasourceSpecificParams(Map)}
    * @param nodeId
+   *          id of the tree node
    * @return returns a json object with the definition of a node give its record id
    */
   protected abstract JSONObject getJSONObjectByRecordId(Map<String, String> parameters,
@@ -778,7 +783,12 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
 
   /**
    * @param parameters
+   *          a map with the parameters of the request
+   * @param datasourceParameters
+   *          specific datasource parameters obtained using method
+   *          {@link #getDatasourceSpecificParams(Map)}
    * @param nodeId
+   *          id of the tree node
    * @return returns a json object with the definition of a node give its node id
    */
   protected abstract JSONObject getJSONObjectByNodeId(Map<String, String> parameters,
@@ -787,6 +797,9 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
   /**
    * 
    * @param parameters
+   *          a map with the parameters of the request
+   * @param datasourceParameters
+   *          specific datasource parameters
    * @param parentId
    *          id of the node whose children are to be retrieved
    * @param hqlWhereClause

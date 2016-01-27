@@ -50,6 +50,7 @@ import org.openbravo.service.db.CallStoredProcedure;
 public class RMInsertOrphanLine implements org.openbravo.scheduling.Process {
 
   final static String ITEM = "I";
+  final static String SERVICE = "S";
 
   @Override
   public void execute(ProcessBundle bundle) throws Exception {
@@ -69,6 +70,10 @@ public class RMInsertOrphanLine implements org.openbravo.scheduling.Process {
 
     Order order = OBDal.getInstance().get(Order.class, strOrderId);
     Product product = OBDal.getInstance().get(Product.class, strProductId);
+
+    if (SERVICE.equals(product.getProductType()) && !product.isReturnable()) {
+      throw new OBException("@Service@ '" + product.getIdentifier() + "' @ServiceIsNotReturnable@");
+    }
     AttributeSetInstance attrSetInstance = null;
     if (strAttributeSetInstanceId != null) {
       attrSetInstance = OBDal.getInstance().get(AttributeSetInstance.class,

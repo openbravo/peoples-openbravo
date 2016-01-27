@@ -492,10 +492,20 @@ public class SystemService implements OBSingleton {
    * applying the exclude filters
    */
   public Database getModelFromDatabase(Platform platform) {
+    boolean doPlSqlStandardization = true;
+    return getModelFromDatabase(platform, doPlSqlStandardization);
+  }
+
+  /**
+   * Given a org.apache.ddlutils.Platform, builds a org.apache.ddlutils.model.Database after
+   * applying the exclude filters. It is possible to specify whether the PLSQL code standardization
+   * should be done
+   */
+  public Database getModelFromDatabase(Platform platform, boolean doPlSqlStandardization) {
     ExcludeFilter excludeFilter = DBSMOBUtil.getInstance().getExcludeFilter(
         new File(OBPropertiesProvider.getInstance().getOpenbravoProperties()
             .getProperty("source.path")));
-    return platform.loadModelFromDatabase(excludeFilter);
+    return platform.loadModelFromDatabase(excludeFilter, doPlSqlStandardization);
   }
 
   private void enableConstraints(Platform platform) {

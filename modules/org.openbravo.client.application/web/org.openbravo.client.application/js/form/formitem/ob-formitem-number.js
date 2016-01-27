@@ -45,8 +45,7 @@ isc.OBNumberItem.addProperties({
   // for precision, the textual value is sent to the server
   // which can be transferred to a bigdecimal there
   changed: function (form, item, value) {
-    if (this.form.setTextualValue) {
-      this.form.setTextualValue(this.name, this.getEnteredValue(), this.typeInstance);
+    if (item && item.setValue) {
       item.setValue(this.getEnteredValue());
     }
     this.Super('changed', arguments);
@@ -441,9 +440,6 @@ isc.OBNumberItem.addProperties({
         isFormula = true;
       }
       this.setValue(OB.Utilities.Number.OBMaskedToJS(value, this.typeInstance.decSeparator, this.typeInstance.groupSeparator));
-      if (this.form.setTextualValue) {
-        this.form.setTextualValue(this.name, value, this.typeInstance);
-      }
     } else {
       value = this.roundJsNumberUsingTypeInstance(this.getValue(), this.typeInstance);
       this.setValue(value);
@@ -470,10 +466,6 @@ isc.OBNumberItem.addProperties({
       if (isFormula) {
         // the formula is evaluated in the validate function, so until then it is not possible to round it, do it now
         value = this.roundJsNumberUsingTypeInstance(value, this.typeInstance);
-        if (this.form.setTextualValue) {
-          textRoundedValue = OB.Utilities.Number.JSToOBMasked(value, this.typeInstance.maskNumeric, this.typeInstance.decSeparator, this.typeInstance.groupSeparator, OB.Format.defaultGroupingSize);
-          this.form.setTextualValue(this.name, textRoundedValue, this.typeInstance);
-        }
         this.setValue(value);
       }
       // first check if the number is valid
@@ -518,9 +510,6 @@ isc.OBNumberItem.validateCondition = function (item, validator, value) {
     if (OB.Utilities.Number.IsValidValueString(type, value)) {
       validator.resultingValue = OB.Utilities.Number.OBMaskedToJS(value, type.decSeparator, type.groupSeparator);
       item.storeValue(validator.resultingValue);
-      if (item.form && item.form.setTextualValue) {
-        item.form.setTextualValue(item.name, value, item.typeInstance);
-      }
       return true;
     } else {
       // don't loose illegal values

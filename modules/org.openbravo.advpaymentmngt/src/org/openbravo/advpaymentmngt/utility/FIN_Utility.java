@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2015 Openbravo SLU
+ * All portions are Copyright (C) 2010-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -1358,8 +1358,8 @@ public class FIN_Utility {
       final StringBuilder whereClause = new StringBuilder();
       whereClause.append(" select pd." + FIN_PaymentDetail.PROPERTY_ID);
       whereClause.append(" from " + FIN_PaymentDetail.ENTITY_NAME + " as pd");
-      whereClause.append(" left join pd." + FIN_PaymentDetail.PROPERTY_FINPAYMENTSCHEDULEDETAILLIST
-          + " as psd");
+      whereClause.append(" inner join pd."
+          + FIN_PaymentDetail.PROPERTY_FINPAYMENTSCHEDULEDETAILLIST + " as psd");
       whereClause
           .append(" where pd." + FIN_PaymentDetail.PROPERTY_FINPAYMENT + ".id = :paymentId ");
       whereClause.append(" and pd." + FIN_PaymentDetail.PROPERTY_ACTIVE + " = true");
