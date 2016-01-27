@@ -67,13 +67,12 @@ public class BPartnerFilter extends ProcessHQLQuery {
           + "bpl.businessPartner.priceList IS NOT NULL AND "
           + "bpl.$readableSimpleClientCriteria AND " + "bpl.$naturalOrgCriteria AND "
           + "(bpl.$incrementalUpdateCriteria" + operator
-          + "bpl.businessPartner.$incrementalUpdateCriteria) "
-          + " ORDER BY bpl.businessPartner.name";
+          + "bpl.businessPartner.$incrementalUpdateCriteria) ";
     } else {
       hql = hql + "FROM BusinessPartner bp left outer join bp.aDUserList AS ulist "
           + "WHERE $filtersCriteria AND bp.customer = true AND "
           + "bp.priceList IS NOT NULL AND bp.$readableSimpleClientCriteria AND "
-          + "bp.$naturalOrgCriteria AND bp.$incrementalUpdateCriteria" + " ORDER BY bp.name";
+          + "bp.$naturalOrgCriteria AND bp.$incrementalUpdateCriteria";
     }
 
     hqlQueries.add(hql);

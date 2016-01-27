@@ -355,21 +355,21 @@ button.btnbp:disabled {
 } 
 
 .iconSortNone {
-  width: 30px;
+  width: 58px;
   height: 30px;
   background-image: url('./../img/iconSelectorSortDisabled.png');
   background-repeat: no-repeat;
 }
 
 .iconSortAsc {
-  width: 30px;
+  width: 58px;
   height: 30px;
   background-image: url('./../img/iconSelectorSortAscending.png');
   background-repeat: no-repeat;
 }
 
 .iconSortDesc {
-  width: 30px;
+  width: 58px;
   height: 30px;
   background-image: url('./../img/iconSelectorSortDescending.png');
   background-repeat: no-repeat;
