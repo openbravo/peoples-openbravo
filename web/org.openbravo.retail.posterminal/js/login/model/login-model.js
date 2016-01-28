@@ -835,7 +835,7 @@
 
     dialog: null,
     preLoadContext: function (callback) {
-      if (!window.localStorage.getItem('terminalKeyIdentifier') && !window.localStorage.getItem('terminalName') && window.localStorage.getItem('terminalAuthentication') === 'Y') {
+      if (!window.localStorage.getItem('terminalKeyIdentifier') && window.localStorage.getItem('terminalAuthentication') === 'Y') {
         OB.UTIL.showLoading(false);
         if (OB.UI.ModalSelectTerminal) {
           this.dialog = OB.MobileApp.view.$.confirmationContainer.createComponent({
