@@ -36,7 +36,6 @@ import org.openbravo.model.pricing.pricelist.PriceListVersion;
 import org.openbravo.retail.config.OBRETCOProductList;
 import org.openbravo.retail.posterminal.POSUtils;
 import org.openbravo.retail.posterminal.ProcessHQLQuery;
-import org.openbravo.retail.posterminal.TerminalType;
 
 public class Product extends ProcessHQLQuery {
   public static final String productPropertyExtension = "OBPOS_ProductExtension";
@@ -258,15 +257,5 @@ public class Product extends ProcessHQLQuery {
   @Override
   protected boolean bypassPreferenceCheck() {
     return true;
-  }
-
-  public final static boolean hasBestSellersModule() {
-    // Check whether there is the BestSellers module installed or not.
-    try {
-      TerminalType.class.getField("PROPERTY_BESTHASBESTSELLERS");
-      return true;
-    } catch (Exception e) {
-      return false;
-    }
   }
 }
