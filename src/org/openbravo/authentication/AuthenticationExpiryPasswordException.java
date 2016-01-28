@@ -12,7 +12,6 @@
 
 package org.openbravo.authentication;
 
-import org.openbravo.base.exception.OBException;
 import org.openbravo.erpCommon.utility.OBError;
 
 /**
@@ -20,7 +19,7 @@ import org.openbravo.erpCommon.utility.OBError;
  * last update password date for user plus validity days defined for client has been reached
  * 
  */
-public class AuthenticationExpiryPasswordException extends OBException {
+public class AuthenticationExpiryPasswordException extends AuthenticationException {
   private static final long serialVersionUID = 1L;
   private OBError error;
 

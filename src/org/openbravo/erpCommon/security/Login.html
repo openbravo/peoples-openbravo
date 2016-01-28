@@ -231,7 +231,6 @@ function buttonOK_click() {
       shouldContinue = setLoginMessage(result.messageType, result.messageTitle, result.messageText);
       if (!shouldContinue) {
         document.getElementById('password').value = '';
-        document.getElementById('user').value = '';
       }
     }
     if (result.resetPassword && document.getElementById('loggedUser').value===''){
@@ -256,6 +255,7 @@ function buttonOK_click() {
       submitCommandForm(command, false, null, result.target, target, true);
     }else if (result.resetPassword){
       enableButton('buttonOK');
+      document.getElementById('user').value = '';
       setWindowElementFocus('user', 'id');
     } else {
       enableButton('buttonOK');

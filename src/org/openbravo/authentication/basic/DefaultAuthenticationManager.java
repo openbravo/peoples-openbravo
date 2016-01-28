@@ -13,6 +13,7 @@
 package org.openbravo.authentication.basic;
 
 import java.io.IOException;
+import java.util.Calendar;
 import java.util.Date;
 
 import javax.servlet.ServletException;
@@ -22,6 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.authentication.AuthenticationException;
 import org.openbravo.authentication.AuthenticationExpiryPasswordException;
 import org.openbravo.authentication.AuthenticationManager;
@@ -29,8 +31,11 @@ import org.openbravo.base.HttpBaseUtils;
 import org.openbravo.base.secureApp.LoginUtils;
 import org.openbravo.base.secureApp.VariablesHistory;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.service.OBCriteria;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.ad.access.User;
 
 /**
  * 
@@ -69,57 +74,54 @@ public class DefaultAuthenticationManager extends AuthenticationManager {
     }
 
     VariablesHistory variables = new VariablesHistory(request);
-    final String strUser;
-    final String strPass;
+    final String user;
+    final String pass;
     // Begins code related to login process
     if (resetPassword) {
-      strUser = vars.getStringParameter("loggedUser");
+      user = vars.getStringParameter("loggedUser");
     } else {
-      strUser = vars.getStringParameter("user");
+      user = vars.getStringParameter("user");
     }
-    strPass = vars.getStringParameter("password");
-    username = strUser;
-    if (StringUtils.isEmpty(strUser)) {
+    pass = vars.getStringParameter("password");
+    username = user;
+    if (StringUtils.isEmpty(user)) {
       // redirects to the menu or the menu with the target
       setTargetInfoInVariables(request, variables);
       return null; // just give up, return null
     }
 
-    final String userId = LoginUtils.getValidUserId(conn, strUser, strPass);
-    final String sessionId = createDBSession(request, strUser, userId);
+    final String userId = LoginUtils.getValidUserId(conn, user, pass);
+    final String sessionId = createDBSession(request, user, userId);
 
     if (userId == null) {
 
       OBError errorMsg = new OBError();
       errorMsg.setType("Error");
 
-      if (LoginUtils.checkUserPassword(conn, strUser, strPass) == null) {
-        log4j.debug("Failed user/password. Username: " + strUser + " - Session ID:" + sessionId);
+      if (LoginUtils.checkUserPassword(conn, user, pass) == null) {
+        log4j.debug("Failed user/password. Username: " + user + " - Session ID:" + sessionId);
         errorMsg.setTitle("IDENTIFICATION_FAILURE_TITLE");
         errorMsg.setMessage("IDENTIFICATION_FAILURE_MSG");
       } else {
-        log4j.debug(strUser + " is locked cannot activate session ID " + sessionId);
+        log4j.debug(user + " is locked cannot activate session ID " + sessionId);
         errorMsg.setTitle("LOCKED_USER_TITLE");
         errorMsg.setMessage("LOCKED_USER_MSG");
       }
 
-      // throw error message will be caught by LoginHandler
       throw new AuthenticationException("IDENTIFICATION_FAILURE_TITLE", errorMsg);
     }
-    // Check if password valid date is reached
-    Date lastUpdatePasswordDate = LoginUtils.getUpdatePasswordDate(conn, strUser, strPass);
+    Date lastUpdatePasswordDate = getUpdatePasswordDate(user);
 
     if (lastUpdatePasswordDate != null) {
 
-      // Checks if password
       Date today = new Date();
       if (lastUpdatePasswordDate.compareTo(today) <= 0) {
-        log4j.debug("Failed user/password. Username: " + strUser + " - Session ID:" + sessionId);
         OBError errorMsg = new OBError();
         errorMsg.setType("Error");
         errorMsg.setTitle("IDENTIFICATION_FAILURE_TITLE");
         errorMsg.setMessage("IDENTIFICATION_FAILURE_MSG");
         throw new AuthenticationExpiryPasswordException("IDENTIFICATION_FAILURE_TITLE", errorMsg);
+
       }
     }
 
@@ -167,5 +169,35 @@ public class DefaultAuthenticationManager extends AuthenticationManager {
     if (!response.isCommitted()) {
       response.sendRedirect(HttpBaseUtils.getLocalAddress(request));
     }
+  }
+
+  /**
+   * Returns the expiry password date from login and unHashedPassword parameters
+   * 
+   * @param username
+   *          the username
+   * @return the expiry password date or null in case validity days are not applicable
+   */
+  private static Date getUpdatePasswordDate(String username) {
+
+    Date total;
+
+    final OBCriteria<User> obc = OBDal.getInstance().createCriteria(User.class);
+    obc.setFilterOnReadableClients(false);
+    obc.setFilterOnReadableOrganization(false);
+    obc.add(Restrictions.eq(User.PROPERTY_USERNAME, username));
+    final User userOB = (User) obc.uniqueResult();
+    Date lastUpdateDate = userOB.getLastupdatepassworddate();
+    Long validityDays = userOB.getClient().getDaystopasswordexpiration();
+    if (validityDays != null && validityDays > 0) {
+      Calendar expirationDate = Calendar.getInstance();
+      expirationDate.setTimeInMillis(lastUpdateDate.getTime());
+      expirationDate.add(Calendar.DATE, validityDays.intValue());
+      total = expirationDate.getTime();
+      return total;
+    } else {
+      return null;
+    }
+
   }
 }
