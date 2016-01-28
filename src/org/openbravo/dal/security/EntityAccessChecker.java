@@ -25,13 +25,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
+import org.openbravo.base.model.Table;
 import org.openbravo.base.provider.OBNotSingleton;
 import org.openbravo.client.application.Parameter;
 import org.openbravo.client.application.Process;
@@ -68,6 +68,8 @@ import org.openbravo.userinterface.selector.Selector;
 
 public class EntityAccessChecker implements OBNotSingleton {
   private static final Logger log = Logger.getLogger(EntityAccessChecker.class);
+
+  private static final Object BUTTON_REFERENCE = "28";
 
   // Table Access Level:
   // "6";"System/Client"
@@ -190,14 +192,19 @@ public class EntityAccessChecker implements OBNotSingleton {
         }
       }
       for (final Entity entity : processEntities) {
-        for (final Property property : entity.getProperties()) {
-          if (property != null && StringUtils.isNotBlank(property.getColumnId())) {
-            // getting all process definition
-            Column col = OBDal.getInstance().get(Column.class, property.getColumnId());
-            if (col != null && col.getOBUIAPPProcess() != null) {
-              addDerivedEtityFromProcess(col.getOBUIAPPProcess());
-            }
+        Table table = mp.getTableFromEntity(entity.getTableName());
+        if (table == null) {
+          continue;
+        }
+        for (org.openbravo.base.model.Column col : table.getColumns()) {
+          if (!BUTTON_REFERENCE.equals(col.getReference().getId())) {
+            continue;
           }
+          Process process = OBDal.getInstance().get(Column.class, col.getId()).getOBUIAPPProcess();
+          if (process == null) {
+            continue;
+          }
+          addDerivedEtityFromProcess(process);
         }
       }
 
@@ -316,7 +323,6 @@ public class EntityAccessChecker implements OBNotSingleton {
     if (obContext.isInAdministratorMode()) {
       return false;
     }
-
     return derivedReadableEntities.contains(entity);
   }
 
@@ -328,8 +334,9 @@ public class EntityAccessChecker implements OBNotSingleton {
   public boolean isWritable(Entity entity) {
     // prevent infinite looping
     if (!isInitialized) {
-      return false;
+      return true;
     }
+
     if (obContext.isInAdministratorMode()) {
       return true;
     }
@@ -446,18 +453,17 @@ public class EntityAccessChecker implements OBNotSingleton {
   private boolean isReadableWithoutAdminMode(Entity entity) {
     // prevent infinite looping
     if (!isInitialized) {
-      return true;
-    }
-
-    if (writableEntities.contains(entity)) {
-      return true;
+      return false;
     }
 
     if (readableEntities.contains(entity)) {
       return true;
     }
 
-    return !derivedReadableEntities.contains(entity);
+   if (derivedReadableEntities.contains(entity)) {
+      return false;
+    }
+    return false;
   }
 
   private boolean isDerivedWithoutAdminMode(Entity entity) {
@@ -466,21 +472,20 @@ public class EntityAccessChecker implements OBNotSingleton {
       return false;
     }
 
-    if (writableEntities.contains(entity)) {
-      return true;
-    }
-
     if (readableEntities.contains(entity)) {
       return true;
     }
 
-    return derivedReadableEntities.contains(entity);
+   if (derivedReadableEntities.contains(entity)) {
+      return true;
+    }
+    return false;
   }
 
   private boolean isWritableWithoutAdminMode(Entity entity) {
     // prevent infinite looping
     if (!isInitialized) {
-      return true;
+      return false;
     }
     return writableEntities.contains(entity);
   }

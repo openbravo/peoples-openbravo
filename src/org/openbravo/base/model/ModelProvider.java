@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -896,6 +896,7 @@ public class ModelProvider implements OBSingleton {
   public Table getTable(String tableName) throws CheckException {
     if (tablesByTableName == null)
       getModel();
+
     // search case insensitive!
     final Table table = tablesByTableName.get(tableName.toLowerCase());
     if (table == null) {
@@ -908,6 +909,17 @@ public class ModelProvider implements OBSingleton {
       }
     }
     return table;
+  }
+
+  /**
+   * Retrieves a table using the entityName. If not found then continue without exception.
+   *
+   * @return Table if exists, otherwise null.
+   */
+  public Table getTableFromEntity(String entityName) {
+    if (tablesByTableName == null)
+      getModel();
+    return tablesByTableName.get(entityName.toLowerCase());
   }
 
   /**
