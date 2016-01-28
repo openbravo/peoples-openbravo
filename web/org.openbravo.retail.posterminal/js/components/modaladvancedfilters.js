@@ -62,22 +62,36 @@ enyo.kind({
   },
 
   addFilter: function (filter) {
+    var editor;
+    if (filter.type === 'DATE') {
+      editor = {
+        kind: 'OB.UI.DatePicker',
+        type: 'text',
+        classes: 'input',
+        name: 'input' + filter.name,
+        style: 'float: left; width: 295px; padding: 0px; height: 39px;'
+      };
+    } else {
+      editor = {
+        kind: 'enyo.Input',
+        type: 'text',
+        classes: 'input',
+        name: 'input' + filter.name,
+        style: 'float: left; width: 295px; padding: 0px;'
+      };
+    }
     var filterLine = this.createComponent({
       filter: filter,
-      style: 'width: 100%; clear:both; background-color: #fff; height: 32px; padding-top: 2px; overflow: hidden;',
+      style: 'width: 100%; clear:both; background-color: #fff; padding-top: 2px; overflow: hidden; height: ' + (filter.type === 'DATE' ? '41px;' : '32px;'),
       components: [{
-        style: 'float: left; width: 30%;  background-color: #e2e2e2; height: 25px; padding-top: 6px; padding-right: 5px; text-align: right;font-size: 16px; color: black',
+        style: 'float: left; width: 120px;  background-color: #e2e2e2; padding-top: 6px; padding-right: 5px; text-align: right;font-size: 16px; color: black; height: ' + (filter.type === 'DATE' ? '39px;' : '25px;'),
         name: 'label' + filter.name,
         content: OB.I18N.getLabel(filter.caption)
       }, {
-        style: 'float: left; width: 65%; text-align: left; padding-left: 5px;',
-        components: [{
-          kind: 'enyo.Input',
-          type: 'text',
-          classes: 'input',
-          name: 'input' + filter.name,
-          style: 'float: left; width: 69%; padding: 0px;'
-        }, {
+        style: 'float: left; width: 376px; text-align: left; padding-left: 5px;',
+        components: [
+        editor,
+        {
           kind: 'OB.UI.SmallButton',
           name: 'order' + filter.name,
           classes: 'btnlink-white iconSortNone',
@@ -107,14 +121,14 @@ enyo.kind({
       orderby: null
     };
     _.each(this.filters, function (flt) {
-      var text = flt.owner.$['input' + flt.filter.name].getValue(),
+      var value = flt.owner.$['input' + flt.filter.name].getValue(),
           orderClasses = flt.owner.$['order' + flt.filter.name].getClassAttribute().split(' '),
           orderClass = orderClasses[orderClasses.length - 1];
-      text = text ? text.trim() : '';
-      if (text) {
+      value = value ? (flt.filter.type === 'DATE' ? value : value.trim()) : '';
+      if (value) {
         result.filters.push({
           column: flt.filter.column,
-          text: text
+          text: value
         });
       }
       if (orderClass !== 'iconSortNone') {
@@ -135,7 +149,7 @@ enyo.kind({
   name: 'OB.UI.ModalAdvancedFilters',
   topPosition: '125px',
   i18nHeader: 'OBPOS_LblAdvancedFilters',
-  style: 'width: 400px',
+  style: 'width: 508px',
   events: {
     onHideThisPopup: ''
   },
