@@ -156,12 +156,12 @@ OB.UTIL.processRemainingCodes = function (order) {
   });
   if (epcCodesToAdd) {
     OB.UTIL.waitForAck(function (uuid) {
-      OB.UTIL.rfidWebsocket.send('addEpc:' + uuid + ':' + epcCodesToAdd.substring(0, epcCodesToAdd.length - 1));
+      OB.UTIL.rfidWebsocket.send('addEpcs:' + uuid + ':' + epcCodesToAdd.substring(0, epcCodesToAdd.length - 1));
     }, function () {}, function () {}, 2000, OB.UTIL.get_UUID(), 5);
   }
   if (epcCodesToErase) {
     OB.UTIL.waitForAck(function (uuid) {
-      OB.UTIL.rfidWebsocket.send('removeEpc:' + uuid + ':' + epcCodesToErase.substring(0, epcCodesToErase.length - 1));
+      OB.UTIL.rfidWebsocket.send('removeEpcs:' + uuid + ':' + epcCodesToErase.substring(0, epcCodesToErase.length - 1));
     }, function () {}, function () {}, 2000, OB.UTIL.get_UUID(), 5);
   }
   //Only if useSecurityGate check is enabled
