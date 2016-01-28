@@ -38,6 +38,7 @@
   v_doIncrease BOOLEAN:= FALSE;
   v_doDecrease BOOLEAN:= FALSE;
   v_stockdiff NUMBER:= 0;
+  v_checkuom NUMBER:= 0;
 BEGIN
     
     IF AD_isTriggerEnabled()='N' THEN RETURN;
@@ -92,7 +93,11 @@ BEGIN
 		IF INSERTING THEN
 			IF(COALESCE(v_UOM_ID, '0') <> COALESCE(:NEW.C_UOM_ID, '0')) THEN
         IF (:new.M_InventoryLine_ID IS NOT NULL) THEN
-	  SELECT line INTO v_DocumentLineNo FROM M_InventoryLine WHERE M_InventoryLine_ID = :new.M_InventoryLine_ID;
+	  SELECT il.line, CASE WHEN i.inventory_type = 'O' OR i.inventory_type = 'C' THEN 1 ELSE 0 END
+	  INTO v_DocumentLineNo, v_checkuom
+	  FROM M_Inventory i JOIN M_InventoryLine il
+	  ON i.m_inventory_id = il.m_inventory_id
+	  WHERE il.m_inventoryline_id = :new.M_InventoryLine_ID;
 	END IF;
 	IF (:new.M_MovementLine_ID IS NOT NULL) THEN
 	  SELECT line INTO v_DocumentLineNo FROM M_MovementLine WHERE M_MovementLine_ID = :new.M_MovementLine_ID;
@@ -106,8 +111,10 @@ BEGIN
 	IF (:new.M_Internal_ConsumptionLine_ID IS NOT NULL) THEN
 	  SELECT line INTO v_DocumentLineNo FROM M_Internal_ConsumptionLine WHERE M_Internal_ConsumptionLine_ID = :new.M_Internal_ConsumptionLine_ID;
 	END IF;
-	  
-	RAISE_APPLICATION_ERROR(-20000, '@DocUOMMismatch@' || ' ' || COALESCE(v_DocumentLineNo, 0));
+
+	IF (v_checkuom = 0) THEN
+	  RAISE_APPLICATION_ERROR(-20000, '@DocUOMMismatch@' || ' ' || COALESCE(v_DocumentLineNo, 0));
+	END IF;
      	END IF;
       IF(v_attributeset_id IS NOT NULL AND (v_AttrSetValueType IS NULL OR v_AttrSetValueType <> 'F') AND v_IsOneAtSetValReq = 'Y' AND COALESCE(:NEW.M_ATTRIBUTESETINSTANCE_ID, '0') = '0') THEN
        	RAISE_APPLICATION_ERROR(-20000, '@20112@' || ' - ' || v_Name) ;
