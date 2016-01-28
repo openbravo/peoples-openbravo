@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2015 Openbravo SLU
+ * All portions are Copyright (C) 2012-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -495,7 +495,6 @@ public class CostingMigrationProcess implements Process {
 
     int costPrecision = cur.getCostingPrecision().intValue();
     int stdPrecision = cur.getStandardPrecision().intValue();
-    CostingRuleProcess crp = new CostingRuleProcess();
     // Update cost of inventories and process starting physical inventories.
     ScrollableResults icls = getCloseInventoryLines(orgs);
     String productId = "";
@@ -512,7 +511,7 @@ public class CostingMigrationProcess implements Process {
           totalStock = stock.get("stock");
         }
 
-        MaterialTransaction trx = crp.getInventoryLineTransaction(icl);
+        MaterialTransaction trx = icl.getMaterialMgmtMaterialTransactionList().get(0);
         trx.setTransactionProcessDate(DateUtils.addSeconds(trx.getTransactionProcessDate(), -1));
         trx.setCurrency(OBDal.getInstance().get(Currency.class, curId));
 

@@ -20,6 +20,7 @@ package org.openbravo.costing;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -58,6 +59,8 @@ import org.openbravo.model.materialmgmt.cost.TransactionCost;
 import org.openbravo.model.materialmgmt.transaction.InventoryCount;
 import org.openbravo.model.materialmgmt.transaction.InventoryCountLine;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
+import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
+import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 import org.openbravo.scheduling.Process;
 import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.scheduling.ProcessLogger;
@@ -200,7 +203,8 @@ public class CostingRuleProcess implements Process {
     pQry.setFilterOnReadableOrganization(false);
     pQry.setNamedParameter("porgs", naturalOrgs);
     pQry.setNamedParameter("childOrgs", childOrgs);
-    return pQry.count() > 0;
+    pQry.setMaxResult(1);
+    return pQry.uniqueResult() != null;
   }
 
   private void checkAllTrxCalculated(Set<String> naturalOrgs, Set<String> childOrgs) {
@@ -219,7 +223,8 @@ public class CostingRuleProcess implements Process {
     pQry.setFilterOnReadableOrganization(false);
     pQry.setNamedParameter("porgs", naturalOrgs);
     pQry.setNamedParameter("childOrgs", childOrgs);
-    if (pQry.count() > 0) {
+    pQry.setMaxResult(1);
+    if (pQry.uniqueResult() != null) {
       throw new OBException("@TrxWithCostNoCalculated@");
     }
   }
@@ -240,57 +245,83 @@ public class CostingRuleProcess implements Process {
     pQry.setFilterOnReadableOrganization(false);
     pQry.setNamedParameter("porgs", naturalOrgs);
     pQry.setNamedParameter("childOrgs", childOrgs);
-    if (pQry.count() > 0) {
+    pQry.setMaxResult(1);
+    if (pQry.uniqueResult() != null) {
       throw new OBException("@ProductsWithTrxCalculated@");
     }
   }
 
-  private void initializeOldTrx(Set<String> childOrgs, Date date) {
-    StringBuffer where = new StringBuffer();
-    where.append(" where " + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
-    where.append("   and " + MaterialTransaction.PROPERTY_MOVEMENTDATE + " < :date");
-    OBQuery<MaterialTransaction> trxQry = OBDal.getInstance().createQuery(
-        MaterialTransaction.class, where.toString());
-    trxQry.setFilterOnReadableOrganization(false);
-    trxQry.setNamedParameter("orgs", childOrgs);
-    trxQry.setNamedParameter("date", date);
-    trxQry.setFetchSize(1000);
-    ScrollableResults trxs = trxQry.scroll(ScrollMode.FORWARD_ONLY);
-    int i = 1;
-    try {
-      while (trxs.next()) {
-        MaterialTransaction trx = (MaterialTransaction) trxs.get(0);
+  private void initializeOldTrx(Set<String> childOrgs, Date date) throws SQLException {
+    Client client = OBDal.getInstance().get(Client.class,
+        OBContext.getOBContext().getCurrentClient().getId());
 
-        TransactionCost transactionCost = OBProvider.getInstance().get(TransactionCost.class);
-        transactionCost.setInventoryTransaction(trx);
-        transactionCost.setCostDate(trx.getTransactionProcessDate());
-        transactionCost.setClient(trx.getClient());
-        transactionCost.setOrganization(trx.getOrganization());
-        transactionCost.setCost(BigDecimal.ZERO);
-        transactionCost.setCurrency(trx.getClient().getCurrency());
-        transactionCost.setAccountingDate(trx.getGoodsShipmentLine() != null ? trx
-            .getGoodsShipmentLine().getShipmentReceipt().getAccountingDate() : trx
-            .getMovementDate());
-        List<TransactionCost> trxCosts = trx.getTransactionCostList();
-        trxCosts.add(transactionCost);
-        trx.setTransactionCostList(trxCosts);
+    StringBuffer insert = new StringBuffer();
+    insert.append(" insert into " + TransactionCost.ENTITY_NAME);
+    insert.append(" (" + TransactionCost.PROPERTY_ID);
+    insert.append(", " + TransactionCost.PROPERTY_CLIENT);
+    insert.append(", " + TransactionCost.PROPERTY_ORGANIZATION);
+    insert.append(", " + TransactionCost.PROPERTY_CREATIONDATE);
+    insert.append(", " + TransactionCost.PROPERTY_CREATEDBY);
+    insert.append(", " + TransactionCost.PROPERTY_UPDATED);
+    insert.append(", " + TransactionCost.PROPERTY_UPDATEDBY);
+    insert.append(", " + TransactionCost.PROPERTY_ACTIVE);
+    insert.append(", " + TransactionCost.PROPERTY_INVENTORYTRANSACTION);
+    insert.append(", " + TransactionCost.PROPERTY_COST);
+    insert.append(", " + TransactionCost.PROPERTY_COSTDATE);
+    insert.append(", " + TransactionCost.PROPERTY_CURRENCY);
+    insert.append(", " + TransactionCost.PROPERTY_ACCOUNTINGDATE);
+    insert.append(")");
+    insert.append(" select get_uuid()");
+    insert.append(", t." + MaterialTransaction.PROPERTY_CLIENT);
+    insert.append(", t." + MaterialTransaction.PROPERTY_ORGANIZATION);
+    insert.append(", now()");
+    insert.append(", t." + MaterialTransaction.PROPERTY_CREATEDBY);
+    insert.append(", now()");
+    insert.append(", t." + MaterialTransaction.PROPERTY_UPDATEDBY);
+    insert.append(", t." + MaterialTransaction.PROPERTY_ACTIVE);
+    insert.append(", t");
+    insert.append(", cast(0 as big_decimal)");
+    insert.append(", t." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE);
+    insert.append(", t." + MaterialTransaction.PROPERTY_CLIENT + "." + Client.PROPERTY_CURRENCY);
+    insert.append(", coalesce(io." + ShipmentInOut.PROPERTY_ACCOUNTINGDATE + ", t."
+        + MaterialTransaction.PROPERTY_MOVEMENTDATE + ")");
+    insert.append(" from " + MaterialTransaction.ENTITY_NAME + " as t");
+    insert.append(" left join t." + MaterialTransaction.PROPERTY_GOODSSHIPMENTLINE + " as iol");
+    insert.append(" left join iol." + ShipmentInOutLine.PROPERTY_SHIPMENTRECEIPT + " as io");
+    insert.append(" where t." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
+    insert.append(" and t." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " < :date");
+    insert.append(" and t." + MaterialTransaction.PROPERTY_ISPROCESSED + " = false");
+    insert.append(" and t." + MaterialTransaction.PROPERTY_ACTIVE + " = true");
+    insert.append(" and t." + MaterialTransaction.PROPERTY_CLIENT + ".id = :client");
 
-        trx.setCostCalculated(true);
-        trx.setCostingStatus("CC");
-        trx.setTransactionCost(BigDecimal.ZERO);
-        trx.setCurrency(trx.getClient().getCurrency());
-        trx.setProcessed(true);
-        OBDal.getInstance().save(trx);
+    Query queryInsert = OBDal.getInstance().getSession().createQuery(insert.toString());
+    queryInsert.setParameterList("orgs", childOrgs);
+    queryInsert.setDate("date", date);
+    queryInsert.setString("client", client.getId());
+    queryInsert.executeUpdate();
 
-        if ((i % 100) == 0) {
-          OBDal.getInstance().flush();
-          OBDal.getInstance().getSession().clear();
-        }
-        i++;
-      }
-    } finally {
-      trxs.close();
-    }
+    StringBuffer update = new StringBuffer();
+    update.append(" update " + MaterialTransaction.ENTITY_NAME);
+    update.append(" set " + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = true");
+    update.append(", " + MaterialTransaction.PROPERTY_COSTINGSTATUS + " = 'CC'");
+    update.append(", " + MaterialTransaction.PROPERTY_TRANSACTIONCOST + " = " + BigDecimal.ZERO);
+    update.append(", " + MaterialTransaction.PROPERTY_CURRENCY + " = :currency");
+    update.append(", " + MaterialTransaction.PROPERTY_ISPROCESSED + " = true");
+    update.append(" where " + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
+    update.append(" and " + MaterialTransaction.PROPERTY_MOVEMENTDATE + " < :date");
+    update.append(" and " + MaterialTransaction.PROPERTY_ISPROCESSED + " = false");
+    update.append(" and " + MaterialTransaction.PROPERTY_ACTIVE + " = true");
+    update.append(" and " + MaterialTransaction.PROPERTY_CLIENT + ".id = :client");
+
+    Query queryUpdate = OBDal.getInstance().getSession().createQuery(update.toString());
+    queryUpdate.setParameter("currency", client.getCurrency());
+    queryUpdate.setParameterList("orgs", childOrgs);
+    queryUpdate.setDate("date", date);
+    queryUpdate.setString("client", client.getId());
+    queryUpdate.executeUpdate();
+
+    OBDal.getInstance().getSession().flush();
+    OBDal.getInstance().getSession().clear();
   }
 
   @Deprecated
@@ -366,6 +397,7 @@ public class CostingRuleProcess implements Process {
       stockLines.close();
     }
     // Process closing physical inventories.
+    rule = OBDal.getInstance().get(CostingRule.class, ruleId);
     for (CostingRuleInit cri : rule.getCostingRuleInitList()) {
       new InventoryCountProcess().processInventory(cri.getCloseInventory(), false);
     }
@@ -496,52 +528,67 @@ public class CostingRuleProcess implements Process {
       boolean existsPreviousRule) {
     CostingRule rule = OBDal.getInstance().get(CostingRule.class, ruleId);
     for (CostingRuleInit cri : rule.getCostingRuleInitList()) {
-      for (InventoryCountLine icl : cri.getCloseInventory().getMaterialMgmtInventoryCountLineList()) {
-        MaterialTransaction trx = getInventoryLineTransaction(icl);
-        // Remove 1 second from transaction date to ensure that cost is calculated with previous
-        // costing rule.
-        trx.setTransactionProcessDate(DateUtils.addSeconds(startingDate, -1));
-        BigDecimal trxCost = BigDecimal.ZERO;
-        BigDecimal cost = null;
-        Currency cur = FinancialUtils.getLegalEntityCurrency(trx.getOrganization());
-        if (existsPreviousRule) {
-          trxCost = CostingUtils.getTransactionCost(trx, startingDate, true, cur);
-          if (trx.getMovementQuantity().compareTo(BigDecimal.ZERO) != 0) {
-            cost = trxCost.divide(trx.getMovementQuantity().abs(), cur.getCostingPrecision()
-                .intValue(), RoundingMode.HALF_UP);
-            trx = OBDal.getInstance().get(MaterialTransaction.class, trx.getId());
+      ScrollableResults trxs = getInventoryLineTransactions(cri.getCloseInventory());
+      int i = 1;
+      try {
+        while (trxs.next()) {
+          MaterialTransaction trx = (MaterialTransaction) trxs.get(0);
+          // Remove 1 second from transaction date to ensure that cost is calculated with previous
+          // costing rule.
+          trx.setTransactionProcessDate(DateUtils.addSeconds(startingDate, -1));
+          BigDecimal trxCost = BigDecimal.ZERO;
+          BigDecimal cost = null;
+          Currency cur = FinancialUtils.getLegalEntityCurrency(trx.getOrganization());
+          if (existsPreviousRule) {
+            trxCost = CostingUtils.getTransactionCost(trx, startingDate, true, cur);
+            if (trx.getMovementQuantity().compareTo(BigDecimal.ZERO) != 0) {
+              cost = trxCost.divide(trx.getMovementQuantity().abs(), cur.getCostingPrecision()
+                  .intValue(), RoundingMode.HALF_UP);
+              trx = OBDal.getInstance().get(MaterialTransaction.class, trx.getId());
+            }
+          } else {
+            // Insert transaction cost record big ZERO cost.
+            cur = trx.getClient().getCurrency();
+            TransactionCost transactionCost = OBProvider.getInstance().get(TransactionCost.class);
+            transactionCost.setInventoryTransaction(trx);
+            transactionCost.setCostDate(trx.getTransactionProcessDate());
+            transactionCost.setClient(trx.getClient());
+            transactionCost.setOrganization(trx.getOrganization());
+            transactionCost.setCost(BigDecimal.ZERO);
+            transactionCost.setCurrency(trx.getClient().getCurrency());
+            transactionCost.setAccountingDate(trx.getGoodsShipmentLine() != null ? trx
+                .getGoodsShipmentLine().getShipmentReceipt().getAccountingDate() : trx
+                .getMovementDate());
+            List<TransactionCost> trxCosts = trx.getTransactionCostList();
+            trxCosts.add(transactionCost);
+            trx.setTransactionCostList(trxCosts);
+            OBDal.getInstance().save(trx);
           }
-        } else {
-          // Insert transaction cost record big ZERO cost.
-          cur = trx.getClient().getCurrency();
-          TransactionCost transactionCost = OBProvider.getInstance().get(TransactionCost.class);
-          transactionCost.setInventoryTransaction(trx);
-          transactionCost.setCostDate(trx.getTransactionProcessDate());
-          transactionCost.setClient(trx.getClient());
-          transactionCost.setOrganization(trx.getOrganization());
-          transactionCost.setCost(BigDecimal.ZERO);
-          transactionCost.setCurrency(trx.getClient().getCurrency());
-          transactionCost.setAccountingDate(trx.getGoodsShipmentLine() != null ? trx
-              .getGoodsShipmentLine().getShipmentReceipt().getAccountingDate() : trx
-              .getMovementDate());
-          List<TransactionCost> trxCosts = trx.getTransactionCostList();
-          trxCosts.add(transactionCost);
-          trx.setTransactionCostList(trxCosts);
-          OBDal.getInstance().save(trx);
-        }
 
-        trx.setCostCalculated(true);
-        trx.setCostingStatus("CC");
-        trx.setCurrency(cur);
-        trx.setTransactionCost(trxCost);
-        trx.setProcessed(true);
-        OBDal.getInstance().save(trx);
-        icl = OBDal.getInstance().get(InventoryCountLine.class, icl.getId());
-        InventoryCountLine initICL = getInitIcl(cri.getInitInventory(), icl);
-        initICL.setCost(cost);
-        OBDal.getInstance().save(initICL);
+          trx.setCostCalculated(true);
+          trx.setCostingStatus("CC");
+          trx.setCurrency(cur);
+          trx.setTransactionCost(trxCost);
+          trx.setProcessed(true);
+          OBDal.getInstance().save(trx);
+
+          InventoryCountLine initICL = trx.getPhysicalInventoryLine().getRelatedInventory();
+          initICL.setCost(cost);
+          OBDal.getInstance().save(initICL);
+
+          if ((i % 100) == 0) {
+            OBDal.getInstance().flush();
+            OBDal.getInstance().getSession().clear();
+            cri = OBDal.getInstance().get(CostingRuleInit.class, cri.getId());
+          }
+          i++;
+        }
+      } finally {
+        trxs.close();
       }
+
       OBDal.getInstance().flush();
+      cri = OBDal.getInstance().get(CostingRuleInit.class, cri.getId());
       new InventoryCountProcess().processInventory(cri.getInitInventory(), false);
     }
     if (!existsPreviousRule) {
@@ -585,30 +632,38 @@ public class CostingRuleProcess implements Process {
     return iclQry.uniqueResult();
   }
 
-  private void updateInitInventoriesTrxDate(Date startingDate, String ruleId) {
+  private ScrollableResults getInventoryLineTransactions(InventoryCount inventory) {
     StringBuffer where = new StringBuffer();
-    where.append(" as trx");
-    where.append("   join trx." + MaterialTransaction.PROPERTY_PHYSICALINVENTORYLINE + " as il");
-    where.append(" where il." + InventoryCountLine.PROPERTY_PHYSINVENTORY + ".id IN (");
-    where.append("    select cri." + CostingRuleInit.PROPERTY_INITINVENTORY + ".id");
-    where.append("    from " + CostingRuleInit.ENTITY_NAME + " as cri");
-    where.append("    where cri." + CostingRuleInit.PROPERTY_COSTINGRULE + ".id = :cr");
-    where.append("    )");
+    where.append(MaterialTransaction.PROPERTY_PHYSICALINVENTORYLINE + "."
+        + InventoryCountLine.PROPERTY_PHYSINVENTORY + "." + InventoryCount.PROPERTY_ID
+        + " = :inventory");
     OBQuery<MaterialTransaction> trxQry = OBDal.getInstance().createQuery(
         MaterialTransaction.class, where.toString());
-    trxQry.setNamedParameter("cr", ruleId);
-    trxQry.setFetchSize(1000);
-    ScrollableResults trxs = trxQry.scroll(ScrollMode.FORWARD_ONLY);
-    int i = 0;
-    while (trxs.next()) {
-      MaterialTransaction trx = (MaterialTransaction) trxs.get(0);
-      trx.setTransactionProcessDate(startingDate);
-      OBDal.getInstance().save(trx);
-      if ((i % 100) == 0) {
-        OBDal.getInstance().flush();
-        OBDal.getInstance().getSession().clear();
-      }
-    }
-    trxs.close();
+    trxQry.setNamedParameter("inventory", inventory.getId());
+    return trxQry.scroll(ScrollMode.FORWARD_ONLY);
+  }
+
+  private void updateInitInventoriesTrxDate(Date startingDate, String ruleId) {
+    StringBuffer update = new StringBuffer();
+    update.append(" update " + MaterialTransaction.ENTITY_NAME + " as trx");
+    update.append(" set trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " = :date");
+    update.append(" where exists (");
+    update.append("    select 1");
+    update.append("    from " + InventoryCountLine.ENTITY_NAME + " as il");
+    update.append("    join il." + InventoryCountLine.PROPERTY_PHYSINVENTORY + " as i");
+    update.append("    join i." + InventoryCount.PROPERTY_COSTINGRULEINITINITINVENTORYLIST
+        + " as cri");
+    update.append("    where cri." + CostingRuleInit.PROPERTY_COSTINGRULE + ".id = :cr");
+    update.append("    and il." + InventoryCountLine.PROPERTY_ID + " = trx."
+        + MaterialTransaction.PROPERTY_PHYSICALINVENTORYLINE + ".id");
+    update.append(" )");
+
+    Query queryUpdate = OBDal.getInstance().getSession().createQuery(update.toString());
+    queryUpdate.setDate("date", startingDate);
+    queryUpdate.setString("cr", ruleId);
+    queryUpdate.executeUpdate();
+
+    OBDal.getInstance().flush();
+    OBDal.getInstance().getSession().clear();
   }
 }
