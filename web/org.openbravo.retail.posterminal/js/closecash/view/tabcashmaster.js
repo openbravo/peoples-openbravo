@@ -138,7 +138,7 @@ enyo.kind({
     }
   },
 
-  updateCashUpModel: function (model, payments) {
+  updateCashUpModel: function (model, payments, updateCallback) {
     // wait until the application has finished all the asynchronous processes
     // this is done to prevent the cashUpReport to be accessed before it has been initialized
     OB.UTIL.SynchronizationHelper.executeWhenSynchronized({
@@ -199,6 +199,9 @@ enyo.kind({
         return OB.DEC.add(total, model.get('expected'));
       }, 0));
       model.set('totalDifference', OB.DEC.sub(model.get('totalDifference'), model.get('totalExpected')));
+      if (updateCallback !== undefined) {
+        updateCallback();
+      }
       callback();
     });
   }
