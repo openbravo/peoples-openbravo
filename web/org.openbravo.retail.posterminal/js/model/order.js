@@ -497,7 +497,6 @@
       }
 
       this.calculatingGross = true;
-      var me = this;
 
       var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('calculateGross');
 
