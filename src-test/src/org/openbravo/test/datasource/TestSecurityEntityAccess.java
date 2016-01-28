@@ -19,15 +19,29 @@
 
 package org.openbravo.test.datasource;
 
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
+import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.ad.access.Role;
+import org.openbravo.model.ad.access.RoleOrganization;
+import org.openbravo.model.ad.access.UserRoles;
+import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.service.json.JsonConstants;
 
 /**
@@ -36,59 +50,106 @@ import org.openbravo.service.json.JsonConstants;
  * @author inigo.sanchez
  *
  */
+@RunWith(Parameterized.class)
 public class TestSecurityEntityAccess extends BaseDataSourceTestDal {
-
   private static final String ASTERISK_ORG_ID = "0";
   private static final String CONTEXT_USER = "100";
   private static final String LANGUAGE_ID = "192";
-  private static final String ROLE_SYSTEM = "0";
   private static final String WAREHOUSE_ID = "B2D40D8A5D644DD89E329DC297309055";
   private static final String ROLE_INTERNATIONAL_ADMIN = "42D0EEB1C66F497A90DD526DC597E6F0";
+  private static final String ROLE_NO_ACCESS = "1";
 
-  private static final String ENTITY_SALES_ORDER = "Order";
-  private static final String ENTITY_SALES_INVOICE = "Invoice";
+  private RoleType role;
+  private String dataSource;
+  private int expectedResponseStatus;
 
-  /**
-   * This test ensures that a user with no access to an entity can't call to the specific
-   * DataSource. It is tested fetch operation.
-   */
-  @Test
-  public void testNotFetchSecurityEntityAccess() throws Exception {
-    OBContext.setOBContext(CONTEXT_USER);
+  private enum RoleType {
+    ADMIN_ROLE(ROLE_INTERNATIONAL_ADMIN), //
+    NO_ACCESS_ROLE(ROLE_NO_ACCESS);
 
-    // ensures a role with not access to a Order entity
-    changeProfile(ROLE_SYSTEM, LANGUAGE_ID, ASTERISK_ORG_ID, WAREHOUSE_ID);
+    private String roleId;
 
-    Map<String, String> params = new HashMap<String, String>();
-    params.put("_operationType", "fetch");
-
-    String response = doRequest("/org.openbravo.service.datasource/" + ENTITY_SALES_ORDER, params,
-        200, "POST");
-    JSONObject jsonResponse = new JSONObject(response);
-    assertTrue(getStatus(jsonResponse).equals(
-        String.valueOf(JsonConstants.RPCREQUEST_STATUS_VALIDATION_ERROR)));
+    private RoleType(String roleId) {
+      this.roleId = roleId;
+    }
   }
 
-  @Test
-  public void testFetchSecurityEntityAccess() throws Exception {
+  public TestSecurityEntityAccess(RoleType role, String dataSource, int expectedResponseStatus) {
+    this.role = role;
+    this.dataSource = dataSource;
+    this.expectedResponseStatus = expectedResponseStatus;
+  }
+
+  @Parameters(name = "{0} - dataSource: {1}")
+  public static Collection<Object[]> parameters() {
+    List<Object[]> testCases = new ArrayList<Object[]>();
+    for (RoleType type : RoleType.values()) {
+      testCases.add(new Object[] {
+          type,
+          "Order",
+          type == RoleType.ADMIN_ROLE ? JsonConstants.RPCREQUEST_STATUS_SUCCESS
+              : JsonConstants.RPCREQUEST_STATUS_FAILURE });
+    }
+    return testCases;
+  }
+
+  /** Creates dummy role without any access for testing purposes */
+  @BeforeClass
+  public static void createNoAccessRole() {
     OBContext.setOBContext(CONTEXT_USER);
 
-    // ensures a role with an access to Invoice entity
-    changeProfile(ROLE_INTERNATIONAL_ADMIN, LANGUAGE_ID, ASTERISK_ORG_ID, WAREHOUSE_ID);
+    Role noAccessRole = OBProvider.getInstance().get(Role.class);
+    noAccessRole.setId("1");
+    noAccessRole.setNewOBObject(true);
+    noAccessRole.setOrganization(OBDal.getInstance().get(Organization.class, ASTERISK_ORG_ID));
+    noAccessRole.setName("Test No Access");
+    noAccessRole.setManual(true);
+    noAccessRole.setUserLevel(" CO");
+    noAccessRole.setClientList(OBContext.getOBContext().getCurrentClient().getId());
+    noAccessRole.setOrganizationList(ASTERISK_ORG_ID);
+    OBDal.getInstance().save(noAccessRole);
 
+    RoleOrganization noAcessRoleOrg = OBProvider.getInstance().get(RoleOrganization.class);
+    noAcessRoleOrg.setOrganization(OBContext.getOBContext().getCurrentOrganization());
+    noAcessRoleOrg.setRole(noAccessRole);
+    OBDal.getInstance().save(noAcessRoleOrg);
+
+    UserRoles noAccessRoleUser = OBProvider.getInstance().get(UserRoles.class);
+    noAccessRoleUser.setOrganization(noAccessRole.getOrganization());
+    noAccessRoleUser.setUserContact(OBContext.getOBContext().getUser());
+    noAccessRoleUser.setRole(noAccessRole);
+    OBDal.getInstance().save(noAccessRoleUser);
+
+    OBDal.getInstance().commitAndClose();
+  }
+
+  /** Tests datasource allows or denies fetch action based on role access */
+  @Test
+  public void fetchShouldBeAllowedOnlyIfRoleIsGranted() throws Exception {
+    OBContext.setOBContext(CONTEXT_USER);
+    changeProfile(role.roleId, LANGUAGE_ID, OBContext.getOBContext().getCurrentOrganization()
+        .getId(), WAREHOUSE_ID);
+    JSONObject jsonResponse = fetchDataSource();
+
+    assertThat("Request status", jsonResponse.getJSONObject("response").getInt("status"),
+        is(expectedResponseStatus));
+  }
+
+  private JSONObject fetchDataSource() throws Exception {
     Map<String, String> params = new HashMap<String, String>();
     params.put("_operationType", "fetch");
     params.put("_startRow", "0");
     params.put("_endRow", "1");
 
-    String responseForRole = doRequest("/org.openbravo.service.datasource/" + ENTITY_SALES_INVOICE,
-        params, 200, "POST");
-    JSONObject jsonResponseForRole = new JSONObject(responseForRole);
-    assertTrue(getStatus(jsonResponseForRole).equals(
-        String.valueOf(JsonConstants.RPCREQUEST_STATUS_SUCCESS)));
+    return new JSONObject(doRequest("/org.openbravo.service.datasource/" + dataSource, params, 200,
+        "POST"));
   }
 
-  private String getStatus(JSONObject jsonResponse) throws JSONException {
-    return jsonResponse.getJSONObject("response").get("status").toString();
+  /** Deletes dummy testing role */
+  @AfterClass
+  public static void cleanUp() {
+    OBContext.setOBContext(CONTEXT_USER);
+    OBDal.getInstance().remove(OBDal.getInstance().get(Role.class, ROLE_NO_ACCESS));
+    OBDal.getInstance().commitAndClose();
   }
 }
