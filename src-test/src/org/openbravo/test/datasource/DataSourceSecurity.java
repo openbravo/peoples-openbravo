@@ -51,7 +51,7 @@ import org.openbravo.service.json.JsonConstants;
  *
  */
 @RunWith(Parameterized.class)
-public class TestSecurityEntityAccess extends BaseDataSourceTestDal {
+public class DataSourceSecurity extends BaseDataSourceTestDal {
   private static final String ASTERISK_ORG_ID = "0";
   private static final String CONTEXT_USER = "100";
   private static final String LANGUAGE_ID = "192";
@@ -74,7 +74,7 @@ public class TestSecurityEntityAccess extends BaseDataSourceTestDal {
     }
   }
 
-  public TestSecurityEntityAccess(RoleType role, String dataSource, int expectedResponseStatus) {
+  public DataSourceSecurity(RoleType role, String dataSource, int expectedResponseStatus) {
     this.role = role;
     this.dataSource = dataSource;
     this.expectedResponseStatus = expectedResponseStatus;

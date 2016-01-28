@@ -31,7 +31,7 @@ import org.openbravo.test.datasource.TestAllowUnpagedDatasourcePreference;
 import org.openbravo.test.datasource.TestCSVEncoding;
 import org.openbravo.test.datasource.TestComboDatasource;
 import org.openbravo.test.datasource.TestNoteDatasource;
-import org.openbravo.test.datasource.TestSecurityEntityAccess;
+import org.openbravo.test.datasource.DataSourceSecurity;
 import org.openbravo.test.webservice.JSONWebServices;
 import org.openbravo.test.webservice.PerformanceTest;
 import org.openbravo.test.webservice.WSAddRecordWithComputedColumns;
@@ -64,6 +64,6 @@ WSReadTest.class, //
     TestNoteDatasource.class, //
     WebServicesWithNoActiveFilterTest.class, //
     ExtendedNavigationModelTest.class, //
-    TestSecurityEntityAccess.class })
+    DataSourceSecurity.class })
 public class AllWebserviceTests {
 }
