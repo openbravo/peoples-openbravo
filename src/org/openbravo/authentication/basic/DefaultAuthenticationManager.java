@@ -110,6 +110,14 @@ public class DefaultAuthenticationManager extends AuthenticationManager {
 
       throw new AuthenticationException("IDENTIFICATION_FAILURE_TITLE", errorMsg);
     }
+
+    // Using the Servlet API instead of vars.setSessionValue to avoid breaking code
+    // vars.setSessionValue always transform the key to upper-case
+    request.getSession(true).setAttribute("#Authenticated_user", userId);
+
+    vars.setSessionValue("#AD_SESSION_ID", sessionId);
+    vars.setSessionValue("#LogginIn", "Y");
+
     Date lastUpdatePasswordDate = getUpdatePasswordDate(user);
 
     if (lastUpdatePasswordDate != null) {
@@ -124,14 +132,6 @@ public class DefaultAuthenticationManager extends AuthenticationManager {
 
       }
     }
-
-    // Using the Servlet API instead of vars.setSessionValue to avoid breaking code
-    // vars.setSessionValue always transform the key to upper-case
-    request.getSession(true).setAttribute("#Authenticated_user", userId);
-
-    vars.setSessionValue("#AD_SESSION_ID", sessionId);
-    vars.setSessionValue("#LogginIn", "Y");
-
     if (!StringUtils.isEmpty(strAjax) && StringUtils.isEmpty(userId)) {
       bdErrorAjax(response, "Error", "",
           Utility.messageBD(this.conn, "NotLogged", variables.getLanguage()));
