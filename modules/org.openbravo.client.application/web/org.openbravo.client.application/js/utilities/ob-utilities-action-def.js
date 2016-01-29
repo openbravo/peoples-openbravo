@@ -95,11 +95,7 @@ OB.Utilities.Action.set('showMsgInProcessView', function (paramObj) {
 OB.Utilities.Action.set('openDirectTab', function (paramObj) {
   var processIndex, tabPosition;
   if (!paramObj.newTabPosition) {
-    if (paramObj._processView && OB.PropertyStore.get('AllowMultiTab', paramObj._processView.windowId) === 'Y') {
-      tabPosition = OB.MainView.TabSet.paneContainer.members.length;
-    } else {
-      tabPosition = OB.Utilities.getTabNumberById(paramObj.tabId); // Search if the tab has been opened before
-    }
+    tabPosition = OB.Utilities.getTabNumberById(paramObj.tabId); // Search if the tab has been opened before
     if (tabPosition !== -1) {
       paramObj.newTabPosition = tabPosition;
     } else {
