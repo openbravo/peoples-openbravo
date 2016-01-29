@@ -109,6 +109,7 @@
             }
             OB.Dal.transaction(function (tx) {
               OB.Dal.saveInTransaction(tx, paymentMethod, function () {
+                var now = new Date();
                 cashManagementTransactionToAdd = new OB.Model.CashManagement({
                   id: OB.Dal.get_uuid(),
                   description: newCashManagementTransaction.get('paymentMethod').payment._identifier + ' - ' + newCashManagementTransaction.get('cashManagementEvent').name,
@@ -119,7 +120,8 @@
                   paymentMethodId: newCashManagementTransaction.get('paymentMethod').payment.id,
                   user: OB.MobileApp.model.get('context').user._identifier,
                   userId: OB.MobileApp.model.get('context').user.id,
-                  time: new Date().toString().substring(16, 21),
+                  creationDate: OB.I18N.normalizeDate(now),
+                  timezoneOffset: now.getTimezoneOffset(),
                   isocode: newCashManagementTransaction.get('paymentMethod').isocode,
                   glItem: optionsObj.glItem,
                   cashup_id: cashUp.get('id'),

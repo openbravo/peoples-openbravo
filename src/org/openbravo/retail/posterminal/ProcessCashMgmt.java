@@ -70,9 +70,10 @@ public class ProcessCashMgmt extends POSDataSynchronizationProcess implements
 
     // get and prepare the cashMgmtTrxDate
     Date cashMgmtTrxDate = new Date();
-    if (jsonsent.has("dateTime") && jsonsent.get("dateTime") != null
-        && StringUtils.isNotEmpty(jsonsent.getString("dateTime"))) {
-      final String strCashMgmtTrxDate = jsonsent.getString("dateTime");
+    if (jsonsent.has("creationDate") && jsonsent.get("creationDate") != null
+        && StringUtils.isNotEmpty(jsonsent.getString("creationDate"))
+        && !"null".equals(jsonsent.get("creationDate"))) {
+      final String strCashMgmtTrxDate = jsonsent.getString("creationDate");
       if (!strCashMgmtTrxDate.substring(strCashMgmtTrxDate.length() - 1).equals("Z")) {
         log.error(String.format(
             "The cashup date must be provided in ISO 8601 format and be an UTC date (value: '%s')",
@@ -81,8 +82,9 @@ public class ProcessCashMgmt extends POSDataSynchronizationProcess implements
       // get the timezoneOffset
       final long timezoneOffset;
       if (jsonsent.has("timezoneOffset") && jsonsent.get("timezoneOffset") != null
-          && StringUtils.isNotEmpty(jsonsent.getString("timezoneOffset"))) {
-        timezoneOffset = Long.parseLong(jsonsent.getString("timezoneOffset"));
+          && StringUtils.isNotEmpty(jsonsent.getString("timezoneOffset"))
+          && !"null".equals(jsonsent.get("timezoneOffset"))) {
+        timezoneOffset = (long) Double.parseDouble(jsonsent.getString("timezoneOffset"));
       } else {
         timezoneOffset = -((Calendar.getInstance().get(Calendar.ZONE_OFFSET) + Calendar
             .getInstance().get(Calendar.DST_OFFSET)) / (60 * 1000));
