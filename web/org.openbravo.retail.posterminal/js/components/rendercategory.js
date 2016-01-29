@@ -32,5 +32,9 @@ enyo.kind({
     this.addClass('btnselect-browse');
     this.$.identifier.setContent(this.model.get('_identifier'));
     this.$.thumbnail.setImg(this.model.get('img'));
+
+    OB.UTIL.HookManager.executeHooks('OBPOS_RenderCategory', {
+      context: this
+    }, function (args) {});
   }
 });
