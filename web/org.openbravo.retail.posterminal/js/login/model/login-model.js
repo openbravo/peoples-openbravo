@@ -157,20 +157,6 @@
               OB.UTIL.HookManager.executeHooks('OBPOS_TerminalLoadedFromBackend', {
                 data: data[0].terminal.id
               });
-              // If the hardware URL is set and the terminal uses RFID
-              if (OB.POS.hwserver.url && OB.POS.modelterminal.get('terminal').terminalType.userfid) {
-                var protocol = OB.POS.hwserver.url.split('/')[0];
-                var websocketServerLocation;
-                if (protocol === 'http:') {
-                  websocketServerLocation = 'ws:' + OB.POS.hwserver.url.substring(protocol.length, OB.POS.hwserver.url.length).split('/printer')[0] + '/rfid';
-                } else if (protocol === 'https:') {
-                  websocketServerLocation = 'wss:' + OB.POS.hwserver.url.substring(protocol.length, OB.POS.hwserver.url.length).split('/printer')[0] + '/rfid';
-                } else {
-                  OB.UTIL.showError(OB.I18N.getLabel('OBPOS_WrongHardwareManagerProtocol'));
-                }
-                OB.UTIL.isRFIDEnabled = true;
-                OB.UTIL.startRfidWebsocket(websocketServerLocation, 2000, 0, 5);
-              }
             } else {
               OB.UTIL.showError("Terminal does not exists: " + 'params.terminal');
             }
@@ -360,6 +346,21 @@
         OB.UTIL.initCashUp(OB.UTIL.calculateCurrentCash);
         // Set Hardware..
         OB.POS.hwserver = new OB.DS.HWServer(terminal.hardwareurl, terminal.scaleurl);
+        
+        // If the hardware URL is set and the terminal uses RFID
+        if (OB.POS.hwserver.url && OB.POS.modelterminal.get('terminal').terminalType.userfid) {
+          var protocol = OB.POS.hwserver.url.split('/')[0];
+          var websocketServerLocation;
+          if (protocol === 'http:') {
+            websocketServerLocation = 'ws:' + OB.POS.hwserver.url.substring(protocol.length, OB.POS.hwserver.url.length).split('/printer')[0] + '/rfid';
+          } else if (protocol === 'https:') {
+            websocketServerLocation = 'wss:' + OB.POS.hwserver.url.substring(protocol.length, OB.POS.hwserver.url.length).split('/printer')[0] + '/rfid';
+          } else {
+            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_WrongHardwareManagerProtocol'));
+          }
+          OB.UTIL.isRFIDEnabled = true;
+          OB.UTIL.startRfidWebsocket(websocketServerLocation, 2000, 0, 5);
+        }
 
         // Set Arithmetic properties:
         OB.DEC.setContext(OB.UTIL.getFirstValidValue([me.get('currency').obposPosprecision, me.get('currency').pricePrecision]), BigDecimal.prototype.ROUND_HALF_UP);
