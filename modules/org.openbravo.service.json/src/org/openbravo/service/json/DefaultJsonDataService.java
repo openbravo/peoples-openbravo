@@ -334,7 +334,6 @@ public class DefaultJsonDataService implements JsonDataService {
     String entityName = parameters.get(JsonConstants.ENTITYNAME);
     final DataEntityQueryService queryService = OBProvider.getInstance().get(
         DataEntityQueryService.class);
-    String theWhereFilterClause = "";
 
     if (!forSubEntity && parameters.get(JsonConstants.DISTINCT_PARAMETER) != null) {
       // this is the main entity of a 'contains' (used in FK drop down lists), it will create also
@@ -494,20 +493,19 @@ public class DefaultJsonDataService implements JsonDataService {
     }
 
     if (!directNavigation) {
+      if (!(parameters.containsKey(SelectorConstants.DS_REQUEST_SELECTOR_ID_PARAMETER))) {
+        queryService.addFilterParameter(JsonConstants.WHERE_PARAMETER,
+            obtainWhereAndFilterClause(parameters, isFilterApplied(parameters)));
+      }
       // set the where/org filter parameters and the @ parameters
       for (String key : parameters.keySet()) {
         if (key.equals(JsonConstants.IDENTIFIER)
-            || key.equals(JsonConstants.FILTER_APPLIED_PARAMETER)
+            || (key.equals(JsonConstants.WHERE_PARAMETER) && parameters
+                .containsKey(SelectorConstants.DS_REQUEST_SELECTOR_ID_PARAMETER))
             || key.equals(JsonConstants.ORG_PARAMETER)
             || key.equals(JsonConstants.TARGETRECORDID_PARAMETER)
             || (key.startsWith(DataEntityQueryService.PARAM_DELIMITER) && key
                 .endsWith(DataEntityQueryService.PARAM_DELIMITER))) {
-          if (key.equals(JsonConstants.FILTER_APPLIED_PARAMETER)) {
-            if ("true".equals(parameters.get(key))) {
-              theWhereFilterClause = obtainWhereAndFilterClause(parameters);
-              queryService.addFilterParameter(JsonConstants.WHERE_PARAMETER, theWhereFilterClause);
-            }
-          }
           queryService.addFilterParameter(key, parameters.get(key));
         }
 
@@ -591,7 +589,8 @@ public class DefaultJsonDataService implements JsonDataService {
     return queryService;
   }
 
-  protected String obtainWhereAndFilterClause(Map<String, String> parameters) {
+  protected String obtainWhereAndFilterClause(Map<String, String> parameters,
+      boolean isFilterApplied) {
     String whereAndFilterClause = "";
     String tabId = parameters.get(JsonConstants.TAB_PARAMETER);
     String entityName = parameters.get(JsonConstants.ENTITYNAME);
@@ -600,18 +599,28 @@ public class DefaultJsonDataService implements JsonDataService {
     boolean isTransactionalWindow = tab.getWindow().getWindowType().equals("T");
     String filterClause = getFilterClause(tab, isTransactionalWindow, entity);
     String whereClause = tab.getHqlwhereclause();
-    if (StringUtils.isNotBlank(filterClause)) {
+    if (isFilterApplied) {
       if (StringUtils.isNotBlank(whereClause)) {
         whereAndFilterClause = " ((" + whereClause + ") and (" + filterClause + "))";
       } else {
         whereAndFilterClause = filterClause;
       }
-    } else if (StringUtils.isNotBlank(whereClause)) {
-      whereAndFilterClause = whereClause;
     } else {
-      whereAndFilterClause = null;
+      if (StringUtils.isNotBlank(whereClause)) {
+        whereAndFilterClause = whereClause;
+      } else {
+        whereAndFilterClause = null;
+      }
     }
     return whereAndFilterClause;
+  }
+
+  private boolean isFilterApplied(Map<String, String> parameters) {
+    if ("true".equals(parameters.get(JsonConstants.FILTER_APPLIED_PARAMETER))) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   private boolean isRootTab(Tab tab) {

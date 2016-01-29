@@ -117,7 +117,7 @@ public class SelectorDataSourceFilter implements DataSourceFilter {
       if (!StringUtils.isEmpty(filterHQL)) {
         log.debug("Adding to where clause (based on filter expression): " + filterHQL);
 
-        String currentWhere = parameters.get(JsonConstants.WHERE_PARAMETER);
+        String currentWhere = sel.getHQLWhereClause();
 
         if (currentWhere == null || currentWhere.equals("null") || currentWhere.equals("")) {
           parameters.put(JsonConstants.WHERE_PARAMETER, filterHQL);
@@ -132,7 +132,7 @@ public class SelectorDataSourceFilter implements DataSourceFilter {
         sfc.add(Restrictions.isNotNull(SelectorField.PROPERTY_DEFAULTEXPRESSION));
         sfc.add(Restrictions.eq(SelectorField.PROPERTY_OBUISELSELECTOR, sel));
 
-        applyDefaultExpressions(sel, parameters, sfc, request);
+        applyDefaultExpressions(sel, parameters, sfc, request, filterHQL);
         verifyPropertyTypes(sel, parameters);
       }
 
@@ -276,8 +276,9 @@ public class SelectorDataSourceFilter implements DataSourceFilter {
    * Evaluates the default expressions and modifies the parameters map for data filtering
    */
   private void applyDefaultExpressions(Selector sel, Map<String, String> parameters,
-      OBCriteria<SelectorField> sfc, HttpServletRequest request) {
+      OBCriteria<SelectorField> sfc, HttpServletRequest request, String hqlFilterClause) {
 
+    String currentWhere = "";
     if (sfc.count() == 0) {
       return;
     }
@@ -385,7 +386,11 @@ public class SelectorDataSourceFilter implements DataSourceFilter {
 
     log.debug("Adding to where clause (based on fields default expression): " + sb.toString());
 
-    String currentWhere = parameters.get(JsonConstants.WHERE_PARAMETER);
+    if (StringUtils.isNotBlank(hqlFilterClause)) {
+      currentWhere = parameters.get(JsonConstants.WHERE_PARAMETER);
+    } else {
+      currentWhere = sel.getHQLWhereClause();
+    }
 
     if (currentWhere == null || currentWhere.equals("null") || currentWhere.equals("")) {
       parameters.put(JsonConstants.WHERE_PARAMETER, sb.toString());
