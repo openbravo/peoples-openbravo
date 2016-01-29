@@ -806,7 +806,8 @@ OB.OBPOSCashUp.Model.CashUpPartial = OB.OBPOSCashUp.Model.CashUp.extend({
       totalExpected: this.get('totalExpected'),
       totalDifference: this.get('totalDifference'),
       totalQtyToKeep: OB.DEC.Zero,
-      totalQtyToDepo: OB.DEC.Zero
+      totalQtyToDepo: OB.DEC.Zero,
+      isPartialCashup: true
     };
     //First we fix the qty to keep for non-automated payment methods
     _.each(this.get('paymentList').models, function (model) {
