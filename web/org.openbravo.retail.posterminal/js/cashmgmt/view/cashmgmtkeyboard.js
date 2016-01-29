@@ -51,7 +51,7 @@ enyo.kind({
             backupDropEvents.add(cmevent);
           });
           backupDropEvents.each(function (cmevent) {
-            if (cmevent.attributes.paymentmethod !== paymentMethod) {
+            if (cmevent.attributes.paymentmethod !== paymentMethod || cmevent.get('isocode') !== isocode) {
               me.owner.owner.owner.model.attributes.cashMgmtDropEvents.remove(cmevent);
             }
           });
@@ -63,7 +63,7 @@ enyo.kind({
             backupDepositEvents.add(cmevent);
           });
           backupDepositEvents.each(function (cmevent) {
-            if (cmevent.attributes.paymentmethod !== paymentMethod) {
+            if (cmevent.attributes.paymentmethod !== paymentMethod || cmevent.get('isocode') !== isocode) {
               me.owner.owner.owner.model.attributes.cashMgmtDepositEvents.remove(cmevent);
             }
           });
@@ -94,23 +94,34 @@ enyo.kind({
       if (OB.POS.modelterminal.get('terminal').isslave && paymentMethod.paymentMethod.isshared) {
         return true;
       }
-      var payment = paymentMethod.payment;
+      var payment = paymentMethod.payment,
+          i;
       if (paymentMethod.paymentMethod.allowdeposits) {
-        buttons.push({
-          idSufix: 'Deposit.' + paymentMethod.isocode,
-          command: payment.searchKey + '_' + OB.I18N.getLabel('OBPOS_LblDeposit'),
-          definition: this.getPayment(payment.id, payment.searchKey, paymentMethod.paymentMethod.iscash, paymentMethod.paymentMethod.allowopendrawer, payment._identifier, payment._identifier, 'deposit', paymentMethod.rate, paymentMethod.isocode, paymentMethod.paymentMethod.gLItemForDeposits, paymentMethod.paymentMethod.paymentMethod),
-          label: payment._identifier + ' ' + OB.I18N.getLabel('OBPOS_LblDeposit')
-        });
+        for (i = 0; i < OB.MobileApp.model.get('cashMgmtDepositEvents').length; i++) {
+          if (OB.MobileApp.model.get('cashMgmtDepositEvents')[i].isocode === paymentMethod.isocode && paymentMethod.paymentMethod.paymentMethod === OB.MobileApp.model.get('cashMgmtDepositEvents')[i].paymentmethod) {
+            buttons.push({
+              idSufix: 'Deposit.' + paymentMethod.isocode,
+              command: payment.searchKey + '_' + OB.I18N.getLabel('OBPOS_LblDeposit'),
+              definition: this.getPayment(payment.id, payment.searchKey, paymentMethod.paymentMethod.iscash, paymentMethod.paymentMethod.allowopendrawer, payment._identifier, payment._identifier, 'deposit', paymentMethod.rate, paymentMethod.isocode, paymentMethod.paymentMethod.gLItemForDeposits, paymentMethod.paymentMethod.paymentMethod),
+              label: payment._identifier + ' ' + OB.I18N.getLabel('OBPOS_LblDeposit')
+            });
+            break;
+          }
+        }
       }
 
       if (paymentMethod.paymentMethod.allowdrops) {
-        buttons.push({
-          idSufix: 'Withdrawal.' + paymentMethod.isocode,
-          command: payment.searchKey + '_' + OB.I18N.getLabel('OBPOS_LblWithdrawal'),
-          definition: this.getPayment(payment.id, payment.searchKey, paymentMethod.paymentMethod.iscash, paymentMethod.paymentMethod.allowopendrawer, payment._identifier, payment._identifier, 'drop', paymentMethod.rate, paymentMethod.isocode, paymentMethod.paymentMethod.gLItemForDrops, paymentMethod.paymentMethod.paymentMethod),
-          label: payment._identifier + ' ' + OB.I18N.getLabel('OBPOS_LblWithdrawal')
-        });
+        for (i = 0; i < OB.MobileApp.model.get('cashMgmtDropEvents').length; i++) {
+          if (OB.MobileApp.model.get('cashMgmtDropEvents')[i].isocode === paymentMethod.isocode && paymentMethod.paymentMethod.paymentMethod === OB.MobileApp.model.get('cashMgmtDropEvents')[i].paymentmethod) {
+            buttons.push({
+              idSufix: 'Withdrawal.' + paymentMethod.isocode,
+              command: payment.searchKey + '_' + OB.I18N.getLabel('OBPOS_LblWithdrawal'),
+              definition: this.getPayment(payment.id, payment.searchKey, paymentMethod.paymentMethod.iscash, paymentMethod.paymentMethod.allowopendrawer, payment._identifier, payment._identifier, 'drop', paymentMethod.rate, paymentMethod.isocode, paymentMethod.paymentMethod.gLItemForDrops, paymentMethod.paymentMethod.paymentMethod),
+              label: payment._identifier + ' ' + OB.I18N.getLabel('OBPOS_LblWithdrawal')
+            });
+            break;
+          }
+        }
       }
     }, this);
 

@@ -19,8 +19,9 @@ public class CashMgmtDepositEvents extends QueryTerminalProperty {
   @Override
   protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
     return Arrays
-        .asList(new String[] { "select c.id as id, c.name as name, c.paymentMethod.id as paymentmethod, 'deposit' as type from OBRETCO_CashManagementEvents c "
-            + "where  c.$naturalOrgCriteria and c.eventtype like '%IN%' order by c.name  " });
+        .asList(new String[] { "select c.id as id, c.name as name, c.paymentMethod.id as paymentmethod, 'deposit' as type, "
+            + "c.currency.iSOCode as isocode from OBRETCO_CashManagementEvents c "
+            + "where c.$naturalOrgCriteria and c.eventtype like '%IN%' order by c.name  " });
   }
 
   @Override

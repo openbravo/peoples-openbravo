@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2015 Openbravo S.L.U.
+ * Copyright (C) 2012-2016 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -190,18 +190,17 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.WindowModel.extend({
     var me = this;
 
     function updateCashMgmEvents(paymentMethodList) {
-      var i;
-      var paymentMethodId;
-      for (i = 0; i < me.attributes.cashMgmtDepositEvents.models.length; i++) {
-        paymentMethodId = me.attributes.cashMgmtDepositEvents.models[i].attributes.paymentmethod;
+      var i, paymentMethodId;
+      for (i = 0; i < me.get('cashMgmtDepositEvents').models.length; i++) {
+        paymentMethodId = me.get('cashMgmtDepositEvents').at(i).get('paymentmethod');
         if (paymentMethodList.indexOf(paymentMethodId) === -1) {
-          me.attributes.cashMgmtDepositEvents.remove(me.attributes.cashMgmtDepositEvents.at(i));
+          me.get('cashMgmtDepositEvents').remove(me.get('cashMgmtDepositEvents').at(i));
         }
       }
-      for (i = 0; i < me.attributes.cashMgmtDropEvents.models.length; i++) {
-        paymentMethodId = me.attributes.cashMgmtDropEvents.models[i].attributes.paymentmethod;
+      for (i = 0; i < me.get('cashMgmtDropEvents').models.length; i++) {
+        paymentMethodId = me.get('cashMgmtDropEvents').at(i).get('paymentmethod');
         if (paymentMethodList.indexOf(paymentMethodId) === -1) {
-          me.attributes.cashMgmtDropEvents.remove(me.attributes.cashMgmtDropEvents.at(i));
+          me.get('cashMgmtDropEvents').remove(me.get('cashMgmtDropEvents').at(i));
         }
       }
     }
