@@ -643,11 +643,15 @@ enyo.kind({
         _orderByClause: ''
       };
       criteria.remoteFilters = [];
+      var hasLocation = false;
       _.each(inEvent.filters, function (flt) {
         var column = _.find(OB.Model.BPartnerFilter.getProperties(), function (col) {
           return col.column === flt.column;
         });
         if (column) {
+          if (column.location) {
+            hasLocation = true;
+          }
           criteria.remoteFilters.push({
             columns: [column.name],
             operator: OB.Dal.CONTAINS,
@@ -659,7 +663,7 @@ enyo.kind({
       if (OB.MobileApp.model.hasPermission('OBPOS_customerLimit', true)) {
         criteria._limit = OB.DEC.abs(OB.MobileApp.model.hasPermission('OBPOS_customerLimit', true));
       }
-      if (inEvent.orderby) {
+      if (inEvent.orderby && ((inEvent.orderby.isLocationFilter && hasLocation) || !inEvent.orderby.isLocationFilter)) {
         criteria._orderByClause = inEvent.orderby.column + ' ' + inEvent.orderby.direction;
       }
       OB.Dal.find(OB.Model.BPartnerFilter, criteria, successCallbackBPs, errorCallback, this);

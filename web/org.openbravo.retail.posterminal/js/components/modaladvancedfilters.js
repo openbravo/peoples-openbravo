@@ -134,8 +134,9 @@ enyo.kind({
       if (orderClass !== 'iconSortNone') {
         result.orderby = {
           name: flt.filter.name,
-          column: flt.filter.column,
-          direction: orderClass === 'iconSortAsc' ? 'asc' : 'desc'
+          column: flt.filter.serverColumn,
+          direction: orderClass === 'iconSortAsc' ? 'asc' : 'desc',
+          isLocationFilter: flt.filter.location
         };
       }
     });

@@ -62,18 +62,18 @@ public class BPartnerFilter extends ProcessHQLQuery {
           && !jsonsent.get("lastUpdated").equals("null") ? jsonsent.getLong("lastUpdated") : null;
       String operator = lastUpdated == null ? " AND " : " OR ";
       hql = hql
-          + "FROM BusinessPartnerLocation bpl left outer join bpl.businessPartner.aDUserList AS ulist "
-          + "WHERE $filtersCriteria AND " + "bpl.businessPartner.customer = true AND "
-          + "bpl.businessPartner.priceList IS NOT NULL AND "
-          + "bpl.$readableSimpleClientCriteria AND " + "bpl.$naturalOrgCriteria AND "
-          + "(bpl.$incrementalUpdateCriteria" + operator
-          + "bpl.businessPartner.$incrementalUpdateCriteria) ";
+          + "FROM BusinessPartnerLocation bpl left outer join bpl.businessPartner AS bp join bp.aDUserList AS ulist "
+          + "WHERE $filtersCriteria AND " + "bp.customer = true AND "
+          + "bp.priceList IS NOT NULL AND " + "bpl.$readableSimpleClientCriteria AND "
+          + "bpl.$naturalOrgCriteria AND " + "(bpl.$incrementalUpdateCriteria" + operator
+          + "bp.$incrementalUpdateCriteria) ";
     } else {
       hql = hql + "FROM BusinessPartner bp left outer join bp.aDUserList AS ulist "
           + "WHERE $filtersCriteria AND bp.customer = true AND "
           + "bp.priceList IS NOT NULL AND bp.$readableSimpleClientCriteria AND "
-          + "bp.$naturalOrgCriteria AND bp.$incrementalUpdateCriteria";
+          + "bp.$naturalOrgCriteria AND bp.$incrementalUpdateCriteria ";
     }
+    hql = hql + "$orderByCriteria";
 
     hqlQueries.add(hql);
     return hqlQueries;

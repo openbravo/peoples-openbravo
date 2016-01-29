@@ -50,6 +50,7 @@
   }, {
     name: 'bpName',
     column: 'bp.name',
+    serverColumn: 'bp.name',
     filter: true,
     type: 'TEXT',
     caption: 'OBPOS_LblFullName',
@@ -57,6 +58,7 @@
   }, {
     name: 'bpCategory',
     column: 'bp.c_bp_group_name',
+    serverColumn: 'bp.businessPartnerCategory.name',
     filter: false,
     type: 'TEXT',
     caption: 'OBPOS_BPCategory',
@@ -64,6 +66,7 @@
   }, {
     name: 'taxID',
     column: 'bp.taxID',
+    serverColumn: 'bp.taxID',
     filter: false,
     type: 'TEXT',
     caption: 'OBPOS_LblTaxId',
@@ -71,6 +74,7 @@
   }, {
     name: 'phone',
     column: 'bp.phone',
+    serverColumn: 'ulist.phone',
     filter: true,
     type: 'TEXT',
     caption: 'OBPOS_LblPhone',
@@ -78,6 +82,7 @@
   }, {
     name: 'email',
     column: 'bp.email',
+    serverColumn: 'ulist.email',
     filter: true,
     type: 'TEXT',
     caption: 'OBPOS_LblEmail',
@@ -91,6 +96,7 @@
   }, {
     name: 'locName',
     column: 'loc.name',
+    serverColumn: 'bpl.name',
     filter: true,
     type: 'TEXT',
     caption: 'OBPOS_LblAddress',
@@ -98,6 +104,7 @@
   }, {
     name: 'postalCode',
     column: 'loc.postalCode',
+    serverColumn: 'bpl.locationAddress.postalCode',
     filter: true,
     type: 'TEXT',
     caption: 'OBPOS_LblPostalCode',
@@ -105,6 +112,7 @@
   }, {
     name: 'cityName',
     column: 'loc.cityName',
+    serverColumn: 'bpl.locationAddress.cityName',
     filter: true,
     type: 'TEXT',
     caption: 'OBPOS_LblCity',
