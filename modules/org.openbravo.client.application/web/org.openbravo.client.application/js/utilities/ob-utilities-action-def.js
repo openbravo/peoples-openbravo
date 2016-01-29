@@ -93,11 +93,12 @@ OB.Utilities.Action.set('showMsgInProcessView', function (paramObj) {
 // * {{{command}}}: The command with which the view to be opened
 // * {{{wait}}}: If true, the thread in which this action was called (if there is any) will be paused until the view be opened.
 OB.Utilities.Action.set('openDirectTab', function (paramObj) {
-  var processIndex, tabPosition;
+  var processIndex, tabPosition, isTabOpened = false;
   if (!paramObj.newTabPosition) {
     tabPosition = OB.Utilities.getTabNumberById(paramObj.tabId); // Search if the tab has been opened before
     if (tabPosition !== -1) {
       paramObj.newTabPosition = tabPosition;
+      isTabOpened = true;
     } else {
       processIndex = OB.Utilities.getProcessTabBarPosition(paramObj._processView);
       if (processIndex === -1) {
@@ -113,7 +114,7 @@ OB.Utilities.Action.set('openDirectTab', function (paramObj) {
     OB.Utilities.openDirectTab(paramObj.tabId, paramObj.recordId, paramObj.command, paramObj.newTabPosition, paramObj.criteria);
   }
   if ((paramObj.wait === true || paramObj.wait === 'true') && paramObj.threadId) {
-    if (!OB.MainView.TabSet.getTabObject(paramObj.newTabPosition) || OB.MainView.TabSet.getTabObject(paramObj.newTabPosition).pane.isLoadingTab === true) {
+    if (!OB.MainView.TabSet.getTabObject(paramObj.newTabPosition) || OB.MainView.TabSet.getTabObject(paramObj.newTabPosition).pane.isLoadingTab === true || isTabOpened) {
       OB.Utilities.Action.pauseThread(paramObj.threadId);
       paramObj.isOpening = true;
       OB.Utilities.Action.execute('openDirectTab', paramObj, 100); //Call this action again with a 100ms delay
