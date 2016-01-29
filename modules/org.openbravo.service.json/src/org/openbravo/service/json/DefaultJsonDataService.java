@@ -493,15 +493,17 @@ public class DefaultJsonDataService implements JsonDataService {
     }
 
     if (!directNavigation) {
-      if (!(parameters.containsKey(SelectorConstants.DS_REQUEST_SELECTOR_ID_PARAMETER))) {
+      boolean isManual = isManualDataSource(parameters);
+      if (!(parameters.containsKey(SelectorConstants.DS_REQUEST_SELECTOR_ID_PARAMETER))
+          && !isManual) {
         queryService.addFilterParameter(JsonConstants.WHERE_PARAMETER,
             obtainWhereAndFilterClause(parameters, isFilterApplied(parameters)));
       }
       // set the where/org filter parameters and the @ parameters
       for (String key : parameters.keySet()) {
         if (key.equals(JsonConstants.IDENTIFIER)
-            || (key.equals(JsonConstants.WHERE_PARAMETER) && parameters
-                .containsKey(SelectorConstants.DS_REQUEST_SELECTOR_ID_PARAMETER))
+            || (key.equals(JsonConstants.WHERE_PARAMETER) && (parameters
+                .containsKey(SelectorConstants.DS_REQUEST_SELECTOR_ID_PARAMETER) || isManual))
             || key.equals(JsonConstants.ORG_PARAMETER)
             || key.equals(JsonConstants.TARGETRECORDID_PARAMETER)
             || (key.startsWith(DataEntityQueryService.PARAM_DELIMITER) && key
@@ -621,6 +623,18 @@ public class DefaultJsonDataService implements JsonDataService {
     } else {
       return false;
     }
+  }
+
+  private boolean isManualDataSource(Map<String, String> parameters) {
+    // The FILTER_APPLIED_PARAMETER is never send in the manual datasources, so
+    // that, this is a good way to know if the datasource is manual or not.
+    boolean isManual = true;
+    for (String key : parameters.keySet()) {
+      if (key.equals(JsonConstants.FILTER_APPLIED_PARAMETER)) {
+        isManual = false;
+      }
+    }
+    return isManual;
   }
 
   private boolean isRootTab(Tab tab) {
