@@ -19,7 +19,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2015 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2001-2016 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -238,7 +238,7 @@
           AND l.M_Attributesetinstance_ID=s.M_Attributesetinstance_ID
         )
         AND (NOT (coalesce(p.attrsetvaluetype, '-') <> 'F'
-		 AND aset.isoneattrsetvalrequired = 'Y'
+		 AND COALESCE(aset.isoneattrsetvalrequired, '-') = 'Y'
 		 AND COALESCE(s.m_attributesetinstance_id, '0') = '0'
 		 AND QTYONHAND = 0
 		 AND COALESCE(QTYORDERONHAND,0) = 0
