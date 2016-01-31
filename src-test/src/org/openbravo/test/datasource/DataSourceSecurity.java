@@ -45,7 +45,7 @@ import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.service.json.JsonConstants;
 
 /**
- * Test cases to ensure that new mechanism of security entity access is working properly.
+ * Test cases to ensure that mechanism of security DataSource access is working properly.
  *
  * @author inigo.sanchez
  *
@@ -88,7 +88,7 @@ public class DataSourceSecurity extends BaseDataSourceTestDal {
           type,
           "Order",
           type == RoleType.ADMIN_ROLE ? JsonConstants.RPCREQUEST_STATUS_SUCCESS
-              : JsonConstants.RPCREQUEST_STATUS_FAILURE });
+              : JsonConstants.RPCREQUEST_STATUS_VALIDATION_ERROR });
     }
     return testCases;
   }
