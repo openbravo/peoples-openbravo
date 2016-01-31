@@ -277,16 +277,6 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
     return HQL;
   }
 
-  @Override
-  public void checkFetchDatasourceAccess(Map<String, String> parameter) {
-    super.checkFetchDatasourceAccess(parameter);
-  }
-
-  @Override
-  public void checkEditDatasourceAccess(Map<String, String> parameter) {
-    super.checkEditDatasourceAccess(parameter);
-  }
-
   /**
    * Returns the where clause of a selector's field based on the given value.
    * 

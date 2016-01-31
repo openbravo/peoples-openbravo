@@ -760,7 +760,6 @@ public class DataSourceServlet extends BaseKernelServlet {
 
       // note if clause updates parameter map
       if (checkSetIDDataSourceName(request, response, parameters)) {
-        // Check security: continue only if the entity is accessible for current user/role.
         String content = getRequestContent(request);
         parameters.put(DataSourceConstants.ADD_CONTENT_OPERATION, content);
         getDataSource(request).checkEditDatasourceAccess(parameters);

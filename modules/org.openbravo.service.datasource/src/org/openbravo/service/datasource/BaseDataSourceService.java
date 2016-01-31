@@ -41,10 +41,6 @@ import org.openbravo.userinterface.selector.SelectorConstants;
 public abstract class BaseDataSourceService implements DataSourceService {
   private static final Logger log = Logger.getLogger(BaseDataSourceService.class);
 
-  protected static final String WRITABLE_ENTITY = "writable";
-  protected static final String DERIVED_READABLE_ENTITY = "derivedReadable";
-  protected static final String SELECTOR_DERIVED_ENTITY = "selectorDerived";
-
   private String name;
   private Template template;
 
