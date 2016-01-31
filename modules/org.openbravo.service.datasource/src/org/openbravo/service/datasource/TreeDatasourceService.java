@@ -94,10 +94,6 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
     try {
       // We can't get the bob from DAL, it has not been saved yet
       JSONObject bobProperties = new JSONObject(parameters.get("jsonBob"));
-      Entity theEntity = getEntity();
-      if (!hasAccess(theEntity, null, false)) {
-        throw new OBException(OBMessageUtils.messageBD("AccessTableNoView"));
-      }
       addNewNode(bobProperties);
     } catch (Exception e) {
       log.error("Error while adding the tree node", e);
@@ -122,7 +118,6 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
     try {
       // We can't get the bob from DAL, it has not been saved yet
       JSONObject bobProperties = new JSONObject(parameters.get("jsonBob"));
-      Entity theEntity = getEntity();
       String bobId = bobProperties.getString("id");
       String entityName = bobProperties.getString("_entity");
       Entity entity = ModelProvider.getInstance().getEntity(entityName);
@@ -130,9 +125,6 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
       if ("DNAIHC".equals(nodeDeletionPolicy) && this.nodeHasChildren(entity, bobId, null)) {
         // Handle the deletion policy "Do Not Allow If Has Children" if it applies to this entity
         throw new OBException(OBMessageUtils.messageBD("CannotDeleteNodeBecauseChildren"));
-      }
-      if (!hasAccess(theEntity, null, false)) {
-        throw new OBException(OBMessageUtils.messageBD("AccessTableNoView"));
       }
 
       this.deleteNode(bobProperties);
@@ -147,6 +139,10 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
 
   @Override
   public void checkEditDatasourceAccess(Map<String, String> parameter) {
+    Entity theEntity = getEntity();
+    if (!hasAccess(theEntity, null, false)) {
+      throw new OBException(OBMessageUtils.messageBD("AccessTableNoView"));
+    }
   }
 
   /**
@@ -320,8 +316,17 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
 
   @Override
   public void checkFetchDatasourceAccess(Map<String, String> parameter) {
-    // Avoids execute this checkFetchDatasourceAccess super method. Security is implemented inside
-    // fetch ds method.
+    final OBContext obContext = OBContext.getOBContext();
+    String tableId = parameter.get("referencedTableId");
+    OBContext.setAdminMode();
+    try {
+      Entity treeEntity = ModelProvider.getInstance().getEntityByTableId(tableId);
+      if (treeEntity != null) {
+        obContext.getEntityAccessChecker().checkReadableAccess(treeEntity);
+      }
+    } finally {
+      OBContext.restorePreviousMode();
+    }
   }
 
   protected abstract Map<String, Object> getDatasourceSpecificParams(Map<String, String> parameters);
