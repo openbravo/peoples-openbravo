@@ -94,6 +94,9 @@ public class EntityAccessChecker implements OBNotSingleton {
   // readable
   // the completely readable entities are present in the readableEntities
   private Set<Entity> derivedReadableEntities = new HashSet<Entity>();
+  // the derived entities from process only contains the entities which are
+  // derived from process definition
+  private Set<Entity> derivedEntitiesFromProcess = new HashSet<Entity>();
   private Set<Entity> nonReadableEntities = new HashSet<Entity>();
   private boolean isInitialized = false;
 
@@ -192,7 +195,7 @@ public class EntityAccessChecker implements OBNotSingleton {
         }
       }
       for (final Entity entity : processEntities) {
-        Table table = mp.getTableFromEntity(entity.getTableName());
+        Table table = mp.getTableFromTableName(entity.getTableName());
         if (table == null) {
           continue;
         }
@@ -264,6 +267,11 @@ public class EntityAccessChecker implements OBNotSingleton {
     log.info(">>> Derived Readable entities: ");
     log.info("");
     dumpSorted(derivedReadableEntities);
+
+    log.info("");
+    log.info(">>> Derived entities from process: ");
+    log.info("");
+    dumpSorted(derivedEntitiesFromProcess);
 
     log.info("");
     log.info(">>> Writable entities: ");
@@ -460,9 +468,6 @@ public class EntityAccessChecker implements OBNotSingleton {
       return true;
     }
 
-   if (derivedReadableEntities.contains(entity)) {
-      return false;
-    }
     return false;
   }
 
@@ -476,9 +481,14 @@ public class EntityAccessChecker implements OBNotSingleton {
       return true;
     }
 
-   if (derivedReadableEntities.contains(entity)) {
+    if (derivedReadableEntities.contains(entity)) {
       return true;
     }
+
+    if (derivedEntitiesFromProcess.contains(entity)) {
+      return true;
+    }
+
     return false;
   }
 
@@ -504,7 +514,7 @@ public class EntityAccessChecker implements OBNotSingleton {
           if (!writableEntities.contains(derivedEntity)
               && !readableEntities.contains(derivedEntity)
               && !derivedReadableEntities.contains(derivedEntity)) {
-            derivedReadableEntities.add(derivedEntity);
+            derivedEntitiesFromProcess.add(derivedEntity);
           }
         }
       }
