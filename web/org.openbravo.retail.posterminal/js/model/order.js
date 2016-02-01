@@ -1295,7 +1295,7 @@
               line = options.line;
             } else {
               line = me.get('lines').find(function (l) {
-                if (l.get('product').id === p.id && l.get('qty') > 0) {
+                if (l.get('product').id === p.id && ((l.get('qty') > 0 && qty > 0) || (l.get('qty') < 0 && qty < 0))) {
                   affectedByPack = l.isAffectedByPack();
                   if (!affectedByPack) {
                     return true;
