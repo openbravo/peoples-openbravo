@@ -219,11 +219,15 @@ enyo.kind({
       this.disabled = false;
       this.setDisabled(false);
       this.removeClass('disabled');
+      this.removeClass('btnlink-gray');
+      this.addClass('btnlink-yellow');
       return;
     }
     this.disabled = true;
     this.setDisabled(true);
     this.addClass('disabled');
+    this.addClass('btnlink-gray');
+    this.removeClass('btnlink-yellow');
   }
 });
 
