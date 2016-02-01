@@ -141,6 +141,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/rendermultiorderline",
         "components/order",
         "components/orderdetails",
+        "components/advancedfilterselector",
         "components/modaladvancedfilters", // Button for selecting customer address
         "components/businesspartner",
         "components/bplocation", // Button for selecting customer address
