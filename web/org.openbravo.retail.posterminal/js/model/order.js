@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2015 Openbravo S.L.U.
+ * Copyright (C) 2013-2016 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -2597,6 +2597,7 @@
           order.set('openDrawer', payment.get('openDrawer'));
         }
         payment.set('date', new Date());
+        payment.set('id', OB.UTIL.get_UUID());
         payments.add(payment);
         order.adjustPayment();
         order.trigger('displayTotal');
@@ -3853,6 +3854,7 @@
           order.set('openDrawer', payment.get('openDrawer'));
         }
         payment.set('date', new Date());
+        payment.set('id', OB.UTIL.get_UUID());
         payments.add(payment);
         order.adjustPayment();
         order.trigger('displayTotal');

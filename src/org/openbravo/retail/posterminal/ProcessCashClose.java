@@ -37,8 +37,8 @@ import org.openbravo.mobile.core.process.DataSynchronizationImportProcess;
 import org.openbravo.mobile.core.process.DataSynchronizationProcess.DataSynchronization;
 import org.openbravo.mobile.core.process.JSONPropertyToEntity;
 import org.openbravo.mobile.core.process.PropertyByType;
-import org.openbravo.model.ad.access.User;
 import org.openbravo.mobile.core.utils.OBMOBCUtils;
+import org.openbravo.model.ad.access.User;
 import org.openbravo.model.financialmgmt.payment.FIN_Reconciliation;
 import org.openbravo.service.json.JsonConstants;
 import org.openbravo.service.json.JsonToDataConverter;
@@ -93,6 +93,8 @@ public class ProcessCashClose extends POSDataSynchronizationProcess implements
     if (jsonCashup.has("approvals")) {
       JSONObject jsonApprovals = jsonCashup.getJSONObject("approvals");
       OBPOSCashupApproval cashupApproval = OBProvider.getInstance().get(OBPOSCashupApproval.class);
+      cashupApproval.setId(cashUp.getId());
+      cashupApproval.setNewOBObject(true);
       cashupApproval.setCashUp(cashUp);
       cashupApproval.setActive(true);
       cashupApproval.setApprovalType(CASHUP_COUNT_DIFF);

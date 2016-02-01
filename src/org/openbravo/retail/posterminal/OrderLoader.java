@@ -654,6 +654,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         jsonorder.getLong("timezoneOffset"));
     JSONPropertyToEntity.fillBobFromJSON(ModelProvider.getInstance().getEntity(InvoiceLine.class),
         line, jsonorder, jsonorder.getLong("timezoneOffset"));
+    line.setId(inOutLine.getId());
+    line.setNewOBObject(true);
     line.setLineNo((long) lineNo);
     line.setDescription(orderlines.getJSONObject(numIter).has("description") ? orderlines
         .getJSONObject(numIter).getString("description") : "");
@@ -754,6 +756,9 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       ind++;
       invoice.getInvoiceLineTaxList().add(invoicelinetax);
       line.getInvoiceLineTaxList().add(invoicelinetax);
+      invoicelinetax.setId(OBMOBCUtils.getUUIDbyString(line.getSalesOrderLine().getId() + lineNo
+          + (long) ((ind + 1) * 10)));
+      invoicelinetax.setNewOBObject(true);
       OBDal.getInstance().save(invoicelinetax);
     }
 
@@ -781,6 +786,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
               .multiply(ratio).setScale(stdPrecision, RoundingMode.HALF_UP));
         }
         promotion.setLineNo((long) ((p + 1) * 10));
+        promotion.setId(OBMOBCUtils.getUUIDbyString(line.getId() + promotion.getLineNo() + p));
+        promotion.setNewOBObject(true);
         promotion.setInvoiceLine(line);
         line.getInvoiceLineOfferList().add(promotion);
       }
@@ -851,7 +858,10 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     Entity invoiceEntity = ModelProvider.getInstance().getEntity(Invoice.class);
     JSONPropertyToEntity.fillBobFromJSON(invoiceEntity, invoice, jsonorder,
         jsonorder.getLong("timezoneOffset"));
-
+    if (jsonorder.has("id")) {
+      invoice.setId(jsonorder.getString("id"));
+      invoice.setNewOBObject(true);
+    }
     int stdPrecision = order.getCurrency().getStandardPrecision().intValue();
 
     String description;
@@ -927,6 +937,9 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       invoiceTax.setInvoice(invoice);
       invoiceTax.setLineNo((long) ((i + 1) * 10));
       invoiceTax.setRecalculate(true);
+      invoiceTax.setId(OBMOBCUtils.getUUIDbyString(invoiceTax.getInvoice().getId()
+          + invoiceTax.getLineNo()));
+      invoiceTax.setNewOBObject(true);
       i++;
       invoice.getInvoiceTaxList().add(invoiceTax);
     }
@@ -1151,13 +1164,13 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       throws JSONException {
     ShipmentInOutLine line = OBProvider.getInstance().get(ShipmentInOutLine.class);
     String shipmentLineId = OBMOBCUtils.getUUIDbyString(orderLine.getId() + lineNo + i);
-    line.setId(shipmentLineId);
-    line.setNewOBObject(true);
     JSONPropertyToEntity.fillBobFromJSON(shplineentity, line, jsonOrderLine,
         jsonorder.getLong("timezoneOffset"));
     JSONPropertyToEntity.fillBobFromJSON(
         ModelProvider.getInstance().getEntity(ShipmentInOutLine.class), line, jsonorder,
         jsonorder.getLong("timezoneOffset"));
+    line.setId(shipmentLineId);
+    line.setNewOBObject(true);
     line.setLineNo(lineNo);
     line.setShipmentReceipt(shipment);
     line.setSalesOrderLine(orderLine);
@@ -1179,6 +1192,10 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     Entity shpEntity = ModelProvider.getInstance().getEntity(ShipmentInOut.class);
     JSONPropertyToEntity.fillBobFromJSON(shpEntity, shipment, jsonorder,
         jsonorder.getLong("timezoneOffset"));
+    if (jsonorder.has("id")) {
+      shipment.setId(jsonorder.getString("id"));
+      shipment.setNewOBObject(true);
+    }
     shipment
         .setDocumentType(getShipmentDocumentType((String) DalUtil.getId(order.getDocumentType())));
 
@@ -1231,7 +1248,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       JSONPropertyToEntity.fillBobFromJSON(orderLineEntity, orderline, jsonOrderLine,
           jsonorder.getLong("timezoneOffset"));
       if (jsonOrderLine.has("id")) {
-        orderline.setId(jsonOrderLine.get("id"));
+        orderline.setId(jsonOrderLine.getString("id"));
         orderline.setNewOBObject(true);
       }
       orderline.setActive(true);
@@ -1283,6 +1300,9 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         ind++;
         orderline.getOrderLineTaxList().add(orderlinetax);
         order.getOrderLineTaxList().add(orderlinetax);
+        orderlinetax.setId(OBMOBCUtils.getUUIDbyString(orderlinetax.getSalesOrderLine().getId()
+            + orderlinetax.getLineNo()));
+        orderlinetax.setNewOBObject(true);
         OBDal.getInstance().save(orderlinetax);
       }
 
@@ -1314,6 +1334,9 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           if (jsonPromotion.has("identifier") && !jsonPromotion.isNull("identifier")) {
             promotion.setObdiscIdentifier(jsonPromotion.getString("identifier"));
           }
+          promotion
+              .setId(OBMOBCUtils.getUUIDbyString(orderline.getId() + promotion.getLineNo() + p));
+          promotion.setNewOBObject(true);
           orderline.getOrderLineOfferList().add(promotion);
         }
       }
@@ -1375,9 +1398,9 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     }
     JSONPropertyToEntity.fillBobFromJSON(orderEntity, order, jsonorder,
         jsonorder.getLong("timezoneOffset"));
-    order.setNewOBObject(true);
-    if (!jsonorder.has("preserveId") || jsonorder.getBoolean("preserveId")) {
+    if (jsonorder.has("id")) {
       order.setId(jsonorder.getString("id"));
+      order.setNewOBObject(true);
     }
     int stdPrecision = order.getCurrency().getStandardPrecision().intValue();
     BusinessPartner bp = order.getBusinessPartner();
@@ -1470,6 +1493,9 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           stdPrecision, RoundingMode.HALF_UP));
       orderTax.setSalesOrder(order);
       orderTax.setLineNo((long) ((i + 1) * 10));
+      orderTax.setId(OBMOBCUtils.getUUIDbyString(orderTax.getSalesOrder().getId()
+          + orderTax.getLineNo()));
+      orderTax.setNewOBObject(true);
       i++;
       order.getOrderTaxList().add(orderTax);
     }
@@ -1491,6 +1517,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         transaction.setMovementDate(shipment.getMovementDate());
         transaction.setGoodsShipmentLine(line);
         transaction.setAttributeSetValue(line.getAttributeSetValue());
+        transaction.setId(line.getId());
+        transaction.setNewOBObject(true);
 
         updateInventory(transaction, updateStockStatement);
 
@@ -1600,6 +1628,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         stdPrecision = order.getCurrency().getStandardPrecision().intValue();
       } else {
         paymentSchedule = OBProvider.getInstance().get(FIN_PaymentSchedule.class);
+        paymentSchedule.setId(order.getId());
+        paymentSchedule.setNewOBObject(true);
         paymentSchedule.setCurrency(order.getCurrency());
         paymentSchedule.setOrder(order);
         paymentSchedule.setFinPaymentmethod(order.getBusinessPartner().getPaymentMethod());
@@ -1754,6 +1784,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         if (paymentScheduleInvoice != null) {
           paymentScheduleDetail.setInvoicePaymentSchedule(paymentScheduleInvoice);
         }
+        paymentScheduleDetail.setId(paymentScheduleInvoice.getId());
+        paymentScheduleDetail.setNewOBObject(true);
         OBDal.getInstance().save(paymentScheduleDetail);
       } else if (notpaidLayaway || fullypaidLayaway) {
         // Unlinked PaymentScheduleDetail records will be recreated
@@ -1785,6 +1817,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           if (paymentScheduleInvoice != null) {
             paymentScheduleDetail.setInvoicePaymentSchedule(paymentScheduleInvoice);
           }
+          paymentScheduleDetail.setId(paymentSchedule.getId());
+          paymentScheduleDetail.setNewOBObject(true);
           OBDal.getInstance().save(paymentScheduleDetail);
         }
       }
@@ -1852,7 +1886,10 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       paymentScheduleDetail.setAmount(amount);
       paymentSchedule.getFINPaymentScheduleDetailOrderPaymentScheduleList().add(
           paymentScheduleDetail);
-
+      if (payment.has("id")) {
+        paymentScheduleDetail.setId(payment.getString("id"));
+        paymentScheduleDetail.setNewOBObject(true);
+      }
       OBDal.getInstance().save(paymentScheduleDetail);
       if (paymentScheduleInvoice != null) {
         paymentScheduleInvoice.getFINPaymentScheduleDetailInvoicePaymentScheduleList().add(
@@ -2008,6 +2045,10 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
         JSONPropertyToEntity.fillBobFromJSON(approvalEntity, approval, jsonApproval,
             jsonorder.getLong("timezoneOffset"));
+        if (jsonApproval.has("id")) {
+          approval.setId(jsonApproval.getString("id"));
+          approval.setNewOBObject(true);
+        }
 
         approval.setSalesOrder(order);
 

@@ -697,6 +697,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
             paymentMethod: {}
           };
           // Set cashclose info
+          cashCloseInfo.id = OB.UTIL.get_UUID();
           cashCloseInfo.paymentTypeId = curModel.get('id');
           cashCloseInfo.difference = curModel.get('difference');
           cashCloseInfo.foreignDifference = curModel.get('foreignDifference');
