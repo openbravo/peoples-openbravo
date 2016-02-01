@@ -1408,14 +1408,16 @@
           var process = new OB.DS.Process('org.openbravo.retail.posterminal.process.HasServices');
           var params = {},
               date = new Date(),
-              i, prod;
+              i, prod, synchId;
           params.terminalTime = date;
           params.terminalTimeOffset = date.getTimezoneOffset();
+          synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('HasServices');
           process.exec({
             product: productId,
             productCategory: productCategory,
             parameters: params
           }, function (data, message) {
+            OB.UTIL.SynchronizationHelper.finished(synchId, 'HasServices');
             if (data && data.exception) {
               //ERROR or no connection
               OB.error(OB.I18N.getLabel('OBPOS_ErrorGettingRelatedServices'));
@@ -1425,6 +1427,10 @@
             } else {
               callback(null);
             }
+          }, function (error) {
+            OB.UTIL.SynchronizationHelper.finished(synchId, 'HasServices');
+            OB.error(OB.I18N.getLabel('OBPOS_ErrorGettingRelatedServices'));
+            callback(null);
           });
         } else {
           //non-high volumes: websql
