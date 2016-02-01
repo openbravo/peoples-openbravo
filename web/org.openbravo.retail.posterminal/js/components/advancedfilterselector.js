@@ -85,6 +85,13 @@ enyo.kind({
               style: 'width: 100%'
             }]
           }]
+        }, {
+          style: 'padding-left: 10px',
+          name: 'dateFormatError',
+          showing: false,
+          initComponents: function () {
+            this.setContent(enyo.format(OB.I18N.getLabel('OBPOS_DateFormatError'), OB.Format.date));
+          }
         }]
       }, {
         style: 'display: table-cell;',
@@ -123,19 +130,21 @@ enyo.kind({
     }]
   }],
   searchAction: function () {
-    var text = this.$.customerFilterText.getValue();
+    var me = this,
+        text = this.$.customerFilterText.getValue();
     if (this.showFields) {
       var value = this.$.customerFilterColumn.getValue(),
           column = _.find(this.filters, function (flt) {
           return flt.column === value;
         }, this);
-      if (column && column.isDate) {
+      if (text !== '' && column && column.isDate) {
         var dateValidated = OB.Utilities.Date.OBToJS(text, OB.Format.date) || OB.Utilities.Date.OBToJS(text, 'yyyy-MM-dd');
         if (dateValidated) {
           text = OB.Utilities.Date.JSToOB(dateValidated, 'yyyy-MM-dd');
+          me.$.dateFormatError.hide();
           this.$.customerFilterText.removeClass('error');
         } else {
-          OB.UTIL.showError(enyo.format(OB.I18N.getLabel('OBPOS_DateFormatError'), OB.Format.date));
+          me.$.dateFormatError.show();
           this.$.customerFilterText.addClass('error');
           return;
         }
