@@ -9,7 +9,6 @@
 package org.openbravo.retail.posterminal;
 
 import java.math.BigDecimal;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -28,7 +27,6 @@ import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.mobile.core.model.HQLProperty;
 import org.openbravo.mobile.core.model.HQLPropertyList;
 import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.mobile.core.model.ModelExtensionUtils;
@@ -69,27 +67,22 @@ public class PaidReceipts extends JSONProcessSimple {
       String posTerminalId = jsonsent.getString("pos");
 
       // get the orderId
-      HQLPropertyList hqlProperties = ModelExtensionUtils.getPropertyExtensions(extensions);
+      HQLPropertyList hqlPropertiesReceipts = ModelExtensionUtils.getPropertyExtensions(extensions);
       String hqlPaidReceipts = "select "
-          + hqlProperties.getHqlSelect()
+          + hqlPropertiesReceipts.getHqlSelect()
           + " from Order as ord LEFT OUTER JOIN ord.obposApplications AS pos LEFT OUTER JOIN ord.salesRepresentative as salesRepresentative"
           + " where ord.id = :orderId";
       Query paidReceiptsQuery = OBDal.getInstance().getSession().createQuery(hqlPaidReceipts);
       paidReceiptsQuery.setString("orderId", orderid);
 
       // cycle through the lines of the selected order
-      for (Object obj : paidReceiptsQuery.list()) {
-        Object[] objpaidReceipts = (Object[]) obj;
-        JSONObject paidReceipt = hqlProperties.getJSONObjectRow(objpaidReceipts);
+      JSONArray paidReceipts = hqlPropertiesReceipts.getJSONArray(paidReceiptsQuery);
+
+      for (int receipt = 0; receipt < paidReceipts.length(); receipt++) {
+        JSONObject paidReceipt = paidReceipts.getJSONObject(receipt);
+
         paidReceipt.put("orderid", orderid);
 
-        // orderDate is a date so we don't need to transform the time information
-        DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
-        int orderDatePropertyIndex = hqlProperties.getHqlPropertyIndex("orderDate");
-        if (orderDatePropertyIndex != -1) {
-          String nowAsISO = df.format(objpaidReceipts[orderDatePropertyIndex]);
-          paidReceipt.put("orderDate", nowAsISO);
-        }
         // get the Invoice for the Order
         String hqlPaidReceiptsInvoice = "select inv.id from Invoice as inv where inv.salesOrder.id = :orderId";
         Query PaidReceiptsInvoiceQuery = OBDal.getInstance().getSession()
@@ -110,26 +103,19 @@ public class PaidReceipts extends JSONProcessSimple {
         String hqlPaidReceiptsLines = "select " + hqlPropertiesLines.getHqlSelect() + //
             "  from OrderLine as ordLine " + //
             " where ordLine.salesOrder.id=? and ordLine.obposIsDeleted = false"; //
-
         hqlPaidReceiptsLines += " order by ordLine.lineNo";
         Query paidReceiptsLinesQuery = OBDal.getInstance().getSession()
             .createQuery(hqlPaidReceiptsLines);
         paidReceiptsLinesQuery.setString(0, orderid);
 
-        for (Object objLine : paidReceiptsLinesQuery.list()) {
-          Object[] objpaidReceiptsLines = (Object[]) objLine;
-          JSONObject paidReceiptLine = new JSONObject();
+        JSONArray paidReceiptsLines = hqlPropertiesLines.getJSONArray(paidReceiptsLinesQuery);
 
-          // add the received database information into the working object (paidReceiptLine)
-          int i = 0;
-          for (HQLProperty property : hqlPropertiesLines.getProperties()) {
-            paidReceiptLine.put(property.getJsonName(), objpaidReceiptsLines[i]);
-            i++;
-          }
+        for (int receiptLine = 0; receiptLine < paidReceiptsLines.length(); receiptLine++) {
+          JSONObject paidReceiptLine = paidReceiptsLines.getJSONObject(receiptLine);
+
           paidReceiptLine.put("priceIncludesTax", paidReceipt.getBoolean("priceIncludesTax"));
 
           // get shipmentLines for returns
-
           HQLPropertyList hqlPropertiesShipLines = ModelExtensionUtils
               .getPropertyExtensions(extensionsShipLines);
           String hqlPaidReceiptsShipLines = "select " + hqlPropertiesShipLines.getHqlSelect() //
@@ -137,28 +123,15 @@ public class PaidReceipts extends JSONProcessSimple {
           OBDal.getInstance().getSession().createQuery(hqlPaidReceiptsShipLines);
           Query paidReceiptsShipLinesQuery = OBDal.getInstance().getSession()
               .createQuery(hqlPaidReceiptsShipLines);
-          paidReceiptsShipLinesQuery.setString(0, (String) objpaidReceiptsLines[6]);
-
-          // cycle through the lines of the selected order
-          JSONArray shipmentlines = new JSONArray();
-          for (Object objShipLines : paidReceiptsShipLinesQuery.list()) {
-
-            JSONObject jsonShipline = new JSONObject();
-            Object[] objpaidReceiptsShipLines = (Object[]) objShipLines;
-            jsonShipline.put("shipLineId", objpaidReceiptsShipLines[0]);
-            jsonShipline.put("shipment", objpaidReceiptsShipLines[1]);
-            jsonShipline.put("shipmentlineNo", objpaidReceiptsShipLines[2]);
-            jsonShipline.put("qty", objpaidReceiptsShipLines[3]);
-            jsonShipline.put("remainingQty", objpaidReceiptsShipLines[4]);
-            shipmentlines.put(jsonShipline);
-          }
-          paidReceiptLine.put("shipmentlines", shipmentlines);
+          paidReceiptsShipLinesQuery.setString(0, paidReceiptLine.getString("lineId"));
+          paidReceiptLine.put("shipmentlines",
+              hqlPropertiesShipLines.getJSONArray(paidReceiptsShipLinesQuery));
 
           // promotions per line
           OBCriteria<OrderLineOffer> qPromotions = OBDal.getInstance().createCriteria(
               OrderLineOffer.class);
           qPromotions.add(Restrictions.eq(OrderLineOffer.PROPERTY_SALESORDERLINE + ".id",
-              (String) objpaidReceiptsLines[6]));
+              (String) paidReceiptLine.getString("lineId")));
           qPromotions.addOrder(Order.asc(OrderLineOffer.PROPERTY_LINENO));
           JSONArray promotions = new JSONArray();
           boolean hasPromotions = false;
@@ -186,10 +159,10 @@ public class PaidReceipts extends JSONProcessSimple {
           BigDecimal lineAmount;
           if (hasPromotions) {
             // When it has promotions, show line amount without them as they are shown after it
-            lineAmount = ((BigDecimal) objpaidReceiptsLines[4])
-                .multiply((BigDecimal) objpaidReceiptsLines[3]);
+            lineAmount = (new BigDecimal(paidReceiptLine.optString("quantity"))
+                .multiply(new BigDecimal(paidReceiptLine.optString("unitPrice"))));
           } else {
-            lineAmount = (BigDecimal) objpaidReceiptsLines[5];
+            lineAmount = new BigDecimal(paidReceiptLine.optString("linegrossamount"));
           }
           paidReceiptLine.put("linegrossamount", lineAmount);
 
@@ -204,21 +177,17 @@ public class PaidReceipts extends JSONProcessSimple {
           OBDal.getInstance().getSession().createQuery(hqlPaidReceiptsShipLines);
           Query paidReceiptsRelatedLinesQuery = OBDal.getInstance().getSession()
               .createQuery(hqlPaidReceiptsRelatedLines);
-          paidReceiptsRelatedLinesQuery.setString(0, (String) objpaidReceiptsLines[6]);
+          paidReceiptsRelatedLinesQuery.setString(0, paidReceiptLine.getString("lineId"));
+          JSONArray relatedLines = hqlPropertiesRelatedLines
+              .getJSONArray(paidReceiptsRelatedLinesQuery);
 
-          JSONArray relatedLines = new JSONArray();
-          for (Object objRelatedLines : paidReceiptsRelatedLinesQuery.list()) {
-
-            JSONObject jsonRelatedline = new JSONObject();
-            Object[] objpaidReceiptsRelatedLines = (Object[]) objRelatedLines;
-            jsonRelatedline.put("orderlineId", objpaidReceiptsRelatedLines[0]);
-            jsonRelatedline.put("productName", objpaidReceiptsRelatedLines[1]);
-            jsonRelatedline.put("orderDocumentNo", objpaidReceiptsRelatedLines[2]);
-            jsonRelatedline.put("orderId", objpaidReceiptsRelatedLines[3]);
-            jsonRelatedline.put("otherTicket", !orderid.equals(objpaidReceiptsRelatedLines[3]));
-            relatedLines.put(jsonRelatedline);
-          }
           if (relatedLines.length() > 0) {
+            for (int r = 0; r < relatedLines.length(); r++) {
+              JSONObject jsonObject = relatedLines.getJSONObject(r);
+              if (!jsonObject.getString("orderId").equals(orderid)) {
+                jsonObject.put("otherTicket", "true");
+              }
+            }
             paidReceiptLine.put("relatedLines", relatedLines);
           }
 
@@ -393,4 +362,5 @@ public class PaidReceipts extends JSONProcessSimple {
   protected boolean bypassPreferenceCheck() {
     return true;
   }
+
 }
