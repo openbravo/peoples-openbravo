@@ -539,23 +539,16 @@ enyo.kind({
     var currentCash = OB.DEC.Zero,
         requiredCash;
 
-    if (OB.UTIL.isNullOrUndefined(selectedPayment) || !selectedPayment.paymentMethod.iscash) {
+    if (OB.UTIL.isNullOrUndefined(selectedPayment) || OB.UTIL.isNullOrUndefined(selectedPayment.paymentMethod.overpaymentLimit)) {
       return true;
     }
 
-    if (paymentstatus.isNegative) {
-      requiredCash = paymentstatus.pendingAmt;
-      paymentstatus.payments.each(function (payment) {
-        if (payment.get('kind') === selectedPayment.payment.searchKey) {
-          requiredCash = OB.DEC.add(requiredCash, payment.get('amount'));
-        }
-      });
-    } else {
-      requiredCash = paymentstatus.changeAmt;
-    }
-
-    if (selectedPayment.paymentMethod.allowoverpayment && (requiredCash !== 0)) {
-      if (!OB.UTIL.isNullOrUndefined(selectedPayment.paymentMethod.overpaymentLimit) && (selectedPayment.paymentMethod.overpaymentLimit < requiredCash)) {
+    requiredCash = paymentstatus.changeAmt;
+    if (requiredCash !== 0) {
+      if (selectedPayment.paymentMethod.overpaymentLimit === 0) {
+        this.$.overpaymentnotavailable.show();
+        return false;
+      } else if (selectedPayment.paymentMethod.overpaymentLimit < requiredCash) {
         this.$.overpaymentexceedlimit.show();
         return false;
       } else {
@@ -563,10 +556,8 @@ enyo.kind({
       }
     } else if (requiredCash === 0) {
       return true;
-    } else {
-      this.$.overpaymentnotavailable.show();
-      return false;
     }
+    return true;
   },
 
   checkValidPaymentMethod: function (paymentstatus, payment) {
