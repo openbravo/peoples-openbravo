@@ -25,7 +25,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2015 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2001-2016 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -90,6 +90,8 @@
     v_defplantype_inv C_InvoiceLine.DefPlanType%TYPE;
     v_periodnumber_inv C_InvoiceLine.periodnumber%TYPE;
     v_period_inv C_InvoiceLine.c_period_id%TYPE;
+    v_InOutLine_ID C_InvoiceLine.M_InOutLine_ID%TYPE;
+
 
     Cur_Bpblocked RECORD;
     
@@ -582,6 +584,19 @@
                     Next_O_Line:=TRUE;
                   END IF;
                   IF(NOT Next_O_Line) THEN
+                    v_InOutLine_ID:=NULL;
+                    -- In case of POS Order get M_InOutLine_ID for OrderLine
+                    -- Making sure exactly one record is retreived using Max
+                    -- Qty compared to get full shipped line reference only
+                    -- There could a case where Order Line is split into two
+                    -- based on available stock in different storage bins
+                    -- in that no reference would be set in Invoice Line
+                    IF(v_DocSubTypeSO = 'WR') THEN
+                      SELECT MAX(sl.M_INOUTLINE_ID) INTO v_InOutLine_ID
+                        FROM M_INOUTLINE sl
+                        WHERE sl.C_ORDERLINE_ID = ptr_ol.C_OrderLine_ID
+                          AND ptr_ol.QtyOrdered = sl.MovementQty;
+                    END IF;
                     --
                     Ad_Sequence_Next('C_InvoiceLine', Cur_Order.C_Order_ID, v_NextNo) ;
                     v_LineNo:=v_LineNo + 10;
@@ -643,7 +658,7 @@
                       (
                         v_NextNo, ptr_ol.AD_Client_ID, ptr_ol.AD_Org_ID, 'Y',
                         now(), v_ADUserId, now(), v_ADUserId,
-                        p_Invoice_ID, ptr_ol.C_OrderLine_ID, NULL, v_LineNo,
+                        p_Invoice_ID, ptr_ol.C_OrderLine_ID, v_InOutLine_ID, v_LineNo,
                         ptr_ol.Description, ptr_ol.M_Product_ID, v_Qty, ptr_ol.PriceList,
                         ptr_ol.PriceActual, ptr_ol.PriceLimit, C_Currency_Round(v_Qty*ptr_ol.PriceActual, Cur_Order.C_Currency_ID, NULL), ptr_ol.C_Charge_ID,
                         ptr_ol.ChargeAmt, ptr_ol.C_UOM_ID,

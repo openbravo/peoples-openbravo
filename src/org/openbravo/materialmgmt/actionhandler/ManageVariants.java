@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013 Openbravo SLU
+ * All portions are Copyright (C) 2013-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -106,6 +106,9 @@ public class ManageVariants extends BaseProcessActionHandler {
 
   private void createVariant(JSONObject variantProperties, Product generic) throws JSONException {
     Product variant = (Product) DalUtil.copy(generic);
+    if (generic.getClient().isMultilingualDocuments()) {
+      variant.getProductTrlList().clear();
+    }
 
     variant.setGenericProduct(generic);
     variant.setProductAccountsList(Collections.<ProductAccounts> emptyList());

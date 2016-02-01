@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -42,6 +42,7 @@ import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.util.Check;
 import org.openbravo.base.weld.WeldUtils;
+import org.openbravo.client.application.CachedPreference;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
@@ -75,8 +76,10 @@ public class DefaultJsonDataService implements JsonDataService {
 
   private static final String ADD_FLAG = "_doingAdd";
 
+  private static final String ALLOW_UNPAGED_DS_MANUAL_REQUEST = "OBJSON_AllowUnpagedDatasourceManualRequest";
+
   @Inject
-  private UnpagedRequestCachedPreference unpagedRequestPreference;
+  private CachedPreference cachedPreference;
 
   private static DefaultJsonDataService instance = WeldUtils
       .getInstanceFromStaticBeanManager(DefaultJsonDataService.class);
@@ -475,7 +478,8 @@ public class DefaultJsonDataService implements JsonDataService {
 
         // for standard tab and selector datasources pagination is mandatory
         throw new OBException(OBMessageUtils.messageBD("OBJSON_NoPagedFetch"));
-      } else if (!"Y".equals(unpagedRequestPreference.getPreferenceValue()) && !isWsCall) {
+      } else if (!"Y".equals(cachedPreference.getPreferenceValue(ALLOW_UNPAGED_DS_MANUAL_REQUEST))
+          && !isWsCall) {
         throw new OBException(OBMessageUtils.messageBD("OBJSON_NoPagedFetchManual"));
       }
     }
