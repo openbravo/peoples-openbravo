@@ -96,22 +96,45 @@ enyo.kind({
   },
 
   clearAll: function () {
+    var me = this;
     _.each(this.filters, function (flt) {
       flt.owner.$['input' + flt.filter.name].setValue('');
+      flt.owner.$['input' + flt.filter.name].removeClass('error');
+      me.owner.$.dateFormatError.hide();
     });
   },
 
   applyFilters: function () {
-    var result = {
-      filters: [],
-      orderby: null
-    };
+    var me = this,
+        filterError = false,
+        result = {
+        filters: [],
+        orderby: null
+        };
+
+    me.owner.$.dateFormatError.hide();
     _.each(this.filters, function (flt) {
       var text = flt.owner.$['input' + flt.filter.name].getValue(),
           orderClasses = flt.owner.$['order' + flt.filter.name].getClassAttribute().split(' '),
-          orderClass = orderClasses[orderClasses.length - 1];
+          orderClass = orderClasses[orderClasses.length - 1],
+          dateValidated;
+
+      flt.owner.$['input' + flt.filter.name].removeClass('error');
+
       text = text ? text.trim() : '';
       if (text) {
+        if (flt.filter.isDate) {
+          dateValidated = OB.Utilities.Date.OBToJS(text, OB.Format.date) || OB.Utilities.Date.OBToJS(text, 'yyyy-MM-dd');
+          if (dateValidated) {
+            flt.text = OB.Utilities.Date.JSToOB(dateValidated, 'yyyy-MM-dd');
+            me.owner.$.dateFormatError.hide();
+            flt.owner.$['input' + flt.filter.name].removeClass('error');
+          } else {
+            me.owner.$.dateFormatError.show();
+            flt.owner.$['input' + flt.filter.name].addClass('error');
+            filterError = true;
+          }
+        }
         result.filters.push({
           column: flt.filter.column,
           text: text
@@ -126,7 +149,11 @@ enyo.kind({
         };
       }
     });
-    return result;
+    if (filterError) {
+      return false;
+    } else {
+      return result;
+    }
   }
 
 });
@@ -164,6 +191,13 @@ enyo.kind({
     }, {
       style: 'height: 15px;'
     }, {
+      style: 'width: 100%; float: left; text-align:center; ',
+      name: 'dateFormatError',
+      showing: false,
+      initComponents: function () {
+        this.setContent(enyo.format(OB.I18N.getLabel('OBPOS_DateFormatError'), OB.Format.date));
+      }
+    }, {
       kind: 'OB.UI.AdvancedFilterTable',
       name: 'filters'
     }]
@@ -174,8 +208,11 @@ enyo.kind({
   },
 
   applyFilters: function () {
-    this.filtersToApply = this.$.body.$.filters.applyFilters();
-    this.doHideThisPopup();
+    var tmpFilters = this.$.body.$.filters.applyFilters();
+    if (tmpFilters) {
+      this.filtersToApply = tmpFilters;
+      this.doHideThisPopup();
+    }
   },
 
   executeOnShow: function () {
