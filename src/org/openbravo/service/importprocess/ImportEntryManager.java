@@ -161,6 +161,10 @@ public class ImportEntryManager {
 
   private boolean isShutDown = false;
 
+  public boolean isShutDown() {
+    return isShutDown;
+  }
+
   public ImportEntryManager() {
     instance = this;
     importBatchSize = ImportProcessUtils.getCheckIntProperty(log, "import.batch.size",
@@ -195,6 +199,7 @@ public class ImportEntryManager {
     managerThread = new ImportEntryManagerThread(this);
     executorService.submit(managerThread);
     importEntryArchiveManager.start();
+    isShutDown = false;
   }
 
   public long getNumberOfQueuedTasks() {
@@ -501,6 +506,9 @@ public class ImportEntryManager {
       try {
         Thread.sleep(manager.initialWaitTime);
       } catch (Exception ignored) {
+      }
+      if (manager.isShutDown) {
+        return;
       }
       log.debug("Run loop started");
       try {
