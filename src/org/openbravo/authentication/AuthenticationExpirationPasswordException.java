@@ -19,21 +19,21 @@ import org.openbravo.erpCommon.utility.OBError;
  * last update password date for user plus validity days defined for client has been reached
  * 
  */
-public class AuthenticationExpiryPasswordException extends AuthenticationException {
+public class AuthenticationExpirationPasswordException extends AuthenticationException {
   private static final long serialVersionUID = 1L;
   private OBError error;
 
-  public AuthenticationExpiryPasswordException(String msg) {
+  public AuthenticationExpirationPasswordException(String msg) {
     super(msg);
     this.error = null;
   }
 
-  public AuthenticationExpiryPasswordException(String msg, Throwable cause) {
+  public AuthenticationExpirationPasswordException(String msg, Throwable cause) {
     super(msg, cause);
     this.error = null;
   }
 
-  public AuthenticationExpiryPasswordException(String msg, OBError error) {
+  public AuthenticationExpirationPasswordException(String msg, OBError error) {
     super(msg);
     this.error = error;
   }

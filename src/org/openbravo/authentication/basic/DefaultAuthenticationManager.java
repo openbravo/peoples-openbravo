@@ -25,7 +25,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.authentication.AuthenticationException;
-import org.openbravo.authentication.AuthenticationExpiryPasswordException;
+import org.openbravo.authentication.AuthenticationExpirationPasswordException;
 import org.openbravo.authentication.AuthenticationManager;
 import org.openbravo.base.HttpBaseUtils;
 import org.openbravo.base.secureApp.LoginUtils;
@@ -118,20 +118,17 @@ public class DefaultAuthenticationManager extends AuthenticationManager {
     vars.setSessionValue("#AD_SESSION_ID", sessionId);
     vars.setSessionValue("#LogginIn", "Y");
 
-    Date lastUpdatePasswordDate = getUpdatePasswordDate(user);
+    Date lastUpdatePassword = getUpdatePasswordDate(userId);
+    Date today = new Date();
 
-    if (lastUpdatePasswordDate != null) {
-
-      Date today = new Date();
-      if (lastUpdatePasswordDate.compareTo(today) <= 0) {
-        OBError errorMsg = new OBError();
-        errorMsg.setType("Error");
-        errorMsg.setTitle("IDENTIFICATION_FAILURE_TITLE");
-        errorMsg.setMessage("IDENTIFICATION_FAILURE_MSG");
-        throw new AuthenticationExpiryPasswordException("IDENTIFICATION_FAILURE_TITLE", errorMsg);
-
-      }
+    if ((lastUpdatePassword != null) && (lastUpdatePassword.compareTo(today) <= 0)) {
+      OBError errorMsg = new OBError();
+      errorMsg.setType("Error");
+      errorMsg.setTitle("IDENTIFICATION_FAILURE_TITLE");
+      errorMsg.setMessage("IDENTIFICATION_FAILURE_MSG");
+      throw new AuthenticationExpirationPasswordException("IDENTIFICATION_FAILURE_TITLE", errorMsg);
     }
+
     if (!StringUtils.isEmpty(strAjax) && StringUtils.isEmpty(userId)) {
       bdErrorAjax(response, "Error", "",
           Utility.messageBD(this.conn, "NotLogged", variables.getLanguage()));
@@ -172,26 +169,26 @@ public class DefaultAuthenticationManager extends AuthenticationManager {
   }
 
   /**
-   * Returns the expiry password date from login and unHashedPassword parameters
+   * Returns the expiration password date from login and unHashedPassword parameters
    * 
    * @param username
    *          the username
-   * @return the expiry password date or null in case validity days are not applicable
+   * @return the expiration password date or null in case validity days are not applicable
    */
-  private static Date getUpdatePasswordDate(String username) {
+  private static Date getUpdatePasswordDate(String id) {
 
     Date total;
 
     final OBCriteria<User> obc = OBDal.getInstance().createCriteria(User.class);
     obc.setFilterOnReadableClients(false);
     obc.setFilterOnReadableOrganization(false);
-    obc.add(Restrictions.eq(User.PROPERTY_USERNAME, username));
+    obc.add(Restrictions.eq(User.PROPERTY_ID, id));
     final User userOB = (User) obc.uniqueResult();
-    Date lastUpdateDate = userOB.getLastupdatepassworddate();
+    Date lastUpdatePassword = userOB.getLastPasswordUpdate();
     Long validityDays = userOB.getClient().getDaystopasswordexpiration();
     if (validityDays != null && validityDays > 0) {
       Calendar expirationDate = Calendar.getInstance();
-      expirationDate.setTimeInMillis(lastUpdateDate.getTime());
+      expirationDate.setTimeInMillis(lastUpdatePassword.getTime());
       expirationDate.add(Calendar.DATE, validityDays.intValue());
       total = expirationDate.getTime();
       return total;

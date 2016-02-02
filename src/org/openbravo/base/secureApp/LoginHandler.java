@@ -24,7 +24,7 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.authentication.AuthenticationException;
-import org.openbravo.authentication.AuthenticationExpiryPasswordException;
+import org.openbravo.authentication.AuthenticationExpirationPasswordException;
 import org.openbravo.authentication.AuthenticationManager;
 import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.base.exception.OBException;
@@ -78,11 +78,24 @@ public class LoginHandler extends HttpBaseServlet {
     Boolean sameOldPassword = false;
     final String user;
     final String password;
+    Client systemClient = OBDal.getInstance().get(Client.class, "0");
+    String language = systemClient.getLanguage().getLanguage();
     if (resetPassword) {
       password = vars.getStringParameter("password");
       user = vars.getStringParameter("loggedUser");
       if (!vars.getSessionValue("#AD_Session_ID").equalsIgnoreCase("")) {
         sameOldPassword = updatePassword(user, password);
+        if (sameOldPassword) {
+          OBError errorMsg = new OBError();
+          String msg = Utility.messageBD(myPool, "CPUpdatePassword", language);
+          String title = Utility.messageBD(myPool, "CPDifferentPassword", language);
+          errorMsg.setType("Error");
+          errorMsg.setTitle(title);
+          errorMsg.setMessage(msg);
+
+          throw new AuthenticationExpirationPasswordException(Utility.messageBD(myPool,
+              "CPSamePasswordThanOld", language), errorMsg);
+        }
       }
     } else {
       user = vars.getStringParameter("user");
@@ -96,25 +109,10 @@ public class LoginHandler extends HttpBaseServlet {
 
     OBContext.setAdminMode();
     try {
-      Client systemClient = OBDal.getInstance().get(Client.class, "0");
-
-      String language = systemClient.getLanguage().getLanguage();
-
       if (user.equals("") && !OBVersion.getInstance().is30()) {
         res.sendRedirect(res.encodeRedirectURL(strDireccion + "/security/Login_F1.html"));
       } else {
         try {
-          if (sameOldPassword) {
-            OBError errorMsg = new OBError();
-            String msg = Utility.messageBD(myPool, "CPUpdatePassword", language);
-            String title = Utility.messageBD(myPool, "CPDifferentPassword", language);
-            errorMsg.setType("Error");
-            errorMsg.setTitle(title);
-            errorMsg.setMessage(msg);
-
-            throw new AuthenticationExpiryPasswordException(Utility.messageBD(myPool,
-                "CPSamePasswordThanOld", language), errorMsg);
-          }
           AuthenticationManager authManager = AuthenticationManager.getAuthenticationManager(this);
 
           final String strUserAuth = authManager.authenticate(req, res);
@@ -125,7 +123,7 @@ public class LoginHandler extends HttpBaseServlet {
           }
           checkLicenseAndGo(res, vars, strUserAuth, user, sessionId, doRedirect);
 
-        } catch (AuthenticationExpiryPasswordException aepe) {
+        } catch (AuthenticationExpirationPasswordException aepe) {
 
           final OBError errorMsg = aepe.getOBError();
           if (errorMsg != null) {
@@ -138,7 +136,7 @@ public class LoginHandler extends HttpBaseServlet {
                   doRedirect);
             } else {
               String msg = Utility.messageBD(myPool, "CPUpdatePassword", language);
-              String title = Utility.messageBD(myPool, "CPExpiryPassword", language);
+              String title = Utility.messageBD(myPool, "CPExpirationPassword", language);
               goToUpdatePassword(res, vars, msg, title, "Error", "../security/Login_FS.html",
                   doRedirect);
             }
