@@ -288,7 +288,7 @@ OB.DS.HWServer.prototype._send = function (data, callback) {
       data: data,
       success: function (inSender, inResponse) {
         if (callback) {
-          callback(inResponse);
+          callback(inResponse, data);
         }
       },
       fail: function (inSender, inResponse) {

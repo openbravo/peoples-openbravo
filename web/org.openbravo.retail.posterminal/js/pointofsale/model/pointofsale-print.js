@@ -309,7 +309,7 @@
         if (receipt.get('print')) { //Print option of order property
           OB.POS.hwserver.print(args.template, {
             order: receipt
-          }, function (result) {
+          }, function (result, printedReceipt) {
             var myreceipt = receipt;
             if (result && result.exception) {
               OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_MsgHardwareServerNotAvailable'), OB.I18N.getLabel('OBPOS_MsgPrintAgain'), [{
@@ -344,9 +344,15 @@
               printFiles(receipt, args);
               // Success. Try to print the pending receipts.
               OB.Model.OfflinePrinter.printPendingJobs();
-              if (args.callback) {
-                args.callback();
-              }
+              OB.UTIL.HookManager.executeHooks('OBPRINT_PostPrint', {
+                receipt: receipt,
+                printedReceipt: printedReceipt
+              }, function () {
+                OB.debug("Executed hooks of OBPRINT_PostPrint");
+                if (args.callback) {
+                  args.callback();
+                }
+              });
             }
           });
         } else {
