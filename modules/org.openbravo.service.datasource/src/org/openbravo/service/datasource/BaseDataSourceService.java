@@ -159,18 +159,20 @@ public abstract class BaseDataSourceService implements DataSourceService {
         // rest of the selectors
         String tableId = parameters.get("inpTableId");
         String targetPropertyName = parameters.get(SelectorConstants.PARAM_TARGET_PROPERTY_NAME);
-        OBContext.setAdminMode();
-        try {
-          Entity parentEntity = ModelProvider.getInstance().getEntityByTableId(tableId);
-          Property p = parentEntity.getProperty(targetPropertyName);
-          Entity entitySelector = p.getReferencedProperty().getEntity();
-          if (entitySelector != null) {
-            obContext.getEntityAccessChecker().checkDerivedAccess(entitySelector);
+        if (StringUtils.isNotBlank(targetPropertyName)) {
+          OBContext.setAdminMode();
+          try {
+            Entity parentEntity = ModelProvider.getInstance().getEntityByTableId(tableId);
+            Property p = parentEntity.getProperty(targetPropertyName);
+            Entity entitySelector = p.getReferencedProperty().getEntity();
+            if (entitySelector != null) {
+              obContext.getEntityAccessChecker().checkDerivedAccess(entitySelector);
+            }
+          } catch (OBSecurityException e) {
+            allowUnsecuredDatasourceAccess(e);
+          } finally {
+            OBContext.restorePreviousMode();
           }
-        } catch (OBSecurityException e) {
-          allowUnsecuredDatasourceAccess(e);
-        } finally {
-          OBContext.restorePreviousMode();
         }
       }
     } else if (entityToCheck != null) {
