@@ -37,16 +37,16 @@ enyo.kind({
             this.setContent(OB.I18N.getLabel('OBPOS_AdvancedFiltersApplied'));
           }
         }, {
-          style: 'width: 100%;',
+          style: 'display: table; width: 100%;',
           name: 'filterInputs',
           components: [{
-            style: 'display: table-cell; width: 150px;',
-            name: 'customerFilterColumnContainer',
+            style: 'display: table-cell; width: 35%;',
+            name: 'entityFilterColumnContainer',
             components: [{
               kind: 'OB.UI.List',
-              name: 'customerFilterColumn',
+              name: 'entityFilterColumn',
               classes: 'combo',
-              style: 'width: 95%',
+              style: 'width: 95%; white-space: nowrap;',
               handlers: {
                 onchange: 'changeColumn'
               },
@@ -60,6 +60,9 @@ enyo.kind({
               }),
               renderEmpty: 'enyo.Control',
               changeColumn: function () {
+                this.owner.$.entityFilterText.removeClass('error');
+                this.owner.$.dateFormatError.hide();
+                this.owner.$.entityFilterText.setValue('');
                 this.owner.doClearAction();
               },
               initComponents: function () {
@@ -77,11 +80,11 @@ enyo.kind({
               }
             }]
           }, {
-            style: 'display: table-cell; width: 275px;',
-            name: 'customerSearchContainer',
+            style: 'display: table-cell; width: 65%;',
+            name: 'entitySearchContainer',
             components: [{
               kind: 'OB.UI.SearchInputAutoFilter',
-              name: 'customerFilterText',
+              name: 'entityFilterText',
               style: 'width: 100%'
             }]
           }]
@@ -107,7 +110,7 @@ enyo.kind({
         style: 'display: table-cell;',
         components: [{
           kind: 'OB.UI.SmallButton',
-          name: 'customerSearchBtn',
+          name: 'entitySearchBtn',
           classes: 'btnlink-yellow btn-icon-small btn-icon-search',
           style: 'width: 40px; margin: 0px 0px 8px 5px;',
           tap: function () {
@@ -131,9 +134,9 @@ enyo.kind({
   }],
   searchAction: function () {
     var me = this,
-        text = this.$.customerFilterText.getValue();
+        text = this.$.entityFilterText.getValue();
     if (this.showFields) {
-      var value = this.$.customerFilterColumn.getValue(),
+      var value = this.$.entityFilterColumn.getValue(),
           column = _.find(this.filters, function (flt) {
           return flt.column === value;
         }, this);
@@ -142,16 +145,16 @@ enyo.kind({
         if (dateValidated) {
           text = OB.Utilities.Date.JSToOB(dateValidated, 'yyyy-MM-dd');
           me.$.dateFormatError.hide();
-          this.$.customerFilterText.removeClass('error');
+          this.$.entityFilterText.removeClass('error');
         } else {
           me.$.dateFormatError.show();
-          this.$.customerFilterText.addClass('error');
+          this.$.entityFilterText.addClass('error');
           return;
         }
       }
     }
     var filters = [{
-      column: this.showFields ? this.$.customerFilterColumn.getValue() : '_filter',
+      column: this.showFields ? this.$.entityFilterColumn.getValue() : '_filter',
       text: text
     }];
     this.lastFilters = filters;
@@ -161,24 +164,25 @@ enyo.kind({
     });
   },
   clearFilter: function () {
-    this.$.customerFilterText.setValue('');
-    this.$.customerFilterText.removeClass('error');
+    this.$.entityFilterText.setValue('');
+    this.$.entityFilterText.removeClass('error');
     this.$.advancedFilterInfo.setShowing(false);
+    this.$.dateFormatError.hide();
     this.$.filterInputs.setShowing(true);
-    this.$.customerSearchBtn.putDisabled(false);
+    this.$.entitySearchBtn.putDisabled(false);
     this.doClearAction();
   },
   setAdvancedSearch: function (isAdvanced) {
     this.$.advancedFilterInfo.setShowing(isAdvanced);
     this.$.filterInputs.setShowing(!isAdvanced);
-    this.$.customerSearchBtn.putDisabled(isAdvanced);
+    this.$.entitySearchBtn.putDisabled(isAdvanced);
     if (isAdvanced) {
       this.lastFilters = null;
     }
   },
   hideFilterCombo: function () {
     this.showFields = false;
-    this.$.customerFilterColumnContainer.setStyle('display: none');
-    this.$.customerSearchContainer.setStyle('display: table-cell; width: 425px;');
+    this.$.entityFilterColumnContainer.setStyle('display: none');
+    this.$.entitySearchContainer.setStyle('display: table-cell; width: 425px;');
   }
 });
