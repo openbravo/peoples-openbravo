@@ -58,6 +58,7 @@ public class DataSourceSecurity extends BaseDataSourceTestDal {
   private static final String WAREHOUSE_ID = "B2D40D8A5D644DD89E329DC297309055";
   private static final String ROLE_INTERNATIONAL_ADMIN = "42D0EEB1C66F497A90DD526DC597E6F0";
   private static final String ROLE_NO_ACCESS = "1";
+  private static final String ROLE_SYSTEM_ADMIN = "0";
 
   private RoleType role;
   private String dataSource;
@@ -65,7 +66,8 @@ public class DataSourceSecurity extends BaseDataSourceTestDal {
 
   private enum RoleType {
     ADMIN_ROLE(ROLE_INTERNATIONAL_ADMIN), //
-    NO_ACCESS_ROLE(ROLE_NO_ACCESS);
+    NO_ACCESS_ROLE(ROLE_NO_ACCESS), //
+    SYSTEM_ROLE(ROLE_SYSTEM_ADMIN);
 
     private String roleId;
 
@@ -89,6 +91,11 @@ public class DataSourceSecurity extends BaseDataSourceTestDal {
           "Order",
           type == RoleType.ADMIN_ROLE ? JsonConstants.RPCREQUEST_STATUS_SUCCESS
               : JsonConstants.RPCREQUEST_STATUS_VALIDATION_ERROR });
+      testCases.add(new Object[] {
+          type,
+          "ADRole",
+          type == RoleType.NO_ACCESS_ROLE ? JsonConstants.RPCREQUEST_STATUS_VALIDATION_ERROR
+              : JsonConstants.RPCREQUEST_STATUS_SUCCESS });
     }
     return testCases;
   }
