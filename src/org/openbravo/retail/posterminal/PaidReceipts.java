@@ -39,6 +39,7 @@ public class PaidReceipts extends JSONProcessSimple {
   public static final String paidReceiptsPropertyExtension = "PRExtension";
   public static final String paidReceiptsLinesPropertyExtension = "PRExtensionLines";
   public static final String paidReceiptsShipLinesPropertyExtension = "PRExtensionShipLines";
+  public static final String paidReceiptsRelatedLinesPropertyExtension = "PRExtensionRelatedLines";
 
   @Inject
   @Any
@@ -52,6 +53,10 @@ public class PaidReceipts extends JSONProcessSimple {
   @Any
   @Qualifier(paidReceiptsShipLinesPropertyExtension)
   private Instance<ModelExtension> extensionsShipLines;
+  @Inject
+  @Any
+  @Qualifier(paidReceiptsRelatedLinesPropertyExtension)
+  private Instance<ModelExtension> extensionsRelatedLines;
 
   @Override
   public JSONObject exec(JSONObject jsonsent) throws JSONException, ServletException {
@@ -61,12 +66,14 @@ public class PaidReceipts extends JSONProcessSimple {
       JSONArray respArray = new JSONArray();
 
       String orderid = jsonsent.getString("orderid");
+      String posTerminalId = jsonsent.getString("pos");
 
       // get the orderId
       HQLPropertyList hqlProperties = ModelExtensionUtils.getPropertyExtensions(extensions);
-      String hqlPaidReceipts = "select " + hqlProperties.getHqlSelect() + //
-          " from Order as ord LEFT OUTER JOIN ord.obposApplications AS pos LEFT OUTER JOIN ord.salesRepresentative as salesRepresentative" + //
-          " where ord.id = :orderId";
+      String hqlPaidReceipts = "select "
+          + hqlProperties.getHqlSelect()
+          + " from Order as ord LEFT OUTER JOIN ord.obposApplications AS pos LEFT OUTER JOIN ord.salesRepresentative as salesRepresentative"
+          + " where ord.id = :orderId";
       Query paidReceiptsQuery = OBDal.getInstance().getSession().createQuery(hqlPaidReceipts);
       paidReceiptsQuery.setString("orderId", orderid);
 
@@ -75,6 +82,7 @@ public class PaidReceipts extends JSONProcessSimple {
         Object[] objpaidReceipts = (Object[]) obj;
         JSONObject paidReceipt = hqlProperties.getJSONObjectRow(objpaidReceipts);
         paidReceipt.put("orderid", orderid);
+
         // orderDate is a date so we don't need to transform the time information
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
         int orderDatePropertyIndex = hqlProperties.getHqlPropertyIndex("orderDate");
@@ -87,7 +95,11 @@ public class PaidReceipts extends JSONProcessSimple {
         Query PaidReceiptsInvoiceQuery = OBDal.getInstance().getSession()
             .createQuery(hqlPaidReceiptsInvoice);
         PaidReceiptsInvoiceQuery.setString("orderId", orderid);
-        if (!PaidReceiptsInvoiceQuery.list().isEmpty())
+        OBPOSApplications posTerminal = OBDal.getInstance().get(OBPOSApplications.class,
+            posTerminalId);
+        if (!PaidReceiptsInvoiceQuery.list().isEmpty()
+            || (paidReceipt.getBoolean("isLayaway") && posTerminal.getObposTerminaltype()
+                .isGenerateInvoice()))
           paidReceipt.put("generateInvoice", true);
 
         JSONArray listpaidReceiptsLines = new JSONArray();
@@ -97,7 +109,7 @@ public class PaidReceipts extends JSONProcessSimple {
             .getPropertyExtensions(extensionsLines);
         String hqlPaidReceiptsLines = "select " + hqlPropertiesLines.getHqlSelect() + //
             "  from OrderLine as ordLine " + //
-            " where ordLine.salesOrder.id=? "; //
+            " where ordLine.salesOrder.id=? and ordLine.obposIsDeleted = false"; //
 
         hqlPaidReceiptsLines += " order by ordLine.lineNo";
         Query paidReceiptsLinesQuery = OBDal.getInstance().getSession()
@@ -183,6 +195,33 @@ public class PaidReceipts extends JSONProcessSimple {
 
           paidReceiptLine.put("promotions", promotions);
 
+          // Related lines
+          HQLPropertyList hqlPropertiesRelatedLines = ModelExtensionUtils
+              .getPropertyExtensions(extensionsRelatedLines);
+          String hqlPaidReceiptsRelatedLines = "select " + hqlPropertiesRelatedLines.getHqlSelect() //
+              + " from OrderlineServiceRelation as olsr where salesOrderLine.id = ? " //
+              + " order by olsr.orderlineRelated.lineNo";
+          OBDal.getInstance().getSession().createQuery(hqlPaidReceiptsShipLines);
+          Query paidReceiptsRelatedLinesQuery = OBDal.getInstance().getSession()
+              .createQuery(hqlPaidReceiptsRelatedLines);
+          paidReceiptsRelatedLinesQuery.setString(0, (String) objpaidReceiptsLines[6]);
+
+          JSONArray relatedLines = new JSONArray();
+          for (Object objRelatedLines : paidReceiptsRelatedLinesQuery.list()) {
+
+            JSONObject jsonRelatedline = new JSONObject();
+            Object[] objpaidReceiptsRelatedLines = (Object[]) objRelatedLines;
+            jsonRelatedline.put("orderlineId", objpaidReceiptsRelatedLines[0]);
+            jsonRelatedline.put("productName", objpaidReceiptsRelatedLines[1]);
+            jsonRelatedline.put("orderDocumentNo", objpaidReceiptsRelatedLines[2]);
+            jsonRelatedline.put("orderId", objpaidReceiptsRelatedLines[3]);
+            jsonRelatedline.put("otherTicket", !orderid.equals(objpaidReceiptsRelatedLines[3]));
+            relatedLines.put(jsonRelatedline);
+          }
+          if (relatedLines.length() > 0) {
+            paidReceiptLine.put("relatedLines", relatedLines);
+          }
+
           listpaidReceiptsLines.put(paidReceiptLine);
         }
         paidReceipt.put("receiptLines", listpaidReceiptsLines);
@@ -190,7 +229,7 @@ public class PaidReceipts extends JSONProcessSimple {
         JSONArray listPaymentsIn = new JSONArray();
 
         // TODO: make this extensible
-        String hqlPaymentsIn = "select scheduleDetail.paymentDetails.finPayment.amount, scheduleDetail.paymentDetails.finPayment.account.id, scheduleDetail.paymentDetails.finPayment.paymentDate, scheduleDetail.paymentDetails.finPayment.id "
+        String hqlPaymentsIn = "select scheduleDetail.amount, scheduleDetail.paymentDetails.finPayment.account.id, scheduleDetail.paymentDetails.finPayment.paymentDate, scheduleDetail.paymentDetails.finPayment.id "
             + "from FIN_Payment_ScheduleDetail as scheduleDetail where scheduleDetail.orderPaymentSchedule.order.id=? "
             + "order by scheduleDetail.paymentDetails.finPayment.documentNo";
         Query paymentsInQuery = OBDal.getInstance().getSession().createQuery(hqlPaymentsIn);
@@ -217,7 +256,11 @@ public class PaidReceipts extends JSONProcessSimple {
             + "c_currency_rate(p.obposApplications.organization.currency, p.financialAccount.currency, null, null, p.obposApplications.client.id, p.obposApplications.organization.id) as mulrate, "
             + "p.financialAccount.currency.iSOCode as isocode, "
             + "p.paymentMethod.openDrawer as openDrawer "
-            + " from OBPOS_App_Payment as p where p.financialAccount.id in (select scheduleDetail.paymentDetails.finPayment.account.id from FIN_Payment_ScheduleDetail as scheduleDetail where scheduleDetail.orderPaymentSchedule.order.id=?)";
+            + " from OBPOS_App_Payment as p where p.financialAccount.id in (select scheduleDetail.paymentDetails.finPayment.account.id from FIN_Payment_ScheduleDetail as scheduleDetail where scheduleDetail.orderPaymentSchedule.order.id=?)"
+            + "group by  p.financialAccount.id, p.commercialName ,p.searchKey,"
+            + "c_currency_rate(p.financialAccount.currency, p.obposApplications.organization.currency, null, null, p.obposApplications.client.id, p.obposApplications.organization.id),"
+            + "c_currency_rate(p.obposApplications.organization.currency, p.financialAccount.currency, null, null, p.obposApplications.client.id, p.obposApplications.organization.id),"
+            + "p.financialAccount.currency.iSOCode ,p.paymentMethod.openDrawer";
         Query paymentsTypeQuery = OBDal.getInstance().getSession().createQuery(hqlPaymentsType);
         // paidReceiptsQuery.setString(0, id);
         paymentsTypeQuery.setString(0, orderid);

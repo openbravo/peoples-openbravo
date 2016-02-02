@@ -86,9 +86,20 @@ enyo.kind({
             i18nContent: 'OBMOBC_LblUndo',
             classes: 'btnlink-white btnlink-fontblue',
             tap: function () {
-              if (this.undoclick) {
-                this.undoclick();
-              }
+              var me = this,
+                  undoaction = this.undoaction;
+              OB.UTIL.HookManager.executeHooks('OBPOS_PreUndo_' + undoaction, {
+                undoBtn: me,
+                order: OB.MobileApp.model.receipt
+              }, function (args) {
+                if (!args.cancellation && me.undoclick) {
+                  me.undoclick();
+                }
+                OB.UTIL.HookManager.executeHooks('OBPOS_PostUndo_' + undoaction, {
+                  undoBtn: me,
+                  order: OB.MobileApp.model.receipt
+                });
+              });
             },
             init: function (model) {
               this.model = model;
@@ -118,10 +129,12 @@ enyo.kind({
       this.$.msgwelcome.hide();
       this.$.msgaction.show();
       this.$.txtaction.setContent(undoaction.text);
+      this.$.undobutton.undoaction = undoaction.action;
       this.$.undobutton.undoclick = undoaction.undo;
     } else {
       this.$.msgaction.hide();
       this.$.msgwelcome.show();
+      this.$.undobutton.undoaction = null;
       delete this.$.undobutton.undoclick;
     }
   },

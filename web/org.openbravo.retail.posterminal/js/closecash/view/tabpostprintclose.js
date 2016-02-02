@@ -607,10 +607,10 @@ enyo.kind({
     this.$.expectedTable.setCollection(this.summary.expectedSummary);
     this.$.expectedTable.setValue('totalexpected', this.summary.totalExpected);
     if (OB.MobileApp.view.currentWindow === 'retail.cashuppartial') {
-     this.$.countedTable.hide();
-     this.$.differenceTable.hide();
-     this.$.qtyToKeepTable.hide();
-     this.$.qtyToDepoTable.hide();
+      this.$.countedTable.hide();
+      this.$.differenceTable.hide();
+      this.$.qtyToKeepTable.hide();
+      this.$.qtyToDepoTable.hide();
     } else {
       this.$.countedTable.setCollection(this.summary.countedSummary);
       this.$.countedTable.setValue('totalcounted', this.summary.totalCounted);
@@ -662,7 +662,23 @@ enyo.kind({
       }, this);
     }
     if (OB.POS.modelterminal.get('terminal').ismaster) {
-      this.cashUpReportChanged(model.get('cashUpReport').at(0));
+      if (OB.MobileApp.view.currentWindow === 'retail.cashuppartial') {
+        var me = this;
+        var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes("tabpostprintclose");
+        new OB.DS.Process('org.openbravo.retail.posterminal.ProcessCashMgmtMaster').exec({
+          cashUpId: OB.POS.modelterminal.get('terminal').cashUpId,
+          terminalSlave: OB.POS.modelterminal.get('terminal').isslave
+        }, function (data) {
+          if (data && !data.exception) {
+            me.owner.$.cashMaster.updateCashUpModel(model, data, function () {
+              me.cashUpReportChanged(model.get('cashUpReport').at(0));
+              OB.UTIL.SynchronizationHelper.finished(synchId, "tabpostprintclose");
+            });
+          }
+        });
+      } else {
+        this.cashUpReportChanged(model.get('cashUpReport').at(0));
+      }
     }
     this.setSummary(model.getCountCashSummary());
     this.$.time.setContent(OB.I18N.getLabel('OBPOS_LblTime') + ': ' + OB.I18N.formatDate(new Date()) + ' - ' + OB.I18N.formatHour(new Date()));

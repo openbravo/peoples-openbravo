@@ -621,7 +621,7 @@
         // set the terminal lock timeout
         setTerminalLockTimeout(sessionTimeoutMinutes, sessionTimeoutMilliseconds);
         // FIXME: hack: inject javascript in the enyo.gesture.down so we can create a terminal timeout
-        enyo.gesture.down = function(inEvent) {
+        enyo.gesture.down = function (inEvent) {
           // start of Openbravo injected code
           setTerminalLockTimeout(sessionTimeoutMinutes, sessionTimeoutMilliseconds);
           // end of Openbravo injected code
@@ -645,20 +645,61 @@
       if (OB.POS.hwserver !== undefined) {
         OB.POS.hwserver.print(new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.GoodByeTemplate), {});
       }
-      this.cleanSessionInfo();
+      if (!OB.MobileApp.model.attributes.permissions || !OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
+        this.cleanSessionInfo();
+      }
     },
 
     postCloseSession: function (session) {
-      //All pending to be paid orders will be removed on logout
-      OB.Dal.removeAll(OB.Model.Order, {
-        'session': session.get('id'),
-        'hasbeenpaid': 'N'
-      }, function () {
-        OB.MobileApp.model.triggerLogout();
-      }, function () {
+      var criteria = {},
+          model;
+      var me = this;
+
+      function success(collection) {
+        var i, j, saveCallback;
+        if (collection.length > 0) {
+          saveCallback = _.after(collection.length, function () {
+            me.cleanSessionInfo();
+            OB.MobileApp.model.triggerLogout();
+          });
+          _.forEach(collection.models, function (model) {
+            var creationDate = new Date();
+            model.set('creationDate', creationDate);
+            model.set('timezoneOffset', creationDate.getTimezoneOffset());
+            model.set('created', creationDate.getTime());
+            model.set('obposCreatedabsolute', OB.I18N.formatDateISO(creationDate));
+            model.set('obposIsDeleted', true);
+            for (i = 0; i < model.get('lines').length; i++) {
+              model.get('lines').at(i).set('obposIsDeleted', true);
+            }
+            model.set('hasbeenpaid', 'Y');
+            OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(model.get('documentnoSuffix'), model.get('quotationnoSuffix'), function () {
+              model.save(saveCallback);
+            });
+          });
+        } else {
+          me.cleanSessionInfo();
+          OB.MobileApp.model.triggerLogout();
+        }
+      }
+
+      function error() {
         OB.error("postCloseSession", arguments);
         OB.MobileApp.model.triggerLogout();
-      });
+      }
+      //All pending to be paid orders will be removed on logout
+      if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
+        criteria.session = session.get('id');
+        criteria.hasbeenpaid = 'N';
+        OB.Dal.find(OB.Model.Order, criteria, success, error);
+      } else {
+        OB.Dal.removeAll(OB.Model.Order, {
+          'session': session.get('id'),
+          'hasbeenpaid': 'N'
+        }, function () {
+          OB.MobileApp.model.triggerLogout();
+        }, error);
+      }
       this.set('currentView', {
         name: 'order',
         params: null
@@ -769,13 +810,13 @@
     getLastDocumentnoSuffixInOrderlist: function () {
       var lastSuffix = null;
       if (OB.MobileApp.model.orderList && OB.MobileApp.model.orderList.length > 0) {
-        var i = OB.MobileApp.model.orderList.models.length - 1;
-        while (lastSuffix === null && i >= 0) {
+        var i = 0;
+        while (lastSuffix === null && i <= OB.MobileApp.model.orderList.models.length - 1) {
           var order = OB.MobileApp.model.orderList.models[i];
           if (!order.get('isPaid') && !order.get('isQuotation') && order.get('documentnoPrefix') === OB.MobileApp.model.get('terminal').docNoPrefix) {
             lastSuffix = order.get('documentnoSuffix');
           }
-          i--;
+          i++;
         }
       }
       if (lastSuffix === null || lastSuffix < this.documentnoThreshold) {
@@ -787,13 +828,13 @@
     getLastQuotationnoSuffixInOrderlist: function () {
       var lastSuffix = null;
       if (OB.MobileApp.model.orderList && OB.MobileApp.model.orderList.length > 0) {
-        var i = OB.MobileApp.model.orderList.models.length - 1;
-        while (lastSuffix === null && i >= 0) {
+        var i = 0;
+        while (lastSuffix === null && i <= OB.MobileApp.model.orderList.models.length - 1) {
           var order = OB.MobileApp.model.orderList.models[i];
           if (order.get('isQuotation') && order.get('quotationnoPrefix') === OB.MobileApp.model.get('terminal').quotationDocNoPrefix) {
             lastSuffix = order.get('quotationnoSuffix');
           }
-          i--;
+          i++;
         }
       }
       if (lastSuffix === null || lastSuffix < this.quotationnoThreshold) {
@@ -850,7 +891,7 @@
 
     dialog: null,
     preLoadContext: function (callback) {
-      if (!window.localStorage.getItem('terminalKeyIdentifier') && !window.localStorage.getItem('terminalName') && window.localStorage.getItem('terminalAuthentication') === 'Y') {
+      if (!window.localStorage.getItem('terminalKeyIdentifier') && window.localStorage.getItem('terminalAuthentication') === 'Y') {
         OB.UTIL.showLoading(false);
         if (OB.UI.ModalSelectTerminal) {
           this.dialog = OB.MobileApp.view.$.confirmationContainer.createComponent({
@@ -937,8 +978,10 @@
           window.localStorage.setItem('cacheSessionId', inResponse.cacheSessionId);
         }
         //Save available servers and services and initialize Request Router layer
-        if (inResponse.servers && inResponse.services) {
+        if (inResponse.servers) {
           localStorage.servers = JSON.stringify(inResponse.servers);
+        }
+        if (inResponse.services) {
           localStorage.services = JSON.stringify(inResponse.services);
         }
         OB.RR.RequestRouter.initialize();

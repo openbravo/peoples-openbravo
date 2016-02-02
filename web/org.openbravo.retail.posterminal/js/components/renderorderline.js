@@ -15,9 +15,14 @@ enyo.kind({
   classes: 'btnselect-orderline',
   handlers: {
     onChangeEditMode: 'changeEditMode',
-    onCheckBoxBehaviorForTicketLine: 'checkBoxForTicketLines'
+    onCheckBoxBehaviorForTicketLine: 'checkBoxForTicketLines',
+    onSetMultiSelected: 'setMultiSelected',
+    onkeyup: 'keyupHandler'
   },
   tap: function () {
+    if (OB.MobileApp.model.get('serviceSearchMode')) {
+      return;
+    }
     this.model.trigger('selected', this.model);
     this.model.trigger('click', this.model);
     this.bubble('onReceiptLineSelected', {
@@ -36,10 +41,17 @@ enyo.kind({
     },
     style: 'float: left; width: 10%;'
   }, {
-    name: 'product',
-    attributes: {
-      style: 'float: left; width: 40%;'
-    }
+    name: 'nameContainner',
+    tag: 'div',
+    style: 'float: left;width: 40%; padding: 0px;',
+    components: [{
+      name: 'serviceIcon',
+      kind: 'Image',
+      src: 'img/iconService_ticketline.png',
+      style: 'float: left; padding-right: 5px; '
+    }, {
+      name: 'product'
+    }]
   }, {
     name: 'quantity',
     attributes: {
@@ -59,7 +71,15 @@ enyo.kind({
     style: 'clear: both;'
   }],
   initComponents: function () {
+    var me = this;
     this.inherited(arguments);
+    if (this.model.get('product').get('productType') === 'S') {
+      this.$.serviceIcon.show();
+      this.$.product.addStyles('margin-left: 24px;');
+    } else {
+      this.$.serviceIcon.hide();
+      this.$.product.addStyles('float: left;');
+    }
     this.$.checkBoxColumn.hide();
     this.$.product.setContent(this.setIdentifierContent());
     this.$.quantity.setContent(this.model.printQty());
@@ -71,11 +91,12 @@ enyo.kind({
     }
     if (this.model.get('product').get('characteristicDescription')) {
       this.createComponent({
-        style: 'display: block;',
+        style: 'display: block; ',
         components: [{
+          name: 'characteristicsDescription',
           content: OB.UTIL.getCharacteristicValues(this.model.get('product').get('characteristicDescription')),
           attributes: {
-            style: 'float: left; width: 60%; color:grey'
+            style: 'width: 60.1%; color:grey; padding-left: 0%; clear: both; '
           }
         }, {
           style: 'clear: both;'
@@ -107,7 +128,7 @@ enyo.kind({
           components: [{
             content: '-- ' + identifierName,
             attributes: {
-              style: 'float: left; width: 80%;'
+              style: 'float: left; width: 80%; clear: left;'
             }
           }, {
             content: OB.I18N.formatCurrency(-d.amt),
@@ -121,11 +142,60 @@ enyo.kind({
       }, this);
 
     }
+    if (this.model.get('relatedLines')) {
+      if (!this.$.relatedLinesContainer) {
+        this.createComponent({
+          name: 'relatedLinesContainer',
+          style: 'clear:both; float: left; width: 80%;'
+        });
+      }
+      enyo.forEach(this.model.get('relatedLines'), function (line) {
+        this.$.relatedLinesContainer.createComponent({
+          components: [{
+            content: line.otherTicket ? OB.I18N.getLabel('OBPOS_lblRelatedLinesOtherTicket', [line.productName, line.orderDocumentNo]) : OB.I18N.getLabel('OBPOS_lblRelatedLines', [line.productName]),
+            attributes: {
+              style: 'font-size: 14px; font-style: italic; text-align: left; padding-left: 25px'
+            }
+          }]
+        });
+      }, this);
+    }
+    if (this.model.get('hasRelatedServices')) {
+      me.createComponent({
+        kind: 'OB.UI.ShowServicesButton',
+        name: 'showServicesButton'
+      });
+    } else if (!this.model.has('hasRelatedServices')) {
+      this.model.on('showServicesButton', function () {
+        me.model.off('showServicesButton');
+        me.createComponent({
+          kind: 'OB.UI.ShowServicesButton',
+          name: 'showServicesButton'
+        }).render();
+      });
+    }
     OB.UTIL.HookManager.executeHooks('OBPOS_RenderOrderLine', {
       orderline: this
     }, function (args) {
       //All should be done in module side
     });
+  },
+  keyupHandler: function (inSender, inEvent) {
+    var keyCode = inEvent.keyCode;
+    if (keyCode === 13 || keyCode === 32) { //Handle ENTER and SPACE keys in buttons
+      this.executeTapAction();
+      return true;
+    }
+    OB.MobileApp.view.keypressHandler(inSender, inEvent);
+  },
+  setMultiSelected: function (inSender, inEvent) {
+    if (inEvent.models && inEvent.models.length > 0 && inEvent.models[0] instanceof OB.Model.OrderLine && this.$.showServicesButton) {
+      if (inEvent.models.length > 1) {
+        this.$.showServicesButton.hide();
+      } else {
+        this.$.showServicesButton.show();
+      }
+    }
   },
   changeEditMode: function (inSender, inEvent) {
     this.addRemoveClass('btnselect-orderline-edit', inEvent.edit);
@@ -138,14 +208,27 @@ enyo.kind({
       this.$.gross.hasNode().style.width = '18%';
       this.$.quantity.hasNode().style.width = '16%';
       this.$.price.hasNode().style.width = '18%';
-      this.$.product.hasNode().style.width = '38%';
+
+      this.$.nameContainner.hasNode().style.width = '38%';
+      if (this.$.characteristicsDescription) {
+        this.$.characteristicsDescription.addStyles('padding-left: 10%; clear: both; width: 50.1%; color:grey');
+      }
+      if (this.$.relatedLinesContainer) {
+        this.$.relatedLinesContainer.addStyles('padding-left: 10%; clear: both; float: left; width: 80%;');
+      }
       this.$.checkBoxColumn.show();
       this.changeEditMode(this, inEvent.status);
     } else {
       this.$.gross.hasNode().style.width = '20%';
       this.$.quantity.hasNode().style.width = '20%';
       this.$.price.hasNode().style.width = '20%';
-      this.$.product.hasNode().style.width = '40%';
+      this.$.nameContainner.hasNode().style.width = '40%';
+      if (this.$.characteristicsDescription) {
+        this.$.characteristicsDescription.addStyles('padding-left: 0%; clear: both; width: 60.1%; color:grey');
+      }
+      if (this.$.relatedLinesContainer) {
+        this.$.relatedLinesContainer.addStyles('padding-left: 0%; clear: both; float: left; width: 80%;');
+      }
       this.$.checkBoxColumn.hide();
       this.changeEditMode(this, false);
     }
@@ -172,6 +255,59 @@ enyo.kind({
   }
 });
 
+enyo.kind({
+  name: 'OB.UI.ShowServicesButton',
+  style: 'float: right; display: block;',
+  published: {
+    disabled: false
+  },
+  handlers: {
+    onRightToolbarDisabled: 'toggleVisibility'
+  },
+  tap: function (inSender, inEvent) {
+    var product = this.owner.model.get('product');
+    if (product) {
+      OB.UI.SearchProductCharacteristic.prototype.filtersCustomClear();
+      OB.UI.SearchProductCharacteristic.prototype.filtersCustomAdd(new OB.UI.SearchServicesFilter({
+        text: product.get("_identifier"),
+        productId: product.id,
+        productList: null,
+        orderline: this.owner.model,
+        orderlineList: null
+      }));
+      var me = this;
+      setTimeout(function () {
+        me.bubble('onTabChange', {
+          tabPanel: 'searchCharacteristic'
+        });
+        me.bubble('onSelectFilter', {});
+        me.owner.model.set("obposServiceProposed", true);
+        OB.MobileApp.model.receipt.save();
+      }, 1);
+    }
+  },
+  toggleVisibility: function (inSender, inEvent) {
+    this.isVisible = !inEvent.status;
+    if (this.isVisible) {
+      this.show();
+    } else {
+      this.hide();
+    }
+  },
+  initComponents: function () {
+    this.inherited(arguments);
+    if (this.owner.model.get('obposServiceProposed')) {
+      this.addRemoveClass('iconServices_unreviewed', false);
+      this.addRemoveClass('iconServices_reviewed', true);
+    } else {
+      this.addRemoveClass('iconServices_unreviewed', true);
+      this.addRemoveClass('iconServices_reviewed', false);
+    }
+    if (OB.MobileApp.model.get('serviceSearchMode')) {
+      this.hide();
+    }
+  }
+});
 
 enyo.kind({
   kind: 'OB.UI.listItemButton',

@@ -323,9 +323,10 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
       if (apps.size() == 1) {
         terminal = ((OBPOSApplications) apps.get(0));
         result.put("servers", getServers(terminal));
-        result.put("services", getServices());
       }
     }
+    // We do not need to be in a specific terminal to load services
+    result.put("services", getServices());
 
     String value;
     try {

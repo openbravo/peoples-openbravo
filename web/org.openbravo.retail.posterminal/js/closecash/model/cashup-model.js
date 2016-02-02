@@ -697,6 +697,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
             paymentMethod: {}
           };
           // Set cashclose info
+          cashCloseInfo.id = OB.UTIL.get_UUID();
           cashCloseInfo.paymentTypeId = curModel.get('id');
           cashCloseInfo.difference = curModel.get('difference');
           cashCloseInfo.foreignDifference = curModel.get('foreignDifference');
@@ -707,6 +708,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
           cashCloseInfo.paymentMethod = paymentMethodInfo;
           objToSend.cashCloseInfo.push(cashCloseInfo);
         }, me);
+        objToSend.approvals = me.get('approvals');
         var cashMgmtIds = [];
         objToSend.cashMgmtIds = cashMgmtIds;
         OB.Dal.find(OB.Model.CashManagement, {
@@ -737,8 +739,17 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
                     OB.UTIL.deleteCashUps(cashUp);
                     if (!cashUp.at(0).get('objToSend')) {
                       OB.UTIL.composeCashupInfo(cashUp, null, function () {
-                        OB.MobileApp.model.runSyncProcess();
-                        callback();
+                        OB.MobileApp.model.runSyncProcess(function () {
+                          callback();
+                          if (OB.MobileApp.model.hasPermission('OBPOS_print.cashup')) {
+                            me.printCashUp.print(me.get('cashUpReport').at(0), me.getCountCashSummary(), true);
+                          }
+                        }, function () {
+                          callback();
+                          if (OB.MobileApp.model.hasPermission('OBPOS_print.cashup')) {
+                            me.printCashUp.print(me.get('cashUpReport').at(0), me.getCountCashSummary(), true);
+                          }
+                        });
                       });
                     } else {
                       callback();
@@ -746,9 +757,16 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
                   }
                 });
                 };
+            var callbackFinishedWrongly = function () {
+                OB.UTIL.showLoading(false);
+                me.set('finishedWrongly', true);
+                OB.UTIL.SynchronizationHelper.finished(synchId, 'processAndFinishCashUp');
+                if (OB.MobileApp.model.hasPermission('OBPOS_print.cashup')) {
+                  me.printCashUp.print(me.get('cashUpReport').at(0), me.getCountCashSummary(), true);
+                }
+                };
             var callbackFunc = function () {
                 OB.UTIL.initCashUp(function () {
-                  OB.MobileApp.model.runSyncProcess();
                   OB.UTIL.SynchronizationHelper.finished(synchId, 'processAndFinishCashUp');
                   OB.UTIL.calculateCurrentCash();
                   // update and sync the new cashup
@@ -757,15 +775,13 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
                     me.set('finished', true);
                   });
                 }, function () {
-                  OB.MobileApp.model.runSyncProcess();
-                  OB.UTIL.showLoading(false);
-                  me.set('finishedWrongly', true);
-                  OB.UTIL.SynchronizationHelper.finished(synchId, 'processAndFinishCashUp');
+                  OB.MobileApp.model.runSyncProcess(function () {
+                    callbackFinishedWrongly();
+                  }, function () {
+                    callbackFinishedWrongly();
+                  });
                 }, true);
                 };
-            if (OB.MobileApp.model.hasPermission('OBPOS_print.cashup')) {
-              me.printCashUp.print(me.get('cashUpReport').at(0), me.getCountCashSummary(), true);
-            }
             callbackFunc();
           }, null);
         }, null, this);
@@ -791,7 +807,8 @@ OB.OBPOSCashUp.Model.CashUpPartial = OB.OBPOSCashUp.Model.CashUp.extend({
       totalExpected: this.get('totalExpected'),
       totalDifference: this.get('totalDifference'),
       totalQtyToKeep: OB.DEC.Zero,
-      totalQtyToDepo: OB.DEC.Zero
+      totalQtyToDepo: OB.DEC.Zero,
+      isPartialCashup: true
     };
     //First we fix the qty to keep for non-automated payment methods
     _.each(this.get('paymentList').models, function (model) {

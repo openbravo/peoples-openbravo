@@ -24,13 +24,13 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Query;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.SequenceIdData;
-import org.openbravo.mobile.core.process.DataSynchronizationProcess.DataSynchronization;
 import org.openbravo.model.ad.access.User;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.businesspartner.Location;
@@ -57,7 +57,6 @@ import org.openbravo.service.json.JsonUtils;
  * processed by the order loader. It also will make sure that any errors are returned to the caller
  * in the expected json format.
  */
-@DataSynchronization(entity = "Order")
 public class ExternalOrderLoader extends OrderLoader {
 
   public static final String APP_NAME = "External";
@@ -90,6 +89,10 @@ public class ExternalOrderLoader extends OrderLoader {
   @Override
   public String getAppName() {
     return "External";
+  }
+
+  public Entity getEntity() {
+    return ModelProvider.getInstance().getEntity(Order.ENTITY_NAME);
   }
 
   public void executeCreateImportEntry(Writer w, JSONObject jsonObject) {

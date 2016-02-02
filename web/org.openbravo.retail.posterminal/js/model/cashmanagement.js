@@ -58,8 +58,12 @@
     column: 'userId',
     type: 'TEXT'
   }, {
-    name: 'time',
-    column: 'time',
+    name: 'creationDate',
+    column: 'creationDate',
+    type: 'TEXT'
+  }, {
+    name: 'timezoneOffset',
+    column: 'timezoneOffset',
     type: 'TEXT'
   }, {
     name: 'isocode',

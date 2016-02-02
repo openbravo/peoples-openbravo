@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2015 Openbravo S.L.U.
+ * Copyright (C) 2012-2016 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -9,12 +9,8 @@
 package org.openbravo.retail.posterminal;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
@@ -22,13 +18,10 @@ import javax.inject.Inject;
 
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
-import org.openbravo.advpaymentmngt.dao.TransactionsDao;
-import org.openbravo.advpaymentmngt.process.FIN_AddPayment;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
-import org.openbravo.base.model.ModelProvider;
-import org.openbravo.base.provider.OBProvider;
+import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
@@ -44,11 +37,7 @@ import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.common.order.OrderLineOffer;
 import org.openbravo.model.common.order.OrderTax;
-import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
-import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
-import org.openbravo.model.financialmgmt.payment.FIN_Payment;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentSchedule;
-import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.json.JsonConstants;
 
@@ -100,6 +89,11 @@ public class ProcessVoidLayaway extends POSDataSynchronizationProcess implements
         orderLineTax.setTaxableAmount(BigDecimal.ZERO);
         orderLineTax.setTaxAmount(BigDecimal.ZERO);
       }
+
+      OrderLoader orderLoader = WeldUtils.getInstanceFromStaticBeanManager(OrderLoader.class);
+      orderLoader.initializeVariables(jsonorder);
+      orderLoader.handlePayments(jsonorder, order, null, false);
+
       for (int i = 0; i < order.getOrderTaxList().size(); i++) {
         OrderTax orderLineTax = (order.getOrderTaxList().get(i));
         orderLineTax.setTaxableAmount(BigDecimal.ZERO);
@@ -109,85 +103,6 @@ public class ProcessVoidLayaway extends POSDataSynchronizationProcess implements
       paymentSchedule.setAmount(BigDecimal.ZERO);
       paymentSchedule.setPaidAmount(BigDecimal.ZERO);
       paymentSchedule.setOutstandingAmount(BigDecimal.ZERO);
-
-      OBPOSApplications posTerminal = OBDal.getInstance().get(OBPOSApplications.class,
-          jsonorder.getString("posTerminal"));
-      int stdPrecision = order.getCurrency().getStandardPrecision().intValue();
-      JSONArray payments = jsonorder.getJSONArray("payments");
-      for (int i = 0; i < payments.length(); i++) {
-        JSONObject payment = payments.getJSONObject(i);
-        OBPOSAppPayment paymentType = null;
-        String paymentTypeName = payment.getString("kind");
-        BigDecimal mulrate = new BigDecimal(1);
-        BigDecimal amount = BigDecimal.valueOf(payment.getDouble("paid"))
-            .setScale(stdPrecision, RoundingMode.HALF_UP).negate();
-        BigDecimal foreignAmount = amount;
-        if (payment.has("mulrate") && payment.getDouble("mulrate") != 1) {
-          mulrate = BigDecimal.valueOf(payment.getDouble("mulrate"));
-          foreignAmount = amount.multiply(mulrate).setScale(stdPrecision, RoundingMode.HALF_UP);
-        }
-
-        for (OBPOSAppPayment type : posTerminal.getOBPOSAppPaymentList()) {
-          if (type.getSearchKey().equals(paymentTypeName)) {
-            paymentType = type;
-          }
-        }
-        if (paymentType.getFinancialAccount() == null) {
-          continue;
-        }
-        FIN_FinancialAccount account = paymentType.getFinancialAccount();
-
-        FIN_PaymentScheduleDetail newPaymentScheduleDetail = OBProvider.getInstance().get(
-            FIN_PaymentScheduleDetail.class);
-        newPaymentScheduleDetail.setOrderPaymentSchedule(paymentSchedule);
-        newPaymentScheduleDetail.setAmount(amount);
-        OBDal.getInstance().save(newPaymentScheduleDetail);
-        List<FIN_PaymentScheduleDetail> detail = new ArrayList<FIN_PaymentScheduleDetail>();
-        detail.add(newPaymentScheduleDetail);
-
-        HashMap<String, BigDecimal> paymentAmount = new HashMap<String, BigDecimal>();
-        paymentAmount.put(newPaymentScheduleDetail.getId(), amount);
-
-        DocumentType paymentDocType = getPaymentDocumentType(order.getOrganization());
-        Entity paymentEntity = ModelProvider.getInstance().getEntity(FIN_Payment.class);
-        String paymentDocNo = getDocumentNo(paymentEntity, null, paymentDocType);
-
-        FIN_Payment finPayment = FIN_AddPayment.savePayment(null, true, paymentDocType,
-            paymentDocNo, order.getBusinessPartner(), paymentType.getPaymentMethod()
-                .getPaymentMethod(), account, amount.toString(), new Date(), order
-                .getOrganization(), null, detail, paymentAmount, false, false, order.getCurrency(),
-            mulrate.setScale(stdPrecision, RoundingMode.HALF_UP), foreignAmount);
-        String description = getPaymentDescription();
-        description += ": " + order.getDocumentNo() + "\n";
-        finPayment.setDescription(description);
-        finPayment.setStatus("RDNC");
-        finPayment.setProcessed(true);
-        finPayment.setAPRMProcessPayment("RE");
-
-        OBDal.getInstance().save(finPayment);
-
-        FIN_FinancialAccount acc = paymentType.getFinancialAccount();
-        FIN_FinaccTransaction transaction = OBProvider.getInstance().get(
-            FIN_FinaccTransaction.class);
-        transaction.setCurrency(acc.getCurrency());
-        transaction.setAccount(acc);
-        transaction.setLineNo(TransactionsDao.getTransactionMaxLineNo(account) + 10);
-        transaction.setPaymentAmount(foreignAmount.negate());
-        transaction.setProcessed(true);
-        transaction.setTransactionType("BPW");
-        transaction.setStatus("RDNC");
-        if (foreignAmount != amount) {
-          transaction.setForeignAmount(amount.negate());
-          transaction.setForeignCurrency(order.getCurrency());
-        }
-        transaction.setDescription(description);
-        transaction.setDateAcct(POSUtils.getCurrentDate());
-        transaction.setTransactionDate(POSUtils.getCurrentDate());
-        transaction.setFinPayment(finPayment);
-        transaction.setBusinessPartner(order.getBusinessPartner());
-        OBDal.getInstance().save(transaction);
-        acc.setCurrentBalance(account.getCurrentBalance().subtract(foreignAmount.negate()));
-      }
 
       OBDal.getInstance().getConnection(true).commit();
     } catch (Exception e) {

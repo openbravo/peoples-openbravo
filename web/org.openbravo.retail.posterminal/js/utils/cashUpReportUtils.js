@@ -47,7 +47,7 @@
   function updateCashUpInfo(cashUp, receipt, j, callback, tx) {
     var cashuptaxes, order, orderType, gross, i, taxOrderType, taxAmount, auxPay;
 
-    if (j < receipt.length) {
+    if (j < receipt.length && !receipt[j].has('obposIsDeleted')) {
       order = receipt[j];
       orderType = order.get('orderType');
       if (cashUp.length !== 0) {

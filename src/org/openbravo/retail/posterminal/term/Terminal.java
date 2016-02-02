@@ -125,13 +125,13 @@ public class Terminal extends JSONProcessSimple {
 
       int sessionTimeout;
       try {
-        String sessionShouldExpire = Preferences.getPreferenceValue("OBPOS_SessionExpiration",
-            true, OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
+        String sessionShouldExpire = Preferences.getPreferenceValue("OBPOS_SessionTimeout", true,
+            OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
                 .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
                 .getOBContext().getRole(), null);
-        if (sessionShouldExpire.equalsIgnoreCase("Y")) {
-          sessionTimeout = 0;
-        } else {
+        try {
+          sessionTimeout = Integer.parseInt(sessionShouldExpire);
+        } catch (NumberFormatException nfe) {
           sessionTimeout = getSessionTimeoutFromDatabase();
         }
       } catch (PropertyException e) {

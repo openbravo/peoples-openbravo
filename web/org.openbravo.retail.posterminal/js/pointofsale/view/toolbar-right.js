@@ -71,12 +71,28 @@ enyo.kind({
   published: {
     receipt: null
   },
+  events: {
+    onShowMultiSelection: ''
+  },
   handlers: {
     onTabButtonTap: 'tabButtonTapHandler'
   },
+  lastSelectedTabPanel: '',
   tabButtonTapHandler: function (inSender, inEvent) {
     if (inEvent.tabPanel) {
       this.setTabButtonActive(inEvent.tabPanel);
+      if (this.lastSelectedTabPanel !== inEvent.tabPanel) {
+        this.lastSelectedTabPanel = inEvent.tabPanel;
+        if (inEvent.tabPanel === 'edit') {
+          this.doShowMultiSelection({
+            show: true
+          });
+        } else {
+          this.doShowMultiSelection({
+            show: false
+          });
+        }
+      }
     }
   },
   setTabButtonActive: function (tabName) {
@@ -319,6 +335,7 @@ enyo.kind({
     } else {
       this.$.lbl.show();
     }
+
   },
   tabPanel: 'catalog',
   i18nLabel: 'OBMOBC_LblBrowse',
@@ -364,7 +381,7 @@ enyo.kind({
   disabledButton: function (inSender, inEvent) {
     this.isEnabled = !inEvent.status;
     this.setDisabled(inEvent.status);
-    if (!this.isEnabled) {
+    if (!this.isEnabled && !OB.MobileApp.model.get('serviceSearchMode')) {
       this.$.lbl.hide();
     } else {
       this.$.lbl.show();
@@ -400,10 +417,16 @@ enyo.kind({
   i18nLabel: 'OBPOS_LblEdit',
   events: {
     onTabChange: '',
-    onRightToolbarDisabled: ''
+    onRightToolbarDisabled: '',
+    onDisableUserInterface: '',
+    onEnableUserInterface: '',
+    onFinishServiceProposal: '',
+    onToggleLineSelection: '',
+    onShowActionIcons: ''
   },
   handlers: {
-    onRightToolbarDisabled: 'disabledButton'
+    onRightToolbarDisabled: 'disabledButton',
+    onManageServiceProposal: 'manageServiceProposal'
   },
   init: function (model) {
     this.model = model;
@@ -417,32 +440,78 @@ enyo.kind({
   disabledButton: function (inSender, inEvent) {
     this.setDisabled(inEvent.status);
   },
+  manageServiceProposal: function (inSender, inEvent) {
+    OB.MobileApp.model.set('serviceSearchMode', inEvent.proposalType);
+    this.previousStatus = inEvent.previousStatus;
+    this.$.lbl.setContent(OB.I18N.getLabel('OBPOS_LblContinue'));
+    this.doDisableUserInterface();
+    this.setDisabled(false);
+    this.doShowActionIcons({
+      show: false
+    });
+  },
   tap: function (options) {
     this.model.get('order').get('lines').on('selected', function (lineSelected) {
       this.currentLine = lineSelected;
     }, this);
 
-    if (!options.isManual) {
-      // The tap was not manual. So consider the last line added
-      var lines = this.model.get('order').get('lines');
-      var lastLine;
-      if (lines && lines.length > 0) {
-        lastLine = lines.models[lines.length - 1];
+    if (OB.MobileApp.model.get('serviceSearchMode')) {
+      this.$.lbl.setContent(OB.I18N.getLabel('OBPOS_LblEdit'));
+      this.doEnableUserInterface();
+      this.doShowActionIcons({
+        show: true
+      });
+      this.doToggleLineSelection({
+        status: false
+      });
+      if (OB.MobileApp.model.get('serviceSearchMode') === 'mandatory') {
+        this.restoreStatus();
+      } else if (OB.MobileApp.model.get('serviceSearchMode') === 'final') {
+        this.previousStatus.callback();
       }
-      if (this.currentLine) {
-        this.currentLine.trigger('selected', this.currentLine);
-      } else if (lastLine) {
-        lastLine.trigger('selected', lastLine);
+      OB.MobileApp.model.unset('serviceSearchMode');
+    } else {
+      if (!options.isManual) {
+        // The tap was not manual. So consider the last line added
+        var lines = this.model.get('order').get('lines');
+        var lastLine;
+        if (lines && lines.length > 0) {
+          lastLine = lines.models[lines.length - 1];
+        }
+        if (this.currentLine) {
+          this.currentLine.trigger('selected', this.currentLine);
+        } else if (lastLine) {
+          lastLine.trigger('selected', lastLine);
+        }
       }
+      if (!this.disabled) {
+        this.doTabChange({
+          tabPanel: this.tabPanel,
+          keyboard: 'toolbarscan',
+          edit: true
+        });
+      }
+      OB.MobileApp.view.scanningFocus(true);
     }
-    if (!this.disabled) {
+  },
+  restoreStatus: function () {
+    if (this.previousStatus.tab === 'scan' || this.previousStatus.tab === 'edit') {
       this.doTabChange({
-        tabPanel: this.tabPanel,
-        keyboard: 'toolbarscan',
-        edit: true
+        tabPanel: this.previousStatus.tab,
+        keyboard: 'toolbarscan'
+      });
+    } else if (this.previousStatus.tab === 'catalog') {
+      this.doTabChange({
+        tabPanel: this.previousStatus.tab
+      });
+    } else {
+      this.doTabChange({
+        tabPanel: this.previousStatus.tab
+      });
+      this.doFinishServiceProposal({
+        status: this.previousStatus
       });
     }
-    OB.MobileApp.view.scanningFocus(true);
   }
 });
 

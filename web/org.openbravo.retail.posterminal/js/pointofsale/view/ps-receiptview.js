@@ -16,6 +16,14 @@ enyo.kind({
     order: null,
     orderList: null
   },
+  events: {
+    onChangeSelectionMode: ''
+  },
+  handlers: {
+    onCheckBoxBehaviorForTicketLine: 'checkBoxBehavior',
+    onToggleSelectionMode: 'toggleSelectionMode',
+    onTableMultiSelectAll: 'tableMultiSelectAll'
+  },
   components: [{
     style: 'margin: 5px',
     components: [{
@@ -52,5 +60,12 @@ enyo.kind({
   },
   orderListChanged: function (oldValue) {
     this.$.receiptcounter.setOrderList(this.orderList);
+  },
+  toggleSelectionMode: function (inSender, inEvent) {
+    this.waterfall('onToggleSelectionTable', inEvent);
+    this.doChangeSelectionMode(inEvent);
+  },
+  tableMultiSelectAll: function (inSender, inEvent) {
+    this.waterfall('onMultiSelectAllTable');
   }
 });

@@ -305,10 +305,8 @@ enyo.kind({
       btncomponent = this.getButtonComponent(sidebutton);
       if (countbuttons++ < paymentsbuttons) {
         this.createComponent(btncomponent);
-      } else if (this.sideButtons.length !== OB.OBPOSPointOfSale.UI.PaymentMethods.prototype.sideButtons.length) {
-        OB.OBPOSPointOfSale.UI.PaymentMethods.prototype.sideButtons.push(btncomponent);
-        dialogbuttons[sidebutton.command] = sidebutton.label;
       } else {
+        OB.OBPOSPointOfSale.UI.PaymentMethods.prototype.sideButtons.push(btncomponent);
         dialogbuttons[sidebutton.command] = sidebutton.label;
       }
     }, this);
@@ -478,6 +476,7 @@ enyo.kind({
       this.$.btn.addClass('btnactive-green');
       this.activegreen = true;
     }
+    OB.UTIL.createElipsisEffect(this.$.btn);
   }
 });
 

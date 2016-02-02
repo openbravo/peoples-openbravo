@@ -117,6 +117,7 @@ enyo.kind({
       this.$.numberOfCoins.setContent(counted);
       this.$.total.setContent(OB.I18N.formatCurrency(OB.DEC.add(0, this.model.get('totalAmount'))));
     }
+    return this;
   },
   lineEdit: function () {
     this.doLineEditCash();
