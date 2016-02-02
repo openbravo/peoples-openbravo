@@ -22,11 +22,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
+import org.openbravo.client.application.CachedPreference;
 import org.openbravo.client.kernel.Template;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
@@ -51,6 +55,10 @@ public abstract class BaseDataSourceService implements DataSourceService {
   private Entity entity;
   private DataSource dataSource;
   private List<DataSourceProperty> dataSourceProperties = new ArrayList<DataSourceProperty>();
+  private final String ALLOW_UNSECURED_DS_REQUEST = "OBSERDS_AllowUnsecuredDatasourceRequest";
+
+  @Inject
+  private CachedPreference cachedPreference;
 
   /*
    * (non-Javadoc)
@@ -123,7 +131,11 @@ public abstract class BaseDataSourceService implements DataSourceService {
     Entity entityToCheck = getEntity();
     final OBContext obContext = OBContext.getOBContext();
     if (entity != null) {
-      obContext.getEntityAccessChecker().checkWritableAccess(entityToCheck);
+      try {
+        obContext.getEntityAccessChecker().checkWritableAccess(entityToCheck);
+      } catch (OBSecurityException e) {
+
+      }
     }
   }
 
@@ -137,7 +149,11 @@ public abstract class BaseDataSourceService implements DataSourceService {
       if (StringUtils.isNotBlank(processId)) {
         // selectors defined in a process definition
         if (entityToCheck != null) {
-          obContext.getEntityAccessChecker().checkDerivedAccess(entityToCheck);
+          try {
+            obContext.getEntityAccessChecker().checkDerivedAccess(entityToCheck);
+          } catch (OBSecurityException e) {
+            allowUnsecuredDatasourceAccess(e);
+          }
         }
       } else {
         // rest of the selectors
@@ -151,12 +167,26 @@ public abstract class BaseDataSourceService implements DataSourceService {
           if (entitySelector != null) {
             obContext.getEntityAccessChecker().checkDerivedAccess(entitySelector);
           }
+        } catch (OBSecurityException e) {
+          allowUnsecuredDatasourceAccess(e);
         } finally {
           OBContext.restorePreviousMode();
         }
       }
     } else if (entityToCheck != null) {
-      obContext.getEntityAccessChecker().checkReadableAccess(entityToCheck);
+      try {
+        obContext.getEntityAccessChecker().checkReadableAccess(entityToCheck);
+      } catch (OBSecurityException e) {
+        allowUnsecuredDatasourceAccess(e);
+      }
+    }
+  }
+
+  protected void allowUnsecuredDatasourceAccess(OBSecurityException securityException) {
+    if (!"Y".equals(cachedPreference.getPreferenceValue(ALLOW_UNSECURED_DS_REQUEST))) {
+      throw new OBSecurityException(securityException);
+    } else {
+      log.warn(securityException.getMessage() + " but in fact it is being allowed access.");
     }
   }
 
