@@ -27,33 +27,27 @@
 
       // protect the application against verification exceptions
       try {
-        var totalTaxes = 0;
+
+        // 3. verify that the sum of the net of each line + taxes equals the gross
+        var totalTaxes = OB.DEC.Zero;
         _.each(this.get('taxes'), function (tax) {
-          totalTaxes += tax.amount;
+          totalTaxes = OB.DEC.add(totalTaxes, tax.amount);
         }, this);
         var gross = this.get('gross');
-
-        // 3. verify that the sum of the gross of each line equals the total gross
-        var difference;
-        var field = '';
-        if (this.get('priceIncludesTax')) {
-          difference = OB.DEC.sub(gross, totalTaxes);
-          field = 'discountedNet';
-        } else {
-          difference = gross;
-          field = 'discountedGross';
-        }
+        var accum = totalTaxes;
         var isFieldUndefined = false;
         _.each(this.get('lines').models, function (line) {
-          var fieldValue = line.get(field);
+          var fieldValue = line.get('discountedNet');
           if (!fieldValue) {
             isFieldUndefined = true;
             return;
           }
-          difference = OB.DEC.sub(difference, fieldValue);
+          accum = OB.DEC.add(accum, fieldValue);
         });
+        var difference = OB.DEC.sub(gross, accum);
+
         if (!isFieldUndefined && difference !== 0) {
-          OB.error(enyo.format("%s: total gross does not equal the sum of the gross of each line. event: '%s', gross: %s, difference: %s", errorHeader, eventParams, gross, difference));
+          OB.error(enyo.format("%s: The sum of the net of each line plus taxes does not equal the gross: '%s', gross: %s, difference: %s", errorHeader, eventParams, gross, difference));
         }
 
         // 4. verify that a cashupId is available
