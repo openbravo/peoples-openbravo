@@ -894,7 +894,7 @@ public class ModelProvider implements OBSingleton {
    * @throws CheckException
    */
   public Table getTable(String tableName) throws CheckException {
-    final Table table = getTableFromTableName(tableName);
+    final Table table = getTableWithoutCheck(tableName);
     if (table == null) {
       if (OBPropertiesProvider.isFriendlyWarnings()) {
         // this error won't be logged...
@@ -912,7 +912,7 @@ public class ModelProvider implements OBSingleton {
    *
    * @return Table if exists, otherwise null.
    */
-  public Table getTableFromTableName(String tableName) {
+  public Table getTableWithoutCheck(String tableName) {
     if (tablesByTableName == null)
       getModel();
     return tablesByTableName.get(tableName.toLowerCase());

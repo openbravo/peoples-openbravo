@@ -195,7 +195,7 @@ public class EntityAccessChecker implements OBNotSingleton {
         }
       }
       for (final Entity entity : processEntities) {
-        Table table = mp.getTableFromTableName(entity.getTableName());
+        Table table = mp.getTableWithoutCheck(entity.getTableName());
         if (table == null) {
           continue;
         }
