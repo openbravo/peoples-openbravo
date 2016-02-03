@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2015 Openbravo S.L.U.
+ * Copyright (C) 2012-2016 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -14,11 +14,19 @@ enyo.kind({
   published: {
     order: null
   },
+  tap: function () {
+    if (!this.order.get('isEditable')) {
+      return;
+    }
+    this.inherited(arguments);
+    this.doShowReceiptProperties();
+  },
   attributes: {
-    style: 'padding: 13px 0px 15px 10px; font-weight: bold; color: #6CB33F; float: left; calc(100% - 50px); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;'
+    style: 'padding: 13px 0px 15px 10px; font-weight: bold; color: #6CB33F; float: left; calc(100% - 50px); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer;'
   },
   events: {
-    onPricelistChanged: ''
+    onPricelistChanged: '',
+    onShowReceiptProperties: ''
   },
   initComponents: function () {},
   renderData: function (docNo) {
