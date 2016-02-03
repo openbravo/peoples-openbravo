@@ -94,8 +94,8 @@ public class ADAlertDatasourceService extends DefaultDataSourceService {
 
   @Override
   public void checkFetchDatasourceAccess(Map<String, String> parameter) {
-    // The security in Alert DataSource is implemented in this class because the alerts are filtered
-    // based on each user/role.
+    // Alert datasource is accessible by all roles. Fetch method implements security access based on
+    // Alerts. Alerts are filtered based on each user/role.
   }
 
   private List<String> getAlertIds() {

@@ -117,21 +117,21 @@ public interface DataSourceService {
   public void setEntity(Entity entity);
 
   /**
-   * This method implements security access to a DataSource when it is used fetch() method. It can
-   * be overwritten in specific DataSources to apply a particular security mechanism.
+   * This method allows implement a security access to a DataSource when it is used fetch() method.
+   * It can be override in specific DataSources to apply a particular security mechanism.
    *
    * @throws OBSecurityException
-   *           is thrown if an entity is not accessible by a particular role.
+   *           is thrown if current role does not have access.
    */
   public void checkFetchDatasourceAccess(Map<String, String> parameter) throws OBSecurityException;
 
   /**
-   * This method implements security access to a DataSource when it is used add(), update() or
-   * remove() methods. It can be overwritten in specific DataSources to apply a particular security
+   * This method allows implement a security access to a DataSource when it is used add(), update()
+   * or remove() methods. It can be override in specific DataSources to apply a particular security
    * mechanism.
    *
-   * @throws OBSecurityException
-   *           is thrown if an entity is not accessible by a particular role.
+   * @throws OBSecurityExceptionA
+   *           is thrown if current role does not have access.
    */
   public void checkEditDatasourceAccess(Map<String, String> parameter) throws OBSecurityException;
 
