@@ -174,7 +174,18 @@ enyo.kind({
     if (countbuttons < paymentsbuttons) {
       this.createComponent(btncomponent);
     } else {
-      OB.OBPOSPointOfSale.UI.PaymentMethods.prototype.sideButtons.push(btncomponent);
+      var btnIndex = -1;
+      _.find(OB.OBPOSPointOfSale.UI.PaymentMethods.prototype.sideButtons, function (button, index) {
+        if (_.isEqual(button.btn.command, btncomponent.btn.command)) {
+          btnIndex = index;
+          return;
+        }
+      });
+      if (btnIndex < 0) {
+        OB.OBPOSPointOfSale.UI.PaymentMethods.prototype.sideButtons.push(btncomponent);
+      } else {
+        OB.OBPOSPointOfSale.UI.PaymentMethods.prototype.sideButtons.splice(btnIndex, 1, btncomponent);
+      }
       dialogbuttons[payment.payment.searchKey] = payment.payment._identifier;
     }
   },
@@ -306,7 +317,18 @@ enyo.kind({
       if (countbuttons++ < paymentsbuttons) {
         this.createComponent(btncomponent);
       } else {
-        OB.OBPOSPointOfSale.UI.PaymentMethods.prototype.sideButtons.push(btncomponent);
+        var btnIndex = -1;
+        _.find(OB.OBPOSPointOfSale.UI.PaymentMethods.prototype.sideButtons, function (button, index) {
+          if (_.isEqual(button.btn.command, btncomponent.btn.command)) {
+            btnIndex = index;
+            return;
+          }
+        });
+        if (btnIndex < 0) {
+          OB.OBPOSPointOfSale.UI.PaymentMethods.prototype.sideButtons.push(btncomponent);
+        } else {
+          OB.OBPOSPointOfSale.UI.PaymentMethods.prototype.sideButtons.splice(btnIndex, 1, btncomponent);
+        }
         dialogbuttons[sidebutton.command] = sidebutton.label;
       }
     }, this);
