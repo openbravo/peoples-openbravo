@@ -134,7 +134,7 @@ public abstract class BaseDataSourceService implements DataSourceService {
       try {
         obContext.getEntityAccessChecker().checkWritableAccess(entityToCheck);
       } catch (OBSecurityException e) {
-
+        allowUnsecuredDatasourceAccess(e);
       }
     }
   }
