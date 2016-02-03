@@ -59,6 +59,8 @@ public class DataSourceSecurity extends BaseDataSourceTestDal {
   private static final String ROLE_INTERNATIONAL_ADMIN = "42D0EEB1C66F497A90DD526DC597E6F0";
   private static final String ROLE_NO_ACCESS = "1";
   private static final String ROLE_SYSTEM_ADMIN = "0";
+  private static final String DS_ORDER = "Order";
+  private static final String DS_PROD_BY_PRICE_WAREHOUSE = "ProductByPriceAndWarehouse";
 
   private RoleType role;
   private String dataSource;
@@ -88,15 +90,13 @@ public class DataSourceSecurity extends BaseDataSourceTestDal {
     for (RoleType type : RoleType.values()) {
       testCases.add(new Object[] {
           type,
-          "Order",
+          DS_ORDER,
           type == RoleType.ADMIN_ROLE ? JsonConstants.RPCREQUEST_STATUS_SUCCESS
               : JsonConstants.RPCREQUEST_STATUS_VALIDATION_ERROR });
-      testCases.add(new Object[] {
-          type,
-          "ADRole",
-          type == RoleType.NO_ACCESS_ROLE ? JsonConstants.RPCREQUEST_STATUS_VALIDATION_ERROR
-              : JsonConstants.RPCREQUEST_STATUS_SUCCESS });
     }
+    // testing a problem detected in how properties are initialized.
+    testCases.add(new Object[] { RoleType.ADMIN_ROLE, DS_PROD_BY_PRICE_WAREHOUSE,
+        JsonConstants.RPCREQUEST_STATUS_SUCCESS });
     return testCases;
   }
 
@@ -136,10 +136,13 @@ public class DataSourceSecurity extends BaseDataSourceTestDal {
     OBContext.setOBContext(CONTEXT_USER);
     changeProfile(role.roleId, LANGUAGE_ID, OBContext.getOBContext().getCurrentOrganization()
         .getId(), WAREHOUSE_ID);
-    JSONObject jsonResponse = fetchDataSource();
-
-    assertThat("Request status", jsonResponse.getJSONObject("response").getInt("status"),
-        is(expectedResponseStatus));
+    JSONObject jsonResponse = null;
+    if (dataSource.equals(DS_PROD_BY_PRICE_WAREHOUSE)) {
+      jsonResponse = selectorFilterRequest();
+    } else {
+      jsonResponse = fetchDataSource();
+    }
+    assertThat("Request status", jsonResponse.getInt("status"), is(expectedResponseStatus));
   }
 
   private JSONObject fetchDataSource() throws Exception {
@@ -148,8 +151,43 @@ public class DataSourceSecurity extends BaseDataSourceTestDal {
     params.put("_startRow", "0");
     params.put("_endRow", "1");
 
-    return new JSONObject(doRequest("/org.openbravo.service.datasource/" + dataSource, params, 200,
-        "POST"));
+    String response = doRequest("/org.openbravo.service.datasource/" + dataSource, params, 200,
+        "POST");
+
+    return new JSONObject(response).getJSONObject("response");
+  }
+
+  /**
+   * This manual request must be tested to ensure it is functioning properly.
+   */
+  private JSONObject selectorFilterRequest() throws Exception {
+    Map<String, String> params = new HashMap<String, String>();
+    params.put("_selectorDefinitionId", "2E64F551C7C4470C80C29DBA24B34A5F");
+    params.put("filterClass", "org.openbravo.userinterface.selector.SelectorDataSourceFilter");
+    params.put("_where", "e.active='Y'");
+    params.put("_sortBy", "_identifier");
+    params.put("_requestType", "Window");
+    params.put("_distinct", "productPrice");
+
+    // To reproduce this problem is important not to add the targetProperty parameter. For this
+    // reason targetProperty=null.
+    params.put("_operationType", "fetch");
+    params.put("_inpTableId", "293");
+    params.put("_startRow", "0");
+    params.put("_endRow", "75");
+    params.put("_textMatchStyle", "substring");
+
+    // Filter selector
+    JSONObject criteria = new JSONObject();
+    criteria.put("fieldName", "productPrice$priceListVersion$_identifier");
+    criteria.put("operator", "iContains");
+    criteria.put("value", "Tarifa");
+    params.put("criteria", criteria.toString());
+
+    String response = doRequest("/org.openbravo.service.datasource/" + dataSource, params, 200,
+        "POST");
+
+    return new JSONObject(response).getJSONObject("response");
   }
 
   /** Deletes dummy testing role */
