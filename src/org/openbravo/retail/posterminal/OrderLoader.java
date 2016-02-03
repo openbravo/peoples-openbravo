@@ -1048,9 +1048,14 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
       if (negativeLine) {
         lineNo += 10;
+        Locator binForReturn = null;
+        if (orderLine.getWarehouse() != null && orderLine.getWarehouse().getReturnlocator() != null) {
+          binForReturn = orderLine.getWarehouse().getReturnlocator();
+        } else {
+          binForReturn = getBinForReturns(jsonorder.getString("posTerminal"));
+        }
         addShipmentline(shipment, shplineentity, orderlines.getJSONObject(i), orderLine, jsonorder,
-            lineNo, pendingQty.negate(), getBinForReturns(jsonorder.getString("posTerminal")),
-            null, i);
+            lineNo, pendingQty.negate(), binForReturn, null, i);
       } else if (useSingleBin) {
         lineNo += 10;
         addShipmentline(shipment, shplineentity, orderlines.getJSONObject(i), orderLine, jsonorder,
