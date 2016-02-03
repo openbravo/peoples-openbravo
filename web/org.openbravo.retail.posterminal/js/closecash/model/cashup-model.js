@@ -342,9 +342,9 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
     }, this);
 
     this.get('paymentList').on('change:counted', function (mod) {
-      mod.set('difference', OB.DEC.sub(mod.get('counted'), mod.get('expected')));
+      mod.set('difference', OB.DEC.sub(mod.get('counted'), OB.Utilities.Number.roundJSNumber(mod.get('expected'), 2)));
       if (mod.get('foreignCounted') !== null && mod.get('foreignCounted') !== undf && mod.get('foreignExpected') !== null && mod.get('foreignExpected') !== undf) {
-        mod.set('foreignDifference', OB.DEC.sub(mod.get('foreignCounted'), mod.get('foreignExpected')));
+        mod.set('foreignDifference', OB.DEC.sub(mod.get('foreignCounted'), OB.Utilities.Number.roundJSNumber(mod.get('foreignExpected'), 2)));
       }
       this.set('totalCounted', _.reduce(this.get('paymentList').models, function (total, model) {
         return model.get('counted') ? OB.DEC.add(total, model.get('counted')) : total;

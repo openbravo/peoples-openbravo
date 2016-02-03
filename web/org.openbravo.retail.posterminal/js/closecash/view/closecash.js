@@ -269,7 +269,7 @@ enyo.kind({
 
     this.model.on('change:totalCounted', function () {
       this.$.cashupMultiColumn.$.leftPanel.$.listPaymentMethods.$.difference.printAmount(OB.DEC.sub(this.model.get('totalCounted'), this.model.get('totalExpected')));
-      this.model.set("totalDifference", OB.DEC.sub(this.model.get('totalCounted'), this.model.get('totalExpected')));
+      this.model.set("totalDifference", OB.DEC.sub(this.model.get('totalCounted'), OB.Utilities.Number.roundJSNumber(this.model.get('totalExpected'), 2)));
       this.waterfall('onAnyCounted');
       this.refreshButtons();
     }, this);
