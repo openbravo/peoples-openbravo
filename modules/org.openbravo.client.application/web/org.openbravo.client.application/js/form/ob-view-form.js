@@ -2185,5 +2185,15 @@ OB.ViewFormProperties = {
       }
     }
     return true;
+  },
+
+  updateAlwaysTakeSpaceInSections: function () {
+    var i, item, length = this.getItems().length;
+    for (i = 0; i < length; i++) {
+      item = this.getItems()[i];
+      if (isc.isA.SectionItem(item) && item.isExpanded()){
+        item.updateAlwaysTakeSpace(true);
+      }
+    }
   }
 };
