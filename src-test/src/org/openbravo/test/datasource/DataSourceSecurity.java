@@ -79,10 +79,10 @@ public class DataSourceSecurity extends BaseDataSourceTestDal {
     }
   }
 
+  @SuppressWarnings("serial")
   private enum DataSource {
     Order("Order"), //
     Alert("DB9F062472294F12A0291A7BD203F922"), //
-    @SuppressWarnings("serial")
     ProductByPriceAndWarehouse("ProductByPriceAndWarehouse", new HashMap<String, String>() {
       {
         try {
@@ -106,6 +106,14 @@ public class DataSourceSecurity extends BaseDataSourceTestDal {
           put("criteria", criteria.toString());
         } catch (Exception ignore) {
         }
+      }
+    }), //
+    PropertySelector("83B60C4C19AE4A9EBA947B948C5BA04D", new HashMap<String, String>() {
+      {
+        // Property selector invocation form Windows > Tab > Field > Property field
+        put("_selectorDefinitionId", "387D9FFC48A74054835C5DF6E6FD08F7");
+        put("inpTableId", "107");
+        put("targetProperty", "property");
       }
     });
 
@@ -148,6 +156,9 @@ public class DataSourceSecurity extends BaseDataSourceTestDal {
     }
     // testing a problem detected in how properties are initialized.
     testCases.add(new Object[] { RoleType.ADMIN_ROLE, DataSource.ProductByPriceAndWarehouse,
+        JsonConstants.RPCREQUEST_STATUS_SUCCESS });
+
+    testCases.add(new Object[] { RoleType.SYSTEM_ROLE, DataSource.PropertySelector,
         JsonConstants.RPCREQUEST_STATUS_SUCCESS });
     return testCases;
   }
