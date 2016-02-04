@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2014 Openbravo SLU
+ * All portions are Copyright (C) 2013-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -32,6 +32,7 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
+import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
@@ -51,11 +52,28 @@ import org.openbravo.service.json.JsonUtils;
 
 public class ManageVariantsDS extends ReadOnlyDataSourceService {
   private static final int searchKeyLength = getSearchKeyColumnLength();
+  private static final String MANAGE_VARIANTS_TABLE_ID = "147D4D709FAC4AF0B611ABFED328FA12";
+
   private List<String> selectedIds = new ArrayList<String>();
   private HashMap<String, List<CharacteristicValue>> selectedChValues = new HashMap<String, List<CharacteristicValue>>();
   private String nameFilter;
   private String searchKeyFilter;
   private Boolean variantCreated;
+
+  @Override
+  public void checkFetchDatasourceAccess(Map<String, String> parameter) {
+    final OBContext obContext = OBContext.getOBContext();
+    Entity entityManageVariants = ModelProvider.getInstance().getEntityByTableId(
+        MANAGE_VARIANTS_TABLE_ID);
+    OBContext.setAdminMode();
+    try {
+      obContext.getEntityAccessChecker().checkReadableAccess(entityManageVariants);
+    } catch (OBSecurityException e) {
+      handlerExceptionUnsecuredDSAccess(e);
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
 
   @Override
   protected int getCount(Map<String, String> parameters) {
