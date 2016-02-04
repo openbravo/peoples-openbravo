@@ -63,6 +63,7 @@ public class DataSourceSecurity extends BaseDataSourceTestDal {
 
   private static final String DS_ORDER = "Order";
   private static final String DS_PROD_BY_PRICE_WAREHOUSE = "ProductByPriceAndWarehouse";
+  private static final String DS_ALERT = "DB9F062472294F12A0291A7BD203F922";
 
   private RoleType role;
   private String dataSource;
@@ -97,6 +98,9 @@ public class DataSourceSecurity extends BaseDataSourceTestDal {
           DS_ORDER,
           type == RoleType.ADMIN_ROLE ? JsonConstants.RPCREQUEST_STATUS_SUCCESS
               : JsonConstants.RPCREQUEST_STATUS_VALIDATION_ERROR });
+
+      // Alert ds should be always accessible
+      testCases.add(new Object[] { type, DS_ALERT, JsonConstants.RPCREQUEST_STATUS_SUCCESS });
     }
     // testing a problem detected in how properties are initialized.
     testCases.add(new Object[] { RoleType.ADMIN_ROLE, DS_PROD_BY_PRICE_WAREHOUSE,
