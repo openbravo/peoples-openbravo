@@ -59,6 +59,8 @@ public class DataSourceSecurity extends BaseDataSourceTestDal {
   private static final String ROLE_INTERNATIONAL_ADMIN = "42D0EEB1C66F497A90DD526DC597E6F0";
   private static final String ROLE_NO_ACCESS = "1";
   private static final String ROLE_SYSTEM_ADMIN = "0";
+  private static final String ESP_ORG = "E443A31992CB4635AFCAEABE7183CE85";
+
   private static final String DS_ORDER = "Order";
   private static final String DS_PROD_BY_PRICE_WAREHOUSE = "ProductByPriceAndWarehouse";
 
@@ -67,14 +69,16 @@ public class DataSourceSecurity extends BaseDataSourceTestDal {
   private int expectedResponseStatus;
 
   private enum RoleType {
-    ADMIN_ROLE(ROLE_INTERNATIONAL_ADMIN), //
-    NO_ACCESS_ROLE(ROLE_NO_ACCESS), //
-    SYSTEM_ROLE(ROLE_SYSTEM_ADMIN);
+    ADMIN_ROLE(ROLE_INTERNATIONAL_ADMIN, ESP_ORG), //
+    NO_ACCESS_ROLE(ROLE_NO_ACCESS, ESP_ORG), //
+    SYSTEM_ROLE(ROLE_SYSTEM_ADMIN, ASTERISK_ORG_ID);
 
     private String roleId;
+    private String orgId;
 
-    private RoleType(String roleId) {
+    private RoleType(String roleId, String orgId) {
       this.roleId = roleId;
+      this.orgId = orgId;
     }
   }
 
@@ -117,7 +121,8 @@ public class DataSourceSecurity extends BaseDataSourceTestDal {
     OBDal.getInstance().save(noAccessRole);
 
     RoleOrganization noAcessRoleOrg = OBProvider.getInstance().get(RoleOrganization.class);
-    noAcessRoleOrg.setOrganization(OBContext.getOBContext().getCurrentOrganization());
+    noAcessRoleOrg.setOrganization((Organization) OBDal.getInstance().getProxy(
+        Organization.ENTITY_NAME, ESP_ORG));
     noAcessRoleOrg.setRole(noAccessRole);
     OBDal.getInstance().save(noAcessRoleOrg);
 
@@ -134,8 +139,7 @@ public class DataSourceSecurity extends BaseDataSourceTestDal {
   @Test
   public void fetchShouldBeAllowedOnlyIfRoleIsGranted() throws Exception {
     OBContext.setOBContext(CONTEXT_USER);
-    changeProfile(role.roleId, LANGUAGE_ID, OBContext.getOBContext().getCurrentOrganization()
-        .getId(), WAREHOUSE_ID);
+    changeProfile(role.roleId, LANGUAGE_ID, role.orgId, WAREHOUSE_ID);
     JSONObject jsonResponse = null;
     if (dataSource.equals(DS_PROD_BY_PRICE_WAREHOUSE)) {
       jsonResponse = selectorFilterRequest();
