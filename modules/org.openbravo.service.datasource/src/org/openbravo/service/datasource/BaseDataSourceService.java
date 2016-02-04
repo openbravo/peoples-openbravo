@@ -134,7 +134,7 @@ public abstract class BaseDataSourceService implements DataSourceService {
       try {
         obContext.getEntityAccessChecker().checkWritableAccess(entityToCheck);
       } catch (OBSecurityException e) {
-        allowUnsecuredDatasourceAccess(e);
+        handlerExceptionUnsecuredDSAccess(e);
       }
     }
   }
@@ -152,7 +152,7 @@ public abstract class BaseDataSourceService implements DataSourceService {
           try {
             obContext.getEntityAccessChecker().checkDerivedAccess(entityToCheck);
           } catch (OBSecurityException e) {
-            allowUnsecuredDatasourceAccess(e);
+            handlerExceptionUnsecuredDSAccess(e);
           }
         }
       } else {
@@ -169,7 +169,7 @@ public abstract class BaseDataSourceService implements DataSourceService {
               obContext.getEntityAccessChecker().checkDerivedAccess(entitySelector);
             }
           } catch (OBSecurityException e) {
-            allowUnsecuredDatasourceAccess(e);
+            handlerExceptionUnsecuredDSAccess(e);
           } finally {
             OBContext.restorePreviousMode();
           }
@@ -179,12 +179,12 @@ public abstract class BaseDataSourceService implements DataSourceService {
       try {
         obContext.getEntityAccessChecker().checkReadableAccess(entityToCheck);
       } catch (OBSecurityException e) {
-        allowUnsecuredDatasourceAccess(e);
+        handlerExceptionUnsecuredDSAccess(e);
       }
     }
   }
 
-  protected void allowUnsecuredDatasourceAccess(OBSecurityException securityException) {
+  protected void handlerExceptionUnsecuredDSAccess(OBSecurityException securityException) {
     if (!"Y".equals(cachedPreference.getPreferenceValue(ALLOW_UNSECURED_DS_REQUEST))) {
       throw new OBSecurityException(securityException);
     } else {
