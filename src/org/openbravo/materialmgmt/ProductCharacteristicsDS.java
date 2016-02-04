@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2015 Openbravo SLU
+ * All portions are Copyright (C) 2013-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -35,6 +35,7 @@ import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.provider.OBProvider;
@@ -79,6 +80,8 @@ public class ProductCharacteristicsDS extends DefaultDataSourceService {
   final static int VAL_NAME = 3;
   final static int VAL_PARENT = 4;
 
+  private static final String PRODUCT_CHARACTERISTICS_TABLE_ID = "8E4A6598CA2747B6B0E7257C6F3DEB19";
+
   @Inject
   private DataSourceServiceProvider dataSourceServiceProvider;
 
@@ -109,6 +112,21 @@ public class ProductCharacteristicsDS extends DefaultDataSourceService {
     } catch (Throwable t) {
       log.error("Error building characteristics tree", t);
       return JsonUtils.convertExceptionToJson(t);
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
+  @Override
+  public void checkFetchDatasourceAccess(Map<String, String> parameter) {
+    final OBContext obContext = OBContext.getOBContext();
+    OBContext.setAdminMode();
+    try {
+      Entity entityToCheck = ModelProvider.getInstance().getEntityByTableId(
+          PRODUCT_CHARACTERISTICS_TABLE_ID);
+      obContext.getEntityAccessChecker().checkReadableAccess(entityToCheck);
+    } catch (OBSecurityException e) {
+      handlerExceptionUnsecuredDSAccess(e);
     } finally {
       OBContext.restorePreviousMode();
     }
