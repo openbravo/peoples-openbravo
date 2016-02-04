@@ -741,7 +741,7 @@ enyo.kind({
       this.$.body.$.listBps.$.stBPAssignToReceipt.$.theader.$.modalBpScrollableHeader.$.newAction.setDisabled(true);
     }
     if (this.args.businessPartner) {
-      this.$.body.$.listBps.$.stBPAssignToReceipt.$.theader.$.modalBpScrollableHeader.searchAction();
+      this.$.body.$.listBps.$.stBPAssignToReceipt.$.theader.$.modalBpScrollableHeader.$.filterSelector.searchAction();
       this.$.body.$.listBps.$.stBPAssignToReceipt.bPartner = this.args.businessPartner;
     } else {
       this.$.body.$.listBps.$.stBPAssignToReceipt.bPartner = null;
