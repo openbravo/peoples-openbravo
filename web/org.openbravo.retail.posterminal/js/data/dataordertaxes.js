@@ -487,7 +487,6 @@
         var totalTaxAmount = OB.DEC.Zero;
         var taxToAdjust = null;
         var taxToAdjustMax = OB.DEC.Zero;
-        var discountedGross;
         var adjustment;
 
         // Calculate taxes
@@ -507,8 +506,7 @@
               // Include in the calculation only the lines that have a 'discountedNet' attribute
               // because has been processed by calcLineTaxesIncPrice()
               totalNet = OB.DEC.add(totalNet, line.get('discountedNet'));
-              discountedGross = calculateDiscountedGross(line);
-              totalGross = OB.DEC.add(totalGross, _.isNull(discountedGross) ? line.get('gross') : discountedGross);
+              totalGross = OB.DEC.add(totalGross, calculateDiscountedGross(line));
             }
           });
 
@@ -780,7 +778,44 @@
       // Calculate
       return Promise.all(_.map(receipt.get('lines').models, function (line) {
         return calcLineTaxesExcPrice(receipt, line);
-      }));
+      })).then(function () {
+        // Ajust gross if net + taxes !== gross
+        var totalTaxAmount = OB.DEC.Zero;
+        var totalNet = OB.DEC.Zero;
+        var totalGross = OB.DEC.Zero;
+        var gross;
+        var lineToAdjust = null;
+        var lineToAdjustMax = OB.DEC.Zero;
+
+        var adjustment;
+
+        receipt.get('lines').forEach(function (line) {
+          totalNet = OB.DEC.add(totalNet, line.get('discountedNet'));
+          gross = line.get('discountedGross');
+          totalGross = OB.DEC.add(totalGross, gross);
+          if (OB.DEC.abs(gross) > lineToAdjustMax) {
+            lineToAdjustMax = gross;
+            lineToAdjust = line;
+          }
+        });
+
+        if (lineToAdjust) {
+          // Calculate taxes
+          _.forEach(receipt.get('taxes'), function (tax, taxid) {
+            totalTaxAmount = OB.DEC.add(totalTaxAmount, tax.amount);
+          });
+
+          adjustment = OB.DEC.sub(totalGross, OB.DEC.add(totalNet, totalTaxAmount));
+          if (adjustment !== OB.DEC.Zero) {
+            lineToAdjust.set({
+              'discountedGross': OB.DEC.sub(lineToAdjust.get('discountedGross'), adjustment),
+              'gross': OB.DEC.sub(lineToAdjust.get('gross'), adjustment)
+            }, {
+              silent: true
+            });
+          }
+        }
+      });
       };
 
   // Just calc the right function depending on prices including or excluding taxes
