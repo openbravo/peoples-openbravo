@@ -80,62 +80,49 @@ public class DataSourceSecurity extends BaseDataSourceTestDal {
   }
 
   private enum DataSource {
-    ORDER("Order"), //
-    ALERT("DB9F062472294F12A0291A7BD203F922", "Alert"), //
+    Order("Order"), //
+    Alert("DB9F062472294F12A0291A7BD203F922"), //
     @SuppressWarnings("serial")
-    PROD_BY_PRICE_WAREHOUSE("ProductByPriceAndWarehouse", "ProductByPriceAndWarehouse",
-        new HashMap<String, String>() {
-          {
-            try {
-              put("_selectorDefinitionId", "2E64F551C7C4470C80C29DBA24B34A5F");
-              put("filterClass", "org.openbravo.userinterface.selector.SelectorDataSourceFilter");
-              put("_where", "e.active='Y'");
-              put("_sortBy", "_identifier");
-              put("_requestType", "Window");
-              put("_distinct", "productPrice");
+    ProductByPriceAndWarehouse("ProductByPriceAndWarehouse", new HashMap<String, String>() {
+      {
+        try {
+          put("_selectorDefinitionId", "2E64F551C7C4470C80C29DBA24B34A5F");
+          put("filterClass", "org.openbravo.userinterface.selector.SelectorDataSourceFilter");
+          put("_where", "e.active='Y'");
+          put("_sortBy", "_identifier");
+          put("_requestType", "Window");
+          put("_distinct", "productPrice");
 
-              // To reproduce this problem is important not to add the targetProperty parameter. For
-              // this reason targetProperty=null.
-              put("_inpTableId", "293");
-              put("_textMatchStyle", "substring");
+          // To reproduce this problem is important not to add the targetProperty parameter. For
+          // this reason targetProperty=null.
+          put("_inpTableId", "293");
+          put("_textMatchStyle", "substring");
 
-              // Filter selector
-              JSONObject criteria = new JSONObject();
-              criteria.put("fieldName", "productPrice$priceListVersion$_identifier");
-              criteria.put("operator", "iContains");
-              criteria.put("value", "Tarifa");
-              put("criteria", criteria.toString());
-            } catch (Exception ignore) {
-            }
-          }
-        });
+          // Filter selector
+          JSONObject criteria = new JSONObject();
+          criteria.put("fieldName", "productPrice$priceListVersion$_identifier");
+          criteria.put("operator", "iContains");
+          criteria.put("value", "Tarifa");
+          put("criteria", criteria.toString());
+        } catch (Exception ignore) {
+        }
+      }
+    });
 
-    private String dsName;
     private String ds;
     private Map<String, String> params;
 
     private DataSource(String ds) {
       this.ds = ds;
-      dsName = ds;
       params = new HashMap<String, String>();
       params.put("_operationType", "fetch");
       params.put("_startRow", "0");
       params.put("_endRow", "1");
     }
 
-    private DataSource(String ds, String name) {
+    private DataSource(String ds, Map<String, String> extraParams) {
       this(ds);
-      this.dsName = name;
-    }
-
-    private DataSource(String ds, String name, Map<String, String> extraParams) {
-      this(ds, name);
       params.putAll(extraParams);
-    }
-
-    @Override
-    public String toString() {
-      return dsName;
     }
   }
 
@@ -151,16 +138,16 @@ public class DataSourceSecurity extends BaseDataSourceTestDal {
     for (RoleType type : RoleType.values()) {
       testCases.add(new Object[] {
           type,
-          DataSource.ORDER,
+          DataSource.Order,
           type == RoleType.ADMIN_ROLE ? JsonConstants.RPCREQUEST_STATUS_SUCCESS
               : JsonConstants.RPCREQUEST_STATUS_VALIDATION_ERROR });
 
       // Alert ds should be always accessible
       testCases
-          .add(new Object[] { type, DataSource.ALERT, JsonConstants.RPCREQUEST_STATUS_SUCCESS });
+          .add(new Object[] { type, DataSource.Alert, JsonConstants.RPCREQUEST_STATUS_SUCCESS });
     }
     // testing a problem detected in how properties are initialized.
-    testCases.add(new Object[] { RoleType.ADMIN_ROLE, DataSource.PROD_BY_PRICE_WAREHOUSE,
+    testCases.add(new Object[] { RoleType.ADMIN_ROLE, DataSource.ProductByPriceAndWarehouse,
         JsonConstants.RPCREQUEST_STATUS_SUCCESS });
     return testCases;
   }
