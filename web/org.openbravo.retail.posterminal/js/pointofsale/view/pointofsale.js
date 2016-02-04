@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2015 Openbravo S.L.U.
+ * Copyright (C) 2013-2016 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -395,10 +395,10 @@ enyo.kind({
   deleteCurrentOrder: function (inSender, inEvent) {
     function removeOrder(context) {
       var isPaidQuotation = (context.model.get('order').has('isQuotation') && context.model.get('order').get('isQuotation') && context.model.get('order').has('hasbeenpaid') && context.model.get('order').get('hasbeenpaid') === 'Y');
-      if (OB.POS.hwserver.url && OB.POS.modelterminal.get('terminal').terminalType.userfid) {
-    	OB.UTIL.eraseEpcOrder(context.model.get('order'));
-      }
       var receipt = context.model.get('order');
+      if (OB.UTIL.isRfidConfigured()) {
+        OB.UTIL.eraseEpcOrder(context.model.get('order'));
+      }
       if (receipt.get('id') && !isPaidQuotation && receipt.get('lines') && receipt.get('lines').length > 0) {
         if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true) && !inEvent.originator.hasClass('paidticket')) {
           receipt.setIsCalculateGrossLockState(true);

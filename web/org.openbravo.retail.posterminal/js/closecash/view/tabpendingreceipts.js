@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2015 Openbravo S.L.U.
+ * Copyright (C) 2012-2016 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -162,9 +162,9 @@ enyo.kind({
           me.markOrderAsDeleted(model);
         } else {
           // approved so remove the entry
-        if (OB.POS.hwserver.url && OB.POS.modelterminal.get('terminal').terminalType.userfid) {
-          OB.UTIL.eraseEpcOrder(model);
-        }
+          if (OB.UTIL.isRfidConfigured()) {
+            OB.UTIL.eraseEpcOrder(model);
+          }
           OB.Dal.remove(model, function () {
             me.collection.remove(model);
           }, OB.UTIL.showError);
@@ -205,7 +205,7 @@ enyo.kind({
     var me = this;
 
     function removeOneModel(collection, model) {
-      if (OB.POS.hwserver.url && OB.POS.modelterminal.get('terminal').terminalType.userfid) {
+      if (OB.UTIL.isRfidConfigured()) {
         OB.UTIL.eraseEpcOrder(model);
       }
       if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {

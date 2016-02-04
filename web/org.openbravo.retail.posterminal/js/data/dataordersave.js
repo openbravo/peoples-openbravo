@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2015 Openbravo S.L.U.
+ * Copyright (C) 2013-2016 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -119,7 +119,7 @@
           return true;
         }
 
-        if (OB.POS.hwserver.url && OB.POS.modelterminal.get('terminal').terminalType.userfid) {
+        if (OB.UTIL.isRfidConfigured()) {
           OB.UTIL.processRemainingCodes(model.get('order'));
           OB.UTIL.updateEpcBuffers();
         }

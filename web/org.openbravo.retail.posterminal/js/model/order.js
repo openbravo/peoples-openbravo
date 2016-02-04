@@ -1165,9 +1165,9 @@
       line.trigger('removed', line);
 
       function finishDelete() {
-      if (OB.POS.hwserver.url && OB.POS.modelterminal.get('terminal').terminalType.userfid && line.get('obposEpccode')) {
-        OB.UTIL.removeEpcLine(line);
-      }
+        if (OB.UTIL.isRfidConfigured() && line.get('obposEpccode')) {
+          OB.UTIL.removeEpcLine(line);
+        }
         var text, lines, indexes, relations, rl, rls, i;
 
         me.get('lines').remove(line);
@@ -1180,9 +1180,9 @@
           lines: lines,
           relations: relations,
           undo: function () {
-          if (OB.POS.hwserver.url && OB.POS.modelterminal.get('terminal').terminalType.userfid && line.get('obposEpccode')) {
-            OB.UTIL.addEpcLine(line);
-          }
+            if (OB.UTIL.isRfidConfigured() && line.get('obposEpccode')) {
+              OB.UTIL.addEpcLine(line);
+            }
             enyo.$.scrim.show();
             me.set('preventServicesUpdate', true);
             me.set('deleting', true);
@@ -1912,7 +1912,7 @@
           var order = OB.MobileApp.model.receipt;
           OB.UTIL.Approval.requestApproval((modelObj ? modelObj : this.model), 'OBPOS_approval.deleteLine', function (approved) {
             if (approved) {
-              if (OB.POS.hwserver.url && OB.POS.modelterminal.get('terminal').terminalType.userfid && newline.get('obposEpccode')) {
+              if (OB.UTIL.isRfidConfigured() && newline.get('obposEpccode')) {
                 OB.UTIL.removeEpcLine(newline);
               }
               // If the OBPOS_remove_ticket preference is active then mark the line as deleted

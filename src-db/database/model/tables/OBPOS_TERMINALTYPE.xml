@@ -126,5 +126,6 @@
       <check name="OBPOS_TERTYPE_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="OBPOS_TERTYPE_LAYAWAYORD_CHK"><![CDATA[LAYAWAYORDER IN ('Y', 'N')]]></check>
       <check name="OBPOS_TERTYPE_USERFID_CHK"><![CDATA[USERFID IN ('Y', 'N')]]></check>
+      <check name="OBPOS_USESECURITYGATE_CHK"><![CDATA[USESECURITYGATE IN ('Y', 'N')]]></check>
     </table>
   </database>

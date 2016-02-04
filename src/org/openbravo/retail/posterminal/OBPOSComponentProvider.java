@@ -86,6 +86,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
 
         // Login
         "login/model/login-model",
+
         // Common components
         "datasource",
         // "data/dal",
@@ -97,12 +98,14 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         // "model/order",
         // "model/terminal",
         // "model/user",
+
         "utils/ob-utilitiesuipos",
 
         "model/bpcategory",
 
-        "model/bplocation", // Model for Customer
-                            // Address
+        // Model for Customer Address
+        "model/bplocation",
+
         "model/currencypanel",
 
         "model/salesrepresentative",
@@ -148,13 +151,14 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/modalnoteditableline",
 
         "components/modalmodulesindev",
+
         // Web POS window
         "utils/eventbus",
 
         "utils/cashUpReportUtils",
-        
+
         "utils/cashManagementUtils",
-        
+
         "components/keypadcoins",
 
         "data/dataordersave",
@@ -191,8 +195,9 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
 
         "components/businesspartner",
 
-        "components/bplocation", // Button for selecting customer
-                                 // address
+        // Button for selecting customer address
+        "components/bplocation",
+
         "components/salesrepresentative",
 
         "components/listreceiptscounter",
@@ -202,18 +207,23 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/modalselectterminal",
 
         "components/popupdraweropened",
+
         "components/servicesfilter",
+
         "components/modalselectopenreceipts",
+
         // Old Tickets
         "components/modalpaidreceipts",
 
         "components/modalmultiorders",
+
         // Quotations
         "components/modalcreateorderfromquotation",
 
         "components/modalreactivatequotation",
 
         "components/modalrejectquotation",
+
         // Detection of change in context
         "components/modalcontextchanged",
 
@@ -231,8 +241,11 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "model/productprice",
 
         "model/offerpricelist",
+
         "model/service-product",
+
         "model/service-category",
+
         "model/businesspartner",
 
         "model/document-sequence",
@@ -244,13 +257,17 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "model/promotions",
 
         "model/servicepricerule",
+
         "model/servicepricerulerange",
+
         "model/servicepricerulerangeprices",
+
         "model/servicepriceruleversion",
 
         "model/obpos-supervisor-model",
 
         "model/obposfiles",
+
         "model/obposprodfiles",
 
         // Point of sale
@@ -287,22 +304,34 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "pointofsale/view/keyboardorder",
         // Point of sale subwindows
         "pointofsale/view/subwindows/customers/components/sharedcomponents",
+
         "pointofsale/view/subwindows/customers/customersadvancedsearch",
+
         "pointofsale/view/subwindows/customers/editcreatecustomerform",
+
         "pointofsale/view/subwindows/customers/customerdetailview",
 
         "pointofsale/view/subwindows/customeraddress/components/sharedcomponents",
+
         "pointofsale/view/subwindows/customeraddress/editcreatecustomeraddress",
+
         "pointofsale/view/subwindows/customeraddress/customeraddrsearch",
+
         "pointofsale/view/subwindows/customeraddress/customeraddrdetailview",
+
         // Point of sale modals
         "pointofsale/view/modals/modalstockinstore",
+
         "pointofsale/view/modals/modalstockinstoreclickable",
+
         "pointofsale/view/modals/modalstockinotherstore",
 
         "pointofsale/view/modals/modalpayments",
+
         "pointofsale/view/modals/modalproductcannotbegroup",
+
         "pointofsale/view/modals/modalwarehousesrequired",
+
         "pointofsale/view/modals/modalcreditsales",
 
         "pointofsale/view/modals/modaldiscountneedqty",
@@ -311,7 +340,9 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
 
         // Cash Management window
         "cashmgmt/model/cashmgmt-print",
+
         "cashmgmt/model/cashmgmt-model",
+
         "cashmgmt/model/cashmgmt-model",
 
         "cashmgmt/view/cashmgmtkeyboard",
@@ -352,12 +383,14 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "closecash/view/tabpostprintclose",
 
         "closecash/components/cashup-modals",
-        
+
         "closecash/components/approvalreason-modal",
 
         "closecash/model/daycash",
+
         // Core resources
         "../../org.openbravo.client.application/js/utilities/ob-utilities-number",
+
         "../../org.openbravo.client.application/js/utilities/ob-utilities-date",
 
         // Payment providers

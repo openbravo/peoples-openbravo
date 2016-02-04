@@ -9,6 +9,10 @@
 
 /*global, WebSocket _ */
 
+OB.UTIL.isRfidConfigured = function () {
+  return OB.POS.hwserver.url && OB.POS.modelterminal.get('terminal').terminalType.userfid;
+};
+
 OB.UTIL.startRfidWebsocket = function startRfidWebsocket(websocketServerLocation, reconnectTimeout, currentRetrials, retrialsBeforeWarning) {
   var barcodeActionHandler, retrialsBeforeThreadCancellation = 100;
   OB.UTIL.rfidWebsocket = new WebSocket(websocketServerLocation);
@@ -48,7 +52,7 @@ OB.UTIL.startRfidWebsocket = function startRfidWebsocket(websocketServerLocation
       OB.UTIL.rfidAckArray.push(event.data.split(':')[1]);
       return;
     }
-    data = JSON.parse(event.data)
+    data = JSON.parse(event.data);
     if (OB.POS.modelterminal.get('terminal').terminalType.rfidtimeout) {
       if (OB.UTIL.rfidTimeout) {
         clearTimeout(OB.UTIL.rfidTimeout);
