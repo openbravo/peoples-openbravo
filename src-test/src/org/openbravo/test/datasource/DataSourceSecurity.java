@@ -36,12 +36,15 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import org.openbravo.base.provider.OBProvider;
+import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.access.RoleOrganization;
 import org.openbravo.model.ad.access.UserRoles;
+import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.model.common.plm.Product;
 import org.openbravo.service.json.JsonConstants;
 
 /**
@@ -60,6 +63,10 @@ public class DataSourceSecurity extends BaseDataSourceTestDal {
   private static final String ROLE_NO_ACCESS = "1";
   private static final String ROLE_SYSTEM_ADMIN = "0";
   private static final String ESP_ORG = "E443A31992CB4635AFCAEABE7183CE85";
+
+  private static final String TABLE_WINDOWS_TABS_FIELDS_ID = "105";
+  private static final String RECORD_OF_WINDOWS_TABS_FIELDS_ID = "283";
+  private static final String PRODUCT_TEST = "11";
 
   private RoleType role;
   private DataSource dataSource;
@@ -110,7 +117,7 @@ public class DataSourceSecurity extends BaseDataSourceTestDal {
     }), //
     PropertySelector("83B60C4C19AE4A9EBA947B948C5BA04D", new HashMap<String, String>() {
       {
-        // Property selector invocation form Windows > Tab > Field > Property field
+        // Property selector invocation from Windows > Tab > Field > Property field
         put("_selectorDefinitionId", "387D9FFC48A74054835C5DF6E6FD08F7");
         put("inpTableId", "107");
         put("targetProperty", "property");
@@ -118,7 +125,19 @@ public class DataSourceSecurity extends BaseDataSourceTestDal {
     }), //
     ManageVariants("6654D607F650425A9DFF7B6961D54920", new HashMap<String, String>() {
       {
-        put("@Product.id@", "DA7FC1BB3BA44EC48EC1AB9C74168CED");
+        put("@Product.id@", PRODUCT_TEST);
+      }
+    }), //
+    Note("090A37D22E61FE94012E621729090048", new HashMap<String, String>() {
+      {
+        // Note of a record in Windows, Tabs and Fields.
+        String criteria = "{\"fieldName\":\"table\",\"operator\":\"equals\",\"value\":\""
+            + TABLE_WINDOWS_TABS_FIELDS_ID
+            + "\"}__;__{\"fieldName\":\"record\",\"operator\":\"equals\",\"value\":\""
+            + RECORD_OF_WINDOWS_TABS_FIELDS_ID + "\"}";
+        String entityName = "OBUIAPP_Note";
+        put("criteria", criteria);
+        put("_entityName", entityName);
       }
     }), //
     ProductCharacteristics("BE2735798ECC4EF88D131F16F1C4EC72");
@@ -160,7 +179,16 @@ public class DataSourceSecurity extends BaseDataSourceTestDal {
       // Alert ds should be always accessible
       testCases
           .add(new Object[] { type, DataSource.Alert, JsonConstants.RPCREQUEST_STATUS_SUCCESS });
+
+      // Note ds is accessible if current role has access to entity of the notes. This note is
+      // invocated from a record in Windows, Tabs and Fields.
+      testCases.add(new Object[] {
+          type,
+          DataSource.Note,
+          type == RoleType.NO_ACCESS_ROLE ? JsonConstants.RPCREQUEST_STATUS_VALIDATION_ERROR
+              : JsonConstants.RPCREQUEST_STATUS_SUCCESS });
     }
+
     // testing a problem detected in how properties are initialized.
     testCases.add(new Object[] { RoleType.ADMIN_ROLE, DataSource.ProductByPriceAndWarehouse,
         JsonConstants.RPCREQUEST_STATUS_SUCCESS });
@@ -172,7 +200,7 @@ public class DataSourceSecurity extends BaseDataSourceTestDal {
 
   /** Creates dummy role without any access for testing purposes */
   @BeforeClass
-  public static void createNoAccessRole() {
+  public static void createNoAccessRoleAndGenericProduct() {
     OBContext.setOBContext(CONTEXT_USER);
 
     Role noAccessRole = OBProvider.getInstance().get(Role.class);
@@ -198,6 +226,19 @@ public class DataSourceSecurity extends BaseDataSourceTestDal {
     noAccessRoleUser.setRole(noAccessRole);
     OBDal.getInstance().save(noAccessRoleUser);
 
+    // Create product generic for manage variants
+    Product productToClone = OBDal.getInstance().get(Product.class,
+        "DA7FC1BB3BA44EC48EC1AB9C74168CED");
+    Product product = (Product) DalUtil.copy(productToClone, false);
+    product.setId(PRODUCT_TEST);
+    product.setNewOBObject(true);
+    product.setOrganization(OBDal.getInstance().get(Organization.class, ASTERISK_ORG_ID));
+    product.setName("Generic Product Test");
+    product.setSearchKey("GEN-1 ");
+    product.setClient(OBDal.getInstance().get(Client.class, "23C59575B9CF467C9620760EB255B389"));
+    product.setGeneric(true);
+    OBDal.getInstance().save(product);
+
     OBDal.getInstance().commitAndClose();
   }
 
@@ -218,11 +259,12 @@ public class DataSourceSecurity extends BaseDataSourceTestDal {
     return new JSONObject(response).getJSONObject("response");
   }
 
-  /** Deletes dummy testing role */
+  /** Deletes dummy testing role and product */
   @AfterClass
   public static void cleanUp() {
     OBContext.setOBContext(CONTEXT_USER);
     OBDal.getInstance().remove(OBDal.getInstance().get(Role.class, ROLE_NO_ACCESS));
+    OBDal.getInstance().remove(OBDal.getInstance().get(Product.class, PRODUCT_TEST));
     OBDal.getInstance().commitAndClose();
   }
 }
