@@ -17,6 +17,7 @@ import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.Preferences;
@@ -37,6 +38,7 @@ public class CheckTerminalAuth extends JSONProcessSimple {
     final JSONObject respArray = new JSONObject();
     final JSONObject result = new JSONObject();
     result.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
+    OBContext.setAdminMode(true);
     try {
       final String terminalName = jsonsent.getString("terminalName");
       final String terminalKeyIdentifier = jsonsent.getString("terminalKeyIdentifier");
@@ -66,6 +68,8 @@ public class CheckTerminalAuth extends JSONProcessSimple {
       }
     } catch (final Exception e) {
       log.error("There was an error Checking Terminal Authentication: ", e);
+    } finally {
+      OBContext.restorePreviousMode();
     }
     result.put(JsonConstants.RESPONSE_DATA, respArray);
     return result;
