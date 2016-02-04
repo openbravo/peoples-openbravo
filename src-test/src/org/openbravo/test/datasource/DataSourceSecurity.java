@@ -120,7 +120,8 @@ public class DataSourceSecurity extends BaseDataSourceTestDal {
       {
         put("@Product.id@", "DA7FC1BB3BA44EC48EC1AB9C74168CED");
       }
-    });
+    }), //
+    ProductCharacteristics("BE2735798ECC4EF88D131F16F1C4EC72");
 
     private String ds;
     private Map<String, String> params;
@@ -154,6 +155,7 @@ public class DataSourceSecurity extends BaseDataSourceTestDal {
 
       testCases.add(new Object[] { type, DataSource.Order, accessForAdminOnly });
       testCases.add(new Object[] { type, DataSource.ManageVariants, accessForAdminOnly });
+      testCases.add(new Object[] { type, DataSource.ProductCharacteristics, accessForAdminOnly });
 
       // Alert ds should be always accessible
       testCases
