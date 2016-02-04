@@ -115,6 +115,11 @@ public class DataSourceSecurity extends BaseDataSourceTestDal {
         put("inpTableId", "107");
         put("targetProperty", "property");
       }
+    }), //
+    ManageVariants("6654D607F650425A9DFF7B6961D54920", new HashMap<String, String>() {
+      {
+        put("@Product.id@", "DA7FC1BB3BA44EC48EC1AB9C74168CED");
+      }
     });
 
     private String ds;
@@ -144,11 +149,11 @@ public class DataSourceSecurity extends BaseDataSourceTestDal {
   public static Collection<Object[]> parameters() {
     List<Object[]> testCases = new ArrayList<Object[]>();
     for (RoleType type : RoleType.values()) {
-      testCases.add(new Object[] {
-          type,
-          DataSource.Order,
-          type == RoleType.ADMIN_ROLE ? JsonConstants.RPCREQUEST_STATUS_SUCCESS
-              : JsonConstants.RPCREQUEST_STATUS_VALIDATION_ERROR });
+      int accessForAdminOnly = type == RoleType.ADMIN_ROLE ? JsonConstants.RPCREQUEST_STATUS_SUCCESS
+          : JsonConstants.RPCREQUEST_STATUS_VALIDATION_ERROR;
+
+      testCases.add(new Object[] { type, DataSource.Order, accessForAdminOnly });
+      testCases.add(new Object[] { type, DataSource.ManageVariants, accessForAdminOnly });
 
       // Alert ds should be always accessible
       testCases
