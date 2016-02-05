@@ -140,7 +140,63 @@ public class DataSourceSecurity extends BaseDataSourceTestDal {
         put("_entityName", entityName);
       }
     }), //
-    ProductCharacteristics("BE2735798ECC4EF88D131F16F1C4EC72");
+    ProductCharacteristics("BE2735798ECC4EF88D131F16F1C4EC72"), //
+    Combo("ComboTableDatasourceService", new HashMap<String, String>() {
+      {
+        // Sales Order > Payment Terms
+        put("fieldId", "1099");
+      }
+    }), //
+    CustomQuerySelectorDatasource("F8DD408F2F3A414188668836F84C21AF",
+        new HashMap<String, String>() {
+          {
+            // Sales Invoice > Selector Business Partner
+            put("_selectorDefinitionId", "862F54CB1B074513BD791C6789F4AA42");
+            put("inpTableId", "318");
+            put("targetProperty", "businessPartner");
+          }
+        }), //
+    CustomQuerySelectorDatasourceProcess("ADList", new HashMap<String, String>() {
+      {
+        // Sales Order > Add Payment process > Selector Action Regarding Document
+        put("_selectorDefinitionId", "41B3A5EA61AB46FBAF4567E3755BA190");
+        put("_processDefinitionId", "9BED7889E1034FE68BD85D5D16857320");
+        put("targetProperty", "businessPartner");
+      }
+    }), //
+    QuickLaunch("99B9CC42FDEA4CA7A4EE35BC49D61E0E"), //
+    QuickCreate("C17951F970E942FD9F3771B7BE91D049"), //
+    HQLDataSource("3C1148C0AB604DE1B51B7EA4112C325F", new HashMap<String, String>() {
+      {
+        // Invocation from Sales Order > Add Payment process > Credit to Use.
+        put("tableId", "58AF4D3E594B421A9A7307480736F03E");
+      }
+    }), //
+    ADTree("90034CAE96E847D78FBEF6D38CB1930D", new HashMap<String, String>() {
+      {
+        // Organization tree view.
+        put("referencedTableId", "155");
+      }
+    }), //
+    AccountTree("D2F94DC86DEC48D69E4BFCE59DC670CF", new HashMap<String, String>() {
+      {
+        // Account tree value > Entity FinancialMgmtElementValue.
+        put("referencedTableId", "188");
+        put("tabId", "132");
+      }
+    }), //
+    StockReservations("2F5B70D7F12E4F5C8FE20D6F17D69ECF", new HashMap<String, String>() {
+      {
+        // Manage Stock from Stock Reservations
+        put("@MaterialMgmtReservation.id@", "848E85D3020245888B9579FEA9A1799B");
+      }
+    }), //
+    QueryList("DD17275427E94026AD721067C3C91C18", new HashMap<String, String>() {
+      {
+        // Query List Widget > Best Sellers
+        put("widgetId", "CD1B06C4ED974B5F905A5A01B097DF4E");
+      }
+    });
 
     private String ds;
     private Map<String, String> params;
@@ -171,10 +227,35 @@ public class DataSourceSecurity extends BaseDataSourceTestDal {
     for (RoleType type : RoleType.values()) {
       int accessForAdminOnly = type == RoleType.ADMIN_ROLE ? JsonConstants.RPCREQUEST_STATUS_SUCCESS
           : JsonConstants.RPCREQUEST_STATUS_VALIDATION_ERROR;
+      int accessForAdminAndSystemOnly = type == RoleType.NO_ACCESS_ROLE ? JsonConstants.RPCREQUEST_STATUS_VALIDATION_ERROR
+          : JsonConstants.RPCREQUEST_STATUS_SUCCESS;
 
       testCases.add(new Object[] { type, DataSource.Order, accessForAdminOnly });
       testCases.add(new Object[] { type, DataSource.ManageVariants, accessForAdminOnly });
       testCases.add(new Object[] { type, DataSource.ProductCharacteristics, accessForAdminOnly });
+      testCases.add(new Object[] { type, DataSource.Combo, accessForAdminOnly });
+      testCases.add(new Object[] { type, DataSource.CustomQuerySelectorDatasource,
+          accessForAdminAndSystemOnly });
+      testCases.add(new Object[] { type, DataSource.CustomQuerySelectorDatasourceProcess,
+          accessForAdminAndSystemOnly });
+
+      // QuickLaunch ds should be always accessible
+      testCases.add(new Object[] { type, DataSource.QuickLaunch,
+          JsonConstants.RPCREQUEST_STATUS_SUCCESS });
+
+      // QuickCreate ds should be always accessible
+      testCases.add(new Object[] { type, DataSource.QuickCreate,
+          JsonConstants.RPCREQUEST_STATUS_SUCCESS });
+      testCases.add(new Object[] { type, DataSource.HQLDataSource, accessForAdminOnly });
+      testCases.add(new Object[] { type, DataSource.ADTree, accessForAdminAndSystemOnly });
+      testCases.add(new Object[] { type, DataSource.AccountTree, accessForAdminOnly });
+      testCases.add(new Object[] { type, DataSource.StockReservations, accessForAdminOnly });
+
+      // QueryList ds is accessible if current role has access to widgetId
+      testCases.add(new Object[] { type, DataSource.QueryList,
+          JsonConstants.RPCREQUEST_STATUS_VALIDATION_ERROR });
+      testCases.add(new Object[] { type, DataSource.PropertySelector,
+          JsonConstants.RPCREQUEST_STATUS_SUCCESS });
 
       // Alert ds should be always accessible
       testCases
@@ -188,13 +269,10 @@ public class DataSourceSecurity extends BaseDataSourceTestDal {
           type == RoleType.NO_ACCESS_ROLE ? JsonConstants.RPCREQUEST_STATUS_VALIDATION_ERROR
               : JsonConstants.RPCREQUEST_STATUS_SUCCESS });
     }
-
     // testing a problem detected in how properties are initialized.
     testCases.add(new Object[] { RoleType.ADMIN_ROLE, DataSource.ProductByPriceAndWarehouse,
         JsonConstants.RPCREQUEST_STATUS_SUCCESS });
 
-    testCases.add(new Object[] { RoleType.SYSTEM_ROLE, DataSource.PropertySelector,
-        JsonConstants.RPCREQUEST_STATUS_SUCCESS });
     return testCases;
   }
 
@@ -250,6 +328,7 @@ public class DataSourceSecurity extends BaseDataSourceTestDal {
     JSONObject jsonResponse = null;
     jsonResponse = fetchDataSource();
     assertThat("Request status", jsonResponse.getInt("status"), is(expectedResponseStatus));
+
   }
 
   private JSONObject fetchDataSource() throws Exception {
