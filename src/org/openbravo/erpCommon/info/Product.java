@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -308,7 +308,8 @@ public class Product extends HttpSecureAppServlet {
     html.append("new SearchElements(\"_PLIST\", true, \""
         + df.format(new BigDecimal(data[0].pricelist)) + "\")\n");
     html.append(");\n");
-    html.append("parent.opener.closeSearch(\"SAVE\", key, text, parameter);\n");
+    html.append("var theOpener = parent.opener || getFrame('LayoutMDI');\n");
+    html.append("theOpener.closeSearch(\"SAVE\", key, text, parameter);\n");
     html.append("}\n");
     return html.toString();
   }

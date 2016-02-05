@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2013 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -35,6 +35,11 @@
 <script language="JavaScript" type="text/javascript">
 function loadCombo(dataArray) {
 	fillCombo(document.forms[0].inpCRegionId, dataArray, true);
+}
+
+function getOpener() {
+  var theOpener = parent.opener || getFrame('LayoutMDI');
+  return theOpener;
 }
 
 function onloadFunctions() {
@@ -202,7 +207,7 @@ function onloadFunctions() {
                 <button type="button" 
                   id="buttonCancel" 
                   class="ButtonLink" 
-                  onclick="parent.opener.closeSearch('CLEAR', '', '');return false;" 
+                  onclick="getOpener().closeSearch('CLEAR', '', '');return false;" 
                   onfocus="buttonEvent('onfocus', this); window.status='Cancel'; return true;" 
                   onblur="buttonEvent('onblur', this);" 
                   onkeyup="buttonEvent('onkeyup', this);" 

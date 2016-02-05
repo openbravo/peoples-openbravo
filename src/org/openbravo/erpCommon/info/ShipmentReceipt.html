@@ -55,14 +55,14 @@
 </script>
 <script type="text/javascript">    
   function validateSelector(action) {
-  	var pos; var keys;  var key; var text; var parameter;
+  	var pos; var keys;  var key; var text; var parameter; var theOpener = parent.opener || getFrame('LayoutMDI');
   	if(action == "SAVE") {
 	    pos = getSelectedPos();
 	    keys = getSelectedValues().split("@_##_@")
 	    key = keys[0];
 	    text = keys[1];
     }    
-  	parent.opener.closeSearch(action, key, text);
+  	theOpener.closeSearch(action, key, text);
   }
 </script>
 <script language="JavaScript" type="text/javascript" id="selectedColumn">
