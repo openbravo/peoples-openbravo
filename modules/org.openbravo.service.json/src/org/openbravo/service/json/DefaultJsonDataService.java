@@ -74,8 +74,6 @@ public class DefaultJsonDataService implements JsonDataService {
 
   private static final String ADD_FLAG = "_doingAdd";
 
-  private static final String ALLOW_UNPAGED_DS_MANUAL_REQUEST = "OBJSON_AllowUnpagedDatasourceManualRequest";
-
   @Inject
   private CachedPreference cachedPreference;
 
@@ -476,8 +474,8 @@ public class DefaultJsonDataService implements JsonDataService {
 
         // for standard tab and selector datasources pagination is mandatory
         throw new OBException(OBMessageUtils.messageBD("OBJSON_NoPagedFetch"));
-      } else if (!"Y".equals(cachedPreference.getPreferenceValue(ALLOW_UNPAGED_DS_MANUAL_REQUEST))
-          && !isWsCall) {
+      } else if (!"Y".equals(cachedPreference
+          .getPreferenceValue(CachedPreference.ALLOW_UNPAGED_DS_MANUAL_REQUEST)) && !isWsCall) {
         throw new OBException(OBMessageUtils.messageBD("OBJSON_NoPagedFetchManual"));
       }
     }
