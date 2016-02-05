@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2009-2013 Openbravo SLU
+ * All portions are Copyright (C) 2009-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -72,7 +72,8 @@ var OB = {
         TEXT_MATCH_PARAMETER_OVERRIDE: '_textMatchStyleOverride',
         SUCCESS : 'success',
         DBL_CLICK_DELAY: 300,
-        ERROR : 'error'
+        ERROR : 'error',
+        IS_PICK_AND_EDIT : '_isPickAndEdit'
     },
 
     Styles : {

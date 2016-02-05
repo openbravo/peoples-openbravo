@@ -185,6 +185,7 @@ isc.OBPickAndExecuteGrid.addProperties({
       if (me.view && me.view.buttonOwnerView && me.view.buttonOwnerView.tabId) {
         dsRequest.params.buttonOwnerViewTabId = me.view.buttonOwnerView.tabId;
       }
+      dsRequest.params[OB.Constants.IS_PICK_AND_EDIT] = true;
       return this.Super('transformRequest', arguments);
     };
     filterableProperties = this.getFields().findAll('canFilter', true);

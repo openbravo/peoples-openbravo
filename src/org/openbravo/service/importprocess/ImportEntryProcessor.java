@@ -286,6 +286,9 @@ public abstract class ImportEntryProcessor {
       try {
         while (true) {
           try {
+            if (importEntryManager.isShutDown()) {
+              return;
+            }
             doRunCycle();
           } catch (Throwable logIt) {
             // prevent the loop from exiting, only log the exception
@@ -331,6 +334,9 @@ public abstract class ImportEntryProcessor {
       QueuedEntry queuedImportEntry;
       while ((queuedImportEntry = importEntries.poll()) != null) {
         try {
+          if (importEntryManager.isShutDown()) {
+            return;
+          }
           final long t0 = System.currentTimeMillis();
 
           // set the same obcontext as was being used for the original

@@ -104,7 +104,6 @@ public class ImportEntryArchiveManager {
 
     @Override
     public void run() {
-
       Thread.currentThread().setName("Import Entry Archiver");
 
       // don't start right away at startup, give the system time to
@@ -115,6 +114,11 @@ public class ImportEntryArchiveManager {
       } catch (Exception ignored) {
       }
       log.debug("Run loop started");
+
+      if (manager.isShutDown) {
+        // don't even start, the import entry manager has been shut down
+        return;
+      }
 
       // make ourselves an admin
       OBContext.setOBContext("0", "0", "0", "0");

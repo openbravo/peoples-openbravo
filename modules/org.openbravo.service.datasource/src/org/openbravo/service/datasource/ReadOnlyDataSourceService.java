@@ -11,19 +11,19 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.service.datasource;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -35,6 +35,8 @@ import org.openbravo.service.json.DataToJsonConverter;
 import org.openbravo.service.json.DefaultJsonDataService.QueryResultWriter;
 import org.openbravo.service.json.JsonConstants;
 import org.openbravo.service.json.JsonUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The SimpleDataSourceService provides a simple way of returning data in the correct format for a
@@ -43,7 +45,11 @@ import org.openbravo.service.json.JsonUtils;
  * @author mtaal
  */
 public abstract class ReadOnlyDataSourceService extends DefaultDataSourceService {
-  private static final Logger log = Logger.getLogger(ReadOnlyDataSourceService.class);
+  private static final Logger log = LoggerFactory.getLogger(ReadOnlyDataSourceService.class);
+  private static final int DATA_PAGE_SIZE = 100;
+  private static final int MAX_PAGE_SIZE_INCREASE = 3;
+  private static final String NEW_END_ROW = "_newEndRow";
+  private static final String IS_PICK_AND_EDIT = "_isPickAndEdit";
 
   /*
    * (non-Javadoc)
@@ -55,6 +61,7 @@ public abstract class ReadOnlyDataSourceService extends DefaultDataSourceService
     final String startRowStr = parameters.get(JsonConstants.STARTROW_PARAMETER);
     final String endRowStr = parameters.get(JsonConstants.ENDROW_PARAMETER);
     int startRow = 0;
+    int newEndRow = 0;
     boolean doCount = false;
     if (startRowStr != null) {
       startRow = Integer.parseInt(startRowStr);
@@ -66,7 +73,9 @@ public abstract class ReadOnlyDataSourceService extends DefaultDataSourceService
     boolean preventCountOperation = "true".equals(parameters.get(JsonConstants.NOCOUNT_PARAMETER));
 
     List<JSONObject> jsonObjects = fetchJSONObject(parameters);
-
+    if (parameters.get(NEW_END_ROW) != null) {
+      newEndRow = Integer.parseInt(parameters.get(NEW_END_ROW));
+    }
     // now jsonfy the data
     try {
       final JSONObject jsonResult = new JSONObject();
@@ -76,7 +85,7 @@ public abstract class ReadOnlyDataSourceService extends DefaultDataSourceService
       if (doCount && !preventCountOperation) {
         count = getCount(parameters);
         if (count == -1) {
-          int endRow = Integer.parseInt(endRowStr);
+          int endRow = newEndRow == 0 ? Integer.parseInt(endRowStr) : newEndRow;
           count = (endRow + 2);
           if ((endRow - startRow) > jsonObjects.size()) {
             count = startRow + jsonObjects.size();
@@ -85,7 +94,7 @@ public abstract class ReadOnlyDataSourceService extends DefaultDataSourceService
       } else {
         count = jsonObjects.size() + startRow;
         if (endRowStr != null) {
-          int endRow = Integer.parseInt(endRowStr);
+          int endRow = newEndRow == 0 ? Integer.parseInt(endRowStr) : newEndRow;
           // computedMaxResults is one too much, if we got one to much then correct
           // the result and up the count so that the grid knows that there are more
           int computedMaxResults = endRow - startRow + 1;
@@ -132,12 +141,85 @@ public abstract class ReadOnlyDataSourceService extends DefaultDataSourceService
     if (tableId != null) {
       entity = ModelProvider.getInstance().getEntityByTableId(tableId);
     }
-    final List<Map<String, Object>> data = getData(parameters, startRow, endRow);
+    final String isPickAndEditParam = parameters.get(IS_PICK_AND_EDIT);
+    final boolean isPickAndEdit = isPickAndEditParam != null ? Boolean.valueOf(isPickAndEditParam)
+        : Boolean.FALSE;
+    final List<Map<String, Object>> data;
+    if (startRow == 0 && endRow != -1 && isPickAndEdit) {
+      data = getSelectedData(parameters, startRow, endRow);
+    } else {
+      data = getData(parameters, startRow, endRow);
+    }
     final DataToJsonConverter toJsonConverter = OBProvider.getInstance().get(
         DataToJsonConverter.class);
     toJsonConverter.setAdditionalProperties(JsonUtils.getAdditionalProperties(parameters));
     toJsonConverter.setEntity(entity);
     return toJsonConverter.convertToJsonObjects(data);
+  }
+
+  private List<Map<String, Object>> getSelectedData(Map<String, String> parameters, int startRow,
+      int endRow) {
+    List<Map<String, Object>> data;
+    int pageSizeIncreaseCount = 0;
+    int selectedRecords = getNumberOfSelectedRecords(parameters);
+    if (selectedRecords > DATA_PAGE_SIZE) {
+      data = getData(parameters, startRow, selectedRecords);
+      parameters.put(NEW_END_ROW, Integer.toString(selectedRecords));
+    } else {
+      data = getData(parameters, startRow, endRow);
+      while (isLastRecordSelected(data) && pageSizeIncreaseCount < MAX_PAGE_SIZE_INCREASE) {
+        pageSizeIncreaseCount++;
+        log.debug(
+            "The amount of selected records is higher than the page size, increasing page size x{}",
+            pageSizeIncreaseCount + 1);
+        data = getData(parameters, startRow, endRow * (pageSizeIncreaseCount + 1));
+      }
+      if (pageSizeIncreaseCount >= 1) {
+        parameters.put(NEW_END_ROW, Integer.toString(endRow * (pageSizeIncreaseCount + 1)));
+        if (pageSizeIncreaseCount == MAX_PAGE_SIZE_INCREASE) {
+          log.warn("The amount of selected records is higher than the maximum page size allowed.");
+        }
+      }
+    }
+    return data;
+  }
+
+  private int getNumberOfSelectedRecords(Map<String, String> parameters) {
+    List<String> selectedRecords = new ArrayList<String>();
+    boolean hasCriteria = parameters.containsKey("criteria");
+    if (hasCriteria) {
+      try {
+        selectedRecords = getSelectedRecordsFromCriteria(JsonUtils.buildCriteria(parameters));
+      } catch (JSONException ignore) {
+      }
+    }
+    return selectedRecords.size();
+  }
+
+  private List<String> getSelectedRecordsFromCriteria(JSONObject buildCriteria)
+      throws JSONException {
+    List<String> selectedRecords = new ArrayList<String>();
+    JSONArray criteriaArray = buildCriteria.getJSONArray("criteria");
+    for (int i = 0; i < criteriaArray.length(); i++) {
+      JSONObject criteria = criteriaArray.getJSONObject(i);
+      if (criteria.has("fieldName") && criteria.getString("fieldName").equals("id")) {
+        String value = criteria.getString("value");
+        for (String recordId : value.split(",")) {
+          selectedRecords.add(recordId.trim());
+        }
+      }
+    }
+    return selectedRecords;
+  }
+
+  private boolean isLastRecordSelected(List<Map<String, Object>> data) {
+    if (data.size() == 0) {
+      return false;
+    }
+    Map<String, Object> lastRecord = data.get(data.size() - 1);
+    Object obSelected = lastRecord.get("obSelected");
+    Boolean isLastRecordSelected = obSelected == null ? Boolean.FALSE : (Boolean) obSelected;
+    return isLastRecordSelected.booleanValue();
   }
 
   /**
