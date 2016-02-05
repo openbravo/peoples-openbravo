@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2015 Openbravo SLU
+ * All portions are Copyright (C) 2014-2016 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -39,6 +39,7 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.provider.OBProvider;
@@ -95,6 +96,22 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
     }
 
     return jsonResult.toString();
+  }
+
+  @Override
+  public void checkFetchDatasourceAccess(Map<String, String> parameter) {
+    final OBContext obContext = OBContext.getOBContext();
+    OBContext.setAdminMode();
+    try {
+      Entity entityToCheck = ModelProvider.getInstance().getEntityByTableId(AD_TABLE_ID);
+      if (entityToCheck != null) {
+        obContext.getEntityAccessChecker().checkReadableAccess(entityToCheck);
+      }
+    } catch (OBSecurityException e) {
+      handlerExceptionUnsecuredDSAccess(e);
+    } finally {
+      OBContext.restorePreviousMode();
+    }
   }
 
   private List<JSONObject> fetchJSONObject(Map<String, String> parameters) {
