@@ -2423,7 +2423,7 @@
       this.set('isEditable', true);
       this.set('createdBy', OB.MobileApp.model.get('orgUserId'));
       this.set('session', OB.MobileApp.model.get('session'));
-      this.set('orderDate', new Date());
+      this.set('orderDate', OB.I18N.normalizeDate(new Date()));
       //Sometimes the Id of Quotation is null.
       if (this.get('id') && !_.isNull(this.get('id'))) {
         this.set('oldId', this.get('id'));
