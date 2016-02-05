@@ -245,7 +245,7 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
       column = field.getColumn();
       targetEntity = ModelProvider.getInstance().getEntityByTableId(
           (String) DalUtil.getId(column.getTable()));
-      OBContext.getOBContext().getEntityAccessChecker().checkReadable(targetEntity);
+      OBContext.getOBContext().getEntityAccessChecker().checkReadableAccess(targetEntity);
     } finally {
       OBContext.restorePreviousMode();
     }
