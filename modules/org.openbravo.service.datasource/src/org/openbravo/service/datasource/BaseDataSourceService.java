@@ -22,11 +22,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
+import org.openbravo.client.application.CachedPreference;
 import org.openbravo.client.kernel.Template;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.ad.ui.Tab;
+import org.openbravo.model.common.order.Order;
+import org.openbravo.service.json.JsonConstants;
 
 /**
  * A base data source service which can be extended. It combines the common parts for data sources
@@ -47,6 +54,11 @@ public abstract class BaseDataSourceService implements DataSourceService {
   private Entity entity;
   private DataSource dataSource;
   private List<DataSourceProperty> dataSourceProperties = new ArrayList<DataSourceProperty>();
+  private static final String ALLOW_WHERE_PREFERENCE = "OBSERDS_AllowWhereParameter";
+  private static final String WARN_MESSAGE = "The '_where' parameter has been included in the request. The provided value will be used by the datasource because the OBSERDS_AllowWhereParameter preference is set to true.";
+
+  @Inject
+  private CachedPreference cachedPreference;
 
   /*
    * (non-Javadoc)
@@ -125,5 +137,90 @@ public abstract class BaseDataSourceService implements DataSourceService {
 
   public void setName(String name) {
     this.name = name;
+  }
+
+  protected String obtainWhereAndFilterClause(Map<String, String> parameters,
+      boolean isFilterApplied, Entity ent) {
+    String whereAndFilterClause = "";
+    if (("Y".equals(cachedPreference.getPreferenceValue(ALLOW_WHERE_PREFERENCE)))
+        && parameters.containsKey(JsonConstants.WHERE_PARAMETER)) {
+      log.warn(WARN_MESSAGE);
+      if (getWhereClause() != null) {
+        if (parameters.get(JsonConstants.WHERE_PARAMETER) != null) {
+          final String currentWhere = parameters.get(JsonConstants.WHERE_PARAMETER);
+
+          whereAndFilterClause = "(" + currentWhere + ") and (" + getWhereClause() + ")";
+        } else if (!"Y".equals(cachedPreference.getPreferenceValue(ALLOW_WHERE_PREFERENCE))) {
+          whereAndFilterClause = getWhereClause();
+        }
+      }
+    } else {
+      String tabId = parameters.get(JsonConstants.TAB_PARAMETER);
+      Tab tab = OBDal.getInstance().get(Tab.class, tabId);
+      boolean isTransactionalWindow = tab.getWindow().getWindowType().equals("T");
+      String filterClause = getFilterClause(tab, isTransactionalWindow, ent);
+      String where = tab.getHqlwhereclause();
+      if (isFilterApplied) {
+        if (StringUtils.isNotBlank(where)) {
+          whereAndFilterClause = " ((" + where + ") and (" + filterClause + "))";
+        } else {
+          whereAndFilterClause = filterClause;
+        }
+      } else {
+        if (StringUtils.isNotBlank(where)) {
+          whereAndFilterClause = where;
+        } else {
+          whereAndFilterClause = null;
+        }
+      }
+    }
+    return whereAndFilterClause;
+
+  }
+
+  private boolean isRootTab(Tab tab) {
+    boolean isRootLevel;
+    Long tabLevel = tab.getTabLevel();
+    if (tabLevel == 0) {
+      isRootLevel = true;
+    } else {
+      isRootLevel = false;
+    }
+    return isRootLevel;
+  }
+
+  private String getFilterClause(Tab tab, boolean isTransactionalWindow, Entity ent) {
+    if (tab.getHqlfilterclause() != null) {
+      return addTransactionalFilter(tab.getHqlfilterclause(), tab, isTransactionalWindow, ent);
+    }
+    return addTransactionalFilter("", tab, isTransactionalWindow, ent);
+  }
+
+  private String addTransactionalFilter(String filterClause, Tab tab,
+      boolean isTransactionalWindow, Entity ent) {
+    if (!isApplyTransactionalFilter(isTransactionalWindow, tab)) {
+      return filterClause;
+    }
+    String transactionalFilter = " e.updated > " + JsonConstants.QUERY_PARAM_TRANSACTIONAL_RANGE
+        + " ";
+    if (ent.hasProperty(Order.PROPERTY_PROCESSED)) {
+      transactionalFilter += " or e.processed = 'N' ";
+    }
+    transactionalFilter = " (" + transactionalFilter + ") ";
+
+    if (filterClause.length() > 0) {
+      return " (" + transactionalFilter + " and (" + filterClause + ")) ";
+    }
+    return transactionalFilter;
+  }
+
+  private boolean isApplyTransactionalFilter(boolean isTransactionalWindow, Tab tab) {
+    boolean applies;
+    if (isTransactionalWindow && isRootTab(tab)) {
+      applies = true;
+    } else {
+      applies = false;
+    }
+    return applies;
   }
 }

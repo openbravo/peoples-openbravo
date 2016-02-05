@@ -57,6 +57,7 @@ import org.openbravo.base.model.Property;
 import org.openbravo.base.model.domaintype.EnumerateDomainType;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.session.OBPropertiesProvider;
+import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.client.application.Parameter;
 import org.openbravo.client.application.Process;
 import org.openbravo.client.application.RefWindow;
@@ -209,7 +210,8 @@ public class DataSourceServlet extends BaseKernelServlet {
       String filterClass = parameters.get(DataSourceConstants.DS_FILTERCLASS_PARAM);
       if (filterClass != null) {
         try {
-          DataSourceFilter filter = (DataSourceFilter) Class.forName(filterClass).newInstance();
+          DataSourceFilter filter = (DataSourceFilter) WeldUtils
+              .getInstanceFromStaticBeanManager(Class.forName(filterClass));
           filter.doFilter(parameters, request);
         } catch (Exception e) {
           log.error("Error trying to apply datasource filter with class: " + filterClass, e);

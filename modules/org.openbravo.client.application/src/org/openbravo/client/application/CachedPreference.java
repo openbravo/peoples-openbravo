@@ -53,8 +53,8 @@ import org.slf4j.LoggerFactory;
 @ApplicationScoped
 public class CachedPreference {
   private static final Logger log = LoggerFactory.getLogger(CachedPreference.class);
-  private List<String> propertyList = new ArrayList<String>(
-      Arrays.asList("OBJSON_AllowUnpagedDatasourceManualRequest"));
+  private List<String> propertyList = new ArrayList<String>(Arrays.asList(
+      "OBJSON_AllowUnpagedDatasourceManualRequest", "OBSERDS_AllowWhereParameter"));
   private Map<String, String> cachedPreference = new HashMap<String, String>();
 
   /**

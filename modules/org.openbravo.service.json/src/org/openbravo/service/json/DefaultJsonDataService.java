@@ -49,8 +49,6 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.database.SessionInfo;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
-import org.openbravo.model.ad.ui.Tab;
-import org.openbravo.model.common.order.Order;
 import org.openbravo.service.db.DbUtility;
 import org.openbravo.service.json.JsonToDataConverter.JsonConversionError;
 import org.openbravo.userinterface.selector.SelectorConstants;
@@ -497,17 +495,10 @@ public class DefaultJsonDataService implements JsonDataService {
     }
 
     if (!directNavigation) {
-      boolean isManual = isManualDataSource(parameters);
-      if (!(parameters.containsKey(SelectorConstants.DS_REQUEST_SELECTOR_ID_PARAMETER))
-          && !isManual) {
-        queryService.addFilterParameter(JsonConstants.WHERE_PARAMETER,
-            obtainWhereAndFilterClause(parameters, isFilterApplied(parameters)));
-      }
       // set the where/org filter parameters and the @ parameters
       for (String key : parameters.keySet()) {
         if (key.equals(JsonConstants.IDENTIFIER)
-            || (key.equals(JsonConstants.WHERE_PARAMETER) && (parameters
-                .containsKey(SelectorConstants.DS_REQUEST_SELECTOR_ID_PARAMETER) || isManual))
+            || (key.equals(JsonConstants.WHERE_PARAMETER))
             || key.equals(JsonConstants.ORG_PARAMETER)
             || key.equals(JsonConstants.TARGETRECORDID_PARAMETER)
             || (key.startsWith(DataEntityQueryService.PARAM_DELIMITER) && key
@@ -593,98 +584,6 @@ public class DefaultJsonDataService implements JsonDataService {
       // queryService.setJoinAssociatedEntities(true);
     }
     return queryService;
-  }
-
-  protected String obtainWhereAndFilterClause(Map<String, String> parameters,
-      boolean isFilterApplied) {
-    String whereAndFilterClause = "";
-    String tabId = parameters.get(JsonConstants.TAB_PARAMETER);
-    String entityName = parameters.get(JsonConstants.ENTITYNAME);
-    Entity entity = ModelProvider.getInstance().getEntity(entityName);
-    Tab tab = OBDal.getInstance().get(Tab.class, tabId);
-    boolean isTransactionalWindow = tab.getWindow().getWindowType().equals("T");
-    String filterClause = getFilterClause(tab, isTransactionalWindow, entity);
-    String whereClause = tab.getHqlwhereclause();
-    if (isFilterApplied) {
-      if (StringUtils.isNotBlank(whereClause)) {
-        whereAndFilterClause = " ((" + whereClause + ") and (" + filterClause + "))";
-      } else {
-        whereAndFilterClause = filterClause;
-      }
-    } else {
-      if (StringUtils.isNotBlank(whereClause)) {
-        whereAndFilterClause = whereClause;
-      } else {
-        whereAndFilterClause = null;
-      }
-    }
-    return whereAndFilterClause;
-  }
-
-  private boolean isFilterApplied(Map<String, String> parameters) {
-    if ("true".equals(parameters.get(JsonConstants.FILTER_APPLIED_PARAMETER))) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  private boolean isManualDataSource(Map<String, String> parameters) {
-    // The FILTER_APPLIED_PARAMETER is never send in the manual datasources, so
-    // that, this is a good way to know if the datasource is manual or not.
-    boolean isManual = true;
-    for (String key : parameters.keySet()) {
-      if (key.equals(JsonConstants.FILTER_APPLIED_PARAMETER)) {
-        isManual = false;
-      }
-    }
-    return isManual;
-  }
-
-  private boolean isRootTab(Tab tab) {
-    boolean isRootLevel;
-    Long tabLevel = tab.getTabLevel();
-    if (tabLevel == 0) {
-      isRootLevel = true;
-    } else {
-      isRootLevel = false;
-    }
-    return isRootLevel;
-  }
-
-  private String getFilterClause(Tab tab, boolean isTransactionalWindow, Entity entity) {
-    if (tab.getHqlfilterclause() != null) {
-      return addTransactionalFilter(tab.getHqlfilterclause(), tab, isTransactionalWindow, entity);
-    }
-    return addTransactionalFilter("", tab, isTransactionalWindow, entity);
-  }
-
-  private String addTransactionalFilter(String filterClause, Tab tab,
-      boolean isTransactionalWindow, Entity entity) {
-    if (!isApplyTransactionalFilter(isTransactionalWindow, tab)) {
-      return filterClause;
-    }
-    String transactionalFilter = " e.updated > " + JsonConstants.QUERY_PARAM_TRANSACTIONAL_RANGE
-        + " ";
-    if (entity.hasProperty(Order.PROPERTY_PROCESSED)) {
-      transactionalFilter += " or e.processed = 'N' ";
-    }
-    transactionalFilter = " (" + transactionalFilter + ") ";
-
-    if (filterClause.length() > 0) {
-      return " (" + transactionalFilter + " and (" + filterClause + ")) ";
-    }
-    return transactionalFilter;
-  }
-
-  private boolean isApplyTransactionalFilter(boolean isTransactionalWindow, Tab tab) {
-    boolean applies;
-    if (isTransactionalWindow && isRootTab(tab)) {
-      applies = true;
-    } else {
-      applies = false;
-    }
-    return applies;
   }
 
   private void removeWhereParameter(Map<String, String> parameters) {

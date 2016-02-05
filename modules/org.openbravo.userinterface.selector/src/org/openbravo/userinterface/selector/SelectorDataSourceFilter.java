@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2014 Openbravo SLU
+ * All portions are Copyright (C) 2010-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,6 +26,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
@@ -35,6 +36,7 @@ import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
+import org.openbravo.client.application.CachedPreference;
 import org.openbravo.client.application.Parameter;
 import org.openbravo.client.application.ParameterUtils;
 import org.openbravo.client.kernel.reference.StringUIDefinition;
@@ -62,6 +64,11 @@ public class SelectorDataSourceFilter implements DataSourceFilter {
   private String dateFormat = null;
   private DateFormat systemDateFormat = null;
   private TextMatching textMatching = TextMatching.exact;
+  private static final String ALLOW_WHERE_PREFERENCE = "OBSERDS_AllowWhereParameter";
+  private static final String WARN_MESSAGE = "The '_where' parameter has been included in the request. The provided value will be used by the datasource because the OBSERDS_AllowWhereParameter preference is set to true.";
+
+  @Inject
+  private CachedPreference cachedPreference;
 
   public SelectorDataSourceFilter() {
   }
@@ -115,9 +122,17 @@ public class SelectorDataSourceFilter implements DataSourceFilter {
       }
 
       if (!StringUtils.isEmpty(filterHQL)) {
+        String currentWhere = "";
         log.debug("Adding to where clause (based on filter expression): " + filterHQL);
 
-        String currentWhere = sel.getHQLWhereClause();
+        if ("Y".equals(cachedPreference.getPreferenceValue(ALLOW_WHERE_PREFERENCE))
+            && parameters.containsKey(JsonConstants.WHERE_PARAMETER)) {
+          log.warn(WARN_MESSAGE);
+          currentWhere = parameters.get(JsonConstants.WHERE_PARAMETER);
+        } else {
+
+          currentWhere = sel.getHQLWhereClause();
+        }
 
         if (currentWhere == null || currentWhere.equals("null") || currentWhere.equals("")) {
           parameters.put(JsonConstants.WHERE_PARAMETER, filterHQL);
@@ -386,10 +401,16 @@ public class SelectorDataSourceFilter implements DataSourceFilter {
 
     log.debug("Adding to where clause (based on fields default expression): " + sb.toString());
 
-    if (StringUtils.isNotBlank(hqlFilterClause)) {
+    if ("Y".equals(cachedPreference.getPreferenceValue(ALLOW_WHERE_PREFERENCE))
+        && parameters.containsKey(JsonConstants.WHERE_PARAMETER)) {
+      log.warn(WARN_MESSAGE);
       currentWhere = parameters.get(JsonConstants.WHERE_PARAMETER);
     } else {
-      currentWhere = sel.getHQLWhereClause();
+      if (StringUtils.isNotBlank(hqlFilterClause)) {
+        currentWhere = parameters.get(JsonConstants.WHERE_PARAMETER);
+      } else {
+        currentWhere = sel.getHQLWhereClause();
+      }
     }
 
     if (currentWhere == null || currentWhere.equals("null") || currentWhere.equals("")) {

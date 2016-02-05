@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2015 Openbravo SLU
+ * All portions are Copyright (C) 2010-2016 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -27,6 +27,7 @@ import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.model.Entity;
+import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.model.domaintype.DateDomainType;
 import org.openbravo.base.model.domaintype.DatetimeDomainType;
@@ -45,6 +46,7 @@ import org.openbravo.service.json.DataToJsonConverter;
 import org.openbravo.service.json.DefaultJsonDataService;
 import org.openbravo.service.json.DefaultJsonDataService.QueryResultWriter;
 import org.openbravo.service.json.JsonConstants;
+import org.openbravo.userinterface.selector.SelectorConstants;
 
 /**
  * The default implementation of the {@link DataSourceService}. Supports data retrieval, update
@@ -93,15 +95,12 @@ public class DefaultDataSourceService extends BaseDataSourceService {
     if (getEntity() != null) {
       parameters.put(JsonConstants.ENTITYNAME, getEntity().getName());
     }
-
-    if (getWhereClause() != null) {
-      if (parameters.get(JsonConstants.WHERE_PARAMETER) != null) {
-        final String currentWhere = parameters.get(JsonConstants.WHERE_PARAMETER);
-        parameters.put(JsonConstants.WHERE_PARAMETER, "(" + currentWhere + ") and ("
-            + getWhereClause() + ")");
-      } else {
-        parameters.put(JsonConstants.WHERE_PARAMETER, getWhereClause());
-      }
+    if (!isSelector(parameters)) {
+      String entityName = parameters.get(JsonConstants.ENTITYNAME);
+      Entity entity = ModelProvider.getInstance().getEntity(entityName);
+      String whereAndFilterClause = obtainWhereAndFilterClause(parameters,
+          isFilterApplied(parameters), entity);
+      parameters.put(JsonConstants.WHERE_PARAMETER, whereAndFilterClause);
     }
 
     // add a filter on the parent of the entity
@@ -131,8 +130,19 @@ public class DefaultDataSourceService extends BaseDataSourceService {
       parameters.put(JsonConstants.WHERE_PARAMETER, whereClause + JsonConstants.MAIN_ALIAS + "."
           + parentProperty + ".id='" + parentId + "')");
     }
-
     parameters.put(JsonConstants.USE_ALIAS, "true");
+  }
+
+  private boolean isSelector(Map<String, String> parameters) {
+    return parameters.containsKey(SelectorConstants.DS_REQUEST_SELECTOR_ID_PARAMETER);
+  }
+
+  private boolean isFilterApplied(Map<String, String> parameters) {
+    if ("true".equals(parameters.get(JsonConstants.FILTER_APPLIED_PARAMETER))) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   /*
