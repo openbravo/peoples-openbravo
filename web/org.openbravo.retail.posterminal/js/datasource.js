@@ -353,10 +353,7 @@ OB.DS.HWServer.prototype._sendPDF = function (data, callback) {
         }
       }
     });
-    rr = new OB.RR.Request({
-      ajaxRequest: ajaxRequest
-    });
-    rr.exec(this.url);
+    ajaxRequest.go(ajaxRequest.data).response('success').error('fail');
   }
 };
 
@@ -367,7 +364,7 @@ OB.DS.HWServer.prototype._printFile = function (params, callback) {
 OB.DS.HWServer.prototype._sendFile = function (data, callback) {
   if (this.url) {
     var me = this,
-        rr, url = this.url;
+        url = this.url;
     var ajaxRequest = new enyo.Ajax({
       url: url.replace('/printer', '/process/printpdf'),
       cacheBust: false,
