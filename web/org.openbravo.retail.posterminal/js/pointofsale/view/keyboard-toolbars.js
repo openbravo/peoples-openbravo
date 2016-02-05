@@ -174,22 +174,22 @@ enyo.kind({
     if (countbuttons < paymentsbuttons) {
       this.createComponent(btncomponent);
     } else {
-      var btnIndex = -1;
-      _.find(OB.OBPOSPointOfSale.UI.PaymentMethods.prototype.sideButtons, function (button, index) {
-        if (_.isEqual(button.btn.command, btncomponent.btn.command)) {
-          btnIndex = index;
-          return;
-        }
-      });
-      if (btnIndex < 0) {
-        OB.OBPOSPointOfSale.UI.PaymentMethods.prototype.sideButtons.push(btncomponent);
-      } else {
-        OB.OBPOSPointOfSale.UI.PaymentMethods.prototype.sideButtons.splice(btnIndex, 1, btncomponent);
-      }
+      this.addSideButton(btncomponent);
       dialogbuttons[payment.payment.searchKey] = payment.payment._identifier;
     }
   },
-
+  addSideButton: function (btncomponent) {
+    var btnIndex = -1;
+    _.find(OB.OBPOSPointOfSale.UI.PaymentMethods.prototype.sideButtons, function (button, index) {
+      if (_.isEqual(button.btn.command, btncomponent.btn.command)) {
+        btnIndex = index;
+        return;
+      }
+    });
+    if (btnIndex < 0) {
+      OB.OBPOSPointOfSale.UI.PaymentMethods.prototype.sideButtons.push(btncomponent);
+    }
+  },
   initComponents: function () {
     //TODO: modal payments
     var i, max, payments, paymentsdialog, paymentsbuttons, countbuttons, btncomponent, Btn, inst, cont, exactdefault, cashdefault, allpayments = {},
@@ -317,18 +317,7 @@ enyo.kind({
       if (countbuttons++ < paymentsbuttons) {
         this.createComponent(btncomponent);
       } else {
-        var btnIndex = -1;
-        _.find(OB.OBPOSPointOfSale.UI.PaymentMethods.prototype.sideButtons, function (button, index) {
-          if (_.isEqual(button.btn.command, btncomponent.btn.command)) {
-            btnIndex = index;
-            return;
-          }
-        });
-        if (btnIndex < 0) {
-          OB.OBPOSPointOfSale.UI.PaymentMethods.prototype.sideButtons.push(btncomponent);
-        } else {
-          OB.OBPOSPointOfSale.UI.PaymentMethods.prototype.sideButtons.splice(btnIndex, 1, btncomponent);
-        }
+        me.addSideButton(btncomponent);
         dialogbuttons[sidebutton.command] = sidebutton.label;
       }
     }, this);
