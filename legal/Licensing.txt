@@ -85,7 +85,7 @@ Copyright (c) 2007, Yahoo! Inc. All rights reserved. Code licensed under the BSD
 # avalon-framework-4.1.5.jar
 # axis-ant.jar
 # axis.jar
-# barcode4j-fop-ext-0.20.5-complete.jar 
+# barcode4j-fop-ext-complete.jar 
 # batik-anim.jar
 # batik-awt-util.jar
 # batik-bridge.jar
@@ -119,6 +119,7 @@ Copyright (c) 2007, Yahoo! Inc. All rights reserved. Code licensed under the BSD
 # tika-core-0.9.jar
 # wstx-asl-3.0.2.jar
 # xercesImpl.jar
+# xmlgraphics-commons-1.5.jar
 
 All files under Apache Software License 2.0, available at
 http://www.apache.org/licenses/LICENSE-2.0
