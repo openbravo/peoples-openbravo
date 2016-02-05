@@ -39,6 +39,7 @@
       window.addEventListener('load', function (e) {
         // manage manifest
         window.applicationCache.addEventListener('updateready', function (e) {
+          OB.MobileApp.model.unset('loadManifeststatus');
           if (window.applicationCache.status == window.applicationCache.UPDATEREADY) {
             OB.Dal.find(OB.Model.Order, {}, function (orders) {
               if (orders.models.length == 0) {
@@ -52,6 +53,9 @@
           } else {
             // Manifest didn't change
           }
+        }, false);
+        window.applicationCache.addEventListener('error', function (e) {
+          OB.MobileApp.model.attributes.loadManifeststatus = e;
         }, false);
       }, false);
     }());
