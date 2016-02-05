@@ -205,15 +205,19 @@ enyo.kind({
     name: 'customerBpCat',
     modelProperty: 'businessPartnerCategory_name',
     i18nLabel: 'OBPOS_BPCategory',
-    readOnly: true
-    //displayLogic: OB.MobileApp.model.get('terminal').bp_showcategoryselector
+    readOnly: true,
+    displayLogic: function () {
+      return OB.MobileApp.model.get('terminal').bp_showcategoryselector;
+    }
   }, {
     kind: 'OB.UI.CustomerTextProperty',
     name: 'customerTaxId',
     modelProperty: 'taxID',
     i18nLabel: 'OBPOS_LblTaxId',
-    readOnly: true
-    //  displayLogic: OB.MobileApp.model.get('terminal').bp_showtaxid
+    readOnly: true,
+    displayLogic: function () {
+      return OB.MobileApp.model.get('terminal').bp_showtaxid;
+    }
   }, {
     kind: 'OB.UI.CustomerTextProperty',
     name: 'customerLocName',
