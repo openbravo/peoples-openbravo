@@ -107,6 +107,7 @@ enyo.kind({
       }]
     }]
   }],
+  productCharacteristicValueFilterQualifier: 'ProductCH_Filter',
   clearAction: function (inSender, inEvent) {
     this.valuesList.reset();
     return true;
@@ -198,7 +199,7 @@ enyo.kind({
         if (productFilterText !== "" || productcategory !== "__all__") {
           productFilter.columns = [];
           productFilter.operator = OB.Dal.FILTER;
-          productFilter.value = 'ProductCH_Filter';
+          productFilter.value = this.productCharacteristicValueFilterQualifier;
           productText = (OB.MobileApp.model.hasPermission('OBPOS_remote.product' + OB.Dal.USESCONTAINS, true) ? '%' : '') + productFilterText + '%';
           productFilter.params = [productText, productcategory];
           remoteCriteria.push(productFilter);

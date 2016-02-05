@@ -21,12 +21,12 @@ public class PCharacteristicHQLCriteria extends HQLCriteriaProcess {
   public String getHQLFilter(String params) {
     String[] array_params = getParams(params);
     String sql = null;
-    if (array_params[1].equals("__all__") && !array_params[0].equals("")) {
-      sql = " ch.id in (select pchv.characteristic.id from ProductCharacteristicValue as pchv where ch.id = pchv.characteristic.id and upper(pchv.product.name) like upper('$1')) ";
-    } else if (array_params[0].equals("")) {
-      sql = " ch.id in (select pchv.characteristic.id from ProductCharacteristicValue as pchv where ch.id = pchv.characteristic.id and pchv.product.productCategory.id in ('$2')) ";
+    if (array_params[1].equals("__all__")) {
+      sql = getAllQuery();
+    } else if (array_params[1].equals("Best sellers")) {
+      sql = getBestsellers();
     } else {
-      sql = " ch.id in (select pchv.characteristic.id from ProductCharacteristicValue as pchv where ch.id = pchv.characteristic.id and upper(pchv.product.name) like upper('$1') and pchv.product.productCategory.id in ( '$2') ) ";
+      sql = getProdCategoryQuery();
     }
     return sql;
   }
@@ -39,4 +39,17 @@ public class PCharacteristicHQLCriteria extends HQLCriteriaProcess {
     }
     return array_params;
   }
+
+  public String getAllQuery() {
+    return " ch.id in (select pchv.characteristic.id from ProductCharacteristicValue as pchv where ch.id = pchv.characteristic.id and upper(pchv.product.name) like upper('$1')) ";
+  }
+
+  public String getProdCategoryQuery() {
+    return "ch.id in (select pchv.characteristic.id from ProductCharacteristicValue as pchv where ch.id = pchv.characteristic.id and upper(pchv.product.name) like upper('$1') and pchv.product.productCategory.id in ( '$2') ) ";
+  }
+
+  public String getBestsellers() {
+    return "ch.id in (select pchv.characteristic.id from ProductCharacteristicValue as pchv, OBRETCO_Prol_Product pli where pchv.product.id=pli.product.id and ch.id = pchv.characteristic.id and pli.bestseller = true and upper(pchv.product.name) like upper('$1')) ";
+  }
+
 }

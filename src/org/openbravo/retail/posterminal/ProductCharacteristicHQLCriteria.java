@@ -21,15 +21,12 @@ public class ProductCharacteristicHQLCriteria extends HQLCriteriaProcess {
   public String getHQLFilter(String params) {
     String[] array_params = getParams(params);
     String sql = null;
-    if (array_params[1].equals("__all__") && !array_params[0].equals("")) {
-      sql = "   cv.id in (select pchv.characteristicValue.id from ProductCharacteristicValue as pchv where cv.characteristic = pchv.characteristic "
-          + " and upper(pchv.product.name) like upper('$1')) ";
-    } else if (array_params[0].equals("")) {
-      sql = "   cv.id in (select pchv.characteristicValue.id from ProductCharacteristicValue as pchv where cv.characteristic = pchv.characteristic "
-          + " and pchv.product.productCategory.id in ( '$2')) ";
+    if (array_params[1].equals("__all__")) {
+      sql = getAllQuery();
+    } else if (array_params[1].equals("Best sellers")) {
+      sql = getBestsellers();
     } else {
-      sql = "   cv.id in (select pchv.characteristicValue.id from ProductCharacteristicValue as pchv where cv.characteristic = pchv.characteristic "
-          + " and upper(pchv.product.name) like upper('$1') and pchv.product.productCategory.id in ( '$2') ) ";
+      sql = getProdCategoryQuery();
     }
     return sql;
   }
@@ -41,6 +38,22 @@ public class ProductCharacteristicHQLCriteria extends HQLCriteriaProcess {
       array_params[i] = array[i].substring(1, array[i].length() - 1);
     }
     return array_params;
+  }
+
+  public String getAllQuery() {
+    return "   cv.id in (select pchv.characteristicValue.id from ProductCharacteristicValue as pchv where cv.characteristic = pchv.characteristic "
+        + " and upper(pchv.product.name) like upper('$1')) ";
+  }
+
+  public String getProdCategoryQuery() {
+    return "   cv.id in (select pchv.characteristicValue.id from ProductCharacteristicValue as pchv where cv.characteristic = pchv.characteristic "
+        + " and upper(pchv.product.name) like upper('$1') and pchv.product.productCategory.id in ( '$2') ) ";
+  }
+
+  public String getBestsellers() {
+    return "   cv.id in (select pchv.characteristicValue.id from ProductCharacteristicValue as pchv , OBRETCO_Prol_Product pli where pchv.product.id=pli.product.id "
+        + " and cv.characteristic = pchv.characteristic  and pli.bestseller = true "
+        + " and upper(pchv.product.name) like upper('$1')) ";
   }
 
 }
