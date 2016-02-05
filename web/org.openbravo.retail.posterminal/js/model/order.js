@@ -2598,6 +2598,20 @@
               return;
             }
           }
+        } else {
+          for (i = 0, max = payments.length; i < max; i++) {
+            p = payments.at(i);
+            if (p.get('kind') === payment.get('kind') && p.get('paymentData') && payment.get('paymentData') && p.get('paymentData').groupingCriteria && payment.get('paymentData').groupingCriteria && p.get('paymentData').groupingCriteria === payment.get('paymentData').groupingCriteria) {
+              p.set('amount', OB.DEC.add(payment.get('amount'), p.get('amount')));
+              if (p.get('rate') && p.get('rate') !== '1') {
+                p.set('origAmount', OB.DEC.add(payment.get('origAmount'), OB.DEC.mul(p.get('origAmount'), p.get('rate'))));
+              }
+              payment.set('date', new Date());
+              order.adjustPayment();
+              order.trigger('displayTotal');
+              return;
+            }
+          }
         }
         if (payment.get('openDrawer') && (payment.get('allowOpenDrawer') || payment.get('isCash'))) {
           order.set('openDrawer', payment.get('openDrawer'));
@@ -3850,6 +3864,21 @@
               if (p.get('rate') && p.get('rate') !== '1') {
                 p.set('origAmount', OB.DEC.add(payment.get('origAmount'), OB.DEC.mul(p.get('origAmount'), p.get('rate'))));
               }
+              payment.set('date', new Date());
+              order.adjustPayment();
+              order.trigger('displayTotal');
+              return;
+            }
+          }
+        } else {
+          for (i = 0, max = payments.length; i < max; i++) {
+            p = payments.at(i);
+            if (p.get('kind') === payment.get('kind') && p.get('paymentData') && payment.get('paymentData') && p.get('paymentData').groupingCriteria && payment.get('paymentData').groupingCriteria && p.get('paymentData').groupingCriteria === payment.get('paymentData').groupingCriteria) {
+              p.set('amount', OB.DEC.add(payment.get('amount'), p.get('amount')));
+              if (p.get('rate') && p.get('rate') !== '1') {
+                p.set('origAmount', OB.DEC.add(payment.get('origAmount'), OB.DEC.mul(p.get('origAmount'), p.get('rate'))));
+              }
+              payment.set('date', new Date());
               order.adjustPayment();
               order.trigger('displayTotal');
               return;

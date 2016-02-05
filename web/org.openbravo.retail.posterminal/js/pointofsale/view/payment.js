@@ -1005,7 +1005,12 @@ enyo.kind({
       this.$.info.setContent(this.model.get('description'));
     } else {
       if (this.model.get('paymentData')) {
-        this.$.info.setContent(this.model.get('paymentData').Name);
+        //legacy
+        if (this.model.get('paymentData').Name) {
+          this.model.get('paymentData').name = this.model.get('paymentData').Name;
+        }
+        //end legacy
+        this.$.info.setContent(this.model.get('paymentData').name);
       } else {
         this.$.info.setContent('');
       }

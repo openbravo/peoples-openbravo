@@ -1979,6 +1979,18 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         }
       }
 
+      if (payment.has("paymentData") && payment.getString("paymentData").length() > 0
+          && !("null".equals(payment.getString("paymentData")))) {
+        // ensure that it is a valid JSON Object prior to save it
+        try {
+          JSONObject jsonPaymentData = payment.getJSONObject("paymentData");
+          finPayment.setObposPaymentdata(jsonPaymentData.toString());
+        } catch (Exception e) {
+          log.error("paymentData attached to payment " + finPayment.getIdentifier()
+              + " is not valid. Ignored by orderloader." + e.getMessage().toString());
+        }
+      }
+
       OBDal.getInstance().save(finPayment);
 
       String description = getPaymentDescription();

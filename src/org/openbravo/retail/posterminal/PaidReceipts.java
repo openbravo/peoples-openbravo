@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2015 Openbravo S.L.U.
+ * Copyright (C) 2012-2016 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -229,7 +229,7 @@ public class PaidReceipts extends JSONProcessSimple {
         JSONArray listPaymentsIn = new JSONArray();
 
         // TODO: make this extensible
-        String hqlPaymentsIn = "select scheduleDetail.amount, scheduleDetail.paymentDetails.finPayment.account.id, scheduleDetail.paymentDetails.finPayment.paymentDate, scheduleDetail.paymentDetails.finPayment.id "
+        String hqlPaymentsIn = "select scheduleDetail.amount, scheduleDetail.paymentDetails.finPayment.account.id, scheduleDetail.paymentDetails.finPayment.paymentDate, scheduleDetail.paymentDetails.finPayment.id, scheduleDetail.paymentDetails.finPayment.obposPaymentdata "
             + "from FIN_Payment_ScheduleDetail as scheduleDetail where scheduleDetail.orderPaymentSchedule.order.id=? "
             + "order by scheduleDetail.paymentDetails.finPayment.documentNo";
         Query paymentsInQuery = OBDal.getInstance().getSession().createQuery(hqlPaymentsIn);
@@ -244,6 +244,12 @@ public class PaidReceipts extends JSONProcessSimple {
           SimpleDateFormat outputFormat = new SimpleDateFormat(dateFormat);
           paymentsIn.put("paymentDate", outputFormat.format(((Date) objPaymentsIn[2])));
           paymentsIn.put("paymentId", objPaymentsIn[3]);
+          try {
+            // ensure that just valid JSONObjects are accepted
+            paymentsIn.put("paymentData", new JSONObject((String) objPaymentsIn[4]));
+          } catch (Exception e) {
+            // This property will not exist
+          }
           listPaymentsIn.put(paymentsIn);
         }
 
@@ -288,6 +294,9 @@ public class PaidReceipts extends JSONProcessSimple {
                   .toString()).multiply(new BigDecimal((String) objectType.get("mulrate")
                   .toString())));
               paidReceiptPayment.put("paymentDate", objectIn.get("paymentDate"));
+              if (objectIn.has("paymentData")) {
+                paidReceiptPayment.put("paymentData", objectIn.get("paymentData"));
+              }
               paidReceiptPayment.put("name", objectType.get("name"));
               paidReceiptPayment.put("kind", objectType.get("kind"));
               paidReceiptPayment.put("rate", objectType.get("rate"));
@@ -329,6 +338,9 @@ public class PaidReceipts extends JSONProcessSimple {
                   .toString()).multiply(new BigDecimal((String) paymentsType.get("mulrate")
                   .toString())));
               paidReceiptPayment.put("paymentDate", objectIn.get("paymentDate"));
+              if (objectIn.has("paymentData")) {
+                paidReceiptPayment.put("paymentData", objectIn.get("paymentData"));
+              }
               paidReceiptPayment.put("name", paymentsType.get("name"));
               paidReceiptPayment.put("kind", paymentsType.get("kind"));
               paidReceiptPayment.put("rate", paymentsType.get("rate"));

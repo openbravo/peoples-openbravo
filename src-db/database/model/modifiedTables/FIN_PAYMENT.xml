@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+  <database name="MODIFIED TABLE FIN_PAYMENT">
+    <table name="FIN_PAYMENT" primaryKey="FIN_PAYMENT_KEY">
+      <column name="EM_OBPOS_PAYMENTDATA" primaryKey="false" required="false" type="CLOB" size="4000" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+    </table>
+  </database>
