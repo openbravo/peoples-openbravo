@@ -87,7 +87,9 @@ enyo.kind({
     onSaveCustomer: ''
   },
   tap: function () {
-    this.doSaveCustomer();
+    this.doSaveCustomer({
+      validations: true
+    });
   }
 });
 

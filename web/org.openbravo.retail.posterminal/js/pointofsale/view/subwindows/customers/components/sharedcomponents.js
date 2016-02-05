@@ -240,9 +240,11 @@ enyo.kind({
   },
   saveChange: function (inSender, inEvent) {
     var selected = this.collection.at(this.$.customerCombo.getSelected());
-    inEvent.customer.set(this.modelProperty, selected.get(this.retrievedPropertyForValue));
-    if (this.modelPropertyText) {
-      inEvent.customer.set(this.modelPropertyText, selected.get(this.retrievedPropertyForText));
+    if (selected) {
+      inEvent.customer.set(this.modelProperty, selected.get(this.retrievedPropertyForValue));
+      if (this.modelPropertyText) {
+        inEvent.customer.set(this.modelPropertyText, selected.get(this.retrievedPropertyForText));
+      }
     }
   },
   initComponents: function () {
@@ -300,7 +302,8 @@ enyo.kind({
       inEvent: inEventOriginal,
       passValidation: true,
       error: '',
-      meObject: me
+      meObject: me,
+      validations: inEvent.validations
     }, function (args) {
       if (args.passValidation) {
         args.meObject.saveCustomer(args.inSender, args.inEvent);
@@ -339,7 +342,8 @@ enyo.kind({
       this.model.get('customer').adjustNames();
       OB.UTIL.HookManager.executeHooks('OBPOS_BeforeCustomerSave', {
         customer: this.model.get('customer'),
-        isNew: true
+        isNew: true,
+        validations: inEvent.validations
       }, function (args) {
         if (args && args.cancellation && args.cancellation === true) {
           return true;
@@ -359,7 +363,8 @@ enyo.kind({
         customer.adjustNames();
         OB.UTIL.HookManager.executeHooks('OBPOS_BeforeCustomerSave', {
           customer: customer,
-          isNew: false
+          isNew: false,
+          validations: inEvent.validations
         }, function (args) {
           if (args && args.cancellation && args.cancellation === true) {
             return true;
