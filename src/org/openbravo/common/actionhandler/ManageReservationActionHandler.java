@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2013-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2013-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -75,11 +75,24 @@ public class ManageReservationActionHandler extends BaseProcessActionHandler {
         final String strOrderLineId = jsonRequest.getString("C_OrderLine_ID");
         final OrderLine sol = OBDal.getInstance().get(OrderLine.class, strOrderLineId);
         reservation = ReservationUtils.getReservationFromOrder(sol);
-
-        OBDal.getInstance().refresh(reservation);
         processReservation = reservation.getRESStatus().equals("DR");
       }
-
+      // Process reservation before managing stock reservations to avoid reserve all available stock
+      // Issue 28051: https://issues.openbravo.com/view.php?id=28051
+      if (processReservation) {
+        OBError result = ReservationUtils.processReserve(reservation, "PR");
+        if (result.getType().equals("Error")) {
+          JSONObject errorMessage = new JSONObject();
+          errorMessage.put("severity", result.getType().toLowerCase());
+          errorMessage.put("text", result.getMessage());
+          jsonRequest.put("message", errorMessage);
+        } else {
+          // Force status to completed in case it was kept as draft because no stock reservation was
+          // created when processing reservation
+          reservation.setRESStatus("CO");
+          reservation.setRESProcess("HO");
+        }
+      }
       if (reservation != null) {
         // FIXME: Replace with OBDao method when handler is merged with latest pi.
         // List<String> idList = OBDao.getIDListFromOBObject(reservation
@@ -89,15 +102,10 @@ public class ManageReservationActionHandler extends BaseProcessActionHandler {
           idList.add(resStock.getId());
         }
         manageReservedStockLines(jsonRequest, reservation, idList);
-
-        if (processReservation) {
-          OBError result = ReservationUtils.processReserve(reservation, "PR");
-          if (result.getType().equals("Error")) {
-            JSONObject errorMessage = new JSONObject();
-            errorMessage.put("severity", result.getType().toLowerCase());
-            errorMessage.put("text", result.getMessage());
-            jsonRequest.put("message", errorMessage);
-          }
+        // Force status to draft in case reservation has no lines
+        if (reservation.getMaterialMgmtReservationStockList().isEmpty()) {
+          reservation.setRESStatus("DR");
+          reservation.setRESProcess("PR");
         }
       }
 
