@@ -329,8 +329,8 @@ button.btnbp:disabled {
   background-image: url('./../../org.openbravo.retail.posterminal/img/iconShippingAddress.png');
   background-repeat: no-repeat;
   background-size: 22px 22px;
-  background-position: 17px 3px;
-  width: 45px;
+  background-position: 12px 3px;
+  width: 35px;
   height: 24px;
 }
 
@@ -339,9 +339,13 @@ button.btnbp:disabled {
   background-image: url('./../../org.openbravo.retail.posterminal/img/iconInvoicingAddress.png');
   background-repeat: no-repeat;
   background-size: 22px 22px;
-  background-position: center 3px;
+  background-position: center 0px;
   width: 28px;
   height: 24px;
+}
+
+.fix-bgposition-y {
+  background-position-y: 0px;	
 }
 
 .listcontextmenu-icon {
@@ -373,5 +377,11 @@ button.btnbp:disabled {
   height: 30px;
   background-image: url('./../img/iconSelectorSortDescending.png');
   background-repeat: no-repeat;
+}
+
+@media all and (max-width: 800px) {
+  div[id*=stBPAssignToReceipt_scrollArea] {
+    max-height: 497px !important;
+  }
 }
 

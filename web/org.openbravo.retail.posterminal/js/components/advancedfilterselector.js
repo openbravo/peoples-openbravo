@@ -24,11 +24,10 @@ enyo.kind({
     onFiltered: 'searchAction'
   },
   components: [{
-    style: 'padding: 10px;',
     components: [{
       style: 'display: table;',
       components: [{
-        style: 'display: table-cell; width: 100%;',
+        style: 'display: table-cell; width: 100%; vertical-align: middle; ',
         components: [{
           style: 'width: 100%;',
           name: 'advancedFilterInfo',
@@ -46,7 +45,7 @@ enyo.kind({
               kind: 'OB.UI.List',
               name: 'entityFilterColumn',
               classes: 'combo',
-              style: 'width: 95%; white-space: nowrap;',
+              style: 'width: 95%; white-space: nowrap; margin-bottom: 0px',
               handlers: {
                 onchange: 'changeColumn'
               },
@@ -85,7 +84,7 @@ enyo.kind({
             components: [{
               kind: 'OB.UI.SearchInputAutoFilter',
               name: 'entityFilterText',
-              style: 'width: 100%'
+              style: 'width: 100%; margin-bottom: 0px;'
             }]
           }]
         }, {
@@ -101,7 +100,7 @@ enyo.kind({
         components: [{
           kind: 'OB.UI.SmallButton',
           classes: 'btnlink-gray btn-icon-small btn-icon-clear',
-          style: 'width: 40px; margin: 0px 5px 8px 19px;',
+          style: 'width: 50px; margin: 4px 5px 4px 27px;',
           tap: function () {
             this.owner.clearFilter();
           }
@@ -112,7 +111,7 @@ enyo.kind({
           kind: 'OB.UI.SmallButton',
           name: 'entitySearchBtn',
           classes: 'btnlink-yellow btn-icon-small btn-icon-search',
-          style: 'width: 40px; margin: 0px 0px 8px 5px;',
+          style: 'width: 50px; margin: 4px 0px 4px 5px;',
           tap: function () {
             this.owner.searchAction();
           },

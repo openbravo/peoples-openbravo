@@ -104,7 +104,7 @@ enyo.kind({
     onHideThisPopup: ''
   },
   disabled: false,
-  style: 'width: 170px; margin: 0px 5px 8px 19px;',
+  style: 'width: 170px; margin: 0px 9px 8px 0px;',
   classes: 'btnlink-yellow btnlink btnlink-small',
   i18nLabel: 'OBPOS_LblNewCustomer',
   handlers: {
@@ -147,7 +147,7 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.Button',
   name: 'OB.UI.AdvancedFilterWindowButton',
-  style: 'margin: 0px 0px 8px 5px;',
+  style: 'width: 170px; margin: 0px 0px 8px 9px;',
   classes: 'btnlink-yellow btnlink btnlink-small',
   i18nLabel: 'OBPOS_LblAdvancedFilter',
   disabled: false,
@@ -215,7 +215,7 @@ enyo.kind({
     name: 'filterSelector',
     filters: OB.Model.BPartnerFilter.getProperties()  
   }, {
-    style: 'padding: 10px;',
+    style: 'padding: 7px;',
     showing: true,
     handlers: {
       onSetShow: 'setShow'
@@ -224,9 +224,9 @@ enyo.kind({
       this.setShowing(inEvent.visibility);
     },
     components: [{
-      style: 'display: table;',
+      style: 'display: table; width: 100%',
       components: [{
-        style: 'display: table-cell;',
+        style: 'display: table-cell; text-align: right; ',
         components: [{
           kind: 'OB.UI.NewCustomerWindowButton',
           name: 'newAction'
@@ -350,37 +350,45 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.ListBpsLine',
   kind: 'OB.UI.listItemButton',
+  style: 'padding: 2px 0px 2px 10px; ',
   components: [{
     name: 'line',
     style: 'line-height: 23px; width: 100%',
     components: [{
       name: 'textInfo',
-      style: 'float: left; width: 91%',
+      style: 'float: left; width: calc(100% - 50px); padding: 8px 0px; display: table; ',
       components: [{
-        style: 'float: left; display: inline-block;',
-        name: 'identifier'
-      }, {
-        style: 'float: left; display: inline-block; color: #888888; padding-left:5px;',
-        name: 'filter'
-      }, {
-        style: 'float: left;',
+        style: 'display: table-cell; ',
         components: [{
-          style: 'float: left;',
-          name: 'bottomShipIcon'
+          tag: 'span',
+          name: 'identifier'
         }, {
-          style: 'float: left;',
-          name: 'bottomBillIcon'
+          tag: 'span',
+          style: 'color: #888888;',
+          name: 'filter'
+        }, {
+          tag: 'span',
+          style: 'font-weight: bold; color: red;',
+          name: 'onHold'
         }]
       }, {
-        style: 'display: inline-block; float: left; font-weight: bold; color: red; padding-left:5px;',
-        name: 'onHold'
+        style: 'vertical-align: top; ',
+        name: 'bottomShipIcon',
+        classes: 'addresshipitems fix-bgposition-y'
+      }, {
+        style: 'vertical-align: top; ',
+        name: 'bottomBillIcon',
+        classes: 'addressbillitems fix-bgposition-y; '
       }, {
         style: 'clear: both;'
       }]
     }, {
-      kind: 'OB.UI.BusinessPartnerContextMenu',
-      name: 'btnContextMenu',
-      style: 'float: right'
+      style: 'float: right;  width: 50px',
+      components: [{
+        kind: 'OB.UI.BusinessPartnerContextMenu',
+        name: 'btnContextMenu',
+        style: 'padding-right: 5px;'
+      }]
     }]
   }],
   events: {
@@ -395,15 +403,22 @@ enyo.kind({
     this.$.identifier.setContent(this.model.get('_identifier'));
     this.$.filter.setContent(this.model.get('filter'));
     if (this.model.get('customerBlocking') && this.model.get('salesOrderBlocking')) {
-      this.$.onHold.setContent('(' + OB.I18N.getLabel('OBPOS_OnHold') + ')');
+      this.$.onHold.setContent(' (' + OB.I18N.getLabel('OBPOS_OnHold') + ')');
     }
+    this.$.bottomShipIcon.show();
+    this.$.bottomBillIcon.show();
     if (this.model.get('isBillTo') && this.model.get('isShipTo')) {
-      this.$.bottomShipIcon.addClass('addresshipitems');
-      this.$.bottomBillIcon.addClass('addressbillitems');
+      this.$.bottomShipIcon.applyStyle('visibility', 'visible');
+      this.$.bottomBillIcon.applyStyle('visibility', 'visible');
     } else if (this.model.get('isBillTo')) {
-      this.$.bottomBillIcon.addClass('addressbillitems');
+      this.$.bottomShipIcon.applyStyle('visibility', 'hidden');
+      this.$.bottomBillIcon.applyStyle('visibility', 'visible');
     } else if (this.model.get('isShipTo')) {
-      this.$.bottomShipIcon.addClass('addresshipitems');
+      this.$.bottomShipIcon.applyStyle('visibility', 'visible');
+      this.$.bottomBillIcon.applyStyle('visibility', 'hidden');
+    } else {
+        this.$.bottomShipIcon.hide();
+        this.$.bottomBillIcon.hide();
     }
     var bPartner = this.owner.owner.owner.bPartner;
     if (bPartner && bPartner.get('id') === this.model.get('id')) {
@@ -441,7 +456,8 @@ enyo.kind({
         components: [{
           name: 'stBPAssignToReceipt',
           kind: 'OB.UI.ScrollableTable',
-          scrollAreaMaxHeight: '350px',
+          classes: 'bp-scroller',
+          scrollAreaMaxHeight: '400px',
           renderHeader: 'OB.UI.ModalBpScrollableHeader',
           renderLine: 'OB.UI.ListBpsLine',
           renderEmpty: 'OB.UI.RenderEmpty'
@@ -705,12 +721,13 @@ enyo.kind({
 /*Modal definition*/
 enyo.kind({
   name: 'OB.UI.ModalBusinessPartners',
-  topPosition: '100px',
+  topPosition: '75px',
   kind: 'OB.UI.Modal',
   handlers: {
     onHideBPSelector: 'hideBPSelector',
     onShowBPSelector: 'showBPSelector'
   },
+  modalClass: 'modal-bpdialog',
   hideBPSelector: function () {
     this.hide();
   },

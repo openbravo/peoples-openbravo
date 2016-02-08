@@ -14,6 +14,7 @@ enyo.kind({
   kind: 'OB.UI.SmallButton',
   name: 'OB.UI.AdvancedFilterClear',
   classes: 'btnlink-gray btnlink btnlink-small',
+  style: 'width: 146px; ',
   events: {
     onClearAll: ''
   },
@@ -29,6 +30,7 @@ enyo.kind({
   kind: 'OB.UI.SmallButton',
   name: 'OB.UI.AdvancedFilterApply',
   classes: 'btnlink-yellow btnlink btnlink-small',
+  style: 'width: 146px; ',
   events: {
     onApplyFilters: ''
   },
@@ -45,8 +47,8 @@ enyo.kind({
   name: 'OB.UI.AdvancedFilterTable',
   kind: 'Scroller',
   maxHeight: '400px',
-  style: 'width: 100%; background-color: #fff; overflow: auto',
-
+  style: 'width: 100%; background-color: #fff; ',
+  horizontal: 'hidden',
   initComponents: function () {
     this.inherited(arguments);
     this.filters = [];
@@ -64,24 +66,24 @@ enyo.kind({
   addFilter: function (filter) {
     var filterLine = this.createComponent({
       filter: filter,
-      style: 'width: 100%; clear:both; background-color: #fff; height: 32px; padding-top: 2px; overflow: hidden;',
+      style: 'width: 100%; clear:both; background-color: #fff; height: 40px; padding-top: 2px; padding-left: 13px; overflow: hidden;',
       components: [{
-        style: 'float: left; width: 30%;  background-color: #e2e2e2; height: 25px; padding-top: 6px; padding-right: 5px; text-align: right;font-size: 16px; color: black',
+        style: 'float: left; width: 112px;  background-color: #e2e2e2; height: 29px; padding-top: 11px; padding-right: 5px; text-align: right;font-size: 16px; color: black; text-overflow: ellipsis; white-space: nowrap; overflow: hidden;',
         name: 'label' + filter.name,
         content: OB.I18N.getLabel(filter.caption)
       }, {
-        style: 'float: left; width: 65%; text-align: left; padding-left: 5px;',
+        style: 'float: left; text-align: left; padding-left: 2px; width: calc(100% - 125px);',
         components: [{
           kind: 'enyo.Input',
           type: 'text',
-          classes: 'input',
+          classes: 'input narrow-input',
           name: 'input' + filter.name,
-          style: 'float: left; width: 69%; padding: 0px;'
+          style: 'float: left; width: calc(100% - 84px); padding: 4px; height: 30px; '
         }, {
           kind: 'OB.UI.SmallButton',
           name: 'order' + filter.name,
           classes: 'btnlink-white iconSortNone',
-          style: 'float: left; margin-top: 1px',
+          style: 'float: left; margin: 5px 8px 5px 8px;',
           tap: function () {
             var buttonClasses = this.getClassAttribute().split(' '),
                 buttonClass = buttonClasses[buttonClasses.length - 1];
@@ -126,7 +128,7 @@ enyo.kind({
         if (flt.filter.isDate) {
           dateValidated = OB.Utilities.Date.OBToJS(text, OB.Format.date) || OB.Utilities.Date.OBToJS(text, 'yyyy-MM-dd');
           if (dateValidated) {
-            flt.text = OB.Utilities.Date.JSToOB(dateValidated, 'yyyy-MM-dd');
+            text = OB.Utilities.Date.JSToOB(dateValidated, 'yyyy-MM-dd');
             me.owner.$.dateFormatError.hide();
             flt.owner.$['input' + flt.filter.name].removeClass('error');
           } else {
@@ -145,7 +147,8 @@ enyo.kind({
           name: flt.filter.name,
           column: flt.filter.serverColumn,
           direction: orderClass === 'iconSortAsc' ? 'asc' : 'desc',
-          isLocationFilter: flt.filter.location
+          isLocationFilter: flt.filter.location,
+          isDate: flt.filter.isDate
         };
       }
     });
@@ -161,9 +164,8 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.Modal',
   name: 'OB.UI.ModalAdvancedFilters',
-  topPosition: '125px',
   i18nHeader: 'OBPOS_LblAdvancedFilters',
-  style: 'width: 400px',
+  style: 'height: 600px',
   events: {
     onHideThisPopup: ''
   },
