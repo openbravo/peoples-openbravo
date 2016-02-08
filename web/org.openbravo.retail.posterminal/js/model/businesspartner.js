@@ -65,6 +65,11 @@
         this.set('searchKey', newSk);
       }
 
+      if (this.get('birthDay') && !OB.UTIL.isInThePast(OB.I18N.formatDate(this.get('birthDay')))) {
+        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_BPartnerBirthDayIncorrect'));
+        return false;
+      }
+
       this.set('_identifier', this.get('name'));
 
       // in case of synchronized then directly call customer save with the callback
