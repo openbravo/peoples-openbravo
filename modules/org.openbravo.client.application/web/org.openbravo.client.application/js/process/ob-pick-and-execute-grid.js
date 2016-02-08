@@ -186,7 +186,7 @@ isc.OBPickAndExecuteGrid.addProperties({
         dsRequest.params.buttonOwnerViewTabId = me.view.buttonOwnerView.tabId;
       }
       // Add selected records (if any) when there is not criteria present in the request
-      if (dsRequest.originalData && !dsRequest.originalData.criteria && me.selectedIds.length) {
+      if (dsRequest.originalData && !dsRequest.originalData.criteria && me.selectedIds.length > 0) {
         isc.addProperties(dsRequest.originalData, me.addSelectedIDsToCriteria());
       }
       dsRequest.params[OB.Constants.IS_PICK_AND_EDIT] = true;
