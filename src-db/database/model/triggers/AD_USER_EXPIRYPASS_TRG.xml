@@ -27,7 +27,7 @@
 
    IF (:OLD.password<>:NEW.password) THEN
      
-     :NEW.lastupdatepassworddate := now();
+     :NEW.lastpasswordupdate := now();
      
    END IF;
  
