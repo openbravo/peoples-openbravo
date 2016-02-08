@@ -120,6 +120,7 @@ public class DataSourceSecurity extends BaseDataSourceTestDal {
         // Property selector invocation from Windows > Tab > Field > Property field
         put("_selectorDefinitionId", "387D9FFC48A74054835C5DF6E6FD08F7");
         put("inpadTableId", "259");
+        put("inpTabId", "107");
         put("targetProperty", "property");
       }
     }), //
@@ -176,6 +177,9 @@ public class DataSourceSecurity extends BaseDataSourceTestDal {
       {
         // Organization tree view.
         put("referencedTableId", "155");
+        put("tabId", "143");
+        String selectedPro = "[\"searchKey\",\"name\",\"description\",\"active\",\"summaryLevel\",\"socialName\",\"organizationType\",\"currency\",\"allowPeriodControl\",\"calendar\"]";
+        put("_selectedProperties", selectedPro);
       }
     }), //
     AccountTree("D2F94DC86DEC48D69E4BFCE59DC670CF", new HashMap<String, String>() {
@@ -183,6 +187,9 @@ public class DataSourceSecurity extends BaseDataSourceTestDal {
         // Account tree value > Entity FinancialMgmtElementValue.
         put("referencedTableId", "188");
         put("tabId", "132");
+        String selectedPro = "[\"searchKey\",\"name\",\"elementLevel\",\"accountType\",\"showValueCondition\",\"summaryLevel\"]";
+        put("_selectedProperties", selectedPro);
+        put("@FinancialMgmtElement.id@", "CCC5ACF18A114F3E9630EE321E6063BF");
       }
     }), //
     StockReservations("2F5B70D7F12E4F5C8FE20D6F17D69ECF", new HashMap<String, String>() {
@@ -254,8 +261,11 @@ public class DataSourceSecurity extends BaseDataSourceTestDal {
       // QueryList ds is accessible if current role has access to widgetId
       testCases.add(new Object[] { type, DataSource.QueryList,
           JsonConstants.RPCREQUEST_STATUS_VALIDATION_ERROR });
-      testCases.add(new Object[] { type, DataSource.PropertySelector,
-          JsonConstants.RPCREQUEST_STATUS_SUCCESS });
+      testCases.add(new Object[] {
+          type,
+          DataSource.PropertySelector,
+          type == RoleType.SYSTEM_ROLE ? JsonConstants.RPCREQUEST_STATUS_SUCCESS
+              : JsonConstants.RPCREQUEST_STATUS_VALIDATION_ERROR });
 
       // Alert ds should be always accessible
       testCases
