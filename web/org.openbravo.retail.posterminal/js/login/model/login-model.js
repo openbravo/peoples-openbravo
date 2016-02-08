@@ -354,9 +354,11 @@
           if (protocol === 'http:') {
             websocketServerLocation = 'ws:' + OB.POS.hwserver.url.substring(protocol.length, OB.POS.hwserver.url.length).split('/printer')[0] + '/rfid';
             OB.UTIL.isRFIDEnabled = true;
+            OB.UTIL.startRfidWebsocket(websocketServerLocation, 2000, 0, 5);
           } else if (protocol === 'https:') {
             websocketServerLocation = 'wss:' + OB.POS.hwserver.url.substring(protocol.length, OB.POS.hwserver.url.length).split('/printer')[0] + '/rfid';
             OB.UTIL.isRFIDEnabled = true;
+            OB.UTIL.startRfidWebsocket(websocketServerLocation, 2000, 0, 5);
           } else {
             OB.UTIL.showError(OB.I18N.getLabel('OBPOS_WrongHardwareManagerProtocol'));
           }
