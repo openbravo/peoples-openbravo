@@ -39,15 +39,15 @@ import org.openbravo.service.datasource.ModelDataSourceService;
 public class SelectorFieldPropertyDataSource extends ModelDataSourceService {
 
   private static final String SELECTOR_FIELD = "inpobuiselSelectorId";
-  private static final String FORM_FIELD = "inpadTableId";
+  private static final String TAB_ID = "inpTabId";
 
   @Override
   public void checkFetchDatasourceAccess(Map<String, String> parameter) {
     final OBContext obContext = OBContext.getOBContext();
-    final String tableId = parameter.get(FORM_FIELD);
+    final String tabId = parameter.get(TAB_ID);
     OBContext.setAdminMode();
     try {
-      final Entity entity = ModelProvider.getInstance().getEntityByTableId(tableId);
+      final Entity entity = ModelProvider.getInstance().getEntityByTableId(tabId);
       if (entity != null) {
         obContext.getEntityAccessChecker().checkReadableAccess(entity);
       }
