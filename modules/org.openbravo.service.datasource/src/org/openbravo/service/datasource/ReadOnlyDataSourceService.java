@@ -190,7 +190,8 @@ public abstract class ReadOnlyDataSourceService extends DefaultDataSourceService
     if (hasCriteria) {
       try {
         selectedRecords = getSelectedRecordsFromCriteria(JsonUtils.buildCriteria(parameters));
-      } catch (JSONException ignore) {
+      } catch (JSONException jsonex) {
+        log.error("Error retrieving number of selected records", jsonex);
       }
     }
     return selectedRecords.size();
@@ -202,7 +203,8 @@ public abstract class ReadOnlyDataSourceService extends DefaultDataSourceService
     JSONArray criteriaArray = buildCriteria.getJSONArray("criteria");
     for (int i = 0; i < criteriaArray.length(); i++) {
       JSONObject criteria = criteriaArray.getJSONObject(i);
-      if (criteria.has("fieldName") && criteria.getString("fieldName").equals("id")) {
+      if (criteria.has("fieldName") && criteria.getString("fieldName").equals("id")
+          && criteria.has("value")) {
         String value = criteria.getString("value");
         for (String recordId : value.split(",")) {
           selectedRecords.add(recordId.trim());

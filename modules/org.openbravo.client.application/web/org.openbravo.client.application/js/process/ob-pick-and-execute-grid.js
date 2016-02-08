@@ -185,6 +185,10 @@ isc.OBPickAndExecuteGrid.addProperties({
       if (me.view && me.view.buttonOwnerView && me.view.buttonOwnerView.tabId) {
         dsRequest.params.buttonOwnerViewTabId = me.view.buttonOwnerView.tabId;
       }
+      // Add selected records (if any) when there is not criteria present in the request
+      if (dsRequest.originalData && !dsRequest.originalData.criteria && me.selectedIds.length) {
+        isc.addProperties(dsRequest.originalData, me.addSelectedIDsToCriteria());
+      }
       dsRequest.params[OB.Constants.IS_PICK_AND_EDIT] = true;
       return this.Super('transformRequest', arguments);
     };
