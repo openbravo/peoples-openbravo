@@ -119,7 +119,7 @@ public class DataSourceSecurity extends BaseDataSourceTestDal {
       {
         // Property selector invocation from Windows > Tab > Field > Property field
         put("_selectorDefinitionId", "387D9FFC48A74054835C5DF6E6FD08F7");
-        put("inpTableId", "107");
+        put("inpadTableId", "259");
         put("targetProperty", "property");
       }
     }), //
