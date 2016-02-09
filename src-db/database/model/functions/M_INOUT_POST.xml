@@ -1187,15 +1187,15 @@
                 WHERE c_orderline_id = r.c_orderline_id
                 AND res_status <> 'DR'
               )
-	      GROUP BY r.m_reservation_id, r.ad_client_id, r.ad_org_id,
-	      r.m_product_id, r.quantity, r.c_uom_id, r.c_orderline_id, r.ad_user_id,
-	      r.c_bpartner_id, r.m_warehouse_id, r.m_attributesetinstance_id, r.m_locator_id,
-	      r.reservedqty, r.res_status, r.managereservation_pe, r.reservedgoodmnt_pe, ol.qtyordered
+              GROUP BY r.m_reservation_id, r.ad_client_id, r.ad_org_id,
+              r.m_product_id, r.quantity, r.c_uom_id, r.c_orderline_id, r.ad_user_id,
+              r.c_bpartner_id, r.m_warehouse_id, r.m_attributesetinstance_id, r.m_locator_id,
+              r.reservedqty, r.res_status, r.managereservation_pe, r.reservedgoodmnt_pe, ol.qtyordered
             )
-	    LOOP
+            LOOP
 
-	      -- Get the least quantity between ordered quantity and movement quantity
-	      v_R_Quantity := LEAST(Cur_Reservation.qtyordered, Cur_Reservation.movementqty);
+              -- Get the least quantity between ordered quantity and movement quantity
+              v_R_Quantity := LEAST(Cur_Reservation.qtyordered, Cur_Reservation.movementqty);
 
               -- If completed reservation exists already update it,
               -- otherwise create a new one with this quantity
