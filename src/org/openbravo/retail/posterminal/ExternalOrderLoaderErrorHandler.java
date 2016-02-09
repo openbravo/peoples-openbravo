@@ -14,6 +14,7 @@ import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
+import org.openbravo.mobile.core.utils.OBMOBCUtils;
 import org.openbravo.service.db.DbUtility;
 
 /**
@@ -24,7 +25,7 @@ public class ExternalOrderLoaderErrorHandler extends POSDataSynchronizationError
 
   @Override
   public void handleError(Throwable t, Entity entity, JSONObject result, JSONObject jsonRecord) {
-    if (ExternalOrderLoader.isSynchronizedRequest()) {
+    if (OBMOBCUtils.isSynchronizedRequest()) {
       Throwable localT = t;
       if (localT instanceof OBException && localT.getCause() != null) {
         localT = t.getCause();

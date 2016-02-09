@@ -31,6 +31,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.SequenceIdData;
+import org.openbravo.mobile.core.utils.OBMOBCUtils;
 import org.openbravo.model.ad.access.User;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.businesspartner.Location;
@@ -80,12 +81,6 @@ public class ExternalOrderLoader extends OrderLoader {
     return dateFormat;
   }
 
-  protected static boolean isSynchronizedRequest() {
-    final String param = (String) RequestContext.get().getRequest()
-        .getParameter("synchronizedProcessing");
-    return param != null && param.toLowerCase().equals("true");
-  }
-
   @Override
   public String getAppName() {
     return "External";
@@ -116,7 +111,7 @@ public class ExternalOrderLoader extends OrderLoader {
         return;
       }
 
-      if (isSynchronizedRequest()) {
+      if (OBMOBCUtils.isSynchronizedRequest()) {
         // also for synchronized requests create an import entry for syncing
         // and tracking
         try {
