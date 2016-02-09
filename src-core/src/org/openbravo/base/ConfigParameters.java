@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2015 Openbravo S.L.U.
+ * Copyright (C) 2001-2016 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -24,8 +24,6 @@ import java.util.Properties;
 
 import javax.servlet.ServletContext;
 
-import org.apache.avalon.framework.logger.Log4JLogger;
-import org.apache.fop.messaging.MessageHandler;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
@@ -59,7 +57,6 @@ public class ConfigParameters {
 
   private static final Logger log4j = Logger.getLogger(ConfigParameters.class);
 
-  private Log4JLogger fopLogger;
   public final String strServletSinIdentificar;
   private final String strServletGoBack;
   public final String strFTPDirectory;
@@ -87,7 +84,6 @@ public class ConfigParameters {
 
     strBaseConfigPath = getResolvedParameter(context, "BaseConfigPath");
     configureLog4j(context, strBaseConfigPath);
-    configureFop();
 
     log4j.debug("context: " + strContext);
     log4j.debug("************************prefix: " + prefix);
@@ -166,12 +162,6 @@ public class ConfigParameters {
       log4j.warn(err.getMessage());
       return "en_US";
     }
-  }
-
-  private void configureFop() {
-    MessageHandler.setQuiet(true);
-    fopLogger = new Log4JLogger(log4j);
-    MessageHandler.setScreenLogger(fopLogger);
   }
 
   private void configureLog4j(ServletContext context, String _strBaseConfigPath) {
@@ -274,10 +264,6 @@ public class ConfigParameters {
 
   public String getFormatPath() {
     return prefix + "/" + strBaseConfigPath + "/Format.xml";
-  }
-
-  public Log4JLogger getFopLogger() {
-    return fopLogger;
   }
 
   public boolean havePeriodicBackgroundTime() {

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2014 Openbravo SLU
+ * All portions are Copyright (C) 2013-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -37,6 +37,7 @@ import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.client.kernel.event.EntityDeleteEvent;
 import org.openbravo.client.kernel.event.EntityNewEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
+import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -62,7 +63,7 @@ public class TreeTablesEventHandler extends EntityPersistenceEventObserver {
 
   private static final String TREENODE_STRUCTURE = "ADTree";
   private static final String LINKTOPARENT_STRUCTURE = "LinkToParent";
-  // private static final String CUSTOM_STRUCTURE = "Custom";
+  private static final String CUSTOM_STRUCTURE = "Custom";
   private static Logger logger = LoggerFactory.getLogger(TreeTablesEventHandler.class);
 
   @Inject
@@ -128,6 +129,10 @@ public class TreeTablesEventHandler extends EntityPersistenceEventObserver {
       dataSource = dataSourceServiceProvider.getDataSource(TREENODE_DATASOURCE);
     } else if (LINKTOPARENT_STRUCTURE.equals(mainTableTree.getTreeStructure())) {
       dataSource = dataSourceServiceProvider.getDataSource(LINKTOPARENT_DATASOURCE);
+    } else if (CUSTOM_STRUCTURE.equals(mainTableTree.getTreeStructure())
+        && mainTableTree.getDatasource() != null) {
+      String customDataSourceId = (String) DalUtil.getId(mainTableTree.getDatasource());
+      dataSource = dataSourceServiceProvider.getDataSource(customDataSourceId);
     }
     return dataSource;
   }

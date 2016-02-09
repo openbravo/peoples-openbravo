@@ -115,6 +115,8 @@
   </SUBREPORT>
   <PARAMETER id="parameterOver" name="all" default="1"/>
   <PARAMETER id="paramOverdue" name="paramOver" boolean="checked" withId="parameterOver" default="0"/>
+  <PARAMETER id="parameterBAZero" name="all" default="Y"/>
+  <PARAMETER id="paramBAZero" name="paramZero" boolean="checked" withId="parameterBAZero" default="Y"/>
   <PARAMETER id="paramGroupCrit" name="groupCrit" attribute="value"/>
   <SUBREPORT id="reportGroupCrit" name="reportGroupCrit" report="org/openbravo/erpCommon/reference/List">
     <ARGUMENT name="parameterListSelected" withId="paramGroupCrit"/>

@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2015 Openbravo S.L.U.
+ * Copyright (C) 2001-2016 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -32,8 +32,21 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.sax.SAXResult;
+import javax.xml.transform.stream.StreamSource;
 
-import org.apache.fop.apps.Driver;
+import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.apps.Fop;
+import org.apache.fop.apps.FopFactory;
+import org.apache.fop.apps.FormattingResults;
+import org.apache.fop.events.Event;
+import org.apache.fop.events.EventFormatter;
+import org.apache.fop.events.EventListener;
+import org.apache.fop.events.model.EventSeverity;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.openbravo.database.ConnectionProvider;
@@ -41,7 +54,6 @@ import org.openbravo.database.ConnectionProviderImpl;
 import org.openbravo.exception.NoConnectionAvailableException;
 import org.openbravo.exception.PoolNotFoundException;
 import org.openbravo.xmlEngine.XmlEngine;
-import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 
 import rmi.RenderFoI;
@@ -63,6 +75,8 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider {
   private static String strContext = null;
   private static String prefix = null;
   protected Logger log4j = Logger.getLogger(this.getClass());
+
+  private FopFactory fopFactory;
 
   protected ConfigParameters globalParameters;
 
@@ -543,6 +557,13 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider {
 
   }
 
+  protected FopFactory getFopFactory() {
+    if (fopFactory == null) {
+      fopFactory = FopFactory.newInstance();
+    }
+    return fopFactory;
+  }
+
   /**
    * Renders the FO input source into a PDF file which is then written directly to OutputStream.
    * 
@@ -590,13 +611,11 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider {
     try {
       if (log4j.isDebugEnabled())
         log4j.debug("Beginning of renderFO");
+      FopFactory fopFactoryInstance = getFopFactory();
       if (globalParameters.haveFopConfig()) {
+        // Take FOP Configuration using userconfig.xml file
         File fopFile = new File(globalParameters.getFopConfigPath());
-        if (fopFile.exists()) {
-          @SuppressWarnings("unused")
-          // external implementation
-          org.apache.fop.apps.Options options = new org.apache.fop.apps.Options(fopFile);
-        }
+        fopFactoryInstance.setUserConfig(fopFile);
       }
 
       final String foTemplate = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + strFo;
@@ -607,34 +626,33 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider {
         if (log4j.isDebugEnabled())
           log4j.debug(strFo);
 
-        StringReader sr = new StringReader(foTemplate);
+        Source sr = new StreamSource(new StringReader(foTemplate));
 
         if (log4j.isDebugEnabled())
           log4j.debug(sr.toString());
 
-        InputSource inputFO = new InputSource(sr);
+        // Configure FOP for PDF output. Define a user agent with a listener used to log information
+        // along the rendering the process
+        FOUserAgent foUserAgent = fopFactoryInstance.newFOUserAgent();
+        foUserAgent.getEventBroadcaster().addEventListener(new FopEventListener());
+        Fop fop = fopFactoryInstance.newFop("application/pdf", foUserAgent, out);
 
-        if (log4j.isDebugEnabled())
-          log4j.debug("Beginning of driver");
+        // Setup JAXP using identity transformer
+        TransformerFactory factory = TransformerFactory.newInstance();
+        Transformer transformer = factory.newTransformer();
 
-        Driver driver = new Driver();
-        driver.setLogger(globalParameters.getFopLogger());
-        driver.setRenderer(Driver.RENDER_PDF);
-        driver.setInputSource(inputFO);
+        // Resulting SAX events (the generated FO) must be piped through to FOP
+        Result res = new SAXResult(fop.getDefaultHandler());
 
-        driver.setOutputStream(out);
+        // Start XSLT transformation and FOP processing
+        transformer.transform(sr, res);
 
-        if (log4j.isDebugEnabled())
-          log4j.debug("driver.run()");
-
-        driver.run();
-
-        if (log4j.isDebugEnabled())
+        if (log4j.isDebugEnabled()) {
+          FormattingResults foResults = fop.getResults();
+          log4j.debug("Generated " + foResults.getPageCount() + " pages in total.");
           log4j.debug("End of renderFO");
+        }
 
-        sr.close();
-        driver.reset();
-        driver = null;
       } else {
 
         RenderFoI render = (RenderFoI) Naming.lookup("rmi://"
@@ -711,6 +729,23 @@ public class HttpBaseServlet extends HttpServlet implements ConnectionProvider {
 
   public String getServletInfo() {
     return "This servlet adds some functions (connection to the database, xmlEngine, logging) over HttpServlet";
+  }
+
+  private class FopEventListener implements EventListener {
+
+    public void processEvent(Event event) {
+      String msg = EventFormatter.format(event);
+      EventSeverity severity = event.getSeverity();
+      if (severity == EventSeverity.INFO) {
+        log4j.info(msg);
+      } else if (severity == EventSeverity.WARN) {
+        log4j.warn(msg);
+      } else if (severity == EventSeverity.ERROR) {
+        log4j.error(msg);
+      } else if (severity == EventSeverity.FATAL) {
+        log4j.error(msg);
+      }
+    }
   }
 
 }

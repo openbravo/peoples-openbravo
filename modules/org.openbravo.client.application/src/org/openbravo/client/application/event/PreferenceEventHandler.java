@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2015 Openbravo SLU
+ * All portions are Copyright (C) 2015-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -25,20 +25,16 @@ import javax.inject.Inject;
 import org.apache.log4j.Logger;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
+import org.openbravo.client.application.CachedPreference;
 import org.openbravo.client.kernel.event.EntityDeleteEvent;
 import org.openbravo.client.kernel.event.EntityNewEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
 import org.openbravo.client.kernel.event.EntityUpdateEvent;
 import org.openbravo.model.ad.domain.Preference;
-import org.openbravo.service.json.UnpagedRequestCachedPreference;
 
 /**
  * Listens to delete, update and save events for the {@link Preference} entity. If it detects a
- * change in the 'OBJSON_AllowUnpagedDatasourceManualRequest' preference it invalidates its cached
- * value by setting it to null.
- * 
- * {@link "https://issues.openbravo.com/view.php?id=30204"}
- * 
+ * change in any of the cached preferences it invalidates its cached value.
  */
 public class PreferenceEventHandler extends EntityPersistenceEventObserver {
 
@@ -46,7 +42,7 @@ public class PreferenceEventHandler extends EntityPersistenceEventObserver {
       .getEntity(Preference.ENTITY_NAME) };
   protected Logger logger = Logger.getLogger(this.getClass());
   @Inject
-  private UnpagedRequestCachedPreference unpagedRequestPreference;
+  private CachedPreference cachedPreference;
 
   @Override
   protected Entity[] getObservedEntities() {
@@ -58,9 +54,7 @@ public class PreferenceEventHandler extends EntityPersistenceEventObserver {
       return;
     }
     final Preference preference = (Preference) event.getTargetInstance();
-    if (unpagedRequestPreference.getProperty().equals(preference.getProperty())) {
-      unpagedRequestPreference.setPreferenceValue(null);
-    }
+    invalidateCachedPreferenceValue(preference.getProperty());
   }
 
   public void onUpdate(@Observes EntityUpdateEvent event) {
@@ -68,9 +62,7 @@ public class PreferenceEventHandler extends EntityPersistenceEventObserver {
       return;
     }
     final Preference preference = (Preference) event.getTargetInstance();
-    if (unpagedRequestPreference.getProperty().equals(preference.getProperty())) {
-      unpagedRequestPreference.setPreferenceValue(null);
-    }
+    invalidateCachedPreferenceValue(preference.getProperty());
   }
 
   public void onDelete(@Observes EntityDeleteEvent event) {
@@ -78,8 +70,12 @@ public class PreferenceEventHandler extends EntityPersistenceEventObserver {
       return;
     }
     final Preference preference = (Preference) event.getTargetInstance();
-    if (unpagedRequestPreference.getProperty().equals(preference.getProperty())) {
-      unpagedRequestPreference.setPreferenceValue(null);
+    invalidateCachedPreferenceValue(preference.getProperty());
+  }
+
+  private void invalidateCachedPreferenceValue(String property) {
+    if (cachedPreference.isCachedPreference(property)) {
+      cachedPreference.invalidatePreferenceValue(property);
     }
   }
 }

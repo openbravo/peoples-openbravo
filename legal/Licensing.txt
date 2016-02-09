@@ -85,7 +85,7 @@ Copyright (c) 2007, Yahoo! Inc. All rights reserved. Code licensed under the BSD
 # avalon-framework-4.1.5.jar
 # axis-ant.jar
 # axis.jar
-# barcode4j-fop-ext-0.20.5-complete.jar 
+# barcode4j-fop-ext-complete.jar 
 # batik-anim.jar
 # batik-awt-util.jar
 # batik-bridge.jar
@@ -119,6 +119,7 @@ Copyright (c) 2007, Yahoo! Inc. All rights reserved. Code licensed under the BSD
 # tika-core-0.9.jar
 # wstx-asl-3.0.2.jar
 # xercesImpl.jar
+# xmlgraphics-commons-1.5.jar
 
 All files under Apache Software License 2.0, available at
 http://www.apache.org/licenses/LICENSE-2.0
@@ -140,9 +141,9 @@ http://opensource.org/licenses/afl-2.1.php)
 # itext-pdfa-5.5.0.jar
 Both files under AGPL V3 license with LGPL Exception (included as iTextpdf_license.txt in this folder)
 
-# jackson-core-2.1.4.jar
-# jackson-databind-2.1.4.jar
-# jackson-annotations-2.1.4.jar
+# jackson-core-2.5.1.jar
+# jackson-databind-2.5.1.jar
+# jackson-annotations-2.5.1.jar
 All files under the Apache 2.0 license (included as Apache_license-2.0.txt in this folder)
 
 # jasperreports-6.0.0.jar

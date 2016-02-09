@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2015 Openbravo SLU
+ * All portions are Copyright (C) 2010-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -1192,11 +1192,6 @@ OB.ViewFormProperties = {
     if (field.compareValues && !field.compareValues(oldValue, this.getValue(field.name))) {
       field._changedByFic = true;
     }
-
-    // store the textualvalue so that it is correctly send back to the server
-    if ((columnValue.classicValue || columnValue.classicValue === '') && typeInstance.decSeparator) {
-      this.setTextualValue(field.name, assignClassicValue, typeInstance);
-    }
   },
 
   setColumnValuesInEditValues: function (columnName, columnValue, gridEditInformation) {
@@ -1268,19 +1263,11 @@ OB.ViewFormProperties = {
       // Look in the complete fields, the column might be hidden
       field = this.grid.getFieldFromColumnName(columnName);
     }
-
-    // store the textualvalue so that it is correctly send back to the server
-    if (field) {
-      // Adjust to formatting if exists value and classicValue.
-      assignClassicValue = (field.typeInstance && field.typeInstance.parseInput && field.typeInstance.editFormatter) ? field.typeInstance.editFormatter(field.typeInstance.parseInput(columnValue.classicValue)) : columnValue.classicValue;
-      typeInstance = isc.SimpleType.getType(field.type);
-      if ((columnValue.classicValue || columnValue.classicValue === '') && typeInstance.decSeparator) {
-        this.setTextualValue(field.name, assignClassicValue, typeInstance, gridEditInformation);
-      }
-    }
   },
 
   // note textValue is in user format using users decimal and group separator
+  // this method is deprecated as textual representation of decimals is no longer used
+  // see issue https://issues.openbravo.com/view.php?id=31901
   setTextualValue: function (fldName, textValue, type, gridEditInformation) {
     if (!textValue || textValue.trim() === '') {
       textValue = '';
@@ -2198,5 +2185,15 @@ OB.ViewFormProperties = {
       }
     }
     return true;
+  },
+
+  updateAlwaysTakeSpaceInSections: function () {
+    var i, item, length = this.getItems().length;
+    for (i = 0; i < length; i++) {
+      item = this.getItems()[i];
+      if (isc.isA.SectionItem(item) && item.isExpanded()){
+        item.updateAlwaysTakeSpace(true);
+      }
+    }
   }
 };

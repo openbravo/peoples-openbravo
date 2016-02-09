@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2012 Openbravo SLU
+ * All portions are Copyright (C) 2011-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -70,7 +70,11 @@ isc.ClassFactory.mixInInterface('OBSearchItem', 'OBLinkTitleItem');
         targetFld.form.focusInNextItem(targetFld.name);
       }
     }
-    isc.OBSearchItem.openedWindow.close();
+    if (isc.OBSearchItem.openedWindow.closeClick) {
+      isc.OBSearchItem.openedWindow.closeClick();
+    } else {
+      isc.OBSearchItem.openedWindow.close();
+    }
     isc.OBSearchItem.openSearchItem = null;
   };
 }(this)); // window
@@ -198,7 +202,11 @@ isc.OBSearchItem.addProperties({
     left = parseInt((screen.width - width) / 2, 10);
 
     if (isc.OBSearchItem.openedWindow) {
-      isc.OBSearchItem.openedWindow.close();
+      if (isc.OBSearchItem.openedWindow.closeClick) {
+        isc.OBSearchItem.openedWindow.closeClick();
+      } else {
+        isc.OBSearchItem.openedWindow.close();
+      }
       this.clearUnloadEventHandling();
     }
     isc.OBSearchItem.openedWindow = null;
@@ -224,12 +232,9 @@ isc.OBSearchItem.addProperties({
       }
     }
 
-    if (navigator.appName.indexOf('Netscape')) {
-      complementsNS4 = 'alwaysRaised=1, dependent=1, directories=0, hotkeys=0, menubar=0, ';
-    }
-    var complements = complementsNS4 + 'height=' + height + ', width=' + width + ', left=' + left + ', top=' + top + ', screenX=' + left + ', screenY=' + top + ', location=0, resizable=1, scrollbars=1, status=0, toolbar=0, titlebar=0, modal=\'yes\'';
-    isc.OBSearchItem.openedWindow = window.open(OB.Utilities.applicationUrl(url) + ((auxField === '') ? '' : '?' + auxField), 'SELECTOR', complements);
+    isc.OBSearchItem.openedWindow = OB.Layout.ClassicOBCompatibility.Popup.open('SELECTOR', width, height, OB.Utilities.applicationUrl(url) + ((auxField === '') ? '' : '?' + auxField), '', window, true, true, true, null, true);
     if (isc.OBSearchItem.openedWindow) {
+      isc.OBSearchItem.openedWindow.name = 'SELECTOR';
       isc.OBSearchItem.openedWindow.focus();
       this.setUnloadEventHandling();
     }

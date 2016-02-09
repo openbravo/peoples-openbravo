@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2013 Openbravo SLU
+ * All portions are Copyright (C) 2010-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -20,11 +20,14 @@ package org.openbravo.erpCommon.ad_forms;
 
 import java.math.BigDecimal;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.invoice.Invoice;
 
-public class DocLine_FINFinAccTransaction extends DocLineCashVATReady_PaymentTransactionReconciliation {
+public class DocLine_FINFinAccTransaction extends
+    DocLineCashVATReady_PaymentTransactionReconciliation {
   static Logger log4jDocLine_FINFinAccTransaction = Logger
       .getLogger(DocLine_FINFinAccTransaction.class);
 
@@ -37,7 +40,10 @@ public class DocLine_FINFinAccTransaction extends DocLineCashVATReady_PaymentTra
   String WriteOffAmt = "";
   boolean isPrepaymentAgainstInvoice = false;
   BigDecimal doubtFulDebtAmount = BigDecimal.ZERO;
+
+  @Deprecated
   Invoice invoice = null;
+  private String invoiceId;
 
   public String getcGlItemId() {
     return cGlItemId;
@@ -48,18 +54,35 @@ public class DocLine_FINFinAccTransaction extends DocLineCashVATReady_PaymentTra
   }
 
   public Invoice getInvoice() {
-    return invoice;
+    if (invoice != null) {
+      return invoice;
+    } else if (StringUtils.isNotBlank(invoiceId)) {
+      try {
+        OBContext.setAdminMode(false);
+        return OBDal.getInstance().get(Invoice.class, invoiceId);
+      } finally {
+        OBContext.restorePreviousMode();
+      }
+    } else {
+      return null;
+    }
   }
 
+  /**
+   * @deprecated Use {@link #setInvoiceId(String)} instead, which avoids to store a object in memory
+   *             so we can control from outside when to flush and/or clear the session to avoid Out
+   *             Of Memory errors
+   */
   public void setInvoice(Invoice invoice) {
     this.invoice = invoice;
   }
 
-  @Deprecated
-  public String getInvoiceId() {
-    return invoice.getId();
-  }
-
+  /**
+   * @deprecated Use {@link #setInvoiceId(String)} instead, which avoids to store a object in memory
+   *             so we can control from outside when to flush and/or clear the session to avoid Out
+   *             Of Memory errors
+   * 
+   */
   @Deprecated
   public void setInvoice_ID(String invoiceId) {
     this.invoice = OBDal.getInstance().get(Invoice.class, invoiceId);
@@ -191,6 +214,14 @@ public class DocLine_FINFinAccTransaction extends DocLineCashVATReady_PaymentTra
 
   public void setDoubtFulDebtAmount(BigDecimal doubtFulDebtAmount) {
     this.doubtFulDebtAmount = doubtFulDebtAmount;
+  }
+
+  public String getInvoiceId() {
+    return invoiceId;
+  }
+
+  public void setInvoiceId(String invoiceId) {
+    this.invoiceId = invoiceId;
   }
 
   public DocLine_FINFinAccTransaction(String DocumentType, String TrxHeader_ID, String TrxLine_ID) {

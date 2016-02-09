@@ -1378,6 +1378,8 @@ isc.OBStandardView.addProperties({
     if (!this.isShowingForm) {
       if (!this.viewForm.getDataSource()) {
         this.prepareViewForm();
+      } else {
+        this.viewForm.updateAlwaysTakeSpaceInSections();
       }
       if (this.treeGrid) {
         if (this.isShowingTree) {
