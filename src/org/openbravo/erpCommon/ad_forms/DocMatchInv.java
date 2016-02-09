@@ -66,8 +66,8 @@ public class DocMatchInv extends AcctServer {
     super(AD_Client_ID, AD_Org_ID, connectionProvider);
   }
 
-  public void loadObjectFieldProvider(ConnectionProvider conn,
-      @SuppressWarnings("hiding") String AD_Client_ID, String Id) throws ServletException {
+  public void loadObjectFieldProvider(ConnectionProvider conn, @SuppressWarnings("hiding")
+  String AD_Client_ID, String Id) throws ServletException {
     setObjectFieldProvider(DocMatchInvData.selectRegistro(conn, AD_Client_ID, Id));
   }
 
@@ -399,27 +399,30 @@ public class DocMatchInv extends AcctServer {
     }
     updateProductInfo(as.getC_AcctSchema_ID(), conn, con); // only API
 
-    BigDecimal bdExpensesCostCurrency = convertAmount(bdExpenses,
-        strIsSOTrx.equalsIgnoreCase("Y") ? true : false, DateAcct, TABLEID_Invoice, strRecordId,
-        strInvoiceCurrency, costCurrency.getId(), docLine, as, fact, Fact_Acct_Group_ID, SeqNo,
-        conn, false);
-    bdExpensesCostCurrency = new BigDecimal(getConvertedAmt(bdExpensesCostCurrency.toString(),
-        strInvoiceCurrency, costCurrency.getId(), DateAcct, "", vars.getClient(), vars.getOrg(),
-        conn));
+    bdExpenses = convertAmount(bdExpenses, strIsSOTrx.equalsIgnoreCase("Y") ? true : false,
+        DateAcct, TABLEID_Invoice, strRecordId, strInvoiceCurrency, as.m_C_Currency_ID, docLine,
+        as, fact, Fact_Acct_Group_ID, SeqNo, conn, false);
 
-    BigDecimal bdDifferenceCostCurrency = bdExpensesCostCurrency.subtract(bdCost);
-    if (bdDifferenceCostCurrency.signum() != 0) {
+    BigDecimal bdExpensesAcctCurrency = new BigDecimal(
+        getConvertedAmt(bdExpenses.toString(), strInvoiceCurrency, as.m_C_Currency_ID, DateAcct,
+            "", vars.getClient(), vars.getOrg(), conn));
+    // Calculate Difference amount in schema currency
+    bdCost = new BigDecimal(getConvertedAmt(bdCost.toString(), costCurrency.getId(),
+        as.m_C_Currency_ID, strReceiptDate, "", vars.getClient(), vars.getOrg(), conn));
+    BigDecimal bdDifference = bdExpensesAcctCurrency.subtract(bdCost);
+    if (bdDifference.signum() != 0) {
       BigDecimal totalDiffLines = BigDecimal.ZERO;
       for (int i = 0; i < p_inOutlines.length; i++) {
         DocLine_Material line = (DocLine_Material) p_inOutlines[i];
-        BigDecimal lineAmount = bdDifferenceCostCurrency.multiply(new BigDecimal(line.m_qty))
-            .divide(new BigDecimal(data[0].getField("MOVEMENTQTY")),
-                costCurrency.getStandardPrecision().intValue(), BigDecimal.ROUND_HALF_UP);
+        BigDecimal lineAmount = bdDifference.multiply(new BigDecimal(line.m_qty)).divide(
+            new BigDecimal(data[0].getField("MOVEMENTQTY")),
+            OBDal.getInstance().get(Currency.class, as.m_C_Currency_ID).getStandardPrecision()
+                .intValue(), BigDecimal.ROUND_HALF_UP);
         if (i == p_inOutlines.length - 1) {
-          lineAmount = bdDifferenceCostCurrency.subtract(totalDiffLines);
+          lineAmount = bdDifference.subtract(totalDiffLines);
         }
         diff = fact.createLine(line, p.getAccount(ProductInfo.ACCTTYPE_P_IPV, as, conn),
-            costCurrency.getId(), (lineAmount.compareTo(BigDecimal.ZERO) == 1) ? lineAmount.abs()
+            as.m_C_Currency_ID, (lineAmount.compareTo(BigDecimal.ZERO) == 1) ? lineAmount.abs()
                 .toString() : "0", (lineAmount.compareTo(BigDecimal.ZERO) < 1) ? lineAmount.abs()
                 .toString() : "0", Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
         totalDiffLines = totalDiffLines.add(lineAmount);
