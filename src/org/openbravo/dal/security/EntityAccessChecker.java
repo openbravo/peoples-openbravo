@@ -70,6 +70,7 @@ public class EntityAccessChecker implements OBNotSingleton {
   private static final Logger log = Logger.getLogger(EntityAccessChecker.class);
 
   private static final Object BUTTON_REFERENCE = "28";
+  private static final Object SELECTOR_REFERENCE = "95E2A8B50A254B2AAE6774B8C2F28120";
 
   // Table Access Level:
   // "6";"System/Client"
@@ -199,18 +200,32 @@ public class EntityAccessChecker implements OBNotSingleton {
         if (table == null) {
           continue;
         }
+        // Processes invoked from selectors
         for (org.openbravo.base.model.Column col : table.getColumns()) {
-          if (!BUTTON_REFERENCE.equals(col.getReference().getId())) {
-            continue;
+          if (SELECTOR_REFERENCE.equals(col.getReference().getId())) {
+            Reference ref = OBDal.getInstance().get(Reference.class,
+                col.getReferenceValue().getId());
+            if (ref != null) {
+              // max one defined selector per reference
+              Selector selector = ref.getOBUISELSelectorList().get(0);
+              if (selector != null) {
+                Process process = selector.getProcessDefintion();
+                if (process != null) {
+                  addDerivedEtityFromProcess(process);
+                }
+              }
+            }
+            // Processes invoked from buttons
+          } else if (BUTTON_REFERENCE.equals(col.getReference().getId())) {
+            Process process = OBDal.getInstance().get(Column.class, col.getId())
+                .getOBUIAPPProcess();
+            if (process == null) {
+              continue;
+            }
+            addDerivedEtityFromProcess(process);
           }
-          Process process = OBDal.getInstance().get(Column.class, col.getId()).getOBUIAPPProcess();
-          if (process == null) {
-            continue;
-          }
-          addDerivedEtityFromProcess(process);
         }
       }
-
       // and take into account explicit process access
       final String processAccessQryStr = "select p from " + ProcessAccess.class.getName()
           + " p where p.role.id='" + getRoleId() + "'";
