@@ -179,14 +179,16 @@ enyo.kind({
     }
   },
   addSideButton: function (btncomponent) {
-    var btnIndex = -1;
-    _.find(OB.OBPOSPointOfSale.UI.PaymentMethods.prototype.sideButtons, function (button, index) {
-      if (_.isEqual(button.btn.command, btncomponent.btn.command)) {
-        btnIndex = index;
-        return;
+    var hasSideButton = false,
+        sideButtons = OB.OBPOSPointOfSale.UI.PaymentMethods.prototype.sideButtons,
+        i;
+    for (i = 0; i < sideButtons.length; i++) {
+      if (_.isEqual(sideButtons[i].btn.command, btncomponent.btn.command)) {
+        hasSideButton = true;
+        break;
       }
-    });
-    if (btnIndex < 0) {
+    }
+    if (!hasSideButton) {
       OB.OBPOSPointOfSale.UI.PaymentMethods.prototype.sideButtons.push(btncomponent);
     }
   },
