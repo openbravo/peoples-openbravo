@@ -395,7 +395,7 @@ enyo.kind({
           columns: ['ispack'],
           operator: 'equals',
           value: false,
-          isId: true
+          fieldType: 'forceString'
         });
       } else {
         criteria.productType = 'S';
