@@ -98,14 +98,23 @@ enyo.kind({
         }
         me.doCloseLeftSubWindow();
       } else {
-        me.doAddProduct({
-          attrs: attrs,
-          options: {
-            line: line,
-            blockAddProduct: true
-          },
-          product: product,
-          ignoreStockTab: true
+        OB.UTIL.HookManager.executeHooks('OBPOS_PreTapStockAddReceipt', {
+          context: me,
+          params: attrs,
+          line: line
+        }, function (args) {
+          if (args && args.cancelOperation && args.cancelOperation === true) {
+            return;
+          }
+          me.doAddProduct({
+            attrs: attrs,
+            options: {
+              line: line,
+              blockAddProduct: true
+            },
+            product: product,
+            ignoreStockTab: true
+          });
         });
       }
     }
