@@ -72,6 +72,14 @@
     caption: 'OBPOS_LblTaxId',
     location: false
   }, {
+    name: 'postalCode',
+    column: 'loc.postalCode',
+    serverColumn: 'bpl.locationAddress.postalCode',
+    filter: true,
+    type: 'TEXT',
+    caption: 'OBPOS_LblPostalCode',
+    location: true
+  }, {
     name: 'phone',
     column: 'bp.phone',
     serverColumn: 'ulist.phone',
@@ -88,6 +96,14 @@
     caption: 'OBPOS_LblEmail',
     location: false
   }, {
+    name: 'cityName',
+    column: 'loc.cityName',
+    serverColumn: 'bpl.locationAddress.cityName',
+    filter: true,
+    type: 'TEXT',
+    caption: 'OBPOS_LblCity',
+    location: true
+  }, {
     name: 'bpLocactionId',
     column: 'loc.c_bpartner_location_id',
     filter: false,
@@ -100,22 +116,6 @@
     filter: true,
     type: 'TEXT',
     caption: 'OBPOS_LblAddress',
-    location: true
-  }, {
-    name: 'postalCode',
-    column: 'loc.postalCode',
-    serverColumn: 'bpl.locationAddress.postalCode',
-    filter: true,
-    type: 'TEXT',
-    caption: 'OBPOS_LblPostalCode',
-    location: true
-  }, {
-    name: 'cityName',
-    column: 'loc.cityName',
-    serverColumn: 'bpl.locationAddress.cityName',
-    filter: true,
-    type: 'TEXT',
-    caption: 'OBPOS_LblCity',
     location: true
   }, {
     name: 'isBillTo',

@@ -158,7 +158,8 @@ enyo.kind({
     modelProperty: 'lastName',
     isFirstFocus: true,
     i18nLabel: 'OBPOS_LblLastName',
-    maxlength: 60
+    maxlength: 60,
+    mandatory: true
   }, {
     kind: 'OB.UI.CustomerComboProperty',
     name: 'customerCategory',
@@ -355,6 +356,7 @@ enyo.kind({
     i18nLabel: 'OBPOS_LblAddress',
     hasAddrIcons: true,
     maxlength: 60,
+    mandatory: true,
     hideShow: function (inSender, inEvent) {
       if (inEvent.checked) {
         this.owner.removeClass('width52');
@@ -447,6 +449,7 @@ enyo.kind({
     modelProperty: 'locName',
     i18nLabel: 'OBPOS_LblAddress',
     maxlength: 60,
+    mandatory: true,
     hasAddrIcons: true,
     hideShow: function (inSender, inEvent) {
       if (inEvent.checked) {

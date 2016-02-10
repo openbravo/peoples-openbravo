@@ -41,6 +41,9 @@ enyo.kind({
     this.inherited(arguments);
     this.$.newAttribute.createComponent(this.newAttribute);
     this.$.labelLine.content = this.newAttribute.i18nLabel ? OB.I18N.getLabel(this.newAttribute.i18nLabel) : this.newAttribute.label;
+    if (this.newAttribute.mandatory) {
+      this.$.labelLine.content = this.$.labelLine.content + ' *';
+    }
   }
 });
 
