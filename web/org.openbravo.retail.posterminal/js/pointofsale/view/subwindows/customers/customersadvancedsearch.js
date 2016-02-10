@@ -367,6 +367,7 @@ enyo.kind({
       }
       if (dataBps && dataBps.length > 0) {
         me.bpsList.add(dataBps.models);
+        me.bpsList.trigger('reset');
         me.$.stBPAdvSearch.$.tbody.show();
       }
     }
