@@ -145,7 +145,7 @@ enyo.kind({
       if (orderClass !== 'iconSortNone') {
         result.orderby = {
           name: flt.filter.name,
-          column: flt.filter.serverColumn,
+          column: OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true) ? flt.filter.serverColumn : flt.filter.column,
           direction: orderClass === 'iconSortAsc' ? 'asc' : 'desc',
           isLocationFilter: flt.filter.location,
           isDate: flt.filter.isDate
