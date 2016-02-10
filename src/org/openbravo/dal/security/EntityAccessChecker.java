@@ -213,7 +213,7 @@ public class EntityAccessChecker implements OBNotSingleton {
               if (selector != null) {
                 Process process = selector.getProcessDefintion();
                 if (process != null) {
-                  addDerivedEtityFromProcess(process);
+                  addDerivedEntitiesFromProcess(process);
                 }
               }
             }
@@ -224,7 +224,7 @@ public class EntityAccessChecker implements OBNotSingleton {
             if (process == null) {
               continue;
             }
-            addDerivedEtityFromProcess(process);
+            addDerivedEntitiesFromProcess(process);
           }
         }
       }
@@ -235,7 +235,7 @@ public class EntityAccessChecker implements OBNotSingleton {
       final List<ProcessAccess> processAccessQuery = SessionHandler.getInstance()
           .createQuery(processAccessQryStr).list();
       for (final ProcessAccess processAccess : processAccessQuery) {
-        addDerivedEtityFromProcess(processAccess.getObuiappProcess());
+        addDerivedEntitiesFromProcess(processAccess.getObuiappProcess());
       }
 
       isInitialized = true;
@@ -517,12 +517,12 @@ public class EntityAccessChecker implements OBNotSingleton {
     return writableEntities.contains(entity);
   }
 
-  private void addDerivedEtityFromProcess(Process process) {
+  private void addDerivedEntitiesFromProcess(Process process) {
     final ModelProvider mp = ModelProvider.getInstance();
     for (Parameter param : process.getOBUIAPPParameterList()) {
       Reference ref = param.getReferenceSearchKey();
       if (ref != null) {
-        // RefWindows are checked and added to Readable and writable Entities
+        // RefWindows are checked and added to readable and writable Entities
         for (RefWindow refWindow : ref.getOBUIAPPRefWindowList()) {
           final Window window = refWindow.getWindow();
           for (Tab tab : window.getADTabList()) {
