@@ -36,6 +36,7 @@ import org.openbravo.base.provider.OBNotSingleton;
 import org.openbravo.client.application.Parameter;
 import org.openbravo.client.application.Process;
 import org.openbravo.client.application.ProcessAccess;
+import org.openbravo.client.application.RefWindow;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.service.OBDal;
@@ -43,6 +44,7 @@ import org.openbravo.model.ad.access.TableAccess;
 import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.ad.domain.Reference;
 import org.openbravo.model.ad.ui.Tab;
+import org.openbravo.model.ad.ui.Window;
 import org.openbravo.userinterface.selector.Selector;
 
 /**
@@ -517,10 +519,23 @@ public class EntityAccessChecker implements OBNotSingleton {
 
   private void addDerivedEtityFromProcess(Process process) {
     final ModelProvider mp = ModelProvider.getInstance();
-    // any selector in a process definition is checked
     for (Parameter param : process.getOBUIAPPParameterList()) {
       Reference ref = param.getReferenceSearchKey();
       if (ref != null) {
+        // RefWindows are checked and added to Readable and writable Entities
+        for (RefWindow refWindow : ref.getOBUIAPPRefWindowList()) {
+          final Window window = refWindow.getWindow();
+          for (Tab tab : window.getADTabList()) {
+            final String tableNameWindow = tab.getTable().getName();
+            final Entity derivedEntity = mp.getEntity(tableNameWindow);
+            if (!writableEntities.contains(derivedEntity)
+                && !readableEntities.contains(derivedEntity)
+                && !nonReadableEntities.contains(derivedEntity)) {
+              readableEntities.add(derivedEntity);
+              writableEntities.add(derivedEntity);
+            }
+          }
+        }
         for (Selector sel : ref.getOBUISELSelectorList()) {
           // obtain entity from selector and added to derivedReadableEntities to take into
           // account as a derived entity.
