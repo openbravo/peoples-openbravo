@@ -582,17 +582,19 @@ enyo.kind({
         permission: 'OBPOS_retail.editCustomers'
       });
     }
-    if (bpLoc.get('isShipTo')) {
-      menuOptions.push({
-        kind: 'OB.UI.BPLocAssignToReceiptShippingContextMenuItem',
-        permission: 'OBPOS_retail.editCustomers'
-      });
-    }
-    if (bpLoc.get('isBillTo')) {
-      menuOptions.push({
-        kind: 'OB.UI.BPLocAssignToReceiptInvoicingContextMenuItem',
-        permission: 'OBPOS_retail.editCustomers'
-      });
+    if (!bpLoc.get('onlyOneAddress') || !(bpLoc.get('isBillTo') && bpLoc.get('isShipTo'))) {
+      if (bpLoc.get('isShipTo')) {
+        menuOptions.push({
+          kind: 'OB.UI.BPLocAssignToReceiptShippingContextMenuItem',
+          permission: 'OBPOS_retail.editCustomers'
+        });
+      }
+      if (bpLoc.get('isBillTo')) {
+        menuOptions.push({
+          kind: 'OB.UI.BPLocAssignToReceiptInvoicingContextMenuItem',
+          permission: 'OBPOS_retail.editCustomers'
+        });
+      }
     }
 
     menuOptions = menuOptions.concat(extraOptions);
@@ -673,7 +675,8 @@ enyo.kind({
   published: {
     bPartner: null,
     manageAddress: false,
-    target: 'order'
+    target: 'order',
+    initialLoad: true
   },
   handlers: {
     onSearchAction: 'searchAction',
@@ -715,6 +718,13 @@ enyo.kind({
 
     function successCallbackBPsLoc(dataBps) {
       if (dataBps && dataBps.length > 0) {
+        if (me.initialLoad) {
+          me.initialLoad = false;
+          me.onlyOneAddress = dataBps.length === 1;
+        }
+        _.each(dataBps.models, function (bp) {
+          bp.set('onlyOneAddress', me.onlyOneAddress);
+        });
         me.bpsList.reset(dataBps.models);
       } else {
         me.bpsList.reset();
@@ -815,6 +825,7 @@ enyo.kind({
     this.$.body.$.listBpsLoc.setManageAddress(this.args.manageAddress);
     this.$.body.$.listBpsLoc.setBPartner(this.bPartner);
     this.$.body.$.listBpsLoc.setTarget(this.args.target);
+    this.$.body.$.listBpsLoc.setInitialLoad(true);
     this.$.body.$.listBpsLoc.$.bpsloclistitemprinter.$.theader.$.modalBpLocScrollableHeader.searchAction();
     this.$.body.$.listBpsLoc.$.bpsloclistitemprinter.$.theader.$.modalBpLocScrollableHeader.$.newAction.putDisabled(!OB.MobileApp.model.hasPermission('OBPOS_retail.editCustomers'));
     return true;

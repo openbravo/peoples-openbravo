@@ -145,7 +145,9 @@ enyo.kind({
   },
   addressChanged: function (inSender, inEvent) {
     var customerAddr = inEvent.address;
-    if (customerAddr.get('isShipTo')) {
+    if (customerAddr.get('onlyOneAddress') && customerAddr.get('isBillTo') && customerAddr.get('isShipTo')) {
+      this.hide();
+    } else if (customerAddr.get('isShipTo')) {
       this.show();
     } else {
       this.hide();
@@ -182,7 +184,9 @@ enyo.kind({
   },
   addressChanged: function (inSender, inEvent) {
     var customerAddr = inEvent.address;
-    if (customerAddr.get('isBillTo')) {
+    if (customerAddr.get('onlyOneAddress') && customerAddr.get('isBillTo') && customerAddr.get('isShipTo')) {
+      this.hide();
+    } else if (customerAddr.get('isBillTo')) {
       this.show();
     } else {
       this.hide();

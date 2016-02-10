@@ -119,6 +119,7 @@ enyo.kind({
     }
 
     function goToViewWindow(sw, params) {
+      params.customerAddr.set('onlyOneAddress', me.customerAddr.get('onlyOneAddress'));
       sw.doChangeSubWindow({
         newWindow: {
           name: 'customerAddressView',
