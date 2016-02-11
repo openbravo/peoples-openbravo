@@ -365,8 +365,18 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
     }
     JSONArray services = new JSONArray();
     if (!server.isAllservices() && server.getOBMOBCSERVERSERVICESList().size() > 0) {
-      for (MobileServerService service : server.getOBMOBCSERVERSERVICESList()) {
-        services.put(service.getObmobcServices().getService());
+      if (server.getServiceSelection().equals("N")) {
+        for (MobileServerService service : server.getOBMOBCSERVERSERVICESList()) {
+          services.put(service.getObmobcServices().getService());
+        }
+      } else if (server.getServiceSelection().equals("Y")) {
+        String hql = "select srvc.service from OBMOBC_SERVICES as srvc where not exists (select 1 from OBMOBC_SERVER_SERVICES where srvc.id=obmobcServices.id and obmobcServerDefinition.id = ?)";
+        Query queryServices = OBDal.getInstance().getSession().createQuery(hql);
+        queryServices.setString(0, server.getId());
+
+        for (Object obj : queryServices.list()) {
+          services.put(obj);
+        }
       }
     }
     jsonObject.put("services", services);
