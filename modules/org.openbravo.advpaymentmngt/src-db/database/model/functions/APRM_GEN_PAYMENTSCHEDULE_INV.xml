@@ -1121,6 +1121,20 @@ BEGIN
       UPDATE C_BPARTNER
          SET SO_CREDITUSED = COALESCE(SO_CREDITUSED,0) - v_convertedAmount
       WHERE C_BPARTNER_ID = v_BPartner_ID;
+
+      -- Delete C_InvoiceTax_CashVAT records for this invoice
+      --  this only happens for prepayments, which are bypassed by the previous check
+      DELETE FROM C_InvoiceTax_CashVAT itcv
+      WHERE EXISTS (SELECT 1
+                    FROM C_InvoiceTax it
+                    WHERE it.C_InvoiceTax_ID = itcv.C_InvoiceTax_ID
+                    AND it.C_Invoice_ID = p_record_id
+                    )
+      AND EXISTS (SELECT 1
+                  FROM FIN_Payment_Detail fpd
+                  WHERE fpd.FIN_Payment_Detail_ID = itcv.FIN_Payment_Detail_ID
+                  AND fpd.IsPrepayment = 'Y')
+      AND itcv.IsManualSettlement = 'N';
     END;
 
   ELSIF (p_docaction = 'RC') THEN
