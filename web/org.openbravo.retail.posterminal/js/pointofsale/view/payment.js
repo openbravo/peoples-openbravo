@@ -505,16 +505,26 @@ enyo.kind({
   },
 
   checkEnoughCashAvailable: function (paymentstatus, selectedPayment, scope, callback) {
-    var requiredCash, hasEnoughCash, hasAllEnoughCash = true;
+    var requiredCash, hasEnoughCash, hasAllEnoughCash = true,
+        reversePaymentsCash = OB.DEC.Zero;
     // Check slave cash 
     this.checkSlaveCashAvailable(selectedPayment, this, function (currentCash) {
+      if (paymentstatus.isReversal) {
+        paymentstatus.payments.each(function (payment) {
+          var paymentmethod = OB.POS.terminal.terminal.paymentnames[payment.get('kind')];
+          if (!payment.get('isPrePayment') && paymentmethod.paymentMethod.iscash) {
+            reversePaymentsCash = OB.DEC.sub(reversePaymentsCash, payment.get('origAmount'));
+          }
+        });
+      }
       if (OB.UTIL.isNullOrUndefined(selectedPayment) || !selectedPayment.paymentMethod.iscash) {
-        requiredCash = OB.DEC.Zero;
-      } else if (!_.isUndefined(paymentstatus) && (paymentstatus.isNegative || paymentstatus.isReversal)) {
-        requiredCash = paymentstatus.pendingAmt;
+        requiredCash = reversePaymentsCash;
+      } else if (!_.isUndefined(paymentstatus) && (paymentstatus.isNegative)) {
+        reversePaymentsCash = OB.DEC.sub(OB.DEC.Zero, reversePaymentsCash);
+        requiredCash = OB.DEC.add(reversePaymentsCash, paymentstatus.pendingAmt);
         paymentstatus.payments.each(function (payment) {
           var paymentmethod;
-          if (payment.get('kind') === selectedPayment.payment.searchKey) {
+          if (payment.get('kind') === selectedPayment.payment.searchKey && !payment.get('isPrePayment') && !payment.get('reversedPaymentId')) {
             requiredCash = OB.DEC.add(requiredCash, payment.get('origAmount'));
           } else {
             paymentmethod = OB.POS.terminal.terminal.paymentnames[payment.get('kind')];
@@ -524,7 +534,7 @@ enyo.kind({
           }
         });
       } else if (!_.isUndefined(paymentstatus)) {
-        requiredCash = paymentstatus.changeAmt;
+        requiredCash = OB.DEC.sub(OB.DEC.add(reversePaymentsCash, paymentstatus.changeAmt), paymentstatus.pendingAmt);
       }
 
       if (!_.isUndefined(requiredCash) && requiredCash === 0) {
@@ -534,6 +544,38 @@ enyo.kind({
       }
 
       if (hasEnoughCash && hasAllEnoughCash) {
+        return callback.call(scope, true);
+      } else {
+        return callback.call(scope, false); // check failed.
+      }
+    });
+  },
+
+  checkEnoughCashAvailableforLayaway: function (paymentstatus, selectedPayment, scope, callback) {
+    var requiredCash, hasEnoughCash, reversePaymentsCash = OB.DEC.Zero;
+    // Check slave cash 
+    this.checkSlaveCashAvailable(selectedPayment, this, function (currentCash) {
+      if (paymentstatus.isReversal) {
+        paymentstatus.payments.each(function (payment) {
+          var paymentmethod = OB.POS.terminal.terminal.paymentnames[payment.get('kind')];
+          if (!payment.get('isPrePayment') && paymentmethod.paymentMethod.iscash) {
+            reversePaymentsCash = OB.DEC.sub(reversePaymentsCash, payment.get('origAmount'));
+          }
+        });
+      }
+      if (OB.UTIL.isNullOrUndefined(selectedPayment) || !selectedPayment.paymentMethod.iscash) {
+        requiredCash = reversePaymentsCash;
+      } else if (!_.isUndefined(paymentstatus)) {
+        requiredCash = OB.DEC.add(reversePaymentsCash, paymentstatus.changeAmt);
+      }
+
+      if (!_.isUndefined(requiredCash) && requiredCash === 0) {
+        hasEnoughCash = true;
+      } else if (!_.isUndefined(requiredCash)) {
+        hasEnoughCash = OB.DEC.compare(OB.DEC.sub(currentCash, requiredCash)) >= 0;
+      }
+
+      if (hasEnoughCash) {
         return callback.call(scope, true);
       } else {
         return callback.call(scope, false); // check failed.
@@ -643,6 +685,9 @@ enyo.kind({
           }
           me.receipt.stopAddingPayments = !_.isEmpty(me.getShowingErrorMessages());
           this.setStatusButtons(lsuccess);
+          this.checkEnoughCashAvailableforLayaway(paymentstatus, selectedPayment, this, function (success) {
+            this.setStatusLayawayButton(success);
+          });
         });
       } else if (!this.receipt.stopAddingPayments) {
         this.$.donebutton.setLocalDisabled(false);
@@ -653,6 +698,10 @@ enyo.kind({
       me.receipt.stopAddingPayments = !_.isEmpty(me.getShowingErrorMessages());
       // Finally set status of buttons
       this.setStatusButtons(resultOK);
+      this.setStatusLayawayButton(resultOK);
+    }
+    if (resultOK) {
+      this.$.noenoughchangelbl.hide();
     }
     this.alignErrorMessages();
   },
@@ -786,6 +835,14 @@ enyo.kind({
       }
       this.$.donebutton.setLocalDisabled(true);
       this.$.exactbutton.setLocalDisabled(true);
+    }
+  },
+
+  setStatusLayawayButton: function (resultOK) {
+    if (resultOK) {
+      this.$.layawayaction.setLocalDisabled(false);
+    } else {
+      this.$.layawayaction.setLocalDisabled(true);
     }
   },
 
