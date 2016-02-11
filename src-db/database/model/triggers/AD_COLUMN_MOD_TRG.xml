@@ -3,6 +3,7 @@
     <trigger name="AD_COLUMN_MOD_TRG" table="AD_COLUMN" fires="before" insert="true" update="true" delete="true" foreach="row">
       <body><![CDATA[
 
+
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
@@ -15,7 +16,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2008-2012 Openbravo SLU
+* All portions are Copyright (C) 2008-2016 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -111,9 +112,6 @@ BEGIN
         COALESCE(:NEW.imagewidth , 1) != COALESCE(:OLD.imagewidth , 1) OR
         COALESCE(:NEW.imageheight , 1) != COALESCE(:OLD.imageheight , 1) OR
         COALESCE(:NEW.isusedsequence , '.') != COALESCE(:OLD.isusedsequence , '.') OR
-        COALESCE(:NEW.fileextensions , '.') != COALESCE(:OLD.fileextensions , '.') OR
-        COALESCE(:NEW.filemaxsize , 0) != COALESCE(:OLD.filemaxsize , 0) OR
-        COALESCE(:NEW.filemaxsizeunit , '.') != COALESCE(:OLD.filemaxsizeunit , '.') OR
         1=2) THEN
       RAISE_APPLICATION_ERROR(-20000, '@20532@');
     END IF;
@@ -180,9 +178,6 @@ BEGIN
         COALESCE(:NEW.imagewidth                 , 1 ) = COALESCE(:OLD.imagewidth                 , 1 )AND
         COALESCE(:NEW.imageheight                , 1 ) = COALESCE(:OLD.imageheight                , 1 )AND
         COALESCE(:NEW.isusedsequence             ,'.') = COALESCE(:OLD.isusedsequence             ,'.')AND
-        COALESCE(:NEW.fileextensions, '.') = COALESCE(:OLD.fileextensions, '.') AND
-        COALESCE(:NEW.filemaxsize, 0) = COALESCE(:OLD.filemaxsize, 0) AND
-        COALESCE(:NEW.filemaxsizeunit, '.') = COALESCE(:OLD.filemaxsizeunit, '.') AND
         COALESCE(:OLD.ISEXCLUDEAUDIT		,'.') != COALESCE(:NEW.ISEXCLUDEAUDIT		,'.')) THEN
       
 		:NEW.UPDATED := :OLD.UPDATED;
