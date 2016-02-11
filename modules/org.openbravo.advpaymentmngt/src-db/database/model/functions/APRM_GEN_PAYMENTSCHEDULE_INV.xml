@@ -1070,6 +1070,20 @@ BEGIN
       IF (v_count <> 0) THEN
         RAISE_APPLICATION_ERROR(-20000, '@APRM_InvoiceWithPayments@' || ' ' || v_documentno);
       END IF;
+
+      SELECT count(*)
+      INTO v_count
+      FROM DUAL
+      WHERE EXISTS (SELECT 1
+                    FROM C_InvoiceTax_CashVAT itcv
+                    INNER JOIN C_InvoiceTax it on (it.C_InvoiceTax_ID = itcv.C_InvoiceTax_ID)
+                    WHERE it.C_Invoice_ID = p_record_id
+                    AND itcv.IsManualSettlement = 'Y'
+                    );
+      IF (v_count > 0) THEN
+        RAISE_APPLICATION_ERROR(-20000, '@APRM_InvoiceWithManualCashVATSettlement@');
+      END IF;
+
       SELECT count(*), max(p.documentno)
         INTO v_count, v_documentno
       FROM fin_payment_schedule ps, fin_payment_scheduledetail psd, fin_payment_prop_detail pd, fin_payment_proposal p
