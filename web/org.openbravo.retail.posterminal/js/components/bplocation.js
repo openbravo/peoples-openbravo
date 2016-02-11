@@ -379,7 +379,9 @@ enyo.kind({
       params: {
         businessPartner: contextMenu.bPartner,
         bPLocation: bploc,
-        navigateOnClose: 'mainSubWindow'
+        navigateOnClose: contextMenu.owner.locId === 'locId' ? 'modalcustomeraddress' : 'modalcustomershipaddress',
+        navigateType: 'modal',
+        target: contextMenu.dialog.target
       }
     });
     return true;
@@ -406,7 +408,9 @@ enyo.kind({
       params: {
         businessPartner: contextMenu.bPartner,
         bPLocation: bploc,
-        navigateOnClose: 'mainSubWindow'
+        navigateOnClose: contextMenu.owner.locId === 'locId' ? 'modalcustomeraddress' : 'modalcustomershipaddress',
+        navigateType: 'modal',
+        target: contextMenu.dialog.target
       }
     });
     return true;
@@ -845,7 +849,7 @@ enyo.kind({
     function successCallbackBPsLoc(dataBps) {
       if (dataBps && dataBps.length > 1) {
         me.$.header.setContent(OB.I18N.getLabel('OBPOS_LblAssignCustomerBillAddress'));
-      } else if (dataBps.models[0].get('isBillTo') && dataBps.models[0].get('isShipTo')) {
+      } else if (dataBps.models[0] && dataBps.models[0].get('isBillTo') && dataBps.models[0].get('isShipTo')) {
         me.$.header.setContent(OB.I18N.getLabel('OBPOS_LblAssignCustomerAddress'));
       } else {
         me.$.header.setContent(OB.I18N.getLabel('OBPOS_LblAssignCustomerBillAddress'));

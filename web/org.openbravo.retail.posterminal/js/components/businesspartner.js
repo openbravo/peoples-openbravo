@@ -249,12 +249,15 @@ enyo.kind({
     bpartner.set('ignoreSetBP', true, {
       silent: true
     });
+    var target = this.owner.owner.dialog.target;
     OB.Dal.get(OB.Model.BusinessPartner, bpartner.get('bpartnerId'), function (bp) {
       OB.MobileApp.view.$.containerWindow.getRoot().model.attributes.subWindowManager.set('currentWindow', {
         name: 'customerView',
         params: {
           businessPartner: bp,
-          navigateOnClose: 'mainSubWindow'
+          navigateOnClose: 'modalcustomer',
+          navigateType: 'modal',
+          target: target
         }
       });
     });
@@ -274,12 +277,15 @@ enyo.kind({
     bpartner.set('ignoreSetBP', true, {
       silent: true
     });
+    var target = this.owner.owner.dialog.target;
     OB.Dal.get(OB.Model.BusinessPartner, bpartner.get('bpartnerId'), function (bp) {
       OB.MobileApp.view.$.containerWindow.getRoot().model.attributes.subWindowManager.set('currentWindow', {
         name: 'customerCreateAndEdit',
         params: {
           businessPartner: bp,
-          navigateOnClose: 'mainSubWindow'
+          navigateOnClose: 'modalcustomer',
+          navigateType: 'modal',
+          target: target
         }
       });
     });

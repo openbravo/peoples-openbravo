@@ -326,15 +326,31 @@ enyo.kind({
     }
 
     function goToViewWindow(sw, params) {
-      sw.doChangeSubWindow({
-        newWindow: {
-          name: 'customerView',
-          params: {
-            navigateOnClose: 'mainSubWindow',
-            businessPartner: params.customer
+      if (sw.params.navigateType === 'modal' && !sw.params.navigateOnCloseParent) {
+        sw.doChangeSubWindow({
+          newWindow: {
+            name: 'mainSubWindow'
           }
-        }
-      });
+        });
+        sw.doShowPopup({
+          popup: sw.params.navigateOnClose,
+          args: {
+            target: sw.params.target
+          }
+        });
+      } else {
+        sw.doChangeSubWindow({
+          newWindow: {
+            name: 'customerView',
+            params: {
+              businessPartner: params.customer,
+              navigateOnClose: sw.params.navigateType === 'modal' ? sw.params.navigateOnCloseParent : 'mainSubWindow',
+              navigateType: sw.params.navigateType,
+              target: sw.params.target
+            }
+          }
+        });
+      }
     }
 
     if (this.customer === undefined) {

@@ -16,6 +16,7 @@ enyo.kind({
     onShowPopup: ''
   },
   beforeSetShowing: function (params) {
+    this.params = params;
     this.waterfall('onSetCustomer', {
       customer: params.businessPartner
     });
@@ -26,15 +27,30 @@ enyo.kind({
     kind: 'OB.UI.SubwindowHeader',
     i18nHeaderMessage: 'OBPOS_TitleViewCustomer',
     onTapCloseButton: function () {
-      var subWindow = this.subWindow;
-      subWindow.doChangeSubWindow({
-        newWindow: {
-          name: subWindow.navigateOnClose,
-          params: {
-            navigateOnClose: 'mainSubWindow'
+      var subWindow = this.subWindow,
+          params = this.owner.owner.owner.params;
+      if (params.navigateType === 'modal') {
+        subWindow.doChangeSubWindow({
+          newWindow: {
+            name: 'mainSubWindow'
           }
-        }
-      });
+        });
+        this.owner.owner.owner.doShowPopup({
+          popup: params.navigateOnClose,
+          args: {
+            target: params.target
+          }
+        });
+      } else {
+        subWindow.doChangeSubWindow({
+          newWindow: {
+            name: subWindow.navigateOnClose,
+            params: {
+              navigateOnClose: 'mainSubWindow'
+            }
+          }
+        });
+      }
     }
   },
   body: {
@@ -42,8 +58,6 @@ enyo.kind({
   }
 });
 
-
-/**/
 enyo.kind({
   kind: 'OB.UI.Button',
   name: 'OB.OBPOSPointOfSale.UI.customers.assigncustomertoticket',
@@ -85,7 +99,6 @@ enyo.kind({
   }
 });
 
-/**/
 enyo.kind({
   kind: 'OB.UI.Button',
   name: 'OB.OBPOSPointOfSale.UI.customers.editnewaddress',
@@ -151,12 +164,16 @@ enyo.kind({
           },
           tap: function () {
             if (this.disabled === false) {
-              var sw = this.subWindow;
+              var sw = this.subWindow,
+                  params = this.owner.owner.owner.owner.owner.params;
               this.model.get('subWindowManager').set('currentWindow', {
                 name: 'customerCreateAndEdit',
                 params: {
                   businessPartner: this.customer,
-                  navigateOnClose: sw.getName()
+                  navigateOnClose: sw.getName(),
+                  navigateOnCloseParent: params.navigateOnClose,
+                  navigateType: params.navigateType,
+                  target: params.target
                 }
               });
             }

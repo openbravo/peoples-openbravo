@@ -120,16 +120,32 @@ enyo.kind({
 
     function goToViewWindow(sw, params) {
       params.customerAddr.set('onlyOneAddress', me.customerAddr.get('onlyOneAddress'));
-      sw.doChangeSubWindow({
-        newWindow: {
-          name: 'customerAddressView',
-          params: {
-            navigateOnClose: 'mainSubWindow',
-            businessPartner: params.customer,
-            bPLocation: params.customerAddr
+      if (sw.params.navigateType === 'modal' && !sw.params.navigateOnCloseParent) {
+        sw.doChangeSubWindow({
+          newWindow: {
+            name: 'mainSubWindow'
           }
-        }
-      });
+        });
+        sw.doShowPopup({
+          popup: sw.params.navigateOnClose,
+          args: {
+            target: sw.params.target
+          }
+        });
+      } else {
+        sw.doChangeSubWindow({
+          newWindow: {
+            name: 'customerAddressView',
+            params: {
+              businessPartner: params.customer,
+              bPLocation: params.customerAddr,
+              navigateOnClose: sw.params.navigateType === 'modal' ? sw.params.navigateOnCloseParent : 'mainSubWindow',
+              navigateType: sw.params.navigateType,
+              target: sw.params.target
+            }
+          }
+        });
+      }
     }
 
     if (this.customerAddr === undefined) {

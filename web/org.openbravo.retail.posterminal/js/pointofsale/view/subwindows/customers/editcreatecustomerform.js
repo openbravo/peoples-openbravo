@@ -15,8 +15,12 @@ enyo.kind({
   events: {
     onShowPopup: ''
   },
+  handlers: {
+    onCancelClose: 'cancelClose'
+  },
   beforeSetShowing: function (params) {
     if (OB.MobileApp.model.get('terminal').defaultbp_paymentmethod !== null && OB.MobileApp.model.get('terminal').defaultbp_bpcategory !== null && OB.MobileApp.model.get('terminal').defaultbp_paymentterm !== null && OB.MobileApp.model.get('terminal').defaultbp_invoiceterm !== null && OB.MobileApp.model.get('terminal').defaultbp_bpcountry !== null && OB.MobileApp.model.get('terminal').defaultbp_bporg !== null) {
+      this.params = params;
       this.waterfall('onSetCustomer', {
         customer: params.businessPartner
       });
@@ -47,24 +51,45 @@ enyo.kind({
     handlers: {
       onSetCustomer: 'setCustomer'
     },
+    events: {
+      onShowPopup: ''
+    },
     setCustomer: function (inSender, inEvent) {
       this.customer = inEvent.customer;
     },
     onTapCloseButton: function () {
-      var subWindow = this.subWindow;
-      if (subWindow.caller === 'mainSubWindow') {
-        subWindow.doChangeSubWindow({
+      this.bubble('onCancelClose');
+    }
+  },
+  cancelClose: function () {
+    if (this.params.navigateType === 'modal' && !this.params.navigateOnCloseParent) {
+      this.doChangeSubWindow({
+        newWindow: {
+          name: 'mainSubWindow'
+        }
+      });
+      this.doShowPopup({
+        popup: this.params.navigateOnClose,
+        args: {
+          target: this.params.target
+        }
+      });
+    } else {
+      if (this.caller === 'mainSubWindow') {
+        this.doChangeSubWindow({
           newWindow: {
-            name: subWindow.caller
+            name: this.caller
           }
         });
       } else {
-        subWindow.doChangeSubWindow({
+        this.doChangeSubWindow({
           newWindow: {
-            name: subWindow.caller,
+            name: this.caller,
             params: {
-              navigateOnClose: 'mainSubWindow',
-              businessPartner: (this.headerContainer && this.headerContainer.customer) ? this.headerContainer.customer : (this.customer ? this.customer : null)
+              navigateOnClose: this.params.navigateType === 'modal' ? this.params.navigateOnCloseParent : 'mainSubWindow',
+              businessPartner: this.params.businessPartner,
+              navigateType: this.params.navigateType,
+              target: this.params.target
             }
           }
         });
@@ -115,24 +140,7 @@ enyo.kind({
             this.customer = inEvent.customer;
           },
           tap: function () {
-            var subWindow = this.subWindow;
-            if (subWindow.caller === 'mainSubWindow') {
-              subWindow.doChangeSubWindow({
-                newWindow: {
-                  name: subWindow.caller
-                }
-              });
-            } else {
-              subWindow.doChangeSubWindow({
-                newWindow: {
-                  name: subWindow.caller,
-                  params: {
-                    navigateOnClose: 'mainSubWindow',
-                    businessPartner: this.customer
-                  }
-                }
-              });
-            }
+            this.bubble('onCancelClose');
           }
         }]
       }]

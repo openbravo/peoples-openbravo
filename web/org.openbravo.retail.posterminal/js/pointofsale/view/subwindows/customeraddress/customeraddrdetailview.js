@@ -18,6 +18,7 @@ enyo.kind({
     onShowPopup: ''
   },
   beforeSetShowing: function (params) {
+    this.params = params;
     this.waterfall('onAddressChanged', {
       address: params.bPLocation
     });
@@ -32,15 +33,31 @@ enyo.kind({
     kind: 'OB.UI.SubwindowHeader',
     i18nHeaderMessage: 'OBPOS_TitleViewCustomerAddress',
     onTapCloseButton: function () {
-      var subWindow = this.subWindow;
-      subWindow.doChangeSubWindow({
-        newWindow: {
-          name: subWindow.navigateOnClose,
-          params: {
-            navigateOnClose: 'mainSubWindow'
+      var subWindow = this.subWindow,
+          params = this.owner.owner.owner.params;
+      if (params.navigateType === 'modal') {
+        subWindow.doChangeSubWindow({
+          newWindow: {
+            name: 'mainSubWindow'
           }
-        }
-      });
+        });
+        this.owner.owner.owner.doShowPopup({
+          popup: params.navigateOnClose,
+          args: {
+            businessPartner: params.businessPartner,
+            target: params.target
+          }
+        });
+      } else {
+        subWindow.doChangeSubWindow({
+          newWindow: {
+            name: subWindow.navigateOnClose,
+            params: {
+              navigateOnClose: 'mainSubWindow'
+            }
+          }
+        });
+      }
     }
   },
   body: {
@@ -228,13 +245,17 @@ enyo.kind({
           },
           tap: function () {
             if (this.disabled === false) {
-              var sw = this.subWindow;
+              var sw = this.subWindow,
+                  params = this.owner.owner.owner.owner.owner.params;
               this.model.get('subWindowManager').set('currentWindow', {
                 name: 'customerAddrCreateAndEdit',
                 params: {
                   businessPartner: this.customer,
                   bPLocation: this.customerAddr,
-                  navigateOnClose: sw.getName()
+                  navigateOnClose: sw.getName(),
+                  navigateOnCloseParent: params.navigateOnClose,
+                  navigateType: params.navigateType,
+                  target: params.target
                 }
               });
             }
