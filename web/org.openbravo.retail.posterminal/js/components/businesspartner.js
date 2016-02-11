@@ -417,8 +417,8 @@ enyo.kind({
       this.$.bottomShipIcon.applyStyle('visibility', 'visible');
       this.$.bottomBillIcon.applyStyle('visibility', 'hidden');
     } else {
-        this.$.bottomShipIcon.hide();
-        this.$.bottomBillIcon.hide();
+      this.$.bottomShipIcon.hide();
+      this.$.bottomBillIcon.hide();
     }
     var bPartner = this.owner.owner.owner.bPartner;
     if (bPartner && bPartner.get('id') === this.model.get('id')) {
@@ -551,7 +551,7 @@ enyo.kind({
           criteria.remoteFilters.push({
             columns: [column.name],
             operator: OB.Dal.CONTAINS,
-            value: OB.UTIL.unAccent(flt.text),
+            value: flt.text,
             location: column.location
           });
         }
@@ -596,7 +596,7 @@ enyo.kind({
               select += ' and ';
             }
             select += flt.column + ' like ? ';
-            params.push('%' + OB.UTIL.unAccent(flt.text) + '%');
+            params.push('%' + flt.text + '%');
             if (!inEvent.advanced && flt.orderby) {
               orderby = ' order by ' + flt.column;
             }
