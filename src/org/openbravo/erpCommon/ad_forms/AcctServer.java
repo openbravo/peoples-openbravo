@@ -11,7 +11,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SLU
- * Contributions are Copyright (C) 2001-2015 Openbravo S.L.U.
+ * Contributions are Copyright (C) 2001-2016 Openbravo S.L.U.
  ******************************************************************************
  */
 package org.openbravo.erpCommon.ad_forms;
@@ -2954,8 +2954,7 @@ public abstract class AcctServer {
   public HashMap<String, BigDecimal> getPaymentDetailWriteOffAndAmount(
       List<FIN_PaymentDetail> paymentDetails, FIN_PaymentSchedule ps, FIN_PaymentSchedule psi,
       FIN_PaymentSchedule pso, int currentPaymentDetailIndex, final FieldProvider fieldProvider) {
-    FIN_PaymentDetail paymentDetail = OBDal.getInstance().get(FIN_PaymentDetail.class,
-        paymentDetails.get(currentPaymentDetailIndex));
+    FIN_PaymentDetail paymentDetail = paymentDetails.get(currentPaymentDetailIndex);
     String paymentDetailNextId = null;
     String paymentDetailPreviousId = null;
     if (currentPaymentDetailIndex < paymentDetails.size() - 1) {
