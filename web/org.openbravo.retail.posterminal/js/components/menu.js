@@ -825,6 +825,7 @@ enyo.kind({
           clearTimeout(OB.UTIL.rfidTimeout);
         }
       } else {
+    	OB.UTIL.reconnectOnScanningFocus = true;
         this.setLabel(OB.I18N.getLabel('OBPOS_RFID'));
         OB.UTIL.connectRFIDDevice();
         if (OB.UTIL.rfidTimeout) {
