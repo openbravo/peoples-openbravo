@@ -818,6 +818,7 @@ enyo.kind({
     this.setDisabled(true);
     if (OB.MobileApp.model.hasPermission(this.permission)) {
       if (OB.UTIL.isRFIDEnabled) {
+    	OB.UTIL.reconnectOnScanningFocus = false;
         this.setLabel(OB.I18N.getLabel('OBPOS_RFID'));
         OB.UTIL.disconnectRFIDDevice();
         if (OB.UTIL.rfidTimeout) {
@@ -830,6 +831,8 @@ enyo.kind({
           clearTimeout(OB.UTIL.rfidTimeout);
         }
         OB.UTIL.rfidTimeout = setTimeout(function () {
+          OB.UTIL.rfidTimeout = undefined;
+          OB.UTIL.reconnectOnScanningFocus = false;
           OB.UTIL.disconnectRFIDDevice();
         }, OB.POS.modelterminal.get('terminal').terminalType.rfidtimeout * 1000 * 60);
       }

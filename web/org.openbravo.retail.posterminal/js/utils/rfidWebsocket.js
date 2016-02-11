@@ -18,6 +18,7 @@ OB.UTIL.startRfidWebsocket = function startRfidWebsocket(websocketServerLocation
   OB.UTIL.rfidWebsocket = new WebSocket(websocketServerLocation);
   OB.UTIL.rfidAckArray = [];
   OB.UTIL.isRFIDEnabled = true;
+  OB.UTIL.reconnectOnScanningFocus = true;
 
   // Called when socket connection is established
   OB.UTIL.rfidWebsocket.onopen = function () {
@@ -31,6 +32,8 @@ OB.UTIL.startRfidWebsocket = function startRfidWebsocket(websocketServerLocation
         clearTimeout(OB.UTIL.rfidTimeout);
       }
       OB.UTIL.rfidTimeout = setTimeout(function () {
+        OB.UTIL.rfidTimeout = undefined;
+        OB.UTIL.reconnectOnScanningFocus = false;
         OB.UTIL.disconnectRFIDDevice();
       }, OB.POS.modelterminal.get('terminal').terminalType.rfidtimeout * 1000 * 60);
     }
@@ -58,6 +61,8 @@ OB.UTIL.startRfidWebsocket = function startRfidWebsocket(websocketServerLocation
         clearTimeout(OB.UTIL.rfidTimeout);
       }
       OB.UTIL.rfidTimeout = setTimeout(function () {
+        OB.UTIL.rfidTimeout = undefined;
+        OB.UTIL.reconnectOnScanningFocus = false;
         OB.UTIL.disconnectRFIDDevice();
       }, OB.POS.modelterminal.get('terminal').terminalType.rfidtimeout * 1000 * 60);
     }
@@ -177,36 +182,30 @@ OB.UTIL.processRemainingCodes = function (order) {
 };
 
 OB.UTIL.connectRFIDDevice = function () {
+  OB.UTIL.isRFIDEnabled = true;
+  OB.MobileApp.view.waterfall('onConnectRfidDevice');
   OB.UTIL.waitForAck(function (uuid) {
     OB.UTIL.rfidWebsocket.send('connect:' + uuid);
-  }, function () {
-    OB.UTIL.isRFIDEnabled = true;
-    OB.MobileApp.view.waterfall('onConnectRfidDevice');
-  }, function () {
+  }, function () {}, function () {
     OB.MobileApp.view.waterfall('onRfidConnectionLost');
     OB.UTIL.waitForAck(function (uuid) {
       OB.UTIL.rfidWebsocket.send('connect:' + uuid);
-    }, function () {
-      OB.MobileApp.view.waterfall('onConnectRfidDevice');
-    }, function () {
+    }, function () {}, function () {
       OB.MobileApp.view.waterfall('onRfidConnectionLost');
     }, 2000, OB.UTIL.get_UUID());
   }, 2000, OB.UTIL.get_UUID(), 3);
 };
 
 OB.UTIL.disconnectRFIDDevice = function () {
+  OB.UTIL.isRFIDEnabled = false;
+  OB.MobileApp.view.waterfall('onDisconnectRfidDevice');
   OB.UTIL.waitForAck(function (uuid) {
     OB.UTIL.rfidWebsocket.send('disconnect:' + uuid);
-  }, function () {
-    OB.UTIL.isRFIDEnabled = false;
-    OB.MobileApp.view.waterfall('onDisconnectRfidDevice');
-  }, function () {
+  }, function () {}, function () {
     OB.MobileApp.view.waterfall('onRfidConnectionLost');
     OB.UTIL.waitForAck(function (uuid) {
       OB.UTIL.rfidWebsocket.send('disconnect:' + uuid);
-    }, function () {
-      OB.MobileApp.view.waterfall('onDisconnectRfidDevice');
-    }, function () {
+    }, function () {}, function () {
       OB.MobileApp.view.waterfall('onRfidConnectionLost');
     }, 2000, OB.UTIL.get_UUID());
   }, 2000, OB.UTIL.get_UUID(), 3);
@@ -236,3 +235,11 @@ OB.UTIL.waitForAck = function (functionToExecute, callback, errorCallback, inter
     errorCallback();
   }
 };
+
+OB.UTIL.sendTestEpc = function (epc) {
+  if (OB.UTIL.isRFIDEnabled) {
+    OB.UTIL.waitForAck(function (uuid) {
+      OB.UTIL.rfidWebsocket.send('test:' + uuid + ':' + epc);
+    }, function () {}, function () {}, 2000, OB.UTIL.get_UUID(), 5);
+  }
+}

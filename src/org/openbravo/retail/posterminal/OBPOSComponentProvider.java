@@ -84,6 +84,8 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         // Websockets
         "utils/rfidWebsocket",
 
+        "utils/preScanningFocusHook",
+
         // Login
         "login/model/login-model",
 
