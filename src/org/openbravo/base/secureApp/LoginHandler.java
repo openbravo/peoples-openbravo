@@ -27,10 +27,10 @@ import org.openbravo.authentication.AuthenticationException;
 import org.openbravo.authentication.AuthenticationExpirationPasswordException;
 import org.openbravo.authentication.AuthenticationManager;
 import org.openbravo.base.HttpBaseServlet;
-import org.openbravo.base.exception.OBException;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.obps.ActivationKey.LicenseRestriction;
 import org.openbravo.erpCommon.security.Login;
@@ -74,29 +74,13 @@ public class LoginHandler extends HttpBaseServlet {
     req.getSession().removeAttribute("#Authenticated_user");
     vars.removeSessionValue("#AD_Role_ID");
     vars.setSessionObject("#loggingIn", "Y");
-    final Boolean resetPassword = Boolean.parseBoolean(vars.getStringParameter("resetPassword"));
-    Boolean sameOldPassword = false;
     final String user;
     final String password;
     Client systemClient = OBDal.getInstance().get(Client.class, "0");
     String language = systemClient.getLanguage().getLanguage();
-    if (resetPassword) {
-      password = vars.getStringParameter("password");
+    boolean isPasswordResetFlow = Boolean.parseBoolean(vars.getStringParameter("resetPassword"));
+    if (isPasswordResetFlow) {
       user = vars.getStringParameter("loggedUser");
-      if (!vars.getSessionValue("#AD_Session_ID").equalsIgnoreCase("")) {
-        sameOldPassword = updatePassword(user, password);
-        if (sameOldPassword) {
-          OBError errorMsg = new OBError();
-          String msg = Utility.messageBD(myPool, "CPUpdatePassword", language);
-          String title = Utility.messageBD(myPool, "CPDifferentPassword", language);
-          errorMsg.setType("Error");
-          errorMsg.setTitle(title);
-          errorMsg.setMessage(msg);
-
-          throw new AuthenticationExpirationPasswordException(Utility.messageBD(myPool,
-              "CPSamePasswordThanOld", language), errorMsg);
-        }
-      }
     } else {
       user = vars.getStringParameter("user");
     }
@@ -113,6 +97,11 @@ public class LoginHandler extends HttpBaseServlet {
         res.sendRedirect(res.encodeRedirectURL(strDireccion + "/security/Login_F1.html"));
       } else {
         try {
+          if (isPasswordResetFlow) {
+            password = vars.getStringParameter("password");
+            updatePassword(user, password, myPool, language);
+          }
+
           AuthenticationManager authManager = AuthenticationManager.getAuthenticationManager(this);
 
           final String strUserAuth = authManager.authenticate(req, res);
@@ -125,22 +114,10 @@ public class LoginHandler extends HttpBaseServlet {
 
         } catch (AuthenticationExpirationPasswordException aepe) {
 
-          final OBError errorMsg = aepe.getOBError();
-          if (errorMsg != null) {
-            vars.removeSessionValue("#LoginErrorMsg");
+          vars.removeSessionValue("#LoginErrorMsg");
+          goToUpdatePassword(res, vars, aepe.getOBError().getMessage(), aepe.getOBError()
+              .getTitle(), "Error", "../security/Login_FS.html", doRedirect);
 
-            if (errorMsg.getMessage().equalsIgnoreCase("Write a new password")) {
-              String msg = Utility.messageBD(myPool, "CPUpdatePassword", language);
-              String title = Utility.messageBD(myPool, "CPDifferentPassword", language);
-              goToUpdatePassword(res, vars, msg, title, "Error", "../security/Login_FS.html",
-                  doRedirect);
-            } else {
-              String msg = Utility.messageBD(myPool, "CPUpdatePassword", language);
-              String title = Utility.messageBD(myPool, "CPExpirationPassword", language);
-              goToUpdatePassword(res, vars, msg, title, "Error", "../security/Login_FS.html",
-                  doRedirect);
-            }
-          }
         } catch (AuthenticationException e) {
 
           final OBError errorMsg = e.getOBError();
@@ -538,10 +515,14 @@ public class LoginHandler extends HttpBaseServlet {
    *          the username
    * @param unHashedPassword
    *          the password, the unhashed password as it is entered by the user.
+   * @param myPool
+   * @param language
    * @return false in case that password has changed succesfully in database, true in case password
    *         were the same than the old one
+   * @throws ServletException
    */
-  private static Boolean updatePassword(String username, String unHashedPassword) {
+  private static void updatePassword(String username, String unHashedPassword,
+      ConnectionProvider myPool, String language) throws ServletException {
     try {
       OBContext.setAdminMode();
       final OBCriteria<User> obc = OBDal.getInstance().createCriteria(User.class);
@@ -551,16 +532,17 @@ public class LoginHandler extends HttpBaseServlet {
       String oldPassword = userOB.getPassword();
       String newPassword = FormatUtilities.sha1Base64(unHashedPassword);
       if (oldPassword.equals(newPassword)) {
-        return true;
+        OBError errorMsg = new OBError();
+        errorMsg.setType("Error");
+        errorMsg.setTitle(Utility.messageBD(myPool, "CPDifferentPassword", language));
+        errorMsg.setMessage(Utility.messageBD(myPool, "CPSamePasswordThanOld", language));
+        throw new AuthenticationExpirationPasswordException(errorMsg.getMessage(), errorMsg, false);
       } else {
         userOB.setPassword(newPassword);
         OBDal.getInstance().save(userOB);
         OBDal.getInstance().flush();
         OBDal.getInstance().commitAndClose();
-        return false;
       }
-    } catch (final Exception e) {
-      throw new OBException(e);
     } finally {
       OBContext.restorePreviousMode();
     }

@@ -22,6 +22,7 @@ import org.openbravo.erpCommon.utility.OBError;
 public class AuthenticationExpirationPasswordException extends AuthenticationException {
   private static final long serialVersionUID = 1L;
   private OBError error;
+  private boolean passwordExpiration;
 
   public AuthenticationExpirationPasswordException(String msg) {
     super(msg);
@@ -33,12 +34,20 @@ public class AuthenticationExpirationPasswordException extends AuthenticationExc
     this.error = null;
   }
 
-  public AuthenticationExpirationPasswordException(String msg, OBError error) {
-    super(msg);
+  public AuthenticationExpirationPasswordException(String msg, OBError error,
+      boolean passwordExpiration) {
+    super(msg, false);
     this.error = error;
+    this.passwordExpiration = passwordExpiration;
+    this.getLogger().error(error.getTitle());
+
   }
 
   public OBError getOBError() {
     return error;
+  }
+
+  public boolean isPasswordExpiration() {
+    return passwordExpiration;
   }
 }

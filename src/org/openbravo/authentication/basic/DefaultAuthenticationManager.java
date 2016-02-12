@@ -33,6 +33,7 @@ import org.openbravo.base.secureApp.VariablesHistory;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.access.User;
@@ -111,23 +112,14 @@ public class DefaultAuthenticationManager extends AuthenticationManager {
       throw new AuthenticationException("IDENTIFICATION_FAILURE_TITLE", errorMsg);
     }
 
+    getUpdatePasswordDate(userId, variables.getLanguage(), this.conn);
+
     // Using the Servlet API instead of vars.setSessionValue to avoid breaking code
     // vars.setSessionValue always transform the key to upper-case
     request.getSession(true).setAttribute("#Authenticated_user", userId);
 
     vars.setSessionValue("#AD_SESSION_ID", sessionId);
     vars.setSessionValue("#LogginIn", "Y");
-
-    Date lastUpdatePassword = getUpdatePasswordDate(userId);
-    Date today = new Date();
-
-    if ((lastUpdatePassword != null) && (lastUpdatePassword.compareTo(today) <= 0)) {
-      OBError errorMsg = new OBError();
-      errorMsg.setType("Error");
-      errorMsg.setTitle("IDENTIFICATION_FAILURE_TITLE");
-      errorMsg.setMessage("IDENTIFICATION_FAILURE_MSG");
-      throw new AuthenticationExpirationPasswordException("IDENTIFICATION_FAILURE_TITLE", errorMsg);
-    }
 
     if (!StringUtils.isEmpty(strAjax) && StringUtils.isEmpty(userId)) {
       bdErrorAjax(response, "Error", "",
@@ -171,13 +163,17 @@ public class DefaultAuthenticationManager extends AuthenticationManager {
   /**
    * Returns the expiration password date from login and unHashedPassword parameters
    * 
+   * @param conn
+   * 
+   * @param string
+   * 
    * @param username
    *          the username
    * @return the expiration password date or null in case validity days are not applicable
    */
-  private static Date getUpdatePasswordDate(String id) {
+  private static void getUpdatePasswordDate(String id, String language, ConnectionProvider conn) {
 
-    Date total;
+    Date total = null;
 
     final OBCriteria<User> obc = OBDal.getInstance().createCriteria(User.class);
     obc.setFilterOnReadableClients(false);
@@ -185,15 +181,21 @@ public class DefaultAuthenticationManager extends AuthenticationManager {
     obc.add(Restrictions.eq(User.PROPERTY_ID, id));
     final User userOB = (User) obc.uniqueResult();
     Date lastUpdatePassword = userOB.getLastPasswordUpdate();
-    Long validityDays = userOB.getClient().getDaystopasswordexpiration();
+    Long validityDays = userOB.getClient().getDaysToPasswordExpiration();
     if (validityDays != null && validityDays > 0) {
       Calendar expirationDate = Calendar.getInstance();
       expirationDate.setTimeInMillis(lastUpdatePassword.getTime());
       expirationDate.add(Calendar.DATE, validityDays.intValue());
       total = expirationDate.getTime();
-      return total;
-    } else {
-      return null;
+    }
+
+    Date today = new Date();
+    if ((total != null) && (total.compareTo(today) <= 0)) {
+      OBError errorMsg = new OBError();
+      errorMsg.setType("Error");
+      errorMsg.setTitle(Utility.messageBD(conn, "CPExpirationPassword", language));
+      errorMsg.setMessage(Utility.messageBD(conn, "CPUpdatePassword", language));
+      throw new AuthenticationExpirationPasswordException(errorMsg.getTitle(), errorMsg, true);
     }
 
   }

@@ -25,7 +25,7 @@
    IF AD_isTriggerEnabled()='N' THEN RETURN;
    END IF;
 
-   IF (:OLD.password<>:NEW.password) THEN
+   IF (:OLD.password<>:NEW.password OR :OLD.password IS NULL AND :NEW.password IS NOT NULL) THEN
      
      :NEW.lastpasswordupdate := now();
      

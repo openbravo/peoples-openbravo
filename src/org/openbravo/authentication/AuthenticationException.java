@@ -29,6 +29,11 @@ public class AuthenticationException extends OBException {
     this.error = null;
   }
 
+  public AuthenticationException(String msg, Boolean isLogExceptionNeeded) {
+    super(msg, isLogExceptionNeeded);
+    this.error = null;
+  }
+
   public AuthenticationException(String msg, Throwable cause) {
     super(msg, cause);
     this.error = null;
