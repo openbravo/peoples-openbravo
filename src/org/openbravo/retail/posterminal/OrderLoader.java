@@ -1986,8 +1986,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           JSONObject jsonPaymentData = payment.getJSONObject("paymentData");
           finPayment.setObposPaymentdata(jsonPaymentData.toString());
         } catch (Exception e) {
-          log.error("paymentData attached to payment " + finPayment.getIdentifier()
-              + " is not valid. Ignored by orderloader." + e.getMessage().toString());
+          throw new OBException("paymentData attached to payment " + finPayment.getIdentifier()
+              + " is not a valid JSON.");
         }
       }
 
