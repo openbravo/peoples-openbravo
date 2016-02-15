@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014 Openbravo SLU
+ * All portions are Copyright (C) 2014-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -32,12 +32,13 @@ public class ReturnToFromCustomerVendorHQLTransformer extends HqlQueryTransforme
   private static final String returnToVendorTabId = "5A5CCFC8359B4D79BA705DC487FE8173";
 
   private static final String rtv_unitPriceLeftClause = "(case when (select e.salesOrderLine.salesOrder.priceList.priceIncludesTax from ProcurementPOInvoiceMatch as e where e.goodsShipmentLine = iol) = true then  coalesce((select ol.unitPrice from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol), (select e.salesOrderLine.grossUnitPrice from ProcurementPOInvoiceMatch as e where e.goodsShipmentLine = iol)) else   coalesce((select ol.unitPrice from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol), (select e.salesOrderLine.unitPrice from ProcurementPOInvoiceMatch as e where e.goodsShipmentLine = iol)) end)";
-  private static final String rtv_orderNoLeftClause = " coalesce ((select e.salesOrderLine.salesOrder.documentNo from ProcurementPOInvoiceMatch as e where e.goodsShipmentLine = iol), '0')";
-  private static final String rfc_unitPriceLeftClause = "(case when (iol.salesOrderLine.salesOrder.priceList.priceIncludesTax) = true then  coalesce((select ol.unitPrice from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol), (iol.salesOrderLine.grossUnitPrice)) else   coalesce((select ol.unitPrice from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol), (coalesce(iol.salesOrderLine.unitPrice,''))) end)";
-  private static final String rfc_orderNoLeftClause = " (select e.salesOrderLine.salesOrder.documentNo from MaterialMgmtShipmentInOutLine as e where e.id = iol)";
+  private static final String rtv_orderNoLeftClause = " coalesce ((select e.salesOrderLine.salesOrder.documentNo from ProcurementPOInvoiceMatch as e where e.goodsShipmentLine = iol), '')";
+  private static final String rfc_unitPriceLeftClause = "(case when (iol.salesOrderLine.salesOrder.priceList.priceIncludesTax) = true then  coalesce((select ol.unitPrice from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol), (iol.salesOrderLine.grossUnitPrice)) else   coalesce((select ol.unitPrice from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol), (coalesce(iol.salesOrderLine.unitPrice,0))) end)";
+  private static final String rfc_orderNoLeftClause = " coalesce((select e.salesOrderLine.salesOrder.documentNo from MaterialMgmtShipmentInOutLine as e where e.id = iol), '')";
   private static final String returnedLeftClause = " coalesce((select ol.orderedQuantity from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol),0)";
   private static final String returnedOthersLeftClause = " coalesce((select sum(ol.orderedQuantity) from OrderLine as ol left join ol.salesOrder as o where ol.goodsShipmentLine = iol and o.processed = true and o.documentStatus <> 'VO'), 0)";
   private static final String returnReasonLeftClause = " coalesce((select ol.returnReason.id from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol), '')";
+  private static final String returnReasonLeftClause2 = " coalesce((select ol.returnReason.name from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol), '')";
   private static final String returnReasonCountQuery = " select count(distinct e.name) from ReturnReason as e where exists (select distinct ol.returnReason from OrderLine as ol where ol.returnReason = e and ol.salesOrder.id = :salesOrderId  and ol.goodsShipmentLine is not null) ";
   private static final String returnReasonDataQuery = " select distinct e, e.name from ReturnReason as e where exists (select distinct ol.returnReason from OrderLine as ol where ol.returnReason = e and ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine is not null) ";
   private static final String unitPriceProperty = "unitPrice";
@@ -118,6 +119,8 @@ public class ReturnToFromCustomerVendorHQLTransformer extends HqlQueryTransforme
     } else {
       transformedHqlQuery = transformedHqlQuery.replace("@returnReasonLeftClause@.id",
           returnReasonLeftClause);
+      transformedHqlQuery = transformedHqlQuery.replace("@returnReasonLeftClause@.name",
+          returnReasonLeftClause2);
     }
     return transformedHqlQuery;
   }
@@ -148,6 +151,8 @@ public class ReturnToFromCustomerVendorHQLTransformer extends HqlQueryTransforme
     } else {
       transformedHqlQuery = transformedHqlQuery.replace("@returnReasonLeftClause@.id",
           returnReasonLeftClause);
+      transformedHqlQuery = transformedHqlQuery.replace("@returnReasonLeftClause@.name",
+          returnReasonLeftClause2);
     }
     return transformedHqlQuery;
   }

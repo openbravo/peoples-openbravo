@@ -185,6 +185,11 @@ isc.OBPickAndExecuteGrid.addProperties({
       if (me.view && me.view.buttonOwnerView && me.view.buttonOwnerView.tabId) {
         dsRequest.params.buttonOwnerViewTabId = me.view.buttonOwnerView.tabId;
       }
+      // Add selected records (if any) when there is not criteria by id field present in the request
+      if (me.selectedIds.length > 0 && dsRequest.originalData && !me.isCriteriaWithIdField(dsRequest.originalData.criteria)) {
+        isc.addProperties(dsRequest.originalData, me.addSelectedIDsToCriteria());
+      }
+      dsRequest.params[OB.Constants.IS_PICK_AND_EDIT] = true;
       return this.Super('transformRequest', arguments);
     };
     filterableProperties = this.getFields().findAll('canFilter', true);
@@ -505,6 +510,13 @@ isc.OBPickAndExecuteGrid.addProperties({
     var crit = this.addSelectedIDsToCriteria(criteria);
 
     this.Super('handleFilterEditorSubmit', [crit, context]);
+  },
+
+  isCriteriaWithIdField: function (criteria) {
+    if (criteria && criteria.find('fieldName', 'id')) {
+      return true;
+    }
+    return false;
   },
 
   isDataLoaded: function () {

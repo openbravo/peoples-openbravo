@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -62,14 +62,14 @@
 </script>
 <script type="text/javascript">    
   function validateSelector(action) {
-  	var pos; var keys;  var key; var text; var parameter;
+  	var pos; var keys;  var key; var text; var parameter; var theOpener = parent.opener || getFrame('LayoutMDI');
   	if(action == "SAVE") {
 	    pos = getSelectedPos();
 	    keys = getSelectedValues().split("@_##_@")
 	    key = keys[0];
 	    text = keys[1];
     }    
-  	parent.opener.closeSearch(action, key, text);
+  	theOpener.closeSearch(action, key, text);
   }
 </script>
 <script language="JavaScript" type="text/javascript" id="selectedColumn">

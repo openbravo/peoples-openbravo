@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,7 +28,7 @@
 			<fo:block text-align="center" font-weight="bold" font-size="11pt">&#160;</fo:block>
 			<fo:block text-align="center" font-weight="bold" font-size="20pt">SALE ORDER REPORT</fo:block>
 			<fo:block text-align="center" font-weight="bold" font-size="11pt" id="fieldValid"/>
-			<fo:table space-before.optimum="20pt">
+			<fo:table table-layout="fixed" width="100%" space-before.optimum="20pt">
 				<fo:table-column column-width="24mm"/>
 				<fo:table-column column-width="90mm"/>
 				<fo:table-column column-width="24mm"/>

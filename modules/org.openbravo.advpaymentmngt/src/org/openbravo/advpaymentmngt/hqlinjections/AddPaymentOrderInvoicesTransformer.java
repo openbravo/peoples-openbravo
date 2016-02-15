@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014 - 2015 Openbravo SLU
+ * All portions are Copyright (C) 2014 - 2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -74,9 +74,9 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
     StringBuffer joinClauseInvoice = getJoinClauseInvoice(requestParameters);
     StringBuffer whereClause = getWhereClause(transactionType, requestParameters, selectedPSDs);
     StringBuffer groupByClause = getGroupByClause(transactionType);
-    StringBuffer orderByClause = new StringBuffer();
+    List<String> orderByClauses = new ArrayList<String>();
     if (!justCount) {
-      orderByClause = getOrderByClause(transactionType, selectedPSDs, requestParameters);
+      orderByClauses = getOrderByClauses(transactionType, selectedPSDs, requestParameters);
     }
 
     // grid filters need to be removed from where clause and added as a having criteria.
@@ -103,7 +103,7 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
     transformedHql = transformedHql.replace("@joinClauseInvoice@", joinClauseInvoice.toString());
     transformedHql = transformedHql.replace("@whereClause@", whereClause.toString());
     transformedHql = transformedHql.replace("@groupByClause@", groupByClause.toString());
-    transformedHql = appendOrderByClause(transformedHql, orderByClause, justCount);
+    transformedHql = appendOrderByClauses(transformedHql, orderByClauses, justCount);
     // Sets parameters
     queryNamedParameters.put("currencyId", requestParameters.get("c_currency_id"));
     queryNamedParameters.put("isSalesTransaction",
@@ -330,46 +330,48 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
   /**
    * Order by selectedPSDs, scheduled date and document number
    */
-  protected StringBuffer getOrderByClause(String transactionType, List<String> selectedPSDs,
+  private List<String> getOrderByClauses(String transactionType, List<String> selectedPSDs,
       Map<String, String> requestParameters) {
-    StringBuffer orderByClause = new StringBuffer();
+    List<String> orderByClauses = new ArrayList<String>();
     if (selectedPSDs.size() == 0) {
       String strInvoiceId = requestParameters.get("c_invoice_id");
       String strOrderId = requestParameters.get("c_order_id");
       if (strInvoiceId != null) {
-        orderByClause.append(" CASE WHEN MAX(inv.id) = '" + strInvoiceId + "' THEN 0 ELSE 1 END ");
+        orderByClauses.add(" CASE WHEN MAX(inv.id) = '" + strInvoiceId + "' THEN 0 ELSE 1 END ");
       } else if (strOrderId != null) {
-        orderByClause.append(" CASE WHEN MAX(ord.id) = '" + strOrderId + "' THEN 0 ELSE 1 END ");
+        orderByClauses.add(" CASE WHEN MAX(ord.id) = '" + strOrderId + "' THEN 0 ELSE 1 END ");
       } else {
-        orderByClause.append(" CASE WHEN MAX(fp.id) IS NOT NULL THEN 0 ELSE 1 END ");
+        orderByClauses.add(" CASE WHEN MAX(fp.id) IS NOT NULL THEN 0 ELSE 1 END ");
       }
     } else {
+      StringBuffer selectedOrderBy = new StringBuffer();
       String strAggId = getAggregatorFunction("psd.id");
-      orderByClause.append(" CASE WHEN ");
+      selectedOrderBy.append(" CASE WHEN ");
       boolean isFirst = true;
       for (String strPSDId : selectedPSDs) {
         if (!isFirst) {
-          orderByClause.append(" OR ");
+          selectedOrderBy.append(" OR ");
         }
-        orderByClause.append(strAggId + " LIKE '%" + strPSDId + "%'");
+        selectedOrderBy.append(strAggId + " LIKE '%" + strPSDId + "%'");
         isFirst = false;
       }
-      orderByClause.append(" THEN 0 ELSE 1 END ");
+      selectedOrderBy.append(" THEN 0 ELSE 1 END ");
+      orderByClauses.add(selectedOrderBy.toString());
     }
     if ("O".equals(transactionType)) {
-      orderByClause.append(", COALESCE(opriority.priority, ipriority.priority) ");
-      orderByClause.append(", COALESCE(ops.expectedDate, ips.expectedDate) ");
+      orderByClauses.add(", COALESCE(opriority.priority, ipriority.priority) ");
+      orderByClauses.add(", COALESCE(ops.expectedDate, ips.expectedDate) ");
     } else {
-      orderByClause.append(", COALESCE(ipriority.priority, opriority.priority) ");
-      orderByClause.append(", COALESCE(ips.expectedDate, ops.expectedDate) ");
+      orderByClauses.add(", COALESCE(ipriority.priority, opriority.priority) ");
+      orderByClauses.add(", COALESCE(ips.expectedDate, ops.expectedDate) ");
     }
     if ("O".equals(transactionType)) {
-      orderByClause.append(", ord.documentNo ");
+      orderByClauses.add(", ord.documentNo ");
     } else {
-      orderByClause.append(", inv.documentNo ");
+      orderByClauses.add(", inv.documentNo ");
     }
 
-    return orderByClause;
+    return orderByClauses;
   }
 
   protected String removeGridFilters(String _hqlQuery) {
@@ -516,16 +518,23 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
     return hqlQuery;
   }
 
-  protected String appendOrderByClause(String _hqlQuery, StringBuffer orderByClause,
+  private String appendOrderByClauses(String _hqlQuery, List<String> orderByClauses,
       boolean justCount) {
+    final String orderby = " ORDER BY ";
     String hqlQuery = _hqlQuery;
     if (!justCount) {
-      if (hqlQuery.contains(" ORDER BY ")) {
-        hqlQuery = hqlQuery.concat(", ");
+      if (hqlQuery.contains(orderby)) {
+        int offset = hqlQuery.indexOf(orderby) + orderby.length();
+        StringBuilder sb = new StringBuilder(hqlQuery);
+        sb.insert(offset, orderByClauses.get(0) + ", ");
+        hqlQuery = sb.toString();
+        orderByClauses.remove(0);
       } else {
-        hqlQuery = hqlQuery.concat(" ORDER BY ");
+        hqlQuery = hqlQuery.concat(orderby);
       }
-      hqlQuery = hqlQuery.concat(orderByClause.toString());
+      for (String clause : orderByClauses) {
+        hqlQuery = hqlQuery.concat(clause);
+      }
     }
     return hqlQuery;
   }
@@ -536,7 +545,8 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
     JSONArray newCriteriaArray = new JSONArray();
     for (int i = 0; i < criteriaArray.length(); i++) {
       JSONObject criteria = criteriaArray.getJSONObject(i);
-      if (criteria.has("fieldName") && criteria.getString("fieldName").equals("id")) {
+      if (criteria.has("fieldName") && criteria.getString("fieldName").equals("id")
+          && criteria.has("value")) {
         String value = criteria.getString("value");
         for (String psdID : value.split(",")) {
           JSONObject newCriteria = criteria;

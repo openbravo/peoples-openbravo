@@ -288,7 +288,8 @@ public class ProductComplete extends HttpSecureAppServlet {
         + "\"),\n");
     html.append("new SearchElements(\"_UOM\", true, \"" + data[0].cUom1Id + "\")\n");
     html.append(");\n");
-    html.append("parent.opener.closeSearch(\"SAVE\", key, text, parameter);\n");
+    html.append("var theOpener = parent.opener || getFrame('LayoutMDI');\n");
+    html.append("theOpener.closeSearch(\"SAVE\", key, text, parameter);\n");
     html.append("}\n");
     return html.toString();
   }

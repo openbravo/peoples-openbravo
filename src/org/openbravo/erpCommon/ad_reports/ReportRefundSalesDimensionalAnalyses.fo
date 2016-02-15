@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -20,12 +20,12 @@
 <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
 	<fo:layout-master-set>
 		<fo:simple-page-master master-name="first" page-height="21cm" page-width="29.7cm" margin-top="1cm" margin-bottom="0.25cm" margin-left="0.5cm" margin-right="0.5cm">
-			<fo:region-before extent="2cm"/>
 			<fo:region-body margin-top="2cm"/>
+			<fo:region-before extent="2cm"/>
 		</fo:simple-page-master>
 		<fo:simple-page-master master-name="rest" page-height="21cm" page-width="29.7cm" margin-top="1cm" margin-bottom="0.25cm" margin-left="0.5cm" margin-right="0.5cm">
-			<fo:region-before extent="2cm"/>
 			<fo:region-body margin-top="2cm"/>
+			<fo:region-before extent="2cm"/>
 		</fo:simple-page-master>
 		<fo:page-sequence-master master-name="basicPSM">
 			<fo:repeatable-page-master-alternatives>
