@@ -119,7 +119,9 @@ enyo.kind({
     }
 
     function goToViewWindow(sw, params) {
-      params.customerAddr.set('onlyOneAddress', me.customerAddr.get('onlyOneAddress'));
+      if (!_.isUndefined(me.customerAddr)) {
+        params.customerAddr.set('onlyOneAddress', me.customerAddr.get('onlyOneAddress'));
+      }
       if (sw.params.navigateType === 'modal' && !sw.params.navigateOnCloseParent) {
         sw.doChangeSubWindow({
           newWindow: {
