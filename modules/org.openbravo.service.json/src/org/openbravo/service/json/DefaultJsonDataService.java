@@ -502,7 +502,8 @@ public class DefaultJsonDataService implements JsonDataService {
             || key.equals(JsonConstants.ORG_PARAMETER)
             || key.equals(JsonConstants.TARGETRECORDID_PARAMETER)
             || (key.startsWith(DataEntityQueryService.PARAM_DELIMITER) && key
-                .endsWith(DataEntityQueryService.PARAM_DELIMITER))) {
+                .endsWith(DataEntityQueryService.PARAM_DELIMITER))
+            || (key.equals(SelectorConstants.DS_REQUEST_SELECTOR_ID_PARAMETER))) {
           queryService.addFilterParameter(key, parameters.get(key));
         }
 

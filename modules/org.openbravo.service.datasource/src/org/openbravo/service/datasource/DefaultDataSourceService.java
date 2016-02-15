@@ -137,14 +137,6 @@ public class DefaultDataSourceService extends BaseDataSourceService {
     return parameters.containsKey(SelectorConstants.DS_REQUEST_SELECTOR_ID_PARAMETER);
   }
 
-  private boolean isFilterApplied(Map<String, String> parameters) {
-    if ("true".equals(parameters.get(JsonConstants.FILTER_APPLIED_PARAMETER))) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
   /*
    * (non-Javadoc)
    * 

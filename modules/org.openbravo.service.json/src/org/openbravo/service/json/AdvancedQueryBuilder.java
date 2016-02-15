@@ -58,6 +58,8 @@ import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.service.db.DalConnectionProvider;
+import org.openbravo.userinterface.selector.Selector;
+import org.openbravo.userinterface.selector.SelectorConstants;
 
 /**
  * Translates an advanced criteria/filter object into a HQL query. Also takes into account session
@@ -355,7 +357,20 @@ public class AdvancedQueryBuilder {
       }
     }
     // add the special whereParameter
-    final String whereParameter = filterParameters.get(JsonConstants.WHERE_PARAMETER);
+
+    String whereParameter = "";
+    String selectorId = filterParameters.get(SelectorConstants.DS_REQUEST_SELECTOR_ID_PARAMETER);
+    if (selectorId == null || selectorId.equals("")) {
+      whereParameter = filterParameters.get(JsonConstants.WHERE_PARAMETER);
+    } else {
+      if (StringUtils.isBlank(filterParameters.get(JsonConstants.WHERE_PARAMETER))) {
+        Selector sel = OBDal.getInstance().get(Selector.class, selectorId);
+        whereParameter = sel.getHQLWhereClause();
+      } else {
+        whereParameter = filterParameters.get(JsonConstants.WHERE_PARAMETER);
+      }
+    }
+
     if (whereParameter != null && !whereParameter.equals("null") && whereParameter.length() > 0) {
       if (localWhereClause.length() > 0) {
         localWhereClause = " (" + localWhereClause + ") and (" + whereParameter + ") ";
