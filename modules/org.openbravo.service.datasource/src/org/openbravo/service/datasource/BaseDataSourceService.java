@@ -161,10 +161,9 @@ public abstract class BaseDataSourceService implements DataSourceService {
     } else {
       String tabId = parameters.get(JsonConstants.TAB_PARAMETER);
       Tab tab = OBDal.getInstance().get(Tab.class, tabId);
-      boolean isTransactionalWindow = tab.getWindow().getWindowType().equals("T");
       String where = tab.getHqlwhereclause();
       if (isFilterApplied(parameters)) {
-        String filterClause = getFilterClause(tab, isTransactionalWindow, ent);
+        String filterClause = getFilterClause(tab, ent);
         if (StringUtils.isNotBlank(where)) {
           whereAndFilterClause = " ((" + where + ") and (" + filterClause + "))";
         } else {
@@ -193,7 +192,8 @@ public abstract class BaseDataSourceService implements DataSourceService {
     return isRootLevel;
   }
 
-  private String getFilterClause(Tab tab, boolean isTransactionalWindow, Entity ent) {
+  private String getFilterClause(Tab tab, Entity ent) {
+    boolean isTransactionalWindow = tab.getWindow().getWindowType().equals("T");
     if (tab.getHqlfilterclause() != null) {
       return addTransactionalFilter(tab.getHqlfilterclause(), tab, isTransactionalWindow, ent);
     }
