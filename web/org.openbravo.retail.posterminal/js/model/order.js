@@ -3506,8 +3506,16 @@
     },
 
     addNewOrder: function (isFirstOrder) {
-      if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true) && (!isFirstOrder || (isFirstOrder && !localStorage.remoteCustomers))) {
-        this.doRemoteBPSettings(OB.MobileApp.model.get('businessPartner'));
+      var me = this;
+      if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
+        if (isFirstOrder) {
+          //if no unpaid order to load, clean tables
+          this.doCleanBPSettings(function () {
+            me.doRemoteBPSettings(OB.MobileApp.model.get('businessPartner'));
+          });
+        } else {
+          me.doRemoteBPSettings(OB.MobileApp.model.get('businessPartner'));
+        }
       }
       this.saveCurrent();
       this.current = this.newOrder();
@@ -3558,6 +3566,29 @@
       }, model.get('isLayaway'));
     },
 
+    doCleanBPSettings: function (callback) {
+      OB.Dal.removeAllTemporally(OB.Model.BusinessPartner, null, function () {
+        OB.Dal.removeAllTemporally(OB.Model.BPLocation, null, function () {
+          if (OB.MobileApp.model.hasPermission('OBPOS_remote.discount.bp', true)) {
+            OB.Dal.removeAllTemporally(OB.Model.DiscountFilterBusinessPartner, null, function () {
+              if (callback) {
+                callback();
+              }
+            }, function () {
+              OB.error(arguments);
+            }, true);
+          } else {
+            if (callback) {
+              callback();
+            }
+          }
+        }, function () {
+          OB.error(arguments);
+        }, true);
+      }, function () {
+        OB.error(arguments);
+      }, true);
+    },
     doRemoteBPSettings: function (businessPartner) {
       OB.Dal.saveTemporally(businessPartner, function () {}, function () {
         OB.error(arguments);
