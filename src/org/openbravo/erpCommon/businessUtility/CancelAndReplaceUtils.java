@@ -43,6 +43,7 @@ import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.core.TriggerHandler;
 import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -783,7 +784,13 @@ public class CancelAndReplaceUtils {
             OBDal.getInstance().flush();
 
             // Call to processPayment in order to process it
+            if (replaceOrder) {
+              TriggerHandler.getInstance().enable();
+            }
             FIN_PaymentProcess.doProcessPayment(newPayment, "P", true, null, null);
+            if (replaceOrder) {
+              TriggerHandler.getInstance().disable();
+            }
 
             if (jsonorder != null && jsonorder.has("obposAppCashup")) {
               // retrieve the transactions of this payment and set the cashupId to those
@@ -801,7 +808,7 @@ public class CancelAndReplaceUtils {
           // completely.
           if (paymentScheduleDetailList.size() == 0) {
             finishOrderPayments(jsonorder, oldOrder, inverseOrder, paymentSchedule,
-                useOrderDocumentNoForRelatedDocs, triggersDisabled);
+                useOrderDocumentNoForRelatedDocs, triggersDisabled, replaceOrder);
           }
         } else {
           // To only cancel a layaway two payments must be added to fully pay the old order and add
@@ -829,7 +836,7 @@ public class CancelAndReplaceUtils {
           }
 
           finishOrderPayments(jsonorder, oldOrder, inverseOrder, paymentSchedule,
-              useOrderDocumentNoForRelatedDocs, triggersDisabled);
+              useOrderDocumentNoForRelatedDocs, triggersDisabled, replaceOrder);
         }
 
       } else {
@@ -851,7 +858,7 @@ public class CancelAndReplaceUtils {
   // Create payments to pay complete fully the order, in the inverse order and old order
   private static void finishOrderPayments(JSONObject jsonorder, Order oldOrder, Order inverseOrder,
       FIN_PaymentSchedule paymentSchedule, boolean useOrderDocumentNoForRelatedDocs,
-      boolean triggersDisabled) throws Exception {
+      boolean triggersDisabled, boolean replaceOrder) throws Exception {
     FIN_Payment newPayment = null;
     String paymentDocumentNo = null;
     FIN_PaymentMethod paymentPaymentMethod = null;
@@ -903,7 +910,13 @@ public class CancelAndReplaceUtils {
     OBDal.getInstance().flush();
 
     // Call to processPayment in order to process it
+    if (replaceOrder) {
+      TriggerHandler.getInstance().enable();
+    }
     FIN_PaymentProcess.doProcessPayment(newPayment, "P", true, null, null);
+    if (replaceOrder) {
+      TriggerHandler.getInstance().disable();
+    }
   }
 
   protected static FIN_Payment createPayment(FIN_Payment payment, Order order,
