@@ -161,24 +161,24 @@ public class DefaultAuthenticationManager extends AuthenticationManager {
   }
 
   /**
-   * Returns the expiration password date from login and unHashedPassword parameters
+   * Checks the expiration password date from userId, throws
+   * AuthenticationExpirationPasswordException in case that expiration date is reached
    * 
+   * @param userId
+   *          The userId of the user to check expiration password date
+   * @param language
+   *          Default language for the user
    * @param conn
-   * 
-   * @param string
-   * 
-   * @param username
-   *          the username
-   * @return the expiration password date or null in case validity days are not applicable
+   *          ConnectionProvider used to translate messages.
    */
-  private static void getUpdatePasswordDate(String id, String language, ConnectionProvider conn) {
+  private static void getUpdatePasswordDate(String userId, String language, ConnectionProvider conn) {
 
     Date total = null;
 
     final OBCriteria<User> obc = OBDal.getInstance().createCriteria(User.class);
     obc.setFilterOnReadableClients(false);
     obc.setFilterOnReadableOrganization(false);
-    obc.add(Restrictions.eq(User.PROPERTY_ID, id));
+    obc.add(Restrictions.eq(User.PROPERTY_ID, userId));
     final User userOB = (User) obc.uniqueResult();
     Date lastUpdatePassword = userOB.getLastPasswordUpdate();
     Long validityDays = userOB.getClient().getDaysToPasswordExpiration();

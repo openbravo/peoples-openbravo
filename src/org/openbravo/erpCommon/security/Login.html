@@ -203,11 +203,15 @@ function buttonOK_click() {
       setWindowElementFocus(document.getElementById('user'))
     } else {
       if (document.getElementById('user').value === '' || document.getElementById('password').value === '') {
-          setLoginMessage('Error', identificationFailureTitle, errorEmptyContent);
+        setLoginMessage('Error', identificationFailureTitle, errorEmptyContent);
         return true;
       }   
       disableButton('buttonOK');
-      submitXmlHttpRequest(loginResult, document.frmIdentificacion, 'DEFAULT', '../secureApp/LoginHandler.html', false, null, null);
+      if (document.getElementById('resetPassword').value =='true'){
+        submitXmlHttpRequest(loginResult, document.frmIdentificacion, 'FORCE_RESET_PASSWORD', '../secureApp/LoginHandler.html', false, null, null);
+      }else{
+        submitXmlHttpRequest(loginResult, document.frmIdentificacion, 'DEFAULT', '../secureApp/LoginHandler.html', false, null, null);
+      }
     }
     
     return false;

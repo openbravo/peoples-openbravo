@@ -69,7 +69,6 @@ public class LoginHandler extends HttpBaseServlet {
     log4j.debug("start doPost");
     doOptions(req, res);
     final VariablesSecureApp vars = new VariablesSecureApp(req);
-
     // Empty session
     req.getSession().removeAttribute("#Authenticated_user");
     vars.removeSessionValue("#AD_Role_ID");
@@ -98,8 +97,10 @@ public class LoginHandler extends HttpBaseServlet {
       } else {
         try {
           if (isPasswordResetFlow) {
-            password = vars.getStringParameter("password");
-            updatePassword(user, password, myPool, language);
+            if (vars.getCommand().equalsIgnoreCase("FORCE_RESET_PASSWORD")) {
+              password = vars.getStringParameter("password");
+              updatePassword(user, password, myPool, language);
+            }
           }
 
           AuthenticationManager authManager = AuthenticationManager.getAuthenticationManager(this);
@@ -506,9 +507,9 @@ public class LoginHandler extends HttpBaseServlet {
   } // end of getServletInfo() method
 
   /**
-   * Returns a boolean indicating if password has been changed for user. The password must be
-   * different from previous one, otherwise method will return false
-   * 
+   * Update user password for username with unHashedPassword provided, throws
+   * AuthenticationExpirationPasswordException in case the new password is the same that the old
+   * one.
    * 
    * 
    * @param username
@@ -516,9 +517,10 @@ public class LoginHandler extends HttpBaseServlet {
    * @param unHashedPassword
    *          the password, the unhashed password as it is entered by the user.
    * @param myPool
+   *          ConnectionProvider used to translate messages.
    * @param language
-   * @return false in case that password has changed succesfully in database, true in case password
-   *         were the same than the old one
+   *          Default language for the user
+   * 
    * @throws ServletException
    */
   private static void updatePassword(String username, String unHashedPassword,
