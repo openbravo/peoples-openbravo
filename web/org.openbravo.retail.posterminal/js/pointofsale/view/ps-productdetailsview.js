@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2015 Openbravo S.L.U.
+ * Copyright (C) 2013-2016 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -50,7 +50,16 @@ enyo.kind({
   style: 'min-width: 70px; margin: 2px 5px 2px 5px;',
   i18nLabel: 'OBPOS_addToTicket',
   events: {
-    onAddProduct: ''
+    onAddProduct: '',
+    onSetLineProperty: '',
+    onCloseLeftSubWindow: ''
+  },
+  setLabel: function () {
+    if (this.leftSubWindow && this.leftSubWindow.line) {
+      this.setContent(OB.I18N.getLabel('OBMOBC_LblApply'));
+    } else {
+      this.setContent(OB.I18N.getLabel('OBPOS_addToTicket'));
+    }
   },
   tap: function () {
     if (this.leftSubWindow.product) {
@@ -64,14 +73,23 @@ enyo.kind({
         warehousename: this.leftSubWindow.warehouse.warehousename,
         warehouseqty: this.leftSubWindow.warehouse.warehouseqty
       };
-      this.doAddProduct({
-        attrs: attrs,
-        options: {
-          line: line
-        },
-        product: this.leftSubWindow.product,
-        ignoreStockTab: true
-      });
+      if (line) {
+        this.doSetLineProperty({
+          line: line,
+          property: 'warehouse',
+          value: attrs.warehouse
+        });
+        this.doCloseLeftSubWindow();
+      } else {
+        this.doAddProduct({
+          attrs: attrs,
+          options: {
+            line: line
+          },
+          product: this.leftSubWindow.product,
+          ignoreStockTab: true
+        });
+      }
     }
   }
 });
@@ -178,6 +196,7 @@ enyo.kind({
         style: 'margin: 5px 0px 12px 0px; text-align: center; font-size: 18px; font-weight: 600;'
       }, {
         components: [{
+          name: 'productAddToReceipt',
           kind: 'OB.OBPOSPointOfSale.UI.ProductDetailsView_ButtonAddToTicket'
         }]
       }]
@@ -289,6 +308,7 @@ enyo.kind({
     this.bodyComponent.$.warehouseToGet.setContent(OB.I18N.getLabel('OBPOS_loadingFromWarehouse', [this.warehouse.warehousename]));
     this.bodyComponent.$.productPrice.setContent(OB.I18N.getLabel('OBPOS_priceInfo') + '<b>' + OB.I18N.formatCurrency(params.product.get('standardPrice')) + '</b>');
     this.bodyComponent.$.descriptionArea.setContent(params.product.get('description'));
+    this.bodyComponent.$.productAddToReceipt.setLabel();
     this.getOtherStock();
     this.getStoreStock();
     return true;
