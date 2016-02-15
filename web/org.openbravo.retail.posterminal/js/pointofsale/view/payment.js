@@ -1175,6 +1175,11 @@ enyo.kind({
         payments;
     this.allowOpenDrawer = false;
 
+    if (receipt.get('bp').id === OB.MobileApp.model.get('terminal').businessPartner && !OB.MobileApp.model.get('terminal').layaway_anonymouscustomer) {
+      OB.UTIL.showConfirmation.display("Error", OB.I18N.getLabel('OBPOS_layawaysOrdersWithAnonimousCust'));
+      return;
+    }
+
     if (!this.showing) {
       return true;
     }

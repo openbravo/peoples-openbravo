@@ -42,6 +42,8 @@ public class TerminalProperties extends ModelExtension {
     list.add(new HQLProperty(
         "(COALESCE(pos.obposCBpartnerLoc.id, pos.organization.obretcoCBpLocation.id))",
         "partnerAddress"));
+    list.add(new HQLProperty("pos.organization.obposLayawayAnonymousbp",
+        "layaway_anonymouscustomer"));
     list.add(new HQLProperty("pos.organization.id", "organization"));
     list.add(new HQLProperty("pos.organization.name", getIdentifierAlias("organization")));
     list.add(new HQLProperty("pos.client.id", "client"));
