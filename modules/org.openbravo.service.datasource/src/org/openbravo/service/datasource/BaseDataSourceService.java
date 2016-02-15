@@ -139,6 +139,12 @@ public abstract class BaseDataSourceService implements DataSourceService {
     this.name = name;
   }
 
+  /**
+   * This method returns a String with the where and filter clauses that will be applied.
+   *
+   * @return A String with the value of the where and filter clause. It can be null when there is no
+   *         filter clause nor where clause.
+   */
   protected String getWhereAndFilterClause(Map<String, String> parameters, boolean isFilterApplied,
       Entity ent) {
     String whereAndFilterClause = "";
