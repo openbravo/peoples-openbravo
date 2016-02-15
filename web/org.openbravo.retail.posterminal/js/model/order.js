@@ -885,6 +885,16 @@
         // modifications to trigger editable events incorrectly
         this.set('isEditable', _order.get('isEditable'));
       }
+      
+      if (_order.get('isLayaway')) {
+        if (OB.MobileApp.model.get('terminal').terminalType.generateInvoice && OB.MobileApp.model.hasPermission('OBPOS_receipt.invoice', true)) {
+          if (OB.MobileApp.model.hasPermission('OBPOS_retail.restricttaxidinvoice', true) && !_order.get('bp').get('taxID')) {
+            _order.set('generateInvoice', false);
+          } else {
+            _order.set('generateInvoice', true);
+          }
+        }
+      }
 
       // the idExecution is saved so only this execution of clearWith will check cloningReceipt to false
       if (OB.UTIL.isNullOrUndefined(this.get('idExecution')) && OB.UTIL.isNullOrUndefined(_order.get('idExecution'))) {

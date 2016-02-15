@@ -64,7 +64,6 @@ public class PaidReceipts extends JSONProcessSimple {
       JSONArray respArray = new JSONArray();
 
       String orderid = jsonsent.getString("orderid");
-      String posTerminalId = jsonsent.getString("pos");
 
       // get the orderId
       HQLPropertyList hqlPropertiesReceipts = ModelExtensionUtils.getPropertyExtensions(extensions);
@@ -88,11 +87,7 @@ public class PaidReceipts extends JSONProcessSimple {
         Query PaidReceiptsInvoiceQuery = OBDal.getInstance().getSession()
             .createQuery(hqlPaidReceiptsInvoice);
         PaidReceiptsInvoiceQuery.setString("orderId", orderid);
-        OBPOSApplications posTerminal = OBDal.getInstance().get(OBPOSApplications.class,
-            posTerminalId);
-        if (!PaidReceiptsInvoiceQuery.list().isEmpty()
-            || (paidReceipt.getBoolean("isLayaway") && posTerminal.getObposTerminaltype()
-                .isGenerateInvoice()))
+        if (!PaidReceiptsInvoiceQuery.list().isEmpty())
           paidReceipt.put("generateInvoice", true);
 
         JSONArray listpaidReceiptsLines = new JSONArray();
