@@ -202,7 +202,7 @@ public abstract class BaseDataSourceService implements DataSourceService {
 
   private String addTransactionalFilter(String filterClause, Tab tab,
       boolean isTransactionalWindow, Entity ent) {
-    if (!isApplyTransactionalFilter(isTransactionalWindow, tab)) {
+    if (!isTransactionalFilterApplied(isTransactionalWindow, tab)) {
       return filterClause;
     }
     String transactionalFilter = " e.updated > " + JsonConstants.QUERY_PARAM_TRANSACTIONAL_RANGE
@@ -218,7 +218,7 @@ public abstract class BaseDataSourceService implements DataSourceService {
     return transactionalFilter;
   }
 
-  private boolean isApplyTransactionalFilter(boolean isTransactionalWindow, Tab tab) {
+  private boolean isTransactionalFilterApplied(boolean isTransactionalWindow, Tab tab) {
     boolean applies;
     if (isTransactionalWindow && isRootTab(tab)) {
       applies = true;
