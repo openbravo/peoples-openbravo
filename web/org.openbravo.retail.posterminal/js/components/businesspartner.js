@@ -250,6 +250,7 @@ enyo.kind({
       silent: true
     });
     var target = this.owner.owner.dialog.target;
+    this.owner.owner.dialog.owner.owner.clearResult = false;
     OB.Dal.get(OB.Model.BusinessPartner, bpartner.get('bpartnerId'), function (bp) {
       OB.MobileApp.view.$.containerWindow.getRoot().model.attributes.subWindowManager.set('currentWindow', {
         name: 'customerView',
@@ -278,6 +279,7 @@ enyo.kind({
       silent: true
     });
     var target = this.owner.owner.dialog.target;
+    this.owner.owner.dialog.owner.owner.clearResult = false;
     OB.Dal.get(OB.Model.BusinessPartner, bpartner.get('bpartnerId'), function (bp) {
       OB.MobileApp.view.$.containerWindow.getRoot().model.attributes.subWindowManager.set('currentWindow', {
         name: 'customerCreateAndEdit',
@@ -307,6 +309,7 @@ enyo.kind({
   },
   selectItem: function (bpartner) {
     var target = this.owner.owner.dialog.target;
+    this.owner.owner.dialog.owner.owner.clearResult = true;
     bpartner.set('ignoreSetBP', true, {
       silent: true
     });
@@ -773,9 +776,14 @@ enyo.kind({
   },
 
   executeOnHide: function () {
-    this.$.body.$.listBps.$.stBPAssignToReceipt.$.theader.$.modalBpScrollableHeader.$.filterSelector.clearFilter();
+    if (this.clearResult) {
+      this.$.body.$.listBps.$.stBPAssignToReceipt.$.theader.$.modalBpScrollableHeader.$.filterSelector.clearFilter();
+    } else {
+      this.clearResult = true;
+    }
   },
   i18nHeader: 'OBPOS_LblAssignCustomer',
+  clearResult: true,
   body: {
     kind: 'OB.UI.ListBps'
   },
