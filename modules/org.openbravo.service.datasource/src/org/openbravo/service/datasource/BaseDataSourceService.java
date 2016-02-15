@@ -145,8 +145,7 @@ public abstract class BaseDataSourceService implements DataSourceService {
    * @return A String with the value of the where and filter clause. It can be null when there is no
    *         filter clause nor where clause.
    */
-  protected String getWhereAndFilterClause(Map<String, String> parameters, boolean isFilterApplied,
-      Entity ent) {
+  protected String getWhereAndFilterClause(Map<String, String> parameters, Entity ent) {
     String whereAndFilterClause = null;
     if (("Y".equals(cachedPreference.getPreferenceValue(ALLOW_WHERE_PREFERENCE)))
         && parameters.containsKey(JsonConstants.WHERE_PARAMETER)) {
@@ -164,7 +163,7 @@ public abstract class BaseDataSourceService implements DataSourceService {
       Tab tab = OBDal.getInstance().get(Tab.class, tabId);
       boolean isTransactionalWindow = tab.getWindow().getWindowType().equals("T");
       String where = tab.getHqlwhereclause();
-      if (isFilterApplied) {
+      if (isFilterApplied(parameters)) {
         String filterClause = getFilterClause(tab, isTransactionalWindow, ent);
         if (StringUtils.isNotBlank(where)) {
           whereAndFilterClause = " ((" + where + ") and (" + filterClause + "))";
@@ -229,7 +228,7 @@ public abstract class BaseDataSourceService implements DataSourceService {
     return applies;
   }
 
-  protected boolean isFilterApplied(Map<String, String> parameters) {
+  private boolean isFilterApplied(Map<String, String> parameters) {
     if ("true".equals(parameters.get(JsonConstants.FILTER_APPLIED_PARAMETER))) {
       return true;
     } else {

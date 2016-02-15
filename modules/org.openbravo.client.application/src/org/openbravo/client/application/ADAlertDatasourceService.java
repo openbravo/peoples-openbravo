@@ -72,7 +72,7 @@ public class ADAlertDatasourceService extends DefaultDataSourceService {
       alertStatus = StringUtils.isEmpty(alertStatus) ? "" : alertStatus.toUpperCase();
 
       Entity entity = ModelProvider.getInstance().getEntityByTableId(AD_TABLE_ID);
-      String whereClause = getWhereAndFilterClause(parameters, false, entity);
+      String whereClause = getWhereAndFilterClause(parameters, entity);
       parameters.put(JsonConstants.WHERE_PARAMETER, whereClause);
 
       if (parameters.get(JsonConstants.DISTINCT_PARAMETER) == null) {
@@ -159,8 +159,7 @@ public class ADAlertDatasourceService extends DefaultDataSourceService {
   }
 
   @Override
-  protected String getWhereAndFilterClause(Map<String, String> parameters, boolean isFilterApplied,
-      Entity entity) {
+  protected String getWhereAndFilterClause(Map<String, String> parameters, Entity entity) {
     String alertStatus = "";
     alertStatus = parameters.get(ALERT_STATUS);
     alertStatus = StringUtils.isEmpty(alertStatus) ? "" : alertStatus.toUpperCase();

@@ -98,8 +98,7 @@ public class DefaultDataSourceService extends BaseDataSourceService {
     if (!isSelector(parameters)) {
       String entityName = parameters.get(JsonConstants.ENTITYNAME);
       Entity entity = ModelProvider.getInstance().getEntity(entityName);
-      String whereAndFilterClause = getWhereAndFilterClause(parameters,
-          isFilterApplied(parameters), entity);
+      String whereAndFilterClause = getWhereAndFilterClause(parameters, entity);
       parameters.put(JsonConstants.WHERE_PARAMETER, whereAndFilterClause);
     }
 
