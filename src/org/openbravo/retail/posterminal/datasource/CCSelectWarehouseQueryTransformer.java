@@ -13,6 +13,7 @@ import java.util.Map;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.client.kernel.RequestContext;
+import org.openbravo.retail.posterminal.POSConstants;
 import org.openbravo.service.datasource.hql.HqlQueryTransformer;
 
 @ComponentProvider.Qualifier("28BE992AF4EF44728E1C7E72377B3785")
@@ -38,15 +39,11 @@ public class CCSelectWarehouseQueryTransformer extends HqlQueryTransformer {
     String transformedHql = hqlQuery
         .replaceAll(
             "where e.client",
-            "where not exists (select 1 from OBPOS_OrgWarehouseExtra as oww where oww.organization.id = 'replace_org_id' and oww.warehouse.id = e.id and oww.warehouseType <> 'cross_channel')"
-                + " and not exists (select 1 from OrganizationWarehouse as oww where oww.organization.id = 'replace_org_id' and oww.warehouse.id = e.id)"
+            "where not exists (select 1 from OBPOS_OrgWarehouseExtra as oww where oww.organization.id = :OBPOS_replace_org_id and oww.warehouse.id = e.id and oww.warehouseType <> :warehouseType)"
+                + " and not exists (select 1 from OrganizationWarehouse as oww where oww.organization.id = :OBPOS_replace_org_id and oww.warehouse.id = e.id)"
                 + " and e.client");
-    transformedHql = transformedHql.replaceAll("replace_org_id", organizationId);
-    transformedHql = transformedHql.replaceAll("join_0.name", "e.organization.name");
-    transformedHql = transformedHql.replaceAll("join_0", "e.locationAddress");
-    transformedHql = transformedHql.replaceAll("join_1", "e.locationAddress.region");
-    transformedHql = transformedHql.replaceAll("join_2", "e.locationAddress.country");
-    transformedHql = transformedHql.replaceAll("AND e.organization in \\(.*?\\)", "");
+    queryNamedParameters.put("OBPOS_replace_org_id", organizationId);
+    queryNamedParameters.put("warehouseType", POSConstants.CROSS_CHANNEL);
     return transformedHql;
   }
 }

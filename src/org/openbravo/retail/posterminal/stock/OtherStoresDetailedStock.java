@@ -44,17 +44,19 @@ public class OtherStoresDetailedStock extends JSONProcessSimple {
 
       Organization organization = OBDal.getInstance().get(Organization.class, orgId);
       String hqlQueryGetWarehouseList;
+      boolean requiresWarehouseTypeParam = false;
       if ("N".equals(organization.getObposIncludedCCWarehouses())) {
-        hqlQueryGetWarehouseList = "exists (SELECT 1 " + "FROM OBPOS_OrgWarehouseExtra as ow "
-            + "WHERE " + "ow.organization.id = '" + orgId + "' and ow.warehouseType = '"
-            + POSConstants.CROSS_CHANNEL + "' "
+        hqlQueryGetWarehouseList = "exists (SELECT 1 "
+            + "FROM OBPOS_OrgWarehouseExtra as ow WHERE ow.organization.id = :orgId and ow.warehouseType = :warehouseType "
             + "AND  ms.storageBin.warehouse.id= ow.warehouse.id ) ";
+        requiresWarehouseTypeParam = true;
+      } else if ("Y".equals(organization.getObposIncludedCCWarehouses())) {
+        hqlQueryGetWarehouseList = "not exists (SELECT 1 FROM OBPOS_OrgWarehouseExtra as ow WHERE ow.organization.id = :orgId and ow.warehouseType = :warehouseType AND ow.warehouse.id = ms.storageBin.warehouse.id) "
+            + "AND not exists (SELECT 1 FROM OrganizationWarehouse as ow WHERE ow.organization.id = :orgId AND ow.warehouse.id = ms.storageBin.warehouse.id) ";
+        requiresWarehouseTypeParam = true;
       } else {
-        hqlQueryGetWarehouseList = "not exists (SELECT 1 FROM OBPOS_OrgWarehouseExtra as ow WHERE ow.organization.id = '"
-            + orgId
-            + "' AND ow.warehouse.id = ms.storageBin.warehouse.id) "
-            + "AND not exists (SELECT 1 FROM OrganizationWarehouse as ow WHERE ow.organization.id = '"
-            + orgId + "' AND ow.warehouse.id = ms.storageBin.warehouse.id) ";
+        hqlQueryGetWarehouseList = "not exists (SELECT 1 FROM OrganizationWarehouse as ow WHERE ow.organization.id = :orgId AND ow.warehouse.id = ms.storageBin.warehouse.id) "
+            + "AND exists (SELECT 1 FROM OrganizationWarehouse as ow WHERE ow.organization.id <> :orgId AND ow.warehouse.id = ms.storageBin.warehouse.id) ";
       }
 
       hqlQuery = "select ms.storageBin.warehouse.id, ms.storageBin.warehouse.name, ms.storageBin.id, ms.storageBin.searchKey, "
@@ -62,14 +64,17 @@ public class OtherStoresDetailedStock extends JSONProcessSimple {
           + "from MaterialMgmtStorageDetail ms "
           + "where "
           + hqlQueryGetWarehouseList
-          + "and ms.product.id = '"
-          + prodId
-          + "' "
+          + "and ms.product.id = :prodId "
           + "group by ms.storageBin.warehouse.id, ms.storageBin.warehouse.name, ms.storageBin.warehouse.id, ms.storageBin.id, ms.storageBin.searchKey "
           + "order by ms.storageBin.warehouse.name";
 
       final Session session = OBDal.getInstance().getSession();
       final Query query = session.createQuery(hqlQuery);
+      if (requiresWarehouseTypeParam) {
+        query.setParameter("warehouseType", POSConstants.CROSS_CHANNEL);
+      }
+      query.setParameter("orgId", orgId);
+      query.setParameter("prodId", prodId);
 
       ScrollableResults results = query.scroll(ScrollMode.FORWARD_ONLY);
       boolean resultsAvailable = false;

@@ -136,8 +136,8 @@
 e.searchKey as searchKey, locationAddress, 
 e.allocated as allocated, 
 (select (case when count(*) = 0 then false else true end) 
-from OBPOS_OrgWarehouseExtra as ow where ow.organization.id = 'replace_org_id'
-and ow.warehouseType = 'cross_channel' and ow.warehouse.id= e.id) as OB_Selected, 
+from OBPOS_OrgWarehouseExtra as ow where ow.organization.id = :OBPOS_replace_org_id
+and ow.warehouseType = :warehouseType and ow.warehouse.id= e.id) as OB_Selected, 
 locationAddress.postalCode as postalCode, region, country
 from Warehouse as e
 left join e.locationAddress as locationAddress 
