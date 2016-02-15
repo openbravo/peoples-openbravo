@@ -147,14 +147,13 @@ public abstract class BaseDataSourceService implements DataSourceService {
    */
   protected String getWhereAndFilterClause(Map<String, String> parameters, boolean isFilterApplied,
       Entity ent) {
-    String whereAndFilterClause = "";
+    String whereAndFilterClause;
     if (("Y".equals(cachedPreference.getPreferenceValue(ALLOW_WHERE_PREFERENCE)))
         && parameters.containsKey(JsonConstants.WHERE_PARAMETER)) {
       log.warn(WARN_MESSAGE);
       if (getWhereClause() != null) {
         if (parameters.get(JsonConstants.WHERE_PARAMETER) != null) {
           final String currentWhere = parameters.get(JsonConstants.WHERE_PARAMETER);
-
           whereAndFilterClause = "(" + currentWhere + ") and (" + getWhereClause() + ")";
         } else if (!"Y".equals(cachedPreference.getPreferenceValue(ALLOW_WHERE_PREFERENCE))) {
           whereAndFilterClause = getWhereClause();
