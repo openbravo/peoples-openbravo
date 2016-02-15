@@ -22,7 +22,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2012-2015 Openbravo SLU
+* All portions are Copyright (C) 2012-2016 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -93,6 +93,7 @@ BEGIN
         JOIN m_locator l ON sd.m_locator_id = l.m_locator_id
         JOIN m_warehouse w ON l.m_warehouse_id = w.m_warehouse_id
     WHERE sp.ad_pinstance_id = v_pinstance_id
+    AND sd.m_product_uom_id IS NULL
     ORDER BY sp.priority
   ) LOOP
     v_qty := LEAST(cur_stock.quantity, v_pendingqty);

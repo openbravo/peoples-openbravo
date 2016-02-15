@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2014-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2014-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -147,7 +147,8 @@ public class PriceAdjustment {
     String hql = "as p ";
     hql += "where active = true ";
     hql += "and client = :client ";
-    hql += "and (endingDate is null or endingDate>:date) ";
+    hql += "and (endingDate is null or trunc(endingDate) + 1 > :date) ";
+    hql += "and trunc(startingDate)<=:date ";
     hql += "and p.discountType.id = '5D4BAF6BB86D4D2C9ED3D5A6FC051579' ";
     hql += "and (minQuantity is null or minQuantity <= :qty) ";
     hql += "and (maxQuantity is null or maxQuantity >= :qty) ";

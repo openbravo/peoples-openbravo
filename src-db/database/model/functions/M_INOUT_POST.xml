@@ -102,6 +102,7 @@
     v_isSoTrx CHAR(1);
     v_ProductName M_Product.name%TYPE;
     v_reservation_id    VARCHAR2(32);
+    v_reservationstock_id    VARCHAR2(32);
     v_M_Warehouse_ID    VARCHAR2(32);
     v_voidmovementdate M_Inout.MovementDate%TYPE;
     v_voiddate_acct M_Inout.DateAcct%TYPE;
@@ -119,8 +120,11 @@
     v_IsQtyVariable M_Product.IsQuantityVariable%TYPE;
     v_IsReversedDoc CHAR(1);
 
-    v_uuid VARCHAR2(32);
-    v_qtyordered NUMBER;
+    v_countRS NUMBER:=0;
+    v_R_Quantity NUMBER;
+    v_R_Reservedqty NUMBER;
+    v_RS_Quantity NUMBER;
+    v_RS_Releasedqty NUMBER;
 
   BEGIN
   
@@ -557,38 +561,15 @@
                   M_RESERVATION_CONSUMPTION(v_reservation_id, cur_inoutline.m_locator_id, cur_inoutline.m_attributesetinstance_id, cur_inoutline.movementqty, v_user, v_result, v_message);
                 END IF;
               ELSIF (cur_inout.issotrx = 'Y' AND cur_inoutline.c_orderline_id IS NOT NULL AND v_qty > 0 AND cur_inoutline.canceled_inoutline_id IS NOT NULL) THEN
-                -- Undo reservation
-                DECLARE
-                  cur_released_stock RECORD;
-                  v_qtyaux NUMBER;
-                  v_undoqty NUMBER;
-                BEGIN
-                  SELECT count(*), max(m_reservation_id)
-                    INTO v_aux, v_reservation_id
-                  FROM m_reservation
-                  WHERE c_orderline_id = cur_inoutline.c_orderline_id
-                  AND res_status NOT IN ('DR', 'CL');
-                  IF (v_aux > 1) THEN
-                    RAISE_APPLICATION_ERROR(-20000, '@SOLineWithMoreThanOneOpenReservation@');
-                  ELSIF (v_aux = 1) THEN
-                    v_qtyaux := v_qty;
-                    FOR cur_released_stock IN (
-                        SELECT m_reservation_stock_id, quantity, releasedqty
-                        FROM m_reservation_stock
-                        WHERE m_locator_id = cur_inoutline.m_locator_id
-                          AND COALESCE(m_attributesetinstance_id, '0') = COALESCE(cur_inoutline.m_attributesetinstance_id, '0')
-                          AND m_reservation_id = v_reservation_id
-                          AND COALESCE(releasedqty, 0) > 0
-                        ORDER BY CASE isallocated WHEN 'N' THEN 0 ELSE 1 END
-                    ) LOOP
-                      v_undoqty := LEAST(v_qtyaux, cur_released_stock.releasedqty);
-                      UPDATE m_reservation_stock
-                      SET releasedqty = releasedqty - v_undoqty
-                      WHERE m_reservation_stock_id = cur_released_stock.m_reservation_stock_id;
-                      v_qtyaux := v_qtyaux - v_undoqty;
-                    END LOOP;
-                  END IF;
-                END;
+                -- Undo reservation is done when voiding shipment
+                SELECT count(*), max(m_reservation_id)
+                INTO v_aux, v_reservation_id
+                FROM m_reservation
+                WHERE c_orderline_id = cur_inoutline.c_orderline_id
+                AND res_status NOT IN ('DR', 'CL');
+                IF (v_aux > 1) THEN
+                  RAISE_APPLICATION_ERROR(-20000, '@SOLineWithMoreThanOneOpenReservation@');
+                END IF;
               ELSIF (cur_inout.issotrx = 'N' AND cur_inoutline.canceled_inoutline_id IS NULL) THEN
                 -- Manage pre-reserves
                 DECLARE
@@ -1168,62 +1149,8 @@
               Updated=now(),
               UpdatedBy=v_User
             WHERE M_INOUTLINE.M_INOUTLINE_ID=Cur_InOutLine.M_INOUTLINE_ID;
-
-	    -- Create new reservation to replace the closed related one
-	    FOR Cur_Reservation IN
-              (SELECT *
-              FROM M_RESERVATION
-              WHERE M_RESERVATION.C_OrderLine_ID=Cur_InOutLine.C_OrderLine_ID
-              AND IsActive='Y')
-	    LOOP
-	      IF (Cur_Reservation.Res_Status = 'CL') THEN
-
-		v_uuid := get_uuid();
-
-		-- Get the ordered quantity from the order line
-	        SELECT qtyordered
-	        INTO v_qtyordered
-	        FROM C_ORDERLINE
-	        WHERE C_OrderLine_ID=Cur_Reservation.C_OrderLine_ID;
-
-	        -- Create a new reservation with the ordered quantity
-	        INSERT INTO M_RESERVATION (
-		  m_reservation_id, ad_client_id, ad_org_id, isactive,
-		  created, createdby, updated, updatedby,
-		  m_product_id, quantity, c_uom_id, c_orderline_id,
-		  ad_user_id, c_bpartner_id, m_warehouse_id, m_attributesetinstance_id, m_locator_id,
-		  res_status, res_process, managereservation_pe, reservedgoodmnt_pe
-	        ) VALUES (
-		  v_uuid, Cur_Reservation.ad_client_id, Cur_Reservation.ad_org_id, 'Y',
-		  now(), v_user, now(), v_user,
-		  Cur_Reservation.m_product_id, v_qtyordered, Cur_Reservation.c_uom_id, Cur_Reservation.c_orderline_id,
-		  Cur_Reservation.ad_user_id, Cur_Reservation.c_bpartner_id, Cur_Reservation.m_warehouse_id,
-		  Cur_Reservation.m_attributesetinstance_id, Cur_Reservation.m_locator_id, 'DR', 'PR',
-		  Cur_Reservation.managereservation_pe, Cur_Reservation.reservedgoodmnt_pe
-	        );
-
-		-- Add a reservation stock with the ordered quantity
-		INSERT INTO M_RESERVATION_STOCK (
-		  m_reservation_stock_id, ad_client_id, ad_org_id, isactive,
-   	          created, createdby, updated, updatedby,
-		  m_reservation_id, c_orderline_id, quantity, isallocated,
-		  m_locator_id, m_attributesetinstance_id )
-		SELECT get_uuid(), ad_client_id, ad_org_id, 'Y',
-		  now(), v_user, now(), v_user,
-		  v_uuid, c_orderline_id, v_qtyordered, isallocated,
-		  m_locator_id, m_attributesetinstance_id
-		FROM M_RESERVATION_STOCK
-		WHERE M_RESERVATION_STOCK.M_Reservation_ID=Cur_Reservation.M_Reservation_ID
-		AND IsActive='Y';
-
-	        -- Process the reservation
-	        M_RESERVATION_POST(null, v_uuid, 'PR', v_user);
-
-	      END IF;
-	    END LOOP;
-
           END LOOP;
-          
+
           -- Post Reversal
           v_ResultStr:='PostReversal';
           -- Update reversal goods dates
@@ -1234,6 +1161,144 @@
             UPDATE M_INOUT SET DateAcct = v_voiddate_acct WHERE M_INOUT_ID = v_RInOut_ID;
           END IF;
           M_INOUT_POST(NULL, v_RInOut_ID) ;
+
+          -- Undo reservation by updating completed existing one or
+          -- by creating new reservation to replace closed existing one
+          IF (Cur_InOut.issotrx = 'Y') THEN
+            FOR Cur_Reservation IN (
+              SELECT r.m_reservation_id, r.ad_client_id, r.ad_org_id,
+              r.m_product_id, r.quantity, r.c_uom_id, r.c_orderline_id, r.ad_user_id,
+              r.c_bpartner_id, r.m_warehouse_id, r.m_attributesetinstance_id, r.m_locator_id,
+              r.reservedqty, r.res_status, r.managereservation_pe, r.reservedgoodmnt_pe,
+              ol.qtyordered, sum(iol.movementqty) as movementqty
+              FROM M_RESERVATION r
+              JOIN C_ORDERLINE ol
+              ON r.c_orderline_id = ol.c_orderline_id
+              JOIN M_INOUTLINE iol
+              ON ol.c_orderline_id = iol.c_orderline_id
+              AND ol.m_product_id = iol.m_product_id
+              WHERE iol.m_inout_id = Cur_InOut.m_inout_id
+              AND r.res_status <> 'DR'
+              AND iol.movementqty > 0
+              AND iol.canceled_inoutline_id IS NULL
+              AND r.created = (
+                SELECT max(created)
+                FROM M_RESERVATION
+                WHERE c_orderline_id = r.c_orderline_id
+                AND res_status <> 'DR'
+              )
+              GROUP BY r.m_reservation_id, r.ad_client_id, r.ad_org_id,
+              r.m_product_id, r.quantity, r.c_uom_id, r.c_orderline_id, r.ad_user_id,
+              r.c_bpartner_id, r.m_warehouse_id, r.m_attributesetinstance_id, r.m_locator_id,
+              r.reservedqty, r.res_status, r.managereservation_pe, r.reservedgoodmnt_pe, ol.qtyordered
+            )
+            LOOP
+
+              -- Get the least quantity between ordered quantity and movement quantity
+              v_R_Quantity := LEAST(Cur_Reservation.qtyordered, Cur_Reservation.movementqty);
+
+              -- If completed reservation exists already update it,
+              -- otherwise create a new one with this quantity
+              IF (Cur_Reservation.res_status <> 'CL') THEN
+                v_reservation_id := Cur_Reservation.m_reservation_id;
+                v_R_Reservedqty := Cur_Reservation.reservedqty;
+              ELSE
+                v_reservation_id := get_uuid();
+                v_R_Reservedqty := 0;
+                INSERT INTO M_RESERVATION (
+                  m_reservation_id, ad_client_id, ad_org_id, isactive,
+                  created, createdby, updated, updatedby,
+                  m_product_id, quantity, c_uom_id, c_orderline_id,
+                  ad_user_id, c_bpartner_id, m_warehouse_id, m_attributesetinstance_id, m_locator_id,
+                  res_status, res_process, managereservation_pe, reservedgoodmnt_pe
+                ) VALUES (
+                  v_reservation_id, Cur_Reservation.ad_client_id, Cur_Reservation.ad_org_id, 'Y',
+                  now(), v_user, now(), v_user,
+                  Cur_Reservation.m_product_id, Cur_Reservation.qtyordered, Cur_Reservation.c_uom_id, Cur_Reservation.c_orderline_id,
+                  Cur_Reservation.ad_user_id, Cur_Reservation.c_bpartner_id, Cur_Reservation.m_warehouse_id,
+                  Cur_Reservation.m_attributesetinstance_id, Cur_Reservation.m_locator_id,
+                  'DR', 'PR', Cur_Reservation.managereservation_pe, Cur_Reservation.reservedgoodmnt_pe
+                );
+                -- To avoid create a reservation with all available stock,
+                -- process new reservation before creating new stock reservations
+                -- and delete stock reservation created by m_reserve_stock_manual
+                M_RESERVATION_POST(null, v_reservation_id, 'PR', v_user);
+                UPDATE M_RESERVATION_STOCK SET releasedqty = 0 WHERE m_reservation_id = v_reservation_id;
+                DELETE FROM M_RESERVATION_STOCK WHERE m_reservation_id = v_reservation_id;
+              END IF;
+
+              -- Add a reservation stock fo each related inout line
+              FOR Cur_InOutLine IN (
+                SELECT iol.m_locator_id, COALESCE(iol.m_attributesetinstance_id, '0') as m_attributesetinstance_id,
+                sum(iol.movementqty) as movementqty
+                FROM M_INOUTLINE iol
+                WHERE iol.m_inout_id = Cur_InOut.m_inout_id
+                AND iol.c_orderline_id = Cur_Reservation.c_orderline_id
+                AND iol.m_product_id = Cur_Reservation.m_product_id
+                AND iol.movementqty > 0
+                AND iol.canceled_inoutline_id IS NULL
+                GROUP BY iol.m_locator_id, COALESCE(iol.m_attributesetinstance_id, '0')
+              )
+              LOOP
+
+                -- Check if movement quantity is less or equals than ordered quantity,
+                -- if so insert a new reservation stock with movement quantity,
+                -- otherwise insert a new reservation stock with pending ordered quantity
+                IF (Cur_InOutLine.movementqty <= v_R_Quantity) THEN
+                  v_RS_Quantity := Cur_InOutLine.movementqty;
+                ELSE
+                  v_RS_Quantity := v_R_Quantity;
+                END IF;
+                v_R_Quantity := v_R_Quantity - v_RS_Quantity;
+
+                -- If completed reservation stock exists already update it
+                -- by decreasing its releasedqty or by increasing its quantity,
+                -- otherwise create a new one with this quantity
+                SELECT count(*), max(rs.m_reservation_stock_id), max(rs.releasedqty)
+                INTO v_countRS, v_reservationstock_id, v_RS_Releasedqty
+                FROM M_RESERVATION_STOCK rs
+                WHERE rs.m_reservation_id = v_reservation_id
+                AND rs.m_locator_id = Cur_InOutLine.m_locator_id
+                AND COALESCE(rs.m_attributesetinstance_id, '0') = Cur_InOutLine.m_attributesetinstance_id;
+
+                IF (v_countRS > 0) THEN
+                  IF (v_RS_Releasedqty > 0) THEN
+                    v_RS_Releasedqty := LEAST(v_RS_Releasedqty, v_RS_Quantity);
+                    UPDATE M_RESERVATION_STOCK
+                    SET releasedqty = releasedqty - v_RS_Releasedqty
+                    WHERE m_reservation_stock_id = v_reservationstock_id;
+                    v_RS_Quantity := v_RS_Quantity - v_RS_Releasedqty;
+                  END IF;
+                  IF (v_RS_Quantity > 0 AND Cur_Reservation.quantity >= v_R_Reservedqty + v_RS_Quantity) THEN
+                    UPDATE M_RESERVATION_STOCK
+                    SET quantity = quantity + v_RS_Quantity
+                    WHERE m_reservation_stock_id = v_reservationstock_id;
+                    v_R_Reservedqty := v_R_Reservedqty + v_RS_Quantity;
+                  END IF;
+                ELSE
+                  INSERT INTO M_RESERVATION_STOCK (
+                    m_reservation_stock_id, ad_client_id, ad_org_id, isactive,
+                    created, createdby, updated, updatedby,
+                    m_reservation_id, quantity, isallocated,
+                    m_locator_id, m_attributesetinstance_id
+                  ) VALUES (
+                    get_uuid(), Cur_Reservation.ad_client_id, Cur_Reservation.ad_org_id, 'Y',
+                    now(), v_user, now(), v_user,
+                    v_reservation_id, v_RS_Quantity, 'N',
+                    Cur_InOutLine.m_locator_id, Cur_InOutLine.m_attributesetinstance_id
+                  );
+                  v_R_Reservedqty := v_R_Reservedqty + v_RS_Quantity;
+                END IF;
+
+                -- Exit if we have reserved all pending ordered quantity
+                IF (v_R_Quantity <= 0) THEN
+                  EXIT;
+                END IF;
+
+              END LOOP;
+            END LOOP;
+          END IF;
+
           -- Indicate as Reversal Transaction
           v_ResultStr:='IndicateReversal';
           UPDATE M_INOUT

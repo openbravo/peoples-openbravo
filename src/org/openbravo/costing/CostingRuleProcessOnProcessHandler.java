@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2015 Openbravo SLU
+ * All portions are Copyright (C) 2014-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -159,7 +159,7 @@ public class CostingRuleProcessOnProcessHandler extends BaseActionHandler {
     pQry.setFilterOnReadableOrganization(false);
     pQry.setNamedParameter("porgs", naturalOrgs);
     pQry.setNamedParameter("childOrgs", childOrgs);
-    return pQry.count() > 0;
+    pQry.setMaxResult(1);
+    return pQry.uniqueResult() != null;
   }
-
 }

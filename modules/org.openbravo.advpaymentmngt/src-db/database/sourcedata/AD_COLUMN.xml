@@ -287,8 +287,8 @@
 <!--07DD87B8F3BE41C18546260D616E1404-->  <IMAGESIZEVALUESACTION><![CDATA[N]]></IMAGESIZEVALUESACTION>
 <!--07DD87B8F3BE41C18546260D616E1404-->  <ISUSEDSEQUENCE><![CDATA[N]]></ISUSEDSEQUENCE>
 <!--07DD87B8F3BE41C18546260D616E1404-->  <SQLLOGIC><![CDATA[(SELECT count(*) FROM fin_bankstatementline bl, fin_bankstatement b, fin_reconciliation r WHERE (bl.fin_finacc_transaction_id IS NULL OR (EXISTS ( SELECT 1 FROM fin_finacc_transaction t, fin_reconciliation rec WHERE t.fin_reconciliation_id  = rec.fin_reconciliation_id AND bl.fin_finacc_transaction_id  = t.fin_finacc_transaction_id  AND t.fin_financial_account_id  = b.fin_financial_account_id  AND rec.created > r.created))) AND bl.datetrx <= r.dateto AND b.fin_bankstatement_id  = bl.fin_bankstatement_id AND b.fin_financial_account_id  = r.fin_financial_account_id and r.fin_reconciliation_id = fin_reconciliation_id)]]></SQLLOGIC>
-<!--07DD87B8F3BE41C18546260D616E1404-->  <ALLOWSORTING><![CDATA[Y]]></ALLOWSORTING>
-<!--07DD87B8F3BE41C18546260D616E1404-->  <ALLOWFILTERING><![CDATA[Y]]></ALLOWFILTERING>
+<!--07DD87B8F3BE41C18546260D616E1404-->  <ALLOWSORTING><![CDATA[N]]></ALLOWSORTING>
+<!--07DD87B8F3BE41C18546260D616E1404-->  <ALLOWFILTERING><![CDATA[N]]></ALLOWFILTERING>
 <!--07DD87B8F3BE41C18546260D616E1404--></AD_COLUMN>
 
 <!--09A1C598D8134CAC92CB30E476A213B0--><AD_COLUMN>
@@ -2272,8 +2272,8 @@
 <!--3FE18B378FA24031A2E24B058414729F-->  <IMAGESIZEVALUESACTION><![CDATA[N]]></IMAGESIZEVALUESACTION>
 <!--3FE18B378FA24031A2E24B058414729F-->  <ISUSEDSEQUENCE><![CDATA[N]]></ISUSEDSEQUENCE>
 <!--3FE18B378FA24031A2E24B058414729F-->  <SQLLOGIC><![CDATA[(SELECT COALESCE(sum(t.depositamt), 0) FROM fin_finacc_transaction t,  fin_reconciliation rec WHERE (t.fin_reconciliation_id IS NULL OR (EXISTS ( SELECT 1 FROM fin_reconciliation r WHERE r.dateto > rec.dateto AND t.fin_reconciliation_id  = r.fin_reconciliation_id ))) AND t.statementdate <= rec.dateto AND t.depositamt <> 0 AND t.fin_financial_account_id  = rec.fin_financial_account_id AND rec.fin_reconciliation_id = fin_reconciliation_id)]]></SQLLOGIC>
-<!--3FE18B378FA24031A2E24B058414729F-->  <ALLOWSORTING><![CDATA[Y]]></ALLOWSORTING>
-<!--3FE18B378FA24031A2E24B058414729F-->  <ALLOWFILTERING><![CDATA[Y]]></ALLOWFILTERING>
+<!--3FE18B378FA24031A2E24B058414729F-->  <ALLOWSORTING><![CDATA[N]]></ALLOWSORTING>
+<!--3FE18B378FA24031A2E24B058414729F-->  <ALLOWFILTERING><![CDATA[N]]></ALLOWFILTERING>
 <!--3FE18B378FA24031A2E24B058414729F--></AD_COLUMN>
 
 <!--40405759C1E1456E99B537D36A06F987--><AD_COLUMN>
@@ -3090,8 +3090,8 @@ The distribution algorithm will be driven by this priority. The pending payments
 <!--590088D9DDB34C1FB99E97CF50022B62-->  <IMAGESIZEVALUESACTION><![CDATA[N]]></IMAGESIZEVALUESACTION>
 <!--590088D9DDB34C1FB99E97CF50022B62-->  <ISUSEDSEQUENCE><![CDATA[N]]></ISUSEDSEQUENCE>
 <!--590088D9DDB34C1FB99E97CF50022B62-->  <SQLLOGIC><![CDATA[( SELECT count(*) FROM fin_finacc_transaction WHERE fin_finacc_transaction.fin_reconciliation_id = fin_reconciliation_id)]]></SQLLOGIC>
-<!--590088D9DDB34C1FB99E97CF50022B62-->  <ALLOWSORTING><![CDATA[Y]]></ALLOWSORTING>
-<!--590088D9DDB34C1FB99E97CF50022B62-->  <ALLOWFILTERING><![CDATA[Y]]></ALLOWFILTERING>
+<!--590088D9DDB34C1FB99E97CF50022B62-->  <ALLOWSORTING><![CDATA[N]]></ALLOWSORTING>
+<!--590088D9DDB34C1FB99E97CF50022B62-->  <ALLOWFILTERING><![CDATA[N]]></ALLOWFILTERING>
 <!--590088D9DDB34C1FB99E97CF50022B62--></AD_COLUMN>
 
 <!--5961F18CC4934FCCA8AB18B2B3AFC960--><AD_COLUMN>
@@ -4208,8 +4208,8 @@ The distribution algorithm will be driven by this priority. The pending payments
 <!--7791426B8C214F0EB68C13D99A577229-->  <IMAGESIZEVALUESACTION><![CDATA[N]]></IMAGESIZEVALUESACTION>
 <!--7791426B8C214F0EB68C13D99A577229-->  <ISUSEDSEQUENCE><![CDATA[N]]></ISUSEDSEQUENCE>
 <!--7791426B8C214F0EB68C13D99A577229-->  <SQLLOGIC><![CDATA[(SELECT COALESCE(sum(fin_finacc_transaction.depositamt - fin_finacc_transaction.paymentamt), 0) FROM fin_finacc_transaction WHERE fin_finacc_transaction.fin_reconciliation_id = fin_reconciliation_id)]]></SQLLOGIC>
-<!--7791426B8C214F0EB68C13D99A577229-->  <ALLOWSORTING><![CDATA[Y]]></ALLOWSORTING>
-<!--7791426B8C214F0EB68C13D99A577229-->  <ALLOWFILTERING><![CDATA[Y]]></ALLOWFILTERING>
+<!--7791426B8C214F0EB68C13D99A577229-->  <ALLOWSORTING><![CDATA[N]]></ALLOWSORTING>
+<!--7791426B8C214F0EB68C13D99A577229-->  <ALLOWFILTERING><![CDATA[N]]></ALLOWFILTERING>
 <!--7791426B8C214F0EB68C13D99A577229--></AD_COLUMN>
 
 <!--78A3367822B35459E040007F01012510--><AD_COLUMN>
@@ -4612,8 +4612,8 @@ The distribution algorithm will be driven by this priority. The pending payments
 <!--81822D492C88480C8830E5059387A771-->  <IMAGESIZEVALUESACTION><![CDATA[N]]></IMAGESIZEVALUESACTION>
 <!--81822D492C88480C8830E5059387A771-->  <ISUSEDSEQUENCE><![CDATA[N]]></ISUSEDSEQUENCE>
 <!--81822D492C88480C8830E5059387A771-->  <SQLLOGIC><![CDATA[(SELECT count(*) FROM fin_finacc_transaction t,  fin_reconciliation rec WHERE (t.fin_reconciliation_id IS NULL OR (EXISTS ( SELECT 1 FROM fin_reconciliation r WHERE r.dateto > rec.dateto AND t.fin_reconciliation_id  = r.fin_reconciliation_id ))) AND t.statementdate <= rec.dateto AND t.depositamt <> 0 AND t.fin_financial_account_id  = rec.fin_financial_account_id AND rec.fin_reconciliation_id = fin_reconciliation_id) ]]></SQLLOGIC>
-<!--81822D492C88480C8830E5059387A771-->  <ALLOWSORTING><![CDATA[Y]]></ALLOWSORTING>
-<!--81822D492C88480C8830E5059387A771-->  <ALLOWFILTERING><![CDATA[Y]]></ALLOWFILTERING>
+<!--81822D492C88480C8830E5059387A771-->  <ALLOWSORTING><![CDATA[N]]></ALLOWSORTING>
+<!--81822D492C88480C8830E5059387A771-->  <ALLOWFILTERING><![CDATA[N]]></ALLOWFILTERING>
 <!--81822D492C88480C8830E5059387A771--></AD_COLUMN>
 
 <!--82EFB8E4043C19C9E040007F01003778--><AD_COLUMN>
@@ -6792,8 +6792,8 @@ The distribution algorithm will be driven by this priority. The pending payments
 <!--91BC2133F04647938F702192A5156C25-->  <IMAGESIZEVALUESACTION><![CDATA[N]]></IMAGESIZEVALUESACTION>
 <!--91BC2133F04647938F702192A5156C25-->  <ISUSEDSEQUENCE><![CDATA[N]]></ISUSEDSEQUENCE>
 <!--91BC2133F04647938F702192A5156C25-->  <SQLLOGIC><![CDATA[(SELECT count(*) FROM fin_finacc_transaction t,  fin_reconciliation rec WHERE (t.fin_reconciliation_id IS NULL OR (EXISTS ( SELECT 1 FROM fin_reconciliation r WHERE r.dateto > rec.dateto AND t.fin_reconciliation_id  = r.fin_reconciliation_id ))) AND t.statementdate <= rec.dateto AND t.paymentamt <> 0 AND t.fin_financial_account_id  = rec.fin_financial_account_id AND rec.fin_reconciliation_id = fin_reconciliation_id) ]]></SQLLOGIC>
-<!--91BC2133F04647938F702192A5156C25-->  <ALLOWSORTING><![CDATA[Y]]></ALLOWSORTING>
-<!--91BC2133F04647938F702192A5156C25-->  <ALLOWFILTERING><![CDATA[Y]]></ALLOWFILTERING>
+<!--91BC2133F04647938F702192A5156C25-->  <ALLOWSORTING><![CDATA[N]]></ALLOWSORTING>
+<!--91BC2133F04647938F702192A5156C25-->  <ALLOWFILTERING><![CDATA[N]]></ALLOWFILTERING>
 <!--91BC2133F04647938F702192A5156C25--></AD_COLUMN>
 
 <!--923F5B228E5F4D2D96C00C206D47BC63--><AD_COLUMN>
@@ -10230,8 +10230,8 @@ The distribution algorithm will be driven by this priority. The pending payments
 <!--BBE47252ECEF4B5BA7116E0E23CA5D8D-->  <IMAGESIZEVALUESACTION><![CDATA[N]]></IMAGESIZEVALUESACTION>
 <!--BBE47252ECEF4B5BA7116E0E23CA5D8D-->  <ISUSEDSEQUENCE><![CDATA[N]]></ISUSEDSEQUENCE>
 <!--BBE47252ECEF4B5BA7116E0E23CA5D8D-->  <SQLLOGIC><![CDATA[(SELECT COALESCE(sum(t.paymentamt), 0) FROM fin_finacc_transaction t,  fin_reconciliation rec WHERE (t.fin_reconciliation_id IS NULL OR (EXISTS ( SELECT 1 FROM fin_reconciliation r WHERE r.dateto > rec.dateto AND t.fin_reconciliation_id  = r.fin_reconciliation_id ))) AND t.statementdate <= rec.dateto AND t.paymentamt <> 0 AND t.fin_financial_account_id  = rec.fin_financial_account_id AND rec.fin_reconciliation_id = fin_reconciliation_id)]]></SQLLOGIC>
-<!--BBE47252ECEF4B5BA7116E0E23CA5D8D-->  <ALLOWSORTING><![CDATA[Y]]></ALLOWSORTING>
-<!--BBE47252ECEF4B5BA7116E0E23CA5D8D-->  <ALLOWFILTERING><![CDATA[Y]]></ALLOWFILTERING>
+<!--BBE47252ECEF4B5BA7116E0E23CA5D8D-->  <ALLOWSORTING><![CDATA[N]]></ALLOWSORTING>
+<!--BBE47252ECEF4B5BA7116E0E23CA5D8D-->  <ALLOWFILTERING><![CDATA[N]]></ALLOWFILTERING>
 <!--BBE47252ECEF4B5BA7116E0E23CA5D8D--></AD_COLUMN>
 
 <!--BC78354AB2F7403FA9725CDF267C0A70--><AD_COLUMN>
@@ -10674,8 +10674,8 @@ The distribution algorithm will be driven by this priority. The pending payments
 <!--C72EC790B2EF4BEEA2A843D30770B85D-->  <IMAGESIZEVALUESACTION><![CDATA[N]]></IMAGESIZEVALUESACTION>
 <!--C72EC790B2EF4BEEA2A843D30770B85D-->  <ISUSEDSEQUENCE><![CDATA[N]]></ISUSEDSEQUENCE>
 <!--C72EC790B2EF4BEEA2A843D30770B85D-->  <SQLLOGIC><![CDATA[(SELECT COALESCE(sum(bl.cramount - bl.dramount), 0) FROM fin_bankstatementline bl, fin_bankstatement b, fin_reconciliation r WHERE (bl.fin_finacc_transaction_id IS NULL OR (EXISTS ( SELECT 1 FROM fin_finacc_transaction t, fin_reconciliation rec WHERE t.fin_reconciliation_id  = rec.fin_reconciliation_id AND bl.fin_finacc_transaction_id  = t.fin_finacc_transaction_id  AND t.fin_financial_account_id  = b.fin_financial_account_id  AND rec.created > r.created))) AND bl.datetrx <= r.dateto AND b.fin_bankstatement_id  = bl.fin_bankstatement_id AND b.fin_financial_account_id  = r.fin_financial_account_id and r.fin_reconciliation_id = fin_reconciliation_id)]]></SQLLOGIC>
-<!--C72EC790B2EF4BEEA2A843D30770B85D-->  <ALLOWSORTING><![CDATA[Y]]></ALLOWSORTING>
-<!--C72EC790B2EF4BEEA2A843D30770B85D-->  <ALLOWFILTERING><![CDATA[Y]]></ALLOWFILTERING>
+<!--C72EC790B2EF4BEEA2A843D30770B85D-->  <ALLOWSORTING><![CDATA[N]]></ALLOWSORTING>
+<!--C72EC790B2EF4BEEA2A843D30770B85D-->  <ALLOWFILTERING><![CDATA[N]]></ALLOWFILTERING>
 <!--C72EC790B2EF4BEEA2A843D30770B85D--></AD_COLUMN>
 
 <!--C9FD369BECE545828033CC49CAB85D9D--><AD_COLUMN>

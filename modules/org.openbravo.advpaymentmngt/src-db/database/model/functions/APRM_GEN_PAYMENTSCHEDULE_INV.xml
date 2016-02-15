@@ -1070,6 +1070,20 @@ BEGIN
       IF (v_count <> 0) THEN
         RAISE_APPLICATION_ERROR(-20000, '@APRM_InvoiceWithPayments@' || ' ' || v_documentno);
       END IF;
+
+      SELECT count(*)
+      INTO v_count
+      FROM DUAL
+      WHERE EXISTS (SELECT 1
+                    FROM C_InvoiceTax_CashVAT itcv
+                    INNER JOIN C_InvoiceTax it on (it.C_InvoiceTax_ID = itcv.C_InvoiceTax_ID)
+                    WHERE it.C_Invoice_ID = p_record_id
+                    AND itcv.IsManualSettlement = 'Y'
+                    );
+      IF (v_count > 0) THEN
+        RAISE_APPLICATION_ERROR(-20000, '@APRM_InvoiceWithManualCashVATSettlement@');
+      END IF;
+
       SELECT count(*), max(p.documentno)
         INTO v_count, v_documentno
       FROM fin_payment_schedule ps, fin_payment_scheduledetail psd, fin_payment_prop_detail pd, fin_payment_proposal p
@@ -1121,6 +1135,20 @@ BEGIN
       UPDATE C_BPARTNER
          SET SO_CREDITUSED = COALESCE(SO_CREDITUSED,0) - v_convertedAmount
       WHERE C_BPARTNER_ID = v_BPartner_ID;
+
+      -- Delete C_InvoiceTax_CashVAT records for this invoice
+      --  this only happens for prepayments, which are bypassed by the previous check
+      DELETE FROM C_InvoiceTax_CashVAT itcv
+      WHERE EXISTS (SELECT 1
+                    FROM C_InvoiceTax it
+                    WHERE it.C_InvoiceTax_ID = itcv.C_InvoiceTax_ID
+                    AND it.C_Invoice_ID = p_record_id
+                    )
+      AND EXISTS (SELECT 1
+                  FROM FIN_Payment_Detail fpd
+                  WHERE fpd.FIN_Payment_Detail_ID = itcv.FIN_Payment_Detail_ID
+                  AND fpd.IsPrepayment = 'Y')
+      AND itcv.IsManualSettlement = 'N';
     END;
 
   ELSIF (p_docaction = 'RC') THEN
