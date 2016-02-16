@@ -41,18 +41,18 @@ public class ProductCharacteristicHQLCriteria extends HQLCriteriaProcess {
   }
 
   public String getAllQuery() {
-    return "   cv.id in (select pchv.characteristicValue.id from ProductCharacteristicValue as pchv where cv.characteristic = pchv.characteristic "
+    return "   exists (select 1 from ProductCharacteristicValue as pchv where cv.characteristic = pchv.characteristic and  cv.id = pchv.characteristicValue.id "
         + " and upper(pchv.product.name) like upper('$1')) ";
   }
 
   public String getProdCategoryQuery() {
-    return "   cv.id in (select pchv.characteristicValue.id from ProductCharacteristicValue as pchv where cv.characteristic = pchv.characteristic "
+    return "   exists (select 1 from ProductCharacteristicValue as pchv where cv.characteristic = pchv.characteristic and  cv.id = pchv.characteristicValue.id"
         + " and upper(pchv.product.name) like upper('$1') and pchv.product.productCategory.id in ( '$2') ) ";
   }
 
   public String getBestsellers() {
-    return "   cv.id in (select pchv.characteristicValue.id from ProductCharacteristicValue as pchv , OBRETCO_Prol_Product pli where pchv.product.id=pli.product.id "
-        + " and cv.characteristic = pchv.characteristic  and pli.bestseller = true "
+    return "  exists (select 1 from ProductCharacteristicValue as pchv , OBRETCO_Prol_Product pli where pchv.product.id=pli.product.id "
+        + " and cv.characteristic = pchv.characteristic  and  cv.id = pchv.characteristicValue.id  and pli.bestseller = true "
         + " and upper(pchv.product.name) like upper('$1')) ";
   }
 
