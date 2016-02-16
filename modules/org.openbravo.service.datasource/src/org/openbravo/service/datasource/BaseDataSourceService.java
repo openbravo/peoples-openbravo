@@ -182,14 +182,7 @@ public abstract class BaseDataSourceService implements DataSourceService {
   }
 
   private boolean isRootTab(Tab tab) {
-    boolean isRootLevel;
-    Long tabLevel = tab.getTabLevel();
-    if (tabLevel == 0) {
-      isRootLevel = true;
-    } else {
-      isRootLevel = false;
-    }
-    return isRootLevel;
+    return (tab.getTabLevel() == 0) ? true : false;
   }
 
   private String getFilterClause(Tab tab, Entity ent) {
