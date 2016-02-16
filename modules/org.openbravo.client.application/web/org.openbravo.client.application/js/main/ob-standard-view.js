@@ -690,7 +690,7 @@ isc.OBStandardView.addProperties({
       length = fieldsWithoutBLOBs.length;
       // gets the index of the image fields
       for (i = 0; i < length; i++) {
-        if (fieldsWithoutBLOBs[i].targetEntity === 'ADImage' || fieldsWithoutBLOBs[i].targetEntity === 'OBFBL_FILE') {
+        if (fieldsWithoutBLOBs[i].targetEntity === 'ADImage' || fieldsWithoutBLOBs[i].targetEntity === 'AD_FILE') {
           indexesToDelete.push(i);
         }
       }
