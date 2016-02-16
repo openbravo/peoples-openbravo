@@ -163,7 +163,7 @@ public abstract class BaseDataSourceService implements DataSourceService {
       Tab tab = OBDal.getInstance().get(Tab.class, tabId);
       String where = tab.getHqlwhereclause();
       if (isFilterApplied(parameters)) {
-        String filterClause = addTransactionalFilter(tab, ent);
+        String filterClause = getFilterClause(tab, ent);
         if (StringUtils.isNotBlank(where)) {
           whereAndFilterClause = " ((" + where + ") and (" + filterClause + "))";
         } else {
@@ -192,7 +192,7 @@ public abstract class BaseDataSourceService implements DataSourceService {
     return isRootLevel;
   }
 
-  private String addTransactionalFilter(Tab tab, Entity ent) {
+  private String getFilterClause(Tab tab, Entity ent) {
     boolean isTransactionalWindow = tab.getWindow().getWindowType().equals("T");
     String filterClause = null;
     if (tab.getHqlfilterclause() == null) {
