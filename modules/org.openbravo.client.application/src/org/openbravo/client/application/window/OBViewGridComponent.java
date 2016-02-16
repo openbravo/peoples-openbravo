@@ -170,13 +170,7 @@ public class OBViewGridComponent extends BaseTemplateComponent {
   }
 
   public boolean getHasFilterClause() {
-    boolean existsFilterClause = false;
-    if (StringUtils.isBlank(getFilterClause())) {
-      existsFilterClause = false;
-    } else {
-      existsFilterClause = true;
-    }
-    return existsFilterClause;
+    return StringUtils.isNotBlank(getFilterClause());
   }
 
   public String getFilterClauseSQL() {
