@@ -29,10 +29,9 @@ isc.OBViewGrid.create({
     <#if data.sortField != "">
         sortField: '${data.sortField?js_string}',
     </#if>
-    <#if data.hasFilterClause == true>
+    <#if data.hasFilterClause>
         filterClause: true,
-    </#if>
-    <#if data.hasFilterClause == false>
+    <#else>
         filterClause: false,
     </#if>
     <#if data.filterName != "">
