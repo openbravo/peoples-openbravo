@@ -30,7 +30,6 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -375,20 +374,6 @@ public class SelectorComponent extends BaseTemplateComponent {
       return Boolean.TRUE.toString();
     }
     return Boolean.FALSE.toString();
-  }
-
-  public String getWhereClause() {
-    return getSafeValue(getSelector().getHQLWhereClause());
-  }
-
-  public boolean getHasWhereClause() {
-    boolean existsWhereClause = false;
-    if (StringUtils.isBlank(getWhereClause())) {
-      existsWhereClause = false;
-    } else {
-      existsWhereClause = true;
-    }
-    return existsWhereClause;
   }
 
   public String getTitle() {
