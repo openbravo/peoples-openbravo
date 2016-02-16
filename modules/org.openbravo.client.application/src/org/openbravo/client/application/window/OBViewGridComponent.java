@@ -92,13 +92,6 @@ public class OBViewGridComponent extends BaseTemplateComponent {
     entity = ModelProvider.getInstance().getEntityByTableId((String) DalUtil.getId(tab.getTable()));
   }
 
-  public String getWhereClause() {
-    if (tab.getHqlwhereclause() != null) {
-      return tab.getHqlwhereclause();
-    }
-    return "";
-  }
-
   public String getWhereClauseSQL() {
     if (tab.getSQLWhereClause() != null) {
       return tab.getSQLWhereClause();
