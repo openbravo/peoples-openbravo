@@ -40,12 +40,12 @@ import org.openbravo.model.pricing.pricelist.PriceList;
 import org.openbravo.test.base.OBBaseTest;
 
 /**
- * Test cases covering references to cross natural tree organizations.
+ * Test cases covering references to cross natural tree organizations. They should not be allowed.
  * 
  * @author alostale
  *
  */
-public class CrossOrganizationReference extends OBBaseTest {
+public class StandardCrossOrganizationReference extends OBBaseTest {
   private final static String SPAIN = "357947E87C284935AD1D783CF6F099A1";
   private final static String SPAIN_WAREHOUSE = "4D7B97565A024DB7B4C61650FA2B9560";
   private final static String USA_WAREHOUSE = "4028E6C72959682B01295ECFE2E20270";
@@ -56,7 +56,7 @@ public class CrossOrganizationReference extends OBBaseTest {
   /** References from org Spain to USA should not be allowed on insertion */
   @Test
   @Ignore("Expected exception is not thrown on isert, see issue #32063")
-  public void stdCrossOrgRefShouldBeIllegalOnInsert() {
+  public void crossOrgRefShouldBeIllegalOnInsert() {
     setTestAdminContext();
     createOrder(SPAIN, USA_WAREHOUSE);
 
@@ -67,7 +67,7 @@ public class CrossOrganizationReference extends OBBaseTest {
 
   /** References from org Spain to USA should not be allowed on update */
   @Test
-  public void stdCrossOrgRefShouldBeIllegalOnUpdate() {
+  public void crossOrgRefShouldBeIllegalOnUpdate() {
     setTestAdminContext();
     Order order = createOrder(SPAIN, SPAIN_WAREHOUSE);
     order.setWarehouse(OBDal.getInstance().getProxy(Warehouse.class, USA_WAREHOUSE));
