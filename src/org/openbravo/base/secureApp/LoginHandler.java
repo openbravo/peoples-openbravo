@@ -69,17 +69,18 @@ public class LoginHandler extends HttpBaseServlet {
     log4j.debug("start doPost");
     doOptions(req, res);
     final VariablesSecureApp vars = new VariablesSecureApp(req);
+
     // Empty session
     req.getSession().removeAttribute("#Authenticated_user");
     vars.removeSessionValue("#AD_Role_ID");
     vars.setSessionObject("#loggingIn", "Y");
+
     final String user;
     final String password;
-    Client systemClient = OBDal.getInstance().get(Client.class, "0");
-    String language = systemClient.getLanguage().getLanguage();
+
     boolean isPasswordResetFlow = Boolean.parseBoolean(vars.getStringParameter("resetPassword"));
     if (isPasswordResetFlow) {
-      user = vars.getStringParameter("loggedUser");
+      user = vars.getSessionValue("#AD_User_ID");
     } else {
       user = vars.getStringParameter("user");
     }
@@ -92,15 +93,17 @@ public class LoginHandler extends HttpBaseServlet {
 
     OBContext.setAdminMode();
     try {
+      Client systemClient = OBDal.getInstance().get(Client.class, "0");
+
+      String language = systemClient.getLanguage().getLanguage();
+
       if (user.equals("") && !OBVersion.getInstance().is30()) {
         res.sendRedirect(res.encodeRedirectURL(strDireccion + "/security/Login_F1.html"));
       } else {
         try {
-          if (isPasswordResetFlow) {
-            if (vars.getCommand().equalsIgnoreCase("FORCE_RESET_PASSWORD")) {
-              password = vars.getStringParameter("password");
-              updatePassword(user, password, myPool, language);
-            }
+          if (isPasswordResetFlow && StringUtils.isNotBlank(vars.getSessionValue("#AD_User_ID"))) {
+            password = vars.getStringParameter("password");
+            updatePassword(user, password, myPool, language);
           }
 
           AuthenticationManager authManager = AuthenticationManager.getAuthenticationManager(this);
@@ -523,13 +526,14 @@ public class LoginHandler extends HttpBaseServlet {
    * 
    * @throws ServletException
    */
-  private static void updatePassword(String username, String unHashedPassword,
+  private static void updatePassword(String userId, String unHashedPassword,
       ConnectionProvider myPool, String language) throws ServletException {
     try {
       OBContext.setAdminMode();
       final OBCriteria<User> obc = OBDal.getInstance().createCriteria(User.class);
-      obc.add(Restrictions.eq(User.PROPERTY_USERNAME, username));
+      obc.add(Restrictions.eq(User.PROPERTY_ID, userId));
       obc.setFilterOnReadableClients(false);
+      obc.setFilterOnReadableOrganization(false);
       final User userOB = (User) obc.uniqueResult();
       String oldPassword = userOB.getPassword();
       String newPassword = FormatUtilities.sha1Base64(unHashedPassword);

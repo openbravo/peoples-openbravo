@@ -237,8 +237,7 @@ function buttonOK_click() {
         document.getElementById('password').value = '';
       }
     }
-    if (result.resetPassword && document.getElementById('loggedUser').value===''){
-      document.getElementById('loggedUser').value=result.loggedUser;
+    if (result.resetPassword ){
       document.getElementById('resetPassword').value=result.resetPassword;
       document.getElementById('user').value = '';
       document.getElementById('user').type = 'password';
@@ -466,7 +465,6 @@ function buttonOK_click() {
       <div class="Login_LogForm">
         <form method="post" action="../secureApp/LoginHandler.html" name="frmIdentificacion" id="frmFormulario" autocomplete="off">
           <input type="hidden" name="Command" value="" />
-          <input type="hidden" name="loggedUser" id="loggedUser" value="" />
           <input type="hidden" name="resetPassword" id="resetPassword" value="" />
           <div class="Login_LogForm_CompanyLogo_Container">
             <div class="Login_LogForm_CompanyLogo" id="CompanyLogo_Container" style="display: none;"><img class="Login_Logo_Company" src="../../../../../web/images/blank.gif" /></div>

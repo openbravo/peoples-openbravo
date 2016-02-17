@@ -62,13 +62,12 @@ public class DefaultAuthenticationManager extends AuthenticationManager {
     final Boolean resetPassword = Boolean.parseBoolean(vars.getStringParameter("resetPassword"));
     final String sUserId;
     if (resetPassword) {
-      final String userId = LoginUtils.getValidUserId(conn, vars.getStringParameter("loggedUser"),
-          vars.getStringParameter("user"));
-      sUserId = userId;
+      sUserId = vars.getSessionValue("#AD_User_ID");
+
     } else {
       sUserId = (String) request.getSession().getAttribute("#Authenticated_user");
-
     }
+
     final String strAjax = vars.getStringParameter("IsAjaxCall");
     if (!StringUtils.isEmpty(sUserId) && !resetPassword) {
       return sUserId;
@@ -79,7 +78,8 @@ public class DefaultAuthenticationManager extends AuthenticationManager {
     final String pass;
     // Begins code related to login process
     if (resetPassword) {
-      user = vars.getStringParameter("loggedUser");
+      User userOB = OBDal.getInstance().get(User.class, sUserId);
+      user = userOB.getUsername();
     } else {
       user = vars.getStringParameter("user");
     }
@@ -111,6 +111,8 @@ public class DefaultAuthenticationManager extends AuthenticationManager {
 
       throw new AuthenticationException("IDENTIFICATION_FAILURE_TITLE", errorMsg);
     }
+
+    vars.setSessionValue("#AD_User_ID", userId);
 
     getUpdatePasswordDate(userId, variables.getLanguage(), this.conn);
 
