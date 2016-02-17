@@ -104,8 +104,9 @@ public class TerminalProperties extends ModelExtension {
           .getCurrentOrganization(), propertyName);
       if (value != null) {
         list.add(new HQLProperty("'" + value.getTemplatePath() + "'", alias));
-        list.add(new HQLProperty("'" + value.isPdf() + "'", alias + "IsPdf"));
-        if (value.isPdf()) {
+        list.add(new HQLProperty("'" + (value.isPdf() == null ? Boolean.FALSE : value.isPdf())
+            + "'", alias + "IsPdf"));
+        if (value.isPdf() != null && value.isPdf()) {
           list.add(new HQLProperty("'" + value.getPrinter() + "'", alias + "Printer"));
         }
         int i = 0;
