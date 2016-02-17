@@ -11,13 +11,14 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2015 Openbravo SLU
+ * All portions are Copyright (C) 2010-2016 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.service.datasource;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -252,10 +253,15 @@ public class DefaultDataSourceService extends BaseDataSourceService {
       fieldQuery.setNamedParameter("tabId", tab.getId());
       fieldQuery.setNamedParameter("roleId", roleId);
       for (Field f : fieldQuery.list()) {
-        String key = KernelUtils.getProperty(f).getName();
+        Property property = KernelUtils.getProperty(f);
+        String key = property.getName();
         if (data.has(key)) {
           String newValue = getValue(data, key);
           String oldValue = getValue(oldData, key);
+          if (property.isPrimitive() && property.isNumericType()
+              && isSameNumericValue(newValue, oldValue)) {
+            continue;
+          }
           if (oldValue == null && newValue != null || oldValue != null
               && !oldValue.equals(newValue)) {
             throw new RuntimeException(KernelUtils.getInstance().getI18N(
@@ -282,6 +288,17 @@ public class DefaultDataSourceService extends BaseDataSourceService {
       return null;
     else
       return val.toString();
+  }
+
+  private static boolean isSameNumericValue(String str1, String str2) {
+    try {
+      BigDecimal bd1 = new BigDecimal(str1);
+      BigDecimal bd2 = new BigDecimal(str2);
+      return bd1.doubleValue() == bd2.doubleValue();
+    } catch (NumberFormatException nfex) {
+      log4j.error("Could not compare numeric values", nfex);
+    }
+    return false;
   }
 
   public List<DataSourceProperty> getDataSourceProperties(Map<String, Object> parameters) {

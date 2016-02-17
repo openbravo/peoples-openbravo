@@ -16,7 +16,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2007 Openbravo SLU
+* All portions are Copyright (C) 2001-2016 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -53,6 +53,15 @@
   v_ProductName NVARCHAR2(90);
   v_IsAPRMinstalled NUMBER;
   v_DefaultPaymentRule VARCHAR2(60):=null;
+  v_PriceListVersion_ID M_PRICELIST_VERSION.M_PRICELIST_VERSION_ID%TYPE;
+  v_istaxincluded CHAR(1);
+  v_LineNetAmt NUMBER:=0;
+  v_gross_unit_price NUMBER:=0;
+  v_stdprecision NUMBER:=0;
+  v_priceprecision NUMBER:=0;
+  v_line_gross_amount NUMBER:=0;
+  v_gross_price_std NUMBER:=0;
+  v_gross_price_list NUMBER:=0;
 
   v_Count NUMBER;
 
@@ -191,14 +200,7 @@
                           AND plv.AD_Client_ID =v_Client_ID));
 
       IF (v_count > 0) THEN
-        SELECT PriceList, PriceStd,
-               M_Get_Offers_Price(v_DateDoc,Cur_workproposal.C_BPartner_ID,Cur_workproposal.M_Product_ID,PriceStd,Cur_workproposal.QTY, Cur_workproposal.PO_PRICELIST_ID),
-               PriceLimit
-          INTO v_PriceList, v_PriceStd, v_PriceActual, v_PriceLimit
-        FROM M_ProductPrice
-        WHERE M_Product_ID = Cur_workproposal.M_Product_ID
-          AND M_PRICELIST_VERSION_ID = (
-                SELECT min(plv.M_PriceList_Version_ID) as M_PriceList_Version_ID
+        SELECT min(plv.M_PriceList_Version_ID) INTO v_PriceListVersion_ID
                 FROM M_PriceList_Version plv
                 WHERE plv.M_PriceList_ID = Cur_workproposal.PO_PRICELIST_ID
                   AND plv.IsActive= 'Y'
@@ -210,7 +212,15 @@
                                     AND plv.IsActive= 'Y'
                                     AND pl.M_PriceList_ID = Cur_workproposal.PO_PRICELIST_ID
                                     AND plv.ValidFrom <= v_DateDoc
-                                    AND plv.AD_Client_ID =v_Client_ID));
+                                    AND plv.AD_Client_ID =v_Client_ID);
+
+        SELECT PriceList, PriceStd,
+               M_Get_Offers_Price(v_DateDoc,Cur_workproposal.C_BPartner_ID,Cur_workproposal.M_Product_ID,PriceStd,Cur_workproposal.QTY, Cur_workproposal.PO_PRICELIST_ID),
+               PriceLimit
+          INTO v_PriceList, v_PriceStd, v_PriceActual, v_PriceLimit
+        FROM M_ProductPrice
+        WHERE M_Product_ID = Cur_workproposal.M_Product_ID
+          AND M_PRICELIST_VERSION_ID = v_PriceListVersion_ID;
       ELSE
         SELECT NAME INTO v_ProductName
         FROM M_PRODUCT
@@ -220,8 +230,33 @@
         RAISE_APPLICATION_ERROR(-20000, v_Message);
       END IF;
 
-      v_TaxID := C_GetTax(Cur_workproposal.M_Product_ID, v_DateDoc, v_Org_ID, v_M_Warehouse_ID, v_BillTo_ID, v_BPartner_Location_ID, null, 'N');
+      SELECT istaxincluded INTO v_istaxincluded
+          FROM M_PRICELIST
+            WHERE M_PRICELIST_ID = (SELECT M_PRICELIST_ID
+              FROM M_PRICELIST_VERSION
+                WHERE M_PRICELIST_VERSION_ID = v_PriceListVersion_ID);
 
+      v_TaxID := C_GetTax(Cur_workproposal.M_Product_ID, v_DateDoc, v_Org_ID, v_M_Warehouse_ID, v_BillTo_ID, v_BPartner_Location_ID, null, 'N');
+      v_LineNetAmt:= v_PriceActual*Cur_workproposal.QTY;
+      IF (v_istaxincluded = 'Y') THEN
+        SELECT PricePrecision, stdprecision
+            INTO v_priceprecision, v_stdprecision
+          FROM C_CURRENCY
+          WHERE C_CURRENCY_ID = Cur_workproposal.C_Currency_ID;
+
+        v_gross_unit_price:= v_PriceActual;
+        v_gross_price_std:= v_PriceStd;
+        v_gross_price_list:= v_PriceList;
+        v_line_gross_amount:= ROUND(v_gross_unit_price * Cur_workproposal.QTY, v_stdprecision);
+        v_PriceActual:= C_GET_NET_PRICE_FROM_GROSS(v_TaxID, v_PriceActual, 0, v_priceprecision, 1);
+        v_PriceStd:= C_GET_NET_PRICE_FROM_GROSS(v_TaxID, v_PriceStd, 0, v_priceprecision, 1);
+        v_PriceList:= C_GET_NET_PRICE_FROM_GROSS(v_TaxID, v_PriceList, 0, v_priceprecision, 1);
+        v_PriceLimit:= C_GET_NET_PRICE_FROM_GROSS(v_TaxID, v_PriceLimit, 0, v_priceprecision, 1);
+        v_LineNetAmt:= ROUND(v_PriceActual * Cur_workproposal.QTY, v_stdprecision);
+
+        UPDATE C_ORDER SET ISTAXINCLUDED='Y' WHERE C_ORDER_ID = v_COrder_ID;
+
+      END IF;
       v_ResultStr:='Insert order line';
 
       INSERT INTO C_OrderLine
@@ -232,7 +267,8 @@
          M_WAREHOUSE_ID, C_UOM_ID, QTYORDERED, C_CURRENCY_ID,
          PRICELIST, PRICEACTUAL, PRICELIMIT,
          PRICESTD, LINENETAMT, DISCOUNT,
-         C_TAX_ID)
+         C_TAX_ID, gross_unit_price, line_gross_amount,
+         grosspricestd, grosspricelist)
      VALUES
       (v_COrderLine_ID,v_Client_ID, v_Org_ID,'Y',
        now(), v_User_ID, now(), v_User_ID,
@@ -240,8 +276,9 @@
        Cur_workproposal.PLANNEDORDERDATE, Cur_workproposal.PLANNEDDATE, v_Description, Cur_workproposal.M_Product_ID,
        v_M_Warehouse_ID, Cur_workproposal.C_UOM_ID, Cur_workproposal.QTY, Cur_workproposal.C_Currency_ID,
        v_PriceList, v_PriceActual, v_PriceLimit,
-       v_PriceStd, v_PriceActual*Cur_workproposal.QTY,CASE v_PriceList WHEN 0 THEN 0 ELSE ROUND((((v_PriceList-v_PriceStd) / v_PriceList) * 100),2) END,
-       v_TaxID
+       v_PriceStd, v_LineNetAmt, CASE v_PriceList WHEN 0 THEN 0 ELSE ROUND((((v_PriceList-v_PriceStd) / v_PriceList) * 100),2) END,
+       v_TaxID, v_gross_unit_price, v_line_gross_amount,
+       v_gross_price_std, v_gross_price_list
       );
 
       UPDATE MRP_RUN_PURCHASELINE
