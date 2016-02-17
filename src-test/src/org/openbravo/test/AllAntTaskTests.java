@@ -76,6 +76,7 @@ import org.openbravo.test.role.inheritance.RoleInheritanceTestSuite;
 import org.openbravo.test.scheduling.ProcessSchedulingTest;
 import org.openbravo.test.security.AccessLevelTest;
 import org.openbravo.test.security.AllowedOrganizationsTest;
+import org.openbravo.test.security.CrossOrganizationReference;
 import org.openbravo.test.security.EntityAccessTest;
 import org.openbravo.test.security.WritableReadableOrganizationClientTest;
 import org.openbravo.test.services.ServicesTest;
@@ -155,7 +156,8 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     AccessLevelTest.class, //
     AllowedOrganizationsTest.class, //
     EntityAccessTest.class, //
-    WritableReadableOrganizationClientTest.class,
+    WritableReadableOrganizationClientTest.class, //
+    CrossOrganizationReference.class,
 
     // system
     SystemServiceTest.class, //
@@ -225,7 +227,7 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
 
     // jasper
     JasperReportsCompilation.class,
-    
+
     // Product Services
     ServicesTest.class, //
     ServicesTest2.class, //
