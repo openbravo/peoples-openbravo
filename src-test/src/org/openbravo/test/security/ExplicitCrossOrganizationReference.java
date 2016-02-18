@@ -278,6 +278,24 @@ public class ExplicitCrossOrganizationReference extends CrossOrganizationReferen
   }
 
   @Test
+  public void crossOrgAdminShouldWorkAsAnStack() {
+    OBContext.setCrossOrgReferenceAdminMode();
+    OBContext.setCrossOrgReferenceAdminMode(); // twice in the stack
+
+    assertThat("isCrossOrgAdministratorMode", OBContext.getOBContext()
+        .isInCrossOrgAdministratorMode(), is(true));
+
+    OBContext.restorePreviousCrossOrgReferenceMode(); // pops 1
+
+    assertThat("isCrossOrgAdministratorMode", OBContext.getOBContext()
+        .isInCrossOrgAdministratorMode(), is(true));
+
+    OBContext.restorePreviousCrossOrgReferenceMode();
+    assertThat("isCrossOrgAdministratorMode", OBContext.getOBContext()
+        .isInCrossOrgAdministratorMode(), is(false));
+  }
+
+  @Test
   public void adminAndCrossOrgAdminAreIndpendent() {
     setTestLogAppenderLevel(Level.WARN);
     OBContext.setAdminMode();
