@@ -316,16 +316,6 @@ public class ExplicitCrossOrganizationReference extends CrossOrganizationReferen
   }
 
   @Test
-  public void unbalancedSetCrossOrgAdminShouldLogWarn() {
-    setTestLogAppenderLevel(Level.WARN);
-
-    OBContext.setCrossOrgReferenceAdminMode();
-    OBContext.setCrossOrgReferenceAdminMode();
-    assertThat(getTestLogAppender().getMessages(Level.WARN),
-        hasItem(containsString("Unbalanced calls to setCrossOrgReferenceAdminMode")));
-  }
-
-  @Test
   public void unbalancedOrgAdminThreadFinalizationShouldLogWarn() throws NoSuchMethodException,
       SecurityException, IllegalAccessException, IllegalArgumentException,
       InvocationTargetException {
