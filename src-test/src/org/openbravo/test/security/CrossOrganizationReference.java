@@ -1,3 +1,22 @@
+/*
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SLU 
+ * All portions are Copyright (C) 2016 Openbravo SLU 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+ */
+
 package org.openbravo.test.security;
 
 import java.math.BigDecimal;
@@ -31,6 +50,12 @@ import org.openbravo.model.financialmgmt.tax.TaxRate;
 import org.openbravo.model.pricing.pricelist.PriceList;
 import org.openbravo.test.base.OBBaseTest;
 
+/**
+ * Base class for test for cross organization reference functionality.
+ * 
+ * @author alostale
+ *
+ */
 public class CrossOrganizationReference extends OBBaseTest {
   private static final String QA_ADMIN_ROLE = "4028E6C72959682B01295A071429011E";
 
@@ -40,14 +65,23 @@ public class CrossOrganizationReference extends OBBaseTest {
   protected static final String USA_ORG = "5EFF95EB540740A3B10510D9814EFAD5";
   protected static final String USA_WAREHOUSE = "4028E6C72959682B01295ECFE2E20270";
   protected static final String USA_BP = "4028E6C72959682B01295F40D4D20333";
-
   protected static final String EUR = "102";
+
+  private static final String CREDIT_ORDER_DOC_TYPE = "FF8080812C2ABFC6012C2B3BDF4C0056";
+  private static final String CUST_A = "4028E6C72959682B01295F40C3CB02EC";
+  private static final String CUST_A_LOCATION = "4028E6C72959682B01295F40C43802EE";
+  private static final String PAYMENT_TERM = "7B308C5CB9674BB3A56E63D85887058A";
+  private static final String PRICE_LIST = "4028E6C72959682B01295B03CE480243";
+  private static final String OUM = "4028E6C72959682B01295ADC1A380221";
+  private static final String PRODUCT = "4028E6C72959682B01295ADC1D07022A";
+  private static final String TAX = "3271411A5AFB490A91FB618B6B789C24";
 
   protected static List<BaseOBObject> createdObjects = new ArrayList<BaseOBObject>();
 
   @Rule
   public ExpectedException exception = ExpectedException.none();
 
+  /** Creates a default order in the given warehouse */
   @SuppressWarnings("serial")
   protected Order createOrder(String orgId, final String warehouseId) {
     return createOrder(orgId, new HashMap<String, Object>() {
@@ -57,13 +91,8 @@ public class CrossOrganizationReference extends OBBaseTest {
     });
   }
 
+  /** Creates a default order being possible to overwrite any value */
   protected Order createOrder(String orgId, Map<String, Object> propertyValues) {
-    String CREDIT_ORDER_DOC_TYPE = "FF8080812C2ABFC6012C2B3BDF4C0056";
-    String CUST_A = "4028E6C72959682B01295F40C3CB02EC";
-    String CUST_A_LOCATION = "4028E6C72959682B01295F40C43802EE";
-    String PAYMENT_TERM = "7B308C5CB9674BB3A56E63D85887058A";
-    String PRICE_LIST = "4028E6C72959682B01295B03CE480243";
-
     Order order = OBProvider.getInstance().get(Order.class);
     order.setOrganization(OBDal.getInstance().getProxy(Organization.class, orgId));
     order.setDocumentType(OBDal.getInstance().getProxy(DocumentType.class, CREDIT_ORDER_DOC_TYPE));
@@ -88,15 +117,13 @@ public class CrossOrganizationReference extends OBBaseTest {
     return order;
   }
 
+  /** Creates a default order line for given order */
   protected OrderLine createOrderLine(Order order) {
     return createOrderLine(order, new HashMap<String, Object>());
   }
 
+  /** Creates a default order line for given order allowing to overwrite any value */
   protected OrderLine createOrderLine(Order order, Map<String, Object> propertyValues) {
-    String OUM = "4028E6C72959682B01295ADC1A380221";
-    String PRODUCT = "4028E6C72959682B01295ADC1D07022A";
-    String TAX = "3271411A5AFB490A91FB618B6B789C24";
-
     OrderLine ol = OBProvider.getInstance().get(OrderLine.class);
     Organization org;
 
