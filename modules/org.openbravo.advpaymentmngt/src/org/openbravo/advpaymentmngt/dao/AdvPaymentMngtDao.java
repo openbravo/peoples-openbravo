@@ -486,7 +486,21 @@ public class AdvPaymentMngtDao {
       FIN_PaymentMethod paymentMethod, FIN_FinancialAccount finAccount, String strPaymentAmount,
       Date paymentDate, String referenceNo, Currency paymentCurrency, BigDecimal finTxnConvertRate,
       BigDecimal finTxnAmount) {
+    return getNewPayment(isReceipt, organization, docType, strPaymentDocumentNo, businessPartner,
+        paymentMethod, finAccount, strPaymentAmount, paymentDate, referenceNo, paymentCurrency,
+        finTxnConvertRate, finTxnAmount, null);
+  }
+
+  public FIN_Payment getNewPayment(boolean isReceipt, Organization organization,
+      DocumentType docType, String strPaymentDocumentNo, BusinessPartner businessPartner,
+      FIN_PaymentMethod paymentMethod, FIN_FinancialAccount finAccount, String strPaymentAmount,
+      Date paymentDate, String referenceNo, Currency paymentCurrency, BigDecimal finTxnConvertRate,
+      BigDecimal finTxnAmount, String paymentId) {
     final FIN_Payment newPayment = OBProvider.getInstance().get(FIN_Payment.class);
+    if (paymentId != null) {
+      newPayment.setId(paymentId);
+      newPayment.setNewOBObject(true);
+    }
     newPayment.setReceipt(isReceipt);
     newPayment.setDocumentType(docType);
     newPayment.setDocumentNo(strPaymentDocumentNo);
@@ -529,16 +543,20 @@ public class AdvPaymentMngtDao {
       FIN_PaymentScheduleDetail paymentScheduleDetail, BigDecimal paymentDetailAmount,
       BigDecimal writeoffAmount, boolean isRefund, GLItem glitem) {
     return getNewPaymentDetail(payment, paymentScheduleDetail, paymentDetailAmount, writeoffAmount,
-        isRefund, glitem, true);
+        isRefund, glitem, true, null);
   }
 
   public FIN_PaymentDetail getNewPaymentDetail(FIN_Payment payment,
       FIN_PaymentScheduleDetail paymentScheduleDetail, BigDecimal paymentDetailAmount,
-      BigDecimal writeoffAmount, boolean isRefund, GLItem glitem, boolean doFlush) {
+      BigDecimal writeoffAmount, boolean isRefund, GLItem glitem, boolean doFlush, String paymentId) {
     try {
       OBContext.setAdminMode(true);
       final FIN_PaymentDetail newPaymentDetail = OBProvider.getInstance().get(
           FIN_PaymentDetail.class);
+      if (paymentId != null) {
+        newPaymentDetail.setId(paymentId);
+        newPaymentDetail.setNewOBObject(true);
+      }
       List<FIN_PaymentDetail> paymentDetails = payment.getFINPaymentDetailList();
       newPaymentDetail.setFinPayment(payment);
       newPaymentDetail.setOrganization(payment.getOrganization());
@@ -584,9 +602,13 @@ public class AdvPaymentMngtDao {
   }
 
   public FIN_PaymentScheduleDetail getNewPaymentScheduleDetail(Organization organization,
-      BigDecimal amount) {
+      BigDecimal amount, String paymentId) {
     final FIN_PaymentScheduleDetail newPaymentScheduleDetail = OBProvider.getInstance().get(
         FIN_PaymentScheduleDetail.class);
+    if (paymentId != null) {
+      newPaymentScheduleDetail.setId(paymentId);
+      newPaymentScheduleDetail.setNewOBObject(true);
+    }
     newPaymentScheduleDetail.setOrganization(organization);
     // As '0' is not a valid organization for transactions we can assume that organization client is
     // transaction client
@@ -597,6 +619,12 @@ public class AdvPaymentMngtDao {
     // OBDal.getInstance().flush();
 
     return newPaymentScheduleDetail;
+  }
+
+  public FIN_PaymentScheduleDetail getNewPaymentScheduleDetail(Organization organization,
+      BigDecimal amount) {
+
+    return getNewPaymentScheduleDetail(organization, amount, null);
   }
 
   /**

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2013 Openbravo SLU
+ * All portions are Copyright (C) 2010-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -98,6 +98,8 @@ public class TransactionsDao {
         FIN_FinaccTransaction.class);
     OBContext.setAdminMode();
     try {
+      newTransaction.setId(payment.getId());
+      newTransaction.setNewOBObject(true);
       newTransaction.setFinPayment(payment);
       newTransaction.setOrganization(payment.getOrganization());
       newTransaction.setAccount(payment.getAccount());
@@ -110,10 +112,12 @@ public class TransactionsDao {
       newTransaction.setNdDimension(payment.getNdDimension());
       newTransaction.setCurrency(payment.getAccount().getCurrency());
       String desc = "";
-      if(payment.getDescription()!=null && !payment.getDescription().isEmpty()){
-    	  desc = payment.getDescription()
-    	          .replace("\n", ". ")
-    	          .substring(0, payment.getDescription().length() > 254 ? 254 : payment.getDescription().length());
+      if (payment.getDescription() != null && !payment.getDescription().isEmpty()) {
+        desc = payment
+            .getDescription()
+            .replace("\n", ". ")
+            .substring(0,
+                payment.getDescription().length() > 254 ? 254 : payment.getDescription().length());
       }
       newTransaction.setDescription(desc);
       newTransaction.setClient(payment.getClient());

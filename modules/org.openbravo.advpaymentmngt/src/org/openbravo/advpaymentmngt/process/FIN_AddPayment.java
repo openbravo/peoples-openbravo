@@ -135,6 +135,8 @@ public class FIN_AddPayment {
    *          Amount of payment in currency of financial account
    * @param doFlush
    *          Force to flush inside the method after creating the payment
+   * @param paymentId
+   *          id to set in new entities
    * @return The FIN_Payment OBObject containing all the Payment Details.
    */
   public static FIN_Payment savePayment(FIN_Payment _payment, boolean isReceipt,
@@ -144,7 +146,7 @@ public class FIN_AddPayment {
       List<FIN_PaymentScheduleDetail> selectedPaymentScheduleDetails,
       HashMap<String, BigDecimal> selectedPaymentScheduleDetailsAmounts, boolean isWriteoff,
       boolean isRefund, Currency paymentCurrency, BigDecimal finTxnConvertRate,
-      BigDecimal finTxnAmount, boolean doFlush) {
+      BigDecimal finTxnAmount, boolean doFlush, String paymentId) {
     dao = new AdvPaymentMngtDao();
 
     BigDecimal assignedAmount = BigDecimal.ZERO;
@@ -154,7 +156,7 @@ public class FIN_AddPayment {
     } else {
       payment = dao.getNewPayment(isReceipt, organization, docType, strPaymentDocumentNo,
           businessPartner, paymentMethod, finAccount, strPaymentAmount, paymentDate, referenceNo,
-          paymentCurrency, finTxnConvertRate, finTxnAmount);
+          paymentCurrency, finTxnConvertRate, finTxnAmount, paymentId);
       if (doFlush) {
         try {
           OBDal.getInstance().flush();
@@ -184,9 +186,10 @@ public class FIN_AddPayment {
       // TODO: Review this condition !=0??
       if (assignedAmount.compareTo(payment.getAmount()) == -1) {
         FIN_PaymentScheduleDetail refundScheduleDetail = dao.getNewPaymentScheduleDetail(
-            payment.getOrganization(), payment.getAmount().subtract(assignedAmount));
+            payment.getOrganization(), payment.getAmount().subtract(assignedAmount), paymentId);
         dao.getNewPaymentDetail(payment, refundScheduleDetail,
-            payment.getAmount().subtract(assignedAmount), BigDecimal.ZERO, false, null);
+            payment.getAmount().subtract(assignedAmount), BigDecimal.ZERO, false, null, true,
+            paymentId);
       }
     } catch (final Exception e) {
       e.printStackTrace(System.err);
@@ -260,7 +263,7 @@ public class FIN_AddPayment {
     return savePayment(_payment, isReceipt, docType, strPaymentDocumentNo, businessPartner,
         paymentMethod, finAccount, strPaymentAmount, paymentDate, organization, referenceNo,
         selectedPaymentScheduleDetails, selectedPaymentScheduleDetailsAmounts, isWriteoff,
-        isRefund, paymentCurrency, finTxnConvertRate, finTxnAmount, true);
+        isRefund, paymentCurrency, finTxnConvertRate, finTxnAmount, true, null);
   }
 
   /*
@@ -276,7 +279,7 @@ public class FIN_AddPayment {
     return savePayment(_payment, isReceipt, docType, strPaymentDocumentNo, businessPartner,
         paymentMethod, finAccount, strPaymentAmount, paymentDate, organization, referenceNo,
         selectedPaymentScheduleDetails, selectedPaymentScheduleDetailsAmounts, isWriteoff,
-        isRefund, null, null, null, true);
+        isRefund, null, null, null, true, null);
   }
 
   /**
@@ -334,7 +337,7 @@ public class FIN_AddPayment {
     return savePayment(_payment, isReceipt, docType, strPaymentDocumentNo, businessPartner,
         paymentMethod, finAccount, strPaymentAmount, paymentDate, organization, referenceNo,
         selectedPaymentScheduleDetails, selectedPaymentScheduleDetailsAmounts, isWriteoff,
-        isRefund, null, null, null, doFlush);
+        isRefund, null, null, null, doFlush, null);
   }
 
   /**
@@ -520,7 +523,7 @@ public class FIN_AddPayment {
         OBDal.getInstance().save(paymentScheduleDetail);
       }
       dao.getNewPaymentDetail(payment, paymentScheduleDetail, paymentDetailAmount,
-          amountDifference, false, null, doFlush);
+          amountDifference, false, null, doFlush, null);
     }
     return assignedAmount;
   }
@@ -657,23 +660,30 @@ public class FIN_AddPayment {
    *          Amount of the new Payment Detail.
    * @param glitem
    *          GLItem to be set in the new Payment Detail.
+   * @param paymentId
+   *          id to set in new entities
    */
-  public static void saveGLItem(FIN_Payment payment, BigDecimal glitemAmount, GLItem glitem) {
+  public static void saveGLItem(FIN_Payment payment, BigDecimal glitemAmount, GLItem glitem,
+      String paymentId) {
     // FIXME: added to access the FIN_PaymentSchedule and FIN_PaymentScheduleDetail tables to be
     // removed when new security implementation is done
     dao = new AdvPaymentMngtDao();
     OBContext.setAdminMode();
     try {
       FIN_PaymentScheduleDetail psd = dao.getNewPaymentScheduleDetail(payment.getOrganization(),
-          glitemAmount);
+          glitemAmount, paymentId);
       FIN_PaymentDetail pd = dao.getNewPaymentDetail(payment, psd, glitemAmount, BigDecimal.ZERO,
-          false, glitem);
+          false, glitem, true, paymentId);
       pd.setFinPayment(payment);
       OBDal.getInstance().save(pd);
       OBDal.getInstance().save(payment);
     } finally {
       OBContext.restorePreviousMode();
     }
+  }
+
+  public static void saveGLItem(FIN_Payment payment, BigDecimal glitemAmount, GLItem glitem) {
+    saveGLItem(payment, glitemAmount, glitem, null);
   }
 
   /**
