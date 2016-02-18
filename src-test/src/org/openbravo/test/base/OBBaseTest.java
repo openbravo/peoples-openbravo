@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2014-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2014-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,9 +26,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.hibernate.criterion.Restrictions;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -167,6 +169,8 @@ public class OBBaseTest {
    */
   protected static Map<String, String[]> TEST_ORG_TREE = new HashMap<String, String[]>();
 
+  private static TestLogAppender testLogAppender;
+
   static {
 
     // "F&B International Group"
@@ -206,13 +210,20 @@ public class OBBaseTest {
   protected static final String TEST_LOCATION_ID = "A21EF1AB822149BEB65D055CD91F261B";
 
   /**
-   * Overridden to initialize the Dal layer
+   * Initializes DAL, it also craetes a log appender that can be used to assert on logs. This log
+   * appender is disabled by default, to activate it set the level with
+   * {@link OBBaseTest#setTestLogAppenderLevel(Level)}
    * 
+   * @see TestLogAppender
    */
   @BeforeClass
   public static void setDalUp() throws Exception {
     if (OBBaseTest.class.getResource("/log4j.lcf") != null) {
       PropertyConfigurator.configure(OBBaseTest.class.getResource("/log4j.lcf"));
+      testLogAppender = new TestLogAppender();
+
+      testLogAppender.setThreshold(Level.OFF);
+      Logger.getRootLogger().addAppender(testLogAppender);
     }
     staticInitializeDalLayer();
   }
@@ -225,6 +236,31 @@ public class OBBaseTest {
     // clear the session otherwise it keeps the old model
     setTestUserContext();
     errorOccured = false;
+  }
+
+  /** Test log appender is reset and switched off */
+  @After
+  public void testDone() {
+    if (testLogAppender != null) {
+      testLogAppender.reset();
+      setTestLogAppenderLevel(Level.OFF);
+    }
+  }
+
+  /**
+   * Defines the threshold {@link Level} that will make messages to be tracked by
+   * {@link TestLogAppender}. Note after test completion appender is reset and its level is set back
+   * to Level.OFF disabling in this manner subsequent logging track.
+   */
+  protected void setTestLogAppenderLevel(Level level) {
+    if (testLogAppender != null) {
+      testLogAppender.setThreshold(level);
+    }
+  }
+
+  /** Returns log appender in order to be possible to do assertions on it */
+  protected TestLogAppender getTestLogAppender() {
+    return testLogAppender;
   }
 
   /**
