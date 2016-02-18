@@ -28,9 +28,14 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.openbravo.base.exception.OBSecurityException;
+import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.core.DalLayerInitializer;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.ad.access.Role;
+import org.openbravo.model.ad.access.RoleOrganization;
+import org.openbravo.model.ad.access.User;
+import org.openbravo.model.ad.access.UserRoles;
 import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
@@ -47,6 +52,7 @@ import org.openbravo.model.common.order.OrderLine;
  *
  */
 public class ExplicitCrossOrganizationReference extends CrossOrganizationReference {
+  private static String QA_ONLY_SPAIN_ROLE;
   private static final String CORE = "0";
   private static final String ORDER_WAREHOUSE_COLUMN = "2202";
   private static final String ORDERLINE_ORDER_COLUMN = "2213";
@@ -260,6 +266,10 @@ public class ExplicitCrossOrganizationReference extends CrossOrganizationReferen
     return order;
   }
 
+  private void setSpainQARole() {
+    OBContext.setOBContext("100", QA_ONLY_SPAIN_ROLE, QA_TEST_CLIENT_ID, SPAIN_ORG);
+  }
+
   @BeforeClass
   public static void setUpAllowedCrossOrg() throws Exception {
     // allow cross org references in order.warehouse and in orderline.order
@@ -281,6 +291,34 @@ public class ExplicitCrossOrganizationReference extends CrossOrganizationReferen
     // reload in memory model with these new settings
     DalLayerInitializer.getInstance().setInitialized(false);
     setDalUp();
+
+    // crate a role with access only to Spain org
+    setQAAdminRole();
+    Role spainRole = OBProvider.getInstance().get(Role.class);
+    spainRole.setName("QA Only Spain - " + System.currentTimeMillis()); // some randomness
+    spainRole.setOrganization(OBDal.getInstance().getProxy(Organization.class, "0"));
+    spainRole.setManual(true);
+    spainRole.setClientList("-");
+    spainRole.setOrganizationList("-");
+    spainRole.setUserLevel("  O");
+    OBDal.getInstance().save(spainRole);
+    createdObjects.add(spainRole);
+    QA_ONLY_SPAIN_ROLE = spainRole.getId();
+
+    RoleOrganization orgAccess = OBProvider.getInstance().get(RoleOrganization.class);
+    orgAccess.setOrganization(OBDal.getInstance().getProxy(Organization.class, SPAIN_ORG));
+    orgAccess.setRole(spainRole);
+    OBDal.getInstance().save(orgAccess);
+    createdObjects.add(orgAccess);
+
+    UserRoles userRole = OBProvider.getInstance().get(UserRoles.class);
+    userRole.setOrganization(OBDal.getInstance().getProxy(Organization.class, "0"));
+    userRole.setRole(spainRole);
+    userRole.setUserContact(OBDal.getInstance().getProxy(User.class, "100"));
+    OBDal.getInstance().save(userRole);
+    createdObjects.add(userRole);
+
+    OBDal.getInstance().commitAndClose();
   }
 
   @AfterClass

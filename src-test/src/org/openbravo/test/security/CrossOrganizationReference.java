@@ -33,7 +33,6 @@ import org.openbravo.test.base.OBBaseTest;
 
 public class CrossOrganizationReference extends OBBaseTest {
   private static final String QA_ADMIN_ROLE = "4028E6C72959682B01295A071429011E";
-  private static final String QA_SPAIN_ROLE = "CC6AB5B4C4B54CB79103C96AD2B90750";
 
   protected static final String SPAIN_ORG = "357947E87C284935AD1D783CF6F099A1";
   protected static final String SPAIN_WAREHOUSE = "4D7B97565A024DB7B4C61650FA2B9560";
@@ -44,7 +43,7 @@ public class CrossOrganizationReference extends OBBaseTest {
 
   protected static final String EUR = "102";
 
-  private static List<BaseOBObject> createdObjects = new ArrayList<BaseOBObject>();
+  protected static List<BaseOBObject> createdObjects = new ArrayList<BaseOBObject>();
 
   @Rule
   public ExpectedException exception = ExpectedException.none();
@@ -132,18 +131,18 @@ public class CrossOrganizationReference extends OBBaseTest {
     }
   }
 
-  protected void setSpainQARole() {
-    OBContext.setOBContext("100", QA_SPAIN_ROLE, QA_TEST_CLIENT_ID, SPAIN_ORG);
+  @Before
+  public void setRole() {
+    setQAAdminRole();
   }
 
-  @Before
-  public void setQAAdminRole() {
+  protected static void setQAAdminRole() {
     OBContext.setOBContext("100", QA_ADMIN_ROLE, QA_TEST_CLIENT_ID, QA_TEST_ORG_ID);
   }
 
   @AfterClass
   public static void cleanUp() {
-    // OBContext.setAdminMode(false);
+    OBContext.setAdminMode(false);
     for (BaseOBObject obj : createdObjects) {
       BaseOBObject objToDelete = OBDal.getInstance().get(obj.getClass(), obj.getId());
       if (objToDelete != null) {
