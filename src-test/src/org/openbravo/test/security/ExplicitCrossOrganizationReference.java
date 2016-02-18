@@ -27,8 +27,10 @@ import static org.junit.Assert.assertThat;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.log4j.Level;
+import org.codehaus.jettison.json.JSONObject;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -348,6 +350,60 @@ public class ExplicitCrossOrganizationReference extends CrossOrganizationReferen
 
     assertThat(getTestLogAppender().getMessages(Level.WARN),
         hasItem(containsString("Unbalanced calls to setCrossOrgReferenceAdminMode")));
+  }
+
+  /**
+   * Creates an order in org Spain with 2 lines: 1 in Spain another in USA. Then fetches OrderLine
+   * data source with QA Admin role which has access to both organizations, so both lines should be
+   * retrieved
+   */
+  @Test
+  public void orderLineDSShouldShowAllChildren() throws Exception {
+    JSONObject resp = createOrderAndFetchLines(QA_ADMIN_ROLE);
+    assertThat("number of fetched order lines", resp.getJSONObject("response").getInt("totalRows"),
+        is(2));
+  }
+
+  /**
+   * Creates same order than {@link #orderLineDSShouldShowAllChildren()}. Fetch is done with role
+   * with access to only Spain, so only 1 line is expected to be retrieved.
+   * 
+   * Note this test will be needed to be changed in case cross org references is also implemented
+   * for the UI.
+   */
+  @Test
+  public void orderLineDSShouldHideNonAccessibleChildren() throws Exception {
+    JSONObject resp = createOrderAndFetchLines(QA_ONLY_SPAIN_ROLE);
+    assertThat("number of fetched order lines", resp.getJSONObject("response").getInt("totalRows"),
+        is(1));
+  }
+
+  @SuppressWarnings("serial")
+  private JSONObject createOrderAndFetchLines(String roleId) throws Exception {
+    Order order = createOrder(SPAIN_ORG);
+    createOrderLine(order);
+    createOrderLine(order, new HashMap<String, Object>() {
+      {
+        put(Order.PROPERTY_ORGANIZATION, OBDal.getInstance().getProxy(Organization.class, USA_ORG));
+      }
+    });
+    OBDal.getInstance().commitAndClose();
+
+    changeProfile(roleId, "192", SPAIN_ORG, SPAIN_WAREHOUSE);
+
+    Map<String, String> params = new HashMap<String, String>();
+
+    JSONObject criteria = new JSONObject();
+    criteria.put("fieldName", "salesOrder");
+    criteria.put("operator", "equals");
+    criteria.put("value", order.getId());
+    params.put("criteria", criteria.toString());
+
+    params.put("_operationType", "fetch");
+    params.put("_startRow", "0");
+    params.put("_endRow", "100");
+    return new JSONObject(doRequest("/org.openbravo.service.datasource/OrderLine", params, 200,
+        "POST"));
   }
 
   @SuppressWarnings("serial")

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -31,6 +31,7 @@ import org.openbravo.test.datasource.TestAllowUnpagedDatasourcePreference;
 import org.openbravo.test.datasource.TestCSVEncoding;
 import org.openbravo.test.datasource.TestComboDatasource;
 import org.openbravo.test.datasource.TestNoteDatasource;
+import org.openbravo.test.security.ExplicitCrossOrganizationReference;
 import org.openbravo.test.webservice.JSONWebServices;
 import org.openbravo.test.webservice.PerformanceTest;
 import org.openbravo.test.webservice.WSAddRecordWithComputedColumns;
@@ -62,6 +63,7 @@ WSReadTest.class, //
     TestAllowUnpagedDatasourcePreference.class, //
     TestNoteDatasource.class, //
     WebServicesWithNoActiveFilterTest.class, //
-    ExtendedNavigationModelTest.class })
+    ExtendedNavigationModelTest.class, //
+    ExplicitCrossOrganizationReference.class })
 public class AllWebserviceTests {
 }

@@ -48,7 +48,7 @@ import org.openbravo.model.common.uom.UOM;
 import org.openbravo.model.financialmgmt.payment.PaymentTerm;
 import org.openbravo.model.financialmgmt.tax.TaxRate;
 import org.openbravo.model.pricing.pricelist.PriceList;
-import org.openbravo.test.base.OBBaseTest;
+import org.openbravo.test.datasource.BaseDataSourceTestDal;
 
 /**
  * Base class for test for cross organization reference functionality.
@@ -56,8 +56,8 @@ import org.openbravo.test.base.OBBaseTest;
  * @author alostale
  *
  */
-public class CrossOrganizationReference extends OBBaseTest {
-  private static final String QA_ADMIN_ROLE = "4028E6C72959682B01295A071429011E";
+public class CrossOrganizationReference extends BaseDataSourceTestDal {
+  protected static final String QA_ADMIN_ROLE = "4028E6C72959682B01295A071429011E";
 
   protected static final String SPAIN_ORG = "357947E87C284935AD1D783CF6F099A1";
   protected static final String SPAIN_WAREHOUSE = "4D7B97565A024DB7B4C61650FA2B9560";
@@ -80,6 +80,11 @@ public class CrossOrganizationReference extends OBBaseTest {
 
   @Rule
   public ExpectedException exception = ExpectedException.none();
+
+  /** Creates a default order */
+  protected Order createOrder(String orgId) {
+    return createOrder(orgId, new HashMap<String, Object>());
+  }
 
   /** Creates a default order in the given warehouse */
   @SuppressWarnings("serial")
