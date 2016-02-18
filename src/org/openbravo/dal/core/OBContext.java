@@ -92,11 +92,25 @@ public class OBContext implements OBNotSingleton {
   private static ThreadLocal<Stack<OBAdminMode>> adminModeStack = new ThreadLocal<Stack<OBAdminMode>>();
   private static ThreadLocal<List<String>> adminModeTrace = new ThreadLocal<List<String>>();
 
+  private static ThreadLocal<Stack<OBAdminMode>> crossOrgAdminModeStack = new ThreadLocal<Stack<OBAdminMode>>();
+  private static ThreadLocal<List<String>> crossOrgAdminModeTrace = new ThreadLocal<List<String>>();
+
   public static final String CONTEXT_PARAM = "#OBContext";
 
   private static OBContext adminContext = null;
 
-  private boolean crossOrgReferenceAdminMode;
+  private enum AdminType {
+    ADMIN_MODE("setAdminMode", "restorePreviousMode"), CROSS_ORG_ADMIN_MODE(
+        "setCrossOrgReferenceAdminMode", "restorePreviousCrossOrgReferenceMode");
+
+    private String setMethod;
+    private String restoreMethod;
+
+    private AdminType(String setMethod, String restoreMethod) {
+      this.setMethod = setMethod;
+      this.restoreMethod = restoreMethod;
+    }
+  };
 
   /**
    * @return true if the current language is a RTL language, false in other cases
@@ -188,8 +202,27 @@ public class OBContext implements OBNotSingleton {
   }
 
   public static void setCrossOrgReferenceAdminMode() {
-    // TODO implement this properly
-    OBContext.getOBContext().crossOrgReferenceAdminMode = true;
+    OBAdminMode am = new OBAdminMode();
+    am.setAdminMode(false);
+    am.setOrgClientAccessCheck(true);
+    am.setCrossOrgAdminMode(true);
+
+    getCrossOrgAdminModeStack().push(am);
+    if (OBContext.getOBContext() == null) {
+      OBContext.setAdminContextLocally();
+    } else if (OBContext.getOBContext() == adminContext) {
+      return;
+    }
+    if (OBContext.getOBContext() != null && ADMIN_TRACE_SIZE != 0) {
+      addStackTrace("setCrossOrgReferenceAdminMode");
+    }
+  }
+
+  private static Stack<OBAdminMode> getCrossOrgAdminModeStack() {
+    if (crossOrgAdminModeStack.get() == null) {
+      crossOrgAdminModeStack.set(new Stack<OBAdminMode>());
+    }
+    return crossOrgAdminModeStack.get();
   }
 
   private static Stack<OBAdminMode> getAdminModeStack() {
@@ -220,7 +253,7 @@ public class OBContext implements OBNotSingleton {
     if (stack.size() > 0) {
       stack.pop();
     } else {
-      printUnbalancedWarning(true);
+      printUnbalancedWarning(true, AdminType.ADMIN_MODE);
     }
 
     if (OBContext.getOBContext() == null) {
@@ -235,13 +268,29 @@ public class OBContext implements OBNotSingleton {
   }
 
   public static void restorePreviousCrossOrgReferenceMode() {
-    // TODO implement this properly
-    OBContext.getOBContext().crossOrgReferenceAdminMode = false;
+    // remove the last admin mode from the stack
+    final Stack<OBAdminMode> stack = getCrossOrgAdminModeStack();
+    if (stack.size() > 0) {
+      stack.pop();
+    } else {
+      printUnbalancedWarning(true, AdminType.CROSS_ORG_ADMIN_MODE);
+    }
+
+    if (OBContext.getOBContext() == null) {
+      return;
+    }
+    if (ADMIN_TRACE_SIZE != 0) {
+      addStackTrace("restorePreviousCrossOrgReferenceMode");
+    }
   }
 
-  private static void printUnbalancedWarning(boolean printLocationOfCaller) {
+  private static void printUnbalancedWarning(boolean printLocationOfCaller, AdminType type) {
     if (ADMIN_TRACE_SIZE == 0) {
-      String errMsg = "Unbalanced calls to setAdminMode and restorePreviousMode. "
+      String errMsg = "Unbalanced calls to "
+          + type.setMethod
+          + " and "
+          + type.restoreMethod
+          + ". "
           + "Consider setting the constant OBContext.ADMIN_TRACE_SIZE to a value higher than 0 to debug this situation";
       if (printLocationOfCaller) {
         log.warn(errMsg, new IllegalStateException());
@@ -252,7 +301,14 @@ public class OBContext implements OBNotSingleton {
     }
 
     // will only be executed with adminModeTrace debugging enabled
-    final List<String> adminModeTraceList = adminModeTrace.get();
+    List<String> adminModeTraceList = null;
+    switch (type) {
+    case ADMIN_MODE:
+      adminModeTraceList = adminModeTrace.get();
+      break;
+    case CROSS_ORG_ADMIN_MODE:
+      adminModeTraceList = crossOrgAdminModeTrace.get();
+    }
     final StringBuilder sb = new StringBuilder();
     if (adminModeTraceList != null) {
       for (String adminModeTraceValue : adminModeTraceList) {
@@ -261,10 +317,12 @@ public class OBContext implements OBNotSingleton {
       }
     }
     if (printLocationOfCaller) {
-      log.warn("Unbalanced calls to setAdminMode and restorePreviousMode" + sb.toString(),
+      log.warn(
+          "Unbalanced calls to " + type.setMethod + " and " + type.restoreMethod + sb.toString(),
           new IllegalStateException());
     } else {
-      log.warn("Unbalanced calls to setAdminMode and restorePreviousMode" + sb.toString());
+      log.warn("Unbalanced calls to " + type.setMethod + " and " + type.restoreMethod
+          + sb.toString());
     }
   }
 
@@ -273,10 +331,19 @@ public class OBContext implements OBNotSingleton {
     final PrintWriter pw = new PrintWriter(sw);
     sw.write(prefix + "\n");
     new Exception().printStackTrace(pw);
-    if (adminModeTrace.get() == null) {
-      adminModeTrace.set(new ArrayList<String>());
+    final List<String> list;
+    if ("setCrossOrgReferenceAdminMode".equals(prefix)) {
+      if (crossOrgAdminModeTrace.get() == null) {
+        crossOrgAdminModeTrace.set(new ArrayList<String>());
+      }
+      list = crossOrgAdminModeTrace.get();
+    } else {
+      if (adminModeTrace.get() == null) {
+        adminModeTrace.set(new ArrayList<String>());
+      }
+      list = adminModeTrace.get();
     }
-    final List<String> list = adminModeTrace.get();
+
     if (list.size() > 0 && list.size() >= ADMIN_TRACE_SIZE) {
       list.remove(0);
     }
@@ -288,7 +355,7 @@ public class OBContext implements OBNotSingleton {
    */
   static void clearAdminModeStack() {
     if (getAdminModeStack().size() > 0) {
-      printUnbalancedWarning(false);
+      printUnbalancedWarning(false, AdminType.ADMIN_MODE);
     }
     getAdminModeStack().clear();
     if (adminModeSet.get() != null) {
@@ -296,6 +363,13 @@ public class OBContext implements OBNotSingleton {
       adminModeSet.set(null);
     }
     adminModeTrace.set(null);
+
+    if (getCrossOrgAdminModeStack().size() > 0) {
+      printUnbalancedWarning(false, AdminType.CROSS_ORG_ADMIN_MODE);
+    }
+    getCrossOrgAdminModeStack().clear();
+
+    crossOrgAdminModeTrace.set(null);
   }
 
   /**
@@ -1031,6 +1105,11 @@ public class OBContext implements OBNotSingleton {
     return adminModeSet.get() != null || isAdministrator;
   }
 
+  public boolean isCrossOrgAdministratorMode() {
+    return getCrossOrgAdminModeStack().size() > 0
+        && getCrossOrgAdminModeStack().peek().isCrossOrgAdminMode();
+  }
+
   public boolean doOrgClientAccessCheck() {
     if (getAdminModeStack().size() > 0 && !getAdminModeStack().peek().doOrgClientAccessCheck()) {
       return false;
@@ -1040,10 +1119,6 @@ public class OBContext implements OBNotSingleton {
 
   public boolean isAdminContext() {
     return this == adminContext;
-  }
-
-  public boolean isCrossOrgRefAdminContext() {
-    return crossOrgReferenceAdminMode;
   }
 
   /**
@@ -1127,13 +1202,22 @@ public class OBContext implements OBNotSingleton {
 
     private boolean adminMode;
     private boolean doOrgClientAccessCheck;
+    private boolean crossOrgAdminMode = false;
 
     public void setAdminMode(boolean adminMode) {
       this.adminMode = adminMode;
     }
 
+    public void setCrossOrgAdminMode(boolean crossOrgAdminMode) {
+      this.crossOrgAdminMode = crossOrgAdminMode;
+    }
+
     public boolean isAdminMode() {
       return adminMode;
+    }
+
+    public boolean isCrossOrgAdminMode() {
+      return crossOrgAdminMode;
     }
 
     public void setOrgClientAccessCheck(boolean doOrgClientAccessCheck) {

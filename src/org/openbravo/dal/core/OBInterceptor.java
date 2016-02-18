@@ -294,7 +294,7 @@ public class OBInterceptor extends EmptyInterceptor {
           continue;
         }
 
-        boolean skipCrossOrgCheck = obContext.isCrossOrgRefAdminContext()
+        boolean skipCrossOrgCheck = obContext.isCrossOrgAdministratorMode()
             && bob.getEntity().getProperty(propertyNames[i]).isAllowedCrossOrgReference();
 
         if (!skipCrossOrgCheck
