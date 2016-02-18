@@ -3106,7 +3106,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
   protected boolean goodsToDeliver(Order order) {
     for (OrderLine line : order.getOrderLineList()) {
-      if (line.getObposQtytodeliver().compareTo(BigDecimal.ZERO) == 0) {
+      if ((paidReceipt && line.getObposQtytodeliver().compareTo(line.getDeliveredQuantity()) == 0)
+          || (!paidReceipt && line.getObposQtytodeliver().compareTo(BigDecimal.ZERO) == 0)) {
         continue;
       } else {
         return true;
