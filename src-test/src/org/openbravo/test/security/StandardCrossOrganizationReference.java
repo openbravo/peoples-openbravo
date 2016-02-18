@@ -35,10 +35,10 @@ import org.openbravo.model.common.order.Order;
 public class StandardCrossOrganizationReference extends CrossOrganizationReference {
   /** References from org Spain to USA should not be allowed on insertion */
   @Test
-  @Ignore("Expected exception is not thrown on isert, see issue #32063")
+  @Ignore("Expected exception is not thrown on insert, see issue #32063")
   public void crossOrgRefShouldBeIllegalOnInsert() {
     setTestAdminContext();
-    createOrder(SPAIN, USA_WAREHOUSE);
+    createOrder(SPAIN_ORG, USA_WAREHOUSE);
 
     exception.expect(OBSecurityException.class);
 
@@ -49,7 +49,7 @@ public class StandardCrossOrganizationReference extends CrossOrganizationReferen
   @Test
   public void crossOrgRefShouldBeIllegalOnUpdate() {
     setTestAdminContext();
-    Order order = createOrder(SPAIN, SPAIN_WAREHOUSE);
+    Order order = createOrder(SPAIN_ORG, SPAIN_WAREHOUSE);
     order.setWarehouse(OBDal.getInstance().getProxy(Warehouse.class, USA_WAREHOUSE));
 
     exception.expect(OBSecurityException.class);

@@ -18,6 +18,8 @@
  */
 package org.openbravo.test.security;
 
+import java.util.HashMap;
+
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -27,6 +29,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.ad.module.Module;
+import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.enterprise.Warehouse;
 import org.openbravo.model.common.order.Order;
 
@@ -42,23 +45,29 @@ public class ExplicitCrossOrganizationReference extends CrossOrganizationReferen
   private static final String ORDER_WAREHOUSE = "2202";
   private static boolean wasCoreInDev;
 
-  /** References from org Spain to USA should not be allowed on insertion */
+  /**
+   * References from org Spain to USA should not be allowed on insertion even in a column allowing
+   * it if not in admin mode
+   */
   @Test
-  @Ignore("Expected exception is not thrown on isert, see issue #32063")
-  public void crossOrgRefShouldBeIllegalOnInsert() {
+  @Ignore("Expected exception is not thrown on insert, see issue #32063")
+  public void shouldBeIllegalOnInsert() {
     setTestAdminContext();
-    createOrder(SPAIN, USA_WAREHOUSE);
+    createOrder(SPAIN_ORG, USA_WAREHOUSE);
 
     exception.expect(OBSecurityException.class);
 
     OBDal.getInstance().commitAndClose();
   }
 
-  /** References from org Spain to USA should not be allowed on update */
+  /**
+   * References from org Spain to USA should not be allowed on update even in a column allowing it
+   * if not in admin mode
+   */
   @Test
-  public void crossOrgRefShouldBeIllegalOnUpdate() {
+  public void shouldBeIllegalOnUpdate() {
     setTestAdminContext();
-    Order order = createOrder(SPAIN, SPAIN_WAREHOUSE);
+    Order order = createOrder(SPAIN_ORG, SPAIN_WAREHOUSE);
     order.setWarehouse(OBDal.getInstance().getProxy(Warehouse.class, USA_WAREHOUSE));
 
     exception.expect(OBSecurityException.class);
@@ -66,13 +75,16 @@ public class ExplicitCrossOrganizationReference extends CrossOrganizationReferen
     OBDal.getInstance().commitAndClose();
   }
 
-  /** References from org Spain to USA should be allowed on insertion if in cross org admin mode */
+  /**
+   * References from org Spain to USA should be allowed on insertion if in cross org admin mode for
+   * columns that allow it
+   */
   @Test
-  public void crossOrgRefShouldBeAllowedOnInsertInCrossOrgAdminMode() {
+  public void shouldBeAllowedOnInsertInCrossOrgAdminMode() {
     setTestAdminContext();
     OBContext.setCrossOrgReferenceAdminMode();
     try {
-      createOrder(SPAIN, USA_WAREHOUSE);
+      createOrder(SPAIN_ORG, USA_WAREHOUSE);
 
       OBDal.getInstance().commitAndClose();
     } finally {
@@ -80,17 +92,63 @@ public class ExplicitCrossOrganizationReference extends CrossOrganizationReferen
     }
   }
 
-  /** References from org Spain to USA should not be allowed on update if in cross org admin mode */
+  /**
+   * References from org Spain to USA should not be allowed on update if in cross org admin mode for
+   * columns that allow it
+   */
   @Test
-  public void crossOrgRefShouldBeAllowedOnUpdateInCrossOrgAdminMode() {
+  public void shouldBeAllowedOnUpdateInCrossOrgAdminMode() {
     setTestAdminContext();
-    Order order = createOrder(SPAIN, SPAIN_WAREHOUSE);
+    Order order = createOrder(SPAIN_ORG, SPAIN_WAREHOUSE);
     OBContext.setCrossOrgReferenceAdminMode();
     try {
       order.setWarehouse(OBDal.getInstance().getProxy(Warehouse.class, USA_WAREHOUSE));
 
+      OBDal.getInstance().commitAndClose();
+    } finally {
+      OBContext.restorePreviousCrossOrgReferenceMode();
+    }
+  }
+
+  /**
+   * For columns not flagged to allow cross org refs, it should not be possible to do it even in
+   * cross org admin mode
+   */
+  @SuppressWarnings("serial")
+  @Test
+  @Ignore("Expected exception is not thrown on insert, see issue #32063")
+  public void shouldBeIllegalOnInsertAdminModeIfColumnNotSet() {
+    setTestAdminContext();
+    OBContext.setCrossOrgReferenceAdminMode();
+    try {
+      createOrder(SPAIN_ORG, new HashMap<String, Object>() {
+        {
+          put(Order.PROPERTY_BUSINESSPARTNER,
+              OBDal.getInstance().getProxy(BusinessPartner.class, USA_BP));
+        }
+      });
+
       exception.expect(OBSecurityException.class);
 
+      OBDal.getInstance().commitAndClose();
+    } finally {
+      OBContext.restorePreviousCrossOrgReferenceMode();
+    }
+  }
+
+  /**
+   * For columns not flagged to allow cross org refs, it should not be possible to do it even in
+   * cross org admin mode
+   */
+  @Test
+  public void shouldBeIllegalOnUpdateAdminModeIfColumnNotSet() {
+    setTestAdminContext();
+    Order order = createOrder(SPAIN_ORG, SPAIN_WAREHOUSE);
+    OBContext.setCrossOrgReferenceAdminMode();
+    try {
+      exception.expect(OBSecurityException.class);
+
+      order.setBusinessPartner(OBDal.getInstance().getProxy(BusinessPartner.class, USA_BP));
       OBDal.getInstance().commitAndClose();
     } finally {
       OBContext.restorePreviousCrossOrgReferenceMode();

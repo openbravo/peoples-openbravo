@@ -1,6 +1,9 @@
 package org.openbravo.test.security;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.junit.Rule;
 import org.junit.rules.ExpectedException;
@@ -18,14 +21,25 @@ import org.openbravo.model.pricing.pricelist.PriceList;
 import org.openbravo.test.base.OBBaseTest;
 
 public class CrossOrganizationReference extends OBBaseTest {
-  protected final static String SPAIN = "357947E87C284935AD1D783CF6F099A1";
+  protected final static String SPAIN_ORG = "357947E87C284935AD1D783CF6F099A1";
   protected final static String SPAIN_WAREHOUSE = "4D7B97565A024DB7B4C61650FA2B9560";
+
   protected final static String USA_WAREHOUSE = "4028E6C72959682B01295ECFE2E20270";
+  protected final static String USA_BP = "4028E6C72959682B01295F40D4D20333";
 
   @Rule
   public ExpectedException exception = ExpectedException.none();
 
-  protected Order createOrder(String orgId, String warehouseId) {
+  @SuppressWarnings("serial")
+  protected Order createOrder(String orgId, final String warehouseId) {
+    return createOrder(orgId, new HashMap<String, Object>() {
+      {
+        put(Order.PROPERTY_WAREHOUSE, OBDal.getInstance().getProxy(Warehouse.class, warehouseId));
+      }
+    });
+  }
+
+  protected Order createOrder(String orgId, Map<String, Object> propertyValues) {
     String CREDIT_ORDER_DOC_TYPE = "FF8080812C2ABFC6012C2B3BDF4C0056";
     String CUST_A = "4028E6C72959682B01295F40C3CB02EC";
     String CUST_A_LOCATION = "4028E6C72959682B01295F40C43802EE";
@@ -44,10 +58,15 @@ public class CrossOrganizationReference extends OBBaseTest {
     order.setPartnerAddress(OBDal.getInstance().getProxy(Location.class, CUST_A_LOCATION));
     order.setCurrency(OBDal.getInstance().getProxy(Currency.class, EUR));
     order.setPaymentTerms(OBDal.getInstance().getProxy(PaymentTerm.class, PAYMENT_TERM));
-    order.setWarehouse(OBDal.getInstance().getProxy(Warehouse.class, warehouseId));
+    order.setWarehouse(OBDal.getInstance().getProxy(Warehouse.class, SPAIN_WAREHOUSE));
     order.setPriceList(OBDal.getInstance().getProxy(PriceList.class, PRICE_LIST));
     order.setOrderDate(new Date());
     order.setAccountingDate(new Date());
+
+    for (Entry<String, Object> propertyValue : propertyValues.entrySet()) {
+      order.set(propertyValue.getKey(), propertyValue.getValue());
+    }
+
     OBDal.getInstance().save(order);
     OBDal.getInstance().flush();
     return order;
