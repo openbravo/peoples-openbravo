@@ -473,7 +473,7 @@ public class ExplicitCrossOrganizationReference extends CrossOrganizationReferen
   }
 
   @AfterClass
-  public static void cleanUp() {
+  public static void resetAD() {
     OBContext.setOBContext("0");
     if (!wasCoreInDev) {
       Module core = OBDal.getInstance().get(Module.class, CORE);

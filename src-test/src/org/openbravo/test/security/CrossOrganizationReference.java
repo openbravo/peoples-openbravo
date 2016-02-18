@@ -50,6 +50,8 @@ import org.openbravo.model.financialmgmt.tax.TaxRate;
 import org.openbravo.model.pricing.pricelist.PriceList;
 import org.openbravo.test.datasource.BaseDataSourceTestDal;
 
+import com.google.common.collect.Lists;
+
 /**
  * Base class for test for cross organization reference functionality.
  * 
@@ -118,7 +120,6 @@ public class CrossOrganizationReference extends BaseDataSourceTestDal {
 
     OBDal.getInstance().save(order);
     OBDal.getInstance().flush();
-    createdObjects.add(order);
     return order;
   }
 
@@ -153,7 +154,6 @@ public class CrossOrganizationReference extends BaseDataSourceTestDal {
 
     OBDal.getInstance().save(ol);
     OBDal.getInstance().flush();
-    createdObjects.add(ol);
     return ol;
   }
 
@@ -173,14 +173,18 @@ public class CrossOrganizationReference extends BaseDataSourceTestDal {
   }
 
   @AfterClass
-  public static void cleanUp() {
+  public static void removeCreatedObjects() {
+    OBContext.setOBContext("0");
     OBContext.setAdminMode(false);
-    for (BaseOBObject obj : createdObjects) {
-      BaseOBObject objToDelete = OBDal.getInstance().get(obj.getClass(), obj.getId());
-      if (objToDelete != null) {
-        OBDal.getInstance().remove(objToDelete);
+    try {
+      for (BaseOBObject obj : Lists.reverse(createdObjects)) {
+        OBDal.getInstance().remove(obj);
+        OBDal.getInstance().flush();
       }
+      OBDal.getInstance().commitAndClose();
+    } catch (Exception ignore) {
+    } finally {
+      OBContext.restorePreviousMode();
     }
-    OBDal.getInstance().commitAndClose();
   }
 }
