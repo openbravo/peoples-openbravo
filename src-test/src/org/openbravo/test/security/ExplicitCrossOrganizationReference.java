@@ -20,6 +20,7 @@ package org.openbravo.test.security;
 
 import java.util.HashMap;
 
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -160,7 +161,7 @@ public class ExplicitCrossOrganizationReference extends CrossOrganizationReferen
     OBContext.setOBContext("0");
     Module core = OBDal.getInstance().get(Module.class, CORE);
     wasCoreInDev = core.isInDevelopment();
-    if (wasCoreInDev) {
+    if (!wasCoreInDev) {
       core.setInDevelopment(true);
     }
 
@@ -171,6 +172,20 @@ public class ExplicitCrossOrganizationReference extends CrossOrganizationReferen
 
     DalLayerInitializer.getInstance().setInitialized(false);
     setDalUp();
+  }
+
+  @AfterClass
+  public static void cleanUp() {
+    OBContext.setOBContext("0");
+    if (!wasCoreInDev) {
+      Module core = OBDal.getInstance().get(Module.class, CORE);
+      core.setInDevelopment(false);
+    }
+
+    Column orderWarehouse = OBDal.getInstance().get(Column.class, ORDER_WAREHOUSE);
+    orderWarehouse.setAllowedCrossOrganizationReference(false);
+
+    OBDal.getInstance().commitAndClose();
   }
 
 }

@@ -1,13 +1,18 @@
 package org.openbravo.test.security;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.junit.AfterClass;
 import org.junit.Rule;
 import org.junit.rules.ExpectedException;
 import org.openbravo.base.provider.OBProvider;
+import org.openbravo.base.structure.BaseOBObject;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.businesspartner.Location;
@@ -27,6 +32,8 @@ public class CrossOrganizationReference extends OBBaseTest {
   protected final static String USA_WAREHOUSE = "4028E6C72959682B01295ECFE2E20270";
   protected final static String USA_BP = "4028E6C72959682B01295F40D4D20333";
 
+  private static List<BaseOBObject> createdObjects = new ArrayList<BaseOBObject>();
+
   @Rule
   public ExpectedException exception = ExpectedException.none();
 
@@ -37,6 +44,18 @@ public class CrossOrganizationReference extends OBBaseTest {
         put(Order.PROPERTY_WAREHOUSE, OBDal.getInstance().getProxy(Warehouse.class, warehouseId));
       }
     });
+  }
+
+  @AfterClass
+  public static void cleanUp() {
+    OBContext.setAdminMode(false);
+    for (BaseOBObject obj : createdObjects) {
+      BaseOBObject objToDelete = OBDal.getInstance().get(obj.getClass(), obj.getId());
+      if (objToDelete != null) {
+        OBDal.getInstance().remove(objToDelete);
+      }
+    }
+    OBDal.getInstance().commitAndClose();
   }
 
   protected Order createOrder(String orgId, Map<String, Object> propertyValues) {
@@ -68,6 +87,7 @@ public class CrossOrganizationReference extends OBBaseTest {
     }
 
     OBDal.getInstance().save(order);
+    createdObjects.add(order);
     OBDal.getInstance().flush();
     return order;
   }
