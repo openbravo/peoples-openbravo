@@ -18,11 +18,17 @@
  */
 package org.openbravo.test.security;
 
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 
+import org.apache.log4j.Level;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -253,6 +259,87 @@ public class ExplicitCrossOrganizationReference extends CrossOrganizationReferen
 
     OBDal.getInstance().refresh(order); // force fetch
     assertThat("Number of lines in order", order.getOrderLineList(), hasSize(1));
+  }
+
+  @Test
+  public void byDefaultCrossOrgAdminShouldBeDisabled() {
+    assertThat("isCrossOrgAdministratorMode", OBContext.getOBContext()
+        .isCrossOrgAdministratorMode(), is(false));
+  }
+
+  @Test
+  public void crossOrgAdminModeShoudBePossibleToEnable() {
+    OBContext.setCrossOrgReferenceAdminMode();
+
+    assertThat("isCrossOrgAdministratorMode", OBContext.getOBContext()
+        .isCrossOrgAdministratorMode(), is(true));
+
+    OBContext.restorePreviousCrossOrgReferenceMode();
+  }
+
+  @Test
+  public void adminAndCrossOrgAdminAreIndpendent() {
+    setTestLogAppenderLevel(Level.WARN);
+    OBContext.setAdminMode();
+    assertThat("admin mode", OBContext.getOBContext().isInAdministratorMode(), is(true));
+    assertThat("cross org admin mode", OBContext.getOBContext().isCrossOrgAdministratorMode(),
+        is(false));
+
+    OBContext.setCrossOrgReferenceAdminMode();
+    assertThat("admin mode", OBContext.getOBContext().isInAdministratorMode(), is(true));
+    assertThat("cross org admin mode", OBContext.getOBContext().isCrossOrgAdministratorMode(),
+        is(true));
+
+    OBContext.restorePreviousMode();
+    assertThat("admin mode", OBContext.getOBContext().isInAdministratorMode(), is(false));
+    assertThat("cross org admin mode", OBContext.getOBContext().isCrossOrgAdministratorMode(),
+        is(true));
+
+    OBContext.restorePreviousCrossOrgReferenceMode();
+    assertThat("admin mode", OBContext.getOBContext().isInAdministratorMode(), is(false));
+    assertThat("cross org admin mode", OBContext.getOBContext().isCrossOrgAdministratorMode(),
+        is(false));
+    assertThat(getTestLogAppender().getMessages(Level.WARN), hasSize(0));
+  }
+
+  @Test
+  public void unbalancedRestorePreviousCrossOrgAdminShouldLogWarn() {
+    setTestLogAppenderLevel(Level.WARN);
+
+    OBContext.setCrossOrgReferenceAdminMode();
+    OBContext.restorePreviousCrossOrgReferenceMode();
+    assertThat(getTestLogAppender().getMessages(Level.WARN), hasSize(0));
+
+    OBContext.restorePreviousCrossOrgReferenceMode();
+    assertThat(getTestLogAppender().getMessages(Level.WARN),
+        hasItem(containsString("Unbalanced calls to setCrossOrgReferenceAdminMode")));
+  }
+
+  @Test
+  public void unbalancedSetCrossOrgAdminShouldLogWarn() {
+    setTestLogAppenderLevel(Level.WARN);
+
+    OBContext.setCrossOrgReferenceAdminMode();
+    OBContext.setCrossOrgReferenceAdminMode();
+    assertThat(getTestLogAppender().getMessages(Level.WARN),
+        hasItem(containsString("Unbalanced calls to setCrossOrgReferenceAdminMode")));
+  }
+
+  @Test
+  public void unbalancedOrgAdminThreadFinalizationShouldLogWarn() throws NoSuchMethodException,
+      SecurityException, IllegalAccessException, IllegalArgumentException,
+      InvocationTargetException {
+    setTestLogAppenderLevel(Level.WARN);
+    OBContext.setCrossOrgReferenceAdminMode();
+
+    // OBContext.clearAdminModeStack is invoked on request thread finalization, invoke it here
+    // directly making it accessible first
+    Method clearAdminModeStack = OBContext.class.getDeclaredMethod("clearAdminModeStack");
+    clearAdminModeStack.setAccessible(true);
+    clearAdminModeStack.invoke(null);
+
+    assertThat(getTestLogAppender().getMessages(Level.WARN),
+        hasItem(containsString("Unbalanced calls to setCrossOrgReferenceAdminMode")));
   }
 
   @SuppressWarnings("serial")
