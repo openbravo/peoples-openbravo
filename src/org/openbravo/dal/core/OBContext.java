@@ -214,11 +214,7 @@ public class OBContext implements OBNotSingleton {
     am.setCrossOrgAdminMode(true);
 
     getCrossOrgAdminModeStack().push(am);
-    if (OBContext.getOBContext() == null) {
-      OBContext.setAdminContextLocally();
-    } else if (OBContext.getOBContext() == adminContext) {
-      return;
-    }
+
     if (OBContext.getOBContext() != null && ADMIN_TRACE_SIZE != 0) {
       addStackTrace("setCrossOrgReferenceAdminMode");
     }
