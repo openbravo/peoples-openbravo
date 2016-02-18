@@ -1265,7 +1265,7 @@ enyo.kind({
     if (this.$.foreignAmount.content || this.$.info.content) {
       this.$.removePayment.style = this.$.removePayment.style + ' margin-top: 10px;';
     }
-    if ((this.model.get('isPrePayment') && (this.model.get('reversedPaymentId'))) || this.model.get('isReversed')) {
+    if ((this.model.get('isPrePayment') && (this.model.get('reversedPaymentId'))) || this.model.get('isReversed') || (this.owner.owner.owner.owner.model.get('order').get('orderType') === 2 && this.owner.owner.owner.owner.model.get('order').get('replacedorder'))) {
       this.$.removePayment.hide();
       this.$.reversePayment.hide();
     } else if (this.model.get('isPrePayment') && OB.MobileApp.model.hasPermission("OBPOS_EnableReversePayments")) {
