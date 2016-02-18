@@ -31,8 +31,10 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
+import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.enterprise.Warehouse;
 import org.openbravo.model.common.order.Order;
+import org.openbravo.model.common.order.OrderLine;
 
 /**
  * Test cases covering special cases for cross organization references, where they are allowed based
@@ -43,7 +45,8 @@ import org.openbravo.model.common.order.Order;
  */
 public class ExplicitCrossOrganizationReference extends CrossOrganizationReference {
   private static final String CORE = "0";
-  private static final String ORDER_WAREHOUSE = "2202";
+  private static final String ORDER_WAREHOUSE_COLUMN = "2202";
+  private static final String ORDERLINE_ORDER_COLUMN = "2213";
   private static boolean wasCoreInDev;
 
   /**
@@ -156,6 +159,74 @@ public class ExplicitCrossOrganizationReference extends CrossOrganizationReferen
     }
   }
 
+  @SuppressWarnings("serial")
+  @Test
+  @Ignore("Expected exception is not thrown on insert, see issue #32063")
+  public void shouldBeIllegalOnChildInsert() {
+    setTestAdminContext();
+    Order order = createOrder(SPAIN_ORG, SPAIN_WAREHOUSE);
+    createOrderLine(order, new HashMap<String, Object>() {
+      {
+        put(OrderLine.PROPERTY_ORGANIZATION, OBDal.getInstance().get(Organization.class, USA_ORG));
+      }
+    });
+
+    exception.expect(OBSecurityException.class);
+
+    OBDal.getInstance().commitAndClose();
+  }
+
+  @Test
+  public void shouldBeIllegalOnChildUpdate() {
+    setTestAdminContext();
+    Order order = createOrder(SPAIN_ORG, SPAIN_WAREHOUSE);
+    OrderLine ol = createOrderLine(order);
+
+    ol.setOrganization(OBDal.getInstance().getProxy(Organization.class, USA_ORG));
+
+    exception.expect(OBSecurityException.class);
+
+    OBDal.getInstance().commitAndClose();
+  }
+
+  @SuppressWarnings("serial")
+  @Test
+  public void shouldBeAllowedOnChildInsertInOrgAdminMode() {
+    setTestAdminContext();
+    OBContext.setCrossOrgReferenceAdminMode();
+    try {
+      Order order = createOrder(SPAIN_ORG, SPAIN_WAREHOUSE);
+      createOrderLine(order, new HashMap<String, Object>() {
+        {
+          put(OrderLine.PROPERTY_ORGANIZATION, OBDal.getInstance().get(Organization.class, USA_ORG));
+        }
+      });
+
+      OBDal.getInstance().commitAndClose();
+    } finally {
+      OBContext.restorePreviousCrossOrgReferenceMode();
+    }
+  }
+
+  @Test
+  public void shouldBeAllowedOnChildUpdateInOrgAdminMode() {
+    setTestAdminContext();
+    OBContext.setCrossOrgReferenceAdminMode();
+    try {
+      Order order = createOrder(SPAIN_ORG, SPAIN_WAREHOUSE);
+      OrderLine ol = createOrderLine(order);
+
+      ol.setOrganization(OBDal.getInstance().getProxy(Organization.class, USA_ORG));
+
+      // warehouse needs to be modified as line-warehouse is not cross-org
+      ol.setWarehouse(OBDal.getInstance().getProxy(Warehouse.class, USA_WAREHOUSE));
+
+      OBDal.getInstance().commitAndClose();
+    } finally {
+      OBContext.restorePreviousCrossOrgReferenceMode();
+    }
+  }
+
   @BeforeClass
   public static void setUpAllowedCrossOrg() throws Exception {
     OBContext.setOBContext("0");
@@ -165,8 +236,11 @@ public class ExplicitCrossOrganizationReference extends CrossOrganizationReferen
       core.setInDevelopment(true);
     }
 
-    Column orderWarehouse = OBDal.getInstance().get(Column.class, ORDER_WAREHOUSE);
+    Column orderWarehouse = OBDal.getInstance().get(Column.class, ORDER_WAREHOUSE_COLUMN);
     orderWarehouse.setAllowedCrossOrganizationReference(true);
+
+    Column orderLineOrder = OBDal.getInstance().get(Column.class, ORDERLINE_ORDER_COLUMN);
+    orderLineOrder.setAllowedCrossOrganizationReference(true);
 
     OBDal.getInstance().commitAndClose();
 
@@ -182,8 +256,11 @@ public class ExplicitCrossOrganizationReference extends CrossOrganizationReferen
       core.setInDevelopment(false);
     }
 
-    Column orderWarehouse = OBDal.getInstance().get(Column.class, ORDER_WAREHOUSE);
+    Column orderWarehouse = OBDal.getInstance().get(Column.class, ORDER_WAREHOUSE_COLUMN);
     orderWarehouse.setAllowedCrossOrganizationReference(false);
+
+    Column orderLineOrder = OBDal.getInstance().get(Column.class, ORDERLINE_ORDER_COLUMN);
+    orderLineOrder.setAllowedCrossOrganizationReference(false);
 
     OBDal.getInstance().commitAndClose();
   }
