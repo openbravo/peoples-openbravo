@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -95,6 +95,8 @@ public class OBContext implements OBNotSingleton {
   public static final String CONTEXT_PARAM = "#OBContext";
 
   private static OBContext adminContext = null;
+
+  private boolean crossOrgReferenceAdminMode;
 
   /**
    * @return true if the current language is a RTL language, false in other cases
@@ -185,6 +187,11 @@ public class OBContext implements OBNotSingleton {
     setAdminMode(false);
   }
 
+  public static void setCrossOrgReferenceAdminMode() {
+    // TODO implement this properly
+    OBContext.getOBContext().crossOrgReferenceAdminMode = true;
+  }
+
   private static Stack<OBAdminMode> getAdminModeStack() {
     if (adminModeStack.get() == null) {
       adminModeStack.set(new Stack<OBAdminMode>());
@@ -225,6 +232,11 @@ public class OBContext implements OBNotSingleton {
     if (stack.isEmpty() && OBContext.getOBContext() == adminContext) {
       OBContext.setOBContext((OBContext) null);
     }
+  }
+
+  public static void restorePreviousCrossOrgReferenceMode() {
+    // TODO implement this properly
+    OBContext.getOBContext().crossOrgReferenceAdminMode = false;
   }
 
   private static void printUnbalancedWarning(boolean printLocationOfCaller) {
@@ -1030,6 +1042,10 @@ public class OBContext implements OBNotSingleton {
     return this == adminContext;
   }
 
+  public boolean isCrossOrgRefAdminContext() {
+    return crossOrgReferenceAdminMode;
+  }
+
   /**
    * @deprecated use {@link #setAdminMode()} and {@link #restorePreviousMode()}.
    */
@@ -1152,4 +1168,5 @@ public class OBContext implements OBNotSingleton {
   private void setTranslationInstalled(boolean translationInstalled) {
     this.translationInstalled = translationInstalled;
   }
+
 }
