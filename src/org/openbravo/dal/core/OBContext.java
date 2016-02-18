@@ -201,6 +201,12 @@ public class OBContext implements OBNotSingleton {
     setAdminMode(false);
   }
 
+  /**
+   * Cross Organization Reference Administrator mode allows to create references from an object to
+   * another one that it is not in the same Organization's natural tree.
+   * 
+   * This only applies for column marked to allow this behavior.
+   */
   public static void setCrossOrgReferenceAdminMode() {
     OBAdminMode am = new OBAdminMode();
     am.setAdminMode(false);
@@ -267,6 +273,12 @@ public class OBContext implements OBNotSingleton {
     }
   }
 
+  /**
+   * Used to restore the previous privileges after enabling Cross Organization Reference
+   * Administrator privileges by calling {@link #setCrossOrgReferenceAdminMode()}.
+   * 
+   * @see OBContext#setCrossOrgReferenceAdminMode()
+   */
   public static void restorePreviousCrossOrgReferenceMode() {
     // remove the last admin mode from the stack
     final Stack<OBAdminMode> stack = getCrossOrgAdminModeStack();
