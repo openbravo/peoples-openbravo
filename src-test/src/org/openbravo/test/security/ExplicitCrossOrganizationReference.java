@@ -264,7 +264,7 @@ public class ExplicitCrossOrganizationReference extends CrossOrganizationReferen
   @Test
   public void byDefaultCrossOrgAdminShouldBeDisabled() {
     assertThat("isCrossOrgAdministratorMode", OBContext.getOBContext()
-        .isCrossOrgAdministratorMode(), is(false));
+        .isInCrossOrgAdministratorMode(), is(false));
   }
 
   @Test
@@ -272,7 +272,7 @@ public class ExplicitCrossOrganizationReference extends CrossOrganizationReferen
     OBContext.setCrossOrgReferenceAdminMode();
 
     assertThat("isCrossOrgAdministratorMode", OBContext.getOBContext()
-        .isCrossOrgAdministratorMode(), is(true));
+        .isInCrossOrgAdministratorMode(), is(true));
 
     OBContext.restorePreviousCrossOrgReferenceMode();
   }
@@ -282,22 +282,22 @@ public class ExplicitCrossOrganizationReference extends CrossOrganizationReferen
     setTestLogAppenderLevel(Level.WARN);
     OBContext.setAdminMode();
     assertThat("admin mode", OBContext.getOBContext().isInAdministratorMode(), is(true));
-    assertThat("cross org admin mode", OBContext.getOBContext().isCrossOrgAdministratorMode(),
+    assertThat("cross org admin mode", OBContext.getOBContext().isInCrossOrgAdministratorMode(),
         is(false));
 
     OBContext.setCrossOrgReferenceAdminMode();
     assertThat("admin mode", OBContext.getOBContext().isInAdministratorMode(), is(true));
-    assertThat("cross org admin mode", OBContext.getOBContext().isCrossOrgAdministratorMode(),
+    assertThat("cross org admin mode", OBContext.getOBContext().isInCrossOrgAdministratorMode(),
         is(true));
 
     OBContext.restorePreviousMode();
     assertThat("admin mode", OBContext.getOBContext().isInAdministratorMode(), is(false));
-    assertThat("cross org admin mode", OBContext.getOBContext().isCrossOrgAdministratorMode(),
+    assertThat("cross org admin mode", OBContext.getOBContext().isInCrossOrgAdministratorMode(),
         is(true));
 
     OBContext.restorePreviousCrossOrgReferenceMode();
     assertThat("admin mode", OBContext.getOBContext().isInAdministratorMode(), is(false));
-    assertThat("cross org admin mode", OBContext.getOBContext().isCrossOrgAdministratorMode(),
+    assertThat("cross org admin mode", OBContext.getOBContext().isInCrossOrgAdministratorMode(),
         is(false));
     assertThat(getTestLogAppender().getMessages(Level.WARN), hasSize(0));
   }

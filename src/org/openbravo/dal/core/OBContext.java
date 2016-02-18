@@ -1105,7 +1105,7 @@ public class OBContext implements OBNotSingleton {
     return adminModeSet.get() != null || isAdministrator;
   }
 
-  public boolean isCrossOrgAdministratorMode() {
+  public boolean isInCrossOrgAdministratorMode() {
     return getCrossOrgAdminModeStack().size() > 0
         && getCrossOrgAdminModeStack().peek().isCrossOrgAdminMode();
   }
