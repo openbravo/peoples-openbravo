@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.ExpectedException;
 import org.openbravo.base.provider.OBProvider;
@@ -31,14 +32,17 @@ import org.openbravo.model.pricing.pricelist.PriceList;
 import org.openbravo.test.base.OBBaseTest;
 
 public class CrossOrganizationReference extends OBBaseTest {
-  protected final static String SPAIN_ORG = "357947E87C284935AD1D783CF6F099A1";
-  protected final static String SPAIN_WAREHOUSE = "4D7B97565A024DB7B4C61650FA2B9560";
+  private static final String QA_ADMIN_ROLE = "4028E6C72959682B01295A071429011E";
+  private static final String QA_SPAIN_ROLE = "CC6AB5B4C4B54CB79103C96AD2B90750";
 
-  protected final static String USA_ORG = "5EFF95EB540740A3B10510D9814EFAD5";
-  protected final static String USA_WAREHOUSE = "4028E6C72959682B01295ECFE2E20270";
-  protected final static String USA_BP = "4028E6C72959682B01295F40D4D20333";
+  protected static final String SPAIN_ORG = "357947E87C284935AD1D783CF6F099A1";
+  protected static final String SPAIN_WAREHOUSE = "4D7B97565A024DB7B4C61650FA2B9560";
 
-  protected final static String EUR = "102";
+  protected static final String USA_ORG = "5EFF95EB540740A3B10510D9814EFAD5";
+  protected static final String USA_WAREHOUSE = "4028E6C72959682B01295ECFE2E20270";
+  protected static final String USA_BP = "4028E6C72959682B01295F40D4D20333";
+
+  protected static final String EUR = "102";
 
   private static List<BaseOBObject> createdObjects = new ArrayList<BaseOBObject>();
 
@@ -128,9 +132,18 @@ public class CrossOrganizationReference extends OBBaseTest {
     }
   }
 
+  protected void setSpainQARole() {
+    OBContext.setOBContext("100", QA_SPAIN_ROLE, QA_TEST_CLIENT_ID, SPAIN_ORG);
+  }
+
+  @Before
+  public void setQAAdminRole() {
+    OBContext.setOBContext("100", QA_ADMIN_ROLE, QA_TEST_CLIENT_ID, QA_TEST_ORG_ID);
+  }
+
   @AfterClass
   public static void cleanUp() {
-    OBContext.setAdminMode(false);
+    // OBContext.setAdminMode(false);
     for (BaseOBObject obj : createdObjects) {
       BaseOBObject objToDelete = OBDal.getInstance().get(obj.getClass(), obj.getId());
       if (objToDelete != null) {

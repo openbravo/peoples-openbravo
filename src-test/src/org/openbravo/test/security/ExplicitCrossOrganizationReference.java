@@ -18,6 +18,9 @@
  */
 package org.openbravo.test.security;
 
+import static org.hamcrest.Matchers.hasSize;
+import static org.junit.Assert.assertThat;
+
 import java.util.HashMap;
 
 import org.junit.AfterClass;
@@ -56,7 +59,6 @@ public class ExplicitCrossOrganizationReference extends CrossOrganizationReferen
   @Test
   @Ignore("Expected exception is not thrown on insert, see issue #32063")
   public void shouldBeIllegalOnInsert() {
-    setTestAdminContext();
     createOrder(SPAIN_ORG, USA_WAREHOUSE);
 
     exception.expect(OBSecurityException.class);
@@ -70,7 +72,6 @@ public class ExplicitCrossOrganizationReference extends CrossOrganizationReferen
    */
   @Test
   public void shouldBeIllegalOnUpdate() {
-    setTestAdminContext();
     Order order = createOrder(SPAIN_ORG, SPAIN_WAREHOUSE);
     order.setWarehouse(OBDal.getInstance().getProxy(Warehouse.class, USA_WAREHOUSE));
 
@@ -85,7 +86,6 @@ public class ExplicitCrossOrganizationReference extends CrossOrganizationReferen
    */
   @Test
   public void shouldBeAllowedOnInsertInCrossOrgAdminMode() {
-    setTestAdminContext();
     OBContext.setCrossOrgReferenceAdminMode();
     try {
       createOrder(SPAIN_ORG, USA_WAREHOUSE);
@@ -102,7 +102,6 @@ public class ExplicitCrossOrganizationReference extends CrossOrganizationReferen
    */
   @Test
   public void shouldBeAllowedOnUpdateInCrossOrgAdminMode() {
-    setTestAdminContext();
     Order order = createOrder(SPAIN_ORG, SPAIN_WAREHOUSE);
     OBContext.setCrossOrgReferenceAdminMode();
     try {
@@ -122,7 +121,6 @@ public class ExplicitCrossOrganizationReference extends CrossOrganizationReferen
   @Test
   @Ignore("Expected exception is not thrown on insert, see issue #32063")
   public void shouldBeIllegalOnInsertAdminModeIfColumnNotSet() {
-    setTestAdminContext();
     OBContext.setCrossOrgReferenceAdminMode();
     try {
       createOrder(SPAIN_ORG, new HashMap<String, Object>() {
@@ -146,7 +144,6 @@ public class ExplicitCrossOrganizationReference extends CrossOrganizationReferen
    */
   @Test
   public void shouldBeIllegalOnUpdateAdminModeIfColumnNotSet() {
-    setTestAdminContext();
     Order order = createOrder(SPAIN_ORG, SPAIN_WAREHOUSE);
     OBContext.setCrossOrgReferenceAdminMode();
     try {
@@ -159,17 +156,10 @@ public class ExplicitCrossOrganizationReference extends CrossOrganizationReferen
     }
   }
 
-  @SuppressWarnings("serial")
   @Test
   @Ignore("Expected exception is not thrown on insert, see issue #32063")
   public void shouldBeIllegalOnChildInsert() {
-    setTestAdminContext();
-    Order order = createOrder(SPAIN_ORG, SPAIN_WAREHOUSE);
-    createOrderLine(order, new HashMap<String, Object>() {
-      {
-        put(OrderLine.PROPERTY_ORGANIZATION, OBDal.getInstance().get(Organization.class, USA_ORG));
-      }
-    });
+    createCrossOrgOrderOrderLine();
 
     exception.expect(OBSecurityException.class);
 
@@ -178,7 +168,6 @@ public class ExplicitCrossOrganizationReference extends CrossOrganizationReferen
 
   @Test
   public void shouldBeIllegalOnChildUpdate() {
-    setTestAdminContext();
     Order order = createOrder(SPAIN_ORG, SPAIN_WAREHOUSE);
     OrderLine ol = createOrderLine(order);
 
@@ -189,18 +178,11 @@ public class ExplicitCrossOrganizationReference extends CrossOrganizationReferen
     OBDal.getInstance().commitAndClose();
   }
 
-  @SuppressWarnings("serial")
   @Test
   public void shouldBeAllowedOnChildInsertInOrgAdminMode() {
-    setTestAdminContext();
     OBContext.setCrossOrgReferenceAdminMode();
     try {
-      Order order = createOrder(SPAIN_ORG, SPAIN_WAREHOUSE);
-      createOrderLine(order, new HashMap<String, Object>() {
-        {
-          put(OrderLine.PROPERTY_ORGANIZATION, OBDal.getInstance().get(Organization.class, USA_ORG));
-        }
-      });
+      createCrossOrgOrderOrderLine();
 
       OBDal.getInstance().commitAndClose();
     } finally {
@@ -210,7 +192,6 @@ public class ExplicitCrossOrganizationReference extends CrossOrganizationReferen
 
   @Test
   public void shouldBeAllowedOnChildUpdateInOrgAdminMode() {
-    setTestAdminContext();
     OBContext.setCrossOrgReferenceAdminMode();
     try {
       Order order = createOrder(SPAIN_ORG, SPAIN_WAREHOUSE);
@@ -227,8 +208,61 @@ public class ExplicitCrossOrganizationReference extends CrossOrganizationReferen
     }
   }
 
+  /**
+   * Fetching children (order.getOrderLineList) should retrieve cross-org elements if role has
+   * access to children org
+   */
+  @Test
+  public void childListShouldBeRetrivedIfRoleHasAccess() {
+    OBContext.setCrossOrgReferenceAdminMode();
+    Order order;
+    try {
+      order = createCrossOrgOrderOrderLine();
+      OBDal.getInstance().flush();
+    } finally {
+      OBContext.restorePreviousCrossOrgReferenceMode();
+    }
+
+    OBDal.getInstance().refresh(order); // force fetch
+    assertThat("Number of lines in order", order.getOrderLineList(), hasSize(1));
+  }
+
+  /**
+   * When fetching children elements (order.getOrderLineList), children's organization is not
+   * checked, so even they are cross-org and the role has no access to them, they are present in the
+   * bag.
+   */
+  @Test
+  public void childListShouldBeRetrivedEvenIfRoleHasNoAccess() {
+    OBContext.setCrossOrgReferenceAdminMode();
+    Order order;
+    try {
+      order = createCrossOrgOrderOrderLine();
+      OBDal.getInstance().flush();
+    } finally {
+      OBContext.restorePreviousCrossOrgReferenceMode();
+    }
+
+    setSpainQARole();
+
+    OBDal.getInstance().refresh(order); // force fetch
+    assertThat("Number of lines in order", order.getOrderLineList(), hasSize(1));
+  }
+
+  @SuppressWarnings("serial")
+  private Order createCrossOrgOrderOrderLine() {
+    Order order = createOrder(SPAIN_ORG, SPAIN_WAREHOUSE);
+    createOrderLine(order, new HashMap<String, Object>() {
+      {
+        put(OrderLine.PROPERTY_ORGANIZATION, OBDal.getInstance().get(Organization.class, USA_ORG));
+      }
+    });
+    return order;
+  }
+
   @BeforeClass
   public static void setUpAllowedCrossOrg() throws Exception {
+    // allow cross org references in order.warehouse and in orderline.order
     OBContext.setOBContext("0");
     Module core = OBDal.getInstance().get(Module.class, CORE);
     wasCoreInDev = core.isInDevelopment();
@@ -244,6 +278,7 @@ public class ExplicitCrossOrganizationReference extends CrossOrganizationReferen
 
     OBDal.getInstance().commitAndClose();
 
+    // reload in memory model with these new settings
     DalLayerInitializer.getInstance().setInitialized(false);
     setDalUp();
   }

@@ -37,7 +37,6 @@ public class StandardCrossOrganizationReference extends CrossOrganizationReferen
   @Test
   @Ignore("Expected exception is not thrown on insert, see issue #32063")
   public void crossOrgRefShouldBeIllegalOnInsert() {
-    setTestAdminContext();
     createOrder(SPAIN_ORG, USA_WAREHOUSE);
 
     exception.expect(OBSecurityException.class);
@@ -48,7 +47,6 @@ public class StandardCrossOrganizationReference extends CrossOrganizationReferen
   /** References from org Spain to USA should not be allowed on update */
   @Test
   public void crossOrgRefShouldBeIllegalOnUpdate() {
-    setTestAdminContext();
     Order order = createOrder(SPAIN_ORG, SPAIN_WAREHOUSE);
     order.setWarehouse(OBDal.getInstance().getProxy(Warehouse.class, USA_WAREHOUSE));
 
