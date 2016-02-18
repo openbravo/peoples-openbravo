@@ -66,7 +66,7 @@
 
   var getTaxRateNumber = function (taxRate) {
 
-      var rate = new BigDecimal(String(taxRate.get('rate'))); // 10
+      var rate = new BigDecimal(String(taxRate)); // 10
       return rate.divide(new BigDecimal('100'), 20, BigDecimal.prototype.ROUND_HALF_UP); // 0.10
       };
 
@@ -188,7 +188,7 @@
             if (!taxRate.get('summaryLevel')) {
 
               var taxId = taxRate.get('id');
-              var rate = getTaxRateNumber(taxRate);
+              var rate = getTaxRateNumber(taxRate.get('rate'));
               if (taxRate.get('cascade')) {
                 linerate = linerate.multiply(rate.add(BigDecimal.prototype.ONE));
                 taxamt = taxamt.multiply(new BigDecimal(String(OB.DEC.add(1, rate))));
@@ -257,10 +257,6 @@
           'taxAmount': OB.DEC.add(line.get('taxAmount'), OB.DEC.sub(orggross, linenet)),
           'net': OB.DEC.add(line.get('net'), linenet),
           'pricenet': OB.DEC.add(line.get('pricenet'), roundedLinePriceNet)
-        });
-
-        receipt.set('net', OB.DEC.add(receipt.get('net'), linenet), {
-          silent: true
         });
 
         //We follow the same formula of function c_get_net_price_from_gross to compute the discounted net
@@ -388,17 +384,14 @@
 
               if (taxes[taxId]) {
                 taxes[taxId].net = OB.DEC.add(taxes[taxId].net, taxLines[taxId].net);
-                taxes[taxId].amount = (taxRate.get('docTaxAmount') === 'D') //
-                ? OB.DEC.mul(taxes[taxId].net, getTaxRateNumber(taxRate)) // Calculate taxes At Document Level
-                : OB.DEC.add(taxes[taxId].amount, taxLines[taxId].amount); // Calculate taxes At Line Level
+                taxes[taxId].amount = OB.DEC.add(taxes[taxId].amount, taxLines[taxId].amount); // Calculate taxes At Line Level. If At Doc Level, adjustment is done at the end.
               } else {
                 taxes[taxId] = {};
                 taxes[taxId].name = taxRate.get('name');
+                taxes[taxId].docTaxAmount = taxRate.get('docTaxAmount');
                 taxes[taxId].rate = taxRate.get('rate');
                 taxes[taxId].net = taxLines[taxId].net;
-                taxes[taxId].amount = (taxRate.get('docTaxAmount') === 'D') //
-                ? OB.DEC.mul(taxes[taxId].net, getTaxRateNumber(taxRate)) // Initialize taxes At Document Level
-                : taxLines[taxId].amount; // Initialize taxes At Line Level
+                taxes[taxId].amount = taxLines[taxId].amount; // Initialize taxes At Line Level. If At Doc Level, adjustment is done at the end.
               }
             }
           });
@@ -500,40 +493,59 @@
       return Promise.all(_.map(receipt.get('lines').models, function (line) {
         return calcLineTaxesIncPrice(receipt, line);
       })).then(function () {
-        // Ajust receipt taxes if net + taxes !== gross
-        var totalNet = OB.DEC.Zero;
-        var totalGross = OB.DEC.Zero;
+
+        var taxFinal;
+        var newTotalNet;
+        var newNet;
+        var newAmount;
         var totalTaxAmount = OB.DEC.Zero;
-        var taxToAdjust = null;
-        var taxToAdjustMax = OB.DEC.Zero;
-        var adjustment;
+        var totalGross = OB.DEC.Zero;
+        var totalNet = OB.DEC.Zero;
+        var lineToAdjust = null;
+        var netToAdjust = OB.DEC.Zero;
 
         // Calculate taxes
         _.forEach(receipt.get('taxes'), function (tax, taxid) {
+          if (tax.docTaxAmount === 'D') {
+            // Adjust taxes in case of taxes at doc level...
+            taxFinal = OB.DEC.add(tax.net, tax.amount);
+            newNet = OB.DEC.div(taxFinal, OB.DEC.add(OB.DEC.One, getTaxRateNumber(tax.rate)));
+            newAmount = OB.DEC.sub(taxFinal, newNet);
+            tax.net = newNet;
+            tax.amount = newAmount;
+          }
           totalTaxAmount = OB.DEC.add(totalTaxAmount, tax.amount);
-          if (OB.DEC.abs(tax.amount) > taxToAdjustMax) {
-            taxToAdjust = tax;
-            taxToAdjustMax = OB.DEC.abs(tax.amount);
+        });
+
+        // And now Total Net = Total Gross - Sum(Tax Amounts)
+        // And adjust a line net if needed
+        receipt.get('lines').forEach(function (line) {
+          if (!_.isUndefined(line.get('discountedNet'))) {
+            // Include in the calculation only the lines that have a 'discountedNet' attribute
+            // because has been processed by calcLineTaxesIncPrice()
+            totalNet = OB.DEC.add(totalNet, line.get('discountedNet'));
+            totalGross = OB.DEC.add(totalGross, calculateDiscountedGross(line));
+
+            if (OB.DEC.abs(line.get('discountedNet')) > netToAdjust) {
+              lineToAdjust = line;
+              netToAdjust = OB.DEC.abs(line.get('discountedNet'));
+            }
+
           }
         });
 
-        if (taxToAdjust) {
-          // Adjust can be performed
-          // Calculate receipt net and gross
-          receipt.get('lines').forEach(function (line) {
-            if (!_.isUndefined(line.get('discountedNet'))) {
-              // Include in the calculation only the lines that have a 'discountedNet' attribute
-              // because has been processed by calcLineTaxesIncPrice()
-              totalNet = OB.DEC.add(totalNet, line.get('discountedNet'));
-              totalGross = OB.DEC.add(totalGross, calculateDiscountedGross(line));
-            }
+        // Adjust the selected line to verify: sum(linenets) = receiptnet
+        newTotalNet = OB.DEC.sub(totalGross, totalTaxAmount);
+        if (lineToAdjust && newTotalNet !== totalNet) {
+          lineToAdjust.set('discountedNet', OB.DEC.sub(OB.DEC.add(lineToAdjust.get('discountedNet'), newTotalNet), totalNet), {
+            silent: true
           });
-
-          adjustment = OB.DEC.sub(totalGross, OB.DEC.add(totalNet, totalTaxAmount));
-          if (adjustment !== OB.DEC.Zero) {
-            taxToAdjust.amount = OB.DEC.add(taxToAdjust.amount, adjustment);
-          }
         }
+
+        // Sets the receipt Net
+        receipt.set('net', newTotalNet, {
+          silent: true
+        });
       });
       };
 
@@ -565,7 +577,7 @@
             if (!taxRate.get('summaryLevel')) {
 
               var taxId = taxRate.get('id');
-              var rate = getTaxRateNumber(taxRate);
+              var rate = getTaxRateNumber(taxRate.get('rate'));
               var net = OB.DEC.mul(pricenetAux, line.get('qty')); //=== discountedNet
               if (taxRate.get('cascade')) {
 
@@ -608,7 +620,7 @@
                   }
                 }
                 taxes[taxId].amount = (taxRate.get('docTaxAmount') === 'D') //
-                ? OB.DEC.mul(taxes[taxId].net, getTaxRateNumber(taxRate)) // Calculate taxes At Document Level
+                ? OB.DEC.mul(taxes[taxId].net, getTaxRateNumber(taxRate.get('rate'))) // Calculate taxes At Document Level
                 : OB.DEC.add(taxes[taxId].amount, amount); // Calculate taxes At Line Level
               } else {
                 taxes[taxId] = {};
@@ -625,7 +637,7 @@
                   }
                 }
                 taxes[taxId].amount = (taxRate.get('docTaxAmount') === 'D') //
-                ? OB.DEC.mul(taxes[taxId].net, getTaxRateNumber(taxRate)) // Calculate taxes At Document Level
+                ? OB.DEC.mul(taxes[taxId].net, getTaxRateNumber(taxRate.get('rate'))) // Calculate taxes At Document Level
                 : amount; // Calculate taxes At Line Level
               }
             } else {
@@ -837,6 +849,10 @@
             });
           }
         }
+
+        receipt.set('net', totalNet, {
+          silent: true
+        });
       });
       };
 

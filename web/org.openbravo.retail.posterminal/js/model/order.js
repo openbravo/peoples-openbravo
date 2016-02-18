@@ -502,17 +502,6 @@
           });
         }
       }, this);
-
-      var totalnet = this.get('lines').reduce(function (memo, e) {
-        if (e.get('net')) {
-          return memo.add(new BigDecimal(String(e.get('net'))));
-        } else {
-          return memo.add(new BigDecimal('0'));
-        }
-      }, new BigDecimal(String(OB.DEC.Zero)));
-      totalnet = OB.DEC.toNumber(totalnet);
-
-      this.set('net', totalnet);
     },
     getTotal: function () {
       return this.getGross();
@@ -608,7 +597,6 @@
 
           // all attributes are set at once, preventing the change event of each attribute to be fired until all values are set
           me.set({
-            'net': net,
             'gross': gross,
             'qty': qty
           });
