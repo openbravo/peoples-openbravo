@@ -83,7 +83,7 @@ public class OBContext implements OBNotSingleton {
   private static final String ORG = "#AD_Org_ID";
 
   // set this to a higher value to enable admin mode tracing
-  private static final int ADMIN_TRACE_SIZE = 0;
+  private static int ADMIN_TRACE_SIZE = 0;
 
   private static ThreadLocal<OBContext> instance = new ThreadLocal<OBContext>();
 
@@ -294,6 +294,14 @@ public class OBContext implements OBNotSingleton {
     if (ADMIN_TRACE_SIZE != 0) {
       addStackTrace("restorePreviousCrossOrgReferenceMode");
     }
+  }
+
+  /**
+   * Sets the size of stack trace to display in case of logging unbalanced set/restore admin modes
+   * calls
+   */
+  public static void setAdminTraceSize(int s) {
+    ADMIN_TRACE_SIZE = s;
   }
 
   private static void printUnbalancedWarning(boolean printLocationOfCaller, AdminType type) {
