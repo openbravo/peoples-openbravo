@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2015 Openbravo S.L.U.
+ * Copyright (C) 2015-2016 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -32,27 +32,32 @@ enyo.kind({
     this.$.header.hide();
   },
   executeOnShow: function () {
-    this.$.body.$.listCategories.setStyle('margin-top: -10px');
-    var showOnlyReal = this.args.showOnlyReal || false;
-    _.each(this.$.body.$.listCategories.$[this.$.body.$.listCategories.tableName].$.tbody.children, function (item) {
-      if (item.renderline.model.get('realCategory') === 'N') {
-        item.setShowing(!showOnlyReal);
+    var me = this;
+    this.startShowing = true;
+    this.$.body.$.listCategories.loadCategories(function () {
+      me.$.body.$.listCategories.setStyle('margin-top: -10px');
+      var showOnlyReal = me.args.showOnlyReal || false;
+      _.each(me.$.body.$.listCategories.$[me.$.body.$.listCategories.tableName].$.tbody.children, function (item) {
+        if (item.renderline.model.get('realCategory') === 'N') {
+          item.setShowing(!showOnlyReal);
+        }
+      }, me);
+      if (me.args.selectCategory) {
+        var category = me.$.body.$.listCategories.categories.get(me.args.selectCategory);
+        if (category) {
+          category.trigger('selected');
+          me.$.body.$.listCategories.$[me.$.body.$.listCategories.tableName].setSelectedModels([category], true);
+        }
       }
-    }, this);
-    if (this.args.selectCategory) {
-      var category = this.$.body.$.listCategories.categories.get(this.args.selectCategory);
-      if (category) {
-        category.trigger('selected');
-        this.$.body.$.listCategories.$[this.$.body.$.listCategories.tableName].setSelectedModels([category], true);
+      if (me.$.body.$.listCategories.$[me.$.body.$.listCategories.tableName].selected) {
+        me.$.body.$.listCategories.categoryExpandSelected();
       }
-    }
-    if (this.$.body.$.listCategories.$[this.$.body.$.listCategories.tableName].selected) {
-      this.$.body.$.listCategories.categoryExpandSelected();
-    }
+      me.startShowing = false;
+    });
   },
   init: function () {
     this.$.body.$.listCategories.categories.on('selected', function (category) {
-      if (category) {
+      if (category && !this.startShowing) {
         if (this.args && this.args.notSelectSummary && category.get('issummary')) {
           this.$.body.$.listCategories.categoryExpandCollapse(this, {
             categoryId: category.get('id'),
