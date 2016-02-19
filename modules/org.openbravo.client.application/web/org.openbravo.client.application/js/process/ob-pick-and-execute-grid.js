@@ -191,6 +191,14 @@ isc.OBPickAndExecuteGrid.addProperties({
         isc.addProperties(dsRequest.originalData, me.addSelectedIDsToCriteria());
       }
       dsRequest.params[OB.Constants.IS_PICK_AND_EDIT] = true;
+      if (!me.firstRecordWillHaveValue()) {
+        // The request has been fired having scroll out of the first page
+        // We prepare startRow, endRow and localData to ensure that all the selected records will be returned from the server
+        dsRequest.startRow = 0;
+        dsRequest.endRow = me.dataPageSize;
+        me.data.localData = [];
+        me.data.setRangeLoading(dsRequest.startRow, dsRequest.endRow);
+      }
       return this.Super('transformRequest', arguments);
     };
     filterableProperties = this.getFields().findAll('canFilter', true);
@@ -627,6 +635,13 @@ isc.OBPickAndExecuteGrid.addProperties({
     // When the data is being loaded, every element in the localData array is set with the "loading" value
     // So we just need to check the first position of the array
     return this.data.localData && !Array.isLoading(this.data.localData[0]);
+  },
+
+  firstRecordWillHaveValue: function () {
+    // localData[0] = value, a new page has been requested (scroll down)
+    // localData[0] = "loading", first page has been requested
+    // localData[0] = undefined, a grid refresh has been requested having scroll out of the first page
+    return this.data.localData[0] !== undefined;
   },
 
   dataArrived: function (startRow, endRow) {
