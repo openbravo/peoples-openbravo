@@ -178,36 +178,31 @@ enyo.kind({
               customerAddr: customerAddr
             });
             if (customerAddr.get('id') === me.customer.get("locId") || customerAddr.get('id') === me.customer.get("shipLocId")) {
-              if (customerAddr.get('id') === me.customer.get('locId')) {
+              if (!customerAddr.get('isBillTo')) {
+                me.customer.set('locId', null);
+                me.customer.set('locName', null);
+                me.customer.set('postalCode', null);
+                me.customer.set('cityName', null);
+                me.customer.set('countryName', null);
+              } else {
+                me.customer.set('locId', customerAddr.get('id'));
                 me.customer.set('locName', customerAddr.get('name'));
-                if (!customerAddr.get('isBillTo')) {
-                  me.customer.set('locId', null);
-                  me.customer.set('locName', null);
-                  me.customer.set('postalCode', null);
-                  me.customer.set('cityName', null);
-                  me.customer.set('countryName', null);
-                } else {
-                  me.customer.set('locId', customerAddr.get('id'));
-                  me.customer.set('locName', customerAddr.get('name'));
-                  me.customer.set('postalCode', customerAddr.get('postalCode'));
-                  me.customer.set('cityName', customerAddr.get('cityName'));
-                  me.customer.set('countryName', customerAddr.get('countryName'));
-                }
+                me.customer.set('postalCode', customerAddr.get('postalCode'));
+                me.customer.set('cityName', customerAddr.get('cityName'));
+                me.customer.set('countryName', customerAddr.get('countryName'));
               }
-              if (customerAddr.get('id') === me.customer.get('shipLocId')) {
-                if (!customerAddr.get('isShipTo')) {
-                  me.customer.set('shipLocId', null);
-                  me.customer.set('shipLocName', null);
-                  me.customer.set('shipPostalCode', null);
-                  me.customer.set('shipCityName', null);
-                  me.customer.set('shipCountryName', null);
-                } else {
-                  me.customer.set('shipLocId', customerAddr.get('id'));
-                  me.customer.set('shipLocName', customerAddr.get('name'));
-                  me.customer.set('shipPostalCode', customerAddr.get('postalCode'));
-                  me.customer.set('shipCityName', customerAddr.get('cityName'));
-                  me.customer.set('shipCountryName', customerAddr.get('countryName'));
-                }
+              if (!customerAddr.get('isShipTo')) {
+                me.customer.set('shipLocId', null);
+                me.customer.set('shipLocName', null);
+                me.customer.set('shipPostalCode', null);
+                me.customer.set('shipCityName', null);
+                me.customer.set('shipCountryName', null);
+              } else {
+                me.customer.set('shipLocId', customerAddr.get('id'));
+                me.customer.set('shipLocName', customerAddr.get('name'));
+                me.customer.set('shipPostalCode', customerAddr.get('postalCode'));
+                me.customer.set('shipCityName', customerAddr.get('cityName'));
+                me.customer.set('shipCountryName', customerAddr.get('countryName'));
               }
               me.customer.set('locationModel', customerAddr);
               OB.Dal.save(me.customer, function success(tx) {
