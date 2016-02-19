@@ -73,7 +73,7 @@ public class ADAlertDatasourceService extends DefaultDataSourceService {
 
       Entity entity = ModelProvider.getInstance().getEntityByTableId(AD_TABLE_ID);
       String whereClause = getWhereAndFilterClause(parameters, entity);
-      parameters.put(JsonConstants.WHERE_PARAMETER, whereClause);
+      parameters.put(JsonConstants.WHERE_AND_FILTER_CLAUSE, whereClause);
 
       if (parameters.get(JsonConstants.DISTINCT_PARAMETER) == null) {
         // Also return the tab id of the alert rule, just when loading the grid from the server.

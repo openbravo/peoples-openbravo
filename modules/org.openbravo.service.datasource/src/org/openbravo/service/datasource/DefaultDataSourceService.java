@@ -100,7 +100,7 @@ public class DefaultDataSourceService extends BaseDataSourceService {
       String entityName = parameters.get(JsonConstants.ENTITYNAME);
       Entity entity = ModelProvider.getInstance().getEntity(entityName);
       String whereAndFilterClause = getWhereAndFilterClause(parameters, entity);
-      parameters.put(JsonConstants.WHERE_PARAMETER, whereAndFilterClause);
+      parameters.put(JsonConstants.WHERE_AND_FILTER_CLAUSE, whereAndFilterClause);
     }
 
     // add a filter on the parent of the entity
@@ -121,14 +121,14 @@ public class DefaultDataSourceService extends BaseDataSourceService {
       }
 
       final String whereClause;
-      if (parameters.get(JsonConstants.WHERE_PARAMETER) != null
-          && !parameters.get(JsonConstants.WHERE_PARAMETER).equals("null")) {
-        whereClause = parameters.get(JsonConstants.WHERE_PARAMETER) + " and (";
+      if (parameters.get(JsonConstants.WHERE_AND_FILTER_CLAUSE) != null
+          && !parameters.get(JsonConstants.WHERE_AND_FILTER_CLAUSE).equals("null")) {
+        whereClause = parameters.get(JsonConstants.WHERE_AND_FILTER_CLAUSE) + " and (";
       } else {
         whereClause = " (";
       }
-      parameters.put(JsonConstants.WHERE_PARAMETER, whereClause + JsonConstants.MAIN_ALIAS + "."
-          + parentProperty + ".id='" + parentId + "')");
+      parameters.put(JsonConstants.WHERE_AND_FILTER_CLAUSE, whereClause + JsonConstants.MAIN_ALIAS
+          + "." + parentProperty + ".id='" + parentId + "')");
     }
     parameters.put(JsonConstants.USE_ALIAS, "true");
   }

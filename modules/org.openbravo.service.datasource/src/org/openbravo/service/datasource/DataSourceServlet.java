@@ -199,6 +199,8 @@ public class DataSourceServlet extends BaseKernelServlet {
       return;
     }
 
+    parameters.put(JsonConstants.WHERE_AND_FILTER_CLAUSE, "");
+
     if (log.isDebugEnabled()) {
       getRequestContent(request);
     }

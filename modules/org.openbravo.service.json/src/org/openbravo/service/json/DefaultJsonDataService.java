@@ -497,6 +497,7 @@ public class DefaultJsonDataService implements JsonDataService {
       for (String key : parameters.keySet()) {
         if (key.equals(JsonConstants.IDENTIFIER)
             || (key.equals(JsonConstants.WHERE_PARAMETER))
+            || (key.equals(JsonConstants.WHERE_AND_FILTER_CLAUSE))
             || key.equals(JsonConstants.ORG_PARAMETER)
             || key.equals(JsonConstants.TARGETRECORDID_PARAMETER)
             || (key.startsWith(DataEntityQueryService.PARAM_DELIMITER) && key
@@ -586,8 +587,8 @@ public class DefaultJsonDataService implements JsonDataService {
   }
 
   private void removeWhereParameter(Map<String, String> parameters) {
-    if (parameters.containsKey(JsonConstants.WHERE_PARAMETER)) {
-      parameters.remove(JsonConstants.WHERE_PARAMETER);
+    if (parameters.containsKey(JsonConstants.WHERE_AND_FILTER_CLAUSE)) {
+      parameters.remove(JsonConstants.WHERE_AND_FILTER_CLAUSE);
     }
   }
 

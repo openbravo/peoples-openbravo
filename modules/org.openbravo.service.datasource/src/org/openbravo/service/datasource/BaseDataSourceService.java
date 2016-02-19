@@ -152,10 +152,10 @@ public abstract class BaseDataSourceService implements DataSourceService {
       log.warn(WARN_MESSAGE);
       if (getWhereClause() != null) {
         if (parameters.get(JsonConstants.WHERE_PARAMETER) != null) {
-          final String currentWhere = parameters.get(JsonConstants.WHERE_PARAMETER);
+          parameters.put(JsonConstants.WHERE_AND_FILTER_CLAUSE,
+              parameters.get(JsonConstants.WHERE_PARAMETER));
+          final String currentWhere = parameters.get(JsonConstants.WHERE_AND_FILTER_CLAUSE);
           whereAndFilterClause = "(" + currentWhere + ") and (" + getWhereClause() + ")";
-        } else if (!"Y".equals(cachedPreference.getPreferenceValue(ALLOW_WHERE_PREFERENCE))) {
-          whereAndFilterClause = getWhereClause();
         }
       }
     } else {

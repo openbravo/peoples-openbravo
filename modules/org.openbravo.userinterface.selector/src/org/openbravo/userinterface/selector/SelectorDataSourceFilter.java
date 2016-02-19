@@ -124,20 +124,21 @@ public class SelectorDataSourceFilter implements DataSourceFilter {
       if (!StringUtils.isEmpty(filterHQL)) {
         String currentWhere = "";
         log.debug("Adding to where clause (based on filter expression): " + filterHQL);
-
+        // TODO: This does not work, it is not taking the proper value from the cache
         if ("Y".equals(cachedPreference.getPreferenceValue(ALLOW_WHERE_PREFERENCE))
             && parameters.containsKey(JsonConstants.WHERE_PARAMETER)) {
           log.warn(WARN_MESSAGE);
-          currentWhere = parameters.get(JsonConstants.WHERE_PARAMETER);
+          parameters.put(JsonConstants.WHERE_AND_FILTER_CLAUSE,
+              parameters.get(JsonConstants.WHERE_PARAMETER));
+          currentWhere = parameters.get(JsonConstants.WHERE_AND_FILTER_CLAUSE);
         } else {
-
           currentWhere = sel.getHQLWhereClause();
         }
 
         if (currentWhere == null || currentWhere.equals("null") || currentWhere.equals("")) {
-          parameters.put(JsonConstants.WHERE_PARAMETER, filterHQL);
+          parameters.put(JsonConstants.WHERE_AND_FILTER_CLAUSE, filterHQL);
         } else {
-          parameters.put(JsonConstants.WHERE_PARAMETER, currentWhere + " and " + filterHQL);
+          parameters.put(JsonConstants.WHERE_AND_FILTER_CLAUSE, currentWhere + " and " + filterHQL);
         }
       }
 
@@ -401,22 +402,25 @@ public class SelectorDataSourceFilter implements DataSourceFilter {
 
     log.debug("Adding to where clause (based on fields default expression): " + sb.toString());
 
+    // TODO: This does not work, it is not taking the proper value from the cache
     if ("Y".equals(cachedPreference.getPreferenceValue(ALLOW_WHERE_PREFERENCE))
         && parameters.containsKey(JsonConstants.WHERE_PARAMETER)) {
       log.warn(WARN_MESSAGE);
-      currentWhere = parameters.get(JsonConstants.WHERE_PARAMETER);
+      parameters.put(JsonConstants.WHERE_AND_FILTER_CLAUSE,
+          parameters.get(JsonConstants.WHERE_PARAMETER));
+      currentWhere = parameters.get(JsonConstants.WHERE_AND_FILTER_CLAUSE);
     } else {
       if (StringUtils.isNotBlank(hqlFilterClause)) {
-        currentWhere = parameters.get(JsonConstants.WHERE_PARAMETER);
+        currentWhere = parameters.get(JsonConstants.WHERE_AND_FILTER_CLAUSE);
       } else {
         currentWhere = sel.getHQLWhereClause();
       }
     }
 
     if (currentWhere == null || currentWhere.equals("null") || currentWhere.equals("")) {
-      parameters.put(JsonConstants.WHERE_PARAMETER, sb.toString());
+      parameters.put(JsonConstants.WHERE_AND_FILTER_CLAUSE, sb.toString());
     } else {
-      parameters.put(JsonConstants.WHERE_PARAMETER, currentWhere + " and " + sb.toString());
+      parameters.put(JsonConstants.WHERE_AND_FILTER_CLAUSE, currentWhere + " and " + sb.toString());
     }
   }
 }

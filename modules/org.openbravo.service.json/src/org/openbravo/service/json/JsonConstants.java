@@ -123,5 +123,6 @@ public class JsonConstants {
   public static final String QUERY_PARAM_TRANSACTIONAL_RANGE = "@transactionalRange@";
 
   public static final String IS_WS_CALL = "_isWsCall";
+  public static final String WHERE_AND_FILTER_CLAUSE = "whereAndFilterClause";
 
 }
