@@ -38,6 +38,7 @@ isc.OBPickAndExecuteGrid.addProperties({
   autoSaveEdits: false,
 
   selectionAppearance: 'checkbox',
+  canSelectOnFilterBlur: true,
   autoFitFieldWidths: true,
   autoFitWidthApproach: 'title',
   canAutoFitFields: false,
@@ -221,6 +222,11 @@ isc.OBPickAndExecuteGrid.addProperties({
     OB.TestRegistry.register('org.openbravo.client.application.ParameterWindow_Grid_' + this.parameterName + '_' + this.contentView.view.processId, this);
   },
 
+  draw: function () {
+    this.Super('draw', arguments);
+    this.overrideFilterItemOnBlur();
+  },
+
   redraw: function () {
     var ret = this.Super('redraw', arguments);
     if (this.autoFitFieldWidths && this.view && this.view.isExpandedRecord && !this.isExpandedRecordAutoFitRedrawAlreadyAplied) {
@@ -233,6 +239,103 @@ isc.OBPickAndExecuteGrid.addProperties({
       this.isExpandedRecordAutoFitRedrawAlreadyAplied = true;
     }
     return ret;
+  },
+
+  overrideFilterItemOnBlur: function () {
+    var i, filterFields, filterItem, me = this,
+        updatedBlur;
+    if (me.filterEditor && me.filterEditor.getEditForm()) {
+      updatedBlur = function () {
+        var field = this.grid.getField(this.name),
+            pickAndEditGrid = field.grid;
+        if (this.actOnKeypress === false && pickAndEditGrid) {
+          if (pickAndEditGrid.isFieldCriterionChanged(this.name)) {
+            // Prevent selection until the filtering request is completed
+            pickAndEditGrid.canSelectOnFilterBlur = false;
+          } else {
+            // Filter content has not changed, not necessary to perform filtering on blur
+            return;
+          }
+        }
+        this.originalBlur();
+      };
+      filterFields = me.filterEditor.getEditForm().getItems() || [];
+      for (i = 0; i < filterFields.length; i++) {
+        filterItem = filterFields[i];
+        if (filterItem.canOverrideOnBlur && !filterItem.originalBlur) {
+          filterItem.originalBlur = filterItem.blur;
+          filterItem.blur = updatedBlur;
+        }
+      }
+    }
+  },
+
+  isFieldCriterionChanged: function (fieldName) {
+    var gridCriteria, currentGridCriteria = [],
+        fieldCriterion, currentFieldCriterion, values = [],
+        valuesAsCriteria;
+    // Get field criterion currently applied into the grid
+    gridCriteria = this.getGridCriteria();
+    fieldCriterion = gridCriteria.find('fieldName', fieldName);
+    // Get field criterion currently present into the filter
+    if (this.getFilterEditor() && this.getFilterEditor().getEditForm()) {
+      values = this.getFilterEditor().getEditForm().getValues() || [];
+      if (!fieldCriterion && values[fieldName]) {
+        // criteria is changing from empty to some value
+        // handle special case: not formatted dates are not present in the criteria
+        return true;
+      }
+      valuesAsCriteria = this.getFilterEditor().getEditForm().getValuesAsCriteria();
+      if (valuesAsCriteria) {
+        currentGridCriteria = valuesAsCriteria.criteria || [];
+      }
+    }
+    currentFieldCriterion = currentGridCriteria.find('fieldName', fieldName);
+    if (this.isSameCriterion(fieldCriterion, currentFieldCriterion)) {
+      return false;
+    }
+    return true;
+  },
+
+  getGridCriteria: function () {
+    var crit;
+    if (!this.getCriteria()) {
+      return [];
+    }
+    crit = this.getCriteria().criteria || [];
+    // remove criteria for selected records
+    crit.removeList(crit.findAll('fieldName', 'id'));
+    if (crit[0] && crit[0].criteria) {
+      return crit[0].criteria;
+    }
+    return crit;
+  },
+
+  isSameCriterion: function (criterion1, criterion2) {
+    var value1 = '',
+        value2 = '',
+        operator1, operator2;
+    if (criterion1) {
+      value1 = criterion1.value || value1;
+      operator1 = criterion1.operator;
+    }
+    if (criterion2) {
+      value2 = criterion2.value || value2;
+      operator2 = criterion2.operator;
+    }
+    return value1.toString() === value2.toString() && operator1 === operator2;
+  },
+
+  canSelectRecords: function () {
+    return this.isDataLoaded() && this.canSelectOnFilterBlur;
+  },
+
+  selectOnMouseDown: function (record, rowNum, colNum) {
+    // If filter on change is disabled, the selection of records is prevented until the request fired after on blur is completed
+    if (!this.canSelectRecords()) {
+      return;
+    }
+    this.Super('selectOnMouseDown', arguments);
   },
 
   evaluateDisplayLogicForGridColumns: function () {
@@ -507,6 +610,7 @@ isc.OBPickAndExecuteGrid.addProperties({
   },
 
   handleFilterEditorSubmit: function (criteria, context) {
+    this.canSelectOnFilterBlur = true;
     var crit = this.addSelectedIDsToCriteria(criteria);
 
     this.Super('handleFilterEditorSubmit', [crit, context]);
