@@ -803,7 +803,8 @@ enyo.kind({
     onConnectRfidDevice: 'connectRfidDevice',
     onDisconnectRfidDevice: 'disconnectRfidDevice',
     onRfidConnectionLost: 'rfidConnectionLost',
-    onRfidConnectionRecovered: 'rfidConnectionRecovered'
+    onRfidConnectionRecovered: 'rfidConnectionRecovered',
+    onPointOfSaleLoad: 'pointOfSaleLoad'
   },
   components: [{
     name: 'lbl',
@@ -818,14 +819,14 @@ enyo.kind({
     this.setDisabled(true);
     if (OB.MobileApp.model.hasPermission(this.permission)) {
       if (OB.UTIL.isRFIDEnabled) {
-    	OB.UTIL.reconnectOnScanningFocus = false;
+        OB.UTIL.reconnectOnScanningFocus = false;
         this.setLabel(OB.I18N.getLabel('OBPOS_RFID'));
         OB.UTIL.disconnectRFIDDevice();
         if (OB.UTIL.rfidTimeout) {
           clearTimeout(OB.UTIL.rfidTimeout);
         }
       } else {
-    	OB.UTIL.reconnectOnScanningFocus = true;
+        OB.UTIL.reconnectOnScanningFocus = true;
         this.setLabel(OB.I18N.getLabel('OBPOS_RFID'));
         OB.UTIL.connectRFIDDevice();
         if (OB.UTIL.rfidTimeout) {
@@ -875,5 +876,12 @@ enyo.kind({
       this.removeClass('btn-icon-switchoff');
     }
     this.setDisabled(false);
+  },
+  pointOfSaleLoad: function (inSender, inEvent) {
+    if (!OB.UTIL.isRFIDEnabled | !OB.UTIL.reconnectOnScanningFocus) {
+      this.addClass('btn-icon-switchoff');
+    } else {
+      this.addClass('btn-icon-switchon');
+    }
   }
 });

@@ -237,7 +237,8 @@ enyo.kind({
     onConnectRfidDevice: 'connectRfidDevice',
     onDisconnectRfidDevice: 'disconnectRfidDevice',
     onRfidConnectionLost: 'rfidConnectionLost',
-    onRfidConnectionRecovered: 'rfidConnectionRecovered'
+    onRfidConnectionRecovered: 'rfidConnectionRecovered',
+    onPointOfSaleLoad: 'pointOfSaleLoad'
   },
   rfidOnIcon: 'btn-icon-rfidon',
   rfidOffIcon: 'btn-icon-rfidoff',
@@ -303,6 +304,13 @@ enyo.kind({
       this.$.rfidIcon.addClass(this.rfidOffIcon);
     } else {
       this.$.rfidIcon.removeClass(this.rfidOffIcon);
+      this.$.rfidIcon.addClass(this.rfidOnIcon);
+    }
+  },
+  pointOfSaleLoad: function (inSender, inEvent) {
+    if (!OB.UTIL.isRFIDEnabled | !OB.UTIL.reconnectOnScanningFocus) {
+      this.$.rfidIcon.addClass(this.rfidOffIcon);
+    } else {
       this.$.rfidIcon.addClass(this.rfidOnIcon);
     }
   }

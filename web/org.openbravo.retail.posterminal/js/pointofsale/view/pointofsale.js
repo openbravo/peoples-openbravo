@@ -1220,6 +1220,8 @@ enyo.kind({
     receipt = this.model.get('order');
     receiptList = this.model.get('orderList');
     OB.MobileApp.view.scanningFocus(true);
+    
+    this.waterfall('onPointOfSaleLoad');
 
     // Try to print the pending receipts.
     OB.Model.OfflinePrinter.printPendingJobs();
