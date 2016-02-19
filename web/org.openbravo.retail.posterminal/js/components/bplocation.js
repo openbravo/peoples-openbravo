@@ -542,11 +542,13 @@ enyo.kind({
         OB.UTIL.showError(OB.I18N.getLabel('OBPOS_BPartnerNoShippingAddress', [contextMenu.bPartner.get('_identifier')]));
         return;
       }
-      dataBps.set('shipLocId', contextMenu.bPartner.get('shipLocId'));
-      dataBps.set('shipLocName', contextMenu.bPartner.get('shipLocName'));
-      dataBps.set('shipPostalCode', contextMenu.bPartner.get('shipPostalCode'));
-      dataBps.set('shipCityName', contextMenu.bPartner.get('shipPostalCode'));
-      dataBps.set('shipCountryName', contextMenu.bPartner.get('shipCountryName'));
+      if (!bploc.get('onlyOneAddress')) {
+        dataBps.set('shipLocId', contextMenu.bPartner.get('shipLocId'));
+        dataBps.set('shipLocName', contextMenu.bPartner.get('shipLocName'));
+        dataBps.set('shipPostalCode', contextMenu.bPartner.get('shipPostalCode'));
+        dataBps.set('shipCityName', contextMenu.bPartner.get('shipPostalCode'));
+        dataBps.set('shipCountryName', contextMenu.bPartner.get('shipCountryName'));
+      }
 
       contextMenu.dialog.doChangeBusinessPartner({
         businessPartner: dataBps,
