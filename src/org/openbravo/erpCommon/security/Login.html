@@ -46,11 +46,13 @@ var validBrowserFirefox = '38.0.0.0';
 var validBrowserChrome = '46.0.0.0';
 var validBrowserExplorer = '9.0.0.0';
 var validBrowserSafari = '8.0.0.0';
+var validBrowserEdge = '12.0.0.0'; // EdgeHTML version
 
 var recBrowserFirefox = '38.0.0.0';
 var recBrowserChrome = '47.0.0.0';
 var recBrowserExplorer = '11.0.0.0';
 var recBrowserSafari = '9.0.0.0';
+var recBrowserEdge = '13.0.0.0'; // EdgeHTML version
 </script>
 
 <script type="text/javascript">
@@ -328,6 +330,10 @@ function buttonOK_click() {
       if (browserVersionToFloat(browserVersion) >= browserVersionToFloat(validBrowserSafari)) {
         isValid = true;
       }
+    } else if (browserName.toUpperCase().indexOf('MICROSOFT EDGE') != -1) {
+      if (browserVersionToFloat(browserVersion) >= browserVersionToFloat(validBrowserEdge)) {
+        isValid = true;
+      }
     }
     return isValid;
   }
@@ -356,6 +362,10 @@ function buttonOK_click() {
       if (browserVersionToFloat(browserVersion) >= browserVersionToFloat(recBrowserSafari)) {
         isRecommended = true;
       }
+    } else if (browserName.toUpperCase().indexOf('MICROSOFT EDGE') != -1) {
+      if (browserVersionToFloat(browserVersion) >= browserVersionToFloat(recBrowserEdge)) {
+        isRecommended = true;
+      }
     }
     return isRecommended;
   }
@@ -366,13 +376,14 @@ function buttonOK_click() {
       + '<br>' + ' * Mozilla Firefox ' + browserVersionTrim(validBrowserFirefox) + ' ' + validBrowserMsgOrHigher
       + '<br>' + ' * Google Chrome ' + browserVersionTrim(validBrowserChrome) + ' ' + validBrowserMsgOrHigher
       + '<br>' + ' * Microsoft Internet Explorer ' + browserVersionTrim(validBrowserExplorer) + ' ' + validBrowserMsgOrHigher
+      + '<br>' + ' * Microsoft Edge ' + browserVersionTrim(validBrowserEdge) + ' ' + validBrowserMsgOrHigher
       + '<br>' + ' * Apple Safari ' + browserVersionTrim(validBrowserSafari) + ' ' + validBrowserMsgOrHigher;
     return displayValidBrowserMsg;
   }
 
   function buildRecBrowserMsgText() {
     var displayRecBrowserMsgText = recBrowserMsgText;
-    displayRecBrowserMsgText = displayRecBrowserMsgText.replace('XX', 'Google Chrome ' + browserVersionTrim(recBrowserChrome) + ', Mozilla Firefox ' + browserVersionTrim(recBrowserFirefox) + ', Internet Explorer ' + browserVersionTrim(recBrowserExplorer));
+    displayRecBrowserMsgText = displayRecBrowserMsgText.replace('XX', 'Google Chrome ' + browserVersionTrim(recBrowserChrome) + ', Mozilla Firefox ' + browserVersionTrim(recBrowserFirefox) + ', Internet Explorer ' + browserVersionTrim(recBrowserExplorer) + ', Microsoft Edge ' + browserVersionTrim(recBrowserEdge));
     displayRecBrowserMsgText = displayRecBrowserMsgText.replace('YY', 'Apple Safari ' + browserVersionTrim(recBrowserSafari) + '');
     return displayRecBrowserMsgText;
   }
