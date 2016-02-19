@@ -83,7 +83,7 @@ public class Characteristic extends ProcessHQLQuery {
             + "where  $filtersCriteria AND $hqlCriteria and "
             + isFilterOnWebPos
             + " ch.$naturalOrgCriteria and ch.$readableSimpleClientCriteria and (ch.$incrementalUpdateCriteria) "
-            + "order by ch.name");
+            + " order by ch.name");
 
     return hqlQueries;
   }

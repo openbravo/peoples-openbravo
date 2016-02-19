@@ -211,6 +211,21 @@ enyo.kind({
           brandfilter.params = [brandparams.toString()];
           remoteCriteria.push(brandfilter);
         }
+        var characteristicparams = [];
+        if (me.parent.parent.model.get('filter').length > 0) {
+          for (i = 0; i < me.parent.parent.model.get('filter').length; i++) {
+            characteristicparams.push("'" + me.parent.parent.model.get('filter')[i].id + "'");
+          }
+        }
+
+        var chFilter = {};
+        for (i = 0; i < me.parent.parent.model.get('filter').length; i++) {
+          chFilter.columns = [];
+          chFilter.operator = OB.Dal.FILTER;
+          chFilter.value = 'Chv_Filter';
+          chFilter.params = [characteristicparams.toString()];
+          remoteCriteria.push(chFilter);
+        }
 
         criteria.hqlCriteria = [];
         productCharacteristic.customFilters.forEach(function (hqlFilter) {
