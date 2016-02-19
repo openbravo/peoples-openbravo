@@ -885,7 +885,7 @@
         // modifications to trigger editable events incorrectly
         this.set('isEditable', _order.get('isEditable'));
       }
-      
+
       if (_order.get('isLayaway')) {
         if (OB.MobileApp.model.get('terminal').terminalType.generateInvoice && OB.MobileApp.model.hasPermission('OBPOS_receipt.invoice', true)) {
           if (OB.MobileApp.model.hasPermission('OBPOS_retail.restricttaxidinvoice', true) && !_order.get('bp').get('taxID')) {
@@ -2123,21 +2123,34 @@
           }
         });
       }
-      if (OB.MobileApp.model.hasPermission('EnableMultiPriceList', true) && oldbp.get('priceList') !== businessPartner.get('priceList')) {
-        me.set('priceList', businessPartner.get('priceList'));
-        var priceIncludesTax = businessPartner.get('priceIncludesTax');
-        if (OB.UTIL.isNullOrUndefined(priceIncludesTax)) {
-          priceIncludesTax = OB.MobileApp.model.get('pricelist').priceIncludesTax;
+      if (OB.MobileApp.model.hasPermission('EnableMultiPriceList', true)) {
+        if (oldbp.get('priceList') !== businessPartner.get('priceList')) {
+          me.set('priceList', businessPartner.get('priceList'));
+          var priceIncludesTax = businessPartner.get('priceIncludesTax');
+          if (OB.UTIL.isNullOrUndefined(priceIncludesTax)) {
+            priceIncludesTax = OB.MobileApp.model.get('pricelist').priceIncludesTax;
+          }
+          me.set('priceIncludesTax', priceIncludesTax);
+          me.removeAndInsertLines(function () {
+            me.calculateReceipt(function () {
+              if (saveChange) {
+                me.save();
+              }
+              if (callback) {
+                callback();
+              }
+            });
+          });
+        } else {
+          me.calculateReceipt(function () {
+            if (saveChange) {
+              me.save();
+            }
+            if (callback) {
+              callback();
+            }
+          });
         }
-        me.set('priceIncludesTax', priceIncludesTax);
-        me.removeAndInsertLines(function () {
-          if (saveChange) {
-            me.save();
-          }
-          if (callback) {
-            callback();
-          }
-        });
       } else {
         if (saveChange) {
           this.save();
@@ -2152,6 +2165,7 @@
       var me = this;
       // Remove all lines and insert again with new prices
       var orderlines = [];
+      var promotionlines = [];
       var addProductsOfLines = null;
 
       addProductsOfLines = function (receipt, lines, index, callback) {
@@ -2162,13 +2176,20 @@
           return;
         }
         OB.Dal.get(OB.Model.Product, lines[index].get('product').id, function (product) {
-          me.addProduct(product, lines[index].get('qty'), undefined, undefined, function () {
-            addProductsOfLines(receipt, lines, index + 1, callback);
+          me.addProduct(product, lines[index].get('qty'), undefined, undefined, function (isInPriceList) {
+            if (isInPriceList) {
+              me.attributes.lines.at(index).set('promotions', lines[index].attributes.promotions);
+              addProductsOfLines(receipt, lines, index + 1, callback);
+            } else {
+              lines.splice(index, 1);
+              addProductsOfLines(receipt, lines, index, callback);
+            }
           });
         });
       };
       _.each(me.get('lines').models, function (line) {
         orderlines.push(line);
+        promotionlines.push(line.attributes.promotions);
       });
       this.set('preventServicesUpdate', true);
       this.set('deleting', true);
@@ -2178,9 +2199,13 @@
       this.unset('preventServicesUpdate');
       this.unset('deleting');
       this.get('lines').trigger('updateRelations');
-      this.calculateGross();
-      // TODO: Lost options and attributes, maybe has problems with other modules (like Complementary Products)
-      addProductsOfLines(me, orderlines, 0, callback);
+      this.calculateReceipt(function () {
+        // TODO: Lost options and attributes, maybe has problems with other modules (like Complementary Products)
+        _.each(orderlines, function (orderline, index) {
+          orderline.attributes.promotions = promotionlines[index];
+        });
+        addProductsOfLines(me, orderlines, 0, callback);
+      });
     },
 
     setOrderType: function (permission, orderType, options) {
