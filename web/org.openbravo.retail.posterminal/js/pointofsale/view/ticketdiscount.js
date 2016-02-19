@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2015 Openbravo S.L.U.
+ * Copyright (C) 2012-2016 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -269,7 +269,7 @@ enyo.kind({
     promotionToAplly.definition.applyNext = !this.$.checkOverride.checked;
     promotionToAplly.definition.lastApplied = true;
 
-    if (discountsContainer.requiresQty && !discountsContainer.amt) {
+    if (!discountsContainer.amt) {
       //Show a modal pop up with the error
       this.doShowPopup({
         popup: 'modalDiscountNeedQty'
