@@ -33,7 +33,6 @@ import org.openbravo.base.secureApp.VariablesHistory;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.access.User;
@@ -114,7 +113,7 @@ public class DefaultAuthenticationManager extends AuthenticationManager {
 
     vars.setSessionValue("#AD_User_ID", userId);
 
-    getUpdatePasswordDate(userId, variables.getLanguage(), this.conn);
+    checkIfPasswordExpired(userId, variables.getLanguage());
 
     // Using the Servlet API instead of vars.setSessionValue to avoid breaking code
     // vars.setSessionValue always transform the key to upper-case
@@ -170,10 +169,13 @@ public class DefaultAuthenticationManager extends AuthenticationManager {
    *          The userId of the user to check expiration password date
    * @param language
    *          Default language for the user
-   * @param conn
-   *          ConnectionProvider used to translate messages.
+   * @throws AuthenticationExpirationPasswordException
+   *           AuthenticationExpirationPasswordException is thrown in case that expiration date is
+   *           reached
+   * 
    */
-  private static void getUpdatePasswordDate(String userId, String language, ConnectionProvider conn) {
+  private void checkIfPasswordExpired(String userId, String language)
+      throws AuthenticationExpirationPasswordException {
 
     Date total = null;
 
@@ -192,7 +194,7 @@ public class DefaultAuthenticationManager extends AuthenticationManager {
     }
 
     Date today = new Date();
-    if ((total != null) && (total.compareTo(today) <= 0)) {
+    if (total != null && total.compareTo(today) <= 0) {
       OBError errorMsg = new OBError();
       errorMsg.setType("Error");
       errorMsg.setTitle(Utility.messageBD(conn, "CPExpirationPassword", language));

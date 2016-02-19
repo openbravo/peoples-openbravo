@@ -44,6 +44,11 @@ public class AuthenticationException extends OBException {
     this.error = error;
   }
 
+  public AuthenticationException(String msg, OBError error, Boolean isLogExceptionNeeded) {
+    super(msg, isLogExceptionNeeded);
+    this.error = error;
+  }
+
   public OBError getOBError() {
     return error;
   }

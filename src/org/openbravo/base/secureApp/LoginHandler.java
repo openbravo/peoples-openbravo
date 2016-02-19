@@ -30,7 +30,6 @@ import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.obps.ActivationKey.LicenseRestriction;
 import org.openbravo.erpCommon.security.Login;
@@ -103,7 +102,7 @@ public class LoginHandler extends HttpBaseServlet {
         try {
           if (isPasswordResetFlow && StringUtils.isNotBlank(vars.getSessionValue("#AD_User_ID"))) {
             password = vars.getStringParameter("password");
-            updatePassword(user, password, myPool, language);
+            updatePassword(user, password, language);
           }
 
           AuthenticationManager authManager = AuthenticationManager.getAuthenticationManager(this);
@@ -476,31 +475,26 @@ public class LoginHandler extends HttpBaseServlet {
       throws IOException, ServletException {
     String msg = (message != null && !message.equals("")) ? message : Utility.messageBD(myPool,
         "CPEmptyUserPassword", vars.getLanguage());
-    ;
 
-    if (OBVersion.getInstance().is30() && !doRedirect) {
-      // 3.0 instances show the message in the same login window, return a json object with the info
-      // to print the message
-      try {
-        JSONObject jsonMsg = new JSONObject();
-        jsonMsg.put("showMessage", true);
-        jsonMsg.put("target", action);
-        jsonMsg.put("messageType", msgType);
-        jsonMsg.put("messageTitle", title);
-        jsonMsg.put("messageText", msg);
-        jsonMsg.put("resetPassword", true);
-        jsonMsg.put("loggedUser", vars.getStringParameter("user"));
-        if ("Confirmation".equals(msgType)) {
-          jsonMsg.put("command", "FORCE_NAMED_USER");
-        }
-        response.setContentType("application/json;charset=UTF-8");
-        final PrintWriter out = response.getWriter();
-        out.print(jsonMsg.toString());
-        out.close();
-      } catch (JSONException e) {
-        log4j.error("Error setting login msg", e);
-        throw new ServletException(e);
+    try {
+      JSONObject jsonMsg = new JSONObject();
+      jsonMsg.put("showMessage", true);
+      jsonMsg.put("target", action);
+      jsonMsg.put("messageType", msgType);
+      jsonMsg.put("messageTitle", title);
+      jsonMsg.put("messageText", msg);
+      jsonMsg.put("resetPassword", true);
+      jsonMsg.put("loggedUser", vars.getStringParameter("user"));
+      if ("Confirmation".equals(msgType)) {
+        jsonMsg.put("command", "FORCE_NAMED_USER");
       }
+      response.setContentType("application/json;charset=UTF-8");
+      final PrintWriter out = response.getWriter();
+      out.print(jsonMsg.toString());
+      out.close();
+    } catch (JSONException e) {
+      log4j.error("Error setting login msg", e);
+      throw new ServletException(e);
     }
   }
 
@@ -510,24 +504,25 @@ public class LoginHandler extends HttpBaseServlet {
   } // end of getServletInfo() method
 
   /**
-   * Update user password for username with unHashedPassword provided, throws
+   * Update user password for userId with unHashedPassword provided, throws
    * AuthenticationExpirationPasswordException in case the new password is the same that the old
    * one.
    * 
    * 
-   * @param username
-   *          the username
+   * @param userId
+   *          the userId
    * @param unHashedPassword
    *          the password, the unhashed password as it is entered by the user.
    * @param myPool
    *          ConnectionProvider used to translate messages.
    * @param language
    *          Default language for the user
-   * 
    * @throws ServletException
+   *           ServletException is thrown in case that password could not be hashed
+   * 
    */
-  private static void updatePassword(String userId, String unHashedPassword,
-      ConnectionProvider myPool, String language) throws ServletException {
+  private void updatePassword(String userId, String unHashedPassword, String language)
+      throws ServletException {
     try {
       OBContext.setAdminMode();
       final OBCriteria<User> obc = OBDal.getInstance().createCriteria(User.class);

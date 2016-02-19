@@ -207,7 +207,7 @@ function buttonOK_click() {
         return true;
       }   
       disableButton('buttonOK');
-      if (document.getElementById('resetPassword').value =='true'){
+      if (document.getElementById('resetPassword').value ==='true'){
         submitXmlHttpRequest(loginResult, document.frmIdentificacion, 'FORCE_RESET_PASSWORD', '../secureApp/LoginHandler.html', false, null, null);
       }else{
         submitXmlHttpRequest(loginResult, document.frmIdentificacion, 'DEFAULT', '../secureApp/LoginHandler.html', false, null, null);
