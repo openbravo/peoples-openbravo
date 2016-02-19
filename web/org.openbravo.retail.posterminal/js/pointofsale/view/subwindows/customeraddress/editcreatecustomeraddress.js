@@ -154,7 +154,8 @@ enyo.kind({
     name: 'customerAddrName',
     modelProperty: 'name',
     i18nLabel: 'OBPOS_LblAddress',
-    maxlength: 60
+    maxlength: 60,
+    mandatory: true
   }, {
     kind: 'OB.UI.CustomerAddrTextProperty',
     name: 'customerAddrPostalCode',
