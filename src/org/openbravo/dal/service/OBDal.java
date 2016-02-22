@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -343,6 +343,15 @@ public class OBDal implements OBSingleton {
   public BaseOBObject getProxy(String entityName, Object id) {
     return (BaseOBObject) ((SessionImplementor) getSession()).internalLoad(entityName,
         (Serializable) id, false, false);
+  }
+
+  /**
+   * Typed version of {@link OBDal#getProxy(String, Object)} returning a proxied instance of
+   * {@code entityClass}
+   */
+  @SuppressWarnings("unchecked")
+  public <T extends BaseOBObject> T getProxy(Class<T> entityClass, String id) {
+    return (T) getProxy(DalUtil.getEntityName(entityClass), id);
   }
 
   /**

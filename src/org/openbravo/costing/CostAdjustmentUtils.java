@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2015 Openbravo SLU
+ * All portions are Copyright (C) 2014-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -22,10 +22,12 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
+import org.hibernate.ScrollMode;
+import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.exception.OBException;
@@ -52,8 +54,6 @@ import org.openbravo.model.materialmgmt.cost.TransactionCost;
 import org.openbravo.model.materialmgmt.transaction.InventoryCount;
 import org.openbravo.model.materialmgmt.transaction.InventoryCountLine;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
-import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
-import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -202,17 +202,18 @@ public class CostAdjustmentUtils {
 
   private static Long getNewLineNo(CostAdjustment cadj) {
     StringBuffer where = new StringBuffer();
-    where.append(" as cal");
+    where.append(" select " + CostAdjustmentLine.PROPERTY_LINENO);
+    where.append(" from " + CostAdjustmentLine.ENTITY_NAME + " as cal");
     where.append(" where cal." + CostAdjustmentLine.PROPERTY_COSTADJUSTMENT
         + ".id = :costAdjustment");
     where.append(" order by cal." + CostAdjustmentLine.PROPERTY_LINENO + " desc");
-    OBQuery<CostAdjustmentLine> calQry = OBDal.getInstance().createQuery(CostAdjustmentLine.class,
-        where.toString());
-    calQry.setNamedParameter("costAdjustment", cadj.getId());
-    calQry.setMaxResult(1);
+    Query calQry = OBDal.getInstance().getSession().createQuery(where.toString());
+    calQry.setParameter("costAdjustment", cadj.getId());
+    calQry.setMaxResults(1);
 
-    if (calQry.uniqueResult() != null) {
-      return calQry.uniqueResult().getLineNo() + 10L;
+    Long lineNo = (Long) calQry.uniqueResult();
+    if (lineNo != null) {
+      return lineNo + 10L;
     }
     return 10L;
   }
@@ -225,17 +226,41 @@ public class CostAdjustmentUtils {
           trx.getId());
       throw new OBException("@NoCostFoundForTrxOnDate@ @Transaction@: " + trx.getIdentifier());
     }
+
+    StringBuffer select = new StringBuffer();
+    select.append(" select sum(tc." + TransactionCost.PROPERTY_COST + ") as cost");
+    select.append(" , tc." + TransactionCost.PROPERTY_CURRENCY + ".id as currency");
+    select.append(" , tc." + TransactionCost.PROPERTY_COSTDATE + " as date");
+    select.append(" from " + TransactionCost.ENTITY_NAME + " as tc");
+    select.append(" where tc." + TransactionCost.PROPERTY_INVENTORYTRANSACTION + ".id = :trxId");
+    if (justUnitCost) {
+      select.append(" and tc." + TransactionCost.PROPERTY_UNITCOST + " = true");
+    }
+    select.append(" group by tc." + TransactionCost.PROPERTY_CURRENCY);
+    select.append(" , tc." + TransactionCost.PROPERTY_COSTDATE);
+
+    Query qry = OBDal.getInstance().getSession().createQuery(select.toString());
+    qry.setParameter("trxId", trx.getId());
+    ScrollableResults scroll = qry.scroll(ScrollMode.FORWARD_ONLY);
+
     BigDecimal cost = BigDecimal.ZERO;
-    for (TransactionCost trxCost : trx.getTransactionCostList()) {
-      if (!justUnitCost || trxCost.isUnitCost()) {
-        if (trxCost.getCurrency().getId().equals(currency.getId())) {
-          cost = cost.add(trxCost.getCost());
+    try {
+      while (scroll.next()) {
+        Object[] resultSet = scroll.get();
+        BigDecimal costAmt = (BigDecimal) resultSet[0];
+        String origCurId = (String) resultSet[1];
+
+        if (StringUtils.equals(origCurId, currency.getId())) {
+          cost = cost.add(costAmt);
         } else {
-          cost = cost.add(FinancialUtils.getConvertedAmount(trxCost.getCost(),
-              trxCost.getCurrency(), currency, trxCost.getCostDate(), trxCost.getOrganization(),
-              FinancialUtils.PRECISION_COSTING));
+          Currency origCur = OBDal.getInstance().get(Currency.class, origCurId);
+          Date convDate = (Date) resultSet[2];
+          cost = cost.add(FinancialUtils.getConvertedAmount(costAmt, origCur, currency, convDate,
+              trx.getOrganization(), FinancialUtils.PRECISION_COSTING));
         }
       }
+    } finally {
+      scroll.close();
     }
     return cost;
   }
@@ -504,15 +529,12 @@ public class CostAdjustmentUtils {
         + " < 0 then -tc." + TransactionCost.PROPERTY_COST);
     select.append("     else tc." + TransactionCost.PROPERTY_COST + " end ) as cost");
     select.append(" , tc." + TransactionCost.PROPERTY_CURRENCY + ".id as currency");
-    select.append(" , coalesce(sr." + ShipmentInOut.PROPERTY_ACCOUNTINGDATE + ", trx."
-        + MaterialTransaction.PROPERTY_MOVEMENTDATE + ") as mdate");
+    select.append(" , tc." + TransactionCost.PROPERTY_ACCOUNTINGDATE + " as mdate");
     select.append(" , sum(trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + ") as stock");
 
     select.append(" from " + TransactionCost.ENTITY_NAME + " as tc");
     select.append("  join tc." + TransactionCost.PROPERTY_INVENTORYTRANSACTION + " as trx");
     select.append("  join trx." + MaterialTransaction.PROPERTY_STORAGEBIN + " as locator");
-    select.append("  left join trx." + MaterialTransaction.PROPERTY_GOODSSHIPMENTLINE + " as line");
-    select.append("  left join line." + ShipmentInOutLine.PROPERTY_SHIPMENTRECEIPT + " as sr");
 
     Date backdatedTrxFrom = null;
     if (backdatedTransactionsFixed) {
@@ -549,8 +571,7 @@ public class CostAdjustmentUtils {
     select.append("   and trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
 
     select.append(" group by tc." + TransactionCost.PROPERTY_CURRENCY);
-    select.append("   , coalesce(sr." + ShipmentInOut.PROPERTY_ACCOUNTINGDATE + ", trx."
-        + MaterialTransaction.PROPERTY_MOVEMENTDATE + ")");
+    select.append("   , tc." + TransactionCost.PROPERTY_ACCOUNTINGDATE);
 
     Query trxQry = OBDal.getInstance().getSession().createQuery(select.toString());
     trxQry.setParameter("product", product);
@@ -565,22 +586,28 @@ public class CostAdjustmentUtils {
       trxQry.setParameter("asi", asi);
     }
     trxQry.setParameterList("orgs", orgs);
-    @SuppressWarnings("unchecked")
-    List<Object[]> o = trxQry.list();
-    BigDecimal costsum = BigDecimal.ZERO;
-    for (Object[] resultSet : o) {
-      BigDecimal origAmt = (BigDecimal) resultSet[0];
-      Currency origCur = OBDal.getInstance().get(Currency.class, resultSet[1]);
-      Date convDate = (Date) resultSet[2];
 
-      if (origCur != currency) {
-        costsum = costsum.add(FinancialUtils.getConvertedAmount(origAmt, origCur, currency,
-            convDate, org, FinancialUtils.PRECISION_COSTING));
-      } else {
-        costsum = costsum.add(origAmt);
+    ScrollableResults scroll = trxQry.scroll(ScrollMode.FORWARD_ONLY);
+    BigDecimal sum = BigDecimal.ZERO;
+    try {
+      while (scroll.next()) {
+        Object[] resultSet = scroll.get();
+        BigDecimal origAmt = (BigDecimal) resultSet[0];
+        String origCurId = (String) resultSet[1];
+
+        if (StringUtils.equals(origCurId, currency.getId())) {
+          sum = sum.add(origAmt);
+        } else {
+          Currency origCur = OBDal.getInstance().get(Currency.class, origCurId);
+          Date convDate = (Date) resultSet[2];
+          sum = sum.add(FinancialUtils.getConvertedAmount(origAmt, origCur, currency, convDate,
+              org, FinancialUtils.PRECISION_COSTING));
+        }
       }
+    } finally {
+      scroll.close();
     }
-    return costsum;
+    return sum;
   }
 
   /**
@@ -698,24 +725,29 @@ public class CostAdjustmentUtils {
       trxQry.setParameter("mvtdate", trx.getMovementDate());
       trxQry.setParameter("fixbdt", CostingUtils.getCostingRuleFixBackdatedFrom(costingRule));
     }
-
     trxQry.setParameterList("orgs", orgs);
-    @SuppressWarnings("unchecked")
-    List<Object[]> o = trxQry.list();
-    BigDecimal costsum = BigDecimal.ZERO;
-    for (Object[] resultSet : o) {
-      BigDecimal origAmt = (BigDecimal) resultSet[0];
-      Currency origCur = OBDal.getInstance().get(Currency.class, resultSet[1]);
-      Date convDate = (Date) resultSet[2];
 
-      if (origCur != currency) {
-        costsum = costsum.add(FinancialUtils.getConvertedAmount(origAmt, origCur, currency,
-            convDate, costorg, FinancialUtils.PRECISION_COSTING));
-      } else {
-        costsum = costsum.add(origAmt);
+    ScrollableResults scroll = trxQry.scroll(ScrollMode.FORWARD_ONLY);
+    BigDecimal sum = BigDecimal.ZERO;
+    try {
+      while (scroll.next()) {
+        Object[] resultSet = scroll.get();
+        BigDecimal origAmt = (BigDecimal) resultSet[0];
+        String origCurId = (String) resultSet[1];
+
+        if (StringUtils.equals(origCurId, currency.getId())) {
+          sum = sum.add(origAmt);
+        } else {
+          Currency origCur = OBDal.getInstance().get(Currency.class, origCurId);
+          Date convDate = (Date) resultSet[2];
+          sum = sum.add(FinancialUtils.getConvertedAmount(origAmt, origCur, currency, convDate,
+              costorg, FinancialUtils.PRECISION_COSTING));
+        }
       }
+    } finally {
+      scroll.close();
     }
-    return costsum;
+    return sum;
   }
 
   /**
