@@ -40,6 +40,8 @@
 <script language="JavaScript" type="text/javascript" id="recBrowserMsgText">var recBrowserMsgText = 'xx';</script>
 <script language="JavaScript" type="text/javascript" id="identificationFailureTitle">var identificationFailureTitle = 'xx';</script>
 <script language="JavaScript" type="text/javascript" id="errorEmptyContent">var errorEmptyContent = 'xx';</script>
+<script language="JavaScript" type="text/javascript" id="errorSamePassword">var errorSamePassword = 'xx';</script>
+<script language="JavaScript" type="text/javascript" id="errorDifferentPasswordInFields">var errorDifferentPasswordInFields = 'xx';</script>
 
 <script language="JavaScript" type="text/javascript">
 var validBrowserFirefox = '38.0.0.0';
@@ -187,8 +189,8 @@ var recBrowserSafari = '9.0.0.0';
 </script>
 <script type="text/javascript">
 function buttonOK_click() {
-    if (document.getElementById('resetPassword').value =='true' && document.getElementById('user').value !== document.getElementById('password').value){
-        setLoginMessage('Error', "Passwords must be the same", "The password must be the same in both fields");
+    if (document.getElementById('resetPassword').value ==='true' && document.getElementById('user').value !== document.getElementById('password').value){
+        setLoginMessage('Error', errorSamePassword, errorDifferentPasswordInFields);
         return true;
     }
     if (focusedWindowElement.id === 'user' && document.getElementById('user').value !== '' && document.getElementById('password').value === '') {
