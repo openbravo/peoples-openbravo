@@ -11,6 +11,15 @@
 
 (function () {
 
+  OB.Model.ProductCategoryTreeQuery = OB.Data.ExtensibleModel.extend({});
+  OB.Model.ProductCategoryTreeQuery.addProperties([{
+    name: 'categoryId',
+    column: 'category_id'
+  }, {
+    name: 'childs',
+    column: 'childs'
+  }]);
+
   var ProductCategoryTree = OB.Data.ExtensibleModel.extend({
     modelName: 'ProductCategoryTree',
     tableName: 'm_product_category_tree',
