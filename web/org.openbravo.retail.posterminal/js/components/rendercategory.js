@@ -114,5 +114,8 @@ enyo.kind({
     this.$.identifier.setContent(this.model.get('_identifier'));
     this.$.identifier.setStyle('padding-left: ' + (14 * this.model.get('level')) + 'px; ' + (this.model.id === '__all__' ? 'font-weight: bold; ' : ''));
     this.$.expandCollapse.setShowing(this.model.get('issummary'));
+    this.$.expand.setShowing(this.model.get('treeNode') !== 'EXPANDED');
+    this.$.collapse.setShowing(this.model.get('treeNode') === 'EXPANDED');
+    // this.setShowing(this.model.get('display'));
   }
 });
