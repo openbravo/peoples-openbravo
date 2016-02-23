@@ -116,6 +116,6 @@ enyo.kind({
     this.$.expandCollapse.setShowing(this.model.get('issummary'));
     this.$.expand.setShowing(this.model.get('treeNode') !== 'EXPANDED');
     this.$.collapse.setShowing(this.model.get('treeNode') === 'EXPANDED');
-    // this.setShowing(this.model.get('display'));
+    this.owner.setShowing(this.model.get('display'));
   }
 });

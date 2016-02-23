@@ -25,12 +25,14 @@ enyo.kind({
     showAllCategories: true,
     tableName: 'searchCategoryTable'
   },
+
   initComponents: function () {
     this.inherited(arguments);
     this.$.body.$.listCategories.$[this.$.body.$.listCategories.tableName].$.theader.hide();
     this.$.closebutton.hide();
     this.$.header.hide();
   },
+
   executeOnShow: function () {
     var me = this;
     this.startShowing = true;
@@ -50,11 +52,17 @@ enyo.kind({
         }
       }
       if (me.$.body.$.listCategories.$[me.$.body.$.listCategories.tableName].selected) {
+        me.$.body.$.listCategories.categoryCollapseSibling('0');
         me.$.body.$.listCategories.categoryExpandSelected();
+        me.$.body.$.listCategories.categoryExpandCollapse(this, {
+          categoryId: me.$.body.$.listCategories.$[me.$.body.$.listCategories.tableName].selected.renderline.model.id,
+          expand: true
+        });
       }
       me.startShowing = false;
     });
   },
+
   init: function () {
     this.$.body.$.listCategories.categories.on('selected', function (category) {
       if (category && !this.startShowing) {
@@ -65,21 +73,64 @@ enyo.kind({
           });
           return;
         }
-        var childrenIds = '',
-            children = this.$.body.$.listCategories.categoryGetChildren(category.id);
-        _.each(children, function (category) {
-          if (childrenIds !== '') {
-            childrenIds += ', ';
-          }
-          childrenIds += "'" + category.id + "'";
+        var me = this;
+        this.loadSubTreeIds(category.id, "'" + category.id + "'", function (childrenIds) {
+          me.doSelectCategoryTreeItem({
+            category: category,
+            children: childrenIds,
+            origin: me.args ? me.args.origin : null
+          });
+          me.doHideThisPopup();
         });
-        this.doSelectCategoryTreeItem({
-          category: category,
-          children: childrenIds,
-          origin: this.args ? this.args.origin : null
-        });
-        this.doHideThisPopup();
       }
     }, this);
+  },
+
+  loadSubTreeIds: function (parentCategoryId, childrenIds, callbackTreeIds) {
+    var me = this,
+        treeProcessed = [];
+
+    function getSubTreeIds(models, index, callback) {
+      if (models.length <= index) {
+        if (callback === callbackTreeIds) {
+          var pending = _.find(treeProcessed, function (t) {
+            return !t.processed;
+          });
+          if (!pending) {
+            callback(childrenIds);
+          }
+        } else {
+          callback();
+        }
+        return;
+      }
+
+      var categoryId = models[index].get('categoryId'),
+          processed = {
+          category: categoryId,
+          processed: models[index].get('childs') === 1
+          };
+      childrenIds += ", '" + categoryId + "'";
+      treeProcessed.push(processed);
+      if (models[index].get('childs') > 1) {
+        me.$.body.$.listCategories.loadCategoryTreeLevel(models[index].get('categoryId'), function (categories) {
+          getSubTreeIds(categories.models, 0, function () {
+            processed.processed = true;
+            getSubTreeIds(models, index + 1, callback);
+          });
+        });
+      } else {
+        getSubTreeIds(models, index + 1, callback);
+      }
+    }
+
+    this.$.body.$.listCategories.loadCategoryTreeLevel(parentCategoryId, function (categories) {
+      if (categories.models.length > 1) {
+        getSubTreeIds(categories.models, 0, callbackTreeIds);
+      } else {
+        callbackTreeIds(childrenIds);
+      }
+    });
   }
+
 });
