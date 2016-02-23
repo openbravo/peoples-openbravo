@@ -3382,8 +3382,8 @@
                 if (p.get('rate') && p.get('rate') !== '1') {
                   p.set('origAmount', OB.DEC.add(payment.get('origAmount'), OB.DEC.mul(p.get('origAmount'), p.get('rate'))));
                 }
-                order.adjustPayment();
-                order.trigger('displayTotal');
+                payment.set('date', new Date());
+                executeFinalCallback(false);
                 return;
               }
             }
