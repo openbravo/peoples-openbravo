@@ -630,8 +630,10 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
           silent: true
         });
       });
-      // Calculate the receipt
-      receipt.calculateReceipt();
+      if (!OB.MobileApp.model.hasPermission('EnableMultiPriceList', true)) {
+        // Calculate the receipt only if it's not multipricelist
+        receipt.calculateReceipt();
+      }
     }, this);
 
     receipt.on('voidLayaway', function () {

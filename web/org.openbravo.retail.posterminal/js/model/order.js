@@ -1665,21 +1665,34 @@
           }
         });
       }
-      if (OB.MobileApp.model.hasPermission('EnableMultiPriceList', true) && oldbp.get('priceList') !== businessPartner.get('priceList')) {
-        me.set('priceList', businessPartner.get('priceList'));
-        var priceIncludesTax = businessPartner.get('priceIncludesTax');
-        if (OB.UTIL.isNullOrUndefined(priceIncludesTax)) {
-          priceIncludesTax = OB.MobileApp.model.get('pricelist').priceIncludesTax;
+      if (OB.MobileApp.model.hasPermission('EnableMultiPriceList', true)) {
+        if (oldbp.get('priceList') !== businessPartner.get('priceList')) {
+          me.set('priceList', businessPartner.get('priceList'));
+          var priceIncludesTax = businessPartner.get('priceIncludesTax');
+          if (OB.UTIL.isNullOrUndefined(priceIncludesTax)) {
+            priceIncludesTax = OB.MobileApp.model.get('pricelist').priceIncludesTax;
+          }
+          me.set('priceIncludesTax', priceIncludesTax);
+          me.removeAndInsertLines(function () {
+            me.calculateReceipt(function () {
+              if (saveChange) {
+                me.save();
+              }
+              if (callback) {
+                callback();
+              }
+            });
+          });
+        } else {
+          me.calculateReceipt(function () {
+            if (saveChange) {
+              me.save();
+            }
+            if (callback) {
+              callback();
+            }
+          });
         }
-        me.set('priceIncludesTax', priceIncludesTax);
-        me.removeAndInsertLines(function () {
-          if (saveChange) {
-            me.save();
-          }
-          if (callback) {
-            callback();
-          }
-        });
       } else {
         if (saveChange) {
           this.save();
@@ -1694,6 +1707,7 @@
       var me = this;
       // Remove all lines and insert again with new prices
       var orderlines = [];
+      var promotionlines = [];
       var addProductsOfLines = null;
 
       addProductsOfLines = function (receipt, lines, index, callback) {
@@ -1704,19 +1718,28 @@
           return;
         }
         OB.Dal.get(OB.Model.Product, lines[index].get('product').id, function (product) {
-          me.addProduct(product, lines[index].get('qty'), undefined, undefined, function () {
-            addProductsOfLines(receipt, lines, index + 1, callback);
+          me.addProduct(product, lines[index].get('qty'), undefined, undefined, function (isInPriceList) {
+            if (isInPriceList) {
+              me.get('lines').at(index).set('promotions', lines[index].get('promotions'));
+              addProductsOfLines(receipt, lines, index + 1, callback);
+            } else {
+              lines.splice(index, 1);
+              addProductsOfLines(receipt, lines, index, callback);
+            }
           });
         });
       };
       _.each(me.get('lines').models, function (line) {
         orderlines.push(line);
+        promotionlines.push(line.get('promotions'));
       });
-      _.each(orderlines, function (line) {
-        me.deleteLine(line, true);
+      this.calculateReceipt(function () {
+        // TODO: Lost options and attributes, maybe has problems with other modules (like Complementary Products)
+        _.each(orderlines, function (orderline, index) {
+      	  orderline.set('promotions', promotionlines[index]);
+      	});
+      	addProductsOfLines(me, orderlines, 0, callback);
       });
-      // TODO: Lost options and attributes, maybe has problems with other modules (like Complementary Products)
-      addProductsOfLines(me, orderlines, 0, callback);
     },
 
     setOrderType: function (permission, orderType, options) {
