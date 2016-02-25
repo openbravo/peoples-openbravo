@@ -401,6 +401,14 @@ public class ImportEntryManager {
   }
 
   /**
+   * Returns whether the ImportEntry is in status Error in the same transaction as the caller.
+   */
+  public boolean isImportEntryError(String importEntryId) {
+    ImportEntry importEntry = OBDal.getInstance().get(ImportEntry.class, importEntryId);
+    return importEntry != null && "Error".equals(importEntry.getImportStatus());
+  }
+
+  /**
    * Sets an {@link ImportEntry} in status Error but does this in its own transaction so not
    * together with the original data. This is relevant when the previous transaction which tried to
    * import the data fails.
