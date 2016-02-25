@@ -264,6 +264,7 @@ enyo.kind({
       if (this.owner.owner && this.owner.owner.line && this.owner.owner.line.get('promotions')) {
         this.owner.owner.line.unset('promotions');
         this.hide();
+        this.model.get('order').calculateReceipt();
       }
     },
     init: function (model) {
