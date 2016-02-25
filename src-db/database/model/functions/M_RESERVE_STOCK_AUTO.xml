@@ -44,7 +44,8 @@
   v_dummy                       VARCHAR2(2000) := '';
   v_pinstance_id                VARCHAR2(32) := get_uuid();
   v_prioritywarehouse_id        VARCHAR2(32);
-  
+
+  v_reservationqty              NUMBER;
 
   TYPE RECORD IS REF CURSOR;
   cur_stock                     RECORD;
@@ -52,10 +53,10 @@
 BEGIN
   SELECT quantity - COALESCE(reservedqty,0),
          m_product_id, c_uom_id, m_attributesetinstance_id, m_locator_id, m_warehouse_id,
-         ad_client_id, ad_org_id, c_orderline_id, quantity
+         ad_client_id, ad_org_id, c_orderline_id, quantity,reservedqty
     INTO v_pendingtoreserveqty,
          v_product_id, v_uom_id, v_asi_id, v_locator_id, v_warehouse_id,
-         v_client_id, v_org_id, v_soline_id, v_reserveqty
+         v_client_id, v_org_id, v_soline_id, v_reserveqty, v_reservationqty
   FROM m_reservation
   WHERE m_reservation_id = p_reservation_id;
 
@@ -86,6 +87,7 @@ BEGIN
   END; -- End Call M_GET_STOCK
   
   v_pendingqty := v_pendingtoreserveqty;
+
   FOR cur_stock IN (
     SELECT sp.quantity, sp.m_storage_detail_id, w.isallocated
     FROM m_stock_proposed sp
@@ -96,9 +98,14 @@ BEGIN
     AND sd.m_product_uom_id IS NULL
     ORDER BY sp.priority
   ) LOOP
+
     v_qty := LEAST(cur_stock.quantity, v_pendingqty);
+    v_qty := CASE WHEN cur_stock.quantity < v_pendingqty THEN cur_stock.quantity - v_reservationqty ELSE v_qty END;
+    
     M_RESERVE_STOCK_MANUAL(p_reservation_id, 'SD', cur_stock.m_storage_detail_id, v_qty, p_user_id, cur_stock.isallocated, v_dummy);
+    
     v_pendingqty := v_pendingqty - v_qty;
+
     IF (v_pendingqty <= 0) THEN
       p_reservedqty := v_reserveqty;
       RETURN;
@@ -106,6 +113,7 @@ BEGIN
   END LOOP;
 
   p_reservedqty := v_reserveqty - v_pendingqty;
+  
   RETURN;
 END M_RESERVE_STOCK_AUTO
 ]]></body>
