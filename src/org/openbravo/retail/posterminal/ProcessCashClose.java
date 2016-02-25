@@ -32,7 +32,6 @@ import org.openbravo.dal.core.TriggerHandler;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
-import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.mobile.core.process.DataSynchronizationImportProcess;
 import org.openbravo.mobile.core.process.DataSynchronizationProcess.DataSynchronization;
 import org.openbravo.mobile.core.process.JSONPropertyToEntity;
@@ -46,9 +45,6 @@ import org.openbravo.service.json.JsonToDataConverter;
 @DataSynchronization(entity = "OBPOS_App_Cashup")
 public class ProcessCashClose extends POSDataSynchronizationProcess implements
     DataSynchronizationImportProcess {
-
-  public static final String CASHUP_COUNT_DIFF = OBMessageUtils.getI18NMessage(
-      "OBPOS_CashupCountDiff", null);
 
   private static final Logger log = Logger.getLogger(ProcessCashClose.class);
   JSONObject jsonResponse = new JSONObject();
@@ -97,7 +93,7 @@ public class ProcessCashClose extends POSDataSynchronizationProcess implements
       cashupApproval.setNewOBObject(true);
       cashupApproval.setCashUp(cashUp);
       cashupApproval.setActive(true);
-      cashupApproval.setApprovalType(CASHUP_COUNT_DIFF);
+      cashupApproval.setApprovalType("OBPOS_CashupCountDiff");
       cashupApproval.setApprovalMessage(jsonApprovals.getString("message"));
       if (jsonApprovals.has("approvalReason")) {
         cashupApproval.setApprovalReason(OBDal.getInstance().get(OBPOSApprovalReason.class,
