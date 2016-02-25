@@ -44,13 +44,6 @@ enyo.kind({
           item.setShowing(!showOnlyReal);
         }
       }, me);
-      if (me.args.selectCategory) {
-        var category = me.$.body.$.listCategories.categories.get(me.args.selectCategory);
-        if (category) {
-          category.trigger('selected');
-          me.$.body.$.listCategories.$[me.$.body.$.listCategories.tableName].setSelectedModels([category], true);
-        }
-      }
       if (me.$.body.$.listCategories.$[me.$.body.$.listCategories.tableName].selected) {
         me.$.body.$.listCategories.categoryCollapseSibling('0');
         me.$.body.$.listCategories.categoryExpandSelected();
@@ -58,6 +51,15 @@ enyo.kind({
           categoryId: me.$.body.$.listCategories.$[me.$.body.$.listCategories.tableName].selected.renderline.model.id,
           expand: true
         });
+        if (me.args.selectCategory) {
+          setTimeout(function () {
+            me.$.body.$.listCategories.categoryAdjustScroll(me.args.selectCategory, 5, 0);
+            var category = me.$.body.$.listCategories.categories.get(me.args.selectCategory);
+            if (category) {
+              me.$.body.$.listCategories.$[me.$.body.$.listCategories.tableName].setSelectedModels([category], true);
+            }
+          }, 200);
+        }
       }
       me.startShowing = false;
     });
@@ -108,11 +110,11 @@ enyo.kind({
       var categoryId = models[index].get('categoryId'),
           processed = {
           category: categoryId,
-          processed: models[index].get('childs') === 1
+          processed: models[index].get('childs') === 0
           };
       childrenIds += ", '" + categoryId + "'";
       treeProcessed.push(processed);
-      if (models[index].get('childs') > 1) {
+      if (models[index].get('childs') > 0) {
         me.$.body.$.listCategories.loadCategoryTreeLevel(models[index].get('categoryId'), function (categories) {
           getSubTreeIds(categories.models, 0, function () {
             processed.processed = true;
@@ -125,7 +127,7 @@ enyo.kind({
     }
 
     this.$.body.$.listCategories.loadCategoryTreeLevel(parentCategoryId, function (categories) {
-      if (categories.models.length > 1) {
+      if (categories.models.length !== 0) {
         getSubTreeIds(categories.models, 0, callbackTreeIds);
       } else {
         callbackTreeIds(childrenIds);
