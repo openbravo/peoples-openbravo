@@ -500,7 +500,7 @@
         var adjustAmount;
         var candidateLine = null;
         var candidateTaxLineAmount = OB.DEC.Zero;
-        
+
         var totalGross = OB.DEC.Zero;
         var newTotalTaxAmount = OB.DEC.Zero;
         var newTotalNet = OB.DEC.Zero;
@@ -515,7 +515,7 @@
             adjustAmount = OB.DEC.sub(tax.amount, newAmount);
             tax.net = newNet;
             tax.amount = newAmount;
-            
+
             if (adjustAmount !== 0) {
               // move te adjustment to a net line...
               receipt.get('lines').forEach(function (line) {
@@ -532,7 +532,7 @@
                     }
                   });
                 }
-              });  
+              });
               // if line found to make adjustments, apply.
               if (candidateLine) {
                 candidateLine.set('discountedNet', OB.DEC.add(candidateLine.get('discountedNet'), adjustAmount), {
@@ -541,12 +541,12 @@
               }
             }
           }
-          
+
           // Accummulate the total tax amount in this loop too.
           newTotalTaxAmount = OB.DEC.add(newTotalTaxAmount, tax.amount);
         });
-        
-        
+
+
 
         // And now Total Net = Total Gross - Sum(Tax Amounts)
         // And adjust a line net if needed
@@ -562,9 +562,7 @@
         newTotalNet = OB.DEC.sub(totalGross, newTotalTaxAmount);
 
         // Sets the receipt Net
-        receipt.set(
-            'net', newTotalNet, 
-            'taxAmount', newTotalTaxAmount, {
+        receipt.set('net', newTotalNet, 'taxAmount', newTotalTaxAmount, {
           silent: true
         });
       });
@@ -832,45 +830,49 @@
         return calcLineTaxesExcPrice(receipt, line);
       })).then(function () {
         // Ajust gross if net + taxes !== gross
-        var totalTaxAmount = OB.DEC.Zero;
+        var newAmount;
+        var adjustAmount;
+        var candidateLine = null;
+        var candidateTaxLineAmount = OB.DEC.Zero;
         var totalNet = OB.DEC.Zero;
-        var totalGross = OB.DEC.Zero;
-        var gross;
-        var lineToAdjust = null;
-        var lineToAdjustMax = OB.DEC.Zero;
 
-        var adjustment;
+        // Calculate taxes
+        _.forEach(receipt.get('taxes'), function (tax, taxid) {
+          if (tax.docTaxAmount === 'D') {
+            // Adjust taxes in case of taxes at doc level...
+            newAmount = OB.DEC.mul(tax.net, getTaxRateNumber(tax.rate));
+            adjustAmount = OB.DEC.sub(tax.amount, newAmount);
+            tax.amount = newAmount;
 
-//        taxes[taxId].amount = (taxRate.get('docTaxAmount') === 'D') //
-//        ? OB.DEC.mul(taxes[taxId].net, getTaxRateNumber(taxRate.get('rate'))) // Calculate taxes At Document Level
-//        : OB.DEC.add(taxes[taxId].amount, amount); // Calculate taxes At Line Level
-        
-        receipt.get('lines').forEach(function (line) {
-          totalNet = OB.DEC.add(totalNet, line.get('discountedNet'));
-          gross = line.get('discountedGross');
-          totalGross = OB.DEC.add(totalGross, gross);
-          if (OB.DEC.abs(gross) > lineToAdjustMax) {
-            lineToAdjustMax = gross;
-            lineToAdjust = line;
+            if (adjustAmount !== 0) {
+              // move te adjustment to a net line...
+              receipt.get('lines').forEach(function (line) {
+                _.each(line.get('taxLines'), function (taxline, taxlineid) {
+                  if (taxid === taxlineid && Math.sign(newAmount) === Math.sign(taxline.amount)) {
+                    // Candidate for applying the adjustment
+                    if (OB.DEC.abs(taxline.amount) > candidateTaxLineAmount) {
+                      candidateTaxLineAmount = OB.DEC.abs(candidateTaxLineAmount);
+                      candidateLine = line;
+                    }
+                  }
+                });
+              });
+              // if line found to make adjustments, apply.
+              if (candidateLine) {
+                candidateLine.set({
+                  'discountedGross': OB.DEC.sub(candidateLine.get('discountedGross'), adjustAmount),
+                  'gross': OB.DEC.sub(candidateLine.get('gross'), adjustAmount)
+                }, {
+                  silent: true
+                });
+              }
+            }
           }
         });
 
-        if (lineToAdjust) {
-          // Calculate taxes
-          _.forEach(receipt.get('taxes'), function (tax, taxid) {
-            totalTaxAmount = OB.DEC.add(totalTaxAmount, tax.amount);
-          });
-
-          adjustment = OB.DEC.sub(totalGross, OB.DEC.add(totalNet, totalTaxAmount));
-          if (adjustment !== OB.DEC.Zero) {
-            lineToAdjust.set({
-              'discountedGross': OB.DEC.sub(lineToAdjust.get('discountedGross'), adjustment),
-              'gross': OB.DEC.sub(lineToAdjust.get('gross'), adjustment)
-            }, {
-              silent: true
-            });
-          }
-        }
+        receipt.get('lines').forEach(function (line) {
+          totalNet = OB.DEC.add(totalNet, line.get('discountedNet'));
+        });
 
         receipt.set('net', totalNet, {
           silent: true
