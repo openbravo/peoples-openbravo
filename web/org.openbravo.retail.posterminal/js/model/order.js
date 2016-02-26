@@ -1258,8 +1258,10 @@
         if (!this.get('deletedLines')) {
           this.set('deletedLines', []);
         }
-        line.set('obposIsDeleted', true);
-        this.get('deletedLines').push(new OrderLine(line.attributes));
+        if (!line.get('hasTaxError')) {
+          line.set('obposIsDeleted', true);
+          this.get('deletedLines').push(new OrderLine(line.attributes));
+        }
       }
       // remove the line
       finishDelete();

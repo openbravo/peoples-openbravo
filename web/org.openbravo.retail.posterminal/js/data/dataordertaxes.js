@@ -465,6 +465,9 @@
       })['catch'](function (reason) {
         var title = OB.I18N.getLabel('OBPOS_TaxNotFound_Header');
         OB.error(title + ":" + reason);
+        line.set('hasTaxError', true, {
+          silent: true
+        });
         receipt.set('preventServicesUpdate', true);
         receipt.set('deleting', true);
         receipt.deleteLine(line);
@@ -766,6 +769,9 @@
       })['catch'](function (reason) {
         var title = OB.I18N.getLabel('OBPOS_TaxNotFound_Header');
         OB.error(title + ":" + reason);
+        line.set('hasTaxError', true, {
+          silent: true
+        });
         receipt.set('preventServicesUpdate', true);
         receipt.set('deleting', true);
         receipt.deleteLine(line);
