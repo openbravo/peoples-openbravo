@@ -254,6 +254,9 @@ public class DefaultDataSourceService extends BaseDataSourceService {
       fieldQuery.setNamedParameter("roleId", roleId);
       for (Field f : fieldQuery.list()) {
         Property property = KernelUtils.getProperty(f);
+        if (property.isAuditInfo()) {
+          continue;
+        }
         String key = property.getName();
         if (data.has(key)) {
           String newValue = getValue(data, key);
