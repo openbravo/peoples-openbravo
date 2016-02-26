@@ -243,7 +243,10 @@ enyo.kind({
       }
     });
 
-    paymentsdialog = countbuttons + this.sideButtons.length > 5;
+    var sideButtonsCount = _.reduce(this.sideButtons, function (sum, item) {
+      return sum + (OB.MobileApp.model.hasPermission(item.permission, true) ? 1 : 0);
+    }, 0);
+    paymentsdialog = (countbuttons + sideButtonsCount) > 5;
     paymentsbuttons = paymentsdialog ? 4 : 5;
     countbuttons = 0;
     paymentCategories = [];
@@ -343,12 +346,14 @@ enyo.kind({
     this.defaultPayment = exactdefault;
 
     enyo.forEach(this.sideButtons, function (sidebutton) {
-      btncomponent = this.getButtonComponent(sidebutton);
-      if (countbuttons++ < paymentsbuttons) {
-        this.createComponent(btncomponent);
-      } else {
-        me.addSideButton(btncomponent);
-        dialogbuttons[sidebutton.command] = sidebutton.label;
+      if (OB.MobileApp.model.hasPermission(sidebutton.permission, true)) {
+        btncomponent = this.getButtonComponent(sidebutton);
+        if (countbuttons++ < paymentsbuttons) {
+          this.createComponent(btncomponent);
+        } else {
+          me.addSideButton(btncomponent);
+          dialogbuttons[sidebutton.command] = sidebutton.label;
+        }
       }
     }, this);
 
