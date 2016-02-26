@@ -16,7 +16,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2015 Openbravo SLU
+* All portions are Copyright (C) 2001-2016 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -149,10 +149,24 @@
           AND am.A_Amortization_ID=V_Record_ID);
       UPDATE a_asset
         SET IsFullyDepreciated='Y',Updated=now(),UpdatedBy=v_AD_User_ID
-      WHERE COALESCE(DepreciatedPlan, -1)=COALESCE(DepreciatedValue, -2) ;
+      WHERE COALESCE(DepreciatedPlan, -1)=COALESCE(DepreciatedValue, -2)
+      AND exists
+        (SELECT 1
+        FROM a_amortizationline al, a_amortization am
+        WHERE a_asset.a_asset_id=al.a_asset_id
+          AND al.A_Amortization_ID=am.A_Amortization_ID
+          AND am.A_Amortization_ID=V_Record_ID)
+      AND IsFullyDepreciated='N';
       UPDATE a_asset
         SET IsFullyDepreciated='N',Updated=now(),UpdatedBy=v_AD_User_ID
-      WHERE DepreciatedPlan<>DepreciatedValue;
+      WHERE DepreciatedPlan<>DepreciatedValue
+      AND exists
+        (SELECT 1
+        FROM a_amortizationline al, a_amortization am
+        WHERE a_asset.a_asset_id=al.a_asset_id
+          AND al.A_Amortization_ID=am.A_Amortization_ID
+          AND am.A_Amortization_ID=V_Record_ID)
+      AND IsFullyDepreciated='Y';
     END IF;
     --<<FINISH_PROCESS>>
     IF(p_PInstance_ID IS NOT NULL) THEN

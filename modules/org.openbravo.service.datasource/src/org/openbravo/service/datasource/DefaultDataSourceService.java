@@ -255,6 +255,9 @@ public class DefaultDataSourceService extends BaseDataSourceService {
       fieldQuery.setNamedParameter("roleId", roleId);
       for (Field f : fieldQuery.list()) {
         Property property = KernelUtils.getProperty(f);
+        if (property.isAuditInfo()) {
+          continue;
+        }
         String key = property.getName();
         if (data.has(key)) {
           String newValue = getValue(data, key);
@@ -293,6 +296,12 @@ public class DefaultDataSourceService extends BaseDataSourceService {
 
   private static boolean isSameNumericValue(String str1, String str2) {
     try {
+      if (str1 == null && str2 == null) {
+        return true;
+      }
+      if (str1 == null && str2 != null || str1 != null && str2 == null) {
+        return false;
+      }
       BigDecimal bd1 = new BigDecimal(str1);
       BigDecimal bd2 = new BigDecimal(str2);
       return bd1.doubleValue() == bd2.doubleValue();

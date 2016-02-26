@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014 Openbravo SLU
+ * All portions are Copyright (C) 2014-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -319,12 +319,14 @@ public class APRM_MatchingUtility {
         boolean isReceipt = false;
         if (finTrans.getFinPayment() != null) {
           isReceipt = finTrans.getFinPayment().isReceipt();
+          finTrans.getFinPayment().setStatus(
+              isReceipt ? APRMConstants.PAYMENT_STATUS_DEPOSIT_NOT_CLEARED
+                  : APRMConstants.PAYMENT_STATUS_WITHDRAWAL_NOT_CLEARED);
         } else {
           isReceipt = finTrans.getDepositAmount().compareTo(finTrans.getPaymentAmount()) > 0;
         }
         finTrans.setStatus(isReceipt ? APRMConstants.PAYMENT_STATUS_DEPOSIT_NOT_CLEARED
             : APRMConstants.PAYMENT_STATUS_WITHDRAWAL_NOT_CLEARED);
-
         // Execute un-matching logic defined by algorithm
         final MatchingAlgorithm ma = bsline.getBankStatement().getAccount().getMatchingAlgorithm();
         final FIN_MatchingTransaction matchingTransaction = new FIN_MatchingTransaction(

@@ -12,7 +12,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2015 Openbravo SLU
+ * All portions are Copyright (C) 2010-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -39,11 +39,11 @@
             disabledFields, i;
             OB.Utilities.fixNull250(currentValues);
         <#list data.fieldHandler.fields as field>
-        <#if field.readOnlyIf != "" && field.showIf == "">
-        // Applying read only.
+        <#if !field.readOnly && field.readOnlyIf != "" && field.showIf == "">
+           // Applying read only logic.
            f.disableItem('${field.name}', ${field.readOnlyIf});
         <#else>
-        <#if field.readOnlyIf == "" && field.showIf != "">
+        <#if !field.readOnly && field.readOnlyIf == "" && field.showIf != "">
         // Applying display logic in grid.
         if (!this.view.isShowingForm) {
         <#if field.showIf == "false">
@@ -53,7 +53,7 @@
         </#if>
         }
         <#else>
-        <#if field.readOnlyIf != "" && field.showIf != "">
+        <#if !field.readOnly && field.readOnlyIf != "" && field.showIf != "">
         // Applying display logic and read only in grid/form.
         if (!this.view.isShowingForm) {
         <#if field.showIf == "false">

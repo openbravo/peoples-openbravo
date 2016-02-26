@@ -86,11 +86,14 @@ public class Login extends HttpBaseServlet {
             "IDENTIFICATION_FAILURE_TITLE", systemClient.getLanguage().getLanguage());
         final String emptyUsernameOrPasswordText = Utility.messageBD(this,
             "EMPTY_USERNAME_OR_PASSWORD_TEXT", systemClient.getLanguage().getLanguage());
-
+        final String errorSamePassword = Utility.messageBD(this, "CPSamePassword", systemClient
+            .getLanguage().getLanguage());
+        final String errorDifferentPasswordInFields = Utility.messageBD(this,
+            "CPDifferentPasswordInFields", systemClient.getLanguage().getLanguage());
         if (OBVersion.getInstance().is30()) {
           printPageLogin30(vars, response, strTheme, cacheMsg, validBrowserMsg, orHigherMsg,
               recBrowserMsgTitle, recBrowserMsgText, identificationFailureTitle,
-              emptyUsernameOrPasswordText);
+              emptyUsernameOrPasswordText, errorSamePassword, errorDifferentPasswordInFields);
         } else {
           printPageLogin250(response, strTheme, cacheMsg, validBrowserMsg, orHigherMsg);
         }
@@ -246,7 +249,8 @@ public class Login extends HttpBaseServlet {
   private void printPageLogin30(VariablesSecureApp vars, HttpServletResponse response,
       String strTheme, String cacheMsg, String validBrowserMsg, String orHigherMsg,
       String recBrowserMsgTitle, String recBrowserMsgText, String identificationFailureTitle,
-      String emptyUsernameOrPasswordText) throws IOException, ServletException {
+      String emptyUsernameOrPasswordText, String errorSamePassword,
+      String errorDifferentPasswordInFields) throws IOException, ServletException {
 
     boolean showForgeLogo = true;
     boolean showITLogo = false;
@@ -323,6 +327,14 @@ public class Login extends HttpBaseServlet {
         + emptyUsernameOrPasswordText + "\"";
     xmlDocument.setParameter("errorEmptyContent",
         emptyUserNameOrPasswordFinal.replaceAll("\\n", "\n"));
+
+    String errorSamePasswordFinal = "var errorSamePassword = \"" + errorSamePassword + "\"";
+    xmlDocument.setParameter("errorSamePassword", errorSamePasswordFinal.replaceAll("\\n", "\n"));
+
+    String errorDifferentPasswordInFieldsFinal = "var errorDifferentPasswordInFields = \""
+        + errorDifferentPasswordInFields + "\"";
+    xmlDocument.setParameter("errorDifferentPasswordInFields",
+        errorDifferentPasswordInFieldsFinal.replaceAll("\\n", "\n"));
 
     String validBrowserMsgFinal = "var validBrowserMsg = \"" + validBrowserMsg + "\"";
     String orHigherMsgFinal = "var validBrowserMsgOrHigher = \"" + orHigherMsg + "\"";
