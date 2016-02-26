@@ -67,17 +67,21 @@
 
       me.setTerminalName(window.localStorage.getItem('terminalAuthentication') === 'Y' ? window.localStorage.getItem('terminalName') : OB.UTIL.getParameterByName("terminal"));
 
-      this.initActions(function () {
-        me.setTerminalName(window.localStorage.getItem('terminalAuthentication') === 'Y' ? window.localStorage.getItem('terminalName') : OB.UTIL.getParameterByName("terminal"));
-        me.set('logConfiguration', {
-          deviceIdentifier: window.localStorage.getItem('terminalAuthentication') === 'Y' ? window.localStorage.getItem('terminalName') : OB.UTIL.getParameterByName("terminal"),
-          logPropertiesExtension: [
+      OB.UTIL.HookManager.registerHook('OBMOBC_InitActions', function (args, c) {
+        me.initActions(function () {
+          me.setTerminalName(window.localStorage.getItem('terminalAuthentication') === 'Y' ? window.localStorage.getItem('terminalName') : OB.UTIL.getParameterByName("terminal"));
+          me.set('logConfiguration', {
+            deviceIdentifier: window.localStorage.getItem('terminalAuthentication') === 'Y' ? window.localStorage.getItem('terminalName') : OB.UTIL.getParameterByName("terminal"),
+            logPropertiesExtension: [
 
-          function () {
-            return {
-              online: OB.MobileApp.model.get('connectedToERP')
-            };
-          }]
+            function () {
+              return {
+                online: OB.MobileApp.model.get('connectedToERP')
+              };
+            }]
+          });
+          args.cancelOperation = true;
+          OB.UTIL.HookManager.callbackExecutor(args, c);
         });
       });
 
