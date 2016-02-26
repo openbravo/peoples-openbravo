@@ -216,16 +216,16 @@ enyo.kind({
   },
   putDisabled: function (status) {
     if (status === false) {
-      this.disabled = false;
       this.setDisabled(false);
       this.removeClass('disabled');
+      this.disabled = false;
       this.removeClass('btnlink-gray');
       this.addClass('btnlink-yellow');
       return;
     }
-    this.disabled = true;
     this.setDisabled(true);
     this.addClass('disabled');
+    this.disabled = true;
     this.addClass('btnlink-gray');
     this.removeClass('btnlink-yellow');
   }
@@ -270,14 +270,14 @@ enyo.kind({
   },
   putDisabled: function (status) {
     if (status === false) {
-      this.disabled = false;
       this.setDisabled(false);
       this.removeClass('disabled');
+      this.disabled = false;
       return;
     }
-    this.disabled = true;
     this.setDisabled(true);
     this.addClass('disabled');
+    this.disabled = true;
   },
   initComponents: function () {
     this.inherited(arguments);
@@ -833,7 +833,7 @@ enyo.kind({
     this.$.body.$.listBpsLoc.setTarget(this.args.target);
     this.$.body.$.listBpsLoc.setInitialLoad(true);
     this.$.body.$.listBpsLoc.$.bpsloclistitemprinter.$.theader.$.modalBpLocScrollableHeader.searchAction();
-    this.$.body.$.listBpsLoc.$.bpsloclistitemprinter.$.theader.$.modalBpLocScrollableHeader.$.newAction.putDisabled(!OB.MobileApp.model.hasPermission('OBPOS_retail.editCustomers'));
+    this.$.body.$.listBpsLoc.$.bpsloclistitemprinter.$.theader.$.modalBpLocScrollableHeader.$.newAction.putDisabled(!OB.MobileApp.model.hasPermission('OBPOS_retail.editCustomers', true));
     return true;
   },
   executeOnHide: function () {

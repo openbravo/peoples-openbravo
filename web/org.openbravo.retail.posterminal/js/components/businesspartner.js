@@ -491,7 +491,7 @@ enyo.kind({
   searchAction: function (inSender, inEvent) {
     var me = this;
 
-    if (OB.MobileApp.model.hasPermission('OBPOS_retail.editCustomers')) {
+    if (OB.MobileApp.model.hasPermission('OBPOS_retail.editCustomers', true)) {
       this.$.stBPAssignToReceipt.$.theader.$.modalBpScrollableHeader.$.newAction.setDisabled(false);
     }
 
@@ -759,7 +759,7 @@ enyo.kind({
     this.waterfall('onSetBusinessPartnerTarget', {
       target: this.args.target
     });
-    this.$.body.$.listBps.$.stBPAssignToReceipt.$.theader.$.modalBpScrollableHeader.$.newAction.putDisabled(!OB.MobileApp.model.hasPermission('OBPOS_retail.editCustomers'));
+    this.$.body.$.listBps.$.stBPAssignToReceipt.$.theader.$.modalBpScrollableHeader.$.newAction.putDisabled(!OB.MobileApp.model.hasPermission('OBPOS_retail.editCustomers', true));
     if (!OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
       this.$.body.$.listBps.$.stBPAssignToReceipt.$.theader.$.modalBpScrollableHeader.$.filterSelector.hideFilterCombo();
     }
