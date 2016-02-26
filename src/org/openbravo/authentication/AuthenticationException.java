@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2011 Openbravo S.L.U.
+ * Copyright (C) 2001-2016 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -29,6 +29,11 @@ public class AuthenticationException extends OBException {
     this.error = null;
   }
 
+  public AuthenticationException(String msg, Boolean isLogExceptionNeeded) {
+    super(msg, isLogExceptionNeeded);
+    this.error = null;
+  }
+
   public AuthenticationException(String msg, Throwable cause) {
     super(msg, cause);
     this.error = null;
@@ -36,6 +41,11 @@ public class AuthenticationException extends OBException {
 
   public AuthenticationException(String msg, OBError error) {
     super(msg);
+    this.error = error;
+  }
+
+  public AuthenticationException(String msg, OBError error, Boolean isLogExceptionNeeded) {
+    super(msg, isLogExceptionNeeded);
     this.error = error;
   }
 
