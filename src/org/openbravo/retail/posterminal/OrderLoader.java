@@ -786,7 +786,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
               .multiply(ratio).setScale(pricePrecision, RoundingMode.HALF_UP));
         }
         promotion.setLineNo((long) ((p + 1) * 10));
-        promotion.setId(OBMOBCUtils.getUUIDbyString(line.getId() + promotion.getLineNo() + p));
+        promotion.setId(OBMOBCUtils.getUUIDbyString(line.getId() + p));
         promotion.setNewOBObject(true);
         promotion.setInvoiceLine(line);
         line.getInvoiceLineOfferList().add(promotion);
@@ -1346,8 +1346,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           if (jsonPromotion.has("identifier") && !jsonPromotion.isNull("identifier")) {
             promotion.setObdiscIdentifier(jsonPromotion.getString("identifier"));
           }
-          promotion
-              .setId(OBMOBCUtils.getUUIDbyString(orderline.getId() + promotion.getLineNo() + p));
+          promotion.setId(OBMOBCUtils.getUUIDbyString(orderline.getId() + p));
           promotion.setNewOBObject(true);
           orderline.getOrderLineOfferList().add(promotion);
         }
@@ -2074,10 +2073,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
         JSONPropertyToEntity.fillBobFromJSON(approvalEntity, approval, jsonApproval,
             jsonorder.getLong("timezoneOffset"));
-        if (jsonApproval.has("id")) {
-          approval.setId(jsonApproval.getString("id"));
-          approval.setNewOBObject(true);
-        }
 
         approval.setSalesOrder(order);
 
