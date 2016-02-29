@@ -216,7 +216,9 @@ public class PaidReceipts extends JSONProcessSimple {
         JSONArray listPaymentsIn = new JSONArray();
 
         // TODO: make this extensible
-        String hqlPaymentsIn = "select scheduleDetail.amount, scheduleDetail.paymentDetails.finPayment.account.id, scheduleDetail.paymentDetails.finPayment.paymentDate, scheduleDetail.paymentDetails.finPayment.id, scheduleDetail.paymentDetails.finPayment.obposPaymentdata "
+        String hqlPaymentsIn = "select scheduleDetail.amount, scheduleDetail.paymentDetails.finPayment.account.id, "
+            + "scheduleDetail.paymentDetails.finPayment.paymentDate, scheduleDetail.paymentDetails.finPayment.id, "
+            + "scheduleDetail.paymentDetails.finPayment.amount, scheduleDetail.paymentDetails.finPayment.obposPaymentdata "
             + "from FIN_Payment_ScheduleDetail as scheduleDetail where scheduleDetail.orderPaymentSchedule.order.id=? "
             + "order by scheduleDetail.paymentDetails.finPayment.documentNo";
         Query paymentsInQuery = OBDal.getInstance().getSession().createQuery(hqlPaymentsIn);
@@ -231,9 +233,10 @@ public class PaidReceipts extends JSONProcessSimple {
           SimpleDateFormat outputFormat = new SimpleDateFormat(dateFormat);
           paymentsIn.put("paymentDate", outputFormat.format(((Date) objPaymentsIn[2])));
           paymentsIn.put("paymentId", objPaymentsIn[3]);
+          paymentsIn.put("paymentAmount", objPaymentsIn[4]);
           try {
             // ensure that just valid JSONObjects are accepted
-            paymentsIn.put("paymentData", new JSONObject((String) objPaymentsIn[4]));
+            paymentsIn.put("paymentData", new JSONObject((String) objPaymentsIn[5]));
           } catch (Exception e) {
             // This property will not exist
           }
@@ -291,6 +294,9 @@ public class PaidReceipts extends JSONProcessSimple {
               paidReceiptPayment.put("isocode", objectType.get("isocode"));
               paidReceiptPayment.put("openDrawer", objectType.get("openDrawer"));
               paidReceiptPayment.put("isPrePayment", true);
+              paidReceiptPayment.put("paymentAmount",
+                  new BigDecimal((String) objectIn.get("paymentAmount").toString())
+                      .multiply(new BigDecimal((String) objectType.get("mulrate").toString())));
               added = true;
               listpaidReceiptsPayments.put(paidReceiptPayment);
             }
