@@ -112,6 +112,7 @@ enyo.kind({
     OB.MobileApp.view.scanningFocus(false);
     me.$.btnApply.setDisabled(true);
     me.discounts.reset();
+    me.order.trigger('showDiscount');
     //uncheck lines
     this.doCheckAllTicketLines({
       status: false

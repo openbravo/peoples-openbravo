@@ -117,6 +117,15 @@ enyo.kind({
       this.addClass('btn-icon-delete');
     }
   },
+  updateDisabled: function (isDisabled) {
+    this.isEnabled = !isDisabled;
+    this.setDisabled(isDisabled);
+    if (!this.isEnabled) {
+      this.removeClass('btn-icon-delete');
+    } else {
+      this.addClass('btn-icon-delete');
+    }
+  },
   tap: function () {
     var i, me = this;
 
@@ -178,6 +187,9 @@ enyo.kind({
         return;
       }
       this.removeClass('paidticket');
+    }, this);
+    this.model.get('order').on('showDiscount', function (model) {
+      this.updateDisabled(true);
     }, this);
   }
 });
