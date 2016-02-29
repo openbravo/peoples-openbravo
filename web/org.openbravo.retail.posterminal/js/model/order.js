@@ -1864,19 +1864,8 @@
           OB.error(arguments);
         }, true);
       }
-      if (OB.MobileApp.model.get('permissions').OBPOS_NotAllowSalesWithReturn) {
-        var negativeLines = _.filter(this.get('lines').models, function (line) {
-          return line.get('qty') < 0;
-        }).length;
-        if (this.get('lines').length > 0) {
-          if (units > 0 && negativeLines > 0) {
-            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgCannotAddPositive'));
-            return;
-          } else if (units < 0 && negativeLines !== this.get('lines').length) {
-            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgCannotAddNegative'));
-            return;
-          }
-        }
+      if (this.validateAllowSalesWithReturn(units, false)) {
+        return;
       }
       // Get prices from BP pricelist 
       var newline = new OrderLine({
@@ -1950,20 +1939,9 @@
 
     returnLine: function (line, options, skipValidaton) {
       var me = this;
-      if (OB.MobileApp.model.get('permissions').OBPOS_NotAllowSalesWithReturn && !skipValidaton) {
-        //The value of qty need to be negate because we want to change it
-        var negativeLines = _.filter(this.get('lines').models, function (line) {
-          return line.get('qty') < 0;
-        }).length;
-        if (this.get('lines').length > 0) {
-          if (-line.get('qty') > 0 && negativeLines > 0) {
-            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgCannotAddPositive'));
-            return;
-          } else if (-line.get('qty') < 0 && negativeLines !== this.get('lines').length) {
-            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgCannotAddNegative'));
-            return;
-          }
-        }
+      //The value of qty need to be negate because we want to change it
+      if (this.validateAllowSalesWithReturn(-line.get('qty'), skipValidaton)) {
+        return;
       }
       if (line.get('qty') > 0) {
         line.get('product').set('ignorePromotions', true);
@@ -2159,6 +2137,24 @@
           callback();
         }
       }
+    },
+
+    validateAllowSalesWithReturn: function (qty, skipValidaton) {
+      if (OB.MobileApp.model.get('permissions').OBPOS_NotAllowSalesWithReturn && !skipValidaton) {
+        var negativeLines = _.filter(this.get('lines').models, function (line) {
+          return line.get('qty') < 0;
+        }).length;
+        if (this.get('lines').length > 0) {
+          if (qty > 0 && negativeLines > 0) {
+            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgCannotAddPositive'));
+            return true;
+          } else if (qty < 0 && negativeLines !== this.get('lines').length) {
+            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgCannotAddNegative'));
+            return true;
+          }
+        }
+      }
+      return false;
     },
 
     removeAndInsertLines: function (callback) {
