@@ -31,7 +31,7 @@ enyo.kind({
   create: function () {
     this.inherited(arguments);
     this.$.slaveTerminalName.setContent(this.model.get('name'));
-    if(this.model.get('finish')) {
+    if (this.model.get('finish')) {
       this.$.slaveCashUpIsClosed.setContent(OB.I18N.getLabel('OBMOBC_LblYes'));
       this.$.slaveCashUpIsClosed.addStyles("color: green");
     } else if ((!this.model.get('finish')) && (this.model.get('noOfTransactions') === 0)) {
