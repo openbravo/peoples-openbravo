@@ -219,6 +219,7 @@
       LEFT JOIN m_attributeset aset ON p.m_attributeset_id = aset.m_attributeset_id	
       WHERE p.AD_Client_ID=v_Client_ID  --    only ..
         AND p.IsActive='Y'
+        AND p.IsStocked='Y'
         AND(v_ProductValue IS NULL
         OR UPPER(p.Value) LIKE v_ProductValue)
         AND(v_Locator_ID IS NULL
