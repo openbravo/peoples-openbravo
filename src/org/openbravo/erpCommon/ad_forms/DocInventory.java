@@ -23,7 +23,6 @@ import java.util.Map;
 
 import javax.servlet.ServletException;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.costing.CostingStatus;
@@ -210,12 +209,13 @@ public class DocInventory extends AcctServer {
         setMessageResult(conn, STATUS_NotCalculatedCost, "error", parameters);
         throw new IllegalStateException();
       }
-      String costs = line.getProductCosts(DateAcct, as, conn, con);
-      log4jDocInventory.debug("CreateFact - before DR - Costs: " + costs);
+      String costs = "";
       BigDecimal b_Costs = BigDecimal.ZERO;
-      if (costs != null && !StringUtils.isBlank(costs) && !StringUtils.isEmpty(costs)) {
+      if (line.transaction != null) {
+        costs = line.getProductCosts(DateAcct, as, conn, con);
         b_Costs = new BigDecimal(costs);
       }
+      log4jDocInventory.debug("CreateFact - before DR - Costs: " + costs);
       Account assetAccount = line.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn);
       if (assetAccount == null) {
         Product product = OBDal.getInstance().get(Product.class, line.m_M_Product_ID);
