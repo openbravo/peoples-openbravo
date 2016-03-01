@@ -330,21 +330,7 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
   /**
    * Order by selectedPSDs, scheduled date and document number
    */
-  protected StringBuffer getOrderByClause(String transactionType, List<String> selectedPSDs,
-      Map<String, String> requestParameters) {
-    StringBuffer orderByClause = new StringBuffer();
-    List<String> orderByClauses = getOrderByClauses(transactionType, selectedPSDs,
-        requestParameters);
-    for (String clause : orderByClauses) {
-      orderByClause.append(clause);
-    }
-    return orderByClause;
-  }
-
-  /**
-   * Order by selectedPSDs, scheduled date and document number
-   */
-  protected List<String> getOrderByClauses(String transactionType, List<String> selectedPSDs,
+  private List<String> getOrderByClauses(String transactionType, List<String> selectedPSDs,
       Map<String, String> requestParameters) {
     List<String> orderByClauses = new ArrayList<String>();
     if (selectedPSDs.size() == 0) {
@@ -532,21 +518,7 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
     return hqlQuery;
   }
 
-  protected String appendOrderByClause(String _hqlQuery, StringBuffer orderByClause,
-      boolean justCount) {
-    String hqlQuery = _hqlQuery;
-    if (!justCount) {
-      if (hqlQuery.contains(" ORDER BY ")) {
-        hqlQuery = hqlQuery.concat(", ");
-      } else {
-        hqlQuery = hqlQuery.concat(" ORDER BY ");
-      }
-      hqlQuery = hqlQuery.concat(orderByClause.toString());
-    }
-    return hqlQuery;
-  }
-
-  protected String appendOrderByClauses(String _hqlQuery, List<String> orderByClauses,
+  private String appendOrderByClauses(String _hqlQuery, List<String> orderByClauses,
       boolean justCount) {
     final String orderby = " ORDER BY ";
     String hqlQuery = _hqlQuery;
@@ -573,7 +545,8 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
     JSONArray newCriteriaArray = new JSONArray();
     for (int i = 0; i < criteriaArray.length(); i++) {
       JSONObject criteria = criteriaArray.getJSONObject(i);
-      if (criteria.has("fieldName") && criteria.getString("fieldName").equals("id")) {
+      if (criteria.has("fieldName") && criteria.getString("fieldName").equals("id")
+          && criteria.has("value")) {
         String value = criteria.getString("value");
         for (String psdID : value.split(",")) {
           JSONObject newCriteria = criteria;

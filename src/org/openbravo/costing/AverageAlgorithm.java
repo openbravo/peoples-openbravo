@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2015 Openbravo SLU
+ * All portions are Copyright (C) 2012-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -187,13 +187,15 @@ public class AverageAlgorithm extends CostingAlgorithm {
     } else {
       costQry.setNamedParameter("org", costOrg.getId());
     }
+    costQry.setMaxResult(2);
 
     List<Costing> costList = costQry.list();
+    int size = costList.size();
     // If no average cost is found return null.
-    if (costList.size() == 0) {
+    if (size == 0) {
       return null;
     }
-    if (costList.size() > 1) {
+    if (size > 1) {
       log4j.warn("More than one cost found for same date: " + OBDateUtils.formatDate(date)
           + " for product: " + product.getName() + " (" + product.getId() + ")");
     }
@@ -239,13 +241,15 @@ public class AverageAlgorithm extends CostingAlgorithm {
     } else {
       costQry.setNamedParameter("org", costOrg.getId());
     }
+    costQry.setMaxResult(2);
 
     List<Costing> costList = costQry.list();
+    int size = costList.size();
     // If no average cost is found return null.
-    if (costList.size() == 0) {
+    if (size == 0) {
       return null;
     }
-    if (costList.size() > 1) {
+    if (size > 1) {
       log4j.warn("More than one cost found for same date: " + OBDateUtils.formatDate(date)
           + " for product: " + product.getName() + " (" + product.getId() + ")");
     }

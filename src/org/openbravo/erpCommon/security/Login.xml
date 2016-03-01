@@ -34,5 +34,7 @@
   <PARAMETER id="errorMsgContent" name="errorMsgContent" default="" />
   <PARAMETER id="identificationFailureTitle" name="identificationFailureTitle" default="" />
   <PARAMETER id="errorEmptyContent" name="errorEmptyContent" default="" />
+  <PARAMETER id="errorSamePassword" name="errorSamePassword" default="" />
+  <PARAMETER id="errorDifferentPasswordInFields" name="errorDifferentPasswordInFields" default="" />
   <PARAMETER id="sign-in" name="sign-in" default=""/>
 </REPORT>

@@ -627,7 +627,11 @@ OB.Utilities.registerClassicPopupInTestRegistry = function (url, obj) {
     var index = url.indexOf('/', 1);
     url = url.substring(index + 1);
   }
-  OB.TestRegistry.register('org.openbravo.classicpopup.' + url, obj);
+  if (url.indexOf('?') !== -1 && url.indexOf('Command') === -1) {
+    OB.TestRegistry.register('org.openbravo.classicpopup.' + url.substring(0, url.indexOf('?')), obj);
+  } else {
+    OB.TestRegistry.register('org.openbravo.classicpopup.' + url, obj);
+  }
 };
 
 // ** {{{ OB.Utilities.isNonEmptyString(/*String*/ strValue }}} **

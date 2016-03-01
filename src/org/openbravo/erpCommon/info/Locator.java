@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -202,7 +202,8 @@ public class Locator extends HttpSecureAppServlet {
     html.append("\nfunction validateSelector() {\n");
     html.append("var key = \"" + data[0].mLocatorId + "\";\n");
     html.append("var text = \"" + Replace.replace(data[0].value, "\"", "\\\"") + "\";\n");
-    html.append("parent.opener.closeSearch(\"SAVE\", key, text);\n");
+    html.append("var theOpener = parent.opener || getFrame('LayoutMDI');\n");
+    html.append("theOpener.closeSearch(\"SAVE\", key, text);\n");
     html.append("}\n");
     return html.toString();
   }

@@ -74,8 +74,6 @@ public class DefaultJsonDataService implements JsonDataService {
 
   private static final String ADD_FLAG = "_doingAdd";
 
-  private static final String ALLOW_UNPAGED_DS_MANUAL_REQUEST = "OBJSON_AllowUnpagedDatasourceManualRequest";
-
   @Inject
   private CachedPreference cachedPreference;
 
@@ -476,8 +474,8 @@ public class DefaultJsonDataService implements JsonDataService {
 
         // for standard tab and selector datasources pagination is mandatory
         throw new OBException(OBMessageUtils.messageBD("OBJSON_NoPagedFetch"));
-      } else if (!"Y".equals(cachedPreference.getPreferenceValue(ALLOW_UNPAGED_DS_MANUAL_REQUEST))
-          && !isWsCall) {
+      } else if (!"Y".equals(cachedPreference
+          .getPreferenceValue(CachedPreference.ALLOW_UNPAGED_DS_MANUAL_REQUEST)) && !isWsCall) {
         throw new OBException(OBMessageUtils.messageBD("OBJSON_NoPagedFetchManual"));
       }
     }
@@ -771,17 +769,19 @@ public class DefaultJsonDataService implements JsonDataService {
           }
         }
 
-        // refresh the objects from the db as they can have changed
-        // put the refreshed objects into a new array as we are going to retrieve them using
-        // OBDal.getInstance().get as performs better than OBDal.getInstance().getSession().refresh
-        // See issue https://issues.openbravo.com/view.php?id=30308
+        // Objects might have been modified in DB through triggers, let's force them to be fetched
+        // DB again, to do so session is cleared (any possible modification is already persisted by
+        // previous flush).
+        // Using OBDal.refresh does not perform well, see issue
+        // https://issues.openbravo.com/view.php?id=30308
+        OBDal.getInstance().getSession().clear();
+
         final List<BaseOBObject> refreshedBobs = new ArrayList<BaseOBObject>();
         for (BaseOBObject bob : bobs) {
-          // Remove the bob instance from the session cache with evict
-          OBDal.getInstance().getSession().evict(bob);
-          // With get() we retrieve the object from db as we have cleared it from cache with evict()
+          // forcing fetch from DB
           BaseOBObject refreshedBob = OBDal.getInstance().get(bob.getEntityName(),
               DalUtil.getId(bob));
+
           // if object has computed columns refresh from the database too
           if (refreshedBob.getEntity().hasComputedColumns()) {
             OBDal.getInstance().getSession()
@@ -790,7 +790,7 @@ public class DefaultJsonDataService implements JsonDataService {
           refreshedBobs.add(refreshedBob);
         }
 
-        // almost successfull, now create the response
+        // almost successful, now create the response
         // needs to be done before the close of the session
         final DataToJsonConverter toJsonConverter = OBProvider.getInstance().get(
             DataToJsonConverter.class);

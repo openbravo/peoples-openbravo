@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2009-2015 Openbravo SLU
+ * All portions are Copyright (C) 2009-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -151,7 +151,8 @@ public class AccountElementValue extends HttpSecureAppServlet {
     html.append("\nfunction validateSelector() {\n");
     html.append("var key = \"" + data[0].cElementvalueId + "\";\n");
     html.append("var text = \"" + Replace.replace(data[0].name, "\"", "\\\"") + "\";\n");
-    html.append("parent.opener.closeSearch(\"SAVE\", key, text, null);\n");
+    html.append("var theOpener = parent.opener || getFrame('LayoutMDI');\n");
+    html.append("theOpener.closeSearch(\"SAVE\", key, text, null);\n");
     html.append("}\n");
     return html.toString();
   }
@@ -319,15 +320,15 @@ public class AccountElementValue extends HttpSecureAppServlet {
           data = AccountElementValueData.select(this, "ROWNUM", strAcctSchema, strValue, strName,
               strOrganization, strAccountElementValue,
               Utility.getContext(this, vars, "#User_Client", "AccountElementValue"),
-              Utility.getContext(this, vars, "#AccessibleOrgTree", "AccountElementValue"), strOrderBy,
-              oraLimit, "");
+              Utility.getContext(this, vars, "#AccessibleOrgTree", "AccountElementValue"),
+              strOrderBy, oraLimit, "");
         } else {
           String pgLimit = pageSize + " OFFSET " + offset;
           data = AccountElementValueData.select(this, "1", strAcctSchema, strValue, strName,
               strOrganization, strAccountElementValue,
               Utility.getContext(this, vars, "#User_Client", "AccountElementValue"),
-              Utility.getContext(this, vars, "#AccessibleOrgTree", "AccountElementValue"), strOrderBy, "",
-              pgLimit);
+              Utility.getContext(this, vars, "#AccessibleOrgTree", "AccountElementValue"),
+              strOrderBy, "", pgLimit);
         }
       } catch (ServletException e) {
         log4j.error("Error in print page data: " + e);

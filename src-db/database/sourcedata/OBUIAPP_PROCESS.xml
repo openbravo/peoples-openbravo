@@ -457,7 +457,9 @@ Sets all transactions prior to the reference date as permanently adjusted.]]></H
 <!--B05273730AA14DAEA91EAC7A828C8026-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--B05273730AA14DAEA91EAC7A828C8026-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--B05273730AA14DAEA91EAC7A828C8026-->  <VALUE><![CDATA[PriceDifferenceByDateProcess]]></VALUE>
-<!--B05273730AA14DAEA91EAC7A828C8026-->  <NAME><![CDATA[Process Price Difference adjustment]]></NAME>
+<!--B05273730AA14DAEA91EAC7A828C8026-->  <NAME><![CDATA[Process Price Difference Adjustment]]></NAME>
+<!--B05273730AA14DAEA91EAC7A828C8026-->  <DESCRIPTION><![CDATA[This process allows to adjust the cost of a transaction, caused by a price difference between the order and the corresponding invoice.]]></DESCRIPTION>
+<!--B05273730AA14DAEA91EAC7A828C8026-->  <HELP><![CDATA[Price difference adjustments can be performed "automatically" by scheduling the "Price Correction Background Process" or manually for a given product or set of products by running this process.]]></HELP>
 <!--B05273730AA14DAEA91EAC7A828C8026-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--B05273730AA14DAEA91EAC7A828C8026-->  <CLASSNAME><![CDATA[org.openbravo.costing.PriceDifferenceByDateProcess]]></CLASSNAME>
 <!--B05273730AA14DAEA91EAC7A828C8026-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>

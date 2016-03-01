@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2014-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2014-2016 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -13094,11 +13094,17 @@ public class TestCosting extends WeldBaseTest {
           rate = BigDecimal.ONE;
         }
 
-        else if ((document.getEntityName().equals(ShipmentInOut.ENTITY_NAME) || document
-            .getEntityName().equals(CostAdjustment.ENTITY_NAME))
+        else if ((document.getEntityName().equals(ShipmentInOut.ENTITY_NAME)
+            || document.getEntityName().equals(CostAdjustment.ENTITY_NAME) || (document
+            .getEntityName().equals(ReceiptInvoiceMatch.ENTITY_NAME) && (line.getEntityName()
+            .equals(ShipmentInOutLine.ENTITY_NAME) || (line.getEntityName().equals(
+            InvoiceLine.ENTITY_NAME) && ((InvoiceLine) line).getInvoice().getCurrency()
+            .equals(CURRENCY2_ID)))))
             && OBDal.getInstance().get(Organization.class, ORGANIZATION_ID).getCurrency() != null
             && OBDal.getInstance().get(Organization.class, ORGANIZATION_ID).getCurrency().getId()
-                .equals(CURRENCY2_ID)) {
+                .equals(CURRENCY2_ID)
+            && !accountingFact.getCurrency().getId()
+                .equals(accountingFact.getAccountingSchema().getCurrency().getId())) {
           Calendar calendar = Calendar.getInstance();
           calendar.set(9999, 0, 1);
           OBCriteria<ConversionRate> criteria = OBDal.getInstance().createCriteria(
@@ -13111,6 +13117,15 @@ public class TestCosting extends WeldBaseTest {
               OBDal.getInstance().get(Currency.class, CURRENCY2_ID)));
           criteria.add(Restrictions.ge(ConversionRate.PROPERTY_VALIDTODATE, calendar.getTime()));
           rate = criteria.list().get(0).getMultipleRateBy();
+        }
+
+        else if (document.getEntityName().equals(ReceiptInvoiceMatch.ENTITY_NAME)
+            && line.getEntityName().equals(InvoiceLine.ENTITY_NAME)
+            && !((InvoiceLine) line).getInvoice().getCurrencyConversionRateDocList().isEmpty()
+            && BigDecimal.ZERO.compareTo(((InvoiceLine) line).getInvoice()
+                .getCurrencyConversionRateDocList().get(0).getRate()) != 0) {
+          rate = BigDecimal.ONE.divide(((InvoiceLine) line).getInvoice()
+              .getCurrencyConversionRateDocList().get(0).getRate());
         }
 
         assertEquals(
@@ -13243,6 +13258,9 @@ public class TestCosting extends WeldBaseTest {
         if ((productId != null && productId.equals(LANDEDCOSTTYPE3_ID))
             || (document.getEntityName().equals(Invoice.ENTITY_NAME) && ((Invoice) document)
                 .getCurrency().getId().equals(CURRENCY2_ID))
+            || (document.getEntityName().equals(ReceiptInvoiceMatch.ENTITY_NAME)
+                && line.getEntityName().equals(InvoiceLine.ENTITY_NAME) && ((InvoiceLine) line)
+                .getInvoice().getCurrency().getId().equals(CURRENCY2_ID))
             || (document.getEntityName().equals(LandedCost.ENTITY_NAME) && ((LCReceiptLineAmt) line)
                 .getLandedCostCost()
                 .getLandedCostType()
@@ -13253,10 +13271,12 @@ public class TestCosting extends WeldBaseTest {
                 && ((LCMatched) line).getInvoiceLine().getProduct() != null && ((LCMatched) line)
                 .getInvoiceLine().getProduct().getId().equals(LANDEDCOSTTYPE3_ID))
             || (!document.getEntityName().equals(Invoice.ENTITY_NAME)
-                && !document.getEntityName().equals(ReceiptInvoiceMatch.ENTITY_NAME)
-                && OBDal.getInstance().get(Organization.class, ORGANIZATION_ID).getCurrency() != null && OBDal
-                .getInstance().get(Organization.class, ORGANIZATION_ID).getCurrency().getId()
-                .equals(CURRENCY2_ID))) {
+                && !(document.getEntityName().equals(ReceiptInvoiceMatch.ENTITY_NAME) && line
+                    .getEntityName().equals(InvoiceLine.ENTITY_NAME))
+                && OBDal.getInstance().get(Organization.class, ORGANIZATION_ID).getCurrency() != null
+                && OBDal.getInstance().get(Organization.class, ORGANIZATION_ID).getCurrency()
+                    .getId().equals(CURRENCY2_ID) && !accountingFact.getCurrency().getId()
+                .equals(accountingFact.getAccountingSchema().getCurrency().getId()))) {
           assertEquals(accountingFact.getCurrency(),
               OBDal.getInstance().get(Currency.class, CURRENCY2_ID));
         } else {

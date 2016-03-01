@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2015 Openbravo SLU
+ * All portions are Copyright (C) 2014-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -172,7 +172,7 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
         log.debug("Negative stock correction. Amount: {}, new cost {}", negCorrAmt.toPlainString(),
             cost.toPlainString());
       }
-      if (basetrx.getMaterialMgmtCostingList().size() == 0) {
+      if (basetrx.getMaterialMgmtCostingList().isEmpty()) {
         Date newDate = new Date();
         Date dateTo = costing.getEndingDate();
         costing.setEndingDate(newDate);
@@ -388,7 +388,7 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
                   .toPlainString());
             }
           }
-          if (trx.getMaterialMgmtCostingList().size() != 0) {
+          if (!trx.getMaterialMgmtCostingList().isEmpty()) {
             Costing curCosting = trx.getMaterialMgmtCostingList().get(0);
             if (currentStock.signum() != 0) {
               cost = currentValueAmt.add(adjustmentBalance).divide(currentStock, costCurPrecission,
@@ -943,10 +943,7 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
         CostAdjustmentLine.class);
     critLines.add(Restrictions.eq(CostAdjustmentLine.PROPERTY_INVENTORYTRANSACTION, trx));
     critLines.add(Restrictions.eq(CostAdjustmentLine.PROPERTY_ISBACKDATEDTRX, true));
-    final List<CostAdjustmentLine> critLinesList = critLines.list();
-    if (critLinesList.size() > 0) {
-      return true;
-    }
-    return false;
+    critLines.setMaxResults(1);
+    return critLines.uniqueResult() != null;
   }
 }

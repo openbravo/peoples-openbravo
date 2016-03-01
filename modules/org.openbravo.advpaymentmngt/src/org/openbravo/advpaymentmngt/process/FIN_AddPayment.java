@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2015 Openbravo SLU
+ * All portions are Copyright (C) 2010-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -133,6 +133,10 @@ public class FIN_AddPayment {
    *          this payment. Defaults to 1.0 if not supplied
    * @param finTxnAmount
    *          Amount of payment in currency of financial account
+   * @param doFlush
+   *          Force to flush inside the method after creating the payment
+   * @param paymentId
+   *          id to set in new entities
    * @return The FIN_Payment OBObject containing all the Payment Details.
    */
   public static FIN_Payment savePayment(FIN_Payment _payment, boolean isReceipt,
@@ -142,7 +146,7 @@ public class FIN_AddPayment {
       List<FIN_PaymentScheduleDetail> selectedPaymentScheduleDetails,
       HashMap<String, BigDecimal> selectedPaymentScheduleDetailsAmounts, boolean isWriteoff,
       boolean isRefund, Currency paymentCurrency, BigDecimal finTxnConvertRate,
-      BigDecimal finTxnAmount) {
+      BigDecimal finTxnAmount, boolean doFlush, String paymentId) {
     dao = new AdvPaymentMngtDao();
 
     BigDecimal assignedAmount = BigDecimal.ZERO;
@@ -152,11 +156,13 @@ public class FIN_AddPayment {
     } else {
       payment = dao.getNewPayment(isReceipt, organization, docType, strPaymentDocumentNo,
           businessPartner, paymentMethod, finAccount, strPaymentAmount, paymentDate, referenceNo,
-          paymentCurrency, finTxnConvertRate, finTxnAmount);
-      try {
-        OBDal.getInstance().flush();
-      } catch (Exception e) {
-        throw new OBException(FIN_Utility.getExceptionMessage(e));
+          paymentCurrency, finTxnConvertRate, finTxnAmount, paymentId);
+      if (doFlush) {
+        try {
+          OBDal.getInstance().flush();
+        } catch (Exception e) {
+          throw new OBException(FIN_Utility.getExceptionMessage(e));
+        }
       }
     }
 
@@ -174,15 +180,16 @@ public class FIN_AddPayment {
         OBDal.getInstance().refresh(paymentScheduleDetail);
 
         BigDecimal assignedAmountDiff = updatePaymentDetail(paymentScheduleDetail, payment,
-            paymentDetailAmount, isWriteoff);
+            paymentDetailAmount, isWriteoff, doFlush);
         assignedAmount = assignedAmount.add(assignedAmountDiff);
       }
       // TODO: Review this condition !=0??
       if (assignedAmount.compareTo(payment.getAmount()) == -1) {
         FIN_PaymentScheduleDetail refundScheduleDetail = dao.getNewPaymentScheduleDetail(
-            payment.getOrganization(), payment.getAmount().subtract(assignedAmount));
+            payment.getOrganization(), payment.getAmount().subtract(assignedAmount), paymentId);
         dao.getNewPaymentDetail(payment, refundScheduleDetail,
-            payment.getAmount().subtract(assignedAmount), BigDecimal.ZERO, false, null);
+            payment.getAmount().subtract(assignedAmount), BigDecimal.ZERO, false, null, true,
+            paymentId);
       }
     } catch (final Exception e) {
       e.printStackTrace(System.err);
@@ -192,6 +199,71 @@ public class FIN_AddPayment {
     }
 
     return payment;
+  }
+
+  /**
+   * Saves the payment and the payment details based on the given Payment Schedule Details. If no
+   * FIN_Payment is given it creates a new one.
+   * 
+   * If the Payment Scheduled Detail is not completely paid and the difference is not written a new
+   * Payment Schedule Detail is created with the difference.
+   * 
+   * If a Refund Amount is given an extra Payment Detail will be created with it.
+   * 
+   * @param _payment
+   *          FIN_Payment where new payment details will be saved.
+   * @param isReceipt
+   *          boolean to define if the Payment is a Receipt Payment (true) or a Payable Payment
+   *          (false). Used when no FIN_Payment is given.
+   * @param docType
+   *          DocumentType of the Payment. Used when no FIN_Payment is given.
+   * @param strPaymentDocumentNo
+   *          String with the Document Number of the new payment. Used when no FIN_Payment is given.
+   * @param businessPartner
+   *          BusinessPartner of the new Payment. Used when no FIN_Payment is given.
+   * @param paymentMethod
+   *          FIN_PaymentMethod of the new Payment. Used when no FIN_Payment is given.
+   * @param finAccount
+   *          FIN_FinancialAccount of the new Payment. Used when no FIN_Payment is given.
+   * @param strPaymentAmount
+   *          String with the Payment Amount of the new Payment. Used when no FIN_Payment is given.
+   * @param paymentDate
+   *          Date when the Payment is done. Used when no FIN_Payment is given.
+   * @param organization
+   *          Organization of the new Payment. Used when no FIN_Payment is given.
+   * @param selectedPaymentScheduleDetails
+   *          List of FIN_PaymentScheduleDetail to be included in the Payment. If one of the items
+   *          is contained in other payment the method will throw an exception. Prevent
+   *          invoice/order to be paid several times.
+   * @param selectedPaymentScheduleDetailsAmounts
+   *          HashMap with the Amount to be paid for each Scheduled Payment Detail.
+   * @param isWriteoff
+   *          Boolean to write off the difference when the payment amount is lower than the Payment
+   *          Scheduled PAyment Detail amount.
+   * @param isRefund
+   *          Not used.
+   * @param paymentCurrency
+   *          The currency that the payment is being made in. Will default to financial account
+   *          currency if not specified
+   * @param finTxnConvertRate
+   *          Exchange rate to convert between payment currency and financial account currency for
+   *          this payment. Defaults to 1.0 if not supplied
+   * @param finTxnAmount
+   *          Amount of payment in currency of financial account
+   * @return The FIN_Payment OBObject containing all the Payment Details.
+   */
+  public static FIN_Payment savePayment(FIN_Payment _payment, boolean isReceipt,
+      DocumentType docType, String strPaymentDocumentNo, BusinessPartner businessPartner,
+      FIN_PaymentMethod paymentMethod, FIN_FinancialAccount finAccount, String strPaymentAmount,
+      Date paymentDate, Organization organization, String referenceNo,
+      List<FIN_PaymentScheduleDetail> selectedPaymentScheduleDetails,
+      HashMap<String, BigDecimal> selectedPaymentScheduleDetailsAmounts, boolean isWriteoff,
+      boolean isRefund, Currency paymentCurrency, BigDecimal finTxnConvertRate,
+      BigDecimal finTxnAmount) {
+    return savePayment(_payment, isReceipt, docType, strPaymentDocumentNo, businessPartner,
+        paymentMethod, finAccount, strPaymentAmount, paymentDate, organization, referenceNo,
+        selectedPaymentScheduleDetails, selectedPaymentScheduleDetailsAmounts, isWriteoff,
+        isRefund, paymentCurrency, finTxnConvertRate, finTxnAmount, true, null);
   }
 
   /*
@@ -207,7 +279,65 @@ public class FIN_AddPayment {
     return savePayment(_payment, isReceipt, docType, strPaymentDocumentNo, businessPartner,
         paymentMethod, finAccount, strPaymentAmount, paymentDate, organization, referenceNo,
         selectedPaymentScheduleDetails, selectedPaymentScheduleDetailsAmounts, isWriteoff,
-        isRefund, null, null, null);
+        isRefund, null, null, null, true, null);
+  }
+
+  /**
+   * Saves the payment and the payment details based on the given Payment Schedule Details. If no
+   * FIN_Payment is given it creates a new one.
+   * 
+   * If the Payment Scheduled Detail is not completely paid and the difference is not written a new
+   * Payment Schedule Detail is created with the difference.
+   * 
+   * If a Refund Amount is given an extra Payment Detail will be created with it.
+   * 
+   * @param _payment
+   *          FIN_Payment where new payment details will be saved.
+   * @param isReceipt
+   *          boolean to define if the Payment is a Receipt Payment (true) or a Payable Payment
+   *          (false). Used when no FIN_Payment is given.
+   * @param docType
+   *          DocumentType of the Payment. Used when no FIN_Payment is given.
+   * @param strPaymentDocumentNo
+   *          String with the Document Number of the new payment. Used when no FIN_Payment is given.
+   * @param businessPartner
+   *          BusinessPartner of the new Payment. Used when no FIN_Payment is given.
+   * @param paymentMethod
+   *          FIN_PaymentMethod of the new Payment. Used when no FIN_Payment is given.
+   * @param finAccount
+   *          FIN_FinancialAccount of the new Payment. Used when no FIN_Payment is given.
+   * @param strPaymentAmount
+   *          String with the Payment Amount of the new Payment. Used when no FIN_Payment is given.
+   * @param paymentDate
+   *          Date when the Payment is done. Used when no FIN_Payment is given.
+   * @param organization
+   *          Organization of the new Payment. Used when no FIN_Payment is given.
+   * @param selectedPaymentScheduleDetails
+   *          List of FIN_PaymentScheduleDetail to be included in the Payment. If one of the items
+   *          is contained in other payment the method will throw an exception. Prevent
+   *          invoice/order to be paid several times.
+   * @param selectedPaymentScheduleDetailsAmounts
+   *          HashMap with the Amount to be paid for each Scheduled Payment Detail.
+   * @param isWriteoff
+   *          Boolean to write off the difference when the payment amount is lower than the Payment
+   *          Scheduled PAyment Detail amount.
+   * @param isRefund
+   *          Not used.
+   * @param doFlush
+   *          Force to flush inside the method after creating the payment
+   * @return The FIN_Payment OBObject containing all the Payment Details.
+   */
+  public static FIN_Payment savePayment(FIN_Payment _payment, boolean isReceipt,
+      DocumentType docType, String strPaymentDocumentNo, BusinessPartner businessPartner,
+      FIN_PaymentMethod paymentMethod, FIN_FinancialAccount finAccount, String strPaymentAmount,
+      Date paymentDate, Organization organization, String referenceNo,
+      List<FIN_PaymentScheduleDetail> selectedPaymentScheduleDetails,
+      HashMap<String, BigDecimal> selectedPaymentScheduleDetailsAmounts, boolean isWriteoff,
+      boolean isRefund, boolean doFlush) {
+    return savePayment(_payment, isReceipt, docType, strPaymentDocumentNo, businessPartner,
+        paymentMethod, finAccount, strPaymentAmount, paymentDate, organization, referenceNo,
+        selectedPaymentScheduleDetails, selectedPaymentScheduleDetailsAmounts, isWriteoff,
+        isRefund, null, null, null, doFlush, null);
   }
 
   /**
@@ -231,6 +361,34 @@ public class FIN_AddPayment {
    */
   public static BigDecimal updatePaymentDetail(FIN_PaymentScheduleDetail paymentScheduleDetail,
       FIN_Payment payment, BigDecimal paymentDetailAmount, boolean isWriteoff) throws OBException {
+    return updatePaymentDetail(paymentScheduleDetail, payment, paymentDetailAmount, isWriteoff,
+        true);
+  }
+
+  /**
+   * Updates the paymentScheduleDetail with the paymentDetailAmount. If it is not related to the
+   * Payment a new Payment Detail is created. If isWriteoff is true and the amount is different to
+   * the outstanding amount the difference is written off.
+   * 
+   * @param paymentScheduleDetail
+   *          the Payment Schedule Detail to be assigned to the Payment
+   * @param payment
+   *          the FIN_Payment that it is being paid
+   * @param paymentDetailAmount
+   *          the amount of this paymentScheduleDetail that it is being paid
+   * @param isWriteoff
+   *          flag to write off the difference when there is an outstanding amount remaining to pay
+   * @param doFlush
+   *          Force to flush inside the method
+   * @return a BigDecimal with the amount newly assigned to the payment. For example, when the
+   *         paymentScheduleDetail is already related to the payment and its amount is not changed
+   *         BigDecimal.ZERO is returned.
+   * @throws OBException
+   *           when the paymentDetailAmount is related to a different payment.
+   */
+  public static BigDecimal updatePaymentDetail(FIN_PaymentScheduleDetail paymentScheduleDetail,
+      FIN_Payment payment, BigDecimal paymentDetailAmount, boolean isWriteoff, boolean doFlush)
+      throws OBException {
     BigDecimal assignedAmount = paymentDetailAmount;
     if (paymentScheduleDetail.getPaymentDetails() != null) {
       if (!paymentScheduleDetail.getPaymentDetails().getFinPayment().getId()
@@ -365,7 +523,7 @@ public class FIN_AddPayment {
         OBDal.getInstance().save(paymentScheduleDetail);
       }
       dao.getNewPaymentDetail(payment, paymentScheduleDetail, paymentDetailAmount,
-          amountDifference, false, null);
+          amountDifference, false, null, doFlush, null);
     }
     return assignedAmount;
   }
@@ -502,23 +660,30 @@ public class FIN_AddPayment {
    *          Amount of the new Payment Detail.
    * @param glitem
    *          GLItem to be set in the new Payment Detail.
+   * @param paymentId
+   *          id to set in new entities
    */
-  public static void saveGLItem(FIN_Payment payment, BigDecimal glitemAmount, GLItem glitem) {
+  public static void saveGLItem(FIN_Payment payment, BigDecimal glitemAmount, GLItem glitem,
+      String paymentId) {
     // FIXME: added to access the FIN_PaymentSchedule and FIN_PaymentScheduleDetail tables to be
     // removed when new security implementation is done
     dao = new AdvPaymentMngtDao();
     OBContext.setAdminMode();
     try {
       FIN_PaymentScheduleDetail psd = dao.getNewPaymentScheduleDetail(payment.getOrganization(),
-          glitemAmount);
+          glitemAmount, paymentId);
       FIN_PaymentDetail pd = dao.getNewPaymentDetail(payment, psd, glitemAmount, BigDecimal.ZERO,
-          false, glitem);
+          false, glitem, true, paymentId);
       pd.setFinPayment(payment);
       OBDal.getInstance().save(pd);
       OBDal.getInstance().save(payment);
     } finally {
       OBContext.restorePreviousMode();
     }
+  }
+
+  public static void saveGLItem(FIN_Payment payment, BigDecimal glitemAmount, GLItem glitem) {
+    saveGLItem(payment, glitemAmount, glitem, null);
   }
 
   /**
@@ -1414,6 +1579,38 @@ public class FIN_AddPayment {
     parameters.put("Fin_Payment_ID", payment.getId());
     parameters.put("comingFrom", comingFrom);
     parameters.put("selectedCreditLineIds", selectedCreditLineIds);
+    pb.setParams(parameters);
+    OBError myMessage = null;
+    new FIN_PaymentProcess().execute(pb);
+    myMessage = (OBError) pb.getResult();
+    return myMessage;
+  }
+
+  /**
+   * It calls the Payment Process using the given ProcessBundle
+   * 
+   * @param pb
+   *          ProcessBundle already created and initialized. This improves the performance when
+   *          calling this method in a loop
+   * @param payment
+   *          FIN_Payment that needs to be processed.
+   * @param comingFrom
+   *          Origin where the process is invoked
+   * @param selectedCreditLineIds
+   *          Id's of selected lines in Credit to Use grid
+   * @param doFlush
+   *          Force to flush inside the method
+   * @return a OBError with the result message of the process.
+   * @throws Exception
+   */
+  public static OBError processPayment(ProcessBundle pb, String strAction, FIN_Payment payment,
+      String comingFrom, String selectedCreditLineIds, boolean doFlush) throws Exception {
+    HashMap<String, Object> parameters = new HashMap<String, Object>();
+    parameters.put("action", strAction);
+    parameters.put("Fin_Payment_ID", payment.getId());
+    parameters.put("comingFrom", comingFrom);
+    parameters.put("selectedCreditLineIds", selectedCreditLineIds);
+    parameters.put("doFlush", doFlush);
     pb.setParams(parameters);
     OBError myMessage = null;
     new FIN_PaymentProcess().execute(pb);

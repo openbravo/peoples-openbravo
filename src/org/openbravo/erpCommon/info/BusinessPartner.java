@@ -227,7 +227,8 @@ public class BusinessPartner extends HttpSecureAppServlet {
     html.append("new SearchElements(\"_LOC\", true, \"" + data[0].cBpartnerLocationId + "\"),\n");
     html.append("new SearchElements(\"_CON\", true, \"" + data[0].cBpartnerContactId + "\")\n");
     html.append(");\n");
-    html.append("parent.opener.closeSearch(\"SAVE\", key, text, parameter);\n");
+    html.append("var theOpener = parent.opener || getFrame('LayoutMDI');\n");
+    html.append("theOpener.closeSearch(\"SAVE\", key, text, parameter);\n");
     html.append("}\n");
     return html.toString();
   }

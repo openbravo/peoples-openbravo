@@ -124,6 +124,7 @@ public class PaymentReport extends HttpSecureAppServlet {
       String strPaymType = vars.getGlobalVariable("inpPaymType", "PaymentReport|PaymentType",
           "FINPR_RecPay");
       String strOverdue = vars.getGlobalVariable("inpOverdue", "PaymentReport|Overdue", "");
+      String strBAZero = vars.getGlobalVariable("inpBAZero", "PaymentReport|BAZero", "Y");
       String strGroupCrit = vars.getGlobalVariable("inpGroupCrit", "PaymentReport|GroupCrit", "");
       String strOrdCrit = vars.getInGlobalVariable("inpShown", "PaymentReport|OrdCrit", "",
           new ValueListFilter("Date", "APRM_FATS_BPARTNER", "Project", "INS_CURRENCY",
@@ -134,8 +135,8 @@ public class PaymentReport extends HttpSecureAppServlet {
           strExpectedDateFrom, strExpectedDateTo, strAmountFrom, strAmountTo, strDocumentDateFrom,
           strDocumentDateTo, strcBPartnerIdIN, strcBPGroupIdIN, strcNoBusinessPartner,
           strcProjectIdIN, strfinPaymSt, strPaymentMethodId, strFinancialAccountId, strcCurrency,
-          strConvertCurrency, strConversionDate, strPaymType, strOverdue, strGroupCrit, strOrdCrit,
-          strInclPaymentUsingCredit, strPaymentDateFrom, strPaymentDateTo);
+          strConvertCurrency, strConversionDate, strPaymType, strOverdue, strBAZero, strGroupCrit,
+          strOrdCrit, strInclPaymentUsingCredit, strPaymentDateFrom, strPaymentDateTo);
       // DIRECT is used when coming from Aging Balance Report
     } else if (vars.commandIn("FIND", "DIRECT")) {
       String strOrg = vars.getRequestGlobalVariable("inpOrg", "PaymentReport|Organization");
@@ -201,6 +202,7 @@ public class PaymentReport extends HttpSecureAppServlet {
       String strPaymType = vars
           .getRequestGlobalVariable("inpPaymType", "PaymentReport|PaymentType");
       String strOverdue = vars.getRequestGlobalVariable("inpOverdue", "PaymentReport|Overdue");
+      String strBAZero = vars.getRequestGlobalVariable("inpBAZero", "PaymentReport|BAZero");
       String strGroupCrit = vars
           .getRequestGlobalVariable("inpGroupCrit", "PaymentReport|GroupCrit");
       String strOrdCrit = vars.getRequestInGlobalVariable("inpShown", "PaymentReport|OrdCrit",
@@ -213,8 +215,8 @@ public class PaymentReport extends HttpSecureAppServlet {
           strExpectedDateFrom, strExpectedDateTo, strAmountFrom, strAmountTo, strDocumentDateFrom,
           strDocumentDateTo, strcBPartnerIdIN, strcBPGroupIdIN, strcNoBusinessPartner,
           strcProjectIdIN, strfinPaymSt, strPaymentMethodId, strFinancialAccountId, strcCurrency,
-          strConvertCurrency, strConversionDate, strPaymType, strOverdue, strGroupCrit, strOrdCrit,
-          strInclPaymentUsingCredit, strPaymentDateFrom, strPaymentDateTo);
+          strConvertCurrency, strConversionDate, strPaymType, strOverdue, strBAZero, strGroupCrit,
+          strOrdCrit, strInclPaymentUsingCredit, strPaymentDateFrom, strPaymentDateTo);
     } else if (vars.commandIn("PDF", "XLS")) {
       String strOrg = vars.getRequestGlobalVariable("inpOrg", "PaymentReport|Organization");
       String strInclSubOrg = vars.getRequestGlobalVariable("inpInclSubOrg",
@@ -263,6 +265,7 @@ public class PaymentReport extends HttpSecureAppServlet {
       String strPaymType = vars
           .getRequestGlobalVariable("inpPaymType", "PaymentReport|PaymentType");
       String strOverdue = vars.getRequestGlobalVariable("inpOverdue", "PaymentReport|Overdue");
+      String strBAZero = vars.getRequestGlobalVariable("inpBAZero", "PaymentReport|BAZero");
       String strGroupCrit = vars
           .getRequestGlobalVariable("inpGroupCrit", "PaymentReport|GroupCrit");
       String strOrdCrit = vars.getRequestInGlobalVariable("inpShown", "PaymentReport|OrdCrit",
@@ -281,8 +284,8 @@ public class PaymentReport extends HttpSecureAppServlet {
           strExpectedDateFrom, strExpectedDateTo, strAmountFrom, strAmountTo, strDocumentDateFrom,
           strDocumentDateTo, strcBPartnerIdIN, strcBPGroupIdIN, strcNoBusinessPartner,
           strcProjectIdIN, strfinPaymSt, strPaymentMethodId, strFinancialAccountId, strcCurrency,
-          strConvertCurrency, strConversionDate, strPaymType, strOverdue, strOutput, strGroupCrit,
-          strOrdCrit, strInclPaymentUsingCredit, strPaymentDateFrom, strPaymentDateTo);
+          strConvertCurrency, strConversionDate, strPaymType, strOverdue, strBAZero, strOutput,
+          strGroupCrit, strOrdCrit, strInclPaymentUsingCredit, strPaymentDateFrom, strPaymentDateTo);
 
     } else if (vars.commandIn("LINK")) {
       String strTableId = vars.getRequiredStringParameter("inpAdTableId", IsIDFilter.instance);
@@ -312,9 +315,9 @@ public class PaymentReport extends HttpSecureAppServlet {
       String strcBPartnerIdIN, String strcBPGroupIdIN, String strcNoBusinessPartner,
       String strcProjectIdIN, String strfinPaymSt, String strPaymentMethodId,
       String strFinancialAccountId, String strcCurrency, String strConvertCurrency,
-      String strConversionDate, String strPaymType, String strOverdue, String strGroupCrit,
-      String strOrdCrit, String strInclPaymentUsingCredit, String strPaymentDateFrom,
-      String strPaymentDateTo) throws IOException, ServletException {
+      String strConversionDate, String strPaymType, String strOverdue, String strBAZero,
+      String strGroupCrit, String strOrdCrit, String strInclPaymentUsingCredit,
+      String strPaymentDateFrom, String strPaymentDateTo) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
     XmlDocument xmlDocument = null;
@@ -330,7 +333,7 @@ public class PaymentReport extends HttpSecureAppServlet {
             strAmountFrom, strAmountTo, strDocumentDateFrom, strDocumentDateTo, strcBPartnerIdIN,
             strcBPGroupIdIN, strcNoBusinessPartner, strcProjectIdIN, strfinPaymSt,
             strPaymentMethodId, strFinancialAccountId, strcCurrency, strConvertCurrency,
-            strConversionDate, strPaymType, strOverdue, strGroupCrit, strOrdCrit,
+            strConversionDate, strPaymType, strOverdue, strBAZero, strGroupCrit, strOrdCrit,
             strInclPaymentUsingCredit, strPaymentDateFrom, strPaymentDateTo, strExpectedDateFrom,
             strExpectedDateTo, "HTML");
       } catch (OBException e) {
@@ -632,7 +635,8 @@ public class PaymentReport extends HttpSecureAppServlet {
 
     xmlDocument.setData("reportPaymType", "liststructure", objectListData);
 
-    xmlDocument.setParameter("paramOver", !strOverdue.equals("Y") ? "0" : "1");
+    xmlDocument.setParameter("paramOver", strOverdue);
+    xmlDocument.setParameter("paramZero", strBAZero);
 
     xmlDocument.setParameter("groupCrit", strGroupCrit);
 
@@ -752,8 +756,9 @@ public class PaymentReport extends HttpSecureAppServlet {
       String strcNoBusinessPartner, String strcProjectIdIN, String strfinPaymSt,
       String strPaymentMethodId, String strFinancialAccountId, String strcCurrency,
       String strConvertCurrency, String strConversionDate, String strPaymType, String strOverdue,
-      String strOutput, String strGroupCrit, String strOrdCrit, String strInclPaymentUsingCredit,
-      String strPaymentDateFrom, String strPaymentDateTo) throws IOException, ServletException {
+      String strBAZero, String strOutput, String strGroupCrit, String strOrdCrit,
+      String strInclPaymentUsingCredit, String strPaymentDateFrom, String strPaymentDateTo)
+      throws IOException, ServletException {
 
     response.setContentType("text/html; charset=UTF-8");
 
@@ -764,7 +769,7 @@ public class PaymentReport extends HttpSecureAppServlet {
           strAmountFrom, strAmountTo, strDocumentDateFrom, strDocumentDateTo, strcBPartnerIdIN,
           strcBPGroupIdIN, strcNoBusinessPartner, strcProjectIdIN, strfinPaymSt,
           strPaymentMethodId, strFinancialAccountId, strcCurrency, strConvertCurrency,
-          strConversionDate, strPaymType, strOverdue, strGroupCrit, strOrdCrit,
+          strConversionDate, strPaymType, strOverdue, strBAZero, strGroupCrit, strOrdCrit,
           strInclPaymentUsingCredit, strPaymentDateFrom, strPaymentDateTo, strExpectedDateFrom,
           strExpectedDateTo, strOutput);
     } catch (OBException e) {

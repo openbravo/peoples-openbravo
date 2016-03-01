@@ -41,11 +41,8 @@ isc.OBNumberItem.addProperties({
     return this.Super('init', arguments);
   },
 
-  // after a change also store the textual value in the form
-  // for precision, the textual value is sent to the server
-  // which can be transferred to a bigdecimal there
   changed: function (form, item, value) {
-    if (item && item.setValue) {
+    if (this.form.className === 'OBViewForm' && item && item.setValue) {
       item.setValue(this.getEnteredValue());
     }
     this.Super('changed', arguments);
@@ -539,6 +536,8 @@ isc.OBNumberFilterItem.addProperties({
   doBlurLogic: false,
   operator: 'equals',
   validOperators: ['equals', 'lessThan', 'greaterThan', 'notEqual', 'lessThan', 'lessOrEqual', 'greaterOrEqual', 'between', 'betweenInclusive', 'isNull', 'isNotNull', 'equalsField', 'notEqualField', 'greaterThanField', 'lessThanField', 'greaterOrEqualField', 'lessOrEqualField'],
+  // In P&E grids, on blur will be overridden to ensure correct record selection having filter on change disabled
+  canOverrideOnBlur: true,
 
   // prevent handling of equal symbol in filteritem
   keyDownAction: function (item, form, keyName) {

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2015 Openbravo SLU
+ * All portions are Copyright (C) 2012-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
@@ -495,7 +496,6 @@ public class CostingMigrationProcess implements Process {
 
     int costPrecision = cur.getCostingPrecision().intValue();
     int stdPrecision = cur.getStandardPrecision().intValue();
-    CostingRuleProcess crp = new CostingRuleProcess();
     // Update cost of inventories and process starting physical inventories.
     ScrollableResults icls = getCloseInventoryLines(orgs);
     String productId = "";
@@ -512,7 +512,7 @@ public class CostingMigrationProcess implements Process {
           totalStock = stock.get("stock");
         }
 
-        MaterialTransaction trx = crp.getInventoryLineTransaction(icl);
+        MaterialTransaction trx = icl.getMaterialMgmtMaterialTransactionList().get(0);
         trx.setTransactionProcessDate(DateUtils.addSeconds(trx.getTransactionProcessDate(), -1));
         trx.setCurrency(OBDal.getInstance().get(Currency.class, curId));
 
@@ -574,49 +574,49 @@ public class CostingMigrationProcess implements Process {
         + " < 0 then -tc." + TransactionCost.PROPERTY_COST);
     select.append("     else tc." + TransactionCost.PROPERTY_COST + " end ) as cost,");
     select.append("  tc." + TransactionCost.PROPERTY_CURRENCY + ".id as currency,");
-    select.append("  coalesce(sr." + ShipmentInOut.PROPERTY_ACCOUNTINGDATE + ", trx."
-        + MaterialTransaction.PROPERTY_MOVEMENTDATE + ") as mdate,");
+    select.append("  tc." + TransactionCost.PROPERTY_ACCOUNTINGDATE + " as mdate,");
     select.append("  sum(trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + ") as stock");
 
     select.append(" from " + TransactionCost.ENTITY_NAME + " as tc");
     select.append("  join tc." + TransactionCost.PROPERTY_INVENTORYTRANSACTION + " as trx");
     select.append("  join trx." + MaterialTransaction.PROPERTY_STORAGEBIN + " as locator");
-    select.append("  left join trx." + MaterialTransaction.PROPERTY_GOODSSHIPMENTLINE + " as line");
-    select.append("  left join line." + ShipmentInOutLine.PROPERTY_SHIPMENTRECEIPT + " as sr");
 
     select.append(" where trx." + MaterialTransaction.PROPERTY_PRODUCT + ".id = :product");
     // Include only transactions that have its cost calculated
     select.append("   and trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = true");
     select.append("   and trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
     select.append(" group by tc." + TransactionCost.PROPERTY_CURRENCY + ",");
-    select.append("   coalesce(sr." + ShipmentInOut.PROPERTY_ACCOUNTINGDATE + ", trx."
-        + MaterialTransaction.PROPERTY_MOVEMENTDATE + ")");
+    select.append("   tc." + TransactionCost.PROPERTY_ACCOUNTINGDATE);
 
     Query trxQry = OBDal.getInstance().getSession().createQuery(select.toString());
     trxQry.setParameter("product", productId);
     trxQry.setParameterList("orgs", orgs);
-    @SuppressWarnings("unchecked")
-    List<Object[]> stocks = trxQry.list();
+
+    ScrollableResults scroll = trxQry.scroll(ScrollMode.FORWARD_ONLY);
     BigDecimal totalAmt = BigDecimal.ZERO;
     BigDecimal totalQty = BigDecimal.ZERO;
-    HashMap<String, BigDecimal> retStock = new HashMap<String, BigDecimal>();
-    if (stocks.size() > 0) {
-      for (Object[] resultSet : stocks) {
+    try {
+      while (scroll.next()) {
+        Object[] resultSet = scroll.get();
         BigDecimal costAmt = (BigDecimal) resultSet[0];
-        Currency origCur = OBDal.getInstance().get(Currency.class, resultSet[1]);
-        Date convDate = (Date) resultSet[2];
+        String origCurId = (String) resultSet[1];
         BigDecimal qty = (BigDecimal) resultSet[3];
 
-        if (origCur != currency) {
+        if (StringUtils.equals(origCurId, currency.getId())) {
+          totalAmt = totalAmt.add(costAmt);
+        } else {
+          Currency origCur = OBDal.getInstance().get(Currency.class, origCurId);
+          Date convDate = (Date) resultSet[2];
           totalAmt = totalAmt.add(FinancialUtils.getConvertedAmount(costAmt, origCur, currency,
               convDate, OBDal.getInstance().get(Organization.class, orgId),
               FinancialUtils.PRECISION_COSTING));
-        } else {
-          totalAmt = totalAmt.add(costAmt);
         }
         totalQty = totalQty.add(qty);
       }
+    } finally {
+      scroll.close();
     }
+    HashMap<String, BigDecimal> retStock = new HashMap<String, BigDecimal>();
     retStock.put("cost", totalAmt);
     retStock.put("stock", totalQty);
     return retStock;

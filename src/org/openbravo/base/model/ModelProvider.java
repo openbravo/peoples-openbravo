@@ -857,7 +857,7 @@ public class ModelProvider implements OBSingleton {
       }
     }
     // If the Entity is ADFile, add its entity to entitiesWithFile
-    if (parentEntity.getName().equals("AD_FILE")) {
+    if (parentEntity.getName().equals("OBPRF_FILE")) {
       if (entitiesWithFile.containsKey(childProperty.getEntity())) {
         entitiesWithFile.get(childProperty.getEntity()).add(childProperty.getName());
       } else {

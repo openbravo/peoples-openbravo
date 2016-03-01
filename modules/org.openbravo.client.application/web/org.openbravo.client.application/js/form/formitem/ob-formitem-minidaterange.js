@@ -389,6 +389,8 @@ isc.OBMiniDateRangeItem.addProperties({}, OB.DateItemProperties, {
   singleDateMode: false,
   singleDateValue: null,
   singleDateDisplayValue: null,
+  // In P&E grids, on blur will be overridden to ensure correct record selection having filter on change disabled
+  canOverrideOnBlur: true,
 
   init: function () {
     this.addAutoChild('rangeDialog', {

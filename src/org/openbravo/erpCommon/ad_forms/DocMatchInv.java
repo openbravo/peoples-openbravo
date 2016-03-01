@@ -11,7 +11,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SLU
- * Contributions are Copyright (C) 2001-2014 Openbravo S.L.U.
+ * Contributions are Copyright (C) 2001-2016 Openbravo S.L.U.
  ******************************************************************************
  */
 package org.openbravo.erpCommon.ad_forms;
@@ -313,7 +313,17 @@ public class DocMatchInv extends AcctServer {
     String strInvoiceCurrency = invoiceData[0].cCurrencyId;
     String strIsSOTrx = invoiceData[0].issotrx;
     String strRecordId = invoiceData[0].cInvoiceId;
-    String strReceiptDate = data[0].getField("ORDERDATEACCT");
+    String strReceiptDate = data[0].getField("orderAcctDate");
+    int invoiceCurrencyPrecission = 2;
+    try {
+      OBContext.setAdminMode();
+      invoiceCurrencyPrecission = OBDal.getInstance().get(Currency.class, strInvoiceCurrency)
+          .getStandardPrecision().intValue();
+    } catch (Exception ignore) {
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+
     BigDecimal bdExpenses = new BigDecimal(strExpenses).multiply(
         new BigDecimal(data[0].getField("QTY"))).divide(
         new BigDecimal(data[0].getField("QTYINVOICED")));
@@ -330,9 +340,6 @@ public class DocMatchInv extends AcctServer {
     docLine.m_C_Campaign_ID = data[0].getField("INOUTCAMPAING");
     docLine.m_C_Activity_ID = data[0].getField("INOUTACTIVITY");
     docLine.m_C_Costcenter_ID = data[0].getField("INOUTCOSCENTER");
-    // Calculate Difference amount in schema currency
-    bdCost = new BigDecimal(getConvertedAmt(bdCost.toString(), costCurrency.getId(),
-        as.m_C_Currency_ID, strReceiptDate, "", vars.getClient(), vars.getOrg(), conn));
 
     if (ZERO.compareTo(bdCost) == 0) {
       strMessage = "@MatchedInvIsZero@";
@@ -343,32 +350,22 @@ public class DocMatchInv extends AcctServer {
       DocLine_Material line = (DocLine_Material) p_inOutlines[i];
       BigDecimal lineAmount = bdCost.multiply(new BigDecimal(line.m_qty)).divide(
           new BigDecimal(data[0].getField("MOVEMENTQTY")),
-          OBDal.getInstance().get(Currency.class, as.m_C_Currency_ID).getStandardPrecision()
-              .intValue(), BigDecimal.ROUND_HALF_UP);
+          costCurrency.getStandardPrecision().intValue(), BigDecimal.ROUND_HALF_UP);
       if (i == p_inOutlines.length - 1) {
         lineAmount = bdCost.subtract(totalInOutLines);
       }
       dr = fact.createLine(line, getAccount(AcctServer.ACCTTYPE_NotInvoicedReceipts, as, conn),
-          as.m_C_Currency_ID, lineAmount.toString(), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-          DocumentType, conn);
+          costCurrency.getId(), lineAmount.toString(), "0", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+          DocumentType, strReceiptDate, conn);
       totalInOutLines = totalInOutLines.add(lineAmount);
     }
-
-    bdExpenses = convertAmount(bdExpenses, strIsSOTrx.equalsIgnoreCase("Y") ? true : false,
-        DateAcct, TABLEID_Invoice, strRecordId, strInvoiceCurrency, as.m_C_Currency_ID, docLine,
-        as, fact, Fact_Acct_Group_ID, SeqNo, conn, false);
-
-    BigDecimal bdExpensesAcctCurrency = new BigDecimal(
-        getConvertedAmt(bdExpenses.toString(), strInvoiceCurrency, as.m_C_Currency_ID, DateAcct,
-            "", vars.getClient(), vars.getOrg(), conn));
-
-    BigDecimal bdDifference = bdExpensesAcctCurrency.subtract(bdCost);
 
     if (dr == null) {
       log4j.warn("createFact - unable to calculate line with "
           + " cost of the product to not invoiced receipt account.");
       return null;
     }
+
     ProductInfo p = new ProductInfo(data[0].getField("M_Product_Id"), conn);
     BigDecimal totalLines = BigDecimal.ZERO;
     for (int i = 0; i < p_lines.length; i++) {
@@ -376,16 +373,14 @@ public class DocMatchInv extends AcctServer {
       BigDecimal lineAmount = BigDecimal.ZERO;
       BigDecimal linenetamt = new BigDecimal(invoiceData[0].linenetamt);
       if (!(linenetamt.compareTo(BigDecimal.ZERO) == 0)) {
-        lineAmount = bdExpensesAcctCurrency.multiply(new BigDecimal(line.getAmount())).divide(
-            linenetamt,
-            OBDal.getInstance().get(Currency.class, strInvoiceCurrency).getStandardPrecision()
-                .intValue(), BigDecimal.ROUND_HALF_UP);
+        lineAmount = bdExpenses.multiply(new BigDecimal(line.getAmount())).divide(linenetamt,
+            invoiceCurrencyPrecission, BigDecimal.ROUND_HALF_UP);
         if (i == p_lines.length - 1) {
-          lineAmount = bdExpensesAcctCurrency.subtract(totalLines);
+          lineAmount = bdExpenses.subtract(totalLines);
         }
         cr = fact.createLine(line, p.getAccount(ProductInfo.ACCTTYPE_P_Expense, as, conn),
-            as.m_C_Currency_ID, "0", lineAmount.toString(), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-            DocumentType, conn);
+            strInvoiceCurrency, "0", lineAmount.toString(), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+            DocumentType, DateAcct, conn);
         totalLines = totalLines.add(lineAmount);
       }
     }
@@ -404,6 +399,17 @@ public class DocMatchInv extends AcctServer {
     }
     updateProductInfo(as.getC_AcctSchema_ID(), conn, con); // only API
 
+    bdExpenses = convertAmount(bdExpenses, strIsSOTrx.equalsIgnoreCase("Y") ? true : false,
+        DateAcct, TABLEID_Invoice, strRecordId, strInvoiceCurrency, as.m_C_Currency_ID, docLine,
+        as, fact, Fact_Acct_Group_ID, SeqNo, conn, false);
+
+    BigDecimal bdExpensesAcctCurrency = new BigDecimal(
+        getConvertedAmt(bdExpenses.toString(), strInvoiceCurrency, as.m_C_Currency_ID, DateAcct,
+            "", vars.getClient(), vars.getOrg(), conn));
+    // Calculate Difference amount in schema currency
+    bdCost = new BigDecimal(getConvertedAmt(bdCost.toString(), costCurrency.getId(),
+        as.m_C_Currency_ID, strReceiptDate, "", vars.getClient(), vars.getOrg(), conn));
+    BigDecimal bdDifference = bdExpensesAcctCurrency.subtract(bdCost);
     if (bdDifference.signum() != 0) {
       BigDecimal totalDiffLines = BigDecimal.ZERO;
       for (int i = 0; i < p_inOutlines.length; i++) {
