@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -91,14 +92,20 @@ public class DefaultDataSourceService extends BaseDataSourceService {
     }
   }
 
-  private void addFetchParameters(Map<String, String> parameters) {
+  protected void addFetchParameters(Map<String, String> parameters) {
 
     if (getEntity() != null) {
       parameters.put(JsonConstants.ENTITYNAME, getEntity().getName());
     }
     if (!isSelector(parameters)) {
+      Entity entity = null;
       String entityName = parameters.get(JsonConstants.ENTITYNAME);
-      Entity entity = ModelProvider.getInstance().getEntity(entityName);
+      if (StringUtils.isNotBlank(entityName)) {
+        entity = ModelProvider.getInstance().getEntity(entityName);
+      } else {
+        String tableId = parameters.get(JsonConstants.TABLE_ID);
+        entity = ModelProvider.getInstance().getEntityByTableId(tableId);
+      }
       String whereAndFilterClause = getWhereAndFilterClause(parameters, entity);
       parameters.put(JsonConstants.WHERE_AND_FILTER_CLAUSE, whereAndFilterClause);
     }
