@@ -1964,15 +1964,18 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       FIN_Payment finPayment = FIN_AddPayment.savePayment(null, true, paymentDocType, paymentDocNo,
           order.getBusinessPartner(), paymentType.getPaymentMethod().getPaymentMethod(), account,
           amount.toString(), calculatedDate, order.getOrganization(), null, detail, paymentAmount,
-          false, false, order.getCurrency(), mulrate, origAmount);
+          false, false, order.getCurrency(), mulrate, origAmount, true,
+          payment.has("id") ? payment.getString("id") : null);
 
       if (writeoffAmt.signum() == 1) {
         if (totalIsNegative) {
           FIN_AddPayment.saveGLItem(finPayment, writeoffAmt.negate(), paymentType
-              .getPaymentMethod().getGlitemWriteoff());
+              .getPaymentMethod().getGlitemWriteoff(),
+              payment.has("id") ? OBMOBCUtils.getUUIDbyString(payment.getString("id")) : null);
         } else {
           FIN_AddPayment.saveGLItem(finPayment, writeoffAmt, paymentType.getPaymentMethod()
-              .getGlitemWriteoff());
+              .getGlitemWriteoff(),
+              payment.has("id") ? OBMOBCUtils.getUUIDbyString(payment.getString("id")) : null);
         }
         // Update Payment In amount after adding GLItem
         finPayment.setAmount(origAmount.setScale(pricePrecision, RoundingMode.HALF_UP));
