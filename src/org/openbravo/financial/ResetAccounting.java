@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2015 Openbravo SLU
+ * All portions are Copyright (C) 2013-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -23,13 +23,14 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
+import org.hibernate.ScrollMode;
+import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.ModelProvider;
@@ -84,23 +85,37 @@ public class ResetAccounting {
           // period control associated
           Map<String, String> organizationPeriodControl = new HashMap<String, String>();
           String calendarId = getCalendarId(adOrgId);
-          Iterator<String> iterator = orgIds.iterator();
-          while (iterator.hasNext()) {
-            String organization = iterator.next();
-            String myQuery1 = "select p.id from Organization p where ad_org_getperiodcontrolallow(:organization)=p.id";
-            Query query1 = OBDal.getInstance().getSession().createQuery(myQuery1);
-            query1.setString("organization", organization);
-            query1.setMaxResults(1);
-            if (query1.uniqueResult() != null) {
-              String orgperiodcontrol = query1.uniqueResult().toString();
-              organizationPeriodControl.put(organization, orgperiodcontrol);
-              if (!organizationPeriod.keySet().contains(orgperiodcontrol)) {
-                periods = getPeriodsDates(getOpenPeriods(client, dbt, orgIds, calendarId, table,
-                    recordId, strdatefrom, strdateto, orgperiodcontrol));
-                organizationPeriod.put(orgperiodcontrol, periods);
+
+          String myQuery1 = "select ad_org_id, ad_org_getperiodcontrolallow(ad_org_id) from ad_org where ad_org_id in (:orgIds)";
+          Query query1 = OBDal.getInstance().getSession().createSQLQuery(myQuery1);
+          query1.setParameterList("orgIds", orgIds);
+          ScrollableResults scroll = query1.scroll(ScrollMode.FORWARD_ONLY);
+          int i = 0;
+          try {
+            while (scroll.next()) {
+              Object[] resultSet = scroll.get();
+              String organization = (String) resultSet[0];
+              String orgperiodcontrol = (String) resultSet[1];
+
+              if (orgperiodcontrol != null) {
+                organizationPeriodControl.put(organization, orgperiodcontrol);
+                if (!organizationPeriod.keySet().contains(orgperiodcontrol)) {
+                  periods = getPeriodsDates(getOpenPeriods(client, dbt, orgIds, calendarId, table,
+                      recordId, strdatefrom, strdateto, orgperiodcontrol));
+                  organizationPeriod.put(orgperiodcontrol, periods);
+                }
+              }
+
+              i++;
+              if (i % 100 == 0) {
+                OBDal.getInstance().flush();
+                OBDal.getInstance().getSession().clear();
               }
             }
+          } finally {
+            scroll.close();
           }
+
           int docUpdated = 0;
           int docDeleted = 0;
           for (String organization : orgIds) {
