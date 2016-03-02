@@ -121,8 +121,11 @@ public class SelectorDataSourceFilter implements DataSourceFilter {
         }
       }
 
+      // /
+      String hqlWhere = sel.getHQLWhereClause();
+      //
+      String currentWhere = "";
       if (!StringUtils.isEmpty(filterHQL)) {
-        String currentWhere = "";
         log.debug("Adding to where clause (based on filter expression): " + filterHQL);
         // TODO: This does not work, it is not taking the proper value from the cache
         if ("Y".equals(cachedPreference.getPreferenceValue(ALLOW_WHERE_PREFERENCE))
@@ -135,11 +138,17 @@ public class SelectorDataSourceFilter implements DataSourceFilter {
           currentWhere = sel.getHQLWhereClause();
         }
 
-        if (currentWhere == null || currentWhere.equals("null") || currentWhere.equals("")) {
+        if (StringUtils.isBlank(currentWhere)) {
           parameters.put(JsonConstants.WHERE_AND_FILTER_CLAUSE, filterHQL);
         } else {
           parameters.put(JsonConstants.WHERE_AND_FILTER_CLAUSE, currentWhere + " and " + filterHQL);
         }
+      } else {
+        currentWhere = sel.getHQLWhereClause();
+        if (StringUtils.isNotBlank(currentWhere)) {
+          parameters.put(JsonConstants.WHERE_AND_FILTER_CLAUSE, currentWhere);
+        }
+
       }
 
       // Applying default expression for selector fields when is not a selector window request

@@ -147,6 +147,7 @@ public abstract class BaseDataSourceService implements DataSourceService {
    *         filter clause nor where clause.
    */
   protected String getWhereAndFilterClause(Map<String, String> parameters, Entity ent) {
+    String tabId = "";
     if (parameters.containsKey(JsonConstants.TAB_PARAMETER)) {
       String whereAndFilterClause = null;
       if (("Y".equals(cachedPreference.getPreferenceValue(ALLOW_WHERE_PREFERENCE)))
@@ -161,7 +162,7 @@ public abstract class BaseDataSourceService implements DataSourceService {
           }
         }
       } else {
-        String tabId = parameters.get(JsonConstants.TAB_PARAMETER);
+        tabId = parameters.get(JsonConstants.TAB_PARAMETER);
         try {
           OBContext.setAdminMode(false);
           Tab tab = OBDal.getInstance().get(Tab.class, tabId);
