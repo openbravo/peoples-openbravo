@@ -87,7 +87,7 @@ enyo.kind({
     var product = this.leftSubWindow.product,
         me = this;
 
-    function addLine(line, product, attrs) {
+    function addLine(line, product, attrs, args) {
       if (line) {
         if (attrs.warehouse.id !== line.get('warehouse').id) {
           me.doSetLineProperty({
@@ -105,6 +105,7 @@ enyo.kind({
             blockAddProduct: true
           },
           product: product,
+          qty: args.qty ? args.qty : OB.DEC.One,
           ignoreStockTab: true
         });
       }
@@ -146,17 +147,17 @@ enyo.kind({
             if (allLinesQty > attrs.warehouse.warehouseqty) {
               OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_ErrorProductDiscontinued', [product.get('_identifier'), allLinesQty, attrs.warehouse.warehouseqty, attrs.warehouse.warehousename]));
             } else {
-              addLine(line, product, attrs);
+              addLine(line, product, attrs, args);
             }
           } else {
             if (line && allLinesQty > attrs.warehouse.warehouseqty) {
               OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_ErrorProductDiscontinued', [product.get('_identifier'), allLinesQty, attrs.warehouse.warehouseqty, attrs.warehouse.warehousename]));
             } else {
-              addLine(line, product, attrs);
+              addLine(line, product, attrs, args);
             }
           }
         } else {
-          addLine(line, product, attrs);
+          addLine(line, product, attrs, args);
         }
       });
     }
