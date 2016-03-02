@@ -89,11 +89,13 @@ enyo.kind({
 
     function addLine(line, product, attrs) {
       if (line) {
-        me.doSetLineProperty({
-          line: line,
-          property: 'warehouse',
-          value: attrs.warehouse
-        });
+        if (attrs.warehouse.id !== line.get('warehouse').id) {
+          me.doSetLineProperty({
+            line: line,
+            property: 'warehouse',
+            value: attrs.warehouse
+          });
+        }
         me.doCloseLeftSubWindow();
       } else {
         me.doAddProduct({
