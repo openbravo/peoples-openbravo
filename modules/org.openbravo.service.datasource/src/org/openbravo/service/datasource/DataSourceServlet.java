@@ -1022,6 +1022,19 @@ public class DataSourceServlet extends BaseKernelServlet {
         final List<Process> obuiapProcesses = new ArrayList<Process>();
         for (Parameter parameter : obParameters.list()) {
           obuiapProcesses.add(parameter.getObuiappProcess());
+
+        }
+
+        // If access to process are granted for current user/role return directly true.
+        boolean isAccessGranted = true;
+        final OBContext obContext = OBContext.getOBContext();
+        for (Process process : obuiapProcesses) {
+          if (!obContext.getEntityAccessChecker().checkProcessAccess(process.getId())) {
+            isAccessGranted = false;
+          }
+        }
+        if (isAccessGranted) {
+          return true;
         }
 
         // Finally select all columns that linked with selected processes and get their fields.
