@@ -439,7 +439,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         if (log.isDebugEnabled()) {
           t113 = System.currentTimeMillis();
         }
-        createShipment = goodsToDeliver(order);
+        createShipment = createShipment && goodsToDeliver(order);
         if (createShipment) {
 
           OBCriteria<Locator> locators = OBDal.getInstance().createCriteria(Locator.class);
@@ -1611,9 +1611,9 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           || (doCancelAndReplace && !newLayaway && !notpaidLayaway && !partialpaidLayaway)) {
         // shipment is created or is a C&R and is not a layaway, so all is delivered
         orderline.setDeliveredQuantity(orderline.getOrderedQuantity());
-        orderline.setObposQtytodeliver(orderline.getOrderedQuantity());
       }
 
+      orderline.setObposQtytodeliver(orderline.getOrderedQuantity());
       try {
         executeHooks(orderCreateOrderLineProcesses, jsonOrderLine, null, null, null, orderline);
       } catch (Exception e) {
@@ -3106,8 +3106,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
   protected boolean goodsToDeliver(Order order) {
     for (OrderLine line : order.getOrderLineList()) {
-      if ((paidReceipt && line.getObposQtytodeliver().compareTo(line.getDeliveredQuantity()) == 0)
-          || (!paidReceipt && line.getObposQtytodeliver().compareTo(BigDecimal.ZERO) == 0)) {
+      if (line.getObposQtytodeliver().compareTo(BigDecimal.ZERO) == 0) {
         continue;
       } else {
         return true;
