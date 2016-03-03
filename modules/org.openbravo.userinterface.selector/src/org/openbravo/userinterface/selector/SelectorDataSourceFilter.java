@@ -120,10 +120,6 @@ public class SelectorDataSourceFilter implements DataSourceFilter {
           }
         }
       }
-
-      // /
-      String hqlWhere = sel.getHQLWhereClause();
-      //
       String currentWhere = "";
       if (!StringUtils.isEmpty(filterHQL)) {
         log.debug("Adding to where clause (based on filter expression): " + filterHQL);
