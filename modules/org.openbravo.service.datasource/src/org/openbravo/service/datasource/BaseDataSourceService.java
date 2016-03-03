@@ -149,7 +149,6 @@ public abstract class BaseDataSourceService implements DataSourceService {
    *         filter clause nor where clause.
    */
   protected String getWhereAndFilterClause(Map<String, String> parameters) {
-    // parameters.put(JsonConstants.WHERE_PARAMETER, "1=1) or 2=2");
     if (parameters.containsKey(JsonConstants.TAB_PARAMETER)) {
       String whereAndFilterClause = null;
       if (parameters.containsKey(JsonConstants.WHERE_PARAMETER)) {
