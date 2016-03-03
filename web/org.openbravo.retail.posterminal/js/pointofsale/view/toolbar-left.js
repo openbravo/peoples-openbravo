@@ -395,7 +395,7 @@ enyo.kind({
           columns: ['ispack'],
           operator: 'equals',
           value: false,
-          isId: true
+          fieldType: 'forceString'
         });
       } else {
         criteria.productType = 'S';
@@ -491,6 +491,9 @@ enyo.kind({
     });
     this.menuEntries.push({
       kind: 'OB.UI.MenuVoidLayaway'
+    });
+    this.menuEntries.push({
+      kind: 'OB.UI.MenuReceiptLayaway'
     });
     this.menuEntries.push({
       kind: 'OB.UI.MenuProperties'

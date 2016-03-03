@@ -21,6 +21,7 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 
 public class ProcessCashCloseMaster extends JSONProcessSimple {
 
@@ -33,6 +34,7 @@ public class ProcessCashCloseMaster extends JSONProcessSimple {
         OBPOSApplications.class);
     obCriteria.add(Restrictions.eq(OBPOSApplications.PROPERTY_MASTERTERMINAL + ".id",
         masterterminal));
+    obCriteria.addOrderBy(OBPOSApplications.PROPERTY_SEARCHKEY, true);
     List<OBPOSApplications> applications = obCriteria.list();
     JSONArray terminals = new JSONArray();
     boolean finishAll = true;
@@ -45,8 +47,11 @@ public class ProcessCashCloseMaster extends JSONProcessSimple {
       boolean finish = terminalCashUp != null && terminalCashUp.isProcessed()
           && terminalCashUp.isProcessedbo();
       terminal.put("finish", finish);
+      int noOfTransactions = (terminalCashUp != null ? getnoOfTransactions(terminalCashUp.getId())
+          : 0);
+      terminal.put("noOfTransactions", noOfTransactions);
       terminal.put("cashUpId", terminalCashUp != null ? terminalCashUp.getId() : null);
-      if (!finish) {
+      if (!finish && noOfTransactions > 0) {
         finishAll = false;
       }
       terminals.put(terminal);
@@ -60,9 +65,11 @@ public class ProcessCashCloseMaster extends JSONProcessSimple {
       List<String> cashUpIds = new ArrayList<String>();
       for (int i = 0; i < terminals.length(); i++) {
         JSONObject terminal = terminals.getJSONObject(i);
-        cashUpIds.add(terminal.getString("cashUpId"));
+        if (terminal.getBoolean("finish"))
+          cashUpIds.add(terminal.getString("cashUpId"));
       }
-      addPaymentmethodCashup(payments, cashUpIds);
+      if (cashUpIds.size() > 0)
+        addPaymentmethodCashup(payments, cashUpIds);
     }
     result.put("data", data);
     result.put("status", 0);
@@ -86,6 +93,22 @@ public class ProcessCashCloseMaster extends JSONProcessSimple {
         .add(Restrictions.eq(OBPOSAppCashup.PROPERTY_OBPOSPARENTCASHUP + ".id", parentCashUp));
     List<OBPOSAppCashup> cashUp = obCriteria.list();
     return cashUp.size() > 0 ? cashUp.get(0) : null;
+  }
+
+  /**
+   * Check If CashUp has Transactions associated
+   * 
+   * @param cashUp
+   *          Cash up id.
+   * @return 1 if has transactions, 0 if no transactions.
+   */
+  public static int getnoOfTransactions(String cashUp) {
+    OBCriteria<FIN_FinaccTransaction> obCriteria = OBDal.getInstance().createCriteria(
+        FIN_FinaccTransaction.class);
+    obCriteria.add(Restrictions.eq(FIN_FinaccTransaction.PROPERTY_OBPOSAPPCASHUP + ".id", cashUp));
+    obCriteria.setMaxResults(1);
+    List<FIN_FinaccTransaction> cashUpTransacitons = obCriteria.list();
+    return cashUpTransacitons.size();
   }
 
   /**

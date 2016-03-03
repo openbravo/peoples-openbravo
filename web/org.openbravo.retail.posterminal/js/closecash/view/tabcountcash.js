@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2015 Openbravo S.L.U.
+ * Copyright (C) 2012-2016 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -107,7 +107,7 @@ enyo.kind({
   components: [{
     classes: 'tab-pane',
     components: [{
-      style: 'overflow:auto; height: 500px; margin: 5px; background-color:white',
+      style: 'margin: 5px; background-color: #ffffff',
       components: [{
         style: 'background-color: #ffffff; color: black; padding: 5px;',
         components: [{
@@ -144,9 +144,9 @@ enyo.kind({
                     }
                   }]
                 }, {
-                  style: 'float: left; display:table; width: 50%; ',
+                  style: 'float: right; display:table;',
                   components: [{
-                    style: 'padding: 10px 10px 10px 0px; display: table-cell; width: 100%; text-align: right;',
+                    style: 'padding: 10px 40px 10px 0px; display: table-cell; width: 100%; text-align: right;',
                     initComponents: function () {
                       this.setContent(OB.I18N.getLabel('OBPOS_LblCounted'));
                     }
@@ -154,11 +154,15 @@ enyo.kind({
                 }]
               }]
             }, {
-              name: 'paymentsList',
-              kind: 'OB.UI.Table',
-              renderLine: 'OB.OBPOSCashUp.UI.RenderPaymentsLine',
-              renderEmpty: 'OB.UI.RenderEmpty',
-              listStyle: 'list'
+              classes: 'row-fluid',
+              style: 'background-color: #ffffff; max-height: 430px; overflow: auto; clear: both; width:100%; border-bottom: 1px solid #cccccc;',
+              components: [{
+                name: 'paymentsList',
+                kind: 'OB.UI.Table',
+                renderLine: 'OB.OBPOSCashUp.UI.RenderPaymentsLine',
+                renderEmpty: 'OB.UI.RenderEmpty',
+                listStyle: 'list'
+              }]
             }, {
               components: [{
                 classes: 'row-fluid',
@@ -192,6 +196,7 @@ enyo.kind({
               }]
             }, {
               classes: 'row-fluid',
+              style: 'background-color: #ffffff; height: 40px; width:100%; clear: both;',
               components: [{
                 classes: 'span12',
                 style: 'border-bottom: 1px solid #cccccc;',
@@ -215,7 +220,7 @@ enyo.kind({
                   components: [{
                     style: 'float: left; display:table; width: 50%; ',
                     components: [{
-                      style: 'padding: 10px 10px 10px 0px; display: table-cell; width: 100%; text-align: right;',
+                      style: 'padding: 10px 40px 10px 0px; display: table-cell; width: 100%; text-align: right;',
                       name: 'difference',
                       kind: 'OB.OBPOSCashUp.UI.RenderTotal'
                     }]

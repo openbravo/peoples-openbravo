@@ -577,9 +577,21 @@ enyo.kind({
         args.context.waterfall('onEnableQtyButton', {
           enable: true
         });
+        args.context.waterfall('onEnablePlusButton', {
+          enable: true
+        });
+        args.context.waterfall('onEnableMinusButton', {
+          enable: true
+        });
       } else {
         // The product added is not grouped, so disable the quantity button
         args.context.waterfall('onEnableQtyButton', {
+          enable: false
+        });
+        args.context.waterfall('onEnablePlusButton', {
+          enable: false
+        });
+        args.context.waterfall('onEnableMinusButton', {
           enable: false
         });
       }
@@ -1185,9 +1197,21 @@ enyo.kind({
       this.waterfall('onEnableQtyButton', {
         enable: true
       });
+      this.waterfall('onEnablePlusButton', {
+        enable: true
+      });
+      this.waterfall('onEnableMinusButton', {
+        enable: true
+      });
     } else {
       // The line selected is not a grouped product, so disable the quantity button
       this.waterfall('onEnableQtyButton', {
+        enable: false
+      });
+      this.waterfall('onEnablePlusButton', {
+        enable: false
+      });
+      this.waterfall('onEnableMinusButton', {
         enable: false
       });
     }

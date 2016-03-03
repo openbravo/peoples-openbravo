@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2015 Openbravo S.L.U.
+ * Copyright (C) 2013-2016 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -81,6 +81,8 @@
       extendHWResource(this.templategoodbye, "printGoodByeTemplate");
       this.templatewelcome = new OB.DS.HWResource(terminal.printWelcomeTemplate || OB.OBPOSPointOfSale.Print.WelcomeTemplate);
       extendHWResource(this.templatewelcome, "printWelcomeTemplate");
+      this.templateclosedinvoice = new OB.DS.HWResource(terminal.printClosedInvoiceTemplate || OB.OBPOSPointOfSale.Print.ClosedInvoiceTemplate);
+      extendHWResource(this.templateclosedinvoice, "printClosedInvoiceTemplate");
       };
 
   PrintReceipt.prototype.print = function (order, printargs) {
@@ -138,110 +140,6 @@
         });
       }
 
-      function printFiles(receipt, args) {
-        var filesArray = [],
-            callbackGetFiles, callbackGetBinaryData, recursivePrintFiles, i = 0;
-
-        if (receipt.get('isPaid') || receipt.get('payment') >= receipt.get('gross') || (receipt.isLayaway() && receipt.get('payment') > 0)) {
-
-          recursivePrintFiles = function () {
-            if (filesArray.length > 0) {
-              OB.POS.hwserver._printFile({
-                name: filesArray[i].name,
-                printer: filesArray[i].printer,
-                document: filesArray[i].document
-              }, function (result) {
-                if (result && result.exception) {
-                  OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_MsgHardwareServerNotAvailable'), OB.I18N.getLabel('OBPOS_MsgPrintAgain'), [{
-                    label: OB.I18N.getLabel('OBMOBC_LblOk'),
-                    action: function () {
-                      me.print(receipt, printargs);
-                      if (args.callback) {
-                        args.callback();
-                      }
-                      return true;
-                    }
-                  }, {
-                    label: OB.I18N.getLabel('OBMOBC_LblCancel')
-                  }], {
-                    onHideFunction: function (dialog) {
-                      if (printargs.offline && OB.MobileApp.model.get('terminal').printoffline) {
-                        OB.Dal.save(new OB.Model.OfflinePrinter({
-                          data: result.data,
-                          sendfunction: '_sendFile'
-                        }));
-                      }
-                    }
-                  });
-                } else {
-                  i++;
-                  if (i < filesArray.length) {
-                    recursivePrintFiles();
-                  } else {
-                    // Success. Try to print the pending receipts.
-                    OB.Model.OfflinePrinter.printPendingJobs();
-                    if (args.callback) {
-                      args.callback();
-                    }
-                  }
-                }
-              });
-            }
-          };
-
-          callbackGetFiles = _.after(receipt.get('lines').length, function () {
-            recursivePrintFiles();
-          });
-
-          _.each(receipt.get('lines').models, function (line) {
-            var criteria = {},
-                productId = line.get('product').id;
-            if (line.get('qty') > 0) {
-              if (OB.MobileApp.model.hasPermission('OBPOS_remote.obposfiles', true)) {
-                criteria.remoteFilters = [{
-                  columns: ['product'],
-                  operator: 'equals',
-                  value: productId,
-                  isId: true
-                }];
-              } else {
-                criteria.product = productId;
-              }
-              OB.Dal.find(OB.Model.OBPOSProdFiles, criteria, function (productFiles) {
-                if (productFiles.length > 0) {
-                  callbackGetBinaryData = _.after(productFiles.length, function () {
-                    callbackGetFiles();
-                  });
-
-                  _.each(productFiles.models, function (productFile) {
-                    var printer = 1;
-                    OB.Dal.get(OB.Model.OBPOSFiles, productFile.get('posfile'), function (posFile) {
-                      if (productFile.get('printer')) {
-                        printer = productFile.get('printer');
-                      }
-                      filesArray.push({
-                        name: posFile.get('name'),
-                        printer: printer,
-                        document: posFile.get('binaryData')
-                      });
-                      callbackGetBinaryData();
-                    }, function () {
-                      OB.error(arguments);
-                    });
-                  });
-                } else {
-                  callbackGetFiles();
-                }
-              }, function () {
-                OB.error(arguments);
-              });
-            } else {
-              callbackGetFiles();
-            }
-          });
-        }
-      }
-
       if (args.cancelOperation && args.cancelOperation === true) {
         if (args.callback) {
           args.callback();
@@ -274,6 +172,8 @@
           args.template = me.templatereturninvoice;
         } else if (receipt.get('isQuotation')) {
           args.template = me.templatequotation;
+        } else if (receipt.get('isPaid')) {
+          args.template = me.templateclosedinvoice;
         } else {
           args.template = me.templateinvoice;
         }
@@ -301,15 +201,14 @@
       if (args.template.ispdf) {
         args.template.dateFormat = OB.Format.date;
         printPDF(receipt, args);
-        if (receipt.get('orderType') === 1 && !OB.MobileApp.model.hasPermission('OBPOS_print.once')) {
+        if ((receipt.get('orderType') === 1 && !OB.MobileApp.model.hasPermission('OBPOS_print.once')) || OB.MobileApp.model.get('terminal').terminalType.printTwice) {
           printPDF(receipt, args);
         }
-        printFiles(receipt, args);
       } else {
         if (receipt.get('print')) { //Print option of order property
           OB.POS.hwserver.print(args.template, {
             order: receipt
-          }, function (result) {
+          }, function (result, printedReceipt) {
             var myreceipt = receipt;
             if (result && result.exception) {
               OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_MsgHardwareServerNotAvailable'), OB.I18N.getLabel('OBPOS_MsgPrintAgain'), [{
@@ -341,12 +240,17 @@
                 }
               });
             } else {
-              printFiles(receipt, args);
               // Success. Try to print the pending receipts.
               OB.Model.OfflinePrinter.printPendingJobs();
-              if (args.callback) {
-                args.callback();
-              }
+              OB.UTIL.HookManager.executeHooks('OBPRINT_PostPrint', {
+                receipt: receipt,
+                printedReceipt: printedReceipt
+              }, function () {
+                OB.debug("Executed hooks of OBPRINT_PostPrint");
+                if (args.callback) {
+                  args.callback();
+                }
+              });
             }
           });
         } else {
@@ -365,7 +269,7 @@
             if (iter.get('printtwice')) {
               return iter;
             }
-          }).length > 0) {
+          }).length > 0 || OB.MobileApp.model.get('terminal').terminalType.printTwice) {
             OB.POS.hwserver.print(args.template, {
               order: receipt
             }, function (result) {
@@ -470,4 +374,5 @@
   OB.OBPOSPointOfSale.Print.GoodByeTemplate = '../org.openbravo.retail.posterminal/res/goodbye.xml';
   OB.OBPOSPointOfSale.Print.WelcomeTemplate = '../org.openbravo.retail.posterminal/res/welcome.xml';
   OB.OBPOSPointOfSale.Print.QuotationTemplate = '../org.openbravo.retail.posterminal/res/printquotation.xml';
+  OB.OBPOSPointOfSale.Print.ClosedInvoiceTemplate = '../org.openbravo.retail.posterminal/res/printclosedinvoice.xml';
 }());

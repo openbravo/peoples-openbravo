@@ -35,6 +35,7 @@ public class PaidReceiptRelatedLinesProperties extends ModelExtension {
         add(new HQLProperty("olsr.orderlineRelated.product.name", "productName"));
         add(new HQLProperty("olsr.orderlineRelated.salesOrder.documentNo", "orderDocumentNo"));
         add(new HQLProperty("olsr.orderlineRelated.salesOrder.id", "orderId"));
+        add(new HQLProperty("'false'", "otherTicket"));
       }
     };
 

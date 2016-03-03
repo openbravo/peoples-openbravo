@@ -476,6 +476,7 @@ enyo.kind({
         }
       });
       this.hide();
+      this.model.get('order').calculateReceipt();
     },
     init: function (model) {
       this.model = model;

@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
-  <database name="TABLE OBPOS_FILES">
-    <table name="OBPOS_FILES" primaryKey="OBPOS_FILES_KEY">
-      <column name="OBPOS_FILES_ID" primaryKey="true" required="true" type="VARCHAR" size="32" autoIncrement="false">
+  <database name="TABLE OBPOS_ORG_WAREHOUSE_EXTRA">
+    <table name="OBPOS_ORG_WAREHOUSE_EXTRA" primaryKey="OBPOS_ORG_WAREHOUSE_EXTRA_KEY">
+      <column name="OBPOS_ORG_WAREHOUSE_EXTRA_ID" primaryKey="true" required="true" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -33,29 +33,37 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="NAME" primaryKey="false" required="true" type="NVARCHAR" size="60" autoIncrement="false">
+      <column name="M_WAREHOUSE_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="AD_FILE_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
-        <default/>
+      <column name="PRIORITY" primaryKey="false" required="true" type="DECIMAL" autoIncrement="false">
+        <default><![CDATA[0]]></default>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_FILE" name="OBPOS_FILES_AD_FILE">
-        <reference local="AD_FILE_ID" foreign="AD_FILE_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_CLIENT" name="OBPOS_FILES_CLIENT">
+      <column name="TYPE" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
+        <default><![CDATA[cross_channel]]></default>
+        <onCreateDefault/>
+      </column>
+      <foreign-key foreignTable="AD_CLIENT" name="OBPOS_ORG_WAREHOUSE_EXTRA_CLI">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="OBPOS_FILES_ORG">
+      <foreign-key foreignTable="AD_ORG" name="OBPOS_ORG_WAREHOUSE_EXTRA_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <index name="OBPOS_FILES_AD_FILE_ID_IDX" unique="false">
-        <index-column name="AD_FILE_ID"/>
+      <foreign-key foreignTable="M_WAREHOUSE" name="OBPOS_ORG_WAREHOUSE_EXTRA_WAR">
+        <reference local="M_WAREHOUSE_ID" foreign="M_WAREHOUSE_ID"/>
+      </foreign-key>
+      <index name="OBPOS_ORGWAR_EXTRA_ORG_IDX" unique="false">
+        <index-column name="AD_ORG_ID"/>
       </index>
-      <index name="OBPOS_FILES_NAME_IDX" unique="false">
-        <index-column name="NAME"/>
+      <index name="OBPOS_ORGWAR_EXTRA_WH_IDX" unique="false">
+        <index-column name="M_WAREHOUSE_ID"/>
       </index>
-      <check name="OBPOS_FILES_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <unique name="OBPOS_ORG_WAREHOU_EXTRA_WAR_UN">
+        <unique-column name="AD_ORG_ID"/>
+        <unique-column name="M_WAREHOUSE_ID"/>
+      </unique>
+      <check name="OBPOS_ORG_WAREHO_EXTRA_ACT_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

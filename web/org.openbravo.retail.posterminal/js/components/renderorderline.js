@@ -384,6 +384,9 @@ enyo.kind({
     var paymentDate;
     this.inherited(arguments);
     this.$.name.setContent(OB.MobileApp.model.getPaymentName(this.model.get('kind')) || this.model.get('name'));
+    if (this && this.model && this.model.get('paymentData') && this.model.get('paymentData').name && this.model.get('paymentData').name.length > 0) {
+      this.$.name.setContent((OB.MobileApp.model.getPaymentName(this.model.get('kind')) || this.model.get('name')) + ' (' + this.model.get('paymentData').name + ')');
+    }
     if (OB.UTIL.isNullOrUndefined(this.model.get('paymentDate'))) {
       paymentDate = new Date();
     } else {

@@ -268,9 +268,6 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
 
         "model/obpos-supervisor-model",
 
-        "model/obposfiles",
-
-        "model/obposprodfiles",
 
         // Point of sale
         "pointofsale/model/pointofsale-print",

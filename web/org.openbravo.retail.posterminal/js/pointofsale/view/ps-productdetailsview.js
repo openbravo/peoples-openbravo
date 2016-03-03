@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2015 Openbravo S.L.U.
+ * Copyright (C) 2013-2016 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -39,7 +39,29 @@ enyo.kind({
   classes: 'btnlink-green',
   style: 'min-width: 200px; margin: 2px 5px 2px 5px;',
   tap: function () {
-    this.doOpenOtherStoresStockModal();
+    var me = this;
+    if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
+      var serverCallStoreDetailedStock = new OB.DS.Process('org.openbravo.retail.posterminal.stock.OtherStoresDetailedStock'),
+          leftSubWindow = this.parent.leftSubWindow;
+      leftSubWindow.bodyComponent.$.stockOthers.setContent(OB.I18N.getLabel('OBPOS_loadingStock'));
+      serverCallStoreDetailedStock.exec({
+        organization: OB.MobileApp.model.get('terminal').organization,
+        product: leftSubWindow.product.get('id')
+      }, function (data) {
+        if (data && data.exception) {
+          leftSubWindow.bodyComponent.$.stockOthers.setContent(OB.I18N.getLabel('OBPOS_stockCannotBeRetrieved'));
+          leftSubWindow.bodyComponent.$.stockOthers.addClass('error');
+        } else if (data.product === leftSubWindow.product.get('id') && leftSubWindow.showing && (data.qty || data.qty === 0)) {
+          data.product = leftSubWindow.product;
+          leftSubWindow.otherStoresStockModel = new OB.OBPOSPointOfSale.UsedModels.OtherStoresWarehousesStock(data);
+          me.doOpenOtherStoresStockModal();
+          leftSubWindow.bodyComponent.$.stockOthers.removeClass('error');
+          leftSubWindow.bodyComponent.$.stockOthers.setContent(OB.I18N.getLabel('OBPOS_otherStoresStock') + data.qty);
+        }
+      });
+    } else {
+      this.doOpenOtherStoresStockModal();
+    }
   }
 });
 
@@ -50,7 +72,16 @@ enyo.kind({
   style: 'min-width: 70px; margin: 2px 5px 2px 5px;',
   i18nLabel: 'OBPOS_addToTicket',
   events: {
-    onAddProduct: ''
+    onAddProduct: '',
+    onSetLineProperty: '',
+    onCloseLeftSubWindow: ''
+  },
+  setLabel: function () {
+    if (this.leftSubWindow && this.leftSubWindow.line) {
+      this.setContent(OB.I18N.getLabel('OBMOBC_LblApply'));
+    } else {
+      this.setContent(OB.I18N.getLabel('OBPOS_addToTicket'));
+    }
   },
   tap: function () {
     if (this.leftSubWindow.product) {
@@ -64,14 +95,23 @@ enyo.kind({
         warehousename: this.leftSubWindow.warehouse.warehousename,
         warehouseqty: this.leftSubWindow.warehouse.warehouseqty
       };
-      this.doAddProduct({
-        attrs: attrs,
-        options: {
-          line: line
-        },
-        product: this.leftSubWindow.product,
-        ignoreStockTab: true
-      });
+      if (line) {
+        this.doSetLineProperty({
+          line: line,
+          property: 'warehouse',
+          value: attrs.warehouse
+        });
+        this.doCloseLeftSubWindow();
+      } else {
+        this.doAddProduct({
+          attrs: attrs,
+          options: {
+            line: line
+          },
+          product: this.leftSubWindow.product,
+          ignoreStockTab: true
+        });
+      }
     }
   }
 });
@@ -178,6 +218,7 @@ enyo.kind({
         style: 'margin: 5px 0px 12px 0px; text-align: center; font-size: 18px; font-weight: 600;'
       }, {
         components: [{
+          name: 'productAddToReceipt',
           kind: 'OB.OBPOSPointOfSale.UI.ProductDetailsView_ButtonAddToTicket'
         }]
       }]
@@ -222,7 +263,7 @@ enyo.kind({
     }, function (data) {
       if (data && data.exception) {
         me.bodyComponent.$.stockHere.setContent(OB.I18N.getLabel('OBPOS_stockCannotBeRetrieved'));
-        me.bodyComponent.$.stockHere.addClass("error");
+        me.bodyComponent.$.stockHere.addClass('error');
       } else if (data.product === me.product.get('id') && me.showing) {
         if (data.qty || data.qty === 0) {
           data.product = me.product;
@@ -234,7 +275,7 @@ enyo.kind({
               me.loadDefaultWarehouseData(me.localStockModel.getWarehouseById(me.warehouse.id));
             }
           }
-          me.bodyComponent.$.stockHere.removeClass("error");
+          me.bodyComponent.$.stockHere.removeClass('error');
           me.bodyComponent.$.stockHere.setContent(OB.I18N.getLabel('OBPOS_storeStock') + data.qty);
         }
       }
@@ -243,23 +284,25 @@ enyo.kind({
   getOtherStock: function () {
     var serverCallStoreDetailedStock = new OB.DS.Process('org.openbravo.retail.posterminal.stock.OtherStoresDetailedStock'),
         me = this;
-    this.bodyComponent.$.stockOthers.setContent(OB.I18N.getLabel('OBPOS_loadingStock'));
-    serverCallStoreDetailedStock.exec({
-      organization: OB.MobileApp.model.get('terminal').organization,
-      product: this.product.get('id')
-    }, function (data) {
-      if (data && data.exception) {
-        me.bodyComponent.$.stockOthers.setContent(OB.I18N.getLabel('OBPOS_stockCannotBeRetrieved'));
-        me.bodyComponent.$.stockOthers.addClass("error");
-      } else if (data.product === me.product.get('id') && me.showing) {
-        if (data.qty || data.qty === 0) {
+    if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
+      this.bodyComponent.$.stockOthers.setContent(OB.I18N.getLabel('OBPOS_otherStoresStock_NotCalculated'));
+    } else {
+      this.bodyComponent.$.stockOthers.setContent(OB.I18N.getLabel('OBPOS_loadingStock'));
+      serverCallStoreDetailedStock.exec({
+        organization: OB.MobileApp.model.get('terminal').organization,
+        product: this.product.get('id')
+      }, function (data) {
+        if (data && data.exception) {
+          me.bodyComponent.$.stockOthers.setContent(OB.I18N.getLabel('OBPOS_stockCannotBeRetrieved'));
+          me.bodyComponent.$.stockOthers.addClass('error');
+        } else if (data.product === me.product.get('id') && me.showing && (data.qty || data.qty === 0)) {
           data.product = me.product;
           me.otherStoresStockModel = new OB.OBPOSPointOfSale.UsedModels.OtherStoresWarehousesStock(data);
-          me.bodyComponent.$.stockOthers.removeClass("error");
+          me.bodyComponent.$.stockOthers.removeClass('error');
           me.bodyComponent.$.stockOthers.setContent(OB.I18N.getLabel('OBPOS_otherStoresStock') + data.qty);
         }
-      }
-    });
+      });
+    }
   },
   beforeSetShowing: function (params) {
     if (!params.product || OB.MobileApp.model.get('warehouses').length === 0) {
@@ -289,6 +332,7 @@ enyo.kind({
     this.bodyComponent.$.warehouseToGet.setContent(OB.I18N.getLabel('OBPOS_loadingFromWarehouse', [this.warehouse.warehousename]));
     this.bodyComponent.$.productPrice.setContent(OB.I18N.getLabel('OBPOS_priceInfo') + '<b>' + OB.I18N.formatCurrency(params.product.get('standardPrice')) + '</b>');
     this.bodyComponent.$.descriptionArea.setContent(params.product.get('description'));
+    this.bodyComponent.$.productAddToReceipt.setLabel();
     this.getOtherStock();
     this.getStoreStock();
     return true;

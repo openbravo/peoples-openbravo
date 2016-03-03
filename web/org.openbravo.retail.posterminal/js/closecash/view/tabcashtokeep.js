@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2015 Openbravo S.L.U.
+ * Copyright (C) 2012-2016 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -94,13 +94,17 @@ enyo.kind({
       components: [{
         style: 'display: table-row;',
         components: [{
+          name: 'variableamount',
           style: 'vertical-align: middle; display: table-cell; ',
+          setAmount: function (amount) {
+            this.setContent(enyo.format(OB.I18N.getLabel('OBPOS_LblOtherMaxAmount'), OB.I18N.formatCurrency(amount, 2)));
+          },
           initComponents: function () {
-            this.setContent(OB.I18N.getLabel('OBPOS_LblOther'));
+            this.setAmount(0);
           }
         }, {
           name: 'variableInput',
-          style: 'width: 90px; vertical-align: middle; margin-top: 0px; margin-right: 0px; margin-bottom: 1px; margin-left: 10px; display: inline-block; ',
+          style: 'padding-left: 20px; display: table-cell;',
           content: OB.DEC.Zero
         }]
       }]
@@ -166,6 +170,7 @@ enyo.kind({
             } else {
               cnted = modelToDraw.get('counted');
             }
+            this.$.variableamount.setAmount(cnted);
             this.$.keepfixedamount.setShowing(modelToDraw.get('paymentMethod').keepfixedamount);
             if (modelToDraw.get('paymentMethod').keepfixedamount) {
               if (modelToDraw.get('foreignCounted') !== null && modelToDraw.get('foreignCounted') !== udfn) {

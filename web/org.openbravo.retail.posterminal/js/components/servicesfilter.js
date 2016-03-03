@@ -173,7 +173,7 @@ enyo.kind({
         columns: ['ispack'],
         operator: 'equals',
         value: false,
-        isId: true
+        fieldType: 'forceString'
       }];
     } else {
       existingServices = OB.MobileApp.model.receipt.get('lines').filter(function (l) {
@@ -195,7 +195,7 @@ enyo.kind({
         columns: ['ispack'],
         operator: 'equals',
         value: false,
-        isId: true
+        fieldType: 'forceString'
       }];
     }
   },
@@ -279,7 +279,7 @@ enyo.kind({
       columns: ['ispack'],
       operator: 'equals',
       value: false,
-      isId: true
+      fieldType: 'forceString'
     }];
   },
   renderInfo: function () {

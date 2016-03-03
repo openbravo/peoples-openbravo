@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013 Openbravo S.L.U.
+ * Copyright (C) 2013-2016 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -107,6 +107,7 @@ enyo.kind({
       }]
     }]
   }],
+  productCharacteristicValueFilterQualifier: 'ProductCH_Filter',
   clearAction: function (inSender, inEvent) {
     this.valuesList.reset();
     return true;
@@ -198,7 +199,7 @@ enyo.kind({
         if (productFilterText !== "" || productcategory !== "__all__") {
           productFilter.columns = [];
           productFilter.operator = OB.Dal.FILTER;
-          productFilter.value = 'ProductCH_Filter';
+          productFilter.value = this.productCharacteristicValueFilterQualifier;
           productText = (OB.MobileApp.model.hasPermission('OBPOS_remote.product' + OB.Dal.USESCONTAINS, true) ? '%' : '') + productFilterText + '%';
           productFilter.params = [productText, productcategory];
           remoteCriteria.push(productFilter);
@@ -209,6 +210,21 @@ enyo.kind({
           brandfilter.value = 'BChV_Filter';
           brandfilter.params = [brandparams.toString()];
           remoteCriteria.push(brandfilter);
+        }
+        var characteristicparams = [];
+        if (me.parent.parent.model.get('filter').length > 0) {
+          for (i = 0; i < me.parent.parent.model.get('filter').length; i++) {
+            characteristicparams.push("'" + me.parent.parent.model.get('filter')[i].id + "'");
+          }
+        }
+
+        var chFilter = {};
+        for (i = 0; i < me.parent.parent.model.get('filter').length; i++) {
+          chFilter.columns = [];
+          chFilter.operator = OB.Dal.FILTER;
+          chFilter.value = 'Chv_Filter';
+          chFilter.params = [characteristicparams.toString()];
+          remoteCriteria.push(chFilter);
         }
 
         criteria.hqlCriteria = [];

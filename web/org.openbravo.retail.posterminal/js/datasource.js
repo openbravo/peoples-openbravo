@@ -288,7 +288,7 @@ OB.DS.HWServer.prototype._send = function (data, callback) {
       data: data,
       success: function (inSender, inResponse) {
         if (callback) {
-          callback(inResponse);
+          callback(inResponse, data);
         }
       },
       fail: function (inSender, inResponse) {
@@ -323,53 +323,6 @@ OB.DS.HWServer.prototype._sendPDF = function (data, callback) {
     var me = this;
     var ajaxRequest = new enyo.Ajax({
       url: me.url + 'pdf',
-      cacheBust: false,
-      method: 'POST',
-      handleAs: 'json',
-      timeout: 20000,
-      contentType: 'application/json;charset=utf-8',
-      data: data,
-      success: function (inSender, inResponse) {
-        if (callback) {
-          callback(inResponse);
-        }
-      },
-      fail: function (inSender, inResponse) {
-        // prevent more than one entry.
-        if (this.failed) {
-          return;
-        }
-        this.failed = true;
-
-        if (callback) {
-          callback({
-            exception: {
-              data: data,
-              message: (OB.I18N.getLabel('OBPOS_MsgHardwareServerNotAvailable'))
-            }
-          });
-        } else {
-          OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgHardwareServerNotAvailable'));
-        }
-      }
-    });
-    rr = new OB.RR.Request({
-      ajaxRequest: ajaxRequest
-    });
-    rr.exec(this.url);
-  }
-};
-
-OB.DS.HWServer.prototype._printFile = function (params, callback) {
-  this._sendFile(JSON.stringify(params), callback);
-};
-
-OB.DS.HWServer.prototype._sendFile = function (data, callback) {
-  if (this.url) {
-    var me = this,
-        rr, url = this.url;
-    var ajaxRequest = new enyo.Ajax({
-      url: url.replace('/printer', '/process/printpdf'),
       cacheBust: false,
       method: 'POST',
       handleAs: 'json',

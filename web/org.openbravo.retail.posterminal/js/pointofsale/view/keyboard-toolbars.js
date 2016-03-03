@@ -174,11 +174,24 @@ enyo.kind({
     if (countbuttons < paymentsbuttons) {
       this.createComponent(btncomponent);
     } else {
-      OB.OBPOSPointOfSale.UI.PaymentMethods.prototype.sideButtons.push(btncomponent);
+      this.addSideButton(btncomponent);
       dialogbuttons[payment.payment.searchKey] = payment.payment._identifier;
     }
   },
-
+  addSideButton: function (btncomponent) {
+    var hasSideButton = false,
+        sideButtons = OB.OBPOSPointOfSale.UI.PaymentMethods.prototype.sideButtons,
+        i;
+    for (i = 0; i < sideButtons.length; i++) {
+      if (_.isEqual(sideButtons[i].btn.command, btncomponent.btn.command)) {
+        hasSideButton = true;
+        break;
+      }
+    }
+    if (!hasSideButton) {
+      OB.OBPOSPointOfSale.UI.PaymentMethods.prototype.sideButtons.push(btncomponent);
+    }
+  },
   initComponents: function () {
     //TODO: modal payments
     var i, max, payments, paymentsdialog, paymentsbuttons, countbuttons, btncomponent, Btn, inst, cont, exactdefault, cashdefault, allpayments = {},
@@ -306,7 +319,7 @@ enyo.kind({
       if (countbuttons++ < paymentsbuttons) {
         this.createComponent(btncomponent);
       } else {
-        OB.OBPOSPointOfSale.UI.PaymentMethods.prototype.sideButtons.push(btncomponent);
+        me.addSideButton(btncomponent);
         dialogbuttons[sidebutton.command] = sidebutton.label;
       }
     }, this);

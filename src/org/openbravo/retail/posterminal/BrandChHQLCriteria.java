@@ -23,6 +23,6 @@ public class BrandChHQLCriteria extends HQLCriteriaProcess {
 
   @Override
   public String getHQLFilter(String params) {
-    return " ch.id in (select pchv.characteristic.id from ProductCharacteristicValue as pchv where ch.id = pchv.characteristic.id and pchv.product.brand.id in ($1)) ";
+    return " exists (select 1 from ProductCharacteristicValue as pchv where ch.id = pchv.characteristic.id and pchv.product.brand.id in ($1)) ";
   }
 }

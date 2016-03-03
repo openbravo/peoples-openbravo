@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2014-2015 Openbravo S.L.U.
+ * Copyright (C) 2014-2016 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -321,7 +321,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
             searchKey: p.get('searchKey'),
             origAmount: OB.UTIL.currency.toDefaultCurrency(fromCurrencyId, p.get('startingCash')),
             amount: OB.DEC.add(0, p.get('startingCash')),
-            description: 'Starting ' + p.get('name') + paymentSharedStr,
+            description: OB.I18N.getLabel('OBPOS_LblStarting') + ' ' + p.get('name') + paymentSharedStr,
             currency: fromCurrencyId,
             isocode: auxPay.isocode,
             rate: p.get('rate'),
@@ -342,9 +342,9 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
     }, this);
 
     this.get('paymentList').on('change:counted', function (mod) {
-      mod.set('difference', OB.DEC.sub(mod.get('counted'), mod.get('expected')));
+      mod.set('difference', OB.DEC.sub(mod.get('counted'), OB.Utilities.Number.roundJSNumber(mod.get('expected'), 2)));
       if (mod.get('foreignCounted') !== null && mod.get('foreignCounted') !== undf && mod.get('foreignExpected') !== null && mod.get('foreignExpected') !== undf) {
-        mod.set('foreignDifference', OB.DEC.sub(mod.get('foreignCounted'), mod.get('foreignExpected')));
+        mod.set('foreignDifference', OB.DEC.sub(mod.get('foreignCounted'), OB.Utilities.Number.roundJSNumber(mod.get('foreignExpected'), 2)));
       }
       this.set('totalCounted', _.reduce(this.get('paymentList').models, function (total, model) {
         return model.get('counted') ? OB.DEC.add(total, model.get('counted')) : total;

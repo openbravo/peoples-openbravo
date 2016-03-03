@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2015 Openbravo S.L.U.
+ * Copyright (C) 2013-2016 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -274,9 +274,6 @@ enyo.kind({
       if ((model.get('orderType') === 2 || (model.get('isLayaway'))) && model.get('orderType') !== 3 && !model.getPaymentStatus().done) {
         this.$.layawayaction.setContent(OB.I18N.getLabel('OBPOS_LblLayaway'));
         this.$.layawayaction.show();
-        if (model.get('orderType') === 2) {
-          this.$.exactbutton.hide();
-        }
       } else if (model.get('orderType') === 3) {
         this.$.layawayaction.hide();
       } else {
@@ -384,9 +381,6 @@ enyo.kind({
       }
       if (this.receipt.get('orderType') === 2 || (this.receipt.get('isLayaway') && this.receipt.get('orderType') !== 3)) {
         this.$.layawayaction.show();
-        if (!this.receipt.get('isLayaway')) {
-          this.$.exactbutton.hide();
-        }
       } else if (this.receipt.get('orderType') === 3) {
         this.$.layawayaction.hide();
       }
@@ -539,23 +533,16 @@ enyo.kind({
     var currentCash = OB.DEC.Zero,
         requiredCash;
 
-    if (OB.UTIL.isNullOrUndefined(selectedPayment) || !selectedPayment.paymentMethod.iscash) {
+    if (OB.UTIL.isNullOrUndefined(selectedPayment) || OB.UTIL.isNullOrUndefined(selectedPayment.paymentMethod.overpaymentLimit)) {
       return true;
     }
 
-    if (paymentstatus.isNegative) {
-      requiredCash = paymentstatus.pendingAmt;
-      paymentstatus.payments.each(function (payment) {
-        if (payment.get('kind') === selectedPayment.payment.searchKey) {
-          requiredCash = OB.DEC.add(requiredCash, payment.get('amount'));
-        }
-      });
-    } else {
-      requiredCash = paymentstatus.changeAmt;
-    }
-
-    if (selectedPayment.paymentMethod.allowoverpayment && (requiredCash !== 0)) {
-      if (!OB.UTIL.isNullOrUndefined(selectedPayment.paymentMethod.overpaymentLimit) && (selectedPayment.paymentMethod.overpaymentLimit < requiredCash)) {
+    requiredCash = paymentstatus.changeAmt;
+    if (requiredCash !== 0) {
+      if (selectedPayment.paymentMethod.overpaymentLimit === 0) {
+        this.$.overpaymentnotavailable.show();
+        return false;
+      } else if (selectedPayment.paymentMethod.overpaymentLimit < requiredCash) {
         this.$.overpaymentexceedlimit.show();
         return false;
       } else {
@@ -563,10 +550,8 @@ enyo.kind({
       }
     } else if (requiredCash === 0) {
       return true;
-    } else {
-      this.$.overpaymentnotavailable.show();
-      return false;
     }
+    return true;
   },
 
   checkValidPaymentMethod: function (paymentstatus, payment) {
@@ -1014,7 +999,12 @@ enyo.kind({
       this.$.info.setContent(this.model.get('description'));
     } else {
       if (this.model.get('paymentData')) {
-        this.$.info.setContent(this.model.get('paymentData').Name);
+        //legacy
+        if (this.model.get('paymentData').Name) {
+          this.model.get('paymentData').name = this.model.get('paymentData').Name;
+        }
+        //end legacy
+        this.$.info.setContent(this.model.get('paymentData').name);
       } else {
         this.$.info.setContent('');
       }
@@ -1175,6 +1165,11 @@ enyo.kind({
         myModel = this.owner.model,
         payments;
     this.allowOpenDrawer = false;
+
+    if (receipt.get('bp').id === OB.MobileApp.model.get('terminal').businessPartner && !OB.MobileApp.model.get('terminal').layaway_anonymouscustomer) {
+      OB.UTIL.showConfirmation.display("Error", OB.I18N.getLabel('OBPOS_layawaysOrdersWithAnonimousCust'));
+      return;
+    }
 
     if (!this.showing) {
       return true;

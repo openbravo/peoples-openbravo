@@ -151,6 +151,18 @@
               OB.MobileApp.view.scanningFocus(true);
               if (!terminalModel.usermodel) {
                 OB.MobileApp.model.loadingErrorsActions("The terminal.usermodel should be loaded at this point");
+              } else if (OB.MobileApp.model.attributes.loadManifeststatus && OB.MobileApp.model.attributes.loadManifeststatus.type === 'error') {
+                var error = OB.MobileApp.model.attributes.loadManifeststatus;
+                var msg = error.reason + ' failed to load: ' + error.url;
+                OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_TitleFailedAppCache'), OB.I18N.getLabel('OBPOS_FailedAppCache', [msg]), [{
+                  label: OB.I18N.getLabel('OBMOBC_LblOk'),
+                  isConfirmButton: true
+                }], {
+                  autoDismiss: false,
+                  onHideFunction: function (popup) {
+                    terminalModel.propertiesReady(me.properties);
+                  }
+                });
               } else {
                 terminalModel.propertiesReady(me.properties);
               }
