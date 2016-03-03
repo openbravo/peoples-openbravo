@@ -149,6 +149,7 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
       JSONObject item = new JSONObject();
       item.put("name", qryUserObjectItem[0]);
       item.put("userName", qryUserObjectItem[1]);
+      item.put("userId", qryUserObjectItem[2]);
 
       // Get the image for the current user
       String hqlImage = "select image.mimetype, image.bindaryData "
