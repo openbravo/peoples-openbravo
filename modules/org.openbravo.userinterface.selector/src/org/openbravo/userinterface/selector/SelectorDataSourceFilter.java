@@ -33,6 +33,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
+import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
@@ -66,7 +67,7 @@ public class SelectorDataSourceFilter implements DataSourceFilter {
   private TextMatching textMatching = TextMatching.exact;
   private static final String ALLOW_WHERE_PREFERENCE = "OBSERDS_AllowWhereParameter";
   private static final String WARN_MESSAGE = "The '_where' parameter has been included in the request. The provided value will be used by the datasource because the OBSERDS_AllowWhereParameter preference is set to true.";
-
+  private static final String PREFERENCE_EXCEPTION_MESSAGE = "The '_where' parameter has been included in the request. This value will not be taken into account. To be able to use this value, set the OBSERDS_AllowWhereParameter preference to true.";
   @Inject
   private CachedPreference cachedPreference;
 
@@ -120,31 +121,32 @@ public class SelectorDataSourceFilter implements DataSourceFilter {
           }
         }
       }
-      String currentWhere = "";
-      if (!StringUtils.isEmpty(filterHQL)) {
-        log.debug("Adding to where clause (based on filter expression): " + filterHQL);
-        // TODO: This does not work, it is not taking the proper value from the cache
-        if ("Y".equals(cachedPreference.getPreferenceValue(ALLOW_WHERE_PREFERENCE))
-            && parameters.containsKey(JsonConstants.WHERE_PARAMETER)) {
-          log.warn(WARN_MESSAGE);
+
+      if (parameters.containsKey(JsonConstants.WHERE_PARAMETER)) {
+        if ("Y".equals(cachedPreference.getPreferenceValue(ALLOW_WHERE_PREFERENCE))) {
           parameters.put(JsonConstants.WHERE_AND_FILTER_CLAUSE,
               parameters.get(JsonConstants.WHERE_PARAMETER));
-          currentWhere = parameters.get(JsonConstants.WHERE_AND_FILTER_CLAUSE);
+          log.warn(WARN_MESSAGE);
         } else {
-          currentWhere = sel.getHQLWhereClause();
-        }
-
-        if (StringUtils.isBlank(currentWhere)) {
-          parameters.put(JsonConstants.WHERE_AND_FILTER_CLAUSE, filterHQL);
-        } else {
-          parameters.put(JsonConstants.WHERE_AND_FILTER_CLAUSE, currentWhere + " and " + filterHQL);
+          throw new OBSecurityException(PREFERENCE_EXCEPTION_MESSAGE);
         }
       } else {
-        currentWhere = sel.getHQLWhereClause();
-        if (StringUtils.isNotBlank(currentWhere)) {
-          parameters.put(JsonConstants.WHERE_AND_FILTER_CLAUSE, currentWhere);
+        String currentWhere = "";
+        if (!StringUtils.isEmpty(filterHQL)) {
+          log.debug("Adding to where clause (based on filter expression): " + filterHQL);
+          currentWhere = sel.getHQLWhereClause();
+          if (StringUtils.isBlank(currentWhere)) {
+            parameters.put(JsonConstants.WHERE_AND_FILTER_CLAUSE, filterHQL);
+          } else {
+            parameters.put(JsonConstants.WHERE_AND_FILTER_CLAUSE, currentWhere + " and "
+                + filterHQL);
+          }
+        } else {
+          currentWhere = sel.getHQLWhereClause();
+          if (StringUtils.isNotBlank(currentWhere)) {
+            parameters.put(JsonConstants.WHERE_AND_FILTER_CLAUSE, currentWhere);
+          }
         }
-
       }
 
       // Applying default expression for selector fields when is not a selector window request
@@ -157,6 +159,8 @@ public class SelectorDataSourceFilter implements DataSourceFilter {
         verifyPropertyTypes(sel, parameters);
       }
 
+    } catch (OBSecurityException e) {
+      throw new OBSecurityException(e);
     } catch (Exception e) {
       log.error("Error executing filter: " + e.getMessage(), e);
     } finally {
@@ -407,25 +411,26 @@ public class SelectorDataSourceFilter implements DataSourceFilter {
 
     log.debug("Adding to where clause (based on fields default expression): " + sb.toString());
 
-    // TODO: This does not work, it is not taking the proper value from the cache
-    if ("Y".equals(cachedPreference.getPreferenceValue(ALLOW_WHERE_PREFERENCE))
-        && parameters.containsKey(JsonConstants.WHERE_PARAMETER)) {
-      log.warn(WARN_MESSAGE);
-      parameters.put(JsonConstants.WHERE_AND_FILTER_CLAUSE,
-          parameters.get(JsonConstants.WHERE_PARAMETER));
-      currentWhere = parameters.get(JsonConstants.WHERE_AND_FILTER_CLAUSE);
+    if (parameters.containsKey(JsonConstants.WHERE_PARAMETER)) {
+      if ("Y".equals(cachedPreference.getPreferenceValue(ALLOW_WHERE_PREFERENCE))) {
+        parameters.put(JsonConstants.WHERE_AND_FILTER_CLAUSE,
+            parameters.get(JsonConstants.WHERE_PARAMETER));
+      } else {
+        throw new OBSecurityException(PREFERENCE_EXCEPTION_MESSAGE);
+      }
     } else {
       if (StringUtils.isNotBlank(hqlFilterClause)) {
         currentWhere = parameters.get(JsonConstants.WHERE_AND_FILTER_CLAUSE);
       } else {
         currentWhere = sel.getHQLWhereClause();
       }
+      if (currentWhere == null || currentWhere.equals("null") || currentWhere.equals("")) {
+        parameters.put(JsonConstants.WHERE_AND_FILTER_CLAUSE, sb.toString());
+      } else {
+        parameters.put(JsonConstants.WHERE_AND_FILTER_CLAUSE,
+            currentWhere + " and " + sb.toString());
+      }
     }
 
-    if (currentWhere == null || currentWhere.equals("null") || currentWhere.equals("")) {
-      parameters.put(JsonConstants.WHERE_AND_FILTER_CLAUSE, sb.toString());
-    } else {
-      parameters.put(JsonConstants.WHERE_AND_FILTER_CLAUSE, currentWhere + " and " + sb.toString());
-    }
   }
 }

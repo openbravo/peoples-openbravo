@@ -26,6 +26,7 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.client.application.CachedPreference;
@@ -57,6 +58,7 @@ public abstract class BaseDataSourceService implements DataSourceService {
   private List<DataSourceProperty> dataSourceProperties = new ArrayList<DataSourceProperty>();
   private static final String ALLOW_WHERE_PREFERENCE = "OBSERDS_AllowWhereParameter";
   private static final String WARN_MESSAGE = "The '_where' parameter has been included in the request. The provided value will be used by the datasource because the OBSERDS_AllowWhereParameter preference is set to true.";
+  private static final String PREFERENCE_EXCEPTION_MESSAGE = "The '_where' parameter has been included in the request. This value will not be taken into account. To be able to use this value, set the OBSERDS_AllowWhereParameter preference to true.";
 
   @Inject
   private CachedPreference cachedPreference;
@@ -146,19 +148,16 @@ public abstract class BaseDataSourceService implements DataSourceService {
    * @return A String with the value of the where and filter clause. It can be null when there is no
    *         filter clause nor where clause.
    */
-  protected String getWhereAndFilterClause(Map<String, String> parameters, Entity ent) {
+  protected String getWhereAndFilterClause(Map<String, String> parameters) {
+    // parameters.put(JsonConstants.WHERE_PARAMETER, "1=1) or 2=2");
     if (parameters.containsKey(JsonConstants.TAB_PARAMETER)) {
       String whereAndFilterClause = null;
-      if (("Y".equals(cachedPreference.getPreferenceValue(ALLOW_WHERE_PREFERENCE)))
-          && parameters.containsKey(JsonConstants.WHERE_PARAMETER)) {
-        log.warn(WARN_MESSAGE);
-        if (getWhereClause() != null) {
-          if (parameters.get(JsonConstants.WHERE_PARAMETER) != null) {
-            parameters.put(JsonConstants.WHERE_AND_FILTER_CLAUSE,
-                parameters.get(JsonConstants.WHERE_PARAMETER));
-            final String currentWhere = parameters.get(JsonConstants.WHERE_AND_FILTER_CLAUSE);
-            whereAndFilterClause = "(" + currentWhere + ") and (" + getWhereClause() + ")";
-          }
+      if (parameters.containsKey(JsonConstants.WHERE_PARAMETER)) {
+        if ("Y".equals(cachedPreference.getPreferenceValue(ALLOW_WHERE_PREFERENCE))) {
+          log.warn(WARN_MESSAGE);
+          whereAndFilterClause = parameters.get(JsonConstants.WHERE_PARAMETER);
+        } else {
+          throw new OBSecurityException(PREFERENCE_EXCEPTION_MESSAGE);
         }
       } else {
         String tabId = parameters.get(JsonConstants.TAB_PARAMETER);
@@ -167,7 +166,7 @@ public abstract class BaseDataSourceService implements DataSourceService {
           Tab tab = OBDal.getInstance().get(Tab.class, tabId);
           String where = tab.getHqlwhereclause();
           if (isFilterApplied(parameters)) {
-            String filterClause = getFilterClause(tab, ent);
+            String filterClause = getFilterClause(tab);
             if (StringUtils.isNotBlank(where)) {
               whereAndFilterClause = " ((" + where + ") and (" + filterClause + "))";
             } else {
@@ -194,7 +193,8 @@ public abstract class BaseDataSourceService implements DataSourceService {
     return (tab.getTabLevel() == 0) ? true : false;
   }
 
-  private String getFilterClause(Tab tab, Entity ent) {
+  private String getFilterClause(Tab tab) {
+    Entity ent = ModelProvider.getInstance().getEntityByTableId(tab.getTable().getId());
     boolean isTransactionalWindow = tab.getWindow().getWindowType().equals("T");
     String filterClause = null;
     if (tab.getHqlfilterclause() == null) {

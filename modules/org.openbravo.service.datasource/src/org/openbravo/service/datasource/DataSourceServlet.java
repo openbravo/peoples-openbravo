@@ -215,6 +215,8 @@ public class DataSourceServlet extends BaseKernelServlet {
           DataSourceFilter filter = (DataSourceFilter) WeldUtils
               .getInstanceFromStaticBeanManager(Class.forName(filterClass));
           filter.doFilter(parameters, request);
+        } catch (OBSecurityException e) {
+          throw new OBSecurityException(e);
         } catch (Exception e) {
           log.error("Error trying to apply datasource filter with class: " + filterClass, e);
         }

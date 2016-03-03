@@ -24,12 +24,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.model.Entity;
-import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.model.domaintype.DateDomainType;
 import org.openbravo.base.model.domaintype.DatetimeDomainType;
@@ -93,20 +91,13 @@ public class DefaultDataSourceService extends BaseDataSourceService {
   }
 
   protected void addFetchParameters(Map<String, String> parameters) {
-
     if (getEntity() != null) {
       parameters.put(JsonConstants.ENTITYNAME, getEntity().getName());
     }
+    // No need to do this for selectors, they manage the where clause in SelectorDataSourceFilter
+    // class
     if (!isSelector(parameters)) {
-      Entity entity = null;
-      String entityName = parameters.get(JsonConstants.ENTITYNAME);
-      if (StringUtils.isNotBlank(entityName)) {
-        entity = ModelProvider.getInstance().getEntity(entityName);
-      } else {
-        String tableId = parameters.get(JsonConstants.TABLE_ID);
-        entity = ModelProvider.getInstance().getEntityByTableId(tableId);
-      }
-      String whereAndFilterClause = getWhereAndFilterClause(parameters, entity);
+      String whereAndFilterClause = getWhereAndFilterClause(parameters);
       parameters.put(JsonConstants.WHERE_AND_FILTER_CLAUSE, whereAndFilterClause);
     }
 
