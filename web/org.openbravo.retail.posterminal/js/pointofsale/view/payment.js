@@ -274,9 +274,6 @@ enyo.kind({
       if ((model.get('orderType') === 2 || (model.get('isLayaway'))) && model.get('orderType') !== 3 && !model.getPaymentStatus().done) {
         this.$.layawayaction.setContent(OB.I18N.getLabel('OBPOS_LblLayaway'));
         this.$.layawayaction.show();
-        if (model.get('orderType') === 2) {
-          this.$.exactbutton.hide();
-        }
       } else if (model.get('orderType') === 3) {
         this.$.layawayaction.hide();
       } else {
@@ -384,9 +381,6 @@ enyo.kind({
       }
       if (this.receipt.get('orderType') === 2 || (this.receipt.get('isLayaway') && this.receipt.get('orderType') !== 3)) {
         this.$.layawayaction.show();
-        if (!this.receipt.get('isLayaway')) {
-          this.$.exactbutton.hide();
-        }
       } else if (this.receipt.get('orderType') === 3) {
         this.$.layawayaction.hide();
       }
