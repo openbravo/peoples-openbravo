@@ -67,6 +67,7 @@ public class TerminalProperties extends ModelExtension {
     list.add(new HQLProperty("pos.orderdocnoPrefix", "docNoPrefix"));
     list.add(new HQLProperty("coalesce(pos.quotationdocnoPrefix, concat(pos.searchKey, 'QT'))",
         "quotationDocNoPrefix"));
+    list.add(new HQLProperty("pos.returndocnoPrefix", "returnDocNoPrefix"));
     list.add(new HQLProperty("pos.obposTerminaltype.allowpayoncredit", "allowpayoncredit"));
     list.add(new HQLProperty("pos.organization.obposCountDiffLimit", "organizationCountDiffLimit"));
     list.add(new HQLProperty("pos.defaultwebpostab", "defaultwebpostab"));

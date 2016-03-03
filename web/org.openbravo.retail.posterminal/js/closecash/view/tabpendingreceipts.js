@@ -193,7 +193,7 @@ enyo.kind({
     }
     model.set('hasbeenpaid', 'Y');
     model.save();
-    OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(model.get('documentnoSuffix'), model.get('quotationnoSuffix'), function () {
+    OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(model.get('documentnoSuffix'), model.get('quotationnoSuffix'), model.get('returnnoSuffix'), function () {
       me.collection.remove(model);
     });
   },

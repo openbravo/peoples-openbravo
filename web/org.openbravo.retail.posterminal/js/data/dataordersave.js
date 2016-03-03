@@ -163,7 +163,7 @@
           // when all the properties of the receipt have been set, keep a copy
           OB.UTIL.cashUpReport(receipt, function () {
             OB.UTIL.calculateCurrentCash(null, tx);
-            OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(receipt.get('documentnoSuffix'), receipt.get('quotationnoSuffix'), function () {
+            OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(receipt.get('documentnoSuffix'), receipt.get('quotationnoSuffix'), receipt.get('returnnoSuffix'), function () {
               OB.trace('Saving receipt.');
               OB.Dal.saveInTransaction(tx, receipt, function () {
                 // the trigger is fired on the receipt object, as there is only 1 that is being updated
@@ -281,7 +281,7 @@
       this.receipt.set('hasbeenpaid', 'Y');
       this.context.get('multiOrders').trigger('integrityOk', this.receipt);
       OB.UTIL.calculateCurrentCash();
-      OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(this.receipt.get('documentnoSuffix'), this.receipt.get('quotationnoSuffix'));
+      OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(this.receipt.get('documentnoSuffix'), this.receipt.get('quotationnoSuffix'), this.receipt.get('returnnoSuffix'));
 
       delete this.receipt.attributes.json;
       this.receipt.set('timezoneOffset', creationDate.getTimezoneOffset());

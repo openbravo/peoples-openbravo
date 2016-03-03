@@ -347,8 +347,10 @@
         this.set('creationDate', OB.I18N.normalizeDate(attributes.creationDate));
         this.set('documentnoPrefix', attributes.documentnoPrefix);
         this.set('quotationnoPrefix', attributes.quotationnoPrefix);
+        this.set('returnnoPrefix', attributes.returnnoPrefix);
         this.set('documentnoSuffix', attributes.documentnoSuffix);
         this.set('quotationnoSuffix', attributes.quotationnoSuffix);
+        this.set('returnnoSuffix', attributes.returnnoSuffix);
         this.set('documentNo', attributes.documentNo);
         this.setUndo('InitializeAttr', attributes.undo);
         bpModel = new OB.Model.BusinessPartner(attributes.bp);
@@ -752,6 +754,21 @@
       }
     },
 
+    setReturnDocumentNo: function () {
+      if (OB.MobileApp.model.get('terminal').returnDocNoPrefix) {
+        var order = this;
+        if (order.get('returnnoPrefix') !== OB.MobileApp.model.get('terminal').returnDocNoPrefix) {
+          var nextReturnno = OB.MobileApp.model.getNextReturnno();
+          order.set('returnnoPrefix', OB.MobileApp.model.get('terminal').returnDocNoPrefix);
+          order.set('returnnoSuffix', nextReturnno.documentnoSuffix);
+          order.set('documentnoPrefix', -1);
+          order.set('documentnoSuffix', -1);
+          order.set('documentNo', nextReturnno.documentNo);
+          order.trigger('saveCurrent');
+        }
+      }
+    },
+
     getQty: function () {
       return this.get('qty');
     },
@@ -839,8 +856,10 @@
       this.set('creationDate', null);
       this.set('documentnoPrefix', -1);
       this.set('quotationnoPrefix', -1);
+      this.set('returnnoPrefix', -1);
       this.set('documentnoSuffix', -1);
       this.set('quotationnoSuffix', -1);
+      this.set('returnnoSuffix', -1);
       this.set('documentNo', '');
       this.set('undo', null);
       this.set('bp', null);
@@ -2533,6 +2552,8 @@
       this.set('documentnoSuffix', nextDocumentno.documentnoSuffix);
       this.set('quotationnoPrefix', -1);
       this.set('quotationnoSuffix', -1);
+      this.set('returnnoPrefix', -1);
+      this.set('returnnoSuffix', -1);
       this.set('documentNo', nextDocumentno.documentNo);
       this.set('posTerminal', OB.MobileApp.model.get('terminal').id);
       this.set('session', OB.MobileApp.model.get('session'));

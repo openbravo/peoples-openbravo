@@ -27,6 +27,7 @@ enyo.kind({
       permission: this.permission,
       orderType: 1
     });
+    this.model.get('order').setReturnDocumentNo();
     if (OB.MobileApp.model.get('lastPaneShown') === 'payment') {
       this.model.get('order').trigger('scan');
     }
@@ -259,6 +260,13 @@ enyo.kind({
         me.updateVisibility(true);
       } else {
         me.updateVisibility(false);
+      }
+    }, this);
+    receipt.on('change:orderType', function (model) {
+      if (model.get('orderType') === 1) {
+        me.updateVisibility(false);
+      } else {
+        me.updateVisibility(true);
       }
     }, this);
     receipt.on('change:isEditable', function (newValue) {
