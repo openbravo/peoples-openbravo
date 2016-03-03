@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2015 Openbravo SLU
+ * All portions are Copyright (C) 2010-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -94,7 +94,10 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
         isPosOrder = bundle.getParams().get("isPOSOrder").equals("Y");
       }
       final String paymentDate = (String) bundle.getParams().get("paymentdate");
-      processPayment(payment, strAction, isPosOrder, paymentDate, comingFrom, selectedCreditLineIds);
+      final boolean doFlush = bundle.getParams().get("doFlush") != null ? (Boolean) bundle
+          .getParams().get("doFlush") : true;
+      processPayment(payment, strAction, isPosOrder, paymentDate, comingFrom,
+          selectedCreditLineIds, doFlush);
       bundle.setResult(msg);
     } catch (Exception e) {
       log4j.error(e.getMessage());
@@ -110,11 +113,12 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
   public static void doProcessPayment(FIN_Payment payment, String strAction, Boolean isPosOrder,
       String paymentDate, String comingFrom) throws OBException {
     FIN_PaymentProcess fpp = WeldUtils.getInstanceFromStaticBeanManager(FIN_PaymentProcess.class);
-    fpp.processPayment(payment, strAction, isPosOrder, paymentDate, comingFrom, null);
+    fpp.processPayment(payment, strAction, isPosOrder, paymentDate, comingFrom, null, true);
   }
 
   private void processPayment(FIN_Payment payment, String strAction, Boolean isPosOrder,
-      String paymentDate, String comingFrom, String selectedCreditLineIds) throws OBException {
+      String paymentDate, String comingFrom, String selectedCreditLineIds, boolean doFlush)
+      throws OBException {
     dao = new AdvPaymentMngtDao();
     String msg = "";
     try {
@@ -485,7 +489,7 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
             flushDone = true;
           }
         } finally {
-          if (!flushDone) {
+          if (!flushDone && doFlush) {
             OBDal.getInstance().flush();
           }
           OBContext.restorePreviousMode();
@@ -656,7 +660,7 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
         FIN_PaymentProcess fpp = WeldUtils
             .getInstanceFromStaticBeanManager(FIN_PaymentProcess.class);
         fpp.processPayment(reversedPayment, newStrAction, isPosOrder, paymentDate, comingFrom,
-            selectedCreditLineIds);
+            selectedCreditLineIds, true);
 
         return;
 
