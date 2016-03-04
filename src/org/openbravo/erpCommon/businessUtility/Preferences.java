@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2016 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -72,7 +72,7 @@ public class Preferences {
         } else {
           // There is a preference for the current property, check whether it is higher priority and
           // if so replace it. In case of conflict leave current preference.
-          if (isHigherPriority(pref, existentPreference, parentTree) == 1) {
+          if (getHighestPriority(pref, existentPreference, parentTree) == 1) {
             preferences.remove(existentPreference);
             preferences.add(pref);
           }
@@ -196,7 +196,7 @@ public class Preferences {
           selectedPreference = preference;
           continue;
         }
-        int higherPriority = isHigherPriority(selectedPreference, preference, parentTree);
+        int higherPriority = getHighestPriority(selectedPreference, preference, parentTree);
         switch (higherPriority) {
         case 1:
           // do nothing, selected one has higher priority
@@ -487,7 +487,7 @@ public class Preferences {
    *         <li>0 in case of conflict (both have identical visibility and value)
    *         </ul>
    */
-  private static int isHigherPriority(Preference pref1, Preference pref2, List<String> parentTree) {
+  private static int getHighestPriority(Preference pref1, Preference pref2, List<String> parentTree) {
     // Check priority by client
     if ((pref2.getVisibleAtClient() == null || pref2.getVisibleAtClient().getId().equals("0"))
         && pref1.getVisibleAtClient() != null && !pref1.getVisibleAtClient().getId().equals("0")) {
@@ -501,7 +501,7 @@ public class Preferences {
       return 1;
     }
 
-    if ((org1 == null && org2 != null)) {
+    if (org1 == null && org2 != null) {
       return 2;
     }
 
