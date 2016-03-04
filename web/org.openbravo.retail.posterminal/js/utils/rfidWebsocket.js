@@ -242,4 +242,4 @@ OB.UTIL.sendTestEpc = function (epc) {
       OB.UTIL.rfidWebsocket.send('test:' + uuid + ':' + epc);
     }, function () {}, function () {}, 2000, OB.UTIL.get_UUID(), 5);
   }
-}
+};
