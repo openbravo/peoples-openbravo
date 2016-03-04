@@ -449,6 +449,8 @@ public class Preferences {
       parameters.add(property);
     }
 
+    hql.append(" order by p.id");
+
     OBQuery<Preference> qPref = OBDal.getInstance().createQuery(Preference.class, hql.toString());
     qPref.setParameters(parameters);
     qPref.setFilterOnActive(activeFilterEnabled);
