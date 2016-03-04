@@ -1137,6 +1137,14 @@
         } else {
           this.deleteLine(line, false, callback);
         }
+      } else {
+        if (idx === length) {
+          if (callback) {
+            callback();
+          }
+        } else {
+          this.deleteLines(lines, idx, length, callback);
+        }
       }
     },
 
