@@ -654,9 +654,6 @@ enyo.kind({
       // Finally set status of buttons
       this.setStatusButtons(resultOK);
     }
-    if (!resultOK && !selectedPayment.paymentMethod.iscash) {
-      this.$.noenoughchangelbl.hide();
-    }
     return returnCheck;
   },
 
