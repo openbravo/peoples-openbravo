@@ -388,7 +388,7 @@ public class DataSourceWhereParameterTest extends BaseDataSourceTestDal {
         RETURN_FROM_CUSTOMER_EXPECTED_VALUE, RETURN_FROM_CUSTOMER_UNEXPECTED_VALUE, false,
         new HashMap<String, String>() {
           {
-            put("@Order.id@", "D6446F22C5E24EBB95F232302AEABBBE");
+            put("@Order.id@", "8A71B73E636447C69D805A7B0F9039BA");
             put("@Order.client@", "23C59575B9CF467C9620760EB255B389");
             put("@Order.documentType@", "0");
             put("@Order.deliveryMethod@", "P");
@@ -417,8 +417,6 @@ public class DataSourceWhereParameterTest extends BaseDataSourceTestDal {
             put("_startRow", "0");
             put("_endRow", "100");
             put("_textMatchStyle", "substring");
-            put("_componentId", "isc_OBPickAndExecuteGrid_0");
-            put("_dataSource", "isc_OBPickAndExecuteDataSource_0");
             put("isc_metaDataPrefix", "_");
             put("isc_dataFormat", "json");
           }
@@ -516,36 +514,22 @@ public class DataSourceWhereParameterTest extends BaseDataSourceTestDal {
 
   @Test
   public void datasourceWithManualWhereParameter() throws Exception {
-    boolean expectedRecordId;
-    boolean unexpectedRecordId;
-    if (!datasource.onlySuccessAssert) {
-
+    if (!datasource.onlySuccessAssert && !"DB9F062472294F12A0291A7BD203F922".equals(datasource.ds)) {
       datasource.params.put("isFilterApplied", "true");
       datasource.params.put("_where", MANUAL_WHERE);
-      String datasourceResponseFilterTrueWhereTrue = getDataSourceResponse();
-      expectedRecordId = isValueInTheResponseData(datasource.expected,
-          datasourceResponseFilterTrueWhereTrue);
-      unexpectedRecordId = isValueInTheResponseData(datasource.unexpected,
-          datasourceResponseFilterTrueWhereTrue);
-      assertThat(expectedRecordId, is(true));
-      assertThat(unexpectedRecordId, is(false));
-      if ("3C1148C0AB604DE1B51B7EA4112C325F".equals(datasource.ds)
-          || "ADUser".equals(datasource.ds)) {
-        datasource.params.put("isFilterApplied", "false");
-        String datasourceResponseFilterFalseWhereTrue = getDataSourceResponse();
-        expectedRecordId = isValueInTheResponseData(datasource.expected,
-            datasourceResponseFilterFalseWhereTrue);
-        unexpectedRecordId = isValueInTheResponseData(datasource.unexpected,
-            datasourceResponseFilterFalseWhereTrue);
-        assertThat(expectedRecordId, is(true));
-        assertThat(unexpectedRecordId, is(true));
-        datasource.params.remove("_where");
-      }
+      String datasourceResponseWhereTrue = getDataSourceResponse();
+      JSONObject jsonResponse = new JSONObject(datasourceResponseWhereTrue);
+      assertThat(getStatus(jsonResponse),
+          is(String.valueOf(JsonConstants.RPCREQUEST_STATUS_VALIDATION_ERROR)));
+      datasource.params.remove(JsonConstants.WHERE_PARAMETER);
     }
   }
 
   @Test
   public void datasourceRequestStatusShouldBeSuccessful() throws Exception {
+    if (datasource.params.containsKey(JsonConstants.WHERE_PARAMETER)) {
+      datasource.params.remove(JsonConstants.WHERE_PARAMETER);
+    }
     String datasourceResponse = getDataSourceResponse();
     JSONObject jsonResponse = new JSONObject(datasourceResponse);
     assertThat(getStatus(jsonResponse), is(String.valueOf(JsonConstants.RPCREQUEST_STATUS_SUCCESS)));
