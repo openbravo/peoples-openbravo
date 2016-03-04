@@ -266,6 +266,10 @@ public class EntityAccessChecker implements OBNotSingleton {
    */
   private boolean hasCorrectAccessLevel(String userLevel, int accessLevel) {
     // copied from HttpSecureAppServlet.
+    if (!OBContext.getOBContext().doAccessLevelCheck()) {
+      return true;
+    }
+
     if (accessLevel == 4 && userLevel.indexOf("S") == -1) {
       return false;
     } else if (accessLevel == 1 && userLevel.indexOf("O") == -1) {

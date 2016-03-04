@@ -173,7 +173,7 @@ public class CrossOrganizationReference extends BaseDataSourceTestDal {
   }
 
   @AfterClass
-  public static void removeCreatedObjects() {
+  static void removeCreatedObjects() {
     OBContext.setOBContext("0");
     OBContext.setAdminMode(false);
     try {
@@ -182,6 +182,7 @@ public class CrossOrganizationReference extends BaseDataSourceTestDal {
         OBDal.getInstance().flush();
       }
       OBDal.getInstance().commitAndClose();
+      createdObjects.clear();
     } catch (Exception ignore) {
     } finally {
       OBContext.restorePreviousMode();
