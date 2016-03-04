@@ -471,8 +471,7 @@ public abstract class UIDefinition {
     if (result.indexOf(attr) != -1) {
       // If there is a previous 'canSort' or 'canFilter' set, remove it to avoid collision when the
       // new one is set later
-      result = result.replaceAll("(,)( *?)(canSort)( *?)(:)( *?)(false|true)( *?)", "");
-      result = result.replaceAll("(,)( *?)(canFilter)( *?)(:)( *?)(false|true)( *?)", "");
+      result = result.replaceAll("(,)( *?)(" + attr + ")( *?)(:)( *?)(false|true)( *?)", "");
     }
     return result;
 
