@@ -662,6 +662,12 @@
         OB.error("calculateReceipt should only be called by the UI receipt");
       }
 
+      // Verify if it's necesary to skip applying the function
+      if (this.get('skipCalculateReceipt')) {
+        OB.debug('Skipping calculateReceipt function');
+        return;
+      }
+
       this.calculatingReceipt = true;
 
       this.addToListOfCallbacks(callback);
@@ -1704,14 +1710,16 @@
     },
 
     removeAndInsertLines: function (callback) {
+      this.set('skipCalculateReceipt', true);
       var me = this;
       // Remove all lines and insert again with new prices
       var orderlines = [];
       var promotionlines = [];
       var addProductsOfLines = null;
 
-      addProductsOfLines = function (receipt, lines, index, callback) {
+      addProductsOfLines = function (receipt, lines, index, callback, promotionLines) {
         if (index === lines.length) {
+          me.set('skipCalculateReceipt', false);
           if (callback) {
             callback();
           }
@@ -1720,11 +1728,13 @@
         OB.Dal.get(OB.Model.Product, lines[index].get('product').id, function (product) {
           me.addProduct(product, lines[index].get('qty'), undefined, undefined, function (isInPriceList) {
             if (isInPriceList) {
-              me.get('lines').at(index).set('promotions', lines[index].get('promotions'));
-              addProductsOfLines(receipt, lines, index + 1, callback);
+              me.get('lines').at(index).set('promotions', promotionLines[index]);
+              me.get('lines').at(index).calculateGross();
+              addProductsOfLines(receipt, lines, index + 1, callback, promotionLines);
             } else {
+              promotionLines.splice(index, 1);
               lines.splice(index, 1);
-              addProductsOfLines(receipt, lines, index, callback);
+              addProductsOfLines(receipt, lines, index, callback, promotionLines);
             }
           });
         });
@@ -1733,13 +1743,10 @@
         orderlines.push(line);
         promotionlines.push(line.get('promotions'));
       });
-      this.calculateReceipt(function () {
-        // TODO: Lost options and attributes, maybe has problems with other modules (like Complementary Products)
-        _.each(orderlines, function (orderline, index) {
-      	  orderline.set('promotions', promotionlines[index]);
-      	});
-      	addProductsOfLines(me, orderlines, 0, callback);
+      _.each(orderlines, function (line) {
+        me.deleteLine(line, true);
       });
+      addProductsOfLines(me, orderlines, 0, callback, promotionlines);
     },
 
     setOrderType: function (permission, orderType, options) {
