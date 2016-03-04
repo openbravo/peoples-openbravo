@@ -47,6 +47,7 @@ import org.openbravo.model.common.enterprise.Organization;
  */
 public class Preferences {
   private static final Logger log4j = Logger.getLogger(Preferences.class);
+  private static final String SYSTEM = "0";
 
   /**
    * Obtains a list of all preferences that are applicable at the given visibility level (client,
@@ -491,9 +492,18 @@ public class Preferences {
    */
   private static int getHighestPriority(Preference pref1, Preference pref2, List<String> parentTree) {
     // Check priority by client
-    if ((pref2.getVisibleAtClient() == null || pref2.getVisibleAtClient().getId().equals("0"))
-        && pref1.getVisibleAtClient() != null && !pref1.getVisibleAtClient().getId().equals("0")) {
+
+    // undefined client visibility is handled as system
+    String clientId1 = pref1.getVisibleAtClient() == null ? SYSTEM : (String) DalUtil.getId(pref1
+        .getVisibleAtClient());
+    String clientId2 = pref2.getVisibleAtClient() == null ? SYSTEM : (String) DalUtil.getId(pref2
+        .getVisibleAtClient());
+    if (!SYSTEM.equals(clientId1) && SYSTEM.equals(clientId2)) {
       return 1;
+    }
+
+    if (SYSTEM.equals(clientId1) && !SYSTEM.equals(clientId2)) {
+      return 2;
     }
 
     // Check priority by organization
