@@ -11,16 +11,18 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2016 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.test.preference;
 
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.sql.Connection;
@@ -279,6 +281,35 @@ public class PreferenceTest extends OBBaseTest {
         .getOBContext().getUser(), OBContext.getOBContext().getRole(), null);
     assertEquals("Not found expected value.", "B12", value);
     OBDal.getInstance().commitAndClose();
+  }
+
+  @Test
+  public void testH1ClientVisibility() throws PropertyException {
+    setSystemAdministratorContext();
+    Client testClient = OBDal.getInstance().getProxy(Client.class, TEST_CLIENT_ID);
+    Client systemClient = OBDal.getInstance().getProxy(Client.class, "0");
+
+    final String propAttribute = "clientPropertyTest";
+    Preference p1 = Preferences.setPreferenceValue(propAttribute, "test client", false, testClient,
+        null, null, null, null, null);
+    Preference p2 = Preferences.setPreferenceValue(propAttribute, "system", false, systemClient,
+        null, null, null, null, null);
+
+    OBDal.getInstance().flush();
+
+    String valueClient = Preferences.getPreferenceValue(propAttribute, false, testClient, OBContext
+        .getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
+        .getOBContext().getRole(), null);
+    assertThat("preference for client", valueClient, is("test client"));
+
+    String valueSystem = Preferences.getPreferenceValue(propAttribute, false, systemClient, OBDal
+        .getInstance().getProxy(Organization.class, "0"), OBContext.getOBContext().getUser(),
+        OBContext.getOBContext().getRole(), null);
+
+    assertThat("preference for system", valueSystem, is("system"));
+
+    OBDal.getInstance().remove(p1);
+    OBDal.getInstance().remove(p2);
   }
 
   @Test
