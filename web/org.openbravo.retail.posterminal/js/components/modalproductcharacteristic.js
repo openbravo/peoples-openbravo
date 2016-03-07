@@ -178,6 +178,7 @@ enyo.kind({
       var productFilter = {},
           criteria = {},
           brandfilter = {},
+          chFilter = {},
           characteristicValuefilter = {},
           productText, characteristicfilter = {
           columns: ['characteristic_id'],
@@ -190,7 +191,13 @@ enyo.kind({
         if (productCharacteristicModel.get('brandFilter').length > 0) {
           for (i = 0; i < productCharacteristicModel.get('brandFilter').length; i++) {
             if (productCharacteristicModel.get('brandFilter')[i]) {
-              brandparams.push("'" + productCharacteristicModel.get('brandFilter')[i].id + "'");
+              brandfilter = {
+                columns: [],
+                operator: OB.Dal.FILTER,
+                value: 'BChV_Filter',
+                params: [productCharacteristicModel.get('brandFilter')[i].id]
+              };
+              remoteCriteria.push(brandfilter);
             }
           }
         }
@@ -203,12 +210,17 @@ enyo.kind({
           productFilter.params = [productText, productcategory];
           remoteCriteria.push(productFilter);
         }
-        if (brandparams.length > 0) {
-          brandfilter.columns = [];
-          brandfilter.operator = OB.Dal.FILTER;
-          brandfilter.value = 'BChV_Filter';
-          brandfilter.params = [brandparams.toString()];
-          remoteCriteria.push(brandfilter);
+        if (me.parent.parent.model.get('filter').length > 0) {
+          for (i = 0; i < me.parent.parent.model.get('filter').length; i++) {
+            chFilter = {
+              columns: [],
+              operator: OB.Dal.FILTER,
+              value: 'Chv_Filter',
+              filter: me.parent.parent.model.get('filter')[i].characteristic_id,
+              params: [me.parent.parent.model.get('filter')[i].id]
+            };
+            remoteCriteria.push(chFilter);
+          }
         }
 
         criteria.hqlCriteria = [];
