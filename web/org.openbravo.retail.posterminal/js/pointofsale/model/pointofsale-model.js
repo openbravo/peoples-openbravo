@@ -577,7 +577,10 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
           silent: true
         });
       });
-      OB.Model.Discounts.applyPromotions(receipt);
+      if (!OB.MobileApp.model.hasPermission('EnableMultiPriceList', true)) {
+        // Calculate the promotions only if it's not multipricelist
+        OB.Model.Discounts.applyPromotions(receipt);
+      }
     }, this);
 
     receipt.on('voidLayaway', function () {
