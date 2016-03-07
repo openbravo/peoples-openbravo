@@ -232,7 +232,7 @@ enyo.kind({
     var comp = this._searchSelectedComponent(this.$.discountsList.getValue()),
         discountsContainer = this.$.discountsContainer;
     discountsContainer.model = comp.model;
-    discountsContainer.requiredQty = comp.requiredQty;
+    discountsContainer.requiresQty = comp.requiresQty;
     discountsContainer.amt = comp.amt;
     discountsContainer.units = comp.units;
     if (comp.model.get('discountType') === "8338556C0FBF45249512DB343FEFD280" || comp.model.get('discountType') === "7B49D8CC4E084A75B7CB4D85A6A3A578") {
