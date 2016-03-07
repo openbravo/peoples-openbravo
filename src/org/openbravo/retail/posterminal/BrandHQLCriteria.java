@@ -19,6 +19,6 @@ public class BrandHQLCriteria extends HQLCriteriaProcess {
 
   @Override
   public String getHQLFilter(String params) {
-    return " exists (select  1 from Brand as brand where brand.id=pli.product.brand.id and  brand.id  in ($1)) ";
+    return " exists (select  1 from Brand as brand where brand.id=pli.product.brand.id and  brand.id  = $1) ";
   }
 }
