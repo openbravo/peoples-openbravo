@@ -674,6 +674,12 @@ public class DefaultJsonDataService implements JsonDataService {
 
         return result;
       } catch (Throwable t) {
+        Throwable localThrowable = DbUtility.getUnderlyingSQLException(t);
+        if (!(localThrowable instanceof OBException)
+            || (localThrowable instanceof OBException && ((OBException) localThrowable)
+                .isLogExceptionNeeded())) {
+          log.error(localThrowable.getMessage(), localThrowable);
+        }
         return JsonUtils.convertExceptionToJson(t);
       }
     } else {
