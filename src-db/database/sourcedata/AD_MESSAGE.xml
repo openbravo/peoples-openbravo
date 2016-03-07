@@ -6682,8 +6682,7 @@ Please contact your system administrator.]]></MSGTEXT>
 <!--E876BD8105FA4907A02D0316C55C878B-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--E876BD8105FA4907A02D0316C55C878B-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--E876BD8105FA4907A02D0316C55C878B-->  <VALUE><![CDATA[OBPOS_FailedAppCache]]></VALUE>
-<!--E876BD8105FA4907A02D0316C55C878B-->  <MSGTEXT><![CDATA[The manifest will not be saved on the AppCache. Offline model is not available.
-%0]]></MSGTEXT>
+<!--E876BD8105FA4907A02D0316C55C878B-->  <MSGTEXT><![CDATA[There was a problem when loading the Web POS application, and it couldn't be saved in the browser cache. Offline mode will not be available. Please contact your system administrator.]]></MSGTEXT>
 <!--E876BD8105FA4907A02D0316C55C878B-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
 <!--E876BD8105FA4907A02D0316C55C878B-->  <AD_MODULE_ID><![CDATA[FF808181326CC34901326D53DBCF0018]]></AD_MODULE_ID>
 <!--E876BD8105FA4907A02D0316C55C878B-->  <ISINCLUDEINI18N><![CDATA[N]]></ISINCLUDEINI18N>
