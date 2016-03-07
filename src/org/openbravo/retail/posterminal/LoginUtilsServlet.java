@@ -29,11 +29,8 @@ import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.PropertyException;
-import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.mobile.core.MobileServerDefinition;
 import org.openbravo.mobile.core.MobileServerOrganization;
-import org.openbravo.mobile.core.MobileServerService;
-import org.openbravo.mobile.core.MobileServiceDefinition;
 import org.openbravo.mobile.core.login.MobileCoreLoginUtilsServlet;
 import org.openbravo.model.ad.access.FormAccess;
 import org.openbravo.model.ad.access.User;
@@ -312,7 +309,6 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
     JSONObject result = super.initActions(request);
 
     final String terminalName = request.getParameter("terminalName");
-    final String cacheSessionId = request.getParameter("cacheSessionId");
     if (terminalName != null) {
       OBPOSApplications terminal = null;
       OBCriteria<OBPOSApplications> qApp = OBDal.getInstance().createCriteria(
@@ -326,8 +322,6 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
         result.put("servers", getServers(terminal));
       }
     }
-    // We do not need to be in a specific terminal to load services
-    result.put("services", getServices());
 
     String value;
     try {
@@ -340,48 +334,7 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
       return result;
     }
     result.put("terminalAuthentication", value);
-    if (cacheSessionId == null) {
-      String generatedCacheSessionId = SequenceIdData.getUUID();
-      result.put("cacheSessionId", generatedCacheSessionId);
-    }
     return result;
-  }
-
-  private JSONObject createServerJSON(MobileServerDefinition server) throws JSONException {
-    final JSONObject jsonObject = new JSONObject();
-    jsonObject.put("name", server.getName());
-    // strip the http:// part if there, is not needed in the client
-    String serverUrl = server.getURL() != null ? server.getURL().trim() : null;
-    if (serverUrl != null && serverUrl.toLowerCase().trim().startsWith("http://")) {
-      serverUrl = serverUrl.substring("http://".length());
-    }
-    jsonObject.put("address", serverUrl);
-    jsonObject.put("online", true);
-    jsonObject.put("priority", server.getPriority());
-    jsonObject.put("allServices", server.isAllservices());
-    if ("MAIN".equals(server.getServerType())) {
-      jsonObject.put("mainServer", true);
-    } else {
-      jsonObject.put("mainServer", false);
-    }
-    JSONArray services = new JSONArray();
-    if (!server.isAllservices() && server.getOBMOBCSERVERSERVICESList().size() > 0) {
-      if (server.getServiceSelection().equals("N")) {
-        for (MobileServerService service : server.getOBMOBCSERVERSERVICESList()) {
-          services.put(service.getObmobcServices().getService());
-        }
-      } else if (server.getServiceSelection().equals("Y")) {
-        String hql = "select srvc.service from OBMOBC_SERVICES as srvc where not exists (select 1 from OBMOBC_SERVER_SERVICES where srvc.id=obmobcServices.id and obmobcServerDefinition.id = ?)";
-        Query queryServices = OBDal.getInstance().getSession().createQuery(hql);
-        queryServices.setString(0, server.getId());
-
-        for (Object obj : queryServices.list()) {
-          services.put(obj);
-        }
-      }
-    }
-    jsonObject.put("services", services);
-    return jsonObject;
   }
 
   protected JSONArray getServers(OBPOSApplications terminal) throws JSONException {
@@ -425,22 +378,6 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
       }
     }
 
-    return respArray;
-  }
-
-  protected JSONArray getServices() throws JSONException {
-    JSONArray respArray = new JSONArray();
-
-    OBQuery<MobileServiceDefinition> services = OBDal.getInstance().createQuery(
-        MobileServiceDefinition.class, "");
-    services.setFilterOnReadableOrganization(false);
-
-    for (MobileServiceDefinition service : services.list()) {
-      final JSONObject jsonObject = new JSONObject();
-      jsonObject.put("name", service.getService());
-      jsonObject.put("type", service.getRoutingtype());
-      respArray.put(jsonObject);
-    }
     return respArray;
   }
 

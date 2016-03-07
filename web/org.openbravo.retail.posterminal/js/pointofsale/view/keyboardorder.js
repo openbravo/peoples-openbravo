@@ -73,6 +73,7 @@ enyo.kind({
     } else {
       this.discountsMode = true;
       this.prevdefaultcommand = this.defaultcommand;
+      this.clearInput();
       this.defaultcommand = 'ticket:discount';
       if (inEvent.writable) {
         //enable keyboard
