@@ -157,8 +157,8 @@
                 OB.MobileApp.model.loadingErrorsActions("The terminal.usermodel should be loaded at this point");
               } else if (OB.MobileApp.model.attributes.loadManifeststatus && OB.MobileApp.model.attributes.loadManifeststatus.type === 'error') {
                 var error = OB.MobileApp.model.attributes.loadManifeststatus;
-                OB.debug(error.reason + ' failed to load: ' + error.url);
-                OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_TitleFailedAppCache'), OB.I18N.getLabel('OBPOS_FailedAppCache'), [{
+                var msg = error.reason + ' failed to load: ' + error.url;
+                OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_TitleFailedAppCache'), OB.I18N.getLabel('OBPOS_FailedAppCache', [msg]), [{
                   label: OB.I18N.getLabel('OBMOBC_LblOk'),
                   isConfirmButton: true
                 }], {
