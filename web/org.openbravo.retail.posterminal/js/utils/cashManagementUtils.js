@@ -125,6 +125,7 @@
                   isocode: newCashManagementTransaction.get('paymentMethod').isocode,
                   glItem: optionsObj.glItem,
                   cashup_id: cashUp.get('id'),
+                  posTerminal: OB.MobileApp.model.get('terminal').id,
                   isbeingprocessed: 'N'
                 });
 
