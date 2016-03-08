@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2015 Openbravo S.L.U.
+ * Copyright (C) 2012-2016 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -161,6 +161,7 @@
     name: 'taxID',
     column: 'taxID',
     filter: true,
+    skipremote: true,
     type: 'TEXT'
   }, {
     name: 'taxCategory',
@@ -190,6 +191,7 @@
     name: 'locName',
     column: 'c_bpartnerlocation_name',
     filter: true,
+    skipremote: true,
     type: 'TEXT'
   }, {
     name: 'postalCode',
@@ -211,11 +213,13 @@
     name: 'phone',
     column: 'phone',
     filter: true,
+    skipremote: true,
     type: 'TEXT'
   }, {
     name: 'email',
     column: 'email',
     filter: true,
+    skipremote: true,
     type: 'TEXT'
   }, {
     name: 'businessPartnerCategory',
