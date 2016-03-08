@@ -130,9 +130,9 @@ public class Terminal extends JSONProcessSimple {
                 .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
                 .getOBContext().getRole(), null);
         try {
-          sessionTimeout = Integer.parseInt(sessionShouldExpire);
+          sessionTimeout = sessionShouldExpire == null ? 0 : Integer.parseInt(sessionShouldExpire);
         } catch (NumberFormatException nfe) {
-          sessionTimeout = getSessionTimeoutFromDatabase();
+          sessionTimeout = 0;
         }
       } catch (PropertyException e) {
         sessionTimeout = getSessionTimeoutFromDatabase();
