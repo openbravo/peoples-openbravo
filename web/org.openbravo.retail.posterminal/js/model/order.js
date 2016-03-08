@@ -2440,9 +2440,12 @@
       if (updatePrices) {
         this.updatePrices(function (order) {
           OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_QuotationCreatedOrder'));
+          // This event is used in stock validation module.
+          order.trigger('orderCreatedFromQuotation');
         });
       } else {
         OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_QuotationCreatedOrder'));
+        this.trigger('orderCreatedFromQuotation');
       }
     },
 
