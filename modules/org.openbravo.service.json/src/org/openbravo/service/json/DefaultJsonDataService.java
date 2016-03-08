@@ -675,10 +675,9 @@ public class DefaultJsonDataService implements JsonDataService {
         return result;
       } catch (Throwable t) {
         Throwable localThrowable = DbUtility.getUnderlyingSQLException(t);
-        if (!(localThrowable instanceof OBException)
-            || (localThrowable instanceof OBException && ((OBException) localThrowable)
-                .isLogExceptionNeeded())) {
-          log.error(localThrowable.getMessage(), localThrowable);
+        if (!(localThrowable instanceof OBException && !((OBException) localThrowable)
+            .isLogExceptionNeeded())) {
+          log.error("Error removing object of " + entityName + " entity", localThrowable);
         }
         return JsonUtils.convertExceptionToJson(t);
       }
@@ -840,10 +839,13 @@ public class DefaultJsonDataService implements JsonDataService {
       }
     } catch (Throwable t) {
       Throwable localThrowable = DbUtility.getUnderlyingSQLException(t);
-      if (!(localThrowable instanceof OBException)
-          || (localThrowable instanceof OBException && ((OBException) localThrowable)
-              .isLogExceptionNeeded())) {
-        log.error(localThrowable.getMessage(), localThrowable);
+      if (!(localThrowable instanceof OBException && !((OBException) localThrowable)
+          .isLogExceptionNeeded())) {
+        if (parameters.containsKey(ADD_FLAG)) {
+          log.error("Error adding new object", localThrowable);
+        } else {
+          log.error("Error updating object", localThrowable);
+        }
       }
       return JsonUtils.convertExceptionToJson(localThrowable);
     }
