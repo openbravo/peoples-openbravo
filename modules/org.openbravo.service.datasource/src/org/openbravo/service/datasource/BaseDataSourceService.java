@@ -218,7 +218,7 @@ public abstract class BaseDataSourceService implements DataSourceService {
   }
 
   private boolean isTransactionalFilterApplied(boolean isTransactionalWindow, Tab tab) {
-    return (isTransactionalWindow && isRootTab(tab));
+    return isTransactionalWindow && isRootTab(tab);
   }
 
   private boolean isFilterApplied(Map<String, String> parameters) {
