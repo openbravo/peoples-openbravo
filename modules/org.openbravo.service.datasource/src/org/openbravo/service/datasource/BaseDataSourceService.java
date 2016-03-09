@@ -222,10 +222,6 @@ public abstract class BaseDataSourceService implements DataSourceService {
   }
 
   private boolean isFilterApplied(Map<String, String> parameters) {
-    if ("true".equals(parameters.get(JsonConstants.FILTER_APPLIED_PARAMETER))) {
-      return true;
-    } else {
-      return false;
-    }
+    return "true".equals(parameters.get(JsonConstants.FILTER_APPLIED_PARAMETER));
   }
 }
