@@ -83,15 +83,15 @@ enyo.kind({
         });
         this.owner.owner.args.callback = null;
         if (this.owner.owner.$.bodyContent.$.chkSelectOpenedReceiptModal.checked) {
-          orderModel.calculateReceipt();
           var me = this,
               onCalculategross;
 
+          me.owner.owner.doChangeCurrentOrder({
+            newCurrentOrder: orderModel
+          });
+          me.owner.owner.owner.model.get('order').calculateReceipt();
           onCalculategross = function () {
             orderModel.off('saveCurrent', onCalculategross);
-            me.owner.owner.doChangeCurrentOrder({
-              newCurrentOrder: orderModel
-            });
             me.owner.owner.owner.model.get('order').trigger('updateServicePrices');
           };
 

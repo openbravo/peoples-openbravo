@@ -1391,7 +1391,7 @@
           if (callback) {
             callback(true);
           }
-          if (args.newLine && me.get('lines').contains(line)) {
+          if (args.newLine && me.get('lines').contains(line) && args.productToAdd.get('productType') !== 'S') {
             var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('HasServices');
             var subs = new subscribeToCalculateGross(me, function () {
               if (me.get('lines').contains(line)) {
