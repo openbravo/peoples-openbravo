@@ -4491,14 +4491,16 @@
       this.unshift(this.current);
       this.loadCurrent(true);
 
-      synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('addPaidReceipt');
-      // OB.Dal.save is done here because we want to force to save with the original id, only this time.
-      OB.Dal.save(model, function () {
-        enyo.$.scrim.hide();
-        OB.UTIL.SynchronizationHelper.finished(synchId, 'addPaidReceipt');
-      }, function () {
-        OB.error(arguments);
-      }, true);
+      if (!model.get('isQuotation')) {
+        synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('addPaidReceipt');
+        // OB.Dal.save is done here because we want to force to save with the original id, only this time.
+        OB.Dal.save(model, function () {
+          enyo.$.scrim.hide();
+          OB.UTIL.SynchronizationHelper.finished(synchId, 'addPaidReceipt');
+        }, function () {
+          OB.error(arguments);
+        }, true);
+      }
     },
 
     addMultiReceipt: function (model) {
