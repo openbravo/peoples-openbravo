@@ -73,7 +73,12 @@ enyo.kind({
         content: OB.I18N.getLabel(filter.caption)
       }, {
         style: 'float: left; text-align: left; padding-left: 2px; width: calc(100% - 125px);',
-        components: [{
+        components: [
+        filter.isList ? {
+          kind: 'OB.UI.FilterSelectorList',
+          name: 'input' + filter.name,
+          style: 'float: left; width: calc(100% - 74px); padding: 4px; height: 40px; '
+        } : {
           kind: 'enyo.Input',
           type: 'text',
           classes: 'input narrow-input',
@@ -94,6 +99,9 @@ enyo.kind({
       }]
     });
     filterLine.render();
+    if (filter.isList) {
+      filterLine.owner.$['input' + filter.name].changeColumn(filter);
+    }
     this.filters.push(filterLine);
   },
 

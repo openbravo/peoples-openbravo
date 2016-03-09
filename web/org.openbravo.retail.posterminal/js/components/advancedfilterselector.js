@@ -10,6 +10,64 @@
 /*global enyo, Backbone, OB, _ */
 
 enyo.kind({
+  kind: 'OB.UI.List',
+  name: 'OB.UI.FilterSelectorList',
+  classes: 'combo',
+  renderLine: enyo.kind({
+    kind: 'enyo.Option',
+    initComponents: function () {
+      this.inherited(arguments);
+      this.setValue(this.model.get('id'));
+      this.setContent(this.model.get('name'));
+    }
+  }),
+  renderEmpty: 'enyo.Control',
+  changeColumn: function (column) {
+    if (column.idList && !OB.MobileApp.model.get(column.termProperty)) {
+      var me = this;
+      new OB.DS.Request('org.openbravo.retail.posterminal.term.ListReference').exec({
+        language: OB.Application.language_string,
+        reference: column.idList
+      }, function (data) {
+        // data is ready. Save it
+        OB.MobileApp.model.set(column.termProperty, data);
+        me.loadList(column);
+      });
+    } else {
+      this.loadList(column);
+    }
+  },
+  loadList: function (column) {
+    var models = OB.MobileApp.model.get(column.termProperty),
+        columns = [];
+    columns.push({
+      id: '',
+      name: ''
+    });
+    _.each(models, function (model) {
+      var addModel = true;
+      if (column.showValues && column.showValues.length > 0) {
+        var value = _.find(column.showValues, function (val) {
+          return model[column.propertyId] === val;
+        });
+        addModel = value !== undefined;
+      }
+      if (addModel) {
+        columns.push({
+          id: model[column.propertyId],
+          name: model[column.propertyName]
+        });
+      }
+    });
+    this.getCollection().reset(columns);
+  },
+  initComponents: function () {
+    this.setCollection(new Backbone.Collection());
+    this.getCollection().reset([]);
+  }
+});
+
+enyo.kind({
   name: 'OB.UI.FilterSelectorTableHeader',
   published: {
     filters: null,
@@ -21,7 +79,8 @@ enyo.kind({
   },
   handlers: {
     onSearchActionByKey: 'searchAction',
-    onFiltered: 'searchAction'
+    onFiltered: 'searchAction',
+    onChangeColumn: 'changeColumn'
   },
   components: [{
     components: [{
@@ -63,6 +122,9 @@ enyo.kind({
                 this.owner.$.dateFormatError.hide();
                 this.owner.$.entityFilterText.setValue('');
                 this.owner.doClearAction();
+                this.bubble('onChangeColumn', {
+                  value: this.getValue()
+                });
               },
               initComponents: function () {
                 var columns = [];
@@ -85,6 +147,10 @@ enyo.kind({
               kind: 'OB.UI.SearchInputAutoFilter',
               name: 'entityFilterText',
               style: 'width: 100%; margin-bottom: 0px;'
+            }, {
+              kind: 'OB.UI.FilterSelectorList',
+              name: 'entityFilterList',
+              style: 'width: 100%; margin-bottom: 0px'
             }]
           }]
         }, {
@@ -131,6 +197,18 @@ enyo.kind({
       }]
     }]
   }],
+  changeColumn: function (inSender, inEvent) {
+    var column = _.find(this.filters, function (flt) {
+      return flt.column === inEvent.value;
+    }, this);
+    if (column) {
+      this.$.entityFilterText.setShowing(!column.isList);
+      this.$.entityFilterList.setShowing(column.isList);
+      if (column.isList) {
+        this.$.entityFilterList.changeColumn(column);
+      }
+    }
+  },
   searchAction: function () {
     var me = this,
         text = this.$.entityFilterText.getValue();
@@ -184,5 +262,13 @@ enyo.kind({
     this.showFields = false;
     this.$.entityFilterColumnContainer.setStyle('display: none');
     this.$.entitySearchContainer.setStyle('display: table-cell; width: 425px;');
+  },
+  initComponents: function () {
+    this.inherited(arguments);
+    if (this.$.entityFilterColumn.collection.length > 0) {
+      this.bubble('onChangeColumn', {
+        value: this.$.entityFilterColumn.collection.at(0).id
+      });
+    }
   }
 });
