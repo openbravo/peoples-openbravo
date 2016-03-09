@@ -6,5 +6,5 @@
 
 echo "Checking --> $@"
 java -jar ./modules/org.openbravo.client.kernel/lib/runtime/jslint4java-1.4.7.jar \
- --browser --evil --continue \
+ --browser --evil --continue --undef \
  --predef window,unescape,escape,top,alert,isc,OB,ok,test,module,expect,same,stop,start,asyncTest,equals,BigDecimal "$@"
