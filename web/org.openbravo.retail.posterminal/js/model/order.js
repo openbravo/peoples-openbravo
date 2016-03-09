@@ -1391,28 +1391,32 @@
           if (callback) {
             callback(true);
           }
-          var subs = new subscribeToCalculateGross(me, function () {
-            if (args.newLine && me.get('lines').contains(line)) {
-              // Display related services after calculate gross, if it is new line and if the line has not been deleted.
-              // The line might has been deleted during calculate gross for examples if there was an error in taxes.
-              var productId = args.productToAdd.get('forceFilterId') ? args.productToAdd.get('forceFilterId') : args.productToAdd.id;
-              args.receipt._loadRelatedServices(args.productToAdd.get('productType'), productId, args.productToAdd.get('productCategory'), function (data) {
-                if (data) {
-                  if (data.hasservices) {
-                    args.orderline.set('hasRelatedServices', true);
-                    args.orderline.trigger('showServicesButton');
-                  } else {
-                    args.orderline.set('hasRelatedServices', false);
+          if (args.newLine && me.get('lines').contains(line)) {
+            var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('HasServices');
+            var subs = new subscribeToCalculateGross(me, function () {
+              if (me.get('lines').contains(line)) {
+                // Display related services after calculate gross, if it is new line and if the line has not been deleted.
+                // The line might has been deleted during calculate gross for examples if there was an error in taxes.
+                var productId = args.productToAdd.get('forceFilterId') ? args.productToAdd.get('forceFilterId') : args.productToAdd.id;
+                args.receipt._loadRelatedServices(args.productToAdd.get('productType'), productId, args.productToAdd.get('productCategory'), function (data) {
+                  if (data) {
+                    if (data.hasservices) {
+                      args.orderline.set('hasRelatedServices', true);
+                      args.orderline.trigger('showServicesButton');
+                    } else {
+                      args.orderline.set('hasRelatedServices', false);
+                    }
+                    args.receipt.save();
+                    if (data.hasmandatoryservices) {
+                      args.receipt.trigger('showProductList', args.orderline, 'mandatory');
+                    }
                   }
-                  args.receipt.save();
-                  if (data.hasmandatoryservices) {
-                    args.receipt.trigger('showProductList', args.orderline, 'mandatory');
-                  }
-                }
-              }, args.orderline);
-            }
-          });
-          subs.doSubscription();
+                  OB.UTIL.SynchronizationHelper.finished(synchId, 'HasServices');
+                }, args.orderline);
+              }
+            });
+            subs.doSubscription();
+          }
         });
       }
       if (((options && options.line) ? options.line.get('qty') + qty : qty) < 0 && p.get('productType') === 'S') {
@@ -1436,13 +1440,11 @@
               i, prod, synchId;
           params.terminalTime = date;
           params.terminalTimeOffset = date.getTimezoneOffset();
-          synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('HasServices');
           process.exec({
             product: productId,
             productCategory: productCategory,
             parameters: params
           }, function (data, message) {
-            OB.UTIL.SynchronizationHelper.finished(synchId, 'HasServices');
             if (data && data.exception) {
               //ERROR or no connection
               OB.error(OB.I18N.getLabel('OBPOS_ErrorGettingRelatedServices'));
@@ -1453,7 +1455,6 @@
               callback(null);
             }
           }, function (error) {
-            OB.UTIL.SynchronizationHelper.finished(synchId, 'HasServices');
             OB.error(OB.I18N.getLabel('OBPOS_ErrorGettingRelatedServices'));
             callback(null);
           });
@@ -1492,6 +1493,7 @@
             }
           }, function (trx, error) {
             OB.error(OB.I18N.getLabel('OBPOS_ErrorGettingRelatedServices'));
+            callback(null);
           });
         }
       } else {
