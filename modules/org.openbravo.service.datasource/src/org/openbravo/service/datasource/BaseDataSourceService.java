@@ -56,7 +56,6 @@ public abstract class BaseDataSourceService implements DataSourceService {
   private Entity entity;
   private DataSource dataSource;
   private List<DataSourceProperty> dataSourceProperties = new ArrayList<DataSourceProperty>();
-  private static final String ALLOW_WHERE_PREFERENCE = "OBSERDS_AllowWhereParameter";
   private static final String WARN_MESSAGE = "The '_where' parameter has been included in the request. The provided value will be used by the datasource because the OBSERDS_AllowWhereParameter preference is set to true.";
   private static final String PREFERENCE_EXCEPTION_MESSAGE = "The '_where' parameter has been included in the request. This value will not be taken into account. To be able to use this value, set the OBSERDS_AllowWhereParameter preference to true.";
 
@@ -152,7 +151,7 @@ public abstract class BaseDataSourceService implements DataSourceService {
     if (parameters.containsKey(JsonConstants.TAB_PARAMETER)) {
       String whereAndFilterClause = null;
       if (parameters.containsKey(JsonConstants.WHERE_PARAMETER)) {
-        if ("Y".equals(cachedPreference.getPreferenceValue(ALLOW_WHERE_PREFERENCE))) {
+        if ("Y".equals(cachedPreference.getPreferenceValue(CachedPreference.ALLOW_WHERE_PARAMETER))) {
           log.warn(WARN_MESSAGE);
           whereAndFilterClause = parameters.get(JsonConstants.WHERE_PARAMETER);
         } else {
