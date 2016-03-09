@@ -189,7 +189,7 @@ public abstract class BaseDataSourceService implements DataSourceService {
   }
 
   private boolean isRootTab(Tab tab) {
-    return (tab.getTabLevel() == 0) ? true : false;
+    return tab.getTabLevel() == 0;
   }
 
   private String getFilterClause(Tab tab) {
