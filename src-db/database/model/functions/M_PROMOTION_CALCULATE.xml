@@ -22,7 +22,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2012-2015 Openbravo SLU
+* All portions are Copyright (C) 2012-2016 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -180,8 +180,13 @@ BEGIN
           v_totalamt := Cur_Offer.totalamt;
           v_displayedtotalamt := Cur_Offer.displayedtotalamt;
         else
-          v_totalamt := round(Cur_Offer.totalamt * v_qtyinvoiced / v_qtyordered, v_precision);
-          v_displayedtotalamt := round(Cur_Offer.displayedtotalamt * v_qtyinvoiced / v_qtyordered, v_precision);
+          IF(v_qtyordered <> 0) THEN
+            v_totalamt := round(Cur_Offer.totalamt * v_qtyinvoiced / v_qtyordered, v_precision);
+            v_displayedtotalamt := round(Cur_Offer.displayedtotalamt * v_qtyinvoiced / v_qtyordered, v_precision);
+          ELSE
+            v_totalamt := 0;
+            v_displayedtotalamt := 0;
+          END IF;
         end if;
         
         insert into c_invoiceline_offer

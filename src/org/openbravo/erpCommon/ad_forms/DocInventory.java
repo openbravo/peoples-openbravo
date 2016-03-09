@@ -11,7 +11,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SLU
- * Contributions are Copyright (C) 2001-2014 Openbravo S.L.U.
+ * Contributions are Copyright (C) 2001-2016 Openbravo S.L.U.
  ******************************************************************************
  */
 package org.openbravo.erpCommon.ad_forms;
@@ -180,12 +180,13 @@ public class DocInventory extends AcctServer {
     int countInvLinesWithTrnCostZero = 0;
     for (int i = 0; i < p_lines.length; i++) {
       DocLine_Material line = (DocLine_Material) p_lines[i];
-      if ("NC".equals(line.transaction.getCostingStatus())) {
+      if (line.transaction != null && "NC".equals(line.transaction.getCostingStatus())) {
         setStatus(STATUS_NotCalculatedCost);
       }
 
-      if (line.transaction.getTransactionCost() != null
-          && line.transaction.getTransactionCost().compareTo(ZERO) == 0) {
+      if (line.transaction == null
+          || (line.transaction.getTransactionCost() != null && line.transaction
+              .getTransactionCost().compareTo(ZERO) == 0)) {
         countInvLinesWithTrnCostZero++;
       }
     }
@@ -208,9 +209,13 @@ public class DocInventory extends AcctServer {
         setMessageResult(conn, STATUS_NotCalculatedCost, "error", parameters);
         throw new IllegalStateException();
       }
-      String costs = line.getProductCosts(DateAcct, as, conn, con);
+      String costs = "";
+      BigDecimal b_Costs = BigDecimal.ZERO;
+      if (line.transaction != null) {
+        costs = line.getProductCosts(DateAcct, as, conn, con);
+        b_Costs = new BigDecimal(costs);
+      }
       log4jDocInventory.debug("CreateFact - before DR - Costs: " + costs);
-      BigDecimal b_Costs = new BigDecimal(costs);
       Account assetAccount = line.getAccount(ProductInfo.ACCTTYPE_P_Asset, as, conn);
       if (assetAccount == null) {
         Product product = OBDal.getInstance().get(Product.class, line.m_M_Product_ID);
