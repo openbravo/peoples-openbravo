@@ -49,6 +49,7 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.domain.Validation;
 import org.openbravo.service.datasource.DataSourceFilter;
+import org.openbravo.service.datasource.DefaultDataSourceService;
 import org.openbravo.service.json.JsonConstants;
 import org.openbravo.service.json.JsonUtils;
 import org.openbravo.service.json.QueryBuilder.TextMatching;
@@ -65,9 +66,6 @@ public class SelectorDataSourceFilter implements DataSourceFilter {
   private String dateFormat = null;
   private DateFormat systemDateFormat = null;
   private TextMatching textMatching = TextMatching.exact;
-  private static final String ALLOW_WHERE_PREFERENCE = "OBSERDS_AllowWhereParameter";
-  private static final String WARN_MESSAGE = "The '_where' parameter has been included in the request. The provided value will be used by the datasource because the OBSERDS_AllowWhereParameter preference is set to true.";
-  private static final String PREFERENCE_EXCEPTION_MESSAGE = "The '_where' parameter has been included in the request. This value will not be taken into account. To be able to use this value, set the OBSERDS_AllowWhereParameter preference to true.";
   @Inject
   private CachedPreference cachedPreference;
 
@@ -123,12 +121,12 @@ public class SelectorDataSourceFilter implements DataSourceFilter {
       }
 
       if (parameters.containsKey(JsonConstants.WHERE_PARAMETER)) {
-        if ("Y".equals(cachedPreference.getPreferenceValue(ALLOW_WHERE_PREFERENCE))) {
+        if ("Y".equals(cachedPreference.getPreferenceValue(CachedPreference.ALLOW_WHERE_PARAMETER))) {
           parameters.put(JsonConstants.WHERE_AND_FILTER_CLAUSE,
               parameters.get(JsonConstants.WHERE_PARAMETER));
-          log.warn(WARN_MESSAGE);
+          log.warn(DefaultDataSourceService.WARN_MESSAGE);
         } else {
-          throw new OBSecurityException(PREFERENCE_EXCEPTION_MESSAGE);
+          throw new OBSecurityException(DefaultDataSourceService.PREFERENCE_EXCEPTION_MESSAGE);
         }
       } else {
         String currentWhere = "";
@@ -412,11 +410,12 @@ public class SelectorDataSourceFilter implements DataSourceFilter {
     log.debug("Adding to where clause (based on fields default expression): " + sb.toString());
 
     if (parameters.containsKey(JsonConstants.WHERE_PARAMETER)) {
-      if ("Y".equals(cachedPreference.getPreferenceValue(ALLOW_WHERE_PREFERENCE))) {
+      if ("Y".equals(cachedPreference.getPreferenceValue(CachedPreference.ALLOW_WHERE_PARAMETER))) {
         parameters.put(JsonConstants.WHERE_AND_FILTER_CLAUSE,
             parameters.get(JsonConstants.WHERE_PARAMETER));
+        log.warn(DefaultDataSourceService.WARN_MESSAGE);
       } else {
-        throw new OBSecurityException(PREFERENCE_EXCEPTION_MESSAGE);
+        throw new OBSecurityException(DefaultDataSourceService.PREFERENCE_EXCEPTION_MESSAGE);
       }
     } else {
       if (StringUtils.isNotBlank(hqlFilterClause)) {

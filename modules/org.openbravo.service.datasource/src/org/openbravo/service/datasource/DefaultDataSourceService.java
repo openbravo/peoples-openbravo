@@ -60,6 +60,9 @@ import org.openbravo.userinterface.selector.SelectorConstants;
 public class DefaultDataSourceService extends BaseDataSourceService {
   private static final Logger log4j = Logger.getLogger(DefaultDataSourceService.class);
 
+  public static final String WARN_MESSAGE = "The '_where' parameter has been included in the request. The provided value will be used by the datasource because the OBSERDS_AllowWhereParameter preference is set to true.";
+  public static final String PREFERENCE_EXCEPTION_MESSAGE = "The '_where' parameter has been included in the request. This value will not be taken into account. To be able to use this value, set the OBSERDS_AllowWhereParameter preference to true.";
+
   /*
    * (non-Javadoc)
    * 
