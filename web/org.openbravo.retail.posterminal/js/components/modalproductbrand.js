@@ -131,6 +131,19 @@ enyo.kind({
         }
       }
 
+      if (me.parent.parent.model.get('filter').length > 0) {
+        for (i = 0; i < productCharacteristic.model.get('filter').length; i++) {
+          chFilter = {
+            columns: [],
+            operator: OB.Dal.FILTER,
+            value: 'BFilterByCH_Filter',
+            filter: productCharacteristic.model.get('filter')[i].characteristic_id,
+            params: [productCharacteristic.model.get('filter')[i].id]
+          };
+          remoteCriteria.push(chFilter);
+        }
+      }
+
       criteria.hqlCriteria = [];
       productCharacteristic.customFilters.forEach(function (hqlFilter) {
         if (!_.isUndefined(hqlFilter.hqlCriteriaBrand)) {
