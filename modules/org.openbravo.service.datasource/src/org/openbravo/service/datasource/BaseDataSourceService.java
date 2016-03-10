@@ -168,12 +168,8 @@ public abstract class BaseDataSourceService implements DataSourceService {
             } else {
               whereAndFilterClause = filterClause;
             }
-          } else {
-            if (StringUtils.isNotBlank(where)) {
-              whereAndFilterClause = where;
-            } else {
-              whereAndFilterClause = null;
-            }
+          } else if (StringUtils.isNotBlank(where)) {
+            whereAndFilterClause = where;
           }
         } finally {
           OBContext.restorePreviousMode();
