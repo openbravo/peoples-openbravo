@@ -211,23 +211,27 @@ enyo.kind({
   },
   searchAction: function () {
     var me = this,
-        text = this.$.entityFilterText.getValue();
-    if (this.showFields) {
-      var value = this.$.entityFilterColumn.getValue(),
-          column = _.find(this.filters, function (flt) {
-          return flt.column === value;
-        }, this);
-      if (text !== '' && column && column.isDate) {
-        var dateValidated = OB.Utilities.Date.OBToJS(text, OB.Format.date) || OB.Utilities.Date.OBToJS(text, 'yyyy-MM-dd');
-        if (dateValidated) {
-          text = OB.Utilities.Date.JSToOB(dateValidated, 'yyyy-MM-dd');
-          me.$.dateFormatError.hide();
-          this.$.entityFilterText.removeClass('error');
-        } else {
-          me.$.dateFormatError.show();
-          this.$.entityFilterText.addClass('error');
-          return;
-        }
+        text, value = this.$.entityFilterColumn.getValue(),
+        column = _.find(this.filters, function (flt) {
+        return flt.column === value;
+      }, this);
+
+    if (column.isList) {
+      text = this.$.entityFilterList.getValue();
+    } else {
+      text = this.$.entityFilterText.getValue();
+    }
+
+    if (this.showFields && text !== '' && column && column.isDate) {
+      var dateValidated = OB.Utilities.Date.OBToJS(text, OB.Format.date) || OB.Utilities.Date.OBToJS(text, 'yyyy-MM-dd');
+      if (dateValidated) {
+        text = OB.Utilities.Date.JSToOB(dateValidated, 'yyyy-MM-dd');
+        me.$.dateFormatError.hide();
+        this.$.entityFilterText.removeClass('error');
+      } else {
+        me.$.dateFormatError.show();
+        this.$.entityFilterText.addClass('error');
+        return;
       }
     }
     var filters = [{
