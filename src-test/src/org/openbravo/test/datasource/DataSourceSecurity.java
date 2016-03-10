@@ -22,6 +22,7 @@ package org.openbravo.test.datasource;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -42,9 +43,12 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.access.RoleOrganization;
 import org.openbravo.model.ad.access.UserRoles;
+import org.openbravo.model.ad.domain.Preference;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.plm.Product;
+import org.openbravo.model.common.uom.UOM;
+import org.openbravo.model.materialmgmt.onhandquantity.Reservation;
 import org.openbravo.service.json.JsonConstants;
 
 /**
@@ -63,10 +67,12 @@ public class DataSourceSecurity extends BaseDataSourceTestDal {
   private static final String ROLE_NO_ACCESS = "1";
   private static final String ROLE_SYSTEM_ADMIN = "0";
   private static final String ESP_ORG = "E443A31992CB4635AFCAEABE7183CE85";
+  private static final String CLIENT = "23C59575B9CF467C9620760EB255B389";
 
   private static final String TABLE_WINDOWS_TABS_FIELDS_ID = "105";
   private static final String RECORD_OF_WINDOWS_TABS_FIELDS_ID = "283";
-  private static final String PRODUCT_TEST = "11";
+  private static final String ID_TESTING = "11";
+  private static final Object PROD_RESERVATION = "DA7FC1BB3BA44EC48EC1AB9C74168CED";
 
   private RoleType role;
   private DataSource dataSource;
@@ -126,7 +132,7 @@ public class DataSourceSecurity extends BaseDataSourceTestDal {
     }), //
     ManageVariants("6654D607F650425A9DFF7B6961D54920", new HashMap<String, String>() {
       {
-        put("@Product.id@", PRODUCT_TEST);
+        put("@Product.id@", ID_TESTING);
       }
     }), //
     Note("090A37D22E61FE94012E621729090048", new HashMap<String, String>() {
@@ -184,18 +190,20 @@ public class DataSourceSecurity extends BaseDataSourceTestDal {
     }), //
     AccountTree("D2F94DC86DEC48D69E4BFCE59DC670CF", new HashMap<String, String>() {
       {
-        // Account tree value > Entity FinancialMgmtElementValue.
+        // Account tree > Element value > Open tree view.
         put("referencedTableId", "188");
         put("tabId", "132");
         String selectedPro = "[\"searchKey\",\"name\",\"elementLevel\",\"accountType\",\"showValueCondition\",\"summaryLevel\"]";
         put("_selectedProperties", selectedPro);
-        put("@FinancialMgmtElement.id@", "CCC5ACF18A114F3E9630EE321E6063BF");
+        put("@FinancialMgmtElement.client@", CLIENT);
+        put("@FinancialMgmtElement.id@", "56E65CF592BD4DAF8A8A879810646266");
+        put("@FinancialMgmtElement.organization@", "B843C30461EA4501935CB1D125C9C25A");
       }
     }), //
     StockReservations("2F5B70D7F12E4F5C8FE20D6F17D69ECF", new HashMap<String, String>() {
       {
         // Manage Stock from Stock Reservations
-        put("@MaterialMgmtReservation.id@", "848E85D3020245888B9579FEA9A1799B");
+        put("@MaterialMgmtReservation.id@", ID_TESTING);
       }
     }), //
     QueryList("DD17275427E94026AD721067C3C91C18", new HashMap<String, String>() {
@@ -318,14 +326,37 @@ public class DataSourceSecurity extends BaseDataSourceTestDal {
     Product productToClone = OBDal.getInstance().get(Product.class,
         "DA7FC1BB3BA44EC48EC1AB9C74168CED");
     Product product = (Product) DalUtil.copy(productToClone, false);
-    product.setId(PRODUCT_TEST);
+    product.setId(ID_TESTING);
     product.setNewOBObject(true);
     product.setOrganization(OBDal.getInstance().get(Organization.class, ASTERISK_ORG_ID));
     product.setName("Generic Product Test");
     product.setSearchKey("GEN-1 ");
-    product.setClient(OBDal.getInstance().get(Client.class, "23C59575B9CF467C9620760EB255B389"));
+    product.setClient(OBDal.getInstance().get(Client.class, CLIENT));
     product.setGeneric(true);
     OBDal.getInstance().save(product);
+
+    // Preference StockReservations
+    Preference preference = OBProvider.getInstance().get(Preference.class);
+    preference.setId(ID_TESTING);
+    preference.setNewOBObject(true);
+    preference.setClient(OBDal.getInstance().get(Client.class, CLIENT));
+    preference.setOrganization(OBDal.getInstance().get(Organization.class, ESP_ORG));
+    preference.setVisibleAtClient(OBDal.getInstance().get(Client.class, CLIENT));
+    preference.setVisibleAtOrganization(OBDal.getInstance().get(Organization.class, ESP_ORG));
+    preference.setPropertyList(true);
+    preference.setProperty("StockReservations");
+    preference.setSearchKey("Y");
+    OBDal.getInstance().save(preference);
+
+    Reservation reservation = OBProvider.getInstance().get(Reservation.class);
+    reservation.setId(ID_TESTING);
+    reservation.setNewOBObject(true);
+    reservation.setClient(OBDal.getInstance().get(Client.class, CLIENT));
+    reservation.setOrganization(OBDal.getInstance().get(Organization.class, ESP_ORG));
+    reservation.setProduct(OBDal.getInstance().get(Product.class, PROD_RESERVATION));
+    reservation.setQuantity(new BigDecimal(1));
+    reservation.setUOM(OBDal.getInstance().get(UOM.class, "100"));
+    OBDal.getInstance().save(reservation);
 
     OBDal.getInstance().commitAndClose();
   }
@@ -353,7 +384,10 @@ public class DataSourceSecurity extends BaseDataSourceTestDal {
   public static void cleanUp() {
     OBContext.setOBContext(CONTEXT_USER);
     OBDal.getInstance().remove(OBDal.getInstance().get(Role.class, ROLE_NO_ACCESS));
-    OBDal.getInstance().remove(OBDal.getInstance().get(Product.class, PRODUCT_TEST));
+    OBDal.getInstance().remove(OBDal.getInstance().get(Product.class, ID_TESTING));
+    OBDal.getInstance().remove(OBDal.getInstance().get(Preference.class, ID_TESTING));
+    OBDal.getInstance().remove(OBDal.getInstance().get(Reservation.class, ID_TESTING));
+
     OBDal.getInstance().commitAndClose();
   }
 }
