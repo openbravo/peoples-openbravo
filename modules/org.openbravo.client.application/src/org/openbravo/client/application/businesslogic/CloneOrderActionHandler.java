@@ -86,8 +86,8 @@ public class CloneOrderActionHandler extends BaseActionHandler {
       cal.set(Calendar.MILLISECOND, 0);
       objCloneOrder.setOrderDate(cal.getTime());
       objCloneOrder.setScheduledDeliveryDate(cal.getTime());
-      objCloneOrder.setGrandTotalAmount(new BigDecimal(0));
-      objCloneOrder.setSummedLineAmount(new BigDecimal(0));
+      objCloneOrder.setGrandTotalAmount(BigDecimal.ZERO);
+      objCloneOrder.setSummedLineAmount(BigDecimal.ZERO);
 
       // save the cloned order object
       OBDal.getInstance().save(objCloneOrder);
