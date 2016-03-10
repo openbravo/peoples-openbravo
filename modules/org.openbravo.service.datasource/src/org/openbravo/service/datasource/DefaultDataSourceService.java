@@ -93,6 +93,9 @@ public class DefaultDataSourceService extends BaseDataSourceService {
     }
   }
 
+  /**
+   * Adds some extra parameters that will be used to fetch data.
+   */
   protected void addFetchParameters(Map<String, String> parameters) {
     if (getEntity() != null) {
       parameters.put(JsonConstants.ENTITYNAME, getEntity().getName());
