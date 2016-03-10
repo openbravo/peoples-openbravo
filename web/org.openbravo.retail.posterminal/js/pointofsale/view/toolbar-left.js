@@ -327,6 +327,7 @@ enyo.kind({
     onShowPopup: ''
   },
   showPaymentTab: function () {
+    var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('showPaymentTab');
     var receipt = this.model.get('order'),
         me = this;
     if (receipt.get('isQuotation')) {
@@ -356,9 +357,11 @@ enyo.kind({
           OB.UTIL.showError(OB.I18N.getLabel('OBPOS_QuotationClosed'));
         });
       }
+      OB.UTIL.SynchronizationHelper.finished(synchId, 'showPaymentTab');
       return;
     }
     if (this.model.get('order').get('isEditable') === false && !this.model.get('order').get('isLayaway')) {
+      OB.UTIL.SynchronizationHelper.finished(synchId, 'showPaymentTab');
       return true;
     }
     if (this.model.get('order').get('orderType') === 3) {
@@ -383,6 +386,7 @@ enyo.kind({
     me.bubble('onShowColumn', {
       colNum: 1
     });
+    OB.UTIL.SynchronizationHelper.finished(synchId, 'showPaymentTab');
   },
   tap: function () {
     var me = this,
