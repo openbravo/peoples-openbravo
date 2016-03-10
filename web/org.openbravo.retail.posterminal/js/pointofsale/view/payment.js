@@ -915,7 +915,6 @@ enyo.kind({
         }
       } else {
         this.setDisabled(true);
-        enyo.$.scrim.show();
         me.owner.receipt.trigger('paymentDone', this.allowOpenDrawer, function (result) {
           if (!result) {
             me.setDisabled(false);
