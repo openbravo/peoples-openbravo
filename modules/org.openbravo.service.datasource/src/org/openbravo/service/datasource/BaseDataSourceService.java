@@ -158,7 +158,7 @@ public abstract class BaseDataSourceService implements DataSourceService {
       } else {
         String tabId = parameters.get(JsonConstants.TAB_PARAMETER);
         try {
-          OBContext.setAdminMode(false);
+          OBContext.setAdminMode(true);
           Tab tab = OBDal.getInstance().get(Tab.class, tabId);
           String where = tab.getHqlwhereclause();
           if (isFilterApplied(parameters)) {
