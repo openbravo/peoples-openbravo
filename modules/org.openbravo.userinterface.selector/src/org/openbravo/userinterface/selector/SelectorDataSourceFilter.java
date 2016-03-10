@@ -158,7 +158,7 @@ public class SelectorDataSourceFilter implements DataSourceFilter {
       }
 
     } catch (OBSecurityException e) {
-      throw new OBSecurityException(e);
+      throw e;
     } catch (Exception e) {
       log.error("Error executing filter: " + e.getMessage(), e);
     } finally {
