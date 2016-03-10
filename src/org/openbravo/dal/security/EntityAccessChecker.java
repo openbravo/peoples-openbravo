@@ -37,6 +37,7 @@ import org.openbravo.client.application.Parameter;
 import org.openbravo.client.application.Process;
 import org.openbravo.client.application.ProcessAccess;
 import org.openbravo.client.application.RefWindow;
+import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.model.ad.access.TableAccess;
@@ -572,47 +573,68 @@ public class EntityAccessChecker implements OBNotSingleton {
     return writableEntities.contains(entity);
   }
 
+  /**
+   * Entities from Process are checked and access to the entities are ensured if they are needed. It
+   * is checked RefWindows and Selector references.
+   */
   private void addEntitiesFromProcess(Process process) {
     final ModelProvider mp = ModelProvider.getInstance();
     for (Parameter param : process.getOBUIAPPParameterList()) {
       Reference ref = param.getReferenceSearchKey();
-      if (ref != null) {
-        if (ref.getParentReference().getId().equals(WINDOW_REFERENCE)) {
-          // RefWindows are checked and added to readable and writable Entities
-          RefWindow refWindow = ref.getOBUIAPPRefWindowList().get(0);
-          final Window window = refWindow.getWindow();
-          for (Tab tab : window.getADTabList()) {
-            final String tableNameWindow = tab.getTable().getName();
-            final Entity derivedEntity = mp.getEntity(tableNameWindow);
-            if (!writableEntities.contains(derivedEntity)
-                && !readableEntities.contains(derivedEntity)
-                && !nonReadableEntities.contains(derivedEntity)) {
-              readableEntities.add(derivedEntity);
-              // TODO: Check if write access is needed
-              writableEntities.add(derivedEntity);
-              // Removed from derived entities
-              if (derivedReadableEntities.contains(derivedEntity)) {
-                derivedReadableEntities.remove(derivedEntity);
-              }
-            }
-          }
-        } else if (ref.getParentReference().getId().equals(SELECTOR_REFERENCE)) {
-          for (Selector sel : ref.getOBUISELSelectorList()) {
-            // obtain entity from selector and added to derivedReadableEntities to take into
-            // account as a derived entity.
-            org.openbravo.model.ad.datamodel.Table table = sel.getTable();
-            // TODO: Table or DataSource.
-            if (table != null) {
-              final String tableNameSelector = table.getName();
-              final Entity derivedEntity = mp.getEntity(tableNameSelector);
-              if (!writableEntities.contains(derivedEntity)
-                  && !readableEntities.contains(derivedEntity)
-                  && !derivedReadableEntities.contains(derivedEntity)
-                  && !nonReadableEntities.contains(derivedEntity)) {
-                derivedEntitiesFromProcess.add(derivedEntity);
-              }
-            }
-          }
+      if (ref == null) {
+        continue;
+      }
+
+      // RefWindows reference is checked and added to readable and writable entities
+      if (ref.getParentReference().getId().equals(WINDOW_REFERENCE)) {
+        RefWindow refWindow = !ref.getOBUIAPPRefWindowList().isEmpty() ? ref
+            .getOBUIAPPRefWindowList().get(0) : null;
+        if (refWindow == null) {
+          continue;
+        }
+        final Window window = refWindow.getWindow();
+        addEntitiesOfWindowReference(mp, window);
+
+        // Selector reference is checked and added to derivedReadableEntities entities
+      } else if (ref.getParentReference().getId().equals(SELECTOR_REFERENCE)) {
+        addEntitiesOfSelectorReference(mp, ref);
+      }
+    }
+  }
+
+  /**
+   * Obtain entity from selector and added to derivedReadableEntities to take into account as a
+   * derived entity.
+   */
+  private void addEntitiesOfSelectorReference(ModelProvider mp, Reference ref) {
+    for (Selector sel : ref.getOBUISELSelectorList()) {
+      org.openbravo.model.ad.datamodel.Table table = sel.getTable();
+      // Table is not mandatory property of selector
+      if (table == null) {
+        continue;
+      }
+      final Entity derivedEntity = mp.getEntityByTableId((String) DalUtil.getId(table));
+      if (!writableEntities.contains(derivedEntity) && !readableEntities.contains(derivedEntity)
+          && !derivedReadableEntities.contains(derivedEntity)
+          && !nonReadableEntities.contains(derivedEntity)) {
+        derivedEntitiesFromProcess.add(derivedEntity);
+      }
+    }
+  }
+
+  /**
+   * Obtain entities from window and added to readable and writable entities.
+   */
+  private void addEntitiesOfWindowReference(ModelProvider mp, Window window) {
+    for (Tab tab : window.getADTabList()) {
+      final Entity derivedEntity = mp.getEntityByTableId((String) DalUtil.getId(tab.getTable()));
+      if (!writableEntities.contains(derivedEntity) && !readableEntities.contains(derivedEntity)
+          && !nonReadableEntities.contains(derivedEntity)) {
+        readableEntities.add(derivedEntity);
+        writableEntities.add(derivedEntity);
+        // Removed from derived entities
+        if (derivedReadableEntities.contains(derivedEntity)) {
+          derivedReadableEntities.remove(derivedEntity);
         }
       }
     }
