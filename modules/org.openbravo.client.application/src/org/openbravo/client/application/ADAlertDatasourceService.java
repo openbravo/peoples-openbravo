@@ -71,7 +71,6 @@ public class ADAlertDatasourceService extends DefaultDataSourceService {
       alertStatus = parameters.get(ALERT_STATUS);
       alertStatus = StringUtils.isEmpty(alertStatus) ? "" : alertStatus.toUpperCase();
 
-      Entity entity = ModelProvider.getInstance().getEntityByTableId(AD_TABLE_ID);
       String whereClause = getWhereAndFilterClause(parameters);
       parameters.put(JsonConstants.WHERE_AND_FILTER_CLAUSE, whereClause);
 
