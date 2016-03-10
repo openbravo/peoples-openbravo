@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2015 Openbravo S.L.U.
+ * Copyright (C) 2013-2016 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -113,12 +113,13 @@ enyo.kind({
     } else {
       var productFilterText = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.searchProductCharacteristicHeader.$.productFilterText.getValue();
       var productcategory = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.searchProductCharacteristicHeader.$.productcategory.getValue();
-      var productCharacteristicModel = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.searchProductCharacteristicHeader.parent.model;
-
+      var productCharacteristic = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.searchProductCharacteristicHeader.parent;
       var remoteCriteria = [],
           brandfilter = {},
+          criteria = {},
+          chFilter = {},
           productText;
-      criteria = {};
+
       if (products.collection.length > 0) {
         if (productFilterText !== "" || productcategory !== "__all__") {
           brandfilter.columns = [];
@@ -128,8 +129,22 @@ enyo.kind({
           brandfilter.params = [productText, productcategory];
           remoteCriteria.push(brandfilter);
         }
-        criteria.remoteFilters = remoteCriteria;
       }
+
+      criteria.hqlCriteria = [];
+      productCharacteristic.customFilters.forEach(function (hqlFilter) {
+        if (!_.isUndefined(hqlFilter.hqlCriteriaBrand)) {
+          var hqlCriteriaFilter = hqlFilter.hqlCriteriaBrand();
+          if (!_.isUndefined(hqlCriteriaFilter)) {
+            hqlCriteriaFilter.forEach(function (filter) {
+              if (filter) {
+                remoteCriteria.push(filter);
+              }
+            });
+          }
+        }
+      });
+      criteria.remoteFilters = remoteCriteria;
       OB.Dal.find(OB.Model.Brand, criteria, successCallbackBrands, errorCallback);
     }
     return true;
