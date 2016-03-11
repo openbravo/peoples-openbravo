@@ -30,10 +30,10 @@ public class ProcessCashCloseMaster extends JSONProcessSimple {
     JSONObject result = new JSONObject();
     String masterterminal = jsonsent.getString("masterterminal");
     String cashUpId = jsonsent.getString("cashUpId");
-    OBCriteria<OBPOSApplications> obCriteria = OBDal.getInstance()
-        .createCriteria(OBPOSApplications.class);
-    obCriteria
-        .add(Restrictions.eq(OBPOSApplications.PROPERTY_MASTERTERMINAL + ".id", masterterminal));
+    OBCriteria<OBPOSApplications> obCriteria = OBDal.getInstance().createCriteria(
+        OBPOSApplications.class);
+    obCriteria.add(Restrictions.eq(OBPOSApplications.PROPERTY_MASTERTERMINAL + ".id",
+        masterterminal));
     obCriteria.addOrderBy(OBPOSApplications.PROPERTY_SEARCHKEY, true);
     List<OBPOSApplications> applications = obCriteria.list();
     JSONArray terminals = new JSONArray();
@@ -105,8 +105,8 @@ public class ProcessCashCloseMaster extends JSONProcessSimple {
    * @return 1 if has transactions, 0 if no transactions.
    */
   public static int getnoOfTransactions(String cashUp) {
-    OBCriteria<FIN_FinaccTransaction> obCriteria = OBDal.getInstance()
-        .createCriteria(FIN_FinaccTransaction.class);
+    OBCriteria<FIN_FinaccTransaction> obCriteria = OBDal.getInstance().createCriteria(
+        FIN_FinaccTransaction.class);
     obCriteria.add(Restrictions.eq(FIN_FinaccTransaction.PROPERTY_OBPOSAPPCASHUP + ".id", cashUp));
     obCriteria.setMaxResults(1);
     List<FIN_FinaccTransaction> cashUpTransactions = obCriteria.list();
@@ -130,7 +130,8 @@ public class ProcessCashCloseMaster extends JSONProcessSimple {
         + OBPOSPaymentMethodCashup.PROPERTY_TOTALDROPS + "), sum("
         + OBPOSPaymentMethodCashup.PROPERTY_TOTALRETURNS + "), sum("
         + OBPOSPaymentMethodCashup.PROPERTY_TOTALSALES + "), sum( "
-        + OBPOSPaymentMethodCashup.PROPERTY_AMOUNTTOKEEP + ")" + " from OBPOS_Paymentmethodcashup" //
+        + OBPOSPaymentMethodCashup.PROPERTY_AMOUNTTOKEEP + ")"
+        + " from OBPOS_Paymentmethodcashup" //
         + " where cashUp.id in (:cashUpIds) and paymentType.paymentMethod.isshared = 'Y'"
         + " group by " + OBPOSPaymentMethodCashup.PROPERTY_SEARCHKEY;
     final Session session = OBDal.getInstance().getSession();
