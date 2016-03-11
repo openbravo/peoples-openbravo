@@ -1083,7 +1083,40 @@ enyo.kind({
         OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_OrderReplacedError'));
         return;
       } else {
-        me.model.get('order').cancelAndReplaceOrder();
+        if (me.model.get('order').get('payments').length) {
+          var notPrePayments = _.filter(me.model.get('order').get('payments').models, function (payment) {
+            return !payment.get('isPrePayment');
+          });
+          if (notPrePayments.length !== 0) {
+            var paymentList = [OB.I18N.getLabel('OBPOS_C&RDeletePaymentsBodyInit')];
+            var symbol = OB.MobileApp.model.get('terminal').symbol;
+            var symbolAtRight = OB.MobileApp.model.get('terminal').currencySymbolAtTheRight;
+            _.each(notPrePayments, function (payment) {
+              paymentList.push('· ' + payment.get('name') + ' (' + OB.I18N.formatCurrencyWithSymbol(payment.get('amount'), symbol, symbolAtRight) + ')');
+            });
+            paymentList.push(OB.I18N.getLabel('OBPOS_C&RDeletePaymentsBodyEnd'));
+            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_C&RDeletePaymentsHeader'), paymentList, [{
+              label: OB.I18N.getLabel('OBMOBC_LblOk'),
+              isConfirmButton: true,
+              order: me.model.get('order'),
+              notPrePayments: notPrePayments,
+              action: function () {
+                var confirmationPopup = this;
+                _.each(this.notPrePayments, function (payment) {
+                  var location = confirmationPopup.order.get('payments').models.indexOf(payment);
+                  confirmationPopup.order.get('payments').remove(confirmationPopup.order.get('payments').at(location));
+                });
+                this.order.cancelAndReplaceOrder();
+              }
+            }, {
+              label: OB.I18N.getLabel('OBMOBC_LblCancel')
+            }]);
+          } else {
+            me.model.get('order').cancelAndReplaceOrder();
+          }
+        } else {
+          me.model.get('order').cancelAndReplaceOrder();
+        }
       }
     });
   },
