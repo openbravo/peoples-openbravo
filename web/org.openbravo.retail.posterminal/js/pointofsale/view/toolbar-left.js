@@ -392,6 +392,7 @@ enyo.kind({
     var me = this,
         criteria = {};
     if (this.disabled === false) {
+      var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('toolbarButtonTabTap');
       this.model.on('approvalChecked', function (event) {
         this.model.off('approvalChecked');
         if (event.approved) {
@@ -422,14 +423,17 @@ enyo.kind({
           me.model.get('order').trigger('showProductList', null, 'final', function () {
             me.model.completePayment();
             me.doClearUserInput();
+            OB.UTIL.SynchronizationHelper.finished(synchId, 'toolbarButtonTabTap');
           });
         } else {
           me.model.completePayment(this);
           me.doClearUserInput();
+          OB.UTIL.SynchronizationHelper.finished(synchId, 'toolbarButtonTabTap');
         }
       }, function (trx, error) {
         me.model.completePayment(this);
         me.doClearUserInput();
+        OB.UTIL.SynchronizationHelper.finished(synchId, 'toolbarButtonTabTap');
       });
     }
   },
