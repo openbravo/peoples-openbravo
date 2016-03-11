@@ -56,18 +56,23 @@ public class ProcessVoidLayaway extends POSDataSynchronizationProcess implements
 
     JSONArray respArray = new JSONArray();
     JSONObject jsonorder = (JSONObject) jsonRecord.get("order");
+    Order order = null;
     try {
 
-      Order order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
+      order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
 
       for (Iterator<VoidLayawayHook> layawayhookiter = layawayhooks.iterator(); layawayhookiter
           .hasNext();) {
         VoidLayawayHook layawayhook = layawayhookiter.next();
         layawayhook.exec(jsonorder, order);
       }
+    } catch (Exception e) {
+      throw new OBException("There was an error voiding the Layaway: ", e);
+    }
 
-      TriggerHandler.getInstance().disable();
-      OBContext.setAdminMode(true);
+    TriggerHandler.getInstance().disable();
+    OBContext.setAdminMode(true);
+    try {
 
       order.setDocumentStatus("CL");
       order.setGrandTotalAmount(BigDecimal.ZERO);
@@ -104,13 +109,17 @@ public class ProcessVoidLayaway extends POSDataSynchronizationProcess implements
       paymentSchedule.setPaidAmount(BigDecimal.ZERO);
       paymentSchedule.setOutstandingAmount(BigDecimal.ZERO);
 
-      OBDal.getInstance().getConnection(true).commit();
-    } catch (Exception e) {
-      throw new OBException("There was an error voiding the orde Layaway: ", e);
-    } finally {
-      OBDal.getInstance().rollbackAndClose();
-      OBContext.restorePreviousMode();
+      OBDal.getInstance().flush();
       TriggerHandler.getInstance().enable();
+
+    } catch (Exception e) {
+      OBDal.getInstance().rollbackAndClose();
+      if (TriggerHandler.getInstance().isDisabled()) {
+        TriggerHandler.getInstance().enable();
+      }
+      throw new OBException("There was an error voiding the Layaway: ", e);
+    } finally {
+      OBContext.restorePreviousMode();
     }
 
     JSONObject result = new JSONObject();
