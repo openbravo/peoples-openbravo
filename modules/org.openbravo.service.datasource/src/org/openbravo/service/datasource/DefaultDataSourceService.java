@@ -24,9 +24,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.model.domaintype.DateDomainType;
@@ -34,6 +37,7 @@ import org.openbravo.base.model.domaintype.DatetimeDomainType;
 import org.openbravo.base.model.domaintype.EnumerateDomainType;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
+import org.openbravo.client.application.CachedPreference;
 import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
@@ -62,6 +66,9 @@ public class DefaultDataSourceService extends BaseDataSourceService {
 
   public static final String WARN_MESSAGE = "The '_where' parameter has been included in the request. The provided value will be used by the datasource because the OBSERDS_AllowWhereParameter preference is set to true.";
   public static final String PREFERENCE_EXCEPTION_MESSAGE = "The '_where' parameter has been included in the request. This value will not be taken into account. To be able to use this value, set the OBSERDS_AllowWhereParameter preference to true.";
+
+  @Inject
+  private CachedPreference cachedPreference;
 
   /*
    * (non-Javadoc)
@@ -103,8 +110,19 @@ public class DefaultDataSourceService extends BaseDataSourceService {
     // No need to do this for selectors, they manage the where clause in SelectorDataSourceFilter
     // class
     if (!isSelector(parameters)) {
-      String whereAndFilterClause = getWhereAndFilterClause(parameters);
-      parameters.put(JsonConstants.WHERE_AND_FILTER_CLAUSE, whereAndFilterClause);
+      if (parameters.containsKey(JsonConstants.WHERE_PARAMETER)) {
+        if ("Y".equals(cachedPreference.getPreferenceValue(CachedPreference.ALLOW_WHERE_PARAMETER))) {
+          parameters.put(JsonConstants.WHERE_AND_FILTER_CLAUSE,
+              parameters.get(JsonConstants.WHERE_PARAMETER));
+          log4j.warn(WARN_MESSAGE);
+          return;
+        } else {
+          throw new OBSecurityException(PREFERENCE_EXCEPTION_MESSAGE);
+        }
+      } else {
+        String whereAndFilterClause = getWhereAndFilterClause(parameters);
+        parameters.put(JsonConstants.WHERE_AND_FILTER_CLAUSE, whereAndFilterClause);
+      }
     }
 
     // add a filter on the parent of the entity

@@ -22,14 +22,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import javax.inject.Inject;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
-import org.openbravo.client.application.CachedPreference;
 import org.openbravo.client.kernel.Template;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
@@ -56,9 +52,6 @@ public abstract class BaseDataSourceService implements DataSourceService {
   private Entity entity;
   private DataSource dataSource;
   private List<DataSourceProperty> dataSourceProperties = new ArrayList<DataSourceProperty>();
-
-  @Inject
-  private CachedPreference cachedPreference;
 
   /*
    * (non-Javadoc)
@@ -146,38 +139,29 @@ public abstract class BaseDataSourceService implements DataSourceService {
    *         filter clause nor where clause.
    */
   protected String getWhereAndFilterClause(Map<String, String> parameters) {
-    if (parameters.containsKey(JsonConstants.TAB_PARAMETER)) {
+    if (!parameters.containsKey(JsonConstants.TAB_PARAMETER)) {
+      return "";
+    } else {
       String whereAndFilterClause = null;
-      if (parameters.containsKey(JsonConstants.WHERE_PARAMETER)) {
-        if ("Y".equals(cachedPreference.getPreferenceValue(CachedPreference.ALLOW_WHERE_PARAMETER))) {
-          log.warn(DefaultDataSourceService.WARN_MESSAGE);
-          whereAndFilterClause = parameters.get(JsonConstants.WHERE_PARAMETER);
-        } else {
-          throw new OBSecurityException(DefaultDataSourceService.PREFERENCE_EXCEPTION_MESSAGE);
-        }
-      } else {
-        String tabId = parameters.get(JsonConstants.TAB_PARAMETER);
-        try {
-          OBContext.setAdminMode(true);
-          Tab tab = OBDal.getInstance().get(Tab.class, tabId);
-          String where = tab.getHqlwhereclause();
-          if (isFilterApplied(parameters)) {
-            String filterClause = getFilterClause(tab);
-            if (StringUtils.isNotBlank(where)) {
-              whereAndFilterClause = " ((" + where + ") and (" + filterClause + "))";
-            } else {
-              whereAndFilterClause = filterClause;
-            }
-          } else if (StringUtils.isNotBlank(where)) {
-            whereAndFilterClause = where;
+      String tabId = parameters.get(JsonConstants.TAB_PARAMETER);
+      try {
+        OBContext.setAdminMode(true);
+        Tab tab = OBDal.getInstance().get(Tab.class, tabId);
+        String where = tab.getHqlwhereclause();
+        if (isFilterApplied(parameters)) {
+          String filterClause = getFilterClause(tab);
+          if (StringUtils.isNotBlank(where)) {
+            whereAndFilterClause = " ((" + where + ") and (" + filterClause + "))";
+          } else {
+            whereAndFilterClause = filterClause;
           }
-        } finally {
-          OBContext.restorePreviousMode();
+        } else if (StringUtils.isNotBlank(where)) {
+          whereAndFilterClause = where;
         }
+      } finally {
+        OBContext.restorePreviousMode();
       }
       return whereAndFilterClause;
-    } else {
-      return "";
     }
   }
 
