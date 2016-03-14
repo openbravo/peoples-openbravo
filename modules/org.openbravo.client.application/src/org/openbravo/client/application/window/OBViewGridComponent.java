@@ -46,11 +46,9 @@ import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.ui.AuxiliaryInput;
 import org.openbravo.model.ad.ui.Tab;
-import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.service.datasource.DataSource;
 import org.openbravo.service.db.DalConnectionProvider;
-import org.openbravo.service.json.JsonConstants;
 
 /**
  * The backing bean for generating the OBViewGrid client-side representation.
@@ -155,15 +153,8 @@ public class OBViewGridComponent extends BaseTemplateComponent {
     return "";
   }
 
-  public String getFilterClause() {
-    if (tab.getHqlfilterclause() != null) {
-      return addTransactionalFilter(tab.getHqlfilterclause());
-    }
-    return addTransactionalFilter("");
-  }
-
   public boolean isHasFilterClause() {
-    return StringUtils.isNotBlank(getFilterClause());
+    return (this.isApplyTransactionalFilter() || StringUtils.isNotBlank(tab.getHqlfilterclause()));
   }
 
   public String getFilterClauseSQL() {
@@ -205,23 +196,6 @@ public class OBViewGridComponent extends BaseTemplateComponent {
     }
 
     return filterName;
-  }
-
-  private String addTransactionalFilter(String filterClause) {
-    if (!this.isApplyTransactionalFilter()) {
-      return filterClause;
-    }
-    String transactionalFilter = " e.updated > " + JsonConstants.QUERY_PARAM_TRANSACTIONAL_RANGE
-        + " ";
-    if (entity.hasProperty(Order.PROPERTY_PROCESSED)) {
-      transactionalFilter += " or e.processed = 'N' ";
-    }
-    transactionalFilter = " (" + transactionalFilter + ") ";
-
-    if (filterClause.length() > 0) {
-      return " (" + transactionalFilter + " and (" + filterClause + ")) ";
-    }
-    return transactionalFilter;
   }
 
   public String getUiPattern() {
