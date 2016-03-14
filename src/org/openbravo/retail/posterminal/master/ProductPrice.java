@@ -21,12 +21,14 @@ import javax.inject.Inject;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
+import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.mobile.core.model.HQLPropertyList;
 import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.mobile.core.model.ModelExtensionUtils;
 import org.openbravo.mobile.core.utils.OBMOBCUtils;
 import org.openbravo.retail.config.OBRETCOProductList;
+import org.openbravo.retail.posterminal.OBPOSApplications;
 import org.openbravo.retail.posterminal.POSUtils;
 import org.openbravo.retail.posterminal.ProcessHQLQuery;
 
@@ -46,6 +48,21 @@ public class ProductPrice extends ProcessHQLQuery {
     propertiesList.add(ProductPriceProperties);
 
     return propertiesList;
+  }
+
+  @Override
+  protected Map<String, Object> getParameterValues(JSONObject jsonsent) throws JSONException {
+    try {
+      OBContext.setAdminMode(true);
+      String posId = RequestContext.get().getSessionAttribute("POSTerminal").toString();
+      OBPOSApplications POSTerminal = POSUtils.getTerminalById(posId);
+      String pricelist = POSUtils.getPriceListByTerminal(POSTerminal.getSearchKey()).getId();
+      Map<String, Object> paramValues = new HashMap<String, Object>();
+      paramValues.put("filterT1", pricelist);
+      return paramValues;
+    } finally {
+      OBContext.restorePreviousMode();
+    }
   }
 
   @Override
