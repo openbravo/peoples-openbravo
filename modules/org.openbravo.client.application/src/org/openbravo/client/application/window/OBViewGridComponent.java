@@ -162,7 +162,7 @@ public class OBViewGridComponent extends BaseTemplateComponent {
     return addTransactionalFilter("");
   }
 
-  public boolean getHasFilterClause() {
+  public boolean isHasFilterClause() {
     return StringUtils.isNotBlank(getFilterClause());
   }
 
