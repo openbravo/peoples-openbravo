@@ -413,7 +413,6 @@ public class SelectorDataSourceFilter implements DataSourceFilter {
       if ("Y".equals(cachedPreference.getPreferenceValue(CachedPreference.ALLOW_WHERE_PARAMETER))) {
         parameters.put(JsonConstants.WHERE_AND_FILTER_CLAUSE,
             parameters.get(JsonConstants.WHERE_PARAMETER));
-        log.warn(DefaultDataSourceService.WARN_MESSAGE);
       } else {
         throw new OBSecurityException(DefaultDataSourceService.PREFERENCE_EXCEPTION_MESSAGE);
       }
