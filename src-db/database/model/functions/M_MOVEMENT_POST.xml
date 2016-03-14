@@ -93,6 +93,7 @@
 	    END LOOP; -- Get Parameter
     ELSE
 	    v_Record_ID:=p_movement_id;
+      SELECT createdby INTO v_p_User FROM m_movement WHERE m_movement_id = v_Record_ID ;
 	  END IF;
     DBMS_OUTPUT.PUT_LINE('  Record_ID=' || v_Record_ID) ;
     -- Reading Movement
@@ -397,9 +398,13 @@
     v_ResultStr:='UnLockingMovement';
     UPDATE M_Movement  SET Processing='N'  WHERE M_Movement_ID=v_Record_ID;
 
+    IF(pinstance_id IS NOT NULL) THEN
     --  Update AD_PInstance
-    DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished ' || v_Message) ;
-    AD_UPDATE_PINSTANCE(PInstance_ID, v_p_User, 'N', v_Result, v_Message) ;
+      DBMS_OUTPUT.PUT_LINE('Updating PInstance - Finished ' || v_Message) ;
+      AD_UPDATE_PINSTANCE(PInstance_ID, v_p_User, 'N', v_Result, v_Message) ;
+    ELSE
+      DBMS_OUTPUT.PUT_LINE('--<<M_MovementPost finished>>') ;
+    END IF ;
     RETURN;
   END; --BODY
 EXCEPTION
@@ -409,7 +414,9 @@ WHEN OTHERS THEN
   ROLLBACK;
   UPDATE M_Movement  SET Processing='N',Updated=now(),UpdatedBy=v_p_User  WHERE M_Movement_ID=v_Record_ID;
   -- Commented by cromero 19102006 COMMIT;
-  AD_UPDATE_PINSTANCE(PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
+  IF(pinstance_id IS NOT NULL) THEN
+    AD_UPDATE_PINSTANCE(PInstance_ID, NULL, 'N', 0, v_ResultStr) ;
+  END IF ;
   RETURN;
 END M_MOVEMENT_POST
 ]]></body>
