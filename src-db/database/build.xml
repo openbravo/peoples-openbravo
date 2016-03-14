@@ -167,10 +167,15 @@ export.database.structure: Exports the database structure in the xml's files.
   </target>
 
   <target name="import.sample.data">
+    <condition property="execute.modulescripts" value="true">
+       <not>  
+          <isset property="execute.modulescripts"/>
+       </not>
+    </condition>    
     <taskdef name="importsampledata" classname="org.openbravo.ddlutils.task.ImportSampledata">
       <classpath refid="runtime-classpath" />
     </taskdef>
-    <importsampledata driver="${bbdd.driver}" url="${bbdd.owner.url}" user="${bbdd.user}" password="${bbdd.password}" verbosity="${bbdd.verbosity}" basedir="${basedir}/../../" />
+    <importsampledata driver="${bbdd.driver}" url="${bbdd.owner.url}" user="${bbdd.user}" password="${bbdd.password}" verbosity="${bbdd.verbosity}" basedir="${basedir}/../../" executeModuleScripts="${execute.modulescripts}"/>
     <antcall target="database.postupdate.${bbdd.rdbms}" />
   </target>
 
