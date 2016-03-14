@@ -22,6 +22,9 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
+import org.openbravo.dal.core.OBContext;
+import org.openbravo.erpCommon.businessUtility.Preferences;
+import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.mobile.core.model.HQLPropertyList;
 import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.mobile.core.model.ModelExtensionUtils;
@@ -81,19 +84,31 @@ public class BPartnerFilter extends ProcessHQLQuery {
 
   private Map<String, Object> getParams(JSONObject jsonsent) {
     Boolean location = false;
-    Map<String, Object> result = new HashMap<String, Object>();
+    String pref = "N";
     try {
-      JSONArray remoteFilters = jsonsent.getJSONArray("remoteFilters");
-      for (int i = 0; i < remoteFilters.length(); i++) {
-        JSONObject filter = remoteFilters.getJSONObject(i);
-        if (filter.has("location") && filter.getBoolean("location")) {
-          location = true;
-          break;
-        }
-      }
-    } catch (JSONException e) {
-      e.printStackTrace();
+      pref = Preferences.getPreferenceValue("OBPOS_FilterAlwaysBPByAddress", true, OBContext
+          .getOBContext().getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(),
+          OBContext.getOBContext().getUser(), OBContext.getOBContext().getRole(), null);
+    } catch (PropertyException e1) {
+      ;
     }
+    if ("N".equals(pref)) {
+      try {
+        JSONArray remoteFilters = jsonsent.getJSONArray("remoteFilters");
+        for (int i = 0; i < remoteFilters.length(); i++) {
+          JSONObject filter = remoteFilters.getJSONObject(i);
+          if (filter.has("location") && filter.getBoolean("location")) {
+            location = true;
+            break;
+          }
+        }
+      } catch (JSONException e) {
+        e.printStackTrace();
+      }
+    } else {
+      location = true;
+    }
+    Map<String, Object> result = new HashMap<String, Object>();
     result.put("location", location);
     return result;
   }

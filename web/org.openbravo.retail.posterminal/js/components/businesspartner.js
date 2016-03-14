@@ -462,6 +462,9 @@ enyo.kind({
     this.$.renderLoading.show();
 
     function hasLocationInFilter() {
+      if (OB.MobileApp.model.hasPermission('OBPOS_FilterAlwaysBPByAddress', true)) {
+        return true;
+      }
       return _.some(inEvent.filters, function (flt) {
         var column = _.find(OB.Model.BPartnerFilter.getProperties(), function (col) {
           return col.column === flt.column;
