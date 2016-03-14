@@ -58,7 +58,7 @@ public class ProductPrice extends ProcessHQLQuery {
       OBPOSApplications POSTerminal = POSUtils.getTerminalById(posId);
       String pricelist = POSUtils.getPriceListByTerminal(POSTerminal.getSearchKey()).getId();
       Map<String, Object> paramValues = new HashMap<String, Object>();
-      paramValues.put("filterT1", pricelist);
+      paramValues.put("priceList", pricelist);
       return paramValues;
     } finally {
       OBContext.restorePreviousMode();

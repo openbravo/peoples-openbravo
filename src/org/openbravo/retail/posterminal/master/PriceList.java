@@ -47,7 +47,7 @@ public class PriceList extends ProcessHQLQuery {
       OBPOSApplications POSTerminal = POSUtils.getTerminalById(posId);
       String pricelist = POSUtils.getPriceListByTerminal(POSTerminal.getSearchKey()).getId();
       Map<String, Object> paramValues = new HashMap<String, Object>();
-      paramValues.put("filterT1", pricelist);
+      paramValues.put("priceList", pricelist);
       return paramValues;
     } finally {
       OBContext.restorePreviousMode();
@@ -56,7 +56,6 @@ public class PriceList extends ProcessHQLQuery {
 
   @Override
   protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
-    String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
     List<String> hqlQueries = new ArrayList<String>();
 
     HQLPropertyList priceListHQLProperties = ModelExtensionUtils.getPropertyExtensions(extensions);
@@ -66,7 +65,7 @@ public class PriceList extends ProcessHQLQuery {
             + priceListHQLProperties.getHqlSelect()
             + " from PricingPriceList pl "
             + "where pl.id in (select distinct priceList.id from BusinessPartner where customer = 'Y') "
-            + "and pl.id <> (:filterT1) "
+            + "and pl.id <> (:priceList) "
             + "and $naturalOrgCriteria and $readableClientCriteria and ($incrementalUpdateCriteria)");
 
     return hqlQueries;
@@ -82,7 +81,7 @@ public class PriceList extends ProcessHQLQuery {
         + "    and to_char(pplv.validFromDate, 'yyyy-mm-dd') <= '"
         + format.format(terminalDate)
         + " ') and (plv.priceList.id in (select distinct priceList.id from BusinessPartner where customer = 'Y') "
-        + " and plv.priceList.id <> (:filterT1))";
+        + " and plv.priceList.id <> (:priceList))";
   }
 
 }
