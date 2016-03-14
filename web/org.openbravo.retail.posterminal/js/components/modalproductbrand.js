@@ -116,10 +116,9 @@ enyo.kind({
       var productCharacteristic = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.searchProductCharacteristicHeader.parent;
       var remoteCriteria = [],
           brandfilter = {},
-          criteria = {},
           chFilter = {},
           productText;
-
+      criteria = {};
       if (products.collection.length > 0) {
         if (productFilterText !== "" || productcategory !== "__all__") {
           brandfilter.columns = [];
