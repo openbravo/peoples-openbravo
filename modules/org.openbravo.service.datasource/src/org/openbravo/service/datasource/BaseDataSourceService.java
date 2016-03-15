@@ -22,11 +22,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
+import org.openbravo.client.application.window.ApplicationDictionaryCachedStructures;
 import org.openbravo.client.kernel.Template;
+import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.ui.Tab;
@@ -52,6 +56,9 @@ public abstract class BaseDataSourceService implements DataSourceService {
   private Entity entity;
   private DataSource dataSource;
   private List<DataSourceProperty> dataSourceProperties = new ArrayList<DataSourceProperty>();
+
+  @Inject
+  private ApplicationDictionaryCachedStructures cachedStructures;
 
   /*
    * (non-Javadoc)
@@ -146,7 +153,7 @@ public abstract class BaseDataSourceService implements DataSourceService {
       String tabId = parameters.get(JsonConstants.TAB_PARAMETER);
       try {
         OBContext.setAdminMode(true);
-        Tab tab = OBDal.getInstance().get(Tab.class, tabId);
+        Tab tab = cachedStructures.getTab(tabId);
         String where = tab.getHqlwhereclause();
         if (isFilterApplied(parameters)) {
           String filterClause = getFilterClause(tab);
@@ -170,7 +177,8 @@ public abstract class BaseDataSourceService implements DataSourceService {
   }
 
   private String getFilterClause(Tab tab) {
-    Entity ent = ModelProvider.getInstance().getEntityByTableId(tab.getTable().getId());
+    String tableId = (String) DalUtil.getId(tab.getTable());
+    Entity ent = ModelProvider.getInstance().getEntityByTableId(tableId);
     boolean isTransactionalWindow = tab.getWindow().getWindowType().equals("T");
     String filterClause = null;
     if (tab.getHqlfilterclause() == null) {
