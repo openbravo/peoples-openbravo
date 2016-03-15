@@ -125,5 +125,6 @@ public class JsonConstants {
   public static final String IS_WS_CALL = "_isWsCall";
   public static final String WHERE_AND_FILTER_CLAUSE = "whereAndFilterClause";
   public static final String TABLE_ID = "tableId";
+  public static final String WHERE_CLAUSE_HAS_BEEN_CHECKED = "whereClauseHasBeenChecked";
 
 }

@@ -202,6 +202,8 @@ public class DataSourceServlet extends BaseKernelServlet {
     // The WHERE_AND_FILTER_CLAUSE parameter is initialized, it will be set after.
     parameters.put(JsonConstants.WHERE_AND_FILTER_CLAUSE, "");
 
+    parameters.put(JsonConstants.WHERE_CLAUSE_HAS_BEEN_CHECKED, "false");
+
     if (log.isDebugEnabled()) {
       getRequestContent(request);
     }
@@ -211,6 +213,7 @@ public class DataSourceServlet extends BaseKernelServlet {
       }
 
       String filterClass = parameters.get(DataSourceConstants.DS_FILTERCLASS_PARAM);
+
       if (filterClass != null) {
         try {
           DataSourceFilter filter = (DataSourceFilter) WeldUtils

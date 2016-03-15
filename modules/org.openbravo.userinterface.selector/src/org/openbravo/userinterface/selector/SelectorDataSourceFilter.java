@@ -147,6 +147,8 @@ public class SelectorDataSourceFilter implements DataSourceFilter {
         }
       }
 
+      parameters.put(JsonConstants.WHERE_CLAUSE_HAS_BEEN_CHECKED, "true");
+
       // Applying default expression for selector fields when is not a selector window request
       if (!"Window".equals(requestType)) {
         OBCriteria<SelectorField> sfc = OBDal.getInstance().createCriteria(SelectorField.class);

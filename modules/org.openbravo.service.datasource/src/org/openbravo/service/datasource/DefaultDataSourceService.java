@@ -50,7 +50,6 @@ import org.openbravo.service.json.DataToJsonConverter;
 import org.openbravo.service.json.DefaultJsonDataService;
 import org.openbravo.service.json.DefaultJsonDataService.QueryResultWriter;
 import org.openbravo.service.json.JsonConstants;
-import org.openbravo.userinterface.selector.SelectorConstants;
 
 /**
  * The default implementation of the {@link DataSourceService}. Supports data retrieval, update
@@ -107,9 +106,8 @@ public class DefaultDataSourceService extends BaseDataSourceService {
     if (getEntity() != null) {
       parameters.put(JsonConstants.ENTITYNAME, getEntity().getName());
     }
-    // No need to do this for selectors, they manage the where clause in SelectorDataSourceFilter
-    // class
-    if (!isSelector(parameters)) {
+
+    if (!"true".equals(parameters.get(JsonConstants.WHERE_CLAUSE_HAS_BEEN_CHECKED))) {
       if (parameters.containsKey(JsonConstants.WHERE_PARAMETER)) {
         if ("Y".equals(cachedPreference.getPreferenceValue(CachedPreference.ALLOW_WHERE_PARAMETER))) {
           parameters.put(JsonConstants.WHERE_AND_FILTER_CLAUSE,
@@ -153,10 +151,6 @@ public class DefaultDataSourceService extends BaseDataSourceService {
           + "." + parentProperty + ".id='" + parentId + "')");
     }
     parameters.put(JsonConstants.USE_ALIAS, "true");
-  }
-
-  private boolean isSelector(Map<String, String> parameters) {
-    return parameters.containsKey(SelectorConstants.DS_REQUEST_SELECTOR_ID_PARAMETER);
   }
 
   /*
