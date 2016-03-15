@@ -199,8 +199,7 @@ public class DataSourceServlet extends BaseKernelServlet {
       return;
     }
 
-    // The WHERE_AND_FILTER_CLAUSE constant should be empty at this point because it
-    // will contain the where and filter clause that will be set after.
+    // The WHERE_AND_FILTER_CLAUSE parameter is initialized, it will be set after.
     parameters.put(JsonConstants.WHERE_AND_FILTER_CLAUSE, "");
 
     if (log.isDebugEnabled()) {
