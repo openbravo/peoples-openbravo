@@ -57,8 +57,11 @@ enyo.kind({
     this.model = model;
   },
   tap: function () {
+        var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes("modalDialogButtonTap");
+
     function error(tx) {
       OB.UTIL.showError("OBDAL error: " + tx);
+      OB.UTIL.SynchronizationHelper.finished(synchId, "modalDialogButtonTap");
     }
 
     this.doHideThisPopup();
@@ -88,8 +91,10 @@ enyo.kind({
     } else {
       bp.set('creditUsed', bpCreditUsed + totalPending);
     }
-    OB.Dal.save(bp, null, error);
-    this.model.get('order').trigger('paymentDone');
+    OB.Dal.save(bp, function() {
+      me.model.get('order').trigger('paymentDone');
+      OB.UTIL.SynchronizationHelper.finished(synchId, "modalDialogButtonTap");
+    }, error);
   }
 });
 
