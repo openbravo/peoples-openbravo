@@ -73,6 +73,7 @@ public class CostingRuleProcess implements Process {
   @Override
   public void execute(ProcessBundle bundle) throws Exception {
     logger = bundle.getLogger();
+    log4j.debug("**CostingRuleProcess - Starting execution.");
     OBError msg = new OBError();
     msg.setType("Success");
     msg.setTitle(OBMessageUtils.messageBD("Success"));
@@ -80,30 +81,55 @@ public class CostingRuleProcess implements Process {
       OBContext.setAdminMode(false);
       final String ruleId = (String) bundle.getParams().get("M_Costing_Rule_ID");
       CostingRule rule = OBDal.getInstance().get(CostingRule.class, ruleId);
+      log4j.debug("**CostingRuleProcess - Retrieving rule with ID: " + ruleId + " -> "
+          + rule.getIdentifier());
       if (rule.getOrganization().getCurrency() == null) {
         throw new OBException("@NoCurrencyInCostingRuleOrg@");
       }
+      log4j.debug(
+          "**CostingRuleProcess - Retrieving Organization Structure provider (OSP) of rule's client: "
+              + rule.getClient().getId());
       OrganizationStructureProvider osp = OBContext.getOBContext()
           .getOrganizationStructureProvider(rule.getClient().getId());
+      log4j.debug("**CostingRuleProcess - Retrieving child orgs for rule's org: "
+          + rule.getOrganization().getId());
       final Set<String> childOrgs = osp.getChildTree(rule.getOrganization().getId(), true);
+      log4j.debug("**CostingRuleProcess - Retrieving natural orgs for rule's org: "
+          + rule.getOrganization().getId());
       final Set<String> naturalOrgs = osp.getNaturalTree(rule.getOrganization().getId());
 
       // Checks
+      log4j.debug("**CostingRuleProcess - Migration check up: ");
       migrationCheck();
+      log4j.debug("**CostingRuleProcess - Retrieving previous costing rule: " + rule.getId());
       CostingRule prevCostingRule = getPreviousRule(rule);
       boolean existsPreviousRule = prevCostingRule != null;
+      log4j.debug("**CostingRuleProcess - Exists previous rule: "
+          + (existsPreviousRule == true ? "YES" : "NO"));
+      log4j.debug(
+          "**CostingRuleProcess - Search if transactions exists for organizations of the rule.");
       boolean existsTransactions = existsTransactions(naturalOrgs, childOrgs);
+      log4j.debug("**CostingRuleProcess - Exists transactions: "
+          + (existsTransactions == true ? "YES" : "NO"));
       if (existsPreviousRule) {
         // Product with costing rule. All trx must be calculated.
+        log4j.debug(
+            "**CostingRuleProcess - Exists previous costing rule. Product with costing rule. All trx must be calculated.");
         checkAllTrxCalculated(naturalOrgs, childOrgs);
       } else if (existsTransactions) {
         // Product configured to have cost not calculated cannot have transactions with cost
         // calculated.
+        log4j.debug(
+            "**CostingRuleProcess - Exists transactions. Product configured to have cost not calculated cannot have transactions with cost calculated.");
         checkNoTrxWithCostCalculated(naturalOrgs, childOrgs);
         if (rule.getStartingDate() != null) {
           // First rule of an instance that does not need migration. Old transactions costs are not
           // calculated. They are initialized with ZERO cost.
+          log4j.debug("**CostingRuleProcess - Initializing old trx with starting date of the rule: "
+              + rule.getStartingDate());
           initializeOldTrx(childOrgs, rule.getStartingDate());
+          log4j.debug(
+              "**CostingRuleProcess - FINISHED -> Initializing old trx with starting date of the rule");
         }
       }
       // Inventories are only needed:
@@ -117,16 +143,20 @@ public class CostingRuleProcess implements Process {
           // Set valid from date
           startingDate = DateUtils.truncate(new Date(), Calendar.SECOND);
           rule.setStartingDate(startingDate);
-          log4j.debug("setting starting date " + startingDate);
+          log4j.debug("**CostingRuleProcess - Setting starting date " + startingDate);
           prevCostingRule.setEndingDate(startingDate);
           OBDal.getInstance().save(prevCostingRule);
           OBDal.getInstance().flush();
+          log4j.debug("**CostingRuleProcess - Starting date SAVED");
         }
         if (rule.getFixbackdatedfrom() == null && rule.isBackdatedTransactionsFixed()) {
           rule.setFixbackdatedfrom(startingDate);
         }
+        log4j.debug("**CostingRuleProcess - Executing createCostingRuleInits method");
         createCostingRuleInits(ruleId, childOrgs, startingDate);
 
+        log4j.debug(
+            "**CostingRuleProcess - Executing updateInventoriesCostAndProcessInitInventories method");
         // Update cost of inventories and process starting physical inventories.
         updateInventoriesCostAndProcessInitInventories(ruleId, startingDate, existsPreviousRule);
       }
@@ -164,6 +194,7 @@ public class CostingRuleProcess implements Process {
     } finally {
       OBContext.restorePreviousMode();
     }
+    log4j.debug("**CostingRuleProcess - Finishing execution.");
     bundle.setResult(msg);
   }
 
@@ -174,6 +205,7 @@ public class CostingRuleProcess implements Process {
   }
 
   private CostingRule getPreviousRule(CostingRule rule) {
+    log4j.debug("**CostingRuleProcess - Preparing statement in getPreviousRule method.");
     StringBuffer where = new StringBuffer();
     where.append(" as cr");
     where.append(" where cr." + CostingRule.PROPERTY_ORGANIZATION + " = :ruleOrg");
@@ -185,10 +217,13 @@ public class CostingRuleProcess implements Process {
     crQry.setFilterOnReadableOrganization(false);
     crQry.setNamedParameter("ruleOrg", rule.getOrganization());
     crQry.setMaxResult(1);
+    log4j.debug("**CostingRuleProcess - Executing query in getPreviousRule method: "
+        + crQry.getSelectClause() + " " + crQry.getWhereAndOrderBy());
     return crQry.uniqueResult();
   }
 
   private boolean existsTransactions(Set<String> naturalOrgs, Set<String> childOrgs) {
+    log4j.debug("**CostingRuleProcess - Preparing statement in existsTransactions method.");
     StringBuffer where = new StringBuffer();
     where.append(" as p");
     where.append(" where p." + Product.PROPERTY_PRODUCTTYPE + " = 'I'");
@@ -204,10 +239,13 @@ public class CostingRuleProcess implements Process {
     pQry.setNamedParameter("porgs", naturalOrgs);
     pQry.setNamedParameter("childOrgs", childOrgs);
     pQry.setMaxResult(1);
+    log4j.debug("**CostingRuleProcess - Executing query in existsTransactions method: "
+        + pQry.getSelectClause() + " " + pQry.getWhereAndOrderBy());
     return pQry.uniqueResult() != null;
   }
 
   private void checkAllTrxCalculated(Set<String> naturalOrgs, Set<String> childOrgs) {
+    log4j.debug("**CostingRuleProcess - Preparing statement in checkAllTrxCalculated method.");
     StringBuffer where = new StringBuffer();
     where.append(" as p");
     where.append(" where p." + Product.PROPERTY_PRODUCTTYPE + " = 'I'");
@@ -215,8 +253,8 @@ public class CostingRuleProcess implements Process {
     where.append("  and p." + Product.PROPERTY_ORGANIZATION + ".id in (:porgs)");
     where.append("  and exists (select 1 from " + MaterialTransaction.ENTITY_NAME + " as trx ");
     where.append("   where trx." + MaterialTransaction.PROPERTY_PRODUCT + " = p");
-    where.append("     and trx." + MaterialTransaction.PROPERTY_ORGANIZATION
-        + ".id in (:childOrgs)");
+    where.append(
+        "     and trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:childOrgs)");
     where.append("     and trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = false");
     where.append("   )");
     OBQuery<Product> pQry = OBDal.getInstance().createQuery(Product.class, where.toString());
@@ -224,12 +262,16 @@ public class CostingRuleProcess implements Process {
     pQry.setNamedParameter("porgs", naturalOrgs);
     pQry.setNamedParameter("childOrgs", childOrgs);
     pQry.setMaxResult(1);
+    log4j.debug("**CostingRuleProcess - Executing query in checkAllTrxCalculated method: "
+        + pQry.getSelectClause() + " " + pQry.getWhereAndOrderBy());
     if (pQry.uniqueResult() != null) {
       throw new OBException("@TrxWithCostNoCalculated@");
     }
   }
 
   private void checkNoTrxWithCostCalculated(Set<String> naturalOrgs, Set<String> childOrgs) {
+    log4j.debug(
+        "**CostingRuleProcess - Preparing statement in checkNoTrxWithCostCalculated method.");
     StringBuffer where = new StringBuffer();
     where.append(" as p");
     where.append(" where p." + Product.PROPERTY_PRODUCTTYPE + " = 'I'");
@@ -238,14 +280,16 @@ public class CostingRuleProcess implements Process {
     where.append("  and exists (select 1 from " + MaterialTransaction.ENTITY_NAME + " as trx ");
     where.append("   where trx." + MaterialTransaction.PROPERTY_PRODUCT + " = p");
     where.append("     and trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = true");
-    where.append("     and trx." + MaterialTransaction.PROPERTY_ORGANIZATION
-        + ".id in (:childOrgs)");
+    where.append(
+        "     and trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:childOrgs)");
     where.append("   )");
     OBQuery<Product> pQry = OBDal.getInstance().createQuery(Product.class, where.toString());
     pQry.setFilterOnReadableOrganization(false);
     pQry.setNamedParameter("porgs", naturalOrgs);
     pQry.setNamedParameter("childOrgs", childOrgs);
     pQry.setMaxResult(1);
+    log4j.debug("**CostingRuleProcess - Executing query in checkNoTrxWithCostCalculated method: "
+        + pQry.getSelectClause() + " " + pQry.getWhereAndOrderBy());
     if (pQry.uniqueResult() != null) {
       throw new OBException("@ProductsWithTrxCalculated@");
     }
@@ -254,7 +298,7 @@ public class CostingRuleProcess implements Process {
   private void initializeOldTrx(Set<String> childOrgs, Date date) throws SQLException {
     Client client = OBDal.getInstance().get(Client.class,
         OBContext.getOBContext().getCurrentClient().getId());
-
+    log4j.debug("**CostingRuleProcess - Preparing INSERT statement in initializeOldTrx method.");
     StringBuffer insert = new StringBuffer();
     insert.append(" insert into " + TransactionCost.ENTITY_NAME);
     insert.append(" (" + TransactionCost.PROPERTY_ID);
@@ -299,7 +343,10 @@ public class CostingRuleProcess implements Process {
     queryInsert.setDate("date", date);
     queryInsert.setString("client", client.getId());
     queryInsert.executeUpdate();
+    log4j.debug("**CostingRuleProcess - Executing INSERT query in initializeOldTrx method: "
+        + queryInsert.getQueryString());
 
+    log4j.debug("**CostingRuleProcess - Preparing UPDATE statement in initializeOldTrx method.");
     StringBuffer update = new StringBuffer();
     update.append(" update " + MaterialTransaction.ENTITY_NAME);
     update.append(" set " + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = true");
@@ -319,6 +366,8 @@ public class CostingRuleProcess implements Process {
     queryUpdate.setDate("date", date);
     queryUpdate.setString("client", client.getId());
     queryUpdate.executeUpdate();
+    log4j.debug("**CostingRuleProcess - Executing UPDATE query in initializeOldTrx method: "
+        + queryUpdate.getQueryString());
 
     OBDal.getInstance().getSession().flush();
     OBDal.getInstance().getSession().clear();
@@ -331,6 +380,8 @@ public class CostingRuleProcess implements Process {
 
   protected void createCostingRuleInits(String ruleId, Set<String> childOrgs, Date date) {
     CostingRule rule = OBDal.getInstance().get(CostingRule.class, ruleId);
+    log4j
+        .debug("**CostingRuleProcess - Retrieving getStockLines in createCostingRuleInits method.");
     ScrollableResults stockLines = getStockLines(childOrgs, date);
     // The key of the Map is the concatenation of orgId and warehouseId
     Map<String, String> initLines = new HashMap<String, String>();
@@ -339,6 +390,7 @@ public class CostingRuleProcess implements Process {
     InventoryCountLine openInventoryLine = null;
     int i = 1;
     try {
+      log4j.debug("**CostingRuleProcess - Scrolling stock lines.");
       while (stockLines.next()) {
         Object[] stockLine = stockLines.get();
         String productId = (String) stockLine[0];
@@ -370,18 +422,19 @@ public class CostingRuleProcess implements Process {
           // values have been inserted.
 
           openInventoryLine = insertInventoryLine(cri.getInitInventory(), productId, attrSetInsId,
-              uomId, orderUOMId, locatorId, qty, BigDecimal.ZERO, orderQty, BigDecimal.ZERO,
-              lineNo, null);
+              uomId, orderUOMId, locatorId, qty, BigDecimal.ZERO, orderQty, BigDecimal.ZERO, lineNo,
+              null);
           insertInventoryLine(cri.getCloseInventory(), productId, attrSetInsId, uomId, orderUOMId,
-              locatorId, BigDecimal.ZERO, qty, BigDecimal.ZERO, orderQty, lineNo, openInventoryLine);
+              locatorId, BigDecimal.ZERO, qty, BigDecimal.ZERO, orderQty, lineNo,
+              openInventoryLine);
 
         } else {
           openInventoryLine = insertInventoryLine(cri.getInitInventory(), productId, attrSetInsId,
               uomId, orderUOMId, locatorId, BigDecimal.ZERO, qty.abs(), BigDecimal.ZERO,
               orderQty == null ? null : orderQty.abs(), lineNo, closingInventoryLine);
           insertInventoryLine(cri.getCloseInventory(), productId, attrSetInsId, uomId, orderUOMId,
-              locatorId, qty == null ? null : qty.abs(), BigDecimal.ZERO, orderQty == null ? null
-                  : orderQty.abs(), BigDecimal.ZERO, lineNo, openInventoryLine);
+              locatorId, qty == null ? null : qty.abs(), BigDecimal.ZERO,
+              orderQty == null ? null : orderQty.abs(), BigDecimal.ZERO, lineNo, openInventoryLine);
 
         }
 
@@ -396,14 +449,18 @@ public class CostingRuleProcess implements Process {
     } finally {
       stockLines.close();
     }
+    log4j.debug("**CostingRuleProcess - FINISHED - Scrolling stock lines.");
     // Process closing physical inventories.
+    log4j.debug("**CostingRuleProcess - Process closing physical inventories.");
     rule = OBDal.getInstance().get(CostingRule.class, ruleId);
     for (CostingRuleInit cri : rule.getCostingRuleInitList()) {
       new InventoryCountProcess().processInventory(cri.getCloseInventory(), false);
     }
+    log4j.debug("**CostingRuleProcess - FINISHED - Process closing physical inventories.");
   }
 
   private ScrollableResults getStockLines(Set<String> childOrgs, Date date) {
+    log4j.debug("**CostingRuleProcess - Preparing SELECT statement in getStockLines method.");
     StringBuffer select = new StringBuffer();
     select.append("select trx." + MaterialTransaction.PROPERTY_PRODUCT + ".id");
     select.append(", trx." + MaterialTransaction.PROPERTY_ATTRIBUTESETVALUE + ".id");
@@ -444,10 +501,14 @@ public class CostingRuleProcess implements Process {
     }
     stockLinesQry.setFetchSize(1000);
     ScrollableResults stockLines = stockLinesQry.scroll(ScrollMode.FORWARD_ONLY);
+    log4j.debug("**CostingRuleProcess - Executing SELECT query in getStockLines method: "
+        + stockLinesQry.getQueryString());
     return stockLines;
   }
 
-  private CostingRuleInit createCostingRuleInitLine(CostingRule rule, String warehouseId, Date date) {
+  private CostingRuleInit createCostingRuleInitLine(CostingRule rule, String warehouseId,
+      Date date) {
+    log4j.debug("**CostingRuleProcess - Executing createCostingRuleInitLine method.");
     Date localDate = date;
     if (localDate == null) {
       localDate = new Date();
@@ -456,8 +517,8 @@ public class CostingRuleProcess implements Process {
     String orgId = (String) DalUtil.getId(rule.getOrganization());
     CostingRuleInit cri = OBProvider.getInstance().get(CostingRuleInit.class);
     cri.setClient((Client) OBDal.getInstance().getProxy(Client.ENTITY_NAME, clientId));
-    cri.setOrganization((Organization) OBDal.getInstance()
-        .getProxy(Organization.ENTITY_NAME, orgId));
+    cri.setOrganization(
+        (Organization) OBDal.getInstance().getProxy(Organization.ENTITY_NAME, orgId));
     cri.setWarehouse((Warehouse) OBDal.getInstance().getProxy(Warehouse.ENTITY_NAME, warehouseId));
     cri.setCostingRule(rule);
     List<CostingRuleInit> criList = rule.getCostingRuleInitList();
@@ -466,22 +527,22 @@ public class CostingRuleProcess implements Process {
 
     InventoryCount closeInv = OBProvider.getInstance().get(InventoryCount.class);
     closeInv.setClient((Client) OBDal.getInstance().getProxy(Client.ENTITY_NAME, clientId));
-    closeInv.setOrganization((Organization) OBDal.getInstance().getProxy(Organization.ENTITY_NAME,
-        orgId));
+    closeInv.setOrganization(
+        (Organization) OBDal.getInstance().getProxy(Organization.ENTITY_NAME, orgId));
     closeInv.setName(OBMessageUtils.messageBD("CostCloseInventory"));
-    closeInv.setWarehouse((Warehouse) OBDal.getInstance().getProxy(Warehouse.ENTITY_NAME,
-        warehouseId));
+    closeInv
+        .setWarehouse((Warehouse) OBDal.getInstance().getProxy(Warehouse.ENTITY_NAME, warehouseId));
     closeInv.setMovementDate(localDate);
     closeInv.setInventoryType("C");
     cri.setCloseInventory(closeInv);
 
     InventoryCount initInv = OBProvider.getInstance().get(InventoryCount.class);
     initInv.setClient((Client) OBDal.getInstance().getProxy(Client.ENTITY_NAME, clientId));
-    initInv.setOrganization((Organization) OBDal.getInstance().getProxy(Organization.ENTITY_NAME,
-        orgId));
+    initInv.setOrganization(
+        (Organization) OBDal.getInstance().getProxy(Organization.ENTITY_NAME, orgId));
     initInv.setName(OBMessageUtils.messageBD("CostInitInventory"));
-    initInv.setWarehouse((Warehouse) OBDal.getInstance().getProxy(Warehouse.ENTITY_NAME,
-        warehouseId));
+    initInv
+        .setWarehouse((Warehouse) OBDal.getInstance().getProxy(Warehouse.ENTITY_NAME, warehouseId));
     initInv.setMovementDate(localDate);
     initInv.setInventoryType("O");
     cri.setInitInventory(initInv);
@@ -490,7 +551,7 @@ public class CostingRuleProcess implements Process {
     OBDal.getInstance().save(initInv);
 
     OBDal.getInstance().flush();
-
+    log4j.debug("**CostingRuleProcess - FINISHED - Executing createCostingRuleInitLine method.");
     return cri;
   }
 
@@ -498,6 +559,7 @@ public class CostingRuleProcess implements Process {
       String attrSetInsId, String uomId, String orderUOMId, String locatorId, BigDecimal qtyCount,
       BigDecimal qtyBook, BigDecimal orderQtyCount, BigDecimal orderQtyBook, Long lineNo,
       InventoryCountLine relatedInventoryLine) {
+    log4j.debug("**CostingRuleProcess - Executing insertInventoryLine method.");
     InventoryCountLine icl = OBProvider.getInstance().get(InventoryCountLine.class);
     icl.setClient(inventory.getClient());
     icl.setOrganization(inventory.getOrganization());
@@ -505,15 +567,16 @@ public class CostingRuleProcess implements Process {
     icl.setLineNo(lineNo);
     icl.setStorageBin((Locator) OBDal.getInstance().getProxy(Locator.ENTITY_NAME, locatorId));
     icl.setProduct((Product) OBDal.getInstance().getProxy(Product.ENTITY_NAME, productId));
-    icl.setAttributeSetValue((AttributeSetInstance) OBDal.getInstance().getProxy(
-        AttributeSetInstance.ENTITY_NAME, attrSetInsId));
+    icl.setAttributeSetValue((AttributeSetInstance) OBDal.getInstance()
+        .getProxy(AttributeSetInstance.ENTITY_NAME, attrSetInsId));
     icl.setQuantityCount(qtyCount);
     icl.setBookQuantity(qtyBook);
     icl.setUOM((UOM) OBDal.getInstance().getProxy(UOM.ENTITY_NAME, uomId));
     if (orderUOMId != null) {
       icl.setOrderQuantity(orderQtyCount);
       icl.setQuantityOrderBook(orderQtyBook);
-      icl.setOrderUOM((ProductUOM) OBDal.getInstance().getProxy(ProductUOM.ENTITY_NAME, orderUOMId));
+      icl.setOrderUOM(
+          (ProductUOM) OBDal.getInstance().getProxy(ProductUOM.ENTITY_NAME, orderUOMId));
     }
     icl.setRelatedInventory(relatedInventoryLine);
     List<InventoryCountLine> invLines = inventory.getMaterialMgmtInventoryCountLineList();
@@ -521,11 +584,14 @@ public class CostingRuleProcess implements Process {
     inventory.setMaterialMgmtInventoryCountLineList(invLines);
     OBDal.getInstance().save(inventory);
     OBDal.getInstance().flush();
+    log4j.debug("**CostingRuleProcess - FINISHED - Executing insertInventoryLine method.");
     return icl;
   }
 
   private void updateInventoriesCostAndProcessInitInventories(String ruleId, Date startingDate,
       boolean existsPreviousRule) {
+    log4j.debug(
+        "**CostingRuleProcess - Executing updateInventoriesCostAndProcessInitInventories method.");
     CostingRule rule = OBDal.getInstance().get(CostingRule.class, ruleId);
     for (CostingRuleInit cri : rule.getCostingRuleInitList()) {
       ScrollableResults trxs = getInventoryLineTransactions(cri.getCloseInventory());
@@ -542,8 +608,8 @@ public class CostingRuleProcess implements Process {
           if (existsPreviousRule) {
             trxCost = CostingUtils.getTransactionCost(trx, startingDate, true, cur);
             if (trx.getMovementQuantity().compareTo(BigDecimal.ZERO) != 0) {
-              cost = trxCost.divide(trx.getMovementQuantity().abs(), cur.getCostingPrecision()
-                  .intValue(), RoundingMode.HALF_UP);
+              cost = trxCost.divide(trx.getMovementQuantity().abs(),
+                  cur.getCostingPrecision().intValue(), RoundingMode.HALF_UP);
               trx = OBDal.getInstance().get(MaterialTransaction.class, trx.getId());
             }
           } else {
@@ -556,9 +622,9 @@ public class CostingRuleProcess implements Process {
             transactionCost.setOrganization(trx.getOrganization());
             transactionCost.setCost(BigDecimal.ZERO);
             transactionCost.setCurrency(trx.getClient().getCurrency());
-            transactionCost.setAccountingDate(trx.getGoodsShipmentLine() != null ? trx
-                .getGoodsShipmentLine().getShipmentReceipt().getAccountingDate() : trx
-                .getMovementDate());
+            transactionCost.setAccountingDate(trx.getGoodsShipmentLine() != null
+                ? trx.getGoodsShipmentLine().getShipmentReceipt().getAccountingDate()
+                : trx.getMovementDate());
             List<TransactionCost> trxCosts = trx.getTransactionCostList();
             trxCosts.add(transactionCost);
             trx.setTransactionCostList(trxCosts);
@@ -594,20 +660,24 @@ public class CostingRuleProcess implements Process {
     if (!existsPreviousRule) {
       updateInitInventoriesTrxDate(startingDate, ruleId);
     }
+    log4j.debug(
+        "**CostingRuleProcess - FINISHED - Executing updateInventoriesCostAndProcessInitInventories method.");
   }
 
   protected MaterialTransaction getInventoryLineTransaction(InventoryCountLine icl) {
-    OBQuery<MaterialTransaction> trxQry = OBDal.getInstance().createQuery(
-        MaterialTransaction.class,
+    log4j.debug("**CostingRuleProcess - Executing getInventoryLineTransaction method.");
+    OBQuery<MaterialTransaction> trxQry = OBDal.getInstance().createQuery(MaterialTransaction.class,
         MaterialTransaction.PROPERTY_PHYSICALINVENTORYLINE + ".id = :invline");
     trxQry.setFilterOnReadableClients(false);
     trxQry.setFilterOnReadableOrganization(false);
     trxQry.setNamedParameter("invline", icl.getId());
     MaterialTransaction trx = trxQry.uniqueResult();
+    log4j.debug("**CostingRuleProcess - FINISHED - Executing getInventoryLineTransaction method.");
     return trx;
   }
 
   protected InventoryCountLine getInitIcl(InventoryCount initInventory, InventoryCountLine icl) {
+    log4j.debug("**CostingRuleProcess - Preparing statement in getStockLines method.");
     StringBuffer where = new StringBuffer();
     where.append(InventoryCountLine.PROPERTY_PHYSINVENTORY + ".id = :inventory");
     where.append(" and " + InventoryCountLine.PROPERTY_PRODUCT + ".id = :product");
@@ -629,21 +699,28 @@ public class CostingRuleProcess implements Process {
     if (icl.getOrderUOM() != null) {
       iclQry.setNamedParameter("orderuom", icl.getOrderUOM().getId());
     }
+    log4j.debug("**CostingRuleProcess - Executing SELECT query in getInitIcl method: "
+        + iclQry.getSelectClause() + " " + iclQry.getWhereAndOrderBy());
     return iclQry.uniqueResult();
   }
 
   private ScrollableResults getInventoryLineTransactions(InventoryCount inventory) {
+    log4j.debug("**CostingRuleProcess - Preparing statement in getInventoryLineTransactions");
     StringBuffer where = new StringBuffer();
     where.append(MaterialTransaction.PROPERTY_PHYSICALINVENTORYLINE + "."
         + InventoryCountLine.PROPERTY_PHYSINVENTORY + "." + InventoryCount.PROPERTY_ID
         + " = :inventory");
-    OBQuery<MaterialTransaction> trxQry = OBDal.getInstance().createQuery(
-        MaterialTransaction.class, where.toString());
+    OBQuery<MaterialTransaction> trxQry = OBDal.getInstance().createQuery(MaterialTransaction.class,
+        where.toString());
     trxQry.setNamedParameter("inventory", inventory.getId());
+    log4j.debug(
+        "**CostingRuleProcess - Executing SELECT query in getInventoryLineTransactions method: "
+            + trxQry.getSelectClause() + " " + trxQry.getWhereAndOrderBy());
     return trxQry.scroll(ScrollMode.FORWARD_ONLY);
   }
 
   private void updateInitInventoriesTrxDate(Date startingDate, String ruleId) {
+    log4j.debug("**CostingRuleProcess - Preparing statement in updateInitInventoriesTrxDate");
     StringBuffer update = new StringBuffer();
     update.append(" update " + MaterialTransaction.ENTITY_NAME + " as trx");
     update.append(" set trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " = :date");
@@ -651,8 +728,8 @@ public class CostingRuleProcess implements Process {
     update.append("    select 1");
     update.append("    from " + InventoryCountLine.ENTITY_NAME + " as il");
     update.append("    join il." + InventoryCountLine.PROPERTY_PHYSINVENTORY + " as i");
-    update.append("    join i." + InventoryCount.PROPERTY_COSTINGRULEINITINITINVENTORYLIST
-        + " as cri");
+    update.append(
+        "    join i." + InventoryCount.PROPERTY_COSTINGRULEINITINITINVENTORYLIST + " as cri");
     update.append("    where cri." + CostingRuleInit.PROPERTY_COSTINGRULE + ".id = :cr");
     update.append("    and il." + InventoryCountLine.PROPERTY_ID + " = trx."
         + MaterialTransaction.PROPERTY_PHYSICALINVENTORYLINE + ".id");
@@ -661,6 +738,9 @@ public class CostingRuleProcess implements Process {
     Query queryUpdate = OBDal.getInstance().getSession().createQuery(update.toString());
     queryUpdate.setDate("date", startingDate);
     queryUpdate.setString("cr", ruleId);
+    log4j.debug(
+        "**CostingRuleProcess - Executing UPDATE query in updateInitInventoriesTrxDate method: "
+            + queryUpdate.getQueryString());
     queryUpdate.executeUpdate();
 
     OBDal.getInstance().flush();
