@@ -26,6 +26,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -119,7 +120,18 @@ public class DefaultDataSourceService extends BaseDataSourceService {
         }
       } else {
         String whereAndFilterClause = getWhereAndFilterClause(parameters);
-        parameters.put(JsonConstants.WHERE_AND_FILTER_CLAUSE, whereAndFilterClause);
+        if (StringUtils.isNotBlank(whereAndFilterClause)) {
+          if (getWhereClause() != null) {
+            parameters.put(JsonConstants.WHERE_AND_FILTER_CLAUSE, "(" + whereAndFilterClause
+                + ") and (" + getWhereClause() + ")");
+          } else {
+            parameters.put(JsonConstants.WHERE_AND_FILTER_CLAUSE, whereAndFilterClause);
+          }
+        } else {
+          if (getWhereClause() != null) {
+            parameters.put(JsonConstants.WHERE_AND_FILTER_CLAUSE, getWhereClause());
+          }
+        }
       }
     }
 
