@@ -20,7 +20,7 @@ public class BrandsFilterByCHHQLCriteria extends HQLCriteriaProcess {
   @Override
   public String getHQLFilter(String params) {
     return "exists (select 1 from ProductCharacteristicValue as chv inner join chv.product as product  "
-        + " where product.brand.id = brand.id and chv.characteristicValue.id = $1) ";
+        + " where product.brand.id = brand.id and chv.characteristicValue.id in ($1)) ";
 
   }
 }

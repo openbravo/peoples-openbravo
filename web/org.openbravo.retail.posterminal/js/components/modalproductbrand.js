@@ -115,6 +115,8 @@ enyo.kind({
       var productcategory = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.searchProductCharacteristicHeader.$.productcategory.getValue();
       var productCharacteristic = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.searchProductCharacteristicHeader.parent;
       var remoteCriteria = [],
+          characteristicValue = [],
+          characteristic = [],
           brandfilter = {},
           chFilter = {},
           productText;
@@ -129,20 +131,31 @@ enyo.kind({
           remoteCriteria.push(brandfilter);
         }
       }
-
       if (me.parent.parent.model.get('filter').length > 0) {
-        for (i = 0; i < productCharacteristic.model.get('filter').length; i++) {
-          chFilter = {
-            columns: [],
-            operator: OB.Dal.FILTER,
-            value: 'BFilterByCH_Filter',
-            filter: productCharacteristic.model.get('filter')[i].characteristic_id,
-            params: [productCharacteristic.model.get('filter')[i].id]
-          };
-          remoteCriteria.push(chFilter);
+        for (i = 0; i < me.parent.parent.model.get('filter').length; i++) {
+          if (!characteristic.includes(me.parent.parent.model.get('filter')[i].characteristic_id)) {
+            characteristic.push(me.parent.parent.model.get('filter')[i].characteristic_id);
+          }
+        }
+        for (i = 0; i < characteristic.length; i++) {
+          for (j = 0; j < me.parent.parent.model.get('filter').length; j++) {
+            if (characteristic[i] === me.parent.parent.model.get('filter')[j].characteristic_id) {
+              characteristicValue.push(me.parent.parent.model.get('filter')[j].id);
+            }
+          }
+          if (characteristicValue.length > 0) {
+            chFilter = {
+              columns: [],
+              operator: OB.Dal.FILTER,
+              value: 'BFilterByCH_Filter',
+              filter: characteristic[i],
+              params: [characteristicValue]
+            };
+            remoteCriteria.push(chFilter);
+            characteristicValue = [];
+          }
         }
       }
-
       criteria.hqlCriteria = [];
       productCharacteristic.customFilters.forEach(function (hqlFilter) {
         if (!_.isUndefined(hqlFilter.hqlCriteriaBrand)) {

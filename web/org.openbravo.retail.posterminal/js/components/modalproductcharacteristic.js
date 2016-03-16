@@ -175,10 +175,13 @@ enyo.kind({
       productCharacteristic = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.searchProductCharacteristicHeader.parent;
 
       var remoteCriteria = [],
-          brandparams = [];
+          brandparams = [],
+          characteristic = [],
+          characteristicValue= [];
       var productFilter = {},
           criteria = {},
-          brandfilter = {}, chFilter ={},
+          brandfilter = {},
+          chFilter = {},
           characteristicValuefilter = {},
           productText, characteristicfilter = {
           columns: ['characteristic_id'],
@@ -190,15 +193,16 @@ enyo.kind({
       if (products.collection.length > 0) {
         if (productCharacteristicModel.get('brandFilter').length > 0) {
           for (i = 0; i < productCharacteristicModel.get('brandFilter').length; i++) {
-            if (productCharacteristicModel.get('brandFilter')[i]) {
-              brandfilter = {
-                columns: [],
-                operator: OB.Dal.FILTER,
-                value: 'BChV_Filter',
-                params: [productCharacteristicModel.get('brandFilter')[i].id]
-              };
-              remoteCriteria.push(brandfilter);
-            }
+            brandparams.push(productCharacteristicModel.get('brandFilter')[i].id);
+          }
+          if (brandparams.length > 0) {
+            brandfilter = {
+              columns: [],
+              operator: OB.Dal.FILTER,
+              value: 'BChV_Filter',
+              params: [brandparams]
+            };
+            remoteCriteria.push(brandfilter);
           }
         }
 
@@ -210,18 +214,29 @@ enyo.kind({
           productFilter.params = [productText, productcategory];
           remoteCriteria.push(productFilter);
         }
-
-        var characteristicparams = [];
         if (me.parent.parent.model.get('filter').length > 0) {
           for (i = 0; i < me.parent.parent.model.get('filter').length; i++) {
-            chFilter = {
-              columns: [],
-              operator: OB.Dal.FILTER,
-              value: 'Chv_Filter',
-              filter: me.parent.parent.model.get('filter')[i].characteristic_id,
-              params: [me.parent.parent.model.get('filter')[i].id]
-            };
-            remoteCriteria.push(chFilter);
+            if (!characteristic.includes(me.parent.parent.model.get('filter')[i].characteristic_id)) {
+              characteristic.push(me.parent.parent.model.get('filter')[i].characteristic_id);
+            }
+          }
+          for (i = 0; i < characteristic.length; i++) {
+            for (j = 0; j < me.parent.parent.model.get('filter').length; j++) {
+              if (characteristic[i] === me.parent.parent.model.get('filter')[j].characteristic_id) {
+                characteristicValue.push(me.parent.parent.model.get('filter')[j].id);
+              }
+            }
+            if (characteristicValue.length > 0) {
+              chFilter = {
+                columns: [],
+                operator: OB.Dal.FILTER,
+                value: 'Chv_Filter',
+                filter: characteristic[i],
+                params: [characteristicValue]
+              };
+              remoteCriteria.push(chFilter);
+              characteristicValue = [];
+            }
           }
         }
         criteria.hqlCriteria = [];
