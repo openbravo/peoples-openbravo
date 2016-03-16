@@ -1138,6 +1138,9 @@
           this.deleteLine(line, false, callback);
         }
       } else {
+        // If there is a line and other related service line selected to delete, the service is deleted when the product is deleted
+        // This causes that when this recursive line tries to delete the service line, the service line is not in the array which stores the lines to delete
+        // The 'else' clause catches this situation and continues with the next line
         if (idx === length) {
           if (callback) {
             callback();
