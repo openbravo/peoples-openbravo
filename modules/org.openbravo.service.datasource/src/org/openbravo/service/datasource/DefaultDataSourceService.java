@@ -107,14 +107,12 @@ public class DefaultDataSourceService extends BaseDataSourceService {
     if (getEntity() != null) {
       parameters.put(JsonConstants.ENTITYNAME, getEntity().getName());
     }
-
     if (!"true".equals(parameters.get(JsonConstants.WHERE_CLAUSE_HAS_BEEN_CHECKED))) {
-      if (parameters.containsKey(JsonConstants.WHERE_PARAMETER)) {
-        if ("Y".equals(cachedPreference.getPreferenceValue(CachedPreference.ALLOW_WHERE_PARAMETER))) {
+      if (whereParameterIsNotBlank(parameters)) {
+        if (manualWhereClausePreferenceIsEnabled()) {
           parameters.put(JsonConstants.WHERE_AND_FILTER_CLAUSE,
               parameters.get(JsonConstants.WHERE_PARAMETER));
           log4j.warn(WARN_MESSAGE);
-          return;
         } else {
           throw new OBSecurityException(PREFERENCE_EXCEPTION_MESSAGE);
         }
@@ -163,6 +161,15 @@ public class DefaultDataSourceService extends BaseDataSourceService {
           + "." + parentProperty + ".id='" + parentId + "')");
     }
     parameters.put(JsonConstants.USE_ALIAS, "true");
+  }
+
+  private boolean manualWhereClausePreferenceIsEnabled() {
+    return "Y".equals(cachedPreference.getPreferenceValue(CachedPreference.ALLOW_WHERE_PARAMETER));
+  }
+
+  private boolean whereParameterIsNotBlank(Map<String, String> parameters) {
+    return parameters.containsKey(JsonConstants.WHERE_PARAMETER)
+        && StringUtils.isNotBlank(parameters.get(JsonConstants.WHERE_PARAMETER));
   }
 
   /*

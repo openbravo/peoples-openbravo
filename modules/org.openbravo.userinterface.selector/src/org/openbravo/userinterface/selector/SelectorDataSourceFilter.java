@@ -120,8 +120,8 @@ public class SelectorDataSourceFilter implements DataSourceFilter {
         }
       }
 
-      if (parameters.containsKey(JsonConstants.WHERE_PARAMETER)) {
-        if ("Y".equals(cachedPreference.getPreferenceValue(CachedPreference.ALLOW_WHERE_PARAMETER))) {
+      if (whereParameterIsNotBlank(parameters)) {
+        if (manualWhereClausePreferenceIsEnabled()) {
           parameters.put(JsonConstants.WHERE_AND_FILTER_CLAUSE,
               parameters.get(JsonConstants.WHERE_PARAMETER));
           log.warn(DefaultDataSourceService.WARN_MESSAGE);
@@ -411,8 +411,8 @@ public class SelectorDataSourceFilter implements DataSourceFilter {
 
     log.debug("Adding to where clause (based on fields default expression): " + sb.toString());
 
-    if (parameters.containsKey(JsonConstants.WHERE_PARAMETER)) {
-      if ("Y".equals(cachedPreference.getPreferenceValue(CachedPreference.ALLOW_WHERE_PARAMETER))) {
+    if (whereParameterIsNotBlank(parameters)) {
+      if (manualWhereClausePreferenceIsEnabled()) {
         parameters.put(JsonConstants.WHERE_AND_FILTER_CLAUSE,
             parameters.get(JsonConstants.WHERE_PARAMETER));
       } else {
@@ -431,6 +431,14 @@ public class SelectorDataSourceFilter implements DataSourceFilter {
             currentWhere + " and " + sb.toString());
       }
     }
+  }
 
+  private boolean manualWhereClausePreferenceIsEnabled() {
+    return "Y".equals(cachedPreference.getPreferenceValue(CachedPreference.ALLOW_WHERE_PARAMETER));
+  }
+
+  private boolean whereParameterIsNotBlank(Map<String, String> parameters) {
+    return parameters.containsKey(JsonConstants.WHERE_PARAMETER)
+        && StringUtils.isNotBlank(parameters.get(JsonConstants.WHERE_PARAMETER));
   }
 }
