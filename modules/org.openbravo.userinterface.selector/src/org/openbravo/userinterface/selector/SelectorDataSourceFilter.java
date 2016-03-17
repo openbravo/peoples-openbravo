@@ -47,9 +47,9 @@ import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.ad.domain.Validation;
 import org.openbravo.service.datasource.DataSourceFilter;
-import org.openbravo.service.datasource.DefaultDataSourceService;
 import org.openbravo.service.json.JsonConstants;
 import org.openbravo.service.json.JsonUtils;
 import org.openbravo.service.json.QueryBuilder.TextMatching;
@@ -66,6 +66,7 @@ public class SelectorDataSourceFilter implements DataSourceFilter {
   private String dateFormat = null;
   private DateFormat systemDateFormat = null;
   private TextMatching textMatching = TextMatching.exact;
+
   @Inject
   private CachedPreference cachedPreference;
 
@@ -121,12 +122,18 @@ public class SelectorDataSourceFilter implements DataSourceFilter {
       }
 
       if (whereParameterIsNotBlank(parameters)) {
+        String dataSourceName = parameters.get(JsonConstants.DATASOURCE_NAME);
         if (manualWhereClausePreferenceIsEnabled()) {
           parameters.put(JsonConstants.WHERE_AND_FILTER_CLAUSE,
               parameters.get(JsonConstants.WHERE_PARAMETER));
-          log.warn(DefaultDataSourceService.WARN_MESSAGE);
+          String warnMsg = OBMessageUtils.getI18NMessage(
+              "WhereParameterAppliedWarningForSelectors",
+              new String[] { dataSourceName, selectorId });
+          log.warn(warnMsg);
         } else {
-          throw new OBSecurityException(DefaultDataSourceService.PREFERENCE_EXCEPTION_MESSAGE);
+          String errorMsg = OBMessageUtils.getI18NMessage("WhereParameterExceptionForSelectors",
+              new String[] { dataSourceName, selectorId });
+          throw new OBSecurityException(errorMsg);
         }
       } else {
         String currentWhere = "";
@@ -412,11 +419,15 @@ public class SelectorDataSourceFilter implements DataSourceFilter {
     log.debug("Adding to where clause (based on fields default expression): " + sb.toString());
 
     if (whereParameterIsNotBlank(parameters)) {
+      String selectorId = parameters.get(SelectorConstants.DS_REQUEST_SELECTOR_ID_PARAMETER);
+      String dataSourceName = parameters.get(JsonConstants.DATASOURCE_NAME);
       if (manualWhereClausePreferenceIsEnabled()) {
         parameters.put(JsonConstants.WHERE_AND_FILTER_CLAUSE,
             parameters.get(JsonConstants.WHERE_PARAMETER));
       } else {
-        throw new OBSecurityException(DefaultDataSourceService.PREFERENCE_EXCEPTION_MESSAGE);
+        String errorMsg = OBMessageUtils.getI18NMessage("WhereParameterExceptionForSelectors",
+            new String[] { dataSourceName, selectorId });
+        throw new OBSecurityException(errorMsg);
       }
     } else {
       if (StringUtils.isNotBlank(hqlFilterClause)) {

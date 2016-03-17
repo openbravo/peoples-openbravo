@@ -44,6 +44,7 @@ import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.service.json.DataResolvingMode;
@@ -63,9 +64,6 @@ import org.openbravo.service.json.JsonConstants;
  */
 public class DefaultDataSourceService extends BaseDataSourceService {
   private static final Logger log4j = Logger.getLogger(DefaultDataSourceService.class);
-
-  public static final String WARN_MESSAGE = "The '_where' parameter has been included in the request. The provided value will be used by the datasource because the OBSERDS_AllowWhereParameter preference is set to true.";
-  public static final String PREFERENCE_EXCEPTION_MESSAGE = "The '_where' parameter has been included in the request. This value will not be taken into account. To be able to use this value, set the OBSERDS_AllowWhereParameter preference to true.";
 
   @Inject
   private CachedPreference cachedPreference;
@@ -109,12 +107,19 @@ public class DefaultDataSourceService extends BaseDataSourceService {
     }
     if (!"true".equals(parameters.get(JsonConstants.WHERE_CLAUSE_HAS_BEEN_CHECKED))) {
       if (whereParameterIsNotBlank(parameters)) {
+        String tabId = parameters.get(JsonConstants.TAB_PARAMETER);
+        String windowId = parameters.get(JsonConstants.WINDOW_ID);
+        String dataSourceName = parameters.get(JsonConstants.DATASOURCE_NAME);
         if (manualWhereClausePreferenceIsEnabled()) {
           parameters.put(JsonConstants.WHERE_AND_FILTER_CLAUSE,
               parameters.get(JsonConstants.WHERE_PARAMETER));
-          log4j.warn(WARN_MESSAGE);
+          String warnMsg = OBMessageUtils.getI18NMessage("WhereParameterAppliedWarningForTabs",
+              new String[] { dataSourceName, tabId, windowId });
+          log4j.warn(warnMsg);
         } else {
-          throw new OBSecurityException(PREFERENCE_EXCEPTION_MESSAGE);
+          String errorMsg = OBMessageUtils.getI18NMessage("WhereParameterExceptionForTabs",
+              new String[] { dataSourceName, tabId, windowId });
+          throw new OBSecurityException(errorMsg);
         }
       } else {
         String whereAndFilterClause = getWhereAndFilterClause(parameters);
