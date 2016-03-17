@@ -2037,7 +2037,7 @@ isc.OBViewGrid.addProperties({
     callback = function () {
       delete me.isFilteringExternally;
     };
-    if (isc.isAn.Array(this.data) || this.data.willFetchData(this.convertCriteria(criteria))) {
+    if (isc.isAn.Array(this.data) || (this.data.willFetchData && this.data.willFetchData(this.convertCriteria(criteria)))) {
       // Use this flag when a filter editor submit results a datasource request
       // This flag will be used to prevent unneeded datasource requests, see https://issues.openbravo.com/view.php?id=29896
       // this.data is an empty array in case of lazy filtering is set and no data
