@@ -213,6 +213,10 @@
     name: 'isSerialNo',
     column: 'isSerialNo',
     type: 'BOOL'
+  }, {
+    name: 'islocked',
+    column: 'islocked',
+    type: 'BOOL'
   }]);
 
   Product.addIndex([{

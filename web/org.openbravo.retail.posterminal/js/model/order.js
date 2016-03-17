@@ -2116,7 +2116,13 @@
             }
           });
         }
-
+        if (p.get('islocked')) {
+          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_Error'), OB.I18N.getLabel('OBPOS_ErrorProductBlocked'));
+          if (callback) {
+            callback(false, null);
+          }
+          return false;
+        }
         if (p.get('obposScale') && !options.isVerifiedReturn) {
           OB.POS.hwserver.getWeight(function (data) {
             if (data.exception) {
