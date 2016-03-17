@@ -27,7 +27,7 @@ isc.OBViewGrid.addClassProperties({
   ARROW_DOWN_KEY_NAME: 'Arrow_Down',
   ERROR_MESSAGE_PROP: '_hasErrors',
   EXISTS_FILTER_CLAUSE: 'hasFilterClause',
-  IS_FILTER_CLAUSE_APPLIED: 'isFilterApplied',
+  IS_FILTER_CLAUSE_APPLIED: 'isImplicitFilterApplied',
   ICONS: {
     PROGRESS: 0,
     OPEN_IN_FORM: 1,
