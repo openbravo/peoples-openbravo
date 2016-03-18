@@ -1997,6 +1997,23 @@
       // remove the line
       finishDelete();
     },
+    getStoreStock: function (p, callback) {
+      var serverCallStoreDetailedStock = new OB.DS.Process('org.openbravo.retail.posterminal.stock.StoreDetailedStock'),
+          me = this;
+      serverCallStoreDetailedStock.exec({
+        organization: OB.MobileApp.model.get('terminal').organization,
+        product: p.get('id')
+      }, function (data) {
+        if (data && data.exception) {
+          OB.UTIL.showConfirmation.display('', data.exception.message);
+        } else if (data && data.qty <= 0) {
+          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_Error'), OB.I18N.getLabel('OBPOS_ErrorProductDiscontinued'));
+          callback(false);
+        } else {
+          callback(true);
+        }
+      });
+    },
 
     //Attrs is an object of attributes that will be set in order
     _addProduct: function (p, qty, options, attrs, callback) {
@@ -2123,143 +2140,155 @@
           }
           return false;
         }
-        if (p.get('obposScale') && !options.isVerifiedReturn) {
-          OB.POS.hwserver.getWeight(function (data) {
-            if (data.exception) {
-              OB.UTIL.showConfirmation.display('', data.exception.message);
-            } else if (data.result === 0) {
-              OB.UTIL.showConfirmation.display('', OB.I18N.getLabel('OBPOS_WeightZero'));
-            } else {
-              line = me.createLine(p, options.isVerifiedReturn ? -data.result : data.result, options, attrs);
-              execPostAddProductToOrderHook();
-            }
-          });
-        } else {
-          if (p.get('groupProduct')) {
-            if (options && options.line) {
-              line = options.line;
-            } else {
-              line = me.get('lines').find(function (l) {
-                if (l.get('product').id === p.id && l.get('isEditable') && ((l.get('qty') > 0 && qty > 0) || (l.get('qty') < 0 && qty < 0))) {
-                  if (attributeSearchAllowed && attrs) {
-                    if (attrs.attributeValue && (l.get('attributeValue') === attrs.attributeValue)) {
+
+        function continueSaving(p) {
+          if (p.get('obposScale') && !options.isVerifiedReturn) {
+            OB.POS.hwserver.getWeight(function (data) {
+              if (data.exception) {
+                OB.UTIL.showConfirmation.display('', data.exception.message);
+              } else if (data.result === 0) {
+                OB.UTIL.showConfirmation.display('', OB.I18N.getLabel('OBPOS_WeightZero'));
+              } else {
+                line = me.createLine(p, options.isVerifiedReturn ? -data.result : data.result, options, attrs);
+                execPostAddProductToOrderHook();
+              }
+            });
+          } else {
+            if (p.get('groupProduct')) {
+              if (options && options.line) {
+                line = options.line;
+              } else {
+                line = me.get('lines').find(function (l) {
+                  if (l.get('product').id === p.id && l.get('isEditable') && ((l.get('qty') > 0 && qty > 0) || (l.get('qty') < 0 && qty < 0))) {
+                    if (attributeSearchAllowed && attrs) {
+                      if (attrs.attributeValue && (l.get('attributeValue') === attrs.attributeValue)) {
+                        return true;
+                      }
+                    } else {
                       return true;
                     }
-                  } else {
-                    return true;
                   }
-                }
-              });
-            }
-            if (me.isCalculateReceiptLocked === true) {
-              OB.error('Before execute OBPOS_GroupedProductPreCreateLine hook, system has detected that line is being added when calculate receipt is closed. Ignore line creation');
-              if (attrs && attrs.obposEpccode) {
-                OB.UTIL.RfidController.removeEpc(attrs.obposEpccode);
+                });
               }
-              return null;
-            }
-            OB.UTIL.HookManager.executeHooks('OBPOS_GroupedProductPreCreateLine', {
-              receipt: me,
-              line: line,
-              allLines: me.get('lines'),
-              p: p,
-              qty: qty,
-              options: options,
-              attrs: attrs
-            }, function (args) {
-              if (args && args.cancelOperation) {
-                return;
-              }
-              if (args.receipt.isCalculateReceiptLocked === true) {
-                OB.error('After execute OBPOS_GroupedProductPreCreateLine hook, system has detected that line is being added when calculate receipt is closed. Ignore line creation');
-                if (args && args.attrs && args.attrs.obposEpccode) {
-                  OB.UTIL.RfidController.removeEpc(args.attrs.obposEpccode);
+              if (me.isCalculateReceiptLocked === true) {
+                OB.error('Before execute OBPOS_GroupedProductPreCreateLine hook, system has detected that line is being added when calculate receipt is closed. Ignore line creation');
+                if (attrs && attrs.obposEpccode) {
+                  OB.UTIL.RfidController.removeEpc(attrs.obposEpccode);
                 }
                 return null;
               }
-              if (OB.MobileApp.model.get('inPaymentTab')) {
-                if (args.options && args.options.blockAddProduct) {
-                  OB.error('An add product is executed. At this point, this action is not allowed. Skipping product ' + p.get('_identifier'));
+              OB.UTIL.HookManager.executeHooks('OBPOS_GroupedProductPreCreateLine', {
+                receipt: me,
+                line: line,
+                allLines: me.get('lines'),
+                p: p,
+                qty: qty,
+                options: options,
+                attrs: attrs
+              }, function (args) {
+                if (args && args.cancelOperation) {
+                  return;
+                }
+                if (args.receipt.isCalculateReceiptLocked === true) {
+                  OB.error('After execute OBPOS_GroupedProductPreCreateLine hook, system has detected that line is being added when calculate receipt is closed. Ignore line creation');
                   if (args && args.attrs && args.attrs.obposEpccode) {
                     OB.UTIL.RfidController.removeEpc(args.attrs.obposEpccode);
+                  }
+                  return null;
+                }
+                if (OB.MobileApp.model.get('inPaymentTab')) {
+                  if (args.options && args.options.blockAddProduct) {
+                    OB.error('An add product is executed. At this point, this action is not allowed. Skipping product ' + p.get('_identifier'));
+                    if (args && args.attrs && args.attrs.obposEpccode) {
+                      OB.UTIL.RfidController.removeEpc(args.attrs.obposEpccode);
+                    }
+                    return;
+                  }
+                }
+                var splitline = !(options && options.line) && !OB.UTIL.isNullOrUndefined(args.line) && !OB.UTIL.isNullOrUndefined(args.line.get('splitline')) && args.line.get('splitline');
+                var serviceProduct = args.line && (qty !== 1 || args.line.get('qty') !== -1 || args.p.get('productType') !== 'S' || (args.p.get('productType') === 'S' && !args.p.get('isLinkedToProduct')));
+                var groupedByAttributeValues = ((productHasAttribute && productHavingSameAttribute) || (!productHasAttribute && !productHavingSameAttribute)) && attributeSearchAllowed;
+                if (args.line && !splitline && (args.line.get('qty') > 0 || !args.line.get('replacedorderline')) && (serviceProduct) && (groupedByAttributeValues || !groupedByAttributeValues)) {
+                  args.receipt.addUnit(args.line, args.qty);
+                  if (!_.isUndefined(args.attrs)) {
+                    _.each(_.keys(args.attrs), function (key) {
+                      if (args.p.get('productType') === 'S' && key === 'relatedLines' && args.line.get('relatedLines')) {
+                        args.line.set('relatedLines', OB.UTIL.mergeArrays(args.line.get('relatedLines'), attrs[key]));
+                      } else {
+                        args.line.set(key, attrs[key]);
+                      }
+                    });
+                  }
+                  args.line.trigger('selected', args.line);
+                  line = args.line;
+                  newLine = false;
+                } else {
+                  if (args.attrs && args.attrs.relatedLines && args.attrs.relatedLines[0].deferred && args.p.get('quantityRule') === 'PP') {
+                    line = args.receipt.createLine(args.p, args.attrs.relatedLines[0].qty, args.options, args.attrs);
+                  } else {
+                    line = args.receipt.createLine(args.p, args.qty, args.options, args.attrs);
+                  }
+                }
+              });
+
+            } else {
+              if (OB.MobileApp.model.get('inPaymentTab')) {
+                if (options && options.blockAddProduct) {
+                  OB.error('An add product is executed. At this point, this action is not allowed. Skipping product ' + p.get('_identifier'));
+                  if (attrs && attrs.obposEpccode) {
+                    OB.UTIL.RfidController.removeEpc(attrs.obposEpccode);
                   }
                   return;
                 }
               }
-              var splitline = !(options && options.line) && !OB.UTIL.isNullOrUndefined(args.line) && !OB.UTIL.isNullOrUndefined(args.line.get('splitline')) && args.line.get('splitline');
-              var serviceProduct = args.line && (qty !== 1 || args.line.get('qty') !== -1 || args.p.get('productType') !== 'S' || (args.p.get('productType') === 'S' && !args.p.get('isLinkedToProduct')));
-              var groupedByAttributeValues = ((productHasAttribute && productHavingSameAttribute) || (!productHasAttribute && !productHavingSameAttribute)) && attributeSearchAllowed;
-              if (args.line && !splitline && (args.line.get('qty') > 0 || !args.line.get('replacedorderline')) && (serviceProduct) && (groupedByAttributeValues || !groupedByAttributeValues)) {
-                args.receipt.addUnit(args.line, args.qty);
-                if (!_.isUndefined(args.attrs)) {
-                  _.each(_.keys(args.attrs), function (key) {
-                    if (args.p.get('productType') === 'S' && key === 'relatedLines' && args.line.get('relatedLines')) {
-                      args.line.set('relatedLines', OB.UTIL.mergeArrays(args.line.get('relatedLines'), attrs[key]));
-                    } else {
-                      args.line.set(key, attrs[key]);
-                    }
-                  });
-                }
-                args.line.trigger('selected', args.line);
-                line = args.line;
-                newLine = false;
-              } else {
-                if (args.attrs && args.attrs.relatedLines && args.attrs.relatedLines[0].deferred && args.p.get('quantityRule') === 'PP') {
-                  line = args.receipt.createLine(args.p, args.attrs.relatedLines[0].qty, args.options, args.attrs);
-                } else {
-                  line = args.receipt.createLine(args.p, args.qty, args.options, args.attrs);
-                }
-              }
-            });
-
-          } else {
-            if (OB.MobileApp.model.get('inPaymentTab')) {
-              if (options && options.blockAddProduct) {
-                OB.error('An add product is executed. At this point, this action is not allowed. Skipping product ' + p.get('_identifier'));
+              if (me.isCalculateReceiptLocked === true) {
+                OB.error('An add product is executed. At this point, this action is not allowed because calculate Receipt is blocked. Skipping product ' + p.get('_identifier'));
                 if (attrs && attrs.obposEpccode) {
                   OB.UTIL.RfidController.removeEpc(attrs.obposEpccode);
                 }
-                return;
+                return null;
               }
-            }
-            if (me.isCalculateReceiptLocked === true) {
-              OB.error('An add product is executed. At this point, this action is not allowed because calculate Receipt is blocked. Skipping product ' + p.get('_identifier'));
-              if (attrs && attrs.obposEpccode) {
-                OB.UTIL.RfidController.removeEpc(attrs.obposEpccode);
-              }
-              return null;
-            }
-            var count;
-            //remove line even it is a grouped line
-            if (options && options.line && qty === -1) {
-              me.addUnit(options.line, qty);
-              line = options.line;
-              newLine = false;
-            } else {
-              if (p.get('avoidSplitProduct')) {
-                line = me.createLine(p, qty, options, attrs);
+              var count;
+              //remove line even it is a grouped line
+              if (options && options.line && qty === -1) {
+                me.addUnit(options.line, qty);
+                line = options.line;
+                newLine = false;
               } else {
-                if (qty >= 0) {
-                  for (count = 0; count < qty; count++) {
-                    line = me.createLine(p, 1, options, attrs);
-                  }
+                if (p.get('avoidSplitProduct')) {
+                  line = me.createLine(p, qty, options, attrs);
                 } else {
-                  for (count = 0; count > qty; count--) {
-                    line = me.createLine(p, -1, options, attrs);
+                  if (qty >= 0) {
+                    for (count = 0; count < qty; count++) {
+                      line = me.createLine(p, 1, options, attrs);
+                    }
+                  } else {
+                    for (count = 0; count > qty; count--) {
+                      line = me.createLine(p, -1, options, attrs);
+                    }
                   }
                 }
               }
             }
           }
-        }
-        if (me.isCalculateReceiptLocked === true || !line) {
-          OB.error('Save ignored before execute OBPOS_PostAddProductToOrder hook, system has detected that a line is being added when calculate receipt is closed. Ignore line creation');
-          if (attrs && attrs.obposEpccode) {
-            OB.UTIL.RfidController.removeEpc(attrs.obposEpccode);
+          if (me.isCalculateReceiptLocked === true || !line) {
+            OB.error('Save ignored before execute OBPOS_PostAddProductToOrder hook, system has detected that a line is being added when calculate receipt is closed. Ignore line creation');
+            if (attrs && attrs.obposEpccode) {
+              OB.UTIL.RfidController.removeEpc(attrs.obposEpccode);
+            }
+            return null;
           }
-          return null;
+          execPostAddProductToOrderHook();
         }
-        execPostAddProductToOrderHook();
+        if (p.get('isdiscontinued') || p.get('issalediscontinued')) {
+          me.getStoreStock(p, function (hasStock) {
+            if (hasStock) {
+              continueSaving(p);
+            }
+          });
+        } else {
+          continueSaving(p);
+        }
       } // End addProductToOrder
       if (((options && options.line) ? options.line.get('qty') + qty : qty) < 0 && p.get('productType') === 'S' && !p.get('ignoreReturnApproval')) {
         if (options && options.isVerifiedReturn) {

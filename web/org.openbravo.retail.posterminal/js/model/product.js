@@ -217,6 +217,14 @@
     name: 'islocked',
     column: 'islocked',
     type: 'BOOL'
+  }, {
+    name: 'isdiscontinued',
+    column: 'isdiscontinued',
+    type: 'BOOL'
+  }, {
+    name: 'issalediscontinued',
+    column: 'issalediscontinued',
+    type: 'BOOL'
   }]);
 
   Product.addIndex([{

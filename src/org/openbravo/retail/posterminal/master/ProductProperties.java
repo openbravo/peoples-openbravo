@@ -64,6 +64,7 @@ public class ProductProperties extends ModelExtension {
           add(new HQLProperty("img.id", "imgId"));
         }
         add(new HQLProperty("pli.bestseller", "bestseller"));
+        add(new HQLProperty("pli.issalediscontinued", "issalediscontinued"));
         add(new HQLProperty("'false'", "ispack"));
         add(new HQLProperty("ppp.listPrice", "listPrice"));
         add(new HQLProperty("ppp.standardPrice", "standardPrice"));
@@ -147,6 +148,7 @@ public class ProductProperties extends ModelExtension {
             add(new HQLProperty("product.obposShowstock", "showstock"));
             add(new HQLProperty("product.isGeneric", "isGeneric"));
             add(new HQLProperty("product.islocked", "islocked"));
+            add(new HQLProperty("product.issalediscontinued", "isdiscontinued"));
             add(new HQLProperty("product.genericProduct.id", "generic_product_id"));
             add(new HQLProperty("product.brand.id", "brand"));
             add(new HQLProperty("product.characteristicDescription", "characteristicDescription"));
