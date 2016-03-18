@@ -1766,10 +1766,6 @@ public class ActivationKey {
       return WSRestriction.EXPIRED_MODULES;
     }
 
-    if (!limitedWsAccess) {
-      return WSRestriction.NO_RESTRICTION;
-    }
-
     Date today = getDayAt0(new Date());
 
     if (initWsCountTime == null || today.getTime() != initWsCountTime.getTime()) {
@@ -1781,6 +1777,10 @@ public class ActivationKey {
       wsDayCounter += 1;
       // Adding 1 to maxWsCalls because session is already saved in DB
       checkCalls += 1;
+    }
+
+    if (!limitedWsAccess) {
+      return WSRestriction.NO_RESTRICTION;
     }
 
     if (wsDayCounter > checkCalls) {
