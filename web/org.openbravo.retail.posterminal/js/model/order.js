@@ -2160,7 +2160,7 @@
     },
 
     validateAllowSalesWithReturn: function (qty, skipValidaton) {
-      if (OB.MobileApp.model.get('permissions').OBPOS_NotAllowSalesWithReturn && !skipValidaton) {
+      if (OB.MobileApp.model.hasPermission('OBPOS_NotAllowSalesWithReturn', true) && !skipValidaton) {
         var negativeLines = _.filter(this.get('lines').models, function (line) {
           return line.get('qty') < 0;
         }).length;
