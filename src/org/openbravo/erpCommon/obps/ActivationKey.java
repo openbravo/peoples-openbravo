@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -124,6 +124,7 @@ public class ActivationKey {
   private boolean limitNamedUsers = false;
   private boolean outOfPlatform = false;
   private Long maxUsers;
+  private long concurrentUsers;
   private Long posTerminals;
   private Long posTerminalsWarn;
 
@@ -923,16 +924,16 @@ public class ActivationKey {
     // maxUsers==0 is unlimited concurrent users
     if (maxUsers != 0) {
       OBContext.setAdminMode();
-      int activeSessions = 0;
+      concurrentUsers = 0;
       try {
-        activeSessions = getActiveSessions(currentSession);
-        log4j.debug("Active sessions: " + activeSessions);
-        if (activeSessions >= maxUsers || (softUsers != null && activeSessions >= softUsers)) {
+        concurrentUsers = getActiveSessions(currentSession);
+        log4j.debug("Active sessions: " + concurrentUsers);
+        if (concurrentUsers >= maxUsers || (softUsers != null && concurrentUsers >= softUsers)) {
           // Before raising concurrent users error, clean the session with ping timeout and try it
           // again
           if (deactivateTimeOutSessions(currentSession)) {
-            activeSessions = getActiveSessions(currentSession);
-            log4j.debug("Active sessions after timeout cleanup: " + activeSessions);
+            concurrentUsers = getActiveSessions(currentSession);
+            log4j.debug("Active sessions after timeout cleanup: " + concurrentUsers);
           }
         }
       } catch (Exception e) {
@@ -940,11 +941,11 @@ public class ActivationKey {
       } finally {
         OBContext.restorePreviousMode();
       }
-      if (activeSessions >= maxUsers) {
+      if (concurrentUsers >= maxUsers) {
         return LicenseRestriction.NUMBER_OF_CONCURRENT_USERS_REACHED;
       }
 
-      if (softUsers != null && activeSessions >= softUsers) {
+      if (softUsers != null && concurrentUsers >= softUsers) {
         result = LicenseRestriction.NUMBER_OF_SOFT_USERS_REACHED;
       }
     }
@@ -1174,6 +1175,11 @@ public class ActivationKey {
           sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSConcurrentUsersWarn", lang))
               .append("</td><td>").append(getProperty("limituserswarn")).append("</td></tr>");
         }
+
+        sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSCurrentConcurrentUsers", lang))
+            .append("</td><td>");
+        sb.append(concurrentUsers);
+        sb.append("</td></tr>");
       }
 
       sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSInstanceNo", lang))
@@ -1187,6 +1193,11 @@ public class ActivationKey {
       sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSWSLimitation", lang))
           .append("</td><td>");
       sb.append(getWSExplanation(conn, lang));
+      sb.append("</td></tr>");
+
+      sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSWSCounterDay", lang))
+          .append("</td><td>");
+      sb.append(wsDayCounter);
       sb.append("</td></tr>");
 
       sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSPOSLimitation", lang))
