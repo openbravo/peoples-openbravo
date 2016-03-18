@@ -25,7 +25,6 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.jboss.arquillian.container.weld.ee.embedded_1_1.mock.MockServletContext;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.weld.test.WeldBaseTest;
@@ -50,8 +49,6 @@ public class GenerateComponentTest extends WeldBaseTest {
   private ComponentProvider kernelComponentProvider;
 
   @Test
-  @Ignore
-  // TODO: failing, check why
   public void testApplication() throws Exception {
     generateComponent(KernelConstants.APPLICATION_COMPONENT_ID, null);
   }
