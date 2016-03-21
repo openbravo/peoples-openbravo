@@ -10,6 +10,9 @@
       <parameter name="p_reservedqty" type="NUMERIC" mode="out">
         <default/>
       </parameter>
+      <parameter name="p_qty" type="NUMERIC" mode="in">
+        <default><![CDATA[NULL]]></default>
+      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
@@ -86,6 +89,11 @@ BEGIN
   END; -- End Call M_GET_STOCK
   
   v_pendingqty := v_pendingtoreserveqty;
+  
+  IF (p_qty IS NOT NULL) THEN
+    v_pendingqty := p_qty;
+  END IF;
+  
   FOR cur_stock IN (
     SELECT sp.quantity, sp.m_storage_detail_id, w.isallocated
     FROM m_stock_proposed sp
