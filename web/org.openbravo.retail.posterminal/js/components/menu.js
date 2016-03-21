@@ -887,23 +887,23 @@ enyo.kind({
     if (OB.MobileApp.model.hasPermission(this.permission)) {
       if (OB.UTIL.isRFIDEnabled) {
         OB.UTIL.reconnectOnScanningFocus = false;
-        this.setLabel(OB.I18N.getLabel('OBPOS_RFID'));
         OB.UTIL.disconnectRFIDDevice();
         if (OB.UTIL.rfidTimeout) {
           clearTimeout(OB.UTIL.rfidTimeout);
         }
       } else {
         OB.UTIL.reconnectOnScanningFocus = true;
-        this.setLabel(OB.I18N.getLabel('OBPOS_RFID'));
         OB.UTIL.connectRFIDDevice();
-        if (OB.UTIL.rfidTimeout) {
-          clearTimeout(OB.UTIL.rfidTimeout);
+        if (OB.POS.modelterminal.get('terminal').terminalType.rfidtimeout) {
+          if (OB.UTIL.rfidTimeout) {
+            clearTimeout(OB.UTIL.rfidTimeout);
+          }
+          OB.UTIL.rfidTimeout = setTimeout(function () {
+            OB.UTIL.rfidTimeout = undefined;
+            OB.UTIL.reconnectOnScanningFocus = false;
+            OB.UTIL.disconnectRFIDDevice();
+          }, OB.POS.modelterminal.get('terminal').terminalType.rfidtimeout * 1000 * 60);
         }
-        OB.UTIL.rfidTimeout = setTimeout(function () {
-          OB.UTIL.rfidTimeout = undefined;
-          OB.UTIL.reconnectOnScanningFocus = false;
-          OB.UTIL.disconnectRFIDDevice();
-        }, OB.POS.modelterminal.get('terminal').terminalType.rfidtimeout * 1000 * 60);
       }
     }
   },

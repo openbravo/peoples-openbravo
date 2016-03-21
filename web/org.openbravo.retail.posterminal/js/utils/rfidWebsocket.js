@@ -10,7 +10,11 @@
 /*global, WebSocket _ */
 
 OB.UTIL.isRfidConfigured = function () {
-  return OB.POS.hwserver.url && OB.POS.modelterminal.get('terminal').terminalType.userfid;
+  if (OB.POS.hwserver) {
+    return OB.POS.hwserver.url && OB.POS.modelterminal.get('terminal').terminalType.userfid;
+  } else {
+    return false;
+  }
 };
 
 OB.UTIL.startRfidWebsocket = function startRfidWebsocket(websocketServerLocation, reconnectTimeout, currentRetrials, retrialsBeforeWarning) {
