@@ -11,20 +11,19 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.client.kernel;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.net.URL;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.commons.io.IOUtils;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.service.json.JsonConstants;
 
@@ -159,20 +158,15 @@ public abstract class BaseTemplateProcessor<T extends Object> implements Templat
    * @return the read template
    */
   protected String readTemplateSourceFromClasspath(String path) {
+    InputStream input = null;
     try {
-      final URL url = this.getClass().getResource(path.trim().replace(" ", "+"));
-      final File file = new File(url.toURI());
-      return readFileAsString(file);
+      input = this.getClass().getResourceAsStream(path.trim().replace(" ", "+"));
+      return IOUtils.toString(input);
     } catch (Exception e) {
       throw new IllegalArgumentException("Exception for path " + path, e);
+    } finally {
+      IOUtils.closeQuietly(input);
     }
-  }
-
-  private String readFileAsString(File file) throws java.io.IOException {
-    byte[] buffer = new byte[(int) file.length()];
-    FileInputStream f = new FileInputStream(file);
-    f.read(buffer);
-    return new String(buffer);
   }
 
   /*
