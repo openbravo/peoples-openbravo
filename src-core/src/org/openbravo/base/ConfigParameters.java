@@ -337,24 +337,33 @@ public class ConfigParameters {
       return;
     }
 
-    String fileName = System.getProperty("machine.name");
-    if (fileName == null || fileName.isEmpty()) {
-      try {
-        fileName = InetAddress.getLocalHost().getHostName();
-        log4j.info("Checking override properties for " + fileName);
-      } catch (UnknownHostException e) {
-        log4j.error("Error when getting host name", e);
-      }
-    }
-
-    if (fileName == null || fileName.isEmpty()) {
-      log4j.debug("Override fileName env variable is not defined.");
-      return;
-    }
-
-    fileName += ".Openbravo.properties";
+    String absPath = System.getProperty("properties.path");
     File propertiesFile = null;
-    propertiesFile = new File(propFilePath, fileName);
+
+    if (absPath != null && !absPath.isEmpty()) {
+      propertiesFile = new File(absPath);
+      log4j.info("Looking for override properties file in " + absPath + ". Found: "
+          + propertiesFile.exists());
+    } else {
+      String fileName = System.getProperty("machine.name");
+      if (fileName == null || fileName.isEmpty()) {
+        try {
+          fileName = InetAddress.getLocalHost().getHostName();
+          log4j.info("Checking override properties for " + fileName);
+        } catch (UnknownHostException e) {
+          log4j.error("Error when getting host name", e);
+        }
+      }
+
+      if (fileName == null || fileName.isEmpty()) {
+        log4j.debug("Override fileName env variable is not defined.");
+        return;
+      }
+
+      fileName += ".Openbravo.properties";
+      propertiesFile = new File(propFilePath, fileName);
+    }
+
     if (!propertiesFile.exists()) {
       log4j.debug("No override file can be found at " + propertiesFile.getAbsolutePath());
       return;
