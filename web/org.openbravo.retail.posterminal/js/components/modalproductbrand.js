@@ -91,7 +91,20 @@ enyo.kind({
       }]
     };
     var products = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.products;
-    if (!OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
+    var forceRemote = false;
+    var productCharacteristic = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.searchProductCharacteristicHeader.parent;
+    productCharacteristic.customFilters.forEach(function (hqlFilter) {
+      if (!_.isUndefined(hqlFilter.hqlCriteriaBrand) && !_.isUndefined(hqlFilter.forceRemote)) {
+        var hqlCriteriaFilter = hqlFilter.hqlCriteriaBrand();
+        hqlCriteriaFilter.forEach(function (filter) {
+          if (filter !== "") {
+            forceRemote = hqlFilter.forceRemote;
+          }
+        });
+      }
+    });
+
+    if (!OB.MobileApp.model.hasPermission('OBPOS_remote.product', true) && !forceRemote) {
       if (products.collection.length > 0) {
         // There are products in search
         // Get all the products id
@@ -113,7 +126,6 @@ enyo.kind({
     } else {
       var productFilterText = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.searchProductCharacteristicHeader.$.productFilterText.getValue();
       var productcategory = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.searchProductCharacteristicHeader.$.productcategory.getValue();
-      var productCharacteristic = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.searchProductCharacteristicHeader.parent;
       var remoteCriteria = [],
           characteristicValue = [],
           characteristic = [],
@@ -170,6 +182,7 @@ enyo.kind({
         }
       });
       criteria.remoteFilters = remoteCriteria;
+      criteria.forceRemote = forceRemote;
       OB.Dal.find(OB.Model.Brand, criteria, successCallbackBrands, errorCallback);
     }
     return true;

@@ -116,9 +116,23 @@ enyo.kind({
     var me = this,
         i, j, whereClause = '',
         params = [],
-        products = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.products;
+        products = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.products,
+        productCharacteristic = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.searchProductCharacteristicHeader.parent,
+        forceRemote = false;
+    productCharacteristic.customFilters.forEach(function (hqlFilter) {
+      if (!_.isUndefined(hqlFilter.hqlCriteriaCharacteristicsValue) && !_.isUndefined(hqlFilter.forceRemote)) {
+        var hqlCriteriaFilter = hqlFilter.hqlCriteriaCharacteristicsValue();
+        if (!_.isUndefined(hqlCriteriaFilter)) {
+          hqlCriteriaFilter.forEach(function (filter) {
+            if (filter) {
+              forceRemote = hqlFilter.forceRemote;
+            }
+          });
+        }
+      }
+    });
 
-    if (!OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
+    if (!OB.MobileApp.model.hasPermission('OBPOS_remote.product', true) && !forceRemote) {
       var sql, productsIdsList;
 
       if (products.collection.length > 0) {
@@ -167,17 +181,16 @@ enyo.kind({
 
     } else {
 
-      var productFilterText, productcategory, productCharacteristicModel, productCharacteristic;
+      var productFilterText, productcategory, productCharacteristicModel;
 
       productFilterText = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.searchProductCharacteristicHeader.$.productFilterText.getValue();
       productcategory = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.searchProductCharacteristicHeader.$.productcategory.getValue();
       productCharacteristicModel = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.searchProductCharacteristicHeader.parent.model;
-      productCharacteristic = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.searchProductCharacteristicHeader.parent;
 
       var remoteCriteria = [],
           brandparams = [],
           characteristic = [],
-          characteristicValue= [];
+          characteristicValue = [];
       var productFilter = {},
           criteria = {},
           brandfilter = {},
@@ -255,7 +268,7 @@ enyo.kind({
       }
       remoteCriteria.push(characteristicfilter);
       criteria.remoteFilters = remoteCriteria;
-
+      criteria.forceRemote = forceRemote;
       OB.Dal.find(OB.Model.CharacteristicValue, criteria, function (dataValues) {
         if (dataValues && dataValues.length > 0) {
           for (i = 0; i < dataValues.length; i++) {
