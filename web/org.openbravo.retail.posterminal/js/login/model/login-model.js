@@ -368,7 +368,13 @@
         OB.DEC.setContext(OB.UTIL.getFirstValidValue([me.get('currency').obposPosprecision, me.get('currency').pricePrecision]), BigDecimal.prototype.ROUND_HALF_UP);
 
         OB.UTIL.HookManager.executeHooks('OBPOS_LoadPOSWindow', {}, function () {
-          OB.POS.navigate('retail.pointofsale');
+          var defaultWindow = OB.MobileApp.model.get('defaultWindow');
+          if (defaultWindow) {
+            OB.POS.navigate(defaultWindow);
+            OB.MobileApp.model.unset('defaultWindow');
+          } else {
+            OB.POS.navigate('retail.pointofsale');
+          }
         });
 
         if (me.get('loggedOffline') === true) {
