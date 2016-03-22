@@ -450,6 +450,7 @@ public class SelectorDataSourceFilter implements DataSourceFilter {
 
   private boolean whereParameterIsNotBlank(Map<String, String> parameters) {
     return parameters.containsKey(JsonConstants.WHERE_PARAMETER)
-        && StringUtils.isNotBlank(parameters.get(JsonConstants.WHERE_PARAMETER));
+        && StringUtils.isNotBlank(parameters.get(JsonConstants.WHERE_PARAMETER))
+        && !"null".equals(parameters.get(JsonConstants.WHERE_PARAMETER));
   }
 }
