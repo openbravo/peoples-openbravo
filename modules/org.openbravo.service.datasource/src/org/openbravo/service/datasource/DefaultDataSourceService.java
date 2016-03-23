@@ -104,7 +104,7 @@ public class DefaultDataSourceService extends BaseDataSourceService {
   protected void addFetchParameters(Map<String, String> parameters) {
     if (getEntity() != null) {
       parameters.put(JsonConstants.ENTITYNAME, getEntity().getName());
-
+    }
     if (!"true".equals(parameters.get(JsonConstants.WHERE_CLAUSE_HAS_BEEN_CHECKED))) {
       if (whereParameterIsNotBlank(parameters)) {
         if (manualWhereClausePreferenceIsEnabled()) {
