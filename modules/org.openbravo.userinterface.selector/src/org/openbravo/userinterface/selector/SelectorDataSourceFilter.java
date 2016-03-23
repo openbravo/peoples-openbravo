@@ -122,17 +122,14 @@ public class SelectorDataSourceFilter implements DataSourceFilter {
       }
 
       if (whereParameterIsNotBlank(parameters)) {
-        String dataSourceName = parameters.get(JsonConstants.DATASOURCE_NAME);
         if (manualWhereClausePreferenceIsEnabled()) {
           parameters.put(JsonConstants.WHERE_AND_FILTER_CLAUSE,
               parameters.get(JsonConstants.WHERE_PARAMETER));
-          String warnMsg = OBMessageUtils.getI18NMessage(
-              "WhereParameterAppliedWarningForSelectors",
-              new String[] { dataSourceName, selectorId });
-          log.warn(warnMsg);
+          String warnMsg = OBMessageUtils.getI18NMessage("WhereParameterAppliedWarning", null);
+          log.warn(warnMsg + " Parameters: " + convertParameterToString(parameters));
         } else {
-          String errorMsg = OBMessageUtils.getI18NMessage("WhereParameterExceptionForSelectors",
-              new String[] { dataSourceName, selectorId });
+          String errorMsg = OBMessageUtils.getI18NMessage("WhereParameterException", null);
+          log.error(errorMsg + " Parameters: " + convertParameterToString(parameters));
           throw new OBSecurityException(errorMsg);
         }
       } else {
@@ -419,14 +416,12 @@ public class SelectorDataSourceFilter implements DataSourceFilter {
     log.debug("Adding to where clause (based on fields default expression): " + sb.toString());
 
     if (whereParameterIsNotBlank(parameters)) {
-      String selectorId = parameters.get(SelectorConstants.DS_REQUEST_SELECTOR_ID_PARAMETER);
-      String dataSourceName = parameters.get(JsonConstants.DATASOURCE_NAME);
       if (manualWhereClausePreferenceIsEnabled()) {
         parameters.put(JsonConstants.WHERE_AND_FILTER_CLAUSE,
             parameters.get(JsonConstants.WHERE_PARAMETER));
       } else {
-        String errorMsg = OBMessageUtils.getI18NMessage("WhereParameterExceptionForSelectors",
-            new String[] { dataSourceName, selectorId });
+        String errorMsg = OBMessageUtils.getI18NMessage("WhereParameterException", null);
+        log.error(errorMsg + " Parameters: " + convertParameterToString(parameters));
         throw new OBSecurityException(errorMsg);
       }
     } else {
@@ -452,5 +447,14 @@ public class SelectorDataSourceFilter implements DataSourceFilter {
     return parameters.containsKey(JsonConstants.WHERE_PARAMETER)
         && StringUtils.isNotBlank(parameters.get(JsonConstants.WHERE_PARAMETER))
         && !"null".equals(parameters.get(JsonConstants.WHERE_PARAMETER));
+  }
+
+  // Given a map of parameters, returns a string with the pairs key:value
+  private String convertParameterToString(Map<String, String> parameters) {
+    String paramMsg = "";
+    for (String paramKey : parameters.keySet()) {
+      paramMsg += paramKey + ":" + parameters.get(paramKey) + "\n";
+    }
+    return paramMsg;
   }
 }

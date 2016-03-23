@@ -104,21 +104,17 @@ public class DefaultDataSourceService extends BaseDataSourceService {
   protected void addFetchParameters(Map<String, String> parameters) {
     if (getEntity() != null) {
       parameters.put(JsonConstants.ENTITYNAME, getEntity().getName());
-    }
+
     if (!"true".equals(parameters.get(JsonConstants.WHERE_CLAUSE_HAS_BEEN_CHECKED))) {
       if (whereParameterIsNotBlank(parameters)) {
-        String tabId = parameters.get(JsonConstants.TAB_PARAMETER);
-        String windowId = parameters.get(JsonConstants.WINDOW_ID);
-        String dataSourceName = parameters.get(JsonConstants.DATASOURCE_NAME);
         if (manualWhereClausePreferenceIsEnabled()) {
           parameters.put(JsonConstants.WHERE_AND_FILTER_CLAUSE,
               parameters.get(JsonConstants.WHERE_PARAMETER));
-          String warnMsg = OBMessageUtils.getI18NMessage("WhereParameterAppliedWarningForTabs",
-              new String[] { dataSourceName, tabId, windowId });
-          log4j.warn(warnMsg);
+          String warnMsg = OBMessageUtils.getI18NMessage("WhereParameterAppliedWarning", null);
+          log4j.warn(warnMsg + "Parameters: " + convertParameterToString(parameters));
         } else {
-          String errorMsg = OBMessageUtils.getI18NMessage("WhereParameterExceptionForTabs",
-              new String[] { dataSourceName, tabId, windowId });
+          String errorMsg = OBMessageUtils.getI18NMessage("WhereParameterException", null);
+          log4j.error(errorMsg + " Parameters: " + convertParameterToString(parameters));
           throw new OBSecurityException(errorMsg);
         }
       } else {
