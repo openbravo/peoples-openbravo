@@ -124,7 +124,7 @@ enyo.kind({
         var hqlCriteriaFilter = hqlFilter.hqlCriteriaCharacteristicsValue();
         if (!_.isUndefined(hqlCriteriaFilter)) {
           hqlCriteriaFilter.forEach(function (filter) {
-            if (filter) {
+            if (filter && forceRemote === false) {
               forceRemote = hqlFilter.forceRemote;
             }
           });

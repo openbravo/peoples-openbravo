@@ -97,7 +97,7 @@ enyo.kind({
       if (!_.isUndefined(hqlFilter.hqlCriteriaBrand) && !_.isUndefined(hqlFilter.forceRemote)) {
         var hqlCriteriaFilter = hqlFilter.hqlCriteriaBrand();
         hqlCriteriaFilter.forEach(function (filter) {
-          if (filter !== "") {
+          if (filter !== "" && forceRemote === false) {
             forceRemote = hqlFilter.forceRemote;
           }
         });
