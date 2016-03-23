@@ -130,7 +130,7 @@ public class SelectorDataSourceFilter implements DataSourceFilter {
         } else {
           String errorMsg = OBMessageUtils.getI18NMessage("WhereParameterException", null);
           log.error(errorMsg + " Parameters: " + convertParameterToString(parameters));
-          throw new OBSecurityException(errorMsg);
+          throw new OBSecurityException(errorMsg, false);
         }
       } else {
         String currentWhere = "";

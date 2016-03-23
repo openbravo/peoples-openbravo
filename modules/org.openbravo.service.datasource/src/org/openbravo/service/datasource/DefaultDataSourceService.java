@@ -105,6 +105,7 @@ public class DefaultDataSourceService extends BaseDataSourceService {
     if (getEntity() != null) {
       parameters.put(JsonConstants.ENTITYNAME, getEntity().getName());
     }
+
     if (!"true".equals(parameters.get(JsonConstants.WHERE_CLAUSE_HAS_BEEN_CHECKED))) {
       if (whereParameterIsNotBlank(parameters)) {
         if (manualWhereClausePreferenceIsEnabled()) {
@@ -115,7 +116,7 @@ public class DefaultDataSourceService extends BaseDataSourceService {
         } else {
           String errorMsg = OBMessageUtils.getI18NMessage("WhereParameterException", null);
           log4j.error(errorMsg + " Parameters: " + convertParameterToString(parameters));
-          throw new OBSecurityException(errorMsg);
+          throw new OBSecurityException(errorMsg, false);
         }
       } else {
         String whereAndFilterClause = getWhereAndFilterClause(parameters);

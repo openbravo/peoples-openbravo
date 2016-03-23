@@ -731,7 +731,9 @@ public class DataSourceServlet extends BaseKernelServlet {
   }
 
   private void handleException(Exception e, HttpServletResponse response) throws IOException {
-    log4j.error(e.getMessage(), e);
+    if (!(e instanceof OBException && ((OBException) e).isLogExceptionNeeded())) {
+      log4j.error(e.getMessage(), e);
+    }
     if (e instanceof SQLGrammarException) {
       log.error(((SQLGrammarException) e).getSQL());
     }
