@@ -593,7 +593,7 @@ public class DefaultJsonDataService implements JsonDataService {
   }
 
   // Given a map of parameters, returns a string with the pairs key:value
-  private String convertParameterToString(Map<String, String> parameters) {
+  public static String convertParameterToString(Map<String, String> parameters) {
     String paramMsg = "";
     for (String paramKey : parameters.keySet()) {
       paramMsg += paramKey + ":" + parameters.get(paramKey) + "\n";

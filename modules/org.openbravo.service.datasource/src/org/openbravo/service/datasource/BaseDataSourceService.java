@@ -209,14 +209,4 @@ public abstract class BaseDataSourceService implements DataSourceService {
   private boolean isFilterApplied(Map<String, String> parameters) {
     return "true".equals(parameters.get(JsonConstants.FILTER_APPLIED_PARAMETER));
   }
-
-  // Given a map of parameters, returns a string with the pairs key:value
-  protected String convertParameterToString(Map<String, String> parameters) {
-    String paramMsg = "";
-    for (String paramKey : parameters.keySet()) {
-      paramMsg += paramKey + ":" + parameters.get(paramKey) + "\n";
-    }
-    return paramMsg;
-  }
-
 }

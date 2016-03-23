@@ -112,10 +112,12 @@ public class DefaultDataSourceService extends BaseDataSourceService {
           parameters.put(JsonConstants.WHERE_AND_FILTER_CLAUSE,
               parameters.get(JsonConstants.WHERE_PARAMETER));
           String warnMsg = OBMessageUtils.getI18NMessage("WhereParameterAppliedWarning", null);
-          log4j.warn(warnMsg + "Parameters: " + convertParameterToString(parameters));
+          log4j.warn(warnMsg + "Parameters: "
+              + DefaultJsonDataService.convertParameterToString(parameters));
         } else {
           String errorMsg = OBMessageUtils.getI18NMessage("WhereParameterException", null);
-          log4j.error(errorMsg + " Parameters: " + convertParameterToString(parameters));
+          log4j.error(errorMsg + " Parameters: "
+              + DefaultJsonDataService.convertParameterToString(parameters));
           throw new OBSecurityException(errorMsg, false);
         }
       } else {

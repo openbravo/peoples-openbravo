@@ -50,6 +50,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.ad.domain.Validation;
 import org.openbravo.service.datasource.DataSourceFilter;
+import org.openbravo.service.json.DefaultJsonDataService;
 import org.openbravo.service.json.JsonConstants;
 import org.openbravo.service.json.JsonUtils;
 import org.openbravo.service.json.QueryBuilder.TextMatching;
@@ -126,10 +127,12 @@ public class SelectorDataSourceFilter implements DataSourceFilter {
           parameters.put(JsonConstants.WHERE_AND_FILTER_CLAUSE,
               parameters.get(JsonConstants.WHERE_PARAMETER));
           String warnMsg = OBMessageUtils.getI18NMessage("WhereParameterAppliedWarning", null);
-          log.warn(warnMsg + " Parameters: " + convertParameterToString(parameters));
+          log.warn(warnMsg + " Parameters: "
+              + DefaultJsonDataService.convertParameterToString(parameters));
         } else {
           String errorMsg = OBMessageUtils.getI18NMessage("WhereParameterException", null);
-          log.error(errorMsg + " Parameters: " + convertParameterToString(parameters));
+          log.error(errorMsg + " Parameters: "
+              + DefaultJsonDataService.convertParameterToString(parameters));
           throw new OBSecurityException(errorMsg, false);
         }
       } else {
@@ -421,7 +424,8 @@ public class SelectorDataSourceFilter implements DataSourceFilter {
             parameters.get(JsonConstants.WHERE_PARAMETER));
       } else {
         String errorMsg = OBMessageUtils.getI18NMessage("WhereParameterException", null);
-        log.error(errorMsg + " Parameters: " + convertParameterToString(parameters));
+        log.error(errorMsg + " Parameters: "
+            + DefaultJsonDataService.convertParameterToString(parameters));
         throw new OBSecurityException(errorMsg);
       }
     } else {
@@ -447,14 +451,5 @@ public class SelectorDataSourceFilter implements DataSourceFilter {
     return parameters.containsKey(JsonConstants.WHERE_PARAMETER)
         && StringUtils.isNotBlank(parameters.get(JsonConstants.WHERE_PARAMETER))
         && !"null".equals(parameters.get(JsonConstants.WHERE_PARAMETER));
-  }
-
-  // Given a map of parameters, returns a string with the pairs key:value
-  private String convertParameterToString(Map<String, String> parameters) {
-    String paramMsg = "";
-    for (String paramKey : parameters.keySet()) {
-      paramMsg += paramKey + ":" + parameters.get(paramKey) + "\n";
-    }
-    return paramMsg;
   }
 }
