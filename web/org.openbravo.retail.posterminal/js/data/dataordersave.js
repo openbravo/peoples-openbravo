@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2015 Openbravo S.L.U.
+ * Copyright (C) 2013-2016 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -275,6 +275,7 @@
       this.receipt.set('accountingDate', OB.I18N.normalizeDate(new Date()));
       this.receipt.set('hasbeenpaid', 'Y');
       this.context.get('multiOrders').trigger('integrityOk', this.receipt);
+      OB.UTIL.calculateCurrentCash();
       OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(this.receipt.get('documentnoSuffix'), this.receipt.get('quotationnoSuffix'));
 
       delete this.receipt.attributes.json;
@@ -310,20 +311,20 @@
           OB.Dal.get(OB.Model.Order, receiptId, function (receipt) {
 
             var successCallback = function () {
-              OB.trace('Sync process success.');
-              OB.UTIL.showLoading(false);
-              if (me.hasInvLayaways) {
-                OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_noInvoiceIfLayaway'));
-                me.hasInvLayaways = false;
-              }
-              OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgAllReceiptSaved'));
-              OB.UTIL.SynchronizationHelper.finished(synchId, "multiOrdersClosed");
-            };
+                OB.trace('Sync process success.');
+                OB.UTIL.showLoading(false);
+                if (me.hasInvLayaways) {
+                  OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_noInvoiceIfLayaway'));
+                  me.hasInvLayaways = false;
+                }
+                OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgAllReceiptSaved'));
+                OB.UTIL.SynchronizationHelper.finished(synchId, "multiOrdersClosed");
+                };
 
             var errorCallback = function () {
-              OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgAllReceiptNotSaved'));
-              OB.UTIL.SynchronizationHelper.finished(synchId, "multiOrdersClosed");
-            };
+                OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgAllReceiptNotSaved'));
+                OB.UTIL.SynchronizationHelper.finished(synchId, "multiOrdersClosed");
+                };
 
             if (!_.isUndefined(receipt.get('amountToLayaway')) && !_.isNull(receipt.get('amountToLayaway')) && receipt.get('generateInvoice')) {
               me.hasInvLayaways = true;
