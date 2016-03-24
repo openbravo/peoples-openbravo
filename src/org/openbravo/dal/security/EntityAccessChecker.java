@@ -33,13 +33,13 @@ import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.model.Table;
 import org.openbravo.base.provider.OBNotSingleton;
-import org.openbravo.client.application.Parameter;
 import org.openbravo.client.application.Process;
 import org.openbravo.client.application.ProcessAccess;
 import org.openbravo.client.application.RefWindow;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.access.TableAccess;
 import org.openbravo.model.ad.domain.Reference;
 import org.openbravo.model.ad.ui.Tab;
@@ -99,7 +99,7 @@ public class EntityAccessChecker implements OBNotSingleton {
   // the derived entities from process only contains the entities which are
   // derived from process definition
   private Set<Entity> derivedEntitiesFromProcess = new HashSet<Entity>();
-  private Set<Process> Processes = new HashSet<Process>();
+  private Set<String> Processes = new HashSet<String>();
   private Set<Entity> nonReadableEntities = new HashSet<Entity>();
   private boolean isInitialized = false;
 
@@ -209,46 +209,45 @@ public class EntityAccessChecker implements OBNotSingleton {
         inTables = inTables.substring(0, inTables.length() - 1) + ")";
 
         // take into account processes
-        final String processButStr = "select p from ADColumn c inner join c.table t inner join "
+        final String processButStr = "select p.id from ADColumn c inner join c.table t inner join "
             + "c.oBUIAPPProcess p where t.id in " + inTables;
         @SuppressWarnings("unchecked")
-        final List<Process> processAccessButtons = SessionHandler.getInstance()
+        final List<String> processAccessButtons = SessionHandler.getInstance()
             .createQuery(processButStr).list();
-        for (Process processButton : processAccessButtons) {
+        for (String processButton : processAccessButtons) {
           if (!Processes.contains(processButton)) {
             Processes.add(processButton);
-            addEntitiesFromProcess(processButton);
+            // addEntitiesFromProcess(processButton);
           }
         }
 
         // take into account processes linked with selectors
-        final String processSelStr = "select p from ADColumn c inner join c.table t inner join "
+        final String processSelStr = "select p.id from ADColumn c inner join c.table t inner join "
             + "c.referenceSearchKey r inner join r.oBUISELSelectorList s inner join s.processDefintion "
             + "p  where r.parentReference='" + SELECTOR_REFERENCE + "' and t.id in " + inTables;
         @SuppressWarnings("unchecked")
-        final List<Process> processAccessSelectors = SessionHandler.getInstance()
+        final List<String> processAccessSelectors = SessionHandler.getInstance()
             .createQuery(processSelStr).list();
-        for (Process processSelector : processAccessSelectors) {
+        for (String processSelector : processAccessSelectors) {
           if (!Processes.contains(processSelector)) {
             Processes.add(processSelector);
-            addEntitiesFromProcess(processSelector);
           }
         }
       }
 
       // and take into account explicit process access
-      final String processAccessQryStr = "select p from " + ProcessAccess.class.getName()
-          + " p where p.role.id='" + getRoleId() + "'";
+      final String processAccessQryStr = "select p.obuiappProcess.id from "
+          + ProcessAccess.class.getName() + " p where p.role.id='" + getRoleId() + "'";
       @SuppressWarnings("unchecked")
-      final List<ProcessAccess> processAccessQuery = SessionHandler.getInstance()
+      final List<String> processAccessQuery = SessionHandler.getInstance()
           .createQuery(processAccessQryStr).list();
-      for (final ProcessAccess processAccess : processAccessQuery) {
-        Process proc = processAccess.getObuiappProcess();
-        if (!Processes.contains(proc)) {
-          Processes.add(proc);
-          addEntitiesFromProcess(proc);
+      for (final String processAccess : processAccessQuery) {
+        if (!Processes.contains(processAccess)) {
+          Processes.add(processAccess);
         }
       }
+
+      addEntitiesFromProcesses();
       isInitialized = true;
     } finally {
       OBContext.restorePreviousMode();
@@ -338,10 +337,10 @@ public class EntityAccessChecker implements OBNotSingleton {
     }
   }
 
-  private void dumpSortedProcess(Set<Process> set) {
+  private void dumpSortedProcess(Set<String> set) {
     final List<String> names = new ArrayList<String>();
-    for (final Process p : set) {
-      names.add(p.getName());
+    for (final String p : set) {
+      names.add(OBDal.getInstance().get(Process.class, p).getName());
     }
     Collections.sort(names);
     for (final String n : names) {
@@ -489,14 +488,7 @@ public class EntityAccessChecker implements OBNotSingleton {
       return false;
     }
 
-    boolean isAccessGranted = false;
-    for (Process process : Processes) {
-      if (process.getId().equals(processId)) {
-        isAccessGranted = true;
-      }
-    }
-
-    return isAccessGranted;
+    return Processes.contains(processId);
   }
 
   public String getRoleId() {
@@ -574,31 +566,50 @@ public class EntityAccessChecker implements OBNotSingleton {
   }
 
   /**
-   * Entities from Process are checked and access to the entities are ensured if they are needed. It
-   * is checked RefWindows and Selector references.
+   * For those processes that are granted, entities used by them through selectors and grids (window
+   * references) need also to be granted
    */
-  private void addEntitiesFromProcess(Process process) {
+  private void addEntitiesFromProcesses() {
+    if (Processes.isEmpty()) {
+      return;
+    }
+    StringBuilder processesInList = new StringBuilder();
+    boolean first = true;
+    for (String p : Processes) {
+      if (!first) {
+        processesInList.append(", ");
+      }
+      first = false;
+      processesInList.append("'").append(p).append("'");
+    }
+
+    String hql = "select p.referenceSearchKey from OBUIAPP_Parameter p where p.reference.id in('"
+        + WINDOW_REFERENCE + "','" + SELECTOR_REFERENCE + "') and p.obuiappProcess.id in ("
+        + processesInList + ")";
+    @SuppressWarnings("unchecked")
+    final List<Reference> references = SessionHandler.getInstance().createQuery(hql).list();
+
+    for (Reference ref : references) {
+      addEntitiesFromProcessReference(ref);
+    }
+  }
+
+  private void addEntitiesFromProcessReference(Reference ref) {
     final ModelProvider mp = ModelProvider.getInstance();
-    for (Parameter param : process.getOBUIAPPParameterList()) {
-      Reference ref = param.getReferenceSearchKey();
-      if (ref == null) {
-        continue;
-      }
 
-      // RefWindows reference is checked and added to readable and writable entities
-      if (ref.getParentReference().getId().equals(WINDOW_REFERENCE)) {
-        RefWindow refWindow = !ref.getOBUIAPPRefWindowList().isEmpty() ? ref
-            .getOBUIAPPRefWindowList().get(0) : null;
-        if (refWindow == null) {
-          continue;
-        }
-        final Window window = refWindow.getWindow();
-        addEntitiesOfWindowReference(mp, window);
-
-        // Selector reference is checked and added to derivedReadableEntities entities
-      } else if (ref.getParentReference().getId().equals(SELECTOR_REFERENCE)) {
-        addEntitiesOfSelectorReference(mp, ref);
+    // RefWindows reference is checked and added to readable and writable entities
+    if (WINDOW_REFERENCE.equals(DalUtil.getId(ref.getParentReference()))) {
+      RefWindow refWindow = !ref.getOBUIAPPRefWindowList().isEmpty() ? ref
+          .getOBUIAPPRefWindowList().get(0) : null;
+      if (refWindow == null) {
+        return;
       }
+      final Window window = refWindow.getWindow();
+      addEntitiesOfWindowReference(mp, window);
+
+      // Selector reference is checked and added to derivedReadableEntities entities
+    } else if (SELECTOR_REFERENCE.equals(DalUtil.getId(ref.getParentReference()))) {
+      addEntitiesOfSelectorReference(mp, ref);
     }
   }
 
