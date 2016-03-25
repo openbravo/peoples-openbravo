@@ -2174,6 +2174,10 @@
           }
         }
       }
+      if (this.isLayaway() && qty < 0) {
+        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_layawaysOrdersWithReturnsNotAllowed'));
+        return true;
+      }
       return false;
     },
 
