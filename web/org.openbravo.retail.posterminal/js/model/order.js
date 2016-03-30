@@ -1416,6 +1416,8 @@
                   }
                   OB.UTIL.SynchronizationHelper.finished(synchId, 'HasServices');
                 }, args.orderline);
+              } else {
+                OB.UTIL.SynchronizationHelper.finished(synchId, 'HasServices');
               }
             });
             subs.doSubscription();
