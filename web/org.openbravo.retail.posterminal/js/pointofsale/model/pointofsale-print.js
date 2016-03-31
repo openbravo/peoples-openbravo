@@ -133,9 +133,14 @@
           } else {
             // Success. Try to print the pending receipts.
             OB.Model.OfflinePrinter.printPendingJobs();
-            if (args.callback) {
-              args.callback();
-            }
+            OB.UTIL.HookManager.executeHooks('OBPRINT_PostPrint', {
+              receipt: receipt
+            }, function () {
+              OB.debug('Executed hooks of OBPRINT_PostPrint');
+              if (args.callback) {
+                args.callback();
+              }
+            });
           }
         });
       }
