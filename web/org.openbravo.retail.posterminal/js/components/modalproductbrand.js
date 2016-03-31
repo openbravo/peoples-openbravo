@@ -115,6 +115,8 @@ enyo.kind({
       var productCharacteristicModel = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.searchProductCharacteristicHeader.parent.model;
 
       var remoteCriteria = [],
+          characteristicValue = [],
+          characteristic = [],
           brandfilter = {},
           productText;
       criteria = {};
