@@ -43,7 +43,7 @@
 
           function () {
             return {
-              online: OB.MobileApp.model.get('connectedToERP')
+              isOnline: OB.MobileApp.model.get('connectedToERP')
             };
           }]
         },
@@ -76,7 +76,7 @@
 
             function () {
               return {
-                online: OB.MobileApp.model.get('connectedToERP')
+                isOnline: OB.MobileApp.model.get('connectedToERP')
               };
             }]
           });
