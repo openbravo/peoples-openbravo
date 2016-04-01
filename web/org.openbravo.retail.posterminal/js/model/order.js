@@ -2007,7 +2007,7 @@
         if (data && data.exception) {
           OB.UTIL.showConfirmation.display('', data.exception.message);
         } else if (data && data.qty <= 0) {
-          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_Error'), OB.I18N.getLabel('OBPOS_ErrorProductDiscontinued'));
+          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_ErrorProductDiscontinued'));
           callback(false);
         } else {
           callback(true);
@@ -2134,7 +2134,7 @@
           });
         }
         if (p.get('islocked')) {
-          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_Error'), OB.I18N.getLabel('OBPOS_ErrorProductBlocked'));
+          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_ErrorProductBlocked'));
           if (callback) {
             callback(false, null);
           }
