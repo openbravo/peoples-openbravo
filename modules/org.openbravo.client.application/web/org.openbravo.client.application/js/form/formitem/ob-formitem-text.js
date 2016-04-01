@@ -125,6 +125,8 @@ isc.ClassFactory.defineClass('OBTextFilterItem', isc.OBTextItem);
 isc.OBTextFilterItem.addProperties({
   allowExpressions: true,
   validateAgainstMask: false,
+  // In P&E grids, on blur will be overridden to ensure correct record selection having filter on change disabled
+  canOverrideOnBlur: true,
 
   init: function () {
     var field = this.grid.getField(this.name);

@@ -112,6 +112,8 @@ BEGIN
         COALESCE(:NEW.imagewidth , 1) != COALESCE(:OLD.imagewidth , 1) OR
         COALESCE(:NEW.imageheight , 1) != COALESCE(:OLD.imageheight , 1) OR
         COALESCE(:NEW.isusedsequence , '.') != COALESCE(:OLD.isusedsequence , '.') OR
+        COALESCE(:NEW.AllowSorting, '.') != COALESCE(:OLD.AllowSorting, '.') OR
+        COALESCE(:NEW.AllowFiltering, '.') != COALESCE(:OLD.AllowFiltering, '.') OR
         1=2) THEN
       RAISE_APPLICATION_ERROR(-20000, '@20532@');
     END IF;

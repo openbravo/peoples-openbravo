@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2015 Openbravo SLU
+ * All portions are Copyright (C) 2012-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -31,6 +31,8 @@ import javax.servlet.ServletException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
+import org.hibernate.ScrollMode;
+import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.session.OBPropertiesProvider;
@@ -64,8 +66,6 @@ import org.openbravo.model.materialmgmt.cost.TransactionCost;
 import org.openbravo.model.materialmgmt.transaction.InventoryCount;
 import org.openbravo.model.materialmgmt.transaction.InventoryCountLine;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
-import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
-import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 import org.openbravo.model.pricing.pricelist.PriceList;
 import org.openbravo.model.pricing.pricelist.ProductPrice;
 import org.openbravo.service.db.DalConnectionProvider;
@@ -320,12 +320,16 @@ public class CostingUtils {
     }
     obcCosting.add(Restrictions.eq(Costing.PROPERTY_ORGANIZATION, org));
     obcCosting.setFilterOnReadableOrganization(false);
-    if (obcCosting.count() > 0) {
-      if (obcCosting.count() > 1) {
+    obcCosting.setMaxResults(2);
+
+    List<Costing> obcCostingList = obcCosting.list();
+    int size = obcCostingList.size();
+    if (size != 0) {
+      if (size > 1) {
         log4j.warn("More than one cost found for same date: " + OBDateUtils.formatDate(date)
             + " for product: " + product.getName() + " (" + product.getId() + ")");
       }
-      return obcCosting.list().get(0);
+      return obcCostingList.get(0);
     } else if (recheckWithoutDimensions) {
       return getStandardCostDefinition(product, org, date, getEmptyDimensions(), false);
     }
@@ -396,14 +400,11 @@ public class CostingUtils {
         + " < 0 then -tc." + TransactionCost.PROPERTY_COST);
     select.append("     else tc." + TransactionCost.PROPERTY_COST + " end ) as cost,");
     select.append("  tc." + TransactionCost.PROPERTY_CURRENCY + ".id as currency,");
-    select.append("  coalesce(sr." + ShipmentInOut.PROPERTY_ACCOUNTINGDATE + ", trx."
-        + MaterialTransaction.PROPERTY_MOVEMENTDATE + ") as mdate");
+    select.append("  tc." + TransactionCost.PROPERTY_ACCOUNTINGDATE + " as mdate");
 
     select.append(" from " + TransactionCost.ENTITY_NAME + " as tc");
     select.append("  join tc." + TransactionCost.PROPERTY_INVENTORYTRANSACTION + " as trx");
     select.append("  join trx." + MaterialTransaction.PROPERTY_STORAGEBIN + " as locator");
-    select.append("  left join trx." + MaterialTransaction.PROPERTY_GOODSSHIPMENTLINE + " as line");
-    select.append("  left join line." + ShipmentInOutLine.PROPERTY_SHIPMENTRECEIPT + " as sr");
 
     select.append(" where trx." + MaterialTransaction.PROPERTY_PRODUCT + ".id = :product");
     select.append("  and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " <= :date");
@@ -414,8 +415,7 @@ public class CostingUtils {
     }
     select.append("   and trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
     select.append(" group by tc." + TransactionCost.PROPERTY_CURRENCY + ",");
-    select.append("   coalesce(sr." + ShipmentInOut.PROPERTY_ACCOUNTINGDATE + ", trx."
-        + MaterialTransaction.PROPERTY_MOVEMENTDATE + ")");
+    select.append("   tc." + TransactionCost.PROPERTY_ACCOUNTINGDATE);
 
     Query trxQry = OBDal.getInstance().getSession().createQuery(select.toString());
     trxQry.setParameter("product", product.getId());
@@ -424,24 +424,28 @@ public class CostingUtils {
       trxQry.setParameter("warehouse", costDimensions.get(CostDimension.Warehouse).getId());
     }
     trxQry.setParameterList("orgs", orgs);
-    @SuppressWarnings("unchecked")
-    List<Object[]> o = trxQry.list();
-    BigDecimal sum = BigDecimal.ZERO;
-    if (o.size() == 0) {
-      return sum;
-    }
-    for (Object[] resultSet : o) {
-      BigDecimal origAmt = (BigDecimal) resultSet[0];
-      Currency origCur = OBDal.getInstance().get(Currency.class, resultSet[1]);
-      Date convDate = (Date) resultSet[2];
 
-      if (origCur != currency) {
-        sum = sum.add(FinancialUtils.getConvertedAmount(origAmt, origCur, currency, convDate, org,
-            FinancialUtils.PRECISION_COSTING));
-      } else {
-        sum = sum.add(origAmt);
+    ScrollableResults scroll = trxQry.scroll(ScrollMode.FORWARD_ONLY);
+    BigDecimal sum = BigDecimal.ZERO;
+    try {
+      while (scroll.next()) {
+        Object[] resultSet = scroll.get();
+        BigDecimal origAmt = (BigDecimal) resultSet[0];
+        String origCurId = (String) resultSet[1];
+
+        if (StringUtils.equals(origCurId, currency.getId())) {
+          sum = sum.add(origAmt);
+        } else {
+          Currency origCur = OBDal.getInstance().get(Currency.class, origCurId);
+          Date convDate = (Date) resultSet[2];
+          sum = sum.add(FinancialUtils.getConvertedAmount(origAmt, origCur, currency, convDate,
+              org, FinancialUtils.PRECISION_COSTING));
+        }
       }
+    } finally {
+      scroll.close();
     }
+
     return sum;
   }
 
@@ -505,12 +509,12 @@ public class CostingUtils {
     crQry.setNamedParameter("startdate", date);
     crQry.setNamedParameter("enddate", date);
     crQry.setMaxResult(1);
-    List<CostingRule> costRules = crQry.list();
-    if (costRules.size() == 0) {
+    CostingRule costRule = crQry.uniqueResult();
+    if (costRule == null) {
       throw new OBException("@NoCostingRuleFoundForOrganizationAndDate@ @Organization@: "
           + org.getName() + ", @Date@: " + OBDateUtils.formatDate(date));
     }
-    return costRules.get(0);
+    return costRule;
   }
 
   /**

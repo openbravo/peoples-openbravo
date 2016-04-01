@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -50,6 +50,8 @@ import org.openbravo.model.ad.system.Language;
 
 public abstract class BaseOBObject implements BaseOBObjectDef, Identifiable, DynamicEnabled,
     OBNotSingleton, Serializable {
+  public static final String ID = "id";
+
   private static final org.apache.log4j.Logger log = org.apache.log4j.Logger
       .getLogger(BaseOBObject.class);
 
@@ -182,11 +184,11 @@ public abstract class BaseOBObject implements BaseOBObjectDef, Identifiable, Dyn
   }
 
   public Object getId() {
-    return get("id");
+    return get(ID);
   }
 
   public void setId(Object id) {
-    set("id", id);
+    set(ID, id);
   }
 
   public abstract String getEntityName();

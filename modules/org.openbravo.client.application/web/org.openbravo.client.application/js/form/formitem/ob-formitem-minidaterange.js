@@ -389,6 +389,8 @@ isc.OBMiniDateRangeItem.addProperties({}, OB.DateItemProperties, {
   singleDateMode: false,
   singleDateValue: null,
   singleDateDisplayValue: null,
+  // In P&E grids, on blur will be overridden to ensure correct record selection having filter on change disabled
+  canOverrideOnBlur: true,
 
   init: function () {
     this.addAutoChild('rangeDialog', {
@@ -457,6 +459,7 @@ isc.OBMiniDateRangeItem.addProperties({}, OB.DateItemProperties, {
   clearFilterValues: function () {
     this.singleDateValue = null;
     this.singleDateDisplayValue = '';
+    this.singleDateMode = true;
     this.rangeItemValue = null;
     this.rangeItem.setValue(null);
     this.setElementValue('', '');
@@ -723,11 +726,15 @@ isc.OBMiniDateRangeItem.addProperties({}, OB.DateItemProperties, {
   },
 
   keyPress: function (item, form, keyName, characterValue) {
+    var enterOnEmptyItem;
     if (keyName === 'Enter') {
       if (this.singleDateMode) {
+        enterOnEmptyItem = !item.getValue() && !item.getEnteredValue();
         this.expandSingleValue();
         this.form.grid.performAction();
-        return false;
+        if (!enterOnEmptyItem) {
+          return false;
+        }
       }
       this.showRangeDialog();
       return false;

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -40,16 +40,20 @@
 <script language="JavaScript" type="text/javascript" id="recBrowserMsgText">var recBrowserMsgText = 'xx';</script>
 <script language="JavaScript" type="text/javascript" id="identificationFailureTitle">var identificationFailureTitle = 'xx';</script>
 <script language="JavaScript" type="text/javascript" id="errorEmptyContent">var errorEmptyContent = 'xx';</script>
+<script language="JavaScript" type="text/javascript" id="errorSamePassword">var errorSamePassword = 'xx';</script>
+<script language="JavaScript" type="text/javascript" id="errorDifferentPasswordInFields">var errorDifferentPasswordInFields = 'xx';</script>
 
 <script language="JavaScript" type="text/javascript">
 var validBrowserFirefox = '38.0.0.0';
-var validBrowserChrome = '46.0.0.0';
+var validBrowserChrome = '48.0.0.0';
 var validBrowserExplorer = '9.0.0.0';
+var validBrowserEdge = '12.0.0.0'; // EdgeHTML version
 var validBrowserSafari = '8.0.0.0';
 
-var recBrowserFirefox = '38.0.0.0';
-var recBrowserChrome = '47.0.0.0';
+var recBrowserFirefox = '45.0.0.0';
+var recBrowserChrome = '49.0.0.0';
 var recBrowserExplorer = '11.0.0.0';
+var recBrowserEdge = '13.0.0.0'; // EdgeHTML version
 var recBrowserSafari = '9.0.0.0';
 </script>
 
@@ -187,6 +191,10 @@ var recBrowserSafari = '9.0.0.0';
 </script>
 <script type="text/javascript">
 function buttonOK_click() {
+    if (document.getElementById('resetPassword').value ==='true' && document.getElementById('user').value !== document.getElementById('password').value){
+        setLoginMessage('Error', errorSamePassword, errorDifferentPasswordInFields);
+        return true;
+    }
     if (focusedWindowElement.id === 'user' && document.getElementById('user').value !== '' && document.getElementById('password').value === '') {
       setTimeout(function() { // To manage browser autocomplete feature if it is active
        if (focusedWindowElement.id === 'user' && document.getElementById('password').value === '') {
@@ -199,12 +207,17 @@ function buttonOK_click() {
       setWindowElementFocus(document.getElementById('user'))
     } else {
       if (document.getElementById('user').value === '' || document.getElementById('password').value === '') {
-          setLoginMessage('Error', identificationFailureTitle, errorEmptyContent);
+        setLoginMessage('Error', identificationFailureTitle, errorEmptyContent);
         return true;
-      }     
+      }   
       disableButton('buttonOK');
-      submitXmlHttpRequest(loginResult, document.frmIdentificacion, 'DEFAULT', '../secureApp/LoginHandler.html', false, null, null);
+      if (document.getElementById('resetPassword').value ==='true'){
+        submitXmlHttpRequest(loginResult, document.frmIdentificacion, 'FORCE_RESET_PASSWORD', '../secureApp/LoginHandler.html', false, null, null);
+      }else{
+        submitXmlHttpRequest(loginResult, document.frmIdentificacion, 'DEFAULT', '../secureApp/LoginHandler.html', false, null, null);
+      }
     }
+    
     return false;
   }
 
@@ -228,7 +241,15 @@ function buttonOK_click() {
         document.getElementById('password').value = '';
       }
     }
-
+    if (result.resetPassword ){
+      document.getElementById('resetPassword').value=result.resetPassword;
+      document.getElementById('user').value = '';
+      document.getElementById('user').type = 'password';
+      document.getElementById('userlabel').style.display = 'none';
+      document.getElementById('passwordlabel').style.display = 'none';
+      document.getElementById('newpasswordlabel').style.display = '';
+      document.getElementById('confirmpasswordlabel').style.display = '';
+    }
     if (shouldContinue) {
       try {
         if (parent.frameMenu) {
@@ -241,6 +262,10 @@ function buttonOK_click() {
       }
       command = result.command || 'DEFAULT';
       submitCommandForm(command, false, null, result.target, target, true);
+    }else if (result.resetPassword){
+      enableButton('buttonOK');
+      document.getElementById('user').value = '';
+      setWindowElementFocus('user', 'id');
     } else {
       enableButton('buttonOK');
       setWindowElementFocus('password', 'id');
@@ -328,6 +353,10 @@ function buttonOK_click() {
       if (browserVersionToFloat(browserVersion) >= browserVersionToFloat(validBrowserSafari)) {
         isValid = true;
       }
+    } else if (browserName.toUpperCase().indexOf('MICROSOFT EDGE') != -1) {
+      if (browserVersionToFloat(browserVersion) >= browserVersionToFloat(validBrowserEdge)) {
+        isValid = true;
+      }
     }
     return isValid;
   }
@@ -356,6 +385,10 @@ function buttonOK_click() {
       if (browserVersionToFloat(browserVersion) >= browserVersionToFloat(recBrowserSafari)) {
         isRecommended = true;
       }
+    } else if (browserName.toUpperCase().indexOf('MICROSOFT EDGE') != -1) {
+      if (browserVersionToFloat(browserVersion) >= browserVersionToFloat(recBrowserEdge)) {
+        isRecommended = true;
+      }
     }
     return isRecommended;
   }
@@ -366,13 +399,14 @@ function buttonOK_click() {
       + '<br>' + ' * Mozilla Firefox ' + browserVersionTrim(validBrowserFirefox) + ' ' + validBrowserMsgOrHigher
       + '<br>' + ' * Google Chrome ' + browserVersionTrim(validBrowserChrome) + ' ' + validBrowserMsgOrHigher
       + '<br>' + ' * Microsoft Internet Explorer ' + browserVersionTrim(validBrowserExplorer) + ' ' + validBrowserMsgOrHigher
+      + '<br>' + ' * Microsoft Edge ' + browserVersionTrim(validBrowserEdge) + ' ' + validBrowserMsgOrHigher
       + '<br>' + ' * Apple Safari ' + browserVersionTrim(validBrowserSafari) + ' ' + validBrowserMsgOrHigher;
     return displayValidBrowserMsg;
   }
 
   function buildRecBrowserMsgText() {
     var displayRecBrowserMsgText = recBrowserMsgText;
-    displayRecBrowserMsgText = displayRecBrowserMsgText.replace('XX', 'Google Chrome ' + browserVersionTrim(recBrowserChrome) + ', Mozilla Firefox ' + browserVersionTrim(recBrowserFirefox) + ', Internet Explorer ' + browserVersionTrim(recBrowserExplorer));
+    displayRecBrowserMsgText = displayRecBrowserMsgText.replace('XX', 'Google Chrome ' + browserVersionTrim(recBrowserChrome) + ', Mozilla Firefox ' + browserVersionTrim(recBrowserFirefox) + ', Internet Explorer ' + browserVersionTrim(recBrowserExplorer) + ', Microsoft Edge ' + browserVersionTrim(recBrowserEdge));
     displayRecBrowserMsgText = displayRecBrowserMsgText.replace('YY', 'Apple Safari ' + browserVersionTrim(recBrowserSafari) + '');
     return displayRecBrowserMsgText;
   }
@@ -444,20 +478,26 @@ function buttonOK_click() {
       <div class="Login_LogForm">
         <form method="post" action="../secureApp/LoginHandler.html" name="frmIdentificacion" id="frmFormulario" autocomplete="off">
           <input type="hidden" name="Command" value="" />
-
+          <input type="hidden" name="resetPassword" id="resetPassword" value="" />
           <div class="Login_LogForm_CompanyLogo_Container">
             <div class="Login_LogForm_CompanyLogo" id="CompanyLogo_Container" style="display: none;"><img class="Login_Logo_Company" src="../../../../../web/images/blank.gif" /></div>
           </div>
           <div class="Login_LogForm_Input_Container">
             <dl>
               <dt>
-                <label for="user" class="LabelText Login_LabelText">User Name</label>
+                <label for="user" class="LabelText Login_LabelText" id="userlabel" >User Name</label>
+              </dt>
+              <dt>
+                <label for="user" class="LabelText Login_LabelText" id="newpasswordlabel" style="display:none;">New Password</label>
               </dt>
               <dd>
                 <input class="dojoValidateValid Login_TextBox" type="text" maxlength="60" name="user" id="user" />
               </dd>
               <dt>
-                <label for="password" class="LabelText Login_LabelText">Password</label>
+                <label for="password" class="LabelText Login_LabelText" id="passwordlabel" >Password</label>
+              </dt>
+              <dt>
+                <label for="password" class="LabelText Login_LabelText" id="confirmpasswordlabel" style="display:none;">Confirm Password</label>
               </dt>
               <dd>
                 <input class="dojoValidateValid Login_TextBox" type="password" maxlength="40" name="password" id="password" />

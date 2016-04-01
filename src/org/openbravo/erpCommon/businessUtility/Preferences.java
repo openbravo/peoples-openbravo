@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2016 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -47,6 +47,7 @@ import org.openbravo.model.common.enterprise.Organization;
  */
 public class Preferences {
   private static final Logger log4j = Logger.getLogger(Preferences.class);
+  private static final String SYSTEM = "0";
 
   /**
    * Obtains a list of all preferences that are applicable at the given visibility level (client,
@@ -72,7 +73,7 @@ public class Preferences {
         } else {
           // There is a preference for the current property, check whether it is higher priority and
           // if so replace it. In case of conflict leave current preference.
-          if (isHigherPriority(pref, existentPreference, parentTree) == 1) {
+          if (getHighestPriority(pref, existentPreference, parentTree) == 1) {
             preferences.remove(existentPreference);
             preferences.add(pref);
           }
@@ -196,7 +197,7 @@ public class Preferences {
           selectedPreference = preference;
           continue;
         }
-        int higherPriority = isHigherPriority(selectedPreference, preference, parentTree);
+        int higherPriority = getHighestPriority(selectedPreference, preference, parentTree);
         switch (higherPriority) {
         case 1:
           // do nothing, selected one has higher priority
@@ -449,6 +450,8 @@ public class Preferences {
       parameters.add(property);
     }
 
+    hql.append(" order by p.id");
+
     OBQuery<Preference> qPref = OBDal.getInstance().createQuery(Preference.class, hql.toString());
     qPref.setParameters(parameters);
     qPref.setFilterOnActive(activeFilterEnabled);
@@ -487,11 +490,20 @@ public class Preferences {
    *         <li>0 in case of conflict (both have identical visibility and value)
    *         </ul>
    */
-  private static int isHigherPriority(Preference pref1, Preference pref2, List<String> parentTree) {
+  private static int getHighestPriority(Preference pref1, Preference pref2, List<String> parentTree) {
     // Check priority by client
-    if ((pref2.getVisibleAtClient() == null || pref2.getVisibleAtClient().getId().equals("0"))
-        && pref1.getVisibleAtClient() != null && !pref1.getVisibleAtClient().getId().equals("0")) {
+
+    // undefined client visibility is handled as system
+    String clientId1 = pref1.getVisibleAtClient() == null ? SYSTEM : (String) DalUtil.getId(pref1
+        .getVisibleAtClient());
+    String clientId2 = pref2.getVisibleAtClient() == null ? SYSTEM : (String) DalUtil.getId(pref2
+        .getVisibleAtClient());
+    if (!SYSTEM.equals(clientId1) && SYSTEM.equals(clientId2)) {
       return 1;
+    }
+
+    if (SYSTEM.equals(clientId1) && !SYSTEM.equals(clientId2)) {
+      return 2;
     }
 
     // Check priority by organization
@@ -501,7 +513,7 @@ public class Preferences {
       return 1;
     }
 
-    if ((org1 == null && org2 != null)) {
+    if (org1 == null && org2 != null) {
       return 2;
     }
 

@@ -674,6 +674,11 @@ public class DefaultJsonDataService implements JsonDataService {
 
         return result;
       } catch (Throwable t) {
+        Throwable localThrowable = DbUtility.getUnderlyingSQLException(t);
+        if (!(localThrowable instanceof OBException && !((OBException) localThrowable)
+            .isLogExceptionNeeded())) {
+          log.error("Error removing object of " + entityName + " entity", localThrowable);
+        }
         return JsonUtils.convertExceptionToJson(t);
       }
     } else {
@@ -769,17 +774,19 @@ public class DefaultJsonDataService implements JsonDataService {
           }
         }
 
-        // refresh the objects from the db as they can have changed
-        // put the refreshed objects into a new array as we are going to retrieve them using
-        // OBDal.getInstance().get as performs better than OBDal.getInstance().getSession().refresh
-        // See issue https://issues.openbravo.com/view.php?id=30308
+        // Objects might have been modified in DB through triggers, let's force them to be fetched
+        // DB again, to do so session is cleared (any possible modification is already persisted by
+        // previous flush).
+        // Using OBDal.refresh does not perform well, see issue
+        // https://issues.openbravo.com/view.php?id=30308
+        OBDal.getInstance().getSession().clear();
+
         final List<BaseOBObject> refreshedBobs = new ArrayList<BaseOBObject>();
         for (BaseOBObject bob : bobs) {
-          // Remove the bob instance from the session cache with evict
-          OBDal.getInstance().getSession().evict(bob);
-          // With get() we retrieve the object from db as we have cleared it from cache with evict()
+          // forcing fetch from DB
           BaseOBObject refreshedBob = OBDal.getInstance().get(bob.getEntityName(),
               DalUtil.getId(bob));
+
           // if object has computed columns refresh from the database too
           if (refreshedBob.getEntity().hasComputedColumns()) {
             OBDal.getInstance().getSession()
@@ -788,7 +795,7 @@ public class DefaultJsonDataService implements JsonDataService {
           refreshedBobs.add(refreshedBob);
         }
 
-        // almost successfull, now create the response
+        // almost successful, now create the response
         // needs to be done before the close of the session
         final DataToJsonConverter toJsonConverter = OBProvider.getInstance().get(
             DataToJsonConverter.class);
@@ -832,10 +839,13 @@ public class DefaultJsonDataService implements JsonDataService {
       }
     } catch (Throwable t) {
       Throwable localThrowable = DbUtility.getUnderlyingSQLException(t);
-      if (!(localThrowable instanceof OBException)
-          || (localThrowable instanceof OBException && ((OBException) localThrowable)
-              .isLogExceptionNeeded())) {
-        log.error(localThrowable.getMessage(), localThrowable);
+      if (!(localThrowable instanceof OBException && !((OBException) localThrowable)
+          .isLogExceptionNeeded())) {
+        if (parameters.containsKey(ADD_FLAG)) {
+          log.error("Error adding new object", localThrowable);
+        } else {
+          log.error("Error updating object", localThrowable);
+        }
       }
       return JsonUtils.convertExceptionToJson(localThrowable);
     }

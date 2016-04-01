@@ -97,4 +97,9 @@ public class PgJdbcDatesIssue extends ModuleScript {
   protected ModuleScriptExecutionLimits getModuleScriptExecutionLimits() {
     return new ModuleScriptExecutionLimits(CORE, PR15Q4, FIXED_VERSION);
   }
+
+  @Override
+  protected boolean executeOnInstall() {
+    return false;
+  }
 }

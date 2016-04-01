@@ -210,7 +210,7 @@ public class OBBaseTest {
   protected static final String TEST_LOCATION_ID = "A21EF1AB822149BEB65D055CD91F261B";
 
   /**
-   * Initializes DAL, it also craetes a log appender that can be used to assert on logs. This log
+   * Initializes DAL, it also creates a log appender that can be used to assert on logs. This log
    * appender is disabled by default, to activate it set the level with
    * {@link OBBaseTest#setTestLogAppenderLevel(Level)}
    * 

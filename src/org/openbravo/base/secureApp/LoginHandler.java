@@ -1,6 +1,7 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2015 Openbravo S.L.U.
+
+ * Copyright (C) 2001-2016 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -21,10 +22,13 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.authentication.AuthenticationException;
+import org.openbravo.authentication.AuthenticationExpirationPasswordException;
 import org.openbravo.authentication.AuthenticationManager;
 import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.obps.ActivationKey.LicenseRestriction;
@@ -38,6 +42,7 @@ import org.openbravo.model.ad.access.UserRoles;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.system.SystemInformation;
+import org.openbravo.utils.FormatUtilities;
 import org.openbravo.xmlEngine.XmlDocument;
 
 /**
@@ -69,7 +74,15 @@ public class LoginHandler extends HttpBaseServlet {
     vars.removeSessionValue("#AD_Role_ID");
     vars.setSessionObject("#loggingIn", "Y");
 
-    final String strUser = vars.getStringParameter("user");
+    final String user;
+    final String password;
+
+    boolean isPasswordResetFlow = Boolean.parseBoolean(vars.getStringParameter("resetPassword"));
+    if (isPasswordResetFlow) {
+      user = vars.getSessionValue("#AD_User_ID");
+    } else {
+      user = vars.getStringParameter("user");
+    }
 
     // When redirect parameter is true, instead of returning a json object with the login result and
     // target, a redirect to the application or error page is done.
@@ -83,10 +96,15 @@ public class LoginHandler extends HttpBaseServlet {
 
       String language = systemClient.getLanguage().getLanguage();
 
-      if (strUser.equals("") && !OBVersion.getInstance().is30()) {
+      if (user.equals("") && !OBVersion.getInstance().is30()) {
         res.sendRedirect(res.encodeRedirectURL(strDireccion + "/security/Login_F1.html"));
       } else {
         try {
+          if (isPasswordResetFlow && StringUtils.isNotBlank(vars.getSessionValue("#AD_User_ID"))) {
+            password = vars.getStringParameter("password");
+            updatePassword(user, password, language);
+          }
+
           AuthenticationManager authManager = AuthenticationManager.getAuthenticationManager(this);
 
           final String strUserAuth = authManager.authenticate(req, res);
@@ -95,7 +113,13 @@ public class LoginHandler extends HttpBaseServlet {
           if (StringUtils.isEmpty(strUserAuth)) {
             throw new AuthenticationException("Message");// FIXME
           }
-          checkLicenseAndGo(res, vars, strUserAuth, strUser, sessionId, doRedirect);
+          checkLicenseAndGo(res, vars, strUserAuth, user, sessionId, doRedirect);
+
+        } catch (AuthenticationExpirationPasswordException aepe) {
+
+          vars.removeSessionValue("#LoginErrorMsg");
+          goToUpdatePassword(res, vars, aepe.getOBError().getMessage(), aepe.getOBError()
+              .getTitle(), "Error", "../security/Login_FS.html", doRedirect);
 
         } catch (AuthenticationException e) {
 
@@ -394,8 +418,8 @@ public class LoginHandler extends HttpBaseServlet {
   protected final void goToRetry(HttpServletResponse response, VariablesSecureApp vars,
       String message, String title, String msgType, String action, boolean doRedirect)
       throws IOException, ServletException {
-    String msg = (message != null && !message.equals("")) ? message
-        : "Please enter your username and password.";
+    String msg = (message != null && !message.equals("")) ? message : Utility.messageBD(myPool,
+        "CPEmptyUserPassword", vars.getLanguage());
 
     if (OBVersion.getInstance().is30() && !doRedirect) {
       // 3.0 instances show the message in the same login window, return a json object with the info
@@ -446,9 +470,82 @@ public class LoginHandler extends HttpBaseServlet {
     }
   }
 
+  protected final void goToUpdatePassword(HttpServletResponse response, VariablesSecureApp vars,
+      String message, String title, String msgType, String action, boolean doRedirect)
+      throws IOException, ServletException {
+    String msg = (message != null && !message.equals("")) ? message : Utility.messageBD(myPool,
+        "CPEmptyUserPassword", vars.getLanguage());
+
+    try {
+      JSONObject jsonMsg = new JSONObject();
+      jsonMsg.put("showMessage", true);
+      jsonMsg.put("target", action);
+      jsonMsg.put("messageType", msgType);
+      jsonMsg.put("messageTitle", title);
+      jsonMsg.put("messageText", msg);
+      jsonMsg.put("resetPassword", true);
+      jsonMsg.put("loggedUser", vars.getStringParameter("user"));
+      if ("Confirmation".equals(msgType)) {
+        jsonMsg.put("command", "FORCE_NAMED_USER");
+      }
+      response.setContentType("application/json;charset=UTF-8");
+      final PrintWriter out = response.getWriter();
+      out.print(jsonMsg.toString());
+      out.close();
+    } catch (JSONException e) {
+      log4j.error("Error setting login msg", e);
+      throw new ServletException(e);
+    }
+  }
+
   @Override
   public String getServletInfo() {
     return "User-login control Servlet";
   } // end of getServletInfo() method
 
+  /**
+   * Update user password for userId with unHashedPassword provided, throws
+   * AuthenticationExpirationPasswordException in case the new password is the same that the old
+   * one.
+   * 
+   * 
+   * @param userId
+   *          the userId
+   * @param unHashedPassword
+   *          the password, the unhashed password as it is entered by the user.
+   * @param myPool
+   *          ConnectionProvider used to translate messages.
+   * @param language
+   *          Default language for the user
+   * @throws ServletException
+   *           ServletException is thrown in case that password could not be hashed
+   * 
+   */
+  private void updatePassword(String userId, String unHashedPassword, String language)
+      throws ServletException {
+    try {
+      OBContext.setAdminMode();
+      final OBCriteria<User> obc = OBDal.getInstance().createCriteria(User.class);
+      obc.add(Restrictions.eq(User.PROPERTY_ID, userId));
+      obc.setFilterOnReadableClients(false);
+      obc.setFilterOnReadableOrganization(false);
+      final User userOB = (User) obc.uniqueResult();
+      String oldPassword = userOB.getPassword();
+      String newPassword = FormatUtilities.sha1Base64(unHashedPassword);
+      if (oldPassword.equals(newPassword)) {
+        OBError errorMsg = new OBError();
+        errorMsg.setType("Error");
+        errorMsg.setTitle(Utility.messageBD(myPool, "CPDifferentPassword", language));
+        errorMsg.setMessage(Utility.messageBD(myPool, "CPSamePasswordThanOld", language));
+        throw new AuthenticationExpirationPasswordException(errorMsg.getMessage(), errorMsg, false);
+      } else {
+        userOB.setPassword(newPassword);
+        OBDal.getInstance().save(userOB);
+        OBDal.getInstance().flush();
+        OBDal.getInstance().commitAndClose();
+      }
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
 }
