@@ -1346,10 +1346,16 @@ public class Property {
     this.sqlLogic = sqlLogic;
   }
 
+  /**
+   * Foreign key properties allowing cross organization references can define a link to an object
+   * which organization is not in the same organization's natural tree when context is in
+   * {@code  setCrossOrgReferenceAdminMode}.
+   */
   public boolean isAllowedCrossOrgReference() {
     return allowedCrossOrgReference;
   }
 
+  /** @see Property#isAllowedCrossOrgReference() */
   public void setAllowedCrossOrgReference(boolean allowedCrossOrgReference) {
     this.allowedCrossOrgReference = allowedCrossOrgReference;
   }

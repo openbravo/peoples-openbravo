@@ -483,10 +483,17 @@ public class Column extends ModelObject {
     this.sqlLogic = sqlLogic;
   }
 
+  /**
+   * Defines whether the {@link Property} generated for this column will allow cross organization
+   * references.
+   * 
+   * @see Property#isAllowedCrossOrgReference()
+   */
   public boolean isAllowedCrossOrgReference() {
     return isAllowedCrossOrgReference;
   }
 
+  /** @see Property#isAllowedCrossOrgReference() */
   public void setAllowedCrossOrgReference(boolean allowedCrossOrgReference) {
     this.isAllowedCrossOrgReference = allowedCrossOrgReference;
   }

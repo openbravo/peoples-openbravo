@@ -205,7 +205,7 @@ public class OBContext implements OBNotSingleton {
    * Cross Organization Reference Administrator mode allows to create references from an object to
    * another one that it is not in the same Organization's natural tree.
    * 
-   * This only applies for column marked to allow this behavior.
+   * This only applies for columns marked to allow this behavior.
    */
   public static void setCrossOrgReferenceAdminMode() {
     OBAdminMode am = new OBAdminMode();
