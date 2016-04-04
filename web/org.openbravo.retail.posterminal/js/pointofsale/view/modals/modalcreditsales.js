@@ -57,7 +57,7 @@ enyo.kind({
     this.model = model;
   },
   tap: function () {
-        var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes("modalDialogButtonTap");
+    var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes("modalDialogButtonTap");
 
     function error(tx) {
       OB.UTIL.showError("OBDAL error: " + tx);
@@ -91,7 +91,7 @@ enyo.kind({
     } else {
       bp.set('creditUsed', bpCreditUsed + totalPending);
     }
-    OB.Dal.save(bp, function() {
+    OB.Dal.save(bp, function () {
       me.model.get('order').trigger('paymentDone');
       OB.UTIL.SynchronizationHelper.finished(synchId, "modalDialogButtonTap");
     }, error);
