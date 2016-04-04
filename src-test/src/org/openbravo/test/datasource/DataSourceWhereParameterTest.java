@@ -51,7 +51,7 @@ public class DataSourceWhereParameterTest extends BaseDataSourceTestDal {
   private static final String ALERT_EXPECTED_VALUE = "D0CB68A7ADDD462E8B46438E2B9F58F6";
   private static final String CUSTOM_QUERY_SELECTOR_EXPECTED_VALUE = "C0D9FAD1047343BAA53AF6F60D572DD0";
   private static final String PRODUCT_SELECTOR_DATASOURCE_EXPECTED_VALUE = "B2D40D8A5D644DD89E329DC29730905541732EFCA6374148BFD8B08C8B12DB73";
-  private static final String RETURN_FROM_CUSTOMER_EXPECTED_VALUE = "279997DFE0D74C72AC983E1F346CE6B9";
+  private static final String RETURN_FROM_CUSTOMER_EXPECTED_VALUE = "DA7FC1BB3BA44EC48EC1AB9C74168CED";
 
   // Unexpected
 
@@ -59,7 +59,7 @@ public class DataSourceWhereParameterTest extends BaseDataSourceTestDal {
   private static final String ALERT_UNEXPECTED_VALUE = "D938304218B6405F8B2665D5E77A3EE4";
   private static final String CUSTOM_QUERY_SELECTOR_UNEXPECTED_VALUE = "369"; // The "<" symbol
   private static final String PRODUCT_SELECTOR_DATASOURCE_UNEXPECTED_VALUE = "3DBB480253094C99A4408923F69806D7"; // Electricity
-  private static final String RETURN_FROM_CUSTOMER_UNEXPECTED_VALUE = "8F71AF46474240E6915F7F0458DE2318"; // Naranja
+  private static final String RETURN_FROM_CUSTOMER_UNEXPECTED_VALUE = "61047A6B06B3452B85260C7BCF08E78D"; // Naranja
                                                                                                           // BIO
   private static final String TABLE_ID = "105";
   private static final String RECORD_ID = "283";
@@ -74,16 +74,22 @@ public class DataSourceWhereParameterTest extends BaseDataSourceTestDal {
     User("ADUser", USER_EXPECTED_VALUE, USER_UNEXPECTED_VALUE, false,
         new HashMap<String, String>() {
           {
+
             put("_noCount", "true");
-            put("isFilterApplied", "true");
+            put("@ADUser.id@", "null");
+            put("@ADUser.client@", "null");
+            put("@ADUser.organization@", "null");
+            put("isImplicitFilterApplied", "true");
             put("isSorting", "true");
             put("_selectedProperties",
                 "id,client,organization,updatedBy,updated,creationDate,createdBy,name,processNow,id,client,organization,processNow,name,username,firstName,lastName,password,description,active,businessPartner,partnerAddress,email,locked,position,birthday,phone,alternativePhone,fax,emailServerUsername,emailServerPassword,supervisor,defaultRole,defaultLanguage,defaultClient,defaultOrganization,defaultWarehouse");
             put("windowId", "108");
             put("tabId", "118");
             put("moduleId", "0");
+            put("_operationType", "fetch");
             put("_noActiveFilter", "true");
             put("sendOriginalIDBack", "true");
+            put("_extraProperties", "");
             put("_className", "OBViewDataSource");
             put("Constants_FIELDSEPARATOR", "$");
             put("Constants_IDENTIFIER", "_identifier");
@@ -91,8 +97,8 @@ public class DataSourceWhereParameterTest extends BaseDataSourceTestDal {
             put("_endRow", "100");
             put("_sortBy", "name");
             put("_textMatchStyle", "substring");
-            put("_componentId", "isc_OBViewGrid_0");
-            put("_dataSource", "isc_OBViewDataSource_0");
+            put("_componentId", "isc_OBViewGrid_1");
+            put("_dataSource", "isc_OBViewDataSource_2");
             put("isc_metaDataPrefix", "_");
             put("isc_dataFormat", "json");
           }
@@ -388,10 +394,11 @@ public class DataSourceWhereParameterTest extends BaseDataSourceTestDal {
         RETURN_FROM_CUSTOMER_EXPECTED_VALUE, RETURN_FROM_CUSTOMER_UNEXPECTED_VALUE, false,
         new HashMap<String, String>() {
           {
-            put("@Order.id@", "8A71B73E636447C69D805A7B0F9039BA");
+            put("@Order.id@", "92644722004243F9A4831438E33E9878");
             put("@Order.client@", "23C59575B9CF467C9620760EB255B389");
             put("@Order.documentType@", "0");
             put("@Order.deliveryMethod@", "P");
+            put("@Order.shippingCompany@", "null");
             put("@Order.processed@", "false");
             put("@Order.freightCostRule@", "I");
             put("@Order.salesTransaction@", "true");
@@ -403,10 +410,30 @@ public class DataSourceWhereParameterTest extends BaseDataSourceTestDal {
             put("@Order.priceList@", "AEE66281A08F42B6BC509B8A80A33C29");
             put("@Order.documentStatus@", "DR");
             put("@Order.currency@", "102");
+            put("OriginalOrderInvoiced", "0");
+            put("DOCBASETYPE", "SOO");
+            put("ORDERTYPE", "SO");
+            put("orphanlinesnumber", "0");
+            put("isReturnMaterial", "Y");
+            put("inpiscashvat", "N");
+            put("$Element_U1_ARR_H", "N");
+            put("$Element_PJ_ARR_H", "Y");
+            put("$Element_U1_POO_H", "N");
+            put("$Element_U2_APP_H", "N");
+            put("$Element_PJ_POO_H", "Y");
+            put("$Element_U2_ARR_H", "N");
+            put("$Element_PJ_SOO_H", "Y");
+            put("$IsAcctDimCentrally", "Y");
+            put("$Element_U1_APP_H", "N");
+            put("$Element_PJ", "Y");
+            put("$Element_U2_SOO_H", "N");
+            put("$Element_U1_SOO_H", "N");
+            put("$Element_PJ_APP_H", "Y");
+            put("$Element_U2_POO_H", "N");
             put("_org", "E443A31992CB4635AFCAEABE7183CE85");
             put("_orderBy", "obSelected desc, io.movementDate desc, io.documentNo desc, iol.lineNo");
             put("_noCount", "true");
-            put("isFilterApplied", "true");
+            put("isImplicitFilterApplied", "true");
             put("tableId", "CDB9DC9655F24DF8AB41AA0ADBD04390");
             put("_className", "OBPickAndExecuteDataSource");
             put("Constants_FIELDSEPARATOR", "$");
@@ -414,9 +441,12 @@ public class DataSourceWhereParameterTest extends BaseDataSourceTestDal {
             put("tabId", "B01BFDF1E6B24CF4941807CA7F77A073");
             put("buttonOwnerViewTabId", "AF4090093CFF1431E040007F010048A5");
             put("_isPickAndEdit", "true");
+            put("_operationType", "fetch");
             put("_startRow", "0");
             put("_endRow", "100");
             put("_textMatchStyle", "substring");
+            put("_componentId", "isc_OBPickAndExecuteGrid_0");
+            put("_dataSource", "isc_OBPickAndExecuteDataSource_0");
             put("isc_metaDataPrefix", "_");
             put("isc_dataFormat", "json");
           }
@@ -454,26 +484,9 @@ public class DataSourceWhereParameterTest extends BaseDataSourceTestDal {
   @Parameters(name = "{0} datasource: {1}")
   public static Collection<Object[]> parameters() {
     List<Object[]> tests = new ArrayList<Object[]>();
-    tests.add(new Object[] { DataSource.Alert, DataSource.Alert.expected,
-        DataSource.Alert.unexpected });
-    tests
-        .add(new Object[] { DataSource.ActionRegardingSelector,
-            DataSource.ActionRegardingSelector.expected,
-            DataSource.ActionRegardingSelector.unexpected });
-    tests.add(new Object[] { DataSource.ProductSelectorDataSource,
-        DataSource.ProductSelectorDataSource.expected,
-        DataSource.ProductSelectorDataSource.unexpected });
-    tests.add(new Object[] { DataSource.ReturnFromCustomersPickAndExecute,
-        DataSource.ReturnFromCustomersPickAndExecute.expected,
-        DataSource.ReturnFromCustomersPickAndExecute.unexpected });
-    tests
-        .add(new Object[] { DataSource.User, DataSource.User.expected, DataSource.User.unexpected });
-    tests
-        .add(new Object[] { DataSource.Note, DataSource.Note.expected, DataSource.Note.unexpected });
-    tests.add(new Object[] { DataSource.QuickCreate, DataSource.QuickCreate.expected,
-        DataSource.QuickCreate.unexpected });
-    tests.add(new Object[] { DataSource.QuickLaunch, DataSource.QuickLaunch.expected,
-        DataSource.QuickLaunch.unexpected });
+    for (DataSource t : DataSource.values()) {
+      tests.add(new Object[] { t, t.expected, t.unexpected });
+    }
 
     return tests;
   }
@@ -485,7 +498,7 @@ public class DataSourceWhereParameterTest extends BaseDataSourceTestDal {
     if (!datasource.onlySuccessAssert) {
       if ("3C1148C0AB604DE1B51B7EA4112C325F".equals(datasource.ds)
           || "ADUser".equals(datasource.ds)) {
-        datasource.params.put("isFilterApplied", "true");
+        datasource.params.put("isImplicitFilterApplied", "true");
         String datasourceResponseFilterTrue = getDataSourceResponse();
         expectedRecordId = isValueInTheResponseData(datasource.expected,
             datasourceResponseFilterTrue);
@@ -493,7 +506,7 @@ public class DataSourceWhereParameterTest extends BaseDataSourceTestDal {
             datasourceResponseFilterTrue);
         assertThat(expectedRecordId, is(true));
         assertThat(unexpectedRecordId, is(false));
-        datasource.params.put("isFilterApplied", "false");
+        datasource.params.put("isImplicitFilterApplied", "false");
         String datasourceResponseFilterFalse = getDataSourceResponse();
         expectedRecordId = isValueInTheResponseData(datasource.expected,
             datasourceResponseFilterFalse);
@@ -515,7 +528,7 @@ public class DataSourceWhereParameterTest extends BaseDataSourceTestDal {
   @Test
   public void datasourceWithManualWhereParameter() throws Exception {
     if (!datasource.onlySuccessAssert && !"DB9F062472294F12A0291A7BD203F922".equals(datasource.ds)) {
-      datasource.params.put("isFilterApplied", "true");
+      datasource.params.put("isImplicitFilterApplied", "true");
       datasource.params.put("_where", MANUAL_WHERE);
       String datasourceResponseWhereTrue = getDataSourceResponse();
       JSONObject jsonResponse = new JSONObject(datasourceResponseWhereTrue);
