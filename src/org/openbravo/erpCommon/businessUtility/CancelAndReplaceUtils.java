@@ -787,7 +787,7 @@ public class CancelAndReplaceUtils {
             if (replaceOrder) {
               TriggerHandler.getInstance().enable();
             }
-            FIN_PaymentProcess.doProcessPayment(newPayment, "P", true, null, null);
+            FIN_PaymentProcess.doProcessPayment(newPayment, "P", null, null);
             if (replaceOrder) {
               TriggerHandler.getInstance().disable();
             }
@@ -913,7 +913,7 @@ public class CancelAndReplaceUtils {
     if (replaceOrder) {
       TriggerHandler.getInstance().enable();
     }
-    FIN_PaymentProcess.doProcessPayment(newPayment, "P", true, null, null);
+    FIN_PaymentProcess.doProcessPayment(newPayment, "P", null, null);
     if (replaceOrder) {
       TriggerHandler.getInstance().disable();
     }
