@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -69,7 +69,14 @@ public class ApplicationComponent extends BaseTemplateComponent {
 
   @SuppressWarnings("unchecked")
   public Map<String, String> getFormats() {
-    return (HashMap<String, String>) RequestContext.get().getSessionAttribute("#formatMap");
+    RequestContext rc = RequestContext.get();
+
+    if (rc.getRequest() != null) {
+      return (HashMap<String, String>) rc.getSessionAttribute("#formatMap");
+    } else {
+      // when generating components in testing, there is no request, so let's mock it
+      return new HashMap<String, String>();
+    }
   }
 
   public boolean isTestEnvironment() {

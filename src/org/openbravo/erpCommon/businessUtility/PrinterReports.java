@@ -62,7 +62,13 @@ public class PrinterReports extends HttpSecureAppServlet {
       String strHiddenValue = vars.getGlobalVariable("inphiddenvalue", strWindowId + "|"
           + strKeyColumnId);
       String strIsDirectPDF = vars.getStringParameter("inpIsDirectPDF");
-      Window window = OBDal.getInstance().get(Window.class, strWindowId);
+      Window window;
+      try {
+        OBContext.setAdminMode(true);
+        window = OBDal.getInstance().get(Window.class, strWindowId);
+      } finally {
+        OBContext.restorePreviousMode();
+      }
       String strIsDirectAttach = vars.getStringParameter("inpIsDirectAttach");
       if ("printButton".equals(strButtonType)) {
         String directAttachPref = isDirectAttach(OBContext.getOBContext(), window);

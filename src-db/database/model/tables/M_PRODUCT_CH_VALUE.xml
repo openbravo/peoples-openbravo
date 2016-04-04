@@ -60,6 +60,9 @@
       <foreign-key foreignTable="M_PRODUCT" name="M_PRODUCT_CH_VALUE_M_PRODUCT">
         <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
       </foreign-key>
+      <index name="M_PRODUCT_CH_VALUE_CHAR_ID" unique="false">
+        <index-column name="M_CHARACTERISTIC_ID"/>
+      </index>
       <index name="M_PRODUCT_CH_VALUE_VALUE" unique="true">
         <index-column name="M_PRODUCT_ID"/>
         <index-column name="M_CH_VALUE_ID"/>

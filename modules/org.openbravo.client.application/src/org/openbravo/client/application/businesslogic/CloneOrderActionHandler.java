@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2011-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2011-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  Mallikarjun M
  ************************************************************************
@@ -60,7 +60,6 @@ public class CloneOrderActionHandler extends BaseActionHandler {
       User currentUser = OBContext.getOBContext().getUser();
       Order objOrder = OBDal.getInstance().get(Order.class, orderId);
       Order objCloneOrder = (Order) DalUtil.copy(objOrder, false);
-      BigDecimal bLineNetAmt = getLineNetAmt(orderId);
 
       objCloneOrder.setDocumentAction("CO");
       objCloneOrder.setDocumentStatus("DR");
@@ -87,12 +86,11 @@ public class CloneOrderActionHandler extends BaseActionHandler {
       cal.set(Calendar.MILLISECOND, 0);
       objCloneOrder.setOrderDate(cal.getTime());
       objCloneOrder.setScheduledDeliveryDate(cal.getTime());
+      objCloneOrder.setGrandTotalAmount(BigDecimal.ZERO);
+      objCloneOrder.setSummedLineAmount(BigDecimal.ZERO);
 
       // save the cloned order object
       OBDal.getInstance().save(objCloneOrder);
-
-      objCloneOrder.setSummedLineAmount(objCloneOrder.getSummedLineAmount().subtract(bLineNetAmt));
-      objCloneOrder.setGrandTotalAmount(objCloneOrder.getGrandTotalAmount().subtract(bLineNetAmt));
 
       // get the lines associated with the order and clone them to the new
       // order line.
