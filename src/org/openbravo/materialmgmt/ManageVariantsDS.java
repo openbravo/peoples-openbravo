@@ -65,13 +65,10 @@ public class ManageVariantsDS extends ReadOnlyDataSourceService {
     final OBContext obContext = OBContext.getOBContext();
     Entity entityManageVariants = ModelProvider.getInstance().getEntityByTableId(
         MANAGE_VARIANTS_TABLE_ID);
-    OBContext.setAdminMode();
     try {
       obContext.getEntityAccessChecker().checkReadableAccess(entityManageVariants);
     } catch (OBSecurityException e) {
       handleExceptionUnsecuredDSAccess(e);
-    } finally {
-      OBContext.restorePreviousMode();
     }
   }
 

@@ -45,7 +45,6 @@ public class SelectorFieldPropertyDataSource extends ModelDataSourceService {
   public void checkFetchDatasourceAccess(Map<String, String> parameter) {
     final OBContext obContext = OBContext.getOBContext();
     final String tabId = parameter.get(TAB_ID);
-    OBContext.setAdminMode();
     try {
       final Entity entity = ModelProvider.getInstance().getEntityByTableId(tabId);
       if (entity != null) {
@@ -53,8 +52,6 @@ public class SelectorFieldPropertyDataSource extends ModelDataSourceService {
       }
     } catch (OBSecurityException e) {
       handleExceptionUnsecuredDSAccess(e);
-    } finally {
-      OBContext.restorePreviousMode();
     }
   }
 

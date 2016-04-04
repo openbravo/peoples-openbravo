@@ -132,7 +132,6 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
   public void checkFetchDatasourceAccess(Map<String, String> parameter) {
     final OBContext obContext = OBContext.getOBContext();
     Table table = getTableFromParameters(parameter);
-    OBContext.setAdminMode();
     try {
       Entity entity = ModelProvider.getInstance().getEntityByTableId(table.getId());
       if (entity != null) {
@@ -140,8 +139,6 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
       }
     } catch (OBSecurityException e) {
       handleExceptionUnsecuredDSAccess(e);
-    } finally {
-      OBContext.restorePreviousMode();
     }
   }
 

@@ -318,7 +318,6 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
   public void checkFetchDatasourceAccess(Map<String, String> parameter) {
     final OBContext obContext = OBContext.getOBContext();
     String tableId = parameter.get("referencedTableId");
-    OBContext.setAdminMode();
     try {
       Entity treeEntity = ModelProvider.getInstance().getEntityByTableId(tableId);
       if (treeEntity != null) {
@@ -326,8 +325,6 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
       }
     } catch (OBSecurityException e) {
       handleExceptionUnsecuredDSAccess(e);
-    } finally {
-      OBContext.restorePreviousMode();
     }
   }
 

@@ -120,15 +120,12 @@ public class ProductCharacteristicsDS extends DefaultDataSourceService {
   @Override
   public void checkFetchDatasourceAccess(Map<String, String> parameter) {
     final OBContext obContext = OBContext.getOBContext();
-    OBContext.setAdminMode();
     try {
       Entity entityToCheck = ModelProvider.getInstance().getEntityByTableId(
           PRODUCT_CHARACTERISTICS_TABLE_ID);
       obContext.getEntityAccessChecker().checkReadableAccess(entityToCheck);
     } catch (OBSecurityException e) {
       handleExceptionUnsecuredDSAccess(e);
-    } finally {
-      OBContext.restorePreviousMode();
     }
   }
 

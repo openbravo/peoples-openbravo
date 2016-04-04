@@ -159,7 +159,6 @@ public abstract class BaseDataSourceService implements DataSourceService {
         String tableId = parameters.get("inpTableId");
         String targetPropertyName = parameters.get(SelectorConstants.PARAM_TARGET_PROPERTY_NAME);
         if (StringUtils.isNotBlank(targetPropertyName)) {
-          OBContext.setAdminMode();
           try {
             Entity parentEntity = ModelProvider.getInstance().getEntityByTableId(tableId);
             Property p = parentEntity.getProperty(targetPropertyName);
@@ -169,8 +168,6 @@ public abstract class BaseDataSourceService implements DataSourceService {
             }
           } catch (OBSecurityException e) {
             handleExceptionUnsecuredDSAccess(e);
-          } finally {
-            OBContext.restorePreviousMode();
           }
         }
       }

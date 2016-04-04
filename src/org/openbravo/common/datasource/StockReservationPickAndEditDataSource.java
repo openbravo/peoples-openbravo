@@ -101,7 +101,6 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
   @Override
   public void checkFetchDatasourceAccess(Map<String, String> parameter) {
     final OBContext obContext = OBContext.getOBContext();
-    OBContext.setAdminMode();
     try {
       Entity entityToCheck = ModelProvider.getInstance().getEntityByTableId(AD_TABLE_ID);
       if (entityToCheck != null) {
@@ -109,8 +108,6 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
       }
     } catch (OBSecurityException e) {
       handleExceptionUnsecuredDSAccess(e);
-    } finally {
-      OBContext.restorePreviousMode();
     }
   }
 
