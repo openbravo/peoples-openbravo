@@ -37,6 +37,7 @@ import org.openbravo.test.webservice.WSAddRecordWithComputedColumns;
 import org.openbravo.test.webservice.WSReadTest;
 import org.openbravo.test.webservice.WSUpdateTest;
 import org.openbravo.test.webservice.WebServicesWithNoActiveFilterTest;
+import org.openbravo.test.datasource.DataSourceWhereParameterTest;
 
 /**
  * This test suite should only contain test cases which are to run the webservices included in core.
@@ -62,6 +63,7 @@ WSReadTest.class, //
     TestAllowUnpagedDatasourcePreference.class, //
     TestNoteDatasource.class, //
     WebServicesWithNoActiveFilterTest.class, //
-    ExtendedNavigationModelTest.class })
+    ExtendedNavigationModelTest.class, //
+    DataSourceWhereParameterTest.class })
 public class AllWebserviceTests {
 }
