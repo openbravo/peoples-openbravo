@@ -33,6 +33,8 @@ public class PaidReceiptsPaymentsProperties extends ModelExtension {
         add(new HQLProperty("to_char(finPayment.obposPaymentdata)", "paymentData"));
         add(new HQLProperty("reversedPayment.id", "reversedPaymentId"));
         add(new HQLProperty("finPayment.documentNo", "documentNo"));
+        add(new HQLProperty("obposAppCashup.id", "cashup"));
+        add(new HQLProperty("oBPOSPOSTerminal.id", "posTerminal"));
       }
     };
 

@@ -2858,6 +2858,10 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         reversedPayment.setReversedPayment(finPayment);
         OBDal.getInstance().save(reversedPayment);
       }
+      finPayment.setObposAppCashup(payment.has("obposAppCashup") ? OBDal.getInstance().get(
+          OBPOSAppCashup.class, payment.getString("obposAppCashup")) : null);
+      finPayment.setOBPOSPOSTerminal(payment.has("oBPOSPOSTerminal") ? OBDal.getInstance().get(
+          OBPOSApplications.class, payment.getString("oBPOSPOSTerminal")) : null);
 
       OBDal.getInstance().save(finPayment);
 
