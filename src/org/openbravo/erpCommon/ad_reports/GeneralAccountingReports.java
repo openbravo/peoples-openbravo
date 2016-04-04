@@ -550,7 +550,7 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
 
     String strOrgList = "";
     OBContext.setAdminMode();
-    String[] orgList = OBContext.getOBContext().getRole().getOrganizationList().split(",");
+    List<String> orgList = getRoleOrganization(OBContext.getOBContext().getRole().getId());
     OBContext.restorePreviousMode();
     int i = 0;
     for (String org : orgList) {
@@ -583,4 +583,15 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
   public String getServletInfo() {
     return "Servlet GeneralAccountingReportsData";
   } // end of getServletInfo() method
+
+  public List<String> getRoleOrganization(String strRoleId) {
+    List<String> organizationList = new ArrayList<String>();
+    String hqlString = "select organization.id from ADRoleOrganization where role.id = :roleId";
+    Query query = OBDal.getInstance().getSession().createQuery(hqlString);
+    query.setParameter("roleId", strRoleId);
+    if (!query.list().isEmpty()) {
+      organizationList = query.list();
+    }
+    return organizationList;
+  }
 }
