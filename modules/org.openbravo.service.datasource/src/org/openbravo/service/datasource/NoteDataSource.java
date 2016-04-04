@@ -30,6 +30,7 @@ import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.structure.OrganizationEnabled;
 import org.openbravo.client.application.Note;
+import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.security.SecurityChecker;
 import org.openbravo.dal.service.OBDal;
@@ -73,14 +74,14 @@ public class NoteDataSource extends DefaultDataSourceService {
   public void checkEditDatasourceAccess(Map<String, String> parameter) {
     String operationType = parameter.get(DataSourceConstants.OPERATION_TYPE_PARAM);
     if (StringUtils.isNotBlank(operationType)
-        && operationType.equals(DataSourceConstants.REMOVE_OPERATION)) {
+        && DataSourceConstants.REMOVE_OPERATION.equals(operationType)) {
       // Removing a Note: Remove operation type
       OBContext.setAdminMode(false);
       try {
         String noteId = parameter.get("id");
         Note note = OBDal.getInstance().get(Note.class, noteId);
         Table table = note.getTable();
-        String tableId = table.getId();
+        String tableId = (String) DalUtil.getId(table);
         String recordId = note.getRecord();
         readableAccesForUser(tableId, recordId);
       } catch (Exception ex) {
