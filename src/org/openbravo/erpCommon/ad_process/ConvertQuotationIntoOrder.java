@@ -49,14 +49,11 @@ import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderDiscount;
 import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.common.order.OrderLineOffer;
-import org.openbravo.model.financialmgmt.payment.FIN_PaymentSchedule;
-import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
 import org.openbravo.model.financialmgmt.tax.TaxRate;
 import org.openbravo.model.pricing.pricelist.PriceListVersion;
 import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.service.db.CallStoredProcedure;
 import org.openbravo.service.db.DalBaseProcess;
-import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.db.DbUtility;
 
 public class ConvertQuotationIntoOrder extends DalBaseProcess {
@@ -74,8 +71,6 @@ public class ConvertQuotationIntoOrder extends DalBaseProcess {
       String orderId = (String) bundle.getParams().get("C_Order_ID");
       Order objOrder = OBDal.getInstance().get(Order.class, orderId);
       Order objCloneOrder = (Order) DalUtil.copy(objOrder, false);
-      boolean update = false;
-      BigDecimal Zero = BigDecimal.ZERO;
 
       if (FIN_Utility.isBlockedBusinessPartner(objOrder.getBusinessPartner().getId(), true, 1)) {
         // If the Business Partner is blocked, the Order should not be completed.
@@ -357,49 +352,6 @@ public class ConvertQuotationIntoOrder extends DalBaseProcess {
   }
 
   /**
-   * Update storage details
-   */
-  private void callUpdateStoragePending(Order objCloneOrder, OrderLine objCloneOrderLine) {
-    BigDecimal qtySo = BigDecimal.ZERO;
-    BigDecimal qtyOrderSo = BigDecimal.ZERO;
-    String productUom = null;
-    try {
-      final List<Object> parameters = new ArrayList<Object>();
-      parameters.add(objCloneOrder.getClient().getId());
-      parameters.add(objCloneOrder.getOrganization().getId());
-      parameters.add(objCloneOrder.getUpdatedBy().getId());
-      parameters.add(objCloneOrderLine.getProduct().getId());
-      parameters.add(objCloneOrderLine.getWarehouse().getId());
-      parameters.add(objCloneOrderLine.getAttributeSetValue() != null ? objCloneOrderLine
-          .getAttributeSetValue().getId() : null);
-      parameters.add(objCloneOrderLine.getUOM().getId());
-      productUom = objCloneOrderLine.getOrderUOM() != null ? objCloneOrderLine.getOrderUOM()
-          .getId() : null;
-      parameters.add(productUom);
-      if (objCloneOrderLine.isDirectShipment()) {
-        qtySo = BigDecimal.ZERO;
-      } else {
-        qtySo = objCloneOrderLine.getOrderedQuantity();
-      }
-      qtySo = qtySo.subtract(objCloneOrderLine.getReservedQuantity());
-      qtySo = qtySo.subtract(objCloneOrderLine.getDeliveredQuantity());
-      parameters.add(qtySo);
-      qtyOrderSo = objCloneOrderLine.getOrderQuantity();
-      parameters.add(qtyOrderSo);
-      parameters.add(BigDecimal.ZERO); // PO quantity
-      parameters.add(null);
-      final String procedureName = "m_update_storage_pending";
-      CallStoredProcedure.getInstance().call(procedureName, parameters, null, true, false);
-
-      // update orderline
-      objCloneOrderLine.setReservedQuantity(objCloneOrderLine.getReservedQuantity().add(qtySo));
-
-    } catch (Exception e) {
-      throw new OBException(e);
-    }
-  }
-
-  /**
    * Get the Current version of a price list
    */
   private String getPriceListVersion(String priceList, String clientId, Date orderDate) {
@@ -504,53 +456,6 @@ public class ConvertQuotationIntoOrder extends DalBaseProcess {
     olDiscount.setProduct(objCloneDiscount.getDiscount().getProduct());
     olDiscount.setDescription(objCloneDiscount.getDiscount().getProduct().getName());
     return olDiscount;
-  }
-
-  /**
-   * Create new Payment Plan for an Order
-   * 
-   * @throws Exception
-   */
-  private FIN_PaymentSchedule generatePaymentPlan(Order order) throws Exception {
-    FIN_PaymentSchedule ps = OBProvider.getInstance().get(FIN_PaymentSchedule.class);
-    ps.setClient(order.getClient());
-    ps.setOrganization(order.getOrganization());
-    ps.setCreatedBy(order.getCreatedBy());
-    ps.setCreationDate(new Date());
-    ps.setUpdatedBy(order.getUpdatedBy());
-    ps.setUpdated(new Date());
-    ps.setInvoice(null);
-    ps.setOrder(order);
-    ps.setCurrency(order.getCurrency());
-    if (order.getPaymentMethod() == null) {
-      throw new Exception(OBMessageUtils.messageBD(new DalConnectionProvider(),
-          "APRM_PAYMENTMETHOD_MISSING", OBContext.getOBContext().getLanguage().getLanguage()));
-    }
-    ps.setFinPaymentmethod(order.getPaymentMethod());
-    ps.setAmount(order.getGrandTotalAmount());
-    ps.setDueDate(order.getOrderDate());
-    ps.setExpectedDate(order.getOrderDate());
-    ps.setOutstandingAmount(order.getGrandTotalAmount());
-    ps.setFINPaymentPriority(order.getFINPaymentPriority());
-    return ps;
-  }
-
-  /**
-   * Create a new Payment Schedule Detail for a Payment Plan line
-   */
-  private FIN_PaymentScheduleDetail generatePaymentPlanDetails(Order order, FIN_PaymentSchedule ps) {
-    FIN_PaymentScheduleDetail psd = OBProvider.getInstance().get(FIN_PaymentScheduleDetail.class);
-    psd.setClient(order.getClient());
-    psd.setOrganization(order.getOrganization());
-    psd.setCreatedBy(order.getCreatedBy());
-    psd.setCreationDate(new Date());
-    psd.setUpdatedBy(order.getUpdatedBy());
-    psd.setUpdated(new Date());
-    psd.setOrderPaymentSchedule(ps);
-    psd.setInvoicePaymentSchedule(null);
-    psd.setPaymentDetails(null);
-    psd.setAmount(ps.getAmount());
-    return psd;
   }
 
   /**
