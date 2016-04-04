@@ -1997,18 +1997,36 @@
       // remove the line
       finishDelete();
     },
-    getStoreStock: function (p, callback) {
+    getStoreStock: function (p, qty, callback) {
       var serverCallStoreDetailedStock = new OB.DS.Process('org.openbravo.retail.posterminal.stock.StoreDetailedStock'),
-          me = this;
+          me = this,
+          i, lines = OB.MobileApp.model.receipt.get('lines'),
+          existLine = false;
       serverCallStoreDetailedStock.exec({
         organization: OB.MobileApp.model.get('terminal').organization,
         product: p.get('id')
       }, function (data) {
         if (data && data.exception) {
           OB.UTIL.showConfirmation.display('', data.exception.message);
-        } else if (data && data.qty <= 0) {
+        } else if (data && data.qty < 1) {
           OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_ErrorProductDiscontinued'));
           callback(false);
+        } else if (lines.length > 0) {
+          for (i = 0; i < lines.length; i++) {
+            if (lines.models[i].get('product').get('id') === p.get('id')) {
+              existLine = true;
+              if ((lines.models[i].get('qty') + qty) > data.qty) {
+                OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_ErrorProductDiscontinued'));
+                callback(false);
+              } else {
+                callback(true);
+              }
+              break;
+            }
+          }
+          if (!existLine) {
+            callback(true);
+          }
         } else {
           callback(true);
         }
@@ -2281,7 +2299,7 @@
           execPostAddProductToOrderHook();
         }
         if (p.get('isdiscontinued') || p.get('issalediscontinued')) {
-          me.getStoreStock(p, function (hasStock) {
+          me.getStoreStock(p, qty, function (hasStock) {
             if (hasStock) {
               continueSaving(p);
             }

@@ -146,15 +146,23 @@ enyo.kind({
           if (_.isNaN(value)) {
             return true;
           } else {
-            me.doAddProduct({
-              product: keyboard.line.get('product'),
-              qty: value,
-              options: {
-                line: keyboard.line,
-                blockAddProduct: true
-              }
-            });
-            keyboard.receipt.trigger('scan');
+            if (keyboard.line.get('product').get('isdiscontinued') || keyboard.line.get('product').get('issalediscontinued')) {
+              me.receipt.getStoreStock(keyboard.line.get('product'), value, function (hasStock) {
+                if (hasStock) {
+                  me.doAddProduct({
+                    product: keyboard.line.get('product'),
+                    qty: value,
+                    options: {
+                      line: keyboard.line,
+                      blockAddProduct: true
+                    }
+                  });
+                  keyboard.receipt.trigger('scan');
+                }
+              });
+            } else {
+              return true;
+            }
           }
         }
         };
