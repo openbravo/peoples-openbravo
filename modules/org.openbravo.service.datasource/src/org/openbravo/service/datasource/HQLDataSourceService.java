@@ -139,7 +139,7 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
         obContext.getEntityAccessChecker().checkReadableAccess(entity);
       }
     } catch (OBSecurityException e) {
-      handlerExceptionUnsecuredDSAccess(e);
+      handleExceptionUnsecuredDSAccess(e);
     } finally {
       OBContext.restorePreviousMode();
     }

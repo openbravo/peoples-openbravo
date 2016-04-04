@@ -108,7 +108,7 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
         obContext.getEntityAccessChecker().checkReadableAccess(entityToCheck);
       }
     } catch (OBSecurityException e) {
-      handlerExceptionUnsecuredDSAccess(e);
+      handleExceptionUnsecuredDSAccess(e);
     } finally {
       OBContext.restorePreviousMode();
     }

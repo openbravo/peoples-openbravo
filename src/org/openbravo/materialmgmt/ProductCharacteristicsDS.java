@@ -126,7 +126,7 @@ public class ProductCharacteristicsDS extends DefaultDataSourceService {
           PRODUCT_CHARACTERISTICS_TABLE_ID);
       obContext.getEntityAccessChecker().checkReadableAccess(entityToCheck);
     } catch (OBSecurityException e) {
-      handlerExceptionUnsecuredDSAccess(e);
+      handleExceptionUnsecuredDSAccess(e);
     } finally {
       OBContext.restorePreviousMode();
     }

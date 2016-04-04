@@ -55,7 +55,6 @@ public abstract class BaseDataSourceService implements DataSourceService {
   private Entity entity;
   private DataSource dataSource;
   private List<DataSourceProperty> dataSourceProperties = new ArrayList<DataSourceProperty>();
-  private final String ALLOW_UNSECURED_DS_REQUEST = "OBSERDS_AllowUnsecuredDatasourceRequest";
 
   @Inject
   private CachedPreference cachedPreference;
@@ -134,7 +133,7 @@ public abstract class BaseDataSourceService implements DataSourceService {
       try {
         obContext.getEntityAccessChecker().checkWritableAccess(entityToCheck);
       } catch (OBSecurityException e) {
-        handlerExceptionUnsecuredDSAccess(e);
+        handleExceptionUnsecuredDSAccess(e);
       }
     }
   }
@@ -152,7 +151,7 @@ public abstract class BaseDataSourceService implements DataSourceService {
           try {
             obContext.getEntityAccessChecker().checkDerivedAccess(entityToCheck);
           } catch (OBSecurityException e) {
-            handlerExceptionUnsecuredDSAccess(e);
+            handleExceptionUnsecuredDSAccess(e);
           }
         }
       } else {
@@ -169,7 +168,7 @@ public abstract class BaseDataSourceService implements DataSourceService {
               obContext.getEntityAccessChecker().checkDerivedAccess(entitySelector);
             }
           } catch (OBSecurityException e) {
-            handlerExceptionUnsecuredDSAccess(e);
+            handleExceptionUnsecuredDSAccess(e);
           } finally {
             OBContext.restorePreviousMode();
           }
@@ -179,13 +178,14 @@ public abstract class BaseDataSourceService implements DataSourceService {
       try {
         obContext.getEntityAccessChecker().checkReadableAccess(entityToCheck);
       } catch (OBSecurityException e) {
-        handlerExceptionUnsecuredDSAccess(e);
+        handleExceptionUnsecuredDSAccess(e);
       }
     }
   }
 
-  protected void handlerExceptionUnsecuredDSAccess(OBSecurityException securityException) {
-    if (!"Y".equals(cachedPreference.getPreferenceValue(ALLOW_UNSECURED_DS_REQUEST))) {
+  protected void handleExceptionUnsecuredDSAccess(OBSecurityException securityException) {
+    if (!"Y".equals(cachedPreference
+        .getPreferenceValue(CachedPreference.ALLOW_UNSECURED_DS_REQUEST))) {
       throw new OBSecurityException(securityException);
     } else {
       log.warn(securityException.getMessage() + " but in fact it is being allowed access.");

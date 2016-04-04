@@ -99,7 +99,7 @@ public class EntityAccessChecker implements OBNotSingleton {
   // the derived entities from process only contains the entities which are
   // derived from process definition
   private Set<Entity> derivedEntitiesFromProcess = new HashSet<Entity>();
-  private Set<String> Processes = new HashSet<String>();
+  private Set<String> processes = new HashSet<String>();
   private Set<Entity> nonReadableEntities = new HashSet<Entity>();
   private boolean isInitialized = false;
 
@@ -215,8 +215,8 @@ public class EntityAccessChecker implements OBNotSingleton {
         final List<String> processAccessButtons = SessionHandler.getInstance()
             .createQuery(processButStr).list();
         for (String processButton : processAccessButtons) {
-          if (!Processes.contains(processButton)) {
-            Processes.add(processButton);
+          if (!processes.contains(processButton)) {
+            processes.add(processButton);
             // addEntitiesFromProcess(processButton);
           }
         }
@@ -229,8 +229,8 @@ public class EntityAccessChecker implements OBNotSingleton {
         final List<String> processAccessSelectors = SessionHandler.getInstance()
             .createQuery(processSelStr).list();
         for (String processSelector : processAccessSelectors) {
-          if (!Processes.contains(processSelector)) {
-            Processes.add(processSelector);
+          if (!processes.contains(processSelector)) {
+            processes.add(processSelector);
           }
         }
       }
@@ -242,8 +242,8 @@ public class EntityAccessChecker implements OBNotSingleton {
       final List<String> processAccessQuery = SessionHandler.getInstance()
           .createQuery(processAccessQryStr).list();
       for (final String processAccess : processAccessQuery) {
-        if (!Processes.contains(processAccess)) {
-          Processes.add(processAccess);
+        if (!processes.contains(processAccess)) {
+          processes.add(processAccess);
         }
       }
 
@@ -320,7 +320,7 @@ public class EntityAccessChecker implements OBNotSingleton {
     log.info("");
     log.info(">>> Processes accessible: ");
     log.info("");
-    dumpSortedProcess(Processes);
+    dumpSortedProcess(processes);
     log.info("");
     log.info("");
 
@@ -488,7 +488,7 @@ public class EntityAccessChecker implements OBNotSingleton {
       return false;
     }
 
-    return Processes.contains(processId);
+    return processes.contains(processId);
   }
 
   public String getRoleId() {
@@ -570,12 +570,12 @@ public class EntityAccessChecker implements OBNotSingleton {
    * references) need also to be granted
    */
   private void addEntitiesFromProcesses() {
-    if (Processes.isEmpty()) {
+    if (processes.isEmpty()) {
       return;
     }
     StringBuilder processesInList = new StringBuilder();
     boolean first = true;
-    for (String p : Processes) {
+    for (String p : processes) {
       if (!first) {
         processesInList.append(", ");
       }

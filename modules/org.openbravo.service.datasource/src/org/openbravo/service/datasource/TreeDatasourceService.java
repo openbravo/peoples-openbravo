@@ -325,7 +325,7 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
         obContext.getEntityAccessChecker().checkReadableAccess(treeEntity);
       }
     } catch (OBSecurityException e) {
-      handlerExceptionUnsecuredDSAccess(e);
+      handleExceptionUnsecuredDSAccess(e);
     } finally {
       OBContext.restorePreviousMode();
     }

@@ -69,7 +69,7 @@ public class ManageVariantsDS extends ReadOnlyDataSourceService {
     try {
       obContext.getEntityAccessChecker().checkReadableAccess(entityManageVariants);
     } catch (OBSecurityException e) {
-      handlerExceptionUnsecuredDSAccess(e);
+      handleExceptionUnsecuredDSAccess(e);
     } finally {
       OBContext.restorePreviousMode();
     }
