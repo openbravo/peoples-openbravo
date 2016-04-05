@@ -80,7 +80,7 @@ public class AccountTree {
     if (reportElements != null && reportElements.length > 0) {
       // forms: Array of accounts with its operands.
       AccountTreeData[] operands = AccountTreeData.selectOperands(conn,
-          Utility.getContext(conn, vars, "#User_Org", "AccountTree"),
+          Utility.getContext(conn, vars, "#AccessibleOrgTree", "AccountTree"),
           Utility.getContext(conn, vars, "#User_Client", "AccountTree"),
           OBDal.getInstance().get(ElementValue.class, reportNodes[0]).getAccountingElement()
               .getId());
@@ -123,7 +123,7 @@ public class AccountTree {
       // Array of accounts with its operands.
       // Calculating forms for every elements
       AccountTreeData[] operands = AccountTreeData.selectOperands(conn,
-          Utility.getContext(conn, vars, "#User_Org", "AccountTree"),
+          Utility.getContext(conn, vars, "#AccessibleOrgTree", "AccountTree"),
           Utility.getContext(conn, vars, "#User_Client", "AccountTree"),
           OBDal.getInstance().get(ElementValue.class, reportNodes[0]).getAccountingElement()
               .getId());
