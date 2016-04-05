@@ -21,6 +21,7 @@ package org.openbravo.test;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
+import org.openbravo.test.datasource.DataSourceWhereParameterTest;
 import org.openbravo.test.datasource.ExtendedNavigationModelTest;
 import org.openbravo.test.datasource.FICTest;
 import org.openbravo.test.datasource.FKDropDownDatasource;
@@ -37,7 +38,6 @@ import org.openbravo.test.webservice.WSAddRecordWithComputedColumns;
 import org.openbravo.test.webservice.WSReadTest;
 import org.openbravo.test.webservice.WSUpdateTest;
 import org.openbravo.test.webservice.WebServicesWithNoActiveFilterTest;
-import org.openbravo.test.datasource.DataSourceWhereParameterTest;
 
 /**
  * This test suite should only contain test cases which are to run the webservices included in core.
@@ -48,7 +48,8 @@ import org.openbravo.test.datasource.DataSourceWhereParameterTest;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
 
-WSReadTest.class, //
+DataSourceWhereParameterTest.class, //
+    WSReadTest.class, //
     WSUpdateTest.class, //
     PerformanceTest.class, //
     WSAddRecordWithComputedColumns.class, //
@@ -63,7 +64,6 @@ WSReadTest.class, //
     TestAllowUnpagedDatasourcePreference.class, //
     TestNoteDatasource.class, //
     WebServicesWithNoActiveFilterTest.class, //
-    ExtendedNavigationModelTest.class, //
-    DataSourceWhereParameterTest.class })
+    ExtendedNavigationModelTest.class })
 public class AllWebserviceTests {
 }
