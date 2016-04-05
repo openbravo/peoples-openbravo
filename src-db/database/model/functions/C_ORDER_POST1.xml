@@ -22,7 +22,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2015 Openbravo SLU
+* All portions are Copyright (C) 2001-2016 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -1258,7 +1258,7 @@
                 WHERE r.m_reservation_id = v_reservation_id
                 GROUP BY r.quantity, r.reservedqty, r.releasedqty, r.res_status;
                 IF (v_quantity != cur_orderline.qtyordered) THEN
-                  IF (cur_orderline.qtyordered < v_allocated) THEN
+                  IF (v_allocated <> 0) THEN
                     RAISE_APPLICATION_ERROR(-20000, '@ThereIsMoreAllocatedQtyThanOrdered@');
                   END IF;
                   IF (cur_orderline.qtyordered < v_releasedqty) THEN

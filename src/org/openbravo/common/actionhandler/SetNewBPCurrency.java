@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2014-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2014-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -262,6 +262,9 @@ public class SetNewBPCurrency extends BaseProcessActionHandler {
                 currency.getStandardPrecision().intValue(), RoundingMode.HALF_UP);
             payment3.setGeneratedCredit(generatedCredit);
             payment3.setUsedCredit(BigDecimal.ZERO);
+            final BigDecimal reverseConvRate = getConversionRate(strOrgId, strToCurrencyId,
+                strFromCurrencyId);
+            payment3.setFinancialTransactionConvertRate(reverseConvRate);
 
             // Create a payment detail to create the credit with a glitem
             FIN_PaymentDetail paymentDetail3 = OBProvider.getInstance()

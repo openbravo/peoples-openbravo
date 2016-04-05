@@ -126,6 +126,7 @@ public abstract class BaseOBObject implements BaseOBObjectDef, Identifiable, Dyn
     if (p.isTranslatable() && OBContext.hasTranslationInstalled()) {
       if (!hasLookedForTrl) {
         hasLookedForTrl = true;
+        OBContext.setAdminMode(true);
         try {
           @SuppressWarnings("unchecked")
           List<BaseOBObject> trl = OBDal.getInstance().getSession()
@@ -157,7 +158,8 @@ public abstract class BaseOBObject implements BaseOBObjectDef, Identifiable, Dyn
             // continue using base language
             log.debug("Error looking for translation of " + p + ". Using base value", t);
           }
-
+        } finally {
+          OBContext.restorePreviousMode();
         }
       }
 
