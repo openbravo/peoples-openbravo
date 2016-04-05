@@ -46,6 +46,7 @@ import org.openbravo.service.json.JsonConstants;
  */
 @RunWith(Parameterized.class)
 public class DataSourceWhereParameterTest extends BaseDataSourceTestDal {
+
   // Expected
 
   private static final String USER_EXPECTED_VALUE = "A530AAE22C864702B7E1C22D58E7B17B";
