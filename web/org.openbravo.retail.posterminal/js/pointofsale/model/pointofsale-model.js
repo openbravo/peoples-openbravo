@@ -661,7 +661,9 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
               OB.UTIL.SynchronizationHelper.finished(synchId, "finishVoidLayaway");
             } else {
               auxReceipt.prepareToSend(function () {
-                OB.UTIL.cashUpReport(auxReceipt);
+                OB.UTIL.cashUpReport(auxReceipt, function () {
+                  OB.UTIL.calculateCurrentCash();
+                });
                 OB.UTIL.SynchronizationHelper.finished(synchId, "finishVoidLayaway");
               });
               OB.Dal.remove(receipt, null, function (tx, err) {
