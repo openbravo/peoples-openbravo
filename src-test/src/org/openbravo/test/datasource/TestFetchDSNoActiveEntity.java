@@ -43,10 +43,20 @@ import org.openbravo.service.json.JsonConstants;
  */
 public class TestFetchDSNoActiveEntity extends BaseDataSourceTestDal {
 
+  private static final String CONTEXT_ROLE = "42D0EEB1C66F497A90DD526DC597E6F0";
+  private static final String CLIENT = "23C59575B9CF467C9620760EB255B389";
+  private static final String AMERICAN_ORGANIZATION = "BAE22373FEBE4CCCA24517E23F0C8A48";
+  private static final String LANGUAGE_ID = "192";
+  private static final String WAREHOUSE_ID = "4D45FE4C515041709047F51D139A21AC";
+
   @Test
   public void fetchNoActiveOrganization() throws Exception {
-    OBContext.setAdminMode();
+    OBContext.setOBContext("100", CONTEXT_ROLE, CLIENT, AMERICAN_ORGANIZATION);
+    OBContext.getOBContext().getRole();
+    OBContext.setAdminMode(false);
     try {
+      changeProfile(CONTEXT_ROLE, LANGUAGE_ID, AMERICAN_ORGANIZATION, WAREHOUSE_ID);
+
       // Fetching an active organization
       JSONObject jsonResponse = doFetchOrg();
       assertThat("Request status", jsonResponse.getInt("status"),
@@ -98,6 +108,7 @@ public class TestFetchDSNoActiveEntity extends BaseDataSourceTestDal {
   @AfterClass
   public static void cleanUp() {
     OBContext.setOBContext("100");
+
     Organization orgTesting = OBDal.getInstance().get(Organization.class,
         "19404EAD144C49A0AF37D54377CF452D");
     orgTesting.setActive(true);
