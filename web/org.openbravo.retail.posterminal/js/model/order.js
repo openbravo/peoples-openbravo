@@ -2009,14 +2009,14 @@
         if (data && data.exception) {
           OB.UTIL.showConfirmation.display('', data.exception.message);
         } else if (data && data.qty < 1) {
-          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_ErrorProductDiscontinued'));
+          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_ErrorProductDiscontinued', [1, data.qty]));
           callback(false);
         } else if (lines.length > 0) {
           for (i = 0; i < lines.length; i++) {
             if (lines.models[i].get('product').get('id') === p.get('id')) {
               existLine = true;
               if ((lines.models[i].get('qty') + qty) > data.qty) {
-                OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_ErrorProductDiscontinued'));
+                OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_ErrorProductDiscontinued', [(lines.models[i].get('qty') + qty), data.qty]));
                 callback(false);
               } else {
                 callback(true);
