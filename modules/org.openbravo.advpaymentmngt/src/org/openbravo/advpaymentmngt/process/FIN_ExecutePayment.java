@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.advpaymentmngt.dao.TransactionsDao;
 import org.openbravo.advpaymentmngt.exception.NoExecutionProcessFoundException;
@@ -34,6 +35,7 @@ import org.openbravo.advpaymentmngt.utility.Value;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.OBError;
@@ -194,8 +196,17 @@ public class FIN_ExecutePayment {
                     if (FIN_Utility.isAutomaticDepositWithdrawn(paymentRunPayment.getPayment())
                         && paymentRunPayment.getPayment().getAmount().compareTo(BigDecimal.ZERO) != 0
                         && !StringUtils.equals(internalParameters.get("comingFrom"), "TRANSACTION")) {
-                      FIN_FinaccTransaction transaction = TransactionsDao
-                          .createFinAccTransaction(paymentRunPayment.getPayment());
+                      OBCriteria<FIN_FinaccTransaction> finAccTransactionCriteria = OBDal
+                          .getInstance().createCriteria(FIN_FinaccTransaction.class);
+                      finAccTransactionCriteria.add(Restrictions.eq(
+                          FIN_FinaccTransaction.PROPERTY_FINPAYMENT, payment));
+                      finAccTransactionCriteria.setMaxResults(1);
+                      FIN_FinaccTransaction transaction = (FIN_FinaccTransaction) finAccTransactionCriteria
+                          .uniqueResult();
+                      if (transaction == null) {
+                        transaction = TransactionsDao.createFinAccTransaction(paymentRunPayment
+                            .getPayment());
+                      }
                       VariablesSecureApp vars = new VariablesSecureApp(RequestContext.get()
                           .getRequest());
                       OBError processTransactionError = processTransaction(vars,
