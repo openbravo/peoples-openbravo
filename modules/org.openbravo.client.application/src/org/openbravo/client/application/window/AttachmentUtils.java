@@ -73,10 +73,14 @@ public class AttachmentUtils {
       }
       critAttConf.setMaxResults(1);
       AttachmentConfig attConf = (AttachmentConfig) critAttConf.uniqueResult();
+      String strAttConfig = "no-config";
       if (attConf != null) {
-        clientConfigs.put((String) DalUtil.getId(client), attConf.getId());
+        strAttConfig = attConf.getId();
       }
+      setAttachmentConfig((String) DalUtil.getId(client), strAttConfig);
       return attConf;
+    } else if ("no-config".equals(strAttachmentConfigId)) {
+      return null;
     }
     return OBDal.getInstance().get(AttachmentConfig.class, strAttachmentConfigId);
   }
@@ -89,7 +93,7 @@ public class AttachmentUtils {
    * @param strAttConfig
    *          The new Attachment Configuration.
    */
-  public static void setAttachmentConfig(String strClient, String strAttConfig) {
+  public static synchronized void setAttachmentConfig(String strClient, String strAttConfig) {
     if (strAttConfig == null) {
       clientConfigs.remove(strClient);
     } else {
