@@ -17312,7 +17312,7 @@ AND e.pending <> 0 AND (e.storageBin is null OR ad_org_isinnaturaltree(@Material
 <!--9E448DCAFFF34174B15C19376FDEE003-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--9E448DCAFFF34174B15C19376FDEE003-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--9E448DCAFFF34174B15C19376FDEE003-->  <NAME><![CDATA[Header]]></NAME>
-<!--9E448DCAFFF34174B15C19376FDEE003-->  <HELP><![CDATA[Shows all data related to the attachment method used to save attachments (if applies): server URL, user, password and language.]]></HELP>
+<!--9E448DCAFFF34174B15C19376FDEE003-->  <HELP><![CDATA[Shows all configuration related to the attachment method used to save attachments. Each Attachment Method can include its own specific configuration fields like: server URL, user, password, language,...]]></HELP>
 <!--9E448DCAFFF34174B15C19376FDEE003-->  <AD_TABLE_ID><![CDATA[593E81B5D9D64825BAFF8CFAE8550964]]></AD_TABLE_ID>
 <!--9E448DCAFFF34174B15C19376FDEE003-->  <AD_WINDOW_ID><![CDATA[7AE5333578E84E3CAEA6F1943ACF324F]]></AD_WINDOW_ID>
 <!--9E448DCAFFF34174B15C19376FDEE003-->  <SEQNO><![CDATA[10]]></SEQNO>
