@@ -47,7 +47,6 @@ import org.openbravo.erpCommon.obps.ActivationKey.FeatureRestriction;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.Window;
-import org.openbravo.model.ad.utility.AttachmentConfig;
 import org.openbravo.model.ad.utility.AttachmentMethod;
 
 /**
@@ -166,12 +165,7 @@ public class ViewComponent extends BaseComponent {
     } else {
       // When uploading an attachment ("Add" button) AttachmentMethod is not sent, so there are less
       // than 3 elements in the array
-      AttachmentConfig attConf = AttachmentUtils.getAttachmentConfig();
-      if (attConf == null) {
-        attMethod = AttachmentUtils.getDefaultAttachmentMethod();
-      } else {
-        attMethod = attConf.getAttachmentMethod();
-      }
+      attMethod = AttachmentUtils.getAttachmentMethod();
     }
     attachmentWindowComponent.initialize(tab, attMethod);
     attachmentWindowComponent.setParameters(getParameters());

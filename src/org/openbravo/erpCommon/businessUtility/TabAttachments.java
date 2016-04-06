@@ -52,7 +52,6 @@ import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.utility.Attachment;
-import org.openbravo.model.ad.utility.AttachmentConfig;
 import org.openbravo.model.ad.utility.AttachmentMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -113,13 +112,7 @@ public class TabAttachments extends HttpSecureAppServlet {
           throw new OBException(OBMessageUtils.messageBD("ErrorUploadingFile"), e);
         }
 
-        AttachmentConfig attConfig = AttachmentUtils.getAttachmentConfig();
-        AttachmentMethod attachMethod;
-        if (attConfig == null) {
-          attachMethod = AttachmentUtils.getDefaultAttachmentMethod();
-        } else {
-          attachMethod = attConfig.getAttachmentMethod();
-        }
+        AttachmentMethod attachMethod = AttachmentUtils.getAttachmentMethod();
         Map<String, String> requestParams = ParameterUtils.buildRequestMap(request);
         for (Parameter param : AttachmentUtils.getMethodMetadataParameters(attachMethod, tab)) {
           String value = null;

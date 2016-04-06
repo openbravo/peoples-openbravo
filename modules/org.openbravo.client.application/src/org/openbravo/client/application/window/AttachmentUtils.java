@@ -102,13 +102,20 @@ public class AttachmentUtils {
   }
 
   /**
-   * Gets the Attachment Configuration associated to the context client
+   * Gets the Attachment Method related to the active Attachment Configuration of the current
+   * client. In case the client does not have any attachment configuration the default Attachment
+   * Method is returned.
    * 
-   * @return Active Attachment Configuration for this context
+   * @return The AttachmentMethod to use for the current client.
    */
-  public static AttachmentConfig getAttachmentConfig() {
+  public static AttachmentMethod getAttachmentMethod() {
     Client client = OBContext.getOBContext().getCurrentClient();
-    return getAttachmentConfig(client);
+    AttachmentConfig attConfig = getAttachmentConfig(client);
+    if (attConfig == null) {
+      return AttachmentUtils.getDefaultAttachmentMethod();
+    } else {
+      return attConfig.getAttachmentMethod();
+    }
   }
 
   /**
