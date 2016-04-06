@@ -19,61 +19,69 @@
 
 package org.openbravo.test.webservice;
 
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.containsString;
 import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.model.common.currency.Currency;
 
 /**
- * Test cases for ensures that Dal Web services works properly with active and non active entity.
+ * Tests that ensure dal web services are able to work with non active dal objets.
  * 
  * See issue https://issues.openbravo.com/view.php?id=32584
  * 
  * @author inigo.sanchez
  *
  */
-public class WSWithNoActiveEntityTest extends BaseWSTest {
+public class WSWithNoActiveDalObjects extends BaseWSTest {
 
-  private static final String ORG_ID_DAL = "<id>19404EAD144C49A0AF37D54377CF452D</id>";
-  private static final String ORG_ID = "19404EAD144C49A0AF37D54377CF452D";
+  private static final String CURRENCY_ID_DAL = "<id>100</id>";
+  private static final String CURRENCY_ID = "100";
 
   @Test
-  public void dalWebServiceNoActiveOrganization() {
-    OBContext.setAdminMode();
+  public void dalWebServiceWithNoActiveCurrencyObject() {
     try {
-      String dalResp = dalRequest("/ws/dal/Organization/" + ORG_ID);
-      assertThat("Request data", dalResp.contains(ORG_ID_DAL), is(true));
-
-      setNoActiveOrg();
-      String dalRespNoActive = dalRequest("/ws/dal/Organization/" + ORG_ID);
-      assertThat("Request data", dalRespNoActive.contains(ORG_ID_DAL), is(true));
+      setActiveOrNoActiveCurrencyObject(false);
+      String dalRespNoActive = dalRequest("/ws/dal/Currency/" + CURRENCY_ID);
+      assertThat("Response data", dalRespNoActive, containsString(CURRENCY_ID_DAL));
     } finally {
-      Organization orgTesting = OBDal.getInstance().get(Organization.class, ORG_ID);
-      orgTesting.setActive(true);
-      OBDal.getInstance().commitAndClose();
-      OBContext.restorePreviousMode();
+      setActiveOrNoActiveCurrencyObject(true);
     }
   }
 
-  private void setNoActiveOrg() {
-    Organization organization = OBDal.getInstance().get(Organization.class, ORG_ID);
-    organization.setActive(false);
-    OBDal.getInstance().commitAndClose();
+  @Test
+  public void dalWebServiceWithActiveCurrencyObject() {
+    try {
+      String dalResp = dalRequest("/ws/dal/Currency/" + CURRENCY_ID);
+      assertThat("Response data", dalResp, containsString(CURRENCY_ID_DAL));
+    } finally {
+
+    }
+  }
+
+  private void setActiveOrNoActiveCurrencyObject(boolean isActive) {
+    OBContext.setAdminMode();
+    try {
+      Currency currency = OBDal.getInstance().get(Currency.class, CURRENCY_ID);
+      currency.setActive(isActive);
+      OBDal.getInstance().commitAndClose();
+    } finally {
+      OBContext.restorePreviousMode();
+    }
   }
 
   private String dalRequest(String urlDalRequest) {
-    String organizationDataString;
+    String currencyDataString;
     OBContext.setAdminMode();
     try {
-      organizationDataString = doTestGetRequest(urlDalRequest, null, 200);
+      currencyDataString = doTestGetRequest(urlDalRequest, null, 200);
     } catch (Exception e) {
-      organizationDataString = e.getMessage();
+      currencyDataString = e.getMessage();
     } finally {
       OBContext.restorePreviousMode();
     }
-    return organizationDataString;
+    return currencyDataString;
   }
 }

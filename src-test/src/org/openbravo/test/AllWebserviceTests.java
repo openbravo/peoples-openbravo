@@ -30,14 +30,14 @@ import org.openbravo.test.datasource.SelectorFieldPropertySelectorDSTest;
 import org.openbravo.test.datasource.TestAllowUnpagedDatasourcePreference;
 import org.openbravo.test.datasource.TestCSVEncoding;
 import org.openbravo.test.datasource.TestComboDatasource;
-import org.openbravo.test.datasource.TestFetchDSNoActiveEntity;
+import org.openbravo.test.datasource.FetchDSNoActiveEntityObjects;
 import org.openbravo.test.datasource.TestNoteDatasource;
 import org.openbravo.test.webservice.JSONWebServices;
 import org.openbravo.test.webservice.PerformanceTest;
 import org.openbravo.test.webservice.WSAddRecordWithComputedColumns;
 import org.openbravo.test.webservice.WSReadTest;
 import org.openbravo.test.webservice.WSUpdateTest;
-import org.openbravo.test.webservice.WSWithNoActiveEntityTest;
+import org.openbravo.test.webservice.WSWithNoActiveDalObjects;
 import org.openbravo.test.webservice.WebServicesWithNoActiveFilterTest;
 
 /**
@@ -64,7 +64,7 @@ WSReadTest.class, //
     TestNoteDatasource.class, //
     WebServicesWithNoActiveFilterTest.class, //
     ExtendedNavigationModelTest.class, //
-    WSWithNoActiveEntityTest.class, //
-    TestFetchDSNoActiveEntity.class })
+    WSWithNoActiveDalObjects.class, //
+    FetchDSNoActiveEntityObjects.class })
 public class AllWebserviceTests {
 }
