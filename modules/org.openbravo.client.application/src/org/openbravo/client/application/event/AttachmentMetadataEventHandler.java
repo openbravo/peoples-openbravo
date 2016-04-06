@@ -32,6 +32,11 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 
+/**
+ * It is not possible to have two different metadatas configured for an Attachment Method with the
+ * same column name. This event handlers checks that no new metadatas with an existing columnname
+ * are added or edited.
+ */
 public class AttachmentMetadataEventHandler extends EntityPersistenceEventObserver {
   private static Entity[] entities = { ModelProvider.getInstance().getEntity(Parameter.class) };
 
@@ -49,7 +54,7 @@ public class AttachmentMetadataEventHandler extends EntityPersistenceEventObserv
       return;
     }
     if (checkDuplicates(parameter)) {
-      // If there is a duplicated Attachmetn Metadata throw an exeption.
+      // If there is a duplicated Attachment Metadata throw an exception.
       throw new OBException(OBMessageUtils.messageBD("OBUIAPP_DuplicatedDBColumnname"));
     }
   }
@@ -63,7 +68,7 @@ public class AttachmentMetadataEventHandler extends EntityPersistenceEventObserv
       return;
     }
     if (checkDuplicates(parameter)) {
-      // If there is a duplicated Attachmetn Metadata throw an exeption.
+      // If there is a duplicated Attachment Metadata throw an exception.
       throw new OBException(OBMessageUtils.messageBD("OBUIAPP_DuplicatedDBColumnname"));
     }
   }
