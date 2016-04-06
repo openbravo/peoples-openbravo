@@ -643,6 +643,11 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
           var process = new OB.DS.Process('org.openbravo.retail.posterminal.ProcessVoidLayaway');
           var auxReceipt = new OB.Model.Order();
           OB.UTIL.clone(receipt, auxReceipt);
+          auxReceipt.prepareToSend(function () {
+            OB.UTIL.cashUpReport(auxReceipt, function () {
+              OB.UTIL.calculateCurrentCash();
+            });
+          });
           receipt.set('obposAppCashup', OB.MobileApp.model.get('terminal').cashUpId);
           receipt.set('timezoneOffset', new Date().getTimezoneOffset());
           receipt.set('gross', OB.DEC.mul(receipt.get('gross'), -1));
@@ -660,12 +665,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
               OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorVoidLayaway'));
               OB.UTIL.SynchronizationHelper.finished(synchId, "finishVoidLayaway");
             } else {
-              auxReceipt.prepareToSend(function () {
-                OB.UTIL.cashUpReport(auxReceipt, function () {
-                  OB.UTIL.calculateCurrentCash();
-                });
-                OB.UTIL.SynchronizationHelper.finished(synchId, "finishVoidLayaway");
-              });
               OB.Dal.remove(receipt, null, function (tx, err) {
                 OB.UTIL.showError(err);
               });
@@ -677,6 +676,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
               receipt.trigger('change:gross', receipt);
 
               OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgSuccessVoidLayaway'));
+              OB.UTIL.SynchronizationHelper.finished(synchId, "finishVoidLayaway");
             }
           }, function () {
             OB.UTIL.showError(OB.I18N.getLabel('OBPOS_OfflineWindowRequiresOnline'));
