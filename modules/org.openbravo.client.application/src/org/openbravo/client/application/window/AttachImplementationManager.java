@@ -86,6 +86,9 @@ public class AttachImplementationManager {
   @Any
   private Instance<AttachImplementation> attachImplementationHandlers;
 
+  @Inject
+  private ApplicationDictionaryCachedStructures adcs;
+
   /**
    * Method to upload files. This method calls needed handler class
    * 
@@ -111,7 +114,7 @@ public class AttachImplementationManager {
     }
 
     Organization org = OBDal.getInstance().get(Organization.class, strDocumentOrganization);
-    Tab tab = OBDal.getInstance().get(Tab.class, strTab);
+    Tab tab = adcs.getTab(strTab);
 
     String strName = file.getName();
 
