@@ -217,15 +217,5 @@ public abstract class BaseProcessActionHandler extends BaseActionHandler {
     return fixRequestMap(parameters, null);
   }
 
-  /**
-   * Fixes the request map adding an "context" key to include context info in order to make it
-   * available to be evaluated by FilterExpression
-   * 
-   * @use {@link BaseProcessActionHandler#fixRequestMap(Map, JSONObject)}
-   */
-  protected Map<String, String> fixRequestMap(Map<String, Object> parameters, JSONObject context) {
-    return super.fixRequestMap(parameters, context);
-  }
-
   protected abstract JSONObject doExecute(Map<String, Object> parameters, String content);
 }
