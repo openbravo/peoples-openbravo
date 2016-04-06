@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2015 Openbravo S.L.U.
+ * Copyright (C) 2012-2016 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -18,26 +18,40 @@ enyo.kind({
   classes: 'btnlink btnlink-small btnlink-gray',
   style: 'float:left; margin:7px; height:27px; padding: 4px 15px 7px 15px;',
   published: {
-    order: null
+    order: null,
+    target: null,
+    popup: null
   },
   events: {
-    onShowPopup: ''
+    onShowPopup: '',
+    onHidePopup: ''
   },
   tap: function () {
     if (!this.disabled) {
+      this.hiddenPopup = true;
+      this.doHidePopup({
+        popup: this.popup
+      });
       this.doShowPopup({
         popup: 'modalcustomer',
         args: {
-          visibilityButtons: false
+          target: this.target
         }
       });
     }
   },
   init: function (model) {
     this.setOrder(model.get('order'));
+    this.hiddenPopup = false;
   },
   renderCustomer: function (newCustomer) {
     this.setContent(newCustomer);
+    if (this.hiddenPopup) {
+      this.hiddenPopup = false;
+      this.doShowPopup({
+        popup: this.popup
+      });
+    }
   },
   orderChanged: function (oldValue) {
     if (this.order.get('bp')) {
@@ -62,26 +76,40 @@ enyo.kind({
   classes: 'btnlink btnlink-small btnlink-gray',
   style: 'float:left; margin:7px; height:27px; padding: 4px 15px 7px 15px;',
   published: {
-    order: null
+    order: null,
+    target: null,
+    popup: null
   },
   events: {
-    onShowPopup: ''
+    onShowPopup: '',
+    onHidePopup: ''
   },
   tap: function () {
     if (!this.disabled) {
+      this.hiddenPopup = true;
+      this.doHidePopup({
+        popup: this.popup
+      });
       this.doShowPopup({
         popup: 'modalcustomershipaddress',
         args: {
-          visibilityButtons: false
+          target: this.target
         }
       });
     }
   },
   init: function (model) {
     this.setOrder(model.get('order'));
+    this.hiddenPopup = false;
   },
   renderAddrShip: function (newAddr) {
     this.setContent(newAddr);
+    if (this.hiddenPopup) {
+      this.hiddenPopup = false;
+      this.doShowPopup({
+        popup: this.popup
+      });
+    }
   },
   orderChanged: function (oldValue) {
     if (this.order.get('bp')) {
@@ -105,26 +133,40 @@ enyo.kind({
   classes: 'btnlink btnlink-small btnlink-gray',
   style: 'float:left; margin:7px; height:27px; padding: 4px 15px 7px 15px;',
   published: {
-    order: null
+    order: null,
+    target: null,
+    popup: null
   },
   events: {
-    onShowPopup: ''
+    onShowPopup: '',
+    onHidePopup: ''
   },
   tap: function () {
     if (!this.disabled) {
+      this.hiddenPopup = true;
+      this.doHidePopup({
+        popup: this.popup
+      });
       this.doShowPopup({
         popup: 'modalcustomeraddress',
         args: {
-          visibilityButtons: false
+          target: this.target
         }
       });
     }
   },
   init: function (model) {
     this.setOrder(model.get('order'));
+    this.hiddenPopup = false;
   },
   renderAddrBill: function (newAddr) {
     this.setContent(newAddr);
+    if (this.hiddenPopup) {
+      this.hiddenPopup = false;
+      this.doShowPopup({
+        popup: this.popup
+      });
+    }
   },
   orderChanged: function (oldValue) {
     if (this.order.get('bp')) {

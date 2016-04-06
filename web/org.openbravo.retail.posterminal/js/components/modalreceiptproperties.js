@@ -92,14 +92,20 @@ enyo.kind({
     permissionOption: 'OBPOS_SR.comboOrModal'
   }, {
     kind: 'OB.UI.Customer',
+    target: 'order',
+    popup: 'receiptPropertiesDialog',
     name: 'customerbutton',
     i18nLabel: 'OBPOS_LblCustomer'
   }, {
     kind: 'OB.UI.ShipTo',
+    target: 'order',
+    popup: 'receiptPropertiesDialog',
     name: 'addressshipbutton',
     i18nLabel: 'OBPOS_LblShipAddr'
   }, {
     kind: 'OB.UI.BillTo',
+    target: 'order',
+    popup: 'receiptPropertiesDialog',
     name: 'addressbillbutton',
     i18nLabel: 'OBPOS_LblBillAddr'
   }],
