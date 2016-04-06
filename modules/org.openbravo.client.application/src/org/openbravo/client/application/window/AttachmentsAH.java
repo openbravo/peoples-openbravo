@@ -42,7 +42,6 @@ import org.openbravo.dal.service.OBDao;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.utility.Attachment;
-import org.openbravo.model.ad.utility.AttachmentMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,12 +52,15 @@ public class AttachmentsAH extends BaseActionHandler {
   @Inject
   private AttachImplementationManager aim;
 
+  @Inject
+  private ApplicationDictionaryCachedStructures adcs;
+
   @Override
   protected JSONObject execute(Map<String, Object> parameters, String content) {
     OBContext.setAdminMode();
     String tabId = (String) parameters.get("tabId");
     Check.isNotNull(tabId, OBMessageUtils.messageBD("OBUIAPP_Attachment_Tab_Mandatory"));
-    Tab tab = OBDal.getInstance().get(Tab.class, tabId);
+    Tab tab = adcs.getTab(tabId);
 
     String recordIds = "";
     try {
@@ -72,15 +74,12 @@ public class AttachmentsAH extends BaseActionHandler {
         JSONObject params = request.getJSONObject("_params");
         recordIds = params.getString("inpKey");
         final String attachmentId = (String) parameters.get("attachmentId");
-        final String strAttMethodId = (String) parameters.get("attachmentMethod");
-        AttachmentMethod attachMethod;
+        String strAttMethodId = (String) parameters.get("attachmentMethod");
         if (StringUtils.isBlank(strAttMethodId)) {
-          attachMethod = AttachmentUtils.getDefaultAttachmentMethod();
-        } else {
-          attachMethod = OBDal.getInstance().get(AttachmentMethod.class, strAttMethodId);
+          strAttMethodId = AttachmentUtils.DEFAULT_METHOD_ID;
         }
         Map<String, String> requestParams = fixRequestMap(parameters, request);
-        for (Parameter param : AttachmentUtils.getMethodMetadataParameters(attachMethod, tab)) {
+        for (Parameter param : adcs.getMethodMetadataParameters(strAttMethodId, tabId)) {
           if (param.isFixed()) {
             continue;
           }

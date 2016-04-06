@@ -31,8 +31,10 @@ import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.client.application.Parameter;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.ad.datamodel.Table;
@@ -67,6 +69,7 @@ public class ApplicationDictionaryCachedStructures implements Serializable {
   private Map<String, List<Column>> columnMap = new HashMap<String, List<Column>>();
   private Map<String, List<AuxiliaryInput>> auxInputMap = new HashMap<String, List<AuxiliaryInput>>();
   private Map<String, ComboTableData> comboTableDataMap = new ConcurrentHashMap<String, ComboTableData>();
+  private Map<String, List<Parameter>> attMethodMetadataMap = new HashMap<String, List<Parameter>>();
   private List<String> initializedWindows = new ArrayList<String>();
 
   private static final Logger log = LoggerFactory
@@ -278,6 +281,41 @@ public class ApplicationDictionaryCachedStructures implements Serializable {
     }
     return comboTableData;
 
+  }
+
+  /**
+   * Gets the list of parameters associated to an Attachment Method and a Tab. The list is sorted so
+   * the fixed parameters are returned first.
+   * 
+   * @param attachMethod
+   *          active attachment method
+   * @param tab
+   *          tab to take metadata
+   * @return List of parameters by attachment method and tab sorted by Fixed and Sequence Number
+   *         where fixed parameters are first.
+   */
+  public List<Parameter> getMethodMetadataParameters(String strAttMethodId, String strTabId) {
+    String strMethodTab = strAttMethodId + "-" + strTabId;
+    if (useCache() && attMethodMetadataMap.get(strMethodTab) != null) {
+      return attMethodMetadataMap.get(strAttMethodId);
+    }
+
+    StringBuilder where = new StringBuilder();
+    where.append(Parameter.PROPERTY_ATTACHMENTMETHOD + ".id = :attMethod");
+    where.append(" and (" + Parameter.PROPERTY_TAB + " is null or " + Parameter.PROPERTY_TAB
+        + ".id = :tab)");
+    where.append(" order by CASE WHEN " + Parameter.PROPERTY_FIXED + " is true THEN 1 ELSE 2 END");
+    where.append(" , " + Parameter.PROPERTY_SEQUENCENUMBER);
+    final OBQuery<Parameter> qryParams = OBDal.getInstance().createQuery(Parameter.class,
+        where.toString());
+    qryParams.setNamedParameter("attMethod", strAttMethodId);
+    qryParams.setNamedParameter("tab", strTabId);
+    List<Parameter> metadatas = qryParams.list();
+
+    if (useCache()) {
+      attMethodMetadataMap.put(strMethodTab, metadatas);
+    }
+    return metadatas;
   }
 
   private boolean useCache() {

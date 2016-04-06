@@ -22,6 +22,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Map;
 
+import javax.inject.Inject;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.ObjectUtils;
@@ -30,6 +31,7 @@ import org.hibernate.criterion.Restrictions;
 import org.openbravo.client.application.Parameter;
 import org.openbravo.client.application.ParameterUtils;
 import org.openbravo.client.application.ParameterValue;
+import org.openbravo.client.application.window.ApplicationDictionaryCachedStructures;
 import org.openbravo.client.application.window.AttachmentUtils;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.client.kernel.KernelConstants;
@@ -37,9 +39,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBDateUtils;
-import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.utility.Attachment;
-import org.openbravo.model.ad.utility.AttachmentMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,6 +50,8 @@ import org.slf4j.LoggerFactory;
 public class DefaultsAttachmentActionHandler extends BaseActionHandler {
 
   private static final Logger log = LoggerFactory.getLogger(DefaultsAttachmentActionHandler.class);
+  @Inject
+  private ApplicationDictionaryCachedStructures adcs;
 
   @Override
   protected final JSONObject execute(Map<String, Object> parameters, String content) {
@@ -62,16 +64,13 @@ public class DefaultsAttachmentActionHandler extends BaseActionHandler {
       final String strAttachmentId = (String) parameters.get("attachmentId");
       final String strAction = (String) parameters.get("action");
       final String strKeyId = (String) parameters.get("keyId");
-      final Tab tab = (Tab) OBDal.getInstance().getProxy(Tab.ENTITY_NAME, strTabId);
       final Attachment attachment = OBDal.getInstance().get(Attachment.class, strAttachmentId);
-      final AttachmentMethod attMethod = (AttachmentMethod) OBDal.getInstance().getProxy(
-          AttachmentMethod.ENTITY_NAME, strAttMethodID);
       JSONObject context = new JSONObject(content);
       final Map<String, String> fixedParameters = fixRequestMap(parameters, context);
 
       // The parameter list is sorted so the fixed parameters are evaluated before. This is needed
       // to be able to define parameters with default values based on the fixed parameters.
-      for (Parameter param : AttachmentUtils.getMethodMetadataParameters(attMethod, tab)) {
+      for (Parameter param : adcs.getMethodMetadataParameters(strAttMethodID, strTabId)) {
         if (param.isFixed()) {
           Object value = null;
           if (param.getPropertyPath() != null) {
@@ -130,7 +129,7 @@ public class DefaultsAttachmentActionHandler extends BaseActionHandler {
 
       }
 
-      log.debug("Defaults for tab {} \n {}", tab, defaults);
+      log.debug("Defaults for tab {} \n {}", strTabId, defaults);
       JSONObject results = new JSONObject();
       results.put("defaults", defaults);
 

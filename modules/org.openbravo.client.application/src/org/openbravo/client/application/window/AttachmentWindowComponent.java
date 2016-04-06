@@ -55,6 +55,9 @@ public class AttachmentWindowComponent extends BaseTemplateComponent {
   @Inject
   private OBViewParameterHandler paramHandler;
 
+  @Inject
+  private ApplicationDictionaryCachedStructures adcs;
+
   protected Template getComponentTemplate() {
     return OBDal.getInstance().get(Template.class, DEFAULT_TEMPLATE_ID);
   }
@@ -199,7 +202,7 @@ public class AttachmentWindowComponent extends BaseTemplateComponent {
    * @return List of parameters by attachment method and tab
    */
   private List<Parameter> getTabMetadataFields() {
-    return AttachmentUtils.getMethodMetadataParameters(attMethod, tab);
+    return adcs.getMethodMetadataParameters(attMethod.getId(), tab.getId());
   }
 
   private void parseValidation(Validation validation, Map<String, List<String>> dynCols,

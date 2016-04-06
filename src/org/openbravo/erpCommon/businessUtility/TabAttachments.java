@@ -42,6 +42,7 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.client.application.Parameter;
 import org.openbravo.client.application.ParameterUtils;
+import org.openbravo.client.application.window.ApplicationDictionaryCachedStructures;
 import org.openbravo.client.application.window.AttachImplementationManager;
 import org.openbravo.client.application.window.AttachmentUtils;
 import org.openbravo.client.application.window.AttachmentsAH;
@@ -79,6 +80,8 @@ public class TabAttachments extends HttpSecureAppServlet {
 
     AttachImplementationManager aim = WeldUtils
         .getInstanceFromStaticBeanManager(AttachImplementationManager.class);
+    ApplicationDictionaryCachedStructures adcs = WeldUtils
+        .getInstanceFromStaticBeanManager(ApplicationDictionaryCachedStructures.class);
     if (vars.getCommand().startsWith("SAVE_NEW")) {
       File tempFile = null;
       String strMessage = "";
@@ -90,7 +93,7 @@ public class TabAttachments extends HttpSecureAppServlet {
         JSONObject paramValues;
         paramValues = new JSONObject(strParamValues);
         final String strTab = paramValues.getString("inpTabId");
-        Tab tab = OBDal.getInstance().get(Tab.class, strTab);
+        Tab tab = adcs.getTab(strTab);
         final String key = paramValues.getString("inpKey");
         final String strDocumentOrganization = paramValues.getString("inpDocumentOrg");
         final FileItem file = vars.getMultiFile("inpname");
@@ -114,7 +117,7 @@ public class TabAttachments extends HttpSecureAppServlet {
 
         AttachmentMethod attachMethod = AttachmentUtils.getAttachmentMethod();
         Map<String, String> requestParams = ParameterUtils.buildRequestMap(request);
-        for (Parameter param : AttachmentUtils.getMethodMetadataParameters(attachMethod, tab)) {
+        for (Parameter param : adcs.getMethodMetadataParameters(attachMethod.getId(), strTab)) {
           String value = null;
           if (param.isFixed()) {
             continue;

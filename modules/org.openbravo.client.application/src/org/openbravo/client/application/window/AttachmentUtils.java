@@ -33,6 +33,7 @@ import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
+import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.client.application.Parameter;
 import org.openbravo.client.application.ParameterUtils;
 import org.openbravo.client.application.ParameterValue;
@@ -41,7 +42,6 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBDao;
-import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.ui.Tab;
@@ -53,6 +53,8 @@ public class AttachmentUtils {
   private static Map<String, String> clientConfigs = new HashMap<String, String>();
   public static final String DEFAULT_METHOD = "Default";
   public static final String DEFAULT_METHOD_ID = "D7B1319FC2B340799283BBF8E838DF9F";
+  private static ApplicationDictionaryCachedStructures adcs = WeldUtils
+      .getInstanceFromStaticBeanManager(ApplicationDictionaryCachedStructures.class);
 
   /**
    * Gets the Attachment Configuration associated to the active client
@@ -132,31 +134,6 @@ public class AttachmentUtils {
   }
 
   /**
-   * Gets the list of parameters associated to an Attachment Method ad a Tab. The list is sorted so
-   * the fixed parameters are returned first.
-   * 
-   * @param attachMethod
-   *          active attachment method
-   * @param tab
-   *          tab to take metadata
-   * @return List of parameters by attachment method and tab sorted by Fixed and Sequence Number
-   *         where fixed parameters are first.
-   */
-  public static List<Parameter> getMethodMetadataParameters(AttachmentMethod attachMethod, Tab tab) {
-    StringBuilder where = new StringBuilder();
-    where.append(Parameter.PROPERTY_ATTACHMENTMETHOD + " = :attMethod");
-    where.append(" and (" + Parameter.PROPERTY_TAB + " is null or " + Parameter.PROPERTY_TAB
-        + " = :tab)");
-    where.append(" order by CASE WHEN " + Parameter.PROPERTY_FIXED + " is true THEN 1 ELSE 2 END");
-    where.append(" , " + Parameter.PROPERTY_SEQUENCENUMBER);
-    final OBQuery<Parameter> qryParams = OBDal.getInstance().createQuery(Parameter.class,
-        where.toString());
-    qryParams.setNamedParameter("attMethod", attachMethod);
-    qryParams.setNamedParameter("tab", tab);
-    return qryParams.list();
-  }
-
-  /**
    * Get JSONObject list with data of the attachments in given tab and records
    * 
    * @param tab
@@ -188,7 +165,8 @@ public class AttachmentUtils {
               .getAttachmentMethod());
         }
         attachmentobj.put("attmethod", attachmentMethod);
-        attachmentobj.put("description", buildDescription(attachment, attachmentMethod, tab));
+        attachmentobj.put("description",
+            buildDescription(attachment, attachmentMethod, tab.getId()));
       } catch (JSONException ignore) {
       }
       attachments.add(attachmentobj);
@@ -211,7 +189,7 @@ public class AttachmentUtils {
    */
   public static Object getPropertyPathValue(Parameter parameter, String tabId, String recordId)
       throws OBException {
-    Tab tab = OBDal.getInstance().get(Tab.class, tabId);
+    Tab tab = adcs.getTab(tabId);
     Entity entity = ModelProvider.getInstance().getEntityByTableId(
         (String) DalUtil.getId(tab.getTable()));
     final String hql = "SELECT a." + parameter.getPropertyPath() + " FROM " + entity.getName()
@@ -225,12 +203,11 @@ public class AttachmentUtils {
     }
   }
 
-  private static String buildDescription(Attachment attachment, String strAttMethodId, Tab tab) {
+  private static String buildDescription(Attachment attachment, String strAttMethodId, String tabId) {
     StringBuilder description = new StringBuilder();
     try {
       OBContext.setAdminMode(true);
-      List<Parameter> parameters = getMethodMetadataParameters(
-          OBDal.getInstance().get(AttachmentMethod.class, strAttMethodId), tab);
+      List<Parameter> parameters = adcs.getMethodMetadataParameters(strAttMethodId, tabId);
       boolean isfirst = true;
       final String delimiter = OBMessageUtils.messageBD("OBUIAPP_Attach_Description_Delimiter");
       final String paramDesc = OBMessageUtils.messageBD("OBUIAPP_Attach_Description");

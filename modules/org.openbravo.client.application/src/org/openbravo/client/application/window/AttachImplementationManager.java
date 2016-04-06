@@ -476,8 +476,7 @@ public class AttachImplementationManager {
       final String paramDesc = OBMessageUtils.messageBD("OBUIAPP_Attach_Description");
 
       Map<String, Object> metadataValues = new HashMap<String, Object>();
-      for (Parameter parameter : AttachmentUtils.getMethodMetadataParameters(attachMethod, OBDal
-          .getInstance().get(Tab.class, tabId))) {
+      for (Parameter parameter : adcs.getMethodMetadataParameters(attachMethod.getId(), tabId)) {
         final String strMetadataId = parameter.getId();
 
         ParameterValue metadataStoredValue = null;
