@@ -45,7 +45,7 @@ import org.openbravo.service.json.JsonConstants;
  * 
  */
 @RunWith(Parameterized.class)
-public class DataSourceWhereParameterTest extends BaseDataSourceTestDal {
+public class DataSourceWhereParameter extends BaseDataSourceTestDal {
 
   // Expected
 
@@ -79,7 +79,7 @@ public class DataSourceWhereParameterTest extends BaseDataSourceTestDal {
             put("_startRow", "0");
             put("_endRow", "100");
           }
-        }), //
+        }, true), //
     QuickLaunch("99B9CC42FDEA4CA7A4EE35BC49D61E0E", null, null, true,
         new HashMap<String, String>() {
           {
@@ -147,6 +147,7 @@ public class DataSourceWhereParameterTest extends BaseDataSourceTestDal {
     private String unexpected;
     private boolean onlySuccessAssert;
     private Map<String, String> params;
+    private boolean hasImplicitFilter;
 
     private DataSource(String ds, String expected, String unexpected, boolean onlySuccessAssert) {
       this.ds = ds;
@@ -162,14 +163,20 @@ public class DataSourceWhereParameterTest extends BaseDataSourceTestDal {
       this(ds, expected, unexpected, onlySuccessAssert);
       params.putAll(extraParams);
     }
+
+    private DataSource(String ds, String expected, String unexpected, boolean onlySuccessAssert,
+        Map<String, String> extraParams, boolean hasImplicitFilter) {
+      this(ds, expected, unexpected, onlySuccessAssert, extraParams);
+      this.hasImplicitFilter = hasImplicitFilter;
+    }
   }
 
-  public DataSourceWhereParameterTest(DataSource datasource, String expectedRecords,
+  public DataSourceWhereParameter(DataSource datasource, String expectedRecords,
       String notExpectedRecords) {
     this.datasource = datasource;
   }
 
-  @Parameters(name = "{0} datasource: {1}")
+  @Parameters(name = "{0} datasource")
   public static Collection<Object[]> parameters() {
     List<Object[]> tests = new ArrayList<Object[]>();
     for (DataSource t : DataSource.values()) {
@@ -181,34 +188,33 @@ public class DataSourceWhereParameterTest extends BaseDataSourceTestDal {
 
   @Test
   public void datasourceWithNoManualWhereParameter() throws Exception {
-    boolean expectedRecordId;
-    boolean unexpectedRecordId;
+    boolean isRecordPresent;
     if (!datasource.onlySuccessAssert) {
-      if ("3C1148C0AB604DE1B51B7EA4112C325F".equals(datasource.ds)
-          || "ADUser".equals(datasource.ds)) {
+      if (datasource.hasImplicitFilter) {
         datasource.params.put("isImplicitFilterApplied", "true");
-        String datasourceResponseFilterTrue = getDataSourceResponse();
-        expectedRecordId = isValueInTheResponseData(datasource.expected,
-            datasourceResponseFilterTrue);
-        unexpectedRecordId = isValueInTheResponseData(datasource.unexpected,
-            datasourceResponseFilterTrue);
-        assertThat(expectedRecordId, is(true));
-        assertThat(unexpectedRecordId, is(false));
+        isRecordPresent = isRecordPresentInTheResponse(datasource.expected);
+        assertThat(
+            "When the implicit filter is applied it is expected to have this record present.",
+            isRecordPresent, is(true));
+        isRecordPresent = isRecordPresentInTheResponse(datasource.unexpected);
+        assertThat(
+            "When the implicit filter is applied it is expected not to have this record present.",
+            isRecordPresent, is(false));
         datasource.params.put("isImplicitFilterApplied", "false");
-        String datasourceResponseFilterFalse = getDataSourceResponse();
-        expectedRecordId = isValueInTheResponseData(datasource.expected,
-            datasourceResponseFilterFalse);
-        unexpectedRecordId = isValueInTheResponseData(datasource.unexpected,
-            datasourceResponseFilterFalse);
-        assertThat(expectedRecordId, is(true));
-        assertThat(unexpectedRecordId, is(true));
+        isRecordPresent = isRecordPresentInTheResponse(datasource.expected);
+        assertThat(
+            "When the implicit filter is not applied it is expected to have this record present.",
+            isRecordPresent, is(true));
+        isRecordPresent = isRecordPresentInTheResponse(datasource.unexpected);
+        assertThat(
+            "When the implicit filter is not applied it is expected to have this record present.",
+            isRecordPresent, is(true));
+
       } else {
-        String datasourceResponseNoFilter = getDataSourceResponse();
-        expectedRecordId = isValueInTheResponseData(datasource.expected, datasourceResponseNoFilter);
-        unexpectedRecordId = isValueInTheResponseData(datasource.unexpected,
-            datasourceResponseNoFilter);
-        assertThat(expectedRecordId, is(true));
-        assertThat(unexpectedRecordId, is(false));
+        isRecordPresent = isRecordPresentInTheResponse(datasource.expected);
+        assertThat("It is expected to have this record present.", isRecordPresent, is(true));
+        isRecordPresent = isRecordPresentInTheResponse(datasource.unexpected);
+        assertThat("It is not expected to have this record present", isRecordPresent, is(false));
       }
     }
   }
@@ -220,7 +226,8 @@ public class DataSourceWhereParameterTest extends BaseDataSourceTestDal {
       datasource.params.put("_where", MANUAL_WHERE);
       String datasourceResponseWhereTrue = getDataSourceResponse();
       JSONObject jsonResponse = new JSONObject(datasourceResponseWhereTrue);
-      assertThat(getStatus(jsonResponse),
+      assertThat("If a manual _where parameters is added, the request status should be -4",
+          getStatus(jsonResponse),
           is(String.valueOf(JsonConstants.RPCREQUEST_STATUS_VALIDATION_ERROR)));
       datasource.params.remove(JsonConstants.WHERE_PARAMETER);
     }
@@ -234,6 +241,13 @@ public class DataSourceWhereParameterTest extends BaseDataSourceTestDal {
     String datasourceResponse = getDataSourceResponse();
     JSONObject jsonResponse = new JSONObject(datasourceResponse);
     assertThat(getStatus(jsonResponse), is(String.valueOf(JsonConstants.RPCREQUEST_STATUS_SUCCESS)));
+  }
+
+  private boolean isRecordPresentInTheResponse(String expectedRecord) throws Exception {
+    boolean isExpectedRecordPresent;
+    String datasourceResponse = getDataSourceResponse();
+    isExpectedRecordPresent = isValueInTheResponseData(expectedRecord, datasourceResponse);
+    return isExpectedRecordPresent;
   }
 
   private boolean isValueInTheResponseData(String valueId, String dataSourceResponse)
