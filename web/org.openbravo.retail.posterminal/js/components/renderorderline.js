@@ -379,9 +379,8 @@ enyo.kind({
   initComponents: function () {
     var paymentDate;
     this.inherited(arguments);
-    if (this.model.get('paymentAmount')) {
-      this.$.name.setContent(OB.MobileApp.model.getPaymentName(this.model.get('kind')) || this.model.get('name'));
-    } else {
+    this.$.name.setContent(OB.MobileApp.model.getPaymentName(this.model.get('kind')) || this.model.get('name'));
+    if (!this.model.get('paymentAmount') && this.model.get('isPrePayment')) {
       this.$.name.setContent(OB.I18N.getLabel('OBPOS_Cancelled'));
     }
     if (this && this.model && this.model.get('paymentData') && this.model.get('paymentData').name && this.model.get('paymentData').name.length > 0) {
