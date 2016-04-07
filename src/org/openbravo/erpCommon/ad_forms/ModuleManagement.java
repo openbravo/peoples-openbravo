@@ -67,6 +67,7 @@ import org.openbravo.ddlutils.task.DatabaseUtils;
 import org.openbravo.ddlutils.util.DBSMOBUtil;
 import org.openbravo.ddlutils.util.OBDataset;
 import org.openbravo.erpCommon.ad_process.HeartbeatProcess;
+import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.modules.ImportModule;
 import org.openbravo.erpCommon.modules.ModuleTree;
@@ -87,10 +88,13 @@ import org.openbravo.erpCommon.utility.NavigationBar;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBErrorBuilder;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
+import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.erpCommon.utility.SQLReturnObject;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.system.SystemInformation;
+import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.services.webservice.Module;
 import org.openbravo.services.webservice.ModuleDependency;
 import org.openbravo.services.webservice.SimpleModule;
@@ -430,14 +434,27 @@ public class ModuleManagement extends HttpSecureAppServlet {
 
   /** Returns {@code true} in case System can be rebuilt from MMC's UI. */
   public static boolean canRebuildFromMMC() {
+    boolean runningInTomcat;
     try {
-      boolean runningInTomcat = RequestContext.getServletContext().getServerInfo()
-          .contains("Tomcat");
-      return runningInTomcat;
-    } catch (Exception e) {
+      runningInTomcat = RequestContext.getServletContext().getServerInfo().contains("Tomcat");
+    } catch (OBException e) {
       log4j.error("Couldn't get servlet context", e);
       return false;
     }
+    if (!runningInTomcat) {
+      return true;
+    }
+
+    boolean externalRebuild = false;
+    try {
+      // ExternalRebuild Property needs to be configured at system level
+      externalRebuild = "Y".equals(Preferences.getPreferenceValue("ExternalRebuild", true, OBDal
+          .getInstance().getProxy(Client.class, "0"),
+          OBDal.getInstance().getProxy(Organization.class, "0"), null, null, null));
+    } catch (PropertyException noPrefDefined) {
+    }
+
+    return !externalRebuild;
   }
 
   /**
