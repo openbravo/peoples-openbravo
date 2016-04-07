@@ -107,6 +107,7 @@ public class DataSourceWhereParameter extends BaseDataSourceTestDal {
     ActionRegardingSelector("ADList", CUSTOM_QUERY_SELECTOR_EXPECTED_VALUE,
         CUSTOM_QUERY_SELECTOR_UNEXPECTED_VALUE, false, new HashMap<String, String>() {
           {
+            put("inpwindowId", "E547CE89D4C04429B6340FFA44E70716");
             put("fin_paymentmethod_id", "47506D4260BA4996B92768FF609E6665");
             put("fin_financial_account_id", "C2AA9C0AFB434FD4B827BE58DC52C1E2");
             put("issotrx", "true");
@@ -115,6 +116,7 @@ public class DataSourceWhereParameter extends BaseDataSourceTestDal {
             put("_selectorFieldId", "52BD390363394BE980D0A55AFC4CDBB9");
             put("_startRow", "0");
             put("_endRow", "75");
+
           }
         }), //
 
@@ -193,28 +195,20 @@ public class DataSourceWhereParameter extends BaseDataSourceTestDal {
       if (datasource.hasImplicitFilter) {
         datasource.params.put("isImplicitFilterApplied", "true");
         isRecordPresent = isRecordPresentInTheResponse(datasource.expected);
-        assertThat(
-            "When the implicit filter is applied it is expected to have this record present.",
-            isRecordPresent, is(true));
+        assertThat("Record present.", isRecordPresent, is(true));
         isRecordPresent = isRecordPresentInTheResponse(datasource.unexpected);
-        assertThat(
-            "When the implicit filter is applied it is expected not to have this record present.",
-            isRecordPresent, is(false));
+        assertThat("Record not present.", isRecordPresent, is(false));
         datasource.params.put("isImplicitFilterApplied", "false");
         isRecordPresent = isRecordPresentInTheResponse(datasource.expected);
-        assertThat(
-            "When the implicit filter is not applied it is expected to have this record present.",
-            isRecordPresent, is(true));
+        assertThat("Record present.", isRecordPresent, is(true));
         isRecordPresent = isRecordPresentInTheResponse(datasource.unexpected);
-        assertThat(
-            "When the implicit filter is not applied it is expected to have this record present.",
-            isRecordPresent, is(true));
+        assertThat("Record present.", isRecordPresent, is(true));
 
       } else {
         isRecordPresent = isRecordPresentInTheResponse(datasource.expected);
-        assertThat("It is expected to have this record present.", isRecordPresent, is(true));
+        assertThat("Record present.", isRecordPresent, is(true));
         isRecordPresent = isRecordPresentInTheResponse(datasource.unexpected);
-        assertThat("It is not expected to have this record present", isRecordPresent, is(false));
+        assertThat("Record not present", isRecordPresent, is(false));
       }
     }
   }
@@ -226,7 +220,7 @@ public class DataSourceWhereParameter extends BaseDataSourceTestDal {
       datasource.params.put("_where", MANUAL_WHERE);
       String datasourceResponseWhereTrue = getDataSourceResponse();
       JSONObject jsonResponse = new JSONObject(datasourceResponseWhereTrue);
-      assertThat("If a manual _where parameters is added, the request status should be -4",
+      assertThat("If a manual _where parameters is added, the request status should be -4.",
           getStatus(jsonResponse),
           is(String.valueOf(JsonConstants.RPCREQUEST_STATUS_VALIDATION_ERROR)));
       datasource.params.remove(JsonConstants.WHERE_PARAMETER);
@@ -240,7 +234,8 @@ public class DataSourceWhereParameter extends BaseDataSourceTestDal {
     }
     String datasourceResponse = getDataSourceResponse();
     JSONObject jsonResponse = new JSONObject(datasourceResponse);
-    assertThat(getStatus(jsonResponse), is(String.valueOf(JsonConstants.RPCREQUEST_STATUS_SUCCESS)));
+    assertThat("The request status should be successful.", getStatus(jsonResponse),
+        is(String.valueOf(JsonConstants.RPCREQUEST_STATUS_SUCCESS)));
   }
 
   private boolean isRecordPresentInTheResponse(String expectedRecord) throws Exception {
