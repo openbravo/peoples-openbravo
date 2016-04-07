@@ -117,6 +117,33 @@
         }
       });
     },
+    adjustNames: function () {
+      var firstName = this.get('firstName'),
+          lastName = this.get('lastName');
+      if (firstName) {
+        firstName = firstName.trim();
+      }
+      if (lastName) {
+        lastName = lastName.trim();
+      }
+      this.set('firstName', firstName);
+      this.set('lastName', lastName);
+      this.set('name', firstName + (lastName ? ' ' + lastName : ''));
+    },
+    serializeEditedToJSON: function () {
+      var me = this,
+          editedBp = new OB.Model.BusinessPartner();
+      //Set entities ids: BusinessPartner, Location and User
+      editedBp.set('id', this.get('id'));
+      editedBp.set('locId', this.get('locId'));
+      editedBp.set('contactId', this.get('contactId'));
+      //Set only form attributes
+      _.each(OB.OBPOSPointOfSale.UI.customers.edit_createcustomers_impl.prototype.newAttributes, function (model) {
+        editedBp.set(model.modelProperty, me.get(model.modelProperty));
+      });
+      editedBp.adjustNames();
+      return JSON.parse(JSON.stringify(editedBp.toJSON()));
+    },
     serializeToJSON: function () {
       return JSON.parse(JSON.stringify(this.toJSON()));
     }

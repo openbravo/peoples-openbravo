@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2015 Openbravo S.L.U.
+ * Copyright (C) 2012-2016 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -31,7 +31,7 @@
       bpToSave.set('createdBy', OB.MobileApp.model.get('orgUserId'));
       if (customerId) {
         this.customer.set('posTerminal', OB.MobileApp.model.get('terminal').id);
-        bpToSave.set('json', JSON.stringify(this.customer.serializeToJSON()));
+        bpToSave.set('json', JSON.stringify(this.customer.serializeEditedToJSON()));
         bpToSave.set('c_bpartner_id', this.customer.get('id'));
       } else {
         isNew = true;
