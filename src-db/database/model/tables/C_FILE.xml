@@ -61,6 +61,13 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="C_ATTACHMENT_CONF_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <foreign-key foreignTable="C_ATTACHMENT_CONF" name="C_CONF_ID_FKEY">
+        <reference local="C_ATTACHMENT_CONF_ID" foreign="C_ATTACHMENT_CONF_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="AD_CLIENT" name="C_FILE_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>

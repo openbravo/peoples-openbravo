@@ -310,7 +310,11 @@ isc.OBToolbar.addClassProperties({
             expandedInterval;
         expandedInterval = setInterval(function () {
           expandedCount += 1;
-          if (attachmentSection.isExpanded()) {
+          if (attachmentSection === null) {
+            // In case attachmenSection was not created try to load it again
+            attachmentSection = me.view.viewForm.getItem('_attachments_');
+          }
+          if (attachmentSection !== null && attachmentSection.isExpanded()) {
             me.view.viewForm.parentElement.scrollTo(null, attachmentSection.getTop());
             clearInterval(expandedInterval);
           }
@@ -320,7 +324,11 @@ isc.OBToolbar.addClassProperties({
         }, 100);
 
         if (!attachmentExists) {
-          if (attachmentSection.attachmentCanvasItem.canvas.getMember(0)) {
+          if (attachmentSection === null) {
+            // In case attachmenSection was not created try to load it again
+            attachmentSection = me.view.viewForm.getItem('_attachments_');
+          }
+          if (attachmentSection !== null && attachmentSection.attachmentCanvasItem.canvas.getMember(0)) {
             attachmentSection.attachmentCanvasItem.canvas.getMember(0).getMember(0).click();
           } else {
             // The first time the form view is loaded, the section is not already built and it could take a while to be.
@@ -329,7 +337,11 @@ isc.OBToolbar.addClassProperties({
                 clickInterval;
             clickInterval = setInterval(function () {
               clickCount += 1;
-              if (attachmentSection.attachmentCanvasItem.canvas.getMember(0)) {
+              if (attachmentSection === null) {
+                // In case attachmenSection was not created try to load it again
+                attachmentSection = me.view.viewForm.getItem('_attachments_');
+              }
+              if (attachmentSection !== null && attachmentSection.attachmentCanvasItem.canvas.getMember(0)) {
                 attachmentSection.attachmentCanvasItem.canvas.getMember(0).getMember(0).click();
                 clearInterval(clickInterval);
               }
@@ -348,14 +360,16 @@ isc.OBToolbar.addClassProperties({
           recordIds = recordIds + selectedRows[i].id;
         }
         var vTabId = this.view.tabId;
+        var viewId = this.view.ID;
         var vbuttonId = this.ID;
         isc.confirm(OB.I18N.getLabel('OBUIAPP_ConfirmDownloadMultiple'), function (clickedOK) {
           if (clickedOK) {
             var d = {
-              Command: 'GET_MULTIPLE_RECORDS_OB3',
+              Command: 'DOWNLOAD_ALL',
               tabId: vTabId,
               buttonId: vbuttonId,
-              recordIds: recordIds
+              recordIds: recordIds,
+              viewId: viewId
             };
             OB.Utilities.postThroughHiddenForm('./businessUtility/TabAttachments_FS.html', d);
           }
