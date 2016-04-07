@@ -30,6 +30,11 @@
   v_parent_id ad_treenode.parent_id%TYPE;
 
 BEGIN
+
+  IF (p_organization IS NULL) THEN
+    RETURN NULL;
+  END IF;
+
   SELECT IsPeriodControlAllowed
   INTO v_isperiodcontrolallowed
   FROM AD_Org
