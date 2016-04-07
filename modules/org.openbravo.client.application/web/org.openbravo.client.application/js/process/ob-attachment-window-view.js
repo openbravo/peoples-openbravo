@@ -167,6 +167,13 @@ isc.OBAttachmentWindowView.addProperties({
       fileItemForm.setTarget('background_target');
     }
   },
+  
+  destroy: function () {
+    if (this.uploadMode) {
+      this.theForm.getFileItemForm().destroy();
+    }
+    this.Super('destroy', arguments);
+  },
 
   buildButtonLayout: function () {
     var view = this,
