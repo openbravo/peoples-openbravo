@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2011-2013 Openbravo SLU 
+ * All portions are Copyright (C) 2011-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -240,7 +240,10 @@ public class ApplicationDictionaryCachedStructures implements Serializable {
       ReferencedTreeField displayField = t.getDisplayfield();
       initializeDALObject(displayField);
     }
-
+    for (org.openbravo.model.ad.domain.List list : reference.getADListList()) {
+      initializeDALObject(list);
+    }
+    initializeDALObject(reference.getOBUIAPPRefWindowList());
   }
 
   public List<AuxiliaryInput> getAuxiliarInputList(String tabId) {
@@ -297,7 +300,7 @@ public class ApplicationDictionaryCachedStructures implements Serializable {
   public List<Parameter> getMethodMetadataParameters(String strAttMethodId, String strTabId) {
     String strMethodTab = strAttMethodId + "-" + strTabId;
     if (useCache() && attMethodMetadataMap.get(strMethodTab) != null) {
-      return attMethodMetadataMap.get(strAttMethodId);
+      return attMethodMetadataMap.get(strMethodTab);
     }
 
     StringBuilder where = new StringBuilder();
@@ -311,11 +314,25 @@ public class ApplicationDictionaryCachedStructures implements Serializable {
     qryParams.setNamedParameter("attMethod", strAttMethodId);
     qryParams.setNamedParameter("tab", strTabId);
     List<Parameter> metadatas = qryParams.list();
+    for (Parameter metadata : metadatas) {
+      initializeMetadata(metadata);
+    }
 
     if (useCache()) {
       attMethodMetadataMap.put(strMethodTab, metadatas);
     }
     return metadatas;
+  }
+
+  private void initializeMetadata(Parameter metadata) {
+    initializeDALObject(metadata);
+    if (metadata.getReference() != null) {
+      initializeDALObject(metadata.getReference());
+      initializeReference(metadata.getReference());
+    }
+    if (metadata.getReferenceSearchKey() != null) {
+      initializeReference(metadata.getReferenceSearchKey());
+    }
   }
 
   private boolean useCache() {
