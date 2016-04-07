@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2015 Openbravo S.L.U.
+ * Copyright (C) 2012-2016 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -68,7 +68,7 @@ enyo.kind({
     style: 'clear:both;'
   }, {
     name: 'generic',
-    style: 'float: right; width: 20%; text-align: right; font-style: italic; color: grey; padding: 15px; font-weight: bold;',
+    style: 'float: right; width: 30%; text-align: right; font-style: italic; color: grey; font-weight: bold;',
     showing: false
   }, {
     style: 'clear:both;'
