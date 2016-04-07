@@ -1257,7 +1257,12 @@ enyo.kind({
     if (this.disabled) {
       return true;
     }
-
+    if (_.isNull(this.model.get('order').get('bp').get('locId'))) {
+      OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_InformationTitle'), OB.I18N.getLabel('OBPOS_EmptyAddrBillToText'), [{
+        label: OB.I18N.getLabel('OBPOS_LblOk')
+      }]);
+      return true;
+    }
     var process = new OB.DS.Process('org.openbravo.retail.posterminal.CheckBusinessPartnerCredit');
     var me = this;
     var paymentstatus = this.model.get('order').getPaymentStatus();
