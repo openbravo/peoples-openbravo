@@ -437,12 +437,13 @@ public class ModuleManagement extends HttpSecureAppServlet {
     boolean runningInTomcat;
     try {
       runningInTomcat = RequestContext.getServletContext().getServerInfo().contains("Tomcat");
+      log4j.debug("Server Info:" + RequestContext.getServletContext().getServerInfo());
     } catch (OBException e) {
       log4j.error("Couldn't get servlet context", e);
       return false;
     }
     if (!runningInTomcat) {
-      return true;
+      return false;
     }
 
     boolean externalRebuild = false;
