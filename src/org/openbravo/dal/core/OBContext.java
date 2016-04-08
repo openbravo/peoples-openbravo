@@ -251,6 +251,11 @@ public class OBContext implements OBNotSingleton {
    */
   public static void restorePreviousMode() {
     restorePreviousMode(AdminType.ADMIN_MODE);
+    Stack<OBAdminMode> stack = getAdminModeStack(AdminType.ADMIN_MODE);
+
+    if (stack.isEmpty() && OBContext.getOBContext() == adminContext) {
+      OBContext.setOBContext((OBContext) null);
+    }
   }
 
   /**
