@@ -31,10 +31,13 @@ import java.util.Map;
 
 import org.apache.log4j.Level;
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.exception.GenericJDBCException;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.core.DalLayerInitializer;
@@ -63,8 +66,13 @@ public class ExplicitCrossOrganizationReference extends CrossOrganizationReferen
   private static String QA_ONLY_SPAIN_ROLE;
   private static final String CORE = "0";
   private static final String ORDER_WAREHOUSE_COLUMN = "2202";
+  private static final String ORDER_BP_COLUMN = "2762";
   private static final String ORDERLINE_ORDER_COLUMN = "2213";
+
   private static boolean wasCoreInDev;
+
+  @Rule
+  public ExpectedException thrown = ExpectedException.none();
 
   /**
    * References from org Spain to USA should not be allowed on insertion even in a column allowing
@@ -391,6 +399,31 @@ public class ExplicitCrossOrganizationReference extends CrossOrganizationReferen
     JSONObject resp = createOrderAndFetchLines(QA_ONLY_SPAIN_ROLE);
     assertThat("number of fetched order lines", resp.getJSONObject("response").getInt("totalRows"),
         is(1));
+  }
+
+  /**
+   * Cross org column value cannot changed if column's module is not in dev. The opposite (value can
+   * be changed if mod in dev), is implicitly tested in @BeforeClass method.
+   */
+  @Test
+  public void itShouldntBeAllowedToSetCrossOrgIfModNotInDev() {
+    OBContext prevCtxt = OBContext.getOBContext();
+    OBContext.setOBContext("0");
+
+    Module core = OBDal.getInstance().get(Module.class, CORE);
+    try {
+      core.setInDevelopment(false);
+
+      Column orderBP = OBDal.getInstance().get(Column.class, ORDER_BP_COLUMN);
+      orderBP.setAllowedCrossOrganizationReference(true);
+
+      thrown.expect(GenericJDBCException.class);
+      OBDal.getInstance().commitAndClose();
+    } finally {
+      core.setInDevelopment(true); // was set in @BeforeClass
+      OBDal.getInstance().commitAndClose();
+      OBContext.setOBContext(prevCtxt);
+    }
   }
 
   @SuppressWarnings("serial")
