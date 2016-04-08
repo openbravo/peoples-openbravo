@@ -277,10 +277,7 @@ public class OBContext implements OBNotSingleton {
       printUnbalancedWarning(true, type);
     }
 
-    if (OBContext.getOBContext() == null) {
-      return;
-    }
-    if (ADMIN_TRACE_SIZE != 0) {
+    if (OBContext.getOBContext() != null && ADMIN_TRACE_SIZE != 0) {
       addStackTrace(type);
     }
   }
