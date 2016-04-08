@@ -566,11 +566,6 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
     if (!"Error".equalsIgnoreCase(message.getType())) {
       message.setMessage(strNewPaymentMessage + " " + message.getMessage());
       message.setType(message.getType().toLowerCase());
-    } else {
-      conn = new DalConnectionProvider(true);
-      OBDal.getInstance().getSession().clear();
-      payment = OBDal.getInstance().get(FIN_Payment.class, payment.getId());
-      addCredit(payment, jsonparams, refundAmount, strDifferenceAction);
     }
     if (!strDifferenceAction.equals("refund")) {
       return message;
