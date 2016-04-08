@@ -298,7 +298,7 @@ public class ExplicitCrossOrganizationReference extends CrossOrganizationReferen
   }
 
   @Test
-  public void adminAndCrossOrgAdminAreIndpendent() {
+  public void adminAndCrossOrgAdminAreIndependent() {
     setTestLogAppenderLevel(Level.WARN);
     OBContext.setAdminMode();
     assertThat("admin mode", OBContext.getOBContext().isInAdministratorMode(), is(true));
