@@ -430,12 +430,11 @@ public class QueryListDataSource extends ReadOnlyDataSourceService implements Po
    */
   private String removeSelectClause(String hql) {
     String hqlWithoutSelectClause = hql;
-    if (hqlWithoutSelectClause.toLowerCase().indexOf(" from ") != -1) {
-      hqlWithoutSelectClause = hqlWithoutSelectClause.substring(hqlWithoutSelectClause
-          .toLowerCase().indexOf(" from "));
+    String hqlLowerCase = hql.toLowerCase();
+    if (hqlLowerCase.indexOf(" from ") != -1) {
+      hqlWithoutSelectClause = hqlWithoutSelectClause.substring(hqlLowerCase.indexOf(" from "));
     } else if (hqlWithoutSelectClause.toLowerCase().indexOf("\nfrom ") != -1) {
-      hqlWithoutSelectClause = hqlWithoutSelectClause.substring(hqlWithoutSelectClause
-          .toLowerCase().indexOf("\nfrom "));
+      hqlWithoutSelectClause = hqlWithoutSelectClause.substring(hqlLowerCase.indexOf("\nfrom "));
     }
     return hqlWithoutSelectClause;
   }
@@ -450,14 +449,15 @@ public class QueryListDataSource extends ReadOnlyDataSourceService implements Po
 
   private String removeClause(String hql, String clause) {
     String hqlWithoutOrderByClause = hql;
+    String hqlLowerCase = hql.toLowerCase();
     String clauseBetweenSpaces = " " + clause + " ";
     String clauseNewLine = "\n" + clause + " ";
-    if (hqlWithoutOrderByClause.toLowerCase().indexOf(clauseBetweenSpaces) != -1) {
-      hqlWithoutOrderByClause = hqlWithoutOrderByClause.substring(0, hqlWithoutOrderByClause
-          .toLowerCase().indexOf(clauseBetweenSpaces));
-    } else if (hqlWithoutOrderByClause.toLowerCase().indexOf(clauseNewLine) != -1) {
-      hqlWithoutOrderByClause = hqlWithoutOrderByClause.substring(0, hqlWithoutOrderByClause
-          .toLowerCase().indexOf(clauseNewLine));
+    if (hqlLowerCase.indexOf(clauseBetweenSpaces) != -1) {
+      hqlWithoutOrderByClause = hqlWithoutOrderByClause.substring(0,
+          hqlLowerCase.indexOf(clauseBetweenSpaces));
+    } else if (hqlLowerCase.indexOf(clauseNewLine) != -1) {
+      hqlWithoutOrderByClause = hqlWithoutOrderByClause.substring(0,
+          hqlLowerCase.indexOf(clauseNewLine));
     }
     return hqlWithoutOrderByClause;
   }
