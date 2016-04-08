@@ -39,7 +39,7 @@ public class PreferenceAccessInjector extends AccessTypeInjector {
 
   private static final Set<String> propertyBlackList = new HashSet<String>(Arrays.asList(
       "OBUIAPP_RecentDocumentsList", "OBUIAPP_RecentViewList", "OBUIAPP_GridConfiguration",
-      "OBUIAPP_DefaultSavedView", "UINAVBA_RecentLaunchList"));
+      "OBUIAPP_DefaultSavedView", "UINAVBA_MenuRecentList", "UINAVBA_RecentLaunchList"));
 
   @Override
   public String getSecuredElementGetter() {
