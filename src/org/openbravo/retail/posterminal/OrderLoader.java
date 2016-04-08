@@ -158,10 +158,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
   @Inject
   @Any
-  private Instance<OrderLoaderCreateOrderlineHook> orderCreateOrderLineProcesses;
-
-  @Inject
-  @Any
   private Instance<OrderLoaderHookForQuotations> quotationProcesses;
 
   @Inject
@@ -674,8 +670,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       Object proc = procIter.next();
       if (proc instanceof OrderLoaderHook) {
         ((OrderLoaderHook) proc).exec(jsonorder, order, shipment, invoice);
-        // } else if (proc instanceof OrderLoaderCreateOrderlineHook) {
-        // ((OrderLoaderCreateOrderlineHook) proc).exec(jsonorder, orderLine);
       } else if (proc instanceof OrderLoaderHookForQuotations) {
         ((OrderLoaderHookForQuotations) proc).exec(jsonorder, order, shipment, invoice);
       }
@@ -1608,15 +1602,14 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       if (createShipment
           || (doCancelAndReplace && !newLayaway && !notpaidLayaway && !partialpaidLayaway)) {
         // shipment is created or is a C&R and is not a layaway, so all is delivered
-        orderline.setDeliveredQuantity(orderline.getOrderedQuantity());
+        orderline
+            .setDeliveredQuantity(jsonOrderLine.has("obposQtytodeliver") ? BigDecimal
+                .valueOf(jsonOrderLine.getDouble("obposQtytodeliver")) : orderline
+                .getOrderedQuantity());
       }
 
-      orderline.setObposQtytodeliver(orderline.getOrderedQuantity());
-      // try {
-      // executeHooks(orderCreateOrderLineProcesses, jsonOrderLine, null, null, null, orderline);
-      // } catch (Exception e) {
-      // throw new OBException("Error in OrderLoader Create OrderLines Hook: ", e);
-      // }
+      orderline.setObposQtytodeliver(jsonOrderLine.has("obposQtytodeliver") ? new BigDecimal(
+          jsonOrderLine.getDouble("obposQtytodeliver")) : orderline.getOrderedQuantity());
 
       lineReferences.add(orderline);
       orderline.setLineNo((long) ((i + 1) * 10));
