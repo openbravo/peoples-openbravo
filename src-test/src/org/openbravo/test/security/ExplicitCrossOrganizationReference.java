@@ -336,6 +336,21 @@ public class ExplicitCrossOrganizationReference extends CrossOrganizationReferen
   }
 
   @Test
+  public void unbalancedRestorePreviousCrossOrgAdminShouldLogStackIfEnabled() {
+    setTestLogAppenderLevel(Level.WARN);
+    OBContext.setAdminTraceSize(1);
+
+    OBContext.setCrossOrgReferenceAdminMode();
+    OBContext.restorePreviousCrossOrgReferenceMode();
+    assertThat(getTestLogAppender().getMessages(Level.WARN), hasSize(0));
+
+    OBContext.restorePreviousCrossOrgReferenceMode();
+    assertThat(
+        getTestLogAppender().getMessages(Level.WARN),
+        hasItem(containsString("org.openbravo.test.security.ExplicitCrossOrganizationReference.unbalancedRestorePreviousCrossOrgAdminShouldLogStackIfEnabled")));
+  }
+
+  @Test
   public void unbalancedOrgAdminThreadFinalizationShouldLogWarn() throws NoSuchMethodException,
       SecurityException, IllegalAccessException, IllegalArgumentException,
       InvocationTargetException {

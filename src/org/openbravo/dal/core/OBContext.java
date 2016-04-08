@@ -348,7 +348,8 @@ public class OBContext implements OBNotSingleton {
     sw.write(prefix + "\n");
     new Exception().printStackTrace(pw);
     final List<String> list;
-    if ("setCrossOrgReferenceAdminMode".equals(prefix)) {
+    if ("setCrossOrgReferenceAdminMode".equals(prefix)
+        || "restorePreviousCrossOrgReferenceMode".equals(prefix)) {
       if (crossOrgAdminModeTrace.get() == null) {
         crossOrgAdminModeTrace.set(new ArrayList<String>());
       }
