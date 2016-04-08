@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2014 Openbravo SLU
+ * All portions are Copyright (C) 2010-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -260,6 +260,9 @@ public class QueryListDataSource extends ReadOnlyDataSourceService implements Po
           }
           summaryData.put("isGridSummary", true);
         } catch (Exception e) {
+          log.error(
+              "Exception fetching summary columns of the widget " + widgetClass.getWidgetTitle()
+                  + ". \n Query = " + HQL, e);
         }
         result.add(summaryData);
 
@@ -368,8 +371,10 @@ public class QueryListDataSource extends ReadOnlyDataSourceService implements Po
       OBCQL_WidgetQuery widgetQuery) {
     // get rid of the original select clause, a new one is going to be built
     String updatedHQL = removeSelectClause(hQL);
-    // the order clause is not needed when obtaining the values for the summary fields
+    // the order and group by clauses are not needed when obtaining the values for the summary
+    // fields
     updatedHQL = removeOrderByClause(updatedHQL);
+    updatedHQL = removeGroupByClause(updatedHQL);
     try {
       JSONObject summaryFieldsObject = new JSONObject(summaryParametersString);
       Iterator<?> summaryFieldNameIterator = summaryFieldsObject.keys();
@@ -435,24 +440,27 @@ public class QueryListDataSource extends ReadOnlyDataSourceService implements Po
     return hqlWithoutSelectClause;
   }
 
-  /**
-   * Removes the order by clause of a hql query
-   * 
-   * @param hql
-   *          the original hql query
-   * @return the original hql query without its select clause
-   */
   private String removeOrderByClause(String hql) {
+    return removeClause(hql, "order by");
+  }
+
+  private String removeGroupByClause(String hql) {
+    return removeClause(hql, "group by");
+  }
+
+  private String removeClause(String hql, String clause) {
     String hqlWithoutOrderByClause = hql;
-    if (hqlWithoutOrderByClause.toLowerCase().indexOf(" order by ") != -1) {
+    String clauseBetweenSpaces = " " + clause + " ";
+    String clauseNewLine = "\n" + clause + " ";
+    if (hqlWithoutOrderByClause.toLowerCase().indexOf(clauseBetweenSpaces) != -1) {
       hqlWithoutOrderByClause = hqlWithoutOrderByClause.substring(0, hqlWithoutOrderByClause
-          .toLowerCase().indexOf(" order by "));
-    } else if (hqlWithoutOrderByClause.toLowerCase().indexOf("\norder by ") != -1) {
+          .toLowerCase().indexOf(clauseBetweenSpaces));
+    } else if (hqlWithoutOrderByClause.toLowerCase().indexOf(clauseNewLine) != -1) {
       hqlWithoutOrderByClause = hqlWithoutOrderByClause.substring(0, hqlWithoutOrderByClause
-          .toLowerCase().indexOf("\norder by "));
+          .toLowerCase().indexOf(clauseNewLine));
     }
     return hqlWithoutOrderByClause;
-  } // Checks if the widget is embedded in a tab accessible by the user
+  }
 
   private boolean isAccessibleWidgetInForm(WidgetClass widgetClass) {
     OBCriteria<WidgetReference> widgetInFormCriteria = OBDal.getInstance().createCriteria(
