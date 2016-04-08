@@ -25,6 +25,7 @@ import java.util.Set;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.structure.InheritedAccessEnabled;
 import org.openbravo.dal.core.DalUtil;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.Utility;
@@ -72,7 +73,11 @@ public class PreferenceAccessInjector extends AccessTypeInjector {
   public Role getRole(InheritedAccessEnabled access) {
     // Preference does not have role property as parent
     Preference preference = (Preference) access;
-    return preference.getVisibleAtRole();
+    if (preference.getVisibleAtRole() == null) {
+      return null;
+    }
+    String roleId = (String) DalUtil.getId(preference.getVisibleAtRole());
+    return (Role) OBDal.getInstance().get(Role.class, roleId);
   }
 
   @Override
