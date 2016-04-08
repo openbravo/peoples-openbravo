@@ -100,8 +100,8 @@ public class OBContext implements OBNotSingleton {
   private static OBContext adminContext = null;
 
   private enum AdminType {
-    ADMIN_MODE("setAdminMode", "restorePreviousMode", adminModeStack, adminModeTrace), CROSS_ORG_ADMIN_MODE(
-        "setCrossOrgReferenceAdminMode", "restorePreviousCrossOrgReferenceMode",
+    ADMIN_MODE("setAdminMode", "restorePreviousMode", adminModeStack, adminModeTrace), //
+    CROSS_ORG_ADMIN_MODE("setCrossOrgReferenceAdminMode", "restorePreviousCrossOrgReferenceMode",
         crossOrgAdminModeStack, crossOrgAdminModeTrace);
 
     private String setMethod;
