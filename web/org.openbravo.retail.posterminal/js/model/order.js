@@ -2843,7 +2843,8 @@
               attrs: {
                 promotions: l.get('promotions'),
                 promotionCandidates: l.get('promotionCandidates'),
-                qtyToApplyDiscount: l.get('qtyToApplyDiscount')
+                qtyToApplyDiscount: l.get('qtyToApplyDiscount'),
+                price: l.get('price')
               }
             });
             lineToEdit.set('qty', OB.DEC.sub(lineToEdit.get('qty'), l.get('qty')), {
