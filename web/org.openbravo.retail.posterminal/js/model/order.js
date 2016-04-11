@@ -1577,8 +1577,10 @@
         OB.Dal.find(OB.Model.ProductPrice, criteria, function (productPrices) {
           if (productPrices.length > 0) {
             p = p.clone();
-            p.set('standardPrice', productPrices.at(0).get('pricestd'));
-            p.set('listPrice', productPrices.at(0).get('pricelist'));
+            if (OB.UTIL.isNullOrUndefined(p.get('giftCardTransaction'))) {
+              p.set('standardPrice', productPrices.at(0).get('pricestd'));
+              p.set('listPrice', productPrices.at(0).get('pricelist'));
+            }
             me.addProductToOrder(p, qty, options, attrs);
             if (callback) {
               callback(true);
