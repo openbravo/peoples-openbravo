@@ -523,16 +523,18 @@ public class ExplicitCrossOrganizationReference extends CrossOrganizationReferen
   @AfterClass
   public static void resetAD() {
     OBContext.setOBContext("0");
-    if (!wasCoreInDev) {
-      Module core = OBDal.getInstance().get(Module.class, CORE);
-      core.setInDevelopment(false);
-    }
 
     Column orderWarehouse = OBDal.getInstance().get(Column.class, ORDER_WAREHOUSE_COLUMN);
     orderWarehouse.setAllowedCrossOrganizationReference(false);
 
     Column orderLineOrder = OBDal.getInstance().get(Column.class, ORDERLINE_ORDER_COLUMN);
     orderLineOrder.setAllowedCrossOrganizationReference(false);
+    OBDal.getInstance().flush();
+
+    if (!wasCoreInDev) {
+      Module core = OBDal.getInstance().get(Module.class, CORE);
+      core.setInDevelopment(false);
+    }
 
     OBDal.getInstance().commitAndClose();
   }
