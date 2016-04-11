@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2015 Openbravo S.L.U.
+ * Copyright (C) 2013-2016 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -1189,29 +1189,37 @@ enyo.kind({
     this.waterfall('onChangePricelist', inEvent);
   },
   receiptLineSelected: function (inSender, inEvent) {
-    if (inEvent.product.get('groupProduct') && inEvent.product.get('productType') !== 'S' && !inEvent.product.get('isLinkedToProduct')) {
-      // The line selected is a grouped product, so enable the quantity button
-      this.waterfall('onEnableQtyButton', {
-        enable: true
-      });
-      this.waterfall('onEnablePlusButton', {
-        enable: true
-      });
-      this.waterfall('onEnableMinusButton', {
-        enable: true
-      });
+    var enableButton = true,
+        selectedLines = this.$.multiColumn.$.rightPanel.$.keyboard.selectedModels,
+        selectedLinesSameQty = this.$.multiColumn.$.rightPanel.$.keyboard.selectedModelsSameQty,
+        selectedLinesLength = this.$.multiColumn.$.rightPanel.$.keyboard.selectedModels.length,
+        product, i;
+    if (selectedLinesLength > 1) {
+      for (i = 0; i < selectedLinesLength; i++) {
+        product = selectedLines[i].get('product');
+        if (!product.get('groupProduct') || (product.get('productType') === 'S' && product.get('isLinkedToProduct'))) {
+          enableButton = false;
+          break;
+        }
+      }
+      if (enableButton && !selectedLinesSameQty) {
+        enableButton = false;
+      }
     } else {
-      // The line selected is not a grouped product, so disable the quantity button
-      this.waterfall('onEnableQtyButton', {
-        enable: false
-      });
-      this.waterfall('onEnablePlusButton', {
-        enable: false
-      });
-      this.waterfall('onEnableMinusButton', {
-        enable: false
-      });
+      product = selectedLines[0].get('product');
+      if (!product.get('groupProduct') || (product.get('productType') === 'S' && product.get('isLinkedToProduct'))) {
+        enableButton = false;
+      }
     }
+    this.waterfall('onEnableQtyButton', {
+      enable: enableButton
+    });
+    this.waterfall('onEnablePlusButton', {
+      enable: enableButton
+    });
+    this.waterfall('onEnableMinusButton', {
+      enable: enableButton
+    });
     OB.UTIL.HookManager.executeHooks('OBPOS_LineSelected', {
       product: inEvent.product,
       context: this

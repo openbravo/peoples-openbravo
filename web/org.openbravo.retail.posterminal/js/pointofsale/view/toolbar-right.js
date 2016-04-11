@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2015 Openbravo S.L.U.
+ * Copyright (C) 2012-2016 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -390,7 +390,8 @@ enyo.kind({
     onEnableUserInterface: '',
     onFinishServiceProposal: '',
     onToggleLineSelection: '',
-    onShowActionIcons: ''
+    onShowActionIcons: '',
+    onReceiptLineSelected: ''
   },
   handlers: {
     onRightToolbarDisabled: 'disabledButton',
@@ -421,6 +422,11 @@ enyo.kind({
   tap: function (options) {
     this.model.get('order').get('lines').on('selected', function (lineSelected) {
       this.currentLine = lineSelected;
+      if (lineSelected) {
+        this.doReceiptLineSelected({
+          product: lineSelected.get('product')
+        });
+      }
     }, this);
 
     if (OB.MobileApp.model.get('serviceSearchMode')) {
