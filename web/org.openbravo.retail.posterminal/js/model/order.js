@@ -2856,6 +2856,7 @@
         line.set('id', idMap[line.get('id')]);
       }, this);
       this.set('hasbeenpaid', 'N');
+      this.set('isPaid', false);
       this.set('isEditable', true);
       this.set('createdBy', OB.MobileApp.model.get('orgUserId'));
       this.set('session', OB.MobileApp.model.get('session'));
