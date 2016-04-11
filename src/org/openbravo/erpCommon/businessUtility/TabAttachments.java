@@ -86,6 +86,8 @@ public class TabAttachments extends HttpSecureAppServlet {
       File tempFile = null;
       String strMessage = "";
       JSONObject obj = null;
+      Tab tab = null;
+      String key = null;
       try {
         OBContext.setAdminMode(true);
 
@@ -93,8 +95,8 @@ public class TabAttachments extends HttpSecureAppServlet {
         JSONObject paramValues;
         paramValues = new JSONObject(strParamValues);
         final String strTab = paramValues.getString("inpTabId");
-        Tab tab = adcs.getTab(strTab);
-        final String key = paramValues.getString("inpKey");
+        tab = adcs.getTab(strTab);
+        key = paramValues.getString("inpKey");
         final String strDocumentOrganization = paramValues.getString("inpDocumentOrg");
         final FileItem file = vars.getMultiFile("inpname");
         if (file == null) {
@@ -139,6 +141,9 @@ public class TabAttachments extends HttpSecureAppServlet {
       } catch (OBException e) {
         OBDal.getInstance().rollbackAndClose();
         log.error("Error uploading the file", e);
+        if (key != null) {
+          obj = AttachmentsAH.getAttachmentJSONObject(tab, key);
+        }
         strMessage = e.getMessage();
       } finally {
         OBContext.restorePreviousMode();
