@@ -55,7 +55,6 @@ public class FIN_TransactionProcess implements org.openbravo.scheduling.Process 
   public static final String TRXTYPE_BPWithdrawal = "BPW";
   public static final String TRXTYPE_BankFee = "BF";
   static Logger log4j = LoggerFactory.getLogger(FIN_TransactionProcess.class);
-  AdvPaymentMngtDao dao = new AdvPaymentMngtDao();
 
   public void execute(ProcessBundle bundle) throws Exception {
     OBError msg = new OBError();
@@ -123,7 +122,8 @@ public class FIN_TransactionProcess implements org.openbravo.scheduling.Process 
           if (transaction.getBusinessPartner() == null) {
             transaction.setBusinessPartner(payment.getBusinessPartner());
           }
-          if (StringUtils.equals(payment.getStatus(), "RPAE")
+          AdvPaymentMngtDao dao = new AdvPaymentMngtDao();
+          if (StringUtils.equals(payment.getStatus(), dao.PAYMENT_STATUS_AWAITING_EXECUTION)
               && dao.isAutomatedExecutionPayment(financialAccount, payment.getPaymentMethod(),
                   payment.isReceipt())) {
             msg = OBMessageUtils.messageBD("APRM_AutomaticExecutionProcess");
