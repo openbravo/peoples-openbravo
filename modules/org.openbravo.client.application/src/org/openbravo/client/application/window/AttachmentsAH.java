@@ -65,12 +65,9 @@ public class AttachmentsAH extends BaseActionHandler {
     String recordIds = "";
     try {
       final JSONObject request = new JSONObject(content);
-      String action = "";
-      if (!request.isNull("action")) {
-        action = request.getString("action");
-      }
+      String command = (String) parameters.get("Command");
 
-      if ("EDIT".equals(action)) {
+      if ("EDIT".equals(command)) {
         JSONObject params = request.getJSONObject("_params");
         recordIds = params.getString("inpKey");
         final String attachmentId = (String) parameters.get("attachmentId");
@@ -99,7 +96,7 @@ public class AttachmentsAH extends BaseActionHandler {
         JSONObject obj = getAttachmentJSONObject(tab, recordIds);
         obj.put("buttonId", params.getString("buttonId"));
         return obj;
-      } else if (parameters.get("Command").equals("DELETE")) {
+      } else if ("DELETE".equals(command)) {
 
         recordIds = parameters.get("recordIds").toString();
         String attachmentId = (String) parameters.get("attachId");

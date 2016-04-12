@@ -276,10 +276,10 @@ isc.OBAttachmentWindowView.addProperties({
         tabId: this.attachSection.tabId,
         attachmentId: this.attachmentId,
         attachmentName: this.attachmentName,
-        attachmentMethod: this.attachmentMethod
+        attachmentMethod: this.attachmentMethod,
+        Command: 'EDIT'
         };
     allProperties._params = this.getContextInfo();
-    allProperties.action = 'EDIT';
 
     OB.RemoteCallManager.call('org.openbravo.client.application.window.AttachmentsAH', allProperties, params, function (response, data, request) {
       OB.Utilities.uploadFinished(data.buttonId, data);
