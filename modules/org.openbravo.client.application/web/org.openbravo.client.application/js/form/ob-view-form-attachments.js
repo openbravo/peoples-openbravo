@@ -385,7 +385,7 @@ isc.OBAttachmentsLayout.addProperties({
         height: 1,
         className: 'OBNoteListGridAuthor',
         width: '200px',
-        contents: creationDate + " " + OB.I18N.getLabel('OBUIAPP_AttachmentBy') + " " + attachment.updatedby
+        contents: creationDate + ' ' + OB.I18N.getLabel('OBUIAPP_AttachmentBy') + ' ' + attachment.updatedby
       });
       var downloadAttachment = isc.OBLinkButtonItem.create({
         title: '[ ' + OB.I18N.getLabel('OBUIAPP_AttachmentDownload') + ' ]',
@@ -410,23 +410,15 @@ isc.OBAttachmentsLayout.addProperties({
         attachment: attachment,
         action: editDescActions
       });
-      var description = isc.DynamicForm.create({
-        title: 'Description',
-        numCols: 1,
+      var descText = attachment.description || '';
+      var description = isc.Label.create({
+        contents: descText.asHTML(),
+        className: 'OBNoteListGrid',
         width: '100%',
-        fields: [{
-          name: 'descriptionOBTextAreaItem',
-          type: 'OBTextAreaItem',
-          showTitle: false,
-          layout: this,
-          width: '*',
-          length: 2000,
-          value: attachment.description || '',
-          disabled: true
-        }]
+        height: 20,
+        wrap: true
       });
 
-      buttonLayout.description = description.fields[0].value;
       buttonLayout.addMember(attachmentLabel);
       buttonLayout.addMember(attachmentBy);
       buttonLayout.addMember(downloadAttachment);
