@@ -35,9 +35,7 @@ import org.hibernate.exception.GenericJDBCException;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.core.DalLayerInitializer;
@@ -70,9 +68,6 @@ public class ExplicitCrossOrganizationReference extends CrossOrganizationReferen
   private static final String ORDERLINE_ORDER_COLUMN = "2213";
 
   private static boolean wasCoreInDev;
-
-  @Rule
-  public ExpectedException thrown = ExpectedException.none();
 
   /**
    * References from org Spain to USA should not be allowed on insertion even in a column allowing
@@ -417,7 +412,7 @@ public class ExplicitCrossOrganizationReference extends CrossOrganizationReferen
       Column orderBP = OBDal.getInstance().get(Column.class, ORDER_BP_COLUMN);
       orderBP.setAllowedCrossOrganizationReference(true);
 
-      thrown.expect(GenericJDBCException.class);
+      exception.expect(GenericJDBCException.class);
       OBDal.getInstance().commitAndClose();
     } finally {
       core.setInDevelopment(true); // was set in @BeforeClass
