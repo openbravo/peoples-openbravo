@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -57,6 +57,7 @@ import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.erpCommon.utility.WindowTreeData;
+import org.openbravo.model.ad.access.RoleOrganization;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.financialmgmt.accounting.OrganizationClosing;
 import org.openbravo.model.financialmgmt.calendar.Calendar;
@@ -549,9 +550,7 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
     }
 
     String strOrgList = "";
-    OBContext.setAdminMode();
-    String[] orgList = OBContext.getOBContext().getRole().getOrganizationList().split(",");
-    OBContext.restorePreviousMode();
+    List<String> orgList = getRoleOrganizationList(OBContext.getOBContext().getRole().getId());
     int i = 0;
     for (String org : orgList) {
       if (i == 0) {
@@ -580,7 +579,24 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
     out.close();
   }
 
+  @SuppressWarnings("unchecked")
+  private List<String> getRoleOrganizationList(String roleId) {
+    try {
+      OBContext.setAdminMode(false);
+      StringBuffer hqlString = new StringBuffer();
+      hqlString.append(" select " + RoleOrganization.PROPERTY_ORGANIZATION + ".id");
+      hqlString.append(" from " + RoleOrganization.ENTITY_NAME);
+      hqlString.append(" where " + RoleOrganization.PROPERTY_ROLE + ".id = :roleId");
+      Query query = OBDal.getInstance().getSession().createQuery(hqlString.toString());
+      query.setParameter("roleId", roleId);
+      return query.list();
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
   public String getServletInfo() {
     return "Servlet GeneralAccountingReportsData";
   } // end of getServletInfo() method
+
 }

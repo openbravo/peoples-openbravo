@@ -308,21 +308,20 @@ public class ConfigParameters {
   /**
    * <p>
    * Looks for file to override some of the properties in the Openbravo.properties. This is intended
-   * to be used in Tomcat cluster environments sharing same context directory to allow having some
-   * properties different in different machines.
+   * to be used in Tomcat cluster environments sharing same context directory to allow to define
+   * specific values for some properties in different machines.
    * </p>
    * <p>
-   * The overriding file should be named like <code>hostName.Openbravo.properties</code> where
-   * <code>hostName</code> can be determined by <code>machine.name</code> system property or by
-   * <code>InetAddress.getLocalHost().getHostName()</code> if <code>machine.name</code> property is
-   * not present.
+   * The file with overridden properties is selected based on the first fulfilled rule of these:
+   * <ul>
+   * <li>If {@code properties.path} JVM property is defined, it indicates the absolute path to take
+   * the file from.
+   * <li>If {@code machine.name} JVM property is defined, this value will be used as {@code prefix}
+   * to look for a file in {@code config} directory named {@code prefix.Openbravo.properties}.
+   * <li>Other case, {@code prefix} is defined by {@code InetAddress.getLocalHost().getHostName()}.
+   * The actual name for <code>hostName</code> can be determined by {@code ant host.name}.
+   * </ul>
    * </p>
-   * <p>
-   * Actual name for <code>hostName</code> can be determined by <code>ant host.name</code>
-   * </p>
-   * 
-   * @param obProperties
-   * @param path
    */
   public static void overrideProperties(Properties obProperties, String path) {
     if (obProperties == null) {
@@ -337,24 +336,33 @@ public class ConfigParameters {
       return;
     }
 
-    String fileName = System.getProperty("machine.name");
-    if (fileName == null || fileName.isEmpty()) {
-      try {
-        fileName = InetAddress.getLocalHost().getHostName();
-        log4j.info("Checking override properties for " + fileName);
-      } catch (UnknownHostException e) {
-        log4j.error("Error when getting host name", e);
-      }
-    }
-
-    if (fileName == null || fileName.isEmpty()) {
-      log4j.debug("Override fileName env variable is not defined.");
-      return;
-    }
-
-    fileName += ".Openbravo.properties";
+    String absPath = System.getProperty("properties.path");
     File propertiesFile = null;
-    propertiesFile = new File(propFilePath, fileName);
+
+    if (absPath != null && !absPath.isEmpty()) {
+      propertiesFile = new File(absPath);
+      log4j.info("Looking for override properties file in " + absPath + ". Found: "
+          + propertiesFile.exists());
+    } else {
+      String fileName = System.getProperty("machine.name");
+      if (fileName == null || fileName.isEmpty()) {
+        try {
+          fileName = InetAddress.getLocalHost().getHostName();
+          log4j.info("Checking override properties for " + fileName);
+        } catch (UnknownHostException e) {
+          log4j.error("Error when getting host name", e);
+        }
+      }
+
+      if (fileName == null || fileName.isEmpty()) {
+        log4j.debug("Override fileName env variable is not defined.");
+        return;
+      }
+
+      fileName += ".Openbravo.properties";
+      propertiesFile = new File(propFilePath, fileName);
+    }
+
     if (!propertiesFile.exists()) {
       log4j.debug("No override file can be found at " + propertiesFile.getAbsolutePath());
       return;
