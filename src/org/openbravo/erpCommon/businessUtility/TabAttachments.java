@@ -43,10 +43,10 @@ import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.client.application.Parameter;
 import org.openbravo.client.application.ParameterUtils;
 import org.openbravo.client.application.attachment.AttachImplementationManager;
+import org.openbravo.client.application.attachment.AttachmentAH;
 import org.openbravo.client.application.attachment.AttachmentUtils;
 import org.openbravo.client.application.attachment.CoreAttachImplementation;
 import org.openbravo.client.application.window.ApplicationDictionaryCachedStructures;
-import org.openbravo.client.application.window.AttachmentsAH;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
@@ -135,14 +135,14 @@ public class TabAttachments extends HttpSecureAppServlet {
         }
 
         aim.upload(requestParams, strTab, key, strDocumentOrganization, tempFile);
-        obj = AttachmentsAH.getAttachmentJSONObject(tab, key);
+        obj = AttachmentAH.getAttachmentJSONObject(tab, key);
       } catch (JSONException e) {
         throw new OBException(OBMessageUtils.messageBD("ErrorUploadingFile"), e);
       } catch (OBException e) {
         OBDal.getInstance().rollbackAndClose();
         log.error("Error uploading the file", e);
         if (key != null) {
-          obj = AttachmentsAH.getAttachmentJSONObject(tab, key);
+          obj = AttachmentAH.getAttachmentJSONObject(tab, key);
         }
         strMessage = e.getMessage();
       } finally {

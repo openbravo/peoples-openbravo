@@ -16,7 +16,7 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
-package org.openbravo.client.application.window;
+package org.openbravo.client.application.attachment;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -33,8 +33,7 @@ import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.util.Check;
 import org.openbravo.client.application.Parameter;
-import org.openbravo.client.application.attachment.AttachImplementationManager;
-import org.openbravo.client.application.attachment.AttachmentUtils;
+import org.openbravo.client.application.window.ApplicationDictionaryCachedStructures;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
@@ -47,9 +46,9 @@ import org.openbravo.model.ad.utility.Attachment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AttachmentsAH extends BaseActionHandler {
+public class AttachmentAH extends BaseActionHandler {
 
-  private static final Logger log = LoggerFactory.getLogger(AttachmentsAH.class);
+  private static final Logger log = LoggerFactory.getLogger(AttachmentAH.class);
 
   @Inject
   private AttachImplementationManager aim;

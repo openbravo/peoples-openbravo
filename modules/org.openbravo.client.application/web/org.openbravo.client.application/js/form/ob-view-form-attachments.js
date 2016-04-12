@@ -313,7 +313,7 @@ isc.OBAttachmentsLayout.addProperties({
         };
         isc.confirm(OB.I18N.getLabel('OBUIAPP_ConfirmRemoveAll'), function (clickedOK) {
           if (clickedOK) {
-            OB.RemoteCallManager.call('org.openbravo.client.application.window.AttachmentsAH', {}, d, function (response, data, request) {
+            OB.RemoteCallManager.call('org.openbravo.client.application.attachment.AttachmentAH', {}, d, function (response, data, request) {
               attachLayout.fillAttachments(data.attachments);
               if (data.status === -1) {
                 OB.Utilities.writeErrorMessage(data.viewId, data.errorMessage);
@@ -353,7 +353,7 @@ isc.OBAttachmentsLayout.addProperties({
 
       isc.confirm(OB.I18N.getLabel('OBUIAPP_ConfirmRemove'), function (clickedOK) {
         if (clickedOK) {
-          OB.RemoteCallManager.call('org.openbravo.client.application.window.AttachmentsAH', {}, d, function (response, data, request) {
+          OB.RemoteCallManager.call('org.openbravo.client.application.attachment.AttachmentAH', {}, d, function (response, data, request) {
             attachLayout.fillAttachments(data.attachments);
             if (data.status === -1) {
               OB.Utilities.writeErrorMessage(data.viewId, data.errorMessage);

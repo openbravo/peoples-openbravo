@@ -281,7 +281,7 @@ isc.OBAttachmentWindowView.addProperties({
         };
     allProperties._params = this.getContextInfo();
 
-    OB.RemoteCallManager.call('org.openbravo.client.application.window.AttachmentsAH', allProperties, params, function (response, data, request) {
+    OB.RemoteCallManager.call('org.openbravo.client.application.attachment.AttachmentAH', allProperties, params, function (response, data, request) {
       OB.Utilities.uploadFinished(data.buttonId, data);
       if (data.status === -1) {
         OB.Utilities.writeErrorMessage(data.viewId, data.errorMessage);
