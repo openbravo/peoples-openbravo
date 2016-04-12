@@ -167,7 +167,7 @@ isc.OBAttachmentWindowView.addProperties({
       fileItemForm.setTarget('background_target');
     }
   },
-  
+
   destroy: function () {
     if (this.uploadMode) {
       this.theForm.getFileItemForm().destroy();
