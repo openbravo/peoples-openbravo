@@ -5839,7 +5839,7 @@
     generateInvoice: function () {
       var invoice;
 
-      if (this.get('bp').get('invoiceTerms') === 'I' && this.get('generateInvoice')) {
+      if ((this.get('bp').get('invoiceTerms') === 'I' && this.get('generateInvoice')) || this.get('paidOnCredit')) {
         invoice = new OB.Model.Invoice(this.attributes);
         //TODO: check & generate ids
         invoice.set('orderId', this.get('id'));
