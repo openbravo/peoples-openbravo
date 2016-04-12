@@ -17,7 +17,7 @@
  ************************************************************************
  */
 
-package org.openbravo.client.application.window;
+package org.openbravo.client.application.attachment;
 
 import java.io.File;
 import java.util.Map;

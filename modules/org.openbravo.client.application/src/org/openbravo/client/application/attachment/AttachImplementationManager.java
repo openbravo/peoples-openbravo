@@ -17,7 +17,7 @@
  ************************************************************************
  */
 
-package org.openbravo.client.application.window;
+package org.openbravo.client.application.attachment;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -46,6 +46,7 @@ import org.openbravo.base.structure.OrganizationEnabled;
 import org.openbravo.client.application.Parameter;
 import org.openbravo.client.application.ParameterUtils;
 import org.openbravo.client.application.ParameterValue;
+import org.openbravo.client.application.window.ApplicationDictionaryCachedStructures;
 import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;

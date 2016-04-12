@@ -16,7 +16,7 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
-package org.openbravo.client.application.window;
+package org.openbravo.client.application.attachment;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,6 +29,8 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.application.Parameter;
+import org.openbravo.client.application.window.ApplicationDictionaryCachedStructures;
+import org.openbravo.client.application.window.OBViewParameterHandler;
 import org.openbravo.client.kernel.BaseTemplateComponent;
 import org.openbravo.client.kernel.KernelConstants;
 import org.openbravo.client.kernel.Template;

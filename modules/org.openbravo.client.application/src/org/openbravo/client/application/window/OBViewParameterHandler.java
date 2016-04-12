@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2012-2016 Openbravo SLU 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -30,6 +30,7 @@ import org.openbravo.base.model.ModelProvider;
 import org.openbravo.client.application.DynamicExpressionParser;
 import org.openbravo.client.application.Parameter;
 import org.openbravo.client.application.Process;
+import org.openbravo.client.application.attachment.AttachmentWindowComponent;
 import org.openbravo.client.kernel.BaseTemplateComponent;
 import org.openbravo.client.kernel.reference.UIDefinition;
 import org.openbravo.client.kernel.reference.UIDefinitionController;

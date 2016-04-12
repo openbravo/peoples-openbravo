@@ -16,7 +16,7 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
-package org.openbravo.client.application.process;
+package org.openbravo.client.application.attachment;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -32,7 +32,6 @@ import org.openbravo.client.application.Parameter;
 import org.openbravo.client.application.ParameterUtils;
 import org.openbravo.client.application.ParameterValue;
 import org.openbravo.client.application.window.ApplicationDictionaryCachedStructures;
-import org.openbravo.client.application.window.AttachmentUtils;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.client.kernel.KernelConstants;
 import org.openbravo.dal.core.OBContext;

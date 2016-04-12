@@ -17,7 +17,7 @@
  ************************************************************************
  */
 
-package org.openbravo.client.application.window;
+package org.openbravo.client.application.attachment;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -38,6 +38,7 @@ import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.client.application.Parameter;
 import org.openbravo.client.application.ParameterUtils;
 import org.openbravo.client.application.ParameterValue;
+import org.openbravo.client.application.window.ApplicationDictionaryCachedStructures;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;

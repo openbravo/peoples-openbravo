@@ -37,7 +37,7 @@ isc.OBAttachmentWindowView.addProperties({
   overflow: 'auto',
   autoSize: false,
 
-  defaultsActionHandler: 'org.openbravo.client.application.process.DefaultsAttachmentActionHandler',
+  defaultsActionHandler: 'org.openbravo.client.application.attachment.DefaultsAttachmentActionHandler',
 
   members: [],
 

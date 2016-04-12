@@ -33,6 +33,8 @@ import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.util.Check;
 import org.openbravo.client.application.Parameter;
+import org.openbravo.client.application.attachment.AttachImplementationManager;
+import org.openbravo.client.application.attachment.AttachmentUtils;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
