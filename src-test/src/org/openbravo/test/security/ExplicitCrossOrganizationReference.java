@@ -31,7 +31,6 @@ import java.util.Map;
 
 import org.apache.log4j.Level;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.exception.GenericJDBCException;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -412,7 +411,7 @@ public class ExplicitCrossOrganizationReference extends CrossOrganizationReferen
       Column orderBP = OBDal.getInstance().get(Column.class, ORDER_BP_COLUMN);
       orderBP.setAllowedCrossOrganizationReference(true);
 
-      exception.expect(GenericJDBCException.class);
+      exception.expect(Exception.class);
       OBDal.getInstance().commitAndClose();
     } finally {
       core.setInDevelopment(true); // was set in @BeforeClass
