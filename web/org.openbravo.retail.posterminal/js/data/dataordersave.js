@@ -113,9 +113,9 @@
           return true;
         }
 
-        if (OB.UTIL.isRfidConfigured()) {
-          OB.UTIL.processRemainingCodes(model.get('order'));
-          OB.UTIL.updateEpcBuffers();
+        if (OB.UTIL.RfidController.isRfidConfigured()) {
+          OB.UTIL.RfidController.processRemainingCodes(receipt);
+          OB.UTIL.RfidController.updateEpcBuffers();
         }
 
         OB.trace('Execution of pre order save hook OK.');

@@ -596,9 +596,6 @@ enyo.kind({
     this.addCommand('line:delete', {
       stateless: true,
       action: function (keyboard) {
-        if (!keyboard.line) {
-          return;
-        }
         OB.UTIL.Approval.requestApproval(me.model, 'OBPOS_approval.deleteLine', function (approved, supervisor, approvalType) {
           if (approved) {
             keyboard.line.set('deleteApproved', true);
@@ -830,10 +827,10 @@ enyo.kind({
       } else {
         // If rfid has been used remove code from buffer
         if (args.attrs && args.attrs.obposEpccode) {
-          OB.UTIL.removeEpc(args.attrs.obposEpccode);
+          OB.UTIL.RfidController.removeEpc(args.attrs.obposEpccode);
         }
-        // 'UPC/EAN code not found'
-        if (OB.MobileApp.model.get('permissions').OBPOS_showPopupEANNotFound) {
+        // If the preference to show that the 'UPC/EAN code has not been found is enabled'
+        if (OB.MobileApp.model.hasPermission('OBPOS_showPopupEANNotFound', true)) {
           OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_KbUPCEANCodeNotFound', [args.code]));
         } else {
           OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_KbUPCEANCodeNotFound', [args.code]));

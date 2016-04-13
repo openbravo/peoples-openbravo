@@ -44,7 +44,7 @@ public class PaidReceiptLinesProperties extends ModelExtension {
         add(new HQLProperty("ordLine.warehouse.id", "warehouse"));
         add(new HQLProperty("ordLine.warehouse.name", "warehousename"));
         add(new HQLProperty("ordLine.description", "description"));
-        add(new HQLProperty("ordLine.obposSerialnumber", "obposSerialnumber"));
+        add(new HQLProperty("ordLine.obposSerialNumber", "obposSerialNumber"));
         add(new HQLProperty("ordLine.obposEpccode", "obposEpccode"));
         // Only used for returns
         add(new HQLProperty(

@@ -1188,8 +1188,8 @@
       line.trigger('removed', line);
 
       function finishDelete() {
-        if (OB.UTIL.isRfidConfigured() && line.get('obposEpccode')) {
-          OB.UTIL.removeEpcLine(line);
+        if (OB.UTIL.RfidController.isRfidConfigured() && line.get('obposEpccode')) {
+          OB.UTIL.RfidController.removeEpcLine(line);
         }
         var text, lines, indexes, relations, rl, rls, i;
 
@@ -1203,8 +1203,8 @@
           lines: lines,
           relations: relations,
           undo: function () {
-            if (OB.UTIL.isRfidConfigured() && line.get('obposEpccode')) {
-              OB.UTIL.addEpcLine(line);
+            if (OB.UTIL.RfidController.isRfidConfigured() && line.get('obposEpccode')) {
+              OB.UTIL.RfidController.addEpcLine(line);
             }
             enyo.$.scrim.show();
             me.set('preventServicesUpdate', true);
@@ -1930,8 +1930,8 @@
           var order = OB.MobileApp.model.receipt;
           OB.UTIL.Approval.requestApproval((modelObj ? modelObj : this.model), 'OBPOS_approval.deleteLine', function (approved) {
             if (approved) {
-              if (OB.UTIL.isRfidConfigured() && newline.get('obposEpccode')) {
-                OB.UTIL.removeEpcLine(newline);
+              if (OB.UTIL.RfidController.isRfidConfigured() && newline.get('obposEpccode')) {
+                OB.UTIL.RfidController.removeEpcLine(newline);
               }
               // If the OBPOS_remove_ticket preference is active then mark the line as deleted
               if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {

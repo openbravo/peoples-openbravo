@@ -162,8 +162,8 @@ enyo.kind({
           me.markOrderAsDeleted(model);
         } else {
           // approved so remove the entry
-          if (OB.UTIL.isRfidConfigured()) {
-            OB.UTIL.eraseEpcOrder(model);
+          if (OB.UTIL.RfidController.isRfidConfigured()) {
+            OB.UTIL.RfidController.eraseEpcOrder(model);
           }
           OB.Dal.remove(model, function () {
             me.collection.remove(model);
@@ -205,8 +205,8 @@ enyo.kind({
     var me = this;
 
     function removeOneModel(collection, model) {
-      if (OB.UTIL.isRfidConfigured()) {
-        OB.UTIL.eraseEpcOrder(model);
+      if (OB.UTIL.RfidController.isRfidConfigured()) {
+        OB.UTIL.RfidController.eraseEpcOrder(model);
       }
       if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
         me.markOrderAsDeleted(model);

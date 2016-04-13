@@ -103,11 +103,11 @@ enyo.kind({
         }]
       });
     }
-    if (this.model.get('obposSerialnumber')) {
+    if (this.model.get('obposSerialNumber')) {
       this.createComponent({
         style: 'display: block;',
         components: [{
-          content: OB.I18N.getLabel('OBPOS_SerialNumber', [this.model.get('obposSerialnumber')]),
+          content: OB.I18N.getLabel('OBPOS_SerialNumber', [this.model.get('obposSerialNumber')]),
           attributes: {
             style: 'float: left; width: 80%;'
           }

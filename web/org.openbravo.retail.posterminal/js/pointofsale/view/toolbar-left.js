@@ -478,7 +478,7 @@ enyo.kind({
     kind: 'OB.UI.MenuSeparator',
     name: 'sep0',
     init: function (model) {
-      if (!OB.MobileApp.model.get('terminal').terminalType.userfid || !OB.POS.hwserver.url) {
+      if (!OB.MobileApp.model.get('terminal').terminalType.useRfid || !OB.POS.hwserver.url) {
         this.hide();
       }
     }

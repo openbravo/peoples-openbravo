@@ -234,10 +234,6 @@ enyo.kind({
   },
   handlers: {
     onRightToolbarDisabled: 'disabledButton',
-    onConnectRfidDevice: 'connectRfidDevice',
-    onDisconnectRfidDevice: 'disconnectRfidDevice',
-    onRfidConnectionLost: 'rfidConnectionLost',
-    onRfidConnectionRecovered: 'rfidConnectionRecovered',
     onPointOfSaleLoad: 'pointOfSaleLoad'
   },
   rfidOnIcon: 'btn-icon-rfidon',
@@ -255,9 +251,42 @@ enyo.kind({
   init: function (model) {
     this.model = model;
     this.$.lbl.addClass('btn-label');
-    if (OB.MobileApp.model.get('terminal').terminalType.userfid && OB.POS.hwserver.url) {
+    if (OB.MobileApp.model.get('terminal').terminalType.useRfid && OB.POS.hwserver.url) {
       this.$.rfidIcon.show();
     }
+    OB.UTIL.RfidController.on('change:connected', function (model) {
+      if (this.$.rfidIcon) {
+        if (OB.UTIL.RfidController.get('connected')) {
+          this.$.rfidIcon.removeClass(this.rfidOffIcon);
+          this.$.rfidIcon.removeClass(this.rfidOfflineIcon);
+          this.$.rfidIcon.addClass(this.rfidOnIcon);
+        } else {
+          this.$.rfidIcon.removeClass(this.rfidOnIcon);
+          this.$.rfidIcon.removeClass(this.rfidOfflineIcon);
+          this.$.rfidIcon.addClass(this.rfidOffIcon);
+        }
+      }
+    }, this);
+
+    OB.UTIL.RfidController.on('change:connectionLost', function (model) {
+      if (this.$.rfidIcon) {
+
+        if (OB.UTIL.RfidController.get('connectionLost')) {
+          this.$.rfidIcon.removeClass(this.rfidOnIcon);
+          this.$.rfidIcon.removeClass(this.rfidOffIcon);
+          this.$.rfidIcon.addClass(this.rfidOfflineIcon);
+        } else {
+          this.$.rfidIcon.removeClass(this.rfidOfflineIcon);
+          if (!OB.UTIL.RfidController.get('isRFIDEnabled')) {
+            this.$.rfidIcon.removeClass(this.rfidOnIcon);
+            this.$.rfidIcon.addClass(this.rfidOffIcon);
+          } else {
+            this.$.rfidIcon.removeClass(this.rfidOffIcon);
+            this.$.rfidIcon.addClass(this.rfidOnIcon);
+          }
+        }
+      }
+    }, this);
   },
   disabledButton: function (inSender, inEvent) {
     this.isEnabled = !inEvent.status;
@@ -282,33 +311,8 @@ enyo.kind({
 
     return true;
   },
-  connectRfidDevice: function (inSender, inEvent) {
-    this.$.rfidIcon.removeClass(this.rfidOffIcon);
-    this.$.rfidIcon.removeClass(this.rfidOfflineIcon);
-    this.$.rfidIcon.addClass(this.rfidOnIcon);
-  },
-  disconnectRfidDevice: function (inSender, inEvent) {
-    this.$.rfidIcon.removeClass(this.rfidOnIcon);
-    this.$.rfidIcon.removeClass(this.rfidOfflineIcon);
-    this.$.rfidIcon.addClass(this.rfidOffIcon);
-  },
-  rfidConnectionLost: function (inSender, inEvent) {
-    this.$.rfidIcon.removeClass(this.rfidOnIcon);
-    this.$.rfidIcon.removeClass(this.rfidOffIcon);
-    this.$.rfidIcon.addClass(this.rfidOfflineIcon);
-  },
-  rfidConnectionRecovered: function (inSender, inEvent) {
-    this.$.rfidIcon.removeClass(this.rfidOfflineIcon);
-    if (!OB.UTIL.isRFIDEnabled) {
-      this.$.rfidIcon.removeClass(this.rfidOnIcon);
-      this.$.rfidIcon.addClass(this.rfidOffIcon);
-    } else {
-      this.$.rfidIcon.removeClass(this.rfidOffIcon);
-      this.$.rfidIcon.addClass(this.rfidOnIcon);
-    }
-  },
   pointOfSaleLoad: function (inSender, inEvent) {
-    if (!OB.UTIL.isRFIDEnabled | !OB.UTIL.reconnectOnScanningFocus) {
+    if (!OB.UTIL.RfidController.get('isRFIDEnabled') | !OB.UTIL.RfidController.get('reconnectOnScanningFocus')) {
       this.$.rfidIcon.addClass(this.rfidOffIcon);
     } else {
       this.$.rfidIcon.addClass(this.rfidOnIcon);

@@ -396,8 +396,8 @@ enyo.kind({
     function removeOrder(context) {
       var isPaidQuotation = (context.model.get('order').has('isQuotation') && context.model.get('order').get('isQuotation') && context.model.get('order').has('hasbeenpaid') && context.model.get('order').get('hasbeenpaid') === 'Y');
       var receipt = context.model.get('order');
-      if (OB.UTIL.isRfidConfigured()) {
-        OB.UTIL.eraseEpcOrder(context.model.get('order'));
+      if (OB.UTIL.RfidController.isRfidConfigured()) {
+        OB.UTIL.RfidController.eraseEpcOrder(context.model.get('order'));
       }
       if (receipt.get('id') && !isPaidQuotation && receipt.get('lines') && receipt.get('lines').length > 0) {
         if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true) && !inEvent.originator.hasClass('paidticket')) {
@@ -1244,7 +1244,7 @@ enyo.kind({
     receipt = this.model.get('order');
     receiptList = this.model.get('orderList');
     OB.MobileApp.view.scanningFocus(true);
-    
+
     this.waterfall('onPointOfSaleLoad');
 
     // Try to print the pending receipts.
