@@ -275,6 +275,7 @@ isc.OBAttachmentsLayout.addProperties({
     var attachLayout = this,
         id, i, length, editDescActions;
 
+    attachments = attachments || [];
     this.getForm().getItem('_attachments_').setAttachmentCount(attachments.length);
     this.savedAttachments = attachments;
     this.destroyAndRemoveMembers(this.getMembers());
