@@ -24,6 +24,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONException;
@@ -52,7 +53,7 @@ import org.openbravo.model.ad.utility.AttachmentConfig;
 import org.openbravo.model.ad.utility.AttachmentMethod;
 
 public class AttachmentUtils {
-  private static Map<String, String> clientConfigs = new HashMap<String, String>();
+  private static Map<String, String> clientConfigs = new ConcurrentHashMap<String, String>();
   public static final String DEFAULT_METHOD = "Default";
   public static final String DEFAULT_METHOD_ID = "D7B1319FC2B340799283BBF8E838DF9F";
   private static final String CORE_DESC_PARAMETER = "E22E8E3B737D4A47A691A073951BBF16";
