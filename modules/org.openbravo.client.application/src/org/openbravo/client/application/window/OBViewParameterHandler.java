@@ -29,7 +29,6 @@ import org.apache.log4j.Logger;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.client.application.DynamicExpressionParser;
 import org.openbravo.client.application.Parameter;
-import org.openbravo.client.application.Process;
 import org.openbravo.client.application.attachment.AttachmentWindowComponent;
 import org.openbravo.client.kernel.BaseTemplateComponent;
 import org.openbravo.client.kernel.reference.UIDefinition;
@@ -49,10 +48,6 @@ public class OBViewParameterHandler {
   private static final int NUMBER_COLUMNS = 4;
   private BaseTemplateComponent paramWindow;
   private List<Parameter> parameters = new ArrayList<Parameter>();
-
-  public void setProcess(Process process) {
-    this.parameters = process.getOBUIAPPParameterList();
-  }
 
   public void setParameters(List<Parameter> parameters) {
     this.parameters = parameters;
