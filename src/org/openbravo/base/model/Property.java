@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -125,6 +125,7 @@ public class Property {
   private Integer seqno;
   private boolean usedSequence;
   private boolean isProxy;
+  private boolean allowedCrossOrgReference;
 
   /**
    * Initializes this Property using the information from the Column.
@@ -201,6 +202,7 @@ public class Property {
     setInactive(!fromColumn.isActive());
 
     setModule(fromColumn.getModule());
+    setAllowedCrossOrgReference(fromColumn.isAllowedCrossOrgReference());
     isProxy = false;
   }
 
@@ -1342,5 +1344,19 @@ public class Property {
 
   public void setSqlLogic(String sqlLogic) {
     this.sqlLogic = sqlLogic;
+  }
+
+  /**
+   * Foreign key properties allowing cross organization references can define a link to an object
+   * which organization is not in the same organization's natural tree when context is in
+   * {@code  setCrossOrgReferenceAdminMode}.
+   */
+  public boolean isAllowedCrossOrgReference() {
+    return allowedCrossOrgReference;
+  }
+
+  /** @see Property#isAllowedCrossOrgReference() */
+  public void setAllowedCrossOrgReference(boolean allowedCrossOrgReference) {
+    this.allowedCrossOrgReference = allowedCrossOrgReference;
   }
 }

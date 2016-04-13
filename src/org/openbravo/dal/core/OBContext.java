@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -83,7 +83,7 @@ public class OBContext implements OBNotSingleton {
   private static final String ORG = "#AD_Org_ID";
 
   // set this to a higher value to enable admin mode tracing
-  private static final int ADMIN_TRACE_SIZE = 0;
+  private static int ADMIN_TRACE_SIZE = 0;
 
   private static ThreadLocal<OBContext> instance = new ThreadLocal<OBContext>();
 
@@ -92,9 +92,31 @@ public class OBContext implements OBNotSingleton {
   private static ThreadLocal<Stack<OBAdminMode>> adminModeStack = new ThreadLocal<Stack<OBAdminMode>>();
   private static ThreadLocal<List<String>> adminModeTrace = new ThreadLocal<List<String>>();
 
+  private static ThreadLocal<Stack<OBAdminMode>> crossOrgAdminModeStack = new ThreadLocal<Stack<OBAdminMode>>();
+  private static ThreadLocal<List<String>> crossOrgAdminModeTrace = new ThreadLocal<List<String>>();
+
   public static final String CONTEXT_PARAM = "#OBContext";
 
   private static OBContext adminContext = null;
+
+  private enum AdminType {
+    ADMIN_MODE("setAdminMode", "restorePreviousMode", adminModeStack, adminModeTrace), //
+    CROSS_ORG_ADMIN_MODE("setCrossOrgReferenceAdminMode", "restorePreviousCrossOrgReferenceMode",
+        crossOrgAdminModeStack, crossOrgAdminModeTrace);
+
+    private String setMethod;
+    private String restoreMethod;
+    private ThreadLocal<Stack<OBAdminMode>> stack;
+    private ThreadLocal<List<String>> trace;
+
+    private AdminType(String setMethod, String restoreMethod,
+        ThreadLocal<Stack<OBAdminMode>> stack, ThreadLocal<List<String>> trace) {
+      this.setMethod = setMethod;
+      this.restoreMethod = restoreMethod;
+      this.stack = stack;
+      this.trace = trace;
+    }
+  };
 
   /**
    * @return true if the current language is a RTL language, false in other cases
@@ -158,14 +180,14 @@ public class OBContext implements OBNotSingleton {
     OBAdminMode am = new OBAdminMode();
     am.setAdminMode(true);
     am.setOrgClientAccessCheck(doOrgClientAccessCheck);
-    getAdminModeStack().push(am);
+    getAdminModeStack(AdminType.ADMIN_MODE).push(am);
     if (OBContext.getOBContext() == null) {
       OBContext.setAdminContextLocally();
     } else if (OBContext.getOBContext() == adminContext) {
       return;
     }
     if (OBContext.getOBContext() != null && ADMIN_TRACE_SIZE != 0) {
-      addStackTrace("setAdminMode");
+      addStackTrace(AdminType.ADMIN_MODE);
     }
   }
 
@@ -185,11 +207,31 @@ public class OBContext implements OBNotSingleton {
     setAdminMode(false);
   }
 
-  private static Stack<OBAdminMode> getAdminModeStack() {
-    if (adminModeStack.get() == null) {
-      adminModeStack.set(new Stack<OBAdminMode>());
+  /**
+   * Cross Organization Reference Administrator mode allows to create references from an object to
+   * another one that it is not in the same Organization's natural tree.
+   * 
+   * This only applies for columns marked to allow this behavior.
+   */
+  public static void setCrossOrgReferenceAdminMode() {
+    OBAdminMode am = new OBAdminMode();
+    am.setAdminMode(false);
+    am.setOrgClientAccessCheck(true);
+    am.setCrossOrgAdminMode(true);
+
+    getAdminModeStack(AdminType.CROSS_ORG_ADMIN_MODE).push(am);
+
+    if (OBContext.getOBContext() != null && ADMIN_TRACE_SIZE != 0) {
+      addStackTrace(AdminType.CROSS_ORG_ADMIN_MODE);
     }
-    return adminModeStack.get();
+  }
+
+  private static Stack<OBAdminMode> getAdminModeStack(AdminType type) {
+    ThreadLocal<Stack<OBAdminMode>> stack = type.stack;
+    if (stack.get() == null) {
+      stack.set(new Stack<OBAdminMode>());
+    }
+    return stack.get();
   }
 
   /**
@@ -208,28 +250,53 @@ public class OBContext implements OBNotSingleton {
    * @since 2.50MP18
    */
   public static void restorePreviousMode() {
-    // remove the last admin mode from the stack
-    final Stack<OBAdminMode> stack = getAdminModeStack();
-    if (stack.size() > 0) {
-      stack.pop();
-    } else {
-      printUnbalancedWarning(true);
-    }
+    restorePreviousMode(AdminType.ADMIN_MODE);
+    Stack<OBAdminMode> stack = getAdminModeStack(AdminType.ADMIN_MODE);
 
-    if (OBContext.getOBContext() == null) {
-      return;
-    }
-    if (ADMIN_TRACE_SIZE != 0) {
-      addStackTrace("restorePreviousMode");
-    }
     if (stack.isEmpty() && OBContext.getOBContext() == adminContext) {
       OBContext.setOBContext((OBContext) null);
     }
   }
 
-  private static void printUnbalancedWarning(boolean printLocationOfCaller) {
+  /**
+   * Used to restore the previous privileges after enabling Cross Organization Reference
+   * Administrator privileges by calling {@link #setCrossOrgReferenceAdminMode()}.
+   * 
+   * @see OBContext#setCrossOrgReferenceAdminMode()
+   */
+  public static void restorePreviousCrossOrgReferenceMode() {
+    restorePreviousMode(AdminType.CROSS_ORG_ADMIN_MODE);
+  }
+
+  private static void restorePreviousMode(AdminType type) {
+    // remove the last admin mode from the stack
+    final Stack<OBAdminMode> stack = getAdminModeStack(type);
+    if (stack.size() > 0) {
+      stack.pop();
+    } else {
+      printUnbalancedWarning(true, type);
+    }
+
+    if (OBContext.getOBContext() != null && ADMIN_TRACE_SIZE != 0) {
+      addStackTrace(type);
+    }
+  }
+
+  /**
+   * Sets the size of stack trace to display in case of logging unbalanced set/restore admin modes
+   * calls
+   */
+  public static void setAdminTraceSize(int s) {
+    ADMIN_TRACE_SIZE = s;
+  }
+
+  private static void printUnbalancedWarning(boolean printLocationOfCaller, AdminType type) {
     if (ADMIN_TRACE_SIZE == 0) {
-      String errMsg = "Unbalanced calls to setAdminMode and restorePreviousMode. "
+      String errMsg = "Unbalanced calls to "
+          + type.setMethod
+          + " and "
+          + type.restoreMethod
+          + ". "
           + "Consider setting the constant OBContext.ADMIN_TRACE_SIZE to a value higher than 0 to debug this situation";
       if (printLocationOfCaller) {
         log.warn(errMsg, new IllegalStateException());
@@ -240,7 +307,8 @@ public class OBContext implements OBNotSingleton {
     }
 
     // will only be executed with adminModeTrace debugging enabled
-    final List<String> adminModeTraceList = adminModeTrace.get();
+    List<String> adminModeTraceList = type.trace.get();
+
     final StringBuilder sb = new StringBuilder();
     if (adminModeTraceList != null) {
       for (String adminModeTraceValue : adminModeTraceList) {
@@ -249,22 +317,28 @@ public class OBContext implements OBNotSingleton {
       }
     }
     if (printLocationOfCaller) {
-      log.warn("Unbalanced calls to setAdminMode and restorePreviousMode" + sb.toString(),
+      log.warn(
+          "Unbalanced calls to " + type.setMethod + " and " + type.restoreMethod + sb.toString(),
           new IllegalStateException());
     } else {
-      log.warn("Unbalanced calls to setAdminMode and restorePreviousMode" + sb.toString());
+      log.warn("Unbalanced calls to " + type.setMethod + " and " + type.restoreMethod
+          + sb.toString());
     }
   }
 
-  private static void addStackTrace(String prefix) {
+  private static void addStackTrace(AdminType adminMode) {
     final StringWriter sw = new StringWriter();
     final PrintWriter pw = new PrintWriter(sw);
-    sw.write(prefix + "\n");
+    sw.write(adminMode + "\n");
     new Exception().printStackTrace(pw);
-    if (adminModeTrace.get() == null) {
-      adminModeTrace.set(new ArrayList<String>());
+    final List<String> list;
+
+    ThreadLocal<List<String>> trace = adminMode.trace;
+    if (trace.get() == null) {
+      trace.set(new ArrayList<String>());
     }
-    final List<String> list = adminModeTrace.get();
+    list = trace.get();
+
     if (list.size() > 0 && list.size() >= ADMIN_TRACE_SIZE) {
       list.remove(0);
     }
@@ -275,15 +349,19 @@ public class OBContext implements OBNotSingleton {
    * Clears the admin context stack.
    */
   static void clearAdminModeStack() {
-    if (getAdminModeStack().size() > 0) {
-      printUnbalancedWarning(false);
+    for (AdminType type : AdminType.values()) {
+      Stack<OBAdminMode> stack = getAdminModeStack(type);
+      if (stack.size() > 0) {
+        printUnbalancedWarning(false, type);
+      }
+      stack.clear();
+      type.trace.set(null);
     }
-    getAdminModeStack().clear();
+
     if (adminModeSet.get() != null) {
       log.warn("Unbalanced calls to enableAsAdminContext and resetAsAdminContext");
       adminModeSet.set(null);
     }
-    adminModeTrace.set(null);
   }
 
   /**
@@ -747,7 +825,7 @@ public class OBContext implements OBNotSingleton {
     OBAdminMode am = new OBAdminMode();
     am.setAdminMode(true);
     am.setOrgClientAccessCheck(true);
-    getAdminModeStack().push(am);
+    getAdminModeStack(AdminType.ADMIN_MODE).push(am);
     try {
       setUser(u);
       Hibernate.initialize(getUser().getClient());
@@ -914,7 +992,7 @@ public class OBContext implements OBNotSingleton {
       // can't use resetAsAdminContext here otherwise there is a danger of
       // recursive/infinite calls.
       // resetAsAdminContext();
-      getAdminModeStack().pop();
+      getAdminModeStack(AdminType.ADMIN_MODE).pop();
       setInitialized(true);
     }
     return true;
@@ -1013,14 +1091,21 @@ public class OBContext implements OBNotSingleton {
   }
 
   public boolean isInAdministratorMode() {
-    if (getAdminModeStack().size() > 0 && getAdminModeStack().peek().isAdminMode()) {
+    if (getAdminModeStack(AdminType.ADMIN_MODE).size() > 0
+        && getAdminModeStack(AdminType.ADMIN_MODE).peek().isAdminMode()) {
       return true;
     }
     return adminModeSet.get() != null || isAdministrator;
   }
 
+  public boolean isInCrossOrgAdministratorMode() {
+    return getAdminModeStack(AdminType.CROSS_ORG_ADMIN_MODE).size() > 0
+        && getAdminModeStack(AdminType.CROSS_ORG_ADMIN_MODE).peek().isCrossOrgAdminMode();
+  }
+
   public boolean doOrgClientAccessCheck() {
-    if (getAdminModeStack().size() > 0 && !getAdminModeStack().peek().doOrgClientAccessCheck()) {
+    if (getAdminModeStack(AdminType.ADMIN_MODE).size() > 0
+        && !getAdminModeStack(AdminType.ADMIN_MODE).peek().doOrgClientAccessCheck()) {
       return false;
     }
     return !(adminModeSet.get() != null || isAdministrator);
@@ -1111,13 +1196,22 @@ public class OBContext implements OBNotSingleton {
 
     private boolean adminMode;
     private boolean doOrgClientAccessCheck;
+    private boolean crossOrgAdminMode = false;
 
     public void setAdminMode(boolean adminMode) {
       this.adminMode = adminMode;
     }
 
+    public void setCrossOrgAdminMode(boolean crossOrgAdminMode) {
+      this.crossOrgAdminMode = crossOrgAdminMode;
+    }
+
     public boolean isAdminMode() {
       return adminMode;
+    }
+
+    public boolean isCrossOrgAdminMode() {
+      return crossOrgAdminMode;
     }
 
     public void setOrgClientAccessCheck(boolean doOrgClientAccessCheck) {
@@ -1152,4 +1246,5 @@ public class OBContext implements OBNotSingleton {
   private void setTranslationInstalled(boolean translationInstalled) {
     this.translationInstalled = translationInstalled;
   }
+
 }
