@@ -69,7 +69,7 @@ public class ApplicationDictionaryCachedStructures implements Serializable {
   private Map<String, List<Column>> columnMap = new HashMap<String, List<Column>>();
   private Map<String, List<AuxiliaryInput>> auxInputMap = new HashMap<String, List<AuxiliaryInput>>();
   private Map<String, ComboTableData> comboTableDataMap = new ConcurrentHashMap<String, ComboTableData>();
-  private Map<String, List<Parameter>> attMethodMetadataMap = new HashMap<String, List<Parameter>>();
+  private Map<String, List<Parameter>> attMethodMetadataMap = new ConcurrentHashMap<String, List<Parameter>>();
   private List<String> initializedWindows = new ArrayList<String>();
 
   private static final Logger log = LoggerFactory
