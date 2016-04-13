@@ -355,7 +355,7 @@ public class AdvancedQueryBuilder {
       }
     }
     // add the special whereParameter
-    final String whereParameter = filterParameters.get(JsonConstants.WHERE_PARAMETER);
+    final String whereParameter = filterParameters.get(JsonConstants.WHERE_AND_FILTER_CLAUSE);
     if (whereParameter != null && !whereParameter.equals("null") && whereParameter.length() > 0) {
       if (localWhereClause.length() > 0) {
         localWhereClause = " (" + localWhereClause + ") and (" + whereParameter + ") ";

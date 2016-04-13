@@ -138,7 +138,6 @@ public class KernelUtils {
   }
 
   public JSONObject createErrorJSON(Exception e) {
-    log.error(e.getMessage(), e);
     JSONObject error = new JSONObject();
     try {
       error.put("message", e.getMessage());

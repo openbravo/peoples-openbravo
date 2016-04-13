@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2014-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2014-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -580,7 +580,7 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
     addFilterWhereClause(additionalFilter, filterWhereClause);
 
     // the _where parameter contains the filter clause and the where clause defined at tab level
-    String whereClauseParameter = parameters.get(JsonConstants.WHERE_PARAMETER);
+    String whereClauseParameter = parameters.get(JsonConstants.WHERE_AND_FILTER_CLAUSE);
     if (whereClauseParameter != null && !whereClauseParameter.trim().isEmpty()
         && !"null".equals(whereClauseParameter)) {
       additionalFilter.append(AND + whereClauseParameter);

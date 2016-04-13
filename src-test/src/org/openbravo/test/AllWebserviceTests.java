@@ -21,6 +21,7 @@ package org.openbravo.test;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
+import org.openbravo.test.datasource.DataSourceWhereParameter;
 import org.openbravo.test.datasource.ExtendedNavigationModelTest;
 import org.openbravo.test.datasource.FICTest;
 import org.openbravo.test.datasource.FKDropDownDatasource;
@@ -48,7 +49,8 @@ import org.openbravo.test.webservice.WebServicesWithNoActiveFilterTest;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
 
-WSReadTest.class, //
+DataSourceWhereParameter.class, //
+    WSReadTest.class, //
     WSUpdateTest.class, //
     PerformanceTest.class, //
     WSAddRecordWithComputedColumns.class, //

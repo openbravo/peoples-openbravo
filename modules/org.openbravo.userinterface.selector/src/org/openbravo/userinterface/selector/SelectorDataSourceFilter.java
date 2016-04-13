@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2014 Openbravo SLU
+ * All portions are Copyright (C) 2010-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,15 +26,18 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
+import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
+import org.openbravo.client.application.CachedPreference;
 import org.openbravo.client.application.Parameter;
 import org.openbravo.client.application.ParameterUtils;
 import org.openbravo.client.kernel.reference.StringUIDefinition;
@@ -44,8 +47,10 @@ import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.ad.domain.Validation;
 import org.openbravo.service.datasource.DataSourceFilter;
+import org.openbravo.service.json.DefaultJsonDataService;
 import org.openbravo.service.json.JsonConstants;
 import org.openbravo.service.json.JsonUtils;
 import org.openbravo.service.json.QueryBuilder.TextMatching;
@@ -62,6 +67,9 @@ public class SelectorDataSourceFilter implements DataSourceFilter {
   private String dateFormat = null;
   private DateFormat systemDateFormat = null;
   private TextMatching textMatching = TextMatching.exact;
+
+  @Inject
+  private CachedPreference cachedPreference;
 
   public SelectorDataSourceFilter() {
   }
@@ -114,17 +122,39 @@ public class SelectorDataSourceFilter implements DataSourceFilter {
         }
       }
 
-      if (!StringUtils.isEmpty(filterHQL)) {
-        log.debug("Adding to where clause (based on filter expression): " + filterHQL);
-
-        String currentWhere = parameters.get(JsonConstants.WHERE_PARAMETER);
-
-        if (currentWhere == null || currentWhere.equals("null") || currentWhere.equals("")) {
-          parameters.put(JsonConstants.WHERE_PARAMETER, filterHQL);
+      if (whereParameterIsNotBlank(parameters)) {
+        if (manualWhereClausePreferenceIsEnabled()) {
+          parameters.put(JsonConstants.WHERE_AND_FILTER_CLAUSE,
+              parameters.get(JsonConstants.WHERE_PARAMETER));
+          String warnMsg = OBMessageUtils.getI18NMessage("WhereParameterAppliedWarning", null);
+          log.warn(warnMsg + " Parameters: "
+              + DefaultJsonDataService.convertParameterToString(parameters));
         } else {
-          parameters.put(JsonConstants.WHERE_PARAMETER, currentWhere + " and " + filterHQL);
+          String errorMsg = OBMessageUtils.getI18NMessage("WhereParameterException", null);
+          log.error(errorMsg + " Parameters: "
+              + DefaultJsonDataService.convertParameterToString(parameters));
+          throw new OBSecurityException(errorMsg, false);
+        }
+      } else {
+        String currentWhere = "";
+        if (!StringUtils.isEmpty(filterHQL)) {
+          log.debug("Adding to where clause (based on filter expression): " + filterHQL);
+          currentWhere = sel.getHQLWhereClause();
+          if (StringUtils.isBlank(currentWhere)) {
+            parameters.put(JsonConstants.WHERE_AND_FILTER_CLAUSE, filterHQL);
+          } else {
+            parameters.put(JsonConstants.WHERE_AND_FILTER_CLAUSE, currentWhere + " and "
+                + filterHQL);
+          }
+        } else {
+          currentWhere = sel.getHQLWhereClause();
+          if (StringUtils.isNotBlank(currentWhere)) {
+            parameters.put(JsonConstants.WHERE_AND_FILTER_CLAUSE, currentWhere);
+          }
         }
       }
+
+      parameters.put(JsonConstants.WHERE_CLAUSE_HAS_BEEN_CHECKED, "true");
 
       // Applying default expression for selector fields when is not a selector window request
       if (!"Window".equals(requestType)) {
@@ -132,10 +162,12 @@ public class SelectorDataSourceFilter implements DataSourceFilter {
         sfc.add(Restrictions.isNotNull(SelectorField.PROPERTY_DEFAULTEXPRESSION));
         sfc.add(Restrictions.eq(SelectorField.PROPERTY_OBUISELSELECTOR, sel));
 
-        applyDefaultExpressions(sel, parameters, sfc, request);
+        applyDefaultExpressions(sel, parameters, sfc, request, filterHQL);
         verifyPropertyTypes(sel, parameters);
       }
 
+    } catch (OBSecurityException e) {
+      throw e;
     } catch (Exception e) {
       log.error("Error executing filter: " + e.getMessage(), e);
     } finally {
@@ -276,8 +308,9 @@ public class SelectorDataSourceFilter implements DataSourceFilter {
    * Evaluates the default expressions and modifies the parameters map for data filtering
    */
   private void applyDefaultExpressions(Selector sel, Map<String, String> parameters,
-      OBCriteria<SelectorField> sfc, HttpServletRequest request) {
+      OBCriteria<SelectorField> sfc, HttpServletRequest request, String hqlFilterClause) {
 
+    String currentWhere = "";
     if (sfc.count() == 0) {
       return;
     }
@@ -385,12 +418,38 @@ public class SelectorDataSourceFilter implements DataSourceFilter {
 
     log.debug("Adding to where clause (based on fields default expression): " + sb.toString());
 
-    String currentWhere = parameters.get(JsonConstants.WHERE_PARAMETER);
-
-    if (currentWhere == null || currentWhere.equals("null") || currentWhere.equals("")) {
-      parameters.put(JsonConstants.WHERE_PARAMETER, sb.toString());
+    if (whereParameterIsNotBlank(parameters)) {
+      if (manualWhereClausePreferenceIsEnabled()) {
+        parameters.put(JsonConstants.WHERE_AND_FILTER_CLAUSE,
+            parameters.get(JsonConstants.WHERE_PARAMETER));
+      } else {
+        String errorMsg = OBMessageUtils.getI18NMessage("WhereParameterException", null);
+        log.error(errorMsg + " Parameters: "
+            + DefaultJsonDataService.convertParameterToString(parameters));
+        throw new OBSecurityException(errorMsg);
+      }
     } else {
-      parameters.put(JsonConstants.WHERE_PARAMETER, currentWhere + " and " + sb.toString());
+      if (StringUtils.isNotBlank(hqlFilterClause)) {
+        currentWhere = parameters.get(JsonConstants.WHERE_AND_FILTER_CLAUSE);
+      } else {
+        currentWhere = sel.getHQLWhereClause();
+      }
+      if (currentWhere == null || currentWhere.equals("null") || currentWhere.equals("")) {
+        parameters.put(JsonConstants.WHERE_AND_FILTER_CLAUSE, sb.toString());
+      } else {
+        parameters.put(JsonConstants.WHERE_AND_FILTER_CLAUSE,
+            currentWhere + " and " + sb.toString());
+      }
     }
+  }
+
+  private boolean manualWhereClausePreferenceIsEnabled() {
+    return "Y".equals(cachedPreference.getPreferenceValue(CachedPreference.ALLOW_WHERE_PARAMETER));
+  }
+
+  private boolean whereParameterIsNotBlank(Map<String, String> parameters) {
+    return parameters.containsKey(JsonConstants.WHERE_PARAMETER)
+        && StringUtils.isNotBlank(parameters.get(JsonConstants.WHERE_PARAMETER))
+        && !"null".equals(parameters.get(JsonConstants.WHERE_PARAMETER));
   }
 }
