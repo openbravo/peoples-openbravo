@@ -875,7 +875,7 @@ public class AdvancedQueryBuilder {
           try {
             date = simpleDateTimeFormat.parse(value.toString());
           } catch (ParseException e) {
-            // When a DateTime column is filtered, plan Date values are used
+            // When a DateTime column is filtered, plain Date values are used
             // See issue https://issues.openbravo.com/view.php?id=23203
             hasComeADateTime = false;
             date = simpleDateFormat.parse(value.toString());
@@ -889,13 +889,13 @@ public class AdvancedQueryBuilder {
 
         // move the date to the beginning of the day
         if (isGreaterOperator(operator)) {
-          calendar.set(Calendar.HOUR, 0);
+          calendar.set(Calendar.HOUR_OF_DAY, 0);
           calendar.set(Calendar.MINUTE, 0);
           calendar.set(Calendar.SECOND, 0);
           calendar.set(Calendar.MILLISECOND, 0);
         } else if (isLesserOperator(operator)) {
           // move the data to the end of the day
-          calendar.set(Calendar.HOUR, 23);
+          calendar.set(Calendar.HOUR_OF_DAY, 23);
           calendar.set(Calendar.MINUTE, 59);
           calendar.set(Calendar.SECOND, 59);
           calendar.set(Calendar.MILLISECOND, 999);
