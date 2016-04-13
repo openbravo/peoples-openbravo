@@ -21,7 +21,6 @@ package org.openbravo.client.application.attachment;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -57,6 +56,7 @@ public class AttachmentUtils {
   public static final String DEFAULT_METHOD = "Default";
   public static final String DEFAULT_METHOD_ID = "D7B1319FC2B340799283BBF8E838DF9F";
   private static final String CORE_DESC_PARAMETER = "E22E8E3B737D4A47A691A073951BBF16";
+  private static final String DESCRIPTION_DELIMITER = "; ";
   private static ApplicationDictionaryCachedStructures adcs = WeldUtils
       .getInstanceFromStaticBeanManager(ApplicationDictionaryCachedStructures.class);
 
@@ -245,14 +245,12 @@ public class AttachmentUtils {
         if (isfirst) {
           isfirst = false;
         } else {
-          description.append(delimiter);
+          description.append(DESCRIPTION_DELIMITER);
         }
-        Map<String, String> paramValues = new HashMap<String, String>();
-        // Get translated parameter name.
-        paramValues.put("paramName",
-            (String) param.get(Parameter.PROPERTY_NAME, OBContext.getOBContext().getLanguage()));
-        paramValues.put("paramValue", value);
-        description.append(OBMessageUtils.parseTranslation(paramDesc, paramValues));
+        description.append((String) param.get(Parameter.PROPERTY_NAME, OBContext.getOBContext()
+            .getLanguage()));
+        description.append(": ");
+        description.append(value);
       }
     } finally {
       OBContext.restorePreviousMode();
