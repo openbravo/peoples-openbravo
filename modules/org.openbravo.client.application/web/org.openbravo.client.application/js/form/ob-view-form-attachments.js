@@ -44,6 +44,8 @@ isc.OBAttachmentsSectionItem.addProperties({
 
   visible: false,
 
+  attachmentCount: 0,
+
   itemIds: ['_attachments_Canvas'],
 
   // note formitems don't have an initWidget but an init method
@@ -56,6 +58,23 @@ isc.OBAttachmentsSectionItem.addProperties({
     this.form.attachmentsSection = this;
 
     return this.Super('init', arguments);
+  },
+
+  setAttachmentCount: function (lAttachmentCount) {
+    var formView = this.form.view;
+
+    lAttachmentCount = parseInt(lAttachmentCount, 10);
+    this.attachmentCount = lAttachmentCount;
+
+    if (lAttachmentCount === 0) {
+      this.setValue(OB.I18N.getLabel('OBUIAPP_AttachmentTitle'));
+      formView.attachmentExists = false;
+    } else {
+      formView.attachmentExists = true;
+      this.setValue(OB.I18N.getLabel('OBUIAPP_AttachmentTitle') + " (" + lAttachmentCount + ")");
+    }
+    this.getAttachmentPart().hasAttachments = formView.attachmentExists;
+    formView.toolBar.updateButtonState();
   },
 
   getAttachmentPart: function () {
@@ -142,6 +161,7 @@ isc.OBAttachmentsLayout.addProperties({
   recordId: null,
   docOrganization: null,
   docClient: null,
+  hasAttachments: false,
 
   // never disable this item
   isDisabled: function () {
@@ -176,8 +196,25 @@ isc.OBAttachmentsLayout.addProperties({
   },
 
   setExpanded: function (expanded) {
-    if (expanded && !this.isInitialized) {
-      this.isInitialized = true;
+    var attachLayout = this;
+    if (expanded) {
+      var d = {
+        Command: 'LOAD',
+        tabId: this.tabId,
+        buttonId: this.ID,
+        recordIds: this.recordId,
+        viewId: this.attachmentForm.view.ID
+      };
+
+      OB.RemoteCallManager.call('org.openbravo.client.application.attachment.AttachmentAH', {}, d, function (response, data, request) {
+        attachLayout.fillAttachments(data.attachments);
+        if (data.status === -1) {
+          OB.Utilities.writeErrorMessage(data.viewId, data.errorMessage);
+        }
+        if (!attachLayout.isInitialized) {
+          this.isInitialized = true;
+        }
+      });
     }
   },
 
@@ -238,6 +275,7 @@ isc.OBAttachmentsLayout.addProperties({
     var attachLayout = this,
         id, i, length, editDescActions;
 
+    this.getForm().getItem('_attachments_').setAttachmentCount(attachments.length);
     this.savedAttachments = attachments;
     this.destroyAndRemoveMembers(this.getMembers());
     var hLayout = isc.HLayout.create();
@@ -269,19 +307,8 @@ isc.OBAttachmentsLayout.addProperties({
       hLayout.addMember(addButton);
     }
     // If there are no attachments, we only display the "[Add]" button
-    if (!attachments || attachments.length === 0) {
-      this.getForm().getItem('_attachments_').setValue(OB.I18N.getLabel('OBUIAPP_AttachmentTitle'));
-      this.getForm().view.attachmentExists = false;
-      this.getForm().view.toolBar.updateButtonState();
+    if (this.hasAttachments === false) {
       return;
-    }
-    this.getForm().view.attachmentExists = true;
-    this.getForm().view.toolBar.updateButtonState();
-    var fields = this.getForm().getFields();
-    for (id = 0; id < fields.length; id++) {
-      if (fields[id].type === 'OBAttachmentsSectionItem') {
-        fields[id].setValue(OB.I18N.getLabel('OBUIAPP_AttachmentTitle') + " (" + attachments.length + ")");
-      }
     }
     var downloadAllButton = isc.OBLinkButtonItem.create({
       title: '[ ' + OB.I18N.getLabel('OBUIAPP_AttachmentDownloadAll') + ' ]',

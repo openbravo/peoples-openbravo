@@ -69,7 +69,10 @@ public class AttachmentAH extends BaseActionHandler {
       final JSONObject request = new JSONObject(content);
       String command = (String) parameters.get("Command");
 
-      if ("EDIT".equals(command)) {
+      if ("LOAD".equals(command)) {
+        buttonId = (String) parameters.get("buttonId");
+        recordIds = parameters.get("recordIds").toString();
+      } else if ("EDIT".equals(command)) {
         JSONObject params = request.getJSONObject("_params");
         recordIds = params.getString("inpKey");
         buttonId = params.getString("buttonId");
