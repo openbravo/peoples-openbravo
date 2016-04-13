@@ -18,8 +18,6 @@
  */
 package org.openbravo.client.application.attachment;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.util.List;
 import java.util.Map;
 
@@ -32,6 +30,7 @@ import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.util.Check;
+import org.openbravo.base.util.CheckException;
 import org.openbravo.client.application.Parameter;
 import org.openbravo.client.application.window.ApplicationDictionaryCachedStructures;
 import org.openbravo.client.kernel.BaseActionHandler;
@@ -58,91 +57,110 @@ public class AttachmentAH extends BaseActionHandler {
 
   @Override
   protected JSONObject execute(Map<String, Object> parameters, String content) {
-    OBContext.setAdminMode();
-    String tabId = (String) parameters.get("tabId");
-    Check.isNotNull(tabId, OBMessageUtils.messageBD("OBUIAPP_Attachment_Tab_Mandatory"));
-    Tab tab = adcs.getTab(tabId);
-
+    OBContext.setAdminMode(true);
     String recordIds = "";
+    String buttonId = "";
+    Tab tab = null;
     try {
+      String tabId = (String) parameters.get("tabId");
+      Check.isNotNull(tabId, OBMessageUtils.messageBD("OBUIAPP_Attachment_Tab_Mandatory"));
+      tab = adcs.getTab(tabId);
+
       final JSONObject request = new JSONObject(content);
       String command = (String) parameters.get("Command");
 
       if ("EDIT".equals(command)) {
         JSONObject params = request.getJSONObject("_params");
         recordIds = params.getString("inpKey");
-        final String attachmentId = (String) parameters.get("attachmentId");
-        String strAttMethodId = (String) parameters.get("attachmentMethod");
-        if (StringUtils.isBlank(strAttMethodId)) {
-          strAttMethodId = AttachmentUtils.DEFAULT_METHOD_ID;
-        }
-        Map<String, String> requestParams = fixRequestMap(parameters, request);
-        for (Parameter param : adcs.getMethodMetadataParameters(strAttMethodId, tabId)) {
-          if (param.isFixed()) {
-            continue;
-          }
-          String value;
-          if (params.has(param.getDBColumnName())
-              && params.get(param.getDBColumnName()) != JSONObject.NULL) {
-            value = URLDecoder.decode(params.getString(param.getDBColumnName()), "UTF-8");
-          } else {
-            value = null;
-          }
-
-          requestParams.put(param.getId(), value);
-        }
-
-        aim.update(requestParams, attachmentId, tabId);
-
-        JSONObject obj = getAttachmentJSONObject(tab, recordIds);
-        obj.put("buttonId", params.getString("buttonId"));
-        return obj;
+        buttonId = params.getString("buttonId");
+        doEdit(parameters, request, params, tabId);
       } else if ("DELETE".equals(command)) {
-
+        buttonId = (String) parameters.get("buttonId");
         recordIds = parameters.get("recordIds").toString();
-        String attachmentId = (String) parameters.get("attachId");
-
-        String tableId = (String) DalUtil.getId(tab.getTable());
-
-        OBCriteria<Attachment> attachmentFiles = OBDao.getFilteredCriteria(Attachment.class,
-            Restrictions.eq("table.id", tableId), Restrictions.in("record", recordIds.split(",")));
-        // do not filter by the attachment's organization
-        // if the user has access to the record where the file its attached, it has access to all
-        // its attachments
-        attachmentFiles.setFilterOnReadableOrganization(false);
-        if (attachmentId != null) {
-          attachmentFiles.add(Restrictions.eq(Attachment.PROPERTY_ID, attachmentId));
-        }
-        for (Attachment attachment : attachmentFiles.list()) {
-          aim.delete(attachment);
-
-        }
-        JSONObject obj = getAttachmentJSONObject(tab, recordIds);
-        obj.put("buttonId", parameters.get("buttonId"));
-        return obj;
+        doDelete(parameters, tab, recordIds);
       } else {
-        return new JSONObject();
+        throw new UnsupportedOperationException("Unknown command " + command);
       }
+
+      JSONObject obj = getAttachmentJSONObject(tab, recordIds);
+      obj.put("buttonId", buttonId);
+      return obj;
     } catch (JSONException e) {
-      throw new OBException("Error while removing file", e);
-    } catch (UnsupportedEncodingException e) {
-      throw new OBException("Error decoding parameter", e);
+      throw new OBException(OBMessageUtils.messageBD("OBUIAPP_AttachParamJSON"), e);
+    } catch (CheckException e) {
+      log.error("Error checking parameters.", e);
+      JSONObject obj = new JSONObject();
+      try {
+        obj.put("buttonId", parameters.get("buttonId"));
+        obj.put("viewId", parameters.get("viewId"));
+        obj.put("status", -1);
+        obj.put("errorMessage", e.getMessage());
+      } catch (JSONException ex) {
+        // do nothing
+      }
+
+      return obj;
     } catch (OBException e) {
       OBDal.getInstance().rollbackAndClose();
-      log.error(e.getMessage());
+      log.error("Error managing attachments.", e);
       JSONObject obj = getAttachmentJSONObject(tab, recordIds);
       try {
         obj.put("buttonId", parameters.get("buttonId"));
         obj.put("viewId", parameters.get("viewId"));
         obj.put("status", -1);
         obj.put("errorMessage", e.getMessage());
-      } catch (Exception ex) {
+      } catch (JSONException ex) {
         // do nothing
       }
 
       return obj;
     } finally {
       OBContext.restorePreviousMode();
+    }
+  }
+
+  private void doEdit(Map<String, Object> parameters, JSONObject request, JSONObject params,
+      String tabId) throws JSONException, OBException {
+    final String attachmentId = (String) parameters.get("attachmentId");
+    String strAttMethodId = (String) parameters.get("attachmentMethod");
+    if (StringUtils.isBlank(strAttMethodId)) {
+      strAttMethodId = AttachmentUtils.DEFAULT_METHOD_ID;
+    }
+
+    Map<String, String> requestParams = fixRequestMap(parameters, request);
+    for (Parameter param : adcs.getMethodMetadataParameters(strAttMethodId, tabId)) {
+      if (param.isFixed()) {
+        continue;
+      }
+      String value;
+      if (params.isNull(param.getDBColumnName())) {
+        value = null;
+      } else {
+        value = params.getString(param.getDBColumnName());
+      }
+      requestParams.put(param.getId(), value);
+    }
+
+    aim.update(requestParams, attachmentId, tabId);
+  }
+
+  private void doDelete(Map<String, Object> parameters, Tab tab, String recordIds)
+      throws OBException {
+    String attachmentId = (String) parameters.get("attachId");
+    String tableId = (String) DalUtil.getId(tab.getTable());
+
+    OBCriteria<Attachment> attachmentFiles = OBDao.getFilteredCriteria(Attachment.class,
+        Restrictions.eq("table.id", tableId), Restrictions.in("record", recordIds.split(",")));
+    // do not filter by the attachment's organization
+    // if the user has access to the record where the file its attached, it has access to all
+    // its attachments
+    attachmentFiles.setFilterOnReadableOrganization(false);
+    if (attachmentId != null) {
+      attachmentFiles.add(Restrictions.eq(Attachment.PROPERTY_ID, attachmentId));
+    }
+
+    for (Attachment attachment : attachmentFiles.list()) {
+      aim.delete(attachment);
     }
   }
 
