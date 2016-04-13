@@ -44,12 +44,6 @@ enyo.kind({
         }
       }
     }
-    this.$.minusBtn.waterfall('onDisableButton', {
-      disabled: !this.selectedModelsSameQty
-    });
-    this.$.plusBtn.waterfall('onDisableButton', {
-      disabled: !this.selectedModelsSameQty
-    });
   },
   keyboardOnDiscountsMode: function (inSender, inEvent) {
     if (inEvent.status) {
@@ -259,26 +253,30 @@ enyo.kind({
               toadd = value - keyboard.line.get('qty');
             }
             if (toadd !== 0) {
-              if (value === 0) { // If final quantity will be 0 then request approval
-                OB.UTIL.Approval.requestApproval(me.model, 'OBPOS_approval.deleteLine', function (approved, supervisor, approvalType) {
-                  if (approved) {
-                    OB.UTIL.HookManager.executeHooks('OBPOS_PreDeleteLine', {
-                      order: me.receipt,
-                      selectedLines: me.selectedModels
-                    }, function () {
-                      keyboard.receipt.set('preventServicesUpdate', true);
-                      keyboard.receipt.set('deleting', true);
-                      if (me.selectedModels.length > 1) {
-                        keyboard.receipt.deleteLines(me.selectedModels, 0, me.selectedModels.length, callback);
-                      } else {
-                        keyboard.receipt.deleteLine(me.line, false, callback);
-                      }
-                      keyboard.receipt.trigger('scan');
-                    });
-                  }
-                });
+              if (!_.isUndefined(keyboard.line.get('originalOrderLineId'))) {
+                OB.UTIL.showError(OB.I18N.getLabel('OBRETUR_CannotChangeQty'));
               } else {
-                actionAddProduct(keyboard, toadd);
+                if (value === 0) { // If final quantity will be 0 then request approval
+                  OB.UTIL.Approval.requestApproval(me.model, 'OBPOS_approval.deleteLine', function (approved, supervisor, approvalType) {
+                    if (approved) {
+                      OB.UTIL.HookManager.executeHooks('OBPOS_PreDeleteLine', {
+                        order: me.receipt,
+                        selectedLines: me.selectedModels
+                      }, function () {
+                        keyboard.receipt.set('preventServicesUpdate', true);
+                        keyboard.receipt.set('deleting', true);
+                        if (me.selectedModels.length > 1) {
+                          keyboard.receipt.deleteLines(me.selectedModels, 0, me.selectedModels.length, callback);
+                        } else {
+                          keyboard.receipt.deleteLine(me.line, false, callback);
+                        }
+                        keyboard.receipt.trigger('scan');
+                      });
+                    }
+                  });
+                } else {
+                  actionAddProduct(keyboard, toadd);
+                }
               }
             }
           });

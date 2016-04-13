@@ -65,11 +65,13 @@ public class ProcessCashCloseMaster extends JSONProcessSimple {
       List<String> cashUpIds = new ArrayList<String>();
       for (int i = 0; i < terminals.length(); i++) {
         JSONObject terminal = terminals.getJSONObject(i);
-        if (terminal.getBoolean("finish"))
+        if (terminal.getBoolean("finish")) {
           cashUpIds.add(terminal.getString("cashUpId"));
+        }
       }
-      if (cashUpIds.size() > 0)
+      if (cashUpIds.size() > 0) {
         addPaymentmethodCashup(payments, cashUpIds);
+      }
     }
     result.put("data", data);
     result.put("status", 0);
@@ -107,8 +109,8 @@ public class ProcessCashCloseMaster extends JSONProcessSimple {
         FIN_FinaccTransaction.class);
     obCriteria.add(Restrictions.eq(FIN_FinaccTransaction.PROPERTY_OBPOSAPPCASHUP + ".id", cashUp));
     obCriteria.setMaxResults(1);
-    List<FIN_FinaccTransaction> cashUpTransacitons = obCriteria.list();
-    return cashUpTransacitons.size();
+    List<FIN_FinaccTransaction> cashUpTransactions = obCriteria.list();
+    return cashUpTransactions.size();
   }
 
   /**

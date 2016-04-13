@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2015 Openbravo S.L.U.
+ * Copyright (C) 2013-2016 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -57,6 +57,7 @@ enyo.kind({
       }]
     }]
   }],
+  brandValueFilterQualifier: 'PBrand_Filter',
   clearAction: function (inSender, inEvent) {
     this.brandsList.reset();
     return true;
@@ -90,7 +91,20 @@ enyo.kind({
       }]
     };
     var products = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.products;
-    if (!OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
+    var forceRemote = false;
+    var productCharacteristic = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.searchProductCharacteristicHeader.parent;
+    productCharacteristic.customFilters.forEach(function (hqlFilter) {
+      if (!_.isUndefined(hqlFilter.hqlCriteriaBrand) && !_.isUndefined(hqlFilter.forceRemote)) {
+        var hqlCriteriaFilter = hqlFilter.hqlCriteriaBrand();
+        hqlCriteriaFilter.forEach(function (filter) {
+          if (filter !== "" && forceRemote === false) {
+            forceRemote = hqlFilter.forceRemote;
+          }
+        });
+      }
+    });
+
+    if (!OB.MobileApp.model.hasPermission('OBPOS_remote.product', true) && !forceRemote) {
       if (products.collection.length > 0) {
         // There are products in search
         // Get all the products id
@@ -112,23 +126,63 @@ enyo.kind({
     } else {
       var productFilterText = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.searchProductCharacteristicHeader.$.productFilterText.getValue();
       var productcategory = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.searchProductCharacteristicHeader.$.productcategory.getValue();
-      var productCharacteristicModel = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.searchProductCharacteristicHeader.parent.model;
-
       var remoteCriteria = [],
+          characteristicValue = [],
+          characteristic = [],
           brandfilter = {},
+          chFilter = {},
           productText;
       criteria = {};
       if (products.collection.length > 0) {
         if (productFilterText !== "" || productcategory !== "__all__") {
           brandfilter.columns = [];
           brandfilter.operator = OB.Dal.FILTER;
-          brandfilter.value = 'PBrand_Filter';
+          brandfilter.value = this.brandValueFilterQualifier;
           productText = (OB.MobileApp.model.hasPermission('OBPOS_remote.product' + OB.Dal.USESCONTAINS, true) ? '%' : '') + productFilterText + '%';
           brandfilter.params = [productText, productcategory];
           remoteCriteria.push(brandfilter);
         }
-        criteria.remoteFilters = remoteCriteria;
       }
+      if (me.parent.parent.model.get('filter').length > 0) {
+        for (i = 0; i < me.parent.parent.model.get('filter').length; i++) {
+          if (!characteristic.includes(me.parent.parent.model.get('filter')[i].characteristic_id)) {
+            characteristic.push(me.parent.parent.model.get('filter')[i].characteristic_id);
+          }
+        }
+        for (i = 0; i < characteristic.length; i++) {
+          for (j = 0; j < me.parent.parent.model.get('filter').length; j++) {
+            if (characteristic[i] === me.parent.parent.model.get('filter')[j].characteristic_id) {
+              characteristicValue.push(me.parent.parent.model.get('filter')[j].id);
+            }
+          }
+          if (characteristicValue.length > 0) {
+            chFilter = {
+              columns: [],
+              operator: OB.Dal.FILTER,
+              value: 'BFilterByCH_Filter',
+              filter: characteristic[i],
+              params: [characteristicValue]
+            };
+            remoteCriteria.push(chFilter);
+            characteristicValue = [];
+          }
+        }
+      }
+      criteria.hqlCriteria = [];
+      productCharacteristic.customFilters.forEach(function (hqlFilter) {
+        if (!_.isUndefined(hqlFilter.hqlCriteriaBrand)) {
+          var hqlCriteriaFilter = hqlFilter.hqlCriteriaBrand();
+          if (!_.isUndefined(hqlCriteriaFilter)) {
+            hqlCriteriaFilter.forEach(function (filter) {
+              if (filter) {
+                remoteCriteria.push(filter);
+              }
+            });
+          }
+        }
+      });
+      criteria.remoteFilters = remoteCriteria;
+      criteria.forceRemote = forceRemote;
       OB.Dal.find(OB.Model.Brand, criteria, successCallbackBrands, errorCallback);
     }
     return true;

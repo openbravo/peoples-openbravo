@@ -106,7 +106,9 @@
             bpIsExempt = receipt.get('bp').get('taxExempt'),
             bpLocId = receipt.get('bp').get('locId'),
             bplCountryId = receipt.get('bp').get('locationModel') ? receipt.get('bp').get('locationModel').get('countryId') : null,
-            bplRegionId = receipt.get('bp').get('locationModel') ? receipt.get('bp').get('locationModel').get('regionId') : null;
+            bplRegionId = receipt.get('bp').get('locationModel') ? receipt.get('bp').get('locationModel').get('regionId') : null,
+            bpName = receipt.get('bp').get('name') || OB.I18N.getLabel('OBPOS_LblEmptyAddress'),
+            bpLocName = receipt.get('bp').get('locName') || OB.I18N.getLabel('OBPOS_LblEmptyAddress');
         // SQL build
         // the query is ordered by countryId desc and regionId desc
         // (so, the first record will be the tax with the same country or
@@ -148,7 +150,7 @@
             if (coll && coll.length > 0) {
               fulfill(coll);
             } else {
-              reject(OB.I18N.getLabel('OBPOS_TaxNotFound_Message', [taxCategory]));
+              reject(OB.I18N.getLabel('OBPOS_TaxNotFound_Message', [bpName, bpLocName]));
             }
           }, function () { // error
             reject(OB.I18N.getLabel('OBPOS_TaxCalculationError_Message'));
@@ -465,6 +467,9 @@
       })['catch'](function (reason) {
         var title = OB.I18N.getLabel('OBPOS_TaxNotFound_Header');
         OB.error(title + ":" + reason);
+        line.set('hasTaxError', true, {
+          silent: true
+        });
         receipt.set('preventServicesUpdate', true);
         receipt.set('deleting', true);
         receipt.deleteLine(line);
@@ -766,6 +771,9 @@
       })['catch'](function (reason) {
         var title = OB.I18N.getLabel('OBPOS_TaxNotFound_Header');
         OB.error(title + ":" + reason);
+        line.set('hasTaxError', true, {
+          silent: true
+        });
         receipt.set('preventServicesUpdate', true);
         receipt.set('deleting', true);
         receipt.deleteLine(line);

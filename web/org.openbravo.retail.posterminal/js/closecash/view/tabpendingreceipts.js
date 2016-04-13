@@ -95,6 +95,8 @@ enyo.kind({
                 this.setContent(OB.I18N.getLabel('OBPOS_LblStepNumber', [step, count]) + " " + OB.I18N.getLabel('OBPOS_LblStepPendingOrders') + OB.OBPOSCashUp.UI.CashUp.getTitleExtensions());
               }
             }]
+          }, {
+            style: 'clear: both;'
           }]
         }, {
           name: 'rowDeleteAll',

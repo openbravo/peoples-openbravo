@@ -256,6 +256,7 @@
     }, this);
 
     this.context.get('multiOrders').on('closed', function (receipt) {
+      var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes("multiOrdersClosed");
 
       OB.info('Multiorders ticket closed', receipt, "caller: " + OB.UTIL.getStackTrace('Backbone.Events.trigger', true));
 
@@ -279,6 +280,7 @@
       this.receipt.set('accountingDate', OB.I18N.normalizeDate(new Date()));
       this.receipt.set('hasbeenpaid', 'Y');
       this.context.get('multiOrders').trigger('integrityOk', this.receipt);
+      OB.UTIL.calculateCurrentCash();
       OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(this.receipt.get('documentnoSuffix'), this.receipt.get('quotationnoSuffix'));
 
       delete this.receipt.attributes.json;
@@ -304,6 +306,7 @@
         OB.trace('Execution of pre order save hook OK.');
         if (args && args.cancellation && args.cancellation === true) {
           args.context.receipt.set('isbeingprocessed', 'N');
+          OB.UTIL.SynchronizationHelper.finished(synchId, "multiOrdersClosed");
           return true;
         }
 
@@ -311,21 +314,22 @@
 
         OB.Dal.save(me.receipt, function () {
           OB.Dal.get(OB.Model.Order, receiptId, function (receipt) {
-            var successCallback, errorCallback;
-            successCallback = function () {
 
-              OB.trace('Sync process success.');
-              OB.UTIL.showLoading(false);
-              if (me.hasInvLayaways) {
-                OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_noInvoiceIfLayaway'));
-                me.hasInvLayaways = false;
-              }
-              OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgAllReceiptSaved'));
-            };
-            errorCallback = function () {
-              OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgAllReceiptNotSaved'));
-            };
+            var successCallback = function () {
+                OB.trace('Sync process success.');
+                OB.UTIL.showLoading(false);
+                if (me.hasInvLayaways) {
+                  OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_noInvoiceIfLayaway'));
+                  me.hasInvLayaways = false;
+                }
+                OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgAllReceiptSaved'));
+                OB.UTIL.SynchronizationHelper.finished(synchId, "multiOrdersClosed");
+                };
 
+            var errorCallback = function () {
+                OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgAllReceiptNotSaved'));
+                OB.UTIL.SynchronizationHelper.finished(synchId, "multiOrdersClosed");
+                };
 
             if (!_.isUndefined(receipt.get('amountToLayaway')) && !_.isNull(receipt.get('amountToLayaway')) && receipt.get('generateInvoice')) {
               me.hasInvLayaways = true;
@@ -338,13 +342,17 @@
 
               OB.trace('Execution Sync process.');
 
-              OB.MobileApp.model.runSyncProcess(successCallback);
+              OB.MobileApp.model.runSyncProcess(successCallback, errorCallback);
               me.ordersToSend = OB.DEC.Zero;
+            } else {
+              OB.UTIL.SynchronizationHelper.finished(synchId, "multiOrdersClosed");
             }
 
           }, null);
         }, function () {
-          //We do nothing: we don't need to alert the user, as the order is still present in the database, so it will be resent as soon as the user logs in again
+          // We do nothing:
+          //      we don't need to alert the user, as the order is still present in the database, so it will be resent as soon as the user logs in again
+          OB.UTIL.SynchronizationHelper.finished(synchId, "multiOrdersClosed");
         });
       });
 

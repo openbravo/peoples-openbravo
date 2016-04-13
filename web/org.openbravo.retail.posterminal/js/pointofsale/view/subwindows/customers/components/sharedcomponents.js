@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2015 Openbravo S.L.U.
+ * Copyright (C) 2012-2016 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -236,7 +236,7 @@ enyo.kind({
       this.waterfall('onSaveChange', {
         customer: this.model.get('customer')
       });
-      this.adjustNames(this.model.get('customer'));
+      this.model.get('customer').adjustNames();
       OB.UTIL.HookManager.executeHooks('OBPOS_BeforeCustomerSave', {
         customer: this.model.get('customer'),
         isNew: true
@@ -257,7 +257,7 @@ enyo.kind({
         getCustomerValues({
           customer: customer
         });
-        that.adjustNames(customer);
+        customer.adjustNames();
         OB.UTIL.HookManager.executeHooks('OBPOS_BeforeCustomerSave', {
           customer: customer,
           isNew: false
@@ -274,19 +274,6 @@ enyo.kind({
         });
       });
     }
-  },
-  adjustNames: function (customer) {
-    var firstName = customer.get('firstName'),
-        lastName = customer.get('lastName');
-    if (firstName) {
-      firstName = firstName.trim();
-    }
-    if (lastName) {
-      lastName = lastName.trim();
-    }
-    customer.set('firstName', firstName);
-    customer.set('lastName', lastName);
-    customer.set('name', firstName + (lastName ? ' ' + lastName : ''));
   },
   initComponents: function () {
     this.inherited(arguments);

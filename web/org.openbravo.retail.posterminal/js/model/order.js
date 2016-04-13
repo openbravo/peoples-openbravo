@@ -1138,6 +1138,9 @@
           this.deleteLine(line, false, callback);
         }
       } else {
+        // If there is a line and other related service line selected to delete, the service is deleted when the product is deleted
+        // This causes that when this recursive line tries to delete the service line, the service line is not in the array which stores the lines to delete
+        // The 'else' clause catches this situation and continues with the next line
         if (idx === length) {
           if (callback) {
             callback();
@@ -1264,8 +1267,10 @@
         if (!this.get('deletedLines')) {
           this.set('deletedLines', []);
         }
-        line.set('obposIsDeleted', true);
-        this.get('deletedLines').push(new OrderLine(line.attributes));
+        if (!line.get('hasTaxError')) {
+          line.set('obposIsDeleted', true);
+          this.get('deletedLines').push(new OrderLine(line.attributes));
+        }
       }
       // remove the line
       finishDelete();
@@ -1395,28 +1400,34 @@
           if (callback) {
             callback(true);
           }
-          var subs = new subscribeToCalculateGross(me, function () {
-            if (args.newLine && me.get('lines').contains(line)) {
-              // Display related services after calculate gross, if it is new line and if the line has not been deleted.
-              // The line might has been deleted during calculate gross for examples if there was an error in taxes.
-              var productId = args.productToAdd.get('forceFilterId') ? args.productToAdd.get('forceFilterId') : args.productToAdd.id;
-              args.receipt._loadRelatedServices(args.productToAdd.get('productType'), productId, args.productToAdd.get('productCategory'), function (data) {
-                if (data) {
-                  if (data.hasservices) {
-                    args.orderline.set('hasRelatedServices', true);
-                    args.orderline.trigger('showServicesButton');
-                  } else {
-                    args.orderline.set('hasRelatedServices', false);
+          if (args.newLine && me.get('lines').contains(line) && args.productToAdd.get('productType') !== 'S') {
+            var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('HasServices');
+            var subs = new subscribeToCalculateGross(me, function () {
+              if (me.get('lines').contains(line)) {
+                // Display related services after calculate gross, if it is new line and if the line has not been deleted.
+                // The line might has been deleted during calculate gross for examples if there was an error in taxes.
+                var productId = args.productToAdd.get('forceFilterId') ? args.productToAdd.get('forceFilterId') : args.productToAdd.id;
+                args.receipt._loadRelatedServices(args.productToAdd.get('productType'), productId, args.productToAdd.get('productCategory'), function (data) {
+                  if (data) {
+                    if (data.hasservices) {
+                      args.orderline.set('hasRelatedServices', true);
+                      args.orderline.trigger('showServicesButton');
+                    } else {
+                      args.orderline.set('hasRelatedServices', false);
+                    }
+                    args.receipt.save();
+                    if (data.hasmandatoryservices) {
+                      args.receipt.trigger('showProductList', args.orderline, 'mandatory');
+                    }
                   }
-                  args.receipt.save();
-                  if (data.hasmandatoryservices) {
-                    args.receipt.trigger('showProductList', args.orderline, 'mandatory');
-                  }
-                }
-              }, args.orderline);
-            }
-          });
-          subs.doSubscription();
+                  OB.UTIL.SynchronizationHelper.finished(synchId, 'HasServices');
+                }, args.orderline);
+              } else {
+                OB.UTIL.SynchronizationHelper.finished(synchId, 'HasServices');
+              }
+            });
+            subs.doSubscription();
+          }
         });
       }
       if (((options && options.line) ? options.line.get('qty') + qty : qty) < 0 && p.get('productType') === 'S') {
@@ -1440,13 +1451,11 @@
               i, prod, synchId;
           params.terminalTime = date;
           params.terminalTimeOffset = date.getTimezoneOffset();
-          synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('HasServices');
           process.exec({
             product: productId,
             productCategory: productCategory,
             parameters: params
           }, function (data, message) {
-            OB.UTIL.SynchronizationHelper.finished(synchId, 'HasServices');
             if (data && data.exception) {
               //ERROR or no connection
               OB.error(OB.I18N.getLabel('OBPOS_ErrorGettingRelatedServices'));
@@ -1457,7 +1466,6 @@
               callback(null);
             }
           }, function (error) {
-            OB.UTIL.SynchronizationHelper.finished(synchId, 'HasServices');
             OB.error(OB.I18N.getLabel('OBPOS_ErrorGettingRelatedServices'));
             callback(null);
           });
@@ -1496,6 +1504,7 @@
             }
           }, function (trx, error) {
             OB.error(OB.I18N.getLabel('OBPOS_ErrorGettingRelatedServices'));
+            callback(null);
           });
         }
       } else {
@@ -1574,8 +1583,10 @@
         OB.Dal.find(OB.Model.ProductPrice, criteria, function (productPrices) {
           if (productPrices.length > 0) {
             p = p.clone();
-            p.set('standardPrice', productPrices.at(0).get('pricestd'));
-            p.set('listPrice', productPrices.at(0).get('pricelist'));
+            if (OB.UTIL.isNullOrUndefined(p.get('giftCardTransaction'))) {
+              p.set('standardPrice', productPrices.at(0).get('pricestd'));
+              p.set('listPrice', productPrices.at(0).get('pricelist'));
+            }
             me.addProductToOrder(p, qty, options, attrs);
             if (callback) {
               callback(true);
@@ -2162,7 +2173,7 @@
     },
 
     validateAllowSalesWithReturn: function (qty, skipValidaton) {
-      if (OB.MobileApp.model.get('permissions').OBPOS_NotAllowSalesWithReturn && !skipValidaton) {
+      if (OB.MobileApp.model.hasPermission('OBPOS_NotAllowSalesWithReturn', true) && !skipValidaton) {
         var negativeLines = _.filter(this.get('lines').models, function (line) {
           return line.get('qty') < 0;
         }).length;
@@ -2175,6 +2186,10 @@
             return true;
           }
         }
+      }
+      if (this.isLayaway() && qty < 0) {
+        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_layawaysOrdersWithReturnsNotAllowed'));
+        return true;
       }
       return false;
     },
@@ -2447,9 +2462,12 @@
       if (updatePrices) {
         this.updatePrices(function (order) {
           OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_QuotationCreatedOrder'));
+          // This event is used in stock validation module.
+          order.trigger('orderCreatedFromQuotation');
         });
       } else {
         OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_QuotationCreatedOrder'));
+        this.trigger('orderCreatedFromQuotation');
       }
     },
 
@@ -2836,7 +2854,8 @@
               attrs: {
                 promotions: l.get('promotions'),
                 promotionCandidates: l.get('promotionCandidates'),
-                qtyToApplyDiscount: l.get('qtyToApplyDiscount')
+                qtyToApplyDiscount: l.get('qtyToApplyDiscount'),
+                price: l.get('price')
               }
             });
             lineToEdit.set('qty', OB.DEC.sub(lineToEdit.get('qty'), l.get('qty')), {

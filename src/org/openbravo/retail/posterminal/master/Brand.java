@@ -57,10 +57,9 @@ public class Brand extends ProcessHQLQuery {
     String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
     final OBRETCOProductList productList = POSUtils.getProductListByOrgId(orgId);
     List<String> hqlQueries = new ArrayList<String>();
-
+    boolean forceRemote = false;
     HQLPropertyList regularBrandsHQLProperties = ModelExtensionUtils
         .getPropertyExtensions(extensions);
-
     boolean isRemote = false;
     try {
       OBContext.setAdminMode(false);
@@ -73,7 +72,13 @@ public class Brand extends ProcessHQLQuery {
       OBContext.restorePreviousMode();
     }
 
-    if (isRemote) {
+    if (!isRemote && jsonsent.has("remoteFilters")) {
+      forceRemote = true;
+      Map<String, Object> args = new HashMap<String, Object>();
+      args.put("forceRemote", forceRemote);
+      regularBrandsHQLProperties = ModelExtensionUtils.getPropertyExtensions(extensions, args);
+    }
+    if (isRemote || forceRemote) {
       hqlQueries
           .add("select"
               + regularBrandsHQLProperties.getHqlSelect() //

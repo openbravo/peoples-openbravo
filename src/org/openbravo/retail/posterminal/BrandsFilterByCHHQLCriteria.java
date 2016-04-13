@@ -14,16 +14,13 @@ import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.mobile.core.process.HQLCriteriaProcess;
 
 @ApplicationScoped
-@Qualifier("Chv_Filter")
-public class ChvHQLCriteria extends HQLCriteriaProcess {
-  @Deprecated
-  public String getHQLFilter() {
-    return null;
-  }
+@Qualifier("BFilterByCH_Filter")
+public class BrandsFilterByCHHQLCriteria extends HQLCriteriaProcess {
 
   @Override
   public String getHQLFilter(String params) {
-    return " exists (select 1  from ProductCharacteristicValue as pchv  where cv.id = pchv.characteristicValue.id  and exists  (select 1 "
-        + " from ProductCharacteristicValue p  where p.product.id = pchv.product.id and  p.characteristicValue.id in ($1) ))";
+    return "exists (select 1 from ProductCharacteristicValue as chv inner join chv.product as product  "
+        + " where product.brand.id = brand.id and chv.characteristicValue.id in ($1)) ";
+
   }
 }

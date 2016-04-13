@@ -629,6 +629,9 @@ enyo.kind({
     this.$.noenoughchangelbl.hide();
     this.$.onlycashpaymentmethod.hide();
 
+    if (!selectedPayment) {
+      return returnCheck;
+    }
     // Do the checkins
     resultOK = this.checkValidCashOverpayment(paymentstatus, selectedPayment);
     if (resultOK) {
@@ -661,7 +664,11 @@ enyo.kind({
         this.$.noenoughchangelbl.setStyle("position: absolute; bottom: 20px; height: 20px; color: #ff0000;");
         this.$.noenoughchangelbl.hide();
       } else {
-        this.$.noenoughchangelbl.setStyle("position: absolute; bottom: 0px; height: 20px; color: #ff0000;");
+        if (this.$.onlycashpaymentmethod.showing) {
+          this.$.noenoughchangelbl.setStyle("position: absolute; bottom: 20px; height: 20px; color: #ff0000;");
+        } else {
+          this.$.noenoughchangelbl.setStyle("position: absolute; bottom: 0px; height: 20px; color: #ff0000;");
+        }
         this.$.noenoughchangelbl.show();
       }
       this.$.payments.scrollAreaMaxHeight = '130px';
@@ -875,6 +882,8 @@ enyo.kind({
       return true;
     }
 
+    var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes("doneButton");
+
     if (myModel.get('leftColumnViewManager').isOrder()) {
       payments = this.owner.receipt.get('payments');
     } else {
@@ -939,6 +948,7 @@ enyo.kind({
         this.owner.model.get('multiOrders').set('openDrawer', false);
       }
     }
+    OB.UTIL.SynchronizationHelper.finished(synchId, "doneButton");
   }
 });
 
@@ -1082,10 +1092,12 @@ enyo.kind({
     var paymentstatus = this.model.get('order').getPaymentStatus();
     if (!paymentstatus.isReturn) {
       //this.setContent(OB.I18N.getLabel('OBPOS_LblLoading'));
+      var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes("creditButtonTap");
       process.exec({
         businessPartnerId: this.model.get('order').get('bp').get('id'),
         totalPending: this.model.get('order').getPending()
       }, function (data) {
+        OB.UTIL.SynchronizationHelper.finished(synchId, "creditButtonTap");
         if (data) {
           if (data.enoughCredit) {
             me.doShowPopup({
@@ -1112,6 +1124,7 @@ enyo.kind({
           OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorCreditSales'));
         }
       }, function () {
+        OB.UTIL.SynchronizationHelper.finished(synchId, "creditButtonTap");
         me.doShowPopup({
           popup: 'modalEnoughCredit',
           args: {

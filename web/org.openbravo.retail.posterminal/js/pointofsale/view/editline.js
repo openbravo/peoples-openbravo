@@ -522,7 +522,7 @@ enyo.kind({
     }
   },
   hideReturnLineButton: function (inSender, inEvent) {
-    if (inEvent.hide) {
+    if (inEvent.hide || !OB.MobileApp.model.hasPermission(this.$.actionButtonsContainer.$.returnLine.permission, true)) {
       this.$.actionButtonsContainer.$.returnLine.hide();
     } else {
       this.$.actionButtonsContainer.$.returnLine.show();

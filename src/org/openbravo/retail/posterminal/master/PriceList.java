@@ -11,7 +11,9 @@ package org.openbravo.retail.posterminal.master;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
@@ -20,10 +22,13 @@ import javax.inject.Inject;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
+import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.mobile.core.model.HQLPropertyList;
 import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.mobile.core.model.ModelExtensionUtils;
+import org.openbravo.retail.posterminal.OBPOSApplications;
+import org.openbravo.retail.posterminal.POSUtils;
 import org.openbravo.retail.posterminal.ProcessHQLQuery;
 
 public class PriceList extends ProcessHQLQuery {
@@ -35,8 +40,22 @@ public class PriceList extends ProcessHQLQuery {
   private Instance<ModelExtension> extensions;
 
   @Override
+  protected Map<String, Object> getParameterValues(JSONObject jsonsent) throws JSONException {
+    try {
+      OBContext.setAdminMode(true);
+      String posId = RequestContext.get().getSessionAttribute("POSTerminal").toString();
+      OBPOSApplications POSTerminal = POSUtils.getTerminalById(posId);
+      String pricelist = POSUtils.getPriceListByTerminal(POSTerminal.getSearchKey()).getId();
+      Map<String, Object> paramValues = new HashMap<String, Object>();
+      paramValues.put("priceList", pricelist);
+      return paramValues;
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
+  @Override
   protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
-    String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
     List<String> hqlQueries = new ArrayList<String>();
 
     HQLPropertyList priceListHQLProperties = ModelExtensionUtils.getPropertyExtensions(extensions);
@@ -46,9 +65,7 @@ public class PriceList extends ProcessHQLQuery {
             + priceListHQLProperties.getHqlSelect()
             + " from PricingPriceList pl "
             + "where pl.id in (select distinct priceList.id from BusinessPartner where customer = 'Y') "
-            + "and pl.id <> (select obretcoPricelist.id from Organization where id = '"
-            + orgId
-            + "') "
+            + "and pl.id <> (:priceList) "
             + "and $naturalOrgCriteria and $readableClientCriteria and ($incrementalUpdateCriteria)");
 
     return hqlQueries;
@@ -64,8 +81,7 @@ public class PriceList extends ProcessHQLQuery {
         + "    and to_char(pplv.validFromDate, 'yyyy-mm-dd') <= '"
         + format.format(terminalDate)
         + " ') and (plv.priceList.id in (select distinct priceList.id from BusinessPartner where customer = 'Y') "
-        + " and plv.priceList.id <> (select obretcoPricelist.id from Organization where id = '"
-        + orgId + "'))";
+        + " and plv.priceList.id <> (:priceList))";
   }
 
 }

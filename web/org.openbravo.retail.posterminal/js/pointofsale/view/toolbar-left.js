@@ -327,6 +327,7 @@ enyo.kind({
     onShowPopup: ''
   },
   showPaymentTab: function () {
+    var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('showPaymentTab');
     var receipt = this.model.get('order'),
         me = this;
     if (receipt.get('isQuotation')) {
@@ -356,9 +357,11 @@ enyo.kind({
           OB.UTIL.showError(OB.I18N.getLabel('OBPOS_QuotationClosed'));
         });
       }
+      OB.UTIL.SynchronizationHelper.finished(synchId, 'showPaymentTab');
       return;
     }
     if (this.model.get('order').get('isEditable') === false && !this.model.get('order').get('isLayaway')) {
+      OB.UTIL.SynchronizationHelper.finished(synchId, 'showPaymentTab');
       return true;
     }
     if (this.model.get('order').get('orderType') === 3) {
@@ -383,11 +386,13 @@ enyo.kind({
     me.bubble('onShowColumn', {
       colNum: 1
     });
+    OB.UTIL.SynchronizationHelper.finished(synchId, 'showPaymentTab');
   },
   tap: function () {
     var me = this,
         criteria = {};
     if (this.disabled === false) {
+      var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('toolbarButtonTabTap');
       this.model.on('approvalChecked', function (event) {
         this.model.off('approvalChecked');
         if (event.approved) {
@@ -418,14 +423,17 @@ enyo.kind({
           me.model.get('order').trigger('showProductList', null, 'final', function () {
             me.model.completePayment();
             me.doClearUserInput();
+            OB.UTIL.SynchronizationHelper.finished(synchId, 'toolbarButtonTabTap');
           });
         } else {
           me.model.completePayment(this);
           me.doClearUserInput();
+          OB.UTIL.SynchronizationHelper.finished(synchId, 'toolbarButtonTabTap');
         }
       }, function (trx, error) {
         me.model.completePayment(this);
         me.doClearUserInput();
+        OB.UTIL.SynchronizationHelper.finished(synchId, 'toolbarButtonTabTap');
       });
     }
   },

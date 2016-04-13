@@ -43,7 +43,7 @@
 
           function () {
             return {
-              online: OB.MobileApp.model.get('connectedToERP')
+              isOnline: OB.MobileApp.model.get('connectedToERP')
             };
           }]
         },
@@ -76,7 +76,7 @@
 
             function () {
               return {
-                online: OB.MobileApp.model.get('connectedToERP')
+                isOnline: OB.MobileApp.model.get('connectedToERP')
               };
             }]
           });
@@ -157,8 +157,8 @@
                 OB.MobileApp.model.loadingErrorsActions("The terminal.usermodel should be loaded at this point");
               } else if (OB.MobileApp.model.attributes.loadManifeststatus && OB.MobileApp.model.attributes.loadManifeststatus.type === 'error') {
                 var error = OB.MobileApp.model.attributes.loadManifeststatus;
-                var msg = error.reason + ' failed to load: ' + error.url;
-                OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_TitleFailedAppCache'), OB.I18N.getLabel('OBPOS_FailedAppCache', [msg]), [{
+                OB.debug(error.reason + ' failed to load: ' + error.url);
+                OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_TitleFailedAppCache'), OB.I18N.getLabel('OBPOS_FailedAppCache'), [{
                   label: OB.I18N.getLabel('OBMOBC_LblOk'),
                   isConfirmButton: true
                 }], {
@@ -350,8 +350,9 @@
             });
             // Get Cashup id, if objToSend is not filled compose and synchronize
             OB.UTIL.deleteCashUps(data);
+            OB.UTIL.calculateCurrentCash();
             callback();
-          });
+          }, null, true);
         }
       });
 
@@ -384,7 +385,13 @@
         OB.DEC.setContext(OB.UTIL.getFirstValidValue([me.get('currency').obposPosprecision, me.get('currency').pricePrecision]), BigDecimal.prototype.ROUND_HALF_UP);
 
         OB.UTIL.HookManager.executeHooks('OBPOS_LoadPOSWindow', {}, function () {
-          OB.POS.navigate('retail.pointofsale');
+          var defaultWindow = OB.MobileApp.model.get('defaultWindow');
+          if (defaultWindow) {
+            OB.POS.navigate(defaultWindow);
+            OB.MobileApp.model.unset('defaultWindow');
+          } else {
+            OB.POS.navigate('retail.pointofsale');
+          }
         });
 
         if (me.get('loggedOffline') === true) {

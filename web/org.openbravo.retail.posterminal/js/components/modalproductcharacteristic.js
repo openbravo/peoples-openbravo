@@ -116,9 +116,23 @@ enyo.kind({
     var me = this,
         i, j, whereClause = '',
         params = [],
-        products = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.products;
+        products = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.products,
+        productCharacteristic = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.searchProductCharacteristicHeader.parent,
+        forceRemote = false;
+    productCharacteristic.customFilters.forEach(function (hqlFilter) {
+      if (!_.isUndefined(hqlFilter.hqlCriteriaCharacteristicsValue) && !_.isUndefined(hqlFilter.forceRemote)) {
+        var hqlCriteriaFilter = hqlFilter.hqlCriteriaCharacteristicsValue();
+        if (!_.isUndefined(hqlCriteriaFilter)) {
+          hqlCriteriaFilter.forEach(function (filter) {
+            if (filter && forceRemote === false) {
+              forceRemote = hqlFilter.forceRemote;
+            }
+          });
+        }
+      }
+    });
 
-    if (!OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
+    if (!OB.MobileApp.model.hasPermission('OBPOS_remote.product', true) && !forceRemote) {
       var sql, productsIdsList;
 
       if (products.collection.length > 0) {
@@ -167,18 +181,20 @@ enyo.kind({
 
     } else {
 
-      var productFilterText, productcategory, productCharacteristicModel, productCharacteristic;
+      var productFilterText, productcategory, productCharacteristicModel;
 
       productFilterText = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.searchProductCharacteristicHeader.$.productFilterText.getValue();
       productcategory = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.searchProductCharacteristicHeader.$.productcategory.getValue();
       productCharacteristicModel = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.searchProductCharacteristicHeader.parent.model;
-      productCharacteristic = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.searchProductCharacteristicHeader.parent;
 
       var remoteCriteria = [],
-          brandparams = [];
+          brandparams = [],
+          characteristic = [],
+          characteristicValue = [];
       var productFilter = {},
           criteria = {},
           brandfilter = {},
+          chFilter = {},
           characteristicValuefilter = {},
           productText, characteristicfilter = {
           columns: ['characteristic_id'],
@@ -190,9 +206,16 @@ enyo.kind({
       if (products.collection.length > 0) {
         if (productCharacteristicModel.get('brandFilter').length > 0) {
           for (i = 0; i < productCharacteristicModel.get('brandFilter').length; i++) {
-            if (productCharacteristicModel.get('brandFilter')[i]) {
-              brandparams.push("'" + productCharacteristicModel.get('brandFilter')[i].id + "'");
-            }
+            brandparams.push(productCharacteristicModel.get('brandFilter')[i].id);
+          }
+          if (brandparams.length > 0) {
+            brandfilter = {
+              columns: [],
+              operator: OB.Dal.FILTER,
+              value: 'BChV_Filter',
+              params: [brandparams]
+            };
+            remoteCriteria.push(brandfilter);
           }
         }
 
@@ -204,29 +227,31 @@ enyo.kind({
           productFilter.params = [productText, productcategory];
           remoteCriteria.push(productFilter);
         }
-        if (brandparams.length > 0) {
-          brandfilter.columns = [];
-          brandfilter.operator = OB.Dal.FILTER;
-          brandfilter.value = 'BChV_Filter';
-          brandfilter.params = [brandparams.toString()];
-          remoteCriteria.push(brandfilter);
-        }
-        var characteristicparams = [];
         if (me.parent.parent.model.get('filter').length > 0) {
           for (i = 0; i < me.parent.parent.model.get('filter').length; i++) {
-            characteristicparams.push("'" + me.parent.parent.model.get('filter')[i].id + "'");
+            if (!characteristic.includes(me.parent.parent.model.get('filter')[i].characteristic_id)) {
+              characteristic.push(me.parent.parent.model.get('filter')[i].characteristic_id);
+            }
+          }
+          for (i = 0; i < characteristic.length; i++) {
+            for (j = 0; j < me.parent.parent.model.get('filter').length; j++) {
+              if (characteristic[i] === me.parent.parent.model.get('filter')[j].characteristic_id) {
+                characteristicValue.push(me.parent.parent.model.get('filter')[j].id);
+              }
+            }
+            if (characteristicValue.length > 0) {
+              chFilter = {
+                columns: [],
+                operator: OB.Dal.FILTER,
+                value: 'Chv_Filter',
+                filter: characteristic[i],
+                params: [characteristicValue]
+              };
+              remoteCriteria.push(chFilter);
+              characteristicValue = [];
+            }
           }
         }
-
-        var chFilter = {};
-        for (i = 0; i < me.parent.parent.model.get('filter').length; i++) {
-          chFilter.columns = [];
-          chFilter.operator = OB.Dal.FILTER;
-          chFilter.value = 'Chv_Filter';
-          chFilter.params = [characteristicparams.toString()];
-          remoteCriteria.push(chFilter);
-        }
-
         criteria.hqlCriteria = [];
         productCharacteristic.customFilters.forEach(function (hqlFilter) {
           if (!_.isUndefined(hqlFilter.hqlCriteriaCharacteristicsValue)) {
@@ -243,7 +268,7 @@ enyo.kind({
       }
       remoteCriteria.push(characteristicfilter);
       criteria.remoteFilters = remoteCriteria;
-
+      criteria.forceRemote = forceRemote;
       OB.Dal.find(OB.Model.CharacteristicValue, criteria, function (dataValues) {
         if (dataValues && dataValues.length > 0) {
           for (i = 0; i < dataValues.length; i++) {

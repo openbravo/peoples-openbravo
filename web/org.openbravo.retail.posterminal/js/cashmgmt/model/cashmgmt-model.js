@@ -64,6 +64,7 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.WindowModel.extend({
           isocode: p.isocode,
           glItem: p.glItem,
           cashup_id: cashUp.at(0).get('id'),
+          posTerminal: OB.MobileApp.model.get('terminal').id,
           isbeingprocessed: 'N'
         });
         me.depsdropstosave.add(addedCashMgmt);

@@ -66,13 +66,13 @@ enyo.kind({
         initComponents: function () {
           this.setContent(OB.I18N.getLabel('OBPOS_LineTotal') + ': ' + this.owner.owner.model.printTotal());
         }
-      } , {
+      }, {
         style: 'font-weight: bold; color: lightblue; float: right; text-align:right; display: inline-block;',
         name: 'isLayaway',
         initComponents: function () {
           if (!_.isUndefined(this.owner.owner.model.get('amountToLayaway')) && !_.isNull(this.owner.owner.model.get('amountToLayaway'))) {
             this.setContent(OB.I18N.getLabel('OBPOS_ToBeLaidaway'));
-         }
+          }
         }
       }]
     }, {

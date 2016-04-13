@@ -1,6 +1,7 @@
 package org.openbravo.retail.posterminal.master;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -31,7 +32,16 @@ public class BrandProperties extends ModelExtension {
     }
 
     ArrayList<HQLProperty> list;
-    if (isRemote) {
+    boolean forceRemote = false;
+    if (params != null) {
+      @SuppressWarnings("unchecked")
+      HashMap<String, Object> localParams = (HashMap<String, Object>) params;
+      if (localParams.get("forceRemote") != null) {
+        forceRemote = (Boolean) localParams.get("forceRemote");
+
+      }
+    }
+    if (isRemote || forceRemote) {
       list = new ArrayList<HQLProperty>() {
         private static final long serialVersionUID = 1L;
         {

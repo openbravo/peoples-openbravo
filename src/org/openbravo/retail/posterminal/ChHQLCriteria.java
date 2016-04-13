@@ -23,19 +23,7 @@ public class ChHQLCriteria extends HQLCriteriaProcess {
 
   @Override
   public String getHQLFilter(String params) {
-    return " exists (select 1  from ProductCharacteristicValue as pchv  where ch.id = pchv.characteristic.id"
-        + addHqlCriteria(params) + ")";
-  }
-
-  private String addHqlCriteria(String params) {
-
-    String[] array = params.substring(2, params.length() - 2).split(",");
-    String hql = "";
-    for (int i = 0; i < array.length; i++) {
-      hql = hql
-          + "  and  pchv.product.id in (select p.product.id  from ProductCharacteristicValue p  where p.characteristicValue.id = "
-          + array[i] + ")";
-    }
-    return hql;
+    return " exists (select 1  from ProductCharacteristicValue as pchv  where ch.id = pchv.characteristic.id "
+        + " and  exists (select 1  from ProductCharacteristicValue p  where p.product.id = pchv.product.id and  p.characteristicValue.id in ($1)))";
   }
 }
