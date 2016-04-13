@@ -60,9 +60,9 @@ public class AttachmentAH extends BaseActionHandler {
     OBContext.setAdminMode(true);
     String recordIds = "";
     String buttonId = "";
+    String tabId = (String) parameters.get("tabId");
     Tab tab = null;
     try {
-      String tabId = (String) parameters.get("tabId");
       Check.isNotNull(tabId, OBMessageUtils.messageBD("OBUIAPP_Attachment_Tab_Mandatory"));
       tab = adcs.getTab(tabId);
 
@@ -91,7 +91,7 @@ public class AttachmentAH extends BaseActionHandler {
     } catch (JSONException e) {
       throw new OBException(OBMessageUtils.messageBD("OBUIAPP_AttachParamJSON"), e);
     } catch (CheckException e) {
-      log.error("Error checking parameters.", e);
+      log.error("Error checking input parameters.", e);
       JSONObject obj = new JSONObject();
       try {
         obj.put("buttonId", parameters.get("buttonId"));
@@ -105,7 +105,7 @@ public class AttachmentAH extends BaseActionHandler {
       return obj;
     } catch (OBException e) {
       OBDal.getInstance().rollbackAndClose();
-      log.error("Error managing attachments.", e);
+      log.error("Error managing attachments of tab " + tabId + " and record(s) " + recordIds, e);
       JSONObject obj = getAttachmentJSONObject(tab, recordIds);
       try {
         obj.put("buttonId", parameters.get("buttonId"));
