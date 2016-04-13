@@ -17,7 +17,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2014 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2001-2016 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -70,7 +70,7 @@ BEGIN
 		AND a.ISACTIVE = 'Y'
       		AND (AD_IsOrgIncluded(a.AD_Org_ID, :new.AD_Org_ID, :new.AD_Client_ID)<>-1
 		OR AD_IsOrgIncluded(:new.AD_Org_ID, a.AD_Org_ID, :new.AD_Client_ID)<>-1)
-		ORDER BY 1 DESC
+		ORDER BY 1
 	)
 	LOOP
 	
@@ -189,9 +189,9 @@ BEGIN
               WHERE d2.C_AcctSchema_ID = oa.C_AcctSchema_ID
               AND oa.ISACTIVE = 'Y'
               AND oA.AD_Client_ID = d2.AD_Client_ID
-              AND (AD_IsOrgIncluded(oa.AD_Org_ID, :new.AD_Org_ID, :new.AD_Org_ID)<>-1
-              OR AD_IsOrgIncluded(:new.AD_Org_ID, oa.AD_Org_ID, :new.AD_Org_ID)<>-1)
-              ORDER BY 1 DESC			
+              AND (AD_IsOrgIncluded(oa.AD_Org_ID, :new.AD_Org_ID, :new.AD_Client_ID)<>-1
+              OR AD_IsOrgIncluded(:new.AD_Org_ID, oa.AD_Org_ID, :new.AD_Client_ID)<>-1)
+              ORDER BY 1
 	) 
   LOOP
 	
