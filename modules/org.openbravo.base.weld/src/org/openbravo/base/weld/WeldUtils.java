@@ -53,7 +53,7 @@ public class WeldUtils {
 
       if (staticBeanManager == null) {
         // In wildfly, bean manager is not saved in servlet context.
-        log.debug("BeanManager not prsent in ServletContext, trying to get it with a jndi lookup");
+        log.debug("BeanManager not present in ServletContext, trying to get it with a jndi lookup");
 
         InitialContext ic = null;
         try {
@@ -61,7 +61,7 @@ public class WeldUtils {
           String name = "java:comp/" + BeanManager.class.getSimpleName();
           staticBeanManager = (BeanManager) ic.lookup(name);
         } catch (NamingException e) {
-          log.error("Couldn't get beanManager trhough jndi lookup in InitialContext {}", ic, e);
+          log.error("Couldn't get beanManager through jndi lookup in InitialContext {}", ic, e);
           throw new OBException(e);
         }
       }
