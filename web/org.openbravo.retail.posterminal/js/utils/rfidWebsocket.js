@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global, WebSocket _ */
+/*global, WebSocket, _ Backbone */
 
 OB.UTIL.RfidController = new Backbone.Model({});
 
