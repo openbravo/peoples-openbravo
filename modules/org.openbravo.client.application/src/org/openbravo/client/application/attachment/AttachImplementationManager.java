@@ -262,8 +262,7 @@ public class AttachImplementationManager {
       }
 
     } catch (IOException e) {
-
-      throw new OBException(OBMessageUtils.messageBD("Error downloading file"));
+      throw new OBException(OBMessageUtils.messageBD("Error downloading file"), e);
     } finally {
       OBContext.restorePreviousMode();
     }
@@ -338,7 +337,7 @@ public class AttachImplementationManager {
       dest.close();
 
     } catch (IOException e) {
-      throw new OBException(OBMessageUtils.messageBD("OBUIAPP_ErrorWiththeFile"));
+      throw new OBException(OBMessageUtils.messageBD("OBUIAPP_ErrorWiththeFile"), e);
     } finally {
       OBContext.restorePreviousMode();
     }
