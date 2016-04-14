@@ -269,7 +269,7 @@ public class AttachImplementationManager {
   }
 
   /**
-   * Method to download all the files related to the record, in a single .zip dile. This method
+   * Method to download all the files related to the record, in a single .zip file. This method
    * calls needed handler class
    * 
    * @param tabId
