@@ -213,8 +213,6 @@ public class AttachmentUtils {
       OBContext.setAdminMode(true);
       List<Parameter> parameters = adcs.getMethodMetadataParameters(strAttMethodId, tabId);
       boolean isfirst = true;
-      final String delimiter = OBMessageUtils.messageBD("OBUIAPP_Attach_Description_Delimiter");
-      final String paramDesc = OBMessageUtils.messageBD("OBUIAPP_Attach_Description");
       for (Parameter param : parameters) {
         if (!param.isShowInDescription()) {
           continue;
