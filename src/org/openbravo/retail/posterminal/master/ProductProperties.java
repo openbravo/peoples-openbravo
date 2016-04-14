@@ -95,7 +95,8 @@ public class ProductProperties extends ModelExtension {
           add(new HQLProperty("ppp.algorithm", "algorithm"));
         }
         add(new HQLProperty(
-            "case when product.active = 'Y' then pli.active else product.active end", "active"));
+            "case when product.active = 'Y' and pli.active is not null then pli.active else product.active end",
+            "active"));
       }
     });
 
