@@ -131,7 +131,8 @@ public class AttachImplementationManager {
         attachment.setTable(tab.getTable());
         attachment.setRecord(strKey);
 
-        AttachmentConfig attachConf = AttachmentUtils.getAttachmentConfig(org.getClient());
+        AttachmentConfig attachConf = AttachmentUtils.getAttachmentConfig((String) DalUtil
+            .getId(org.getClient()));
         if (attachConf == null) {
           attachMethod = AttachmentUtils.getDefaultAttachmentMethod();
         } else {

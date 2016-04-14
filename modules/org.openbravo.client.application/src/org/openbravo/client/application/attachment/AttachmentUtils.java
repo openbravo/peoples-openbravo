@@ -57,23 +57,34 @@ public class AttachmentUtils {
   public static final String DEFAULT_METHOD_ID = "D7B1319FC2B340799283BBF8E838DF9F";
   private static final String CORE_DESC_PARAMETER = "E22E8E3B737D4A47A691A073951BBF16";
   private static final String DESCRIPTION_DELIMITER = "; ";
+  private static final String SYSTEM_CLIENT_ID = "0";
   private static ApplicationDictionaryCachedStructures adcs = WeldUtils
       .getInstanceFromStaticBeanManager(ApplicationDictionaryCachedStructures.class);
 
   /**
+   * Gets the Attachment Configuration associated to the client active in OBContext
+   * 
+   * @return Activate Attachment Configuration for the current OBContext client
+   */
+  public static AttachmentConfig getAttachmentConfig() {
+    Client client = OBContext.getOBContext().getCurrentClient();
+    return getAttachmentConfig((String) DalUtil.getId(client));
+  }
+
+  /**
    * Gets the Attachment Configuration associated to the active client
    * 
-   * @param client
+   * @param clientId
    *          Client using openbravo
    * @return Activated Attachment Configuration for this client
    */
-  public static AttachmentConfig getAttachmentConfig(Client client) {
-    String strAttachmentConfigId = clientConfigs.get(DalUtil.getId(client));
+  public static AttachmentConfig getAttachmentConfig(String clientId) {
+    String strAttachmentConfigId = clientConfigs.get(clientId);
     if (strAttachmentConfigId == null) {
       // Only one active AttachmentConfig is allowed per client.
       OBCriteria<AttachmentConfig> critAttConf = OBDal.getInstance().createCriteria(
           AttachmentConfig.class);
-      critAttConf.add(Restrictions.eq(AttachmentConfig.PROPERTY_CLIENT, client));
+      critAttConf.add(Restrictions.eq(AttachmentConfig.PROPERTY_CLIENT + ".id", clientId));
       if (!OBDal.getInstance().isActiveFilterEnabled()) {
         critAttConf.setFilterOnActive(true);
       }
@@ -82,8 +93,15 @@ public class AttachmentUtils {
       String strAttConfig = "no-config";
       if (attConf != null) {
         strAttConfig = attConf.getId();
+      } else if (!SYSTEM_CLIENT_ID.equals(clientId)) {
+        // If there is no specific configuration on the client search a generic configuration on
+        // system client.
+        attConf = getAttachmentConfig(SYSTEM_CLIENT_ID);
+        if (attConf != null) {
+          strAttConfig = attConf.getId();
+        }
       }
-      setAttachmentConfig((String) DalUtil.getId(client), strAttConfig);
+      setAttachmentConfig((String) DalUtil.getId(clientId), strAttConfig);
       return attConf;
     } else if ("no-config".equals(strAttachmentConfigId)) {
       return null;
@@ -115,8 +133,7 @@ public class AttachmentUtils {
    * @return The AttachmentMethod to use for the current client.
    */
   public static AttachmentMethod getAttachmentMethod() {
-    Client client = OBContext.getOBContext().getCurrentClient();
-    AttachmentConfig attConfig = getAttachmentConfig(client);
+    AttachmentConfig attConfig = getAttachmentConfig();
     if (attConfig == null) {
       return AttachmentUtils.getDefaultAttachmentMethod();
     } else {
