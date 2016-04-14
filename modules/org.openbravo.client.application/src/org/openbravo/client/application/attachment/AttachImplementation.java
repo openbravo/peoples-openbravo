@@ -26,77 +26,78 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.model.ad.utility.Attachment;
 
 /**
- * Public class to allow extend the functionality
+ * Public class to allow extend the Attachment Functionality. Modules implementing new attachment
+ * method must implement this class. The class must implement the
+ * org.openbravo.client.kernel.ComponentProvider.Qualifier with the Attachment Method's Search Key
+ * so the AttachImplementationManager can load the corresponding class.
  */
 
 public abstract class AttachImplementation {
 
   /**
-   * Abstract method to upload files
+   * Method in charge of File upload. Invoked when a new file is attached to a record.
    * 
    * @param attachment
-   *          The attachment created in c_file with empty metadata
-   * @param strDataType
+   *          The attachment created in c_file
+   * @param dataType
    *          DataType of the attachment
    * @param parameters
    *          A map with the metadata and its values to be updated in the corresponding file
    *          management system and in the attachment
    * @param file
    *          The file to be uploaded
-   * @param strTab
+   * @param tabId
    *          The tabID where the file is attached
-   * @param parameterValues
-   *          List of metadata saved in database
    * @throws OBException
    *           Thrown when any error occurs during the upload
    */
-  public abstract void uploadFile(Attachment attachment, String strDataType,
-      Map<String, Object> parameters, File file, String strTab) throws OBException;
+  public abstract void uploadFile(Attachment attachment, String dataType,
+      Map<String, Object> parameters, File file, String tabId) throws OBException;
 
   /**
-   * Abstract method to download a single file
+   * Method invoked when an attached file needs to be downloaded from the corresponding file
+   * management system.
    * 
    * @param attachment
    *          The attachment that will be downloaded
-   * @return The file being to download
+   * @return the attached file.
    * @throws OBException
    *           Thrown when any error occurs during the download
    */
   public abstract File downloadFile(Attachment attachment) throws OBException;
 
   /**
-   * Abstract method to delete a file
+   * Method invoked when an attached file needs to be removed from the corresponding file management
+   * system.
    * 
    * @param attachment
-   *          The attachment that want to be removed
+   *          The attachment to be removed
    * @throws OBException
    *           Thrown when any error occurs when deleting the file
    */
   public abstract void deleteFile(Attachment attachment) throws OBException;
 
   /**
-   * Abstract method to update file's metadata
+   * Method invoked when an existing attachment metadata is updated.
    * 
    * @param attachment
    *          The attachment to be modified
-   * @param strTab
+   * @param tabId
    *          The tabID where the file was attached
    * @param parameters
-   *          The metadata to be modified
-   * @param parameterValues
-   *          List of metadata saved in database
+   *          The metadata with the new values.
    * @throws OBException
    *           Thrown when any error occurs when updating the file
    */
-  public abstract void updateFile(Attachment attachment, String strTab,
+  public abstract void updateFile(Attachment attachment, String tabId,
       Map<String, Object> parameters) throws OBException;
 
   /**
-   * This method is used to know whether the attach method is creating a temporary file in the temp
-   * directory of Openbravo server when downloading a file. If it is true, the process will remove
-   * the temporary file. If it s false, the process will not remove the file
+   * Method invoked to check if the downloaded file has to be deleted when the download is completed
+   * by the user. Some attachment methods might create temporary files in Openbravo server that
+   * should be removed when the download is completed.
    * 
-   * @return true if the attachment method creates a temporary file in Openbravo server.
+   * @return true if the downloaded File has to be deleted.
    */
   public abstract boolean isTempFile();
 
