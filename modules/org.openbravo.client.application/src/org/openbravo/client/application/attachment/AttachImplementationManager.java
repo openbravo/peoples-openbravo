@@ -281,7 +281,7 @@ public class AttachImplementationManager {
    *           any exception thrown during the download of all documents
    */
 
-  public void dowloadAll(String tabId, String recordIds, OutputStream os) throws OBException {
+  public void downloadAll(String tabId, String recordIds, OutputStream os) throws OBException {
 
     try {
       OBContext.setAdminMode(true);

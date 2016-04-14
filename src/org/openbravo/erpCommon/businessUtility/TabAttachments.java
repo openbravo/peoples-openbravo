@@ -205,7 +205,7 @@ public class TabAttachments extends HttpSecureAppServlet {
       ByteArrayOutputStream os = null;
       try {
         os = new ByteArrayOutputStream();
-        aim.dowloadAll(tabId, recordIds, os);
+        aim.downloadAll(tabId, recordIds, os);
         response.setContentType("application/zip");
         response.setHeader("Content-Disposition", "attachment; filename=attachments.zip");
         response.getOutputStream().write(os.toByteArray());
