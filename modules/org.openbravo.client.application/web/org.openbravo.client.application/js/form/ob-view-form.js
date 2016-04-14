@@ -346,8 +346,8 @@ OB.ViewFormProperties = {
     if (!this.attachmentsSection) {
       return;
     }
+    this.attachmentsSection.collapseSection(true);
     if (enable) {
-      this.attachmentsSection.collapseSection(true);
       this.attachmentsSection.setRecordInfo(this.view.entity, this.getValue(OB.Constants.ID), this.view.tabId, this);
       delete this.attachmentsSection.hiddenInForm;
       this.attachmentsSection.show();

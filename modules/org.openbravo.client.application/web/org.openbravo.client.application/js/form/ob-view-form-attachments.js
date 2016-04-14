@@ -215,6 +215,10 @@ isc.OBAttachmentsLayout.addProperties({
           this.isInitialized = true;
         }
       });
+    } else {
+      // When collapsing the section remove loaded attachments.
+      this.savedAttachments = [];
+      this.destroyAndRemoveMembers(this.getMembers());
     }
   },
 
