@@ -54,17 +54,17 @@ public class CoreAttachImplementation extends AttachImplementation {
   private static final Logger log = LoggerFactory.getLogger(CoreAttachImplementation.class);
 
   @Override
-  public void uploadFile(Attachment attachment, String strDataType, Map<String, Object> parameters,
-      File file, String strTab) throws OBException {
+  public void uploadFile(Attachment attachment, String dataType, Map<String, Object> parameters,
+      File file, String tabId) throws OBException {
     log.debug("CoreAttachImplemententation - Uploading files");
     String tableId = (String) DalUtil.getId(attachment.getTable());
-    String strKey = attachment.getRecord();
-    String strFileDir = getAttachmentDirectoryForNewAttachments(tableId, strKey);
+    String key = attachment.getRecord();
+    String fileDirPath = getAttachmentDirectoryForNewAttachments(tableId, key);
 
-    String attachmentFolder = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+    String attachmentFolderPath = OBPropertiesProvider.getInstance().getOpenbravoProperties()
         .getProperty("attach.path");
     File uploadDir = null;
-    uploadDir = new File(attachmentFolder + File.separator + strFileDir);
+    uploadDir = new File(attachmentFolderPath + File.separator + fileDirPath);
     log.debug("Destination file before renaming: {}", uploadDir);
     try {
       // moveFileToDirectory not used as it does not allow to overwrite the destination file if it
@@ -77,30 +77,31 @@ public class CoreAttachImplementation extends AttachImplementation {
           + e.getMessage(), e);
     }
 
-    attachment.setPath(getPath(strFileDir));
+    attachment.setPath(getPath(fileDirPath));
     OBDal.getInstance().save(attachment);
   }
 
   @Override
   public File downloadFile(Attachment attachment) {
     log.debug("CoreAttachImplemententation - download file");
-    String fileDir = getAttachmentDirectory((String) DalUtil.getId(attachment.getTable()),
+    String fileDirPath = getAttachmentDirectory((String) DalUtil.getId(attachment.getTable()),
         attachment.getRecord(), attachment.getName());
-    String attachmentFolder = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+    String attachmentFolderPath = OBPropertiesProvider.getInstance().getOpenbravoProperties()
         .getProperty("attach.path");
-    final File file = new File(attachmentFolder + File.separator + fileDir, attachment.getName());
+    final File file = new File(attachmentFolderPath + File.separator + fileDirPath,
+        attachment.getName());
     return file;
   }
 
   @Override
   public void deleteFile(Attachment attachment) {
     log.debug("CoreAttachImplemententation - Removing files");
-    String attachmentFolder = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+    String attachmentFolderPath = OBPropertiesProvider.getInstance().getOpenbravoProperties()
         .getProperty("attach.path");
-    String fileDir = getAttachmentDirectory((String) DalUtil.getId(attachment.getTable()),
+    String fileFolderPath = getAttachmentDirectory((String) DalUtil.getId(attachment.getTable()),
         attachment.getRecord(), attachment.getName());
-    String fileDirPath = attachmentFolder + "/" + fileDir;
-    final File file = new File(fileDirPath, attachment.getName());
+    String absoluteFileFolderPath = attachmentFolderPath + "/" + fileFolderPath;
+    final File file = new File(absoluteFileFolderPath, attachment.getName());
     if (file.exists()) {
       file.delete();
     } else {
@@ -109,7 +110,7 @@ public class CoreAttachImplementation extends AttachImplementation {
   }
 
   @Override
-  public void updateFile(Attachment attachment, String strTab, Map<String, Object> parameters)
+  public void updateFile(Attachment attachment, String tabId, Map<String, Object> parameters)
       throws OBException {
     // Do nothing the metadata is saved in the database by the AttachImplementationManager.
     log.debug("CoreAttachImplemententation - Updating files");
@@ -136,7 +137,7 @@ public class CoreAttachImplementation extends AttachImplementation {
    * @return file directory to save the attachment
    */
   public static String getAttachmentDirectoryForNewAttachments(String tableID, String recordID) {
-    String fileDir = tableID + "-" + recordID;
+    String fileFolderPath = tableID + "-" + recordID;
     String saveAttachmentsOldWay = null;
     try {
       saveAttachmentsOldWay = Preferences.getPreferenceValue("SaveAttachmentsOldWay", true,
@@ -149,11 +150,11 @@ public class CoreAttachImplementation extends AttachImplementation {
     }
 
     if ("Y".equals(saveAttachmentsOldWay)) {
-      return fileDir;
+      return fileFolderPath;
     } else {
-      fileDir = tableID + "/" + splitPath(recordID);
+      fileFolderPath = tableID + "/" + splitPath(recordID);
     }
-    return fileDir;
+    return fileFolderPath;
   }
 
   /**
@@ -175,7 +176,7 @@ public class CoreAttachImplementation extends AttachImplementation {
    * @return file directory in which the attachment is stored
    */
   public static String getAttachmentDirectory(String tableID, String recordID, String fileName) {
-    String fileDir = tableID + "-" + recordID;
+    String fileFolderPath = tableID + "-" + recordID;
     Table attachmentTable = null;
     try {
       OBContext.setAdminMode();
@@ -191,14 +192,14 @@ public class CoreAttachImplementation extends AttachImplementation {
 
       Attachment attachment = (Attachment) attachmentCriteria.uniqueResult();
       if (attachment != null && attachment.getPath() != null) {
-        fileDir = attachment.getPath();
+        fileFolderPath = attachment.getPath();
       }
     } catch (Exception e) {
-      log.error(e.getMessage(), e);
+      log.error("Error building attachment folder " + e.getMessage(), e);
     } finally {
       OBContext.restorePreviousMode();
     }
-    return fileDir;
+    return fileFolderPath;
   }
 
   /**

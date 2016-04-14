@@ -58,22 +58,22 @@ public class DefaultsAttachmentActionHandler extends BaseActionHandler {
       OBContext.setAdminMode(true);
       JSONObject defaults = new JSONObject();
 
-      final String strAttMethodID = (String) parameters.get("attachmentMethod");
-      final String strTabId = (String) parameters.get("tabId");
-      final String strAttachmentId = (String) parameters.get("attachmentId");
-      final String strAction = (String) parameters.get("action");
-      final String strKeyId = (String) parameters.get("keyId");
-      final Attachment attachment = OBDal.getInstance().get(Attachment.class, strAttachmentId);
+      final String attMethodID = (String) parameters.get("attachmentMethod");
+      final String tabId = (String) parameters.get("tabId");
+      final String attachmentId = (String) parameters.get("attachmentId");
+      final String action = (String) parameters.get("action");
+      final String keyId = (String) parameters.get("keyId");
+      final Attachment attachment = OBDal.getInstance().get(Attachment.class, attachmentId);
       JSONObject context = new JSONObject(content);
       final Map<String, String> fixedParameters = fixRequestMap(parameters, context);
 
       // The parameter list is sorted so the fixed parameters are evaluated before. This is needed
       // to be able to define parameters with default values based on the fixed parameters.
-      for (Parameter param : adcs.getMethodMetadataParameters(strAttMethodID, strTabId)) {
+      for (Parameter param : adcs.getMethodMetadataParameters(attMethodID, tabId)) {
         if (param.isFixed()) {
           Object value = null;
           if (param.getPropertyPath() != null) {
-            value = AttachmentUtils.getPropertyPathValue(param, strTabId, strKeyId);
+            value = AttachmentUtils.getPropertyPathValue(param, tabId, keyId);
           } else if (param.isEvaluateFixedValue()) {
             value = ParameterUtils.getParameterFixedValue(fixedParameters, param);
           } else {
@@ -86,7 +86,7 @@ public class DefaultsAttachmentActionHandler extends BaseActionHandler {
           continue;
         }
 
-        if ("edit".equals(strAction)) {
+        if ("edit".equals(action)) {
           // Calculate stored value.
           OBCriteria<ParameterValue> parameterValueCriteria = OBDal.getInstance().createCriteria(
               ParameterValue.class);
@@ -96,18 +96,18 @@ public class DefaultsAttachmentActionHandler extends BaseActionHandler {
           if (parameterValue != null) {
             // If the parameter has a previous value set it on the defaults map and continue with
             // next parameter.
-            Object objValue = ParameterUtils.getParameterValue(parameterValue);
+            Object baseValue = ParameterUtils.getParameterValue(parameterValue);
             Object parsedValue = "";
-            if (objValue == null) {
+            if (baseValue == null) {
               parsedValue = "";
-            } else if (objValue instanceof Date) {
-              parsedValue = OBDateUtils.formatDate((Date) objValue);
-            } else if (objValue instanceof BigDecimal) {
-              parsedValue = ((BigDecimal) objValue).toPlainString();
-            } else if (objValue instanceof Boolean) {
-              parsedValue = objValue;
+            } else if (baseValue instanceof Date) {
+              parsedValue = OBDateUtils.formatDate((Date) baseValue);
+            } else if (baseValue instanceof BigDecimal) {
+              parsedValue = ((BigDecimal) baseValue).toPlainString();
+            } else if (baseValue instanceof Boolean) {
+              parsedValue = baseValue;
             } else {
-              parsedValue = objValue.toString();
+              parsedValue = baseValue.toString();
             }
 
             defaults.put(param.getDBColumnName(), parsedValue);
@@ -128,7 +128,7 @@ public class DefaultsAttachmentActionHandler extends BaseActionHandler {
 
       }
 
-      log.debug("Defaults for tab {} \n {}", strTabId, defaults);
+      log.debug("Defaults for tab {} \n {}", tabId, defaults);
       JSONObject results = new JSONObject();
       results.put("defaults", defaults);
 

@@ -67,12 +67,12 @@ public class AttachmentConfigEventHandler extends EntityPersistenceEventObserver
     final AttachmentConfig newAttConfig = (AttachmentConfig) event.getTargetInstance();
 
     isAnyActivated(event);
-    String strClient = (String) DalUtil.getId(newAttConfig.getClient());
+    String clientId = (String) DalUtil.getId(newAttConfig.getClient());
     if ((Boolean) event.getCurrentState(propActive)) {
-      AttachmentUtils.setAttachmentConfig(strClient, event.getId());
+      AttachmentUtils.setAttachmentConfig(clientId, event.getId());
     } else if ((Boolean) event.getPreviousState(propActive)) {
       // Deactivating a config reset AttachmentUtils state
-      AttachmentUtils.setAttachmentConfig(strClient, null);
+      AttachmentUtils.setAttachmentConfig(clientId, null);
     }
   }
 
@@ -87,9 +87,9 @@ public class AttachmentConfigEventHandler extends EntityPersistenceEventObserver
     final AttachmentConfig newAttConfig = (AttachmentConfig) event.getTargetInstance();
 
     isAnyActivated(event);
-    String strClient = (String) DalUtil.getId(newAttConfig.getClient());
+    String clientId = (String) DalUtil.getId(newAttConfig.getClient());
     if ((Boolean) event.getCurrentState(propActive)) {
-      AttachmentUtils.setAttachmentConfig(strClient, newAttConfig.getId());
+      AttachmentUtils.setAttachmentConfig(clientId, newAttConfig.getId());
     }
   }
 
@@ -102,10 +102,10 @@ public class AttachmentConfigEventHandler extends EntityPersistenceEventObserver
     }
 
     final AttachmentConfig deletedAttachmentConfig = (AttachmentConfig) event.getTargetInstance();
-    String strClient = (String) DalUtil.getId(deletedAttachmentConfig.getClient());
+    String clientId = (String) DalUtil.getId(deletedAttachmentConfig.getClient());
     if (deletedAttachmentConfig.isActive()) {
       // The active config of the client is deleted. Update AttachmentUtils with an empty config
-      AttachmentUtils.setAttachmentConfig(strClient, null);
+      AttachmentUtils.setAttachmentConfig(clientId, null);
     }
 
   }
