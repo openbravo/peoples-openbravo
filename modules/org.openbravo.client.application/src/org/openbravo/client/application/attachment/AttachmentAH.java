@@ -174,7 +174,7 @@ public class AttachmentAH extends BaseActionHandler {
    * @param tab
    *          The tab the attachments belong to.
    * @param recordIds
-   *          A string of ids concatenated by comma identifing the records whose attachments has to
+   *          A string of ids concatenated by comma identifying the records whose attachments has to
    *          be loaded.
    * @return a JSONObject with an "attachment" key that includes a JSONArray with all the
    *         attachments.
