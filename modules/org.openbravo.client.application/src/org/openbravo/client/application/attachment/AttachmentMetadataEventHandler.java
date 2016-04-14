@@ -26,6 +26,7 @@ import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.client.application.Parameter;
 import org.openbravo.client.kernel.event.EntityNewEvent;
+import org.openbravo.client.kernel.event.EntityPersistenceEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
 import org.openbravo.client.kernel.event.EntityUpdateEvent;
 import org.openbravo.dal.service.OBCriteria;
@@ -49,20 +50,17 @@ public class AttachmentMetadataEventHandler extends EntityPersistenceEventObserv
     if (!isValidEvent(event)) {
       return;
     }
-    Parameter parameter = (Parameter) event.getTargetInstance();
-    if (parameter.getAttachmentMethod() == null) {
-      return;
-    }
-    if (checkDuplicates(parameter)) {
-      // If there is a duplicated Attachment Metadata throw an exception.
-      throw new OBException(OBMessageUtils.messageBD("OBUIAPP_DuplicatedDBColumnname"));
-    }
+    doChecks(event);
   }
 
   public void onUpdate(@Observes EntityUpdateEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
+    doChecks(event);
+  }
+
+  private void doChecks(EntityPersistenceEvent event) {
     Parameter parameter = (Parameter) event.getTargetInstance();
     if (parameter.getAttachmentMethod() == null) {
       return;
