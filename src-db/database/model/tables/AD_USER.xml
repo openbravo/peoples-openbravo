@@ -161,6 +161,10 @@
         <default><![CDATA[SYSDATE]]></default>
         <onCreateDefault/>
       </column>
+      <column name="ISEXPIREDPASSWORD" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault><![CDATA['N']]></onCreateDefault>
+      </column>
       <foreign-key foreignTable="AD_ORG" name="AD_USER_AD_ORGTRX">
         <reference local="AD_ORGTRX_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
