@@ -33,32 +33,35 @@ import org.openbravo.erpCommon.ad_callouts.SimpleCallout;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.utility.AttachmentMethod;
 
+/**
+ * Callout executed only on Metadata Tab of "Windows, Tabs and Fields" window. It calculates the
+ * Sequence Number to set on the new metadata when the Attachmnt MEthod is selected.
+ */
 public class MetadataOnTab extends SimpleCallout {
   private static final long serialVersionUID = 1L;
+  private static final String WINDOWTABSFIELDS_WINDOW_ID = "102";
 
   @Override
   protected void execute(CalloutInfo info) throws ServletException {
-    final String strWindow = info.getWindowId();
-    // Only execute callout if we are in Windows, Tabs and Fields window.
-    if (!"102".equals(strWindow)) {
+    final String windowId = info.getWindowId();
+    if (!WINDOWTABSFIELDS_WINDOW_ID.equals(windowId)) {
       return;
     }
-    final String strMethodId = info.getStringParameter("inpcAttachmentMethodId",
-        IsIDFilter.instance);
-    final String strTabId = info.getStringParameter("inpadTabId", IsIDFilter.instance);
-    if (StringUtils.isEmpty(strMethodId)) {
+    final String methodId = info.getStringParameter("inpcAttachmentMethodId", IsIDFilter.instance);
+    final String tabId = info.getStringParameter("inpadTabId", IsIDFilter.instance);
+    if (StringUtils.isEmpty(methodId)) {
       info.addResult("inpseqno", "");
     } else {
-      int seqNo = getNextSeqNo(strMethodId, strTabId);
+      int seqNo = getNextSeqNo(methodId, tabId);
       info.addResult("inpseqno", seqNo);
     }
   }
 
-  private int getNextSeqNo(String strMethodId, String tabId) {
+  private int getNextSeqNo(String methodId, String tabId) {
     ApplicationDictionaryCachedStructures adcs = WeldUtils
         .getInstanceFromStaticBeanManager(ApplicationDictionaryCachedStructures.class);
 
-    AttachmentMethod attMethod = OBDal.getInstance().get(AttachmentMethod.class, strMethodId);
+    AttachmentMethod attMethod = OBDal.getInstance().get(AttachmentMethod.class, methodId);
     Tab tab = adcs.getTab(tabId);
     OBCriteria<Parameter> critParam = OBDal.getInstance().createCriteria(Parameter.class);
     critParam.add(Restrictions.eq(Parameter.PROPERTY_ATTACHMENTMETHOD, attMethod));
