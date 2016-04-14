@@ -167,6 +167,18 @@ public class AttachmentAH extends BaseActionHandler {
     }
   }
 
+  /**
+   * Method to build the JSONObject that contains all the attachments related to the given tab's
+   * record ids.
+   * 
+   * @param tab
+   *          The tab the attachments belong to.
+   * @param recordIds
+   *          A string of ids concatenated by comma identifing the records whose attachments has to
+   *          be loaded.
+   * @return a JSONObject with an "attachment" key that includes a JSONArray with all the
+   *         attachments.
+   */
   public static JSONObject getAttachmentJSONObject(Tab tab, String recordIds) {
     List<JSONObject> attachments = AttachmentUtils.getTabAttachmentsForRows(tab,
         recordIds.split(","));

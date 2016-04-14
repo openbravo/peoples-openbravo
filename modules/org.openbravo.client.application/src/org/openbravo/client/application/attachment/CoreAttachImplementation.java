@@ -42,6 +42,12 @@ import org.openbravo.model.ad.utility.Attachment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Default implementation of Attachment Management. This method saves the attached files in the
+ * "attach.path" folder of Openbravo server. It is the method used when no other configuration is
+ * provided.
+ *
+ */
 @ApplicationScoped
 @ComponentProvider.Qualifier(AttachmentUtils.DEFAULT_METHOD)
 public class CoreAttachImplementation extends AttachImplementation {
@@ -105,11 +111,13 @@ public class CoreAttachImplementation extends AttachImplementation {
   @Override
   public void updateFile(Attachment attachment, String strTab, Map<String, Object> parameters)
       throws OBException {
+    // Do nothing the metadata is saved in the database by the AttachImplementationManager.
     log.debug("CoreAttachImplemententation - Updating files");
   }
 
   @Override
   public boolean isTempFile() {
+    // Return false as the downloaded file is the original file stored in the server.
     return false;
   }
 

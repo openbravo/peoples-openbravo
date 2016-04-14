@@ -37,6 +37,12 @@ import org.openbravo.model.ad.utility.AttachmentConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Event Handler on AttachmentConfig entity that manages the changes on the Attachment Method used
+ * on each Client. It also ensures that there are not more than 1 record active for each client. It
+ * listens to Insert, Update or Delete events to update the cached "clientConfigs" Map in
+ * AttachmentUtils.
+ */
 public class AttachmentConfigEventHandler extends EntityPersistenceEventObserver {
   private static final Logger logger = LoggerFactory.getLogger(AttachmentConfigEventHandler.class);
 
@@ -49,6 +55,11 @@ public class AttachmentConfigEventHandler extends EntityPersistenceEventObserver
     return entities;
   }
 
+  /**
+   * It checks that there is not already an active config for the client and updates the cached
+   * client config. If the record is being deactivated it sends an empty id to reset the
+   * configuration.
+   */
   public void onUpdate(@Observes EntityUpdateEvent event) {
     if (!isValidEvent(event)) {
       return;
@@ -65,6 +76,10 @@ public class AttachmentConfigEventHandler extends EntityPersistenceEventObserver
     }
   }
 
+  /**
+   * It checks that there is not already an active config for the client and updates the cached
+   * client config.
+   */
   public void onSave(@Observes EntityNewEvent event) {
     if (!isValidEvent(event)) {
       return;
@@ -78,6 +93,9 @@ public class AttachmentConfigEventHandler extends EntityPersistenceEventObserver
     }
   }
 
+  /**
+   * It updates the cached client config by sending a empty id.
+   */
   public void onDelete(@Observes EntityDeleteEvent event) {
     if (!isValidEvent(event)) {
       return;
