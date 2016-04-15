@@ -30,12 +30,16 @@ enyo.kind({
     if (!this.disabled) {
       this.hiddenPopup = true;
       this.doHidePopup({
-        popup: this.popup
+        popup: this.popup,
+        args: {
+          activeFlow: true
+        }
       });
       this.doShowPopup({
         popup: 'modalcustomer',
         args: {
-          target: this.target
+          target: this.target,
+          flowTrigger: 'flowReceiptProperties'
         }
       });
     }
@@ -46,12 +50,6 @@ enyo.kind({
   },
   renderCustomer: function (newCustomer) {
     this.setContent(newCustomer);
-    if (this.hiddenPopup) {
-      this.hiddenPopup = false;
-      this.doShowPopup({
-        popup: this.popup
-      });
-    }
   },
   orderChanged: function (oldValue) {
     if (this.order.get('bp')) {
@@ -93,7 +91,8 @@ enyo.kind({
       this.doShowPopup({
         popup: 'modalcustomershipaddress',
         args: {
-          target: this.target
+          target: this.target,
+          flowTrigger: 'flowReceiptProperties'
         }
       });
     }
@@ -104,12 +103,6 @@ enyo.kind({
   },
   renderAddrShip: function (newAddr) {
     this.setContent(newAddr);
-    if (this.hiddenPopup) {
-      this.hiddenPopup = false;
-      this.doShowPopup({
-        popup: this.popup
-      });
-    }
   },
   orderChanged: function (oldValue) {
     if (this.order.get('bp')) {
@@ -150,7 +143,8 @@ enyo.kind({
       this.doShowPopup({
         popup: 'modalcustomeraddress',
         args: {
-          target: this.target
+          target: this.target,
+          flowTrigger: 'flowReceiptProperties'
         }
       });
     }
@@ -161,12 +155,6 @@ enyo.kind({
   },
   renderAddrBill: function (newAddr) {
     this.setContent(newAddr);
-    if (this.hiddenPopup) {
-      this.hiddenPopup = false;
-      this.doShowPopup({
-        popup: this.popup
-      });
-    }
   },
   orderChanged: function (oldValue) {
     if (this.order.get('bp')) {

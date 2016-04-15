@@ -122,7 +122,6 @@ enyo.kind({
       }
     }
   },
-
   init: function (model) {
     var me = this,
         criteria = {};
@@ -165,6 +164,10 @@ enyo.kind({
 
     this.model.on('paymentAccepted', function () {
       this.resetProperties();
+    }, this);
+
+    OB.MobileApp.model.on('flowReceiptProperties', function (args) {
+      this.show();
     }, this);
   }
 });

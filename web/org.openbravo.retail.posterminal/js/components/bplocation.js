@@ -450,6 +450,11 @@ enyo.kind({
       dataBps.set('shipCityName', bploc.get('cityName'));
       dataBps.set('shipCountryName', bploc.get('countryName'));
 
+      if (contextMenu.dialog.owner.owner.args.flowTrigger) { // The arguments of the modal dialog
+        OB.MobileApp.model.trigger(contextMenu.dialog.owner.owner.args.flowTrigger, {
+          businessPartner: dataBps
+        });
+      }
       contextMenu.dialog.doChangeBusinessPartner({
         businessPartner: dataBps,
         target: contextMenu.dialog.target
@@ -499,6 +504,11 @@ enyo.kind({
       dataBps.set('cityName', contextMenu.bPartner.get('cityName'));
       dataBps.set('countryName', contextMenu.bPartner.get('countryName'));
 
+      if (contextMenu.dialog.owner.owner.args.flowTrigger) { // The arguments of the modal dialog
+        OB.MobileApp.model.trigger(contextMenu.dialog.owner.owner.args.flowTrigger, {
+          businessPartner: dataBps
+        });
+      }
       contextMenu.dialog.doChangeBusinessPartner({
         businessPartner: dataBps,
         target: contextMenu.dialog.target
@@ -550,6 +560,11 @@ enyo.kind({
         dataBps.set('shipCountryName', contextMenu.bPartner.get('shipCountryName'));
       }
 
+      if (contextMenu.dialog.owner.owner.args.flowTrigger) { // The arguments of the modal dialog
+        OB.MobileApp.model.trigger(contextMenu.dialog.owner.owner.args.flowTrigger, {
+          businessPartner: dataBps
+        });
+      }
       contextMenu.dialog.doChangeBusinessPartner({
         businessPartner: dataBps,
         target: contextMenu.dialog.target
@@ -796,6 +811,11 @@ enyo.kind({
         dataBps.set('shipCityName', me.bPartner.get('shipPostalCode'));
         dataBps.set('shipCountryName', me.bPartner.get('shipCountryName'));
 
+        if (me.owner.owner.args.flowTrigger) { // The arguments of the modal dialog
+          OB.MobileApp.model.trigger(me.owner.owner.args.flowTrigger, {
+            businessPartner: dataBps
+          });
+        }
         me.doChangeBusinessPartner({
           businessPartner: dataBps,
           target: me.owner.owner.args.target

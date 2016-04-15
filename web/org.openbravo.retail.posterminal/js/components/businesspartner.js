@@ -719,6 +719,13 @@ enyo.kind({
       if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
         bp.set('locationModel', shipping);
       }
+
+      if (me.owner.owner.args.flowTrigger) { // The arguments of the modal dialog
+        OB.MobileApp.model.trigger(me.owner.owner.args.flowTrigger, {
+          businessPartner: bp
+        });
+      }
+
       me.doChangeBusinessPartner({
         businessPartner: bp,
         target: me.target
@@ -741,7 +748,7 @@ enyo.kind({
     this.hide();
   },
   showBPSelector: function () {
-    this.show();
+    this.show(this.args);
   },
   executeOnShow: function () {
     if (_.isUndefined(this.args.visibilityButtons)) {

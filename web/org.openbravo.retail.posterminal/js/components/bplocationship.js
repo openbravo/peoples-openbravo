@@ -129,6 +129,11 @@ enyo.kind({
         dataBps.set('cityName', me.bPartner.get('cityName'));
         dataBps.set('countryName', me.bPartner.get('countryName'));
 
+        if (me.owner.owner.args.flowTrigger) { // The arguments of the modal dialog
+          OB.MobileApp.model.trigger(me.owner.owner.args.flowTrigger, {
+            businessPartner: dataBps
+          });
+        }
         me.doChangeBusinessPartner({
           businessPartner: dataBps,
           target: me.owner.owner.args.target
