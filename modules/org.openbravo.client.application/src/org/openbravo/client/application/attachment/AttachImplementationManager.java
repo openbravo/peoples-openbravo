@@ -34,6 +34,7 @@ import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.tika.Tika;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -510,13 +511,10 @@ public class AttachImplementationManager {
       }
 
       String strValue = "";
-      if (value == null) {
-        // There is no value for this parameter. Reset all values and continue with next metadata.
+      if (value == null || (value instanceof String && StringUtils.isEmpty((String) value))) {
+        // There is no value for this parameter. Remove metadataStoredValue from Database.
         metadataValues.put(strMetadataId, null);
-        metadataStoredValue.setValueDate(null);
-        metadataStoredValue.setValueKey(null);
-        metadataStoredValue.setValueNumber(null);
-        metadataStoredValue.setValueString(null);
+        OBDal.getInstance().remove(metadataStoredValue);
       } else {
         String strReferenceId = (String) DalUtil.getId(parameter.getReference());
         if (REFERENCE_LIST.equals(strReferenceId)) {
@@ -567,8 +565,14 @@ public class AttachImplementationManager {
           ParameterUtils.setParameterValue(metadataStoredValue, jsonValue);
           metadataValues.put(strMetadataId, ParameterUtils.getParameterValue(metadataStoredValue));
         }
+        OBDal.getInstance().save(metadataStoredValue);
       }
-      OBDal.getInstance().save(metadataStoredValue);
+    }
+    if (StringUtils.isNotBlank(attachment.getText())) {
+      // Attachment was stored using old implementation.
+      // The metadata has been saved using the new implementation so the text column can be reset.
+      attachment.setText(null);
+      OBDal.getInstance().save(attachment);
     }
 
     return metadataValues;
