@@ -90,18 +90,15 @@ public class AttachmentUtils {
       }
       critAttConf.setMaxResults(1);
       AttachmentConfig attConf = (AttachmentConfig) critAttConf.uniqueResult();
-      String strAttConfig = "no-config";
-      if (attConf != null) {
-        strAttConfig = attConf.getId();
-      } else if (!SYSTEM_CLIENT_ID.equals(clientId)) {
+      if (attConf == null && SYSTEM_CLIENT_ID.equals(clientId)) {
         // If there is no specific configuration on the client search a generic configuration on
         // system client.
         attConf = getAttachmentConfig(SYSTEM_CLIENT_ID);
-        if (attConf != null) {
-          strAttConfig = attConf.getId();
-        }
       }
-      setAttachmentConfig(clientId, strAttConfig);
+
+      String attConfId = attConf != null ? attConf.getId() : "no-config";
+
+      setAttachmentConfig(clientId, attConfId);
       return attConf;
     } else if ("no-config".equals(strAttachmentConfigId)) {
       return null;
