@@ -35,7 +35,9 @@ import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
 import org.apache.tika.Tika;
+import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.HibernateException;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
@@ -470,120 +472,106 @@ public class AttachImplementationManager {
   private Map<String, Object> saveMetadata(Map<String, String> requestParams,
       Attachment attachment, String tabId, String strKey, AttachmentMethod attachMethod)
       throws OBException {
-    try {
-      String attachmentText = "";
-      boolean isfirst = true;
-      final String delimiter = OBMessageUtils.messageBD("OBUIAPP_Attach_Description_Delimiter");
-      final String paramDesc = OBMessageUtils.messageBD("OBUIAPP_Attach_Description");
+    Map<String, Object> metadataValues = new HashMap<String, Object>();
+    for (Parameter parameter : adcs.getMethodMetadataParameters(attachMethod.getId(), tabId)) {
+      final String strMetadataId = parameter.getId();
 
-      Map<String, Object> metadataValues = new HashMap<String, Object>();
-      for (Parameter parameter : adcs.getMethodMetadataParameters(attachMethod.getId(), tabId)) {
-        final String strMetadataId = parameter.getId();
-
-        ParameterValue metadataStoredValue = null;
-        final OBCriteria<ParameterValue> critStoredMetadata = OBDal.getInstance().createCriteria(
-            ParameterValue.class);
-        critStoredMetadata.add(Restrictions.eq(ParameterValue.PROPERTY_FILE, attachment));
-        critStoredMetadata.add(Restrictions.eq(ParameterValue.PROPERTY_PARAMETER, parameter));
-        critStoredMetadata.setMaxResults(1);
+      ParameterValue metadataStoredValue = null;
+      final OBCriteria<ParameterValue> critStoredMetadata = OBDal.getInstance().createCriteria(
+          ParameterValue.class);
+      critStoredMetadata.add(Restrictions.eq(ParameterValue.PROPERTY_FILE, attachment));
+      critStoredMetadata.add(Restrictions.eq(ParameterValue.PROPERTY_PARAMETER, parameter));
+      critStoredMetadata.setMaxResults(1);
+      try {
         metadataStoredValue = (ParameterValue) critStoredMetadata.uniqueResult();
-        if (metadataStoredValue == null) {
-          metadataStoredValue = OBProvider.getInstance().get(ParameterValue.class);
-          metadataStoredValue.setFile(attachment);
-          metadataStoredValue.setParameter(parameter);
-        }
+      } catch (HibernateException e) {
+        log.error("Error getting stored value of metadata. Attachment: " + attachment.getId()
+            + " metadata: " + parameter.getId(), e);
+        throw new OBException(OBMessageUtils.messageBD("OBUIAPP_ErrorInsertMetadata"), e);
+      }
+      if (metadataStoredValue == null) {
+        metadataStoredValue = OBProvider.getInstance().get(ParameterValue.class);
+        metadataStoredValue.setFile(attachment);
+        metadataStoredValue.setParameter(parameter);
+      }
 
-        Object value = "";
-        // Load the value. If the parameter is fixed calculate it, if not retrieve from the request
-        // parameters.
-        if (parameter.isFixed()) {
-          if (parameter.getPropertyPath() != null) {
-            value = AttachmentUtils.getPropertyPathValue(parameter, tabId, strKey);
-          } else if (parameter.isEvaluateFixedValue()) {
-            value = ParameterUtils.getParameterFixedValue(requestParams, parameter);
-          } else {
-            value = parameter.getFixedValue();
-          }
+      Object value = "";
+      // Load the value. If the parameter is fixed calculate it, if not retrieve from the request
+      // parameters.
+      if (parameter.isFixed()) {
+        if (parameter.getPropertyPath() != null) {
+          value = AttachmentUtils.getPropertyPathValue(parameter, tabId, strKey);
+        } else if (parameter.isEvaluateFixedValue()) {
+          value = ParameterUtils.getParameterFixedValue(requestParams, parameter);
         } else {
-          value = requestParams.get(strMetadataId);
+          value = parameter.getFixedValue();
         }
+      } else {
+        value = requestParams.get(strMetadataId);
+      }
 
-        String strValue = "";
-        if (value == null) {
-          // There is no value for this parameter. Reset all values and continue with next metadata.
-          metadataValues.put(strMetadataId, null);
-          metadataStoredValue.setValueDate(null);
-          metadataStoredValue.setValueKey(null);
-          metadataStoredValue.setValueNumber(null);
-          metadataStoredValue.setValueString(null);
-        } else {
-          String strReferenceId = (String) DalUtil.getId(parameter.getReference());
-          if (REFERENCE_LIST.equals(strReferenceId)) {
-            strValue = (String) value;
-            Reference reference = parameter.getReferenceSearchKey();
-            for (List currentList : reference.getADListList()) {
-              if (currentList.getSearchKey().equals(strValue)) {
-                metadataStoredValue.setValueKey(currentList.getId());
-                metadataStoredValue.setValueString(currentList.getName());
-                JSONObject jsonValue = new JSONObject();
+      String strValue = "";
+      if (value == null) {
+        // There is no value for this parameter. Reset all values and continue with next metadata.
+        metadataValues.put(strMetadataId, null);
+        metadataStoredValue.setValueDate(null);
+        metadataStoredValue.setValueKey(null);
+        metadataStoredValue.setValueNumber(null);
+        metadataStoredValue.setValueString(null);
+      } else {
+        String strReferenceId = (String) DalUtil.getId(parameter.getReference());
+        if (REFERENCE_LIST.equals(strReferenceId)) {
+          strValue = (String) value;
+          Reference reference = parameter.getReferenceSearchKey();
+          for (List currentList : reference.getADListList()) {
+            if (currentList.getSearchKey().equals(strValue)) {
+              metadataStoredValue.setValueKey(currentList.getId());
+              metadataStoredValue.setValueString(currentList.getName());
+              JSONObject jsonValue = new JSONObject();
+              try {
                 jsonValue.put("id", currentList.getSearchKey());
                 jsonValue.put("name", currentList.getName());
-                metadataValues.put(strMetadataId, jsonValue);
-                break;
+              } catch (JSONException ignore) {
               }
+              metadataValues.put(strMetadataId, jsonValue);
+              break;
             }
-          } else if (REFERENCE_SELECTOR_REFERENCE.equals(strReferenceId)) {
-            strValue = (String) value;
-            Reference reference = parameter.getReferenceSearchKey();
-            Selector selector = reference.getADSelectorList().get(0);
-            BaseOBObject object = OBDal.getInstance().get(selector.getTable().getEntityName(),
-                strValue);
-            metadataStoredValue.setValueKey(object.getId().toString());
-            metadataStoredValue.setValueString(object.getIdentifier());
-            JSONObject jsonValue = new JSONObject();
+          }
+        } else if (REFERENCE_SELECTOR_REFERENCE.equals(strReferenceId)) {
+          strValue = (String) value;
+          Reference reference = parameter.getReferenceSearchKey();
+          Selector selector = reference.getADSelectorList().get(0);
+          BaseOBObject object = OBDal.getInstance().get(selector.getTable().getEntityName(),
+              strValue);
+          metadataStoredValue.setValueKey(object.getId().toString());
+          metadataStoredValue.setValueString(object.getIdentifier());
+          JSONObject jsonValue = new JSONObject();
+          try {
             jsonValue.put("id", object.getId().toString());
             jsonValue.put("name", object.getIdentifier());
-            metadataValues.put(strMetadataId, jsonValue);
+          } catch (JSONException ignore) {
+          }
+          metadataValues.put(strMetadataId, jsonValue);
+        } else {
+          if (value instanceof Date) {
+            strValue = JsonUtils.createDateFormat().format((Date) value);
+          } else if (value instanceof BigDecimal) {
+            strValue = ((BigDecimal) value).toPlainString();
           } else {
-            JSONObject jsonValue = new JSONObject();
-            if (value instanceof Date) {
-              strValue = JsonUtils.createDateFormat().format((Date) value);
-            } else if (value instanceof BigDecimal) {
-              strValue = ((BigDecimal) value).toPlainString();
-            } else {
-              strValue = value.toString();
-            }
+            strValue = value.toString();
+          }
+          JSONObject jsonValue = new JSONObject();
+          try {
             jsonValue.put("value", strValue);
-            ParameterUtils.setParameterValue(metadataStoredValue, jsonValue);
-            metadataValues
-                .put(strMetadataId, ParameterUtils.getParameterValue(metadataStoredValue));
+          } catch (JSONException ignore) {
           }
+          ParameterUtils.setParameterValue(metadataStoredValue, jsonValue);
+          metadataValues.put(strMetadataId, ParameterUtils.getParameterValue(metadataStoredValue));
         }
-        if (parameter.isShowInDescription()) {
-          if (isfirst) {
-            isfirst = false;
-          } else {
-            attachmentText += delimiter;
-          }
-          Map<String, String> paramValues = new HashMap<String, String>();
-          // Get translated parameter name.
-          paramValues.put("paramName", (String) parameter.get(Parameter.PROPERTY_NAME, OBContext
-              .getOBContext().getLanguage()));
-          paramValues.put("paramValue", strValue);
-          attachmentText += OBMessageUtils.parseTranslation(paramDesc, paramValues);
-        }
-        OBDal.getInstance().save(metadataStoredValue);
       }
-      if (attachmentText.length() > 2000) {
-        attachmentText = attachmentText.substring(0, 1997) + "...";
-      }
-      attachment.setText(attachmentText.trim());
-      OBDal.getInstance().save(attachment);
-
-      return metadataValues;
-    } catch (Exception e) {
-      log.error("Error saving the metadata value." + e.getMessage(), e);
-      throw new OBException(OBMessageUtils.messageBD("OBUIAPP_ErrorInsertMetadata"), e);
+      OBDal.getInstance().save(metadataStoredValue);
     }
+
+    return metadataValues;
   }
 }
