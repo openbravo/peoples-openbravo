@@ -52,11 +52,12 @@ public class PaidReceiptLinesProperties extends ModelExtension {
         add(new HQLProperty("ordLine.obposSerialNumber", "obposSerialNumber"));
         add(new HQLProperty("ordLine.obposEpccode", "obposEpccode"));
         add(new HQLProperty(
-            "(select coalesce(sum(iol.movementQuantity),0) from MaterialMgmtShipmentInOutLine iol where iol.salesOrderLine.id =ordLine.id)",
+            "(select coalesce(sum(iol.movementQuantity), 0) from MaterialMgmtShipmentInOutLine iol where iol.salesOrderLine.id = ordLine.id)",
             "deliveredQuantity"));
+        add(new HQLProperty("ordLine.invoicedQuantity", "invoicedQuantity"));
         // Only used for returns
         add(new HQLProperty(
-            "(ordLine.deliveredQuantity - (select coalesce(abs(sum(deliveredQuantity)),0) from OrderLine where goodsShipmentLine.salesOrderLine.id =ordLine.id))",
+            "(ordLine.deliveredQuantity - (select coalesce(abs(sum(deliveredQuantity)), 0) from OrderLine where goodsShipmentLine.salesOrderLine.id = ordLine.id))",
             "remainingQuantity"));
         add(new HQLProperty("coalesce(ordLine.product.overdueReturnDays, 999999999999)",
             "overdueReturnDays"));

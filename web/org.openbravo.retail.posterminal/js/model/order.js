@@ -5837,15 +5837,110 @@
       return true;
     },
     generateInvoice: function () {
-      var invoice;
+      var receiptShouldBeInvoiced = false,
+          linesToInvoice, linesPendingToDeliver, line, me = this,
+          invoice, isQuotation = this.get('isQuotation'),
+          notpaidLayaway = (this.get('isLayaway') || this.get('orderType') === 2) && Math.abs(this.get('payment')) < Math.abs(this.get('gross')) && !this.get('paidOnCredit'),
+          isDeleted = this.get('obposIsDeleted'),
+          paidReceipt = (this.get('orderType') === 0 || this.get('orderType') === 1) && this.get('isPaid'),
+          receiptShouldBeShipped = false;
 
       if ((this.get('bp').get('invoiceTerms') === 'I' && this.get('generateInvoice')) || this.get('paidOnCredit')) {
+        receiptShouldBeInvoiced = true;
+      } else if (this.get('bp').get('invoiceTerms') === 'O') {
+        linesPendingToDeliver = _.find(this.get('lines').models, function (line) {
+          return line.get('qty') !== (!OB.UTIL.isNullOrUndefined(line.get('obposQtytodeliver')) ? line.get('obposQtytodeliver') : 0);
+        });
+        if (!linesPendingToDeliver) {
+          receiptShouldBeInvoiced = true;
+        }
+      } else if (this.get('bp').get('invoiceTerms') === 'D') {
+        receiptShouldBeShipped = !isQuotation && !notpaidLayaway && !isDeleted && !paidReceipt;
+        if (receiptShouldBeShipped) {
+          linesToInvoice = _.find(this.get('lines').models, function (line) {
+            return (!OB.UTIL.isNullOrUndefined(line.get('obposQtytodeliver')) ? line.get('obposQtytodeliver') : line.get('qty')) > 0;
+          });
+          if (linesToInvoice) {
+            receiptShouldBeInvoiced = true;
+          }
+        }
+      }
+      if (receiptShouldBeInvoiced) {
         invoice = new OB.Model.Invoice(this.attributes);
         //TODO: check & generate ids
         invoice.set('orderId', this.get('id'));
         invoice.set('id', OB.UTIL.get_UUID());
-        invoice.get('lines').forEach(function (line) {
-          line.set('id', OB.UTIL.get_UUID());
+        invoice.get('lines').reset();
+
+        this.get('lines').forEach(function (ol) {
+          var originalQty = ol.get('qty'),
+              qtyAlreadyInvoiced = ol.get('invoicedQuantity') || OB.DEC.Zero,
+              qtyPendingToBeInvoiced = OB.DEC.sub(ol.get('qty'), qtyAlreadyInvoiced),
+              qtyToDeliver = !OB.UTIL.isNullOrUndefined(ol.get('obposQtytodeliver')) ? ol.get('obposQtytodeliver') : ol.get('qty'),
+              qtyPendingToDeliver = OB.DEC.sub(qtyToDeliver, (ol.get('remainingQuantity') || OB.DEC.Zero)),
+              qtyToInvoice = OB.DEC.Zero,
+              lineToInvoice, promotionAmt = OB.DEC.Zero;
+          if (me.get('bp').get('invoiceTerms') === 'D') {
+            if (qtyPendingToDeliver > 0) {
+              if (OB.DEC.compare(OB.DEC.sub(qtyPendingToDeliver, qtyPendingToBeInvoiced)) > 0) {
+                qtyToInvoice = qtyPendingToBeInvoiced;
+              } else {
+                qtyToInvoice = qtyPendingToDeliver;
+              }
+            } else {
+              qtyToInvoice = 0;
+            }
+          } else if (me.get('bp').get('invoiceTerms') === 'I' || me.get('bp').get('invoiceTerms') === 'O') {
+            qtyToInvoice = qtyPendingToBeInvoiced;
+          }
+          if (qtyToInvoice > 0) {
+            lineToInvoice = new OB.Model.OrderLine(ol.attributes);
+            lineToInvoice.set('id', OB.UTIL.get_UUID());
+            lineToInvoice.set('qty', qtyToInvoice);
+            lineToInvoice.get('product').set('ignorePromotions', true);
+            if (qtyAlreadyInvoiced > 0) {
+              lineToInvoice.get('promotions').forEach(function (p) {
+                if (qtyToInvoice < qtyPendingToBeInvoiced) {
+                  p.amt = OB.DEC.mul(p.amt, (qtyToInvoice / originalQty));
+                  p.obdiscQtyoffer = qtyToInvoice;
+                  if (p.actualAmt) {
+                    p.actualAmt = OB.DEC.mul(p.actualAmt, (qtyToInvoice / originalQty));
+                  }
+                  if (p.displayedTotalAmount) {
+                    p.displayedTotalAmount = OB.DEC.mul(p.displayedTotalAmount, (qtyToInvoice / originalQty));
+                  }
+                  if (p.fullAmt) {
+                    p.fullAmt = OB.DEC.mul(p.fullAmt, (qtyToInvoice / originalQty));
+                  }
+                  if (p.qtyOffer) {
+                    p.qtyOffer = qtyToInvoice;
+                  }
+                  if (p.pendingQtyOffer) {
+                    p.pendingQtyOffer = qtyToInvoice;
+                  }
+                } else {
+                  p.amt = OB.DEC.sub(p.amt, OB.DEC.mul(p.amt, (qtyAlreadyInvoiced / originalQty)));
+                  p.obdiscQtyoffer = qtyToInvoice;
+                  if (p.actualAmt) {
+                    p.actualAmt = OB.DEC.sub(p.actualAmt, OB.DEC.mul(p.actualAmt, (qtyAlreadyInvoiced / originalQty)));
+                  }
+                  if (p.displayedTotalAmount) {
+                    p.displayedTotalAmount = OB.DEC.sub(p.displayedTotalAmount, OB.DEC.mul(p.displayedTotalAmount, (qtyAlreadyInvoiced / originalQty)));
+                  }
+                  if (p.fullAmt) {
+                    p.fullAmt = OB.DEC.sub(p.fullAmt, OB.DEC.mul(p.fullAmt, (qtyAlreadyInvoiced / originalQty)));
+                  }
+                  if (p.qtyOffer) {
+                    p.qtyOffer = qtyToInvoice;
+                  }
+                  if (p.pendingQtyOffer) {
+                    p.pendingQtyOffer = qtyToInvoice;
+                  }
+                }
+              });
+            }
+            invoice.get('lines').add(lineToInvoice);
+          }
         });
 
         invoice.set('skipApplyPromotions', true);
@@ -5854,6 +5949,7 @@
         invoice.set('ignoreCheckIfIsActiveOrder', true);
         invoice.set('hasbeenpaid', 'Y');
         invoice.calculateReceipt(function () {
+          invoice.adjustPrices();
           invoice.set('json', JSON.stringify(invoice.serializeToJSON()));
 
           OB.Dal.save(invoice, function () {

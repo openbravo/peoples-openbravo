@@ -256,18 +256,6 @@ public class InvoiceLoader extends POSDataSynchronizationProcess implements
     boolean deliveredQtyEqualsToMovementQty = movementQtyTotal.compareTo(lineReferences
         .get(numIter).getOrderedQuantity()) == 0;
 
-    BigDecimal movQty = null;
-    if (inOutLine != null && inOutLine.getMovementQuantity() != null) {
-      movQty = inOutLine.getMovementQuantity();
-    } else if (inOutLine == null && movementQtyTotal.compareTo(BigDecimal.ZERO) != 0) {
-      movQty = lineReferences.get(numIter).getOrderedQuantity().subtract(movementQtyTotal);
-    } else {
-      movQty = lineReferences.get(numIter).getOrderedQuantity();
-    }
-
-    BigDecimal ratio = movQty.divide(lineReferences.get(numIter).getOrderedQuantity(), 32,
-        RoundingMode.HALF_UP);
-
     Entity promotionLineEntity = ModelProvider.getInstance().getEntity(InvoiceLineOffer.class);
     InvoiceLine line = OBProvider.getInstance().get(InvoiceLine.class);
     Entity inlineEntity = ModelProvider.getInstance().getEntity(InvoiceLine.class);
@@ -280,6 +268,25 @@ public class InvoiceLoader extends POSDataSynchronizationProcess implements
     line.setLineNo((long) lineNo);
     line.setDescription(invoicelines.getJSONObject(numIter).has("description") ? invoicelines
         .getJSONObject(numIter).getString("description") : "");
+
+    final BigDecimal orderedQuantity = BigDecimal.valueOf(invoicelines.getJSONObject(numIter)
+        .getDouble("qty"));
+    final BigDecimal lineGrossAmount = BigDecimal.valueOf(invoicelines.getJSONObject(numIter)
+        .getDouble("lineGrossAmount"));
+    final BigDecimal lineNetAmount = BigDecimal.valueOf(invoicelines.getJSONObject(numIter)
+        .getDouble("net"));
+
+    BigDecimal movQty = null;
+    if (inOutLine != null && inOutLine.getMovementQuantity() != null) {
+      movQty = inOutLine.getMovementQuantity();
+    } else if (inOutLine == null && movementQtyTotal.compareTo(BigDecimal.ZERO) != 0) {
+      movQty = orderedQuantity.subtract(movementQtyTotal);
+    } else {
+      movQty = orderedQuantity;
+    }
+
+    BigDecimal ratio = movQty.divide(orderedQuantity, 32, RoundingMode.HALF_UP);
+
     BigDecimal qty = movQty;
 
     // if ratio equals to one, then only one shipment line is related to orderline, then lineNetAmt
@@ -302,17 +309,14 @@ public class InvoiceLoader extends POSDataSynchronizationProcess implements
             partialLineNetAmount = partialLineNetAmount.add(il.getLineNetAmount());
           }
         }
-        line.setLineNetAmount(lineReferences.get(numIter).getLineNetAmount()
-            .subtract(partialLineNetAmount).setScale(pricePrecision, RoundingMode.HALF_UP));
-        line.setGrossAmount(lineReferences.get(numIter).getLineGrossAmount()
-            .subtract(partialGrossAmount).setScale(pricePrecision, RoundingMode.HALF_UP));
+        line.setLineNetAmount(lineNetAmount.subtract(partialLineNetAmount).setScale(pricePrecision,
+            RoundingMode.HALF_UP));
+        line.setGrossAmount(lineGrossAmount.subtract(partialGrossAmount).setScale(pricePrecision,
+            RoundingMode.HALF_UP));
       }
     } else {
-      line.setLineNetAmount(BigDecimal
-          .valueOf(invoicelines.getJSONObject(numIter).getDouble("net")).setScale(pricePrecision,
-              RoundingMode.HALF_UP));
-      line.setGrossAmount(lineReferences.get(numIter).getLineGrossAmount()
-          .setScale(pricePrecision, RoundingMode.HALF_UP));
+      line.setLineNetAmount(lineNetAmount.setScale(pricePrecision, RoundingMode.HALF_UP));
+      line.setGrossAmount(lineGrossAmount.setScale(pricePrecision, RoundingMode.HALF_UP));
     }
 
     line.setInvoicedQuantity(qty);
@@ -346,16 +350,18 @@ public class InvoiceLoader extends POSDataSynchronizationProcess implements
           ModelProvider.getInstance().getEntity(TaxRate.class).getName(), taxId);
       invoicelinetax.setTax(tax);
 
+      final BigDecimal taxNetAmt = BigDecimal.valueOf(jsoninvoiceTax.getDouble("net"));
+      final BigDecimal taxAmt = BigDecimal.valueOf(jsoninvoiceTax.getDouble("amount"));
       // if ratio equals to one, then only one shipment line is related to orderline, then
       // lineNetAmt and gross is populated from JSON
       if (ratio.compareTo(BigDecimal.ONE) != 0) {
         // if there are several shipments line to the same orderline, in the last line of the
         // splited lines, the tax amount will be calculated as the pending tax amount
         if (numLines > actualLine || (numLines == actualLine && !deliveredQtyEqualsToMovementQty)) {
-          invoicelinetax.setTaxableAmount(BigDecimal.valueOf(jsoninvoiceTax.getDouble("net"))
-              .multiply(ratio).setScale(pricePrecision, RoundingMode.HALF_UP));
-          invoicelinetax.setTaxAmount(BigDecimal.valueOf(jsoninvoiceTax.getDouble("amount"))
-              .multiply(ratio).setScale(pricePrecision, RoundingMode.HALF_UP));
+          invoicelinetax.setTaxableAmount(taxNetAmt.multiply(ratio).setScale(pricePrecision,
+              RoundingMode.HALF_UP));
+          invoicelinetax.setTaxAmount(taxAmt.multiply(ratio).setScale(pricePrecision,
+              RoundingMode.HALF_UP));
           totalTaxAmount = totalTaxAmount.add(invoicelinetax.getTaxAmount());
         } else {
           BigDecimal partialTaxableAmount = BigDecimal.ZERO;
@@ -368,16 +374,14 @@ public class InvoiceLoader extends POSDataSynchronizationProcess implements
               partialTaxAmount = partialTaxAmount.add(ilt.getTaxAmount());
             }
           }
-          invoicelinetax.setTaxableAmount(BigDecimal.valueOf(jsoninvoiceTax.getDouble("net"))
-              .subtract(partialTaxableAmount).setScale(pricePrecision, RoundingMode.HALF_UP));
-          invoicelinetax.setTaxAmount(BigDecimal.valueOf(jsoninvoiceTax.getDouble("amount"))
-              .subtract(partialTaxAmount).setScale(pricePrecision, RoundingMode.HALF_UP));
+          invoicelinetax.setTaxableAmount(taxNetAmt.subtract(partialTaxableAmount).setScale(
+              pricePrecision, RoundingMode.HALF_UP));
+          invoicelinetax.setTaxAmount(taxAmt.subtract(partialTaxAmount).setScale(pricePrecision,
+              RoundingMode.HALF_UP));
         }
       } else {
-        invoicelinetax.setTaxableAmount(BigDecimal.valueOf(jsoninvoiceTax.getDouble("net"))
-            .setScale(pricePrecision, RoundingMode.HALF_UP));
-        invoicelinetax.setTaxAmount(BigDecimal.valueOf(jsoninvoiceTax.getDouble("amount"))
-            .setScale(pricePrecision, RoundingMode.HALF_UP));
+        invoicelinetax.setTaxableAmount(taxNetAmt.setScale(pricePrecision, RoundingMode.HALF_UP));
+        invoicelinetax.setTaxAmount(taxAmt.setScale(pricePrecision, RoundingMode.HALF_UP));
       }
       invoicelinetax.setInvoice(invoice);
       invoicelinetax.setInvoiceLine(line);
@@ -458,7 +462,8 @@ public class InvoiceLoader extends POSDataSynchronizationProcess implements
           createInvoiceLine(invoice, order, jsoninvoice, invoicelines, lineReferences, i,
               pricePrecision, iol, lineNo, iolList.size(), numIter, movementQtyTotal);
         }
-        if (movementQtyTotal.compareTo(lineReferences.get(i).getOrderedQuantity()) == -1) {
+        if (movementQtyTotal.compareTo(BigDecimal.valueOf(invoicelines.getJSONObject(i).getDouble(
+            "qty"))) == -1) {
           lineNo = lineNo + 10;
           createInvoiceLine(invoice, order, jsoninvoice, invoicelines, lineReferences, i,
               pricePrecision, null, lineNo, iolList.size(), iolList.size() + 1, movementQtyTotal);
