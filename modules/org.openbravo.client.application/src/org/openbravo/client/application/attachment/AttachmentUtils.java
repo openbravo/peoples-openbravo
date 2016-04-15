@@ -101,7 +101,7 @@ public class AttachmentUtils {
           strAttConfig = attConf.getId();
         }
       }
-      setAttachmentConfig((String) DalUtil.getId(clientId), strAttConfig);
+      setAttachmentConfig(clientId, strAttConfig);
       return attConf;
     } else if ("no-config".equals(strAttachmentConfigId)) {
       return null;
