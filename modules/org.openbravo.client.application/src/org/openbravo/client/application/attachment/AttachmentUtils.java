@@ -95,7 +95,7 @@ public class AttachmentUtils {
       }
       critAttConf.setMaxResults(1);
       AttachmentConfig attConf = (AttachmentConfig) critAttConf.uniqueResult();
-      if (attConf == null && SYSTEM_CLIENT_ID.equals(clientId)) {
+      if (attConf == null && !SYSTEM_CLIENT_ID.equals(clientId)) {
         // If there is no specific configuration on the client search a generic configuration on
         // system client.
         attConf = getAttachmentConfig(SYSTEM_CLIENT_ID);
