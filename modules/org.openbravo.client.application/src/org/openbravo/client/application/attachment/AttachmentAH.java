@@ -45,6 +45,13 @@ import org.openbravo.model.ad.utility.Attachment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Action handler to manage attachments.<br>
+ * It implements 3 different commands. 'LOAD' used to fill the attachment section with the record
+ * attachments. 'EDIT' used to update the metadata of an attachment. And 'DELETE' used to remove an
+ * attachment.
+ *
+ */
 public class AttachmentAH extends BaseActionHandler {
 
   private static final Logger log = LoggerFactory.getLogger(AttachmentAH.class);

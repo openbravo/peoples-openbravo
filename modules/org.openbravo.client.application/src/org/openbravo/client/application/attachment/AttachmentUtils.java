@@ -51,6 +51,11 @@ import org.openbravo.model.ad.utility.Attachment;
 import org.openbravo.model.ad.utility.AttachmentConfig;
 import org.openbravo.model.ad.utility.AttachmentMethod;
 
+/**
+ * Utility class to manage Attachments. It includes a cached map of the attachment configuratio of
+ * each client in the system.
+ *
+ */
 public class AttachmentUtils {
   private static Map<String, String> clientConfigs = new ConcurrentHashMap<String, String>();
   public static final String DEFAULT_METHOD = "Default";
