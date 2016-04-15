@@ -52,7 +52,7 @@ import org.openbravo.model.ad.utility.AttachmentConfig;
 import org.openbravo.model.ad.utility.AttachmentMethod;
 
 /**
- * Utility class to manage Attachments. It includes a cached map of the attachment configuratio of
+ * Utility class to manage Attachments. It includes a cached map of the attachment configuration of
  * each client in the system.
  *
  */
