@@ -186,6 +186,7 @@ public class DefaultAuthenticationManager extends AuthenticationManager {
     final User userOB = (User) obc.uniqueResult();
     Date lastUpdatePassword = userOB.getLastPasswordUpdate();
     Long validityDays = userOB.getClient().getDaysToPasswordExpiration();
+
     if (validityDays != null && validityDays > 0) {
       Calendar expirationDate = Calendar.getInstance();
       expirationDate.setTimeInMillis(lastUpdatePassword.getTime());
@@ -194,7 +195,9 @@ public class DefaultAuthenticationManager extends AuthenticationManager {
     }
 
     Date today = new Date();
-    if (total != null && total.compareTo(today) <= 0) {
+    if ((total != null && total.compareTo(today) <= 0) || (userOB.isPasswordExpired())) {
+      userOB.setPasswordExpired(false);
+      OBDal.getInstance().flush();
       OBError errorMsg = new OBError();
       errorMsg.setType("Error");
       errorMsg.setTitle(Utility.messageBD(conn, "CPExpirationPassword", language));
