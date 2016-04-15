@@ -2096,61 +2096,6 @@
           return false;
         }
 
-        function execPostAddProductToOrderHook() {
-          OB.UTIL.HookManager.executeHooks('OBPOS_PostAddProductToOrder', {
-            receipt: me,
-            productToAdd: p,
-            orderline: line,
-            qtyToAdd: qty,
-            attrs: attrs,
-            options: options,
-            newLine: newLine
-          }, function (args) {
-            var callbackAddProduct = function () {
-                if (callback) {
-                  callback(true, args.orderline);
-                }
-                };
-            if (args.orderline) {
-              args.orderline.set('hasMandatoryServices', false);
-            }
-            if (args.newLine && me.get('lines').contains(line) && args.productToAdd.get('productType') !== 'S') {
-              var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('HasServices');
-              // Display related services after calculate gross, if it is new line
-              // and if the line has not been deleted.
-              // The line might has been deleted during calculate gross for
-              // examples if there was an error in taxes.
-              var productId = (args.productToAdd.get('isNew') && OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) ? null : (args.productToAdd.get('forceFilterId') ? args.productToAdd.get('forceFilterId') : args.productToAdd.id);
-              args.receipt._loadRelatedServices(args.productToAdd.get('productType'), productId, args.productToAdd.get('productCategory'), function (data) {
-                if (data) {
-                  if (data.hasservices) {
-                    args.orderline.set('hasRelatedServices', true);
-                    args.orderline.trigger('showServicesButton');
-                  } else {
-                    args.orderline.set('hasRelatedServices', false);
-                  }
-                  if (data.hasmandatoryservices) {
-                    var splitline = !OB.UTIL.isNullOrUndefined(args.orderline) && !OB.UTIL.isNullOrUndefined(args.orderline.get('splitline')) && args.orderline.get('splitline');
-                    if (!splitline) {
-                      args.receipt.trigger('showProductList', args.orderline, 'mandatory');
-                      args.orderline.set('hasMandatoryServices', true);
-                      callbackAddProduct();
-                    } else {
-                      callbackAddProduct();
-                    }
-                  } else {
-                    callbackAddProduct();
-                  }
-                } else {
-                  callbackAddProduct();
-                }
-                OB.UTIL.SynchronizationHelper.finished(synchId, 'HasServices');
-              }, args.orderline);
-            } else {
-              callbackAddProduct();
-            }
-          });
-        }
         if (p.get('islocked')) {
           OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_ErrorProductBlocked'));
           if (callback) {
@@ -2160,6 +2105,62 @@
         }
 
         function continueSaving(p) {
+          function execPostAddProductToOrderHook() {
+            OB.UTIL.HookManager.executeHooks('OBPOS_PostAddProductToOrder', {
+              receipt: me,
+              productToAdd: p,
+              orderline: line,
+              qtyToAdd: qty,
+              attrs: attrs,
+              options: options,
+              newLine: newLine
+            }, function (args) {
+              var callbackAddProduct = function () {
+                  if (callback) {
+                    callback(true, args.orderline);
+                  }
+                  };
+              if (args.orderline) {
+                args.orderline.set('hasMandatoryServices', false);
+              }
+              if (args.newLine && me.get('lines').contains(line) && args.productToAdd.get('productType') !== 'S') {
+                var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('HasServices');
+                // Display related services after calculate gross, if it is new line
+                // and if the line has not been deleted.
+                // The line might has been deleted during calculate gross for
+                // examples if there was an error in taxes.
+                var productId = (args.productToAdd.get('isNew') && OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) ? null : (args.productToAdd.get('forceFilterId') ? args.productToAdd.get('forceFilterId') : args.productToAdd.id);
+                args.receipt._loadRelatedServices(args.productToAdd.get('productType'), productId, args.productToAdd.get('productCategory'), function (data) {
+                  if (data) {
+                    if (data.hasservices) {
+                      args.orderline.set('hasRelatedServices', true);
+                      args.orderline.trigger('showServicesButton');
+                    } else {
+                      args.orderline.set('hasRelatedServices', false);
+                    }
+                    if (data.hasmandatoryservices) {
+                      var splitline = !OB.UTIL.isNullOrUndefined(args.orderline) && !OB.UTIL.isNullOrUndefined(args.orderline.get('splitline')) && args.orderline.get('splitline');
+                      if (!splitline) {
+                        args.receipt.trigger('showProductList', args.orderline, 'mandatory');
+                        args.orderline.set('hasMandatoryServices', true);
+                        callbackAddProduct();
+                      } else {
+                        callbackAddProduct();
+                      }
+                    } else {
+                      callbackAddProduct();
+                    }
+                  } else {
+                    callbackAddProduct();
+                  }
+                  OB.UTIL.SynchronizationHelper.finished(synchId, 'HasServices');
+                }, args.orderline);
+              } else {
+                callbackAddProduct();
+              }
+            });
+          }
+
           if (p.get('obposScale') && !options.isVerifiedReturn) {
             OB.POS.hwserver.getWeight(function (data) {
               if (data.exception) {
