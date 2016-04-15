@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2015 Openbravo S.L.U.
+ * Copyright (C) 2015-2016 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -37,7 +37,7 @@ import org.openbravo.retail.posterminal.ProcessHQLQuery;
 
 public class ProductPrice extends ProcessHQLQuery {
   public static final String productPricePropertyExtension = "OBPOS_ProductPriceExtension";
-  public static final Logger log = Logger.getLogger(Discount.class);
+  public static final Logger log = Logger.getLogger(ProductPrice.class);
 
   @Inject
   @Any
