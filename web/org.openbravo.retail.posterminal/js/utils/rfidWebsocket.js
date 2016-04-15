@@ -207,7 +207,7 @@ OB.UTIL.RfidController.updateEpcBuffers = function (callback, errorCallback) {
 
 OB.UTIL.RfidController.removeAllEpcs = function (callback, errorCallback) {
   OB.UTIL.RfidController.waitForAck(function (uuid) {
-    OB.UTIL.RfidController.get('rfidWebsocket').send('removeAllEpcs: ' + uuid);
+    OB.UTIL.RfidController.get('rfidWebsocket').send('removeAllEpcs:' + uuid);
     OB.info('removeAllEpcs sent, UUID: ' + uuid);
   }, function () {
     OB.info('removeAllEpcs ended succesfully');
