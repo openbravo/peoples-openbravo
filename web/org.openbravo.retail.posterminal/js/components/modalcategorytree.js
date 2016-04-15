@@ -21,7 +21,7 @@ enyo.kind({
   body: {
     kind: 'OB.UI.ListCategories',
     classes: 'product_category_search',
-    showBestSellers: false,
+    showBestSellers: true,
     showAllCategories: true,
     tableName: 'searchCategoryTable'
   },
