@@ -35,7 +35,7 @@ import org.openbravo.model.ad.utility.AttachmentMethod;
 
 /**
  * Callout executed only on Metadata Tab of "Windows, Tabs and Fields" window. It calculates the
- * Sequence Number to set on the new metadata when the Attachmnt MEthod is selected.
+ * Sequence Number to set on the new metadata when the Attachment Method is selected.
  */
 public class MetadataOnTab extends SimpleCallout {
   private static final long serialVersionUID = 1L;
