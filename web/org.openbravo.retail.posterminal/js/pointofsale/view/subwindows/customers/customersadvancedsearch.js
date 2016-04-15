@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2015 Openbravo S.L.U.
+ * Copyright (C) 2012-2016 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -362,17 +362,18 @@ enyo.kind({
 
     function successCallbackBPs(dataBps, args) {
       me.$.renderLoading.hide();
-      if (args === 0) {
-        me.bpsList.reset();
+      if (args === 0 && (!dataBps || dataBps.length === 0)) {
         me.$.stBPAdvSearch.$.tempty.show();
       }
       if (dataBps && dataBps.length > 0) {
         me.bpsList.add(dataBps.models);
+        me.bpsList.trigger('reset');
         me.$.stBPAdvSearch.$.tbody.show();
       }
     }
 
     function reset(me) {
+      me.$.stBPAdvSearch.$.theader.$.modalCustomerScrollableHeader.$.customerFilterText.setValue('');
       me.bpsList.reset();
       me.lastCriteria = null;
       me.$.renderLoading.hide();
@@ -397,20 +398,37 @@ enyo.kind({
       return reset(this);
     }
 
+    // clear the current search results
+    me.bpsList.reset();
+
     filter = OB.UTIL.unAccent(inEvent.bpName);
     splitFilter = filter.split(",");
     splitFilterLength = splitFilter.length;
     _operator = inEvent.operator;
 
+    if (OB.MobileApp.model.hasPermission('OBPOS_customerLimit', true)) {
+      criteria._limit = OB.DEC.abs(OB.MobileApp.model.hasPermission('OBPOS_customerLimit', true));
+    }
+
     if (filter && filter !== '') {
       for (i = 0; i < splitFilter.length; i++) {
-        criteria._filter = {
-          operator: _operator,
-          value: splitFilter[i]
-        };
+        // with starts with always search using identifier
+        // as this is more logical, the filter column can start 
+        // with any value
+        if (_operator === 'startsWith') {
+          criteria._identifier = {
+            operator: _operator,
+            value: splitFilter[i]
+          };
+        } else {
+          criteria._filter = {
+            operator: _operator,
+            value: splitFilter[i]
+          };
+        }
         if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
           var filterIdentifier = {
-            columns: ['_identifier'],
+            columns: ['_filter'],
             operator: 'startsWith',
             value: splitFilter[i]
           };

@@ -189,8 +189,9 @@
     <line>
     </line>
     <%
+    if (OB.UTIL.isNullOrUndefined(cashup.summary.isPartialCashup)) {
     _.each(cashup.summary.countedSummary, function(payment){
-   if(payment.get('second') && payment.get('second')!==payment.get('value')){
+    if(payment.get('second') && payment.get('second')!==payment.get('value')){
     %>
     <line>
       <text align ="left" length="18"><%=OB.UTIL.encodeXMLComponent(payment.get('name')) %></text>
@@ -216,7 +217,7 @@
     </line>
     <%
     _.each(cashup.summary.differenceSummary, function(payment){
-   if(payment.get('second') && payment.get('second')!==payment.get('value')){
+    if(payment.get('second') && payment.get('second')!==payment.get('value')){
     %>
     <line>
       <text align ="left" length="18"><%=OB.UTIL.encodeXMLComponent(payment.get('name')) %></text>
@@ -242,7 +243,7 @@
     </line>
     <%
     _.each(cashup.summary.qtyToKeepSummary, function(payment) {
-   if (payment.get('second') && payment.get('second') !== payment.get('value')) {
+    if (payment.get('second') && payment.get('second') !== payment.get('value')) {
     %>
     <line>
       <text align ="left" length="18"><%= OB.UTIL.encodeXMLComponent(payment.get('name')) %></text>
@@ -268,7 +269,7 @@
     </line>
     <%
     _.each(cashup.summary.qtyToDepoSummary, function(payment) {
-   if (payment.get('second') && payment.get('second') !== payment.get('value')) {
+    if (payment.get('second') && payment.get('second') !== payment.get('value')) {
     %>
     <line>
       <text align ="left" length="18"><%= OB.UTIL.encodeXMLComponent(payment.get('name')) %></text>
@@ -292,6 +293,9 @@
     </line>
     <line>
     </line>
+    <%
+    }
+    %>
   </ticket>
   <display>
         <line>

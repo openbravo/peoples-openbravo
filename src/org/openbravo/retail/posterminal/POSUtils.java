@@ -1,3 +1,11 @@
+/*
+ ************************************************************************************
+ * Copyright (C) 2012-2016 Openbravo S.L.U.
+ * Licensed under the Openbravo Commercial License version 1.0
+ * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
+ * or in the legal folder of this module distribution.
+ ************************************************************************************
+ */
 package org.openbravo.retail.posterminal;
 
 import java.math.BigDecimal;
@@ -354,12 +362,13 @@ public class POSUtils {
     // This number will be compared against the maximum number of the failed orders
     OBCriteria<OBPOSErrors> errorCrit = OBDal.getInstance().createCriteria(OBPOSErrors.class);
     errorCrit.add(Restrictions.eq(OBPOSErrors.PROPERTY_OBPOSAPPLICATIONS, terminal));
-    errorCrit.add(Restrictions.eq(OBPOSErrors.PROPERTY_TYPEOFDATA, "order"));
+    errorCrit.add(Restrictions.eq(OBPOSErrors.PROPERTY_TYPEOFDATA, "Order"));
     List<OBPOSErrors> errors = errorCrit.list();
     for (OBPOSErrors error : errors) {
       try {
         JSONObject jsonError = new JSONObject(error.getJsoninfo());
-        if (jsonError.has("documentNo")) {
+        if (jsonError.has("documentNo") && jsonError.has("isQuotation")
+            && !jsonError.getBoolean("isQuotation")) {
           String documentNo = jsonError.getString("documentNo");
           if (documentNo.indexOf("/") != 0) {
             String number = documentNo.substring(documentNo.indexOf("/") + 1);
@@ -435,12 +444,13 @@ public class POSUtils {
     // This number will be compared against the maximum number of the failed orders
     OBCriteria<OBPOSErrors> errorCrit = OBDal.getInstance().createCriteria(OBPOSErrors.class);
     errorCrit.add(Restrictions.eq(OBPOSErrors.PROPERTY_OBPOSAPPLICATIONS, terminal));
-    errorCrit.add(Restrictions.eq(OBPOSErrors.PROPERTY_TYPEOFDATA, "order"));
+    errorCrit.add(Restrictions.eq(OBPOSErrors.PROPERTY_TYPEOFDATA, "Order"));
     List<OBPOSErrors> errors = errorCrit.list();
     for (OBPOSErrors error : errors) {
       try {
         JSONObject jsonError = new JSONObject(error.getJsoninfo());
-        if (jsonError.has("documentNo")) {
+        if (jsonError.has("documentNo") && jsonError.has("isQuotation")
+            && jsonError.getBoolean("isQuotation")) {
           String documentNo = jsonError.getString("documentNo");
           if (documentNo.indexOf("/") != 0) {
             String number = documentNo.substring(documentNo.indexOf("/") + 1);

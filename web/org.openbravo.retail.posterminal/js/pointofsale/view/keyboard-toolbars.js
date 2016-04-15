@@ -125,14 +125,16 @@ enyo.kind({
           this.bubble('onMaxLimitAmountError', {
             show: true,
             maxLimitAmount: paymentMethod.maxLimitAmount,
-            currency: OB.MobileApp.model.paymentnames[key].symbol
+            currency: OB.MobileApp.model.paymentnames[key].symbol,
+            symbolAtRight: OB.MobileApp.model.paymentnames[key].currencySymbolAtTheRight
           });
         } else {
           // Hide error and process payment
           this.bubble('onMaxLimitAmountError', {
             show: false,
             maxLimitAmount: 0,
-            currency: ''
+            currency: '',
+            symbolAtRight: true
           });
           this.model.addPayment(new OB.Model.PaymentLine({
             'kind': key,
@@ -169,16 +171,27 @@ enyo.kind({
     };
   },
   addPaymentButton: function (btncomponent, countbuttons, paymentsbuttons, dialogbuttons, payment) {
-    if (btncomponent !== null) {
-      if (countbuttons < paymentsbuttons) {
-        this.createComponent(btncomponent);
-      } else {
-        OB.OBPOSPointOfSale.UI.PaymentMethods.prototype.sideButtons.push(btncomponent);
-        dialogbuttons[payment.payment.searchKey] = payment.payment._identifier;
-      }
+    if (countbuttons < paymentsbuttons) {
+      this.createComponent(btncomponent);
+    } else {
+      this.addSideButton(btncomponent);
+      dialogbuttons[payment.payment.searchKey] = payment.payment._identifier;
     }
   },
-
+  addSideButton: function (btncomponent) {
+    var hasSideButton = false,
+        sideButtons = OB.OBPOSPointOfSale.UI.PaymentMethods.prototype.sideButtons,
+        i;
+    for (i = 0; i < sideButtons.length; i++) {
+      if (_.isEqual(sideButtons[i].btn.command, btncomponent.btn.command)) {
+        hasSideButton = true;
+        break;
+      }
+    }
+    if (!hasSideButton) {
+      OB.OBPOSPointOfSale.UI.PaymentMethods.prototype.sideButtons.push(btncomponent);
+    }
+  },
   initComponents: function () {
     //TODO: modal payments
     var i, max, payments, paymentsdialog, paymentsbuttons, countbuttons, btncomponent, Btn, inst, cont, exactdefault, cashdefault, allpayments = {},
@@ -217,45 +230,7 @@ enyo.kind({
     paymentsdialog = countbuttons + this.sideButtons.length > 5;
     paymentsbuttons = paymentsdialog ? 4 : 5;
     countbuttons = 0;
-
-    // Add buttons for payment method categories
-    enyo.forEach(paymentCategories, function (category) {
-      btncomponent = me.getButtonComponent({
-        command: 'paymentMethodCategory.showitems.' + category.id,
-        label: category.name,
-        stateless: false,
-        action: function (keyboard, txt) {
-          var options = {};
-          if (_.last(txt) === '%') {
-            options.percentaje = true;
-          }
-          var amount = OB.DEC.number(OB.I18N.parseNumber(txt));
-          if (_.isNaN(amount)) {
-            OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_NotValidNumber', [txt]));
-            return;
-          }
-          var buttonClass = keyboard.buttons['paymentMethodCategory.showitems.' + category.id].attributes['class'];
-          if (me.currentPayment && buttonClass.indexOf('btnactive-green') > 0) {
-            me.pay(amount, me.currentPayment.payment.searchKey, me.currentPayment.payment._identifier, me.currentPayment.paymentMethod, me.currentPayment.rate, me.currentPayment.mulrate, me.currentPayment.isocode, options);
-          } else {
-            me.doShowPopup({
-              popup: 'modalPaymentsSelect',
-              args: {
-                idCategory: category.id,
-                amount: amount,
-                options: options
-              }
-            });
-          }
-        }
-      });
-      me.addPaymentButton(btncomponent, countbuttons++, paymentsbuttons, dialogbuttons, {
-        payment: {
-          searchKey: 'paymentMethodCategory.showitems.' + category.id,
-          _identifier: category.name
-        }
-      });
-    });
+    paymentCategories = [];
 
     enyo.forEach(payments, function (payment) {
       if (payment.paymentMethod.id === OB.MobileApp.model.get('terminal').terminalType.paymentMethod) {
@@ -269,6 +244,38 @@ enyo.kind({
       // Check for payment method category
       if (payment.paymentMethod.paymentMethodCategory) {
         btncomponent = null;
+        if (paymentCategories.indexOf(payment.paymentMethod.paymentMethodCategory) === -1) {
+          btncomponent = me.getButtonComponent({
+            command: 'paymentMethodCategory.showitems.' + payment.paymentMethod.paymentMethodCategory,
+            label: payment.paymentMethod.paymentMethodCategory$_identifier,
+            stateless: false,
+            action: function (keyboard, txt) {
+              var options = {};
+              if (_.last(txt) === '%') {
+                options.percentaje = true;
+              }
+              var amount = OB.DEC.number(OB.I18N.parseNumber(txt));
+              if (_.isNaN(amount)) {
+                OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_NotValidNumber', [txt]));
+                return;
+              }
+              var buttonClass = keyboard.buttons['paymentMethodCategory.showitems.' + payment.paymentMethod.paymentMethodCategory].attributes['class'];
+              if (me.currentPayment && buttonClass.indexOf('btnactive-green') > 0) {
+                me.pay(amount, me.currentPayment.payment.searchKey, me.currentPayment.payment._identifier, me.currentPayment.paymentMethod, me.currentPayment.rate, me.currentPayment.mulrate, me.currentPayment.isocode, options);
+              } else {
+                me.doShowPopup({
+                  popup: 'modalPaymentsSelect',
+                  args: {
+                    idCategory: payment.paymentMethod.paymentMethodCategory,
+                    amount: amount,
+                    options: options
+                  }
+                });
+              }
+            }
+          });
+          paymentCategories.push(payment.paymentMethod.paymentMethodCategory);
+        }
       } else {
         btncomponent = this.getButtonComponent({
           command: payment.payment.searchKey,
@@ -291,7 +298,16 @@ enyo.kind({
       }
 
       if (btncomponent !== null) {
-        me.addPaymentButton(btncomponent, countbuttons++, paymentsbuttons, dialogbuttons, payment);
+        if (payment.paymentMethod.paymentMethodCategory) {
+          me.addPaymentButton(btncomponent, countbuttons++, paymentsbuttons, dialogbuttons, {
+            payment: {
+              searchKey: 'paymentMethodCategory.showitems.' + payment.paymentMethod.paymentMethodCategory,
+              _identifier: payment.paymentMethod.paymentMethodCategory$_identifier
+            }
+          });
+        } else {
+          me.addPaymentButton(btncomponent, countbuttons++, paymentsbuttons, dialogbuttons, payment);
+        }
       }
     }, this);
 
@@ -302,10 +318,8 @@ enyo.kind({
       btncomponent = this.getButtonComponent(sidebutton);
       if (countbuttons++ < paymentsbuttons) {
         this.createComponent(btncomponent);
-      } else if (this.sideButtons.length !== OB.OBPOSPointOfSale.UI.PaymentMethods.prototype.sideButtons.length) {
-        OB.OBPOSPointOfSale.UI.PaymentMethods.prototype.sideButtons.push(btncomponent);
-        dialogbuttons[sidebutton.command] = sidebutton.label;
       } else {
+        me.addSideButton(btncomponent);
         dialogbuttons[sidebutton.command] = sidebutton.label;
       }
     }, this);
@@ -458,11 +472,8 @@ enyo.kind({
   tap: function () {
     // this.toolbar.keyboard
     // this.dialogbuttons
-    if (this.activegreen) {
-      this.toolbar.keyboard.setStatus('');
-    } else {
-      this.doShowAllButtons();
-    }
+    this.toolbar.keyboard.setStatus('');
+    this.doShowAllButtons();
   },
   buttonStatusChanged: function (inSender, inEvent) {
     var status = inEvent.value.status;
@@ -474,10 +485,11 @@ enyo.kind({
     }
 
     if (this.dialogbuttons[status]) {
-      this.$.btn.setContent(this.dialogbuttons[status]);
+      this.$.btn.setContent(OB.I18N.getLabel('OBPOS_MorePayments') + ' (' + this.dialogbuttons[status] + ')');
       this.$.btn.addClass('btnactive-green');
       this.activegreen = true;
     }
+    OB.UTIL.createElipsisEffect(this.$.btn);
   }
 });
 

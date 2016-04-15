@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2015 Openbravo S.L.U.
+ * Copyright (C) 2012-2016 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -268,8 +268,8 @@ enyo.kind({
     }, this);
 
     this.model.on('change:totalCounted', function () {
-      this.$.cashupMultiColumn.$.leftPanel.$.listPaymentMethods.$.difference.printAmount(OB.DEC.sub(this.model.get('totalCounted'), this.model.get('totalExpected')));
-      this.model.set("totalDifference", OB.DEC.sub(this.model.get('totalCounted'), this.model.get('totalExpected')));
+      this.model.set("totalDifference", OB.DEC.sub(this.model.get('totalCounted'), OB.Utilities.Number.roundJSNumber(this.model.get('totalExpected'), 2)));
+      this.$.cashupMultiColumn.$.leftPanel.$.listPaymentMethods.$.difference.printAmount(this.model.get("totalDifference"));
       this.waterfall('onAnyCounted');
       this.refreshButtons();
     }, this);
@@ -330,19 +330,24 @@ enyo.kind({
       }
 
       OB.UTIL.HookManager.executeHooks(me.cashupSentHook, {}, function () {
-        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_LblGoodjob'), content, [{
-          label: OB.I18N.getLabel('OBMOBC_LblOk'),
-          isConfirmButton: true,
-          action: function () {
-            me.finalAction();
-            return true;
-          }
-        }], {
-          autoDismiss: false,
-          onHideFunction: function () {
-            me.finalAction();
-          }
-        });
+
+        if (OB.MobileApp.view.$.confirmationContainer.getAttribute('openedPopup') !== OB.I18N.getLabel('OBPOS_MsgPrintAgainCashUp')) {
+          // Only display the good job message if there are no components displayed
+          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_LblGoodjob'), content, [{
+            label: OB.I18N.getLabel('OBMOBC_LblOk'),
+            isConfirmButton: true,
+            action: function () {
+              me.finalAction();
+              return true;
+            }
+          }], {
+            autoDismiss: false,
+            onHideFunction: function () {
+              me.finalAction();
+            }
+          });
+
+        }
       });
 
     }, this);

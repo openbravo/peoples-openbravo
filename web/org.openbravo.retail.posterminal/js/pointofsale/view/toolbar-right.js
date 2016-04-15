@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2015 Openbravo S.L.U.
+ * Copyright (C) 2012-2016 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -71,12 +71,28 @@ enyo.kind({
   published: {
     receipt: null
   },
+  events: {
+    onShowMultiSelection: ''
+  },
   handlers: {
     onTabButtonTap: 'tabButtonTapHandler'
   },
+  lastSelectedTabPanel: '',
   tabButtonTapHandler: function (inSender, inEvent) {
     if (inEvent.tabPanel) {
       this.setTabButtonActive(inEvent.tabPanel);
+      if (this.lastSelectedTabPanel !== inEvent.tabPanel) {
+        this.lastSelectedTabPanel = inEvent.tabPanel;
+        if (inEvent.tabPanel === 'edit') {
+          this.doShowMultiSelection({
+            show: true
+          });
+        } else {
+          this.doShowMultiSelection({
+            show: false
+          });
+        }
+      }
     }
   },
   setTabButtonActive: function (tabName) {
@@ -91,13 +107,13 @@ enyo.kind({
     }
   },
   manualTap: function (tabName, options) {
-    var tab;
+    var tab, defaultTab;
 
     function getButtonByName(name, me) {
       var componentArray = me.$.toolbar.getComponents(),
           i;
       for (i = 0; i < componentArray.length; i++) {
-        if (componentArray[i].$.theButton.getComponents()[0].tabToOpen === name) {
+        if (componentArray[i].$.theButton.getComponents()[0].tabToOpen === name && componentArray[i].$.theButton.getComponents()[0].showing) {
           return componentArray[i].$.theButton.getComponents()[0];
         }
       }
@@ -105,15 +121,31 @@ enyo.kind({
     }
 
     tab = getButtonByName(tabName, this);
+    if (options) {
+      options.isManual = true;
+    } else {
+      options = {
+        isManual: true
+      };
+    }
+
     if (tab) {
       tab.tap(options);
+    } else {
+      defaultTab = _.find(this.$.toolbar.getComponents(), function (component) {
+        if (component.button.defaultTab) {
+          return component;
+        }
+      }).$.theButton.getComponents()[0];
+      defaultTab.tap(options);
     }
   },
   kind: 'OB.UI.MultiColumn.Toolbar',
   buttons: [{
     kind: 'OB.OBPOSPointOfSale.UI.ButtonTabScan',
     name: 'toolbarBtnScan',
-    tabToOpen: 'scan'
+    tabToOpen: 'scan',
+    defaultTab: true
   }, {
     kind: 'OB.OBPOSPointOfSale.UI.ButtonTabBrowse',
     name: 'toolbarBtnCatalog',
@@ -138,16 +170,7 @@ enyo.kind({
       if (this.receipt.get('isEditable') === false) {
         this.manualTap('edit');
       } else {
-        if (OB.MobileApp.model.get('terminal').defaultwebpostab) {
-          if (OB.MobileApp.model.get('terminal').defaultwebpostab !== '') {
-            this.manualTap(OB.MobileApp.model.get('terminal').defaultwebpostab);
-          } else {
-            this.manualTap('scan');
-          }
-        } else {
-          this.manualTap('scan');
-        }
-
+        this.manualTap(OB.MobileApp.model.get('terminal').defaultwebpostab);
       }
     }, this);
 
@@ -280,11 +303,11 @@ enyo.kind({
     } else {
       this.$.lbl.show();
     }
+
   },
   tabPanel: 'catalog',
   i18nLabel: 'OBMOBC_LblBrowse',
   tap: function () {
-    OB.MobileApp.view.scanningFocus(false);
     if (!this.disabled) {
       this.doTabChange({
         tabPanel: this.tabPanel,
@@ -292,6 +315,7 @@ enyo.kind({
         edit: false
       });
     }
+    OB.MobileApp.view.scanningFocus(true);
   },
   initComponents: function () {
     this.inherited(arguments);
@@ -325,14 +349,13 @@ enyo.kind({
   disabledButton: function (inSender, inEvent) {
     this.isEnabled = !inEvent.status;
     this.setDisabled(inEvent.status);
-    if (!this.isEnabled) {
+    if (!this.isEnabled && !OB.MobileApp.model.get('serviceSearchMode')) {
       this.$.lbl.hide();
     } else {
       this.$.lbl.show();
     }
   },
   tap: function () {
-    OB.MobileApp.view.scanningFocus(false);
     if (this.disabled === false) {
       OB.UI.SearchProductCharacteristic.prototype.filtersCustomClear();
       this.doTabChange({
@@ -340,6 +363,7 @@ enyo.kind({
         keyboard: false,
         edit: false
       });
+      OB.MobileApp.view.scanningFocus(true);
     }
   },
   initComponents: function () {
@@ -361,10 +385,17 @@ enyo.kind({
   i18nLabel: 'OBPOS_LblEdit',
   events: {
     onTabChange: '',
-    onRightToolbarDisabled: ''
+    onRightToolbarDisabled: '',
+    onDisableUserInterface: '',
+    onEnableUserInterface: '',
+    onFinishServiceProposal: '',
+    onToggleLineSelection: '',
+    onShowActionIcons: '',
+    onReceiptLineSelected: ''
   },
   handlers: {
-    onRightToolbarDisabled: 'disabledButton'
+    onRightToolbarDisabled: 'disabledButton',
+    onManageServiceProposal: 'manageServiceProposal'
   },
   init: function (model) {
     this.model = model;
@@ -378,13 +409,81 @@ enyo.kind({
   disabledButton: function (inSender, inEvent) {
     this.setDisabled(inEvent.status);
   },
-  tap: function () {
-    OB.MobileApp.view.scanningFocus(true);
-    if (!this.disabled) {
+  manageServiceProposal: function (inSender, inEvent) {
+    OB.MobileApp.model.set('serviceSearchMode', inEvent.proposalType);
+    this.previousStatus = inEvent.previousStatus;
+    this.$.lbl.setContent(OB.I18N.getLabel('OBPOS_LblContinue'));
+    this.doDisableUserInterface();
+    this.setDisabled(false);
+    this.doShowActionIcons({
+      show: false
+    });
+  },
+  tap: function (options) {
+    this.model.get('order').get('lines').on('selected', function (lineSelected) {
+      this.currentLine = lineSelected;
+      if (lineSelected) {
+        this.doReceiptLineSelected({
+          product: lineSelected.get('product')
+        });
+      }
+    }, this);
+
+    if (OB.MobileApp.model.get('serviceSearchMode')) {
+      this.$.lbl.setContent(OB.I18N.getLabel('OBPOS_LblEdit'));
+      this.doEnableUserInterface();
+      this.doShowActionIcons({
+        show: true
+      });
+      this.doToggleLineSelection({
+        status: false
+      });
+      if (OB.MobileApp.model.get('serviceSearchMode') === 'mandatory') {
+        this.restoreStatus();
+      } else if (OB.MobileApp.model.get('serviceSearchMode') === 'final') {
+        this.previousStatus.callback();
+      }
+      OB.MobileApp.model.unset('serviceSearchMode');
+    } else {
+      if (!options.isManual) {
+        // The tap was not manual. So consider the last line added
+        var lines = this.model.get('order').get('lines');
+        var lastLine;
+        if (lines && lines.length > 0) {
+          lastLine = lines.models[lines.length - 1];
+        }
+        if (this.currentLine) {
+          this.currentLine.trigger('selected', this.currentLine);
+        } else if (lastLine) {
+          lastLine.trigger('selected', lastLine);
+        }
+      }
+      if (!this.disabled) {
+        this.doTabChange({
+          tabPanel: this.tabPanel,
+          keyboard: 'toolbarscan',
+          edit: true
+        });
+      }
+      OB.MobileApp.view.scanningFocus(true);
+    }
+  },
+  restoreStatus: function () {
+    if (this.previousStatus.tab === 'scan' || this.previousStatus.tab === 'edit') {
       this.doTabChange({
-        tabPanel: this.tabPanel,
-        keyboard: 'toolbarscan',
-        edit: true
+        tabPanel: this.previousStatus.tab,
+        keyboard: 'toolbarscan'
+      });
+    } else if (this.previousStatus.tab === 'catalog') {
+      this.doTabChange({
+        tabPanel: this.previousStatus.tab
+      });
+    } else {
+      this.doTabChange({
+        tabPanel: this.previousStatus.tab
+      });
+      this.doFinishServiceProposal({
+        status: this.previousStatus
       });
     }
   }
@@ -426,16 +525,17 @@ enyo.kind({
     }
   },
   showPane: function (tabName, options) {
+    OB.MobileApp.model.set('lastPaneShown', 'unknown');
     var paneArray = this.getComponents(),
         i;
     for (i = 0; i < paneArray.length; i++) {
       paneArray[i].removeClass('active');
       if (paneArray[i].name === tabName) {
-        OB.MobileApp.model.set('lastPaneShown', tabName);
         if (paneArray[i].executeOnShow) {
           paneArray[i].executeOnShow(options);
         }
         paneArray[i].addClass('active');
+        OB.MobileApp.model.set('lastPaneShown', tabName);
       }
     }
   },

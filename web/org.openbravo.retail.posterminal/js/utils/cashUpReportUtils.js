@@ -47,7 +47,7 @@
   function updateCashUpInfo(cashUp, receipt, j, callback, tx) {
     var cashuptaxes, order, orderType, gross, i, taxOrderType, taxAmount, auxPay;
 
-    if (j < receipt.length) {
+    if (j < receipt.length && !receipt[j].has('obposIsDeleted')) {
       order = receipt[j];
       orderType = order.get('orderType');
       if (cashUp.length !== 0) {
@@ -194,7 +194,18 @@
       _.each(cashup.get('cashTaxInfo'), function (taxCashup) {
         var taxModel = new OB.Model.TaxCashUp();
         taxModel.set(taxCashup);
-        OB.Dal.save(taxModel, null, null, true);
+        OB.Dal.save(taxModel, null, function () {
+          OB.error(OB.I18N.getLabel('OBPOS_DalSaveError'));
+        }, true);
+      });
+
+      // Create Cash Management
+      _.each(cashup.get('cashMgmInfo'), function (cashMgm) {
+        var cashMgmModel = new OB.Model.CashManagement();
+        cashMgmModel.set(cashMgm);
+        OB.Dal.save(cashMgmModel, null, function () {
+          OB.error(OB.I18N.getLabel('OBPOS_DalSaveError'));
+        }, true);
       });
 
       //current cashup
@@ -211,7 +222,9 @@
             return;
           }
           if (pAux.payment.active === true || (pAux.payment.active === false && paymentMethodCashUpModel.get('totalSales') !== 0 && paymentMethodCashUpModel.get('totalReturns') !== 0 && paymentMethodCashUpModel.get('totalDepostis') !== 0 && paymentMethodCashUpModel.get('totalDrops') !== 0)) {
-            OB.Dal.save(paymentMethodCashUpModel, null, null, true);
+            OB.Dal.save(paymentMethodCashUpModel, null, function () {
+              OB.error(OB.I18N.getLabel('OBPOS_DalSaveError'));
+            }, true);
           }
           //end if
           //OB.UTIL.deleteUnactivePaymentMethod(paymentMethodCashUpModel);
@@ -231,7 +244,7 @@
 
   OB.UTIL.createNewCashup = function (callback) {
     // Create the cashup empty
-    var uuid = OB.Dal.get_uuid();
+    var uuid = OB.UTIL.get_UUID();
     OB.Dal.save(new OB.Model.CashUp({
       id: uuid,
       netSales: OB.DEC.Zero,
@@ -329,7 +342,7 @@
           startingCash = OB.DEC.Zero;
         }
         OB.Dal.save(new OB.Model.PaymentMethodCashUp({
-          id: OB.Dal.get_uuid(),
+          id: OB.UTIL.get_UUID(),
           paymentmethod_id: payment.payment.id,
           searchKey: payment.payment.searchKey,
           name: payment.payment._identifier,
@@ -399,7 +412,7 @@
               })[0];
               if (OB.UTIL.isNullOrUndefined(pAux) && payment.payment.active === true) {
                 OB.Dal.save(new OB.Model.PaymentMethodCashUp({
-                  id: OB.Dal.get_uuid(),
+                  id: OB.UTIL.get_UUID(),
                   paymentmethod_id: payment.payment.id,
                   searchKey: payment.payment.searchKey,
                   name: payment.payment._identifier,
@@ -412,6 +425,11 @@
                   isocode: payment.isocode,
                   cashup_id: cashUp.at(0).get('id')
                 }), null, null, true);
+              } else if (!OB.UTIL.isNullOrUndefined(pAux)) {
+                if (pAux.get("name") !== payment.payment._identifier) {
+                  pAux.set("name", payment.payment._identifier);
+                  OB.Dal.save(pAux);
+                }
               }
             }
           }, function (lastCashUpPayments) {
@@ -564,7 +582,7 @@
     objToSend.set('userId', OB.MobileApp.model.get('context').user.id);
     cashUp.at(0).set('objToSend', JSON.stringify(objToSend));
     OB.Dal.saveInTransaction(tx, cashUp.at(0), function () {
-      if (callback)  {
+      if (callback) {
         callback(me);
       }
     }, null);

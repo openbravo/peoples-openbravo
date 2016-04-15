@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  ************************************************************************************
- * Copyright (C) 2012 Openbravo S.L.U.
+ * Copyright (C) 2012-2016 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -116,10 +116,14 @@
       <%
         var payments = order.get('payments');
         for (var i = 0; i < payments.length; i++) {
+          var paymentName = payments.at(i).get('name');
+          if (payments && payments.at(i) && payments.at(i).get('paymentData') && payments.at(i).get('paymentData').name && payments.at(i).get('paymentData').name.length > 0) {
+            paymentName = paymentName + ' (' + payments.at(i).get('paymentData').name + ')';
+          }
          if(payments.at(i).get('rate') && payments.at(i).get('rate')!=='1'){
       %>
         <line>
-          <text align="left" length="15"><%= payments.at(i).get('name') %></text>
+          <text align="left" length="15"><%= paymentName %></text>
           <text align="right" length="12"><%= '('+OB.I18N.formatCurrency(payments.at(i).get('amount'))+' '+payments.at(i).get('isocode')+')' %></text>
           <text align="right" length="13"><%= OB.I18N.formatCurrency(payments.at(i).get('origAmount')) %></text>
         </line>
@@ -127,7 +131,7 @@
          }else {
      %>
         <line>
-          <text align="left" length="20"><%= payments.at(i).get('name') %></text>
+          <text align="left" length="20"><%= paymentName %></text>
           <text align="right" length="20"><%= OB.I18N.formatCurrency(payments.at(i).get('amount')) %></text>
         </line>
       <%
@@ -164,6 +168,12 @@
           }
         }
       %>   
+    <% if (order.get('hasbeenpaid') === 'Y' && order.get('paidOnCredit')) { %>
+    <line>
+      <text align="left" length="20"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_paidOnCredit')) %></text>
+      <text align="right" length="20"><%= OB.I18N.formatCurrency(order.getGross() - order.get('payment'))%></text>
+    </line>
+    <% } %>
     <line>
       <text align="left" length="20"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_ticketChange')) %></text>
       <text align="right" length="20"><%= OB.I18N.formatCurrency(order.get('change'))%></text>
@@ -171,9 +181,7 @@
     <line></line>
     <line size="1">
       <% if (order.get('hasbeenpaid') === 'Y') { %>
-        <% if (order.get('paidOnCredit')){ %>
-          <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_paidOnCredit')) %></text>
-        <% } else if (order.getGross() < 0){ %>
+        <% if (order.getGross() < 0){ %>
           <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_paidReturn')) %></text>
         <% } else { %>
           <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_tckfooter_line1')) %></text>
@@ -231,11 +239,9 @@
 
   <display>
       <line>
-        <text align="left" length="10"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_display_total'))%></text>
-        <text align="right" length="10"><%= order.printGross() %></text>
       </line>
       <line>
-        <text align="center" length="20"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_thankyou'))%></text>
+        <text align="center" length="20"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_welcome'))%></text>
       </line>
   </display>
 

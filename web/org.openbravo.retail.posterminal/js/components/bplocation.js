@@ -194,7 +194,7 @@ enyo.kind({
         style: 'display: table-cell; width: 100%;',
         components: [{
           kind: 'OB.UI.SearchInputAutoFilter',
-          name: 'filterText',
+          name: 'bpsLocationSearchfilterText',
           style: 'width: 100%'
         }]
       }, {
@@ -203,6 +203,7 @@ enyo.kind({
           kind: 'OB.UI.SmallButton',
           classes: 'btnlink-gray btn-icon-small btn-icon-clear',
           style: 'width: 100px; margin: 0px 5px 8px 19px;',
+          name: 'bpsLocationSearchClearButton',
           ontap: 'clearAction'
         }]
       }, {
@@ -211,6 +212,7 @@ enyo.kind({
           kind: 'OB.UI.SmallButton',
           classes: 'btnlink-yellow btn-icon-small btn-icon-search',
           style: 'width: 100px; margin: 0px 0px 8px 5px;',
+          name: 'bpsLocationSearchButton',
           ontap: 'searchAction'
         }]
       }]
@@ -234,15 +236,15 @@ enyo.kind({
     }]
   }],
   clearAction: function () {
-    this.$.filterText.setValue('');
+    this.$.bpsLocationSearchfilterText.setValue('');
     this.doSearchAction({
-      locName: this.$.filterText.getValue()
+      locName: this.$.bpsLocationSearchfilterText.getValue()
     });
     return true;
   },
   searchAction: function () {
     this.doSearchAction({
-      locName: this.$.filterText.getValue()
+      locName: this.$.bpsLocationSearchfilterText.getValue()
     });
     return true;
   }
@@ -333,7 +335,7 @@ enyo.kind({
     criteria.bpartner = this.bPartnerId;
     if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
       var filterIdentifier = {
-        columns: ['_identifier'],
+        columns: ['_filter'],
         operator: 'startsWith',
         value: filter
       },
@@ -389,7 +391,7 @@ enyo.kind({
     return true;
   },
   executeOnHide: function () {
-    this.$.body.$.listBpsLoc.$.bpsloclistitemprinter.$.theader.$.modalBpLocScrollableHeader.clearAction();
+    this.$.body.$.listBpsLoc.$.bpsloclistitemprinter.$.theader.$.modalBpLocScrollableHeader.$.bpsLocationSearchfilterText.setValue('');
   },
   i18nHeader: 'OBPOS_LblAssignCustomerAddress',
   body: {

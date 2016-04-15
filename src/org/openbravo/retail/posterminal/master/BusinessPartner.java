@@ -33,7 +33,7 @@ public class BusinessPartner extends ProcessHQLQuery {
   private Instance<ModelExtension> extensions;
 
   @Override
-  protected List<HQLPropertyList> getHqlProperties() {
+  protected List<HQLPropertyList> getHqlProperties(JSONObject jsonsent) {
     List<HQLPropertyList> propertiesList = new ArrayList<HQLPropertyList>();
     HQLPropertyList regularBusinessPartnerHQLProperties = ModelExtensionUtils
         .getPropertyExtensions(extensions);
@@ -46,8 +46,9 @@ public class BusinessPartner extends ProcessHQLQuery {
 
   @Override
   protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
-    Long lastUpdated = (jsonsent.has("lastUpdated") && jsonsent.get("lastUpdated") != null && !jsonsent
-        .get("lastUpdated").equals("undefined")) ? jsonsent.getLong("lastUpdated") : null;
+    Long lastUpdated = jsonsent.has("lastUpdated")
+        && !jsonsent.get("lastUpdated").equals("undefined")
+        && !jsonsent.get("lastUpdated").equals("null") ? jsonsent.getLong("lastUpdated") : null;
     // if it is a total refresh we need to ensure that all(AND) entities are active. In a
     // incremental refresh, we need to retrieve it if some (OR) ot the entities have changed
     String operator = lastUpdated == null ? " AND " : " OR ";
@@ -56,10 +57,13 @@ public class BusinessPartner extends ProcessHQLQuery {
     String hql = "SELECT "
         + regularBusinessPartnerHQLProperties.getHqlSelect() //
         + "FROM BusinessPartnerLocation AS bpl left outer join bpl.businessPartner.aDUserList AS ulist "
+        + "left outer join bpl.businessPartner.priceList AS plist "
         + "WHERE $filtersCriteria AND "
         + "bpl.invoiceToAddress = true AND "
         + "bpl.businessPartner.customer = true AND "
         + "bpl.businessPartner.priceList IS NOT NULL AND "
+        + "bpl.businessPartner.paymentMethod IS NOT NULL AND "
+        + "bpl.businessPartner.paymentTerms IS NOT NULL AND "
         + "bpl.$readableSimpleClientCriteria AND "
         + "bpl.$naturalOrgCriteria AND "
         + "(bpl.$incrementalUpdateCriteria"
@@ -72,10 +76,13 @@ public class BusinessPartner extends ProcessHQLQuery {
     String hql2 = "SELECT"
         + regularBusinessPartnerHQLProperties.getHqlSelect() //
         + "FROM BusinessPartnerLocation AS bpl left outer join bpl.businessPartner.aDUserList AS ulist "
+        + "left outer join bpl.businessPartner.priceList AS plist "
         + "WHERE $filtersCriteria AND "
         + "bpl.invoiceToAddress = true AND "
         + "bpl.businessPartner.customer = true AND "
         + "bpl.businessPartner.priceList IS NOT NULL AND "
+        + "bpl.businessPartner.paymentMethod IS NOT NULL AND "
+        + "bpl.businessPartner.paymentTerms IS NOT NULL AND "
         + "bpl.$readableSimpleClientCriteria AND "
         + "bpl.$naturalOrgCriteria AND "
         + "(bpl.$incrementalUpdateCriteria"

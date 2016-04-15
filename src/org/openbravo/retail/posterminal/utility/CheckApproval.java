@@ -57,11 +57,9 @@ public class CheckApproval extends JSONProcessSimple {
         }
 
         String whereClause = "as p"
-            + " where property in ("
-            + approvals
-            + ")"
+            + " where property IS NOT NULL "
             + "   and active = true" //
-            + "   and to_char(searchKey) = 'Y'" //
+            + "   and (case when length(searchKey)<>1 then 'X' else to_char(searchKey) end) = 'Y'" //
             + "   and (userContact = :user" //
             + "        or exists (from ADUserRoles r"
             + "                  where r.role = p.visibleAtRole"
@@ -84,8 +82,17 @@ public class CheckApproval extends JSONProcessSimple {
         } else {
           result.put("status", 0);
           JSONObject jsonData = new JSONObject();
+          JSONObject jsonPreference = new JSONObject();
+          Integer c = 0;
+          for (Preference preference : qPreference.list()) {
+            jsonPreference.put(preference.getProperty(), preference.getProperty());
+            if (approvals.contains(preference.getProperty())) {
+              c++;
+            }
+          }
           jsonData.put("userId", qUser.list().get(0).getId());
-          jsonData.put("canApprove", qPreference.count() == approvalType.length());
+          jsonData.put("canApprove", c == approvalType.length());
+          jsonData.put("preference", jsonPreference);
           result.put("data", jsonData);
         }
       }

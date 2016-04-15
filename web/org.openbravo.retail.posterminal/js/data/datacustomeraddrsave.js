@@ -38,7 +38,7 @@
       if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) { //With high volume we only save adress we it is assigned to the order
         if (isNew) {
           me.customerAddr.set('posTerminal', OB.MobileApp.model.get('terminal').id);
-          var uuid = OB.Dal.get_uuid();
+          var uuid = OB.UTIL.get_UUID();
           me.customerAddr.set('id', uuid);
           me.customerAddr.id = uuid;
           bpLocToSave.set('json', JSON.stringify(me.customerAddr.serializeToJSON()));
@@ -103,15 +103,13 @@
           }, function () {
             //error saving BP changes with changes in changedbusinesspartners
             OB.UTIL.showError(OB.I18N.getLabel('OBPOS_errorSavingCustomerAddrChn', [me.customerAddr.get('_identifier')]));
-          }, isNew);
+          });
         }, function () {
           //error saving BP Location with new values in c_bpartner_location
           OB.error(arguments);
           OB.UTIL.showError(OB.I18N.getLabel('OBPOS_errorSavingCustomerAddrLocally', [me.customerAddr.get('_identifier')]));
-        }, isNew);
+        });
       }
-
-
     }, this);
   };
 }());

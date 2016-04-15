@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2015 Openbravo S.L.U.
+ * Copyright (C) 2012-2016 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -8,12 +8,19 @@
  */
 package org.openbravo.retail.posterminal;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import javax.enterprise.inject.spi.Bean;
+import javax.enterprise.inject.spi.BeanManager;
+
 import org.codehaus.jettison.json.JSONException;
+import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
+import org.openbravo.erpCommon.businessUtility.Preferences;
+import org.openbravo.erpCommon.utility.PropertyException;
 
 public class InitialValidations {
 
@@ -115,5 +122,34 @@ public class InitialValidations {
       }
     }
 
+    if (posTerminal.getObposTerminaltype().isLayawayorder()) {
+      try {
+        String generateLayawaysPref = Preferences
+            .getPreferenceValue("OBPOS_receipt.layawayReceipt", true, OBContext.getOBContext()
+                .getCurrentClient().getId(), OBContext.getOBContext().getCurrentOrganization()
+                .getId(), OBContext.getOBContext().getUser().getId(), OBContext.getOBContext()
+                .getRole().getId(), null);
+        if (generateLayawaysPref.equals("N")) {
+          throw new JSONException("OBPOS_LayawayTerminalNoLayawayPermission");
+        }
+      } catch (PropertyException e) {
+        // Preferences wrongly defined. Process will fail later on, so no need to do anything here.
+      }
+    }
+
+    for (CustomInitialValidation customInitialValidation : getCustomInitialValidations()) {
+      customInitialValidation.validation(posTerminal);
+    }
+
+  }
+
+  private static List<CustomInitialValidation> getCustomInitialValidations() {
+    List<CustomInitialValidation> result = new ArrayList<CustomInitialValidation>();
+    BeanManager bm = WeldUtils.getStaticInstanceBeanManager();
+    for (Bean<?> restrictionBean : bm.getBeans(CustomInitialValidation.class)) {
+      result.add((CustomInitialValidation) bm.getReference(restrictionBean,
+          CustomInitialValidation.class, bm.createCreationalContext(restrictionBean)));
+    }
+    return result;
   }
 }

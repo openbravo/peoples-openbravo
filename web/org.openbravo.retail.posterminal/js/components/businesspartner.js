@@ -344,7 +344,7 @@ enyo.kind({
   },
   searchAction: function (inSender, inEvent) {
     var me = this,
-        filter = inEvent.bpName;
+        filter = OB.UTIL.unAccent(inEvent.bpName);
 
     this.$.stBPAssignToReceipt.$.tempty.hide();
     this.$.stBPAssignToReceipt.$.tbody.hide();
@@ -375,12 +375,15 @@ enyo.kind({
     }
     if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
       var filterIdentifier = {
-        columns: ['_identifier'],
+        columns: ['_filter'],
         operator: 'startsWith',
         value: filter
       };
       var remoteCriteria = [filterIdentifier];
       criteria.remoteFilters = remoteCriteria;
+    }
+    if (OB.MobileApp.model.hasPermission('OBPOS_customerLimit', true)) {
+      criteria._limit = OB.DEC.abs(OB.MobileApp.model.hasPermission('OBPOS_customerLimit', true));
     }
     OB.Dal.find(OB.Model.BusinessPartner, criteria, successCallbackBPs, errorCallback);
     return true;

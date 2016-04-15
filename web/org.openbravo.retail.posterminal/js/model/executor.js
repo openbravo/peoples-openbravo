@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2014 Openbravo S.L.U.
+ * Copyright (C) 2012-2015 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -26,11 +26,12 @@ OB.Model.Executor = Backbone.Model.extend({
     this.set('eventQueue', eventQueue);
     this.set('actionQueue', new Backbone.Collection());
 
-    eventQueue.on('add', function () {
-      if (!this.get('executing')) {
+    eventQueue.on('add', function (event) {
+      if (!this.get('executing') && !event.get('avoidTrigger')) {
         // Adding an event to an empty queue, firing it
         this.nextEvent();
       }
+      event.set('avoidTrigger', false);
     }, this);
   },
   removeGroup: function (groupId) {
@@ -55,6 +56,9 @@ OB.Model.Executor = Backbone.Model.extend({
         if (currentEvt === evt) {
           this.set('eventQueue');
           actionQueue.remove(actionQueue.models);
+        }
+        if (evt.reportSynchronizationHelper) {
+          evt.reportSynchronizationHelper();
         }
         evtQueue.remove(evt);
         currentExecutionQueue = (this.get('exec') || 0) - 1;
@@ -114,7 +118,7 @@ OB.Model.Executor = Backbone.Model.extend({
   nextAction: function (event) {
     var action = this.get('actionQueue').shift();
     if (action) {
-      action.get('action').call(this, action.get('args'), event);
+      action.get('action').call(this, action.get('args'), event, action.get('promCandidates'));
     } else {
       // queue of action is empty
       this.postAction(event);
@@ -136,7 +140,7 @@ OB.Model.Executor = Backbone.Model.extend({
 OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
   // parameters that will be used in the SQL to get promotions, in case this SQL is extended,
   // these parameters might be required to be extended too
-  criteriaParams: ['bpId', 'bpId', 'bpId', 'bpId', 'productId', 'productId', 'productId', 'productId', 'productId', 'productId'],
+  criteriaParams: ['date', 'bpId', 'bpId', 'bpId', 'bpId', 'productId', 'productId', 'productId', 'productId', 'productId', 'productId', 'priceListId', 'priceListId'],
 
   // defines the property each of the parameters in criteriaParams is translated to, in case of
   // different parameters than standard ones this should be extended
@@ -148,6 +152,14 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
     productId: {
       model: 'line',
       property: 'product'
+    },
+    priceListId: {
+      model: 'receipt',
+      property: 'priceList'
+    },
+    date: {
+      model: 'receipt',
+      property: 'orderDate'
     }
   },
 
@@ -170,7 +182,11 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
         model = evt.get(paraTrl.model);
       }
 
-      translatedParams.push(model.get(paraTrl.property).id);
+      if (param === 'date') {
+        translatedParams.push(OB.I18N.formatDateISO(new Date()));
+      } else {
+        translatedParams.push(model.get(paraTrl.property).id ? model.get(paraTrl.property).id : model.get(paraTrl.property));
+      }
     });
     return translatedParams;
   },
@@ -183,7 +199,11 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
         actionQueue = this.get('actionQueue'),
         me = this,
         criteria, t0 = new Date().getTime(),
-        whereClause = OB.Model.Discounts.computeStandardFilter(receipt) + " AND M_OFFER_TYPE_ID NOT IN (" + OB.Model.Discounts.getManualPromotions() + ")";
+        whereClause = OB.Model.Discounts.computeStandardFilter(receipt) // 
+         + " AND M_OFFER_TYPE_ID NOT IN (" + OB.Model.Discounts.getManualPromotions() + ")" //
+         + " AND ((EM_OBDISC_ROLE_SELECTION = 'Y' AND NOT EXISTS (SELECT 1 FROM OBDISC_OFFER_ROLE WHERE M_OFFER_ID = M_OFFER.M_OFFER_ID " + " AND AD_ROLE_ID = '" + OB.MobileApp.model.get('context').role.id + "')) OR (EM_OBDISC_ROLE_SELECTION = 'N' " //
+         + " AND EXISTS (SELECT 1 FROM OBDISC_OFFER_ROLE WHERE M_OFFER_ID = M_OFFER.M_OFFER_ID " //
+         + " AND AD_ROLE_ID = '" + OB.MobileApp.model.get('context').role.id + "')))";
 
     if (!receipt.shouldApplyPromotions() || line.get('product').get('ignorePromotions')) {
       // Cannot apply promotions, leave actions empty
@@ -196,7 +216,7 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
       params: this.convertParams(evt, line, receipt, this.paramsTranslation)
     };
 
-    OB.Dal.find(OB.Model.Discount, criteria, function (d) {
+    OB.Dal.findUsingCache('discountsCache', OB.Model.Discount, criteria, function (d) {
       if (d.size() === 0) {
         line.set('noDiscountCandidates', true, {
           silent: true
@@ -205,7 +225,9 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
       d.forEach(function (disc) {
         actionQueue.add({
           action: me.applyRule,
-          args: disc
+          args: disc,
+          promCandidates: d,
+          avoidTrigger: true
         });
       });
       evt.trigger('actionsCreated');
@@ -214,7 +236,7 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
     });
   },
 
-  applyRule: function (disc, evt) {
+  applyRule: function (disc, evt, promCandidates) {
     var receipt = evt.get('receipt'),
         line = evt.get('line'),
         rule = OB.Model.Discounts.discountRules[disc.get('discountType')],
@@ -231,28 +253,20 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
         ruleListener.on('completed', function (obj) {
           if (obj && obj.alerts) {
             // in the new flow discount, the messages are stored in array, so only will be displayed the first time
-            if (OB.MobileApp.model.hasPermission('OBPOS_discount.newFlow', true)) {
-              var localArrayMessages = line.get('promotionMessages') || [];
-              localArrayMessages.push(obj.alerts);
-              line.set('promotionMessages', localArrayMessages);
-            } else {
-              OB.UTIL.showAlert.display(obj.alerts);
-            }
+            var localArrayMessages = line.get('promotionMessages') || [];
+            localArrayMessages.push(obj.alerts);
+            line.set('promotionMessages', localArrayMessages);
           }
           ruleListener.off('completed');
           this.nextAction(evt);
         }, this);
       }
-      ds = rule.implementation(disc, receipt, line, ruleListener);
+      ds = rule.implementation(disc, receipt, line, ruleListener, promCandidates);
       if (ds && ds.alerts) {
         // in the new flow discount, the messages are stored in array, so only will be displayed the first time
-        if (OB.MobileApp.model.hasPermission('OBPOS_discount.newFlow', true)) {
-          var localArrayMessages = line.get('promotionMessages') || [];
-          localArrayMessages.push(ds.alerts);
-          line.set('promotionMessages', localArrayMessages);
-        } else {
-          OB.UTIL.showAlert.display(ds.alerts);
-        }
+        var localArrayMessages = line.get('promotionMessages') || [];
+        localArrayMessages.push(ds.alerts);
+        line.set('promotionMessages', localArrayMessages);
       }
 
       if (!rule.async) {
@@ -335,21 +349,11 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
   },
 
   postAction: function (evt) {
-    // if new flow of discounts, then discountsApplied is triggered
-    if (OB.MobileApp.model.hasPermission('OBPOS_discount.newFlow', true)) {
-      if (this.get('eventQueue').filter(function (p) {
-        return p.get('receipt') === evt.get('receipt');
-      }).length === 0) {
-        evt.get('receipt').trigger('discountsApplied');
-      }
-    } else {
-      if (this.get('eventQueue').filter(function (p) {
-        return p.get('receipt') === evt.get('receipt');
-      }).length === 0) {
-        evt.get('receipt').calculateGross();
-      }
+    if (this.get('eventQueue').filter(function (p) {
+      return p.get('receipt') === evt.get('receipt');
+    }).length === 0) {
+      evt.get('receipt').trigger('discountsApplied');
     }
-
     // Forcing local db save. Rule implementations could (should!) do modifications
     // without persisting them improving performance in this manner.
     if (!evt.get('skipSave') && evt.get('receipt') && evt.get('receipt').get('lines') && evt.get('receipt').get('lines').length > 0) {

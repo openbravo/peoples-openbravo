@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2013 Openbravo SLU
+ * All portions are Copyright (C) 2012-2015 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -70,7 +70,7 @@ public class ApplicationCacheComponent extends MobileCoreApplicationCacheCompone
     resources
         .add("../../org.openbravo.mobile.core/OBMOBC_Main/ClientModel?entity=PricingAdjustment&modelName=Discount&source=org.openbravo.retail.posterminal.master.Discount");
     resources
-        .add("../../org.openbravo.mobile.core/OBMOBC_Main/ClientModel?entity=PricingAdjustmentBusinessPartner&modelName=DiscountFilterBusinessPartner&source=org.openbravo.retail.posterminal.master.DiscountFilterBusinessPartner");
+        .add("../../org.openbravo.mobile.core/OBMOBC_Main/ClientModel?entity=PricingAdjustmentBusinessPartner&modelName=DiscountFilterBusinessPartner&source=org.openbravo.retail.posterminal.master.DiscountFilterBusinessPartner&remote=OBPOS_remote.discount.bp");
     resources
         .add("../../org.openbravo.mobile.core/OBMOBC_Main/ClientModel?entity=PricingAdjustmentBusinessPartnerGroup&modelName=DiscountFilterBusinessPartnerGroup&source=org.openbravo.retail.posterminal.master.DiscountFilterBusinessPartnerGroup");
     resources
@@ -81,8 +81,6 @@ public class ApplicationCacheComponent extends MobileCoreApplicationCacheCompone
         .add("../../org.openbravo.mobile.core/OBMOBC_Main/ClientModel?entity=OBDISC_Offer_Role&modelName=DiscountFilterRole&source=org.openbravo.retail.posterminal.master.DiscountFilterRole");
     resources
         .add("../../org.openbravo.mobile.core/OBMOBC_Main/ClientModel?entity=PricingAdjustmentCharacteristic&modelName=DiscountFilterCharacteristic&source=org.openbravo.retail.posterminal.master.DiscountFilterCharacteristic");
-    resources
-        .add("../../org.openbravo.mobile.core/OBMOBC_Main/ClientModel?entity=ProductCharacteristicValue&modelName=ProductCharacteristicValue&source=org.openbravo.retail.posterminal.master.ProductProductChValue");
 
     // default print templates
     resources.add("../../web/org.openbravo.retail.posterminal/res/printcashup.xml");
@@ -98,6 +96,9 @@ public class ApplicationCacheComponent extends MobileCoreApplicationCacheCompone
     resources.add("../../web/org.openbravo.retail.posterminal/res/printreturninvoice.xml");
     resources.add("../../web/org.openbravo.retail.posterminal/res/welcome.xml");
     resources.add("../../web/org.openbravo.retail.posterminal/res/goodbye.xml");
+
+    // App Icon
+    resources.add("../../web/images/favicon.ico");
 
     OBContext.setAdminMode(true);
     try {
@@ -133,7 +134,7 @@ public class ApplicationCacheComponent extends MobileCoreApplicationCacheCompone
 
   private List<String> getFileList(String[] extensions) {
 
-    final String relativePath = PATH_PREFIX + getModulePackageName();
+    final String relativePath = "/" + PATH_PREFIX + getModulePackageName();
 
     List<String> fileList = new ArrayList<String>();
 

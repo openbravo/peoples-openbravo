@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2015 Openbravo S.L.U.
+ * Copyright (C) 2013-2016 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -26,6 +26,7 @@ enyo.kind({
     onShowCreateOrderPopup: 'showCreateOrderPopup',
     onReactivateQuotation: 'reactivateQuotation',
     onShowReactivateQuotation: 'showReactivateQuotation',
+    onShowRejectQuotation: 'showRejectQuotation',
     onRejectQuotation: 'rejectQuotation',
     onQuotations: 'quotations',
     onShowDivText: 'showDivText',
@@ -79,7 +80,21 @@ enyo.kind({
     onSelectCategoryTreeItem: 'selectCategoryTreeItem',
     onShowLeftHeader: 'doShowLeftHeader',
     onWarehouseSelected: 'warehouseSelected',
-    onClearUserInput: 'clearUserInput'
+    onClearUserInput: 'clearUserInput',
+    onPricelistChanged: 'pricelistChanged',
+    onChangeDiscount: 'changeDiscount',
+    onReceiptLineSelected: 'receiptLineSelected',
+    onManageServiceProposal: 'manageServiceProposal',
+    onDisableUserInterface: 'disableUserInterface',
+    onEnableUserInterface: 'enableUserInterface',
+    onShowActionIcons: 'showActionIcons',
+    onSetMultiSelection: 'setMultiSelection',
+    onShowMultiSelection: 'showMultiSelection',
+    onSetMultiSelectionItems: 'setMultiSelectionItems',
+    onToggleLineSelection: 'toggleLineSelection',
+    onFinishServiceProposal: 'finishServiceProposal',
+    onkeydown: 'keyDownHandler',
+    onkeyup: 'keyUpHandler'
   },
   events: {
     onShowPopup: '',
@@ -143,6 +158,9 @@ enyo.kind({
       kind: 'OB.UI.ModalReactivateQuotation',
       name: 'modalReactivateQuotation'
     }, {
+      kind: 'OB.UI.ModalRejectQuotation',
+      name: 'modalRejectQuotation'
+    }, {
       kind: 'OB.UI.ModalReceiptPropertiesImpl',
       name: 'receiptPropertiesDialog'
     }, {
@@ -205,6 +223,9 @@ enyo.kind({
     }, {
       kind: 'OB.UI.ModalModulesInDev',
       name: 'modalModulesInDev'
+    }, {
+      kind: 'OB.UI.ModalSelectOpenedReceipt',
+      name: 'OBPOS_modalSelectOpenedReceipt'
     }]
   }, {
     name: 'mainSubWindow',
@@ -303,26 +324,38 @@ enyo.kind({
               return;
             }
             receipt.trigger('print', receipt, {
-              force: true
+              forcePrint: true
             });
           });
 
           return;
         }
-        receipt.calculateTaxes(function () {
-          receipt.trigger('print', receipt, {
-            force: true
-          });
+        receipt.trigger('print', receipt, {
+          forcePrint: true
         });
         return;
       }
       if (this.model.get('leftColumnViewManager').isMultiOrder()) {
         _.each(this.model.get('multiOrders').get('multiOrdersList').models, function (order) {
           this.model.get('multiOrders').trigger('print', order, {
-            force: true
+            forcePrint: true
           });
         }, this);
       }
+    }
+  },
+  keyDownHandler: function (inSender, inEvent) {
+    var keyCode = inEvent.keyCode;
+    OB.MobileApp.model.ctrlPressed = keyCode === 17;
+    OB.MobileApp.model.shiftPressed = keyCode === 16;
+  },
+  keyUpHandler: function (inSender, inEvent) {
+    var keyCode = inEvent.keyCode;
+    if (keyCode === 17) {
+      OB.MobileApp.model.ctrlPressed = false;
+    }
+    if (keyCode === 16) {
+      OB.MobileApp.model.shiftPressed = false;
     }
   },
   paidReceipts: function (inSender, inEvent) {
@@ -366,11 +399,55 @@ enyo.kind({
   deleteCurrentOrder: function (inSender, inEvent) {
     function removeOrder(context) {
       var isPaidQuotation = (context.model.get('order').has('isQuotation') && context.model.get('order').get('isQuotation') && context.model.get('order').has('hasbeenpaid') && context.model.get('order').get('hasbeenpaid') === 'Y');
-      if (context.model.get('order').get('id') && !isPaidQuotation) {
-        context.model.get('orderList').saveCurrent();
-        OB.Dal.remove(context.model.get('orderList').current, null, null);
+      var receipt = context.model.get('order');
+      if (receipt.get('id') && !isPaidQuotation && receipt.get('lines') && receipt.get('lines').length > 0) {
+        if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true) && !inEvent.originator.hasClass('paidticket')) {
+          receipt.setIsCalculateGrossLockState(true);
+          receipt.set('obposIsDeleted', true);
+          var i;
+          for (i = 0; i < receipt.get('lines').length; i++) {
+            receipt.get('lines').at(i).set('obposIsDeleted', true);
+          }
+
+          receipt.prepareToSend(function () {
+            receipt.trigger('closed', {
+              callback: function () {
+                context.model.get('orderList').deleteCurrent();
+                context.model.get('orderList').synchronizeCurrentOrder();
+                receipt.setIsCalculateGrossLockState(false);
+              }
+            });
+          });
+        } else {
+          context.model.get('orderList').saveCurrent();
+          OB.Dal.remove(context.model.get('orderList').current, null, null);
+          context.model.get('orderList').deleteCurrent();
+        }
+      } else if (receipt.has('deletedLines')) {
+        if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
+          receipt.setIsCalculateGrossLockState(true);
+          receipt.set('obposIsDeleted', true);
+          receipt.prepareToSend(function () {
+            receipt.trigger('closed', {
+              callback: function () {
+                context.model.get('orderList').deleteCurrent();
+                context.model.get('orderList').synchronizeCurrentOrder();
+                receipt.setIsCalculateGrossLockState(false);
+              }
+            });
+          });
+        } else {
+          context.model.get('orderList').saveCurrent();
+          OB.Dal.remove(context.model.get('orderList').current, null, null);
+          context.model.get('orderList').deleteCurrent();
+        }
+      } else {
+        if (receipt.get('id')) {
+          context.model.get('orderList').saveCurrent();
+          OB.Dal.remove(context.model.get('orderList').current, null, null);
+        }
+        context.model.get('orderList').deleteCurrent();
       }
-      context.model.get('orderList').deleteCurrent();
     }
 
     if (inEvent && inEvent.notSavedOrder === true) {
@@ -389,17 +466,82 @@ enyo.kind({
     return true;
   },
   addProductToOrder: function (inSender, inEvent) {
-    if (this.model.get('order').get('isEditable') === false) {
-      this.doShowPopup({
-        popup: 'modalNotEditableOrder'
-      });
+    var targetOrder;
+    if (inEvent && inEvent.targetOrder) {
+      targetOrder = inEvent.targetOrder;
+    } else {
+      targetOrder = this.model.get('order');
+    }
+    if (targetOrder.get('isEditable') === false) {
+      targetOrder.canAddAsServices(this.model, inEvent.product, function (addAsServices) {
+        if (addAsServices !== 'ABORT') {
+          if (addAsServices === 'OK') {
+            // Get approval
+            var deferedSellApproval = _.find(targetOrder.get('approvals'), function (approval) {
+              return approval.approvalType.approval === 'OBPOS_approval.deferred_sell_max_days';
+            });
+            if (deferedSellApproval) {
+              deferedSellApproval.approvalType.message = 'OBPOS_approval.deferred_sell_max_days_erp';
+              deferedSellApproval.approvalType.params.push(inEvent.attrs.relatedLines[0].productName);
+              deferedSellApproval.approvalType.params.push(targetOrder.get('documentNo'));
+            }
+            _.each(inEvent.attrs.relatedLines, function (relatedLine) {
+              relatedLine.orderDocumentNo = targetOrder.get('documentNo');
+              relatedLine.otherTicket = OB.UTIL.isNullOrUndefined(inEvent.targetOrder);
+              relatedLine.deferred = true;
+              var currentLine = targetOrder.get('lines').models.filter(function getCurrentLine(line) {
+                return line.id === relatedLine.orderlineId;
+              });
+              relatedLine.qty = currentLine[0].get('qty');
+              relatedLine.gross = currentLine[0].get('gross');
+              relatedLine.net = currentLine[0].get('net');
+              relatedLine.promotions = currentLine[0].get('promotions').slice();
+            });
+
+            // Select open ticket or create a new one
+            this.doShowPopup({
+              popup: 'OBPOS_modalSelectOpenedReceipt',
+              args: {
+                product: inEvent.product,
+                approval: deferedSellApproval,
+                attrs: inEvent.attrs,
+                context: inEvent.context,
+                callback: inEvent.callback
+              }
+            });
+            // Remove approval from not editable ticket
+            if (deferedSellApproval) {
+              var index = _.indexOf(targetOrder.get('approvals'), deferedSellApproval);
+              if (index >= 0) {
+                targetOrder.get('approvals').splice(index, 1);
+              }
+            }
+          } else {
+            if (inEvent.callback) {
+              inEvent.callback.call(inEvent.context, false);
+            }
+          }
+        } else {
+          this.doShowPopup({
+            popup: 'modalNotEditableOrder'
+          });
+          if (inEvent.callback) {
+            inEvent.callback.call(inEvent.context, false);
+          }
+        }
+      }, this);
       return true;
+    }
+
+    // If a deferred service has 'As per product' quantity rule, the product quantity must be set to the quantity of the line
+    if (inEvent.attrs && inEvent.attrs.relatedLines && inEvent.attrs.relatedLines[0].deferred && inEvent.product.get('quantityRule') === 'PP') {
+      inEvent.qty = inEvent.attrs.relatedLines[0].qty;
     }
 
     if (inEvent.ignoreStockTab) {
       this.showOrder(inSender, inEvent);
     } else {
-      if (!this.model.get('order').get('lines').isProductPresent(inEvent.product) && inEvent.product.get('showstock') && !inEvent.product.get('ispack') && OB.MobileApp.model.get('connectedToERP')) {
+      if (!targetOrder.get('lines').isProductPresent(inEvent.product) && inEvent.product.get('showstock') && !inEvent.product.get('ispack') && OB.MobileApp.model.get('connectedToERP')) {
         inEvent.leftSubWindow = OB.OBPOSPointOfSale.UICustomization.stockLeftSubWindow;
         this.showLeftSubWindow(inSender, inEvent);
         if (enyo.Panels.isScreenNarrow()) {
@@ -413,17 +555,47 @@ enyo.kind({
 
     OB.UTIL.HookManager.executeHooks('OBPOS_PreAddProductToOrder', {
       context: this,
-      receipt: this.model.get('order'),
+      receipt: targetOrder,
       productToAdd: inEvent.product,
-      qtyToAdd: inEvent.qty,
+      qtyToAdd: inEvent.qty ? inEvent.qty : 1,
       options: inEvent.options,
       attrs: inEvent.attrs
     }, function (args) {
       if (args.cancelOperation && args.cancelOperation === true) {
+        if (inEvent.callback) {
+          inEvent.callback.call(inEvent.context, false);
+        }
         return true;
       }
-      args.context.model.get('order').addProduct(args.productToAdd, args.qtyToAdd, args.options, args.attrs);
-      args.context.model.get('orderList').saveCurrent();
+      args.receipt.addProduct(args.productToAdd, args.qtyToAdd, args.options, args.attrs, function (success) {
+        args.context.model.get('orderList').saveCurrent();
+        if (inEvent.callback) {
+          inEvent.callback.call(inEvent.context, success);
+        }
+      });
+      if (args.productToAdd.get('groupProduct') && args.productToAdd.get('productType') !== 'S' && !args.productToAdd.get('isLinkedToProduct')) {
+        // The product added is grouped, so enable the quantity button
+        args.context.waterfall('onEnableQtyButton', {
+          enable: true
+        });
+        args.context.waterfall('onEnablePlusButton', {
+          enable: true
+        });
+        args.context.waterfall('onEnableMinusButton', {
+          enable: true
+        });
+      } else {
+        // The product added is not grouped, so disable the quantity button
+        args.context.waterfall('onEnableQtyButton', {
+          enable: false
+        });
+        args.context.waterfall('onEnablePlusButton', {
+          enable: false
+        });
+        args.context.waterfall('onEnableMinusButton', {
+          enable: false
+        });
+      }
     });
     return true;
   },
@@ -462,6 +634,7 @@ enyo.kind({
         if (this.$.multiColumn.$.leftPanel.$[inEvent.leftSubWindow].mainBeforeSetShowing(inEvent) && allHidden) {
           this.$.multiColumn.$.leftPanel.$.receiptview.setShowing(false);
           this.$.multiColumn.$.leftPanel.$[inEvent.leftSubWindow].setShowing(true);
+          this.$.multiColumn.$.leftPanel.$[inEvent.leftSubWindow].inEvent = inEvent;
         }
       }
     }
@@ -517,17 +690,26 @@ enyo.kind({
     });
   },
 
+  showRejectQuotation: function () {
+    this.doShowPopup({
+      popup: 'modalRejectQuotation'
+    });
+  },
+
   reactivateQuotation: function () {
     this.model.get('order').reactivateQuotation();
     this.model.get('orderList').saveCurrent();
     if (this.model.get('order').get('isEditable') && this.model.get('order').get('isQuotation')) {
-      this.$.multiColumn.$.rightPanel.$.toolbarpane.$.edit.$.editTabContent.$.actionButtonsContainer.$.smallButton.show();
+      this.$.multiColumn.$.rightPanel.$.toolbarpane.$.edit.$.editTabContent.$.actionButtonsContainer.$.descriptionButton.show();
     }
     return true;
   },
-  rejectQuotation: function () {
-    this.model.get('order').rejectQuotation();
-    this.model.get('orderList').saveCurrent();
+  rejectQuotation: function (inSender, inEvent) {
+    this.model.get('order').rejectQuotation(inEvent.rejectReason, this, function (success) {
+      if (success) {
+        this.deleteCurrentOrder(inSender, inEvent);
+      }
+    });
     return true;
   },
   showDivText: function (inSender, inEvent) {
@@ -570,6 +752,9 @@ enyo.kind({
       this.waterfall('onCheckedTicketLine', inEvent);
       return true;
     }
+  },
+  changeDiscount: function (inSender, inEvent) {
+    this.waterfall('onDiscountChanged', inEvent);
   },
   discountQtyChanged: function (inSender, inEvent) {
     this.waterfall('onDiscountQtyChanged', inEvent);
@@ -628,8 +813,48 @@ enyo.kind({
     });
     this.tabChange(inSender, inEvent);
   },
+  disableUserInterface: function (inSender, inEvent) {
+    this.leftToolbarDisabled(inSender, {
+      status: true
+    });
+    this.rightToolbarDisabled(inSender, {
+      status: true
+    });
+    this.BPSelectionDisabled(inSender, {
+      status: true
+    });
+    this.BPLocSelectionDisabled(inSender, {
+      status: true
+    });
+    this.orderSelectionDisabled(inSender, {
+      status: true
+    });
+  },
+  enableUserInterface: function (inSender, inEvent) {
+    this.leftToolbarDisabled(inSender, {
+      status: false
+    });
+    this.rightToolbarDisabled(inSender, {
+      status: false
+    });
+    this.BPSelectionDisabled(inSender, {
+      status: false
+    });
+    this.BPLocSelectionDisabled(inSender, {
+      status: false
+    });
+    this.orderSelectionDisabled(inSender, {
+      status: false
+    });
+  },
+  showActionIcons: function (inSender, inEvent) {
+    this.waterfall('onShowingActionIcons', inEvent);
+  },
   tabChange: function (inSender, inEvent) {
-
+    this.leftToolbarDisabled(inSender, {
+      status: false,
+      disableButtonNew: (this.model.get('leftColumnViewManager').isMultiOrder() ? true : false)
+    });
     this.waterfall('onTabButtonTap', {
       tabPanel: inEvent.tabPanel,
       options: inEvent.options
@@ -693,7 +918,7 @@ enyo.kind({
     var line = inEvent.line,
         receipt = this.model.get('order');
     if (line && receipt) {
-      receipt.deleteLine(line);
+      receipt.deleteLine(line, false, inEvent.callback);
       receipt.trigger('scan');
     }
   },
@@ -787,7 +1012,11 @@ enyo.kind({
       voidConfirmation = inEvent.payment.get('paymentData').voidConfirmation;
 
       if (voidConfirmation === false) {
-        callVoidTransaction();
+        if (voidTransaction !== undefined) {
+          callVoidTransaction();
+        } else {
+          removeTransaction();
+        }
         return;
       }
 
@@ -795,7 +1024,11 @@ enyo.kind({
         label: OB.I18N.getLabel('OBMOBC_LblOk'),
         isConfirmButton: true,
         action: function () {
-          callVoidTransaction();
+          if (voidTransaction !== undefined) {
+            callVoidTransaction();
+          } else {
+            removeTransaction();
+          }
           return true;
         }
       }, {
@@ -823,6 +1056,7 @@ enyo.kind({
   },
   setReceiptsList: function (inSender, inEvent) {
     this.$.modalreceipts.setReceiptsList(inEvent.orderList);
+    this.$.OBPOS_modalSelectOpenedReceipt.setReceiptsList(inEvent.orderList);
   },
   showModalReceiptProperties: function (inSender, inEvent) {
     this.doShowPopup({
@@ -942,21 +1176,123 @@ enyo.kind({
     //this.model.get('multiOrders').set('isMultiOrders', true);
     return true;
   },
+  removeOrderAndExitMultiOrder: function (model) {
+    model.deleteMultiOrderList();
+    model.get('multiOrders').resetValues();
+    model.get('leftColumnViewManager').setOrderMode();
+  },
+  cancelRemoveMultiOrders: function (originator) {
+    originator.deleting = false;
+    originator.removeClass('btn-icon-loading');
+    originator.addClass('btn-icon-clearPayment');
+  },
   removeMultiOrders: function (inSender, inEvent) {
     var me = this;
-    me.model.get('multiOrders').get('multiOrdersList').remove(inEvent.order);
-    if (inEvent && inEvent.order && inEvent.order.get('loadedFromServer')) {
-      me.model.get('orderList').current = inEvent.order;
-      me.model.get('orderList').deleteCurrent();
-      me.model.get('orderList').deleteCurrentFromDatabase(inEvent.order);
+    var originator = inEvent.originator;
+    // If there are more than 1 order, do as usual
+    if (me.model.get('multiOrders').get('multiOrdersList').length > 1) {
+      me.model.get('multiOrders').get('multiOrdersList').remove(inEvent.order);
+      if (inEvent && inEvent.order && inEvent.order.get('loadedFromServer')) {
+        me.model.get('orderList').current = inEvent.order;
+        me.model.get('orderList').deleteCurrent();
+        me.model.get('orderList').deleteCurrentFromDatabase(inEvent.order);
+      }
+      return true;
+    } else if (me.model.get('multiOrders').get('multiOrdersList').length === 1) {
+      if (OB.UTIL.isNullOrUndefined(me.model.get('multiOrders').get('payments')) || me.model.get('multiOrders').get('payments').length < 1) {
+        // Delete and exit the multiorder
+        me.removeOrderAndExitMultiOrder(me.model);
+        return true;
+      } else {
+        //Show confirmation popup indicating all payments will be deleted
+        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_deletepayments_title'), OB.I18N.getLabel('OBPOS_deletepayments_body'), [{
+          label: OB.I18N.getLabel('OBMOBC_LblOk'),
+          action: function () {
+            // Delete payments and exit the multiorder
+            me.removeOrderAndExitMultiOrder(me.model);
+            return false;
+          }
+        }, {
+          label: OB.I18N.getLabel('OBMOBC_LblCancel'),
+          action: function (inEvent) {
+            // Return to the original state of the multiorder
+            me.cancelRemoveMultiOrders(originator);
+            return false;
+          }
+        }], {
+          onHideFunction: function (popup) {
+            me.cancelRemoveMultiOrders(originator);
+            return false;
+          }
+        });
+      }
+    } else {
+      me.cancelRemoveMultiOrders(originator);
     }
-    return true;
   },
   doShowLeftHeader: function (inSender, inEvent) {
     this.waterfall('onLeftHeaderShow', inEvent);
   },
   clearUserInput: function (inSender, inEvent) {
     this.waterfall('onClearEditBox', inEvent);
+  },
+  pricelistChanged: function (inSender, inEvent) {
+    this.waterfall('onChangePricelist', inEvent);
+  },
+  receiptLineSelected: function (inSender, inEvent) {
+    var enableButton = true,
+        selectedLines = this.$.multiColumn.$.rightPanel.$.keyboard.selectedModels,
+        selectedLinesSameQty = this.$.multiColumn.$.rightPanel.$.keyboard.selectedModelsSameQty,
+        selectedLinesLength = this.$.multiColumn.$.rightPanel.$.keyboard.selectedModels.length,
+        product, i;
+    if (selectedLinesLength > 1) {
+      for (i = 0; i < selectedLinesLength; i++) {
+        product = selectedLines[i].get('product');
+        if (!product.get('groupProduct') || (product.get('productType') === 'S' && product.get('isLinkedToProduct'))) {
+          enableButton = false;
+          break;
+        }
+      }
+      if (enableButton && !selectedLinesSameQty) {
+        enableButton = false;
+      }
+    } else {
+      product = selectedLines[0].get('product');
+      if (!product.get('groupProduct') || (product.get('productType') === 'S' && product.get('isLinkedToProduct'))) {
+        enableButton = false;
+      }
+    }
+    this.waterfall('onEnableQtyButton', {
+      enable: enableButton
+    });
+    this.waterfall('onEnablePlusButton', {
+      enable: enableButton
+    });
+    this.waterfall('onEnableMinusButton', {
+      enable: enableButton
+    });
+    OB.UTIL.HookManager.executeHooks('OBPOS_LineSelected', {
+      product: inEvent.product,
+      context: this
+    }, function (args) {});
+  },
+  manageServiceProposal: function (inSender, inEvent) {
+    this.waterfallDown('onManageServiceProposal', inEvent);
+  },
+  toggleLineSelection: function (inSender, inEvent) {
+    this.waterfall('onToggledLineSelection', inEvent);
+  },
+  finishServiceProposal: function (inSender, inEvent) {
+    this.waterfallDown('onFinishServiceProposal', inEvent);
+  },
+  setMultiSelection: function (inSender, inEvent) {
+    this.waterfall('onSetMultiSelected', inEvent);
+  },
+  showMultiSelection: function (inSender, inEvent) {
+    this.waterfall('onShowMultiSelected', inEvent);
+  },
+  setMultiSelectionItems: function (inSender, inEvent) {
+    this.waterfall('onTableMultiSelectedItems', inEvent);
   },
   init: function () {
     var receipt, receiptList, LeftColumnCurrentView;

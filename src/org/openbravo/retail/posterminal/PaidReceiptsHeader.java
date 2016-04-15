@@ -64,7 +64,7 @@ public class PaidReceiptsHeader extends ProcessHQLQuery {
         + json.getString("client")
         + "' and ord.organization='"
         + json.getString("organization")
-        + "'";
+        + "' and ord.obposIsDeleted = false ";
 
     if (!json.getString("filterText").isEmpty()) {
       String hqlFilter = "ord.documentNo like :filterT1 or REPLACE(ord.documentNo, '/', '') like :filterT1 or upper(ord.businessPartner.name) like upper(:filterT1)";
@@ -93,10 +93,12 @@ public class PaidReceiptsHeader extends ProcessHQLQuery {
       hqlPaidReceipts += " and ord.documentStatus='" + json.getString("docstatus") + "'";
     }
     if (!json.getString("startDate").isEmpty()) {
-      hqlPaidReceipts += " and ord.orderDate >='" + json.getString("startDate") + "'";
+      hqlPaidReceipts += " and ord.orderDate >= to_date('" + json.getString("startDate")
+          + "', 'YYYY/MM/DD')";
     }
     if (!json.getString("endDate").isEmpty()) {
-      hqlPaidReceipts += " and ord.orderDate <='" + json.getString("endDate") + "'";
+      hqlPaidReceipts += " and ord.orderDate <= to_date('" + json.getString("endDate")
+          + "', 'YYYY/MM/DD')";
     }
 
     if (json.has("isQuotation") && json.getBoolean("isQuotation")) {
@@ -105,10 +107,10 @@ public class PaidReceiptsHeader extends ProcessHQLQuery {
       // (It is Layaway)
       hqlPaidReceipts += " and ord.obposApplications is not null and (select sum(deliveredQuantity) from ord.orderLineList where orderedQuantity > 0)=0 and ord.documentStatus = 'CO' ";
     } else if (json.getBoolean("isReturn")) {
-      // (It is not Layaway and It is not a Return)
+      // (It is a Return)
       hqlPaidReceipts += " and ord.obposApplications is not null and (exists( select 1 from ord.orderLineList where deliveredQuantity != 0) and exists( select 1 from ord.orderLineList where orderedQuantity > 0)) ";
     } else {
-      // (It is not Layaway or it is a Return)
+      // (It is not Layaway and It is not a Return)
       hqlPaidReceipts += " and ord.obposApplications is not null and exists(select 1 from ord.orderLineList where deliveredQuantity != 0) ";
     }
 

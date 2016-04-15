@@ -1,21 +1,12 @@
 /*
- *************************************************************************
- * The contents of this file are subject to the Openbravo  Public  License
- * Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
- * Version 1.1  with a permitted attribution clause; you may not  use this
- * file except in compliance with the License. You  may  obtain  a copy of
- * the License at http://www.openbravo.com/legal/license.html
- * Software distributed under the License  is  distributed  on  an "AS IS"
- * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
- * License for the specific  language  governing  rights  and  limitations
- * under the License.
- * The Original Code is Openbravo ERP.
- * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2015 Openbravo SLU
- * All Rights Reserved.
- * Contributor(s):  ______________________________________.
- ************************************************************************
+ ************************************************************************************
+ * Copyright (C) 2013-2016 Openbravo S.L.U.
+ * Licensed under the Openbravo Commercial License version 1.0
+ * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
+ * or in the legal folder of this module distribution.
+ ************************************************************************************
  */
+
 package org.openbravo.retail.posterminal;
 
 import java.util.ArrayList;
@@ -102,8 +93,9 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "model/bplocation", // Model for Customer Address
         "model/currencypanel",
         "model/salesrepresentative",
-        "model/productcharacteristic",
-        "model/productchvalue",
+        "model/productcharacteristicvalue",
+        "model/characteristicvalue",
+        "model/characteristic",
         "model/brand",
         "model/returnreasons",
         "model/executor",
@@ -125,6 +117,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         // Web POS window
         "utils/eventbus",
         "utils/cashUpReportUtils",
+        "utils/cashManagementUtils",
         "components/keypadcoins",
         "data/dataordersave",
         "data/dataordertaxes",
@@ -150,26 +143,39 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/menu",
         "components/modalselectterminal",
         "components/popupdraweropened",
+        "components/servicesfilter",
+        "components/modalselectopenreceipts",
         // Old Tickets
         "components/modalpaidreceipts",
         "components/modalmultiorders",
         // Quotations
         "components/modalcreateorderfromquotation",
         "components/modalreactivatequotation",
+        "components/modalrejectquotation",
         // Detection of change in context
         "components/modalcontextchanged",
         "components/modalproductcharacteristic",
         "components/modalproductbrand",
 
         // Point of sale models
+        "model/pricelist",
         "model/product-category",
         "model/product-category-tree",
         "model/product",
+        "model/productprice",
+        "model/offerpricelist",
+        "model/service-product",
+        "model/service-category",
         "model/businesspartner",
         "model/document-sequence",
         "model/taxRate",
         "model/taxZone",
         "model/promotions",
+
+        "model/servicepricerule",
+        "model/servicepricerulerange",
+        "model/servicepricerulerangeprices",
+        "model/servicepriceruleversion",
 
         "model/obpos-supervisor-model",
 
@@ -212,7 +218,8 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "pointofsale/view/modals/modalmessage",
 
         // Cash Management window
-        "cashmgmt/model/cashmgmt-print", "cashmgmt/model/cashmgmt-model",
+        "cashmgmt/model/cashmgmt-print",
+        "cashmgmt/model/cashmgmt-model",
 
         "cashmgmt/view/cashmgmtkeyboard",
         "cashmgmt/view/listevents",
@@ -229,6 +236,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "closecash/view/tabcashmaster", "closecash/view/tabcashpayments",
         "closecash/view/tabcountcash", "closecash/view/tabcashtokeep",
         "closecash/view/tabpostprintclose", "closecash/components/cashup-modals",
+        "closecash/components/approvalreason-modal",
 
         "closecash/model/daycash",
         // Core resources
@@ -242,7 +250,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "model/discounts",
 
         // Hook
-        "components/menuhook" };
+        "components/menuhook", "components/hookPreDeleteLine" };
 
     // Unlink onLoad in the ERP
     globalResources.add(createComponentResource(ComponentResourceType.Static, prefix

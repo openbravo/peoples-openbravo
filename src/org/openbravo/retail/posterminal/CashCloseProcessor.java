@@ -32,6 +32,8 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.mobile.core.utils.OBMOBCUtils;
+import org.openbravo.model.ad.access.User;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.financialmgmt.gl.GLItem;
 import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
@@ -60,6 +62,7 @@ public class CashCloseProcessor {
     long t0 = System.currentTimeMillis();
 
     String cashUpId = jsonCashup.getString("id");
+    String userId = jsonCashup.getString("userId");
     JSONArray cashCloseInfo = jsonCashup.getJSONArray("cashCloseInfo");
     OBPOSAppCashup cashUp = OBDal.getInstance().get(OBPOSAppCashup.class, cashUpId);
     ArrayList<FIN_Reconciliation> arrayReconciliations = new ArrayList<FIN_Reconciliation>();
@@ -97,17 +100,16 @@ public class CashCloseProcessor {
           reconciliation, cashUp);
       OBDal.getInstance().save(recon);
 
-      BigDecimal reconciliationTotal = BigDecimal
-          .valueOf(cashCloseObj.getDouble("foreignExpected")).add(foreignDifference);
+      BigDecimal reconciliationTotal = BigDecimal.valueOf(cashCloseObj.getDouble("foreignExpected"))
+          .add(foreignDifference);
       if (reconciliationTotal.compareTo(new BigDecimal(0)) != 0) {
 
-        if (!cashCloseObj.getJSONObject("paymentMethod").isNull("amountToKeep")
-            && BigDecimal.valueOf(
-                cashCloseObj.getJSONObject("paymentMethod").getDouble("amountToKeep")).compareTo(
-                new BigDecimal(0)) != 0) {
+        if (!cashCloseObj.getJSONObject("paymentMethod").isNull("amountToKeep") && BigDecimal
+            .valueOf(cashCloseObj.getJSONObject("paymentMethod").getDouble("amountToKeep"))
+            .compareTo(new BigDecimal(0)) != 0) {
 
-          BigDecimal amountToKeep = BigDecimal.valueOf(cashCloseObj.getJSONObject("paymentMethod")
-              .getDouble("amountToKeep"));
+          BigDecimal amountToKeep = BigDecimal
+              .valueOf(cashCloseObj.getJSONObject("paymentMethod").getDouble("amountToKeep"));
           reconciliationTotal = reconciliationTotal.subtract(amountToKeep);
         }
         if (reconciliationTotal.compareTo(BigDecimal.ZERO) != 0) {
@@ -127,6 +129,9 @@ public class CashCloseProcessor {
       reconciliation.setDocumentNo(getReconciliationDocumentNo(reconciliation.getDocumentType()));
       OBDal.getInstance().save(reconciliation);
     }
+
+    User user = OBDal.getInstance().get(User.class, userId);
+    cashUp.setUserContact(user);
 
     long t1 = System.currentTimeMillis();
 
@@ -207,11 +212,11 @@ public class CashCloseProcessor {
 
   protected FIN_Reconciliation createReconciliation(JSONObject cashCloseObj,
       OBPOSApplications posTerminal, FIN_FinancialAccount account, Date currentDate)
-      throws JSONException {
+          throws JSONException {
 
     BigDecimal startingBalance;
-    OBCriteria<FIN_Reconciliation> reconciliationsForAccount = OBDal.getInstance().createCriteria(
-        FIN_Reconciliation.class);
+    OBCriteria<FIN_Reconciliation> reconciliationsForAccount = OBDal.getInstance()
+        .createCriteria(FIN_Reconciliation.class);
     reconciliationsForAccount.add(Restrictions.eq("account", account));
     reconciliationsForAccount.addOrderBy("creationDate", false);
     List<FIN_Reconciliation> reconciliations = reconciliationsForAccount.list();
@@ -222,16 +227,20 @@ public class CashCloseProcessor {
     }
 
     FIN_Reconciliation reconciliation = OBProvider.getInstance().get(FIN_Reconciliation.class);
+    if (cashCloseObj.has("id")) {
+      reconciliation.setId(cashCloseObj.getString("id"));
+      reconciliation.setNewOBObject(true);
+    }
     reconciliation.setAccount(account);
     reconciliation.setOrganization(posTerminal.getOrganization());
-    reconciliation.setDocumentType(posTerminal.getObposTerminaltype()
-        .getDocumentTypeForReconciliations());
+    reconciliation
+        .setDocumentType(posTerminal.getObposTerminaltype().getDocumentTypeForReconciliations());
     reconciliation.setDocumentNo("99999999temp");
     reconciliation.setEndingDate(currentDate);
     reconciliation.setTransactionDate(currentDate);
     if (!cashCloseObj.getJSONObject("paymentMethod").isNull("amountToKeep")) {
-      reconciliation.setEndingBalance(BigDecimal.valueOf(cashCloseObj
-          .getJSONObject("paymentMethod").getDouble("amountToKeep")));
+      reconciliation.setEndingBalance(BigDecimal
+          .valueOf(cashCloseObj.getJSONObject("paymentMethod").getDouble("amountToKeep")));
     } else {
       reconciliation.setEndingBalance(new BigDecimal(0));
     }
@@ -262,6 +271,8 @@ public class CashCloseProcessor {
     }
 
     FIN_FinaccTransaction transaction = OBProvider.getInstance().get(FIN_FinaccTransaction.class);
+    transaction.setId(OBMOBCUtils.getUUIDbyString(reconciliation.getId() + "Difference"));
+    transaction.setNewOBObject(true);
     transaction.setCurrency(account.getCurrency());
     transaction.setAccount(account);
     transaction.setLineNo(TransactionsDao.getTransactionMaxLineNo(account) + 10);
@@ -298,6 +309,8 @@ public class CashCloseProcessor {
     }
 
     FIN_FinaccTransaction transaction = OBProvider.getInstance().get(FIN_FinaccTransaction.class);
+    transaction.setId(OBMOBCUtils.getUUIDbyString(reconciliation.getId() + "Payment"));
+    transaction.setNewOBObject(true);
     transaction.setCurrency(account.getCurrency());
     transaction.setAccount(account);
     transaction.setLineNo(TransactionsDao.getTransactionMaxLineNo(account) + 10);
@@ -349,12 +362,14 @@ public class CashCloseProcessor {
     }
 
     FIN_FinaccTransaction transaction = OBProvider.getInstance().get(FIN_FinaccTransaction.class);
+    transaction.setId(OBMOBCUtils.getUUIDbyString(reconciliation.getId() + "Deposit"));
+    transaction.setNewOBObject(true);
     transaction.setCurrency(accountTo.getCurrency());
     transaction.setAccount(accountTo);
     transaction.setLineNo(TransactionsDao.getTransactionMaxLineNo(accountTo) + 10);
     transaction.setGLItem(glItem);
-    transaction.setDepositAmount(reconciliationTotal.multiply(conversionRate).setScale(2,
-        BigDecimal.ROUND_HALF_EVEN));
+    transaction.setDepositAmount(
+        reconciliationTotal.multiply(conversionRate).setScale(2, BigDecimal.ROUND_HALF_EVEN));
     transaction.setProcessed(true);
     transaction.setTransactionType("BPW");
     transaction.setStatus("RDNC");
@@ -372,6 +387,8 @@ public class CashCloseProcessor {
   protected OBPOSAppCashReconcil createCashUpReconciliation(OBPOSApplications posTerminal,
       OBPOSAppPayment paymentType, FIN_Reconciliation reconciliation, OBPOSAppCashup cashUp) {
     OBPOSAppCashReconcil recon = OBProvider.getInstance().get(OBPOSAppCashReconcil.class);
+    recon.setId(reconciliation.getId());
+    recon.setNewOBObject(true);
     recon.setOrganization(posTerminal.getOrganization());
     recon.setPaymentType(paymentType);
     recon.setReconciliation(reconciliation);

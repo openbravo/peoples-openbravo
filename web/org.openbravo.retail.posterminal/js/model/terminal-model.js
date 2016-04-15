@@ -68,7 +68,15 @@
                 supervisor.set('name', username);
                 supervisor.set('password', OB.MobileApp.model.generate_sha1(password + date));
                 supervisor.set('created', date);
-                supervisor.set('permissions', JSON.stringify(approvalType));
+                // Set all permissions
+                if (response.preference) {
+                  _.each(response.preference, function (perm) {
+                    permissions.push(perm);
+                  }, this);
+                  supervisor.set('permissions', JSON.stringify(permissions));
+                } else {
+                  supervisor.set('permissions', JSON.stringify(approvalType));
+                }
                 OB.Dal.save(supervisor, null, null, true);
               }
             } else {

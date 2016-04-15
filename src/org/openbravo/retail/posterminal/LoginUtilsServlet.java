@@ -22,11 +22,15 @@ import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.secureApp.LoginUtils;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.kernel.RequestContext;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.businessUtility.Preferences;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.PropertyException;
+import org.openbravo.mobile.core.MobileServerDefinition;
+import org.openbravo.mobile.core.MobileServerOrganization;
 import org.openbravo.mobile.core.login.MobileCoreLoginUtilsServlet;
 import org.openbravo.model.ad.access.FormAccess;
 import org.openbravo.model.ad.access.User;
@@ -142,6 +146,7 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
       JSONObject item = new JSONObject();
       item.put("name", qryUserObjectItem[0]);
       item.put("userName", qryUserObjectItem[1]);
+      item.put("userId", qryUserObjectItem[2]);
 
       // Get the image for the current user
       String hqlImage = "select image.mimetype, image.bindaryData "
@@ -216,6 +221,7 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
     String terminalKeyIdentifier = obj.getString("terminalKeyIdentifier");
     String username = obj.getString("username");
     String password = obj.getString("password");
+    String cacheSessionId = obj.getString("cacheSessionId");
 
     OBCriteria<OBPOSApplications> qApp = OBDal.getInstance()
         .createCriteria(OBPOSApplications.class);
@@ -271,8 +277,9 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
           result.put("appCaption", terminal.getIdentifier() + " - "
               + terminal.getOrganization().getIdentifier());
           result.put("servers", getServers(terminal));
-          result.put("services", getServices(terminal));
+          result.put("services", getServices());
           terminal.setLinked(true);
+          terminal.setCurrentCacheSession(cacheSessionId);
 
           OBDal.getInstance().save(terminal);
           try {
@@ -300,16 +307,78 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
   @Override
   protected JSONObject initActions(HttpServletRequest request) throws JSONException {
     JSONObject result = super.initActions(request);
+
+    final String terminalName = request.getParameter("terminalName");
+    if (terminalName != null) {
+      OBPOSApplications terminal = null;
+      OBCriteria<OBPOSApplications> qApp = OBDal.getInstance().createCriteria(
+          OBPOSApplications.class);
+      qApp.add(Restrictions.eq(OBPOSApplications.PROPERTY_SEARCHKEY, terminalName));
+      qApp.setFilterOnReadableOrganization(false);
+      qApp.setFilterOnReadableClients(false);
+      List<OBPOSApplications> apps = qApp.list();
+      if (apps.size() == 1) {
+        terminal = ((OBPOSApplications) apps.get(0));
+        result.put("servers", getServers(terminal));
+      }
+    }
+
     String value;
     try {
       value = Preferences.getPreferenceValue("OBPOS_TerminalAuthentication", true, null, null,
           null, null, (String) null);
     } catch (PropertyException e) {
-      result.put("terminalAuthentication", "N");
+      result.put("terminalAuthentication", "Y");
+      result.put("errorReadingTerminalAuthentication",
+          OBMessageUtils.messageBD("OBPOS_errorWhileReadingTerminalAuthenticationPreference"));
       return result;
     }
     result.put("terminalAuthentication", value);
     return result;
+  }
+
+  protected JSONArray getServers(OBPOSApplications terminal) throws JSONException {
+    JSONArray respArray = new JSONArray();
+
+    boolean multiServerEnabled = false;
+    try {
+      OBContext.setAdminMode(false);
+      multiServerEnabled = "Y".equals(Preferences.getPreferenceValue(
+          "OBMOBC_MultiServerArchitecture", true, terminal.getClient(), terminal.getOrganization(),
+          null, null, null).trim());
+    } catch (PropertyException ignore) {
+      // ignore on purpose
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+
+    if (!multiServerEnabled) {
+      return respArray;
+    }
+
+    OBQuery<MobileServerDefinition> servers = OBDal.getInstance().createQuery(
+        MobileServerDefinition.class,
+        "client.id=:clientId order by " + MobileServerDefinition.PROPERTY_PRIORITY);
+    servers.setFilterOnReadableClients(false);
+    servers.setFilterOnReadableOrganization(false);
+    servers.setNamedParameter("clientId", terminal.getClient().getId());
+    for (MobileServerDefinition server : servers.list()) {
+      if (server.isAllorgs()) {
+        respArray.put(createServerJSON(server));
+      } else {
+        Query filterQuery = OBDal
+            .getInstance()
+            .getSession()
+            .createFilter(server.getOBMOBCSERVERORGSList(),
+                "where this." + MobileServerOrganization.PROPERTY_SERVERORG + "=:org");
+        filterQuery.setParameter("org", terminal.getOrganization());
+        if (filterQuery.list().size() > 0) {
+          respArray.put(createServerJSON(server));
+        }
+      }
+    }
+
+    return respArray;
   }
 
   @Override

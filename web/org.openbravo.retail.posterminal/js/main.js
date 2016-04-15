@@ -47,8 +47,8 @@
    */
   // Add the current WebPOS version
   OB.UTIL.VersionManagement.current.posterminal = {
-    year: 15,
-    major: 4,
+    year: 16,
+    major: 2,
     minor: 0
   };
   // Add the current WebSQL database version for WebPOS

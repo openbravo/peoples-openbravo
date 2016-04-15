@@ -117,6 +117,7 @@ enyo.kind({
       this.$.numberOfCoins.setContent(counted);
       this.$.total.setContent(OB.I18N.formatCurrency(OB.DEC.add(0, this.model.get('totalAmount'))));
     }
+    return this;
   },
   lineEdit: function () {
     this.doLineEditCash();
@@ -165,7 +166,7 @@ enyo.kind({
             }]
           }]
         }, {
-          style: 'background-color: #ffffff; color: black;',
+          style: 'background-color: #ffffff; color: black; height: 100%; width:100%',
           components: [{
             components: [{
               classes: 'row-fluid',
@@ -190,12 +191,13 @@ enyo.kind({
                 }]
               }]
             }, {
-              style: 'overflow:auto; height: 454px; align:left; width:100%',
+              style: 'background-color: #ffffff; height: 454px; clear:left; width:100%',
               components: [{
                 name: 'paymentsList',
-                kind: 'OB.UI.Table',
+                kind: 'OB.UI.ScrollableTable',
                 renderLine: 'OB.OBPOSCashUp.UI.RenderCashPaymentsLine',
                 renderEmpty: 'OB.UI.RenderEmpty',
+                scrollAreaMaxHeight: '454px',
                 listStyle: 'list'
               }, {
                 name: 'renderLoading',
@@ -347,7 +349,7 @@ enyo.kind({
     this.payment.set('foreignCounted', totalCounted);
     var cTotalCounted = OB.UTIL.currency.toDefaultCurrency(this.payment.attributes.paymentMethod.currency, totalCounted);
     this.payment.set('counted', cTotalCounted);
-    this.payment.set('foreignDifference', OB.DEC.sub(totalCounted, this.payment.get('foreignExpected')));
+    this.payment.set('foreignDifference', OB.DEC.sub(totalCounted, OB.Utilities.Number.roundJSNumber(this.payment.get('foreignExpected'), 2)));
     this.printTotals();
 
     this.setCoinsStatus(null);

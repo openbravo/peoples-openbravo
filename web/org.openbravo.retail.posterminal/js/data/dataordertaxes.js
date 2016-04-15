@@ -1,13 +1,13 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2015 Openbravo S.L.U.
+ * Copyright (C) 2012-2016 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
  ************************************************************************************
  */
 
-/*global window,Promise,Backbone,_ */
+/*global OB, Promise, _, BigDecimal */
 
 (function () {
 
@@ -64,6 +64,21 @@
       });
       };
 
+  var getTaxRateNumber = function (taxRate) {
+
+      var rate = new BigDecimal(String(taxRate.get('rate'))); // 10
+      return rate.divide(new BigDecimal('100'), 20, BigDecimal.prototype.ROUND_HALF_UP); // 0.10
+      };
+
+  var calculateDiscountedGross = function (line) {
+      var discountedGross = line.get('gross');
+      if (line.get('promotions')) {
+        discountedGross = line.get('promotions').reduce(function (memo, element) {
+          return OB.DEC.sub(memo, element.actualAmt || element.amt || 0);
+        }, discountedGross);
+      }
+      return discountedGross;
+      };
 
   var distributeBOM = function (data, property, amount) {
 
@@ -76,8 +91,10 @@
         productbom[property] = bomamount;
       });
       // Adjust rounding in the first item of the bom
-      var lastitem = data[data.length - 1];
-      lastitem[property] = OB.DEC.add(lastitem[property], accamount);
+      if (data && data.length > 0) {
+        var lastitem = data[data.length - 1];
+        lastitem[property] = OB.DEC.add(lastitem[property], accamount);
+      }
       };
 
   var findTaxesCollection = function (receipt, line, taxCategory) {
@@ -87,14 +104,23 @@
             fromCountryOrg = OB.MobileApp.model.get('terminal').organizationCountryId,
             bpTaxCategory = receipt.get('bp').get('taxCategory'),
             bpIsExempt = receipt.get('bp').get('taxExempt'),
-            bpLocId = receipt.get('bp').get('locId');
+            bpLocId = receipt.get('bp').get('locId'),
+            bplCountryId = receipt.get('bp').get('locationModel') ? receipt.get('bp').get('locationModel').get('countryId') : null,
+            bplRegionId = receipt.get('bp').get('locationModel') ? receipt.get('bp').get('locationModel').get('regionId') : null,
+            bpName = receipt.get('bp').get('name') || OB.I18N.getLabel('OBPOS_LblEmptyAddress'),
+            bpLocName = receipt.get('bp').get('locName') || OB.I18N.getLabel('OBPOS_LblEmptyAddress');
         // SQL build
         // the query is ordered by countryId desc and regionId desc
         // (so, the first record will be the tax with the same country or
         // region that the customer,
         // or if toCountryId and toRegionId are nulls then will be ordered
-        // by validfromdate)            
-        var sql = "select c_tax.c_tax_id, c_tax.name,  c_tax.description, c_tax.taxindicator, c_tax.validfrom, c_tax.issummary, c_tax.rate, c_tax.parent_tax_id, (case when c_tax.c_country_id = '" + fromCountryOrg + "' then c_tax.c_country_id else tz.from_country_id end) as c_country_id, (case when c_tax.c_region_id = '" + fromRegionOrg + "' then c_tax.c_region_id else tz.from_region_id end) as c_region_id, (case when c_tax.to_country_id = bpl.countryId then c_tax.to_country_id else tz.to_country_id end) as to_country_id, (case when c_tax.to_region_id = bpl.regionId then c_tax.to_region_id else tz.to_region_id end)  as to_region_id, c_tax.c_taxcategory_id, c_tax.isdefault, c_tax.istaxexempt, c_tax.sopotype, c_tax.cascade, c_tax.c_bp_taxcategory_id,  c_tax.line, c_tax.iswithholdingtax, c_tax.isnotaxable, c_tax.deducpercent, c_tax.originalrate, c_tax.istaxundeductable,  c_tax.istaxdeductable, c_tax.isnovat, c_tax.baseamount, c_tax.c_taxbase_id, c_tax.doctaxamount, c_tax.iscashvat,  c_tax._identifier,  c_tax._idx,  (case when (c_tax.to_country_id = bpl.countryId or tz.to_country_id= bpl.countryId) then 0 else 1 end) as orderCountryTo,  (case when (c_tax.to_region_id = bpl.regionId or tz.to_region_id = bpl.regionId) then 0 else 1 end) as orderRegionTo,  (case when coalesce(c_tax.c_country_id, tz.from_country_id) is null then 1 else 0 end) as orderCountryFrom,  (case when coalesce(c_tax.c_region_id, tz.from_region_id) is null then 1 else 0 end) as orderRegionFrom  from c_tax left join c_tax_zone tz on tz.c_tax_id = c_tax.c_tax_id  join c_bpartner_location bpl on bpl.c_bpartner_location_id = '" + bpLocId + "'   where c_tax.sopotype in ('B', 'S') ";
+        // by validfromdate)
+        var sql = "";
+        if (!bplCountryId) {
+          sql = "select c_tax.c_tax_id, c_tax.name,  c_tax.description, c_tax.taxindicator, c_tax.validfrom, c_tax.issummary, c_tax.rate, c_tax.parent_tax_id, (case when c_tax.c_country_id = '" + fromCountryOrg + "' then c_tax.c_country_id else tz.from_country_id end) as c_country_id, (case when c_tax.c_region_id = '" + fromRegionOrg + "' then c_tax.c_region_id else tz.from_region_id end) as c_region_id, (case when c_tax.to_country_id = bpl.countryId then c_tax.to_country_id else tz.to_country_id end) as to_country_id, (case when c_tax.to_region_id = bpl.regionId then c_tax.to_region_id else tz.to_region_id end)  as to_region_id, c_tax.c_taxcategory_id, c_tax.isdefault, c_tax.istaxexempt, c_tax.sopotype, c_tax.cascade, c_tax.c_bp_taxcategory_id,  c_tax.line, c_tax.iswithholdingtax, c_tax.isnotaxable, c_tax.deducpercent, c_tax.originalrate, c_tax.istaxundeductable,  c_tax.istaxdeductable, c_tax.isnovat, c_tax.baseamount, c_tax.c_taxbase_id, c_tax.doctaxamount, c_tax.iscashvat,  c_tax._identifier,  c_tax._idx,  (case when (c_tax.to_country_id = bpl.countryId or tz.to_country_id= bpl.countryId) then 0 else 1 end) as orderCountryTo,  (case when (c_tax.to_region_id = bpl.regionId or tz.to_region_id = bpl.regionId) then 0 else 1 end) as orderRegionTo,  (case when coalesce(c_tax.c_country_id, tz.from_country_id) is null then 1 else 0 end) as orderCountryFrom,  (case when coalesce(c_tax.c_region_id, tz.from_region_id) is null then 1 else 0 end) as orderRegionFrom  from c_tax left join c_tax_zone tz on tz.c_tax_id = c_tax.c_tax_id  join c_bpartner_location bpl on bpl.c_bpartner_location_id = '" + bpLocId + "'   where c_tax.sopotype in ('B', 'S') ";
+        } else {
+          sql = "select c_tax.c_tax_id, c_tax.name,  c_tax.description, c_tax.taxindicator, c_tax.validfrom, c_tax.issummary, c_tax.rate, c_tax.parent_tax_id, (case when c_tax.c_country_id = '" + fromCountryOrg + "' then c_tax.c_country_id else tz.from_country_id end) as c_country_id, (case when c_tax.c_region_id = '" + fromRegionOrg + "' then c_tax.c_region_id else tz.from_region_id end) as c_region_id, (case when c_tax.to_country_id = '" + bplCountryId + "' then c_tax.to_country_id else tz.to_country_id end) as to_country_id, (case when c_tax.to_region_id = '" + bplRegionId + "' then c_tax.to_region_id else tz.to_region_id end)  as to_region_id, c_tax.c_taxcategory_id, c_tax.isdefault, c_tax.istaxexempt, c_tax.sopotype, c_tax.cascade, c_tax.c_bp_taxcategory_id,  c_tax.line, c_tax.iswithholdingtax, c_tax.isnotaxable, c_tax.deducpercent, c_tax.originalrate, c_tax.istaxundeductable,  c_tax.istaxdeductable, c_tax.isnovat, c_tax.baseamount, c_tax.c_taxbase_id, c_tax.doctaxamount, c_tax.iscashvat,  c_tax._identifier,  c_tax._idx,  (case when (c_tax.to_country_id = '" + bplCountryId + "' or tz.to_country_id= '" + bplCountryId + "') then 0 else 1 end) as orderCountryTo,  (case when (c_tax.to_region_id = '" + bplRegionId + "' or tz.to_region_id = '" + bplRegionId + "') then 0 else 1 end) as orderRegionTo,  (case when coalesce(c_tax.c_country_id, tz.from_country_id) is null then 1 else 0 end) as orderCountryFrom,  (case when coalesce(c_tax.c_region_id, tz.from_region_id) is null then 1 else 0 end) as orderRegionFrom  from c_tax left join c_tax_zone tz on tz.c_tax_id = c_tax.c_tax_id  where c_tax.sopotype in ('B', 'S') ";
+        }
         if (bpIsExempt) {
           sql = sql + " and c_tax.istaxexempt = 'true'";
         } else {
@@ -106,8 +132,13 @@
           }
         }
         sql = sql + " and c_tax.validFrom <= date()";
-        sql = sql + " and (c_tax.to_country_id = bpl.countryId   or tz.to_country_id = bpl.countryId   or (c_tax.to_country_id is null       and (not exists (select 1 from c_tax_zone z where z.c_tax_id = c_tax.c_tax_id)           or exists (select 1 from c_tax_zone z where z.c_tax_id = c_tax.c_tax_id and z.to_country_id = bpl.countryId)           or exists (select 1 from c_tax_zone z where z.c_tax_id = c_tax.c_tax_id and z.to_country_id is null))))";
-        sql = sql + " and (c_tax.to_region_id = bpl.regionId   or tz.to_region_id = bpl.regionId  or (c_tax.to_region_id is null       and (not exists (select 1 from c_tax_zone z where z.c_tax_id = c_tax.c_tax_id)           or exists (select 1 from c_tax_zone z where z.c_tax_id = c_tax.c_tax_id and z.to_region_id = bpl.regionId)           or exists (select 1 from c_tax_zone z where z.c_tax_id = c_tax.c_tax_id and z.to_region_id is null))))";
+        if (!bplCountryId) {
+          sql = sql + " and (c_tax.to_country_id = bpl.countryId   or tz.to_country_id = bpl.countryId   or (c_tax.to_country_id is null       and (not exists (select 1 from c_tax_zone z where z.c_tax_id = c_tax.c_tax_id)           or exists (select 1 from c_tax_zone z where z.c_tax_id = c_tax.c_tax_id and z.to_country_id = bpl.countryId)           or exists (select 1 from c_tax_zone z where z.c_tax_id = c_tax.c_tax_id and z.to_country_id is null))))";
+          sql = sql + " and (c_tax.to_region_id = bpl.regionId   or tz.to_region_id = bpl.regionId  or (c_tax.to_region_id is null       and (not exists (select 1 from c_tax_zone z where z.c_tax_id = c_tax.c_tax_id)           or exists (select 1 from c_tax_zone z where z.c_tax_id = c_tax.c_tax_id and z.to_region_id = bpl.regionId)           or exists (select 1 from c_tax_zone z where z.c_tax_id = c_tax.c_tax_id and z.to_region_id is null))))";
+        } else {
+          sql = sql + " and (c_tax.to_country_id = '" + bplCountryId + "'   or tz.to_country_id = '" + bplCountryId + "'   or (c_tax.to_country_id is null       and (not exists (select 1 from c_tax_zone z where z.c_tax_id = c_tax.c_tax_id)           or exists (select 1 from c_tax_zone z where z.c_tax_id = c_tax.c_tax_id and z.to_country_id = '" + bplCountryId + "')           or exists (select 1 from c_tax_zone z where z.c_tax_id = c_tax.c_tax_id and z.to_country_id is null))))";
+          sql = sql + " and (c_tax.to_region_id = '" + bplRegionId + "'   or tz.to_region_id = '" + bplRegionId + "'  or (c_tax.to_region_id is null       and (not exists (select 1 from c_tax_zone z where z.c_tax_id = c_tax.c_tax_id)           or exists (select 1 from c_tax_zone z where z.c_tax_id = c_tax.c_tax_id and z.to_region_id = '" + bplRegionId + "')           or exists (select 1 from c_tax_zone z where z.c_tax_id = c_tax.c_tax_id and z.to_region_id is null))))";
+        }
         sql = sql + " order by orderRegionTo, orderRegionFrom, orderCountryTo, orderCountryFrom, c_tax.validFrom desc, c_tax.isdefault desc";
 
         OB.UTIL.HookManager.executeHooks('OBPOS_FindTaxRate', {
@@ -115,13 +146,13 @@
           line: line,
           sql: sql
         }, function (args) {
-          OB.Dal.queryUsingCache(OB.Model.TaxRate, args.sql, [], function (coll, args) { // success
+          OB.Dal.queryUsingCache(OB.Model.TaxRate, args.sql, [], function (coll) { // success
             if (coll && coll.length > 0) {
               fulfill(coll);
             } else {
-              reject(OB.I18N.getLabel('OBPOS_TaxNotFound_Message', [taxCategory]));
+              reject(OB.I18N.getLabel('OBPOS_TaxNotFound_Message', [bpName, bpLocName]));
             }
-          }, function (tx, error) { // error
+          }, function () { // error
             reject(OB.I18N.getLabel('OBPOS_TaxCalculationError_Message'));
           });
         });
@@ -157,8 +188,7 @@
             if (!taxRate.get('summaryLevel')) {
 
               var taxId = taxRate.get('id');
-              var rate = new BigDecimal(String(taxRate.get('rate'))); // 10
-              rate = rate.divide(new BigDecimal('100'), 20, BigDecimal.prototype.ROUND_HALF_UP); // 0.10
+              var rate = getTaxRateNumber(taxRate);
               if (taxRate.get('cascade')) {
                 linerate = linerate.multiply(rate.add(BigDecimal.prototype.ONE));
                 taxamt = taxamt.multiply(new BigDecimal(String(OB.DEC.add(1, rate))));
@@ -205,18 +235,17 @@
 
         // the line net price is calculated by doing price*price/(price*rate), as it is done in
         // the database function c_get_net_price_from_gross
-        var linenet, calculatedLineNet, roundedLinePriceNet, linepricenet, pricenet, discountedNet, pricenetcascade, discountedLinePriceNet, roundedDiscountedLinePriceNet, calculatedDiscountedNet;
+        var linenet, roundedLinePriceNet, linepricenet, pricenet, discountedNet, pricenetcascade, discountedLinePriceNet, roundedDiscountedLinePriceNet;
         if (orggross === 0) {
-          linenet = new BigDecimal('0');
+          linenet = 0;
           linepricenet = new BigDecimal('0');
           roundedLinePriceNet = 0;
-          calculatedLineNet = 0;
         } else {
           linenet = new BigDecimal(String(orggross)).multiply(new BigDecimal(String(orggross))).divide(new BigDecimal(String(taxamt)), 20, BigDecimal.prototype.ROUND_HALF_UP);
           linepricenet = linenet.divide(new BigDecimal(String(line.get('qty'))), 20, BigDecimal.prototype.ROUND_HALF_UP);
           //round and continue with rounded values
+          linenet = OB.DEC.toNumber(linenet);
           roundedLinePriceNet = OB.DEC.toNumber(linepricenet);
-          calculatedLineNet = OB.DEC.mul(roundedLinePriceNet, new BigDecimal(String(line.get('qty'))));
         }
 
         if (!line.get('tax')) {
@@ -226,11 +255,11 @@
         }
         line.set({
           'taxAmount': OB.DEC.add(line.get('taxAmount'), OB.DEC.sub(orggross, linenet)),
-          'net': OB.DEC.add(line.get('net'), calculatedLineNet),
+          'net': OB.DEC.add(line.get('net'), linenet),
           'pricenet': OB.DEC.add(line.get('pricenet'), roundedLinePriceNet)
         });
 
-        receipt.set('net', OB.DEC.add(receipt.get('net'), calculatedLineNet), {
+        receipt.set('net', OB.DEC.add(receipt.get('net'), linenet), {
           silent: true
         });
 
@@ -240,7 +269,6 @@
             discountedNet = new BigDecimal(String(discountedGross)).multiply(new BigDecimal(String(discountedGross))).divide(new BigDecimal(String(taxamtdc)), 20, BigDecimal.prototype.ROUND_HALF_UP);
             discountedLinePriceNet = discountedNet.divide(new BigDecimal(String(line.get('qty'))), 20, BigDecimal.prototype.ROUND_HALF_UP);
             roundedDiscountedLinePriceNet = OB.DEC.toNumber(discountedLinePriceNet);
-            calculatedDiscountedNet = OB.DEC.mul(roundedDiscountedLinePriceNet, new BigDecimal(String(line.get('qty'))));
             //In advance we will work with rounded prices
             discountedNet = OB.DEC.toNumber(discountedNet);
             pricenet = roundedDiscountedLinePriceNet; //discounted rounded NET unit price
@@ -306,7 +334,7 @@
         var summedTaxAmt = 0;
         var expectedGross = (_.isNull(discountedGross) || _.isUndefined(discountedGross)) ? orggross : discountedGross;
         var greaterTax = null;
-        _.each(coll, function (taxRate, taxIndex, taxList) {
+        _.each(coll, function (taxRate) {
           if (!taxRate.get('summaryLevel')) {
             var taxId = taxRate.get('id');
             summedTaxAmt = OB.DEC.add(summedTaxAmt, taxesline[taxId].amount);
@@ -347,30 +375,35 @@
 
         // Calculate receipt taxes
         var taxes = receipt.get('taxes');
-        _.each(coll, function (taxRate, taxIndex) {
+        _.each(coll, function (taxRate) {
           var taxId = taxRate.get('id');
 
           delete taxes[taxId];
-          receipt.get('lines').each(function (line, lineindex) {
+          receipt.get('lines').each(function (line) {
             var taxLines = line.get('taxLines');
             if (!taxLines || !taxLines[taxId]) {
               return;
             }
             if (!taxRate.get('summaryLevel')) {
+
               if (taxes[taxId]) {
                 taxes[taxId].net = OB.DEC.add(taxes[taxId].net, taxLines[taxId].net);
-                taxes[taxId].amount = OB.DEC.add(taxes[taxId].amount, taxLines[taxId].amount);
+                taxes[taxId].amount = (taxRate.get('docTaxAmount') === 'D') //
+                ? OB.DEC.mul(taxes[taxId].net, getTaxRateNumber(taxRate)) // Calculate taxes At Document Level
+                : OB.DEC.add(taxes[taxId].amount, taxLines[taxId].amount); // Calculate taxes At Line Level
               } else {
                 taxes[taxId] = {};
                 taxes[taxId].name = taxRate.get('name');
                 taxes[taxId].rate = taxRate.get('rate');
                 taxes[taxId].net = taxLines[taxId].net;
-                taxes[taxId].amount = taxLines[taxId].amount;
+                taxes[taxId].amount = (taxRate.get('docTaxAmount') === 'D') //
+                ? OB.DEC.mul(taxes[taxId].net, getTaxRateNumber(taxRate)) // Initialize taxes At Document Level
+                : taxLines[taxId].amount; // Initialize taxes At Line Level
               }
             }
           });
         });
-        _.each(coll, function (taxRate, taxIndex) {
+        _.each(coll, function (taxRate) {
           var taxId = taxRate.get('id');
           if (taxes[taxId]) {
             taxes[taxId].net = OB.DEC.toNumber(taxes[taxId].net);
@@ -383,39 +416,22 @@
   var calcLineTaxesIncPrice = function (receipt, line) {
 
       // Initialize line properties
-      line.set('taxLines', {}, {
+      line.set({
+        'taxLines': {},
+        'tax': null,
+        'taxAmount': OB.DEC.Zero,
+        'net': OB.DEC.Zero,
+        'pricenet': OB.DEC.Zero,
+        'discountedNet': OB.DEC.Zero,
+        'linerate': BigDecimal.prototype.ONE
+      }, {
         silent: true
       });
-      line.set('tax', null, {
-        silent: true
-      });
-      line.set('taxAmount', OB.DEC.Zero, {
-        silent: true
-      });
-      line.set('net', OB.DEC.Zero, {
-        silent: true
-      });
-      line.set('pricenet', OB.DEC.Zero, {
-        silent: true
-      });
-      line.set('discountedNet', OB.DEC.Zero, {
-        silent: true
-      });
-      line.set('linerate', BigDecimal.prototype.ZERO, {
-        silent: true
-      });
-
 
       // Calculate product, orggross, and discountedGross.
       var product = line.get('product');
       var orggross = line.get('gross');
-      var discountedGross = null;
-      if (line.get('promotions')) {
-        discountedGross = line.get('gross');
-        discountedGross = line.get('promotions').reduce(function (memo, element) {
-          return OB.DEC.sub(memo, element.actualAmt || element.amt || 0);
-        }, discountedGross);
-      }
+      var discountedGross = calculateDiscountedGross(line);
 
       return isTaxCategoryBOM(product.get('taxCategory')).then(function (isbom) {
         if (isbom) {
@@ -445,21 +461,25 @@
         }
       }).then(function () {
         // Calculate linerate
-        if (orggross === 0 && line.get('net') === 0) {
-          line.set('linerate', BigDecimal.prototype.ZERO, {
-            silent: true
-          });
-        } else {
-          line.set('linerate', OB.DEC.div(orggross, line.get('net')), {
-            silent: true
-          });
-        }
+        line.set('linerate', (orggross === 0 || line.get('net') === 0) ? BigDecimal.prototype.ONE : OB.DEC.div(orggross, line.get('net')), {
+          silent: true
+        });
       })['catch'](function (reason) {
+        var title = OB.I18N.getLabel('OBPOS_TaxNotFound_Header');
+        OB.error(title + ":" + reason);
+        line.set('hasTaxError', true, {
+          silent: true
+        });
+        receipt.set('preventServicesUpdate', true);
+        receipt.set('deleting', true);
         receipt.deleteLine(line);
+        receipt.unset('preventServicesUpdate');
+        receipt.unset('deleting');
+        receipt.get('lines').trigger('updateRelations');
         OB.MobileApp.view.$.containerWindow.getRoot().doShowPopup({
           popup: 'OB_UI_MessageDialog',
           args: {
-            header: OB.I18N.getLabel('OBPOS_TaxNotFound_Header'),
+            header: title,
             message: reason
           }
         });
@@ -469,17 +489,52 @@
   var calcTaxesIncPrice = function (receipt) {
 
       // Initialize receipt properties
-      receipt.set('taxes', {}, {
-        silent: true
-      });
-      receipt.set('net', OB.DEC.Zero, {
+      receipt.set({
+        'taxes': {},
+        'net': OB.DEC.Zero
+      }, {
         silent: true
       });
 
       // Calculate
-      return Promise.all(_.map(receipt.get('lines').models, function (line, index, list) {
+      return Promise.all(_.map(receipt.get('lines').models, function (line) {
         return calcLineTaxesIncPrice(receipt, line);
-      }));
+      })).then(function () {
+        // Ajust receipt taxes if net + taxes !== gross
+        var totalNet = OB.DEC.Zero;
+        var totalGross = OB.DEC.Zero;
+        var totalTaxAmount = OB.DEC.Zero;
+        var taxToAdjust = null;
+        var taxToAdjustMax = OB.DEC.Zero;
+        var adjustment;
+
+        // Calculate taxes
+        _.forEach(receipt.get('taxes'), function (tax, taxid) {
+          totalTaxAmount = OB.DEC.add(totalTaxAmount, tax.amount);
+          if (OB.DEC.abs(tax.amount) > taxToAdjustMax) {
+            taxToAdjust = tax;
+            taxToAdjustMax = OB.DEC.abs(tax.amount);
+          }
+        });
+
+        if (taxToAdjust) {
+          // Adjust can be performed
+          // Calculate receipt net and gross
+          receipt.get('lines').forEach(function (line) {
+            if (!_.isUndefined(line.get('discountedNet'))) {
+              // Include in the calculation only the lines that have a 'discountedNet' attribute
+              // because has been processed by calcLineTaxesIncPrice()
+              totalNet = OB.DEC.add(totalNet, line.get('discountedNet'));
+              totalGross = OB.DEC.add(totalGross, calculateDiscountedGross(line));
+            }
+          });
+
+          adjustment = OB.DEC.sub(totalGross, OB.DEC.add(totalNet, totalTaxAmount));
+          if (adjustment !== OB.DEC.Zero) {
+            taxToAdjust.amount = OB.DEC.add(taxToAdjust.amount, adjustment);
+          }
+        }
+      });
       };
 
   var calcProductTaxesExcPrice = function (receipt, line, taxCategory, linepricenet, linenet, discountedprice, discountedNet) {
@@ -510,8 +565,7 @@
             if (!taxRate.get('summaryLevel')) {
 
               var taxId = taxRate.get('id');
-              var rate = new BigDecimal(String(taxRate.get('rate')));
-              rate = rate.divide(new BigDecimal('100'), 20, BigDecimal.prototype.ROUND_HALF_UP);
+              var rate = getTaxRateNumber(taxRate);
               var net = OB.DEC.mul(pricenetAux, line.get('qty')); //=== discountedNet
               if (taxRate.get('cascade')) {
 
@@ -553,7 +607,9 @@
                     taxes[taxId].net = OB.DEC.add(taxes[taxId].net, roundingLoses);
                   }
                 }
-                taxes[taxId].amount = OB.DEC.add(taxes[taxId].amount, amount);
+                taxes[taxId].amount = (taxRate.get('docTaxAmount') === 'D') //
+                ? OB.DEC.mul(taxes[taxId].net, getTaxRateNumber(taxRate)) // Calculate taxes At Document Level
+                : OB.DEC.add(taxes[taxId].amount, amount); // Calculate taxes At Line Level
               } else {
                 taxes[taxId] = {};
                 taxes[taxId].name = taxRate.get('name');
@@ -568,7 +624,9 @@
                     taxes[taxId].net = OB.DEC.add(taxes[taxId].net, roundingLoses);
                   }
                 }
-                taxes[taxId].amount = amount;
+                taxes[taxId].amount = (taxRate.get('docTaxAmount') === 'D') //
+                ? OB.DEC.mul(taxes[taxId].net, getTaxRateNumber(taxRate)) // Calculate taxes At Document Level
+                : amount; // Calculate taxes At Line Level
               }
             } else {
               linetaxid = taxRate.get('id');
@@ -616,7 +674,7 @@
       line.set({
         'pricenet': line.get('price'),
         'net': OB.DEC.mul(line.get('price'), line.get('qty')),
-        'linerate': OB.DEC.Zero,
+        'linerate': OB.DEC.One,
         'tax': null,
         'taxAmount': OB.DEC.Zero,
         'taxLines': {}
@@ -667,7 +725,7 @@
         // Initialize line calculations
         line.set({
           'discountedNet': discountedNet,
-          'discountedNetPrice': discountedprice,
+          'discountedNetPrice': OB.DEC.toNumber(discountedprice),
           'gross': linenet,
           'discountedGross': discountedNet
         }, {
@@ -704,24 +762,28 @@
 
       return resultpromise.then(function () {
         // Calculate linerate and taxamount
-        if (line.get('gross') === 0 && line.get('net') === 0) {
-          line.set('linerate', BigDecimal.prototype.ZERO, {
-            silent: true
-          });
-        } else {
-          line.set('linerate', OB.DEC.div(line.get('gross'), line.get('net')), {
-            silent: true
-          });
-        }
-        line.set('taxAmount', OB.DEC.sub(line.get('discountedGross'), line.get('discountedNet')), {
+        line.set({
+          'linerate': (line.get('gross') === 0 || line.get('net') === 0) ? BigDecimal.prototype.ONE : OB.DEC.div(line.get('gross'), line.get('net')),
+          'taxAmount': OB.DEC.sub(line.get('discountedGross'), line.get('discountedNet'))
+        }, {
           silent: true
         });
       })['catch'](function (reason) {
+        var title = OB.I18N.getLabel('OBPOS_TaxNotFound_Header');
+        OB.error(title + ":" + reason);
+        line.set('hasTaxError', true, {
+          silent: true
+        });
+        receipt.set('preventServicesUpdate', true);
+        receipt.set('deleting', true);
         receipt.deleteLine(line);
+        receipt.unset('preventServicesUpdate');
+        receipt.unset('deleting');
+        receipt.get('lines').trigger('updateRelations');
         OB.MobileApp.view.$.containerWindow.getRoot().doShowPopup({
           popup: 'OB_UI_MessageDialog',
           args: {
-            header: OB.I18N.getLabel('OBPOS_TaxNotFound_Header'),
+            header: title,
             message: reason
           }
         });
@@ -736,9 +798,46 @@
       });
 
       // Calculate
-      return Promise.all(_.map(receipt.get('lines').models, function (line, index, list) {
+      return Promise.all(_.map(receipt.get('lines').models, function (line) {
         return calcLineTaxesExcPrice(receipt, line);
-      }));
+      })).then(function () {
+        // Ajust gross if net + taxes !== gross
+        var totalTaxAmount = OB.DEC.Zero;
+        var totalNet = OB.DEC.Zero;
+        var totalGross = OB.DEC.Zero;
+        var gross;
+        var lineToAdjust = null;
+        var lineToAdjustMax = OB.DEC.Zero;
+
+        var adjustment;
+
+        receipt.get('lines').forEach(function (line) {
+          totalNet = OB.DEC.add(totalNet, line.get('discountedNet'));
+          gross = line.get('discountedGross');
+          totalGross = OB.DEC.add(totalGross, gross);
+          if (OB.DEC.abs(gross) > lineToAdjustMax) {
+            lineToAdjustMax = gross;
+            lineToAdjust = line;
+          }
+        });
+
+        if (lineToAdjust) {
+          // Calculate taxes
+          _.forEach(receipt.get('taxes'), function (tax, taxid) {
+            totalTaxAmount = OB.DEC.add(totalTaxAmount, tax.amount);
+          });
+
+          adjustment = OB.DEC.sub(totalGross, OB.DEC.add(totalNet, totalTaxAmount));
+          if (adjustment !== OB.DEC.Zero) {
+            lineToAdjust.set({
+              'discountedGross': OB.DEC.sub(lineToAdjust.get('discountedGross'), adjustment),
+              'gross': OB.DEC.sub(lineToAdjust.get('gross'), adjustment)
+            }, {
+              silent: true
+            });
+          }
+        }
+      });
       };
 
   // Just calc the right function depending on prices including or excluding taxes
@@ -750,30 +849,9 @@
       }
       };
 
-  var getTaxesInfo = function (receipt) {
-      return {
-        taxlines: receipt.get('lines').map(function (line) {
-          return {
-            linerate: line.get('linerate'),
-            tax: line.get('tax'),
-            taxAmount: line.get('taxAmount'),
-            net: line.get('net'),
-            pricenet: line.get('pricenet'),
-            discountedNet: line.get('discountedNet'),
-            taxes: line.get('taxLines')
-          };
-        }),
-        net: receipt.get('net'),
-        taxes: receipt.get('taxes')
-      };
-      };
-
-  OB = window.OB || {};
-  OB.DATA = window.OB.DATA || {};
-  OB.DATA.OrderTaxes = function (modelOrder) {
-    modelOrder.calculateTaxes = function (callback) {
+  OB.DATA.OrderTaxes = function (modelOfAnOrder) {
+    modelOfAnOrder.calculateTaxes = function (callback) {
       var me = this;
-      var mytaxes, mytaxesold;
       var synchId;
       synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('taxescalculation');
       calcTaxes(me).then(function () {

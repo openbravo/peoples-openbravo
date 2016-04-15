@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2014-2015 Openbravo S.L.U.
+ * Copyright (C) 2014-2016 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -53,7 +53,11 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
     loaded: true,
     active: true
   }],
-  init: function () {},
+  init: function () {
+    OB.error("This init method should never be called for this model. Call initModels and loadModels instead");
+    this.initModels(function () {});
+    this.loadModels(function () {});
+  },
   initModels: function (initModelsCallback) {
     var synchId1 = OB.UTIL.SynchronizationHelper.busyUntilFinishes('cashup-model.init1');
     //Check for orders which are being processed in this moment.
@@ -64,7 +68,10 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
         newstep, expected = 0,
         startings = [],
         cashUpReport, tempList = new Backbone.Collection(),
-        activePaymentsList = [];
+        activePaymentsList = [],
+        finish, synch1 = false,
+        synch2 = false,
+        synch3 = false;
 
     this.cashupStepsDefinition[this.stepIndex('OB.CashUp.Master')].active = OB.POS.modelterminal.get('terminal').ismaster;
     this.cashupStepsDefinition[this.stepIndex('OB.CashUp.StepPendingOrders')].loaded = false;
@@ -165,7 +172,8 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
         }, this);
         me.cashupStepsDefinition[me.stepIndex('OB.CashUp.CashPayments')].loaded = true;
         me.cashupStepsDefinition[me.stepIndex('OB.CashUp.PaymentMethods')].loaded = true;
-        me.finishLoad();
+        synch1 = true;
+        finish();
         OB.UTIL.SynchronizationHelper.finished(synchId1, 'cashup-model.init1');
       }, function () {
         OB.UTIL.SynchronizationHelper.finished(synchId1, 'cashup-model.init1');
@@ -313,7 +321,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
             searchKey: p.get('searchKey'),
             origAmount: OB.UTIL.currency.toDefaultCurrency(fromCurrencyId, p.get('startingCash')),
             amount: OB.DEC.add(0, p.get('startingCash')),
-            description: 'Starting ' + p.get('name') + paymentSharedStr,
+            description: OB.I18N.getLabel('OBPOS_LblStarting') + ' ' + p.get('name') + paymentSharedStr,
             currency: fromCurrencyId,
             isocode: auxPay.isocode,
             rate: p.get('rate'),
@@ -326,16 +334,17 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
           cashUpReport: cashUpReport
         }, function (args) {
           me.get('cashUpReport').add(args.cashUpReport);
-          initModelsCallback();
+          synch2 = true;
+          finish();
           OB.UTIL.SynchronizationHelper.finished(synchId2, 'cashup-model.init2');
         });
       }, this);
     }, this);
 
     this.get('paymentList').on('change:counted', function (mod) {
-      mod.set('difference', OB.DEC.sub(mod.get('counted'), mod.get('expected')));
+      mod.set('difference', OB.DEC.sub(mod.get('counted'), OB.Utilities.Number.roundJSNumber(mod.get('expected'), 2)));
       if (mod.get('foreignCounted') !== null && mod.get('foreignCounted') !== undf && mod.get('foreignExpected') !== null && mod.get('foreignExpected') !== undf) {
-        mod.set('foreignDifference', OB.DEC.sub(mod.get('foreignCounted'), mod.get('foreignExpected')));
+        mod.set('foreignDifference', OB.DEC.sub(mod.get('foreignCounted'), OB.Utilities.Number.roundJSNumber(mod.get('foreignExpected'), 2)));
       }
       this.set('totalCounted', _.reduce(this.get('paymentList').models, function (total, model) {
         return model.get('counted') ? OB.DEC.add(total, model.get('counted')) : total;
@@ -346,7 +355,8 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
     }, this);
 
     OB.Dal.find(OB.Model.Order, {
-      hasbeenpaid: 'N'
+      hasbeenpaid: 'N',
+      'session': OB.MobileApp.model.get('session')
     }, function (pendingOrderList, me) {
       var emptyOrders;
       // Detect empty orders and remove them from here
@@ -368,12 +378,19 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
       var indexStepPendingOrders = me.stepIndex('OB.CashUp.StepPendingOrders');
       me.cashupStepsDefinition[indexStepPendingOrders].active = pendingOrderList.length > 0;
       me.cashupStepsDefinition[indexStepPendingOrders].loaded = true;
+      synch3 = true;
+      finish();
     }, function (tx, error) {
       OB.UTIL.showError("OBDAL error: " + error);
     }, this);
 
     this.printCashUp = new OB.OBPOSCashUp.Print.CashUp();
 
+    finish = function () {
+      if (synch1 && synch2 && synch3) {
+        me.finishLoad();
+      }
+    };
   },
   loadModels: function (loadModelsCallback) {
     loadModelsCallback();
@@ -664,8 +681,9 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
     }, function (cashUp) {
       OB.UTIL.composeCashupInfo(cashUp, currentMe, function (me) {
         var i, paymentMethodInfo, objToSend = JSON.parse(cashUp.at(0).get('objToSend'));
-        objToSend.cashUpDate = OB.I18N.formatDate(new Date());
-        objToSend.currentDate = OB.I18N.formatDate(new Date());
+        var now = new Date();
+        objToSend.cashUpDate = OB.I18N.normalizeDate(now);
+        objToSend.timezoneOffset = now.getTimezoneOffset();
         for (i = 0; i < me.additionalProperties.length; i++) {
           objToSend[me.additionalProperties[i]] = me.propertyFunctions[i](OB.POS.modelterminal.get('terminal').id, cashUp.at(0));
         }
@@ -679,6 +697,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
             paymentMethod: {}
           };
           // Set cashclose info
+          cashCloseInfo.id = OB.UTIL.get_UUID();
           cashCloseInfo.paymentTypeId = curModel.get('id');
           cashCloseInfo.difference = curModel.get('difference');
           cashCloseInfo.foreignDifference = curModel.get('foreignDifference');
@@ -689,6 +708,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
           cashCloseInfo.paymentMethod = paymentMethodInfo;
           objToSend.cashCloseInfo.push(cashCloseInfo);
         }, me);
+        objToSend.approvals = me.get('approvals');
         var cashMgmtIds = [];
         objToSend.cashMgmtIds = cashMgmtIds;
         OB.Dal.find(OB.Model.CashManagement, {
@@ -705,23 +725,21 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
           cashUp.at(0).set('isprocessed', 'Y');
 
           OB.Dal.save(cashUp.at(0), function () {
-            var callbackFunc = function () {
-                OB.UTIL.initCashUp(function () {
-                  OB.MobileApp.model.runSyncProcess();
-                  OB.UTIL.SynchronizationHelper.finished(synchId, 'processAndFinishCashUp');
-                  OB.UTIL.calculateCurrentCash();
-                  OB.UTIL.showLoading(false);
-                  me.set('finished', true);
-                }, function () {
-                  OB.MobileApp.model.runSyncProcess();
-                  OB.UTIL.showLoading(false);
-                  me.set('finishedWrongly', true);
-                  OB.UTIL.SynchronizationHelper.finished(synchId, 'processAndFinishCashUp');
-                }, true);
+            var callbackFinishedSuccess = function () {
+                OB.UTIL.showLoading(true);
+                me.set('finished', true);
+                if (OB.MobileApp.model.hasPermission('OBPOS_print.cashup')) {
+                  me.printCashUp.print(me.get('cashUpReport').at(0), me.getCountCashSummary(), true);
+                }
                 };
-            if (OB.MobileApp.model.hasPermission('OBPOS_print.cashup')) {
-              me.printCashUp.print(me.get('cashUpReport').at(0), me.getCountCashSummary(), true);
-            }
+            var callbackFunc = function () {
+                OB.UTIL.SynchronizationHelper.finished(synchId, 'processAndFinishCashUp');
+                OB.MobileApp.model.runSyncProcess(function () {
+                  callbackFinishedSuccess();
+                }, function () {
+                  callbackFinishedSuccess();
+                });
+                };
             callbackFunc();
           }, null);
         }, null, this);
@@ -731,13 +749,99 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
 });
 
 OB.OBPOSCashUp.Model.CashUpPartial = OB.OBPOSCashUp.Model.CashUp.extend({
-  initialStep: 5,
+  initialStep: 6,
   finishButtonLabel: 'OBPOS_LblPrintClose',
   reportTitleLabel: 'OBPOS_LblPartialCashUpTitle',
+  getCountCashSummary: function () {
+    var countCashSummary, counter, enumConcepts, enumSecondConcepts, enumSummarys, i, undf, model, value = OB.DEC.Zero,
+        second = OB.DEC.Zero;
+    countCashSummary = {
+      expectedSummary: [],
+      countedSummary: [],
+      differenceSummary: [],
+      qtyToKeepSummary: [],
+      qtyToDepoSummary: [],
+      totalCounted: this.get('totalCounted'),
+      totalExpected: this.get('totalExpected'),
+      totalDifference: this.get('totalDifference'),
+      totalQtyToKeep: OB.DEC.Zero,
+      totalQtyToDepo: OB.DEC.Zero,
+      isPartialCashup: true
+    };
+    //First we fix the qty to keep for non-automated payment methods
+    _.each(this.get('paymentList').models, function (model) {
+      if (OB.UTIL.isNullOrUndefined(model.get('qtyToKeep'))) {
+        model.set('qtyToKeep', model.get('counted'));
+      }
+    });
+
+    enumSummarys = ['expectedSummary', 'countedSummary', 'differenceSummary', 'qtyToKeepSummary', 'qtyToDepoSummary'];
+    enumConcepts = ['expected', 'counted', 'difference', 'qtyToKeep', 'foreignCounted'];
+    enumSecondConcepts = ['foreignExpected', 'foreignCounted', 'foreignDifference', 'qtyToKeep', 'qtyToKeep'];
+    var sortedPays = _.sortBy(this.get('paymentList').models, function (p) {
+      return p.get('name');
+    });
+    for (counter = 0; counter < 5; counter++) {
+      for (i = 0; i < sortedPays.length; i++) {
+        model = sortedPays[i];
+        if (!model.get(enumConcepts[counter])) {
+          countCashSummary[enumSummarys[counter]].push(new Backbone.Model({
+            searchKey: model.get('searchKey'),
+            name: model.get('name'),
+            value: 0,
+            second: 0,
+            isocode: ''
+          }));
+        } else {
+          switch (enumSummarys[counter]) {
+          case 'qtyToKeepSummary':
+            if (model.get(enumSecondConcepts[counter]) !== null && model.get(enumSecondConcepts[counter]) !== undf) {
+              value = OB.DEC.Zero;
+              second = OB.DEC.Zero;
+            }
+            break;
+          case 'qtyToDepoSummary':
+            if (model.get(enumSecondConcepts[counter]) !== null && model.get(enumSecondConcepts[counter]) !== undf && model.get('rate') !== '1') {
+              second = OB.DEC.Zero;
+            }
+            if (model.get(enumSecondConcepts[counter]) !== null && model.get(enumSecondConcepts[counter]) !== undf) {
+              value = OB.DEC.Zero;
+            }
+            break;
+          default:
+            value = model.get(enumConcepts[counter]);
+            second = model.get(enumSecondConcepts[counter]);
+          }
+          countCashSummary[enumSummarys[counter]].push(new Backbone.Model({
+            searchKey: model.get('searchKey'),
+            name: model.get('name'),
+            value: value,
+            second: second,
+            isocode: model.get('isocode')
+          }));
+        }
+      }
+    }
+    return countCashSummary;
+  },
   processAndFinishCashUp: function () {
     if (OB.MobileApp.model.hasPermission('OBPOS_print.cashup')) {
       this.printCashUp.print(this.get('cashUpReport').at(0), this.getCountCashSummary(), false);
     }
     this.set('finished', true);
+  },
+  allowPrevious: function () {
+    return false;
+  },
+  finishLoad: function () {
+    var finish = true;
+    _.each(this.cashupStepsDefinition, function (step) {
+      if (!step.loaded) {
+        finish = false;
+      }
+    });
+    if (finish && !this.get('loadFinished')) {
+      this.set('loadFinished', true);
+    }
   }
 });

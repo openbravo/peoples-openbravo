@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2015 Openbravo S.L.U.
+ * Copyright (C) 2013-2016 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -11,27 +11,29 @@
 
 (function () {
 
+  function dumyFunction() {}
+
+  function extendHWResource(resource, template) {
+    var terminal = OB.MobileApp.model.get('terminal');
+
+    if (terminal[template + 'IsPdf'] === 'true') {
+      resource.ispdf = true;
+      resource.printer = terminal[template + 'Printer'];
+      var i = 0,
+          subreports = [];
+
+      while (terminal.hasOwnProperty(template + 'Subrep' + i)) {
+        subreports[i] = new OB.DS.HWResource(terminal[template + 'Subrep' + i]);
+        subreports[i].getData(dumyFunction);
+        i++;
+      }
+      resource.subreports = subreports;
+      resource.getData(dumyFunction);
+    }
+  }
+
   var PrintReceipt = function (model) {
       var terminal = OB.MobileApp.model.get('terminal');
-
-      function dumyFunction() {}
-
-      function extendHWResource(resource, template) {
-        if (terminal[template + "IsPdf"] === 'true') {
-          resource.ispdf = true;
-          resource.printer = terminal[template + "Printer"];
-          var i = 0,
-              subreports = [];
-
-          while (terminal.hasOwnProperty(template + "Subrep" + i)) {
-            subreports[i] = new OB.DS.HWResource(terminal[template + "Subrep" + i]);
-            subreports[i].getData(dumyFunction);
-            i++;
-          }
-          resource.subreports = subreports;
-          resource.getData(function () {});
-        }
-      }
 
       this.receipt = model.get('order');
       this.multiOrders = model.get('multiOrders');
@@ -79,6 +81,8 @@
       extendHWResource(this.templategoodbye, "printGoodByeTemplate");
       this.templatewelcome = new OB.DS.HWResource(terminal.printWelcomeTemplate || OB.OBPOSPointOfSale.Print.WelcomeTemplate);
       extendHWResource(this.templatewelcome, "printWelcomeTemplate");
+      this.templateclosedinvoice = new OB.DS.HWResource(terminal.printClosedInvoiceTemplate || OB.OBPOSPointOfSale.Print.ClosedInvoiceTemplate);
+      extendHWResource(this.templateclosedinvoice, "printClosedInvoiceTemplate");
       };
 
   PrintReceipt.prototype.print = function (order, printargs) {
@@ -147,6 +151,20 @@
       } else {
         OB.UTIL.clone(me.receipt, receipt);
       }
+
+      var linesToRemove = [];
+      receipt.get('lines').forEach(function (line) {
+        if (!line.isPrintableService()) {
+          //Prevent service lines with prices different than zero to be removed:
+          if (line.get('net') || line.get('gross')) {
+            return;
+          }
+          linesToRemove.push(line);
+        }
+      });
+
+      receipt.get('lines').remove(linesToRemove);
+
       if (args.forcedtemplate) {
         args.template = args.forcedtemplate;
       } else if (receipt.get('generateInvoice') && receipt.get('orderType') !== 2 && receipt.get('orderType') !== 3 && !receipt.get('isLayaway')) {
@@ -154,6 +172,8 @@
           args.template = me.templatereturninvoice;
         } else if (receipt.get('isQuotation')) {
           args.template = me.templatequotation;
+        } else if (receipt.get('isPaid')) {
+          args.template = me.templateclosedinvoice;
         } else {
           args.template = me.templateinvoice;
         }
@@ -181,14 +201,14 @@
       if (args.template.ispdf) {
         args.template.dateFormat = OB.Format.date;
         printPDF(receipt, args);
-        if (receipt.get('orderType') === 1 && !OB.MobileApp.model.hasPermission('OBPOS_print.once')) {
+        if ((receipt.get('orderType') === 1 && !OB.MobileApp.model.hasPermission('OBPOS_print.once')) || OB.MobileApp.model.get('terminal').terminalType.printTwice) {
           printPDF(receipt, args);
         }
       } else {
         if (receipt.get('print')) { //Print option of order property
           OB.POS.hwserver.print(args.template, {
             order: receipt
-          }, function (result) {
+          }, function (result, printedReceipt) {
             var myreceipt = receipt;
             if (result && result.exception) {
               OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_MsgHardwareServerNotAvailable'), OB.I18N.getLabel('OBPOS_MsgPrintAgain'), [{
@@ -222,9 +242,15 @@
             } else {
               // Success. Try to print the pending receipts.
               OB.Model.OfflinePrinter.printPendingJobs();
-              if (args.callback) {
-                args.callback();
-              }
+              OB.UTIL.HookManager.executeHooks('OBPRINT_PostPrint', {
+                receipt: receipt,
+                printedReceipt: printedReceipt
+              }, function () {
+                OB.debug("Executed hooks of OBPRINT_PostPrint");
+                if (args.callback) {
+                  args.callback();
+                }
+              });
             }
           });
         } else {
@@ -243,7 +269,7 @@
             if (iter.get('printtwice')) {
               return iter;
             }
-          }).length > 0) {
+          }).length > 0 || OB.MobileApp.model.get('terminal').terminalType.printTwice) {
             OB.POS.hwserver.print(args.template, {
               order: receipt
             }, function (result) {
@@ -300,6 +326,8 @@
   };
 
   var PrintReceiptLine = function (receipt) {
+      var terminal = OB.MobileApp.model.get('terminal');
+
       this.receipt = receipt;
       this.line = null;
 
@@ -316,6 +344,8 @@
         }
         this.print();
       }, this);
+      this.templateline = new OB.DS.HWResource(terminal.printReceiptLineTemplate || OB.OBPOSPointOfSale.Print.ReceiptLineTemplate);
+      extendHWResource(this.templateline, 'printReceiptLineTemplate');
       };
 
   PrintReceiptLine.prototype.print = function () {
@@ -344,4 +374,5 @@
   OB.OBPOSPointOfSale.Print.GoodByeTemplate = '../org.openbravo.retail.posterminal/res/goodbye.xml';
   OB.OBPOSPointOfSale.Print.WelcomeTemplate = '../org.openbravo.retail.posterminal/res/welcome.xml';
   OB.OBPOSPointOfSale.Print.QuotationTemplate = '../org.openbravo.retail.posterminal/res/printquotation.xml';
+  OB.OBPOSPointOfSale.Print.ClosedInvoiceTemplate = '../org.openbravo.retail.posterminal/res/printclosedinvoice.xml';
 }());

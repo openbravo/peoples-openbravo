@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013 Openbravo S.L.U.
+ * Copyright (C) 2013-2016 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -58,8 +58,12 @@
     column: 'userId',
     type: 'TEXT'
   }, {
-    name: 'time',
-    column: 'time',
+    name: 'creationDate',
+    column: 'creationDate',
+    type: 'TEXT'
+  }, {
+    name: 'timezoneOffset',
+    column: 'timezoneOffset',
     type: 'TEXT'
   }, {
     name: 'isocode',
@@ -76,6 +80,10 @@
   }, {
     name: 'isbeingprocessed',
     column: 'isbeingprocessed',
+    type: 'TEXT'
+  }, {
+    name: 'posTerminal',
+    column: 'posTerminal',
     type: 'TEXT'
   }]);
 

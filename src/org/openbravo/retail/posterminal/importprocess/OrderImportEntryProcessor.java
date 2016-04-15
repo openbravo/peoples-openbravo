@@ -52,6 +52,8 @@ public class OrderImportEntryProcessor extends ImportEntryProcessor {
     protected void processEntry(ImportEntry importEntry) throws Exception {
       // check that there are no customers import entries for the same organization
       if (thereAreCustomersInImportQueue(importEntry)) {
+        // close and commit
+        OBDal.getInstance().commitAndClose();
         return;
       }
       super.processEntry(importEntry);

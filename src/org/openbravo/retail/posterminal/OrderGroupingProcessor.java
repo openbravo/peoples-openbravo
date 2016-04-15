@@ -138,11 +138,15 @@ public class OrderGroupingProcessor {
 
       OrderLine[] orderLinesSplittedByShipmentLine = splitOrderLineByShipmentLine(orderLine);
       if (orderLinesSplittedByShipmentLine.length > 1) {
-        InvoiceLine oldInvoiceLine = orderLine.getInvoiceLineList().get(0);
-        Invoice invoice = oldInvoiceLine.getInvoice();
-        Long lineno = oldInvoiceLine.getLineNo();
-        OBDal.getInstance().remove(oldInvoiceLine);
 
+        Invoice invoice = null;
+        for (int i = 0; i < orderLine.getInvoiceLineList().size(); i++) {
+          InvoiceLine oldInvoiceLine = orderLine.getInvoiceLineList().get(i);
+          invoice = oldInvoiceLine.getInvoice();
+          OBDal.getInstance().remove(oldInvoiceLine);
+        }
+
+        Long lineno = (long) 10;
         for (int i = 0; i < orderLinesSplittedByShipmentLine.length; i++) {
           OrderLine olSplitted = orderLinesSplittedByShipmentLine[i];
 
@@ -487,7 +491,9 @@ public class OrderGroupingProcessor {
 
     List<ShipmentInOutLine> shipmentLines = ol.getMaterialMgmtShipmentInOutLineList();
 
-    int stdPrecision = ol.getSalesOrder().getCurrency().getStandardPrecision().intValue();
+    int pricePrecision = ol.getSalesOrder().getCurrency().getObposPosprecision() == null ? ol
+        .getSalesOrder().getCurrency().getPricePrecision().intValue() : ol.getSalesOrder()
+        .getCurrency().getObposPosprecision().intValue();
     long lineNo = 0;
 
     // if there is one or none then only one record is returned with the original orderline
@@ -513,22 +519,24 @@ public class OrderGroupingProcessor {
         olSplit.setGoodsShipmentLine(shipmentLines.get(i));
         olSplit.setInvoicedQuantity(shipmentLines.get(i).getMovementQuantity());
         olSplit.setTaxableAmount(ol.getUnitPrice().multiply(olSplit.getOrderedQuantity())
-            .setScale(stdPrecision, RoundingMode.HALF_UP));
+            .setScale(pricePrecision, RoundingMode.HALF_UP));
 
         if (shipmentLines.size() > i + 1) {
           olSplit.setLineGrossAmount(ol.getGrossUnitPrice().multiply(olSplit.getOrderedQuantity())
-              .setScale(stdPrecision, RoundingMode.HALF_UP));
+              .setScale(pricePrecision, RoundingMode.HALF_UP));
           olSplit.setLineNetAmount(ol.getUnitPrice().multiply(olSplit.getOrderedQuantity())
-              .setScale(stdPrecision, RoundingMode.HALF_UP));
+              .setScale(pricePrecision, RoundingMode.HALF_UP));
           partialGrossAmount = partialGrossAmount.add(ol.getGrossUnitPrice()
-              .multiply(olSplit.getOrderedQuantity()).setScale(stdPrecision, RoundingMode.HALF_UP));
+              .multiply(olSplit.getOrderedQuantity())
+              .setScale(pricePrecision, RoundingMode.HALF_UP));
           partialLineNetAmount = partialLineNetAmount.add(ol.getUnitPrice()
-              .multiply(olSplit.getOrderedQuantity()).setScale(stdPrecision, RoundingMode.HALF_UP));
+              .multiply(olSplit.getOrderedQuantity())
+              .setScale(pricePrecision, RoundingMode.HALF_UP));
         } else {
           olSplit.setLineNetAmount(ol.getLineNetAmount().subtract(partialLineNetAmount)
-              .setScale(stdPrecision, RoundingMode.HALF_UP));
+              .setScale(pricePrecision, RoundingMode.HALF_UP));
           olSplit.setLineGrossAmount(ol.getLineGrossAmount().subtract(partialGrossAmount)
-              .setScale(stdPrecision, RoundingMode.HALF_UP));
+              .setScale(pricePrecision, RoundingMode.HALF_UP));
         }
 
         olSplit.setLineNo(lineNo);
@@ -537,9 +545,9 @@ public class OrderGroupingProcessor {
           for (int j = 0; j < olSplit.getOrderLineTaxList().size(); j++) {
             OrderLineTax olt = olSplit.getOrderLineTaxList().get(j);
             olt.setTaxAmount(olt.getTaxAmount().multiply(ratio)
-                .setScale(stdPrecision, RoundingMode.HALF_UP));
+                .setScale(pricePrecision, RoundingMode.HALF_UP));
             olt.setTaxableAmount(olt.getTaxableAmount().multiply(ratio)
-                .setScale(stdPrecision, RoundingMode.HALF_UP));
+                .setScale(pricePrecision, RoundingMode.HALF_UP));
             // in partialTaxableAmount is added the taxable amount set in the splited lines
             if (partialTaxableAmount[j] == null) {
               partialTaxableAmount[j] = olt.getTaxableAmount();
@@ -558,9 +566,9 @@ public class OrderGroupingProcessor {
           for (int j = 0; j < olSplit.getOrderLineTaxList().size(); j++) {
             OrderLineTax olt = olSplit.getOrderLineTaxList().get(j);
             olt.setTaxAmount(olt.getTaxAmount().subtract(partialTaxAmount[j])
-                .setScale(stdPrecision, RoundingMode.HALF_UP));
+                .setScale(pricePrecision, RoundingMode.HALF_UP));
             olt.setTaxableAmount(olt.getTaxableAmount().subtract(partialTaxableAmount[j])
-                .setScale(stdPrecision, RoundingMode.HALF_UP));
+                .setScale(pricePrecision, RoundingMode.HALF_UP));
           }
         }
 

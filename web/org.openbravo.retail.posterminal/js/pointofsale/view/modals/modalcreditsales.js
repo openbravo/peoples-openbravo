@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012 Openbravo S.L.U.
+ * Copyright (C) 2012-2015 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -26,7 +26,7 @@ enyo.kind({
   executeOnShow: function () {
     var pendingQty = this.args.order.getPending();
     var bpName = this.args.order.get('bp').get('_identifier');
-    var selectedPaymentMethod = this.args.order.selectedPayment;
+    var selectedPaymentMethod = this.args.order.get('selectedPayment');
     var currSymbol;
     var rate = 1,
         i;
@@ -57,13 +57,15 @@ enyo.kind({
     this.model = model;
   },
   tap: function () {
+    var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes("modalDialogButtonTap");
+
     function error(tx) {
       OB.UTIL.showError("OBDAL error: " + tx);
+      OB.UTIL.SynchronizationHelper.finished(synchId, "modalDialogButtonTap");
     }
 
     this.doHideThisPopup();
     this.model.get('order').set('paidOnCredit', true);
-    this.model.get('order').trigger('paymentDone');
     this.allowOpenDrawer = false;
     var payments = this.model.get('order').get('payments');
     var me = this;
@@ -89,7 +91,10 @@ enyo.kind({
     } else {
       bp.set('creditUsed', bpCreditUsed + totalPending);
     }
-    OB.Dal.save(bp, null, error);
+    OB.Dal.save(bp, function () {
+      me.model.get('order').trigger('paymentDone');
+      OB.UTIL.SynchronizationHelper.finished(synchId, "modalDialogButtonTap");
+    }, error);
   }
 });
 

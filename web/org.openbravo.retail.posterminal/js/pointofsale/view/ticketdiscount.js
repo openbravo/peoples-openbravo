@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2013 Openbravo S.L.U.
+ * Copyright (C) 2012-2016 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -13,6 +13,7 @@ enyo.kind({
   handlers: {
     onApplyDiscounts: 'applyDiscounts',
     onDiscountsClose: 'closingDiscounts',
+    onDiscountChanged: 'discountChanged',
     onDiscountQtyChanged: 'discountQtyChanged',
     onCheckedTicketLine: 'ticketLineChecked'
   },
@@ -24,7 +25,7 @@ enyo.kind({
     onCheckAllTicketLines: ''
   },
   checkedLines: [],
-  style: 'position:relative; background-color: orange; background-size: cover; color: white; height: 200px; margin: 5px; padding: 5px',
+  style: 'position:relative; background-color: orange; background-size: cover; color: white; height: 200px; margin: 5px; padding: 5px;',
   components: [{
     kind: 'Scroller',
     maxHeight: '130px',
@@ -32,7 +33,7 @@ enyo.kind({
     horizontal: 'hidden',
     components: [{
       components: [{
-        style: 'border: 1px solid #F0F0F0; background-color: #E2E2E2; color: black; width: 35%; height: 40px; float: left; text-align: left',
+        style: 'border: 1px solid #F0F0F0; background-color: #E2E2E2; color: black; width: 35%; height: 40px; float: left; text-align: left;',
         components: [{
           style: 'padding: 5px 8px 0px 3px;',
           initComponents: function () {
@@ -40,67 +41,18 @@ enyo.kind({
           }
         }]
       }, {
+        name: 'discountsContainer',
         style: 'border: 1px solid #F0F0F0; float: left; width: 63%;',
         components: [{
-          kind: 'OB.UI.List',
           name: 'discountsList',
-          tag: 'select',
-          onchange: 'discountChanged',
-          classes: 'discount-dialog-profile-combo',
-          renderEmpty: enyo.Control,
-          renderLine: enyo.kind({
-            kind: 'enyo.Option',
-            initComponents: function () {
-              this.setValue(this.model.get('id'));
-              this.originalText = this.model.get('_identifier');
-              // TODO: this shouldn't be hardcoded but defined in each promotion
-              if (this.model.get('discountType') === 'D1D193305A6443B09B299259493B272A' || this.model.get('discountType') === '20E4EC27397344309A2185097392D964') {
-                //variable
-                this.requiresQty = true;
-                if (this.model.get('discountType') === '20E4EC27397344309A2185097392D964') {
-                  //variable porcentaje
-                  this.units = '%';
-                  if (!_.isUndefined(this.model.get('obdiscPercentage')) && !_.isNull(this.model.get('obdiscPercentage'))) {
-                    this.amt = this.model.get('obdiscPercentage');
-                  }
-                } else if (this.model.get('discountType') === 'D1D193305A6443B09B299259493B272A') {
-                  //variable qty
-                  this.units = OB.MobileApp.model.get('terminal').currency$_identifier;
-                  if (this.model.get('obdiscAmt')) {
-                    this.amt = this.model.get('obdiscAmt');
-                  }
-                }
-              } else {
-                //fixed
-                this.requiresQty = false;
-                if (this.model.get('discountType') === '8338556C0FBF45249512DB343FEFD280') {
-                  //fixed percentage
-                  this.units = '%';
-                  if (!_.isUndefined(this.model.get('obdiscPercentage')) && !_.isNull(this.model.get('obdiscPercentage'))) {
-                    this.amt = this.model.get('obdiscPercentage');
-                  }
-                } else if (this.model.get('discountType') === '7B49D8CC4E084A75B7CB4D85A6A3A578') {
-                  //fixed amount
-                  this.units = OB.MobileApp.model.get('terminal').currency$_identifier;
-                  if (!_.isUndefined(this.model.get('obdiscAmt')) && !_.isNull(this.model.get('obdiscAmt'))) {
-                    this.amt = this.model.get('obdiscAmt');
-                  }
-                }
-              }
-              if (this.amt) {
-                this.setContent(this.originalText + ' - ' + this.amt + ' ' + this.units);
-              } else {
-                this.setContent(this.originalText);
-              }
-            }
-          })
+          kind: 'OB.UI.DiscountList'
         }]
       }]
     }, {
       style: 'clear: both'
     }, {
       components: [{
-        style: 'border: 1px solid #F0F0F0; background-color: #E2E2E2; color: black; width: 35%; height: 40px; float: left; text-align: left',
+        style: 'border: 1px solid #F0F0F0; background-color: #E2E2E2; color: black; width: 35%; height: 40px; float: left; text-align: left;',
         components: [{
           style: 'padding: 5px 8px 0px 3px;',
           initComponents: function () {
@@ -122,7 +74,7 @@ enyo.kind({
       style: 'clear: both'
     }, {
       components: [{
-        style: 'border: 1px solid #F0F0F0; background-color: #E2E2E2; color: black; width: 35%; height: 40px; float: left;  text-align: left',
+        style: 'border: 1px solid #F0F0F0; background-color: #E2E2E2; color: black; width: 35%; height: 40px; float: left;  text-align: left;',
         components: [{
           style: 'padding: 5px 8px 0px 3px;',
           initComponents: function () {
@@ -160,6 +112,7 @@ enyo.kind({
     OB.MobileApp.view.scanningFocus(false);
     me.$.btnApply.setDisabled(true);
     me.discounts.reset();
+    me.order.trigger('showDiscount');
     //uncheck lines
     this.doCheckAllTicketLines({
       status: false
@@ -167,6 +120,11 @@ enyo.kind({
     //load discounts
     OB.Dal.find(OB.Model.Discount, {
       _whereClause: "where m_offer_type_id in (" + OB.Model.Discounts.getManualPromotions() + ") AND date('now') BETWEEN DATEFROM AND COALESCE(date(DATETO), date('9999-12-31'))"
+      // filter by order price list
+      + " AND (" + " (pricelist_selection = 'Y' AND NOT EXISTS " //
+      + " (SELECT 1 FROM m_offer_pricelist opl WHERE m_offer.m_offer_id = opl.m_offer_id AND opl.m_pricelist_id = '" + me.order.get('priceList') + "'))" // 
+      + " OR (pricelist_selection = 'N' AND EXISTS " //
+      + " (SELECT 1 FROM m_offer_pricelist opl WHERE m_offer.m_offer_id = opl.m_offer_id AND opl.m_pricelist_id = '" + me.order.get('priceList') + "')))" //
       // filter discretionary discounts by current role
       + " AND ((EM_OBDISC_ROLE_SELECTION = 'Y'" //
       + " AND NOT EXISTS" //
@@ -183,6 +141,10 @@ enyo.kind({
       + "   AND AD_ROLE_ID = '" + OB.MobileApp.model.get('context').role.id + "'" //
       + " )))" //
     }, function (promos) {
+      promos.comparator = function (model) {
+        return model.get('_identifier');
+      };
+      promos.sort();
       me.discounts.reset(promos.models);
       me.ticketLineChecked({}, {
         checkedLines: me.checkedLines
@@ -245,7 +207,7 @@ enyo.kind({
       return;
     }
     comp.setContent(comp.originalText + ' - ' + inEvent.qty + ' ' + comp.units);
-    comp.amt = inEvent.qty;
+    this.$.discountsContainer.amt = inEvent.qty;
   },
   initComponents: function () {
     var discountsModel = Backbone.Collection.extend({
@@ -272,12 +234,13 @@ enyo.kind({
     }
   },
   discountChanged: function (inSender, inEvent) {
-    var selectedDiscount = inEvent.originator.collection.find(function (discount) {
-      if (discount.get('id') === inEvent.originator.getValue()) {
-        return true;
-      }
-    }, this);
-    if (selectedDiscount.get('discountType') === "8338556C0FBF45249512DB343FEFD280" || selectedDiscount.get('discountType') === "7B49D8CC4E084A75B7CB4D85A6A3A578") {
+    var comp = this._searchSelectedComponent(this.$.discountsList.getValue()),
+        discountsContainer = this.$.discountsContainer;
+    discountsContainer.model = comp.model;
+    discountsContainer.requiresQty = comp.requiresQty;
+    discountsContainer.amt = comp.amt;
+    discountsContainer.units = comp.units;
+    if (comp.model.get('discountType') === "8338556C0FBF45249512DB343FEFD280" || comp.model.get('discountType') === "7B49D8CC4E084A75B7CB4D85A6A3A578") {
       this.disableKeyboard();
     } else {
       //enable keyboard
@@ -299,15 +262,15 @@ enyo.kind({
   },
   applyDiscounts: function (inSender, inEvent) {
     var promotionToAplly = {},
-        comp = this._searchSelectedComponent(this.$.discountsList.getValue()),
+        discountsContainer = this.$.discountsContainer,
         orderLinesCollection = new OB.Collection.OrderLineList();
-    promotionToAplly.rule = comp.model;
+    promotionToAplly.rule = discountsContainer.model;
     promotionToAplly.definition = {};
-    promotionToAplly.definition.userAmt = comp.amt;
+    promotionToAplly.definition.userAmt = discountsContainer.amt;
     promotionToAplly.definition.applyNext = !this.$.checkOverride.checked;
     promotionToAplly.definition.lastApplied = true;
 
-    if (comp.requiresQty && !comp.amt) {
+    if (discountsContainer.requiresQty && !discountsContainer.amt) {
       //Show a modal pop up with the error
       this.doShowPopup({
         popup: 'modalDiscountNeedQty'
@@ -329,8 +292,8 @@ enyo.kind({
 });
 
 enyo.kind({
-  kind: 'OB.UI.ModalDialogButton',
   name: 'OB.OBPOSPointOfSale.UI.Discounts.btnDiscountsApply',
+  kind: 'OB.UI.ModalDialogButton',
   style: 'color: orange; font-weight: bold;',
   i18nLabel: 'OBMOBC_LblApply',
   events: {
@@ -346,8 +309,8 @@ enyo.kind({
 });
 
 enyo.kind({
-  kind: 'OB.UI.CheckboxButton',
   name: 'OB.OBPOSPointOfSale.UI.Discounts.btnCheckAll',
+  kind: 'OB.UI.CheckboxButton',
   events: {
     onCheckAllTicketLines: ''
   },
@@ -361,8 +324,8 @@ enyo.kind({
 });
 
 enyo.kind({
-  kind: 'OB.UI.CheckboxButton',
   name: 'OB.OBPOSPointOfSale.UI.Discounts.btnCheckOverride',
+  kind: 'OB.UI.CheckboxButton',
   checked: false
 });
 
@@ -376,5 +339,63 @@ enyo.kind({
   i18nContent: 'OBMOBC_LblCancel',
   tap: function () {
     this.doDiscountsClose();
+  }
+});
+
+enyo.kind({
+  name: 'OB.UI.DiscountList',
+  kind: 'OB.UI.List',
+  tag: 'select',
+  onchange: 'discountChanged',
+  classes: 'discount-dialog-profile-combo',
+  renderEmpty: enyo.Control,
+  renderLine: enyo.kind({
+    kind: 'enyo.Option',
+    initComponents: function () {
+      this.setValue(this.model.get('id'));
+      this.originalText = this.model.get('_identifier');
+      // TODO: this shouldn't be hardcoded but defined in each promotion
+      if (this.model.get('discountType') === 'D1D193305A6443B09B299259493B272A' || this.model.get('discountType') === '20E4EC27397344309A2185097392D964') {
+        //variable
+        this.requiresQty = true;
+        if (this.model.get('discountType') === '20E4EC27397344309A2185097392D964') {
+          //variable porcentaje
+          this.units = '%';
+          if (!_.isUndefined(this.model.get('obdiscPercentage')) && !_.isNull(this.model.get('obdiscPercentage'))) {
+            this.amt = this.model.get('obdiscPercentage');
+          }
+        } else if (this.model.get('discountType') === 'D1D193305A6443B09B299259493B272A') {
+          //variable qty
+          this.units = OB.MobileApp.model.get('terminal').currency$_identifier;
+          if (this.model.get('obdiscAmt')) {
+            this.amt = this.model.get('obdiscAmt');
+          }
+        }
+      } else {
+        //fixed
+        this.requiresQty = false;
+        if (this.model.get('discountType') === '8338556C0FBF45249512DB343FEFD280') {
+          //fixed percentage
+          this.units = '%';
+          if (!_.isUndefined(this.model.get('obdiscPercentage')) && !_.isNull(this.model.get('obdiscPercentage'))) {
+            this.amt = this.model.get('obdiscPercentage');
+          }
+        } else if (this.model.get('discountType') === '7B49D8CC4E084A75B7CB4D85A6A3A578') {
+          //fixed amount
+          this.units = OB.MobileApp.model.get('terminal').currency$_identifier;
+          if (!_.isUndefined(this.model.get('obdiscAmt')) && !_.isNull(this.model.get('obdiscAmt'))) {
+            this.amt = this.model.get('obdiscAmt');
+          }
+        }
+      }
+      if (this.amt) {
+        this.setContent(this.originalText + ' - ' + this.amt + ' ' + this.units);
+      } else {
+        this.setContent(this.originalText);
+      }
+    }
+  }),
+  initComponents: function () {
+    this.inherited(arguments);
   }
 });

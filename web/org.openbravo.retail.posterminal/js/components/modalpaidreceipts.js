@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2014-2015 Openbravo S.L.U.
+ * Copyright (C) 2014-2016 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -244,7 +244,7 @@ enyo.kind({
 
     OB.UTIL.HookManager.executeHooks('OBPOS_RenderPaidReceiptLine', {
       paidReceiptLine: this
-    }, function (args) {
+    }, function () {
       //All should be done in module side
     });
 
@@ -264,7 +264,8 @@ enyo.kind({
     onChangePaidReceipt: '',
     onShowPopup: '',
     onAddProduct: '',
-    onHideThisPopup: ''
+    onHideThisPopup: '',
+    onChangeCurrentOrder: ''
   },
   components: [{
     classes: 'span12',
@@ -291,7 +292,7 @@ enyo.kind({
       }]
     }]
   }],
-  clearAction: function (inSender, inEvent) {
+  clearAction: function () {
     this.prsList.reset();
     return true;
   },
@@ -305,9 +306,14 @@ enyo.kind({
     this.$.prslistitemprinter.$.tbody.hide();
     this.$.prslistitemprinter.$.tlimit.hide();
     this.$.renderLoading.show();
+    var limit = OB.Model.Order.prototype.dataLimit;
+    if (OB.MobileApp.model.hasPermission('OBPOS_orderLimit', true)) {
+      limit = OB.DEC.abs(OB.MobileApp.model.hasPermission('OBPOS_orderLimit', true));
+      OB.Model.Order.prototype.tempDataLimit = OB.DEC.abs(OB.MobileApp.model.hasPermission('OBPOS_orderLimit', true));
+    }
     process.exec({
       filters: me.filters,
-      _limit: OB.Model.Order.prototype.dataLimit,
+      _limit: limit + 1,
       _dateFormat: OB.Format.date
     }, function (data) {
       if (data) {
@@ -315,7 +321,6 @@ enyo.kind({
         _.each(data, function (iter) {
           me.model.get('orderList').newDynamicOrder(iter, function (order) {
             ordersLoaded.push(order);
-
           });
         });
         me.prsList.reset(ordersLoaded);
@@ -346,34 +351,118 @@ enyo.kind({
     this.prsList = new Backbone.Collection();
     this.$.prslistitemprinter.setCollection(this.prsList);
     this.prsList.on('click', function (model) {
-      OB.UTIL.showLoading(true);
-      process.exec({
-        orderid: model.get('id')
-      }, function (data) {
-        if (data) {
-          if (me.model.get('leftColumnViewManager').isMultiOrder()) {
-            if (me.model.get('multiorders')) {
-              me.model.get('multiorders').resetValues();
+      function loadOrder(model) {
+        var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('clickSearch');
+        OB.UTIL.showLoading(true);
+        process.exec({
+          orderid: model.get('id')
+        }, function (data) {
+          if (data) {
+            if (me.model.get('leftColumnViewManager').isMultiOrder()) {
+              if (me.model.get('multiorders')) {
+                me.model.get('multiorders').resetValues();
+              }
+              me.model.get('leftColumnViewManager').setOrderMode();
             }
-            me.model.get('leftColumnViewManager').setOrderMode();
-          }
-          OB.UTIL.HookManager.executeHooks('OBRETUR_ReturnFromOrig', {
-            order: data[0],
-            context: me,
-            params: me.parent.parent.params
-          }, function (args) {
-            if (!args.cancelOperation) {
-              me.model.get('orderList').newPaidReceipt(data[0], function (order) {
-                me.doChangePaidReceipt({
-                  newPaidReceipt: order
+            OB.UTIL.HookManager.executeHooks('OBRETUR_ReturnFromOrig', {
+              order: data[0],
+              context: me,
+              params: me.parent.parent.params
+            }, function (args) {
+              if (!args.cancelOperation) {
+                var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('clickSearchNewReceipt');
+                me.model.get('orderList').newPaidReceipt(data[0], function (order) {
+                  me.doChangePaidReceipt({
+                    newPaidReceipt: order
+                  });
+                  OB.UTIL.SynchronizationHelper.finished(synchId, 'clickSearchNewReceipt');
+
                 });
-              });
+              }
+            });
+          } else {
+            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorDropDep'));
+          }
+          OB.UTIL.SynchronizationHelper.finished(synchId, 'clickSearch');
+        });
+        return true;
+      }
+
+      // Check in Current Session
+      var i = 0;
+      for (i = 0; i < me.model.get('orderList').length; i++) {
+        if (me.model.get('orderList').models[i].get('id') === model.get('id')) {
+          var orderTypeMsg = OB.I18N.getLabel('OBPOS_ticket');
+          if (me.model.get('orderList').models[i].get('isLayaway')) {
+            orderTypeMsg = OB.I18N.getLabel('OBPOS_LblLayaway');
+          } else if (me.model.get('orderList').models[i].get('isQuotation')) {
+            orderTypeMsg = OB.I18N.getLabel('OBPOS_Quotation');
+          }
+          me.doShowPopup({
+            popup: 'OB_UI_MessageDialog',
+            args: {
+              message: (enyo.format(OB.I18N.getLabel('OBPOS_ticketAlreadyOpened'), orderTypeMsg, model.get('documentNo')))
             }
           });
+          if (OB.MobileApp.model.receipt.get('documentNo') !== model.get('documentNo')) {
+            me.doChangeCurrentOrder({
+              newCurrentOrder: me.model.get('orderList').models[i]
+            });
+          }
+          return true;
+        }
+      }
+
+      // Check in Other Session
+      OB.Dal.find(OB.Model.Order, {
+        'hasbeenpaid': 'N'
+      }, function (ordersNotProcessed) {
+        if (ordersNotProcessed.length > 0) {
+          var existingOrder = _.find(ordersNotProcessed.models, function (order) {
+            return order.get('id') === model.get('id') || order.get('oldId') === model.get('id');
+          });
+          if (existingOrder) {
+            var orderTypeMsg = OB.I18N.getLabel('OBPOS_ticket');
+            if (existingOrder.get('isLayaway')) {
+              orderTypeMsg = OB.I18N.getLabel('OBPOS_LblLayaway');
+            } else if (existingOrder.get('isQuotation')) {
+              orderTypeMsg = OB.I18N.getLabel('OBPOS_Quotation');
+            }
+            // Getting Other Session User's username
+            OB.Dal.find(OB.Model.Session, {
+              'id': existingOrder.get('session')
+            }, function (sessions) {
+              if (sessions.length > 0) {
+                OB.Dal.find(OB.Model.User, {
+                  'id': sessions.models[0].get('user')
+                }, function (users) {
+                  if (users.length > 0) {
+                    OB.UTIL.showConfirmation.display(enyo.format(OB.I18N.getLabel('OBPOS_ticketAlreadyOpenedInSession'), orderTypeMsg, model.get('documentNo'), users.models[0].get('name')), enyo.format(OB.I18N.getLabel('OBPOS_MsgConfirmSaveInCurrentSession'), users.models[0].get('name')), [{
+                      label: OB.I18N.getLabel('OBMOBC_LblOk'),
+                      action: function () {
+                        OB.Dal.remove(existingOrder, function () {
+                          loadOrder(model);
+                        }, OB.UTIL.showError);
+                      }
+                    }, {
+                      label: OB.I18N.getLabel('OBMOBC_LblCancel')
+                    }], {
+                      onHideFunction: function (dialog) {
+                        return true;
+                      }
+                    });
+                  }
+                });
+              }
+            });
+          } else {
+            return loadOrder(model);
+          }
         } else {
-          OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorDropDep'));
+          return loadOrder(model);
         }
       });
+
       return true;
 
     }, this);
@@ -389,7 +478,7 @@ enyo.kind({
   published: {
     params: null
   },
-  changedParams: function (value) {
+  changedParams: function () {
 
   },
   body: {
@@ -400,6 +489,7 @@ enyo.kind({
   },
   changePaidReceipt: function (inSender, inEvent) {
     this.model.get('orderList').addPaidReceipt(inEvent.newPaidReceipt);
+    this.model.attributes.order.calculateReceipt();
     return true;
   },
   executeOnShow: function () {

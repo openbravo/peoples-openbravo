@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2015 Openbravo S.L.U.
+ * Copyright (C) 2012-2016 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -22,7 +22,12 @@
       var nameLength, newSk;
 
       if (!this.get("name")) {
-        OB.UTIL.showWarning('Name is required for BPartner');
+        OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_BPartnerNameRequired'));
+        return false;
+      }
+
+      if (!this.get('locName')) {
+        OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_BPartnerAddressRequired'));
         return false;
       }
 
@@ -112,6 +117,33 @@
         }
       });
     },
+    adjustNames: function () {
+      var firstName = this.get('firstName'),
+          lastName = this.get('lastName');
+      if (firstName) {
+        firstName = firstName.trim();
+      }
+      if (lastName) {
+        lastName = lastName.trim();
+      }
+      this.set('firstName', firstName);
+      this.set('lastName', lastName);
+      this.set('name', firstName + (lastName ? ' ' + lastName : ''));
+    },
+    serializeEditedToJSON: function () {
+      var me = this,
+          editedBp = new OB.Model.BusinessPartner();
+      //Set entities ids: BusinessPartner, Location and User
+      editedBp.set('id', this.get('id'));
+      editedBp.set('locId', this.get('locId'));
+      editedBp.set('contactId', this.get('contactId'));
+      //Set only form attributes
+      _.each(OB.OBPOSPointOfSale.UI.customers.edit_createcustomers_impl.prototype.newAttributes, function (model) {
+        editedBp.set(model.modelProperty, me.get(model.modelProperty));
+      });
+      editedBp.adjustNames();
+      return JSON.parse(JSON.stringify(editedBp.toJSON()));
+    },
     serializeToJSON: function () {
       return JSON.parse(JSON.stringify(this.toJSON()));
     }
@@ -129,6 +161,7 @@
   }, {
     name: 'searchKey',
     column: 'value',
+    filter: true,
     type: 'TEXT'
   }, {
     name: '_identifier',
@@ -155,6 +188,7 @@
     name: 'taxID',
     column: 'taxID',
     filter: true,
+    skipremote: true,
     type: 'TEXT'
   }, {
     name: 'taxCategory',
@@ -169,7 +203,7 @@
     column: 'c_paymentterm_id',
     type: 'TEXT'
   }, {
-    name: 'priceList ',
+    name: 'priceList',
     column: 'm_pricelist_id',
     type: 'TEXT '
   }, {
@@ -184,6 +218,7 @@
     name: 'locName',
     column: 'c_bpartnerlocation_name',
     filter: true,
+    skipremote: true,
     type: 'TEXT'
   }, {
     name: 'postalCode',
@@ -205,11 +240,13 @@
     name: 'phone',
     column: 'phone',
     filter: true,
+    skipremote: true,
     type: 'TEXT'
   }, {
     name: 'email',
     column: 'email',
     filter: true,
+    skipremote: true,
     type: 'TEXT'
   }, {
     name: 'businessPartnerCategory',
@@ -238,6 +275,14 @@
   }, {
     name: 'salesOrderBlocking',
     column: 'salesOrderBlocking',
+    type: 'TEXT'
+  }, {
+    name: 'priceIncludesTax',
+    column: 'priceIncludesTax',
+    type: 'TEXT'
+  }, {
+    name: 'priceListName',
+    column: 'priceListName',
     type: 'TEXT'
   }]);
 

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+/*
+ ************************************************************************************
+ * Copyright (C) 2015 Openbravo S.L.U.
+ * Licensed under the Openbravo Commercial License version 1.0
+ * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
+ * or in the legal folder of this module distribution.
+ ************************************************************************************
+ */
+-->
+<SqlClass name="InitializeProposalTypeforServicesData" package="org.openbravo.retail.posterminal.modulescript">
+<SqlClassComment></SqlClassComment>
+  <SqlMethod name="select" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+      SELECT '' as dummy FROM dual
+      ]]>
+    </Sql>
+  </SqlMethod>
+  <SqlMethod name="initializeProposalType" type="preparedStatement" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+     <![CDATA[ 
+        UPDATE m_product SET em_obpos_proposal_type = 'OP' 
+        WHERE islinkedtoproduct = 'Y' 
+        AND em_obpos_proposal_type IS NULL             
+      ]]>
+    </Sql>
+  </SqlMethod>
+  <SqlMethod name="insertPreference" type="preparedStatement" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+      INSERT INTO AD_PREFERENCE 
+      (AD_PREFERENCE_ID,AD_CLIENT_ID,AD_ORG_ID,ISACTIVE,CREATED,CREATEDBY,UPDATED,UPDATEDBY,AD_WINDOW_ID,AD_USER_ID,ATTRIBUTE,VALUE,PROPERTY,ISPROPERTYLIST,VISIBLEAT_CLIENT_ID,VISIBLEAT_ORG_ID,VISIBLEAT_ROLE_ID,SELECTED,AD_MODULE_ID) 
+      VALUES (get_uuid(),'0','0','Y',now(),'100',now(),'100',null,null,'Initialize Proposal Type executed','Y',null,'N',null,null,null,'N',null)
+      ]]>
+    </Sql>
+  </SqlMethod>
+  <SqlMethod name="selectExistsPreference" type="preparedStatement" return="string">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+      SELECT COUNT(1) as counter FROM AD_PREFERENCE WHERE ATTRIBUTE  = 'Initialize Proposal Type executed'
+      ]]>
+    </Sql>
+  </SqlMethod> 
+</SqlClass>

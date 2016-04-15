@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2015 Openbravo S.L.U.
+ * Copyright (C) 2012-2016 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -12,10 +12,10 @@
 enyo.kind({
   name: 'OB.OBPOSCashUp.UI.ButtonVoid',
   kind: 'OB.UI.SmallButton',
-  classes: 'btnlink-gray',
-  style: 'min-width: 70px; margin: 2px 5px 2px 5px;',
+  classes: 'btn-icon-small btn-icon-clear',
+  style: 'background-color: #e2e2e2; margin: 5px 0px 5px 0px;',
   initComponents: function () {
-    this.setContent(OB.I18N.getLabel('OBPOS_Delete'));
+
   }
 });
 
@@ -25,27 +25,21 @@ enyo.kind({
     onVoidOrder: ''
   },
   components: [{
-    classes: 'display: table-row; height: 42px;',
+    style: 'display: table; height: 42px; width: 100%; border-bottom: 1px solid #cccccc;',
     components: [{
       name: 'orderDate',
-      style: 'display: table-cell; vertical-align: middle; padding: 2px 5px 2px 5px; border-bottom: 1px solid #cccccc; width: 10%;'
+      style: 'display: table-cell; vertical-align: middle; padding: 2px 5px 2px 5px; width: 10%;'
     }, {
       name: 'documentNo',
-      style: 'display: table-cell; vertical-align: middle; padding: 2px 5px 2px 5px; border-bottom: 1px solid #cccccc; width: 20%;'
+      style: 'display: table-cell; vertical-align: middle; padding: 2px 5px 2px 5px; width: 20%;'
     }, {
       name: 'bp',
-      style: 'display: table-cell; vertical-align: middle; padding: 2px 5px 2px 5px; border-bottom: 1px solid #cccccc; width: 39%;'
+      style: 'display: table-cell; vertical-align: middle; padding: 2px 5px 2px 5px; width: 40%;'
     }, {
-      style: 'display: table-cell; vertical-align: middle; padding: 2px 5px 2px 5px; border-bottom: 1px solid #cccccc; width: 15%; text-align:right;',
-      components: [{
-        //FIXME: <strong> should be part of a <p>
-        tag: 'strong',
-        components: [{
-          name: 'printGross'
-        }]
-      }]
+      name: 'printGross',
+      style: 'display: table-cell; vertical-align: middle; padding: 2px 5px 2px 5px; width: 15%; font-weight: bold; text-align: right;'
     }, {
-      style: 'display: table-cell; vertical-align: middle; padding: 2px 5px 2px 5px; border-bottom: 1px solid #cccccc; width: 15%;',
+      style: 'display: table-cell; vertical-align: middle; padding: 2px 5px 2px 5px; width: 15%;',
       components: [{
         name: 'buttonVoid',
         kind: 'OB.OBPOSCashUp.UI.ButtonVoid',
@@ -101,6 +95,8 @@ enyo.kind({
                 this.setContent(OB.I18N.getLabel('OBPOS_LblStepNumber', [step, count]) + " " + OB.I18N.getLabel('OBPOS_LblStepPendingOrders') + OB.OBPOSCashUp.UI.CashUp.getTitleExtensions());
               }
             }]
+          }, {
+            style: 'clear: both;'
           }]
         }, {
           name: 'rowDeleteAll',
@@ -164,11 +160,32 @@ enyo.kind({
     OB.UTIL.Approval.requestApproval(
     this.model, 'OBPOS_approval.cashupremovereceipts', function (approved, supervisor, approvalType) {
       if (approved) {
-        // approved so remove the entry
-        OB.Dal.remove(model, function () {
-          me.collection.remove(model);
-        }, OB.UTIL.showError);
+        if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
+          me.markOrderAsDeleted(model);
+        } else {
+          // approved so remove the entry
+          OB.Dal.remove(model, function () {
+            me.collection.remove(model);
+          }, OB.UTIL.showError);
+        }
       }
+    });
+  },
+  markOrderAsDeleted: function (model) {
+    var i, me = this,
+        creationDate = model.get('creationDate') || new Date();
+    model.set('creationDate', creationDate);
+    model.set('timezoneOffset', creationDate.getTimezoneOffset());
+    model.set('created', creationDate.getTime());
+    model.set('obposCreatedabsolute', OB.I18N.formatDateISO(creationDate));
+    model.set('obposIsDeleted', true);
+    for (i = 0; i < model.get('lines').length; i++) {
+      model.get('lines').at(i).set('obposIsDeleted', true);
+    }
+    model.set('hasbeenpaid', 'Y');
+    model.save();
+    OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(model.get('documentnoSuffix'), model.get('quotationnoSuffix'), function () {
+      me.collection.remove(model);
     });
   },
   voidAllPendingReceipts: function (inSender, inEvent) {
@@ -187,9 +204,13 @@ enyo.kind({
     var me = this;
 
     function removeOneModel(collection, model) {
-      OB.Dal.remove(model, function () {
-        collection.remove(model);
-      }, OB.UTIL.showError);
+      if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
+        me.markOrderAsDeleted(model);
+      } else {
+        OB.Dal.remove(model, function () {
+          collection.remove(model);
+        }, OB.UTIL.showError);
+      }
     }
 
     OB.UTIL.Approval.requestApproval(

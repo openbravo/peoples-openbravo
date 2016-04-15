@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2015 Openbravo S.L.U.
+ * Copyright (C) 2013-2016 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -22,11 +22,12 @@ enyo.kind({
     onButtonStatusChanged: 'buttonStatusChanged',
     onMaxLimitAmountError: 'maxLimitAmountError',
     onButtonPaymentChanged: 'paymentChanged',
-    onClearPaymentMethodSelect: 'clearPaymentMethodSelect'
+    onClearPaymentMethodSelect: 'clearPaymentMethodSelect',
+    onCheckValidPaymentList: 'checkValidPaymentList'
   },
   getSelectedPayment: function () {
-    if (this.receipt && this.receipt.selectedPayment) {
-      return this.receipt.selectedPayment;
+    if (this.receipt && this.receipt.get('selectedPayment')) {
+      return this.receipt.get('selectedPayment');
     }
     return null;
   },
@@ -48,7 +49,7 @@ enyo.kind({
       });
     } else {
       var payment, change, pending, isMultiOrders, paymentstatus;
-      payment = inEvent.value.payment || OB.MobileApp.model.paymentnames[OB.MobileApp.model.get('paymentcash')];
+      payment = inEvent.value.payment || OB.MobileApp.model.paymentnames[this.receipt.get('selectedPayment') || OB.MobileApp.model.get('paymentcash')];
       if (_.isUndefined(payment)) {
         return true;
       }
@@ -57,7 +58,8 @@ enyo.kind({
         this.bubble('onMaxLimitAmountError', {
           show: false,
           maxLimitAmount: 0,
-          currency: ''
+          currency: '',
+          symbolAtRight: true
         });
       }
       isMultiOrders = this.model.isValidMultiOrderState();
@@ -65,7 +67,7 @@ enyo.kind({
       pending = this.model.getPending();
       if (!isMultiOrders) {
         if (!_.isNull(this.receipt)) {
-          this.receipt.selectedPayment = payment.payment.searchKey;
+          this.receipt.set('selectedPayment', payment.payment.searchKey);
           paymentstatus = this.receipt.getPaymentStatus();
         }
       } else {
@@ -79,9 +81,8 @@ enyo.kind({
       } else if (!_.isNull(pending) && pending) {
         this.setTotalPending(pending, payment.mulrate, payment.symbol, payment.currencySymbolAtTheRight, inSender, inEvent);
       }
-      this.checkValidPayments(paymentstatus, payment);
-      if (!_.isNull(this.receipt) && this.receipt.get('isLayaway') && this.receipt.get('orderType') !== 3) {
-        this.$.layawayaction.updateVisibility(true);
+      if (paymentstatus) {
+        this.checkValidPayments(paymentstatus, payment);
       }
       if (inEvent.value.amount) {
         this.doPaymentActionPay({
@@ -121,11 +122,7 @@ enyo.kind({
   maxLimitAmountError: function (inSender, inEvent) {
     var maxHeight;
     if (inEvent.show) {
-      if (inEvent.currency !== '$') {
-        this.$.errorMaxlimitamount.setContent(OB.I18N.getLabel('OBPOS_PaymentMaxLimitAmount', [inEvent.maxLimitAmount, inEvent.currency]));
-      } else {
-        this.$.errorMaxlimitamount.setContent(OB.I18N.getLabel('OBPOS_PaymentMaxLimitAmount', [inEvent.currency, inEvent.maxLimitAmount]));
-      }
+      this.$.errorMaxlimitamount.setContent(OB.I18N.getLabel('OBPOS_PaymentMaxLimitAmount', [OB.I18N.formatCurrencyWithSymbol(inEvent.maxLimitAmount, inEvent.currency, inEvent.symbolAtRight)]));
     } else {
       this.$.errorMaxlimitamount.setContent('');
     }
@@ -221,24 +218,17 @@ enyo.kind({
       }, {
         classes: 'span3',
         components: [{
-          style: 'float: right;',
-          name: 'doneaction',
-          components: [{
-            kind: 'OB.OBPOSPointOfSale.UI.DoneButton'
-          }]
+          name: 'donebutton',
+          kind: 'OB.OBPOSPointOfSale.UI.DoneButton'
         }, {
-          style: 'float: right;',
-          name: 'exactaction',
-          components: [{
-            kind: 'OB.OBPOSPointOfSale.UI.ExactButton'
-          }]
+          name: 'exactbutton',
+          kind: 'OB.OBPOSPointOfSale.UI.ExactButton'
         }, {
           name: 'creditsalesaction',
           kind: 'OB.OBPOSPointOfSale.UI.CreditButton'
         }, {
           name: 'layawayaction',
-          kind: 'OB.OBPOSPointOfSale.UI.LayawayButton',
-          showing: false
+          kind: 'OB.OBPOSPointOfSale.UI.LayawayButton'
         }]
       }]
     }, {
@@ -276,21 +266,20 @@ enyo.kind({
     }
     this.receipt.on('change:orderType change:isLayaway change:payment', function (model) {
       if (this.model.get('leftColumnViewManager').isMultiOrder()) {
-        this.$.creditsalesaction.hide();
+        this.updateCreditSalesAction();
         this.$.layawayaction.hide();
         return;
       }
       var payment = OB.MobileApp.model.paymentnames[OB.MobileApp.model.get('paymentcash')];
       if ((model.get('orderType') === 2 || (model.get('isLayaway'))) && model.get('orderType') !== 3 && !model.getPaymentStatus().done) {
-        this.$.creditsalesaction.show();
         this.$.layawayaction.setContent(OB.I18N.getLabel('OBPOS_LblLayaway'));
         this.$.layawayaction.show();
       } else if (model.get('orderType') === 3) {
-        this.$.creditsalesaction.hide();
         this.$.layawayaction.hide();
       } else {
         this.$.layawayaction.hide();
       }
+      this.updateCreditSalesAction();
     }, this);
     this.$.extrainfo.setContent('');
     this.receipt.on('extrainfo', function (info) {
@@ -333,13 +322,13 @@ enyo.kind({
       symbol = OB.MobileApp.model.get('terminal').symbol;
       symbolAtRight = OB.MobileApp.model.get('terminal').currencySymbolAtTheRight;
     }
-    if (!_.isUndefined(this.receipt) && !_.isUndefined(OB.MobileApp.model.paymentnames[this.receipt.selectedPayment])) {
-      symbol = OB.MobileApp.model.paymentnames[this.receipt.selectedPayment].symbol;
-      rate = OB.MobileApp.model.paymentnames[this.receipt.selectedPayment].mulrate;
-      symbolAtRight = OB.MobileApp.model.paymentnames[this.receipt.selectedPayment].currencySymbolAtTheRight;
-      isCashType = OB.MobileApp.model.paymentnames[this.receipt.selectedPayment].paymentMethod.iscash;
+    if (!_.isUndefined(this.receipt) && !_.isUndefined(OB.MobileApp.model.paymentnames[this.receipt.get('selectedPayment')])) {
+      symbol = OB.MobileApp.model.paymentnames[this.receipt.get('selectedPayment')].symbol;
+      rate = OB.MobileApp.model.paymentnames[this.receipt.get('selectedPayment')].mulrate;
+      symbolAtRight = OB.MobileApp.model.paymentnames[this.receipt.get('selectedPayment')].currencySymbolAtTheRight;
+      isCashType = OB.MobileApp.model.paymentnames[this.receipt.get('selectedPayment')].paymentMethod.iscash;
     }
-    this.checkValidPayments(paymentstatus, OB.MobileApp.model.paymentnames[this.receipt.selectedPayment || OB.MobileApp.model.get('paymentcash')]);
+    this.checkValidPayments(paymentstatus, OB.MobileApp.model.paymentnames[this.receipt.get('selectedPayment') || OB.MobileApp.model.get('paymentcash')]);
     if (paymentstatus.change) {
       this.$.change.setContent(OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(this.receipt.getChange(), rate), symbol, symbolAtRight));
       OB.MobileApp.model.set('changeReceipt', OB.I18N.formatCurrencyWithSymbol(OB.DEC.mul(this.receipt.getChange(), rate), symbol, symbolAtRight));
@@ -362,9 +351,9 @@ enyo.kind({
       this.$.totalpending.hide();
       this.$.totalpendinglbl.hide();
       if (!_.isEmpty(OB.MobileApp.model.paymentnames)) {
-        this.$.doneaction.show();
+        this.$.donebutton.show();
       }
-      this.$.creditsalesaction.hide();
+      this.updateCreditSalesAction();
       this.$.layawayaction.hide();
     } else {
       this.setTotalPending(this.receipt.getPending(), rate, symbol, symbolAtRight);
@@ -376,25 +365,22 @@ enyo.kind({
         this.$.totalpendinglbl.setContent(OB.I18N.getLabel('OBPOS_PaymentsRemaining'));
       }
       this.$.totalpendinglbl.show();
-      this.$.doneaction.hide();
-      if (this.$.doneButton.drawerpreference) {
-        this.$.doneButton.setContent(OB.I18N.getLabel('OBPOS_LblOpen'));
-        this.$.doneButton.drawerOpened = false;
+      this.$.donebutton.hide();
+      if (this.$.donebutton.drawerpreference) {
+        this.$.donebutton.setContent(OB.I18N.getLabel('OBPOS_LblOpen'));
+        this.$.donebutton.drawerOpened = false;
       }
     }
 
     if (paymentstatus.done || this.receipt.getGross() === 0) {
-      this.$.exactaction.hide();
+      this.$.exactbutton.hide();
       this.$.layawayaction.hide();
     } else {
       if (!_.isEmpty(OB.MobileApp.model.paymentnames)) {
-        this.$.exactaction.show();
+        this.$.exactbutton.show();
       }
       if (this.receipt.get('orderType') === 2 || (this.receipt.get('isLayaway') && this.receipt.get('orderType') !== 3)) {
         this.$.layawayaction.show();
-        if (!this.receipt.get('isLayaway')) {
-          this.$.exactaction.hide();
-        }
       } else if (this.receipt.get('orderType') === 3) {
         this.$.layawayaction.hide();
       }
@@ -467,28 +453,28 @@ enyo.kind({
       this.$.totalpending.hide();
       this.$.totalpendinglbl.hide();
       if (!_.isEmpty(OB.MobileApp.model.paymentnames)) {
-        this.$.doneaction.show();
+        this.$.donebutton.show();
       }
-      this.$.creditsalesaction.hide();
+      this.updateCreditSalesAction();
       //            this.$.layawayaction.hide();
     } else {
       this.setTotalPending(OB.DEC.sub(paymentstatus.get('total'), paymentstatus.get('payment')), rate, symbol, symbolAtRight);
       this.$.totalpending.show();
       this.$.totalpendinglbl.show();
-      this.$.doneaction.hide();
-      if (this.$.doneButton.drawerpreference) {
-        this.$.doneButton.setContent(OB.I18N.getLabel('OBPOS_LblOpen'));
-        this.$.doneButton.drawerOpened = false;
+      this.$.donebutton.hide();
+      if (this.$.donebutton.drawerpreference) {
+        this.$.donebutton.setContent(OB.I18N.getLabel('OBPOS_LblOpen'));
+        this.$.donebutton.drawerOpened = false;
       }
     }
 
-    this.$.creditsalesaction.hide();
+    this.updateCreditSalesAction();
     this.$.layawayaction.hide();
     if (paymentstatus.get('multiOrdersList').length > 0 && OB.DEC.compare(paymentstatus.get('total')) >= 0 && (OB.DEC.compare(OB.DEC.sub(paymentstatus.get('payment'), paymentstatus.get('total'))) >= 0 || paymentstatus.get('total') === 0)) {
-      this.$.exactaction.hide();
+      this.$.exactbutton.hide();
     } else {
       if (!_.isEmpty(OB.MobileApp.model.paymentnames)) {
-        this.$.exactaction.show();
+        this.$.exactbutton.show();
       }
     }
     if (paymentstatus.get('multiOrdersList').length > 0 && OB.DEC.compare(paymentstatus.get('total')) >= 0 && OB.DEC.compare(OB.DEC.sub(paymentstatus.get('payment'), paymentstatus.get('total'))) >= 0 && !paymentstatus.get('change') && OB.DEC.compare(OB.DEC.sub(paymentstatus.get('payment'), paymentstatus.get('total'))) <= 0) {
@@ -520,7 +506,7 @@ enyo.kind({
             requiredCash = OB.DEC.add(requiredCash, payment.get('origAmount'));
           } else {
             paymentmethod = OB.POS.terminal.terminal.paymentnames[payment.get('kind')];
-            if (paymentmethod && payment.get('amount') > paymentmethod.currentCash) {
+            if (paymentmethod && payment.get('amount') > paymentmethod.currentCash && payment.get('isCash')) {
               hasAllEnoughCash = false;
             }
           }
@@ -547,23 +533,16 @@ enyo.kind({
     var currentCash = OB.DEC.Zero,
         requiredCash;
 
-    if (OB.UTIL.isNullOrUndefined(selectedPayment) || !selectedPayment.paymentMethod.iscash) {
+    if (OB.UTIL.isNullOrUndefined(selectedPayment) || OB.UTIL.isNullOrUndefined(selectedPayment.paymentMethod.overpaymentLimit)) {
       return true;
     }
 
-    if (paymentstatus.isNegative) {
-      requiredCash = paymentstatus.pendingAmt;
-      paymentstatus.payments.each(function (payment) {
-        if (payment.get('kind') === selectedPayment.payment.searchKey) {
-          requiredCash = OB.DEC.add(requiredCash, payment.get('amount'));
-        }
-      });
-    } else {
-      requiredCash = paymentstatus.changeAmt;
-    }
-
-    if (selectedPayment.paymentMethod.allowoverpayment && (requiredCash !== 0)) {
-      if (!OB.UTIL.isNullOrUndefined(selectedPayment.paymentMethod.overpaymentLimit) && (selectedPayment.paymentMethod.overpaymentLimit < requiredCash)) {
+    requiredCash = paymentstatus.changeAmt;
+    if (requiredCash !== 0) {
+      if (selectedPayment.paymentMethod.overpaymentLimit === 0) {
+        this.$.overpaymentnotavailable.show();
+        return false;
+      } else if (selectedPayment.paymentMethod.overpaymentLimit < requiredCash) {
         this.$.overpaymentexceedlimit.show();
         return false;
       } else {
@@ -571,20 +550,43 @@ enyo.kind({
       }
     } else if (requiredCash === 0) {
       return true;
-    } else {
-      this.$.overpaymentnotavailable.show();
-      return false;
     }
+    return true;
   },
 
   checkValidPaymentMethod: function (paymentstatus, payment) {
     var change = this.model.getChange();
     var check = true;
     var currentcash = payment.currentCash;
+    var cashIsPresent = false;
+    var alternativeCashPayment;
+    var alternativePaymentInfo;
     if (change && change > 0) {
       if (!payment.paymentMethod.iscash) {
-        check = false;
-        this.$.onlycashpaymentmethod.show();
+        if (paymentstatus.payments.size() > 1) {
+          alternativeCashPayment = _.find(paymentstatus.payments.models, function (item) {
+            if (item.get('isCash')) {
+              return item;
+            }
+          });
+          if (alternativeCashPayment) {
+            alternativePaymentInfo = _.find(OB.MobileApp.model.get('payments'), function (defPayment) {
+              if (defPayment.payment.searchKey === alternativeCashPayment.get('kind')) {
+                return defPayment;
+              }
+            });
+          }
+          if (!alternativeCashPayment) {
+            check = false;
+            this.$.onlycashpaymentmethod.show();
+          } else if (alternativePaymentInfo && alternativePaymentInfo.currentCash < change) {
+            check = false;
+            this.$.noenoughchangelbl.show();
+          }
+        } else {
+          check = false;
+          this.$.onlycashpaymentmethod.show();
+        }
       } else {
         if (currentcash < change) {
           check = false;
@@ -595,8 +597,31 @@ enyo.kind({
     return check;
   },
 
+  checkValidPaymentList: function (inSender, inEvent) {
+    var me = this,
+        checkPayment = true;
+    // Validating Payment
+    me.receipt.get('payments').each(function (payment) {
+      if (checkPayment) {
+        var paymentModal = OB.MobileApp.model.paymentnames[payment.get('kind')];
+        // Checking payment is valid
+        var returnCheck = me.checkValidPayments(me.receipt.getPaymentStatus(), paymentModal);
+        if (!returnCheck.enoughCashAvailable) {
+          OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_NoEnoughCash'));
+          checkPayment = false;
+        }
+      }
+    });
+    return true;
+  },
+
   checkValidPayments: function (paymentstatus, selectedPayment) {
     var resultOK;
+    var returnCheck = {
+      validCashOverpayment: false,
+      enoughCashAvailable: false,
+      validPaymentMethod: false
+    };
 
     // Hide all error labels. Error labels are shown by check... functions
     this.$.overpaymentnotavailable.hide();
@@ -604,13 +629,21 @@ enyo.kind({
     this.$.noenoughchangelbl.hide();
     this.$.onlycashpaymentmethod.hide();
 
+    if (!selectedPayment) {
+      return returnCheck;
+    }
     // Do the checkins
     resultOK = this.checkValidCashOverpayment(paymentstatus, selectedPayment);
     if (resultOK) {
+      returnCheck.validCashOverpayment = true;
       resultOK = this.checkEnoughCashAvailable(paymentstatus, selectedPayment, this, function (success) {
         var lsuccess = success;
         if (lsuccess) {
+          returnCheck.enoughCashAvailable = true;
           lsuccess = this.checkValidPaymentMethod(paymentstatus, selectedPayment);
+          if (lsuccess) {
+            returnCheck.validPaymentMethod = true;
+          }
         }
         this.setStatusButtons(lsuccess);
       });
@@ -618,26 +651,29 @@ enyo.kind({
       // Finally set status of buttons
       this.setStatusButtons(resultOK);
     }
-    if (!resultOK && !selectedPayment.paymentMethod.iscash) {
-      this.$.noenoughchangelbl.hide();
-    }
+    return returnCheck;
   },
 
   setStatusButtons: function (resultOK) {
     if (resultOK) {
       this.$.payments.scrollAreaMaxHeight = '150px';
-      this.$.doneButton.setLocalDisabled(false);
-      this.$.exactButton.setDisabled(false);
+      this.$.donebutton.setLocalDisabled(false);
+      this.$.exactbutton.setLocalDisabled(false);
     } else {
       if (this.$.overpaymentnotavailable.showing || this.$.overpaymentexceedlimit.showing) {
         this.$.noenoughchangelbl.setStyle("position: absolute; bottom: 20px; height: 20px; color: #ff0000;");
+        this.$.noenoughchangelbl.hide();
       } else {
-        this.$.noenoughchangelbl.setStyle("position: absolute; bottom: 0px; height: 20px; color: #ff0000;");
+        if (this.$.onlycashpaymentmethod.showing) {
+          this.$.noenoughchangelbl.setStyle("position: absolute; bottom: 20px; height: 20px; color: #ff0000;");
+        } else {
+          this.$.noenoughchangelbl.setStyle("position: absolute; bottom: 0px; height: 20px; color: #ff0000;");
+        }
+        this.$.noenoughchangelbl.show();
       }
-      this.$.noenoughchangelbl.show();
       this.$.payments.scrollAreaMaxHeight = '130px';
-      this.$.doneButton.setLocalDisabled(true);
-      this.$.exactButton.setDisabled(true);
+      this.$.donebutton.setLocalDisabled(true);
+      this.$.exactbutton.setLocalDisabled(true);
     }
   },
 
@@ -706,8 +742,8 @@ enyo.kind({
     var me = this;
     this.model = model;
     if (_.isEmpty(OB.MobileApp.model.paymentnames)) {
-      this.$.doneaction.show();
-      this.$.exactaction.hide();
+      this.$.donebutton.show();
+      this.$.exactbutton.hide();
     }
     this.model.get('multiOrders').get('multiOrdersList').on('all', function (event) {
       if (this.model.isValidMultiOrderState()) {
@@ -745,6 +781,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.ProcessButton',
   kind: 'OB.UI.RegularButton',
+  style: 'width: 120px; float: right; margin: 5px 5px 10px 0px; height: 2.5em; display:block; clear: right; font-weight: normal; padding: 0px',
   processdisabled: false,
   localdisabled: false,
   setLocalDisabled: function (value) {
@@ -766,8 +803,42 @@ enyo.kind({
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.DoneButton',
   kind: 'OB.OBPOSPointOfSale.UI.ProcessButton',
+  handlers: {
+    synchronizing: 'isSynchronizing',
+    synchronized: 'isSynchronized'
+  },
   drawerOpened: true,
-  style: 'width: 120px; float: right; margin: 5px 5px 15px 0px; height: 2.5em; display:block; clear: right',
+  isLocked: true,
+  lasDisabledPetition: true,
+  isSynchronizing: function () {
+    this.isLocked = true;
+    this.setDisabledIfSynchronized();
+  },
+  isSynchronized: function () {
+    this.isLocked = false;
+    this.setDisabledIfSynchronized();
+  },
+  setDisabled: function (value) {
+    this.lasDisabledPetition = value;
+    this.setDisabledIfSynchronized(value);
+  },
+  setDisabledIfSynchronized: function () {
+    var value = this.lasDisabledPetition;
+    // check arguments
+    if (value === undefined) {
+      // be sure that the value is always valid
+      OB.UTIL.Debug.execute(function () {
+        throw "The disabled value must be true or false";
+      });
+      value = false;
+    }
+    // force disabled is there are pending synchronizations
+    if (this.isLocked) {
+      value = true;
+    }
+    this.disabled = value; // for getDisabled() to return the correct value
+    this.setAttribute('disabled', value); // to effectively turn the button enabled or disabled    
+  },
   init: function (model) {
     this.model = model;
     this.setContent(OB.I18N.getLabel('OBPOS_LblDone'));
@@ -803,6 +874,15 @@ enyo.kind({
         me = this,
         payments;
     this.allowOpenDrawer = false;
+
+    // Checking Payment before Process
+    this.bubble('onCheckValidPaymentList');
+
+    if (this.disabled) {
+      return true;
+    }
+
+    var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes("doneButton");
 
     if (myModel.get('leftColumnViewManager').isOrder()) {
       payments = this.owner.receipt.get('payments');
@@ -868,17 +948,17 @@ enyo.kind({
         this.owner.model.get('multiOrders').set('openDrawer', false);
       }
     }
+    OB.UTIL.SynchronizationHelper.finished(synchId, "doneButton");
   }
 });
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.ExactButton',
+  kind: 'OB.OBPOSPointOfSale.UI.ProcessButton',
   events: {
     onExactPayment: ''
   },
-  kind: 'OB.OBPOSPointOfSale.UI.ProcessButton',
   classes: 'btn-icon-adaptative btn-icon-check btnlink-green',
-  style: 'width: 120px; float: right; margin: 5px 5px 15px 0px; height: 2.5em; display:block; clear: right',
   tap: function () {
     if (this.disabled) {
       return true;
@@ -926,7 +1006,12 @@ enyo.kind({
       this.$.info.setContent(this.model.get('description'));
     } else {
       if (this.model.get('paymentData')) {
-        this.$.info.setContent(this.model.get('paymentData').Name);
+        //legacy
+        if (this.model.get('paymentData').Name) {
+          this.model.get('paymentData').name = this.model.get('paymentData').Name;
+        }
+        //end legacy
+        this.$.info.setContent(this.model.get('paymentData').name);
       } else {
         this.$.info.setContent('');
       }
@@ -953,7 +1038,8 @@ enyo.kind({
       this.bubble('onMaxLimitAmountError', {
         show: false,
         maxLimitAmount: 0,
-        currency: ''
+        currency: '',
+        symbolAtRight: true
       });
       this.bubble('onClearPaymentSelect');
       this.doRemovePayment({
@@ -970,10 +1056,9 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.CreditButton',
-  kind: 'OB.UI.SmallButton',
+  kind: 'OB.OBPOSPointOfSale.UI.ProcessButton',
   i18nLabel: 'OBPOS_LblCreditSales',
   classes: 'btn-icon-small btnlink-green',
-  style: 'width: 120px; float: right; margin: 10px 5px 5px 0px; height: 2.0em; display:block; clear: right',
   permission: 'OBPOS_receipt.creditsales',
   events: {
     onShowPopup: ''
@@ -1007,10 +1092,12 @@ enyo.kind({
     var paymentstatus = this.model.get('order').getPaymentStatus();
     if (!paymentstatus.isReturn) {
       //this.setContent(OB.I18N.getLabel('OBPOS_LblLoading'));
+      var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes("creditButtonTap");
       process.exec({
         businessPartnerId: this.model.get('order').get('bp').get('id'),
         totalPending: this.model.get('order').getPending()
       }, function (data) {
+        OB.UTIL.SynchronizationHelper.finished(synchId, "creditButtonTap");
         if (data) {
           if (data.enoughCredit) {
             me.doShowPopup({
@@ -1037,6 +1124,7 @@ enyo.kind({
           OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorCreditSales'));
         }
       }, function () {
+        OB.UTIL.SynchronizationHelper.finished(synchId, "creditButtonTap");
         me.doShowPopup({
           popup: 'modalEnoughCredit',
           args: {
@@ -1060,13 +1148,11 @@ enyo.kind({
     }
   }
 });
-
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.LayawayButton',
-  kind: 'OB.UI.SmallButton',
+  kind: 'OB.OBPOSPointOfSale.UI.ProcessButton',
   content: '',
   classes: 'btn-icon-small btnlink-green',
-  style: 'width: 120px;float: right; margin: 10px 5px 5px 0px; height: 2.0em; display:block; clear: right;',
   permission: 'OBPOS_receipt.layawayReceipt',
   init: function (model) {
     this.model = model;
@@ -1089,6 +1175,15 @@ enyo.kind({
         myModel = this.owner.model,
         payments;
     this.allowOpenDrawer = false;
+
+    if (receipt.get('bp').id === OB.MobileApp.model.get('terminal').businessPartner && !OB.MobileApp.model.get('terminal').layaway_anonymouscustomer) {
+      OB.UTIL.showConfirmation.display("Error", OB.I18N.getLabel('OBPOS_layawaysOrdersWithAnonimousCust'));
+      return;
+    }
+
+    if (!this.showing) {
+      return true;
+    }
 
     if (myModel.get('leftColumnViewManager').isOrder()) {
       payments = this.owner.receipt.get('payments');
@@ -1114,6 +1209,8 @@ enyo.kind({
         receipt.set('generateInvoice', false);
       }
     }
+    this.hide();
+    enyo.$.scrim.show();
     receipt.trigger('paymentDone', me.allowOpenDrawer);
   }
 });

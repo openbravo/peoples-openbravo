@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2013 Openbravo S.L.U.
+ * Copyright (C) 2012-2016 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -52,7 +52,7 @@ public class Product extends ProcessHQLQuery {
   private Instance<ModelExtension> extensionsDisc;
 
   @Override
-  protected List<HQLPropertyList> getHqlProperties() {
+  protected List<HQLPropertyList> getHqlProperties(JSONObject jsonsent) {
     // Get Product Properties
     List<HQLPropertyList> propertiesList = new ArrayList<HQLPropertyList>();
     String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
@@ -68,8 +68,44 @@ public class Product extends ProcessHQLQuery {
     } finally {
       OBContext.restorePreviousMode();
     }
+    boolean isRemote = false;
+    try {
+      OBContext.setAdminMode(false);
+      posPrecision = (priceList.getCurrency().getObposPosprecision() == null ? priceList
+          .getCurrency().getPricePrecision() : priceList.getCurrency().getObposPosprecision())
+          .toString();
+      isRemote = "Y".equals(Preferences.getPreferenceValue("OBPOS_remote.product", true, OBContext
+          .getOBContext().getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(),
+          OBContext.getOBContext().getUser(), OBContext.getOBContext().getRole(), null));
+    } catch (PropertyException e) {
+      log.error("Error getting preference OBPOS_remote.product " + e.getMessage(), e);
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+    boolean isMultipricelist = false;
+    try {
+      OBContext.setAdminMode(false);
+      isMultipricelist = "Y".equals(Preferences.getPreferenceValue("OBPOS_EnableMultiPriceList",
+          true, OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
+              .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
+              .getOBContext().getRole(), null));
+    } catch (PropertyException e) {
+      log.error("Error getting preference EnableMultiPriceList " + e.getMessage(), e);
+    } finally {
+      OBContext.restorePreviousMode();
+    }
     Map<String, Object> args = new HashMap<String, Object>();
     args.put("posPrecision", posPrecision);
+    try {
+      if (isRemote && isMultipricelist && jsonsent.has("remoteParams")
+          && jsonsent.getJSONObject("remoteParams").getString("currentPriceList") != null) {
+        args.put("multiPriceList", true);
+      } else {
+        args.put("multiPriceList", false);
+      }
+    } catch (JSONException e) {
+      e.printStackTrace();
+    }
 
     HQLPropertyList regularProductsHQLProperties = ModelExtensionUtils.getPropertyExtensions(
         extensions, args);
@@ -119,9 +155,30 @@ public class Product extends ProcessHQLQuery {
     } finally {
       OBContext.restorePreviousMode();
     }
-
+    boolean isMultipricelist = false;
+    try {
+      OBContext.setAdminMode(false);
+      isMultipricelist = "Y".equals(Preferences.getPreferenceValue("OBPOS_EnableMultiPriceList",
+          true, OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
+              .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
+              .getOBContext().getRole(), null));
+    } catch (PropertyException e) {
+      log.error("Error getting preference EnableMultiPriceList " + e.getMessage(), e);
+    } finally {
+      OBContext.restorePreviousMode();
+    }
     Map<String, Object> args = new HashMap<String, Object>();
     args.put("posPrecision", posPrecision);
+    try {
+      if (isRemote && isMultipricelist && jsonsent.has("remoteParams")
+          && jsonsent.getJSONObject("remoteParams").getString("currentPriceList") != null) {
+        args.put("multiPriceList", true);
+      } else {
+        args.put("multiPriceList", false);
+      }
+    } catch (JSONException e) {
+      e.printStackTrace();
+    }
 
     HQLPropertyList regularProductsHQLProperties = ModelExtensionUtils.getPropertyExtensions(
         extensions, args);
@@ -129,14 +186,25 @@ public class Product extends ProcessHQLQuery {
         extensionsDisc, args);
 
     Long lastUpdated = jsonsent.has("lastUpdated")
-        && !jsonsent.get("lastUpdated").equals("undefined") ? jsonsent.getLong("lastUpdated")
-        : null;
+        && !jsonsent.get("lastUpdated").equals("undefined")
+        && !jsonsent.get("lastUpdated").equals("null") ? jsonsent.getLong("lastUpdated") : null;
+
     // regular products
     String hql = "select"
         + regularProductsHQLProperties.getHqlSelect()
         + "FROM OBRETCO_Prol_Product as pli left outer join pli.product.image img inner join pli.product as product, "
-        + "PricingProductPrice ppp, " + "PricingPriceListVersion pplv "
-        + "WHERE  $filtersCriteria AND $hqlCriteria AND (pli.obretcoProductlist = '"
+        + "PricingProductPrice ppp, " + "PricingPriceListVersion pplv ";
+    if (isRemote && isMultipricelist && jsonsent.has("remoteParams")) {
+      String multipriceListVersionId = POSUtils.getPriceListVersionForPriceList(
+          jsonsent.getJSONObject("remoteParams").getString("currentPriceList"), terminalDate)
+          .getId();
+      hql += ", PricingProductPrice pp WHERE pp.product=pli.product and pp.priceListVersion='"
+          + multipriceListVersionId + "'";
+    } else {
+      hql += " WHERE 1=1";
+    }
+
+    hql += " AND $filtersCriteria AND $hqlCriteria AND (pli.obretcoProductlist = '"
         + productList.getId() + "') " + "AND (" + "pplv.id='" + priceListVersion.getId() + "'"
         + ") AND (" + "ppp.priceListVersion.id = pplv.id" + ") AND ("
         + "pli.product.id = ppp.product.id" + ") ";
@@ -144,9 +212,10 @@ public class Product extends ProcessHQLQuery {
     if (lastUpdated != null) {
       hql += "AND ((pli.product.$incrementalUpdateCriteria) OR (pli.$incrementalUpdateCriteria) OR (ppp.$incrementalUpdateCriteria)) ";
     } else {
-      hql += "AND (pli.product.$incrementalUpdateCriteria) ";
+      hql += "AND ((pli.product.$incrementalUpdateCriteria) AND (pli.$incrementalUpdateCriteria)) ";
     }
-    hql += "order by pli.product.name";
+
+    hql += "order by pli.product.name asc";
     products.add(hql);
     // Packs, combos...
     products.add("select "
@@ -169,7 +238,7 @@ public class Product extends ProcessHQLQuery {
         + "')) " + "   or (p.includedOrganizations='N' " + "  and  exists (select 1 "
         + "         from PricingAdjustmentOrganization o" + "        where active = true"
         + "          and o.priceAdjustment = p" + "          and o.organization.id ='" + orgId
-        + "')) " + "    ) ");
+        + "')) " + "    ) order by p.name asc");
 
     // generic products
     if (!isRemote) {// BROWSE tab is hidden, we do not need to send generic products
@@ -178,7 +247,7 @@ public class Product extends ProcessHQLQuery {
               + regularProductsHQLProperties.getHqlSelect()
               + " from Product product left outer join product.image img left join product.oBRETCOProlProductList as pli left outer join product.pricingProductPriceList ppp where $filtersCriteria AND (product.$incrementalUpdateCriteria) and exists (select 1 from Product product2 left join product2.oBRETCOProlProductList as pli2, PricingProductPrice ppp2 where product.id = product2.genericProduct.id and product2 = ppp2.product and ppp2.priceListVersion.id = '"
               + priceListVersion.getId() + "' and pli2.obretcoProductlist.id = '"
-              + productList.getId() + "')");
+              + productList.getId() + "') order by product.name asc");
     }
 
     return products;

@@ -132,6 +132,7 @@ enyo.kind({
     kind: 'OB.UI.renderTextProperty',
     name: 'receiptLineDescription',
     modelProperty: 'description',
+    style: 'height: 30px; margin-bottom: 3px; padding: 3px;',
     i18nLabel: 'OBPOS_LblDescription'
   }]
 });

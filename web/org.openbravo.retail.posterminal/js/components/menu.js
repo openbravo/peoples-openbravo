@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012 Openbravo S.L.U.
+ * Copyright (C) 2012-2015 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -144,6 +144,73 @@ enyo.kind({
 });
 
 enyo.kind({
+  name: 'OB.UI.MenuReceiptLayaway',
+  kind: 'OB.UI.MenuAction',
+  permission: 'OBPOS_receipt.receiptLayaway',
+  events: {
+    onShowDivText: ''
+  },
+  i18nLabel: 'OBPOS_LblReceiptLayaway',
+  tap: function () {
+    var receiptAllowed = true,
+        notValid = {};
+    if (this.disabled) {
+      return true;
+    }
+    this.inherited(arguments); // Manual dropdown menu closure
+    // check if this order has been voided previously
+    if (this.model.get('order').get('orderType') === 3) {
+      return;
+    }
+    var order = this.model.get('order');
+    enyo.forEach(this.model.get('order').get('payments').models, function (curPayment) {
+      receiptAllowed = false;
+      return;
+    }, this);
+
+    if (receiptAllowed) {
+      this.doShowDivText({
+        permission: this.permission,
+        orderType: 0
+      });
+    } else {
+      OB.UTIL.showError(OB.I18N.getLabel('OBPOS_LayawayHasPayment'));
+    }
+  },
+  displayLogic: function () {
+    if (this.model.get('order').get('orderType') === 2) {
+      this.show();
+      this.adjustVisibilityBasedOnPermissions();
+    } else {
+      this.hide();
+    }
+  },
+  init: function (model) {
+    this.model = model;
+    var receipt = model.get('order'),
+        me = this;
+    this.setShowing(false);
+    receipt.on('change:orderType', function (model) {
+      this.displayLogic();
+    }, this);
+    receipt.on('change:isLayaway', function (model) {
+      this.displayLogic();
+    }, this);
+
+    this.model.get('leftColumnViewManager').on('change:currentView', function (changedModel) {
+      if (changedModel.isOrder()) {
+        this.displayLogic();
+        return;
+      }
+      if (changedModel.isMultiOrder()) {
+        this.setShowing(false);
+        return;
+      }
+    }, this);
+  }
+});
+
+enyo.kind({
   name: 'OB.UI.MenuLayaway',
   kind: 'OB.UI.MenuAction',
   permission: 'OBPOS_receipt.layawayReceipt',
@@ -157,6 +224,10 @@ enyo.kind({
       return true;
     }
     this.inherited(arguments); // Manual dropdown menu closure
+    if (OB.UTIL.isNullOrUndefined(this.model.get('order').get('bp'))) {
+      OB.UTIL.showError(OB.I18N.getLabel('OBPOS_layawaysOrderWithNotBP'));
+      return true;
+    }
     negativeLines = _.find(this.model.get('order').get('lines').models, function (line) {
       return line.get('qty') < 0;
     });
@@ -598,6 +669,53 @@ enyo.kind({
   },
   updateVisibility: function (model) {
     if (OB.MobileApp.model.hasPermission(this.permission) && model.get('isQuotation') && model.get('hasbeenpaid') === 'Y') {
+      this.show();
+    } else {
+      this.hide();
+    }
+  },
+  init: function (model) {
+    var receipt = model.get('order'),
+        me = this;
+    me.hide();
+
+    model.get('leftColumnViewManager').on('order', function () {
+      this.updateVisibility(receipt);
+      this.adjustVisibilityBasedOnPermissions();
+    }, this);
+
+    model.get('leftColumnViewManager').on('multiorder', function () {
+      me.hide();
+    }, this);
+
+    receipt.on('change:isQuotation', function (model) {
+      this.updateVisibility(model);
+    }, this);
+    receipt.on('change:hasbeenpaid', function (model) {
+      this.updateVisibility(model);
+    }, this);
+  }
+});
+
+enyo.kind({
+  name: 'OB.UI.MenuRejectQuotation',
+  kind: 'OB.UI.MenuAction',
+  permission: 'OBPOS_quotation.rejections',
+  events: {
+    onShowRejectQuotation: ''
+  },
+  i18nLabel: 'OBPOS_RejectQuotation',
+  tap: function () {
+    if (this.disabled) {
+      return true;
+    }
+    this.inherited(arguments); // Manual dropdown menu closure
+    if (OB.MobileApp.model.hasPermission(this.permission, true)) {
+      this.doShowRejectQuotation();
+    }
+  },
+  updateVisibility: function (model) {
+    if (OB.MobileApp.model.hasPermission(this.permission, true) && model.get('isQuotation') && model.get('hasbeenpaid') === 'Y') {
       this.show();
     } else {
       this.hide();
