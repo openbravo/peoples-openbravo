@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2015 Openbravo SLU
+ * All portions are Copyright (C) 2014-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -268,7 +268,10 @@ public class InventoryAmountUpdateProcess extends BaseActionHandler {
         subSelect.append("select min(trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
             + ")");
         subSelect.append(" from " + MaterialTransaction.ENTITY_NAME + " as trx");
-        subSelect.append("   join trx." + MaterialTransaction.PROPERTY_STORAGEBIN + " as locator");
+        if (warehouse != null) {
+          subSelect
+              .append("   join trx." + MaterialTransaction.PROPERTY_STORAGEBIN + " as locator");
+        }
         subSelect.append(" where trx." + MaterialTransaction.PROPERTY_PRODUCT + ".id = :product");
         subSelect.append(" and trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " > :date");
         // Include only transactions that have its cost calculated

@@ -50,10 +50,10 @@ public class AverageAlgorithm extends CostingAlgorithm {
       BigDecimal trxCostWithSign = (transaction.getMovementQuantity().signum() == -1) ? trxCost
           .negate() : trxCost;
       BigDecimal newCost = null;
-      BigDecimal currentValuedStock = CostingUtils.getCurrentValuedStock(transaction.getProduct(),
-          costOrg, transaction.getTransactionProcessDate(), costDimensions, costCurrency);
       BigDecimal currentStock = CostingUtils.getCurrentStock(transaction.getProduct(), costOrg,
           transaction.getTransactionProcessDate(), costDimensions);
+      BigDecimal currentValuedStock = CostingUtils.getCurrentValuedStock(transaction.getProduct(),
+          costOrg, transaction.getTransactionProcessDate(), costDimensions, costCurrency);
       if (currentCosting == null) {
         if (transaction.getMovementQuantity().signum() == 0) {
           newCost = BigDecimal.ZERO;
@@ -72,7 +72,7 @@ public class AverageAlgorithm extends CostingAlgorithm {
               RoundingMode.HALF_UP);
         }
       }
-      insertCost(currentCosting, newCost, currentStock, trxCostWithSign);
+      insertCost(currentCosting, newCost, currentStock, currentValuedStock, trxCostWithSign);
 
     }
     return trxCost;
@@ -115,7 +115,7 @@ public class AverageAlgorithm extends CostingAlgorithm {
   }
 
   private void insertCost(Costing currentCosting, BigDecimal newCost, BigDecimal currentStock,
-      BigDecimal trxCost) {
+      BigDecimal currentValuedStock, BigDecimal trxCost) {
     Date dateTo = getLastDate();
     Date startingDate = null;
     if (currentCosting != null) {
@@ -142,6 +142,7 @@ public class AverageAlgorithm extends CostingAlgorithm {
     }
     cost.setQuantity(transaction.getMovementQuantity());
     cost.setTotalMovementQuantity(currentStock.add(transaction.getMovementQuantity()));
+    cost.setTotalStockValuation(currentValuedStock.add(trxCost));
     if (transaction.getMovementQuantity().signum() == 0) {
       cost.setPrice(newCost);
     } else {

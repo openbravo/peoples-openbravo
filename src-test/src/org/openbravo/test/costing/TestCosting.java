@@ -12671,11 +12671,17 @@ public class TestCosting extends WeldBaseTest {
 
         assertEquals(productCosting.getTotalMovementQuantity(), productCostingAssert.getQuantity());
 
-        if (productCostingAssert.getQuantity() == null)
+        if (productCostingAssert.getQuantity() == null) {
           assertEquals(productCosting.getQuantity(), null);
-        else
+          assertEquals(productCosting.getTotalStockValuation(), null);
+        } else {
           assertEquals(productCosting.getQuantity(), productCostingAssert.getTransaction()
               .getMovementQuantity());
+          assertEquals(productCosting.getTotalStockValuation()
+              .setScale(1, BigDecimal.ROUND_HALF_UP),
+              productCostingAssert.getFinalCost().multiply(productCostingAssert.getQuantity())
+                  .setScale(1, BigDecimal.ROUND_HALF_UP));
+        }
 
         assertEquals(productCosting.isManual(), productCostingAssert.isManual());
         assertEquals(productCosting.isPermanent(), !productCostingAssert.isManual());

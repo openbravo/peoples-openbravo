@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2015 Openbravo SLU
+ * All portions are Copyright (C) 2012-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -291,35 +291,41 @@ public class CostingServer {
       checkNegativeStockCorrectionTrxs = false;
     }
 
-    boolean modifiesAvg = AverageAlgorithm.modifiesAverage(TrxType.getTrxType(transaction));
-    BigDecimal currentStock = CostAdjustmentUtils.getStockOnTransactionDate(getOrganization(),
-        transaction, getCostingAlgorithm().costDimensions, transaction.getProduct().isProduction(),
-        costingRule.isBackdatedTransactionsFixed());
     // the stock previous to transaction was zero or negative
     if (checkNegativeStockCorrectionTrxs
-        && modifiesAvg
-        && !adjustmentAlreadyCreated
-        && (currentStock.compareTo(transaction.getMovementQuantity()) < 0 || (trxType != TrxType.InventoryOpening
-            && currentStock.compareTo(transaction.getMovementQuantity()) == 0 && CostingUtils
-              .existsProcessedTransactions(transaction.getProduct(),
-                  getCostingAlgorithm().costDimensions, getOrganization(), transaction, transaction
-                      .getProduct().isProduction())))) {
+        && AverageAlgorithm.modifiesAverage(TrxType.getTrxType(transaction))
+        && !adjustmentAlreadyCreated) {
+      BigDecimal currentStock = CostAdjustmentUtils.getStockOnTransactionDate(getOrganization(),
+          transaction, getCostingAlgorithm().costDimensions, transaction.getProduct()
+              .isProduction(), costingRule.isBackdatedTransactionsFixed());
+      if (currentStock.compareTo(transaction.getMovementQuantity()) < 0
+          || (trxType != TrxType.InventoryOpening
+              && currentStock.compareTo(transaction.getMovementQuantity()) == 0 && CostingUtils
+                .existsProcessedTransactions(transaction.getProduct(),
+                    getCostingAlgorithm().costDimensions, getOrganization(), transaction,
+                    transaction.getProduct().isProduction()))) {
 
-      // NSC = Negative Stock Correction
-      createAdjustment("NSC", null);
+        // NSC = Negative Stock Correction
+        createAdjustment("NSC", null);
+      }
     }
 
     // check if closing inventory needs to be adjusted due to a remainder value
-    if (trxType == TrxType.InventoryClosing && BigDecimal.ZERO.compareTo(currentStock) == 0) {
+    if (trxType == TrxType.InventoryClosing) {
+      BigDecimal currentStock = CostAdjustmentUtils.getStockOnTransactionDate(getOrganization(),
+          transaction, getCostingAlgorithm().costDimensions, transaction.getProduct()
+              .isProduction(), costingRule.isBackdatedTransactionsFixed());
 
-      BigDecimal currentValuedStock = CostAdjustmentUtils.getValuedStockOnTransactionDate(
-          getOrganization(), transaction, getCostingAlgorithm().costDimensions, transaction
-              .getProduct().isProduction(), costingRule.isBackdatedTransactionsFixed(), transaction
-              .getCurrency());
+      if (BigDecimal.ZERO.compareTo(currentStock) == 0) {
+        BigDecimal currentValuedStock = CostAdjustmentUtils.getValuedStockOnTransactionDate(
+            getOrganization(), transaction, getCostingAlgorithm().costDimensions, transaction
+                .getProduct().isProduction(), costingRule.isBackdatedTransactionsFixed(),
+            transaction.getCurrency());
 
-      if (BigDecimal.ZERO.compareTo(currentValuedStock) != 0) {
-        // NSC = Negative Stock Correction
-        createAdjustment("NSC", currentValuedStock);
+        if (BigDecimal.ZERO.compareTo(currentValuedStock) != 0) {
+          // NSC = Negative Stock Correction
+          createAdjustment("NSC", currentValuedStock);
+        }
       }
     }
 

@@ -579,7 +579,6 @@ public class CostingMigrationProcess implements Process {
 
     select.append(" from " + TransactionCost.ENTITY_NAME + " as tc");
     select.append("  join tc." + TransactionCost.PROPERTY_INVENTORYTRANSACTION + " as trx");
-    select.append("  join trx." + MaterialTransaction.PROPERTY_STORAGEBIN + " as locator");
 
     select.append(" where trx." + MaterialTransaction.PROPERTY_PRODUCT + ".id = :product");
     // Include only transactions that have its cost calculated
