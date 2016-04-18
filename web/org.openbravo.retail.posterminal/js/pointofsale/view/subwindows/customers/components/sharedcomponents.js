@@ -407,64 +407,31 @@ enyo.kind({
     });
     this.attributeContainer = this.$.customerAttributes;
     enyo.forEach(this.newAttributes, function (natt) {
-      var resultDisplay = true,
-          undf;
-      if (natt.displayLogic !== undf && natt.displayLogic !== null) {
-        if (enyo.isFunction(natt.displayLogic)) {
-          resultDisplay = natt.displayLogic(this);
-        } else {
-          resultDisplay = natt.displayLogic;
-        }
-      }
-      if (resultDisplay) {
-        this.$.customerOnlyFields.createComponent({
-          kind: 'OB.UI.CustomerPropertyLine',
-          name: 'line_' + natt.name,
-          newAttribute: natt
-        }, {
-          owner: me.attributeContainer
-        });
-      }
+      this.$.customerOnlyFields.createComponent({
+        kind: 'OB.UI.CustomerPropertyLine',
+        name: 'line_' + natt.name,
+        newAttribute: natt
+      }, {
+        owner: me.attributeContainer
+      });
     }, this);
     enyo.forEach(this.shipAddrAttributes, function (natt) {
-      var resultDisplay = true,
-          undf;
-      if (natt.displayLogic !== undf && natt.displayLogic !== null) {
-        if (enyo.isFunction(natt.displayLogic)) {
-          resultDisplay = natt.displayLogic(this);
-        } else {
-          resultDisplay = natt.displayLogic;
-        }
-      }
-      if (resultDisplay) {
-        this.$.shippingAddrFields.createComponent({
-          kind: 'OB.UI.CustomerPropertyLine',
-          name: 'line_' + natt.name,
-          newAttribute: natt
-        }, {
-          owner: me.attributeContainer
-        });
-      }
+      this.$.shippingAddrFields.createComponent({
+        kind: 'OB.UI.CustomerPropertyLine',
+        name: 'line_' + natt.name,
+        newAttribute: natt
+      }, {
+        owner: me.attributeContainer
+      });
     }, this);
     enyo.forEach(this.invAddrAttributes, function (natt) {
-      var resultDisplay = true,
-          undf;
-      if (natt.displayLogic !== undf && natt.displayLogic !== null) {
-        if (enyo.isFunction(natt.displayLogic)) {
-          resultDisplay = natt.displayLogic(this);
-        } else {
-          resultDisplay = natt.displayLogic;
-        }
-      }
-      if (resultDisplay) {
-        this.$.invoicingAddrFields.createComponent({
-          kind: 'OB.UI.CustomerPropertyLine',
-          name: 'line_' + natt.name,
-          newAttribute: natt
-        }, {
-          owner: me.attributeContainer
-        });
-      }
+      this.$.invoicingAddrFields.createComponent({
+        kind: 'OB.UI.CustomerPropertyLine',
+        name: 'line_' + natt.name,
+        newAttribute: natt
+      }, {
+        owner: me.attributeContainer
+      });
     }, this);
   },
   init: function (model) {

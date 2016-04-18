@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, enyo */
+/*global OB, enyo, _ */
 
 enyo.kind({
   kind: 'OB.UI.Subwindow',
@@ -20,6 +20,16 @@ enyo.kind({
     this.waterfall('onSetCustomer', {
       customer: params.businessPartner
     });
+
+    // Hide components depending on its displayLogic function
+    _.each(this.$.subWindowBody.$.editcustomers_impl.$.customerAttributes.$, function (attribute) {
+      _.each(attribute.$.newAttribute.$, function (attrObject) {
+        if (attrObject.displayLogic && !attrObject.displayLogic()) {
+          this.hide();
+        }
+      }, attribute);
+    });
+
     return true;
   },
   defaultNavigateOnClose: 'mainSubWindow',
