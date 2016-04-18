@@ -595,7 +595,7 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
     addFilterWhereClause(additionalFilter, filterWhereClause);
 
     // the _where parameter contains the filter clause and the where clause defined at tab level
-    String whereClauseParameter = parameters.get(JsonConstants.WHERE_PARAMETER);
+    String whereClauseParameter = parameters.get(JsonConstants.WHERE_AND_FILTER_CLAUSE);
     if (whereClauseParameter != null && !whereClauseParameter.trim().isEmpty()
         && !"null".equals(whereClauseParameter)) {
       additionalFilter.append(AND + whereClauseParameter);

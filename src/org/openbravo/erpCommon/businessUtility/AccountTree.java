@@ -11,7 +11,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SLU
- * Contributions are Copyright (C) 2001-2013 Openbravo S.L.U.
+ * Contributions are Copyright (C) 2001-2016 Openbravo S.L.U.
  ******************************************************************************
  */
 package org.openbravo.erpCommon.businessUtility;
@@ -80,7 +80,7 @@ public class AccountTree {
     if (reportElements != null && reportElements.length > 0) {
       // forms: Array of accounts with its operands.
       AccountTreeData[] operands = AccountTreeData.selectOperands(conn,
-          Utility.getContext(conn, vars, "#User_Org", "AccountTree"),
+          Utility.getContext(conn, vars, "#AccessibleOrgTree", "AccountTree"),
           Utility.getContext(conn, vars, "#User_Client", "AccountTree"),
           OBDal.getInstance().get(ElementValue.class, reportNodes[0]).getAccountingElement()
               .getId());
@@ -123,7 +123,7 @@ public class AccountTree {
       // Array of accounts with its operands.
       // Calculating forms for every elements
       AccountTreeData[] operands = AccountTreeData.selectOperands(conn,
-          Utility.getContext(conn, vars, "#User_Org", "AccountTree"),
+          Utility.getContext(conn, vars, "#AccessibleOrgTree", "AccountTree"),
           Utility.getContext(conn, vars, "#User_Client", "AccountTree"),
           OBDal.getInstance().get(ElementValue.class, reportNodes[0]).getAccountingElement()
               .getId());

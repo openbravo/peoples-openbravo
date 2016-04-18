@@ -24,9 +24,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.model.domaintype.DateDomainType;
@@ -34,11 +38,13 @@ import org.openbravo.base.model.domaintype.DatetimeDomainType;
 import org.openbravo.base.model.domaintype.EnumerateDomainType;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
+import org.openbravo.client.application.CachedPreference;
 import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.service.json.DataResolvingMode;
@@ -58,6 +64,9 @@ import org.openbravo.service.json.JsonConstants;
  */
 public class DefaultDataSourceService extends BaseDataSourceService {
   private static final Logger log4j = Logger.getLogger(DefaultDataSourceService.class);
+
+  @Inject
+  private CachedPreference cachedPreference;
 
   /*
    * (non-Javadoc)
@@ -89,19 +98,42 @@ public class DefaultDataSourceService extends BaseDataSourceService {
     }
   }
 
-  private void addFetchParameters(Map<String, String> parameters) {
-
+  /**
+   * Adds some extra parameters that will be used to fetch data.
+   */
+  protected void addFetchParameters(Map<String, String> parameters) {
     if (getEntity() != null) {
       parameters.put(JsonConstants.ENTITYNAME, getEntity().getName());
     }
 
-    if (getWhereClause() != null) {
-      if (parameters.get(JsonConstants.WHERE_PARAMETER) != null) {
-        final String currentWhere = parameters.get(JsonConstants.WHERE_PARAMETER);
-        parameters.put(JsonConstants.WHERE_PARAMETER, "(" + currentWhere + ") and ("
-            + getWhereClause() + ")");
+    if (!"true".equals(parameters.get(JsonConstants.WHERE_CLAUSE_HAS_BEEN_CHECKED))) {
+      if (whereParameterIsNotBlank(parameters)) {
+        if (manualWhereClausePreferenceIsEnabled()) {
+          parameters.put(JsonConstants.WHERE_AND_FILTER_CLAUSE,
+              parameters.get(JsonConstants.WHERE_PARAMETER));
+          String warnMsg = OBMessageUtils.getI18NMessage("WhereParameterAppliedWarning", null);
+          log4j.warn(warnMsg + "Parameters: "
+              + DefaultJsonDataService.convertParameterToString(parameters));
+        } else {
+          String errorMsg = OBMessageUtils.getI18NMessage("WhereParameterException", null);
+          log4j.error(errorMsg + " Parameters: "
+              + DefaultJsonDataService.convertParameterToString(parameters));
+          throw new OBSecurityException(errorMsg, false);
+        }
       } else {
-        parameters.put(JsonConstants.WHERE_PARAMETER, getWhereClause());
+        String whereAndFilterClause = getWhereAndFilterClause(parameters);
+        if (StringUtils.isNotBlank(whereAndFilterClause)) {
+          if (getWhereClause() != null) {
+            parameters.put(JsonConstants.WHERE_AND_FILTER_CLAUSE, "(" + whereAndFilterClause
+                + ") and (" + getWhereClause() + ")");
+          } else {
+            parameters.put(JsonConstants.WHERE_AND_FILTER_CLAUSE, whereAndFilterClause);
+          }
+        } else {
+          if (getWhereClause() != null) {
+            parameters.put(JsonConstants.WHERE_AND_FILTER_CLAUSE, getWhereClause());
+          }
+        }
       }
     }
 
@@ -123,17 +155,26 @@ public class DefaultDataSourceService extends BaseDataSourceService {
       }
 
       final String whereClause;
-      if (parameters.get(JsonConstants.WHERE_PARAMETER) != null
-          && !parameters.get(JsonConstants.WHERE_PARAMETER).equals("null")) {
-        whereClause = parameters.get(JsonConstants.WHERE_PARAMETER) + " and (";
+      if (parameters.get(JsonConstants.WHERE_AND_FILTER_CLAUSE) != null
+          && !parameters.get(JsonConstants.WHERE_AND_FILTER_CLAUSE).equals("null")) {
+        whereClause = parameters.get(JsonConstants.WHERE_AND_FILTER_CLAUSE) + " and (";
       } else {
         whereClause = " (";
       }
-      parameters.put(JsonConstants.WHERE_PARAMETER, whereClause + JsonConstants.MAIN_ALIAS + "."
-          + parentProperty + ".id='" + parentId + "')");
+      parameters.put(JsonConstants.WHERE_AND_FILTER_CLAUSE, whereClause + JsonConstants.MAIN_ALIAS
+          + "." + parentProperty + ".id='" + parentId + "')");
     }
-
     parameters.put(JsonConstants.USE_ALIAS, "true");
+  }
+
+  private boolean manualWhereClausePreferenceIsEnabled() {
+    return "Y".equals(cachedPreference.getPreferenceValue(CachedPreference.ALLOW_WHERE_PARAMETER));
+  }
+
+  private boolean whereParameterIsNotBlank(Map<String, String> parameters) {
+    return parameters.containsKey(JsonConstants.WHERE_PARAMETER)
+        && StringUtils.isNotBlank(parameters.get(JsonConstants.WHERE_PARAMETER))
+        && !"null".equals(parameters.get(JsonConstants.WHERE_PARAMETER));
   }
 
   /*

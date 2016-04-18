@@ -19,8 +19,8 @@
  coalesce(taxregline.taxundamt,0) as IvaIndeducibile, coalesce(taxregline.taxamt,0) as Iva, coalesce(taxregline.totalamt,0) as Totale,
  coalesce(taxreg.lastregaccumamt,0) as TotalePrecedente,
 case 
- when taxregtyp.issotrx ='S' then 'Vendite'
- else 'Acquisti'
+ when taxregtyp.issotrx ='Y' then 'Sales'
+ else 'Purchase'
  end 
  as IsSale
  from c_taxregister taxreg, c_taxregisterline taxregline , c_taxregister_type taxregtyp, c_tax tax
@@ -65,10 +65,10 @@ case
 		<variableExpression><![CDATA[$F{TOTALEPRECEDENTE}]]></variableExpression>
 	</variable>
 	<variable name="TotIva" class="java.math.BigDecimal" calculation="Sum">
-		<variableExpression><![CDATA[( $F{ISSALE}.equals( "Acquisti" )  ? $F{IVA}.negate() : $F{IVA} )]]></variableExpression>
+		<variableExpression><![CDATA[( $F{ISSALE}.equals( "Purchase" )  ? $F{IVA}.negate() : $F{IVA} )]]></variableExpression>
 	</variable>
 	<variable name="TotCredPrec" class="java.math.BigDecimal" incrementType="Group" incrementGroup="NAME" calculation="Sum">
-		<variableExpression><![CDATA[( $F{ISSALE}.equals( "Acquisti" )  ? $F{TOTALEPRECEDENTE} : $F{TOTALEPRECEDENTE}.negate() )]]></variableExpression>
+		<variableExpression><![CDATA[( $F{ISSALE}.equals( "Purchase" )  ? $F{TOTALEPRECEDENTE} : $F{TOTALEPRECEDENTE}.negate() )]]></variableExpression>
 		<initialValueExpression><![CDATA[new BigDecimal(0)]]></initialValueExpression>
 	</variable>
 	<variable name="TotIvaDaPagare" class="java.math.BigDecimal">

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2008-2011 Openbravo SLU
+ * All portions are Copyright (C) 2008-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -23,6 +23,7 @@ import javax.servlet.ServletException;
 import org.apache.log4j.Logger;
 import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.data.FieldProvider;
+import org.openbravo.erpCommon.ad_forms.ModuleManagement;
 import org.openbravo.erpCommon.utility.FieldProviderFactory;
 import org.openbravo.erpCommon.utility.GenericTree;
 import org.openbravo.erpCommon.utility.Utility;
@@ -150,8 +151,13 @@ public class ModuleTree extends GenericTree {
   }
 
   private void addLinks(ModuleTreeData[] modules, boolean showApplied) {
-    if (modules == null || modules.length == 0)
+    if (modules == null || modules.length == 0) {
       return;
+    }
+
+    String rebuildMsg = ModuleManagement.canRebuildFromMMC() ? Utility.messageBD(conn,
+        "RebuildNow", lang) : Utility.messageBD(conn, "RebuildRequired", lang);
+
     for (int i = 0; i < modules.length; i++) {
       if (!modules[i].updateAvailable.equals("")) {
         modules[i].linkname = Utility.messageBD(conn, "UpdateAvailable", lang);
@@ -159,8 +165,7 @@ public class ModuleTree extends GenericTree {
             + "'); return false;";
       }
       if (modules[i].status.equals("I") || modules[i].status.equals("P")) {
-        String link = Utility.messageBD(conn, "ApplyModules", lang) + ", "
-            + Utility.messageBD(conn, "RebuildNow", lang);
+        String link = Utility.messageBD(conn, "ApplyModules", lang) + ", " + rebuildMsg;
         String click = "openServletNewWindow('DEFAULT', false, '../ad_process/ApplyModules.html', 'BUTTON', null, true, 700, 900, null, null, null, null, true);return false;";
 
         if (modules[i].linkname != null && !modules[i].linkname.isEmpty()) {

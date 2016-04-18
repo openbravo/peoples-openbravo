@@ -71,10 +71,8 @@ public class ADAlertDatasourceService extends DefaultDataSourceService {
       alertStatus = parameters.get(ALERT_STATUS);
       alertStatus = StringUtils.isEmpty(alertStatus) ? "" : alertStatus.toUpperCase();
 
-      List<String> alertList = getAlertIds();
-
-      String whereClause = buildWhereClause(alertStatus, alertList);
-      parameters.put(JsonConstants.WHERE_PARAMETER, whereClause);
+      String whereClause = getWhereAndFilterClause(parameters);
+      parameters.put(JsonConstants.WHERE_AND_FILTER_CLAUSE, whereClause);
 
       if (parameters.get(JsonConstants.DISTINCT_PARAMETER) == null) {
         // Also return the tab id of the alert rule, just when loading the grid from the server.
@@ -165,7 +163,13 @@ public class ADAlertDatasourceService extends DefaultDataSourceService {
     return alertIds;
   }
 
-  private String buildWhereClause(String alertStatus, List<String> alertList) {
+  @Override
+  protected String getWhereAndFilterClause(Map<String, String> parameters) {
+    String alertStatus = "";
+    alertStatus = parameters.get(ALERT_STATUS);
+    alertStatus = StringUtils.isEmpty(alertStatus) ? "" : alertStatus.toUpperCase();
+
+    List<String> alertList = getAlertIds();
     int chunkSize = 1000;
     String filterClause;
     String whereClause = "coalesce(to_char(status), 'NEW') = '"

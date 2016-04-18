@@ -58,6 +58,7 @@ public abstract class ReadOnlyDataSourceService extends DefaultDataSourceService
    */
   public String fetch(Map<String, String> parameters) {
 
+    addFetchParameters(parameters);
     final String startRowStr = parameters.get(JsonConstants.STARTROW_PARAMETER);
     final String endRowStr = parameters.get(JsonConstants.ENDROW_PARAMETER);
     int startRow = 0;

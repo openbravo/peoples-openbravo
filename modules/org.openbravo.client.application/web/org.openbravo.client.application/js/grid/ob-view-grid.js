@@ -26,6 +26,8 @@ isc.OBViewGrid.addClassProperties({
   ARROW_UP_KEY_NAME: 'Arrow_Up',
   ARROW_DOWN_KEY_NAME: 'Arrow_Down',
   ERROR_MESSAGE_PROP: '_hasErrors',
+  EXISTS_FILTER_CLAUSE: 'hasFilterClause',
+  IS_FILTER_CLAUSE_APPLIED: 'isImplicitFilterApplied',
   ICONS: {
     PROGRESS: 0,
     OPEN_IN_FORM: 1,
@@ -56,7 +58,6 @@ isc.OBViewGrid.addProperties({
   // handles this form
   // and the grid and other related components.
   view: null,
-
   // ** {{{ editGrid }}} **
   // Controls if an edit link column is created in the grid, set to false to
   // prevent this.
@@ -2295,17 +2296,7 @@ isc.OBViewGrid.addProperties({
     // add all the new session properties context info to the requestProperties
     isc.addProperties(params, this.view.getContextInfo(true, false));
 
-    if (this.filterClause) {
-      if (this.whereClause) {
-        params[OB.Constants.WHERE_PARAMETER] = ' ((' + this.whereClause + ') and (' + this.filterClause + ')) ';
-      } else {
-        params[OB.Constants.WHERE_PARAMETER] = this.filterClause;
-      }
-    } else if (this.whereClause) {
-      params[OB.Constants.WHERE_PARAMETER] = this.whereClause;
-    } else {
-      params[OB.Constants.WHERE_PARAMETER] = null;
-    }
+    params[isc.OBViewGrid.IS_FILTER_CLAUSE_APPLIED] = this.isFilterClauseApplied();
 
     if (this.isSorting) {
       params.isSorting = true;

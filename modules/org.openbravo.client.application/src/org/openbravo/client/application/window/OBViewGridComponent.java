@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2014 Openbravo SLU
+ * All portions are Copyright (C) 2010-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -45,11 +46,9 @@ import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.ui.AuxiliaryInput;
 import org.openbravo.model.ad.ui.Tab;
-import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.service.datasource.DataSource;
 import org.openbravo.service.db.DalConnectionProvider;
-import org.openbravo.service.json.JsonConstants;
 
 /**
  * The backing bean for generating the OBViewGrid client-side representation.
@@ -89,13 +88,6 @@ public class OBViewGridComponent extends BaseTemplateComponent {
   public void setTab(Tab tab) {
     this.tab = tab;
     entity = ModelProvider.getInstance().getEntityByTableId((String) DalUtil.getId(tab.getTable()));
-  }
-
-  public String getWhereClause() {
-    if (tab.getHqlwhereclause() != null) {
-      return tab.getHqlwhereclause();
-    }
-    return "";
   }
 
   public String getWhereClauseSQL() {
@@ -161,11 +153,8 @@ public class OBViewGridComponent extends BaseTemplateComponent {
     return "";
   }
 
-  public String getFilterClause() {
-    if (tab.getHqlfilterclause() != null) {
-      return addTransactionalFilter(tab.getHqlfilterclause());
-    }
-    return addTransactionalFilter("");
+  public boolean isHasFilterClause() {
+    return (this.isApplyTransactionalFilter() || StringUtils.isNotBlank(tab.getHqlfilterclause()));
   }
 
   public String getFilterClauseSQL() {
@@ -207,23 +196,6 @@ public class OBViewGridComponent extends BaseTemplateComponent {
     }
 
     return filterName;
-  }
-
-  private String addTransactionalFilter(String filterClause) {
-    if (!this.isApplyTransactionalFilter()) {
-      return filterClause;
-    }
-    String transactionalFilter = " e.updated > " + JsonConstants.QUERY_PARAM_TRANSACTIONAL_RANGE
-        + " ";
-    if (entity.hasProperty(Order.PROPERTY_PROCESSED)) {
-      transactionalFilter += " or e.processed = 'N' ";
-    }
-    transactionalFilter = " (" + transactionalFilter + ") ";
-
-    if (filterClause.length() > 0) {
-      return " (" + transactionalFilter + " and (" + filterClause + ")) ";
-    }
-    return transactionalFilter;
   }
 
   public String getUiPattern() {

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2011 Openbravo SLU
+ * All portions are Copyright (C) 2010-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,9 +26,14 @@ import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Inject;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 
 import org.jboss.weld.environment.servlet.Listener;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.dal.core.DalContextListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Provides weld utilities.
@@ -39,11 +44,27 @@ import org.openbravo.dal.core.DalContextListener;
 public class WeldUtils {
 
   private static BeanManager staticBeanManager = null;
+  private static final Logger log = LoggerFactory.getLogger(WeldUtils.class);
 
   public static BeanManager getStaticInstanceBeanManager() {
     if (staticBeanManager == null) {
       staticBeanManager = (BeanManager) DalContextListener.getServletContext().getAttribute(
           Listener.BEAN_MANAGER_ATTRIBUTE_NAME);
+
+      if (staticBeanManager == null) {
+        // In wildfly, bean manager is not saved in servlet context.
+        log.debug("BeanManager not present in ServletContext, trying to get it with a jndi lookup");
+
+        InitialContext ic = null;
+        try {
+          ic = new InitialContext();
+          String name = "java:comp/" + BeanManager.class.getSimpleName();
+          staticBeanManager = (BeanManager) ic.lookup(name);
+        } catch (NamingException e) {
+          log.error("Couldn't get beanManager through jndi lookup in InitialContext {}", ic, e);
+          throw new OBException(e);
+        }
+      }
     }
     return staticBeanManager;
   }

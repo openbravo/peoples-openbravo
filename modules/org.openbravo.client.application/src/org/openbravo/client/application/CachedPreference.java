@@ -54,10 +54,11 @@ import org.slf4j.LoggerFactory;
 public class CachedPreference {
   public static final String ALLOW_UNPAGED_DS_MANUAL_REQUEST = "OBJSON_AllowUnpagedDatasourceManualRequest";
   public static final String ALLOW_UNSECURED_DS_REQUEST = "OBSERDS_AllowUnsecuredDatasourceRequest";
+  public static final String ALLOW_WHERE_PARAMETER = "OBSERDS_AllowWhereParameter";
 
   private static final Logger log = LoggerFactory.getLogger(CachedPreference.class);
   private List<String> propertyList = new ArrayList<String>(Arrays.asList(
-      ALLOW_UNPAGED_DS_MANUAL_REQUEST, ALLOW_UNSECURED_DS_REQUEST));
+      ALLOW_UNPAGED_DS_MANUAL_REQUEST, ALLOW_UNSECURED_DS_REQUEST, ALLOW_WHERE_PARAMETER));
   private Map<String, String> cachedPreference = new HashMap<String, String>();
 
   /**

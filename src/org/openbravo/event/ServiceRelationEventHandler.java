@@ -172,7 +172,8 @@ public class ServiceRelationEventHandler extends EntityPersistenceEventObserver 
     currentOrderLine.setTaxableAmount(serviceAmount);
 
     // Calculate discount
-    BigDecimal discount = listPrice.subtract(servicePrice).multiply(new BigDecimal("100"))
+    BigDecimal discount = listPrice.compareTo(BigDecimal.ZERO) == 0 ? BigDecimal.ZERO : listPrice
+        .subtract(servicePrice).multiply(new BigDecimal("100"))
         .divide(listPrice, currency.getPricePrecision().intValue(), BigDecimal.ROUND_HALF_EVEN);
     currentOrderLine.setDiscount(discount);
     OBDal.getInstance().save(currentOrderLine);

@@ -21,6 +21,7 @@ package org.openbravo.test;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
+import org.openbravo.test.datasource.DataSourceWhereParameter;
 import org.openbravo.test.datasource.ExtendedNavigationModelTest;
 import org.openbravo.test.datasource.FICTest;
 import org.openbravo.test.datasource.FKDropDownDatasource;
@@ -30,13 +31,16 @@ import org.openbravo.test.datasource.SelectorFieldPropertySelectorDSTest;
 import org.openbravo.test.datasource.TestAllowUnpagedDatasourcePreference;
 import org.openbravo.test.datasource.TestCSVEncoding;
 import org.openbravo.test.datasource.TestComboDatasource;
+import org.openbravo.test.datasource.FetchDSNoActiveEntityObjects;
 import org.openbravo.test.datasource.TestNoteDatasource;
+import org.openbravo.test.security.ExplicitCrossOrganizationReference;
 import org.openbravo.test.datasource.DataSourceSecurity;
 import org.openbravo.test.webservice.JSONWebServices;
 import org.openbravo.test.webservice.PerformanceTest;
 import org.openbravo.test.webservice.WSAddRecordWithComputedColumns;
 import org.openbravo.test.webservice.WSReadTest;
 import org.openbravo.test.webservice.WSUpdateTest;
+import org.openbravo.test.webservice.WSWithNoActiveDalObjects;
 import org.openbravo.test.webservice.WebServicesWithNoActiveFilterTest;
 
 /**
@@ -48,7 +52,8 @@ import org.openbravo.test.webservice.WebServicesWithNoActiveFilterTest;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
 
-WSReadTest.class, //
+DataSourceWhereParameter.class, //
+    WSReadTest.class, //
     WSUpdateTest.class, //
     PerformanceTest.class, //
     WSAddRecordWithComputedColumns.class, //
@@ -64,6 +69,9 @@ WSReadTest.class, //
     TestNoteDatasource.class, //
     WebServicesWithNoActiveFilterTest.class, //
     ExtendedNavigationModelTest.class, //
+    WSWithNoActiveDalObjects.class, //
+    FetchDSNoActiveEntityObjects.class, //
+    ExplicitCrossOrganizationReference.class, //
     DataSourceSecurity.class })
 public class AllWebserviceTests {
 }

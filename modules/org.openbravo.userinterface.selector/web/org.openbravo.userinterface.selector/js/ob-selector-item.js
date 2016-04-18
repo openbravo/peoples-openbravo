@@ -1174,9 +1174,6 @@ isc.OBSelectorItem.addClassMethods({
       params.filterClass = 'org.openbravo.userinterface.selector.SelectorDataSourceFilter';
     }
 
-    // the additional where clause
-    params[OB.Constants.WHERE_PARAMETER] = selector.whereClause;
-
     // and sort according to the display field
     // initially
     params[OB.Constants.SORTBY_PARAMETER] = selector.displayField;

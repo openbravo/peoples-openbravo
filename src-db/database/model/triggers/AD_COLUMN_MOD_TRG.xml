@@ -114,6 +114,7 @@ BEGIN
         COALESCE(:NEW.isusedsequence , '.') != COALESCE(:OLD.isusedsequence , '.') OR
         COALESCE(:NEW.AllowSorting, '.') != COALESCE(:OLD.AllowSorting, '.') OR
         COALESCE(:NEW.AllowFiltering, '.') != COALESCE(:OLD.AllowFiltering, '.') OR
+        :NEW.Allowed_Cross_Org_Link != :OLD.Allowed_Cross_Org_Link OR
         1=2) THEN
       RAISE_APPLICATION_ERROR(-20000, '@20532@');
     END IF;

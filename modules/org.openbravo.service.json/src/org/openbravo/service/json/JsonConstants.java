@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -54,6 +54,7 @@ public class JsonConstants {
 
   public static final String FILTERBYPARENTPROPERTY_PARAMETER = "_filterByParentProperty";
   public static final String WHERE_PARAMETER = "_where";
+  public static final String FILTER_APPLIED_PARAMETER = "isImplicitFilterApplied";
   public static final String SELECTEDPROPERTIES_PARAMETER = "_selectedProperties";
   public static final String DISTINCT_PARAMETER = "_distinct";
   public static final String SHOW_FK_DROPDOWN_UNFILTERED_PARAMETER = "_showFkDropdownUnfiltered";
@@ -122,5 +123,9 @@ public class JsonConstants {
   public static final String QUERY_PARAM_TRANSACTIONAL_RANGE = "@transactionalRange@";
 
   public static final String IS_WS_CALL = "_isWsCall";
-
+  public static final String WHERE_AND_FILTER_CLAUSE = "whereAndFilterClause";
+  public static final String TABLE_ID = "tableId";
+  public static final String WHERE_CLAUSE_HAS_BEEN_CHECKED = "whereClauseHasBeenChecked";
+  public static final String WINDOW_ID = "windowId";
+  public static final String DATASOURCE_NAME = "dataSourceName";
 }
