@@ -357,8 +357,9 @@ public class ServiceOrderLineRelate extends BaseProcessActionHandler {
     mainOrderLine.setOrderedQuantity(lineQuantity.multiply(signum));
 
     // Calculate discount
-    BigDecimal discount = listPrice.subtract(servicePrice).multiply(new BigDecimal("100"))
-        .divide(listPrice, currency.getPricePrecision().intValue(), RoundingMode.HALF_UP);
+    BigDecimal discount = listPrice.compareTo(BigDecimal.ZERO) == 0 ? BigDecimal.ZERO : listPrice
+        .subtract(servicePrice).multiply(new BigDecimal("100"))
+        .divide(listPrice, currency.getPricePrecision().intValue(), BigDecimal.ROUND_HALF_EVEN);
     mainOrderLine.setDiscount(discount);
     OBDal.getInstance().save(mainOrderLine);
   }

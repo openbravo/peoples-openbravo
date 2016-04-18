@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2013 Openbravo SLU 
+ * All portions are Copyright (C) 2013-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -25,8 +25,8 @@ import java.sql.PreparedStatement;
 
 import org.apache.tools.ant.Task;
 import org.openbravo.base.session.OBPropertiesProvider;
+import org.openbravo.client.application.attachment.CoreAttachImplementation;
 import org.openbravo.database.ConnectionProviderImpl;
-import org.openbravo.erpCommon.businessUtility.TabAttachments;
 import org.openbravo.utils.FileUtility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -95,7 +95,8 @@ public class MigrateAttachments extends Task {
               if (names.length == 2) {
                 tableId = names[0];
                 recordId = names[1];
-                newDirectoryStructure = tableId + "/" + TabAttachments.splitPath(recordId);
+                newDirectoryStructure = tableId + "/"
+                    + CoreAttachImplementation.splitPath(recordId);
                 attachmentDirectory = attachPath + "/" + newDirectoryStructure;
                 if (!new File(attachmentDirectory).exists()) {
                   createDirectory = new File(attachmentDirectory).mkdirs();

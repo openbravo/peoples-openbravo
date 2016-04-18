@@ -17,7 +17,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2014 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2001-2016 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -68,9 +68,8 @@ BEGIN
 		WHERE d1.C_BP_Group_ID=:new.C_BP_Group_ID
 		AND d1.C_AcctSchema_ID = a.C_AcctSchema_ID
 		AND a.ISACTIVE = 'Y'
-      		AND (AD_IsOrgIncluded(a.AD_Org_ID, :new.AD_Org_ID, :new.AD_Client_ID)<>-1
-		OR AD_IsOrgIncluded(:new.AD_Org_ID, a.AD_Org_ID, :new.AD_Client_ID)<>-1)
-		ORDER BY 1 DESC
+      		AND AD_IsOrgIncluded(:new.AD_Org_ID, a.AD_Org_ID, :new.AD_Client_ID)<>-1
+		ORDER BY 1
 	)
 	LOOP
 	
@@ -87,20 +86,21 @@ BEGIN
               /*
                 Retrieving the sequence NUMBER for sub account.	
               */
-              SELECT NAME INTO v_seq_name FROM AD_SEQUENCE 
-              WHERE AD_SEQUENCE.AD_SEQUENCE_ID=Cur_Defaults.Ad_Sequence_BP_Id;
-    
+              SELECT NAME INTO v_seq_name FROM AD_SEQUENCE WHERE AD_SEQUENCE.AD_SEQUENCE_ID=Cur_Defaults.Ad_Sequence_BP_Id;
+              AD_Sequence_Doc(v_seq_name, Cur_Defaults.AD_Client_ID, 'Y', v_Sequence_No);
+
               /*
                   Retrieving the receivable account NUMBER
               */
-              AD_Sequence_Doc(v_seq_name, Cur_Defaults.AD_Client_ID, 'Y', v_Sequence_No);
-              c_validcombination_clone(Cur_Defaults.C_Receivable_Acct, v_Sequence_No, :new.Name, Cur_Defaults.acct_length, Cur_Defaults.subacct_length, v_C_Receivable_Acct);
-              
+              IF (Cur_Defaults.C_Receivable_Acct IS NOT NULL) THEN
+                c_validcombination_clone(Cur_Defaults.C_Receivable_Acct, v_Sequence_No, :new.Name, Cur_Defaults.acct_length, Cur_Defaults.subacct_length, v_C_Receivable_Acct);
+              END IF;
+
                /*
                   Retrieving the prepayment account NUMBER
                */
-               IF(Cur_Defaults.C_Prepayment_Acct IS NOT NULL) THEN
-               	c_validcombination_clone(Cur_Defaults.C_Prepayment_Acct, v_Sequence_No, :new.Name, Cur_Defaults.acct_length, Cur_Defaults.subacct_length, v_C_Prepayment_Acct);
+               IF (Cur_Defaults.C_Prepayment_Acct IS NOT NULL) THEN
+                 c_validcombination_clone(Cur_Defaults.C_Prepayment_Acct, v_Sequence_No, :new.Name, Cur_Defaults.acct_length, Cur_Defaults.subacct_length, v_C_Prepayment_Acct);
                END IF;
 			            
              /*
@@ -138,19 +138,24 @@ BEGIN
 	        /*
                 Retrieving the liability account NUMBER 
                */
-              c_validcombination_clone(Cur_Defaults.V_Liability_Acct, v_Sequence_No, :new.Name, Cur_Defaults.acct_length, Cur_Defaults.subacct_length, v_V_Liability_Acct);
+               IF (Cur_Defaults.V_Liability_Acct IS NOT NULL) THEN
+                 c_validcombination_clone(Cur_Defaults.V_Liability_Acct, v_Sequence_No, :new.Name, Cur_Defaults.acct_length, Cur_Defaults.subacct_length, v_V_Liability_Acct);
+               END IF;
+
                /*
                  Retrieving the liability services account NUMBER
                */ 
-               IF(Cur_Defaults.V_Liability_Services_Acct IS NOT NULL) THEN
-					c_validcombination_clone(Cur_Defaults.V_Liability_Services_Acct, v_Sequence_No, :new.Name, Cur_Defaults.acct_length, Cur_Defaults.subacct_length, v_V_Liability_Services_Acct);
-			   END IF;
-		/*
+               IF (Cur_Defaults.V_Liability_Services_Acct IS NOT NULL) THEN
+                 c_validcombination_clone(Cur_Defaults.V_Liability_Services_Acct, v_Sequence_No, :new.Name, Cur_Defaults.acct_length, Cur_Defaults.subacct_length, v_V_Liability_Services_Acct);
+               END IF;
+
+	       /*
                  Retrieving the prepayment account NUMBER
-              */
-              IF(Cur_Defaults.V_Prepayment_Acct IS NOT NULL) THEN
-               c_validcombination_clone(Cur_Defaults.V_Prepayment_Acct, v_Sequence_No, :new.Name, Cur_Defaults.acct_length, Cur_Defaults.subacct_length, v_V_Prepayment_Acct);
-              END IF;
+               */
+               IF (Cur_Defaults.V_Prepayment_Acct IS NOT NULL) THEN
+                 c_validcombination_clone(Cur_Defaults.V_Prepayment_Acct, v_Sequence_No, :new.Name, Cur_Defaults.acct_length, Cur_Defaults.subacct_length, v_V_Prepayment_Acct);
+               END IF;
+
     		/*
                  Inserting the new account NUMBER
                */
@@ -182,16 +187,15 @@ BEGIN
   v_C_AcctSchema_ID:=null;
   v_count:=0;
               FOR Cur_Defaults2 IN (
-              SELECT AD_IsOrgIncluded(:new.AD_Org_ID, oa.AD_Org_ID, :new.AD_Org_ID),
+              SELECT AD_IsOrgIncluded(:new.AD_Org_ID, oa.AD_Org_ID, :new.AD_Client_ID),
               oa.ad_sequence_bp_id, oa.isbpnewaccount, oa.acct_length, oa.subacct_length, oa.createdby, oa.updatedby,
               d2.E_Expense_Acct, d2.E_Prepayment_Acct, d2.AD_Client_ID, d2.C_AcctSchema_ID, d2.ISACTIVE
               FROM C_AcctSchema_Default d2, AD_Org_AcctSchema oa 
               WHERE d2.C_AcctSchema_ID = oa.C_AcctSchema_ID
               AND oa.ISACTIVE = 'Y'
               AND oA.AD_Client_ID = d2.AD_Client_ID
-              AND (AD_IsOrgIncluded(oa.AD_Org_ID, :new.AD_Org_ID, :new.AD_Org_ID)<>-1
-              OR AD_IsOrgIncluded(:new.AD_Org_ID, oa.AD_Org_ID, :new.AD_Org_ID)<>-1)
-              ORDER BY 1 DESC			
+              AND AD_IsOrgIncluded(:new.AD_Org_ID, oa.AD_Org_ID, :new.AD_Client_ID)<>-1
+              ORDER BY 1
 	) 
   LOOP
 	
@@ -208,12 +212,16 @@ BEGIN
              /*
                 Retrieving the Expense account NUMBER
              */
-             c_validcombination_clone(Cur_Defaults2.E_Expense_Acct, v_Sequence_No, :new.Name, Cur_Defaults2.acct_length, Cur_Defaults2.subacct_length, v_E_Expense_Acct);
-             
+             IF (Cur_Defaults2.E_Expense_Acct IS NOT NULL) THEN
+               c_validcombination_clone(Cur_Defaults2.E_Expense_Acct, v_Sequence_No, :new.Name, Cur_Defaults2.acct_length, Cur_Defaults2.subacct_length, v_E_Expense_Acct);
+             END IF;
+
              /*
                  Retrieving the Prepayment account NUMBER
              */
-             c_validcombination_clone(Cur_Defaults2.E_Prepayment_Acct, v_Sequence_No, :new.Name, Cur_Defaults2.acct_length, Cur_Defaults2.subacct_length, v_E_Prepayment_Acct);
+             IF (Cur_Defaults2.E_Prepayment_Acct IS NOT NULL) THEN
+               c_validcombination_clone(Cur_Defaults2.E_Prepayment_Acct, v_Sequence_No, :new.Name, Cur_Defaults2.acct_length, Cur_Defaults2.subacct_length, v_E_Prepayment_Acct);
+             END IF;
 
 	      /*
                  Inserting the new account NUMBER 
