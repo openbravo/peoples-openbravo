@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2015 Openbravo S.L.U.
+ * Copyright (C) 2015-2016 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -80,7 +80,8 @@ public class PriceList extends ProcessHQLQuery {
               + " from PricingPriceList pl "
               + "where pl.id in (select distinct priceList.id from BusinessPartner where customer = 'Y') "
               + "and pl.id <> (:priceList) "
-              + "and $naturalOrgCriteria and $readableClientCriteria and ($incrementalUpdateCriteria)");
+              + "and $naturalOrgCriteria and $readableClientCriteria and ($incrementalUpdateCriteria) "
+              + "order by pl.id asc");
     }
 
     return hqlQueries;
@@ -96,7 +97,7 @@ public class PriceList extends ProcessHQLQuery {
         + "    and to_char(pplv.validFromDate, 'yyyy-mm-dd') <= '"
         + format.format(terminalDate)
         + " ') and (plv.priceList.id in (select distinct priceList.id from BusinessPartner where customer = 'Y') "
-        + " and plv.priceList.id <> (:priceList))";
+        + " and plv.priceList.id <> (:priceList)) order by plv.id asc";
   }
 
 }

@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2015 Openbravo S.L.U.
+ * Copyright (C) 2015-2016 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -105,7 +105,8 @@ public class ProductPrice extends ProcessHQLQuery {
               + "' and ppp.priceListVersion.id in ("
               + PriceList.getSelectPriceListVersionIds(orgId, terminalDate)
               + ") and $filtersCriteria AND $hqlCriteria "
-              + "and pli.$naturalOrgCriteria and pli.$readableClientCriteria and (ppp.$incrementalUpdateCriteria)");
+              + "and pli.$naturalOrgCriteria and pli.$readableClientCriteria and (ppp.$incrementalUpdateCriteria) "
+              + "order by ppp.id asc");
     }
 
     return hqlQueries;

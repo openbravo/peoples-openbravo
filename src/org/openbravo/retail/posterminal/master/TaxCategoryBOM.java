@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2014 Openbravo S.L.U.
+ * Copyright (C) 2014-2016 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -26,7 +26,7 @@ public class TaxCategoryBOM extends ProcessHQLQuery {
         .add("select taxcategory.id as id "
             + "from FinancialMgmtTaxCategory taxcategory "
             + "where (taxcategory.$incrementalUpdateCriteria) AND ($naturalOrgCriteria) and $readableClientCriteria "
-            + "AND taxcategory.asbom=true AND taxcategory.active=true");
+            + "AND taxcategory.asbom=true AND taxcategory.active=true order by taxcategory.id asc");
 
     return hqlQueries;
   }
