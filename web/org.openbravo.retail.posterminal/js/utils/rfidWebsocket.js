@@ -31,7 +31,7 @@ OB.UTIL.RfidController.startRfidWebsocket = function startRfidWebsocket(websocke
     if (currentRetrials >= retrialsBeforeWarning) {
       currentRetrials = 0;
       OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_ConnectedWithRFID'));
-      OB.info(OB.I18N.getLabel('OBPOS_ConnectedWithRFID'));
+      OB.debug(OB.I18N.getLabel('OBPOS_ConnectedWithRFID'));
     }
     if (OB.POS.modelterminal.get('terminal').terminalType.rfidTimeout) {
       if (OB.UTIL.RfidController.get('rfidTimeout')) {
@@ -115,14 +115,14 @@ OB.UTIL.RfidController.startRfidWebsocket = function startRfidWebsocket(websocke
 OB.UTIL.RfidController.addEpcLine = function (line, callback, errorCallback) {
   OB.UTIL.RfidController.waitForAck(function (uuid) {
     OB.UTIL.RfidController.get('rfidWebsocket').send('addEpcs:' + uuid + ':' + line.get('obposEpccode'));
-    OB.info('addEpcLine sent, UUID: ' + uuid);
+    OB.debug('addEpcLine sent, UUID: ' + uuid);
   }, function () {
-    OB.info('addEpcLine ended succesfully: ' + line.get('id'));
+    OB.debug('addEpcLine ended succesfully: ' + line.get('id'));
     if (callback) {
       callback();
     }
   }, function () {
-    OB.info('error while addEpcLine: ' + line.get('id'));
+    OB.debug('error while addEpcLine: ' + line.get('id'));
     if (errorCallback) {
       errorCallback();
     }
@@ -139,14 +139,14 @@ OB.UTIL.RfidController.eraseEpcOrder = function (order, callback, errorCallback)
   if (epcCodes) {
     OB.UTIL.RfidController.waitForAck(function (uuid) {
       OB.UTIL.RfidController.get('rfidWebsocket').send('removeEpcs:' + uuid + ':' + epcCodes.substring(0, epcCodes.length - 1));
-      OB.info('eraseEpcOrder sent, UUID: ' + uuid);
+      OB.debug('eraseEpcOrder sent, UUID: ' + uuid);
     }, function () {
-      OB.info('eraseEpcOrder ended succesfully: ' + order.get('id'));
+      OB.debug('eraseEpcOrder ended succesfully: ' + order.get('id'));
       if (callback) {
         callback();
       }
     }, function () {
-      OB.info('error while eraseEpcOrder: ' + order.get('id'));
+      OB.debug('error while eraseEpcOrder: ' + order.get('id'));
       if (errorCallback) {
         errorCallback();
       }
@@ -157,14 +157,14 @@ OB.UTIL.RfidController.eraseEpcOrder = function (order, callback, errorCallback)
 OB.UTIL.RfidController.removeEpc = function (epc, callback, errorCallback) {
   OB.UTIL.RfidController.waitForAck(function (uuid) {
     OB.UTIL.RfidController.get('rfidWebsocket').send('removeEpcs:' + uuid + ':' + epc);
-    OB.info('removeEpc sent, UUID: ' + uuid);
+    OB.debug('removeEpc sent, UUID: ' + uuid);
   }, function () {
-    OB.info('removeEpc ended succesfully: ' + epc);
+    OB.debug('removeEpc ended succesfully: ' + epc);
     if (callback) {
       callback();
     }
   }, function () {
-    OB.info('error while removeEpc: ' + epc);
+    OB.debug('error while removeEpc: ' + epc);
     if (errorCallback) {
       errorCallback();
     }
@@ -174,14 +174,14 @@ OB.UTIL.RfidController.removeEpc = function (epc, callback, errorCallback) {
 OB.UTIL.RfidController.removeEpcLine = function (line, callback, errorCallback) {
   OB.UTIL.RfidController.waitForAck(function (uuid) {
     OB.UTIL.RfidController.get('rfidWebsocket').send('removeEpcs:' + uuid + ':' + line.get('obposEpccode'));
-    OB.info('removeEpcLine sent UUID: ' + uuid);
+    OB.debug('removeEpcLine sent UUID: ' + uuid);
   }, function () {
-    OB.info('removeEpcLine ended succesfully: ' + line.get('id'));
+    OB.debug('removeEpcLine ended succesfully: ' + line.get('id'));
     if (callback) {
       callback();
     }
   }, function () {
-    OB.info('error while removeEpcLine: ' + line.get('id'));
+    OB.debug('error while removeEpcLine: ' + line.get('id'));
     if (errorCallback) {
       errorCallback();
     }
@@ -191,14 +191,14 @@ OB.UTIL.RfidController.removeEpcLine = function (line, callback, errorCallback) 
 OB.UTIL.RfidController.updateEpcBuffers = function (callback, errorCallback) {
   OB.UTIL.RfidController.waitForAck(function (uuid) {
     OB.UTIL.RfidController.get('rfidWebsocket').send('updateEpcBuffers:' + uuid);
-    OB.info('updateEpcBuffers sent, UUID: ' + uuid);
+    OB.debug('updateEpcBuffers sent, UUID: ' + uuid);
   }, function () {
-    OB.info('updateEpcBuffers ended succesfully');
+    OB.debug('updateEpcBuffers ended succesfully');
     if (callback) {
       callback();
     }
   }, function () {
-    OB.info('error while updateEpcBuffers');
+    OB.debug('error while updateEpcBuffers');
     if (errorCallback) {
       errorCallback();
     }
@@ -208,14 +208,14 @@ OB.UTIL.RfidController.updateEpcBuffers = function (callback, errorCallback) {
 OB.UTIL.RfidController.removeAllEpcs = function (callback, errorCallback) {
   OB.UTIL.RfidController.waitForAck(function (uuid) {
     OB.UTIL.RfidController.get('rfidWebsocket').send('removeAllEpcs:' + uuid);
-    OB.info('removeAllEpcs sent, UUID: ' + uuid);
+    OB.debug('removeAllEpcs sent, UUID: ' + uuid);
   }, function () {
-    OB.info('removeAllEpcs ended succesfully');
+    OB.debug('removeAllEpcs ended succesfully');
     if (callback) {
       callback();
     }
   }, function () {
-    OB.info('error while removeAllEpcs');
+    OB.debug('error while removeAllEpcs');
     if (errorCallback) {
       errorCallback();
     }
@@ -237,14 +237,14 @@ OB.UTIL.RfidController.processRemainingCodes = function (order, callback, errorC
   if (epcCodesToAdd) {
     OB.UTIL.RfidController.waitForAck(function (uuid) {
       OB.UTIL.RfidController.get('rfidWebsocket').send('addEpcs:' + uuid + ':' + epcCodesToAdd.substring(0, epcCodesToAdd.length - 1));
-      OB.info('add:processRemainingCodes sent, UUID: ' + uuid);
+      OB.debug('add:processRemainingCodes sent, UUID: ' + uuid);
     }, function () {
-      OB.info('add processRemainingCodes ended succesfully: ' + epcCodesToAdd);
+      OB.debug('add processRemainingCodes ended succesfully: ' + epcCodesToAdd);
       if (callback) {
         callback();
       }
     }, function () {
-      OB.info('error while add processRemainingCodes: ' + epcCodesToAdd);
+      OB.debug('error while add processRemainingCodes: ' + epcCodesToAdd);
       if (errorCallback) {
         errorCallback();
       }
@@ -253,14 +253,14 @@ OB.UTIL.RfidController.processRemainingCodes = function (order, callback, errorC
   if (epcCodesToErase) {
     OB.UTIL.RfidController.waitForAck(function (uuid) {
       OB.UTIL.RfidController.get('rfidWebsocket').send('removeEpcs:' + uuid + ':' + epcCodesToErase.substring(0, epcCodesToErase.length - 1));
-      OB.info('remove processRemainingCodes sent, UUID: ' + uuid);
+      OB.debug('remove processRemainingCodes sent, UUID: ' + uuid);
     }, function () {
-      OB.info('remove processRemainingCodes ended succesfully: ' + epcCodesToErase);
+      OB.debug('remove processRemainingCodes ended succesfully: ' + epcCodesToErase);
       if (callback) {
         callback();
       }
     }, function () {
-      OB.info('error while remove processRemainingCodes: ' + epcCodesToErase);
+      OB.debug('error while remove processRemainingCodes: ' + epcCodesToErase);
       if (errorCallback) {
         errorCallback();
       }
@@ -270,14 +270,14 @@ OB.UTIL.RfidController.processRemainingCodes = function (order, callback, errorC
   if (OB.POS.modelterminal.get('terminal').terminalType.useSecurityGate) {
     OB.UTIL.RfidController.waitForAck(function (uuid) {
       OB.UTIL.RfidController.get('rfidWebsocket').send('send:' + uuid + ':' + JSON.stringify(order));
-      OB.info('sent processRemaingingCodes sent, UUID: ' + uuid);
+      OB.debug('sent processRemaingingCodes sent, UUID: ' + uuid);
     }, function () {
-      OB.info('send processRemainingCodes ended succesfully: ' + order.get('id'));
+      OB.debug('send processRemainingCodes ended succesfully: ' + order.get('id'));
       if (callback) {
         callback();
       }
     }, function () {
-      OB.info('error while send processRemainingCodes: ' + order.get('id'));
+      OB.debug('error while send processRemainingCodes: ' + order.get('id'));
       if (errorCallback) {
         errorCallback();
       }
@@ -290,9 +290,9 @@ OB.UTIL.RfidController.connectRFIDDevice = function (callback, errorCallback) {
   OB.UTIL.RfidController.set('connected', true);
   OB.UTIL.RfidController.waitForAck(function (uuid) {
     OB.UTIL.RfidController.get('rfidWebsocket').send('connect:' + uuid);
-    OB.info('connectRFIDDevice sent, UUID: ' + uuid);
+    OB.debug('connectRFIDDevice sent, UUID: ' + uuid);
   }, function () {
-    OB.info('connectRFIDDevice ended succesfully');
+    OB.debug('connectRFIDDevice ended succesfully');
     if (callback) {
       callback();
     }
@@ -300,20 +300,20 @@ OB.UTIL.RfidController.connectRFIDDevice = function (callback, errorCallback) {
     OB.UTIL.RfidController.set('connectionLost', true);
     OB.UTIL.RfidController.waitForAck(function (uuid) {
       OB.UTIL.RfidController.get('rfidWebsocket').send('connect:' + uuid);
-      OB.info('connectRFIDDevice sent, UUID: ' + uuid);
+      OB.debug('connectRFIDDevice sent, UUID: ' + uuid);
     }, function () {
-      OB.info('connectRFIDDevice ended succesfully');
+      OB.debug('connectRFIDDevice ended succesfully');
       if (callback) {
         callback();
       }
     }, function () {
       OB.UTIL.RfidController.set('connectionLost', true);
-      OB.info('error while connectRFIDDevice');
+      OB.debug('error while connectRFIDDevice');
       if (errorCallback) {
         errorCallback();
       }
     }, 2000, OB.UTIL.get_UUID());
-    OB.info('error while connectRFIDDevice');
+    OB.debug('error while connectRFIDDevice');
     if (errorCallback) {
       errorCallback();
     }
@@ -325,9 +325,9 @@ OB.UTIL.RfidController.disconnectRFIDDevice = function (callback, errorCallback)
   OB.UTIL.RfidController.set('connected', false);
   OB.UTIL.RfidController.waitForAck(function (uuid) {
     OB.UTIL.RfidController.get('rfidWebsocket').send('disconnect:' + uuid);
-    OB.info('disconnectRFIDDevice sent, UUID: ' + uuid);
+    OB.debug('disconnectRFIDDevice sent, UUID: ' + uuid);
   }, function () {
-    OB.info('disconnectRFIDDevice ended succesfully');
+    OB.debug('disconnectRFIDDevice ended succesfully');
     if (callback) {
       callback();
     }
@@ -335,20 +335,20 @@ OB.UTIL.RfidController.disconnectRFIDDevice = function (callback, errorCallback)
     OB.UTIL.RfidController.set('connectionLost', true);
     OB.UTIL.RfidController.waitForAck(function (uuid) {
       OB.UTIL.RfidController.get('rfidWebsocket').send('disconnect:' + uuid);
-      OB.info('disconnectRFIDDevice sent, UUID: ' + uuid);
+      OB.debug('disconnectRFIDDevice sent, UUID: ' + uuid);
     }, function () {
-      OB.info('disconnectRFIDDevice ended succesfully');
+      OB.debug('disconnectRFIDDevice ended succesfully');
       if (callback) {
         callback();
       }
     }, function () {
       OB.UTIL.RfidController.set('connectionLost', true);
-      OB.info('error while disconnectRFIDDevice');
+      OB.debug('error while disconnectRFIDDevice');
       if (errorCallback) {
         errorCallback();
       }
     }, 2000, OB.UTIL.get_UUID());
-    OB.info('error while disconnectRFIDDevice');
+    OB.debug('error while disconnectRFIDDevice');
     if (errorCallback) {
       errorCallback();
     }
@@ -385,14 +385,14 @@ OB.UTIL.RfidController.sendTestEpc = function (epc, callback, errorCallback) {
   if (OB.UTIL.RfidController.get('isRFIDEnabled')) {
     OB.UTIL.RfidController.waitForAck(function (uuid) {
       OB.UTIL.RfidController.get('rfidWebsocket').send('test:' + uuid + ':' + epc);
-      OB.info('sendTestEpc sent, UUID: ' + uuid);
+      OB.debug('sendTestEpc sent, UUID: ' + uuid);
     }, function () {
-      OB.info('sendTestEpc ended succesfully:' + epc);
+      OB.debug('sendTestEpc ended succesfully:' + epc);
       if (callback) {
         callback();
       }
     }, function () {
-      OB.info('error while sendTestEpc:' + epc);
+      OB.debug('error while sendTestEpc:' + epc);
       if (errorCallback) {
         errorCallback();
       }
