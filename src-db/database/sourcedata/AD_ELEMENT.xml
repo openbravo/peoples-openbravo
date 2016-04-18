@@ -26230,6 +26230,8 @@ The distribution algorithm will be driven by this priority. The pending payments
 <!--680E69F4E5C8492BA0897166B5C54926-->  <COLUMNNAME><![CDATA[Islinkedtoproduct]]></COLUMNNAME>
 <!--680E69F4E5C8492BA0897166B5C54926-->  <NAME><![CDATA[Linked To Product]]></NAME>
 <!--680E69F4E5C8492BA0897166B5C54926-->  <PRINTNAME><![CDATA[Linked To Product]]></PRINTNAME>
+<!--680E69F4E5C8492BA0897166B5C54926-->  <DESCRIPTION><![CDATA[The service can be linked to a Product]]></DESCRIPTION>
+<!--680E69F4E5C8492BA0897166B5C54926-->  <HELP><![CDATA[The service can be linked to a Product. If so, when adding the product to a Sales Order, the related service product could be added to the Sales Order also, following special rules to set the quantity to be added and the price of the service, both of them based on the product.]]></HELP>
 <!--680E69F4E5C8492BA0897166B5C54926-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--680E69F4E5C8492BA0897166B5C54926-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--680E69F4E5C8492BA0897166B5C54926--></AD_ELEMENT>

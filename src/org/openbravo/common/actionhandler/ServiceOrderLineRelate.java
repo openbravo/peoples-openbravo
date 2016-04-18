@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2015 Openbravo SLU 
+ * All portions are Copyright (C) 2015-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -57,6 +57,7 @@ public class ServiceOrderLineRelate extends BaseProcessActionHandler {
     JSONObject jsonRequest = null;
     OBContext.setAdminMode(true);
     JSONObject errorMessage = new JSONObject();
+    ScrollableResults scroller = null;
     try {
       jsonRequest = new JSONObject(content);
       log.debug("{}", jsonRequest);
@@ -107,7 +108,7 @@ public class ServiceOrderLineRelate extends BaseProcessActionHandler {
       rol.setNamedParameter("orderLineId", mainOrderLine.getId());
       rol.setMaxResult(1000);
 
-      final ScrollableResults scroller = rol.scroll(ScrollMode.FORWARD_ONLY);
+      scroller = rol.scroll(ScrollMode.FORWARD_ONLY);
       while (scroller.next()) {
         final OrderlineServiceRelation or = (OrderlineServiceRelation) scroller.get()[0];
         OBDal.getInstance().remove(or);
@@ -320,6 +321,9 @@ public class ServiceOrderLineRelate extends BaseProcessActionHandler {
         log.error(e.getMessage(), e2);
       }
     } finally {
+      if (scroller != null) {
+        scroller.close();
+      }
       OBContext.restorePreviousMode();
     }
     return jsonRequest;

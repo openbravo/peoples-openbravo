@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2015 Openbravo SLU
+ * All portions are Copyright (C) 2015-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -25,6 +25,7 @@ import javax.enterprise.event.Observes;
 import org.apache.log4j.Logger;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
@@ -91,49 +92,57 @@ public class ServiceOrderLineEventHandler extends EntityPersistenceEventObserver
         OBQuery<OrderlineServiceRelation> rol = relatedServices(thisLine);
         rol.setMaxResult(1000);
         final ScrollableResults scroller = rol.scroll(ScrollMode.FORWARD_ONLY);
-        while (scroller.next()) {
-          boolean changed = false;
-          final OrderlineServiceRelation or = (OrderlineServiceRelation) scroller.get()[0];
-          // Order Quantity has changed from positive to negative or backwards
-          if (currentOrderedQty.signum() != 0 && oldOrderedQty.signum() != 0
-              && currentOrderedQty.signum() != oldOrderedQty.signum()) {
-            // Create new order line
-            if (lineNo == null) {
-              lineNo = ServicePriceUtils.getNewLineNo(thisLine.getSalesOrder().getId());
+        try {
+          while (scroller.next()) {
+            boolean changed = false;
+            final OrderlineServiceRelation or = (OrderlineServiceRelation) scroller.get()[0];
+            // Order Quantity has changed from positive to negative or backwards
+            if (currentOrderedQty.signum() != 0 && oldOrderedQty.signum() != 0
+                && currentOrderedQty.signum() != oldOrderedQty.signum()) {
+              // Create new order line
+              if (lineNo == null) {
+                lineNo = ServicePriceUtils.getNewLineNo(thisLine.getSalesOrder().getId());
+              } else {
+                lineNo = lineNo + 10L;
+              }
+              OrderLine secondOrderline = (OrderLine) DalUtil.copy(or.getSalesOrderLine(), false);
+              secondOrderline.setLineNo(lineNo);
+              secondOrderline.setId(SequenceIdData.getUUID());
+              secondOrderline.setNewOBObject(true);
+              OBDal.getInstance().save(secondOrderline);
+
+              // Delete relation line
+              OBDal.getInstance().remove(or);
+
+              // Create new relation line and relate to the new orderline
+              OrderlineServiceRelation olsr = OBProvider.getInstance().get(
+                  OrderlineServiceRelation.class);
+              olsr.setClient(thisLine.getClient());
+              olsr.setOrganization(thisLine.getOrganization());
+              olsr.setOrderlineRelated(thisLine);
+              olsr.setSalesOrderLine(secondOrderline);
+              olsr.setAmount(currentAmount);
+              olsr.setQuantity(currentOrderedQty);
+              OBDal.getInstance().save(olsr);
             } else {
-              lineNo = lineNo + 10L;
+              if (or.getQuantity().compareTo(currentOrderedQty) != 0) {
+                or.setQuantity(currentOrderedQty);
+                changed = true;
+              }
+              if (currentAmount.compareTo(oldAmount) != 0) {
+                or.setAmount(currentAmount);
+                changed = true;
+              }
+              if (changed) {
+                OBDal.getInstance().save(or);
+              }
             }
-            OrderLine secondOrderline = (OrderLine) DalUtil.copy(or.getSalesOrderLine(), false);
-            secondOrderline.setLineNo(lineNo);
-            secondOrderline.setId(SequenceIdData.getUUID());
-            secondOrderline.setNewOBObject(true);
-            OBDal.getInstance().save(secondOrderline);
-
-            // Delete relation line
-            OBDal.getInstance().remove(or);
-
-            // Create new relation line and relate to the new orderline
-            OrderlineServiceRelation olsr = OBProvider.getInstance().get(
-                OrderlineServiceRelation.class);
-            olsr.setClient(thisLine.getClient());
-            olsr.setOrganization(thisLine.getOrganization());
-            olsr.setOrderlineRelated(thisLine);
-            olsr.setSalesOrderLine(secondOrderline);
-            olsr.setAmount(currentAmount);
-            olsr.setQuantity(currentOrderedQty);
-            OBDal.getInstance().save(olsr);
-          } else {
-            if (or.getQuantity().compareTo(currentOrderedQty) != 0) {
-              or.setQuantity(currentOrderedQty);
-              changed = true;
-            }
-            if (currentAmount.compareTo(oldAmount) != 0) {
-              or.setAmount(currentAmount);
-              changed = true;
-            }
-            if (changed) {
-              OBDal.getInstance().save(or);
-            }
+          }
+        } catch (Exception e) {
+          throw new OBException("Error in SalesOrderLineEventHandler" + e.getMessage());
+        } finally {
+          if (scroller != null) {
+            scroller.close();
           }
         }
       }
