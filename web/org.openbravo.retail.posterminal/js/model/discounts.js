@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2015 Openbravo S.L.U.
+ * Copyright (C) 2012-2016 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -176,7 +176,7 @@
     },
 
     applyPromotionsImp: function (receipt, line, skipSave, avoidTrigger) {
-      var lines, linesWithoutNoDiscCandidated;
+      var lines;
       if (this.preventApplyPromotions) {
         return;
       }
@@ -198,20 +198,14 @@
         lines = _.sortBy(receipt.get('lines').models, function (lo) {
           return -lo.getQty();
         });
-        linesWithoutNoDiscCandidated = lines.filter(function (l) {
-          return l.get('noDiscountCandidates') !== true;
-        });
-        if (linesWithoutNoDiscCandidated.length === 0) {
+        if (lines.length === 0) {
           receipt.trigger('discountsApplied');
-        } else {
-          lines.forEach(function (l) {
-            // with new flow discounts -> skipSave =true
-            if (l.get('noDiscountCandidates') !== true) {
-              this.applyPromotionsImp(receipt, l, true, true);
-            }
-          }, this);
-          this.executor.nextEvent();
         }
+        lines.forEach(function (l) {
+          // with new flow discounts -> skipSave =true
+          this.applyPromotionsImp(receipt, l, true, true);
+        }, this);
+        this.executor.nextEvent();
       }
     },
 

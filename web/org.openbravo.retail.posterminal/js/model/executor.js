@@ -217,11 +217,6 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
     };
 
     OB.Dal.findUsingCache('discountsCache', OB.Model.Discount, criteria, function (d) {
-      if (d.size() === 0) {
-        line.set('noDiscountCandidates', true, {
-          silent: true
-        });
-      }
       d.forEach(function (disc) {
         actionQueue.add({
           action: me.applyRule,
@@ -233,6 +228,8 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
       evt.trigger('actionsCreated');
     }, function () {
       OB.error('Error getting promotions', arguments);
+    }, {
+      modelsAffectedByCache: ['BusinessPartner', 'Product', 'ProductCharacteristicValue', 'Discount', 'DiscountFilterBusinessPartner', 'PricingAdjustmentBusinessPartnerGroup', 'DiscountFilterProductCategory', 'DiscountFilterCharacteristic', 'DiscountFilterProduct', 'OfferPriceList']
     });
   },
 

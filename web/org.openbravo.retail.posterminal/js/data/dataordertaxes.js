@@ -26,6 +26,8 @@
           'id': taxcategory
         }, function (data) {
           fulfill(data.length > 0);
+        }, {
+          modelsAffectedByCache: ['TaxCategoryBOM']
         });
       });
       };
@@ -60,6 +62,8 @@
 
           // Fulfill promise
           fulfill(groupeddata);
+        }, {
+          modelsAffectedByCache: ['ProductBOM']
         });
       });
       };

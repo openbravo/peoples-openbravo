@@ -22,6 +22,8 @@ OB.UTIL.isDisableDiscount = function (receipt, callback) {
       } else {
         callback(false);
       }
+    }, {
+      modelsAffectedByCache: ['Discount']
     }, function () {
       callback(true);
     });
