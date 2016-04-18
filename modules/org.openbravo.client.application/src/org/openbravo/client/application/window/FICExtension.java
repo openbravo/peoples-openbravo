@@ -50,7 +50,9 @@ public interface FICExtension {
    * @param calloutMessages
    *          The list of messages returned by the callouts that have been executed.
    * @param attachments
-   *          The list with the attachments related to the record that it is being edited.
+   *          A empty list where can be populated the attachments related to the record that it is
+   *          being edited. By default these attachments are loaded when the section is opened and
+   *          not by the FIC response.
    * @param jsExcuteCode
    *          The list of JavaScrip code returned by the callouts to be executed in the client.
    * @param hiddenInputs

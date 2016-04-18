@@ -124,7 +124,7 @@
       return params;
     },
 
-    fetchView: function (viewId, callback, clientContext, params, useLoadingTab) {
+    fetchView: function (viewId, callback, clientContext, params, useLoadingTab, additionalParams) {
       var rpcMgr = ISC.RPCManager,
           reqObj, request;
 
@@ -143,6 +143,8 @@
         useSimpleHttp: true,
         actionURL: OB.Application.contextUrl + 'org.openbravo.client.kernel/OBUIAPP_MainLayout/View'
       };
+      reqObj.params = isc.addProperties({}, additionalParams, reqObj.params);
+
       request = rpcMgr.sendRequest(reqObj);
     },
 

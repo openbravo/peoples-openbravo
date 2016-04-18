@@ -70,6 +70,7 @@ public class DynamicExpressionParser {
   private List<Parameter> parametersInExpression = new ArrayList<Parameter>();
   private List<AuxiliaryInput> auxInputsInExpression = new ArrayList<AuxiliaryInput>();
   private List<String> sessionAttributesInExpression = new ArrayList<String>();
+  private List<Parameter> parameters;
 
   private String code;
   private Tab tab;
@@ -85,6 +86,7 @@ public class DynamicExpressionParser {
   public DynamicExpressionParser(String code, Process process, boolean parameterDisplayLogic) {
     this.code = code;
     this.process = process;
+    this.parameters = process.getOBUIAPPParameterList();
     this.parameterDisplayLogic = parameterDisplayLogic;
     parse();
   }
@@ -93,6 +95,30 @@ public class DynamicExpressionParser {
     this.code = code;
     this.parameter = parameter;
     this.process = parameter.getObuiappProcess();
+    this.parameters = this.process.getOBUIAPPParameterList();
+    this.parameterDisplayLogic = parameterDisplayLogic;
+    parse();
+  }
+
+  /**
+   * Constructor to be used when the parameter is not a process parameter. In this case the list of
+   * related parameters is given as a constructor parameter.
+   * 
+   * @param code
+   *          the code with the Dynamic Expression to parse.
+   * @param parameter
+   *          the parameter where the expression is defined.
+   * @param parameters
+   *          the list of related parameters.
+   * @param parameterDisplayLogic
+   *          boolean to determine if the expression is based in a Parameter
+   */
+  public DynamicExpressionParser(String code, Parameter parameter, List<Parameter> parameters,
+      boolean parameterDisplayLogic) {
+    this.code = code;
+    this.parameter = parameter;
+    this.process = parameter.getObuiappProcess();
+    this.parameters = parameters;
     this.parameterDisplayLogic = parameterDisplayLogic;
     parse();
   }
@@ -178,13 +204,16 @@ public class DynamicExpressionParser {
     if (jsCode.toString().contains(DimensionDisplayUtility.DIM_DISPLAYLOGIC)) {
       String parsedDisplay = null;
       if (this.parameterDisplayLogic) {
-        List<String> sessionVariablesToLoad = DimensionDisplayUtility
-            .getRequiredSessionVariablesForTab(this.process, this.parameter);
-        for (String sv : sessionVariablesToLoad) {
-          sessionAttributesInExpression.add(sv);
+        if (this.process != null) {
+          List<String> sessionVariablesToLoad = DimensionDisplayUtility
+              .getRequiredSessionVariablesForTab(this.process, this.parameter);
+
+          for (String sv : sessionVariablesToLoad) {
+            sessionAttributesInExpression.add(sv);
+          }
+          parsedDisplay = DimensionDisplayUtility.computeAccountingDimensionDisplayLogic(
+              this.process, this.parameter);
         }
-        parsedDisplay = DimensionDisplayUtility.computeAccountingDimensionDisplayLogic(
-            this.process, this.parameter);
       } else {
         List<String> sessionVariablesToLoad = DimensionDisplayUtility
             .getRequiredSessionVariablesForTab(this.tab, this.field);
@@ -328,7 +357,6 @@ public class DynamicExpressionParser {
     List<Field> fields;
     List<AuxiliaryInput> auxIns;
     if (parameterDisplayLogic) {
-      List<Parameter> parameters = process.getOBUIAPPParameterList();
       for (Parameter parameter : parameters) {
         if (token.equalsIgnoreCase(parameter.getDBColumnName())) {
           parametersInExpression.add(parameter);

@@ -346,8 +346,8 @@ OB.ViewFormProperties = {
     if (!this.attachmentsSection) {
       return;
     }
+    this.attachmentsSection.collapseSection(true);
     if (enable) {
-      this.attachmentsSection.collapseSection(true);
       this.attachmentsSection.setRecordInfo(this.view.entity, this.getValue(OB.Constants.ID), this.view.tabId, this);
       delete this.attachmentsSection.hiddenInForm;
       this.attachmentsSection.show();
@@ -848,7 +848,12 @@ OB.ViewFormProperties = {
     }
 
     if (this.attachmentsSection) {
-      this.attachmentsSection.fillAttachments(data.attachments);
+      if (data.attachments) {
+        this.attachmentsSection.fillAttachments(data.attachments);
+      }
+      if (data.attachmentCount) {
+        this.attachmentsSection.setAttachmentCount(data.attachmentCount);
+      }
     }
 
     // We will show the note count if it has been calculated and is different from 0
@@ -2191,7 +2196,7 @@ OB.ViewFormProperties = {
     var i, item, length = this.getItems().length;
     for (i = 0; i < length; i++) {
       item = this.getItems()[i];
-      if (isc.isA.SectionItem(item) && item.isExpanded()){
+      if (isc.isA.SectionItem(item) && item.isExpanded()) {
         item.updateAlwaysTakeSpace(true);
       }
     }
