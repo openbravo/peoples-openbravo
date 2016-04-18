@@ -13,6 +13,7 @@ enyo.kind({
   name: 'OB.UI.RenderProduct',
   kind: 'OB.UI.listItemButton',
   components: [{
+    name: 'productImage',
     style: 'max-width: 100%;',
     components: [{
       style: 'display: table-cell; vertical-align: top;  width: 50px;',
@@ -46,12 +47,18 @@ enyo.kind({
     }, {
       style: 'display: table-cell; min-width: 10px;'
     }, {
-      name: 'bestseller',
-      style: 'display: table-cell; min-width: 21px; height: 16px;',
-      kind: 'OB.UI.Thumbnail.Bestseller',
-      'default': 'img/iconBestsellerSmall.png',
-      showing: false
+      name: 'icons',
+      minWidth: 0,
+      style: 'display: table-cell; vertical-align: top;',
+      components: [{
+        name: 'bestseller',
+        style: 'height: 16px; width: 16px; padding: 0px 2px; float: left;',
+        kind: 'OB.UI.Thumbnail.Bestseller',
+        'default': 'img/iconBestsellerSmall.png',
+        showing: false
+      }]
     }, {
+      name: 'priceBox',
       style: 'display: table-cell; vertical-align: top; ',
       components: [{
         style: 'width: 100%;',
@@ -80,7 +87,8 @@ enyo.kind({
     this.inherited(arguments);
     // Build filter info from filter attributes
     var filterTxt = '',
-        filterAttr = this.model.get("filterAttr");
+        filterAttr = this.model.get("filterAttr"),
+        maxWidthCalc;
     if (filterAttr && _.isArray(filterAttr) && filterAttr.length > 0) {
       filterAttr.forEach(function (attr) {
         if (filterTxt !== '') {
@@ -112,10 +120,33 @@ enyo.kind({
       this.$.icon.parent.hide();
     }
 
+    if (this.owner.owner.owner.owner.owner.name === 'browseProducts') {
+      if (enyo.Panels.isScreenNarrow()) {
+        maxWidthCalc = parseInt(document.body.clientWidth / 2, 10) - 213;
+      } else {
+        maxWidthCalc = parseInt(document.body.clientWidth / 4, 10) - 213;
+      }
+    } else {
+      if (enyo.Panels.isScreenNarrow()) {
+        maxWidthCalc = parseInt(document.body.clientWidth / 2, 10) - 213;
+      } else {
+        maxWidthCalc = parseInt(document.body.clientWidth, 10) - 363;
+      }
+    }
+    if (maxWidthCalc < 0) {
+      maxWidthCalc = 0;
+    }
+    maxWidthCalc = Math.floor(maxWidthCalc / 20) * 20 >= 20 ? Math.floor(maxWidthCalc / 20) * 20 : 20;
+    this.$.icons.addStyles('max-width: ' + maxWidthCalc + 'px');
+    //this.$.icons.addStyles('max-width: 16px');
     if (this.model.get('bestseller') !== true) {
-      this.$.bestseller.applyStyle('min-width', '0px !important');
-      this.$.bestseller.applyStyle('width', '0px');
+      this.$.icons.applyStyle('min-width', this.$.icons.minWidth + 'px');
+      this.$.icons.applyStyle('width', '0px');
       this.$.bestseller.$.image.hide();
+    } else {
+      this.$.icons.minWidth += 20;
+      this.$.icons.applyStyle('min-width', this.$.icons.minWidth + 'px');
+      this.$.bestseller.addStyles('display: block');
     }
 
     if (OB.MobileApp.model.hasPermission('OBPOS_HideProductImagesInSearchAndBrowse', true)) {
@@ -128,6 +159,11 @@ enyo.kind({
       this.$.generic.setContent(OB.I18N.getLabel('OBMOBC_LblGeneric'));
       this.$.generic.show();
     }
+    OB.UTIL.HookManager.executeHooks('OBPOS_RenderProduct', {
+      model: this
+    }, function (args) {
+      //All should be done in module side
+    });
   },
   setIdentifierContent: function () {
     return this.model.get('_identifier');
