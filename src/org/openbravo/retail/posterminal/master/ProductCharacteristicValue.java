@@ -10,7 +10,9 @@ package org.openbravo.retail.posterminal.master;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
@@ -37,6 +39,18 @@ public class ProductCharacteristicValue extends ProcessHQLQuery {
   @Any
   @Qualifier(productCharacteristicValuePropertyExtension)
   private Instance<ModelExtension> extensions;
+
+  @Override
+  protected List<HQLPropertyList> getHqlProperties(JSONObject jsonsent) {
+    // Get Product Properties
+    List<HQLPropertyList> propertiesList = new ArrayList<HQLPropertyList>();
+    Map<String, Object> args = new HashMap<String, Object>();
+    HQLPropertyList productcharacteristicsHQLProperties = ModelExtensionUtils
+        .getPropertyExtensions(extensions, args);
+    propertiesList.add(productcharacteristicsHQLProperties);
+
+    return propertiesList;
+  }
 
   @Override
   protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
@@ -67,7 +81,7 @@ public class ProductCharacteristicValue extends ProcessHQLQuery {
             + priceListVersion.getId()
             + "') AND (ppp.product.id=pcv.product.id) ) "
             + "and pcv.characteristicValue.characteristic.obposUseonwebpos = true "
-            + "and $naturalOrgCriteria and $readableSimpleClientCriteria and (pcv.$incrementalUpdateCriteria"
+            + "and  $filtersCriteria AND $hqlCriteria and $naturalOrgCriteria and $readableSimpleClientCriteria and (pcv.$incrementalUpdateCriteria"
             + "OR pcv.characteristic.$incrementalUpdateCriteria OR pcv.characteristicValue.$incrementalUpdateCriteria) "
             + "order by pcv.id");
 

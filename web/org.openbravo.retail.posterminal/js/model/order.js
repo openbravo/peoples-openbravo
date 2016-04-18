@@ -1887,87 +1887,147 @@
 
     //Attrs is an object of attributes that will be set in order line
     createLine: function (p, units, options, attrs) {
-      var me = this;
+      var newline, me = this;
+
+      function removeTemporallyProductAndCharacteristics(p) {
+        var productcriteria = {
+          columns: ['product'],
+          operator: 'equals',
+          value: p.id,
+          isId: true
+        };
+        var remoteCriteria = [productcriteria];
+        var criteriaFilter = {};
+        criteriaFilter.remoteFilters = remoteCriteria;
+        OB.Dal.find(OB.Model.ProductCharacteristicValue, criteriaFilter, function (productcharacteristic) {
+          _.each(productcharacteristic.models, function (pchv) {
+            OB.Dal.removeTemporally(pchv, function () {}, function () {
+              OB.error(arguments);
+            });
+          }, function () {
+            OB.error(arguments);
+          });
+        }, function () {
+          OB.error(arguments);
+        });
+        OB.Dal.removeTemporally(p, function () {}, function () {
+          OB.error(arguments);
+        });
+      }
+
+      function createLineAux(p, units, options, attrs, me) {
+        if (me.validateAllowSalesWithReturn(units, false)) {
+          return;
+        }
+        // Get prices from BP pricelist 
+        var newline = new OrderLine({
+          id: OB.UTIL.get_UUID(),
+          product: p,
+          uOM: p.get('uOM'),
+          qty: OB.DEC.number(units),
+          price: OB.DEC.number(p.get('standardPrice')),
+          priceList: OB.DEC.number(p.get('listPrice')),
+          priceIncludesTax: me.get('priceIncludesTax'),
+          warehouse: {
+            id: OB.MobileApp.model.get('warehouses')[0].warehouseid,
+            warehousename: OB.MobileApp.model.get('warehouses')[0].warehousename
+          }
+        });
+
+        if (!_.isUndefined(attrs)) {
+          _.each(_.keys(attrs), function (key) {
+            newline.set(key, attrs[key]);
+          });
+        }
+
+        if (newline.get('relatedLines')) {
+          newline.set('groupService', newline.get('product').get('groupProduct'));
+        }
+
+        //issue 25448: Show stock screen is just shown when a new line is created.
+        if (newline.get('product').get("showstock") === true) {
+          newline.get('product').set("showstock", false);
+          newline.get('product').set("_showstock", true);
+        }
+
+        // add the created line
+        me.get('lines').add(newline, options);
+        newline.trigger('created', newline);
+        // set the undo action
+        me.setUndo('CreateLine', {
+          text: OB.I18N.getLabel('OBPOS_AddLine', [newline.get('qty'), newline.get('product').get('_identifier')]),
+          line: newline,
+          undo: function (modelObj) {
+            // Instead of using 'me' as order, is necessary to use 'OB.MobileApp.model.receipt' to avoid references to not active orders
+            // This happens while adding a deferred sale to a paid receipt
+            var order = OB.MobileApp.model.receipt;
+            OB.UTIL.Approval.requestApproval((modelObj ? modelObj : this.model), 'OBPOS_approval.deleteLine', function (approved) {
+              if (approved) {
+                if (OB.UTIL.RfidController.isRfidConfigured() && newline.get('obposEpccode')) {
+                  OB.UTIL.RfidController.removeEpcLine(newline);
+                }
+                // If the OBPOS_remove_ticket preference is active then mark the line as deleted
+                if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
+                  if (!order.get('deletedLines')) {
+                    order.set('deletedLines', []);
+                  }
+                  newline.set('obposIsDeleted', true);
+                  order.get('deletedLines').push(new OrderLine(newline.attributes));
+                  order.save(function () {
+                    order.get('lines').remove(newline);
+                    order.calculateGross();
+                    order.set('undo', null);
+                  });
+                } else {
+                  // remove the line
+                  order.get('lines').remove(newline);
+                  order.calculateGross();
+                  order.set('undo', null);
+                }
+              }
+            });
+          }
+        });
+        me.adjustPayment();
+        return newline;
+      }
+
 
       if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
         OB.Dal.saveTemporally(p, function () {}, function () {
           OB.error(arguments);
         }, true);
-      }
-      if (this.validateAllowSalesWithReturn(units, false)) {
-        return;
-      }
-      // Get prices from BP pricelist 
-      var newline = new OrderLine({
-        id: OB.UTIL.get_UUID(),
-        product: p,
-        uOM: p.get('uOM'),
-        qty: OB.DEC.number(units),
-        price: OB.DEC.number(p.get('standardPrice')),
-        priceList: OB.DEC.number(p.get('listPrice')),
-        priceIncludesTax: this.get('priceIncludesTax'),
-        warehouse: {
-          id: OB.MobileApp.model.get('warehouses')[0].warehouseid,
-          warehousename: OB.MobileApp.model.get('warehouses')[0].warehousename
-        }
-      });
 
-      if (!_.isUndefined(attrs)) {
-        _.each(_.keys(attrs), function (key) {
-          newline.set(key, attrs[key]);
+        var productcriteria = {
+          columns: ['product'],
+          operator: 'equals',
+          value: p.id,
+          isId: true
+        };
+        var remoteCriteria = [productcriteria];
+        var criteriaFilter = {};
+        criteriaFilter.remoteFilters = remoteCriteria;
+        OB.Dal.find(OB.Model.ProductCharacteristicValue, criteriaFilter, function (productcharacteristic) {
+          function saveCharacteristics(characteristics, i) {
+            if (i === characteristics.length) {
+              me.calculateReceipt();
+            } else {
+              OB.Dal.saveTemporally(characteristics[i], function () {
+                saveCharacteristics(characteristics, i + 1);
+              }, function () {
+                OB.error(arguments);
+              }, true);
+            }
+          }
+          if (productcharacteristic.models.length !== 0) {
+            saveCharacteristics(productcharacteristic.models, 0);
+          }
+
+        }, function () {
+          OB.error(arguments);
         });
       }
-
-      if (newline.get('relatedLines')) {
-        newline.set('groupService', newline.get('product').get('groupProduct'));
-      }
-
-      //issue 25448: Show stock screen is just shown when a new line is created.
-      if (newline.get('product').get("showstock") === true) {
-        newline.get('product').set("showstock", false);
-        newline.get('product').set("_showstock", true);
-      }
-
-      // add the created line
-      this.get('lines').add(newline, options);
-      newline.trigger('created', newline);
-      // set the undo action
-      this.setUndo('CreateLine', {
-        text: OB.I18N.getLabel('OBPOS_AddLine', [newline.get('qty'), newline.get('product').get('_identifier')]),
-        line: newline,
-        undo: function (modelObj) {
-          // Instead of using 'me' as order, is necessary to use 'OB.MobileApp.model.receipt' to avoid references to not active orders
-          // This happens while adding a deferred sale to a paid receipt
-          var order = OB.MobileApp.model.receipt;
-          OB.UTIL.Approval.requestApproval((modelObj ? modelObj : this.model), 'OBPOS_approval.deleteLine', function (approved) {
-            if (approved) {
-              if (OB.UTIL.RfidController.isRfidConfigured() && newline.get('obposEpccode')) {
-                OB.UTIL.RfidController.removeEpcLine(newline);
-              }
-              // If the OBPOS_remove_ticket preference is active then mark the line as deleted
-              if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
-                if (!order.get('deletedLines')) {
-                  order.set('deletedLines', []);
-                }
-                newline.set('obposIsDeleted', true);
-                order.get('deletedLines').push(new OrderLine(newline.attributes));
-                order.save(function () {
-                  order.get('lines').remove(newline);
-                  order.calculateGross();
-                  order.set('undo', null);
-                });
-              } else {
-                // remove the line
-                order.get('lines').remove(newline);
-                order.calculateGross();
-                order.set('undo', null);
-              }
-            }
-          });
-        }
-      });
-      this.adjustPayment();
-      return newline;
+      return createLineAux(p, units, options, attrs, me);
     },
 
     returnLine: function (line, options, skipValidaton) {
@@ -3424,9 +3484,30 @@
                 iter.linepos = linepos;
                 var addLineForProduct = function (prod) {
                     if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
-                      OB.Dal.saveTemporally(prod, function () {}, function () {
+                      OB.Dal.saveTemporally(prod, function () {
+                        var productcriteria = {
+                          columns: ['product'],
+                          operator: 'equals',
+                          value: prod.id,
+                          isId: true
+                        };
+                        var remoteCriteria = [productcriteria];
+                        var criteriaFilter = {};
+                        criteriaFilter.remoteFilters = remoteCriteria;
+                        OB.Dal.find(OB.Model.ProductCharacteristicValue, criteriaFilter, function (productcharacteristic) {
+                          _.each(productcharacteristic.models, function (pchv) {
+                            OB.Dal.saveTemporally(pchv, function () {}, function () {
+                              OB.error(arguments);
+                            }, true);
+                          });
+                        }, function () {
+                          OB.error(arguments);
+                        });
+
+                      }, function () {
                         OB.error(arguments);
                       }, true);
+
                     }
                     // Set product services
                     order._loadRelatedServices(prod.get('productType'), prod.get('id'), prod.get('productCategory'), function (data) {
@@ -3759,11 +3840,27 @@
         me.current = me.at(0);
         me.loadCurrent(createNew);
       }
+      var successCallbackProductCH = function (productcharacteristic) {
+          _.each(productcharacteristic.models, function (pchv) {
+            OB.Dal.removeTemporally(pchv, successCallback, errorCallback);
+          });
+          };
 
       if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
         for (i = 0, max = this.current.get('lines').length; i < this.current.get('lines').length; i++) {
           var p = this.current.get('lines').models[i].get('product');
+          var productcriteria = {
+            columns: ['product'],
+            operator: 'equals',
+            value: p.id,
+            isId: true
+          };
+          var remoteCriteria = [productcriteria];
+          var criteriaFilter = {};
+          criteriaFilter.remoteFilters = remoteCriteria;
+          OB.Dal.find(OB.Model.ProductCharacteristicValue, criteriaFilter, successCallbackProductCH, errorCallback);
           OB.Dal.removeTemporally(p, successCallback, errorCallback);
+
         }
       }
       if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
