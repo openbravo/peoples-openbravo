@@ -351,7 +351,7 @@
         this.set('quotationnoSuffix', attributes.quotationnoSuffix);
         this.set('documentNo', attributes.documentNo);
         this.setUndo('InitializeAttr', attributes.undo);
-        bpModel = new Backbone.Model(attributes.bp);
+        bpModel = new OB.Model.BusinessPartner(attributes.bp);
         bpModel.set('locationModel', new OB.Model.BPLocation(attributes.bp.locationModel));
         this.set('bp', bpModel);
         this.set('lines', new OrderLineList().reset(attributes.lines));
