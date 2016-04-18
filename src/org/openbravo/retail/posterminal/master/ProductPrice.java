@@ -87,7 +87,8 @@ public class ProductPrice extends ProcessHQLQuery {
               + PriceList.getSelectPriceListVersionIds(orgId,
                   terminalDate)
               + ") and $filtersCriteria AND $hqlCriteria "
-              + "and pli.$naturalOrgCriteria and pli.$readableClientCriteria and (ppp.$incrementalUpdateCriteria)");
+              + "and pli.$naturalOrgCriteria and pli.$readableClientCriteria and (ppp.$incrementalUpdateCriteria) "
+              + "order by ppp.id asc");
     }
 
     return hqlQueries;

@@ -68,7 +68,8 @@ public class ProductCharacteristicValue extends ProcessHQLQuery {
             + "') AND (ppp.product.id=pcv.product.id) ) "
             + "and pcv.characteristicValue.characteristic.obposUseonwebpos = true "
             + "and $naturalOrgCriteria and $readableSimpleClientCriteria and (pcv.$incrementalUpdateCriteria"
-            + "OR pcv.characteristic.$incrementalUpdateCriteria OR pcv.characteristicValue.$incrementalUpdateCriteria)");
+            + "OR pcv.characteristic.$incrementalUpdateCriteria OR pcv.characteristicValue.$incrementalUpdateCriteria) "
+            + "order by pcv.id asc");
 
     return hqlQueries;
   }
