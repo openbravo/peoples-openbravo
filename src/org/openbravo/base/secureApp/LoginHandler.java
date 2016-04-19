@@ -15,6 +15,7 @@ package org.openbravo.base.secureApp;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import javax.inject.Inject;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -27,6 +28,7 @@ import org.openbravo.authentication.AuthenticationException;
 import org.openbravo.authentication.AuthenticationExpirationPasswordException;
 import org.openbravo.authentication.AuthenticationManager;
 import org.openbravo.base.HttpBaseServlet;
+import org.openbravo.client.application.CachedPreference;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -42,6 +44,7 @@ import org.openbravo.model.ad.access.UserRoles;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.system.SystemInformation;
+import org.openbravo.server.ServerControllerHandler;
 import org.openbravo.utils.FormatUtilities;
 import org.openbravo.xmlEngine.XmlDocument;
 
@@ -60,6 +63,12 @@ import org.openbravo.xmlEngine.XmlDocument;
  */
 public class LoginHandler extends HttpBaseServlet {
   private static final long serialVersionUID = 1L;
+
+  @Inject
+  private ServerControllerHandler serverController;
+
+  @Inject
+  private CachedPreference cachedPreference;
 
   @Override
   public void doPost(HttpServletRequest req, HttpServletResponse res) throws IOException,
@@ -185,7 +194,6 @@ public class LoginHandler extends HttpBaseServlet {
         msgType = "Error";
         action = "../security/Login_FS.html";
       }
-
       boolean forceNamedUserLogin = "FORCE_NAMED_USER".equals(vars.getCommand());
 
       LicenseRestriction limitation = ak.checkOPSLimitations(sessionId, username,
@@ -350,6 +358,23 @@ public class LoginHandler extends HttpBaseServlet {
         }
       }
 
+      // checks if the current server is a store server, and in that case, if the access is
+      // restricted
+      vars.removeSessionValue("OnlySystemAdminAccess");
+      if (serverController.isThisAStoreServer() && isLoginAccessRestrictedInStoreServer(vars)) {
+        // sets the onlySystemAdminRoleShouldBeAvailableInErp flag to "Y" to:
+        // * use it in UserInfoWidgetActionHandler.getRoles to make System Admin the only role
+        // available
+        // * use it in index.jsp to make sure the ERP is only available to users with the System
+        // Admin role
+        vars.setSessionValue("onlySystemAdminRoleShouldBeAvailableInErp", "Y");
+        String msg = Utility.messageBD(myPool, "BACKEND_LOGIN_RESTRICTED", vars.getLanguage());
+        String title = Utility.messageBD(myPool, "BACKEND_LOGIN_RESTRICTED_TITLE",
+            vars.getLanguage());
+        goToRetry(res, vars, msg, title, msgType, action, doRedirect);
+        return;
+      }
+
       try {
         LoginUtils.getLoginDefaults(strUserAuth, "", myPool);
       } catch (DefaultValidationException e) {
@@ -368,6 +393,25 @@ public class LoginHandler extends HttpBaseServlet {
       OBContext.restorePreviousMode();
     }
 
+  }
+
+  /**
+   * Returns true if the access to the current login handler should be restricted in the store
+   * servers
+   */
+  protected boolean isLoginAccessRestrictedInStoreServer(VariablesSecureApp vars) {
+    return isErpAccessRestrictedInStoreServer();
+  }
+
+  /**
+   * Checks if the RestrictErpAccessInStoreServer preference has been set to "Y". In that case, the
+   * access to the ERP will be restricted in store servers and only the System Admin role will be
+   * available
+   */
+  protected boolean isErpAccessRestrictedInStoreServer() {
+    String restrictErpAccessInStoreServer = cachedPreference
+        .getPreferenceValue(CachedPreference.RESTRICT_ERP_ACCESS_IN_STORE_SERVER);
+    return "Y".equals(restrictErpAccessInStoreServer);
   }
 
   private void updateDBSession(String sessionId, boolean sessionActive, String status) {

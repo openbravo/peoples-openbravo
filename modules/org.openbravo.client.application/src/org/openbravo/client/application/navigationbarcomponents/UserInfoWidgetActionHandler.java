@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -40,6 +40,7 @@ import org.openbravo.client.application.ApplicationConstants;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.client.kernel.KernelConstants;
 import org.openbravo.client.kernel.KernelServlet;
+import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.client.kernel.StaticResourceComponent;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
@@ -299,6 +300,14 @@ public class UserInfoWidgetActionHandler extends BaseActionHandler implements Po
           || limitation == LicenseRestriction.POS_TERMINALS_EXCEEDED) {
         return Collections.singletonList(OBDal.getInstance().get(Role.class, "0"));
       }
+    }
+
+    final HttpServletRequest request = RequestContext.get().getRequest();
+    final VariablesSecureApp vars = new VariablesSecureApp(request);
+    boolean onlySystemAdminAccess = "Y".equals(vars
+        .getSessionValue("onlySystemAdminRoleShouldBeAvailableInErp"));
+    if (onlySystemAdminAccess) {
+      return Collections.singletonList(OBDal.getInstance().get(Role.class, "0"));
     }
 
     // return the complete role list

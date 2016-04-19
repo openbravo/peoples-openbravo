@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2015 Openbravo S.L.U.
+ * Copyright (C) 2001-2016 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -31,6 +31,8 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
+import net.sf.jasperreports.engine.JRDataSource;
 
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
@@ -69,8 +71,6 @@ import org.openbravo.model.ad.ui.WindowTrl;
 import org.openbravo.utils.FileUtility;
 import org.openbravo.utils.Replace;
 import org.openbravo.xmlEngine.XmlDocument;
-
-import net.sf.jasperreports.engine.JRDataSource;
 
 public class HttpSecureAppServlet extends HttpBaseServlet {
   private static final long serialVersionUID = 1L;
@@ -237,6 +237,10 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
           boolean correctSystemStatus = sysInfo.getSystemStatus() == null
               || this.globalParameters.getOBProperty("safe.mode", "false")
                   .equalsIgnoreCase("false") || sysInfo.getSystemStatus().equals("RB70");
+
+          final VariablesSecureApp vars = new VariablesSecureApp(request, false);
+          boolean onlySystemAdminAvailable = "Y".equals(vars
+              .getSessionValue("onlySystemAdminRoleShouldBeAvailableInErp"));
           LicenseRestriction limitation = ActivationKey.getInstance().checkOPSLimitations(
               variables.getDBSession());
           // We check if there is a Openbravo Professional Subscription restriction in the license,
@@ -248,7 +252,8 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
               || limitation == LicenseRestriction.NOT_MATCHED_INSTANCE
               || limitation == LicenseRestriction.HB_NOT_ACTIVE
               || limitation == LicenseRestriction.ON_DEMAND_OFF_PLATFORM
-              || limitation == LicenseRestriction.POS_TERMINALS_EXCEEDED || !correctSystemStatus) {
+              || limitation == LicenseRestriction.POS_TERMINALS_EXCEEDED || !correctSystemStatus
+              || onlySystemAdminAvailable) {
             // it is only allowed to log as system administrator
             strRole = DefaultOptionsData.getDefaultSystemRole(this, strUserAuth);
             if (strRole == null || strRole.equals("")) {
@@ -284,8 +289,6 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
               strIsRTL = dataLanguage[0].getField("ISRTL");
             }
           }
-
-          final VariablesSecureApp vars = new VariablesSecureApp(request, false);
 
           // note fill session arguments will set the LOGGINGIN session var
           // to N
