@@ -152,6 +152,10 @@
         OB.UTIL.clone(me.receipt, receipt);
       }
 
+      var hasNegativeLines = _.filter(receipt.get('lines').models, function (line) {
+        return line.get('qty') < 0;
+      }).length === receipt.get('lines').models ? true : false;
+
       var linesToRemove = [];
       receipt.get('lines').forEach(function (line) {
         if (!line.isPrintableService()) {
@@ -168,7 +172,7 @@
       if (args.forcedtemplate) {
         args.template = args.forcedtemplate;
       } else if (receipt.get('generateInvoice') && receipt.get('orderType') !== 2 && receipt.get('orderType') !== 3 && !receipt.get('isLayaway')) {
-        if (receipt.get('orderType') === 1) {
+        if (receipt.get('orderType') === 1 || hasNegativeLines) {
           args.template = me.templatereturninvoice;
         } else if (receipt.get('isQuotation')) {
           args.template = me.templatequotation;
@@ -179,7 +183,7 @@
         }
       } else {
         if (receipt.get('isPaid')) {
-          if (receipt.get('orderType') === 1) {
+          if (receipt.get('orderType') === 1 || hasNegativeLines) {
             args.template = me.templatereturn;
           } else if (receipt.get('isQuotation')) {
             args.template = me.templatequotation;
@@ -187,7 +191,7 @@
             args.template = me.templateclosedreceipt;
           }
         } else {
-          if (receipt.get('orderType') === 1) {
+          if (receipt.get('orderType') === 1 || hasNegativeLines) {
             args.template = me.templatereturn;
           } else if (receipt.get('orderType') === 2 || receipt.get('isLayaway') || receipt.get('orderType') === 3) {
             args.template = me.templatelayaway;
