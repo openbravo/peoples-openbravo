@@ -1194,7 +1194,7 @@ function onloadFunctions() {
                       <table border="0" cellspacing="0" cellpadding="0" width="90%" class="DataGrid_Header_Table DataGrid_Body_Table" style="table-layout: auto;">
                         <div id="sectionStatus">
                           <tr class="DataGrid_Body_Row">
-                            <th colspan="17"  class="DataGrid_Header_Cell" style="text-align:left">Status<span>:&nbsp;</span>
+                            <th colspan="18"  class="DataGrid_Header_Cell" style="text-align:left">Status<span>:&nbsp;</span>
                             <span id="fieldStatus">xxStatusName</span></th>
                           </tr>
                     
@@ -1206,6 +1206,7 @@ function onloadFunctions() {
                             <th width="10%" class="DataGrid_Header_Cell">Sales Person</th>
                             <th width="10%" class="DataGrid_Header_Cell">Invoice Number</th>
                             <th width="10%" class="DataGrid_Header_Cell">Invoice Date</th>
+                            <th width="10%" class="DataGrid_Header_Cell">Payment Method</th>
                             <th width="10%" class="DataGrid_Header_Cell">Payment</th>
                             <th width="10%" class="DataGrid_Header_Cell">Due Date</th>
                             <th width="10%" class="DataGrid_Header_Cell">Expected Date</th>
@@ -1233,6 +1234,7 @@ function onloadFunctions() {
                               </td>
                                 
                               <td width="10%" id="fieldInvoiceDate" class="DataGrid_Body_Cell">xx14500.34</td>
+                              <td width="10%" id="fieldPaymentMethod" class="DataGrid_Body_Cell">xx14500.34</td>
                               <td width="10%" class="DataGrid_Body_Cell_Amount">
                                 <a href="#" onclick="validate(); openPaymentTab('yy', 'zz');" onmouseover="window.status='Payment Report';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="fieldPaymLink" style="xx" title="xx">
                                   <span id="fieldPayment">xx14500.34</span>
@@ -1252,7 +1254,7 @@ function onloadFunctions() {
                           </div>
                           <tr class="DataGrid_Body_Row">
                             <th width="10%" class="DataGrid_Header_Cell"><span class="Bold">Sub Total (Status)</span></th>
-                            <th width="100%" class="DataGrid_Header_Cell_Amount" colspan="13"></th>
+                            <th width="100%" class="DataGrid_Header_Cell_Amount" colspan="14"></th>
                             <th width="10%" class="DataGrid_Header_Cell_Amount" style="text-align:right"><span class="Bold" id="subtotalBaseAmount"></span></th>
                             <th width="10%" class="DataGrid_Header_Cell"><span class="Bold" id="fieldBaseCurrency"></span></th>
                             <th width="100%" class="DataGrid_Header_Cell_Amount"></th>
@@ -1267,7 +1269,7 @@ function onloadFunctions() {
                       <table cellspacing="0" cellpadding="0" width="90%" class="DataGrid_Header_Table DataGrid_Body_Table" style="table-layout: auto;">
                           <div id="sectionGroupCrit">
                             <tr class="DataGrid_Body_Row">
-                              <th colspan="13" class="DataGrid_Header_Cell" style="text-align:left">Grouping Criteria<span>:&nbsp;</span>
+                              <th colspan="15" class="DataGrid_Header_Cell" style="text-align:left">Grouping Criteria<span>:&nbsp;</span>
                                 <span id="fieldGroupCritName">xxGroupCritName</span></th>
                              <!-- <th class="DataGrid_Header_Cell">Balance</th>
                               <th class="DataGrid_Header_Cell_Amount"><span id="sumBalanceAmount"></span></th>
@@ -1276,7 +1278,7 @@ function onloadFunctions() {
                             </tr>
                             <div id="sectionStatus2">
                                 <tr class="DataGrid_Body_Row">
-                                  <th colspan="17" class="DataGrid_Header_Cell" style="text-align:left">Status<span>:&nbsp;</span>
+                                  <th colspan="18" class="DataGrid_Header_Cell" style="text-align:left">Status<span>:&nbsp;</span>
                                 <span id="fieldStatus2">xxStatusName</span></th>
                                 </tr>
                         
@@ -1287,6 +1289,7 @@ function onloadFunctions() {
                                     <th width="10%" class="DataGrid_Header_Cell">Sales Person</th>
                                     <th width="10%" class="DataGrid_Header_Cell">Invoice Number</th>
                                     <th width="10%" class="DataGrid_Header_Cell">Invoice Date</th>
+                                    <th width="10%" class="DataGrid_Header_Cell">Payment Method</th>
                                     <th width="10%" class="DataGrid_Header_Cell">Payment</th>
                                     <th width="10%" class="DataGrid_Header_Cell">Due Date</th>
                                     <th width="10%" class="DataGrid_Header_Cell">Expected Date</th>
@@ -1313,6 +1316,7 @@ function onloadFunctions() {
                                       <span id="fieldInvoiceNumber2_nolink" class="DataGrid_Body_Cell" style="xx">xx14500.34</span>
                                     </td>
                                     <td width="10%" id="fieldInvoiceDate2" class="DataGrid_Body_Cell">xx14500.34</td>
+                                    <td width="10%" id="fieldPaymentMethod" class="DataGrid_Body_Cell">xx14500.34</td>
                                     <td width="10%" class="DataGrid_Body_Cell_Amount">
                                       <a href="#" onclick="validate(); openPaymentTab('yy', 'zz');" onmouseover="window.status='Payment Report';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="fieldPaymLink2" style="xx" title="xx">
                                         <span id="fieldPayment2">xx14500.34</span>
@@ -1332,7 +1336,7 @@ function onloadFunctions() {
                                 </div>
                                 <tr class="DataGrid_Body_Row">
                                   <th width="10%" class="DataGrid_Header_Cell"><span class="Bold">Sub Total (Status)</span></th>
-                                  <th width="100%" class="DataGrid_Header_Cell_Amount" colspan="13"></th>
+                                  <th width="100%" class="DataGrid_Header_Cell_Amount" colspan="14"></th>
                                   <th width="10%" class="DataGrid_Header_Cell_Amount" style="text-align:right"><span class="Bold" id="subtotalBaseAmountStatus"></span></th>
                                   <th width="10%" class="DataGrid_Header_Cell"><span class="Bold" id="fieldBaseCurrency2"></span></th>
                                   <th width="100%" class="DataGrid_Header_Cell_Amount"></th>

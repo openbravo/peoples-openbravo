@@ -150,6 +150,8 @@
     <FIELD id="fieldInvoiceNumber_nolink" replaceCharacters="html">INVOICE_NUMBER</FIELD>
     <FIELD id="fieldInvoiceNumber_nolink" attribute="style" replace="xx">NOT_PAYMENT_PLAN_Y_N</FIELD>
     
+    <FIELD id="fieldPaymentMethod">PAYMENT_METHOD</FIELD>
+    
     <FIELD id="fieldInvoiceDate">INVOICE_DATE</FIELD>
     
     <FIELD id="fieldPayment" replaceCharacters="html">PAYMENT</FIELD>
@@ -189,6 +191,8 @@
     <FIELD id="fieldInvoiceNumber2" replaceCharacters="html">INVOICE_NUMBER</FIELD>
     <FIELD id="fieldInvoiceNumber2_nolink" replaceCharacters="html">INVOICE_NUMBER</FIELD>
     <FIELD id="fieldInvoiceNumber2_nolink" attribute="style" replace="xx">NOT_PAYMENT_PLAN_Y_N</FIELD>
+    
+    <FIELD id="fieldPaymentMethod">PAYMENT_METHOD</FIELD>
     
     <FIELD id="fieldInvoiceDate2">INVOICE_DATE</FIELD>
     

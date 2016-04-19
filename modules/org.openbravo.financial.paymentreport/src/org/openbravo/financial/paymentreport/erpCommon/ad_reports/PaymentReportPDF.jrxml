@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.0.0.final using JasperReports Library version 6.0.0  -->
+<!-- 2016-03-11T16:07:41 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PaymentReportPDF" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="NoDataSection" columnWidth="782" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20" uuid="a1c562a7-5994-47ae-b89e-6d598ae5c022">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
@@ -382,6 +384,14 @@ FROM DUAL]]>
 		<groupHeader>
 			<band height="60" splitType="Stretch">
 				<staticText>
+					<reportElement key="staticText-5" style="Detail_Header" x="101" y="35" width="60" height="25" uuid="89db38b4-84b8-4853-aba9-020948be129d"/>
+					<box leftPadding="2"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Payment Method]]></text>
+				</staticText>
+				<staticText>
 					<reportElement key="staticText-2" style="Detail_Header" x="1" y="35" width="100" height="25" uuid="6ded83c1-5034-4d33-931c-092801ef633d"/>
 					<box leftPadding="2"/>
 					<textElement verticalAlignment="Middle">
@@ -390,7 +400,7 @@ FROM DUAL]]>
 					<text><![CDATA[Business Partner]]></text>
 				</staticText>
 				<staticText>
-					<reportElement key="staticText-4" style="Detail_Header" x="285" y="35" width="65" height="25" uuid="d26a7aeb-43a1-433e-a686-959222707aa0"/>
+					<reportElement key="staticText-4" style="Detail_Header" x="344" y="35" width="50" height="25" uuid="d26a7aeb-43a1-433e-a686-959222707aa0"/>
 					<box leftPadding="2"/>
 					<textElement verticalAlignment="Middle">
 						<font fontName="DejaVu Sans" size="8" isBold="false"/>
@@ -398,7 +408,15 @@ FROM DUAL]]>
 					<text><![CDATA[Payment]]></text>
 				</staticText>
 				<staticText>
-					<reportElement key="staticText-5" style="Detail_Header" x="102" y="35" width="70" height="25" uuid="c5e07f95-fb36-426c-a383-de0060792657"/>
+					<reportElement key="staticText-5" style="Detail_Header" x="162" y="35" width="70" height="25" uuid="87dabf7a-0fce-4884-9648-e68ea63a13ff"/>
+					<box leftPadding="2"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="DejaVu Sans" size="8" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Payment Method]]></text>
+				</staticText>
+				<staticText>
+					<reportElement key="staticText-5" style="Detail_Header" x="162" y="35" width="70" height="25" uuid="c5e07f95-fb36-426c-a383-de0060792657"/>
 					<box leftPadding="2"/>
 					<textElement verticalAlignment="Middle">
 						<font fontName="DejaVu Sans" size="8" isBold="false"/>
@@ -406,7 +424,7 @@ FROM DUAL]]>
 					<text><![CDATA[Sales Person]]></text>
 				</staticText>
 				<staticText>
-					<reportElement key="staticText-6" style="Detail_Header" x="173" y="35" width="55" height="25" uuid="0166abd3-0aeb-4dea-857e-1e96f86db279"/>
+					<reportElement key="staticText-6" style="Detail_Header" x="233" y="35" width="55" height="25" uuid="0166abd3-0aeb-4dea-857e-1e96f86db279"/>
 					<box leftPadding="2"/>
 					<textElement verticalAlignment="Middle">
 						<font fontName="DejaVu Sans" size="8" isBold="false"/>
@@ -414,7 +432,7 @@ FROM DUAL]]>
 					<text><![CDATA[Invoice Number]]></text>
 				</staticText>
 				<staticText>
-					<reportElement key="staticText-7" style="Detail_Header" x="229" y="35" width="55" height="25" uuid="153e019b-b727-4499-b6f7-758a0ad35770"/>
+					<reportElement key="staticText-7" style="Detail_Header" x="289" y="35" width="55" height="25" uuid="153e019b-b727-4499-b6f7-758a0ad35770"/>
 					<box leftPadding="2"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font fontName="DejaVu Sans" size="8" isBold="false"/>
@@ -422,7 +440,7 @@ FROM DUAL]]>
 					<text><![CDATA[Invoice Date]]></text>
 				</staticText>
 				<staticText>
-					<reportElement key="staticText-8" style="Detail_Header" x="351" y="35" width="61" height="25" uuid="38b58e5b-238d-49b4-82fc-119173a21091"/>
+					<reportElement key="staticText-8" style="Detail_Header" x="394" y="35" width="52" height="25" uuid="38b58e5b-238d-49b4-82fc-119173a21091"/>
 					<box leftPadding="2"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font fontName="DejaVu Sans" size="8" isBold="false"/>
@@ -430,28 +448,28 @@ FROM DUAL]]>
 					<text><![CDATA[Expected Date]]></text>
 				</staticText>
 				<staticText>
-					<reportElement key="staticText-9" style="Detail_Header" x="412" y="35" width="33" height="25" uuid="9435ab33-40a4-4369-a94a-75cf3267bdb8"/>
+					<reportElement key="staticText-9" style="Detail_Header" x="446" y="35" width="33" height="25" uuid="9435ab33-40a4-4369-a94a-75cf3267bdb8"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font fontName="DejaVu Sans" size="8" isBold="false"/>
 					</textElement>
 					<text><![CDATA[PlannedDSO]]></text>
 				</staticText>
 				<staticText>
-					<reportElement key="staticText-10" style="Detail_Header" x="446" y="35" width="33" height="25" uuid="7d4a0f1e-1aa3-402e-9d09-fcd7a560ab18"/>
+					<reportElement key="staticText-10" style="Detail_Header" x="480" y="35" width="33" height="25" uuid="7d4a0f1e-1aa3-402e-9d09-fcd7a560ab18"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font fontName="DejaVu Sans" size="8" isBold="false"/>
 					</textElement>
 					<text><![CDATA[CurrentDSO]]></text>
 				</staticText>
 				<staticText>
-					<reportElement key="staticText-11" style="Detail_Header" x="480" y="35" width="36" height="25" uuid="7959b859-3ba3-4060-92b1-3ca4aea9a8b0"/>
+					<reportElement key="staticText-11" style="Detail_Header" x="514" y="35" width="36" height="25" uuid="7959b859-3ba3-4060-92b1-3ca4aea9a8b0"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font fontName="DejaVu Sans" size="8" isBold="false"/>
 					</textElement>
 					<text><![CDATA[Overdue]]></text>
 				</staticText>
 				<staticText>
-					<reportElement key="staticText-13" style="Detail_Header" x="654" y="35" width="75" height="25" uuid="b4e5ab52-1feb-4952-9af5-434c908c8ee9"/>
+					<reportElement key="staticText-13" style="Detail_Header" x="680" y="35" width="49" height="25" uuid="b4e5ab52-1feb-4952-9af5-434c908c8ee9"/>
 					<box rightPadding="2"/>
 					<textElement textAlignment="Right">
 						<font fontName="DejaVu Sans" size="8" isBold="false"/>
@@ -467,7 +485,7 @@ FROM DUAL]]>
 					<text><![CDATA[Base Currency]]></text>
 				</staticText>
 				<staticText>
-					<reportElement key="staticText-15" style="Detail_Header" x="517" y="35" width="75" height="25" uuid="94678790-4aa7-4975-936c-59724cea4fc4"/>
+					<reportElement key="staticText-15" style="Detail_Header" x="551" y="35" width="68" height="25" uuid="94678790-4aa7-4975-936c-59724cea4fc4"/>
 					<box rightPadding="2"/>
 					<textElement textAlignment="Right">
 						<font fontName="DejaVu Sans" size="8" isBold="false"/>
@@ -475,7 +493,7 @@ FROM DUAL]]>
 					<text><![CDATA[Transactional Amount]]></text>
 				</staticText>
 				<staticText>
-					<reportElement key="staticText-16" style="Detail_Header" x="593" y="35" width="60" height="25" uuid="76bd692c-f062-49de-b4cd-4e31b1f4a713"/>
+					<reportElement key="staticText-16" style="Detail_Header" x="620" y="35" width="60" height="25" uuid="76bd692c-f062-49de-b4cd-4e31b1f4a713"/>
 					<box leftPadding="2"/>
 					<textElement textAlignment="Center">
 						<font fontName="DejaVu Sans" size="8" isBold="false"/>
@@ -496,37 +514,37 @@ FROM DUAL]]>
 					<reportElement key="line-37" style="Report_Footer" stretchType="RelativeToBandHeight" x="0" y="35" width="1" height="25" uuid="0617e110-f967-4059-a9da-aa22d33689c8"/>
 				</line>
 				<line>
-					<reportElement key="line-38" style="Report_Footer" stretchType="RelativeToBandHeight" x="101" y="35" width="1" height="25" uuid="3cf51cd2-2dfc-4f5e-8c5e-d9766ef3fcac"/>
+					<reportElement key="line-38" style="Report_Footer" stretchType="RelativeToBandHeight" x="161" y="35" width="1" height="25" uuid="3cf51cd2-2dfc-4f5e-8c5e-d9766ef3fcac"/>
 				</line>
 				<line>
-					<reportElement key="line-39" style="Report_Footer" stretchType="RelativeToBandHeight" x="172" y="35" width="1" height="25" uuid="6493541b-b5cc-4cb0-9c90-36e3dea808ba"/>
+					<reportElement key="line-39" style="Report_Footer" stretchType="RelativeToBandHeight" x="232" y="35" width="1" height="25" uuid="6493541b-b5cc-4cb0-9c90-36e3dea808ba"/>
 				</line>
 				<line>
-					<reportElement key="line-40" style="Report_Footer" stretchType="RelativeToBandHeight" x="228" y="35" width="1" height="25" uuid="300ede3c-5c25-43b6-be75-b5911390a1a9"/>
+					<reportElement key="line-40" style="Report_Footer" stretchType="RelativeToBandHeight" x="288" y="35" width="1" height="25" uuid="300ede3c-5c25-43b6-be75-b5911390a1a9"/>
 				</line>
 				<line>
-					<reportElement key="line-41" style="Report_Footer" stretchType="RelativeToBandHeight" x="284" y="35" width="1" height="25" uuid="487d171b-6290-4ca3-8b8d-140bb14762b6"/>
+					<reportElement key="line-41" style="Report_Footer" stretchType="RelativeToBandHeight" x="344" y="35" width="1" height="25" uuid="487d171b-6290-4ca3-8b8d-140bb14762b6"/>
 				</line>
 				<line>
-					<reportElement key="line-42" style="Report_Footer" stretchType="RelativeToBandHeight" x="350" y="35" width="1" height="25" uuid="99d486ee-3925-47c0-a646-c0cb6c4f817c"/>
+					<reportElement key="line-42" style="Report_Footer" stretchType="RelativeToBandHeight" x="394" y="35" width="1" height="25" uuid="99d486ee-3925-47c0-a646-c0cb6c4f817c"/>
 				</line>
 				<line>
-					<reportElement key="line-43" style="Report_Footer" stretchType="RelativeToBandHeight" x="412" y="35" width="1" height="25" uuid="00e5626b-63a3-4ca5-b328-33268ff7ddcd"/>
+					<reportElement key="line-43" style="Report_Footer" stretchType="RelativeToBandHeight" x="446" y="35" width="1" height="25" uuid="00e5626b-63a3-4ca5-b328-33268ff7ddcd"/>
 				</line>
 				<line>
-					<reportElement key="line-44" style="Report_Footer" stretchType="RelativeToBandHeight" x="445" y="35" width="1" height="25" uuid="f7e5b742-21f6-42ec-be4b-2d6f92fbd396"/>
+					<reportElement key="line-44" style="Report_Footer" stretchType="RelativeToBandHeight" x="479" y="35" width="1" height="25" uuid="f7e5b742-21f6-42ec-be4b-2d6f92fbd396"/>
 				</line>
 				<line>
-					<reportElement key="line-45" style="Report_Footer" stretchType="RelativeToBandHeight" x="479" y="35" width="1" height="25" uuid="0eaf78ab-cc35-49bf-bb50-19463785448c"/>
+					<reportElement key="line-45" style="Report_Footer" stretchType="RelativeToBandHeight" x="513" y="35" width="1" height="25" uuid="0eaf78ab-cc35-49bf-bb50-19463785448c"/>
 				</line>
 				<line>
-					<reportElement key="line-46" style="Report_Footer" stretchType="RelativeToBandHeight" x="516" y="35" width="1" height="25" uuid="fced94e7-c104-4403-b2c3-c394987465e9"/>
+					<reportElement key="line-46" style="Report_Footer" stretchType="RelativeToBandHeight" x="550" y="35" width="1" height="25" uuid="fced94e7-c104-4403-b2c3-c394987465e9"/>
 				</line>
 				<line>
-					<reportElement key="line-47" style="Report_Footer" stretchType="RelativeToBandHeight" x="592" y="35" width="1" height="25" uuid="9acdcfd9-698b-46da-8ab2-d0e64e02f895"/>
+					<reportElement key="line-47" style="Report_Footer" stretchType="RelativeToBandHeight" x="619" y="35" width="1" height="25" uuid="9acdcfd9-698b-46da-8ab2-d0e64e02f895"/>
 				</line>
 				<line>
-					<reportElement key="line-48" style="Report_Footer" stretchType="RelativeToBandHeight" x="653" y="35" width="1" height="25" uuid="ea0359a3-2df7-4587-9838-02781d918a66"/>
+					<reportElement key="line-48" style="Report_Footer" stretchType="RelativeToBandHeight" x="680" y="35" width="1" height="25" uuid="ea0359a3-2df7-4587-9838-02781d918a66"/>
 				</line>
 				<line>
 					<reportElement key="line-49" style="Report_Footer" stretchType="RelativeToBandHeight" x="729" y="35" width="1" height="25" uuid="928e123d-218c-47e1-bd61-ce9bbee504e7"/>
@@ -541,6 +559,9 @@ FROM DUAL]]>
 					</textElement>
 					<text><![CDATA[Status:]]></text>
 				</staticText>
+				<line>
+					<reportElement key="line-38" style="Report_Footer" stretchType="RelativeToBandHeight" x="100" y="35" width="1" height="25" uuid="e13c49f0-6c2d-42d1-b579-8aeab16ddc29"/>
+				</line>
 			</band>
 		</groupHeader>
 		<groupFooter>
@@ -740,6 +761,22 @@ FROM DUAL]]>
 		<band height="25" splitType="Stretch">
 			<frame>
 				<reportElement key="frame-1" style="Detail_Line" x="0" y="0" width="782" height="25" uuid="515e87db-984c-4145-ae86-8bc24b84bdab"/>
+				<textField isBlankWhenNull="false">
+					<reportElement key="textField-4" style="Report_Footer" x="344" y="0" width="50" height="25" uuid="2ab054f6-a64e-4d4b-b0a7-bc580e10dc18"/>
+					<box leftPadding="2"/>
+					<textElement>
+						<font fontName="DejaVu Sans" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($F{PAYMENT}==null ? " " : $F{PAYMENT})]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="false">
+					<reportElement key="textField-5" style="Report_Footer" x="100" y="0" width="62" height="25" uuid="adb6b64b-0f2a-499e-8710-6f29822c6164"/>
+					<box leftPadding="2"/>
+					<textElement>
+						<font fontName="DejaVu Sans" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{PAYMENT_METHOD}==null ? " " : $F{PAYMENT_METHOD}]]></textFieldExpression>
+				</textField>
 			</frame>
 			<line>
 				<reportElement key="line-1" style="Report_Footer" stretchType="RelativeToBandHeight" x="0" y="0" width="1" height="25" uuid="32dc1ead-6253-407e-b2ae-7dc0971b9aa1"/>
@@ -753,15 +790,7 @@ FROM DUAL]]>
 				<textFieldExpression><![CDATA[$F{BPARTNER}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-4" style="Report_Footer" x="285" y="0" width="64" height="25" uuid="2ab054f6-a64e-4d4b-b0a7-bc580e10dc18"/>
-				<box leftPadding="2"/>
-				<textElement>
-					<font fontName="DejaVu Sans" size="8"/>
-				</textElement>
-				<textFieldExpression><![CDATA[($F{PAYMENT}==null ? " " : $F{PAYMENT})]]></textFieldExpression>
-			</textField>
-			<textField isBlankWhenNull="false">
-				<reportElement key="textField-5" style="Report_Footer" x="102" y="0" width="69" height="25" uuid="00a5f0e4-442b-4e21-8f17-430b289d5c99"/>
+				<reportElement key="textField-5" style="Report_Footer" x="162" y="0" width="69" height="25" uuid="00a5f0e4-442b-4e21-8f17-430b289d5c99"/>
 				<box leftPadding="2"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="8"/>
@@ -769,7 +798,7 @@ FROM DUAL]]>
 				<textFieldExpression><![CDATA[($F{SALES_PERSON}==null ? " " : $F{SALES_PERSON})]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-6" style="Report_Footer" x="173" y="0" width="55" height="25" uuid="a36b61b3-0742-4b2e-8ecd-5b2842f390f1"/>
+				<reportElement key="textField-6" style="Report_Footer" x="233" y="0" width="55" height="25" uuid="a36b61b3-0742-4b2e-8ecd-5b2842f390f1"/>
 				<box leftPadding="2"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="8"/>
@@ -777,7 +806,7 @@ FROM DUAL]]>
 				<textFieldExpression><![CDATA[($F{INVOICE_NUMBER}==null ? " " : $F{INVOICE_NUMBER}.toString())]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-7" style="Report_Footer" x="229" y="0" width="54" height="25" uuid="62b42099-1dfd-4cca-b9a5-7ecf0fda327f"/>
+				<reportElement key="textField-7" style="Report_Footer" x="289" y="0" width="54" height="25" uuid="62b42099-1dfd-4cca-b9a5-7ecf0fda327f"/>
 				<box leftPadding="2"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="8"/>
@@ -785,7 +814,7 @@ FROM DUAL]]>
 				<textFieldExpression><![CDATA[($F{INVOICE_DATE}== null ? " " : $F{INVOICE_DATE})]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-8" style="Report_Footer" x="350" y="0" width="62" height="25" uuid="c73189e0-f12a-4852-8b9f-7d58a44497c6"/>
+				<reportElement key="textField-8" style="Report_Footer" x="395" y="0" width="51" height="25" uuid="c73189e0-f12a-4852-8b9f-7d58a44497c6"/>
 				<box leftPadding="2"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="8"/>
@@ -793,28 +822,28 @@ FROM DUAL]]>
 				<textFieldExpression><![CDATA[($F{EXPECTED_DATE}== null ? " " : $F{EXPECTED_DATE})]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-9" style="Report_Footer" x="412" y="0" width="33" height="25" uuid="fc9250c8-954f-428c-8f6b-abda6b409d11"/>
+				<reportElement key="textField-9" style="Report_Footer" x="446" y="0" width="33" height="25" uuid="fc9250c8-954f-428c-8f6b-abda6b409d11"/>
 				<textElement textAlignment="Center">
 					<font fontName="DejaVu Sans" size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[($F{PLANNED_DSO}== null ? " " : $F{PLANNED_DSO}.toString())]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-10" style="Report_Footer" x="446" y="0" width="33" height="25" uuid="b3d660d0-b2db-4680-b6d6-ce34183eb1a5"/>
+				<reportElement key="textField-10" style="Report_Footer" x="480" y="0" width="33" height="25" uuid="b3d660d0-b2db-4680-b6d6-ce34183eb1a5"/>
 				<textElement textAlignment="Center">
 					<font fontName="DejaVu Sans" size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[($F{CURRENT_DSO}== null ? " " : $F{CURRENT_DSO}.toString())]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-11" style="Report_Footer" x="480" y="0" width="36" height="25" uuid="3af350b3-7a97-4835-b03f-03e2a671b54b"/>
+				<reportElement key="textField-11" style="Report_Footer" x="514" y="0" width="36" height="25" uuid="3af350b3-7a97-4835-b03f-03e2a671b54b"/>
 				<textElement textAlignment="Center">
 					<font fontName="DejaVu Sans" size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[($F{OVERDUE}== null ? " " : $F{OVERDUE}.toString())]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-13" style="Report_Footer" x="654" y="0" width="74" height="25" uuid="c7897cb8-44f9-4b17-882d-d72f20913658"/>
+				<reportElement key="textField-13" style="Report_Footer" x="680" y="0" width="48" height="25" uuid="c7897cb8-44f9-4b17-882d-d72f20913658"/>
 				<box rightPadding="2"/>
 				<textElement textAlignment="Right">
 					<font fontName="DejaVu Sans" size="8"/>
@@ -829,7 +858,7 @@ FROM DUAL]]>
 				<textFieldExpression><![CDATA[$F{BASE_CURRENCY}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-15" style="Report_Footer" x="517" y="0" width="74" height="25" uuid="d63322e2-7be2-4ee5-9549-df6e0220cb88"/>
+				<reportElement key="textField-15" style="Report_Footer" x="551" y="0" width="67" height="25" uuid="d63322e2-7be2-4ee5-9549-df6e0220cb88"/>
 				<box rightPadding="2"/>
 				<textElement textAlignment="Right">
 					<font fontName="DejaVu Sans" size="8"/>
@@ -837,50 +866,53 @@ FROM DUAL]]>
 				<textFieldExpression><![CDATA[$P{NUMBERFORMAT}.format($F{TRANS_AMOUNT}).toString() + " "]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-16" style="Report_Footer" x="593" y="0" width="60" height="25" uuid="2d3d9724-a086-4616-a115-c81b3c23d427"/>
+				<reportElement key="textField-16" style="Report_Footer" x="620" y="0" width="60" height="25" uuid="2d3d9724-a086-4616-a115-c81b3c23d427"/>
 				<textElement textAlignment="Center">
 					<font fontName="DejaVu Sans" size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{TRANS_CURRENCY}]]></textFieldExpression>
 			</textField>
 			<line>
-				<reportElement key="line-5" style="Report_Footer" stretchType="RelativeToBandHeight" x="101" y="0" width="1" height="25" uuid="2f7ac113-7f29-4fc2-b064-185ccf45b337"/>
+				<reportElement key="line-5" style="Report_Footer" stretchType="RelativeToBandHeight" x="161" y="0" width="1" height="25" uuid="2f7ac113-7f29-4fc2-b064-185ccf45b337"/>
 			</line>
 			<line>
-				<reportElement key="line-7" style="Report_Footer" stretchType="RelativeToBandHeight" x="172" y="0" width="1" height="25" uuid="38a8f536-fa29-4272-aa12-b19c285d9023"/>
+				<reportElement key="line-7" style="Report_Footer" stretchType="RelativeToBandHeight" x="232" y="0" width="1" height="25" uuid="38a8f536-fa29-4272-aa12-b19c285d9023"/>
 			</line>
 			<line>
-				<reportElement key="line-8" style="Report_Footer" stretchType="RelativeToBandHeight" x="284" y="0" width="1" height="25" uuid="a6d4ef1b-4f42-41b3-87f8-0eaf9226f6ed"/>
+				<reportElement key="line-8" style="Report_Footer" stretchType="RelativeToBandHeight" x="344" y="0" width="1" height="25" uuid="a6d4ef1b-4f42-41b3-87f8-0eaf9226f6ed"/>
 			</line>
 			<line>
-				<reportElement key="line-9" style="Report_Footer" stretchType="RelativeToBandHeight" x="228" y="0" width="1" height="25" uuid="a4ecb202-e815-47a4-bd67-dc2b168db0fe"/>
+				<reportElement key="line-9" style="Report_Footer" stretchType="RelativeToBandHeight" x="288" y="0" width="1" height="25" uuid="a4ecb202-e815-47a4-bd67-dc2b168db0fe"/>
 			</line>
 			<line>
-				<reportElement key="line-10" style="Report_Footer" stretchType="RelativeToBandHeight" x="350" y="0" width="1" height="25" uuid="4a1b3a35-d44a-480e-bf67-7d94694adfed"/>
+				<reportElement key="line-10" style="Report_Footer" stretchType="RelativeToBandHeight" x="394" y="0" width="1" height="25" uuid="4a1b3a35-d44a-480e-bf67-7d94694adfed"/>
 			</line>
 			<line>
-				<reportElement key="line-11" style="Report_Footer" stretchType="RelativeToBandHeight" x="445" y="0" width="1" height="25" uuid="b0b3b117-16d7-4a67-ba16-068912ab8487"/>
+				<reportElement key="line-11" style="Report_Footer" stretchType="RelativeToBandHeight" x="479" y="0" width="1" height="25" uuid="b0b3b117-16d7-4a67-ba16-068912ab8487"/>
 			</line>
 			<line>
-				<reportElement key="line-12" style="Report_Footer" stretchType="RelativeToBandHeight" x="479" y="0" width="1" height="25" uuid="500d239e-fc2a-4e14-89e2-dce686e7aa91"/>
+				<reportElement key="line-12" style="Report_Footer" stretchType="RelativeToBandHeight" x="513" y="0" width="1" height="25" uuid="500d239e-fc2a-4e14-89e2-dce686e7aa91"/>
 			</line>
 			<line>
-				<reportElement key="line-13" style="Report_Footer" stretchType="RelativeToBandHeight" x="412" y="0" width="1" height="25" uuid="f189e17e-54e8-4bc4-a8eb-4723b622c6a3"/>
+				<reportElement key="line-13" style="Report_Footer" stretchType="RelativeToBandHeight" x="446" y="0" width="1" height="25" uuid="f189e17e-54e8-4bc4-a8eb-4723b622c6a3"/>
 			</line>
 			<line>
-				<reportElement key="line-15" style="Report_Footer" stretchType="RelativeToBandHeight" x="516" y="0" width="1" height="25" uuid="fb94af81-42d3-4c25-a520-b4721b1378d0"/>
+				<reportElement key="line-15" style="Report_Footer" stretchType="RelativeToBandHeight" x="550" y="0" width="1" height="25" uuid="fb94af81-42d3-4c25-a520-b4721b1378d0"/>
 			</line>
 			<line>
-				<reportElement key="line-17" style="Report_Footer" stretchType="RelativeToBandHeight" x="592" y="0" width="1" height="25" uuid="9534ff26-3a5b-4521-b034-13c4b00331b8"/>
+				<reportElement key="line-17" style="Report_Footer" stretchType="RelativeToBandHeight" x="619" y="0" width="1" height="25" uuid="9534ff26-3a5b-4521-b034-13c4b00331b8"/>
 			</line>
 			<line>
-				<reportElement key="line-18" style="Report_Footer" stretchType="RelativeToBandHeight" x="653" y="0" width="1" height="25" uuid="f2f10c62-ea53-499c-864b-fcbe63f0992b"/>
+				<reportElement key="line-18" style="Report_Footer" stretchType="RelativeToBandHeight" x="680" y="0" width="1" height="25" uuid="f2f10c62-ea53-499c-864b-fcbe63f0992b"/>
 			</line>
 			<line>
 				<reportElement key="line-19" style="Report_Footer" stretchType="RelativeToBandHeight" x="729" y="0" width="1" height="25" uuid="3b36db6e-f9df-4cf5-91f2-8f746191d3ea"/>
 			</line>
 			<line>
 				<reportElement key="line-25" style="Report_Footer" stretchType="RelativeToBandHeight" x="781" y="0" width="1" height="25" uuid="2a846697-6273-4eb2-8e9c-419b04aa185f"/>
+			</line>
+			<line>
+				<reportElement key="line-5" style="Report_Footer" stretchType="RelativeToBandHeight" x="100" y="0" width="1" height="25" uuid="512581cb-f7a7-4641-9047-00c04d17385c"/>
 			</line>
 		</band>
 	</detail>
