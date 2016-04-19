@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2012-2016 Openbravo SLU 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -29,7 +29,8 @@ import org.apache.log4j.Logger;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.client.application.DynamicExpressionParser;
 import org.openbravo.client.application.Parameter;
-import org.openbravo.client.application.Process;
+import org.openbravo.client.application.attachment.AttachmentWindowComponent;
+import org.openbravo.client.kernel.BaseTemplateComponent;
 import org.openbravo.client.kernel.reference.UIDefinition;
 import org.openbravo.client.kernel.reference.UIDefinitionController;
 import org.openbravo.dal.core.DalUtil;
@@ -45,11 +46,11 @@ public class OBViewParameterHandler {
   private static final Logger log = Logger.getLogger(OBViewParameterHandler.class);
   private static final String WINDOW_REFERENCE_ID = "FF80818132D8F0F30132D9BC395D0038";
   private static final int NUMBER_COLUMNS = 4;
-  private Process process;
-  private ParameterWindowComponent paramWindow;
+  private BaseTemplateComponent paramWindow;
+  private List<Parameter> parameters = new ArrayList<Parameter>();
 
-  public void setProcess(Process process) {
-    this.process = process;
+  public void setParameters(List<Parameter> parameters) {
+    this.parameters = parameters;
   }
 
   public List<OBViewParameter> getParameters() {
@@ -59,10 +60,10 @@ public class OBViewParameterHandler {
     // Computes the display logic of the parameters
     // It has to be done in advance in order to determine the dynamic parameters
     Map<Parameter, String> displayLogicMap = new HashMap<Parameter, String>();
-    for (Parameter param : process.getOBUIAPPParameterList()) {
+    for (Parameter param : parameters) {
       if (param.isActive() && param.getDisplayLogic() != null && !param.getDisplayLogic().isEmpty()) {
         final DynamicExpressionParser parser = new DynamicExpressionParser(param.getDisplayLogic(),
-            param, true);
+            param, parameters, true);
         displayLogicMap.put(param, parser.getJSExpression());
         for (Parameter parameterExpression : parser.getParameters()) {
           if (!parametersInExpression.contains(parameterExpression)) {
@@ -74,11 +75,11 @@ public class OBViewParameterHandler {
 
     // Computes read-only logic
     Map<Parameter, String> readOnlyLogicMap = new HashMap<Parameter, String>();
-    for (Parameter param : process.getOBUIAPPParameterList()) {
+    for (Parameter param : parameters) {
       if (param.isActive() && !param.isFixed() && param.getReadOnlyLogic() != null
           && !param.getReadOnlyLogic().isEmpty()) {
         final DynamicExpressionParser parser = new DynamicExpressionParser(
-            param.getReadOnlyLogic(), param, true);
+            param.getReadOnlyLogic(), param, parameters, true);
         readOnlyLogicMap.put(param, parser.getJSExpression());
         for (Parameter parameterExpression : parser.getParameters()) {
           if (!parametersInExpression.contains(parameterExpression)) {
@@ -92,8 +93,7 @@ public class OBViewParameterHandler {
     OBViewParamGroup currentGroup = null;
     FieldGroup currentADFieldGroup = null;
     int pos = 1;
-    for (Parameter param : process.getOBUIAPPParameterList()) {
-
+    for (Parameter param : parameters) {
       if (!(param.isActive()
           && (!param.isFixed() || param.getReference().getId().equals(WINDOW_REFERENCE_ID)) && (!param
           .getReference().getId().equals(ParameterWindowComponent.BUTTON_LIST_REFERENCE_ID)))) {
@@ -232,8 +232,13 @@ public class OBViewParameterHandler {
     }
 
     public String getTitle() {
-      boolean purchaseTrx = paramWindow.parentWindow != null
-          && !paramWindow.parentWindow.isSalesTransaction();
+      Window parentWindow = null;
+      if (paramWindow instanceof ParameterWindowComponent) {
+        parentWindow = ((ParameterWindowComponent) paramWindow).parentWindow;
+      } else if (paramWindow instanceof AttachmentWindowComponent) {
+        parentWindow = ((AttachmentWindowComponent) paramWindow).getParentWindow();
+      }
+      boolean purchaseTrx = parentWindow != null && !parentWindow.isSalesTransaction();
       return OBViewUtil.getParameterTitle(parameter, purchaseTrx);
     }
 
@@ -456,7 +461,7 @@ public class OBViewParameterHandler {
 
   }
 
-  public void setParamWindow(ParameterWindowComponent parameterWindowComponent) {
-    this.paramWindow = parameterWindowComponent;
+  public void setParamWindow(BaseTemplateComponent baseTemplateComponent) {
+    this.paramWindow = baseTemplateComponent;
   }
 }

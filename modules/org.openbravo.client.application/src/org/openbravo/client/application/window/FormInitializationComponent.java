@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -23,7 +23,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -37,7 +36,6 @@ import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.NativeArray;
@@ -78,6 +76,7 @@ import org.openbravo.model.ad.ui.AuxiliaryInput;
 import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.Window;
+import org.openbravo.model.ad.utility.Attachment;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.json.JsonConstants;
 import org.openbravo.service.json.JsonToDataConverter;
@@ -288,7 +287,13 @@ public class FormInitializationComponent extends BaseActionHandler {
 
       // Attachment information
       long t7 = System.currentTimeMillis();
-      List<JSONObject> attachments = attachmentForRows(tab, rowId, multipleRowIds);
+      List<JSONObject> attachments = new ArrayList<JSONObject>();
+      int attachmentCount = 0;
+      if (multipleRowIds != null) {
+        attachmentCount = computeAttachmentCount(tab, multipleRowIds, true);
+      } else {
+        attachmentCount = computeAttachmentCount(tab, new String[] { rowId }, false);
+      }
 
       // Notes information
       long t8 = System.currentTimeMillis();
@@ -304,7 +309,7 @@ public class FormInitializationComponent extends BaseActionHandler {
       // Construction of the final JSONObject
       long t10 = System.currentTimeMillis();
       JSONObject finalObject = buildJSONObject(mode, tab, columnValues, row, changeEventCols,
-          calloutMessages, attachments, jsExcuteCode, hiddenInputs, noteCount,
+          calloutMessages, attachments, attachmentCount, jsExcuteCode, hiddenInputs, noteCount,
           overwrittenAuxiliaryInputs);
       analyzeResponse(tab, columnValues);
       long t11 = System.currentTimeMillis();
@@ -376,6 +381,34 @@ public class FormInitializationComponent extends BaseActionHandler {
     }
   }
 
+  /**
+   * Get JSONObject list with data of the attachments in given tab and records
+   * 
+   * @param tab
+   *          tab to take attachments
+   * @param recordIds
+   *          list of record IDs where taken attachments
+   * @param doExists
+   *          flag to not return the actual count just 1 or 0
+   * @return count of attachment found for the given records.
+   */
+  private int computeAttachmentCount(Tab tab, String[] recordIds, boolean doExists) {
+    String tableId = (String) DalUtil.getId(tab.getTable());
+    OBCriteria<Attachment> attachmentFiles = OBDao.getFilteredCriteria(Attachment.class,
+        Restrictions.eq("table.id", tableId), Restrictions.in("record", recordIds));
+    // do not filter by the attachment's organization
+    // if the user has access to the record where the file its attached, it has access to all its
+    // attachments
+    attachmentFiles.setFilterOnReadableOrganization(false);
+    if (doExists) {
+      // We only want to know if there is at least 1 attachment. Limit the query to 1 record and
+      // return the size of the result.
+      attachmentFiles.setMaxResults(1);
+      return attachmentFiles.list().size();
+    }
+    return attachmentFiles.count();
+  }
+
   private int computeNoteCount(Tab tab, String rowId) {
     OBQuery<Note> obq = OBDal.getInstance().createQuery(Note.class,
         " table.id=:tableId and record=:recordId");
@@ -397,43 +430,10 @@ public class FormInitializationComponent extends BaseActionHandler {
     return visibleProperties;
   }
 
-  private List<JSONObject> attachmentForRows(Tab tab, String rowId, String[] multipleRowIds) {
-    String tableId = (String) DalUtil.getId(tab.getTable());
-    List<JSONObject> attachmentList = new ArrayList<JSONObject>();
-    Query q;
-    if (multipleRowIds == null) {
-      String hql = "select n.name, n.id, n.updated, n.updatedBy.name, n.text from org.openbravo.model.ad.utility.Attachment n where n.table.id=:tableId and n.record=:recordId";
-      q = OBDal.getInstance().getSession().createQuery(hql);
-      q.setParameter("tableId", tableId);
-      q.setParameter("recordId", rowId);
-    } else {
-
-      String hql = "select n.name, n.id, n.updated, n.updatedBy.name, n.text from org.openbravo.model.ad.utility.Attachment n where n.table.id=:tableId and n.record in :recordId";
-      q = OBDal.getInstance().getSession().createQuery(hql);
-      q.setParameter("tableId", tableId);
-      q.setParameterList("recordId", multipleRowIds);
-    }
-    for (Object qobj : q.list()) {
-      Object[] array = (Object[]) qobj;
-      JSONObject obj = new JSONObject();
-      try {
-        obj.put("name", array[0]);
-        obj.put("id", array[1]);
-        obj.put("age", (new Date().getTime() - ((Date) array[2]).getTime()));
-        obj.put("updatedby", array[3]);
-        obj.put("description", array[4]);
-      } catch (JSONException e) {
-        log.error("Error while reading attachments", e);
-      }
-      attachmentList.add(obj);
-    }
-    return attachmentList;
-  }
-
   private JSONObject buildJSONObject(String mode, Tab tab, Map<String, JSONObject> columnValues,
       BaseOBObject row, List<String> changeEventCols, List<JSONObject> calloutMessages,
-      List<JSONObject> attachments, List<String> jsExcuteCode, Map<String, Object> hiddenInputs,
-      int noteCount, List<String> overwrittenAuxiliaryInputs) {
+      List<JSONObject> attachments, int attachmentCount, List<String> jsExcuteCode,
+      Map<String, Object> hiddenInputs, int noteCount, List<String> overwrittenAuxiliaryInputs) {
     JSONObject finalObject = new JSONObject();
     try {
       if ((mode.equals("NEW") || mode.equals("CHANGE")) && !hiddenInputs.isEmpty()) {
@@ -556,8 +556,11 @@ public class FormInitializationComponent extends BaseActionHandler {
         }
         finalObject.put("noteCount", noteCount);
       }
-      finalObject.put("attachments", new JSONArray(attachments));
-      finalObject.put("attachmentExists", attachments.size() > 0);
+      if (attachments.size() > 0) {
+        finalObject.put("attachments", new JSONArray(attachments));
+      }
+      finalObject.put("attachmentCount", attachmentCount);
+      finalObject.put("attachmentExists", attachmentCount > 0);
 
       if (!jsExcuteCode.isEmpty()) {
         finalObject.put("jscode", new JSONArray(jsExcuteCode));
