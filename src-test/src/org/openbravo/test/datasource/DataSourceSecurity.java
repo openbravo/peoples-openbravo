@@ -101,7 +101,6 @@ public class DataSourceSecurity extends BaseDataSourceTestDal {
         try {
           put("_selectorDefinitionId", "2E64F551C7C4470C80C29DBA24B34A5F");
           put("filterClass", "org.openbravo.userinterface.selector.SelectorDataSourceFilter");
-          put("_where", "e.active='Y'");
           put("_sortBy", "_identifier");
           put("_requestType", "Window");
           put("_distinct", "productPrice");

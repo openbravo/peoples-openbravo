@@ -31,6 +31,7 @@ import java.util.Map;
 
 import org.apache.log4j.Level;
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.criterion.Restrictions;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -39,13 +40,16 @@ import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.core.DalLayerInitializer;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.access.RoleOrganization;
 import org.openbravo.model.ad.access.User;
 import org.openbravo.model.ad.access.UserRoles;
+import org.openbravo.model.ad.access.WindowAccess;
 import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.ad.module.Module;
+import org.openbravo.model.ad.ui.Window;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.enterprise.Warehouse;
@@ -497,6 +501,19 @@ public class ExplicitCrossOrganizationReference extends CrossOrganizationReferen
     OBDal.getInstance().save(spainRole);
     createdObjects.add(spainRole);
     QA_ONLY_SPAIN_ROLE = spainRole.getId();
+
+    Role role = OBDal.getInstance().get(Role.class, QA_ONLY_SPAIN_ROLE);
+    WindowAccess windowAccess = OBProvider.getInstance().get(WindowAccess.class);
+    final OBCriteria<Window> obCriteria = OBDal.getInstance().createCriteria(Window.class);
+    obCriteria.add(Restrictions.eq(Window.PROPERTY_ID, "143"));
+    obCriteria.setMaxResults(1);
+    windowAccess.setClient(role.getClient());
+    windowAccess.setOrganization(role.getOrganization());
+    windowAccess.setRole(role);
+    windowAccess.setWindow((Window) obCriteria.uniqueResult());
+    windowAccess.setEditableField(true);
+    OBDal.getInstance().save(windowAccess);
+    createdObjects.add(windowAccess);
 
     RoleOrganization orgAccess = OBProvider.getInstance().get(RoleOrganization.class);
     orgAccess.setOrganization(OBDal.getInstance().getProxy(Organization.class, SPAIN_ORG));
