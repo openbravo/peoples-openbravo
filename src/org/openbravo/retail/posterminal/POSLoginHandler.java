@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2013 Openbravo S.L.U.
+ * Copyright (C) 2012-2016 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -158,5 +158,17 @@ public class POSLoginHandler extends MobileCoreLoginHandler {
     }
     return (Language) OBDal.getInstance().createCriteria(Language.class)
         .add(Restrictions.eq(Language.PROPERTY_LANGUAGE, "en_US")).list().get(0);
+  }
+
+  @Override
+  protected boolean isLoginAccessRestrictedInStoreServer(VariablesSecureApp vars) {
+    // access to the POS login is granted, even if the ERP access is restricted in the store server
+    // even though access is granted to the POS Login, the onlySystemAdminRoleShouldBeAvailableInErp
+    // session flag is set to prevent opening the backend from the POS (this is controlled in the
+    // index.jsp file)
+    if (isErpAccessRestrictedInStoreServer()) {
+      vars.setSessionValue("onlySystemAdminRoleShouldBeAvailableInErp", "Y");
+    }
+    return false;
   }
 }
