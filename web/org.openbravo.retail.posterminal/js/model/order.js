@@ -1774,10 +1774,6 @@
     },
 
     addPromotion: function (line, rule, discount) {
-      if (this.get('isQuotation') && this.get('hasbeenpaid') === 'Y') {
-        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_QuotationClosed'));
-        return;
-      }
       var promotions = line.get('promotions') || [],
           disc = {},
           i, replaced = false,
@@ -2555,6 +2551,7 @@
         OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_QuotationCreatedOrder'));
         this.trigger('orderCreatedFromQuotation');
       }
+      this.calculateReceipt();
     },
 
     reactivateQuotation: function () {
