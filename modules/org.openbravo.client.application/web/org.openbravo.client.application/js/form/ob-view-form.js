@@ -851,7 +851,7 @@ OB.ViewFormProperties = {
       if (data.attachments) {
         this.attachmentsSection.fillAttachments(data.attachments);
       }
-      if (data.attachmentCount) {
+      if (isc.isA.Number(data.attachmentCount)) {
         this.attachmentsSection.setAttachmentCount(data.attachmentCount);
       }
     }
