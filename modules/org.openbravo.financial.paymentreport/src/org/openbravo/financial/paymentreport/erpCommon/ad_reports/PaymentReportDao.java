@@ -197,7 +197,7 @@ public class PaymentReportDao {
         strcBPGroupIdIN, strcNoBusinessPartner, strcProjectIdIN, strfinPaymSt, strPaymentMethodId,
         strFinancialAccountId, strcCurrency, strConvertCurrency, strConversionDate, strPaymType,
         strOverdue, "Y", strGroupCrit, strOrdCrit, strInclPaymentUsingCredit, strPaymentDateFrom,
-        strPaymentDateTo, strExpectedDateFrom, strExpectedDateTo, "dummy");
+        strPaymentDateTo, strExpectedDateFrom, strExpectedDateTo, "", "dummy");
   }
 
   @Deprecated
@@ -216,7 +216,7 @@ public class PaymentReportDao {
         strcBPGroupIdIN, strcNoBusinessPartner, strcProjectIdIN, strfinPaymSt, strPaymentMethodId,
         strFinancialAccountId, strcCurrency, strConvertCurrency, strConversionDate, strPaymType,
         strOverdue, "Y", strGroupCrit, strOrdCrit, strInclPaymentUsingCredit, strPaymentDateFrom,
-        strPaymentDateTo, strExpectedDateFrom, strExpectedDateTo, strOutput);    
+        strPaymentDateTo, strExpectedDateFrom, strExpectedDateTo, "", strOutput);
   }
 
   FieldProvider[] getPaymentReport(VariablesSecureApp vars, String strOrg, String strInclSubOrg,
@@ -228,6 +228,24 @@ public class PaymentReportDao {
       String strOverdue, String strBAZero, String strGroupCrit, String strOrdCrit,
       String strInclPaymentUsingCredit, String strPaymentDateFrom, String strPaymentDateTo,
       String strExpectedDateFrom, String strExpectedDateTo, String strOutput) throws OBException {
+    return getPaymentReport(vars, strOrg, strInclSubOrg, strDueDateFrom, strDueDateTo,
+        strAmountFrom, strAmountTo, strDocumentDateFrom, strDocumentDateTo, strcBPartnerIdIN,
+        strcBPGroupIdIN, strcNoBusinessPartner, strcProjectIdIN, strfinPaymSt, strPaymentMethodId,
+        strFinancialAccountId, strcCurrency, strConvertCurrency, strConversionDate, strPaymType,
+        strOverdue, strBAZero, strGroupCrit, strOrdCrit, strInclPaymentUsingCredit,
+        strPaymentDateFrom, strPaymentDateTo, strExpectedDateFrom, strExpectedDateTo, "", strOutput);
+  }
+
+  FieldProvider[] getPaymentReport(VariablesSecureApp vars, String strOrg, String strInclSubOrg,
+      String strDueDateFrom, String strDueDateTo, String strAmountFrom, String strAmountTo,
+      String strDocumentDateFrom, String strDocumentDateTo, String strcBPartnerIdIN,
+      String strcBPGroupIdIN, String strcNoBusinessPartner, String strcProjectIdIN,
+      String strfinPaymSt, String strPaymentMethodId, String strFinancialAccountId,
+      String strcCurrency, String strConvertCurrency, String strConversionDate, String strPaymType,
+      String strOverdue, String strBAZero, String strGroupCrit, String strOrdCrit,
+      String strInclPaymentUsingCredit, String strPaymentDateFrom, String strPaymentDateTo,
+      String strExpectedDateFrom, String strExpectedDateTo, String strsalesrepId, String strOutput)
+      throws OBException {
 
     StringBuilder hsqlScript = new StringBuilder();
     final java.util.List<Object> parameters = new ArrayList<Object>();
@@ -506,6 +524,15 @@ public class PaymentReportDao {
         hsqlScript.append("'");
       }
 
+      // strsalesrepId
+      if (!strsalesrepId.isEmpty()) {
+        hsqlScript.append(" and inv.");
+        hsqlScript.append(Invoice.PROPERTY_SALESREPRESENTATIVE);
+        hsqlScript.append(" = '");
+        hsqlScript.append(strsalesrepId);
+        hsqlScript.append("'");
+      }
+
       // payment type
       if (strPaymType.equalsIgnoreCase("FINPR_Receivables")) {
         hsqlScript.append(" and (pay.");
@@ -687,12 +714,15 @@ public class PaymentReportDao {
       boolean isAmtInLimit = false;
 
       // Before processing the data the Transactions without a Payment associated are recovered
-      java.util.List<FIN_FinaccTransaction> transactionsList = getTransactionsList(strInclSubOrg,
-          strOrg, strcBPartnerIdIN, strFinancialAccountId, strDocumentDateFrom, strDocumentDateTo,
-          strPaymentDateFrom, strPaymentDateTo, strAmountFrom, strAmountTo, strcBPGroupIdIN,
-          strcProjectIdIN, strfinPaymSt, strcCurrency, strPaymType, strGroupCrit, strOrdCrit,
-          strcNoBusinessPartner, strDueDateFrom, strDueDateTo, strExpectedDateFrom,
-          strExpectedDateTo);
+      java.util.List<FIN_FinaccTransaction> transactionsList = new ArrayList<FIN_FinaccTransaction>();
+      if (strsalesrepId.isEmpty()) {
+        transactionsList = getTransactionsList(strInclSubOrg, strOrg, strcBPartnerIdIN,
+            strFinancialAccountId, strDocumentDateFrom, strDocumentDateTo, strPaymentDateFrom,
+            strPaymentDateTo, strAmountFrom, strAmountTo, strcBPGroupIdIN, strcProjectIdIN,
+            strfinPaymSt, strcCurrency, strPaymType, strGroupCrit, strOrdCrit,
+            strcNoBusinessPartner, strDueDateFrom, strDueDateTo, strExpectedDateFrom,
+            strExpectedDateTo);
+      }
 
       // There are three variables involved in this loop. The first one is data, wich is the
       // the one the loop processes. Then grouped data is used to group similar data lines into

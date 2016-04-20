@@ -23,7 +23,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>Payment Report</title>
     <link rel="shortcut icon" href="../../../../../web/images/favicon.ico" type="image/x-icon" />
-    <link rel="stylesheet" type="text/css" href="../../../../../web/skins/Default/Openbravo_ERP_250.css" id="paramCSS" />
+    <link rel="stylesheet" type="text/css" href="../../../../../web/skins/Default/Openbravo_ERP_250.css" id="paramCSS" /> 
      
     <script language="JavaScript" type="text/javascript" id="paramDirectory">
       var baseDirectory = "../../../../../web/";
@@ -910,8 +910,18 @@ function onloadFunctions() {
                     </select>
                   </td>
                 </tr>
-                
-                
+                <tr>
+                  <td class="TitleCell">
+                    <span class="LabelText">Sales Representative</span>
+                  </td>
+                  <td class="Combo_ContentCell" colspan="2">
+                    <select name="inpSalesrepId" id="paramSalesrepId" class="Combo Combo_TwoCells_width">
+                      <option value=""> <div id="reportSalesRep_ID"></div></option>
+                    </select>
+                  </td>
+                  <td class="ContentCell"></td>
+-                  <td class="ContentCell"></td>
+                </tr>
                 <tr>
                   <td class="TitleCell"><span class="LabelText">Payment Method</span></td>
                   <td class="Combo_ContentCell" colspan="2">
@@ -1174,7 +1184,7 @@ function onloadFunctions() {
                   </td>
                   <td class="ContentCell"></td>
                   <td class="ContentCell"></td>
-                  <td class="ContentCell"></td>
+-                 <td class="ContentCell"></td>
                 </tr>
               <table class="Main_Client_TableEdition">
                   <tr>
