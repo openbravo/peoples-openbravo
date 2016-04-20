@@ -1172,6 +1172,32 @@
           pack = line.isAffectedByPack(),
           productId = line.get('product').id;
 
+      if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
+        var productcriteria = {
+          columns: ['product'],
+          operator: 'equals',
+          value: line.get('product').id,
+          isId: true
+        };
+        var remoteCriteria = [productcriteria];
+        var criteriaFilter = {};
+        criteriaFilter.remoteFilters = remoteCriteria;
+        OB.Dal.find(OB.Model.ProductCharacteristicValue, criteriaFilter, function (productcharacteristic) {
+          _.each(productcharacteristic.models, function (pchv) {
+            OB.Dal.removeTemporally(pchv, function () {}, function () {
+              OB.error(arguments);
+            });
+          }, function () {
+            OB.error(arguments);
+          });
+        }, function () {
+          OB.error(arguments);
+        });
+        OB.Dal.removeTemporally(line.get('product'), function () {}, function () {
+          OB.error(arguments);
+        });
+      }
+
       if (pack) {
         // When deleting a line, check lines with other product that are affected by
         // same pack than deleted one and merge splitted lines created for those
@@ -2292,32 +2318,6 @@
       this.set('deleting', true);
       _.each(orderlines, function (line) {
         me.deleteLine(line, true);
-        if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
-          var productcriteria = {
-            columns: ['product'],
-            operator: 'equals',
-            value: line.get('product').id,
-            isId: true
-          };
-          var remoteCriteria = [productcriteria];
-          var criteriaFilter = {};
-          criteriaFilter.remoteFilters = remoteCriteria;
-          OB.Dal.find(OB.Model.ProductCharacteristicValue, criteriaFilter, function (productcharacteristic) {
-            _.each(productcharacteristic.models, function (pchv) {
-              OB.Dal.removeTemporally(pchv, function () {}, function () {
-                OB.error(arguments);
-              });
-            }, function () {
-              OB.error(arguments);
-            });
-          }, function () {
-            OB.error(arguments);
-          });
-          OB.Dal.removeTemporally(line.get('product'), function () {}, function () {
-            OB.error(arguments);
-          });
-        }
-
       });
       this.unset('preventServicesUpdate');
       this.unset('deleting');
