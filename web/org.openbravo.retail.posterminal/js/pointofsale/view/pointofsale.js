@@ -1244,7 +1244,7 @@ enyo.kind({
     if (selectedLinesLength > 1) {
       for (i = 0; i < selectedLinesLength; i++) {
         product = selectedLines[i].get('product');
-        if (!product.get('groupProduct') || (product.get('productType') === 'S' && product.get('isLinkedToProduct'))) {
+        if (!product.get('groupProduct') || (product.get('productType') === 'S' && product.get('isLinkedToProduct')) || selectedLines[i].get('originalOrderLineId')) {
           enableButton = false;
           break;
         }
@@ -1254,7 +1254,7 @@ enyo.kind({
       }
     } else {
       product = selectedLines[0].get('product');
-      if (!product.get('groupProduct') || (product.get('productType') === 'S' && product.get('isLinkedToProduct'))) {
+      if (!product.get('groupProduct') || (product.get('productType') === 'S' && product.get('isLinkedToProduct')) || selectedLines[0].get('originalOrderLineId')) {
         enableButton = false;
       }
     }
