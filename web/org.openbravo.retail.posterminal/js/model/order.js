@@ -2949,6 +2949,7 @@
             lineToEdit.set('qty', OB.DEC.sub(lineToEdit.get('qty'), l.get('qty')), {
               silent: true
             });
+            me.mergeLines(lineToEdit);
             //if promotion affects to several lines, edit first line with the promotion info and then remove the affected lines
           } else if (lineToEdit.get('qty') < l.get('qty')) {
             qtyToReduce = OB.DEC.sub(l.get('qty'), lineToEdit.get('qty'));
