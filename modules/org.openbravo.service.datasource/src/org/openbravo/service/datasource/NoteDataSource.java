@@ -136,5 +136,4 @@ public class NoteDataSource extends DefaultDataSourceService {
       }
     }
   }
-
 }

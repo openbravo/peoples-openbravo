@@ -225,7 +225,6 @@ public class DataSourceServlet extends BaseKernelServlet {
           log.error("Error trying to apply datasource filter with class: " + filterClass, e);
         }
       }
-
       // now do the action
       boolean isExport = "true".equals(parameters.get("exportToFile"));
       if (isExport) {
@@ -806,6 +805,7 @@ public class DataSourceServlet extends BaseKernelServlet {
       if (id == null) {
         throw new InvalidRequestException("No id parameter");
       }
+
       getDataSource(request).checkEditDatasourceAccess(parameters);
       final String result = getDataSource(request).remove(parameters);
       writeResult(response, result);

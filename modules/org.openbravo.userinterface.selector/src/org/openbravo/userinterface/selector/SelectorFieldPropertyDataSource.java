@@ -103,4 +103,5 @@ public class SelectorFieldPropertyDataSource extends ModelDataSourceService {
     entityProperties.removeAll(toRemove);
     return entityProperties;
   }
+
 }

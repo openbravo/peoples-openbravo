@@ -489,7 +489,7 @@ public class ExplicitCrossOrganizationReference extends CrossOrganizationReferen
     DalLayerInitializer.getInstance().setInitialized(false);
     setDalUp();
 
-    // crate a role with access only to Spain org
+    // create a role with access only to Spain org
     setQAAdminRole();
     Role spainRole = OBProvider.getInstance().get(Role.class);
     spainRole.setName("QA Only Spain - " + System.currentTimeMillis()); // some randomness
@@ -502,6 +502,7 @@ public class ExplicitCrossOrganizationReference extends CrossOrganizationReferen
     createdObjects.add(spainRole);
     QA_ONLY_SPAIN_ROLE = spainRole.getId();
 
+    // create a window access for previous role
     Role role = OBDal.getInstance().get(Role.class, QA_ONLY_SPAIN_ROLE);
     WindowAccess windowAccess = OBProvider.getInstance().get(WindowAccess.class);
     final OBCriteria<Window> obCriteria = OBDal.getInstance().createCriteria(Window.class);
