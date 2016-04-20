@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2015 Openbravo S.L.U.
+ * Copyright (C) 2012-2016 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -700,7 +700,7 @@ enyo.kind({
         this.$.actionButtonsContainer.$.descriptionButton.show();
       }
       if (this.line) {
-        if ((this.line.get('product').get('showstock') || this.line.get('product').get('_showstock')) && !this.line.get('product').get('ispack') && OB.MobileApp.model.get('connectedToERP')) {
+        if (this.line.get('product').get('stocked') && this.line.get('product').get('productType') === 'I' && !this.line.get('product').get('ispack') && OB.MobileApp.model.get('connectedToERP')) {
           this.$.actionButtonsContainer.$.checkStockButton.show();
         } else {
           this.$.actionButtonsContainer.$.checkStockButton.hide();
@@ -957,7 +957,7 @@ enyo.kind({
     var product = this.owner.owner.line.get('product');
     var params = {};
     //show always or just when the product has been set to show stock screen?
-    if ((product.get('showstock') || product.get('_showstock')) && !product.get('ispack') && OB.MobileApp.model.get('connectedToERP')) {
+    if (product.get('stocked') && product.get('productType') === 'I' && !product.get('ispack') && OB.MobileApp.model.get('connectedToERP')) {
       params.leftSubWindow = OB.OBPOSPointOfSale.UICustomization.stockLeftSubWindow;
       params.product = product;
       params.line = line;
