@@ -2038,6 +2038,10 @@
         line.get('product').set('ignorePromotions', false);
       }
       line.set('qty', -line.get('qty'));
+      if (line.get('qty') > 0 && line.get('product').get('groupProduct')) {
+        this.mergeLines(line);
+      }
+
 
       // set the undo action
       if (me.get('multipleUndo')) {
