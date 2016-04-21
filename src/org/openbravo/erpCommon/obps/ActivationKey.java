@@ -237,18 +237,8 @@ public class ActivationKey {
   @SuppressWarnings("serial")
   private static final List<String> NO_CU_SESSION_TYPES = new ArrayList<String>() {
     {
-      add("CNU");
-      add("CUR");
-      add("F");
-      add("IOBPS");
-      add("LBF");
-      add("LU");
-      add("ME");
-      add("RESTR");
-      add("RT");
       add("WS");
       add("WSC");
-      add("WSR");
       add("OBPOS_POS");
     }
   };
