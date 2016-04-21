@@ -237,9 +237,9 @@ public class ActivationKey {
   @SuppressWarnings("serial")
   private static final List<String> NO_CU_SESSION_TYPES = new ArrayList<String>() {
     {
-      add("WS");
-      add("WSC");
-      add("OBPOS_POS");
+      add("WS"); // Web service
+      add("WSC"); // Connector
+      add("OBPOS_POS"); // WebPOS
     }
   };
   public static final Long NO_LIMIT = -1L;
