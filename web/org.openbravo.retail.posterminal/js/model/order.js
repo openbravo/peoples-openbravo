@@ -2297,7 +2297,7 @@
           }
           execPostAddProductToOrderHook();
         }
-        if (p.get('isdiscontinued') || p.get('issalediscontinued')) {
+        if ((p.get('isdiscontinued') || p.get('issalediscontinued')) && !OB.MobileApp.model.hasPermission('OBPOS_AvoidProductDiscontinuedStockCheck', true)) {
           me.getStoreStock(p, qty, function (hasStock) {
             if (hasStock) {
               continueSaving(p);
