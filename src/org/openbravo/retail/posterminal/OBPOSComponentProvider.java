@@ -127,6 +127,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "data/dataorderdiscount",
         "components/modalreceipts",
         "components/modalmultiorderslayaway",
+        "components/modalcategorytree",
         "components/rendercategory",
         "components/renderproduct",
         "components/renderproductch",
@@ -161,6 +162,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         // Point of sale models
         "model/pricelist",
         "model/product-category",
+        "model/product-category-tree",
         "model/product",
         "model/productprice",
         "model/offerpricelist",
