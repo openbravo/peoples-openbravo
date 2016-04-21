@@ -14,6 +14,7 @@
 <%@ page import="org.openbravo.dal.service.OBDal" %>
 <%@ page import="org.openbravo.base.secureApp.VariablesSecureApp" %>
 <%@ page import="org.openbravo.erpCommon.obps.ActivationKey" %>
+<%@ page import="org.openbravo.base.secureApp.LoginHandler" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%
   /*
@@ -54,7 +55,7 @@ try {
     String currentSessionType = dbSession.getLoginStatus();
 
     if (!ActivationKey.consumesConcurrentUser(currentSessionType)) {
-      dbSession.setLoginStatus("S");
+      dbSession.setLoginStatus(LoginHandler.SUCCESS_SESSION_STANDARD);
       OBDal.getInstance().flush();
     }
   }
