@@ -2021,13 +2021,11 @@
               break;
             }
           }
-          if (!existLine) {
-            callback(true);
-          }
-        } else if (data && data.qty < qty) {
+        }
+        if (!existLine && data && data.qty < qty) {
           OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_ErrorProductDiscontinued', [p.get('_identifier'), qty, data.qty]));
           callback(false);
-        } else {
+        } else if (!existLine) {
           callback(true);
         }
       });
