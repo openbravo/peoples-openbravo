@@ -28,8 +28,7 @@ import javax.inject.Inject;
  * in a multi-tiered architecture
  * 
  * It has a default implementation where it is hardcoded that the current server is a central
- * server, but this functionality can be overwritten by extending the
- * AbstractServerControllerImplementation class
+ * server, but this functionality can be overwritten by extending the {@link ServerController} class
  */
 @ApplicationScoped
 public class ServerControllerHandler {
@@ -40,6 +39,9 @@ public class ServerControllerHandler {
   // the ServerController that will be used according to its priority
   private ServerController serverControllerImplementation = null;
 
+  /**
+   * @return true if the current server has been configured to be a central server, false otherwise
+   */
   public boolean isThisACentralServer() {
     if (getServerControllerImplementation() != null) {
       return getServerControllerImplementation().isThisACentralServer();
@@ -48,6 +50,9 @@ public class ServerControllerHandler {
     }
   }
 
+  /**
+   * @return true if the current server has been configured to be a store server, false otherwise
+   */
   public boolean isThisAStoreServer() {
     if (getServerControllerImplementation() != null) {
       return getServerControllerImplementation().isThisAStoreServer();
