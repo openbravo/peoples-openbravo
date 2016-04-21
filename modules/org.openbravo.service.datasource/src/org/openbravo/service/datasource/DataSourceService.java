@@ -117,8 +117,8 @@ public interface DataSourceService {
   public void setEntity(Entity entity);
 
   /**
-   * This method allows implement a security access to a DataSource when it is used fetch() method.
-   * It can be overridden in specific DataSources to apply a particular security mechanism.
+   * This method allows to implement a security access to a DataSource when it is used fetch()
+   * method. It can be overridden in specific DataSources to apply a particular security mechanism.
    *
    * @throws OBSecurityException
    *           is thrown if current role does not have access.
@@ -126,7 +126,7 @@ public interface DataSourceService {
   public void checkFetchDatasourceAccess(Map<String, String> parameter) throws OBSecurityException;
 
   /**
-   * This method allows implement a security access to a DataSource when it is used add(), update()
+   * This method allows to implement a security access to a DataSource when it is used add(), update()
    * or remove() methods. It can be overridden in specific DataSources to apply a particular
    * security mechanism.
    *
@@ -140,9 +140,9 @@ public interface DataSourceService {
   public void setWhereClause(String whereClause);
 
   /**
-   * The data source read from the database. Note care must be taken when using referenced objects
-   * in the returned DataSource instance. The DataSource is read often in a different thread so the
-   * Hibernate session is not available anymore.
+   * This method allows to implement a security access to a DataSource when it is used add(),
+   * update() or remove() methods. It can be overridden in specific DataSources to apply a
+   * particular security mechanism.
    * 
    * @return the data source read from the database. Note: can be null for data sources which are
    *         created in-memory on request.

@@ -134,6 +134,7 @@ public abstract class BaseDataSourceService implements DataSourceService {
     setWhereClause(dataSource.getHQLWhereClause());
   }
 
+  @Override
   public void checkEditDatasourceAccess(Map<String, String> parameters) {
     Entity entityToCheck = getEntity();
     final OBContext obContext = OBContext.getOBContext();
@@ -146,6 +147,7 @@ public abstract class BaseDataSourceService implements DataSourceService {
     }
   }
 
+  @Override
   public void checkFetchDatasourceAccess(Map<String, String> parameters) {
     Entity entityToCheck = getEntity();
     final OBContext obContext = OBContext.getOBContext();
