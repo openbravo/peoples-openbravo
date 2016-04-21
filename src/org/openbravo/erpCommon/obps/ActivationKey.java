@@ -872,7 +872,9 @@ public class ActivationKey {
     return new ActivationMsg(severity, customMsg);
   }
 
-  /** gets HTML to be injected in Instance Activation window with additional actions to be performed */
+  /**
+   * gets HTML to be injected in Instance Activation window with additional actions to be performed
+   */
   public String getInstanceActivationExtraActionsHtml(XmlEngine xmlEngine) {
     String html = "";
 
@@ -895,6 +897,11 @@ public class ActivationKey {
     return checkOPSLimitations("");
   }
 
+  /** @see ActivationKey#checkOPSLimitations(String, String) */
+  public LicenseRestriction checkOPSLimitations(String currentSession) {
+    return checkOPSLimitations(currentSession, null);
+  }
+
   /**
    * Checks the current activation key
    * 
@@ -903,7 +910,7 @@ public class ActivationKey {
    * 
    * @return {@link LicenseRestriction} with the status of the restrictions
    */
-  public LicenseRestriction checkOPSLimitations(String currentSession) {
+  public LicenseRestriction checkOPSLimitations(String currentSession, String sessionType) {
     LicenseRestriction result = LicenseRestriction.NO_RESTRICTION;
     if (!isOPSInstance()) {
       return LicenseRestriction.NO_RESTRICTION;
@@ -931,7 +938,9 @@ public class ActivationKey {
     }
 
     // maxUsers==0 is unlimited concurrent users
-    if (maxUsers != 0) {
+    boolean checkConcurrentUsers = maxUsers != 0
+        && (sessionType == null || !NO_CU_SESSION_TYPES.contains(sessionType));
+    if (checkConcurrentUsers) {
       OBContext.setAdminMode();
       int activeSessions = 0;
       try {
@@ -984,13 +993,13 @@ public class ActivationKey {
   }
 
   public LicenseRestriction checkOPSLimitations(String currentSession, String username,
-      boolean forceNamedUserLogin) {
+      boolean forceNamedUserLogin, String sessionType) {
     if (forceNamedUserLogin) {
       // Forcing log in even there are other sessions for same user: disabling the other sessions
       disableOtherSessionsOfUser(currentSession, username);
     }
 
-    LicenseRestriction result = checkOPSLimitations(currentSession);
+    LicenseRestriction result = checkOPSLimitations(currentSession, sessionType);
 
     boolean checkNamedUserLimitation = StringUtils.isNotEmpty(username) && limitNamedUsers;
 

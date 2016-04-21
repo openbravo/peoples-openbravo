@@ -63,6 +63,7 @@ import org.openbravo.xmlEngine.XmlDocument;
  */
 public class LoginHandler extends HttpBaseServlet {
   private static final long serialVersionUID = 1L;
+  public static final String SUCCESS_SESSION_STANDARD = "S";
 
   @Inject
   private ServerControllerHandler serverController;
@@ -197,7 +198,7 @@ public class LoginHandler extends HttpBaseServlet {
       boolean forceNamedUserLogin = "FORCE_NAMED_USER".equals(vars.getCommand());
 
       LicenseRestriction limitation = ak.checkOPSLimitations(sessionId, username,
-          forceNamedUserLogin);
+          forceNamedUserLogin, getSessionType());
       boolean doRedirect = redirect
           || (limitation == LicenseRestriction.NO_RESTRICTION && forceNamedUserLogin);
 
@@ -393,6 +394,11 @@ public class LoginHandler extends HttpBaseServlet {
       OBContext.restorePreviousMode();
     }
 
+  }
+
+  /** Returns how the successful session will be marked in ad_session. It can be app specific. */
+  protected String getSessionType() {
+    return SUCCESS_SESSION_STANDARD;
   }
 
   /**
