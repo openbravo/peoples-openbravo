@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2015 Openbravo SLU
+ * All portions are Copyright (C) 2014-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -155,6 +155,10 @@ public class TransactionAddPaymentDefaultValues extends AddPaymentDefaultValuesH
   public String getOrganization(Map<String, String> requestMap) throws JSONException {
     // Organization of the current Payment
     JSONObject context = new JSONObject(requestMap.get("context"));
+    if (context.has("ad_org_id") && context.get("ad_org_id") != JSONObject.NULL
+        && StringUtils.isNotEmpty(context.getString("ad_org_id"))) {
+      return context.getString("ad_org_id");
+    }
     if (context.has("inpadOrgId") && context.get("inpadOrgId") != JSONObject.NULL
         && StringUtils.isNotEmpty(context.getString("inpadOrgId"))) {
       return context.getString("inpadOrgId");

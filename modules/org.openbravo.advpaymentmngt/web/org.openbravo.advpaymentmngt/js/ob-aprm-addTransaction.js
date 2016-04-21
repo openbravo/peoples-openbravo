@@ -27,6 +27,7 @@ OB.APRM.AddTransaction.onLoad = function (view) {
     value: bankStatementLineId
   }));
   view.theForm.hideItem('bankStatementLineId');
+  view.theForm.getItem('ad_org_id_process').setValue(view.theForm.getItem('ad_org_id').getValue());
 };
 
 
@@ -123,4 +124,8 @@ OB.APRM.AddTransaction.glitemOnChangeFunction = function (item, view, form, grid
 
 OB.APRM.AddTransaction.trxDateOnChangeFunction = function (item, view, form, grid) {
   form.getItem('dateacct').setDateParameterValue(new Date(item.getValue()));
+};
+
+OB.APRM.AddTransaction.organizationOnChangeFunction = function (item, view, form, grid) {
+  form.getItem('ad_org_id_process').setValue(form.getItem('ad_org_id').getValue());
 };
