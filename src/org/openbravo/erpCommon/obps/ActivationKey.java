@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -232,14 +232,24 @@ public class ActivationKey {
   private static final String ON_DEMAND_PLATFORM_CHECK_URL = "http://localhost:20290/checkOnDemand?qry=";
 
   /**
-   * Session types that are considered for user concurrency
+   * Session types that are not taken into account for counting concurrent users
    */
   @SuppressWarnings("serial")
-  private static final List<String> ACTIVE_SESSION_TYPES = new ArrayList<String>() {
+  private static final List<String> NO_CU_SESSION_TYPES = new ArrayList<String>() {
     {
-      add("S");
+      add("CNU");
       add("CUR");
-      add("SUR");
+      add("F");
+      add("IOBPS");
+      add("LBF");
+      add("LU");
+      add("ME");
+      add("RESTR");
+      add("RT");
+      add("WS");
+      add("WSC");
+      add("WSR");
+      add("OBPOS_POS");
     }
   };
   public static final Long NO_LIMIT = -1L;
@@ -1060,7 +1070,8 @@ public class ActivationKey {
         Restrictions.eq(Session.PROPERTY_SESSIONACTIVE, true),
         Restrictions.or(Restrictions.isNull(Session.PROPERTY_LASTPING),
             Restrictions.lt(Session.PROPERTY_LASTPING, lastValidPingTime))));
-    obCriteria.add(Restrictions.in(Session.PROPERTY_LOGINSTATUS, ACTIVE_SESSION_TYPES));
+    obCriteria.add(Restrictions.not(Restrictions.in(Session.PROPERTY_LOGINSTATUS,
+        NO_CU_SESSION_TYPES)));
     obCriteria.add(Restrictions.ne(Session.PROPERTY_ID, currentSessionId));
 
     boolean sessionDeactivated = false;
@@ -1085,7 +1096,8 @@ public class ActivationKey {
   private int getActiveSessions(String currentSession) {
     OBCriteria<Session> obCriteria = OBDal.getInstance().createCriteria(Session.class);
     obCriteria.add(Restrictions.eq(Session.PROPERTY_SESSIONACTIVE, true));
-    obCriteria.add(Restrictions.in(Session.PROPERTY_LOGINSTATUS, ACTIVE_SESSION_TYPES));
+    obCriteria.add(Restrictions.not(Restrictions.in(Session.PROPERTY_LOGINSTATUS,
+        NO_CU_SESSION_TYPES)));
 
     if (currentSession != null && !currentSession.equals("")) {
       obCriteria.add(Restrictions.ne(Session.PROPERTY_ID, currentSession));
@@ -1097,7 +1109,8 @@ public class ActivationKey {
     OBCriteria<Session> obCriteria = OBDal.getInstance().createCriteria(Session.class);
     obCriteria.add(Restrictions.eq(Session.PROPERTY_SESSIONACTIVE, true));
     obCriteria.add(Restrictions.eq(Session.PROPERTY_USERNAME, username));
-    obCriteria.add(Restrictions.in(Session.PROPERTY_LOGINSTATUS, ACTIVE_SESSION_TYPES));
+    obCriteria.add(Restrictions.not(Restrictions.in(Session.PROPERTY_LOGINSTATUS,
+        NO_CU_SESSION_TYPES)));
     if (currentSession != null && !currentSession.equals("")) {
       obCriteria.add(Restrictions.ne(Session.PROPERTY_ID, currentSession));
     }
