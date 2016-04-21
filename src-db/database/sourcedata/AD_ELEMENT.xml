@@ -33475,7 +33475,10 @@ Processes with "Requires Explicit Access Permission" flag set to true, do not in
 <!--DE965C6322B04FCAAC6DDCB4334CE52A-->  <NAME><![CDATA[Recalculate Permissions]]></NAME>
 <!--DE965C6322B04FCAAC6DDCB4334CE52A-->  <PRINTNAME><![CDATA[Recalculate Permissions]]></PRINTNAME>
 <!--DE965C6322B04FCAAC6DDCB4334CE52A-->  <DESCRIPTION><![CDATA[Recalculate Permissions]]></DESCRIPTION>
-<!--DE965C6322B04FCAAC6DDCB4334CE52A-->  <HELP><![CDATA[A process which recalculates role permissions using role inheritance]]></HELP>
+<!--DE965C6322B04FCAAC6DDCB4334CE52A-->  <HELP><![CDATA[This process recalculates role permissions, based on the role inheritance defined. Depending on the role type the behavior varies:
+- If the role is a template one, the permissions for the role will be recalculated and also propagated to every role which is currently inheriting from this template.
+- If the role is not marked as template, just the permissions for this role are recalculated.
+For details - http://wiki.openbravo.com/wiki/Role#Permissions_Inheritance]]></HELP>
 <!--DE965C6322B04FCAAC6DDCB4334CE52A-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--DE965C6322B04FCAAC6DDCB4334CE52A-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--DE965C6322B04FCAAC6DDCB4334CE52A--></AD_ELEMENT>
