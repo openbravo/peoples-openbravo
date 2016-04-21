@@ -928,8 +928,7 @@ public class ActivationKey {
     }
 
     // maxUsers==0 is unlimited concurrent users
-    boolean checkConcurrentUsers = maxUsers != 0
-        && (sessionType == null || !NO_CU_SESSION_TYPES.contains(sessionType));
+    boolean checkConcurrentUsers = maxUsers != 0 && consumesConcurrentUser(sessionType);
     if (checkConcurrentUsers) {
       OBContext.setAdminMode();
       int activeSessions = 0;
@@ -980,6 +979,11 @@ public class ActivationKey {
     }
 
     return result;
+  }
+
+  /** Returns whether a session type is counted for concurrent users */
+  public static boolean consumesConcurrentUser(String sessionType) {
+    return sessionType == null || !NO_CU_SESSION_TYPES.contains(sessionType);
   }
 
   public LicenseRestriction checkOPSLimitations(String currentSession, String username,
