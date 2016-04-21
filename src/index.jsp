@@ -13,6 +13,7 @@
 <%@ page import="org.openbravo.model.ad.access.User" %>
 <%@ page import="org.openbravo.dal.service.OBDal" %>
 <%@ page import="org.openbravo.base.secureApp.VariablesSecureApp" %>
+<%@ page import="org.openbravo.erpCommon.obps.ActivationKey" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%
   /*
@@ -43,6 +44,26 @@ String userId = authManager.authenticate(request, response);
 if(userId == null){
   return;
 }
+
+OBContext.setAdminMode(false);
+String sessionId = null;
+try {
+  sessionId = (String) session.getAttribute("#AD_SESSION_ID");
+  if (sessionId != null && !"".equals(sessionId)) {
+    org.openbravo.model.ad.access.Session dbSession = OBDal.getInstance().get(org.openbravo.model.ad.access.Session.class, sessionId);
+    String currentSessionType = dbSession.getLoginStatus();
+
+    if (!ActivationKey.consumesConcurrentUser(currentSessionType)) {
+      dbSession.setLoginStatus("S");
+      OBDal.getInstance().flush();
+    }
+  }
+} catch (Exception e) {
+  log.error("Error resetting login status for session "  + sessionId,e);
+} finally {
+  OBContext.restorePreviousMode();
+}
+
 
 boolean uncompSC = false;
 String scDevModulePackage = "org.openbravo.userinterface.smartclient.dev";
