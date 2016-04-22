@@ -749,22 +749,20 @@ public class PaymentReportDao {
             .getInstance()
             .getSession()
             .buildLockRequest(LockOptions.NONE)
-            .lock(org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail.ENTITY_NAME,
+            .lock(FIN_PaymentScheduleDetail.ENTITY_NAME,
                 fpsd);
 
         // search for fin_finacc_transaction for this payment
         FIN_FinaccTransaction trx = null;
-        FIN_PaymentDetail detail = fpsd.getPaymentDetails();
         FIN_Payment payment = null;
         Invoice invoice = null;
-        if (detail != null) {
+        if (fpsd.getPaymentDetails() != null) {
+          payment = fpsd.getPaymentDetails().getFinPayment();
           OBCriteria<FIN_FinaccTransaction> trxQuery = OBDal.getInstance().createCriteria(
               FIN_FinaccTransaction.class);
-          trxQuery.add(Restrictions.eq(FIN_FinaccTransaction.PROPERTY_FINPAYMENT,
-              detail.getFinPayment()));
+          trxQuery.add(Restrictions.eq(FIN_FinaccTransaction.PROPERTY_FINPAYMENT, payment));
           // uniqueness guaranteed via unique constraint in db
           trx = (FIN_FinaccTransaction) trxQuery.uniqueResult();
-          payment = fpsd.getPaymentDetails().getFinPayment();
         } else {
           invoice = fpsd.getInvoicePaymentSchedule().getInvoice();
         }
