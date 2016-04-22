@@ -72,7 +72,7 @@ try {
         OBError errMsg = new OBError();
         errMsg.setTitle(OBMessageUtils.messageBD("NUMBER_OF_CONCURRENT_USERS_REACHED_TITLE", false, true));
         errMsg.setMessage(OBMessageUtils.messageBD("NUMBER_OF_CONCURRENT_USERS_REACHED", false, true));
-        session.setAttribute("LoginErrorMsg".toUpperCase(), errMsg);
+        session.setAttribute("LOGINERRORMSG", errMsg);
 
         String localAdress = HttpBaseUtils.getLocalAddress(request);
         String defaultServletUrl = getServletConfig().getServletContext()
