@@ -71,12 +71,20 @@ public class OBBaseTest {
   @Rule
   public TestWatcher watchFailures = new TestWatcher() {
     @Override
+    protected void starting(Description description) {
+      log.info("*** Starting test case: " + getTestName(description));
+    };
+
+    @Override
     protected void failed(Throwable e, Description description) {
       errorOccured = true;
     }
 
     @Override
     protected void finished(Description description) {
+      log.info("*** Finished test case: " + getTestName(description)
+          + (errorOccured ? " - with errors" : ""));
+
       // if not an administrator but still admin mode set throw an exception
       if (!OBContext.getOBContext().getUser().getId().equals("0")
           && !OBContext.getOBContext().getRole().getId().equals("0")
@@ -107,6 +115,11 @@ public class OBBaseTest {
 
       super.finished(description);
     }
+
+    private String getTestName(Description description) {
+      return description.getClassName() + "." + description.getMethodName();
+    }
+
   };
 
   private static final Logger log = Logger.getLogger(OBBaseTest.class);
