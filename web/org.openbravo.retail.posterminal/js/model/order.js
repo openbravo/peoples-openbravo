@@ -1892,10 +1892,17 @@
       this.save();
       if (updatePrices) {
         this.updatePrices(function (order) {
-          OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_QuotationCreatedOrder'));
+          order.calculateReceipt(function () {
+            OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_QuotationCreatedOrder'));
+          });
         });
       } else {
-        OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_QuotationCreatedOrder'));
+        var me = this;
+        this.set('skipApplyPromotions', true);
+        this.calculateReceipt(function () {
+          me.unset('skipApplyPromotions');
+          OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_QuotationCreatedOrder'));
+        });
       }
     },
 
