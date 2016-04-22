@@ -55,7 +55,7 @@ public class POSImportEntryProcessor extends ImportEntryPreProcessor {
 
   private boolean POStypeofdata(ImportEntry importEntry) {
     List<String> posTypeOfData = Arrays.asList("Order", "BusinessPartner",
-        "BusinessPartnerLocation", "OBPOS_App_Cashup", "FIN_Finacc_Transaction");
+        "BusinessPartnerLocation", "OBPOS_App_Cashup", "FIN_Finacc_Transaction", "OBPOS_VoidLayaway");
     return posTypeOfData.contains(importEntry.getTypeofdata());
   }
 }
