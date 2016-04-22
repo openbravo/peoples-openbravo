@@ -5848,11 +5848,14 @@
       if ((this.get('bp').get('invoiceTerms') === 'I' && this.get('generateInvoice')) || this.get('paidOnCredit')) {
         receiptShouldBeInvoiced = true;
       } else if (this.get('bp').get('invoiceTerms') === 'O') {
-        linesPendingToDeliver = _.find(this.get('lines').models, function (line) {
-          return line.get('qty') !== (!OB.UTIL.isNullOrUndefined(line.get('obposQtytodeliver')) ? line.get('obposQtytodeliver') : 0);
-        });
-        if (!linesPendingToDeliver) {
-          receiptShouldBeInvoiced = true;
+        receiptShouldBeShipped = !isQuotation && !notpaidLayaway && !isDeleted && !paidReceipt;
+        if (receiptShouldBeShipped) {
+          linesPendingToDeliver = _.find(this.get('lines').models, function (line) {
+            return line.get('qty') !== (!OB.UTIL.isNullOrUndefined(line.get('obposQtytodeliver')) ? line.get('obposQtytodeliver') : 0);
+          });
+          if (!linesPendingToDeliver) {
+            receiptShouldBeInvoiced = true;
+          }
         }
       } else if (this.get('bp').get('invoiceTerms') === 'D') {
         receiptShouldBeShipped = !isQuotation && !notpaidLayaway && !isDeleted && !paidReceipt;
