@@ -53,6 +53,7 @@ import java.util.zip.CRC32;
 import javax.crypto.Cipher;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Appender;
@@ -68,6 +69,7 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.dal.core.DalContextListener;
+import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -75,6 +77,7 @@ import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.obps.DisabledModules.Artifacts;
 import org.openbravo.erpCommon.obps.ModuleLicenseRestrictions.ActivationMsg;
 import org.openbravo.erpCommon.obps.ModuleLicenseRestrictions.MsgSeverity;
+import org.openbravo.erpCommon.security.SessionListener;
 import org.openbravo.erpCommon.utility.HttpsUtils;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
@@ -1079,11 +1082,13 @@ public class ActivationKey {
 
     boolean sessionDeactivated = false;
     for (Session expiredSession : obCriteria.list()) {
-      expiredSession.setSessionActive(false);
-      sessionDeactivated = true;
-      log4j.info("Deactivated session: " + expiredSession.getId()
-          + " beacuse of ping time out. Last ping: " + expiredSession.getLastPing()
-          + ". Last valid ping time: " + lastValidPingTime);
+      if (shouldDeactivateSession(expiredSession, lastValidPingTime)) {
+        expiredSession.setSessionActive(false);
+        sessionDeactivated = true;
+        log4j.info("Deactivated session: " + expiredSession.getId()
+            + " beacuse of ping time out. Last ping: " + expiredSession.getLastPing()
+            + ". Last valid ping time: " + lastValidPingTime);
+      }
     }
     if (sessionDeactivated) {
       OBDal.getInstance().flush();
@@ -1091,6 +1096,22 @@ public class ActivationKey {
       log4j.debug("No ping timeout sessions");
     }
     return sessionDeactivated;
+  }
+
+  /**
+   * Do not deactivate those sessions that are not using ping but consume concurrent users (ie.
+   * mobile apps) if activity from them has been recently detected.
+   */
+  private boolean shouldDeactivateSession(Session expiredSession, Date lastValidPingTime) {
+    String sessionId = (String) DalUtil.getId(expiredSession);
+    HttpSession session = SessionListener.getActiveSession(sessionId);
+    if (session == null) {
+      log4j.debug("Session " + sessionId + " no found in context");
+      return true;
+    }
+    Date lastRequestTime = new Date(session.getLastAccessedTime());
+    log4j.debug("Last request received from session " + sessionId + ": " + lastRequestTime);
+    return lastRequestTime.compareTo(lastValidPingTime) < 0;
   }
 
   /**

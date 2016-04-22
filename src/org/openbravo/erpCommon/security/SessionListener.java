@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -27,6 +27,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 
@@ -41,6 +42,7 @@ public class SessionListener implements HttpSessionListener, ServletContextListe
   private static final Logger log = Logger.getLogger(SessionListener.class);
 
   private static Vector<String> sessionsInContext = new Vector<String>();
+  private static Vector<HttpSession> activeHttpSessions = new Vector<HttpSession>();
   private static ServletContext context = null;
 
   /**
@@ -51,11 +53,13 @@ public class SessionListener implements HttpSessionListener, ServletContextListe
   @Override
   public void sessionDestroyed(HttpSessionEvent event) {
     log.debug("Destroying session");
-    String sessionId = (String) event.getSession().getAttribute("#AD_SESSION_ID");
+    HttpSession session = event.getSession();
+    String sessionId = (String) session.getAttribute("#AD_SESSION_ID");
     if (sessionId != null) {
       deactivateSession(sessionId);
-
     }
+    activeHttpSessions.remove(session);
+    log.debug("Session destroyed. Active sessions count: " + activeHttpSessions.size());
   }
 
   /**
@@ -136,7 +140,21 @@ public class SessionListener implements HttpSessionListener, ServletContextListe
 
   @Override
   public void sessionCreated(HttpSessionEvent event) {
-    // do nothing
+    activeHttpSessions.add(event.getSession());
+    log.debug("Session created. Active sessions count: " + activeHttpSessions.size());
+  }
+
+  /**
+   * Returns the {@code HttpSession} identified by {@code sessionId} it is present in this context.
+   * If not present {@code null} is returned.
+   */
+  public static HttpSession getActiveSession(String sessionId) {
+    for (HttpSession session : activeHttpSessions) {
+      if (sessionId.equals(session.getAttribute("#AD_SESSION_ID"))) {
+        return session;
+      }
+    }
+    return null;
   }
 
   private void deactivateSession(String sessionId) {
