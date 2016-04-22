@@ -83,6 +83,9 @@ public class ProductSelectorDataSourceTest extends BaseDataSourceTestNoDal {
     params.put("_endRow", "75");
     params.put("_textMatchStyle", "substring");
 
+    params.put("targetProperty", "product");
+    params.put("inpTableId", "FF8080812E381D1E012E3898C5DD0010");
+
     if (addFilter) {
       JSONObject filterCriteria = new JSONObject();
       filterCriteria.put("fieldName", "storageBin$warehouse$_identifier");

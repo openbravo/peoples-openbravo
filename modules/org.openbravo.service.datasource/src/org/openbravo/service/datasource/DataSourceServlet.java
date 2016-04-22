@@ -276,6 +276,8 @@ public class DataSourceServlet extends BaseKernelServlet {
           log.error("Unsupported export format: " + exportAs);
         }
       } else {
+        // Check security: continue only if the entity is accessible for current user/role.
+        getDataSource(request).checkFetchDatasourceAccess(parameters);
         String result = getDataSource(request).fetch(parameters);
         writeResult(response, result);
       }
@@ -774,7 +776,10 @@ public class DataSourceServlet extends BaseKernelServlet {
 
       // note if clause updates parameter map
       if (checkSetIDDataSourceName(request, response, parameters)) {
-        final String result = getDataSource(request).add(parameters, getRequestContent(request));
+        String content = getRequestContent(request);
+        parameters.put(DataSourceConstants.ADD_CONTENT_OPERATION, content);
+        getDataSource(request).checkEditDatasourceAccess(parameters);
+        final String result = getDataSource(request).add(parameters, content);
         writeResult(response, result);
       }
     } catch (Exception e) {
@@ -801,6 +806,7 @@ public class DataSourceServlet extends BaseKernelServlet {
         throw new InvalidRequestException("No id parameter");
       }
 
+      getDataSource(request).checkEditDatasourceAccess(parameters);
       final String result = getDataSource(request).remove(parameters);
       writeResult(response, result);
     } catch (Exception e) {
@@ -836,6 +842,7 @@ public class DataSourceServlet extends BaseKernelServlet {
 
       // note if clause updates parameter map
       if (checkSetIDDataSourceName(request, response, parameters)) {
+        getDataSource(request).checkEditDatasourceAccess(parameters);
         final String result = getDataSource(request).update(parameters, getRequestContent(request));
         writeResult(response, result);
       }
@@ -1027,6 +1034,19 @@ public class DataSourceServlet extends BaseKernelServlet {
         final List<Process> obuiapProcesses = new ArrayList<Process>();
         for (Parameter parameter : obParameters.list()) {
           obuiapProcesses.add(parameter.getObuiappProcess());
+
+        }
+
+        // If access to process are granted for current user/role return directly true.
+        boolean isAccessGranted = true;
+        final OBContext obContext = OBContext.getOBContext();
+        for (Process process : obuiapProcesses) {
+          if (!obContext.getEntityAccessChecker().checkProcessAccess(process.getId())) {
+            isAccessGranted = false;
+          }
+        }
+        if (isAccessGranted) {
+          return true;
         }
 
         // Finally select all columns that linked with selected processes and get their fields.

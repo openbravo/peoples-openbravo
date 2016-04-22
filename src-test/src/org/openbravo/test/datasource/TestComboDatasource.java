@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2014 Openbravo SLU 
+ * All portions are Copyright (C) 2014-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -154,6 +154,9 @@ public class TestComboDatasource extends BaseDataSourceTestDal {
   @Test
   public void testFilter() throws Exception {
     setOBContext("100");
+    // Set F&B International Admin role
+    changeProfile("42D0EEB1C66F497A90DD526DC597E6F0", "192", "E443A31992CB4635AFCAEABE7183CE85",
+        "B2D40D8A5D644DD89E329DC297309055");
     // Using values of visible at user in preference
     Map<String, String> params = new HashMap<String, String>();
     params.put("fieldId", "927D156048246E92E040A8C0CF071D3D");
@@ -179,6 +182,9 @@ public class TestComboDatasource extends BaseDataSourceTestDal {
   @Test
   public void testFilterWithPagination() throws Exception {
     setOBContext("100");
+    // Set F&B International Admin role
+    changeProfile("42D0EEB1C66F497A90DD526DC597E6F0", "192", "E443A31992CB4635AFCAEABE7183CE85",
+        "B2D40D8A5D644DD89E329DC297309055");
     // Using values of visible at user in preference
     Map<String, String> params = new HashMap<String, String>();
     params.put("fieldId", "927D156048246E92E040A8C0CF071D3D");

@@ -26,8 +26,11 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
+import org.openbravo.base.model.Property;
+import org.openbravo.client.application.CachedPreference;
 import org.openbravo.client.application.window.ApplicationDictionaryCachedStructures;
 import org.openbravo.client.kernel.Template;
 import org.openbravo.dal.core.DalUtil;
@@ -36,6 +39,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.service.json.JsonConstants;
+import org.openbravo.userinterface.selector.SelectorConstants;
 
 /**
  * A base data source service which can be extended. It combines the common parts for data sources
@@ -56,6 +60,9 @@ public abstract class BaseDataSourceService implements DataSourceService {
   private Entity entity;
   private DataSource dataSource;
   private List<DataSourceProperty> dataSourceProperties = new ArrayList<DataSourceProperty>();
+
+  @Inject
+  private CachedPreference cachedPreference;
 
   @Inject
   private ApplicationDictionaryCachedStructures cachedStructures;
@@ -127,16 +134,60 @@ public abstract class BaseDataSourceService implements DataSourceService {
     setWhereClause(dataSource.getHQLWhereClause());
   }
 
-  public Entity getEntity() {
-    return entity;
+  @Override
+  public void checkEditDatasourceAccess(Map<String, String> parameters) {
+    Entity entityToCheck = getEntity();
+    final OBContext obContext = OBContext.getOBContext();
+    if (entity != null) {
+      try {
+        obContext.getEntityAccessChecker().checkWritableAccess(entityToCheck);
+      } catch (OBSecurityException e) {
+        handleExceptionUnsecuredDSAccess(e);
+      }
+    }
   }
 
-  public void setEntity(Entity entity) {
-    this.entity = entity;
-  }
-
-  public void setName(String name) {
-    this.name = name;
+  @Override
+  public void checkFetchDatasourceAccess(Map<String, String> parameters) {
+    Entity entityToCheck = getEntity();
+    final OBContext obContext = OBContext.getOBContext();
+    String selectorId = parameters.get(SelectorConstants.DS_REQUEST_SELECTOR_ID_PARAMETER);
+    if (StringUtils.isNotBlank(selectorId)) {
+      // selectors
+      String processId = parameters.get(SelectorConstants.DS_REQUEST_PROCESS_DEFINITION_ID);
+      if (StringUtils.isNotBlank(processId)) {
+        // selectors defined in a process definition
+        if (entityToCheck != null) {
+          try {
+            obContext.getEntityAccessChecker().checkDerivedAccess(entityToCheck);
+          } catch (OBSecurityException e) {
+            handleExceptionUnsecuredDSAccess(e);
+          }
+        }
+      } else {
+        // rest of the selectors
+        String tableId = parameters.get("inpTableId");
+        String targetPropertyName = parameters.get(SelectorConstants.PARAM_TARGET_PROPERTY_NAME);
+        if (StringUtils.isNotBlank(targetPropertyName)) {
+          try {
+            Entity parentEntity = ModelProvider.getInstance().getEntityByTableId(tableId);
+            Property p = parentEntity.getProperty(targetPropertyName);
+            Entity entitySelector = p.getReferencedProperty().getEntity();
+            if (entitySelector != null) {
+              obContext.getEntityAccessChecker().checkDerivedAccess(entitySelector);
+            }
+          } catch (OBSecurityException e) {
+            handleExceptionUnsecuredDSAccess(e);
+          }
+        }
+      }
+    } else if (entityToCheck != null) {
+      try {
+        obContext.getEntityAccessChecker().checkReadableAccess(entityToCheck);
+      } catch (OBSecurityException e) {
+        handleExceptionUnsecuredDSAccess(e);
+      }
+    }
   }
 
   /**
@@ -170,6 +221,27 @@ public abstract class BaseDataSourceService implements DataSourceService {
       }
       return whereAndFilterClause;
     }
+  }
+
+  protected void handleExceptionUnsecuredDSAccess(OBSecurityException securityException) {
+    if (!"Y".equals(cachedPreference
+        .getPreferenceValue(CachedPreference.ALLOW_UNSECURED_DS_REQUEST))) {
+      throw new OBSecurityException(securityException);
+    } else {
+      log.warn(securityException.getMessage() + " but in fact it is being allowed access.");
+    }
+  }
+
+  public Entity getEntity() {
+    return entity;
+  }
+
+  public void setEntity(Entity entity) {
+    this.entity = entity;
+  }
+
+  public void setName(String name) {
+    this.name = name;
   }
 
   private boolean isRootTab(Tab tab) {

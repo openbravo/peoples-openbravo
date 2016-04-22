@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -31,11 +31,20 @@ import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
+import org.openbravo.base.model.Table;
 import org.openbravo.base.provider.OBNotSingleton;
+import org.openbravo.client.application.Process;
+import org.openbravo.client.application.ProcessAccess;
+import org.openbravo.client.application.RefWindow;
+import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.access.TableAccess;
+import org.openbravo.model.ad.domain.Reference;
 import org.openbravo.model.ad.ui.Tab;
+import org.openbravo.model.ad.ui.Window;
+import org.openbravo.userinterface.selector.Selector;
 
 /**
  * This class is responsible for determining the allowed read/write access for a combination of user
@@ -61,6 +70,9 @@ import org.openbravo.model.ad.ui.Tab;
 public class EntityAccessChecker implements OBNotSingleton {
   private static final Logger log = Logger.getLogger(EntityAccessChecker.class);
 
+  private static final String SELECTOR_REFERENCE = "95E2A8B50A254B2AAE6774B8C2F28120";
+  private static final String WINDOW_REFERENCE = "FF80818132D8F0F30132D9BC395D0038";
+
   // Table Access Level:
   // "6";"System/Client"
   // "1";"Organization"
@@ -84,6 +96,10 @@ public class EntityAccessChecker implements OBNotSingleton {
   // readable
   // the completely readable entities are present in the readableEntities
   private Set<Entity> derivedReadableEntities = new HashSet<Entity>();
+  // the derived entities from process only contains the entities which are
+  // derived from process definition
+  private Set<Entity> derivedEntitiesFromProcess = new HashSet<Entity>();
+  private Set<String> processes = new HashSet<String>();
   private Set<Entity> nonReadableEntities = new HashSet<Entity>();
   private boolean isInitialized = false;
 
@@ -92,7 +108,8 @@ public class EntityAccessChecker implements OBNotSingleton {
   /**
    * Reads the windows from the database using the current role of the user. Then it iterates
    * through the windows and tabs to determine which entities are readable/writable for that user.
-   * In addition non-readable and derived-readable entities are computed.
+   * In addition non-readable and derived-readable entities are computed. Besides derived entities
+   * from process definition are being computed too.
    * 
    * @see ModelProvider
    */
@@ -172,6 +189,65 @@ public class EntityAccessChecker implements OBNotSingleton {
         }
       }
 
+      // and take into account derived entities from process definition
+      // union of writableEntities and readableEntities
+      List<Entity> processEntities = new ArrayList<Entity>(writableEntities);
+      for (final Entity readableEntity : readableEntities) {
+        if (!processEntities.contains(readableEntity)) {
+          processEntities.add(readableEntity);
+        }
+      }
+      if (processEntities.size() > 0) {
+        String inTables = "(";
+        for (final Entity entity : processEntities) {
+          Table table = mp.getTableWithoutCheck(entity.getTableName());
+          if (table == null) {
+            continue;
+          }
+          inTables = inTables + "'" + table.getId() + "',";
+        }
+        inTables = inTables.substring(0, inTables.length() - 1) + ")";
+
+        // take into account processes
+        final String processButStr = "select p.id from ADColumn c inner join c.table t inner join "
+            + "c.oBUIAPPProcess p where t.id in " + inTables;
+        @SuppressWarnings("unchecked")
+        final List<String> processAccessButtons = SessionHandler.getInstance()
+            .createQuery(processButStr).list();
+        for (String processButton : processAccessButtons) {
+          if (!processes.contains(processButton)) {
+            processes.add(processButton);
+            // addEntitiesFromProcess(processButton);
+          }
+        }
+
+        // take into account processes linked with selectors
+        final String processSelStr = "select p.id from ADColumn c inner join c.table t inner join "
+            + "c.referenceSearchKey r inner join r.oBUISELSelectorList s inner join s.processDefintion "
+            + "p  where r.parentReference='" + SELECTOR_REFERENCE + "' and t.id in " + inTables;
+        @SuppressWarnings("unchecked")
+        final List<String> processAccessSelectors = SessionHandler.getInstance()
+            .createQuery(processSelStr).list();
+        for (String processSelector : processAccessSelectors) {
+          if (!processes.contains(processSelector)) {
+            processes.add(processSelector);
+          }
+        }
+      }
+
+      // and take into account explicit process access
+      final String processAccessQryStr = "select p.obuiappProcess.id from "
+          + ProcessAccess.class.getName() + " p where p.role.id='" + getRoleId() + "'";
+      @SuppressWarnings("unchecked")
+      final List<String> processAccessQuery = SessionHandler.getInstance()
+          .createQuery(processAccessQryStr).list();
+      for (final String processAccess : processAccessQuery) {
+        if (!processes.contains(processAccess)) {
+          processes.add(processAccess);
+        }
+      }
+
+      addEntitiesFromProcesses();
       isInitialized = true;
     } finally {
       OBContext.restorePreviousMode();
@@ -220,6 +296,11 @@ public class EntityAccessChecker implements OBNotSingleton {
     dumpSorted(derivedReadableEntities);
 
     log.info("");
+    log.info(">>> Derived entities from process: ");
+    log.info("");
+    dumpSorted(derivedEntitiesFromProcess);
+
+    log.info("");
     log.info(">>> Writable entities: ");
     log.info("");
     dumpSorted(writableEntities);
@@ -236,12 +317,30 @@ public class EntityAccessChecker implements OBNotSingleton {
     log.info("");
     log.info("");
 
+    log.info("");
+    log.info(">>> Processes accessible: ");
+    log.info("");
+    dumpSortedProcess(processes);
+    log.info("");
+    log.info("");
+
   }
 
   private void dumpSorted(Set<Entity> set) {
     final List<String> names = new ArrayList<String>();
     for (final Entity e : set) {
       names.add(e.getName());
+    }
+    Collections.sort(names);
+    for (final String n : names) {
+      log.info(n);
+    }
+  }
+
+  private void dumpSortedProcess(Set<String> set) {
+    final List<String> names = new ArrayList<String>();
+    for (final String p : set) {
+      names.add(OBDal.getInstance().get(Process.class, p).getName());
     }
     Collections.sort(names);
     for (final String n : names) {
@@ -294,11 +393,7 @@ public class EntityAccessChecker implements OBNotSingleton {
     if (obContext.isInAdministratorMode()) {
       return true;
     }
-
-    if (!writableEntities.contains(entity)) {
-      return false;
-    }
-    return true;
+    return isWritableWithoutAdminMode(entity);
   }
 
   /**
@@ -345,6 +440,57 @@ public class EntityAccessChecker implements OBNotSingleton {
     }
   }
 
+  /**
+   * Checks if an entity is readable for current user. It is not take into account admin mode.
+   * 
+   * @param entity
+   *          the entity to check
+   */
+  public void checkReadableAccess(Entity entity) {
+    if (!isReadableWithoutAdminMode(entity)) {
+      throw new OBSecurityException("Entity " + entity + " is not accessible by this role/user: "
+          + obContext.getRole().getName() + "/" + obContext.getUser().getName());
+    }
+  }
+
+  /**
+   * Checks if an entity is derived for current user. It is not take into account admin mode.
+   * 
+   * @param entity
+   *          the entity to check
+   */
+  public void checkDerivedAccess(Entity entity) {
+    if (!isDerivedWithoutAdminMode(entity)) {
+      throw new OBSecurityException("Entity " + entity + " is not accessible by this role/user: "
+          + obContext.getRole().getName() + "/" + obContext.getUser().getName());
+    }
+  }
+
+  /**
+   * Checks if an entity is writable for current user. It is not take into account admin mode.
+   * 
+   * @param entity
+   *          the entity to check
+   */
+  public void checkWritableAccess(Entity entity) {
+    if (!isWritableWithoutAdminMode(entity)) {
+      throw new OBSecurityException("Entity " + entity + " is not writable by this role/user: "
+          + obContext.getRole().getName() + "/" + obContext.getUser().getName());
+    }
+  }
+
+  /**
+   * Checks if a process is accessible for current user. It is not take into account admin mode.
+   */
+  public boolean checkProcessAccess(String processId) {
+    // prevent infinite looping
+    if (!isInitialized) {
+      return false;
+    }
+
+    return processes.contains(processId);
+  }
+
   public String getRoleId() {
     return roleId;
   }
@@ -369,4 +515,139 @@ public class EntityAccessChecker implements OBNotSingleton {
     return writableEntities;
   }
 
+  public Set<Entity> getDerivedReadableEntities() {
+    return derivedReadableEntities;
+  }
+
+  public Set<Entity> getDerivedEntitiesFromProcess() {
+    return derivedEntitiesFromProcess;
+  }
+
+  private boolean isReadableWithoutAdminMode(Entity entity) {
+    // prevent infinite looping
+    if (!isInitialized) {
+      return false;
+    }
+
+    if (readableEntities.contains(entity)) {
+      return true;
+    }
+
+    return false;
+  }
+
+  private boolean isDerivedWithoutAdminMode(Entity entity) {
+    // prevent infinite looping
+    if (!isInitialized) {
+      return false;
+    }
+
+    if (readableEntities.contains(entity)) {
+      return true;
+    }
+
+    if (derivedReadableEntities.contains(entity)) {
+      return true;
+    }
+
+    if (derivedEntitiesFromProcess.contains(entity)) {
+      return true;
+    }
+
+    return false;
+  }
+
+  private boolean isWritableWithoutAdminMode(Entity entity) {
+    // prevent infinite looping
+    if (!isInitialized) {
+      return false;
+    }
+    return writableEntities.contains(entity);
+  }
+
+  /**
+   * For those processes that are granted, entities used by them through selectors and grids (window
+   * references) need also to be granted
+   */
+  private void addEntitiesFromProcesses() {
+    if (processes.isEmpty()) {
+      return;
+    }
+    StringBuilder processesInList = new StringBuilder();
+    boolean first = true;
+    for (String p : processes) {
+      if (!first) {
+        processesInList.append(", ");
+      }
+      first = false;
+      processesInList.append("'").append(p).append("'");
+    }
+
+    String hql = "select p.referenceSearchKey from OBUIAPP_Parameter p where p.reference.id in('"
+        + WINDOW_REFERENCE + "','" + SELECTOR_REFERENCE + "') and p.obuiappProcess.id in ("
+        + processesInList + ")";
+    @SuppressWarnings("unchecked")
+    final List<Reference> references = SessionHandler.getInstance().createQuery(hql).list();
+
+    for (Reference ref : references) {
+      addEntitiesFromProcessReference(ref);
+    }
+  }
+
+  private void addEntitiesFromProcessReference(Reference ref) {
+    final ModelProvider mp = ModelProvider.getInstance();
+
+    // RefWindows reference is checked and added to readable and writable entities
+    if (WINDOW_REFERENCE.equals(DalUtil.getId(ref.getParentReference()))) {
+      RefWindow refWindow = !ref.getOBUIAPPRefWindowList().isEmpty() ? ref
+          .getOBUIAPPRefWindowList().get(0) : null;
+      if (refWindow == null) {
+        return;
+      }
+      final Window window = refWindow.getWindow();
+      addEntitiesOfWindowReference(mp, window);
+
+      // Selector reference is checked and added to derivedReadableEntities entities
+    } else if (SELECTOR_REFERENCE.equals(DalUtil.getId(ref.getParentReference()))) {
+      addEntitiesOfSelectorReference(mp, ref);
+    }
+  }
+
+  /**
+   * Obtain entity from selector and added to derivedReadableEntities to take into account as a
+   * derived entity.
+   */
+  private void addEntitiesOfSelectorReference(ModelProvider mp, Reference ref) {
+    for (Selector sel : ref.getOBUISELSelectorList()) {
+      org.openbravo.model.ad.datamodel.Table table = sel.getTable();
+      // Table is not mandatory property of selector
+      if (table == null) {
+        continue;
+      }
+      final Entity derivedEntity = mp.getEntityByTableId((String) DalUtil.getId(table));
+      if (!writableEntities.contains(derivedEntity) && !readableEntities.contains(derivedEntity)
+          && !derivedReadableEntities.contains(derivedEntity)
+          && !nonReadableEntities.contains(derivedEntity)) {
+        derivedEntitiesFromProcess.add(derivedEntity);
+      }
+    }
+  }
+
+  /**
+   * Obtain entities from window and added to readable and writable entities.
+   */
+  private void addEntitiesOfWindowReference(ModelProvider mp, Window window) {
+    for (Tab tab : window.getADTabList()) {
+      final Entity derivedEntity = mp.getEntityByTableId((String) DalUtil.getId(tab.getTable()));
+      if (!writableEntities.contains(derivedEntity) && !readableEntities.contains(derivedEntity)
+          && !nonReadableEntities.contains(derivedEntity)) {
+        readableEntities.add(derivedEntity);
+        writableEntities.add(derivedEntity);
+        // Removed from derived entities
+        if (derivedReadableEntities.contains(derivedEntity)) {
+          derivedReadableEntities.remove(derivedEntity);
+        }
+      }
+    }
+  }
 }

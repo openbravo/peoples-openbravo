@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -23,9 +23,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.service.datasource.ModelDataSourceService;
 
@@ -37,6 +39,21 @@ import org.openbravo.service.datasource.ModelDataSourceService;
 public class SelectorFieldPropertyDataSource extends ModelDataSourceService {
 
   private static final String SELECTOR_FIELD = "inpobuiselSelectorId";
+  private static final String TAB_ID = "inpTabId";
+
+  @Override
+  public void checkFetchDatasourceAccess(Map<String, String> parameter) {
+    final OBContext obContext = OBContext.getOBContext();
+    final String tabId = parameter.get(TAB_ID);
+    try {
+      final Entity entity = ModelProvider.getInstance().getEntityByTableId(tabId);
+      if (entity != null) {
+        obContext.getEntityAccessChecker().checkReadableAccess(entity);
+      }
+    } catch (OBSecurityException e) {
+      handleExceptionUnsecuredDSAccess(e);
+    }
+  }
 
   /*
    * (non-Javadoc)
