@@ -168,7 +168,8 @@ enyo.kind({
         columns: [],
         operator: OB.Dal.FILTER,
         value: (this.orderlineList.length > 1 ? 'Services_Filter_Multi' : 'Services_Filter'),
-        params: [prodList.join("','"), catList.join("','"), prodList.length, catList.length, (existingServices.length > 0 ? existingServices.join("','") : '-')]
+        params: [prodList, catList, prodList.length, catList.length, (existingServices.length > 0 ? existingServices : '-')],
+        fieldType: 'Long'
       }, {
         columns: ['ispack'],
         operator: 'equals',
