@@ -80,6 +80,7 @@ public class CancelAndReplaceUtils {
   private static Date today = null;
   private static final BigDecimal NEGATIVE_ONE = new BigDecimal(-1);
   private static final String CREATE_NETTING_SHIPMENT = "CancelAndReplaceCreateNetShipment";
+  private static final String ASSOCIATE_SHIPMENT_TO_REPLACE_TICKET = "CancelAndReplaceAssociateShipmentToNewTicket";
   private static OrganizationStructureProvider osp = null;
 
   public static void cancelOrder(String newOrderId, JSONObject jsonorder,
@@ -195,6 +196,15 @@ public class CancelAndReplaceUtils {
         } catch (PropertyException e1) {
           createNettingGoodsShipment = false;
         }
+        boolean associateShipmentToNewReceipt = false;
+        try {
+          associateShipmentToNewReceipt = ("Y").equals(Preferences.getPreferenceValue(
+              CancelAndReplaceUtils.ASSOCIATE_SHIPMENT_TO_REPLACE_TICKET, true,
+              oldOrder.getClient(), oldOrder.getOrganization(), OBContext.getOBContext().getUser(),
+              null, null));
+        } catch (PropertyException e1) {
+          associateShipmentToNewReceipt = false;
+        }
 
         if (createNettingGoodsShipment && inverseOrderLine != null) {
           // Create Netting goods shipment Header
@@ -257,6 +267,18 @@ public class CancelAndReplaceUtils {
                 newOrderLine.setDeliveredQuantity(newOrderLineDeliveredQty);
               }
               OBDal.getInstance().save(newOrderLine);
+            }
+          }
+        } else if (associateShipmentToNewReceipt) {
+          OBDal.getInstance().flush();
+          for (ShipmentInOutLine shipmentLine : goodsShipmentLineList) {
+            OBCriteria<OrderLine> olc = OBDal.getInstance().createCriteria(OrderLine.class);
+            olc.add(Restrictions.eq(OrderLine.PROPERTY_REPLACEDORDERLINE, oldOrderLine));
+            olc.add(Restrictions.eq(OrderLine.PROPERTY_SALESORDER, newOrder));
+            olc.setMaxResults(1);
+            OrderLine newOrderLine = (OrderLine) olc.uniqueResult();
+            if (newOrderLine != null) {
+              shipmentLine.setSalesOrderLine(newOrderLine);
             }
           }
         }
