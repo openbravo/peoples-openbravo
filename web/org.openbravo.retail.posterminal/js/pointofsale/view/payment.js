@@ -605,19 +605,18 @@ enyo.kind({
       if (checkPayment) {
         var paymentModal = OB.MobileApp.model.paymentnames[payment.get('kind')];
         // Checking payment is valid
-        me.checkValidPayments(me.receipt.getPaymentStatus(), paymentModal, function () {
-          if (!returnCheck.enoughCashAvailable) {
-            OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_NoEnoughCash'));
-            checkPayment = false;
-          }
-        });
+        var returnCheck = me.checkValidPayments(me.receipt.getPaymentStatus(), paymentModal);
+        if (!returnCheck.enoughCashAvailable) {
+          OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_NoEnoughCash'));
+          checkPayment = false;
+        }
       }
     });
     return true;
   },
 
-  checkValidPayments: function (paymentstatus, selectedPayment, callback) {
-    var resultOK, me = this;
+  checkValidPayments: function (paymentstatus, selectedPayment) {
+    var resultOK;
     var returnCheck = {
       validCashOverpayment: false,
       enoughCashAvailable: false,
@@ -647,17 +646,12 @@ enyo.kind({
           }
         }
         this.setStatusButtons(lsuccess);
-        if (me.callback) {
-          me.callback(returnCheck);
-        }
       });
     } else {
       // Finally set status of buttons
       this.setStatusButtons(resultOK);
-      if (callback) {
-        callback(returnCheck);
-      }
     }
+    return returnCheck;
   },
 
   setStatusButtons: function (resultOK) {
