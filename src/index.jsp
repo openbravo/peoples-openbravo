@@ -15,6 +15,11 @@
 <%@ page import="org.openbravo.base.secureApp.VariablesSecureApp" %>
 <%@ page import="org.openbravo.erpCommon.obps.ActivationKey" %>
 <%@ page import="org.openbravo.base.secureApp.LoginHandler" %>
+<%@ page import="org.openbravo.base.HttpBaseUtils" %>
+<%@ page import="org.openbravo.erpCommon.utility.OBMessageUtils" %>
+<%@ page import="org.openbravo.erpCommon.utility.OBError" %>
+<%@ page import="java.util.Date" %>
+<%@ page import="org.openbravo.erpCommon.obps.ActivationKey.LicenseRestriction" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%
   /*
@@ -55,8 +60,31 @@ try {
     String currentSessionType = dbSession.getLoginStatus();
 
     if (!ActivationKey.consumesConcurrentUser(currentSessionType)) {
+      // session was created not counting concurrent users, now switching to backend so they
+      // should be counted
       dbSession.setLoginStatus(LoginHandler.SUCCESS_SESSION_STANDARD);
       OBDal.getInstance().flush();
+
+      if (ActivationKey.getInstance().checkOPSLimitations(sessionId) == LicenseRestriction.NUMBER_OF_CONCURRENT_USERS_REACHED) {
+        dbSession.setSessionActive(false);
+        OBDal.getInstance().flush();
+
+        OBError errMsg = new OBError();
+        errMsg.setTitle(OBMessageUtils.messageBD("NUMBER_OF_CONCURRENT_USERS_REACHED_TITLE", false, true));
+        errMsg.setMessage(OBMessageUtils.messageBD("NUMBER_OF_CONCURRENT_USERS_REACHED", false, true));
+        session.setAttribute("LoginErrorMsg".toUpperCase(), errMsg);
+
+        String localAdress = HttpBaseUtils.getLocalAddress(request);
+        String defaultServletUrl = getServletConfig().getServletContext()
+            .getInitParameter("ServletSinIdentificar");
+        final String customLoginURL = (String) request.getAttribute("loginURL");
+
+        final String loginURL = localAdress
+            + (customLoginURL == null || "".equals(customLoginURL) ? defaultServletUrl : customLoginURL);
+
+        response.sendRedirect(loginURL);
+        return;
+      }
     }
   }
 } catch (Exception e) {
