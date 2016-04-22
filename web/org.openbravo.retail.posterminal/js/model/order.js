@@ -2000,7 +2000,7 @@
     getStoreStock: function (p, qty, callback) {
       var serverCallStoreDetailedStock = new OB.DS.Process('org.openbravo.retail.posterminal.stock.StoreDetailedStock'),
           me = this,
-          i, lines = OB.MobileApp.model.receipt.get('lines'),
+          i, lines = OB.MobileApp.view.$.containerWindow.getRoot().$.multiColumn.$.rightPanel.$.keyboard.selectedModels,
           existLine = false;
       serverCallStoreDetailedStock.exec({
         organization: OB.MobileApp.model.get('terminal').organization,
@@ -2008,12 +2008,12 @@
       }, function (data) {
         if (data && data.exception) {
           OB.UTIL.showConfirmation.display('', data.exception.message);
-        } else if (lines.length > 0) {
+        } else if (lines && lines.length > 0) {
           for (i = 0; i < lines.length; i++) {
-            if (lines.models[i].get('product').get('id') === p.get('id')) {
+            if (lines[i].get('product').get('id') === p.get('id')) {
               existLine = true;
-              if ((lines.models[i].get('qty') + qty) > data.qty) {
-                OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_ErrorProductDiscontinued', [p.get('_identifier'), (lines.models[i].get('qty') + qty), data.qty]));
+              if ((lines[i].get('qty') + qty) > data.qty) {
+                OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_ErrorProductDiscontinued', [p.get('_identifier'), (lines[i].get('qty') + qty), data.qty]));
                 callback(false);
               } else {
                 callback(true);
