@@ -35,6 +35,10 @@ import org.apache.log4j.Logger;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.database.SessionInfo;
 
+/**
+ * Keeps track of active sessions in this context so they can be marked as no active in database
+ * when they are destroyed. Also used to keep last activity info for CU management.
+ */
 public class SessionListener implements HttpSessionListener, ServletContextListener {
 
   private static final int PING_TIMEOUT_SECS = 120;
