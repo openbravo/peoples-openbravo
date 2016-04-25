@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2013 Openbravo S.L.U.
+ * Copyright (C) 2012-2015 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -83,20 +83,33 @@ public class Category extends ProcessHQLQuery {
       hqlQueries
           .add("select"
               + regularProductsCategoriesHQLProperties.getHqlSelect() //
-              + "from OBRETCO_Productcategory aCat  left outer join aCat.productCategory as pCat left outer join pCat.image as img"
+              + "from OBRETCO_Productcategory aCat left outer join aCat.productCategory as pCat left outer join pCat.image as img"
               + " where ( aCat.obretcoProductlist.id = '" + productList.getId() + "') "
               + " order by pCat.name");
+      hqlQueries
+          .add("select"
+              + regularProductsCategoriesHQLProperties.getHqlSelect() //
+              + "from ADTreeNode tn, ProductCategory pCat left outer join pCat.image as img "
+              + "where tn.$incrementalUpdateCriteria and tn.$naturalOrgCriteria and tn.$readableSimpleClientCriteria "
+              + " and tn.node = pCat.id and tn.tree.table.id = '"
+              + CategoryTree.productCategoryTableId
+              + "' and pCat.summaryLevel = 'Y'"
+              + " and not exists (select pc.id from OBRETCO_Productcategory pc where tn.node = pc.productCategory.id) "
+              + "order by tn.sequenceNumber");
+
     } else {
       hqlQueries.add("select"
           + regularProductsCategoriesHQLProperties.getHqlSelect() //
-          + "from ProductCategory as pCat left outer join pCat.image as img  " + " where exists("
+          + "from ProductCategory as pCat left outer join pCat.image as img  " + " where (exists("
           + "from OBRETCO_Prol_Product pli, " + "PricingProductPrice ppp, "
           + "PricingPriceListVersion pplv "
           + "WHERE pCat=pli.product.productCategory and (pli.obretcoProductlist = '"
           + productList.getId() + "') " + "AND (pplv.id='" + priceListVersion.getId() + "') AND ("
           + "ppp.priceListVersion.id = pplv.id" + ") AND (" + "pli.product.id = ppp.product.id"
-          + ") AND (" + "pli.product.active = true" + ")) "
-          + " AND pCat.$incrementalUpdateCriteria" + " order by pCat.name");
+          + ") AND (" + "pli.product.active = true)) "
+          + "OR (pCat.summaryLevel = 'Y' AND pCat.$naturalOrgCriteria AND "
+          + "pCat.$readableSimpleClientCriteria)) AND pCat.$incrementalUpdateCriteria "
+          + "order by pCat.name");
     }
 
     String promoNameTrl;
@@ -114,7 +127,8 @@ public class Category extends ProcessHQLQuery {
         + promoNameTrl
         + " as name, img.bindaryData as img, "
         + promoNameTrl
-        + " as _identifier"
+        + " as _identifier, "
+        + "'N' as realCategory "
         + " from PromotionType as pt left outer join pt.obposImage img " //
         + "where pt.obposIsCategory = true "//
         + "  and pt.$readableSimpleClientCriteria" //
