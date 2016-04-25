@@ -323,9 +323,16 @@ enyo.kind({
       name: ''
     });
     _.each(models, function (model) {
-      var addModel = true;
+      var addModel = true,
+          value;
       if (column.showValues && column.showValues.length > 0) {
-        var value = _.find(column.showValues, function (val) {
+        value = _.find(column.showValues, function (val) {
+          return model[column.propertyId] === val;
+        });
+        addModel = value !== undefined;
+      }
+      if (column.excludeValues && column.excludeValues.length > 0) {
+        value = _.find(column.excludeValues, function (val) {
           return model[column.propertyId] === val;
         });
         addModel = addModel && value === undefined;
