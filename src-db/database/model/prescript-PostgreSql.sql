@@ -490,9 +490,6 @@ END;$BODY$
 CREATE OR REPLACE FUNCTION hex_to_int(numeric) RETURNS numeric AS '
 DECLARE
 h alias for $1;
-exec varchar;
-curs refcursor;
-res int;
 BEGIN
 return h;
 END;'
