@@ -50,7 +50,7 @@ enyo.kind({
         var value = _.find(column.showValues, function (val) {
           return model[column.propertyId] === val;
         });
-        addModel = value !== undefined;
+        addModel = addModel && value === undefined;
       }
       if (addModel) {
         columns.push({
