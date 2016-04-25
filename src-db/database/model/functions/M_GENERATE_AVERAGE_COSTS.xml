@@ -16,7 +16,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2012 Openbravo SLU
+* All portions are Copyright (C) 2001-2016 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -560,7 +560,7 @@
 		  M_COSTING_ID, CREATED, CREATEDBY, UPDATED,
 		  UPDATEDBY, AD_CLIENT_ID, AD_ORG_ID, M_PRODUCT_ID,
 		  DATETO, DATEFROM, ISMANUAL, M_INOUTLINE_ID,
-		  C_INVOICELINE_ID, QTY, PRICE, CUMQTY,
+		  C_INVOICELINE_ID, QTY, PRICE,
 		  COST, COSTTYPE, ISPERMANENT
 		)
 		VALUES
@@ -568,7 +568,7 @@
 		  Ad_Sequence_Nextno('M_Costing'), now(), v_User, now(),
 		  v_User, Cur_InOutLine.AD_CLIENT_ID, Cur_InOutLine.AD_ORG_ID, Cur_InOutLine.M_PRODUCT_ID,
 		  COALESCE(v_Date, TO_DATE('31-12-9999', 'DD-MM-YYYY')), Cur_InOutLine.MOVEMENTDATE, 'N', Cur_InOutLine.M_INOUTLINE_ID,
-		  NULL, Cur_InOutLine.MOVEMENTQTY, v_PriceNew, COALESCE(v_Qty, 0) + Cur_InOutLine.MOVEMENTQTY + v_CumQty, v_CostNew,
+		  NULL, Cur_InOutLine.MOVEMENTQTY, v_PriceNew, v_CostNew,
 		  'AV', 'N'
 		);
       END IF; 
