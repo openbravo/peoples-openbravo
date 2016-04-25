@@ -33,6 +33,7 @@ import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Query;
 import org.hibernate.ScrollableResults;
+import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
@@ -125,6 +126,20 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
       }
     }
     return dataSourceProperties;
+  }
+
+  @Override
+  public void checkFetchDatasourceAccess(Map<String, String> parameter) {
+    final OBContext obContext = OBContext.getOBContext();
+    Table table = getTableFromParameters(parameter);
+    try {
+      Entity entity = ModelProvider.getInstance().getEntityByTableId(table.getId());
+      if (entity != null) {
+        obContext.getEntityAccessChecker().checkReadableAccess(entity);
+      }
+    } catch (OBSecurityException e) {
+      handleExceptionUnsecuredDSAccess(e);
+    }
   }
 
   @Override

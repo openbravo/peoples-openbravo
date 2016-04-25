@@ -894,10 +894,7 @@ public class ModelProvider implements OBSingleton {
    * @throws CheckException
    */
   public Table getTable(String tableName) throws CheckException {
-    if (tablesByTableName == null)
-      getModel();
-    // search case insensitive!
-    final Table table = tablesByTableName.get(tableName.toLowerCase());
+    final Table table = getTableWithoutCheck(tableName);
     if (table == null) {
       if (OBPropertiesProvider.isFriendlyWarnings()) {
         // this error won't be logged...
@@ -908,6 +905,17 @@ public class ModelProvider implements OBSingleton {
       }
     }
     return table;
+  }
+
+  /**
+   * Retrieves a table using the tableName. If not found then continue without exception.
+   *
+   * @return Table if exists, otherwise null.
+   */
+  public Table getTableWithoutCheck(String tableName) {
+    if (tablesByTableName == null)
+      getModel();
+    return tablesByTableName.get(tableName.toLowerCase());
   }
 
   /**

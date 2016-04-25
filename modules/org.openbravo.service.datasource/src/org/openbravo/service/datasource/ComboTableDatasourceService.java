@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2014 Openbravo SLU 
+ * All portions are Copyright (C) 2014-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -75,12 +75,10 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
 
     OBContext.setAdminMode(true);
     try {
-      // check access to current entity
       field = OBDal.getInstance().get(Field.class, fieldId);
       column = field.getColumn();
       targetEntity = ModelProvider.getInstance().getEntityByTableId(
           (String) DalUtil.getId(column.getTable()));
-      OBContext.getOBContext().getEntityAccessChecker().checkReadable(targetEntity);
 
       if (!StringUtils.isEmpty(parameters.get("criteria"))) {
         String criteria = parameters.get("criteria");
@@ -230,6 +228,31 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
 
   @Override
   public String update(Map<String, String> parameters, String content) {
+    throw new OBException("Method not implemented");
+  }
+
+  @Override
+  public void checkFetchDatasourceAccess(Map<String, String> parameters) {
+    Field field = null;
+    Column column = null;
+    String fieldId = parameters.get("fieldId");
+    Entity targetEntity = null;
+
+    OBContext.setAdminMode(true);
+    try {
+      // check access to current entity
+      field = OBDal.getInstance().get(Field.class, fieldId);
+      column = field.getColumn();
+      targetEntity = ModelProvider.getInstance().getEntityByTableId(
+          (String) DalUtil.getId(column.getTable()));
+      OBContext.getOBContext().getEntityAccessChecker().checkReadableAccess(targetEntity);
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
+  @Override
+  public void checkEditDatasourceAccess(Map<String, String> parameters) {
     throw new OBException("Method not implemented");
   }
 }
