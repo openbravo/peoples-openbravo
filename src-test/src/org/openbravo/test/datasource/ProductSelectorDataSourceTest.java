@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2014 Openbravo SLU 
+ * All portions are Copyright (C) 2014-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -66,7 +66,14 @@ public class ProductSelectorDataSourceTest extends BaseDataSourceTestNoDal {
     Map<String, String> params = new HashMap<String, String>();
     params.put("_selectorDefinitionId", "4C8BC3E8E56441F4B8C98C684A0C9212");
     params.put("filterClass", "org.openbravo.userinterface.selector.SelectorDataSourceFilter");
-    params.put("_where", "e.active='Y'");
+
+    JSONObject criteria = new JSONObject();
+    criteria.put("fieldName", "active");
+    criteria.put("operator", "equals");
+    criteria.put("value", "true");
+    criteria.put("_constructor", "AdvancedCriteria");
+    params.put("criteria", criteria.toString());
+
     params.put("_sortBy", "_identifier");
     params.put("_requestType", "Window");
     params.put("_distinct", "storageBin$warehouse");
@@ -76,13 +83,15 @@ public class ProductSelectorDataSourceTest extends BaseDataSourceTestNoDal {
     params.put("_endRow", "75");
     params.put("_textMatchStyle", "substring");
 
-    if (addFilter) {
-      JSONObject criteria = new JSONObject();
-      criteria.put("fieldName", "storageBin$warehouse$_identifier");
-      criteria.put("operator", "iContains");
-      criteria.put("value", "US");
+    params.put("targetProperty", "product");
+    params.put("inpTableId", "FF8080812E381D1E012E3898C5DD0010");
 
-      params.put("criteria", criteria.toString());
+    if (addFilter) {
+      JSONObject filterCriteria = new JSONObject();
+      filterCriteria.put("fieldName", "storageBin$warehouse$_identifier");
+      filterCriteria.put("operator", "iContains");
+      filterCriteria.put("value", "US");
+      params.put("criteria", filterCriteria.toString());
     }
 
     String response = doRequest("/org.openbravo.service.datasource/ProductStockView", params, 200,
@@ -92,5 +101,4 @@ public class ProductSelectorDataSourceTest extends BaseDataSourceTestNoDal {
     assertTrue("Response should have data", resp.has("data"));
     return resp;
   }
-
 }

@@ -15,7 +15,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2015 Openbravo SLU
+* All portions are Copyright (C) 2015-2016 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -28,9 +28,13 @@
    IF (:OLD.password<>:NEW.password OR :OLD.password IS NULL AND :NEW.password IS NOT NULL) THEN
      
      :NEW.lastpasswordupdate := now();
+
+     IF :OLD.isExpiredPassword = 'Y' then
+       :NEW.isExpiredPassword := 'N';
+     END IF;
      
    END IF;
- 
+
    END AD_USER_EXPIRATIONPASS_TRG
 ]]></body>
     </trigger>

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,6 +21,7 @@ package org.openbravo.service.datasource;
 import java.util.List;
 import java.util.Map;
 
+import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.client.kernel.Template;
 
@@ -115,14 +116,33 @@ public interface DataSourceService {
 
   public void setEntity(Entity entity);
 
+  /**
+   * This method allows to implement a security access to a DataSource when it is used fetch()
+   * method. It can be overridden in specific DataSources to apply a particular security mechanism.
+   *
+   * @throws OBSecurityException
+   *           is thrown if current role does not have access.
+   */
+  public void checkFetchDatasourceAccess(Map<String, String> parameter) throws OBSecurityException;
+
+  /**
+   * This method allows to implement a security access to a DataSource when it is used add(), update()
+   * or remove() methods. It can be overridden in specific DataSources to apply a particular
+   * security mechanism.
+   *
+   * @throws OBSecurityException
+   *           is thrown if current role does not have access.
+   */
+  public void checkEditDatasourceAccess(Map<String, String> parameter) throws OBSecurityException;
+
   public String getWhereClause();
 
   public void setWhereClause(String whereClause);
 
   /**
-   * The data source read from the database. Note care must be taken when using referenced objects
-   * in the returned DataSource instance. The DataSource is read often in a different thread so the
-   * Hibernate session is not available anymore.
+   * This method allows to implement a security access to a DataSource when it is used add(),
+   * update() or remove() methods. It can be overridden in specific DataSources to apply a
+   * particular security mechanism.
    * 
    * @return the data source read from the database. Note: can be null for data sources which are
    *         created in-memory on request.

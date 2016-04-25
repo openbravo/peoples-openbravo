@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2015 Openbravo SLU
+ * All portions are Copyright (C) 2001-2016 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -2635,6 +2635,7 @@ public class Utility {
       return df.format(date);
     } finally {
       OBContext.restorePreviousMode();
+      OBDal.getInstance().commitAndClose();
     }
   }
 
@@ -2685,6 +2686,7 @@ public class Utility {
       }
     } finally {
       OBContext.restorePreviousMode();
+      OBDal.getInstance().commitAndClose();
     }
   }
 

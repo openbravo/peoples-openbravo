@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2015 Openbravo SLU
+ * All portions are Copyright (C) 2014-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -102,10 +102,10 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
         openedFromMenu = "null".equals(parameters.get("windowId").toString()) ? true : false;
       }
       String strOrgId = null;
-      if (jsonRequest.has("inpadOrgId") && jsonRequest.get("inpadOrgId") != JSONObject.NULL) {
-        strOrgId = jsonRequest.getString("inpadOrgId");
-      } else if (jsonparams.has("ad_org_id") && jsonparams.get("ad_org_id") != JSONObject.NULL) {
+      if (jsonparams.has("ad_org_id") && jsonparams.get("ad_org_id") != JSONObject.NULL) {
         strOrgId = jsonparams.getString("ad_org_id");
+      } else if (jsonRequest.has("inpadOrgId") && jsonRequest.get("inpadOrgId") != JSONObject.NULL) {
+        strOrgId = jsonRequest.getString("inpadOrgId");
       }
       Organization org = OBDal.getInstance().get(Organization.class, strOrgId);
       boolean isReceipt = jsonparams.getBoolean("issotrx");
@@ -566,11 +566,6 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
     if (!"Error".equalsIgnoreCase(message.getType())) {
       message.setMessage(strNewPaymentMessage + " " + message.getMessage());
       message.setType(message.getType().toLowerCase());
-    } else {
-      conn = new DalConnectionProvider(true);
-      OBDal.getInstance().getSession().clear();
-      payment = OBDal.getInstance().get(FIN_Payment.class, payment.getId());
-      addCredit(payment, jsonparams, refundAmount, strDifferenceAction);
     }
     if (!strDifferenceAction.equals("refund")) {
       return message;

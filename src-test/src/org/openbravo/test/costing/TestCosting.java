@@ -801,8 +801,14 @@ public class TestCosting extends WeldBaseTest {
       // Create goods shipment, run costing background, post it and assert it
       ShipmentInOut goodsShipment = createGoodsShipment(product, price2, quantity2, day1);
 
+      // Add sleep to avoid assert errors
+      Thread.sleep(1000);
+
       // Create goods receipt, run costing background, post it and assert it
       ShipmentInOut goodsReceipt1 = createGoodsReceipt(purchaseInvoice, price2, quantity3, day2);
+
+      // Add sleep to avoid assert errors
+      Thread.sleep(1000);
 
       // Create goods receipt, run costing background, post it and assert it
       ShipmentInOut goodsReceipt2 = createGoodsReceipt(purchaseInvoice, price1, quantity4, day3);
@@ -917,8 +923,14 @@ public class TestCosting extends WeldBaseTest {
       // Create goods receipt, run costing background, post it and assert it
       ShipmentInOut goodsReceipt1 = createGoodsReceipt(purchaseOrder, price1, quantity2, day1);
 
+      // Add sleep to avoid assert errors
+      Thread.sleep(1000);
+
       // Create goods receipt, run costing background, post it and assert it
       ShipmentInOut goodsReceipt2 = createGoodsReceipt(purchaseOrder, price1, quantity3, day2);
+
+      // Add sleep to avoid assert errors
+      Thread.sleep(1000);
 
       // Create goods shipment, run costing background, post it and assert it
       ShipmentInOut goodsShipment1 = createGoodsShipment(product, price1, quantity4, day3);
@@ -935,11 +947,20 @@ public class TestCosting extends WeldBaseTest {
       // Run price correction background
       runPriceBackground();
 
+      // Add sleep to avoid assert errors
+      Thread.sleep(1000);
+
       // Create goods receipt, run costing background, post it and assert it
       ShipmentInOut goodsReceipt3 = createGoodsReceipt(purchaseOrder, price1, quantity5, day5);
 
+      // Add sleep to avoid assert errors
+      Thread.sleep(1000);
+
       // Create goods receipt, run costing background, post it and assert it
       ShipmentInOut goodsReceipt4 = createGoodsReceipt(purchaseOrder, price1, quantity6, day6);
+
+      // Add sleep to avoid assert errors
+      Thread.sleep(1000);
 
       // Create goods shipment, run costing background, post it and assert it
       ShipmentInOut goodsShipment2 = createGoodsShipment(product, price3, quantity7, day7);
@@ -2786,6 +2807,9 @@ public class TestCosting extends WeldBaseTest {
       // Create goods receipt, run costing background, post it and assert it
       ShipmentInOut goodsReceipt = createGoodsReceipt(purchaseOrder, price1, quantity1, day1);
 
+      // Add sleep to avoid assert errors
+      Thread.sleep(1000);
+
       // Create goods movement, run costing background, post it and assert it
       InternalMovement goodsMovement = createGoodsMovement(product, price1, quantity2, LOCATOR1_ID,
           LOCATOR4_ID, day3);
@@ -2909,6 +2933,9 @@ public class TestCosting extends WeldBaseTest {
 
       // Create goods receipt, run costing background, post it and assert it
       ShipmentInOut goodsReceipt = createGoodsReceipt(purchaseOrder, price1, quantity1, day1);
+
+      // Add sleep to avoid assert errors
+      Thread.sleep(1000);
 
       // Create goods movement, run costing background, post it and assert it
       InternalMovement goodsMovement = createGoodsMovement(product, price1, quantity2, LOCATOR1_ID,
@@ -3043,6 +3070,9 @@ public class TestCosting extends WeldBaseTest {
 
       // Create goods receipt, run costing background, post it and assert it
       ShipmentInOut goodsReceipt = createGoodsReceipt(purchaseOrder, price1, quantity1, day1);
+
+      // Add sleep to avoid assert errors
+      Thread.sleep(1000);
 
       // Create goods movement, run costing background, post it and assert it
       InternalMovement goodsMovement = createGoodsMovement(product, price1, quantity2, LOCATOR1_ID,
@@ -3195,6 +3225,9 @@ public class TestCosting extends WeldBaseTest {
       ShipmentInOut goodsReceipt1 = createGoodsReceipt(purchaseOrder1, price1, quantity1,
           LOCATOR1_ID, day1);
 
+      // Add sleep to avoid assert errors
+      Thread.sleep(1000);
+
       // Create goods receipt, run costing background, post it and assert it
       ShipmentInOut goodsReceipt2 = createGoodsReceipt(purchaseOrder2, price2, quantity1,
           LOCATOR4_ID, day2);
@@ -3202,6 +3235,9 @@ public class TestCosting extends WeldBaseTest {
       // Create goods shipment, run costing background, post it and assert it
       ShipmentInOut goodsShipment1 = createGoodsShipment(product, price1, quantity2, LOCATOR1_ID,
           day3);
+
+      // Add sleep to avoid assert errors
+      Thread.sleep(1000);
 
       // Create goods shipment, run costing background, post it and assert it
       ShipmentInOut goodsShipment2 = createGoodsShipment(product, price2, quantity3, LOCATOR4_ID,
@@ -4040,6 +4076,9 @@ public class TestCosting extends WeldBaseTest {
 
       // Create goods receipt, run costing background, post it and assert it
       ShipmentInOut goodsReceipt = createGoodsReceipt(purchaseOrder, price1, quantity1, day0);
+
+      // Add sleep to avoid assert errors
+      Thread.sleep(1000);
 
       // Create goods shipment, run costing background, post it and assert it
       ShipmentInOut goodsShipment1 = createGoodsShipment(product, price1, quantity2, day2);
@@ -7882,6 +7921,9 @@ public class TestCosting extends WeldBaseTest {
 
       // Create goods receipt, run costing background, post it and assert it
       ShipmentInOut goodsReceipt = createGoodsReceipt(purchaseOrder, price1, quantity1, day1);
+
+      // Add sleep to avoid assert errors
+      Thread.sleep(1000);
 
       // Create goods shipment, run costing background, post it and assert it
       ShipmentInOut goodsShipment1 = createGoodsShipment(product, price1, quantity3, day2);
@@ -12671,11 +12713,17 @@ public class TestCosting extends WeldBaseTest {
 
         assertEquals(productCosting.getTotalMovementQuantity(), productCostingAssert.getQuantity());
 
-        if (productCostingAssert.getQuantity() == null)
+        if (productCostingAssert.getQuantity() == null) {
           assertEquals(productCosting.getQuantity(), null);
-        else
+          assertEquals(productCosting.getTotalStockValuation(), null);
+        } else {
           assertEquals(productCosting.getQuantity(), productCostingAssert.getTransaction()
               .getMovementQuantity());
+          assertEquals(productCosting.getTotalStockValuation()
+              .setScale(1, BigDecimal.ROUND_HALF_UP),
+              productCostingAssert.getFinalCost().multiply(productCostingAssert.getQuantity())
+                  .setScale(1, BigDecimal.ROUND_HALF_UP));
+        }
 
         assertEquals(productCosting.isManual(), productCostingAssert.isManual());
         assertEquals(productCosting.isPermanent(), !productCostingAssert.isManual());

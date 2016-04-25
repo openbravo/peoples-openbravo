@@ -28,7 +28,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2011-2015 Openbravo SLU
+ * All portions are Copyright (C) 2011-2016 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -194,6 +194,14 @@ if(role !=null && role.isRestrictbackend()){
   isc.Dialog.create({message: OB.I18N.getLabel('OBUIAPP_RestrictedUser'), title: OB.I18N.getLabel('OBUIAPP_RestrictedUserTitle'), showCloseButton: false}).show();
   return;
 <%
+}
+boolean onlySystemAdminAccess = "Y".equals(vars1.getSessionValue("onlySystemAdminRoleShouldBeAvailableInErp"));
+if (onlySystemAdminAccess && role != null && !"0".equals(role.getId())) {
+  %>
+  document.body.removeChild(document.getElementById('OBLoadingDiv'));
+  isc.Dialog.create({message: OB.I18N.getLabel('BACKEND_LOGIN_RESTRICTED'), title: OB.I18N.getLabel('BACKEND_LOGIN_RESTRICTED_TITLE'), showCloseButton: false}).show();
+  return;
+<%  
 }
  }finally{
   OBContext.restorePreviousMode();

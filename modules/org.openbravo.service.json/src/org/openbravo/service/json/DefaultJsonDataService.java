@@ -136,6 +136,7 @@ public class DefaultJsonDataService implements JsonDataService {
         final OBQuery<BaseOBObject> obq = OBDal.getInstance().createQuery(entityName,
             JsonConstants.ID + " = :bobId");
         obq.setNamedParameter("bobId", id);
+        obq.setFilterOnActive(false);
         obq.setMaxResult(1);
         final BaseOBObject bob = obq.uniqueResult();
         if (bob != null) {
@@ -495,12 +496,14 @@ public class DefaultJsonDataService implements JsonDataService {
     if (!directNavigation) {
       // set the where/org filter parameters and the @ parameters
       for (String key : parameters.keySet()) {
-        if (key.equals(JsonConstants.WHERE_PARAMETER)
-            || key.equals(JsonConstants.IDENTIFIER)
+        if (key.equals(JsonConstants.IDENTIFIER)
+            || key.equals(JsonConstants.WHERE_PARAMETER)
+            || key.equals(JsonConstants.WHERE_AND_FILTER_CLAUSE)
             || key.equals(JsonConstants.ORG_PARAMETER)
             || key.equals(JsonConstants.TARGETRECORDID_PARAMETER)
             || (key.startsWith(DataEntityQueryService.PARAM_DELIMITER) && key
-                .endsWith(DataEntityQueryService.PARAM_DELIMITER))) {
+                .endsWith(DataEntityQueryService.PARAM_DELIMITER))
+            || (key.equals(SelectorConstants.DS_REQUEST_SELECTOR_ID_PARAMETER))) {
           queryService.addFilterParameter(key, parameters.get(key));
         }
 
@@ -585,13 +588,13 @@ public class DefaultJsonDataService implements JsonDataService {
   }
 
   private void removeWhereParameter(Map<String, String> parameters) {
-    if (parameters.containsKey(JsonConstants.WHERE_PARAMETER)) {
-      parameters.remove(JsonConstants.WHERE_PARAMETER);
+    if (parameters.containsKey(JsonConstants.WHERE_AND_FILTER_CLAUSE)) {
+      parameters.remove(JsonConstants.WHERE_AND_FILTER_CLAUSE);
     }
   }
 
   // Given a map of parameters, returns a string with the pairs key:value
-  private String convertParameterToString(Map<String, String> parameters) {
+  public static String convertParameterToString(Map<String, String> parameters) {
     String paramMsg = "";
     for (String paramKey : parameters.keySet()) {
       paramMsg += paramKey + ":" + parameters.get(paramKey) + "\n";

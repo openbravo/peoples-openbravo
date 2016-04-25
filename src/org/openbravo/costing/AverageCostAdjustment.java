@@ -49,7 +49,6 @@ import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.Locator;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.enterprise.Warehouse;
-import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.materialmgmt.cost.CostAdjustmentLine;
 import org.openbravo.model.materialmgmt.cost.Costing;
 import org.openbravo.model.materialmgmt.cost.CostingRule;
@@ -143,7 +142,7 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
           RoundingMode.HALF_UP);
     }
     log.debug("Starting average cost {}", cost == null ? "not cost" : cost.toPlainString());
-    if (cost != null && (AverageAlgorithm.modifiesAverage(trxType) || !baseCAL.isBackdatedTrx())) {
+    if (AverageAlgorithm.modifiesAverage(trxType) || !baseCAL.isBackdatedTrx()) {
       BigDecimal trxUnitCost = CostAdjustmentUtils.getTrxCost(basetrx, true, getCostCurrency());
       BigDecimal trxPrice = null;
       if (basetrx.getMovementQuantity().signum() == 0) {
@@ -151,6 +150,9 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
       } else {
         trxPrice = trxUnitCost.add(unitCostAdjustmentBalance).divide(
             basetrx.getMovementQuantity().abs(), costCurPrecission, RoundingMode.HALF_UP);
+      }
+      if (cost == null) {
+        cost = trxPrice;
       }
       if (checkNegativeStockCorrection && currentStock.compareTo(basetrx.getMovementQuantity()) < 0
           && cost.compareTo(trxPrice) != 0 && !baseCAL.isNegativeStockCorrection()
@@ -194,6 +196,7 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
         }
         newCosting.setQuantity(basetrx.getMovementQuantity());
         newCosting.setTotalMovementQuantity(currentStock);
+        newCosting.setTotalStockValuation(currentValueAmt.add(adjustmentBalance));
         newCosting.setPrice(cost);
         newCosting.setCostType("AVA");
         newCosting.setManual(Boolean.FALSE);
@@ -219,6 +222,7 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
             curCosting.setPrice(trxPrice);
           }
           curCosting.setTotalMovementQuantity(currentStock);
+          curCosting.setTotalStockValuation(currentValueAmt.add(adjustmentBalance));
           curCosting.setPermanent(Boolean.TRUE);
           OBDal.getInstance().flush();
           OBDal.getInstance().save(curCosting);
@@ -360,6 +364,7 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
               curCosting.setCost(cost);
             }
             curCosting.setTotalMovementQuantity(currentStock);
+            curCosting.setTotalStockValuation(currentValueAmt.add(adjustmentBalance));
             curCosting.setPermanent(Boolean.TRUE);
             OBDal.getInstance().save(curCosting);
           }
@@ -414,6 +419,7 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
                 curCosting.setCost(cost);
               }
               curCosting.setTotalMovementQuantity(currentStock);
+              curCosting.setTotalStockValuation(currentValueAmt.add(adjustmentBalance));
               curCosting.setPermanent(Boolean.TRUE);
               OBDal.getInstance().save(curCosting);
             }
@@ -448,6 +454,7 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
         currentCosting.setPrice(cost);
         currentCosting.setCost(cost);
         currentCosting.setTotalMovementQuantity(currentStock);
+        currentCosting.setTotalStockValuation(currentValueAmt.add(adjustmentBalance));
         currentCosting.setManual(Boolean.FALSE);
         currentCosting.setPermanent(Boolean.TRUE);
         OBDal.getInstance().save(currentCosting);
@@ -547,13 +554,13 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
       orgs = osp.getChildTree("0", false);
       costDimensions = CostingUtils.getEmptyDimensions();
     }
-    Warehouse warehouse = (Warehouse) costDimensions.get(CostDimension.Warehouse);
     MaterialTransaction trx = getTransaction();
 
     StringBuffer wh = new StringBuffer();
     wh.append(" as trx");
-    wh.append("\n join trx." + Product.PROPERTY_ORGANIZATION + " as org");
-    wh.append("\n join trx." + Product.PROPERTY_STORAGEBIN + " as loc");
+    if (costDimensions.get(CostDimension.Warehouse) != null) {
+      wh.append("\n join trx." + MaterialTransaction.PROPERTY_STORAGEBIN + " as loc");
+    }
     wh.append("\n , " + org.openbravo.model.ad.domain.List.ENTITY_NAME + " as trxtype");
     wh.append("\n where trxtype." + CostAdjustmentUtils.propADListReference + ".id = :refid");
     wh.append("  and trxtype." + CostAdjustmentUtils.propADListValue + " = trx."
@@ -610,9 +617,9 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
       wh.append("    )))))");
       wh.append(" ))))");
     }
-    wh.append("  and org.id in (:orgs)");
-    if (warehouse != null) {
-      wh.append("  and loc." + Locator.PROPERTY_WAREHOUSE + " = :warehouse");
+    wh.append("  and trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
+    if (costDimensions.get(CostDimension.Warehouse) != null) {
+      wh.append("  and loc." + Locator.PROPERTY_WAREHOUSE + ".id = :warehouse");
     }
     if (costingRule.getEndingDate() != null) {
       wh.append("  and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " <= :enddate");
@@ -645,8 +652,8 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
     trxQry.setNamedParameter("trxqty", trx.getMovementQuantity());
     trxQry.setNamedParameter("trxid", trx.getId());
     trxQry.setNamedParameter("orgs", orgs);
-    if (warehouse != null) {
-      trxQry.setNamedParameter("warehouse", warehouse);
+    if (costDimensions.get(CostDimension.Warehouse) != null) {
+      trxQry.setNamedParameter("warehouse", costDimensions.get(CostDimension.Warehouse).getId());
     }
     if (costingRule.getEndingDate() != null) {
       trxQry.setNamedParameter("enddate", costingRule.getEndingDate());
@@ -704,7 +711,9 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
     StringBuffer where = new StringBuffer();
     where.append(" as c");
     where.append("\n  join c." + TransactionCost.PROPERTY_INVENTORYTRANSACTION + " as trx");
-    where.append("\n  join trx." + MaterialTransaction.PROPERTY_STORAGEBIN + " as locator");
+    if (costDimensions.get(CostDimension.Warehouse) != null) {
+      where.append("\n  join trx." + MaterialTransaction.PROPERTY_STORAGEBIN + " as locator");
+    }
     where.append("\n , " + org.openbravo.model.ad.domain.List.ENTITY_NAME + " as trxtype");
     where.append("\n where trxtype." + CostAdjustmentUtils.propADListReference + ".id = :refid");
     where.append("  and trxtype." + CostAdjustmentUtils.propADListValue + " = trx."

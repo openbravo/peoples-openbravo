@@ -57,6 +57,7 @@ import org.openbravo.base.model.Property;
 import org.openbravo.base.model.domaintype.EnumerateDomainType;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.session.OBPropertiesProvider;
+import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.client.application.Parameter;
 import org.openbravo.client.application.Process;
 import org.openbravo.client.application.RefWindow;
@@ -198,6 +199,11 @@ public class DataSourceServlet extends BaseKernelServlet {
       return;
     }
 
+    // The WHERE_AND_FILTER_CLAUSE parameter is initialized, it will be set after.
+    parameters.put(JsonConstants.WHERE_AND_FILTER_CLAUSE, "");
+
+    parameters.put(JsonConstants.WHERE_CLAUSE_HAS_BEEN_CHECKED, "false");
+
     if (log.isDebugEnabled()) {
       getRequestContent(request);
     }
@@ -207,10 +213,14 @@ public class DataSourceServlet extends BaseKernelServlet {
       }
 
       String filterClass = parameters.get(DataSourceConstants.DS_FILTERCLASS_PARAM);
+
       if (filterClass != null) {
         try {
-          DataSourceFilter filter = (DataSourceFilter) Class.forName(filterClass).newInstance();
+          DataSourceFilter filter = (DataSourceFilter) WeldUtils
+              .getInstanceFromStaticBeanManager(Class.forName(filterClass));
           filter.doFilter(parameters, request);
+        } catch (OBSecurityException e) {
+          throw e;
         } catch (Exception e) {
           log.error("Error trying to apply datasource filter with class: " + filterClass, e);
         }
@@ -266,6 +276,8 @@ public class DataSourceServlet extends BaseKernelServlet {
           log.error("Unsupported export format: " + exportAs);
         }
       } else {
+        // Check security: continue only if the entity is accessible for current user/role.
+        getDataSource(request).checkFetchDatasourceAccess(parameters);
         String result = getDataSource(request).fetch(parameters);
         writeResult(response, result);
       }
@@ -721,7 +733,9 @@ public class DataSourceServlet extends BaseKernelServlet {
   }
 
   private void handleException(Exception e, HttpServletResponse response) throws IOException {
-    log4j.error(e.getMessage(), e);
+    if (!(e instanceof OBException && ((OBException) e).isLogExceptionNeeded())) {
+      log4j.error(e.getMessage(), e);
+    }
     if (e instanceof SQLGrammarException) {
       log.error(((SQLGrammarException) e).getSQL());
     }
@@ -762,7 +776,10 @@ public class DataSourceServlet extends BaseKernelServlet {
 
       // note if clause updates parameter map
       if (checkSetIDDataSourceName(request, response, parameters)) {
-        final String result = getDataSource(request).add(parameters, getRequestContent(request));
+        String content = getRequestContent(request);
+        parameters.put(DataSourceConstants.ADD_CONTENT_OPERATION, content);
+        getDataSource(request).checkEditDatasourceAccess(parameters);
+        final String result = getDataSource(request).add(parameters, content);
         writeResult(response, result);
       }
     } catch (Exception e) {
@@ -789,6 +806,7 @@ public class DataSourceServlet extends BaseKernelServlet {
         throw new InvalidRequestException("No id parameter");
       }
 
+      getDataSource(request).checkEditDatasourceAccess(parameters);
       final String result = getDataSource(request).remove(parameters);
       writeResult(response, result);
     } catch (Exception e) {
@@ -824,6 +842,7 @@ public class DataSourceServlet extends BaseKernelServlet {
 
       // note if clause updates parameter map
       if (checkSetIDDataSourceName(request, response, parameters)) {
+        getDataSource(request).checkEditDatasourceAccess(parameters);
         final String result = getDataSource(request).update(parameters, getRequestContent(request));
         writeResult(response, result);
       }
@@ -1015,6 +1034,19 @@ public class DataSourceServlet extends BaseKernelServlet {
         final List<Process> obuiapProcesses = new ArrayList<Process>();
         for (Parameter parameter : obParameters.list()) {
           obuiapProcesses.add(parameter.getObuiappProcess());
+
+        }
+
+        // If access to process are granted for current user/role return directly true.
+        boolean isAccessGranted = true;
+        final OBContext obContext = OBContext.getOBContext();
+        for (Process process : obuiapProcesses) {
+          if (!obContext.getEntityAccessChecker().checkProcessAccess(process.getId())) {
+            isAccessGranted = false;
+          }
+        }
+        if (isAccessGranted) {
+          return true;
         }
 
         // Finally select all columns that linked with selected processes and get their fields.

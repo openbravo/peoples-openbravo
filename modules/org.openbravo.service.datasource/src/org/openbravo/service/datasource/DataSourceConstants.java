@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -33,6 +33,9 @@ public class DataSourceConstants {
 
   public static final String OPERATION_TYPE_PARAM = "_operationType";
   public static final String FETCH_OPERATION = "fetch";
+  public static final String REMOVE_OPERATION = "remove";
+
+  public static final String ADD_CONTENT_OPERATION = "addContent";
 
   public static final String NEW_PARAM = "_new";
   public static final String URL_NAME_PARAM = "mapping_name";

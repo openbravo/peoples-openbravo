@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Business Momentum b.v.
- * All portions are Copyright (C) 2007-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2007-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  Business Momentum b.v. (http://www.businessmomentum.eu).
  *************************************************************************
@@ -20,23 +20,23 @@ package org.openbravo.erpCommon.utility.reporting;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.Connection;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperPrint;
 
 import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.base.weld.WeldUtils;
+import org.openbravo.client.application.attachment.AttachImplementationManager;
+import org.openbravo.client.application.attachment.CoreAttachImplementation;
 import org.openbravo.client.application.report.ReportingUtils;
 import org.openbravo.client.application.report.ReportingUtils.ExportType;
 import org.openbravo.database.ConnectionProvider;
-import org.openbravo.erpCommon.businessUtility.TabAttachments;
-import org.openbravo.erpCommon.businessUtility.TabAttachmentsData;
-import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.utils.Replace;
 
@@ -164,13 +164,12 @@ public class ReportManager {
   public File createAttachmentForReport(ConnectionProvider connectionProvider, Report report,
       String tableId, VariablesSecureApp vars, String textForAttachment) throws ReportingException,
       IOException {
-    String path = null;
     if (report.isAttached())
       throw new ReportingException(Utility.messageBD(connectionProvider, "AttachmentExists",
           vars.getLanguage()));
 
-    final String destination = TabAttachments.getAttachmentDirectoryForNewAttachments(tableId,
-        report.getDocumentId());
+    final String destination = CoreAttachImplementation.getAttachmentDirectoryForNewAttachments(
+        tableId, report.getDocumentId());
 
     // First move the file to the correct destination
     final File destinationFolder = new File(_strAttachmentPath + "/" + destination);
@@ -183,39 +182,20 @@ public class ReportManager {
     saveReport(report, jasperPrint);
 
     final File sourceFile = new File(report.getTargetLocation());
-    final File destinationFile = new File(destinationFolder, sourceFile.getName());
-    log4j.debug("Destination file before renaming: " + destinationFile);
-    if (!sourceFile.renameTo(destinationFile))
-      throw new ReportingException(Utility.messageBD(connectionProvider, "UnreachableDestination",
-          vars.getLanguage()) + destinationFolder);
 
-    report.setTargetDirectory(destinationFolder);
-    // Attach them to the order in OB
-    Connection conn = null;
-    try {
-      conn = _connectionProvider.getTransactionConnection();
-      path = TabAttachments.getPath(destination);
-      final String newFileId = SequenceIdData.getUUID();
-      log4j.debug("New file id: " + newFileId);
-      // The 103 in the following insert specifies the document type: in
-      // this case PDF
-      TabAttachmentsData.insert(conn, _connectionProvider, newFileId, vars.getClient(),
-          vars.getOrg(), vars.getUser(), tableId, report.getDocumentId(), "103", textForAttachment,
-          destinationFile.getName(), path);
+    AttachImplementationManager aim = WeldUtils
+        .getInstanceFromStaticBeanManager(AttachImplementationManager.class);
 
-      _connectionProvider.releaseCommitConnection(conn);
-    } catch (final Exception exception) {
-      try {
-        _connectionProvider.releaseRollbackConnection(conn);
-      } catch (final Exception ignored) {
-      }
+    // Add Core's default desc parameter id with textForAttachment for backwards compatibility
+    Map<String, String> requestParams = new HashMap<String, String>();
+    requestParams.put("E22E8E3B737D4A47A691A073951BBF16", textForAttachment);
 
-      throw new ReportingException(exception);
-    }
+    aim.upload(requestParams, vars.getSessionValue("inpTabId"), report.getDocumentId(),
+        vars.getOrg(), sourceFile);
 
     report.setAttached(true);
 
-    return destinationFile;
+    return sourceFile;
   }
 
   private HashMap<String, Object> populateDesignParameters(VariablesSecureApp variables,

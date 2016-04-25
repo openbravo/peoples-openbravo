@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -56,6 +56,7 @@ import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.session.OBPropertiesProvider;
+import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.OBInterceptor;
 import org.openbravo.dal.service.OBCriteria;
@@ -66,6 +67,7 @@ import org.openbravo.ddlutils.task.DatabaseUtils;
 import org.openbravo.ddlutils.util.DBSMOBUtil;
 import org.openbravo.ddlutils.util.OBDataset;
 import org.openbravo.erpCommon.ad_process.HeartbeatProcess;
+import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.modules.ImportModule;
 import org.openbravo.erpCommon.modules.ModuleTree;
@@ -86,10 +88,13 @@ import org.openbravo.erpCommon.utility.NavigationBar;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBErrorBuilder;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
+import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.erpCommon.utility.SQLReturnObject;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.system.SystemInformation;
+import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.services.webservice.Module;
 import org.openbravo.services.webservice.ModuleDependency;
 import org.openbravo.services.webservice.SimpleModule;
@@ -97,6 +102,8 @@ import org.openbravo.services.webservice.WebService3Impl;
 import org.openbravo.services.webservice.WebService3ImplServiceLocator;
 import org.openbravo.utils.Replace;
 import org.openbravo.xmlEngine.XmlDocument;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This servlet is in charge of showing the Module Manager Console which have three tabs: *Installed
@@ -108,6 +115,9 @@ public class ModuleManagement extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
   public static final String UPDATE_ALL_RECORD_ID = "FFF";
   private static final String UPGRADE_INFO_URL = "https://butler.openbravo.com/heartbeat-server/org.openbravo.utility.centralrepository/UpgradeInfo";
+
+  @SuppressWarnings("hiding")
+  private static final Logger log4j = LoggerFactory.getLogger(ModuleManagement.class);
 
   /**
    * Main method that controls the sent command
@@ -355,7 +365,8 @@ public class ModuleManagement extends HttpSecureAppServlet {
       // but dont show the restart tomcat message is a rebuild need to be done
       if (!restartTomcat.equals("0") && totalToBeRebuilt.equals("0")) {
         updatesRebuildHTML = "<a class=\"LabelLink_noicon\" href=\"#\" onclick=\"openServletNewWindow('TOMCAT', false, '../ad_process/ApplyModules.html', 'BUTTON', null, true, 650, 900, null, null, null, null, true);return false;\">"
-            + Utility.messageBD(this, "Restart_Tomcat", lang) + "</a>";
+            + Utility.messageBD(this, canRebuildFromMMC() ? "Restart_Tomcat" : "RestartRequired",
+                lang) + "</a>";
       } else {
         // Check for rebuild system
         if (!totalToBeRebuilt.equals("0") || lastBuildFailed) {
@@ -363,7 +374,8 @@ public class ModuleManagement extends HttpSecureAppServlet {
               + "&nbsp;"
               + Utility.messageBD(this, "ApplyModules", lang)
               + ", <a id=\"rebuildNow\" class=\"LabelLink_noicon\" href=\"#\" onclick=\"openServletNewWindow('DEFAULT', false, '../ad_process/ApplyModules.html', 'BUTTON', null, true, 700, 900, null, null, null, null, true);return false;\">"
-              + Utility.messageBD(this, "RebuildNow", lang) + "</a>";
+              + Utility.messageBD(this, canRebuildFromMMC() ? "RebuildNow" : "RebuildRequired",
+                  lang) + "</a>";
         }
 
         // Check for updates
@@ -418,6 +430,32 @@ public class ModuleManagement extends HttpSecureAppServlet {
       log4j.error("Error genrating updates notifications", e);
     }
     return rt;
+  }
+
+  /** Returns {@code true} in case System can be rebuilt from MMC's UI. */
+  public static boolean canRebuildFromMMC() {
+    boolean runningInTomcat;
+    try {
+      runningInTomcat = RequestContext.getServletContext().getServerInfo().contains("Tomcat");
+      log4j.debug("Server Info:" + RequestContext.getServletContext().getServerInfo());
+    } catch (OBException e) {
+      log4j.error("Couldn't get servlet context", e);
+      return false;
+    }
+    if (!runningInTomcat) {
+      return false;
+    }
+
+    boolean externalRebuild = false;
+    try {
+      // ExternalRebuild Property needs to be configured at system level
+      externalRebuild = "Y".equals(Preferences.getPreferenceValue("ExternalRebuild", true, OBDal
+          .getInstance().getProxy(Client.class, "0"),
+          OBDal.getInstance().getProxy(Organization.class, "0"), null, null, null));
+    } catch (PropertyException noPrefDefined) {
+    }
+
+    return !externalRebuild;
   }
 
   /**
@@ -2725,7 +2763,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
     final Platform platform = PlatformFactory.createNewPlatformInstance(datasource);
 
     OBDataset ad = new OBDataset(platform, db, "AD");
-    boolean datachange = ad.hasChanged(connection, log4j, tablesModified);
+    boolean datachange = ad.hasChanged(connection, super.log4j, tablesModified);
     if (datachange) {
       if (localChanges == null) {
         localChanges = Utility.messageBD(this, "ErrorLocalChanges", vars.getLanguage());

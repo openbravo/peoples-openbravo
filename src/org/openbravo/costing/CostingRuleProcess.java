@@ -72,6 +72,8 @@ public class CostingRuleProcess implements Process {
 
   @Override
   public void execute(ProcessBundle bundle) throws Exception {
+    long start = System.currentTimeMillis();
+    log4j.debug("Starting CostingRuleProcess at: " + new Date());
     logger = bundle.getLogger();
     OBError msg = new OBError();
     msg.setType("Success");
@@ -117,7 +119,7 @@ public class CostingRuleProcess implements Process {
           // Set valid from date
           startingDate = DateUtils.truncate(new Date(), Calendar.SECOND);
           rule.setStartingDate(startingDate);
-          log4j.debug("setting starting date " + startingDate);
+          log4j.debug("Setting starting date " + startingDate);
           prevCostingRule.setEndingDate(startingDate);
           OBDal.getInstance().save(prevCostingRule);
           OBDal.getInstance().flush();
@@ -165,6 +167,9 @@ public class CostingRuleProcess implements Process {
       OBContext.restorePreviousMode();
     }
     bundle.setResult(msg);
+    long end = System.currentTimeMillis();
+    log4j.debug("Ending CostingRuleProcess at: " + new Date() + ". Duration: " + (end - start)
+        + " ms.");
   }
 
   private void migrationCheck() {
@@ -255,6 +260,7 @@ public class CostingRuleProcess implements Process {
     Client client = OBDal.getInstance().get(Client.class,
         OBContext.getOBContext().getCurrentClient().getId());
 
+    long t1 = System.currentTimeMillis();
     StringBuffer insert = new StringBuffer();
     insert.append(" insert into " + TransactionCost.ENTITY_NAME);
     insert.append(" (" + TransactionCost.PROPERTY_ID);
@@ -298,8 +304,11 @@ public class CostingRuleProcess implements Process {
     queryInsert.setParameterList("orgs", childOrgs);
     queryInsert.setDate("date", date);
     queryInsert.setString("client", client.getId());
-    queryInsert.executeUpdate();
+    int n1 = queryInsert.executeUpdate();
+    log4j.debug("InitializeOldTrx inserted " + n1 + " records. Took: "
+        + (System.currentTimeMillis() - t1) + " ms.");
 
+    long t2 = System.currentTimeMillis();
     StringBuffer update = new StringBuffer();
     update.append(" update " + MaterialTransaction.ENTITY_NAME);
     update.append(" set " + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = true");
@@ -318,7 +327,9 @@ public class CostingRuleProcess implements Process {
     queryUpdate.setParameterList("orgs", childOrgs);
     queryUpdate.setDate("date", date);
     queryUpdate.setString("client", client.getId());
-    queryUpdate.executeUpdate();
+    int n2 = queryUpdate.executeUpdate();
+    log4j.debug("InitializeOldTrx updated " + n2 + " records. Took: "
+        + (System.currentTimeMillis() - t2) + " ms.");
 
     OBDal.getInstance().getSession().flush();
     OBDal.getInstance().getSession().clear();
@@ -330,16 +341,21 @@ public class CostingRuleProcess implements Process {
   }
 
   protected void createCostingRuleInits(String ruleId, Set<String> childOrgs, Date date) {
+    long t1 = System.currentTimeMillis();
     CostingRule rule = OBDal.getInstance().get(CostingRule.class, ruleId);
     ScrollableResults stockLines = getStockLines(childOrgs, date);
+    log4j.debug("GetStockLines took: " + (System.currentTimeMillis() - t1) + " ms.");
+
     // The key of the Map is the concatenation of orgId and warehouseId
+    long t2 = System.currentTimeMillis();
     Map<String, String> initLines = new HashMap<String, String>();
     Map<String, Long> maxLineNumbers = new HashMap<String, Long>();
     InventoryCountLine closingInventoryLine = null;
     InventoryCountLine openInventoryLine = null;
-    int i = 1;
+    int i = 0;
     try {
       while (stockLines.next()) {
+        long t3 = System.currentTimeMillis();
         Object[] stockLine = stockLines.get();
         String productId = (String) stockLine[0];
         String attrSetInsId = (String) stockLine[1];
@@ -382,25 +398,41 @@ public class CostingRuleProcess implements Process {
           insertInventoryLine(cri.getCloseInventory(), productId, attrSetInsId, uomId, orderUOMId,
               locatorId, qty == null ? null : qty.abs(), BigDecimal.ZERO, orderQty == null ? null
                   : orderQty.abs(), BigDecimal.ZERO, lineNo, openInventoryLine);
-
         }
 
+        i++;
         if ((i % 100) == 0) {
           OBDal.getInstance().flush();
           OBDal.getInstance().getSession().clear();
           // Reload rule after clear session.
           rule = OBDal.getInstance().get(CostingRule.class, ruleId);
         }
-        i++;
+
+        log4j.debug("Create closing/opening inventory line took: "
+            + (System.currentTimeMillis() - t3) + " ms.");
       }
     } finally {
       stockLines.close();
     }
+    log4j.debug("Create " + i + " closing/opening inventory lines took: "
+        + (System.currentTimeMillis() - t2) + " ms.");
+
     // Process closing physical inventories.
+    long t4 = System.currentTimeMillis();
     rule = OBDal.getInstance().get(CostingRule.class, ruleId);
+    i = 0;
     for (CostingRuleInit cri : rule.getCostingRuleInitList()) {
+      long t5 = System.currentTimeMillis();
       new InventoryCountProcess().processInventory(cri.getCloseInventory(), false);
+      log4j.debug("Processing closing inventory took: " + (System.currentTimeMillis() - t5)
+          + " ms.");
+      i++;
     }
+    log4j.debug("Processing " + i + " closing inventories took: "
+        + (System.currentTimeMillis() - t4) + " ms.");
+
+    log4j
+        .debug("CreateCostingRuleInits method took: " + (System.currentTimeMillis() - t1) + " ms.");
   }
 
   private ScrollableResults getStockLines(Set<String> childOrgs, Date date) {
@@ -526,12 +558,19 @@ public class CostingRuleProcess implements Process {
 
   private void updateInventoriesCostAndProcessInitInventories(String ruleId, Date startingDate,
       boolean existsPreviousRule) {
+    long t1 = System.currentTimeMillis();
     CostingRule rule = OBDal.getInstance().get(CostingRule.class, ruleId);
+    int i = 0;
     for (CostingRuleInit cri : rule.getCostingRuleInitList()) {
+      long t2 = System.currentTimeMillis();
       ScrollableResults trxs = getInventoryLineTransactions(cri.getCloseInventory());
-      int i = 1;
+      log4j.debug("GetInventoryLineTransactions took: " + (System.currentTimeMillis() - t2)
+          + " ms.");
+      long t3 = System.currentTimeMillis();
+      int j = 0;
       try {
         while (trxs.next()) {
+          long t4 = System.currentTimeMillis();
           MaterialTransaction trx = (MaterialTransaction) trxs.get(0);
           // Remove 1 second from transaction date to ensure that cost is calculated with previous
           // costing rule.
@@ -576,24 +615,42 @@ public class CostingRuleProcess implements Process {
           initICL.setCost(cost);
           OBDal.getInstance().save(initICL);
 
-          if ((i % 100) == 0) {
+          j++;
+          if ((j % 100) == 0) {
             OBDal.getInstance().flush();
             OBDal.getInstance().getSession().clear();
             cri = OBDal.getInstance().get(CostingRuleInit.class, cri.getId());
           }
-          i++;
+
+          log4j.debug("Update inventory line cost took: " + (System.currentTimeMillis() - t4)
+              + " ms.");
         }
       } finally {
         trxs.close();
       }
-
       OBDal.getInstance().flush();
+      log4j.debug("Update " + j + "inventory line costs took: " + (System.currentTimeMillis() - t3)
+          + " ms.");
+
+      long t5 = System.currentTimeMillis();
       cri = OBDal.getInstance().get(CostingRuleInit.class, cri.getId());
       new InventoryCountProcess().processInventory(cri.getInitInventory(), false);
+      log4j.debug("Processing opening inventory took: " + (System.currentTimeMillis() - t5)
+          + " ms.");
+      i++;
     }
+    log4j.debug("Processing " + i + " opening inventories took: "
+        + (System.currentTimeMillis() - t1) + " ms.");
+
     if (!existsPreviousRule) {
+      long t6 = System.currentTimeMillis();
       updateInitInventoriesTrxDate(startingDate, ruleId);
+      log4j.debug("UpdateInitInventoriesTrxDate took: " + (System.currentTimeMillis() - t6)
+          + " ms.");
     }
+
+    log4j.debug("UpdateInventoriesCostAndProcessInitInventories method took: "
+        + (System.currentTimeMillis() - t1) + " ms.");
   }
 
   protected MaterialTransaction getInventoryLineTransaction(InventoryCountLine icl) {

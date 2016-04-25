@@ -1,4 +1,4 @@
-<!--
+/*
  *************************************************************************
  * The contents of this file are subject to the Openbravo  Public  License
  * Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
@@ -11,18 +11,26 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2016 Openbravo SLU 
  * All Rights Reserved. 
- * Contributor(s):  ______________________________________.
  ************************************************************************
--->
-<html>
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>Attached files</title>
-<link rel="shortcut icon" href="../../../../../web/images/favicon.ico" type="image/x-icon" />
-</head>
-<frameset rows="100%,*" frameborder="no" border="0" framespacing="0" cols="*">
-<frame name="superior" noresize="" src="TabAttachments_F1.html?Command=FRAME1"></frame>
-<frame name="oculto" scrolling="no" noresize="" src="TabAttachments_F1.html?Command=FRAME2"></frame></frameset>
-</html>
+ */
+
+package org.openbravo.server;
+
+import javax.enterprise.context.ApplicationScoped;
+
+/**
+ * Abstract class to be extended by implementations of the server controller
+ */
+@ApplicationScoped
+public abstract class ServerController {
+
+  public abstract boolean isThisACentralServer();
+
+  public abstract boolean isThisAStoreServer();
+
+  public int getPriority() {
+    return 100;
+  }
+}

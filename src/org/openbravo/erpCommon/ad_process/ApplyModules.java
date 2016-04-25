@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2015 Openbravo SLU
+ * All portions are Copyright (C) 2009-2016 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -46,6 +46,7 @@ import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
+import org.openbravo.erpCommon.ad_forms.ModuleManagement;
 import org.openbravo.erpCommon.ad_process.buildStructure.Build;
 import org.openbravo.erpCommon.ad_process.buildStructure.BuildMainStep;
 import org.openbravo.erpCommon.ad_process.buildStructure.BuildStep;
@@ -66,22 +67,27 @@ import org.xml.sax.InputSource;
 public class ApplyModules extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
-  /**
-   * 
-   */
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
     final VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
-      printPage(request, response, vars);
+      if (ModuleManagement.canRebuildFromMMC()) {
+        printDefaultPage(request, response, vars);
+      } else {
+        printExternalRebuild(request, response, vars, false);
+      }
     } else if (vars.commandIn("STARTAPPLY")) {
       startApply(response, vars);
     } else if (vars.commandIn("RESETREBUILDSTATE")) {
       resetBuild(response, vars);
     } else if (vars.commandIn("TOMCAT")) {
-      printPageTomcat(request, response, vars);
+      if (ModuleManagement.canRebuildFromMMC()) {
+        printPageRestartTomcat(request, response, vars);
+      } else {
+        printExternalRebuild(request, response, vars, true);
+      }
     } else if (vars.commandIn("RESTART")) {
       restartApplicationServer(response, vars);
     } else {
@@ -92,7 +98,7 @@ public class ApplyModules extends HttpSecureAppServlet {
   /**
    * Prints a page that only allows the user to restart or reload Tomcat
    */
-  private void printPageTomcat(HttpServletRequest request, HttpServletResponse response,
+  private void printPageRestartTomcat(HttpServletRequest request, HttpServletResponse response,
       VariablesSecureApp vars) throws IOException, ServletException {
 
     final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
@@ -141,7 +147,7 @@ public class ApplyModules extends HttpSecureAppServlet {
    * buttons. First it checks whether the server has write permissions to be able to execute the
    * process.
    */
-  private void printPage(HttpServletRequest request, HttpServletResponse response,
+  private void printDefaultPage(HttpServletRequest request, HttpServletResponse response,
       VariablesSecureApp vars) throws IOException, ServletException {
     // Check for permissions to apply modules from application server.
     final File f = new File(vars.getSessionValue("#sourcePath"));
@@ -267,6 +273,22 @@ public class ApplyModules extends HttpSecureAppServlet {
     String generatedJS = firstState + "\n" + endStates + "\n" + arraySteps + "\n" + errorStatus
         + "\n" + numofWarns + "\n" + numofErrors + "\n" + nodeStructure + "\n" + "\n";
     xmlDocument.setParameter("jsparam", generatedJS);
+
+    response.setContentType("text/html; charset=UTF-8");
+    final PrintWriter out = response.getWriter();
+
+    out.println(xmlDocument.print());
+    out.close();
+  }
+
+  private void printExternalRebuild(HttpServletRequest request, HttpServletResponse response,
+      VariablesSecureApp vars, boolean restart) throws IOException {
+    String[] discard = { restart ? "rebuildMsg" : "restartMsg" };
+    final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
+        "org/openbravo/erpCommon/ad_process/ApplyModulesExternal", discard).createXmlDocument();
+    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
+    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\r\n");
+    xmlDocument.setParameter("theme", vars.getTheme());
 
     response.setContentType("text/html; charset=UTF-8");
     final PrintWriter out = response.getWriter();

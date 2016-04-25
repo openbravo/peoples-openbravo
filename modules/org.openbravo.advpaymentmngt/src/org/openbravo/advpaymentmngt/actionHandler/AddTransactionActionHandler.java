@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2015 Openbravo SLU
+ * All portions are Copyright (C) 2014-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -173,7 +173,6 @@ public class AddTransactionActionHandler extends BaseProcessActionHandler {
         isReceipt = payment.isReceipt();
         description = StringUtils.isNotBlank(payment.getDescription()) ? payment.getDescription()
             .replace("\n", ". ") : "";
-        organization = payment.getOrganization();
         paymentCurrency = payment.getCurrency();
         convertRate = payment.getFinancialTransactionConvertRate();
         sourceAmount = payment.getAmount();
@@ -183,8 +182,9 @@ public class AddTransactionActionHandler extends BaseProcessActionHandler {
         depositAmt = new BigDecimal(strDepositAmount);
         paymentAmt = new BigDecimal(strWithdrawalamt);
         isReceipt = (depositAmt.compareTo(paymentAmt) >= 0);
-        description = (StringUtils.isBlank(strDescription) || strDescription.equals("null")) ? OBMessageUtils.messageBD("APRM_GLItem")
-            + ": " + glItem.getName() : strDescription;
+        description = (StringUtils.isBlank(strDescription) || strDescription.equals("null")) ? OBMessageUtils
+            .messageBD("APRM_GLItem") + ": " + glItem.getName()
+            : strDescription;
       } else { // Bank Fee or transaction without payment and gl item
         depositAmt = new BigDecimal(strDepositAmount);
         paymentAmt = new BigDecimal(strWithdrawalamt);

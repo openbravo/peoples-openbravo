@@ -121,6 +121,10 @@
   <SUBREPORT id="reportGroupCrit" name="reportGroupCrit" report="org/openbravo/erpCommon/reference/List">
     <ARGUMENT name="parameterListSelected" withId="paramGroupCrit"/>
   </SUBREPORT>
+    <PARAMETER id="paramSalesrepId" name="salesrepId" attribute="value"/>
+  <SUBREPORT id="reportSalesRep_ID" name="reportSalesRep_ID" report="org/openbravo/erpCommon/reference/List">
+    <ARGUMENT name="parameterListSelected" withId="paramSalesrepId"/>
+  </SUBREPORT>
   <PARAMETER id="paramOrdCrit" name="ordCrit" attribute="value"/>
   <SUBREPORT id="reportOrdCrit" name="reportOrdCrit" report="org/openbravo/erpCommon/reference/List">
     <ARGUMENT name="parameterListSelected" withId="paramOrdCrit"/>
@@ -145,6 +149,8 @@
     <FIELD id="fieldInvoiceNumber" replaceCharacters="html">INVOICE_NUMBER</FIELD>
     <FIELD id="fieldInvoiceNumber_nolink" replaceCharacters="html">INVOICE_NUMBER</FIELD>
     <FIELD id="fieldInvoiceNumber_nolink" attribute="style" replace="xx">NOT_PAYMENT_PLAN_Y_N</FIELD>
+    
+    <FIELD id="fieldPaymentMethod">PAYMENT_METHOD</FIELD>
     
     <FIELD id="fieldInvoiceDate">INVOICE_DATE</FIELD>
     
@@ -185,6 +191,8 @@
     <FIELD id="fieldInvoiceNumber2" replaceCharacters="html">INVOICE_NUMBER</FIELD>
     <FIELD id="fieldInvoiceNumber2_nolink" replaceCharacters="html">INVOICE_NUMBER</FIELD>
     <FIELD id="fieldInvoiceNumber2_nolink" attribute="style" replace="xx">NOT_PAYMENT_PLAN_Y_N</FIELD>
+    
+    <FIELD id="fieldPaymentMethod">PAYMENT_METHOD</FIELD>
     
     <FIELD id="fieldInvoiceDate2">INVOICE_DATE</FIELD>
     

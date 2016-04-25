@@ -17,7 +17,7 @@
     * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
     * All Rights Reserved.
     * Contributor(s): Openbravo SLU
-    * Contributions are Copyright (C) 2001-2012 Openbravo, S.L.U.
+    * Contributions are Copyright (C) 2001-2016 Openbravo, S.L.U.
     *
     * Specifically, this derivative work is based upon the following Compiere
     * file and version.
@@ -32,6 +32,10 @@
   v_Processed  VARCHAR(60) ;
   v_C_ORDER_ID VARCHAR2(32) ;
   v_Docaction VARCHAR(60) ;
+  v_IsWithholding_Tax C_Tax.IsWithholdingTax%TYPE;
+  v_Rate_Tax C_Tax.Rate%TYPE;
+  v_IsCashVAT_Tax C_Tax.IsCashVAT%TYPE;
+  v_IsCashVAT_Order C_Order.IsCashVAT%TYPE;
     
 BEGIN
     
@@ -82,6 +86,31 @@ BEGIN
   RAISE_APPLICATION_ERROR(-20000, '@20501@');
   END IF;
   **/
+ -- Update C_Order.IsCashVAT flag from the line tax rate.
+ -- We do it this way to force any process that creates Orders to properly set the C_Order.IsCashVAT
+ -- If a user manually changes the tax rate when entering a line, the order's header IsCash VAT may change
+ IF (INSERTING OR UPDATING) THEN
+   IF (:NEW.C_TAX_ID IS NOT NULL) THEN
+     SELECT COALESCE(iswithholdingtax, 'N'), COALESCE(rate, 0), COALESCE(IsCashVat, 'N')
+     INTO v_IsWithholding_Tax, v_Rate_Tax, v_IsCashVAT_Tax
+     FROM C_Tax
+     WHERE C_Tax_ID=:NEW.C_Tax_ID;
+
+     IF (v_IsWithholding_Tax='N' AND v_Rate_Tax<>0) THEN
+       SELECT COALESCE(IsCashVAT, 'N')
+       INTO v_IsCashVAT_Order
+       FROM C_Order
+       WHERE C_Order_ID=:NEW.C_Order_ID;
+
+       IF (v_IsCashVAT_Tax <> v_IsCashVAT_Order) THEN
+         UPDATE C_Order
+         SET IsCashVAT = v_IsCashVAT_Tax
+         WHERE C_Order_ID=:NEW.C_Order_ID;
+       END IF;
+     END IF;
+   END IF;
+ END IF;
+
 END C_ORDERTAX_TRG
 ]]></body>
     </trigger>

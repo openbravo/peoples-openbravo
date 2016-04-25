@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -70,6 +70,7 @@ public class Column extends ModelObject {
   private boolean translatable;
   private Integer seqno;
   private boolean usedSequence;
+  private boolean isAllowedCrossOrgReference;
 
   private Module module;
 
@@ -480,6 +481,21 @@ public class Column extends ModelObject {
 
   public void setSqlLogic(String sqlLogic) {
     this.sqlLogic = sqlLogic;
+  }
+
+  /**
+   * Defines whether the {@link Property} generated for this column will allow cross organization
+   * references.
+   * 
+   * @see Property#isAllowedCrossOrgReference()
+   */
+  public boolean isAllowedCrossOrgReference() {
+    return isAllowedCrossOrgReference;
+  }
+
+  /** @see Property#isAllowedCrossOrgReference() */
+  public void setAllowedCrossOrgReference(boolean allowedCrossOrgReference) {
+    this.isAllowedCrossOrgReference = allowedCrossOrgReference;
   }
 
 }

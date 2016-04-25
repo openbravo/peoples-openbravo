@@ -160,7 +160,7 @@ All files under the LGPL 2.1 (available at http://www.gnu.org/licenses/old-licen
 # poi-3.10.1.jar
 Under the Apache 2.0 license (included as Apache_poi_license.txt in this folder)
 
-# hibernate3.jar
+# hibernate3-patched.jar
 All files under the LGPL 2.1 (available at www.gnu.org/licenses/lgpl.html)
 
 # dom4j-1.6.1.jar

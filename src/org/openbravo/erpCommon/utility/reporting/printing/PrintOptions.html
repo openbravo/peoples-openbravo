@@ -13,7 +13,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2008-2013 Openbravo SLU
+ * All portions are Copyright (C) 2008-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -65,7 +65,11 @@
           //We refresh the main view to ensure that the attachments counter is updated
         var tabSet = getFrame('LayoutMDI').OB.MainView.TabSet;
         if (tabSet && tabSet.getSelectedTab() && tabSet.getSelectedTab().pane.view && tabSet.getSelectedTab().pane.view.refresh) {
-          tabSet.getSelectedTab().pane.view.refresh();
+          if (tabSet.getSelectedTab().pane.view.viewGrid.getSelectedRecords().length > 1) {
+            tabSet.getSelectedTab().pane.view.refresh();
+          } else {
+            tabSet.getSelectedTab().pane.view.refreshCurrentRecord ? tabSet.getSelectedTab().pane.view.refreshCurrentRecord():tabSet.getSelectedTab().pane.view.refresh();
+          }
         }
       }
       closePage();

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2015 Openbravo SLU
+ * All portions are Copyright (C) 2010-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -25,11 +25,14 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.util.OBClassLoader;
 import org.openbravo.base.weld.WeldUtils;
+import org.openbravo.client.application.attachment.AttachmentUtils;
+import org.openbravo.client.application.attachment.AttachmentWindowComponent;
 import org.openbravo.client.application.window.ParameterWindowComponent;
 import org.openbravo.client.application.window.StandardWindowComponent;
 import org.openbravo.client.kernel.BaseComponent;
@@ -44,6 +47,7 @@ import org.openbravo.erpCommon.obps.ActivationKey.FeatureRestriction;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.Window;
+import org.openbravo.model.ad.utility.AttachmentMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,6 +65,9 @@ public class ViewComponent extends BaseComponent {
 
   @Inject
   private ParameterWindowComponent parameterWindowComponent;
+
+  @Inject
+  private AttachmentWindowComponent attachmentWindowComponent;
 
   @Inject
   private WeldUtils weldUtils;
@@ -92,6 +99,8 @@ public class ViewComponent extends BaseComponent {
           throw new IllegalArgumentException("Not found process definition with ID " + processId);
         }
         return generateProcess(process);
+      } else if (viewId.startsWith("attachment_")) {
+        return generateAttachment(viewId);
       } else {
         return generateView(viewId);
       }
@@ -142,6 +151,32 @@ public class ViewComponent extends BaseComponent {
     return parameterWindowComponent.generate();
   }
 
+  protected String generateAttachment(String viewId) {
+    String[] keys = viewId.split(KernelConstants.ID_PREFIX);
+    String tabId = keys[1];
+    Tab tab = OBDal.getInstance().get(Tab.class, tabId);
+    if (tab == null) {
+      throw new IllegalArgumentException("Not found process definition with ID " + tabId);
+    }
+    AttachmentMethod attMethod;
+    if (keys.length >= 3) {
+      String strAttMethodId = keys[2];
+      if (StringUtils.isEmpty(strAttMethodId)) {
+        // In case the attachment was created with old attachments.
+        attMethod = AttachmentUtils.getDefaultAttachmentMethod();
+      } else {
+        attMethod = OBDal.getInstance().get(AttachmentMethod.class, strAttMethodId);
+      }
+    } else {
+      // When uploading an attachment ("Add" button) AttachmentMethod is not sent, so there are less
+      // than 3 elements in the array
+      attMethod = AttachmentUtils.getAttachmentMethod();
+    }
+    attachmentWindowComponent.initialize(tab, attMethod);
+    attachmentWindowComponent.setParameters(getParameters());
+    return attachmentWindowComponent.generate();
+  }
+
   private OBUIAPPViewImplementation getView(String viewName) {
     OBCriteria<OBUIAPPViewImplementation> obc = OBDal.getInstance().createCriteria(
         OBUIAPPViewImplementation.class);
@@ -168,6 +203,14 @@ public class ViewComponent extends BaseComponent {
         throw new IllegalArgumentException("Not found process definition with ID " + processId);
       }
       return process.getModule();
+    } else if (id.startsWith("attachment_")) {
+      String[] keys = id.split(KernelConstants.ID_PREFIX);
+      String tabId = keys[1];
+      Tab tab = OBDal.getInstance().get(Tab.class, tabId);
+      if (tab == null) {
+        throw new IllegalArgumentException("Not found tab with ID " + tabId);
+      }
+      return tab.getModule();
     } else {
       OBUIAPPViewImplementation view = getView(id);
       if (view != null) {

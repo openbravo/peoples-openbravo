@@ -1658,4 +1658,13 @@ public class FIN_Utility {
       }
     }
   }
+
+  public static FIN_FinaccTransaction getFinAccTransaction(FIN_Payment payment) {
+    OBCriteria<FIN_FinaccTransaction> finAccTransactionCriteria = OBDal.getInstance()
+        .createCriteria(FIN_FinaccTransaction.class);
+    finAccTransactionCriteria.add(Restrictions.eq(FIN_FinaccTransaction.PROPERTY_FINPAYMENT,
+        payment));
+    finAccTransactionCriteria.setMaxResults(1);
+    return (FIN_FinaccTransaction) finAccTransactionCriteria.uniqueResult();
+  }
 }

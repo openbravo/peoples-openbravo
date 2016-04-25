@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2015 Openbravo SLU
+ * All portions are Copyright (C) 2010-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -194,8 +194,11 @@ public class FIN_ExecutePayment {
                     if (FIN_Utility.isAutomaticDepositWithdrawn(paymentRunPayment.getPayment())
                         && paymentRunPayment.getPayment().getAmount().compareTo(BigDecimal.ZERO) != 0
                         && !StringUtils.equals(internalParameters.get("comingFrom"), "TRANSACTION")) {
-                      FIN_FinaccTransaction transaction = TransactionsDao
-                          .createFinAccTransaction(paymentRunPayment.getPayment());
+                      FIN_FinaccTransaction transaction = FIN_Utility.getFinAccTransaction(payment);
+                      if (transaction == null) {
+                        transaction = TransactionsDao.createFinAccTransaction(paymentRunPayment
+                            .getPayment());
+                      }
                       VariablesSecureApp vars = new VariablesSecureApp(RequestContext.get()
                           .getRequest());
                       OBError processTransactionError = processTransaction(vars,
@@ -323,10 +326,10 @@ public class FIN_ExecutePayment {
   private OBError processTransaction(VariablesSecureApp vars, ConnectionProvider conn,
       String strAction, FIN_FinaccTransaction transaction) throws Exception {
     ProcessBundle pb = new ProcessBundle("F68F2890E96D4D85A1DEF0274D105BCE", vars).init(conn);
-    HashMap<String, Object> parameters = new HashMap<String, Object>();
-    parameters.put("action", strAction);
-    parameters.put("Fin_FinAcc_Transaction_ID", transaction.getId());
-    pb.setParams(parameters);
+    HashMap<String, Object> params = new HashMap<String, Object>();
+    params.put("action", strAction);
+    params.put("Fin_FinAcc_Transaction_ID", transaction.getId());
+    pb.setParams(params);
     OBError myMessage = null;
     new FIN_TransactionProcess().execute(pb);
     myMessage = (OBError) pb.getResult();

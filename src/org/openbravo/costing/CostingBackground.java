@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2015 Openbravo SLU
+ * All portions are Copyright (C) 2012-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -57,9 +57,9 @@ public class CostingBackground extends DalBaseProcess implements KillableProcess
   private static final Logger log4j = Logger.getLogger(CostingBackground.class);
   public static final String AD_PROCESS_ID = "3F2B4AAC707B4CE7B98D2005CF7310B5";
   private ProcessLogger logger;
-  private int maxTransactions = 0;
   public static final String TRANSACTION_COST_DATEACCT_INITIALIZED = "TransactionCostDateacctInitialized";
   private boolean killProcess = false;
+  private final int BATCH_SIZE = 10000;
 
   @Override
   protected void doExecute(ProcessBundle bundle) throws Exception {
@@ -68,7 +68,6 @@ public class CostingBackground extends DalBaseProcess implements KillableProcess
     OBError result = new OBError();
     List<String> orgsWithRule = new ArrayList<String>();
     List<String> trxs = null;
-    int counter = 0, total = 0, batch = 0;
     try {
       OBContext.setAdminMode(false);
 
@@ -108,37 +107,42 @@ public class CostingBackground extends DalBaseProcess implements KillableProcess
       // Fix the Not Processed flag for those Transactions with Cost Not Calculated
       setNotProcessedWhenNotCalculatedTransactions(orgsWithRule);
 
+      int batch = 0;
+      int counter = 0;
+      int counterBatch;
       trxs = getTransactionsBatch(orgsWithRule);
-      total = trxs.size();
-      while (counter < maxTransactions) {
+      while (!trxs.isEmpty()) {
+        long t1 = System.currentTimeMillis();
         batch++;
+        counterBatch = 0;
         for (String trxId : trxs) {
           if (killProcess) {
             throw new OBException("Process killed");
           }
+          long t3 = System.currentTimeMillis();
+          log4j.debug("Starting transaction process: " + trxId);
           counter++;
+          counterBatch++;
           MaterialTransaction transaction = OBDal.getInstance().get(MaterialTransaction.class,
               trxId);
-          log4j.debug("Start transaction process: " + transaction.getId());
           CostingServer transactionCost = new CostingServer(transaction);
           transactionCost.process();
-          log4j.debug("Transaction processed: " + counter + "/" + maxTransactions + " batch: "
-              + batch);
           OBDal.getInstance().getSession().clear();
           OBDal.getInstance().getConnection(true).commit();
+          long t4 = System.currentTimeMillis();
+          log4j.debug("Ending transaction process: transaction: " + counter + ", batch: " + batch
+              + ". Took: " + (t4 - t3) + " ms.");
         }
-
-        if (counter < maxTransactions) {
-          trxs = getTransactionsBatch(orgsWithRule);
-          total += trxs.size();
-        }
+        trxs = getTransactionsBatch(orgsWithRule);
+        long t2 = System.currentTimeMillis();
+        log4j.debug("Processing batch: " + batch + " (" + counterBatch + " transactions) took: "
+            + (t2 - t1) + " ms.");
       }
 
       logger.logln(OBMessageUtils.messageBD("Success"));
       bundle.setResult(result);
     } catch (OBException e) {
       OBDal.getInstance().rollbackAndClose();
-      // calculateCorrectTrxWhileRollback(trxs, counter, total);
       String message = OBMessageUtils.parseTranslation(bundle.getConnection(), bundle.getContext()
           .toVars(), OBContext.getOBContext().getLanguage().getLanguage(), e.getMessage());
       result.setMessage(message);
@@ -149,7 +153,6 @@ public class CostingBackground extends DalBaseProcess implements KillableProcess
       return;
     } catch (Exception e) {
       OBDal.getInstance().rollbackAndClose();
-      // calculateCorrectTrxWhileRollback(trxs, counter, total);
       result = OBMessageUtils.translateError(bundle.getConnection(), bundle.getContext().toVars(),
           OBContext.getOBContext().getLanguage().getLanguage(), e.getMessage());
       result.setType("Error");
@@ -210,61 +213,8 @@ public class CostingBackground extends DalBaseProcess implements KillableProcess
     trxQry.setParameter("refid", CostAdjustmentUtils.MovementTypeRefID);
     trxQry.setParameter("now", new Date());
     trxQry.setParameterList("orgs", orgsWithRule);
-
-    if (maxTransactions == 0) {
-      maxTransactions = count(orgsWithRule);
-    }
-    trxQry.setMaxResults(10000);
+    trxQry.setMaxResults(BATCH_SIZE);
     return trxQry.list();
-  }
-
-  /**
-   * Return count of transactions to be calculated
-   */
-  private int count(List<String> orgsWithRule) {
-    StringBuffer where = new StringBuffer();
-    where.append(" select count(*) ");
-    where.append(" from " + MaterialTransaction.ENTITY_NAME + " as trx");
-    where.append(" join trx." + MaterialTransaction.PROPERTY_PRODUCT + " as p");
-    where.append("\n , " + org.openbravo.model.ad.domain.List.ENTITY_NAME + " as trxtype");
-    where.append("\n where trx." + MaterialTransaction.PROPERTY_ISPROCESSED + " = false");
-    where.append("   and trx." + MaterialTransaction.PROPERTY_COSTINGSTATUS + " <> 'S'");
-    where.append("   and p." + Product.PROPERTY_PRODUCTTYPE + " = 'I'");
-    where.append("   and p." + Product.PROPERTY_STOCKED + " = true");
-    where.append("   and trxtype." + CostAdjustmentUtils.propADListReference + ".id = :refid");
-    where.append("   and trxtype." + CostAdjustmentUtils.propADListValue + " = trx."
-        + MaterialTransaction.PROPERTY_MOVEMENTTYPE);
-    where.append("   and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " <= :now");
-    where.append("   and trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
-    Query trxQry = OBDal.getInstance().getSession().createQuery(where.toString());
-
-    trxQry.setParameter("refid", CostAdjustmentUtils.MovementTypeRefID);
-    trxQry.setParameter("now", new Date());
-    trxQry.setParameterList("orgs", orgsWithRule);
-
-    return ((Number) trxQry.uniqueResult()).intValue();
-  }
-
-  private void calculateCorrectTrxWhileRollback(List<String> trxs, int _counter, int total) {
-    int correctTrx = _counter - 1;
-    int counter = total - 1000;
-    try {
-      for (String trxId : trxs) {
-        if (counter == correctTrx) {
-          break;
-        }
-        MaterialTransaction transaction = OBDal.getInstance().get(MaterialTransaction.class, trxId);
-        counter++;
-        CostingServer transactionCost = new CostingServer(transaction);
-        transactionCost.process();
-      }
-      OBDal.getInstance().getConnection(true).commit();
-      OBDal.getInstance().getSession().clear();
-    } catch (OBException e1) {
-      OBDal.getInstance().rollbackAndClose();
-    } catch (Exception e1) {
-      OBDal.getInstance().rollbackAndClose();
-    }
   }
 
   private void initializeMtransCostDateAcct() throws Exception {

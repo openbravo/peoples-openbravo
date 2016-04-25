@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2015 Openbravo SLU
+ * All portions are Copyright (C) 2010-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -24,6 +24,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.APRM_FinaccTransactionV;
+import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
@@ -121,6 +122,14 @@ public class FIN_TransactionProcess implements org.openbravo.scheduling.Process 
           if (transaction.getBusinessPartner() == null) {
             transaction.setBusinessPartner(payment.getBusinessPartner());
           }
+          AdvPaymentMngtDao dao = new AdvPaymentMngtDao();
+          if (StringUtils.equals(payment.getStatus(), dao.PAYMENT_STATUS_AWAITING_EXECUTION)
+              && dao.isAutomatedExecutionPayment(financialAccount, payment.getPaymentMethod(),
+                  payment.isReceipt())) {
+            msg = OBMessageUtils.messageBD("APRM_AutomaticExecutionProcess");
+            throw new OBException(msg);
+          }
+
           payment.setStatus(payment.isReceipt() ? "RDNC" : "PWNC");
           transaction.setStatus(payment.isReceipt() ? "RDNC" : "PWNC");
           if (transaction.getPaymentAmount().compareTo(BigDecimal.ZERO) > 0) {

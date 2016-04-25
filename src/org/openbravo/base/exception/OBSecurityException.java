@@ -44,4 +44,9 @@ public class OBSecurityException extends OBException {
   public OBSecurityException(Throwable cause) {
     super(cause);
   }
+
+  public OBSecurityException(String message, boolean logException) {
+    super(message, logException);
+  }
+
 }
