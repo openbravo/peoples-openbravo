@@ -150,9 +150,7 @@ public class CancelAndReplaceUtils {
           oldOrder.getOrganization().getClient().getId());
 
       // Release old reservations
-      if (!triggersDisabled) {
-        releaseOldReservations(oldOrder);
-      }
+      releaseOldReservations(oldOrder);
 
       // Get documentNo for the inverse Order Header coming from jsonorder, if exists
       JSONObject negativeDocumentNoJSON = jsonorder != null && jsonorder.has("negativeDocNo") ? jsonorder
@@ -320,11 +318,11 @@ public class CancelAndReplaceUtils {
         OBDal.getInstance().save(newOrder);
         callCOrderPost(newOrder);
 
-        // Create new reservations
-        createNewReservations(newOrder);
-
-        OBDal.getInstance().flush();
       }
+      // Create new reservations
+      createNewReservations(newOrder);
+
+      OBDal.getInstance().flush();
 
       // Payment Creation
       // Get the payment schedule detail of the oldOrder
