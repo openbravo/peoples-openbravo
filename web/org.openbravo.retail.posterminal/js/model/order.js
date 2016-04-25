@@ -2089,7 +2089,7 @@
           return false;
         }
 
-        if (p.get('islocked')) {
+        if (p.get('islocked') && qty > 0) {
           OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_ErrorProductBlocked', [p.get('_identifier')]));
           if (callback) {
             callback(false, null);
