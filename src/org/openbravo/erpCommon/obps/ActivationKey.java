@@ -900,6 +900,10 @@ public class ActivationKey {
    * 
    * @param currentSession
    *          Current session, not to be taken into account
+   * @param sessionType
+   *          Successful session type: if the session is finally successful this is the type that
+   *          will be marked with in {@code AD_Session}, it is used to determine whether it should
+   *          or not count for CU limitation. In case it is {@code null} it will be counted.
    * 
    * @return {@link LicenseRestriction} with the status of the restrictions
    */
