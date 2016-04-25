@@ -1078,7 +1078,10 @@ public class ActivationKey {
             Restrictions.lt(Session.PROPERTY_LASTPING, lastValidPingTime))));
     obCriteria.add(Restrictions.not(Restrictions.in(Session.PROPERTY_LOGINSTATUS,
         NO_CU_SESSION_TYPES)));
-    obCriteria.add(Restrictions.ne(Session.PROPERTY_ID, currentSessionId));
+
+    if (currentSessionId != null) {
+      obCriteria.add(Restrictions.ne(Session.PROPERTY_ID, currentSessionId));
+    }
 
     boolean sessionDeactivated = false;
     for (Session expiredSession : obCriteria.list()) {
