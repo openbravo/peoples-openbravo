@@ -2000,35 +2000,30 @@
     getStoreStock: function (p, qty, callback) {
       var serverCallStoreDetailedStock = new OB.DS.Process('org.openbravo.retail.posterminal.stock.StoreDetailedStock'),
           me = this,
-          i, lines = OB.MobileApp.view.$.containerWindow.getRoot().$.multiColumn.$.rightPanel.$.keyboard.selectedModels,
-          existLine = false;
-      serverCallStoreDetailedStock.exec({
-        organization: OB.MobileApp.model.get('terminal').organization,
-        product: p.get('id')
-      }, function (data) {
-        if (data && data.exception) {
-          OB.UTIL.showConfirmation.display('', data.exception.message);
-        } else if (lines && lines.length > 0) {
-          for (i = 0; i < lines.length; i++) {
-            if (lines[i].get('product').get('id') === p.get('id')) {
-              existLine = true;
-              if ((lines[i].get('qty') + qty) > data.qty) {
-                OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_ErrorProductDiscontinued', [p.get('_identifier'), (lines[i].get('qty') + qty), data.qty]));
-                callback(false);
-              } else {
-                callback(true);
-              }
-              break;
-            }
-          }
-        }
-        if (!existLine && data && data.qty < qty) {
-          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_ErrorProductDiscontinued', [p.get('_identifier'), qty, data.qty]));
-          callback(false);
-        } else if (!existLine) {
-          callback(true);
+          lines = OB.MobileApp.model.receipt.get('lines');
+
+      _.forEach(lines.models, function (line) {
+        if (line.get('product').get('id') === p.get('id')) {
+          qty += line.get('qty');
         }
       });
+      if (qty > 0) {
+        serverCallStoreDetailedStock.exec({
+          organization: OB.MobileApp.model.get('terminal').organization,
+          product: p.get('id')
+        }, function (data) {
+          if (data && data.exception) {
+            OB.UTIL.showConfirmation.display('', data.exception.message);
+          } else if (data && data.qty < qty) {
+            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_ErrorProductDiscontinued', [p.get('_identifier'), qty, data.qty]));
+            callback(false);
+          } else {
+            callback(true);
+          }
+        });
+      } else {
+        callback(true);
+      }
     },
 
     //Attrs is an object of attributes that will be set in order
