@@ -21,7 +21,8 @@ package org.openbravo.erpCommon.security;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Vector;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
@@ -45,8 +46,8 @@ public class SessionListener implements HttpSessionListener, ServletContextListe
 
   private static final Logger log = Logger.getLogger(SessionListener.class);
 
-  private static Vector<String> sessionsInContext = new Vector<String>();
-  private static Vector<HttpSession> activeHttpSessions = new Vector<HttpSession>();
+  private static Set<String> sessionsInContext = new HashSet<String>();
+  private static Set<HttpSession> activeHttpSessions = new HashSet<HttpSession>();
   private static ServletContext context = null;
 
   /**
@@ -62,7 +63,10 @@ public class SessionListener implements HttpSessionListener, ServletContextListe
     if (sessionId != null) {
       deactivateSession(sessionId);
     }
-    activeHttpSessions.remove(session);
+    synchronized (activeHttpSessions) {
+      activeHttpSessions.remove(session);
+    }
+
     log.debug("Session destroyed. Active sessions count: " + activeHttpSessions.size());
   }
 
@@ -95,7 +99,7 @@ public class SessionListener implements HttpSessionListener, ServletContextListe
    * @param sessionId
    *          db id for the session to keep track
    */
-  public static void addSession(String sessionId) {
+  public static synchronized void addSession(String sessionId) {
     sessionsInContext.add(sessionId);
   }
 
@@ -144,7 +148,10 @@ public class SessionListener implements HttpSessionListener, ServletContextListe
 
   @Override
   public void sessionCreated(HttpSessionEvent event) {
-    activeHttpSessions.add(event.getSession());
+    synchronized (activeHttpSessions) {
+      activeHttpSessions.add(event.getSession());
+    }
+
     log.debug("Session created. Active sessions count: " + activeHttpSessions.size());
   }
 
@@ -153,17 +160,24 @@ public class SessionListener implements HttpSessionListener, ServletContextListe
    * If not present {@code null} is returned.
    */
   public static HttpSession getActiveSession(String sessionId) {
-    for (HttpSession session : activeHttpSessions) {
-      if (sessionId.equals(session.getAttribute("#AD_SESSION_ID"))) {
-        return session;
+    try {
+      for (HttpSession session : activeHttpSessions) {
+        if (sessionId.equals(session.getAttribute("#AD_SESSION_ID"))) {
+          return session;
+        }
       }
+    } catch (Exception e) {
+      log.error("Error getting active session from context", e);
+      // give up and return null
     }
     return null;
   }
 
   private void deactivateSession(String sessionId) {
     try {
-      sessionsInContext.remove(sessionId);
+      synchronized (sessionsInContext) {
+        sessionsInContext.remove(sessionId);
+      }
 
       // Do not use DAL here
       SessionLoginData.deactivate((ConnectionProvider) context.getAttribute("openbravoPool"),
