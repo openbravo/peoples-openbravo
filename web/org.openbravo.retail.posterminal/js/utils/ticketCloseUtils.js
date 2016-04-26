@@ -65,9 +65,24 @@
                   offline: true
                 });
                 if (receipt.get('calculatedInvoice').get('id')) {
-                  receipt.trigger('print', receipt.get('calculatedInvoice'), {
-                    offline: true
-                  });
+                  if (receipt.get('orderType') === 1 && !OB.MobileApp.model.hasPermission('OBPOS_print.return_invoice', true)) {
+                    OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_LblPrintInvoices'), OB.I18N.getLabel('OBPOS_LblPrintInvoicesReturn'), [{
+                      label: OB.I18N.getLabel('OBMOBC_LblOk'),
+                      action: function () {
+                        receipt.trigger('print', orderToPrint.get('calculatedInvoice'), {
+                          offline: true
+                        });
+                      }
+                    }, {
+                      label: OB.I18N.getLabel('OBMOBC_LblCancel')
+                    }], {
+                      autoDismiss: false
+                    });
+                  } else {
+                    receipt.trigger('print', orderToPrint.get('calculatedInvoice'), {
+                      offline: true
+                    });
+                  }
                 }
 
                 // Verify that the receipt has not been changed while the ticket has being closed
