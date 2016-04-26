@@ -1196,8 +1196,13 @@ OB.ViewFormProperties = {
     }
 
     // store the textualvalue so that it is correctly send back to the server
-    if ((columnValue.classicValue || columnValue.classicValue === '') && typeInstance.decSeparator) {
-      this.setTextualValue(field.name, assignClassicValue, typeInstance);
+    if (typeInstance.decSeparator) {
+      if (columnValue.classicValue || columnValue.classicValue === '') {
+        this.setTextualValue(field.name, assignClassicValue, typeInstance);
+      } else {
+        // no textual value, reset it
+        this.setTextualValue(field.name, null, typeInstance);
+      }
     }
   },
 
