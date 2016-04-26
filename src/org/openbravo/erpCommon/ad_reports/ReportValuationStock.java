@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2016 Openbravo SLU 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -63,6 +63,7 @@ public class ReportValuationStock extends HttpSecureAppServlet {
 
     // Get user Client's base currency
     String strUserCurrencyId = Utility.stringBaseCurrencyId(this, vars.getClient());
+
     if (vars.commandIn("DEFAULT", "RELATION")) {
       String strDate = vars.getGlobalVariable("inpDate", "ReportValuationStock|Date",
           DateTimeData.today(this));
@@ -72,6 +73,16 @@ public class ReportValuationStock extends HttpSecureAppServlet {
           "ReportValuationStock|CategoryProduct", "");
       String strCurrencyId = vars.getGlobalVariable("inpCurrencyId",
           "ReportValuationStock|currency", strUserCurrencyId);
+
+      // If login organization's currency exist, it will be defaulted to it
+      String org = vars.getOrg();
+      if (!org.equals("")) {
+        Organization organization = OBDal.getInstance().get(Organization.class, org);
+        if (organization.getCurrency() != null) {
+          strCurrencyId = organization.getCurrency().getId();
+        }
+      }
+
       printPageDataSheet(request, response, vars, strDate, strWarehouse, strCategoryProduct,
           strCurrencyId);
     } else if (vars.commandIn("FIND")) {
