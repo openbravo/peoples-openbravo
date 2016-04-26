@@ -967,23 +967,6 @@ CREATE OPERATOR -(
   RIGHTARG = numeric)
 /-- END
 
--- Auxiliar function for compatibility between 8.2 and 8.3 Postgres version.
-CREATE OR REPLACE FUNCTION is_Trigger_Enabled(tg_name "text")
-  RETURNS boolean AS
-$BODY$ 
-DECLARE
-  v_isEnabled boolean := false;
-BEGIN
-  SELECT tgenabled INTO v_isEnabled FROM pg_trigger WHERE UPPER(tgname) = UPPER(tg_name);
-  RETURN v_isEnabled;
-EXCEPTION
-WHEN OTHERS THEN
-  SELECT (UPPER(tgenabled)<>'D') INTO v_isEnabled FROM pg_trigger WHERE tgname = tg_name;
-  RETURN v_isEnabled;
-END;   $BODY$
-  LANGUAGE 'plpgsql' STABLE;
-/-- END
-
 -- Creating auxiliar functions for view dropping
 CREATE or REPLACE function drop_view (view_name IN varchar) returns varchar as '
 DECLARE
