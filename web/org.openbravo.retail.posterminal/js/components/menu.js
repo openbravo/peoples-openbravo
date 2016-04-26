@@ -92,15 +92,22 @@ enyo.kind({
     }
     this.inherited(arguments); // Manual dropdown menu closure
     this.model.get('order').checkNotProcessedPayments(function () {
-      me.model.get('order').set('voidLayaway', true);
-      me.doShowDivText({
-        permission: me.permission,
-        orderType: 3
-      });
-      me.doTabChange({
-        tabPanel: 'payment',
-        keyboard: 'toolbarpayment',
-        edit: false
+      OB.UTIL.HookManager.executeHooks('OBPOS_PreVoidLayaway', {
+        context: this
+      }, function (args) {
+        if (args && args.cancelOperation) {
+          return;
+        }
+        me.model.get('order').set('voidLayaway', true);
+        me.doShowDivText({
+          permission: me.permission,
+          orderType: 3
+        });
+        me.doTabChange({
+          tabPanel: 'payment',
+          keyboard: 'toolbarpayment',
+          edit: false
+        });
       });
     });
   },
