@@ -2000,7 +2000,8 @@
     getStoreStock: function (p, qty, callback) {
       var serverCallStoreDetailedStock = new OB.DS.Process('org.openbravo.retail.posterminal.stock.StoreDetailedStock'),
           me = this,
-          lines = OB.MobileApp.model.receipt.get('lines');
+          lines = OB.MobileApp.model.receipt.get('lines'),
+          warehouse;
 
       _.forEach(lines.models, function (line) {
         if (line.get('product').get('id') === p.get('id')) {
@@ -2014,11 +2015,20 @@
         }, function (data) {
           if (data && data.exception) {
             OB.UTIL.showConfirmation.display('', data.exception.message);
-          } else if (data && data.qty < qty) {
-            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_ErrorProductDiscontinued', [p.get('_identifier'), qty, data.qty]));
-            callback(false);
           } else {
-            callback(true);
+            warehouse = _.find(data.warehouses, function (warehouse) {
+              if (OB.MobileApp.view.$.containerWindow.getRoot().$.multiColumn.$.leftPanel.$.productdetailsview.warehouse) {
+                return warehouse.warehouseid === OB.MobileApp.view.$.containerWindow.getRoot().$.multiColumn.$.leftPanel.$.productdetailsview.warehouse.warehouseid;
+              } else {
+                return warehouse.warehouseid === OB.MobileApp.model.get('warehouses')[0].warehouseid;
+              }
+            });
+            if (warehouse && warehouse.warehouseqty < qty) {
+              OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_ErrorProductDiscontinued', [p.get('_identifier'), qty, warehouse.warehouseqty, warehouse.warehousename]));
+              callback(false);
+            } else {
+              callback(true);
+            }
           }
         });
       } else {
