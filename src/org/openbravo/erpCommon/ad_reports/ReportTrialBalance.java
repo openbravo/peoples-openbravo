@@ -50,6 +50,7 @@ import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
 import org.openbravo.erpCommon.utility.NavigationBar;
 import org.openbravo.erpCommon.utility.OBError;
+import org.openbravo.erpCommon.utility.OBLedgerUtils;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.financialmgmt.accounting.coa.AcctSchema;
@@ -63,12 +64,11 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
-      String strcAcctSchemaId = vars.getGlobalVariable("inpcAcctSchemaId",
-          "ReportTrialBalance|cAcctSchemaId", "");
+      String strOrg = vars.getGlobalVariable("inpOrg", "ReportTrialBalance|Org", "");
+      String strcAcctSchemaId = OBLedgerUtils.getOrgLedger(strOrg);
       String strDateFrom = vars.getGlobalVariable("inpDateFrom", "ReportTrialBalance|DateFrom", "");
       String strDateTo = vars.getGlobalVariable("inpDateTo", "ReportTrialBalance|DateTo", "");
       String strPageNo = vars.getGlobalVariable("inpPageNo", "ReportTrialBalance|PageNo", "1");
-      String strOrg = vars.getGlobalVariable("inpOrg", "ReportTrialBalance|Org", "");
       String strLevel = vars.getGlobalVariable("inpLevel", "ReportTrialBalance|Level", "");
       String strcBpartnerId = vars.getInGlobalVariable("inpcBPartnerId_IN",
           "ReportTrialBalance|cBpartnerId", "", IsIDFilter.instance);
@@ -191,12 +191,11 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
 
     } else if (vars.commandIn("OPEN")) {
       String strAccountId = vars.getRequiredStringParameter("inpcAccountId");
-      String strcAcctSchemaId = vars.getRequestGlobalVariable("inpcAcctSchemaId",
-          "ReportTrialBalance|cAcctSchemaId");
+      String strOrg = vars.getRequestGlobalVariable("inpOrg", "ReportTrialBalance|Org");
+      String strcAcctSchemaId = OBLedgerUtils.getOrgLedger(strOrg);
       String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom",
           "ReportTrialBalance|DateFrom");
       String strDateTo = vars.getRequestGlobalVariable("inpDateTo", "ReportTrialBalance|DateTo");
-      String strOrg = vars.getRequestGlobalVariable("inpOrg", "ReportTrialBalance|Org");
       String strLevel = vars.getRequestGlobalVariable("inpLevel", "ReportTrialBalance|Level");
       String strcBpartnerId = vars.getInGlobalVariable("inpcBPartnerId_IN",
           "ReportTrialBalance|cBpartnerId", "", IsIDFilter.instance);
@@ -212,6 +211,14 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
           strmProductId, strcProjectId, strcAcctSchemaId, strGroupBy, strAccountId,
           strNotInitialBalance);
 
+    } else if (vars.commandIn("LEDGER")) {
+      String strOrg = vars.getGlobalVariable("inpOrg", "AgingInquiry|Org", "0");
+      String strcAcctSchemaId = OBLedgerUtils.getOrgLedger(strOrg);
+
+      response.setContentType("text/html; charset=UTF-8");
+      PrintWriter out = response.getWriter();
+      out.print(strcAcctSchemaId);
+      out.close();
     } else {
       pageError(response);
     }
@@ -469,7 +476,7 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
             Utility.getContext(this, vars, "#User_Client", ""), strcProjectIdAux));
 
     if (data != null && data.length > 0) {
-      if ("Y".equals(strIncludeZeroFigures) &&  "S".equals(strLevel))
+      if ("Y".equals(strIncludeZeroFigures) && "S".equals(strLevel))
         data = includeZeroFigures(data, strcAcctSchemaId, strOrg, strAccountFromValue,
             strAccountToValue);
       xmlDocument.setData("structure1", data);
@@ -663,7 +670,7 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
             Utility.messageBD(this, "ProcessStatus-W", vars.getLanguage()),
             Utility.messageBD(this, "NoDataFound", vars.getLanguage()));
       } else {
-        if ("Y".equals(strIncludeZeroFigures) &&  "S".equals(strLevel)) {
+        if ("Y".equals(strIncludeZeroFigures) && "S".equals(strLevel)) {
           data = includeZeroFigures(data, strcAcctSchemaId, strOrg, strAccountFromValue,
               strAccountToValue);
         }

@@ -54,6 +54,7 @@ import org.openbravo.erpCommon.utility.LeftTabsBar;
 import org.openbravo.erpCommon.utility.NavigationBar;
 import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.erpCommon.utility.OBError;
+import org.openbravo.erpCommon.utility.OBLedgerUtils;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.erpCommon.utility.WindowTreeData;
@@ -97,7 +98,9 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
           strDateToRef, strAsDateTo, strAsDateToRef, strElementValue, strConImporte, "", strLevel,
           strConCodigo, "");
     } else if (vars.commandIn("FIND")) {
-      String strcAcctSchemaId = vars.getStringParameter("inpcAcctSchemaId", "");
+      String strOrg = vars.getRequestGlobalVariable("inpOrganizacion",
+          "GeneralAccountingReports|organizacion");
+      String strcAcctSchemaId = OBLedgerUtils.getOrgLedger(strOrg);
       String strAgno = vars.getRequiredGlobalVariable("inpAgno", "GeneralAccountingReports|agno");
       String strAgnoRef = vars.getRequiredGlobalVariable("inpAgnoRef",
           "GeneralAccountingReports|agnoRef");
@@ -121,13 +124,22 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
           "GeneralAccountingReports|conImporte");
       String strConCodigo = vars.getRequestGlobalVariable("inpConCodigo",
           "GeneralAccountingReports|conCodigo");
-      String strOrg = vars.getRequestGlobalVariable("inpOrganizacion",
-          "GeneralAccountingReports|organizacion");
       String strLevel = vars.getRequestGlobalVariable("inpLevel", "GeneralAccountingReports|level");
       printPagePDF(request, response, vars, strAgno, strAgnoRef, strDateFrom, strDateTo,
           strDateFromRef, strDateToRef, strAsDateTo, strAsDateToRef, strElementValue,
           strConImporte, strOrg, strLevel, strConCodigo, strcAcctSchemaId, strPageNo);
-    } else
+    } else if (vars.commandIn("LEDGER")) {
+      String strOrg = vars
+          .getGlobalVariable("inpOrganizacion", "GeneralAccountingReports|Org", "0");
+      String strcAcctSchemaId = OBLedgerUtils.getOrgLedger(strOrg);
+
+      response.setContentType("text/html; charset=UTF-8");
+      PrintWriter out = response.getWriter();
+      out.print(strcAcctSchemaId);
+      out.close();
+    }
+
+    else
       pageError(response);
   }
 

@@ -142,7 +142,34 @@ function refreshComboYears() {
   var cmbYearRef = document.frmMain.inpAgnoRef;
   changeComboData(cmbYear, arrYears, cmbOrganization.options[cmbOrganization.selectedIndex].value, true);
   changeComboData(cmbYearRef, arrYears, cmbOrganization.options[cmbOrganization.selectedIndex].value, true);
+  setDefaultLedger();
   return true;
+}
+
+function callbackLedger(paramXMLParticular, XMLHttpRequestObj) {
+    var strText = "";
+    if (getReadyStateHandler(XMLHttpRequestObj)) {
+        try {
+            if (XMLHttpRequestObj.responseText) {
+                strText = XMLHttpRequestObj.responseText;
+                if (strText) {
+                    document.getElementById('inpcAcctSchemaId').value = strText;
+                }
+            }
+       } catch (e) {
+       }
+    }
+    return true;
+}
+
+function setDefaultLedger() {
+    try {
+        var paramXMLReq = null;
+        return submitXmlHttpRequest(callbackLedger, document.frmMain, "LEDGER", "GeneralAccountingReports.html", false, null, paramXMLReq);
+        
+    } catch (e) {
+        alert(e);
+    }
 }
 
 function onloadFunctions() {
@@ -173,7 +200,7 @@ function onLoadDo(){
 	setTabTableParentElement();
 	enableShortcuts('edition');
 	setBrowserAutoComplete(false);
-	
+	setDefaultLedger();
 	resizeArea();
 	updateMenuIcon('buttonMenu');
 
@@ -346,7 +373,7 @@ function onResizeDo(){
 
                 <tr>
                   <td class="TitleCell"> <span class="LabelText">General Ledger</span></td>
-                  <td class="Combo_ContentCell" colspan="2"> <select name="inpcAcctSchemaId" id="inpcAcctSchemaId" class="ComboKey Combo_TwoCells_width" onchange="refreshComboReports(); logChanges(this); return true;">
+                  <td class="Combo_ContentCell" colspan="2"> <select name="inpcAcctSchemaId" id="inpcAcctSchemaId" class="ComboKey Combo_TwoCells_width" onchange="refreshComboReports(); logChanges(this); return true; setDefaultLedger();">
                     <option value=""></option><div id="reportC_ACCTSCHEMA_ID"></div>
                   </select></td>
                   <td class="ContentCell"></td>
@@ -366,7 +393,7 @@ function onResizeDo(){
 
                 <tr>
                   <td class="TitleCell"><span class="LabelText">Organization</span></td>
-                  <td class="Combo_ContentCell" colspan="2"> <select name="inpOrganizacion" id="inpOrganizacion" class="ComboKey Combo_TwoCells_width" onchange="refreshComboYears(); logChanges(this); return true;">
+                  <td class="Combo_ContentCell" colspan="2"> <select name="inpOrganizacion" id="inpOrganizacion" class="ComboKey Combo_TwoCells_width" onchange="refreshComboYears(); logChanges(this); return true;setDefaultLedger();">
                       <option value=""></option><div id="reportC_Org_ID"></div>
                     </select></td>
                 </tr>

@@ -87,6 +87,32 @@ function displayAdvancedFilters(){
     }    
 }
 
+
+function callbackLedger(paramXMLParticular, XMLHttpRequestObj) {
+    var strText = "";
+    if (getReadyStateHandler(XMLHttpRequestObj)) {
+        try {
+            if (XMLHttpRequestObj.responseText) {
+                strText = XMLHttpRequestObj.responseText;
+                if (strText) {
+                    document.getElementById('inpcAcctSchemaId').value = strText;
+                }
+            }
+       } catch (e) {
+       }
+    }
+    return true;
+}
+
+function setDefaultLedger() {
+    try {
+        var paramXMLReq = null;
+        return submitXmlHttpRequest(callbackLedger, document.frmMain, "LEDGER", "ReportTrialBalance.html", false, null, paramXMLReq);
+    } catch (e) {
+        alert(e);
+    }
+}
+
 function onloadFunctions() {
   displayLogic();
   keyArray[keyArray.length] = new keyArrayItem("ENTER", "openSearch(null, null, '../info/AccountElementValue.html', 'SELECTOR_ACCOUNTELEMENTVALUE', false, 'frmMain', 'inpcElementValueIdFrom', 'inpElementValueIdFrom_DES', document.frmMain.inpElementValueIdFrom_DES.value, 'inpcAcctSchemaId', document.frmMain.inpcAcctSchemaId.value, 'Command', 'KEY');", "inpElementValueIdFrom_DES", "null");
@@ -274,6 +300,7 @@ function onLoadDo(){
 
   setWindowElementFocus('firstElement');
   displayAdvancedFilters();
+  setDefaultLedger();
 }
 
 function onResizeDo(){
@@ -550,7 +577,7 @@ function openTabToReportTrialBalanceDetails(procId, recordId){
             <tr>
               <td class="TitleCell"><span class="LabelText">Organization</span></td>
               <td class="Combo_ContentCell">
-                <select  name="inpOrg" id="inpOrg" class="ComboKey Combo_TwoCells_width" required="true">
+                <select  name="inpOrg" id="inpOrg" class="ComboKey Combo_TwoCells_width" required="true" onchange="setDefaultLedger();">
                  <div id="reportAD_ORGID"></div>
                 </select></td>
               <td class="TitleCell"/></td>

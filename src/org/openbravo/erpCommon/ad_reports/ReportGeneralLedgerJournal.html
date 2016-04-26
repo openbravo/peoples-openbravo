@@ -89,6 +89,32 @@ function imprimir()
     return true;
 }
 
+
+function callback2(paramXMLParticular, XMLHttpRequestObj) {
+    var strText = "";
+    if (getReadyStateHandler(XMLHttpRequestObj)) {
+        try {
+            if (XMLHttpRequestObj.responseText) {
+                strText = XMLHttpRequestObj.responseText;
+                if (strText) {
+                    document.getElementById('inpcAcctSchemaId').value = strText;
+                }
+            }
+       } catch (e) {
+       }
+    }
+    return true;
+}
+
+function setDefaultLedger() {
+    try {
+        var paramXMLReq = null;
+        return submitXmlHttpRequest(callback2, document.frmMain, "LEDGER", "ReportGeneralLedgerJournal.html", false, null, paramXMLReq);
+    } catch (e) {
+        alert(e);
+    }
+}
+
 function onloadFunctions() {
   keyArray[keyArray.length] = new keyArrayItem("ENTER", "openSearch(null, null, '../info/AccountElementValue.html', 'SELECTOR_ACCOUNTELEMENTVALUE', false, 'frmMain', 'inpcElementValueIdFrom', 'inpElementValueIdFrom_DES', document.frmMain.inpElementValueIdFrom_DES.value, 'inpcAcctSchemaId', document.frmMain.inpcAcctSchemaId.value, 'Command', 'KEY');", "inpElementValueIdFrom_DES", "null");
   keyArray[keyArray.length] = new keyArrayItem("ENTER", "openSearch(null, null, '../info/AccountElementValue.html', 'SELECTOR_ACCOUNTELEMENTVALUE', false, 'frmMain', 'inpcElementValueIdTo', 'inpElementValueIdTo_DES', document.frmMain.inpElementValueIdTo_DES.value, 'inpcAcctSchemaId', document.frmMain.inpcAcctSchemaId.value, 'Command', 'KEY');", "inpElementValueIdTo_DES", "null");
@@ -292,6 +318,7 @@ function callback(paramXMLParticular, XMLHttpRequestObj) {
         displayDocumentNo();
         displayAdvancedFilters();
         selectDocument();
+        setDefaultLedger();
         openTabWhenPost();
         
         if (checkPreviousNextButtons) {
@@ -514,11 +541,11 @@ function callback(paramXMLParticular, XMLHttpRequestObj) {
             </tr>
             <tr>
               <td class="TitleCell"><span class="LabelText">Organization</span></td>
-              <td class="Combo_ContentCell" colspan="2"> <select  name="inpOrg" id="inpOrg" class="ComboKey Combo_TwoCells_width required Combo_focus" required="true" onchange="selectDocument();">
+              <td class="Combo_ContentCell" colspan="2"> <select  name="inpOrg" id="inpOrg" class="ComboKey Combo_TwoCells_width required Combo_focus" required="true" onchange="selectDocument();setDefaultLedger();">
                  <div id="reportAD_ORGID"></div>
                 </select></td>
               <td class="TitleCell"> <span class="LabelText">General Ledger</span></td>
-              <td class="Combo_ContentCell" colspan="2"> <select  name="inpcAcctSchemaId" id="inpcAcctSchemaId" class="ComboKey Combo_TwoCells_width required Combo_focus" required="true" onchange="selectDocument();">
+              <td class="Combo_ContentCell" colspan="2"> <select  name="inpcAcctSchemaId" id="inpcAcctSchemaId" class="ComboKey Combo_TwoCells_width required Combo_focus" required="true" onchange="selectDocument();setDefaultLedger();">
                  <div id="reportC_ACCTSCHEMA_ID"></div> 
                 </select></td>
             </tr>
