@@ -5848,20 +5848,17 @@
       if ((this.get('bp').get('invoiceTerms') === 'I' && this.get('generateInvoice')) || this.get('paidOnCredit')) {
         receiptShouldBeInvoiced = true;
       } else if (this.get('bp').get('invoiceTerms') === 'O') {
-        receiptShouldBeShipped = !isQuotation && !notpaidLayaway && !isDeleted && !paidReceipt;
-        if (receiptShouldBeShipped) {
-          linesPendingToDeliver = _.find(this.get('lines').models, function (line) {
-            return line.get('qty') !== (!OB.UTIL.isNullOrUndefined(line.get('obposQtytodeliver')) ? line.get('obposQtytodeliver') : 0);
-          });
-          if (!linesPendingToDeliver) {
-            receiptShouldBeInvoiced = true;
-          }
+        linesPendingToDeliver = _.find(this.get('lines').models, function (line) {
+          return line.get('qty') !== (!OB.UTIL.isNullOrUndefined(line.get('obposQtytodeliver')) ? line.get('obposQtytodeliver') : 0);
+        });
+        if (!linesPendingToDeliver) {
+          receiptShouldBeInvoiced = true;
         }
       } else if (this.get('bp').get('invoiceTerms') === 'D') {
         receiptShouldBeShipped = !isQuotation && !notpaidLayaway && !isDeleted && !paidReceipt;
         if (receiptShouldBeShipped) {
           linesToInvoice = _.find(this.get('lines').models, function (line) {
-            return (!OB.UTIL.isNullOrUndefined(line.get('obposQtytodeliver')) ? line.get('obposQtytodeliver') : line.get('qty')) > 0;
+            return (!OB.UTIL.isNullOrUndefined(line.get('obposQtytodeliver')) ? line.get('obposQtytodeliver') : line.get('qty')) !== 0;
           });
           if (linesToInvoice) {
             receiptShouldBeInvoiced = true;
@@ -5884,8 +5881,8 @@
               qtyToInvoice = OB.DEC.Zero,
               lineToInvoice, promotionAmt = OB.DEC.Zero;
           if (me.get('bp').get('invoiceTerms') === 'D') {
-            if (qtyPendingToDeliver > 0) {
-              if (OB.DEC.compare(OB.DEC.sub(qtyPendingToDeliver, qtyPendingToBeInvoiced)) > 0) {
+            if (qtyPendingToDeliver !== 0) {
+              if (OB.DEC.compare(OB.DEC.sub(OB.DEC.abs(qtyPendingToDeliver), OB.DEC.abs(qtyPendingToBeInvoiced))) > 0) {
                 qtyToInvoice = qtyPendingToBeInvoiced;
               } else {
                 qtyToInvoice = qtyPendingToDeliver;
@@ -5896,14 +5893,14 @@
           } else if (me.get('bp').get('invoiceTerms') === 'I' || me.get('bp').get('invoiceTerms') === 'O') {
             qtyToInvoice = qtyPendingToBeInvoiced;
           }
-          if (qtyToInvoice > 0) {
+          if (qtyToInvoice !== 0) {
             lineToInvoice = new OB.Model.OrderLine(ol.attributes);
             lineToInvoice.set('id', OB.UTIL.get_UUID());
             lineToInvoice.set('qty', qtyToInvoice);
             lineToInvoice.get('product').set('ignorePromotions', true);
-            if (qtyAlreadyInvoiced > 0) {
+            if (OB.DEC.abs(qtyAlreadyInvoiced) > 0) {
               lineToInvoice.get('promotions').forEach(function (p) {
-                if (qtyToInvoice < qtyPendingToBeInvoiced) {
+                if (OB.DEC.abs(qtyToInvoice) < OB.DEC.abs(qtyPendingToBeInvoiced)) {
                   p.amt = OB.DEC.mul(p.amt, (qtyToInvoice / originalQty));
                   p.obdiscQtyoffer = qtyToInvoice;
                   if (p.actualAmt) {
