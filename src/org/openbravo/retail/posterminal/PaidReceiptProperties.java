@@ -57,6 +57,8 @@ public class PaidReceiptProperties extends ModelExtension {
             "(case when (select sum(abs(deliveredQuantity)) from ord.orderLineList)=0 and ord.documentType.sOSubType<>'OB' then true else false end)",
             "isLayaway")); // TODO: computed column, it should be refactored
         add(new HQLProperty("ord.priceList.priceIncludesTax", "priceIncludesTax"));
+        add(new HQLProperty("replacedOrder.documentNo", "replacedorder_documentNo"));
+        add(new HQLProperty("replacedOrder.id", "replacedorder"));
       }
     };
 
