@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2016 Openbravo S.L.U.
+ * Copyright (C) 2012 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -56,7 +56,7 @@ public class CashCloseReport extends JSONProcessSimple {
         + "                           where t.reconciliation is null"
         + "                           and t.finPayment = d.paymentDetails.finPayment))"
         + " and olt.salesOrderLine.salesOrder.documentType.id=?  and olt.salesOrderLine.salesOrder.obposApplications.id=? "
-        + " group by olt.tax.name order by olt.tax.name asc";
+        + " group by olt.tax.name";
     Query salesTaxesQuery = OBDal.getInstance().getSession().createQuery(hqlTaxes);
     salesTaxesQuery.setString(0,
         (String) DalUtil.getId(terminal.getObposTerminaltype().getDocumentType()));

@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2016 Openbravo S.L.U.
+ * Copyright (C) 2012 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -39,8 +39,7 @@ public class DiscountFilterProductCategory extends Discount {
         + jsonsent.get("operator") + " (pc.priceAdjustment.$incrementalUpdateCriteria)) ";
 
     hql += " and exists (select 1 " + getPromotionsHQL(jsonsent, false);
-    hql += "              and pc.priceAdjustment = p) ";
-    hql += "order by pc.priceAdjustment.id asc";
+    hql += "              and pc.priceAdjustment = p)";
 
     return Arrays.asList(new String[] { hql });
   }

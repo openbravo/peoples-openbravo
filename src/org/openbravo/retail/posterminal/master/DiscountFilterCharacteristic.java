@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2014-2016 Openbravo S.L.U.
+ * Copyright (C) 2014 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -41,8 +41,7 @@ public class DiscountFilterCharacteristic extends Discount {
         + " (c.offer.$incrementalUpdateCriteria)) ";
     hql += "   and m_isparent_ch_value(cvl.characteristicValue.id, c.chValue.id, c.characteristic.id) != -1 ";
     hql += "   and exists (select 1 " + getPromotionsHQL(jsonsent, false);
-    hql += "                and c.offer = p) ";
-    hql += "order by c.characteristic.id asc";
+    hql += "                and c.offer = p)";
 
     return Arrays.asList(new String[] { hql });
   }

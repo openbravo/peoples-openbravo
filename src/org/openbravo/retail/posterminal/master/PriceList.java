@@ -48,24 +48,20 @@ public class PriceList extends ProcessHQLQuery {
 
     try {
       multiPrices = "Y".equals(Preferences.getPreferenceValue("OBPOS_EnableMultiPriceList", true,
-          OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
-              .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
-              .getOBContext().getRole(), null));
+          OBContext.getOBContext().getCurrentClient(),
+          OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
+          OBContext.getOBContext().getRole(), null));
     } catch (PropertyException e1) {
       log.error("Error getting Preference: " + e1.getMessage(), e1);
     }
 
     if (multiPrices) {
-      hqlQueries
-          .add("select "
-              + priceListHQLProperties.getHqlSelect()
-              + " from PricingPriceList pl "
-              + "where pl.id in (select distinct priceList.id from BusinessPartner where customer = 'Y') "
-              + "and pl.id <> (select obretcoPricelist.id from Organization where id = '"
-              + orgId
-              + "') "
-              + "and $naturalOrgCriteria and $readableClientCriteria and ($incrementalUpdateCriteria) "
-              + "order by pl.id asc");
+      hqlQueries.add("select " + priceListHQLProperties.getHqlSelect()
+          + " from PricingPriceList pl "
+          + "where pl.id in (select distinct priceList.id from BusinessPartner where customer = 'Y') "
+          + "and pl.id <> (select obretcoPricelist.id from Organization where id = '" + orgId
+          + "') "
+          + "and $naturalOrgCriteria and $readableClientCriteria and ($incrementalUpdateCriteria)");
     }
 
     return hqlQueries;
@@ -73,16 +69,14 @@ public class PriceList extends ProcessHQLQuery {
 
   public static String getSelectPriceListVersionIds(String orgId, Date terminalDate) {
     SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd");
-    return "select plv.id from PricingPriceListVersion AS plv "
-        + "where plv.active = true"
+    return "select plv.id from PricingPriceListVersion AS plv " + "where plv.active = true"
         + " and plv.validFromDate = ("
         + "  select max(pplv.validFromDate) from PricingPriceListVersion as pplv "
         + "  where pplv.active=true and pplv.priceList.id = plv.priceList.id "
-        + "    and to_char(pplv.validFromDate, 'yyyy-mm-dd') <= '"
-        + format.format(terminalDate)
+        + "    and to_char(pplv.validFromDate, 'yyyy-mm-dd') <= '" + format.format(terminalDate)
         + " ') and (plv.priceList.id in (select distinct priceList.id from BusinessPartner where customer = 'Y') "
         + " and plv.priceList.id <> (select obretcoPricelist.id from Organization where id = '"
-        + orgId + "')) order by plv.id asc";
+        + orgId + "'))";
   }
 
 }
