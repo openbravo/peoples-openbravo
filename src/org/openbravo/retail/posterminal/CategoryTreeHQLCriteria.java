@@ -19,9 +19,9 @@ import org.openbravo.mobile.core.process.HQLCriteriaProcess;
 public class CategoryTreeHQLCriteria extends HQLCriteriaProcess {
 
   @Override
-  public String getHQLFilter() {
+  public String getHQLFilter(String params) {
     // TODO Auto-generated method stub
-    return " pli.product.productCategory in ($1)";
+    return " pli.product.productCategory.id = $1 ";
   }
 
 }
