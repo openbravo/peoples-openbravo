@@ -65,23 +65,34 @@
                   offline: true
                 });
                 if (receipt.get('calculatedInvoice').get('id')) {
-                  if (receipt.get('orderType') === 1 && !OB.MobileApp.model.hasPermission('OBPOS_print.return_invoice', true)) {
-                    OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_LblPrintInvoices'), OB.I18N.getLabel('OBPOS_LblPrintInvoicesReturn'), [{
-                      label: OB.I18N.getLabel('OBMOBC_LblOk'),
-                      action: function () {
-                        receipt.trigger('print', orderToPrint.get('calculatedInvoice'), {
-                          offline: true
-                        });
-                      }
-                    }, {
-                      label: OB.I18N.getLabel('OBMOBC_LblCancel')
-                    }], {
-                      autoDismiss: false
+                  if (!OB.MobileApp.model.hasPermission('OBPOS_print.return_invoice', true)) {
+                    var positiveLine = _.find(receipt.get('lines').models, function (line) {
+                      return line.get('qty') >= 0;
                     });
+                    if (!positiveLine) {
+                      OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_LblPrintInvoices'), OB.I18N.getLabel('OBPOS_LblPrintInvoicesReturn'), [{
+                        label: OB.I18N.getLabel('OBMOBC_LblOk'),
+                        action: function () {
+                          receipt.trigger('print', orderToPrint.get('calculatedInvoice'), {
+                            offline: true
+                          });
+                        }
+                      }, {
+                        label: OB.I18N.getLabel('OBMOBC_LblCancel')
+                      }], {
+                        autoDismiss: false
+                      });
+                    } else {
+                      receipt.trigger('print', orderToPrint.get('calculatedInvoice'), {
+                        offline: true
+                      });
+                    }
                   } else {
-                    receipt.trigger('print', orderToPrint.get('calculatedInvoice'), {
-                      offline: true
-                    });
+                    if (OB.MobileApp.model.hasPermission('OBPOS_print.invoicesautomatically', true)) {
+                      receipt.trigger('print', orderToPrint.get('calculatedInvoice'), {
+                        offline: true
+                      });
+                    }
                   }
                 }
 
