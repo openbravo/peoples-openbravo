@@ -434,8 +434,7 @@ enyo.kind({
     onEnableUserInterface: '',
     onFinishServiceProposal: '',
     onToggleLineSelection: '',
-    onShowActionIcons: '',
-    onReceiptLineSelected: ''
+    onShowActionIcons: ''
   },
   handlers: {
     onRightToolbarDisabled: 'disabledButton',
@@ -443,6 +442,9 @@ enyo.kind({
   },
   init: function (model) {
     this.model = model;
+    this.model.get('order').get('lines').on('selected', function (lineSelected) {
+      this.currentLine = lineSelected;
+    }, this);
     //    var me = this;
     //    this.model.get('multiOrders').on('change:isMultiOrders', function (model) {
     //      me.doRightToolbarDisabled({
@@ -464,15 +466,6 @@ enyo.kind({
     });
   },
   tap: function (options) {
-    this.model.get('order').get('lines').on('selected', function (lineSelected) {
-      this.currentLine = lineSelected;
-      if (lineSelected) {
-        this.doReceiptLineSelected({
-          product: lineSelected.get('product')
-        });
-      }
-    }, this);
-
     if (OB.MobileApp.model.get('serviceSearchMode')) {
       this.$.lbl.setContent(OB.I18N.getLabel('OBPOS_LblEdit'));
       this.doEnableUserInterface();
