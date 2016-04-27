@@ -361,7 +361,6 @@ public class MatchTransaction extends HttpSecureAppServlet {
     return ((FIN_ReconciliationLine_v) obc.uniqueResult()).getTransactionDate();
   }
 
-  @SuppressWarnings("unused")
   private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strOrgId,
       String strWindowId, String strTabId, String strPaymentTypeFilter,
       String strFinancialAccountId, String reconciliationId, String strShowCleared,

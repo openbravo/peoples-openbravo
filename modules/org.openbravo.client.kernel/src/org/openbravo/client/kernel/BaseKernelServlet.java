@@ -34,7 +34,6 @@ import org.openbravo.base.secureApp.HttpSecureAppServlet;
  * 
  * @author mtaal
  */
-@SuppressWarnings("deprecation")
 public abstract class BaseKernelServlet extends HttpSecureAppServlet {
   protected static final String RESPONSE_HEADER_ETAG = "ETag";
   protected static final String RESPONSE_HEADER_LASTMODIFIED = "Last-Modified";

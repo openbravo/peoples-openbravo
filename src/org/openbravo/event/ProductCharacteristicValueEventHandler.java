@@ -53,7 +53,6 @@ public class ProductCharacteristicValueEventHandler extends EntityPersistenceEve
     return entities;
   }
 
-  @SuppressWarnings("unused")
   public void onTransactionBegin(@Observes TransactionBeginEvent event) {
     prodchvalueUpdated.set(null);
   }

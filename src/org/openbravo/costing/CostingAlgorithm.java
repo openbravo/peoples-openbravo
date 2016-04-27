@@ -297,7 +297,6 @@ public abstract class CostingAlgorithm {
 
     if (ppDate.before(olDate) && stdCostDate.before(olDate)) {
       // purchase order
-      @SuppressWarnings("null")
       BigDecimal cost = transaction.getMovementQuantity().abs().multiply(orderLine.getUnitPrice());
       if (costCurrency.getId().equals(orderLine.getCurrency().getId())) {
         return cost;

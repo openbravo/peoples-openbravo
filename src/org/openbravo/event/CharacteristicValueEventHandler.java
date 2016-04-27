@@ -54,14 +54,11 @@ public class CharacteristicValueEventHandler extends EntityPersistenceEventObser
     return entities;
   }
 
-  @SuppressWarnings("unused")
-  public void onTransactionBegin(@Observes
-  TransactionBeginEvent event) {
+  public void onTransactionBegin(@Observes TransactionBeginEvent event) {
     chvalueUpdated.set(null);
   }
 
-  public void onUpdate(@Observes
-  EntityUpdateEvent event) {
+  public void onUpdate(@Observes EntityUpdateEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
@@ -100,8 +97,7 @@ public class CharacteristicValueEventHandler extends EntityPersistenceEventObser
     }
   }
 
-  public void onTransactionCompleted(@Observes
-  TransactionCompletedEvent event) {
+  public void onTransactionCompleted(@Observes TransactionCompletedEvent event) {
     String strChValueId = chvalueUpdated.get();
     chvalueUpdated.set(null);
     if (StringUtils.isBlank(strChValueId) || event.getTransaction().wasRolledBack()) {

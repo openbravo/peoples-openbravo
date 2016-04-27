@@ -49,7 +49,6 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
  * 
  * @author mtaal
  */
-@SuppressWarnings("deprecation")
 public class RequestContext {
   private static ServletContext servletContext = null;
 

@@ -37,7 +37,6 @@ public class PrintQuotations extends PrintController {
     boolHist = false;
   }
 
-  @SuppressWarnings("unchecked")
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
