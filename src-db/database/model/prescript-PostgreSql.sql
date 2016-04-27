@@ -261,6 +261,17 @@ END;
 ' LANGUAGE 'plpgsql' IMMUTABLE
 /-- END
 
+CREATE OR REPLACE FUNCTION to_date
+(
+ timestamp, varchar
+)
+  RETURNS timestamp AS '
+BEGIN
+  RETURN to_timestamp(to_char($1), $2);
+END;
+' LANGUAGE 'plpgsql' IMMUTABLE
+/-- END
+
 CREATE OR REPLACE FUNCTION to_timestamp
 (
  timestamptz
