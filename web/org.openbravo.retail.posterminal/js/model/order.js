@@ -1997,17 +1997,30 @@
       // remove the line
       finishDelete();
     },
-    getStoreStock: function (p, qty, callback) {
+    getStoreStock: function (p, qty, options, attrs, callback) {
       var serverCallStoreDetailedStock = new OB.DS.Process('org.openbravo.retail.posterminal.stock.StoreDetailedStock'),
           me = this,
           lines = OB.MobileApp.model.receipt.get('lines'),
-          warehouse;
+          line = !OB.UTIL.isNullOrUndefined(options) ? options.line : null,
+          warehouseId, warehouse;
 
-      _.forEach(lines.models, function (line) {
-        if (line.get('product').get('id') === p.get('id')) {
-          qty += line.get('qty');
-        }
-      });
+      if (attrs && attrs.warehouse) {
+        warehouseId = attrs.warehouse.id;
+      } else if (line) {
+        warehouseId = line.get('warehouse').id;
+      } else {
+        warehouseId = OB.MobileApp.model.get('warehouses')[0].warehouseid;
+      }
+      if (!p.get('groupProduct')) {
+        _.forEach(lines.models, function (li) {
+          if (li.get('product').get('id') === p.get('id') && li.get('warehouse').id === warehouseId) {
+            qty += li.get('qty');
+          }
+        });
+      }
+      if (!OB.UTIL.isNullOrUndefined(line) && p.get('groupProduct')) {
+        qty += line.get('qty');
+      }
       if (qty > 0) {
         serverCallStoreDetailedStock.exec({
           organization: OB.MobileApp.model.get('terminal').organization,
@@ -2017,11 +2030,7 @@
             OB.UTIL.showConfirmation.display('', data.exception.message);
           } else {
             warehouse = _.find(data.warehouses, function (warehouse) {
-              if (OB.MobileApp.view.$.containerWindow.getRoot().$.multiColumn.$.leftPanel.$.productdetailsview.warehouse) {
-                return warehouse.warehouseid === OB.MobileApp.view.$.containerWindow.getRoot().$.multiColumn.$.leftPanel.$.productdetailsview.warehouse.warehouseid;
-              } else {
-                return warehouse.warehouseid === OB.MobileApp.model.get('warehouses')[0].warehouseid;
-              }
+              return warehouse.warehouseid === warehouseId;
             });
             if (warehouse && warehouse.warehouseqty < qty) {
               OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_ErrorProductDiscontinued', [p.get('_identifier'), qty, warehouse.warehouseqty, warehouse.warehousename]));
@@ -2303,7 +2312,7 @@
           execPostAddProductToOrderHook();
         }
         if ((p.get('isdiscontinued') || p.get('issalediscontinued')) && !OB.MobileApp.model.hasPermission('OBPOS_AvoidProductDiscontinuedStockCheck', true)) {
-          me.getStoreStock(p, qty, function (hasStock) {
+          me.getStoreStock(p, qty, options, attrs, function (hasStock) {
             if (hasStock) {
               continueSaving(p);
             }

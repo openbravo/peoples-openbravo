@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, Backbone, enyo */
+/*global OB, Backbone, enyo, _ */
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.ProductDetailsView_ButtonStockThisStore',
@@ -84,34 +84,67 @@ enyo.kind({
     }
   },
   tap: function () {
-    if (this.leftSubWindow.product) {
-      var line = null;
-      if (this.leftSubWindow && this.leftSubWindow.line) {
-        line = this.leftSubWindow.line;
-      }
-      var attrs = (this.leftSubWindow.inEvent && this.leftSubWindow.inEvent.attrs) ? this.leftSubWindow.inEvent.attrs : {};
-      attrs.warehouse = {
-        id: this.leftSubWindow.warehouse.warehouseid ? this.leftSubWindow.warehouse.warehouseid : this.leftSubWindow.warehouse.id,
-        warehousename: this.leftSubWindow.warehouse.warehousename,
-        warehouseqty: this.leftSubWindow.warehouse.warehouseqty
-      };
+    var product = this.leftSubWindow.product,
+        me = this;
+
+    function addLine(line, product, attrs) {
       if (line) {
-        this.doSetLineProperty({
+        me.doSetLineProperty({
           line: line,
           property: 'warehouse',
           value: attrs.warehouse
         });
-        this.doCloseLeftSubWindow();
+        me.doCloseLeftSubWindow();
       } else {
-        this.doAddProduct({
+        me.doAddProduct({
           attrs: attrs,
           options: {
             line: line,
             blockAddProduct: true
           },
-          product: this.leftSubWindow.product,
+          product: product,
           ignoreStockTab: true
         });
+      }
+    }
+
+    if (product) {
+      var line = null,
+          lines = OB.MobileApp.model.receipt.get('lines'),
+          allLinesQty = 0;
+      if (me.leftSubWindow && me.leftSubWindow.line) {
+        line = me.leftSubWindow.line;
+      }
+      var attrs = (me.leftSubWindow.inEvent && me.leftSubWindow.inEvent.attrs) ? me.leftSubWindow.inEvent.attrs : {};
+      attrs.warehouse = {
+        id: me.leftSubWindow.warehouse.warehouseid ? this.leftSubWindow.warehouse.warehouseid : this.leftSubWindow.warehouse.id,
+        warehousename: me.leftSubWindow.warehouse.warehousename,
+        warehouseqty: me.leftSubWindow.warehouse.warehouseqty
+      };
+      _.forEach(lines.models, function (li) {
+        if ((li.get('product').get('id') === product.get('id') && li.get('warehouse').id === attrs.warehouse.id) || (line && li.get('id') === line.get('id'))) {
+          allLinesQty += li.get('qty');
+        }
+      });
+      if (!line) {
+        allLinesQty += OB.DEC.One;
+      }
+      if ((product.get('isdiscontinued') || product.get('issalediscontinued'))) {
+        if (OB.MobileApp.model.hasPermission('OBPOS_AvoidProductDiscontinuedStockCheck', true)) {
+          if (allLinesQty > attrs.warehouse.warehouseqty) {
+            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_ErrorProductDiscontinued', [product.get('_identifier'), allLinesQty, attrs.warehouse.warehouseqty, attrs.warehouse.warehousename]));
+          } else {
+            addLine(line, product, attrs);
+          }
+        } else {
+          if (line && allLinesQty > attrs.warehouse.warehouseqty) {
+            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_ErrorProductDiscontinued', [product.get('_identifier'), allLinesQty, attrs.warehouse.warehouseqty, attrs.warehouse.warehousename]));
+          } else {
+            addLine(line, product, attrs);
+          }
+        }
+      } else {
+        addLine(line, product, attrs);
       }
     }
   }
