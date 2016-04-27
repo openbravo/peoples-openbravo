@@ -21,7 +21,7 @@ public class CategoryTreeHQLCriteria extends HQLCriteriaProcess {
   @Override
   public String getHQLFilter(String params) {
     // TODO Auto-generated method stub
-    return " pli.product.productCategory.id = $1 ";
+    return " pli.product.productCategory.id in ($1) ";
   }
 
 }
