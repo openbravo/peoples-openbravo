@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2015 Openbravo SLU
+ * All portions are Copyright (C) 2001-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -90,9 +90,8 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
       log4j.debug("Command: " + vars.getStringParameter("Command"));
 
     if (vars.commandIn("DEFAULT")) {
-      String strOrg = vars.getGlobalVariable("inpOrg", "ReportGeneralLedgerJournal|Org", "0");
-      String strcAcctSchemaId = OBLedgerUtils.getOrgLedger(strOrg);
-
+      String strcAcctSchemaId = vars.getGlobalVariable("inpcAcctSchemaId",
+          "ReportGeneralLedger|cAcctSchemaId", "");
       String strDateFrom = vars.getGlobalVariable("inpDateFrom",
           "ReportGeneralLedgerJournal|DateFrom", "");
       String strDateTo = vars.getGlobalVariable("inpDateTo", "ReportGeneralLedgerJournal|DateTo",
@@ -101,6 +100,7 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
           "ReportGeneralLedgerJournal|Document", "");
       String strDocumentNo = vars.getGlobalVariable("inpDocumentNo",
           "ReportGeneralLedgerJournal|DocumentNo", "");
+      String strOrg = vars.getGlobalVariable("inpOrg", "ReportGeneralLedgerJournal|Org", "0");
       String strShowClosing = vars.getGlobalVariable("inpShowClosing",
           "ReportGeneralLedgerJournal|ShowClosing", "Y");
       String strShowReg = vars.getGlobalVariable("inpShowReg",
@@ -190,8 +190,8 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
       printPageDataSheet(response, vars, "", "", "", "", "", "", "", strFactAcctGroupId, "", "",
           "", "", "1", "1", "", "Y", "", "", "", "", "", "", "");
     } else if (vars.commandIn("FIND")) {
-      String strOrg = vars.getGlobalVariable("inpOrg", "ReportGeneralLedgerJournal|Org", "0");
-      String strcAcctSchemaId = OBLedgerUtils.getOrgLedger(strOrg);
+      String strcAcctSchemaId = vars.getRequestGlobalVariable("inpcAcctSchemaId",
+          "ReportGeneralLedger|cAcctSchemaId");
       String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom",
           "ReportGeneralLedgerJournal|DateFrom");
       String strDateTo = vars.getRequestGlobalVariable("inpDateTo",
@@ -200,6 +200,7 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
           "ReportGeneralLedgerJournal|Document");
       String strDocumentNo = vars.getRequestGlobalVariable("inpDocumentNo",
           "ReportGeneralLedgerJournal|DocumentNo");
+      String strOrg = vars.getGlobalVariable("inpOrg", "ReportGeneralLedgerJournal|Org", "0");
       String strShowClosing = vars.getRequestGlobalVariable("inpShowClosing",
           "ReportGeneralLedgerJournal|ShowClosing");
       if (strShowClosing == null || "".equals(strShowClosing))
@@ -268,10 +269,11 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
           strPageNo, strEntryNo, strShowDescription, strShowRegular, strShowDivideUp, "", "",
           strcelementvaluefrom, strcelementvalueto, strcelementvaluefromdes, strcelementvaluetodes);
     } else if (vars.commandIn("PDF", "XLS")) {
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug("PDF");
-      String strOrg = vars.getGlobalVariable("inpOrg", "ReportGeneralLedgerJournal|Org", "0");
-      String strcAcctSchemaId = OBLedgerUtils.getOrgLedger(strOrg);
+      }
+      String strcAcctSchemaId = vars.getRequestGlobalVariable("inpcAcctSchemaId",
+          "ReportGeneralLedger|cAcctSchemaId");
       String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom",
           "ReportGeneralLedgerJournal|DateFrom");
       String strDateTo = vars.getRequestGlobalVariable("inpDateTo",
@@ -280,6 +282,7 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
           "ReportGeneralLedgerJournal|Document");
       String strDocumentNo = vars.getRequestGlobalVariable("inpDocumentNo",
           "ReportGeneralLedgerJournal|DocumentNo");
+      String strOrg = vars.getGlobalVariable("inpOrg", "ReportGeneralLedgerJournal|Org", "0");
       String strShowClosing = vars.getRequestGlobalVariable("inpShowClosing",
           "ReportGeneralLedgerJournal|ShowClosing");
       if (strShowClosing == null || "".equals(strShowClosing))
@@ -408,17 +411,16 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
       PrintWriter out = response.getWriter();
       out.println("objson = " + combobox);
       out.close();
-
     } else if (vars.commandIn("LEDGER")) {
       String strOrg = vars.getGlobalVariable("inpOrg", "ReportGeneralLedgerJournal|Org", "0");
       String strcAcctSchemaId = OBLedgerUtils.getOrgLedger(strOrg);
-
       response.setContentType("text/html; charset=UTF-8");
       PrintWriter out = response.getWriter();
       out.print(strcAcctSchemaId);
       out.close();
-    } else
+    } else {
       pageError(response);
+    }
   }
 
   private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,

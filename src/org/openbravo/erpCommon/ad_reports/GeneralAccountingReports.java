@@ -98,9 +98,7 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
           strDateToRef, strAsDateTo, strAsDateToRef, strElementValue, strConImporte, "", strLevel,
           strConCodigo, "");
     } else if (vars.commandIn("FIND")) {
-      String strOrg = vars.getRequestGlobalVariable("inpOrganizacion",
-          "GeneralAccountingReports|organizacion");
-      String strcAcctSchemaId = OBLedgerUtils.getOrgLedger(strOrg);
+      String strcAcctSchemaId = vars.getStringParameter("inpcAcctSchemaId", "");
       String strAgno = vars.getRequiredGlobalVariable("inpAgno", "GeneralAccountingReports|agno");
       String strAgnoRef = vars.getRequiredGlobalVariable("inpAgnoRef",
           "GeneralAccountingReports|agnoRef");
@@ -124,6 +122,8 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
           "GeneralAccountingReports|conImporte");
       String strConCodigo = vars.getRequestGlobalVariable("inpConCodigo",
           "GeneralAccountingReports|conCodigo");
+      String strOrg = vars.getRequestGlobalVariable("inpOrganizacion",
+          "GeneralAccountingReports|organizacion");
       String strLevel = vars.getRequestGlobalVariable("inpLevel", "GeneralAccountingReports|level");
       printPagePDF(request, response, vars, strAgno, strAgnoRef, strDateFrom, strDateTo,
           strDateFromRef, strDateToRef, strAsDateTo, strAsDateToRef, strElementValue,
@@ -132,15 +132,15 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
       String strOrg = vars
           .getGlobalVariable("inpOrganizacion", "GeneralAccountingReports|Org", "0");
       String strcAcctSchemaId = OBLedgerUtils.getOrgLedger(strOrg);
-
       response.setContentType("text/html; charset=UTF-8");
       PrintWriter out = response.getWriter();
       out.print(strcAcctSchemaId);
       out.close();
     }
 
-    else
+    else {
       pageError(response);
+    }
   }
 
   private void printPagePDF(HttpServletRequest request, HttpServletResponse response,

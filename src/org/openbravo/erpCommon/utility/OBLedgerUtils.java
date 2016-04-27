@@ -1,6 +1,22 @@
+/*
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License.
+ * The Original Code is Openbravo ERP.
+ * The Initial Developer of the Original Code is Openbravo SLU
+ * All portions are Copyright (C) 2016 Openbravo SLU
+ * All Rights Reserved.
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+ */
 package org.openbravo.erpCommon.utility;
-
-import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -10,6 +26,9 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.financialmgmt.accounting.coa.AcctSchema;
 
+/**
+ * Utilities to get AcctSchema
+ */
 public class OBLedgerUtils {
   private static Logger log4j = Logger.getLogger(OBLedgerUtils.class);
 
@@ -25,27 +44,28 @@ public class OBLedgerUtils {
    * @return String ledgerId ledger id for the given organization. Null if not found
    */
   public static String getOrgLedger(String orgId) {
-    if (StringUtils.isBlank(orgId)) {
-      return null;
-    }
-
-    OBContext.setAdminMode(true);
     try {
+      OBContext.setAdminMode(true);
+
+      if (StringUtils.isBlank(orgId)) {
+        // No organization
+        return null;
+      }
       final Organization org = OBDal.getInstance().get(Organization.class, orgId);
       if (org == null) {
         // No organization
         return null;
-      } else {
-        AcctSchema acctSchema = getLedgerRecursive(org);
-        if (acctSchema != null) {
-          return acctSchema.getId();
-        } else {
-          // Get client base Ledger
-          String clientId = StringUtils.equals(orgId, "0")
-              ? OBContext.getOBContext().getCurrentClient().getId() : org.getClient().getId();
-          return getClientBaseLedger(clientId);
-        }
       }
+      String acctSchemaId = getOrgLedgerRecursive(orgId);
+      if (!StringUtils.isEmpty(acctSchemaId)) {
+        // Get ledger of organization tree
+        return acctSchemaId;
+      }
+      String clientId = StringUtils.equals(orgId, "0") ? OBContext.getOBContext()
+          .getCurrentClient().getId() : org.getClient().getId();
+      // Get client base Ledger
+      return getClientLedger(clientId);
+
     } catch (Exception e) {
       log4j.error("Impossible to get ledger for organization id " + orgId, e);
     } finally {
@@ -55,33 +75,40 @@ public class OBLedgerUtils {
     return null;
   }
 
-  private static String getClientBaseLedger(String clientId) {
-    String qryString = " select id  from FinancialMgmtAcctSchema where client.id='" + clientId
-        + "'";
-    Query qry = OBDal.getInstance().getSession().createQuery(qryString);
-    @SuppressWarnings("unchecked")
-    List<String> qryList = qry.list();
-    if (qryList != null && qryList.size() > 0) {
-      return qryList.get(0);
-    } else {
-      return null;
-
+  private static String getOrgLedgerRecursive(String orgId) {
+    try {
+      OBContext.setAdminMode(true);
+      StringBuffer where = new StringBuffer();
+      where.append(" select " + Organization.PROPERTY_GENERALLEDGER + ".id");
+      where.append(" from " + Organization.ENTITY_NAME);
+      where.append(" where ad_isorgincluded(:orgId, " + Organization.PROPERTY_ID + ", "
+          + Organization.PROPERTY_CLIENT + ".id) <> -1");
+      where.append(" and " + Organization.PROPERTY_GENERALLEDGER + " is not null");
+      where.append(" order by ad_isorgincluded(:orgId, " + Organization.PROPERTY_ID + ", "
+          + Organization.PROPERTY_CLIENT + ".id)");
+      Query qry = OBDal.getInstance().getSession().createQuery(where.toString());
+      qry.setParameter("orgId", orgId);
+      qry.setMaxResults(1);
+      return (String) qry.uniqueResult();
+    } finally {
+      OBContext.restorePreviousMode();
     }
   }
 
-  private static AcctSchema getLedgerRecursive(Organization adOrg) {
-    if (adOrg != null) {
-      AcctSchema acctSchema = adOrg.getGeneralLedger();
-      if (acctSchema != null) {
-        return acctSchema;
-      } else {
-        if (!adOrg.getId().equals("0")) {
-          return getLedgerRecursive(
-              OBContext.getOBContext().getOrganizationStructureProvider().getParentOrg(adOrg));
-        }
-
-      }
+  private static String getClientLedger(String clientId) {
+    try {
+      OBContext.setAdminMode(true);
+      StringBuffer where = new StringBuffer();
+      where.append(" select " + AcctSchema.PROPERTY_ID);
+      where.append(" from " + AcctSchema.ENTITY_NAME);
+      where.append(" where " + AcctSchema.PROPERTY_CLIENT + ".id = :clientId");
+      where.append(" order by " + AcctSchema.PROPERTY_NAME);
+      Query qry = OBDal.getInstance().getSession().createQuery(where.toString());
+      qry.setParameter("clientId", clientId);
+      qry.setMaxResults(1);
+      return (String) qry.uniqueResult();
+    } finally {
+      OBContext.restorePreviousMode();
     }
-    return null;
   }
 }

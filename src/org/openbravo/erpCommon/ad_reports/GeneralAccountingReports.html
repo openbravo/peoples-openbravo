@@ -13,7 +13,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2011 Openbravo SLU
+ * All portions are Copyright (C) 2001-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -142,7 +142,6 @@ function refreshComboYears() {
   var cmbYearRef = document.frmMain.inpAgnoRef;
   changeComboData(cmbYear, arrYears, cmbOrganization.options[cmbOrganization.selectedIndex].value, true);
   changeComboData(cmbYearRef, arrYears, cmbOrganization.options[cmbOrganization.selectedIndex].value, true);
-  setDefaultLedger();
   return true;
 }
 
@@ -152,8 +151,12 @@ function callbackLedger(paramXMLParticular, XMLHttpRequestObj) {
         try {
             if (XMLHttpRequestObj.responseText) {
                 strText = XMLHttpRequestObj.responseText;
-                if (strText) {
+                if (strText && document.getElementById('inpcAcctSchemaId').value != strText) {
                     document.getElementById('inpcAcctSchemaId').value = strText;
+                    refreshComboReports();
+                }
+                else {
+                    refreshComboYears();
                 }
             }
        } catch (e) {
@@ -166,7 +169,6 @@ function setDefaultLedger() {
     try {
         var paramXMLReq = null;
         return submitXmlHttpRequest(callbackLedger, document.frmMain, "LEDGER", "GeneralAccountingReports.html", false, null, paramXMLReq);
-        
     } catch (e) {
         alert(e);
     }
@@ -200,12 +202,12 @@ function onLoadDo(){
 	setTabTableParentElement();
 	enableShortcuts('edition');
 	setBrowserAutoComplete(false);
-	setDefaultLedger();
 	resizeArea();
 	updateMenuIcon('buttonMenu');
 
 	setWindowElementFocus('firstElement');
-       displayLogic();
+	setDefaultLedger();
+	displayLogic();
 }
 
 function onResizeDo(){
@@ -373,7 +375,7 @@ function onResizeDo(){
 
                 <tr>
                   <td class="TitleCell"> <span class="LabelText">General Ledger</span></td>
-                  <td class="Combo_ContentCell" colspan="2"> <select name="inpcAcctSchemaId" id="inpcAcctSchemaId" class="ComboKey Combo_TwoCells_width" onchange="refreshComboReports(); logChanges(this); return true; setDefaultLedger();">
+                  <td class="Combo_ContentCell" colspan="2"> <select name="inpcAcctSchemaId" id="inpcAcctSchemaId" class="ComboKey Combo_TwoCells_width" onchange="refreshComboReports(); logChanges(this); return true;">
                     <option value=""></option><div id="reportC_ACCTSCHEMA_ID"></div>
                   </select></td>
                   <td class="ContentCell"></td>
@@ -393,7 +395,7 @@ function onResizeDo(){
 
                 <tr>
                   <td class="TitleCell"><span class="LabelText">Organization</span></td>
-                  <td class="Combo_ContentCell" colspan="2"> <select name="inpOrganizacion" id="inpOrganizacion" class="ComboKey Combo_TwoCells_width" onchange="refreshComboYears(); logChanges(this); return true;setDefaultLedger();">
+                  <td class="Combo_ContentCell" colspan="2"> <select name="inpOrganizacion" id="inpOrganizacion" class="ComboKey Combo_TwoCells_width" onchange="setDefaultLedger(); logChanges(this); return true;">
                       <option value=""></option><div id="reportC_Org_ID"></div>
                     </select></td>
                 </tr>

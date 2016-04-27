@@ -13,7 +13,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2012 Openbravo SLU
+ * All portions are Copyright (C) 2001-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -90,7 +90,7 @@ function validate() {
 }
 
 
-function callback(paramXMLParticular, XMLHttpRequestObj) {
+function callbackLedger(paramXMLParticular, XMLHttpRequestObj) {
     var strText = "";
     if (getReadyStateHandler(XMLHttpRequestObj)) {
         try {
@@ -109,7 +109,7 @@ function callback(paramXMLParticular, XMLHttpRequestObj) {
 function setDefaultLedger() {
     try {
         var paramXMLReq = null;
-        return submitXmlHttpRequest(callback, document.frmMain, "LEDGER", "ReportGeneralLedger.html", false, null, paramXMLReq);
+        return submitXmlHttpRequest(callbackLedger, document.frmMain, "LEDGER", "ReportGeneralLedger.html", false, null, paramXMLReq);
     } catch (e) {
         alert(e);
     }
@@ -149,7 +149,7 @@ function onloadFunctions() {
     updateMenuIcon('buttonMenu');
 
     setWindowElementFocus('firstElement');
-	setDefaultLedger();
+    setDefaultLedger();
 
   }
 

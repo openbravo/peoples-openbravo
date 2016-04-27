@@ -13,7 +13,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2015 Openbravo SLU
+ * All portions are Copyright (C) 2001-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -90,14 +90,15 @@ function imprimir()
 }
 
 
-function callback2(paramXMLParticular, XMLHttpRequestObj) {
+function callbackLedger(paramXMLParticular, XMLHttpRequestObj) {
     var strText = "";
     if (getReadyStateHandler(XMLHttpRequestObj)) {
         try {
             if (XMLHttpRequestObj.responseText) {
                 strText = XMLHttpRequestObj.responseText;
-                if (strText) {
+                if (strText && document.getElementById('inpcAcctSchemaId').value != strText) {
                     document.getElementById('inpcAcctSchemaId').value = strText;
+                    selectDocument();
                 }
             }
        } catch (e) {
@@ -109,7 +110,7 @@ function callback2(paramXMLParticular, XMLHttpRequestObj) {
 function setDefaultLedger() {
     try {
         var paramXMLReq = null;
-        return submitXmlHttpRequest(callback2, document.frmMain, "LEDGER", "ReportGeneralLedgerJournal.html", false, null, paramXMLReq);
+        return submitXmlHttpRequest(callbackLedger, document.frmMain, "LEDGER", "ReportGeneralLedgerJournal.html", false, null, paramXMLReq);
     } catch (e) {
         alert(e);
     }
@@ -315,10 +316,10 @@ function callback(paramXMLParticular, XMLHttpRequestObj) {
         updateMenuIcon('buttonMenu');
 
         setWindowElementFocus('firstElement');
+        setDefaultLedger();
         displayDocumentNo();
         displayAdvancedFilters();
         selectDocument();
-        setDefaultLedger();
         openTabWhenPost();
         
         if (checkPreviousNextButtons) {
@@ -541,11 +542,11 @@ function callback(paramXMLParticular, XMLHttpRequestObj) {
             </tr>
             <tr>
               <td class="TitleCell"><span class="LabelText">Organization</span></td>
-              <td class="Combo_ContentCell" colspan="2"> <select  name="inpOrg" id="inpOrg" class="ComboKey Combo_TwoCells_width required Combo_focus" required="true" onchange="selectDocument();setDefaultLedger();">
+              <td class="Combo_ContentCell" colspan="2"> <select  name="inpOrg" id="inpOrg" class="ComboKey Combo_TwoCells_width required Combo_focus" required="true" onchange="setDefaultLedger();">
                  <div id="reportAD_ORGID"></div>
                 </select></td>
               <td class="TitleCell"> <span class="LabelText">General Ledger</span></td>
-              <td class="Combo_ContentCell" colspan="2"> <select  name="inpcAcctSchemaId" id="inpcAcctSchemaId" class="ComboKey Combo_TwoCells_width required Combo_focus" required="true" onchange="selectDocument();setDefaultLedger();">
+              <td class="Combo_ContentCell" colspan="2"> <select  name="inpcAcctSchemaId" id="inpcAcctSchemaId" class="ComboKey Combo_TwoCells_width required Combo_focus" required="true" onchange="selectDocument();">
                  <div id="reportC_ACCTSCHEMA_ID"></div> 
                 </select></td>
             </tr>

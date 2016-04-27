@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2016 Openbravo SLU 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -64,11 +64,12 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
-      String strOrg = vars.getGlobalVariable("inpOrg", "ReportTrialBalance|Org", "");
-      String strcAcctSchemaId = OBLedgerUtils.getOrgLedger(strOrg);
+      String strcAcctSchemaId = vars.getGlobalVariable("inpcAcctSchemaId",
+          "ReportTrialBalance|cAcctSchemaId", "");
       String strDateFrom = vars.getGlobalVariable("inpDateFrom", "ReportTrialBalance|DateFrom", "");
       String strDateTo = vars.getGlobalVariable("inpDateTo", "ReportTrialBalance|DateTo", "");
       String strPageNo = vars.getGlobalVariable("inpPageNo", "ReportTrialBalance|PageNo", "1");
+      String strOrg = vars.getGlobalVariable("inpOrg", "ReportTrialBalance|Org", "");
       String strLevel = vars.getGlobalVariable("inpLevel", "ReportTrialBalance|Level", "");
       String strcBpartnerId = vars.getInGlobalVariable("inpcBPartnerId_IN",
           "ReportTrialBalance|cBpartnerId", "", IsIDFilter.instance);
@@ -191,11 +192,12 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
 
     } else if (vars.commandIn("OPEN")) {
       String strAccountId = vars.getRequiredStringParameter("inpcAccountId");
-      String strOrg = vars.getRequestGlobalVariable("inpOrg", "ReportTrialBalance|Org");
-      String strcAcctSchemaId = OBLedgerUtils.getOrgLedger(strOrg);
+      String strcAcctSchemaId = vars.getRequestGlobalVariable("inpcAcctSchemaId",
+          "ReportTrialBalance|cAcctSchemaId");
       String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom",
           "ReportTrialBalance|DateFrom");
       String strDateTo = vars.getRequestGlobalVariable("inpDateTo", "ReportTrialBalance|DateTo");
+      String strOrg = vars.getRequestGlobalVariable("inpOrg", "ReportTrialBalance|Org");
       String strLevel = vars.getRequestGlobalVariable("inpLevel", "ReportTrialBalance|Level");
       String strcBpartnerId = vars.getInGlobalVariable("inpcBPartnerId_IN",
           "ReportTrialBalance|cBpartnerId", "", IsIDFilter.instance);
@@ -210,11 +212,9 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
       printPageOpen(response, vars, strDateFrom, strDateTo, strOrg, strLevel, strcBpartnerId,
           strmProductId, strcProjectId, strcAcctSchemaId, strGroupBy, strAccountId,
           strNotInitialBalance);
-
     } else if (vars.commandIn("LEDGER")) {
       String strOrg = vars.getGlobalVariable("inpOrg", "AgingInquiry|Org", "0");
       String strcAcctSchemaId = OBLedgerUtils.getOrgLedger(strOrg);
-
       response.setContentType("text/html; charset=UTF-8");
       PrintWriter out = response.getWriter();
       out.print(strcAcctSchemaId);
