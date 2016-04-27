@@ -954,6 +954,8 @@ OB.ViewFormProperties = {
     if (request.params.MODE === 'EDIT') {
       this.view.statusBar.mode = 'VIEW';
       this.view.statusBar.setContentLabel(null, null, this.getStatusBarFields());
+    } else if (modeIsNew) {
+      this.view.statusBar.setNewState(true);
     }
 
     if (this.callSaveAfterFICReturn) {

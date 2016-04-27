@@ -50,10 +50,10 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.ad.domain.Validation;
 import org.openbravo.service.datasource.DataSourceFilter;
+import org.openbravo.service.json.AdvancedQueryBuilder.TextMatching;
 import org.openbravo.service.json.DefaultJsonDataService;
 import org.openbravo.service.json.JsonConstants;
 import org.openbravo.service.json.JsonUtils;
-import org.openbravo.service.json.QueryBuilder.TextMatching;
 
 /**
  * Implements the a datasource filter request for the selectors. Used to generates Hibernate where

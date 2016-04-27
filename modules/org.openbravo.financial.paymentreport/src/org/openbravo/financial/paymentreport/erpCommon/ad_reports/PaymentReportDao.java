@@ -30,6 +30,7 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.Vector;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.LockOptions;
@@ -268,25 +269,34 @@ public class PaymentReportDao {
       hsqlScript.append(" left join fpd.finPayment as pay");
       hsqlScript.append(" left join fpsd.invoicePaymentSchedule as invps");
       hsqlScript.append(" left join invps.invoice as inv");
-      if (strGroupCrit.equalsIgnoreCase("INS_CURRENCY") || strOrdCrit.contains("INS_CURRENCY")) {
+      if (StringUtils.equalsIgnoreCase(strGroupCrit, "INS_CURRENCY")
+          || StringUtils.contains(strOrdCrit, "INS_CURRENCY")) {
         hsqlScript.append(" left join pay.currency as paycur");
         hsqlScript.append(" left join inv.currency as invcur");
       }
-      if (strGroupCrit.equalsIgnoreCase("Project") || strOrdCrit.contains("Project")) {
+      if (StringUtils.equalsIgnoreCase(strGroupCrit, "Project")
+          || StringUtils.contains(strOrdCrit, "Project")) {
         hsqlScript.append(" left join pay.project as paypro");
         hsqlScript.append(" left join inv.project as invpro");
       }
-      if (strGroupCrit.equalsIgnoreCase("APRM_FATS_BPARTNER")
-          || strOrdCrit.contains("APRM_FATS_BPARTNER")
-          || strGroupCrit.equalsIgnoreCase("FINPR_BPartner_Category")
-          || strOrdCrit.contains("FINPR_BPartner_Category")) {
+      if (StringUtils.equalsIgnoreCase(strGroupCrit, "APRM_FATS_BPARTNER")
+          || StringUtils.contains(strOrdCrit, "APRM_FATS_BPARTNER")
+          || StringUtils.equalsIgnoreCase(strGroupCrit, "FINPR_BPartner_Category")
+          || StringUtils.contains(strOrdCrit, "FINPR_BPartner_Category")
+          || (StringUtils.isNotEmpty(strcBPGroupIdIN) && (StringUtils.equals(strcNoBusinessPartner,
+              "include") || StringUtils.equals(strcNoBusinessPartner, "exclude")))) {
         hsqlScript.append(" left join pay.businessPartner as paybp");
         hsqlScript.append(" left join inv.businessPartner as invbp");
-        if (strGroupCrit.equalsIgnoreCase("FINPR_BPartner_Category")
-            || strOrdCrit.contains("FINPR_BPartner_Category")) {
+        if (StringUtils.equalsIgnoreCase(strGroupCrit, "FINPR_BPartner_Category")
+            || StringUtils.contains(strOrdCrit, "FINPR_BPartner_Category")
+            || (StringUtils.isNotEmpty(strcBPGroupIdIN) && (StringUtils.equals(
+                strcNoBusinessPartner, "include") || StringUtils.equals(strcNoBusinessPartner,
+                "exclude")))) {
           hsqlScript.append(" left join paybp.businessPartnerCategory as paybpc");
           hsqlScript.append(" left join invbp.businessPartnerCategory as invbpc");
         }
+      } else if (StringUtils.isNotEmpty(strFinancialAccountId)) {
+        hsqlScript.append(" left join inv.businessPartner as invbp");
       }
       hsqlScript.append(" where (fpd is not null or invps is not null)");
       hsqlScript.append(" and fpsd.organization.id in ");
@@ -745,12 +755,8 @@ public class PaymentReportDao {
         if (i % 100 == 0) {
           OBDal.getInstance().getSession().clear();
         }
-        OBDal
-            .getInstance()
-            .getSession()
-            .buildLockRequest(LockOptions.NONE)
-            .lock(FIN_PaymentScheduleDetail.ENTITY_NAME,
-                fpsd);
+        OBDal.getInstance().getSession().buildLockRequest(LockOptions.NONE)
+            .lock(FIN_PaymentScheduleDetail.ENTITY_NAME, fpsd);
 
         // search for fin_finacc_transaction for this payment
         FIN_FinaccTransaction trx = null;
