@@ -7,15 +7,13 @@
  ************************************************************************************
  */
 
-/*global Backbone,_*/
+/*global OB, Backbone , _ */
 
 (function () {
 
-  OB = window.OB || {};
-  OB.UTILS = window.OB.UTILS || {};
-  OB.UTILS.CashManagementUtils = window.OB.UTILS.CashManagementUtils || {};
+  OB.UTIL.CashManagementUtils = {};
 
-  OB.UTILS.CashManagementUtils.addCashManagementTransaction = function (newCashManagementTransaction, successCallback, errorCallback, options) {
+  OB.UTIL.CashManagementUtils.addCashManagementTransaction = function (newCashManagementTransaction, successCallback, errorCallback, options) {
     //Doc:
     //newCashMangmentTransaction is a backbone model which includes the following fields
     //amount -> the amount to be drop or deposited.
