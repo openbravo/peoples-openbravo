@@ -23,7 +23,7 @@ public class ProductCharacteristicHQLCriteria extends HQLCriteriaProcess {
     String sql = null;
     if (array_params[1].equals("__all__")) {
       sql = getAllQuery();
-    } else if (array_params[1].equals("Best sellers")) {
+    } else if (array_params[1].equals("OBPOS_bestsellercategory")) {
       sql = getBestsellers();
     } else {
       sql = getProdCategoryQuery();
