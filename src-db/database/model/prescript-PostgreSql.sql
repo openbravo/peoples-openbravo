@@ -176,8 +176,8 @@ BEGIN
     -- this is the old behaviour
     RETURN to_number($1, ''S99999999999999D999999'');
   ELSE
-    v_Mant := substring($1 from 1 for v_Pos - 1); -- Mantissa, implicit cast to data type NUMERIC
-    v_Exp := substring($1 from v_Pos + 1); -- Exponent, implicit cast to data type NUMERIC
+    v_Mant := cast(substring($1 from 1 for v_Pos - 1) as numeric);
+    v_Exp := cast(substring($1 from v_Pos + 1) as numeric);
     v_Res := v_Mant * power(10, v_Exp);
     RETURN v_Res;
   END IF;
