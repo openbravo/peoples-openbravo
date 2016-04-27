@@ -118,7 +118,7 @@ enyo.kind({
       this.createComponent({
         style: 'display: block;',
         components: [{
-          content: '-- ' + 'Delivered Quantity: ' + this.model.get('remainingQuantity'),
+          content: '-- ' + OB.I18N.getLabel('OBPOS_DeliveredQuantity') + ': ' + this.model.get('remainingQuantity'),
           attributes: {
             style: 'float: left; width: 100%; clear: left;'
           }
