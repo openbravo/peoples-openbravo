@@ -173,7 +173,7 @@ public class CrossOrganizationReference extends BaseDataSourceTestDal {
   }
 
   @AfterClass
-  static void removeCreatedObjects() {
+  public static void removeCreatedObjects() {
     OBContext.setOBContext("0");
     OBContext.setAdminMode(false);
     try {
