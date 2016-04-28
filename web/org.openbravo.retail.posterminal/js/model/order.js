@@ -2079,7 +2079,7 @@
       }
 
       _.forEach(lines.models, function (l) {
-        if (l.get('product').get('id') === p.get('id') && l.get('warehouse').id === warehouseId) {
+        if ((l.get('product').get('id') === p.get('id') && l.get('warehouse').id === warehouseId) || (line && l.get('id') === line.get('id'))) {
           qty += l.get('qty');
         }
       });

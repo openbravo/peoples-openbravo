@@ -98,23 +98,14 @@ enyo.kind({
         }
         me.doCloseLeftSubWindow();
       } else {
-        OB.UTIL.HookManager.executeHooks('OBPOS_PreTapStockAddReceipt', {
-          context: me,
-          params: attrs,
-          line: line
-        }, function (args) {
-          if (args && args.cancelOperation && args.cancelOperation === true) {
-            return;
-          }
-          me.doAddProduct({
-            attrs: attrs,
-            options: {
-              line: line,
-              blockAddProduct: true
-            },
-            product: product,
-            ignoreStockTab: true
-          });
+        me.doAddProduct({
+          attrs: attrs,
+          options: {
+            line: line,
+            blockAddProduct: true
+          },
+          product: product,
+          ignoreStockTab: true
         });
       }
     }
@@ -132,31 +123,42 @@ enyo.kind({
         warehousename: me.leftSubWindow.warehouse.warehousename,
         warehouseqty: me.leftSubWindow.warehouse.warehouseqty
       };
-      _.forEach(lines.models, function (li) {
-        if ((li.get('product').get('id') === product.get('id') && li.get('warehouse').id === attrs.warehouse.id) || (line && li.get('id') === line.get('id'))) {
-          allLinesQty += li.get('qty');
+      OB.UTIL.HookManager.executeHooks('OBPOS_PreTapStockAddReceipt', {
+        context: me,
+        params: attrs,
+        line: line
+      }, function (args) {
+        if (args && args.cancelOperation && args.cancelOperation === true) {
+          return;
         }
-      });
-      if (!line) {
-        allLinesQty += OB.DEC.One;
-      }
-      if ((product.get('isdiscontinued') || product.get('issalediscontinued'))) {
-        if (OB.MobileApp.model.hasPermission('OBPOS_AvoidProductDiscontinuedStockCheck', true)) {
-          if (allLinesQty > attrs.warehouse.warehouseqty) {
-            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_ErrorProductDiscontinued', [product.get('_identifier'), allLinesQty, attrs.warehouse.warehouseqty, attrs.warehouse.warehousename]));
+        _.forEach(lines.models, function (li) {
+          if ((li.get('product').get('id') === product.get('id') && li.get('warehouse').id === attrs.warehouse.id) || (line && li.get('id') === line.get('id'))) {
+            allLinesQty += li.get('qty');
+          }
+        });
+        if (!line) {
+          allLinesQty += args.qty ? args.qty : OB.DEC.One;
+        } else {
+          allLinesQty += args.qty ? args.qty : OB.DEC.Zero;
+        }
+        if ((product.get('isdiscontinued') || product.get('issalediscontinued'))) {
+          if (OB.MobileApp.model.hasPermission('OBPOS_AvoidProductDiscontinuedStockCheck', true)) {
+            if (allLinesQty > attrs.warehouse.warehouseqty) {
+              OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_ErrorProductDiscontinued', [product.get('_identifier'), allLinesQty, attrs.warehouse.warehouseqty, attrs.warehouse.warehousename]));
+            } else {
+              addLine(line, product, attrs);
+            }
           } else {
-            addLine(line, product, attrs);
+            if (line && allLinesQty > attrs.warehouse.warehouseqty) {
+              OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_ErrorProductDiscontinued', [product.get('_identifier'), allLinesQty, attrs.warehouse.warehouseqty, attrs.warehouse.warehousename]));
+            } else {
+              addLine(line, product, attrs);
+            }
           }
         } else {
-          if (line && allLinesQty > attrs.warehouse.warehouseqty) {
-            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_ErrorProductDiscontinued', [product.get('_identifier'), allLinesQty, attrs.warehouse.warehouseqty, attrs.warehouse.warehousename]));
-          } else {
-            addLine(line, product, attrs);
-          }
+          addLine(line, product, attrs);
         }
-      } else {
-        addLine(line, product, attrs);
-      }
+      });
     }
   }
 });
