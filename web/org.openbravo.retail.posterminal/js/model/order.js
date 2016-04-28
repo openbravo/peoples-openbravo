@@ -2423,6 +2423,7 @@
         this.set('salesRepresentative', null);
       }
       this.set('hasbeenpaid', 'N');
+      this.set('skipApplyPromotions', false);
       this.set('isPaid', false);
       this.set('isEditable', true);
       this.set('orderDate', OB.I18N.normalizeDate(new Date()));
@@ -3374,6 +3375,7 @@
       order.set('orderDate', OB.I18N.normalizeDate(model.orderDate));
       order.set('creationDate', OB.I18N.normalizeDate(model.creationDate));
       order.set('paidOnCredit', false);
+      order.set('skipApplyPromotions', true);
       if (model.isQuotation) {
         order.set('isQuotation', true);
         order.set('oldId', model.orderid);
