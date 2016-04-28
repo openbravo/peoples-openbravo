@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -38,6 +38,7 @@ import org.openbravo.reference.ui.UIReference;
  * 
  *         Handler to manage all the process for the tab's query building.
  */
+@SuppressWarnings("serial")
 public class TableSQLData implements Serializable {
   private static Logger log4j = Logger.getLogger(TableSQLData.class);
   private final String internalPrefix = "@@";

@@ -626,12 +626,15 @@ class Part {
   }
 }
 
+@SuppressWarnings("serial")
 class UnterminatedCommentException extends Exception {
 }
 
+@SuppressWarnings("serial")
 class UnbalancedBracesException extends Exception {
 }
 
+@SuppressWarnings("serial")
 class IncompletePropertyException extends Exception {
   String message = null;
 
@@ -644,6 +647,7 @@ class IncompletePropertyException extends Exception {
   }
 }
 
+@SuppressWarnings("serial")
 class EmptySelectorBodyException extends Exception {
   String message = null;
 
@@ -656,6 +660,7 @@ class EmptySelectorBodyException extends Exception {
   }
 }
 
+@SuppressWarnings("serial")
 class UnterminatedSelectorException extends Exception {
   String message = null;
 
@@ -668,6 +673,7 @@ class UnterminatedSelectorException extends Exception {
   }
 }
 
+@SuppressWarnings("serial")
 class IncompleteSelectorException extends Exception {
   String message = null;
 
