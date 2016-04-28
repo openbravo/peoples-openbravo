@@ -1322,7 +1322,8 @@
 
     deleteLinesFromOrder: function (selectedModels, callback) {
       var me = this,
-          pointofsale = OB.MobileApp.view.$.containerWindow.getRoot();
+          pointofsale = OB.MobileApp.view.$.containerWindow.getRoot(),
+          i;
 
       function postDeleteLine() {
         var cleanReceipt, hasServices = me.get('hasServices'),
@@ -1480,6 +1481,38 @@
         });
       }
 
+      function deleteApproval() {
+        OB.UTIL.Approval.requestApproval(pointofsale.model, 'OBPOS_approval.deleteLine', function (approved, supervisor, approvalType) {
+          if (approved) {
+            selectedModels.forEach(function (line, idx) {
+              line.set('deleteApproved', true);
+            });
+            preDeleteLine();
+          }
+        });
+      }
+
+      function checkStock(idx) {
+        var line = selectedModels[idx];
+        if (idx === selectedModels.length) {
+          deleteApproval();
+        } else {
+          if (line.get('qty') < 0 && (line.get('product').get('isdiscontinued') || line.get('product').get('issalediscontinued'))) {
+            var qtyAdded = -line.get('qty'),
+                options = {
+                line: line
+                };
+            this.model.get('order').getStoreStock(line.get('product'), qtyAdded, options, null, function (hasStock) {
+              if (hasStock) {
+                checkStock(idx + 1);
+              }
+            });
+          } else {
+            checkStock(idx + 1);
+          }
+        }
+      }
+
       //If there are no lines to delete, continue
       if (!selectedModels || !selectedModels.length) {
         if (callback) {
@@ -1496,13 +1529,24 @@
         return true;
       }
 
+      //C&R lines with delivered quantities cannot be removed
+      for (i = 0; i < selectedModels.length; i++) {
+        if (me.get('replacedorder') && selectedModels[i].get('deliveredQuantity') && selectedModels[i].get('deliveredQuantity')) {
+          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_CancelReplaceDeleteLine'));
+          if (callback) {
+            callback();
+          }
+          return;
+        }
+      }
+
       //Services validation
       if (this.get('hasServices')) {
         var unGroupedServiceLines = _.filter(selectedModels, function (line) {
           return line.get('product').get('productType') === 'S' && line.get('product').get('quantityRule') === 'PP' && !line.get('groupService') && line.has('relatedLines') && line.get('relatedLines').length > 0 && line.get('isEditable');
         });
         if (unGroupedServiceLines && unGroupedServiceLines.length > 0) {
-          var i, j, serviceQty, productQty, uniqueServices, getServiceQty, getProductQty;
+          var serviceQty, productQty, uniqueServices, getServiceQty, getProductQty;
           uniqueServices = _.uniq(unGroupedServiceLines, false, function (line) {
             return line.get('product').get('id') + line.get('relatedLines')[0].orderlineId;
           });
@@ -1530,32 +1574,19 @@
         }
       }
 
-      OB.UTIL.Approval.requestApproval(pointofsale.model, 'OBPOS_approval.deleteLine', function (approved, supervisor, approvalType) {
-        if (approved) {
-          selectedModels.forEach(function (line, idx) {
-            line.set('deleteApproved', true);
-          });
-          preDeleteLine();
-        }
-      });
+      if (!OB.MobileApp.model.hasPermission('OBPOS_AvoidProductDiscontinuedStockCheck', true)) {
+        // Check the stock for the discontinued negative lines
+        checkStock(0);
+      } else {
+        deleteApproval();
+      }
     },
 
     _deleteLines: function (lines, idx, length, callback) {
       var me = this,
           line = lines[idx];
 
-      if (idx === 0) {
-        var i;
-        for (i = 0; i < lines.length; i++) {
-          if (me.get('replacedorder') && lines[i].get('remainingQuantity')) {
-            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_CancelReplaceDeleteLine'));
-            if (callback) {
-              callback();
-            }
-            return;
-          }
-        }
-      } else if (idx === length) {
+      if (idx === length) {
         if (callback) {
           callback();
         }
@@ -1599,7 +1630,7 @@
         return;
       }
 
-      if (me.get('replacedorder') && line.get('remainingQuantity')) {
+      if (me.get('replacedorder') && line.get('deliveredQuantity')) {
         OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_CancelReplaceDeleteLine'));
         if (callback) {
           callback();
@@ -2000,9 +2031,23 @@
     getStoreStock: function (p, qty, options, attrs, callback) {
       var serverCallStoreDetailedStock = new OB.DS.Process('org.openbravo.retail.posterminal.stock.StoreDetailedStock'),
           me = this,
-          lines = OB.MobileApp.model.receipt.get('lines'),
+          lines = this.get('lines'),
           line = !OB.UTIL.isNullOrUndefined(options) ? options.line : null,
           warehouseId, warehouse;
+
+      if (!line && p.get('groupProduct')) {
+        var affectedByPack;
+        line = lines.find(function (l) {
+          if (l.get('product').id === p.id && ((l.get('qty') > 0 && qty > 0) || (l.get('qty') < 0 && qty < 0))) {
+            affectedByPack = l.isAffectedByPack();
+            if (!affectedByPack) {
+              return true;
+            } else if ((options && options.packId === affectedByPack.ruleId) || !(options && options.packId)) {
+              return true;
+            }
+          }
+        });
+      }
 
       if (attrs && attrs.warehouse) {
         warehouseId = attrs.warehouse.id;
@@ -2011,16 +2056,13 @@
       } else {
         warehouseId = OB.MobileApp.model.get('warehouses')[0].warehouseid;
       }
-      if (!p.get('groupProduct')) {
-        _.forEach(lines.models, function (li) {
-          if (li.get('product').get('id') === p.get('id') && li.get('warehouse').id === warehouseId) {
-            qty += li.get('qty');
-          }
-        });
-      }
-      if (!OB.UTIL.isNullOrUndefined(line) && p.get('groupProduct')) {
-        qty += line.get('qty');
-      }
+
+      _.forEach(lines.models, function (l) {
+        if (l.get('product').get('id') === p.get('id') && l.get('warehouse').id === warehouseId) {
+          qty += l.get('qty');
+        }
+      });
+
       if (qty > 0) {
         serverCallStoreDetailedStock.exec({
           organization: OB.MobileApp.model.get('terminal').organization,

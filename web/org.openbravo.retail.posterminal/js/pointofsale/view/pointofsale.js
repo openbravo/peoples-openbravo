@@ -957,6 +957,7 @@ enyo.kind({
     });
   },
   returnLine: function (inSender, inEvent) {
+    var me = this;
     if (this.model.get('order').get('isEditable') === false) {
       this.doShowPopup({
         popup: 'modalNotEditableOrder'
@@ -967,7 +968,16 @@ enyo.kind({
       OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_CancelReplaceReturnLines'));
       return;
     }
-    this.model.get('order').returnLine(inEvent.line);
+    if (inEvent.line.get('qty') < 0 && (inEvent.line.get('product').get('isdiscontinued') || inEvent.line.get('product').get('issalediscontinued')) && !OB.MobileApp.model.hasPermission('OBPOS_AvoidProductDiscontinuedStockCheck', true)) {
+      var qtyAdded = -inEvent.line.get('qty') - inEvent.line.get('qty');
+      this.model.get('order').getStoreStock(inEvent.line.get('product'), qtyAdded, inEvent, null, function (hasStock) {
+        if (hasStock) {
+          me.model.get('order').returnLine(inEvent.line);
+        }
+      });
+    } else {
+      this.model.get('order').returnLine(inEvent.line);
+    }
   },
   exactPayment: function (inSender, inEvent) {
     this.$.multiColumn.$.rightPanel.$.keyboard.execStatelessCommand('cashexact');
