@@ -2548,13 +2548,19 @@
 
       if (updatePrices) {
         this.updatePrices(function (order) {
-          OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_QuotationCreatedOrder'));
-          // This event is used in stock validation module.
-          order.trigger('orderCreatedFromQuotation');
+          order.calculateReceipt(function () {
+            OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_QuotationCreatedOrder'));
+            // This event is used in stock validation module.
+            order.trigger('orderCreatedFromQuotation');
+          });
         });
       } else {
-        OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_QuotationCreatedOrder'));
-        this.trigger('orderCreatedFromQuotation');
+        this.set('skipApplyPromotions', true);
+        this.calculateReceipt(function () {
+          me.unset('skipApplyPromotions');
+          OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_QuotationCreatedOrder'));
+          me.trigger('orderCreatedFromQuotation');
+        });
       }
       this.calculateReceipt();
     },

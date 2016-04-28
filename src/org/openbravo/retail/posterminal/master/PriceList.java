@@ -80,7 +80,8 @@ public class PriceList extends ProcessHQLQuery {
               + " from PricingPriceList pl "
               + "where pl.id in (select distinct priceList.id from BusinessPartner where customer = 'Y') "
               + "and pl.id <> (:priceList) "
-              + "and $naturalOrgCriteria and $readableClientCriteria and ($incrementalUpdateCriteria)");
+              + "and $naturalOrgCriteria and $readableClientCriteria and ($incrementalUpdateCriteria) "
+              + "order by pl.id asc");
     }
 
     return hqlQueries;

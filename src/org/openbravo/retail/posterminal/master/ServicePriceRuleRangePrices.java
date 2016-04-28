@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2015 Openbravo S.L.U.
+ * Copyright (C) 2015-2016 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -65,7 +65,8 @@ public class ServicePriceRuleRangePrices extends ProcessHQLQuery {
             + "join ppl.servicePriceRuleRangeList sppr join pplv.pricingProductPriceList ppp "
             + "where $filtersCriteria and $hqlCriteria and pplv.id = get_pricelist_version(pplv.priceList.id, '"
             + format.format(terminalDate) + "') and ppp.product.productType = 'S' "
-            + "and sppr.$naturalOrgCriteria and sppr.$incrementalUpdateCriteria ");
+            + "and sppr.$naturalOrgCriteria and sppr.$incrementalUpdateCriteria "
+            + "order by ppl.id asc");
 
     return hqlQueries;
   }
