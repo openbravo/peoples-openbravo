@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2012 Openbravo S.L.U.
+ * Copyright (C) 2001-2016 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -22,6 +22,7 @@ import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.scheduling.OBScheduler;
+import org.quartz.SchedulerException;
 
 /**
  * This class is used to provide the coder with friendly methods to retrieve certain environment,
@@ -221,6 +222,7 @@ public class VariablesSecureApp extends VariablesBase {
    * corresponds to the theme's folder name in the web/skins. Default theme's value is 'Default'.
    * 
    * @return String with the unique name of the theme.
+   * @throws SchedulerException
    */
   public String getTheme() {
     if (!theme.equals("")) {
@@ -248,12 +250,14 @@ public class VariablesSecureApp extends VariablesBase {
             OBContext.restorePreviousMode();
           }
         }
+      } catch (SchedulerException e) {
+        log4j.error("Error while checking if the scheduler is started.", e);
       } finally {
         if (strTheme.isEmpty()) {
           strTheme = "ltr/org.openbravo.userinterface.skin.250to300Comp/250to300Comp";
         }
-        return strTheme;
       }
+      return strTheme;
     }
   }
 
