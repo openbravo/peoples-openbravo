@@ -61,6 +61,9 @@ enyo.kind({
     });
     this.getCollection().reset(columns);
   },
+  setValue: function (value) {
+    this.setSelectedValue(value, 'id');
+  },
   initComponents: function () {
     this.setCollection(new Backbone.Collection());
     this.getCollection().reset([]);
