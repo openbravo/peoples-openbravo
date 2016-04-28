@@ -11,7 +11,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SLU
- * Contributions are Copyright (C) 2001-2012 Openbravo S.L.U.
+ * Contributions are Copyright (C) 2001-2016 Openbravo S.L.U.
  ******************************************************************************
  */
 package org.openbravo.erpCommon.ad_forms;
@@ -278,10 +278,6 @@ public class ProductInfo {
       return null;
     }
     BigDecimal cost = new BigDecimal(getProductItemCost(date, as, "", conn, con));
-    if (cost == null) {
-      log4jProductInfo.debug("getProductCosts - No Costs");
-      return null;
-    }
     log4jProductInfo.debug("getProductCosts - qty = " + m_qty);
     if (strQty == null || strQty.equals("")) {
       BigDecimal qty = new BigDecimal(m_qty);

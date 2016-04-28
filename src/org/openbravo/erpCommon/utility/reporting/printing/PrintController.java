@@ -8,7 +8,7 @@
  * either express or implied. See the License for the specific language
  * governing rights and limitations under the License. The Original Code is
  * Openbravo ERP. The Initial Developer of the Original Code is Openbravo SLU All
- * portions are Copyright (C) 2008-2015 Openbravo SLU All Rights Reserved.
+ * portions are Copyright (C) 2008-2016 Openbravo SLU All Rights Reserved.
  * Contributor(s): ______________________________________.
  */
 package org.openbravo.erpCommon.utility.reporting.printing;
@@ -1334,28 +1334,20 @@ public class PrintController extends HttpSecureAppServlet {
     // check the templates
     if (differentDocTypes.size() > 1) { // the templates selector shouldn't
       // appear
-      if (discard == null) { // Its the only think to hide
-        discard = new String[] { "discardSelect" };
-      } else {
-        final String[] discardAux = new String[discard.length + 1];
-        for (int i = 0; i < discard.length; i++) {
-          discardAux[i] = discard[i];
-        }
-        discardAux[discard.length] = "discardSelect";
-        return discardAux;
+      final String[] discardAux = new String[discard.length + 1];
+      for (int i = 0; i < discard.length; i++) {
+        discardAux[i] = discard[i];
       }
+      discardAux[discard.length] = "discardSelect";
+      return discardAux;
     }
     if (vector == null && vars.getMultiFile("inpFile") == null) {
-      if (discard == null) {
-        discard = new String[] { "view" };
-      } else {
-        final String[] discardAux = new String[discard.length + 1];
-        for (int i = 0; i < discard.length; i++) {
-          discardAux[i] = discard[i];
-        }
-        discardAux[discard.length] = "view";
-        return discardAux;
+      final String[] discardAux = new String[discard.length + 1];
+      for (int i = 0; i < discard.length; i++) {
+        discardAux[i] = discard[i];
       }
+      discardAux[discard.length] = "view";
+      return discardAux;
     }
     return discard;
   }
