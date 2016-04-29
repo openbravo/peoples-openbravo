@@ -94,7 +94,6 @@ public class Project extends HttpSecureAppServlet {
       if (vars.getStringParameter("newFilter").equals("1")) {
         removePageSessionVariables(vars);
       }
-      String strWindowId = vars.getGlobalVariable("inpWindowId", "Project.windowId", "");
       String strKey = vars.getGlobalVariable("inpKey", "Project.key", "");
       String strName = vars.getGlobalVariable("inpName", "Project.name", "");
       String strBpartners = vars.getGlobalVariable("inpBpartnerId", "Project.bpartner", "");

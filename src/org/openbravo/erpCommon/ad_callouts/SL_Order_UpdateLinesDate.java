@@ -21,7 +21,6 @@ package org.openbravo.erpCommon.ad_callouts;
 import javax.servlet.ServletException;
 
 import org.hibernate.criterion.Restrictions;
-import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -41,8 +40,6 @@ public class SL_Order_UpdateLinesDate extends SimpleCallout {
     try {
       OBContext.setAdminMode();
       String lastChanged = info.getStringParameter("inpLastFieldChanged", null);
-      String format = OBPropertiesProvider.getInstance().getOpenbravoProperties()
-          .getProperty("dateFormat.java");
       String id = info.getStringParameter("C_Order_ID", null);
 
       /*

@@ -105,8 +105,10 @@ public class PostDocumentTest extends OBBaseTest {
   private static String PRETTY_CASH = "627A1291274F4BCF838588BB2F2102AD";
   private static String BANK_ACCOUNT = "58D66F384F7549D995523BF116F29BA0";
 
-  private String testNumber;
-  private String testDescription;
+  @SuppressWarnings("unused")
+  private String testNumber; // It is used to show the test number when the test is run.
+  @SuppressWarnings("unused")
+  private String testDescription; // It is used to show the test description when the test is run.
   private String keyId;
   private String tableId;
   private String orgId;

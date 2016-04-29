@@ -90,10 +90,7 @@ public class ServicesTest3 extends WeldBaseTest {
       PARAMS);
 
   /** this field will take the values defined by parameterValuesRule field. */
-  private @ParameterCdiTest
-  ServiceTestData parameter;
-
-  private static int counterTest = 0;
+  private @ParameterCdiTest ServiceTestData parameter;
 
   /**
    * Tests cases to check ServicePriceUtils.getServiceAmount method. All possible errors are
@@ -160,7 +157,6 @@ public class ServicesTest3 extends WeldBaseTest {
       }
 
       assertTrue("Not properly handled error obtained", error);
-      counterTest++;
     } catch (Exception e) {
       log.error("Error when executing: " + parameter.getTestDescription(), e);
       assertFalse(true);

@@ -411,7 +411,7 @@ public class PrintController extends HttpSecureAppServlet {
                 + fullDocumentIdentifier);
             final String templateId = vars.getRequestGlobalVariable("templates", "templates");
             final String documentId = pocData[0].documentId;
-            for (final PocData documentData : pocData) {
+            for (int i = 0; i < pocData.length; i++) {
               final Report report = new Report(this, documentType, documentId, vars.getLanguage(),
                   templateId, multiReports, OutputTypeEnum.DEFAULT);
               o.put("templateId", templateId);
