@@ -251,7 +251,7 @@ enyo.kind({
   init: function (model) {
     this.model = model;
     this.$.lbl.addClass('btn-label');
-    if (OB.MobileApp.model.get('terminal').terminalType.useRfid && OB.POS.hwserver.url) {
+    if (OB.UTIL.RfidController.isRfidConfigured()) {
       this.$.rfidIcon.show();
     }
     OB.UTIL.RfidController.on('change:connected', function (model) {
@@ -312,7 +312,7 @@ enyo.kind({
     return true;
   },
   pointOfSaleLoad: function (inSender, inEvent) {
-    if (!OB.UTIL.RfidController.get('isRFIDEnabled') | !OB.UTIL.RfidController.get('reconnectOnScanningFocus')) {
+    if (!OB.UTIL.RfidController.get('isRFIDEnabled') || !OB.UTIL.RfidController.get('reconnectOnScanningFocus')) {
       this.$.rfidIcon.addClass(this.rfidOffIcon);
     } else {
       this.$.rfidIcon.addClass(this.rfidOnIcon);

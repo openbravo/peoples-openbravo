@@ -13,7 +13,7 @@ OB.UTIL.RfidController = new Backbone.Model({});
 
 OB.UTIL.RfidController.isRfidConfigured = function () {
   if (OB.POS.hwserver) {
-    return OB.POS.hwserver.url && OB.POS.modelterminal.get('terminal').terminalType.useRfid;
+    return OB.POS.hwserver.url && OB.POS.modelterminal.get('terminal').terminalType.useRfid && window.location.protocol === OB.POS.hwserver.url.split('/')[0];
   } else {
     return false;
   }
