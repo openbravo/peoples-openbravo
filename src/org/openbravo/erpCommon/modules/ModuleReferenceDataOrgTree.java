@@ -286,22 +286,22 @@ public class ModuleReferenceDataOrgTree extends ModuleTree {
   public String getHTMLDescription(String node) {
     try {
 
-      ModuleReferenceDataOrgTreeData[] data = ModuleReferenceDataOrgTreeData.selectDescription(
+      ModuleReferenceDataOrgTreeData[] moduleReferenceDataOrgTreeData = ModuleReferenceDataOrgTreeData.selectDescription(
           conn, lang, node);
       // addLinks(data, true);
       String discard[] = { "" };
-      if (data != null && data.length > 0 && data[0].linkname != null
-          && !data[0].linkname.equals(""))
-        data[0].statusName = "";
-      if (data != null
-          && data.length > 0
-          && (data[0].updateAvailable == null || data[0].updateAvailable.equals("") || data[0].updateAvailable
+      if (moduleReferenceDataOrgTreeData != null && moduleReferenceDataOrgTreeData.length > 0 && moduleReferenceDataOrgTreeData[0].linkname != null
+          && !moduleReferenceDataOrgTreeData[0].linkname.equals(""))
+        moduleReferenceDataOrgTreeData[0].statusName = "";
+      if (moduleReferenceDataOrgTreeData != null
+          && moduleReferenceDataOrgTreeData.length > 0
+          && (moduleReferenceDataOrgTreeData[0].updateAvailable == null || moduleReferenceDataOrgTreeData[0].updateAvailable.equals("") || moduleReferenceDataOrgTreeData[0].updateAvailable
               .equals("N")))
         discard[0] = "update";
 
       XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
           "org/openbravo/erpCommon/modules/ModuleTreeDescription", discard).createXmlDocument();
-      xmlDocument.setData("structureDesc", data);
+      xmlDocument.setData("structureDesc", moduleReferenceDataOrgTreeData);
       return xmlDocument.print();
 
     } catch (Exception e) {

@@ -41,7 +41,8 @@ import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 public class SE_Payment_MultiCurrency extends SimpleCallout {
 
   private static final long serialVersionUID = 1L;
-  static Logger log4j = Logger.getLogger(SE_Payment_MultiCurrency.class);
+  private static final Logger sePaymentMultiCurrencyLog4j = Logger
+      .getLogger(SE_Payment_MultiCurrency.class);
 
   @Override
   protected void execute(CalloutInfo info) throws ServletException {
@@ -110,8 +111,9 @@ public class SE_Payment_MultiCurrency extends SimpleCallout {
         }
       }
     } else {
-      log4j.error("SE_Payment_MultiCurrency. The following field executed the callout"
-          + lastFieldChanged);
+      sePaymentMultiCurrencyLog4j
+          .error("SE_Payment_MultiCurrency. The following field executed the callout"
+              + lastFieldChanged);
     }
 
   }
@@ -160,7 +162,7 @@ public class SE_Payment_MultiCurrency extends SimpleCallout {
         }
       }
     } catch (Exception e) {
-      log4j.error(e);
+      sePaymentMultiCurrencyLog4j.error(e);
       return null;
     } finally {
       OBContext.restorePreviousMode();
@@ -184,7 +186,7 @@ public class SE_Payment_MultiCurrency extends SimpleCallout {
       SimpleDateFormat outputFormat = new SimpleDateFormat(dateFormat);
       return (outputFormat.parse(strDate));
     } catch (ParseException e) {
-      log4j.error(e.getMessage(), e);
+      sePaymentMultiCurrencyLog4j.error(e.getMessage(), e);
       return null;
     }
   }

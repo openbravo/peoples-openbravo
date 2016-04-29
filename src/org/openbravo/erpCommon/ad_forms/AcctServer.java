@@ -1513,13 +1513,13 @@ public abstract class AcctServer {
         //
         String strQty = Qty.toString();
         String strDateTrx = DateTrx;
-        String AD_Client_ID = data[i].adClientId;
-        String AD_Org_ID = data[i].adOrgId;
+        String adClientId = data[i].adClientId;
+        String adOrgId = data[i].adOrgId;
         String C_InvoiceLine_ID = data[i].cInvoicelineId;
         String M_InOutLine_ID = data[i].mInoutlineId;
-        String M_Product_ID = data[i].mProductId;
+        String mProductId = data[i].mProductId;
         //
-        if (createMatchInv(AD_Client_ID, AD_Org_ID, M_InOutLine_ID, C_InvoiceLine_ID, M_Product_ID,
+        if (createMatchInv(adClientId, adOrgId, M_InOutLine_ID, C_InvoiceLine_ID, mProductId,
             strDateTrx, strQty, vars, conn, con) == 1)
           counter++;
       }

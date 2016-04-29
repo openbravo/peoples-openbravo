@@ -233,7 +233,7 @@ public class DocBank extends AcctServer {
     log4jDocBank.debug("createFact - object created");
     // Header -- there may be different currency amounts
     BigDecimal TrxAmt = null;
-    BigDecimal ChargeAmt = null;
+    BigDecimal docBankChargeAmt = null;
     BigDecimal ConvertChargeAmt = null;
     String strDateAcct = "FirstIteration";
     // BigDecimal InterestAmt = null;
@@ -251,7 +251,7 @@ public class DocBank extends AcctServer {
       // setC_Period_ID(line.m_DateAcct);
       // BankAsset DR CR (Statement)
       TrxAmt = new BigDecimal(line.m_TrxAmt);
-      ChargeAmt = new BigDecimal(line.chargeAmt);
+      docBankChargeAmt = new BigDecimal(line.chargeAmt);
       ConvertChargeAmt = new BigDecimal(line.convertChargeAmt);
       log4jDocBank.debug("createFact - p_lines.length = " + p_lines.length + " - i=" + i);
       log4jDocBank.debug("createFact - Record_ID = " + Record_ID);
@@ -289,7 +289,7 @@ public class DocBank extends AcctServer {
       fact.createLine(
           lineAux,
           new Account(conn, DocLineBankData.selectChargeAccount(conn, C_BankAccount_ID,
-              as.m_C_AcctSchema_ID)), line.m_C_Currency_ID, ChargeAmt.toString(), "",
+              as.m_C_AcctSchema_ID)), line.m_C_Currency_ID, docBankChargeAmt.toString(), "",
           Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
       // Interest DR CR (Interest)
       /*

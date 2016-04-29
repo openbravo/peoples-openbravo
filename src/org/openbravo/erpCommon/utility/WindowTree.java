@@ -165,7 +165,7 @@ public class WindowTree extends HttpSecureAppServlet {
     String TreeName = "";
     String TreeDescription = "";
 
-    StringBuffer menu = new StringBuffer();
+    StringBuffer nodesMenu = new StringBuffer();
     if (key == null || key.isEmpty()) {
       Tab tab = OBDal.getInstance().get(Tab.class, strTabId);
       Table table = tab.getTable();
@@ -197,17 +197,17 @@ public class WindowTree extends HttpSecureAppServlet {
 
     if (log4j.isDebugEnabled())
       log4j.debug("WindowTree.loadNodes() - TreeType: " + TreeType + " || TreeID: " + TreeID);
-    menu.append("\n<ul class=\"dhtmlgoodies_tree\">\n");
-    menu.append(WindowTreeUtility.addNodeElement(TreeName, TreeDescription, CHILD_SHEETS, true, "",
-        strDireccion, "clickItem(0, '" + Replace.replace(TreeName, "'", "\\'") + "', 'N');",
-        "dblClickItem(0);", true, "0", ""));
+    nodesMenu.append("\n<ul class=\"dhtmlgoodies_tree\">\n");
+    nodesMenu.append(WindowTreeUtility.addNodeElement(TreeName, TreeDescription, CHILD_SHEETS,
+        true, "", strDireccion, "clickItem(0, '" + Replace.replace(TreeName, "'", "\\'")
+            + "', 'N');", "dblClickItem(0);", true, "0", ""));
     WindowTreeData[] wtd = WindowTreeUtility.getTree(this, vars, TreeType, TreeID, editable, "",
         "", strTabId);
     Map<String, List<WindowTreeData>> wtdTree = buildTree(wtd);
-    menu.append(generateTree(wtd, wtdTree, strDireccion, "0", true, strTabId));
-    menu.append("\n</ul>\n");
+    nodesMenu.append(generateTree(wtd, wtdTree, strDireccion, "0", true, strTabId));
+    nodesMenu.append("\n</ul>\n");
     nodeIdList = null;
-    return menu.toString();
+    return nodesMenu.toString();
   }
 
   /**

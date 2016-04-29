@@ -316,7 +316,7 @@ class Property implements Comparable<Property> {
   public Property(String property) throws Exception {
     try {
       // Parse the property.
-      ArrayList<String> parts = new ArrayList<String>();
+      ArrayList<String> partList = new ArrayList<String>();
       boolean bCanSplit = true;
       int j = 0;
       String substr;
@@ -331,19 +331,19 @@ class Property implements Comparable<Property> {
         } else if (property.charAt(i) == ':') {
           substr = property.substring(j, i);
           if (!(substr.trim().equals("") || (substr == null)))
-            parts.add(substr);
+            partList.add(substr);
           j = i + 1;
         }
       }
       substr = property.substring(j, property.length());
       if (!(substr.trim().equals("") || (substr == null)))
-        parts.add(substr);
-      if (parts.size() < 2) {
+        partList.add(substr);
+      if (partList.size() < 2) {
         throw new Exception("\t\tWarning: Incomplete property: " + property);
       }
-      this.property = parts.get(0).trim().toLowerCase();
+      this.property = partList.get(0).trim().toLowerCase();
 
-      this.parts = parseValues(simplifyColours(parts.get(1).trim().replaceAll(", ", ",")));
+      this.parts = parseValues(simplifyColours(partList.get(1).trim().replaceAll(", ", ",")));
 
     } catch (PatternSyntaxException e) {
       // Invalid regular expression used.

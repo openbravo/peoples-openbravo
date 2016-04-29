@@ -60,7 +60,7 @@ import org.openbravo.model.financialmgmt.payment.FIN_Payment_Credit;
 import org.openbravo.model.financialmgmt.payment.FinAccPaymentMethod;
 
 public class DocFINPayment extends AcctServer {
-  static Logger log4j = Logger.getLogger(DocFINPayment.class);
+  private static final Logger docFINPaymentLog4j = Logger.getLogger(DocFINPayment.class);
 
   String SeqNo = "0";
   String generatedAmount = "";
@@ -355,7 +355,8 @@ public class DocFINPayment extends AcctServer {
               .newInstance();
           return newTemplate.createFact(this, as, conn, con, vars);
         } catch (Exception e) {
-          log4j.error("Error while creating new instance for DocFINPaymentTemplate - ", e);
+          docFINPaymentLog4j.error(
+              "Error while creating new instance for DocFINPaymentTemplate - ", e);
         }
       }
 
@@ -573,7 +574,7 @@ public class DocFINPayment extends AcctServer {
     }
     sb.append("]");
     //
-    log4j.debug(" Balance=" + retValue + sb.toString());
+    docFINPaymentLog4j.debug(" Balance=" + retValue + sb.toString());
     return retValue;
   } // getBalance
 
@@ -744,22 +745,22 @@ public class DocFINPayment extends AcctServer {
       MultiCurrency = true;
     String Amt = getConvertedAmt(Amount, C_Currency_ID_From, C_Currency_ID_To, conversionDate, "",
         AD_Client_ID, AD_Org_ID, conn);
-    if (log4j.isDebugEnabled())
-      log4j.debug("Amt:" + Amt);
+    if (docFINPaymentLog4j.isDebugEnabled())
+      docFINPaymentLog4j.debug("Amt:" + Amt);
 
     String AmtTo = getConvertedAmt(Amount, C_Currency_ID_From, C_Currency_ID_To, mDateAcct, "",
         AD_Client_ID, AD_Org_ID, conn);
-    if (log4j.isDebugEnabled())
-      log4j.debug("AmtTo:" + AmtTo);
+    if (docFINPaymentLog4j.isDebugEnabled())
+      docFINPaymentLog4j.debug("AmtTo:" + AmtTo);
 
     BigDecimal AmtDiff = (new BigDecimal(AmtTo)).subtract(new BigDecimal(Amt));
-    if (log4j.isDebugEnabled())
-      log4j.debug("AmtDiff:" + AmtDiff);
+    if (docFINPaymentLog4j.isDebugEnabled())
+      docFINPaymentLog4j.debug("AmtDiff:" + AmtDiff);
 
-    if (log4j.isDebugEnabled()) {
-      log4j.debug("curr from:" + C_Currency_ID_From + " Curr to:" + C_Currency_ID_To + " convDate:"
-          + conversionDate + " DateAcct:" + mDateAcct);
-      log4j.debug("Amt:" + Amt + " AmtTo:" + AmtTo + " Diff:" + AmtDiff.toString());
+    if (docFINPaymentLog4j.isDebugEnabled()) {
+      docFINPaymentLog4j.debug("curr from:" + C_Currency_ID_From + " Curr to:" + C_Currency_ID_To
+          + " convDate:" + conversionDate + " DateAcct:" + mDateAcct);
+      docFINPaymentLog4j.debug("Amt:" + Amt + " AmtTo:" + AmtTo + " Diff:" + AmtDiff.toString());
     }
 
     if ((isReceipt && AmtDiff.compareTo(new BigDecimal("0.00")) == 1)

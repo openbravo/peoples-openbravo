@@ -71,7 +71,8 @@ public class DocFINReconciliation extends AcctServer {
   public static final String TRXTYPE_BPWithdrawal = "BPW";
   public static final String TRXTYPE_BankFee = "BF";
 
-  private static final Logger log4j = Logger.getLogger(DocFINReconciliation.class);
+  private static final Logger docFINReconciliationLog4j = Logger
+      .getLogger(DocFINReconciliation.class);
 
   String SeqNo = "0";
 
@@ -390,7 +391,7 @@ public class DocFINReconciliation extends AcctServer {
             FieldProviderFactory.setField(data[i], "cCostcenterId", trxInfo[0].cCostcenterId);
           }
         } catch (Exception e) {
-          log4j.error("Error while retreiving user1 and user2 - ", e);
+          docFINReconciliationLog4j.error("Error while retreiving user1 and user2 - ", e);
         }
       }
     } finally {
@@ -446,7 +447,7 @@ public class DocFINReconciliation extends AcctServer {
           FieldProviderFactory.setField(data[0], "cCostcenterId", trxInfo[0].cCostcenterId);
         }
       } catch (Exception e) {
-        log4j.error("Error while retreiving user1 and user2 - ", e);
+        docFINReconciliationLog4j.error("Error while retreiving user1 and user2 - ", e);
       }
     } finally {
       OBContext.restorePreviousMode();
@@ -492,7 +493,7 @@ public class DocFINReconciliation extends AcctServer {
           FieldProviderFactory.setField(data[0], "user2Id", trxInfo[0].user2Id);
         }
       } catch (Exception e) {
-        log4j.error("Error while retreiving user1 and user2 - ", e);
+        docFINReconciliationLog4j.error("Error while retreiving user1 and user2 - ", e);
       }
     } finally {
       OBContext.restorePreviousMode();
@@ -578,7 +579,8 @@ public class DocFINReconciliation extends AcctServer {
               strClassname).newInstance();
           return newTemplate.createFact(this, as, conn, con, vars);
         } catch (Exception e) {
-          log4j.error("Error while creating new instance for DocFINReconciliationTemplate - " + e);
+          docFINReconciliationLog4j
+              .error("Error while creating new instance for DocFINReconciliationTemplate - " + e);
         }
       }
       String Fact_Acct_Group_ID = SequenceIdData.getUUID();
@@ -1041,7 +1043,7 @@ public class DocFINReconciliation extends AcctServer {
     }
     sb.append("]");
     //
-    log4j.debug(" Balance=" + retValue + sb.toString());
+    docFINReconciliationLog4j.debug(" Balance=" + retValue + sb.toString());
     return retValue;
   } // getBalance
 
@@ -1649,7 +1651,7 @@ public class DocFINReconciliation extends AcctServer {
       data = AcctServerData.periodOpen(connectionProvider, client, documentType, org, date);
       return data[0].period;
     } catch (ServletException e) {
-      log4j.warn(e);
+      docFINReconciliationLog4j.warn(e);
       e.printStackTrace();
     }
     return null;
@@ -1674,13 +1676,13 @@ public class DocFINReconciliation extends AcctServer {
         return acct;
       // No account
       if (Account_ID.equals("")) {
-        log4j.warn("AcctServer - getAccount - NO account Type=" + AcctType + ", Record="
-            + Record_ID);
+        docFINReconciliationLog4j.warn("AcctServer - getAccount - NO account Type=" + AcctType
+            + ", Record=" + Record_ID);
         return acct;
       }
       acct = Account.getAccount(conn, Account_ID);
     } catch (ServletException e) {
-      log4j.warn(e);
+      docFINReconciliationLog4j.warn(e);
       e.printStackTrace();
     } finally {
       if (acct == null) {

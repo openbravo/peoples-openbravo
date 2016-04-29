@@ -102,19 +102,19 @@ public class ModuleReferenceDataClientTree extends ModuleTree {
   public String getHTMLDescription(String node) {
     try {
 
-      ModuleReferenceDataClientTreeData[] data = ModuleReferenceDataClientTreeData
+      ModuleReferenceDataClientTreeData[] moduleReferenceDataClientTreeData = ModuleReferenceDataClientTreeData
           .selectDescription(conn, lang, node);
       String discard[] = { "" };
-      if (data != null && data.length > 0 && data[0].linkname != null
-          && !data[0].linkname.equals(""))
-        data[0].statusName = "";
-      if (data != null && data.length > 0
-          && (data[0].updateAvailable == null || data[0].updateAvailable.equals("")))
+      if (moduleReferenceDataClientTreeData != null && moduleReferenceDataClientTreeData.length > 0 && moduleReferenceDataClientTreeData[0].linkname != null
+          && !moduleReferenceDataClientTreeData[0].linkname.equals(""))
+        moduleReferenceDataClientTreeData[0].statusName = "";
+      if (moduleReferenceDataClientTreeData != null && moduleReferenceDataClientTreeData.length > 0
+          && (moduleReferenceDataClientTreeData[0].updateAvailable == null || moduleReferenceDataClientTreeData[0].updateAvailable.equals("")))
         discard[0] = "update";
 
       XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
           "org/openbravo/erpCommon/modules/ModuleTreeDescription", discard).createXmlDocument();
-      xmlDocument.setData("structureDesc", data);
+      xmlDocument.setData("structureDesc", moduleReferenceDataClientTreeData);
       return xmlDocument.print();
 
     } catch (Exception e) {
