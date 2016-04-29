@@ -427,21 +427,6 @@ public class ComboTableData {
   }
 
   /**
-   * Adds a new parameter to the select section of the query.
-   * 
-   * @param _parameter
-   *          String with the parameter.
-   * @param _fieldName
-   *          String with the name of the field.
-   */
-  private void addSelectParameter(String _parameter, String _fieldName) {
-    if (this.paramSelect == null)
-      this.paramSelect = new Vector<QueryParameterStructure>();
-    QueryParameterStructure aux = new QueryParameterStructure(_parameter, _fieldName, "SELECT");
-    paramSelect.addElement(aux);
-  }
-
-  /**
    * Gets all the defined parameters for the select section.
    * 
    * @return Vector with the parameters.
@@ -625,15 +610,6 @@ public class ComboTableData {
    */
   private void setIndex(int _index) {
     this.index = _index;
-  }
-
-  /**
-   * Getter for the table alias index.
-   * 
-   * @return Integer with the index.
-   */
-  private int getIndex() {
-    return this.index;
   }
 
   /**

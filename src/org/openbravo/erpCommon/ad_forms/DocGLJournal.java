@@ -304,23 +304,6 @@ public class DocGLJournal extends AcctServer {
     return true;
   }
 
-  private String isperiodOpen(ConnectionProvider conn, String periodId) {
-    if ("".equals(periodId)) {
-      return "";
-    }
-    try {
-      DocGLJournalData[] data = DocGLJournalData.periodOpen(conn, periodId);
-      if (data != null && data.length > 0) {
-        return periodId;
-      } else {
-        return "";
-      }
-    } catch (ServletException e) {
-      e.printStackTrace();
-      return "";
-    }
-  }
-
   public String getServletInfo() {
     return "Servlet for the accounting";
   } // end of getServletInfo() method

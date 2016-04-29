@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2015 Openbravo SLU
+ * All portions are Copyright (C) 2015-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -51,11 +51,6 @@ public class Ad_isorgincludedTest extends OBBaseTest {
    * Spain Organization
    */
   private static final String ORG_A1 = "357947E87C284935AD1D783CF6F099A1";
-
-  /**
-   * USA Organization
-   */
-  private static final String ORG_A2 = "5EFF95EB540740A3B10510D9814EFAD5";
 
   /**
    * F&B International Group Client

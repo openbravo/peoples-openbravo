@@ -39,8 +39,6 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class SL_Payment_Amounts extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
-  private static final BigDecimal ZERO = new BigDecimal(0.0);
-
   public void init(ServletConfig config) {
     super.init(config);
     boolHist = false;

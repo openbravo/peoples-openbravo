@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -29,8 +29,6 @@ public class Alert {
   private String referencekeyId = "0";
 
   private static Logger log4j = Logger.getLogger(Alert.class);
-  private static final char DATA_DRIVEN = 'D';
-  private static final char EXTERNAL = 'E';
 
   public Alert() {
     this(0);

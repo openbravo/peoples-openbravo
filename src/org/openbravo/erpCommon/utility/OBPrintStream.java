@@ -40,7 +40,6 @@ class OBPrintStream extends PrintStream {
   private PrintStream psout;
   public static final int TEXT_HTML = 1;
   public static final int TEXT_PLAIN = 2;
-  private File logFile;
   private PrintWriter logWriter;
 
   /**
@@ -69,7 +68,6 @@ class OBPrintStream extends PrintStream {
   }
 
   public void setLogFile(File f) {
-    logFile = f;
     try {
       logWriter = new PrintWriter(f);
 

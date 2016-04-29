@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2015 Openbravo SLU
+ * All portions are Copyright (C) 2014-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -30,7 +30,6 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.Organization;
-import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 
 @ComponentProvider.Qualifier(APRMConstants.TRANSACTION_WINDOW_ID)
 public class TransactionAddPaymentDisplayLogics extends AddPaymentDisplayLogicsHandler {
@@ -78,21 +77,6 @@ public class TransactionAddPaymentDisplayLogics extends AddPaymentDisplayLogicsH
     } else {
       return false;
     }
-  }
-
-  private FIN_FinaccTransaction getTransaction(Map<String, String> requestMap) throws JSONException {
-    // Current Payment
-    JSONObject context = new JSONObject(requestMap.get("context"));
-    String strFinFinaccTransactionIdd = "";
-    if (context.has("inpfinFinaccTransactionId") && !context.isNull("inpfinFinaccTransactionId")) {
-      strFinFinaccTransactionIdd = context.getString("inpfinFinaccTransactionId");
-    }
-    if (context.has("Fin_Finacc_Transaction_ID") && !context.isNull("Fin_Finacc_Transaction_ID")) {
-      strFinFinaccTransactionIdd = context.getString("Fin_Finacc_Transaction_ID");
-    }
-    FIN_FinaccTransaction transaction = OBDal.getInstance().get(FIN_FinaccTransaction.class,
-        strFinFinaccTransactionIdd);
-    return transaction;
   }
 
   BigDecimal getDefaultGeneratedCredit(Map<String, String> requestMap) throws JSONException {

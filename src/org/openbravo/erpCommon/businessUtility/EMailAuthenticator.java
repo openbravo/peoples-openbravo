@@ -49,12 +49,4 @@ public class EMailAuthenticator extends Authenticator {
       return "EMailAuthenticator[" + m_pass.getUserName() + "/" + m_pass.getPassword() + "]";
   }
 
-  private String getUserName() {
-    return m_pass.getUserName();
-  }
-
-  private String getPassword() {
-    return m_pass.getPassword();
-  }
-
 }
