@@ -658,6 +658,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
           process.exec({
             messageId: OB.UTIL.get_UUID(),
             data: [{
+              id: receipt.get('id'),
               order: receipt
             }]
           }, function (data) {
