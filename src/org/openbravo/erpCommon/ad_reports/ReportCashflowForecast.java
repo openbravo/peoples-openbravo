@@ -84,16 +84,9 @@ public class ReportCashflowForecast extends HttpSecureAppServlet {
       String strBankAccount, String strDateMax, String strBreakDate, boolean showDefault)
       throws IOException, ServletException {
 
-    ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "ReportCashflowForecast", false, "",
-        "", "", false, "ad_reports", strReplaceWith, false, true);
-
     // ReportCashflowForecastData[] dataSummary =
     // ReportCashflowForecastData.select(this,Utility.getContext(this, vars, "#User_Client",
     // "ReportBank"), Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportBank"));
-    ReportCashflowForecastData[] dataSummary = ReportCashflowForecastData.select(this,
-        vars.getLanguage(), strDateMax, "",
-        Utility.getContext(this, vars, "#User_Client", "ReportBank"),
-        Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportBank"));
 
     if (!showDefault) {
       ReportCashflowForecastData[] dataDetail = null;

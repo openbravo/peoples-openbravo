@@ -377,7 +377,6 @@ class Property implements Comparable<Property> {
     // prefixes last -- eg, *display should come after display.
     String thisProp = this.property;
     String thatProp = other.property;
-    String[] parts;
 
     if (thisProp.charAt(0) == '-') {
       thisProp = thisProp.substring(1);

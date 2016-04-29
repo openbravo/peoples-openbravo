@@ -326,7 +326,6 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
           String periodNumber = accDefPlanData.get("periodNumber");
           String startingPeriodId = accDefPlanData.get("startingPeriodId");
           // As it is a Expense invoice:
-          boolean isSOTRX = false;
           if (!"".equals(planType) && !"".equals(periodNumber) && !"".equals(startingPeriodId)) {
             isDeferred = "Y";
           } else {

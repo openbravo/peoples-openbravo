@@ -995,17 +995,13 @@ public class Utility {
       return true;
 
     boolean retValue = true;
-    String whatMissing = "";
 
     if (AD_Client_ID.equals("0") && AD_Org_ID.equals("0") && User_Level.indexOf("S") == -1) {
       retValue = false;
-      whatMissing += "S";
     } else if (!AD_Client_ID.equals("0") && AD_Org_ID.equals("0") && User_Level.indexOf("C") == -1) {
       retValue = false;
-      whatMissing += "C";
     } else if (!AD_Client_ID.equals("0") && !AD_Org_ID.equals("0") && User_Level.indexOf("O") == -1) {
       retValue = false;
-      whatMissing += "O";
     }
 
     if (!WindowAccessData.hasWriteAccess(conn, window, vars.getRole()))

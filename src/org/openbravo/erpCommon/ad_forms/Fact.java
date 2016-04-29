@@ -696,7 +696,6 @@ public class Fact {
     } else { // Adjust biggest (Balance Sheet) line amount
       BigDecimal BSamount = ZERO;
       FactLine BSline = null;
-      BigDecimal PLamount = ZERO;
       FactLine PLline = null;
       int signum = diff.signum();
       // Find line
@@ -710,7 +709,6 @@ public class Fact {
           BSline = l;
         } else if (!l.isBalanceSheet() && ((amt.compareTo(BSamount) > 0 && signum != 1))
             || ((amt.compareTo(BSamount) < 0 && signum == 1))) {
-          PLamount = amt;
           PLline = l;
         }
       }

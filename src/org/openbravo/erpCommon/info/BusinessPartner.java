@@ -125,7 +125,7 @@ public class BusinessPartner extends HttpSecureAppServlet {
       // - exactly one row (and row content is needed)
       // - zero or more than one row (row content not needed)
       // so limit <= 2 records to get both info from result without needing to fetch all rows
-      String rownum = "0", oraLimit1 = null, pgLimit = null;
+      String oraLimit1 = null, pgLimit = null;
       if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
         oraLimit1 = "2";
       } else {

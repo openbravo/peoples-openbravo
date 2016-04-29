@@ -58,7 +58,6 @@ public class RptM_Inout extends HttpSecureAppServlet {
         .createXmlDocument();
 
     RptMInoutData[] data = RptMInoutData.select(this, strmInoutId);
-    String strCopies = minimumOne(RptMInoutData.selectCopies(this, strmInoutId));
     RptMInoutData[] dataPrincipal = RptMInoutData.selectNumCopies(this,
         Integer.toString(data.length));
     RptMInoutHeaderData[][] dataHeader = new RptMInoutHeaderData[data.length][];

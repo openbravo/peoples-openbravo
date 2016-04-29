@@ -42,7 +42,6 @@ public class VariablesSecureApp extends VariablesBase {
   private String warehouse;
   private String command;
   private String userClient;
-  private String userOrganization;
   private String dbSessionID;
   private String javaDateFormat;
   private String javaDataTimeFormat;
@@ -71,7 +70,6 @@ public class VariablesSecureApp extends VariablesBase {
     this.client = strClient;
     this.organization = strOrganization;
     this.userClient = "";
-    this.userOrganization = "";
     this.warehouse = "";
     this.dbSessionID = "";
     this.command = "DEFAULT";
@@ -130,7 +128,6 @@ public class VariablesSecureApp extends VariablesBase {
     this.client = strClient;
     this.organization = strOrganization;
     this.userClient = "";
-    this.userOrganization = "";
     this.warehouse = "";
     this.dbSessionID = "";
     this.command = "DEFAULT";
@@ -176,7 +173,6 @@ public class VariablesSecureApp extends VariablesBase {
     this.client = getSessionValue("#AD_Client_ID");
     this.organization = getSessionValue("#AD_Org_ID");
     this.userClient = getSessionValue("#User_Client");
-    this.userOrganization = getSessionValue("#User_Org");
     this.warehouse = getSessionValue("#M_Warehouse_ID");
     this.dbSessionID = getSessionValue("#AD_Session_ID");
     this.command = getStringParameter("Command", "DEFAULT");

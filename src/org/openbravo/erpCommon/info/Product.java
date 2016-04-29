@@ -185,7 +185,6 @@ public class Product extends HttpSecureAppServlet {
       String strName = vars.getGlobalVariable("inpName", "Product.name", "");
       String strOrg = vars.getGlobalVariable("inpAD_Org_ID", "Product.adorgid", "");
       String strWarehouse = vars.getGlobalVariable("inpWarehouse", "Product.warehouse", "");
-      String strPriceList = vars.getGlobalVariable("inpPriceList", "Product.priceList", "");
       String strPriceListVersion = vars.getGlobalVariable("inpPriceListVersion",
           "Product.priceListVersion", "");
 

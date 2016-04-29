@@ -86,10 +86,9 @@ public class SL_JournalLineAmt extends HttpSecureAppServlet {
         "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
     String strAcctSchema = SLJournalLineAmtData.selectGeneralLedger(this, strGLJournal);
     SLJournalLineAmtData[] data = SLJournalLineAmtData.select(this, strAcctSchema);
-    String strPrecision = "2", strTargetCurrencyId = "";
+    String strPrecision = "2";
     if (data != null && data.length > 0) {
       strPrecision = data[0].stdprecision.equals("") ? "2" : data[0].stdprecision;
-      strTargetCurrencyId = data[0].cCurrencyId.equals("") ? "0" : data[0].cCurrencyId;
     }
     GLJournal gLJournal = OBDal.getInstance().get(GLJournal.class, strGLJournal);
     BigDecimal CurrencyRateValue = gLJournal.getRate();

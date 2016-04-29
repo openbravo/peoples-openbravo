@@ -53,7 +53,6 @@ public class ReportManager {
   private String _strBaseWeb; // BASE WEB!!!!!!
   private String _prefix;
   private String _strAttachmentPath;
-  private boolean multiReports = false;
 
   public ReportManager(ConnectionProvider connectionProvider, String ftpDirectory,
       String replaceWithFull, String baseDesignPath, String defaultDesignPath, String prefix,
@@ -64,7 +63,6 @@ public class ReportManager {
     _strDefaultDesignPath = defaultDesignPath;
     _strAttachmentPath = ftpDirectory;
     _prefix = prefix;
-    multiReports = multiReport;
 
     // Strip of ending slash character
     if (_strBaseDesignPath.endsWith("/"))

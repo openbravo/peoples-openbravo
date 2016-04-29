@@ -2615,10 +2615,6 @@ public abstract class AcctServer {
         APRM_FinaccTransactionV a = OBDal.getInstance()
             .get(APRM_FinaccTransactionV.class, recordId);
         if (a.getForeignCurrency() != null) { // && !a.getForeignCurrency().getId().equals(CurTo_ID)
-          String strDateFormat;
-          strDateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
-              .getProperty("dateFormat.java");
-          final SimpleDateFormat dateFormat = new SimpleDateFormat(strDateFormat);
           Amt = a.getForeignAmount().toString();
           data = AcctServerData.currencyConvert(conn, Amt, a.getForeignCurrency().getId(),
               CurTo_ID, ConvDate, RateType, client, org);

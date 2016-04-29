@@ -535,7 +535,6 @@ public class MatchTransaction extends HttpSecureAppServlet {
         final String COLOR_STRONG = "#66CC00";
         final String COLOR_WEAK = "#99CC66";
         final String COLOR_WHITE = "white";
-        boolean alreadyMatched = false;
 
         FIN_BankStatementLine line = OBDal.getInstance().get(FIN_BankStatementLine.class,
             FIN_BankStatementLines[i].getId());
@@ -547,7 +546,6 @@ public class MatchTransaction extends HttpSecureAppServlet {
           if (executeMatching) {
             // try to match if exception is thrown continue
             try {
-              long initMatchLine = System.currentTimeMillis();
               matched = matchingTransaction.match(line, excluded);
               // initMatch = initMatch + (System.currentTimeMillis() - initMatchLine);
               OBDal.getInstance().getConnection().commit();
@@ -583,8 +581,6 @@ public class MatchTransaction extends HttpSecureAppServlet {
           }
           matchingType = matched.getMatchLevel();
 
-        } else {
-          alreadyMatched = true;
         }
 
         FieldProviderFactory.setField(data[i], "rownum", Integer.toString(i + 1));

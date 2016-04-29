@@ -107,7 +107,6 @@ public class AntExecutor {
   @Deprecated
   public String setLogFile(String directory, String logFileName) throws Exception {
     // DefaultLogger logger = new DefaultLogger();
-    final FileOutputStream logFile = new FileOutputStream(directory + "/" + logFileName);
     // PrintStream ps = new PrintStream(logFile);
     // logger.setOutputPrintStream(ps);
     // logger.setErrorPrintStream(ps);

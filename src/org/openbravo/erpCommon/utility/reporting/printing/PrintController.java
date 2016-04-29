@@ -278,7 +278,6 @@ public class PrintController extends HttpSecureAppServlet {
 
               final String senderAddress = EmailData.getSenderAddress(this, vars.getClient(),
                   report.getOrgId());
-              boolean moreThanOnesalesRep = checks.get("moreThanOnesalesRep").booleanValue();
 
               if (request.getServletPath().toLowerCase().indexOf(PRINT_PATH) == -1
                   && request.getServletPath().toLowerCase().indexOf(PRINT_OPTIONS_PATH) == -1) {

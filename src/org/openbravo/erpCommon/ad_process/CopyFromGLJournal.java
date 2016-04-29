@@ -21,7 +21,6 @@ package org.openbravo.erpCommon.ad_process;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
-import java.text.SimpleDateFormat;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -85,8 +84,6 @@ public class CopyFromGLJournal extends HttpSecureAppServlet {
 
   private OBError processButton(VariablesSecureApp vars, String strKey, String strGLJournalBatch,
       String windowId) {
-    String strDateFormat = vars.getJavaDateFormat();
-    SimpleDateFormat dateFormat = new SimpleDateFormat(strDateFormat);
 
     if (log4j.isDebugEnabled())
       log4j.debug("Save: GLJournal");

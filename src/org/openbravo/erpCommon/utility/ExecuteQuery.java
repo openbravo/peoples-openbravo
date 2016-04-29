@@ -290,7 +290,6 @@ public class ExecuteQuery {
 
       boolean first = true;
       int numColumns = 0;
-      int rowNum = 0;
       Vector<String> names = new Vector<String>(0);
       while (result.next()) {
         if (first) {
@@ -306,7 +305,6 @@ public class ExecuteQuery {
           sqlReturnObject.setData(names.elementAt(i), UtilSql.getValue(result, names.elementAt(i)));
         }
         vector.addElement(sqlReturnObject);
-        rowNum++;
       }
       result.close();
     } catch (SQLException e) {

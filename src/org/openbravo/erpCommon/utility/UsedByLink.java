@@ -555,7 +555,7 @@ public class UsedByLink extends HttpSecureAppServlet {
     if (log4j.isDebugEnabled())
       log4j.debug("WHERE CLAUSE: " + strWhere);
     final StringBuffer where = new StringBuffer();
-    String token = "", fin = "";
+    String token = "";
     int i = 0;
     i = strWhere.indexOf("@");
     while (i != -1) {
@@ -566,7 +566,6 @@ public class UsedByLink extends HttpSecureAppServlet {
       if (log4j.isDebugEnabled())
         log4j.debug("WHERE COMPARATION: " + strWhere);
       if (strWhere.startsWith("SQL")) {
-        fin += ")";
         strWhere.substring(4);
         where.append("(");
       } else {

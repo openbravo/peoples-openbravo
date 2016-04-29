@@ -63,7 +63,6 @@ public class ReportNotPosted extends HttpSecureAppServlet {
       log4j.debug("Output: dataSheet");
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
-    String discard[] = { "sectionDocType" };
     XmlDocument xmlDocument = null;
     ReportNotPostedData[] data = null;
     // if (strDateFrom.equals("") && strDateTo.equals("")) {

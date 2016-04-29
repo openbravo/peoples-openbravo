@@ -1674,13 +1674,9 @@ public class TableSQLData implements Serializable {
         _alias = _alias.substring(0, _alias.length() - 2);
       }
       int position = -1;
-      UIReference reference = null;
       Properties myProps = getColumnPosition(_alias);
       if (myProps != null) {
         position = Integer.valueOf(myProps.getProperty("Position")).intValue();
-
-        reference = Reference.getUIReference(myProps.getProperty("AD_Reference_ID"),
-            myProps.getProperty("AD_Reference_Value_ID"));
       }
       if (position != -1) {
         addOrderByPosition(Integer.toString(position));

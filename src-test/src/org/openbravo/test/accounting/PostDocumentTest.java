@@ -173,11 +173,6 @@ public class PostDocumentTest extends OBBaseTest {
         { USA_DOLLAR_LEGDER, PRETTY_CASH, "03-06-2015", "100", "100.00", "0.00", "100.00", "0.00" },
         { MAIN_EURO_LEGDER, FONDO_SOCIAL, "03-06-2015", "100", "0.00", "100.00", "0.00", "200.00" },
         { MAIN_EURO_LEGDER, CAPITAL_SOCIAL, "03-06-2015", "100", "100.00", "0.00", "200.00", "0.00" } };
-    String[][] resultTest9 = {
-        { USA_DOLLAR_LEGDER, BANK_ACCOUNT, "03-06-2015", "100", "0.00", "100.00", "0.00", "100.00" },
-        { USA_DOLLAR_LEGDER, PRETTY_CASH, "03-06-2015", "100", "100.00", "0.00", "100.00", "0.00" },
-        { MAIN_EURO_LEGDER, FONDO_SOCIAL, "03-06-2015", "100", "0.00", "100.00", "0.00", "200.00" },
-        { MAIN_EURO_LEGDER, CAPITAL_SOCIAL, "03-06-2015", "100", "100.00", "0.00", "200.00", "0.00" } };
 
     return Arrays.asList(new Object[][] {
         { "1", "Sales invoice I/29", INVOICE_TEST1, TABLE_INVOICE, ORGANIZATION_SPAIN_ID,

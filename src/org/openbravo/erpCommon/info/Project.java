@@ -98,7 +98,6 @@ public class Project extends HttpSecureAppServlet {
       String strKey = vars.getGlobalVariable("inpKey", "Project.key", "");
       String strName = vars.getGlobalVariable("inpName", "Project.name", "");
       String strBpartners = vars.getGlobalVariable("inpBpartnerId", "Project.bpartner", "");
-      String strIsSOTrx = Utility.getContext(this, vars, "isSOTrx", strWindowId);
       String strOrg = vars.getGlobalVariable("inpAD_Org_ID", "Project.adorgid", "");
 
       String strNewFilter = vars.getStringParameter("newFilter");

@@ -469,7 +469,7 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
             Utility.getContext(this, vars, "#User_Client", ""), strcProjectIdAux));
 
     if (data != null && data.length > 0) {
-      if ("Y".equals(strIncludeZeroFigures) &&  "S".equals(strLevel))
+      if ("Y".equals(strIncludeZeroFigures) && "S".equals(strLevel))
         data = includeZeroFigures(data, strcAcctSchemaId, strOrg, strAccountFromValue,
             strAccountToValue);
       xmlDocument.setData("structure1", data);
@@ -663,7 +663,7 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
             Utility.messageBD(this, "ProcessStatus-W", vars.getLanguage()),
             Utility.messageBD(this, "NoDataFound", vars.getLanguage()));
       } else {
-        if ("Y".equals(strIncludeZeroFigures) &&  "S".equals(strLevel)) {
+        if ("Y".equals(strIncludeZeroFigures) && "S".equals(strLevel)) {
           data = includeZeroFigures(data, strcAcctSchemaId, strOrg, strAccountFromValue,
               strAccountToValue);
         }
@@ -796,7 +796,6 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
         BigDecimal parcialDR = new BigDecimal((String) vecParcial.elementAt(0));
         BigDecimal parcialCR = new BigDecimal((String) vecParcial.elementAt(1));
         BigDecimal parcialInicial = new BigDecimal((String) vecParcial.elementAt(2));
-        BigDecimal parcialFinal = new BigDecimal((String) vecParcial.elementAt(3));
         data[i].amtacctdr = (new BigDecimal(data[i].amtacctdr).add(parcialDR)).toPlainString();
         data[i].amtacctcr = (new BigDecimal(data[i].amtacctcr).add(parcialCR)).toPlainString();
         data[i].saldoInicial = (new BigDecimal(data[i].saldoInicial).add(parcialInicial))
