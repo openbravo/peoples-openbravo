@@ -201,6 +201,7 @@ public class ProductProperties extends ModelExtension {
           add(new HQLProperty("product.deferredSellMaxDays", "deferredSellMaxDays"));
           add(new HQLProperty("product.quantityRule", "quantityRule"));
           add(new HQLProperty("product.obposPrintservices", "isPrintServices"));
+          add(new HQLProperty("'true'", "updatePriceFromPricelist"));
           if (multiPriceList) {
             add(new HQLProperty("pp.standardPrice", "currentStandardPrice"));
           }
