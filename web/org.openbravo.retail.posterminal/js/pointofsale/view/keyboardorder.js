@@ -44,12 +44,6 @@ enyo.kind({
         }
       }
     }
-    this.$.minusBtn.waterfall('onDisableButton', {
-      disabled: !this.selectedModelsSameQty
-    });
-    this.$.plusBtn.waterfall('onDisableButton', {
-      disabled: !this.selectedModelsSameQty
-    });
   },
   keyboardOnDiscountsMode: function (inSender, inEvent) {
     if (inEvent.status) {

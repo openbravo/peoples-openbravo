@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2015 Openbravo S.L.U.
+ * Copyright (C) 2012-2016 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -494,7 +494,8 @@ enyo.kind({
     onEditLine: '',
     onReturnLine: '',
     onShowPopup: '',
-    onShowMultiSelection: ''
+    onShowMultiSelection: '',
+    onReceiptLineSelected: ''
   },
   handlers: {
     onCheckBoxBehaviorForTicketLine: 'checkBoxBehavior',
@@ -540,11 +541,7 @@ enyo.kind({
     } else {
       //The fix for issue 31509 adds a selected callback after 'off'ing the callbacks but before
       //restoring them. We need to ensure that both callback objects are merged
-      this.receipt.get('lines')._callbacks.selected.tail.next = this.selectedCallbacks.next.next;
-      this.receipt.get('lines')._callbacks.selected.tail.context = this.selectedCallbacks.next.context;
-      this.receipt.get('lines')._callbacks.selected.tail.callback = this.selectedCallbacks.next.callback;
-      this.receipt.get('lines')._callbacks.selected.tail = this.selectedCallbacks.tail;
-
+      this.receipt.get('lines')._callbacks.selected = this.selectedCallbacks;
       this.receipt.get('lines')._callbacks.click = this.clickCallbacks;
       if (this.receipt.get('lines').length > 0) {
         var line = this.selectedLine;
@@ -774,10 +771,16 @@ enyo.kind({
   },
   receiptChanged: function () {
     this.inherited(arguments);
-
     this.line = null;
-
-    this.receipt.get('lines').on('selected', this.selectedListener, this);
+    var me = this;
+    this.receipt.get('lines').on('selected', function (lineSelected) {
+      if (lineSelected) {
+        me.selectedListener(lineSelected);
+        me.doReceiptLineSelected({
+          product: lineSelected.get('product')
+        });
+      }
+    }, this);
   },
 
   render: function () {
