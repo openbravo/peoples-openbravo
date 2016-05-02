@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2013 Openbravo S.L.U.
+ * Copyright (C) 2012-2016 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -282,7 +282,8 @@ enyo.kind({
     onDeleteLine: '',
     onEditLine: '',
     onReturnLine: '',
-    onShowPopup: ''
+    onShowPopup: '',
+    onReceiptLineSelected: ''
   },
   handlers: {
     onCheckBoxBehaviorForTicketLine: 'checkBoxBehavior',
@@ -295,11 +296,14 @@ enyo.kind({
       //are removed. Because of it, the callback for the selected event are saved
       //and then recovered.
       this.selectedCallbacks = this.receipt.get('lines')._callbacks.selected;
+      this.clickCallbacks = this.receipt.get('lines')._callbacks.click;
       this.receipt.get('lines').off('selected');
+      this.receipt.get('lines').off('click');
       this.render();
     } else {
       //WARN! recover the callbacks for the selected events
       this.receipt.get('lines')._callbacks.selected = this.selectedCallbacks;
+      this.receipt.get('lines')._callbacks.click = this.clickCallbacks;
 
       if (this.receipt.get('lines').length > 0) {
         var line = this.receipt.get('lines').at(0);
@@ -461,10 +465,16 @@ enyo.kind({
   },
   receiptChanged: function () {
     this.inherited(arguments);
-
     this.line = null;
-
-    this.receipt.get('lines').on('selected', this.selectedListener, this);
+    var me = this;
+    this.receipt.get('lines').on('selected', function (lineSelected) {
+      if (lineSelected) {
+        me.selectedListener(lineSelected);
+        me.doReceiptLineSelected({
+          product: lineSelected.get('product')
+        });
+      }
+    }, this);
   },
 
   render: function () {

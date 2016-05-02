@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2015 Openbravo S.L.U.
+ * Copyright (C) 2012-2016 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -375,6 +375,9 @@ enyo.kind({
   },
   init: function (model) {
     this.model = model;
+    this.model.get('order').get('lines').on('selected', function (lineSelected) {
+      this.currentLine = lineSelected;
+    }, this);
     //    var me = this;
     //    this.model.get('multiOrders').on('change:isMultiOrders', function (model) {
     //      me.doRightToolbarDisabled({
@@ -386,10 +389,6 @@ enyo.kind({
     this.setDisabled(inEvent.status);
   },
   tap: function (options) {
-    this.model.get('order').get('lines').on('selected', function (lineSelected) {
-      this.currentLine = lineSelected;
-    }, this);
-
     if (!options.isManual) {
       // The tap was not manual. So consider the last line added
       var lines = this.model.get('order').get('lines');
