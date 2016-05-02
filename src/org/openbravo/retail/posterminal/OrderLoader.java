@@ -1755,7 +1755,10 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           writeoffAmt = writeoffAmt.subtract(tempWriteoffAmt);
         }
       }
-      if (invoice != null && (creditpaidLayaway || fullypaidLayaway)) {
+
+      boolean checkPaidOnCreditChecked = (jsonorder.has("paidOnCredit") && jsonorder
+          .getBoolean("paidOnCredit"));
+      if (invoice != null && (creditpaidLayaway || fullypaidLayaway || checkPaidOnCreditChecked)) {
         for (int j = 0; j < paymentSchedule.getFINPaymentScheduleDetailOrderPaymentScheduleList()
             .size(); j++) {
           if (paymentSchedule.getFINPaymentScheduleDetailOrderPaymentScheduleList().get(j)
@@ -1772,6 +1775,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         invoice.setTotalPaid(invoice.getGrandTotalAmount().subtract(amountPaidWithCredit));
         invoice.setOutstandingAmount(amountPaidWithCredit);
         invoice.setDueAmount(amountPaidWithCredit);
+        invoice.setDaysTillDue(FIN_Utility.getDaysToDue(paymentScheduleInvoice.getDueDate()));
         invoice.setPaymentComplete(amountPaidWithCredit.compareTo(BigDecimal.ZERO) == 0);
         paymentScheduleInvoice.setOutstandingAmount(amountPaidWithCredit);
         paymentScheduleInvoice.setPaidAmount(invoice.getGrandTotalAmount().subtract(
