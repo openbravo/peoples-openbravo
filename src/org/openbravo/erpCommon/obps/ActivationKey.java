@@ -1113,7 +1113,7 @@ public class ActivationKey {
     String sessionId = (String) DalUtil.getId(expiredSession);
     HttpSession session = SessionListener.getActiveSession(sessionId);
     if (session == null) {
-      log4j.debug("Session " + sessionId + " no found in context");
+      log4j.debug("Session " + sessionId + " not found in context");
       return true;
     }
     Date lastRequestTime = new Date(session.getLastAccessedTime());
