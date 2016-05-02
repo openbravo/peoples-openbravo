@@ -1456,7 +1456,24 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       }
     }
 
-    order.setInvoiceTerms(bp.getInvoiceTerms());
+    if (bp.getInvoiceTerms() != null) {
+      order.setInvoiceTerms(bp.getInvoiceTerms());
+    } else if (order.getOrganization().getObretcoDbpIrulesid() != null) {
+      order.setInvoiceTerms(order.getOrganization().getObretcoDbpIrulesid());
+    } else {
+      OBCriteria<org.openbravo.model.ad.domain.List> invoiceRules = OBDal.getInstance()
+          .createCriteria(org.openbravo.model.ad.domain.List.class);
+      invoiceRules.add(Restrictions.eq(org.openbravo.model.ad.domain.List.PROPERTY_REFERENCE
+          + ".id", "150"));
+      invoiceRules.add(Restrictions.eq(org.openbravo.model.ad.domain.List.PROPERTY_ACTIVE, true));
+      invoiceRules.addOrderBy(org.openbravo.model.ad.domain.List.PROPERTY_SEARCHKEY, true);
+      invoiceRules.setMaxResults(1);
+      List<org.openbravo.model.ad.domain.List> lstInvoiceRule = invoiceRules.list();
+      if (lstInvoiceRule != null && lstInvoiceRule.size() > 0) {
+        order.setInvoiceTerms(lstInvoiceRule.get(0).getSearchKey());
+      }
+    }
+
     order.setGrandTotalAmount(BigDecimal.valueOf(jsonorder.getDouble("gross")).setScale(
         pricePrecision, RoundingMode.HALF_UP));
     order.setSummedLineAmount(BigDecimal.valueOf(jsonorder.getDouble("net")).setScale(
