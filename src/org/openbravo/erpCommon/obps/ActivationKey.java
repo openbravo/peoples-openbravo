@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -53,6 +53,7 @@ import java.util.zip.CRC32;
 import javax.crypto.Cipher;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Appender;
@@ -68,6 +69,7 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.dal.core.DalContextListener;
+import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -75,6 +77,7 @@ import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.obps.DisabledModules.Artifacts;
 import org.openbravo.erpCommon.obps.ModuleLicenseRestrictions.ActivationMsg;
 import org.openbravo.erpCommon.obps.ModuleLicenseRestrictions.MsgSeverity;
+import org.openbravo.erpCommon.security.SessionListener;
 import org.openbravo.erpCommon.utility.HttpsUtils;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
@@ -232,14 +235,14 @@ public class ActivationKey {
   private static final String ON_DEMAND_PLATFORM_CHECK_URL = "http://localhost:20290/checkOnDemand?qry=";
 
   /**
-   * Session types that are considered for user concurrency
+   * Session types that are not taken into account for counting concurrent users
    */
   @SuppressWarnings("serial")
-  private static final List<String> ACTIVE_SESSION_TYPES = new ArrayList<String>() {
+  private static final List<String> NO_CU_SESSION_TYPES = new ArrayList<String>() {
     {
-      add("S");
-      add("CUR");
-      add("SUR");
+      add("WS"); // Web service
+      add("WSC"); // Connector
+      add("OBPOS_POS"); // WebPOS
     }
   };
   public static final Long NO_LIMIT = -1L;
@@ -862,7 +865,9 @@ public class ActivationKey {
     return new ActivationMsg(severity, customMsg);
   }
 
-  /** gets HTML to be injected in Instance Activation window with additional actions to be performed */
+  /**
+   * gets HTML to be injected in Instance Activation window with additional actions to be performed
+   */
   public String getInstanceActivationExtraActionsHtml(XmlEngine xmlEngine) {
     String html = "";
 
@@ -885,15 +890,24 @@ public class ActivationKey {
     return checkOPSLimitations("");
   }
 
+  /** @see ActivationKey#checkOPSLimitations(String, String) */
+  public LicenseRestriction checkOPSLimitations(String currentSession) {
+    return checkOPSLimitations(currentSession, null);
+  }
+
   /**
    * Checks the current activation key
    * 
    * @param currentSession
    *          Current session, not to be taken into account
+   * @param sessionType
+   *          Successful session type: if the session is finally successful this is the type that
+   *          will be marked with in {@code AD_Session}, it is used to determine whether it should
+   *          or not count for CU limitation. In case it is {@code null} it will be counted.
    * 
    * @return {@link LicenseRestriction} with the status of the restrictions
    */
-  public LicenseRestriction checkOPSLimitations(String currentSession) {
+  public LicenseRestriction checkOPSLimitations(String currentSession, String sessionType) {
     LicenseRestriction result = LicenseRestriction.NO_RESTRICTION;
     if (!isOPSInstance()) {
       return LicenseRestriction.NO_RESTRICTION;
@@ -921,7 +935,8 @@ public class ActivationKey {
     }
 
     // maxUsers==0 is unlimited concurrent users
-    if (maxUsers != 0) {
+    boolean checkConcurrentUsers = maxUsers != 0 && consumesConcurrentUser(sessionType);
+    if (checkConcurrentUsers) {
       OBContext.setAdminMode();
       int activeSessions = 0;
       try {
@@ -973,14 +988,19 @@ public class ActivationKey {
     return result;
   }
 
+  /** Returns whether a session type is counted for concurrent users */
+  public static boolean consumesConcurrentUser(String sessionType) {
+    return sessionType == null || !NO_CU_SESSION_TYPES.contains(sessionType);
+  }
+
   public LicenseRestriction checkOPSLimitations(String currentSession, String username,
-      boolean forceNamedUserLogin) {
+      boolean forceNamedUserLogin, String sessionType) {
     if (forceNamedUserLogin) {
       // Forcing log in even there are other sessions for same user: disabling the other sessions
       disableOtherSessionsOfUser(currentSession, username);
     }
 
-    LicenseRestriction result = checkOPSLimitations(currentSession);
+    LicenseRestriction result = checkOPSLimitations(currentSession, sessionType);
 
     boolean checkNamedUserLimitation = StringUtils.isNotEmpty(username) && limitNamedUsers;
 
@@ -1060,16 +1080,22 @@ public class ActivationKey {
         Restrictions.eq(Session.PROPERTY_SESSIONACTIVE, true),
         Restrictions.or(Restrictions.isNull(Session.PROPERTY_LASTPING),
             Restrictions.lt(Session.PROPERTY_LASTPING, lastValidPingTime))));
-    obCriteria.add(Restrictions.in(Session.PROPERTY_LOGINSTATUS, ACTIVE_SESSION_TYPES));
-    obCriteria.add(Restrictions.ne(Session.PROPERTY_ID, currentSessionId));
+    obCriteria.add(Restrictions.not(Restrictions.in(Session.PROPERTY_LOGINSTATUS,
+        NO_CU_SESSION_TYPES)));
+
+    if (currentSessionId != null) {
+      obCriteria.add(Restrictions.ne(Session.PROPERTY_ID, currentSessionId));
+    }
 
     boolean sessionDeactivated = false;
     for (Session expiredSession : obCriteria.list()) {
-      expiredSession.setSessionActive(false);
-      sessionDeactivated = true;
-      log4j.info("Deactivated session: " + expiredSession.getId()
-          + " beacuse of ping time out. Last ping: " + expiredSession.getLastPing()
-          + ". Last valid ping time: " + lastValidPingTime);
+      if (shouldDeactivateSession(expiredSession, lastValidPingTime)) {
+        expiredSession.setSessionActive(false);
+        sessionDeactivated = true;
+        log4j.info("Deactivated session: " + expiredSession.getId()
+            + " beacuse of ping time out. Last ping: " + expiredSession.getLastPing()
+            + ". Last valid ping time: " + lastValidPingTime);
+      }
     }
     if (sessionDeactivated) {
       OBDal.getInstance().flush();
@@ -1080,12 +1106,29 @@ public class ActivationKey {
   }
 
   /**
+   * Do not deactivate those sessions that are not using ping but consume concurrent users (ie.
+   * mobile apps) if activity from them has been recently detected.
+   */
+  private boolean shouldDeactivateSession(Session expiredSession, Date lastValidPingTime) {
+    String sessionId = (String) DalUtil.getId(expiredSession);
+    HttpSession session = SessionListener.getActiveSession(sessionId);
+    if (session == null) {
+      log4j.debug("Session " + sessionId + " not found in context");
+      return true;
+    }
+    Date lastRequestTime = new Date(session.getLastAccessedTime());
+    log4j.debug("Last request received from session " + sessionId + ": " + lastRequestTime);
+    return lastRequestTime.compareTo(lastValidPingTime) < 0;
+  }
+
+  /**
    * Returns the number of current active sessions
    */
   private int getActiveSessions(String currentSession) {
     OBCriteria<Session> obCriteria = OBDal.getInstance().createCriteria(Session.class);
     obCriteria.add(Restrictions.eq(Session.PROPERTY_SESSIONACTIVE, true));
-    obCriteria.add(Restrictions.in(Session.PROPERTY_LOGINSTATUS, ACTIVE_SESSION_TYPES));
+    obCriteria.add(Restrictions.not(Restrictions.in(Session.PROPERTY_LOGINSTATUS,
+        NO_CU_SESSION_TYPES)));
 
     if (currentSession != null && !currentSession.equals("")) {
       obCriteria.add(Restrictions.ne(Session.PROPERTY_ID, currentSession));
@@ -1097,7 +1140,8 @@ public class ActivationKey {
     OBCriteria<Session> obCriteria = OBDal.getInstance().createCriteria(Session.class);
     obCriteria.add(Restrictions.eq(Session.PROPERTY_SESSIONACTIVE, true));
     obCriteria.add(Restrictions.eq(Session.PROPERTY_USERNAME, username));
-    obCriteria.add(Restrictions.in(Session.PROPERTY_LOGINSTATUS, ACTIVE_SESSION_TYPES));
+    obCriteria.add(Restrictions.not(Restrictions.in(Session.PROPERTY_LOGINSTATUS,
+        NO_CU_SESSION_TYPES)));
     if (currentSession != null && !currentSession.equals("")) {
       obCriteria.add(Restrictions.ne(Session.PROPERTY_ID, currentSession));
     }
