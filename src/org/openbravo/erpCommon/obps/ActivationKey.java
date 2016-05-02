@@ -994,6 +994,11 @@ public class ActivationKey {
   }
 
   public LicenseRestriction checkOPSLimitations(String currentSession, String username,
+      boolean forceNamedUserLogin) {
+    return checkOPSLimitations(currentSession, username, forceNamedUserLogin, null);
+  }
+
+  public LicenseRestriction checkOPSLimitations(String currentSession, String username,
       boolean forceNamedUserLogin, String sessionType) {
     if (forceNamedUserLogin) {
       // Forcing log in even there are other sessions for same user: disabling the other sessions
