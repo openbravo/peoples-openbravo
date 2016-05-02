@@ -74,15 +74,7 @@ try {
         errMsg.setMessage(OBMessageUtils.messageBD("NUMBER_OF_CONCURRENT_USERS_REACHED", false, true));
         session.setAttribute("LOGINERRORMSG", errMsg);
 
-        String localAdress = HttpBaseUtils.getLocalAddress(request);
-        String defaultServletUrl = getServletConfig().getServletContext()
-            .getInitParameter("ServletSinIdentificar");
-        final String customLoginURL = (String) request.getAttribute("loginURL");
-
-        final String loginURL = localAdress
-            + (customLoginURL == null || "".equals(customLoginURL) ? defaultServletUrl : customLoginURL);
-
-        response.sendRedirect(loginURL);
+        response.sendRedirect(authManager.getLoginURL(request));
         return;
       }
     }

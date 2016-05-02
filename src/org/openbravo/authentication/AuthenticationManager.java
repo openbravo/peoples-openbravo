@@ -152,19 +152,22 @@ public abstract class AuthenticationManager {
       return null;
     }
 
-    // A restricted resource can define a custom login URL
-    // It just need to set an the attribute loginURL in the request
-    final String customLoginURL = (String) request.getAttribute("loginURL");
-
-    final String loginURL = localAdress
-        + (customLoginURL == null || "".equals(customLoginURL) ? defaultServletUrl : customLoginURL);
-
     if (userId == null && !response.isCommitted()) {
-      response.sendRedirect(loginURL);
+      response.sendRedirect(getLoginURL(request));
       return null;
     }
 
     return userId;
+  }
+
+  /** Returns the URL that displays the login window (request for user/password) */
+  public String getLoginURL(HttpServletRequest request) {
+    // A restricted resource can define a custom login URL
+    // It just need to set an the attribute loginURL in the request
+    final String customLoginURL = (String) request.getAttribute("loginURL");
+
+    return localAdress
+        + (customLoginURL == null || "".equals(customLoginURL) ? defaultServletUrl : customLoginURL);
   }
 
   /**
