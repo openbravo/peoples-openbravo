@@ -55,7 +55,7 @@ OBContext.setAdminMode(false);
 String sessionId = null;
 try {
   sessionId = (String) session.getAttribute("#AD_SESSION_ID");
-  if (sessionId != null && !"".equals(sessionId)) {
+  if (sessionId != null && !"".equals(sessionId) && !"Y".equals(session.getAttribute("forceLogin"))) {
     org.openbravo.model.ad.access.Session dbSession = OBDal.getInstance().get(org.openbravo.model.ad.access.Session.class, sessionId);
     String currentSessionType = dbSession.getLoginStatus();
 
