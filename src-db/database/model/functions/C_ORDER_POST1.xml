@@ -373,6 +373,19 @@
        IF v_Aux=0 THEN
          RAISE_APPLICATION_ERROR(-20000, '@OrderWithoutLines@');
        END IF;
+       SELECT PROCESSED INTO v_IsProcessed
+       FROM C_ORDER WHERE C_ORDER_ID = v_Record_ID;
+       IF v_IsProcessed = 'Y' THEN
+         RAISE_APPLICATION_ERROR(-20000,'@AlreadyPosted@');
+       END IF;
+    END IF;
+
+    IF (v_DocAction='RE') THEN
+      SELECT PROCESSED INTO v_IsProcessed
+       FROM C_ORDER WHERE C_ORDER_ID = v_Record_ID;
+       IF v_IsProcessed = 'N' THEN
+         RAISE_APPLICATION_ERROR(-20000,'@ActionNotSupported@');
+       END IF;
     END IF;
 
     -- Check the cash vat flag for all the taxes matches the order one
