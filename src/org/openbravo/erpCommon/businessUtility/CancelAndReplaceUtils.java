@@ -722,6 +722,24 @@ public class CancelAndReplaceUtils {
         paymentSchedule = paymentScheduleList.get(0);
         FIN_Payment newPayment = null;
         if (replaceOrder) {
+          boolean createPayments = true;
+          if (!triggersDisabled) {
+            // Only for BackEnd WorkFlow
+            // Get the payment schedule of the new order to check the outstanding amount, could
+            // have been automatically paid on C_ORDER_POST if is automatically invoiced and the
+            // payment method of the financial account is configured as 'Automatic Receipt'
+            FIN_PaymentSchedule paymentScheduleNewOrder = null;
+            OBCriteria<FIN_PaymentSchedule> paymentScheduleCriteriaNewOrder = OBDal.getInstance()
+                .createCriteria(FIN_PaymentSchedule.class);
+            paymentScheduleCriteriaNewOrder.add(Restrictions.eq(FIN_PaymentSchedule.PROPERTY_ORDER,
+                newOrder));
+            paymentScheduleCriteriaNewOrder.setMaxResults(1);
+            paymentScheduleNewOrder = (FIN_PaymentSchedule) paymentScheduleCriteriaNewOrder
+                .uniqueResult();
+            if (paymentScheduleNewOrder.getOutstandingAmount().compareTo(BigDecimal.ZERO) == 0) {
+              createPayments = false;
+            }
+          }
           // Get the payment schedule detail of the order
           OBCriteria<FIN_PaymentScheduleDetail> paymentScheduleDetailCriteria = OBDal.getInstance()
               .createCriteria(FIN_PaymentScheduleDetail.class);
@@ -753,22 +771,7 @@ public class CancelAndReplaceUtils {
             String description = getPaymentDescription();
             description += ": " + inverseOrder.getDocumentNo();
 
-            if (!triggersDisabled) {
-              // Only for BackEnd WorkFlow
-              // Get the payment schedule of the new order to check the outstanding amount, could
-              // have been automatically paid on C_ORDER_POST if is automatically invoiced and the
-              // payment method of the financial account is configured as 'Automatic Receipt'
-              FIN_PaymentSchedule paymentScheduleNewOrder = null;
-              OBCriteria<FIN_PaymentSchedule> paymentScheduleCriteriaNewOrder = OBDal.getInstance()
-                  .createCriteria(FIN_PaymentSchedule.class);
-              paymentScheduleCriteriaNewOrder.add(Restrictions.eq(
-                  FIN_PaymentSchedule.PROPERTY_ORDER, newOrder));
-              paymentScheduleCriteriaNewOrder.setMaxResults(1);
-              paymentScheduleNewOrder = (FIN_PaymentSchedule) paymentScheduleCriteriaNewOrder
-                  .uniqueResult();
-              amount = paymentScheduleNewOrder.getOutstandingAmount();
-            }
-            if (amount.compareTo(BigDecimal.ZERO) != 0) {
+            if (createPayments && amount.compareTo(BigDecimal.ZERO) != 0) {
               // Duplicate payment with positive amount
               newPayment = createPayment(newPayment, newOrder, paymentPaymentMethod, amount,
                   paymentDocumentType, financialAccount, paymentDocumentNo);
