@@ -377,7 +377,9 @@ public class CancelAndReplaceUtils {
     }
     inverseOrder.setDocumentNo(newDocumentNo);
     inverseOrder.setCancelledorder(oldOrder);
-    inverseOrder.setObposAppCashup(jsonorder.getString("obposAppCashup"));
+    if (jsonorder != null) {
+      inverseOrder.setObposAppCashup(jsonorder.getString("obposAppCashup"));
+    }
     OBDal.getInstance().save(inverseOrder);
 
     // Copy old order taxes to inverse, it is done when is executed from Web POS because triggers
@@ -807,11 +809,11 @@ public class CancelAndReplaceUtils {
             OBDal.getInstance().flush();
 
             // Call to processPayment in order to process it
-            if (replaceOrder) {
+            if (triggersDisabled && replaceOrder) {
               TriggerHandler.getInstance().enable();
             }
             FIN_PaymentProcess.doProcessPayment(newPayment, "P", true, null, null);
-            if (replaceOrder) {
+            if (triggersDisabled && replaceOrder) {
               TriggerHandler.getInstance().disable();
             }
 
