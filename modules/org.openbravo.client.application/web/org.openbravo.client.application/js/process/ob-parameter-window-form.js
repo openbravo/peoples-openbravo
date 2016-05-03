@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014 Openbravo SLU
+ * All portions are Copyright (C) 2014-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -55,10 +55,14 @@ isc.OBParameterWindowForm.addProperties({
   // this function is invoked on the blur action of the formitems
   // this is the proper place to execute the client-side callouts
   handleItemChange: function (item) {
-    var affectedParams, i, field, me = this;
+    var affectedParams, i, field, me = this,
+        registryId;
+
+    registryId = this.paramWindow.viewId || this.paramWindow.processId;
+
     // Execute onChangeFunctions if they exist
-    if (this && OB.OnChangeRegistry.hasOnChange(this.paramWindow.viewId, item)) {
-      OB.OnChangeRegistry.call(this.paramWindow.viewId, item, this.paramWindow, this, this.paramWindow.viewGrid);
+    if (OB.OnChangeRegistry.hasOnChange(registryId, item)) {
+      OB.OnChangeRegistry.call(registryId, item, this.paramWindow, this, this.paramWindow.viewGrid);
     }
     // Check validation rules (subordinated fields), when value of a
     // parent field is changed, all its subordinated are reset
