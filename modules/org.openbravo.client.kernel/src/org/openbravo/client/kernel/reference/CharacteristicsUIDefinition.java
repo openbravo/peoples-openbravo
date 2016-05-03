@@ -33,6 +33,7 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.Sqlc;
 import org.openbravo.erpCommon.businessUtility.Preferences;
+import org.openbravo.erpCommon.utility.PropertyNotFoundException;
 import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.utility.Tree;
 import org.openbravo.model.ad.utility.TreeNode;
@@ -128,6 +129,7 @@ public class CharacteristicsUIDefinition extends TextUIDefinition {
               .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
               .getOBContext().getRole(), null);
       levels = Integer.parseInt(levelsPreference);
+    } catch (PropertyNotFoundException ignore) {
     } catch (Exception e) {
       if (e instanceof NumberFormatException) {
         log4j.error("ShowProductCharacteristicsParents preference is not a number", e);
