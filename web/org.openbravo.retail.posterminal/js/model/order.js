@@ -2881,7 +2881,7 @@
             return line;
           }
         });
-        if (lineToMerge) {
+        if (lineToMerge && lineToMerge.get('product').get('groupProduct')) {
           lineToMerge.set({
             qty: lineToMerge.get('qty') + l.get('qty')
           }, {
@@ -2912,6 +2912,9 @@
       groupedOrder.get('lines').forEach(function (l) {
         _.each(l.get('promotions'), function (promo) {
           promo.pendingQtyOffer = promo.qtyOffer;
+          if (!l.get('product').get('groupProduct')) {
+            promo.doNotMerge = true;
+          }
         });
         //copy lines from virtual ticket to original ticket when they have promotions which avoid us to merge lines
         if (_.find(l.get('promotions'), function (promo) {
@@ -2920,8 +2923,6 @@
           //First, try to find lines with the same qty
           lineToEdit = _.find(me.get('lines').models, function (line) {
             if (l !== line && l.get('product').id === line.get('product').id && l.get('price') === line.get('price') && line.get('qty') === l.get('qty') && !_.find(line.get('promotions'), function (promo) {
-              return promo.manual;
-            }) && !_.find(line.get('promotions'), function (promo) {
               return promo.doNotMerge;
             })) {
               return line;
@@ -2930,17 +2931,18 @@
           //if we cannot find lines with same qty, find lines with qty > 0
           if (!lineToEdit) {
             lineToEdit = _.find(me.get('lines').models, function (line) {
-              if (l !== line && l.get('product').id === line.get('product').id && l.get('price') === line.get('price') && line.get('qty') > 0 && !_.find(line.get('promotions'), function (promo) {
-                return promo.manual;
-              })) {
+              if (l !== line && l.get('product').id === line.get('product').id && l.get('price') === line.get('price') && line.get('qty') > 0) {
                 return line;
               }
             });
           }
-
+          if (OB.UTIL.isNullOrUndefined(lineToEdit)) {
+            return;
+          }
           lineToEdit.set('noDiscountCandidates', l.get('noDiscountCandidates'), {
             silent: true
           });
+
           //if promotion affects only to few quantities of the line, create a new line with quantities not affected by the promotion
           if (lineToEdit.get('qty') > l.get('qty')) {
             linesToCreate.push({
