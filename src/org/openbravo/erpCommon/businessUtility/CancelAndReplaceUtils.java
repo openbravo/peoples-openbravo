@@ -935,11 +935,11 @@ public class CancelAndReplaceUtils {
     OBDal.getInstance().flush();
 
     // Call to processPayment in order to process it
-    if (replaceOrder) {
+    if (triggersDisabled && replaceOrder) {
       TriggerHandler.getInstance().enable();
     }
     FIN_PaymentProcess.doProcessPayment(newPayment, "P", true, null, null);
-    if (replaceOrder) {
+    if (triggersDisabled && replaceOrder) {
       TriggerHandler.getInstance().disable();
     }
   }
