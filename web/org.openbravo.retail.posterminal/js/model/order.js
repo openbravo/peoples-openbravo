@@ -576,8 +576,6 @@
 
       this.calculatingGross = true;
       var me = this;
-      var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('calculateGross');
-
       // reset some vital receipt values because, at this point, they are obsolete. do not fire the change event
       me.set({
         'net': OB.DEC.Zero,
@@ -615,7 +613,6 @@
 
           me.adjustPayment();
           me.save(function () {
-            OB.UTIL.SynchronizationHelper.finished(synchId, 'calculateGross');
             // Reset the flag that protects reentrant invocations to calculateGross().
             // And if there is pending any execution of calculateGross(), do it and do not continue.
             me.calculatingGross = false;
@@ -707,7 +704,7 @@
         OB.debug('Skipping calculateReceipt function');
         return;
       }
-
+      OB.MobileApp.view.waterfall('calculatingReceipt');
       this.calculatingReceipt = true;
 
       this.addToListOfCallbacks(callback);
@@ -728,14 +725,20 @@
         me.on('calculategross', function () {
           me.off('calculategross');
           if (me.pendingCalculateReceipt) {
+            OB.MobileApp.view.waterfall('calculatedReceipt');
             me.pendingCalculateReceipt = false;
+            me.calculatingReceipt = false;
             me.calculateReceipt();
             return;
           } else {
             if (me.get('calculateReceiptCallbacks') && me.get('calculateReceiptCallbacks').length > 0) {
               executeCallback(me.get('calculateReceiptCallbacks'), function () {
                 me.calculatingReceipt = false;
+                OB.MobileApp.view.waterfall('calculatedReceipt');
               });
+            } else {
+              me.calculatingReceipt = false;
+              OB.MobileApp.view.waterfall('calculatedReceipt');
             }
           }
         });
