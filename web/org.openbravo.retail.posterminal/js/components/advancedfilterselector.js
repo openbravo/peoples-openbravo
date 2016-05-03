@@ -165,6 +165,7 @@ enyo.kind({
   clearFilter: function () {
     this.$.entityFilterText.setValue('');
     this.$.entityFilterText.removeClass('error');
+    this.$.entityFilterList.setSelected(0);
     this.$.advancedFilterInfo.setShowing(false);
     this.$.dateFormatError.hide();
     this.$.filterInputs.setShowing(true);

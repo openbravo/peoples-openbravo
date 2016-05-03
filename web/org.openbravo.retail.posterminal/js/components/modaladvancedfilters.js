@@ -100,7 +100,11 @@ enyo.kind({
   clearAll: function () {
     var me = this;
     _.each(this.filters, function (flt) {
-      flt.owner.$['input' + flt.filter.name].setValue('');
+      if (flt.owner.$['input' + flt.filter.name].setValue) {
+        flt.owner.$['input' + flt.filter.name].setValue('');
+      } else if (flt.owner.$['input' + flt.filter.name].setSelected) {
+        flt.owner.$['input' + flt.filter.name].setSelected(0);
+      }
       flt.owner.$['input' + flt.filter.name].removeClass('error');
       me.owner.$.dateFormatError.hide();
     });
