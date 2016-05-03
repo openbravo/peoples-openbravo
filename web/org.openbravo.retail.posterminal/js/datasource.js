@@ -311,6 +311,10 @@ OB.DS.HWServer.prototype._send = function (data, callback) {
       }
     });
     ajaxRequest.go(ajaxRequest.data).response('success').error('fail');
+  } else {
+    if (callback) {
+      callback();
+    }
   }
 };
 
@@ -354,5 +358,9 @@ OB.DS.HWServer.prototype._sendPDF = function (data, callback) {
       }
     });
     ajaxRequest.go(ajaxRequest.data).response('success').error('fail');
+  } else {
+    if (callback) {
+      callback();
+    }
   }
 };
