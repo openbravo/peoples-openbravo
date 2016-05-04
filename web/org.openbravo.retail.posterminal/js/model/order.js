@@ -288,6 +288,7 @@
 
   // Sales.Order Model.
   var Order = Backbone.Model.extend({
+    includeDocNoSeperator: true,
     modelName: 'Order',
     tableName: 'c_order',
     entityName: 'Order',

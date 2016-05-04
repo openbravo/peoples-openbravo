@@ -912,7 +912,7 @@
       var next = this.getLastDocumentnoSuffixInOrderlist() + 1;
       return {
         documentnoSuffix: next,
-        documentNo: OB.MobileApp.model.get('terminal').docNoPrefix + '/' + OB.UTIL.padNumber(next, 7)
+        documentNo: OB.MobileApp.model.get('terminal').docNoPrefix + (OB.Model.Order.prototype.includeDocNoSeperator ? '/' : '') + OB.UTIL.padNumber(next, 7)
       };
     },
     // call this method to get a new quotation document number
@@ -920,7 +920,7 @@
       var next = this.getLastQuotationnoSuffixInOrderlist() + 1;
       return {
         quotationnoSuffix: next,
-        documentNo: OB.MobileApp.model.get('terminal').quotationDocNoPrefix + '/' + OB.UTIL.padNumber(next, 7)
+        documentNo: OB.MobileApp.model.get('terminal').quotationDocNoPrefix + (OB.Model.Order.prototype.includeDocNoSeperator ? '/' : '') + OB.UTIL.padNumber(next, 7)
       };
     },
     // call this method to get a new Return document number

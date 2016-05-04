@@ -370,8 +370,14 @@ public class POSUtils {
         if (jsonError.has("documentNo") && jsonError.has("isQuotation")
             && !jsonError.getBoolean("isQuotation")) {
           String documentNo = jsonError.getString("documentNo");
-          if (documentNo.indexOf("/") != 0) {
+          if (documentNo.indexOf("/") > -1) {
             String number = documentNo.substring(documentNo.indexOf("/") + 1);
+            int errorNumber = new Long(number).intValue();
+            if (errorNumber > maxDocNo) {
+              maxDocNo = errorNumber;
+            }
+          } else if (jsonError.has("documentnoPrefix")) {
+            String number = documentNo.replace(jsonError.getString("documentnoPrefix"), "");
             int errorNumber = new Long(number).intValue();
             if (errorNumber > maxDocNo) {
               maxDocNo = errorNumber;
@@ -452,8 +458,14 @@ public class POSUtils {
         if (jsonError.has("documentNo") && jsonError.has("isQuotation")
             && jsonError.getBoolean("isQuotation")) {
           String documentNo = jsonError.getString("documentNo");
-          if (documentNo.indexOf("/") != 0) {
+          if (documentNo.indexOf("/") > -1) {
             String number = documentNo.substring(documentNo.indexOf("/") + 1);
+            int errorNumber = new Long(number).intValue();
+            if (errorNumber > maxDocNo) {
+              maxDocNo = errorNumber;
+            }
+          } else if (jsonError.has("quotationnoPrefix")) {
+            String number = documentNo.replace(jsonError.getString("quotationnoPrefix"), "");
             int errorNumber = new Long(number).intValue();
             if (errorNumber > maxDocNo) {
               maxDocNo = errorNumber;
