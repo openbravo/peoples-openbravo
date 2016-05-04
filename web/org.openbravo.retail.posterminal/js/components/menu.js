@@ -904,7 +904,7 @@ enyo.kind({
     }
   },
   init: function (model) {
-    if (!OB.MobileApp.model.get('terminal').terminalType.useRfid || !OB.POS.hwserver.url) {
+    if (!OB.UTIL.RfidController.isRfidConfigured()) {
       this.hide();
     }
 
@@ -945,10 +945,18 @@ enyo.kind({
     }, this);
   },
   pointOfSaleLoad: function (inSender, inEvent) {
-    if (!OB.UTIL.RfidController.get('isRFIDEnabled') | !OB.UTIL.RfidController.get('reconnectOnScanningFocus')) {
-      this.addClass('btn-icon-switchoff');
-    } else {
-      this.addClass('btn-icon-switchon');
+    if (OB.UTIL.RfidController.isRfidConfigured()) {
+      var protocol = OB.POS.hwserver.url.split('/')[0];
+      if (window.location.protocol === protocol) {
+        if (!OB.UTIL.RfidController.get('isRFIDEnabled') || !OB.UTIL.RfidController.get('reconnectOnScanningFocus')) {
+          this.addClass('btn-icon-switchoff');
+        } else {
+          this.addClass('btn-icon-switchon');
+        }
+      } else {
+        this.hide();
+        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_POSHWMProtocolMismatch'));
+      }
     }
   }
 });

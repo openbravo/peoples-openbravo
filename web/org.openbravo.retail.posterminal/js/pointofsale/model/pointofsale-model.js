@@ -253,7 +253,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
       },
       initialize: function () {
         this.on('change:currentView', function (changedModel) {
-          localStorage.setItem('leftColumnCurrentView', JSON.stringify(changedModel.get('currentView')));
+          OB.UTIL.localStorage.setItem('leftColumnCurrentView', JSON.stringify(changedModel.get('currentView')));
           this.trigger(changedModel.get('currentView').name);
         }, this);
       },
@@ -262,7 +262,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
           name: 'order',
           params: parameters
         });
-        localStorage.setItem('leftColumnCurrentView', JSON.stringify(this.get('currentView')));
+        OB.UTIL.localStorage.setItem('leftColumnCurrentView', JSON.stringify(this.get('currentView')));
       },
       isOrder: function () {
         if (this.get('currentView').name === 'order') {
@@ -658,6 +658,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
           process.exec({
             messageId: OB.UTIL.get_UUID(),
             data: [{
+              id: receipt.get('id'),
               order: receipt
             }]
           }, function (data) {
@@ -718,12 +719,12 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
           }], {
             onShowFunction: function (popup) {
               popup.$.headerCloseButton.hide();
-              window.localStorage.removeItem('POSLastTotalRefresh');
-              window.localStorage.removeItem('POSLastIncRefresh');
+              window.OB.UTIL.localStorage.removeItem('POSLastTotalRefresh');
+              window.OB.UTIL.localStorage.removeItem('POSLastIncRefresh');
             },
             onHideFunction: function () {
-              window.localStorage.removeItem('POSLastTotalRefresh');
-              window.localStorage.removeItem('POSLastIncRefresh');
+              window.OB.UTIL.localStorage.removeItem('POSLastTotalRefresh');
+              window.OB.UTIL.localStorage.removeItem('POSLastIncRefresh');
               window.location.reload();
             },
             autoDismiss: false

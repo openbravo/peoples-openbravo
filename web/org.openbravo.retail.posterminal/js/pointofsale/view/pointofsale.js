@@ -1333,7 +1333,7 @@ enyo.kind({
       }
     }, this);
 
-    LeftColumnCurrentView = enyo.json.parse(localStorage.getItem('leftColumnCurrentView'));
+    LeftColumnCurrentView = enyo.json.parse(OB.UTIL.localStorage.getItem('leftColumnCurrentView'));
     if (LeftColumnCurrentView === null) {
       LeftColumnCurrentView = {
         name: 'order',

@@ -241,7 +241,10 @@ public class Product extends ProcessHQLQuery {
         + "')) " + "    ) order by p.name asc");
 
     // generic products
-    if (!isRemote) {// BROWSE tab is hidden, we do not need to send generic products
+    boolean isForceRemote = jsonsent.getJSONObject("parameters").has("forceRemote")
+        && jsonsent.getJSONObject("parameters").getBoolean("forceRemote");
+    if (!isRemote && !isForceRemote) {// BROWSE tab is hidden, we do not need to send generic
+                                      // products
       products
           .add("select "
               + regularProductsHQLProperties.getHqlSelect()

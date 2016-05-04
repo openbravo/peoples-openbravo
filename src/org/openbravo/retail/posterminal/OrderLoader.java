@@ -905,10 +905,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     invoice.setPartnerAddress(OBDal.getInstance().get(Location.class,
         jsonorder.getJSONObject("bp").getString("locId")));
     invoice.setProcessed(true);
-    invoice.setPaymentMethod((FIN_PaymentMethod) OBDal.getInstance().getProxy("FIN_PaymentMethod",
-        jsonorder.getJSONObject("bp").getString("paymentMethod")));
-    invoice.setPaymentTerms((PaymentTerm) OBDal.getInstance().getProxy("FinancialMgmtPaymentTerm",
-        jsonorder.getJSONObject("bp").getString("paymentTerms")));
+    invoice.setPaymentMethod(order.getPaymentMethod());
+    invoice.setPaymentTerms(order.getPaymentTerms());
     invoice.setGrandTotalAmount(BigDecimal.valueOf(jsonorder.getDouble("gross")).setScale(
         pricePrecision, RoundingMode.HALF_UP));
     invoice.setSummedLineAmount(BigDecimal.valueOf(jsonorder.getDouble("net")).setScale(
@@ -1425,14 +1423,57 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     order.setPartnerAddress(OBDal.getInstance().get(Location.class,
         jsonorder.getJSONObject("bp").getString("locId")));
     order.setInvoiceAddress(order.getPartnerAddress());
-    order.setPaymentMethod((FIN_PaymentMethod) bp.getPaymentMethod());
+
+    if (bp.getPaymentMethod() != null) {
+      order.setPaymentMethod((FIN_PaymentMethod) bp.getPaymentMethod());
+    } else if (order.getOrganization().getObretcoDbpPmethodid() != null) {
+      order.setPaymentMethod((FIN_PaymentMethod) order.getOrganization().getObretcoDbpPmethodid());
+    } else {
+      String paymentMethodHqlWhereClause = " pmethod where EXISTS (SELECT 1 FROM FinancialMgmtFinAccPaymentMethod fapm "
+          + "WHERE pmethod.id = fapm.paymentMethod.id AND fapm.payinAllow = 'Y')";
+      OBQuery<FIN_PaymentMethod> queryPaymentMethod = OBDal.getInstance().createQuery(
+          FIN_PaymentMethod.class, paymentMethodHqlWhereClause);
+      queryPaymentMethod.setFilterOnReadableOrganization(true);
+      queryPaymentMethod.setMaxResult(1);
+      List<FIN_PaymentMethod> lstPaymentMethod = queryPaymentMethod.list();
+      if (lstPaymentMethod != null && lstPaymentMethod.size() > 0) {
+        order.setPaymentMethod(lstPaymentMethod.get(0));
+      }
+    }
+
     if (bp.getPaymentTerms() != null) {
       order.setPaymentTerms((PaymentTerm) bp.getPaymentTerms());
+    } else if (order.getOrganization().getObretcoDbpPmethodid() != null) {
+      order.setPaymentTerms((PaymentTerm) order.getOrganization().getObretcoDbpPtermid());
     } else {
-      order.setPaymentTerms(OBDal.getInstance().get(PaymentTerm.class,
-          jsonorder.getJSONObject("bp").getString("paymentTerms")));
+      OBCriteria<PaymentTerm> paymentTerms = OBDal.getInstance().createCriteria(PaymentTerm.class);
+      paymentTerms.add(Restrictions.eq(Locator.PROPERTY_ACTIVE, true));
+      paymentTerms.addOrderBy(PaymentTerm.PROPERTY_NAME, true);
+      paymentTerms.setMaxResults(1);
+      List<PaymentTerm> lstPaymentTerm = paymentTerms.list();
+      if (lstPaymentTerm != null && lstPaymentTerm.size() > 0) {
+        order.setPaymentTerms(lstPaymentTerm.get(0));
+      }
     }
-    order.setInvoiceTerms(bp.getInvoiceTerms());
+
+    if (bp.getInvoiceTerms() != null) {
+      order.setInvoiceTerms(bp.getInvoiceTerms());
+    } else if (order.getOrganization().getObretcoDbpIrulesid() != null) {
+      order.setInvoiceTerms(order.getOrganization().getObretcoDbpIrulesid());
+    } else {
+      OBCriteria<org.openbravo.model.ad.domain.List> invoiceRules = OBDal.getInstance()
+          .createCriteria(org.openbravo.model.ad.domain.List.class);
+      invoiceRules.add(Restrictions.eq(org.openbravo.model.ad.domain.List.PROPERTY_REFERENCE
+          + ".id", "150"));
+      invoiceRules.add(Restrictions.eq(org.openbravo.model.ad.domain.List.PROPERTY_ACTIVE, true));
+      invoiceRules.addOrderBy(org.openbravo.model.ad.domain.List.PROPERTY_SEARCHKEY, true);
+      invoiceRules.setMaxResults(1);
+      List<org.openbravo.model.ad.domain.List> lstInvoiceRule = invoiceRules.list();
+      if (lstInvoiceRule != null && lstInvoiceRule.size() > 0) {
+        order.setInvoiceTerms(lstInvoiceRule.get(0).getSearchKey());
+      }
+    }
+
     order.setGrandTotalAmount(BigDecimal.valueOf(jsonorder.getDouble("gross")).setScale(
         pricePrecision, RoundingMode.HALF_UP));
     order.setSummedLineAmount(BigDecimal.valueOf(jsonorder.getDouble("net")).setScale(
@@ -1646,7 +1687,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         paymentSchedule.setNewOBObject(true);
         paymentSchedule.setCurrency(order.getCurrency());
         paymentSchedule.setOrder(order);
-        paymentSchedule.setFinPaymentmethod(order.getBusinessPartner().getPaymentMethod());
+        paymentSchedule.setFinPaymentmethod(order.getPaymentMethod());
         // paymentSchedule.setPaidAmount(new BigDecimal(0));
         paymentSchedule.setAmount(BigDecimal.valueOf(jsonorder.getDouble("gross")).setScale(
             pricePrecision, RoundingMode.HALF_UP));
@@ -1682,7 +1723,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         }
         paymentScheduleInvoice.setCurrency(order.getCurrency());
         paymentScheduleInvoice.setInvoice(invoice);
-        paymentScheduleInvoice.setFinPaymentmethod(order.getBusinessPartner().getPaymentMethod());
+        paymentScheduleInvoice.setFinPaymentmethod(order.getPaymentMethod());
         paymentScheduleInvoice.setAmount(BigDecimal.valueOf(jsonorder.getDouble("gross")).setScale(
             pricePrecision, RoundingMode.HALF_UP));
         paymentScheduleInvoice.setOutstandingAmount(BigDecimal
@@ -1755,7 +1796,10 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           writeoffAmt = writeoffAmt.subtract(tempWriteoffAmt);
         }
       }
-      if (invoice != null && (creditpaidLayaway || fullypaidLayaway)) {
+
+      boolean checkPaidOnCreditChecked = (jsonorder.has("paidOnCredit") && jsonorder
+          .getBoolean("paidOnCredit"));
+      if (invoice != null && (creditpaidLayaway || fullypaidLayaway || checkPaidOnCreditChecked)) {
         for (int j = 0; j < paymentSchedule.getFINPaymentScheduleDetailOrderPaymentScheduleList()
             .size(); j++) {
           if (paymentSchedule.getFINPaymentScheduleDetailOrderPaymentScheduleList().get(j)
@@ -1772,6 +1816,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         invoice.setTotalPaid(invoice.getGrandTotalAmount().subtract(amountPaidWithCredit));
         invoice.setOutstandingAmount(amountPaidWithCredit);
         invoice.setDueAmount(amountPaidWithCredit);
+        invoice.setDaysTillDue(FIN_Utility.getDaysToDue(paymentScheduleInvoice.getDueDate()));
         invoice.setPaymentComplete(amountPaidWithCredit.compareTo(BigDecimal.ZERO) == 0);
         paymentScheduleInvoice.setOutstandingAmount(amountPaidWithCredit);
         paymentScheduleInvoice.setPaidAmount(invoice.getGrandTotalAmount().subtract(

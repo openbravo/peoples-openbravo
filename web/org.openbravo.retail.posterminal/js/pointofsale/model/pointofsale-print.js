@@ -267,11 +267,6 @@
             args.callback();
           }
         } // order property.
-        if (!OB.POS.hwserver.url) {
-          if (args.callback) {
-            args.callback();
-          }
-        }
         //Print again when it is a return and the preference is 'Y' or when one of the payments method has the print twice checked
         if (receipt.get('print')) { //Print option of order property
           if ((receipt.get('orderType') === 1 && !OB.MobileApp.model.hasPermission('OBPOS_print.once')) || _.filter(receipt.get('payments').models, function (iter) {
