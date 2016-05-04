@@ -528,6 +528,10 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
    * 
    */
   private boolean hasLevelAccess(VariablesSecureApp vars, String accessLevel) {
+    if (!OBContext.getOBContext().doAccessLevelCheck()) {
+      return true;
+    }
+
     final String userLevel = vars.getSessionValue("#User_Level");
 
     boolean retValue = true;

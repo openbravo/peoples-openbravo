@@ -573,6 +573,8 @@ public class OBContext implements OBNotSingleton {
   // check whether using new or old UI
   private boolean newUI = false;
 
+  private boolean checkAccessLevel = true;
+
   public String getUserLevel() {
     return userLevel;
   }
@@ -1109,6 +1111,19 @@ public class OBContext implements OBNotSingleton {
       return false;
     }
     return !(adminModeSet.get() != null || isAdministrator);
+  }
+
+  /**
+   * Defines whether entity check should or not compare entity's access level with role's user level
+   * in order to completely prevent access to that entity.
+   */
+  public boolean doAccessLevelCheck() {
+    return checkAccessLevel;
+  }
+
+  /** @see OBContext#doAccessLevelCheck() */
+  public void setCheckAccessLevel(boolean checkAccessLevel) {
+    this.checkAccessLevel = checkAccessLevel;
   }
 
   public boolean isAdminContext() {

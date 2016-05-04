@@ -266,6 +266,10 @@ public class EntityAccessChecker implements OBNotSingleton {
    */
   private boolean hasCorrectAccessLevel(String userLevel, int accessLevel) {
     // copied from HttpSecureAppServlet.
+    if (!OBContext.getOBContext().doAccessLevelCheck()) {
+      return true;
+    }
+
     if (accessLevel == 4 && userLevel.indexOf("S") == -1) {
       return false;
     } else if (accessLevel == 1 && userLevel.indexOf("O") == -1) {
@@ -339,8 +343,13 @@ public class EntityAccessChecker implements OBNotSingleton {
 
   private void dumpSortedProcess(Set<String> set) {
     final List<String> names = new ArrayList<String>();
-    for (final String p : set) {
-      names.add(OBDal.getInstance().get(Process.class, p).getName());
+    OBContext.setAdminMode(true);
+    try {
+      for (final String p : set) {
+        names.add(OBDal.getInstance().get(Process.class, p).getName());
+      }
+    } finally {
+      OBContext.restorePreviousMode();
     }
     Collections.sort(names);
     for (final String n : names) {
@@ -573,15 +582,7 @@ public class EntityAccessChecker implements OBNotSingleton {
     if (processes.isEmpty()) {
       return;
     }
-    StringBuilder processesInList = new StringBuilder();
-    boolean first = true;
-    for (String p : processes) {
-      if (!first) {
-        processesInList.append(", ");
-      }
-      first = false;
-      processesInList.append("'").append(p).append("'");
-    }
+    String processesInList = createWhereInCondition(processes);
 
     String hql = "select p.referenceSearchKey from OBUIAPP_Parameter p where p.reference.id in('"
         + WINDOW_REFERENCE + "','" + SELECTOR_REFERENCE + "') and p.obuiappProcess.id in ("
@@ -637,7 +638,9 @@ public class EntityAccessChecker implements OBNotSingleton {
    * Obtain entities from window and added to readable and writable entities.
    */
   private void addEntitiesOfWindowReference(ModelProvider mp, Window window) {
+    Set<String> tabs = new HashSet<String>();
     for (Tab tab : window.getADTabList()) {
+      tabs.add((String) DalUtil.getId(tab));
       final Entity derivedEntity = mp.getEntityByTableId((String) DalUtil.getId(tab.getTable()));
       if (!writableEntities.contains(derivedEntity) && !readableEntities.contains(derivedEntity)
           && !nonReadableEntities.contains(derivedEntity)) {
@@ -649,5 +652,39 @@ public class EntityAccessChecker implements OBNotSingleton {
         }
       }
     }
+    if (tabs.isEmpty()) {
+      return;
+    }
+    String tabInList = createWhereInCondition(tabs);
+    addEntitiesSelectorsFromTabs(mp, tabInList);
+  }
+
+  /**
+   * Obtain selector references in tabs and added to derivedReadableEntities to take into account as
+   * a derived entity.
+   */
+  private void addEntitiesSelectorsFromTabs(ModelProvider mp, String tabs) {
+    String hql = "select r from ADField f inner join f.column c inner join c.referenceSearchKey r  where r.parentReference='"
+        + SELECTOR_REFERENCE + "' and f.tab.id in(" + tabs + ")";
+    @SuppressWarnings("unchecked")
+    final List<Reference> references = SessionHandler.getInstance().createQuery(hql).list();
+    if (!references.isEmpty()) {
+      for (Reference ref : references) {
+        addEntitiesOfSelectorReference(mp, ref);
+      }
+    }
+  }
+
+  private String createWhereInCondition(Set<String> list) {
+    StringBuilder processesInList = new StringBuilder();
+    boolean first = true;
+    for (String p : list) {
+      if (!first) {
+        processesInList.append(", ");
+      }
+      first = false;
+      processesInList.append("'").append(p).append("'");
+    }
+    return processesInList.toString();
   }
 }

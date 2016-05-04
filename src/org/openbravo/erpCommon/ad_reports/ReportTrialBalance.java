@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2016 Openbravo SLU 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -50,6 +50,7 @@ import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
 import org.openbravo.erpCommon.utility.NavigationBar;
 import org.openbravo.erpCommon.utility.OBError;
+import org.openbravo.erpCommon.utility.OBLedgerUtils;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.financialmgmt.accounting.coa.AcctSchema;
@@ -211,7 +212,13 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
       printPageOpen(response, vars, strDateFrom, strDateTo, strOrg, strLevel, strcBpartnerId,
           strmProductId, strcProjectId, strcAcctSchemaId, strGroupBy, strAccountId,
           strNotInitialBalance);
-
+    } else if (vars.commandIn("LEDGER")) {
+      String strOrg = vars.getGlobalVariable("inpOrg", "AgingInquiry|Org", "0");
+      String strcAcctSchemaId = OBLedgerUtils.getOrgLedger(strOrg);
+      response.setContentType("text/html; charset=UTF-8");
+      PrintWriter out = response.getWriter();
+      out.print(strcAcctSchemaId);
+      out.close();
     } else {
       pageError(response);
     }
@@ -469,7 +476,7 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
             Utility.getContext(this, vars, "#User_Client", ""), strcProjectIdAux));
 
     if (data != null && data.length > 0) {
-      if ("Y".equals(strIncludeZeroFigures) &&  "S".equals(strLevel))
+      if ("Y".equals(strIncludeZeroFigures) && "S".equals(strLevel))
         data = includeZeroFigures(data, strcAcctSchemaId, strOrg, strAccountFromValue,
             strAccountToValue);
       xmlDocument.setData("structure1", data);
@@ -663,7 +670,7 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
             Utility.messageBD(this, "ProcessStatus-W", vars.getLanguage()),
             Utility.messageBD(this, "NoDataFound", vars.getLanguage()));
       } else {
-        if ("Y".equals(strIncludeZeroFigures) &&  "S".equals(strLevel)) {
+        if ("Y".equals(strIncludeZeroFigures) && "S".equals(strLevel)) {
           data = includeZeroFigures(data, strcAcctSchemaId, strOrg, strAccountFromValue,
               strAccountToValue);
         }

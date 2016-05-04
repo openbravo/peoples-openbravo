@@ -173,6 +173,10 @@ public class AdvancedQueryBuilder {
   // in the FROM clause
   private boolean creatingJoinsInWhereClauseIsPrevented = false;
 
+  public static enum TextMatching {
+    startsWith, exact, substring
+  }
+
   public Entity getEntity() {
     return entity;
   }

@@ -13,6 +13,13 @@
 <%@ page import="org.openbravo.model.ad.access.User" %>
 <%@ page import="org.openbravo.dal.service.OBDal" %>
 <%@ page import="org.openbravo.base.secureApp.VariablesSecureApp" %>
+<%@ page import="org.openbravo.erpCommon.obps.ActivationKey" %>
+<%@ page import="org.openbravo.base.secureApp.LoginHandler" %>
+<%@ page import="org.openbravo.base.HttpBaseUtils" %>
+<%@ page import="org.openbravo.erpCommon.utility.OBMessageUtils" %>
+<%@ page import="org.openbravo.erpCommon.utility.OBError" %>
+<%@ page import="java.util.Date" %>
+<%@ page import="org.openbravo.erpCommon.obps.ActivationKey.LicenseRestriction" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%
   /*
@@ -43,6 +50,41 @@ String userId = authManager.authenticate(request, response);
 if(userId == null){
   return;
 }
+
+OBContext.setAdminMode(false);
+String sessionId = null;
+try {
+  sessionId = (String) session.getAttribute("#AD_SESSION_ID");
+  if (sessionId != null && !"".equals(sessionId) && !"Y".equals(session.getAttribute("forceLogin"))) {
+    org.openbravo.model.ad.access.Session dbSession = OBDal.getInstance().get(org.openbravo.model.ad.access.Session.class, sessionId);
+    String currentSessionType = dbSession.getLoginStatus();
+
+    if (!ActivationKey.consumesConcurrentUser(currentSessionType)) {
+      // session was created not counting concurrent users, now switching to backend so they
+      // should be counted
+      dbSession.setLoginStatus(LoginHandler.SUCCESS_SESSION_STANDARD);
+      OBDal.getInstance().flush();
+
+      if (ActivationKey.getInstance().checkOPSLimitations(sessionId) == LicenseRestriction.NUMBER_OF_CONCURRENT_USERS_REACHED) {
+        dbSession.setSessionActive(false);
+        OBDal.getInstance().flush();
+
+        OBError errMsg = new OBError();
+        errMsg.setTitle(OBMessageUtils.messageBD("NUMBER_OF_CONCURRENT_USERS_REACHED_TITLE", false, true));
+        errMsg.setMessage(OBMessageUtils.messageBD("NUMBER_OF_CONCURRENT_USERS_REACHED", false, true));
+        session.setAttribute("LOGINERRORMSG", errMsg);
+
+        response.sendRedirect(authManager.getLoginURL(request));
+        return;
+      }
+    }
+  }
+} catch (Exception e) {
+  log.error("Error resetting login status for session "  + sessionId,e);
+} finally {
+  OBContext.restorePreviousMode();
+}
+
 
 boolean uncompSC = false;
 String scDevModulePackage = "org.openbravo.userinterface.smartclient.dev";

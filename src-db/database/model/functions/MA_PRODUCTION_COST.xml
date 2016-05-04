@@ -22,7 +22,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2014 Openbravo SLU
+ * All portions are Copyright (C) 2001-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************/
@@ -451,12 +451,12 @@ BEGIN
               INSERT INTO M_COSTING (M_COSTING_ID, CREATED, CREATEDBY, UPDATED, UPDATEDBY, AD_CLIENT_ID,
                             AD_ORG_ID, M_PRODUCT_ID, DATETO, DATEFROM, ISMANUAL,
                             M_PRODUCTIONLINE_ID, QTY,
-                            PRICE,  CUMQTY,
+                            PRICE,
                             COST, ISPERMANENT, ISPRODUCTION, COSTTYPE)
                      VALUES (v_NextNo,now(), p_User_ID, now(), p_User_ID, Cur_ProductionLine.AD_CLIENT_ID,
                             Cur_ProductionLine.AD_ORG_ID, Cur_ProductionLine.M_PRODUCT_ID, TO_DATE('31-12-9999','DD-MM-YYYY'), v_CostingDate, 'N',
                             Cur_ProductionLine.M_PRODUCTIONLINE_ID, Cur_ProductionLine.MOVEMENTQTY,
-                            ROUND(v_Cost/Cur_ProductionLine.MOVEMENTQTY,4), COALESCE(v_Qty,0) + Cur_ProductionLine.MOVEMENTQTY,
+                            ROUND(v_Cost/Cur_ProductionLine.MOVEMENTQTY,4),
                             (CASE (Cur_ProductionLine.MOVEMENTQTY) WHEN 0 THEN 0 ELSE ROUND(v_Cost/Cur_ProductionLine.MOVEMENTQTY,4) END), 'N', 'Y', 'AV');
             ELSE
               v_ResultStr := 'update cost';
@@ -508,13 +508,13 @@ BEGIN
                 INSERT INTO M_COSTING (M_COSTING_ID, CREATED, CREATEDBY, UPDATED, UPDATEDBY, AD_CLIENT_ID,
                             AD_ORG_ID, M_PRODUCT_ID, DATETO, DATEFROM, ISMANUAL,
                             M_PRODUCTIONLINE_ID, QTY,
-                            PRICE, CUMQTY,
+                            PRICE,
                             COST,
                             ISPERMANENT, ISPRODUCTION, COSTTYPE)
                        VALUES (v_NextNo,now(), p_User_ID, now(), p_User_ID, Cur_ProductionLine.AD_CLIENT_ID,
                             Cur_ProductionLine.AD_ORG_ID, Cur_ProductionLine.M_PRODUCT_ID, v_DateTo, v_CostingDate, 'N',
                             Cur_ProductionLine.M_PRODUCTIONLINE_ID, Cur_ProductionLine.MOVEMENTQTY,
-                            ROUND(v_Cost/Cur_ProductionLine.MOVEMENTQTY,4), COALESCE(v_Qty,0) + Cur_ProductionLine.MOVEMENTQTY,
+                            ROUND(v_Cost/Cur_ProductionLine.MOVEMENTQTY,4),
                             (CASE (v_Qty+Cur_ProductionLine.MOVEMENTQTY) WHEN 0 THEN 0 ELSE ROUND(((v_Qty*v_CostOld)+(v_Cost))/(v_Qty+Cur_ProductionLine.MOVEMENTQTY),4)END),
                                 'N', 'Y', 'AV');
               ELSIF (v_count2 = 0) THEN
@@ -538,13 +538,13 @@ BEGIN
                 INSERT INTO M_COSTING (M_COSTING_ID, CREATED, CREATEDBY, UPDATED, UPDATEDBY, AD_CLIENT_ID,
                             AD_ORG_ID, M_PRODUCT_ID, DATETO, DATEFROM, ISMANUAL,
                             M_PRODUCTIONLINE_ID, QTY,
-                            PRICE, CUMQTY,
+                            PRICE,
                             COST,
                             ISPERMANENT, ISPRODUCTION, COSTTYPE)
                        VALUES (v_NextNo,now(), p_User_ID, now(), p_User_ID, Cur_ProductionLine.AD_CLIENT_ID,
                             Cur_ProductionLine.AD_ORG_ID, Cur_ProductionLine.M_PRODUCT_ID, v_DateTo, v_CostingDate, 'N',
                             Cur_ProductionLine.M_PRODUCTIONLINE_ID, Cur_ProductionLine.MOVEMENTQTY,
-                            ROUND(v_Cost/Cur_ProductionLine.MOVEMENTQTY,4), COALESCE(v_Qty,0) + Cur_ProductionLine.MOVEMENTQTY,
+                            ROUND(v_Cost/Cur_ProductionLine.MOVEMENTQTY,4),
                             (CASE (v_Qty+Cur_ProductionLine.MOVEMENTQTY) WHEN 0 THEN 0 ELSE ROUND(((v_Qty*v_CostOld)+(v_Cost))/(v_Qty+Cur_ProductionLine.MOVEMENTQTY),4)END),
                               'N', 'Y', 'AV');
 

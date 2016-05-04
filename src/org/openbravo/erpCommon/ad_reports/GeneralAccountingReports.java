@@ -54,6 +54,7 @@ import org.openbravo.erpCommon.utility.LeftTabsBar;
 import org.openbravo.erpCommon.utility.NavigationBar;
 import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.erpCommon.utility.OBError;
+import org.openbravo.erpCommon.utility.OBLedgerUtils;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.erpCommon.utility.WindowTreeData;
@@ -127,8 +128,19 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
       printPagePDF(request, response, vars, strAgno, strAgnoRef, strDateFrom, strDateTo,
           strDateFromRef, strDateToRef, strAsDateTo, strAsDateToRef, strElementValue,
           strConImporte, strOrg, strLevel, strConCodigo, strcAcctSchemaId, strPageNo);
-    } else
+    } else if (vars.commandIn("LEDGER")) {
+      String strOrg = vars
+          .getGlobalVariable("inpOrganizacion", "GeneralAccountingReports|Org", "0");
+      String strcAcctSchemaId = OBLedgerUtils.getOrgLedger(strOrg);
+      response.setContentType("text/html; charset=UTF-8");
+      PrintWriter out = response.getWriter();
+      out.print(strcAcctSchemaId);
+      out.close();
+    }
+
+    else {
       pageError(response);
+    }
   }
 
   private void printPagePDF(HttpServletRequest request, HttpServletResponse response,

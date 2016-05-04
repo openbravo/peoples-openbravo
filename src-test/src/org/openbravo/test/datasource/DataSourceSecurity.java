@@ -170,6 +170,14 @@ public class DataSourceSecurity extends BaseDataSourceTestDal {
         put("targetProperty", "businessPartner");
       }
     }), //
+    SelectorGLItemDatasource("FinancialMgmtGLItem", new HashMap<String, String>() {
+      {
+        // Payment In > Add Details process > GLItem section > Selector GLItem
+        put("_selectorDefinitionId", "9FAD469CE4414A25974CF45C0AD22D35");
+        put("inpTableId", "D1A97202E832470285C9B1EB026D54E2");
+        put("targetProperty", "gLItem");
+      }
+    }), //
     QuickLaunch("99B9CC42FDEA4CA7A4EE35BC49D61E0E"), //
     QuickCreate("C17951F970E942FD9F3771B7BE91D049"), //
     HQLDataSource("3C1148C0AB604DE1B51B7EA4112C325F", new HashMap<String, String>() {
@@ -280,11 +288,11 @@ public class DataSourceSecurity extends BaseDataSourceTestDal {
 
       // Note ds is accessible if current role has access to entity of the notes. This note is
       // invocated from a record in Windows, Tabs and Fields.
-      testCases.add(new Object[] {
-          type,
-          DataSource.Note,
-          type == RoleType.NO_ACCESS_ROLE ? JsonConstants.RPCREQUEST_STATUS_VALIDATION_ERROR
-              : JsonConstants.RPCREQUEST_STATUS_SUCCESS });
+      testCases.add(new Object[] { type, DataSource.Note, accessForAdminAndSystemOnly });
+
+      // Selector into a datasource into a P&E Window.
+      testCases.add(new Object[] { type, DataSource.SelectorGLItemDatasource,
+          accessForAdminAndSystemOnly });
     }
     // testing a problem detected in how properties are initialized.
     testCases.add(new Object[] { RoleType.ADMIN_ROLE, DataSource.ProductByPriceAndWarehouse,

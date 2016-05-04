@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -50,8 +50,6 @@ import org.openbravo.model.ad.datamodel.Column;
  * This service class only supports querying for one {@link Entity}.
  * 
  * This service class can not be used as a singleton.
- * 
- * It makes use of the {@link QueryBuilder} helper class to manage filter information.
  * 
  * @author mtaal
  */
@@ -280,8 +278,8 @@ public class DataEntityQueryService {
   }
 
   /**
-   * Tells the {@link QueryBuilder} to use the {@link JsonConstants#MAIN_ALIAS} as the alias for
-   * prefixing all properties in the where clause and order by.
+   * Tells the query builder to use the {@link JsonConstants#MAIN_ALIAS} as the alias for prefixing
+   * all properties in the where clause and order by.
    */
   public void setUseAlias() {
     queryBuilder.setMainAlias(JsonConstants.MAIN_ALIAS);

@@ -64,6 +64,7 @@ import org.openbravo.model.common.order.OrderLine;
  *
  */
 public class ExplicitCrossOrganizationReference extends CrossOrganizationReference {
+  private static final String SALES_ORDER_WINDOW = "143";
   private static String QA_ONLY_SPAIN_ROLE;
   private static final String CORE = "0";
   private static final String ORDER_WAREHOUSE_COLUMN = "2202";
@@ -489,7 +490,15 @@ public class ExplicitCrossOrganizationReference extends CrossOrganizationReferen
     DalLayerInitializer.getInstance().setInitialized(false);
     setDalUp();
 
-    // create a role with access only to Spain org
+    Role qaRole = createOrgUserLevelRole();
+    QA_ONLY_SPAIN_ROLE = qaRole.getId();
+    grantWindowAccess(qaRole, SALES_ORDER_WINDOW);
+
+    OBDal.getInstance().commitAndClose();
+  }
+
+  /** Creates a role with Org user level, and access to Spain Org */
+  static Role createOrgUserLevelRole() {
     setQAAdminRole();
     Role spainRole = OBProvider.getInstance().get(Role.class);
     spainRole.setName("QA Only Spain - " + System.currentTimeMillis()); // some randomness
@@ -500,21 +509,6 @@ public class ExplicitCrossOrganizationReference extends CrossOrganizationReferen
     spainRole.setUserLevel("  O");
     OBDal.getInstance().save(spainRole);
     createdObjects.add(spainRole);
-    QA_ONLY_SPAIN_ROLE = spainRole.getId();
-
-    // create a window access for previous role
-    Role role = OBDal.getInstance().get(Role.class, QA_ONLY_SPAIN_ROLE);
-    WindowAccess windowAccess = OBProvider.getInstance().get(WindowAccess.class);
-    final OBCriteria<Window> obCriteria = OBDal.getInstance().createCriteria(Window.class);
-    obCriteria.add(Restrictions.eq(Window.PROPERTY_ID, "143"));
-    obCriteria.setMaxResults(1);
-    windowAccess.setClient(role.getClient());
-    windowAccess.setOrganization(role.getOrganization());
-    windowAccess.setRole(role);
-    windowAccess.setWindow((Window) obCriteria.uniqueResult());
-    windowAccess.setEditableField(true);
-    OBDal.getInstance().save(windowAccess);
-    createdObjects.add(windowAccess);
 
     RoleOrganization orgAccess = OBProvider.getInstance().get(RoleOrganization.class);
     orgAccess.setOrganization(OBDal.getInstance().getProxy(Organization.class, SPAIN_ORG));
@@ -529,7 +523,21 @@ public class ExplicitCrossOrganizationReference extends CrossOrganizationReferen
     OBDal.getInstance().save(userRole);
     createdObjects.add(userRole);
 
-    OBDal.getInstance().commitAndClose();
+    return spainRole;
+  }
+
+  static void grantWindowAccess(Role role, String windowId) {
+    WindowAccess windowAccess = OBProvider.getInstance().get(WindowAccess.class);
+    final OBCriteria<Window> obCriteria = OBDal.getInstance().createCriteria(Window.class);
+    obCriteria.add(Restrictions.eq(Window.PROPERTY_ID, windowId));
+    obCriteria.setMaxResults(1);
+    windowAccess.setClient(role.getClient());
+    windowAccess.setOrganization(role.getOrganization());
+    windowAccess.setRole(role);
+    windowAccess.setWindow((Window) obCriteria.uniqueResult());
+    windowAccess.setEditableField(true);
+    OBDal.getInstance().save(windowAccess);
+    createdObjects.add(windowAccess);
   }
 
   @AfterClass

@@ -1057,7 +1057,8 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
                   // Create merged Payment Schedule Detail with the pending to be paid amount
                   if (outStandingAmt.compareTo(BigDecimal.ZERO) != 0) {
                     final FIN_PaymentScheduleDetail mergedScheduleDetail = dao
-                        .getNewPaymentScheduleDetail(payment.getOrganization(), outStandingAmt);
+                        .getNewPaymentScheduleDetail(paymentScheduleDetail.getInvoicePaymentSchedule()
+                           .getInvoice().getOrganization(), outStandingAmt);
                     mergedScheduleDetail.setInvoicePaymentSchedule(paymentScheduleDetail
                         .getInvoicePaymentSchedule());
                     mergedScheduleDetail.setOrderPaymentSchedule(paymentScheduleDetail
@@ -1085,7 +1086,8 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
                   // Create merged Payment Schedule Detail with the pending to be paid amount
                   if (outStandingAmt.compareTo(BigDecimal.ZERO) != 0) {
                     final FIN_PaymentScheduleDetail mergedScheduleDetail = dao
-                        .getNewPaymentScheduleDetail(payment.getOrganization(), outStandingAmt);
+                        .getNewPaymentScheduleDetail(paymentScheduleDetail.getOrderPaymentSchedule()
+                        	.getOrder().getOrganization(), outStandingAmt);
                     mergedScheduleDetail.setOrderPaymentSchedule(paymentScheduleDetail
                         .getOrderPaymentSchedule());
                     OBDal.getInstance().save(mergedScheduleDetail);

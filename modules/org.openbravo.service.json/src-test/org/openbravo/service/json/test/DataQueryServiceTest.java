@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -39,12 +39,12 @@ import org.openbravo.model.common.bank.Bank;
 import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 import org.openbravo.service.json.DataEntityQueryService;
 import org.openbravo.service.json.JsonConstants;
-import org.openbravo.service.json.QueryBuilder;
-import org.openbravo.service.json.QueryBuilder.TextMatching;
+import org.openbravo.service.json.AdvancedQueryBuilder;
+import org.openbravo.service.json.AdvancedQueryBuilder.TextMatching;
 import org.openbravo.test.base.OBBaseTest;
 
 /**
- * Test the {@link DataEntityQueryService} and {@link QueryBuilder} classes.
+ * Test the {@link DataEntityQueryService} and {@link AdvancedQueryBuilder} classes.
  * 
  * @author mtaal
  */

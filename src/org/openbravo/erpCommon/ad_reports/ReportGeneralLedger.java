@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2015 Openbravo SLU
+ * All portions are Copyright (C) 2001-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -46,6 +46,7 @@ import org.openbravo.erpCommon.utility.LeftTabsBar;
 import org.openbravo.erpCommon.utility.LimitRowsScrollableFieldProviderFilter;
 import org.openbravo.erpCommon.utility.NavigationBar;
 import org.openbravo.erpCommon.utility.OBError;
+import org.openbravo.erpCommon.utility.OBLedgerUtils;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.xmlEngine.XmlDocument;
@@ -192,16 +193,27 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
       String strGroupBy = vars
           .getRequestGlobalVariable("inpGroupBy", "ReportGeneralLedger|GroupBy");
       String strPageNo = vars.getGlobalVariable("inpPageNo", "ReportGeneralLedger|PageNo", "1");
-      if (vars.commandIn("PDF"))
+      if (vars.commandIn("PDF")) {
         printPageDataPDF(request, response, vars, strDateFrom, strDateTo, strAmtFrom, strAmtTo,
             strcelementvaluefrom, strcelementvalueto, strOrg, strcBpartnerId, strmProductId,
             strcProjectId, strGroupBy, strcAcctSchemaId, strPageNo, strShowOpenBalances);
-      else
+      } else {
         printPageDataXLS(request, response, vars, strDateFrom, strDateTo, strAmtFrom, strAmtTo,
             strcelementvaluefrom, strcelementvalueto, strOrg, strcBpartnerId, strmProductId,
             strcProjectId, strGroupBy, strcAcctSchemaId, strShowOpenBalances);
-    } else
+      }
+    } else if (vars.commandIn("LEDGER")) {
+      String strOrg = vars.getGlobalVariable("inpOrg", "ReportGeneralLedger|Org", "0");
+      String strcAcctSchemaId = OBLedgerUtils.getOrgLedger(strOrg);
+      response.setContentType("text/html; charset=UTF-8");
+      PrintWriter out = response.getWriter();
+      out.print(strcAcctSchemaId);
+      out.close();
+    }
+
+    else {
       pageError(response);
+    }
   }
 
   private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,

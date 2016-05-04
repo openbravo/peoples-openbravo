@@ -50,10 +50,10 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.ad.domain.Validation;
 import org.openbravo.service.datasource.DataSourceFilter;
+import org.openbravo.service.json.AdvancedQueryBuilder.TextMatching;
 import org.openbravo.service.json.DefaultJsonDataService;
 import org.openbravo.service.json.JsonConstants;
 import org.openbravo.service.json.JsonUtils;
-import org.openbravo.service.json.QueryBuilder.TextMatching;
 
 /**
  * Implements the a datasource filter request for the selectors. Used to generates Hibernate where
@@ -369,11 +369,6 @@ public class SelectorDataSourceFilter implements DataSourceFilter {
         if (sb.length() > 0) {
           sb.append(" and ");
         }
-
-        // Code duplicated from org.openbravo.service.json.QueryBuilder
-        // Used to identify the type of property and modify the _where parameter
-        // If the this code change, make sure you check the getWhereClause method of the
-        // QueryBuilder. Check issue https://issues.openbravo.com/view.php?id=14239
 
         if (!property.isPrimitive()) {
           sb.append("e." + sf.getProperty() + ".id = '" + result.toString() + "'");

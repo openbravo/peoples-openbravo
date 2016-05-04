@@ -182,6 +182,7 @@ public class CrossOrganizationReference extends BaseDataSourceTestDal {
         OBDal.getInstance().flush();
       }
       OBDal.getInstance().commitAndClose();
+      createdObjects.clear();
     } catch (Exception ignore) {
     } finally {
       OBContext.restorePreviousMode();

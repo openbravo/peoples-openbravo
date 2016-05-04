@@ -32,6 +32,7 @@ import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.security.SessionLogin;
 import org.openbravo.erpCommon.utility.DimensionDisplayUtility;
+import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.access.RoleOrganization;
 import org.openbravo.model.ad.domain.Preference;
@@ -208,6 +209,18 @@ public class LoginUtils {
       log4j.error("Error trying to initialize OBContext: " + e.getMessage(), e);
       return false;
     }
+
+    boolean shouldCheckAccessLevel = true;
+
+    try {
+      shouldCheckAccessLevel = "N".equals(Preferences.getPreferenceValue(
+          "BypassAccessLevelEntityCheck", true, OBContext.getOBContext().getCurrentClient(),
+          OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
+          OBContext.getOBContext().getRole(), null));
+    } catch (PropertyException prefNotDefined) {
+    }
+
+    OBContext.getOBContext().setCheckAccessLevel(shouldCheckAccessLevel);
 
     // Set session vars
     vars.setSessionValue("#AD_User_ID", strUserAuth);

@@ -77,6 +77,7 @@ import org.openbravo.test.role.inheritance.RoleInheritanceTestSuite;
 import org.openbravo.test.scheduling.ProcessSchedulingTest;
 import org.openbravo.test.security.AccessLevelTest;
 import org.openbravo.test.security.AllowedOrganizationsTest;
+import org.openbravo.test.security.BypassAccessLevelCheck;
 import org.openbravo.test.security.EntityAccessTest;
 import org.openbravo.test.security.StandardCrossOrganizationReference;
 import org.openbravo.test.security.WritableReadableOrganizationClientTest;
@@ -159,6 +160,7 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     EntityAccessTest.class, //
     WritableReadableOrganizationClientTest.class, //
     StandardCrossOrganizationReference.class, //
+    BypassAccessLevelCheck.class, //
 
     // system
     SystemServiceTest.class, //

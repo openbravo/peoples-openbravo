@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2013 Openbravo S.L.U.
+ * Copyright (C) 2001-2016 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -11,6 +11,8 @@
  */
 
 package org.openbravo.authentication;
+
+import static org.openbravo.base.secureApp.LoginHandler.SUCCESS_SESSION_STANDARD;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -52,7 +54,6 @@ public abstract class AuthenticationManager {
   private static final Logger log4j = Logger.getLogger(AuthenticationManager.class);
   private static final String DEFAULT_AUTH_CLASS = "org.openbravo.authentication.basic.DefaultAuthenticationManager";
 
-  private static final String SUCCESS_SESSION_STANDARD = "S";
   private static final String SUCCESS_SESSION_WEB_SERVICE = "WS";
   private static final String REJECTED_SESSION_WEB_SERVICE = "WSR";
   private static final String SUCCESS_SESSION_CONNECTOR = "WSC";
@@ -151,19 +152,22 @@ public abstract class AuthenticationManager {
       return null;
     }
 
-    // A restricted resource can define a custom login URL
-    // It just need to set an the attribute loginURL in the request
-    final String customLoginURL = (String) request.getAttribute("loginURL");
-
-    final String loginURL = localAdress
-        + (customLoginURL == null || "".equals(customLoginURL) ? defaultServletUrl : customLoginURL);
-
     if (userId == null && !response.isCommitted()) {
-      response.sendRedirect(loginURL);
+      response.sendRedirect(getLoginURL(request));
       return null;
     }
 
     return userId;
+  }
+
+  /** Returns the URL that displays the login window (request for user/password) */
+  public String getLoginURL(HttpServletRequest request) {
+    // A restricted resource can define a custom login URL
+    // It just need to set an the attribute loginURL in the request
+    final String customLoginURL = (String) request.getAttribute("loginURL");
+
+    return localAdress
+        + (customLoginURL == null || "".equals(customLoginURL) ? defaultServletUrl : customLoginURL);
   }
 
   /**

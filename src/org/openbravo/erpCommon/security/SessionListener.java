@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,12 +21,14 @@ package org.openbravo.erpCommon.security;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Vector;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 
@@ -34,13 +36,18 @@ import org.apache.log4j.Logger;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.database.SessionInfo;
 
+/**
+ * Keeps track of active sessions in this context so they can be marked as no active in database
+ * when they are destroyed. Also used to keep last activity info for CU management.
+ */
 public class SessionListener implements HttpSessionListener, ServletContextListener {
 
   private static final int PING_TIMEOUT_SECS = 120;
 
   private static final Logger log = Logger.getLogger(SessionListener.class);
 
-  private static Vector<String> sessionsInContext = new Vector<String>();
+  private static Set<String> sessionsInContext = new HashSet<String>();
+  private static Set<HttpSession> activeHttpSessions = new HashSet<HttpSession>();
   private static ServletContext context = null;
 
   /**
@@ -51,11 +58,16 @@ public class SessionListener implements HttpSessionListener, ServletContextListe
   @Override
   public void sessionDestroyed(HttpSessionEvent event) {
     log.debug("Destroying session");
-    String sessionId = (String) event.getSession().getAttribute("#AD_SESSION_ID");
+    HttpSession session = event.getSession();
+    String sessionId = (String) session.getAttribute("#AD_SESSION_ID");
     if (sessionId != null) {
       deactivateSession(sessionId);
-
     }
+    synchronized (activeHttpSessions) {
+      activeHttpSessions.remove(session);
+    }
+
+    log.debug("Session destroyed. Active sessions count: " + activeHttpSessions.size());
   }
 
   /**
@@ -87,7 +99,7 @@ public class SessionListener implements HttpSessionListener, ServletContextListe
    * @param sessionId
    *          db id for the session to keep track
    */
-  public static void addSession(String sessionId) {
+  public static synchronized void addSession(String sessionId) {
     sessionsInContext.add(sessionId);
   }
 
@@ -136,12 +148,36 @@ public class SessionListener implements HttpSessionListener, ServletContextListe
 
   @Override
   public void sessionCreated(HttpSessionEvent event) {
-    // do nothing
+    synchronized (activeHttpSessions) {
+      activeHttpSessions.add(event.getSession());
+    }
+
+    log.debug("Session created. Active sessions count: " + activeHttpSessions.size());
+  }
+
+  /**
+   * Returns the {@code HttpSession} identified by {@code sessionId} it is present in this context.
+   * If not present {@code null} is returned.
+   */
+  public static HttpSession getActiveSession(String sessionId) {
+    try {
+      for (HttpSession session : activeHttpSessions) {
+        if (sessionId.equals(session.getAttribute("#AD_SESSION_ID"))) {
+          return session;
+        }
+      }
+    } catch (Exception e) {
+      log.error("Error getting active session from context", e);
+      // give up and return null
+    }
+    return null;
   }
 
   private void deactivateSession(String sessionId) {
     try {
-      sessionsInContext.remove(sessionId);
+      synchronized (sessionsInContext) {
+        sessionsInContext.remove(sessionId);
+      }
 
       // Do not use DAL here
       SessionLoginData.deactivate((ConnectionProvider) context.getAttribute("openbravoPool"),

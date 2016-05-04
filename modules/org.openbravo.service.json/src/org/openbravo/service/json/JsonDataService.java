@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -51,7 +51,6 @@ public interface JsonDataService {
    *          the parameters driving the query, one parameter is mandatory:
    *          {@link JsonConstants#ENTITYNAME}
    * @return a json result string
-   * @see QueryBuilder
    */
   public abstract String fetch(Map<String, String> parameters);
 
