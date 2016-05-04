@@ -11,12 +11,14 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2015 Openbravo SLU 
+ * All portions are Copyright (C) 2015-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.erpCommon.obps;
+
+import java.util.Map;
 
 import javax.enterprise.context.ApplicationScoped;
 
@@ -48,6 +50,11 @@ public interface ModuleLicenseRestrictions {
 
   /** Provides the HTML to be injected in Instance Activation window to perform additional actions */
   public String getInstanceActivationExtraActionsHtml(XmlEngine xmlEngine);
+
+  /**
+   * Returns additional information.
+   */
+  public Map<String, String> getAdditionalTxtMessage();
 
   public enum MsgSeverity {
     WARN("Warning"), ERROR("Error");
