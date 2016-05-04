@@ -148,6 +148,19 @@ public class ActivationKey {
    */
   private static final int REFRESH_MIN_TIME = 60;
 
+  public enum AdditionalInformation {
+    ACTIVE_WEB_POS_TERMINAL("ActiveWebPOSTerminals");
+    private String info;
+
+    private AdditionalInformation(String info) {
+      this.info = info;
+    }
+
+    public String getInfo() {
+      return info;
+    }
+  }
+
   public enum LicenseRestriction {
     NO_RESTRICTION, OPS_INSTANCE_NOT_ACTIVE, NUMBER_OF_SOFT_USERS_REACHED, NUMBER_OF_CONCURRENT_USERS_REACHED, MODULE_EXPIRED, NOT_MATCHED_INSTANCE, HB_NOT_ACTIVE, EXPIRED_GOLDEN, CONCURRENT_NAMED_USER, ON_DEMAND_OFF_PLATFORM, POS_TERMINALS_EXCEEDED
   }
@@ -863,6 +876,22 @@ public class ActivationKey {
     return new ActivationMsg(severity, customMsg);
   }
 
+  /**
+   * gets current number of active terminals
+   */
+  private String getNumberOfActivePosTerminals() {
+    String valueActivePosTerminales = null;
+    Map<String, String> additionalInfo = null;
+    for (ModuleLicenseRestrictions moduleRestriction : getModuleLicenseRestrictions()) {
+      additionalInfo = moduleRestriction.getAdditionalTxtMessage();
+      if (valueActivePosTerminales == null) {
+        valueActivePosTerminales = additionalInfo.get(AdditionalInformation.ACTIVE_WEB_POS_TERMINAL
+            .getInfo());
+      }
+    }
+    return valueActivePosTerminales;
+  }
+
   /** gets HTML to be injected in Instance Activation window with additional actions to be performed */
   public String getInstanceActivationExtraActionsHtml(XmlEngine xmlEngine) {
     String html = "";
@@ -970,7 +999,6 @@ public class ActivationKey {
         }
       }
     }
-
     return result;
   }
 
@@ -1204,6 +1232,13 @@ public class ActivationKey {
           .append("</td><td>");
       sb.append(getPOSTerminalsExplanation());
       sb.append("</td></tr>");
+
+      if (getNumberOfActivePosTerminals() != null) {
+        sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSActivePosTerminals", lang))
+            .append("</td><td>");
+        sb.append(getNumberOfActivePosTerminals());
+        sb.append("</td></tr>");
+      }
 
     } else {
       sb.append(Utility.messageBD(conn, "OPSNonActiveInstance", lang));
