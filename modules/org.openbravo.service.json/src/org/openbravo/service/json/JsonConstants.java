@@ -128,4 +128,7 @@ public class JsonConstants {
   public static final String WHERE_CLAUSE_HAS_BEEN_CHECKED = "whereClauseHasBeenChecked";
   public static final String WINDOW_ID = "windowId";
   public static final String DATASOURCE_NAME = "dataSourceName";
+
+  public static final String UNDEFINED = "undefined";
+  public static final String NULL = "null";
 }

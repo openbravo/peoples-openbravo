@@ -998,7 +998,7 @@ public class DataSourceServlet extends BaseKernelServlet {
    */
   private boolean hasAccess(HttpServletRequest req, String tabId) {
     try {
-      if (tabId == null || tabId.isEmpty()) {
+      if (JsonUtils.isValueEmpty(tabId)) {
         return true;
       }
       VariablesSecureApp vars = new VariablesSecureApp(req);
