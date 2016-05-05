@@ -866,17 +866,6 @@ public class ActivationKey {
   }
 
   /**
-   * get all additional messages to be printed in Instance Activation window.
-   */
-  private List<ModuleLicenseRestrictions.AdditionalInfo> getAdditionalMessageInfo() {
-    List<ModuleLicenseRestrictions.AdditionalInfo> additionalInfo = new ArrayList<ModuleLicenseRestrictions.AdditionalInfo>();
-    for (ModuleLicenseRestrictions moduleRestriction : getModuleLicenseRestrictions()) {
-      additionalInfo.addAll(moduleRestriction.getAdditionalMessage());
-    }
-    return additionalInfo;
-  }
-
-  /**
    * gets HTML to be injected in Instance Activation window with additional actions to be performed
    */
   public String getInstanceActivationExtraActionsHtml(XmlEngine xmlEngine) {
@@ -1355,6 +1344,17 @@ public class ActivationKey {
    */
   public HashMap<String, CommercialModuleStatus> getSubscribedModules() {
     return getSubscribedModules(true);
+  }
+
+  /**
+   * get all additional messages to be printed in Instance Activation window.
+   */
+  private List<ModuleLicenseRestrictions.AdditionalInfo> getAdditionalMessageInfo() {
+    List<ModuleLicenseRestrictions.AdditionalInfo> additionalInfo = new ArrayList<ModuleLicenseRestrictions.AdditionalInfo>();
+    for (ModuleLicenseRestrictions moduleRestriction : getModuleLicenseRestrictions()) {
+      additionalInfo.addAll(moduleRestriction.getAdditionalMessage());
+    }
+    return additionalInfo;
   }
 
   /**
