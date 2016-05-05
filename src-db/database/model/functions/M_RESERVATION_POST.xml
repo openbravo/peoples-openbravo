@@ -13,9 +13,6 @@
       <parameter name="p_user_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
-      <parameter name="p_qty" type="NUMERIC" mode="in">
-        <default><![CDATA[NULL]]></default>
-      </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
@@ -425,7 +422,7 @@ BEGIN
 
   IF (v_resaction = 'PR') THEN
     -- ADD RESERVED STOCK
-    M_RESERVE_STOCK_AUTO(v_reservation_id, v_user_id, v_message, p_qty);
+    M_RESERVE_STOCK_AUTO(v_reservation_id, v_user_id, v_message);
   END IF;
 
   /* Do not process reservation's with no lines
