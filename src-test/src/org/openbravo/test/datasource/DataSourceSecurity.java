@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -74,6 +75,9 @@ public class DataSourceSecurity extends BaseDataSourceTestDal {
   private static final String ID_TESTING = "11";
   private static final Object PROD_RESERVATION = "DA7FC1BB3BA44EC48EC1AB9C74168CED";
 
+  private static final String OPERATION_FETCH = "fetch";
+  private static final String OPERATION_UPDATE = "update";
+
   private RoleType role;
   private DataSource dataSource;
   private int expectedResponseStatus;
@@ -92,69 +96,142 @@ public class DataSourceSecurity extends BaseDataSourceTestDal {
     }
   }
 
+  private enum JSONObjectURL {
+    // Move node in Account Tree
+    MOVEMENT_NODE(
+        "?_skinVersion=Default&_create=true&Constants_FIELDSEPARATOR=$&_new=true"
+            + "&_contextUrl=http://localhost:8080/openbravo&Constants_IDENTIFIER=_identifier"
+            + "&_startRow=0&_endRow=200&referencedTableId=188&parentRecordId=56E65CF592BD4DAF8A8A879810646266&tabId=132"
+            + "&_selectedProperties=['searchKey','name','elementLevel','accountType','showValueCondition','summaryLevel']"
+            + "&@FinancialMgmtElement.client@=23C59575B9CF467C9620760EB255B389"
+            + "&@FinancialMgmtElement.id@=56E65CF592BD4DAF8A8A879810646266"
+            + "&@FinancialMgmtElement.organization@=B843C30461EA4501935CB1D125C9C25A&@FinancialMgmtElement.type@=A"
+            + "&@FinancialMgmtElementValue.organization@=B843C30461EA4501935CB1D125C9C25A"
+            + "&@FinancialMgmtElementValue.client@=23C59575B9CF467C9620760EB255B389"
+            + "&@FinancialMgmtElementValue.accountingElement@=56E65CF592BD4DAF8A8A879810646266"
+            + "&@FinancialMgmtElementValue.id@=A45B7570F9BE4A69A3BF53CFEBB29FC0&dropIndex=2"
+            + "&nextNodeId=FF30CF29CE614360AF85020438BFE328&isc_dataFormat=json&prevNodeId=C3FE5804602E481FAEDCA5D4D71B6CF",
+        createJsonObjectForNodeMovement()), //
+    NO_APPLIED("", "");
+
+    private String url;
+    private String content;
+
+    private JSONObjectURL(String url, String content) {
+      this.url = url;
+      this.content = content;
+    }
+
+    private static String createJsonObjectForNodeMovement() {
+      JSONObject dataObject = new JSONObject();
+      JSONObject oldValuesJSON = new JSONObject();
+      JSONObject contentJson = new JSONObject();
+      try {
+        dataObject.put("_identifier", "P - PATRIMONIO NETO Y PASIVO");
+        dataObject.put("_entityName", "FinancialMgmtElementValue");
+        dataObject.put("$ref", "FinancialMgmtElementValue/C3FE5804602E481FAEDCA5D4D71B6CF3");
+        dataObject.put("id", "C3FE5804602E481FAEDCA5D4D71B6CF3");
+        dataObject.put("client", "23C59575B9CF467C9620760EB255B389");
+        dataObject.put("parentId", "-1");
+        dataObject.put("organization", "B843C30461EA4501935CB1D125C9C25A");
+        dataObject.put("searchKey", "A");
+        dataObject.put("accountingElement", "56E65CF592BD4DAF8A8A879810646266");
+        dataObject.put("nodeId", "A45B7570F9BE4A69A3BF53CFEBB29FC0");
+        dataObject.put("seqno", "210");
+
+        oldValuesJSON.put("_identifier", "A - ACTIVO");
+        oldValuesJSON.put("_entityName", "FinancialMgmtElementValue");
+        oldValuesJSON.put("$ref", "FinancialMgmtElementValue/A45B7570F9BE4A69A3BF53CFEBB29FC0");
+        oldValuesJSON.put("id", "A45B7570F9BE4A69A3BF53CFEBB29FC0");
+        oldValuesJSON.put("client", "23C59575B9CF467C9620760EB255B389");
+        oldValuesJSON.put("organization", "B843C30461EA4501935CB1D125C9C25A");
+        oldValuesJSON.put("organization", "B843C30461EA4501935CB1D125C9C25A");
+        oldValuesJSON.put("searchKey", "A");
+        oldValuesJSON.put("name", "ACTIVO");
+        oldValuesJSON.put("accountingElement", "56E65CF592BD4DAF8A8A879810646266");
+        oldValuesJSON.put("nodeId", "A45B7570F9BE4A69A3BF53CFEBB29FC0");
+
+        contentJson.put("dataSource",
+            "D2F94DC86DEC48D69E4BFCE59DC670CF_1462265510526_1462271742157");
+        contentJson.put("operationType", "update");
+        contentJson.put("data", dataObject);
+        contentJson.put("oldValues", oldValuesJSON);
+      } catch (JSONException e) {
+        e.printStackTrace();
+      }
+      return contentJson.toString();
+    }
+  }
+
   @SuppressWarnings("serial")
   private enum DataSource {
-    Order("Order"), //
-    Alert("DB9F062472294F12A0291A7BD203F922"), //
-    ProductByPriceAndWarehouse("ProductByPriceAndWarehouse", new HashMap<String, String>() {
-      {
-        try {
-          put("_selectorDefinitionId", "2E64F551C7C4470C80C29DBA24B34A5F");
-          put("filterClass", "org.openbravo.userinterface.selector.SelectorDataSourceFilter");
-          put("_sortBy", "_identifier");
-          put("_requestType", "Window");
-          put("_distinct", "productPrice");
+    Order("Order", JSONObjectURL.NO_APPLIED, OPERATION_FETCH), //
+    Alert("DB9F062472294F12A0291A7BD203F922", JSONObjectURL.NO_APPLIED, OPERATION_FETCH), //
+    ProductByPriceAndWarehouse("ProductByPriceAndWarehouse", JSONObjectURL.NO_APPLIED,
+        OPERATION_FETCH, new HashMap<String, String>() {
+          {
+            try {
+              put("_selectorDefinitionId", "2E64F551C7C4470C80C29DBA24B34A5F");
+              put("filterClass", "org.openbravo.userinterface.selector.SelectorDataSourceFilter");
+              put("_sortBy", "_identifier");
+              put("_requestType", "Window");
+              put("_distinct", "productPrice");
 
-          // To reproduce this problem is important not to add the targetProperty parameter. For
-          // this reason targetProperty=null.
-          put("_inpTableId", "293");
-          put("_textMatchStyle", "substring");
+              // To reproduce this problem is important not to add the targetProperty parameter. For
+              // this reason targetProperty=null.
+              put("_inpTableId", "293");
+              put("_textMatchStyle", "substring");
 
-          // Filter selector
-          JSONObject criteria = new JSONObject();
-          criteria.put("fieldName", "productPrice$priceListVersion$_identifier");
-          criteria.put("operator", "iContains");
-          criteria.put("value", "Tarifa");
-          put("criteria", criteria.toString());
-        } catch (Exception ignore) {
-        }
-      }
-    }), //
-    PropertySelector("83B60C4C19AE4A9EBA947B948C5BA04D", new HashMap<String, String>() {
-      {
-        // Property selector invocation from Windows > Tab > Field > Property field
-        put("_selectorDefinitionId", "387D9FFC48A74054835C5DF6E6FD08F7");
-        put("inpadTableId", "259");
-        put("inpTabId", "107");
-        put("targetProperty", "property");
-      }
-    }), //
-    ManageVariants("6654D607F650425A9DFF7B6961D54920", new HashMap<String, String>() {
-      {
-        put("@Product.id@", ID_TESTING);
-      }
-    }), //
-    Note("090A37D22E61FE94012E621729090048", new HashMap<String, String>() {
-      {
-        // Note of a record in Windows, Tabs and Fields.
-        String criteria = "{\"fieldName\":\"table\",\"operator\":\"equals\",\"value\":\""
-            + TABLE_WINDOWS_TABS_FIELDS_ID
-            + "\"}__;__{\"fieldName\":\"record\",\"operator\":\"equals\",\"value\":\""
-            + RECORD_OF_WINDOWS_TABS_FIELDS_ID + "\"}";
-        String entityName = "OBUIAPP_Note";
-        put("criteria", criteria);
-        put("_entityName", entityName);
-      }
-    }), //
-    ProductCharacteristics("BE2735798ECC4EF88D131F16F1C4EC72"), //
-    Combo("ComboTableDatasourceService", new HashMap<String, String>() {
-      {
-        // Sales Order > Payment Terms
-        put("fieldId", "1099");
-      }
-    }), //
-    CustomQuerySelectorDatasource("F8DD408F2F3A414188668836F84C21AF",
+              // Filter selector
+              JSONObject criteria = new JSONObject();
+              criteria.put("fieldName", "productPrice$priceListVersion$_identifier");
+              criteria.put("operator", "iContains");
+              criteria.put("value", "Tarifa");
+              put("criteria", criteria.toString());
+            } catch (Exception ignore) {
+            }
+          }
+        }), //
+    PropertySelector("83B60C4C19AE4A9EBA947B948C5BA04D", JSONObjectURL.NO_APPLIED, OPERATION_FETCH,
         new HashMap<String, String>() {
+          {
+            // Property selector invocation from Windows > Tab > Field > Property field
+            put("_selectorDefinitionId", "387D9FFC48A74054835C5DF6E6FD08F7");
+            put("inpadTableId", "259");
+            put("inpTabId", "107");
+            put("targetProperty", "property");
+          }
+        }), //
+    ManageVariants("6654D607F650425A9DFF7B6961D54920", JSONObjectURL.NO_APPLIED, OPERATION_FETCH,
+        new HashMap<String, String>() {
+          {
+            put("@Product.id@", ID_TESTING);
+          }
+        }), //
+    Note("090A37D22E61FE94012E621729090048", JSONObjectURL.NO_APPLIED, OPERATION_FETCH,
+        new HashMap<String, String>() {
+          {
+            // Note of a record in Windows, Tabs and Fields.
+            String criteria = "{\"fieldName\":\"table\",\"operator\":\"equals\",\"value\":\""
+                + TABLE_WINDOWS_TABS_FIELDS_ID
+                + "\"}__;__{\"fieldName\":\"record\",\"operator\":\"equals\",\"value\":\""
+                + RECORD_OF_WINDOWS_TABS_FIELDS_ID + "\"}";
+            String entityName = "OBUIAPP_Note";
+            put("criteria", criteria);
+            put("_entityName", entityName);
+          }
+        }), //
+    ProductCharacteristics("BE2735798ECC4EF88D131F16F1C4EC72", JSONObjectURL.NO_APPLIED,
+        OPERATION_FETCH), //
+    Combo("ComboTableDatasourceService", JSONObjectURL.NO_APPLIED, OPERATION_FETCH,
+        new HashMap<String, String>() {
+          {
+            // Sales Order > Payment Terms
+            put("fieldId", "1099");
+          }
+        }), //
+    CustomQuerySelectorDatasource("F8DD408F2F3A414188668836F84C21AF", JSONObjectURL.NO_APPLIED,
+        OPERATION_FETCH, new HashMap<String, String>() {
           {
             // Sales Invoice > Selector Business Partner
             put("_selectorDefinitionId", "862F54CB1B074513BD791C6789F4AA42");
@@ -162,77 +239,92 @@ public class DataSourceSecurity extends BaseDataSourceTestDal {
             put("targetProperty", "businessPartner");
           }
         }), //
-    CustomQuerySelectorDatasourceProcess("ADList", new HashMap<String, String>() {
-      {
-        // Sales Order > Add Payment process > Selector Action Regarding Document
-        put("_selectorDefinitionId", "41B3A5EA61AB46FBAF4567E3755BA190");
-        put("_processDefinitionId", "9BED7889E1034FE68BD85D5D16857320");
-        put("targetProperty", "businessPartner");
-      }
-    }), //
-    SelectorGLItemDatasource("FinancialMgmtGLItem", new HashMap<String, String>() {
-      {
-        // Payment In > Add Details process > GLItem section > Selector GLItem
-        put("_selectorDefinitionId", "9FAD469CE4414A25974CF45C0AD22D35");
-        put("inpTableId", "D1A97202E832470285C9B1EB026D54E2");
-        put("targetProperty", "gLItem");
-      }
-    }), //
-    QuickLaunch("99B9CC42FDEA4CA7A4EE35BC49D61E0E"), //
-    QuickCreate("C17951F970E942FD9F3771B7BE91D049"), //
-    HQLDataSource("3C1148C0AB604DE1B51B7EA4112C325F", new HashMap<String, String>() {
-      {
-        // Invocation from Sales Order > Add Payment process > Credit to Use.
-        put("tableId", "58AF4D3E594B421A9A7307480736F03E");
-      }
-    }), //
-    ADTree("90034CAE96E847D78FBEF6D38CB1930D", new HashMap<String, String>() {
-      {
-        // Organization tree view.
-        put("referencedTableId", "155");
-        put("tabId", "143");
-        String selectedPro = "[\"searchKey\",\"name\",\"description\",\"active\",\"summaryLevel\",\"socialName\",\"organizationType\",\"currency\",\"allowPeriodControl\",\"calendar\"]";
-        put("_selectedProperties", selectedPro);
-      }
-    }), //
-    AccountTree("D2F94DC86DEC48D69E4BFCE59DC670CF", new HashMap<String, String>() {
-      {
-        // Account tree > Element value > Open tree view.
-        put("referencedTableId", "188");
-        put("tabId", "132");
-        String selectedPro = "[\"searchKey\",\"name\",\"elementLevel\",\"accountType\",\"showValueCondition\",\"summaryLevel\"]";
-        put("_selectedProperties", selectedPro);
-        put("@FinancialMgmtElement.client@", CLIENT);
-        put("@FinancialMgmtElement.id@", "56E65CF592BD4DAF8A8A879810646266");
-        put("@FinancialMgmtElement.organization@", "B843C30461EA4501935CB1D125C9C25A");
-      }
-    }), //
-    StockReservations("2F5B70D7F12E4F5C8FE20D6F17D69ECF", new HashMap<String, String>() {
-      {
-        // Manage Stock from Stock Reservations
-        put("@MaterialMgmtReservation.id@", ID_TESTING);
-      }
-    }), //
-    QueryList("DD17275427E94026AD721067C3C91C18", new HashMap<String, String>() {
-      {
-        // Query List Widget > Best Sellers
-        put("widgetId", "CD1B06C4ED974B5F905A5A01B097DF4E");
-      }
-    });
+    CustomQuerySelectorDatasourceProcess("ADList", JSONObjectURL.NO_APPLIED, OPERATION_FETCH,
+        new HashMap<String, String>() {
+          {
+            // Sales Order > Add Payment process > Selector Action Regarding Document
+            put("_selectorDefinitionId", "41B3A5EA61AB46FBAF4567E3755BA190");
+            put("_processDefinitionId", "9BED7889E1034FE68BD85D5D16857320");
+            put("targetProperty", "businessPartner");
+          }
+        }), //
+    SelectorGLItemDatasource("FinancialMgmtGLItem", JSONObjectURL.NO_APPLIED, OPERATION_FETCH,
+        new HashMap<String, String>() {
+          {
+            // Payment In > Add Details process > GLItem section > Selector GLItem
+            put("_selectorDefinitionId", "9FAD469CE4414A25974CF45C0AD22D35");
+            put("inpTableId", "D1A97202E832470285C9B1EB026D54E2");
+            put("targetProperty", "gLItem");
+          }
+        }), //
+    QuickLaunch("99B9CC42FDEA4CA7A4EE35BC49D61E0E", JSONObjectURL.NO_APPLIED, OPERATION_FETCH), //
+    QuickCreate("C17951F970E942FD9F3771B7BE91D049", JSONObjectURL.NO_APPLIED, OPERATION_FETCH), //
+    HQLDataSource("3C1148C0AB604DE1B51B7EA4112C325F", JSONObjectURL.NO_APPLIED, OPERATION_FETCH,
+        new HashMap<String, String>() {
+          {
+            // Invocation from Sales Order > Add Payment process > Credit to Use.
+            put("tableId", "58AF4D3E594B421A9A7307480736F03E");
+          }
+        }), //
+    ADTree("90034CAE96E847D78FBEF6D38CB1930D", JSONObjectURL.NO_APPLIED, OPERATION_FETCH,
+        new HashMap<String, String>() {
+          {
+            // Organization tree view.
+            put("referencedTableId", "155");
+            put("tabId", "143");
+            String selectedPro = "[\"searchKey\",\"name\",\"description\",\"active\",\"summaryLevel\",\"socialName\",\"organizationType\",\"currency\",\"allowPeriodControl\",\"calendar\"]";
+            put("_selectedProperties", selectedPro);
+          }
+        }), //
+    AccountTree("D2F94DC86DEC48D69E4BFCE59DC670CF", JSONObjectURL.NO_APPLIED, OPERATION_FETCH,
+        new HashMap<String, String>() {
+          {
+            // Account tree > Element value > Open tree view.
+            put("referencedTableId", "188");
+            put("tabId", "132");
+            String selectedPro = "[\"searchKey\",\"name\",\"elementLevel\",\"accountType\",\"showValueCondition\",\"summaryLevel\"]";
+            put("_selectedProperties", selectedPro);
+            put("@FinancialMgmtElement.client@", CLIENT);
+            put("@FinancialMgmtElement.id@", "56E65CF592BD4DAF8A8A879810646266");
+            put("@FinancialMgmtElement.organization@", "B843C30461EA4501935CB1D125C9C25A");
+          }
+        }), //
+    StockReservations("2F5B70D7F12E4F5C8FE20D6F17D69ECF", JSONObjectURL.NO_APPLIED,
+        OPERATION_FETCH, new HashMap<String, String>() {
+          {
+            // Manage Stock from Stock Reservations
+            put("@MaterialMgmtReservation.id@", ID_TESTING);
+          }
+        }), //
+    QueryList("DD17275427E94026AD721067C3C91C18", JSONObjectURL.NO_APPLIED, OPERATION_FETCH,
+        new HashMap<String, String>() {
+          {
+            // Query List Widget > Best Sellers
+            put("widgetId", "CD1B06C4ED974B5F905A5A01B097DF4E");
+          }
+        }), //
+    AccountTreeMovement("D2F94DC86DEC48D69E4BFCE59DC670CF", JSONObjectURL.MOVEMENT_NODE,
+        OPERATION_UPDATE);
 
     private String ds;
+    private JSONObjectURL urlAndJson;
+    private String operation;
     private Map<String, String> params;
 
-    private DataSource(String ds) {
+    private DataSource(String ds, JSONObjectURL urlAndJson, String operation) {
       this.ds = ds;
+      this.urlAndJson = urlAndJson;
+      this.operation = operation;
+
       params = new HashMap<String, String>();
-      params.put("_operationType", "fetch");
+      params.put("_operationType", operation);
       params.put("_startRow", "0");
       params.put("_endRow", "1");
     }
 
-    private DataSource(String ds, Map<String, String> extraParams) {
-      this(ds);
+    private DataSource(String ds, JSONObjectURL urlAndJson, String operation,
+        Map<String, String> extraParams) {
+      this(ds, urlAndJson, operation);
       params.putAll(extraParams);
     }
   }
@@ -293,6 +385,9 @@ public class DataSourceSecurity extends BaseDataSourceTestDal {
       // Selector into a datasource into a P&E Window.
       testCases.add(new Object[] { type, DataSource.SelectorGLItemDatasource,
           accessForAdminAndSystemOnly });
+
+      // Moving a tree node : https://issues.openbravo.com/view.php?id=32833
+      testCases.add(new Object[] { type, DataSource.AccountTreeMovement, accessForAdminOnly });
     }
     // testing a problem detected in how properties are initialized.
     testCases.add(new Object[] { RoleType.ADMIN_ROLE, DataSource.ProductByPriceAndWarehouse,
@@ -373,10 +468,21 @@ public class DataSourceSecurity extends BaseDataSourceTestDal {
   public void fetchShouldBeAllowedOnlyIfRoleIsGranted() throws Exception {
     OBContext.setOBContext(CONTEXT_USER);
     changeProfile(role.roleId, LANGUAGE_ID, role.orgId, WAREHOUSE_ID);
-    JSONObject jsonResponse = null;
-    jsonResponse = fetchDataSource();
-    assertThat("Request status", jsonResponse.getInt("status"), is(expectedResponseStatus));
 
+    JSONObject jsonResponse = null;
+    if (dataSource.operation.equals(OPERATION_FETCH)) {
+      jsonResponse = fetchDataSource();
+    } else if (dataSource.operation.equals(OPERATION_UPDATE)) {
+      jsonResponse = updateDataSource();
+    }
+    assertThat("Request status", jsonResponse.getInt("status"), is(expectedResponseStatus));
+  }
+
+  private JSONObject updateDataSource() throws Exception {
+    String responseUpdate = doRequest("/org.openbravo.service.datasource/" + dataSource.ds
+        + dataSource.urlAndJson.url, dataSource.urlAndJson.content, 200, "PUT", "application/json");
+
+    return new JSONObject(responseUpdate).getJSONObject("response");
   }
 
   private JSONObject fetchDataSource() throws Exception {
