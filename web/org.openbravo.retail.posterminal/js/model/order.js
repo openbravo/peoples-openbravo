@@ -2033,7 +2033,7 @@
           me = this,
           lines = this.get('lines'),
           line = !OB.UTIL.isNullOrUndefined(options) ? options.line : null,
-          warehouseId, warehouse;
+          warehouseId, warehouse, params = {};
 
       if (!line && p.get('groupProduct')) {
         var affectedByPack;
@@ -2075,7 +2075,18 @@
               return warehouse.warehouseid === warehouseId;
             });
             if (warehouse && warehouse.warehouseqty < qty) {
-              OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_ErrorProductDiscontinued', [p.get('_identifier'), qty, warehouse.warehouseqty, warehouse.warehousename]));
+              OB.UTIL.showConfirmation.display(
+              OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_ErrorProductDiscontinued', [p.get('_identifier'), qty, warehouse.warehouseqty, warehouse.warehousename]), [{
+                label: OB.I18N.getLabel('OBMOBC_LblOk'),
+                action: function () {
+                  if (p.get('showstock') && OB.MobileApp.model.get('connectedToERP')) {
+                    params.leftSubWindow = OB.OBPOSPointOfSale.UICustomization.stockLeftSubWindow;
+                    params.product = p;
+                    params.warehouse = warehouse;
+                    OB.MobileApp.view.$.containerWindow.getRoot().showLeftSubWindow({}, params);
+                  }
+                }
+              }]);
               callback(false);
             } else {
               callback(true);
