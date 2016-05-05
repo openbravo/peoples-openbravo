@@ -142,7 +142,7 @@ public class DataSourceServlet extends BaseKernelServlet {
 
       SessionInfo.setModuleId(request.getParameter("moduleId"));
       SessionInfo.setCommand(request.getParameter(DataSourceConstants.OPERATION_TYPE_PARAM));
-      SessionInfo.setProcessId(request.getParameter("tabId"));
+      SessionInfo.setProcessId(request.getParameter(JsonConstants.TAB_PARAMETER));
       SessionInfo.setProcessType("W");
 
       super.service(request, response);
@@ -208,7 +208,7 @@ public class DataSourceServlet extends BaseKernelServlet {
       getRequestContent(request);
     }
     try {
-      if (!hasAccess(request, parameters.get("tabId"))) {
+      if (!hasAccess(request, parameters.get(JsonConstants.TAB_PARAMETER))) {
         throw new OBUserException("AccessTableNoView");
       }
 
@@ -764,7 +764,7 @@ public class DataSourceServlet extends BaseKernelServlet {
     setSessionInfo();
 
     try {
-      if (!hasAccess(request, parameters.get("tabId"))) {
+      if (!hasAccess(request, parameters.get(JsonConstants.TAB_PARAMETER))) {
         throw new OBUserException("AccessTableNoView");
       }
 
@@ -797,7 +797,7 @@ public class DataSourceServlet extends BaseKernelServlet {
       if (!checkSetParameters(request, response, parameters)) {
         return;
       }
-      if (!hasAccess(request, parameters.get("tabId"))) {
+      if (!hasAccess(request, parameters.get(JsonConstants.TAB_PARAMETER))) {
         throw new OBUserException("AccessTableNoView");
       }
 
@@ -836,7 +836,7 @@ public class DataSourceServlet extends BaseKernelServlet {
     final Map<String, String> parameters = getParameterMap(request);
     setSessionInfo();
     try {
-      if (!hasAccess(request, parameters.get("tabId"))) {
+      if (!hasAccess(request, parameters.get(JsonConstants.TAB_PARAMETER))) {
         throw new OBUserException("AccessTableNoView");
       }
 
