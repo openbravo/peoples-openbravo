@@ -866,7 +866,7 @@ public class ActivationKey {
   }
 
   /**
-   * gets current number of active terminals
+   * get all additional messages to be printed in Instance Activation window.
    */
   private List<ModuleLicenseRestrictions.AdditionalInfo> getAdditionalMessageInfo() {
     List<ModuleLicenseRestrictions.AdditionalInfo> additionalInfo = new ArrayList<ModuleLicenseRestrictions.AdditionalInfo>();
@@ -1137,21 +1137,6 @@ public class ActivationKey {
     return lastRequestTime.compareTo(lastValidPingTime) < 0;
   }
 
-  /**
-   * Returns the number of current active sessions
-   */
-  private int getActiveSessions(String currentSession) {
-    OBCriteria<Session> obCriteria = OBDal.getInstance().createCriteria(Session.class);
-    obCriteria.add(Restrictions.eq(Session.PROPERTY_SESSIONACTIVE, true));
-    obCriteria.add(Restrictions.not(Restrictions.in(Session.PROPERTY_LOGINSTATUS,
-        NO_CU_SESSION_TYPES)));
-
-    if (currentSession != null && !currentSession.equals("")) {
-      obCriteria.add(Restrictions.ne(Session.PROPERTY_ID, currentSession));
-    }
-    return obCriteria.count();
-  }
-
   private int getActiveSessionsForNamedUser(String currentSession, String username) {
     OBCriteria<Session> obCriteria = OBDal.getInstance().createCriteria(Session.class);
     obCriteria.add(Restrictions.eq(Session.PROPERTY_SESSIONACTIVE, true));
@@ -1370,6 +1355,21 @@ public class ActivationKey {
    */
   public HashMap<String, CommercialModuleStatus> getSubscribedModules() {
     return getSubscribedModules(true);
+  }
+
+  /**
+   * Returns the number of current active sessions
+   */
+  private int getActiveSessions(String currentSession) {
+    OBCriteria<Session> obCriteria = OBDal.getInstance().createCriteria(Session.class);
+    obCriteria.add(Restrictions.eq(Session.PROPERTY_SESSIONACTIVE, true));
+    obCriteria.add(Restrictions.not(Restrictions.in(Session.PROPERTY_LOGINSTATUS,
+        NO_CU_SESSION_TYPES)));
+
+    if (currentSession != null && !currentSession.equals("")) {
+      obCriteria.add(Restrictions.ne(Session.PROPERTY_ID, currentSession));
+    }
+    return obCriteria.count();
   }
 
   /**
@@ -1918,10 +1918,10 @@ public class ActivationKey {
   }
 
   private int getNumberWSDayCounter() {
-    Date cc = getDayAt0(new Date());
+    Date date = getDayAt0(new Date());
     OBCriteria<Session> qLogins = OBDal.getInstance().createCriteria(Session.class);
     qLogins.add(Restrictions.eq(Session.PROPERTY_LOGINSTATUS, "WS"));
-    qLogins.add(Restrictions.ge(Session.PROPERTY_CREATIONDATE, cc));
+    qLogins.add(Restrictions.ge(Session.PROPERTY_CREATIONDATE, date));
     return qLogins.count();
   }
 
