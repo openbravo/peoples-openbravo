@@ -432,12 +432,16 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
         UsageAudit.auditActionNoDal(this, vars1, this.getClass().getName(),
             System.currentTimeMillis() - t);
       } else {
-        if ((strPopUp != null && !strPopUp.equals("")) || (classInfo.type.equals("S")))
+        if ((strPopUp != null && !strPopUp.equals("")) || classInfo.type.equals("S")) {
           bdErrorGeneralPopUp(request, response,
               Utility.messageBD(this, "Error", variables.getLanguage()),
               Utility.messageBD(this, "AccessTableNoView", variables.getLanguage()));
-        else
+        } else {
           bdError(request, response, "AccessTableNoView", vars1.getLanguage());
+        }
+        String roleStr = "".equals(vars1.getRole()) ? "" : " (" + vars1.getRole() + ")";
+        log4j.error("With your current role" + roleStr
+            + " and settings, you cannot view this information.");
       }
     } catch (final ServletException ex) {
       log4j.error("Error captured: ", ex);
