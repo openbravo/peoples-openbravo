@@ -139,9 +139,15 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
 
   @Override
   public void checkEditDatasourceAccess(Map<String, String> parameter) {
-    Entity theEntity = getEntity();
-    if (!hasAccess(theEntity, null, false)) {
-      throw new OBException(OBMessageUtils.messageBD("AccessTableNoView"));
+    final OBContext obContext = OBContext.getOBContext();
+    String tableId = parameter.get("referencedTableId");
+    try {
+      Entity treeEntity = ModelProvider.getInstance().getEntityByTableId(tableId);
+      if (treeEntity != null) {
+        obContext.getEntityAccessChecker().checkWritableAccess(treeEntity);
+      }
+    } catch (OBSecurityException e) {
+      handleExceptionUnsecuredDSAccess(e);
     }
   }
 
