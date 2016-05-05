@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global enyo */
+/*global enyo , _ */
 
 enyo.kind({
   name: 'OB.OBPOSCashUp.UI.ButtonVoid',
@@ -155,7 +155,8 @@ enyo.kind({
   },
   voidOrder: function (inSender, inEvent) {
     var me = this,
-        model = inEvent.originator.model;
+        model = inEvent.originator.model,
+        i;
 
     OB.UTIL.Approval.requestApproval(
     this.model, 'OBPOS_approval.cashupremovereceipts', function (approved, supervisor, approvalType) {
@@ -169,6 +170,11 @@ enyo.kind({
           }
           OB.Dal.remove(model, function () {
             me.collection.remove(model);
+            if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
+              for (i = 0; i < model.get('lines').length; i++) {
+                me.removeTemporallyProductAndCharacteristics(model.get('lines').at(i).get('product'));
+              }
+            }
           }, OB.UTIL.showError);
         }
       }
@@ -204,7 +210,8 @@ enyo.kind({
     }]);
   },
   voidAllOrders: function (inSender, inEvent) {
-    var me = this;
+    var me = this,
+        i;
 
     function removeOneModel(collection, model) {
       if (OB.UTIL.RfidController.isRfidConfigured()) {
@@ -215,6 +222,11 @@ enyo.kind({
       } else {
         OB.Dal.remove(model, function () {
           collection.remove(model);
+          if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
+            for (i = 0; i < model.get('lines').length; i++) {
+              me.removeTemporallyProductAndCharacteristics(model.get('lines').at(i).get('product'));
+            }
+          }
         }, OB.UTIL.showError);
       }
     }
@@ -234,5 +246,30 @@ enyo.kind({
     // this function is invoked when displayed.   
     this.$.stepsheader.renderHeader(model.stepNumber('OB.CashUp.StepPendingOrders'), model.stepCount());
 
+  },
+  removeTemporallyProductAndCharacteristics: function (p) {
+    var productcriteria = {
+      columns: ['product'],
+      operator: 'equals',
+      value: p.id,
+      isId: true
+    };
+    var remoteCriteria = [productcriteria];
+    var criteriaFilter = {};
+    criteriaFilter.remoteFilters = remoteCriteria;
+    OB.Dal.find(OB.Model.ProductCharacteristicValue, criteriaFilter, function (productcharacteristic) {
+      _.each(productcharacteristic.models, function (pchv) {
+        OB.Dal.removeTemporally(pchv, function () {}, function () {
+          OB.error(arguments);
+        });
+      }, function () {
+        OB.error(arguments);
+      });
+    }, function () {
+      OB.error(arguments);
+    });
+    OB.Dal.removeTemporally(p, function () {}, function () {
+      OB.error(arguments);
+    });
   }
 });
