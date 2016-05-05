@@ -585,18 +585,21 @@
                   END IF;
                   IF(NOT Next_O_Line) THEN
                     v_InOutLine_ID:=NULL;
-                    -- In case of POS Order get M_InOutLine_ID for OrderLine
+                    -- In any case get M_InOutLine_ID for OrderLine
                     -- Making sure exactly one record is retreived using Max
                     -- Qty compared to get full shipped line reference only
+                    -- from a processed shipment
                     -- There could a case where Order Line is split into two
                     -- based on available stock in different storage bins
                     -- in that no reference would be set in Invoice Line
-                    IF(v_DocSubTypeSO = 'WR') THEN
-                      SELECT MAX(sl.M_INOUTLINE_ID) INTO v_InOutLine_ID
-                        FROM M_INOUTLINE sl
-                        WHERE sl.C_ORDERLINE_ID = ptr_ol.C_OrderLine_ID
-                          AND ptr_ol.QtyOrdered = sl.MovementQty;
-                    END IF;
+                    SELECT MAX(sl.M_INOUTLINE_ID)
+                    INTO v_InOutLine_ID
+                    FROM M_INOUT s
+                    JOIN M_INOUTLINE sl
+                    ON s.M_INOUT_ID = sl.M_INOUT_ID
+                    WHERE sl.C_ORDERLINE_ID = ptr_ol.C_OrderLine_ID
+                    AND sl.MovementQty = ptr_ol.QtyOrdered
+                    AND s.processed='Y';
                     --
                     Ad_Sequence_Next('C_InvoiceLine', Cur_Order.C_Order_ID, v_NextNo) ;
                     v_LineNo:=v_LineNo + 10;
