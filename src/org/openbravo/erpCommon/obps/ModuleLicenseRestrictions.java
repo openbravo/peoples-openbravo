@@ -18,7 +18,7 @@
  */
 package org.openbravo.erpCommon.obps;
 
-import java.util.Map;
+import java.util.List;
 
 import javax.enterprise.context.ApplicationScoped;
 
@@ -52,9 +52,31 @@ public interface ModuleLicenseRestrictions {
   public String getInstanceActivationExtraActionsHtml(XmlEngine xmlEngine);
 
   /**
-   * Returns additional information.
+   * Provides a mechanism to returns an extra message. This information will be shown in Instance
+   * Activation window.
    */
-  public Map<String, String> getAdditionalTxtMessage();
+  public List<AdditionalInfo> getAdditionalMessage();
+
+  /**
+   * Holder for additional messages. The key is used for retrieves a message from ad_message table.
+   */
+  public static class AdditionalInfo {
+    private String key;
+    private String value;
+
+    public AdditionalInfo(String key, String value) {
+      this.key = key;
+      this.value = value;
+    }
+
+    public String getKey() {
+      return key;
+    }
+
+    public String getValue() {
+      return value;
+    }
+  }
 
   public enum MsgSeverity {
     WARN("Warning"), ERROR("Error");

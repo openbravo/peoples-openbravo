@@ -127,7 +127,6 @@ public class ActivationKey {
   private boolean limitNamedUsers = false;
   private boolean outOfPlatform = false;
   private Long maxUsers;
-  private long concurrentUsers;
   private Long posTerminals;
   private Long posTerminalsWarn;
 
@@ -150,19 +149,6 @@ public class ActivationKey {
    * Number of minutes since last license refresh to wait before doing it again
    */
   private static final int REFRESH_MIN_TIME = 60;
-
-  public enum AdditionalInformation {
-    ACTIVE_WEB_POS_TERMINAL("ActiveWebPOSTerminals");
-    private String info;
-
-    private AdditionalInformation(String info) {
-      this.info = info;
-    }
-
-    public String getInfo() {
-      return info;
-    }
-  }
 
   public enum LicenseRestriction {
     NO_RESTRICTION, OPS_INSTANCE_NOT_ACTIVE, NUMBER_OF_SOFT_USERS_REACHED, NUMBER_OF_CONCURRENT_USERS_REACHED, MODULE_EXPIRED, NOT_MATCHED_INSTANCE, HB_NOT_ACTIVE, EXPIRED_GOLDEN, CONCURRENT_NAMED_USER, ON_DEMAND_OFF_PLATFORM, POS_TERMINALS_EXCEEDED
@@ -882,17 +868,12 @@ public class ActivationKey {
   /**
    * gets current number of active terminals
    */
-  private String getNumberOfActivePosTerminals() {
-    String valueActivePosTerminales = null;
-    Map<String, String> additionalInfo = null;
+  private List<ModuleLicenseRestrictions.AdditionalInfo> getAdditionalMessageInfo() {
+    List<ModuleLicenseRestrictions.AdditionalInfo> additionalInfo = new ArrayList<ModuleLicenseRestrictions.AdditionalInfo>();
     for (ModuleLicenseRestrictions moduleRestriction : getModuleLicenseRestrictions()) {
-      additionalInfo = moduleRestriction.getAdditionalTxtMessage();
-      if (valueActivePosTerminales == null) {
-        valueActivePosTerminales = additionalInfo.get(AdditionalInformation.ACTIVE_WEB_POS_TERMINAL
-            .getInfo());
-      }
+      additionalInfo.addAll(moduleRestriction.getAdditionalMessage());
     }
-    return valueActivePosTerminales;
+    return additionalInfo;
   }
 
   /**
@@ -968,16 +949,16 @@ public class ActivationKey {
     boolean checkConcurrentUsers = maxUsers != 0 && consumesConcurrentUser(sessionType);
     if (checkConcurrentUsers) {
       OBContext.setAdminMode();
-      concurrentUsers = 0;
+      int activeSessions = 0;
       try {
-        concurrentUsers = getActiveSessions(currentSession);
-        log4j.debug("Active sessions: " + concurrentUsers);
-        if (concurrentUsers >= maxUsers || (softUsers != null && concurrentUsers >= softUsers)) {
+        activeSessions = getActiveSessions(currentSession);
+        log4j.debug("Active sessions: " + activeSessions);
+        if (activeSessions >= maxUsers || (softUsers != null && activeSessions >= softUsers)) {
           // Before raising concurrent users error, clean the session with ping timeout and try it
           // again
           if (deactivateTimeOutSessions(currentSession)) {
-            concurrentUsers = getActiveSessions(currentSession);
-            log4j.debug("Active sessions after timeout cleanup: " + concurrentUsers);
+            activeSessions = getActiveSessions(currentSession);
+            log4j.debug("Active sessions after timeout cleanup: " + activeSessions);
           }
         }
       } catch (Exception e) {
@@ -985,11 +966,11 @@ public class ActivationKey {
       } finally {
         OBContext.restorePreviousMode();
       }
-      if (concurrentUsers >= maxUsers) {
+      if (activeSessions >= maxUsers) {
         return LicenseRestriction.NUMBER_OF_CONCURRENT_USERS_REACHED;
       }
 
-      if (softUsers != null && concurrentUsers >= softUsers) {
+      if (softUsers != null && activeSessions >= softUsers) {
         result = LicenseRestriction.NUMBER_OF_SOFT_USERS_REACHED;
       }
     }
@@ -1256,7 +1237,7 @@ public class ActivationKey {
 
         sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSCurrentConcurrentUsers", lang))
             .append("</td><td>");
-        sb.append(concurrentUsers);
+        sb.append(getActiveSessions(null));
         sb.append("</td></tr>");
       }
 
@@ -1275,7 +1256,7 @@ public class ActivationKey {
 
       sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSWSCounterDay", lang))
           .append("</td><td>");
-      sb.append(wsDayCounter);
+      sb.append(getNumberWSDayCounter());
       sb.append("</td></tr>");
 
       sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSPOSLimitation", lang))
@@ -1283,10 +1264,10 @@ public class ActivationKey {
       sb.append(getPOSTerminalsExplanation());
       sb.append("</td></tr>");
 
-      if (getNumberOfActivePosTerminals() != null) {
-        sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSActivePosTerminals", lang))
+      for (ModuleLicenseRestrictions.AdditionalInfo addInfo : getAdditionalMessageInfo()) {
+        sb.append("<tr><td>").append(Utility.messageBD(conn, addInfo.getKey(), lang))
             .append("</td><td>");
-        sb.append(getNumberOfActivePosTerminals());
+        sb.append(addInfo.getValue());
         sb.append("</td></tr>");
       }
 
@@ -1851,6 +1832,10 @@ public class ActivationKey {
       return WSRestriction.EXPIRED_MODULES;
     }
 
+    if (!limitedWsAccess) {
+      return WSRestriction.NO_RESTRICTION;
+    }
+
     Date today = getDayAt0(new Date());
 
     if (initWsCountTime == null || today.getTime() != initWsCountTime.getTime()) {
@@ -1862,10 +1847,6 @@ public class ActivationKey {
       wsDayCounter += 1;
       // Adding 1 to maxWsCalls because session is already saved in DB
       checkCalls += 1;
-    }
-
-    if (!limitedWsAccess) {
-      return WSRestriction.NO_RESTRICTION;
     }
 
     if (wsDayCounter > checkCalls) {
@@ -1929,14 +1910,19 @@ public class ActivationKey {
     initWsCountTime = getDayAt0(new Date());
     OBContext.setAdminMode();
     try {
-      OBCriteria<Session> qLogins = OBDal.getInstance().createCriteria(Session.class);
-      qLogins.add(Restrictions.eq(Session.PROPERTY_LOGINSTATUS, "WS"));
-      qLogins.add(Restrictions.ge(Session.PROPERTY_CREATIONDATE, initWsCountTime));
-      wsDayCounter = qLogins.count();
+      wsDayCounter = getNumberWSDayCounter();
       log.info("Initialized ws count to " + wsDayCounter + " from " + initWsCountTime);
     } finally {
       OBContext.restorePreviousMode();
     }
+  }
+
+  private int getNumberWSDayCounter() {
+    Date cc = getDayAt0(new Date());
+    OBCriteria<Session> qLogins = OBDal.getInstance().createCriteria(Session.class);
+    qLogins.add(Restrictions.eq(Session.PROPERTY_LOGINSTATUS, "WS"));
+    qLogins.add(Restrictions.ge(Session.PROPERTY_CREATIONDATE, cc));
+    return qLogins.count();
   }
 
   private void initializeWsCounter() {
