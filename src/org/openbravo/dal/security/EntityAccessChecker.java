@@ -668,10 +668,8 @@ public class EntityAccessChecker implements OBNotSingleton {
         + SELECTOR_REFERENCE + "' and f.tab.id in(" + tabs + ")";
     @SuppressWarnings("unchecked")
     final List<Reference> references = SessionHandler.getInstance().createQuery(hql).list();
-    if (!references.isEmpty()) {
-      for (Reference ref : references) {
-        addEntitiesOfSelectorReference(mp, ref);
-      }
+    for (Reference ref : references) {
+      addEntitiesOfSelectorReference(mp, ref);
     }
   }
 
