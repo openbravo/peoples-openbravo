@@ -1126,21 +1126,6 @@ public class ActivationKey {
     return lastRequestTime.compareTo(lastValidPingTime) < 0;
   }
 
-  /**
-   * Returns the number of current active sessions
-   */
-  private int getActiveSessions(String currentSession) {
-    OBCriteria<Session> obCriteria = OBDal.getInstance().createCriteria(Session.class);
-    obCriteria.add(Restrictions.eq(Session.PROPERTY_SESSIONACTIVE, true));
-    obCriteria.add(Restrictions.not(Restrictions.in(Session.PROPERTY_LOGINSTATUS,
-        NO_CU_SESSION_TYPES)));
-
-    if (currentSession != null && !currentSession.equals("")) {
-      obCriteria.add(Restrictions.ne(Session.PROPERTY_ID, currentSession));
-    }
-    return obCriteria.count();
-  }
-
   private int getActiveSessionsForNamedUser(String currentSession, String username) {
     OBCriteria<Session> obCriteria = OBDal.getInstance().createCriteria(Session.class);
     obCriteria.add(Restrictions.eq(Session.PROPERTY_SESSIONACTIVE, true));
@@ -1223,6 +1208,11 @@ public class ActivationKey {
           sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSConcurrentUsersWarn", lang))
               .append("</td><td>").append(getProperty("limituserswarn")).append("</td></tr>");
         }
+
+        sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSCurrentConcurrentUsers", lang))
+            .append("</td><td>");
+        sb.append(getActiveSessions(null));
+        sb.append("</td></tr>");
       }
 
       sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSInstanceNo", lang))
@@ -1238,10 +1228,22 @@ public class ActivationKey {
       sb.append(getWSExplanation(conn, lang));
       sb.append("</td></tr>");
 
+      sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSWSCounterDay", lang))
+          .append("</td><td>");
+      sb.append(getNumberWSDayCounter());
+      sb.append("</td></tr>");
+
       sb.append("<tr><td>").append(Utility.messageBD(conn, "OPSPOSLimitation", lang))
           .append("</td><td>");
       sb.append(getPOSTerminalsExplanation());
       sb.append("</td></tr>");
+
+      for (ModuleLicenseRestrictions.AdditionalInfo addInfo : getAdditionalMessageInfo()) {
+        sb.append("<tr><td>").append(Utility.messageBD(conn, addInfo.getKey(), lang))
+            .append("</td><td>");
+        sb.append(addInfo.getValue());
+        sb.append("</td></tr>");
+      }
 
     } else {
       sb.append(Utility.messageBD(conn, "OPSNonActiveInstance", lang));
@@ -1342,6 +1344,32 @@ public class ActivationKey {
    */
   public HashMap<String, CommercialModuleStatus> getSubscribedModules() {
     return getSubscribedModules(true);
+  }
+
+  /**
+   * get all additional messages to be printed in Instance Activation window.
+   */
+  private List<ModuleLicenseRestrictions.AdditionalInfo> getAdditionalMessageInfo() {
+    List<ModuleLicenseRestrictions.AdditionalInfo> additionalInfo = new ArrayList<ModuleLicenseRestrictions.AdditionalInfo>();
+    for (ModuleLicenseRestrictions moduleRestriction : getModuleLicenseRestrictions()) {
+      additionalInfo.addAll(moduleRestriction.getAdditionalMessage());
+    }
+    return additionalInfo;
+  }
+
+  /**
+   * Returns the number of current active sessions
+   */
+  private int getActiveSessions(String currentSession) {
+    OBCriteria<Session> obCriteria = OBDal.getInstance().createCriteria(Session.class);
+    obCriteria.add(Restrictions.eq(Session.PROPERTY_SESSIONACTIVE, true));
+    obCriteria.add(Restrictions.not(Restrictions.in(Session.PROPERTY_LOGINSTATUS,
+        NO_CU_SESSION_TYPES)));
+
+    if (currentSession != null && !currentSession.equals("")) {
+      obCriteria.add(Restrictions.ne(Session.PROPERTY_ID, currentSession));
+    }
+    return obCriteria.count();
   }
 
   /**
@@ -1882,14 +1910,19 @@ public class ActivationKey {
     initWsCountTime = getDayAt0(new Date());
     OBContext.setAdminMode();
     try {
-      OBCriteria<Session> qLogins = OBDal.getInstance().createCriteria(Session.class);
-      qLogins.add(Restrictions.eq(Session.PROPERTY_LOGINSTATUS, "WS"));
-      qLogins.add(Restrictions.ge(Session.PROPERTY_CREATIONDATE, initWsCountTime));
-      wsDayCounter = qLogins.count();
+      wsDayCounter = getNumberWSDayCounter();
       log.info("Initialized ws count to " + wsDayCounter + " from " + initWsCountTime);
     } finally {
       OBContext.restorePreviousMode();
     }
+  }
+
+  private int getNumberWSDayCounter() {
+    Date date = getDayAt0(new Date());
+    OBCriteria<Session> qLogins = OBDal.getInstance().createCriteria(Session.class);
+    qLogins.add(Restrictions.eq(Session.PROPERTY_LOGINSTATUS, "WS"));
+    qLogins.add(Restrictions.ge(Session.PROPERTY_CREATIONDATE, date));
+    return qLogins.count();
   }
 
   private void initializeWsCounter() {
