@@ -15,7 +15,7 @@ enyo.kind({
   classes: 'btn-icon-small btn-icon-clear',
   style: 'background-color: #e2e2e2; margin: 5px 0px 5px 0px;',
   initComponents: function () {
-
+    return this;
   }
 });
 

@@ -1,13 +1,13 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012 Openbravo S.L.U.
+ * Copyright (C) 2012-2016 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
  ************************************************************************************
  */
 
-/*global enyo $ */
+/*global enyo, $ */
 
 enyo.kind({
   name: 'OB.UI.Subwindow',
@@ -31,12 +31,12 @@ enyo.kind({
       //TODO: Improve the way the "close" action is defined
       this.$.subWindowHeader.getComponents()[0].onTapCloseButton();
       return true;
-    } else if (keyCode === 13 && this.defaultActionButton) { //Handle ENTER key to execute the default action (if exists)
+    }
+    if (keyCode === 13 && this.defaultActionButton) { //Handle ENTER key to execute the default action (if exists)
       this.defaultActionButton.executeTapAction();
       return true;
-    } else {
-      return false;
     }
+    return false;
   },
   showingChanged: function () {
     this.inherited(arguments);
@@ -132,9 +132,6 @@ enyo.kind({
   },
   header: {},
   body: {},
-  goBack: function () {
-    //navigate to this.caller
-  },
   components: [{
     name: 'subWindowHeader'
   }, {

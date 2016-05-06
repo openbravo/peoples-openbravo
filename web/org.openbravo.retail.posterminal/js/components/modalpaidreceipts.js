@@ -169,10 +169,9 @@ enyo.kind({
     if (startDateValidated === null || endDateValidated === null) {
       this.showValidationErrors(startDateValidated !== null, endDateValidated !== null);
       return false;
-    } else {
-      this.$.startDate.removeClass('error');
-      this.$.endDate.removeClass('error');
     }
+    this.$.startDate.removeClass('error');
+    this.$.endDate.removeClass('error');
 
     this.filters = _.extend(this.filters, {
       startDate: formattedStartDate,
@@ -244,8 +243,6 @@ enyo.kind({
 
     OB.UTIL.HookManager.executeHooks('OBPOS_RenderPaidReceiptLine', {
       paidReceiptLine: this
-    }, function () {
-      //All should be done in module side
     });
 
     this.render();
@@ -389,10 +386,10 @@ enyo.kind({
       }
 
       // Check in Current Session
-      var i = 0;
+      var orderTypeMsg, i;
       for (i = 0; i < me.model.get('orderList').length; i++) {
         if (me.model.get('orderList').models[i].get('id') === model.get('id')) {
-          var orderTypeMsg = OB.I18N.getLabel('OBPOS_ticket');
+          orderTypeMsg = OB.I18N.getLabel('OBPOS_ticket');
           if (me.model.get('orderList').models[i].get('isLayaway')) {
             orderTypeMsg = OB.I18N.getLabel('OBPOS_LblLayaway');
           } else if (me.model.get('orderList').models[i].get('isQuotation')) {
@@ -477,9 +474,6 @@ enyo.kind({
   i18nHeader: 'OBPOS_LblPaidReceipts',
   published: {
     params: null
-  },
-  changedParams: function () {
-
   },
   body: {
     kind: 'OB.UI.ListPRs'

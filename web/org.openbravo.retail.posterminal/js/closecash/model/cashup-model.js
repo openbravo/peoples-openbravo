@@ -55,15 +55,19 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
   }],
   init: function () {
     OB.error("This init method should never be called for this model. Call initModels and loadModels instead");
-    this.initModels(function () {});
-    this.loadModels(function () {});
+    this.initModels(function () {
+      return this;
+    });
+    this.loadModels(function () {
+      return this;
+    });
   },
   initModels: function (initModelsCallback) {
     var synchId1 = OB.UTIL.SynchronizationHelper.busyUntilFinishes('cashup-model.init1');
     //Check for orders which are being processed in this moment.
     //cancel -> back to point of sale
     //Ok -> Continue closing without these orders
-    var undf, me = this,
+    var me = this,
         terminalSlave = !OB.POS.modelterminal.get('terminal').ismaster && OB.POS.modelterminal.get('terminal').isslave,
         newstep, expected = 0,
         startings = [],
@@ -251,9 +255,8 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
             var fromCurrencyId = OB.MobileApp.model.paymentnames[trx.get('searchKey')].paymentMethod.currency;
             var cStartingCash = OB.UTIL.currency.toDefaultCurrency(fromCurrencyId, trx.get('startingCash'));
             return OB.DEC.add(accum, cStartingCash);
-          } else {
-            return 0;
           }
+          return 0;
         }, 0));
 
         cashUpReport.set('totalDeposits', _.reduce(payMthds.models, function (accum, trx) {
@@ -265,9 +268,8 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
             var fromCurrencyId = OB.MobileApp.model.paymentnames[trx.get('searchKey')].paymentMethod.currency;
             var cTotalDeposits = OB.UTIL.currency.toDefaultCurrency(fromCurrencyId, OB.DEC.add(trx.get('totalDeposits'), trx.get('totalSales')));
             return OB.DEC.add(accum, cTotalDeposits);
-          } else {
-            return 0;
           }
+          return 0;
         }, 0));
 
         cashUpReport.set('totalDrops', _.reduce(payMthds.models, function (accum, trx) {
@@ -279,9 +281,8 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
             var fromCurrencyId = OB.MobileApp.model.paymentnames[trx.get('searchKey')].paymentMethod.currency;
             var cTotalDrops = OB.UTIL.currency.toDefaultCurrency(fromCurrencyId, OB.DEC.add(trx.get('totalDrops'), trx.get('totalReturns')));
             return OB.DEC.add(accum, cTotalDrops);
-          } else {
-            return 0;
           }
+          return 0;
         }, 0));
 
         _.each(payMthds.models, function (p) {
@@ -343,7 +344,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
 
     this.get('paymentList').on('change:counted', function (mod) {
       mod.set('difference', OB.DEC.sub(mod.get('counted'), OB.Utilities.Number.roundJSNumber(mod.get('expected'), 2)));
-      if (mod.get('foreignCounted') !== null && mod.get('foreignCounted') !== undf && mod.get('foreignExpected') !== null && mod.get('foreignExpected') !== undf) {
+      if (mod.get('foreignCounted') !== null && mod.get('foreignCounted') !== undefined && mod.get('foreignExpected') !== null && mod.get('foreignExpected') !== undefined) {
         mod.set('foreignDifference', OB.DEC.sub(mod.get('foreignCounted'), OB.Utilities.Number.roundJSNumber(mod.get('foreignExpected'), 2)));
       }
       this.set('totalCounted', _.reduce(this.get('paymentList').models, function (total, model) {
@@ -513,9 +514,8 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
     var currentstep = this.get('step') - 1;
     if (this.cashupsteps[currentstep].nextFinishButton()) {
       return this.finishButtonLabel;
-    } else {
-      return 'OBPOS_LblNextStep';
     }
+    return 'OBPOS_LblNextStep';
   },
   isFinishedWizard: function (step) {
     // Adjust step to array index
@@ -536,9 +536,8 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
     var stepcomponent = this.cashupsteps[currentstep].getStepComponent(leftpanel$);
     if (stepcomponent.verifyStep) {
       return stepcomponent.verifyStep(this, callback);
-    } else {
-      callback();
     }
+    callback();
   },
   isPaymentMethodListVisible: function () {
     // Adjust step to array index
@@ -554,11 +553,11 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
 
   //step 3
   validateCashKeep: function (qty) {
-    var unfd, result = {
+    var result = {
       result: false,
       message: ''
     };
-    if (qty !== unfd && qty !== null && $.isNumeric(qty)) {
+    if (qty !== undefined && qty !== null && $.isNumeric(qty)) {
       if (this.get('paymentList').at(this.get('substep')).get('foreignCounted') >= qty) {
         result.result = true;
         result.message = '';
@@ -578,7 +577,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
 
   //Step 4
   getCountCashSummary: function () {
-    var countCashSummary, counter, enumConcepts, enumSecondConcepts, enumSummarys, i, undf, model, value = OB.DEC.Zero,
+    var countCashSummary, counter, enumConcepts, enumSecondConcepts, enumSummarys, i, model, value = OB.DEC.Zero,
         second = OB.DEC.Zero;
     countCashSummary = {
       expectedSummary: [],
@@ -593,18 +592,16 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
         if (model.get('qtyToKeep')) {
           var cQtyToKeep = OB.UTIL.currency.toDefaultCurrency(model.get('paymentMethod').currency, model.get('qtyToKeep'));
           return OB.DEC.add(total, cQtyToKeep);
-        } else {
-          return total;
         }
+        return total;
       }, 0),
       totalQtyToDepo: _.reduce(this.get('paymentList').models, function (total, model) {
-        if (model.get('qtyToKeep') !== null && model.get('qtyToKeep') !== undf && model.get('foreignCounted') !== null && model.get('foreignCounted') !== undf) {
+        if (model.get('qtyToKeep') !== null && model.get('qtyToKeep') !== undefined && model.get('foreignCounted') !== null && model.get('foreignCounted') !== undefined) {
           var qtyToDepo = OB.DEC.sub(model.get('foreignCounted'), model.get('qtyToKeep'));
           var cQtyToDepo = OB.UTIL.currency.toDefaultCurrency(model.get('paymentMethod').currency, qtyToDepo);
           return OB.DEC.add(total, cQtyToDepo);
-        } else {
-          return total;
         }
+        return total;
       }, 0)
     };
     //First we fix the qty to keep for non-automated payment methods
@@ -620,6 +617,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
     var sortedPays = _.sortBy(this.get('paymentList').models, function (p) {
       return p.get('name');
     });
+    var fromCurrencyId, baseAmount;
     for (counter = 0; counter < 5; counter++) {
       for (i = 0; i < sortedPays.length; i++) {
         model = sortedPays[i];
@@ -632,22 +630,22 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
             isocode: ''
           }));
         } else {
-          var fromCurrencyId = model.get('paymentMethod').currency;
+          fromCurrencyId = model.get('paymentMethod').currency;
           switch (enumSummarys[counter]) {
           case 'qtyToKeepSummary':
-            if (model.get(enumSecondConcepts[counter]) !== null && model.get(enumSecondConcepts[counter]) !== undf) {
+            if (model.get(enumSecondConcepts[counter]) !== null && model.get(enumSecondConcepts[counter]) !== undefined) {
               value = OB.UTIL.currency.toDefaultCurrency(fromCurrencyId, model.get(enumConcepts[counter]));
               second = model.get(enumSecondConcepts[counter]);
             }
             break;
           case 'qtyToDepoSummary':
-            if (model.get(enumSecondConcepts[counter]) !== null && model.get(enumSecondConcepts[counter]) !== undf && model.get('rate') !== '1') {
+            if (model.get(enumSecondConcepts[counter]) !== null && model.get(enumSecondConcepts[counter]) !== undefined && model.get('rate') !== '1') {
               second = OB.DEC.sub(model.get(enumConcepts[counter]), model.get(enumSecondConcepts[counter]));
             } else {
               second = OB.DEC.Zero;
             }
-            if (model.get(enumSecondConcepts[counter]) !== null && model.get(enumSecondConcepts[counter]) !== undf) {
-              var baseAmount = OB.DEC.sub(model.get(enumConcepts[counter]), model.get(enumSecondConcepts[counter]));
+            if (model.get(enumSecondConcepts[counter]) !== null && model.get(enumSecondConcepts[counter]) !== undefined) {
+              baseAmount = OB.DEC.sub(model.get(enumConcepts[counter]), model.get(enumSecondConcepts[counter]));
               value = OB.UTIL.currency.toDefaultCurrency(fromCurrencyId, baseAmount);
             } else {
               value = OB.DEC.Zero;
@@ -753,7 +751,7 @@ OB.OBPOSCashUp.Model.CashUpPartial = OB.OBPOSCashUp.Model.CashUp.extend({
   finishButtonLabel: 'OBPOS_LblPrintClose',
   reportTitleLabel: 'OBPOS_LblPartialCashUpTitle',
   getCountCashSummary: function () {
-    var countCashSummary, counter, enumConcepts, enumSecondConcepts, enumSummarys, i, undf, model, value = OB.DEC.Zero,
+    var countCashSummary, counter, enumConcepts, enumSecondConcepts, enumSummarys, i, model, value = OB.DEC.Zero,
         second = OB.DEC.Zero;
     countCashSummary = {
       expectedSummary: [],
@@ -795,16 +793,16 @@ OB.OBPOSCashUp.Model.CashUpPartial = OB.OBPOSCashUp.Model.CashUp.extend({
         } else {
           switch (enumSummarys[counter]) {
           case 'qtyToKeepSummary':
-            if (model.get(enumSecondConcepts[counter]) !== null && model.get(enumSecondConcepts[counter]) !== undf) {
+            if (model.get(enumSecondConcepts[counter]) !== null && model.get(enumSecondConcepts[counter]) !== undefined) {
               value = OB.DEC.Zero;
               second = OB.DEC.Zero;
             }
             break;
           case 'qtyToDepoSummary':
-            if (model.get(enumSecondConcepts[counter]) !== null && model.get(enumSecondConcepts[counter]) !== undf && model.get('rate') !== '1') {
+            if (model.get(enumSecondConcepts[counter]) !== null && model.get(enumSecondConcepts[counter]) !== undefined && model.get('rate') !== '1') {
               second = OB.DEC.Zero;
             }
-            if (model.get(enumSecondConcepts[counter]) !== null && model.get(enumSecondConcepts[counter]) !== undf) {
+            if (model.get(enumSecondConcepts[counter]) !== null && model.get(enumSecondConcepts[counter]) !== undefined) {
               value = OB.DEC.Zero;
             }
             break;

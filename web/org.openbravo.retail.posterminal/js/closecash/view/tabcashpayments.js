@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2015 Openbravo S.L.U.
+ * Copyright (C) 2012-2016 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -110,10 +110,10 @@ enyo.kind({
     this.$.total.setContent(OB.I18N.formatCurrency(OB.DEC.add(0, this.model.get('totalAmount'))));
   },
   render: function () {
-    var udfn, counted, foreignCounted;
+    var counted;
     this.inherited(arguments);
     counted = this.model.get('numberOfCoins');
-    if (counted !== null && counted !== udfn) {
+    if (counted !== null && counted !== undefined) {
       this.$.numberOfCoins.setContent(counted);
       this.$.total.setContent(OB.I18N.formatCurrency(OB.DEC.add(0, this.model.get('totalAmount'))));
     }

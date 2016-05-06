@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global enyo _ */
+/*global enyo,_ */
 
 enyo.kind({
   name: 'OB.OBPOSCashUp.UI.RenderPaymentsLine',
@@ -73,10 +73,10 @@ enyo.kind({
     this.$.expected.setContent(OB.I18N.formatCurrency(OB.DEC.add(0, this.model.get('expected'))));
   },
   render: function () {
-    var udfn, counted, foreignCounted;
+    var counted;
     this.inherited(arguments);
     counted = this.model.get('counted');
-    if (counted !== null && counted !== udfn) {
+    if (counted !== null && counted !== undefined) {
       this.$.counted.setContent(OB.I18N.formatCurrency(OB.DEC.add(0, counted)));
       this.$.counted.show();
       if (this.model.get('rate') && this.model.get('rate') !== 1) {

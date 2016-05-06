@@ -106,8 +106,6 @@ enyo.kind({
     this.$.total.setContent(this.model.printTotal());
     OB.UTIL.HookManager.executeHooks('OBPOS_RenderListReceiptLine', {
       listReceiptLine: this
-    }, function (args) {
-      //All should be done in module side
     });
   }
 });

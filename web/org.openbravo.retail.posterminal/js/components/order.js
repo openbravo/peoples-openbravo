@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2015 Openbravo S.L.U.
+ * Copyright (C) 2013-2016 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -255,8 +255,6 @@ enyo.kind({
     this.$.totalgross.setContent(OB.I18N.formatCurrency(newTotal));
     OB.UTIL.HookManager.executeHooks('OBPOS_UpdateTotalReceiptLine', {
       totalline: this
-    }, function (args) {
-      //All should be done in module side
     });
   },
   renderQty: function (newQty) {
@@ -278,8 +276,6 @@ enyo.kind({
     this.$.lblTotal.setContent(OB.I18N.getLabel('OBPOS_LblTotal'));
     OB.UTIL.HookManager.executeHooks('OBPOS_RenderTotalReceiptLine', {
       totalline: this
-    }, function (args) {
-      //All should be done in module side
     });
   }
 });
@@ -301,9 +297,6 @@ enyo.kind({
   }],
   renderTax: function (newTax) {
     this.$.totaltax.setContent(OB.I18N.formatCurrency(newTax));
-  },
-  renderBase: function (newBase) {
-    //this.$.totalbase.setContent(newBase);
   },
   initComponents: function () {
     this.inherited(arguments);
@@ -527,7 +520,6 @@ enyo.kind({
     this.$.totalReceiptLine.renderTotal(this.order.getTotal());
     this.$.totalReceiptLine.renderQty(this.order.getQty());
     this.$.totalTaxLine.renderTax(OB.DEC.sub(this.order.getTotal(), this.order.getNet()));
-    this.$.totalTaxLine.renderBase('');
     this.$.listOrderLines.setCollection(this.order.get('lines'));
     this.$.listOrderLines.collection.on('add change:qty change:promotions', function (model, list) {
       me.$.listOrderLines.scrollToBottom = false;
@@ -661,9 +653,8 @@ enyo.kind({
 
       if (this.updating || this.order.get('preventServicesUpdate')) {
         return;
-      } else {
-        this.updating = true;
       }
+      this.updating = true;
 
       function getServiceLines(service) {
         var serviceLines;
@@ -671,9 +662,8 @@ enyo.kind({
           serviceLines = _.filter(me.order.get('lines').models, function (l) {
             return (l.get('product').get('id') === service.get('product').get('id')) && !l.get('originalOrderLineId');
           });
-        } else {
-          serviceLines = [service];
         }
+        serviceLines = [service];
         return serviceLines;
       }
 
@@ -700,11 +690,11 @@ enyo.kind({
           var siblingServicesLines = getSiblingServicesLines(line.get('product').id, line.get('relatedLines')[0].orderlineId);
           if (!me.order.get('deleting')) {
             if (siblingServicesLines.length < qtyService) {
-              var i;
+              var i, p, newLine;
               for (i = 0; i < qtyService - siblingServicesLines.length; i++) {
-                var p = line.get('product').clone();
+                p = line.get('product').clone();
                 p.set('groupProduct', false);
-                var newLine = me.order.createLine(p, qtyLineServ);
+                newLine = me.order.createLine(p, qtyLineServ);
                 newLine.set('relatedLines', siblingServicesLines[0].get('relatedLines'));
                 newLine.set('groupService', false);
               }
@@ -720,15 +710,16 @@ enyo.kind({
 
       if (!OB.MobileApp.model.receipt.get('notApprove')) {
         // First check if there is any service modified to negative quantity amount in order to know if approval will be required
+        var prod, i, j, l, newqtyplus, newqtyminus, serviceLines, positiveLines, negativeLines, newRelatedLines;
         for (k = 0; k < this.order.get('lines').length; k++) {
           line = this.order.get('lines').models[k];
-          var prod = line.get('product'),
-              newLine, i, j, l, rlp, rln, newqtyplus = 0,
-              newqtyminus = 0,
-              serviceLines = [],
-              positiveLines = [],
-              negativeLines = [],
-              newRelatedLines = [];
+          prod = line.get('product');
+          newqtyplus = 0;
+          newqtyminus = 0;
+          serviceLines = [];
+          positiveLines = [];
+          negativeLines = [];
+          newRelatedLines = [];
 
           if (line.has('relatedLines') && line.get('relatedLines').length > 0 && !line.get('originalOrderLineId')) {
 
@@ -747,9 +738,6 @@ enyo.kind({
                 negativeLines.push(l);
               }
             }
-            rlp = filterLines(newRelatedLines, positiveLines);
-
-            rln = filterLines(newRelatedLines, negativeLines);
 
             if (prod.get('quantityRule') === 'UQ') {
               newqtyplus = (newqtyplus ? 1 : 0);
@@ -764,12 +752,11 @@ enyo.kind({
                   OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_UnreturnableProduct'), OB.I18N.getLabel('OBPOS_UnreturnableProductMessage', [l.get('product').get('_identifier')]));
                   this.updating = false;
                   return;
-                } else {
-                  if (!approvalNeeded) {
-                    approvalNeeded = true;
-                  }
-                  servicesToApprove += '<br>· ' + line.get('product').get('_identifier');
                 }
+                if (!approvalNeeded) {
+                  approvalNeeded = true;
+                }
+                servicesToApprove += '<br>· ' + line.get('product').get('_identifier');
               }
             }
           }
@@ -1241,10 +1228,8 @@ enyo.kind({
       }
 
       me.order.get('lines').forEach(function (line, idx) {
-        var prod = line.get('product');
         if (line.has('relatedLines') && line.get('relatedLines').length > 0) {
-          var i, l = 0,
-              relationIds = _.pluck(line.get('relatedLines'), 'orderlineId');
+          var relationIds = _.pluck(line.get('relatedLines'), 'orderlineId');
           if (_.indexOf(relationIds, removedId) !== -1) {
             serviceLinesToCheck.push([line, idx]);
           }
@@ -1276,8 +1261,6 @@ enyo.kind({
       OB.UTIL.HookManager.executeHooks('OBPOS_PaymentSelected', {
         order: this.order,
         paymentSelected: OB.MobileApp.model.paymentnames[model.get('selectedPayment')]
-      }, function (args) {
-        //All should be done in module side
       });
     }, this);
   }

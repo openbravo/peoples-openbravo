@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2015 Openbravo S.L.U.
+ * Copyright (C) 2013-2016 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -221,8 +221,7 @@ enyo.kind({
   searchAction: function (inSender, inEvent) {
     var me = this,
         toMatch = 0,
-        re, actualDate, i, processHeader = new OB.DS.Process('org.openbravo.retail.posterminal.PaidReceiptsHeader'),
-        negativeLines;
+        re, actualDate, i, processHeader = new OB.DS.Process('org.openbravo.retail.posterminal.PaidReceiptsHeader');
     me.filters = inEvent.filters;
     var limit = OB.Model.Order.prototype.dataLimit;
     if (OB.MobileApp.model.hasPermission('OBPOS_orderLimit', true)) {
@@ -402,7 +401,6 @@ enyo.kind({
     this.$.body.$.listMultiOrders.$.multiorderslistitemprinter.$.theader.$.modalMultiOrdersHeader.clearAction();
   },
   executeOnShow: function () {
-    var i, j;
     this.$.header.$.modalMultiOrdersTopHeader.$.title.setContent(OB.I18N.getLabel('OBPOS_LblMultiOrders'));
     this.$.body.$.listMultiOrders.cleanFilter = true;
     this.$.header.$.modalMultiOrdersTopHeader.disableDoneButton(true);
