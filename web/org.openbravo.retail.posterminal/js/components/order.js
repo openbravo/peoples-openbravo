@@ -364,6 +364,9 @@ enyo.kind({
   published: {
     order: null
   },
+  events: {
+	  onReceiptLineSelected: ''
+  },
   handlers: {
     onCheckBoxBehaviorForTicketLine: 'checkBoxBehavior',
     onAllTicketLinesChecked: 'allTicketLinesChecked',
@@ -514,6 +517,7 @@ enyo.kind({
   },
   multiSelectAllTable: function () {
     this.$.listOrderLines.selectAll();
+    this.doReceiptLineSelected();
   },
   tableMultiSelectedItems: function (inSender, inEvent) {
     this.$.listOrderLines.setSelectedModels(inEvent.selection);
