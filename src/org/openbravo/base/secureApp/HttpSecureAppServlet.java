@@ -440,8 +440,8 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
           bdError(request, response, "AccessTableNoView", vars1.getLanguage());
         }
         String roleStr = "".equals(vars1.getRole()) ? "" : " (" + vars1.getRole() + ")";
-        log4j.error("With your current role" + roleStr
-            + " and settings, you cannot view this information.");
+        log4j
+            .warn("Role" + roleStr + " tried to access ungranted resource with ID " + classInfo.id);
       }
     } catch (final ServletException ex) {
       log4j.error("Error captured: ", ex);
