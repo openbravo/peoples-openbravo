@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2015 Openbravo S.L.U.
+ * Copyright (C) 2012-2016 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -580,6 +580,7 @@
   OB.UTIL.saveComposeInfo = function (me, callback, objToSend, cashUp, tx) {
     cashUp.at(0).set('userId', OB.MobileApp.model.get('context').user.id);
     objToSend.set('userId', OB.MobileApp.model.get('context').user.id);
+    objToSend.set('organization', OB.MobileApp.model.get('terminal').organization);
     cashUp.at(0).set('objToSend', JSON.stringify(objToSend));
     OB.Dal.saveInTransaction(tx, cashUp.at(0), function () {
       if (callback) {
