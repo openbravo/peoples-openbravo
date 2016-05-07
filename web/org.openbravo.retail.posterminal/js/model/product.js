@@ -196,10 +196,6 @@
     name: 'isPrintServices',
     column: 'isPrintServices',
     type: 'BOOL'
-  }, {
-    name: 'updatePriceFromPricelist',
-    column: 'updatePriceFromPricelist',
-    type: 'BOOL'
   }]);
 
   Product.addIndex([{
