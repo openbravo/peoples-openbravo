@@ -411,18 +411,16 @@ public class PrintController extends HttpSecureAppServlet {
                 + fullDocumentIdentifier);
             final String templateId = vars.getRequestGlobalVariable("templates", "templates");
             final String documentId = pocData[0].documentId;
-            for (int i = 0; i < pocData.length; i++) {
-              final Report report = new Report(this, documentType, documentId, vars.getLanguage(),
-                  templateId, multiReports, OutputTypeEnum.DEFAULT);
-              o.put("templateId", templateId);
-              o.put("subject", report.getEmailDefinition().getSubject());
-              o.put("body", report.getEmailDefinition().getBody());
-              if (!multiReports) {
-                o.put("filename", report.getFilename());
-              }
-              reports = new HashMap<String, Report>();
-              reports.put(documentId, report);
+            final Report report = new Report(this, documentType, documentId, vars.getLanguage(),
+                templateId, multiReports, OutputTypeEnum.DEFAULT);
+            o.put("templateId", templateId);
+            o.put("subject", report.getEmailDefinition().getSubject());
+            o.put("body", report.getEmailDefinition().getBody());
+            if (!multiReports) {
+              o.put("filename", report.getFilename());
             }
+            reports = new HashMap<String, Report>();
+            reports.put(documentId, report);
             vars.setSessionObject(sessionValuePrefix + ".Documents", reports);
 
           } catch (Exception e) {
