@@ -106,12 +106,6 @@ public class AntExecutor {
    */
   @Deprecated
   public String setLogFile(String directory, String logFileName) throws Exception {
-    // DefaultLogger logger = new DefaultLogger();
-    // PrintStream ps = new PrintStream(logFile);
-    // logger.setOutputPrintStream(ps);
-    // logger.setErrorPrintStream(ps);
-    // logger.setMessageOutputLevel(Project.MSG_INFO);
-    // project.addBuildListener(logger);
     return directory + "/" + logFileName;
   }
 
