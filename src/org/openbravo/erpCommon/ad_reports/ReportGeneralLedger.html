@@ -13,7 +13,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2012 Openbravo SLU
+ * All portions are Copyright (C) 2001-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -89,6 +89,32 @@ function validate() {
   return true;
 }
 
+
+function callbackLedger(paramXMLParticular, XMLHttpRequestObj) {
+    var strText = "";
+    if (getReadyStateHandler(XMLHttpRequestObj)) {
+        try {
+            if (XMLHttpRequestObj.responseText) {
+                strText = XMLHttpRequestObj.responseText;
+                if (strText) {
+                    document.getElementById('inpcAcctSchemaId').value = strText;
+                }
+            }
+       } catch (e) {
+       }
+    }
+    return true;
+}
+
+function setDefaultLedger() {
+    try {
+        var paramXMLReq = null;
+        return submitXmlHttpRequest(callbackLedger, document.frmMain, "LEDGER", "ReportGeneralLedger.html", false, null, paramXMLReq);
+    } catch (e) {
+        alert(e);
+    }
+}
+
 function onloadFunctions() {
   keyArray[keyArray.length] = new keyArrayItem("ENTER", "openSearch(null, null, '../info/AccountElementValue.html', 'SELECTOR_ACCOUNTELEMENTVALUE', false, 'frmMain', 'inpcElementValueIdFrom', 'inpElementValueIdFrom_DES', document.frmMain.inpElementValueIdFrom_DES.value, 'inpcAcctSchemaId', document.frmMain.inpcAcctSchemaId.value, 'Command', 'KEY');", "inpElementValueIdFrom_DES", "null");
   keyArray[keyArray.length] = new keyArrayItem("ENTER", "openSearch(null, null, '../info/AccountElementValue.html', 'SELECTOR_ACCOUNTELEMENTVALUE', false, 'frmMain', 'inpcElementValueIdTo', 'inpElementValueIdTo_DES', document.frmMain.inpElementValueIdTo_DES.value, 'inpcAcctSchemaId', document.frmMain.inpcAcctSchemaId.value, 'Command', 'KEY');", "inpElementValueIdTo_DES", "null");
@@ -123,11 +149,14 @@ function onloadFunctions() {
     updateMenuIcon('buttonMenu');
 
     setWindowElementFocus('firstElement');
+    setDefaultLedger();
+
   }
 
   function onResizeDo(){
     resizeArea();
   }
+  
 
   function openGeneralLedgerJournal(recordid) {
       
@@ -370,7 +399,7 @@ function onloadFunctions() {
             </tr>
             <tr>
               <td class="TitleCell"><span class="LabelText">Organization</span></td>
-              <td class="Combo_ContentCell" colspan="2"> <select name="inpOrg" id="inpOrg" class="Combo Combo_TwoCells_width">
+              <td class="Combo_ContentCell" colspan="2"> <select name="inpOrg" id="inpOrg" class="Combo Combo_TwoCells_width" onChange="setDefaultLedger();">
                   <div id="reportAD_ORGID"></div>
                 </select>
               </td>              

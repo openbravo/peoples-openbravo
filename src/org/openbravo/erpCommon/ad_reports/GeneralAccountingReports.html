@@ -13,7 +13,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2011 Openbravo SLU
+ * All portions are Copyright (C) 2001-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -145,6 +145,35 @@ function refreshComboYears() {
   return true;
 }
 
+function callbackLedger(paramXMLParticular, XMLHttpRequestObj) {
+    var strText = "";
+    if (getReadyStateHandler(XMLHttpRequestObj)) {
+        try {
+            if (XMLHttpRequestObj.responseText) {
+                strText = XMLHttpRequestObj.responseText;
+                if (strText && document.getElementById('inpcAcctSchemaId').value != strText) {
+                    document.getElementById('inpcAcctSchemaId').value = strText;
+                    refreshComboReports();
+                }
+                else {
+                    refreshComboYears();
+                }
+            }
+       } catch (e) {
+       }
+    }
+    return true;
+}
+
+function setDefaultLedger() {
+    try {
+        var paramXMLReq = null;
+        return submitXmlHttpRequest(callbackLedger, document.frmMain, "LEDGER", "GeneralAccountingReports.html", false, null, paramXMLReq);
+    } catch (e) {
+        alert(e);
+    }
+}
+
 function onloadFunctions() {
 }
 </script>
@@ -173,12 +202,12 @@ function onLoadDo(){
 	setTabTableParentElement();
 	enableShortcuts('edition');
 	setBrowserAutoComplete(false);
-	
 	resizeArea();
 	updateMenuIcon('buttonMenu');
 
 	setWindowElementFocus('firstElement');
-       displayLogic();
+	setDefaultLedger();
+	displayLogic();
 }
 
 function onResizeDo(){
@@ -366,7 +395,7 @@ function onResizeDo(){
 
                 <tr>
                   <td class="TitleCell"><span class="LabelText">Organization</span></td>
-                  <td class="Combo_ContentCell" colspan="2"> <select name="inpOrganizacion" id="inpOrganizacion" class="ComboKey Combo_TwoCells_width" onchange="refreshComboYears(); logChanges(this); return true;">
+                  <td class="Combo_ContentCell" colspan="2"> <select name="inpOrganizacion" id="inpOrganizacion" class="ComboKey Combo_TwoCells_width" onchange="setDefaultLedger(); logChanges(this); return true;">
                       <option value=""></option><div id="reportC_Org_ID"></div>
                     </select></td>
                 </tr>

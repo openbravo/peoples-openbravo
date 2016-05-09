@@ -432,12 +432,16 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
         UsageAudit.auditActionNoDal(this, vars1, this.getClass().getName(),
             System.currentTimeMillis() - t);
       } else {
-        if ((strPopUp != null && !strPopUp.equals("")) || (classInfo.type.equals("S")))
+        if ((strPopUp != null && !strPopUp.equals("")) || classInfo.type.equals("S")) {
           bdErrorGeneralPopUp(request, response,
               Utility.messageBD(this, "Error", variables.getLanguage()),
               Utility.messageBD(this, "AccessTableNoView", variables.getLanguage()));
-        else
+        } else {
           bdError(request, response, "AccessTableNoView", vars1.getLanguage());
+        }
+        String roleStr = "".equals(vars1.getRole()) ? "" : " (" + vars1.getRole() + ")";
+        log4j
+            .warn("Role" + roleStr + " tried to access ungranted resource with ID " + classInfo.id);
       }
     } catch (final ServletException ex) {
       log4j.error("Error captured: ", ex);
@@ -528,6 +532,10 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
    * 
    */
   private boolean hasLevelAccess(VariablesSecureApp vars, String accessLevel) {
+    if (!OBContext.getOBContext().doAccessLevelCheck()) {
+      return true;
+    }
+
     final String userLevel = vars.getSessionValue("#User_Level");
 
     boolean retValue = true;

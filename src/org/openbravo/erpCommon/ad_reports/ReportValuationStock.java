@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2016 Openbravo SLU 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -25,6 +25,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.costing.CostingBackground;
@@ -39,6 +40,7 @@ import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
 import org.openbravo.erpCommon.utility.NavigationBar;
+import org.openbravo.erpCommon.utility.OBCurrencyUtils;
 import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
@@ -63,6 +65,7 @@ public class ReportValuationStock extends HttpSecureAppServlet {
 
     // Get user Client's base currency
     String strUserCurrencyId = Utility.stringBaseCurrencyId(this, vars.getClient());
+
     if (vars.commandIn("DEFAULT", "RELATION")) {
       String strDate = vars.getGlobalVariable("inpDate", "ReportValuationStock|Date",
           DateTimeData.today(this));
@@ -70,8 +73,11 @@ public class ReportValuationStock extends HttpSecureAppServlet {
           "ReportValuationStock|Warehouse", "");
       String strCategoryProduct = vars.getGlobalVariable("inpCategoryProduct",
           "ReportValuationStock|CategoryProduct", "");
-      String strCurrencyId = vars.getGlobalVariable("inpCurrencyId",
-          "ReportValuationStock|currency", strUserCurrencyId);
+      String strCurrencyId = OBCurrencyUtils.getOrgCurrency(vars.getOrg());
+      if (StringUtils.isEmpty(strCurrencyId)) {
+        strCurrencyId = strUserCurrencyId;
+      }
+
       printPageDataSheet(request, response, vars, strDate, strWarehouse, strCategoryProduct,
           strCurrencyId);
     } else if (vars.commandIn("FIND")) {

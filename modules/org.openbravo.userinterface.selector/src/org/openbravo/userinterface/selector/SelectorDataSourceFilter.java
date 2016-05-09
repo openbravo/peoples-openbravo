@@ -370,11 +370,6 @@ public class SelectorDataSourceFilter implements DataSourceFilter {
           sb.append(" and ");
         }
 
-        // Code duplicated from org.openbravo.service.json.QueryBuilder
-        // Used to identify the type of property and modify the _where parameter
-        // If the this code change, make sure you check the getWhereClause method of the
-        // QueryBuilder. Check issue https://issues.openbravo.com/view.php?id=14239
-
         if (!property.isPrimitive()) {
           sb.append("e." + sf.getProperty() + ".id = '" + result.toString() + "'");
         } else if (String.class == property.getPrimitiveObjectType()) {

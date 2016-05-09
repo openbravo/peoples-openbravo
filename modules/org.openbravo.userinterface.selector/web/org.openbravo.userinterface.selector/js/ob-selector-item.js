@@ -1112,6 +1112,13 @@ isc.OBSelectorItem.addClassMethods({
   // Prepares requestProperties adding contextInfo, this is later used in backed
   // to prepare filters 
   prepareDSRequest: function (params, selector) {
+    function setOrgIdParam(params) {
+      if (!params.inpadOrgId) {
+        // look for an ad_org_id parameter. If there is no such parameter or its value is empty, use the current user organization
+        params.inpadOrgId = params.ad_org_id || params.AD_Org_ID || OB.User.organizationId;
+      }
+    }
+
     // on purpose not passing the third boolean param
     if (selector.form && selector.form.view && selector.form.view.getContextInfo) {
       // for table and table dir reference values needs to be transformed to classic (ex.: true -> Y)
@@ -1121,20 +1128,14 @@ isc.OBSelectorItem.addClassMethods({
       if (selector.form && selector.form.paramWindow && selector.form.paramWindow.getContextInfo) {
         isc.addProperties(params, selector.form.paramWindow.getContextInfo());
       }
-      if (!params.inpadOrgId) {
-        // look for an ad_org_id parameter. If there is no such parameter or its value is empty, use the current user organization
-        params.inpadOrgId = params.ad_org_id || OB.User.organizationId;
-      }
+      setOrgIdParam(params);
     } else if (selector.view && selector.view.sourceView && selector.view.sourceView.getContextInfo) {
       isc.addProperties(params, selector.view.sourceView.getContextInfo(false, true, null, selector.isComboReference));
     } else if (selector.grid && selector.grid.contentView && selector.grid.contentView.getContextInfo) {
       isc.addProperties(params, selector.grid.contentView.getContextInfo(false, true, null, selector.isComboReference));
     } else if (selector.form && selector.form.paramWindow && selector.form.paramWindow.getContextInfo) {
       isc.addProperties(params, selector.form.paramWindow.getContextInfo());
-      if (!params.inpadOrgId) {
-        // look for an ad_org_id parameter. If there is no such parameter or its value is empty, use the current user organization
-        params.inpadOrgId = params.ad_org_id || OB.User.organizationId;
-      }
+      setOrgIdParam(params);
     }
 
     // if the selector belongs to a P&E grid, include the info of the record being edited

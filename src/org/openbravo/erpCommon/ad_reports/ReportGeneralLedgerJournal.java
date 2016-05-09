@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2015 Openbravo SLU
+ * All portions are Copyright (C) 2001-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -55,6 +55,7 @@ import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.LeftTabsBar;
 import org.openbravo.erpCommon.utility.NavigationBar;
 import org.openbravo.erpCommon.utility.OBError;
+import org.openbravo.erpCommon.utility.OBLedgerUtils;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.datamodel.Table;
@@ -268,8 +269,9 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
           strPageNo, strEntryNo, strShowDescription, strShowRegular, strShowDivideUp, "", "",
           strcelementvaluefrom, strcelementvalueto, strcelementvaluefromdes, strcelementvaluetodes);
     } else if (vars.commandIn("PDF", "XLS")) {
-      if (log4j.isDebugEnabled())
+      if (log4j.isDebugEnabled()) {
         log4j.debug("PDF");
+      }
       String strcAcctSchemaId = vars.getRequestGlobalVariable("inpcAcctSchemaId",
           "ReportGeneralLedger|cAcctSchemaId");
       String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom",
@@ -409,9 +411,16 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
       PrintWriter out = response.getWriter();
       out.println("objson = " + combobox);
       out.close();
-
-    } else
+    } else if (vars.commandIn("LEDGER")) {
+      String strOrg = vars.getGlobalVariable("inpOrg", "ReportGeneralLedgerJournal|Org", "0");
+      String strcAcctSchemaId = OBLedgerUtils.getOrgLedger(strOrg);
+      response.setContentType("text/html; charset=UTF-8");
+      PrintWriter out = response.getWriter();
+      out.print(strcAcctSchemaId);
+      out.close();
+    } else {
       pageError(response);
+    }
   }
 
   private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,

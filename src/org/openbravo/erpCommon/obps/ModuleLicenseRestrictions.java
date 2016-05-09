@@ -11,12 +11,14 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2015 Openbravo SLU 
+ * All portions are Copyright (C) 2015-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.erpCommon.obps;
+
+import java.util.List;
 
 import javax.enterprise.context.ApplicationScoped;
 
@@ -48,6 +50,33 @@ public interface ModuleLicenseRestrictions {
 
   /** Provides the HTML to be injected in Instance Activation window to perform additional actions */
   public String getInstanceActivationExtraActionsHtml(XmlEngine xmlEngine);
+
+  /**
+   * Provides a mechanism to returns an extra message. This information will be shown in Instance
+   * Activation window.
+   */
+  public List<AdditionalInfo> getAdditionalMessage();
+
+  /**
+   * Holder for additional messages. The key is used for retrieves a message from ad_message table.
+   */
+  public static class AdditionalInfo {
+    private String key;
+    private String value;
+
+    public AdditionalInfo(String key, String value) {
+      this.key = key;
+      this.value = value;
+    }
+
+    public String getKey() {
+      return key;
+    }
+
+    public String getValue() {
+      return value;
+    }
+  }
 
   public enum MsgSeverity {
     WARN("Warning"), ERROR("Error");

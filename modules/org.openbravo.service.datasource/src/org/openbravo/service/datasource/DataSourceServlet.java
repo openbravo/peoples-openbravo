@@ -142,7 +142,7 @@ public class DataSourceServlet extends BaseKernelServlet {
 
       SessionInfo.setModuleId(request.getParameter("moduleId"));
       SessionInfo.setCommand(request.getParameter(DataSourceConstants.OPERATION_TYPE_PARAM));
-      SessionInfo.setProcessId(request.getParameter("tabId"));
+      SessionInfo.setProcessId(request.getParameter(JsonConstants.TAB_PARAMETER));
       SessionInfo.setProcessType("W");
 
       super.service(request, response);
@@ -208,7 +208,7 @@ public class DataSourceServlet extends BaseKernelServlet {
       getRequestContent(request);
     }
     try {
-      if (!hasAccess(request, parameters.get("tabId"))) {
+      if (!hasAccess(request, parameters.get(JsonConstants.TAB_PARAMETER))) {
         throw new OBUserException("AccessTableNoView");
       }
 
@@ -236,10 +236,9 @@ public class DataSourceServlet extends BaseKernelServlet {
           try {
             OBContext.setAdminMode();
             try {
-              Window window = parameters.get(JsonConstants.TAB_PARAMETER) == null
-                  || parameters.get(JsonConstants.TAB_PARAMETER).equals("undefined") ? null : OBDal
-                  .getInstance().get(Tab.class, parameters.get(JsonConstants.TAB_PARAMETER))
-                  .getWindow();
+              Window window = JsonUtils.isValueEmpty(parameters.get(JsonConstants.TAB_PARAMETER)) ? null
+                  : OBDal.getInstance().get(Tab.class, parameters.get(JsonConstants.TAB_PARAMETER))
+                      .getWindow();
               String encoding = Preferences.getPreferenceValue("OBSERDS_CSVTextEncoding", true,
                   OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
                       .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
@@ -312,9 +311,9 @@ public class DataSourceServlet extends BaseKernelServlet {
         response.setHeader("Content-Disposition", "attachment; filename=ExportedData.csv");
         writer = response.getWriter();
         VariablesSecureApp vars = new VariablesSecureApp(request);
-        Window window = parameters.get(JsonConstants.TAB_PARAMETER) == null
-            || parameters.get(JsonConstants.TAB_PARAMETER).equals("undefined") ? null : OBDal
-            .getInstance().get(Tab.class, parameters.get(JsonConstants.TAB_PARAMETER)).getWindow();
+        Window window = JsonUtils.isValueEmpty(parameters.get(JsonConstants.TAB_PARAMETER)) ? null
+            : OBDal.getInstance().get(Tab.class, parameters.get(JsonConstants.TAB_PARAMETER))
+                .getWindow();
         try {
           prefDecimalSeparator = Preferences.getPreferenceValue("OBSERDS_CSVDecimalSeparator",
               true, OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
@@ -370,8 +369,7 @@ public class DataSourceServlet extends BaseKernelServlet {
         }
 
         fieldProperties = new ArrayList<String>();
-        if (parameters.get("viewState") != null
-            && !parameters.get("viewState").toString().equals("undefined")) {
+        if (!JsonUtils.isValueEmpty(parameters.get("viewState"))) {
           String viewStateO = parameters.get("viewState");
           String viewStateWithoutParenthesis = viewStateO.substring(1, viewStateO.length() - 1);
           JSONObject viewState = new JSONObject(viewStateWithoutParenthesis);
@@ -701,10 +699,9 @@ public class DataSourceServlet extends BaseKernelServlet {
       try {
         String csvMessage = null;
         try {
-          Window window = parameters.get(JsonConstants.TAB_PARAMETER) == null
-              || parameters.get(JsonConstants.TAB_PARAMETER).equals("undefined") ? null : OBDal
-              .getInstance().get(Tab.class, parameters.get(JsonConstants.TAB_PARAMETER))
-              .getWindow();
+          Window window = JsonUtils.isValueEmpty(parameters.get(JsonConstants.TAB_PARAMETER)) ? null
+              : OBDal.getInstance().get(Tab.class, parameters.get(JsonConstants.TAB_PARAMETER))
+                  .getWindow();
           csvMessage = Preferences.getPreferenceValue(property, true, OBContext.getOBContext()
               .getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(), OBContext
               .getOBContext().getUser(), OBContext.getOBContext().getRole(), window);
@@ -764,7 +761,7 @@ public class DataSourceServlet extends BaseKernelServlet {
     setSessionInfo();
 
     try {
-      if (!hasAccess(request, parameters.get("tabId"))) {
+      if (!hasAccess(request, parameters.get(JsonConstants.TAB_PARAMETER))) {
         throw new OBUserException("AccessTableNoView");
       }
 
@@ -797,7 +794,7 @@ public class DataSourceServlet extends BaseKernelServlet {
       if (!checkSetParameters(request, response, parameters)) {
         return;
       }
-      if (!hasAccess(request, parameters.get("tabId"))) {
+      if (!hasAccess(request, parameters.get(JsonConstants.TAB_PARAMETER))) {
         throw new OBUserException("AccessTableNoView");
       }
 
@@ -836,7 +833,7 @@ public class DataSourceServlet extends BaseKernelServlet {
     final Map<String, String> parameters = getParameterMap(request);
     setSessionInfo();
     try {
-      if (!hasAccess(request, parameters.get("tabId"))) {
+      if (!hasAccess(request, parameters.get(JsonConstants.TAB_PARAMETER))) {
         throw new OBUserException("AccessTableNoView");
       }
 
@@ -998,7 +995,7 @@ public class DataSourceServlet extends BaseKernelServlet {
    */
   private boolean hasAccess(HttpServletRequest req, String tabId) {
     try {
-      if (tabId == null || tabId.isEmpty()) {
+      if (JsonUtils.isValueEmpty(tabId)) {
         return true;
       }
       VariablesSecureApp vars = new VariablesSecureApp(req);

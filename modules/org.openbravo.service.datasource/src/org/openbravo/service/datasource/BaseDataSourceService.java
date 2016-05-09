@@ -29,7 +29,6 @@ import org.apache.log4j.Logger;
 import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
-import org.openbravo.base.model.Property;
 import org.openbravo.client.application.CachedPreference;
 import org.openbravo.client.application.window.ApplicationDictionaryCachedStructures;
 import org.openbravo.client.kernel.Template;
@@ -39,6 +38,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.service.json.JsonConstants;
+import org.openbravo.userinterface.selector.Selector;
 import org.openbravo.userinterface.selector.SelectorConstants;
 
 /**
@@ -154,31 +154,21 @@ public abstract class BaseDataSourceService implements DataSourceService {
     String selectorId = parameters.get(SelectorConstants.DS_REQUEST_SELECTOR_ID_PARAMETER);
     if (StringUtils.isNotBlank(selectorId)) {
       // selectors
-      String processId = parameters.get(SelectorConstants.DS_REQUEST_PROCESS_DEFINITION_ID);
-      if (StringUtils.isNotBlank(processId)) {
-        // selectors defined in a process definition
-        if (entityToCheck != null) {
-          try {
-            obContext.getEntityAccessChecker().checkDerivedAccess(entityToCheck);
-          } catch (OBSecurityException e) {
-            handleExceptionUnsecuredDSAccess(e);
-          }
+      if (entityToCheck == null) {
+        OBContext.setAdminMode(true);
+        try {
+          Selector sel = OBDal.getInstance().get(Selector.class, selectorId);
+          entityToCheck = ModelProvider.getInstance().getEntityByTableId(
+              (String) DalUtil.getId(sel.getTable()));
+        } finally {
+          OBContext.restorePreviousMode();
         }
-      } else {
-        // rest of the selectors
-        String tableId = parameters.get("inpTableId");
-        String targetPropertyName = parameters.get(SelectorConstants.PARAM_TARGET_PROPERTY_NAME);
-        if (StringUtils.isNotBlank(targetPropertyName)) {
-          try {
-            Entity parentEntity = ModelProvider.getInstance().getEntityByTableId(tableId);
-            Property p = parentEntity.getProperty(targetPropertyName);
-            Entity entitySelector = p.getReferencedProperty().getEntity();
-            if (entitySelector != null) {
-              obContext.getEntityAccessChecker().checkDerivedAccess(entitySelector);
-            }
-          } catch (OBSecurityException e) {
-            handleExceptionUnsecuredDSAccess(e);
-          }
+      }
+      if (entityToCheck != null) {
+        try {
+          obContext.getEntityAccessChecker().checkDerivedAccess(entityToCheck);
+        } catch (OBSecurityException e) {
+          handleExceptionUnsecuredDSAccess(e);
         }
       }
     } else if (entityToCheck != null) {

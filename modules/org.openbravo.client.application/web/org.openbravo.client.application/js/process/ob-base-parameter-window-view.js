@@ -154,7 +154,7 @@ isc.OBBaseParameterWindowView.addProperties({
           // the default
           field.onChangeFunction.sort = 50;
 
-          OB.OnChangeRegistry.register(this.viewId, field.name, field.onChangeFunction, 'default');
+          OB.OnChangeRegistry.register(this.viewId || this.processId, field.name, field.onChangeFunction, 'default');
         }
 
         if (field.type === 'OBSectionItem' && !field.sectionExpanded) {
