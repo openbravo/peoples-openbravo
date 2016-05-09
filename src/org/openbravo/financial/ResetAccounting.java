@@ -251,6 +251,7 @@ public class ResetAccounting {
       updateBalanced.setString("tableId", tableId);
       updateBalanced.setParameterList("transactions", transactions);
       updateBalanced.setString("clientId", client);
+      updateBalanced.executeUpdate();
       Table table = OBDal.getInstance().get(Table.class, tableId);
       if (!table.isView()) {
         tableName = table.getDBTableName();
