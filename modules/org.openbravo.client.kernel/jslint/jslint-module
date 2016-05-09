@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # --browser doesn't work properly in jslint4java 1.4.7
 # adding the global available functions manually: window, unscape, top, alert, escape

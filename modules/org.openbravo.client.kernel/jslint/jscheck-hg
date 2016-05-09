@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Mercurial pretxncommit hook
 echo "Performing jslint check on modified js resources"

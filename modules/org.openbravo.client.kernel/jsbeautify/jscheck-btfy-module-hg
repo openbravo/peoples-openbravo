@@ -1,0 +1,17 @@
+#!/bin/bash
+set -e
+# Mercurial pre-commit hook for jsbeautify
+replaceparam=$1
+if [ "$replaceparam" != "replace" ] ; then
+ echo "Performing jsbeautify check on all js resources"
+else
+ echo "Performing jsbeautify replacement on all js resources"
+fi
+
+for changedfile in $(hg st -ma)
+do
+  if [ -f "$changedfile" -a -n "$(echo $changedfile | awk '/.js$/')" ]; then
+    source ../org.openbravo.client.kernel/jsbeautify/jsbeautify-module $changedfile $replaceparam
+  fi
+done
+exit $ERROR
