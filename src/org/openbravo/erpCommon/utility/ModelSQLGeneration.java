@@ -249,9 +249,9 @@ public class ModelSQLGeneration {
    *          Handler for the query builder.
    * @param selectFields
    *          String with the fields of the select clause.
-   * @param filter
+   * @param localFilter
    *          Vector with the specific filter fields.
-   * @param filterParams
+   * @param localFilterParams
    *          Vector with the parameters for the specific filter fields.
    * @param offset
    *          int, offset of rows to be displayed
@@ -267,6 +267,8 @@ public class ModelSQLGeneration {
       TableSQLData tableSQL, String selectFields, Vector<String> filter,
       Vector<String> filterParams, int offset, int pageSize, boolean sorted, boolean onlyId)
       throws Exception {
+    Vector<String> localFilter = filter;
+    Vector<String> localFilterParams = filterParams;
     Vector<String> orderBy = new Vector<String>(); // Maintains orderby
     // clause with SQL clause
     Vector<String> orderBySimple = new Vector<String>(); // Maintains
@@ -286,11 +288,11 @@ public class ModelSQLGeneration {
       if (!auxOrderSimple.equals(""))
         orderBySimple.addElement(auxOrderSimple);
     }
-    if (filter == null)
-      filter = new Vector<String>();
-    if (filterParams == null)
-      filterParams = new Vector<String>();
-    SQLReturnObject parametersData = getFilter(vars, tableSQL, filter, filterParams);
+    if (localFilter == null)
+      localFilter = new Vector<String>();
+    if (localFilterParams == null)
+      localFilterParams = new Vector<String>();
+    SQLReturnObject parametersData = getFilter(vars, tableSQL, localFilter, localFilterParams);
     String parentKey = tableSQL.getParentColumnName();
     if (parentKey != null && !parentKey.equals("")) {
       String aux = vars.getGlobalVariable("inpParentKey", tableSQL.getWindowID() + "|" + parentKey);
@@ -300,7 +302,7 @@ public class ModelSQLGeneration {
         parametersData.setData("PARENT", aux);
       }
     }
-    String strSQL = tableSQL.getSQL(filter, filterParams, orderBy, null, selectFields,
+    String strSQL = tableSQL.getSQL(localFilter, localFilterParams, orderBy, null, selectFields,
         orderBySimple, offset, pageSize, sorted, onlyId);
     setSessionOrderBy(vars, tableSQL);
     Utility.fillTableSQLParameters(conn, vars, parametersData, tableSQL, tableSQL.getWindowID());

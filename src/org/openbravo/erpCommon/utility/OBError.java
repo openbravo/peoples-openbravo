@@ -31,9 +31,10 @@ public class OBError {
   }
 
   public void setType(String _data) {
-    if (_data == null)
-      _data = "";
-    this.type = _data;
+    String localData = _data;
+    if (localData == null)
+      localData = "";
+    this.type = localData;
   }
 
   public String getType() {
@@ -41,9 +42,10 @@ public class OBError {
   }
 
   public void setTitle(String _data) {
-    if (_data == null)
-      _data = "";
-    this.title = _data;
+    String localData = _data;
+    if (localData == null)
+      localData = "";
+    this.title = localData;
   }
 
   public String getTitle() {
@@ -51,9 +53,10 @@ public class OBError {
   }
 
   public void setMessage(String _data) {
-    if (_data == null)
-      _data = "";
-    this.message = _data;
+    String localData = _data;
+    if (localData == null)
+      localData = "";
+    this.message = localData;
   }
 
   public String getMessage() {

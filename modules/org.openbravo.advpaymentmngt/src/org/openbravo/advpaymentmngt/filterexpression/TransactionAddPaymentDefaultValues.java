@@ -69,12 +69,13 @@ public class TransactionAddPaymentDefaultValues extends AddPaymentDefaultValuesH
   }
 
   private String convertToSafeDecimalString(String bigdecimalString) {
-    bigdecimalString = bigdecimalString.replaceAll("[^\\d,\\.]++", "");
-    if (bigdecimalString.matches(".+\\.\\d+,\\d+$"))
-      return bigdecimalString.replaceAll("\\.", "").replaceAll(",", ".");
-    if (bigdecimalString.matches(".+,\\d+\\.\\d+$"))
-      return bigdecimalString.replaceAll(",", "");
-    return bigdecimalString.replaceAll(",", ".");
+    String localBigdecimalString = bigdecimalString;
+    localBigdecimalString = localBigdecimalString.replaceAll("[^\\d,\\.]++", "");
+    if (localBigdecimalString.matches(".+\\.\\d+,\\d+$"))
+      return localBigdecimalString.replaceAll("\\.", "").replaceAll(",", ".");
+    if (localBigdecimalString.matches(".+,\\d+\\.\\d+$"))
+      return localBigdecimalString.replaceAll(",", "");
+    return localBigdecimalString.replaceAll(",", ".");
   }
 
   @Override

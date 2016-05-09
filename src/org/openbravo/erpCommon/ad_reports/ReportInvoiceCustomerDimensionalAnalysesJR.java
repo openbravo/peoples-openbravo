@@ -560,6 +560,10 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
       String strProducttype, String strcDocTypeId, String strOrder, String strMayor,
       String strMenor, String strPartnerSalesrepId, String strCurrencyId, String strVoid,
       String strOutput) throws IOException, ServletException {
+    String localStrDateToRef3 = strDateToRef3;
+    String localStrDateToRef2 = strDateToRef2;
+    String localStrDateFromRef2 = strDateFromRef2;
+    String localStrDateFromRef3 = strDateFromRef3;
     if (log4j.isDebugEnabled())
       log4j.debug("Output: print html");
     String strOrderby = "";
@@ -578,19 +582,21 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
     boolean multiComparative3 = false;
     if (strComparative.equals("Y")) {
       discard1[0] = "selEliminarBody2";
-      if (StringUtils.isNotBlank(strDateFromRef2) && StringUtils.isNotBlank(strDateToRef2)) {
+      if (StringUtils.isNotBlank(localStrDateFromRef2)
+          && StringUtils.isNotBlank(localStrDateToRef2)) {
         multiComparative2 = true;
-        if (StringUtils.isNotBlank(strDateFromRef3) && StringUtils.isNotBlank(strDateToRef3)) {
+        if (StringUtils.isNotBlank(localStrDateFromRef3)
+            && StringUtils.isNotBlank(localStrDateToRef3)) {
           multiComparative3 = true;
         } else {
-          strDateFromRef3 = "";
-          strDateToRef3 = "";
+          localStrDateFromRef3 = "";
+          localStrDateToRef3 = "";
         }
       } else {
-        strDateFromRef2 = "";
-        strDateToRef2 = "";
-        strDateFromRef3 = "";
-        strDateToRef3 = "";
+        localStrDateFromRef2 = "";
+        localStrDateToRef2 = "";
+        localStrDateFromRef3 = "";
+        localStrDateToRef3 = "";
       }
     }
     String strTitle = "";
@@ -799,12 +805,13 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
                     strsalesrepId, strPartnerSalesrepId, strcProjectId, strProducttype,
                     strcDocTypeId, strVoid.equals("Y") ? "" : "VO", strDateFrom, DateTimeData
                         .nDaysAfter(this, strDateTo, "1"), strDateFromRef, DateTimeData.nDaysAfter(
-                        this, strDateToRef, "1"), strDateFromRef2, DateTimeData.nDaysAfter(this,
-                        strDateToRef2, "1"), strDateFromRef3, DateTimeData.nDaysAfter(this,
-                        strDateToRef3, "1")) : ReportInvoiceCustomerDimensionalAnalysesJRData
-                .selectNoComparativeCount(this, levelsconcat.toString(), Tree.getMembers(this,
-                    TreeData.getTreeOrg(this, vars.getClient()), strOrg), Utility.getContext(this,
-                    vars, "#User_Client", "ReportInvoiceCustomerDimensionalAnalysesJR"),
+                        this, strDateToRef, "1"), localStrDateFromRef2, DateTimeData.nDaysAfter(
+                        this, localStrDateToRef2, "1"), localStrDateFromRef3, DateTimeData
+                        .nDaysAfter(this, localStrDateToRef3, "1"))
+                : ReportInvoiceCustomerDimensionalAnalysesJRData.selectNoComparativeCount(this,
+                    levelsconcat.toString(), Tree.getMembers(this,
+                        TreeData.getTreeOrg(this, vars.getClient()), strOrg), Utility.getContext(
+                        this, vars, "#User_Client", "ReportInvoiceCustomerDimensionalAnalysesJR"),
                     strPartnerGroup, strcBpartnerId, strProductCategory, strmProductId,
                     strsalesrepId, strPartnerSalesrepId, strcProjectId, strProducttype,
                     strcDocTypeId, strVoid.equals("Y") ? "" : "VO", strDateFrom, DateTimeData
@@ -852,8 +859,9 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
                     strProductCategory, strmProductId, strsalesrepId, strPartnerSalesrepId,
                     strcProjectId, strProducttype, strcDocTypeId, strVoid.equals("Y") ? "" : "VO",
                     strDateFromRef, DateTimeData.nDaysAfter(this, strDateToRef, "1"),
-                    strDateFromRef2, DateTimeData.nDaysAfter(this, strDateToRef2, "1"),
-                    strDateFromRef3, DateTimeData.nDaysAfter(this, strDateToRef3, "1"), strOrderby);
+                    localStrDateFromRef2, DateTimeData.nDaysAfter(this, localStrDateToRef2, "1"),
+                    localStrDateFromRef3, DateTimeData.nDaysAfter(this, localStrDateToRef3, "1"),
+                    strOrderby);
               } else {
                 // Multi-comparative A: 1 base date, 2 reference dates
                 data = ReportInvoiceCustomerDimensionalAnalysesJRData.select2(this, strCurrencyId,
@@ -866,7 +874,8 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
                     strProductCategory, strmProductId, strsalesrepId, strPartnerSalesrepId,
                     strcProjectId, strProducttype, strcDocTypeId, strVoid.equals("Y") ? "" : "VO",
                     strDateFromRef, DateTimeData.nDaysAfter(this, strDateToRef, "1"),
-                    strDateFromRef2, DateTimeData.nDaysAfter(this, strDateToRef2, "1"), strOrderby);
+                    localStrDateFromRef2, DateTimeData.nDaysAfter(this, localStrDateToRef2, "1"),
+                    strOrderby);
               }
             } else {
               // Regular comparative: 1 base date, 1 reference date

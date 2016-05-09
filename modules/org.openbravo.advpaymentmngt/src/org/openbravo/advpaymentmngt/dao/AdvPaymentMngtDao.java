@@ -496,6 +496,8 @@ public class AdvPaymentMngtDao {
       FIN_PaymentMethod paymentMethod, FIN_FinancialAccount finAccount, String strPaymentAmount,
       Date paymentDate, String referenceNo, Currency paymentCurrency, BigDecimal finTxnConvertRate,
       BigDecimal finTxnAmount, String paymentId) {
+    BigDecimal localFinTxnConvertRate = finTxnConvertRate;
+    BigDecimal localFinTxnAmount = finTxnAmount;
     final FIN_Payment newPayment = OBProvider.getInstance().get(FIN_Payment.class);
     if (paymentId != null) {
       newPayment.setId(paymentId);
@@ -519,11 +521,11 @@ public class AdvPaymentMngtDao {
       newPayment.setCurrency(finAccount.getCurrency());
     }
     newPayment.setReferenceNo(referenceNo);
-    if (finTxnConvertRate == null || finTxnConvertRate.compareTo(BigDecimal.ZERO) <= 0) {
-      finTxnConvertRate = BigDecimal.ONE;
+    if (localFinTxnConvertRate == null || localFinTxnConvertRate.compareTo(BigDecimal.ZERO) <= 0) {
+      localFinTxnConvertRate = BigDecimal.ONE;
     }
-    if (finTxnAmount == null || finTxnAmount.compareTo(BigDecimal.ZERO) == 0) {
-      finTxnAmount = paymentAmount.multiply(finTxnConvertRate);
+    if (localFinTxnAmount == null || localFinTxnAmount.compareTo(BigDecimal.ZERO) == 0) {
+      localFinTxnAmount = paymentAmount.multiply(localFinTxnConvertRate);
     }
     // This code commented due to fix in bug 17829
     // else if (paymentAmount != null && paymentAmount.compareTo(BigDecimal.ZERO) != 0) {
@@ -531,8 +533,8 @@ public class AdvPaymentMngtDao {
     // finTxnConvertRate = finTxnAmount.divide(paymentAmount, MathContext.DECIMAL64);
     // }
 
-    newPayment.setFinancialTransactionConvertRate(finTxnConvertRate);
-    newPayment.setFinancialTransactionAmount(finTxnAmount);
+    newPayment.setFinancialTransactionConvertRate(localFinTxnConvertRate);
+    newPayment.setFinancialTransactionAmount(localFinTxnAmount);
 
     OBDal.getInstance().save(newPayment);
 

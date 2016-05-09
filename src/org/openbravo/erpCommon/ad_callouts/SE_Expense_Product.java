@@ -78,6 +78,7 @@ public class SE_Expense_Product extends HttpSecureAppServlet {
       String strDateexpense, String strmProductId, String strsTimeexpenseId, String strqty,
       String strcCurrencyId, String strInvPrice, String strChanged, String strTabId,
       String strWindowId, String strlastNetUnitPrice) throws IOException, ServletException {
+    String localStrDateexpense = strDateexpense;
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
@@ -95,9 +96,10 @@ public class SE_Expense_Product extends HttpSecureAppServlet {
     final Organization org = OBDal.getInstance()
         .get(org.openbravo.model.timeandexpense.Sheet.class, strsTimeexpenseId).getOrganization();
 
-    if (strDateexpense.equals("")) {
-      strDateexpense = SEExpenseProductData.selectReportDate(this, strsTimeexpenseId).equals("") ? DateTimeData
-          .today(this) : SEExpenseProductData.selectReportDate(this, strsTimeexpenseId);
+    if (localStrDateexpense.equals("")) {
+      localStrDateexpense = SEExpenseProductData.selectReportDate(this, strsTimeexpenseId).equals(
+          "") ? DateTimeData.today(this) : SEExpenseProductData.selectReportDate(this,
+          strsTimeexpenseId);
     }
 
     BigDecimal invPrice = BigDecimal.ZERO;
@@ -113,7 +115,7 @@ public class SE_Expense_Product extends HttpSecureAppServlet {
         || (strChanged.equals("inpmProductId") && invPrice.compareTo(lastNetUnitPrice) == 0)) {
       for (int i = 0; data != null && i < data.length && noPrice; i++) {
         if (data[i].validfrom == null || data[i].validfrom.equals("")
-            || !DateTimeData.compare(this, strDateexpense, data[i].validfrom).equals("-1")) {
+            || !DateTimeData.compare(this, localStrDateexpense, data[i].validfrom).equals("-1")) {
           noPrice = false;
           // Price
           priceActual = data[i].pricestd;
@@ -129,7 +131,7 @@ public class SE_Expense_Product extends HttpSecureAppServlet {
         data = SEExpenseProductData.selectBasePriceList(this, strmProductId, strmPricelistId);
         for (int i = 0; data != null && i < data.length && noPrice; i++) {
           if (data[i].validfrom == null || data[i].validfrom.equals("")
-              || !DateTimeData.compare(this, strDateexpense, data[i].validfrom).equals("-1")) {
+              || !DateTimeData.compare(this, localStrDateexpense, data[i].validfrom).equals("-1")) {
             noPrice = false;
             // Price
             priceActual = data[i].pricestd;
@@ -190,7 +192,7 @@ public class SE_Expense_Product extends HttpSecureAppServlet {
       if (!cCurrencyID.equals(c_Currency_To_ID)) {
         try {
           convertedAmount = SEExpenseProductData.selectConvertedAmt(this, amount.toPlainString(),
-              cCurrencyID, c_Currency_To_ID, strDateexpense, vars.getClient(), org.getId());
+              cCurrencyID, c_Currency_To_ID, localStrDateexpense, vars.getClient(), org.getId());
         } catch (ServletException e) {
           convertedAmount = "";
           myMessage = Utility.translateError(this, vars, vars.getLanguage(), e.getMessage());

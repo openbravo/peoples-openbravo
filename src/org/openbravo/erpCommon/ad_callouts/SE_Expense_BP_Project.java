@@ -60,6 +60,7 @@ public class SE_Expense_BP_Project extends HttpSecureAppServlet {
   private void printPage(HttpServletResponse response, VariablesSecureApp vars,
       String strBPartnerId, String strProjectId, String strChanged, String strTabId,
       String strWindowId) throws IOException, ServletException {
+    String localStrBPartnerId = strBPartnerId;
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
@@ -77,28 +78,28 @@ public class SE_Expense_BP_Project extends HttpSecureAppServlet {
         String strBPartnerName = "";
         String strBPartner = SEExpenseBPProjectData.selectBPId(this, strProjectId);
         if (strBPartner != null && !strBPartner.equals("")) {
-          strBPartnerId = strBPartner;
+          localStrBPartnerId = strBPartner;
           strBPartnerName = SEExpenseBPProjectData.selectBPName(this, strProjectId);
-          resultado.append(", new Array(\"inpcBpartnerId\", \"" + strBPartnerId + "\")\n");
+          resultado.append(", new Array(\"inpcBpartnerId\", \"" + localStrBPartnerId + "\")\n");
           resultado.append(", new Array(\"inpcBpartnerId_R\", \"" + strBPartnerName + "\")\n");
         }
       }
     } else if (strChanged.equals("inpcBpartnerId")) {
       // If business partner changed...
       String strReset = "0";
-      if (strBPartnerId != null && !strBPartnerId.equals("")) {
+      if (localStrBPartnerId != null && !localStrBPartnerId.equals("")) {
         String strProject = "";
         if (strProjectId != null && !strProjectId.equals("")) {
           // ...if project is not null, check if it corresponds with
           // the business partner
-          String strBPartnerProject = SEExpenseBPProjectData.selectBPProject(this, strBPartnerId,
-              strProjectId);
+          String strBPartnerProject = SEExpenseBPProjectData.selectBPProject(this,
+              localStrBPartnerId, strProjectId);
           // ...if there is no relationship between project and
           // business partner, take the last project of that business
           // partner (if any).
           if (strBPartnerProject == null || strBPartnerProject.equals("")) {
             // strReset = "1";
-            strProject = SEExpenseBPProjectData.selectProjectId(this, strBPartnerId);
+            strProject = SEExpenseBPProjectData.selectProjectId(this, localStrBPartnerId);
             if (strProject != null && !strProject.equals("")) {
               strProjectId = strProject;
               resultado.append("new Array(\"inpcProjectId\", \"" + strProjectId + "\")\n");
@@ -110,7 +111,7 @@ public class SE_Expense_BP_Project extends HttpSecureAppServlet {
           // ...if project is null, take the last project of that
           // business partner (if any).
           strReset = "1";
-          strProject = SEExpenseBPProjectData.selectProjectId(this, strBPartnerId);
+          strProject = SEExpenseBPProjectData.selectProjectId(this, localStrBPartnerId);
           resultado.append("new Array(\"inpcProjectId\", \"" + strProject + "\"),\n");
         }
         if (strReset.equals("1")) {

@@ -84,10 +84,11 @@ public class RptM_Inout extends HttpSecureAppServlet {
   }
 
   private String minimumOne(String strCopies) {
-    if (strCopies == null || strCopies.length() == 0 || strCopies.equals("0")) {
-      strCopies = "1";
+    String localStrCopies = strCopies;
+    if (localStrCopies == null || localStrCopies.length() == 0 || localStrCopies.equals("0")) {
+      localStrCopies = "1";
     }
-    return strCopies;
+    return localStrCopies;
   }
 
   public String getServletInfo() {

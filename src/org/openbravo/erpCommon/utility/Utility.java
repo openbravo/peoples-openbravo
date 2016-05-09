@@ -1415,15 +1415,16 @@ public class Utility {
   /**
    * Returns a string list comma separated as SQL strings.
    * 
-   * @param list
+   * @param localList
    * @return comma delimited quoted string
    */
   public static String stringList(String list) {
+    String localList = list;
     String ret = "";
-    final boolean hasBrackets = list.startsWith("(") && list.endsWith(")");
+    final boolean hasBrackets = localList.startsWith("(") && localList.endsWith(")");
     if (hasBrackets)
-      list = list.substring(1, list.length() - 1);
-    final StringTokenizer st = new StringTokenizer(list, ",", false);
+      localList = localList.substring(1, localList.length() - 1);
+    final StringTokenizer st = new StringTokenizer(localList, ",", false);
     while (st.hasMoreTokens()) {
       String token = st.nextToken().trim();
       if (!ret.equals(""))
@@ -1559,11 +1560,12 @@ public class Utility {
   public static String getButtonName(ConnectionProvider conn, VariablesSecureApp vars,
       String reference, String currentValue, String buttonId,
       HashMap<String, String> usedButtonShortCuts, HashMap<String, String> reservedButtonShortCuts) {
+    String localCurrentValue = currentValue;
     try {
       final UtilityData[] data = UtilityData.selectReference(conn, vars.getLanguage(), reference);
       String retVal = "";
-      if (currentValue.equals("--"))
-        currentValue = "CL";
+      if (localCurrentValue.equals("--"))
+        localCurrentValue = "CL";
       if (data == null)
         return retVal;
       for (int j = 0; j < data.length; j++) {
@@ -1572,16 +1574,16 @@ public class Utility {
         while ((i < name.length())
             && (name.substring(i, i + 1).equals(" ") || reservedButtonShortCuts.containsKey(name
                 .substring(i, i + 1).toUpperCase()))) {
-          if (data[j].value.equals(currentValue))
+          if (data[j].value.equals(localCurrentValue))
             retVal += name.substring(i, i + 1);
           i++;
         }
-        if ((i == name.length()) && (data[j].value.equals(currentValue))) {
+        if ((i == name.length()) && (data[j].value.equals(localCurrentValue))) {
           i = 1;
           while (i <= 10 && reservedButtonShortCuts.containsKey(new Integer(i).toString()))
             i++;
           if (i < 10) {
-            if (data[j].value.equals(currentValue)) {
+            if (data[j].value.equals(localCurrentValue)) {
               retVal += "<span>(<u>" + i + "</u>)</span>";
               reservedButtonShortCuts.put(new Integer(i).toString(), "");
               usedButtonShortCuts.put(new Integer(i).toString(), "executeWindowButton('" + buttonId
@@ -1590,7 +1592,7 @@ public class Utility {
           }
         } else {
 
-          if (data[j].value.equals(currentValue)) {
+          if (data[j].value.equals(localCurrentValue)) {
             if (i < name.length())
               reservedButtonShortCuts.put(name.substring(i, i + 1).toUpperCase(), "");
             usedButtonShortCuts.put(name.substring(i, i + 1).toUpperCase(), "executeWindowButton('"
@@ -1603,7 +1605,7 @@ public class Utility {
       return retVal;
     } catch (final Exception e) {
       log4j.error(e.toString());
-      return currentValue;
+      return localCurrentValue;
     }
   }
 

@@ -45,19 +45,20 @@ public class LandedCostDistributionByAmount extends LandedCostDistributionAlgori
   @Override
   public void distributeAmount(LandedCostCost lcCost, boolean isMatching) {
     // Calculate total amount of all receipt lines assigned to the landed cost.
-    lcCost = (LandedCostCost) OBDal.getInstance().getProxy(LandedCostCost.ENTITY_NAME,
-        lcCost.getId());
-    LandedCost landedCost = lcCost.getLandedCost();
+    LandedCostCost localLcCost = lcCost;
+    localLcCost = (LandedCostCost) OBDal.getInstance().getProxy(LandedCostCost.ENTITY_NAME,
+        localLcCost.getId());
+    LandedCost landedCost = localLcCost.getLandedCost();
     // Get the currency of the Landed Cost Cost
-    String strCurId = lcCost.getCurrency().getId();
+    String strCurId = localLcCost.getCurrency().getId();
     String strOrgId = landedCost.getOrganization().getId();
     Date dateReference = landedCost.getReferenceDate();
-    int precission = lcCost.getCurrency().getCostingPrecision().intValue();
+    int precission = localLcCost.getCurrency().getCostingPrecision().intValue();
     BigDecimal baseAmt;
     if (isMatching) {
-      baseAmt = lcCost.getMatchingAmount().subtract(lcCost.getAmount());
+      baseAmt = localLcCost.getMatchingAmount().subtract(localLcCost.getAmount());
     } else {
-      baseAmt = lcCost.getAmount();
+      baseAmt = localLcCost.getAmount();
     }
 
     BigDecimal totalAmt = BigDecimal.ZERO;
@@ -113,14 +114,14 @@ public class LandedCostDistributionByAmount extends LandedCostDistributionAlgori
           receiptCosts.get()[0]);
       LCReceiptLineAmt lcrla = OBProvider.getInstance().get(LCReceiptLineAmt.class);
       lcrla.setLandedCostCost((LandedCostCost) OBDal.getInstance().getProxy(
-          LandedCostCost.ENTITY_NAME, lcCost.getId()));
-      lcCost = (LandedCostCost) OBDal.getInstance().getProxy(LandedCostCost.ENTITY_NAME,
-          lcCost.getId());
+          LandedCostCost.ENTITY_NAME, localLcCost.getId()));
+      localLcCost = (LandedCostCost) OBDal.getInstance().getProxy(LandedCostCost.ENTITY_NAME,
+          localLcCost.getId());
       lcrla.setLandedCostReceipt(lcrl);
       lcrla.setGoodsShipmentLine(receiptline);
       lcrla.setMatchingAdjustment(isMatching);
       lcrla.setAmount(receiptAmt);
-      lcrla.setOrganization(lcCost.getOrganization());
+      lcrla.setOrganization(localLcCost.getOrganization());
       OBDal.getInstance().save(lcrla);
       if (i % 100 == 0) {
         OBDal.getInstance().flush();

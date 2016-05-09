@@ -65,20 +65,22 @@ public class Zip {
   }
 
   public static void zip(File[] list, String dest, String relativeDir) throws Exception {
+    String localRelativeDir = relativeDir;
     ZipOutputStream destZip = new ZipOutputStream(new FileOutputStream(dest));
-    relativeDir = (relativeDir + (relativeDir.endsWith("/") ? "" : "/")).replace("/",
-        File.separator);
-    zip(list, destZip, relativeDir);
+    localRelativeDir = (localRelativeDir + (localRelativeDir.endsWith("/") ? "" : "/")).replace(
+        "/", File.separator);
+    zip(list, destZip, localRelativeDir);
     destZip.close();
     log4j.info("zipped in " + dest);
   }
 
   public static void zip(String orig, String dest, String relativeDir) throws Exception {
+    String localRelativeDir = relativeDir;
     File file = new File(orig);
-    relativeDir = (relativeDir + (relativeDir.endsWith("/") ? "" : "/")).replace("/",
-        File.separator);
+    localRelativeDir = (localRelativeDir + (localRelativeDir.endsWith("/") ? "" : "/")).replace(
+        "/", File.separator);
     ZipOutputStream destZip = new ZipOutputStream(new FileOutputStream(dest));
-    zip(file, destZip, relativeDir);
+    zip(file, destZip, localRelativeDir);
     destZip.close();
     log4j.info("zipped " + orig + " in " + dest);
   }

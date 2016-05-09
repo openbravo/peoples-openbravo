@@ -768,10 +768,11 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
 
   private ReportTrialBalanceData[] calculateTree(ReportTrialBalanceData[] data, String indice,
       Vector<Object> vecTotal, ReportTrialBalanceData[] dataIB, String strNotInitialBalance) {
+    String localIndice = indice;
     if (data == null || data.length == 0)
       return data;
-    if (indice == null)
-      indice = "0";
+    if (localIndice == null)
+      localIndice = "0";
     ReportTrialBalanceData[] result = null;
     Vector<Object> vec = new Vector<Object>();
     // if (log4j.isDebugEnabled())
@@ -791,7 +792,7 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
     BigDecimal totalFinal = new BigDecimal((String) vecTotal.elementAt(3));
     boolean encontrado = false;
     for (int i = 0; i < data.length; i++) {
-      if (data[i].parentId.equals(indice)) {
+      if (data[i].parentId.equals(localIndice)) {
         encontrado = true;
         Vector<Object> vecParcial = new Vector<Object>();
         vecParcial.addElement("0");
@@ -876,6 +877,7 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
 
   private ReportTrialBalanceData[] levelFilter(ReportTrialBalanceData[] data, String indice,
       boolean found, String strLevel) {
+    String localIndice = indice;
     if (data == null || data.length == 0 || strLevel == null || strLevel.equals(""))
       return data;
     ReportTrialBalanceData[] result = null;
@@ -884,10 +886,10 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
     // log4j.debug("ReportTrialBalanceData.levelFilter() - data: " +
     // data.length);
 
-    if (indice == null)
-      indice = "0";
+    if (localIndice == null)
+      localIndice = "0";
     for (int i = 0; i < data.length; i++) {
-      if (data[i].parentId.equals(indice)
+      if (data[i].parentId.equals(localIndice)
           && (!found || data[i].elementlevel.equalsIgnoreCase(strLevel))) {
         ReportTrialBalanceData[] dataChilds = levelFilter(data, data[i].id,
             (found || data[i].elementlevel.equals(strLevel)), strLevel);

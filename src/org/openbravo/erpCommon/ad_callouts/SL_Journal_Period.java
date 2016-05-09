@@ -72,6 +72,7 @@ public class SL_Journal_Period extends HttpSecureAppServlet {
       String strDateAcctNew, String strDateDocNew, String strcPeriodIdNew, String strWindowId,
       String strChanged, String strTabId, String strCurrencyId, String strAcctSchemaId,
       String strCurrencyRateType) throws IOException, ServletException {
+    String localStrChanged = strChanged;
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
@@ -96,12 +97,12 @@ public class SL_Journal_Period extends HttpSecureAppServlet {
     String strDateAcct = strDateAcctNew;
     String strcPeriodId = strcPeriodIdNew;
     // When DateDoc is changed, update DateAcct
-    if (strChanged.equals("inpdatedoc")) {
+    if (localStrChanged.equals("inpdatedoc")) {
       strDateAcct = strDateDocNew;
-      strChanged = "inpdateacct";
+      localStrChanged = "inpdateacct";
     }
     // When DateAcct is changed, set C_Period_ID
-    if (strChanged.equals("inpdateacct")) {
+    if (localStrChanged.equals("inpdateacct")) {
       strcPeriodId = SLJournalPeriodData.period(this, stradClientId, stradOrgId, strDateAcct);
       if (strcPeriodId.equals("")) {
         StringBuffer resultado = new StringBuffer();
@@ -121,7 +122,7 @@ public class SL_Journal_Period extends HttpSecureAppServlet {
 
     }
     boolean isStandardPeriod = true;
-    if (strChanged.equals("inpcPeriodId") && !strcPeriodId.equals("")) {
+    if (localStrChanged.equals("inpcPeriodId") && !strcPeriodId.equals("")) {
       // When C_Period_ID is changed, check if in DateAcct range and set
       // to end date if not
       SLJournalPeriodData[] data = SLJournalPeriodData.select(this, strcPeriodId);

@@ -52,8 +52,9 @@ public class ResetAccounting {
   @SuppressWarnings("unchecked")
   public static HashMap<String, Integer> delete(String adClientId, String adOrgId,
       String adTableId, String recordId, String strdatefrom, String strdateto) throws OBException {
-    if (recordId == null) {
-      recordId = "";
+    String localRecordId = recordId;
+    if (localRecordId == null) {
+      localRecordId = "";
     }
     long totalProcess = System.currentTimeMillis();
     long start = 0l;
@@ -71,9 +72,9 @@ public class ResetAccounting {
     try {
       Set<String> orgIds = new OrganizationStructureProvider().getChildTree(adOrgId, true);
       for (String table : tables) {
-        List<String> docbasetypes = getDocbasetypes(client, table, recordId);
+        List<String> docbasetypes = getDocbasetypes(client, table, localRecordId);
         String myQuery = "select distinct e.recordID from FinancialMgmtAccountingFact e where e.organization.id in (:orgIds) and e.client.id = :clientId and e.table.id = :tableId";
-        if (recordId != null && !"".equals(recordId)) {
+        if (localRecordId != null && !"".equals(localRecordId)) {
           myQuery = myQuery + " and e.recordID = :recordId ";
         }
         for (String dbt : docbasetypes) {
@@ -101,7 +102,7 @@ public class ResetAccounting {
                 organizationPeriodControl.put(organization, orgperiodcontrol);
                 if (!organizationPeriod.keySet().contains(orgperiodcontrol)) {
                   periods = getPeriodsDates(getOpenPeriods(client, dbt, orgIds, calendarId, table,
-                      recordId, strdatefrom, strdateto, orgperiodcontrol));
+                      localRecordId, strdatefrom, strdateto, orgperiodcontrol));
                   organizationPeriod.put(orgperiodcontrol, periods);
                 }
               }
@@ -131,8 +132,8 @@ public class ResetAccounting {
                   .append(" and not exists (select a from FinancialMgmtAccountingFact a where a.recordID = e.recordID and a.table.id = e.table.id and (a.accountingDate < :dateFrom or a.accountingDate > :dateTo))");
               final Query query = OBDal.getInstance().getSession()
                   .createQuery(myQuery + consDate.toString());
-              if (recordId != null && !"".equals(recordId)) {
-                query.setString("recordId", recordId);
+              if (localRecordId != null && !"".equals(localRecordId)) {
+                query.setString("recordId", localRecordId);
               }
               query.setParameterList("orgIds", orgIds);
               query.setString("clientId", client);
@@ -141,7 +142,7 @@ public class ResetAccounting {
               query.setDate("dateFrom", p[0]);
               query.setDate("dateTo", p[1]);
               query.setString("organization", organization);
-              if (recordId != null && !"".equals(recordId)) {
+              if (localRecordId != null && !"".equals(localRecordId)) {
                 query.setMaxResults(1);
               } else {
                 query.setFetchSize(FETCH_SIZE);
@@ -164,9 +165,9 @@ public class ResetAccounting {
               // Documents with postings in different periods are treated separately to validate
               // all
               // dates are within an open period
-              HashMap<String, Integer> partial = treatExceptions(exceptionsSql, recordId, table,
-                  orgIds, client, p[0], p[1], calendarId, strdatefrom, strdateto, dbt, orgAllow,
-                  organization);
+              HashMap<String, Integer> partial = treatExceptions(exceptionsSql, localRecordId,
+                  table, orgIds, client, p[0], p[1], calendarId, strdatefrom, strdateto, dbt,
+                  orgAllow, organization);
               deleted = deleted + partial.get("deleted");
               updated = updated + partial.get("updated");
               docUpdated = docUpdated + partial.get("updated");
@@ -188,8 +189,9 @@ public class ResetAccounting {
     results.put("deleted", deleted);
     results.put("updated", updated);
     log4j.debug("total totalProcess (milies): " + (System.currentTimeMillis() - totalProcess));
-    if (recordId != null && !"".equals(recordId) && deleted == 0 && updated == 0) {
-      if (recordId != null && !"".equals(recordId) && adTableId != null && !"".equals(adTableId)) {
+    if (localRecordId != null && !"".equals(localRecordId) && deleted == 0 && updated == 0) {
+      if (localRecordId != null && !"".equals(localRecordId) && adTableId != null
+          && !"".equals(adTableId)) {
         // If record exists but there is no entry in fact table then unpost record
         try {
           OBContext.setAdminMode(false);
@@ -198,7 +200,7 @@ public class ResetAccounting {
           obc.setFilterOnReadableClients(false);
           obc.setFilterOnReadableOrganization(false);
           obc.setFilterOnActive(false);
-          obc.add(Restrictions.eq(AccountingFact.PROPERTY_RECORDID, recordId));
+          obc.add(Restrictions.eq(AccountingFact.PROPERTY_RECORDID, localRecordId));
           obc.add(Restrictions.eq(AccountingFact.PROPERTY_TABLE, table));
           obc.setMaxResults(1);
           if (obc.list().isEmpty() && !table.isView()) {
@@ -216,7 +218,7 @@ public class ResetAccounting {
                   + " = :recordID ";
             }
             final Query update = OBDal.getInstance().getSession().createSQLQuery(strUpdate);
-            update.setParameter("recordID", recordId);
+            update.setParameter("recordID", localRecordId);
             updated = update.executeUpdate();
             return results;
           }

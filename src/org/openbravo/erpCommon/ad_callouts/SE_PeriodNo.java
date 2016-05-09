@@ -59,6 +59,7 @@ public class SE_PeriodNo extends HttpSecureAppServlet {
   private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strYearId,
       String strWindowId, String strOrgId, String strCalendarId, String strChanged)
       throws IOException, ServletException {
+    String localStrCalendarId = strCalendarId;
 
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
@@ -103,7 +104,7 @@ public class SE_PeriodNo extends HttpSecureAppServlet {
         for (int i = 0; i < tdv.length; i++) {
           resultado.append("new Array(\"" + tdv[i].getField("id") + "\", \""
               + tdv[i].getField("Name") + "\")");
-          strCalendarId = tdv[i].getField("id");
+          localStrCalendarId = tdv[i].getField("id");
           if (i < tdv.length - 1)
             resultado.append(",\n");
         }
@@ -114,7 +115,7 @@ public class SE_PeriodNo extends HttpSecureAppServlet {
 
       // Update the years
       try {
-        tdv = SEPeriodNoData.getYears(this, strCalendarId);
+        tdv = SEPeriodNoData.getYears(this, localStrCalendarId);
       } catch (Exception ex) {
         throw new ServletException(ex);
       }

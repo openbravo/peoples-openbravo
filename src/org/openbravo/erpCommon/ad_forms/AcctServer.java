@@ -1350,10 +1350,14 @@ public abstract class AcctServer {
 
   public static String getConvertedAmt(String Amt, String CurFrom_ID, String CurTo_ID,
       String ConvDate, String RateType, String client, String org, ConnectionProvider conn) {
+    String localRateType = RateType;
+    String localConvDate = ConvDate;
     if (log4j.isDebugEnabled())
-      log4j.debug("AcctServer - getConvertedAmount - starting method - Amt : " + Amt
-          + " - CurFrom_ID : " + CurFrom_ID + " - CurTo_ID : " + CurTo_ID + "- ConvDate: "
-          + ConvDate + " - RateType:" + RateType + " - client:" + client + "- org:" + org);
+      log4j
+          .debug("AcctServer - getConvertedAmount - starting method - Amt : " + Amt
+              + " - CurFrom_ID : " + CurFrom_ID + " - CurTo_ID : " + CurTo_ID + "- ConvDate: "
+              + localConvDate + " - RateType:" + localRateType + " - client:" + client + "- org:"
+              + org);
     if (Amt.equals(""))
       throw new IllegalArgumentException(
           "AcctServer - getConvertedAmt - required parameter missing - Amt");
@@ -1361,13 +1365,13 @@ public abstract class AcctServer {
       return Amt;
     AcctServerData[] data = null;
     try {
-      if (ConvDate != null && ConvDate.equals(""))
-        ConvDate = DateTimeData.today(conn);
+      if (localConvDate != null && localConvDate.equals(""))
+        localConvDate = DateTimeData.today(conn);
       // ConvDate IN DATE
-      if (RateType == null || RateType.equals(""))
-        RateType = "S";
-      data = AcctServerData.currencyConvert(conn, Amt, CurFrom_ID, CurTo_ID, ConvDate, RateType,
-          client, org);
+      if (localRateType == null || localRateType.equals(""))
+        localRateType = "S";
+      data = AcctServerData.currencyConvert(conn, Amt, CurFrom_ID, CurTo_ID, localConvDate,
+          localRateType, client, org);
     } catch (ServletException e) {
       log4j.warn(e);
       e.printStackTrace();
@@ -1387,17 +1391,19 @@ public abstract class AcctServer {
 
   public static BigDecimal getConvertionRate(String CurFrom_ID, String CurTo_ID, String ConvDate,
       String RateType, String client, String org, ConnectionProvider conn) {
+    String localRateType = RateType;
+    String localConvDate = ConvDate;
     if (CurFrom_ID.equals(CurTo_ID))
       return BigDecimal.ONE;
     AcctServerData[] data = null;
     try {
-      if (ConvDate != null && ConvDate.equals(""))
-        ConvDate = DateTimeData.today(conn);
+      if (localConvDate != null && localConvDate.equals(""))
+        localConvDate = DateTimeData.today(conn);
       // ConvDate IN DATE
-      if (RateType == null || RateType.equals(""))
-        RateType = "S";
-      data = AcctServerData.currencyConvertionRate(conn, CurFrom_ID, CurTo_ID, ConvDate, RateType,
-          client, org);
+      if (localRateType == null || localRateType.equals(""))
+        localRateType = "S";
+      data = AcctServerData.currencyConvertionRate(conn, CurFrom_ID, CurTo_ID, localConvDate,
+          localRateType, client, org);
     } catch (ServletException e) {
       log4j.warn(e);
       e.printStackTrace();
@@ -2549,28 +2555,33 @@ public abstract class AcctServer {
   public static String getConvertedAmt(String Amt, String CurFrom_ID, String CurTo_ID,
       String ConvDate, String RateType, String client, String org, String recordId, String docType,
       ConnectionProvider conn) {
+    String localRateType = RateType;
+    String localConvDate = ConvDate;
+    String amt = Amt;
     boolean useSystemConversionRate = true;
     if (log4j.isDebugEnabled())
-      log4j.debug("AcctServer - getConvertedAmount - starting method - Amt : " + Amt
-          + " - CurFrom_ID : " + CurFrom_ID + " - CurTo_ID : " + CurTo_ID + "- ConvDate: "
-          + ConvDate + " - RateType:" + RateType + " - client:" + client + "- org:" + org);
+      log4j
+          .debug("AcctServer - getConvertedAmount - starting method - Amt : " + amt
+              + " - CurFrom_ID : " + CurFrom_ID + " - CurTo_ID : " + CurTo_ID + "- ConvDate: "
+              + localConvDate + " - RateType:" + localRateType + " - client:" + client + "- org:"
+              + org);
 
-    if (Amt.equals(""))
+    if (amt.equals(""))
       throw new IllegalArgumentException(
           "AcctServer - getConvertedAmt - required parameter missing - Amt");
     if ((CurFrom_ID.equals(CurTo_ID) && !docType.equals(EXCHANGE_DOCTYPE_Transaction))
-        || Amt.equals("0"))
-      return Amt;
+        || amt.equals("0"))
+      return amt;
     AcctServerData[] data = null;
     OBContext.setAdminMode();
     try {
-      if (ConvDate != null && ConvDate.equals(""))
-        ConvDate = DateTimeData.today(conn);
+      if (localConvDate != null && localConvDate.equals(""))
+        localConvDate = DateTimeData.today(conn);
       // ConvDate IN DATE
-      if (RateType == null || RateType.equals(""))
-        RateType = "S";
-      data = AcctServerData.currencyConvert(conn, Amt, CurFrom_ID, CurTo_ID, ConvDate, RateType,
-          client, org);
+      if (localRateType == null || localRateType.equals(""))
+        localRateType = "S";
+      data = AcctServerData.currencyConvert(conn, amt, CurFrom_ID, CurTo_ID, localConvDate,
+          localRateType, client, org);
       // Search if exists any conversion rate at document level
 
       OBCriteria<ConversionRateDoc> docRateCriteria = OBDal.getInstance().createCriteria(
@@ -2590,10 +2601,10 @@ public abstract class AcctServer {
           strDateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
               .getProperty("dateFormat.java");
           final SimpleDateFormat dateFormat = new SimpleDateFormat(strDateFormat);
-          ConvDate = dateFormat.format(reversedCriteria.list().get(0).getReversedInvoice()
+          localConvDate = dateFormat.format(reversedCriteria.list().get(0).getReversedInvoice()
               .getAccountingDate());
-          data = AcctServerData.currencyConvert(conn, Amt, CurFrom_ID, CurTo_ID, ConvDate,
-              RateType, client, org);
+          data = AcctServerData.currencyConvert(conn, amt, CurFrom_ID, CurTo_ID, localConvDate,
+              localRateType, client, org);
           docRateCriteria.add(Restrictions.eq(
               ConversionRateDoc.PROPERTY_INVOICE,
               OBDal.getInstance().get(Invoice.class,
@@ -2615,9 +2626,9 @@ public abstract class AcctServer {
         APRM_FinaccTransactionV a = OBDal.getInstance()
             .get(APRM_FinaccTransactionV.class, recordId);
         if (a.getForeignCurrency() != null) { // && !a.getForeignCurrency().getId().equals(CurTo_ID)
-          Amt = a.getForeignAmount().toString();
-          data = AcctServerData.currencyConvert(conn, Amt, a.getForeignCurrency().getId(),
-              CurTo_ID, ConvDate, RateType, client, org);
+          amt = a.getForeignAmount().toString();
+          data = AcctServerData.currencyConvert(conn, amt, a.getForeignCurrency().getId(),
+              CurTo_ID, localConvDate, localRateType, client, org);
           docRateCriteria.add(Restrictions.eq(ConversionRateDoc.PROPERTY_TOCURRENCY, OBDal
               .getInstance().get(Currency.class, CurTo_ID)));
           docRateCriteria.add(Restrictions.eq(ConversionRateDoc.PROPERTY_CURRENCY, OBDal
@@ -2636,7 +2647,7 @@ public abstract class AcctServer {
           || docType.equals(EXCHANGE_DOCTYPE_Transaction)) {
         List<ConversionRateDoc> conversionRates = docRateCriteria.list();
         if (!conversionRates.isEmpty() && !useSystemConversionRate) {
-          BigDecimal Amount = new BigDecimal(Amt);
+          BigDecimal Amount = new BigDecimal(amt);
           BigDecimal AmountConverted = Amount.multiply(conversionRates.get(0).getRate()).setScale(
               2, BigDecimal.ROUND_HALF_UP);
           return AmountConverted.toString();

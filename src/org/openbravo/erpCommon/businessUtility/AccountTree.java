@@ -226,7 +226,7 @@ public class AccountTree {
    * This method updates all the Quantitie's signs of the tree. Is used by the constructor to
    * initialize the element's quantities. Also initializes the level of each account
    * 
-   * @param rootElement
+   * @param localRootElement
    *          String with the index from which to start updating.
    * @param level
    *          Integer with the level of the elements.
@@ -236,6 +236,7 @@ public class AccountTree {
    */
   private AccountTreeData[] updateTreeQuantitiesSign(String rootElement, int level,
       String accountSign) {
+    String localRootElement = rootElement;
     if (accountsTree == null || accountsTree.length == 0)
       return accountsTree;
     AccountTreeData[] result = null;
@@ -243,10 +244,10 @@ public class AccountTree {
     // if (log4j.isDebugEnabled())
     // log4j.debug("AccountTree.updateTreeQuantitiesSign() - elements: " +
     // elements.length);
-    if (rootElement == null)
-      rootElement = "0";
+    if (localRootElement == null)
+      localRootElement = "0";
     for (int i = 0; i < accountsTree.length; i++) {
-      if (accountsTree[i].parentId.equals(rootElement)) {
+      if (accountsTree[i].parentId.equals(localRootElement)) {
         // accountSign = accountsTree[i].accountsign;
         AccountTreeData[] dataChilds = updateTreeQuantitiesSign(accountsTree[i].nodeId,
             (level + 1), accountSign);
@@ -440,7 +441,7 @@ public class AccountTree {
    * 
    * @param operands
    *          Array with the forms.
-   * @param reportNode
+   * @param localReportNode
    *          Array with the start indexes.
    * @param totalAmounts
    *          Vector with the accumulated totals.
@@ -452,11 +453,12 @@ public class AccountTree {
    */
   private AccountTreeData[] calculateTree(AccountTreeData[] operands, String[] reportNode,
       Vector<Object> totalAmounts, boolean applysign, boolean isExactValue) {
+    String[] localReportNode = reportNode;
     if (reportElements == null || reportElements.length == 0)
       return reportElements;
-    if (reportNode == null) {
-      reportNode = new String[1];
-      reportNode[0] = "0";
+    if (localReportNode == null) {
+      localReportNode = new String[1];
+      localReportNode[0] = "0";
     }
     AccountTreeData[] result = null;
     Vector<Object> report = new Vector<Object>();
@@ -472,8 +474,9 @@ public class AccountTree {
     BigDecimal totalRef = new BigDecimal((String) totalAmounts.elementAt(1));
 
     for (int i = 0; i < reportElements.length; i++) {
-      if ((isExactValue && nodeIn(reportElements[i].nodeId, reportNode))
-          || (!isExactValue && nodeIn(reportElements[i].parentId, reportNode))) { // modified by
+      if ((isExactValue && nodeIn(reportElements[i].nodeId, localReportNode))
+          || (!isExactValue && nodeIn(reportElements[i].parentId, localReportNode))) { // modified
+                                                                                       // by
         // Eduardo Argal.
         // For
         // operands calculation
@@ -574,7 +577,7 @@ public class AccountTree {
    * Method to make the level filter of the tree, to eliminate the levels that shouldn't be shown in
    * the report.
    * 
-   * @param indice
+   * @param localIndice
    *          Array of indexes to evaluate.
    * @param found
    *          Boolean to know if the index has been found
@@ -583,6 +586,7 @@ public class AccountTree {
    * @return New Array with the filter applied.
    */
   private AccountTreeData[] levelFilter(String[] indice, boolean found, String strLevel) {
+    String[] localIndice = indice;
     if (reportElements == null || reportElements.length == 0 || strLevel == null
         || strLevel.equals(""))
       return reportElements;
@@ -592,14 +596,14 @@ public class AccountTree {
       log4j.debug("AccountTree.levelFilter() - accounts: " + reportElements.length);
 
     // if (indice == null) indice="0";
-    if (indice == null) {
-      indice = new String[1];
-      indice[0] = "0";
+    if (localIndice == null) {
+      localIndice = new String[1];
+      localIndice[0] = "0";
     }
     for (int i = 0; i < reportElements.length; i++) {
       // if (resultantAccounts[i].parentId.equals(indice) && (!found ||
       // resultantAccounts[i].elementlevel.equalsIgnoreCase(strLevel))) {
-      if (nodeIn(reportElements[i].parentId, indice)
+      if (nodeIn(reportElements[i].parentId, localIndice)
           && (!found || reportElements[i].elementlevel.equalsIgnoreCase(strLevel))) {
         AccountTreeData[] dataChilds = levelFilter(reportElements[i].nodeId,
             (found || reportElements[i].elementlevel.equals(strLevel)), strLevel);

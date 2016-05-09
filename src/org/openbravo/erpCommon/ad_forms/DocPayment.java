@@ -496,21 +496,22 @@ public class DocPayment extends AcctServer {
       String conversionDate, String C_Currency_ID_From, String C_Currency_ID, DocLine line,
       AcctSchema as, Fact fact, String Fact_Acct_Group_ID, ConnectionProvider conn)
       throws ServletException {
+    String amount = Amount;
     if (docPaymentLog4j.isDebugEnabled())
-      docPaymentLog4j.debug("Amount:" + Amount + " curr from:" + C_Currency_ID_From + " Curr to:"
+      docPaymentLog4j.debug("Amount:" + amount + " curr from:" + C_Currency_ID_From + " Curr to:"
           + C_Currency_ID + " convDate:" + conversionDate + " DateAcct:" + DateAcct);
-    if (Amount == null || Amount.equals(""))
-      Amount = "0";
+    if (amount == null || amount.equals(""))
+      amount = "0";
     if (C_Currency_ID_From.equals(C_Currency_ID))
-      return Amount;
+      return amount;
     else
       MultiCurrency = true;
-    String Amt = getConvertedAmt(Amount, C_Currency_ID_From, C_Currency_ID, conversionDate, "",
+    String Amt = getConvertedAmt(amount, C_Currency_ID_From, C_Currency_ID, conversionDate, "",
         AD_Client_ID, AD_Org_ID, conn);
     if (docPaymentLog4j.isDebugEnabled())
       docPaymentLog4j.debug("Amt:" + Amt);
 
-    String AmtTo = getConvertedAmt(Amount, C_Currency_ID_From, C_Currency_ID, DateAcct, "",
+    String AmtTo = getConvertedAmt(amount, C_Currency_ID_From, C_Currency_ID, DateAcct, "",
         AD_Client_ID, AD_Org_ID, conn);
     if (docPaymentLog4j.isDebugEnabled())
       docPaymentLog4j.debug("AmtTo:" + AmtTo);

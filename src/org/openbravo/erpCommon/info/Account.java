@@ -198,9 +198,8 @@ public class Account extends HttpSecureAppServlet {
         .createXmlDocument();
     AccountData[] data = null;
     if (isDefault) {
-      if (strAlias.equals("") && strCombination.equals(""))
-        strAlias = "%";
-      data = AccountData.set(strAlias, strCombination);
+      data = AccountData.set(strAlias.equals("") && strCombination.equals("") ? "%" : strAlias,
+          strCombination);
     } else {
       data = AccountData.select(this, "1", "", "", "", "", "", "", "", "", "", strValidCombination,
           Utility.getContext(this, vars, "#User_Client", "Account"),
@@ -336,6 +335,7 @@ public class Account extends HttpSecureAppServlet {
       String strNewFilter, String strAcctSchema) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: print page rows");
+    String localNewFilter = strNewFilter;
     int page = 0;
     SQLReturnObject[] headers = getHeaders(vars);
     FieldProvider[] data = null;
@@ -353,12 +353,12 @@ public class Account extends HttpSecureAppServlet {
         page = TableSQLData.calcAndGetBackendPage(vars, "DebtPaymentInfo.currentPage");
         if (vars.getStringParameter("movePage", "").length() > 0) {
           // on movePage action force executing countRows again
-          strNewFilter = "";
+          localNewFilter = "";
         }
         int oldOffset = offset;
         offset = (page * TableSQLData.maxRowsPerGridPage) + offset;
         log4j.debug("relativeOffset: " + oldOffset + " absoluteOffset: " + offset);
-        if (strNewFilter.equals("1") || strNewFilter.equals("")) { // New
+        if (localNewFilter.equals("1") || localNewFilter.equals("")) { // New
           // filter
           // or
           // first

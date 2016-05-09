@@ -650,6 +650,7 @@ public class DocFINReconciliation extends AcctServer {
   public Fact createFactPayment(DocLine_FINReconciliation line, AcctSchema as,
       ConnectionProvider conn, Fact fact, String Fact_Acct_Group_ID, String Fact_Acct_Group_ID2)
       throws ServletException {
+    Fact localFact = fact;
     FIN_Payment payment = OBDal.getInstance().get(FIN_Payment.class, line.getFinPaymentId());
     FIN_FinaccTransaction transaction = OBDal.getInstance().get(FIN_FinaccTransaction.class,
         line.getFinFinAccTransactionId());
@@ -661,10 +662,10 @@ public class DocFINReconciliation extends AcctServer {
       // Should map with the amount booked in the transaction and adjust with currency gain/loss
       transactionAmount = convertAmount(new BigDecimal(line.getAmount()), !payment.isReceipt(),
           dateFormat.format(transaction.getDateAcct()), TABLEID_Transaction, transaction.getId(),
-          C_Currency_ID, as.m_C_Currency_ID, line, as, fact, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-          conn);
+          C_Currency_ID, as.m_C_Currency_ID, line, as, localFact, Fact_Acct_Group_ID,
+          nextSeqNo(SeqNo), conn);
       line.m_Record_Id2 = transaction.getId();
-      fact.createLine(line, getAccountTransactionPayment(conn, payment, as), C_Currency_ID,
+      localFact.createLine(line, getAccountTransactionPayment(conn, payment, as), C_Currency_ID,
           !payment.isReceipt() ? transactionAmount.toString() : "",
           payment.isReceipt() ? transactionAmount.toString() : "", Fact_Acct_Group_ID,
           nextSeqNo(SeqNo), DocumentType, line.m_DateAcct, null, conn);
@@ -700,18 +701,18 @@ public class DocFINReconciliation extends AcctServer {
             finPaymentDetailID);
         detail.setInvoiceTaxCashVAT_V(finPaymentDetailID);
         detail.setInvoiceTaxCashVAT_V(data[i].getField("MergedPaymentDetailId"));
-        fact = createFactPaymentDetails(detail, paymentDetail, as, conn, fact, Fact_Acct_Group_ID,
-            Fact_Acct_Group_ID2);
+        localFact = createFactPaymentDetails(detail, paymentDetail, as, conn, localFact,
+            Fact_Acct_Group_ID, Fact_Acct_Group_ID2);
       }
     } else {
       BigDecimal paymentAmount = new BigDecimal(line.getAmount());
       // Should map with the amount booked in the payment and adjust with currency gain/loss
       paymentAmount = convertAmount(new BigDecimal(line.getAmount()), !payment.isReceipt(),
           dateFormat.format(transaction.getDateAcct()), TABLEID_Payment, line.getFinPaymentId(),
-          C_Currency_ID, as.m_C_Currency_ID, line, as, fact, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-          conn);
+          C_Currency_ID, as.m_C_Currency_ID, line, as, localFact, Fact_Acct_Group_ID,
+          nextSeqNo(SeqNo), conn);
       line.m_Record_Id2 = payment.getId();
-      fact.createLine(line, getAccountPayment(conn, payment, as), C_Currency_ID,
+      localFact.createLine(line, getAccountPayment(conn, payment, as), C_Currency_ID,
           !payment.isReceipt() ? paymentAmount.toString() : "",
           payment.isReceipt() ? paymentAmount.toString() : "", Fact_Acct_Group_ID,
           nextSeqNo(SeqNo), DocumentType, line.m_DateAcct, null, conn);
@@ -722,9 +723,10 @@ public class DocFINReconciliation extends AcctServer {
     paymentTypeLine.copyInfo(line);
     paymentTypeLine.m_Record_Id2 = "";
     paymentTypeLine.setFinFinAccTransactionId(transaction.getId());
-    fact.createLine(paymentTypeLine, getAccountReconciliation(conn, payment, as), C_Currency_ID,
-        payment.isReceipt() ? line.getAmount() : "", !payment.isReceipt() ? line.getAmount() : "",
-        Fact_Acct_Group_ID, "999999", DocumentType, line.m_DateAcct, null, conn);
+    localFact.createLine(paymentTypeLine, getAccountReconciliation(conn, payment, as),
+        C_Currency_ID, payment.isReceipt() ? line.getAmount() : "",
+        !payment.isReceipt() ? line.getAmount() : "", Fact_Acct_Group_ID, "999999", DocumentType,
+        line.m_DateAcct, null, conn);
     if (!getDocumentPaymentConfirmation(payment)
         && !getDocumentTransactionConfirmation(transaction)) {
       // Pre-payment is consumed when Used Credit Amount not equals Zero. When consuming Credit no
@@ -739,8 +741,8 @@ public class DocFINReconciliation extends AcctServer {
           String creditAmountConverted = convertAmount(creditPayment.getAmount(), isReceiptPayment,
               DateAcct, TABLEID_Payment, creditPayment.getCreditPaymentUsed().getId(),
               creditPayment.getCreditPaymentUsed().getCurrency().getId(), as.m_C_Currency_ID, line,
-              as, fact, Fact_Acct_Group_ID, nextSeqNo(SeqNo), conn, false).toString();
-          fact.createLine(
+              as, localFact, Fact_Acct_Group_ID, nextSeqNo(SeqNo), conn, false).toString();
+          localFact.createLine(
               line,
               getAccountBPartner(creditPayment.getCreditPaymentUsed().getBusinessPartner().getId(),
                   as, isReceiptPayment, true, conn), creditPayment.getCreditPaymentUsed()
@@ -753,16 +755,18 @@ public class DocFINReconciliation extends AcctServer {
         }
         if (!payment.isReceipt() && amtDiff.compareTo(BigDecimal.ZERO) == 1 || payment.isReceipt()
             && amtDiff.compareTo(BigDecimal.ZERO) == -1) {
-          fact.createLine(null, getAccount(AcctServer.ACCTTYPE_ConvertGainDefaultAmt, as, conn),
-              payment.getCurrency().getId(), "", amtDiff.abs().toString(), Fact_Acct_Group_ID,
+          localFact.createLine(null,
+              getAccount(AcctServer.ACCTTYPE_ConvertGainDefaultAmt, as, conn), payment
+                  .getCurrency().getId(), "", amtDiff.abs().toString(), Fact_Acct_Group_ID,
               nextSeqNo(SeqNo), DocumentType, conn);
         } else {
-          fact.createLine(null, getAccount(AcctServer.ACCTTYPE_ConvertChargeDefaultAmt, as, conn),
-              payment.getCurrency().getId(), amtDiff.abs().toString(), "", Fact_Acct_Group_ID,
+          localFact.createLine(null,
+              getAccount(AcctServer.ACCTTYPE_ConvertChargeDefaultAmt, as, conn), payment
+                  .getCurrency().getId(), amtDiff.abs().toString(), "", Fact_Acct_Group_ID,
               nextSeqNo(SeqNo), DocumentType, conn);
         }
         if (creditPayments.isEmpty()) {
-          fact.createLine(
+          localFact.createLine(
               line,
               getAccountBPartner(payment.getBusinessPartner().getId(), as, payment.isReceipt(),
                   true, conn), payment.getCurrency().getId(), (payment.isReceipt() ? payment
@@ -774,7 +778,7 @@ public class DocFINReconciliation extends AcctServer {
     }
 
     SeqNo = "0";
-    return fact;
+    return localFact;
   }
 
   @Deprecated

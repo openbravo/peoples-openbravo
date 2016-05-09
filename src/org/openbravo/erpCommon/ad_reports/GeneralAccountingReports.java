@@ -149,6 +149,10 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
       String strAsDateToRef, String strElementValue, String strConImporte, String strOrg,
       String strLevel, String strConCodigo, String strcAcctSchemaId, String strPageNo)
       throws IOException, ServletException {
+    String localStrDateToRef = strDateToRef;
+    String localStrDateFrom = strDateFrom;
+    String localStrDateFromRef = strDateFromRef;
+    String localStrDateTo = strDateTo;
     if (log4j.isDebugEnabled())
       log4j.debug("Output: pdf");
 
@@ -199,10 +203,10 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
         String strYearsToCloseRef = "";
         if (strCalculateOpening.equals("Y")) {
           strCalculateOpening = "N";
-          strDateTo = strAsDateTo;
-          strDateToRef = strAsDateToRef;
-          strDateFrom = "";
-          strDateFromRef = "";
+          localStrDateTo = strAsDateTo;
+          localStrDateToRef = strAsDateToRef;
+          localStrDateFrom = "";
+          localStrDateFromRef = "";
           String[] yearsInfo = getYearsToClose(startingEndingDate.get("startingDate"), strOrg,
               year.getCalendar(), strcAcctSchemaId, false);
           strYearsToClose = yearsInfo[0];
@@ -236,22 +240,23 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
           AccountTreeData[] accounts = AccountTreeData.selectFactAcct(this,
               Utility.getContext(this, vars, "#AccessibleOrgTree", "GeneralAccountingReports"),
               Utility.getContext(this, vars, "#User_Client", "GeneralAccountingReports"),
-              strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strcAcctSchemaId,
-              Tree.getMembers(this, strTreeOrg, strOrg), "'" + year.getFiscalYear() + "'"
-                  + strYearsToClose, openingEntryOwner, strDateFromRef,
-              DateTimeData.nDaysAfter(this, strDateToRef, "1"), "'" + yearRef.getFiscalYear() + "'"
-                  + strYearsToCloseRef, openingEntryOwnerRef);
+              localStrDateFrom, DateTimeData.nDaysAfter(this, localStrDateTo, "1"),
+              strcAcctSchemaId, Tree.getMembers(this, strTreeOrg, strOrg),
+              "'" + year.getFiscalYear() + "'" + strYearsToClose, openingEntryOwner,
+              localStrDateFromRef, DateTimeData.nDaysAfter(this, localStrDateToRef, "1"), "'"
+                  + yearRef.getFiscalYear() + "'" + strYearsToCloseRef, openingEntryOwnerRef);
           {
             if (log4j.isDebugEnabled())
               log4j.debug("*********** strIncomeSummaryAccount: " + strIncomeSummaryAccount);
-            String strISyear = processIncomeSummary(strDateFrom,
-                DateTimeData.nDaysAfter(this, strDateTo, "1"), "'" + year.getFiscalYear() + "'"
-                    + strYearsToClose, strTreeOrg, strOrg, strcAcctSchemaId);
+            String strISyear = processIncomeSummary(localStrDateFrom,
+                DateTimeData.nDaysAfter(this, localStrDateTo, "1"), "'" + year.getFiscalYear()
+                    + "'" + strYearsToClose, strTreeOrg, strOrg, strcAcctSchemaId);
             if (log4j.isDebugEnabled())
               log4j.debug("*********** strISyear: " + strISyear);
-            String strISyearRef = processIncomeSummary(strDateFromRef,
-                DateTimeData.nDaysAfter(this, strDateToRef, "1"), "'" + yearRef.getFiscalYear()
-                    + "'" + strYearsToCloseRef, strTreeOrg, strOrg, strcAcctSchemaId);
+            String strISyearRef = processIncomeSummary(localStrDateFromRef,
+                DateTimeData.nDaysAfter(this, localStrDateToRef, "1"),
+                "'" + yearRef.getFiscalYear() + "'" + strYearsToCloseRef, strTreeOrg, strOrg,
+                strcAcctSchemaId);
             if (log4j.isDebugEnabled())
               log4j.debug("*********** strISyearRef: " + strISyearRef);
             accounts = appendRecords(accounts, strIncomeSummaryAccount, strISyear, strISyearRef);
@@ -282,16 +287,16 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
         parameters.put("companyName",
             GeneralAccountingReportsData.companyName(this, vars.getClient()));
         parameters.put("date", DateTimeData.today(this));
-        if (strDateFrom.equals(""))
-          strDateFrom = OBDateUtils.formatDate(startingEndingDate.get("startingDate"));
-        if (strDateTo.equals(""))
-          strDateTo = OBDateUtils.formatDate(startingEndingDate.get("endingDate"));
-        if (strDateFromRef.equals(""))
-          strDateFromRef = OBDateUtils.formatDate(startingEndingDateRef.get("startingDate"));
-        if (strDateToRef.equals(""))
-          strDateToRef = OBDateUtils.formatDate(startingEndingDateRef.get("endingDate"));
-        parameters.put("period", strDateFrom + " - " + strDateTo);
-        parameters.put("periodRef", strDateFromRef + " - " + strDateToRef);
+        if (localStrDateFrom.equals(""))
+          localStrDateFrom = OBDateUtils.formatDate(startingEndingDate.get("startingDate"));
+        if (localStrDateTo.equals(""))
+          localStrDateTo = OBDateUtils.formatDate(startingEndingDate.get("endingDate"));
+        if (localStrDateFromRef.equals(""))
+          localStrDateFromRef = OBDateUtils.formatDate(startingEndingDateRef.get("startingDate"));
+        if (localStrDateToRef.equals(""))
+          localStrDateToRef = OBDateUtils.formatDate(startingEndingDateRef.get("endingDate"));
+        parameters.put("period", localStrDateFrom + " - " + localStrDateTo);
+        parameters.put("periodRef", localStrDateFromRef + " - " + localStrDateToRef);
         parameters.put("agnoInitial", year.getFiscalYear());
         parameters.put("agnoRef", yearRef.getFiscalYear());
 

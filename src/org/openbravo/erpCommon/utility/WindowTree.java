@@ -217,30 +217,33 @@ public class WindowTree extends HttpSecureAppServlet {
    *          Array with the tree elements.
    * @param strDireccion
    *          String with the path for the urls.
-   * @param indice
+   * @param localIndice
    *          String with the index.
-   * @param isFirst
+   * @param localIsFirst
    *          Indicates if is the first or not.
    * @return String html with the tree.
    */
   private String generateTree(WindowTreeData[] data, Map<String, List<WindowTreeData>> wtdTree,
       String strDireccion, String indice, boolean isFirst, String strTabId) {
+    boolean localIsFirst = isFirst;
+    String localIndice = indice;
     if (data == null || data.length == 0)
       return "";
     if (log4j.isDebugEnabled())
       log4j.debug("WindowTree.generateTree() - data: " + data.length);
-    if (indice == null)
-      indice = "0";
+    if (localIndice == null)
+      localIndice = "0";
     boolean hayDatos = false;
     StringBuffer strResultado = new StringBuffer();
     strResultado.append("<ul>");
-    isFirst = false;
-    List<WindowTreeData> subList = wtdTree.get(indice);
+    localIsFirst = false;
+    List<WindowTreeData> subList = wtdTree.get(localIndice);
     if (subList != null) {
       List<WindowTreeData> filteredSubList = applyWhereClause(subList, strTabId);
       for (WindowTreeData elem : subList) {
         hayDatos = true;
-        String strHijos = generateTree(data, wtdTree, strDireccion, elem.nodeId, isFirst, strTabId);
+        String strHijos = generateTree(data, wtdTree, strDireccion, elem.nodeId, localIsFirst,
+            strTabId);
         // if elem is present in filtered sublist click action is allowed, else disabled
         if (filteredSubList.contains(elem)) {
           strResultado.append(WindowTreeUtility.addNodeElement(elem.name, elem.description,

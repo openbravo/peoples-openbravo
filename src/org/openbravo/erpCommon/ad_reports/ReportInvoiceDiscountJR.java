@@ -81,11 +81,12 @@ public class ReportInvoiceDiscountJR extends HttpSecureAppServlet {
   private void printPageDataHtml(HttpServletRequest request, HttpServletResponse response,
       VariablesSecureApp vars, String strDateFrom, String strDateTo, String strcBpartnerId,
       String strDiscount, String strCurrencyId) throws IOException, ServletException {
+    String localStrDiscount = strDiscount;
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
 
-    if (strDiscount.equals(""))
-      strDiscount = "N";
+    if (localStrDiscount.equals(""))
+      localStrDiscount = "N";
 
     String strReportName = "@basedesign@/org/openbravo/erpCommon/ad_reports/ReportInvoiceDiscountJR.jrxml";
     String strOutput = "html";
@@ -100,10 +101,10 @@ public class ReportInvoiceDiscountJR extends HttpSecureAppServlet {
       OBError myMessage = null;
       myMessage = new OBError();
       try {
-        data = ReportInvoiceDiscountData.select(this, strCurrencyId,
-            Utility.getContext(this, vars, "#User_Client", "ReportInvoiceDiscountJR"),
-            Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportInvoiceDiscountJR"),
-            strDateFrom, strDateTo, strcBpartnerId, (strDiscount.equals("N")) ? "" : "discount");
+        data = ReportInvoiceDiscountData.select(this, strCurrencyId, Utility.getContext(this, vars,
+            "#User_Client", "ReportInvoiceDiscountJR"), Utility.getContext(this, vars,
+            "#AccessibleOrgTree", "ReportInvoiceDiscountJR"), strDateFrom, strDateTo,
+            strcBpartnerId, (localStrDiscount.equals("N")) ? "" : "discount");
       } catch (ServletException ex) {
         myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
       }
@@ -134,12 +135,13 @@ public class ReportInvoiceDiscountJR extends HttpSecureAppServlet {
   private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String strDateFrom, String strDateTo, String strcBpartnerId, String strCurrencyId,
       String strDiscount) throws IOException, ServletException {
+    String localStrDiscount = strDiscount;
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
 
     XmlDocument xmlDocument = null;
-    if (strDiscount.equals(""))
-      strDiscount = "N";
+    if (localStrDiscount.equals(""))
+      localStrDiscount = "N";
     xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_reports/ReportInvoiceDiscountJR").createXmlDocument();
 
@@ -184,7 +186,7 @@ public class ReportInvoiceDiscountJR extends HttpSecureAppServlet {
     xmlDocument.setParameter("dateTo", strDateTo);
     xmlDocument.setParameter("dateTodisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("dateTosaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
-    xmlDocument.setParameter("discount", strDiscount);
+    xmlDocument.setParameter("discount", localStrDiscount);
     xmlDocument.setData("reportCBPartnerId_IN", "liststructure", SelectorUtilityData
         .selectBpartner(this,
             Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportInvoiceDiscountJR"),

@@ -188,15 +188,16 @@ public class ComboTableData {
    * @throws Exception
    */
   private void setReferenceType(String _reference) throws Exception {
-    if (_reference != null && !_reference.equals("")) {
+    String localReference = _reference;
+    if (localReference != null && !localReference.equals("")) {
       try {
-        Integer.valueOf(_reference).intValue();
+        Integer.valueOf(localReference).intValue();
       } catch (Exception ignore) {
-        if (!Utility.isUUIDString(_reference))
-          _reference = ComboTableQueryData.getBaseReferenceID(getPool(), _reference);
+        if (!Utility.isUUIDString(localReference))
+          localReference = ComboTableQueryData.getBaseReferenceID(getPool(), localReference);
       }
     }
-    setParameter(internalPrefix + "reference", _reference);
+    setParameter(internalPrefix + "reference", localReference);
   }
 
   /**
@@ -236,23 +237,24 @@ public class ComboTableData {
    * @throws Exception
    */
   private void setObjectReference(String _reference) throws Exception {
-    if (_reference != null && !_reference.equals("")) {
+    String localReference = _reference;
+    if (localReference != null && !localReference.equals("")) {
       try {
-        Integer.valueOf(_reference).intValue();
+        Integer.valueOf(localReference).intValue();
       } catch (Exception ignore) {
-        if (!Utility.isUUIDString(_reference)) {
+        if (!Utility.isUUIDString(localReference)) {
           // Looking reference by name! This shouldn't be used, name is prone to change. It only
           // looks in core names
-          _reference = ComboTableQueryData
-              .getReferenceID(getPool(), _reference, getReferenceType());
-          if (_reference == null || _reference.equals("")) {
+          localReference = ComboTableQueryData.getReferenceID(getPool(), localReference,
+              getReferenceType());
+          if (localReference == null || localReference.equals("")) {
             throw new OBException(Utility.messageBD(pool, "ReferenceNotFound", vars.getLanguage())
-                + " " + _reference);
+                + " " + localReference);
           }
         }
       }
     }
-    setParameter(internalPrefix + "objectReference", _reference);
+    setParameter(internalPrefix + "objectReference", localReference);
   }
 
   /**
@@ -272,15 +274,16 @@ public class ComboTableData {
    * @throws Exception
    */
   private void setValidation(String _reference) throws Exception {
-    if (_reference != null && !_reference.equals("")) {
+    String localReference = _reference;
+    if (localReference != null && !localReference.equals("")) {
       try {
-        Integer.valueOf(_reference).intValue();
+        Integer.valueOf(localReference).intValue();
       } catch (Exception ignore) {
-        if (!Utility.isUUIDString(_reference))
-          _reference = ComboTableQueryData.getValidationID(getPool(), _reference);
+        if (!Utility.isUUIDString(localReference))
+          localReference = ComboTableQueryData.getValidationID(getPool(), localReference);
       }
     }
-    setParameter(internalPrefix + "validation", _reference);
+    setParameter(internalPrefix + "validation", localReference);
   }
 
   /**
@@ -683,7 +686,7 @@ public class ComboTableData {
   /**
    * Auxiliar method to make a replace ignoring the case.
    * 
-   * @param data
+   * @param localData
    *          String with the text.
    * @param replaceWhat
    *          The string to search.
@@ -692,19 +695,20 @@ public class ComboTableData {
    * @return String with the text replaced.
    */
   private String replaceIgnoreCase(String data, String replaceWhat, String replaceWith) {
-    if (data == null || data.equals(""))
+    String localData = data;
+    if (localData == null || localData.equals(""))
       return "";
     if (log4j.isDebugEnabled())
-      log4j.debug("parsing data: " + data + " - replace: " + replaceWhat + " - with: "
+      log4j.debug("parsing data: " + localData + " - replace: " + replaceWhat + " - with: "
           + replaceWith);
     StringBuffer text = new StringBuffer();
-    int i = data.toUpperCase().indexOf(replaceWhat.toUpperCase());
+    int i = localData.toUpperCase().indexOf(replaceWhat.toUpperCase());
     while (i != -1) {
-      text.append(data.substring(0, i)).append(replaceWith);
-      data = data.substring(i + replaceWhat.length());
-      i = data.toUpperCase().indexOf(replaceWhat.toUpperCase());
+      text.append(localData.substring(0, i)).append(replaceWith);
+      localData = localData.substring(i + replaceWhat.length());
+      i = localData.toUpperCase().indexOf(replaceWhat.toUpperCase());
     }
-    text.append(data);
+    text.append(localData);
     return text.toString();
   }
 
@@ -979,7 +983,7 @@ public class ComboTableData {
    * 
    * @param st
    *          PreparedStatement object.
-   * @param iParameter
+   * @param localIParameter
    *          Index of the parameter.
    * @param discard
    *          Array with the groups to discard.
@@ -987,6 +991,7 @@ public class ComboTableData {
    */
   private int setSQLParameters(PreparedStatement st, Map<String, String> lparameters,
       int iParameter, String[] discard, String recordId, String filter) {
+    int localIParameter = iParameter;
     Vector<QueryParameterStructure> vAux = getSelectParameters();
     if (vAux != null) {
       for (int i = 0; i < vAux.size(); i++) {
@@ -995,8 +1000,8 @@ public class ComboTableData {
           String strAux = lparameters != null ? (aux.getName() == null ? null : lparameters.get(aux
               .getName().toUpperCase())) : getParameter(aux.getName());
           if (log4j.isDebugEnabled())
-            log4j.debug("Parameter - " + iParameter + " - " + aux.getName() + ": " + strAux);
-          UtilSql.setValue(st, ++iParameter, 12, null, strAux);
+            log4j.debug("Parameter - " + localIParameter + " - " + aux.getName() + ": " + strAux);
+          UtilSql.setValue(st, ++localIParameter, 12, null, strAux);
         }
       }
     }
@@ -1008,8 +1013,8 @@ public class ComboTableData {
           String strAux = lparameters != null ? (aux.getName() == null ? null : lparameters.get(aux
               .getName().toUpperCase())) : getParameter(aux.getName());
           if (log4j.isDebugEnabled())
-            log4j.debug("Parameter - " + iParameter + " - " + aux.getName() + ": " + strAux);
-          UtilSql.setValue(st, ++iParameter, 12, null, strAux);
+            log4j.debug("Parameter - " + localIParameter + " - " + aux.getName() + ": " + strAux);
+          UtilSql.setValue(st, ++localIParameter, 12, null, strAux);
         }
       }
     }
@@ -1021,17 +1026,17 @@ public class ComboTableData {
           String strAux = lparameters != null ? (aux.getName() == null ? null : lparameters.get(aux
               .getName().toUpperCase())) : getParameter(aux.getName());
           if (log4j.isDebugEnabled())
-            log4j.debug("Parameter - " + iParameter + " - " + aux.getName() + ": " + strAux);
-          UtilSql.setValue(st, ++iParameter, 12, null, strAux);
+            log4j.debug("Parameter - " + localIParameter + " - " + aux.getName() + ": " + strAux);
+          UtilSql.setValue(st, ++localIParameter, 12, null, strAux);
         }
       }
     }
     if (recordId != null) {
-      UtilSql.setValue(st, ++iParameter, 12, null, recordId);
+      UtilSql.setValue(st, ++localIParameter, 12, null, recordId);
     }
     if (!StringUtils.isEmpty(filter)) {
       // filtering by value
-      UtilSql.setValue(st, ++iParameter, 12, null, "%" + filter + "%");
+      UtilSql.setValue(st, ++localIParameter, 12, null, "%" + filter + "%");
     }
     vAux = getOrderByParameters();
     if (vAux != null) {
@@ -1041,12 +1046,12 @@ public class ComboTableData {
           String strAux = lparameters != null ? (aux.getName() == null ? null : lparameters.get(aux
               .getName().toUpperCase())) : getParameter(aux.getName());
           if (log4j.isDebugEnabled())
-            log4j.debug("Parameter - " + iParameter + " - " + aux.getName() + ": " + strAux);
-          UtilSql.setValue(st, ++iParameter, 12, null, strAux);
+            log4j.debug("Parameter - " + localIParameter + " - " + aux.getName() + ": " + strAux);
+          UtilSql.setValue(st, ++localIParameter, 12, null, strAux);
         }
       }
     }
-    return iParameter;
+    return localIParameter;
   }
 
   /**
@@ -1285,8 +1290,8 @@ public class ComboTableData {
       for (int i = 0; i < vAux.size(); i++) {
         final String strAux = vAux.elementAt(i);
         try {
-          final String value = Utility.parseParameterValue(conn, variables, data, strAux, tab, window,
-              actual_value, fromSearch);
+          final String value = Utility.parseParameterValue(conn, variables, data, strAux, tab,
+              window, actual_value, fromSearch);
           if (log4j.isDebugEnabled())
             log4j.debug("Combo Parameter: " + strAux + " - Value: " + value);
           setParameter(strAux, value);

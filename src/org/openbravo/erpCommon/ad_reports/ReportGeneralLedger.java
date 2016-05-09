@@ -222,6 +222,8 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
       String strmProductId, String strcProjectId, String strGroupBy, String strcAcctSchemaId,
       String strcelementvaluefromdes, String strcelementvaluetodes, String strShowOpenBalances)
       throws IOException, ServletException {
+    String localStrcelementvaluetodes = strcelementvaluetodes;
+    String localStrcelementvalueto = strcelementvalueto;
     String strRecordRange = Utility.getContext(this, vars, "#RecordRange", "ReportGeneralLedger");
     int intRecordRange = (strRecordRange.equals("") ? 0 : Integer.parseInt(strRecordRange));
     String strInitRecord = vars.getSessionValue("ReportGeneralLedger.initRecordNumber");
@@ -280,26 +282,26 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
       BigDecimal previousCredit = BigDecimal.ZERO;
       String strAllaccounts = "Y";
       if (strcelementvaluefrom != null && !strcelementvaluefrom.equals("")) {
-        if (strcelementvalueto.equals("")) {
-          strcelementvalueto = strcelementvaluefrom;
-          strcelementvaluetodes = ReportGeneralLedgerData.selectSubaccountDescription(this,
-              strcelementvalueto);
-          vars.setSessionValue("inpElementValueIdTo_DES", strcelementvaluetodes);
+        if (localStrcelementvalueto.equals("")) {
+          localStrcelementvalueto = strcelementvaluefrom;
+          localStrcelementvaluetodes = ReportGeneralLedgerData.selectSubaccountDescription(this,
+              localStrcelementvalueto);
+          vars.setSessionValue("inpElementValueIdTo_DES", localStrcelementvaluetodes);
 
         }
         strAllaccounts = "N";
         log4j.debug("##################### strcelementvaluefrom= " + strcelementvaluefrom);
-        log4j.debug("##################### strcelementvalueto= " + strcelementvalueto);
+        log4j.debug("##################### strcelementvalueto= " + localStrcelementvalueto);
       } else {
-        strcelementvalueto = "";
-        strcelementvaluetodes = "";
-        vars.setSessionValue("inpElementValueIdTo_DES", strcelementvaluetodes);
+        localStrcelementvalueto = "";
+        localStrcelementvaluetodes = "";
+        vars.setSessionValue("inpElementValueIdTo_DES", localStrcelementvaluetodes);
       }
       Long initMainSelect = System.currentTimeMillis();
       ReportGeneralLedgerData scroll = null;
       try {
         scroll = ReportGeneralLedgerData.select2(this, rowNum, strGroupByText, strGroupBy,
-            strAllaccounts, strcelementvaluefrom, strcelementvalueto,
+            strAllaccounts, strcelementvaluefrom, localStrcelementvalueto,
             Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"),
             Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
             "Y".equals(strShowOpenBalances) ? strDateTo : null, strcAcctSchemaId, strDateFrom,
@@ -333,7 +335,7 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
             // firstPagBlock = true;
             Long init = System.currentTimeMillis();
             dataTotal = ReportGeneralLedgerData.select2Total(this, rowNum, strGroupByText,
-                strGroupBy, strAllaccounts, strcelementvaluefrom, strcelementvalueto,
+                strGroupBy, strAllaccounts, strcelementvaluefrom, localStrcelementvalueto,
                 Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"),
                 Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
                 strcAcctSchemaId, "", DateTimeData.nDaysAfter(this, data[0].dateacct, "1"),
@@ -341,7 +343,7 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
                 data[0].id, data[0].groupbyid, null, null, null, data[0].dateacctnumber
                     + data[0].factaccttype + data[0].factAcctGroupId + data[0].factAcctId);
             dataSubtotal = ReportGeneralLedgerData.select2sum(this, rowNum, strGroupByText,
-                strGroupBy, strAllaccounts, strcelementvaluefrom, strcelementvalueto,
+                strGroupBy, strAllaccounts, strcelementvaluefrom, localStrcelementvalueto,
                 Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"),
                 Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
                 strcAcctSchemaId, strDateFrom, toDatePlusOne, strOrgFamily,
@@ -495,9 +497,9 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
     xmlDocument.setParameter("amtTo", strAmtTo);
     xmlDocument.setParameter("adOrgId", strOrg);
     xmlDocument.setParameter("cAcctschemaId", strcAcctSchemaId);
-    xmlDocument.setParameter("paramElementvalueIdTo", strcelementvalueto);
+    xmlDocument.setParameter("paramElementvalueIdTo", localStrcelementvalueto);
     xmlDocument.setParameter("paramElementvalueIdFrom", strcelementvaluefrom);
-    xmlDocument.setParameter("inpElementValueIdTo_DES", strcelementvaluetodes);
+    xmlDocument.setParameter("inpElementValueIdTo_DES", localStrcelementvaluetodes);
     xmlDocument.setParameter("inpElementValueIdFrom_DES", strcelementvaluefromdes);
     xmlDocument.setParameter("groupbyselected", strGroupBy);
     xmlDocument.setParameter("showOpenBalances", strShowOpenBalances);
@@ -554,6 +556,7 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
       String strcBpartnerId, String strmProductId, String strcProjectId, String strGroupBy,
       String strcAcctSchemaId, String strPageNo, String strShowOpenBalances) throws IOException,
       ServletException {
+    String localStrcelementvalueto = strcelementvalueto;
     log4j.debug("Output: PDF");
     response.setContentType("text/html; charset=UTF-8");
     String strTreeOrg = TreeData.getTreeOrg(this, vars.getClient());
@@ -574,15 +577,15 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
     }
 
     if (strcelementvaluefrom != null && !strcelementvaluefrom.equals("")) {
-      if (strcelementvalueto.equals(""))
-        strcelementvalueto = strcelementvaluefrom;
+      if (localStrcelementvalueto.equals(""))
+        localStrcelementvalueto = strcelementvaluefrom;
       strAllaccounts = "N";
     }
 
     ReportGeneralLedgerData data = null;
     try {
       data = ReportGeneralLedgerData.select2(this, "0", strGroupByText, strGroupBy, strAllaccounts,
-          strcelementvaluefrom, strcelementvalueto,
+          strcelementvaluefrom, localStrcelementvalueto,
           Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"),
           Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
           "Y".equals(strShowOpenBalances) ? strDateTo : null, strcAcctSchemaId, strDateFrom,
@@ -634,6 +637,7 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
       String strAmtTo, String strcelementvaluefrom, String strcelementvalueto, String strOrg,
       String strcBpartnerId, String strmProductId, String strcProjectId, String strGroupBy,
       String strcAcctSchemaId, String strShowOpenBalances) throws IOException, ServletException {
+    String localStrcelementvalueto = strcelementvalueto;
     log4j.debug("Output: XLS");
     response.setContentType("text/html; charset=UTF-8");
     String strTreeOrg = TreeData.getTreeOrg(this, vars.getClient());
@@ -651,15 +655,15 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
     }
 
     if (strcelementvaluefrom != null && !strcelementvaluefrom.equals("")) {
-      if (strcelementvalueto.equals(""))
-        strcelementvalueto = strcelementvaluefrom;
+      if (localStrcelementvalueto.equals(""))
+        localStrcelementvalueto = strcelementvaluefrom;
       strAllaccounts = "N";
     }
 
     ReportGeneralLedgerData data = null;
     try {
       data = ReportGeneralLedgerData.selectXLS2(this, strAllaccounts, strcelementvaluefrom,
-          strcelementvalueto,
+          localStrcelementvalueto,
           Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportGeneralLedger"),
           Utility.getContext(this, vars, "#User_Client", "ReportGeneralLedger"),
           "Y".equals(strShowOpenBalances) ? strDateTo : null, strcAcctSchemaId, strDateFrom,

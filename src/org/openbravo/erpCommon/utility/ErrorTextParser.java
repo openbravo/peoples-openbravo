@@ -72,9 +72,10 @@ abstract class ErrorTextParser {
    *          String with the language.
    */
   public void setLanguage(String _data) {
-    if (_data == null)
-      _data = "";
-    this.language = _data;
+    String localData = _data;
+    if (localData == null)
+      localData = "";
+    this.language = localData;
   }
 
   /**
@@ -93,9 +94,10 @@ abstract class ErrorTextParser {
    *          String with the new message text.
    */
   public void setMessage(String _data) {
-    if (_data == null)
-      _data = "";
-    this.message = _data;
+    String localData = _data;
+    if (localData == null)
+      localData = "";
+    this.message = localData;
   }
 
   /**

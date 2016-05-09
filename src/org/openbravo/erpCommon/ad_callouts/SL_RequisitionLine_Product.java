@@ -79,6 +79,7 @@ public class SL_RequisitionLine_Product extends HttpSecureAppServlet {
       String strMProductID, String strWindowId, String strTabId, String strAttribute,
       String strUOM, String strRequisition, String strPriceListId, String strChanged)
       throws IOException, ServletException {
+    String localStrAttribute = strAttribute;
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
@@ -162,12 +163,13 @@ public class SL_RequisitionLine_Product extends HttpSecureAppServlet {
     if (strChanged.equals("inpmProductId")) {
       strResult.append("new Array(\"inpcUomId\", "
           + (strUOM.equals("") ? "\"\"" : "\"" + strUOM + "\"") + "),\n");
-      if (strAttribute.startsWith("\""))
-        strAttribute = strAttribute.substring(1, strAttribute.length() - 1);
-      strResult.append("new Array(\"inpmAttributesetinstanceId\", \"" + strAttribute + "\"),\n");
-      strResult.append("new Array(\"inpmAttributesetinstanceId_R\", \""
-          + FormatUtilities.replaceJS(SLRequisitionLineProductData.attribute(this, strAttribute))
+      if (localStrAttribute.startsWith("\""))
+        localStrAttribute = localStrAttribute.substring(1, localStrAttribute.length() - 1);
+      strResult.append("new Array(\"inpmAttributesetinstanceId\", \"" + localStrAttribute
           + "\"),\n");
+      strResult.append("new Array(\"inpmAttributesetinstanceId_R\", \""
+          + FormatUtilities.replaceJS(SLRequisitionLineProductData.attribute(this,
+              localStrAttribute)) + "\"),\n");
       String strAttrSet, strAttrSetValueType;
       strAttrSet = strAttrSetValueType = "";
       OBContext.setAdminMode();
@@ -182,12 +184,12 @@ public class SL_RequisitionLine_Product extends HttpSecureAppServlet {
       } finally {
         OBContext.restorePreviousMode();
       }
-      strResult.append("new Array(\"inpattributeset\", \"" 
-          + (strAttrSet == null || strAttrSet.equals("") ? "" : FormatUtilities.replaceJS(strAttrSet))
-          + "\"),\n");
-      strResult.append("new Array(\"inpattrsetvaluetype\", \"" 
-          + (strAttrSetValueType == null || strAttrSetValueType.equals("") ? "" : FormatUtilities.replaceJS(strAttrSetValueType))
-          + "\"),\n");
+      strResult.append("new Array(\"inpattributeset\", \""
+          + (strAttrSet == null || strAttrSet.equals("") ? "" : FormatUtilities
+              .replaceJS(strAttrSet)) + "\"),\n");
+      strResult.append("new Array(\"inpattrsetvaluetype\", \""
+          + (strAttrSetValueType == null || strAttrSetValueType.equals("") ? "" : FormatUtilities
+              .replaceJS(strAttrSetValueType)) + "\"),\n");
       String strHasSecondaryUOM = SLRequisitionLineProductData.hasSecondaryUOM(this, strMProductID);
       strResult.append("new Array(\"inphasseconduom\", " + strHasSecondaryUOM + "),\n");
       strResult.append("new Array(\"inpmProductUomId\", ");

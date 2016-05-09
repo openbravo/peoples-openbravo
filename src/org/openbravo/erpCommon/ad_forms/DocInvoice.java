@@ -1557,11 +1557,13 @@ public class DocInvoice extends AcctServer {
   private BigDecimal createLineForTaxUndeductable(int invoiceLineTaxCount, int totalInvoiceLineTax,
       BigDecimal cumulativeTaxLineAmount, BigDecimal taxAmount, DocInvoiceData[] data,
       ConnectionProvider conn, Fact fact, DocLine docLine, String Fact_Acct_Group_ID) {
+    int localInvoiceLineTaxCount = invoiceLineTaxCount;
+    BigDecimal localCumulativeTaxLineAmount = cumulativeTaxLineAmount;
     for (int j = 0; j < data.length; j++) {
-      invoiceLineTaxCount++;
+      localInvoiceLineTaxCount++;
       // We have to adjust the amount in last line of tax
-      if (invoiceLineTaxCount == totalInvoiceLineTax) {
-        data[j].taxamt = taxAmount.subtract(cumulativeTaxLineAmount).toPlainString();
+      if (localInvoiceLineTaxCount == totalInvoiceLineTax) {
+        data[j].taxamt = taxAmount.subtract(localCumulativeTaxLineAmount).toPlainString();
       }
       try {
         // currently applicable for API and APC
@@ -1581,13 +1583,14 @@ public class DocInvoice extends AcctServer {
               this.C_Currency_ID, "", data[j].taxamt, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
               DocumentType, conn);
         }
-        cumulativeTaxLineAmount = cumulativeTaxLineAmount.add(new BigDecimal(data[j].taxamt));
+        localCumulativeTaxLineAmount = localCumulativeTaxLineAmount.add(new BigDecimal(
+            data[j].taxamt));
       } catch (ServletException e) {
         log4jDocInvoice.error("Exception in createLineForTaxUndeductable method: " + e);
       }
 
     }
 
-    return cumulativeTaxLineAmount;
+    return localCumulativeTaxLineAmount;
   }
 }

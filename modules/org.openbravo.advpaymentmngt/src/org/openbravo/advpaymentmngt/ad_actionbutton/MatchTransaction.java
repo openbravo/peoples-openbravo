@@ -867,13 +867,14 @@ public class MatchTransaction extends HttpSecureAppServlet {
   }
 
   private void unmatch(FIN_BankStatementLine bsline) {
+    FIN_BankStatementLine localBsline = bsline;
     OBContext.setAdminMode();
     try {
-      bsline = OBDal.getInstance().get(FIN_BankStatementLine.class, bsline.getId());
-      FIN_FinaccTransaction finTrans = bsline.getFinancialAccountTransaction();
+      localBsline = OBDal.getInstance().get(FIN_BankStatementLine.class, localBsline.getId());
+      FIN_FinaccTransaction finTrans = localBsline.getFinancialAccountTransaction();
       if (finTrans == null) {
         String strTransactionId = vars.getStringParameter("inpFinancialTransactionId_"
-            + bsline.getId());
+            + localBsline.getId());
         if (strTransactionId != null && !"".equals(strTransactionId)) {
           finTrans = OBDal.getInstance().get(FIN_FinaccTransaction.class, strTransactionId);
         }
@@ -882,16 +883,16 @@ public class MatchTransaction extends HttpSecureAppServlet {
         finTrans.setReconciliation(null);
         finTrans.setStatus((finTrans.getDepositAmount().subtract(finTrans.getPaymentAmount())
             .signum() == 1) ? "RDNC" : "PWNC");
-        bsline.setFinancialAccountTransaction(null);
+        localBsline.setFinancialAccountTransaction(null);
         OBDal.getInstance().save(finTrans);
         // OBDal.getInstance().flush();
       }
-      bsline.setMatchingtype(null);
-      OBDal.getInstance().save(bsline);
+      localBsline.setMatchingtype(null);
+      OBDal.getInstance().save(localBsline);
       // OBDal.getInstance().flush();
 
       // merge if the bank statement line was split before
-      mergeBankStatementLine(bsline);
+      mergeBankStatementLine(localBsline);
 
       if (finTrans != null) {
         if (finTrans.getFinPayment() != null) {
@@ -910,19 +911,19 @@ public class MatchTransaction extends HttpSecureAppServlet {
         // OBDal.getInstance().flush();
       }
       // Execute un-matching logic defined by algorithm
-      MatchingAlgorithm ma = bsline.getBankStatement().getAccount().getMatchingAlgorithm();
+      MatchingAlgorithm ma = localBsline.getBankStatement().getAccount().getMatchingAlgorithm();
       FIN_MatchingTransaction matchingTransaction = new FIN_MatchingTransaction(
           ma.getJavaClassName());
       matchingTransaction.unmatch(finTrans);
 
       // Do not allow bank statement lines of 0
-      if (bsline.getCramount().compareTo(BigDecimal.ZERO) == 0
-          && bsline.getDramount().compareTo(BigDecimal.ZERO) == 0) {
-        FIN_BankStatement bs = bsline.getBankStatement();
+      if (localBsline.getCramount().compareTo(BigDecimal.ZERO) == 0
+          && localBsline.getDramount().compareTo(BigDecimal.ZERO) == 0) {
+        FIN_BankStatement bs = localBsline.getBankStatement();
         bs.setProcessed(false);
         OBDal.getInstance().save(bs);
         OBDal.getInstance().flush();
-        OBDal.getInstance().remove(bsline);
+        OBDal.getInstance().remove(localBsline);
         OBDal.getInstance().flush();
         bs.setProcessed(true);
         OBDal.getInstance().save(bs);
@@ -1369,6 +1370,7 @@ public class MatchTransaction extends HttpSecureAppServlet {
 
   void matchBankStatementLine(String strFinBankStatementLineId, String strFinancialTransactionId,
       String strReconciliationId, String matchLevel) {
+    String localMatchLevel = matchLevel;
     OBContext.setAdminMode(false);
     try {
       FIN_BankStatementLine bsl = OBDal.getInstance().get(FIN_BankStatementLine.class,
@@ -1383,10 +1385,10 @@ public class MatchTransaction extends HttpSecureAppServlet {
           unmatch(bsl);
         }
         bsl.setFinancialAccountTransaction(transaction);
-        if (matchLevel == null || "".equals(matchLevel)) {
-          matchLevel = FIN_MatchedTransaction.MANUALMATCH;
+        if (localMatchLevel == null || "".equals(localMatchLevel)) {
+          localMatchLevel = FIN_MatchedTransaction.MANUALMATCH;
         }
-        bsl.setMatchingtype(matchLevel);
+        bsl.setMatchingtype(localMatchLevel);
         transaction.setStatus("RPPC");
         transaction.setReconciliation(MatchTransactionDao.getObject(FIN_Reconciliation.class,
             strReconciliationId));
