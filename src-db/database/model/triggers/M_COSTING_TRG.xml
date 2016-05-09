@@ -32,26 +32,30 @@ BEGIN
     IF(v_count>0 and (:new.costtype = 'AV' or :new.costtype = 'ST' or :new.costtype = 'AVO')) then
       RAISE_APPLICATION_ERROR(-20000, '@CostMigratedInstance@');
     END IF;
-  ELSIF (DELETING) THEN
-    SELECT EXISTS ( SELECT 1 FROM C_OrderLine WHERE m_product_id = :OLD.m_product_id )
-       OR EXISTS ( SELECT 1 FROM C_InvoiceLine WHERE m_product_id = :OLD.m_product_id )
-       OR EXISTS ( SELECT 1 FROM M_InventoryLine WHERE m_product_id = :OLD.m_product_id )
-       OR EXISTS ( SELECT 1 FROM M_MovementLine WHERE m_product_id = :OLD.m_product_id )
-       OR EXISTS ( SELECT 1 FROM M_InoutLine WHERE m_product_id = :OLD.m_product_id )
-       OR EXISTS ( SELECT 1 FROM M_ProductionLine WHERE m_product_id = :OLD.m_product_id )
-       OR EXISTS ( SELECT 1 FROM M_Internal_ConsumptionLine WHERE m_product_id = :OLD.m_product_id )
-    INTO v_relateddocs;
 
-    IF (:OLD.ISPERMANENT = 'Y' AND v_relateddocs = 't') THEN
-      RAISE_APPLICATION_ERROR(-20000, '@CannotDeletePermanentCost@');
-    END IF;
-  ELSIF (UPDATING) THEN
-    IF (:OLD.ISPERMANENT = 'Y'
-        AND (:OLD.COST <> :NEW.COST
-             OR :OLD.DATEFROM <> :NEW.DATEFROM)) THEN
-      RAISE_APPLICATION_ERROR(-20000, '@CannotModifyPermanentCost@');
+  ELSIF (UPDATING OR DELETING) THEN
+    IF (:OLD.ISPERMANENT = 'Y') THEN
+      SELECT count(*)
+      INTO v_count
+      FROM dual
+      WHERE EXISTS ( SELECT 1 FROM C_OrderLine WHERE m_product_id = :old.m_product_id )
+      OR EXISTS ( SELECT 1 FROM C_InvoiceLine WHERE m_product_id = :old.m_product_id )
+      OR EXISTS ( SELECT 1 FROM M_InventoryLine WHERE m_product_id = :old.m_product_id )
+      OR EXISTS ( SELECT 1 FROM M_MovementLine WHERE m_product_id = :old.m_product_id )
+      OR EXISTS ( SELECT 1 FROM M_InoutLine WHERE m_product_id = :old.m_product_id )
+      OR EXISTS ( SELECT 1 FROM M_ProductionLine WHERE m_product_id = :old.m_product_id )
+      OR EXISTS ( SELECT 1 FROM M_Internal_ConsumptionLine WHERE m_product_id = :old.m_product_id );
+
+      IF (v_count > 0) THEN
+        IF (UPDATING AND (:OLD.COST <> :NEW.COST OR :OLD.DATEFROM <> :NEW.DATEFROM)) THEN
+          RAISE_APPLICATION_ERROR(-20000, '@CannotModifyPermanentCost@');
+        ELSIF (DELETING) THEN
+          RAISE_APPLICATION_ERROR(-20000, '@CannotDeletePermanentCost@');
+        END IF;
+      END IF;
     END IF;
   END IF;
+
 END M_COSTING_TRG
 ]]></body>
     </trigger>
