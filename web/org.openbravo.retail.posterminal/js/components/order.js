@@ -358,7 +358,7 @@ enyo.kind({
     order: null
   },
   events: {
-	  onReceiptLineSelected: ''
+    onReceiptLineSelected: ''
   },
   handlers: {
     onCheckBoxBehaviorForTicketLine: 'checkBoxBehavior',
