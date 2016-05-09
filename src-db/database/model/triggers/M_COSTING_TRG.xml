@@ -15,11 +15,12 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2012 Openbravo SLU
+* All portions are Copyright (C) 2012-2016 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
 v_count NUMBER;
+v_relateddocs BOOLEAN;
 BEGIN
   IF AD_isTriggerEnabled()='N' THEN RETURN;
   END IF;
@@ -32,11 +33,20 @@ BEGIN
       RAISE_APPLICATION_ERROR(-20000, '@CostMigratedInstance@');
     END IF;
   ELSIF (DELETING) THEN
-    IF (:OLD.ISPERMANENT = 'Y') THEN
+    SELECT EXISTS ( SELECT 1 FROM C_OrderLine WHERE m_product_id = :OLD.m_product_id )
+       OR EXISTS ( SELECT 1 FROM C_InvoiceLine WHERE m_product_id = :OLD.m_product_id )
+       OR EXISTS ( SELECT 1 FROM M_InventoryLine WHERE m_product_id = :OLD.m_product_id )
+       OR EXISTS ( SELECT 1 FROM M_MovementLine WHERE m_product_id = :OLD.m_product_id )
+       OR EXISTS ( SELECT 1 FROM M_InoutLine WHERE m_product_id = :OLD.m_product_id )
+       OR EXISTS ( SELECT 1 FROM M_ProductionLine WHERE m_product_id = :OLD.m_product_id )
+       OR EXISTS ( SELECT 1 FROM M_Internal_ConsumptionLine WHERE m_product_id = :OLD.m_product_id )
+    INTO v_relateddocs;
+
+    IF (:OLD.ISPERMANENT = 'Y' AND v_relateddocs = 't') THEN
       RAISE_APPLICATION_ERROR(-20000, '@CannotDeletePermanentCost@');
     END IF;
   ELSIF (UPDATING) THEN
-    IF (:OLD.ISPERMANENT = 'Y' 
+    IF (:OLD.ISPERMANENT = 'Y'
         AND (:OLD.COST <> :NEW.COST
              OR :OLD.DATEFROM <> :NEW.DATEFROM)) THEN
       RAISE_APPLICATION_ERROR(-20000, '@CannotModifyPermanentCost@');
