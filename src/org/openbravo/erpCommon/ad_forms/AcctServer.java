@@ -1075,8 +1075,8 @@ public abstract class AcctServer {
    *             in case any module may call it.
    */
   @Deprecated
-  public boolean insertNote(String AD_Client_ID, String AD_Org_ID, String AD_User_ID,
-      String AD_Table_ID, String Record_ID, String AD_MessageValue, String Text, String Reference,
+  public boolean insertNote(String aD_Client_ID, String aD_Org_ID, String AD_User_ID,
+      String aD_Table_ID, String record_ID, String AD_MessageValue, String Text, String Reference,
       VariablesSecureApp vars, ConnectionProvider conn, Connection con) {
     return false;
   }

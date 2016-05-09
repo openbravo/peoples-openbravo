@@ -27,7 +27,7 @@ import org.openbravo.database.ConnectionProvider;
 public class DocLine {
   static Logger log4jDocLine = Logger.getLogger(DocLine.class);
 
-  public BigDecimal ZERO = new BigDecimal("0");
+  public BigDecimal ZERO = BigDecimal.ZERO;
 
   public String p_DocumentType = "";
   /** ID - Trx Header */

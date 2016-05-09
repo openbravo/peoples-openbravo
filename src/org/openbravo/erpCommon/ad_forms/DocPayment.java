@@ -36,7 +36,6 @@ public class DocPayment extends AcctServer {
 
   private String SeqNo = "0";
   private String SettlementType = "";
-  static final BigDecimal ZERO = BigDecimal.ZERO;
 
   /**
    * Constructor
@@ -490,7 +489,7 @@ public class DocPayment extends AcctServer {
    * @return the zERO
    */
   public static BigDecimal getZERO() {
-    return ZERO;
+    return BigDecimal.ZERO;
   }
 
   public String convertAmount(String Amount, boolean isReceipt, String DateAcct,

@@ -1266,7 +1266,7 @@ public class ComboTableData {
    * 
    * @param conn
    *          Handler for the database connection.
-   * @param vars
+   * @param variables
    *          Handler for the session info.
    * @param data
    *          FieldProvider with the columns values.
@@ -1276,7 +1276,7 @@ public class ComboTableData {
    *          actual value for the combo.
    * @throws ServletException
    */
-  void fillSQLParameters(ConnectionProvider conn, VariablesSecureApp vars, FieldProvider data,
+  void fillSQLParameters(ConnectionProvider conn, VariablesSecureApp variables, FieldProvider data,
       String tab, String window, String actual_value, boolean fromSearch) throws ServletException {
     final Vector<String> vAux = getParameters();
     if (vAux != null && vAux.size() > 0) {
@@ -1285,7 +1285,7 @@ public class ComboTableData {
       for (int i = 0; i < vAux.size(); i++) {
         final String strAux = vAux.elementAt(i);
         try {
-          final String value = Utility.parseParameterValue(conn, vars, data, strAux, tab, window,
+          final String value = Utility.parseParameterValue(conn, variables, data, strAux, tab, window,
               actual_value, fromSearch);
           if (log4j.isDebugEnabled())
             log4j.debug("Combo Parameter: " + strAux + " - Value: " + value);
