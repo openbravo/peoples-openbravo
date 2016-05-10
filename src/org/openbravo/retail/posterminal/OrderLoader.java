@@ -2008,7 +2008,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
               .setScale(pricePrecision, RoundingMode.HALF_UP);
         }
       } else if (writeoffAmt.signum() == -1
-          && (!notpaidLayaway && !creditpaidLayaway && !fullypaidLayaway && !checkPaidOnCreditChecked)) {
+          && ((!notpaidLayaway && !creditpaidLayaway && !fullypaidLayaway && !checkPaidOnCreditChecked) || jsonorder
+              .has("paidInNegativeStatusAmt"))) {
         if (totalIsNegative) {
           amount = amount.add(writeoffAmt).setScale(pricePrecision, RoundingMode.HALF_UP);
         } else {
@@ -2095,7 +2096,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           false, false, order.getCurrency(), mulrate, origAmount, true,
           payment.has("id") ? payment.getString("id") : null);
 
-      if (writeoffAmt.signum() == 1) {
+      if (writeoffAmt.signum() == 1 || jsonorder.has("paidInNegativeStatusAmt")) {
         if (totalIsNegative) {
           FIN_AddPayment.saveGLItem(finPayment, writeoffAmt.negate(), paymentType
               .getPaymentMethod().getGlitemWriteoff(),

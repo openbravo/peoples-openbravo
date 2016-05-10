@@ -146,12 +146,19 @@
 
           receipt.set('obposAppCashup', OB.MobileApp.model.get('terminal').cashUpId);
           // convert returns
-          if (receipt.getGross() < 0) {
+          if (receipt.getGross() < 0 || !_.isUndefined(receipt.get('paidInNegativeStatusAmt'))) {
+            var paymentTotalAmt = OB.DEC.Zero;
             _.forEach(receipt.get('payments').models, function (item) {
-              item.set('amount', -item.get('amount'));
-              item.set('origAmount', -item.get('origAmount'));
-              item.set('paid', -item.get('paid'));
+              if (_.isUndefined(receipt.get('paidInNegativeStatusAmt')) || !item.get('isPrePayment')) {
+                item.set('amount', -item.get('amount'));
+                item.set('origAmount', -item.get('origAmount'));
+                item.set('paid', -item.get('paid'));
+              }
+              paymentTotalAmt = OB.DEC.add(paymentTotalAmt, item.get('origAmount'));
             });
+            if (!_.isUndefined(receipt.get('paidInNegativeStatusAmt'))) {
+              receipt.set('payment', paymentTotalAmt);
+            }
           }
           receipt.set('json', JSON.stringify(receipt.serializeToJSON()));
 

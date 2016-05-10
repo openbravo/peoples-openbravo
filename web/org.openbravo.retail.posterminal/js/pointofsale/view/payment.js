@@ -267,10 +267,10 @@ enyo.kind({
         return;
       }
       var payment = OB.MobileApp.model.paymentnames[OB.MobileApp.model.get('paymentcash')];
-      if ((model.get('orderType') === 2 || (model.get('isLayaway'))) && model.get('orderType') !== 3 && !model.getPaymentStatus().done) {
+      if ((model.get('orderType') === 2 || (model.get('isLayaway'))) && model.get('orderType') !== 3 && !model.getPaymentStatus().done && _.isUndefined(model.get('paidInNegativeStatusAmt'))) {
         this.$.layawayaction.setContent(OB.I18N.getLabel('OBPOS_LblLayaway'));
         this.$.layawayaction.show();
-      } else if (model.get('orderType') === 3) {
+      } else if (model.get('orderType') === 3 && _.isUndefined(model.get('paidInNegativeStatusAmt'))) {
         this.$.layawayaction.hide();
       } else {
         this.$.layawayaction.hide();
@@ -374,10 +374,13 @@ enyo.kind({
       if (!_.isEmpty(OB.MobileApp.model.paymentnames)) {
         this.$.exactbutton.show();
       }
-      if (this.receipt.get('orderType') === 2 || (this.receipt.get('isLayaway') && this.receipt.get('orderType') !== 3)) {
+      if ((this.receipt.get('orderType') === 2 || (this.receipt.get('isLayaway') && this.receipt.get('orderType') !== 3)) && _.isUndefined(this.receipt.get('paidInNegativeStatusAmt'))) {
         this.$.layawayaction.show();
-      } else if (this.receipt.get('orderType') === 3) {
+      } else if (this.receipt.get('orderType') === 3 && _.isUndefined(this.receipt.get('paidInNegativeStatusAmt'))) {
         this.$.layawayaction.hide();
+      } else if (!_.isUndefined(this.receipt.get('paidInNegativeStatusAmt'))) {
+        this.$.layawayaction.hide();
+        this.$.exactaction.show();
       }
     }
     if (paymentstatus.done && !paymentstatus.change && !paymentstatus.overpayment) {

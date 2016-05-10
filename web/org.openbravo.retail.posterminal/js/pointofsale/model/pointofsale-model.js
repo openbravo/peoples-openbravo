@@ -310,7 +310,8 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
         //Create the negative payment for change
         var oldChange = receipt.get('change'),
             clonedCollection = new Backbone.Collection(),
-            paymentKind, i;
+            paymentKind, i, totalPrePayment = OB.DEC.Zero,
+            totalNotPrePayment = OB.DEC.Zero;
         if (receipt.get('orderType') !== 2 && receipt.get('orderType') !== 3) {
           var negativeLines = _.filter(receipt.get('lines').models, function (line) {
             return line.get('qty') < 0;
@@ -329,13 +330,18 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
         }
         receipt.get('payments').each(function (model) {
           clonedCollection.add(new Backbone.Model(model.toJSON()));
+          if (model.get('isPrePayment')) {
+            totalPrePayment = OB.DEC.add(totalPrePayment, model.get('origAmount'));
+          } else {
+            totalNotPrePayment = OB.DEC.add(totalNotPrePayment, model.get('origAmount'));
+          }
         });
         if (!_.isUndefined(receipt.get('selectedPayment')) && receipt.getChange() > 0) {
           var payment = OB.MobileApp.model.paymentnames[receipt.get('selectedPayment')];
           if (!payment.paymentMethod.iscash) {
             payment = OB.MobileApp.model.paymentnames[OB.MobileApp.model.get('paymentcash')];
           }
-          if (receipt.get('payment') >= receipt.get('gross')) {
+          if (receipt.get('payment') >= receipt.get('gross') || (!_.isUndefined(receipt.get('paidInNegativeStatusAmt')) && OB.DEC.compare(OB.DEC.sub(receipt.get('gross'), OB.DEC.sub(totalPrePayment, totalNotPrePayment))) >= 0)) {
             receipt.addPayment(new OB.Model.PaymentLine({
               'kind': payment.payment.searchKey,
               'name': payment.payment.commercialName,
