@@ -131,14 +131,15 @@ public class ShipmentReceipt extends HttpSecureAppServlet {
 
   private void printPage(HttpServletResponse response, VariablesSecureApp vars,
       String strNameValue, String strSOTrx) throws IOException, ServletException {
+    String localStrNameValue = strNameValue;
     if (log4j.isDebugEnabled())
       log4j.debug("Output: Frame 1 of the invoice seeker");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/info/ShipmentReceipt").createXmlDocument();
-    if (!strNameValue.endsWith("%"))
-      strNameValue = strNameValue + "%";
+    if (!localStrNameValue.endsWith("%"))
+      localStrNameValue = localStrNameValue + "%";
 
-    xmlDocument.setParameter("key", strNameValue);
+    xmlDocument.setParameter("key", localStrNameValue);
     xmlDocument.setParameter("calendar", vars.getLanguage().substring(0, 2));
     xmlDocument.setParameter("salesTransaction", strSOTrx);
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
@@ -246,6 +247,7 @@ public class ShipmentReceipt extends HttpSecureAppServlet {
       String strDateTo, String strSalesTransaction, String strOrderCols, String strOrderDirs,
       String strOffset, String strPageSize, String strNewFilter, String strOrg) throws IOException,
       ServletException {
+    String localStrNewFilter = strNewFilter;
     if (log4j.isDebugEnabled())
       log4j.debug("Output: print page rows");
     int page = 0;
@@ -265,12 +267,12 @@ public class ShipmentReceipt extends HttpSecureAppServlet {
         page = TableSQLData.calcAndGetBackendPage(vars, "ShipmentReceipt.currentPage");
         if (vars.getStringParameter("movePage", "").length() > 0) {
           // on movePage action force executing countRows again
-          strNewFilter = "";
+          localStrNewFilter = "";
         }
         int oldOffset = offset;
         offset = (page * TableSQLData.maxRowsPerGridPage) + offset;
         log4j.debug("relativeOffset: " + oldOffset + " absoluteOffset: " + offset);
-        if (strNewFilter.equals("1") || strNewFilter.equals("")) { // New
+        if (localStrNewFilter.equals("1") || localStrNewFilter.equals("")) { // New
           // filter
           // or
           // first

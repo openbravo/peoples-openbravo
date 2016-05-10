@@ -65,13 +65,15 @@ public class SL_User_Name extends HttpSecureAppServlet {
   private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strChanged,
       String strFirstname, String strLastname, String strName, String strUserName, String strTabId)
       throws IOException, ServletException {
+    String localStrName = strName;
+    String localStrLastname = strLastname;
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
 
-    if (!strLastname.equals(""))
-      strLastname = " " + strLastname;
+    if (!localStrLastname.equals(""))
+      localStrLastname = " " + localStrLastname;
 
     StringBuffer resultado = new StringBuffer();
     resultado.append("var calloutName='SL_User_Name';\n\n");
@@ -80,33 +82,33 @@ public class SL_User_Name extends HttpSecureAppServlet {
     int maxChar = 60;
     // do not change the name field, if the user just left it
     if (!strChanged.equals("inpname")) {
-      if (FormatUtilities.replaceJS(strFirstname + strLastname).length() > maxChar) {
-        strName = FormatUtilities.replaceJS(strFirstname + strLastname).substring(0, maxChar);
+      if (FormatUtilities.replaceJS(strFirstname + localStrLastname).length() > maxChar) {
+        localStrName = FormatUtilities.replaceJS(strFirstname + localStrLastname).substring(0,
+            maxChar);
       } else {
-        strName = FormatUtilities.replaceJS(strFirstname + strLastname);
+        localStrName = FormatUtilities.replaceJS(strFirstname + localStrLastname);
       }
-      resultado.append("new Array(\"inpname\", \"" + strName + "\"),");
+      resultado.append("new Array(\"inpname\", \"" + localStrName + "\"),");
     }
     // if we have a name filled in use that for the username
     if (strUserName.equals("")) {
-      if (!strName.equals("")) {
-        if (FormatUtilities.replaceJS(strName).length() > maxChar) {
+      if (!localStrName.equals("")) {
+        if (FormatUtilities.replaceJS(localStrName).length() > maxChar) {
           resultado.append("new Array(\"inpusername\", \""
-              + FormatUtilities.replaceJS(strName).substring(0, maxChar) + "\")");
+              + FormatUtilities.replaceJS(localStrName).substring(0, maxChar) + "\")");
         } else {
-          resultado.append("new Array(\"inpusername\", \"" + FormatUtilities.replaceJS(strName)
-              + "\")");
+          resultado.append("new Array(\"inpusername\", \""
+              + FormatUtilities.replaceJS(localStrName) + "\")");
         }
       } else {
         // else concatenate first- and lastname
-        if (FormatUtilities.replaceJS(strFirstname + strLastname).length() > maxChar) {
-          resultado
-              .append("new Array(\"inpusername\", \""
-                  + FormatUtilities.replaceJS(strFirstname + strLastname).substring(0, maxChar)
-                  + "\")");
+        if (FormatUtilities.replaceJS(strFirstname + localStrLastname).length() > maxChar) {
+          resultado.append("new Array(\"inpusername\", \""
+              + FormatUtilities.replaceJS(strFirstname + localStrLastname).substring(0, maxChar)
+              + "\")");
         } else {
           resultado.append("new Array(\"inpusername\", \""
-              + FormatUtilities.replaceJS(strFirstname + strLastname) + "\")");
+              + FormatUtilities.replaceJS(strFirstname + localStrLastname) + "\")");
         }
       }
     } else {
@@ -119,7 +121,7 @@ public class SL_User_Name extends HttpSecureAppServlet {
       }
     }
     // informs about characters cut
-    if (FormatUtilities.replaceJS(strFirstname + strLastname).length() > maxChar) {
+    if (FormatUtilities.replaceJS(strFirstname + localStrLastname).length() > maxChar) {
       resultado.append(", new Array('MESSAGE', \""
           + FormatUtilities.replaceJS(Utility.messageBD(this, "NameUsernameLengthCut",
               vars.getLanguage())) + "\")");

@@ -58,7 +58,7 @@ public class BasicUtility {
    *          Handler for the database connection.
    * @param strCode
    *          String with the code to search.
-   * @param strLanguage
+   * @param localStrLanguage
    *          String with the translation language.
    * @param escape
    *          Escape \n and " characters
@@ -66,20 +66,21 @@ public class BasicUtility {
    */
   public static String messageBD(ConnectionProvider conn, String strCode, String strLanguage,
       boolean escape) {
+    String localStrLanguage = strLanguage;
     String strMessage = "";
-    if (strLanguage == null || strLanguage.equals(""))
-      strLanguage = "en_US";
+    if (localStrLanguage == null || localStrLanguage.equals(""))
+      localStrLanguage = "en_US";
 
     try {
       log4j.debug("Utility.messageBD - Message Code: " + strCode);
-      strMessage = MessageBDData.message(conn, strLanguage, strCode);
+      strMessage = MessageBDData.message(conn, localStrLanguage, strCode);
     } catch (final Exception ignore) {
       log4j.error("Error getting message", ignore);
     }
     log4j.debug("Utility.messageBD - Message description: " + strMessage);
     if (strMessage == null || strMessage.equals("")) {
       try {
-        strMessage = MessageBDData.columnname(conn, strLanguage, strCode);
+        strMessage = MessageBDData.columnname(conn, localStrLanguage, strCode);
       } catch (final Exception e) {
         log4j.error("Error getting message", e);
         strMessage = strCode;

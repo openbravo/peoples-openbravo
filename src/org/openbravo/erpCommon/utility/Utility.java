@@ -1357,20 +1357,22 @@ public class Utility {
    * Checks if an element is in a list. List is an string like "(e1, e2, e3,...)" where en are
    * elements. It is inteeded to be used for checking user client and organizations.
    * 
-   * @param strList
+   * @param localStrList
    *          List to check in
-   * @param strElement
+   * @param localStrElement
    *          Element to check in the list
    * @return true in case the element is in the list
    */
   public static boolean isElementInList(String strList, String strElement) {
-    strList = strList.replace("(", "").replace(")", "");
-    final StringTokenizer st = new StringTokenizer(strList, ",", false);
-    strElement = strElement.replaceAll("'", "");
+    String localStrElement = strElement;
+    String localStrList = strList;
+    localStrList = localStrList.replace("(", "").replace(")", "");
+    final StringTokenizer st = new StringTokenizer(localStrList, ",", false);
+    localStrElement = localStrElement.replaceAll("'", "");
 
     while (st.hasMoreTokens()) {
       final String token = st.nextToken().trim().replaceAll("'", "");
-      if (token.equals(strElement))
+      if (token.equals(localStrElement))
         return true;
     }
     return false;

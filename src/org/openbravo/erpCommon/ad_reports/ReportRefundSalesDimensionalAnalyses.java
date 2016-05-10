@@ -357,6 +357,7 @@ public class ReportRefundSalesDimensionalAnalyses extends HttpSecureAppServlet {
       String strDateToRef, String strOrg, String strsalesrepId, String strmWarehouseId,
       String strOrder, String strMayor, String strMenor, String strRatioMayor,
       String strRatioMenor, String strCurrencyId) throws IOException, ServletException {
+    String localStrOrg = strOrg;
     if (log4j.isDebugEnabled())
       log4j.debug("Output: print html");
     XmlDocument xmlDocument = null;
@@ -367,8 +368,8 @@ public class ReportRefundSalesDimensionalAnalyses extends HttpSecureAppServlet {
         "discard", "discard", "discard", "discard", "discard", "discard", "discard", "discard",
         "discard", "discard", "discard", "discard", "discard", "discard", "discard", "discard",
         "discard", "discard" };
-    if (strOrg.equals(""))
-      strOrg = vars.getOrg();
+    if (localStrOrg.equals(""))
+      localStrOrg = vars.getOrg();
     if (strComparative.equals("Y"))
       discard1[0] = "selEliminarBody2";
     String strTitle = "";
@@ -535,7 +536,7 @@ public class ReportRefundSalesDimensionalAnalyses extends HttpSecureAppServlet {
         data = ReportRefundSalesDimensionalAnalysesData.select(this, strCurrencyId, strTextShow[0],
             strTextShow[1], strTextShow[2], strTextShow[3], strTextShow[4], strTextShow[5],
             strTextShow[6], Tree.getMembers(this, TreeData.getTreeOrg(this, vars.getClient()),
-                strOrg), Utility.getContext(this, vars, "#User_Client",
+                localStrOrg), Utility.getContext(this, vars, "#User_Client",
                 "ReportRefundInvoiceCustomerDimensionalAnalyses"), strDateFrom, DateTimeData
                 .nDaysAfter(this, strDateTo, "1"), strPartnerGroup, strcBpartnerId,
             strProductCategory, strmProductId, strsalesrepId, strmWarehouseId, strDateFromRef,
@@ -548,7 +549,7 @@ public class ReportRefundSalesDimensionalAnalyses extends HttpSecureAppServlet {
         data = ReportRefundSalesDimensionalAnalysesData.selectNoComparative(this, strCurrencyId,
             strTextShow[0], strTextShow[1], strTextShow[2], strTextShow[3], strTextShow[4],
             strTextShow[5], strTextShow[6], Tree.getMembers(this,
-                TreeData.getTreeOrg(this, vars.getClient()), strOrg), Utility.getContext(this,
+                TreeData.getTreeOrg(this, vars.getClient()), localStrOrg), Utility.getContext(this,
                 vars, "#User_Client", "ReportRefundInvoiceCustomerDimensionalAnalyses"),
             strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strPartnerGroup,
             strcBpartnerId, strProductCategory, strmProductId, strsalesrepId, strmWarehouseId,

@@ -209,9 +209,9 @@ class WindowTreeUtility {
    *          Type of window.
    * @param strDirection
    *          Base path for the urls.
-   * @param strOnClick
+   * @param localStrOnClick
    *          Command for the onclick event.
-   * @param strOnDblClick
+   * @param localStrOnDblClick
    *          Command for the onDblClick event.
    * @param hasChilds
    *          Boolean to know if has any child.
@@ -224,11 +224,13 @@ class WindowTreeUtility {
   public static String addNodeElement(String name, String description, String target,
       boolean isSummary, String windowType, String strDirection, String strOnClick,
       String strOnDblClick, boolean hasChilds, String nodeId, String action) {
+    String localStrOnDblClick = strOnDblClick;
+    String localStrOnClick = strOnClick;
     if (log4j.isDebugEnabled())
       log4j.debug("WindowTreeUtility.addNodeElement() - name: " + name);
     StringBuffer element = new StringBuffer();
-    strOnClick = Replace.replace(strOnClick, "\"", "&quot;");
-    strOnDblClick = Replace.replace(strOnDblClick, "\"", "&quot;");
+    localStrOnClick = Replace.replace(localStrOnClick, "\"", "&quot;");
+    localStrOnDblClick = Replace.replace(localStrOnDblClick, "\"", "&quot;");
 
     // In case the element is filtered (strOnClick and strOnDblClick is null), it is shown in the
     // tree but click action is disabled
@@ -242,14 +244,14 @@ class WindowTreeUtility {
           .append(
               (nodeId.equals("0") ? " noDrag=\"true\" noSiblings=\"true\" noDelete=\"true\" noRename=\"true\" "
                   : "")).append(">\n");
-      if (strOnClick == null && strOnDblClick == null) {
+      if (localStrOnClick == null && localStrOnDblClick == null) {
         element.append("<a id=\"folderHref").append((hasChilds ? "" : "NoChilds")).append("__")
             .append(nodeId).append("\"");
       } else {
         element.append("<a href=\"#\" id=\"folderHref").append((hasChilds ? "" : "NoChilds"))
             .append("__").append(nodeId).append("\"");
-        if (strOnDblClick != null && !strOnDblClick.equals("")) {
-          element.append(" onclick=\"").append(strOnDblClick).append("return true;\"");
+        if (localStrOnDblClick != null && !localStrOnDblClick.equals("")) {
+          element.append(" onclick=\"").append(localStrOnDblClick).append("return true;\"");
         }
       }
       element.append(">").append(StringEscapeUtils.escapeHtml(name)).append("</a>\n");
@@ -257,14 +259,14 @@ class WindowTreeUtility {
     } else {
       element.append("<li id=\"").append(windowTypeNico(action)).append("__").append(nodeId)
           .append("\" isElement=\"true\"").append(" noChildren=\"true\"").append(">\n");
-      if (strOnClick == null && strOnDblClick == null) {
+      if (localStrOnClick == null && localStrOnDblClick == null) {
         element.append("<a id=\"child").append(windowTypeNico(action)).append("__").append(nodeId)
             .append("\"");
       } else {
         element.append("<a href=\"#\" id=\"child").append(windowTypeNico(action)).append("__")
             .append(nodeId).append("\"");
-        if (strOnDblClick != null && !strOnDblClick.equals("")) {
-          element.append(" onclick=\"").append(strOnDblClick).append("return true;\"");
+        if (localStrOnDblClick != null && !localStrOnDblClick.equals("")) {
+          element.append(" onclick=\"").append(localStrOnDblClick).append("return true;\"");
         }
       }
 

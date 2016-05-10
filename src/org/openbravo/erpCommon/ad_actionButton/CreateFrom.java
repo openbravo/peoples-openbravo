@@ -2347,12 +2347,13 @@ public class CreateFrom extends HttpSecureAppServlet {
   }
 
   private String[] restrictParameter(String strIds) {
+    String localStrIds = strIds;
     String[] ids = null;
-    if (strIds == null || ("").equals(strIds)) {
+    if (localStrIds == null || ("").equals(localStrIds)) {
       return new String[0];
     }
-    strIds = strIds.substring(1, strIds.length() - 1);
-    StringTokenizer st = new StringTokenizer(strIds, ",");
+    localStrIds = localStrIds.substring(1, localStrIds.length() - 1);
+    StringTokenizer st = new StringTokenizer(localStrIds, ",");
     int noOfRecords = 1;
     int tokenCount = st.countTokens();
     final double totalRecords = 900.0;
@@ -2361,7 +2362,7 @@ public class CreateFrom extends HttpSecureAppServlet {
       ids = new String[strArrayCount];
     } else {
       ids = new String[1];
-      ids[0] = "(" + strIds + ")";
+      ids[0] = "(" + localStrIds + ")";
     }
 
     int count = 1;

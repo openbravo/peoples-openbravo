@@ -427,6 +427,7 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR_legacy extends HttpSecur
       String strProducttype, String strOrder, String strMayor, String strMenor,
       String strPartnerSalesrepId, String strCurrencyId, String strOutput) throws IOException,
       ServletException {
+    String localStrOrg = strOrg;
     if (log4j.isDebugEnabled())
       log4j.debug("Output: print html");
     String strOrderby = "";
@@ -439,8 +440,8 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR_legacy extends HttpSecur
         "discard", "discard", "discard", "discard", "discard", "discard", "discard", "discard",
         "discard", "discard", "discard", "discard", "discard", "discard", "discard", "discard",
         "discard", "discard", "discard", "discard", "discard", "discard" };
-    if (strOrg.equals(""))
-      strOrg = vars.getOrg();
+    if (localStrOrg.equals(""))
+      localStrOrg = vars.getOrg();
     if (strComparative.equals("Y"))
       discard1[0] = "selEliminarBody2";
     String strTitle = "";
@@ -647,19 +648,20 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR_legacy extends HttpSecur
       limit = Integer.parseInt(Utility.getPreference(vars, "ReportsLimit", ""));
       if (limit > 0) {
         mycount = Integer
-            .parseInt((strComparative.equals("Y")) ? ReportInvoiceCustomerDimensionalAnalysesJRLegacyData
-                .selectCount(this, levelsconcat.toString(), Tree.getMembers(this,
-                    TreeData.getTreeOrg(this, vars.getClient()), strOrg), Utility.getContext(this,
-                    vars, "#User_Client", "ReportInvoiceCustomerDimensionalAnalysesJR_legacy"),
-                    strPartnerGroup, strcBpartnerId, strProductCategory, strmProductId,
-                    strsalesrepId, strPartnerSalesrepId, strcProjectId, strProducttype,
-                    strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strDateFromRef,
-                    DateTimeData.nDaysAfter(this, strDateToRef, "1"))
+            .parseInt((strComparative.equals("Y")) ? ReportInvoiceCustomerDimensionalAnalysesJRLegacyData.selectCount(
+                this, levelsconcat.toString(), Tree.getMembers(this,
+                    TreeData.getTreeOrg(this, vars.getClient()), localStrOrg), Utility
+                    .getContext(this, vars, "#User_Client",
+                        "ReportInvoiceCustomerDimensionalAnalysesJR_legacy"), strPartnerGroup,
+                strcBpartnerId, strProductCategory, strmProductId, strsalesrepId,
+                strPartnerSalesrepId, strcProjectId, strProducttype, strDateFrom, DateTimeData
+                    .nDaysAfter(this, strDateTo, "1"), strDateFromRef, DateTimeData.nDaysAfter(
+                    this, strDateToRef, "1"))
                 : ReportInvoiceCustomerDimensionalAnalysesJRLegacyData.selectNoComparativeCount(
                     this, levelsconcat.toString(), Tree.getMembers(this,
-                        TreeData.getTreeOrg(this, vars.getClient()), strOrg), Utility.getContext(
-                        this, vars, "#User_Client",
-                        "ReportInvoiceCustomerDimensionalAnalysesJR_legacy"), strPartnerGroup,
+                        TreeData.getTreeOrg(this, vars.getClient()), localStrOrg), Utility
+                        .getContext(this, vars, "#User_Client",
+                            "ReportInvoiceCustomerDimensionalAnalysesJR_legacy"), strPartnerGroup,
                     strcBpartnerId, strProductCategory, strmProductId, strsalesrepId,
                     strPartnerSalesrepId, strcProjectId, strProducttype, strDateFrom, DateTimeData
                         .nDaysAfter(this, strDateTo, "1")));
@@ -687,7 +689,7 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR_legacy extends HttpSecur
               strBaseCurrencyId, strTextShow[0], strTextShow[1], strTextShow[2], strTextShow[3],
               strTextShow[4], strTextShow[5], strTextShow[6], strTextShow[7], strTextShow[8],
               strTextShow[9], Tree.getMembers(this, TreeData.getTreeOrg(this, vars.getClient()),
-                  strOrg), Utility.getContext(this, vars, "#User_Client",
+                  localStrOrg), Utility.getContext(this, vars, "#User_Client",
                   "ReportInvoiceCustomerDimensionalAnalysesJR_legacy"), strDateFrom, DateTimeData
                   .nDaysAfter(this, strDateTo, "1"), strPartnerGroup, strcBpartnerId,
               strProductCategory, strmProductId, strsalesrepId, strPartnerSalesrepId,
@@ -702,8 +704,8 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR_legacy extends HttpSecur
               strCurrencyId, strBaseCurrencyId, strTextShow[0], strTextShow[1], strTextShow[2],
               strTextShow[3], strTextShow[4], strTextShow[5], strTextShow[6], strTextShow[7],
               strTextShow[8], strTextShow[9], Tree.getMembers(this,
-                  TreeData.getTreeOrg(this, vars.getClient()), strOrg), Utility.getContext(this,
-                  vars, "#User_Client", "ReportInvoiceCustomerDimensionalAnalysesJR_legacy"),
+                  TreeData.getTreeOrg(this, vars.getClient()), localStrOrg), Utility.getContext(
+                  this, vars, "#User_Client", "ReportInvoiceCustomerDimensionalAnalysesJR_legacy"),
               strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strPartnerGroup,
               strcBpartnerId, strProductCategory, strmProductId, strsalesrepId,
               strPartnerSalesrepId, strcProjectId, strProducttype, strOrderby);

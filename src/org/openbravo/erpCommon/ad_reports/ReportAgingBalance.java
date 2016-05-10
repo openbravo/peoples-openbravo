@@ -117,6 +117,7 @@ public class ReportAgingBalance extends HttpSecureAppServlet {
       VariablesSecureApp vars, String strisReceipt, String strcolumn1, String strcolumn2,
       String strcolumn3, String strcolumn4, String strcBpartnerId, String strOrgTrx,
       String strfirstPrint, final String strCurrencyId) throws IOException, ServletException {
+    String localStrisReceipt = strisReceipt;
     ReportAgingBalanceData[] data = null;
     // Jarenor
     /*
@@ -127,12 +128,12 @@ public class ReportAgingBalance extends HttpSecureAppServlet {
     String strTreeOrg = TreeData.getTreeOrg(this, vars.getClient());
     String strOrgFamily = getFamily(strTreeOrg, strOrgTrx);
 
-    if (strisReceipt.equals(""))
-      strisReceipt = "N";
+    if (localStrisReceipt.equals(""))
+      localStrisReceipt = "N";
 
     try {
       data = ReportAgingBalanceData.select(this, vars.getLanguage(), strOrgTrx, strCurrencyId,
-          strcolumn1, strcolumn2, strcolumn3, strcolumn4, strisReceipt, strcBpartnerId,
+          strcolumn1, strcolumn2, strcolumn3, strcolumn4, localStrisReceipt, strcBpartnerId,
           strOrgFamily, Utility.getContext(this, vars, "#User_Client", "ReportAgingBalance"),
           Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportAgingBalance"));
     } catch (ServletException ex) {
@@ -155,6 +156,7 @@ public class ReportAgingBalance extends HttpSecureAppServlet {
       String strisReceipt, String strcolumn1, String strcolumn2, String strcolumn3,
       String strcolumn4, String strcBpartnerId, String strOrgTrx, String strfirstPrint,
       final String strCurrencyId) throws IOException, ServletException {
+    String localStrisReceipt = strisReceipt;
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
     response.setContentType("text/html; charset=UTF-8");
@@ -166,13 +168,13 @@ public class ReportAgingBalance extends HttpSecureAppServlet {
     String strTreeOrg = TreeData.getTreeOrg(this, vars.getClient());
     String strOrgFamily = getFamily(strTreeOrg, strOrgTrx);
 
-    if (strisReceipt.equals(""))
-      strisReceipt = "N";
+    if (localStrisReceipt.equals(""))
+      localStrisReceipt = "N";
 
     if (vars.commandIn("FIND")) {
       try {
         data = ReportAgingBalanceData.select(this, vars.getLanguage(), strOrgTrx, strCurrencyId,
-            strcolumn1, strcolumn2, strcolumn3, strcolumn4, strisReceipt, strcBpartnerId,
+            strcolumn1, strcolumn2, strcolumn3, strcolumn4, localStrisReceipt, strcBpartnerId,
             strOrgFamily, Utility.getContext(this, vars, "#User_Client", "ReportAgingBalance"),
             Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportAgingBalance"));
       } catch (final ServletException ex) {
@@ -227,8 +229,8 @@ public class ReportAgingBalance extends HttpSecureAppServlet {
 
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("paramLanguage", "defaultLang=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("receipt", strisReceipt);
-    xmlDocument.setParameter("payable", strisReceipt);
+    xmlDocument.setParameter("receipt", localStrisReceipt);
+    xmlDocument.setParameter("payable", localStrisReceipt);
     xmlDocument.setParameter("column1", strcolumn1);
     xmlDocument.setParameter("column2", strcolumn2);
     xmlDocument.setParameter("column3", strcolumn3);

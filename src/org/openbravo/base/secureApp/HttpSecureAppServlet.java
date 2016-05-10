@@ -1165,6 +1165,8 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
       String strReportName, String strFileName, String strOutputType,
       HashMap<String, Object> designParameters, JRDataSource data,
       Map<Object, Object> exportParameters, boolean forceRefresh) throws ServletException {
+    String localStrOutputType = strOutputType;
+    String localStrFileName = strFileName;
     Map<Object, Object> localExportParameters = exportParameters;
     HashMap<String, Object> localDesignParameters = designParameters;
     if (strReportName == null || strReportName.equals(""))
@@ -1179,8 +1181,8 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
 
     strReportName = Replace.replace(Replace.replace(strReportName, "@basedesign@", strBaseDesign),
         "@attach@", strAttach);
-    if (strFileName == null) {
-      strFileName = strReportName.substring(strReportName.lastIndexOf("/") + 1);
+    if (localStrFileName == null) {
+      localStrFileName = strReportName.substring(strReportName.lastIndexOf("/") + 1);
     }
 
     ServletOutputStream os = null;
@@ -1210,49 +1212,50 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
       os = response.getOutputStream();
       if (localExportParameters == null)
         localExportParameters = new HashMap<Object, Object>();
-      if (strOutputType == null || strOutputType.equals(""))
-        strOutputType = "html";
-      final ExportType expType = ExportType.getExportType(strOutputType.toUpperCase());
+      if (localStrOutputType == null || localStrOutputType.equals(""))
+        localStrOutputType = "html";
+      final ExportType expType = ExportType.getExportType(localStrOutputType.toUpperCase());
 
-      if (strOutputType.equals("html")) {
+      if (localStrOutputType.equals("html")) {
         if (log4j.isDebugEnabled())
           log4j.debug("JR: Print HTML");
-        response.setHeader("Content-disposition", "inline" + "; filename=" + strFileName + "."
-            + strOutputType);
+        response.setHeader("Content-disposition", "inline" + "; filename=" + localStrFileName + "."
+            + localStrOutputType);
         HttpServletRequest request = RequestContext.get().getRequest();
         String localAddress = HttpBaseUtils.getLocalAddress(request);
         localExportParameters.put(ReportingUtils.IMAGES_URI, localAddress
             + "/servlets/image?image={0}");
         ReportingUtils.exportJR(strReportName, expType, localDesignParameters, os, false, this,
             data, localExportParameters);
-      } else if (strOutputType.equals("pdf") || strOutputType.equalsIgnoreCase("xls")
-          || strOutputType.equalsIgnoreCase("txt") || strOutputType.equalsIgnoreCase("csv")) {
+      } else if (localStrOutputType.equals("pdf") || localStrOutputType.equalsIgnoreCase("xls")
+          || localStrOutputType.equalsIgnoreCase("txt")
+          || localStrOutputType.equalsIgnoreCase("csv")) {
         reportId = UUID.randomUUID();
-        File outputFile = new File(globalParameters.strFTPDirectory + "/" + strFileName + "-"
-            + (reportId) + "." + strOutputType);
+        File outputFile = new File(globalParameters.strFTPDirectory + "/" + localStrFileName + "-"
+            + (reportId) + "." + localStrOutputType);
         ReportingUtils.exportJR(strReportName, expType, localDesignParameters, outputFile, false,
             this, data, localExportParameters);
         response.setContentType("text/html;charset=UTF-8");
-        response.setHeader("Content-disposition", "inline" + "; filename=" + strFileName + "-"
+        response.setHeader("Content-disposition", "inline" + "; filename=" + localStrFileName + "-"
             + (reportId) + ".html");
         if (forceRefresh) {
-          printPagePopUpDownloadAndRefresh(response.getOutputStream(), strFileName + "-"
-              + (reportId) + "." + strOutputType);
+          printPagePopUpDownloadAndRefresh(response.getOutputStream(), localStrFileName + "-"
+              + (reportId) + "." + localStrOutputType);
         } else {
-          printPagePopUpDownload(response.getOutputStream(), strFileName + "-" + (reportId) + "."
-              + strOutputType);
+          printPagePopUpDownload(response.getOutputStream(), localStrFileName + "-" + (reportId)
+              + "." + localStrOutputType);
         }
       }
 
     } catch (IOException ioe) {
       try {
-        FileUtility f = new FileUtility(globalParameters.strFTPDirectory, strFileName + "-"
-            + (reportId) + "." + strOutputType, false, true);
+        FileUtility f = new FileUtility(globalParameters.strFTPDirectory, localStrFileName + "-"
+            + (reportId) + "." + localStrOutputType, false, true);
         if (f.exists())
           f.deleteFile();
       } catch (IOException ioex) {
-        log4j.error("Error trying to delete temporary report file " + strFileName + "-"
-            + (reportId) + "." + strOutputType + " : " + ioex.getMessage());
+        log4j.error("Error trying to delete temporary report file " + localStrFileName + "-"
+            + (reportId) + "." + localStrOutputType + " : " + ioex.getMessage());
       }
     } catch (final Exception e) {
       throw new ServletException(e.getMessage(), e);

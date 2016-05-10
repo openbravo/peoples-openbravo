@@ -73,6 +73,7 @@ public class SL_MachineCost extends HttpSecureAppServlet {
       String strDaysYear, String strDayHours, String strImproductiveHoursYear,
       String strCostUomYear, String strCost, String strCostUom) throws IOException,
       ServletException {
+    String localStrImproductiveHoursYear = strImproductiveHoursYear;
     String localStrCostUomYear = strCostUomYear;
     String localStrCost = strCost;
     String localStrAmortization = strAmortization;
@@ -118,11 +119,11 @@ public class SL_MachineCost extends HttpSecureAppServlet {
     } else if (strChanged.equals("inpdaysyear") || strChanged.equals("inpdayhours")
         || strChanged.equals("inpimproductivehoursyear")) {
       if (strDaysYear != null && !strDaysYear.equals("") && strDayHours != null
-          && !strDayHours.equals("") && strImproductiveHoursYear != null
-          && !strImproductiveHoursYear.equals("")) {
+          && !strDayHours.equals("") && localStrImproductiveHoursYear != null
+          && !localStrImproductiveHoursYear.equals("")) {
         BigDecimal fDaysYear = new BigDecimal(strDaysYear);
         BigDecimal fDayHours = new BigDecimal(strDayHours);
-        BigDecimal fImproductiveHoursYear = new BigDecimal(strImproductiveHoursYear);
+        BigDecimal fImproductiveHoursYear = new BigDecimal(localStrImproductiveHoursYear);
         BigDecimal fCostUomYear = (fDaysYear.multiply(fDayHours)).subtract(fImproductiveHoursYear);
         localStrCostUomYear = fCostUomYear.toPlainString();
 
@@ -142,7 +143,7 @@ public class SL_MachineCost extends HttpSecureAppServlet {
           BigDecimal fCostUomYear = new BigDecimal(localStrCostUomYear);
           BigDecimal fImproductiveHoursYear = (fDaysYear.multiply(fDayHours))
               .subtract(fCostUomYear);
-          strImproductiveHoursYear = fImproductiveHoursYear.toPlainString();
+          localStrImproductiveHoursYear = fImproductiveHoursYear.toPlainString();
         }
       if (strYearValue != null && !strYearValue.equals("") && localStrCostUomYear != null
           && !localStrCostUomYear.equals("")) {
@@ -191,8 +192,8 @@ public class SL_MachineCost extends HttpSecureAppServlet {
     if (!"".equals(strDayHours) && strDayHours != null) {
       resultado.append("new Array(\"inpdayhours\", " + strDayHours + "),\n");
     }
-    if (!"".equals(strImproductiveHoursYear) && strImproductiveHoursYear != null) {
-      resultado.append("new Array(\"inpimproductivehoursyear\", " + strImproductiveHoursYear
+    if (!"".equals(localStrImproductiveHoursYear) && localStrImproductiveHoursYear != null) {
+      resultado.append("new Array(\"inpimproductivehoursyear\", " + localStrImproductiveHoursYear
           + "),\n");
     }
     if (!"".equals(localStrCostUomYear) && localStrCostUomYear != null) {

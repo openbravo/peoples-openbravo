@@ -195,6 +195,7 @@ public class SalesOrderLine extends HttpSecureAppServlet {
   private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strBPartner,
       String strProduct, String strDocumentNo, String strDateFrom, String strDateTo,
       String strCal1, String strCal2) throws IOException, ServletException {
+    String localStrDocumentNo = strDocumentNo;
     if (log4j.isDebugEnabled())
       log4j.debug("Output: Frame 1 of sale-order-lines seeker");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
@@ -202,17 +203,17 @@ public class SalesOrderLine extends HttpSecureAppServlet {
 
     String strSOTrx = vars.getSessionValue("SalesOrderLine.isSOTrx");
 
-    if (strBPartner.equals("") && strProduct.equals("") && strDocumentNo.equals("")
+    if (strBPartner.equals("") && strProduct.equals("") && localStrDocumentNo.equals("")
         && strDateFrom.equals("") && strDateTo.equals("") && strCal1.equals("")
         && strCal2.equals("")) {
-      strDocumentNo = "%";
+      localStrDocumentNo = "%";
     }
     xmlDocument.setParameter("calendar", vars.getLanguage().substring(0, 2));
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("theme", vars.getTheme());
 
-    xmlDocument.setParameter("documentno", strDocumentNo);
+    xmlDocument.setParameter("documentno", localStrDocumentNo);
     xmlDocument.setParameter("datefrom", strDateFrom);
     xmlDocument.setParameter("dateto", strDateTo);
     xmlDocument.setParameter("grandtotalfrom", strCal1);
@@ -326,6 +327,7 @@ public class SalesOrderLine extends HttpSecureAppServlet {
       String strDelivered, String strInvoiced, String strSOTrx, String strOrderCols,
       String strOrderDirs, String strOffset, String strPageSize, String strNewFilter, String strOrg)
       throws IOException, ServletException {
+    String localStrNewFilter = strNewFilter;
     if (log4j.isDebugEnabled())
       log4j.debug("Output: print page rows");
 
@@ -347,14 +349,14 @@ public class SalesOrderLine extends HttpSecureAppServlet {
         page = TableSQLData.calcAndGetBackendPage(vars, "SalesOrderLine.currentPage");
         if (vars.getStringParameter("movePage", "").length() > 0) {
           // on movePage action force executing countRows again
-          strNewFilter = "";
+          localStrNewFilter = "";
         }
         int oldOffset = offset;
         offset = (page * TableSQLData.maxRowsPerGridPage) + offset;
         log4j.debug("relativeOffset: " + oldOffset + " absoluteOffset: " + offset);
 
         // New filter or first load
-        if (strNewFilter.equals("1") || strNewFilter.equals("")) {
+        if (localStrNewFilter.equals("1") || localStrNewFilter.equals("")) {
           // calculate params for sql limit/offset or rownum clause
           String rownum = "0", oraLimit1 = null, oraLimit2 = null, pgLimit = null;
           if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {

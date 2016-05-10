@@ -560,6 +560,7 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
       String strProducttype, String strcDocTypeId, String strOrder, String strMayor,
       String strMenor, String strPartnerSalesrepId, String strCurrencyId, String strVoid,
       String strOutput) throws IOException, ServletException {
+    String localStrOrg = strOrg;
     String localStrDateToRef3 = strDateToRef3;
     String localStrDateToRef2 = strDateToRef2;
     String localStrDateFromRef2 = strDateFromRef2;
@@ -576,8 +577,8 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
         "discard", "discard", "discard", "discard", "discard", "discard", "discard", "discard",
         "discard", "discard", "discard", "discard", "discard", "discard", "discard", "discard",
         "discard", "discard", "discard", "discard", "discard", "discard" };
-    if (strOrg.equals(""))
-      strOrg = vars.getOrg();
+    if (localStrOrg.equals(""))
+      localStrOrg = vars.getOrg();
     boolean multiComparative2 = false;
     boolean multiComparative3 = false;
     if (strComparative.equals("Y")) {
@@ -797,25 +798,25 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
       limit = Integer.parseInt(Utility.getPreference(vars, "ReportsLimit", ""));
       if (limit > 0) {
         mycount = Integer
-            .parseInt((strComparative.equals("Y")) ? ReportInvoiceCustomerDimensionalAnalysesJRData
-                .selectCount(this, levelsconcat.toString(), Tree.getMembers(this,
-                    TreeData.getTreeOrg(this, vars.getClient()), strOrg), Utility.getContext(this,
-                    vars, "#User_Client", "ReportInvoiceCustomerDimensionalAnalysesJR"),
-                    strPartnerGroup, strcBpartnerId, strProductCategory, strmProductId,
-                    strsalesrepId, strPartnerSalesrepId, strcProjectId, strProducttype,
-                    strcDocTypeId, strVoid.equals("Y") ? "" : "VO", strDateFrom, DateTimeData
-                        .nDaysAfter(this, strDateTo, "1"), strDateFromRef, DateTimeData.nDaysAfter(
-                        this, strDateToRef, "1"), localStrDateFromRef2, DateTimeData.nDaysAfter(
-                        this, localStrDateToRef2, "1"), localStrDateFromRef3, DateTimeData
-                        .nDaysAfter(this, localStrDateToRef3, "1"))
+            .parseInt((strComparative.equals("Y")) ? ReportInvoiceCustomerDimensionalAnalysesJRData.selectCount(
+                this, levelsconcat.toString(), Tree.getMembers(this,
+                    TreeData.getTreeOrg(this, vars.getClient()), localStrOrg), Utility.getContext(
+                    this, vars, "#User_Client", "ReportInvoiceCustomerDimensionalAnalysesJR"),
+                strPartnerGroup, strcBpartnerId, strProductCategory, strmProductId, strsalesrepId,
+                strPartnerSalesrepId, strcProjectId, strProducttype, strcDocTypeId, strVoid
+                    .equals("Y") ? "" : "VO", strDateFrom, DateTimeData.nDaysAfter(this, strDateTo,
+                    "1"), strDateFromRef, DateTimeData.nDaysAfter(this, strDateToRef, "1"),
+                localStrDateFromRef2, DateTimeData.nDaysAfter(this, localStrDateToRef2, "1"),
+                localStrDateFromRef3, DateTimeData.nDaysAfter(this, localStrDateToRef3, "1"))
                 : ReportInvoiceCustomerDimensionalAnalysesJRData.selectNoComparativeCount(this,
                     levelsconcat.toString(), Tree.getMembers(this,
-                        TreeData.getTreeOrg(this, vars.getClient()), strOrg), Utility.getContext(
-                        this, vars, "#User_Client", "ReportInvoiceCustomerDimensionalAnalysesJR"),
-                    strPartnerGroup, strcBpartnerId, strProductCategory, strmProductId,
-                    strsalesrepId, strPartnerSalesrepId, strcProjectId, strProducttype,
-                    strcDocTypeId, strVoid.equals("Y") ? "" : "VO", strDateFrom, DateTimeData
-                        .nDaysAfter(this, strDateTo, "1")));
+                        TreeData.getTreeOrg(this, vars.getClient()), localStrOrg), Utility
+                        .getContext(this, vars, "#User_Client",
+                            "ReportInvoiceCustomerDimensionalAnalysesJR"), strPartnerGroup,
+                    strcBpartnerId, strProductCategory, strmProductId, strsalesrepId,
+                    strPartnerSalesrepId, strcProjectId, strProducttype, strcDocTypeId, strVoid
+                        .equals("Y") ? "" : "VO", strDateFrom, DateTimeData.nDaysAfter(this,
+                        strDateTo, "1")));
       }
     } catch (NumberFormatException e) {
     }
@@ -834,9 +835,9 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
       if ("xls".equals(strOutput)) {
         try {
           dataXLS = ReportInvoiceCustomerDimensionalAnalysesJRData.selectXLS(this, strCurrencyId,
-              Tree.getMembers(this, TreeData.getTreeOrg(this, vars.getClient()), strOrg), Utility
-                  .getContext(this, vars, "#User_Client",
-                      "ReportInvoiceCustomerDimensionalAnalysesJR"), strDateFrom, DateTimeData
+              Tree.getMembers(this, TreeData.getTreeOrg(this, vars.getClient()), localStrOrg),
+              Utility.getContext(this, vars, "#User_Client",
+                  "ReportInvoiceCustomerDimensionalAnalysesJR"), strDateFrom, DateTimeData
                   .nDaysAfter(this, strDateTo, "1"), strPartnerGroup, strcBpartnerId,
               strProductCategory, strmProductId, strsalesrepId, strPartnerSalesrepId,
               strcProjectId, strProducttype, strcDocTypeId, strVoid.equals("Y") ? "" : "VO");
@@ -849,40 +850,42 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
             if (multiComparative2) {
               if (multiComparative3) {
                 // Multi-comparative B: 1 base date, 3 reference dates
-                data = ReportInvoiceCustomerDimensionalAnalysesJRData.select3(this, strCurrencyId,
-                    strTextShow[0], strTextShow[1], strTextShow[2], strTextShow[3], strTextShow[4],
-                    strTextShow[5], strTextShow[6], strTextShow[7], strTextShow[8], strTextShow[9],
-                    Tree.getMembers(this, TreeData.getTreeOrg(this, vars.getClient()), strOrg),
-                    Utility.getContext(this, vars, "#User_Client",
-                        "ReportInvoiceCustomerDimensionalAnalysesJR"), strDateFrom, DateTimeData
-                        .nDaysAfter(this, strDateTo, "1"), strPartnerGroup, strcBpartnerId,
-                    strProductCategory, strmProductId, strsalesrepId, strPartnerSalesrepId,
-                    strcProjectId, strProducttype, strcDocTypeId, strVoid.equals("Y") ? "" : "VO",
-                    strDateFromRef, DateTimeData.nDaysAfter(this, strDateToRef, "1"),
-                    localStrDateFromRef2, DateTimeData.nDaysAfter(this, localStrDateToRef2, "1"),
-                    localStrDateFromRef3, DateTimeData.nDaysAfter(this, localStrDateToRef3, "1"),
-                    strOrderby);
+                data = ReportInvoiceCustomerDimensionalAnalysesJRData
+                    .select3(this, strCurrencyId, strTextShow[0], strTextShow[1], strTextShow[2],
+                        strTextShow[3], strTextShow[4], strTextShow[5], strTextShow[6],
+                        strTextShow[7], strTextShow[8], strTextShow[9], Tree.getMembers(this,
+                            TreeData.getTreeOrg(this, vars.getClient()), localStrOrg), Utility
+                            .getContext(this, vars, "#User_Client",
+                                "ReportInvoiceCustomerDimensionalAnalysesJR"), strDateFrom,
+                        DateTimeData.nDaysAfter(this, strDateTo, "1"), strPartnerGroup,
+                        strcBpartnerId, strProductCategory, strmProductId, strsalesrepId,
+                        strPartnerSalesrepId, strcProjectId, strProducttype, strcDocTypeId, strVoid
+                            .equals("Y") ? "" : "VO", strDateFromRef, DateTimeData.nDaysAfter(this,
+                            strDateToRef, "1"), localStrDateFromRef2, DateTimeData.nDaysAfter(this,
+                            localStrDateToRef2, "1"), localStrDateFromRef3, DateTimeData
+                            .nDaysAfter(this, localStrDateToRef3, "1"), strOrderby);
               } else {
                 // Multi-comparative A: 1 base date, 2 reference dates
-                data = ReportInvoiceCustomerDimensionalAnalysesJRData.select2(this, strCurrencyId,
-                    strTextShow[0], strTextShow[1], strTextShow[2], strTextShow[3], strTextShow[4],
-                    strTextShow[5], strTextShow[6], strTextShow[7], strTextShow[8], strTextShow[9],
-                    Tree.getMembers(this, TreeData.getTreeOrg(this, vars.getClient()), strOrg),
-                    Utility.getContext(this, vars, "#User_Client",
-                        "ReportInvoiceCustomerDimensionalAnalysesJR"), strDateFrom, DateTimeData
-                        .nDaysAfter(this, strDateTo, "1"), strPartnerGroup, strcBpartnerId,
-                    strProductCategory, strmProductId, strsalesrepId, strPartnerSalesrepId,
-                    strcProjectId, strProducttype, strcDocTypeId, strVoid.equals("Y") ? "" : "VO",
-                    strDateFromRef, DateTimeData.nDaysAfter(this, strDateToRef, "1"),
-                    localStrDateFromRef2, DateTimeData.nDaysAfter(this, localStrDateToRef2, "1"),
-                    strOrderby);
+                data = ReportInvoiceCustomerDimensionalAnalysesJRData
+                    .select2(this, strCurrencyId, strTextShow[0], strTextShow[1], strTextShow[2],
+                        strTextShow[3], strTextShow[4], strTextShow[5], strTextShow[6],
+                        strTextShow[7], strTextShow[8], strTextShow[9], Tree.getMembers(this,
+                            TreeData.getTreeOrg(this, vars.getClient()), localStrOrg), Utility
+                            .getContext(this, vars, "#User_Client",
+                                "ReportInvoiceCustomerDimensionalAnalysesJR"), strDateFrom,
+                        DateTimeData.nDaysAfter(this, strDateTo, "1"), strPartnerGroup,
+                        strcBpartnerId, strProductCategory, strmProductId, strsalesrepId,
+                        strPartnerSalesrepId, strcProjectId, strProducttype, strcDocTypeId, strVoid
+                            .equals("Y") ? "" : "VO", strDateFromRef, DateTimeData.nDaysAfter(this,
+                            strDateToRef, "1"), localStrDateFromRef2, DateTimeData.nDaysAfter(this,
+                            localStrDateToRef2, "1"), strOrderby);
               }
             } else {
               // Regular comparative: 1 base date, 1 reference date
               data = ReportInvoiceCustomerDimensionalAnalysesJRData.select(this, strCurrencyId,
                   strTextShow[0], strTextShow[1], strTextShow[2], strTextShow[3], strTextShow[4],
                   strTextShow[5], strTextShow[6], strTextShow[7], strTextShow[8], strTextShow[9],
-                  Tree.getMembers(this, TreeData.getTreeOrg(this, vars.getClient()), strOrg),
+                  Tree.getMembers(this, TreeData.getTreeOrg(this, vars.getClient()), localStrOrg),
                   Utility.getContext(this, vars, "#User_Client",
                       "ReportInvoiceCustomerDimensionalAnalysesJR"), strDateFrom, DateTimeData
                       .nDaysAfter(this, strDateTo, "1"), strPartnerGroup, strcBpartnerId,
@@ -899,7 +902,7 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
                 strCurrencyId, strTextShow[0], strTextShow[1], strTextShow[2], strTextShow[3],
                 strTextShow[4], strTextShow[5], strTextShow[6], strTextShow[7], strTextShow[8],
                 strTextShow[9], Tree.getMembers(this, TreeData.getTreeOrg(this, vars.getClient()),
-                    strOrg), Utility.getContext(this, vars, "#User_Client",
+                    localStrOrg), Utility.getContext(this, vars, "#User_Client",
                     "ReportInvoiceCustomerDimensionalAnalysesJR"), strDateFrom, DateTimeData
                     .nDaysAfter(this, strDateTo, "1"), strPartnerGroup, strcBpartnerId,
                 strProductCategory, strmProductId, strsalesrepId, strPartnerSalesrepId,

@@ -104,13 +104,14 @@ public class ReportTaxInvoiceJR extends HttpSecureAppServlet {
   private void printPageDataHtml(HttpServletResponse response, VariablesSecureApp vars,
       String strDateFrom, String strDateTo, String strOrg, String strDetail, String strSales,
       String strOutput, String strCurrencyId) throws IOException, ServletException {
+    String localStrOrg = strOrg;
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
     response.setContentType("text/html; charset=UTF-8");
     String strSale = "";
     String strPurchase = "";
-    if (strOrg.equals(""))
-      strOrg = vars.getOrg();
+    if (localStrOrg.equals(""))
+      localStrOrg = vars.getOrg();
     if (log4j.isDebugEnabled())
       log4j.debug("****** strSales: " + strSales + " fecha desde: " + strDateFrom
           + " fecha hasta: " + strDateTo + " detalle: " + strDetail);
@@ -118,7 +119,7 @@ public class ReportTaxInvoiceJR extends HttpSecureAppServlet {
      * if (strSales.equals("S")) strSalesAux = "Y"; else strSalesAux = "N";
      */
     if (strDateFrom.equals("") && strDateTo.equals("") && strDetail.equals("-1")) {
-      printPageDataSheet(response, vars, strDateFrom, strDateTo, strOrg, strDetail, strSales,
+      printPageDataSheet(response, vars, strDateFrom, strDateTo, localStrOrg, strDetail, strSales,
           strCurrencyId);
     } else if (!strDetail.equals("-1")) {
       if (log4j.isDebugEnabled())
@@ -155,7 +156,7 @@ public class ReportTaxInvoiceJR extends HttpSecureAppServlet {
     parameters.put("SALE", strSale);
     parameters.put("PURCHASE", strPurchase);
     parameters.put("PARAM_ORG",
-        Tree.getMembers(this, TreeData.getTreeOrg(this, vars.getClient()), strOrg));
+        Tree.getMembers(this, TreeData.getTreeOrg(this, vars.getClient()), localStrOrg));
     parameters.put("PARAM_CURRENCY", strCurrencyId);
     String strDateFormat;
     strDateFormat = vars.getJavaDateFormat();

@@ -63,6 +63,7 @@ public class SL_InvoiceTax_Amt extends HttpSecureAppServlet {
   private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strChanged,
       String strTaxAmt, String strTaxBaseAmt, String strTaxId, String strInvoiceId)
       throws IOException, ServletException {
+    String localStrInvoiceId = strInvoiceId;
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
@@ -77,10 +78,10 @@ public class SL_InvoiceTax_Amt extends HttpSecureAppServlet {
       strTaxBaseAmt = strTaxBaseAmt.substring(1, strTaxBaseAmt.length() - 1);
     if (strTaxId.startsWith("\""))
       strTaxId = strTaxId.substring(1, strTaxId.length() - 1);
-    if (strInvoiceId.startsWith("\""))
-      strInvoiceId = strInvoiceId.substring(1, strTaxId.length() - 1);
+    if (localStrInvoiceId.startsWith("\""))
+      localStrInvoiceId = localStrInvoiceId.substring(1, strTaxId.length() - 1);
 
-    SLInvoiceTaxAmtData[] data = SLInvoiceTaxAmtData.select(this, strTaxId, strInvoiceId);
+    SLInvoiceTaxAmtData[] data = SLInvoiceTaxAmtData.select(this, strTaxId, localStrInvoiceId);
 
     BigDecimal taxAmt = (strTaxAmt.equals("") ? new BigDecimal(0.0) : new BigDecimal(strTaxAmt));
     BigDecimal taxBaseAmt = (strTaxBaseAmt.equals("") ? new BigDecimal(0.0) : new BigDecimal(

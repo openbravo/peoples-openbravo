@@ -174,12 +174,13 @@ public class TabFilter extends HttpSecureAppServlet {
   }
 
   private TabFilterData[] getOrderByFields(TabFilterData[] data, String strOrderBy) {
-    strOrderBy = strOrderBy.trim();
-    if (strOrderBy.startsWith("("))
-      strOrderBy = strOrderBy.substring(1, strOrderBy.length() - 1);
+    String localStrOrderBy = strOrderBy;
+    localStrOrderBy = localStrOrderBy.trim();
+    if (localStrOrderBy.startsWith("("))
+      localStrOrderBy = localStrOrderBy.substring(1, localStrOrderBy.length() - 1);
     if (log4j.isDebugEnabled())
-      log4j.debug("TabFilter - getOrderByFields() - String to parse: " + strOrderBy);
-    StringTokenizer orderBy = new StringTokenizer(strOrderBy, ",");
+      log4j.debug("TabFilter - getOrderByFields() - String to parse: " + localStrOrderBy);
+    StringTokenizer orderBy = new StringTokenizer(localStrOrderBy, ",");
     Vector<Object> fields = new Vector<Object>();
     boolean isnegative = false;
     while (orderBy.hasMoreTokens()) {

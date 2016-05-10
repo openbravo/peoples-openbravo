@@ -149,6 +149,7 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
       String strAsDateToRef, String strElementValue, String strConImporte, String strOrg,
       String strLevel, String strConCodigo, String strcAcctSchemaId, String strPageNo)
       throws IOException, ServletException {
+    String localStrElementValue = strElementValue;
     String localStrDateToRef = strDateToRef;
     String localStrDateFrom = strDateFrom;
     String localStrDateFromRef = strDateFromRef;
@@ -156,17 +157,17 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: pdf");
 
-    String strCalculateOpening = strElementValue.substring(0, 1);
-    strElementValue = strElementValue.substring(1, strElementValue.length());
+    String strCalculateOpening = localStrElementValue.substring(0, 1);
+    localStrElementValue = localStrElementValue.substring(1, localStrElementValue.length());
     GeneralAccountingReportsData[] strGroups = GeneralAccountingReportsData.selectGroups(this,
-        strElementValue);
+        localStrElementValue);
 
     try {
       strGroups[strGroups.length - 1].pagebreak = "";
 
       String[][] strElementValueDes = new String[strGroups.length][];
       if (log4j.isDebugEnabled())
-        log4j.debug("strElementValue:" + strElementValue + " - strGroups.length:"
+        log4j.debug("strElementValue:" + localStrElementValue + " - strGroups.length:"
             + strGroups.length);
       for (int i = 0; i < strGroups.length; i++) {
         GeneralAccountingReportsData[] strElements = GeneralAccountingReportsData.selectElements(
@@ -303,8 +304,8 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
         parameters.put(
             "principalTitle",
             strCalculateOpening.equals("Y") ? GeneralAccountingReportsData.rptTitle(this,
-                strElementValue) + " (Provisional)" : GeneralAccountingReportsData.rptTitle(this,
-                strElementValue));
+                localStrElementValue) + " (Provisional)" : GeneralAccountingReportsData.rptTitle(
+                this, localStrElementValue));
 
         parameters.put("pageNo", strPageNo);
 

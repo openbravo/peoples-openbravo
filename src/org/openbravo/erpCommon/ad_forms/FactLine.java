@@ -1013,17 +1013,18 @@ public class FactLine {
   public StringBuffer getDescription(ConnectionProvider connectionProvider,
       String strC_Bpartner_ID, String strC_AcctSchema_ID, String strAD_Table_ID,
       String strRecord_ID, String strLine) throws ServletException {
+    String localStrLine = strLine;
     StringBuffer description = new StringBuffer();
     String strSql = AcctServerData.selectDescription(connectionProvider, strAD_Table_ID,
         strC_AcctSchema_ID);
     try {
       if (!strSql.equals("")/* && strLine!=null && !strLine.equals("") */) {
         strSql = strSql.replaceAll("@RecordId@", "'" + strRecord_ID + "'");
-        if (strLine == null || strLine.equals(""))
-          strLine = "NULL";
+        if (localStrLine == null || localStrLine.equals(""))
+          localStrLine = "NULL";
         else
-          strLine = "'" + strLine + "'";
-        strSql = strSql.replaceAll("@Line@", strLine);
+          localStrLine = "'" + localStrLine + "'";
+        strSql = strSql.replaceAll("@Line@", localStrLine);
         Statement st = connectionProvider.getStatement();
         ResultSet result;
         try {

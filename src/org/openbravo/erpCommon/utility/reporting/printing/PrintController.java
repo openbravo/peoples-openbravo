@@ -167,9 +167,10 @@ public class PrintController extends HttpSecureAppServlet {
   void post(HttpServletRequest request, HttpServletResponse response, VariablesSecureApp vars,
       DocumentType documentType, String sessionValuePrefix, String strDocumentId)
       throws IOException, ServletException {
+    String localStrDocumentId = strDocumentId;
     try {
 
-      String fullDocumentIdentifier = strDocumentId + documentType.getTableName();
+      String fullDocumentIdentifier = localStrDocumentId + documentType.getTableName();
 
       Map<String, Report> reports;
 
@@ -180,13 +181,13 @@ public class PrintController extends HttpSecureAppServlet {
 
       String documentIds[] = null;
       if (log4j.isDebugEnabled())
-        log4j.debug("strDocumentId: " + strDocumentId);
+        log4j.debug("strDocumentId: " + localStrDocumentId);
       // normalize the string of ids to a comma separated list
-      strDocumentId = strDocumentId.replaceAll("\\(|\\)|'", "");
-      if (strDocumentId.length() == 0)
+      localStrDocumentId = localStrDocumentId.replaceAll("\\(|\\)|'", "");
+      if (localStrDocumentId.length() == 0)
         throw new ServletException(Utility.messageBD(this, "NoDocument", vars.getLanguage()));
 
-      documentIds = strDocumentId.split(",");
+      documentIds = localStrDocumentId.split(",");
 
       if (log4j.isDebugEnabled())
         log4j.debug("Number of documents selected: " + documentIds.length);
@@ -578,12 +579,13 @@ public class PrintController extends HttpSecureAppServlet {
   public Report buildReport(HttpServletResponse response, VariablesSecureApp vars,
       String strDocumentId, final ReportManager reportManager, DocumentType documentType,
       OutputTypeEnum outputType, String templateId) {
+    String localStrDocumentId = strDocumentId;
     Report report = null;
-    if (strDocumentId != null) {
-      strDocumentId = strDocumentId.replaceAll("\\(|\\)|'", "");
+    if (localStrDocumentId != null) {
+      localStrDocumentId = localStrDocumentId.replaceAll("\\(|\\)|'", "");
     }
     try {
-      report = new Report(this, documentType, strDocumentId, vars.getLanguage(), templateId,
+      report = new Report(this, documentType, localStrDocumentId, vars.getLanguage(), templateId,
           multiReports, outputType);
     } catch (final ReportingException e) {
       log4j.error(e);
@@ -598,10 +600,11 @@ public class PrintController extends HttpSecureAppServlet {
   public void buildReport(HttpServletResponse response, VariablesSecureApp vars,
       String strDocumentId, Map<String, Report> reports, final ReportManager reportManager)
       throws ServletException, IOException {
+    String localStrDocumentId = strDocumentId;
     final String documentId = vars.getStringParameter("inpDocumentId");
-    if (strDocumentId != null)
-      strDocumentId = strDocumentId.replaceAll("\\(|\\)|'", "");
-    final Report report = reports.get(strDocumentId);
+    if (localStrDocumentId != null)
+      localStrDocumentId = localStrDocumentId.replaceAll("\\(|\\)|'", "");
+    final Report report = reports.get(localStrDocumentId);
     if (report == null)
       throw new ServletException(Utility.messageBD(this, "NoDataReport", vars.getLanguage())
           + documentId);

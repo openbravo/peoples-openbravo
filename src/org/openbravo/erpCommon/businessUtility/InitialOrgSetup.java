@@ -781,12 +781,13 @@ public class InitialOrgSetup {
   }
 
   OBError coaModule(String strModules) {
-    strModules = cleanUpStrModules(strModules);
+    String localStrModules = strModules;
+    localStrModules = cleanUpStrModules(localStrModules);
     OBError obeResult = new OBError();
     obeResult.setType(OKTYPE);
     List<Module> lCoaModules = null;
     try {
-      lCoaModules = InitialSetupUtility.getCOAModules(strModules);
+      lCoaModules = InitialSetupUtility.getCOAModules(localStrModules);
       // Modules with CoA are retrieved.
       if (lCoaModules.size() < 1) {
 
