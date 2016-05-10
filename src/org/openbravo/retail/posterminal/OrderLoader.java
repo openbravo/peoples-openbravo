@@ -1535,6 +1535,18 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
             OBDal.getInstance().save(terminal);
           }
         }
+      } else if (jsonorder.has("isReturn") && jsonorder.getBoolean("isReturn")) {
+        if (jsonorder.has("returnnoPrefix")) {
+          documentno = Long.parseLong(order.getDocumentNo().replace(
+              jsonorder.getString("returnnoPrefix"), ""));
+
+          if (order.getObposApplications().getReturnslastassignednum() == null
+              || documentno > order.getObposApplications().getReturnslastassignednum()) {
+            OBPOSApplications terminal = order.getObposApplications();
+            terminal.setReturnslastassignednum(documentno);
+            OBDal.getInstance().save(terminal);
+          }
+        }
       } else {
         if (jsonorder.has("documentnoPrefix")) {
           documentno = Long.parseLong(order.getDocumentNo().replace(
