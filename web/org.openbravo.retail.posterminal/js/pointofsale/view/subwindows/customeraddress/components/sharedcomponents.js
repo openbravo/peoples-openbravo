@@ -91,7 +91,7 @@ enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.customeraddr.edit_createcustomers',
   handlers: {
     onSetCustomerAddr: 'setCustomerAddr',
-    onSaveCustomerAddr: 'saveCustomerAddr'
+    onSaveCustomerAddr: 'preSaveCustomerAddr'
   },
   events: {
     onChangeBusinessPartner: ''
@@ -108,6 +108,24 @@ enyo.kind({
     this.waterfall('onLoadValue', {
       customer: this.customer,
       customerAddr: this.customerAddr
+    });
+  },
+  preSaveCustomerAddr: function (inSender, inEvent) {
+    var me = this,
+        inSenderOriginal = inSender,
+        inEventOriginal = inEvent;
+    OB.UTIL.HookManager.executeHooks('OBPOS_PreCustomerAddrSave', {
+      inSender: inSenderOriginal,
+      inEvent: inEventOriginal,
+      passValidation: true,
+      error: '',
+      meObject: me
+    }, function (args) {
+      if (args.passValidation) {
+        args.meObject.saveCustomerAddr(args.inSender, args.inEvent);
+      } else {
+        OB.UTIL.showWarning(args.error);
+      }
     });
   },
   saveCustomerAddr: function (inSender, inEvent) {
