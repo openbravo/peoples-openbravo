@@ -34,7 +34,7 @@ enyo.kind({
     kind: 'OB.UI.CheckboxButton',
     tag: 'div',
     tap: function () {
-
+      return this;
     },
     style: 'float: left; width: 10%;'
   }, {
@@ -119,7 +119,7 @@ enyo.kind({
           // continue
           return;
         }
-        var identifierName = d.identifier ? d.identifier : d.name;
+        var identifierName = d.identifier || d.name;
         this.createComponent({
           style: 'display: block;',
           components: [{
@@ -173,8 +173,6 @@ enyo.kind({
     }
     OB.UTIL.HookManager.executeHooks('OBPOS_RenderOrderLine', {
       orderline: this
-    }, function (args) {
-      //All should be done in module side
     });
   },
   keyupHandler: function (inSender, inEvent) {
@@ -311,7 +309,7 @@ enyo.kind({
   name: 'OB.UI.RenderTaxLine',
   classes: 'btnselect-orderline',
   tap: function () {
-
+    return this;
   },
   components: [{
     name: 'tax',
@@ -332,7 +330,7 @@ enyo.kind({
     style: 'clear: both;'
   }],
   selected: function () {
-
+    return this;
   },
   initComponents: function () {
     this.inherited(arguments);
@@ -349,7 +347,7 @@ enyo.kind({
   classes: 'btnselect-orderline',
   style: 'border-bottom: 0px',
   tap: function () {
-
+    return this;
   },
   components: [{
     name: 'name',
@@ -375,7 +373,7 @@ enyo.kind({
     style: 'clear: both;'
   }],
   selected: function () {
-
+    return this;
   },
   initComponents: function () {
     var paymentDate;

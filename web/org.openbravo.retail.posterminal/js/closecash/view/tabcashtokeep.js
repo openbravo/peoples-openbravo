@@ -163,7 +163,7 @@ enyo.kind({
             }
           },
           renderFixedAmount: function (modelToDraw) {
-            var udfn, cnted;
+            var cnted;
 
             if (modelToDraw.get('foreignCounted')) {
               cnted = modelToDraw.get('foreignCounted');
@@ -173,7 +173,7 @@ enyo.kind({
             this.$.variableamount.setAmount(cnted);
             this.$.keepfixedamount.setShowing(modelToDraw.get('paymentMethod').keepfixedamount);
             if (modelToDraw.get('paymentMethod').keepfixedamount) {
-              if (modelToDraw.get('foreignCounted') !== null && modelToDraw.get('foreignCounted') !== udfn) {
+              if (modelToDraw.get('foreignCounted') !== null && modelToDraw.get('foreignCounted') !== undefined) {
                 if (cnted < modelToDraw.get('paymentMethod').amount) {
                   this.$.keepfixedamount.render(OB.I18N.formatCurrency(cnted));
                   this.$.keepfixedamount.setQtyToKeep(cnted);

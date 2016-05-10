@@ -69,45 +69,43 @@ enyo.kind({
     name: 'line',
     style: 'line-height: 23px; width: 100%;',
     components: [{
+      style: 'float: left; width: 95px;',
       components: [{
-        style: 'float: left; width: 15%',
-        name: 'time'
-      }, {
-        style: 'float: left; width: 25%',
-        name: 'orderNo'
-      }, {
-        style: 'float: left; width: 60%',
-        name: 'bp'
+        style: 'float: left; width: 100%;',
+        name: 'date'
       }, {
         style: 'clear: both;'
+      }, {
+        style: 'float: left; width: 100%;',
+        name: 'time'
       }]
     }, {
+      style: 'float: left; width: calc(100% - 185px);',
       components: [{
-        style: 'float: left; width: 15%; font-weight: bold;'
-      }, {
-        style: 'float: left; width: 25%; font-weight: bold;'
-      }, {
-        style: 'float: right; text-align: right; width: 25%; font-weight: bold;',
-        name: 'total'
+        style: 'float: left; width: 100%;',
+        name: 'orderNo'
       }, {
         style: 'clear: both;'
+      }, {
+        style: 'float: left; width: 100%;',
+        name: 'bp'
       }]
+    }, {
+      style: 'float: right; font-weight: bold; text-align: right;',
+      name: 'total'
+    }, {
+      style: 'clear: both;'
     }]
   }],
   create: function () {
     this.inherited(arguments);
-    if (this.model.get('isPaid')) {
-      this.$.time.setContent(OB.I18N.formatDate(new Date(this.model.get('orderDate'))));
-    } else {
-      this.$.time.setContent(OB.I18N.formatHour(OB.I18N.normalizeDate(this.model.get('creationDate') || this.model.get('orderDate'))));
-    }
+    this.$.date.setContent(OB.I18N.formatDate(new Date(this.model.get('orderDate'))));
+    this.$.time.setContent(OB.I18N.formatHour(OB.I18N.normalizeDate(this.model.get('creationDate') || this.model.get('orderDate'))));
     this.$.orderNo.setContent(this.model.get('documentNo'));
     this.$.bp.setContent(this.model.get('bp').get('_identifier'));
     this.$.total.setContent(this.model.printTotal());
     OB.UTIL.HookManager.executeHooks('OBPOS_RenderListReceiptLine', {
       listReceiptLine: this
-    }, function (args) {
-      //All should be done in module side
     });
   }
 });

@@ -161,8 +161,6 @@ enyo.kind({
     }
     OB.UTIL.HookManager.executeHooks('OBPOS_RenderProduct', {
       model: this
-    }, function (args) {
-      //All should be done in module side
     });
   },
   setIdentifierContent: function () {

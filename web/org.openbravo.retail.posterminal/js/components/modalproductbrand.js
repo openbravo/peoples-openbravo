@@ -253,7 +253,6 @@ enyo.kind({
     characteristic: null
   },
   executeOnShow: function () {
-    var i, j;
     this.$.header.parent.addStyles('padding: 0px; border-bottom: 1px solid #cccccc');
     this.$.header.$.modalProductBrandTopHeader.$.title.setContent(OB.I18N.getLabel('OBMOBC_LblBrand'));
     this.waterfall('onSearchAction');

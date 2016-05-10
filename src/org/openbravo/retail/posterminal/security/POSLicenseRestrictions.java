@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2015 Openbravo S.L.U.
+ * Copyright (C) 2015-2016 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -8,6 +8,8 @@
  */
 package org.openbravo.retail.posterminal.security;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
@@ -71,6 +73,12 @@ public class POSLicenseRestrictions implements ModuleLicenseRestrictions {
     } else {
       return LicenseRestriction.NO_RESTRICTION;
     }
+  }
+
+  @Override
+  public List<AdditionalInfo> getAdditionalMessage() {
+    return Arrays.asList(new AdditionalInfo("OBPOS_ActivePosTerminals", String
+        .valueOf(getNumberOfActiveTerminals())));
   }
 
   @Override

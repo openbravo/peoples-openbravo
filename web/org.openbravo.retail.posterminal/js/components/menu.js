@@ -27,6 +27,7 @@ enyo.kind({
       permission: this.permission,
       orderType: 1
     });
+    this.model.get('order').setReturnDocumentNo();
     if (OB.MobileApp.model.get('lastPaneShown') === 'payment') {
       this.model.get('order').trigger('scan');
     }
@@ -55,8 +56,7 @@ enyo.kind({
   },
   init: function (model) {
     this.model = model;
-    var receipt = model.get('order'),
-        me = this;
+    var receipt = model.get('order');
     receipt.on('change:isEditable change:isQuotation change:gross', function (changedModel) {
       this.displayLogic();
     }, this);
@@ -125,8 +125,7 @@ enyo.kind({
   },
   init: function (model) {
     this.model = model;
-    var receipt = model.get('order'),
-        me = this;
+    var receipt = model.get('order');
     this.setShowing(false);
     receipt.on('change:isLayaway', function (model) {
       this.displayLogic();
@@ -154,8 +153,7 @@ enyo.kind({
   },
   i18nLabel: 'OBPOS_LblReceiptLayaway',
   tap: function () {
-    var receiptAllowed = true,
-        notValid = {};
+    var receiptAllowed = true;
     if (this.disabled) {
       return true;
     }
@@ -164,7 +162,6 @@ enyo.kind({
     if (this.model.get('order').get('orderType') === 3) {
       return;
     }
-    var order = this.model.get('order');
     enyo.forEach(this.model.get('order').get('payments').models, function (curPayment) {
       receiptAllowed = false;
       return;
@@ -189,8 +186,7 @@ enyo.kind({
   },
   init: function (model) {
     this.model = model;
-    var receipt = model.get('order'),
-        me = this;
+    var receipt = model.get('order');
     this.setShowing(false);
     receipt.on('change:orderType', function (model) {
       this.displayLogic();
@@ -264,6 +260,13 @@ enyo.kind({
         me.updateVisibility(true);
       } else {
         me.updateVisibility(false);
+      }
+    }, this);
+    receipt.on('change:orderType', function (model) {
+      if (model.get('orderType') === 1) {
+        me.updateVisibility(false);
+      } else {
+        me.updateVisibility(true);
       }
     }, this);
     receipt.on('change:isEditable', function (newValue) {
@@ -527,8 +530,7 @@ enyo.kind({
     }
   },
   init: function (model) {
-    var receipt = model.get('order'),
-        me = this;
+    var receipt = model.get('order');
     this.model = model;
     receipt.on('change:isQuotation', function (model) {
       this.updateVisibility(model);

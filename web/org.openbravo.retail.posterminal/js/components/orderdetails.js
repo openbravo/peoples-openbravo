@@ -28,7 +28,9 @@ enyo.kind({
     onPricelistChanged: '',
     onShowReceiptProperties: ''
   },
-  initComponents: function () {},
+  initComponents: function () {
+    return this;
+  },
   renderData: function (docNo) {
     this.preSetContentDetail(this.order, docNo);
   },

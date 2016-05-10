@@ -1506,12 +1506,46 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           terminal.setQuotationslastassignednum(documentno);
           OBDal.getInstance().save(terminal);
         }
+      } else if (jsonorder.has("isReturn") && jsonorder.getBoolean("isReturn")) {
+        if (order.getObposApplications().getReturnslastassignednum() == null
+            || documentno > order.getObposApplications().getReturnslastassignednum()) {
+          OBPOSApplications terminal = order.getObposApplications();
+          terminal.setReturnslastassignednum(documentno);
+          OBDal.getInstance().save(terminal);
+        }
       } else {
         if (order.getObposApplications().getLastassignednum() == null
             || documentno > order.getObposApplications().getLastassignednum()) {
           OBPOSApplications terminal = order.getObposApplications();
           terminal.setLastassignednum(documentno);
           OBDal.getInstance().save(terminal);
+        }
+      }
+    } else {
+      long documentno;
+      if (jsonorder.has("isQuotation") && jsonorder.getBoolean("isQuotation")) {
+        if (jsonorder.has("quotationnoPrefix")) {
+          documentno = Long.parseLong(order.getDocumentNo().replace(
+              jsonorder.getString("quotationnoPrefix"), ""));
+
+          if (order.getObposApplications().getQuotationslastassignednum() == null
+              || documentno > order.getObposApplications().getQuotationslastassignednum()) {
+            OBPOSApplications terminal = order.getObposApplications();
+            terminal.setQuotationslastassignednum(documentno);
+            OBDal.getInstance().save(terminal);
+          }
+        }
+      } else {
+        if (jsonorder.has("documentnoPrefix")) {
+          documentno = Long.parseLong(order.getDocumentNo().replace(
+              jsonorder.getString("documentnoPrefix"), ""));
+
+          if (order.getObposApplications().getLastassignednum() == null
+              || documentno > order.getObposApplications().getLastassignednum()) {
+            OBPOSApplications terminal = order.getObposApplications();
+            terminal.setLastassignednum(documentno);
+            OBDal.getInstance().save(terminal);
+          }
         }
       }
     }

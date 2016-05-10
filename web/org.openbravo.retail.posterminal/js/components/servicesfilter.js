@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2015 Openbravo S.L.U.
+ * Copyright (C) 2015-2016 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -48,7 +48,7 @@ enyo.kind({
         return false;
       }).map(function (line) {
         var product = line.get('product');
-        return product.get('forceFilterId') ? product.get('forceFilterId') : product.get('id');
+        return product.get('forceFilterId') || product.get('id');
       });
 
       //build auxiliar string for the products filter and for the categories filter:
@@ -61,7 +61,7 @@ enyo.kind({
         auxProdStr += '?';
 
         var product = l.get('product');
-        auxProdFilters.push(product.get('forceFilterId') ? product.get('forceFilterId') : product.get('id'));
+        auxProdFilters.push(product.get('forceFilterId') || product.get('id'));
 
         if (auxCatFilters.indexOf(l.get('product').get('productCategory')) < 0) {
           if (appendCatComma) {
@@ -109,7 +109,7 @@ enyo.kind({
         return false;
       }).map(function (line) {
         var product = line.get('product');
-        return product.get('forceFilterId') ? product.get('forceFilterId') : product.get('id');
+        return product.get('forceFilterId') || product.get('id');
       });
 
       where = " and product.productType = 'S' and (product.isLinkedToProduct = 'true' and ";
@@ -126,7 +126,7 @@ enyo.kind({
       where += "and product.m_product_id not in ('" + existingServices.join("','") + "')";
 
       var product = this.orderline.get('product'),
-          productId = product.get('forceFilterId') ? product.get('forceFilterId') : product.get('id');
+          productId = product.get('forceFilterId') || product.get('id');
       filters.push(productId);
       filters.push(productId);
       filters.push(this.orderline.get('product').get('productCategory'));
@@ -144,7 +144,7 @@ enyo.kind({
     if (this.orderlineList && this.orderlineList.length > 0) {
       prodList = this.orderlineList.map(function (line) {
         var product = line.get('product');
-        return product.get('forceFilterId') ? product.get('forceFilterId') : product.get('id');
+        return product.get('forceFilterId') || product.get('id');
       });
       catList = this.orderlineList.map(function (line) {
         return line.get('product').get('productCategory');
@@ -162,7 +162,7 @@ enyo.kind({
         return false;
       }).map(function (line) {
         var product = line.get('product');
-        return product.get('forceFilterId') ? product.get('forceFilterId') : product.get('id');
+        return product.get('forceFilterId') || product.get('id');
       });
       return [{
         columns: [],
@@ -176,29 +176,28 @@ enyo.kind({
         value: false,
         fieldType: 'forceString'
       }];
-    } else {
-      existingServices = OB.MobileApp.model.receipt.get('lines').filter(function (l) {
-        if (l.get('relatedLines') && _.indexOf(_.pluck(l.get('relatedLines'), 'orderlineId'), me.orderline.get('id')) !== -1) {
-          return true;
-        }
-        return false;
-      }).map(function (line) {
-        var product = line.get('product');
-        return product.get('forceFilterId') ? product.get('forceFilterId') : product.get('id');
-      });
-      var product = this.orderline.get('product');
-      return [{
-        columns: [],
-        operator: OB.Dal.FILTER,
-        value: 'Services_Filter',
-        params: [product.get('forceFilterId') ? product.get('forceFilterId') : product.get('id'), product.get('productCategory'), '', '', (existingServices.length > 0 ? existingServices.join("','") : '-')]
-      }, {
-        columns: ['ispack'],
-        operator: 'equals',
-        value: false,
-        fieldType: 'forceString'
-      }];
     }
+    existingServices = OB.MobileApp.model.receipt.get('lines').filter(function (l) {
+      if (l.get('relatedLines') && _.indexOf(_.pluck(l.get('relatedLines'), 'orderlineId'), me.orderline.get('id')) !== -1) {
+        return true;
+      }
+      return false;
+    }).map(function (line) {
+      var product = line.get('product');
+      return product.get('forceFilterId') || product.get('id');
+    });
+    var product = this.orderline.get('product');
+    return [{
+      columns: [],
+      operator: OB.Dal.FILTER,
+      value: 'Services_Filter',
+      params: [product.get('forceFilterId') || product.get('id'), product.get('productCategory'), '', '', (existingServices.length > 0 ? existingServices.join("','") : '-')]
+    }, {
+      columns: ['ispack'],
+      operator: 'equals',
+      value: false,
+      fieldType: 'forceString'
+    }];
   },
   lineAttributes: function () {
 

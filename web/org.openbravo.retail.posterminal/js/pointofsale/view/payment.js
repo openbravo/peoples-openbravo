@@ -537,7 +537,7 @@ enyo.kind({
       return true;
     }
 
-    requiredCash = paymentstatus.changeAmt;
+    requiredCash = selectedPayment.paymentMethod.iscash ? paymentstatus.changeAmt : paymentstatus.overpayment;
     if (requiredCash !== 0) {
       if (selectedPayment.paymentMethod.overpaymentLimit === 0) {
         this.$.overpaymentnotavailable.show();

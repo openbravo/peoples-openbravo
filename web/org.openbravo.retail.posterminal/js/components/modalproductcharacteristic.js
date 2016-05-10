@@ -55,7 +55,6 @@ enyo.kind({
   },
   create: function () {
     this.inherited(arguments);
-    var me = this;
     OB.Dal.query(OB.Model.CharacteristicValue, "select distinct(id), name, characteristic_id from m_ch_value where parent = '" + this.parent.model.get('id') + "' order by UPPER(name) asc", [], function (dataValues, me) {
       if (dataValues && dataValues.length > 0) {
         me.childrenArray = dataValues.models;
@@ -179,122 +178,117 @@ enyo.kind({
       }, this);
       return true;
 
-    } else {
+    }
+    var productFilterText, productcategory, productCharacteristicModel;
 
-      var productFilterText, productcategory, productCharacteristicModel;
+    productFilterText = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.searchProductCharacteristicHeader.$.productFilterText.getValue();
+    productcategory = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.searchProductCharacteristicHeader.$.productcategory.getValue();
+    productCharacteristicModel = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.searchProductCharacteristicHeader.parent.model;
 
-      productFilterText = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.searchProductCharacteristicHeader.$.productFilterText.getValue();
-      productcategory = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.searchProductCharacteristicHeader.$.productcategory.getValue();
-      productCharacteristicModel = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.searchProductCharacteristicHeader.parent.model;
+    var remoteCriteria = [],
+        brandparams = [],
+        characteristic = [],
+        characteristicValue = [];
+    var productFilter = {},
+        criteria = {},
+        brandfilter = {},
+        chFilter = {},
+        productText, characteristicfilter = {
+        columns: ['characteristic_id'],
+        operator: 'equals',
+        value: this.parent.parent.characteristic.get('id'),
+        isId: true
+        };
 
-      var remoteCriteria = [],
-          brandparams = [],
-          characteristic = [],
-          characteristicValue = [];
-      var productFilter = {},
-          criteria = {},
-          brandfilter = {},
-          chFilter = {},
-          characteristicValuefilter = {},
-          productText, characteristicfilter = {
-          columns: ['characteristic_id'],
-          operator: 'equals',
-          value: this.parent.parent.characteristic.get('id'),
-          isId: true
+    if (products.collection.length > 0) {
+      if (productCharacteristicModel.get('brandFilter').length > 0) {
+        for (i = 0; i < productCharacteristicModel.get('brandFilter').length; i++) {
+          brandparams.push(productCharacteristicModel.get('brandFilter')[i].id);
+        }
+        if (brandparams.length > 0) {
+          brandfilter = {
+            columns: [],
+            operator: OB.Dal.FILTER,
+            value: 'BChV_Filter',
+            params: [brandparams]
           };
+          remoteCriteria.push(brandfilter);
+        }
+      }
 
-      if (products.collection.length > 0) {
-        if (productCharacteristicModel.get('brandFilter').length > 0) {
-          for (i = 0; i < productCharacteristicModel.get('brandFilter').length; i++) {
-            brandparams.push(productCharacteristicModel.get('brandFilter')[i].id);
+      if (productFilterText !== "" || productcategory !== "__all__") {
+        productFilter.columns = [];
+        productFilter.operator = OB.Dal.FILTER;
+        productFilter.value = this.productCharacteristicValueFilterQualifier;
+        productText = (OB.MobileApp.model.hasPermission('OBPOS_remote.product' + OB.Dal.USESCONTAINS, true) ? '%' : '') + productFilterText + '%';
+        productFilter.params = [productText, productcategory];
+        remoteCriteria.push(productFilter);
+      }
+      if (me.parent.parent.model.get('filter').length > 0) {
+        for (i = 0; i < me.parent.parent.model.get('filter').length; i++) {
+          if (!characteristic.includes(me.parent.parent.model.get('filter')[i].characteristic_id)) {
+            characteristic.push(me.parent.parent.model.get('filter')[i].characteristic_id);
           }
-          if (brandparams.length > 0) {
-            brandfilter = {
+        }
+        for (i = 0; i < characteristic.length; i++) {
+          for (j = 0; j < me.parent.parent.model.get('filter').length; j++) {
+            if (characteristic[i] === me.parent.parent.model.get('filter')[j].characteristic_id) {
+              characteristicValue.push(me.parent.parent.model.get('filter')[j].id);
+            }
+          }
+          if (characteristicValue.length > 0) {
+            chFilter = {
               columns: [],
               operator: OB.Dal.FILTER,
-              value: 'BChV_Filter',
-              params: [brandparams]
+              value: 'Chv_Filter',
+              filter: characteristic[i],
+              params: [characteristicValue]
             };
-            remoteCriteria.push(brandfilter);
+            remoteCriteria.push(chFilter);
+            characteristicValue = [];
           }
         }
-
-        if (productFilterText !== "" || productcategory !== "__all__") {
-          productFilter.columns = [];
-          productFilter.operator = OB.Dal.FILTER;
-          productFilter.value = this.productCharacteristicValueFilterQualifier;
-          productText = (OB.MobileApp.model.hasPermission('OBPOS_remote.product' + OB.Dal.USESCONTAINS, true) ? '%' : '') + productFilterText + '%';
-          productFilter.params = [productText, productcategory];
-          remoteCriteria.push(productFilter);
-        }
-        if (me.parent.parent.model.get('filter').length > 0) {
-          for (i = 0; i < me.parent.parent.model.get('filter').length; i++) {
-            if (!characteristic.includes(me.parent.parent.model.get('filter')[i].characteristic_id)) {
-              characteristic.push(me.parent.parent.model.get('filter')[i].characteristic_id);
-            }
-          }
-          for (i = 0; i < characteristic.length; i++) {
-            for (j = 0; j < me.parent.parent.model.get('filter').length; j++) {
-              if (characteristic[i] === me.parent.parent.model.get('filter')[j].characteristic_id) {
-                characteristicValue.push(me.parent.parent.model.get('filter')[j].id);
-              }
-            }
-            if (characteristicValue.length > 0) {
-              chFilter = {
-                columns: [],
-                operator: OB.Dal.FILTER,
-                value: 'Chv_Filter',
-                filter: characteristic[i],
-                params: [characteristicValue]
-              };
-              remoteCriteria.push(chFilter);
-              characteristicValue = [];
-            }
-          }
-        }
-        criteria.hqlCriteria = [];
-        productCharacteristic.customFilters.forEach(function (hqlFilter) {
-          if (!_.isUndefined(hqlFilter.hqlCriteriaCharacteristicsValue)) {
-            var hqlCriteriaFilter = hqlFilter.hqlCriteriaCharacteristicsValue();
-            if (!_.isUndefined(hqlCriteriaFilter)) {
-              hqlCriteriaFilter.forEach(function (filter) {
-                if (filter) {
-                  remoteCriteria.push(filter);
-                }
-              });
-            }
-          }
-        });
       }
-      remoteCriteria.push(characteristicfilter);
-      criteria.remoteFilters = remoteCriteria;
-      criteria.forceRemote = forceRemote;
-      OB.Dal.find(OB.Model.CharacteristicValue, criteria, function (dataValues) {
-        if (dataValues && dataValues.length > 0) {
-          for (i = 0; i < dataValues.length; i++) {
-            for (j = 0; j < me.parent.parent.model.get('filter').length; j++) {
-              if (dataValues.models[i].get('id') === me.parent.parent.model.get('filter')[j].id) {
-                dataValues.models[i].set('checked', true);
-                dataValues.models[i].set('selected', me.parent.parent.model.get('filter')[j].selected);
-                break;
-              } else {
-                dataValues.models[i].set('checked', false);
+      criteria.hqlCriteria = [];
+      productCharacteristic.customFilters.forEach(function (hqlFilter) {
+        if (!_.isUndefined(hqlFilter.hqlCriteriaCharacteristicsValue)) {
+          var hqlCriteriaFilter = hqlFilter.hqlCriteriaCharacteristicsValue();
+          if (!_.isUndefined(hqlCriteriaFilter)) {
+            hqlCriteriaFilter.forEach(function (filter) {
+              if (filter) {
+                remoteCriteria.push(filter);
               }
-              dataValues.models[i].set('childrenSelected', null);
-              me.hasSelectedChildrenTree([dataValues.models[i]], dataValues.models[i]);
-            }
+            });
           }
-          me.parent.parent.$.body.$.listValues.valuesList.reset(dataValues.models);
-        } else {
-          me.parent.parent.$.body.$.listValues.valuesList.reset();
         }
-      }, function (tx, error) {
-        OB.UTIL.showError("OBDAL error: " + error);
-      }, this);
-      return true;
-
-
+      });
     }
+    remoteCriteria.push(characteristicfilter);
+    criteria.remoteFilters = remoteCriteria;
+    criteria.forceRemote = forceRemote;
+    OB.Dal.find(OB.Model.CharacteristicValue, criteria, function (dataValues) {
+      if (dataValues && dataValues.length > 0) {
+        for (i = 0; i < dataValues.length; i++) {
+          for (j = 0; j < me.parent.parent.model.get('filter').length; j++) {
+            if (dataValues.models[i].get('id') === me.parent.parent.model.get('filter')[j].id) {
+              dataValues.models[i].set('checked', true);
+              dataValues.models[i].set('selected', me.parent.parent.model.get('filter')[j].selected);
+              break;
+            } else {
+              dataValues.models[i].set('checked', false);
+            }
+            dataValues.models[i].set('childrenSelected', null);
+            me.hasSelectedChildrenTree([dataValues.models[i]], dataValues.models[i]);
+          }
+        }
+        me.parent.parent.$.body.$.listValues.valuesList.reset(dataValues.models);
+      } else {
+        me.parent.parent.$.body.$.listValues.valuesList.reset();
+      }
+    }, function (tx, error) {
+      OB.UTIL.showError("OBDAL error: " + error);
+    }, this);
+    return true;
   },
   parentValue: 0,
   setCollection: function (inSender, inEvent) {
@@ -514,7 +508,6 @@ enyo.kind({
     onGetPrevCollection: 'getPrevCollection'
   },
   executeOnShow: function () {
-    var i, j;
     this.$.body.$.listValues.parentValue = 0;
     this.$.header.parent.addStyles('padding: 0px; border-bottom: 1px solid #cccccc');
     this.$.header.$.modalProductChTopHeader.$.backChButton.addStyles('visibility: hidden');
@@ -557,8 +550,7 @@ enyo.kind({
 
   },
   getPrevCollection: function (inSender, inEvent) {
-    var me = this,
-        i, j, k;
+    var i, j, k;
     OB.Dal.query(OB.Model.CharacteristicValue, "select distinct(id) , name , characteristic_id, parent as parent from m_ch_value " + "where parent = (select parent from m_ch_value where id = '" + this.$.body.$.listValues.parentValue + "') and " + "characteristic_id = (select characteristic_id from m_ch_value where id = '" + this.$.body.$.listValues.parentValue + "') order by UPPER(name) asc", [], function (dataValues, me) {
       if (dataValues && dataValues.length > 0) {
         for (i = 0; i < dataValues.length; i++) {

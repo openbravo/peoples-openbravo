@@ -76,15 +76,24 @@ public class Terminal extends JSONProcessSimple {
       String quotationsDocTypeId = pOSTerminal.getObposTerminaltype()
           .getDocumentTypeForQuotations() == null ? null : pOSTerminal.getObposTerminaltype()
           .getDocumentTypeForQuotations().getId();
+      // saving returns doc id to prevent session to be lost in getLastDocumentNumberForPOS
+      String returnsDocTypeId = pOSTerminal.getObposTerminaltype().getDocumentTypeForReturns()
+          .getId();
       List<String> doctypeIds = new ArrayList<String>();
       doctypeIds.add(pOSTerminal.getObposTerminaltype().getDocumentType().getId());
-      doctypeIds.add(pOSTerminal.getObposTerminaltype().getDocumentTypeForReturns().getId());
+      if (pOSTerminal.getReturndocnoPrefix() == null)
+        doctypeIds.add(pOSTerminal.getObposTerminaltype().getDocumentTypeForReturns().getId());
       int lastDocumentNumber = POSUtils.getLastDocumentNumberForPOS(pOSTerminal.getSearchKey(),
           doctypeIds);
       int lastQuotationDocumentNumber = 0;
       if (quotationsDocTypeId != null) {
         lastQuotationDocumentNumber = POSUtils.getLastDocumentNumberQuotationForPOS(
             pOSTerminal.getSearchKey(), quotationsDocTypeId);
+      }
+      int lastReturnDocumentNumber = 0;
+      if (returnsDocTypeId != null) {
+        lastReturnDocumentNumber = POSUtils.getLastDocumentNumberReturnForPOS(
+            pOSTerminal.getSearchKey(), returnsDocTypeId);
       }
       String warehouseId = POSUtils.getWarehouseForTerminal(pOSTerminal).getId();
       final org.openbravo.model.pricing.pricelist.PriceList pricesList = POSUtils
@@ -145,8 +154,9 @@ public class Terminal extends JSONProcessSimple {
           + "' as currencySymbolAtTheRight, " + "'" + pricesList.getCurrency().getSymbol()
           + "' as symbol, " + "'" + warehouseId + "' as warehouse, " + lastDocumentNumber
           + " as lastDocumentNumber, " + lastQuotationDocumentNumber
-          + " as lastQuotationDocumentNumber, " + "'" + regionId + "'"
-          + " as organizationRegionId, " + "'" + countryId + "'" + " as organizationCountryId, '"
+          + " as lastQuotationDocumentNumber, " + lastReturnDocumentNumber
+          + " as lastReturnDocumentNumber, " + "'" + regionId + "'" + " as organizationRegionId, "
+          + "'" + countryId + "'" + " as organizationCountryId, '"
           + ProcessHQLQuery.escape(storeAddress) + "' as organizationAddressIdentifier, "
           + sessionTimeout + " as sessionTimeout, " + selectOrgImage
           + regularTerminalHQLProperties.getHqlSelect()

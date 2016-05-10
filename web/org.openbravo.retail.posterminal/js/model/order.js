@@ -288,6 +288,7 @@
 
   // Sales.Order Model.
   var Order = Backbone.Model.extend({
+    includeDocNoSeperator: true,
     modelName: 'Order',
     tableName: 'c_order',
     entityName: 'Order',
@@ -347,8 +348,10 @@
         this.set('creationDate', OB.I18N.normalizeDate(attributes.creationDate));
         this.set('documentnoPrefix', attributes.documentnoPrefix);
         this.set('quotationnoPrefix', attributes.quotationnoPrefix);
+        this.set('returnnoPrefix', attributes.returnnoPrefix);
         this.set('documentnoSuffix', attributes.documentnoSuffix);
         this.set('quotationnoSuffix', attributes.quotationnoSuffix);
+        this.set('returnnoSuffix', attributes.returnnoSuffix);
         this.set('documentNo', attributes.documentNo);
         this.setUndo('InitializeAttr', attributes.undo);
         bpModel = new OB.Model.BusinessPartner(attributes.bp);
@@ -576,8 +579,6 @@
 
       this.calculatingGross = true;
       var me = this;
-      var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('calculateGross');
-
       // reset some vital receipt values because, at this point, they are obsolete. do not fire the change event
       me.set({
         'net': OB.DEC.Zero,
@@ -615,7 +616,6 @@
 
           me.adjustPayment();
           me.save(function () {
-            OB.UTIL.SynchronizationHelper.finished(synchId, 'calculateGross');
             // Reset the flag that protects reentrant invocations to calculateGross().
             // And if there is pending any execution of calculateGross(), do it and do not continue.
             me.calculatingGross = false;
@@ -707,7 +707,7 @@
         OB.debug('Skipping calculateReceipt function');
         return;
       }
-
+      OB.MobileApp.view.waterfall('calculatingReceipt');
       this.calculatingReceipt = true;
 
       this.addToListOfCallbacks(callback);
@@ -728,14 +728,20 @@
         me.on('calculategross', function () {
           me.off('calculategross');
           if (me.pendingCalculateReceipt) {
+            OB.MobileApp.view.waterfall('calculatedReceipt');
             me.pendingCalculateReceipt = false;
+            me.calculatingReceipt = false;
             me.calculateReceipt();
             return;
           } else {
             if (me.get('calculateReceiptCallbacks') && me.get('calculateReceiptCallbacks').length > 0) {
               executeCallback(me.get('calculateReceiptCallbacks'), function () {
                 me.calculatingReceipt = false;
+                OB.MobileApp.view.waterfall('calculatedReceipt');
               });
+            } else {
+              me.calculatingReceipt = false;
+              OB.MobileApp.view.waterfall('calculatedReceipt');
             }
           }
         });
@@ -746,6 +752,21 @@
         OB.Model.Discounts.applyPromotions(this);
       } else {
         OB.Model.Discounts.applyPromotions(this, line);
+      }
+    },
+
+    setReturnDocumentNo: function () {
+      if (OB.MobileApp.model.get('terminal').returnDocNoPrefix) {
+        var order = this;
+        if (order.get('returnnoPrefix') !== OB.MobileApp.model.get('terminal').returnDocNoPrefix) {
+          var nextReturnno = OB.MobileApp.model.getNextReturnno();
+          order.set('returnnoPrefix', OB.MobileApp.model.get('terminal').returnDocNoPrefix);
+          order.set('returnnoSuffix', nextReturnno.documentnoSuffix);
+          order.set('documentnoPrefix', -1);
+          order.set('documentnoSuffix', -1);
+          order.set('documentNo', nextReturnno.documentNo);
+          order.trigger('saveCurrent');
+        }
       }
     },
 
@@ -836,8 +857,10 @@
       this.set('creationDate', null);
       this.set('documentnoPrefix', -1);
       this.set('quotationnoPrefix', -1);
+      this.set('returnnoPrefix', -1);
       this.set('documentnoSuffix', -1);
       this.set('quotationnoSuffix', -1);
+      this.set('returnnoSuffix', -1);
       this.set('documentNo', '');
       this.set('undo', null);
       this.set('bp', null);
@@ -1609,7 +1632,7 @@
         OB.Dal.find(OB.Model.ProductPrice, criteria, function (productPrices) {
           if (productPrices.length > 0) {
             p = p.clone();
-            if (OB.UTIL.isNullOrUndefined(p.get('giftCardTransaction'))) {
+            if (OB.UTIL.isNullOrUndefined(p.get('updatePriceFromPricelist')) || p.get('updatePriceFromPricelist')) {
               p.set('standardPrice', productPrices.at(0).get('pricestd'));
               p.set('listPrice', productPrices.at(0).get('pricelist'));
             }
@@ -2530,6 +2553,8 @@
       this.set('documentnoSuffix', nextDocumentno.documentnoSuffix);
       this.set('quotationnoPrefix', -1);
       this.set('quotationnoSuffix', -1);
+      this.set('returnnoPrefix', -1);
+      this.set('returnnoSuffix', -1);
       this.set('documentNo', nextDocumentno.documentNo);
       this.set('posTerminal', OB.MobileApp.model.get('terminal').id);
       this.set('session', OB.MobileApp.model.get('session'));
