@@ -64,23 +64,24 @@ public class SL_SequenceProduct_Conversion extends HttpSecureAppServlet {
   private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strUOM,
       String strMProductUOMID, String strQuantityOrder, String strTabId) throws IOException,
       ServletException {
+    String localStrUOM = strUOM;
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
-    if (strUOM.startsWith("\""))
-      strUOM = strUOM.substring(1, strUOM.length() - 1);
-    int stdPrecision = Integer.valueOf(SLInvoiceConversionData.stdPrecision(this, strUOM))
+    if (localStrUOM.startsWith("\""))
+      localStrUOM = localStrUOM.substring(1, localStrUOM.length() - 1);
+    int stdPrecision = Integer.valueOf(SLInvoiceConversionData.stdPrecision(this, localStrUOM))
         .intValue();
     String strInitUOM = SLInvoiceConversionData.initUOMId(this, strMProductUOMID);
     String strMultiplyRate;
     boolean check = false;
 
-    strMultiplyRate = SLInvoiceConversionData.multiplyRate(this, strInitUOM, strUOM);
-    if (strInitUOM.equals(strUOM))
+    strMultiplyRate = SLInvoiceConversionData.multiplyRate(this, strInitUOM, localStrUOM);
+    if (strInitUOM.equals(localStrUOM))
       strMultiplyRate = "1";
     if (strMultiplyRate.equals(""))
-      strMultiplyRate = SLInvoiceConversionData.divideRate(this, strUOM, strInitUOM);
+      strMultiplyRate = SLInvoiceConversionData.divideRate(this, localStrUOM, strInitUOM);
     if (strMultiplyRate.equals("")) {
       strMultiplyRate = "1";
       if (!strMProductUOMID.equals(""))

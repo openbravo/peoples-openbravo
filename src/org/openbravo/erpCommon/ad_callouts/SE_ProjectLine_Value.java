@@ -71,6 +71,7 @@ public class SE_ProjectLine_Value extends HttpSecureAppServlet {
       String strmProductId, String strPriceListVersion, String strTabId, String strProjectId,
       String strPhaseId, String strADOrgID, String strPriceStd, String strCreatePL, String strStatus)
       throws IOException, ServletException {
+    String localStrProjectId = strProjectId;
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
@@ -88,18 +89,18 @@ public class SE_ProjectLine_Value extends HttpSecureAppServlet {
       data = SEProjectLineValueData.select(this, strmProductId);
       String strDate = DateTimeData.today(this);
       if (strPhaseId != null && !strPhaseId.equals("")) {
-        if (strProjectId == null || strProjectId.equals("")) {
-          strProjectId = SEProjectLineValueData.selectPhaseProject(this, strPhaseId);
+        if (localStrProjectId == null || localStrProjectId.equals("")) {
+          localStrProjectId = SEProjectLineValueData.selectPhaseProject(this, strPhaseId);
         }
       }
-      data1 = SEProjectLineValueData.selectProject(this, strProjectId);
+      data1 = SEProjectLineValueData.selectProject(this, localStrProjectId);
       String strCBPartnerLocationID = data1[0].bplocation;
       String strMWarehouseID = data1[0].warehouse;
       String strProjCat = data1[0].projcat;
 
       if (!strPriceListVersion.equals("")) {
         String plannedprice = SEProjectLineValueData.selectPlannedPrice(this, strPriceListVersion,
-            strmProductId, strProjectId);
+            strmProductId, localStrProjectId);
         if (plannedprice != null && !plannedprice.equals("")) {
           if (!strProjCat.equals("S")) {
             resultado.append("new Array(\"inpplannedprice\", "
@@ -121,7 +122,8 @@ public class SE_ProjectLine_Value extends HttpSecureAppServlet {
             && strMWarehouseID != null && !strMWarehouseID.equals("")) {
           String strIsSOTrx = "Y";
           String strCTaxID = Tax.get(this, strmProductId, strDate, strADOrgID, strMWarehouseID,
-              strCBPartnerLocationID, strCBPartnerLocationID, strProjectId, strIsSOTrx.equals("Y"));
+              strCBPartnerLocationID, strCBPartnerLocationID, localStrProjectId,
+              strIsSOTrx.equals("Y"));
           if (strCTaxID != null && !strCTaxID.equals("")) {
             resultado.append(", new Array(\"inpcTaxId\", \""
                 + (strCTaxID.equals("") ? "\"\"" : strCTaxID) + "\"),\n");

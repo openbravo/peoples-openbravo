@@ -95,13 +95,14 @@ public class UsedByLink extends HttpSecureAppServlet {
   private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strWindow,
       String TabId, String keyColumn, String keyId, String tableId) throws IOException,
       ServletException {
+    String localTableId = tableId;
     if (log4j.isDebugEnabled())
       log4j.debug("Output: UsedBy links for tab: " + TabId);
 
     // Special case: convert FinancialMgmtDebtPaymentGenerateV view into its
     // FinancialMgmtDebtPayment table. Fixes issue #0009973
-    if (tableId.equals("800021")) {
-      tableId = "800018";
+    if (localTableId.equals("800021")) {
+      localTableId = "800018";
     }
 
     final XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
@@ -112,14 +113,14 @@ public class UsedByLink extends HttpSecureAppServlet {
     xmlDocument.setParameter("tabID", TabId);
     xmlDocument.setParameter("windowID", strWindow);
     xmlDocument.setParameter("keyColumn", keyColumn);
-    xmlDocument.setParameter("tableId", tableId);
+    xmlDocument.setParameter("tableId", localTableId);
     xmlDocument.setParameter("keyName", "inp" + Sqlc.TransformaNombreColumna(keyColumn));
     xmlDocument.setParameter("keyId", keyId);
     xmlDocument.setParameter("recordIdentifier",
-        UsedByLinkData.selectIdentifier(this, keyId, vars.getLanguage(), tableId));
+        UsedByLinkData.selectIdentifier(this, keyId, vars.getLanguage(), localTableId));
 
     final SearchResult searchResult = getLinkedItemCategories(vars, strWindow, keyColumn, keyId,
-        tableId);
+        localTableId);
 
     final UsedByLinkData[] usedByLinkData = searchResult.getUsedByLinkData();
     final OBError message = searchResult.getMessage();

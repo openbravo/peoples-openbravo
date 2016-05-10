@@ -152,16 +152,17 @@ public class BasicUtility {
   /**
    * Generates a String representing the wikified name from source
    * 
-   * @param strSource
+   * @param localStrSource
    * @return strTarget: wikified name
    */
   public static String wikifiedName(String strSource) throws FileNotFoundException {
-    if (strSource == null || strSource.equals(""))
-      return strSource;
-    strSource = strSource.trim();
-    if (strSource.equals(""))
-      return strSource;
-    final StringTokenizer source = new StringTokenizer(strSource, " ", false);
+    String localStrSource = strSource;
+    if (localStrSource == null || localStrSource.equals(""))
+      return localStrSource;
+    localStrSource = localStrSource.trim();
+    if (localStrSource.equals(""))
+      return localStrSource;
+    final StringTokenizer source = new StringTokenizer(localStrSource, " ", false);
     String strTarget = "";
     String strTemp = "";
     int i = 0;

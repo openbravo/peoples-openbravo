@@ -63,6 +63,7 @@ public class SL_Assets extends HttpSecureAppServlet {
   private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strTabId,
       String strAssetvalue, String strResidualvalue, String strAmortizationvalue,
       String strLastChanged) throws IOException, ServletException {
+    String localStrResidualvalue = strResidualvalue;
     String localStrAssetvalue = strAssetvalue;
     String localStrAmortizationvalue = strAmortizationvalue;
     if (log4j.isDebugEnabled())
@@ -72,13 +73,13 @@ public class SL_Assets extends HttpSecureAppServlet {
 
     if (localStrAssetvalue.equals(""))
       localStrAssetvalue = "0";
-    if (strResidualvalue.equals(""))
-      strResidualvalue = "0";
+    if (localStrResidualvalue.equals(""))
+      localStrResidualvalue = "0";
     if (localStrAmortizationvalue.equals(""))
       localStrAmortizationvalue = "0";
 
     BigDecimal fAssetvalue = new BigDecimal(localStrAssetvalue);
-    BigDecimal fResidualvalue = new BigDecimal(strResidualvalue);
+    BigDecimal fResidualvalue = new BigDecimal(localStrResidualvalue);
     BigDecimal fAmortizationvalue = new BigDecimal(localStrAmortizationvalue);
     // Float fAssetvalue = Float.valueOf(strAssetvalue);
     // Float fResidualvalue = Float.valueOf(strResidualvalue);
@@ -103,7 +104,7 @@ public class SL_Assets extends HttpSecureAppServlet {
     }
 
     localStrAssetvalue = fAssetvalue.toString();
-    strResidualvalue = fResidualvalue.toString();
+    localStrResidualvalue = fResidualvalue.toString();
     localStrAmortizationvalue = fAmortizationvalue.toString();
 
     StringBuffer resultado = new StringBuffer();

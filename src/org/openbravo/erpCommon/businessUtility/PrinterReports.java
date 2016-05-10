@@ -92,6 +92,7 @@ public class PrinterReports extends HttpSecureAppServlet {
       String strDirectPrint, String strPDFPath, String strHiddenKey, String strHiddenValue,
       String inptabId, String strIsDirectPDF, String strIsDirectAttach) throws IOException,
       ServletException {
+    String localStrPDFPath = strPDFPath;
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
     String[] discard = { "isPrintPreview" };
@@ -100,12 +101,12 @@ public class PrinterReports extends HttpSecureAppServlet {
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/businessUtility/PrinterReports", discard).createXmlDocument();
     String mapping = "";
-    if (strPDFPath.startsWith("..")) {
-      strPDFPath = strPDFPath.substring(2);
-      mapping = strPDFPath;
-      strPDFPath = FormatUtilities.replace(PrinterReportsData.select(this, strPDFPath));
+    if (localStrPDFPath.startsWith("..")) {
+      localStrPDFPath = localStrPDFPath.substring(2);
+      mapping = localStrPDFPath;
+      localStrPDFPath = FormatUtilities.replace(PrinterReportsData.select(this, localStrPDFPath));
     } else
-      mapping = PrinterReportsData.selectMapping(this, strPDFPath);
+      mapping = PrinterReportsData.selectMapping(this, localStrPDFPath);
 
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
@@ -118,14 +119,14 @@ public class PrinterReports extends HttpSecureAppServlet {
 
     // String mapping =
     // FormatUtilities.replace(PrinterReportsData.select(this, strPDFPath));
-    strPDFPath = FormatUtilities.replace(strPDFPath);
+    localStrPDFPath = FormatUtilities.replace(localStrPDFPath);
     vars.setSessionValue("inpTabID", inptabId);
     final String hiddenValue = quouteIds(strHiddenValue);
-    vars.setSessionValue(strPDFPath + "." + strHiddenKey, "(" + hiddenValue + ")");
+    vars.setSessionValue(localStrPDFPath + "." + strHiddenKey, "(" + hiddenValue + ")");
     if (!strHiddenValue.equals(""))
-      vars.setSessionValue(strPDFPath + "." + strHiddenKey, "(" + hiddenValue + ")");
+      vars.setSessionValue(localStrPDFPath + "." + strHiddenKey, "(" + hiddenValue + ")");
     else
-      vars.getRequestInGlobalVariable(strHiddenKey, strPDFPath + "." + strHiddenKey,
+      vars.getRequestInGlobalVariable(strHiddenKey, localStrPDFPath + "." + strHiddenKey,
           IsIDFilter.instance);
 
     // vars.getRequestInGlobalVariable(strHiddenKey + "_R", mapping + "." +

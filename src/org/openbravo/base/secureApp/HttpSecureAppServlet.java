@@ -1165,12 +1165,13 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
       String strReportName, String strFileName, String strOutputType,
       HashMap<String, Object> designParameters, JRDataSource data,
       Map<Object, Object> exportParameters, boolean forceRefresh) throws ServletException {
+    String localStrReportName = strReportName;
     String localStrOutputType = strOutputType;
     String localStrFileName = strFileName;
     Map<Object, Object> localExportParameters = exportParameters;
     HashMap<String, Object> localDesignParameters = designParameters;
-    if (strReportName == null || strReportName.equals(""))
-      strReportName = PrintJRData.getReportName(this, classInfo.id);
+    if (localStrReportName == null || localStrReportName.equals(""))
+      localStrReportName = PrintJRData.getReportName(this, classInfo.id);
 
     final String strAttach = globalParameters.strFTPDirectory + "/284-" + classInfo.id;
 
@@ -1179,10 +1180,10 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
 
     final String strBaseDesign = getBaseDesignPath(strLanguage);
 
-    strReportName = Replace.replace(Replace.replace(strReportName, "@basedesign@", strBaseDesign),
-        "@attach@", strAttach);
+    localStrReportName = Replace.replace(
+        Replace.replace(localStrReportName, "@basedesign@", strBaseDesign), "@attach@", strAttach);
     if (localStrFileName == null) {
-      localStrFileName = strReportName.substring(strReportName.lastIndexOf("/") + 1);
+      localStrFileName = localStrReportName.substring(localStrReportName.lastIndexOf("/") + 1);
     }
 
     ServletOutputStream os = null;
@@ -1225,16 +1226,16 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
         String localAddress = HttpBaseUtils.getLocalAddress(request);
         localExportParameters.put(ReportingUtils.IMAGES_URI, localAddress
             + "/servlets/image?image={0}");
-        ReportingUtils.exportJR(strReportName, expType, localDesignParameters, os, false, this,
-            data, localExportParameters);
+        ReportingUtils.exportJR(localStrReportName, expType, localDesignParameters, os, false,
+            this, data, localExportParameters);
       } else if (localStrOutputType.equals("pdf") || localStrOutputType.equalsIgnoreCase("xls")
           || localStrOutputType.equalsIgnoreCase("txt")
           || localStrOutputType.equalsIgnoreCase("csv")) {
         reportId = UUID.randomUUID();
         File outputFile = new File(globalParameters.strFTPDirectory + "/" + localStrFileName + "-"
             + (reportId) + "." + localStrOutputType);
-        ReportingUtils.exportJR(strReportName, expType, localDesignParameters, outputFile, false,
-            this, data, localExportParameters);
+        ReportingUtils.exportJR(localStrReportName, expType, localDesignParameters, outputFile,
+            false, this, data, localExportParameters);
         response.setContentType("text/html;charset=UTF-8");
         response.setHeader("Content-disposition", "inline" + "; filename=" + localStrFileName + "-"
             + (reportId) + ".html");

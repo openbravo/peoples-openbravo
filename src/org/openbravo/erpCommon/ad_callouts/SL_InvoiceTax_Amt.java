@@ -63,6 +63,9 @@ public class SL_InvoiceTax_Amt extends HttpSecureAppServlet {
   private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strChanged,
       String strTaxAmt, String strTaxBaseAmt, String strTaxId, String strInvoiceId)
       throws IOException, ServletException {
+    String localStrTaxId = strTaxId;
+    String localStrTaxBaseAmt = strTaxBaseAmt;
+    String localStrTaxAmt = strTaxAmt;
     String localStrInvoiceId = strInvoiceId;
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
@@ -72,20 +75,21 @@ public class SL_InvoiceTax_Amt extends HttpSecureAppServlet {
     StringBuffer resultado = new StringBuffer();
 
     // Discount...
-    if (strTaxAmt.startsWith("\""))
-      strTaxAmt = strTaxAmt.substring(1, strTaxAmt.length() - 1);
-    if (strTaxBaseAmt.startsWith("\""))
-      strTaxBaseAmt = strTaxBaseAmt.substring(1, strTaxBaseAmt.length() - 1);
-    if (strTaxId.startsWith("\""))
-      strTaxId = strTaxId.substring(1, strTaxId.length() - 1);
+    if (localStrTaxAmt.startsWith("\""))
+      localStrTaxAmt = localStrTaxAmt.substring(1, localStrTaxAmt.length() - 1);
+    if (localStrTaxBaseAmt.startsWith("\""))
+      localStrTaxBaseAmt = localStrTaxBaseAmt.substring(1, localStrTaxBaseAmt.length() - 1);
+    if (localStrTaxId.startsWith("\""))
+      localStrTaxId = localStrTaxId.substring(1, localStrTaxId.length() - 1);
     if (localStrInvoiceId.startsWith("\""))
-      localStrInvoiceId = localStrInvoiceId.substring(1, strTaxId.length() - 1);
+      localStrInvoiceId = localStrInvoiceId.substring(1, localStrTaxId.length() - 1);
 
-    SLInvoiceTaxAmtData[] data = SLInvoiceTaxAmtData.select(this, strTaxId, localStrInvoiceId);
+    SLInvoiceTaxAmtData[] data = SLInvoiceTaxAmtData.select(this, localStrTaxId, localStrInvoiceId);
 
-    BigDecimal taxAmt = (strTaxAmt.equals("") ? new BigDecimal(0.0) : new BigDecimal(strTaxAmt));
-    BigDecimal taxBaseAmt = (strTaxBaseAmt.equals("") ? new BigDecimal(0.0) : new BigDecimal(
-        strTaxBaseAmt));
+    BigDecimal taxAmt = (localStrTaxAmt.equals("") ? new BigDecimal(0.0) : new BigDecimal(
+        localStrTaxAmt));
+    BigDecimal taxBaseAmt = (localStrTaxBaseAmt.equals("") ? new BigDecimal(0.0) : new BigDecimal(
+        localStrTaxBaseAmt));
     BigDecimal taxRate = (data[0].rate.equals("") ? new BigDecimal(1)
         : new BigDecimal(data[0].rate));
     Integer taxScale = new Integer(data[0].priceprecision);

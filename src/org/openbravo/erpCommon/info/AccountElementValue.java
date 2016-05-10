@@ -166,9 +166,8 @@ public class AccountElementValue extends HttpSecureAppServlet {
         "org/openbravo/erpCommon/info/AccountElementValue").createXmlDocument();
     AccountElementValueData[] data = null;
     if (isDefault) {
-      if (strValue.equals("") && strName.equals(""))
-        strValue = "%";
-      data = AccountElementValueData.set(strValue, strName);
+      data = AccountElementValueData.set(
+          strValue.equals("") && strName.equals("") ? "%" : strValue, strName);
     } else {
       data = AccountElementValueData.select(this, "1", "", "", "", "", strElementValue,
           Utility.getContext(this, vars, "#User_Client", "AccountElementValue"),

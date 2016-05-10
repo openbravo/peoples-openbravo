@@ -768,6 +768,7 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
 
   private ReportTrialBalanceData[] calculateTree(ReportTrialBalanceData[] data, String indice,
       Vector<Object> vecTotal, ReportTrialBalanceData[] dataIB, String strNotInitialBalance) {
+    Vector<Object> localVecTotal = vecTotal;
     String localIndice = indice;
     if (data == null || data.length == 0)
       return data;
@@ -778,18 +779,18 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
     // if (log4j.isDebugEnabled())
     // log4j.debug("ReportTrialBalanceData.calculateTree() - data: " +
     // data.length);
-    if (vecTotal == null)
-      vecTotal = new Vector<Object>();
-    if (vecTotal.size() == 0) {
-      vecTotal.addElement("0");
-      vecTotal.addElement("0");
-      vecTotal.addElement("0");
-      vecTotal.addElement("0");
+    if (localVecTotal == null)
+      localVecTotal = new Vector<Object>();
+    if (localVecTotal.size() == 0) {
+      localVecTotal.addElement("0");
+      localVecTotal.addElement("0");
+      localVecTotal.addElement("0");
+      localVecTotal.addElement("0");
     }
-    BigDecimal totalDR = new BigDecimal((String) vecTotal.elementAt(0));
-    BigDecimal totalCR = new BigDecimal((String) vecTotal.elementAt(1));
-    BigDecimal totalInicial = new BigDecimal((String) vecTotal.elementAt(2));
-    BigDecimal totalFinal = new BigDecimal((String) vecTotal.elementAt(3));
+    BigDecimal totalDR = new BigDecimal((String) localVecTotal.elementAt(0));
+    BigDecimal totalCR = new BigDecimal((String) localVecTotal.elementAt(1));
+    BigDecimal totalInicial = new BigDecimal((String) localVecTotal.elementAt(2));
+    BigDecimal totalFinal = new BigDecimal((String) localVecTotal.elementAt(3));
     boolean encontrado = false;
     for (int i = 0; i < data.length; i++) {
       if (data[i].parentId.equals(localIndice)) {
@@ -842,10 +843,10 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
       } else if (encontrado)
         break;
     }
-    vecTotal.set(0, totalDR.toPlainString());
-    vecTotal.set(1, totalCR.toPlainString());
-    vecTotal.set(2, totalInicial.toPlainString());
-    vecTotal.set(3, totalFinal.toPlainString());
+    localVecTotal.set(0, totalDR.toPlainString());
+    localVecTotal.set(1, totalCR.toPlainString());
+    localVecTotal.set(2, totalInicial.toPlainString());
+    localVecTotal.set(3, totalFinal.toPlainString());
     result = new ReportTrialBalanceData[vec.size()];
     vec.copyInto(result);
     return result;

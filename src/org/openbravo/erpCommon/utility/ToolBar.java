@@ -1058,14 +1058,15 @@ public class ToolBar {
 
   private String transformElementsToString(HTMLElement element, Vector<String> vecLastType,
       boolean isReference) {
+    Vector<String> localVecLastType = vecLastType;
     if (element == null)
       return "";
-    if (vecLastType == null)
-      vecLastType = new Vector<String>(0);
+    if (localVecLastType == null)
+      localVecLastType = new Vector<String>(0);
     final StringBuffer sbElement = new StringBuffer();
     String lastType = "";
-    if (vecLastType.size() > 0)
-      lastType = vecLastType.elementAt(0);
+    if (localVecLastType.size() > 0)
+      lastType = localVecLastType.elementAt(0);
     if (lastType.equals("SPACE") && element.elementType().equals("SPACE"))
       return "";
     if (isReference) {
@@ -1094,8 +1095,8 @@ public class ToolBar {
     if (!element.elementType().equals("HR"))
       sbElement.append(element);
     sbElement.append("</td>\n");
-    vecLastType.clear();
-    vecLastType.addElement(element.elementType());
+    localVecLastType.clear();
+    localVecLastType.addElement(element.elementType());
     return sbElement.toString();
   }
 
