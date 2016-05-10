@@ -30,6 +30,7 @@
       me.set({
         appName: 'WebPOS',
         appModuleId: 'FF808181326CC34901326D53DBCF0018',
+        appModulePrefix: 'OBPOS',
         supportsOffline: true,
         loginUtilsUrl: '../../org.openbravo.retail.posterminal.service.loginutils',
         loginHandlerUrl: '../../org.openbravo.retail.posterminal/POSLoginHandler',
