@@ -3093,7 +3093,14 @@
         paymentToAdd: payment,
         payments: payments,
         receipt: this
-      }, function () {
+      }, function (args) {
+        if (args && args.cancellation) {
+          if (payment.get('reverseCallback')) {
+            var reverseCallback = payment.get('reverseCallback');
+            reverseCallback();
+          }
+          return;
+        }
         if (!payment.get('paymentData') && !payment.get('reversedPaymentId')) {
           // search for an existing payment only if there is not paymentData info.
           // this avoids to merge for example card payments of different cards.
@@ -3132,6 +3139,11 @@
         payments.add(payment, {
           at: payment.get('index')
         });
+        // If there is a reversed payment set isReversed and isNegativeOrder properties
+        if (payment.get('reversedPayment')) {
+          payment.get('reversedPayment').set('isReversed', true);
+          payment.get('reversedPayment').set('isNegativeOrder', order.getGross() < 0 ? true : false);
+        }
         order.adjustPayment();
         order.trigger('displayTotal');
         order.save();
@@ -3213,7 +3225,8 @@
               'reversedPayment': payment,
               'index': OB.DEC.add(1, payments.indexOf(payment)),
               'isNegativeOrder': me.getGross() < 0 ? true : false,
-              'paymentData': payment.get('paymentData') ? payment.get('paymentData') : null
+              'paymentData': payment.get('paymentData') ? payment.get('paymentData') : null,
+              'reverseCallback': reverseCallback
             }
           });
         } else {
@@ -3231,13 +3244,12 @@
             'origAmount': OB.DEC.sub(0, payment.get('origAmount')),
             'paid': OB.DEC.sub(0, payment.get('paid')),
             'reversedPaymentId': payment.get('paymentId'),
+            'reversedPayment': payment,
             'index': OB.DEC.add(1, payments.indexOf(payment)),
             'isNegativeOrder': me.getGross() < 0 ? true : false,
-            'paymentData': payment.get('paymentData') ? payment.get('paymentData') : null
+            'paymentData': payment.get('paymentData') ? payment.get('paymentData') : null,
+            'reverseCallback': reverseCallback
           }));
-          payment.set('isReversed', true);
-          payment.set('isNegativeOrder', me.getGross() < 0 ? true : false);
-          me.save();
         }
       });
     },

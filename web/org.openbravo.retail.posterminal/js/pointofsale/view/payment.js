@@ -1339,7 +1339,7 @@ enyo.kind({
           me.bubble('onClearPaymentSelect');
           me.doReversePayment({
             payment: me.owner.model,
-            removeCallback: function () {
+            reverseCallback: function () {
               me.deleting = false;
               me.removeClass('btn-icon-loading');
               me.addClass('btn-icon-reversePayment');
