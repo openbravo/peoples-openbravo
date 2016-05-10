@@ -61,6 +61,7 @@ import org.openbravo.materialmgmt.StockUtils;
 import org.openbravo.mobile.core.process.DataSynchronizationImportProcess;
 import org.openbravo.mobile.core.process.DataSynchronizationProcess.DataSynchronization;
 import org.openbravo.mobile.core.process.JSONPropertyToEntity;
+import org.openbravo.mobile.core.process.OutDatedDataChangeException;
 import org.openbravo.mobile.core.process.PropertyByType;
 import org.openbravo.mobile.core.utils.OBMOBCUtils;
 import org.openbravo.model.ad.access.InvoiceLineTax;
@@ -201,6 +202,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
     orderLineServiceList = new HashMap<String, JSONArray>();
     try {
+
       initializeVariables(jsonorder);
       executeHooks(orderPreProcesses, jsonorder, null, null, null);
       boolean wasPaidOnCredit = false;
@@ -280,6 +282,24 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         }
         ArrayList<OrderLine> lineReferences = new ArrayList<OrderLine>();
         JSONArray orderlines = jsonorder.getJSONArray("lines");
+        if (jsonorder.getBoolean("isLayaway")) {
+          order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
+
+          final Date updated = OBMOBCUtils.calculateClientDatetime(jsonorder.getString("updated"),
+              Long.parseLong(jsonorder.getString("timezoneOffset")));
+
+          final Date loaded = OBMOBCUtils.calculateClientDatetime(jsonorder.getString("loaded"),
+              Long.parseLong(jsonorder.getString("timezoneOffset")));
+
+          if (!((updated.compareTo(order.getUpdated()) >= 0) && (loaded.compareTo(order
+              .getUpdated()) >= 0))) {
+            throw new OutDatedDataChangeException(Utility.messageBD(
+                new DalConnectionProvider(false), "OBPOS_outdatedLayaway", OBContext.getOBContext()
+                    .getLanguage().getLanguage()));
+          }
+
+        }
+
         if (!newLayaway && notpaidLayaway) {
           order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
           order.setObposAppCashup(jsonorder.getString("obposAppCashup"));
@@ -506,6 +526,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       throws JSONException {
     Long value = jsonorder.getLong("created");
     order.set("creationDate", new Date(value));
+    order.set("updated", new Date(value));
     if (invoice != null) {
       invoice.set("creationDate", new Date(value));
     }

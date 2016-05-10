@@ -377,11 +377,14 @@
         this.set('isBeingDiscounted', false);
         this.set('reApplyDiscounts', false);
         this.set('calculateReceiptCallbacks', []);
+        this.set('loaded', attributes.loaded);
+        this.set('updated', attributes.updated);
         _.each(_.keys(attributes), function (key) {
           if (!this.has(key)) {
             this.set(key, attributes[key]);
           }
         }, this);
+
       } else {
         this.clearOrderAttributes();
       }
@@ -391,6 +394,10 @@
       var undoCopy = this.get('undo'),
           me = this,
           previousOrder;
+
+      var now = new Date();
+      this.set('updated', OB.I18N.normalizeDate(now));
+      this.set('timezoneOffset', now.getTimezoneOffset());
       this.set('json', JSON.stringify(this.serializeToJSON()));
       if (callback === undefined || !callback instanceof Function) {
         callback = function () {};
@@ -589,6 +596,9 @@
         silent: true
       });
       var saveAndTriggerEvents = function (gross) {
+          var now = new Date();
+          me.set('loaded', OB.I18N.normalizeDate(now));
+          me.set('timezoneOffset', now.getTimezoneOffset());
           var net = me.get('lines').reduce(function (memo, e) {
             var netLine = e.get('discountedNet');
             if (netLine) {

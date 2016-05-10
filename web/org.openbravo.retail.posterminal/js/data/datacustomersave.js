@@ -31,6 +31,10 @@
       bpToSave.set('createdBy', OB.MobileApp.model.get('orgUserId'));
       if (customerId) {
         this.customer.set('posTerminal', OB.MobileApp.model.get('terminal').id);
+        var now = new Date();
+        this.customer.set('updated', OB.I18N.normalizeDate(now));
+        this.customer.set('timezoneOffset', now.getTimezoneOffset());
+        this.customer.set('loaded', OB.I18N.normalizeDate(new Date(this.customer.get('loaded'))));
         bpToSave.set('json', JSON.stringify(this.customer.serializeEditedToJSON()));
         bpToSave.set('c_bpartner_id', this.customer.get('id'));
       } else {
@@ -83,6 +87,7 @@
         });
       } else {
         //save that the customer is being processed by server
+        this.customer.set('loaded', OB.I18N.normalizeDate(new Date()));
         OB.Dal.save(this.customer, function () {
           //OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_customerSavedSuccessfullyLocally',[me.customer.get('_identifier')]));
           // Saving Customer Address locally

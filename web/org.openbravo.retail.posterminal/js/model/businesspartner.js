@@ -50,6 +50,7 @@
 
       this.set('_identifier', this.get('name'));
 
+
       this.trigger('customerSaved');
       //datacustomersave will catch this event and save this locally with changed = 'Y'
       //Then it will try to send to the backend
@@ -137,6 +138,9 @@
       editedBp.set('id', this.get('id'));
       editedBp.set('locId', this.get('locId'));
       editedBp.set('contactId', this.get('contactId'));
+      editedBp.set('updated', this.get('updated'));
+      editedBp.set('timezoneOffset', this.get('timezoneOffset'));
+      editedBp.set('loaded', this.get('loaded'));
       //Set only form attributes
       _.each(OB.OBPOSPointOfSale.UI.customers.edit_createcustomers_impl.prototype.newAttributes, function (model) {
         editedBp.set(model.modelProperty, me.get(model.modelProperty));
@@ -283,6 +287,14 @@
   }, {
     name: 'priceListName',
     column: 'priceListName',
+    type: 'TEXT'
+  }, {
+    name: 'updated',
+    column: 'updated',
+    type: 'TEXT'
+  }, {
+    name: 'loaded',
+    column: 'loaded',
     type: 'TEXT'
   }]);
 

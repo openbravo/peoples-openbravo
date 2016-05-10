@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012 Openbravo S.L.U.
+ * Copyright (C) 2012-2016 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -10,6 +10,7 @@ package org.openbravo.retail.posterminal;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Date;
 
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
@@ -20,12 +21,15 @@ import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.mobile.core.process.DataSynchronizationImportProcess;
 import org.openbravo.mobile.core.process.DataSynchronizationProcess.DataSynchronization;
 import org.openbravo.mobile.core.process.JSONPropertyToEntity;
+import org.openbravo.mobile.core.utils.OBMOBCUtils;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.businesspartner.Location;
 import org.openbravo.model.common.geography.Country;
+import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.json.JsonConstants;
 
 @DataSynchronization(entity = "BusinessPartnerLocation")
@@ -46,11 +50,25 @@ public class CustomerAddrLoader extends POSDataSynchronizationProcess implements
 
       BusinessPartner customer = OBDal.getInstance().get(BusinessPartner.class,
           jsonCustomerAddr.getString("bpartner"));
+
       location = getCustomerAddress(jsonCustomerAddr.getString("id"));
 
       if (location.getId() == null) {
         location = createBPartnerAddr(customer, jsonCustomerAddr);
       } else {
+        final Date updated = OBMOBCUtils.calculateClientDatetime(
+            jsonCustomerAddr.getString("updated"),
+            Long.parseLong(jsonCustomerAddr.getString("timezoneOffset")));
+
+        final Date loaded = OBMOBCUtils.calculateClientDatetime(
+            jsonCustomerAddr.getString("loaded"),
+            Long.parseLong(jsonCustomerAddr.getString("timezoneOffset")));
+
+        if (!((updated.compareTo(location.getUpdated()) >= 0) && (loaded.compareTo(location
+            .getUpdated()) >= 0))) {
+          Utility.messageBD(new DalConnectionProvider(false), "OBPOS_outdatedbpl", OBContext
+              .getOBContext().getLanguage().getLanguage());
+        }
         location = editBPartnerAddr(customer, location, jsonCustomerAddr);
       }
 

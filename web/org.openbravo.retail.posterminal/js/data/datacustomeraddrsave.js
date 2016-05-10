@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2015 Openbravo S.L.U.
+ * Copyright (C) 2012-2016 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -30,6 +30,10 @@
       bpLocToSave.set('createdBy', OB.MobileApp.model.get('orgUserId'));
       if (customerAddrId) {
         this.customerAddr.set('posTerminal', OB.MobileApp.model.get('terminal').id);
+        var now = new Date();
+        this.customerAddr.set('updated', OB.I18N.normalizeDate(now));
+        this.customerAddr.set('timezoneOffset', now.getTimezoneOffset());
+        this.customerAddr.set('loaded', OB.I18N.normalizeDate(new Date(this.customerAddr.get('loaded'))));
         bpLocToSave.set('json', JSON.stringify(this.customerAddr.serializeToJSON()));
         bpLocToSave.set('c_bpartner_location_id', this.customerAddr.get('id'));
       } else {
@@ -60,6 +64,7 @@
         }, isNew);
       } else {
         //save that the customer address is being processed by server
+        this.customerAddr.set('loaded', OB.I18N.normalizeDate(new Date()));
         OB.Dal.save(this.customerAddr, function () {
           // Update Default Address
 

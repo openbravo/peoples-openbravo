@@ -11,6 +11,7 @@ package org.openbravo.retail.posterminal.master;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.mobile.core.model.HQLProperty;
 import org.openbravo.mobile.core.model.ModelExtension;
@@ -44,6 +45,13 @@ public class BPLocationProperties extends ModelExtension {
         add(new HQLProperty(
             "(case when bploc.active = 'Y' and bploc.businessPartner.active = 'Y' then true else false end)",
             "active"));
+        String curDbms = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+            .getProperty("bbdd.rdbms");
+        if (curDbms.equals("POSTGRE")) {
+          add(new HQLProperty("now()", "loaded"));
+        } else if (curDbms.equals("ORACLE")) {
+          add(new HQLProperty("TO_CHAR(SYSTIMESTAMP, 'MM-DD-YYYY HH24:MI:SS')", "loaded"));
+        }
       }
     };
     return list;

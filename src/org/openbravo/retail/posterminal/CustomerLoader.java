@@ -11,6 +11,7 @@ package org.openbravo.retail.posterminal;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.Iterator;
 
 import javax.enterprise.inject.Any;
@@ -28,11 +29,14 @@ import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.mobile.core.process.DataSynchronizationImportProcess;
 import org.openbravo.mobile.core.process.DataSynchronizationProcess.DataSynchronization;
 import org.openbravo.mobile.core.process.JSONPropertyToEntity;
+import org.openbravo.mobile.core.utils.OBMOBCUtils;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.businesspartner.Location;
+import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.json.JsonConstants;
 
 @DataSynchronization(entity = "BusinessPartner")
@@ -59,6 +63,18 @@ public class CustomerLoader extends POSDataSynchronizationProcess implements
       if (customer.getId() == null) {
         customer = createBPartner(jsoncustomer);
       } else {
+        final Date updated = OBMOBCUtils.calculateClientDatetime(jsoncustomer.getString("updated"),
+            Long.parseLong(jsoncustomer.getString("timezoneOffset")));
+
+        final Date loaded = OBMOBCUtils.calculateClientDatetime(jsoncustomer.getString("loaded"),
+            Long.parseLong(jsoncustomer.getString("timezoneOffset")));
+
+        if (!((updated.compareTo(customer.getUpdated()) >= 0) && (loaded.compareTo(customer
+            .getUpdated()) >= 0))) {
+          Utility.messageBD(new DalConnectionProvider(false), "OBPOS_outdatedbp", OBContext
+              .getOBContext().getLanguage().getLanguage());
+        }
+
         customer = editBPartner(customer, jsoncustomer);
       }
 
