@@ -54,6 +54,7 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.Property;
+import org.openbravo.base.model.domaintype.BooleanDomainType;
 import org.openbravo.base.model.domaintype.EnumerateDomainType;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.session.OBPropertiesProvider;
@@ -89,6 +90,7 @@ import org.openbravo.model.ad.ui.FieldTrl;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.Window;
 import org.openbravo.portal.PortalAccessible;
+import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.json.DefaultJsonDataService;
 import org.openbravo.service.json.JsonConstants;
 import org.openbravo.service.json.JsonUtils;
@@ -303,6 +305,7 @@ public class DataSourceServlet extends BaseKernelServlet {
     Map<String, DecimalFormat> formats = new HashMap<String, DecimalFormat>();
     int clientUTCOffsetMiliseconds;
     TimeZone clientTimeZone;
+    Window windowToCsv = null;
 
     public QueryJSONWriterToCSV(HttpServletRequest request, HttpServletResponse response,
         Map<String, String> parameters, Entity entity) {
@@ -461,6 +464,11 @@ public class DataSourceServlet extends BaseKernelServlet {
               numericCols.add(propKey);
             }
 
+            // save current window to get preference properly
+            if (prop.getDomainType() instanceof BooleanDomainType) {
+              windowToCsv = window;
+            }
+
             if (!(prop.getDomainType() instanceof EnumerateDomainType)) {
               continue;
             }
@@ -552,6 +560,8 @@ public class DataSourceServlet extends BaseKernelServlet {
         }
 
         boolean isFirst = true;
+        boolean shouldCheckTranslation = false;
+        boolean preferenceCalculateFirst = true;
         while (itKeys.hasNext()) {
           String key = (String) itKeys.next();
           if (key.endsWith(JsonConstants.IDENTIFIER)) {
@@ -619,6 +629,22 @@ public class DataSourceServlet extends BaseKernelServlet {
             SimpleDateFormat timeFormat = JsonUtils.createTimeFormatWithoutGMTOffset();
             timeFormat.setLenient(true);
             keyValue = timeFormat.format(clientTimezoneDate);
+          } else if (keyValue instanceof Boolean && keyValue != null) {
+            // Calculate if it is needed translate YesNo reference in export to csv.
+            if (preferenceCalculateFirst == true) {
+              shouldCheckTranslation = getValueShouldCheckTranslationPreference();
+              preferenceCalculateFirst = false;
+            }
+            if (shouldCheckTranslation) {
+              String userLanguage = OBContext.getOBContext().getLanguage().getLanguage();
+              if (keyValue.toString().equals("true")) {
+                keyValue = Utility.messageBD(new DalConnectionProvider(false), "OBUISC_Yes",
+                    userLanguage);
+              } else if (keyValue.toString().equals("false")) {
+                keyValue = Utility.messageBD(new DalConnectionProvider(false), "OBUISC_No",
+                    userLanguage);
+              }
+            }
           }
 
           if (keyValue != null && !keyValue.toString().equals("null")) {
@@ -634,6 +660,18 @@ public class DataSourceServlet extends BaseKernelServlet {
       } catch (Exception e) {
         throw new OBException("Error while exporting CSV information", e);
       }
+    }
+
+    private boolean getValueShouldCheckTranslationPreference() {
+      boolean shouldCheck = false;
+      try {
+        shouldCheck = "Y".equals(Preferences.getPreferenceValue("AllowExportCSV_YesNoTranslated",
+            true, OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
+                .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
+                .getOBContext().getRole(), windowToCsv));
+      } catch (PropertyException prefNotDefined) {
+      }
+      return shouldCheck;
     }
 
     private Date convertFromLocalToClientTimezone(Date localDate) {
