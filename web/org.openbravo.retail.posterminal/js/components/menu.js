@@ -1171,7 +1171,7 @@ enyo.kind({
       }
       return 'DN';
     }
-    if (!receipt.get('replacedorder') && (isPaidReceipt || isLayaway)) {
+    if (isPaidReceipt || isLayaway) {
       var deliveredresult = delivered();
       if (isPaidReceipt && !OB.MobileApp.model.hasPermission('OBPOS_receipt.CancelReplacePaidOrders', true) && deliveredresult === 'TD') {
         this.hide();
