@@ -18,7 +18,6 @@
  */
 package org.openbravo.erpCommon.ad_process;
 
-import org.apache.log4j.Logger;
 import org.openbravo.erpCommon.reference.PInstanceProcessData;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
@@ -32,8 +31,6 @@ import org.openbravo.scheduling.ProcessContext;
  * 
  */
 public class PinstanceProcedure extends ProcedureProcess {
-
-  static Logger log = Logger.getLogger(PinstanceProcedure.class);
 
   private String pinstanceId;
 

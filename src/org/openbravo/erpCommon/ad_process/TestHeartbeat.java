@@ -108,6 +108,7 @@ public class TestHeartbeat extends HttpSecureAppServlet {
               .init(connectionProvider);
           Map<String, Object> params = bundle.getParams();
           params.put("action", "DECLINE");
+          new ProcessRunner(bundle).execute(connectionProvider);
         }
 
         // Deactivating the process at SystemInfo

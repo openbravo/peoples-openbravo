@@ -891,9 +891,5 @@ public class IssuesTest extends OBBaseTest {
     public boolean isErrorOccured() {
       return errorOccured;
     }
-
-    public void setErrorOccured(boolean errorOccured) {
-      this.errorOccured = errorOccured;
-    }
   }
 }
