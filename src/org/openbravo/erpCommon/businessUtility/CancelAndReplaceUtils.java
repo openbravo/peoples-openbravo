@@ -329,6 +329,10 @@ public class CancelAndReplaceUtils {
       createPayments(oldOrder, newOrder, inverseOrder, jsonorder, useOrderDocumentNoForRelatedDocs,
           replaceOrder, triggersDisabled);
 
+     //Calling Cancelandreplaceorderhook
+     WeldUtils.getInstanceFromStaticBeanManager(CancelAndReplaceOrderHookCaller.class)
+          .executeHook(triggersDisabled, oldOrder, newOrder);
+
     } catch (Exception e1) {
       try {
         OBDal.getInstance().getConnection().rollback();
