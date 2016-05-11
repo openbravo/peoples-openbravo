@@ -856,6 +856,10 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                                 }
                               }
 
+                              OB.MobileApp.view.$.containerWindow.getRoot().showDivText(null, {
+                                permission: null,
+                                orderType: cloneOrder.get('orderType')
+                              });
                               order.set('preventServicesUpdate', true);
                               _.each(cloneOrder.get('lines').models, function (line) {
                                 if (line.get('remainingQuantity') < line.get('qty')) {
