@@ -628,7 +628,7 @@ enyo.kind({
     }
   },
   toggleLineSelection: function (inSender, inEvent) {
-    if (inEvent.status) {
+    if (inEvent.status && this.line) {
       this.selectedLine = this.line;
       this.line = null;
       this.selectedCallbacks = this.receipt.get('lines')._callbacks.selected;
@@ -636,7 +636,7 @@ enyo.kind({
       this.receipt.get('lines').off('selected');
       this.receipt.get('lines').off('click');
       this.render();
-    } else {
+    } else if (!inEvent.status) {
       //The fix for issue 31509 adds a selected callback after 'off'ing the callbacks but before
       //restoring them. We need to ensure that both callback objects are merged
       this.receipt.get('lines')._callbacks.selected = this.selectedCallbacks;
