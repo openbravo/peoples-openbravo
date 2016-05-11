@@ -64,7 +64,8 @@ enyo.kind({
       tap: function () {
         // TODO: Check the behavior with the receipt multi-line selection case.
         // TODO: The 'Undo' button doesn't work in the case the target receipt is opened.
-        var orderModel = this.owner.owner.selectedLine.model;
+        var me = this,
+            orderModel = this.owner.owner.selectedLine.model;
         if (this.owner.owner.selectedLine.id.indexOf('openedReceiptsListLine') === -1) {
           // 'Create New One' case
           var orderList = this.owner.owner.owner.model.get('orderList');
@@ -79,24 +80,31 @@ enyo.kind({
           product: this.owner.owner.args.product,
           attrs: this.owner.owner.args.attrs,
           context: this.owner.owner.args.context,
-          callback: this.owner.owner.args.callback
+          callback: function () {
+            if (me.owner.owner.args.callback) {
+              me.owner.owner.args.callback();
+            }
+            if (me.owner.owner.$.bodyContent.$.chkSelectOpenedReceiptModal.checked) {
+
+              me.owner.owner.doChangeCurrentOrder({
+                newCurrentOrder: orderModel
+              });
+              me.owner.owner.owner.model.get('order').calculateReceipt(function () {
+                me.owner.owner.owner.model.get('order').trigger('updateServicePrices');
+              });
+            } else {
+              //Hack to calculate totals even if the receipt is not the UI receipt
+              orderModel.setIsCalculateReceiptLockState(false);
+              orderModel.setIsCalculateGrossLockState(false);
+              orderModel.set('belongsToMultiOrder', true);
+              orderModel.calculateReceipt(function () {
+                orderModel.trigger('updateServicePrices');
+                orderModel.set('belongsToMultiOrder', false);
+              });
+            }
+          }
         });
         this.owner.owner.args.callback = null;
-        if (this.owner.owner.$.bodyContent.$.chkSelectOpenedReceiptModal.checked) {
-          var me = this,
-              onCalculategross;
-
-          me.owner.owner.doChangeCurrentOrder({
-            newCurrentOrder: orderModel
-          });
-          me.owner.owner.owner.model.get('order').calculateReceipt();
-          onCalculategross = function () {
-            orderModel.off('saveCurrent', onCalculategross);
-            me.owner.owner.owner.model.get('order').trigger('updateServicePrices');
-          };
-
-          orderModel.on('saveCurrent', onCalculategross);
-        }
         this.owner.owner.doHideThisPopup();
       }
     }, {
@@ -128,7 +136,6 @@ enyo.kind({
 
   init: function (model) {
     this.$.bodyButtons.setStyle('padding-top: 5px');
-    // TODO: La aprobación (si fue necesaria debe ser copiada a la nueva orden o a la orden seleccionada)
   },
   events: {
     onChangeCurrentOrder: '',
