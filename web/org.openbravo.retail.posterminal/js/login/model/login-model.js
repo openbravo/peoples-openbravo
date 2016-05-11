@@ -928,7 +928,7 @@
       var next = this.getLastReturnnoSuffixInOrderlist() + 1;
       return {
         documentnoSuffix: next,
-        documentNo: OB.MobileApp.model.get('terminal').returnDocNoPrefix + '/' + OB.UTIL.padNumber(next, 7)
+        documentNo: OB.MobileApp.model.get('terminal').returnDocNoPrefix + (OB.Model.Order.prototype.includeDocNoSeperator ? '/' : '') + OB.UTIL.padNumber(next, 7)
       };
     },
 

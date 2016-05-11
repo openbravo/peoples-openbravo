@@ -544,8 +544,14 @@ public class POSUtils {
         if (jsonError.has("documentNo") && jsonError.has("isReturn")
             && jsonError.getBoolean("isReturn")) {
           String documentNo = jsonError.getString("documentNo");
-          if (documentNo.indexOf("/") != 0) {
+          if (documentNo.indexOf("/") > -1) {
             String number = documentNo.substring(documentNo.indexOf("/") + 1);
+            int errorNumber = new Long(number).intValue();
+            if (errorNumber > maxDocNo) {
+              maxDocNo = errorNumber;
+            }
+          } else if (jsonError.has("returnnoPrefix")) {
+            String number = documentNo.replace(jsonError.getString("returnnoPrefix"), "");
             int errorNumber = new Long(number).intValue();
             if (errorNumber > maxDocNo) {
               maxDocNo = errorNumber;
