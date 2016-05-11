@@ -449,7 +449,9 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           return paymentResponse;
         }
 
-        if (order.getReplacedorder() != null) {
+        boolean doCancelAndReplace = jsonorder.has("doCancelAndReplace")
+            && jsonorder.getBoolean("doCancelAndReplace") ? true : false;
+        if (doCancelAndReplace && order.getReplacedorder() != null) {
           TriggerHandler.getInstance().disable();
           try {
             // Set default payment type to order in case there is no payment on the order

@@ -2569,6 +2569,7 @@
           }
         }, me);
         me.get('payments').reset(me.get('payments').models);
+        me.set('doCancelAndReplace', true);
 
         OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_OrderReplaced', [me.get('replacedorder_documentNo'), me.get('documentNo')]));
         me.calculateGross();

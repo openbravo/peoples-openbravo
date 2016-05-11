@@ -427,7 +427,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
           triggerPaymentAccepted;
 
       triggerPaymentAccepted = function () {
-        if (receipt.get('replacedorder')) {
+        if (receipt.get('doCancelAndReplace') && receipt.get('replacedorder')) {
           process.exec({
             orderId: receipt.get('replacedorder'),
             setCancelled: true
