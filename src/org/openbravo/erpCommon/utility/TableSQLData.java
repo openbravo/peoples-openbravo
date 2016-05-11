@@ -1719,8 +1719,8 @@ public class TableSQLData implements Serializable {
   SQLReturnObject[] getHeaders(boolean withoutIdentifiers, boolean useFieldLength) {
     SQLReturnObject[] data = null;
     Vector<SQLReturnObject> vAux = new Vector<SQLReturnObject>();
-    Vector<Properties> structure = getStructure();
-    for (Enumeration<Properties> e = structure.elements(); e.hasMoreElements();) {
+    Vector<Properties> windowInfoStructure = getStructure();
+    for (Enumeration<Properties> e = windowInfoStructure.elements(); e.hasMoreElements();) {
       Properties prop = e.nextElement();
       if (prop.getProperty("IsKey").equals("Y")
           || prop.getProperty("IsSecondaryKey").equals("Y")

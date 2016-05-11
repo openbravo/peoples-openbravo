@@ -1498,8 +1498,8 @@ public abstract class AcctServer {
       for (int i = 0; i < data.length; i++) {
         BigDecimal qty1 = new BigDecimal(data[i].qty1);
         BigDecimal qty2 = new BigDecimal(data[i].qty2);
-        BigDecimal Qty = qty1.min(qty2);
-        if (Qty.toString().equals("0"))
+        BigDecimal qty = qty1.min(qty2);
+        if (qty.toString().equals("0"))
           continue;
         // if (log4j.isDebugEnabled())
         // log4j.debug("AcctServer - Match--dateTrx1 :->" + data[i].datetrx1
@@ -1517,7 +1517,7 @@ public abstract class AcctServer {
         if (compare.equals("-1"))
           DateTrx = dateTrx2;
         //
-        String strQty = Qty.toString();
+        String strQty = qty.toString();
         String strDateTrx = DateTrx;
         String adClientId = data[i].adClientId;
         String adOrgId = data[i].adOrgId;
@@ -1542,24 +1542,24 @@ public abstract class AcctServer {
   /**
    * Create MatchInv record
    * 
-   * @param AD_Client_ID
+   * @param aD_Client_ID
    *          Client
-   * @param AD_Org_ID
+   * @param aD_Org_ID
    *          Org
    * @param M_InOutLine_ID
    *          Receipt
    * @param C_InvoiceLine_ID
    *          Invoice
-   * @param M_Product_ID
+   * @param m_Product_ID
    *          Product
    * @param DateTrx
    *          Date
-   * @param Qty
+   * @param qty
    *          Qty
    * @return true if record created
    */
-  private int createMatchInv(String AD_Client_ID, String AD_Org_ID, String M_InOutLine_ID,
-      String C_InvoiceLine_ID, String M_Product_ID, String DateTrx, String Qty,
+  private int createMatchInv(String aD_Client_ID, String aD_Org_ID, String M_InOutLine_ID,
+      String C_InvoiceLine_ID, String m_Product_ID, String DateTrx, String qty,
       VariablesSecureApp vars, ConnectionProvider conn, Connection con) {
     // if (log4j.isDebugEnabled())
     // log4j.debug("AcctServer - createMatchInv - InvLine=" +
@@ -1569,8 +1569,8 @@ public abstract class AcctServer {
     try {
       String M_MatchInv_ID = SequenceIdData.getUUID();
       //
-      no = AcctServerData.insertMatchInv(con, conn, M_MatchInv_ID, AD_Client_ID, AD_Org_ID,
-          M_InOutLine_ID, C_InvoiceLine_ID, M_Product_ID, DateTrx, Qty);
+      no = AcctServerData.insertMatchInv(con, conn, M_MatchInv_ID, aD_Client_ID, aD_Org_ID,
+          M_InOutLine_ID, C_InvoiceLine_ID, m_Product_ID, DateTrx, qty);
     } catch (ServletException e) {
       log4j.warn(e);
       e.printStackTrace();
@@ -2105,7 +2105,7 @@ public abstract class AcctServer {
     objectFieldProvider = fieldProvider;
   }
 
-  public abstract void loadObjectFieldProvider(ConnectionProvider conn, String AD_Client_ID,
+  public abstract void loadObjectFieldProvider(ConnectionProvider conn, String aD_Client_ID,
       String Id) throws ServletException;
 
   public abstract boolean loadDocumentDetails(FieldProvider[] data, ConnectionProvider conn);
@@ -2409,18 +2409,18 @@ public abstract class AcctServer {
   // return amt;
   // }
 
-  public BigDecimal convertAmount(BigDecimal _amount, boolean isReceipt, String dateAcct,
+  public BigDecimal convertAmount(BigDecimal _amount, boolean isReceipt, String acctDate,
       String table_ID, String record_ID, String currencyIDFrom, String currencyIDTo, DocLine line,
       AcctSchema as, Fact fact, String Fact_Acct_Group_ID, String seqNo, ConnectionProvider conn)
       throws ServletException {
-    return convertAmount(_amount, isReceipt, dateAcct, table_ID, record_ID, currencyIDFrom,
+    return convertAmount(_amount, isReceipt, acctDate, table_ID, record_ID, currencyIDFrom,
         currencyIDTo, line, as, fact, Fact_Acct_Group_ID, seqNo, conn, true);
   }
 
   /*
    * Returns an amount without applying currency precision for rounding purposes
    */
-  public BigDecimal convertAmount(BigDecimal _amount, boolean isReceipt, String dateAcct,
+  public BigDecimal convertAmount(BigDecimal _amount, boolean isReceipt, String acctDate,
       String table_ID, String record_ID, String currencyIDFrom, String currencyIDTo, DocLine line,
       AcctSchema as, Fact fact, String Fact_Acct_Group_ID, String seqNo, ConnectionProvider conn,
       boolean bookDifferences) throws ServletException {
@@ -2428,7 +2428,7 @@ public abstract class AcctServer {
     if (_amount == null || _amount.compareTo(BigDecimal.ZERO) == 0) {
       return _amount;
     }
-    String conversionDate = dateAcct;
+    String conversionDate = acctDate;
     String strDateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
         .getProperty("dateFormat.java");
     final SimpleDateFormat dateFormat = new SimpleDateFormat(strDateFormat);
@@ -2487,7 +2487,7 @@ public abstract class AcctServer {
       conversionRateCurrentDoc = getConversionRateDoc(TABLEID_Transaction, transaction.getId(),
           currencyIDFrom, currencyIDTo);
     } else {
-      conversionDate = dateAcct;
+      conversionDate = acctDate;
     }
     if (conversionRateCurrentDoc != null) {
       amtTo = applyRate(_amount, conversionRateCurrentDoc, true);

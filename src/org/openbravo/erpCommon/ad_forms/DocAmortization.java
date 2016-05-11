@@ -102,9 +102,9 @@ public class DocAmortization extends AcctServer {
     return serialVersionUID;
   }
 
-  public void loadObjectFieldProvider(ConnectionProvider conn, String AD_Client_ID, String Id)
+  public void loadObjectFieldProvider(ConnectionProvider conn, String aD_Client_ID, String Id)
       throws ServletException {
-    setObjectFieldProvider(DocAmortizationData.selectRegistro(conn, AD_Client_ID, Id));
+    setObjectFieldProvider(DocAmortizationData.selectRegistro(conn, aD_Client_ID, Id));
   }
 
   /**

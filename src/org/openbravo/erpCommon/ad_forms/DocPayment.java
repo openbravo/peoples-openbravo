@@ -47,9 +47,9 @@ public class DocPayment extends AcctServer {
     super(AD_Client_ID, AD_Org_ID, connectionProvider);
   }
 
-  public void loadObjectFieldProvider(ConnectionProvider conn, String AD_Client_ID, String Id)
+  public void loadObjectFieldProvider(ConnectionProvider conn, String aD_Client_ID, String Id)
       throws ServletException {
-    setObjectFieldProvider(DocPaymentData.selectRegistro(conn, AD_Client_ID, Id));
+    setObjectFieldProvider(DocPaymentData.selectRegistro(conn, aD_Client_ID, Id));
   }
 
   /**
@@ -492,26 +492,26 @@ public class DocPayment extends AcctServer {
     return BigDecimal.ZERO;
   }
 
-  public String convertAmount(String Amount, boolean isReceipt, String DateAcct,
-      String conversionDate, String C_Currency_ID_From, String C_Currency_ID, DocLine line,
+  public String convertAmount(String Amount, boolean isReceipt, String acctDate,
+      String conversionDate, String C_Currency_ID_From, String c_Currency_ID, DocLine line,
       AcctSchema as, Fact fact, String Fact_Acct_Group_ID, ConnectionProvider conn)
       throws ServletException {
     String amount = Amount;
     if (docPaymentLog4j.isDebugEnabled())
       docPaymentLog4j.debug("Amount:" + amount + " curr from:" + C_Currency_ID_From + " Curr to:"
-          + C_Currency_ID + " convDate:" + conversionDate + " DateAcct:" + DateAcct);
+          + c_Currency_ID + " convDate:" + conversionDate + " DateAcct:" + acctDate);
     if (amount == null || amount.equals(""))
       amount = "0";
-    if (C_Currency_ID_From.equals(C_Currency_ID))
+    if (C_Currency_ID_From.equals(c_Currency_ID))
       return amount;
     else
       MultiCurrency = true;
-    String Amt = getConvertedAmt(amount, C_Currency_ID_From, C_Currency_ID, conversionDate, "",
+    String Amt = getConvertedAmt(amount, C_Currency_ID_From, c_Currency_ID, conversionDate, "",
         AD_Client_ID, AD_Org_ID, conn);
     if (docPaymentLog4j.isDebugEnabled())
       docPaymentLog4j.debug("Amt:" + Amt);
 
-    String AmtTo = getConvertedAmt(amount, C_Currency_ID_From, C_Currency_ID, DateAcct, "",
+    String AmtTo = getConvertedAmt(amount, C_Currency_ID_From, c_Currency_ID, acctDate, "",
         AD_Client_ID, AD_Org_ID, conn);
     if (docPaymentLog4j.isDebugEnabled())
       docPaymentLog4j.debug("AmtTo:" + AmtTo);
@@ -521,19 +521,19 @@ public class DocPayment extends AcctServer {
       docPaymentLog4j.debug("AmtDiff:" + AmtDiff);
 
     if (docPaymentLog4j.isDebugEnabled()) {
-      docPaymentLog4j.debug("curr from:" + C_Currency_ID_From + " Curr to:" + C_Currency_ID
-          + " convDate:" + conversionDate + " DateAcct:" + DateAcct);
+      docPaymentLog4j.debug("curr from:" + C_Currency_ID_From + " Curr to:" + c_Currency_ID
+          + " convDate:" + conversionDate + " DateAcct:" + acctDate);
       docPaymentLog4j.debug("Amt:" + Amt + " AmtTo:" + AmtTo + " Diff:" + AmtDiff.toString());
     }
 
     if ((isReceipt && AmtDiff.compareTo(new BigDecimal("0.00")) == 1)
         || (!isReceipt && AmtDiff.compareTo(new BigDecimal("0.00")) == -1)) {
       fact.createLine(line, getAccount(AcctServer.ACCTTYPE_ConvertGainDefaultAmt, as, conn),
-          C_Currency_ID, "", AmtDiff.abs().toString(), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+          c_Currency_ID, "", AmtDiff.abs().toString(), Fact_Acct_Group_ID, nextSeqNo(SeqNo),
           DocumentType, conn);
     } else {
       fact.createLine(line, getAccount(AcctServer.ACCTTYPE_ConvertChargeDefaultAmt, as, conn),
-          C_Currency_ID, AmtDiff.abs().toString(), "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
+          c_Currency_ID, AmtDiff.abs().toString(), "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
           DocumentType, conn);
     }
 

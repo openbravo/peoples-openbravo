@@ -293,8 +293,8 @@ class Selector {
    * @param properties1
    *          The array to be sorted.
    */
-  private void sortProperties(Property[] properties) {
-    Arrays.sort(properties);
+  private void sortProperties(Property[] props) {
+    Arrays.sort(props);
   }
 }
 
@@ -403,12 +403,12 @@ class Property implements Comparable<Property> {
    * @returns An array of Parts
    */
   private Part[] parseValues(String contents) {
-    String[] parts = contents.split(",");
-    Part[] results = new Part[parts.length];
+    String[] propertyParts = contents.split(",");
+    Part[] results = new Part[propertyParts.length];
 
-    for (int i = 0; i < parts.length; i++) {
+    for (int i = 0; i < propertyParts.length; i++) {
       try {
-        results[i] = new Part(parts[i], property);
+        results[i] = new Part(propertyParts[i], property);
       } catch (Exception e) {
         log.error(e.getMessage(), e);
         results[i] = null;

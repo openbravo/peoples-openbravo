@@ -215,7 +215,7 @@ public class WindowTree extends HttpSecureAppServlet {
    * 
    * @param data
    *          Array with the tree elements.
-   * @param strDireccion
+   * @param direccion
    *          String with the path for the urls.
    * @param localIndice
    *          String with the index.
@@ -224,7 +224,7 @@ public class WindowTree extends HttpSecureAppServlet {
    * @return String html with the tree.
    */
   private String generateTree(WindowTreeData[] data, Map<String, List<WindowTreeData>> wtdTree,
-      String strDireccion, String indice, boolean isFirst, String strTabId) {
+      String direccion, String indice, boolean isFirst, String strTabId) {
     boolean localIsFirst = isFirst;
     String localIndice = indice;
     if (data == null || data.length == 0)
@@ -242,20 +242,20 @@ public class WindowTree extends HttpSecureAppServlet {
       List<WindowTreeData> filteredSubList = applyWhereClause(subList, strTabId);
       for (WindowTreeData elem : subList) {
         hayDatos = true;
-        String strHijos = generateTree(data, wtdTree, strDireccion, elem.nodeId, localIsFirst,
+        String strHijos = generateTree(data, wtdTree, direccion, elem.nodeId, localIsFirst,
             strTabId);
         // if elem is present in filtered sublist click action is allowed, else disabled
         if (filteredSubList.contains(elem)) {
           strResultado.append(WindowTreeUtility.addNodeElement(elem.name, elem.description,
               CHILD_SHEETS, elem.issummary.equals("Y"), WindowTreeUtility.windowType(elem.action),
-              strDireccion,
+              direccion,
               "clickItem('" + elem.nodeId + "', '" + Replace.replace(elem.name, "'", "\\'")
                   + "', '" + elem.issummary + "');", "dblClickItem('" + elem.nodeId + "');",
               !strHijos.equals(""), elem.nodeId, elem.action));
         } else {
           strResultado.append(WindowTreeUtility.addNodeElement(elem.name, elem.description,
               CHILD_SHEETS, elem.issummary.equals("Y"), WindowTreeUtility.windowType(elem.action),
-              strDireccion, null, null, !strHijos.equals(""), elem.nodeId, elem.action));
+              direccion, null, null, !strHijos.equals(""), elem.nodeId, elem.action));
         }
         strResultado.append(strHijos);
       }

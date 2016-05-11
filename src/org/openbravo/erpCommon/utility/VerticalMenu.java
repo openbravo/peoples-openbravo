@@ -219,7 +219,7 @@ public class VerticalMenu extends HttpSecureAppServlet {
       return "";
   }
 
-  private String generarMenuVertical(MenuData[] menuData, String strDireccion, String indice,
+  private String generarMenuVertical(MenuData[] menuData, String direccion, String indice,
       boolean open) {
     String localIndice = indice;
     if (menuData == null || menuData.length == 0)
@@ -231,7 +231,7 @@ public class VerticalMenu extends HttpSecureAppServlet {
     for (int i = 0; i < menuData.length; i++) {
       if (menuData[i].parentId.equals(localIndice)) {
         // haveData=true;
-        final String strHijos = generarMenuVertical(menuData, strDireccion, menuData[i].nodeId,
+        final String strHijos = generarMenuVertical(menuData, direccion, menuData[i].nodeId,
             open);
         String strID = "";
 
@@ -283,7 +283,7 @@ public class VerticalMenu extends HttpSecureAppServlet {
             if (menuData[i].action.equals("L") || menuData[i].action.equals("I"))
               strText.append(menuData[i].url);
             else {
-              strText.append(getUrlString(strDireccion, menuData[i]));
+              strText.append(getUrlString(direccion, menuData[i]));
             }
             strText.append("', '");
             if (menuData[i].action.equals("F")

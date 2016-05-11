@@ -1303,7 +1303,7 @@ public class ComboTableData {
   }
 
   public Map<String, String> fillSQLParametersIntoMap(ConnectionProvider conn,
-      VariablesSecureApp vars, FieldProvider data, String window, String actual_value)
+      VariablesSecureApp variables, FieldProvider data, String window, String actual_value)
       throws ServletException {
     final Vector<String> vAux = getParameters();
     Hashtable<String, String> lparameters = new Hashtable<String, String>();
@@ -1317,7 +1317,7 @@ public class ComboTableData {
       for (int i = 0; i < vAux.size(); i++) {
         final String strAux = vAux.elementAt(i);
         try {
-          final String value = Utility.parseParameterValue(conn, vars, data, strAux, "", window,
+          final String value = Utility.parseParameterValue(conn, variables, data, strAux, "", window,
               actual_value, false);
           if (log4j.isDebugEnabled())
             log4j.debug("Combo Parameter: " + strAux + " - Value: " + value);

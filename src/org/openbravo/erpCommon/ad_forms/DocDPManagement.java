@@ -84,9 +84,9 @@ public class DocDPManagement extends AcctServer {
     super(AD_Client_ID, AD_Org_ID, connectionProvider);
   }
 
-  public void loadObjectFieldProvider(ConnectionProvider conn, String AD_Client_ID, String Id)
+  public void loadObjectFieldProvider(ConnectionProvider conn, String aD_Client_ID, String Id)
       throws ServletException {
-    setObjectFieldProvider(DocDPManagementData.selectRegistro(conn, AD_Client_ID, Id));
+    setObjectFieldProvider(DocDPManagementData.selectRegistro(conn, aD_Client_ID, Id));
   }
 
   /**

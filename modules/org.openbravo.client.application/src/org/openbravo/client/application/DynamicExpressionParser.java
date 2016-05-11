@@ -450,8 +450,8 @@ public class DynamicExpressionParser {
     return aField;
   }
 
-  private Field searchForFieldInTab(Tab tab, String fieldName) {
-    List<Field> fields = tab.getADFieldList();
+  private Field searchForFieldInTab(Tab targetTab, String fieldName) {
+    List<Field> fields = targetTab.getADFieldList();
     for (Field aField : fields) {
       if (aField.getColumn() == null) {
         continue;

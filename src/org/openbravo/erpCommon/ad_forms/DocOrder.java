@@ -44,9 +44,9 @@ public class DocOrder extends AcctServer {
     super(AD_Client_ID, AD_Org_ID, connectionProvider);
   }
 
-  public void loadObjectFieldProvider(ConnectionProvider conn, String AD_Client_ID, String Id)
+  public void loadObjectFieldProvider(ConnectionProvider conn, String aD_Client_ID, String Id)
       throws ServletException {
-    setObjectFieldProvider(DocOrderData.selectRegistro(conn, AD_Client_ID, Id));
+    setObjectFieldProvider(DocOrderData.selectRegistro(conn, aD_Client_ID, Id));
   }
 
   /**
@@ -93,8 +93,8 @@ public class DocOrder extends AcctServer {
         String Line_ID = data[i].getField("cOrderlineId");
         DocLine docLine = new DocLine(DocumentType, Record_ID, Line_ID);
         docLine.loadAttributes(data[i], this);
-        String Qty = data[i].getField("qtyordered");
-        docLine.setQty(Qty);
+        String qty = data[i].getField("qtyordered");
+        docLine.setQty(qty);
         String LineNetAmt = data[i].getField("linenetamt");
         // BigDecimal PriceList = rs.getBigDecimal("PriceList");
         docLine.setAmount(LineNetAmt);

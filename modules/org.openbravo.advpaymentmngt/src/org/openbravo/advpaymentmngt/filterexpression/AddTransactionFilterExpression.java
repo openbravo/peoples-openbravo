@@ -135,9 +135,9 @@ public class AddTransactionFilterExpression implements FilterExpression {
     return getFinancialAccount(_requestMap).getCurrency().getId().toString();
   }
 
-  private FIN_FinancialAccount getFinancialAccount(Map<String, String> requestMap)
+  private FIN_FinancialAccount getFinancialAccount(Map<String, String> reqstMap)
       throws JSONException {
-    JSONObject context = new JSONObject(requestMap.get("context"));
+    JSONObject context = new JSONObject(reqstMap.get("context"));
     if (context.has("inpfinFinancialAccountId") && !context.isNull("inpfinFinancialAccountId")
         && !"".equals(context.getString("inpfinFinancialAccountId"))) {
       return OBDal.getInstance().get(FIN_FinancialAccount.class,
