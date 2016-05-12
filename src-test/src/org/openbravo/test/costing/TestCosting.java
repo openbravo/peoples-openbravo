@@ -4093,6 +4093,9 @@ public class TestCosting extends WeldBaseTest {
       // Run price correction background
       runPriceBackground();
 
+      // Add sleep to avoid assert errors
+      Thread.sleep(1000);
+
       // Create goods shipment, run costing background, post it and assert it
       ShipmentInOut goodsShipment2 = createGoodsShipment(product, price4, quantity3, day5);
 

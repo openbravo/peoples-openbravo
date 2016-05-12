@@ -155,7 +155,7 @@ public class DefaultDataSourceService extends BaseDataSourceService {
       }
 
       final String whereClause;
-      if (parameters.get(JsonConstants.WHERE_AND_FILTER_CLAUSE) != null
+      if (StringUtils.isNotBlank(parameters.get(JsonConstants.WHERE_AND_FILTER_CLAUSE))
           && !parameters.get(JsonConstants.WHERE_AND_FILTER_CLAUSE).equals("null")) {
         whereClause = parameters.get(JsonConstants.WHERE_AND_FILTER_CLAUSE) + " and (";
       } else {

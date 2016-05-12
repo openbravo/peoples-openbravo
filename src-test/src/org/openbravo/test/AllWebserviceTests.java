@@ -33,6 +33,7 @@ import org.openbravo.test.datasource.TestCSVEncoding;
 import org.openbravo.test.datasource.TestComboDatasource;
 import org.openbravo.test.datasource.FetchDSNoActiveEntityObjects;
 import org.openbravo.test.datasource.TestNoteDatasource;
+import org.openbravo.test.datasource.EmptyStringWhereAndFilterClauseParameter;
 import org.openbravo.test.security.ExplicitCrossOrganizationReference;
 import org.openbravo.test.datasource.DataSourceSecurity;
 import org.openbravo.test.webservice.JSONWebServices;
@@ -72,6 +73,7 @@ DataSourceWhereParameter.class, //
     WSWithNoActiveDalObjects.class, //
     FetchDSNoActiveEntityObjects.class, //
     ExplicitCrossOrganizationReference.class, //
-    DataSourceSecurity.class })
+    DataSourceSecurity.class, //
+    EmptyStringWhereAndFilterClauseParameter.class })
 public class AllWebserviceTests {
 }

@@ -15,11 +15,12 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2012 Openbravo SLU
+* All portions are Copyright (C) 2012-2016 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
 v_count NUMBER;
+v_relateddocs BOOLEAN;
 BEGIN
   IF AD_isTriggerEnabled()='N' THEN RETURN;
   END IF;
@@ -31,17 +32,30 @@ BEGIN
     IF(v_count>0 and (:new.costtype = 'AV' or :new.costtype = 'ST' or :new.costtype = 'AVO')) then
       RAISE_APPLICATION_ERROR(-20000, '@CostMigratedInstance@');
     END IF;
-  ELSIF (DELETING) THEN
+
+  ELSIF (UPDATING OR DELETING) THEN
     IF (:OLD.ISPERMANENT = 'Y') THEN
-      RAISE_APPLICATION_ERROR(-20000, '@CannotDeletePermanentCost@');
-    END IF;
-  ELSIF (UPDATING) THEN
-    IF (:OLD.ISPERMANENT = 'Y' 
-        AND (:OLD.COST <> :NEW.COST
-             OR :OLD.DATEFROM <> :NEW.DATEFROM)) THEN
-      RAISE_APPLICATION_ERROR(-20000, '@CannotModifyPermanentCost@');
+      SELECT count(*)
+      INTO v_count
+      FROM dual
+      WHERE EXISTS ( SELECT 1 FROM C_OrderLine WHERE m_product_id = :old.m_product_id )
+      OR EXISTS ( SELECT 1 FROM C_InvoiceLine WHERE m_product_id = :old.m_product_id )
+      OR EXISTS ( SELECT 1 FROM M_InventoryLine WHERE m_product_id = :old.m_product_id )
+      OR EXISTS ( SELECT 1 FROM M_MovementLine WHERE m_product_id = :old.m_product_id )
+      OR EXISTS ( SELECT 1 FROM M_InoutLine WHERE m_product_id = :old.m_product_id )
+      OR EXISTS ( SELECT 1 FROM M_ProductionLine WHERE m_product_id = :old.m_product_id )
+      OR EXISTS ( SELECT 1 FROM M_Internal_ConsumptionLine WHERE m_product_id = :old.m_product_id );
+
+      IF (v_count > 0) THEN
+        IF (UPDATING AND (:OLD.COST <> :NEW.COST OR :OLD.DATEFROM <> :NEW.DATEFROM)) THEN
+          RAISE_APPLICATION_ERROR(-20000, '@CannotModifyPermanentCost@');
+        ELSIF (DELETING) THEN
+          RAISE_APPLICATION_ERROR(-20000, '@CannotDeletePermanentCost@');
+        END IF;
+      END IF;
     END IF;
   END IF;
+
 END M_COSTING_TRG
 ]]></body>
     </trigger>

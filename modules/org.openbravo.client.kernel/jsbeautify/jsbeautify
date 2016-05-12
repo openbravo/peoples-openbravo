@@ -1,0 +1,18 @@
+#!/bin/bash
+set -e
+# Mercurial pre-commit hook for jsbeautify
+
+changedfile=$1
+replaceparam=$2
+./modules/org.openbravo.client.kernel/jsbeautify/jsbeautifier.py --indent-size=2 --jslint-happy "$changedfile" > "$changedfile.beautified"
+if ! diff -Z "$changedfile" "$changedfile.beautified" >/dev/null ; then
+  if [ "$replaceparam" != "replace" ] ; then
+    echo "Beautify Error --> Please, beautify $changedfile";
+    rm -rf "$changedfile.beautified"
+    export ERROR="1"
+  else
+    perl -pe 'chop if eof' "$changedfile.beautified" > "$changedfile"
+    echo "Beautify --> File beautified: $changedfile";
+  fi
+fi
+rm -rf "$changedfile.beautified"
