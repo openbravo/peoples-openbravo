@@ -812,9 +812,10 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                               orderList.addNewOrder();
                               var length = cloneOrder.get('lines').length,
                                   linesMap = {},
-                                  order = orderList.modelorder;
+                                  order = orderList.modelorder,
+                                  addRelatedLines, addLineToTickect;
 
-                              function addRelatedLines(index) {
+                              addRelatedLines = function (index) {
                                 var line = cloneOrder.get('lines').at(index),
                                     nextLine = function () {
                                     if (index + 1 < length) {
@@ -854,25 +855,35 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                                 } else {
                                   nextLine();
                                 }
-                              }
+                              };
+
+                              addLineToTickect = function (idx) {
+                                if (idx === cloneOrder.get('lines').length) {
+                                  if (length > 0) {
+                                    addRelatedLines(0);
+                                  } else {
+                                    order.unset('preventServicesUpdate');
+                                  }
+                                } else {
+                                  var line = cloneOrder.get('lines').at(idx);
+                                  if (line.get('remainingQuantity') < line.get('qty')) {
+                                    order.addProduct(line.get('product'), OB.DEC.sub(line.get('qty'), line.get('remainingQuantity')), undefined, undefined, function (success, orderline) {
+                                      if (success) {
+                                        linesMap[line.id] = order.get('lines').at(order.get('lines').length - 1).id;
+                                      }
+                                      addLineToTickect(idx + 1);
+                                    });
+                                  } else {
+                                    addLineToTickect(idx + 1);
+                                  }
+                                }
+                              };
 
                               OB.MobileApp.view.$.containerWindow.getRoot().showDivText(null, {
                                 permission: null,
                                 orderType: cloneOrder.get('orderType')
                               });
-                              order.set('preventServicesUpdate', true);
-                              _.each(cloneOrder.get('lines').models, function (line) {
-                                if (line.get('remainingQuantity') < line.get('qty')) {
-                                  order.addProduct(line.get('product'), OB.DEC.sub(line.get('qty'), line.get('remainingQuantity')));
-                                  linesMap[line.id] = order.get('lines').at(order.get('lines').length - 1).id;
-                                }
-                              });
-
-                              if (length > 0) {
-                                addRelatedLines(0);
-                              } else {
-                                order.unset('preventServicesUpdate');
-                              }
+                              addLineToTickect(0);
                             }
                           }, {
                             label: OB.I18N.getLabel('OBPOS_Cancel')
