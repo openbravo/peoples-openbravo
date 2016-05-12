@@ -46,6 +46,16 @@
 
   function updateCashUpInfo(cashUp, receipt, j, callback, tx) {
     var cashuptaxes, order, orderType, gross, i, taxOrderType, taxAmount, auxPay;
+    var netSales = OB.DEC.Zero;
+    var grossSales = OB.DEC.Zero;
+    var netReturns = OB.DEC.Zero;
+    var grossReturns = OB.DEC.Zero;
+    var taxSales = OB.DEC.Zero;
+    var taxReturns = OB.DEC.Zero;
+    var ctaxSales;
+    var maxtaxSales = OB.DEC.Zero;
+    var ctaxReturns;
+    var maxtaxReturns = OB.DEC.Zero;
 
     if (j < receipt.length && !receipt[j].has('obposIsDeleted')) {
       order = receipt[j];
@@ -60,24 +70,28 @@
           //Sales order: Positive line
           if (!(order.has('isQuotation') && order.get('isQuotation'))) {
             if (line.get('qty') > 0 && orderType !== 3 && !order.get('isLayaway')) {
-              cashUp.at(0).set('netSales', OB.DEC.add(cashUp.at(0).get('netSales'), line.get('net')));
-              cashUp.at(0).set('grossSales', OB.DEC.add(cashUp.at(0).get('grossSales'), gross));
+              netSales = OB.DEC.add(netSales, line.get('net'));
+              grossSales = OB.DEC.add(grossSales, gross);
               //Return from customer or Sales with return: Negative line
             } else if (line.get('qty') < 0 && orderType !== 3 && !order.get('isLayaway')) {
-              cashUp.at(0).set('netReturns', OB.DEC.add(cashUp.at(0).get('netReturns'), -line.get('net')));
-              cashUp.at(0).set('grossReturns', OB.DEC.add(cashUp.at(0).get('grossReturns'), -gross));
+              netReturns = OB.DEC.add(netReturns, -line.get('net'));
+              grossReturns = OB.DEC.add(grossReturns, -gross);
               //Void Layaway
             } else if (orderType === 3) {
               if (line.get('qty') > 0) {
-                cashUp.at(0).set('netSales', OB.DEC.add(cashUp.at(0).get('netSales'), -line.get('net')));
-                cashUp.at(0).set('grossSales', OB.DEC.add(cashUp.at(0).get('grossSales'), -gross));
+                netSales = OB.DEC.add(netSales, -line.get('net'));
+                grossSales = OB.DEC.add(grossSales, -gross);
               } else {
-                cashUp.at(0).set('netReturns', OB.DEC.add(cashUp.at(0).get('netReturns'), line.get('net')));
-                cashUp.at(0).set('grossReturns', OB.DEC.add(cashUp.at(0).get('grossReturns'), gross));
+                netReturns = OB.DEC.add(netReturns, line.get('net'));
+                grossReturns = OB.DEC.add(grossReturns, gross);
               }
             }
           }
         });
+        cashUp.at(0).set('netSales', OB.DEC.add(cashUp.at(0).get('netSales'), netSales));
+        cashUp.at(0).set('grossSales', OB.DEC.add(cashUp.at(0).get('grossSales'), grossSales));
+        cashUp.at(0).set('netReturns', OB.DEC.add(cashUp.at(0).get('netReturns'), netReturns));
+        cashUp.at(0).set('grossReturns', OB.DEC.add(cashUp.at(0).get('grossReturns'), grossReturns));
         cashUp.at(0).set('totalRetailTransactions', OB.DEC.sub(cashUp.at(0).get('grossSales'), cashUp.at(0).get('grossReturns')));
         OB.Dal.saveInTransaction(tx, cashUp.at(0), null, null);
 
@@ -87,9 +101,9 @@
           var taxLines, taxLine;
           taxLines = line.get('taxLines');
           if (orderType === 1 || line.get('qty') < 0) {
-            taxOrderType = 1;
+            taxOrderType = '1';
           } else {
-            taxOrderType = 0;
+            taxOrderType = '0';
           }
 
           _.each(taxLines, function (taxLine) {
@@ -111,12 +125,35 @@
               cashuptaxes.push({
                 taxName: taxLine.name,
                 taxAmount: taxAmount,
-                taxOrderType: taxOrderType.toString(),
+                taxOrderType: taxOrderType,
                 cashupID: cashUp.at(0).get('id')
               });
             }
           });
         });
+
+        // Calculate adjustment taxes
+        _.each(cashuptaxes, function (t) {
+          if (t.taxOrderType === '0') { // sale
+            taxSales = OB.DEC.add(taxSales, t.taxAmount);
+            if (t.taxAmount > maxtaxSales) {
+              ctaxSales = t;
+            }
+          } else { // return
+            taxReturns = OB.DEC.add(taxReturns, t.taxAmount);
+            if (t.taxAmount > maxtaxReturns) {
+              ctaxReturns = t;
+            }
+          }
+        });
+        // Do the adjustment
+        if (ctaxSales) {
+          ctaxSales.taxAmount = OB.DEC.add(ctaxSales.taxAmount, OB.DEC.sub(OB.DEC.sub(grossSales, netSales), taxSales));
+        }
+        if (ctaxReturns) {
+          ctaxReturns.taxAmount = OB.DEC.add(ctaxReturns.taxAmount, OB.DEC.sub(OB.DEC.sub(grossReturns, netReturns), taxReturns));
+        }
+
 
         OB.Dal.findInTransaction(tx, OB.Model.PaymentMethodCashUp, {
           'cashup_id': cashUp.at(0).get('id')
