@@ -51,7 +51,7 @@ public class EmptyStringWhereAndFilterClauseParameter extends BaseDataSourceTest
         is(String.valueOf(JsonConstants.RPCREQUEST_STATUS_SUCCESS)));
   }
 
-  private Map<String, String> fillInTheParameters() throws Exception {
+  private Map<String, String> fillInTheParameters() {
     Map<String, String> params = new HashMap<String, String>();
     params.put("_targetRecordId", WAREHOUSE_LOCATOR_ID);
     params.put("_filterByParentProperty", "warehouse");
@@ -64,8 +64,8 @@ public class EmptyStringWhereAndFilterClauseParameter extends BaseDataSourceTest
   }
 
   private String getDataSourceResponse() throws Exception {
-    String response = doRequest("/org.openbravo.service.datasource/" + "Locator",
-        fillInTheParameters(), 200, "POST");
+    String response = doRequest("/org.openbravo.service.datasource/Locator", fillInTheParameters(),
+        200, "POST");
     return response;
   }
 
