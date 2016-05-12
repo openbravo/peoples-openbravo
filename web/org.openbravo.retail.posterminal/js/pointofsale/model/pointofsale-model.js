@@ -883,6 +883,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                                 permission: null,
                                 orderType: cloneOrder.get('orderType')
                               });
+                              order.set('bp', cloneOrder.get('bp'));
                               addLineToTickect(0);
                             }
                           }, {
