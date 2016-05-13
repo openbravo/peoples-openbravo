@@ -789,9 +789,26 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
 
               OB.Dal.save(cancelLayawayModel, function () {
                 OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(docNo.documentnoSuffix, OB.MobileApp.model.set('quotationDocumentSequence'), function () {
+                  var orderId = receipt.id;
+
                   OB.MobileApp.model.runSyncProcess();
                   orderList.deleteCurrent();
-                  OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgSuccessCancelLayaway', [documentNo]));
+                  OB.Dal.get(OB.Model.Order, orderId, function (model) {
+                    function cancelAndNew() {
+                      OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgSuccessCancelLayaway', [documentNo]));
+                    }
+                    if (model) {
+                      OB.Dal.remove(model, function (tx) {
+                        cancelAndNew();
+                      }, function (tx, err) {
+                        OB.UTIL.showError(err);
+                      });
+                    } else {
+                      cancelAndNew();
+                    }
+                  }, function (tx, err) {
+                    OB.UTIL.showError(err);
+                  });
                 });
               }, function () {
                 OB.error(arguments);
