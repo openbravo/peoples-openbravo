@@ -881,7 +881,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
 
                               OB.MobileApp.view.$.containerWindow.getRoot().showDivText(null, {
                                 permission: null,
-                                orderType: cloneOrder.get('orderType')
+                                orderType: cloneOrder.get('isLayaway') ? 2 : 1
                               });
                               order.set('bp', cloneOrder.get('bp'));
                               addLineToTickect(0);
