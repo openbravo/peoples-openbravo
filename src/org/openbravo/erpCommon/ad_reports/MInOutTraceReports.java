@@ -182,7 +182,7 @@ public class MInOutTraceReports extends HttpSecureAppServlet {
           localData[i].mProductId, localData[i].mLocatorId, strIn, true, strmProductIdGlobal,
           calculated, count);
       if ("".equals(localData[i].html)) {
-        // Delete data[i] from array
+        // Delete localData[i] from array
         localData = (MInOutTraceReportsData[]) ArrayUtils.removeElement(localData, localData[i]);
         i--;
       }

@@ -232,7 +232,8 @@ class WindowTreeUtility {
     localStrOnClick = Replace.replace(localStrOnClick, "\"", "&quot;");
     localStrOnDblClick = Replace.replace(localStrOnDblClick, "\"", "&quot;");
 
-    // In case the element is filtered (strOnClick and strOnDblClick is null), it is shown in the
+    // In case the element is filtered (localStrOnClick and localStrOnDblClick is null), it is shown
+    // in the
     // tree but click action is disabled
     if (isSummary) {
       element

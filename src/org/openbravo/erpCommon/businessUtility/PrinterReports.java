@@ -118,7 +118,7 @@ public class PrinterReports extends HttpSecureAppServlet {
     // strPDFPath.substring(2);
 
     // String mapping =
-    // FormatUtilities.replace(PrinterReportsData.select(this, strPDFPath));
+    // FormatUtilities.replace(PrinterReportsData.select(this, localStrPDFPath));
     localStrPDFPath = FormatUtilities.replace(localStrPDFPath);
     vars.setSessionValue("inpTabID", inptabId);
     final String hiddenValue = quouteIds(strHiddenValue);
