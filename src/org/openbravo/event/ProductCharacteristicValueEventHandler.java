@@ -18,9 +18,9 @@
  */
 package org.openbravo.event;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.enterprise.event.Observes;
 
@@ -46,7 +46,7 @@ public class ProductCharacteristicValueEventHandler extends EntityPersistenceEve
   protected Logger logger = Logger.getLogger(this.getClass());
   private static Entity[] entities = { ModelProvider.getInstance().getEntity(
       ProductCharacteristicValue.ENTITY_NAME) };
-  private static ThreadLocal<List<String>> prodchvalueUpdated = new ThreadLocal<List<String>>();
+  private static ThreadLocal<Set<String>> prodchvalueUpdated = new ThreadLocal<Set<String>>();
 
   @Override
   protected Entity[] getObservedEntities() {
@@ -55,7 +55,7 @@ public class ProductCharacteristicValueEventHandler extends EntityPersistenceEve
 
   @SuppressWarnings("unused")
   public void onTransactionBegin(@Observes TransactionBeginEvent event) {
-    prodchvalueUpdated.set(null);
+    prodchvalueUpdated.set(new HashSet<String>());
   }
 
   public void onNew(@Observes EntityNewEvent event) {
@@ -83,7 +83,7 @@ public class ProductCharacteristicValueEventHandler extends EntityPersistenceEve
   }
 
   public void onTransactionCompleted(@Observes TransactionCompletedEvent event) {
-    List<String> productList = prodchvalueUpdated.get();
+    Set<String> productList = prodchvalueUpdated.get();
     prodchvalueUpdated.set(null);
     prodchvalueUpdated.remove();
     if (productList == null || productList.isEmpty() || event.getTransaction().wasRolledBack()) {
@@ -92,7 +92,14 @@ public class ProductCharacteristicValueEventHandler extends EntityPersistenceEve
     try {
       VariablesSecureApp vars = null;
       try {
-        vars = RequestContext.get().getVariablesSecureApp();
+        if (RequestContext.get().getRequest() == null) {
+          vars = new VariablesSecureApp(OBContext.getOBContext().getUser().getId(), OBContext
+              .getOBContext().getCurrentClient().getId(), OBContext.getOBContext()
+              .getCurrentOrganization().getId(), OBContext.getOBContext().getRole().getId(),
+              OBContext.getOBContext().getLanguage().getLanguage());
+        } else {
+          vars = RequestContext.get().getVariablesSecureApp();
+        }
       } catch (Exception e) {
         vars = new VariablesSecureApp(OBContext.getOBContext().getUser().getId(), OBContext
             .getOBContext().getCurrentClient().getId(), OBContext.getOBContext()
@@ -115,9 +122,9 @@ public class ProductCharacteristicValueEventHandler extends EntityPersistenceEve
   }
 
   private void addProductToList(ProductCharacteristicValue pchv) {
-    List<String> productList = prodchvalueUpdated.get();
+    Set<String> productList = prodchvalueUpdated.get();
     if (productList == null) {
-      productList = new ArrayList<String>();
+      productList = new HashSet<String>();
     }
     productList.add(pchv.getProduct().getId());
     prodchvalueUpdated.set(productList);
