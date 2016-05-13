@@ -382,6 +382,9 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
       if ("iStartsWith".equals(operator)) {
         whereClause = "upper(" + field.getClauseLeftPart() + ") LIKE upper("
             + getTypedParameterAlias(typedParameters, value.replaceAll(" ", "%") + "%") + ")";
+      } else if ("iEquals".equals(operator)) {
+        whereClause = "upper(" + field.getClauseLeftPart() + ") = upper("
+            + getTypedParameterAlias(typedParameters, value) + ")";
       } else {
         whereClause = "upper(" + field.getClauseLeftPart() + ") LIKE upper("
             + getTypedParameterAlias(typedParameters, "%" + value.replaceAll(" ", "%") + "%") + ")";

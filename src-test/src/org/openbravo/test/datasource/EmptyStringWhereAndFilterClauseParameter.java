@@ -39,18 +39,9 @@ import org.openbravo.service.json.JsonConstants;
  * 
  */
 public class EmptyStringWhereAndFilterClauseParameter extends BaseDataSourceTestDal {
-  private Map<String, String> params;
-
-  public EmptyStringWhereAndFilterClauseParameter() {
-    params = new HashMap<String, String>();
-    params.put("_targetRecordId", "17435FB915B14A93B51F3A6375B12BEE");
-    params.put("_filterByParentProperty", "priceList");
-    params.put("windowId", "146");
-    params.put("tabId", "238");
-    params.put("_operationType", "fetch");
-    params.put("_startRow", "0");
-    params.put("_endRow", "100");
-  }
+  private static final String WAREHOUSE_AND_STORAGE_BIN_WINDOW_ID = "139";
+  private static final String STORAGE_BIN_TAB_ID = "178";
+  private static final String WAREHOUSE_LOCATOR_ID = "54EB861A446D464EAA433477A1D867A6";
 
   @Test
   public void datasourceRequestStatusShouldBeSuccessful() throws Exception {
@@ -60,9 +51,21 @@ public class EmptyStringWhereAndFilterClauseParameter extends BaseDataSourceTest
         is(String.valueOf(JsonConstants.RPCREQUEST_STATUS_SUCCESS)));
   }
 
+  private Map<String, String> fillInTheParameters() {
+    Map<String, String> params = new HashMap<String, String>();
+    params.put("_targetRecordId", WAREHOUSE_LOCATOR_ID);
+    params.put("_filterByParentProperty", "warehouse");
+    params.put("windowId", WAREHOUSE_AND_STORAGE_BIN_WINDOW_ID);
+    params.put("tabId", STORAGE_BIN_TAB_ID);
+    params.put("_operationType", "fetch");
+    params.put("_startRow", "0");
+    params.put("_endRow", "100");
+    return params;
+  }
+
   private String getDataSourceResponse() throws Exception {
-    String response = doRequest("/org.openbravo.service.datasource/" + "PricingPriceListVersion",
-        params, 200, "POST");
+    String response = doRequest("/org.openbravo.service.datasource/Locator", fillInTheParameters(),
+        200, "POST");
     return response;
   }
 

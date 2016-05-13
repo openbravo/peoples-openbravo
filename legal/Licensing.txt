@@ -302,6 +302,9 @@ Dual licensed under the MIT (MIT-LICENSE.txt) or GPL (GPL-LICENSE.txt) licenses.
 Beautiful documentation, dynamically generated from source code in the browser.
 From the code-illuminated project at: http://code.google.com/p/code-illuminated/, under the MPL 1.1
 
+# jsbeautifier.py
+Under the MIT license (available at https://github.com/beautify-web/js-beautify/blob/master/LICENSE)
+
 The license files for this third party software are available in the legal
 folder of this distribution.
 
