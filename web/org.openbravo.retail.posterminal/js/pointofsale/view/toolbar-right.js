@@ -460,6 +460,7 @@ enyo.kind({
     this.previousStatus = inEvent.previousStatus;
     this.$.lbl.setContent(OB.I18N.getLabel('OBPOS_LblContinue'));
     this.doDisableUserInterface();
+    OB.MobileApp.view.scanningFocus(false);
     this.setDisabled(false);
     this.doShowActionIcons({
       show: false
@@ -469,6 +470,7 @@ enyo.kind({
     if (OB.MobileApp.model.get('serviceSearchMode')) {
       this.$.lbl.setContent(OB.I18N.getLabel('OBPOS_LblEdit'));
       this.doEnableUserInterface();
+      OB.MobileApp.view.scanningFocus(true);
       this.doShowActionIcons({
         show: true
       });
