@@ -92,7 +92,7 @@ public class SelectorFieldPropertyCallout extends HttpSecureAppServlet {
     } else {
       final String[] parts = property.split("\\.");
       Entity currentEntity = entity;
-      Property currentProperty;
+      Property currentProperty = null;
       for (String part : parts) {
         if (part.length() == 0) {
           writeEmptyResult(response);
@@ -110,7 +110,13 @@ public class SelectorFieldPropertyCallout extends HttpSecureAppServlet {
         if (currentProperty.isPrimitive()) {
           break;
         }
-        currentEntity = foundProperty.getTargetEntity();
+
+        if (Entity.COMPUTED_COLUMNS_PROXY_PROPERTY.equals(currentProperty.getName())) {
+          currentEntity = ModelProvider.getInstance().getEntity(
+              currentEntity.getName() + Entity.COMPUTED_COLUMNS_CLASS_APPENDIX);
+        } else {
+          currentEntity = foundProperty.getTargetEntity();
+        }
       }
     }
 
@@ -119,11 +125,18 @@ public class SelectorFieldPropertyCallout extends HttpSecureAppServlet {
     try {
       // get the table
       final Entity propertyEntity = foundProperty.getEntity();
-      final Table propertyTable = OBDal
-          .getInstance()
-          .createQuery(Table.class,
-              Table.PROPERTY_DBTABLENAME + "='" + propertyEntity.getTableName() + "'").list()
-          .get(0);
+
+      String tableId = propertyEntity.getTableId();
+
+      if (propertyEntity.isVirtualEntity()) {
+        // If it is a virtual entity, that means that the variable tableId will be
+        // the id of the table concatenated to the "_CC" substring, this is why the
+        // tableId variable is get by removing the last three characters.
+        tableId = tableId.substring(0, tableId.length() - 3);
+      }
+
+      final Table propertyTable = OBDal.getInstance()
+          .createQuery(Table.class, Table.PROPERTY_ID + "='" + tableId + "'").list().get(0);
 
       final OBCriteria<Column> columnCriteria = OBDal.getInstance().createCriteria(Column.class);
       columnCriteria.add(Restrictions.and(Restrictions.eq(Column.PROPERTY_TABLE, propertyTable),
