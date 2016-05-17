@@ -226,7 +226,8 @@ public class VariablesSecureApp extends VariablesBase {
     } else {
       String strTheme = "";
       try {
-        if (OBScheduler.getInstance().getScheduler().isStarted()) {
+        if (OBScheduler.getInstance().getScheduler() != null
+            && OBScheduler.getInstance().getScheduler().isStarted()) {
           Client systemClient = OBDal.getInstance().get(Client.class, "0");
 
           // Get theme (skin)
