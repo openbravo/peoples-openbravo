@@ -40,11 +40,12 @@ enyo.kind({
   tap: function () {
     var amount = OB.DEC.Zero,
         total = OB.DEC.Zero,
-        tmp;
+        tmp, currentOrder;
+    currentOrder = this.model.get('multiOrders').get('multiOrdersList').get(this.owner.owner.args.id);
     if (this.owner.$.btnModalMultiSearchInput.getValue().indexOf('%') !== -1) {
       try {
         tmp = this.owner.$.btnModalMultiSearchInput.getValue().replace('%', '');
-        amount = OB.DEC.div(OB.DEC.mul(this.model.get('multiOrders').get('multiOrdersList').get(this.owner.owner.args.id).getPending(), tmp), 100);
+        amount = OB.DEC.div(OB.DEC.mul(currentOrder.getPending(), tmp), 100);
       } catch (ex) {
         OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_notValidInput_header'), OB.I18N.getLabel('OBPOS_notValidQty'));
         return;
@@ -58,19 +59,19 @@ enyo.kind({
       }
     }
     if (_.isNaN(amount)) {
-      this.model.get('multiOrders').get('multiOrdersList').get(this.owner.owner.args.id).setOrderType(null, 0);
-      this.model.get('multiOrders').get('multiOrdersList').get(this.owner.owner.args.id).set('amountToLayaway', null);
+      currentOrder.setOrderType(null, 0);
+      currentOrder.set('amountToLayaway', null);
       this.doHideThisPopup();
       return;
     }
-    total = this.model.get('multiOrders').get('multiOrdersList').get(this.owner.owner.args.id).get('gross');
-    if (OB.DEC.compare(OB.DEC.sub(amount, total)) > 0 || OB.DEC.compare(amount) < 0) {
+    total = currentOrder.get('gross');
+    if ((OB.DEC.compare(OB.DEC.sub(total, OB.DEC.add(amount, currentOrder.get('payment')))) <= 0) || (OB.DEC.compare(OB.DEC.sub(amount, total)) > 0 || OB.DEC.compare(amount) < 0)) {
       OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_notValidInput_header'), OB.I18N.getLabel('OBPOS_notValidQty'));
       this.doHideThisPopup();
       return;
     }
-    this.model.get('multiOrders').get('multiOrdersList').get(this.owner.owner.args.id).set('amountToLayaway', amount);
-    this.model.get('multiOrders').get('multiOrdersList').get(this.owner.owner.args.id).setOrderType(null, 2);
+    currentOrder.set('amountToLayaway', amount);
+    currentOrder.setOrderType(null, 2);
     this.doHideThisPopup();
   },
   init: function (model) {
