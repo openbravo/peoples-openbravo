@@ -37,7 +37,9 @@ enyo.kind({
       },
       content: '',
       init: function () {
-        if (OB.UTIL.Debug.isDebug()) {
+        if (!OB.UTIL.isHTTPSAvailable()) {
+          this.setContent(OB.I18N.getLabel('OBPOS_NonSecureConnection'));
+        } else if (OB.UTIL.Debug.isDebug()) {
           var ifInDevelopment = 'OBPOS_ModulesInDevelopment';
           var ifInTestEnvironment = 'OBPOS_ApplicationInTestEnvironment';
           var i18nLabel = 'OBMOBC_Debug';
