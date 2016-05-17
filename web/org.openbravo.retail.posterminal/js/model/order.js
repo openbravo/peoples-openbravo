@@ -1855,6 +1855,12 @@
       disc.obdiscQtyoffer = rule.get('qtyOffer') ? OB.DEC.toNumber(rule.get('qtyOffer')) : line.get('qty');
       disc.qtyOffer = disc.obdiscQtyoffer;
       disc.doNotMerge = discount.doNotMerge;
+      if (!OB.UTIL.isNullOrUndefined(discount.chunks)) {
+        disc.chunks = discount.chunks;
+      } else {
+        disc.chunks = undefined;
+      }
+
 
       disc.hidden = discount.hidden === true || (discount.actualAmt && !disc.amt);
       disc.preserve = discount.preserve === true;

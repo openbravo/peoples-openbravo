@@ -120,10 +120,11 @@ enyo.kind({
           return;
         }
         var identifierName = d.identifier || d.name;
+        var nochunks = d.chunks;
         this.createComponent({
           style: 'display: block;',
           components: [{
-            content: '-- ' + identifierName,
+            content: (OB.UTIL.isNullOrUndefined(nochunks) || nochunks === 1) ? '-- ' + identifierName : '-- ' + '(' + nochunks + 'x) ' + identifierName,
             attributes: {
               style: 'float: left; width: 80%; clear: left;'
             }
