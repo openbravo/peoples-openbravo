@@ -65,6 +65,7 @@
 	<parameter name="TWO_ASTERISK_SHOW" class="java.lang.Boolean" isForPrompting="false">
 		<defaultValueExpression><![CDATA[new Boolean(false)]]></defaultValueExpression>
 	</parameter>
+	<parameter name="NUMBERFORMAT" class="java.text.DecimalFormat" isForPrompting="false"/>
 	<queryString>
 		<![CDATA[SELECT 'hello' AS BP_GROUP, 'hello' AS BPARTNER, 'hello' AS PROJECT, 'hello' AS PAYMENT, 'hello' AS SALES_PERSON, 1234 AS INVOICE_NUMBER, to_Date('01/01/2010') AS INVOICE_DATE,
        to_Date('01/03/2010') AS DUE_DATE, 1234 AS PLANNED_DSO, 1234 AS CURRENT_DSO, 1234 AS OVERDUE, 1234 AS DAYS_OVERDUE, 1234 AS AMOUNT,
@@ -383,7 +384,7 @@ FROM DUAL]]>
 				<textElement textAlignment="Right">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{BASE_AMOUNT}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($F{BASE_AMOUNT}!=null)?$P{NUMBERFORMAT}.format($F{BASE_AMOUNT}):new String(" ")]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement key="textField-14" style="Report_Footer" x="1597" y="0" width="46" height="25" uuid="5048cde4-f51d-4ce0-8a89-adc9406901c8"/>
@@ -398,7 +399,7 @@ FROM DUAL]]>
 				<textElement textAlignment="Right">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{TRANS_AMOUNT}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($F{TRANS_AMOUNT}!=null)?$P{NUMBERFORMAT}.format($F{TRANS_AMOUNT}):new String(" ")]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement key="textField-16" style="Report_Footer" x="1457" y="0" width="60" height="25" uuid="ff340e8e-63c1-4df9-af58-75c6c7bbabee"/>
