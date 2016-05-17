@@ -329,8 +329,8 @@ public class CancelAndReplaceUtils {
       createPayments(oldOrder, newOrder, inverseOrder, jsonorder, useOrderDocumentNoForRelatedDocs,
           replaceOrder, triggersDisabled);
 
-     //Calling Cancelandreplaceorderhook
-     WeldUtils.getInstanceFromStaticBeanManager(CancelAndReplaceOrderHookCaller.class)
+      // Calling Cancelandreplaceorderhook
+      WeldUtils.getInstanceFromStaticBeanManager(CancelAndReplaceOrderHookCaller.class)
           .executeHook(triggersDisabled, oldOrder, newOrder);
 
     } catch (Exception e1) {
@@ -723,7 +723,6 @@ public class CancelAndReplaceUtils {
           FIN_PaymentSchedule.class);
       paymentScheduleCriteria.add(Restrictions.eq(FIN_PaymentSchedule.PROPERTY_ORDER, oldOrder));
       List<FIN_PaymentSchedule> paymentScheduleList = paymentScheduleCriteria.list();
-      boolean inversePaymentCreated = false;
       if (paymentScheduleList.size() != 0) {
         paymentSchedule = paymentScheduleList.get(0);
         FIN_Payment newPayment = null;
@@ -746,93 +745,83 @@ public class CancelAndReplaceUtils {
               createPayments = false;
             }
           }
-          // Get the payment schedule detail of the order
-          OBCriteria<FIN_PaymentScheduleDetail> paymentScheduleDetailCriteria = OBDal.getInstance()
-              .createCriteria(FIN_PaymentScheduleDetail.class);
-          paymentScheduleDetailCriteria.add(Restrictions.eq(
-              FIN_PaymentScheduleDetail.PROPERTY_ORDERPAYMENTSCHEDULE, paymentSchedule));
-          // We are looking for the ones with a payment detail
-          paymentScheduleDetailCriteria.add(Restrictions
-              .isNotNull(FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS));
-          List<FIN_PaymentScheduleDetail> paymentScheduleDetailList = paymentScheduleDetailCriteria
-              .list();
-          // New payment definition
-          for (FIN_PaymentScheduleDetail paymentScheduleDetail : paymentScheduleDetailList) {
-            newPayment = null;
-            String paymentDocumentNo = null;
 
+          BigDecimal paymentTotalAmount = BigDecimal.ZERO;
+          // Get Payment Description
+          String description = getPaymentDescription();
+          description += ": " + inverseOrder.getDocumentNo();
+          FIN_PaymentMethod paymentPaymentMethod = null;
+          DocumentType paymentDocumentType = null;
+          FIN_FinancialAccount financialAccount = null;
+          List<FIN_PaymentScheduleDetail> paymentScheduleDetailList = paymentSchedule
+              .getFINPaymentScheduleDetailOrderPaymentScheduleList();
+          if (paymentScheduleDetailList.size() != 0) {
+            FIN_PaymentScheduleDetail paymentScheduleDetail = paymentScheduleDetailList.get(0);
             FIN_PaymentDetail paymentDetail = paymentScheduleDetail.getPaymentDetails();
             FIN_Payment payment = paymentDetail.getFinPayment();
-            FIN_PaymentMethod paymentPaymentMethod = payment.getPaymentMethod();
-            BigDecimal amount = paymentScheduleDetail.getAmount();
-            BigDecimal negativeAmount = paymentSchedule.getAmount().negate();
-            DocumentType paymentDocumentType = payment.getDocumentType();
-            FIN_FinancialAccount financialAccount = payment.getAccount();
-            BigDecimal paymentTotalAmount = BigDecimal.ZERO;
+            paymentPaymentMethod = payment.getPaymentMethod();
+            paymentDocumentType = payment.getDocumentType();
+            financialAccount = payment.getAccount();
+          }
+          String paymentDocumentNo = getPaymentDocumentNo(useOrderDocumentNoForRelatedDocs,
+              oldOrder, paymentDocumentType);
 
-            paymentDocumentNo = getPaymentDocumentNo(useOrderDocumentNoForRelatedDocs, oldOrder,
-                paymentDocumentType);
+          BigDecimal amount = paymentSchedule.getPaidAmount();
+          if (createPayments && amount.compareTo(BigDecimal.ZERO) != 0) {
+            // Duplicate payment with positive amount
+            newPayment = createPayment(newPayment, newOrder, paymentPaymentMethod, amount,
+                paymentDocumentType, financialAccount, paymentDocumentNo);
+            description += ": " + newOrder.getDocumentNo();
+            paymentTotalAmount = paymentTotalAmount.add(amount);
+          }
 
-            // Get Payment Description
-            String description = getPaymentDescription();
-            description += ": " + inverseOrder.getDocumentNo();
+          BigDecimal negativeAmount = paymentSchedule.getAmount().negate();
+          if (negativeAmount.compareTo(BigDecimal.ZERO) != 0) {
+            // Duplicate payment with negative amount
+            newPayment = createPayment(newPayment, inverseOrder, paymentPaymentMethod,
+                negativeAmount, paymentDocumentType, financialAccount, paymentDocumentNo);
+            paymentTotalAmount = paymentTotalAmount.add(negativeAmount);
+          }
 
-            if (createPayments && amount.compareTo(BigDecimal.ZERO) != 0) {
-              // Duplicate payment with positive amount
-              newPayment = createPayment(newPayment, newOrder, paymentPaymentMethod, amount,
-                  paymentDocumentType, financialAccount, paymentDocumentNo);
-              description += ": " + newOrder.getDocumentNo();
-              paymentTotalAmount = paymentTotalAmount.add(amount);
-            }
+          BigDecimal outstandingAmount = paymentSchedule.getOutstandingAmount();
+          // Create if needed a second payment for the partially paid
+          if (outstandingAmount.compareTo(BigDecimal.ZERO) != 0) {
+            // Duplicate payment with positive amount
+            newPayment = createPayment(newPayment, oldOrder, paymentPaymentMethod,
+                outstandingAmount, paymentDocumentType, financialAccount, paymentDocumentNo);
+            description += ": " + oldOrder.getDocumentNo();
+            paymentTotalAmount = paymentTotalAmount.add(outstandingAmount);
+          }
 
-            if (negativeAmount.compareTo(BigDecimal.ZERO) != 0 && !inversePaymentCreated) {
-              // Duplicate payment with negative amount
-              newPayment = createPayment(newPayment, inverseOrder, paymentPaymentMethod,
-                  negativeAmount, paymentDocumentType, financialAccount, paymentDocumentNo);
-              paymentTotalAmount = paymentTotalAmount.add(negativeAmount);
-              inversePaymentCreated = true;
-            }
+          // Set amount and used credit to zero
+          newPayment.setAmount(paymentTotalAmount);
+          newPayment.setUsedCredit(BigDecimal.ZERO);
+          newPayment.setDescription(description + "\n");
+          OBDal.getInstance().save(newPayment);
 
-            // Create if needed a second payment for the partially paid
-            BigDecimal outstandingAmount = paymentSchedule.getOutstandingAmount();
-            if (outstandingAmount.compareTo(BigDecimal.ZERO) != 0) {
+          OBDal.getInstance().flush();
 
-              // Duplicate payment with positive amount
-              newPayment = createPayment(newPayment, oldOrder, paymentPaymentMethod,
-                  outstandingAmount, paymentDocumentType, financialAccount, paymentDocumentNo);
-              description += ": " + oldOrder.getDocumentNo() + "\n";
-              paymentTotalAmount = paymentTotalAmount.add(outstandingAmount);
-            }
+          // Call to processPayment in order to process it
+          if (triggersDisabled && replaceOrder) {
+            TriggerHandler.getInstance().enable();
+          }
+          FIN_PaymentProcess.doProcessPayment(newPayment, "P", true, null, null);
+          if (triggersDisabled && replaceOrder) {
+            TriggerHandler.getInstance().disable();
+          }
 
-            // Set amount and used credit to zero
-            newPayment.setAmount(paymentTotalAmount);
-            newPayment.setUsedCredit(BigDecimal.ZERO);
-            newPayment.setDescription(description);
-            OBDal.getInstance().save(newPayment);
-
-            OBDal.getInstance().flush();
-
-            // Call to processPayment in order to process it
-            if (triggersDisabled && replaceOrder) {
-              TriggerHandler.getInstance().enable();
-            }
-            FIN_PaymentProcess.doProcessPayment(newPayment, "P", true, null, null);
-            if (triggersDisabled && replaceOrder) {
-              TriggerHandler.getInstance().disable();
-            }
-
-            if (jsonorder != null && jsonorder.has("obposAppCashup")) {
-              // retrieve the transactions of this payment and set the cashupId to those
-              // transactions
-              final List<FIN_FinaccTransaction> newTransactions = newPayment
-                  .getFINFinaccTransactionList();
-              final String cashupId = jsonorder.getString("obposAppCashup");
-              final OBPOSAppCashup cashup = OBDal.getInstance().get(OBPOSAppCashup.class, cashupId);
-              for (FIN_FinaccTransaction transaction : newTransactions) {
-                transaction.setObposAppCashup(cashup);
-              }
+          if (jsonorder != null && jsonorder.has("obposAppCashup")) {
+            // retrieve the transactions of this payment and set the cashupId to those
+            // transactions
+            final List<FIN_FinaccTransaction> newTransactions = newPayment
+                .getFINFinaccTransactionList();
+            final String cashupId = jsonorder.getString("obposAppCashup");
+            final OBPOSAppCashup cashup = OBDal.getInstance().get(OBPOSAppCashup.class, cashupId);
+            for (FIN_FinaccTransaction transaction : newTransactions) {
+              transaction.setObposAppCashup(cashup);
             }
           }
+
           // There aren't any payments on original order, pay original order and inverse order
           // completely.
           if (paymentScheduleDetailList.size() == 0) {
@@ -847,10 +836,8 @@ public class CancelAndReplaceUtils {
                 .executeHook(jsonorder, inverseOrder);
 
             // In a cancel layaway the gross value of the jsonorder was the quantity amount to
-            // return
-            // to the customer, not the quantity amount of the ticket. This generates that the
-            // amount
-            // and outstandig amount of the payment schedule is wrong
+            // return to the customer, not the quantity amount of the ticket. This generates that
+            // the amount and outstandig amount of the payment schedule is wrong
             // The amount and outstanding amount are corrected
             OBCriteria<FIN_PaymentSchedule> newPaymentScheduleList = OBDal.getInstance()
                 .createCriteria(FIN_PaymentSchedule.class);
