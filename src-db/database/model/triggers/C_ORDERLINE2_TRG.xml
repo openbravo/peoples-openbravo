@@ -54,7 +54,7 @@ BEGIN
           IF :old.qtydelivered=0 AND :new.qtydelivered=:new.qtyordered THEN
             v_QtyOrderReserved:=-:new.QuantityOrder;
           ELSIF :new.M_Product_UOM_ID IS NOT NULL THEN
-            v_QtyOrderReserved:=C_Uom_Convert(v_QtyReserved, :new.C_UOM_ID, :new.m_product_uom_id, 'Y') ;
+            v_QtyOrderReserved:=C_Uom_Convert(v_QtyReserved, :new.C_UOM_ID, (select c_uom_id from m_product_uom where m_product_uom_id = :new.m_product_uom_id), 'Y') ;
           END IF;
           SELECT COUNT(*)
           INTO V_STOCKED

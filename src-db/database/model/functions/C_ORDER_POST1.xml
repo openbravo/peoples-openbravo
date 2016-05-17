@@ -563,14 +563,14 @@
               IF (Cur_ResLine.QtyDelivered=0) THEN
                 v_QtyOrderPO := -Cur_ResLine.QuantityOrder;
               ELSIF Cur_ResLine.M_Product_UOM_ID IS NOT NULL THEN
-                v_QtyOrderPO := -C_Uom_Convert(v_QtyPO, Cur_ResLine.C_UOM_ID, Cur_ResLine.M_Product_UOM_ID, 'Y');
+                v_QtyOrderPO := -C_Uom_Convert(v_QtyPO, Cur_ResLine.C_UOM_ID, (select c_uom_id from m_product_uom where m_product_uom_id = Cur_ResLine.M_Product_UOM_ID), 'Y');
               END IF;
             ELSE
               v_QtySO:=-Cur_ResLine.QtyReserved;
               IF (Cur_ResLine.QtyReserved=Cur_ResLine.Qty) THEN
                 v_QtyOrderSO := -Cur_ResLine.QuantityOrder;
               ELSIF Cur_ResLine.M_Product_UOM_ID IS NOT NULL THEN
-                v_QtyOrderSO := -C_Uom_Convert(v_QtySO, Cur_ResLine.C_UOM_ID, Cur_ResLine.M_Product_UOM_ID, 'Y');
+                v_QtyOrderSO := -C_Uom_Convert(v_QtySO, Cur_ResLine.C_UOM_ID, (select c_uom_id from m_product_uom where m_product_uom_id = Cur_ResLine.M_Product_UOM_ID), 'Y');
               END IF;
               v_QtyPO:=0;
               v_QtyOrderPO:=NULL;
@@ -1161,7 +1161,7 @@
               IF (Cur_ResLine.QtyReserved = 0 AND Cur_ResLine.QtyDelivered = 0) THEN
                 v_QtyOrderSO := Cur_ResLine.QuantityOrder;
               ELSIF (Cur_ResLine.M_Product_UOM_ID IS NOT NULL) THEN
-                v_QtyOrderSO := C_Uom_Convert(v_QtySO, Cur_ResLine.C_UOM_ID, Cur_ResLine.M_Product_UOM_ID, 'Y');
+                v_QtyOrderSO := C_Uom_Convert(v_QtySO, Cur_ResLine.C_UOM_ID, (select c_uom_id from m_product_uom where m_product_uom_id = Cur_ResLine.M_Product_UOM_ID), 'Y');
               END IF;
               v_QtyPO   := 0;
               v_QtyOrderPO := NULL;
@@ -1173,7 +1173,7 @@
               IF (Cur_ResLine.QtyReserved = 0 AND Cur_ResLine.QtyDelivered = 0) THEN
                 v_QtyOrderPO := Cur_ResLine.QuantityOrder;
               ELSIF (Cur_ResLine.M_Product_UOM_ID IS NOT NULL) THEN
-                v_QtyOrderPO := C_Uom_Convert(v_QtyPO, Cur_ResLine.C_UOM_ID, Cur_ResLine.M_Product_UOM_ID, 'Y');
+                v_QtyOrderPO := C_Uom_Convert(v_QtyPO, Cur_ResLine.C_UOM_ID, (select c_uom_id from m_product_uom where m_product_uom_id = Cur_ResLine.M_Product_UOM_ID), 'Y');
               END IF;
             END IF;
             IF ((v_DocStatus<>'IP' OR v_DocAction<>'CO') AND COALESCE(v_DocSubTypeSO, '')<>'OB') THEN
