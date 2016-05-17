@@ -54,7 +54,6 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.Property;
-import org.openbravo.base.model.domaintype.BooleanDomainType;
 import org.openbravo.base.model.domaintype.EnumerateDomainType;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.session.OBPropertiesProvider;
@@ -289,6 +288,8 @@ public class DataSourceServlet extends BaseKernelServlet {
 
   private class QueryJSONWriterToCSV extends DefaultJsonDataService.QueryResultWriter {
 
+    private static final String YES_NO_REFERENCE_ID = "20";
+
     Writer writer;
     String fieldSeparator;
     String decimalSeparator;
@@ -302,10 +303,12 @@ public class DataSourceServlet extends BaseKernelServlet {
     List<String> dateTimeCols = new ArrayList<String>();
     List<String> timeCols = new ArrayList<String>();
     List<String> numericCols = new ArrayList<String>();
+    List<String> yesNoCols = new ArrayList<String>();
     Map<String, DecimalFormat> formats = new HashMap<String, DecimalFormat>();
     int clientUTCOffsetMiliseconds;
     TimeZone clientTimeZone;
-    Window windowToCsv = null;
+    String translatedLabelYes;
+    String translatedLabelNo;
 
     public QueryJSONWriterToCSV(HttpServletRequest request, HttpServletResponse response,
         Map<String, String> parameters, Entity entity) {
@@ -408,6 +411,8 @@ public class DataSourceServlet extends BaseKernelServlet {
             }
           }
 
+          boolean preferenceCalculateFirst = true;
+          boolean translateYesNoReferences = false;
           for (String propKey : properties.keySet()) {
             final Property prop = properties.get(propKey);
             Column col = OBDal.getInstance().get(Column.class, prop.getColumnId());
@@ -462,11 +467,15 @@ public class DataSourceServlet extends BaseKernelServlet {
               timeCols.add(propKey);
             } else if (prop.isPrimitive() && prop.isNumericType()) {
               numericCols.add(propKey);
-            }
-
-            // save current window to get preference properly
-            if (prop.getDomainType() instanceof BooleanDomainType) {
-              windowToCsv = window;
+            } else if (isYesNoReference(prop)) {
+              // Calculate if it is needed translate YesNo reference in export to CSV.
+              if (preferenceCalculateFirst) {
+                translateYesNoReferences = translateYesNoReferencesInCsv(window);
+                preferenceCalculateFirst = false;
+              }
+              if (translateYesNoReferences) {
+                yesNoCols.add(propKey);
+              }
             }
 
             if (!(prop.getDomainType() instanceof EnumerateDomainType)) {
@@ -518,6 +527,23 @@ public class DataSourceServlet extends BaseKernelServlet {
       }
     }
 
+    private boolean isYesNoReference(Property prop) {
+      final Column column = OBDal.getInstance().get(Column.class, prop.getColumnId());
+      return YES_NO_REFERENCE_ID.equals((String) DalUtil.getId(column.getReference()));
+    }
+
+    private boolean translateYesNoReferencesInCsv(Window windowToCsv) {
+      boolean shouldCheck = false;
+      try {
+        shouldCheck = "Y".equals(Preferences.getPreferenceValue(
+            "OBSERDS_CSVExportTranslateYesNoReference", true, OBContext.getOBContext()
+                .getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(), OBContext
+                .getOBContext().getUser(), OBContext.getOBContext().getRole(), windowToCsv));
+      } catch (PropertyException prefNotDefined) {
+      }
+      return shouldCheck;
+    }
+
     private void writeJSONProperties(JSONObject row) {
       final Iterator<?> itKeysF = row.keys();
       Vector<String> keys = new Vector<String>();
@@ -560,8 +586,6 @@ public class DataSourceServlet extends BaseKernelServlet {
         }
 
         boolean isFirst = true;
-        boolean shouldCheckTranslation = false;
-        boolean preferenceCalculateFirst = true;
         while (itKeys.hasNext()) {
           String key = (String) itKeys.next();
           if (key.endsWith(JsonConstants.IDENTIFIER)) {
@@ -629,22 +653,8 @@ public class DataSourceServlet extends BaseKernelServlet {
             SimpleDateFormat timeFormat = JsonUtils.createTimeFormatWithoutGMTOffset();
             timeFormat.setLenient(true);
             keyValue = timeFormat.format(clientTimezoneDate);
-          } else if (keyValue instanceof Boolean && keyValue != null) {
-            // Calculate if it is needed translate YesNo reference in export to csv.
-            if (preferenceCalculateFirst == true) {
-              shouldCheckTranslation = getValueShouldCheckTranslationPreference();
-              preferenceCalculateFirst = false;
-            }
-            if (shouldCheckTranslation) {
-              String userLanguage = OBContext.getOBContext().getLanguage().getLanguage();
-              if (keyValue.toString().equals("true")) {
-                keyValue = Utility.messageBD(new DalConnectionProvider(false), "OBUISC_Yes",
-                    userLanguage);
-              } else if (keyValue.toString().equals("false")) {
-                keyValue = Utility.messageBD(new DalConnectionProvider(false), "OBUISC_No",
-                    userLanguage);
-              }
-            }
+          } else if (yesNoCols.contains(key) && keyValue != null) {
+            keyValue = (Boolean) keyValue ? getTranslatedLabelYes() : getTranslatedLabelNo();
           }
 
           if (keyValue != null && !keyValue.toString().equals("null")) {
@@ -662,16 +672,23 @@ public class DataSourceServlet extends BaseKernelServlet {
       }
     }
 
-    private boolean getValueShouldCheckTranslationPreference() {
-      boolean shouldCheck = false;
-      try {
-        shouldCheck = "Y".equals(Preferences.getPreferenceValue("AllowExportCSV_YesNoTranslated",
-            true, OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
-                .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
-                .getOBContext().getRole(), windowToCsv));
-      } catch (PropertyException prefNotDefined) {
+    private String getTranslatedLabelYes() {
+      if (translatedLabelYes == null) {
+        translatedLabelYes = getTranslatedLabel("OBUISC_Yes");
       }
-      return shouldCheck;
+      return translatedLabelYes;
+    }
+
+    private String getTranslatedLabelNo() {
+      if (translatedLabelNo == null) {
+        translatedLabelNo = getTranslatedLabel("OBUISC_No");
+      }
+      return translatedLabelNo;
+    }
+
+    private String getTranslatedLabel(String label) {
+      String userLanguage = OBContext.getOBContext().getLanguage().getLanguage();
+      return Utility.messageBD(new DalConnectionProvider(false), label, userLanguage);
     }
 
     private Date convertFromLocalToClientTimezone(Date localDate) {
