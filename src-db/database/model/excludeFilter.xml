@@ -34,6 +34,7 @@
     <excludedFunction name="TRUNC"/>
     <excludedFunction name="INSTR"/>
     <excludedFunction name="LAST_DAY"/>
+    <excludedFunction name="IS_TRIGGER_ENABLED"/>
     <excludedFunction name="DROP_VIEW"/>
     <excludedFunction name="MONTHS_BETWEEN"/>
     <excludedFunction name="AD_SCRIPT_DROP_RECREATE_INDEXES"/>
@@ -53,6 +54,7 @@
     <excludedFunction name="NOW"/>
     <excludedFunction name="UPDATE_DATEFORMAT"/>
     <excludedFunction name="GET_UUID"/>
+    <excludedFunction name="HEX_TO_INT"/>
     <excludedFunction name="UUID_GENERATE_V4"/>
     <excludedFunction name="AD_ORG_CHK_DOCUMENTS"/>
     <excludedFunction name="AD_ORG_CHK_DOC_PAYMENTS"/>
