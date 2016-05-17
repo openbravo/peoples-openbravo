@@ -764,7 +764,7 @@ public class CancelAndReplaceUtils {
             FIN_PaymentDetail paymentDetail = paymentScheduleDetail.getPaymentDetails();
             FIN_Payment payment = paymentDetail.getFinPayment();
             FIN_PaymentMethod paymentPaymentMethod = payment.getPaymentMethod();
-            BigDecimal amount = payment.getAmount();
+            BigDecimal amount = paymentScheduleDetail.getAmount();
             BigDecimal negativeAmount = paymentSchedule.getAmount().negate();
             DocumentType paymentDocumentType = payment.getDocumentType();
             FIN_FinancialAccount financialAccount = payment.getAccount();
