@@ -13,11 +13,22 @@ enyo.kind({
   name: 'OB.UI.ModalModulesInDev',
   kind: 'OB.UI.ModalInfo',
   bodyContent: {
-    name: 'message',
-    content: ''
+    components: [{
+      name: 'message',
+      content: ''
+    }, {
+      name: 'link',
+      tag: 'a href="http://wiki.openbravo.com/wiki/WebPOS_and_HTTPS" target="_blank"',
+      content: '',
+      showing: false
+    }]
   },
   executeOnShow: function () {
-    if (OB.UTIL.Debug.isDebug()) {
+    if (!OB.UTIL.isHTTPSAvailable()) {
+      this.$.bodyContent.$.message.setContent(OB.I18N.getLabel('OBPOS_NonSecureModalPopup'));
+      this.$.bodyContent.$.link.setContent(OB.I18N.getLabel('OBPOS_link'));
+      this.$.bodyContent.$.link.setShowing(true);
+    } else if (OB.UTIL.Debug.isDebug()) {
       var ifInDevelopment = 'OBPOS_modalModulesInDevBody';
       var ifInTestEnvironment = 'OBPOS_modalApplicationInTestEnvironmentBody';
       var i18nLabel = 'OBMOBC_Debug';
