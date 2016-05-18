@@ -58,7 +58,6 @@ import org.openbravo.model.common.enterprise.Locator;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.common.order.OrderTax;
-import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentDetail;
@@ -70,7 +69,6 @@ import org.openbravo.model.materialmgmt.onhandquantity.ReservationStock;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
-import org.openbravo.retail.posterminal.OBPOSAppCashup;
 import org.openbravo.service.db.CallStoredProcedure;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.db.DbUtility;
@@ -808,18 +806,6 @@ public class CancelAndReplaceUtils {
           FIN_PaymentProcess.doProcessPayment(newPayment, "P", true, null, null);
           if (triggersDisabled && replaceOrder) {
             TriggerHandler.getInstance().disable();
-          }
-
-          if (jsonorder != null && jsonorder.has("obposAppCashup")) {
-            // retrieve the transactions of this payment and set the cashupId to those
-            // transactions
-            final List<FIN_FinaccTransaction> newTransactions = newPayment
-                .getFINFinaccTransactionList();
-            final String cashupId = jsonorder.getString("obposAppCashup");
-            final OBPOSAppCashup cashup = OBDal.getInstance().get(OBPOSAppCashup.class, cashupId);
-            for (FIN_FinaccTransaction transaction : newTransactions) {
-              transaction.setObposAppCashup(cashup);
-            }
           }
 
           // There aren't any payments on original order, pay original order and inverse order
