@@ -541,8 +541,7 @@ public class POSUtils {
     for (OBPOSErrors error : errors) {
       try {
         JSONObject jsonError = new JSONObject(error.getJsoninfo());
-        if (jsonError.has("documentNo") && jsonError.has("isReturn")
-            && jsonError.getBoolean("isReturn")) {
+        if (jsonError.has("documentNo") && (jsonError.optLong("returnnoSuffix", -1L) > -1L)) {
           String documentNo = jsonError.getString("documentNo");
           if (documentNo.indexOf("/") > -1) {
             String number = documentNo.substring(documentNo.indexOf("/") + 1);

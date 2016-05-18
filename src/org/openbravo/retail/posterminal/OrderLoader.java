@@ -1527,7 +1527,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           terminal.setQuotationslastassignednum(documentno);
           OBDal.getInstance().save(terminal);
         }
-      } else if (jsonorder.has("isReturn") && jsonorder.getBoolean("isReturn")) {
+      } else if (jsonorder.optLong("returnnoSuffix", -1L) > -1L) {
         if (order.getObposApplications().getReturnslastassignednum() == null
             || documentno > order.getObposApplications().getReturnslastassignednum()) {
           OBPOSApplications terminal = order.getObposApplications();
@@ -1556,7 +1556,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
             OBDal.getInstance().save(terminal);
           }
         }
-      } else if (jsonorder.has("isReturn") && jsonorder.getBoolean("isReturn")) {
+      } else if (jsonorder.optLong("returnnoSuffix", -1L) > -1L) {
         if (jsonorder.has("returnnoPrefix")) {
           documentno = Long.parseLong(order.getDocumentNo().replace(
               jsonorder.getString("returnnoPrefix"), ""));

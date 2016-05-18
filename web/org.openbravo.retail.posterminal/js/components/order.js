@@ -655,6 +655,19 @@ enyo.kind({
         return;
       }
       this.updating = true;
+      //Check Return No logic and change
+      if (!this.order.get('isLayaway') && !this.order.get('isQuotation')) {
+        var negativeLinesLength = _.filter(this.order.get('lines').models, function (line) {
+          return line.get('qty') < 0;
+        }).length;
+        if (negativeLinesLength === this.order.get('lines').models.length) {
+          //isReturn
+          OB.MobileApp.model.receipt.setDocumentNo(true, false);
+        } else {
+          //isOrder
+          OB.MobileApp.model.receipt.setDocumentNo(false, true);
+        }
+      }
 
       function getServiceLines(service) {
         var serviceLines;

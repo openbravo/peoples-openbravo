@@ -860,7 +860,7 @@
         var i = 0;
         while (lastSuffix === null && i <= OB.MobileApp.model.orderList.models.length - 1) {
           var order = OB.MobileApp.model.orderList.models[i];
-          if (!order.get('isPaid') && !order.get('isQuotation') && !order.get('isReturn') && order.get('documentnoPrefix') === OB.MobileApp.model.get('terminal').docNoPrefix) {
+          if (!order.get('isPaid') && !order.get('isQuotation') && order.get('documentnoPrefix') === OB.MobileApp.model.get('terminal').docNoPrefix) {
             lastSuffix = order.get('documentnoSuffix');
           }
           i++;

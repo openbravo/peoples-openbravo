@@ -23,11 +23,11 @@ enyo.kind({
       return true;
     }
     this.inherited(arguments); // Manual dropdown menu closure
+    this.model.get('order').setDocumentNo(true, false);
     this.doShowDivText({
       permission: this.permission,
       orderType: 1
     });
-    this.model.get('order').setReturnDocumentNo();
     if (OB.MobileApp.model.get('lastPaneShown') === 'payment') {
       this.model.get('order').trigger('scan');
     }
