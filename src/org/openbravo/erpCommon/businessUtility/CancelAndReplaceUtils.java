@@ -57,6 +57,7 @@ import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.enterprise.Locator;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
+import org.openbravo.model.common.order.OrderLineOffer;
 import org.openbravo.model.common.order.OrderTax;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
@@ -433,6 +434,8 @@ public class CancelAndReplaceUtils {
     inverseOrder.getOrderLineList().add(inverseOrderLine);
     OBDal.getInstance().save(inverseOrderLine);
 
+    // Copy the discounts of the original line
+    creteOrderLineDiscounts(oldOrderLine, inverseOrderLine, inverseOrder);
     // Copy old order taxes to inverse, it is done when is executed from Web POS because triggers
     // are disabled
     if (triggersDisabled) {
@@ -440,6 +443,17 @@ public class CancelAndReplaceUtils {
     }
 
     return inverseOrderLine;
+  }
+
+  protected static void creteOrderLineDiscounts(OrderLine oldOrderLine, OrderLine inverseOrderLine,
+      Order inverseOrder) {
+    for (OrderLineOffer orderLineOffer : oldOrderLine.getOrderLineOfferList()) {
+      final OrderLineOffer inverseOrderLineOffer = (OrderLineOffer) DalUtil.copy(orderLineOffer,
+          false, true);
+      inverseOrderLineOffer.setSalesOrderLine(inverseOrderLine);
+      OBDal.getInstance().save(inverseOrderLineOffer);
+    }
+    OBDal.getInstance().flush();
   }
 
   protected static void createOrderLineTaxes(OrderLine oldOrderLine, OrderLine inverseOrderLine,
