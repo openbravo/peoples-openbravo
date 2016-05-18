@@ -244,12 +244,11 @@ enyo.kind({
         if (args && args.cancellation && args.cancellation === true) {
           return true;
         }
-        var success = args.customer.saveCustomer();
-        if (success) {
+        args.customer.saveCustomer(function () {
           goToViewWindow(sw, {
             customer: OB.UTIL.clone(args.customer)
           });
-        }
+        });
       });
     } else {
       var that = this;
@@ -265,12 +264,11 @@ enyo.kind({
           if (args && args.cancellation && args.cancellation === true) {
             return true;
           }
-          var success = args.customer.saveCustomer();
-          if (success) {
+          args.customer.saveCustomer(function () {
             goToViewWindow(sw, {
               customer: args.customer
             });
-          }
+          });
         });
       });
     }

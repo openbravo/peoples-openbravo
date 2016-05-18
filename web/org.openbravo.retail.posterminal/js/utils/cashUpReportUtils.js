@@ -396,6 +396,45 @@
     }, this);
   };
 
+  // 1. call server for cashup info
+  // 2. when returns delete current cashup info 
+  // 3. recreate
+  OB.UTIL.rebuildCashupFromServer = function (callback) {
+    var service = 'org.openbravo.retail.posterminal.master.Cashup';
+    if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
+      service = 'org.openbravo.retail.posterminal.master.CashupSynchronized';
+    }
+    new OB.DS.Process(service).exec({
+      isprocessed: 'N',
+      isprocessedbo: 'N'
+    }, function (data) {
+      var afterDeleteCallback = function () {
+          // Found non processed cashups
+          if (data[0]) {
+            var cashUp = new OB.Model.CashUp();
+            cashUp.set(data[0]);
+            var cashUpCollection = new Backbone.Collection();
+            cashUpCollection.push(cashUp);
+            OB.UTIL.createNewCashupFromServer(cashUp, function () {
+              OB.UTIL.composeCashupInfo(cashUpCollection, null, null);
+              OB.UTIL.calculateCurrentCash(callback);
+            });
+          } else {
+            OB.UTIL.createNewCashup(callback);
+          }
+          };
+
+      // remove the current cashup
+      OB.Dal.transaction(function (tx) {
+        OB.Dal.removeAllInTransaction(tx, OB.Model.PaymentMethodCashUp);
+        OB.Dal.removeAllInTransaction(tx, OB.Model.TaxCashUp);
+        OB.Dal.removeAllInTransaction(tx, OB.Model.CashUp);
+        OB.Dal.removeAllInTransaction(tx, OB.Model.CashManagement);
+      }, null, afterDeleteCallback);
+
+    });
+  };
+
   OB.UTIL.initCashUp = function (callback, errorCallback, skipSearchBackend) {
 
     //1. Search non processed cashup in local DB

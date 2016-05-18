@@ -730,12 +730,19 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
                   me.printCashUp.print(me.get('cashUpReport').at(0), me.getCountCashSummary(), true);
                 }
                 };
+            var callbackFinishedWrongly = function () {
+                // reset to N
+                cashUp.at(0).set('isprocessed', 'N');
+                OB.Dal.save(cashUp.at(0));
+                me.set("finishedWrongly", true);
+                };
+
             var callbackFunc = function () {
                 OB.UTIL.SynchronizationHelper.finished(synchId, 'processAndFinishCashUp');
                 OB.MobileApp.model.runSyncProcess(function () {
                   callbackFinishedSuccess();
                 }, function () {
-                  callbackFinishedSuccess();
+                  callbackFinishedWrongly();
                 });
                 };
             callbackFunc();

@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012 Openbravo S.L.U.
+ * Copyright (C) 2012-2016 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -174,11 +174,14 @@ enyo.kind({
       if (this.model.get('customerAddr').get('name') === '') {
         OB.UTIL.showWarning('Address is required for BPartner');
         return false;
-      } else if (this.model.get('customerAddr').saveCustomerAddr()) {
-        goToViewWindow(sw, {
-          customer: OB.UTIL.clone(this.customer),
-          customerAddr: OB.UTIL.clone(this.model.get('customerAddr'))
-        });
+      } else {
+        var callback = function () {
+            goToViewWindow(sw, {
+              customer: OB.UTIL.clone(me.customer),
+              customerAddr: OB.UTIL.clone(me.model.get('customerAddr'))
+            });
+            };
+        this.model.get('customerAddr').saveCustomerAddr(callback);
       }
     } else {
       this.model.get('customerAddr').loadById(this.customerAddr.get('id'), function (customerAddr) {
@@ -186,28 +189,30 @@ enyo.kind({
           OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_BPartnerAddressRequired'));
           return false;
         } else {
+          var callback = function () {
+              goToViewWindow(sw, {
+                customer: me.customer,
+                customerAddr: customerAddr
+              });
+              if (customerAddr.get('id') === me.customer.get("locId")) {
+                me.customer.set('locId', customerAddr.get('id'));
+                me.customer.set('locName', customerAddr.get('name'));
+                me.customer.set('locationModel', customerAddr);
+                OB.Dal.save(me.customer, function success(tx) {
+                  me.doChangeBusinessPartner({
+                    businessPartner: me.customer
+                  });
+                }, function error(tx) {
+                  OB.error(tx);
+                });
+
+              }
+
+              };
           getCustomerAddrValues({
             customerAddr: customerAddr
           });
-          if (customerAddr.saveCustomerAddr()) {
-            goToViewWindow(sw, {
-              customer: me.customer,
-              customerAddr: customerAddr
-            });
-            if (customerAddr.get('id') === me.customer.get("locId")) {
-              me.customer.set('locId', customerAddr.get('id'));
-              me.customer.set('locName', customerAddr.get('name'));
-              me.customer.set('locationModel', customerAddr);
-              OB.Dal.save(me.customer, function success(tx) {
-                me.doChangeBusinessPartner({
-                  businessPartner: me.customer
-                });
-              }, function error(tx) {
-                OB.error(tx);
-              });
-
-            }
-          }
+          customerAddr.saveCustomerAddr(callback);
         }
       });
     }

@@ -496,16 +496,18 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
           }
         }
         me.get('multiOrders').trigger('closed', order);
-        enyo.$.scrim.hide();
-        me.get('multiOrders').trigger('print', order, {
-          offline: true
-        }); // to guaranty execution order
-        SyncReadyToSendFunction();
+        if (!OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
+          enyo.$.scrim.hide();
+          me.get('multiOrders').trigger('print', order, {
+            offline: true
+          }); // to guaranty execution order
+          SyncReadyToSendFunction();
 
-        auxReceiptList.push(auxReceipt);
-        if (auxReceiptList.length === me.get('multiOrders').get('multiOrdersList').length) {
-          OB.UTIL.cashUpReport(auxReceiptList);
-          auxReceiptList = [];
+          auxReceiptList.push(auxReceipt);
+          if (auxReceiptList.length === me.get('multiOrders').get('multiOrdersList').length) {
+            OB.UTIL.cashUpReport(auxReceiptList);
+            auxReceiptList = [];
+          }
         }
       }
       var i, j;

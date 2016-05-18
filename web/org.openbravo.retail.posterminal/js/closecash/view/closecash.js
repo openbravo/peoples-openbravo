@@ -352,6 +352,11 @@ enyo.kind({
     }, this);
     //finishedWrongly
     this.model.on('change:finishedWrongly', function (model) {
+      // in case of synchronized mode then don't do specific things
+      // message is already displayed
+      if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
+        return;
+      }
       var message = "";
       if (model.get('errorMessage')) {
         message = OB.I18N.getLabel(model.get('errorMessage'), [model.get('errorDetail')]);
@@ -567,8 +572,6 @@ enyo.kind({
   }
 });
 
-
-
 OB.POS.registerWindow({
   windowClass: OB.OBPOSCashUp.UI.CashUp,
   route: 'retail.cashup',
@@ -576,9 +579,21 @@ OB.POS.registerWindow({
   menuPosition: 20,
   menuI18NLabel: 'OBPOS_LblCloseCash',
   permission: 'OBPOS_retail.cashup',
-  approvalType: 'OBPOS_approval.cashup'
+  approvalType: 'OBPOS_approval.cashup',
+  navigateTo: function () {
+    var me = this;
+    // in case of synchronized mode reload the cashup from the server
+    // this is needed because there is a slight change that the cashup on the client 
+    // is out of date
+    if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
+      OB.UTIL.rebuildCashupFromServer(function () {
+        OB.MobileApp.model.navigate(me.route);
+      });
+    } else {
+      OB.MobileApp.model.navigate(me.route);
+    }
+  }
 });
-
 
 enyo.kind({
   name: 'OB.OBPOSCashUp.UI.CashUpPartial',

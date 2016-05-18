@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2013 Openbravo S.L.U.
+ * Copyright (C) 2012-2016 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -22,7 +22,6 @@ import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.secureApp.LoginUtils;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.kernel.RequestContext;
-import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
@@ -32,6 +31,7 @@ import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.mobile.core.MobileServerDefinition;
 import org.openbravo.mobile.core.MobileServerOrganization;
 import org.openbravo.mobile.core.login.MobileCoreLoginUtilsServlet;
+import org.openbravo.mobile.core.servercontroller.MobileServerUtils;
 import org.openbravo.model.ad.access.FormAccess;
 import org.openbravo.model.ad.access.User;
 import org.openbravo.model.ad.access.UserRoles;
@@ -340,19 +340,7 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
   protected JSONArray getServers(OBPOSApplications terminal) throws JSONException {
     JSONArray respArray = new JSONArray();
 
-    boolean multiServerEnabled = false;
-    try {
-      OBContext.setAdminMode(false);
-      multiServerEnabled = "Y".equals(Preferences.getPreferenceValue(
-          "OBMOBC_MultiServerArchitecture", true, terminal.getClient(), terminal.getOrganization(),
-          null, null, null).trim());
-    } catch (PropertyException ignore) {
-      // ignore on purpose
-    } finally {
-      OBContext.restorePreviousMode();
-    }
-
-    if (!multiServerEnabled) {
+    if (!MobileServerUtils.isMultiServerEnabled(terminal.getClient(), terminal.getOrganization())) {
       return respArray;
     }
 

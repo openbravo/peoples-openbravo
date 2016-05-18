@@ -21,14 +21,19 @@
     dataLimit: OB.Dal.DATALIMIT,
     local: false,
     remote: 'OBPOS_remote.customer',
-    saveCustomerAddr: function (silent) {
+    saveCustomerAddr: function (callback) {
       var nameLength, newSk;
 
       this.set('_identifier', this.get('name'));
-      this.trigger('customerAddrSaved');
+
+      if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
+        OB.DATA.executeCustomerAddressSave(this, callback);
+      } else {
+        this.trigger('customerAddrSaved');
+        callback();
+      }
+
       return true;
-      //datacustomeraddrsave will catch this event and save this locally with changed = 'Y'
-      //Then it will try to send to the backend
     },
     loadById: function (CusAddrId, userCallback) {
       //search data in local DB and load it to this

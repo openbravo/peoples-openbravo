@@ -82,103 +82,120 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.WindowModel.extend({
       }, null, this);
     }, this);
 
-    this.depsdropstosave.on('makeDeposits', function () {
-      // Done button has been clicked
-      me = this;
-      TestRegistry.CashMgmt = TestRegistry.CashMgmt || {};
-      TestRegistry.CashMgmt.isCashDepositPrinted = false;
+    var makeDepositsFunction = function (me) {
+        TestRegistry.CashMgmt = TestRegistry.CashMgmt || {};
+        TestRegistry.CashMgmt.isCashDepositPrinted = false;
 
-      OB.UTIL.showLoading(true);
+        OB.UTIL.showLoading(true);
 
-      if (this.depsdropstosave.length === 0) {
-        // Nothing to do go to main window
-        OB.POS.navigate('retail.pointofsale');
-        return true;
-      }
+        if (me.depsdropstosave.length === 0) {
+          // Nothing to do go to main window
+          OB.POS.navigate('retail.pointofsale');
+          return true;
+        }
 
-      this.printCashMgmt = new OB.OBPOSCashMgmt.Print.CashMgmt();
+        me.printCashMgmt = new OB.OBPOSCashMgmt.Print.CashMgmt();
 
-      TestRegistry.CashMgmt.isCashDepositPrinted = true;
+        TestRegistry.CashMgmt.isCashDepositPrinted = true;
 
-      function runSync() {
-        if (OB.MobileApp.model.get('connectedToERP')) {
-          OB.MobileApp.model.runSyncProcess(function () {
+        function runSync() {
+          if (OB.MobileApp.model.get('connectedToERP')) {
+            OB.MobileApp.model.runSyncProcess(function () {
+              OB.UTIL.showLoading(false);
+              me.set("finished", true);
+              if (OB.MobileApp.model.hasPermission('OBPOS_print.cashmanagement')) {
+                me.printCashMgmt.print(me.depsdropstosave.toJSON());
+              }
+            }, function () {
+              if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
+                // fail, remove everything and go away
+                OB.Dal.removeAll(OB.Model.CashManagement, null, function () {
+                  OB.UTIL.calculateCurrentCash();
+                  me.depsdropstosave = new Backbone.Collection();
+                });
+              }
+            });
+          } else {
             OB.UTIL.showLoading(false);
             me.set("finished", true);
             if (OB.MobileApp.model.hasPermission('OBPOS_print.cashmanagement')) {
               me.printCashMgmt.print(me.depsdropstosave.toJSON());
             }
-          });
-        } else {
-          OB.UTIL.showLoading(false);
-          me.set("finished", true);
-          if (OB.MobileApp.model.hasPermission('OBPOS_print.cashmanagement')) {
-            me.printCashMgmt.print(me.depsdropstosave.toJSON());
           }
         }
-      }
 
-      var paymentList = new Backbone.Collection(),
-          found = false,
-          i;
+        var paymentList = new Backbone.Collection(),
+            found = false,
+            i;
 
-      function addAttributes(depdrop) {
-        var payment = new OB.Model.PaymentMethodCashUp();
-        if (depdrop.get('type') === 'deposit') {
-          payment.set('paymentMethodId', depdrop.get('paymentMethodId'));
-          payment.set('cashup_id', depdrop.get('cashup_id'));
-          payment.set('totalDeposits', depdrop.get('amount'));
-          payment.set('totalDrops', 0);
-        } else {
-          payment.set('paymentMethodId', depdrop.get('paymentMethodId'));
-          payment.set('cashup_id', depdrop.get('cashup_id'));
-          payment.set('totalDrops', depdrop.get('amount'));
-          payment.set('totalDeposits', 0);
+        function addAttributes(depdrop) {
+          var payment = new OB.Model.PaymentMethodCashUp();
+          if (depdrop.get('type') === 'deposit') {
+            payment.set('paymentMethodId', depdrop.get('paymentMethodId'));
+            payment.set('cashup_id', depdrop.get('cashup_id'));
+            payment.set('totalDeposits', depdrop.get('amount'));
+            payment.set('totalDrops', 0);
+          } else {
+            payment.set('paymentMethodId', depdrop.get('paymentMethodId'));
+            payment.set('cashup_id', depdrop.get('cashup_id'));
+            payment.set('totalDrops', depdrop.get('amount'));
+            payment.set('totalDeposits', 0);
+          }
+          return payment;
         }
-        return payment;
-      }
-      _.each(this.depsdropstosave.models, function (depdrop) {
-        if (paymentList.length > 0) {
-          for (i = 0; i < paymentList.length; i++) {
-            found = false;
-            if (paymentList.models[i].get('paymentMethodId') === depdrop.get('paymentMethodId')) {
-              var paymentMethod = paymentList.models[i],
-                  totalDeposits = 0,
-                  totalDrops = 0,
-                  depos = paymentMethod.get('totalDeposits'),
-                  drop = paymentMethod.get('totalDrops');
-              if (depdrop.get('type') === 'deposit') {
-                totalDeposits = OB.DEC.add(depos, depdrop.get('amount'));
-                paymentMethod.set('totalDeposits', totalDeposits);
-              } else {
-                totalDrops = OB.DEC.add(drop, depdrop.get('amount'));
-                paymentMethod.set('totalDrops', totalDrops);
+        _.each(me.depsdropstosave.models, function (depdrop) {
+          if (paymentList.length > 0) {
+            for (i = 0; i < paymentList.length; i++) {
+              found = false;
+              if (paymentList.models[i].get('paymentMethodId') === depdrop.get('paymentMethodId')) {
+                var paymentMethod = paymentList.models[i],
+                    totalDeposits = 0,
+                    totalDrops = 0,
+                    depos = paymentMethod.get('totalDeposits'),
+                    drop = paymentMethod.get('totalDrops');
+                if (depdrop.get('type') === 'deposit') {
+                  totalDeposits = OB.DEC.add(depos, depdrop.get('amount'));
+                  paymentMethod.set('totalDeposits', totalDeposits);
+                } else {
+                  totalDrops = OB.DEC.add(drop, depdrop.get('amount'));
+                  paymentMethod.set('totalDrops', totalDrops);
+                }
+                found = true;
+                break;
               }
-              found = true;
-              break;
             }
-          }
-          if (!found) {
+            if (!found) {
+              paymentList.add(addAttributes(depdrop));
+            }
+          } else {
             paymentList.add(addAttributes(depdrop));
           }
-        } else {
-          paymentList.add(addAttributes(depdrop));
-        }
-      }, this);
+        }, this);
 
-      var runSyncProcessCM = _.after(this.depsdropstosave.models.length, runSync);
-      // Sending drops/deposits to backend
-      _.each(this.depsdropstosave.models, function (depdrop, index) {
-        OB.Dal.save(depdrop, function () {
-          OB.UTIL.sumCashManagementToCashup(paymentList.models[index]);
-          OB.UTIL.calculateCurrentCash();
-          runSyncProcessCM();
-        }, function () {
-          OB.UTIL.showLoading(false);
-          me.set("finishedWrongly", true);
-          return;
-        }, true);
-      }, this);
+        var runSyncProcessCM = _.after(me.depsdropstosave.models.length, runSync);
+        // Sending drops/deposits to backend
+        _.each(me.depsdropstosave.models, function (depdrop, index) {
+          OB.Dal.save(depdrop, function () {
+            OB.UTIL.sumCashManagementToCashup(paymentList.models[index]);
+            OB.UTIL.calculateCurrentCash();
+            runSyncProcessCM();
+          }, function () {
+            OB.UTIL.showLoading(false);
+            me.set("finishedWrongly", true);
+            return;
+          }, true);
+        }, this);
+        };
+
+    this.depsdropstosave.on('makeDeposits', function (receipt) {
+      var me = this;
+      if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
+        OB.MobileApp.model.setSynchronizedCheckpoint(function () {
+          makeDepositsFunction(me);
+        });
+      } else {
+        makeDepositsFunction(me);
+      }
     }, this);
 
     // effective entry point

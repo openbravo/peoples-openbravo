@@ -360,12 +360,22 @@
           if (dataToSync.length === 1 && this.model === OB.Model.CashUp && localStorage.lastCashupInfo === dataToSync.models[0].get('objToSend')) {
             me.skipSyncModel = true;
           }
-          localStorage.lastCashupInfo = dataToSync.models[0].get('objToSend');
+          localStorage.lastCashupSendInfo = dataToSync.models[0].get('objToSend');
+        },
+        // keep track of successfull send
+        successSendModel: function () {
+          localStorage.lastCashupInfo = localStorage.lastCashupSendInfo;
         }
       });
 
       this.on('ready', function () {
         OB.debug("next process: 'retail.pointofsale' window");
+
+        // register models which are cached during synchronized transactions
+        OB.MobileApp.model.addSyncCheckpointModel(OB.Model.Order);
+        OB.MobileApp.model.addSyncCheckpointModel(OB.Model.PaymentMethodCashUp);
+        OB.MobileApp.model.addSyncCheckpointModel(OB.Model.TaxCashUp);
+        OB.MobileApp.model.addSyncCheckpointModel(OB.Model.CashUp);
 
         var terminal = this.get('terminal');
         OB.UTIL.initCashUp(OB.UTIL.calculateCurrentCash);

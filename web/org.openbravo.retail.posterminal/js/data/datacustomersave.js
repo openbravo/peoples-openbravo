@@ -17,24 +17,27 @@
     this.context = model;
     this.customer = model.get('customer');
 
-
+    // trigger is from previous code, keeping it for backward compat
     this.customer.on('customerSaved', function () {
-      var me = this,
-          customersList, customerId = this.customer.get('id'),
+      OB.DATA.executeCustomerSave(this.customer);
+    }, this);
+
+    OB.DATA.executeCustomerSave = function (customer, callback) {
+      var customersList, customerId = this.customer.get('id'),
           isNew = false,
           bpToSave = new OB.Model.ChangedBusinessPartners(),
           bpLocation, bpLocToSave = new OB.Model.BPLocation(),
           customersListToChange;
 
       bpToSave.set('isbeingprocessed', 'N');
-      this.customer.set('createdBy', OB.MobileApp.model.get('orgUserId'));
+      customer.set('createdBy', OB.MobileApp.model.get('orgUserId'));
       bpToSave.set('createdBy', OB.MobileApp.model.get('orgUserId'));
       if (customerId) {
-        this.customer.set('posTerminal', OB.MobileApp.model.get('terminal').id);
+        customer.set('posTerminal', OB.MobileApp.model.get('terminal').id);
         var now = new Date();
-        this.customer.set('updated', OB.I18N.normalizeDate(now));
-        this.customer.set('timezoneOffset', now.getTimezoneOffset());
-        this.customer.set('loaded', OB.I18N.normalizeDate(new Date(this.customer.get('loaded'))));
+        customer.set('updated', OB.I18N.normalizeDate(now));
+        customer.set('timezoneOffset', now.getTimezoneOffset());
+        customer.set('loaded', OB.I18N.normalizeDate(new Date(customer.get('loaded'))));
         bpToSave.set('json', JSON.stringify(this.customer.serializeEditedToJSON()));
         bpToSave.set('c_bpartner_id', this.customer.get('id'));
       } else {
@@ -43,12 +46,12 @@
 
       if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) { //With high volume we only save localy when it is assigned to the order
         if (isNew) {
-          me.customer.set('posTerminal', OB.MobileApp.model.get('terminal').id);
+          customer.set('posTerminal', OB.MobileApp.model.get('terminal').id);
           var uuid = OB.UTIL.get_UUID();
-          me.customer.set('id', uuid);
-          me.customer.id = uuid;
-          bpToSave.set('json', JSON.stringify(me.customer.serializeToJSON()));
-          bpToSave.set('id', me.customer.get('id'));
+          customer.set('id', uuid);
+          customer.id = uuid;
+          bpToSave.set('json', JSON.stringify(customer.serializeToJSON()));
+          bpToSave.set('id', customer.get('id'));
         }
 
         // the location is sent to the server as part of the BP save, but when the BP is 
@@ -58,12 +61,12 @@
         // but this takes another request, that's why it is created here as an object
         if (!bpToSave.get('locationModel')) {
           bpLocation = new OB.Model.BPLocation();
-          bpLocation.set('id', me.customer.get('locId'));
-          bpLocation.set('bpartner', me.customer.get('id'));
-          bpLocation.set('name', me.customer.get('locName'));
-          bpLocation.set('postalCode', me.customer.get('postalCode'));
-          bpLocation.set('cityName', me.customer.get('cityName'));
-          bpLocation.set('_identifier', me.customer.get('locName'));
+          bpLocation.set('id', customer.get('locId'));
+          bpLocation.set('bpartner', customer.get('id'));
+          bpLocation.set('name', customer.get('locName'));
+          bpLocation.set('postalCode', customer.get('postalCode'));
+          bpLocation.set('cityName', customer.get('cityName'));
+          bpLocation.set('_identifier', customer.get('locName'));
           bpLocation.set('countryName', OB.MobileApp.model.get('terminal').defaultbp_bpcountry_name);
           bpLocation.set('countryId', OB.MobileApp.model.get('terminal').defaultbp_bpcountry);
           bpToSave.set('locationModel', bpLocation);
@@ -71,34 +74,37 @@
 
         bpToSave.set('isbeingprocessed', 'Y');
         OB.UTIL.HookManager.executeHooks('OBPOS_PostCustomerSave', {
-          customer: me.customer,
+          customer: customer,
           bpToSave: bpToSave
         }, function (args) {
           OB.Dal.save(bpToSave, function () {
-            bpToSave.set('json', me.customer.serializeToJSON());
+            bpToSave.set('json', customer.serializeToJSON());
             var successCallback = function () {
-                OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_customerSaved', [me.customer.get('_identifier')]));
+                if (callback) {
+                  callback();
+                }
+                OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_customerSaved', [customer.get('_identifier')]));
                 };
             OB.MobileApp.model.runSyncProcess(successCallback);
           }, function () {
             //error saving BP changes with changes in changedbusinesspartners
-            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_errorSavingCustomerChanges', [me.customer.get('_identifier')]));
+            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_errorSavingCustomerChanges', [customer.get('_identifier')]));
           }, isNew);
         });
       } else {
         //save that the customer is being processed by server
-        this.customer.set('loaded', OB.I18N.normalizeDate(new Date()));
-        OB.Dal.save(this.customer, function () {
-          //OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_customerSavedSuccessfullyLocally',[me.customer.get('_identifier')]));
+        customer.set('loaded', OB.I18N.normalizeDate(new Date()));
+        OB.Dal.save(customer, function () {
+          //OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_customerSavedSuccessfullyLocally',[customer.get('_identifier')]));
           // Saving Customer Address locally
           if (!isNew) {
             //load the BPlocation and then update it
-            OB.Dal.get(OB.Model.BPLocation, me.customer.get('locId'), function (bpLocToUpdate) {
+            OB.Dal.get(OB.Model.BPLocation, customer.get('locId'), function (bpLocToUpdate) {
               if (bpLocToUpdate) {
-                bpLocToUpdate.set('name', me.customer.get('locName'));
-                bpLocToUpdate.set('postalCode', me.customer.get('postalCode'));
-                bpLocToUpdate.set('cityName', me.customer.get('cityName'));
-                bpLocToUpdate.set('_identifier', me.customer.get('locName'));
+                bpLocToUpdate.set('name', customer.get('locName'));
+                bpLocToUpdate.set('postalCode', customer.get('postalCode'));
+                bpLocToUpdate.set('cityName', customer.get('cityName'));
+                bpLocToUpdate.set('_identifier', customer.get('locName'));
                 OB.Dal.save(bpLocToUpdate, function () {
                   //customer location updated successfully. Nothing to do here.
                 }, function () {
@@ -112,12 +118,12 @@
             });
           } else {
             //create bploc from scratch
-            bpLocToSave.set('id', me.customer.get('locId'));
-            bpLocToSave.set('bpartner', me.customer.get('id'));
-            bpLocToSave.set('name', me.customer.get('locName'));
-            bpLocToSave.set('postalCode', me.customer.get('postalCode'));
-            bpLocToSave.set('cityName', me.customer.get('cityName'));
-            bpLocToSave.set('_identifier', me.customer.get('locName'));
+            bpLocToSave.set('id', customer.get('locId'));
+            bpLocToSave.set('bpartner', customer.get('id'));
+            bpLocToSave.set('name', customer.get('locName'));
+            bpLocToSave.set('postalCode', customer.get('postalCode'));
+            bpLocToSave.set('cityName', customer.get('cityName'));
+            bpLocToSave.set('_identifier', customer.get('locName'));
             bpLocToSave.set('countryName', OB.MobileApp.model.get('terminal').defaultbp_bpcountry_name);
             bpLocToSave.set('countryId', OB.MobileApp.model.get('terminal').defaultbp_bpcountry);
             OB.Dal.save(bpLocToSave, function () {
@@ -128,33 +134,36 @@
           }
 
           if (isNew) {
-            me.customer.set('posTerminal', OB.MobileApp.model.get('terminal').id);
-            bpToSave.set('json', JSON.stringify(me.customer.serializeToJSON()));
-            bpToSave.set('c_bpartner_id', me.customer.get('id'));
+            customer.set('posTerminal', OB.MobileApp.model.get('terminal').id);
+            bpToSave.set('json', JSON.stringify(customer.serializeToJSON()));
+            bpToSave.set('c_bpartner_id', customer.get('id'));
           }
           bpToSave.set('isbeingprocessed', 'Y');
           OB.UTIL.HookManager.executeHooks('OBPOS_PostCustomerSave', {
-            customer: me.customer,
+            customer: customer,
             bpToSave: bpToSave
           }, function (args) {
             OB.Dal.save(bpToSave, function () {
-              bpToSave.set('json', me.customer.serializeToJSON());
+              bpToSave.set('json', customer.serializeToJSON());
               var successCallback, errorCallback, List;
               successCallback = function () {
-                OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_customerSaved', [me.customer.get('_identifier')]));
+                if (callback) {
+                  callback();
+                }
+                OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_customerSaved', [customer.get('_identifier')]));
               };
               OB.MobileApp.model.runSyncProcess(successCallback);
             }, function () {
               //error saving BP changes with changes in changedbusinesspartners
-              OB.UTIL.showError(OB.I18N.getLabel('OBPOS_errorSavingCustomerChanges', [me.customer.get('_identifier')]));
+              OB.UTIL.showError(OB.I18N.getLabel('OBPOS_errorSavingCustomerChanges', [customer.get('_identifier')]));
             });
           });
         }, function () {
           //error saving BP with new values in c_bpartner
-          OB.UTIL.showError(OB.I18N.getLabel('OBPOS_errorSavingCustomerLocally', [me.customer.get('_identifier')]));
+          OB.UTIL.showError(OB.I18N.getLabel('OBPOS_errorSavingCustomerLocally', [customer.get('_identifier')]));
         });
       }
 
-    }, this);
+    };
   };
 }());

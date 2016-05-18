@@ -18,7 +18,7 @@
     source: 'org.openbravo.retail.posterminal.master.BusinessPartner',
     dataLimit: OB.Dal.DATALIMIT,
     remote: 'OBPOS_remote.customer',
-    saveCustomer: function (silent) {
+    saveCustomer: function (callback) {
       var nameLength, newSk;
 
       if (!this.get("name")) {
@@ -50,10 +50,13 @@
 
       this.set('_identifier', this.get('name'));
 
-
-      this.trigger('customerSaved');
-      //datacustomersave will catch this event and save this locally with changed = 'Y'
-      //Then it will try to send to the backend
+      // in case of synchronized then directly call customer save with the callback
+      if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
+        OB.DATA.executeCustomerSave(this, callback);
+      } else {
+        this.trigger('customerSaved');
+        callback();
+      }
       return true;
     },
     loadById: function (CusId, userCallback) {
