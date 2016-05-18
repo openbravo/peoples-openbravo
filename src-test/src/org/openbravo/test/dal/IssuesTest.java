@@ -708,7 +708,7 @@ public class IssuesTest extends OBBaseTest {
             + "WHERE AD_REF_LIST.AD_REFERENCE_ID = ?");
     query.setString(0, "en_US");
     query.setString(1, "800025");
-
+    query.list();
   }
 
   /**
