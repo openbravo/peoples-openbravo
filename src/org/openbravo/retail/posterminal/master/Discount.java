@@ -21,6 +21,7 @@ import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.model.pricing.priceadjustment.PriceAdjustment;
 import org.openbravo.model.pricing.pricelist.PriceList;
+import org.openbravo.retail.config.OBRETCOProductList;
 import org.openbravo.retail.posterminal.POSUtils;
 import org.openbravo.retail.posterminal.ProcessHQLQuery;
 import org.openbravo.service.json.JsonUtils;
@@ -42,8 +43,13 @@ public class Discount extends ProcessHQLQuery {
       throws JSONException {
     String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
 
+    final OBRETCOProductList productList = POSUtils.getProductListByOrgId(orgId);
     PriceList priceList = POSUtils.getPriceListByOrgId(orgId);
     String priceListId = priceList.getId();
+
+    if (productList == null) {
+      throw new JSONException("Product list not found");
+    }
 
     String posPrecision = "";
 
@@ -86,6 +92,22 @@ public class Discount extends ProcessHQLQuery {
       hql += "        where active = true";
       hql += "          and pl.priceAdjustment = p";
       hql += "          and pl.priceList.id ='" + priceListId + "')) ";
+      hql += "    ) ";
+
+      // assortment product list
+      hql += "and ((p.includedProducts='Y' ";
+      hql += "  and not exists (select 1 ";
+      hql += "         from PricingAdjustmentProduct pap, OBRETCO_Prol_Product ppl ";
+      hql += "        where pap.active = true " + "          and pap.priceAdjustment = p ";
+      hql += "          and pap.product.id = ppl.product.id ";
+      hql += "          and ppl.obretcoProductlist ='" + productList.getId() + "')) ";
+      hql += "   or (p.includedProducts='N' ";
+      hql += "  and  exists (select 1 ";
+      hql += "         from PricingAdjustmentProduct pap, OBRETCO_Prol_Product ppl ";
+      hql += "        where pap.active = true ";
+      hql += "          and pap.priceAdjustment = p ";
+      hql += "          and pap.product.id = ppl.product.id ";
+      hql += "          and ppl.obretcoProductlist ='" + productList.getId() + "')) ";
       hql += "    ) ";
     }
     // organization

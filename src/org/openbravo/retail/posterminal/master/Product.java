@@ -231,6 +231,24 @@ public class Product extends ProcessHQLQuery {
         + format.format(now.getTime())
         + "', 'yyyy/MM/dd')"
         + "   and (p.$incrementalUpdateCriteria) "//
+
+        // assortment product list
+        + "and ((p.includedProducts='Y' " + "  and not exists (select 1 "
+        + "         from PricingAdjustmentProduct pap, OBRETCO_Prol_Product ppl "
+        + "        where pap.active = true " + "          and pap.priceAdjustment = p "
+        + "          and pap.product.id = ppl.product.id "
+        + "          and ppl.obretcoProductlist ='" + productList.getId() + "')) "
+        + "   or (p.includedProducts='N' "
+        + "  and  exists (select 1 "
+        + "         from PricingAdjustmentProduct pap, OBRETCO_Prol_Product ppl "
+        + "        where pap.active = true "
+        + "          and pap.priceAdjustment = p "
+        + "          and pap.product.id = ppl.product.id "
+        + "          and ppl.obretcoProductlist ='"
+        + productList.getId()
+        + "')) "
+        + "    ) "
+
         // organization
         + "and p.$naturalOrgCriteria and ((p.includedOrganizations='Y' "
         + "  and not exists (select 1 " + "         from PricingAdjustmentOrganization o"
