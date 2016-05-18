@@ -751,8 +751,14 @@ public class CancelAndReplaceUtils {
           FIN_PaymentMethod paymentPaymentMethod = null;
           DocumentType paymentDocumentType = null;
           FIN_FinancialAccount financialAccount = null;
-          List<FIN_PaymentScheduleDetail> paymentScheduleDetailList = paymentSchedule
-              .getFINPaymentScheduleDetailOrderPaymentScheduleList();
+          OBCriteria<FIN_PaymentScheduleDetail> paymentScheduleDetailCriteria = OBDal.getInstance()
+              .createCriteria(FIN_PaymentScheduleDetail.class);
+          paymentScheduleDetailCriteria.add(Restrictions.eq(
+              FIN_PaymentScheduleDetail.PROPERTY_ORDERPAYMENTSCHEDULE, paymentSchedule));
+          paymentScheduleDetailCriteria.add(Restrictions
+              .isNotNull(FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS));
+          List<FIN_PaymentScheduleDetail> paymentScheduleDetailList = paymentScheduleDetailCriteria
+              .list();
           if (paymentScheduleDetailList.size() != 0) {
             FIN_PaymentScheduleDetail paymentScheduleDetail = paymentScheduleDetailList.get(0);
             FIN_PaymentDetail paymentDetail = paymentScheduleDetail.getPaymentDetails();
