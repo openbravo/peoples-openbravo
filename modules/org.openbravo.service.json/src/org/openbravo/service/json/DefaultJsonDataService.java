@@ -564,7 +564,9 @@ public class DefaultJsonDataService implements JsonDataService {
     if (!forCountOperation && !directNavigation
         && parameters.containsKey(JsonConstants.TARGETRECORDID_PARAMETER)) {
       final String targetRecordId = parameters.get(JsonConstants.TARGETRECORDID_PARAMETER);
-      targetRowNumber = queryService.getRowNumber(targetRecordId);
+      if (StringUtils.isNotBlank(targetRecordId) && !"null".equals(targetRecordId)) {
+        targetRowNumber = queryService.getRowNumber(targetRecordId);
+      }
       if (targetRowNumber != -1) {
         startRow = targetRowNumber;
         // if the startrow is really low, then just read from 0
