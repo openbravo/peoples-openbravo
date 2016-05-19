@@ -357,6 +357,8 @@ isc.OBSelectorPopupWindow.addProperties({
     // first time    
     var ret = this.Super('show', arguments);
     if (applyDefaultFilter) {
+      this.setFilterByIdEditorCriteria(this.defaultFilter);
+      delete this.defaultFilter.idFilters;
       this.selectorGrid.setFilterEditorCriteria(this.defaultFilter);
       this.selectorGrid.filterByEditor();
     }
@@ -410,6 +412,24 @@ isc.OBSelectorPopupWindow.addProperties({
     this.defaultFilter = defaultFilter;
     this.selectorGrid.targetRecordId = this.selector.getValue();
     this.show(true);
+  },
+
+  setFilterByIdEditorCriteria: function (defaultFilter) {
+    var editForm, filterField, idFilter, i;
+    if (!defaultFilter.idFilters || !this.selectorGrid || !this.selectorGrid.filterEditor || !this.selectorGrid.filterEditor.getEditForm) {
+      return;
+    }
+    editForm = this.selectorGrid.filterEditor.getEditForm();
+    for (i = 0; i < defaultFilter.idFilters.length; i++) {
+      idFilter = defaultFilter.idFilters[i];
+      filterField = editForm.getField(idFilter.fieldName);
+      if (filterField) {
+        // Force filter by id
+        filterField.filterType = 'id';
+        filterField.filterAuxCache = [idFilter];
+        defaultFilter[idFilter.fieldName] = idFilter._identifier;
+      }
+    }
   },
 
   setValueInField: function () {
@@ -917,10 +937,16 @@ isc.OBSelectorItem.addProperties({
   },
 
   openSelectorWindow: function () {
+    var selectorGrid = this.selectorWindow.selectorGrid;
     // always refresh the content of the grid to force a reload
     // if the organization has changed
-    if (this.selectorWindow.selectorGrid) {
-      this.selectorWindow.selectorGrid.invalidateCache();
+    if (selectorGrid && selectorGrid.data) {
+      delete selectorGrid.data;
+      // Ensure that the scroll is on the top after reopening the selector pop-up
+      selectorGrid.scrollToRow(0);
+      if (selectorGrid.body) {
+        selectorGrid.body.markForRedraw();
+      }
     }
     this.selectorWindow.open();
   },

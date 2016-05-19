@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2013 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -25,8 +25,12 @@ package org.openbravo.userinterface.selector;
  */
 public class SelectorConstants {
   public static final String SELECTOR_COMPONENT_TYPE = "OBUISEL_Selector";
+  public static final String JS = "js";
 
   // parameters used by the SelectorComponent
+  public static final String PARAM_ID = "id";
+  public static final String PARAM_IDENTIFIER = "_identifier";
+  public static final String PARAM_FIELD_NAME = "fieldName";
   public static final String PARAM_COLUMN_NAME = "columnName";
   public static final String PARAM_DISABLED = "disabled";
   public static final String PARAM_REQUIRED = "required";
@@ -34,6 +38,8 @@ public class SelectorConstants {
   public static final String PARAM_TAB_ID = "adTabId";
   public static final String PARAM_COMBO_RELOAD = "comboReload";
   public static final String PARAM_TARGET_PROPERTY_NAME = "targetProperty";
+  public static final String PARAM_ID_FILTERS = "idFilters";
+  public static final String PARAM_FILTER_EXPRESSION = "filterExpression";
 
   // Reference definition IDs
   public static final String SELECTOR_REFERENCE_ID = "95E2A8B50A254B2AAE6774B8C2F28120";

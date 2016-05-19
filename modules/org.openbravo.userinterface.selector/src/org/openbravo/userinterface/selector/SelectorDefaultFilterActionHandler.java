@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2012 Openbravo SLU
+ * All portions are Copyright (C) 2010-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -27,6 +27,8 @@ import javax.script.ScriptEngineManager;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
+import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.model.Entity;
@@ -60,11 +62,11 @@ public class SelectorDefaultFilterActionHandler extends BaseActionHandler {
     OBContext.setAdminMode();
 
     try {
-      if (!params.containsKey("_selectorDefinitionId")) {
+      if (!params.containsKey(SelectorConstants.DS_REQUEST_SELECTOR_ID_PARAMETER)) {
         return result;
       }
 
-      String selectorId = params.get("_selectorDefinitionId");
+      String selectorId = params.get(SelectorConstants.DS_REQUEST_SELECTOR_ID_PARAMETER);
 
       Selector sel = OBDal.getInstance().get(Selector.class, selectorId);
       final Table table;
@@ -90,16 +92,18 @@ public class SelectorDefaultFilterActionHandler extends BaseActionHandler {
       }
 
       final ScriptEngineManager manager = new ScriptEngineManager();
-      final ScriptEngine engine = manager.getEngineByName("js");
+      final ScriptEngine engine = manager.getEngineByName(SelectorConstants.JS);
       engine.put(
           "OB",
           new OBBindings(OBContext.getOBContext(), params, (HttpSession) parameters
               .get(KernelConstants.HTTP_SESSION)));
 
       Object exprResult = null;
+      JSONArray idFilters = new JSONArray();
       for (SelectorField f : obc.list()) {
         try {
           exprResult = engine.eval(f.getDefaultExpression());
+          Object bobId = null;
 
           if (exprResult != null && !exprResult.equals("") && !exprResult.equals("''")) {
             Property property = null;
@@ -111,6 +115,7 @@ public class SelectorDefaultFilterActionHandler extends BaseActionHandler {
             if (property != null && property.getTargetEntity() != null && !property.isOneToMany()) {
               final BaseOBObject bob = OBDal.getInstance().get(
                   property.getTargetEntity().getName(), exprResult);
+              bobId = exprResult;
               exprResult = bob.getIdentifier();
             }
           }
@@ -119,8 +124,12 @@ public class SelectorDefaultFilterActionHandler extends BaseActionHandler {
             result.put(f.getDisplayColumnAlias().replace(DalUtil.DOT, DalUtil.FIELDSEPARATOR),
                 exprResult);
           } else if (exprResult != null && !exprResult.equals("") && !exprResult.equals("''")) {
-            String fieldName = f.getProperty();
-            result.put(fieldName.replace(DalUtil.DOT, DalUtil.FIELDSEPARATOR), exprResult);
+            String fieldName = f.getProperty().replace(DalUtil.DOT, DalUtil.FIELDSEPARATOR);
+            if (bobId != null) {
+              idFilters.put(createJSONObjectFilter(fieldName, (String) bobId, (String) exprResult));
+            } else {
+              result.put(fieldName, exprResult);
+            }
           }
         } catch (Exception e) {
           log.error(
@@ -129,12 +138,14 @@ public class SelectorDefaultFilterActionHandler extends BaseActionHandler {
         }
       }
 
+      result.put(SelectorConstants.PARAM_ID_FILTERS, idFilters);
+
       // Obtaining the filter Expression from Selector. Refer issue
       // https://issues.openbravo.com/view.php?id=21541
       Object dynamicFilterExpression = null;
       if (sel.getFilterExpression() != null) {
         dynamicFilterExpression = engine.eval(sel.getFilterExpression());
-        result.put("filterExpression", dynamicFilterExpression.toString());
+        result.put(SelectorConstants.PARAM_FILTER_EXPRESSION, dynamicFilterExpression.toString());
       }
 
     } catch (Exception e) {
@@ -144,6 +155,15 @@ public class SelectorDefaultFilterActionHandler extends BaseActionHandler {
     }
 
     return result;
+  }
+
+  private JSONObject createJSONObjectFilter(String fieldName, String id, String identifier)
+      throws JSONException {
+    JSONObject jsonResult = new JSONObject();
+    jsonResult.put(SelectorConstants.PARAM_FIELD_NAME, fieldName);
+    jsonResult.put(SelectorConstants.PARAM_ID, id);
+    jsonResult.put(SelectorConstants.PARAM_IDENTIFIER, identifier);
+    return jsonResult;
   }
 
   private Map<String, String> getParameterMap(Map<String, Object> parameters) {
