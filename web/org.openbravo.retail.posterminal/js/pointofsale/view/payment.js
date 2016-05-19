@@ -991,7 +991,7 @@ enyo.kind({
   },
   setDisabled: function (value) {
     this.lasDisabledPetition = value;
-    this.setDisabledIfSynchronized();
+    this.setDisabledIfSynchronized(value);
   },
   setDisabledIfSynchronized: function () {
     var value = this.lasDisabledPetition;
@@ -1007,20 +1007,11 @@ enyo.kind({
     if (this.isLocked) {
       value = true;
     }
-    // if no 'not isPrePayment' payments, the 'Done' button must be disabled
-    if (!value) {
-      if (this.owner.receipt && this.owner.receipt.get('payments') && this.owner.receipt.get('payments').size() > 0 && _.filter(this.owner.receipt.get('payments').models, function (payment) {
-        return (!payment.get('isPrePayment'));
-      }).length === 0) {
-        value = true;
-      }
-    }
     this.disabled = value; // for getDisabled() to return the correct value
     this.setAttribute('disabled', value); // to effectively turn the button enabled or disabled    
   },
   init: function (model) {
     this.model = model;
-    this.setDisabledIfSynchronized();
     this.setContent(OB.I18N.getLabel('OBPOS_LblDone'));
     this.model.get('order').on('change:openDrawer', function () {
       this.drawerpreference = this.model.get('order').get('openDrawer');
