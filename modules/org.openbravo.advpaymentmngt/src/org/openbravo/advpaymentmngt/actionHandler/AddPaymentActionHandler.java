@@ -21,6 +21,7 @@ package org.openbravo.advpaymentmngt.actionHandler;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -49,6 +50,7 @@ import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBDao;
+import org.openbravo.dal.service.OBQuery;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.erpCommon.utility.OBError;
@@ -310,7 +312,7 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
 
       boolean isWriteOff = psdRow.getBoolean("writeoff");
       // psdIds can be grouped
-      String[] psdIds = strPSDIds.replaceAll(" ", "").split(",");
+      List<String> psdIds = Arrays.asList(strPSDIds.replaceAll(" ", "").split(","));
       List<FIN_PaymentScheduleDetail> psds = getOrderedPaymentScheduleDetails(psdIds);
       BigDecimal outstandingAmount = BigDecimal.ZERO;
       BigDecimal remainingAmount = paidAmount;
@@ -332,8 +334,7 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
         }
         // Manage negative amounts
         if ((remainingAmount.signum() > 0 && remainingAmount.compareTo(outstandingAmount) >= 0)
-            || ((remainingAmount.signum() < 0 && outstandingAmount.signum() < 0) && (remainingAmount
-                .compareTo(outstandingAmount) >= 0))) {
+            || (remainingAmount.signum() < 0 && remainingAmount.compareTo(outstandingAmount) <= 0)) {
           assignAmount = outstandingAmount;
           remainingAmount = remainingAmount.subtract(outstandingAmount);
         } else {
@@ -616,12 +617,15 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
     return message;
   }
 
-  private List<FIN_PaymentScheduleDetail> getOrderedPaymentScheduleDetails(String[] psdSet) {
-    OBCriteria<FIN_PaymentScheduleDetail> orderedPSDs = OBDal.getInstance().createCriteria(
-        FIN_PaymentScheduleDetail.class);
-    orderedPSDs.add(Restrictions.in(FIN_PaymentScheduleDetail.PROPERTY_ID, psdSet));
-    orderedPSDs.addOrderBy(FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS, true);
-    orderedPSDs.addOrderBy(FIN_PaymentScheduleDetail.PROPERTY_AMOUNT, true);
+  private List<FIN_PaymentScheduleDetail> getOrderedPaymentScheduleDetails(List<String> psdSet) {
+    StringBuffer where = new StringBuffer();
+    where.append(" as psd");
+    where.append(" where psd." + FIN_PaymentScheduleDetail.PROPERTY_ID + " in (:psdSet)");
+    where.append(" order by psd." + FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS);
+    where.append(", abs(psd." + FIN_PaymentScheduleDetail.PROPERTY_AMOUNT + ")");
+    OBQuery<FIN_PaymentScheduleDetail> orderedPSDs = OBDal.getInstance().createQuery(
+        FIN_PaymentScheduleDetail.class, where.toString());
+    orderedPSDs.setNamedParameter("psdSet", psdSet);
     return orderedPSDs.list();
   }
 
