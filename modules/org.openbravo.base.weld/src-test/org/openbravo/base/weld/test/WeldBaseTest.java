@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2015 Openbravo SLU
+ * All portions are Copyright (C) 2010-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -57,6 +57,12 @@ public class WeldBaseTest extends OBBaseTest {
   @Deployment
   public static JavaArchive createTestArchive() {
     if (archive == null) {
+
+      // Setting this property to "true" is avoided throwing an error when this class is used with
+      // analytics module. It is a workaround for Weld proxy bug. See issue:
+      // https://issues.openbravo.com/view.php?id=32704
+      System.setProperty("com.sun.jersey.server.impl.cdi.lookupExtensionInBeanManager", "true");
+
       log.info("Creating cdi archive...");
       final String sourcePath = OBPropertiesProvider.getInstance().getOpenbravoProperties()
           .getProperty("source.path");
