@@ -132,6 +132,7 @@ public class CreateFromMultiple extends HttpSecureAppServlet {
   protected void printPageReceipt(HttpServletResponse response, VariablesSecureApp vars,
       String strKey, String strWindowId, String strTabId, String strSOTrx, String strProcessId,
       String strBpartner, String strmWarehouseId) throws IOException, ServletException {
+    String localStrmWarehouseId = strmWarehouseId;
     if (log4j.isDebugEnabled())
       log4j.debug("Output: Receipt");
     ActionButtonDefaultData[] data = null;
@@ -161,7 +162,7 @@ public class CreateFromMultiple extends HttpSecureAppServlet {
     xmlDocument.setParameter("tabId", strTabId);
     xmlDocument.setParameter("sotrx", strSOTrx);
     xmlDocument.setParameter("bpartner", strBpartner);
-    xmlDocument.setParameter("mWarehouseId", strmWarehouseId);
+    xmlDocument.setParameter("mWarehouseId", localStrmWarehouseId);
 
     try {
       ComboTableData comboTableData = new ComboTableData(this, "TABLEDIR", "C_UOM_ID", "", "",
@@ -178,7 +179,8 @@ public class CreateFromMultiple extends HttpSecureAppServlet {
       ComboTableData comboTableData = new ComboTableData(this, "TABLEDIR", "M_Warehouse_ID", "",
           "", Utility.getContext(this, vars, "#AccessibleOrgTree", strWindowId),
           Utility.getContext(this, vars, "#User_Client", strWindowId), 0);
-      Utility.fillSQLParameters(this, vars, null, comboTableData, strWindowId, strmWarehouseId);
+      Utility
+          .fillSQLParameters(this, vars, null, comboTableData, strWindowId, localStrmWarehouseId);
       xmlDocument.setData("reportM_WAREHOUSE_ID", "liststructure", comboTableData.select(false));
       comboTableData = null;
     } catch (Exception ex) {
@@ -187,10 +189,10 @@ public class CreateFromMultiple extends HttpSecureAppServlet {
 
     CreateFromMultipleReceiptData[] dataW = CreateFromMultipleReceiptData
         .selectAccessibleWarehouses(this, vars.getRole(), vars.getClient());
-    if (strmWarehouseId.equals("") && dataW != null && dataW.length > 0)
-      strmWarehouseId = dataW[0].id;
+    if (localStrmWarehouseId.equals("") && dataW != null && dataW.length > 0)
+      localStrmWarehouseId = dataW[0].id;
     xmlDocument.setData("reportM_LOCATOR_X", "liststructure",
-        CreateFromMultipleReceiptData.selectM_Locator_X(this, strmWarehouseId));
+        CreateFromMultipleReceiptData.selectM_Locator_X(this, localStrmWarehouseId));
 
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();

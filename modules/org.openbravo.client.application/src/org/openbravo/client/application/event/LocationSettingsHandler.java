@@ -73,7 +73,6 @@ public class LocationSettingsHandler extends EntityPersistenceEventObserver {
     }
   }
 
-  @SuppressWarnings("unused")
   private void checkCorrectValues(String numericmask, String datetimeformat, String dateformat) {
     if (numericmask != null) {
       if (checkNumericMask(numericmask)) {

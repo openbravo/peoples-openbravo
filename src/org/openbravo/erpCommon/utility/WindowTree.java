@@ -165,7 +165,7 @@ public class WindowTree extends HttpSecureAppServlet {
     String TreeName = "";
     String TreeDescription = "";
 
-    StringBuffer menu = new StringBuffer();
+    StringBuffer nodesMenu = new StringBuffer();
     if (key == null || key.isEmpty()) {
       Tab tab = OBDal.getInstance().get(Tab.class, strTabId);
       Table table = tab.getTable();
@@ -197,17 +197,17 @@ public class WindowTree extends HttpSecureAppServlet {
 
     if (log4j.isDebugEnabled())
       log4j.debug("WindowTree.loadNodes() - TreeType: " + TreeType + " || TreeID: " + TreeID);
-    menu.append("\n<ul class=\"dhtmlgoodies_tree\">\n");
-    menu.append(WindowTreeUtility.addNodeElement(TreeName, TreeDescription, CHILD_SHEETS, true, "",
-        strDireccion, "clickItem(0, '" + Replace.replace(TreeName, "'", "\\'") + "', 'N');",
-        "dblClickItem(0);", true, "0", ""));
+    nodesMenu.append("\n<ul class=\"dhtmlgoodies_tree\">\n");
+    nodesMenu.append(WindowTreeUtility.addNodeElement(TreeName, TreeDescription, CHILD_SHEETS,
+        true, "", strDireccion, "clickItem(0, '" + Replace.replace(TreeName, "'", "\\'")
+            + "', 'N');", "dblClickItem(0);", true, "0", ""));
     WindowTreeData[] wtd = WindowTreeUtility.getTree(this, vars, TreeType, TreeID, editable, "",
         "", strTabId);
     Map<String, List<WindowTreeData>> wtdTree = buildTree(wtd);
-    menu.append(generateTree(wtd, wtdTree, strDireccion, "0", true, strTabId));
-    menu.append("\n</ul>\n");
+    nodesMenu.append(generateTree(wtd, wtdTree, strDireccion, "0", true, strTabId));
+    nodesMenu.append("\n</ul>\n");
     nodeIdList = null;
-    return menu.toString();
+    return nodesMenu.toString();
   }
 
   /**
@@ -215,44 +215,47 @@ public class WindowTree extends HttpSecureAppServlet {
    * 
    * @param data
    *          Array with the tree elements.
-   * @param strDireccion
+   * @param direccion
    *          String with the path for the urls.
-   * @param indice
+   * @param localIndice
    *          String with the index.
-   * @param isFirst
+   * @param localIsFirst
    *          Indicates if is the first or not.
    * @return String html with the tree.
    */
   private String generateTree(WindowTreeData[] data, Map<String, List<WindowTreeData>> wtdTree,
-      String strDireccion, String indice, boolean isFirst, String strTabId) {
+      String direccion, String indice, boolean isFirst, String strTabId) {
+    boolean localIsFirst = isFirst;
+    String localIndice = indice;
     if (data == null || data.length == 0)
       return "";
     if (log4j.isDebugEnabled())
       log4j.debug("WindowTree.generateTree() - data: " + data.length);
-    if (indice == null)
-      indice = "0";
+    if (localIndice == null)
+      localIndice = "0";
     boolean hayDatos = false;
     StringBuffer strResultado = new StringBuffer();
     strResultado.append("<ul>");
-    isFirst = false;
-    List<WindowTreeData> subList = wtdTree.get(indice);
+    localIsFirst = false;
+    List<WindowTreeData> subList = wtdTree.get(localIndice);
     if (subList != null) {
       List<WindowTreeData> filteredSubList = applyWhereClause(subList, strTabId);
       for (WindowTreeData elem : subList) {
         hayDatos = true;
-        String strHijos = generateTree(data, wtdTree, strDireccion, elem.nodeId, isFirst, strTabId);
+        String strHijos = generateTree(data, wtdTree, direccion, elem.nodeId, localIsFirst,
+            strTabId);
         // if elem is present in filtered sublist click action is allowed, else disabled
         if (filteredSubList.contains(elem)) {
           strResultado.append(WindowTreeUtility.addNodeElement(elem.name, elem.description,
               CHILD_SHEETS, elem.issummary.equals("Y"), WindowTreeUtility.windowType(elem.action),
-              strDireccion,
+              direccion,
               "clickItem('" + elem.nodeId + "', '" + Replace.replace(elem.name, "'", "\\'")
                   + "', '" + elem.issummary + "');", "dblClickItem('" + elem.nodeId + "');",
               !strHijos.equals(""), elem.nodeId, elem.action));
         } else {
           strResultado.append(WindowTreeUtility.addNodeElement(elem.name, elem.description,
               CHILD_SHEETS, elem.issummary.equals("Y"), WindowTreeUtility.windowType(elem.action),
-              strDireccion, null, null, !strHijos.equals(""), elem.nodeId, elem.action));
+              direccion, null, null, !strHijos.equals(""), elem.nodeId, elem.action));
         }
         strResultado.append(strHijos);
       }

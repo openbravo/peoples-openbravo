@@ -2026,13 +2026,15 @@ public class ModuleManagement extends HttpSecureAppServlet {
     boolean found = false;
     String agreement = "";
     while (!found && inst != null && i < inst.length) {
-      if (found = inst[i].getModuleID().equals(record))
+      found = inst[i].getModuleID().equals(record);
+      if (found)
         agreement = inst[i].getLicenseAgreement();
       i++;
     }
     i = 0;
     while (!found && upd != null && i < upd.length) {
-      if (found = upd[i].getModuleID().equals(record))
+      found = upd[i].getModuleID().equals(record);
+      if (found)
         agreement = upd[i].getLicenseAgreement();
       i++;
     }

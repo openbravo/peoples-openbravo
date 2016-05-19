@@ -106,7 +106,6 @@ public abstract class ProcedureProcess extends DalBaseProcess {
 
         if (params != null) {
           for (int i = 0; i < params.length; i++) {
-            String type = types[i];
             String value = params[i];
 
             int iParameter = i + 1;

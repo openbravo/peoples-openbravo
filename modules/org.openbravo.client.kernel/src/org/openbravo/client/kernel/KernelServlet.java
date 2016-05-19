@@ -66,7 +66,7 @@ public class KernelServlet extends BaseKernelServlet {
   private static String servletPathPart = "org.openbravo.client.kernel";
 
   // are used to compute the relative path
-  private static ConfigParameters globalParameters;
+  private static ConfigParameters kernelServletglobalParameters;
 
   private static ServletContext servletContext;
 
@@ -74,7 +74,7 @@ public class KernelServlet extends BaseKernelServlet {
    * @return the parameters as they are defined in the servlet context.
    */
   public static ConfigParameters getGlobalParameters() {
-    return globalParameters;
+    return kernelServletglobalParameters;
   }
 
   public static String getServletPathPart() {
@@ -146,7 +146,7 @@ public class KernelServlet extends BaseKernelServlet {
 
   public void init(ServletConfig config) {
     super.init(config);
-    globalParameters = ConfigParameters.retrieveFrom(config.getServletContext());
+    kernelServletglobalParameters = ConfigParameters.retrieveFrom(config.getServletContext());
     servletContext = config.getServletContext();
   }
 

@@ -90,6 +90,7 @@ public class HelpWindow {
   public static String generateWindow(ConnectionProvider conn, XmlEngine xmlEngine,
       VariablesSecureApp vars, boolean discardEdit, String strKeyId) throws IOException,
       ServletException {
+    String localStrKeyId = strKeyId;
     OBContext.setAdminMode();
     if (log4j.isDebugEnabled())
       log4j.debug("Output: Help Window");
@@ -141,14 +142,14 @@ public class HelpWindow {
       discard[nDiscards++] = new String("discardEdit");
     }
 
-    if (!discardEdit && strKeyId.equals("")) {
+    if (!discardEdit && localStrKeyId.equals("")) {
       strType = vars.getRequiredStringParameter("inpwindowType");
       window = false;
       if (strType.equals("X")) {
         strCommand = "FORM";
-        strKeyId = vars.getRequiredStringParameter("inpwindowName");
+        localStrKeyId = vars.getRequiredStringParameter("inpwindowName");
         DisplayHelpData[] dataForm = DisplayHelpData.selectFormTrl(conn, vars.getLanguage(),
-            strKeyId);
+            localStrKeyId);
         if (dataForm != null && dataForm.length > 0) {
           strWindowName = dataForm[0].name;
           strWindowHelp = dataForm[0].help;
@@ -159,9 +160,9 @@ public class HelpWindow {
         }
       } else if (strType.equals("P") || strType.equals("R")) {
         strCommand = "PROCESS";
-        strKeyId = vars.getRequiredStringParameter("inpwindowName");
+        localStrKeyId = vars.getRequiredStringParameter("inpwindowName");
         DisplayHelpData[] dataProcess = DisplayHelpData.selectProcessTrl(conn, vars.getLanguage(),
-            strKeyId);
+            localStrKeyId);
         if (dataProcess != null && dataProcess.length > 0) {
           strWindowName = dataProcess[0].name;
           strWindowHelp = dataProcess[0].help;
@@ -180,7 +181,7 @@ public class HelpWindow {
     List<TabGridConfigParameter> tabGridConfigParams = new ArrayList<TabGridConfigParameter>();
     DisplayHelpData[] data = DisplayHelpData.set();
     if (window) {
-      data = DisplayHelpData.selectTrl(conn, vars.getLanguage(), strKeyId);
+      data = DisplayHelpData.selectTrl(conn, vars.getLanguage(), localStrKeyId);
       if (data != null && data.length > 0) {
         strWindowName = data[0].windowname;
         strBaseName = data[0].basename;
@@ -188,7 +189,7 @@ public class HelpWindow {
       } else {
         discard[nDiscards++] = new String("discardEdit");
       }
-      strWindowHelp = DisplayHelpData.windowHelpTrl(conn, vars.getLanguage(), strKeyId);
+      strWindowHelp = DisplayHelpData.windowHelpTrl(conn, vars.getLanguage(), localStrKeyId);
       strCommand = "WINDOW";
 
       // Grid Configuration at System Level
@@ -213,7 +214,7 @@ public class HelpWindow {
 
       // Grid Configuration at Tab Level
       OBQuery<GCTab> tabGridConfigQuery = OBDal.getInstance().createQuery(GCTab.class,
-          "tab.window.id = '" + strKeyId + "'");
+          "tab.window.id = '" + localStrKeyId + "'");
       List<GCTab> tabGridConfigList = tabGridConfigQuery.list();
       for (GCTab gcTab : tabGridConfigList) {
         String tabId = gcTab.getTab().getId();
@@ -307,7 +308,7 @@ public class HelpWindow {
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + xmlEngine.strReplaceWith
         + "/\";\n");
     xmlDocument.setParameter("theme", vars.getTheme());
-    xmlDocument.setParameter("windowId", strKeyId);
+    xmlDocument.setParameter("windowId", localStrKeyId);
     xmlDocument.setParameter("windowName", strWindowName);
     xmlDocument.setParameter("windowHelp", strWindowHelp);
     xmlDocument.setParameter("command", strCommand);

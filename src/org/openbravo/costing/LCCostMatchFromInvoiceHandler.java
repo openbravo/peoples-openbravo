@@ -99,6 +99,7 @@ public class LCCostMatchFromInvoiceHandler extends BaseProcessActionHandler {
 
   private JSONObject processSelectedLines(InvoiceLine il, JSONArray selectedLines,
       List<String> existingMatchings) throws JSONException {
+    InvoiceLine localIl = il;
     JSONObject message = null;
     for (int i = 0; i < selectedLines.length(); i++) {
       JSONObject line = selectedLines.getJSONObject(i);
@@ -116,7 +117,7 @@ public class LCCostMatchFromInvoiceHandler extends BaseProcessActionHandler {
         match = OBProvider.getInstance().get(LCMatched.class);
         match.setOrganization(lcc.getOrganization());
         match.setLandedCostCost(lcc);
-        match.setInvoiceLine(il);
+        match.setInvoiceLine(localIl);
         match.setAmount(BigDecimal.ZERO);
       } else {
         // Update existing record.
@@ -131,8 +132,8 @@ public class LCCostMatchFromInvoiceHandler extends BaseProcessActionHandler {
       BigDecimal amount = new BigDecimal(line.getString("matchedAmt"));
       if (amount.compareTo(match.getAmount()) != 0) {
         match.setAmountInInvoiceCurrency(amount);
-        if (lcc.getCurrency() != il.getInvoice().getCurrency()) {
-          amount = FinancialUtils.getConvertedAmount(amount, il.getInvoice().getCurrency(),
+        if (lcc.getCurrency() != localIl.getInvoice().getCurrency()) {
+          amount = FinancialUtils.getConvertedAmount(amount, localIl.getInvoice().getCurrency(),
               lcc.getCurrency(), lcc.getAccountingDate(), lcc.getOrganization(),
               FinancialUtils.PRECISION_STANDARD);
         }
@@ -149,7 +150,8 @@ public class LCCostMatchFromInvoiceHandler extends BaseProcessActionHandler {
 
       final OBCriteria<ConversionRateDoc> conversionRateDoc = OBDal.getInstance().createCriteria(
           ConversionRateDoc.class);
-      conversionRateDoc.add(Restrictions.eq(ConversionRateDoc.PROPERTY_INVOICE, il.getInvoice()));
+      conversionRateDoc.add(Restrictions.eq(ConversionRateDoc.PROPERTY_INVOICE,
+          localIl.getInvoice()));
       ConversionRateDoc invoiceconversionrate = (ConversionRateDoc) conversionRateDoc
           .uniqueResult();
 
@@ -169,7 +171,7 @@ public class LCCostMatchFromInvoiceHandler extends BaseProcessActionHandler {
         lcmCm.setOrganization(lcc.getOrganization());
         lcmCm.setLandedCostCost(lcc);
         lcmCm.setAmount(amount);
-        lcmCm.setInvoiceLine(il);
+        lcmCm.setInvoiceLine(localIl);
         lcmCm.setConversionmatching(true);
         OBDal.getInstance().save(lcmCm);
 
@@ -185,8 +187,8 @@ public class LCCostMatchFromInvoiceHandler extends BaseProcessActionHandler {
     // Delete unselected matches
     if (!existingMatchings.isEmpty()) {
       LandedCostCost lcCost = null;
-      il = OBDal.getInstance().get(InvoiceLine.class, il.getId());
-      OBDal.getInstance().refresh(il);
+      localIl = OBDal.getInstance().get(InvoiceLine.class, localIl.getId());
+      OBDal.getInstance().refresh(localIl);
 
       for (String strLCMatchId : existingMatchings) {
         LCMatched matchToRemove = OBDal.getInstance().get(LCMatched.class, strLCMatchId);
@@ -195,11 +197,11 @@ public class LCCostMatchFromInvoiceHandler extends BaseProcessActionHandler {
         lcCost = OBDal.getInstance().get(LandedCostCost.class,
             matchToRemove.getLandedCostCost().getId());
         lcCost.getLandedCostMatchedList().remove(matchToRemove);
-        il.getLandedCostCostList().remove(matchToRemove);
+        localIl.getLandedCostCostList().remove(matchToRemove);
         OBDal.getInstance().save(lcCost);
         OBDal.getInstance().remove(matchToRemove);
       }
-      OBDal.getInstance().save(il);
+      OBDal.getInstance().save(localIl);
     }
     return message;
   }

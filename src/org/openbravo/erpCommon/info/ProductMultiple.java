@@ -204,6 +204,7 @@ public class ProductMultiple extends HttpSecureAppServlet {
       String strName, String strProductCategory, String strOrg, String strOrderCols,
       String strOrderDirs, String strOffset, String strPageSize, String strNewFilter,
       boolean isSoTrx) throws IOException, ServletException {
+    String localStrNewFilter = strNewFilter;
     if (log4j.isDebugEnabled())
       log4j.debug("Output: print page rows");
     int page = 0;
@@ -223,12 +224,12 @@ public class ProductMultiple extends HttpSecureAppServlet {
         page = TableSQLData.calcAndGetBackendPage(vars, "ProjectData.currentPage");
         if (vars.getStringParameter("movePage", "").length() > 0) {
           // on movePage action force executing countRows again
-          strNewFilter = "";
+          localStrNewFilter = "";
         }
         int oldOffset = offset;
         offset = (page * TableSQLData.maxRowsPerGridPage) + offset;
         log4j.debug("relativeOffset: " + oldOffset + " absoluteOffset: " + offset);
-        if (strNewFilter.equals("1") || strNewFilter.equals("")) { // New
+        if (localStrNewFilter.equals("1") || localStrNewFilter.equals("")) { // New
           // filter
           // or
           // first

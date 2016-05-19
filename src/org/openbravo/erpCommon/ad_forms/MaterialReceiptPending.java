@@ -256,6 +256,7 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
 
   private OBError processPurchaseOrder(VariablesSecureApp vars, String strcOrderLineId)
       throws IOException, ServletException {
+    String localStrcOrderLineId = strcOrderLineId;
     String strMessageResult = "";
     String strMessageType = "Success";
     String strWindowName = WindowTabsData.selectWindowInfo(this, vars.getLanguage(), "184");
@@ -263,7 +264,7 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
     OBError myMessageAux = new OBError();
     myMessage = new OBError();
     myMessage.setTitle("");
-    if (strcOrderLineId.equals("")) {
+    if (localStrcOrderLineId.equals("")) {
       myMessage = Utility.translateError(this, vars, vars.getLanguage(), "ProcessRunError");
       return myMessage;
     }
@@ -272,11 +273,11 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
     OBContext.setAdminMode();
     try {
       conn = this.getTransactionConnection();
-      if (strcOrderLineId.startsWith("("))
-        strcOrderLineId = strcOrderLineId.substring(1, strcOrderLineId.length() - 1);
-      if (!strcOrderLineId.equals("")) {
-        strcOrderLineId = Replace.replace(strcOrderLineId, "'", "");
-        StringTokenizer st = new StringTokenizer(strcOrderLineId, ",", false);
+      if (localStrcOrderLineId.startsWith("("))
+        localStrcOrderLineId = localStrcOrderLineId.substring(1, localStrcOrderLineId.length() - 1);
+      if (!localStrcOrderLineId.equals("")) {
+        localStrcOrderLineId = Replace.replace(localStrcOrderLineId, "'", "");
+        StringTokenizer st = new StringTokenizer(localStrcOrderLineId, ",", false);
         String strmInoutId = "";
         String docTargetType = "";
         String docType = "";

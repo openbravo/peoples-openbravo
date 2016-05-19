@@ -65,6 +65,7 @@ public class SL_BankDebt_Amount extends HttpSecureAppServlet {
   private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strChanged,
       String strDebtPayment, String strTabId, String strBankStatement, String strCurrency,
       String strDescription) throws IOException, ServletException {
+    String localStrDescription = strDescription;
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
@@ -76,10 +77,10 @@ public class SL_BankDebt_Amount extends HttpSecureAppServlet {
     if (!strDebtPayment.equals("")) {
       Amount = SLCashJournalAmountsData.amountDebtPaymentBank(this, strBankStatement,
           strDebtPayment);
-      if (!strDescription.equals("")) {
-        strDescription = strDescription + " - ";
+      if (!localStrDescription.equals("")) {
+        localStrDescription = localStrDescription + " - ";
       }
-      strDescription = strDescription
+      localStrDescription = localStrDescription
           + SLCashJournalAmountsData.debtPaymentDescription(this, strDebtPayment);
       conv = SLBankStmtAmountData.isConversion(this, strCurrency, strDebtPayment);
     } else {
@@ -91,8 +92,8 @@ public class SL_BankDebt_Amount extends HttpSecureAppServlet {
     StringBuffer resultado = new StringBuffer();
     resultado.append("var calloutName='SL_BankDebt_Amount';\n\n");
     resultado.append("var respuesta = new Array(");
-    resultado.append("new Array(\"inpdescription\", \"" + FormatUtilities.replaceJS(strDescription)
-        + "\"),");
+    resultado.append("new Array(\"inpdescription\", \""
+        + FormatUtilities.replaceJS(localStrDescription) + "\"),");
     resultado.append("new Array(\"inptrxamt\", " + Amount + "),");
     resultado.append("new Array(\"inpcurrconv\", \"" + conv + "\"),");
     resultado.append("new Array(\"inpconvertchargeamt\", " + ConvChargeAmt + "),");

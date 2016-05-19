@@ -293,8 +293,8 @@ class Selector {
    * @param properties1
    *          The array to be sorted.
    */
-  private void sortProperties(Property[] properties) {
-    Arrays.sort(properties);
+  private void sortProperties(Property[] props) {
+    Arrays.sort(props);
   }
 }
 
@@ -316,7 +316,7 @@ class Property implements Comparable<Property> {
   public Property(String property) throws Exception {
     try {
       // Parse the property.
-      ArrayList<String> parts = new ArrayList<String>();
+      ArrayList<String> partList = new ArrayList<String>();
       boolean bCanSplit = true;
       int j = 0;
       String substr;
@@ -331,19 +331,19 @@ class Property implements Comparable<Property> {
         } else if (property.charAt(i) == ':') {
           substr = property.substring(j, i);
           if (!(substr.trim().equals("") || (substr == null)))
-            parts.add(substr);
+            partList.add(substr);
           j = i + 1;
         }
       }
       substr = property.substring(j, property.length());
       if (!(substr.trim().equals("") || (substr == null)))
-        parts.add(substr);
-      if (parts.size() < 2) {
+        partList.add(substr);
+      if (partList.size() < 2) {
         throw new Exception("\t\tWarning: Incomplete property: " + property);
       }
-      this.property = parts.get(0).trim().toLowerCase();
+      this.property = partList.get(0).trim().toLowerCase();
 
-      this.parts = parseValues(simplifyColours(parts.get(1).trim().replaceAll(", ", ",")));
+      this.parts = parseValues(simplifyColours(partList.get(1).trim().replaceAll(", ", ",")));
 
     } catch (PatternSyntaxException e) {
       // Invalid regular expression used.
@@ -377,7 +377,6 @@ class Property implements Comparable<Property> {
     // prefixes last -- eg, *display should come after display.
     String thisProp = this.property;
     String thatProp = other.property;
-    String[] parts;
 
     if (thisProp.charAt(0) == '-') {
       thisProp = thisProp.substring(1);
@@ -404,12 +403,12 @@ class Property implements Comparable<Property> {
    * @returns An array of Parts
    */
   private Part[] parseValues(String contents) {
-    String[] parts = contents.split(",");
-    Part[] results = new Part[parts.length];
+    String[] propertyParts = contents.split(",");
+    Part[] results = new Part[propertyParts.length];
 
-    for (int i = 0; i < parts.length; i++) {
+    for (int i = 0; i < propertyParts.length; i++) {
       try {
-        results[i] = new Part(parts[i], property);
+        results[i] = new Part(propertyParts[i], property);
       } catch (Exception e) {
         log.error(e.getMessage(), e);
         results[i] = null;
@@ -626,12 +625,15 @@ class Part {
   }
 }
 
+@SuppressWarnings("serial")
 class UnterminatedCommentException extends Exception {
 }
 
+@SuppressWarnings("serial")
 class UnbalancedBracesException extends Exception {
 }
 
+@SuppressWarnings("serial")
 class IncompletePropertyException extends Exception {
   String message = null;
 
@@ -644,6 +646,7 @@ class IncompletePropertyException extends Exception {
   }
 }
 
+@SuppressWarnings("serial")
 class EmptySelectorBodyException extends Exception {
   String message = null;
 
@@ -656,6 +659,7 @@ class EmptySelectorBodyException extends Exception {
   }
 }
 
+@SuppressWarnings("serial")
 class UnterminatedSelectorException extends Exception {
   String message = null;
 
@@ -668,6 +672,7 @@ class UnterminatedSelectorException extends Exception {
   }
 }
 
+@SuppressWarnings("serial")
 class IncompleteSelectorException extends Exception {
   String message = null;
 

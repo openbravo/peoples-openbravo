@@ -79,7 +79,6 @@ public class DocLine_Invoice extends DocLine {
   }
 
   public void setAmount(String LineNetAmt, String PriceList, String Qty) {
-    BigDecimal ZERO = new BigDecimal("0");
     m_LineNetAmt = (LineNetAmt == "0") ? ZERO.toString() : LineNetAmt;
     BigDecimal b_Qty = new BigDecimal(Qty);
     BigDecimal b_PriceList = new BigDecimal(PriceList);

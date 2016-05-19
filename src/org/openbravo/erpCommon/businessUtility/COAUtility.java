@@ -408,13 +408,13 @@ public class COAUtility {
     return obeResult;
   }
 
-  private OBError insertAccountingSchemaGLDefaults(AcctSchema acctSchema) {
+  private OBError insertAccountingSchemaGLDefaults(AcctSchema acctSchm) {
     OBError obeResult = new OBError();
     obeResult.setType(strMessageOk);
 
     AcctSchemaGL acctSchGL;
     try {
-      acctSchGL = InitialSetupUtility.insertAcctSchemaGL(defaultElementValues, acctSchema);
+      acctSchGL = InitialSetupUtility.insertAcctSchemaGL(defaultElementValues, acctSchm);
     } catch (Exception e) {
       return logError("@CreateAccountingFailed@",
           "insertAccountingSchema() - Exception while creating acct. schema G/L entry in database",
@@ -428,7 +428,7 @@ public class COAUtility {
         + "inserted. Inserting acct.schema defaults");
     AcctSchemaDefault acctSchDef;
     try {
-      acctSchDef = InitialSetupUtility.insertAcctSchemaDefault(defaultElementValues, acctSchema);
+      acctSchDef = InitialSetupUtility.insertAcctSchemaDefault(defaultElementValues, acctSchm);
     } catch (Exception e) {
       return logError(
           "@CreateAccountingFailed@",
@@ -444,7 +444,7 @@ public class COAUtility {
     OrganizationAcctSchema orgAcctSchema = null;
     if (organization != null && organization.getId() != "0") {
       try {
-        orgAcctSchema = InitialSetupUtility.insertOrgAcctSchema(client, acctSchema, organization);
+        orgAcctSchema = InitialSetupUtility.insertOrgAcctSchema(client, acctSchm, organization);
       } catch (Exception e) {
         return logError(
             "@CreateAccountingFailed@",
@@ -456,7 +456,7 @@ public class COAUtility {
         return logError("@CreateAccountingFailed@",
             "insertAccountingSchema() - Exception while creating organization - acct. schema entry");
       } else {
-        organization.setGeneralLedger(acctSchema);
+        organization.setGeneralLedger(acctSchm);
       }
     }
     return obeResult;

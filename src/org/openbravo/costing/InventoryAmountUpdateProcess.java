@@ -248,6 +248,7 @@ public class InventoryAmountUpdateProcess extends BaseActionHandler {
 
   private ScrollableResults getStockLines(Set<String> childOrgs, Date date, Product product,
       Warehouse warehouse, boolean backdatedTransactionsFixed) {
+    Date localDate = date;
     StringBuffer select = new StringBuffer();
     StringBuffer subSelect = new StringBuffer();
 
@@ -261,7 +262,7 @@ public class InventoryAmountUpdateProcess extends BaseActionHandler {
     select.append(" from " + MaterialTransaction.ENTITY_NAME + " as trx");
     select.append("    join trx." + MaterialTransaction.PROPERTY_STORAGEBIN + " as loc");
     select.append(" where trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
-    if (date != null) {
+    if (localDate != null) {
       if (backdatedTransactionsFixed) {
         select.append("   and trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " <= :date");
       } else {
@@ -283,7 +284,7 @@ public class InventoryAmountUpdateProcess extends BaseActionHandler {
             + ".id in (:orgs)");
 
         Query trxsubQry = OBDal.getInstance().getSession().createQuery(subSelect.toString());
-        trxsubQry.setParameter("date", date);
+        trxsubQry.setParameter("date", localDate);
         trxsubQry.setParameter("product", product.getId());
         if (warehouse != null) {
           trxsubQry.setParameter("warehouse", warehouse.getId());
@@ -291,7 +292,7 @@ public class InventoryAmountUpdateProcess extends BaseActionHandler {
         trxsubQry.setParameterList("orgs", childOrgs);
         Object trxprocessDate = trxsubQry.uniqueResult();
         if (trxprocessDate != null) {
-          date = (Date) trxprocessDate;
+          localDate = (Date) trxprocessDate;
           select.append("   and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
               + " < :date");
         } else {
@@ -318,8 +319,8 @@ public class InventoryAmountUpdateProcess extends BaseActionHandler {
 
     Query stockLinesQry = OBDal.getInstance().getSession().createQuery(select.toString());
     stockLinesQry.setParameterList("orgs", childOrgs);
-    if (date != null) {
-      stockLinesQry.setTimestamp("date", date);
+    if (localDate != null) {
+      stockLinesQry.setTimestamp("date", localDate);
     }
     if (warehouse != null) {
       stockLinesQry.setParameter("warehouse", warehouse);

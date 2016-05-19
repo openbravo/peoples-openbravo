@@ -83,16 +83,18 @@ public class UpdateMaintenanceScheduled extends HttpSecureAppServlet {
   private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String strKey, String strWindowId, String strTabId, String strPartDateFrom,
       String strPartDateTo, String strMaintType) throws IOException, ServletException {
+    String localStrMaintType = strMaintType;
+    String localStrPartDateTo = strPartDateTo;
     if (log4j.isDebugEnabled())
       log4j.debug("Output: values ");
     String[] discard = { "" };
     UpdateMaintenanceScheduledData[] data = null;
-    if (strMaintType == null)
-      strMaintType = "";
-    if (strPartDateTo == null)
-      strPartDateTo = "";
+    if (localStrMaintType == null)
+      localStrMaintType = "";
+    if (localStrPartDateTo == null)
+      localStrPartDateTo = "";
     data = UpdateMaintenanceScheduledData.select(this, vars.getLanguage(), strPartDateFrom,
-        strPartDateTo, strMaintType);
+        localStrPartDateTo, localStrMaintType);
 
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_actionButton/UpdateMaintenanceScheduled", discard)
@@ -106,8 +108,8 @@ public class UpdateMaintenanceScheduled extends HttpSecureAppServlet {
     xmlDocument.setParameter("tabId", strTabId);
 
     xmlDocument.setParameter("partDateFrom", strPartDateFrom);
-    xmlDocument.setParameter("partDateTo", strPartDateTo);
-    xmlDocument.setParameter("maintType", strMaintType);
+    xmlDocument.setParameter("partDateTo", localStrPartDateTo);
+    xmlDocument.setParameter("maintType", localStrMaintType);
 
     xmlDocument.setParameter("calendar", vars.getLanguage().substring(0, 2));
     xmlDocument.setParameter("dateFromdisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
@@ -120,7 +122,7 @@ public class UpdateMaintenanceScheduled extends HttpSecureAppServlet {
               "UpdateMaintenanceScheduled"), Utility.getContext(this, vars, "#User_Client",
               "UpdateMaintenanceScheduled"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "UpdateMaintenanceScheduled",
-          strMaintType);
+          localStrMaintType);
       xmlDocument.setData("reportMaintType", "liststructure", comboTableData.select(false));
       comboTableData = null;
     } catch (Exception ex) {

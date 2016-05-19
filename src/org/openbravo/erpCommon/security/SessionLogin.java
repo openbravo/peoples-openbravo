@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -203,10 +203,6 @@ public class SessionLogin {
     return ((this.org == null) ? "" : this.org);
   }
 
-  private void setIsActive(String newValue) {
-    this.isactive = (newValue == null) ? "Y" : newValue;
-  }
-
   private boolean getIsActive() {
     return (this.isactive.equals("Y"));
   }
@@ -241,10 +237,6 @@ public class SessionLogin {
 
   private String getRemoteHost() {
     return ((this.remoteHost == null) ? "" : this.remoteHost);
-  }
-
-  private void setProcessed(String newValue) {
-    this.processed = (newValue == null) ? "" : newValue;
   }
 
   private boolean getProcessed() {

@@ -75,6 +75,7 @@ public class SL_CreateFromMultiple_Product extends HttpSecureAppServlet {
       String strQty, String strUOM, String strAttribute, String strQtyOrder, String strPUOM,
       String strMProductID, String strIsSOTrx, String strWharehouse, String strTabId)
       throws IOException, ServletException {
+    String localStrPUOM = strPUOM;
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
@@ -102,8 +103,8 @@ public class SL_CreateFromMultiple_Product extends HttpSecureAppServlet {
     String strHasSecondaryUOM = SLOrderProductData.hasSecondaryUOM(this, strMProductID);
     resultado.append("new Array(\"inphasseconduom\", " + strHasSecondaryUOM + "),\n");
     resultado.append("new Array(\"inpmProductUomId\", ");
-    if (strPUOM.startsWith("\""))
-      strPUOM = strPUOM.substring(1, strPUOM.length() - 1);
+    if (localStrPUOM.startsWith("\""))
+      localStrPUOM = localStrPUOM.substring(1, localStrPUOM.length() - 1);
     if (vars.getLanguage().equals("en_US")) {
       FieldProvider[] tld = null;
       try {
@@ -124,7 +125,7 @@ public class SL_CreateFromMultiple_Product extends HttpSecureAppServlet {
         for (int i = 0; i < tld.length; i++) {
           resultado.append("new Array(\"" + tld[i].getField("id") + "\", \""
               + FormatUtilities.replaceJS(tld[i].getField("name")) + "\", \""
-              + (tld[i].getField("id").equalsIgnoreCase(strPUOM) ? "true" : "false") + "\")");
+              + (tld[i].getField("id").equalsIgnoreCase(localStrPUOM) ? "true" : "false") + "\")");
           if (i < tld.length - 1)
             resultado.append(",\n");
         }
@@ -152,7 +153,7 @@ public class SL_CreateFromMultiple_Product extends HttpSecureAppServlet {
         for (int i = 0; i < tld.length; i++) {
           resultado.append("new Array(\"" + tld[i].getField("id") + "\", \""
               + FormatUtilities.replaceJS(tld[i].getField("name")) + "\", \""
-              + (tld[i].getField("id").equalsIgnoreCase(strPUOM) ? "true" : "false") + "\")");
+              + (tld[i].getField("id").equalsIgnoreCase(localStrPUOM) ? "true" : "false") + "\")");
           if (i < tld.length - 1)
             resultado.append(",\n");
         }

@@ -54,20 +54,16 @@ public class VersionUtility {
     String name;
     String availableMinVer;
     String availableMaxVer;
-    String type;
     HashMap<String, Ver> versions;
   }
 
   private static class Ver {
-    String verId;
     String version;
     HashMap<String, Dep> dependencies;
     HashMap<String, Dep> includes;
   }
 
   private static class Dep {
-    String depId;
-    String version;
     String minVer;
     String maxVer;
     String modId;
@@ -325,7 +321,6 @@ public class VersionUtility {
         Mod mod = new Mod();
         mod.modId = data[i].adModuleId;
         mod.name = data[i].name;
-        mod.type = data[i].type;
         mod.versions = fillVersions(data[i], mod, "Y".equals(data[i].installed));
         modules.put(data[i].adModuleId, mod);
       }
@@ -384,7 +379,6 @@ public class VersionUtility {
     HashMap<String, Dep> hashDep = new HashMap<String, Dep>();
     for (int i = 0; i < data.length; i++) {
       Dep dep = new Dep();
-      dep.depId = data[i].adModuleDependencyId;
       dep.minVer = data[i].startversion;
       dep.maxVer = data[i].endversion;
       dep.modId = data[i].adDependentModuleId;
@@ -566,7 +560,6 @@ public class VersionUtility {
     for (int i = 0; i < modules.length; i++) {
       Mod mod = mods.get(modules[i].getModuleID());
       Ver ver = new Ver();
-      ver.verId = modules[i].getModuleVersionID();
       ver.version = modules[i].getVersionNo();
       if (mod.availableMinVer == null || versionCompare(ver.version, mod.availableMinVer) == -1) {
         mod.availableMinVer = ver.version;

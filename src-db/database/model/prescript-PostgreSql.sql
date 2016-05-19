@@ -176,8 +176,8 @@ BEGIN
     -- this is the old behaviour
     RETURN to_number($1, ''S99999999999999D999999'');
   ELSE
-    v_Mant := substring($1 from 1 for v_Pos - 1); -- Mantissa, implicit cast to data type NUMERIC
-    v_Exp := substring($1 from v_Pos + 1); -- Exponent, implicit cast to data type NUMERIC
+    v_Mant := cast(substring($1 from 1 for v_Pos - 1) as numeric);
+    v_Exp := cast(substring($1 from v_Pos + 1) as numeric);
     v_Res := v_Mant * power(10, v_Exp);
     RETURN v_Res;
   END IF;
@@ -263,11 +263,11 @@ END;
 
 CREATE OR REPLACE FUNCTION to_date
 (
-timestamp, varchar
+ timestamp, varchar
 )
-RETURNS timestamp AS '
+  RETURNS timestamp AS '
 BEGIN
-RETURN to_timestamp($1, $2);
+  RETURN to_timestamp(to_char($1), $2);
 END;
 ' LANGUAGE 'plpgsql' IMMUTABLE
 /-- END
@@ -428,79 +428,6 @@ begin
 END;
 ' language 'plpgsql' IMMUTABLE
 /-- END
-
-CREATE OR REPLACE FUNCTION hex_to_int("varchar")
-  RETURNS "numeric" AS
-$BODY$
-DECLARE
-h alias for $1;
-exec varchar;
-curs refcursor;
-res numeric;
-res1 numeric;
-res2 numeric;
-res3 numeric;
-res4 numeric;
-hi varchar;
-h1 varchar;
-h2 varchar;
-h3 varchar;
-h4 varchar;
-exp1 numeric(50);
-exp2 numeric(50);
-exp3 numeric(50);
-BEGIN
-if length(h) < 32 then
-	hi:=repeat('0',32-length(h)) || h;
-else
-	hi:=h;
-end if;
-h1:=substr(hi,25,8);
-h2:=substr(hi,17,8);
-h3:=substr(hi,9,8);
-h4:=substr(hi,1,8);
-exec := 'SELECT x''' || h1 || '''::bigint';
-OPEN curs FOR EXECUTE exec;
-FETCH curs INTO res1;
-CLOSE curs;
-exec := 'SELECT x''' || h2 || '''::bigint';
-OPEN curs FOR EXECUTE exec;
-FETCH curs INTO res2;
-CLOSE curs;
-exec := 'SELECT x''' || h3 || '''::bigint';
-OPEN curs FOR EXECUTE exec;
-FETCH curs INTO res3;
-CLOSE curs;
-exec := 'SELECT x''' || h4 || '''::bigint';
-OPEN curs FOR EXECUTE exec;
-FETCH curs INTO res4;
-CLOSE curs;
-exp1=pow(16::numeric,8::numeric);
-exp2=pow(16::numeric,16::numeric);
-exp3=pow(16::numeric,24::numeric);
-res:=res1;
-res:=res+res2*exp1;
-res:=res+res3*exp2;
-res:=res+res4*exp3;
-return to_number(res);
-END;$BODY$
-  LANGUAGE 'plpgsql' IMMUTABLE STRICT;
-/-- END
-
-CREATE OR REPLACE FUNCTION hex_to_int(numeric) RETURNS numeric AS '
-DECLARE
-h alias for $1;
-exec varchar;
-curs refcursor;
-res int;
-BEGIN
-return h;
-END;'
-LANGUAGE 'plpgsql'
-IMMUTABLE
-STRICT;
-/-- END
-
 
 CREATE OR REPLACE FUNCTION add_months
 (
@@ -1049,23 +976,6 @@ CREATE OPERATOR -(
   PROCEDURE = substract_days,
   LEFTARG = timestamptz,
   RIGHTARG = numeric)
-/-- END
-
--- Auxiliar function for compatibility between 8.2 and 8.3 Postgres version.
-CREATE OR REPLACE FUNCTION is_Trigger_Enabled(tg_name "text")
-  RETURNS boolean AS
-$BODY$ 
-DECLARE
-  v_isEnabled boolean := false;
-BEGIN
-  SELECT tgenabled INTO v_isEnabled FROM pg_trigger WHERE UPPER(tgname) = UPPER(tg_name);
-  RETURN v_isEnabled;
-EXCEPTION
-WHEN OTHERS THEN
-  SELECT (UPPER(tgenabled)<>'D') INTO v_isEnabled FROM pg_trigger WHERE tgname = tg_name;
-  RETURN v_isEnabled;
-END;   $BODY$
-  LANGUAGE 'plpgsql' STABLE;
 /-- END
 
 -- Creating auxiliar functions for view dropping

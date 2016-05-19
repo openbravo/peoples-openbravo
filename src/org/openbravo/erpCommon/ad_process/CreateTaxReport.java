@@ -230,6 +230,7 @@ public class CreateTaxReport extends HttpSecureAppServlet {
   private void childData(VariablesSecureApp vars, Vector<Object> vectorArray,
       String strTaxReportId, String strPeriodFrom, String strPeriodTo, String strOrg, int level,
       String strParent, int rownum) throws IOException, ServletException {
+    int localRownum = rownum;
     if (log4j.isDebugEnabled())
       log4j.debug("**********************strTaxReportId: " + strTaxReportId);
     if (log4j.isDebugEnabled())
@@ -253,7 +254,7 @@ public class CreateTaxReport extends HttpSecureAppServlet {
     String strTaxId = CreateTaxReportData.selectTax(this, strTaxReportId);
     if (log4j.isDebugEnabled())
       log4j.debug("**********************strTaxId: " + strTaxId);
-    CreateTaxReportData[] data = CreateTaxReportData.select(this, String.valueOf(rownum),
+    CreateTaxReportData[] data = CreateTaxReportData.select(this, String.valueOf(localRownum),
         strParent, String.valueOf(level),
         Utility.getContext(this, vars, "#User_Client", "CreateTaxReport"),
         Utility.stringList(strOrg), strPeriodFrom, DateTimeData.nDaysAfter(this, strPeriodTo, "1"),
@@ -261,7 +262,7 @@ public class CreateTaxReport extends HttpSecureAppServlet {
     if (data == null || data.length == 0)
       data = CreateTaxReportData.set();
     else
-      rownum++;
+      localRownum++;
     vectorArray.addElement(data[0]);
     if (log4j.isDebugEnabled())
       log4j.debug("**********************data[0]*********************data[0].id: " + data[0].id
@@ -274,8 +275,8 @@ public class CreateTaxReport extends HttpSecureAppServlet {
     for (int i = 0; i < dataAux.length; i++) {
       // if (dataAux[i].issummary.equals("Y")){
       childData(vars, vectorArray, dataAux[i].id, strPeriodFrom, strPeriodTo, strOrg, level + 1,
-          data[0].id, rownum);
-      rownum++;
+          data[0].id, localRownum);
+      localRownum++;
       // }
     }
   }

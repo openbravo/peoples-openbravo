@@ -36,11 +36,10 @@ import java.io.PrintWriter;
 class OBPrintStream extends PrintStream {
   private StringBuffer log;
   private boolean finished;
-  private PrintWriter out;
+  private PrintWriter obPrintStreamOut;
   private PrintStream psout;
   public static final int TEXT_HTML = 1;
   public static final int TEXT_PLAIN = 2;
-  private File logFile;
   private PrintWriter logWriter;
 
   /**
@@ -65,11 +64,10 @@ class OBPrintStream extends PrintStream {
   }
 
   public void setPrintWritter(PrintWriter p) {
-    out = p;
+    obPrintStreamOut = p;
   }
 
   public void setLogFile(File f) {
-    logFile = f;
     try {
       logWriter = new PrintWriter(f);
 
@@ -97,9 +95,9 @@ class OBPrintStream extends PrintStream {
     if (psout != null) {
       psout.println(encodeHtml(s));
       psout.flush();
-    } else if (out != null) {
-      out.println(encodeHtml(s));
-      out.flush();
+    } else if (obPrintStreamOut != null) {
+      obPrintStreamOut.println(encodeHtml(s));
+      obPrintStreamOut.flush();
     }
     if (logWriter != null) {
       logWriter.print(s);

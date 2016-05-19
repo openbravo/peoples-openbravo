@@ -310,8 +310,6 @@ public class CreateFrom extends HttpSecureAppServlet {
     final String strAmountFrom = vars.getNumericParameter("inpamountFrom");
     final String strAmountTo = vars.getNumericParameter("inpamountTo");
     String strIsReceipt = vars.getStringParameter("inpisreceipt");
-    final String isSOTrx = Utility.getContext(this, vars, "isSOTrx", strWindowId);
-    final String strBankAccount = vars.getStringParameter("inpcBankaccountId");
     final String strOrg = vars.getStringParameter("inpadOrgId");
     final String strCharge = vars.getStringParameter("inpCharge");
     final String strPlannedDate = vars.getStringParameter("inpplanneddate", strStatementDate);
@@ -1528,9 +1526,7 @@ public class CreateFrom extends HttpSecureAppServlet {
             else
               C_Tax_ID = CreateFromInvoiceData.getTax(this, data[i].cOrderlineId);
 
-            final int stdPrecision;
             final int curPrecision;
-            stdPrecision = Integer.valueOf(data[i].stdprecision).intValue();
             if (strType.equals("SHIPMENT")) {
               curPrecision = Integer.valueOf(dataAux[0].priceprecision).intValue();
             } else {
@@ -1602,7 +1598,6 @@ public class CreateFrom extends HttpSecureAppServlet {
             BigDecimal taxAmt = ((lineNetAmt.multiply(taxRate)).divide(new BigDecimal("100"), 12,
                 BigDecimal.ROUND_HALF_EVEN)).setScale(curPrecision, BigDecimal.ROUND_HALF_UP);
             try {
-              final String strOrg2 = vars.getGlobalVariable("inpadOrgId", "CreateFrom|adOrgId", "");
               // Calculate Acc and Def Plan from Product
               String isDeferred = "N";
               HashMap<String, String> accDefPlanData = AccDefUtility
@@ -1610,7 +1605,6 @@ public class CreateFrom extends HttpSecureAppServlet {
               String planType = accDefPlanData.get("planType");
               String periodNumber = accDefPlanData.get("periodNumber");
               String startingPeriodId = accDefPlanData.get("startingPeriodId");
-              boolean isSOTRX = "Y".equals(isSOTrx);
               if (!"".equals(planType) && !"".equals(periodNumber) && !"".equals(startingPeriodId)) {
                 isDeferred = "Y";
               } else {
@@ -2353,12 +2347,13 @@ public class CreateFrom extends HttpSecureAppServlet {
   }
 
   private String[] restrictParameter(String strIds) {
+    String localStrIds = strIds;
     String[] ids = null;
-    if (strIds == null || ("").equals(strIds)) {
+    if (localStrIds == null || ("").equals(localStrIds)) {
       return new String[0];
     }
-    strIds = strIds.substring(1, strIds.length() - 1);
-    StringTokenizer st = new StringTokenizer(strIds, ",");
+    localStrIds = localStrIds.substring(1, localStrIds.length() - 1);
+    StringTokenizer st = new StringTokenizer(localStrIds, ",");
     int noOfRecords = 1;
     int tokenCount = st.countTokens();
     final double totalRecords = 900.0;
@@ -2367,7 +2362,7 @@ public class CreateFrom extends HttpSecureAppServlet {
       ids = new String[strArrayCount];
     } else {
       ids = new String[1];
-      ids[0] = "(" + strIds + ")";
+      ids[0] = "(" + localStrIds + ")";
     }
 
     int count = 1;

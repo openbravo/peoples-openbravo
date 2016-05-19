@@ -188,18 +188,19 @@ public class UITableDir extends UIReference {
 
   private static void getComboReloadText(String token, Vector<String> vecComboReload,
       String columnname) {
-    int i = token.indexOf("@");
+    String localToken = token;
+    int i = localToken.indexOf("@");
     while (i != -1) {
-      token = token.substring(i + 1);
-      if (!token.startsWith("SQL")) {
-        i = token.indexOf("@");
+      localToken = localToken.substring(i + 1);
+      if (!localToken.startsWith("SQL")) {
+        i = localToken.indexOf("@");
         if (i != -1) {
-          String strAux = token.substring(0, i);
-          token = token.substring(i + 1);
+          String strAux = localToken.substring(0, i);
+          localToken = localToken.substring(i + 1);
           getComboReloadTextTranslate(strAux, vecComboReload, columnname);
         }
       }
-      i = token.indexOf("@");
+      i = localToken.indexOf("@");
     }
   }
 

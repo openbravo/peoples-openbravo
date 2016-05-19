@@ -85,10 +85,7 @@ public class ServicesTest2 extends WeldBaseTest {
       PARAMS);
 
   /** this field will take the values defined by parameterValuesRule field. */
-  private @ParameterCdiTest
-  ServiceTestData parameter;
-
-  private static int counterTest = 0;
+  private @ParameterCdiTest ServiceTestData parameter;
 
   /**
    * Tests cases to check modifications on quantities of a sales order lines with related service
@@ -164,7 +161,6 @@ public class ServicesTest2 extends WeldBaseTest {
         }
       }
 
-      counterTest++;
     } catch (Exception e) {
       log.error("Error when executing: " + parameter.getTestDescription(), e);
       assertFalse(true);

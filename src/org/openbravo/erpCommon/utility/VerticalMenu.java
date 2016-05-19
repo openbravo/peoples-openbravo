@@ -219,18 +219,19 @@ public class VerticalMenu extends HttpSecureAppServlet {
       return "";
   }
 
-  private String generarMenuVertical(MenuData[] menuData, String strDireccion, String indice,
+  private String generarMenuVertical(MenuData[] menuData, String direccion, String indice,
       boolean open) {
+    String localIndice = indice;
     if (menuData == null || menuData.length == 0)
       return "";
-    if (indice == null)
-      indice = "0";
+    if (localIndice == null)
+      localIndice = "0";
     // boolean haveData=false;
     final StringBuffer strText = new StringBuffer();
     for (int i = 0; i < menuData.length; i++) {
-      if (menuData[i].parentId.equals(indice)) {
+      if (menuData[i].parentId.equals(localIndice)) {
         // haveData=true;
-        final String strHijos = generarMenuVertical(menuData, strDireccion, menuData[i].nodeId,
+        final String strHijos = generarMenuVertical(menuData, direccion, menuData[i].nodeId,
             open);
         String strID = "";
 
@@ -282,7 +283,7 @@ public class VerticalMenu extends HttpSecureAppServlet {
             if (menuData[i].action.equals("L") || menuData[i].action.equals("I"))
               strText.append(menuData[i].url);
             else {
-              strText.append(getUrlString(strDireccion, menuData[i]));
+              strText.append(getUrlString(direccion, menuData[i]));
             }
             strText.append("', '");
             if (menuData[i].action.equals("F")
@@ -309,7 +310,7 @@ public class VerticalMenu extends HttpSecureAppServlet {
           strText.append(">");
           strText.append("<img src=\"").append(strReplaceWith)
               .append("/images/blank.gif\" class=\"Menu_Client_Button_")
-              .append((indice.equals("0") ? "Big" : "")).append("Icon");
+              .append((localIndice.equals("0") ? "Big" : "")).append("Icon");
           if (menuData[i].issummary.equals("N")) {
             if (menuData[i].action.equals("B"))
               strText.append(" Menu_Client_Button_Icon_childWorkBench");
@@ -325,7 +326,7 @@ public class VerticalMenu extends HttpSecureAppServlet {
               strText.append(" Menu_Client_Button_Icon_childWindows");
           } else {
             strText.append(" Menu_Client_Button_");
-            if (indice.equals("0"))
+            if (localIndice.equals("0"))
               strText.append("Big");
             strText.append("Icon_folder");
             strText.append((open ? "Opened" : "Closed"));

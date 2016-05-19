@@ -1628,21 +1628,6 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
     return (BigDecimal) query.uniqueResult();
   }
 
-  private BigDecimal getQtyReserved(Reservation reservation, StorageDetail sd) {
-    final StringBuilder hqlString = new StringBuilder();
-    hqlString
-        .append("select coalesce(sum(rs.quantity - coalesce(rs.released,0)),0) from MaterialMgmtReservationStock rs ");
-    hqlString.append("join rs.reservation as r ");
-    hqlString.append(" where r.rESStatus not in ('CL', 'DR') ");
-    hqlString.append(" and rs.storageDetail = :storageDetail ");
-    hqlString.append(" and r <> :reservation ");
-    final Session session = OBDal.getInstance().getSession();
-    Query query = session.createQuery(hqlString.toString());
-    query.setParameter("storageDetail", sd);
-    query.setParameter("reservation", reservation);
-    return (BigDecimal) query.uniqueResult();
-  }
-
   private BigDecimal getQtyReserved(Reservation reservation, Product product,
       AttributeSetInstance attribute, Locator storageBin) {
     final StringBuilder hqlString = new StringBuilder();

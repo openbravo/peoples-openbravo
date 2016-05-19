@@ -49,6 +49,12 @@ public class EmailManager {
       String connSecurity, int port, String senderAddress, String recipientTO, String recipientCC,
       String recipientBCC, String replyTo, String subject, String content, String contentType,
       List<File> attachments, Date sentDate, List<String> headerExtras) throws Exception {
+    String localReplyTo = replyTo;
+    String localRecipientTO = recipientTO;
+    String localRecipientCC = recipientCC;
+    String localRecipientBCC = recipientBCC;
+    String localConnSecurity = connSecurity;
+    String localContentType = contentType;
     try {
       Properties props = new Properties();
 
@@ -59,9 +65,9 @@ public class EmailManager {
       props.put("mail.smtp.host", host);
       props.put("mail.smtp.port", port);
 
-      if (connSecurity != null) {
-        connSecurity = connSecurity.replaceAll(", *", ",");
-        String[] connSecurityArray = connSecurity.split(",");
+      if (localConnSecurity != null) {
+        localConnSecurity = localConnSecurity.replaceAll(", *", ",");
+        String[] connSecurityArray = localConnSecurity.split(",");
         for (int i = 0; i < connSecurityArray.length; i++) {
           if ("STARTTLS".equals(connSecurityArray[i])) {
             props.put("mail.smtp.starttls.enable", "true");
@@ -89,23 +95,23 @@ public class EmailManager {
 
       message.setFrom(new InternetAddress(senderAddress));
 
-      if (recipientTO != null) {
-        recipientTO = recipientTO.replaceAll(";", ",");
-        message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recipientTO));
+      if (localRecipientTO != null) {
+        localRecipientTO = localRecipientTO.replaceAll(";", ",");
+        message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(localRecipientTO));
       }
-      if (recipientCC != null) {
-        recipientCC = recipientCC.replaceAll(";", ",");
-        message.setRecipients(Message.RecipientType.CC, InternetAddress.parse(recipientCC));
+      if (localRecipientCC != null) {
+        localRecipientCC = localRecipientCC.replaceAll(";", ",");
+        message.setRecipients(Message.RecipientType.CC, InternetAddress.parse(localRecipientCC));
       }
-      if (recipientBCC != null) {
-        recipientBCC = recipientBCC.replaceAll(";", ",");
-        message.setRecipients(Message.RecipientType.BCC, InternetAddress.parse(recipientBCC));
+      if (localRecipientBCC != null) {
+        localRecipientBCC = localRecipientBCC.replaceAll(";", ",");
+        message.setRecipients(Message.RecipientType.BCC, InternetAddress.parse(localRecipientBCC));
       }
 
-      if (replyTo != null) {
-        replyTo = replyTo.replaceAll(";", ",");
-        replyTo = replyTo.replaceAll(", *", ",");
-        String[] replyToArray = replyTo.split(",");
+      if (localReplyTo != null) {
+        localReplyTo = localReplyTo.replaceAll(";", ",");
+        localReplyTo = localReplyTo.replaceAll(", *", ",");
+        String[] replyToArray = localReplyTo.split(",");
 
         Address[] replyToAddresses = new InternetAddress[replyToArray.length];
         for (int i = 0; i < replyToArray.length; i++) {
@@ -135,10 +141,10 @@ public class EmailManager {
 
         if (content != null) {
           MimeBodyPart messagePart = new MimeBodyPart();
-          if (contentType == null) {
-            contentType = "text/plain; charset=utf-8";
+          if (localContentType == null) {
+            localContentType = "text/plain; charset=utf-8";
           }
-          messagePart.setContent(content, contentType);
+          messagePart.setContent(content, localContentType);
           multipart.addBodyPart(messagePart);
         }
 
@@ -154,10 +160,10 @@ public class EmailManager {
         message.setContent(multipart);
       } else {
         if (content != null) {
-          if (contentType == null) {
-            contentType = "text/plain; charset=utf-8";
+          if (localContentType == null) {
+            localContentType = "text/plain; charset=utf-8";
           }
-          message.setContent(content, contentType);
+          message.setContent(content, localContentType);
         }
       }
 

@@ -203,6 +203,8 @@ public class DebtPayment extends HttpSecureAppServlet {
       String strOrder, String strInvoice, String strOrderCols, String strOrderDirs,
       String strOffset, String strPageSize, String strNewFilter, String strOrg) throws IOException,
       ServletException {
+    String localStrNewFilter = strNewFilter;
+    String localStrIsPending = strIsPending;
     if (log4j.isDebugEnabled())
       log4j.debug("Output: print page rows");
     int page = 0;
@@ -216,7 +218,7 @@ public class DebtPayment extends HttpSecureAppServlet {
     int pageSize = Integer.valueOf(strPageSize).intValue();
 
     // adjust to either pending or any other state then pending
-    strIsPending = strIsPending.equals("P") ? "= 'P'" : "<> 'P'";
+    localStrIsPending = localStrIsPending.equals("P") ? "= 'P'" : "<> 'P'";
 
     if (headers != null) {
       try {
@@ -225,12 +227,12 @@ public class DebtPayment extends HttpSecureAppServlet {
         page = TableSQLData.calcAndGetBackendPage(vars, "DebtPaymentInfo.currentPage");
         if (vars.getStringParameter("movePage", "").length() > 0) {
           // on movePage action force executing countRows again
-          strNewFilter = "";
+          localStrNewFilter = "";
         }
         int oldOffset = offset;
         offset = (page * TableSQLData.maxRowsPerGridPage) + offset;
         log4j.debug("relativeOffset: " + oldOffset + " absoluteOffset: " + offset);
-        if (strNewFilter.equals("1") || strNewFilter.equals("")) {
+        if (localStrNewFilter.equals("1") || localStrNewFilter.equals("")) {
           // New filter or first load
           /*
            * strNumRows = DebtPaymentData.countRows(this, Utility.getContext(this, vars,
@@ -251,7 +253,7 @@ public class DebtPayment extends HttpSecureAppServlet {
               Utility.getContext(this, vars, "#User_Client", "DebtPayment"),
               Utility.getSelectorOrgs(this, vars, strOrg), strBpartnerId, strDateFrom,
               DateTimeData.nDaysAfter(this, strDateTo, "1"), strCal1, strCal2, strPaymentRule,
-              strIsPaid, strIsReceipt, strInvoice, strOrder, strIsPending, pgLimit, oraLimit1,
+              strIsPaid, strIsReceipt, strInvoice, strOrder, localStrIsPending, pgLimit, oraLimit1,
               oraLimit2);
           vars.setSessionValue("DebtPaymentInfo.numrows", strNumRows);
         } else {
@@ -261,20 +263,20 @@ public class DebtPayment extends HttpSecureAppServlet {
         // Filtering result
         if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
           String oraLimit = (offset + 1) + " AND " + String.valueOf(offset + pageSize);
-          data = DebtPaymentData
-              .select(this, vars.getLanguage(), "ROWNUM",
-                  Utility.getContext(this, vars, "#User_Client", "DebtPayment"),
-                  Utility.getSelectorOrgs(this, vars, strOrg), strBpartnerId, strDateFrom,
-                  DateTimeData.nDaysAfter(this, strDateTo, "1"), strCal1, strCal2, strPaymentRule,
-                  strIsPaid, strIsReceipt, strInvoice, strOrder, strIsPending, strOrderBy,
-                  oraLimit, "");
+          data = DebtPaymentData.select(this, vars.getLanguage(), "ROWNUM",
+              Utility.getContext(this, vars, "#User_Client", "DebtPayment"),
+              Utility.getSelectorOrgs(this, vars, strOrg), strBpartnerId, strDateFrom,
+              DateTimeData.nDaysAfter(this, strDateTo, "1"), strCal1, strCal2, strPaymentRule,
+              strIsPaid, strIsReceipt, strInvoice, strOrder, localStrIsPending, strOrderBy,
+              oraLimit, "");
         } else {
           String pgLimit = pageSize + " OFFSET " + offset;
           data = DebtPaymentData.select(this, vars.getLanguage(), "1",
               Utility.getContext(this, vars, "#User_Client", "DebtPayment"),
               Utility.getSelectorOrgs(this, vars, strOrg), strBpartnerId, strDateFrom,
               DateTimeData.nDaysAfter(this, strDateTo, "1"), strCal1, strCal2, strPaymentRule,
-              strIsPaid, strIsReceipt, strInvoice, strOrder, strIsPending, strOrderBy, "", pgLimit);
+              strIsPaid, strIsReceipt, strInvoice, strOrder, localStrIsPending, strOrderBy, "",
+              pgLimit);
         }
       } catch (ServletException e) {
         log4j.error("Error in print page data: " + e);

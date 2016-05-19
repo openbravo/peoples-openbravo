@@ -125,6 +125,7 @@ public class ReportProductionJR extends HttpSecureAppServlet {
       String strDateFrom, String strDateTo, String strRawMaterial) throws IOException,
       ServletException {
 
+    String localStrRawMaterial = strRawMaterial;
     if (log4j.isDebugEnabled())
       log4j.debug("Output: Jasper Report : Production Report");
 
@@ -138,10 +139,10 @@ public class ReportProductionJR extends HttpSecureAppServlet {
     // String strSubTitle = (!strDateFrom.equals("")?"From "+strDateFrom:"")
     // + (!strDateTo.equals("")?" to "+strDateTo:"");
 
-    if (!strRawMaterial.equals("Y"))
-      strRawMaterial = "N";
+    if (!localStrRawMaterial.equals("Y"))
+      localStrRawMaterial = "N";
 
-    ReportProductionData[] data = ReportProductionData.select(this, strRawMaterial,
+    ReportProductionData[] data = ReportProductionData.select(this, localStrRawMaterial,
         Utility.getContext(this, vars, "#User_Client", "ReportProductionJR"),
         Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportProductionJR"), strDateFrom,
         DateTimeData.nDaysAfter(this, strDateTo, "1"));

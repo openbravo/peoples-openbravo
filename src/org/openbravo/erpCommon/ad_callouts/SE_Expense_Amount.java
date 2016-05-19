@@ -68,6 +68,7 @@ public class SE_Expense_Amount extends HttpSecureAppServlet {
   private void printPage(HttpServletResponse response, VariablesSecureApp vars,
       String strExpenseAmt, String strDateexpense, String strcCurrencyId, String strTimeExpenseId,
       String strTabId) throws IOException, ServletException {
+    String localStrDateexpense = strDateexpense;
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
@@ -87,8 +88,8 @@ public class SE_Expense_Amount extends HttpSecureAppServlet {
     OBError myMessage = null;
     myMessage = new OBError();
 
-    if (strDateexpense.equals("")) {
-      strDateexpense = SEExpenseAmountData.selectReportDate(this, strTimeExpenseId).equals("") ? DateTimeData
+    if (localStrDateexpense.equals("")) {
+      localStrDateexpense = SEExpenseAmountData.selectReportDate(this, strTimeExpenseId).equals("") ? DateTimeData
           .today(this) : SEExpenseAmountData.selectReportDate(this, strTimeExpenseId);
     }
 
@@ -117,7 +118,7 @@ public class SE_Expense_Amount extends HttpSecureAppServlet {
       int stdPrecisionConv = Integer.valueOf(strPrecisionConv).intValue();
       try {
         convertedAmount = SEExpenseAmountData.selectConvertedAmt(this, strExpenseAmt,
-            strcCurrencyId, c_Currency_To_ID, strDateexpense, vars.getClient(), org.getId());
+            strcCurrencyId, c_Currency_To_ID, localStrDateexpense, vars.getClient(), org.getId());
       } catch (ServletException e) {
         convertedAmount = "";
         myMessage = Utility.translateError(this, vars, vars.getLanguage(), e.getMessage());

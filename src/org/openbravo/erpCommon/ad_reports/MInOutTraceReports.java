@@ -173,19 +173,21 @@ public class MInOutTraceReports extends HttpSecureAppServlet {
   private MInOutTraceReportsData[] processData(VariablesSecureApp vars,
       MInOutTraceReportsData[] data, String strIn, String strmProductIdGlobal,
       Hashtable<String, Integer> calculated, Vector<Integer> count) throws ServletException {
-    if (data == null || data.length == 0) {
-      return data;
+    MInOutTraceReportsData[] localData = data;
+    if (localData == null || localData.length == 0) {
+      return localData;
     }
-    for (int i = 0; i < data.length; i++) {
-      data[i].html = processChilds(vars, data[i].mAttributesetinstanceId, data[i].mProductId,
-          data[i].mLocatorId, strIn, true, strmProductIdGlobal, calculated, count);
-      if ("".equals(data[i].html)) {
-        // Delete data[i] from array
-        data = (MInOutTraceReportsData[]) ArrayUtils.removeElement(data, data[i]);
+    for (int i = 0; i < localData.length; i++) {
+      localData[i].html = processChilds(vars, localData[i].mAttributesetinstanceId,
+          localData[i].mProductId, localData[i].mLocatorId, strIn, true, strmProductIdGlobal,
+          calculated, count);
+      if ("".equals(localData[i].html)) {
+        // Delete localData[i] from array
+        localData = (MInOutTraceReportsData[]) ArrayUtils.removeElement(localData, localData[i]);
         i--;
       }
     }
-    return data;
+    return localData;
   }
 
   private String insertTabHtml(boolean border) {

@@ -63,21 +63,24 @@ public class SL_Assets extends HttpSecureAppServlet {
   private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strTabId,
       String strAssetvalue, String strResidualvalue, String strAmortizationvalue,
       String strLastChanged) throws IOException, ServletException {
+    String localStrResidualvalue = strResidualvalue;
+    String localStrAssetvalue = strAssetvalue;
+    String localStrAmortizationvalue = strAmortizationvalue;
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
 
-    if (strAssetvalue.equals(""))
-      strAssetvalue = "0";
-    if (strResidualvalue.equals(""))
-      strResidualvalue = "0";
-    if (strAmortizationvalue.equals(""))
-      strAmortizationvalue = "0";
+    if (localStrAssetvalue.equals(""))
+      localStrAssetvalue = "0";
+    if (localStrResidualvalue.equals(""))
+      localStrResidualvalue = "0";
+    if (localStrAmortizationvalue.equals(""))
+      localStrAmortizationvalue = "0";
 
-    BigDecimal fAssetvalue = new BigDecimal(strAssetvalue);
-    BigDecimal fResidualvalue = new BigDecimal(strResidualvalue);
-    BigDecimal fAmortizationvalue = new BigDecimal(strAmortizationvalue);
+    BigDecimal fAssetvalue = new BigDecimal(localStrAssetvalue);
+    BigDecimal fResidualvalue = new BigDecimal(localStrResidualvalue);
+    BigDecimal fAmortizationvalue = new BigDecimal(localStrAmortizationvalue);
     // Float fAssetvalue = Float.valueOf(strAssetvalue);
     // Float fResidualvalue = Float.valueOf(strResidualvalue);
     // Float fAmortizationvalue = Float.valueOf(strAmortizationvalue);
@@ -100,9 +103,9 @@ public class SL_Assets extends HttpSecureAppServlet {
       fResidualvalue = fAssetvalue.subtract(fAmortizationvalue);
     }
 
-    strAssetvalue = fAssetvalue.toString();
-    strResidualvalue = fResidualvalue.toString();
-    strAmortizationvalue = fAmortizationvalue.toString();
+    localStrAssetvalue = fAssetvalue.toString();
+    localStrResidualvalue = fResidualvalue.toString();
+    localStrAmortizationvalue = fAmortizationvalue.toString();
 
     StringBuffer resultado = new StringBuffer();
     resultado.append("var calloutName='SL_Assets';\n\n");

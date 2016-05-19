@@ -55,12 +55,14 @@ public class OpenPentaho extends HttpSecureAppServlet {
   private void printPageDataSheet(HttpServletResponse response, VariablesSecureApp vars,
       String pentahoServer, String source, String adProcessId, String userRole) throws IOException,
       ServletException {
+    String localSource = source;
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/utility/OpenPentaho").createXmlDocument();
-    if (!source.startsWith("/"))
-      source = "/" + source;
-    source = source + ((source.indexOf("?") != -1) ? "&" : "?") + "ob_role='" + userRole + "'";
-    xmlDocument.setParameter("paramURL", pentahoServer + source);
+    if (!localSource.startsWith("/"))
+      localSource = "/" + localSource;
+    localSource = localSource + ((localSource.indexOf("?") != -1) ? "&" : "?") + "ob_role='"
+        + userRole + "'";
+    xmlDocument.setParameter("paramURL", pentahoServer + localSource);
 
     try {
       WindowTabs tabs = new WindowTabs(this, vars, new Integer(adProcessId).intValue());

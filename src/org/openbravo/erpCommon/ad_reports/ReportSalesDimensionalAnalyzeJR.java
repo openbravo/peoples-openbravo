@@ -409,6 +409,8 @@ public class ReportSalesDimensionalAnalyzeJR extends HttpSecureAppServlet {
       String strDateFromRef, String strDateToRef, String strOrg, String strsalesrepId,
       String strOrder, String strMayor, String strMenor, String strPartnerSalesrepId,
       String strCurrencyId, String strOutput) throws IOException, ServletException {
+    String localStrShown = strShown;
+    String localStrOrg = strOrg;
     if (log4j.isDebugEnabled())
       log4j.debug("Output: print html");
     String strOrderby = "";
@@ -423,8 +425,8 @@ public class ReportSalesDimensionalAnalyzeJR extends HttpSecureAppServlet {
         "discard", "discard", "discard", "discard", "discard", "discard", "discard", "discard",
         "discard", "discard", "discard", "discard", "discard", "discard", "discard", "discard",
         "discard", "discard", "discard" };
-    if (strOrg.equals(""))
-      strOrg = vars.getOrg();
+    if (localStrOrg.equals(""))
+      localStrOrg = vars.getOrg();
     if (strComparative.equals("Y"))
       discard1[0] = "selEliminarBody2";
     String strTitle = "";
@@ -450,12 +452,12 @@ public class ReportSalesDimensionalAnalyzeJR extends HttpSecureAppServlet {
 
     ReportSalesDimensionalAnalyzeJRData[] data = null;
     String[] strShownArray = { "", "", "", "", "", "", "", "", "", "", "" };
-    if (strShown.startsWith("("))
-      strShown = strShown.substring(1, strShown.length() - 1);
-    if (!strShown.equals("")) {
-      strShown = Replace.replace(strShown, "'", "");
-      strShown = Replace.replace(strShown, " ", "");
-      StringTokenizer st = new StringTokenizer(strShown, ",", false);
+    if (localStrShown.startsWith("("))
+      localStrShown = localStrShown.substring(1, localStrShown.length() - 1);
+    if (!localStrShown.equals("")) {
+      localStrShown = Replace.replace(localStrShown, "'", "");
+      localStrShown = Replace.replace(localStrShown, " ", "");
+      StringTokenizer st = new StringTokenizer(localStrShown, ",", false);
       int intContador = 0;
       while (st.hasMoreTokens()) {
         strShownArray[intContador] = st.nextToken();
@@ -613,20 +615,21 @@ public class ReportSalesDimensionalAnalyzeJR extends HttpSecureAppServlet {
       limit = Integer.parseInt(Utility.getPreference(vars, "ReportsLimit", ""));
       if (limit > 0) {
         mycount = Integer
-            .parseInt((strComparative.equals("Y")) ? ReportSalesDimensionalAnalyzeJRData
-                .selectCount(this, levelsconcat.toString(), Tree.getMembers(this,
-                    TreeData.getTreeOrg(this, vars.getClient()), strOrg), Utility.getContext(this,
-                    vars, "#User_Client", "ReportSalesDimensionalAnalyzeJR"), strPartnerGroup,
-                    strcBpartnerId, strProductCategory, strmProductId, strmWarehouseId,
-                    strsalesrepId, strPartnerSalesrepId, strDateFrom, DateTimeData.nDaysAfter(this,
-                        strDateTo, "1"), strDateFromRef, DateTimeData.nDaysAfter(this,
-                        strDateToRef, "1")) : ReportSalesDimensionalAnalyzeJRData
-                .selectNoComparativeCount(this, levelsconcat.toString(), Tree.getMembers(this,
-                    TreeData.getTreeOrg(this, vars.getClient()), strOrg), Utility.getContext(this,
-                    vars, "#User_Client", "ReportSalesDimensionalAnalyzeJR"), strPartnerGroup,
-                    strcBpartnerId, strProductCategory, strmProductId, strmWarehouseId,
-                    strsalesrepId, strPartnerSalesrepId, strDateFrom, DateTimeData.nDaysAfter(this,
-                        strDateTo, "1")));
+            .parseInt((strComparative.equals("Y")) ? ReportSalesDimensionalAnalyzeJRData.selectCount(
+                this, levelsconcat.toString(),
+                Tree.getMembers(this, TreeData.getTreeOrg(this, vars.getClient()), localStrOrg),
+                Utility.getContext(this, vars, "#User_Client", "ReportSalesDimensionalAnalyzeJR"),
+                strPartnerGroup, strcBpartnerId, strProductCategory, strmProductId,
+                strmWarehouseId, strsalesrepId, strPartnerSalesrepId, strDateFrom,
+                DateTimeData.nDaysAfter(this, strDateTo, "1"), strDateFromRef,
+                DateTimeData.nDaysAfter(this, strDateToRef, "1"))
+                : ReportSalesDimensionalAnalyzeJRData.selectNoComparativeCount(this, levelsconcat
+                    .toString(), Tree.getMembers(this, TreeData.getTreeOrg(this, vars.getClient()),
+                    localStrOrg), Utility.getContext(this, vars, "#User_Client",
+                    "ReportSalesDimensionalAnalyzeJR"), strPartnerGroup, strcBpartnerId,
+                    strProductCategory, strmProductId, strmWarehouseId, strsalesrepId,
+                    strPartnerSalesrepId, strDateFrom, DateTimeData
+                        .nDaysAfter(this, strDateTo, "1")));
       }
     } catch (NumberFormatException e) {
     }
@@ -649,7 +652,7 @@ public class ReportSalesDimensionalAnalyzeJR extends HttpSecureAppServlet {
           data = ReportSalesDimensionalAnalyzeJRData.select(this, strCurrencyId, strTextShow[0],
               strTextShow[1], strTextShow[2], strTextShow[3], strTextShow[4], strTextShow[5],
               strTextShow[6], strTextShow[7], strTextShow[8], strTextShow[9], strTextShow[10],
-              Tree.getMembers(this, TreeData.getTreeOrg(this, vars.getClient()), strOrg),
+              Tree.getMembers(this, TreeData.getTreeOrg(this, vars.getClient()), localStrOrg),
               Utility.getContext(this, vars, "#User_Client", "ReportSalesDimensionalAnalyzeJR"),
               strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strPartnerGroup,
               strcBpartnerId, strProductCategory, strmProductId, strmWarehouseId, strsalesrepId,
@@ -664,7 +667,7 @@ public class ReportSalesDimensionalAnalyzeJR extends HttpSecureAppServlet {
               strTextShow[0], strTextShow[1], strTextShow[2], strTextShow[3], strTextShow[4],
               strTextShow[5], strTextShow[6], strTextShow[7], strTextShow[8], strTextShow[9],
               strTextShow[10],
-              Tree.getMembers(this, TreeData.getTreeOrg(this, vars.getClient()), strOrg),
+              Tree.getMembers(this, TreeData.getTreeOrg(this, vars.getClient()), localStrOrg),
               Utility.getContext(this, vars, "#User_Client", "ReportSalesDimensionalAnalyzeJR"),
               strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strPartnerGroup,
               strcBpartnerId, strProductCategory, strmProductId, strmWarehouseId, strsalesrepId,

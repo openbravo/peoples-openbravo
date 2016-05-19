@@ -76,18 +76,19 @@ public class AcctServerProcess extends DalBaseProcess {
 
   /**
    * 
-   * @param vars
+   * @param localVars
    * @param bundle
    * @throws ServletException
    */
   private void processClient(VariablesSecureApp vars, ProcessBundle bundle) throws ServletException {
+    VariablesSecureApp localVars = vars;
     final String processId = bundle.getProcessId();
     final String pinstanceId = bundle.getPinstanceId();
     final ProcessContext ctx = bundle.getContext();
     isDirect = bundle.getChannel() == Channel.DIRECT;
 
     if (log4j.isDebugEnabled()) {
-      log4j.debug("Processing client: " + vars.getClient());
+      log4j.debug("Processing client: " + localVars.getClient());
     }
 
     if (isDirect) {
@@ -95,7 +96,7 @@ public class AcctServerProcess extends DalBaseProcess {
     } else {
       addLog("Starting background process.");
     }
-    if (vars == null) {
+    if (localVars == null) {
       try {
         final AcctServerProcessData[] dataOrg = AcctServerProcessData.selectUserOrg(connection,
             processId);
@@ -107,7 +108,7 @@ public class AcctServerProcess extends DalBaseProcess {
           }
           return;
         }
-        vars = new VariablesSecureApp(dataOrg[0].adUserId, ctx.getClient(), dataOrg[0].adOrgId);
+        localVars = new VariablesSecureApp(dataOrg[0].adUserId, ctx.getClient(), dataOrg[0].adOrgId);
       } catch (final ServletException ex) {
         log4j.error(ex.getMessage());
         return;
@@ -149,7 +150,7 @@ public class AcctServerProcess extends DalBaseProcess {
     // If UseRequestOrganizationExecutingRequestProcess preference exists
     // use process Organization
     if (AcctServerProcessData.useRequestProcessOrg(connection)) {
-      strOrg = vars.getOrg();
+      strOrg = localVars.getOrg();
     }
     if (!strTable.equals("")) {
       tables = new String[1];
@@ -159,7 +160,7 @@ public class AcctServerProcess extends DalBaseProcess {
     }
     String strTableDesc;
     for (int i = 0; i < tables.length; i++) {
-      final AcctServer acct = AcctServer.get(tables[i], vars.getClient(), strOrg, connection);
+      final AcctServer acct = AcctServer.get(tables[i], localVars.getClient(), strOrg, connection);
       if (acct == null)
         continue;
       acct.setBatchSize(BATCH_SIZE);
@@ -183,7 +184,7 @@ public class AcctServerProcess extends DalBaseProcess {
         }
 
         try {
-          acct.run(vars, strDateFrom, strDateTo);
+          acct.run(localVars, strDateFrom, strDateTo);
         } catch (final Exception ex) {
           log4j.error(ex.getMessage(), ex);
           return;

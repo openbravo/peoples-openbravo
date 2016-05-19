@@ -160,9 +160,9 @@ public class Fact {
    *          if null, line is not created
    * @param C_Currency_ID
    *          the currency
-   * @param debitAmt
+   * @param localDebitAmt
    *          debit amount, can be null
-   * @param creditAmt
+   * @param localCreditAmt
    *          credit amount, can be null
    * @param Fact_Acct_Group_ID
    * 
@@ -170,7 +170,7 @@ public class Fact {
    * 
    * @param DocBaseType
    * 
-   * @param conversionDate
+   * @param localConversionDate
    *          Date to convert currencies if required
    * @param conversionRate
    *          The rate to use to convert from source amount to account amount. May be null
@@ -180,6 +180,9 @@ public class Fact {
       String debitAmt, String creditAmt, String Fact_Acct_Group_ID, String SeqNo,
       String DocBaseType, String conversionDate, BigDecimal conversionRate, ConnectionProvider conn) {
 
+    String localConversionDate = conversionDate;
+    String localCreditAmt = creditAmt;
+    String localDebitAmt = debitAmt;
     String strNegate = "";
     try {
       strNegate = AcctServerData.selectNegate(conn, m_acctSchema.m_C_AcctSchema_ID, DocBaseType);
@@ -189,8 +192,8 @@ public class Fact {
     }
     if (strNegate.equals(""))
       strNegate = "Y";
-    BigDecimal DebitAmt = new BigDecimal(debitAmt.equals("") ? "0.00" : debitAmt);
-    BigDecimal CreditAmt = new BigDecimal(creditAmt.equals("") ? "0.00" : creditAmt);
+    BigDecimal DebitAmt = new BigDecimal(localDebitAmt.equals("") ? "0.00" : localDebitAmt);
+    BigDecimal CreditAmt = new BigDecimal(localCreditAmt.equals("") ? "0.00" : localCreditAmt);
     if (DebitAmt.compareTo(BigDecimal.ZERO) == 0 && CreditAmt.compareTo(BigDecimal.ZERO) == 0) {
       return null;
     }
@@ -206,9 +209,9 @@ public class Fact {
 
       if (DebitAmt.compareTo(ZERO) < 0) {
         CreditAmt = CreditAmt.add(DebitAmt.abs());
-        creditAmt = CreditAmt.toString();
+        localCreditAmt = CreditAmt.toString();
         DebitAmt = BigDecimal.ZERO;
-        debitAmt = DebitAmt.toString();
+        localDebitAmt = DebitAmt.toString();
         if ("GLJ".equals(DocBaseType)) {
           convertedCreditAmt = convertedCreditAmt.add(convertedDebitAmt.abs());
           convertedDebitAmt = BigDecimal.ZERO;
@@ -217,9 +220,9 @@ public class Fact {
       }
       if (CreditAmt.compareTo(ZERO) < 0) {
         DebitAmt = DebitAmt.add(CreditAmt.abs());
-        debitAmt = DebitAmt.toString();
+        localDebitAmt = DebitAmt.toString();
         CreditAmt = BigDecimal.ZERO;
-        creditAmt = CreditAmt.toString();
+        localCreditAmt = CreditAmt.toString();
         if ("GLJ".equals(DocBaseType)) {
           convertedDebitAmt = convertedDebitAmt.add(convertedCreditAmt.abs());
           convertedCreditAmt = BigDecimal.ZERO;
@@ -239,7 +242,8 @@ public class Fact {
       }
     }
 
-    log4jFact.debug("createLine - " + account + " - Dr=" + debitAmt + ", Cr=" + creditAmt);
+    log4jFact
+        .debug("createLine - " + account + " - Dr=" + localDebitAmt + ", Cr=" + localCreditAmt);
     log4jFact.debug("Starting createline");
     // Data Check
     if (account == null) {
@@ -260,21 +264,21 @@ public class Fact {
     line.setAccount(m_acctSchema, account);
     log4jFact.debug("account set");
 
-    log4jFact.debug("C_Currency_ID: " + C_Currency_ID + " - debitAmt: " + debitAmt
-        + " - creditAmt: " + creditAmt);
+    log4jFact.debug("C_Currency_ID: " + C_Currency_ID + " - debitAmt: " + localDebitAmt
+        + " - creditAmt: " + localCreditAmt);
     // Amounts - one needs to be both not zero
-    if (!line.setAmtSource(C_Currency_ID, debitAmt, creditAmt))
+    if (!line.setAmtSource(C_Currency_ID, localDebitAmt, localCreditAmt))
       return null;
-    if (conversionDate == null || conversionDate.isEmpty()) {
-      conversionDate = m_doc.DateAcct;
+    if (localConversionDate == null || localConversionDate.isEmpty()) {
+      localConversionDate = m_doc.DateAcct;
     }
     log4jFact.debug("C_Currency_ID: " + m_acctSchema.getC_Currency_ID() + " - ConversionDate: "
-        + conversionDate + " - CurrencyRateType: " + m_acctSchema.getCurrencyRateType());
+        + localConversionDate + " - CurrencyRateType: " + m_acctSchema.getCurrencyRateType());
     // Convert
     if (conversionRate != null) {
       line.convertByRate(m_acctSchema.getC_Currency_ID(), conversionRate);
     } else {
-      line.convert(m_acctSchema.getC_Currency_ID(), conversionDate,
+      line.convert(m_acctSchema.getC_Currency_ID(), localConversionDate,
           m_acctSchema.getCurrencyRateType(), conn);
     }
     // Optionally overwrite Acct Amount
@@ -696,7 +700,6 @@ public class Fact {
     } else { // Adjust biggest (Balance Sheet) line amount
       BigDecimal BSamount = ZERO;
       FactLine BSline = null;
-      BigDecimal PLamount = ZERO;
       FactLine PLline = null;
       int signum = diff.signum();
       // Find line
@@ -710,7 +713,6 @@ public class Fact {
           BSline = l;
         } else if (!l.isBalanceSheet() && ((amt.compareTo(BSamount) > 0 && signum != 1))
             || ((amt.compareTo(BSamount) < 0 && signum == 1))) {
-          PLamount = amt;
           PLline = l;
         }
       }

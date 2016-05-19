@@ -71,7 +71,8 @@ public class DocFINReconciliation extends AcctServer {
   public static final String TRXTYPE_BPWithdrawal = "BPW";
   public static final String TRXTYPE_BankFee = "BF";
 
-  private static final Logger log4j = Logger.getLogger(DocFINReconciliation.class);
+  private static final Logger docFINReconciliationLog4j = Logger
+      .getLogger(DocFINReconciliation.class);
 
   String SeqNo = "0";
 
@@ -390,7 +391,7 @@ public class DocFINReconciliation extends AcctServer {
             FieldProviderFactory.setField(data[i], "cCostcenterId", trxInfo[0].cCostcenterId);
           }
         } catch (Exception e) {
-          log4j.error("Error while retreiving user1 and user2 - ", e);
+          docFINReconciliationLog4j.error("Error while retreiving user1 and user2 - ", e);
         }
       }
     } finally {
@@ -446,7 +447,7 @@ public class DocFINReconciliation extends AcctServer {
           FieldProviderFactory.setField(data[0], "cCostcenterId", trxInfo[0].cCostcenterId);
         }
       } catch (Exception e) {
-        log4j.error("Error while retreiving user1 and user2 - ", e);
+        docFINReconciliationLog4j.error("Error while retreiving user1 and user2 - ", e);
       }
     } finally {
       OBContext.restorePreviousMode();
@@ -492,7 +493,7 @@ public class DocFINReconciliation extends AcctServer {
           FieldProviderFactory.setField(data[0], "user2Id", trxInfo[0].user2Id);
         }
       } catch (Exception e) {
-        log4j.error("Error while retreiving user1 and user2 - ", e);
+        docFINReconciliationLog4j.error("Error while retreiving user1 and user2 - ", e);
       }
     } finally {
       OBContext.restorePreviousMode();
@@ -578,7 +579,8 @@ public class DocFINReconciliation extends AcctServer {
               strClassname).newInstance();
           return newTemplate.createFact(this, as, conn, con, vars);
         } catch (Exception e) {
-          log4j.error("Error while creating new instance for DocFINReconciliationTemplate - " + e);
+          docFINReconciliationLog4j
+              .error("Error while creating new instance for DocFINReconciliationTemplate - " + e);
         }
       }
       String Fact_Acct_Group_ID = SequenceIdData.getUUID();
@@ -648,6 +650,7 @@ public class DocFINReconciliation extends AcctServer {
   public Fact createFactPayment(DocLine_FINReconciliation line, AcctSchema as,
       ConnectionProvider conn, Fact fact, String Fact_Acct_Group_ID, String Fact_Acct_Group_ID2)
       throws ServletException {
+    Fact localFact = fact;
     FIN_Payment payment = OBDal.getInstance().get(FIN_Payment.class, line.getFinPaymentId());
     FIN_FinaccTransaction transaction = OBDal.getInstance().get(FIN_FinaccTransaction.class,
         line.getFinFinAccTransactionId());
@@ -659,10 +662,10 @@ public class DocFINReconciliation extends AcctServer {
       // Should map with the amount booked in the transaction and adjust with currency gain/loss
       transactionAmount = convertAmount(new BigDecimal(line.getAmount()), !payment.isReceipt(),
           dateFormat.format(transaction.getDateAcct()), TABLEID_Transaction, transaction.getId(),
-          C_Currency_ID, as.m_C_Currency_ID, line, as, fact, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-          conn);
+          C_Currency_ID, as.m_C_Currency_ID, line, as, localFact, Fact_Acct_Group_ID,
+          nextSeqNo(SeqNo), conn);
       line.m_Record_Id2 = transaction.getId();
-      fact.createLine(line, getAccountTransactionPayment(conn, payment, as), C_Currency_ID,
+      localFact.createLine(line, getAccountTransactionPayment(conn, payment, as), C_Currency_ID,
           !payment.isReceipt() ? transactionAmount.toString() : "",
           payment.isReceipt() ? transactionAmount.toString() : "", Fact_Acct_Group_ID,
           nextSeqNo(SeqNo), DocumentType, line.m_DateAcct, null, conn);
@@ -698,18 +701,18 @@ public class DocFINReconciliation extends AcctServer {
             finPaymentDetailID);
         detail.setInvoiceTaxCashVAT_V(finPaymentDetailID);
         detail.setInvoiceTaxCashVAT_V(data[i].getField("MergedPaymentDetailId"));
-        fact = createFactPaymentDetails(detail, paymentDetail, as, conn, fact, Fact_Acct_Group_ID,
-            Fact_Acct_Group_ID2);
+        localFact = createFactPaymentDetails(detail, paymentDetail, as, conn, localFact,
+            Fact_Acct_Group_ID, Fact_Acct_Group_ID2);
       }
     } else {
       BigDecimal paymentAmount = new BigDecimal(line.getAmount());
       // Should map with the amount booked in the payment and adjust with currency gain/loss
       paymentAmount = convertAmount(new BigDecimal(line.getAmount()), !payment.isReceipt(),
           dateFormat.format(transaction.getDateAcct()), TABLEID_Payment, line.getFinPaymentId(),
-          C_Currency_ID, as.m_C_Currency_ID, line, as, fact, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
-          conn);
+          C_Currency_ID, as.m_C_Currency_ID, line, as, localFact, Fact_Acct_Group_ID,
+          nextSeqNo(SeqNo), conn);
       line.m_Record_Id2 = payment.getId();
-      fact.createLine(line, getAccountPayment(conn, payment, as), C_Currency_ID,
+      localFact.createLine(line, getAccountPayment(conn, payment, as), C_Currency_ID,
           !payment.isReceipt() ? paymentAmount.toString() : "",
           payment.isReceipt() ? paymentAmount.toString() : "", Fact_Acct_Group_ID,
           nextSeqNo(SeqNo), DocumentType, line.m_DateAcct, null, conn);
@@ -720,9 +723,10 @@ public class DocFINReconciliation extends AcctServer {
     paymentTypeLine.copyInfo(line);
     paymentTypeLine.m_Record_Id2 = "";
     paymentTypeLine.setFinFinAccTransactionId(transaction.getId());
-    fact.createLine(paymentTypeLine, getAccountReconciliation(conn, payment, as), C_Currency_ID,
-        payment.isReceipt() ? line.getAmount() : "", !payment.isReceipt() ? line.getAmount() : "",
-        Fact_Acct_Group_ID, "999999", DocumentType, line.m_DateAcct, null, conn);
+    localFact.createLine(paymentTypeLine, getAccountReconciliation(conn, payment, as),
+        C_Currency_ID, payment.isReceipt() ? line.getAmount() : "",
+        !payment.isReceipt() ? line.getAmount() : "", Fact_Acct_Group_ID, "999999", DocumentType,
+        line.m_DateAcct, null, conn);
     if (!getDocumentPaymentConfirmation(payment)
         && !getDocumentTransactionConfirmation(transaction)) {
       // Pre-payment is consumed when Used Credit Amount not equals Zero. When consuming Credit no
@@ -737,8 +741,8 @@ public class DocFINReconciliation extends AcctServer {
           String creditAmountConverted = convertAmount(creditPayment.getAmount(), isReceiptPayment,
               DateAcct, TABLEID_Payment, creditPayment.getCreditPaymentUsed().getId(),
               creditPayment.getCreditPaymentUsed().getCurrency().getId(), as.m_C_Currency_ID, line,
-              as, fact, Fact_Acct_Group_ID, nextSeqNo(SeqNo), conn, false).toString();
-          fact.createLine(
+              as, localFact, Fact_Acct_Group_ID, nextSeqNo(SeqNo), conn, false).toString();
+          localFact.createLine(
               line,
               getAccountBPartner(creditPayment.getCreditPaymentUsed().getBusinessPartner().getId(),
                   as, isReceiptPayment, true, conn), creditPayment.getCreditPaymentUsed()
@@ -751,16 +755,18 @@ public class DocFINReconciliation extends AcctServer {
         }
         if (!payment.isReceipt() && amtDiff.compareTo(BigDecimal.ZERO) == 1 || payment.isReceipt()
             && amtDiff.compareTo(BigDecimal.ZERO) == -1) {
-          fact.createLine(null, getAccount(AcctServer.ACCTTYPE_ConvertGainDefaultAmt, as, conn),
-              payment.getCurrency().getId(), "", amtDiff.abs().toString(), Fact_Acct_Group_ID,
+          localFact.createLine(null,
+              getAccount(AcctServer.ACCTTYPE_ConvertGainDefaultAmt, as, conn), payment
+                  .getCurrency().getId(), "", amtDiff.abs().toString(), Fact_Acct_Group_ID,
               nextSeqNo(SeqNo), DocumentType, conn);
         } else {
-          fact.createLine(null, getAccount(AcctServer.ACCTTYPE_ConvertChargeDefaultAmt, as, conn),
-              payment.getCurrency().getId(), amtDiff.abs().toString(), "", Fact_Acct_Group_ID,
+          localFact.createLine(null,
+              getAccount(AcctServer.ACCTTYPE_ConvertChargeDefaultAmt, as, conn), payment
+                  .getCurrency().getId(), amtDiff.abs().toString(), "", Fact_Acct_Group_ID,
               nextSeqNo(SeqNo), DocumentType, conn);
         }
         if (creditPayments.isEmpty()) {
-          fact.createLine(
+          localFact.createLine(
               line,
               getAccountBPartner(payment.getBusinessPartner().getId(), as, payment.isReceipt(),
                   true, conn), payment.getCurrency().getId(), (payment.isReceipt() ? payment
@@ -772,7 +778,7 @@ public class DocFINReconciliation extends AcctServer {
     }
 
     SeqNo = "0";
-    return fact;
+    return localFact;
   }
 
   @Deprecated
@@ -1041,7 +1047,7 @@ public class DocFINReconciliation extends AcctServer {
     }
     sb.append("]");
     //
-    log4j.debug(" Balance=" + retValue + sb.toString());
+    docFINReconciliationLog4j.debug(" Balance=" + retValue + sb.toString());
     return retValue;
   } // getBalance
 
@@ -1649,7 +1655,7 @@ public class DocFINReconciliation extends AcctServer {
       data = AcctServerData.periodOpen(connectionProvider, client, documentType, org, date);
       return data[0].period;
     } catch (ServletException e) {
-      log4j.warn(e);
+      docFINReconciliationLog4j.warn(e);
       e.printStackTrace();
     }
     return null;
@@ -1674,13 +1680,13 @@ public class DocFINReconciliation extends AcctServer {
         return acct;
       // No account
       if (Account_ID.equals("")) {
-        log4j.warn("AcctServer - getAccount - NO account Type=" + AcctType + ", Record="
-            + Record_ID);
+        docFINReconciliationLog4j.warn("AcctServer - getAccount - NO account Type=" + AcctType
+            + ", Record=" + Record_ID);
         return acct;
       }
       acct = Account.getAccount(conn, Account_ID);
     } catch (ServletException e) {
-      log4j.warn(e);
+      docFINReconciliationLog4j.warn(e);
       e.printStackTrace();
     } finally {
       if (acct == null) {

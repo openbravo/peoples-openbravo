@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -38,8 +38,6 @@ import org.openbravo.xmlEngine.XmlDocument;
 
 public class SL_Payment_Amounts extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
-
-  private static final BigDecimal ZERO = new BigDecimal(0.0);
 
   public void init(ServletConfig config) {
     super.init(config);
@@ -85,25 +83,15 @@ public class SL_Payment_Amounts extends HttpSecureAppServlet {
     BigDecimal payamt, discountamt, writeoffamt, overunderamt, convert, invtotamt;
 
     payamt = new BigDecimal(strPayamt);
-    if (payamt == null)
-      payamt = ZERO;
     discountamt = new BigDecimal(strDiscountamt);
-    if (discountamt == null)
-      discountamt = ZERO;
     writeoffamt = new BigDecimal(strWriteoffamt);
-    if (writeoffamt == null)
-      writeoffamt = ZERO;
     overunderamt = new BigDecimal(strOverunderamt);
-    if (overunderamt == null)
-      overunderamt = ZERO;
 
     StringBuffer resultado = new StringBuffer();
     resultado.append("var calloutName='SL_Payment_Amounts';\n\n");
     resultado.append("var respuesta = new Array(");
     if (strChanged.equals("inpisoverunderpayment")) {
       overunderamt = new BigDecimal(strOverunderamt);
-      if (overunderamt == null)
-        overunderamt = ZERO;
       resultado.append("new Array(\"inpoverunderamt\", " + overunderamt.toString() + ")");
     }
 
@@ -174,8 +162,6 @@ public class SL_Payment_Amounts extends HttpSecureAppServlet {
       if (log4j.isDebugEnabled())
         log4j.debug("PAYMENT: " + data[0].grand + "CURRENCYID: " + data[0].currencyid);
       invtotamt = new BigDecimal(data[0].grand);
-      if (invtotamt == null)
-        invtotamt = ZERO;
       if (strcCurrencyId.equals(data[0].currencyid)) {
       } else {
         String strconvert = SLPaymentAmountsData.selectConversion(this, data[0].currencyid,
@@ -188,8 +174,6 @@ public class SL_Payment_Amounts extends HttpSecureAppServlet {
     } else if (strChanged.equals("inpdiscountamt")) {
       SLPaymentAmountsData[] data = SLPaymentAmountsData.select(this, strcInvoiceId);
       invtotamt = new BigDecimal(data[0].grand);
-      if (invtotamt == null)
-        invtotamt = ZERO;
       if (strcCurrencyId.equals(data[0].currencyid)) {
       } else {
         String strconvert = SLPaymentAmountsData.selectConversion(this, data[0].currencyid,
@@ -202,8 +186,6 @@ public class SL_Payment_Amounts extends HttpSecureAppServlet {
     } else if (strChanged.equals("inpwriteoffamt")) {
       SLPaymentAmountsData[] data = SLPaymentAmountsData.select(this, strcInvoiceId);
       invtotamt = new BigDecimal(data[0].grand);
-      if (invtotamt == null)
-        invtotamt = ZERO;
       if (strcCurrencyId.equals(data[0].currencyid)) {
       } else {
         String strconvert = SLPaymentAmountsData.selectConversion(this, data[0].currencyid,
@@ -216,8 +198,6 @@ public class SL_Payment_Amounts extends HttpSecureAppServlet {
     } else if (strChanged.equals("inpoverunderamt")) {
       SLPaymentAmountsData[] data = SLPaymentAmountsData.select(this, strcInvoiceId);
       invtotamt = new BigDecimal(data[0].grand);
-      if (invtotamt == null)
-        invtotamt = ZERO;
       invtotamt = invtotamt.subtract(overunderamt).subtract(writeoffamt).subtract(discountamt);
       resultado.append("new Array(\"inppayamt\", " + invtotamt.toString() + ")");
     }

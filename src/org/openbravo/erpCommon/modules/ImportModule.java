@@ -1459,18 +1459,19 @@ public class ImportModule {
    * Installs or updates the modules in the obx file
    * 
    * @param obx
-   * @param moduleID
+   * @param localModuleID
    *          The ID for the current module to install
    * @throws Exception
    */
   private void installModule(InputStream obx, String moduleID, Vector<DynaBean> dModulesToInstall,
       Vector<DynaBean> dDependencies, Vector<DynaBean> dDBprefix) throws Exception {
 
+    String localModuleID = moduleID;
     // For local installations modules are temporary unzipped in tmp/localInstall directory, because
     // it is possible this version in obx is not going to be installed, in any case it must be
     // unzipped looking for other obx files inside it.
-    String fileDestination = installLocally && !"0".equals(moduleID) ? obDir + "/tmp/localInstall"
-        : obDir;
+    String fileDestination = installLocally && !"0".equals(localModuleID) ? obDir
+        + "/tmp/localInstall" : obDir;
 
     if (!(new File(fileDestination + "/modules").canWrite())) {
       addLog("@CannotWriteDirectory@ " + fileDestination + "/modules. ", MSG_ERROR);
@@ -1486,13 +1487,13 @@ public class ImportModule {
           final ByteArrayInputStream ba = new ByteArrayInputStream(
               getBytesCurrentEntryStream(obxInputStream));
 
-          installModule(ba, moduleID, dModulesToInstall, dDependencies, dDBprefix);
+          installModule(ba, localModuleID, dModulesToInstall, dDependencies, dDBprefix);
         } // If install remotely it is no necessary to install the .obx
         // because it will be get from CR
         obxInputStream.closeEntry();
       } else {
         // Unzip the contents
-        final String fileName = fileDestination + (moduleID.equals("0") ? "/" : "/modules/")
+        final String fileName = fileDestination + (localModuleID.equals("0") ? "/" : "/modules/")
             + entry.getName().replace("\\", "/");
         final File entryFile = new File(fileName);
         // Check whether the directory exists, if not create
@@ -1519,8 +1520,8 @@ public class ImportModule {
               .endsWith("src-db/database/sourcedata/AD_MODULE.xml")) {
             entryBytes = getBytesCurrentEntryStream(obxInputStream);
             final Vector<DynaBean> module = getEntryDynaBeans(entryBytes);
-            moduleID = (String) module.get(0).get("AD_MODULE_ID");
-            if (installingModule(moduleID)) {
+            localModuleID = (String) module.get(0).get("AD_MODULE_ID");
+            if (installingModule(localModuleID)) {
               dModulesToInstall.addAll(module);
             }
             obxInputStream.closeEntry();

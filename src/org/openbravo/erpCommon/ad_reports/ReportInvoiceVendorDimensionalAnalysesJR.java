@@ -385,6 +385,8 @@ public class ReportInvoiceVendorDimensionalAnalysesJR extends HttpSecureAppServl
       String strDateToRef, String strOrg, String strOrder, String strMayor, String strMenor,
       String strProducttype, String strCurrencyId, String strOutput) throws IOException,
       ServletException {
+    String localStrShown = strShown;
+    String localStrOrg = strOrg;
     if (log4j.isDebugEnabled())
       log4j.debug("Output: print html");
     String strOrderby = "";
@@ -392,8 +394,8 @@ public class ReportInvoiceVendorDimensionalAnalysesJR extends HttpSecureAppServl
     String[] discard1 = { "selEliminarBody1", "discard", "discard", "discard", "discard",
         "discard", "discard", "discard", "discard", "discard", "discard", "discard", "discard",
         "discard", "discard", "discard", "discard", "discard", "discard", "discard", "discard" };
-    if (strOrg.equals(""))
-      strOrg = vars.getOrg();
+    if (localStrOrg.equals(""))
+      localStrOrg = vars.getOrg();
     if (strComparative.equals("Y"))
       discard1[0] = "selEliminarBody2";
     String strTitle = "";
@@ -415,12 +417,12 @@ public class ReportInvoiceVendorDimensionalAnalysesJR extends HttpSecureAppServl
     ReportInvoiceVendorDimensionalAnalysesJRData[] data = null;
     ReportInvoiceVendorDimensionalAnalysesJRData dataXLS = null;
     String[] strShownArray = { "", "", "", "", "" };
-    if (strShown.startsWith("("))
-      strShown = strShown.substring(1, strShown.length() - 1);
-    if (!strShown.equals("")) {
-      strShown = Replace.replace(strShown, "'", "");
-      strShown = Replace.replace(strShown, " ", "");
-      StringTokenizer st = new StringTokenizer(strShown, ",", false);
+    if (localStrShown.startsWith("("))
+      localStrShown = localStrShown.substring(1, localStrShown.length() - 1);
+    if (!localStrShown.equals("")) {
+      localStrShown = Replace.replace(localStrShown, "'", "");
+      localStrShown = Replace.replace(localStrShown, " ", "");
+      StringTokenizer st = new StringTokenizer(localStrShown, ",", false);
       int intContador = 0;
       while (st.hasMoreTokens()) {
         strShownArray[intContador] = st.nextToken();
@@ -525,7 +527,7 @@ public class ReportInvoiceVendorDimensionalAnalysesJR extends HttpSecureAppServl
     if ("xls".equals(strOutput)) {
       try {
         dataXLS = ReportInvoiceVendorDimensionalAnalysesJRData.selectXLS(this, strCurrencyId, Tree
-            .getMembers(this, TreeData.getTreeOrg(this, vars.getClient()), strOrg), Utility
+            .getMembers(this, TreeData.getTreeOrg(this, vars.getClient()), localStrOrg), Utility
             .getContext(this, vars, "#User_Client", "ReportInvoiceVendorDimensionalAnalysesJR"),
             strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strPartnerGroup,
             strcBpartnerId, strProductCategory, strmProductId, strProducttype);
@@ -537,9 +539,9 @@ public class ReportInvoiceVendorDimensionalAnalysesJR extends HttpSecureAppServl
         try {
           data = ReportInvoiceVendorDimensionalAnalysesJRData.select(this, strCurrencyId,
               strTextShow[0], strTextShow[1], strTextShow[2], strTextShow[3], strTextShow[4], Tree
-                  .getMembers(this, TreeData.getTreeOrg(this, vars.getClient()), strOrg), Utility
-                  .getContext(this, vars, "#User_Client",
-                      "ReportInvoiceVendorDimensionalAnalysesJR"), strDateFrom, DateTimeData
+                  .getMembers(this, TreeData.getTreeOrg(this, vars.getClient()), localStrOrg),
+              Utility.getContext(this, vars, "#User_Client",
+                  "ReportInvoiceVendorDimensionalAnalysesJR"), strDateFrom, DateTimeData
                   .nDaysAfter(this, strDateTo, "1"), strPartnerGroup, strcBpartnerId,
               strProductCategory, strmProductId, strProducttype, strDateFromRef, DateTimeData
                   .nDaysAfter(this, strDateToRef, "1"), strOrderby);
@@ -551,7 +553,7 @@ public class ReportInvoiceVendorDimensionalAnalysesJR extends HttpSecureAppServl
           data = ReportInvoiceVendorDimensionalAnalysesJRData.selectNoComparative(this,
               strCurrencyId, strTextShow[0], strTextShow[1], strTextShow[2], strTextShow[3],
               strTextShow[4], Tree.getMembers(this, TreeData.getTreeOrg(this, vars.getClient()),
-                  strOrg), Utility.getContext(this, vars, "#User_Client",
+                  localStrOrg), Utility.getContext(this, vars, "#User_Client",
                   "ReportInvoiceVendorDimensionalAnalysesJR"), strDateFrom, DateTimeData
                   .nDaysAfter(this, strDateTo, "1"), strPartnerGroup, strcBpartnerId,
               strProductCategory, strmProductId, strProducttype, strOrderby);

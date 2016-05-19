@@ -52,16 +52,16 @@ public class DocGLJournal extends AcctServer {
 
   public String m_PostingType = Fact.POST_Actual;
 
-  public void loadObjectFieldProvider(ConnectionProvider conn, String AD_Client_ID, String Id)
+  public void loadObjectFieldProvider(ConnectionProvider conn, String aD_Client_ID, String Id)
       throws ServletException {
     AcctSchema docAcctSchema = new AcctSchema(conn, DocGLJournalData.selectAcctSchema(conn,
-        AD_Client_ID, Id));
+        aD_Client_ID, Id));
     ArrayList<Object> list = new ArrayList<Object>();
     list.add(docAcctSchema);
     AcctSchema[] retValue = new AcctSchema[list.size()];
     list.toArray(retValue);
     this.m_as = retValue;
-    setObjectFieldProvider(DocGLJournalData.select(conn, AD_Client_ID, Id));
+    setObjectFieldProvider(DocGLJournalData.select(conn, aD_Client_ID, Id));
   }
 
   /**
@@ -302,23 +302,6 @@ public class DocGLJournal extends AcctServer {
       log4jDocGLJournal.error("Exception in getDocumentConfirmation method.", e);
     }
     return true;
-  }
-
-  private String isperiodOpen(ConnectionProvider conn, String periodId) {
-    if ("".equals(periodId)) {
-      return "";
-    }
-    try {
-      DocGLJournalData[] data = DocGLJournalData.periodOpen(conn, periodId);
-      if (data != null && data.length > 0) {
-        return periodId;
-      } else {
-        return "";
-      }
-    } catch (ServletException e) {
-      e.printStackTrace();
-      return "";
-    }
   }
 
   public String getServletInfo() {

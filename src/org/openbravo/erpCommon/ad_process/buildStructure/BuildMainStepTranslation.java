@@ -121,9 +121,9 @@ public class BuildMainStepTranslation {
     stepTranslations.add(stepTranslation);
   }
 
-  public BuildStepTranslation getBuildStepTranslationForCode(String code) {
+  public BuildStepTranslation getBuildStepTranslationForCode(String theCode) {
     for (BuildStepTranslation stepTranslation : stepTranslations) {
-      if (stepTranslation.getCode().equals(code)) {
+      if (stepTranslation.getCode().equals(theCode)) {
         return stepTranslation;
       }
     }

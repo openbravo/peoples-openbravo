@@ -69,6 +69,7 @@ public class SL_GlobalUse_Product extends HttpSecureAppServlet {
 
   private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strTabId,
       String strMProductID, String strPAttr) throws IOException, ServletException {
+    String localStrPAttr = strPAttr;
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
@@ -84,11 +85,12 @@ public class SL_GlobalUse_Product extends HttpSecureAppServlet {
             + "\"),\n");
     String strHasSecondaryUOM = SLGlobalUseProductData.hasSecondaryUOM(this, strMProductID);
     resultado.append("new Array(\"inphasseconduom\", \"" + strHasSecondaryUOM + "\"),\n");
-    if (strPAttr.startsWith("\""))
-      strPAttr = strPAttr.substring(1, strPAttr.length() - 1);
-    resultado.append("new Array(\"inpmAttributesetinstanceId\", \"" + strPAttr + "\"),\n");
+    if (localStrPAttr.startsWith("\""))
+      localStrPAttr = localStrPAttr.substring(1, localStrPAttr.length() - 1);
+    resultado.append("new Array(\"inpmAttributesetinstanceId\", \"" + localStrPAttr + "\"),\n");
     resultado.append("new Array(\"inpmAttributesetinstanceId_R\", \""
-        + FormatUtilities.replaceJS(SLInOutLineProductData.attribute(this, strPAttr)) + "\"),\n");
+        + FormatUtilities.replaceJS(SLInOutLineProductData.attribute(this, localStrPAttr))
+        + "\"),\n");
     String strAttrSet, strAttrSetValueType;
     strAttrSet = strAttrSetValueType = "";
     OBContext.setAdminMode();

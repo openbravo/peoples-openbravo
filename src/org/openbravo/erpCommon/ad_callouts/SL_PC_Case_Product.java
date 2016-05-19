@@ -64,18 +64,19 @@ public class SL_PC_Case_Product extends HttpSecureAppServlet {
 
   private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strTabId,
       String strMProductID, String strPAttr) throws IOException, ServletException {
+    String localStrPAttr = strPAttr;
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
 
     StringBuffer result = new StringBuffer();
     result.append("var calloutName='SL_PC_Case_Product';\n\n");
     result.append("var respuesta = new Array(");
-    if (strPAttr.startsWith("\""))
-      strPAttr = strPAttr.substring(1, strPAttr.length() - 1);
-    result.append("new Array(\"inpmAttributesetinstanceId\", \"" + strPAttr + "\"),\n");
+    if (localStrPAttr.startsWith("\""))
+      localStrPAttr = localStrPAttr.substring(1, localStrPAttr.length() - 1);
+    result.append("new Array(\"inpmAttributesetinstanceId\", \"" + localStrPAttr + "\"),\n");
     String strattrsetvaluesdescr = "";
     final AttributeSetInstance attributesetinstance = OBDal.getInstance().get(
-        AttributeSetInstance.class, strPAttr);
+        AttributeSetInstance.class, localStrPAttr);
     if (attributesetinstance != null) {
       strattrsetvaluesdescr = attributesetinstance.getDescription();
     }

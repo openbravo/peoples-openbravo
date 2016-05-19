@@ -357,12 +357,7 @@ public class DefaultDataSourceService extends BaseDataSourceService {
     if (entity == null) {
       dsProperties = super.getDataSourceProperties(parameters);
     } else {
-      if (false) {
-        dsProperties = getInitialProperties(entity,
-            parameters.containsKey(DataSourceConstants.MINIMAL_PROPERTY_OUTPUT));
-      } else {
-        dsProperties = getInitialProperties(entity, false);
-      }
+      dsProperties = getInitialProperties(entity, false);
     }
 
     // now see if there are additional properties, these are often property paths

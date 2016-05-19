@@ -123,6 +123,8 @@ public class ReportProductMovement extends HttpSecureAppServlet {
       String strInout, String strReturn, String strInventory, String strMovement,
       String strProduction, String strmAttributesetinstanceId, String strInternalConsumption)
       throws IOException, ServletException {
+    String localStrDateTo = strDateTo;
+    String localStrDateFrom = strDateFrom;
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
     response.setContentType("text/html; charset=UTF-8");
@@ -135,16 +137,16 @@ public class ReportProductMovement extends HttpSecureAppServlet {
     ReportProductMovementData[] data4 = null;
     ReportProductMovementData[] data5 = null;
     String discard[] = { "discard", "discard", "discard", "discard", "discard", "discard" };
-    if (strDateFrom.equals("") && strDateTo.equals("")) {
-      strDateTo = DateTimeData.today(this);
-      strDateFrom = DateTimeData.weekBefore(this);
+    if (localStrDateFrom.equals("") && localStrDateTo.equals("")) {
+      localStrDateTo = DateTimeData.today(this);
+      localStrDateFrom = DateTimeData.weekBefore(this);
     }
     if (vars.commandIn("FIND", "DIRECT")) {
       if (strInout.equals("-1")) {
         data = ReportProductMovementData.select(this, vars.getLanguage(),
             Utility.getContext(this, vars, "#User_Client", "ReportProductMovement"),
             Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportProductMovement"),
-            strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strcBpartnerId,
+            localStrDateFrom, DateTimeData.nDaysAfter(this, localStrDateTo, "1"), strcBpartnerId,
             strmProductId, strmAttributesetinstanceId, "N");
         if (data == null || data.length == 0) {
           discard[0] = "selEliminar1";
@@ -159,7 +161,7 @@ public class ReportProductMovement extends HttpSecureAppServlet {
         data5 = ReportProductMovementData.select(this, vars.getLanguage(),
             Utility.getContext(this, vars, "#User_Client", "ReportProductMovement"),
             Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportProductMovement"),
-            strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strcBpartnerId,
+            localStrDateFrom, DateTimeData.nDaysAfter(this, localStrDateTo, "1"), strcBpartnerId,
             strmProductId, strmAttributesetinstanceId, "Y");
         if (data5 == null || data5.length == 0) {
           discard[5] = "selEliminar6";
@@ -174,7 +176,7 @@ public class ReportProductMovement extends HttpSecureAppServlet {
         data1 = ReportProductMovementData.selectInventory(this,
             Utility.getContext(this, vars, "#User_Client", "ReportProductMovement"),
             Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportProductMovement"),
-            strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strcBpartnerId,
+            localStrDateFrom, DateTimeData.nDaysAfter(this, localStrDateTo, "1"), strcBpartnerId,
             strmProductId, strmAttributesetinstanceId);
         if (data1 == null || data1.length == 0) {
           discard[1] = "selEliminar2";
@@ -188,7 +190,7 @@ public class ReportProductMovement extends HttpSecureAppServlet {
         data2 = ReportProductMovementData.selectMovement(this,
             Utility.getContext(this, vars, "#User_Client", "ReportProductMovement"),
             Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportProductMovement"),
-            strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strcBpartnerId,
+            localStrDateFrom, DateTimeData.nDaysAfter(this, localStrDateTo, "1"), strcBpartnerId,
             strmProductId);
         if (data2 == null || data2.length == 0) {
           discard[2] = "selEliminar3";
@@ -202,7 +204,7 @@ public class ReportProductMovement extends HttpSecureAppServlet {
         data3 = ReportProductMovementData.selectProduction(this,
             Utility.getContext(this, vars, "#User_Client", "ReportProductMovement"),
             Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportProductMovement"),
-            strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strcBpartnerId,
+            localStrDateFrom, DateTimeData.nDaysAfter(this, localStrDateTo, "1"), strcBpartnerId,
             strmProductId, strmAttributesetinstanceId);
         if (data3 == null || data3.length == 0) {
           discard[3] = "selEliminar4";
@@ -216,7 +218,7 @@ public class ReportProductMovement extends HttpSecureAppServlet {
         data4 = ReportProductMovementData.selectInternalConsumption(this,
             Utility.getContext(this, vars, "#User_Client", "ReportProductMovement"),
             Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportProductMovement"),
-            strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strcBpartnerId,
+            localStrDateFrom, DateTimeData.nDaysAfter(this, localStrDateTo, "1"), strcBpartnerId,
             strmProductId);
         if (data4 == null || data4.length == 0) {
           discard[4] = "selEliminar5";
@@ -277,10 +279,10 @@ public class ReportProductMovement extends HttpSecureAppServlet {
     xmlDocument.setParameter("calendar", vars.getLanguage().substring(0, 2));
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("paramLanguage", "defaultLang=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("dateFrom", strDateFrom);
+    xmlDocument.setParameter("dateFrom", localStrDateFrom);
     xmlDocument.setParameter("dateFromdisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("dateFromsaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
-    xmlDocument.setParameter("dateTo", strDateTo);
+    xmlDocument.setParameter("dateTo", localStrDateTo);
     xmlDocument.setParameter("dateTodisplayFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("dateTosaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("paramBPartnerId", strcBpartnerId);

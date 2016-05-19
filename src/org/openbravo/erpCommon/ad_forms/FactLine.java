@@ -1013,17 +1013,18 @@ public class FactLine {
   public StringBuffer getDescription(ConnectionProvider connectionProvider,
       String strC_Bpartner_ID, String strC_AcctSchema_ID, String strAD_Table_ID,
       String strRecord_ID, String strLine) throws ServletException {
+    String localStrLine = strLine;
     StringBuffer description = new StringBuffer();
     String strSql = AcctServerData.selectDescription(connectionProvider, strAD_Table_ID,
         strC_AcctSchema_ID);
     try {
       if (!strSql.equals("")/* && strLine!=null && !strLine.equals("") */) {
         strSql = strSql.replaceAll("@RecordId@", "'" + strRecord_ID + "'");
-        if (strLine == null || strLine.equals(""))
-          strLine = "NULL";
+        if (localStrLine == null || localStrLine.equals(""))
+          localStrLine = "NULL";
         else
-          strLine = "'" + strLine + "'";
-        strSql = strSql.replaceAll("@Line@", strLine);
+          localStrLine = "'" + localStrLine + "'";
+        strSql = strSql.replaceAll("@Line@", localStrLine);
         Statement st = connectionProvider.getStatement();
         ResultSet result;
         try {
@@ -1111,29 +1112,6 @@ public class FactLine {
     }
     try {
       return in.setScale((int) precision, RoundingMode.HALF_UP).toPlainString();
-    } catch (ArithmeticException e) {
-      log4jFactLine.error(e.getMessage(), e);
-      return null;
-    }
-  }
-
-  /**
-   * Convert a BigDecimal to a BigDecimal with a specified number of decimal places
-   * 
-   * @param in
-   *          BigDecimal to set the precision
-   * @param precision
-   *          (Max) Number of decimal places to output Note: precision generally refers to the total
-   *          number of digits in a number, but within Openbravo it refers to the number of
-   *          significant digits after the decimal point.
-   * @return BigDecimal with specified number of significant decimal places
-   */
-  private BigDecimal toNumberWithPrecision(BigDecimal in, long precision) {
-    if (in == null) {
-      return null;
-    }
-    try {
-      return in.setScale((int) precision, RoundingMode.HALF_UP);
     } catch (ArithmeticException e) {
       log4jFactLine.error(e.getMessage(), e);
       return null;

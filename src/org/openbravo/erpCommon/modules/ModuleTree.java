@@ -249,13 +249,13 @@ public class ModuleTree extends GenericTree {
    */
   private boolean hasChildUpdate(String node) {
     try {
-      ModuleTreeData data[] = ModuleTreeData.selectSubTree(conn, "", node);
-      if (data == null || data.length == 0)
+      ModuleTreeData moduleTreeData[] = ModuleTreeData.selectSubTree(conn, "", node);
+      if (moduleTreeData == null || moduleTreeData.length == 0)
         return false;
-      for (int i = 0; i < data.length; i++) {
-        if (data[i].updateAvailable != null && !data[i].updateAvailable.equals(""))
+      for (int i = 0; i < moduleTreeData.length; i++) {
+        if (moduleTreeData[i].updateAvailable != null && !moduleTreeData[i].updateAvailable.equals(""))
           return true;
-        if (hasChildUpdate(data[i].nodeId))
+        if (hasChildUpdate(moduleTreeData[i].nodeId))
           return true;
       }
       return false;

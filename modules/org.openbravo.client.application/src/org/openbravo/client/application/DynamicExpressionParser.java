@@ -357,11 +357,11 @@ public class DynamicExpressionParser {
     List<Field> fields;
     List<AuxiliaryInput> auxIns;
     if (parameterDisplayLogic) {
-      for (Parameter parameter : parameters) {
-        if (token.equalsIgnoreCase(parameter.getDBColumnName())) {
-          parametersInExpression.add(parameter);
+      for (Parameter param : parameters) {
+        if (token.equalsIgnoreCase(param.getDBColumnName())) {
+          parametersInExpression.add(param);
           UIDefinition uiDef = UIDefinitionController.getInstance().getUIDefinition(
-              parameter.getReference());
+              param.getReference());
           if (uiDef.getDomainType() instanceof DateDomainType) {
             return new DisplayLogicElement(
                 "OB.Utilities.Date.JSToOB(OB.Utilities.getValue(currentValues,'" + token
@@ -383,17 +383,17 @@ public class DynamicExpressionParser {
         fields = tab.getADFieldList();
         auxIns = tab.getADAuxiliaryInputList();
       }
-      for (Field field : fields) {
-        if (field.getColumn() == null) {
+      for (Field tabField : fields) {
+        if (tabField.getColumn() == null) {
           continue;
         }
-        if (token.equalsIgnoreCase(field.getColumn().getDBColumnName()) && !tabLevelDisplayLogic) {
-          fieldsInExpression.add(field);
+        if (token.equalsIgnoreCase(tabField.getColumn().getDBColumnName()) && !tabLevelDisplayLogic) {
+          fieldsInExpression.add(tabField);
           final String fieldName = KernelUtils.getInstance()
-              .getPropertyFromColumn(field.getColumn()).getName();
+              .getPropertyFromColumn(tabField.getColumn()).getName();
 
           UIDefinition uiDef = UIDefinitionController.getInstance().getUIDefinition(
-              field.getColumn().getId());
+              tabField.getColumn().getId());
           if (uiDef.getDomainType() instanceof DateDomainType) {
             return new DisplayLogicElement(
                 "OB.Utilities.Date.JSToOB(OB.Utilities.getValue(currentValues,'" + fieldName
@@ -450,8 +450,8 @@ public class DynamicExpressionParser {
     return aField;
   }
 
-  private Field searchForFieldInTab(Tab tab, String fieldName) {
-    List<Field> fields = tab.getADFieldList();
+  private Field searchForFieldInTab(Tab targetTab, String fieldName) {
+    List<Field> fields = targetTab.getADFieldList();
     for (Field aField : fields) {
       if (aField.getColumn() == null) {
         continue;

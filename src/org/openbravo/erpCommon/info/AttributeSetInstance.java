@@ -177,6 +177,7 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
   private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strInstance,
       String strAttributeSet, String strProductInstance, String strWindowId, String strTabId,
       String strLocator, String strIsSOTrx, String strProduct) throws IOException, ServletException {
+    String localStrInstance = strInstance;
     if (log4j.isDebugEnabled())
       log4j.debug("Output: Frame 1 of the attributes seeker");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
@@ -211,24 +212,23 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
      * "printMessage('');"; } xmlDocument.setParameter("body", message);
      */
 
-    if (strInstance.equals("")
+    if (localStrInstance.equals("")
         && AttributeSetInstanceData.isInstanceAttribute(this, strAttributeSet).equals("0"))
-      strInstance = strProductInstance;
+      localStrInstance = strProductInstance;
 
-    xmlDocument.setParameter("instance", strInstance);
+    xmlDocument.setParameter("instance", localStrInstance);
     xmlDocument.setParameter("product", strProduct);
     String strName = Utility.messageBD(this, "Description", vars.getLanguage());
     xmlDocument.setParameter("nameDescription", strName.equals("") ? "Description" : strName);
-    xmlDocument.setParameter(
-        "description",
-        Utility.formatMessageBDToHtml(AttributeSetInstanceData.selectDescription(this,
-            (strInstance.equals("") ? strProductInstance : strInstance))));
+    xmlDocument.setParameter("description", Utility.formatMessageBDToHtml(AttributeSetInstanceData
+        .selectDescription(this, (localStrInstance.equals("") ? strProductInstance
+            : localStrInstance))));
     AttributeSetInstanceData[] data = AttributeSetInstanceData.select(this, strAttributeSet);
     xmlDocument.setParameter(
         "data",
         generateHtml(vars, data, AttributeSetInstanceData.selectInstance(this,
-            (strInstance.equals("") ? strProductInstance : strInstance)), strInstance, strIsSOTrx,
-            strWindowId));
+            (localStrInstance.equals("") ? strProductInstance : localStrInstance)),
+            localStrInstance, strIsSOTrx, strWindowId));
     xmlDocument.setParameter("script", generateScript(vars, data));
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();

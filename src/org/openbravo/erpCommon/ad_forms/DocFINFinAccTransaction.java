@@ -72,7 +72,8 @@ public class DocFINFinAccTransaction extends AcctServer {
   BigDecimal generatedCredit = ZERO;
   boolean exceptionPosting = false;
 
-  private static final Logger log4j = Logger.getLogger(DocFINFinAccTransaction.class);
+  private static final Logger docFINFinAccTransactionLog4j = Logger
+      .getLogger(DocFINFinAccTransaction.class);
 
   String SeqNo = "0";
 
@@ -348,7 +349,7 @@ public class DocFINFinAccTransaction extends AcctServer {
         }
 
       } catch (Exception e) {
-        log4j.error("Error while retreiving user1 and user2 - ", e);
+        docFINFinAccTransactionLog4j.error("Error while retreiving user1 and user2 - ", e);
       }
 
     } finally {
@@ -447,8 +448,8 @@ public class DocFINFinAccTransaction extends AcctServer {
               .forName(strClassname).newInstance();
           return newTemplate.createFact(this, as, conn, con, vars);
         } catch (Exception e) {
-          log4j.error("Error while creating new instance for DocFINFinAccTransactionTemplate - "
-              + e);
+          docFINFinAccTransactionLog4j
+              .error("Error while creating new instance for DocFINFinAccTransactionTemplate - " + e);
         }
       }
       FIN_FinaccTransaction transaction = OBDal.getInstance().get(FIN_FinaccTransaction.class,
@@ -828,7 +829,7 @@ public class DocFINFinAccTransaction extends AcctServer {
     }
     sb.append("]");
     //
-    log4j.debug(" Balance=" + retValue + sb.toString());
+    docFINFinAccTransactionLog4j.debug(" Balance=" + retValue + sb.toString());
     return retValue;
   } // getBalance
 
@@ -1296,7 +1297,7 @@ public class DocFINFinAccTransaction extends AcctServer {
             as.getC_AcctSchema_ID());
       }
     } catch (ServletException e) {
-      log4j.warn(e);
+      docFINFinAccTransactionLog4j.warn(e);
       e.printStackTrace();
     }
     // Get Acct
@@ -1307,14 +1308,15 @@ public class DocFINFinAccTransaction extends AcctServer {
       return null;
     // No account
     if (Account_ID.equals("")) {
-      log4j.warn("AcctServer - getAccount - NO account Type=" + AcctType + ", Record=" + Record_ID);
+      docFINFinAccTransactionLog4j.warn("AcctServer - getAccount - NO account Type=" + AcctType
+          + ", Record=" + Record_ID);
       return null;
     }
     Account acct = null;
     try {
       acct = Account.getAccount(conn, Account_ID);
     } catch (ServletException e) {
-      log4j.warn(e);
+      docFINFinAccTransactionLog4j.warn(e);
       e.printStackTrace();
     }
     return acct;

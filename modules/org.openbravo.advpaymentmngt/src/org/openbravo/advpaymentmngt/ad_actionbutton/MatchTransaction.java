@@ -361,8 +361,7 @@ public class MatchTransaction extends HttpSecureAppServlet {
     return ((FIN_ReconciliationLine_v) obc.uniqueResult()).getTransactionDate();
   }
 
-  @SuppressWarnings("unused")
-  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strOrgId,
+  private void printPage(HttpServletResponse response, VariablesSecureApp variables, String strOrgId,
       String strWindowId, String strTabId, String strPaymentTypeFilter,
       String strFinancialAccountId, String reconciliationId, String strShowCleared,
       String strHideDate) throws IOException, ServletException {
@@ -373,8 +372,8 @@ public class MatchTransaction extends HttpSecureAppServlet {
         "org/openbravo/advpaymentmngt/ad_actionbutton/MatchTransaction").createXmlDocument();
 
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("theme", vars.getTheme());
+    xmlDocument.setParameter("language", "defaultLang=\"" + variables.getLanguage() + "\";");
+    xmlDocument.setParameter("theme", variables.getTheme());
     final String MATCHED_AGAINST_TRANSACTION = FIN_Utility.messageBD("APRM_Transaction");
     final String CONFIRMATION_MESSAGE = FIN_Utility.messageBD("APRM_AlgorithmConfirm");
 
@@ -404,7 +403,7 @@ public class MatchTransaction extends HttpSecureAppServlet {
     xmlDocument.setParameter("paramPaymentTypeFilter", strPaymentTypeFilter);
     xmlDocument.setParameter("showCleared", strShowCleared);
     xmlDocument.setParameter("hideDate", strHideDate);
-    xmlDocument.setParameter("jsDateFormat", "var sc_JsDateFormat =\"" + vars.getJsDateFormat()
+    xmlDocument.setParameter("jsDateFormat", "var sc_JsDateFormat =\"" + variables.getJsDateFormat()
         + "\";");
     // Check if There is a matching algorithm for the given financial account
     FIN_FinancialAccount financial = OBDal.getInstance().get(FIN_FinancialAccount.class,
@@ -414,20 +413,20 @@ public class MatchTransaction extends HttpSecureAppServlet {
       new FIN_MatchingTransaction(financial.getMatchingAlgorithm().getJavaClassName());
     } catch (Exception ex) {
       OBDal.getInstance().rollbackAndClose();
-      OBError message = Utility.translateError(this, vars, vars.getLanguage(), Utility
-          .parseTranslation(this, vars, vars.getLanguage(), "@APRM_MissingMatchingAlgorithm@"));
-      vars.setMessage(strTabId, message);
-      printPageClosePopUp(response, vars, Utility.getTabURL(strTabId, "R", true));
+      OBError message = Utility.translateError(this, variables, variables.getLanguage(), Utility
+          .parseTranslation(this, variables, variables.getLanguage(), "@APRM_MissingMatchingAlgorithm@"));
+      variables.setMessage(strTabId, message);
+      printPageClosePopUp(response, variables, Utility.getTabURL(strTabId, "R", true));
       return;
     } finally {
       OBContext.restorePreviousMode();
     }
     try {
-      ComboTableData comboTableData = new ComboTableData(vars, this, "LIST", "",
-          "0CC268ED2E8D4B0397A0DCBBFA2237DE", "", Utility.getContext(this, vars,
-              "#AccessibleOrgTree", "MatchTransaction"), Utility.getContext(this, vars,
+      ComboTableData comboTableData = new ComboTableData(variables, this, "LIST", "",
+          "0CC268ED2E8D4B0397A0DCBBFA2237DE", "", Utility.getContext(this, variables,
+              "#AccessibleOrgTree", "MatchTransaction"), Utility.getContext(this, variables,
               "#User_Client", "MatchTransaction"), 0);
-      Utility.fillSQLParameters(this, vars, null, comboTableData, "MatchTransaction", "");
+      Utility.fillSQLParameters(this, variables, null, comboTableData, "MatchTransaction", "");
       xmlDocument.setData("reportPaymentTypeFilter", "liststructure", comboTableData.select(false));
       comboTableData = null;
     } catch (Exception ex) {
@@ -440,7 +439,7 @@ public class MatchTransaction extends HttpSecureAppServlet {
     out.close();
   }
 
-  private void printGrid(HttpServletResponse response, VariablesSecureApp vars,
+  private void printGrid(HttpServletResponse response, VariablesSecureApp variables,
       String strPaymentTypeFilter, String strFinancialAccountId, String strReconciliationId,
       String strShowCleared, String strHideDate, String showJSMessage, boolean executeMatching)
       throws IOException, ServletException {
@@ -453,7 +452,7 @@ public class MatchTransaction extends HttpSecureAppServlet {
     try {
       OBContext.setAdminMode(true);
       // long init = System.currentTimeMillis();
-      data = getMatchedBankStatementLinesData(vars, strFinancialAccountId, strReconciliationId,
+      data = getMatchedBankStatementLinesData(variables, strFinancialAccountId, strReconciliationId,
           strPaymentTypeFilter, strShowCleared, strHideDate, executeMatching);
       // log4j.error("Getting Grid Data: " + (System.currentTimeMillis() - init));
     } catch (Exception e) {
@@ -505,7 +504,7 @@ public class MatchTransaction extends HttpSecureAppServlet {
     }
   }
 
-  private FieldProvider[] getMatchedBankStatementLinesData(VariablesSecureApp vars,
+  private FieldProvider[] getMatchedBankStatementLinesData(VariablesSecureApp variables,
       String strFinancialAccountId, String strReconciliationId, String strPaymentTypeFilter,
       String strShowCleared, String strHideDate, boolean executeMatching) throws ServletException {
     FIN_FinancialAccount financial = new AdvPaymentMngtDao().getObject(FIN_FinancialAccount.class,
@@ -536,7 +535,6 @@ public class MatchTransaction extends HttpSecureAppServlet {
         final String COLOR_STRONG = "#66CC00";
         final String COLOR_WEAK = "#99CC66";
         final String COLOR_WHITE = "white";
-        boolean alreadyMatched = false;
 
         FIN_BankStatementLine line = OBDal.getInstance().get(FIN_BankStatementLine.class,
             FIN_BankStatementLines[i].getId());
@@ -548,7 +546,6 @@ public class MatchTransaction extends HttpSecureAppServlet {
           if (executeMatching) {
             // try to match if exception is thrown continue
             try {
-              long initMatchLine = System.currentTimeMillis();
               matched = matchingTransaction.match(line, excluded);
               // initMatch = initMatch + (System.currentTimeMillis() - initMatchLine);
               OBDal.getInstance().getConnection().commit();
@@ -584,8 +581,6 @@ public class MatchTransaction extends HttpSecureAppServlet {
           }
           matchingType = matched.getMatchLevel();
 
-        } else {
-          alreadyMatched = true;
         }
 
         FieldProviderFactory.setField(data[i], "rownum", Integer.toString(i + 1));
@@ -595,7 +590,7 @@ public class MatchTransaction extends HttpSecureAppServlet {
             data[i],
             "bankLineTransactionDate",
             Utility.formatDate(FIN_BankStatementLines[i].getTransactionDate(),
-                vars.getJavaDateFormat()));
+                variables.getJavaDateFormat()));
         FieldProviderFactory.setField(
             data[i],
             "bankLineBusinessPartner",
@@ -636,7 +631,7 @@ public class MatchTransaction extends HttpSecureAppServlet {
                   "transactionDate",
                   Utility.formatDate(
                       transaction.getTransactionDate().compareTo(reconciliation.getEndingDate()) > 0 ? reconciliation
-                          .getEndingDate() : transaction.getTransactionDate(), vars
+                          .getEndingDate() : transaction.getTransactionDate(), variables
                           .getJavaDateFormat()));
           FieldProviderFactory
               .setField(
@@ -723,7 +718,7 @@ public class MatchTransaction extends HttpSecureAppServlet {
     return result;
   }
 
-  public String checkReconciliationNotProcessed(VariablesSecureApp vars,
+  public String checkReconciliationNotProcessed(VariablesSecureApp variables,
       String strReconciliationId, String strTabId) {
     FIN_Reconciliation reconciliation = MatchTransactionDao.getObject(FIN_Reconciliation.class,
         strReconciliationId);
@@ -731,8 +726,8 @@ public class MatchTransaction extends HttpSecureAppServlet {
     try {
       String text = "Closed or Invalid Reconciliation";
       if (reconciliation != null && !reconciliation.isNewOBObject() && reconciliation.isProcessed()) {
-        OBError menssage = Utility.translateError(this, vars, vars.getLanguage(), text);
-        vars.setMessage(strTabId, menssage);
+        OBError menssage = Utility.translateError(this, variables, variables.getLanguage(), text);
+        variables.setMessage(strTabId, menssage);
         return text;
       }
       return "";
@@ -872,13 +867,14 @@ public class MatchTransaction extends HttpSecureAppServlet {
   }
 
   private void unmatch(FIN_BankStatementLine bsline) {
+    FIN_BankStatementLine localBsline = bsline;
     OBContext.setAdminMode();
     try {
-      bsline = OBDal.getInstance().get(FIN_BankStatementLine.class, bsline.getId());
-      FIN_FinaccTransaction finTrans = bsline.getFinancialAccountTransaction();
+      localBsline = OBDal.getInstance().get(FIN_BankStatementLine.class, localBsline.getId());
+      FIN_FinaccTransaction finTrans = localBsline.getFinancialAccountTransaction();
       if (finTrans == null) {
         String strTransactionId = vars.getStringParameter("inpFinancialTransactionId_"
-            + bsline.getId());
+            + localBsline.getId());
         if (strTransactionId != null && !"".equals(strTransactionId)) {
           finTrans = OBDal.getInstance().get(FIN_FinaccTransaction.class, strTransactionId);
         }
@@ -887,16 +883,16 @@ public class MatchTransaction extends HttpSecureAppServlet {
         finTrans.setReconciliation(null);
         finTrans.setStatus((finTrans.getDepositAmount().subtract(finTrans.getPaymentAmount())
             .signum() == 1) ? "RDNC" : "PWNC");
-        bsline.setFinancialAccountTransaction(null);
+        localBsline.setFinancialAccountTransaction(null);
         OBDal.getInstance().save(finTrans);
         // OBDal.getInstance().flush();
       }
-      bsline.setMatchingtype(null);
-      OBDal.getInstance().save(bsline);
+      localBsline.setMatchingtype(null);
+      OBDal.getInstance().save(localBsline);
       // OBDal.getInstance().flush();
 
       // merge if the bank statement line was split before
-      mergeBankStatementLine(bsline);
+      mergeBankStatementLine(localBsline);
 
       if (finTrans != null) {
         if (finTrans.getFinPayment() != null) {
@@ -915,19 +911,19 @@ public class MatchTransaction extends HttpSecureAppServlet {
         // OBDal.getInstance().flush();
       }
       // Execute un-matching logic defined by algorithm
-      MatchingAlgorithm ma = bsline.getBankStatement().getAccount().getMatchingAlgorithm();
+      MatchingAlgorithm ma = localBsline.getBankStatement().getAccount().getMatchingAlgorithm();
       FIN_MatchingTransaction matchingTransaction = new FIN_MatchingTransaction(
           ma.getJavaClassName());
       matchingTransaction.unmatch(finTrans);
 
       // Do not allow bank statement lines of 0
-      if (bsline.getCramount().compareTo(BigDecimal.ZERO) == 0
-          && bsline.getDramount().compareTo(BigDecimal.ZERO) == 0) {
-        FIN_BankStatement bs = bsline.getBankStatement();
+      if (localBsline.getCramount().compareTo(BigDecimal.ZERO) == 0
+          && localBsline.getDramount().compareTo(BigDecimal.ZERO) == 0) {
+        FIN_BankStatement bs = localBsline.getBankStatement();
         bs.setProcessed(false);
         OBDal.getInstance().save(bs);
         OBDal.getInstance().flush();
-        OBDal.getInstance().remove(bsline);
+        OBDal.getInstance().remove(localBsline);
         OBDal.getInstance().flush();
         bs.setProcessed(true);
         OBDal.getInstance().save(bs);
@@ -1374,6 +1370,7 @@ public class MatchTransaction extends HttpSecureAppServlet {
 
   void matchBankStatementLine(String strFinBankStatementLineId, String strFinancialTransactionId,
       String strReconciliationId, String matchLevel) {
+    String localMatchLevel = matchLevel;
     OBContext.setAdminMode(false);
     try {
       FIN_BankStatementLine bsl = OBDal.getInstance().get(FIN_BankStatementLine.class,
@@ -1388,10 +1385,10 @@ public class MatchTransaction extends HttpSecureAppServlet {
           unmatch(bsl);
         }
         bsl.setFinancialAccountTransaction(transaction);
-        if (matchLevel == null || "".equals(matchLevel)) {
-          matchLevel = FIN_MatchedTransaction.MANUALMATCH;
+        if (localMatchLevel == null || "".equals(localMatchLevel)) {
+          localMatchLevel = FIN_MatchedTransaction.MANUALMATCH;
         }
-        bsl.setMatchingtype(matchLevel);
+        bsl.setMatchingtype(localMatchLevel);
         transaction.setStatus("RPPC");
         transaction.setReconciliation(MatchTransactionDao.getObject(FIN_Reconciliation.class,
             strReconciliationId));

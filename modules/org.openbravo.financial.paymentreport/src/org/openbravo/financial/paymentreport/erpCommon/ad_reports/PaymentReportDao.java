@@ -1702,6 +1702,7 @@ public class PaymentReportDao {
       String strcProjectIdIN, String strfinPaymSt, String strcCurrency, String strPaymType,
       String strGroupCrit, String strOrdCrit, String strcNoBusinessPartner, String strDueDateFrom,
       String strDueDateTo, String strExpectedDateFrom, String strExpectedDateTo) {
+    String localStrfinPaymSt = strfinPaymSt;
     Organization[] organizations;
     if (strInclSubOrg.equalsIgnoreCase("include")) {
       Set<String> orgChildTree = OBContext.getOBContext().getOrganizationStructureProvider()
@@ -1828,12 +1829,12 @@ public class PaymentReportDao {
       }
 
       // Status
-      if (!strfinPaymSt.isEmpty() && !strfinPaymSt.equalsIgnoreCase("('')")) {
-        strfinPaymSt = strfinPaymSt.replace("(", "");
-        strfinPaymSt = strfinPaymSt.replace(")", "");
-        strfinPaymSt = strfinPaymSt.replace("'", "");
-        strfinPaymSt = strfinPaymSt.replace(" ", "");
-        String[] status = strfinPaymSt.split(",");
+      if (!localStrfinPaymSt.isEmpty() && !localStrfinPaymSt.equalsIgnoreCase("('')")) {
+        localStrfinPaymSt = localStrfinPaymSt.replace("(", "");
+        localStrfinPaymSt = localStrfinPaymSt.replace(")", "");
+        localStrfinPaymSt = localStrfinPaymSt.replace("'", "");
+        localStrfinPaymSt = localStrfinPaymSt.replace(" ", "");
+        String[] status = localStrfinPaymSt.split(",");
         obCriteriaTrans.add(Restrictions.in(FIN_FinaccTransaction.PROPERTY_STATUS, status));
       }
 

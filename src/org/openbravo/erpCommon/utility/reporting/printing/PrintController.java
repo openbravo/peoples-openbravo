@@ -8,7 +8,7 @@
  * either express or implied. See the License for the specific language
  * governing rights and limitations under the License. The Original Code is
  * Openbravo ERP. The Initial Developer of the Original Code is Openbravo SLU All
- * portions are Copyright (C) 2008-2015 Openbravo SLU All Rights Reserved.
+ * portions are Copyright (C) 2008-2016 Openbravo SLU All Rights Reserved.
  * Contributor(s): ______________________________________.
  */
 package org.openbravo.erpCommon.utility.reporting.printing;
@@ -167,9 +167,10 @@ public class PrintController extends HttpSecureAppServlet {
   void post(HttpServletRequest request, HttpServletResponse response, VariablesSecureApp vars,
       DocumentType documentType, String sessionValuePrefix, String strDocumentId)
       throws IOException, ServletException {
+    String localStrDocumentId = strDocumentId;
     try {
 
-      String fullDocumentIdentifier = strDocumentId + documentType.getTableName();
+      String fullDocumentIdentifier = localStrDocumentId + documentType.getTableName();
 
       Map<String, Report> reports;
 
@@ -180,13 +181,13 @@ public class PrintController extends HttpSecureAppServlet {
 
       String documentIds[] = null;
       if (log4j.isDebugEnabled())
-        log4j.debug("strDocumentId: " + strDocumentId);
+        log4j.debug("strDocumentId: " + localStrDocumentId);
       // normalize the string of ids to a comma separated list
-      strDocumentId = strDocumentId.replaceAll("\\(|\\)|'", "");
-      if (strDocumentId.length() == 0)
+      localStrDocumentId = localStrDocumentId.replaceAll("\\(|\\)|'", "");
+      if (localStrDocumentId.length() == 0)
         throw new ServletException(Utility.messageBD(this, "NoDocument", vars.getLanguage()));
 
-      documentIds = strDocumentId.split(",");
+      documentIds = localStrDocumentId.split(",");
 
       if (log4j.isDebugEnabled())
         log4j.debug("Number of documents selected: " + documentIds.length);
@@ -278,7 +279,6 @@ public class PrintController extends HttpSecureAppServlet {
 
               final String senderAddress = EmailData.getSenderAddress(this, vars.getClient(),
                   report.getOrgId());
-              boolean moreThanOnesalesRep = checks.get("moreThanOnesalesRep").booleanValue();
 
               if (request.getServletPath().toLowerCase().indexOf(PRINT_PATH) == -1
                   && request.getServletPath().toLowerCase().indexOf(PRINT_OPTIONS_PATH) == -1) {
@@ -412,18 +412,16 @@ public class PrintController extends HttpSecureAppServlet {
                 + fullDocumentIdentifier);
             final String templateId = vars.getRequestGlobalVariable("templates", "templates");
             final String documentId = pocData[0].documentId;
-            for (final PocData documentData : pocData) {
-              final Report report = new Report(this, documentType, documentId, vars.getLanguage(),
-                  templateId, multiReports, OutputTypeEnum.DEFAULT);
-              o.put("templateId", templateId);
-              o.put("subject", report.getEmailDefinition().getSubject());
-              o.put("body", report.getEmailDefinition().getBody());
-              if (!multiReports) {
-                o.put("filename", report.getFilename());
-              }
-              reports = new HashMap<String, Report>();
-              reports.put(documentId, report);
+            final Report report = new Report(this, documentType, documentId, vars.getLanguage(),
+                templateId, multiReports, OutputTypeEnum.DEFAULT);
+            o.put("templateId", templateId);
+            o.put("subject", report.getEmailDefinition().getSubject());
+            o.put("body", report.getEmailDefinition().getBody());
+            if (!multiReports) {
+              o.put("filename", report.getFilename());
             }
+            reports = new HashMap<String, Report>();
+            reports.put(documentId, report);
             vars.setSessionObject(sessionValuePrefix + ".Documents", reports);
 
           } catch (Exception e) {
@@ -581,12 +579,13 @@ public class PrintController extends HttpSecureAppServlet {
   public Report buildReport(HttpServletResponse response, VariablesSecureApp vars,
       String strDocumentId, final ReportManager reportManager, DocumentType documentType,
       OutputTypeEnum outputType, String templateId) {
+    String localStrDocumentId = strDocumentId;
     Report report = null;
-    if (strDocumentId != null) {
-      strDocumentId = strDocumentId.replaceAll("\\(|\\)|'", "");
+    if (localStrDocumentId != null) {
+      localStrDocumentId = localStrDocumentId.replaceAll("\\(|\\)|'", "");
     }
     try {
-      report = new Report(this, documentType, strDocumentId, vars.getLanguage(), templateId,
+      report = new Report(this, documentType, localStrDocumentId, vars.getLanguage(), templateId,
           multiReports, outputType);
     } catch (final ReportingException e) {
       log4j.error(e);
@@ -601,10 +600,11 @@ public class PrintController extends HttpSecureAppServlet {
   public void buildReport(HttpServletResponse response, VariablesSecureApp vars,
       String strDocumentId, Map<String, Report> reports, final ReportManager reportManager)
       throws ServletException, IOException {
+    String localStrDocumentId = strDocumentId;
     final String documentId = vars.getStringParameter("inpDocumentId");
-    if (strDocumentId != null)
-      strDocumentId = strDocumentId.replaceAll("\\(|\\)|'", "");
-    final Report report = reports.get(strDocumentId);
+    if (localStrDocumentId != null)
+      localStrDocumentId = localStrDocumentId.replaceAll("\\(|\\)|'", "");
+    final Report report = reports.get(localStrDocumentId);
     if (report == null)
       throw new ServletException(Utility.messageBD(this, "NoDataReport", vars.getLanguage())
           + documentId);
@@ -1334,28 +1334,20 @@ public class PrintController extends HttpSecureAppServlet {
     // check the templates
     if (differentDocTypes.size() > 1) { // the templates selector shouldn't
       // appear
-      if (discard == null) { // Its the only think to hide
-        discard = new String[] { "discardSelect" };
-      } else {
-        final String[] discardAux = new String[discard.length + 1];
-        for (int i = 0; i < discard.length; i++) {
-          discardAux[i] = discard[i];
-        }
-        discardAux[discard.length] = "discardSelect";
-        return discardAux;
+      final String[] discardAux = new String[discard.length + 1];
+      for (int i = 0; i < discard.length; i++) {
+        discardAux[i] = discard[i];
       }
+      discardAux[discard.length] = "discardSelect";
+      return discardAux;
     }
     if (vector == null && vars.getMultiFile("inpFile") == null) {
-      if (discard == null) {
-        discard = new String[] { "view" };
-      } else {
-        final String[] discardAux = new String[discard.length + 1];
-        for (int i = 0; i < discard.length; i++) {
-          discardAux[i] = discard[i];
-        }
-        discardAux[discard.length] = "view";
-        return discardAux;
+      final String[] discardAux = new String[discard.length + 1];
+      for (int i = 0; i < discard.length; i++) {
+        discardAux[i] = discard[i];
       }
+      discardAux[discard.length] = "view";
+      return discardAux;
     }
     return discard;
   }

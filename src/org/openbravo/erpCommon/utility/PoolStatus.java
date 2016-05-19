@@ -90,19 +90,20 @@ public class PoolStatus extends HttpSecureAppServlet {
   // replaces the linebreak character and the enter carriage with \n and \r,
   // in order to make it identify just the in the second reading
   private String formatearTextoJavascript(String strTexto) {
+    String localStrTexto = strTexto;
     int pos;
-    while (strTexto.indexOf('\r') != -1) {
-      pos = strTexto.indexOf('\r');
-      strTexto = strTexto.substring(0, pos) + "<br>"
-          + strTexto.substring(pos + 1, strTexto.length());
+    while (localStrTexto.indexOf('\r') != -1) {
+      pos = localStrTexto.indexOf('\r');
+      localStrTexto = localStrTexto.substring(0, pos) + "<br>"
+          + localStrTexto.substring(pos + 1, localStrTexto.length());
     }
 
-    while (strTexto.indexOf('\n') != -1) {
-      pos = strTexto.indexOf('\n');
-      strTexto = strTexto.substring(0, pos) + "<br>"
-          + strTexto.substring(pos + 1, strTexto.length());
+    while (localStrTexto.indexOf('\n') != -1) {
+      pos = localStrTexto.indexOf('\n');
+      localStrTexto = localStrTexto.substring(0, pos) + "<br>"
+          + localStrTexto.substring(pos + 1, localStrTexto.length());
     }
-    return strTexto;
+    return localStrTexto;
 
   }
 

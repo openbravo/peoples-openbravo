@@ -89,7 +89,6 @@ public class ModelProvider implements OBSingleton {
   private List<Module> modules;
   private Session initsession;
 
-  private static final String DATASOURCEBASEDTABLE = "Datasource";
   private static final String TABLEBASEDTABLE = "Table";
 
   /**

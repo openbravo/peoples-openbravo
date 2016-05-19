@@ -53,7 +53,6 @@ public class ReportManager {
   private String _strBaseWeb; // BASE WEB!!!!!!
   private String _prefix;
   private String _strAttachmentPath;
-  private boolean multiReports = false;
 
   public ReportManager(ConnectionProvider connectionProvider, String ftpDirectory,
       String replaceWithFull, String baseDesignPath, String defaultDesignPath, String prefix,
@@ -64,7 +63,6 @@ public class ReportManager {
     _strDefaultDesignPath = defaultDesignPath;
     _strAttachmentPath = ftpDirectory;
     _prefix = prefix;
-    multiReports = multiReport;
 
     // Strip of ending slash character
     if (_strBaseDesignPath.endsWith("/"))
@@ -214,10 +212,10 @@ public class ReportManager {
     designParameters.put("USER_ORG",
         Utility.getContext(_connectionProvider, variables, "#User_Org", ""));
 
-    final String language = variables.getLanguage();
-    designParameters.put("LANGUAGE", language);
+    final String lang = variables.getLanguage();
+    designParameters.put("LANGUAGE", lang);
 
-    final Locale locale = new Locale(language.substring(0, 2), language.substring(3, 5));
+    final Locale locale = new Locale(lang.substring(0, 2), lang.substring(3, 5));
     designParameters.put("LOCALE", locale);
 
     final DecimalFormatSymbols dfs = new DecimalFormatSymbols();

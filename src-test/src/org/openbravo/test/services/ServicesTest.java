@@ -92,10 +92,7 @@ public class ServicesTest extends WeldBaseTest {
       PARAMS);
 
   /** this field will take the values defined by parameterValuesRule field. */
-  private @ParameterCdiTest
-  ServiceTestData parameter;
-
-  private static int counterTest = 0;
+  private @ParameterCdiTest ServiceTestData parameter;
 
   /**
    * Verifies price computation for services. Add a relation line, update it and delete it. Review
@@ -191,7 +188,6 @@ public class ServicesTest extends WeldBaseTest {
           .getOrderlineServiceRelationCOrderlineRelatedIDList().size()),
           closeTo(BigDecimal.ZERO, BigDecimal.ZERO));
 
-      counterTest++;
     } catch (Exception e) {
       log.error("Error when executing: " + parameter.getTestDescription(), e);
       assertFalse(true);

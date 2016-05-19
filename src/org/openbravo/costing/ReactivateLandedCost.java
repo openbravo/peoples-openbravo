@@ -73,12 +73,13 @@ public class ReactivateLandedCost extends BaseActionHandler {
 
   public static JSONObject doReactivateLandedCost(LandedCost landedCost) throws OBException,
       JSONException {
-    String strLCostId = landedCost.getId();
+    LandedCost localLandedCost = landedCost;
+    String strLCostId = localLandedCost.getId();
     JSONObject message = null;
 
     // Cancel cost adjustment only if exists
-    if (landedCost.getCostAdjustment() != null) {
-      message = CancelCostAdjustment.doCancelCostAdjustment(landedCost.getCostAdjustment());
+    if (localLandedCost.getCostAdjustment() != null) {
+      message = CancelCostAdjustment.doCancelCostAdjustment(localLandedCost.getCostAdjustment());
       if (!"success".equals(message.get("severity"))) {
         return message;
       }
@@ -90,11 +91,11 @@ public class ReactivateLandedCost extends BaseActionHandler {
 
     String strPartialMessage = "";
     // Reload in case the cancel cost adjustment has cleared the session.
-    landedCost = OBDal.getInstance().get(LandedCost.class, strLCostId);
-    landedCost.setProcessed(Boolean.FALSE);
-    OBDal.getInstance().save(landedCost);
+    localLandedCost = OBDal.getInstance().get(LandedCost.class, strLCostId);
+    localLandedCost.setProcessed(Boolean.FALSE);
+    OBDal.getInstance().save(localLandedCost);
     OBDal.getInstance().flush();
-    for (LandedCostCost lcc : landedCost.getLandedCostCostList()) {
+    for (LandedCostCost lcc : localLandedCost.getLandedCostCostList()) {
       if (lcc.isMatched()) {
         message = LCMatchingCancelHandler.doCancelMatchingLandedCost(lcc.getId());
       }
@@ -116,10 +117,10 @@ public class ReactivateLandedCost extends BaseActionHandler {
     }
 
     // Reload in case the cancel cost adjustment has cleared the session.
-    landedCost = OBDal.getInstance().get(LandedCost.class, strLCostId);
-    landedCost.setDocumentStatus("DR");
-    landedCost.setCostAdjustment(null);
-    OBDal.getInstance().save(landedCost);
+    localLandedCost = OBDal.getInstance().get(LandedCost.class, strLCostId);
+    localLandedCost.setDocumentStatus("DR");
+    localLandedCost.setCostAdjustment(null);
+    OBDal.getInstance().save(localLandedCost);
 
     message.put("title", OBMessageUtils.messageBD("Success"));
     message.put("text", strPartialMessage);

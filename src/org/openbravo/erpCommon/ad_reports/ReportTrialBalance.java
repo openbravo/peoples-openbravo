@@ -768,30 +768,32 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
 
   private ReportTrialBalanceData[] calculateTree(ReportTrialBalanceData[] data, String indice,
       Vector<Object> vecTotal, ReportTrialBalanceData[] dataIB, String strNotInitialBalance) {
+    Vector<Object> localVecTotal = vecTotal;
+    String localIndice = indice;
     if (data == null || data.length == 0)
       return data;
-    if (indice == null)
-      indice = "0";
+    if (localIndice == null)
+      localIndice = "0";
     ReportTrialBalanceData[] result = null;
     Vector<Object> vec = new Vector<Object>();
     // if (log4j.isDebugEnabled())
     // log4j.debug("ReportTrialBalanceData.calculateTree() - data: " +
     // data.length);
-    if (vecTotal == null)
-      vecTotal = new Vector<Object>();
-    if (vecTotal.size() == 0) {
-      vecTotal.addElement("0");
-      vecTotal.addElement("0");
-      vecTotal.addElement("0");
-      vecTotal.addElement("0");
+    if (localVecTotal == null)
+      localVecTotal = new Vector<Object>();
+    if (localVecTotal.size() == 0) {
+      localVecTotal.addElement("0");
+      localVecTotal.addElement("0");
+      localVecTotal.addElement("0");
+      localVecTotal.addElement("0");
     }
-    BigDecimal totalDR = new BigDecimal((String) vecTotal.elementAt(0));
-    BigDecimal totalCR = new BigDecimal((String) vecTotal.elementAt(1));
-    BigDecimal totalInicial = new BigDecimal((String) vecTotal.elementAt(2));
-    BigDecimal totalFinal = new BigDecimal((String) vecTotal.elementAt(3));
+    BigDecimal totalDR = new BigDecimal((String) localVecTotal.elementAt(0));
+    BigDecimal totalCR = new BigDecimal((String) localVecTotal.elementAt(1));
+    BigDecimal totalInicial = new BigDecimal((String) localVecTotal.elementAt(2));
+    BigDecimal totalFinal = new BigDecimal((String) localVecTotal.elementAt(3));
     boolean encontrado = false;
     for (int i = 0; i < data.length; i++) {
-      if (data[i].parentId.equals(indice)) {
+      if (data[i].parentId.equals(localIndice)) {
         encontrado = true;
         Vector<Object> vecParcial = new Vector<Object>();
         vecParcial.addElement("0");
@@ -803,7 +805,6 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
         BigDecimal parcialDR = new BigDecimal((String) vecParcial.elementAt(0));
         BigDecimal parcialCR = new BigDecimal((String) vecParcial.elementAt(1));
         BigDecimal parcialInicial = new BigDecimal((String) vecParcial.elementAt(2));
-        BigDecimal parcialFinal = new BigDecimal((String) vecParcial.elementAt(3));
         data[i].amtacctdr = (new BigDecimal(data[i].amtacctdr).add(parcialDR)).toPlainString();
         data[i].amtacctcr = (new BigDecimal(data[i].amtacctcr).add(parcialCR)).toPlainString();
         data[i].saldoInicial = (new BigDecimal(data[i].saldoInicial).add(parcialInicial))
@@ -842,10 +843,10 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
       } else if (encontrado)
         break;
     }
-    vecTotal.set(0, totalDR.toPlainString());
-    vecTotal.set(1, totalCR.toPlainString());
-    vecTotal.set(2, totalInicial.toPlainString());
-    vecTotal.set(3, totalFinal.toPlainString());
+    localVecTotal.set(0, totalDR.toPlainString());
+    localVecTotal.set(1, totalCR.toPlainString());
+    localVecTotal.set(2, totalInicial.toPlainString());
+    localVecTotal.set(3, totalFinal.toPlainString());
     result = new ReportTrialBalanceData[vec.size()];
     vec.copyInto(result);
     return result;
@@ -877,6 +878,7 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
 
   private ReportTrialBalanceData[] levelFilter(ReportTrialBalanceData[] data, String indice,
       boolean found, String strLevel) {
+    String localIndice = indice;
     if (data == null || data.length == 0 || strLevel == null || strLevel.equals(""))
       return data;
     ReportTrialBalanceData[] result = null;
@@ -885,10 +887,10 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
     // log4j.debug("ReportTrialBalanceData.levelFilter() - data: " +
     // data.length);
 
-    if (indice == null)
-      indice = "0";
+    if (localIndice == null)
+      localIndice = "0";
     for (int i = 0; i < data.length; i++) {
-      if (data[i].parentId.equals(indice)
+      if (data[i].parentId.equals(localIndice)
           && (!found || data[i].elementlevel.equalsIgnoreCase(strLevel))) {
         ReportTrialBalanceData[] dataChilds = levelFilter(data, data[i].id,
             (found || data[i].elementlevel.equals(strLevel)), strLevel);

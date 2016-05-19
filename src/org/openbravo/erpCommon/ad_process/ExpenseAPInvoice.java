@@ -49,7 +49,7 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class ExpenseAPInvoice extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
   private static final BigDecimal ZERO = BigDecimal.ZERO;
-  static Logger log4j = Logger.getLogger(ExpenseAPInvoice.class);
+  private static final Logger expenseAPInvoiceLog4j = Logger.getLogger(ExpenseAPInvoice.class);
 
   public void init(ServletConfig config) {
     super.init(config);
@@ -87,8 +87,8 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
 
   private OBError processExpense(VariablesSecureApp vars, String strcBpartnerId,
       String strDatereportFrom, String strDatereportTo, String strDateInvoiced) {
-    if (log4j.isDebugEnabled())
-      log4j.debug("Save: Expense AP Invoice");
+    if (expenseAPInvoiceLog4j.isDebugEnabled())
+      expenseAPInvoiceLog4j.debug("Save: Expense AP Invoice");
     int line = 0;
 
     String strcInvoiceId = "";
@@ -303,8 +303,8 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
             data[i].adOrgId, data[i].mProductId, data[i].cUomId, strPricestd, strPricelist,
             strPricelimit, data[i].description, strcTaxID);
 
-        if (log4j.isDebugEnabled())
-          log4j.debug("dataInvoiceline: " + dataInvoiceline.length);
+        if (expenseAPInvoiceLog4j.isDebugEnabled())
+          expenseAPInvoiceLog4j.debug("dataInvoiceline: " + dataInvoiceline.length);
         if (dataInvoiceline == null || dataInvoiceline.length == 0) {
           // If it is a new line, calculates c_invoiceline_id and qty
           strcInvoiceLineId = SequenceIdData.getUUID();
@@ -315,8 +315,8 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
             strLine = "10";
           line += Integer.valueOf(strLine);
 
-          if (log4j.isDebugEnabled())
-            log4j.debug("*****************+client: "
+          if (expenseAPInvoiceLog4j.isDebugEnabled())
+            expenseAPInvoiceLog4j.debug("*****************+client: "
                 + (data[i].invoiceprice.equals("") ? dataPrice[0].pricestd : data[i].invoiceprice));
           // Calculate Acc and Def Plan from Product
           String isDeferred = "N";
@@ -326,7 +326,6 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
           String periodNumber = accDefPlanData.get("periodNumber");
           String startingPeriodId = accDefPlanData.get("startingPeriodId");
           // As it is a Expense invoice:
-          boolean isSOTRX = false;
           if (!"".equals(planType) && !"".equals(periodNumber) && !"".equals(startingPeriodId)) {
             isDeferred = "Y";
           } else {
@@ -435,7 +434,7 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
       } catch (Exception ignored) {
       }
       f.printStackTrace();
-      log4j.warn("Rollback in transaction");
+      expenseAPInvoiceLog4j.warn("Rollback in transaction");
       myMessage.setType("Error");
       myMessage.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
       myMessage.setMessage(Utility.messageBD(this, "PriceListVersionNotFound", vars.getLanguage())
@@ -452,7 +451,7 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
       } catch (Exception ignored) {
       }
       e.printStackTrace();
-      log4j.warn("Rollback in transaction");
+      expenseAPInvoiceLog4j.warn("Rollback in transaction");
       myMessage.setType("Error");
       myMessage.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
       if (e.getMessage().equals("PricelistNotdefined")) {
@@ -485,8 +484,8 @@ public class ExpenseAPInvoice extends HttpSecureAppServlet {
   private void printPage(HttpServletResponse response, VariablesSecureApp vars,
       String strcBpartnerId, String strDatereportFrom, String strDatereportTo,
       String strDateInvoiced) throws IOException, ServletException {
-    if (log4j.isDebugEnabled())
-      log4j.debug("Output: process ExpenseAPInvoice");
+    if (expenseAPInvoiceLog4j.isDebugEnabled())
+      expenseAPInvoiceLog4j.debug("Output: process ExpenseAPInvoice");
 
     ActionButtonDefaultData[] data = null;
     String strHelp = "", strDescription = "", strProcessId = "187";

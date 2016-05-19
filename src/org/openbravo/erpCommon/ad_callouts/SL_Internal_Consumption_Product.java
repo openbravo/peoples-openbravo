@@ -76,6 +76,9 @@ public class SL_Internal_Consumption_Product extends HttpSecureAppServlet {
   private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strChanged,
       String strProduct, String strPLocator, String strPAttr, String strPQty, String strPUOM,
       String strQty, String strUOM, String strTabId) throws IOException, ServletException {
+    String localStrPUOM = strPUOM;
+    String localStrPLocator = strPLocator;
+    String localStrPAttr = strPAttr;
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
@@ -85,19 +88,20 @@ public class SL_Internal_Consumption_Product extends HttpSecureAppServlet {
     resultado.append("var calloutName='SL_Internal_Consumption_Product';\n\n");
     resultado.append("var respuesta = new Array(");
     resultado.append("new Array(\"inpcUomId\", \"" + strUOM + "\"),\n");
-    if (strPLocator.startsWith("\""))
-      strPLocator = strPLocator.substring(1, strPLocator.length() - 1);
-    resultado.append("new Array(\"inpmLocatorId\", \"" + strPLocator + "\"),\n");
+    if (localStrPLocator.startsWith("\""))
+      localStrPLocator = localStrPLocator.substring(1, localStrPLocator.length() - 1);
+    resultado.append("new Array(\"inpmLocatorId\", \"" + localStrPLocator + "\"),\n");
     resultado.append("new Array(\"inpmLocatorId_R\", \""
         + FormatUtilities.replaceJS(SLInternalConsumptionProductData.selectLocator(this,
-            strPLocator)) + "\"),\n");
+            localStrPLocator)) + "\"),\n");
     String strHasSecondaryUOM = SLOrderProductData.hasSecondaryUOM(this, strProduct);
     resultado.append("new Array(\"inphasseconduom\", " + strHasSecondaryUOM + "),\n");
-    if (strPAttr.startsWith("\""))
-      strPAttr = strPAttr.substring(1, strPAttr.length() - 1);
-    resultado.append("new Array(\"inpmAttributesetinstanceId\", \"" + strPAttr + "\"),\n");
+    if (localStrPAttr.startsWith("\""))
+      localStrPAttr = localStrPAttr.substring(1, localStrPAttr.length() - 1);
+    resultado.append("new Array(\"inpmAttributesetinstanceId\", \"" + localStrPAttr + "\"),\n");
     resultado.append("new Array(\"inpmAttributesetinstanceId_R\", \""
-        + FormatUtilities.replaceJS(SLInOutLineProductData.attribute(this, strPAttr)) + "\"),\n");
+        + FormatUtilities.replaceJS(SLInOutLineProductData.attribute(this, localStrPAttr))
+        + "\"),\n");
     String strAttrSet, strAttrSetValueType;
     strAttrSet = strAttrSetValueType = "";
     OBContext.setAdminMode();
@@ -112,18 +116,19 @@ public class SL_Internal_Consumption_Product extends HttpSecureAppServlet {
     } finally {
       OBContext.restorePreviousMode();
     }
-    resultado.append("new Array(\"inpattributeset\", \"" 
-        + (strAttrSet == null || strAttrSet.equals("") ? "" : FormatUtilities.replaceJS(strAttrSet))
-        + "\"),\n");
+    resultado
+        .append("new Array(\"inpattributeset\", \""
+            + (strAttrSet == null || strAttrSet.equals("") ? "" : FormatUtilities
+                .replaceJS(strAttrSet)) + "\"),\n");
     resultado.append("new Array(\"inpattrsetvaluetype\", \""
-        + (strAttrSetValueType == null || strAttrSetValueType.equals("") ? "" : FormatUtilities.replaceJS(strAttrSetValueType))
-    	+ "\"),\n");
+        + (strAttrSetValueType == null || strAttrSetValueType.equals("") ? "" : FormatUtilities
+            .replaceJS(strAttrSetValueType)) + "\"),\n");
     resultado.append("new Array(\"inpmovementqty\", " + (strQty.equals("") ? "\"\"" : strQty)
         + "),\n");
     resultado.append("new Array(\"inpquantityorder\", " + (strPQty.equals("") ? "\"\"" : strPQty)
         + "),\n");
-    if (strPUOM.startsWith("\""))
-      strPUOM = strPUOM.substring(1, strPUOM.length() - 1);
+    if (localStrPUOM.startsWith("\""))
+      localStrPUOM = localStrPUOM.substring(1, localStrPUOM.length() - 1);
     resultado.append("new Array(\"inpmProductUomId\", ");
     if (vars.getLanguage().equals("en_US")) {
       FieldProvider[] tld = null;
@@ -145,7 +150,7 @@ public class SL_Internal_Consumption_Product extends HttpSecureAppServlet {
         for (int i = 0; i < tld.length; i++) {
           resultado.append("new Array(\"" + tld[i].getField("id") + "\", \""
               + FormatUtilities.replaceJS(tld[i].getField("name")) + "\", \""
-              + ((tld[i].getField("id").equals(strPUOM)) ? "true" : "false") + "\")");
+              + ((tld[i].getField("id").equals(localStrPUOM)) ? "true" : "false") + "\")");
           if (i < tld.length - 1)
             resultado.append(",\n");
         }
@@ -173,7 +178,7 @@ public class SL_Internal_Consumption_Product extends HttpSecureAppServlet {
         for (int i = 0; i < tld.length; i++) {
           resultado.append("new Array(\"" + tld[i].getField("id") + "\", \""
               + FormatUtilities.replaceJS(tld[i].getField("name")) + "\", \""
-              + ((tld[i].getField("id").equals(strPUOM)) ? "true" : "false") + "\")");
+              + ((tld[i].getField("id").equals(localStrPUOM)) ? "true" : "false") + "\")");
           if (i < tld.length - 1)
             resultado.append(",\n");
         }

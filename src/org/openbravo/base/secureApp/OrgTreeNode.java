@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2008-2010 Openbravo S.L.U.
+ * Copyright (C) 2008-2016 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -30,7 +30,6 @@ class OrgTreeNode implements Serializable {
   private String value;
   private String isReady;
   private OrganizationType orgType;
-  private String serializedOrgTypeId;
 
   /**
    * Creates a node from data related to it
@@ -65,7 +64,6 @@ class OrgTreeNode implements Serializable {
   // only be deserialized if they are connected to the db because some
   // of the references maybe a cglib proxy
   private void writeObject(ObjectOutputStream out) throws IOException {
-    serializedOrgTypeId = orgType.getId();
     orgType = null;
     out.defaultWriteObject();
   }

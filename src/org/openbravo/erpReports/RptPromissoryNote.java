@@ -182,13 +182,15 @@ public class RptPromissoryNote extends HttpSecureAppServlet {
   }
 
   private String debtPaymentTree(String strcDebtPaymentId) throws IOException, ServletException {
+    String localStrcDebtPaymentId = strcDebtPaymentId;
     String strDocumentno = "";
     // strMark=(sale, buy);
     // boolean[] strMark = {true, true};
-    strcDebtPaymentId = "(" + strcDebtPaymentId + ")";
+    localStrcDebtPaymentId = "(" + localStrcDebtPaymentId + ")";
     while (true) {
-      RptPromissoryNoteTreeData[] data = RptPromissoryNoteTreeData.select(this, strcDebtPaymentId);
-      strcDebtPaymentId = "(";
+      RptPromissoryNoteTreeData[] data = RptPromissoryNoteTreeData.select(this,
+          localStrcDebtPaymentId);
+      localStrcDebtPaymentId = "(";
       if (data == null || data.length == 0)
         break;
       for (int i = 0; i < data.length; i++) {
@@ -201,11 +203,11 @@ public class RptPromissoryNote extends HttpSecureAppServlet {
                 + data[i].grandtotal + " *";
           strDocumentno += "\n";
         }
-        strcDebtPaymentId += data[i].cDebtPaymentId;
+        localStrcDebtPaymentId += data[i].cDebtPaymentId;
         if (i != data.length - 1)
-          strcDebtPaymentId += ",";
+          localStrcDebtPaymentId += ",";
       }
-      strcDebtPaymentId += ")";
+      localStrcDebtPaymentId += ")";
     }
     return strDocumentno;
   }

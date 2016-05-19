@@ -67,6 +67,7 @@ public class ServicePriceUtils {
   public static BigDecimal getServiceAmount(OrderLine orderline, BigDecimal linesTotalAmount,
       BigDecimal totalDiscounts, BigDecimal totalPrice, BigDecimal relatedQty,
       BigDecimal unitDiscountsAmt) {
+    BigDecimal localRelatedQty = relatedQty;
     final Product serviceProduct = orderline.getProduct();
     OBContext.setAdminMode(true);
     try {
@@ -100,7 +101,7 @@ public class ServicePriceUtils {
           HashMap<String, BigDecimal> relatedAmountAndQuatity = getRelatedAmountAndQty(orderline);
           relatedAmount = relatedAmountAndQuatity.get("amount");
           // TODO: APPLY quantities
-          relatedQty = relatedAmountAndQuatity.get("quantity");
+          localRelatedQty = relatedAmountAndQuatity.get("quantity");
         }
 
         if (PERCENTAGE.equals(servicePriceRule.getRuletype())) {
@@ -145,7 +146,7 @@ public class ServicePriceUtils {
             }
           }
           if (!UNIQUE_QUANTITY.equals(serviceProduct.getQuantityRule())) {
-            serviceRelatedPrice = serviceRelatedPrice.multiply(relatedQty);
+            serviceRelatedPrice = serviceRelatedPrice.multiply(localRelatedQty);
           }
         }
         return serviceRelatedPrice.setScale(orderline.getCurrency().getPricePrecision().intValue(),

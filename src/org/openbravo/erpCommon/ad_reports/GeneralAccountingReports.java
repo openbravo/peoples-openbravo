@@ -149,20 +149,25 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
       String strAsDateToRef, String strElementValue, String strConImporte, String strOrg,
       String strLevel, String strConCodigo, String strcAcctSchemaId, String strPageNo)
       throws IOException, ServletException {
+    String localStrElementValue = strElementValue;
+    String localStrDateToRef = strDateToRef;
+    String localStrDateFrom = strDateFrom;
+    String localStrDateFromRef = strDateFromRef;
+    String localStrDateTo = strDateTo;
     if (log4j.isDebugEnabled())
       log4j.debug("Output: pdf");
 
-    String strCalculateOpening = strElementValue.substring(0, 1);
-    strElementValue = strElementValue.substring(1, strElementValue.length());
+    String strCalculateOpening = localStrElementValue.substring(0, 1);
+    localStrElementValue = localStrElementValue.substring(1, localStrElementValue.length());
     GeneralAccountingReportsData[] strGroups = GeneralAccountingReportsData.selectGroups(this,
-        strElementValue);
+        localStrElementValue);
 
     try {
       strGroups[strGroups.length - 1].pagebreak = "";
 
       String[][] strElementValueDes = new String[strGroups.length][];
       if (log4j.isDebugEnabled())
-        log4j.debug("strElementValue:" + strElementValue + " - strGroups.length:"
+        log4j.debug("strElementValue:" + localStrElementValue + " - strGroups.length:"
             + strGroups.length);
       for (int i = 0; i < strGroups.length; i++) {
         GeneralAccountingReportsData[] strElements = GeneralAccountingReportsData.selectElements(
@@ -199,10 +204,10 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
         String strYearsToCloseRef = "";
         if (strCalculateOpening.equals("Y")) {
           strCalculateOpening = "N";
-          strDateTo = strAsDateTo;
-          strDateToRef = strAsDateToRef;
-          strDateFrom = "";
-          strDateFromRef = "";
+          localStrDateTo = strAsDateTo;
+          localStrDateToRef = strAsDateToRef;
+          localStrDateFrom = "";
+          localStrDateFromRef = "";
           String[] yearsInfo = getYearsToClose(startingEndingDate.get("startingDate"), strOrg,
               year.getCalendar(), strcAcctSchemaId, false);
           strYearsToClose = yearsInfo[0];
@@ -236,22 +241,23 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
           AccountTreeData[] accounts = AccountTreeData.selectFactAcct(this,
               Utility.getContext(this, vars, "#AccessibleOrgTree", "GeneralAccountingReports"),
               Utility.getContext(this, vars, "#User_Client", "GeneralAccountingReports"),
-              strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strcAcctSchemaId,
-              Tree.getMembers(this, strTreeOrg, strOrg), "'" + year.getFiscalYear() + "'"
-                  + strYearsToClose, openingEntryOwner, strDateFromRef,
-              DateTimeData.nDaysAfter(this, strDateToRef, "1"), "'" + yearRef.getFiscalYear() + "'"
-                  + strYearsToCloseRef, openingEntryOwnerRef);
+              localStrDateFrom, DateTimeData.nDaysAfter(this, localStrDateTo, "1"),
+              strcAcctSchemaId, Tree.getMembers(this, strTreeOrg, strOrg),
+              "'" + year.getFiscalYear() + "'" + strYearsToClose, openingEntryOwner,
+              localStrDateFromRef, DateTimeData.nDaysAfter(this, localStrDateToRef, "1"), "'"
+                  + yearRef.getFiscalYear() + "'" + strYearsToCloseRef, openingEntryOwnerRef);
           {
             if (log4j.isDebugEnabled())
               log4j.debug("*********** strIncomeSummaryAccount: " + strIncomeSummaryAccount);
-            String strISyear = processIncomeSummary(strDateFrom,
-                DateTimeData.nDaysAfter(this, strDateTo, "1"), "'" + year.getFiscalYear() + "'"
-                    + strYearsToClose, strTreeOrg, strOrg, strcAcctSchemaId);
+            String strISyear = processIncomeSummary(localStrDateFrom,
+                DateTimeData.nDaysAfter(this, localStrDateTo, "1"), "'" + year.getFiscalYear()
+                    + "'" + strYearsToClose, strTreeOrg, strOrg, strcAcctSchemaId);
             if (log4j.isDebugEnabled())
               log4j.debug("*********** strISyear: " + strISyear);
-            String strISyearRef = processIncomeSummary(strDateFromRef,
-                DateTimeData.nDaysAfter(this, strDateToRef, "1"), "'" + yearRef.getFiscalYear()
-                    + "'" + strYearsToCloseRef, strTreeOrg, strOrg, strcAcctSchemaId);
+            String strISyearRef = processIncomeSummary(localStrDateFromRef,
+                DateTimeData.nDaysAfter(this, localStrDateToRef, "1"),
+                "'" + yearRef.getFiscalYear() + "'" + strYearsToCloseRef, strTreeOrg, strOrg,
+                strcAcctSchemaId);
             if (log4j.isDebugEnabled())
               log4j.debug("*********** strISyearRef: " + strISyearRef);
             accounts = appendRecords(accounts, strIncomeSummaryAccount, strISyear, strISyearRef);
@@ -282,24 +288,24 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
         parameters.put("companyName",
             GeneralAccountingReportsData.companyName(this, vars.getClient()));
         parameters.put("date", DateTimeData.today(this));
-        if (strDateFrom.equals(""))
-          strDateFrom = OBDateUtils.formatDate(startingEndingDate.get("startingDate"));
-        if (strDateTo.equals(""))
-          strDateTo = OBDateUtils.formatDate(startingEndingDate.get("endingDate"));
-        if (strDateFromRef.equals(""))
-          strDateFromRef = OBDateUtils.formatDate(startingEndingDateRef.get("startingDate"));
-        if (strDateToRef.equals(""))
-          strDateToRef = OBDateUtils.formatDate(startingEndingDateRef.get("endingDate"));
-        parameters.put("period", strDateFrom + " - " + strDateTo);
-        parameters.put("periodRef", strDateFromRef + " - " + strDateToRef);
+        if (localStrDateFrom.equals(""))
+          localStrDateFrom = OBDateUtils.formatDate(startingEndingDate.get("startingDate"));
+        if (localStrDateTo.equals(""))
+          localStrDateTo = OBDateUtils.formatDate(startingEndingDate.get("endingDate"));
+        if (localStrDateFromRef.equals(""))
+          localStrDateFromRef = OBDateUtils.formatDate(startingEndingDateRef.get("startingDate"));
+        if (localStrDateToRef.equals(""))
+          localStrDateToRef = OBDateUtils.formatDate(startingEndingDateRef.get("endingDate"));
+        parameters.put("period", localStrDateFrom + " - " + localStrDateTo);
+        parameters.put("periodRef", localStrDateFromRef + " - " + localStrDateToRef);
         parameters.put("agnoInitial", year.getFiscalYear());
         parameters.put("agnoRef", yearRef.getFiscalYear());
 
         parameters.put(
             "principalTitle",
             strCalculateOpening.equals("Y") ? GeneralAccountingReportsData.rptTitle(this,
-                strElementValue) + " (Provisional)" : GeneralAccountingReportsData.rptTitle(this,
-                strElementValue));
+                localStrElementValue) + " (Provisional)" : GeneralAccountingReportsData.rptTitle(
+                this, localStrElementValue));
 
         parameters.put("pageNo", strPageNo);
 

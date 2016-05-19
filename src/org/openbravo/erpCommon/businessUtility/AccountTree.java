@@ -226,7 +226,7 @@ public class AccountTree {
    * This method updates all the Quantitie's signs of the tree. Is used by the constructor to
    * initialize the element's quantities. Also initializes the level of each account
    * 
-   * @param rootElement
+   * @param localRootElement
    *          String with the index from which to start updating.
    * @param level
    *          Integer with the level of the elements.
@@ -236,6 +236,7 @@ public class AccountTree {
    */
   private AccountTreeData[] updateTreeQuantitiesSign(String rootElement, int level,
       String accountSign) {
+    String localRootElement = rootElement;
     if (accountsTree == null || accountsTree.length == 0)
       return accountsTree;
     AccountTreeData[] result = null;
@@ -243,10 +244,10 @@ public class AccountTree {
     // if (log4j.isDebugEnabled())
     // log4j.debug("AccountTree.updateTreeQuantitiesSign() - elements: " +
     // elements.length);
-    if (rootElement == null)
-      rootElement = "0";
+    if (localRootElement == null)
+      localRootElement = "0";
     for (int i = 0; i < accountsTree.length; i++) {
-      if (accountsTree[i].parentId.equals(rootElement)) {
+      if (accountsTree[i].parentId.equals(localRootElement)) {
         // accountSign = accountsTree[i].accountsign;
         AccountTreeData[] dataChilds = updateTreeQuantitiesSign(accountsTree[i].nodeId,
             (level + 1), accountSign);
@@ -294,11 +295,12 @@ public class AccountTree {
    *          Array with the operands.
    * @param accountId
    *          String with the index of the element to evaluate.
-   * @param vecTotal
+   * @param localVecTotal
    *          Vector with the totals of the operation.
    */
   private void operandsCalculate(Vector<Object> vecAll, AccountTreeData[] operands,
       String accountId, Vector<Object> vecTotal, boolean isExactValue) {
+    Vector<Object> localVecTotal = vecTotal;
     if (isExactValue) {
       recursiveOperands = true;
     } else {
@@ -312,14 +314,14 @@ public class AccountTree {
       log4j.error("AccountTree.formsCalculate - Missing accountId");
       return;
     }
-    if (vecTotal == null)
-      vecTotal = new Vector<Object>();
-    if (vecTotal.size() == 0) {
-      vecTotal.addElement("0");
-      vecTotal.addElement("0");
+    if (localVecTotal == null)
+      localVecTotal = new Vector<Object>();
+    if (localVecTotal.size() == 0) {
+      localVecTotal.addElement("0");
+      localVecTotal.addElement("0");
     }
-    BigDecimal total = new BigDecimal((String) vecTotal.elementAt(0));
-    BigDecimal totalRef = new BigDecimal((String) vecTotal.elementAt(1));
+    BigDecimal total = new BigDecimal((String) localVecTotal.elementAt(0));
+    BigDecimal totalRef = new BigDecimal((String) localVecTotal.elementAt(1));
     boolean encontrado = false;
     for (int i = 0; i < operands.length; i++) {
       if (operands[i].id.equals(accountId)) {
@@ -369,8 +371,8 @@ public class AccountTree {
         }
       }
     }
-    vecTotal.set(0, total.toPlainString());
-    vecTotal.set(1, totalRef.toPlainString());
+    localVecTotal.set(0, total.toPlainString());
+    localVecTotal.set(1, totalRef.toPlainString());
   }
 
   /**
@@ -440,9 +442,9 @@ public class AccountTree {
    * 
    * @param operands
    *          Array with the forms.
-   * @param reportNode
+   * @param localReportNode
    *          Array with the start indexes.
-   * @param totalAmounts
+   * @param localTotalAmounts
    *          Vector with the accumulated totals.
    * @param applysign
    *          Boolean to know if the sign must be applied or not.
@@ -452,28 +454,31 @@ public class AccountTree {
    */
   private AccountTreeData[] calculateTree(AccountTreeData[] operands, String[] reportNode,
       Vector<Object> totalAmounts, boolean applysign, boolean isExactValue) {
+    Vector<Object> localTotalAmounts = totalAmounts;
+    String[] localReportNode = reportNode;
     if (reportElements == null || reportElements.length == 0)
       return reportElements;
-    if (reportNode == null) {
-      reportNode = new String[1];
-      reportNode[0] = "0";
+    if (localReportNode == null) {
+      localReportNode = new String[1];
+      localReportNode[0] = "0";
     }
     AccountTreeData[] result = null;
     Vector<Object> report = new Vector<Object>();
     if (log4j.isDebugEnabled())
       log4j.debug("AccountTree.calculateTree() - accounts: " + reportElements.length);
-    if (totalAmounts == null)
-      totalAmounts = new Vector<Object>();
-    if (totalAmounts.size() == 0) {
-      totalAmounts.addElement("0");
-      totalAmounts.addElement("0");
+    if (localTotalAmounts == null)
+      localTotalAmounts = new Vector<Object>();
+    if (localTotalAmounts.size() == 0) {
+      localTotalAmounts.addElement("0");
+      localTotalAmounts.addElement("0");
     }
-    BigDecimal total = new BigDecimal((String) totalAmounts.elementAt(0));
-    BigDecimal totalRef = new BigDecimal((String) totalAmounts.elementAt(1));
+    BigDecimal total = new BigDecimal((String) localTotalAmounts.elementAt(0));
+    BigDecimal totalRef = new BigDecimal((String) localTotalAmounts.elementAt(1));
 
     for (int i = 0; i < reportElements.length; i++) {
-      if ((isExactValue && nodeIn(reportElements[i].nodeId, reportNode))
-          || (!isExactValue && nodeIn(reportElements[i].parentId, reportNode))) { // modified by
+      if ((isExactValue && nodeIn(reportElements[i].nodeId, localReportNode))
+          || (!isExactValue && nodeIn(reportElements[i].parentId, localReportNode))) { // modified
+                                                                                       // by
         // Eduardo Argal.
         // For
         // operands calculation
@@ -563,8 +568,8 @@ public class AccountTree {
         }
       }
     }
-    totalAmounts.set(0, total.toPlainString());
-    totalAmounts.set(1, totalRef.toPlainString());
+    localTotalAmounts.set(0, total.toPlainString());
+    localTotalAmounts.set(1, totalRef.toPlainString());
     result = new AccountTreeData[report.size()];
     report.copyInto(result);
     return result;
@@ -574,7 +579,7 @@ public class AccountTree {
    * Method to make the level filter of the tree, to eliminate the levels that shouldn't be shown in
    * the report.
    * 
-   * @param indice
+   * @param localIndice
    *          Array of indexes to evaluate.
    * @param found
    *          Boolean to know if the index has been found
@@ -583,6 +588,7 @@ public class AccountTree {
    * @return New Array with the filter applied.
    */
   private AccountTreeData[] levelFilter(String[] indice, boolean found, String strLevel) {
+    String[] localIndice = indice;
     if (reportElements == null || reportElements.length == 0 || strLevel == null
         || strLevel.equals(""))
       return reportElements;
@@ -592,14 +598,14 @@ public class AccountTree {
       log4j.debug("AccountTree.levelFilter() - accounts: " + reportElements.length);
 
     // if (indice == null) indice="0";
-    if (indice == null) {
-      indice = new String[1];
-      indice[0] = "0";
+    if (localIndice == null) {
+      localIndice = new String[1];
+      localIndice[0] = "0";
     }
     for (int i = 0; i < reportElements.length; i++) {
       // if (resultantAccounts[i].parentId.equals(indice) && (!found ||
       // resultantAccounts[i].elementlevel.equalsIgnoreCase(strLevel))) {
-      if (nodeIn(reportElements[i].parentId, indice)
+      if (nodeIn(reportElements[i].parentId, localIndice)
           && (!found || reportElements[i].elementlevel.equalsIgnoreCase(strLevel))) {
         AccountTreeData[] dataChilds = levelFilter(reportElements[i].nodeId,
             (found || reportElements[i].elementlevel.equals(strLevel)), strLevel);

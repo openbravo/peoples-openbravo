@@ -25,6 +25,7 @@ import static org.junit.Assert.fail;
 
 import java.util.Set;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.dal.core.OBContext;
@@ -50,27 +51,24 @@ public class AllowedOrganizationsTest extends OBBaseTest {
    * Tests valid organizations trees for different organizations.
    */
   @Test
+  @Ignore("Fix test with new org tree map")
   public void testOrganizationTree() {
     setTestAdminContext();
-    // FIXME: Fix test with new org tree map
 
-    // final OrganizationStructureProvider osp = new OrganizationStructureProvider();
-    // osp.setClientId(TEST_CLIENT_ID);
-    //
-    // checkResult("1000001", osp, new String[] { "1000001" });
-    // checkResult("1000002", osp, new String[] { "1000003", "1000004", "1000000", "0", "1000002"
-    // });
-    // checkResult("1000003", osp, new String[] { "1000003", "1000000", "0", "1000002" });
-    // checkResult("1000004", osp, new String[] { "1000004", "1000000", "0", "1000002" });
-    // checkResult("1000005", osp, new String[] { "1000009", "1000006", "0", "1000000", "1000008",
-    // "1000005", "1000007" });
-    // checkResult("1000006", osp, new String[] { "1000009", "1000006", "0", "1000000", "1000008",
-    // "1000005" });
-    // checkResult("1000007", osp, new String[] { "1000000", "0", "1000005", "1000007" });
-    // checkResult("1000008", osp, new String[] { "1000000", "1000006", "0", "1000008", "1000005"
-    // });
-    // checkResult("1000009", osp, new String[] { "1000009", "1000006", "0", "1000000", "1000005"
-    // });
+    final OrganizationStructureProvider osp = new OrganizationStructureProvider();
+    osp.setClientId(TEST_CLIENT_ID);
+
+    checkResult("1000001", osp, new String[] { "1000001" });
+    checkResult("1000002", osp, new String[] { "1000003", "1000004", "1000000", "0", "1000002" });
+    checkResult("1000003", osp, new String[] { "1000003", "1000000", "0", "1000002" });
+    checkResult("1000004", osp, new String[] { "1000004", "1000000", "0", "1000002" });
+    checkResult("1000005", osp, new String[] { "1000009", "1000006", "0", "1000000", "1000008",
+        "1000005", "1000007" });
+    checkResult("1000006", osp, new String[] { "1000009", "1000006", "0", "1000000", "1000008",
+        "1000005" });
+    checkResult("1000007", osp, new String[] { "1000000", "0", "1000005", "1000007" });
+    checkResult("1000008", osp, new String[] { "1000000", "1000006", "0", "1000008", "1000005" });
+    checkResult("1000009", osp, new String[] { "1000009", "1000006", "0", "1000000", "1000005" });
   }
 
   private void checkResult(String id, OrganizationStructureProvider osp, String[] values) {

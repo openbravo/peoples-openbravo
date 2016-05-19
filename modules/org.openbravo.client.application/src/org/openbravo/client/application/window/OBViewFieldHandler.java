@@ -74,7 +74,6 @@ public class OBViewFieldHandler {
   private Tab tab;
   private List<String> statusBarFields;
 
-  private List<String> windowEntities = null;
   private List<OBViewFieldDefinition> fields;
   private List<String> propertiesInButtonFieldDisplayLogic = new ArrayList<String>();
   private List<String> hiddenPropertiesInDisplayLogic = new ArrayList<String>();
@@ -2252,16 +2251,6 @@ public class OBViewFieldHandler {
 
       return (int) (arg0Position - arg1Position);
     }
-  }
-
-  private List<String> getWindowEntities() {
-    if (windowEntities == null) {
-      windowEntities = new ArrayList<String>();
-      for (Tab localTab : tab.getWindow().getADTabList()) {
-        windowEntities.add(localTab.getTable().getName());
-      }
-    }
-    return windowEntities;
   }
 
   public List<Field> getIgnoredFields() {

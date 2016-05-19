@@ -83,29 +83,30 @@ public class UninstallModule {
    * Executes the uninstall process for a comma separated list of modules, all these modules will be
    * uninstalled as well as all their contained modules.
    * 
-   * @param moduleIdList
+   * @param localModuleIdList
    *          Comma separated list of module ids
    */
   public void execute(String moduleIdList) {
-    if (moduleIdList == null || moduleIdList.equals("")) {
+    String localModuleIdList = moduleIdList;
+    if (localModuleIdList == null || localModuleIdList.equals("")) {
       log4j.error("No module selected to uninstall");
       addLog("@NoModuleSelectedToUninstall@", MSG_ERROR);
       return;
     }
     try {
-      moduleIdList = moduleIdList.replace("(", "").replace(")", "");
-      if (moduleIdList.contains("'0'")) {
+      localModuleIdList = localModuleIdList.replace("(", "").replace(")", "");
+      if (localModuleIdList.contains("'0'")) {
         log4j.error("Cannot uninstall core");
         addLog("@CannotUninstallCore@", MSG_ERROR);
         return;
       }
-      if (moduleIdList.contains("'0138E7A89B5E4DC3932462252801FFBC'")) {
+      if (localModuleIdList.contains("'0138E7A89B5E4DC3932462252801FFBC'")) {
         log4j.error("Cannot uninstall Openbravo 3.0");
         addLog("@CannotUninstallOpenbravo3@", MSG_ERROR);
         return;
       }
       final UninstallModuleData[] dependencies = UninstallModuleData.selectDependencies(pool,
-          moduleIdList);
+          localModuleIdList);
       if (dependencies != null && dependencies.length > 0) {
         for (int i = 0; i < dependencies.length; i++) {
           log4j.error(dependencies[i].origname
@@ -125,7 +126,7 @@ public class UninstallModule {
       }
 
       // loop all the modules to be uninstalled
-      final StringTokenizer st = new StringTokenizer(moduleIdList, ",", false);
+      final StringTokenizer st = new StringTokenizer(localModuleIdList, ",", false);
       while (st.hasMoreTokens()) {
         final String module = st.nextToken().trim();
 

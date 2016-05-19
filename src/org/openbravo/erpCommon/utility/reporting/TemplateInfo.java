@@ -110,12 +110,12 @@ public class TemplateInfo {
           strLanguage) + docTypeId);
   }
 
-  private TemplateData getSelectedTemplate(TemplateData[] templates, String templateId) {
+  private TemplateData getSelectedTemplate(TemplateData[] templateData, String templateId) {
     if ("default".equals(templateId)) {
-      return (templates.length == 0) ? new TemplateData() : templates[0];
+      return (templateData.length == 0) ? new TemplateData() : templateData[0];
     } else {
-      for (int i = 0; i < templates.length; i++) {
-        final TemplateData template = templates[i];
+      for (int i = 0; i < templateData.length; i++) {
+        final TemplateData template = templateData[i];
         if (templateId.equals(template.id)) {
           return template;
         }

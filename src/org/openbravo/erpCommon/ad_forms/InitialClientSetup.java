@@ -38,7 +38,7 @@ import org.openbravo.xmlEngine.XmlDocument;
 
 public class InitialClientSetup extends HttpSecureAppServlet {
 
-  private static final Logger log4j = Logger.getLogger(InitialClientSetup.class);
+  private static final Logger initialClientSetupLog4j = Logger.getLogger(InitialClientSetup.class);
   private static final long serialVersionUID = 1L;
 
   public void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -51,7 +51,7 @@ public class InitialClientSetup extends HttpSecureAppServlet {
       String strModules = vars.getInStringParameter("inpNodes", IsIDFilter.instance);
       StringBuffer strLog = new StringBuffer();
       OBError obeResultado = process(request, response, vars, strModules, strLog);
-      log4j.debug("InitialClientSetup - after processFile");
+      initialClientSetupLog4j.debug("InitialClientSetup - after processFile");
       printPageResult(response, vars, obeResultado, strLog);
     } else
       pageError(response);
@@ -165,7 +165,7 @@ public class InitialClientSetup extends HttpSecureAppServlet {
   private OBError process(HttpServletRequest request, HttpServletResponse response,
       VariablesSecureApp vars, String strModules, StringBuffer strLog) throws IOException {
 
-    log4j.debug("process() - Initial Client Setup Process Start - strModules - " + strModules);
+    initialClientSetupLog4j.debug("process() - Initial Client Setup Process Start - strModules - " + strModules);
 
     String strClientName = vars.getStringParameter("inpClient");
     String strClientUser = vars.getStringParameter("inpClientUser");
@@ -173,7 +173,7 @@ public class InitialClientSetup extends HttpSecureAppServlet {
     String strCurrency = vars.getStringParameter("inpCurrency");
     org.apache.commons.fileupload.FileItem fileCoAFilePath = vars.getMultiFile("inpFile");
     boolean bCreateAccounting = isTrue(vars.getStringParameter("inpCreateAccounting"));
-    log4j.debug("process() - Client name: " + strClientName + ". Client user name: "
+    initialClientSetupLog4j.debug("process() - Client name: " + strClientName + ". Client user name: "
         + strClientUser);
     org.openbravo.erpCommon.businessUtility.InitialClientSetup ics = new org.openbravo.erpCommon.businessUtility.InitialClientSetup();
     OBError obeResult = ics.createClient(vars, strCurrency, strClientName, strClientUser,

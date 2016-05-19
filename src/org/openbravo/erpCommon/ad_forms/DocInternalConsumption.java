@@ -58,9 +58,9 @@ public class DocInternalConsumption extends AcctServer {
   }
 
   @Override
-  public void loadObjectFieldProvider(ConnectionProvider conn, String AD_Client_ID, String Id)
+  public void loadObjectFieldProvider(ConnectionProvider conn, String aD_Client_ID, String Id)
       throws ServletException {
-    setObjectFieldProvider(DocInternalConsumptionData.select(conn, AD_Client_ID, Id));
+    setObjectFieldProvider(DocInternalConsumptionData.select(conn, aD_Client_ID, Id));
   }
 
   /**

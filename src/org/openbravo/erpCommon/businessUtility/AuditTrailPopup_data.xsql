@@ -127,7 +127,7 @@
         WHERE AD_TABLE.ad_table_id = AD_COLUMN.ad_table_id 
         AND iskey='Y' 
         AND AD_TABLE.ad_table_id = a2.ad_table_id) AS KEY, '' AS href, '' AS Td_Height, 
-        COALESCE(a1.ad_tab_id,'-1') AS Parent_Key, a2.isInfoTab, a2.isTranslationTab, AD_ShortName(a2.Name) as NameTab, 
+        COALESCE(a1.ad_tab_id,'-1') AS Parent_Key, a2.isInfoTab, a2.isTranslationTab,
         a2.EDITREFERENCE, a2.AD_MODULE_ID as tabmodule
         FROM AD_TAB a1, AD_TAB a2
         WHERE a1.ad_tab_id = ?

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2015 Openbravo SLU 
+ * All portions are Copyright (C) 2015-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -66,8 +66,6 @@ public class PostDocumentTest extends OBBaseTest {
   private static final String ORGANIZATION_SPAIN_ID = "357947E87C284935AD1D783CF6F099A1";
   // Organization USA
   private static final String ORGANIZATION_USA_ID = "5EFF95EB540740A3B10510D9814EFAD5";
-  // Role QA Testing Admin
-  private final String ROLE_ID = "4028E6C72959682B01295A071429011E";
   // Table INVOICE
   private static final String TABLE_INVOICE = "318";
   // Table GL_JOURNAL
@@ -91,8 +89,6 @@ public class PostDocumentTest extends OBBaseTest {
   private static final String GLJOURNAL_TEST7 = "F284DBAF46F244EB8CCA145A0CC47ACD";
   // G/L Journal Test with documentNo: 1003
   private static final String GLJOURNAL_TEST8 = "12857A9C03AD49D795F05A889CBEC0F2";
-  // G/L Journal Test with documentNo: 1004
-  private static final String GLJOURNAL_TEST9 = "8F27C4F6393A4457AA07E8D7754CEDF9";
   // ACCOUNTS USED FOR TEST RESULTS
   private static String TAX_RECEIVABLES = "FABD8D6CF3F04EE7A0389C2BAA1D620E";
   private static String SERVICE_COST = "F7B96292FB5842FBB51143BA659008B0";
@@ -109,8 +105,10 @@ public class PostDocumentTest extends OBBaseTest {
   private static String PRETTY_CASH = "627A1291274F4BCF838588BB2F2102AD";
   private static String BANK_ACCOUNT = "58D66F384F7549D995523BF116F29BA0";
 
-  private String testNumber;
-  private String testDescription;
+  @SuppressWarnings("unused")
+  private String testNumber; // It is used to show the test number when the test is run.
+  @SuppressWarnings("unused")
+  private String testDescription; // It is used to show the test description when the test is run.
   private String keyId;
   private String tableId;
   private String orgId;
@@ -173,11 +171,6 @@ public class PostDocumentTest extends OBBaseTest {
         { MAIN_EURO_LEGDER, FONDO_SOCIAL, "03-06-2015", "100", "0.00", "100.00", "0.00", "40.00" },
         { MAIN_EURO_LEGDER, CAPITAL_SOCIAL, "03-06-2015", "100", "100.00", "0.00", "40.00", "0.00" } };
     String[][] resultTest8 = {
-        { USA_DOLLAR_LEGDER, BANK_ACCOUNT, "03-06-2015", "100", "0.00", "100.00", "0.00", "100.00" },
-        { USA_DOLLAR_LEGDER, PRETTY_CASH, "03-06-2015", "100", "100.00", "0.00", "100.00", "0.00" },
-        { MAIN_EURO_LEGDER, FONDO_SOCIAL, "03-06-2015", "100", "0.00", "100.00", "0.00", "200.00" },
-        { MAIN_EURO_LEGDER, CAPITAL_SOCIAL, "03-06-2015", "100", "100.00", "0.00", "200.00", "0.00" } };
-    String[][] resultTest9 = {
         { USA_DOLLAR_LEGDER, BANK_ACCOUNT, "03-06-2015", "100", "0.00", "100.00", "0.00", "100.00" },
         { USA_DOLLAR_LEGDER, PRETTY_CASH, "03-06-2015", "100", "100.00", "0.00", "100.00", "0.00" },
         { MAIN_EURO_LEGDER, FONDO_SOCIAL, "03-06-2015", "100", "0.00", "100.00", "0.00", "200.00" },

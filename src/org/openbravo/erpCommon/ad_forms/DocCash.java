@@ -82,10 +82,10 @@ public class DocCash extends AcctServer {
     super(AD_Client_ID, AD_Org_ID, connectionProvider);
   }
 
-  public void loadObjectFieldProvider(ConnectionProvider conn, String AD_Client_ID, String Id)
+  public void loadObjectFieldProvider(ConnectionProvider conn, String aD_Client_ID, String Id)
       throws ServletException {
     log4jDocCash.debug("************************** DocCash - loadObjectFieldProvider - ID - " + Id);
-    setObjectFieldProvider(DocCashData.selectRegistro(conn, AD_Client_ID, Id));
+    setObjectFieldProvider(DocCashData.selectRegistro(conn, aD_Client_ID, Id));
   }
 
   /**

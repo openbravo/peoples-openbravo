@@ -106,13 +106,6 @@ public class AntExecutor {
    */
   @Deprecated
   public String setLogFile(String directory, String logFileName) throws Exception {
-    // DefaultLogger logger = new DefaultLogger();
-    final FileOutputStream logFile = new FileOutputStream(directory + "/" + logFileName);
-    // PrintStream ps = new PrintStream(logFile);
-    // logger.setOutputPrintStream(ps);
-    // logger.setErrorPrintStream(ps);
-    // logger.setMessageOutputLevel(Project.MSG_INFO);
-    // project.addBuildListener(logger);
     return directory + "/" + logFileName;
   }
 
@@ -214,18 +207,19 @@ public class AntExecutor {
   /**
    * Executes an ant task
    * 
-   * @param task
+   * @param localTask
    *          - Name of the task to execute
    * @throws Exception
    *           - In case the project is not loaded
    */
   public void runTask(String task) throws Exception {
+    String localTask = task;
     if (project == null)
       throw new Exception("NoProjectLoaded");
-    if (task == null)
-      task = project.getDefaultTarget();
+    if (localTask == null)
+      localTask = project.getDefaultTarget();
     try {
-      project.executeTarget(task);
+      project.executeTarget(localTask);
     } catch (final BuildException e) {
       logger.error(e.getMessage(), e);
     }

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -38,6 +38,7 @@ import org.openbravo.reference.ui.UIReference;
  * 
  *         Handler to manage all the process for the tab's query building.
  */
+@SuppressWarnings("serial")
 public class TableSQLData implements Serializable {
   private static Logger log4j = Logger.getLogger(TableSQLData.class);
   private final String internalPrefix = "@@";
@@ -1507,7 +1508,7 @@ public class TableSQLData implements Serializable {
    * 
    * @param text
    *          String where is the close char to search.
-   * @param pos
+   * @param localPos
    *          Integer with the start position.
    * @param openChar
    *          The open char.
@@ -1516,17 +1517,18 @@ public class TableSQLData implements Serializable {
    * @return Integer with the position of the close char or -1 if isn't.
    */
   private int findCloseTarget(String text, int pos, String openChar, String closeChar) {
+    int localPos = pos;
     if (text == null || text.equals(""))
       return -1;
-    int nextOpen = text.indexOf(openChar, pos);
-    int nextClose = text.indexOf(closeChar, pos);
+    int nextOpen = text.indexOf(openChar, localPos);
+    int nextClose = text.indexOf(closeChar, localPos);
     if (nextClose != -1) {
-      while (pos != -1 && nextClose != -1 && (nextOpen != -1 && nextClose > nextOpen)) {
-        pos = findCloseTarget(text, nextOpen + 1, openChar, closeChar);
-        nextOpen = text.indexOf(openChar, pos);
-        nextClose = text.indexOf(closeChar, pos);
+      while (localPos != -1 && nextClose != -1 && (nextOpen != -1 && nextClose > nextOpen)) {
+        localPos = findCloseTarget(text, nextOpen + 1, openChar, closeChar);
+        nextOpen = text.indexOf(openChar, localPos);
+        nextClose = text.indexOf(closeChar, localPos);
       }
-      if (pos == -1)
+      if (localPos == -1)
         nextClose = -1;
     }
     return nextClose;
@@ -1644,25 +1646,26 @@ public class TableSQLData implements Serializable {
   /**
    * Returns the actual order by columns. The columns names inside the handler.
    * 
-   * @param data
+   * @param localData
    *          String with the order by clause.
    * @return String with the correct columns names.
    */
   private String getRealOrderByColumn(String data) {
-    if (data == null || data.equals(""))
+    String localData = data;
+    if (localData == null || localData.equals(""))
       return "";
-    data = data.trim();
+    localData = localData.trim();
     String orderDirection = "ASC";
-    String orderField = data;
-    int pos = data.toUpperCase().lastIndexOf(" DESC");
-    if (pos == -1 || pos != (data.length() - 5)) {
-      pos = data.toUpperCase().lastIndexOf(" ASC");
-      if (pos != -1 && pos == (data.length() - 4)) {
-        orderField = data.substring(0, pos);
+    String orderField = localData;
+    int pos = localData.toUpperCase().lastIndexOf(" DESC");
+    if (pos == -1 || pos != (localData.length() - 5)) {
+      pos = localData.toUpperCase().lastIndexOf(" ASC");
+      if (pos != -1 && pos == (localData.length() - 4)) {
+        orderField = localData.substring(0, pos);
       } else
-        return data;
+        return localData;
     } else {
-      orderField = data.substring(0, pos);
+      orderField = localData.substring(0, pos);
       orderDirection = "DESC";
     }
     String _alias = getSelectFieldAlias(orderField);
@@ -1673,13 +1676,9 @@ public class TableSQLData implements Serializable {
         _alias = _alias.substring(0, _alias.length() - 2);
       }
       int position = -1;
-      UIReference reference = null;
       Properties myProps = getColumnPosition(_alias);
       if (myProps != null) {
         position = Integer.valueOf(myProps.getProperty("Position")).intValue();
-
-        reference = Reference.getUIReference(myProps.getProperty("AD_Reference_ID"),
-            myProps.getProperty("AD_Reference_Value_ID"));
       }
       if (position != -1) {
         addOrderByPosition(Integer.toString(position));
@@ -1720,8 +1719,8 @@ public class TableSQLData implements Serializable {
   SQLReturnObject[] getHeaders(boolean withoutIdentifiers, boolean useFieldLength) {
     SQLReturnObject[] data = null;
     Vector<SQLReturnObject> vAux = new Vector<SQLReturnObject>();
-    Vector<Properties> structure = getStructure();
-    for (Enumeration<Properties> e = structure.elements(); e.hasMoreElements();) {
+    Vector<Properties> windowInfoStructure = getStructure();
+    for (Enumeration<Properties> e = windowInfoStructure.elements(); e.hasMoreElements();) {
       Properties prop = e.nextElement();
       if (prop.getProperty("IsKey").equals("Y")
           || prop.getProperty("IsSecondaryKey").equals("Y")
@@ -1948,7 +1947,7 @@ public class TableSQLData implements Serializable {
    *          Vector with parameters for the specific order by fields.
    * @param selectFields
    *          String with the fields for the select clause.
-   * @param _OrderSimple
+   * @param localOrderSimple
    *          Vector with specific order by fields. It always contains tablename.field, never SQL
    *          clause
    * @param startPosition
@@ -1962,6 +1961,7 @@ public class TableSQLData implements Serializable {
       Vector<String> _OrderFields, Vector<String> _OrderParams, String selectFields,
       Vector<String> _OrderSimple, int startPosition, int rangeLength, boolean sorted,
       boolean onlyId) {
+    Vector<String> localOrderSimple = _OrderSimple;
     StringBuffer text = new StringBuffer();
     boolean hasWhere = false;
     Vector<QueryFieldStructure> aux = null;
@@ -2016,7 +2016,7 @@ public class TableSQLData implements Serializable {
     Vector<QueryFieldStructure> auxFrom = getFromFields();
     Vector<QueryParameterStructure> auxParam = getFromParameters();
 
-    if ((_OrderSimple.size() == 0) && (_OrderFields.size() == 0)) {// Order
+    if ((localOrderSimple.size() == 0) && (_OrderFields.size() == 0)) {// Order
       // by
       // defined
       // as
@@ -2024,14 +2024,14 @@ public class TableSQLData implements Serializable {
       // not as
       // param
       setOrderBy(null, null);
-      _OrderSimple = getOrderBySimpleFieldsString();
+      localOrderSimple = getOrderBySimpleFieldsString();
     }
-    _OrderSimple = cleanVector(_OrderSimple);
+    localOrderSimple = cleanVector(localOrderSimple);
 
-    if (_OrderSimple != null) {
+    if (localOrderSimple != null) {
       // where clause for order by fields
-      for (int i = 0; i < _OrderSimple.size(); i++) {
-        String auxStructure = _OrderSimple.elementAt(i);
+      for (int i = 0; i < localOrderSimple.size(); i++) {
+        String auxStructure = localOrderSimple.elementAt(i);
         String orderField = auxStructure;
         if (auxStructure.indexOf(" ") != -1)
           orderField = auxStructure.substring(0, auxStructure.indexOf(" ")); // tablename.fieldname
@@ -2091,7 +2091,7 @@ public class TableSQLData implements Serializable {
 
     // Order by
 
-    setOrderBy(_OrderSimple, _OrderParams);
+    setOrderBy(localOrderSimple, _OrderParams);
     aux = getOrderByFields();
     boolean hasOrder = false;
     StringBuffer txtAuxOrderBy = new StringBuffer();

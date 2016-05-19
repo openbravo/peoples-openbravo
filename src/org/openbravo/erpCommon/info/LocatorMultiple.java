@@ -201,6 +201,7 @@ public class LocatorMultiple extends HttpSecureAppServlet {
       String strWarehouseId, String strAisle, String strBin, String strLevel, String strOrderCols,
       String strOrderDirs, String strOffset, String strPageSize, String strNewFilter, String strOrg)
       throws IOException, ServletException {
+    String localStrNewFilter = strNewFilter;
     if (log4j.isDebugEnabled())
       log4j.debug("Output: print page rows");
     int page = 0;
@@ -220,12 +221,12 @@ public class LocatorMultiple extends HttpSecureAppServlet {
         page = TableSQLData.calcAndGetBackendPage(vars, "LocatorMultiple.currentPage");
         if (vars.getStringParameter("movePage", "").length() > 0) {
           // on movePage action force executing countRows again
-          strNewFilter = "";
+          localStrNewFilter = "";
         }
         int oldOffset = offset;
         offset = (page * TableSQLData.maxRowsPerGridPage) + offset;
         log4j.debug("relativeOffset: " + oldOffset + " absoluteOffset: " + offset);
-        if (strNewFilter.equals("1") || strNewFilter.equals("")) {
+        if (localStrNewFilter.equals("1") || localStrNewFilter.equals("")) {
           // New filter or first load
           String rownum = "0", oraLimit1 = null, oraLimit2 = null, pgLimit = null;
           if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
@@ -336,83 +337,6 @@ public class LocatorMultiple extends HttpSecureAppServlet {
     if (log4j.isDebugEnabled())
       log4j.debug(strRowsData.toString());
     out.print(strRowsData.toString());
-    out.close();
-  }
-
-  /**
-   * Prints the response for the getRowsIds action. It returns the rowkey for the identifier column
-   * for the list of selected rows [minOffset..maxOffset]
-   * 
-   */
-  private void printGridDataSelectedRows(HttpServletResponse response, VariablesSecureApp vars,
-      String strKey, String strName, String strProductCategory, String strOrg, String strOrderCols,
-      String strOrderDirs, boolean isSoTrx) throws IOException, ServletException {
-    int minOffset = new Integer(vars.getStringParameter("minOffset")).intValue();
-    int maxOffset = new Integer(vars.getStringParameter("maxOffset")).intValue();
-    log4j.debug("Output: print page ids, minOffset: " + minOffset + ", maxOffset: " + maxOffset);
-    String type = "Hidden";
-    String title = "";
-    String description = "";
-    FieldProvider[] data = null;
-    FieldProvider[] res = null;
-    try {
-      // build sql orderBy clause
-      String strOrderBy = SelectorUtility.buildOrderByClause(strOrderCols, strOrderDirs);
-      String strPage = vars.getSessionValue("LocatorMultiple|currentPage", "0");
-      int page = Integer.valueOf(strPage);
-
-      int oldMinOffset = minOffset;
-      int oldMaxOffset = maxOffset;
-      minOffset = (page * TableSQLData.maxRowsPerGridPage) + minOffset;
-      maxOffset = (page * TableSQLData.maxRowsPerGridPage) + maxOffset;
-      log4j.debug("relativeMinOffset: " + oldMinOffset + " absoluteMinOffset: " + minOffset);
-      log4j.debug("relativeMaxOffset: " + oldMaxOffset + " absoluteMaxOffset: " + maxOffset);
-      // Filtering result
-      if (this.myPool.getRDBMS().equalsIgnoreCase("ORACLE")) {
-        String oraLimit1 = String.valueOf(maxOffset);
-        String oraLimit2 = (minOffset + 1) + " AND " + oraLimit1;
-        data = LocatorMultipleData.select(this, "ROWNUM", strKey, strName, strProductCategory,
-            (isSoTrx) ? "Y" : null,
-            Utility.getContext(this, vars, "#User_Client", "LocatorMultiple"),
-            Utility.getSelectorOrgs(this, vars, strOrg), strOrderBy, "", oraLimit1, oraLimit2);
-      } else {
-        // minOffset and maxOffset are zero based so pageSize is difference +1
-        int pageSize = maxOffset - minOffset + 1;
-        String pgLimit = pageSize + " OFFSET " + minOffset;
-        data = LocatorMultipleData.select(this, "1", strKey, strName, strProductCategory,
-            (isSoTrx) ? "Y" : null,
-            Utility.getContext(this, vars, "#User_Client", "LocatorMultiple"),
-            Utility.getSelectorOrgs(this, vars, strOrg), strOrderBy, pgLimit, "", "");
-
-      }
-
-      // result field has to be named id -> rename by copy the list
-      res = new FieldProvider[data.length];
-      for (int i = 0; i < data.length; i++) {
-        SQLReturnObject sqlReturnObject = new SQLReturnObject();
-        String resValue = "<![CDATA[" + data[i].getField("rowkey") + "]]>";
-        sqlReturnObject.setData("id", resValue);
-        res[i] = sqlReturnObject;
-      }
-    } catch (Exception e) {
-      log4j.error("Error obtaining id-list for getIdsInRange", e);
-      type = "Error";
-      title = "Error";
-      if (!e.getMessage().startsWith("<![CDATA["))
-        description = "<![CDATA[" + e.getMessage() + "]]>";
-    }
-
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/utility/DataGridID").createXmlDocument();
-    xmlDocument.setParameter("type", type);
-    xmlDocument.setParameter("title", title);
-    xmlDocument.setParameter("description", description);
-    xmlDocument.setData("structure1", res);
-    response.setContentType("text/xml; charset=UTF-8");
-    response.setHeader("Cache-Control", "no-cache");
-    PrintWriter out = response.getWriter();
-    log4j.debug(xmlDocument.print());
-    out.println(xmlDocument.print());
     out.close();
   }
 

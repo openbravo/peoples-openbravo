@@ -94,7 +94,6 @@ public class EntityResolver implements OBNotSingleton {
   private Organization organization;
   private String[] orgNaturalTree;
   private ResolvingMode resolvingMode = ResolvingMode.ALLOW_NOT_EXIST;
-  private boolean lookForTranslatedIDs;
 
   private OrganizationStructureProvider organizationStructureProvider;
 
@@ -442,7 +441,7 @@ public class EntityResolver implements OBNotSingleton {
       boolean filterByClient) {
     PreparedStatement ps = null;
     try {
-      String st = "Select specific_id, generic_id, ad_client_id, ad_org_id from ad_ref_data_loaded where ad_client_id in ('"
+      String st = "Select specific_id, ad_client_id, ad_org_id from ad_ref_data_loaded where ad_client_id in ('"
           + client.getId()
           + "', '0') and generic_id='"
           + id
@@ -455,11 +454,11 @@ public class EntityResolver implements OBNotSingleton {
       while (rs.next()) {
         RefDataLoaded rfl = new RefDataLoaded();
         rfl.setSpecificId(rs.getString(1));
-        rfl.setGenericId(rs.getString(2));
-        rfl.setClientId(rs.getString(3));
-        rfl.setOrgId(rs.getString(4));
+        rfl.setClientId(rs.getString(2));
+        rfl.setOrgId(rs.getString(3));
         refDataLoadeds.add(rfl);
       }
+
       return refDataLoadeds;
     } catch (Exception e) {
       throw new OBException("Error while accessing the ad_ref_data_loaded table", e);
@@ -474,17 +473,8 @@ public class EntityResolver implements OBNotSingleton {
 
   private class RefDataLoaded {
     private String specificId;
-    private String genericId;
     private String clientId;
     private String orgId;
-
-    public String getGenericId() {
-      return genericId;
-    }
-
-    public void setGenericId(String genericId) {
-      this.genericId = genericId;
-    }
 
     public String getSpecificId() {
       return specificId;
@@ -744,11 +734,6 @@ public class EntityResolver implements OBNotSingleton {
   // convenience to prevent using id and entityName in the wrong order
   protected String getKey(String entityName, String id) {
     return entityName + id;
-  }
-
-  @Deprecated
-  public void setLookForTranslatedIDs(boolean lookForTranslatedIDs) {
-    this.lookForTranslatedIDs = lookForTranslatedIDs;
   }
 
 }

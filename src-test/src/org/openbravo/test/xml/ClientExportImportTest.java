@@ -108,6 +108,7 @@ public class ClientExportImportTest extends XMLBaseTest {
    * 
    * Also tests mantis 9000: https://issues.openbravo.com/view.php?id=9000
    */
+  @SuppressWarnings("deprecation")
   @Ignore("This test has been temporarily disabled until the following issue related to the export client functionality is fixed: https://issues.openbravo.com/view.php?id=14848")
   @Test
   public void testExportImportClient1000000() {
@@ -115,12 +116,11 @@ public class ClientExportImportTest extends XMLBaseTest {
     // This test has been temporarily disabled until the following issue related to the export
     // client functionality is fixed:
     // https://issues.openbravo.com/view.php?id=14848
-
-    // final String newClientId = exportImport(TEST_CLIENT_ID);
-    // testMantis8509(newClientId);
-    // testAccountingFactMantis9000(newClientId);
-    // testTreeNodesMantis9000(newClientId);
-    // SystemService.getInstance().removeAllClientData(newClientId);
+    final String newClientId = exportImport(TEST_CLIENT_ID);
+    testMantis8509(newClientId);
+    testAccountingFactMantis9000(newClientId);
+    testTreeNodesMantis9000(newClientId);
+    SystemService.getInstance().removeAllClientData(newClientId);
   }
 
   private void testTreeNodesMantis9000(String newClientID) {

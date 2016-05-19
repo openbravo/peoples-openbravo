@@ -203,7 +203,7 @@ public final class Account implements Serializable {
   public boolean save(Connection conn1, ConnectionProvider conn) throws ServletException {
     log4jAccount.debug("Account.save - Client_ID=" + AD_Client_ID + ", Org_ID=" + AD_Org_ID
         + "AcctSchema_ID=" + C_AcctSchema_ID + ", Account_ID=" + Account_ID);
-    String C_ValidCombination_ID = "";
+    String cValidCombinationId = "";
     boolean saved = false;
     RespuestaCS respuestaCS;
     try {
@@ -219,14 +219,14 @@ public final class Account implements Serializable {
           C_AcctSchema_ID, Account_ID, "", "Y", alias, updatedBy, M_Product_ID, C_BPartner_ID,
           AD_OrgTrx_ID, C_LocFrom_ID, C_LocTo_ID, C_SalesRegion_ID, C_Project_ID, C_Campaign_ID,
           C_Activity_ID, User1_ID, User2_ID);
-      C_ValidCombination_ID = respuestaCS.CValidCombinationId;
+      cValidCombinationId = respuestaCS.CValidCombinationId;
       m_changed = "Y";
       saved = true;
     } catch (ServletException e) {
       log4jAccount.warn("Account.save: " + e);
       m_changed = "N";
     }
-    load(conn1, conn, C_ValidCombination_ID);
+    load(conn1, conn, cValidCombinationId);
     return saved;
   }
 
