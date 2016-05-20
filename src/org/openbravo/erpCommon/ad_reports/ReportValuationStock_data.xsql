@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2015 Openbravo SLU
+ * All portions are Copyright (C) 2001-2016 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -51,7 +51,7 @@
                                 WHERE COALESCE(DATEACCT, COSTDATE) < to_date(?)
                                 GROUP BY m_transaction_id, C_CURRENCY_ID, COALESCE(DATEACCT, COSTDATE)) TC ON TRX.M_TRANSACTION_ID = TC.M_TRANSACTION_ID
                  WHERE TRX.MOVEMENTDATE < to_date(?)
-                 AND TRX.TRXPROCESSDATE > to_date(?)
+                 AND TRX.TRXPROCESSDATE >= to_timestamp(?, ?)
                  AND L.M_WAREHOUSE_ID = ?
                  GROUP BY TRX.M_TRANSACTION_ID, TRX.M_PRODUCT_ID, TRX.C_UOM_ID, TRX.AD_CLIENT_ID, TRX.ISCOSTCALCULATED, TC.C_CURRENCY_ID, TC.MOVEMENTDATE) A ON TR.M_TRANSACTION_ID = A.M_TRANSACTION_ID,
                 C_UOM,
@@ -74,6 +74,7 @@
       <Parameter name="datePlus"/>
       <Parameter name="datePlus"/>
       <Parameter name="dateFrom"/>
+      <Parameter name="dateTimeFormat"/>
       <Parameter name="warehouse"/>
       <Parameter name="categoryProduct" optional="true" after="AND   1 = 1"><![CDATA[ AND M_PRODUCT.M_PRODUCT_CATEGORY_ID= ? ]]></Parameter>
   </SqlMethod>
