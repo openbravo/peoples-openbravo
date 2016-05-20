@@ -71,9 +71,9 @@
   v_availablestock      NUMBER;
   v_dummy               VARCHAR2(2000);
   v_attr_description    VARCHAR2(255);
-  v_product_value       VARCHAR2(40);
-  v_locator_value       VARCHAR2(40);
-  v_uom_value           VARCHAR2(3);
+  v_product_value       M_PRODUCT.value%type;
+  v_locator_value       M_LOCATOR.value%type;
+  v_uom_value           C_UOM.uomsymbol%type;
   v_attributesetinstance_id VARCHAR2(32);
   v_warehouse_rule_id     VARCHAR2(32);
 
