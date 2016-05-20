@@ -2573,6 +2573,7 @@
 
         OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_OrderReplaced', [me.get('replacedorder_documentNo'), me.get('documentNo')]));
         me.calculateGross();
+        me.unset('skipApplyPromotions');
       }, function () {
         OB.UTIL.showError('Error removing');
       });
