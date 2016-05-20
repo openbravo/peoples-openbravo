@@ -330,7 +330,7 @@ public class CancelAndReplaceUtils {
 
       // Calling Cancelandreplaceorderhook
       WeldUtils.getInstanceFromStaticBeanManager(CancelAndReplaceOrderHookCaller.class)
-          .executeHook(triggersDisabled, oldOrder, newOrder);
+          .executeHook(replaceOrder, triggersDisabled, oldOrder, newOrder);
 
     } catch (Exception e1) {
       try {

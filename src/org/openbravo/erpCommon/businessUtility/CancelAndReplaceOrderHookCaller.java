@@ -21,17 +21,17 @@ public class CancelAndReplaceOrderHookCaller {
   @Any
   private Instance<CancelAndReplaceOrderHook> cancelAndReplaceOrderHookProcesses;
 
-  public void executeHook(boolean triggersDisabled, Order oldOrder, Order newOrder)
-      throws Exception {
-    executeHooks(triggersDisabled, oldOrder, newOrder);
+  public void executeHook(boolean replaceOrder, boolean triggersDisabled, Order oldOrder,
+      Order newOrder) throws Exception {
+    executeHooks(replaceOrder, triggersDisabled, oldOrder, newOrder);
   }
 
-  protected void executeHooks(boolean triggersDisabled, Order oldOrder, Order newOrder)
-      throws Exception {
+  protected void executeHooks(boolean replaceOrder, boolean triggersDisabled, Order oldOrder,
+      Order newOrder) throws Exception {
     for (Iterator<CancelAndReplaceOrderHook> processIterator = cancelAndReplaceOrderHookProcesses
         .iterator(); processIterator.hasNext();) {
       CancelAndReplaceOrderHook process = processIterator.next();
-      process.exec(triggersDisabled, oldOrder, newOrder);
+      process.exec(replaceOrder, triggersDisabled, oldOrder, newOrder);
     }
   }
 }
