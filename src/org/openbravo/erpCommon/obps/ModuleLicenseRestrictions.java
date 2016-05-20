@@ -87,9 +87,9 @@ public interface ModuleLicenseRestrictions {
       this.type = type;
     }
 
-    MsgSeverity forType(String typeToCheck) {
+    static MsgSeverity forType(String typeToCheck) {
       for (MsgSeverity severity : MsgSeverity.values()) {
-        if (typeToCheck.equals(severity.toString())) {
+        if (severity.type.equals(typeToCheck)) {
           return severity;
         }
       }

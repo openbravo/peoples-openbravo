@@ -842,7 +842,7 @@ public class ActivationKey {
   public ActivationMsg getActivationMessage() {
     if (StringUtils.isNotEmpty(errorMessage)) {
       // there is a core message (expiration, etc.), return it
-      return new ActivationMsg(MsgSeverity.valueOf(messageType), errorMessage);
+      return new ActivationMsg(MsgSeverity.forType(messageType), errorMessage);
     }
 
     // look for messages defined by modules
