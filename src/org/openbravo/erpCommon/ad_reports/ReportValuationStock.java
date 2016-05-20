@@ -133,10 +133,11 @@ public class ReportValuationStock extends HttpSecureAppServlet {
               Utility.messageBD(this, "WarehouseNotInLE", vars.getLanguage()), "");
         } else {
           try {
+            // Use a static date time format to ensure we have the same pattern for java and sql
             CostingRule costingRule = CostingUtils.getCostDimensionRule(legalEntity,
                 OBDateUtils.getDate(strDate));
-            strDateFrom = OBDateUtils.formatDateTime(CostingUtils
-                .getCostingRuleStartingDate(costingRule));
+            strDateFrom = OBDateUtils.formatDate(
+                CostingUtils.getCostingRuleStartingDate(costingRule), "dd-MM-yyyy HH:mm:ss");
           } catch (Exception exception) {
             advise(
                 request,
@@ -148,8 +149,8 @@ public class ReportValuationStock extends HttpSecureAppServlet {
         }
         data = ReportValuationStockData.select(this, vars.getLanguage(), strCurrencyId,
             (legalEntity == null) ? null : legalEntity.getId(),
-            DateTimeData.nDaysAfter(this, strDate, "1"), strDateFrom, strWarehouse,
-            strCategoryProduct);
+            DateTimeData.nDaysAfter(this, strDate, "1"), strDateFrom, "DD-MM-YYYY HH24:MI:SS",
+            strWarehouse, strCategoryProduct);
         boolean hasTrxWithNoCost = hasTrxWithNoCost(strDate, strWarehouse, strCategoryProduct);
         if (hasTrxWithNoCost) {
           OBError warning = new OBError();
