@@ -416,11 +416,11 @@ isc.OBSelectorPopupWindow.addProperties({
   },
 
   setFilterByIdEditorCriteria: function (defaultFilter) {
-    var editForm, filterField, idFilter, i;
-    if (!defaultFilter.idFilters || !this.selectorGrid || !this.selectorGrid.filterEditor || !this.selectorGrid.filterEditor.getEditForm) {
+    var editForm = this.getFilterEditorForm(),
+        filterField, idFilter, i;
+    if (!defaultFilter.idFilters || !editForm) {
       return;
     }
-    editForm = this.selectorGrid.filterEditor.getEditForm();
     for (i = 0; i < defaultFilter.idFilters.length; i++) {
       idFilter = defaultFilter.idFilters[i];
       filterField = editForm.getField(idFilter.fieldName);
@@ -433,6 +433,13 @@ isc.OBSelectorPopupWindow.addProperties({
     }
     // idFilters is no longer needed. Its information is already included into the grid filters.
     delete this.defaultFilter.idFilters;
+  },
+
+  getFilterEditorForm: function () {
+    if (!this.selectorGrid || !this.selectorGrid.filterEditor || !this.selectorGrid.filterEditor.getEditForm) {
+      return null;
+    }
+    return this.selectorGrid.filterEditor.getEditForm();
   },
 
   setValueInField: function () {
