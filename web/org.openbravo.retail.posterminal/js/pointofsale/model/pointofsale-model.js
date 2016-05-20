@@ -797,12 +797,10 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                   OB.Dal.save(cancelLayawayModel, function () {
                     var orderId = receipt.id;
 
-                    OB.MobileApp.model.runSyncProcess();
                     orderList.deleteCurrent();
                     receipt.trigger('change:gross', receipt);
                     OB.Dal.get(OB.Model.Order, orderId, function (model) {
                       function cancelAndNew() {
-                        OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgSuccessCancelLayaway', [documentNo]));
                         if (OB.MobileApp.model.hasPermission('OBPOS_cancelLayawayAndNew', true)) {
                           var cloneOrder = new OB.Model.Order();
                           OB.UTIL.clone(receipt, cloneOrder);
@@ -863,6 +861,8 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                                     addRelatedLines(0);
                                   } else {
                                     order.unset('preventServicesUpdate');
+                                    OB.MobileApp.model.runSyncProcess();
+                                    OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgSuccessCancelLayaway', [documentNo]));
                                   }
                                 } else {
                                   var line = cloneOrder.get('lines').at(idx);
@@ -887,13 +887,20 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                               addLineToTickect(0);
                             }
                           }, {
-                            label: OB.I18N.getLabel('OBPOS_Cancel')
+                            label: OB.I18N.getLabel('OBPOS_Cancel'),
+                            action: function () {
+                              OB.MobileApp.model.runSyncProcess();
+                              OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgSuccessCancelLayaway', [documentNo]));
+                            }
                           }], {
-                            onShowFunction: function (popup) {
-                              popup.$.headerCloseButton.hide();
-                            },
-                            autoDismiss: false
+                            onHideFunction: function (popup) {
+                              OB.MobileApp.model.runSyncProcess();
+                              OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgSuccessCancelLayaway', [documentNo]));
+                            }
                           });
+                        } else {
+                          OB.MobileApp.model.runSyncProcess();
+                          OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgSuccessCancelLayaway', [documentNo]));
                         }
                       }
                       if (model) {
