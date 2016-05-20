@@ -98,6 +98,11 @@ public class SelectorDefaultFilterActionHandler extends BaseActionHandler {
           new OBBindings(OBContext.getOBContext(), params, (HttpSession) parameters
               .get(KernelConstants.HTTP_SESSION)));
 
+      boolean isFilterByIdSupported = false;
+      if (params.containsKey(SelectorConstants.DS_REQUEST_IS_FILTER_BY_ID_SUPPORTED)
+          && "true".equals(params.get(SelectorConstants.DS_REQUEST_IS_FILTER_BY_ID_SUPPORTED))) {
+        isFilterByIdSupported = true;
+      }
       Object exprResult = null;
       JSONArray idFilters = new JSONArray();
       for (SelectorField f : obc.list()) {
@@ -125,7 +130,7 @@ public class SelectorDefaultFilterActionHandler extends BaseActionHandler {
                 exprResult);
           } else if (exprResult != null && !exprResult.equals("") && !exprResult.equals("''")) {
             String fieldName = f.getProperty().replace(DalUtil.DOT, DalUtil.FIELDSEPARATOR);
-            if (bobId != null) {
+            if (bobId != null && isFilterByIdSupported) {
               idFilters.put(createJSONObjectFilter(fieldName, (String) bobId, (String) exprResult));
             } else {
               result.put(fieldName, exprResult);
@@ -138,7 +143,9 @@ public class SelectorDefaultFilterActionHandler extends BaseActionHandler {
         }
       }
 
-      result.put(SelectorConstants.PARAM_ID_FILTERS, idFilters);
+      if (idFilters.length() > 0) {
+        result.put(SelectorConstants.PARAM_ID_FILTERS, idFilters);
+      }
 
       // Obtaining the filter Expression from Selector. Refer issue
       // https://issues.openbravo.com/view.php?id=21541

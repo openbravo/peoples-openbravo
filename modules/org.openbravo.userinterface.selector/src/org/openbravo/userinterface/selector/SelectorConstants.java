@@ -50,4 +50,5 @@ public class SelectorConstants {
   public static final String DS_REQUEST_TYPE_PARAMETER = "_requestType";
   public static final String DS_REQUEST_PROCESS_DEFINITION_ID = "_processDefinitionId";
   public static final String DS_REQUEST_SELECTOR_FIELD_ID = "_selectorFieldId";
+  public static final String DS_REQUEST_IS_FILTER_BY_ID_SUPPORTED = "_isFilterByIdSupported";
 }

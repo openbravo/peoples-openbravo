@@ -359,7 +359,6 @@ isc.OBSelectorPopupWindow.addProperties({
     var ret = this.Super('show', arguments);
     if (applyDefaultFilter) {
       this.setFilterByIdEditorCriteria(this.defaultFilter);
-      delete this.defaultFilter.idFilters;
       this.selectorGrid.setFilterEditorCriteria(this.defaultFilter);
       this.selectorGrid.filterByEditor();
     }
@@ -383,7 +382,8 @@ isc.OBSelectorPopupWindow.addProperties({
         callback, data;
 
     data = {
-      '_selectorDefinitionId': this.selectorDefinitionId || this.selector.selectorDefinitionId
+      '_selectorDefinitionId': this.selectorDefinitionId || this.selector.selectorDefinitionId,
+      '_isFilterByIdSupported': true
     };
 
     // on purpose not passing the third boolean param
@@ -431,6 +431,8 @@ isc.OBSelectorPopupWindow.addProperties({
         defaultFilter[idFilter.fieldName] = idFilter._identifier;
       }
     }
+    // idFilters is no longer needed. Its information is already included into the grid filters.
+    delete this.defaultFilter.idFilters;
   },
 
   setValueInField: function () {
