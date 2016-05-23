@@ -7,7 +7,7 @@
 
 package org.openbravo.services.webservice;
 
-@SuppressWarnings({ "rawtypes", "serial" })
+@SuppressWarnings({ "rawtypes", "serial", "unused" })
 public class Module1  implements java.io.Serializable {
     private java.lang.String author;
 

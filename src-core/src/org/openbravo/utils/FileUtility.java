@@ -20,9 +20,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.nio.MappedByteBuffer;
-import java.nio.channels.FileChannel;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 
 /**
@@ -139,30 +138,11 @@ public class FileUtility {
   }
 
   public static void copyFile(File in, File out) throws Exception {
-    FileChannel src = null, cp = null;
-    try {
-      src = new FileInputStream(in).getChannel();
-      cp = new FileOutputStream(out).getChannel();
-      long size = src.size();
-      MappedByteBuffer buf = src.map(FileChannel.MapMode.READ_ONLY, 0, size);
-      cp.write(buf);
-    } finally {
-      if (src != null)
-        src.close();
-      if (cp != null)
-        cp.close();
-    }
+    // TODO: check preserveFileDate how we want it
+    // kept false as that probably matches the old openCoded behavior
+    // only single user (MigrateAttachments script) anyway
+    FileUtils.copyFile(in, out, false);
   }
-
-  /*
-   * public void copyFile(File in, File out) throws Exception { //FileInputStream fis = new
-   * FileInputStream(in); BufferedReader fileBuffer = new BufferedReader(new FileReader(in));
-   * FileOutputStream fos = new FileOutputStream(out); OutputStreamWriter printWriterData = new
-   * OutputStreamWriter(fos, "UTF-8"); String nextLine = fileBuffer.readLine(); while (nextLine !=
-   * null) { printWriterData.write(nextLine); printWriterData.write("\n"); nextLine =
-   * fileBuffer.readLine(); } printWriterData.flush(); fos.close(); fileBuffer.close();
-   * /while((i=fis.read(buf))!=-1) { fos.write(buf, 0, i); } fis.close(); fos.close(); }
-   */
 
   public static void delete(File source) throws Exception {
     File[] list = source.listFiles();

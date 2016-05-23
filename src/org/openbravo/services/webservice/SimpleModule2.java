@@ -7,7 +7,7 @@
 
 package org.openbravo.services.webservice;
 
-@SuppressWarnings({ "rawtypes", "serial" })
+@SuppressWarnings({ "rawtypes", "serial", "unused" })
 public class SimpleModule2  extends org.openbravo.services.webservice.SimpleModule1  implements java.io.Serializable {
     private boolean isCommercial;
 

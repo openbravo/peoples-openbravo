@@ -23,7 +23,6 @@ import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -55,6 +54,7 @@ import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Appender;
 import org.apache.log4j.Logger;
@@ -701,9 +701,7 @@ public class ActivationKey {
       File restrictionsFile = new File(restrictionsFilePath);
       log4j.debug("Restrictions file: " + restrictionsFile.getAbsolutePath());
 
-      FileInputStream fis = new FileInputStream(restrictionsFile);
-      byte fileContent[] = new byte[(int) restrictionsFile.length()];
-      fis.read(fileContent);
+      byte fileContent[] = FileUtils.readFileToByteArray(restrictionsFile);
       ByteArrayOutputStream bos = new ByteArrayOutputStream();
       decrypt(fileContent, getPublicKey(OB_PUBLIC_KEY), bos, OB_PUBLIC_KEY);
       ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(bos.toByteArray()));

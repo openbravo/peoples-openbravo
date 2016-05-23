@@ -23,13 +23,14 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.StringReader;
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.LineIterator;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.structure.BaseOBObject;
@@ -52,11 +53,12 @@ public class XMLBaseTest extends OBBaseTest {
     try {
       final URL url = this.getClass().getResource("testdata/" + file);
       final File f = new File(new URI(url.toString()));
-      final BufferedReader r1 = new BufferedReader(new FileReader(f));
+      LineIterator li1 = FileUtils.lineIterator(f);
       final BufferedReader r2 = new BufferedReader(new StringReader(result));
       String line = null;
       int lineNo = 1;
-      while ((line = r1.readLine()) != null) {
+      while (li1.hasNext()) {
+        line = li1.nextLine();
         final String otherLine = r2.readLine();
         assertTrue("File: " + file + ": Lines are unequal: \n" + line + "\n" + otherLine
             + "\n Line number is " + lineNo, line.equals(otherLine));
@@ -71,16 +73,7 @@ public class XMLBaseTest extends OBBaseTest {
     try {
       final URL url = this.getClass().getResource("testdata/" + file);
       final File f = new File(new URI(url.toString()));
-      final BufferedReader r1 = new BufferedReader(new FileReader(f));
-      final StringBuilder sb = new StringBuilder();
-      String line;
-      while ((line = r1.readLine()) != null) {
-        if (sb.length() > 0) {
-          sb.append("\n");
-        }
-        sb.append(line);
-      }
-      return sb.toString();
+      return FileUtils.readFileToString(f);
     } catch (final Exception e) {
       throw new OBException(e);
     }

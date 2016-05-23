@@ -23,7 +23,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Collections;
@@ -33,6 +32,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.openbravo.base.model.Entity;
@@ -153,8 +153,8 @@ public class FreemarkerTemplateProcessorTest extends WeldBaseTest {
     template.setModule(getModule());
 
     for (Template dependency : dependencies) {
-      final TemplateDependency templateDependency = OBProvider.getInstance()
-          .get(TemplateDependency.class);
+      final TemplateDependency templateDependency = OBProvider.getInstance().get(
+          TemplateDependency.class);
       templateDependency.setObclkerTemplate(template);
       templateDependency.setDependsOnTemplate(dependency);
       template.getOBCLKERTemplateDependencyList().add(templateDependency);
@@ -166,14 +166,7 @@ public class FreemarkerTemplateProcessorTest extends WeldBaseTest {
   private String readTemplateSource(String fileName) throws Exception {
     final URL url = this.getClass().getResource(fileName + ".ftl");
     final File file = new File(url.toURI());
-    return readFileAsString(file);
-  }
-
-  private static String readFileAsString(File file) throws java.io.IOException {
-    byte[] buffer = new byte[(int) file.length()];
-    FileInputStream f = new FileInputStream(file);
-    f.read(buffer);
-    return new String(buffer);
+    return FileUtils.readFileToString(file);
   }
 
   private Module getModule() {
