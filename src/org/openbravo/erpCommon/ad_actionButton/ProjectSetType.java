@@ -78,6 +78,8 @@ public class ProjectSetType extends HttpSecureAppServlet {
       pageErrorPopUp(response);
   }
 
+  @SuppressWarnings("resource")
+  // con is closed in commit/rollback methods
   private OBError processButton(VariablesSecureApp vars, String strKey, String strProjectType,
       String strDateFrom, String windowId) {
     Connection conn = null;

@@ -70,6 +70,8 @@ public class ProjectCopyFrom extends HttpSecureAppServlet {
       pageErrorPopUp(response);
   }
 
+  @SuppressWarnings("resource")
+  // con is closed in commit/rollback methods
   private OBError processButton(VariablesSecureApp vars, String strKey, String strProject,
       String windowId) {
     Connection conn = null;
