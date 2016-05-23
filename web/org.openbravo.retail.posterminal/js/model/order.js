@@ -3590,6 +3590,21 @@
                       if (!OB.UTIL.isNullOrUndefined(data) && OB.DEC.number(iter.quantity) > 0) {
                         hasservices = data.hasservices;
                       }
+                      _.each(iter.promotions, function (promotion) {
+                        OB.Dal.get(OB.Model.Discount, promotion.ruleId, function (discount) {
+                          if (discount && OB.Model.Discounts.discountRules[discount.get('discountType')].addManual) {
+                            var percentage;
+                            if (discount.get('obdiscPercentage')) {
+                              percentage = OB.DEC.mul(OB.DEC.div(promotion.amt, iter.linegrossamount), new BigDecimal('100'));
+                            }
+                            promotion.userAmt = percentage ? percentage : promotion.amt;
+                            promotion.discountType = discount.get('discountType');
+                            promotion.manual = true;
+                          }
+                        }, function (tx, error) {
+                          OB.UTIL.showError("OBDAL error: " + error);
+                        });
+                      });
                       newline = new OrderLine({
                         id: iter.lineId,
                         product: prod,
