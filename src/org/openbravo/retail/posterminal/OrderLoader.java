@@ -1445,7 +1445,11 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         jsonorder.getJSONObject("bp").getString("locId")));
     order.setInvoiceAddress(order.getPartnerAddress());
 
-    if (bp.getPaymentMethod() != null) {
+    if (!jsonorder.getJSONObject("bp").isNull("paymentMethod")
+        && !jsonorder.getJSONObject("bp").getString("paymentMethod").equals("null")) {
+      order.setPaymentMethod((FIN_PaymentMethod) OBDal.getInstance().getProxy("FIN_PaymentMethod",
+          jsonorder.getJSONObject("bp").getString("paymentMethod")));
+    } else if (bp.getPaymentMethod() != null) {
       order.setPaymentMethod((FIN_PaymentMethod) bp.getPaymentMethod());
     } else if (order.getOrganization().getObretcoDbpPmethodid() != null) {
       order.setPaymentMethod((FIN_PaymentMethod) order.getOrganization().getObretcoDbpPmethodid());
@@ -1462,7 +1466,11 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       }
     }
 
-    if (bp.getPaymentTerms() != null) {
+    if (!jsonorder.getJSONObject("bp").isNull("paymentTerms")
+        && !jsonorder.getJSONObject("bp").getString("paymentTerms").equals("null")) {
+      order.setPaymentTerms((PaymentTerm) OBDal.getInstance().getProxy("FinancialMgmtPaymentTerm",
+          jsonorder.getJSONObject("bp").getString("paymentTerms")));
+    } else if (bp.getPaymentTerms() != null) {
       order.setPaymentTerms((PaymentTerm) bp.getPaymentTerms());
     } else if (order.getOrganization().getObretcoDbpPmethodid() != null) {
       order.setPaymentTerms((PaymentTerm) order.getOrganization().getObretcoDbpPtermid());
@@ -1477,7 +1485,10 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       }
     }
 
-    if (bp.getInvoiceTerms() != null) {
+    if (!jsonorder.getJSONObject("bp").isNull("invoiceTerms")
+        && !jsonorder.getJSONObject("bp").getString("invoiceTerms").equals("null")) {
+      order.setInvoiceTerms(jsonorder.getJSONObject("bp").getString("invoiceTerms"));
+    } else if (bp.getInvoiceTerms() != null) {
       order.setInvoiceTerms(bp.getInvoiceTerms());
     } else if (order.getOrganization().getObretcoDbpIrulesid() != null) {
       order.setInvoiceTerms(order.getOrganization().getObretcoDbpIrulesid());
