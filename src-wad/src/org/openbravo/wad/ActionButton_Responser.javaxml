@@ -41,6 +41,7 @@ import java.io.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
 
+@SuppressWarnings("unused")
 public class ActionButton_Responser extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
   protected static final String windowId = "ActionButtonResponser";
