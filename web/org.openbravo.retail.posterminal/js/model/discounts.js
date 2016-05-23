@@ -146,6 +146,7 @@
           line.set('promotions', []);
           line.set('promotionCandidates', []);
           _.forEach(manualPromotions, function (promo) {
+            promo.qtyOffer = undefined;
             var promotion = {
               rule: new Backbone.Model(promo),
 
