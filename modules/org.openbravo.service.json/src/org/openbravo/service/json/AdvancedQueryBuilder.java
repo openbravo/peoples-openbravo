@@ -1566,8 +1566,8 @@ public class AdvancedQueryBuilder {
     return orderByClausePart;
   }
 
-  // When joining tables, this method can be used to check if the joining property of the table on
-  // the left part is mandatory. In that case, an inner join would not discard any record of that
+  // When joining DB tables, this method can be used to check if the joining property of the
+  // leftmost table is mandatory. In that case, an inner join would not discard any record of that
   // table. This means that the left join can be safely replaced with inner join.
   private boolean canUseInnerJoin(List<Property> properties) {
     if (properties.size() == 0) {
