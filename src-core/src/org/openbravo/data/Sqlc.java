@@ -94,6 +94,7 @@ public class Sqlc extends DefaultHandler {
   private static boolean includeQueryTimeOut;
 
   private List<String> scrollableFunctionNames = new ArrayList<String>();
+  private boolean hasCountField;
 
   private Sqlc() {
     init();
@@ -107,6 +108,7 @@ public class Sqlc extends DefaultHandler {
     strComments = null;
     sqlcAccessModifier = "";
     scrollableFunctionNames = new ArrayList<String>();
+    hasCountField = false;
   }
 
   public static void main(String argv[]) throws Exception {
@@ -887,6 +889,11 @@ public class Sqlc extends DefaultHandler {
       // add needed instance variables & functions
       String toInsert = "\n";
       toInsert += "  private String scrollableGetter;\n";
+
+      if (!hasCountField) {
+        toInsert += "  @SuppressWarnings(\"unused\")\n";
+      }
+
       toInsert += "  private long countRecord;\n";
       toInsert += "  private ResultSet result;\n";
       toInsert += "  private boolean hasData;\n";
@@ -1589,10 +1596,11 @@ public class Sqlc extends DefaultHandler {
     }
     for (final Enumeration<Object> e = sql.vecFieldAdded.elements(); e.hasMoreElements();) {
       final FieldAdded fieldAdded = (FieldAdded) e.nextElement();
-      if (fieldAdded.strValue.equals("count"))
+      if (fieldAdded.strValue.equals("count")) {
         out2.append("        object" + sqlcName + "." + fieldAdded.strName
             + " = Long.toString(countRecord);\n");
-      else if (fieldAdded.strValue.equals("void"))
+        hasCountField = true;
+      } else if (fieldAdded.strValue.equals("void"))
         out2.append("        object" + sqlcName + "." + fieldAdded.strName + " = \"\";\n");
     }
     if (sql.sqlReturn.equalsIgnoreCase("MULTIPLE"))
