@@ -58,7 +58,7 @@ public class BasicUtility {
    *          Handler for the database connection.
    * @param strCode
    *          String with the code to search.
-   * @param localStrLanguage
+   * @param strLanguage
    *          String with the translation language.
    * @param escape
    *          Escape \n and " characters
@@ -152,7 +152,7 @@ public class BasicUtility {
   /**
    * Generates a String representing the wikified name from source
    * 
-   * @param localStrSource
+   * @param strSource
    * @return strTarget: wikified name
    */
   public static String wikifiedName(String strSource) throws FileNotFoundException {

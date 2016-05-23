@@ -160,17 +160,11 @@ public class Fact {
    *          if null, line is not created
    * @param C_Currency_ID
    *          the currency
-   * @param localDebitAmt
+   * @param debitAmt
    *          debit amount, can be null
-   * @param localCreditAmt
+   * @param creditAmt
    *          credit amount, can be null
-   * @param Fact_Acct_Group_ID
-   * 
-   * @param SeqNo
-   * 
-   * @param DocBaseType
-   * 
-   * @param localConversionDate
+   * @param conversionDate
    *          Date to convert currencies if required
    * @param conversionRate
    *          The rate to use to convert from source amount to account amount. May be null

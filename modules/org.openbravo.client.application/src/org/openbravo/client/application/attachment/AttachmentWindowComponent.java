@@ -111,9 +111,9 @@ public class AttachmentWindowComponent extends BaseTemplateComponent {
    * Sets the Attachment Method and Tab. Actualizes metadata depending on this tab an attachment
    * method
    * 
-   * @param tab
+   * @param _tab
    *          Tab to set.
-   * @param attMethod
+   * @param _attMethod
    *          Method to set.
    */
   public void initialize(Tab _tab, AttachmentMethod _attMethod) {

@@ -207,7 +207,7 @@ public class AntExecutor {
   /**
    * Executes an ant task
    * 
-   * @param localTask
+   * @param task
    *          - Name of the task to execute
    * @throws Exception
    *           - In case the project is not loaded

@@ -96,14 +96,10 @@ public class AttachImplementationManager {
   /**
    * Method to upload files. This method calls needed handler class
    * 
-   * @param requestParams
-   * 
    * @param strTab
    *          the tab Id where the attachment is done
    * @param strKey
    *          the recordId where the attachment is done
-   * @param strDataType
-   *          the datatype of the document that is attached
    * @param strDocumentOrganization
    *          the organization ID of the record where the attachment is done
    * @param file

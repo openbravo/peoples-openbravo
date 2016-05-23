@@ -188,7 +188,7 @@ public class ParameterUtils {
    *          the parameter to get the Default Value from
    * @param session
    *          the HttpSession of the request
-   * @param context
+   * @param _context
    *          the JSONObject with the context information of the request.
    * @return the DefaultValue of the Parameter.
    * @throws ScriptException

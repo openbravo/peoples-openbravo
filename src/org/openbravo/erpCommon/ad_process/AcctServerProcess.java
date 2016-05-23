@@ -76,8 +76,6 @@ public class AcctServerProcess extends DalBaseProcess {
 
   /**
    * 
-   * @param localVars
-   * @param bundle
    * @throws ServletException
    */
   private void processClient(VariablesSecureApp vars, ProcessBundle bundle) throws ServletException {

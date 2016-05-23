@@ -563,8 +563,6 @@ public class LoginHandler extends HttpBaseServlet {
    *          the userId
    * @param unHashedPassword
    *          the password, the unhashed password as it is entered by the user.
-   * @param myPool
-   *          ConnectionProvider used to translate messages.
    * @param language
    *          Default language for the user
    * @throws ServletException

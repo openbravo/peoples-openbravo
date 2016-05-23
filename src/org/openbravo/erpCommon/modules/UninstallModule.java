@@ -83,7 +83,7 @@ public class UninstallModule {
    * Executes the uninstall process for a comma separated list of modules, all these modules will be
    * uninstalled as well as all their contained modules.
    * 
-   * @param localModuleIdList
+   * @param moduleIdList
    *          Comma separated list of module ids
    */
   public void execute(String moduleIdList) {

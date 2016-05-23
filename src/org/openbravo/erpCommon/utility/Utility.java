@@ -1357,9 +1357,9 @@ public class Utility {
    * Checks if an element is in a list. List is an string like "(e1, e2, e3,...)" where en are
    * elements. It is inteeded to be used for checking user client and organizations.
    * 
-   * @param localStrList
+   * @param strList
    *          List to check in
-   * @param localStrElement
+   * @param strElement
    *          Element to check in the list
    * @return true in case the element is in the list
    */
@@ -1417,7 +1417,6 @@ public class Utility {
   /**
    * Returns a string list comma separated as SQL strings.
    * 
-   * @param localList
    * @return comma delimited quoted string
    */
   public static String stringList(String list) {

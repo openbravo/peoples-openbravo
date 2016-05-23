@@ -218,7 +218,6 @@ public class VariablesSecureApp extends VariablesBase {
    * corresponds to the theme's folder name in the web/skins. Default theme's value is 'Default'.
    * 
    * @return String with the unique name of the theme.
-   * @throws SchedulerException
    */
   public String getTheme() {
     if (!theme.equals("")) {

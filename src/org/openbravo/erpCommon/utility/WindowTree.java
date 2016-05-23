@@ -217,9 +217,9 @@ public class WindowTree extends HttpSecureAppServlet {
    *          Array with the tree elements.
    * @param direccion
    *          String with the path for the urls.
-   * @param localIndice
+   * @param indice
    *          String with the index.
-   * @param localIsFirst
+   * @param isFirst
    *          Indicates if is the first or not.
    * @return String html with the tree.
    */

@@ -1571,12 +1571,6 @@ public class FIN_Utility {
    * any FinAccPaymentMethod related to paymentMethodId FIN_PaymentMethod ordered by default field.
    * FinAccPaymentMethod must have pay in/out active and must be compatible with currencyId Currency
    * if currencyId is not null.
-   * 
-   * @param paymentMethodId
-   * @param financialAccountId
-   * @param issotrx
-   * @param currencyId
-   * @return
    */
   public static FinAccPaymentMethod getFinancialAccountPaymentMethod(String paymentMethodId,
       String financialAccountId, boolean issotrx, String currencyId) {
@@ -1624,10 +1618,6 @@ public class FIN_Utility {
   /**
    * Appends existing Financial Account Transaction description with either GL Item Description or
    * Payment description in a new line
-   * 
-   * @param description
-   * @param descriptionToAppend
-   * @return returnDescription
    */
 
   public static String getFinAccTransactionDescription(String description,

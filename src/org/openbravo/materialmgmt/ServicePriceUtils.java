@@ -58,11 +58,6 @@ public class ServicePriceUtils {
   /**
    * Method to obtain Service Amount to be added for a certain service order line based on selected
    * product lines amount
-   * 
-   * @param orderline
-   * @param linesTotalAmount
-   * @param totalDiscounts
-   * @return
    */
   public static BigDecimal getServiceAmount(OrderLine orderline, BigDecimal linesTotalAmount,
       BigDecimal totalDiscounts, BigDecimal totalPrice, BigDecimal relatedQty,
@@ -164,7 +159,6 @@ public class ServicePriceUtils {
    *          Service Price Rule
    * @param relatedAmount
    *          Amount
-   * @return
    */
   private static ServicePriceRuleRange getRange(ServicePriceRule servicePriceRule,
       BigDecimal relatedAmount) {
@@ -191,9 +185,6 @@ public class ServicePriceUtils {
 
   /**
    * Method that returns the total amount, quantity and price of all lines related to the given line
-   * 
-   * @param orderLine
-   * @return
    */
   public static HashMap<String, BigDecimal> getRelatedAmountAndQty(OrderLine orderLine) {
     OBContext.setAdminMode(true);
@@ -229,7 +220,6 @@ public class ServicePriceUtils {
    *          Price List assigned in the Service Price Rule Range
    * @param product
    *          Product to search in Price List
-   * @return
    */
   public static BigDecimal getProductPrice(Date date, PriceList priceList, Product product)
       throws OBException {
@@ -269,7 +259,6 @@ public class ServicePriceUtils {
    *          Service Product
    * @param orderDate
    *          Order Date of the Sales Order
-   * @return
    */
   public static ServicePriceRule getServicePriceRule(Product serviceProduct, Date orderDate) {
     OBContext.setAdminMode(true);
@@ -297,7 +286,7 @@ public class ServicePriceUtils {
   /**
    * Method that returns the next Line Number of a Sales Order
    * 
-   * @param order
+   * @param orderId
    *          Order
    */
   public static Long getNewLineNo(String orderId) {
@@ -329,7 +318,6 @@ public class ServicePriceUtils {
    *          Order Line in which the service deferred it is wanted to be added
    * @param orderLineToRelate
    *          Order Line to which the service is related
-   * @return
    */
   public static JSONObject deferredSaleAllowed(OrderLine orderline, OrderLine orderLineToRelate) {
     JSONObject result = null;
@@ -382,11 +370,6 @@ public class ServicePriceUtils {
   /**
    * Method that returns a warning message if a service of a Return From Customer is not Returnable
    * of the return period is expired.
-   * 
-   * @param shipmentLine
-   * @param serviceProduct
-   * @param rfcOrderDate
-   * @return
    */
   public static JSONObject serviceReturnAllowedRFC(ShipmentInOutLine shipmentLine,
       Product serviceProduct, Date rfcOrderDate) {
@@ -444,8 +427,6 @@ public class ServicePriceUtils {
    * 
    * @param orderline
    *          OrderLine
-   * @param linesTotalAmount
-   * @return
    */
   public static boolean servicePriceRuleIsAfterDiscounts(OrderLine orderline,
       BigDecimal linesTotalAmount, BigDecimal totalPrice, BigDecimal totalDiscounts,

@@ -226,7 +226,7 @@ public class AccountTree {
    * This method updates all the Quantitie's signs of the tree. Is used by the constructor to
    * initialize the element's quantities. Also initializes the level of each account
    * 
-   * @param localRootElement
+   * @param rootElement
    *          String with the index from which to start updating.
    * @param level
    *          Integer with the level of the elements.
@@ -295,7 +295,7 @@ public class AccountTree {
    *          Array with the operands.
    * @param accountId
    *          String with the index of the element to evaluate.
-   * @param localVecTotal
+   * @param vecTotal
    *          Vector with the totals of the operation.
    */
   private void operandsCalculate(Vector<Object> vecAll, AccountTreeData[] operands,
@@ -442,9 +442,9 @@ public class AccountTree {
    * 
    * @param operands
    *          Array with the forms.
-   * @param localReportNode
+   * @param reportNode
    *          Array with the start indexes.
-   * @param localTotalAmounts
+   * @param totalAmounts
    *          Vector with the accumulated totals.
    * @param applysign
    *          Boolean to know if the sign must be applied or not.
@@ -579,7 +579,7 @@ public class AccountTree {
    * Method to make the level filter of the tree, to eliminate the levels that shouldn't be shown in
    * the report.
    * 
-   * @param localIndice
+   * @param indice
    *          Array of indexes to evaluate.
    * @param found
    *          Boolean to know if the index has been found

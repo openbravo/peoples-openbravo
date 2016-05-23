@@ -209,9 +209,9 @@ class WindowTreeUtility {
    *          Type of window.
    * @param strDirection
    *          Base path for the urls.
-   * @param localStrOnClick
+   * @param strOnClick
    *          Command for the onclick event.
-   * @param localStrOnDblClick
+   * @param strOnDblClick
    *          Command for the onDblClick event.
    * @param hasChilds
    *          Boolean to know if has any child.

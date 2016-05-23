@@ -1508,7 +1508,7 @@ public class TableSQLData implements Serializable {
    * 
    * @param text
    *          String where is the close char to search.
-   * @param localPos
+   * @param pos
    *          Integer with the start position.
    * @param openChar
    *          The open char.
@@ -1646,7 +1646,7 @@ public class TableSQLData implements Serializable {
   /**
    * Returns the actual order by columns. The columns names inside the handler.
    * 
-   * @param localData
+   * @param data
    *          String with the order by clause.
    * @return String with the correct columns names.
    */
@@ -1947,7 +1947,7 @@ public class TableSQLData implements Serializable {
    *          Vector with parameters for the specific order by fields.
    * @param selectFields
    *          String with the fields for the select clause.
-   * @param localOrderSimple
+   * @param _OrderSimple
    *          Vector with specific order by fields. It always contains tablename.field, never SQL
    *          clause
    * @param startPosition

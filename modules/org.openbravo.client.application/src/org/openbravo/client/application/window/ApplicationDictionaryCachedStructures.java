@@ -290,10 +290,10 @@ public class ApplicationDictionaryCachedStructures implements Serializable {
    * Gets the list of parameters associated to an Attachment Method and a Tab. The list is sorted so
    * the fixed parameters are returned first.
    * 
-   * @param attachMethod
-   *          active attachment method
-   * @param tab
-   *          tab to take metadata
+   * @param strAttMethodId
+   *          active attachment method id
+   * @param strTabId
+   *          tab id to take metadata
    * @return List of parameters by attachment method and tab sorted by Fixed and Sequence Number
    *         where fixed parameters are first.
    */

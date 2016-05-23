@@ -124,8 +124,6 @@ public class StandardCostAdjustment extends CostingAlgorithmAdjustmentImp {
   /**
    * Returns transactions with movement/process date after trx and before next Inventory Amount
    * Update
-   * 
-   * @return
    */
   private ScrollableResults getLaterTransactions(MaterialTransaction trx) {
 
@@ -231,8 +229,6 @@ public class StandardCostAdjustment extends CostingAlgorithmAdjustmentImp {
   /**
    * Returns opening physical inventory transactions created by a Inventory Amount Update and
    * created after trx
-   * 
-   * @return
    */
   private ScrollableResults getLaterOpeningTransactions(MaterialTransaction trx) {
 

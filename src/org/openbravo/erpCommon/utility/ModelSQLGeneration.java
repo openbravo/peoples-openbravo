@@ -249,9 +249,9 @@ public class ModelSQLGeneration {
    *          Handler for the query builder.
    * @param selectFields
    *          String with the fields of the select clause.
-   * @param localFilter
+   * @param filter
    *          Vector with the specific filter fields.
-   * @param localFilterParams
+   * @param filterParams
    *          Vector with the parameters for the specific filter fields.
    * @param offset
    *          int, offset of rows to be displayed

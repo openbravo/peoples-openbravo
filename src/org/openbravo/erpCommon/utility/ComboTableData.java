@@ -686,7 +686,7 @@ public class ComboTableData {
   /**
    * Auxiliar method to make a replace ignoring the case.
    * 
-   * @param localData
+   * @param data
    *          String with the text.
    * @param replaceWhat
    *          The string to search.
@@ -983,7 +983,7 @@ public class ComboTableData {
    * 
    * @param st
    *          PreparedStatement object.
-   * @param localIParameter
+   * @param iParameter
    *          Index of the parameter.
    * @param discard
    *          Array with the groups to discard.
@@ -1317,8 +1317,8 @@ public class ComboTableData {
       for (int i = 0; i < vAux.size(); i++) {
         final String strAux = vAux.elementAt(i);
         try {
-          final String value = Utility.parseParameterValue(conn, variables, data, strAux, "", window,
-              actual_value, false);
+          final String value = Utility.parseParameterValue(conn, variables, data, strAux, "",
+              window, actual_value, false);
           if (log4j.isDebugEnabled())
             log4j.debug("Combo Parameter: " + strAux + " - Value: " + value);
           if (value == null || value.equals("") || "null".equals(value))

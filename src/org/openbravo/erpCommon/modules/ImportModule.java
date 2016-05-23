@@ -1458,8 +1458,7 @@ public class ImportModule {
   /**
    * Installs or updates the modules in the obx file
    * 
-   * @param obx
-   * @param localModuleID
+   * @param moduleID
    *          The ID for the current module to install
    * @throws Exception
    */
