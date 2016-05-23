@@ -761,6 +761,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
               OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_LayawayCancelledError'));
               return;
             } else {
+              cancelLayawayObj.id = receipt.get('id');
               cancelLayawayObj.negativeDocNo = docNo;
               cancelLayawayObj.orderId = receipt.get('id');
               cancelLayawayObj.payments = JSON.parse(JSON.stringify(receipt.get('payments')));
