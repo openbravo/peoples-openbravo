@@ -98,11 +98,9 @@ public class SelectorDefaultFilterActionHandler extends BaseActionHandler {
           new OBBindings(OBContext.getOBContext(), params, (HttpSession) parameters
               .get(KernelConstants.HTTP_SESSION)));
 
-      boolean isFilterByIdSupported = false;
-      if (params.containsKey(SelectorConstants.DS_REQUEST_IS_FILTER_BY_ID_SUPPORTED)
-          && "true".equals(params.get(SelectorConstants.DS_REQUEST_IS_FILTER_BY_ID_SUPPORTED))) {
-        isFilterByIdSupported = true;
-      }
+      boolean isFilterByIdSupported = params
+          .containsKey(SelectorConstants.DS_REQUEST_IS_FILTER_BY_ID_SUPPORTED)
+          && "true".equals(params.get(SelectorConstants.DS_REQUEST_IS_FILTER_BY_ID_SUPPORTED));
       Object exprResult = null;
       JSONArray idFilters = new JSONArray();
       for (SelectorField f : obc.list()) {

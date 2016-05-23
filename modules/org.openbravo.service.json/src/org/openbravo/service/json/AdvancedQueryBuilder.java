@@ -1551,8 +1551,7 @@ public class AdvancedQueryBuilder {
       }
       List<Property> properties = JsonUtils.getPropertiesOnPath(getEntity(), path);
       // decide whether the entity joined for sorting have to use a left join or an inner join
-      boolean useInnerJoin = canUseInnerJoin(properties);
-      final String resolvedPath = resolveJoins(properties, path, useInnerJoin);
+      final String resolvedPath = resolveJoins(properties, path, canUseInnerJoin(properties));
       sb.append(resolvedPath);
       sb.append(direction);
     }
@@ -1567,6 +1566,9 @@ public class AdvancedQueryBuilder {
     return orderByClausePart;
   }
 
+  // When joining tables, this method can be used to check if the joining property of the table on
+  // the left part is mandatory. In that case, an inner join would not discard any record of that
+  // table. This means that the left join can be safely replaced with inner join.
   private boolean canUseInnerJoin(List<Property> properties) {
     if (properties.size() == 0) {
       return false;
