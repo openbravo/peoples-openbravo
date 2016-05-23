@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
@@ -389,6 +390,20 @@ public class JsonUtils {
     } catch (JSONException e) {
       throw new OBException(e);
     }
+  }
+
+  /**
+   * Returns whether a JSON value is empty. The following values are considered as empty:
+   * <ul>
+   * <li>An empty string
+   * <li>{@code null}
+   * <li>{@code "null"} literal
+   * <li>{@code "undefined"} literal
+   * </ul>
+   */
+  public static boolean isValueEmpty(String value) {
+    return StringUtils.isEmpty(value) || JsonConstants.UNDEFINED.equals(value)
+        || JsonConstants.NULL.equals(value);
   }
 
 }

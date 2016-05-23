@@ -123,4 +123,6 @@ public class JsonConstants {
 
   public static final String IS_WS_CALL = "_isWsCall";
 
+  public static final String UNDEFINED = "undefined";
+  public static final String NULL = "null";
 }
