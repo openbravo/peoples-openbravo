@@ -981,7 +981,7 @@
       if (OB.DEC.isNumber(qty) && qty !== 0) {
         var oldqty = line.get('qty');
         permission = 'OBPOS_ReturnLine';
-        if (!OB.MobileApp.model.hasPermission(permission, true) && qty < 0 && oldqty > 0) {
+        if ((!OB.MobileApp.model.hasPermission(permission, true) || this.get('isQuotation')) && qty < 0 && oldqty > 0) {
           OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgCannotAddNegative'));
           return;
         }
