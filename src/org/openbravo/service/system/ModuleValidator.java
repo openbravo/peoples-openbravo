@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,7 +21,9 @@ package org.openbravo.service.system;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.model.NamingUtil;
@@ -53,6 +55,19 @@ import org.openbravo.service.system.SystemValidationResult.SystemValidationType;
 public class ModuleValidator implements SystemValidator {
 
   private Module validateModule;
+
+  @SuppressWarnings("serial")
+  private static final Map<String, List<String>> ALLOWED_FILES_IN_PATH = new HashMap<String, List<String>>() {
+    // key is the parent directory and value is the list of allowed files not matching the standard
+    // rule
+    {
+      put("src", new ArrayList<String>() {
+        {
+          add("META-INF");
+        }
+      });
+    }
+  };
 
   public String getCategory() {
     return "Module";
@@ -146,9 +161,17 @@ public class ModuleValidator implements SystemValidator {
         if (!file.isDirectory() && rootSrcDir) {
           continue;
         }
-        if (!file.getName().equals(part)) {
+
+        String fileName = file.getName();
+        if (!fileName.equals(part)) {
+          String parentDirectoryName = file.getParentFile().getName();
+          if (ALLOWED_FILES_IN_PATH.containsKey(parentDirectoryName)
+              && ALLOWED_FILES_IN_PATH.get(parentDirectoryName).contains(fileName)) {
+            continue;
+          }
+
           result.addError(SystemValidationType.MODULE_ERROR, "The source directory of the Module "
-              + module.getName() + " is invalid, it contains directories/files (" + file.getName()
+              + module.getName() + " is invalid, it contains directories/files (" + fileName
               + ") which are not part of " + "the javaPackage of the module: " + javaPackage);
         }
       }
