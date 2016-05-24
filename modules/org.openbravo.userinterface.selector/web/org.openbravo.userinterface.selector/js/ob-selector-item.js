@@ -143,12 +143,13 @@ isc.OBSelectorPopupWindow.addProperties({
       },
 
       getFetchRequestParams: function (params) {
+        var requestType = 'Window';
         params = params || {};
         if (this.selector) {
-          isc.OBSelectorItem.prepareDSRequest(params, this.selector);
+          isc.OBSelectorItem.prepareDSRequest(params, this.selector, requestType);
         }
 
-        params._requestType = 'Window';
+        params._requestType = requestType;
 
         if (this.getSelectedRecord()) {
           params._targetRecordId = this.targetRecordId;
@@ -357,6 +358,7 @@ isc.OBSelectorPopupWindow.addProperties({
     // first time    
     var ret = this.Super('show', arguments);
     if (applyDefaultFilter) {
+      this.setFilterByIdEditorCriteria(this.defaultFilter);
       this.selectorGrid.setFilterEditorCriteria(this.defaultFilter);
       this.selectorGrid.filterByEditor();
     }
@@ -380,7 +382,8 @@ isc.OBSelectorPopupWindow.addProperties({
         callback, data;
 
     data = {
-      '_selectorDefinitionId': this.selectorDefinitionId || this.selector.selectorDefinitionId
+      '_selectorDefinitionId': this.selectorDefinitionId || this.selector.selectorDefinitionId,
+      '_isFilterByIdSupported': true
     };
 
     // on purpose not passing the third boolean param
@@ -410,6 +413,33 @@ isc.OBSelectorPopupWindow.addProperties({
     this.defaultFilter = defaultFilter;
     this.selectorGrid.targetRecordId = this.selector.getValue();
     this.show(true);
+  },
+
+  setFilterByIdEditorCriteria: function (defaultFilter) {
+    var editForm = this.getFilterEditorForm(),
+        filterField, idFilter, i;
+    if (!defaultFilter.idFilters || !editForm) {
+      return;
+    }
+    for (i = 0; i < defaultFilter.idFilters.length; i++) {
+      idFilter = defaultFilter.idFilters[i];
+      filterField = editForm.getField(idFilter.fieldName);
+      if (filterField) {
+        // Force filter by id
+        filterField.filterType = 'id';
+        filterField.filterAuxCache = [idFilter];
+        defaultFilter[idFilter.fieldName] = idFilter._identifier;
+      }
+    }
+    // idFilters is no longer needed. Its information is already included into the grid filters.
+    delete this.defaultFilter.idFilters;
+  },
+
+  getFilterEditorForm: function () {
+    if (!this.selectorGrid || !this.selectorGrid.filterEditor || !this.selectorGrid.filterEditor.getEditForm) {
+      return null;
+    }
+    return this.selectorGrid.filterEditor.getEditForm();
   },
 
   setValueInField: function () {
@@ -917,10 +947,16 @@ isc.OBSelectorItem.addProperties({
   },
 
   openSelectorWindow: function () {
+    var selectorGrid = this.selectorWindow.selectorGrid;
     // always refresh the content of the grid to force a reload
     // if the organization has changed
-    if (this.selectorWindow.selectorGrid) {
-      this.selectorWindow.selectorGrid.invalidateCache();
+    if (selectorGrid && selectorGrid.data) {
+      delete selectorGrid.data;
+      // Ensure that the scroll is on the top after reopening the selector pop-up
+      selectorGrid.scrollToRow(0);
+      if (selectorGrid.body) {
+        selectorGrid.body.markForRedraw();
+      }
     }
     this.selectorWindow.open();
   },
@@ -977,7 +1013,7 @@ isc.OBSelectorItem.addProperties({
     requestProperties = requestProperties || {};
     requestProperties.params = requestProperties.params || {};
 
-    isc.OBSelectorItem.prepareDSRequest(requestProperties.params, this);
+    isc.OBSelectorItem.prepareDSRequest(requestProperties.params, this, 'PickList');
 
     // sometimes the value is passed as a filter criteria remove it
     if (this.getValueFieldName() && requestProperties.params[this.getValueFieldName()]) {
@@ -1061,6 +1097,36 @@ isc.OBSelectorItem.addProperties({
     return criteria;
   },
 
+  getSelectedPropertiesString: function () {
+    var i, fieldName, selectedProperties = OB.Constants.ID;
+    for (i = 0; i < this.pickListFields.length; i++) {
+      fieldName = this.pickListFields[i].name;
+      if (fieldName === OB.Constants.ID || fieldName === OB.Constants.IDENTIFIER) {
+        continue;
+      }
+      selectedProperties += ',' + fieldName;
+    }
+    return selectedProperties;
+  },
+
+  getExtraPropertiesString: function () {
+    var i, outFieldName, outFieldsNames, extraProperties = this.valueField || '';
+    if (this.displayField && this.displayField !== OB.Constants.IDENTIFIER) {
+      extraProperties += ',' + this.displayField;
+    }
+    if (this.outFields) {
+      outFieldsNames = isc.getKeys(this.outFields);
+      for (i = 0; i < outFieldsNames.length; i++) {
+        outFieldName = outFieldsNames[i];
+        if (outFieldName === this.valueField || outFieldName === this.displayField) {
+          continue;
+        }
+        extraProperties += ',' + outFieldName;
+      }
+    }
+    return extraProperties;
+  },
+
   mapValueToDisplay: function (value) {
     var ret = this.Super('mapValueToDisplay', arguments);
     if (ret === value && this.isDisabled()) {
@@ -1111,7 +1177,7 @@ isc.OBSelectorItem.addProperties({
 isc.OBSelectorItem.addClassMethods({
   // Prepares requestProperties adding contextInfo, this is later used in backed
   // to prepare filters 
-  prepareDSRequest: function (params, selector) {
+  prepareDSRequest: function (params, selector, requestType) {
     function setOrgIdParam(params) {
       if (!params.inpadOrgId) {
         // look for an ad_org_id parameter. If there is no such parameter or its value is empty, use the current user organization
@@ -1178,6 +1244,13 @@ isc.OBSelectorItem.addClassMethods({
     // and sort according to the display field
     // initially
     params[OB.Constants.SORTBY_PARAMETER] = selector.displayField;
+
+    if (requestType === 'PickList') {
+      // Add the fields to be displayed in the picklist as selected properties
+      params[OB.Constants.SELECTED_PROPERTIES] = selector.getSelectedPropertiesString();
+      // Include value field, display field and out fields into additional properties
+      params[OB.Constants.EXTRA_PROPERTIES] = selector.getExtraPropertiesString();
+    }
 
     // Parameter windows
     if (selector.form.paramWindow) {

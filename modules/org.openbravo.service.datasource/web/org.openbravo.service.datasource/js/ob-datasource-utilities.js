@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2009-2013 Openbravo SLU
+ * All portions are Copyright (C) 2009-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -185,8 +185,12 @@ isc.OBRestDataSource.addClassProperties({
 isc.OBRestDataSource.addProperties({
   sendDSRequest: function (dsRequest) {
     //TODO: Report an issue to SmartClient - This part is a work around
+    var extraProperties = {};
     if (dsRequest.params && this.requestProperties && this.requestProperties.params) {
-      isc.addProperties(dsRequest.params, this.requestProperties.params);
+      if (dsRequest.params._extraProperties) {
+        extraProperties[OB.Constants.EXTRA_PROPERTIES] = dsRequest.params._extraProperties;
+      }
+      isc.addProperties(dsRequest.params, this.requestProperties.params, extraProperties);
     }
     // if the datasource is not paginated, paginate them in case of selectors working in 2.50 UI.
     // in other cases error is thrown from server side.

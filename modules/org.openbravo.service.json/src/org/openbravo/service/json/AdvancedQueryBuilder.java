@@ -160,10 +160,12 @@ public class AdvancedQueryBuilder {
   private String distinctPropertyPath;
   private DataEntityQueryService subDataEntityQueryService;
 
-  // map that indicates, for a property, if its join definition is used only in joins used for
-  // filtering the grid
-  // see issue https://issues.openbravo.com/view.php?id=26279
-  private Map<String, Boolean> gridFilterExclusiveJoinMap = new HashMap<String, Boolean>();
+  // map that indicates, for a property, if it should be joined using an inner join or a left join.
+  // An inner join will be used if one of the following cases is fulfilled:
+  // 1- the join definition of the property is used only in joins used for filtering the grid.
+  // 2- the join definition is included for sorting, and the property used to make the join is
+  // mandatory, i.e., the inner join can be used safely.
+  private Map<String, Boolean> useInnerJoinMap = new HashMap<String, Boolean>();
 
   private int aliasOffset = 0;
 
@@ -1547,9 +1549,9 @@ public class AdvancedQueryBuilder {
         path = orderByExpression[0];
         direction = " " + orderByExpression[1] + " ";
       }
-      boolean fromCriteria = false;
-      final String resolvedPath = resolveJoins(JsonUtils.getPropertiesOnPath(getEntity(), path),
-          path, fromCriteria);
+      List<Property> properties = JsonUtils.getPropertiesOnPath(getEntity(), path);
+      // decide whether the entity joined for sorting have to use a left join or an inner join
+      final String resolvedPath = resolveJoins(properties, path, canUseInnerJoin(properties));
       sb.append(resolvedPath);
       sb.append(direction);
     }
@@ -1562,6 +1564,17 @@ public class AdvancedQueryBuilder {
       }
     }
     return orderByClausePart;
+  }
+
+  // When joining DB tables, this method can be used to check if the joining property of the
+  // leftmost table is mandatory. In that case, an inner join would not discard any record of that
+  // table. This means that the left join can be safely replaced with inner join.
+  private boolean canUseInnerJoin(List<Property> properties) {
+    if (properties.size() == 0) {
+      return false;
+    }
+    Property firstProperty = properties.get(0);
+    return !firstProperty.isPrimitive() && firstProperty.isMandatory();
   }
 
   // Creates a Hibernate concatenation if there are multiple identifierproperties
@@ -1758,7 +1771,7 @@ public class AdvancedQueryBuilder {
       for (JoinDefinition joinDefinition : joinDefinitions) {
         if (joinDefinition.appliesTo(alias, prop)) {
           if (!fromCriteria) {
-            gridFilterExclusiveJoinMap.put(prop.getName(), Boolean.FALSE);
+            useInnerJoinMap.put(prop.getName(), Boolean.FALSE);
           }
           alias = joinDefinition.getJoinAlias();
           joinedPropertyIndex = index;
@@ -1783,9 +1796,9 @@ public class AdvancedQueryBuilder {
       joinDefinition.setOwnerAlias(alias);
       joinDefinition.setProperty(prop);
       if (fromCriteria) {
-        gridFilterExclusiveJoinMap.put(prop.getName(), Boolean.TRUE);
+        useInnerJoinMap.put(prop.getName(), Boolean.TRUE);
       } else {
-        gridFilterExclusiveJoinMap.put(prop.getName(), Boolean.FALSE);
+        useInnerJoinMap.put(prop.getName(), Boolean.FALSE);
       }
       joinDefinitions.add(joinDefinition);
 
@@ -1840,7 +1853,7 @@ public class AdvancedQueryBuilder {
         // entity is used only in where clauses resulting from filtering the grid, an inner join can
         // be used
         if (KernelUtils.hasNullableIdentifierProperties(property.getTargetEntity())
-            || !(Boolean.TRUE.equals(gridFilterExclusiveJoinMap.get(property.getName())))) {
+            || !(Boolean.TRUE.equals(useInnerJoinMap.get(property.getName())))) {
           joinType = " left join ";
         } else {
           joinType = " inner join ";

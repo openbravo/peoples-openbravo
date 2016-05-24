@@ -68,12 +68,14 @@ var OB = {
         FILTER_PARAMETER : '_filter',
         SQL_FILTER_PARAMETER : '_sqlFilter',
         SORTBY_PARAMETER : '_sortBy',
-        OR_EXPRESSION: '_OrExpression',
-        TEXT_MATCH_PARAMETER_OVERRIDE: '_textMatchStyleOverride',
+        OR_EXPRESSION : '_OrExpression',
+        TEXT_MATCH_PARAMETER_OVERRIDE : '_textMatchStyleOverride',
         SUCCESS : 'success',
-        DBL_CLICK_DELAY: 300,
+        DBL_CLICK_DELAY : 300,
         ERROR : 'error',
-        IS_PICK_AND_EDIT : '_isPickAndEdit'
+        IS_PICK_AND_EDIT : '_isPickAndEdit',
+        SELECTED_PROPERTIES : '_selectedProperties',
+        EXTRA_PROPERTIES : '_extraProperties'
     },
 
     Styles : {

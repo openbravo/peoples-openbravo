@@ -35,6 +35,7 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.ScrollableResults;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.base.model.Column;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
@@ -51,6 +52,7 @@ import org.openbravo.database.SessionInfo;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.service.db.DbUtility;
 import org.openbravo.service.json.JsonToDataConverter.JsonConversionError;
+import org.openbravo.userinterface.selector.Selector;
 import org.openbravo.userinterface.selector.SelectorConstants;
 
 /**
@@ -73,6 +75,7 @@ public class DefaultJsonDataService implements JsonDataService {
   private static final Logger log = Logger.getLogger(DefaultJsonDataService.class);
 
   private static final String ADD_FLAG = "_doingAdd";
+  private static final int DEFAULT_ID_LENGTH = 32;
 
   @Inject
   private CachedPreference cachedPreference;
@@ -549,9 +552,16 @@ public class DefaultJsonDataService implements JsonDataService {
       if (parameters.get(JsonConstants.SUMMARY_PARAMETER) != null
           && parameters.get(JsonConstants.SUMMARY_PARAMETER).trim().length() > 0) {
         queryService.setSummarySettings(parameters.get(JsonConstants.SUMMARY_PARAMETER));
+      } else if (parameters.containsKey(SelectorConstants.DS_REQUEST_SELECTOR_ID_PARAMETER)
+          && entityIsViewWithConcatenatedPK(entityName)) {
+        // To avoid performance problems, views whose primary key is built with the concatenation of
+        // several columns must not use that key for predictable sorting
+        String idProperty = getSelectorValueFieldProperty(entityName,
+            parameters.get(SelectorConstants.DS_REQUEST_SELECTOR_ID_PARAMETER));
+        orderBy += (orderBy.isEmpty() ? "" : ",") + idProperty;
       } else {
         // Always append id to the orderby to make a predictable sorting
-        orderBy += (orderBy.isEmpty() ? "" : ",") + "id";
+        orderBy += (orderBy.isEmpty() ? "" : ",") + JsonConstants.ID;
       }
     } else {
       orderBy = JsonConstants.IDENTIFIER;
@@ -564,7 +574,9 @@ public class DefaultJsonDataService implements JsonDataService {
     if (!forCountOperation && !directNavigation
         && parameters.containsKey(JsonConstants.TARGETRECORDID_PARAMETER)) {
       final String targetRecordId = parameters.get(JsonConstants.TARGETRECORDID_PARAMETER);
-      targetRowNumber = queryService.getRowNumber(targetRecordId);
+      if (StringUtils.isNotBlank(targetRecordId) && !"null".equals(targetRecordId)) {
+        targetRowNumber = queryService.getRowNumber(targetRecordId);
+      }
       if (targetRowNumber != -1) {
         startRow = targetRowNumber;
         // if the startrow is really low, then just read from 0
@@ -600,6 +612,32 @@ public class DefaultJsonDataService implements JsonDataService {
       paramMsg += paramKey + ":" + parameters.get(paramKey) + "\n";
     }
     return paramMsg;
+  }
+
+  private boolean entityIsViewWithConcatenatedPK(String entityName) {
+    Entity entity = ModelProvider.getInstance().getEntity(entityName);
+    if (entity.isView()) {
+      // If a view has a concatenation of several column values as its primary key value, the length
+      // of the primary key will be higher than 32, the default size for a UUID.
+      List<Column> primaryKeys = ModelProvider.getInstance().getTable(entity.getTableName())
+          .getPrimaryKeyColumns();
+      return primaryKeys.size() > 0 && primaryKeys.get(0).getFieldLength() > DEFAULT_ID_LENGTH;
+    }
+    return false;
+  }
+
+  private String getSelectorValueFieldProperty(String entityName, String selectorId) {
+    try {
+      OBContext.setAdminMode(false); // Need access to Application Dictionary information
+      Selector selector = OBDal.getInstance().get(Selector.class, selectorId);
+      if (selector != null && selector.getValuefield() != null
+          && selector.getValuefield().getProperty() != null) {
+        return selector.getValuefield().getProperty();
+      }
+      return JsonConstants.ID;
+    } finally {
+      OBContext.restorePreviousMode();
+    }
   }
 
   private void addWritableAttribute(List<JSONObject> jsonObjects) throws JSONException {
