@@ -18,11 +18,11 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2015 Openbravo SLU
+* All portions are Copyright (C) 2001-2016 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
-  v_ID VARCHAR2(32);   
+  v_ID                 VARCHAR2(32);
   v_QtyReserved        NUMBER;
   v_QtyOrderReserved   NUMBER;
   V_STOCKED            NUMBER;
@@ -32,6 +32,7 @@
   v_QtyReservedPO      NUMBER;
   v_QtyOrderReservedPO NUMBER;
   v_count              NUMBER;
+  v_UOM_ID             VARCHAR2(32);
 
 BEGIN
     
@@ -54,7 +55,11 @@ BEGIN
           IF :old.qtydelivered=0 AND :new.qtydelivered=:new.qtyordered THEN
             v_QtyOrderReserved:=-:new.QuantityOrder;
           ELSIF :new.M_Product_UOM_ID IS NOT NULL THEN
-            v_QtyOrderReserved:=C_Uom_Convert(v_QtyReserved, :new.C_UOM_ID, (select c_uom_id from m_product_uom where m_product_uom_id = :new.m_product_uom_id), 'Y') ;
+            SELECT c_uom_id
+            INTO v_UOM_ID
+            FROM m_product_uom
+            WHERE m_product_uom_id = :new.m_product_uom_id;
+            v_QtyOrderReserved:=C_Uom_Convert(v_QtyReserved, :new.C_UOM_ID, v_UOM_ID, 'Y') ;
           END IF;
           SELECT COUNT(*)
           INTO V_STOCKED
