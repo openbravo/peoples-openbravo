@@ -21,11 +21,16 @@ package org.openbravo.test.system;
 
 import static org.junit.Assert.fail;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Query;
+import org.hibernate.criterion.Restrictions;
 import org.junit.Test;
-import org.openbravo.service.system.DatabaseValidator;
+import org.openbravo.dal.service.OBCriteria;
+import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.ad.module.Module;
 import org.openbravo.service.system.ModuleValidator;
 import org.openbravo.service.system.SystemValidationResult;
 import org.openbravo.service.system.SystemValidationResult.SystemValidationType;
@@ -34,7 +39,6 @@ import org.openbravo.test.base.OBBaseTest;
 /**
  * Tests System Validation.
  * 
- * @see DatabaseValidator
  * @see ModuleValidator
  * 
  * @author mtaal
@@ -50,19 +54,37 @@ public class SystemValidatorTest extends OBBaseTest {
   @Test
   public void testModulesValidation() {
     setSystemAdministratorContext();
-    final ModuleValidator moduleValidator = new ModuleValidator();
-    final SystemValidationResult result = moduleValidator.validate();
-    printResult(result, true);
+    List<String> updatedModules = null;
+    try {
+      updatedModules = setModulesInDev();
+      final ModuleValidator moduleValidator = new ModuleValidator();
+      final SystemValidationResult result = moduleValidator.validate();
+      printResult(result, true);
+    } finally {
+      resetModules(updatedModules);
+    }
+  }
+
+  private List<String> setModulesInDev() {
+    List<String> updatedModules = new ArrayList<String>();
+    OBCriteria<Module> qModules = OBDal.getInstance().createCriteria(Module.class);
+    qModules.add(Restrictions.eq(Module.PROPERTY_INDEVELOPMENT, false));
+    for (Module mod : qModules.list()) {
+      mod.setInDevelopment(true);
+      updatedModules.add(mod.getId());
+    }
+    OBDal.getInstance().flush();
+    return updatedModules;
   }
 
   private void printResult(SystemValidationResult result, boolean allowFail) {
     for (SystemValidationType validationType : result.getWarnings().keySet()) {
-      log.debug("\n+++++++++++++++++++++++++++++++++++++++++++++++++++");
-      log.debug("Warnings for Validation type: " + validationType);
-      log.debug("\n+++++++++++++++++++++++++++++++++++++++++++++++++++");
+      log.warn("\n+++++++++++++++++++++++++++++++++++++++++++++++++++");
+      log.warn("Warnings for Validation type: " + validationType);
+      log.warn("\n+++++++++++++++++++++++++++++++++++++++++++++++++++");
       final List<String> warnings = result.getWarnings().get(validationType);
       for (String warning : warnings) {
-        log.debug(warning);
+        log.warn(warning);
       }
     }
 
@@ -78,11 +100,23 @@ public class SystemValidatorTest extends OBBaseTest {
           sb.append("\n");
         }
       }
-      if (allowFail && errors.size() > 0) {
-        fail(sb.toString());
-      }
     }
-    log.debug(sb.toString());
+    log.error(sb.toString());
+    if (allowFail && sb.length() > 0) {
+      fail(sb.toString());
+    }
   }
 
+  private void resetModules(List<String> updatedModules) {
+    if (updatedModules == null || updatedModules.isEmpty()) {
+      return;
+    }
+
+    Query upd = OBDal.getInstance().getSession()
+        .createQuery("update ADModule set inDevelopment = true where id in (:mods)");
+    upd.setParameterList("mods", updatedModules);
+    upd.executeUpdate();
+
+    OBDal.getInstance().flush();
+  }
 }
