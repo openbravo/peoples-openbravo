@@ -1337,23 +1337,6 @@ public class AdvancedQueryBuilder {
       }
     }
 
-    for (String additionalProperty : additionalProperties) {
-      List<Property> properties = JsonUtils.getPropertiesOnPath(getEntity(), additionalProperty);
-      if (properties.isEmpty()) {
-        continue;
-      }
-      properties = getPropertyForTableReference(properties);
-      final Property lastProperty = properties.get(properties.size() - 1);
-      if (lastProperty.isPrimitive()) {
-        properties.remove(lastProperty);
-      }
-      if (properties.isEmpty() || lastProperty.isOneToMany()) {
-        continue;
-      }
-      boolean fromCriteria = false;
-      resolveJoins(properties, getMainAlias(), fromCriteria);
-    }
-
     // make sure that the join clauses are computed
     getOrderByClause();
     getWhereClause();
