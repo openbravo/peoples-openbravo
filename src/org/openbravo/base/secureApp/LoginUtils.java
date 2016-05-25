@@ -125,8 +125,9 @@ public class LoginUtils {
       throws ServletException {
     boolean valid = SeguridadData.isRoleClient(conn, role, client);
     if (!valid) {
-      log4j
-          .error("Login client is not in role clients list. Role: " + role + ", Client: " + client);
+      log4j.error(
+          "Login client is not in role clients list. Role: " + role + ", Client: " + client,
+          new Exception("stack trace"));
     }
     return valid;
   }
@@ -136,7 +137,7 @@ public class LoginUtils {
     boolean valid = SeguridadData.isLoginRoleOrg(conn, role, org);
     if (!valid) {
       log4j.error("Login organization is not in role organizations list. Role: " + role + ", Org: "
-          + org);
+          + org, new Exception("stack trace"));
     }
     return valid;
   }
