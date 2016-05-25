@@ -816,14 +816,14 @@ public class DataSourceServlet extends BaseKernelServlet {
     setSessionInfo();
 
     try {
-      if (!hasAccess(request, parameters.get(JsonConstants.TAB_PARAMETER))) {
-        throw new OBUserException("AccessTableNoView");
-      }
-
       if (DataSourceConstants.FETCH_OPERATION.equals(parameters
           .get(DataSourceConstants.OPERATION_TYPE_PARAM))) {
         doFetch(request, response, parameters);
         return;
+      }
+
+      if (!hasAccess(request, parameters.get(JsonConstants.TAB_PARAMETER))) {
+        throw new OBUserException("AccessTableNoView");
       }
 
       // note if clause updates parameter map
