@@ -416,11 +416,6 @@ enyo.kind({
     var me = this,
         criteria = {};
     if (this.disabled === false) {
-      var receipt = me.model.get('order');
-      if (receipt.get('isQuotation') && receipt.get('bp').id === OB.MobileApp.model.get('terminal').businessPartner && !OB.MobileApp.model.get('terminal').quotation_anonymouscustomer) {
-        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_quotationsOrdersWithAnonimousCust'));
-        return;
-      }
       var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('toolbarButtonTabTap');
       this.model.on('approvalChecked', function (event) {
         this.model.off('approvalChecked');
