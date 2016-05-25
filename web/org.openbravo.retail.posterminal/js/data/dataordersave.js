@@ -129,6 +129,8 @@
           receipt.set('orderDate', orderDate);
           receipt.set('movementDate', OB.I18N.normalizeDate(new Date()));
           receipt.set('accountingDate', OB.I18N.normalizeDate(new Date()));
+          receipt.set('undo', null);
+          receipt.set('multipleUndo', null);
 
           // multiterminal support
           // be sure that the active terminal is the one set as the order proprietary
