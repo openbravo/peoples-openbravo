@@ -44,6 +44,7 @@ import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.mobile.core.process.DataSynchronizationImportProcess;
+import org.openbravo.mobile.core.process.DataSynchronizationProcess.DataSynchronization;
 import org.openbravo.mobile.core.process.JSONPropertyToEntity;
 import org.openbravo.mobile.core.utils.OBMOBCUtils;
 import org.openbravo.model.ad.access.InvoiceLineTax;
@@ -67,6 +68,7 @@ import org.openbravo.retail.posterminal.utility.DocumentNoHandler;
 import org.openbravo.service.db.CallStoredProcedure;
 import org.openbravo.service.json.JsonConstants;
 
+@DataSynchronization(entity = "Invoice")
 public class InvoiceLoader extends POSDataSynchronizationProcess implements
     DataSynchronizationImportProcess {
 

@@ -5870,6 +5870,7 @@
         //TODO: check & generate ids
         invoice.set('orderId', this.get('id'));
         invoice.set('id', OB.UTIL.get_UUID());
+        invoice.set('posTerminal', OB.MobileApp.model.get('terminal').id);
         invoice.get('lines').reset();
 
         this.get('lines').forEach(function (ol) {
