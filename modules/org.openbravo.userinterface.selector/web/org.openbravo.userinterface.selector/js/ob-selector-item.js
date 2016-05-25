@@ -957,6 +957,10 @@ isc.OBSelectorItem.addProperties({
       if (selectorGrid.body) {
         selectorGrid.body.markForRedraw();
       }
+      if (selectorGrid.getSelectedRecord()) {
+        // Clean selection information, it will be recalculated on dataArrived
+        selectorGrid.deselectAllRecords();
+      }
     }
     this.selectorWindow.open();
   },
