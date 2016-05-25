@@ -165,22 +165,8 @@ CREATE OR REPLACE FUNCTION to_number
 text
 )
 RETURNS NUMERIC AS '
-DECLARE
-  v_Pos INTEGER;
-  v_Mant NUMERIC;
-  v_Exp NUMERIC;
-  v_Res NUMERIC;
 BEGIN
-  v_Pos := position(''E'' in upper($1));
-  IF v_Pos = 0 THEN
-    -- this is the old behaviour
-    RETURN to_number($1, ''S99999999999999D999999'');
-  ELSE
-    v_Mant := cast(substring($1 from 1 for v_Pos - 1) as numeric);
-    v_Exp := cast(substring($1 from v_Pos + 1) as numeric);
-    v_Res := v_Mant * power(10, v_Exp);
-    RETURN v_Res;
-  END IF;
+  RETURN cast($1 as numeric);
 EXCEPTION
   WHEN OTHERS THEN
     RETURN NULL;
