@@ -450,6 +450,13 @@ public class CancelAndReplaceUtils {
     for (OrderLineOffer orderLineOffer : oldOrderLine.getOrderLineOfferList()) {
       final OrderLineOffer inverseOrderLineOffer = (OrderLineOffer) DalUtil.copy(orderLineOffer,
           false, true);
+      inverseOrderLineOffer.setBaseGrossUnitPrice(inverseOrderLineOffer.getBaseGrossUnitPrice()
+          .negate());
+      inverseOrderLineOffer.setDisplayedTotalAmount(inverseOrderLineOffer.getDisplayedTotalAmount()
+          .negate());
+      inverseOrderLineOffer.setPriceAdjustmentAmt(inverseOrderLineOffer.getPriceAdjustmentAmt()
+          .negate());
+      inverseOrderLineOffer.setTotalAmount(inverseOrderLineOffer.getTotalAmount().negate());
       inverseOrderLineOffer.setSalesOrderLine(inverseOrderLine);
       OBDal.getInstance().save(inverseOrderLineOffer);
     }
