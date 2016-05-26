@@ -90,8 +90,8 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
       log4j.debug("Command: " + vars.getStringParameter("Command"));
 
     if (vars.commandIn("DEFAULT")) {
-      String strcAcctSchemaId = vars.getGlobalVariable("inpcAcctSchemaId",
-          "ReportGeneralLedger|cAcctSchemaId", "");
+      String strOrg = vars.getGlobalVariable("inpOrg", "ReportGeneralLedgerJournal|Org", "0");
+      String strcAcctSchemaId = OBLedgerUtils.getOrgLedger(strOrg);
       String strDateFrom = vars.getGlobalVariable("inpDateFrom",
           "ReportGeneralLedgerJournal|DateFrom", "");
       String strDateTo = vars.getGlobalVariable("inpDateTo", "ReportGeneralLedgerJournal|DateTo",
@@ -100,7 +100,6 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
           "ReportGeneralLedgerJournal|Document", "");
       String strDocumentNo = vars.getGlobalVariable("inpDocumentNo",
           "ReportGeneralLedgerJournal|DocumentNo", "");
-      String strOrg = vars.getGlobalVariable("inpOrg", "ReportGeneralLedgerJournal|Org", "0");
       String strShowClosing = vars.getGlobalVariable("inpShowClosing",
           "ReportGeneralLedgerJournal|ShowClosing", "Y");
       String strShowReg = vars.getGlobalVariable("inpShowReg",
@@ -412,7 +411,7 @@ public class ReportGeneralLedgerJournal extends HttpSecureAppServlet {
       out.println("objson = " + combobox);
       out.close();
     } else if (vars.commandIn("LEDGER")) {
-      String strOrg = vars.getGlobalVariable("inpOrg", "ReportGeneralLedgerJournal|Org", "0");
+      String strOrg = vars.getStringParameter("inpOrg");
       String strcAcctSchemaId = OBLedgerUtils.getOrgLedger(strOrg);
       response.setContentType("text/html; charset=UTF-8");
       PrintWriter out = response.getWriter();

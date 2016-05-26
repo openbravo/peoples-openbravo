@@ -64,12 +64,11 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
-      String strcAcctSchemaId = vars.getGlobalVariable("inpcAcctSchemaId",
-          "ReportTrialBalance|cAcctSchemaId", "");
+      String strOrg = vars.getGlobalVariable("inpOrg", "ReportTrialBalance|Org", "");
+      String strcAcctSchemaId = OBLedgerUtils.getOrgLedger(strOrg);
       String strDateFrom = vars.getGlobalVariable("inpDateFrom", "ReportTrialBalance|DateFrom", "");
       String strDateTo = vars.getGlobalVariable("inpDateTo", "ReportTrialBalance|DateTo", "");
       String strPageNo = vars.getGlobalVariable("inpPageNo", "ReportTrialBalance|PageNo", "1");
-      String strOrg = vars.getGlobalVariable("inpOrg", "ReportTrialBalance|Org", "");
       String strLevel = vars.getGlobalVariable("inpLevel", "ReportTrialBalance|Level", "");
       String strcBpartnerId = vars.getInGlobalVariable("inpcBPartnerId_IN",
           "ReportTrialBalance|cBpartnerId", "", IsIDFilter.instance);
@@ -213,7 +212,7 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
           strmProductId, strcProjectId, strcAcctSchemaId, strGroupBy, strAccountId,
           strNotInitialBalance);
     } else if (vars.commandIn("LEDGER")) {
-      String strOrg = vars.getGlobalVariable("inpOrg", "AgingInquiry|Org", "0");
+      String strOrg = vars.getStringParameter("inpOrg");
       String strcAcctSchemaId = OBLedgerUtils.getOrgLedger(strOrg);
       response.setContentType("text/html; charset=UTF-8");
       PrintWriter out = response.getWriter();

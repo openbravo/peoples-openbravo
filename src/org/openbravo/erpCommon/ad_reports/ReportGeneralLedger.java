@@ -60,8 +60,8 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     if (vars.commandIn("DEFAULT")) {
-      String strcAcctSchemaId = vars.getGlobalVariable("inpcAcctSchemaId",
-          "ReportGeneralLedger|cAcctSchemaId", "");
+      String strOrg = vars.getGlobalVariable("inpOrg", "ReportGeneralLedger|Org", "0");
+      String strcAcctSchemaId = OBLedgerUtils.getOrgLedger(strOrg);
       String strDateFrom = vars
           .getGlobalVariable("inpDateFrom", "ReportGeneralLedger|DateFrom", "");
       String strDateTo = vars.getGlobalVariable("inpDateTo", "ReportGeneralLedger|DateTo", "");
@@ -85,7 +85,6 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
       strcelementvaluetodes = (strcelementvaluetodes.equals("null")) ? "" : strcelementvaluetodes;
       vars.setSessionValue("inpElementValueIdFrom_DES", strcelementvaluefromdes);
       vars.setSessionValue("inpElementValueIdTo_DES", strcelementvaluetodes);
-      String strOrg = vars.getGlobalVariable("inpOrg", "ReportGeneralLedger|Org", "0");
       String strcBpartnerId = vars.getInGlobalVariable("inpcBPartnerId_IN",
           "ReportGeneralLedger|cBpartnerId", "", IsIDFilter.instance);
       String strmProductId = vars.getInGlobalVariable("inpmProductId_IN",
@@ -203,7 +202,7 @@ public class ReportGeneralLedger extends HttpSecureAppServlet {
             strcProjectId, strGroupBy, strcAcctSchemaId, strShowOpenBalances);
       }
     } else if (vars.commandIn("LEDGER")) {
-      String strOrg = vars.getGlobalVariable("inpOrg", "ReportGeneralLedger|Org", "0");
+      String strOrg = vars.getStringParameter("inpOrg");
       String strcAcctSchemaId = OBLedgerUtils.getOrgLedger(strOrg);
       response.setContentType("text/html; charset=UTF-8");
       PrintWriter out = response.getWriter();

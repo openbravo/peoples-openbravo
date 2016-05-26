@@ -32,6 +32,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
@@ -129,8 +130,10 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
           strDateFromRef, strDateToRef, strAsDateTo, strAsDateToRef, strElementValue,
           strConImporte, strOrg, strLevel, strConCodigo, strcAcctSchemaId, strPageNo);
     } else if (vars.commandIn("LEDGER")) {
-      String strOrg = vars
-          .getGlobalVariable("inpOrganizacion", "GeneralAccountingReports|Org", "0");
+      String strOrg = vars.getStringParameter("inpOrganizacion");
+      if (StringUtils.isEmpty(strOrg)) {
+        strOrg = vars.getOrg();
+      }
       String strcAcctSchemaId = OBLedgerUtils.getOrgLedger(strOrg);
       response.setContentType("text/html; charset=UTF-8");
       PrintWriter out = response.getWriter();
