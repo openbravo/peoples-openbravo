@@ -21,7 +21,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.openbravo.base.HttpBaseUtils;
 import org.openbravo.base.exception.OBException;
@@ -36,7 +35,6 @@ import org.openbravo.erpCommon.utility.DimensionDisplayUtility;
 import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.access.RoleOrganization;
-import org.openbravo.model.ad.access.Session;
 import org.openbravo.model.ad.domain.Preference;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.service.db.DalConnectionProvider;
@@ -134,50 +132,14 @@ public class LoginUtils {
     return valid;
   }
 
-  private static boolean validRoleOrg(ConnectionProvider conn, String role, String org,
-      HttpServletRequest request) throws ServletException {
+  static boolean validRoleOrg(ConnectionProvider conn, String role, String org)
+      throws ServletException {
     boolean valid = SeguridadData.isLoginRoleOrg(conn, role, org);
     if (!valid) {
       log4j.error("Login organization is not in role organizations list. Role: " + role + ", Org: "
-          + org);
-
-      if (request != null) {
-
-        String sessionId = (String) request.getSession().getAttribute("#AD_SESSION_ID");
-
-        log4j.error("SessionId: " + sessionId + " - loggging in: "
-            + request.getSession().getAttribute("#LOGGINGIN") + " - forceLogin: "
-            + request.getSession().getAttribute("forceLogin"));
-
-        log4j.error("request URI: " + request.getRequestURI());
-
-        if (StringUtils.isNotBlank(sessionId)) {
-          OBContext.setAdminMode(false);
-          try {
-            Session session = OBDal.getInstance().get(Session.class, sessionId);
-            if (session != null) {
-              log4j.error("Session: [ active:" + session.isActive() + " - session_active:"
-                  + session.isSessionActive() + " - status: " + session.getLoginStatus()
-                  + " - user:" + session.getUsername() + " - " + session.getCreationDate() + " ]");
-            } else {
-              log4j.error("No session in DB");
-            }
-          } catch (Exception e) {
-            log4j.error("Couldn't log info", e);
-          } finally {
-            OBContext.restorePreviousMode();
-          }
-        }
-      }
-
-      log4j.error("stack trace", new Exception());
+          + org, new Exception("stack trace"));
     }
     return valid;
-  }
-
-  static boolean validRoleOrg(ConnectionProvider conn, String role, String org)
-      throws ServletException {
-    return validRoleOrg(conn, role, org, null);
   }
 
   public static List<RoleOrganization> loadRoleOrganization(String strRol) {
@@ -422,17 +384,9 @@ public class LoginUtils {
   /**
    * Obtains defaults defined for a user and throws DefaultValidationException in case they are not
    * correct.
-   * 
-   * @param variables
    */
   public static RoleDefaults getLoginDefaults(String strUserAuth, String role, ConnectionProvider cp)
       throws ServletException, DefaultValidationException {
-    return getLoginDefaults(strUserAuth, role, cp, null);
-  }
-
-  public static RoleDefaults getLoginDefaults(String strUserAuth, String role,
-      ConnectionProvider cp, HttpServletRequest request) throws ServletException,
-      DefaultValidationException {
     String strRole = role;
     if (strRole.equals("")) {
       // use default role
@@ -446,7 +400,7 @@ public class LoginUtils {
 
     String strOrg = DefaultOptionsData.defaultOrg(cp, strUserAuth);
     // use default org
-    if (strOrg == null || !LoginUtils.validRoleOrg(cp, strRole, strOrg, request)) {
+    if (strOrg == null || !LoginUtils.validRoleOrg(cp, strRole, strOrg)) {
       // if default not set or not valid take any one
       strOrg = DefaultOptionsData.getDefaultOrg(cp, strRole);
     }
@@ -658,5 +612,4 @@ public class LoginUtils {
     }
     return strWarehouse;
   }
-
 }
