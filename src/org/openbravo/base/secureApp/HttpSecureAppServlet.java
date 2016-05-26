@@ -32,8 +32,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import net.sf.jasperreports.engine.JRDataSource;
-
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.authentication.AuthenticationManager;
@@ -71,6 +69,8 @@ import org.openbravo.model.ad.ui.WindowTrl;
 import org.openbravo.utils.FileUtility;
 import org.openbravo.utils.Replace;
 import org.openbravo.xmlEngine.XmlDocument;
+
+import net.sf.jasperreports.engine.JRDataSource;
 
 public class HttpSecureAppServlet extends HttpBaseServlet {
   private static final long serialVersionUID = 1L;
@@ -270,7 +270,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
             strWarehouse = "";
           } else {
             RoleDefaults defaults = LoginUtils.getLoginDefaults(strUserAuth, variables.getRole(),
-                this);
+                this, request);
             strRole = defaults.role;
             strClient = defaults.client;
             strOrg = defaults.org;

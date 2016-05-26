@@ -473,6 +473,10 @@ public class UserInfoWidgetActionHandler extends BaseActionHandler implements Po
               toSaveStr(language.getLanguage()), (language.isRTLLanguage() ? "Y" : "N"),
               toSaveStr(roleId), toSaveStr(clientId), toSaveStr(organizationId),
               toSaveStr(warehouseId));
+
+      log4j.info("Session reset. Session Id: " + sessionID + " - user: " + sessionUser
+          + " - role: " + roleId + " - client: " + clientId + " - org: " + organizationId);
+
       if (!result) {
         throw new IllegalArgumentException("Error when saving default values");
       }
