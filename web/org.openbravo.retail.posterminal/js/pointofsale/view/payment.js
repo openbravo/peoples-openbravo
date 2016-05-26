@@ -985,21 +985,33 @@ enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.RenderPaymentLine',
   classes: 'btnselect',
   components: [{
-    style: 'color:white;',
+    name: 'paymentRowLines',
+    style: 'color:white; width: 100%;',
     components: [{
-      name: 'name',
-      style: 'float: left; width: 20%; padding: 5px 0px 0px 0px;'
+      style: 'float: left; width: 85%; max-width: 350px;',
+      components: [{
+        components: [{
+          name: 'name',
+          style: 'float: left; width: 65%; max-width: 230px; padding: 5px 0px 0px 0px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;'
+        }, {
+          name: 'amount',
+          style: 'float: left; width: 35%; max-width: 120px; padding: 5px 0px 0px 0px; text-align: right;'
+        }, {
+          style: 'clear: both;'
+        }]
+      }, {
+        components: [{
+          name: 'info',
+          style: 'float: left; width: 65%; max-width: 230px; padding: 5px 0px 0px 0px; font-size: smaller; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;'
+        }, {
+          name: 'foreignAmount',
+          style: 'float: left; width: 35%; max-width: 120px; padding: 5px 0px 0px 0px; font-size: smaller; text-align: right;'
+        }, {
+          style: 'clear: both;'
+        }]
+      }]
     }, {
-      name: 'info',
-      style: 'float: left; width: 15%; padding: 5px 0px 0px 0px;'
-    }, {
-      name: 'foreignAmount',
-      style: 'float: left; width: 20%; padding: 5px 0px 0px 0px; text-align: right;'
-    }, {
-      name: 'amount',
-      style: 'float: left; width: 25%; padding: 5px 0px 0px 0px; text-align: right;'
-    }, {
-      style: 'float: left; width: 20%; text-align: right;',
+      style: 'float: left; width: 15%; padding: 5px 0px 0px 0px;',
       components: [{
         kind: 'OB.OBPOSPointOfSale.UI.RemovePayment'
       }]
