@@ -580,21 +580,11 @@ public class AdvPaymentMngtDao {
       paymentScheduleDetails.add(paymentScheduleDetail);
       newPaymentDetail.setFINPaymentScheduleDetailList(paymentScheduleDetails);
 
-      if (payment.getDocumentType().getDocumentSequence() != null) {
-        OBContext.getOBContext().addWritableOrganization(
-            payment.getDocumentType().getDocumentSequence().getOrganization().getId());
-      }
-
       OBDal.getInstance().save(payment);
       OBDal.getInstance().save(newPaymentDetail);
       OBDal.getInstance().save(paymentScheduleDetail);
       if (doFlush) {
         OBDal.getInstance().flush();
-      }
-
-      if (payment.getDocumentType().getDocumentSequence() != null) {
-        OBContext.getOBContext().removeWritableOrganization(
-            payment.getDocumentType().getDocumentSequence().getOrganization().getId());
       }
 
       return newPaymentDetail;
