@@ -1466,10 +1466,16 @@
         });
       }
       if (((options && options.line) ? options.line.get('qty') + qty : qty) < 0 && p.get('productType') === 'S') {
+        OB.UTIL.showLoading(false);
         OB.UTIL.Approval.requestApproval(
         OB.MobileApp.view.$.containerWindow.getRoot().model, 'OBPOS_approval.returnService', function (approved, supervisor, approvalType) {
+          OB.UTIL.showLoading(true);
           if (approved) {
             addProductToOrder();
+          } else {
+            if (callback) {
+              callback(true);
+            }
           }
         });
       } else {
