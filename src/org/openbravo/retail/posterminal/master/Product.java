@@ -232,10 +232,11 @@ public class Product extends ProcessHQLQuery {
         + "', 'yyyy/MM/dd')"
         + "   and (p.$incrementalUpdateCriteria) "//
         // organization
-        + "and ((p.includedOrganizations='Y' " + "  and not exists (select 1 "
-        + "         from PricingAdjustmentOrganization o" + "        where active = true"
-        + "          and o.priceAdjustment = p" + "          and o.organization.id ='" + orgId
-        + "')) " + "   or (p.includedOrganizations='N' " + "  and  exists (select 1 "
+        + "and p.$naturalOrgCriteria and ((p.includedOrganizations='Y' "
+        + "  and not exists (select 1 " + "         from PricingAdjustmentOrganization o"
+        + "        where active = true" + "          and o.priceAdjustment = p"
+        + "          and o.organization.id ='" + orgId + "')) "
+        + "   or (p.includedOrganizations='N' " + "  and  exists (select 1 "
         + "         from PricingAdjustmentOrganization o" + "        where active = true"
         + "          and o.priceAdjustment = p" + "          and o.organization.id ='" + orgId
         + "')) " + "    ) order by p.name asc");
