@@ -1206,31 +1206,6 @@
           pack = line.isAffectedByPack(),
           productId = line.get('product').id;
 
-      if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
-        var productcriteria = {
-          columns: ['product'],
-          operator: 'equals',
-          value: line.get('product').id,
-          isId: true
-        };
-        var remoteCriteria = [productcriteria];
-        var criteriaFilter = {};
-        criteriaFilter.remoteFilters = remoteCriteria;
-        OB.Dal.find(OB.Model.ProductCharacteristicValue, criteriaFilter, function (productcharacteristic) {
-          _.each(productcharacteristic.models, function (pchv) {
-            OB.Dal.removeTemporally(pchv, function () {}, function () {
-              OB.error(arguments);
-            });
-          }, function () {
-            OB.error(arguments);
-          });
-        }, function () {
-          OB.error(arguments);
-        });
-        OB.Dal.removeTemporally(line.get('product'), function () {}, function () {
-          OB.error(arguments);
-        });
-      }
 
       if (pack) {
         // When deleting a line, check lines with other product that are affected by
@@ -1951,32 +1926,6 @@
     createLine: function (p, units, options, attrs) {
       var newline, me = this;
 
-      function removeTemporallyProductAndCharacteristics(p) {
-        var productcriteria = {
-          columns: ['product'],
-          operator: 'equals',
-          value: p.id,
-          isId: true
-        };
-        var remoteCriteria = [productcriteria];
-        var criteriaFilter = {};
-        criteriaFilter.remoteFilters = remoteCriteria;
-        OB.Dal.find(OB.Model.ProductCharacteristicValue, criteriaFilter, function (productcharacteristic) {
-          _.each(productcharacteristic.models, function (pchv) {
-            OB.Dal.removeTemporally(pchv, function () {}, function () {
-              OB.error(arguments);
-            });
-          }, function () {
-            OB.error(arguments);
-          });
-        }, function () {
-          OB.error(arguments);
-        });
-        OB.Dal.removeTemporally(p, function () {}, function () {
-          OB.error(arguments);
-        });
-      }
-
       function createLineAux(p, units, options, attrs, me) {
         if (me.validateAllowSalesWithReturn(units, false)) {
           return;
@@ -2056,7 +2005,7 @@
 
 
       if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
-        OB.Dal.saveTemporally(p, function () {}, function () {
+        OB.Dal.getsave(p, function () {}, function () {
           OB.error(arguments);
         }, true);
 
@@ -2074,7 +2023,7 @@
             if (i === characteristics.length) {
               me.calculateReceipt();
             } else {
-              OB.Dal.saveTemporally(characteristics[i], function () {
+              OB.Dal.getsave(characteristics[i], function () {
                 saveCharacteristics(characteristics, i + 1);
               }, function () {
                 OB.error(arguments);
@@ -2167,32 +2116,10 @@
       }
       if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
         if (oldbp.id !== businessPartner.id) { //Business Partner have changed
-          OB.Dal.removeTemporally(new OB.Model.BusinessPartner(oldbp), function () {}, function () {
-            OB.UTIL.showError('Error removing');
-          });
-
-          OB.Dal.saveTemporally(businessPartner, function () {}, function () {
+          OB.Dal.getsave(businessPartner, function () {}, function () {
             OB.error(arguments);
           }, true);
           if (OB.MobileApp.model.hasPermission('OBPOS_remote.discount.bp', true)) {
-            var oldbpfilter = {
-              columns: ['businessPartner'],
-              operator: 'equals',
-              value: oldbp.id,
-              isId: true
-            };
-            var oldRemoteCriteria = [oldbpfilter];
-            var criteria = {};
-            criteria.remoteFilters = oldRemoteCriteria;
-            OB.Dal.find(OB.Model.DiscountFilterBusinessPartner, criteria, function (discountsBP) {
-              _.each(discountsBP.models, function (dsc) {
-                OB.Dal.removeTemporally(dsc, function () {}, function () {
-                  OB.error(arguments);
-                }, true);
-              });
-            }, function () {
-              OB.error(arguments);
-            });
             var bp = {
               columns: ['businessPartner'],
               operator: 'equals',
@@ -2204,7 +2131,7 @@
             criteriaFilter.remoteFilters = remoteCriteria;
             OB.Dal.find(OB.Model.DiscountFilterBusinessPartner, criteriaFilter, function (discountsBP) {
               _.each(discountsBP.models, function (dsc) {
-                OB.Dal.saveTemporally(dsc, function () {}, function () {
+                OB.Dal.getsave(dsc, function () {}, function () {
                   OB.error(arguments);
                 }, true);
               });
@@ -2215,12 +2142,7 @@
 
           OB.Dal.get(OB.Model.BPLocation, businessPartner.get('locId'), function (location) {
 
-            var loc = oldbp.get('locationModel');
-            OB.Dal.removeTemporally(loc, function () {}, function () {
-              OB.UTIL.showError('Error removing');
-            });
-
-            OB.Dal.saveTemporally(location, function () {
+            OB.Dal.getsave(location, function () {
               businessPartner.set('locationModel', location);
               me.set('bp', businessPartner);
               me.save();
@@ -2233,11 +2155,7 @@
           });
 
         } else if (businessPartner.get('locationModel')) { //Location has changed or we are assigning current bp
-          var location = oldbp.get('locationModel');
-          OB.Dal.removeTemporally(location, function () {}, function () {
-            OB.UTIL.showError('Error removing');
-          });
-          OB.Dal.saveTemporally(businessPartner.get('locationModel'), function () {
+          OB.Dal.getsave(businessPartner.get('locationModel'), function () {
             me.set('bp', businessPartner);
             me.save();
           }, function () {
@@ -3566,7 +3484,7 @@
                 iter.linepos = linepos;
                 var addLineForProduct = function (prod) {
                     if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
-                      OB.Dal.saveTemporally(prod, function () {
+                      OB.Dal.getsave(prod, function () {
                         var productcriteria = {
                           columns: ['product'],
                           operator: 'equals',
@@ -3578,7 +3496,7 @@
                         criteriaFilter.remoteFilters = remoteCriteria;
                         OB.Dal.find(OB.Model.ProductCharacteristicValue, criteriaFilter, function (productcharacteristic) {
                           _.each(productcharacteristic.models, function (pchv) {
-                            OB.Dal.saveTemporally(pchv, function () {}, function () {
+                            OB.Dal.getsave(pchv, function () {}, function () {
                               OB.error(arguments);
                             }, true);
                           });
@@ -3774,14 +3692,7 @@
     addNewOrder: function (isFirstOrder) {
       var me = this;
       if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
-        if (isFirstOrder) {
-          //if no unpaid order to load, clean tables
-          this.doCleanBPSettings(function () {
-            me.doRemoteBPSettings(OB.MobileApp.model.get('businessPartner'));
-          });
-        } else {
-          me.doRemoteBPSettings(OB.MobileApp.model.get('businessPartner'));
-        }
+        me.doRemoteBPSettings(OB.MobileApp.model.get('businessPartner'));
       }
       this.saveCurrent();
       this.current = this.newOrder();
@@ -3832,34 +3743,11 @@
       }, model.get('isLayaway'));
     },
 
-    doCleanBPSettings: function (callback) {
-      OB.Dal.removeAllTemporally(OB.Model.BusinessPartner, null, function () {
-        OB.Dal.removeAllTemporally(OB.Model.BPLocation, null, function () {
-          if (OB.MobileApp.model.hasPermission('OBPOS_remote.discount.bp', true)) {
-            OB.Dal.removeAllTemporally(OB.Model.DiscountFilterBusinessPartner, null, function () {
-              if (callback) {
-                callback();
-              }
-            }, function () {
-              OB.error(arguments);
-            }, true);
-          } else {
-            if (callback) {
-              callback();
-            }
-          }
-        }, function () {
-          OB.error(arguments);
-        }, true);
-      }, function () {
-        OB.error(arguments);
-      }, true);
-    },
     doRemoteBPSettings: function (businessPartner) {
-      OB.Dal.saveTemporally(businessPartner, function () {}, function () {
+      OB.Dal.getsave(businessPartner, function () {}, function () {
         OB.error(arguments);
       }, true);
-      OB.Dal.saveTemporally(businessPartner.get('locationModel'), function () {}, function () {
+      OB.Dal.getsave(businessPartner.get('locationModel'), function () {}, function () {
         OB.error(arguments);
       }, true);
       if (OB.MobileApp.model.hasPermission('OBPOS_remote.discount.bp', true)) {
@@ -3874,7 +3762,7 @@
         criteria.remoteFilters = remoteCriteria;
         OB.Dal.find(OB.Model.DiscountFilterBusinessPartner, criteria, function (discountsBP) {
           _.each(discountsBP.models, function (dsc) {
-            OB.Dal.saveTemporally(dsc, function () {}, function () {
+            OB.Dal.getsave(dsc, function () {}, function () {
               OB.error(arguments);
             }, true);
           });
@@ -3936,56 +3824,6 @@
         }
         me.current = me.at(0);
         me.loadCurrent(createNew);
-      }
-      var successCallbackProductCH = function (productcharacteristic) {
-          _.each(productcharacteristic.models, function (pchv) {
-            OB.Dal.removeTemporally(pchv, successCallback, errorCallback);
-          });
-          };
-
-      if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
-        for (i = 0, max = this.current.get('lines').length; i < this.current.get('lines').length; i++) {
-          var p = this.current.get('lines').models[i].get('product');
-          var productcriteria = {
-            columns: ['product'],
-            operator: 'equals',
-            value: p.id,
-            isId: true
-          };
-          var remoteCriteria = [productcriteria];
-          var criteriaFilter = {};
-          criteriaFilter.remoteFilters = remoteCriteria;
-          OB.Dal.find(OB.Model.ProductCharacteristicValue, criteriaFilter, successCallbackProductCH, errorCallback);
-          OB.Dal.removeTemporally(p, successCallback, errorCallback);
-
-        }
-      }
-      if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
-        OB.Dal.removeTemporally(new OB.Model.BusinessPartner(this.current.get('bp')), successCallback, errorCallback);
-        if (this.current.get('bp').get('locationModel')) {
-          OB.Dal.removeTemporally(this.current.get('bp').get('locationModel'), successCallback, errorCallback);
-        }
-      }
-
-      if (OB.MobileApp.model.hasPermission('OBPOS_remote.discount.bp', true)) {
-        var oldbpfilter = {
-          columns: ['businessPartner'],
-          operator: 'equals',
-          value: this.current.get('bp').id,
-          isId: true
-        };
-        var oldRemoteCriteria = [oldbpfilter];
-        var criteria = {};
-        criteria.remoteFilters = oldRemoteCriteria;
-        OB.Dal.find(OB.Model.DiscountFilterBusinessPartner, criteria, function (discountsBP) {
-          _.each(discountsBP.models, function (dsc) {
-            OB.Dal.removeTemporally(dsc, function () {}, function () {
-              OB.error(arguments);
-            }, true);
-          });
-        }, function () {
-          OB.error(arguments);
-        });
       }
 
       if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true) && !this.current.get('isQuotation') && OB.MobileApp.model.receipt.id === this.current.id && this.current.get('lines').length === 0 && (this.current.get('documentnoSuffix') <= OB.MobileApp.model.documentnoThreshold || OB.MobileApp.model.documentnoThreshold === 0)) {
