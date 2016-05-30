@@ -291,29 +291,12 @@ public class AddPaymentActionHandler extends BaseProcessActionHandler {
       strPaymentDocumentNo = FIN_Utility.getDocumentNo(documentType, "FIN_Payment");
     }
 
+    OBContext.setAdminMode(false);
     try {
       FIN_Payment payment = (new AdvPaymentMngtDao()).getNewPayment(isReceipt, org, documentType,
           strPaymentDocumentNo, bPartner, paymentMethod, finAccount, strPaymentAmount, paymentDate,
           strReferenceNo, currency, conversionRate, convertedAmt);
-
-      OBContext.setAdminMode();
-
-      boolean removeWritableOrg = false;
-      String docSeqOrgId = payment.getDocumentType().getDocumentSequence().getOrganization()
-          .getId();
-
-      if (payment.getDocumentType().getDocumentSequence() != null
-          && !OBContext.getOBContext().getWritableOrganizations().contains(docSeqOrgId)) {
-        OBContext.getOBContext().getWritableOrganizations().add(docSeqOrgId);
-        removeWritableOrg = true;
-      }
-
       OBDal.getInstance().getConnection(true).commit();
-
-      if (removeWritableOrg) {
-        OBContext.getOBContext().getWritableOrganizations().remove(docSeqOrgId);
-      }
-
       return payment;
     } finally {
       OBContext.restorePreviousMode();
