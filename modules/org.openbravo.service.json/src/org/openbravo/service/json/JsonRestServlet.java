@@ -157,6 +157,8 @@ public class JsonRestServlet extends BaseWebServiceServlet {
         JSONStreamWriter writer = new JSONStreamWriter(response, parameters);
         parameters.put(JsonConstants.USE_ALIAS, "true");
         parameters.put(JsonConstants.IS_WS_CALL, "true");
+        parameters.put(JsonConstants.WHERE_AND_FILTER_CLAUSE,
+            parameters.get(JsonConstants.WHERE_PARAMETER));
         DefaultJsonDataService.getInstance().fetch(parameters, writer);
         writer.close();
       }
