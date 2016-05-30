@@ -14,6 +14,7 @@ import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
+import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.model.common.order.Order;
 
 public class CancelAndReplaceOrderHookCaller {
@@ -22,16 +23,16 @@ public class CancelAndReplaceOrderHookCaller {
   private Instance<CancelAndReplaceOrderHook> cancelAndReplaceOrderHookProcesses;
 
   public void executeHook(boolean replaceOrder, boolean triggersDisabled, Order oldOrder,
-      Order newOrder) throws Exception {
-    executeHooks(replaceOrder, triggersDisabled, oldOrder, newOrder);
+      Order newOrder, Order inverseOrder, JSONObject jsonorder) throws Exception {
+    executeHooks(replaceOrder, triggersDisabled, oldOrder, newOrder, inverseOrder, jsonorder);
   }
 
   protected void executeHooks(boolean replaceOrder, boolean triggersDisabled, Order oldOrder,
-      Order newOrder) throws Exception {
+      Order newOrder, Order inverseOrder, JSONObject jsonorder) throws Exception {
     for (Iterator<CancelAndReplaceOrderHook> processIterator = cancelAndReplaceOrderHookProcesses
         .iterator(); processIterator.hasNext();) {
       CancelAndReplaceOrderHook process = processIterator.next();
-      process.exec(replaceOrder, triggersDisabled, oldOrder, newOrder);
+      process.exec(replaceOrder, triggersDisabled, oldOrder, newOrder, inverseOrder, jsonorder);
     }
   }
 }

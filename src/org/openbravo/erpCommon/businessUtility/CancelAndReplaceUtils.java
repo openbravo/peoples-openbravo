@@ -330,7 +330,7 @@ public class CancelAndReplaceUtils {
 
       // Calling Cancelandreplaceorderhook
       WeldUtils.getInstanceFromStaticBeanManager(CancelAndReplaceOrderHookCaller.class)
-          .executeHook(replaceOrder, triggersDisabled, oldOrder, newOrder);
+          .executeHook(replaceOrder, triggersDisabled, oldOrder, newOrder, inverseOrder, jsonorder);
 
     } catch (Exception e1) {
       try {
@@ -380,9 +380,6 @@ public class CancelAndReplaceUtils {
     }
     inverseOrder.setDocumentNo(newDocumentNo);
     inverseOrder.setCancelledorder(oldOrder);
-    if (jsonorder != null) {
-      inverseOrder.setObposAppCashup(jsonorder.getString("obposAppCashup"));
-    }
     OBDal.getInstance().save(inverseOrder);
 
     // Copy old order taxes to inverse, it is done when is executed from Web POS because triggers

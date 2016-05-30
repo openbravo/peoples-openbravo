@@ -9,10 +9,11 @@
 
 package org.openbravo.erpCommon.businessUtility;
 
+import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.model.common.order.Order;
 
 public abstract class CancelAndReplaceOrderHook {
 
   public abstract void exec(Boolean replaceOrder, Boolean triggersDisabled, Order oldOrder,
-      Order newOrder) throws Exception;
+      Order newOrder, Order inverseOrder, JSONObject jsonorder) throws Exception;
 }
