@@ -43,6 +43,7 @@ import org.openbravo.test.webservice.WSReadTest;
 import org.openbravo.test.webservice.WSUpdateTest;
 import org.openbravo.test.webservice.WSWithNoActiveDalObjects;
 import org.openbravo.test.webservice.WebServicesWithNoActiveFilterTest;
+import org.openbravo.test.webservice.JSONWebServicesWhereParameter;
 
 /**
  * This test suite should only contain test cases which are to run the webservices included in core.
@@ -74,6 +75,7 @@ DataSourceWhereParameter.class, //
     FetchDSNoActiveEntityObjects.class, //
     ExplicitCrossOrganizationReference.class, //
     DataSourceSecurity.class, //
-    EmptyStringWhereAndFilterClauseParameter.class })
+    EmptyStringWhereAndFilterClauseParameter.class, //
+    JSONWebServicesWhereParameter.class })
 public class AllWebserviceTests {
 }
