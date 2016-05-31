@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2014 Openbravo SLU
+ * All portions are Copyright (C) 2010-2016 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -83,10 +83,6 @@ public class ClassLoaderTest extends OBBaseTest {
 
     for (ModelImplementation mi : obc.list()) {
       try {
-        if (mi.getId().equals("801180")) {
-          // Ugly hack! check issue https://issues.openbravo.com/view.php?id=12429
-          continue;
-        }
         Class.forName(mi.getJavaClassName());
       } catch (ClassNotFoundException e) {
         notFoundClasses.add(mi.getId() + " : " + mi.getJavaClassName());
