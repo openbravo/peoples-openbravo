@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2015 Openbravo SLU
+ * All portions are Copyright (C) 2015-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -40,7 +40,12 @@ public class DatabaseDecimalNumberCheck extends BuildValidation {
     ArrayList<String> errors = new ArrayList<String>();
     try {
       String numberString = new BigDecimal(ORIGINAL_NUMBER).toString();
-      String returnedNumber = DatabaseDecimalNumberCheckData.checkToNumber(cp, numberString);
+      String returnedNumber;
+      if (cp.getRDBMS().equalsIgnoreCase("POSTGRE")) {
+        returnedNumber = DatabaseDecimalNumberCheckData.checkToNumberPG(cp, numberString);
+      } else {
+        returnedNumber = DatabaseDecimalNumberCheckData.checkToNumberORA(cp, numberString);
+      }
       if (!ORIGINAL_NUMBER.equals(returnedNumber)) {
         errors.add("The decimal numbers are not being retrieved properly from the database. "
             + "This could be caused because the current database locale uses a decimal separator different from a period(.). "
