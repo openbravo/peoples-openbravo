@@ -364,6 +364,7 @@ enyo.kind({
       function returnLines() {
         order.set('undo', null);
         order.set('multipleUndo', true);
+        order.set('preventServicesUpdate', true);
         _.each(me.owner.owner.selectedModels, function (line) {
           if (!line.get('notReturnThisLine')) {
             me.owner.owner.doReturnLine({
@@ -373,6 +374,8 @@ enyo.kind({
             line.unset('notReturnThisLine');
           }
         });
+        order.unset('preventServicesUpdate');
+        order.get('lines').trigger('updateRelations');
         order.set('multipleUndo', null);
       }
       if (approvalNeeded) {
