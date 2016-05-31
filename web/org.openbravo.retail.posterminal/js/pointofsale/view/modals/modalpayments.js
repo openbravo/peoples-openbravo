@@ -74,6 +74,7 @@ enyo.kind({
           }
           items.forEach(function (item) {
             this.createComponent({
+              name: item.payment.payment.searchKey,
               classes: 'paymentmethoditems',
               tag: 'div',
               allowHtml: true,
