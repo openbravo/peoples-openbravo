@@ -72,7 +72,7 @@ public class ClassLoaderTest extends OBBaseTest {
     obc.add(Restrictions.in(ModelImplementation.PROPERTY_OBJECTTYPE, in));
 
     // these don't need to implement Servlet
-    checkClasses(obc.list(), notFoundClasses, new ArrayList<String>());
+    checkClasses("Listener/Filter", obc.list(), notFoundClasses, new ArrayList<String>());
 
     // Checking manual servlets
     obc = OBDal.getInstance().createCriteria(ModelImplementation.class);
@@ -81,25 +81,25 @@ public class ClassLoaderTest extends OBBaseTest {
     obc.add(Restrictions.isNull(ModelImplementation.PROPERTY_SPECIALFORM));
     obc.add(Restrictions.isNull(ModelImplementation.PROPERTY_PROCESS));
 
-    checkClasses(obc.list(), notFoundClasses, notServletClasses);
+    checkClasses("Manual Servlet", obc.list(), notFoundClasses, notServletClasses);
 
     // Checking servlets associated to forms
     OBQuery<ModelImplementation> obq = OBDal.getInstance().createQuery(ModelImplementation.class,
         "objectType = 'S' and specialForm is not null and specialForm.active = true");
 
-    checkClasses(obq.list(), notFoundClasses, notServletClasses);
+    checkClasses("Form", obq.list(), notFoundClasses, notServletClasses);
 
     // Check servlets associated to processes/reports
     obq = OBDal.getInstance().createQuery(ModelImplementation.class,
         "objectType = 'S' and process is not null and process.active = true");
 
-    checkClasses(obq.list(), notFoundClasses, notServletClasses);
+    checkClasses("Process", obq.list(), notFoundClasses, notServletClasses);
 
     // Checking servlets associated to tabs
     obq = OBDal.getInstance().createQuery(ModelImplementation.class,
         "objectType = 'S' and tab is not null and tab.active = true and tab.window.active = true");
 
-    checkClasses(obq.list(), notFoundClasses, notServletClasses);
+    checkClasses("Tab", obq.list(), notFoundClasses, notServletClasses);
 
     logErrors(notFoundClasses, "Missing classes");
     logErrors(notServletClasses, "Classes not implementing Servlet");
@@ -109,27 +109,29 @@ public class ClassLoaderTest extends OBBaseTest {
         is(empty()));
   }
 
-  private void checkClasses(List<ModelImplementation> models, List<String> notFoundClasses,
-      List<String> notServletClasses) {
+  private void checkClasses(String type, List<ModelImplementation> models,
+      List<String> notFoundClasses, List<String> notServletClasses) {
     for (ModelImplementation mi : models) {
       try {
         Class<?> clz = Class.forName(mi.getJavaClassName());
         if (!Servlet.class.isAssignableFrom(clz)) {
-          notServletClasses.add(mi.getId() + " : " + mi.getJavaClassName());
+          notServletClasses.add(type + " - " + mi.getId() + ": " + mi.getJavaClassName());
         }
 
       } catch (ClassNotFoundException e) {
-        notFoundClasses.add(mi.getId() + " : " + mi.getJavaClassName());
+        notFoundClasses.add(type + " - " + mi.getId() + " : " + mi.getJavaClassName());
       }
     }
   }
 
   private void logErrors(final List<String> classes, String msg) {
-    if (!classes.isEmpty()) {
-      log.error("== " + msg + " ==");
-      for (String nf : classes) {
-        log.error("  " + nf);
-      }
+    if (classes.isEmpty()) {
+      return;
     }
+    log.error("== " + msg + " ==");
+    for (String nf : classes) {
+      log.error("  " + nf);
+    }
+    log.error("Total: " + classes.size());
   }
 }
