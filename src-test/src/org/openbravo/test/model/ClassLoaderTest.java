@@ -44,16 +44,42 @@ import org.openbravo.test.base.OBBaseTest;
 public class ClassLoaderTest extends OBBaseTest {
 
   private static final Logger log = Logger.getLogger(ClassLoaderTest.class);
+  private static List<String> notFoundClasses = new ArrayList<String>();
+  private static List<String> notServletClasses = new ArrayList<String>();
 
   /**
    * Test if all registered classes in Application Dictionary can be loaded. Consistency test to
    * have a clean web.xml
    */
   @Test
-  public void testModelObject() {
+  public void modelClassesShouldBeImplemented() {
+    loadModel();
 
-    final List<String> notFoundClasses = new ArrayList<String>();
-    final List<String> notServletClasses = new ArrayList<String>();
+    logErrors(notFoundClasses, "Missing classes");
+    assertThat("Missing classes defined in AD_Model_Object", notFoundClasses, is(empty()));
+  }
+
+  /**
+   * Test if all registered classes in Application Dictionary implement Servlet when needed.
+   * Consistency test to have a clean web.xml
+   */
+  @Test
+  public void modelClassesShouldImplementServlet() {
+    loadModel();
+
+    logErrors(notServletClasses, "Classes not implementing Servlet");
+    assertThat("Classes not implement Servlet defined in AD_Model_Object", notServletClasses,
+        is(empty()));
+  }
+
+  private void loadModel() {
+    if (notFoundClasses != null) {
+      // already initialized
+      return;
+    }
+
+    notFoundClasses = new ArrayList<String>();
+    notServletClasses = new ArrayList<String>();
 
     setSystemAdministratorContext();
 
@@ -100,26 +126,19 @@ public class ClassLoaderTest extends OBBaseTest {
         "objectType = 'S' and tab is not null and tab.active = true and tab.window.active = true");
 
     checkClasses("Tab", obq.list(), notFoundClasses, notServletClasses);
-
-    logErrors(notFoundClasses, "Missing classes");
-    logErrors(notServletClasses, "Classes not implementing Servlet");
-
-    assertThat("Missing classes defined in AD_Model_Object", notFoundClasses, is(empty()));
-    assertThat("Classes not implement Servlet defined in AD_Model_Object", notServletClasses,
-        is(empty()));
   }
 
-  private void checkClasses(String type, List<ModelImplementation> models,
-      List<String> notFoundClasses, List<String> notServletClasses) {
+  private void checkClasses(String type, List<ModelImplementation> models, List<String> notFound,
+      List<String> notServlet) {
     for (ModelImplementation mi : models) {
       try {
         Class<?> clz = Class.forName(mi.getJavaClassName());
         if (!Servlet.class.isAssignableFrom(clz)) {
-          notServletClasses.add(type + " - " + mi.getId() + ": " + mi.getJavaClassName());
+          notServlet.add(type + " - " + mi.getId() + ": " + mi.getJavaClassName());
         }
 
       } catch (ClassNotFoundException e) {
-        notFoundClasses.add(type + " - " + mi.getId() + " : " + mi.getJavaClassName());
+        notFound.add(type + " - " + mi.getId() + " : " + mi.getJavaClassName());
       }
     }
   }
