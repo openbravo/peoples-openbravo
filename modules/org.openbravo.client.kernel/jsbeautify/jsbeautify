@@ -1,3 +1,4 @@
+#!/bin/bash
 # *************************************************************************
 # * The contents of this file are subject to the Openbravo  Public  License
 # * Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
@@ -14,7 +15,7 @@
 # * All Rights Reserved.
 # * Contributor(s):  ______________________________________.
 # ************************************************************************
-#!/bin/bash
+
 set -e
 # Mercurial pre-commit hook for jsbeautify
 
