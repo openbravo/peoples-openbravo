@@ -492,25 +492,31 @@
             me.context.get('multiOrders').trigger('integrityOk', currentReceipt);
 
             OB.UTIL.calculateCurrentCash();
-            OB.UTIL.cashUpReport(currentReceipt, function (cashUp) {
-              currentReceipt.set('cashUpReportInformation', JSON.parse(cashUp.models[0].get('objToSend')));
-              OB.UTIL.HookManager.executeHooks('OBPOS_PreSyncReceipt', {
-                receipt: currentReceipt,
-                model: model,
-                isMultiOrder: true
-              }, function (args) {
-                currentReceipt.set('json', JSON.stringify(currentReceipt.serializeToJSON()));
-                OB.UTIL.setScanningFocus(true);
-                currentReceipt.set('hasbeenpaid', 'Y');
-                OB.Dal.save(currentReceipt, function () {
-                  OB.Dal.get(OB.Model.Order, receiptId, function (savedReceipt) {
-                    if (!_.isUndefined(savedReceipt.get('amountToLayaway')) && !_.isNull(savedReceipt.get('amountToLayaway')) && savedReceipt.get('generateInvoice')) {
-                      me.hasInvLayaways = true;
-                    }
+
+            var invoice = currentReceipt.generateInvoice();
+            currentReceipt.set('calculatedInvoice', invoice);
+
+            invoice.on('invoiceCalculated', function () {
+              OB.UTIL.cashUpReport(currentReceipt, function (cashUp) {
+                currentReceipt.set('cashUpReportInformation', JSON.parse(cashUp.models[0].get('objToSend')));
+                OB.UTIL.HookManager.executeHooks('OBPOS_PreSyncReceipt', {
+                  receipt: currentReceipt,
+                  model: model,
+                  isMultiOrder: true
+                }, function (args) {
+                  currentReceipt.set('json', JSON.stringify(currentReceipt.serializeToJSON()));
+                  OB.UTIL.setScanningFocus(true);
+                  currentReceipt.set('hasbeenpaid', 'Y');
+                  OB.Dal.save(currentReceipt, function () {
+                    OB.Dal.get(OB.Model.Order, receiptId, function (savedReceipt) {
+                      if (!_.isUndefined(savedReceipt.get('amountToLayaway')) && !_.isNull(savedReceipt.get('amountToLayaway')) && savedReceipt.get('generateInvoice')) {
+                        me.hasInvLayaways = true;
+                      }
+                      recursiveSaveFn(receiptIndex + 1);
+                    }, null);
+                  }, function () {
                     recursiveSaveFn(receiptIndex + 1);
-                  }, null);
-                }, function () {
-                  recursiveSaveFn(receiptIndex + 1);
+                  });
                 });
               });
             });
@@ -524,7 +530,7 @@
                   offline: true
                 });
 
-                invoice = theReceipt.generateInvoice();
+                invoice = theReceipt.get('calculatedInvoice');
                 if (invoice && invoice.get('id')) {
                   invoice.on('invoiceCalculated', function () {
                     me.get('multiOrders').trigger('print', invoice, {
