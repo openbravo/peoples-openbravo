@@ -61,7 +61,7 @@
     applyPromotionsLat: function (receipt, line) {
       var me = this;
       if (receipt.get('skipApplyPromotions') || receipt.get('cloningReceipt') || this.preventApplyPromotions) {
-        receipt.trigger('applyPromotionsFinished');
+        OB.Model.Discounts.finishPromotions(receipt, line);
         return;
       }
 
