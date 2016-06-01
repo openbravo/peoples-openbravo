@@ -777,7 +777,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.ProcessButton',
   kind: 'OB.UI.RegularButton',
-  style: 'width: 120px; float: right; margin: 5px 5px 10px 0px; height: 2.5em; display:block; clear: right; font-weight: normal; padding: 0px',
+  style: 'width: 85%; max-width: 125px; float: right; margin: 5px 5px 10px 0px; height: 2.5em; display:block; clear: right; font-weight: normal; padding: 0px',
   processdisabled: false,
   localdisabled: false,
   setLocalDisabled: function (value) {
@@ -980,8 +980,7 @@ enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.RenderPaymentLine',
   classes: 'btnselect',
   components: [{
-    name: 'paymentRowLines',
-    style: 'color:white; width: 100%;',
+    style: 'color:white;',
     components: [{
       style: 'float: left; width: 85%; max-width: 350px;',
       components: [{
@@ -1006,9 +1005,10 @@ enyo.kind({
         }]
       }]
     }, {
-      style: 'float: left; width: 15%; padding: 5px 0px 0px 0px;',
+      style: 'float: left; width: 15%;',
       components: [{
-        kind: 'OB.OBPOSPointOfSale.UI.RemovePayment'
+        kind: 'OB.OBPOSPointOfSale.UI.RemovePayment',
+        style: 'float: left; width: 80%; max-width: 50px; height: 25px; max-height: 30px; padding: 5px 5% 5px 0px; display:block;'
       }]
     }, {
       style: 'clear: both;'
