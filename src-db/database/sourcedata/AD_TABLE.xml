@@ -12096,16 +12096,16 @@ iol.uOM as uOM, iol.id as goodsShipmentLine, iol.movementQuantity as movementQua
 iol.shipmentReceipt.businessPartner as businessPartner, iol.shipmentReceipt.documentNo as shipmentNumber,
 iol.shipmentReceipt.movementDate as movementDate,  attributeSetValue as attributeSetValue,
 (@returnedOthersLeftClause@)*(-1) as returnQtyOtherRM,
-(case when (select ('Y') from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol) is null then false else true end) as obSelected,
+(case when (select ('Y') from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine.id = iol) is null then false else true end) as obSelected,
 (@returnedLeftClause@)*(-1) as returned,
-(select ol.returnReason from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol) as returnReason,
-coalesce((select ol.tax from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol) ,
+(select ol.returnReason from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine.id = iol) as returnReason,
+coalesce((select ol.tax from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine.id = iol) ,
 @taxSubQuery@) as tax,
 (case when @priceIncludeTaxSubQuery@ = true then
- coalesce((select ol.@unitPriceProperty@ from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol), 
+ coalesce((select ol.@unitPriceProperty@ from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine.id = iol), 
           @grossUnitPriceSubQuery@)
 else 
- coalesce((select ol.@unitPriceProperty@ from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol), 
+ coalesce((select ol.@unitPriceProperty@ from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine.id = iol), 
           @unitPriceSubQuery@)
 end) as unitPrice,
 @orderNoSubQuery@ as orderNo
