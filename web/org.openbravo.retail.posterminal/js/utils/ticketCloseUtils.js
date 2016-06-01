@@ -86,7 +86,9 @@
                         autoDismiss: false
                       });
                     } else {
-                      printInvoice();
+                      if (OB.MobileApp.model.hasPermission('OBPOS_print.invoicesautomatically', true)) {
+                        printInvoice();
+                      }
                     }
                   } else {
                     if (OB.MobileApp.model.hasPermission('OBPOS_print.invoicesautomatically', true)) {
