@@ -113,7 +113,7 @@ public class SystemValidatorTest extends OBBaseTest {
     }
 
     Query upd = OBDal.getInstance().getSession()
-        .createQuery("update ADModule set inDevelopment = true where id in (:mods)");
+        .createQuery("update ADModule set inDevelopment = false where id in (:mods)");
     upd.setParameterList("mods", updatedModules);
     upd.executeUpdate();
 
