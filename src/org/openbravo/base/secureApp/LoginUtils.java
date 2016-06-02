@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2014 Openbravo S.L.U.
+ * Copyright (C) 2001-2016 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.openbravo.base.HttpBaseUtils;
 import org.openbravo.base.exception.OBException;
@@ -32,6 +33,7 @@ import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.security.SessionLogin;
 import org.openbravo.erpCommon.utility.DimensionDisplayUtility;
+import org.openbravo.erpCommon.utility.OBLedgerUtils;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.access.RoleOrganization;
 import org.openbravo.model.ad.domain.Preference;
@@ -257,9 +259,23 @@ public class LoginUtils {
       vars.setSessionValue("#Client_SMTP", data[0].smtphost);
       data = null;
 
-      AttributeData[] attr = AttributeData.select(conn,
-          Utility.getContext(conn, vars, "#User_Client", "LoginHandler"),
-          Utility.getContext(conn, vars, "#User_Org", "LoginHandler"));
+      String[] orgList = Utility.getContext(conn, vars, "#User_Org", "LoginHandler").split(",");
+      AttributeData[] attr = null;
+      int j = 0;
+      String acctschemaId = null;
+
+      for (String orgIdString : orgList) {
+        String orgId = orgIdString.replace("'", "");
+        acctschemaId = OBLedgerUtils.getOrgLedger(orgId);
+        if (StringUtils.isNotEmpty(acctschemaId)) {
+          acctschemaId = "'" + acctschemaId + "'";
+          break;
+        }
+      }
+
+      attr = AttributeData.select(conn,
+          Utility.getContext(conn, vars, "#User_Client", "LoginHandler"), acctschemaId);
+
       if (attr != null && attr.length > 0) {
         vars.setSessionValue("$C_AcctSchema_ID", attr[0].value);
         if (orgCurrency.length > 0) {
