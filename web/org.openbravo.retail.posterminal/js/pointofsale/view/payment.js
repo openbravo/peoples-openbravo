@@ -629,6 +629,9 @@ enyo.kind({
     this.$.noenoughchangelbl.hide();
     this.$.onlycashpaymentmethod.hide();
 
+    if (!selectedPayment) {
+      return returnCheck;
+    }
     // Do the checkins
     resultOK = this.checkValidCashOverpayment(paymentstatus, selectedPayment);
     if (resultOK) {
