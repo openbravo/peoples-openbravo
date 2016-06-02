@@ -554,38 +554,33 @@ enyo.kind({
     return true;
   },
 
-  checkValidPaymentMethod: function (paymentstatus, payment) {
+  checkValidPaymentMethod: function (paymentstatus, selectedPayment) {
     var change = this.model.getChange();
     var check = true;
-    var currentcash = payment.currentCash;
+    var currentcash = selectedPayment.currentCash;
     var cashIsPresent = false;
     var alternativeCashPayment;
     var alternativePaymentInfo;
     if (change && change > 0) {
-      if (!payment.paymentMethod.iscash) {
-        if (paymentstatus.payments.size() > 1) {
-          alternativeCashPayment = _.find(paymentstatus.payments.models, function (item) {
-            if (item.get('isCash')) {
-              return item;
+      if (!selectedPayment.paymentMethod.iscash && paymentstatus.payments.length > 0) {
+        alternativeCashPayment = _.find(paymentstatus.payments.models, function (item) {
+          if (item.get('isCash')) {
+            return item;
+          }
+        });
+        if (alternativeCashPayment) {
+          alternativePaymentInfo = _.find(OB.MobileApp.model.get('payments'), function (defPayment) {
+            if (defPayment.payment.searchKey === alternativeCashPayment.get('kind')) {
+              return defPayment;
             }
           });
-          if (alternativeCashPayment) {
-            alternativePaymentInfo = _.find(OB.MobileApp.model.get('payments'), function (defPayment) {
-              if (defPayment.payment.searchKey === alternativeCashPayment.get('kind')) {
-                return defPayment;
-              }
-            });
-          }
-          if (!alternativeCashPayment) {
-            check = false;
-            this.$.onlycashpaymentmethod.show();
-          } else if (alternativePaymentInfo && alternativePaymentInfo.currentCash < change) {
-            check = false;
-            this.$.noenoughchangelbl.show();
-          }
-        } else {
+        }
+        if (!alternativeCashPayment) {
           check = false;
           this.$.onlycashpaymentmethod.show();
+        } else if (alternativePaymentInfo && alternativePaymentInfo.currentCash < change) {
+          check = false;
+          this.$.noenoughchangelbl.show();
         }
       } else {
         if (currentcash < change) {
