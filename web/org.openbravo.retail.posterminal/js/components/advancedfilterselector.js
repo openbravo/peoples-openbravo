@@ -10,6 +10,58 @@
 /*global enyo, Backbone, OB, _ */
 
 enyo.kind({
+  name: 'OB.UI.FilterSelectorAmount',
+  components: [{
+    kind: 'OB.UI.List',
+    name: 'filterCondition',
+    classes: 'combo',
+    style: 'float: left; width: calc(50% - 18px); padding: 4px; margin-right: 16px; margin-bottom: 0px;',
+    renderEmpty: 'enyo.Control',
+    renderLine: enyo.kind({
+      kind: 'enyo.Option',
+      initComponents: function () {
+        this.inherited(arguments);
+        this.setValue(this.model.get('id'));
+        this.setContent(this.model.get('name'));
+      }
+    })
+  }, {
+    kind: 'enyo.Input',
+    type: 'text',
+    classes: 'input narrow-input',
+    name: 'filterInput',
+    style: 'float: left; width: calc(50% - 18px); padding: 4px; margin-bottom: 0px;'
+  }],
+  getValue: function () {
+    return this.$.filterInput.getValue();
+  },
+  setValue: function (value) {
+    this.$.filterInput.setValue(value);
+  },
+  getOperator: function () {
+    return this.$.filterCondition.getValue();
+  },
+  initComponents: function () {
+    this.inherited(arguments);
+    this.$.filterCondition.setCollection(new Backbone.Collection());
+    this.$.filterCondition.getCollection().reset([{
+      id: 'greaterThan',
+      name: OB.I18N.getLabel('OBMOBC_FilterQueryBuilderMoreThan')
+    }, {
+      id: 'lessThan',
+      name: OB.I18N.getLabel('OBMOBC_FilterQueryBuilderLessThan')
+    }, {
+      id: 'equals',
+      name: OB.I18N.getLabel('OBMOBC_FilterQueryBuilderEquals')
+    }, {
+      id: 'notEquals',
+      name: OB.I18N.getLabel('OBMOBC_FilterQueryBuilderNotEquals')
+    }]);
+  }
+
+});
+
+enyo.kind({
   kind: 'OB.UI.List',
   name: 'OB.UI.FilterSelectorList',
   classes: 'combo',
@@ -101,7 +153,7 @@ enyo.kind({
           style: 'display: table; width: 100%;',
           name: 'filterInputs',
           components: [{
-            style: 'display: table-cell; width: 35%;',
+            style: 'display: table-cell; width: 35%; vertical-align: top',
             name: 'entityFilterColumnContainer',
             components: [{
               kind: 'OB.UI.List',
@@ -144,7 +196,7 @@ enyo.kind({
               }
             }]
           }, {
-            style: 'display: table-cell; width: 65%;',
+            style: 'display: table-cell; width: 65%; vertical-align: top',
             name: 'entitySearchContainer',
             components: [{
               kind: 'OB.UI.SearchInputAutoFilter',
@@ -153,6 +205,10 @@ enyo.kind({
             }, {
               kind: 'OB.UI.FilterSelectorList',
               name: 'entityFilterList',
+              style: 'width: 100%; margin-bottom: 0px'
+            }, {
+              kind: 'OB.UI.FilterSelectorAmount',
+              name: 'entityFilterAmount',
               style: 'width: 100%; margin-bottom: 0px'
             }]
           }]
@@ -205,8 +261,9 @@ enyo.kind({
       return flt.column === inEvent.value;
     }, this);
     if (column) {
-      this.$.entityFilterText.setShowing(!column.isList);
+      this.$.entityFilterText.setShowing(!column.isList && !column.isAmount);
       this.$.entityFilterList.setShowing(column.isList);
+      this.$.entityFilterAmount.setShowing(column.isAmount);
       if (column.isList) {
         this.$.entityFilterList.changeColumn(column);
       }
@@ -221,6 +278,9 @@ enyo.kind({
 
     if (column.isList) {
       text = this.$.entityFilterList.getValue();
+    } else if (column.isAmount) {
+      column.operator = this.$.entityFilterAmount.getOperator();
+      text = this.$.entityFilterAmount.getValue();
     } else {
       text = this.$.entityFilterText.getValue();
     }

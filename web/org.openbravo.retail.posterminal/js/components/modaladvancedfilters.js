@@ -64,6 +64,28 @@ enyo.kind({
   },
 
   addFilter: function (filter) {
+    var filterEditor;
+    if (filter.isList) {
+      filterEditor = {
+        kind: 'OB.UI.FilterSelectorList',
+        name: 'input' + filter.name,
+        style: 'float: left; width: calc(100% - 74px); padding: 4px; height: 40px;'
+      };
+    } else if (filter.isAmount) {
+      filterEditor = {
+        kind: 'OB.UI.FilterSelectorAmount',
+        name: 'input' + filter.name,
+        style: 'float: left; width: calc(100% - 64px); padding: 0; height: 40px;'
+      };
+    } else {
+      filterEditor = {
+        kind: 'enyo.Input',
+        type: 'text',
+        classes: 'input narrow-input',
+        name: 'input' + filter.name,
+        style: 'float: left; width: calc(100% - 84px); padding: 4px;'
+      };
+    }
     var filterLine = this.createComponent({
       filter: filter,
       style: 'width: 100%; clear:both; background-color: #fff; height: 40px; padding-top: 2px; padding-left: 13px; overflow: hidden;',
@@ -74,17 +96,8 @@ enyo.kind({
       }, {
         style: 'float: left; text-align: left; padding-left: 2px; width: calc(100% - 125px);',
         components: [
-        filter.isList ? {
-          kind: 'OB.UI.FilterSelectorList',
-          name: 'input' + filter.name,
-          style: 'float: left; width: calc(100% - 74px); padding: 4px; height: 40px; '
-        } : {
-          kind: 'enyo.Input',
-          type: 'text',
-          classes: 'input narrow-input',
-          name: 'input' + filter.name,
-          style: 'float: left; width: calc(100% - 84px); padding: 4px; height: 30px; '
-        }, {
+        filterEditor,
+        {
           kind: 'OB.UI.SmallButton',
           name: 'order' + filter.name,
           classes: 'btnlink-white iconSortNone',
@@ -97,6 +110,8 @@ enyo.kind({
           }
         }]
       }]
+    }, {
+      owner: this
     });
     filterLine.render();
     if (filter.isList) {
@@ -137,6 +152,9 @@ enyo.kind({
 
       text = text ? text.trim() : '';
       if (text) {
+        if (flt.filter.isAmount) {
+          flt.filter.operator = flt.owner.$['input' + flt.filter.name].getOperator();
+        }
         if (flt.filter.isDate) {
           dateValidated = OB.Utilities.Date.OBToJS(text, OB.Format.date) || OB.Utilities.Date.OBToJS(text, 'yyyy-MM-dd');
           if (dateValidated) {
