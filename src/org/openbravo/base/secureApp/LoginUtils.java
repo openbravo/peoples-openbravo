@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.openbravo.base.HttpBaseUtils;
@@ -275,22 +276,18 @@ public class LoginUtils {
       vars.setSessionValue("#Client_SMTP", data[0].smtphost);
       data = null;
 
-      String[] orgList = Utility.getContext(conn, vars, "#User_Org", "LoginHandler").split(",");
       AttributeData[] attr = null;
-      int j = 0;
-      String acctschemaId = null;
-
-      for (String orgIdString : orgList) {
-        String orgId = orgIdString.replace("'", "");
-        acctschemaId = OBLedgerUtils.getOrgLedger(orgId);
-        if (StringUtils.isNotEmpty(acctschemaId)) {
-          acctschemaId = "'" + acctschemaId + "'";
-          break;
+      String[] orgList = Utility.getContext(conn, vars, "#User_Org", "LoginHandler").split(",");
+      for (String orgId : orgList) {
+        String acctSchemaId = OBLedgerUtils.getOrgLedger(orgId.replace("'", ""));
+        if (StringUtils.isNotEmpty(acctSchemaId)) {
+          attr = AttributeData.selectAcctSchema(conn, acctSchemaId,
+              Utility.getContext(conn, vars, "#User_Client", "LoginHandler"));
+          if (ArrayUtils.isNotEmpty(attr)) {
+            break;
+          }
         }
       }
-
-      attr = AttributeData.select(conn,
-          Utility.getContext(conn, vars, "#User_Client", "LoginHandler"), acctschemaId);
 
       if (attr != null && attr.length > 0) {
         vars.setSessionValue("$C_AcctSchema_ID", attr[0].value);
