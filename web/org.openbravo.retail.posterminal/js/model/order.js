@@ -4829,7 +4829,7 @@
           p.set('origAmount', p.get('amount'));
         }
         p.set('paid', p.get('origAmount'));
-        origAmount = p.get('isNegativeOrder') ? -p.get('amount') : p.get('amount');
+        origAmount = p.get('isNegativeOrder') ? -p.get('origAmount') : p.get('origAmount');
         if (p.get('kind') === OB.MobileApp.model.get('paymentcash')) {
           // The default cash method
           cash = OB.DEC.add(cash, origAmount);
