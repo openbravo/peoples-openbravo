@@ -23,6 +23,10 @@ enyo.kind({
       return true;
     }
     this.inherited(arguments); // Manual dropdown menu closure
+    if (this.model.get('order').get('orderType') === 2 && this.model.get('order').get('lines').length > 0) {
+      OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_layawaysOrdersWithReturnsNotAllowed'));
+      return true;
+    }
     this.model.get('order').setDocumentNo(true, false);
     this.doShowDivText({
       permission: this.permission,
