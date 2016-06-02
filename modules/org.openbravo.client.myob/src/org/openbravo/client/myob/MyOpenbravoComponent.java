@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2014 Openbravo SLU
+ * All portions are Copyright (C) 2010-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -96,6 +96,12 @@ public class MyOpenbravoComponent extends BaseTemplateComponent {
 
   public List<String> getAvailableWidgetClasses(String roleId, boolean isAdminMode)
       throws Exception {
+    boolean shouldBeDisplayedInWorkspace = false;
+    return getAvailableWidgetClasses(roleId, isAdminMode, shouldBeDisplayedInWorkspace);
+  }
+
+  public List<String> getAvailableWidgetClasses(String roleId, boolean isAdminMode,
+      boolean shouldBeDisplayed) throws Exception {
     OBContext.setAdminMode();
     try {
       if (widgetClassDefinitions != null) {
@@ -105,8 +111,13 @@ public class MyOpenbravoComponent extends BaseTemplateComponent {
       final List<JSONObject> definitions = new ArrayList<JSONObject>();
       final List<String> tmp = new ArrayList<String>();
       String classDef = "";
+      String strConditionQuery = WidgetClass.PROPERTY_SUPERCLASS + " is false";
+      if (shouldBeDisplayed) {
+        strConditionQuery += " and " + WidgetClass.PROPERTY_AVAILABLEINWORKSPACE + " is true";
+      }
+
       final OBQuery<WidgetClass> widgetClassesQry = OBDal.getInstance().createQuery(
-          WidgetClass.class, WidgetClass.PROPERTY_SUPERCLASS + " is false");
+          WidgetClass.class, strConditionQuery);
       for (WidgetClass widgetClass : widgetClassesQry.list()) {
         if (isAccessible(widgetClass, roleId)) {
           final WidgetProvider widgetProvider = myOBUtils.getWidgetProvider(widgetClass);
