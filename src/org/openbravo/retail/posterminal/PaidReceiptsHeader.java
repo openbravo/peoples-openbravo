@@ -22,6 +22,9 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.dal.core.OBContext;
+import org.openbravo.erpCommon.businessUtility.Preferences;
+import org.openbravo.erpCommon.utility.PropertyException;
 
 public class PaidReceiptsHeader extends ProcessHQLQuery {
   public static final Logger log = Logger.getLogger(PaidReceiptsHeader.class);
@@ -38,9 +41,41 @@ public class PaidReceiptsHeader extends ProcessHQLQuery {
   @Override
   protected Map<String, Object> getParameterValues(JSONObject jsonsent) throws JSONException {
     if (!jsonsent.getJSONObject("filters").getString("filterText").isEmpty()) {
+      boolean isRemote = false;
+      try {
+        OBContext.setAdminMode(false);
+        isRemote = "Y".equals(Preferences.getPreferenceValue("OBPOS_remote.customer", true,
+            OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
+                .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
+                .getOBContext().getRole(), null));
+      } catch (PropertyException e) {
+        log.error("Error getting preference OBPOS_remote.product " + e.getMessage(), e);
+      } finally {
+        OBContext.restorePreviousMode();
+      }
+      boolean useContains = false;
+      if (isRemote) {
+        try {
+          OBContext.setAdminMode(false);
+          useContains = "Y".equals(Preferences.getPreferenceValue(
+              "OBPOS_remote.customer_usesContains", true, OBContext.getOBContext()
+                  .getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(), OBContext
+                  .getOBContext().getUser(), OBContext.getOBContext().getRole(), null));
+        } catch (PropertyException e) {
+          log.error(
+              "Error getting preference OBPOS_remote.customer_usesContains " + e.getMessage(), e);
+        } finally {
+          OBContext.restorePreviousMode();
+        }
+      }
       Map<String, Object> paramValues = new HashMap<String, Object>();
-      paramValues.put("filterT1", ("%"
-          + jsonsent.getJSONObject("filters").getString("filterText").trim() + "%"));
+      if (isRemote && !useContains) {
+        paramValues.put("filterT1", (jsonsent.getJSONObject("filters").getString("filterText")
+            .trim() + "%"));
+      } else {
+        paramValues.put("filterT1", ("%"
+            + jsonsent.getJSONObject("filters").getString("filterText").trim() + "%"));
+      }
       return paramValues;
     } else {
       return null;
