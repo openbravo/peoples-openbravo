@@ -463,6 +463,7 @@ enyo.kind({
                 order: me.receipt,
                 selectedLines: me.selectedModels
               }, function () {
+                keyboard.receipt.set('undo', null);
                 keyboard.line.set('deleteApproved', true);
                 keyboard.receipt.set('preventServicesUpdate', true);
                 keyboard.receipt.set('deleting', true);
