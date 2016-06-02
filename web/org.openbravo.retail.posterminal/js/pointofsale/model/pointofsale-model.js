@@ -728,12 +728,12 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
           }], {
             onShowFunction: function (popup) {
               popup.$.headerCloseButton.hide();
-              window.OB.UTIL.localStorage.removeItem('POSLastTotalRefresh');
-              window.OB.UTIL.localStorage.removeItem('POSLastIncRefresh');
+              OB.UTIL.localStorage.removeItem('POSLastTotalRefresh');
+              OB.UTIL.localStorage.removeItem('POSLastIncRefresh');
             },
             onHideFunction: function () {
-              window.OB.UTIL.localStorage.removeItem('POSLastTotalRefresh');
-              window.OB.UTIL.localStorage.removeItem('POSLastIncRefresh');
+              OB.UTIL.localStorage.removeItem('POSLastTotalRefresh');
+              OB.UTIL.localStorage.removeItem('POSLastIncRefresh');
               window.location.reload();
             },
             autoDismiss: false

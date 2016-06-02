@@ -19,8 +19,8 @@
         terminalName: terminalName
       });
       // set the terminal only if it was empty. this variable is used to detect if the terminal changed
-      if (terminalName && !window.OB.UTIL.localStorage.getItem('terminalName')) {
-        window.OB.UTIL.localStorage.setItem('terminalName', terminalName);
+      if (terminalName && !OB.UTIL.localStorage.getItem('terminalName')) {
+        OB.UTIL.localStorage.setItem('terminalName', terminalName);
       }
     },
 
@@ -35,11 +35,11 @@
         loginUtilsUrl: '../../org.openbravo.retail.posterminal.service.loginutils',
         loginHandlerUrl: '../../org.openbravo.retail.posterminal/POSLoginHandler',
         applicationFormatUrl: '../../org.openbravo.mobile.core/OBPOS_Main/ApplicationFormats',
-        logoutUrlParams: window.OB.UTIL.localStorage.getItem('terminalAuthentication') === 'Y' ? {} : {
+        logoutUrlParams: OB.UTIL.localStorage.getItem('terminalAuthentication') === 'Y' ? {} : {
           terminal: OB.UTIL.getParameterByName("terminal")
         },
         logConfiguration: {
-          deviceIdentifier: window.OB.UTIL.localStorage.getItem('terminalAuthentication') === 'Y' ? window.OB.UTIL.localStorage.getItem('terminalName') : OB.UTIL.getParameterByName("terminal"),
+          deviceIdentifier: OB.UTIL.localStorage.getItem('terminalAuthentication') === 'Y' ? OB.UTIL.localStorage.getItem('terminalName') : OB.UTIL.getParameterByName("terminal"),
           logPropertiesExtension: [
 
           function () {
@@ -66,13 +66,13 @@
         logDBStmtThreshold: 1000
       });
 
-      me.setTerminalName(window.OB.UTIL.localStorage.getItem('terminalAuthentication') === 'Y' ? window.OB.UTIL.localStorage.getItem('terminalName') : OB.UTIL.getParameterByName("terminal"));
+      me.setTerminalName(OB.UTIL.localStorage.getItem('terminalAuthentication') === 'Y' ? OB.UTIL.localStorage.getItem('terminalName') : OB.UTIL.getParameterByName("terminal"));
 
       OB.UTIL.HookManager.registerHook('OBMOBC_InitActions', function (args, c) {
         me.initActions(function () {
-          me.setTerminalName(window.OB.UTIL.localStorage.getItem('terminalAuthentication') === 'Y' ? window.OB.UTIL.localStorage.getItem('terminalName') : OB.UTIL.getParameterByName("terminal"));
+          me.setTerminalName(OB.UTIL.localStorage.getItem('terminalAuthentication') === 'Y' ? OB.UTIL.localStorage.getItem('terminalName') : OB.UTIL.getParameterByName("terminal"));
           me.set('logConfiguration', {
-            deviceIdentifier: window.OB.UTIL.localStorage.getItem('terminalAuthentication') === 'Y' ? window.OB.UTIL.localStorage.getItem('terminalName') : OB.UTIL.getParameterByName("terminal"),
+            deviceIdentifier: OB.UTIL.localStorage.getItem('terminalAuthentication') === 'Y' ? OB.UTIL.localStorage.getItem('terminalName') : OB.UTIL.getParameterByName("terminal"),
             logPropertiesExtension: [
 
             function () {
@@ -123,7 +123,7 @@
                 }
               }], {
                 onShowFunction: function (popup) {
-                  window.OB.UTIL.localStorage.removeItem('cacheAvailableForUser:' + OB.MobileApp.model.get('orgUserId'));
+                  OB.UTIL.localStorage.removeItem('cacheAvailableForUser:' + OB.MobileApp.model.get('orgUserId'));
                   popup.$.headerCloseButton.hide();
                   OB.MobileApp.view.$.containerWindow.destroyComponents();
                 },
@@ -151,7 +151,7 @@
                 }
               });
 
-              window.OB.UTIL.localStorage.setItem('terminalId', data[0].terminal.id);
+              OB.UTIL.localStorage.setItem('terminalId', data[0].terminal.id);
               terminalModel.set('useBarcode', terminalModel.get('terminal').terminalType.usebarcodescanner);
               OB.MobileApp.view.scanningFocus(true);
               if (!terminalModel.usermodel) {
@@ -220,7 +220,7 @@
                     }
                   }], {
                     onShowFunction: function (popup) {
-                      window.OB.UTIL.localStorage.removeItem('cacheAvailableForUser:' + OB.MobileApp.model.get('orgUserId'));
+                      OB.UTIL.localStorage.removeItem('cacheAvailableForUser:' + OB.MobileApp.model.get('orgUserId'));
                       popup.$.headerCloseButton.hide();
                     },
                     autoDismiss: false
@@ -238,7 +238,7 @@
                   }
                 }], {
                   onShowFunction: function (popup) {
-                    window.OB.UTIL.localStorage.removeItem('cacheAvailableForUser:' + OB.MobileApp.model.get('orgUserId'));
+                    OB.UTIL.localStorage.removeItem('cacheAvailableForUser:' + OB.MobileApp.model.get('orgUserId'));
                     popup.$.headerCloseButton.hide();
                   },
                   autoDismiss: false
@@ -443,27 +443,27 @@
           });
         });
       }
-      if (window.OB.UTIL.localStorage.getItem('terminalAuthentication') === 'Y') {
+      if (OB.UTIL.localStorage.getItem('terminalAuthentication') === 'Y') {
         var process = new OB.DS.Process('org.openbravo.retail.posterminal.CheckTerminalAuth');
 
         OB.trace('Checking authentication');
 
         process.exec({
-          terminalName: window.OB.UTIL.localStorage.getItem('terminalName'),
-          terminalKeyIdentifier: window.OB.UTIL.localStorage.getItem('terminalKeyIdentifier'),
-          terminalAuthentication: window.OB.UTIL.localStorage.getItem('terminalAuthentication'),
-          cacheSessionId: window.OB.UTIL.localStorage.getItem('cacheSessionId')
+          terminalName: OB.UTIL.localStorage.getItem('terminalName'),
+          terminalKeyIdentifier: OB.UTIL.localStorage.getItem('terminalKeyIdentifier'),
+          terminalAuthentication: OB.UTIL.localStorage.getItem('terminalAuthentication'),
+          cacheSessionId: OB.UTIL.localStorage.getItem('cacheSessionId')
         }, function (data) {
           if (data && data.exception) {
             //ERROR or no connection
             OB.error("runSyncProcess", OB.I18N.getLabel('OBPOS_TerminalAuthError'));
           } else if (data && (data.isLinked === false || data.terminalAuthentication)) {
             if (data.isLinked === false) {
-              window.OB.UTIL.localStorage.removeItem('terminalName');
-              window.OB.UTIL.localStorage.removeItem('terminalKeyIdentifier');
+              OB.UTIL.localStorage.removeItem('terminalName');
+              OB.UTIL.localStorage.removeItem('terminalKeyIdentifier');
             }
             if (data.terminalAuthentication) {
-              window.OB.UTIL.localStorage.setItem('terminalAuthentication', data.terminalAuthentication);
+              OB.UTIL.localStorage.setItem('terminalAuthentication', data.terminalAuthentication);
             }
             if (data && data.errorReadingTerminalAuthentication) {
               OB.UTIL.showWarning(data.errorReadingTerminalAuthentication);
@@ -570,24 +570,24 @@
       }, this);
 
       OB.MobileApp.model.on('window:ready', function () {
-        if (window.OB.UTIL.localStorage.getItem('terminalAuthentication') === 'Y') {
+        if (OB.UTIL.localStorage.getItem('terminalAuthentication') === 'Y') {
           var process = new OB.DS.Process('org.openbravo.retail.posterminal.CheckTerminalAuth');
           process.exec({
-            terminalName: window.OB.UTIL.localStorage.getItem('terminalName'),
-            terminalKeyIdentifier: window.OB.UTIL.localStorage.getItem('terminalKeyIdentifier'),
-            terminalAuthentication: window.OB.UTIL.localStorage.getItem('terminalAuthentication'),
-            cacheSessionId: window.OB.UTIL.localStorage.getItem('cacheSessionId')
+            terminalName: OB.UTIL.localStorage.getItem('terminalName'),
+            terminalKeyIdentifier: OB.UTIL.localStorage.getItem('terminalKeyIdentifier'),
+            terminalAuthentication: OB.UTIL.localStorage.getItem('terminalAuthentication'),
+            cacheSessionId: OB.UTIL.localStorage.getItem('cacheSessionId')
           }, function (data) {
             if (data && data.exception) {
               //ERROR or no connection
               OB.error("renderMain", OB.I18N.getLabel('OBPOS_TerminalAuthError'));
             } else if (data && (data.isLinked === false || data.terminalAuthentication)) {
               if (data.isLinked === false) {
-                window.OB.UTIL.localStorage.removeItem('terminalName');
-                window.OB.UTIL.localStorage.removeItem('terminalKeyIdentifier');
+                OB.UTIL.localStorage.removeItem('terminalName');
+                OB.UTIL.localStorage.removeItem('terminalKeyIdentifier');
               }
               if (data.terminalAuthentication) {
-                window.OB.UTIL.localStorage.setItem('terminalAuthentication', data.terminalAuthentication);
+                OB.UTIL.localStorage.setItem('terminalAuthentication', data.terminalAuthentication);
               }
               if (data && data.errorReadingTerminalAuthentication) {
                 OB.UTIL.showWarning(data.errorReadingTerminalAuthentication);
@@ -621,8 +621,8 @@
       //MASTER DATA REFRESH
       var minIncRefresh = this.get('terminal').terminalType.minutestorefreshdatainc * 60 * 1000,
           minTotalRefresh = this.get('terminal').terminalType.minutestorefreshdatatotal * 60 * 1000,
-          lastTotalRefresh = window.OB.UTIL.localStorage.getItem('POSLastTotalRefresh'),
-          lastIncRefresh = window.OB.UTIL.localStorage.getItem('POSLastIncRefresh');
+          lastTotalRefresh = OB.UTIL.localStorage.getItem('POSLastTotalRefresh'),
+          lastIncRefresh = OB.UTIL.localStorage.getItem('POSLastIncRefresh');
 
       function setTerminalLockTimeout(sessionTimeoutMinutes, sessionTimeoutMilliseconds) {
         OB.debug("Terminal lock timer reset (" + sessionTimeoutMinutes + " minutes)");
@@ -974,7 +974,7 @@
 
     dialog: null,
     preLoadContext: function (callback) {
-      if (!window.OB.UTIL.localStorage.getItem('terminalKeyIdentifier') && window.OB.UTIL.localStorage.getItem('terminalAuthentication') === 'Y') {
+      if (!OB.UTIL.localStorage.getItem('terminalKeyIdentifier') && OB.UTIL.localStorage.getItem('terminalAuthentication') === 'Y') {
         OB.UTIL.showLoading(false);
         if (OB.UI.ModalSelectTerminal) {
           this.dialog = OB.MobileApp.view.$.confirmationContainer.createComponent({
@@ -1031,8 +1031,8 @@
           if (me.get('logConfiguration') && me.get('logConfiguration').deviceIdentifier === null) {
             me.get('logConfiguration').deviceIdentifier = inResponse.terminalName;
           }
-          window.OB.UTIL.localStorage.setItem('terminalName', inResponse.terminalName);
-          window.OB.UTIL.localStorage.setItem('terminalKeyIdentifier', inResponse.terminalKeyIdentifier);
+          OB.UTIL.localStorage.setItem('terminalName', inResponse.terminalName);
+          OB.UTIL.localStorage.setItem('terminalKeyIdentifier', inResponse.terminalKeyIdentifier);
           callback();
         }
 
@@ -1045,8 +1045,8 @@
       var params = this.get('loginUtilsParams') || {},
           me = this;
       var cacheSessionId = null;
-      if (window.OB.UTIL.localStorage.getItem('cacheSessionId') && window.OB.UTIL.localStorage.getItem('cacheSessionId').length === 32) {
-        cacheSessionId = window.OB.UTIL.localStorage.getItem('cacheSessionId');
+      if (OB.UTIL.localStorage.getItem('cacheSessionId') && OB.UTIL.localStorage.getItem('cacheSessionId').length === 32) {
+        cacheSessionId = OB.UTIL.localStorage.getItem('cacheSessionId');
       }
       params.cacheSessionId = cacheSessionId;
       params.command = 'initActions';
@@ -1056,9 +1056,9 @@
         if (inResponse && inResponse.errorReadingTerminalAuthentication) {
           OB.UTIL.showWarning(inResponse.errorReadingTerminalAuthentication);
         }
-        window.OB.UTIL.localStorage.setItem('terminalAuthentication', inResponse.terminalAuthentication);
-        if (!(window.OB.UTIL.localStorage.getItem('cacheSessionId') && window.OB.UTIL.localStorage.getItem('cacheSessionId').length === 32)) {
-          window.OB.UTIL.localStorage.setItem('cacheSessionId', inResponse.cacheSessionId);
+        OB.UTIL.localStorage.setItem('terminalAuthentication', inResponse.terminalAuthentication);
+        if (!(OB.UTIL.localStorage.getItem('cacheSessionId') && OB.UTIL.localStorage.getItem('cacheSessionId').length === 32)) {
+          OB.UTIL.localStorage.setItem('cacheSessionId', inResponse.cacheSessionId);
         }
         //Save available servers and services and initialize Request Router layer
         if (inResponse.servers) {
@@ -1069,7 +1069,7 @@
         }
         OB.RR.RequestRouter.initialize();
 
-        me.setTerminalName(window.OB.UTIL.localStorage.getItem('terminalAuthentication') === 'Y' ? window.OB.UTIL.localStorage.getItem('terminalName') : OB.UTIL.getParameterByName("terminal"));
+        me.setTerminalName(OB.UTIL.localStorage.getItem('terminalAuthentication') === 'Y' ? OB.UTIL.localStorage.getItem('terminalName') : OB.UTIL.getParameterByName("terminal"));
         callback();
       }).error(function () {
         callback();
@@ -1085,7 +1085,7 @@
     modelterminal: OB.MobileApp.model,
     // kept fot backward compatibility. Deprecation id: 27646
     paramWindow: OB.UTIL.getParameterByName("window") || "retail.pointofsale",
-    paramTerminal: window.OB.UTIL.localStorage.getItem('terminalAuthentication') === 'Y' ? window.OB.UTIL.localStorage.getItem('terminalName') : OB.UTIL.getParameterByName("terminal"),
+    paramTerminal: OB.UTIL.localStorage.getItem('terminalAuthentication') === 'Y' ? OB.UTIL.localStorage.getItem('terminalName') : OB.UTIL.getParameterByName("terminal"),
     hrefWindow: function (windowname) {
       return '?terminal=' + window.encodeURIComponent(OB.MobileApp.model.get('terminalName')) + '&window=' + window.encodeURIComponent(windowname);
     },
