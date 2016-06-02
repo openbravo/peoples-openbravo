@@ -53,7 +53,21 @@ enyo.kind({
     onAddNewOrder: ''
   },
   handlers: {
-    onLeftToolbarDisabled: 'disabledButton'
+    onLeftToolbarDisabled: 'disabledButton',
+    calculatingReceipt: 'disableButton',
+    calculatedReceipt: 'enableButton'
+  },
+  disableButton: function () {
+    if (!this.model.get('leftColumnViewManager').isMultiOrder()) {
+      this.isEnabled = false;
+      this.setDisabled(true);
+    }
+  },
+  enableButton: function () {
+    if (!this.model.get('leftColumnViewManager').isMultiOrder()) {
+      this.isEnabled = true;
+      this.setDisabled(false);
+    }
   },
   disabledButton: function (inSender, inEvent) {
     this.isEnabled = inEvent.disableButtonNew || !inEvent.status;
@@ -106,7 +120,17 @@ enyo.kind({
     onDeleteOrder: ''
   },
   handlers: {
-    onLeftToolbarDisabled: 'disabledButton'
+    onLeftToolbarDisabled: 'disabledButton',
+    calculatingReceipt: 'disableButton',
+    calculatedReceipt: 'enableButton'
+  },
+  disableButton: function () {
+    this.isEnabled = false;
+    this.setDisabled(true);
+  },
+  enableButton: function () {
+    this.isEnabled = true;
+    this.setDisabled(false);
   },
   disabledButton: function (inSender, inEvent) {
     this.isEnabled = !inEvent.status;
