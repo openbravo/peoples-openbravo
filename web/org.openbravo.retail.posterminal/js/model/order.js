@@ -2231,15 +2231,28 @@
             OB.error(arguments);
           });
 
-        } else if (businessPartner.get('locationModel')) { //Location has changed or we are assigning current bp
-          OB.Dal.saveIfNew(businessPartner.get('locationModel'), function () {
-            me.set('bp', businessPartner);
-            me.save();
-            // copy the modelOrder again, as saveIfNew is possibly async
-            OB.MobileApp.model.orderList.saveCurrent();
-          }, function () {
-            OB.error(arguments);
-          });
+        } else {
+          if (businessPartner.get('locationModel')) { //Location has changed or we are assigning current bp
+            OB.Dal.saveIfNew(businessPartner.get('locationModel'), function () {
+              me.set('bp', businessPartner);
+              me.save();
+              // copy the modelOrder again, as saveIfNew is possibly async
+              OB.MobileApp.model.orderList.saveCurrent();
+            }, function () {
+              OB.UTIL.showError('Error removing');
+            });
+          } else {
+            OB.Dal.get(OB.Model.BPLocation, businessPartner.get('shipLocId'), function (location) {
+              OB.Dal.saveIfNew(location, function () {}, function () {
+                OB.error(arguments);
+              });
+              businessPartner.set('locationModel', location);
+              me.set('bp', businessPartner);
+              me.save();
+            }, function () {
+              OB.error(arguments);
+            });
+          }
         }
       } else {
         this.set('bp', businessPartner);
