@@ -611,7 +611,7 @@ enyo.kind({
         this.$.divText.setContent(OB.I18N.getLabel('OBPOS_QuotationDraft'));
       }
     }, this);
-    this.order.on('change:isPaid change:paidOnCredit change:isQuotation', function (model) {
+    this.order.on('change:isPaid change:paidOnCredit change:isQuotation change:documentNo', function (model) {
       if (model.get('isPaid') === true && !model.get('isQuotation')) {
         this.$.divText.addStyles('width: 50%; color: #f8941d;');
         if (model.get('paidOnCredit')) {
