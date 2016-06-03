@@ -15,7 +15,7 @@ enyo.kind({
     kind: 'OB.UI.List',
     name: 'filterCondition',
     classes: 'combo',
-    style: 'float: left; width: calc(50% - 18px); padding: 4px; margin-right: 16px; margin-bottom: 0px;',
+    style: 'float: left; width: calc(50% - 8px); padding: 4px; margin-right: 16px; margin-bottom: 0px;',
     renderEmpty: 'enyo.Control',
     renderLine: enyo.kind({
       kind: 'enyo.Option',
@@ -30,13 +30,29 @@ enyo.kind({
     type: 'text',
     classes: 'input narrow-input',
     name: 'filterInput',
-    style: 'float: left; width: calc(50% - 18px); padding: 4px; margin-bottom: 0px;'
+    style: 'float: left; width: calc(50% - 18px); padding: 4px; margin-bottom: 0px;',
+    handlers: {
+      onkeyup: 'keyup'
+    },
+    keyup: function (inSender, inEvent) {
+      var value = this.getValue();
+      if (value === '') {
+        this.owner.parent.hideRemove();
+      } else {
+        this.owner.parent.showRemove();
+      }
+    }
   }],
   getValue: function () {
     return this.$.filterInput.getValue();
   },
   setValue: function (value) {
     this.$.filterInput.setValue(value);
+    if (value === '') {
+      this.parent.hideRemove();
+    } else {
+      this.parent.showRemove();
+    }
   },
   setPresetValue: function (preset) {
     this.$.filterCondition.setSelectedValue(preset.id, 'id');
@@ -88,9 +104,15 @@ enyo.kind({
   },
   setValue: function (value) {
     this.id = value;
+    if (value === '') {
+      this.$.filterButton.setContent(' --- ');
+      this.parent.hideRemove();
+    } else {
+      this.parent.showRemove();
+    }
   },
   setSelectorValue: function (id, text) {
-    this.id = id;
+    this.setValue(id);
     this.$.filterButton.setContent(text);
   },
   setPresetValue: function (preset) {
@@ -105,6 +127,9 @@ enyo.kind({
   kind: 'OB.UI.List',
   name: 'OB.UI.FilterSelectorList',
   classes: 'combo',
+  handlers: {
+    onchange: 'change'
+  },
   renderLine: enyo.kind({
     kind: 'enyo.Option',
     initComponents: function () {
@@ -114,6 +139,14 @@ enyo.kind({
     }
   }),
   renderEmpty: 'enyo.Control',
+  change: function () {
+    var value = this.getValue();
+    if (value === '') {
+      this.parent.hideRemove();
+    } else {
+      this.parent.showRemove();
+    }
+  },
   changeColumn: function (column) {
     if (column.idList && !OB.MobileApp.model.get(column.termProperty)) {
       var me = this;
@@ -155,6 +188,11 @@ enyo.kind({
   },
   setValue: function (value) {
     this.setSelectedValue(value, 'id');
+    if (value === '') {
+      this.parent.hideRemove();
+    } else {
+      this.parent.showRemove();
+    }
   },
   setPresetValue: function (preset) {
     this.setValue(preset.id);
@@ -170,8 +208,20 @@ enyo.kind({
   kind: 'enyo.Input',
   type: 'text',
   classes: 'input narrow-input',
+  handlers: {
+    onkeyup: 'keyup'
+  },
   setPresetValue: function (preset) {
     this.setValue(preset.name);
+    this.keyup();
+  },
+  keyup: function (inSender, inEvent) {
+    var value = this.getValue();
+    if (value === '') {
+      this.parent.hideRemove();
+    } else {
+      this.parent.showRemove();
+    }
   }
 });
 

@@ -358,6 +358,14 @@ button.btnbp:disabled {
   background-repeat: no-repeat;
 } 
 
+.iconRemove {
+  width: 30px;
+  height: 30px;
+  background-image: url('./../img/iconSelectorRemove.png');
+  background-repeat: no-repeat;
+  background-position: 3px 3px;
+}
+
 .iconSortNone {
   width: 58px;
   height: 30px;

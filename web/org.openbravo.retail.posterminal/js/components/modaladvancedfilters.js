@@ -69,13 +69,13 @@ enyo.kind({
       filterEditor = {
         kind: 'OB.UI.FilterSelectorList',
         name: 'input' + filter.name,
-        style: 'float: left; width: calc(100% - 74px); padding: 4px; height: 40px;'
+        style: 'float: left; width: calc(100% - 120px); padding: 4px; height: 40px;'
       };
     } else if (filter.isAmount) {
       filterEditor = {
         kind: 'OB.UI.FilterSelectorAmount',
         name: 'input' + filter.name,
-        style: 'float: left; width: calc(100% - 64px); padding: 0; height: 40px;'
+        style: 'float: left; width: calc(100% - 120px); padding: 0; height: 40px;'
       };
     } else if (filter.isSelector) {
       filterEditor = {
@@ -83,13 +83,13 @@ enyo.kind({
         name: 'input' + filter.name,
         selectorPopup: filter.selectorPopup,
         filterName: filter.name,
-        style: 'float: left; width: calc(100% - 64px); padding: 0; height: 40px;'
+        style: 'float: left; width: calc(100% - 120px); padding: 0; height: 40px;'
       };
     } else {
       filterEditor = {
         kind: 'OB.UI.FilterSelectorText',
         name: 'input' + filter.name,
-        style: 'float: left; width: calc(100% - 84px); padding: 4px;'
+        style: 'float: left; width: calc(100% - 130px); padding: 4px;'
       };
     }
     var filterLine = this.createComponent({
@@ -101,9 +101,25 @@ enyo.kind({
         content: OB.I18N.getLabel(filter.caption)
       }, {
         style: 'float: left; text-align: left; padding-left: 2px; width: calc(100% - 125px);',
+        name: 'filterEditor' + filter.name,
         components: [
         filterEditor,
         {
+          name: 'deleteSpacer' + filter.name,
+          style: 'width: 30px; height: 30px; float: left; margin: 5px 0px 5px 8px;'
+        }, {
+          kind: 'OB.UI.SmallButton',
+          name: 'delete' + filter.name,
+          classes: 'btnlink-white iconRemove',
+          style: 'float: left; margin: 5px 0px 5px 8px;',
+          showing: false,
+          tap: function () {
+            this.owner.$['input' + filter.name].setValue('');
+            if (this.owner.$['input' + filter.name].kind === 'OB.UI.FilterSelectorText') {
+              this.owner.$['filterEditor' + filter.name].hideRemove();
+            }
+          }
+        }, {
           kind: 'OB.UI.SmallButton',
           name: 'order' + filter.name,
           classes: 'btnlink-white iconSortNone',
@@ -114,7 +130,15 @@ enyo.kind({
             this.owner.setSortNone();
             this.addClass(buttonClass === 'iconSortAsc' ? 'iconSortDesc' : (buttonClass === 'iconSortDesc' ? 'iconSortNone' : 'iconSortAsc'));
           }
-        }]
+        }],
+        hideRemove: function () {
+          this.owner.$['delete' + filter.name].hide();
+          this.owner.$['deleteSpacer' + filter.name].show();
+        },
+        showRemove: function () {
+          this.owner.$['deleteSpacer' + filter.name].hide();
+          this.owner.$['delete' + filter.name].show();
+        }
       }]
     }, {
       owner: this
@@ -134,6 +158,7 @@ enyo.kind({
           flt.owner.$['input' + flt.filter.name].setPresetValue(flt.filter.preset);
         } else {
           flt.owner.$['input' + flt.filter.name].setValue('');
+          flt.owner.$['filterEditor' + flt.filter.name].hideRemove();
         }
         flt.owner.$['input' + flt.filter.name].removeClass('error');
       }
