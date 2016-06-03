@@ -468,7 +468,6 @@ enyo.kind({
         this.$.donebutton.show();
       }
       this.updateCreditSalesAction();
-      //            this.$.layawayaction.hide();
     } else {
       this.setTotalPending(OB.DEC.sub(paymentstatus.get('total'), paymentstatus.get('payment')), rate, symbol, symbolAtRight);
       this.$.totalpending.show();
@@ -512,7 +511,7 @@ enyo.kind({
       if (paymentstatus.isReversal) {
         paymentstatus.payments.each(function (payment) {
           var paymentmethod = OB.POS.terminal.terminal.paymentnames[payment.get('kind')];
-          if (!payment.get('isPrePayment') && paymentmethod.paymentMethod.iscash) {
+          if (!payment.get('isPrePayment') && selectedPayment === paymentmethod && paymentmethod.paymentMethod.iscash) {
             reversePaymentsCash = OB.DEC.sub(reversePaymentsCash, payment.get('origAmount'));
           }
         });
@@ -520,7 +519,6 @@ enyo.kind({
       if (OB.UTIL.isNullOrUndefined(selectedPayment) || !selectedPayment.paymentMethod.iscash) {
         requiredCash = reversePaymentsCash;
       } else if (!_.isUndefined(paymentstatus) && (paymentstatus.isNegative)) {
-        reversePaymentsCash = OB.DEC.sub(OB.DEC.Zero, reversePaymentsCash);
         requiredCash = OB.DEC.add(reversePaymentsCash, paymentstatus.pendingAmt);
         paymentstatus.payments.each(function (payment) {
           var paymentmethod;
@@ -558,7 +556,7 @@ enyo.kind({
       if (paymentstatus.isReversal) {
         paymentstatus.payments.each(function (payment) {
           var paymentmethod = OB.POS.terminal.terminal.paymentnames[payment.get('kind')];
-          if (!payment.get('isPrePayment') && paymentmethod.paymentMethod.iscash) {
+          if (!payment.get('isPrePayment') && selectedPayment === paymentmethod && paymentmethod.paymentMethod.iscash) {
             reversePaymentsCash = OB.DEC.sub(reversePaymentsCash, payment.get('origAmount'));
           }
         });
