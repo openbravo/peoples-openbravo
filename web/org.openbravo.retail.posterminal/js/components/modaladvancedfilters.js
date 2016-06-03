@@ -77,11 +77,17 @@ enyo.kind({
         name: 'input' + filter.name,
         style: 'float: left; width: calc(100% - 64px); padding: 0; height: 40px;'
       };
+    } else if (filter.isSelector) {
+      filterEditor = {
+        kind: 'OB.UI.FilterSelectorButton',
+        name: 'input' + filter.name,
+        selectorPopup: filter.selectorPopup,
+        filterName: filter.name,
+        style: 'float: left; width: calc(100% - 64px); padding: 0; height: 40px;'
+      };
     } else {
       filterEditor = {
-        kind: 'enyo.Input',
-        type: 'text',
-        classes: 'input narrow-input',
+        kind: 'OB.UI.FilterSelectorText',
         name: 'input' + filter.name,
         style: 'float: left; width: calc(100% - 84px); padding: 4px;'
       };
@@ -123,14 +129,16 @@ enyo.kind({
   clearAll: function () {
     var me = this;
     _.each(this.filters, function (flt) {
-      if (flt.owner.$['input' + flt.filter.name].setValue) {
-        flt.owner.$['input' + flt.filter.name].setValue('');
-      } else if (flt.owner.$['input' + flt.filter.name].setSelected) {
-        flt.owner.$['input' + flt.filter.name].setSelected(0);
+      if (flt.filter.filter) {
+        if (flt.filter.preset) {
+          flt.owner.$['input' + flt.filter.name].setPresetValue(flt.filter.preset);
+        } else {
+          flt.owner.$['input' + flt.filter.name].setValue('');
+        }
+        flt.owner.$['input' + flt.filter.name].removeClass('error');
       }
-      flt.owner.$['input' + flt.filter.name].removeClass('error');
-      me.owner.$.dateFormatError.hide();
     });
+    this.owner.$.dateFormatError.hide();
   },
 
   applyFilters: function () {
@@ -200,6 +208,7 @@ enyo.kind({
     onHideThisPopup: ''
   },
   handlers: {
+    onChangeFilterSelector: 'changeFilterSelector',
     onClearAll: 'clearAll',
     onApplyFilters: 'applyFilters'
   },
@@ -235,6 +244,14 @@ enyo.kind({
     }]
   },
 
+  changeFilterSelector: function (inSender, inEvent) {
+    this.show();
+    var selector = _.find(this.$.body.$.filters.filters, function (flt) {
+      return flt.filter.name === inEvent.selector.name;
+    }, this);
+    selector.owner.$['input' + selector.filter.name].setSelectorValue(inEvent.selector.id, inEvent.selector.text);
+  },
+
   clearAll: function () {
     this.$.body.$.filters.clearAll();
   },
@@ -248,21 +265,33 @@ enyo.kind({
   },
 
   executeOnShow: function () {
-    if (this.args.lastFilters) {
+    if (this.args.callback) {
+      this.callback = this.args.callback;
       _.each(this.$.body.$.filters.filters, function (filter) {
-        var lastFlt = _.find(this.args.lastFilters, function (last) {
-          return last.column === filter.filter.column;
-        });
-        filter.owner.$['input' + filter.filter.name].setValue(lastFlt ? lastFlt.text : '');
+        if (filter.filter.preset) {
+          filter.owner.$['input' + filter.filter.name].setPresetValue(filter.filter.preset);
+        }
       }, this);
+      if (this.args.lastFilters) {
+        _.each(this.$.body.$.filters.filters, function (filter) {
+          var lastFlt = _.find(this.args.lastFilters, function (last) {
+            return last.column === filter.filter.column;
+          });
+          filter.owner.$['input' + filter.filter.name].setValue(lastFlt ? lastFlt.text : '');
+        }, this);
+      }
+      this.filtersToApply = null;
     }
-    this.filtersToApply = null;
     return true;
   },
 
   executeOnHide: function () {
-    if (this.args.callback) {
-      this.args.callback(this.filtersToApply);
+    if (!this.$.body.showSelector) {
+      if (this.callback) {
+        this.callback(this.filtersToApply);
+      }
+    } else {
+      this.$.body.showSelector = false;
     }
   }
 

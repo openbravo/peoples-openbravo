@@ -38,6 +38,10 @@ enyo.kind({
   setValue: function (value) {
     this.$.filterInput.setValue(value);
   },
+  setPresetValue: function (preset) {
+    this.$.filterCondition.setSelectedValue(preset.id, 'id');
+    this.setValue(preset.name);
+  },
   getOperator: function () {
     return this.$.filterCondition.getValue();
   },
@@ -59,6 +63,42 @@ enyo.kind({
     }]);
   }
 
+});
+
+enyo.kind({
+  name: 'OB.UI.FilterSelectorButton',
+  components: [{
+    kind: 'OB.UI.SmallButton',
+    name: 'filterButton',
+    classes: 'btnlink-gray obrcifp-btn',
+    tap: function () {
+      this.owner.owner.owner.showSelector = true;
+      this.bubble('onHideThisPopup');
+      this.bubble('onShowPopup', {
+        popup: this.owner.selectorPopup,
+        args: {
+          target: 'filterSelectorButton_' + this.owner.filterName,
+          filterName: this.owner.filterName
+        }
+      });
+    }
+  }],
+  getValue: function () {
+    return this.id;
+  },
+  setValue: function (value) {
+    this.id = value;
+  },
+  setSelectorValue: function (id, text) {
+    this.id = id;
+    this.$.filterButton.setContent(text);
+  },
+  setPresetValue: function (preset) {
+    this.setSelectorValue(preset.id, preset.name);
+  },
+  initComponents: function () {
+    this.inherited(arguments);
+  }
 });
 
 enyo.kind({
@@ -116,9 +156,22 @@ enyo.kind({
   setValue: function (value) {
     this.setSelectedValue(value, 'id');
   },
+  setPresetValue: function (preset) {
+    this.setValue(preset.id);
+  },
   initComponents: function () {
     this.setCollection(new Backbone.Collection());
     this.getCollection().reset([]);
+  }
+});
+
+enyo.kind({
+  name: 'OB.UI.FilterSelectorText',
+  kind: 'enyo.Input',
+  type: 'text',
+  classes: 'input narrow-input',
+  setPresetValue: function (preset) {
+    this.setValue(preset.name);
   }
 });
 
@@ -329,6 +382,9 @@ enyo.kind({
     this.showFields = false;
     this.$.entityFilterColumnContainer.setStyle('display: none');
     this.$.entitySearchContainer.setStyle('display: table-cell; width: 425px;');
+  },
+  fixColumn: function () {
+
   },
   initComponents: function () {
     this.inherited(arguments);
