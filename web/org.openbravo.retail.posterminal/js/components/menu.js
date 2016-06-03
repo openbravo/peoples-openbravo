@@ -14,7 +14,8 @@ enyo.kind({
   kind: 'OB.UI.MenuAction',
   permission: 'OBPOS_receipt.return',
   events: {
-    onShowDivText: ''
+    onShowDivText: '',
+    onRearrangeEditButtonBar: ''
   },
   i18nLabel: 'OBPOS_LblReturn',
   tap: function () {
@@ -29,6 +30,7 @@ enyo.kind({
     if (OB.MobileApp.model.get('lastPaneShown') === 'payment') {
       this.model.get('order').trigger('scan');
     }
+    this.doRearrangeEditButtonBar();
   },
   displayLogic: function () {
     var negativeLines = _.filter(this.model.get('order').get('lines').models, function (line) {
@@ -215,7 +217,8 @@ enyo.kind({
   kind: 'OB.UI.MenuAction',
   permission: 'OBPOS_receipt.layawayReceipt',
   events: {
-    onShowDivText: ''
+    onShowDivText: '',
+    onRearrangeEditButtonBar: ''
   },
   i18nLabel: 'OBPOS_LblLayawayReceipt',
   tap: function () {
@@ -239,6 +242,7 @@ enyo.kind({
       permission: this.permission,
       orderType: 2
     });
+    this.doRearrangeEditButtonBar();
   },
   updateVisibility: function (isVisible) {
     if (!OB.MobileApp.model.hasPermission(this.permission)) {

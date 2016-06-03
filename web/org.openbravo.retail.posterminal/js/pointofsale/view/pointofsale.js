@@ -93,7 +93,8 @@ enyo.kind({
     onToggleLineSelection: 'toggleLineSelection',
     onFinishServiceProposal: 'finishServiceProposal',
     onkeydown: 'keyDownHandler',
-    onkeyup: 'keyUpHandler'
+    onkeyup: 'keyUpHandler',
+    onRearrangeEditButtonBar:'rearrangeEditButtonBar'
   },
   events: {
     onShowPopup: '',
@@ -1242,6 +1243,9 @@ enyo.kind({
   },
   setMultiSelectionItems: function (inSender, inEvent) {
     this.waterfall('onTableMultiSelectedItems', inEvent);
+  },
+  rearrangeEditButtonBar:function (inSender, inEvent) {
+	  this.waterfall('onRearrangedEditButtonBar', inEvent);
   },
   init: function () {
     var receipt, receiptList, LeftColumnCurrentView;
