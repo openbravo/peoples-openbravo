@@ -527,25 +527,21 @@ public class OBDal implements OBSingleton {
     return result;
   }
 
-  // TODO: this is maybe not the best location for this functionality??
   protected void setClientOrganization(Object o) {
     final OBContext obContext = OBContext.getOBContext();
+    // Client and organization in context could have been created in another session, use proxies
+    // to set them. Note DalUtil.getId won't help here as objects are already loaded in memory
+
     if (o instanceof ClientEnabled) {
       final ClientEnabled ce = (ClientEnabled) o;
-      // reread the client
       if (ce.getClient() == null) {
-        final Client client = SessionHandler.getInstance().find(Client.class,
-            obContext.getCurrentClient().getId());
-        ce.setClient(client);
+        ce.setClient(getProxy(Client.class, obContext.getCurrentClient().getId()));
       }
     }
     if (o instanceof OrganizationEnabled) {
       final OrganizationEnabled oe = (OrganizationEnabled) o;
-      // reread the client and organization
       if (oe.getOrganization() == null) {
-        final Organization org = SessionHandler.getInstance().find(Organization.class,
-            obContext.getCurrentOrganization().getId());
-        oe.setOrganization(org);
+        oe.setOrganization(getProxy(Organization.class, obContext.getCurrentOrganization().getId()));
       }
     }
   }
