@@ -3,7 +3,6 @@
     <function name="OBPOS_FIXISSUE25555" type="NULL">
       <body><![CDATA[TYPE RECORD IS REF CURSOR;
 v_candidateInvoices RECORD;
-v_wrongPaymentSched RECORD;
 cursor1 RECORD;
 v_needToExecute NUMBER:=0;
 v_isWrongInvoice NUMBER:=0;
@@ -12,7 +11,6 @@ v_invoice2 character varying(32);
 v_paymentSchedDet1 character varying(32);
 v_paymentSched2 character varying(32);
 v_order1 character varying(32);
-v_numWrongInvoicesByOrder NUMBER:=0;
 v_numOfPaymentSched NUMBER:=0;
 v_numOfPaymentSched2 NUMBER:=0;
 sumGrandTotal NUMBER:=0;
