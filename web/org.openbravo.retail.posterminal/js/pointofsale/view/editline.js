@@ -773,6 +773,13 @@ enyo.kind({
     this.inherited(arguments);
     this.line = null;
     var me = this;
+    this.receipt.on('change:qty', function () {
+      if (me.receipt.get('lines').length === 0) {
+        me.line = null;
+        me.selectedModels = null;
+        me.render();
+      }
+    }, this);
     this.receipt.get('lines').on('selected', function (lineSelected) {
       if (lineSelected) {
         me.selectedListener(lineSelected);
