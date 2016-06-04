@@ -799,7 +799,7 @@ enyo.kind({
       if (lineSelected) {
         me.selectedListener(lineSelected);
         me.doReceiptLineSelected({
-          product: lineSelected.get('product')
+          line: lineSelected
         });
       }
     }, this);

@@ -1224,7 +1224,7 @@ enyo.kind({
     var enableButton = true,
         selectedLines = this.$.multiColumn.$.rightPanel.$.keyboard.selectedModels,
         selectedLinesSameQty = this.$.multiColumn.$.rightPanel.$.keyboard.selectedModelsSameQty,
-        selectedLinesLength = this.$.multiColumn.$.rightPanel.$.keyboard.selectedModels.length,
+        selectedLinesLength = selectedLines ? this.$.multiColumn.$.rightPanel.$.keyboard.selectedModels.length : 0,
         product, i;
     if (selectedLinesLength > 1) {
       for (i = 0; i < selectedLinesLength; i++) {
@@ -1242,10 +1242,13 @@ enyo.kind({
       if (!product.get('groupProduct') || (product.get('productType') === 'S' && product.get('isLinkedToProduct')) || selectedLines[0].get('originalOrderLineId')) {
         enableButton = false;
       }
+    } else {
+      enableButton = false;
     }
     this.enableKeyboardButton(enableButton);
     OB.UTIL.HookManager.executeHooks('OBPOS_LineSelected', {
-      product: inEvent.product,
+      line: inEvent.line,
+      selectedLines: selectedLines,
       context: this
     }, function (args) {});
   },
