@@ -835,9 +835,9 @@
         }
       });
 
-      isNegative = OB.DEC.compare(total) < 0 || (OB.DEC.compare(total) === 1 && this.get('orderType') === 3 && (!this.get('isPartiallyDelivered') || (this.get('isPartiallyDelivered') && this.get('isDeliveredGreaterThanGross'))));
+      isNegative = this.get('gross') < 0 || (this.get('gross') > 0 && this.get('orderType') === 3 && (!this.get('isPartiallyDelivered') || (this.get('isPartiallyDelivered') && this.get('isDeliveredGreaterThanGross'))));
       // Check if the total amount is lower than the already paid (processed)
-      if (!isNegative && OB.DEC.compare(total) >= 0 && OB.DEC.compare(OB.DEC.sub(processedPaymentsAmount, total)) === 1) {
+      if (!isNegative && this.get('gross') >= 0 && OB.DEC.compare(OB.DEC.sub(processedPaymentsAmount, total)) === 1) {
         isNegative = true;
         paidInNegativeStatus = OB.DEC.sub(processedPaymentsAmount, paymentsAmount);
         totalToReturn = OB.DEC.sub(processedPaymentsAmount, total);
@@ -845,13 +845,13 @@
 
       if (_.isUndefined(paidInNegativeStatus)) {
         this.unset('paidInNegativeStatusAmt');
-        done = this.get('lines').length > 0 && OB.DEC.compare(total) >= 0 && OB.DEC.compare(OB.DEC.sub(pay, total)) >= 0;
+        done = this.get('lines').length > 0 && this.get('gross') >= 0 && OB.DEC.compare(OB.DEC.sub(pay, total)) >= 0;
         pending = OB.DEC.compare(OB.DEC.sub(pay, total)) >= 0 ? OB.I18N.formatCurrency(OB.DEC.Zero) : OB.I18N.formatCurrency(OB.DEC.sub(total, pay));
         overpayment = OB.DEC.compare(OB.DEC.sub(pay, total)) > 0 ? OB.I18N.formatCurrency(OB.DEC.sub(pay, total)) : null;
         pendingAmt = OB.DEC.compare(OB.DEC.sub(pay, total)) >= 0 ? OB.DEC.Zero : OB.DEC.sub(total, pay);
       } else {
         this.set('paidInNegativeStatusAmt', paidInNegativeStatus);
-        done = this.get('lines').length > 0 && OB.DEC.compare(total) >= 0 && OB.DEC.compare(OB.DEC.sub(paymentsAmount, totalToReturn)) >= 0;
+        done = this.get('lines').length > 0 && this.get('gross') >= 0 && OB.DEC.compare(OB.DEC.sub(paymentsAmount, totalToReturn)) >= 0;
         pending = OB.DEC.compare(OB.DEC.sub(totalToReturn, paymentsAmount)) === 1 ? OB.I18N.formatCurrency(OB.DEC.sub(totalToReturn, paymentsAmount)) : null;
         overpayment = OB.DEC.compare(OB.DEC.sub(OB.DEC.sub(paymentsAmount, totalToReturn), this.getChange())) === 1 ? OB.I18N.formatCurrency(OB.DEC.sub(OB.DEC.sub(paymentsAmount, totalToReturn), this.getChange())) : null;
         pendingAmt = OB.DEC.compare(OB.DEC.sub(totalToReturn, paymentsAmount)) === 1 ? OB.DEC.sub(totalToReturn, paymentsAmount) : OB.DEC.Zero;
