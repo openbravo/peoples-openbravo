@@ -94,7 +94,7 @@ enyo.kind({
     onFinishServiceProposal: 'finishServiceProposal',
     onkeydown: 'keyDownHandler',
     onkeyup: 'keyUpHandler',
-    onRearrangeEditButtonBar:'rearrangeEditButtonBar'
+    onRearrangeEditButtonBar: 'rearrangeEditButtonBar'
   },
   events: {
     onShowPopup: '',
@@ -570,29 +570,6 @@ enyo.kind({
           inEvent.callback.call(inEvent.context, success);
         }
       });
-      if (args.productToAdd.get('groupProduct') && args.productToAdd.get('productType') !== 'S' && !args.productToAdd.get('isLinkedToProduct')) {
-        // The product added is grouped, so enable the quantity button
-        args.context.waterfall('onEnableQtyButton', {
-          enable: true
-        });
-        args.context.waterfall('onEnablePlusButton', {
-          enable: true
-        });
-        args.context.waterfall('onEnableMinusButton', {
-          enable: true
-        });
-      } else {
-        // The product added is not grouped, so disable the quantity button
-        args.context.waterfall('onEnableQtyButton', {
-          enable: false
-        });
-        args.context.waterfall('onEnablePlusButton', {
-          enable: false
-        });
-        args.context.waterfall('onEnableMinusButton', {
-          enable: false
-        });
-      }
     });
     return true;
   },
@@ -1193,7 +1170,7 @@ enyo.kind({
     var enableButton = true,
         selectedLines = this.$.multiColumn.$.rightPanel.$.keyboard.selectedModels,
         selectedLinesSameQty = this.$.multiColumn.$.rightPanel.$.keyboard.selectedModelsSameQty,
-        selectedLinesLength = this.$.multiColumn.$.rightPanel.$.keyboard.selectedModels.length,
+        selectedLinesLength = selectedLines ? this.$.multiColumn.$.rightPanel.$.keyboard.selectedModels.length : 0,
         product, i;
     if (selectedLinesLength > 1) {
       for (i = 0; i < selectedLinesLength; i++) {
@@ -1206,11 +1183,13 @@ enyo.kind({
       if (enableButton && !selectedLinesSameQty) {
         enableButton = false;
       }
-    } else {
+    } else if (selectedLinesLength === 1) {
       product = selectedLines[0].get('product');
       if (!product.get('groupProduct') || (product.get('productType') === 'S' && product.get('isLinkedToProduct')) || selectedLines[0].get('originalOrderLineId')) {
         enableButton = false;
       }
+    } else {
+      enableButton = false;
     }
     this.waterfall('onEnableQtyButton', {
       enable: enableButton
@@ -1222,7 +1201,8 @@ enyo.kind({
       enable: enableButton
     });
     OB.UTIL.HookManager.executeHooks('OBPOS_LineSelected', {
-      product: inEvent.product,
+      line: inEvent.line,
+      selectedLines: selectedLines,
       context: this
     }, function (args) {});
   },
@@ -1244,8 +1224,8 @@ enyo.kind({
   setMultiSelectionItems: function (inSender, inEvent) {
     this.waterfall('onTableMultiSelectedItems', inEvent);
   },
-  rearrangeEditButtonBar:function (inSender, inEvent) {
-	  this.waterfall('onRearrangedEditButtonBar', inEvent);
+  rearrangeEditButtonBar: function (inSender, inEvent) {
+    this.waterfall('onRearrangedEditButtonBar', inEvent);
   },
   init: function () {
     var receipt, receiptList, LeftColumnCurrentView;
