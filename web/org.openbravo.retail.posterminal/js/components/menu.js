@@ -23,10 +23,6 @@ enyo.kind({
       return true;
     }
     this.inherited(arguments); // Manual dropdown menu closure
-    if (this.model.get('order').get('orderType') === 2 && this.model.get('order').get('lines').length > 0) {
-      OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_layawaysOrdersWithReturnsNotAllowed'));
-      return true;
-    }
     this.model.get('order').setDocumentNo(true, false);
     this.doShowDivText({
       permission: this.permission,
@@ -51,7 +47,7 @@ enyo.kind({
       this.hide();
       return;
     }
-    if (this.model.get('order').get('isEditable') === false) {
+    if (this.model.get('order').get('isEditable') === false || this.model.get('order').get('orderType') === 2) {
       this.setShowing(false);
       return;
     }
@@ -61,7 +57,7 @@ enyo.kind({
   init: function (model) {
     this.model = model;
     var receipt = model.get('order');
-    receipt.on('change:isEditable change:isQuotation change:gross', function (changedModel) {
+    receipt.on('change:isEditable change:isQuotation change:gross change:orderType', function (changedModel) {
       this.displayLogic();
     }, this);
     this.model.get('leftColumnViewManager').on('change:currentView', function (changedModel) {
