@@ -85,23 +85,7 @@ public class MyOpenbravoComponent extends BaseTemplateComponent {
     return COMPONENT_ID;
   }
 
-  public List<String> getAvailableWidgetClasses() throws Exception {
-    return getAvailableWidgetClasses(null);
-  }
-
-  public List<String> getAvailableWidgetClasses(String roleId) throws Exception {
-    boolean isAdminMode = false;
-    return getAvailableWidgetClasses(roleId, isAdminMode);
-  }
-
-  public List<String> getAvailableWidgetClasses(String roleId, boolean isAdminMode)
-      throws Exception {
-    boolean shouldBeDisplayedInWorkspace = false;
-    return getAvailableWidgetClasses(roleId, isAdminMode, shouldBeDisplayedInWorkspace);
-  }
-
-  public List<String> getAvailableWidgetClasses(String roleId, boolean isAdminMode,
-      boolean shouldBeDisplayed) throws Exception {
+  List<String> getAvailableWidgetClasses(String roleId, boolean shouldBeDisplayed) throws Exception {
     OBContext.setAdminMode();
     try {
       if (widgetClassDefinitions != null) {
