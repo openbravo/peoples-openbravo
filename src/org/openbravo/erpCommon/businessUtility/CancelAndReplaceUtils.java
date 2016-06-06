@@ -359,6 +359,7 @@ public class CancelAndReplaceUtils {
       boolean triggersDisabled) throws JSONException {
     Order inverseOrder = (Order) DalUtil.copy(oldOrder, false, true);
     // Change order values
+    inverseOrder.setCreatedBy(OBContext.getOBContext().getUser());
     inverseOrder.setPosted("N");
     inverseOrder.setProcessed(false);
     inverseOrder.setDocumentStatus("DR");
