@@ -1924,6 +1924,7 @@
       this.set('createdBy', OB.MobileApp.model.get('orgUserId'));
       this.set('session', OB.MobileApp.model.get('session'));
       this.set('orderDate', new Date());
+      this.set('skipApplyPromotions', false);
       //Sometimes the Id of Quotation is null.
       if (this.get('id') && !_.isNull(this.get('id'))) {
         this.set('oldId', this.get('id'));
