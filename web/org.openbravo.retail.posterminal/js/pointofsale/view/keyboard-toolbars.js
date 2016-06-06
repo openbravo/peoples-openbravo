@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2015 Openbravo S.L.U.
+ * Copyright (C) 2013-2016 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -362,7 +362,7 @@ enyo.kind({
             amount = altexactamount[exactpayment.payment.searchKey];
           }
           if (exactpayment.rate && exactpayment.rate !== '1') {
-            amount = OB.DEC.div(amount, exactpayment.rate);
+            amount = OB.DEC.div(amount, exactpayment.rate, 6);
           }
 
           if (amount > 0 && exactpayment && OB.MobileApp.model.hasPermission(exactpayment.payment.searchKey)) {
