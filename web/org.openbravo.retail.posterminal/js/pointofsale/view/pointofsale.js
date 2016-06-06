@@ -1253,7 +1253,7 @@ enyo.kind({
     }, function (args) {});
   },
   enableKeyboardButton: function (enableButton) {
-    if (enableButton && this.model.get('order').get('hasbeenpaid') === 'Y') {
+    if (enableButton && !this.model.get('order').get('isEditable')) {
       enableButton = false;
     }
     this.waterfall('onEnableQtyButton', {
@@ -1391,7 +1391,7 @@ enyo.kind({
       this.classModel.trigger('removedLine', this, line);
     }, this);
 
-    receipt.on('change:hasbeenpaid', function (model) {
+    receipt.on('change:isEditable', function (model) {
       this.enableKeyboardButton(true);
     }, this);
 
