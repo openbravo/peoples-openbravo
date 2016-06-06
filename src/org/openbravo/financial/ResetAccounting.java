@@ -231,6 +231,26 @@ public class ResetAccounting {
     return results;
   }
 
+  /**
+   * Deletes multiple table ids
+   */
+  @SuppressWarnings("unchecked")
+  public static HashMap<String, Integer> delete(String adClientId, String adOrgId,
+      List<String> tableIdsList, String recordId, String strdatefrom, String strdateto)
+          throws OBException {
+    HashMap<String, Integer> results = new HashMap<String, Integer>();
+    results.put("deleted", 0);
+    results.put("updated", 0);
+    List<String> tableIds = getTables(tableIdsList);
+    for (String tableId : tableIds) {
+      HashMap<String, Integer> partial = delete(adClientId, adOrgId, tableId, recordId, strdatefrom,
+          strdateto);
+      results.put("deleted", results.get("deleted") + partial.get("deleted"));
+      results.put("updated", results.get("updated") + partial.get("updated"));
+    }
+    return results;
+  }
+
   private static HashMap<String, Integer> delete(List<String> transactions, String tableId,
       String client) throws OBException {
     HashMap<String, Integer> result = new HashMap<String, Integer>();
@@ -307,6 +327,21 @@ public class ResetAccounting {
     return results;
   }
 
+  public static HashMap<String, Integer> restore(String clientId, String adOrgId,
+      List<String> tableIdsList, String datefrom, String dateto) throws OBException {
+    HashMap<String, Integer> results = new HashMap<String, Integer>();
+    results.put("deleted", 0);
+    results.put("updated", 0);
+    List<String> tableIds = !tableIdsList.isEmpty() ? tableIdsList
+        : getActiveTables(clientId, adOrgId);
+    for (String tableId : tableIds) {
+      HashMap<String, Integer> partial = restore(clientId, adOrgId, tableId, datefrom, dateto);
+      results.put("deleted", results.get("deleted") + partial.get("deleted"));
+      results.put("updated", results.get("updated") + partial.get("updated"));
+    }
+    return results;
+  }
+
   public static HashMap<String, Integer> restore(String clientId, String adOrgId, String tableId,
       String datefrom, String dateto) throws OBException {
     HashMap<String, Integer> results = new HashMap<String, Integer>();
@@ -376,6 +411,22 @@ public class ResetAccounting {
         Table myTable = OBDal.getInstance().get(Table.class, adTableId);
         accountingTables.add(myTable.getId());
         return accountingTables;
+      }
+      String myQuery = "select distinct e.table.id from FinancialMgmtAccountingFact e where e.table.id <> '145'";
+      accountingTables = OBDal.getInstance().getSession().createQuery(myQuery).list();
+      return accountingTables;
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
+  @SuppressWarnings("unchecked")
+  private static List<String> getTables(List<String> tableIdsList) {
+    OBContext.setAdminMode(false);
+    try {
+      List<String> accountingTables = new ArrayList<String>();
+      if (!tableIdsList.isEmpty()) {
+        return tableIdsList;
       }
       String myQuery = "select distinct e.table.id from FinancialMgmtAccountingFact e where e.table.id <> '145'";
       accountingTables = OBDal.getInstance().getSession().createQuery(myQuery).list();
