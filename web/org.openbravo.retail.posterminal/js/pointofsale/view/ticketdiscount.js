@@ -109,7 +109,6 @@ enyo.kind({
   }],
   show: function () {
     var me = this;
-    OB.MobileApp.view.scanningFocus(false);
     me.$.btnApply.setDisabled(true);
     me.discounts.reset();
     me.order.trigger('showDiscount');

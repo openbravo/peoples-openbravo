@@ -395,7 +395,6 @@ enyo.kind({
         edit: false
       });
     }
-    OB.MobileApp.view.scanningFocus(false);
     if (this.model.get('leftColumnViewManager').isMultiOrder()) {
       this.model.get('multiOrders').trigger('displayTotal');
     } else {
