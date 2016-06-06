@@ -424,29 +424,6 @@ enyo.kind({
         return true;
       }
       args.context.model.get('order').addProduct(args.productToAdd, args.qtyToAdd, args.options, args.attrs, null);
-      if (args.productToAdd.get('groupProduct')) {
-        // The product added is grouped, so enable the quantity button
-        args.context.waterfall('onEnableQtyButton', {
-          enable: true
-        });
-        args.context.waterfall('onEnablePlusButton', {
-          enable: true
-        });
-        args.context.waterfall('onEnableMinusButton', {
-          enable: true
-        });
-      } else {
-        // The product added is not grouped, so disable the quantity button
-        args.context.waterfall('onEnableQtyButton', {
-          enable: false
-        });
-        args.context.waterfall('onEnablePlusButton', {
-          enable: false
-        });
-        args.context.waterfall('onEnableMinusButton', {
-          enable: false
-        });
-      }
     });
     return true;
   },
@@ -1003,7 +980,7 @@ enyo.kind({
   },
   receiptLineSelected: function (inSender, inEvent) {
     var enableButton = true,
-        product = inEvent.product;
+        product = inEvent.line.get('product');
     if (!product.get('groupProduct') || (product.get('productType') === 'S' && product.get('isLinkedToProduct'))) {
       enableButton = false;
     }
@@ -1017,7 +994,7 @@ enyo.kind({
       enable: enableButton
     });
     OB.UTIL.HookManager.executeHooks('OBPOS_LineSelected', {
-      product: inEvent.product,
+      line: inEvent.line,
       context: this
     }, function (args) {});
   },
