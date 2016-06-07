@@ -88,9 +88,7 @@ import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_OrigPaymentScheduleDetail;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentDetail;
-import org.openbravo.model.financialmgmt.payment.FIN_PaymentDetailV;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentMethod;
-import org.openbravo.model.financialmgmt.payment.FIN_PaymentSchedOrdV;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentSchedule;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
 import org.openbravo.model.financialmgmt.payment.Fin_OrigPaymentSchedule;
@@ -2154,9 +2152,9 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
   }
 
   private int countPayments(Order order) {
-    final String countHql = "select count(*) from FIN_Payment_Detail_V where "
-        + FIN_PaymentDetailV.PROPERTY_ORDERPAYMENTPLAN + "."
-        + FIN_PaymentSchedOrdV.PROPERTY_SALESORDER + "=:order";
+    final String countHql = "select count(*) from FIN_Payment_ScheduleDetail where "
+        + FIN_PaymentScheduleDetail.PROPERTY_ORDERPAYMENTSCHEDULE + "."
+        + FIN_PaymentSchedule.PROPERTY_ORDER + "=:order";
     final Query qry = OBDal.getInstance().getSession().createQuery(countHql);
     qry.setEntity("order", order);
     return ((Number) qry.uniqueResult()).intValue();
