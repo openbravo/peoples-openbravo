@@ -923,7 +923,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     invoice.setDocumentAction("RE");
     invoice.setAPRMProcessinvoice("RE");
     invoice.setSalesOrder(order);
-    invoice.setPartnerAddress(OBDal.getInstance().get(Location.class,
+    invoice.setPartnerAddress(OBDal.getInstance().getProxy(Location.class,
         jsonorder.getJSONObject("bp").getString("locId")));
     invoice.setProcessed(true);
     invoice.setPaymentMethod(order.getPaymentMethod());
@@ -1246,7 +1246,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       shipment.setAccountingDate(order.getOrderDate());
     }
 
-    shipment.setPartnerAddress(OBDal.getInstance().get(Location.class,
+    shipment.setPartnerAddress(OBDal.getInstance().getProxy(Location.class,
         jsonorder.getJSONObject("bp").getString("locId")));
     shipment.setSalesTransaction(true);
     shipment.setDocumentStatus("CO");
@@ -1441,7 +1441,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         jsonorder.getString("documentType")));
     order.setAccountingDate(order.getOrderDate());
     order.setScheduledDeliveryDate(order.getOrderDate());
-    order.setPartnerAddress(OBDal.getInstance().get(Location.class,
+    order.setPartnerAddress(OBDal.getInstance().getProxy(Location.class,
         jsonorder.getJSONObject("bp").getString("locId")));
     order.setInvoiceAddress(order.getPartnerAddress());
 
