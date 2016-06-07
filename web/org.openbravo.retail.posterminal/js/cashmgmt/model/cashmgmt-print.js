@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012 Openbravo S.L.U.
+ * Copyright (C) 2012-2016 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -12,7 +12,8 @@
 (function () {
 
   var PrintCashMgmt = function () {
-      this.templatecashmgmt = new OB.DS.HWResource(OB.OBPOSCashMgmt.Print.CashMgmtTemplate);
+      var terminal = OB.MobileApp.model.get('terminal');
+      this.templatecashmgmt = new OB.DS.HWResource(terminal.printCashMgmTemplate || OB.OBPOSPointOfSale.Print.CashMgmTemplate);
       };
 
   PrintCashMgmt.prototype.print = function (depsdropstosave) {
@@ -27,6 +28,6 @@
   OB.OBPOSCashMgmt.Print = OB.OBPOSCashMgmt.Print || {};
 
   OB.OBPOSCashMgmt.Print.CashMgmt = PrintCashMgmt;
-  OB.OBPOSCashMgmt.Print.CashMgmtTemplate = 'res/printcashmgmt.xml';
+  OB.OBPOSCashMgmt.Print.CashMgmtTemplate = PrintCashMgmt;
 
 }());
