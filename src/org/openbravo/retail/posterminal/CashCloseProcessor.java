@@ -28,6 +28,7 @@ import org.openbravo.advpaymentmngt.dao.TransactionsDao;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.client.kernel.RequestContext;
+import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
@@ -348,11 +349,13 @@ public class CashCloseProcessor {
     FIN_FinancialAccount accountFrom = paymentType.getFinancialAccount();
     FIN_FinancialAccount accountTo = paymentType.getObretcoCmevents().getFinancialAccount();
 
+    String accountFromCurrency = (String) DalUtil.getId(accountFrom.getCurrency());
+    String accountToCurrency = (String) DalUtil.getId(accountTo.getCurrency());
     BigDecimal conversionRate = new BigDecimal(1);
-    if (!accountFrom.getCurrency().getId().equals(accountTo.getCurrency().getId())) {
+    if (!accountFromCurrency.equals(accountToCurrency)) {
       List<Object> parameters = new ArrayList<Object>();
-      parameters.add(accountFrom.getCurrency().getId());
-      parameters.add(accountTo.getCurrency().getId());
+      parameters.add(accountFromCurrency);
+      parameters.add(accountToCurrency);
       parameters.add(null);
       parameters.add(null);
       parameters.add(terminal.getClient().getId());
