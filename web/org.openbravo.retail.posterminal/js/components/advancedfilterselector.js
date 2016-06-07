@@ -314,6 +314,10 @@ enyo.kind({
                 this.setCollection(new Backbone.Collection());
                 this.getCollection().reset(columns);
               }
+            }, {
+              name: 'entityFilterLabel',
+              style: 'text-align: right; padding: 10px 10px;',
+              showing: false
             }]
           }, {
             style: 'display: table-cell; width: 65%; vertical-align: top',
@@ -397,9 +401,9 @@ enyo.kind({
     }, this);
     if (column) {
       this.$.entityFilterText.setShowing(!column.isList && !column.isAmount && !column.isSelector);
-      this.$.entityFilterList.setShowing(column.isList);
-      this.$.entityFilterAmount.setShowing(column.isAmount);
-      this.$.entityFilterButton.setShowing(column.isSelector);
+      this.$.entityFilterList.setShowing(column.isList === true);
+      this.$.entityFilterAmount.setShowing(column.isAmount === true);
+      this.$.entityFilterButton.setShowing(column.isSelector === true);
       if (column.isList) {
         this.$.entityFilterList.changeColumn(column);
       }
@@ -457,7 +461,7 @@ enyo.kind({
     this.$.entityFilterButton.setValue('');
     this.$.advancedFilterInfo.setShowing(false);
     this.$.dateFormatError.hide();
-    this.$.filterInputs.setShowing(true);
+    this.$.filterInputs.setShowing(this.showFields);
     this.$.entitySearchBtn.putDisabled(false);
     this.doClearAction();
   },
@@ -474,12 +478,22 @@ enyo.kind({
     this.$.entityFilterColumnContainer.setStyle('display: none');
     this.$.entitySearchContainer.setStyle('display: table-cell; width: 425px;');
   },
-  fixColumn: function () {
-
+  fixColumn: function (column) {
+    this.$.entityFilterColumn.hide();
+    this.$.entityFilterLabel.show();
+    this.$.entityFilterLabel.setContent(OB.I18N.getLabel(column.caption));
+    this.changeColumn(null, {
+      value: column.column
+    });
   },
   initComponents: function () {
     this.inherited(arguments);
-    if (this.$.entityFilterColumn.collection.length > 0) {
+    var fixed = _.find(this.filters, function (filter) {
+      return filter.isFixed;
+    });
+    if (fixed) {
+      this.fixColumn(fixed);
+    } else if (this.$.entityFilterColumn.collection.length > 0) {
       this.bubble('onChangeColumn', {
         value: this.$.entityFilterColumn.collection.at(0).id
       });
