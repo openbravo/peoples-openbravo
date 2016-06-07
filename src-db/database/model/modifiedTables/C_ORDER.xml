@@ -39,6 +39,9 @@
       <foreign-key foreignTable="C_ORDER" name="EM_OBPOS_QUOT_ID">
         <reference local="EM_OBPOS_REJECTED_QUOTAT_ID" foreign="C_ORDER_ID"/>
       </foreign-key>
+      <index name="EM_OBPOS_APP_CASHUP_IDX" unique="false">
+        <index-column name="EM_OBPOS_APP_CASHUP_ID"/>
+      </index>
       <index name="EM_OBPOS_APPLICATIONS_IDX" unique="false">
         <index-column name="EM_OBPOS_APPLICATIONS_ID"/>
       </index>
