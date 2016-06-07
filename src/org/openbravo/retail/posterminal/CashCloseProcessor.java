@@ -220,6 +220,7 @@ public class CashCloseProcessor {
         FIN_Reconciliation.class);
     reconciliationsForAccount.add(Restrictions.eq("account", account));
     reconciliationsForAccount.addOrderBy("creationDate", false);
+    reconciliationsForAccount.setMaxResults(1);
     List<FIN_Reconciliation> reconciliations = reconciliationsForAccount.list();
     if (reconciliations.size() == 0) {
       startingBalance = account.getInitialBalance();
