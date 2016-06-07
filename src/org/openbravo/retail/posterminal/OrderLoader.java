@@ -1301,9 +1301,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       order.getOrderLineList().add(orderline);
       OBDal.getInstance().save(orderline);
 
-      if ("S".equals(orderline.getProduct().getProductType())) {
-        // related can be null
-        if (jsonOrderLine.has("relatedLines")) {
+      if (jsonOrderLine.has("relatedLines")) {
+        if ("S".equals(orderline.getProduct().getProductType())) {
           orderLineServiceList.put(orderline.getId(), jsonOrderLine.getJSONArray("relatedLines"));
         }
       }
