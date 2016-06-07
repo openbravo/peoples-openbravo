@@ -35,11 +35,13 @@ enyo.kind({
       onkeyup: 'keyup'
     },
     keyup: function (inSender, inEvent) {
-      var value = this.getValue();
-      if (value === '') {
-        this.owner.parent.hideRemove();
-      } else {
-        this.owner.parent.showRemove();
+      if (this.hasRemoveButton) {
+        var value = this.getValue();
+        if (value === '') {
+          this.owner.parent.hideRemove();
+        } else {
+          this.owner.parent.showRemove();
+        }
       }
     }
   }],
@@ -48,10 +50,12 @@ enyo.kind({
   },
   setValue: function (value) {
     this.$.filterInput.setValue(value);
-    if (value === '') {
-      this.parent.hideRemove();
-    } else {
-      this.parent.showRemove();
+    if (this.hasRemoveButton) {
+      if (value === '') {
+        this.parent.hideRemove();
+      } else {
+        this.parent.showRemove();
+      }
     }
   },
   setPresetValue: function (preset) {
@@ -89,6 +93,7 @@ enyo.kind({
     classes: 'btnlink-gray obrcifp-btn',
     tap: function () {
       this.owner.owner.owner.showSelector = true;
+      this.owner.showSelector = true;
       this.bubble('onHideThisPopup');
       this.bubble('onShowPopup', {
         popup: this.owner.selectorPopup,
@@ -106,9 +111,13 @@ enyo.kind({
     this.id = value;
     if (value === '') {
       this.$.filterButton.setContent(' --- ');
-      this.parent.hideRemove();
-    } else {
-      this.parent.showRemove();
+    }
+    if (this.hasRemoveButton) {
+      if (value === '') {
+        this.parent.hideRemove();
+      } else {
+        this.parent.showRemove();
+      }
     }
   },
   setSelectorValue: function (id, text) {
@@ -120,6 +129,7 @@ enyo.kind({
   },
   initComponents: function () {
     this.inherited(arguments);
+    this.$.filterButton.setContent(' --- ');
   }
 });
 
@@ -141,10 +151,12 @@ enyo.kind({
   renderEmpty: 'enyo.Control',
   change: function () {
     var value = this.getValue();
-    if (value === '') {
-      this.parent.hideRemove();
-    } else {
-      this.parent.showRemove();
+    if (this.hasRemoveButton) {
+      if (value === '') {
+        this.parent.hideRemove();
+      } else {
+        this.parent.showRemove();
+      }
     }
   },
   changeColumn: function (column) {
@@ -188,10 +200,12 @@ enyo.kind({
   },
   setValue: function (value) {
     this.setSelectedValue(value, 'id');
-    if (value === '') {
-      this.parent.hideRemove();
-    } else {
-      this.parent.showRemove();
+    if (this.hasRemoveButton) {
+      if (value === '') {
+        this.parent.hideRemove();
+      } else {
+        this.parent.showRemove();
+      }
     }
   },
   setPresetValue: function (preset) {
@@ -217,10 +231,12 @@ enyo.kind({
   },
   keyup: function (inSender, inEvent) {
     var value = this.getValue();
-    if (value === '') {
-      this.parent.hideRemove();
-    } else {
-      this.parent.showRemove();
+    if (this.hasRemoveButton) {
+      if (value === '') {
+        this.parent.hideRemove();
+      } else {
+        this.parent.showRemove();
+      }
     }
   }
 });
@@ -238,7 +254,8 @@ enyo.kind({
   handlers: {
     onSearchActionByKey: 'searchAction',
     onFiltered: 'searchAction',
-    onChangeColumn: 'changeColumn'
+    onChangeColumn: 'changeColumn',
+    onChangeFilterSelector: 'changeFilterSelector'
   },
   components: [{
     components: [{
@@ -304,14 +321,22 @@ enyo.kind({
             components: [{
               kind: 'OB.UI.SearchInputAutoFilter',
               name: 'entityFilterText',
+              hasRemoveButton: false,
               style: 'width: 100%; margin-bottom: 0px;'
             }, {
               kind: 'OB.UI.FilterSelectorList',
               name: 'entityFilterList',
+              hasRemoveButton: false,
               style: 'width: 100%; margin-bottom: 0px'
             }, {
               kind: 'OB.UI.FilterSelectorAmount',
               name: 'entityFilterAmount',
+              hasRemoveButton: false,
+              style: 'width: 100%; margin-bottom: 0px'
+            }, {
+              kind: 'OB.UI.FilterSelectorButton',
+              name: 'entityFilterButton',
+              hasRemoveButton: false,
               style: 'width: 100%; margin-bottom: 0px'
             }]
           }]
@@ -359,16 +384,28 @@ enyo.kind({
       }]
     }]
   }],
+  changeFilterSelector: function (inSender, inEvent) {
+    if (this.$.entityFilterButton.showSelector) {
+      this.$.entityFilterButton.showSelector = false;
+      this.$.entityFilterButton.setSelectorValue(inEvent.selector.value, inEvent.selector.text);
+      this.owner.owner.owner.owner.owner.owner.show();
+    }
+  },
   changeColumn: function (inSender, inEvent) {
     var column = _.find(this.filters, function (flt) {
       return flt.column === inEvent.value;
     }, this);
     if (column) {
-      this.$.entityFilterText.setShowing(!column.isList && !column.isAmount);
+      this.$.entityFilterText.setShowing(!column.isList && !column.isAmount && !column.isSelector);
       this.$.entityFilterList.setShowing(column.isList);
       this.$.entityFilterAmount.setShowing(column.isAmount);
+      this.$.entityFilterButton.setShowing(column.isSelector);
       if (column.isList) {
         this.$.entityFilterList.changeColumn(column);
+      }
+      if (column.isSelector) {
+        this.$.entityFilterButton.selectorPopup = column.selectorPopup;
+        this.$.entityFilterButton.filterName = column.name;
       }
     }
   },
@@ -384,6 +421,8 @@ enyo.kind({
     } else if (column.isAmount) {
       column.operator = this.$.entityFilterAmount.getOperator();
       text = this.$.entityFilterAmount.getValue();
+    } else if (column.isSelector) {
+      text = this.$.entityFilterButton.getValue();
     } else {
       text = this.$.entityFilterText.getValue();
     }
@@ -413,7 +452,9 @@ enyo.kind({
   clearFilter: function () {
     this.$.entityFilterText.setValue('');
     this.$.entityFilterText.removeClass('error');
-    this.$.entityFilterList.setSelected(0);
+    this.$.entityFilterList.setValue('');
+    this.$.entityFilterAmount.setValue('');
+    this.$.entityFilterButton.setValue('');
     this.$.advancedFilterInfo.setShowing(false);
     this.$.dateFormatError.hide();
     this.$.filterInputs.setShowing(true);

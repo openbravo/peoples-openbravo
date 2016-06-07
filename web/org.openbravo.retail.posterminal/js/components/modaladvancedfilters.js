@@ -69,18 +69,21 @@ enyo.kind({
       filterEditor = {
         kind: 'OB.UI.FilterSelectorList',
         name: 'input' + filter.name,
+        hasRemoveButton: true,
         style: 'float: left; width: calc(100% - 120px); padding: 4px; height: 40px;'
       };
     } else if (filter.isAmount) {
       filterEditor = {
         kind: 'OB.UI.FilterSelectorAmount',
         name: 'input' + filter.name,
+        hasRemoveButton: true,
         style: 'float: left; width: calc(100% - 120px); padding: 0; height: 40px;'
       };
     } else if (filter.isSelector) {
       filterEditor = {
         kind: 'OB.UI.FilterSelectorButton',
         name: 'input' + filter.name,
+        hasRemoveButton: true,
         selectorPopup: filter.selectorPopup,
         filterName: filter.name,
         style: 'float: left; width: calc(100% - 120px); padding: 0; height: 40px;'
@@ -88,6 +91,7 @@ enyo.kind({
     } else {
       filterEditor = {
         kind: 'OB.UI.FilterSelectorText',
+        hasRemoveButton: true,
         name: 'input' + filter.name,
         style: 'float: left; width: calc(100% - 130px); padding: 4px;'
       };
@@ -270,11 +274,14 @@ enyo.kind({
   },
 
   changeFilterSelector: function (inSender, inEvent) {
-    this.show();
-    var selector = _.find(this.$.body.$.filters.filters, function (flt) {
-      return flt.filter.name === inEvent.selector.name;
-    }, this);
-    selector.owner.$['input' + selector.filter.name].setSelectorValue(inEvent.selector.id, inEvent.selector.text);
+    if (this.$.body.showSelector) {
+      this.$.body.showSelector = false;
+      this.show();
+      var selector = _.find(this.$.body.$.filters.filters, function (flt) {
+        return flt.filter.name === inEvent.selector.name;
+      }, this);
+      selector.owner.$['input' + selector.filter.name].setSelectorValue(inEvent.selector.id, inEvent.selector.text);
+    }
   },
 
   clearAll: function () {
@@ -315,8 +322,6 @@ enyo.kind({
       if (this.callback) {
         this.callback(this.filtersToApply);
       }
-    } else {
-      this.$.body.showSelector = false;
     }
   }
 
