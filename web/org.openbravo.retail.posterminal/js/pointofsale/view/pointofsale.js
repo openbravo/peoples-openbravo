@@ -1191,6 +1191,17 @@ enyo.kind({
     } else {
       enableButton = false;
     }
+    this.enableKeyboardButton(enableButton);
+    OB.UTIL.HookManager.executeHooks('OBPOS_LineSelected', {
+      line: inEvent.line,
+      selectedLines: selectedLines,
+      context: this
+    }, function (args) {});
+  },
+  enableKeyboardButton: function (enableButton) {
+    if (enableButton && this.model.get('order').get('hasbeenpaid') === 'Y') {
+      enableButton = false;
+    }
     this.waterfall('onEnableQtyButton', {
       enable: enableButton
     });
@@ -1200,11 +1211,6 @@ enyo.kind({
     this.waterfall('onEnableMinusButton', {
       enable: enableButton
     });
-    OB.UTIL.HookManager.executeHooks('OBPOS_LineSelected', {
-      line: inEvent.line,
-      selectedLines: selectedLines,
-      context: this
-    }, function (args) {});
   },
   manageServiceProposal: function (inSender, inEvent) {
     this.waterfallDown('onManageServiceProposal', inEvent);
@@ -1327,6 +1333,10 @@ enyo.kind({
     }, this);
     receipt.get('lines').on('removed', function (line) {
       this.classModel.trigger('removedLine', this, line);
+    }, this);
+
+    receipt.on('change:hasbeenpaid', function (model) {
+      this.enableKeyboardButton(true);
     }, this);
 
     this.$.multiColumn.$.leftPanel.$.receiptview.setOrder(receipt);
