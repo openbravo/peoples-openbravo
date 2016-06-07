@@ -301,7 +301,7 @@ public class ImportEntryManager {
 
       ImportEntry importEntry = OBProvider.getInstance().get(ImportEntry.class);
       importEntry.setId(id);
-      importEntry.setRole(OBDal.getInstance().get(Role.class,
+      importEntry.setRole((Role) OBDal.getInstance().getProxy(Role.ENTITY_NAME,
           OBContext.getOBContext().getRole().getId()));
       importEntry.setNewOBObject(true);
       importEntry.setImportStatus("Initial");
