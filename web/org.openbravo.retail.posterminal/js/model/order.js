@@ -1002,11 +1002,11 @@
         this.set('replacedorder_documentNo', _order.get('replacedorder_documentNo'));
       }
 
-      if (_order.get('replacedorder')) {
-        this.set('replacedorder', _order.get('replacedorder'));
-      }
       if (_order.get('replacedorder_documentNo')) {
         this.set('replacedorder_documentNo', _order.get('replacedorder_documentNo'));
+      }
+      if (_order.get('replacedorder')) {
+        this.set('replacedorder', _order.get('replacedorder'));
       }
 
       // the idExecution is saved so only this execution of clearWith will check cloningReceipt to false
