@@ -147,6 +147,10 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
   @Any
   private Instance<OrderLoaderHookForQuotations> quotationProcesses;
 
+  @Inject
+  @Any
+  private Instance<OrderLoaderPreProcessPaymentHook> preProcessPayment;
+
   private boolean useOrderDocumentNoForRelatedDocs = false;
 
   protected String getImportQualifier() {
@@ -246,7 +250,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         verifyCashupStatus(jsonorder);
       }
 
-      executeHooks(orderPreProcesses, jsonorder, null, null, null);
+      executeOrderLoaderPreProcessHook(orderPreProcesses, jsonorder);
 
       if (jsonorder.has("deletedLines")) {
         mergeDeletedLines(jsonorder);
@@ -556,8 +560,31 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       Object proc = procIter.next();
       if (proc instanceof OrderLoaderHook) {
         ((OrderLoaderHook) proc).exec(jsonorder, order, shipment, invoice);
-      } else {
+      } else if (proc instanceof OrderLoaderHookForQuotations) {
+        ((OrderLoaderHookForQuotations) proc).exec(jsonorder, order, shipment, invoice);
+      }
+    }
+  }
+
+  protected void executeOrderLoaderPreProcessHook(Instance<? extends Object> hooks,
+      JSONObject jsonorder) throws Exception {
+
+    for (Iterator<? extends Object> procIter = hooks.iterator(); procIter.hasNext();) {
+      Object proc = procIter.next();
+      if (proc instanceof OrderLoaderPreProcessHook) {
         ((OrderLoaderPreProcessHook) proc).exec(jsonorder);
+      }
+    }
+  }
+
+  protected void executeOrderLoaderPreProcessPaymentHook(Instance<? extends Object> hooks,
+      JSONObject jsonorder, Order order, JSONObject jsonpayment, FIN_Payment payment)
+      throws Exception {
+
+    for (Iterator<? extends Object> procIter = hooks.iterator(); procIter.hasNext();) {
+      Object proc = procIter.next();
+      if (proc instanceof OrderLoaderPreProcessPaymentHook) {
+        ((OrderLoaderPreProcessPaymentHook) proc).exec(jsonorder, order, jsonpayment, payment);
       }
     }
   }
@@ -2228,6 +2255,9 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       OBDal.getInstance().save(finPayment);
 
       long t1 = System.currentTimeMillis();
+      // Call all OrderProcess injected.
+      executeOrderLoaderPreProcessPaymentHook(preProcessPayment, jsonorder, order, payment,
+          finPayment);
       FIN_PaymentProcess.doProcessPayment(finPayment, "P", null, null);
       ImportEntryManager.getInstance().reportStats("processPayments",
           (System.currentTimeMillis() - t1));
