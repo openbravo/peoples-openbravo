@@ -98,6 +98,8 @@ enyo.kind({
     onPreSaveCustomer: 'preSaveCustomer',
     onkeydown: 'keyDownHandler',
     onkeyup: 'keyUpHandler',
+    onChangeFilterSelector: 'changeFilterSelector',
+    onClearAllFilterSelector: 'clearAllFilterSelector',
     onRearrangeEditButtonBar: 'rearrangeEditButtonBar'
   },
   events: {
@@ -1186,6 +1188,12 @@ enyo.kind({
   },
   pricelistChanged: function (inSender, inEvent) {
     this.waterfall('onChangePricelist', inEvent);
+  },
+  changeFilterSelector: function (inSender, inEvent) {
+    this.waterfall('onUpdateFilterSelector', inEvent);
+  },
+  clearAllFilterSelector: function (inSender, inEvent) {
+    this.waterfall('onClearFilterSelector', inEvent);
   },
   receiptLineSelected: function (inSender, inEvent) {
     var enableButton = true,

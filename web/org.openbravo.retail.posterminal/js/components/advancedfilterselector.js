@@ -249,13 +249,13 @@ enyo.kind({
   },
   events: {
     onSearchAction: '',
-    onClearAction: ''
+    onClearAllFilterSelector: ''
   },
   handlers: {
     onSearchActionByKey: 'searchAction',
     onFiltered: 'searchAction',
     onChangeColumn: 'changeColumn',
-    onChangeFilterSelector: 'changeFilterSelector'
+    onUpdateFilterSelector: 'updateFilterSelector'
   },
   components: [{
     components: [{
@@ -296,7 +296,7 @@ enyo.kind({
                 this.owner.$.entityFilterText.removeClass('error');
                 this.owner.$.dateFormatError.hide();
                 this.owner.$.entityFilterText.setValue('');
-                this.owner.doClearAction();
+                this.owner.doClearAllFilterSelector();
                 this.bubble('onChangeColumn', {
                   value: this.getValue()
                 });
@@ -388,7 +388,7 @@ enyo.kind({
       }]
     }]
   }],
-  changeFilterSelector: function (inSender, inEvent) {
+  updateFilterSelector: function (inSender, inEvent) {
     if (this.$.entityFilterButton.showSelector) {
       this.$.entityFilterButton.showSelector = false;
       this.$.entityFilterButton.setSelectorValue(inEvent.selector.value, inEvent.selector.text);
@@ -461,9 +461,9 @@ enyo.kind({
     this.$.entityFilterButton.setValue('');
     this.$.advancedFilterInfo.setShowing(false);
     this.$.dateFormatError.hide();
-    this.$.filterInputs.setShowing(this.showFields);
+    this.$.filterInputs.setShowing(true);
     this.$.entitySearchBtn.putDisabled(false);
-    this.doClearAction();
+    this.doClearAllFilterSelector();
   },
   setAdvancedSearch: function (isAdvanced) {
     this.$.advancedFilterInfo.setShowing(isAdvanced);

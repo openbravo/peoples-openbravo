@@ -16,10 +16,10 @@ enyo.kind({
   classes: 'btnlink-gray btnlink btnlink-small',
   style: 'width: 146px; ',
   events: {
-    onClearAll: ''
+    onClearFilterSelector: ''
   },
   tap: function () {
-    this.doClearAll();
+    this.doClearFilterSelector();
   },
   initComponents: function () {
     this.setContent(OB.I18N.getLabel('OBPOS_ClearAll'));
@@ -237,8 +237,8 @@ enyo.kind({
     onHideThisPopup: ''
   },
   handlers: {
-    onChangeFilterSelector: 'changeFilterSelector',
-    onClearAll: 'clearAll',
+    onUpdateFilterSelector: 'updateFilterSelector',
+    onClearFilterSelector: 'clearFilterSelector',
     onApplyFilters: 'applyFilters'
   },
   body: {
@@ -273,18 +273,20 @@ enyo.kind({
     }]
   },
 
-  changeFilterSelector: function (inSender, inEvent) {
+  updateFilterSelector: function (inSender, inEvent) {
     if (this.$.body.showSelector) {
       this.$.body.showSelector = false;
       this.show();
       var selector = _.find(this.$.body.$.filters.filters, function (flt) {
         return flt.filter.name === inEvent.selector.name;
       }, this);
-      selector.owner.$['input' + selector.filter.name].setSelectorValue(inEvent.selector.id, inEvent.selector.text);
+      if (selector) {
+        selector.owner.$['input' + selector.filter.name].setSelectorValue(inEvent.selector.id, inEvent.selector.text);
+      }
     }
   },
 
-  clearAll: function () {
+  clearFilterSelector: function () {
     this.$.body.$.filters.clearAll();
   },
 
