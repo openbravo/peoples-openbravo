@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012 Openbravo SLU
+ * All portions are Copyright (C) 2012-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -270,12 +270,26 @@ public class ModifyPaymentPlanActionHandler extends BaseProcessActionHandler {
       while (ite.hasNext()) {
         FIN_PaymentDetail pd = ite.next();
         BigDecimal amount = canceledPSDs.get(pd);
-        FIN_PaymentScheduleDetail psd = dao.getNewPaymentScheduleDetail(ps, null, amount,
-            BigDecimal.ZERO, pd);
-        psd.setCanceled(true);
+        FIN_PaymentScheduleDetail psd = getPSDwithPaymentDetail(pd);
+        if (psd == null) {
+          psd = dao.getNewPaymentScheduleDetail(ps, null, amount, BigDecimal.ZERO, pd);
+          psd.setCanceled(true);
+        }
       }
       return;
     }
+  }
+
+  /**
+   * Returns the payment schedule detail for payment detail
+   * 
+   */
+  private FIN_PaymentScheduleDetail getPSDwithPaymentDetail(FIN_PaymentDetail pd) {
+    OBCriteria<FIN_PaymentScheduleDetail> obcPSD = OBDal.getInstance().createCriteria(
+        FIN_PaymentScheduleDetail.class);
+    obcPSD.add(Restrictions.eq(FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS, pd));
+    obcPSD.setMaxResults(1);
+    return (FIN_PaymentScheduleDetail) obcPSD.uniqueResult();
   }
 
   /**
