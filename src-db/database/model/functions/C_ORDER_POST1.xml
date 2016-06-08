@@ -148,6 +148,9 @@
       LOOP
         v_Record_ID:=Cur_Parameter.Record_ID;
         v_User:=Cur_Parameter.AD_User_ID;
+        IF (Cur_Parameter.ParameterName = 'recalculateDiscounts') THEN
+          v_recalculateDiscounts := Cur_Parameter.P_String;
+        END IF;
       END LOOP; -- Get Parameter
     ELSE
       v_Record_ID:=p_Order_ID;
