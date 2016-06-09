@@ -22,6 +22,7 @@ import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
+import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -144,11 +145,21 @@ public class CustomerLoader extends POSDataSynchronizationProcess
       log.error(errorMessage);
       throw new OBException(errorMessage, null);
     }
+    OBPOSApplications pos = OBDal.getInstance().get(OBPOSApplications.class,
+        jsonCustomer.get("posTerminal"));
     // BP search key (required)
     if (!jsonCustomer.has("searchKey") && jsonCustomer.getString("searchKey").equals("null")) {
       String errorMessage = "Business partner search key is a mandatory field to create a new customer from Web Pos";
       log.error(errorMessage);
       throw new OBException(errorMessage, null);
+    } else if (pos.getOrganization().getObretcoCustomersequence() != null) {
+      if (jsonCustomer.getString("searchKey").equals("***")) {
+        String newSk = FIN_Utility.getDocumentNo(
+            pos.getOrganization().getObretcoCustomersequence(), true);
+        customer.setSearchKey(newSk);
+      } else {
+        customer.setSearchKey(jsonCustomer.getString("searchKey"));
+      }
     } else {
       String possibleSK = jsonCustomer.getString("searchKey");
       String finalSK = "";
