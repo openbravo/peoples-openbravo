@@ -9,6 +9,32 @@
 
 /*global enyo, Backbone, OB, _ */
 
+/* Modal definition */
+enyo.kind({
+  name: 'OB.UI.ModalSelector',
+  kind: 'OB.UI.Modal',
+  handlers: {},
+  getFilterSelectorTableHeader: function () {
+    return null;
+  },
+  getAdvancedFilterBtn: function () {
+    return null;
+  },
+  getAdvancedFilterDialog: function () {
+    return null;
+  },
+  initSelector: function () {
+    var advancedFilterBtn = this.getAdvancedFilterBtn(),
+        advancedFilterDialog = this.getAdvancedFilterDialog(),
+        filterSelectorTableHeader = this.getFilterSelectorTableHeader();
+    if (filterSelectorTableHeader) {
+      filterSelectorTableHeader.advancedFilterBtn = advancedFilterBtn;
+      filterSelectorTableHeader.advancedFilterDialog = advancedFilterDialog;
+      filterSelectorTableHeader.setAdvancedFilterBtnCaption();
+    }
+  }
+});
+
 enyo.kind({
   name: 'OB.UI.FilterSelectorAmount',
   components: [{
@@ -105,10 +131,10 @@ enyo.kind({
     }
   }],
   getValue: function () {
-    return this.id;
+    return this.value;
   },
   setValue: function (value) {
-    this.id = value;
+    this.value = value;
     if (value === '') {
       this.$.filterButton.setContent(' --- ');
     }
@@ -130,6 +156,7 @@ enyo.kind({
   initComponents: function () {
     this.inherited(arguments);
     this.$.filterButton.setContent(' --- ');
+    this.value = '';
   }
 });
 
@@ -415,8 +442,10 @@ enyo.kind({
   },
   searchAction: function () {
     var me = this,
-        text, value = this.$.entityFilterColumn.getValue(),
-        column = _.find(this.filters, function (flt) {
+        text, caption = null,
+        operator = null,
+        value = this.fixedColumn ? this.fixedColumn.column : this.$.entityFilterColumn.getValue(),
+        column = this.fixedColumn ? this.fixedColumn : _.find(this.filters, function (flt) {
         return flt.column === value;
       }, this);
 
@@ -425,8 +454,10 @@ enyo.kind({
     } else if (column.isAmount) {
       column.operator = this.$.entityFilterAmount.getOperator();
       text = this.$.entityFilterAmount.getValue();
+      operator = column.operator;
     } else if (column.isSelector) {
       text = this.$.entityFilterButton.getValue();
+      caption = this.$.entityFilterButton.$.filterButton.getContent();
     } else {
       text = this.$.entityFilterText.getValue();
     }
@@ -444,14 +475,29 @@ enyo.kind({
       }
     }
     var filters = [{
-      column: this.showFields ? this.$.entityFilterColumn.getValue() : '_filter',
+      column: this.showFields ? value : '_filter',
       text: text
     }];
-    this.lastFilters = filters;
-    this.doSearchAction({
-      filters: filters,
-      advanced: false
-    });
+    if (this.advancedFilterDialog) {
+      this.bubble('onAdvancedFilterSelector', {
+        name: this.advancedFilterDialog,
+        filter: filters[0],
+        caption: caption,
+        operator: operator,
+        callback: function (advancedFilters) {
+          me.doSearchAction({
+            filters: advancedFilters.filters,
+            orderby: advancedFilters.orderby,
+            advanced: false
+          });
+        }
+      });
+    } else {
+      this.doSearchAction({
+        filters: filters,
+        advanced: false
+      });
+    }
   },
   clearFilter: function () {
     this.$.entityFilterText.setValue('');
@@ -463,14 +509,30 @@ enyo.kind({
     this.$.dateFormatError.hide();
     this.$.filterInputs.setShowing(true);
     this.$.entitySearchBtn.putDisabled(false);
+    this.setAdvancedFilterBtnCaption();
     this.doClearAllFilterSelector();
+  },
+  setAdvancedFilterBtnCaption: function () {
+    if (this.advancedFilterBtn && this.advancedFilterDialog) {
+      var me = this;
+      this.bubble('onCheckPresetFilterSelector', {
+        name: this.advancedFilterDialog,
+        callback: function (hasPreset) {
+          if (hasPreset) {
+            me.advancedFilterBtn.setContent('* ' + OB.I18N.getLabel(me.advancedFilterBtn.i18nLabel));
+          } else {
+            me.advancedFilterBtn.setContent(OB.I18N.getLabel(me.advancedFilterBtn.i18nLabel));
+          }
+        }
+      });
+    }
   },
   setAdvancedSearch: function (isAdvanced) {
     this.$.advancedFilterInfo.setShowing(isAdvanced);
     this.$.filterInputs.setShowing(!isAdvanced);
     this.$.entitySearchBtn.putDisabled(isAdvanced);
-    if (isAdvanced) {
-      this.lastFilters = null;
+    if (isAdvanced && this.advancedFilterBtn) {
+      this.advancedFilterBtn.setContent(OB.I18N.getLabel(this.advancedFilterBtn.i18nLabel));
     }
   },
   hideFilterCombo: function () {
@@ -491,6 +553,7 @@ enyo.kind({
     var fixed = _.find(this.filters, function (filter) {
       return filter.isFixed;
     });
+    this.fixedColumn = fixed;
     if (fixed) {
       this.fixColumn(fixed);
     } else if (this.$.entityFilterColumn.collection.length > 0) {

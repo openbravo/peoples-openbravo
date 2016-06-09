@@ -239,6 +239,8 @@ enyo.kind({
   handlers: {
     onUpdateFilterSelector: 'updateFilterSelector',
     onClearFilterSelector: 'clearFilterSelector',
+    onGetAdvancedFilterSelector: 'getAdvancedFilterSelector',
+    onHasPresetFilterSelector: 'hasPresetFilterSelector',
     onApplyFilters: 'applyFilters'
   },
   body: {
@@ -290,6 +292,59 @@ enyo.kind({
     this.$.body.$.filters.clearAll();
   },
 
+  getAdvancedFilterSelector: function (inSender, inEvent) {
+    if (inEvent.name === this.name && inEvent.callback) {
+      this.presetLoaded = true;
+      this.$.body.$.filters.clearAll();
+      var advancedFilters = this.$.body.$.filters.applyFilters();
+      var standardFlt = _.find(this.$.body.$.filters.filters, function (flt) {
+        return flt.filter.column === inEvent.filter.column;
+      });
+      if (standardFlt) {
+        if (standardFlt.filter.isSelector) {
+          standardFlt.owner.$['input' + standardFlt.filter.name].setSelectorValue(inEvent.filter.text, inEvent.caption);
+        } else if (standardFlt.filter.isAmount) {
+          standardFlt.owner.$['input' + standardFlt.filter.name].setPresetValue({
+            id: inEvent.operator,
+            name: inEvent.filter.text
+          });
+        } else {
+          standardFlt.owner.$['input' + standardFlt.filter.name].setValue(inEvent.filter.text);
+        }
+      }
+      advancedFilters.filters.push(inEvent.filter);
+      inEvent.callback(advancedFilters);
+    }
+  },
+
+  hasPresetFilterSelector: function (inSender, inEvent) {
+    if (inEvent.name === this.name && inEvent.callback) {
+      var preset = false,
+          presetEquals = true,
+          tmpFilters = this.$.body.$.filters.applyFilters();
+
+      _.each(this.$.body.$.filters.filters, function (filter) {
+        if (filter.filter.preset) {
+          preset = true;
+          if (this.presetLoaded) {
+            var appliedFlt = _.find(tmpFilters.filters, function (flt) {
+              return flt.column === filter.filter.column;
+            });
+            if (appliedFlt === undefined) {
+              presetEquals = false;
+            } else {
+              var value = filter.filter.isList || filter.filter.isSelector ? filter.filter.preset.id : filter.filter.preset.name;
+              if (appliedFlt.text !== value) {
+                presetEquals = false;
+              }
+            }
+          }
+        }
+      }, this);
+      inEvent.callback(preset && presetEquals);
+    }
+  },
+
   applyFilters: function () {
     var tmpFilters = this.$.body.$.filters.applyFilters();
     if (tmpFilters) {
@@ -301,18 +356,9 @@ enyo.kind({
   executeOnShow: function () {
     if (this.args.callback) {
       this.callback = this.args.callback;
-      _.each(this.$.body.$.filters.filters, function (filter) {
-        if (filter.filter.preset) {
-          filter.owner.$['input' + filter.filter.name].setPresetValue(filter.filter.preset);
-        }
-      }, this);
-      if (this.args.lastFilters) {
-        _.each(this.$.body.$.filters.filters, function (filter) {
-          var lastFlt = _.find(this.args.lastFilters, function (last) {
-            return last.column === filter.filter.column;
-          });
-          filter.owner.$['input' + filter.filter.name].setValue(lastFlt ? lastFlt.text : '');
-        }, this);
+      if (!this.presetLoaded) {
+        this.presetLoaded = true;
+        this.$.body.$.filters.clearAll();
       }
       this.filtersToApply = null;
     }
