@@ -69,8 +69,8 @@ public class CustomerLoader extends POSDataSynchronizationProcess implements
 
         if (!((updated.compareTo(customer.getUpdated()) >= 0) && (loaded.compareTo(customer
             .getUpdated()) >= 0))) {
-          Utility.messageBD(new DalConnectionProvider(false), "OBPOS_outdatedbp", OBContext
-              .getOBContext().getLanguage().getLanguage());
+          log.warn(Utility.messageBD(new DalConnectionProvider(false), "OBPOS_outdatedbp",
+              OBContext.getOBContext().getLanguage().getLanguage()));
         }
 
         customer = editBPartner(customer, jsoncustomer);

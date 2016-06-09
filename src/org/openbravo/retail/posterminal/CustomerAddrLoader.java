@@ -66,8 +66,8 @@ public class CustomerAddrLoader extends POSDataSynchronizationProcess implements
 
         if (!((updated.compareTo(location.getUpdated()) >= 0) && (loaded.compareTo(location
             .getUpdated()) >= 0))) {
-          Utility.messageBD(new DalConnectionProvider(false), "OBPOS_outdatedbpl", OBContext
-              .getOBContext().getLanguage().getLanguage());
+          log.warn(Utility.messageBD(new DalConnectionProvider(false), "OBPOS_outdatedbpl",
+              OBContext.getOBContext().getLanguage().getLanguage()));
         }
         location = editBPartnerAddr(customer, location, jsonCustomerAddr);
       }
