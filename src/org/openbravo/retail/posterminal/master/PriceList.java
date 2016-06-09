@@ -97,7 +97,7 @@ public class PriceList extends ProcessHQLQuery {
         + "    and to_char(pplv.validFromDate, 'yyyy-mm-dd') <= '"
         + format.format(terminalDate)
         + " ') and (plv.priceList.id in (select distinct priceList.id from BusinessPartner where customer = 'Y') "
-        + " and plv.priceList.id <> (:priceList)) order by plv.id asc";
+        + " and plv.priceList.id <> (:priceList))";
   }
 
 }
