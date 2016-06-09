@@ -413,7 +413,8 @@ enyo.kind({
     onSetBusinessPartnerTarget: 'setBusinessPartnerTarget'
   },
   events: {
-    onChangeBusinessPartner: ''
+    onChangeBusinessPartner: '',
+    onChangeFilterSelector: ''
   },
   components: [{
     classes: 'span12',
@@ -684,11 +685,20 @@ enyo.kind({
           businessPartner: bp
         });
       }
-
-      me.doChangeBusinessPartner({
-        businessPartner: bp,
-        target: me.target
-      });
+      if (me.target.startsWith('filterSelectorButton_')) {
+        me.doChangeFilterSelector({
+          selector: {
+            name: me.target.substring('filterSelectorButton_'.length),
+            value: bp.get('id'),
+            text: bp.get('_identifier')
+          }
+        });
+      } else {
+        me.doChangeBusinessPartner({
+          businessPartner: bp,
+          target: me.target
+        });
+      }
     });
   }
 });
