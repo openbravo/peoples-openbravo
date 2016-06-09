@@ -71,6 +71,7 @@ public class EntityAccessChecker implements OBNotSingleton {
   private static final Logger log = Logger.getLogger(EntityAccessChecker.class);
 
   private static final String SELECTOR_REFERENCE = "95E2A8B50A254B2AAE6774B8C2F28120";
+  private static final String MULTI_SELECTOR_REFERENCE = "87E6CFF8F71548AFA33F181C317970B5";
   private static final String WINDOW_REFERENCE = "FF80818132D8F0F30132D9BC395D0038";
 
   // Table Access Level:
@@ -585,8 +586,8 @@ public class EntityAccessChecker implements OBNotSingleton {
     String processesInList = createWhereInCondition(processes);
 
     String hql = "select p.referenceSearchKey from OBUIAPP_Parameter p where p.reference.id in('"
-        + WINDOW_REFERENCE + "','" + SELECTOR_REFERENCE + "') and p.obuiappProcess.id in ("
-        + processesInList + ")";
+        + WINDOW_REFERENCE + "','" + SELECTOR_REFERENCE + "','" + MULTI_SELECTOR_REFERENCE
+        + "') and p.obuiappProcess.id in (" + processesInList + ")";
     @SuppressWarnings("unchecked")
     final List<Reference> references = SessionHandler.getInstance().createQuery(hql).list();
 
@@ -609,7 +610,8 @@ public class EntityAccessChecker implements OBNotSingleton {
       addEntitiesOfWindowReference(mp, window);
 
       // Selector reference is checked and added to derivedReadableEntities entities
-    } else if (SELECTOR_REFERENCE.equals(DalUtil.getId(ref.getParentReference()))) {
+    } else if (SELECTOR_REFERENCE.equals(DalUtil.getId(ref.getParentReference()))
+        || MULTI_SELECTOR_REFERENCE.equals(DalUtil.getId(ref.getParentReference()))) {
       addEntitiesOfSelectorReference(mp, ref);
     }
   }
