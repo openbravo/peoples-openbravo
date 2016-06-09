@@ -510,7 +510,9 @@ enyo.kind({
     this.$.filterInputs.setShowing(true);
     this.$.entitySearchBtn.putDisabled(false);
     this.setAdvancedFilterBtnCaption();
-    this.doClearAllFilterSelector();
+    this.doClearAllFilterSelector({
+      name: this.advancedFilterDialog
+    });
   },
   setAdvancedFilterBtnCaption: function () {
     if (this.advancedFilterBtn && this.advancedFilterDialog) {

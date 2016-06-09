@@ -736,9 +736,9 @@ enyo.kind({
 
 /*Modal definition*/
 enyo.kind({
+  kind: 'OB.UI.ModalSelector',
   name: 'OB.UI.ModalBusinessPartners',
   topPosition: '75px',
-  kind: 'OB.UI.Modal',
   handlers: {
     onHideBPSelector: 'hideBPSelector',
     onShowBPSelector: 'showBPSelector'
@@ -779,20 +779,29 @@ enyo.kind({
     } else {
       this.$.body.$.listBps.$.stBPAssignToReceipt.bPartner = null;
     }
+    this.notClear = false;
+    this.initSelector();
     return true;
   },
 
   executeOnHide: function () {
-    if (this.clearResult) {
-      this.$.body.$.listBps.$.stBPAssignToReceipt.$.theader.$.modalBpScrollableHeader.$.filterSelector.clearFilter();
-    } else {
-      this.clearResult = true;
+    if (!this.notClear) {
+      this.$.body.$.listBps.clearAction();
     }
   },
   i18nHeader: 'OBPOS_LblAssignCustomer',
   clearResult: true,
   body: {
     kind: 'OB.UI.ListBps'
+  },
+  getFilterSelectorTableHeader: function () {
+    return this.$.body.$.listBps.$.stBPAssignToReceipt.$.theader.$.modalBpScrollableHeader.$.filterSelector;
+  },
+  getAdvancedFilterBtn: function () {
+    return this.$.body.$.listBps.$.stBPAssignToReceipt.$.theader.$.modalBpScrollableHeader.$.advancedFilterWindowButton;
+  },
+  getAdvancedFilterDialog: function () {
+    return 'modalAdvancedFilterBP';
   },
   init: function (model) {
     this.model = model;

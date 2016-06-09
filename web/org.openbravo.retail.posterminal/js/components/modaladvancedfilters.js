@@ -288,8 +288,10 @@ enyo.kind({
     }
   },
 
-  clearFilterSelector: function () {
-    this.$.body.$.filters.clearAll();
+  clearFilterSelector: function (inSender, inEvent) {
+    if (!inEvent.name || inEvent.name === this.name) {
+      this.$.body.$.filters.clearAll();
+    }
   },
 
   getAdvancedFilterSelector: function (inSender, inEvent) {
