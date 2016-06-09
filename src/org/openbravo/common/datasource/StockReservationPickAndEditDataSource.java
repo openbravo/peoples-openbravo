@@ -531,7 +531,20 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
         if (criteria.has("criteria") && criteria.has("operator")) {
           JSONArray mySon = new JSONArray(criteria.getString("criteria"));
           for (int j = 0; j < mySon.length(); j++) {
-            if (filterCriteria.containsKey(mySon.getJSONObject(j).getString("fieldName"))) {
+            if (mySon.getJSONObject(j).has("criteria") && criteria.has("operator")) {
+              JSONArray mySubSom = new JSONArray(mySon.getJSONObject(j).getString("criteria"));
+              for (int k = 0; k < mySubSom.length(); k++) {
+                if (filterCriteria.containsKey(mySubSom.getJSONObject(k).getString("fieldName"))) {
+                  JSONArray values = new JSONArray(
+                      filterCriteria.get(mySubSom.getJSONObject(k).getString("fieldName")));
+                  filterCriteria.put(mySubSom.getJSONObject(k).getString("fieldName"),
+                      values.put(mySubSom.getJSONObject(k)).toString());
+                } else {
+                  filterCriteria.put(mySubSom.getJSONObject(k).getString("fieldName"),
+                      new JSONArray().put(mySubSom.getJSONObject(k)).toString());
+                }
+              }
+            } else if (filterCriteria.containsKey(mySon.getJSONObject(j).getString("fieldName"))) {
               JSONArray values = new JSONArray(filterCriteria.get(mySon.getJSONObject(j).getString(
                   "fieldName")));
               filterCriteria.put(mySon.getJSONObject(j).getString("fieldName"),
