@@ -26,7 +26,6 @@ import org.openbravo.mobile.core.model.HQLPropertyList;
 import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.mobile.core.model.ModelExtensionUtils;
 import org.openbravo.mobile.core.utils.OBMOBCUtils;
-import org.openbravo.model.pricing.pricelist.PriceList;
 import org.openbravo.model.pricing.pricelist.PriceListVersion;
 import org.openbravo.retail.config.OBRETCOProductList;
 import org.openbravo.retail.posterminal.POSUtils;
@@ -61,7 +60,6 @@ public class ProductCharacteristicValue extends ProcessHQLQuery {
         .getString("terminalTime"),
         jsonsent.getJSONObject("parameters").getJSONObject("terminalTimeOffset").getLong("value"));
 
-    final PriceList priceList = POSUtils.getPriceListByOrgId(orgId);
     final PriceListVersion priceListVersion = POSUtils.getPriceListVersionByOrgId(orgId,
         terminalDate);
 

@@ -13,7 +13,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -38,8 +37,6 @@ import org.openbravo.model.ad.access.UserRoles;
 import org.openbravo.service.db.DalConnectionProvider;
 
 public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
-
-  private static final Logger log = Logger.getLogger(LoginUtilsServlet.class);
 
   private static final long serialVersionUID = 1L;
 

@@ -28,7 +28,6 @@ import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 
-import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.weld.WeldUtils;
@@ -47,7 +46,6 @@ import org.openbravo.service.json.JsonConstants;
  * 
  */
 public class SyncAllErrorsWhileImporting extends DalBaseProcess {
-  private static final Logger log4j = Logger.getLogger(SyncAllErrorsWhileImporting.class);
   private ProcessLogger logger;
 
   @Inject

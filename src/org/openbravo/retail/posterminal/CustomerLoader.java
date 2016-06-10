@@ -45,8 +45,6 @@ public class CustomerLoader extends POSDataSynchronizationProcess implements
 
   private static final Logger log = Logger.getLogger(CustomerLoader.class);
 
-  private static final BigDecimal NEGATIVE_ONE = new BigDecimal(-1);
-
   @Inject
   @Any
   private Instance<CustomerLoaderHook> customerCreations;

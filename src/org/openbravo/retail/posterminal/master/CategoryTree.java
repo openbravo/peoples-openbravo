@@ -27,8 +27,6 @@ import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.mobile.core.model.HQLPropertyList;
 import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.mobile.core.model.ModelExtensionUtils;
-import org.openbravo.retail.config.OBRETCOProductList;
-import org.openbravo.retail.posterminal.POSUtils;
 import org.openbravo.retail.posterminal.ProcessHQLQuery;
 
 public class CategoryTree extends ProcessHQLQuery {
@@ -45,8 +43,6 @@ public class CategoryTree extends ProcessHQLQuery {
   protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
 
     String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
-
-    final OBRETCOProductList productList = POSUtils.getProductListByOrgId(orgId);
 
     SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd");
     Calendar now = Calendar.getInstance();

@@ -47,7 +47,6 @@ public class EmailSender implements Runnable {
   }
 
   public void sendDocumentEmail() throws JSONException, IOException, ServletException {
-    final String toName = jsonorder.getJSONObject("bp").getString("name");
     boolean setFailed = false;
     String toEmail = jsonorder.getJSONObject("bp").getString("email");
 
@@ -84,7 +83,6 @@ public class EmailSender implements Runnable {
     int port = 25;
 
     List<EmailServerConfiguration> emailServersConfiguration = null;
-    final String replyToName = "Openbravo";
     String replyToEmail = null;
     String senderAddress = null;
     OBContext.setAdminMode(true);

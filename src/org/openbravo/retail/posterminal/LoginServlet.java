@@ -25,7 +25,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
 import org.openbravo.mobile.core.process.WebServiceAbstractServlet;
 import org.openbravo.service.json.JsonUtils;
 import org.openbravo.service.web.InvalidRequestException;
@@ -37,10 +36,7 @@ import org.openbravo.service.web.InvalidRequestException;
  */
 public class LoginServlet extends WebServiceAbstractServlet {
 
-  private static final Logger log = Logger.getLogger(TerminalServlet.class);
   private static final long serialVersionUID = 1L;
-
-  private static String SERVLET_PATH = "org.openbravo.service.retail.posterminal.jsonrest";
 
   @Override
   public void init(ServletConfig config) throws ServletException {

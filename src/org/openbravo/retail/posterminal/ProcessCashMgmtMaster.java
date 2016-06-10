@@ -13,7 +13,6 @@ import java.util.List;
 
 import javax.servlet.ServletException;
 
-import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -22,8 +21,6 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 
 public class ProcessCashMgmtMaster extends JSONProcessSimple {
-
-  private static final Logger log = Logger.getLogger(ProcessCashMgmtMaster.class);
 
   @Override
   public JSONObject exec(JSONObject jsonsent) throws JSONException, ServletException {
