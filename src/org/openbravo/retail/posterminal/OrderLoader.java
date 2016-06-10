@@ -159,7 +159,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
    * @param jsonorder
    *          JSONObject which contains the order to be synchronized. This object is generated in
    *          Web POS
-   * @return
    */
   public void initializeVariables(JSONObject jsonorder) throws JSONException {
     try {

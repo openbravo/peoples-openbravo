@@ -68,7 +68,6 @@ public class ProcessCashMgmtMaster extends JSONProcessSimple {
    * 
    * @param parentCashUp
    *          Parent cash up id.
-   * @return
    */
   private List<OBPOSAppCashup> getCashUpList(String parentCashUp) {
     OBCriteria<OBPOSAppCashup> obCriteria = OBDal.getInstance()

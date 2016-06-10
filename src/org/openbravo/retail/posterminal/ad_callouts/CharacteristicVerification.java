@@ -47,7 +47,6 @@ public class CharacteristicVerification extends SimpleCallout {
    *          Variables from the callout
    * @param strCharacteristicId
    *          The Id of the characteristic to search related Discounts and Promotions
-   * @return
    */
   protected String getRelatedDiscounts(VariablesSecureApp vars, String strCharacteristicId) {
 

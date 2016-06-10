@@ -360,7 +360,6 @@ public class ProcessCashClose extends POSDataSynchronizationProcess implements
    *          The cashUp identifier
    * @param jsonCashup
    *          The input object with cashup data
-   * @param cashUpDate2
    * @return Cashup object
    * @throws JSONException
    */
@@ -485,8 +484,6 @@ public class ProcessCashClose extends POSDataSynchronizationProcess implements
   /**
    * Create the OBPOSPaymentMethodCashup object from json
    * 
-   * @param jsonCashup
-   * @return
    * @throws JSONException
    */
   private void createPaymentMethodCashUp(OBPOSAppCashup cashup, JSONObject jsonCashup)
@@ -533,8 +530,6 @@ public class ProcessCashClose extends POSDataSynchronizationProcess implements
   /**
    * Create the OBPOSTaxCashup object from json
    * 
-   * @param jsonCashup
-   * @return
    * @throws JSONException
    */
   private void createTaxCashUp(OBPOSAppCashup cashup, JSONObject jsonCashup) throws JSONException {

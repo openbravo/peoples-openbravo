@@ -85,7 +85,6 @@ public class ProcessCashCloseMaster extends JSONProcessSimple {
    *          Terminal id.
    * @param parentCashUp
    *          Parent cash up id.
-   * @return
    */
   public static OBPOSAppCashup getTerminalCashUp(String posterminal, String parentCashUp) {
     OBCriteria<OBPOSAppCashup> obCriteria = OBDal.getInstance()
