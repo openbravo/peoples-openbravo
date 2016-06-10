@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -68,6 +68,7 @@ public class OBCriteria<E extends BaseOBObject> extends CriteriaImpl {
   private boolean filterOnReadableOrganization = true;
   private boolean filterOnActive = true;
   private List<OrderBy> orderBys = new ArrayList<OrderBy>();
+  private boolean initialized = false;
 
   // package visible
 
@@ -130,6 +131,9 @@ public class OBCriteria<E extends BaseOBObject> extends CriteriaImpl {
   }
 
   void initialize() {
+    if (initialized) {
+      return;
+    }
     final OBContext obContext = OBContext.getOBContext();
     final Entity e = getEntity();
 
@@ -174,6 +178,7 @@ public class OBCriteria<E extends BaseOBObject> extends CriteriaImpl {
     if (SessionInfo.getQueryProfile() != null) {
       QueryTimeOutUtil.getInstance().setQueryTimeOut(this, SessionInfo.getQueryProfile());
     }
+    initialized = true;
   }
 
   /**
