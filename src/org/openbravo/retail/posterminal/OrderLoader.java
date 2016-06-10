@@ -374,7 +374,10 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
           for (int i = 0; i < lstResultOL.size(); i++) {
             orderLine = lstResultOL.get(i);
-            orderLine.setDeliveredQuantity(orderLine.getOrderedQuantity());
+            JSONObject jsonOrderLine = orderlines.getJSONObject(i);
+            BigDecimal qtyToDeliver = jsonOrderLine.has("obposQtytodeliver") ? new BigDecimal(
+                jsonOrderLine.getDouble("obposQtytodeliver")) : orderLine.getObposQtytodeliver();
+            orderLine.setDeliveredQuantity(qtyToDeliver);
             lineReferences.add(orderLine);
           }
         } else if (partialpaidLayaway) {
