@@ -627,8 +627,8 @@
 <!--7D1559318B3140508C83E893EF404710-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--7D1559318B3140508C83E893EF404710-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--7D1559318B3140508C83E893EF404710-->  <NAME><![CDATA[Available_In_Workspace]]></NAME>
-<!--7D1559318B3140508C83E893EF404710-->  <DESCRIPTION><![CDATA[A flag that determines when a widget is available to be shown in the workspace.]]></DESCRIPTION>
-<!--7D1559318B3140508C83E893EF404710-->  <HELP><![CDATA[When is false, the widget can't adds to the workspace.]]></HELP>
+<!--7D1559318B3140508C83E893EF404710-->  <DESCRIPTION><![CDATA[Determines whether the widget is available to be shown in the workspace.]]></DESCRIPTION>
+<!--7D1559318B3140508C83E893EF404710-->  <HELP><![CDATA[When this field is checked, the widget will be available in the "Add Widget" drop down menu to include it in the workspace.]]></HELP>
 <!--7D1559318B3140508C83E893EF404710-->  <COLUMNNAME><![CDATA[Available_In_Workspace]]></COLUMNNAME>
 <!--7D1559318B3140508C83E893EF404710-->  <AD_TABLE_ID><![CDATA[5F20F3D554CA408891C1BA6545114D4D]]></AD_TABLE_ID>
 <!--7D1559318B3140508C83E893EF404710-->  <AD_REFERENCE_ID><![CDATA[20]]></AD_REFERENCE_ID>
