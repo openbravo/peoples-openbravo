@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -96,8 +96,8 @@ public class OrganizationStructureProvider implements OBNotSingleton {
     for (final Object[] tn : treeNodes) {
       final OrgNode on = new OrgNode();
       String nodeId = (String) tn[0];
-      String reportSet = (String) tn[1];
-      on.setTreeNodeData(nodeId, reportSet);
+      String parentId = (String) tn[1];
+      on.setTreeNodeData(nodeId, parentId);
       orgNodes.add(on);
     }
 
@@ -107,17 +107,17 @@ public class OrganizationStructureProvider implements OBNotSingleton {
 
     for (final OrgNode on : orgNodes) {
       if (on.getParent() != null) {
-        parentByOrganizationID.put(on.getTreeNodeNodeId(), on.getParent().getTreeNodeNodeId());
+        parentByOrganizationID.put(on.getNodeId(), on.getParent().getNodeId());
       }
     }
 
     for (final OrgNode on : orgNodes) {
-      naturalTreesByOrgID.put(on.getTreeNodeNodeId(), on.getNaturalTree());
+      naturalTreesByOrgID.put(on.getNodeId(), on.getNaturalTree());
       if (on.getChildren() != null) {
         Set<String> os = new HashSet<String>();
         for (OrgNode o : on.getChildren())
-          os.add(o.getTreeNodeNodeId());
-        childByOrganizationID.put(on.getTreeNodeNodeId(), os);
+          os.add(o.getNodeId());
+        childByOrganizationID.put(on.getNodeId(), os);
       }
     }
     isInitialized = true;
@@ -294,8 +294,8 @@ public class OrganizationStructureProvider implements OBNotSingleton {
 
   class OrgNode {
 
-    private String treeNodeNodeId;
-    private String treeNodeReportSet;
+    private String nodeId;
+    private String parentNodeId;
     private OrgNode parent;
     private List<OrgNode> children = new ArrayList<OrgNode>();
 
@@ -308,11 +308,11 @@ public class OrganizationStructureProvider implements OBNotSingleton {
     }
 
     public void resolve(List<OrgNode> nodes) {
-      if (treeNodeReportSet == null) {
+      if (parentNodeId == null) {
         return;
       }
       for (final OrgNode on : nodes) {
-        if (on.getTreeNodeNodeId().equals(treeNodeReportSet)) {
+        if (on.getNodeId().equals(parentNodeId)) {
           on.addChild(this);
           setParent(on);
           break;
@@ -323,7 +323,7 @@ public class OrganizationStructureProvider implements OBNotSingleton {
     public Set<String> getNaturalTree() {
       if (naturalTree == null) {
         naturalTree = new HashSet<String>();
-        naturalTree.add(getTreeNodeNodeId());
+        naturalTree.add(getNodeId());
         if (getParent() != null) {
           getParent().getParentPath(naturalTree);
         }
@@ -337,7 +337,7 @@ public class OrganizationStructureProvider implements OBNotSingleton {
     public void getParentPath(Set<String> theNaturalTree) {
       if (naturalTreeParent == null) {
         naturalTreeParent = new HashSet<String>();
-        naturalTreeParent.add(getTreeNodeNodeId());
+        naturalTreeParent.add(getNodeId());
         if (getParent() != null) {
           getParent().getParentPath(naturalTreeParent);
         }
@@ -348,7 +348,7 @@ public class OrganizationStructureProvider implements OBNotSingleton {
     public void getChildPath(Set<String> theNaturalTree) {
       if (naturalTreeChildren == null) {
         naturalTreeChildren = new HashSet<String>();
-        naturalTreeChildren.add(getTreeNodeNodeId());
+        naturalTreeChildren.add(getNodeId());
         for (final OrgNode child : getChildren()) {
           child.getChildPath(naturalTreeChildren);
         }
@@ -356,17 +356,17 @@ public class OrganizationStructureProvider implements OBNotSingleton {
       theNaturalTree.addAll(naturalTreeChildren);
     }
 
-    public String getTreeNodeNodeId() {
-      return treeNodeNodeId;
+    public String getNodeId() {
+      return nodeId;
     }
 
-    public String getTreeNodeReportSet() {
-      return treeNodeReportSet;
+    public String getParentNodeId() {
+      return parentNodeId;
     }
 
-    public void setTreeNodeData(String treeNodeNodeId, String treeNodeReportSet) {
-      this.treeNodeNodeId = treeNodeNodeId;
-      this.treeNodeReportSet = treeNodeReportSet;
+    public void setTreeNodeData(String nodeId, String parentNodeId) {
+      this.nodeId = nodeId;
+      this.parentNodeId = parentNodeId;
     }
 
     public OrgNode getParent() {
