@@ -2011,9 +2011,9 @@
 
 
       if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
-        OB.Dal.getsave(p, function () {}, function () {
+        OB.Dal.saveIfNew(p, function () {}, function () {
           OB.error(arguments);
-        }, true);
+        });
 
         var productcriteria = {
           columns: ['product'],
@@ -2029,11 +2029,11 @@
             if (i === characteristics.length) {
               me.calculateReceipt();
             } else {
-              OB.Dal.getsave(characteristics[i], function () {
+              OB.Dal.saveIfNew(characteristics[i], function () {
                 saveCharacteristics(characteristics, i + 1);
               }, function () {
                 OB.error(arguments);
-              }, true);
+              });
             }
           }
           if (productcharacteristic.models.length !== 0) {
@@ -2122,9 +2122,9 @@
       }
       if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
         if (oldbp.id !== businessPartner.id) { //Business Partner have changed
-          OB.Dal.getsave(businessPartner, function () {}, function () {
+          OB.Dal.saveIfNew(businessPartner, function () {}, function () {
             OB.error(arguments);
-          }, true);
+          });
           if (OB.MobileApp.model.hasPermission('OBPOS_remote.discount.bp', true)) {
             var bp = {
               columns: ['businessPartner'],
@@ -2137,9 +2137,9 @@
             criteriaFilter.remoteFilters = remoteCriteria;
             OB.Dal.find(OB.Model.DiscountFilterBusinessPartner, criteriaFilter, function (discountsBP) {
               _.each(discountsBP.models, function (dsc) {
-                OB.Dal.getsave(dsc, function () {}, function () {
+                OB.Dal.saveIfNew(dsc, function () {}, function () {
                   OB.error(arguments);
-                }, true);
+                });
               });
             }, function () {
               OB.error(arguments);
@@ -2148,25 +2148,25 @@
 
           OB.Dal.get(OB.Model.BPLocation, businessPartner.get('locId'), function (location) {
 
-            OB.Dal.getsave(location, function () {
+            OB.Dal.saveIfNew(location, function () {
               businessPartner.set('locationModel', location);
               me.set('bp', businessPartner);
               me.save();
             }, function () {
               OB.error(arguments);
-            }, true);
+            });
 
           }, function () {
             OB.error(arguments);
           });
 
         } else if (businessPartner.get('locationModel')) { //Location has changed or we are assigning current bp
-          OB.Dal.getsave(businessPartner.get('locationModel'), function () {
+          OB.Dal.saveIfNew(businessPartner.get('locationModel'), function () {
             me.set('bp', businessPartner);
             me.save();
           }, function () {
             OB.error(arguments);
-          }, true);
+          });
         }
       } else {
         this.set('bp', businessPartner);
@@ -3490,7 +3490,7 @@
                 iter.linepos = linepos;
                 var addLineForProduct = function (prod) {
                     if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
-                      OB.Dal.getsave(prod, function () {
+                      OB.Dal.saveIfNew(prod, function () {
                         var productcriteria = {
                           columns: ['product'],
                           operator: 'equals',
@@ -3502,9 +3502,9 @@
                         criteriaFilter.remoteFilters = remoteCriteria;
                         OB.Dal.find(OB.Model.ProductCharacteristicValue, criteriaFilter, function (productcharacteristic) {
                           _.each(productcharacteristic.models, function (pchv) {
-                            OB.Dal.getsave(pchv, function () {}, function () {
+                            OB.Dal.saveIfNew(pchv, function () {}, function () {
                               OB.error(arguments);
-                            }, true);
+                            });
                           });
                         }, function () {
                           OB.error(arguments);
@@ -3512,7 +3512,7 @@
 
                       }, function () {
                         OB.error(arguments);
-                      }, true);
+                      });
 
                     }
                     // Set product services
@@ -3750,12 +3750,12 @@
     },
 
     doRemoteBPSettings: function (businessPartner) {
-      OB.Dal.getsave(businessPartner, function () {}, function () {
+      OB.Dal.saveIfNew(businessPartner, function () {}, function () {
         OB.error(arguments);
-      }, true);
-      OB.Dal.getsave(businessPartner.get('locationModel'), function () {}, function () {
+      });
+      OB.Dal.saveIfNew(businessPartner.get('locationModel'), function () {}, function () {
         OB.error(arguments);
-      }, true);
+      });
       if (OB.MobileApp.model.hasPermission('OBPOS_remote.discount.bp', true)) {
         var bp = {
           columns: ['businessPartner'],
@@ -3768,9 +3768,9 @@
         criteria.remoteFilters = remoteCriteria;
         OB.Dal.find(OB.Model.DiscountFilterBusinessPartner, criteria, function (discountsBP) {
           _.each(discountsBP.models, function (dsc) {
-            OB.Dal.getsave(dsc, function () {}, function () {
+            OB.Dal.saveIfNew(dsc, function () {}, function () {
               OB.error(arguments);
-            }, true);
+            });
           });
           OB.UTIL.showLoading(false);
         }, function () {
