@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2014 Openbravo SLU
+ * All portions are Copyright (C) 2011-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -423,15 +423,15 @@ isc.OBMiniDateRangeItem.addProperties({}, OB.DateItemProperties, {
   expandSingleValue: function () {
     var newValue = this.parseValue(),
         oldValue = this.mapValueToDisplay(),
-        dateValue, editRow;
+        dateValue, editRow, currentFieldCriterion;
 
     if (!this.singleDateMode) {
       return;
     }
 
     // Apply the empty filter if the date text has been deleted
-    // See issue https://issues.openbravo.com/view.php?id=21697
-    if (newValue === '') {
+    currentFieldCriterion = this.getFieldCriterionFromGrid();
+    if (newValue === '' && currentFieldCriterion) {
       return true;
     }
 
@@ -454,6 +454,18 @@ isc.OBMiniDateRangeItem.addProperties({}, OB.DateItemProperties, {
       return true;
     }
     return false;
+  },
+
+  getFieldCriterionFromGrid: function () {
+    var currentGridCriteria, fieldCriterion, criteria;
+    if (this.grid && this.grid.sourceWidget && this.grid.sourceWidget.getCriteria) {
+      currentGridCriteria = this.grid.sourceWidget.getCriteria();
+      if (currentGridCriteria) {
+        criteria = currentGridCriteria.criteria || [];
+        fieldCriterion = criteria.find('fieldName', this.getFieldName());
+      }
+    }
+    return fieldCriterion;
   },
 
   clearFilterValues: function () {
