@@ -183,7 +183,7 @@ enyo.kind({
       var text = flt.owner.$['input' + flt.filter.name].getValue(),
           orderClasses = flt.owner.$['order' + flt.filter.name].getClassAttribute().split(' '),
           orderClass = orderClasses[orderClasses.length - 1],
-          dateValidated;
+          dateValidated, caption;
 
       flt.owner.$['input' + flt.filter.name].removeClass('error');
 
@@ -203,10 +203,15 @@ enyo.kind({
             flt.owner.$['input' + flt.filter.name].addClass('error');
             filterError = true;
           }
+        } else if (flt.filter.isSelector) {
+          caption = flt.owner.$['input' + flt.filter.name].$.filterButton.getContent();
+        } else if (flt.filter.isList) {
+          caption = flt.owner.$['input' + flt.filter.name].getCaption();
         }
         result.filters.push({
           column: flt.filter.column,
-          text: text
+          text: text,
+          caption: caption
         });
       }
       if (orderClass !== 'iconSortNone') {
@@ -283,7 +288,7 @@ enyo.kind({
         return flt.filter.name === inEvent.selector.name;
       }, this);
       if (selector) {
-        selector.owner.$['input' + selector.filter.name].setSelectorValue(inEvent.selector.id, inEvent.selector.text);
+        selector.owner.$['input' + selector.filter.name].setSelectorValue(inEvent.selector.value, inEvent.selector.text);
       }
     }
   },

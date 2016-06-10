@@ -146,8 +146,8 @@ enyo.kind({
       }
     }
   },
-  setSelectorValue: function (id, text) {
-    this.setValue(id);
+  setSelectorValue: function (value, text) {
+    this.setValue(value);
     this.$.filterButton.setContent(text);
   },
   setPresetValue: function (preset) {
@@ -237,6 +237,10 @@ enyo.kind({
   },
   setPresetValue: function (preset) {
     this.setValue(preset.id);
+  },
+  getCaption: function () {
+    var index = this.getSelected();
+    return index >= 0 ? this.getCollection().at(index).get('name') : '';
   },
   initComponents: function () {
     this.setCollection(new Backbone.Collection());
