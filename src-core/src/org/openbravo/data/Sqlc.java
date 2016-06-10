@@ -1515,7 +1515,7 @@ public class Sqlc extends DefaultHandler {
           if (parameter.strInOut.equals("out")) {
             outParamName = parameter.strName;
             paramsReceipt.append("      object").append(sql.sqlObject).append(".")
-                .append(outParamName).append(" = (String) vecTotal.elementAt(").append(outParams)
+                .append(outParamName).append(" = vecTotal.elementAt(").append(outParams)
                 .append(");\n");
             outParams++;
           }
