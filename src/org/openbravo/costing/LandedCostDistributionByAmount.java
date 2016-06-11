@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2015 Openbravo SLU
+ * All portions are Copyright (C) 2014-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -107,7 +107,10 @@ public class LandedCostDistributionByAmount extends LandedCostDistributionAlgori
         // Insert pending amount on receipt with higher cost to avoid rounding issues.
         receiptAmt = pendingAmt;
       } else {
-        receiptAmt = baseAmt.multiply(trxAmt).divide(totalAmt, precission, RoundingMode.HALF_UP);
+        receiptAmt = baseAmt.multiply(trxAmt);
+        if (totalAmt.compareTo(BigDecimal.ZERO) != 0) {
+          receiptAmt = receiptAmt.divide(totalAmt, precission, RoundingMode.HALF_UP);
+        }
       }
       pendingAmt = pendingAmt.subtract(receiptAmt);
       LCReceipt lcrl = (LCReceipt) OBDal.getInstance().getProxy(LCReceipt.ENTITY_NAME,
