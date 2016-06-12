@@ -34,7 +34,6 @@ public class CheckTerminalAuth extends JSONProcessSimple {
 
   @Override
   public JSONObject exec(final JSONObject jsonsent) throws JSONException, ServletException {
-    String value = new String();
     final JSONObject respArray = new JSONObject();
     final JSONObject result = new JSONObject();
     result.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
@@ -42,7 +41,6 @@ public class CheckTerminalAuth extends JSONProcessSimple {
     try {
       final String terminalName = jsonsent.getString("terminalName");
       final String terminalKeyIdentifier = jsonsent.getString("terminalKeyIdentifier");
-      final String terminalAuthentication = jsonsent.getString("terminalAuthentication");
       final String currentCacheSessionId = jsonsent.getString("cacheSessionId");
 
       final OBCriteria<OBPOSApplications> qApp = OBDal.getInstance().createCriteria(
@@ -56,7 +54,7 @@ public class CheckTerminalAuth extends JSONProcessSimple {
           respArray.put("isLinked", false);
         }
         try {
-          value = Preferences.getPreferenceValue("OBPOS_TerminalAuthentication", true, null, null,
+          Preferences.getPreferenceValue("OBPOS_TerminalAuthentication", true, null, null,
               null, null, (String) null);
         } catch (final PropertyException e) {
           respArray.put("terminalAuthentication", "Y");

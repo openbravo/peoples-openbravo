@@ -51,13 +51,10 @@ public class Discount extends ProcessHQLQuery {
       throw new JSONException("Product list not found");
     }
 
-    String posPrecision = "";
-
     try {
       OBContext.setAdminMode(false);
-      posPrecision = (priceList.getCurrency().getObposPosprecision() == null ? priceList
-          .getCurrency().getPricePrecision() : priceList.getCurrency().getObposPosprecision())
-          .toString();
+      (priceList.getCurrency().getObposPosprecision() == null ? priceList.getCurrency()
+          .getPricePrecision() : priceList.getCurrency().getObposPosprecision()).toString();
     } catch (Exception e) {
       log.error("Error getting currency by id: " + e.getMessage(), e);
     } finally {
