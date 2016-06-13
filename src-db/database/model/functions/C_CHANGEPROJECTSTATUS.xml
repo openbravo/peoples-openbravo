@@ -16,7 +16,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2009 Openbravo SLU
+* All portions are Copyright (C) 2001-2016 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -31,7 +31,6 @@
   cur_parameter       RECORD;
   v_p_projectstatus   VARCHAR(60);
   v_projectstatus     VARCHAR(60);
-  v_created NUMBER:= 0;
   finish_process      BOOLEAN         := FALSE;
 BEGIN
   -- Get Parameters

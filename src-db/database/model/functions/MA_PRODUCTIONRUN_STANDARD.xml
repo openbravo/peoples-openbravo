@@ -55,7 +55,6 @@
   v_StdPrecision NUMBER:=0;
   v_UseStdPrecisionInProduction CHAR(1);
   v_PlanLine NUMBER;
-  v_CostCenterCost NUMBER;
   v_CostCenterUse NUMBER;
   v_allownegativestock CHAR(1);
   v_Calculated CHAR(1);

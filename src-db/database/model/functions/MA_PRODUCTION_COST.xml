@@ -31,7 +31,6 @@
   --v_Message                             VARCHAR2(2000) := '';
   -- Parameter
   TYPE RECORD IS REF CURSOR;
-  Cur_Parameter RECORD;
 
   v_Org_ID                              varchar2(32);
   v_Client_ID                           varchar2(32);
@@ -42,7 +41,6 @@
   v_productName                         M_Product.Name%TYPE;
   v_ProductionDate                      DATE;
   v_CostingDate                         DATE;
-  v_Result NUMBER:= 1;
   v_ProductionCost                      NUMBER;
   v_ProductionCost_Tmp                  NUMBER;
   v_ProducedKg                          NUMBER;
@@ -55,9 +53,7 @@
   v_Qty                                 NUMBER;
   v_DateTo                              DATE;
   v_Costing_ID                          varchar2(32);
-  v_CostCenter_ID                       varchar2(32);
-  v_IC_Value                            NUMBER;
-  v_Cost_UOM                            CHAR;
+
   v_NextNo                              VARCHAR2(32);
   v_ProductionNo                        M_Production.DocumentNo%TYPE;
   v_iscostmigrated                      CHAR;
@@ -69,7 +65,6 @@
   Cur_Machine RECORD;
   Cur_IndirectCost RECORD;
   Cur_IndirectCostPorc RECORD;
-  FINISH_PROCESS                        BOOLEAN := FALSE;
 BEGIN
   BEGIN --BODY
     v_ResultStr := 'Update productionline calculated';

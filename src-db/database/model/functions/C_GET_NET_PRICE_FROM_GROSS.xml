@@ -28,13 +28,12 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2012-2013 Openbravo SLU
+* All portions are Copyright (C) 2012-2016 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
 -- Logistice
   v_ResultStr VARCHAR(2000):=''; 
-  v_message VARCHAR2(2000):='';
   v_NetPrice NUMBER;
   v_TaxAmount NUMBER;
   v_calcPrecision NUMBER:=50;

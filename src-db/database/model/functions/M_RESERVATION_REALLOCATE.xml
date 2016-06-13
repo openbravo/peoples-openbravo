@@ -66,10 +66,8 @@
   v_qtytounreserve      NUMBER;
   v_qtytounreserve_aux  NUMBER;
   v_qtyavailabletoreserve        NUMBER;
-  v_qtyfromother        NUMBER;
   v_newreservedqty      NUMBER;
   v_availablestock      NUMBER;
-  v_dummy               VARCHAR2(2000);
   v_attr_description    VARCHAR2(255);
   v_product_value       M_PRODUCT.value%type;
   v_locator_value       M_LOCATOR.value%type;

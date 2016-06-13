@@ -19,7 +19,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012 Openbravo SLU
+ * All portions are Copyright (C) 2012-2016 Openbravo SLU
  * All Rights Reserved.
 *************************************************************************
 ****
@@ -28,9 +28,6 @@
 *  In case the IBAN format is not correct, it raises an exception
 ************************************************************************/
   v_IBAN_check NUMBER;
-  v_Bank NVARCHAR2(4);
-  v_Branch NVARCHAR2(4);
-  v_DigitBank NVARCHAR2(1);
   v_CountryId NVARCHAR2(2);
   v_Length NUMBER;
   

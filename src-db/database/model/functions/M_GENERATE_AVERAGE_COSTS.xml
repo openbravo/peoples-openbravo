@@ -38,7 +38,6 @@
   v_CheckResultStr VARCHAR2(2000):='';
   v_CumQty NUMBER;
   v_PermanentQty NUMBER;
-  v_Processed VARCHAR2(60) ;
   v_count NUMBER;
   v_Deleted NUMBER;
   v_ProductOld VARCHAR2(32);

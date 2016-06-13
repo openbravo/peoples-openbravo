@@ -19,7 +19,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2012 Openbravo SLU
+* All portions are Copyright (C) 2001-2016 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -38,7 +38,6 @@
   v_Date DATE;
   v_DateAcct DATE;
   v_CashBook_ISO_Code VARCHAR(10) ;
-  v_Record_Description VARCHAR2(2000):='';
   v_Debt_Payment_ID VARCHAR2(32) ;
   v_isGenerated char(1) ;
   --Added by Psarobe
@@ -75,8 +74,6 @@
     v_GeneratedAmt_WH NUMBER:=0;
     v_ChargedAmt_WH NUMBER:=0;
     --
-    v_ForcedOrg NUMBER;
-    v_ManualAmt NUMBER:=0;
     FINISH_PROCESS BOOLEAN:=false;
   BEGIN
     IF(p_PInstance_ID IS NOT NULL) THEN

@@ -19,7 +19,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2008 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2001-2016 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -47,8 +47,6 @@
     --
     v_Created NUMBER:=0;
     FINISH_PROCESS BOOLEAN:=false;
-    v_PInstance_Log_ID VARCHAR2(32);
-    v_Client_ID VARCHAR2(32);
     
   BEGIN
     --  Update AD_PInstance
