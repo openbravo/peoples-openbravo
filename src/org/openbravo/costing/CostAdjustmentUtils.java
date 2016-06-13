@@ -174,7 +174,8 @@ public class CostAdjustmentUtils {
     where.append("   and trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " >= :trxqty");
     where.append(" ))");
 
-    where.append("   and trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " > :movementDate");
+    where.append(
+        "   and trunc(trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + ") > :movementDate");
     where.append("   and trx." + MaterialTransaction.PROPERTY_PRODUCT + ".id = :productId");
     where.append("   and trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
 
