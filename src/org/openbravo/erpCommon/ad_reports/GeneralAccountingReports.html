@@ -151,12 +151,9 @@ function callbackLedger(paramXMLParticular, XMLHttpRequestObj) {
         try {
             if (XMLHttpRequestObj.responseText) {
                 strText = XMLHttpRequestObj.responseText;
-                if (strText && document.getElementById('inpcAcctSchemaId').value != strText) {
+                if (strText) {
                     document.getElementById('inpcAcctSchemaId').value = strText;
                     refreshComboReports();
-                }
-                else {
-                    refreshComboYears();
                 }
             }
        } catch (e) {
@@ -395,7 +392,7 @@ function onResizeDo(){
 
                 <tr>
                   <td class="TitleCell"><span class="LabelText">Organization</span></td>
-                  <td class="Combo_ContentCell" colspan="2"> <select name="inpOrganizacion" id="inpOrganizacion" class="ComboKey Combo_TwoCells_width" onchange="setDefaultLedger(); logChanges(this); return true;">
+                  <td class="Combo_ContentCell" colspan="2"> <select name="inpOrganizacion" id="inpOrganizacion" class="ComboKey Combo_TwoCells_width" onchange="refreshComboYears(); logChanges(this); return true;">
                       <option value=""></option><div id="reportC_Org_ID"></div>
                     </select></td>
                 </tr>
