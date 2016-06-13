@@ -866,8 +866,10 @@ public class CancelAndReplaceUtils {
                 newPaymentSchedule.getPaidAmount()));
           }
 
-          finishOrderPayments(jsonorder, oldOrder, inverseOrder, paymentSchedule,
-              useOrderDocumentNoForRelatedDocs, triggersDisabled, replaceOrder);
+          if (paymentSchedule.getOutstandingAmount().compareTo(BigDecimal.ZERO) != 0) {
+            finishOrderPayments(jsonorder, oldOrder, inverseOrder, paymentSchedule,
+                useOrderDocumentNoForRelatedDocs, triggersDisabled, replaceOrder);
+          }
         }
 
       } else {
@@ -923,14 +925,10 @@ public class CancelAndReplaceUtils {
     newPayment = createPayment(newPayment, inverseOrder, paymentPaymentMethod, negativeAmount,
         paymentDocumentType, financialAccount, paymentDocumentNo);
 
-    // Create if needed a second payment for the partially paid
-    if (outstandingAmount.compareTo(BigDecimal.ZERO) != 0) {
-
-      // Duplicate payment with positive amount
-      newPayment = createPayment(newPayment, oldOrder, paymentPaymentMethod, outstandingAmount,
-          paymentDocumentType, financialAccount, paymentDocumentNo);
-      description += ": " + oldOrder.getDocumentNo() + "\n";
-    }
+    // Duplicate payment with positive amount
+    newPayment = createPayment(newPayment, oldOrder, paymentPaymentMethod, outstandingAmount,
+        paymentDocumentType, financialAccount, paymentDocumentNo);
+    description += ": " + oldOrder.getDocumentNo() + "\n";
 
     // Set amount and used credit to zero
     newPayment.setAmount(BigDecimal.ZERO);
@@ -948,6 +946,7 @@ public class CancelAndReplaceUtils {
     if (triggersDisabled && replaceOrder) {
       TriggerHandler.getInstance().disable();
     }
+
   }
 
   protected static FIN_Payment createPayment(FIN_Payment payment, Order order,
