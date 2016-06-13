@@ -417,7 +417,7 @@ enyo.kind({
   classes: 'row-fluid',
   handlers: {
     onSearchAction: 'searchAction',
-    onClearAction: 'clearAction',
+    onClearFilterSelector: 'clearAction',
     onSetBusinessPartnerTarget: 'setBusinessPartnerTarget'
   },
   events: {
@@ -527,7 +527,7 @@ enyo.kind({
           criteria.remoteFilters.push({
             columns: [column.name],
             operator: OB.Dal.CONTAINS,
-            value: flt.text,
+            value: flt.value,
             location: column.location
           });
         }
@@ -572,7 +572,7 @@ enyo.kind({
               select += ' and ';
             }
             select += flt.column + ' like ? ';
-            params.push('%' + flt.text + '%');
+            params.push('%' + flt.value + '%');
             if (!inEvent.advanced && flt.orderby) {
               orderby = ' order by ' + flt.column;
             }
@@ -580,7 +580,7 @@ enyo.kind({
         }
       } else if (inEvent.filters.length > 0) {
         select += 'where bp._filter like ? or loc._filter like ?';
-        var text = OB.UTIL.unAccent(inEvent.filters[0].text);
+        var text = OB.UTIL.unAccent(inEvent.filters[0].value);
         params.push('%' + text + '%');
         params.push('%' + text + '%');
       }

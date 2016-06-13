@@ -520,7 +520,7 @@ enyo.kind({
     var filters = [{
       operator: operator,
       column: this.showFields ? value : '_filter',
-      text: text
+      value: text
     }];
     if (this.advancedFilterDialog) {
       this.bubble('onAdvancedFilterSelector', {

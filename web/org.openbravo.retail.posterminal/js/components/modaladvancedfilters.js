@@ -168,6 +168,7 @@ enyo.kind({
       }
     });
     this.owner.$.dateFormatError.hide();
+    this.setSortNone();
   },
 
   applyFilters: function () {
@@ -180,7 +181,7 @@ enyo.kind({
 
     me.owner.$.dateFormatError.hide();
     _.each(this.filters, function (flt) {
-      var text = flt.owner.$['input' + flt.filter.name].getValue(),
+      var value = flt.owner.$['input' + flt.filter.name].getValue(),
           orderClasses = flt.owner.$['order' + flt.filter.name].getClassAttribute().split(' '),
           orderClass = orderClasses[orderClasses.length - 1],
           operator = flt.filter.operator,
@@ -188,17 +189,17 @@ enyo.kind({
 
       flt.owner.$['input' + flt.filter.name].removeClass('error');
 
-      text = text ? text.trim() : '';
-      if (text) {
+      value = value ? value.trim() : '';
+      if (value) {
         if (flt.filter.isAmount) {
           operator = flt.owner.$['input' + flt.filter.name].getOperator();
           if (!operator) {
             operator = flt.filter.preset && flt.filter.preset.id ? flt.filter.preset.id : 'greaterThan';
           }
         } else if (flt.filter.isDate) {
-          dateValidated = OB.Utilities.Date.OBToJS(text, OB.Format.date) || OB.Utilities.Date.OBToJS(text, 'yyyy-MM-dd');
+          dateValidated = OB.Utilities.Date.OBToJS(value, OB.Format.date) || OB.Utilities.Date.OBToJS(value, 'yyyy-MM-dd');
           if (dateValidated) {
-            text = OB.Utilities.Date.JSToOB(dateValidated, 'yyyy-MM-dd');
+            value = OB.Utilities.Date.JSToOB(dateValidated, 'yyyy-MM-dd');
             me.owner.$.dateFormatError.hide();
             flt.owner.$['input' + flt.filter.name].removeClass('error');
           } else {
@@ -210,18 +211,21 @@ enyo.kind({
           caption = flt.owner.$['input' + flt.filter.name].$.filterButton.getContent();
         } else if (flt.filter.isList) {
           caption = flt.owner.$['input' + flt.filter.name].getCaption();
+        } else {
+          value = OB.UTIL.unAccent(value);
         }
         result.filters.push({
           operator: operator,
           column: flt.filter.column,
-          text: text,
+          value: value,
           caption: caption
         });
       }
       if (orderClass !== 'iconSortNone') {
         result.orderby = {
           name: flt.filter.name,
-          column: OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true) ? flt.filter.serverColumn : flt.filter.column,
+          column: flt.filter.column,
+          serverColumn: flt.filter.serverColumn ? flt.filter.serverColumn : flt.filter.column,
           direction: orderClass === 'iconSortAsc' ? 'asc' : 'desc',
           isLocationFilter: flt.filter.location,
           isDate: flt.filter.isDate
@@ -324,14 +328,14 @@ enyo.kind({
       });
       if (standardFlt) {
         if (standardFlt.filter.isSelector) {
-          standardFlt.owner.$['input' + standardFlt.filter.name].setSelectorValue(inEvent.filter.text, inEvent.caption);
+          standardFlt.owner.$['input' + standardFlt.filter.name].setSelectorValue(inEvent.filter.value, inEvent.caption);
         } else if (standardFlt.filter.isAmount) {
           standardFlt.owner.$['input' + standardFlt.filter.name].setPresetValue({
             id: inEvent.operator,
-            name: inEvent.filter.text
+            name: inEvent.filter.value
           });
         } else {
-          standardFlt.owner.$['input' + standardFlt.filter.name].setValue(inEvent.filter.text);
+          standardFlt.owner.$['input' + standardFlt.filter.name].setValue(inEvent.filter.value);
         }
       }
       var inEventFilter = _.find(advancedFilters.filters, function (advFlt) {
@@ -339,7 +343,7 @@ enyo.kind({
       });
       if (inEventFilter) {
         inEventFilter.operator = inEvent.filter.operator;
-        inEventFilter.text = inEvent.filter.text;
+        inEventFilter.value = inEvent.filter.value;
       } else {
         advancedFilters.filters.push(inEvent.filter);
       }
