@@ -696,7 +696,7 @@ enyo.kind({
     return true;
   },
   showDivText: function (inSender, inEvent) {
-    if (this.model.get('order').get('isEditable') === false && !this.model.get('order').get('isLayaway')) {
+    if (this.model.get('order').get('isEditable') === false && !this.model.get('order').get('isLayaway') && !this.model.get('order').get('cancelLayaway')) {
       this.doShowPopup({
         popup: 'modalNotEditableOrder'
       });

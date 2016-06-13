@@ -276,7 +276,43 @@ enyo.kind({
     });
   },
   displayLogic: function () {
-    if (this.model.get('order').get('isLayaway') && this.model.get('order').get('orderType') !== 3 && ((OB.MobileApp.model.hasPermission('OBPOS_payments.cancelLayaway', true) && this.model.get('orderList').current.get('payment') > 0) || !OB.MobileApp.model.hasPermission('OBPOS_payments.cancelLayaway', true))) {
+    var isPaidReceipt, isLayaway, isReturn, haspayments, receiptLines, receipt;
+
+    receipt = this.model.get('order');
+
+    isPaidReceipt = receipt.get('isPaid') === true && !receipt.get('isQuotation');
+    isLayaway = receipt.get('isLayaway') && receipt.get('orderType') !== 3;
+    isReturn = receipt.get('orderType') === 1 || receipt.get('documentType') === OB.MobileApp.model.get('terminal').terminalType.documentTypeForReturns || receipt.get('documentType') === 'VBS RFC Order';
+    receiptLines = OB.MobileApp.model.receipt.get('receiptLines');
+
+    function delivered() {
+      var shipqty = OB.DEC.Zero;
+      var qty = OB.DEC.Zero;
+      _.each(receipt.get('lines').models, function (line) {
+        qty += line.get('qty');
+      });
+      if (receiptLines) {
+        _.each(receiptLines, function (line) {
+          _.each(line.shipmentlines, function (shipline) {
+            shipqty += shipline.qty;
+          });
+        });
+      } else {
+        return 'udf';
+      }
+      if (shipqty === qty) { //totally delivered
+        return 'TD';
+      }
+      if (shipqty === 0) { //no deliveries
+        return 'ND';
+      }
+      return 'DN';
+    }
+
+    if (isLayaway && ((OB.MobileApp.model.hasPermission('OBPOS_payments.cancelLayaway', true) && this.model.get('orderList').current.get('payment') > 0) || !OB.MobileApp.model.hasPermission('OBPOS_payments.cancelLayaway', true))) {
+      this.show();
+      this.adjustVisibilityBasedOnPermissions();
+    } else if (isPaidReceipt && !isReturn && receipt.get('orderType') !== 3 && delivered() !== 'TD') {
       this.show();
       this.adjustVisibilityBasedOnPermissions();
     } else {
