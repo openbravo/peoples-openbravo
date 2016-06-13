@@ -1213,6 +1213,8 @@ enyo.kind({
         this.hide();
       } else if (isLayaway && !OB.MobileApp.model.hasPermission('OBPOS_receipt.CancelReplaceLayaways', true) && (deliveredresult === 'ND' && !haspayments)) {
         this.hide();
+      } else if (!OB.MobileApp.model.hasPermission('OBPOS_receipt.CancelAndReplaceOrdersWithDeliveries', true) && (deliveredresult === 'TD' || deliveredresult === 'DN')) {
+        this.hide();
       } else {
         this.show();
       }
