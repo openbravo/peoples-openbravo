@@ -1119,7 +1119,7 @@ isc.OBViewGrid.addProperties({
     }
 
     if (localState.noFilterClause) {
-      if (OB.Utilities.isNonEmptyString(this.filterClause)) {
+      if (this.filterClause) {
         if (this.data) {
           this.data.forceRefresh = true;
         }
