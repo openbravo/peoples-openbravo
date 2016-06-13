@@ -1133,7 +1133,7 @@ isc.OBViewGrid.addProperties({
     }
 
     // and no additional filter clauses passed in
-    if (localState.filter && this.view.tabId !== this.view.standardWindow.additionalCriteriaTabId && this.view.tabId !== this.view.standardWindow.additionalFilterTabId) {
+    if (localState.filter && this.view.tabId !== this.view.standardWindow.additionalCriteriaTabId) {
       // a filtereditor but no editor yet
       // set it in the initialcriteria of the filterEditro
       if (this.filterEditor && !this.filterEditor.getEditForm()) {
@@ -1275,17 +1275,6 @@ isc.OBViewGrid.addProperties({
       this.getField(this.view.parentProperty).canEdit = false;
     }
 
-    // Begins-added to have the additional filter clause and tabid..Mallikarjun M
-    // URL example:http://localhost:8080/openbravo/?tabId=186&filterClause=e.businessPartner.searchKey%3D%27mcgiver%27&replaceDefaultFilter=true&
-    if (this.view.tabId === this.view.standardWindow.additionalFilterTabId) {
-
-      if (!this.filterClause || this.view.standardWindow.replaceDefaultFilter === 'true') {
-        this.filterClause = unescape(this.view.standardWindow.additionalFilterClause);
-      } else if (this.filterClause) {
-        this.filterClause = '((' + this.filterClause + ') and (' + unescape(this.view.standardWindow.additionalFilterClause) + '))';
-      }
-    }
-    // Ends..
     if (this.view.tabId === this.view.standardWindow.additionalCriteriaTabId && this.view.standardWindow.additionalCriteria) {
       crit = isc.JSON.decode(unescape(this.view.standardWindow.additionalCriteria));
       this.setCriteria(crit);
