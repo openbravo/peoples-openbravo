@@ -72,7 +72,8 @@ enyo.kind({
           kind: 'OB.UI.SearchInputAutoFilter',
           name: 'customerFilterText',
           style: 'width: 100%',
-          isFirstFocus: true
+          isFirstFocus: true,
+          skipAutoFilterPref: 'OBPOS_remote.customer'
         }]
       }, {
         style: 'display: table-cell;',

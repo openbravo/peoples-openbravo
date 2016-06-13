@@ -214,7 +214,8 @@ enyo.kind({
         components: [{
           kind: 'OB.UI.SearchInputAutoFilter',
           name: 'customerFilterText',
-          style: 'width: 100%'
+          style: 'width: 100%',
+          skipAutoFilterPref: 'OBPOS_remote.customer'
         }]
       }, {
         style: 'display: table-cell;',
