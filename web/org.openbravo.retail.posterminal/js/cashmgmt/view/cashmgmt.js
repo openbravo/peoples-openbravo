@@ -74,6 +74,9 @@ enyo.kind({
   events: {
     onShowPopup: ''
   },
+  handlers: {
+    onAdvancedFilterSelector: 'advancedFilterSelector'
+  },
   components: [{
     kind: 'OB.UI.MultiColumn',
     name: 'cashupMultiColumn',
@@ -133,6 +136,10 @@ enyo.kind({
       kind: 'OB.UI.ModalSelectPrinters'
     }]
   }],
+
+  advancedFilterSelector: function (inSender, inEvent) {
+    this.waterfall('onGetAdvancedFilterSelector', inEvent);
+  },
 
   init: function () {
     this.inherited(arguments);
