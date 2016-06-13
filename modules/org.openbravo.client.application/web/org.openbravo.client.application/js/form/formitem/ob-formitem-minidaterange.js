@@ -423,15 +423,14 @@ isc.OBMiniDateRangeItem.addProperties({}, OB.DateItemProperties, {
   expandSingleValue: function () {
     var newValue = this.parseValue(),
         oldValue = this.mapValueToDisplay(),
-        dateValue, editRow, currentFieldCriterion;
+        dateValue, editRow;
 
     if (!this.singleDateMode) {
       return;
     }
 
     // Apply the empty filter if the date text has been deleted
-    currentFieldCriterion = this.getFieldCriterionFromGrid();
-    if (newValue === '' && currentFieldCriterion) {
+    if (newValue === '' && this.getFieldCriterionFromGrid()) {
       return true;
     }
 
