@@ -87,6 +87,13 @@ enyo.kind({
           action: function () {}
         }
       }, {
+        command: 'allowmoveeverything',
+        stateless: true,
+        definition: {
+          stateless: true,
+          action: function () {}
+        }
+      }, {
         command: 'opendrawer',
         i18nLabel: 'OBPOS_OpenDrawer',
         stateless: true,
