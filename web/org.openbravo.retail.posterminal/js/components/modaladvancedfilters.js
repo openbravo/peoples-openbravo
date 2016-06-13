@@ -183,6 +183,7 @@ enyo.kind({
       var text = flt.owner.$['input' + flt.filter.name].getValue(),
           orderClasses = flt.owner.$['order' + flt.filter.name].getClassAttribute().split(' '),
           orderClass = orderClasses[orderClasses.length - 1],
+          operator = flt.filter.operator,
           dateValidated, caption;
 
       flt.owner.$['input' + flt.filter.name].removeClass('error');
@@ -190,9 +191,11 @@ enyo.kind({
       text = text ? text.trim() : '';
       if (text) {
         if (flt.filter.isAmount) {
-          flt.filter.operator = flt.owner.$['input' + flt.filter.name].getOperator();
-        }
-        if (flt.filter.isDate) {
+          operator = flt.owner.$['input' + flt.filter.name].getOperator();
+          if (!operator) {
+            operator = flt.filter.preset && flt.filter.preset.id ? flt.filter.preset.id : 'greaterThan';
+          }
+        } else if (flt.filter.isDate) {
           dateValidated = OB.Utilities.Date.OBToJS(text, OB.Format.date) || OB.Utilities.Date.OBToJS(text, 'yyyy-MM-dd');
           if (dateValidated) {
             text = OB.Utilities.Date.JSToOB(dateValidated, 'yyyy-MM-dd');
@@ -209,6 +212,7 @@ enyo.kind({
           caption = flt.owner.$['input' + flt.filter.name].getCaption();
         }
         result.filters.push({
+          operator: operator,
           column: flt.filter.column,
           text: text,
           caption: caption
@@ -240,6 +244,9 @@ enyo.kind({
   style: 'height: 600px',
   events: {
     onHideThisPopup: ''
+  },
+  published: {
+    filters: null
   },
   handlers: {
     onUpdateFilterSelector: 'updateFilterSelector',
@@ -278,6 +285,14 @@ enyo.kind({
       kind: 'OB.UI.AdvancedFilterTable',
       name: 'filters'
     }]
+  },
+
+  setFilters: function (filters) {
+    _.each(filters, function (prop) {
+      if (prop.filter) {
+        this.$.body.$.filters.addFilter(prop);
+      }
+    }, this);
   },
 
   updateFilterSelector: function (inSender, inEvent) {
@@ -319,7 +334,15 @@ enyo.kind({
           standardFlt.owner.$['input' + standardFlt.filter.name].setValue(inEvent.filter.text);
         }
       }
-      advancedFilters.filters.push(inEvent.filter);
+      var inEventFilter = _.find(advancedFilters.filters, function (advFlt) {
+        return advFlt.column === inEvent.filter.column;
+      });
+      if (inEventFilter) {
+        inEventFilter.operator = inEvent.filter.operator;
+        inEventFilter.text = inEvent.filter.text;
+      } else {
+        advancedFilters.filters.push(inEvent.filter);
+      }
       inEvent.callback(advancedFilters);
     }
   },

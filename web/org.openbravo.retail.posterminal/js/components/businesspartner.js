@@ -145,10 +145,11 @@ enyo.kind({
 });
 
 enyo.kind({
-  kind: 'OB.UI.Button',
+  kind: 'OB.UI.ButtonAdvancedFilter',
   name: 'OB.UI.AdvancedFilterWindowButton',
   style: 'width: 170px; margin: 0px 0px 8px 9px;',
-  classes: 'btnlink-yellow btnlink btnlink-small',
+  classes: 'btnlink-yellow btnlink btnlink-small ',
+  dialog: 'modalAdvancedFilterBP',
   i18nLabel: 'OBPOS_LblAdvancedFilter',
   disabled: false,
   handlers: {
@@ -156,35 +157,6 @@ enyo.kind({
   },
   doDisableNewBP: function (inSender, inEvent) {
     this.putDisabled(inEvent.status);
-  },
-  events: {
-    onShowPopup: '',
-    onSearchAction: '',
-    onHideBPSelector: '',
-    onShowBPSelector: ''
-  },
-  tap: function () {
-    if (this.disabled) {
-      return true;
-    }
-    var me = this;
-    this.doHideBPSelector();
-    this.doShowPopup({
-      popup: 'modalAdvancedFilterBP',
-      args: {
-        lastFilters: this.owner.$.filterSelector.lastFilters,
-        callback: function (result) {
-          me.doShowBPSelector();
-          if (result) {
-            me.doSearchAction({
-              filters: result.filters,
-              orderby: result.orderby,
-              advanced: true
-            });
-          }
-        }
-      }
-    });
   },
   putDisabled: function (status) {
     if (status === false) {
@@ -226,7 +198,7 @@ enyo.kind({
     components: [{
       style: 'display: table; width: 100%',
       components: [{
-        style: 'display: table-cell; text-align: right; ',
+        style: 'display: table-cell; text-align: right;',
         components: [{
           kind: 'OB.UI.NewCustomerWindowButton',
           name: 'newAction'
@@ -303,10 +275,6 @@ enyo.kind({
   kind: 'OB.UI.ListContextMenuItem',
   name: 'OB.UI.BPAddressContextMenuItem',
   i18NLabel: 'OBPOS_BPAddress',
-  events: {
-    onShowPopup: '',
-    onHideBPSelector: ''
-  },
   selectItem: function (bpartner) {
     var target = this.owner.owner.dialog.target;
     this.owner.owner.dialog.owner.owner.clearResult = true;
@@ -359,7 +327,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.ListBpsLine',
   kind: 'OB.UI.listItemButton',
-  style: 'padding: 2px 0px 2px 10px; ',
+  style: 'padding: 2px 0px 2px 10px;',
   components: [{
     name: 'line',
     style: 'line-height: 23px; width: 100%',
@@ -367,7 +335,7 @@ enyo.kind({
       name: 'textInfo',
       style: 'float: left; width: calc(100% - 50px); padding: 8px 0px; display: table; ',
       components: [{
-        style: 'display: table-cell; ',
+        style: 'display: table-cell;',
         components: [{
           tag: 'span',
           name: 'identifier'
@@ -495,7 +463,6 @@ enyo.kind({
       this.$.stBPAssignToReceipt.$.theader.$.modalBpScrollableHeader.$.newAction.setDisabled(false);
     }
 
-    this.$.stBPAssignToReceipt.$.theader.$.modalBpScrollableHeader.$.filterSelector.setAdvancedSearch(inEvent.advanced);
     this.$.stBPAssignToReceipt.$.tempty.hide();
     this.$.stBPAssignToReceipt.$.tbody.hide();
     this.$.stBPAssignToReceipt.$.tlimit.hide();
@@ -740,14 +707,14 @@ enyo.kind({
   name: 'OB.UI.ModalBusinessPartners',
   topPosition: '75px',
   handlers: {
-    onHideBPSelector: 'hideBPSelector',
-    onShowBPSelector: 'showBPSelector'
+	  onHideSelector: 'hideSelector',
+	  onShowSelector: 'showSelector'
   },
   modalClass: 'modal-bpdialog',
-  hideBPSelector: function () {
+  hideSelector: function () {
     this.hide();
   },
-  showBPSelector: function () {
+  showSelector: function () {
     this.show(this.args);
   },
   executeOnShow: function () {
@@ -824,9 +791,7 @@ enyo.kind({
       if (prop.name === 'taxID') {
         prop.filter = OB.MobileApp.model.get('terminal').bp_showtaxid;
       }
-      if (prop.filter) {
-        this.$.body.$.filters.addFilter(prop);
-      }
     }, this);
+    this.setFilters(OB.Model.BPartnerFilter.getProperties());
   }
 });

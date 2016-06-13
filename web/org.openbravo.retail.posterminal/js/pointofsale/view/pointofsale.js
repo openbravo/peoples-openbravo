@@ -102,6 +102,7 @@ enyo.kind({
     onClearAllFilterSelector: 'clearAllFilterSelector',
     onCheckPresetFilterSelector: 'checkPresetFilterSelector',
     onAdvancedFilterSelector: 'advancedFilterSelector',
+    onSetSelectorAdvancedSearch: 'setSelectorAdvancedSearch',
     onRearrangeEditButtonBar: 'rearrangeEditButtonBar'
   },
   events: {
@@ -1202,6 +1203,9 @@ enyo.kind({
   },
   advancedFilterSelector: function (inSender, inEvent) {
     this.waterfall('onGetAdvancedFilterSelector', inEvent);
+  },
+  setSelectorAdvancedSearch: function (inSender, inEvent) {
+    this.waterfall('onSetAdvancedSearchMode', inEvent);
   },
   receiptLineSelected: function (inSender, inEvent) {
     var enableButton = true,

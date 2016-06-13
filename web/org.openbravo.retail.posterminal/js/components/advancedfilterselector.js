@@ -9,11 +9,50 @@
 
 /*global enyo, Backbone, OB, _ */
 
+enyo.kind({
+  kind: 'OB.UI.SmallButton',
+  name: 'OB.UI.ButtonAdvancedFilter',
+  style: 'width: 160px; margin: 0px 9px 8px 0px;',
+  classes: 'btnlink-yellow btnlink btnlink-small',
+  i18nLabel: 'OBPOS_LblAdvancedFilter',
+  events: {
+    onShowPopup: '',
+    onSearchAction: '',
+    onSetSelectorAdvancedSearch: '',
+    onHideSelector: '',
+    onShowSelector: ''
+  },
+  tap: function () {
+    if (this.disabled) {
+      return true;
+    }
+    var me = this;
+    this.doHideSelector();
+    this.doShowPopup({
+      popup: this.dialog,
+      args: {
+        callback: function (result) {
+          me.doShowSelector();
+          if (result) {
+            me.doSetSelectorAdvancedSearch({
+              isAdvanced: true
+            });
+            me.doSearchAction({
+              filters: result.filters,
+              orderby: result.orderby,
+              advanced: true
+            });
+          }
+        }
+      }
+    });
+  }
+});
+
 /* Modal definition */
 enyo.kind({
   name: 'OB.UI.ModalSelector',
   kind: 'OB.UI.Modal',
-  handlers: {},
   getFilterSelectorTableHeader: function () {
     return null;
   },
@@ -61,7 +100,7 @@ enyo.kind({
       onkeyup: 'keyup'
     },
     keyup: function (inSender, inEvent) {
-      if (this.hasRemoveButton) {
+      if (this.owner.hasRemoveButton) {
         var value = this.getValue();
         if (value === '') {
           this.owner.parent.hideRemove();
@@ -148,7 +187,7 @@ enyo.kind({
   },
   setSelectorValue: function (value, text) {
     this.setValue(value);
-    this.$.filterButton.setContent(text);
+    this.$.filterButton.setContent(text ? text : ' --- ');
   },
   setPresetValue: function (preset) {
     this.setSelectorValue(preset.id, preset.name);
@@ -283,6 +322,7 @@ enyo.kind({
     onClearAllFilterSelector: ''
   },
   handlers: {
+    onSetAdvancedSearchMode: 'setAdvancedSearchMode',
     onSearchActionByKey: 'searchAction',
     onFiltered: 'searchAction',
     onChangeColumn: 'changeColumn',
@@ -447,18 +487,17 @@ enyo.kind({
   searchAction: function () {
     var me = this,
         text, caption = null,
-        operator = null,
         value = this.fixedColumn ? this.fixedColumn.column : this.$.entityFilterColumn.getValue(),
         column = this.fixedColumn ? this.fixedColumn : _.find(this.filters, function (flt) {
         return flt.column === value;
-      }, this);
+      }, this),
+        operator = column.operator;
 
     if (column.isList) {
       text = this.$.entityFilterList.getValue();
     } else if (column.isAmount) {
-      column.operator = this.$.entityFilterAmount.getOperator();
       text = this.$.entityFilterAmount.getValue();
-      operator = column.operator;
+      operator = this.$.entityFilterAmount.getOperator();
     } else if (column.isSelector) {
       text = this.$.entityFilterButton.getValue();
       caption = this.$.entityFilterButton.$.filterButton.getContent();
@@ -479,6 +518,7 @@ enyo.kind({
       }
     }
     var filters = [{
+      operator: operator,
       column: this.showFields ? value : '_filter',
       text: text
     }];
@@ -533,11 +573,11 @@ enyo.kind({
       });
     }
   },
-  setAdvancedSearch: function (isAdvanced) {
-    this.$.advancedFilterInfo.setShowing(isAdvanced);
-    this.$.filterInputs.setShowing(!isAdvanced);
-    this.$.entitySearchBtn.putDisabled(isAdvanced);
-    if (isAdvanced && this.advancedFilterBtn) {
+  setAdvancedSearchMode: function (inSender, inEvent) {
+    this.$.advancedFilterInfo.setShowing(inEvent.isAdvanced);
+    this.$.filterInputs.setShowing(!inEvent.isAdvanced);
+    this.$.entitySearchBtn.putDisabled(inEvent.isAdvanced);
+    if (inEvent.isAdvanced && this.advancedFilterBtn) {
       this.advancedFilterBtn.setContent(OB.I18N.getLabel(this.advancedFilterBtn.i18nLabel));
     }
   },
