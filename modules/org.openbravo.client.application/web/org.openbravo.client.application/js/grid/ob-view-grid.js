@@ -3490,7 +3490,8 @@ isc.OBViewGrid.addProperties({
   // done, at that point first try to force a fic call (handleItemChange) and if that
   // indeed happens stop the saveEdit until the fic returns
   saveEditedValues: function (rowNum, colNum, newValues, oldValues, editValuesID, editCompletionEvent, originalCallback, ficCallDone) {
-    var previousExplicitOffline, saveCallback;
+    var previousExplicitOffline, saveCallback, editForm = this.getEditForm(),
+        autoSaveAction, isNewRecord = false;
     if (!rowNum && rowNum !== 0) {
       rowNum = this.getEditRow();
     }
@@ -3499,14 +3500,25 @@ isc.OBViewGrid.addProperties({
     }
 
     // nothing changed just fire the calback and bail
-    if (!ficCallDone && this.getEditForm() && !this.getEditForm().hasChanged && !this.getEditForm().isNew) {
+    if (!ficCallDone && editForm && !editForm.hasChanged && !editForm.isNew) {
       if (originalCallback) {
         this.fireCallback(originalCallback, 'rowNum,colNum,editCompletionEvent,success', [rowNum, colNum, editCompletionEvent]);
       }
       return true;
     }
 
+    if (editForm && editForm.isNew) {
+      isNewRecord = true;
+    }
+
+    if (this.view.standardWindow) {
+      autoSaveAction = this.view.standardWindow.autoSaveAction;
+    }
+
     saveCallback = function () {
+      var eventHandlerParams = {},
+          eventHandlerCallback, savedValues = isc.clone(this.getRecord(rowNum));
+
       if (originalCallback) {
         if (this.getSelectedRecord() && this.getSelectedRecord()[OB.Constants.ID]) {
           if (this.view.parentRecordId) {
@@ -3525,12 +3537,22 @@ isc.OBViewGrid.addProperties({
           }
         }
         this.fireCallback(originalCallback, 'rowNum,colNum,editCompletionEvent,success', [rowNum, colNum, editCompletionEvent]);
+
+        if (!this.hasErrors() && this.view.callSaveActions) {
+          eventHandlerParams.data = savedValues;
+          eventHandlerParams.isNewRecord = isNewRecord;
+          if (autoSaveAction) {
+            eventHandlerCallback = function () {
+              OB.Utilities.callAction(autoSaveAction);
+            };
+          }
+          this.view.callSaveActions('POSTSAVE', eventHandlerParams, eventHandlerCallback);
+        }
       }
     };
 
     if (!ficCallDone) {
-      var editForm = this.getEditForm(),
-          focusItem = editForm.getFocusItem();
+      var focusItem = editForm.getFocusItem();
       if (focusItem && !focusItem.hasPickList) {
         focusItem.blur(focusItem.form, focusItem);
         if (editForm.inFicCall) {
