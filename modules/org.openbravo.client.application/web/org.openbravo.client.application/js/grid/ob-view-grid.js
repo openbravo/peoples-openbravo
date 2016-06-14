@@ -3525,7 +3525,7 @@ isc.OBViewGrid.addProperties({
 
     saveCallback = function () {
       var eventHandlerParams = {},
-          eventHandlerCallback, savedValues = isc.clone(this.getRecord(rowNum));
+          eventHandlerCallback;
 
       if (originalCallback) {
         if (this.getSelectedRecord() && this.getSelectedRecord()[OB.Constants.ID]) {
@@ -3547,7 +3547,7 @@ isc.OBViewGrid.addProperties({
         this.fireCallback(originalCallback, 'rowNum,colNum,editCompletionEvent,success', [rowNum, colNum, editCompletionEvent]);
 
         if (!this.hasErrors() && this.view.callSaveActions) {
-          eventHandlerParams.data = savedValues;
+          eventHandlerParams.data = isc.clone(this.getRecord(rowNum));
           eventHandlerParams.isNewRecord = isNewRecord;
           if (autoSaveAction) {
             eventHandlerCallback = function () {
