@@ -55,7 +55,7 @@ isc.OBEventHandlerRegistry.addProperties({
     if (callback) {
       actions.unshift(callback);
     }
-    this.callbackExecutor(view, form, grid, actions);
+    this.callbackExecutor(view, form, grid, extraParameters, actions);
   },
 
   callbackExecutor: function (view, form, grid, extraParameters, actions) {
