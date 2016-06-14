@@ -44,7 +44,7 @@ isc.OBEventHandlerRegistry.addProperties({
     return false;
   },
 
-  call: function (tabId, actionType, view, form, grid, callback) {
+  call: function (tabId, actionType, view, form, grid, extraParameters, callback) {
     var callResult, entries = this.getEntries(tabId, actionType),
         actions, i;
 
@@ -58,11 +58,11 @@ isc.OBEventHandlerRegistry.addProperties({
     this.callbackExecutor(view, form, grid, actions);
   },
 
-  callbackExecutor: function (view, form, grid, actions) {
+  callbackExecutor: function (view, form, grid, extraParameters, actions) {
     var func;
     func = actions.pop();
     if (func) {
-      func(view, form, grid, actions);
+      func(view, form, grid, extraParameters, actions);
     }
   }
 });
