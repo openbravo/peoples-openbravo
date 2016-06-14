@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2014 Openbravo SLU
+ * All portions are Copyright (C) 2013-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -95,7 +95,6 @@ isc.OBTreeViewGrid.addProperties({
         //Only send the index if the tree is ordered
         dsRequest = me.addOrderedTreeParameters(dsRequest);
       }
-      dsRequest.params._selectedProperties = me.getSelectedPropertiesString();
       // Includes the context, it could be used in the hqlwhereclause
       isc.addProperties(dsRequest.params, me.view.getContextInfo(true, false));
       dsRequest.willHandleError = true;
