@@ -340,6 +340,7 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
     OBQuery<BaseOBObject> obq = OBDal.getInstance()
         .createQuery("ADTreeNode", joinClause.toString());
     obq.setFilterOnActive(false);
+    obq.setFilterOnReadableOrganization(entity.getMappingClass() != Organization.class);
     final List<Object> parameters = new ArrayList<Object>();
     parameters.add(nodeId);
     obq.setParameters(parameters);
