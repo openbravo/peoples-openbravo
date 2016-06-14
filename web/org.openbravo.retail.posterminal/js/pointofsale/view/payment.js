@@ -1007,8 +1007,9 @@ enyo.kind({
     }, {
       style: 'float: left; width: 15%;',
       components: [{
+        name: 'removePayment',
         kind: 'OB.OBPOSPointOfSale.UI.RemovePayment',
-        style: 'float: left; width: 80%; max-width: 50px; height: 25px; max-height: 30px; padding: 5px 5% 5px 0px; display:block;'
+        style: 'float: left; width: 75%; max-width: 50px; height: 25px; margin-left: 10%;'
       }]
     }, {
       style: 'clear: both;'
