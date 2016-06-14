@@ -62,7 +62,7 @@ enyo.kind({
     onShowSelector: 'showSelector'
   },
   hideSelector: function (inSender, inEvent) {
-    this.selectorHide = true;
+    this.selectorHide = inEvent && (inEvent.selectorHide !== undefined || inEvent.selectorHide !== null) ? inEvent.selectorHide : true;
     this.hide();
   },
   showSelector: function () {
@@ -344,6 +344,42 @@ enyo.kind({
         this.parent.showRemove();
       }
     }
+  }
+});
+
+enyo.kind({
+  name: 'OB.UI.FilterSelectorRenderLine',
+  kind: 'OB.UI.listItemButton',
+  allowHtml: true,
+  events: {
+    onHideThisPopup: ''
+  },
+  tap: function () {
+    this.inherited(arguments);
+    this.doHideThisPopup();
+  },
+  components: [{
+    name: 'line',
+    style: 'line-height: 23px; width: 100%',
+    components: [{
+      name: 'textInfo',
+      style: 'float: left; width: 91%',
+      components: [{
+        style: 'float: left; display: inline-block;',
+        name: 'identifier'
+      }, {
+        style: 'float: left; display: inline-block; color: #888888; padding-left:5px;',
+        name: 'filter'
+      }, {
+        style: 'clear: both;'
+      }]
+    }]
+  }],
+  create: function () {
+    this.inherited(arguments);
+    this.$.identifier.setContent(this.model.get('_identifier'));
+    this.$.filter.setContent(this.model.get('filter'));
+    this.render();
   }
 });
 
