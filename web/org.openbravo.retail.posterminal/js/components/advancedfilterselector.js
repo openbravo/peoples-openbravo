@@ -95,6 +95,10 @@ enyo.kind({
     if (!this.initialized) {
       this.selectorHide = false;
       this.initialized = true;
+      var filterSelectorTableHeader = this.getFilterSelectorTableHeader();
+      if (filterSelectorTableHeader) {
+        filterSelectorTableHeader.setAdvancedFilterBtnCaption();
+      }
     }
   },
   executeOnHide: function () {
