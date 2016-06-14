@@ -304,6 +304,7 @@ public class CancelAndReplaceUtils {
       // Close original order
       oldOrder.setDocumentStatus("CL");
       oldOrder.setDocumentAction("--");
+      oldOrder.setReplacementorder(newOrder);
       oldOrder.setCancelled(true);
       oldOrder.setProcessed(true);
       oldOrder.setProcessNow(false);
