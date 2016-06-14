@@ -53,11 +53,16 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.ModalSelector',
   kind: 'OB.UI.Modal',
+  events: {
+    onSetSelectorAdvancedSearch: '',
+    onClearAllFilterSelector: ''
+  },
   handlers: {
     onHideSelector: 'hideSelector',
     onShowSelector: 'showSelector'
   },
   hideSelector: function (inSender, inEvent) {
+    this.selectorHide = true;
     this.hide();
   },
   showSelector: function () {
@@ -85,6 +90,23 @@ enyo.kind({
   init: function (model) {
     this.model = model;
     this.initSelector();
+  },
+  executeOnShow: function () {
+    if (!this.initialized) {
+      this.selectorHide = false;
+      this.initialized = true;
+    }
+  },
+  executeOnHide: function () {
+    if (this.selectorHide) {
+      this.selectorHide = false;
+    } else {
+      this.initialized = false;
+      this.doClearAllFilterSelector();
+      this.doSetSelectorAdvancedSearch({
+        isAdvanced: false
+      });
+    }
   }
 });
 

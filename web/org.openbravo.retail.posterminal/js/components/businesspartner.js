@@ -706,59 +706,45 @@ enyo.kind({
   kind: 'OB.UI.ModalSelector',
   name: 'OB.UI.ModalBusinessPartners',
   topPosition: '75px',
-  handlers: {
-	  onHideSelector: 'hideSelector',
-	  onShowSelector: 'showSelector'
-  },
   modalClass: 'modal-bpdialog',
-  hideSelector: function () {
-    this.hide();
-  },
-  showSelector: function () {
-    this.show(this.args);
-  },
-  executeOnShow: function () {
-    if (_.isUndefined(this.args.visibilityButtons)) {
-      this.args.visibilityButtons = true;
-    }
-    if (_.isUndefined(this.args.target)) {
-      this.args.target = 'order';
-    }
-    this.waterfall('onSetShow', {
-      visibility: this.args.visibilityButtons
-    });
-    this.bubble('onSetBusinessPartnerTarget', {
-      target: this.args.target
-    });
-    this.waterfall('onSetBusinessPartnerTarget', {
-      target: this.args.target
-    });
-    this.$.body.$.listBps.$.stBPAssignToReceipt.$.theader.$.modalBpScrollableHeader.$.newAction.putDisabled(!OB.MobileApp.model.hasPermission('OBPOS_retail.editCustomers', true));
-    if (!OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
-      this.$.body.$.listBps.$.stBPAssignToReceipt.$.theader.$.modalBpScrollableHeader.$.filterSelector.hideFilterCombo();
-    }
-    if (OB.MobileApp.model.hasPermission('OBPOS_retail.disableNewBPButton', true)) {
-      this.$.body.$.listBps.$.stBPAssignToReceipt.$.theader.$.modalBpScrollableHeader.$.newAction.setDisabled(true);
-    }
-    if (this.args.businessPartner) {
-      this.$.body.$.listBps.$.stBPAssignToReceipt.$.theader.$.modalBpScrollableHeader.$.filterSelector.searchAction();
-      this.$.body.$.listBps.$.stBPAssignToReceipt.bPartner = this.args.businessPartner;
-    } else {
-      this.$.body.$.listBps.$.stBPAssignToReceipt.bPartner = null;
-    }
-    this.notClear = false;
-    return true;
-  },
-
-  executeOnHide: function () {
-    if (!this.notClear) {
-      this.$.body.$.listBps.clearAction();
-    }
-  },
   i18nHeader: 'OBPOS_LblAssignCustomer',
-  clearResult: true,
   body: {
     kind: 'OB.UI.ListBps'
+  },
+  executeOnShow: function () {
+    if (!this.initialized) {
+      this.inherited(arguments);
+      if (_.isUndefined(this.args.visibilityButtons)) {
+        this.args.visibilityButtons = true;
+      }
+      if (_.isUndefined(this.args.target)) {
+        this.args.target = 'order';
+      }
+      this.waterfall('onSetShow', {
+        visibility: this.args.visibilityButtons
+      });
+      this.bubble('onSetBusinessPartnerTarget', {
+        target: this.args.target
+      });
+      this.waterfall('onSetBusinessPartnerTarget', {
+        target: this.args.target
+      });
+      this.$.body.$.listBps.$.stBPAssignToReceipt.$.theader.$.modalBpScrollableHeader.$.newAction.putDisabled(!OB.MobileApp.model.hasPermission('OBPOS_retail.editCustomers', true));
+      if (!OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
+        this.$.body.$.listBps.$.stBPAssignToReceipt.$.theader.$.modalBpScrollableHeader.$.filterSelector.hideFilterCombo();
+      }
+      if (OB.MobileApp.model.hasPermission('OBPOS_retail.disableNewBPButton', true)) {
+        this.$.body.$.listBps.$.stBPAssignToReceipt.$.theader.$.modalBpScrollableHeader.$.newAction.setDisabled(true);
+      }
+      this.$.body.$.listBps.$.stBPAssignToReceipt.$.theader.$.modalBpScrollableHeader.$.filterSelector.clearFilter();
+      if (this.args.businessPartner) {
+        this.$.body.$.listBps.$.stBPAssignToReceipt.$.theader.$.modalBpScrollableHeader.$.filterSelector.searchAction();
+        this.$.body.$.listBps.$.stBPAssignToReceipt.bPartner = this.args.businessPartner;
+      } else {
+        this.$.body.$.listBps.$.stBPAssignToReceipt.bPartner = null;
+      }
+    }
+    return true;
   },
   getFilterSelectorTableHeader: function () {
     return this.$.body.$.listBps.$.stBPAssignToReceipt.$.theader.$.modalBpScrollableHeader.$.filterSelector;
