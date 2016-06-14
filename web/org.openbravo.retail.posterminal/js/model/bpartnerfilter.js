@@ -13,7 +13,8 @@
 
   OB.Model.BPartnerFilter = OB.Data.ExtensibleModel.extend({
     remote: 'OBPOS_remote.customer',
-    source: 'org.openbravo.retail.posterminal.master.BPartnerFilter'
+    source: 'org.openbravo.retail.posterminal.master.BPartnerFilter',
+    dataLimit: OB.Dal.DATALIMIT
   });
 
   OB.Model.BPartnerFilter.addProperties([{
