@@ -858,6 +858,10 @@ isc.OBStandardWindow.addProperties({
     if (!action) {
       return;
     }
+    if (this.view && OB.EventHandlerRegistry.hasAction(this.view.tabId, 'POSTSAVE')) {
+      // If there exists post-save actions, the auto save action will be fired right after them
+      return;
+    }
     OB.Utilities.callAction(action);
   },
 
