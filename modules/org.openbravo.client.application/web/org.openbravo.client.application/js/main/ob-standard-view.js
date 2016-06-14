@@ -3055,6 +3055,12 @@ isc.OBStandardView.addProperties({
     });
 
     return result;
+  },
+
+  callSaveActions: function (actionType, extraParameters, callback) {
+    if (this.tabId && OB.EventHandlerRegistry.hasAction(this.tabId, actionType)) {
+      OB.EventHandlerRegistry.call(this.tabId, actionType, this, this.viewForm, this.viewGrid, extraParameters, callback);
+    }
   }
 
 });
