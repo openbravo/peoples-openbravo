@@ -188,6 +188,8 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/utilities/ob-property-store.js", false));
     globalResources.add(createStaticResource(
+        "web/org.openbravo.client.application/js/utilities/ob-function-registry.js", false));
+    globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/utilities/ob-test-registry.js", true));
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/utilities/ob-remote-call-manager.js", true));
@@ -210,6 +212,8 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
         "web/org.openbravo.client.application/js/main/ob-standard-view-datasource.js", false));
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/main/ob-standard-view.js", false));
+    globalResources.add(createStaticResource(
+        "web/org.openbravo.client.application/js/main/ob-event-handler-registry.js", false));
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/main/ob-base-view.js", false));
     globalResources.add(createStaticResource(
