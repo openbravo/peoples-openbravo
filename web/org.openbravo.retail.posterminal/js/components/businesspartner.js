@@ -747,7 +747,6 @@ enyo.kind({
       this.$.body.$.listBps.$.stBPAssignToReceipt.bPartner = null;
     }
     this.notClear = false;
-    this.initSelector();
     return true;
   },
 
@@ -771,6 +770,7 @@ enyo.kind({
     return 'modalAdvancedFilterBP';
   },
   init: function (model) {
+    this.inherited(arguments);
     this.model = model;
     this.waterfall('onSetModel', {
       model: this.model

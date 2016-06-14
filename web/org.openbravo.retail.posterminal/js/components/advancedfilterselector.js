@@ -53,6 +53,16 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.ModalSelector',
   kind: 'OB.UI.Modal',
+  handlers: {
+    onHideSelector: 'hideSelector',
+    onShowSelector: 'showSelector'
+  },
+  hideSelector: function (inSender, inEvent) {
+    this.hide();
+  },
+  showSelector: function () {
+    this.show();
+  },
   getFilterSelectorTableHeader: function () {
     return null;
   },
@@ -71,6 +81,10 @@ enyo.kind({
       filterSelectorTableHeader.advancedFilterDialog = advancedFilterDialog;
       filterSelectorTableHeader.setAdvancedFilterBtnCaption();
     }
+  },
+  init: function (model) {
+    this.model = model;
+    this.initSelector();
   }
 });
 
