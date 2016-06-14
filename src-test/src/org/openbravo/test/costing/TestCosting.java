@@ -10160,6 +10160,7 @@ public class TestCosting extends WeldBaseTest {
             productPriceClone.setListPrice(salesPrice);
           }
           productPriceClone.setProduct(productClone);
+          OBDal.getInstance().save(productPriceClone);
           productClone.getPricingProductPriceList().add(productPriceClone);
           i++;
         }
