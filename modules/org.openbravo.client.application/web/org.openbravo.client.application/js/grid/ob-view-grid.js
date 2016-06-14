@@ -1772,7 +1772,7 @@ isc.OBViewGrid.addProperties({
     return criteria.criteria.get(0);
   },
 
-  refreshGrid: function (callback, newRecordsToBeIncluded) {
+  refreshGrid: function (callback, newRecordsToBeIncluded, afterFilterCallback) {
     var originalCriteria, criteria = {},
         newRecordsCriteria, newRecordsLength, i, index, selectedRecordIndex, visibleRows, filterDataCallback, me = this;
 
@@ -1889,6 +1889,10 @@ isc.OBViewGrid.addProperties({
         }
         delete me.selectedRecordsBeforeRefresh;
       }
+
+      if (afterFilterCallback) {
+        afterFilterCallback();
+      }
     };
     this.filterData(criteria, filterDataCallback, context);
     // Set the refreshingWithRecordSelected and refreshingWithScrolledGrid flags to true when needed after
@@ -1903,6 +1907,10 @@ isc.OBViewGrid.addProperties({
     // It is not possible to do it here, though, because a this.setCriteria(originalCriteria)
     // would trigger an automatic refresh that would leave without effect that last filterData
     // The additional criteria will be removed in the next call to refreshGrid
+  },
+
+  refreshGridAfterSave: function (callback) {
+    this.refreshGrid(null, null, callback);
   },
 
   // with a delay to handle the target record when the body has been drawn
