@@ -208,6 +208,7 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
     Entity entity = ModelProvider.getInstance().getEntityByTableId(tree.getTable().getId());
     final DataToJsonConverter toJsonConverter = OBProvider.getInstance().get(
         DataToJsonConverter.class);
+    toJsonConverter.setAdditionalProperties(JsonUtils.getAdditionalProperties(parameters));
 
     // Joins the ADTreeNode with the referenced table
     StringBuilder joinClause = new StringBuilder();
@@ -631,6 +632,7 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
 
     final DataToJsonConverter toJsonConverter = OBProvider.getInstance().get(
         DataToJsonConverter.class);
+    toJsonConverter.setAdditionalProperties(JsonUtils.getAdditionalProperties(parameters));
 
     JSONObject json = null;
     try {
