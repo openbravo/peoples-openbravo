@@ -1909,7 +1909,7 @@ isc.OBViewGrid.addProperties({
     // The additional criteria will be removed in the next call to refreshGrid
   },
 
-  refreshGridAfterSave: function (callback) {
+  refreshGridFromClientEventHandler: function (callback) {
     this.refreshGrid(null, null, callback);
   },
 
