@@ -281,7 +281,7 @@ public class ModifyPaymentPlanActionHandler extends BaseProcessActionHandler {
   }
 
   /**
-   * Returns the payment schedule detail for payment detail
+   * Returns if exists any payment schedule detail for the payment detail
    * 
    */
   private boolean existsPaymentScheduleDetail(FIN_PaymentDetail pd) {
