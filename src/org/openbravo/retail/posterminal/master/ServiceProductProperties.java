@@ -27,6 +27,7 @@ public class ServiceProductProperties extends ModelExtension {
         add(new HQLProperty("sp.id", "id"));
         add(new HQLProperty("sp.product.id", "service"));
         add(new HQLProperty("sp.relatedProduct.id", "relatedProduct"));
+        add(new HQLProperty("sp.active", "active"));
       }
     };
     return list;
