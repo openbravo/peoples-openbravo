@@ -33,6 +33,8 @@ import org.openbravo.base.structure.OrganizationEnabled;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
+import org.openbravo.model.ad.system.Client;
+import org.openbravo.model.common.enterprise.Organization;
 
 /**
  * This class combines all security checks which are performed on entity level:
@@ -105,6 +107,7 @@ public class SecurityChecker implements OBSingleton {
   }
 
   private void checkWriteAccess(Object obj, boolean logError) {
+
     // check that the client id and organization id are resp. in the list of
     // user_client and user_org
     // TODO: throw specific and translated exception, for more info:
@@ -115,10 +118,15 @@ public class SecurityChecker implements OBSingleton {
     String clientId = "";
     if (obj instanceof ClientEnabled && ((ClientEnabled) obj).getClient() != null) {
       clientId = (String) DalUtil.getId(((ClientEnabled) obj).getClient());
+    } else if (obj instanceof Client) {
+      clientId = (String) DalUtil.getId(obj);
     }
+
     String orgId = "";
     if (obj instanceof OrganizationEnabled && ((OrganizationEnabled) obj).getOrganization() != null) {
       orgId = (String) DalUtil.getId(((OrganizationEnabled) obj).getOrganization());
+    } else if (obj instanceof Organization) {
+      orgId = (String) DalUtil.getId(obj);
     }
 
     final Entity entity = ((BaseOBObject) obj).getEntity();
@@ -138,7 +146,7 @@ public class SecurityChecker implements OBSingleton {
             logError);
       }
 
-      if (obj instanceof OrganizationEnabled && orgId != null && orgId.length() > 0) {
+      if (orgId != null && orgId.length() > 0) {
         // Due to issue 23419: Impossible to add an organization to one role, it has been necessary
         // to add the below check. The system is going to check if it can avoid the permission
         // during the record insertion. The application is allowed to avoid the permission when the
