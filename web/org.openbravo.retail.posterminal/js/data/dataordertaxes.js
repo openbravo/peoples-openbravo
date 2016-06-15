@@ -420,7 +420,7 @@
         'net': OB.DEC.Zero,
         'pricenet': OB.DEC.Zero,
         'discountedNet': OB.DEC.Zero,
-        'linerate': BigDecimal.prototype.ONE
+        'linerate': OB.DEC.One
       }, {
         silent: true
       });
@@ -458,7 +458,7 @@
         }
       }).then(function () {
         // Calculate linerate
-        line.set('linerate', (orggross === 0 || line.get('net') === 0) ? BigDecimal.prototype.ONE : OB.DEC.div(orggross, line.get('net')), {
+        line.set('linerate', (orggross === 0 || line.get('net') === 0) ? OB.DEC.One : OB.DEC.div(orggross, line.get('net')), {
           silent: true
         });
       })['catch'](function (reason) {
@@ -795,7 +795,7 @@
       return resultpromise.then(function () {
         // Calculate linerate and taxamount
         line.set({
-          'linerate': (line.get('gross') === 0 || line.get('net') === 0) ? BigDecimal.prototype.ONE : OB.DEC.div(line.get('gross'), line.get('net')),
+          'linerate': (line.get('gross') === 0 || line.get('net') === 0) ? OB.DEC.One : OB.DEC.div(line.get('gross'), line.get('net')),
           'taxAmount': OB.DEC.sub(line.get('discountedGross'), line.get('discountedNet'))
         }, {
           silent: true
