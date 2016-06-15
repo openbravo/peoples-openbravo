@@ -126,6 +126,9 @@
     v_RS_Quantity NUMBER;
     v_RS_Releasedqty NUMBER;
 
+    v_orderlineno VARCHAR2(40) ;
+    v_orderDocumentNo VARCHAR2(40) ;
+
   BEGIN
   
     IF(p_PInstance_ID IS NOT NULL) THEN
@@ -353,18 +356,19 @@
         IF (v_Count=0) THEN
           RAISE_APPLICATION_ERROR(-20000, '@NotCorrectOrgDoctypeShipment@') ;
         END IF;
-        SELECT COUNT(*), MAX(M.line)
-        INTO v_Count, v_line
-        FROM M_InOutLine M,
-          M_Product P
-        WHERE M.M_PRODUCT_ID=P.M_PRODUCT_ID
-          AND P.M_ATTRIBUTESET_ID IS NOT NULL
+        SELECT COUNT(*), MAX(M.line),MAX(O.documentno),Max(OL.line)
+        INTO v_Count, v_line,v_orderDocumentNo, v_orderlineno
+        FROM M_InOutLine M
+        left join C_orderLine OL on OL.c_orderline_id=M.c_orderline_id
+        left join C_Order O on OL.C_Order_id=O.C_Order_id
+        join m_product P on P.m_product_id = M.m_product_id
+        WHERE P.M_ATTRIBUTESET_ID IS NOT NULL
           AND (P.ATTRSETVALUETYPE IS NULL OR P.ATTRSETVALUETYPE <> 'F')
           AND (SELECT ISONEATTRSETVALREQUIRED FROM M_ATTRIBUTESET WHERE M_ATTRIBUTESET_ID = P.M_ATTRIBUTESET_ID) = 'Y'
           AND COALESCE(M.M_ATTRIBUTESETINSTANCE_ID, '0') = '0'
           AND M.M_INOUT_ID=v_Record_ID;
         IF v_Count<>0 THEN
-          RAISE_APPLICATION_ERROR(-20000, '@Inline@'||' '||v_line||' '||'@productWithoutAttributeSet@') ;
+          RAISE_APPLICATION_ERROR(-20000, '@Inline@'||' '||v_line||' '||'@productWithoutAttributeSet@'||': '||'@INS_POREFERENCE@'||' '||v_orderDocumentNo ||' '||'@OrderLine@' ||' ' || v_orderlineno);
         END IF;
         SELECT COUNT(*), MAX(M.line)
         INTO v_Count, v_Line
