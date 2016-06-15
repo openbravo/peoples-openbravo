@@ -2126,6 +2126,16 @@ isc.OBStandardView.addProperties({
     }
   },
 
+  existsAction: function (actionType) {
+    return this.tabId && OB.EventHandlerRegistry.hasAction(this.tabId, actionType);
+  },
+
+  callSaveActions: function (actionType, extraParameters, callback) {
+    if (this.existsAction(actionType)) {
+      OB.EventHandlerRegistry.call(this.tabId, actionType, this, this.viewForm, this.viewGrid, extraParameters, callback);
+    }
+  },
+
   deleteSelectedRows: function (autoSaveDone) {
     var msg, dialogTitle, view = this,
         deleteCount, callback, currentGrid;
@@ -3055,12 +3065,5 @@ isc.OBStandardView.addProperties({
     });
 
     return result;
-  },
-
-  callSaveActions: function (actionType, extraParameters, callback) {
-    if (this.tabId && OB.EventHandlerRegistry.hasAction(this.tabId, actionType)) {
-      OB.EventHandlerRegistry.call(this.tabId, actionType, this, this.viewForm, this.viewGrid, extraParameters, callback);
-    }
   }
-
 });
