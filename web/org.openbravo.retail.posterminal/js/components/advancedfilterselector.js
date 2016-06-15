@@ -62,7 +62,7 @@ enyo.kind({
     onShowSelector: 'showSelector'
   },
   hideSelector: function (inSender, inEvent) {
-    this.selectorHide = inEvent && (inEvent.selectorHide !== undefined || inEvent.selectorHide !== null) ? inEvent.selectorHide : true;
+    this.selectorHide = inEvent && !OB.UTIL.isNullOrUndefined(inEvent.selectorHide) ? inEvent.selectorHide : true;
     this.hide();
   },
   showSelector: function () {
