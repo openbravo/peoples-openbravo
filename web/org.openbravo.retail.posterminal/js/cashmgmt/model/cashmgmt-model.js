@@ -26,7 +26,7 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.WindowModel.extend({
     var me = this;
 
     this.depsdropstosave = new Backbone.Collection();
-    this.depsdropstosave.on('paymentDone', function (model, p) {
+    this.depsdropstosave.on('paymentDone', function (model, p, callback) {
       // argument checks
       OB.UTIL.Debug.execute(function () {
         if (!me.payments) {
@@ -45,41 +45,59 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.WindowModel.extend({
         return;
       }
 
-      OB.Dal.find(OB.Model.CashUp, {
-        'isprocessed': 'N'
-      }, function (cashUp) {
-        var now = new Date();
-        var addedCashMgmt = new OB.Model.CashManagement({
-          id: OB.UTIL.get_UUID(),
-          description: p.identifier + ' - ' + model.get('name'),
-          amount: p.amount,
-          origAmount: OB.DEC.mul(p.amount, p.rate),
-          type: p.type,
-          reasonId: model.get('id'),
-          paymentMethodId: p.id,
-          user: OB.MobileApp.model.get('context').user._identifier,
-          userId: OB.MobileApp.model.get('context').user.id,
-          creationDate: OB.I18N.normalizeDate(now),
-          timezoneOffset: now.getTimezoneOffset(),
-          isocode: p.isocode,
-          glItem: p.glItem,
-          cashup_id: cashUp.at(0).get('id'),
-          posTerminal: OB.MobileApp.model.get('terminal').id,
-          isbeingprocessed: 'N'
-        });
-        me.depsdropstosave.add(addedCashMgmt);
+      // synch logic
+      var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes("paymentDone");
 
-        var selectedPayment = me.payments.filter(function (payment) {
-          return payment.get('paymentmethod_id') === p.id;
-        })[0];
-        if (selectedPayment.get('listdepositsdrops')) {
-          selectedPayment.get('listdepositsdrops').push(addedCashMgmt);
-          selectedPayment.trigger('change');
-        } else {
-          selectedPayment.set('listdepositsdrops', [addedCashMgmt]);
+      function finishSynch() {
+        OB.UTIL.SynchronizationHelper.finished(synchId, "paymentDone");
+      }
+
+      var asyncToSyncWrapper = new Promise(function (resolve, reject) {
+        OB.Dal.find(OB.Model.CashUp, {
+          'isprocessed': 'N'
+        }, function (cashUp) {
+          var now = new Date();
+          var addedCashMgmt = new OB.Model.CashManagement({
+            id: OB.UTIL.get_UUID(),
+            description: p.identifier + ' - ' + model.get('name'),
+            amount: p.amount,
+            origAmount: OB.DEC.mul(p.amount, p.rate),
+            type: p.type,
+            reasonId: model.get('id'),
+            paymentMethodId: p.id,
+            user: OB.MobileApp.model.get('context').user._identifier,
+            userId: OB.MobileApp.model.get('context').user.id,
+            creationDate: OB.I18N.normalizeDate(now),
+            timezoneOffset: now.getTimezoneOffset(),
+            isocode: p.isocode,
+            glItem: p.glItem,
+            cashup_id: cashUp.at(0).get('id'),
+            posTerminal: OB.MobileApp.model.get('terminal').id,
+            isbeingprocessed: 'N'
+          });
+          me.depsdropstosave.add(addedCashMgmt);
+
+          var selectedPayment = me.payments.filter(function (payment) {
+            return payment.get('paymentmethod_id') === p.id;
+          })[0];
+          if (selectedPayment.get('listdepositsdrops')) {
+            selectedPayment.get('listdepositsdrops').push(addedCashMgmt);
+            selectedPayment.trigger('change');
+          } else {
+            selectedPayment.set('listdepositsdrops', [addedCashMgmt]);
+          }
+          resolve();
+        }, reject, this);
+      });
+
+      asyncToSyncWrapper.then(function () {
+        finishSynch();
+        if (callback) {
+          callback();
         }
-
-      }, null, this);
+      }, function () {
+        OB.error("Could not save payment information");
+      });
     }, this);
 
     var makeDepositsFunction = function (me) {
