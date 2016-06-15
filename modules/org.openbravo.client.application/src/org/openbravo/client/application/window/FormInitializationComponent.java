@@ -47,8 +47,6 @@ import org.openbravo.base.model.Property;
 import org.openbravo.base.model.domaintype.PrimitiveDomainType;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
-import org.openbravo.base.structure.ClientEnabled;
-import org.openbravo.base.structure.OrganizationEnabled;
 import org.openbravo.client.application.ApplicationConstants;
 import org.openbravo.client.application.DynamicExpressionParser;
 import org.openbravo.client.application.Note;
@@ -63,6 +61,7 @@ import org.openbravo.client.kernel.reference.UIDefinition;
 import org.openbravo.client.kernel.reference.UIDefinitionController;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.security.SecurityChecker;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBDao;
@@ -533,27 +532,10 @@ public class FormInitializationComponent extends BaseActionHandler {
       }
 
       if ((mode.equals("EDIT") || mode.equals("CHANGE")) && row != null) {
-        if ((row instanceof ClientEnabled && ((ClientEnabled) row).getClient() != null)) {
-          final String rowClientId = ((ClientEnabled) row).getClient().getId();
-          final String currentClientId = OBContext.getOBContext().getCurrentClient().getId();
-          if (!rowClientId.equals(currentClientId)) {
-            finalObject.put("_readOnly", true);
-          }
+        if (!SecurityChecker.getInstance().isWritable(row)) {
+          finalObject.put("_readOnly", true);
         }
-        if (row instanceof OrganizationEnabled
-            && ((OrganizationEnabled) row).getOrganization() != null) {
-          boolean writable = false;
-          final String objectOrgId = ((OrganizationEnabled) row).getOrganization().getId();
-          for (String orgId : OBContext.getOBContext().getWritableOrganizations()) {
-            if (orgId.equals(objectOrgId)) {
-              writable = true;
-              break;
-            }
-          }
-          if (!writable) {
-            finalObject.put("_readOnly", true);
-          }
-        }
+
         finalObject.put("noteCount", noteCount);
       }
       if (attachments.size() > 0) {
