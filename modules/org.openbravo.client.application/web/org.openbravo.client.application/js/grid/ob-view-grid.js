@@ -4254,6 +4254,12 @@ isc.OBGridButtonsComponent.addProperties({
       buttonType: 'save',
       prompt: OB.I18N.getLabel('OBUIAPP_GridSaveButtonPrompt'),
       action: function () {
+        if (me.grid.view && me.grid.view.existsAction && me.grid.view.existsAction('PRESAVE')) {
+          me.grid.view.executePreSaveActions(function () {
+            me.doSave();
+          });
+          return;
+        }
         me.doSave();
       }
     });

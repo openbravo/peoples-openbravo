@@ -2119,11 +2119,38 @@ isc.OBStandardView.addProperties({
   },
 
   saveRow: function () {
+    var me = this;
+    if (this.existsAction('PRESAVE')) {
+      me.executePreSaveActions(function () {
+        me.doSaveRow();
+      });
+      return;
+    }
+    me.doSaveRow();
+  },
+
+  doSaveRow: function () {
     if (this.isEditingGrid) {
       this.viewGrid.endEditing();
     } else {
       this.viewForm.saveRow();
     }
+  },
+
+  executePreSaveActions: function (saveRowCallback) {
+    var editForm, eventHandlerParams = {};
+
+    if (this.isEditingGrid) {
+      editForm = this.viewGrid.getEditForm();
+      if (editForm) {
+        eventHandlerParams.data = isc.clone(editForm.getValues());
+        eventHandlerParams.isNewRecord = editForm.isNew;
+      }
+    } else {
+      eventHandlerParams.data = isc.clone(this.viewForm.getValues());
+      eventHandlerParams.isNewRecord = this.viewForm.isNew;
+    }
+    this.callSaveActions('PRESAVE', eventHandlerParams, saveRowCallback);
   },
 
   existsAction: function (actionType) {
