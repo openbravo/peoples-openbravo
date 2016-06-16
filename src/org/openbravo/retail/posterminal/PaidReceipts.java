@@ -194,6 +194,17 @@ public class PaidReceipts extends JSONProcessSimple {
               if (!jsonObject.getString("orderId").equals(orderid)) {
                 jsonObject.put("otherTicket", "true");
               }
+              String hqlRelatedLinePromotions = "select olo.totalAmount from OrderLineOffer olo where olo.salesOrderLine.id = ?";
+              Query relatedLinePromotionsQuery = OBDal.getInstance().getSession()
+                  .createQuery(hqlRelatedLinePromotions);
+              relatedLinePromotionsQuery.setString(0, jsonObject.getString("orderlineId"));
+              JSONArray promos = new JSONArray();
+              for (Object promotionAmt : relatedLinePromotionsQuery.list()) {
+                JSONObject jsonPromo = new JSONObject();
+                jsonPromo.put("amt", (BigDecimal) promotionAmt);
+                promos.put(jsonPromo);
+              }
+              jsonObject.put("promotions", promos);
             }
             paidReceiptLine.put("relatedLines", relatedLines);
           }

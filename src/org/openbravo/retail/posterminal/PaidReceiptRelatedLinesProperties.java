@@ -19,7 +19,7 @@ import org.openbravo.mobile.core.model.ModelExtension;
 /**
  * Defines hql properties for the PaidReceipsShipLines Order
  * 
- * @author mdj
+ * @author ACA
  * 
  */
 
@@ -35,6 +35,13 @@ public class PaidReceiptRelatedLinesProperties extends ModelExtension {
         add(new HQLProperty("olsr.orderlineRelated.product.name", "productName"));
         add(new HQLProperty("olsr.orderlineRelated.salesOrder.documentNo", "orderDocumentNo"));
         add(new HQLProperty("olsr.orderlineRelated.salesOrder.id", "orderId"));
+        add(new HQLProperty("olsr.orderlineRelated.orderedQuantity", "qty"));
+        add(new HQLProperty(
+            "olsr.orderlineRelated.baseGrossUnitPrice*olsr.orderlineRelated.orderedQuantity",
+            "gross"));
+        add(new HQLProperty(
+            "olsr.orderlineRelated.standardPrice*olsr.orderlineRelated.orderedQuantity", "net"));
+
         add(new HQLProperty("'false'", "otherTicket"));
       }
     };
