@@ -776,7 +776,13 @@ isc.OBStandardWindow.addProperties({
 
   doActionAfterAutoSave: function (action, forceDialogOnFailure, ignoreAutoSaveEnabled) {
     var me = this,
-        saveCallback;
+        preSaveCallback, saveCallback;
+
+    preSaveCallback = function (ok) {
+      me.activeView.executePreSaveActions(function () {
+        saveCallback(ok);
+      });
+    };
 
     saveCallback = function (ok) {
       var dirtyEditForm = me.getDirtyEditForm();
@@ -845,13 +851,15 @@ isc.OBStandardWindow.addProperties({
         OB.Utilities.callAction(action);
         return;
       }
+      if (this.getDirtyEditForm() && this.activeView.existsAction && this.activeView.existsAction('PRESAVE')) {
+        isc.ask(OB.I18N.getLabel('OBUIAPP_AutosaveConfirm'), preSaveCallback);
+        return;
+      }
       isc.ask(OB.I18N.getLabel('OBUIAPP_AutosaveConfirm'), saveCallback);
     } else {
       // Auto save confirmation not required: continue as confirmation was accepted
       if (this.getDirtyEditForm() && this.activeView.existsAction && this.activeView.existsAction('PRESAVE')) {
-        this.activeView.executePreSaveActions(function () {
-          saveCallback(true);
-        });
+        preSaveCallback(true);
         return;
       }
       saveCallback(true);
