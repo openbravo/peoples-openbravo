@@ -3345,10 +3345,34 @@ isc.OBViewGrid.addProperties({
     return ret;
   },
 
+  cellEditEnd: function (editCompletionEvent, newValue, ficCallDone, autoSaveDone) {
+    var rowNum, colNum, nextEditCell, newRow, me = this;
+
+    rowNum = me.getEditRow();
+    colNum = me.getEditCol();
+    nextEditCell = ((rowNum || rowNum === 0) && (colNum || colNum === 0) ? this.getNextEditCell(rowNum, colNum, editCompletionEvent) : null);
+    newRow = nextEditCell && nextEditCell[0] !== rowNum;
+    if (newRow !== false && me.keyPressedForEditCompletion(editCompletionEvent) && me.view.existsAction && me.view.existsAction('PRESAVE')) {
+      me.view.executePreSaveActions(function () {
+        me.doCellEditEnd(editCompletionEvent, newValue, ficCallDone, autoSaveDone);
+      });
+      return;
+    }
+    me.doCellEditEnd(editCompletionEvent, newValue, ficCallDone, autoSaveDone);
+  },
+
+  keyPressedForEditCompletion: function (editCompletionEvent) {
+    return editCompletionEvent === isc.ListGrid.DOWN_ARROW_KEYPRESS //
+    || editCompletionEvent === isc.ListGrid.UP_ARROW_KEYPRESS //
+    || editCompletionEvent === isc.ListGrid.ENTER_KEYPRESS //
+    || editCompletionEvent === isc.ListGrid.TAB_KEYPRESS //
+    || editCompletionEvent === isc.ListGrid.SHIFT_TAB_KEYPRESS;
+  },
+
   // check if a fic call needs to be done when leaving a cell and moving to the next
   // row
   // see description in saveEditvalues
-  cellEditEnd: function (editCompletionEvent, newValue, ficCallDone, autoSaveDone) {
+  doCellEditEnd: function (editCompletionEvent, newValue, ficCallDone, autoSaveDone) {
     var rowNum = this.getEditRow(),
         colNum = this.getEditCol();
     var editForm = this.getEditForm(),
