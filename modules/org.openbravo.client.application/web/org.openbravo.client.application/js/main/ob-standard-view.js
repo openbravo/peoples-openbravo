@@ -2120,7 +2120,7 @@ isc.OBStandardView.addProperties({
 
   saveRow: function () {
     var me = this;
-    if (this.existsAction('PRESAVE')) {
+    if (me.existsAction('PRESAVE')) {
       me.executePreSaveActions(function () {
         me.doSaveRow();
       });
