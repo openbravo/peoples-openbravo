@@ -619,9 +619,11 @@ public class CancelAndReplaceUtils {
       newOrderLines = getOrderLineList(newOrder);
       while (newOrderLines.next()) {
         OrderLine newOrderLine = (OrderLine) newOrderLines.get(0);
-        if (newOrderLine.getOrderedQuantity().subtract(newOrderLine.getDeliveredQuantity())
-            .compareTo(BigDecimal.ZERO) == 0) {
-          continue;
+        if (newOrderLine.getDeliveredQuantity() != null) {
+          if (newOrderLine.getOrderedQuantity().subtract(newOrderLine.getDeliveredQuantity())
+              .compareTo(BigDecimal.ZERO) == 0) {
+            continue;
+          }
         }
         OBCriteria<Reservation> reservationCriteria = OBDal.getInstance().createCriteria(
             Reservation.class);
