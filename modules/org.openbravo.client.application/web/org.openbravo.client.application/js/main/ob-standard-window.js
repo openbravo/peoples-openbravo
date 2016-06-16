@@ -779,9 +779,13 @@ isc.OBStandardWindow.addProperties({
         preSaveCallback, saveCallback;
 
     preSaveCallback = function (ok) {
-      me.activeView.executePreSaveActions(function () {
-        saveCallback(ok);
-      });
+      if (ok) {
+        me.activeView.executePreSaveActions(function () {
+          saveCallback(true);
+        });
+        return;
+      }
+      saveCallback(false);
     };
 
     saveCallback = function (ok) {
