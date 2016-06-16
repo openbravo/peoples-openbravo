@@ -23,7 +23,10 @@ enyo.kind({
     onMaxLimitAmountError: 'maxLimitAmountError',
     onButtonPaymentChanged: 'paymentChanged',
     onClearPaymentMethodSelect: 'clearPaymentMethodSelect',
-    onCheckValidPaymentList: 'checkValidPaymentList'
+    onCheckValidPaymentList: 'checkValidPaymentList',
+    ontap: 'dispalyErrorLabels',
+    onmouseover: 'pauseAnimation',
+    onmouseout: 'resumeAnimation'
   },
   getSelectedPayment: function () {
     if (this.receipt && this.receipt.get('selectedPayment')) {
@@ -39,7 +42,6 @@ enyo.kind({
   },
   buttonStatusChanged: function (inSender, inEvent) {
     this.$.paymentMethodSelect.setContent('');
-    this.updateScrollArea();
     if (inEvent.value.status && inEvent.value.status.indexOf('paymentMethodCategory.showitems.') === 0) {
       this.doShowPopup({
         popup: 'modalPaymentsSelect',
@@ -99,35 +101,20 @@ enyo.kind({
     }
   },
   paymentChanged: function (inSender, inEvent) {
-    this.updateScrollArea();
     if (!inEvent.amount) {
       this.$.paymentMethodSelect.setContent(OB.I18N.getLabel('OBPOS_PaymentsSelectedMethod', [inEvent.payment.payment._identifier]));
     }
-  },
-  updateScrollArea: function () {
-    var maxHeight = 115;
-    // Resize scroll area to fix parent panel
-    var component = this.model.isValidMultiOrderState() ? this.$.multiPayments : this.$.payments;
-    if (component.$.tempty.getShowing()) {
-      maxHeight -= component.$.tempty.getBounds().height;
-    }
-    component.$.scrollArea.setStyle("height: " + maxHeight + "px");
-    // Scroll to bottom
-    var height = 0;
-    component.$.tbody.children.forEach(function (line) {
-      height += line.getBounds().height;
-    });
-    component.$.scrollArea.setScrollTop(height - maxHeight);
   },
   maxLimitAmountError: function (inSender, inEvent) {
     var maxHeight;
     if (inEvent.show) {
       this.$.errorMaxlimitamount.setContent(OB.I18N.getLabel('OBPOS_PaymentMaxLimitAmount', [OB.I18N.formatCurrencyWithSymbol(inEvent.maxLimitAmount, inEvent.currency, inEvent.symbolAtRight)]));
+      this.$.errorMaxlimitamount.show();
     } else {
       this.$.errorMaxlimitamount.setContent('');
+      this.$.errorMaxlimitamount.hide();
     }
-    // Resize scroll area to fix parent panel
-    this.updateScrollArea();
+    this.animateErrorMessages();
   },
   components: [{
     style: 'background-color: #363636; color: white; height: 200px; margin: 5px; padding: 5px; position: relative;',
@@ -171,14 +158,14 @@ enyo.kind({
             name: 'donezerolbl'
           }]
         }, {
-          style: 'overflow:auto; width: 100%;',
           components: [{
             style: 'padding: 5px',
             components: [{
               style: 'margin: 2px 0px 0px 0px; border-bottom: 1px solid #cccccc;'
             }, {
               kind: 'OB.UI.ScrollableTable',
-              scrollAreaMaxHeight: '150px',
+              scrollAreaMaxHeight: '115px',
+              style: 'height: 115px',
               name: 'payments',
               renderEmpty: enyo.kind({
                 style: 'height: 36px'
@@ -186,7 +173,8 @@ enyo.kind({
               renderLine: 'OB.OBPOSPointOfSale.UI.RenderPaymentLine'
             }, {
               kind: 'OB.UI.ScrollableTable',
-              scrollAreaMaxHeight: '150px',
+              scrollAreaMaxHeight: '115px',
+              style: 'height: 115px',
               name: 'multiPayments',
               showing: false,
               renderEmpty: enyo.kind({
@@ -197,21 +185,30 @@ enyo.kind({
               style: 'position: absolute; bottom: 20px; height: 20px; font-weight: bold; color:DodgerBlue;',
               name: 'extrainfo'
             }, {
-              style: 'position: absolute; bottom: 0px; height: 20px; color: #ff0000;',
-              name: 'noenoughchangelbl',
-              showing: false
-            }, {
-              style: 'position: absolute; bottom: 0px; height: 20px; color: #ff0000;',
-              name: 'overpaymentnotavailable',
-              showing: false
-            }, {
-              style: 'position: absolute; bottom: 0px; height: 20px; color: #ff0000;',
-              name: 'overpaymentexceedlimit',
-              showing: false
-            }, {
-              style: 'position: absolute; bottom: 0px; height: 20px; color: #ff0000;',
-              name: 'onlycashpaymentmethod',
-              showing: false
+              style: 'overflow: hidden; height: 30px; margin-top: 3px; color: #ff0000; padding: 5px; position: relative;',
+              name: 'errorLabelArea',
+              components: [{
+                name: 'noenoughchangelbl',
+                showing: false,
+                type: 'error'
+              }, {
+                name: 'overpaymentnotavailable',
+                showing: false,
+                type: 'error'
+              }, {
+                name: 'overpaymentexceedlimit',
+                showing: false,
+                type: 'error'
+              }, {
+                name: 'onlycashpaymentmethod',
+                showing: false,
+                type: 'error'
+              }, {
+                name: 'errorMaxlimitamount',
+                showing: false,
+                type: 'error'
+              }]
+
             }]
           }]
         }]
@@ -236,12 +233,6 @@ enyo.kind({
       components: [{
         name: 'paymentMethodSelect',
         style: 'color: orange; padding-left: 1em'
-      }]
-    }, {
-      classes: 'span12',
-      components: [{
-        name: 'errorMaxlimitamount',
-        style: 'color: red'
       }]
     }]
   }],
@@ -653,21 +644,128 @@ enyo.kind({
         callback(returnCheck);
       }
     }
+    this.alignErrorMessages();
   },
+  alignErrorMessages: function () {
+    if (OB.MobileApp.view.currentWindow === 'retail.pointofsale' && typeof (this.$.errorLabelArea) !== 'undefined') {
+      var me = this,
+          delay = 1500;
+      this.errorLabels = this.pushErrorMessagesToArray();
+      this.showingCount = this.getShowingMessagesCount(this.errorLabels);
+      clearInterval(this.maxAnimateErrorInterval);
+      // 2 interval Max ,Min defined here
+      // Min Interval Fuction Get Exexuted Based On the Max Interval 
+      // Paramaters ,It will Reset After Every Max Interval 
+      // In Order To Behave Like Animation Of The Text Error Messages 
+      // To Fit into the Payment Area Where Error Messages To Be Shown 
+      this.maxAnimateErrorInterval = setInterval(function () {
+        clearInterval(this.animateErrorInterval);
+        me.animateErrorMessages();
+      }, delay + 1700 * this.showingCount);
+    }
 
+  },
+  animateErrorMessages: function () {
+    if (OB.MobileApp.view.currentWindow === 'retail.pointofsale' && typeof (this.$.errorLabelArea) !== 'undefined') {
+      clearInterval(this.animateErrorInterval);
+      var me = this,
+          marginTop = 30,
+          resizediStyle = '',
+          initialTop = 0,
+          defaultStyle = 'position: absolute; bottom: 0px; height: 20px; color: #ff0000;';
+      this.errorLabels = this.pushErrorMessagesToArray();
+      this.showingCount = this.getShowingMessagesCount(this.errorLabels);
+      this.firstShowingObject = this.getFirstShowingObject(this.errorLabels);
+      if (this.firstShowingObject && this.showingCount > 1) {
+        this.animateErrorInterval = setInterval(function () {
+          marginTop = marginTop - 2;
+          this.marginTop = marginTop;
+          resizediStyle = 'margin-top: ' + marginTop + 'px';
+          me.firstShowingObject.addStyles(resizediStyle);
+        }, 100);
+      }
+      if (this.showingCount === 1) {
+        defaultStyle = 'margin-top: ' + initialTop + 'px';
+        this.firstShowingObject.addStyles(defaultStyle);
+      }
+    }
+  },
+  pushErrorMessagesToArray: function () {
+    var errorLabelArray = [];
+    errorLabelArray.push(this.$.noenoughchangelbl);
+    errorLabelArray.push(this.$.overpaymentnotavailable);
+    errorLabelArray.push(this.$.overpaymentexceedlimit);
+    errorLabelArray.push(this.$.onlycashpaymentmethod);
+    errorLabelArray.push(this.$.errorMaxlimitamount);
+    return errorLabelArray;
+  },
+  getFirstShowingObject: function (errorLabelArray) {
+    var showingObj = '',
+        i;
+    for (i = 0; i < errorLabelArray.length; i++) {
+      var arrayContent = errorLabelArray[i];
+      if (arrayContent.showing) {
+        showingObj = arrayContent;
+        break;
+      }
+    }
+    return showingObj;
+  },
+  getShowingMessagesCount: function (errorLabelArray) {
+    var count = 0,
+        i;
+    for (i = 0; i < errorLabelArray.length; i++) {
+      var arrayContent = errorLabelArray[i];
+      if (arrayContent.showing) {
+        count = count + 1;
+      }
+    }
+    return count;
+  },
+  resumeAnimation: function (inSender, inEvent) {
+    if (inEvent.originator.type === 'error') {
+      this.alignErrorMessages();
+    }
+
+  },
+  pauseAnimation: function (inSender, inEvent) {
+    if (inEvent.originator.type === 'error') {
+      clearInterval(this.maxAnimateErrorInterval);
+      clearInterval(this.animateErrorInterval);
+      inEvent.originator.addStyles(this.marginTop);
+    }
+
+  },
+  dispalyErrorLabels: function (inSender, inEvent) {
+    if (inEvent.originator.type === 'error') {
+      var message = this.getShowingErrorMessages();
+      OB.UTIL.showConfirmation.display("Error", message);
+      this.alignErrorMessages(false);
+    }
+  },
+  getShowingErrorMessages: function () {
+    var msgToReturn = '';
+    var count = 0,
+        i;
+    for (i = 0; i < this.errorLabels.length; i++) {
+      var arrayContent = this.errorLabels[i];
+      if (arrayContent.showing) {
+        count = count + 1;
+        msgToReturn = msgToReturn + '\n' + count + ')' + arrayContent.content;
+      }
+    }
+    return msgToReturn;
+  },
   setStatusButtons: function (resultOK) {
     if (resultOK) {
-      this.$.payments.scrollAreaMaxHeight = '150px';
       this.$.donebutton.setLocalDisabled(false);
       this.$.exactbutton.setLocalDisabled(false);
     } else {
       if (this.$.overpaymentnotavailable.showing || this.$.overpaymentexceedlimit.showing || this.$.onlycashpaymentmethod.showing) {
-        this.$.noenoughchangelbl.setStyle("position: absolute; bottom: 20px; height: 20px; color: #ff0000;");
         this.$.noenoughchangelbl.hide();
       } else {
         this.$.noenoughchangelbl.show();
       }
-      this.$.payments.scrollAreaMaxHeight = '130px';
       this.$.donebutton.setLocalDisabled(true);
       this.$.exactbutton.setLocalDisabled(true);
     }
@@ -724,6 +822,7 @@ enyo.kind({
 
   initComponents: function () {
     this.inherited(arguments);
+    this.$.errorLabelArea.render();
     this.$.totalpendinglbl.setContent(OB.I18N.getLabel('OBPOS_PaymentsRemaining'));
     this.$.changelbl.setContent(OB.I18N.getLabel('OBPOS_PaymentsChange'));
     this.$.overpaymentlbl.setContent(OB.I18N.getLabel('OBPOS_PaymentsOverpayment'));
