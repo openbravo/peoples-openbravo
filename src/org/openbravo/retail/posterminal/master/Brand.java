@@ -83,7 +83,15 @@ public class Brand extends ProcessHQLQuery {
           .add("select"
               + regularBrandsHQLProperties.getHqlSelect() //
               + "from Brand brand " //
-              + "where  $filtersCriteria AND $hqlCriteria and  $naturalOrgCriteria and $incrementalUpdateCriteria and brand.active = true "
+              + "where "
+              + " exists (select 1 from  Product p, OBRETCO_Prol_Product assort "
+              + " where brand.id=p.brand.id "
+              + " and p.id= assort.product.id "
+              + " and assort.obretcoProductlist.id= '"
+              + productList.getId()
+              + "'"
+              + ")"
+              + " AND $filtersCriteria AND $hqlCriteria and  $naturalOrgCriteria and $incrementalUpdateCriteria and brand.active = true "
               + "order by brand.name");
     } else {
       hqlQueries.add("select"

@@ -216,7 +216,7 @@ enyo.kind({
         }
       }
 
-      if (productFilterText !== "" || productcategory !== "__all__") {
+      if (productFilterText !== undefined || productcategory !== undefined) {
         productFilter.columns = [];
         productFilter.operator = OB.Dal.FILTER;
         productFilter.value = this.productCharacteristicValueFilterQualifier;
