@@ -19,7 +19,9 @@
 
 package org.openbravo.test.system;
 
+import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.fail;
+import static org.junit.Assume.assumeThat;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,6 +57,9 @@ public class SystemValidatorTest extends OBBaseTest {
   @Test
   @Ignore("Temporarily ignore test until it can be optionally disabled via some configuration")
   public void testModulesValidation() {
+    String postPublication = System.getProperty("post.publication");
+    assumeThat("Ignoring test case during post publication cycle", postPublication, not("true"));
+
     setSystemAdministratorContext();
     List<String> updatedModules = null;
     try {
