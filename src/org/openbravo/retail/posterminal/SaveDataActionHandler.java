@@ -26,9 +26,14 @@ import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.mobile.core.process.DataSynchronizationProcess;
 import org.openbravo.service.db.DalConnectionProvider;
+import org.openbravo.service.importprocess.ImportEntry;
+import org.openbravo.service.importprocess.ImportEntryManager;
+import org.openbravo.service.importprocess.ImportEntryManager.ImportEntryProcessorSelector;
+import org.openbravo.service.importprocess.ImportEntryPostProcessor;
 import org.openbravo.service.json.JsonConstants;
 
 @ApplicationScoped
@@ -38,6 +43,13 @@ public class SaveDataActionHandler extends BaseActionHandler {
   @Inject
   @Any
   private Instance<POSDataSynchronizationProcess> syncProcesses;
+
+  @Inject
+  private ImportEntryManager importEntryManager;
+
+  @Inject
+  @Any
+  private Instance<ImportEntryPostProcessor> importEntryPostProcessors;
 
   @Override
   protected JSONObject execute(Map<String, Object> parameters, String content) {
@@ -60,11 +72,28 @@ public class SaveDataActionHandler extends BaseActionHandler {
 
         POSDataSynchronizationProcess syncProcess = null;
         syncProcess = syncProcesses.select(new DataSynchronizationProcess.Selector(type)).get();
+
         JSONObject record = new JSONObject(error.getJsoninfo());
         record.put("posErrorId", errorId);
         JSONObject data = new JSONObject();
         data.put("data", record);
+
+        String entryId = SequenceIdData.getUUID();
+        importEntryManager.createImportEntry(entryId, type, data.toString(), false);
+        // We will create a new entry, and commit it (we need to commit it just in case the process
+        // then rolls back the changes due to some error).
+        OBDal.getInstance().getConnection(true).commit();
+        ImportEntry entry = OBDal.getInstance().get(ImportEntry.class, entryId);
+
         JSONObject result = syncProcess.exec(data, true);
+
+        // Execute post process hooks.
+        for (ImportEntryPostProcessor importEntryPostProcessor : importEntryPostProcessors
+            .select(new ImportEntryProcessorSelector(type))) {
+          importEntryPostProcessor.afterProcessing(entry);
+        }
+
+        importEntryManager.setImportEntryProcessed(entryId);
         if (result.get(JsonConstants.RESPONSE_STATUS).equals(
             JsonConstants.RPCREQUEST_STATUS_FAILURE)) {
           errorb = true;
