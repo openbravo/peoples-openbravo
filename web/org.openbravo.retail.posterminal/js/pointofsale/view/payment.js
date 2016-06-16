@@ -1140,6 +1140,9 @@ enyo.kind({
         this.$.info.setContent('');
       }
     }
+    if (this.$.foreignAmount.content || this.$.info.content) {
+      this.$.removePayment.style = this.$.removePayment.style + ' margin-top: 10px;';
+    }
     if (this.model.get('isPrePayment')) {
       this.hide();
     }
