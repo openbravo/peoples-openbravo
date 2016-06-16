@@ -848,7 +848,7 @@ isc.OBStandardWindow.addProperties({
       isc.ask(OB.I18N.getLabel('OBUIAPP_AutosaveConfirm'), saveCallback);
     } else {
       // Auto save confirmation not required: continue as confirmation was accepted
-      if (this.hasChanges() && this.activeView.existsAction && this.activeView.existsAction('PRESAVE')) {
+      if (this.getDirtyEditForm() && this.activeView.existsAction && this.activeView.existsAction('PRESAVE')) {
         this.activeView.executePreSaveActions(function () {
           saveCallback(true);
         });
@@ -856,21 +856,6 @@ isc.OBStandardWindow.addProperties({
       }
       saveCallback(true);
     }
-  },
-
-  hasChanges: function () {
-    var editForm;
-    if (!this.activeView) {
-      return false;
-    }
-    if (this.activeView.isShowingForm) {
-      return this.activeView.viewForm.hasChanged;
-    }
-    editForm = this.activeView.viewGrid.getEditForm();
-    if (editForm) {
-      return editForm.hasChanged;
-    }
-    return false;
   },
 
   callAutoSaveAction: function () {
