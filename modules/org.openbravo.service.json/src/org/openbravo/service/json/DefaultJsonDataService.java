@@ -50,6 +50,8 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.database.SessionInfo;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
+import org.openbravo.model.ad.system.Client;
+import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.service.db.DbUtility;
 import org.openbravo.service.json.JsonToDataConverter.JsonConversionError;
 import org.openbravo.userinterface.selector.Selector;
@@ -642,12 +644,12 @@ public class DefaultJsonDataService implements JsonDataService {
 
   private void addWritableAttribute(List<JSONObject> jsonObjects) throws JSONException {
     for (JSONObject jsonObject : jsonObjects) {
-      if (!jsonObject.has("client") || !jsonObject.has("organization")) {
-        continue;
-      }
-      final Object rowClient = jsonObject.get("client");
-      final Object rowOrganization = jsonObject.get("organization");
-      if (!(rowClient instanceof String) || !(rowOrganization instanceof String)) {
+      final Object rowClient = getFKValue(jsonObject, "client", Client.ENTITY_NAME);
+      final Object rowOrganization = getFKValue(jsonObject, "organization",
+          Organization.ENTITY_NAME);
+
+      if (rowClient == null || !(rowClient instanceof String) || rowOrganization == null
+          || !(rowOrganization instanceof String)) {
         continue;
       }
       final String currentClientId = OBContext.getOBContext().getCurrentClient().getId();
@@ -666,6 +668,23 @@ public class DefaultJsonDataService implements JsonDataService {
         }
       }
     }
+  }
+
+  /**
+   * Returns the value for a FK property, in case the entity of the row is the referencedEntity for
+   * that FK, it returns the row id.
+   */
+  private Object getFKValue(JSONObject row, String propertyName,
+      String referencedEntityName) throws JSONException {
+    Object value = null;
+    if (row.has(propertyName)) {
+      value = row.get(propertyName);
+    } else if (row.has(JsonConstants.ENTITYNAME)
+        && referencedEntityName.equals(row.get(JsonConstants.ENTITYNAME))
+        && row.has(BaseOBObject.ID)) {
+      value = row.get(BaseOBObject.ID);
+    }
+    return value;
   }
 
   /*

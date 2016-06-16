@@ -150,20 +150,7 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
 
   private List<Map<String, Object>> getOrderLineSetValueFilterData(Map<String, String> parameters) {
     List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
-    Map<String, String> filterCriteria = new HashMap<String, String>();
-    try {
-      // Builds the criteria based on the fetch parameters
-      JSONArray criterias = (JSONArray) JsonUtils.buildCriteria(parameters).get("criteria");
-      for (int i = 0; i < criterias.length(); i++) {
-        final JSONObject criteria = criterias.getJSONObject(i);
-        if (criteria.has("fieldName")) {
-          filterCriteria.put(criteria.getString("fieldName"),
-              criteria.has("value") ? criteria.getString("value") : criteria.toString());
-        }
-      }
-    } catch (JSONException e) {
-      log4j.error("Error while building the criteria", e);
-    }
+    Map<String, String> filterCriteria = buildCriteria(parameters);
     OBContext.setAdminMode();
     try {
       for (OrderLine o : getOrderLineFromGrid(filterCriteria.get("orderLine$_identifier"),
@@ -206,18 +193,7 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
 
   private List<Map<String, Object>> getWarehouseFilterData(Map<String, String> parameters) {
     List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
-    Map<String, String> filterCriteria = new HashMap<String, String>();
-    try {
-      // Builds the criteria based on the fetch parameters
-      JSONArray criterias = (JSONArray) JsonUtils.buildCriteria(parameters).get("criteria");
-      for (int i = 0; i < criterias.length(); i++) {
-        final JSONObject criteria = criterias.getJSONObject(i);
-        filterCriteria.put(criteria.getString("fieldName"),
-            criteria.has("value") ? criteria.getString("value") : criteria.toString());
-      }
-    } catch (JSONException e) {
-      log4j.error("Error while building the criteria", e);
-    }
+    Map<String, String> filterCriteria = buildCriteria(parameters);
     OBContext.setAdminMode();
     try {
       for (Warehouse o : getWarehouseFromGrid(filterCriteria.get("warehouse$_identifier"),
@@ -342,18 +318,7 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
 
   private List<Map<String, Object>> getStorageFilterData(Map<String, String> parameters) {
     List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
-    Map<String, String> filterCriteria = new HashMap<String, String>();
-    try {
-      // Builds the criteria based on the fetch parameters
-      JSONArray criterias = (JSONArray) JsonUtils.buildCriteria(parameters).get("criteria");
-      for (int i = 0; i < criterias.length(); i++) {
-        final JSONObject criteria = criterias.getJSONObject(i);
-        filterCriteria.put(criteria.getString("fieldName"),
-            criteria.has("value") ? criteria.getString("value") : criteria.toString());
-      }
-    } catch (JSONException e) {
-      log4j.error("Error while building the criteria", e);
-    }
+    Map<String, String> filterCriteria = buildCriteria(parameters);
     OBContext.setAdminMode();
     try {
       for (Locator o : getStorageBinFromGrid(filterCriteria.get("storageBin$_identifier"),
@@ -462,20 +427,7 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
 
   private List<Map<String, Object>> getAttributeSetValueFilterData(Map<String, String> parameters) {
     List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
-    Map<String, String> filterCriteria = new HashMap<String, String>();
-    try {
-      // Builds the criteria based on the fetch parameters
-      JSONArray criterias = (JSONArray) JsonUtils.buildCriteria(parameters).get("criteria");
-      for (int i = 0; i < criterias.length(); i++) {
-        final JSONObject criteria = criterias.getJSONObject(i);
-        if (criteria.has("fieldName")) {
-          filterCriteria.put(criteria.getString("fieldName"),
-              criteria.has("value") ? criteria.getString("value") : criteria.toString());
-        }
-      }
-    } catch (JSONException e) {
-      log4j.error("Error while building the criteria", e);
-    }
+    Map<String, String> filterCriteria = buildCriteria(parameters);
     OBContext.setAdminMode();
     try {
       for (AttributeSetInstance o : getAttributeSetValueFromGrid(
@@ -531,14 +483,33 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
         if (criteria.has("criteria") && criteria.has("operator")) {
           JSONArray mySon = new JSONArray(criteria.getString("criteria"));
           for (int j = 0; j < mySon.length(); j++) {
-            if (filterCriteria.containsKey(mySon.getJSONObject(j).getString("fieldName"))) {
-              JSONArray values = new JSONArray(filterCriteria.get(mySon.getJSONObject(j).getString(
-                  "fieldName")));
-              filterCriteria.put(mySon.getJSONObject(j).getString("fieldName"),
-                  values.put(mySon.getJSONObject(j)).toString());
-            } else {
-              filterCriteria.put(mySon.getJSONObject(j).getString("fieldName"), new JSONArray()
-                  .put(mySon.getJSONObject(j)).toString());
+            final JSONObject criteria2 = mySon.getJSONObject(j);
+            if (criteria2.has("criteria") && criteria2.has("operator")) {
+              JSONArray mySonSon = new JSONArray(criteria2.getString("criteria"));
+              for (int k = 0; k < mySonSon.length(); k++) {
+                final JSONObject criteria3 = mySonSon.getJSONObject(k);
+                if (criteria3.has("fieldName")) {
+                  if (filterCriteria.containsKey(criteria3.getString("fieldName"))) {
+                    JSONArray values = new JSONArray(filterCriteria.get(criteria3
+                        .getString("fieldName")));
+                    filterCriteria.put(criteria3.getString("fieldName"), values.put(criteria3)
+                        .toString());
+                  } else {
+                    filterCriteria.put(criteria3.getString("fieldName"),
+                        new JSONArray().put(criteria3).toString());
+                  }
+                }
+              }
+            } else if (criteria2.has("fieldName")) {
+              if (filterCriteria.containsKey(criteria2.getString("fieldName"))) {
+                JSONArray values = new JSONArray(filterCriteria.get(criteria2
+                    .getString("fieldName")));
+                filterCriteria.put(criteria2.getString("fieldName"), values.put(criteria2)
+                    .toString());
+              } else {
+                filterCriteria.put(criteria2.getString("fieldName"), new JSONArray().put(criteria2)
+                    .toString());
+              }
             }
           }
           // lessOrEqual
@@ -1655,6 +1626,44 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
       query.setParameter("storageBin", storageBin);
     }
     return (BigDecimal) query.uniqueResult();
+  }
+
+  private Map<String, String> buildCriteria(Map<String, String> parameters) {
+    Map<String, String> filterCriteria = new HashMap<String, String>();
+
+    try {
+      // Builds the criteria based on the fetch parameters
+      JSONArray criterias = (JSONArray) JsonUtils.buildCriteria(parameters).get("criteria");
+      for (int i = 0; i < criterias.length(); i++) {
+        final JSONObject criteria1 = criterias.getJSONObject(i);
+        if (criteria1.has("criteria") && criteria1.has("operator")) {
+          JSONArray mySon = new JSONArray(criteria1.getString("criteria"));
+          for (int j = 0; j < mySon.length(); j++) {
+            final JSONObject criteria2 = mySon.getJSONObject(j);
+            if (criteria2.has("criteria") && criteria2.has("operator")) {
+              JSONArray mySonSon = new JSONArray(criteria2.getString("criteria"));
+              for (int k = 0; k < mySonSon.length(); k++) {
+                final JSONObject criteria3 = mySonSon.getJSONObject(k);
+                if (criteria3.has("fieldName")) {
+                  filterCriteria.put(criteria3.getString("fieldName"),
+                      criteria3.has("value") ? criteria3.getString("value") : criteria3.toString());
+                }
+              }
+            } else if (criteria2.has("fieldName")) {
+              filterCriteria.put(criteria2.getString("fieldName"),
+                  criteria2.has("value") ? criteria2.getString("value") : criteria2.toString());
+            }
+          }
+        } else if (criteria1.has("fieldName")) {
+          filterCriteria.put(criteria1.getString("fieldName"),
+              criteria1.has("value") ? criteria1.getString("value") : criteria1.toString());
+        }
+      }
+    } catch (JSONException e) {
+      log4j.error("Error while building the criteria", e);
+    }
+
+    return filterCriteria;
   }
 
   @Override

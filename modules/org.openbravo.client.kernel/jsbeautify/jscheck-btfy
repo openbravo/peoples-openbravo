@@ -18,12 +18,16 @@
 
 set -e
 replaceparam=$1
+
+ echo ""
+ echo "-----------------------------------------------"
 if [ "$replaceparam" != "replace" ] ; then
  echo "Performing jsbeautify check on all js resources"
 else
  echo "Performing jsbeautify replacement on all js resources"
 fi
-
+ echo "-----------------------------------------------"
+ echo ""
 files=$(./modules/org.openbravo.client.kernel/jscheck/jsfiles ./modules)
 
 for changedfile in echo $files; do
