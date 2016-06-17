@@ -103,6 +103,7 @@ public class AddMultiplePaymentsHandler extends BaseProcessActionHandler {
         transaction.setTransactionDate(transactionDate);
         transaction.setDateAcct(acctDate);
         transaction.setAccount(account);
+        transaction.setLineNo(TransactionsDao.getTransactionMaxLineNo(account) + 10);
         FIN_TransactionProcess.doTransactionProcess(ACTION_PROCESS_TRANSACTION, transaction);
       }
     } finally {
