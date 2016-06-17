@@ -76,7 +76,7 @@ public class LandedCostDistributionByAmount extends LandedCostDistributionAlgori
           trxAmt = getConvertedAmount(trxAmt, strTrxCur, strCurId, dateReference, strOrgId);
         }
 
-        totalAmt = totalAmt.add(trxAmt);
+        totalAmt = totalAmt.add(trxAmt.abs());
 
         if (i % 100 == 0) {
           OBDal.getInstance().flush();
@@ -107,7 +107,7 @@ public class LandedCostDistributionByAmount extends LandedCostDistributionAlgori
         // Insert pending amount on receipt with higher cost to avoid rounding issues.
         receiptAmt = pendingAmt;
       } else {
-        receiptAmt = baseAmt.multiply(trxAmt);
+        receiptAmt = baseAmt.multiply(trxAmt.abs());
         if (totalAmt.compareTo(BigDecimal.ZERO) != 0) {
           receiptAmt = receiptAmt.divide(totalAmt, precission, RoundingMode.HALF_UP);
         }
