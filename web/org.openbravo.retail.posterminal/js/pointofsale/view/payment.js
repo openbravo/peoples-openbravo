@@ -114,7 +114,7 @@ enyo.kind({
       this.$.errorMaxlimitamount.setContent('');
       this.$.errorMaxlimitamount.hide();
     }
-    this.animateErrorMessages();
+    this.alignErrorMessages();
   },
   components: [{
     style: 'background-color: #363636; color: white; height: 200px; margin: 5px; padding: 5px; position: relative;',
@@ -658,10 +658,13 @@ enyo.kind({
       // Paramaters ,It will Reset After Every Max Interval 
       // In Order To Behave Like Animation Of The Text Error Messages 
       // To Fit into the Payment Area Where Error Messages To Be Shown 
-      this.maxAnimateErrorInterval = setInterval(function () {
-        clearInterval(this.animateErrorInterval);
+      if (this.showingCount > 1) {
         me.animateErrorMessages();
-      }, delay + 1700 * this.showingCount);
+        this.maxAnimateErrorInterval = setInterval(function () {
+          clearInterval(this.animateErrorInterval);
+          me.animateErrorMessages();
+        }, delay + 1700 * this.showingCount);
+      }
     }
 
   },
@@ -669,7 +672,7 @@ enyo.kind({
     if (OB.MobileApp.view.currentWindow === 'retail.pointofsale' && typeof (this.$.errorLabelArea) !== 'undefined') {
       clearInterval(this.animateErrorInterval);
       var me = this,
-          marginTop = 30,
+          marginTop = 0,
           resizediStyle = '',
           initialTop = 0,
           defaultStyle = 'position: absolute; bottom: 0px; height: 20px; color: #ff0000;';
