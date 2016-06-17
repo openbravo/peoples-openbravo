@@ -1415,6 +1415,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       paymentSchedule.setOrder(order);
     }
     if (order.getFINPaymentScheduleList().isEmpty() || isModified) {
+      order.getFINPaymentScheduleList().add(paymentSchedule);
       paymentSchedule.setFinPaymentmethod(order.getPaymentMethod());
       // paymentSchedule.setPaidAmount(new BigDecimal(0));
       paymentSchedule.setAmount(gross.setScale(pricePrecision, RoundingMode.HALF_UP));
@@ -1431,6 +1432,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       }
       paymentSchedule.setFINPaymentPriority(order.getFINPaymentPriority());
       OBDal.getInstance().save(paymentSchedule);
+      OBDal.getInstance().save(order);
     }
 
     Boolean isInvoicePaymentScheduleNew = false;
