@@ -625,6 +625,8 @@ enyo.kind({
     this.$.entityFilterList.setValue('');
     this.$.entityFilterAmount.setValue('');
     this.$.entityFilterButton.setValue('');
+    this.$.entityFilterColumn.setSelected(0);
+    this.$.entityFilterList.setSelected(0);
     this.$.advancedFilterInfo.setShowing(false);
     this.$.dateFormatError.hide();
     this.$.filterInputs.setShowing(true);
