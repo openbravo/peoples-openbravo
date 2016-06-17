@@ -3350,7 +3350,7 @@ isc.OBViewGrid.addProperties({
 
     rowNum = me.getEditRow();
     colNum = me.getEditCol();
-    nextEditCell = ((rowNum || rowNum === 0) && (colNum || colNum === 0) ? this.getNextEditCell(rowNum, colNum, editCompletionEvent) : null);
+    nextEditCell = ((rowNum || rowNum === 0) && (colNum || colNum === 0) ? me.getNextEditCell(rowNum, colNum, editCompletionEvent) : null);
     newRow = nextEditCell && nextEditCell[0] !== rowNum;
     if (newRow !== false && me.keyPressedForEditCompletion(editCompletionEvent) && me.view.existsAction && me.view.existsAction('PRESAVE')) {
       me.view.executePreSaveActions(function () {
