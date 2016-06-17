@@ -49,8 +49,8 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.ModalAction',
   name: 'OB.UI.ModalApprovalReason',
-  closeOnEscKey: false,
-  autoDismiss: false,
+  closeOnEscKey: true,
+  autoDismiss: true,
   bodyContent: {
     components: [{
       name: 'labelApprovalReason',
@@ -72,7 +72,7 @@ enyo.kind({
   },
   initComponents: function () {
     this.inherited(arguments);
-    this.$.headerCloseButton.hide();
+    this.$.headerCloseButton.show();
     this.$.bodyContent.$.labelApprovalReason.setContent(OB.I18N.getLabel('OBPOS_lblApprovalReason'));
     var me = this,
         approvalReasonCollection = [];
