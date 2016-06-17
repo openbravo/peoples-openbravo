@@ -58,7 +58,8 @@
     updateHistory: function () {
 
       var state = {},
-          stateStr, data, i, tabsLength, tab, tabObject, tabWidgetNumber, previousWidgetsInTab = 0;
+          stateStr, data, i, tabsLength, tab, tabObject, tabWidgetNumber, previousWidgetsInTab = 0,
+          bookMarkParams;
 
       if (L.ViewManager.inStateHandling) {
         return;
@@ -75,6 +76,7 @@
       data = [];
       for (i = 0; i < tabsLength; i++) {
         tab = OB.MainView.TabSet.tabs[i];
+        bookMarkParams = null;
 
         if (tab.viewName !== 'OBQueryListView' && tab.viewName !== 'OBCalendarWidgetView') {
           state.bm[i] = {};
@@ -86,9 +88,17 @@
             viewId: tabObject.viewName
           };
 
-          // store the bookmark parameters
+          // retrieve the bookmark parameters
           if (tabObject.pane && tabObject.pane.getBookMarkParams) {
-            state.bm[i].params = tabObject.pane.getBookMarkParams();
+            bookMarkParams = tabObject.pane.getBookMarkParams();
+          } else if (OB.MyOB && tabObject.myOB && tabObject.pane && tabObject.pane.isLoadingTab) {
+            // Workspace is not yet loaded, recovering its getBookMarkParams to avoid losing them
+            bookMarkParams = OB.MyOB.getBookMarkParams();
+          }
+
+          // store the bookmark parameters
+          if (bookMarkParams) {
+            state.bm[i].params = bookMarkParams;
             if (!state.bm[i].params.tabTitle) {
               state.bm[i].params.tabTitle = tabObject.title;
             }
