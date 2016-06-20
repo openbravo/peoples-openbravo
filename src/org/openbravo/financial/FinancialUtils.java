@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2015 Openbravo SLU
+ * All portions are Copyright (C) 2012-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -122,6 +122,14 @@ public class FinancialUtils {
   }
 
   /**
+   * @see #getProductPrice(Product, Date, boolean, PriceList, boolean, boolean)
+   */
+  public static ProductPrice getProductPrice(Product product, Date date, boolean useSalesPriceList,
+      PriceList priceList, boolean throwException) throws OBException {
+    return getProductPrice(product, date, useSalesPriceList, priceList, throwException, true);
+  }
+
+  /**
    * Method to get a valid ProductPrice for the given Product. It only considers PriceList versions
    * valid on the given date. If a PriceList is given it searches on that one. If PriceList null is
    * passed it search on any Sales or Purchase PriceList based on the useSalesPriceList.
@@ -141,7 +149,7 @@ public class FinancialUtils {
    *           when no valid ProductPrice is found and throwException is true.
    */
   public static ProductPrice getProductPrice(Product product, Date date, boolean useSalesPriceList,
-      PriceList priceList, boolean throwException) throws OBException {
+      PriceList priceList, boolean throwException, boolean usePriceIncludeTax) throws OBException {
     StringBuffer where = new StringBuffer();
     where.append(" as pp");
     where.append("   join pp." + ProductPrice.PROPERTY_PRICELISTVERSION + " as plv");
@@ -153,6 +161,10 @@ public class FinancialUtils {
     } else {
       where.append("   and pl." + PriceList.PROPERTY_SALESPRICELIST + " = :salespricelist");
     }
+    if (!usePriceIncludeTax) {
+      where.append("   and pl." + PriceList.PROPERTY_PRICEINCLUDESTAX + " = :usepriceincludetax");
+    }
+
     where.append(" order by pl." + PriceList.PROPERTY_DEFAULT + " desc, plv."
         + PriceListVersion.PROPERTY_VALIDFROMDATE + " desc");
 
@@ -164,6 +176,9 @@ public class FinancialUtils {
       ppQry.setNamedParameter("pricelist", priceList);
     } else {
       ppQry.setNamedParameter("salespricelist", useSalesPriceList);
+    }
+    if (!usePriceIncludeTax) {
+      ppQry.setNamedParameter("usepriceincludetax", usePriceIncludeTax);
     }
 
     List<ProductPrice> ppList = ppQry.list();

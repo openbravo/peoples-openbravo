@@ -148,8 +148,8 @@ public class CostingUtils {
     if (bp != null) {
       pricelist = bp.getPurchasePricelist();
     }
-    ProductPrice pp = FinancialUtils
-        .getProductPrice(product, movementDate, false, pricelist, false);
+    ProductPrice pp = FinancialUtils.getProductPrice(product, movementDate, false, pricelist,
+        false, false);
     if (stdCost == null && pp == null) {
       throw new OBException("@NoPriceListOrStandardCostForProduct@ @Organization@: "
           + org.getName() + ", @Product@: " + product.getName() + ", @Date@: "
