@@ -567,7 +567,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
       }
     } else {
       result.result = false;
-      result.message = 'Not valid number to keep';
+      result.message = OB.I18N.getLabel('OBPOS_MsgNotValidNoToKeep');
     }
     if (!result.result) {
       this.get('paymentList').at(this.get('substep')).set('qtyToKeep', null);
