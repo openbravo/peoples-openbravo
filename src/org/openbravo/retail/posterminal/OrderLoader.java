@@ -1904,7 +1904,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         diffPaid = gross.subtract(amt.multiply(new BigDecimal("-1")));
       }
       // if (payments.length() == 0 ) or (writeoffAmt<0) means that use credit was used
-      if ((payments.length() == 0 || diffPaid.compareTo(BigDecimal.ZERO) != 0) && invoice != null) {
+      if ((payments.length() == 0 || diffPaid.compareTo(BigDecimal.ZERO) != 0) && invoice != null
+          && invoice.getGrandTotalAmount().compareTo(BigDecimal.ZERO) != 0) {
         FIN_PaymentScheduleDetail paymentScheduleDetail = OBProvider.getInstance().get(
             FIN_PaymentScheduleDetail.class);
         paymentScheduleDetail.setOrderPaymentSchedule(paymentSchedule);
