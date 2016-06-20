@@ -80,6 +80,13 @@ enyo.kind({
           }
         }
       }, {
+        command: 'keepfixedamount',
+        stateless: true,
+        definition: {
+          stateless: true,
+          action: function () {}
+        }
+      }, {
         command: 'allowdontmove',
         stateless: true,
         definition: {
