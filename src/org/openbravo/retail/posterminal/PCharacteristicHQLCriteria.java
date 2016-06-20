@@ -21,17 +21,14 @@ public class PCharacteristicHQLCriteria extends HQLCriteriaProcess {
 
   @Override
   public String getHQLFilter(String params) {
-    String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
-    final OBRETCOProductList productList = POSUtils.getProductListByOrgId(orgId);
-
     String[] array_params = getParams(params);
     String sql = null;
     if (array_params[1].equals("__all__")) {
-      sql = getAllQuery(productList);
+      sql = getAllQuery();
     } else if (array_params[1].equals("OBPOS_bestsellercategory")) {
-      sql = getBestsellers(productList);
+      sql = getBestsellers();
     } else {
-      sql = getProdCategoryQuery(productList);
+      sql = getProdCategoryQuery();
     }
     return sql;
   }
@@ -45,14 +42,18 @@ public class PCharacteristicHQLCriteria extends HQLCriteriaProcess {
     return array_params;
   }
 
-  public String getAllQuery(OBRETCOProductList productList) {
+  public String getAllQuery() {
+    String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
+    final OBRETCOProductList productList = POSUtils.getProductListByOrgId(orgId);
     return " exists (select 1 from ProductCharacteristicValue as pchv , OBRETCO_Prol_Product pli "
         + "where ch.id = pchv.characteristic.id "
         + "and pchv.product.id= pli.product.id  and   pli.obretcoProductlist.id='"
         + productList.getId() + "' and upper(pchv.product.name) like upper('$1') ) ";
   }
 
-  public String getProdCategoryQuery(OBRETCOProductList productList) {
+  public String getProdCategoryQuery() {
+    String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
+    final OBRETCOProductList productList = POSUtils.getProductListByOrgId(orgId);
     return " exists (select 1 from ProductCharacteristicValue as pchv , OBRETCO_Prol_Product pli "
         + "where ch.id = pchv.characteristic.id "
         + "and pchv.product.id= pli.product.id  and   pli.obretcoProductlist.id='"
@@ -60,7 +61,9 @@ public class PCharacteristicHQLCriteria extends HQLCriteriaProcess {
         + "' and upper(pchv.product.name) like upper('$1') and pchv.product.productCategory.id in ( '$2') ) ";
   }
 
-  public String getBestsellers(OBRETCOProductList productList) {
+  public String getBestsellers() {
+    String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
+    final OBRETCOProductList productList = POSUtils.getProductListByOrgId(orgId);
     return " exists (select 1 from ProductCharacteristicValue as pchv, OBRETCO_Prol_Product pli "
         + "where pchv.product.id=pli.product.id and ch.id = pchv.characteristic.id "
         + "and pli.bestseller = true and upper(pchv.product.name) like upper('$1') and pli.obretcoProductlist.id='"
