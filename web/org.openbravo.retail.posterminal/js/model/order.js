@@ -2700,6 +2700,10 @@
         OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_MsgPaymentAmountError'));
         return;
       }
+      if (this.stopAddingPayments) {
+        OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_CannotAddPayments'));
+        return;
+      }
 
       order = this;
       if (order.get('orderType') === 3 && order.getGross() === 0) {
@@ -4010,6 +4014,10 @@
 
       if (!OB.DEC.isNumber(payment.get('amount'))) {
         OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_MsgPaymentAmountError'));
+        return;
+      }
+      if (this.stopAddingPayments) {
+        OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_CannotAddPayments'));
         return;
       }
 

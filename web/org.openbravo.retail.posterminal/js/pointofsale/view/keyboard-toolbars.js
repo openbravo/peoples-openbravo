@@ -74,6 +74,10 @@ enyo.kind({
     this.pay(inEvent.amount, inEvent.key, inEvent.name, inEvent.paymentMethod, inEvent.rate, inEvent.mulrate, inEvent.isocode, inEvent.options);
   },
   pay: function (amount, key, name, paymentMethod, rate, mulrate, isocode, options) {
+    if (this.receipt.stopAddingPayments) {
+      OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_CannotAddPayments'));
+      return;
+    }
     if (options && options.percentaje) {
       var pending = this.model.getPending();
       if (mulrate && mulrate !== '1') {
