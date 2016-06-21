@@ -114,7 +114,7 @@ enyo.kind({
       this.$.errorMaxlimitamount.setContent('');
       this.$.errorMaxlimitamount.hide();
     }
-    this.animateErrorMessages();
+    this.alignErrorMessages();
   },
   components: [{
     style: 'background-color: #363636; color: white; height: 200px; margin: 5px; padding: 5px; position: relative;',
