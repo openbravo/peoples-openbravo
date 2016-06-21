@@ -227,8 +227,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       boolean createInvoice = false;
       TriggerHandler.getInstance().disable();
       try {
-        if (jsonorder.has("oldId") && !jsonorder.getString("oldId").equals("null")
-            && jsonorder.has("isQuotation") && jsonorder.getBoolean("isQuotation")) {
+        if (jsonorder.has("oldId") && !jsonorder.getString("oldId").equals("null") && isQuotation) {
           try {
             deleteOldDocument(jsonorder);
           } catch (Exception e) {
@@ -1509,7 +1508,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       order.setDocumentStatus("CL");
       order.setGrandTotalAmount(BigDecimal.ZERO);
       order.setSummedLineAmount(BigDecimal.ZERO);
-    } else if (jsonorder.getBoolean("isQuotation")) {
+    } else if (isQuotation) {
       order.setDocumentStatus("UE");
     } else {
       order.setDocumentStatus("CO");
@@ -1518,12 +1517,15 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     order.setProcessed(true);
     order.setProcessNow(false);
     order.setObposSendemail((jsonorder.has("sendEmail") && jsonorder.getBoolean("sendEmail")));
+    if (!newLayaway && !isQuotation) {
+      order.setDelivered(true);
+    }
 
     if (order.getDocumentNo().indexOf("/") > -1) {
       long documentno = Long.parseLong(order.getDocumentNo().substring(
           order.getDocumentNo().lastIndexOf("/") + 1));
 
-      if (jsonorder.has("isQuotation") && jsonorder.getBoolean("isQuotation")) {
+      if (isQuotation) {
         if (order.getObposApplications().getQuotationslastassignednum() == null
             || documentno > order.getObposApplications().getQuotationslastassignednum()) {
           OBPOSApplications terminal = order.getObposApplications();
@@ -1547,7 +1549,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       }
     } else {
       long documentno;
-      if (jsonorder.has("isQuotation") && jsonorder.getBoolean("isQuotation")) {
+      if (isQuotation) {
         if (jsonorder.has("quotationnoPrefix")) {
           documentno = Long.parseLong(order.getDocumentNo().replace(
               jsonorder.getString("quotationnoPrefix"), ""));
