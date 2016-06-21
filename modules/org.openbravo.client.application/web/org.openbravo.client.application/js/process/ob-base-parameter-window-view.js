@@ -511,5 +511,10 @@ isc.OBBaseParameterWindowView.addProperties({
     result.viewId = this.getClassName();
     result.tabTitle = this.tabTitle;
     return result;
+  },
+
+  isSameTab: function (viewName, params) {
+    // process definition based windows can be opened in more than one tab at the same time
+    return false;
   }
 });
