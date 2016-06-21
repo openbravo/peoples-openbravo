@@ -2348,7 +2348,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
             + "', null, null, null, null, null, '" + reservationId + "', 'N'");
       }
       long initGetStockProcedureCall = System.currentTimeMillis();
-      StockUtils.getStock(processId, recordID, quantity, productId, null, warehouseId, null, orgId,
+      StockUtils.getStock(processId, recordID, quantity, productId, null, null, warehouseId, orgId,
           attributesetinstanceId, OBContext.getOBContext().getUser().getId(), clientId,
           warehouseRuleId, uomId, null, null, null, null, null, reservationId, "N");
       long elapsedGetStockProcedureCall = (System.currentTimeMillis() - initGetStockProcedureCall);
