@@ -23,7 +23,6 @@ enyo.kind({
     onMaxLimitAmountError: 'maxLimitAmountError',
     onButtonPaymentChanged: 'paymentChanged',
     onClearPaymentMethodSelect: 'clearPaymentMethodSelect',
-    onCheckValidPaymentList: 'checkValidPaymentList',
     ontap: 'dispalyErrorLabels',
     onmouseover: 'pauseAnimation',
     onmouseout: 'resumeAnimation'
@@ -51,7 +50,7 @@ enyo.kind({
       });
     } else {
       var payment, change, pending, isMultiOrders, paymentstatus;
-      payment = inEvent.value.payment || OB.MobileApp.model.paymentnames[this.receipt.get('selectedPayment') || OB.MobileApp.model.get('paymentcash')];
+      payment = inEvent.value.payment || OB.MobileApp.model.paymentnames[OB.MobileApp.model.get('paymentcash')];
       if (_.isUndefined(payment)) {
         return true;
       }
@@ -83,7 +82,7 @@ enyo.kind({
       } else if (!_.isNull(pending) && pending) {
         this.setTotalPending(pending, payment.mulrate, payment.symbol, payment.currencySymbolAtTheRight, inSender, inEvent);
       }
-      if (paymentstatus) {
+      if (paymentstatus && inEvent.value.status !== "") {
         this.checkValidPayments(paymentstatus, payment);
       }
       if (inEvent.value.amount) {
@@ -588,62 +587,48 @@ enyo.kind({
     return check;
   },
 
-  checkValidPaymentList: function (inSender, inEvent) {
-    var me = this,
-        checkPayment = true;
-    // Validating Payment
-    me.receipt.get('payments').each(function (payment) {
-      if (checkPayment) {
-        var paymentModal = OB.MobileApp.model.paymentnames[payment.get('kind')];
-        // Checking payment is valid
-        var returnCheck = me.checkValidPayments(me.receipt.getPaymentStatus(), paymentModal);
-        if (!returnCheck.enoughCashAvailable) {
-          OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_NoEnoughCash'));
-          checkPayment = false;
-        }
-      }
-    });
-    return true;
-  },
-
   checkValidPayments: function (paymentstatus, selectedPayment) {
-    var resultOK;
-    var returnCheck = {
-      validCashOverpayment: false,
-      enoughCashAvailable: false,
-      validPaymentMethod: false
-    };
+    var resultOK, me = this;
 
+    if (!selectedPayment) {
+      return;
+    }
     // Hide all error labels. Error labels are shown by check... functions
-    this.$.overpaymentnotavailable.hide();
-    this.$.overpaymentexceedlimit.hide();
+    if (_.isNull(paymentstatus.overpayment)) {
+      this.$.overpaymentnotavailable.hide();
+      this.$.overpaymentexceedlimit.hide();
+    }
     this.$.noenoughchangelbl.hide();
     this.$.onlycashpaymentmethod.hide();
 
-    if (!selectedPayment) {
-      return returnCheck;
-    }
     // Do the checkins
-    resultOK = this.checkValidCashOverpayment(paymentstatus, selectedPayment);
-    if (resultOK) {
-      returnCheck.validCashOverpayment = true;
-      resultOK = this.checkEnoughCashAvailable(paymentstatus, selectedPayment, this, function (success) {
-        var lsuccess = success;
-        if (lsuccess) {
-          returnCheck.enoughCashAvailable = true;
-          lsuccess = this.checkValidPaymentMethod(paymentstatus, selectedPayment);
+    this.receipt.stopAddingPayments = !_.isEmpty(this.getShowingErrorMessages());
+    resultOK = !selectedPayment.paymentMethod.iscash || paymentstatus.changeAmt > 0 ? this.checkValidCashOverpayment(paymentstatus, selectedPayment) : undefined;
+    if (resultOK || _.isUndefined(resultOK)) {
+      if (!_.isNull(paymentstatus.change) || (paymentstatus.isReturn && !_.isNull(paymentstatus.pending))) {
+        resultOK = this.checkEnoughCashAvailable(paymentstatus, selectedPayment, this, function (success) {
+          var lsuccess = success;
           if (lsuccess) {
-            returnCheck.validPaymentMethod = true;
+            lsuccess = this.checkValidPaymentMethod(paymentstatus, selectedPayment);
+          } else {
+            this.$.noenoughchangelbl.show();
+            this.$.donebutton.setLocalDisabled(true);
+            this.$.exactbutton.setLocalDisabled(true);
           }
-        }
-        this.setStatusButtons(lsuccess);
-      });
+          me.receipt.stopAddingPayments = !_.isEmpty(me.getShowingErrorMessages());
+          this.setStatusButtons(lsuccess);
+        });
+      } else if (!this.receipt.stopAddingPayments) {
+        this.$.donebutton.setLocalDisabled(false);
+        this.$.exactbutton.setLocalDisabled(false);
+      }
+
     } else {
+      me.receipt.stopAddingPayments = !_.isEmpty(me.getShowingErrorMessages());
       // Finally set status of buttons
       this.setStatusButtons(resultOK);
     }
     this.alignErrorMessages();
-    return returnCheck;
   },
   alignErrorMessages: function () {
     if (OB.MobileApp.view.currentWindow === 'retail.pointofsale' && typeof (this.$.errorLabelArea) !== 'undefined') {
@@ -974,9 +959,6 @@ enyo.kind({
         me = this,
         payments;
     this.allowOpenDrawer = false;
-
-    // Checking Payment before Process
-    this.bubble('onCheckValidPaymentList');
 
     if (this.disabled) {
       return true;
