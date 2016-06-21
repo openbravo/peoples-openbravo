@@ -144,6 +144,8 @@ public class FinancialUtils {
    *          PriceList to get its ProductPrice
    * @param throwException
    *          boolean to determine if an exception has to be thrown when no pricelist is found.
+   * @param usePriceIncludeTax
+   *          boolean to set if price lists including taxes should be considered or not.
    * @return a valid ProductPrice for the given parameters. Null is no exception is to be thrown.
    * @throws OBException
    *           when no valid ProductPrice is found and throwException is true.
@@ -162,9 +164,8 @@ public class FinancialUtils {
       where.append("   and pl." + PriceList.PROPERTY_SALESPRICELIST + " = :salespricelist");
     }
     if (!usePriceIncludeTax) {
-      where.append("   and pl." + PriceList.PROPERTY_PRICEINCLUDESTAX + " = :usepriceincludetax");
+      where.append("   and pl." + PriceList.PROPERTY_PRICEINCLUDESTAX + " = false");
     }
-
     where.append(" order by pl." + PriceList.PROPERTY_DEFAULT + " desc, plv."
         + PriceListVersion.PROPERTY_VALIDFROMDATE + " desc");
 
@@ -176,9 +177,6 @@ public class FinancialUtils {
       ppQry.setNamedParameter("pricelist", priceList);
     } else {
       ppQry.setNamedParameter("salespricelist", useSalesPriceList);
-    }
-    if (!usePriceIncludeTax) {
-      ppQry.setNamedParameter("usepriceincludetax", usePriceIncludeTax);
     }
 
     List<ProductPrice> ppList = ppQry.list();

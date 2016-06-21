@@ -274,7 +274,7 @@ public abstract class CostingAlgorithm {
 
     PriceList pricelist = bp.getPurchasePricelist();
     ProductPrice pp = FinancialUtils.getProductPrice(transaction.getProduct(),
-        transaction.getTransactionProcessDate(), false, pricelist, false);
+        transaction.getTransactionProcessDate(), false, pricelist, false, false);
     OrderLine orderLine = CostingUtils.getOrderLine(transaction.getProduct(), bp, costOrg);
 
     if (stdCost == null && pp == null && orderLine == null) {
@@ -592,7 +592,7 @@ public abstract class CostingAlgorithm {
       pricelist = bp.getPurchasePricelist();
     }
     ProductPrice pp = FinancialUtils.getProductPrice(transaction.getProduct(),
-        transaction.getMovementDate(), false, pricelist, false);
+        transaction.getMovementDate(), false, pricelist, true, false);
     BigDecimal cost = pp.getStandardPrice().multiply(transaction.getMovementQuantity().abs());
     if (DalUtil.getId(pp.getPriceListVersion().getPriceList().getCurrency()).equals(
         costCurrency.getId())) {
