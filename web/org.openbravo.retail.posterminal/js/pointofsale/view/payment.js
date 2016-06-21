@@ -1062,34 +1062,34 @@ enyo.kind({
   components: [{
     style: 'color:white;',
     components: [{
-      style: 'float: left; width: 85%; max-width: 350px;',
+      style: 'float: left; width: 85%;',
       components: [{
         components: [{
           name: 'name',
-          style: 'float: left; width: 65%; max-width: 230px; padding: 5px 0px 0px 0px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;'
+          style: 'float: left; width: 65%; padding: 5px 0px 0px 0px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;'
         }, {
           name: 'amount',
-          style: 'float: left; width: 35%; max-width: 120px; padding: 5px 0px 0px 0px; text-align: right;'
+          style: 'float: left; width: 35%; padding: 5px 0px 0px 0px; text-align: right;'
         }, {
           style: 'clear: both;'
         }]
       }, {
         components: [{
           name: 'info',
-          style: 'float: left; width: 65%; max-width: 230px; padding: 5px 0px 0px 0px; font-size: smaller; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;'
+          style: 'float: left; width: 65%; padding: 5px 0px 0px 0px; font-size: smaller; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;'
         }, {
           name: 'foreignAmount',
-          style: 'float: left; width: 35%; max-width: 120px; padding: 5px 0px 0px 0px; font-size: smaller; text-align: right;'
+          style: 'float: left; width: 35%; padding: 5px 0px 0px 0px; font-size: smaller; text-align: right;'
         }, {
           style: 'clear: both;'
         }]
       }]
     }, {
-      style: 'float: left; width: 15%;',
+      style: 'float: left; width: 15%; text-align: right;',
       components: [{
         name: 'removePayment',
         kind: 'OB.OBPOSPointOfSale.UI.RemovePayment',
-        style: 'float: left; width: 75%; max-width: 50px; height: 25px; margin-left: 10%;'
+        style: 'width: 75%; max-width: 50px; height: 25px; margin-left: 10%;'
       }]
     }, {
       style: 'clear: both;'
