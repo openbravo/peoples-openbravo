@@ -1502,7 +1502,7 @@ public class FormInitializationComponent extends BaseActionHandler {
             RequestContext.getServletContext());
 
         if (wasCached) {
-          Method doPost = calloutClass.getDeclaredMethod("doPost", HttpServletRequest.class,
+          Method doPost = calloutClass.getMethod("doPost", HttpServletRequest.class,
               HttpServletResponse.class);
           doPost.setAccessible(true);
           doPost.invoke(calloutInstance, rq.getRequest(), fakeResponse);
