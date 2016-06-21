@@ -174,6 +174,27 @@
       editedBp.adjustNames();
       return JSON.parse(JSON.stringify(editedBp.toJSON()));
     },
+    serializeEditedToJSON: function () {
+      var me = this,
+          editedBp = new OB.Model.BusinessPartner();
+      //Set entities ids: BusinessPartner, Location and User
+      editedBp.set('id', this.get('id'));
+      editedBp.set('locId', this.get('locId'));
+      editedBp.set('contactId', this.get('contactId'));
+      editedBp.set('updated', this.get('updated'));
+      editedBp.set('timezoneOffset', this.get('timezoneOffset'));
+      editedBp.set('loaded', this.get('loaded'));
+      //Set only form attributes
+      _.each(OB.OBPOSPointOfSale.UI.customers.edit_createcustomers_impl.prototype.newAttributes, function (model) {
+        if (model.setEditedProperties) {
+          model.setEditedProperties(me, editedBp);
+        } else {
+          editedBp.set(model.modelProperty, me.get(model.modelProperty));
+        }
+      });
+      editedBp.adjustNames();
+      return JSON.parse(JSON.stringify(editedBp.toJSON()));
+    },
     serializeToJSON: function () {
       return JSON.parse(JSON.stringify(this.toJSON()));
     }
