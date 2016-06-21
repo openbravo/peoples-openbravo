@@ -721,7 +721,7 @@ enyo.kind({
   dispalyErrorLabels: function (inSender, inEvent) {
     if (inEvent.originator.type === 'error') {
       var message = this.getShowingErrorMessages();
-      OB.UTIL.showConfirmation.display("Error", message);
+      OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), message);
       this.alignErrorMessages(false);
     }
   },
@@ -963,7 +963,7 @@ enyo.kind({
       receipts.forEach(function (receipt) {
         if ((receipt.get('orderType') === 2 || receipt.get('orderType') === 3) && receipt.get('bp').id === OB.MobileApp.model.get('terminal').businessPartner && !OB.MobileApp.model.get('terminal').layaway_anonymouscustomer) {
           avoidPayment = true;
-          OB.UTIL.showConfirmation.display("Error", OB.I18N.getLabel('OBPOS_layawaysOrdersWithAnonimousCust'));
+          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_layawaysOrdersWithAnonimousCust'));
           return;
         }
       });
@@ -1282,7 +1282,7 @@ enyo.kind({
     this.allowOpenDrawer = false;
 
     if (receipt.get('bp').id === OB.MobileApp.model.get('terminal').businessPartner && !OB.MobileApp.model.get('terminal').layaway_anonymouscustomer) {
-      OB.UTIL.showConfirmation.display("Error", OB.I18N.getLabel('OBPOS_layawaysOrdersWithAnonimousCust'));
+      OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_layawaysOrdersWithAnonimousCust'));
       return;
     }
 
