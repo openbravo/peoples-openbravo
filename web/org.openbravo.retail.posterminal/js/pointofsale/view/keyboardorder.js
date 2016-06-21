@@ -102,21 +102,27 @@ enyo.kind({
       this.clearInput();
     }, this);
   },
+  validateReceipt: function (keyboard, validateLine) {
+    if (keyboard.receipt.get('isEditable') === false) {
+      this.doShowPopup({
+        popup: 'modalNotEditableOrder'
+      });
+      return false;
+    }
+    if (validateLine && keyboard.line && keyboard.line.get('product').get('isEditableQty') === false) {
+      this.doShowPopup({
+        popup: 'modalNotEditableLine'
+      });
+      return false;
+    }
+    return true;
+  },
   initComponents: function () {
     var me = this;
 
     var actionAddProduct = function (keyboard, value) {
         if (!keyboard.line.get('notReturnThisLine')) {
-          if (keyboard.receipt.get('isEditable') === false) {
-            me.doShowPopup({
-              popup: 'modalNotEditableOrder'
-            });
-            return true;
-          }
-          if (keyboard.line && keyboard.line.get('product').get('isEditableQty') === false) {
-            me.doShowPopup({
-              popup: 'modalNotEditableLine'
-            });
+          if (!me.validateReceipt(keyboard, true)) {
             return true;
           }
           if (keyboard.line) {
@@ -156,16 +162,7 @@ enyo.kind({
         };
 
     var actionRemoveProduct = function (keyboard, value) {
-        if (keyboard.receipt.get('isEditable') === false) {
-          me.doShowPopup({
-            popup: 'modalNotEditableOrder'
-          });
-          return true;
-        }
-        if (keyboard.line && keyboard.line.get('product').get('isEditableQty') === false) {
-          me.doShowPopup({
-            popup: 'modalNotEditableLine'
-          });
+        if (!me.validateReceipt(keyboard, true)) {
           return true;
         }
         if (keyboard.line) {
@@ -188,16 +185,7 @@ enyo.kind({
             enyo.$.scrim.hide();
           });
         }
-        if (keyboard.receipt.get('isEditable') === false) {
-          me.doShowPopup({
-            popup: 'modalNotEditableOrder'
-          });
-          return true;
-        }
-        if (keyboard.line && keyboard.line.get('product').get('isEditableQty') === false) {
-          me.doShowPopup({
-            popup: 'modalNotEditableLine'
-          });
+        if (!me.validateReceipt(keyboard, true)) {
           return true;
         }
         if (keyboard.line) {
@@ -287,19 +275,10 @@ enyo.kind({
     this.addCommand('line:price', {
       permission: 'OBPOS_order.changePrice',
       action: function (keyboard, txt) {
-        if (keyboard.receipt.get('isEditable') === false) {
-          me.doShowPopup({
-            popup: 'modalNotEditableOrder'
-          });
+        if (!me.validateReceipt(keyboard, true)) {
           return true;
         }
         if (!keyboard.line) {
-          return true;
-        }
-        if (keyboard.line.get('product').get('isEditablePrice') === false) {
-          me.doShowPopup({
-            popup: 'modalNotEditableLine'
-          });
           return true;
         }
         if (keyboard.line) {
@@ -328,10 +307,7 @@ enyo.kind({
     this.addCommand('line:dto', {
       permission: 'OBPOS_order.discount',
       action: function (keyboard, txt) {
-        if (keyboard.receipt.get('isEditable') === false) {
-          me.doShowPopup({
-            popup: 'modalNotEditableOrder'
-          });
+        if (!me.validateReceipt(keyboard, false)) {
           return true;
         }
         if (OB.MobileApp.model.get('permissions')["OBPOS_retail.discountkeyboard"] === true || keyboard.line.getQty() < 0) {
@@ -352,10 +328,7 @@ enyo.kind({
       stateless: true,
       permission: 'OBPOS_order.discount',
       action: function (keyboard, txt) {
-        if (keyboard.receipt.get('isEditable') === false) {
-          me.doShowPopup({
-            popup: 'modalNotEditableOrder'
-          });
+        if (!me.validateReceipt(keyboard, false)) {
           return true;
         }
         me.doDiscountsMode({
@@ -424,6 +397,9 @@ enyo.kind({
             value, i, j, k, h, line, relatedLine, lineFromSelected;
         if (!me.selectedModels || !keyboard.line) {
           return;
+        }
+        if (!me.validateReceipt(keyboard, true)) {
+          return true;
         }
 
         function callback() {
