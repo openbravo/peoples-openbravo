@@ -71,7 +71,7 @@ where fin_financial_account_id = @FIN_Financial_Account_ID@)]]></CODE>
 <!--874CCFB2FE7B40D79D2B0AE27951853F-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--874CCFB2FE7B40D79D2B0AE27951853F-->  <AD_TAB_ID><![CDATA[294]]></AD_TAB_ID>
 <!--874CCFB2FE7B40D79D2B0AE27951853F-->  <NAME><![CDATA[APRM_OrderIsPaid]]></NAME>
-<!--874CCFB2FE7B40D79D2B0AE27951853F-->  <CODE><![CDATA[@SQL=select case when ps.outstandingamt > 0 then 'N' else 'Y' end
+<!--874CCFB2FE7B40D79D2B0AE27951853F-->  <CODE><![CDATA[@SQL=select case when ps.outstandingamt <> 0 then 'N' else 'Y' end
           from fin_payment_scheduledetail fpsd
               join fin_payment_detail fpd on fpsd.fin_payment_detail_id=fpd.fin_payment_detail_id
               join fin_payment fp on fpd.fin_payment_id=fp.fin_payment_id
@@ -101,7 +101,7 @@ where fin_financial_account_id = @FIN_Financial_Account_ID@)]]></CODE>
 <!--9FF4321DE0E5487B8A649A444F3F64BC-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--9FF4321DE0E5487B8A649A444F3F64BC-->  <AD_TAB_ID><![CDATA[186]]></AD_TAB_ID>
 <!--9FF4321DE0E5487B8A649A444F3F64BC-->  <NAME><![CDATA[APRM_OrderIsPaid]]></NAME>
-<!--9FF4321DE0E5487B8A649A444F3F64BC-->  <CODE><![CDATA[@SQL=select case when ps.outstandingamt > 0 then 'N' else 'Y' end
+<!--9FF4321DE0E5487B8A649A444F3F64BC-->  <CODE><![CDATA[@SQL=select case when ps.outstandingamt <> 0 then 'N' else 'Y' end
           from fin_payment_scheduledetail fpsd
               join fin_payment_detail fpd on fpsd.fin_payment_detail_id=fpd.fin_payment_detail_id
               join fin_payment fp on fpd.fin_payment_id=fp.fin_payment_id

@@ -24,7 +24,11 @@ replaceparam=$2
 ./modules/org.openbravo.client.kernel/jsbeautify/jsbeautifier.py --indent-size=2 --jslint-happy "$changedfile" | perl -pe 'chop if eof' > "$changedfile.beautified"
 if ! diff "$changedfile" "$changedfile.beautified" >/dev/null ; then
   if [ "$replaceparam" != "replace" ] ; then
+    echo ""
+    echo "******************************************************************************************************************************************************"
     echo "Beautify Error --> Please, beautify $changedfile";
+    echo "******************************************************************************************************************************************************"
+    echo ""
     rm -rf "$changedfile.beautified"
     export ERROR="1"
   else

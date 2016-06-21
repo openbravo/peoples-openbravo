@@ -19,7 +19,9 @@
 
 package org.openbravo.test.system;
 
+import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.fail;
+import static org.junit.Assume.assumeThat;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +29,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -52,7 +55,11 @@ public class SystemValidatorTest extends OBBaseTest {
    * Performs module validation using the {@link ModuleValidator}.
    */
   @Test
+  @Ignore("Temporarily ignore test until it can be optionally disabled via some configuration")
   public void testModulesValidation() {
+    String postPublication = System.getProperty("post.publication");
+    assumeThat("Ignoring test case during post publication cycle", postPublication, not("true"));
+
     setSystemAdministratorContext();
     List<String> updatedModules = null;
     try {

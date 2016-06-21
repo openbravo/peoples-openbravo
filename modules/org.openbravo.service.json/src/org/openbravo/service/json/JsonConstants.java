@@ -131,4 +131,5 @@ public class JsonConstants {
 
   public static final String UNDEFINED = "undefined";
   public static final String NULL = "null";
+  public static final String FIELD_SEPARATOR = "$";
 }

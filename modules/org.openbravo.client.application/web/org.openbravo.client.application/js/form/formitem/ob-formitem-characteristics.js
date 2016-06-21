@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2015 Openbravo SLU
+ * All portions are Copyright (C) 2013-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -519,12 +519,17 @@ isc.OBCharacteristicsFilterItem.addProperties({
   init: function () {
     var propertyPath, i, parentDSIdentifier = null,
         selectorDefinition = null;
+    this.canEdit = false;
 
     // Getting the product property in the entity we are filtering it.
     // It is obtained based on fieldName, in case its path is compound (i.e.
     // product$characteristicDescription), path is included up to the element
-    // previous to the last one
-    this.propertyName = 'e'; // "e" is the base entity
+    // previous to the last one 
+    if (this.grid && this.grid.parentElement && this.grid.parentElement.viewProperties && this.grid.parentElement.viewProperties.gridProperties && this.grid.parentElement.viewProperties.gridProperties.alias) {
+      this.propertyName = this.grid.parentElement.viewProperties.gridProperties.alias;
+    } else {
+      this.propertyName = 'e'; // "e" is the base entity
+    }
     propertyPath = this.getFieldName().split(OB.Constants.FIELDSEPARATOR);
     for (i = 0; i < propertyPath.length - 1; i++) {
       this.propertyName += '.' + propertyPath[i];
