@@ -1436,8 +1436,8 @@
             callback(true);
           }
           if (args.newLine && me.get('lines').contains(line) && args.productToAdd.get('productType') !== 'S') {
-            var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('HasServices');
             var subs = new subscribeToCalculateGross(me, function () {
+              var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('HasServices');
               if (me.get('lines').contains(line)) {
                 // Display related services after calculate gross, if it is new line and if the line has not been deleted.
                 // The line might has been deleted during calculate gross for examples if there was an error in taxes.
@@ -1472,6 +1472,7 @@
           OB.UTIL.showLoading(true);
           if (approved) {
             addProductToOrder();
+            OB.UTIL.showLoading(false);
           } else {
             if (callback) {
               callback(true);
