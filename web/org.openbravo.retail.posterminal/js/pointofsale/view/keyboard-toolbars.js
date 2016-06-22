@@ -167,6 +167,7 @@ enyo.kind({
         label: sidebutton.label,
         permission: sidebutton.permission,
         definition: {
+          holdActive: true,
           permission: sidebutton.permission,
           stateless: sidebutton.stateless,
           action: sidebutton.action
