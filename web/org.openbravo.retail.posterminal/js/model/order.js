@@ -746,7 +746,7 @@
         me.calculateGross();
       });
       // If line is null or undefined, we calculate the Promotions of the receipt
-      if (OB.UTIL.isNullOrUndefined(line)) {
+      if (OB.UTIL.isNullOrUndefined(line) || line.get('splitline')) {
         OB.Model.Discounts.applyPromotions(this);
       } else {
         OB.Model.Discounts.applyPromotions(this, line);
@@ -2839,9 +2839,7 @@
     groupLinesByProduct: function () {
       var lineToMerge, lines = this.get('lines'),
           auxLines = lines.models.slice(0),
-          localSkipApplyPromotions;
-
-      localSkipApplyPromotions = this.get('skipApplyPromotions');
+          localSkipApplyPromotions = this.get('skipApplyPromotions');
       this.set({
         'skipApplyPromotions': true
       }, {
@@ -2872,18 +2870,11 @@
         silent: true
       });
     },
-    fillPromotionsWith: function (groupedOrder, isFirstTime) {
+    fillPromotionsStandard: function (groupedOrder, isFirstTime) {
       var me = this,
           copiedPromo, linesToMerge, auxPromo, idx, actProm, linesToCreate = [],
-          qtyToReduce, lineToEdit, lineProm, linesToReduce, linesCreated = false,
-          localSkipApplyPromotions;
+          qtyToReduce, lineToEdit, lineProm, linesToReduce, linesCreated = false;
 
-      localSkipApplyPromotions = this.get('skipApplyPromotions');
-      this.set({
-        'skipApplyPromotions': true
-      }, {
-        silent: true
-      });
       //reset pendingQtyOffer value of each promotion
       groupedOrder.get('lines').forEach(function (l) {
         _.each(l.get('promotions'), function (promo) {
@@ -3112,6 +3103,74 @@
         });
         linesCreated = true;
       }
+    },
+
+    fillPromotionsSplitted: function (groupedOrder, isFirstTime) {
+      var receipt = this;
+      // Receipt with split lines
+      _.forEach(groupedOrder.get('lines').models, function (gli, index) {
+        if (gli.get('promotions') && gli.get('promotions').length > 0) {
+          var linesToApply = new Backbone.Collection();
+          var finalQty = 0;
+          _.forEach(receipt.get('lines').models, function (rli) {
+            if (gli.get('product').id === rli.get('product').id && gli.get('price') === rli.get('price')) { // Here could be more checks
+              linesToApply.add(rli);
+              finalQty += rli.get('qty');
+            }
+          });
+
+          var groupedPromos = gli.get('promotions');
+          _.forEach(groupedPromos, function (promotion) {
+            if (!promotion.manual) {
+              var promoAmt = 0,
+                  promoQtyoffer = promotion.qtyOffer;
+
+              _.forEach(linesToApply.models, function (line) {
+                var clonedPromotion = JSON.parse(JSON.stringify(promotion));
+                if (promoQtyoffer > 0) {
+                  clonedPromotion.obdiscQtyoffer = (line.get('qty') - promoQtyoffer >= 0) ? promoQtyoffer : line.get('qty');
+                  clonedPromotion.amt = (promotion.amt * (clonedPromotion.obdiscQtyoffer / promotion.qtyOffer));
+                  clonedPromotion.fullAmt = clonedPromotion.amt;
+                  clonedPromotion.displayedTotalAmount = (promotion.displayedTotalAmount * (clonedPromotion.obdiscQtyoffer / promotion.qtyOffer));
+                  clonedPromotion.pendingQtyoffer = line.get('qty') - clonedPromotion.obdiscQtyoffer;
+                  clonedPromotion.qtyOffer = clonedPromotion.obdiscQtyoffer;
+                  clonedPromotion.qtyOfferReserved = clonedPromotion.obdiscQtyoffer;
+                  clonedPromotion.doNotMerge = true;
+                  line.get('promotions').push(clonedPromotion);
+                  promoQtyoffer -= clonedPromotion.obdiscQtyoffer;
+                  promoAmt += clonedPromotion.amt;
+                } else if (promoQtyoffer < 0) {
+                  OB.error("There is more units consumed than the original promotion");
+                }
+              });
+
+              // Check the amount discount is the same
+              if (promotion.amt !== promoAmt) {
+                OB.error("There is an error in the sum");
+              }
+            } else {
+              receipt.get('lines').models[index].get('promotions').push(promotion);
+            }
+          });
+        }
+      });
+    },
+
+    fillPromotionsWith: function (groupedOrder, isFirstTime) {
+      var countSplited = _.reduce(this.get('lines').models, function (count, line) {
+        return count + (line.get('splitline') ? 1 : 0);
+      }, 0);
+      var localSkipApplyPromotions = this.get('skipApplyPromotions');
+      this.set({
+        'skipApplyPromotions': true
+      }, {
+        silent: true
+      });
+      if (countSplited > 1) {
+        this.fillPromotionsSplitted(groupedOrder, isFirstTime);
+      } else {
+        this.fillPromotionsStandard(groupedOrder, isFirstTime);
+      }
       this.set({
         'skipApplyPromotions': localSkipApplyPromotions
       }, {
@@ -3119,6 +3178,7 @@
       });
       this.trigger('promotionsUpdated');
     },
+
     // for each line, decrease the qtyOffer of promotions and remove the lines with qty 0
     removeQtyOffer: function () {
       var linesPending = new Backbone.Collection();

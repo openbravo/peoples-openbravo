@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global enyo, _ */
+/*global enyo, _, Backbone */
 
 enyo.kind({
   name: 'OB.UI.ModalNumberEditor',
@@ -330,6 +330,29 @@ enyo.kind({
   'promotionCandidates', 'promotionMessages', 'promotions', 'qty', 'qtyToApplyDiscount', 'splitline', //
   'tax', 'taxAmount', 'taxLines', 'uOM', 'warehouse', 'deliveredQuantity', 'replacedorderline'],
 
+  getAdjustedPromotion: function (promo, qty) {
+    var clonedPromotion = JSON.parse(JSON.stringify(promo));
+    if (clonedPromotion.discountType === 'D1D193305A6443B09B299259493B272A' || promo.discountType === '7B49D8CC4E084A75B7CB4D85A6A3A578') {
+      var amount = clonedPromotion.amt / clonedPromotion.qtyOffer * qty;
+      clonedPromotion.amt = amount;
+      clonedPromotion.displayedTotalAmount = amount;
+      clonedPromotion.fullAmt = amount;
+      clonedPromotion.userAmt = amount;
+      clonedPromotion.qtyOffer = qty;
+      clonedPromotion.obdiscQtyoffer = qty;
+      clonedPromotion.pendingQtyOffer = qty;
+    }
+    return clonedPromotion;
+  },
+
+  addManualPromotionSplit: function (line, promo) {
+    var adjustedPromotion = this.getAdjustedPromotion(promo, line.get('qty'));
+    OB.Model.Discounts.addManualPromotion(this.receipt, [line], {
+      definition: adjustedPromotion,
+      rule: new Backbone.Model(adjustedPromotion)
+    });
+  },
+
   addProductSplit: function (success, addline) {
     if (success && addline && addline.id !== this.orderline.id) {
       if (addline.get('price') !== this.orderline.get('price')) {
@@ -356,17 +379,46 @@ enyo.kind({
             'splitline': true
           },
           context: this,
-          callback: this.addProductSplit
+          callback: function (success, addline) {
+            addline.set('promotions', []);
+            var promotionManual = _.filter(this.orderline.get('promotions'), function (promo) {
+              return promo.manual;
+            });
+            _.forEach(promotionManual, function (promo) {
+              this.addManualPromotionSplit(addline, promo);
+            }, this);
+            this.addProductSplit(success, addline);
+          }
         });
       } else {
         OB.log('error', 'Can not add product to receipt');
       }
+    } else {
+      var promotionManual = _.filter(this.orderline.get('promotions'), function (promo) {
+        return promo.manual;
+      });
+      _.forEach(promotionManual, function (promo, index) {
+        if (promo.discountType === 'D1D193305A6443B09B299259493B272A' || promo.discountType === '7B49D8CC4E084A75B7CB4D85A6A3A578') {
+          var adjustedPromotion = this.getAdjustedPromotion(promo, this.orderline.get('qty'));
+          promo.amt = adjustedPromotion.amt;
+          promo.displayedTotalAmount = adjustedPromotion.displayedTotalAmount;
+          promo.fullAmt = adjustedPromotion.fullAmt;
+          promo.userAmt = adjustedPromotion.userAmt;
+          promo.qtyOffer = adjustedPromotion.qtyOffer;
+          promo.obdiscQtyoffer = adjustedPromotion.obdiscQtyoffer;
+          promo.pendingQtyOffer = adjustedPromotion.pendingQtyOffer;
+        }
+      }, this);
+      this.receipt.set('skipCalculateReceipt', false);
+      this.receipt.calculateReceipt();
     }
   },
 
   splitLines: function () {
     this.indexToAdd = 1;
     this.qtysToAdd = this.$.bodyContent.$.qtyLines.getValues();
+    this.orderline.set('splitline', true);
+    this.receipt.set('skipCalculateReceipt', true);
     this.doAddProduct({
       options: {
         line: this.orderline
@@ -376,9 +428,10 @@ enyo.kind({
       context: this,
       callback: function (success, orderline) {
         if (success) {
-          this.orderline.set('splitline', true);
           this.addProductSplit(true, orderline);
         } else {
+          this.orderline.set('splitline', false);
+          this.receipt.set('skipCalculateReceipt', false);
           OB.log('error ', 'Can not change units');
         }
       }
