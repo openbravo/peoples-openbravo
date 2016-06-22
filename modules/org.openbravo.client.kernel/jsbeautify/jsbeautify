@@ -26,8 +26,9 @@ if ! diff -c "$changedfile" "$changedfile.beautified"; then
   if [ "$replaceparam" != "replace" ] ; then
     echo ""
     echo "******************************************************************************************************************************************************"
-    echo "Beautify Error --> Please, beautify $changedfile";
+    echo "See above Beautify Error --> Please, beautify $changedfile";
     echo "******************************************************************************************************************************************************"
+    echo "*Note: JS Beautifier Eclipse plugin doesn't remove white spaces at the end of the line in block comments. You have to do it manually"
     echo ""
     rm -rf "$changedfile.beautified"
     export ERROR="1"
