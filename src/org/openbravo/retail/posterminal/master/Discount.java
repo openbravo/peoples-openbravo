@@ -51,16 +51,6 @@ public class Discount extends ProcessHQLQuery {
       throw new JSONException("Product list not found");
     }
 
-    try {
-      OBContext.setAdminMode(false);
-      (priceList.getCurrency().getObposPosprecision() == null ? priceList.getCurrency()
-          .getPricePrecision() : priceList.getCurrency().getObposPosprecision()).toString();
-    } catch (Exception e) {
-      log.error("Error getting currency by id: " + e.getMessage(), e);
-    } finally {
-      OBContext.restorePreviousMode();
-    }
-
     String hql = "from PricingAdjustment p ";
     hql += "where client.id = '" + OBContext.getOBContext().getCurrentClient().getId() + "' ";
     if (addIncrementalUpdateFilter) {
