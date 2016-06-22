@@ -529,7 +529,7 @@ enyo.kind({
 
     requiredCash = paymentstatus.changeAmt;
     if (requiredCash !== 0) {
-      if (selectedPayment.paymentMethod.overpaymentLimit === 0) {
+      if (selectedPayment.paymentMethod.overpaymentLimit === 0 && selectedPayment.paymentMethod.overpaymentLimit < requiredCash) {
         this.$.overpaymentnotavailable.show();
         return false;
       } else if (selectedPayment.paymentMethod.overpaymentLimit < requiredCash) {
