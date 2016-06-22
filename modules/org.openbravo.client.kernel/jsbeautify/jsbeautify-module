@@ -22,7 +22,7 @@ set -e
 changedfile=$1
 replaceparam=$2
 ../org.openbravo.client.kernel/jsbeautify/jsbeautifier.py --indent-size=2 --jslint-happy "$changedfile" | perl -pe 'chop if eof' > "$changedfile.beautified"
-if ! diff "$changedfile" "$changedfile.beautified" >/dev/null ; then
+if ! diff -c "$changedfile" "$changedfile.beautified"; then
   if [ "$replaceparam" != "replace" ] ; then
     echo ""
     echo "******************************************************************************************************************************************************"
