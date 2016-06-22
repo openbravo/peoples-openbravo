@@ -788,7 +788,7 @@ enyo.kind({
     this.inherited(arguments);
     this.line = null;
     var me = this;
-    this.receipt.on('change:qty', function () {
+    this.receipt.get('lines').on('remove', function () {
       if (me.receipt.get('lines').length === 0) {
         me.line = null;
         me.selectedModels = null;
