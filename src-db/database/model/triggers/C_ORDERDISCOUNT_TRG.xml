@@ -22,6 +22,10 @@
   v_RO        NUMBER;
   v_Processed CHAR(1) ;
 BEGIN
+
+    IF AD_isTriggerEnabled()='N' THEN RETURN;
+    END IF;
+    
   IF UPDATING THEN
     SELECT PROCESSED
     INTO v_Processed
