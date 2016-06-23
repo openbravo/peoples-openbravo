@@ -479,11 +479,14 @@ public class AssetLinearDepreciationMethodProcess extends DalBaseProcess {
           Long lineNo = getMaxLineNo(amortization) + 10L;
 
           // Create the amortization line
-          amortizationLine = createNewAmortizationLine(amortization, lineNo, seqNoAsset, asset,
-              proportionaldPercentage, proportionalAmount, asset.getCurrency(), asset.getProject(),
-              null /* campaign */, null /* activity */, null /* user1 */, null /* user2 */, null /* costcenter */);
-
-          seqNoAsset += 10L;
+          if (proportionaldPercentage.compareTo(BigDecimal.ZERO) > 0
+              || proportionalAmount.compareTo(BigDecimal.ZERO) > 0) {
+            amortizationLine = createNewAmortizationLine(amortization, lineNo, seqNoAsset, asset,
+                proportionaldPercentage, proportionalAmount, asset.getCurrency(),
+                asset.getProject(), null /* campaign */, null /* activity */, null /* user1 */,
+                null /* user2 */, null /* costcenter */);
+            seqNoAsset += 10L;
+          }
         }
 
         // Initialize new range
