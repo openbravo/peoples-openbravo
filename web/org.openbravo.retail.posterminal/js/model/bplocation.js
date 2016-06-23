@@ -24,7 +24,7 @@
     saveCustomerAddr: function (callback) {
       var nameLength, newSk;
       if (!this.get('isBillTo') && !this.get('isShipTo')) {
-        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_errorSavingCustomerAddrChn', [this.get('_identifier')]));
+        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_shippedOrInvoicedNotChekedOff'));
         return;
       }
       if (this.get('name') === '') {
