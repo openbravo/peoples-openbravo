@@ -33,7 +33,7 @@ if ! diff -u "$changedfile" "$changedfile.beautified"; then
     rm -rf "$changedfile.beautified"
     export ERROR="1"
   else
-    perl -pe 'chop if eof' "$changedfile.beautified" > "$changedfile"
+    cat "$changedfile.beautified" > "$changedfile"
     echo "Beautify --> File beautified: $changedfile";
   fi
 fi
