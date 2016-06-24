@@ -36,7 +36,7 @@ import java.util.TimeZone;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
-import org.hibernate.LockMode;
+import org.hibernate.LockOptions;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
@@ -180,9 +180,11 @@ public class FIN_Utility {
     shownScheduledPayments.addAll(filteredScheduledPayments);
     FIN_PaymentSchedule[] FIN_PaymentSchedules = new FIN_PaymentSchedule[0];
     FIN_PaymentSchedules = shownScheduledPayments.toArray(FIN_PaymentSchedules);
-    // FieldProvider[] data = FieldProviderFactory.getFieldProviderArray(FIN_PaymentSchedules);
+    // FieldProvider[] data =
+    // FieldProviderFactory.getFieldProviderArray(FIN_PaymentSchedules);
 
-    // FieldProvider[] data = new FieldProviderFactory[selectedScheduledPayments.size()];
+    // FieldProvider[] data = new
+    // FieldProviderFactory[selectedScheduledPayments.size()];
     FieldProvider[] data = FieldProviderFactory.getFieldProviderArray(shownScheduledPayments);
     String dateFormat = OBPropertiesProvider.getInstance().getOpenbravoProperties()
         .getProperty("dateFormat.java");
@@ -345,32 +347,52 @@ public class FIN_Utility {
    *         category. Null if no sequence is found.
    */
   public static String getDocumentNo(DocumentType docType, String tableName, boolean updateNext) {
-    String nextDocNumber = "";
     if (docType != null) {
       Sequence seq = docType.getDocumentSequence();
       if (seq == null && tableName != null) {
         OBCriteria<Sequence> obcSeq = OBDal.getInstance().createCriteria(Sequence.class);
         obcSeq.add(Restrictions.eq(Sequence.PROPERTY_NAME, tableName));
-        obcSeq.setLockMode(LockMode.PESSIMISTIC_WRITE);
-        if (obcSeq != null && obcSeq.list().size() > 0) {
-          seq = obcSeq.list().get(0);
-        }
+        obcSeq.setMaxResults(1);
+        seq = (Sequence) obcSeq.uniqueResult();
       }
-      if (seq != null) {
-        if (seq.getPrefix() != null)
-          nextDocNumber = seq.getPrefix();
-        nextDocNumber += seq.getNextAssignedNumber().toString();
-        if (seq.getSuffix() != null)
-          nextDocNumber += seq.getSuffix();
-        if (updateNext) {
-          seq.setNextAssignedNumber(seq.getNextAssignedNumber() + seq.getIncrementBy());
-          OBDal.getInstance().save(seq);
-          // OBDal.getInstance().flush();
-        }
-      }
+      return getDocumentNo(updateNext, seq);
     }
+    return null;
+  }
 
-    return nextDocNumber;
+  public static String getDocumentNo(boolean updateNext, Sequence seq) {
+    if (seq != null) {
+      if (updateNext) {
+        // We lock the sequence with a select for update to avoid duplicates
+        seq = lockSequence(seq);
+      }
+      StringBuilder nextDocNumber = new StringBuilder();
+      if (seq.getPrefix() != null) {
+        nextDocNumber.append(seq.getPrefix());
+      }
+      nextDocNumber.append(seq.getNextAssignedNumber().toString());
+      if (seq.getSuffix() != null) {
+        nextDocNumber.append(seq.getSuffix());
+      }
+      if (updateNext) {
+        seq.setNextAssignedNumber(seq.getNextAssignedNumber() + seq.getIncrementBy());
+        OBDal.getInstance().save(seq);
+        // OBDal.getInstance().flush();
+      }
+      return nextDocNumber.toString();
+    }
+    return null;
+  }
+
+  private static Sequence lockSequence(Sequence seq) {
+    StringBuilder where = new StringBuilder("select s from ADSequence s where id = :id");
+    final Session session = OBDal.getInstance().getSession();
+    final Query query = session.createQuery(where.toString());
+    query.setParameter("id", seq.getId());
+    query.setMaxResults(1);
+    query.setLockOptions(LockOptions.UPGRADE);
+    OBDal.getInstance().getSession().evict(seq);
+    return (Sequence) query.uniqueResult();
   }
 
   /**
@@ -972,7 +994,8 @@ public class FIN_Utility {
       }
     } catch (Exception e) {
       log4j.error("Error getting conversion rate precission", e);
-      return 6; // by default precision of 6 decimals as is defaulted in Format.xml
+      return 6; // by default precision of 6 decimals as is defaulted in
+                // Format.xml
     }
   }
 
@@ -1064,7 +1087,8 @@ public class FIN_Utility {
       final String paymentDescription = OBDal.getInstance()
           .get(OrganizationInformation.class, (DalUtil.getId(organization)))
           .getAPRMPaymentDescription();
-      // In case of a purchase invoice and the Supplier Reference is selected use Reference
+      // In case of a purchase invoice and the Supplier Reference is selected use
+      // Reference
       if (paymentDescription.equals("Supplier Reference") && !invoice.isSalesTransaction()) {
         invoiceDocNo = invoice.getOrderReference();
         if (invoiceDocNo == null) {
@@ -1462,8 +1486,10 @@ public class FIN_Utility {
     if (payment == null) {
       return;
     }
-    // When credit is used (consumed) we compensate so_creditused as this amount is already
-    // included in the payment details. Credit consumed should not affect to so_creditused
+    // When credit is used (consumed) we compensate so_creditused as this amount is
+    // already
+    // included in the payment details. Credit consumed should not affect to
+    // so_creditused
     if (payment.getGeneratedCredit().compareTo(BigDecimal.ZERO) == 0
         && payment.getUsedCredit().compareTo(BigDecimal.ZERO) != 0) {
       BusinessPartner bp = payment.getBusinessPartner();
