@@ -11,26 +11,7 @@
 
 OB.UTIL = window.OB.UTIL || {};
 
-OB.UTIL.isDisableDiscount = function (receipt, callback) {
-  if (receipt.get('lines').length > 0) {
-    // Set disable promotion discount property
-    OB.Dal.findUsingCache('ManualDiscountsExist', OB.Model.Discount, {
-      _whereClause: "where m_offer_type_id in (" + OB.Model.Discounts.getManualPromotions() + ")"
-    }, function (promos) {
-      if (promos.length === 0) {
-        callback(true);
-      } else {
-        callback(false);
-      }
-    }, {
-      modelsAffectedByCache: ['Discount']
-    }, function () {
-      callback(true);
-    });
-  } else {
-    callback(true);
-  }
-};
+
 
 OB.UTIL.getImageURL = function (id) {
   var imageUrl = 'productImages/';
