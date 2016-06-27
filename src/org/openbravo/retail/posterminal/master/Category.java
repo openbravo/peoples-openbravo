@@ -144,22 +144,15 @@ public class Category extends ProcessHQLQuery {
         + "                 and p.startingDate <= TO_DATE('"
         + format.format(now.getTime())
         + "', 'yyyy/MM/dd')"
-        // assortment product list
-        + "and ((p.includedProducts='Y' " + "  and not exists (select 1 "
-        + "         from PricingAdjustmentProduct pap, OBRETCO_Prol_Product ppl "
-        + "        where pap.active = true " + "          and pap.priceAdjustment = p "
-        + "          and pap.product.id = ppl.product.id "
-        + "          and ppl.obretcoProductlist ='" + productList.getId() + "')) "
-        + "   or (p.includedProducts='N' "
-        + "  and  exists (select 1 "
-        + "         from PricingAdjustmentProduct pap, OBRETCO_Prol_Product ppl "
-        + "        where pap.active = true "
-        + "          and pap.priceAdjustment = p "
-        + "          and pap.product.id = ppl.product.id "
-        + "          and ppl.obretcoProductlist ='"
+        // assortment products
+        + " and ((p.includedProducts = 'N' "
+        + "  and not exists (select 1 from PricingAdjustmentProduct pap"
+        + "    where pap.active = true and pap.priceAdjustment = p and pap.product.sale = true "
+        + "      and pap.product not in (select ppl.product.id from OBRETCO_Prol_Product ppl "
+        + "         where ppl.obretcoProductlist.id = '"
         + productList.getId()
-        + "')) "
-        + "    ) "
+        + "'        and ppl.active = true))) "
+        + " or p.includedProducts = 'Y') "
         // organization
         + "and ((p.includedOrganizations='Y' " + "  and not exists (select 1 "
         + "         from PricingAdjustmentOrganization o" + "        where active = true"

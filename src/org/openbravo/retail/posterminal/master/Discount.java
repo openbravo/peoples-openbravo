@@ -80,23 +80,15 @@ public class Discount extends ProcessHQLQuery {
       hql += "          and pl.priceAdjustment = p";
       hql += "          and pl.priceList.id ='" + priceListId + "')) ";
       hql += "    ) ";
-
-      // assortment product list
-      hql += "and ((p.includedProducts='Y' ";
-      hql += "  and not exists (select 1 ";
-      hql += "         from PricingAdjustmentProduct pap, OBRETCO_Prol_Product ppl ";
-      hql += "        where pap.active = true " + "          and pap.priceAdjustment = p ";
-      hql += "          and pap.product.id = ppl.product.id ";
-      hql += "          and ppl.obretcoProductlist ='" + productList.getId() + "')) ";
-      hql += "   or (p.includedProducts='N' ";
-      hql += "  and  exists (select 1 ";
-      hql += "         from PricingAdjustmentProduct pap, OBRETCO_Prol_Product ppl ";
-      hql += "        where pap.active = true ";
-      hql += "          and pap.priceAdjustment = p ";
-      hql += "          and pap.product.id = ppl.product.id ";
-      hql += "          and ppl.obretcoProductlist ='" + productList.getId() + "')) ";
-      hql += "    ) ";
     }
+    // assortment products
+    hql += " and ((p.includedProducts = 'N' ";
+    hql += "  and not exists (select 1 from PricingAdjustmentProduct pap";
+    hql += "    where pap.active = true and pap.priceAdjustment = p and pap.product.sale = true ";
+    hql += "      and pap.product not in (select ppl.product.id from OBRETCO_Prol_Product ppl ";
+    hql += "         where ppl.obretcoProductlist.id = '" + productList.getId() + "' ";
+    hql += "         and ppl.active = true))) ";
+    hql += " or p.includedProducts = 'Y') ";
     // organization
     hql += "and p.$naturalOrgCriteria and ((includedOrganizations='Y' ";
     hql += "  and not exists (select 1 ";
