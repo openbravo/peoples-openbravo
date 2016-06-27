@@ -38,9 +38,11 @@ enyo.kind({
   },
   clearPaymentMethodSelect: function (inSender, inEvent) {
     this.$.paymentMethodSelect.setContent('');
+    this.$.paymentMethodSelect.hide();
   },
   buttonStatusChanged: function (inSender, inEvent) {
     this.$.paymentMethodSelect.setContent('');
+    this.$.paymentMethodSelect.hide();
     if (inEvent.value.status && inEvent.value.status.indexOf('paymentMethodCategory.showitems.') === 0) {
       this.doShowPopup({
         popup: 'modalPaymentsSelect',
@@ -102,6 +104,7 @@ enyo.kind({
   paymentChanged: function (inSender, inEvent) {
     if (!inEvent.amount) {
       this.$.paymentMethodSelect.setContent(OB.I18N.getLabel('OBPOS_PaymentsSelectedMethod', [inEvent.payment.payment._identifier]));
+      this.$.paymentMethodSelect.show();
     }
   },
   maxLimitAmountError: function (inSender, inEvent) {
@@ -210,6 +213,11 @@ enyo.kind({
                 name: 'errorMaxlimitamount',
                 showing: false,
                 type: 'error'
+              }, {
+                name: 'paymentMethodSelect',
+                style: 'color: orange',
+                type: 'info',
+                showing: false
               }]
 
             }]
@@ -230,12 +238,6 @@ enyo.kind({
           name: 'layawayaction',
           kind: 'OB.OBPOSPointOfSale.UI.LayawayButton'
         }]
-      }]
-    }, {
-      classes: 'span12',
-      components: [{
-        name: 'paymentMethodSelect',
-        style: 'color: orange; padding-left: 1em'
       }]
     }]
   }],
@@ -693,6 +695,7 @@ enyo.kind({
     errorLabelArray.push(this.$.overpaymentexceedlimit);
     errorLabelArray.push(this.$.onlycashpaymentmethod);
     errorLabelArray.push(this.$.errorMaxlimitamount);
+    errorLabelArray.push(this.$.paymentMethodSelect);
     return errorLabelArray;
   },
   getFirstShowingObject: function (errorLabelArray) {
@@ -719,7 +722,7 @@ enyo.kind({
     return count;
   },
   resumeAnimation: function (inSender, inEvent) {
-    if (inEvent.originator.type === 'error') {
+    if (inEvent.originator.type === 'error' || inEvent.originator.type === 'info') {
       this.alignErrorMessages();
     }
 
@@ -746,7 +749,7 @@ enyo.kind({
     if (this.errorLabels) {
       for (i = 0; i < this.errorLabels.length; i++) {
         var arrayContent = this.errorLabels[i];
-        if (arrayContent.showing) {
+        if (arrayContent.showing && arrayContent.type === 'error') {
           count = count + 1;
           msgToReturn = msgToReturn + '\n' + count + ')' + arrayContent.content;
         }
