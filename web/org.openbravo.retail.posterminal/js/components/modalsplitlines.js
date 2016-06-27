@@ -400,13 +400,7 @@ enyo.kind({
       _.forEach(promotionManual, function (promo, index) {
         if (promo.discountType === 'D1D193305A6443B09B299259493B272A' || promo.discountType === '7B49D8CC4E084A75B7CB4D85A6A3A578') {
           var adjustedPromotion = this.getAdjustedPromotion(promo, this.orderline.get('qty'));
-          promo.amt = adjustedPromotion.amt;
-          promo.displayedTotalAmount = adjustedPromotion.displayedTotalAmount;
-          promo.fullAmt = adjustedPromotion.fullAmt;
-          promo.userAmt = adjustedPromotion.userAmt;
-          promo.qtyOffer = adjustedPromotion.qtyOffer;
-          promo.obdiscQtyoffer = adjustedPromotion.obdiscQtyoffer;
-          promo.pendingQtyOffer = adjustedPromotion.pendingQtyOffer;
+          this.orderline.get('promotions').splice(index, 1, adjustedPromotion);
         }
       }, this);
       this.receipt.set('skipCalculateReceipt', false);

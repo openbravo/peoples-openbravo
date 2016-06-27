@@ -3149,7 +3149,15 @@
                 OB.error("There is an error in the sum");
               }
             } else {
-              receipt.get('lines').models[index].get('promotions').push(promotion);
+              _.forEach(linesToApply.models, function (l) {
+                if (l.get('qty') === gli.get('qty')) {
+                  if (_.find(l.get('promotions'), function (promo) {
+                    return promo.promoType === promotion.promoType;
+                  }) === undefined) {
+                    l.get('promotions').push(promotion);
+                  }
+                }
+              });
             }
           });
         }
