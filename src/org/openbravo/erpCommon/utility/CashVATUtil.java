@@ -495,7 +495,7 @@ public class CashVATUtil {
         for (final InvoiceTaxCashVAT_V itcv : line.getInvoiceTaxCashVAT_V()) {
           final TaxRate tax = itcv.getInvoiceTax().getTax();
           Invoice inv = itcv.getInvoiceTax().getInvoice();
-          if (tax.isCashVAT() && inv.equals(invoice)) {
+          if (tax.isCashVAT() && StringUtils.equals(inv.getId(), invoice.getId())) {
             final BigDecimal taxAmt = itcv.getTaxAmount();
             if (taxAmt.compareTo(BigDecimal.ZERO) != 0) {
               final DocTax m_tax = new DocTax(tax.getId(), tax.getName(), tax.getRate().toString(),
