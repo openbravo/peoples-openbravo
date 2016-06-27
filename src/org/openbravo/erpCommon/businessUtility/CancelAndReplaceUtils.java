@@ -907,9 +907,7 @@ public class CancelAndReplaceUtils {
           "financialAccount");
     } else {
       paymentPaymentMethod = oldOrder.getPaymentMethod();
-      // financialAccount =
-      // FIN_Utility.getFinancialAccountPaymentMethod(paymentPaymentMethod.getId(),
-      // null, true, oldOrder.getCurrency().getId()).getAccount();
+      // Find a financial account belong the organization tree
       if (oldOrder.getBusinessPartner().getAccount() != null
           && FIN_Utility.getFinancialAccountPaymentMethod(paymentPaymentMethod.getId(), oldOrder
               .getBusinessPartner().getAccount().getId(), true, oldOrder.getCurrency().getId()) != null
