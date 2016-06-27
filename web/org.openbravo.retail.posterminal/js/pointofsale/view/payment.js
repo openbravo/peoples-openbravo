@@ -191,6 +191,10 @@ enyo.kind({
                 showing: false,
                 type: 'error'
               }, {
+                name: 'changeexceedlimit',
+                showing: false,
+                type: 'error'
+              }, {
                 name: 'overpaymentnotavailable',
                 showing: false,
                 type: 'error'
@@ -530,10 +534,18 @@ enyo.kind({
     requiredCash = selectedPayment.paymentMethod.iscash ? paymentstatus.changeAmt : paymentstatus.overpayment;
     if (requiredCash !== 0) {
       if (selectedPayment.paymentMethod.overpaymentLimit === 0 && selectedPayment.paymentMethod.overpaymentLimit < requiredCash) {
-        this.$.overpaymentnotavailable.show();
+        if (selectedPayment.paymentMethod.iscash) {
+          this.$.changeexceedlimit.show();
+        } else {
+          this.$.overpaymentnotavailable.show();
+        }
         return false;
       } else if (selectedPayment.paymentMethod.overpaymentLimit < requiredCash) {
-        this.$.overpaymentexceedlimit.show();
+        if (selectedPayment.paymentMethod.iscash) {
+          this.$.changeexceedlimit.show();
+        } else {
+          this.$.overpaymentexceedlimit.show();
+        }
         return false;
       } else {
         return true;
@@ -590,6 +602,7 @@ enyo.kind({
     }
     // Hide all error labels. Error labels are shown by check... functions
     if (_.isNull(paymentstatus.overpayment)) {
+      this.$.changeexceedlimit.hide();
       this.$.overpaymentnotavailable.hide();
       this.$.overpaymentexceedlimit.hide();
     }
@@ -675,6 +688,7 @@ enyo.kind({
   pushErrorMessagesToArray: function () {
     var errorLabelArray = [];
     errorLabelArray.push(this.$.noenoughchangelbl);
+    errorLabelArray.push(this.$.changeexceedlimit);
     errorLabelArray.push(this.$.overpaymentnotavailable);
     errorLabelArray.push(this.$.overpaymentexceedlimit);
     errorLabelArray.push(this.$.onlycashpaymentmethod);
@@ -745,7 +759,7 @@ enyo.kind({
       this.$.donebutton.setLocalDisabled(false);
       this.$.exactbutton.setLocalDisabled(false);
     } else {
-      if (this.$.overpaymentnotavailable.showing || this.$.overpaymentexceedlimit.showing || this.$.onlycashpaymentmethod.showing) {
+      if (this.$.changeexceedlimit.showing || this.$.overpaymentnotavailable.showing || this.$.overpaymentexceedlimit.showing || this.$.onlycashpaymentmethod.showing) {
         this.$.noenoughchangelbl.hide();
       } else {
         this.$.noenoughchangelbl.show();
@@ -813,6 +827,7 @@ enyo.kind({
     this.$.exactlbl.setContent(OB.I18N.getLabel('OBPOS_PaymentsExact'));
     this.$.donezerolbl.setContent(OB.I18N.getLabel('OBPOS_MsgPaymentAmountZero'));
     this.$.noenoughchangelbl.setContent(OB.I18N.getLabel('OBPOS_NoEnoughCash'));
+    this.$.changeexceedlimit.setContent(OB.I18N.getLabel('OBPOS_ChangeLimitOverLimit'));
     this.$.overpaymentnotavailable.setContent(OB.I18N.getLabel('OBPOS_OverpaymentNotAvailable'));
     this.$.overpaymentexceedlimit.setContent(OB.I18N.getLabel('OBPOS_OverpaymentExcededLimit'));
     this.$.onlycashpaymentmethod.setContent(OB.I18N.getLabel('OBPOS_OnlyCashPaymentMethod'));
