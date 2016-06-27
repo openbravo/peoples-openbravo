@@ -55,6 +55,7 @@ import org.openbravo.model.ad.access.OrderLineTax;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.enterprise.Locator;
+import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.common.order.OrderLineOffer;
@@ -792,57 +793,57 @@ public class CancelAndReplaceUtils {
             paymentPaymentMethod = payment.getPaymentMethod();
             paymentDocumentType = payment.getDocumentType();
             financialAccount = payment.getAccount();
-          }
-          String paymentDocumentNo = getPaymentDocumentNo(useOrderDocumentNoForRelatedDocs,
-              oldOrder, paymentDocumentType);
 
-          BigDecimal amount = paymentSchedule.getPaidAmount();
-          if (createPayments && amount.compareTo(BigDecimal.ZERO) != 0) {
-            // Duplicate payment with positive amount
-            newPayment = createPayment(newPayment, newOrder, paymentPaymentMethod, amount,
-                paymentDocumentType, financialAccount, paymentDocumentNo);
-            description += ": " + newOrder.getDocumentNo();
-            paymentTotalAmount = paymentTotalAmount.add(amount);
-          }
+            String paymentDocumentNo = getPaymentDocumentNo(useOrderDocumentNoForRelatedDocs,
+                oldOrder, paymentDocumentType);
 
-          BigDecimal negativeAmount = paymentSchedule.getAmount().negate();
-          if (negativeAmount.compareTo(BigDecimal.ZERO) != 0) {
-            // Duplicate payment with negative amount
-            newPayment = createPayment(newPayment, inverseOrder, paymentPaymentMethod,
-                negativeAmount, paymentDocumentType, financialAccount, paymentDocumentNo);
-            paymentTotalAmount = paymentTotalAmount.add(negativeAmount);
-          }
+            BigDecimal amount = paymentSchedule.getPaidAmount();
+            if (createPayments && amount.compareTo(BigDecimal.ZERO) != 0) {
+              // Duplicate payment with positive amount
+              newPayment = createPayment(newPayment, newOrder, paymentPaymentMethod, amount,
+                  paymentDocumentType, financialAccount, paymentDocumentNo);
+              description += ": " + newOrder.getDocumentNo();
+              paymentTotalAmount = paymentTotalAmount.add(amount);
+            }
 
-          BigDecimal outstandingAmount = paymentSchedule.getOutstandingAmount();
-          // Create if needed a second payment for the partially paid
-          if (outstandingAmount.compareTo(BigDecimal.ZERO) != 0) {
-            // Duplicate payment with positive amount
-            newPayment = createPayment(newPayment, oldOrder, paymentPaymentMethod,
-                outstandingAmount, paymentDocumentType, financialAccount, paymentDocumentNo);
-            description += ": " + oldOrder.getDocumentNo();
-            paymentTotalAmount = paymentTotalAmount.add(outstandingAmount);
-          }
+            BigDecimal negativeAmount = paymentSchedule.getAmount().negate();
+            if (negativeAmount.compareTo(BigDecimal.ZERO) != 0) {
+              // Duplicate payment with negative amount
+              newPayment = createPayment(newPayment, inverseOrder, paymentPaymentMethod,
+                  negativeAmount, paymentDocumentType, financialAccount, paymentDocumentNo);
+              paymentTotalAmount = paymentTotalAmount.add(negativeAmount);
+            }
 
-          // Set amount and used credit to zero
-          newPayment.setAmount(paymentTotalAmount);
-          newPayment.setUsedCredit(BigDecimal.ZERO);
-          newPayment.setDescription(description + "\n");
-          OBDal.getInstance().save(newPayment);
+            BigDecimal outstandingAmount = paymentSchedule.getOutstandingAmount();
+            // Create if needed a second payment for the partially paid
+            if (outstandingAmount.compareTo(BigDecimal.ZERO) != 0) {
+              // Duplicate payment with positive amount
+              newPayment = createPayment(newPayment, oldOrder, paymentPaymentMethod,
+                  outstandingAmount, paymentDocumentType, financialAccount, paymentDocumentNo);
+              description += ": " + oldOrder.getDocumentNo();
+              paymentTotalAmount = paymentTotalAmount.add(outstandingAmount);
+            }
 
-          OBDal.getInstance().flush();
+            // Set amount and used credit to zero
+            newPayment.setAmount(paymentTotalAmount);
+            newPayment.setUsedCredit(BigDecimal.ZERO);
+            newPayment.setDescription(description + "\n");
+            OBDal.getInstance().save(newPayment);
 
-          // Call to processPayment in order to process it
-          if (triggersDisabled && replaceOrder) {
-            TriggerHandler.getInstance().enable();
-          }
-          FIN_PaymentProcess.doProcessPayment(newPayment, "P", true, null, null);
-          if (triggersDisabled && replaceOrder) {
-            TriggerHandler.getInstance().disable();
-          }
+            OBDal.getInstance().flush();
 
-          // There aren't any payments on original order, pay original order and inverse order
-          // completely.
-          if (paymentScheduleDetailList.size() == 0) {
+            // Call to processPayment in order to process it
+            if (triggersDisabled && replaceOrder) {
+              TriggerHandler.getInstance().enable();
+            }
+            FIN_PaymentProcess.doProcessPayment(newPayment, "P", true, null, null);
+            if (triggersDisabled && replaceOrder) {
+              TriggerHandler.getInstance().disable();
+            }
+
+          } else {
+            // There aren't any payments on original order, pay original order and inverse order
+            // completely.
             finishOrderPayments(jsonorder, oldOrder, inverseOrder, paymentSchedule,
                 useOrderDocumentNoForRelatedDocs, triggersDisabled, replaceOrder);
           }
@@ -906,7 +907,20 @@ public class CancelAndReplaceUtils {
           "financialAccount");
     } else {
       paymentPaymentMethod = oldOrder.getPaymentMethod();
-      financialAccount = oldOrder.getBusinessPartner().getAccount();
+      // financialAccount =
+      // FIN_Utility.getFinancialAccountPaymentMethod(paymentPaymentMethod.getId(),
+      // null, true, oldOrder.getCurrency().getId()).getAccount();
+      if (oldOrder.getBusinessPartner().getAccount() != null
+          && FIN_Utility.getFinancialAccountPaymentMethod(paymentPaymentMethod.getId(), oldOrder
+              .getBusinessPartner().getAccount().getId(), true, oldOrder.getCurrency().getId()) != null
+          && osp.isInNaturalTree(oldOrder.getBusinessPartner().getAccount().getOrganization(),
+              OBDal.getInstance().get(Organization.class, oldOrder.getOrganization().getId()))) {
+        financialAccount = oldOrder.getBusinessPartner().getAccount();
+      } else {
+        financialAccount = FIN_Utility.getFinancialAccountPaymentMethodByOrganization(
+            paymentPaymentMethod.getId(), null, true, oldOrder.getCurrency().getId(),
+            oldOrder.getOrganization().getId()).getAccount();
+      }
     }
 
     BigDecimal negativeAmount = paymentSchedule.getOutstandingAmount().negate();
