@@ -40,9 +40,9 @@
     v_Dateordered DATE;
     v_BillTo VARCHAR2(32);
     v_BpartnerLocation VARCHAR2(32);
-    v_Pricelist VARCHAR2(32);
+    v_Pricelist M_ProductPrice.PriceList%TYPE;
     v_Pricelimit NUMBER;
-    v_Pricestd NUMBER;
+    v_Pricestd M_ProductPrice.PriceStd%TYPE;
     v_Linenetamount NUMBER;
     v_Discount NUMBER;
     v_Tax VARCHAR2(32);

@@ -82,7 +82,7 @@
       v_NextNo VARCHAR2(32) ;
       v_M_PriceList_ID VARCHAR2(32) ;
       --
-      v_Line NUMBER ; --OBTG:VARCHAR2--
+      v_Line C_ORDERLINE.Line%TYPE;
       v_PriceList NUMBER;
       v_PriceLimit NUMBER;
       v_C_UOM_ID VARCHAR2(32) ;

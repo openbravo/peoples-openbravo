@@ -87,7 +87,6 @@
     v_IsStocked NUMBER;
     v_DoctypeReversed_ID VARCHAR2(32);
     --MODIFIED BY F.IRIAZABAL
-    v_QtyAux NUMBER;
     v_Count NUMBER:=0;
     v_Line VARCHAR2(10) ;
     v_OrderDocumentNo C_ORDER.DocumentNo%TYPE;

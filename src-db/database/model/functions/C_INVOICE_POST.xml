@@ -1524,7 +1524,6 @@ IF (NOT FINISH_PROCESS) THEN
     -- Generate C_Debt_Payment linked to this invoice
     DECLARE
       v_totalCash NUMBER:=0;
-      v_processed CHAR(1):='N';
       v_debtPaymentID varchar2(32) ;
       v_amount NUMBER;
       v_cashBook VARCHAR2(32) ;
