@@ -1532,7 +1532,9 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       order.setDelivered(true);
     }
 
-    if (order.getDocumentNo().indexOf("/") > -1) {
+    boolean doCancelAndReplace = jsonorder.has("doCancelAndReplace")
+        && jsonorder.getBoolean("doCancelAndReplace") ? true : false;
+    if (!doCancelAndReplace && order.getDocumentNo().indexOf("/") > -1) {
       long documentno = Long.parseLong(order.getDocumentNo().substring(
           order.getDocumentNo().lastIndexOf("/") + 1));
 
