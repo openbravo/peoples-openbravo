@@ -80,8 +80,7 @@ public class SaveDataActionHandler extends BaseActionHandler {
 
         String entryId = SequenceIdData.getUUID();
         importEntryManager.createImportEntry(entryId, type, data.toString(), false);
-        // We will create a new entry, and commit it (we need to commit it just in case the process
-        // then rolls back the changes due to some error).
+        importEntryManager.setImportEntryProcessed(entryId);
         ImportEntry entry = OBDal.getInstance().get(ImportEntry.class, entryId);
 
         JSONObject result = syncProcess.exec(data, true);
@@ -99,7 +98,6 @@ public class SaveDataActionHandler extends BaseActionHandler {
             importEntryPostProcessor.afterProcessing(entry);
           }
 
-          importEntryManager.setImportEntryProcessed(entryId);
           OBContext.setAdminMode(true);
           try {
             error = OBDal.getInstance().get(OBPOSErrors.class, errorId);
