@@ -27,6 +27,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
@@ -138,10 +139,14 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
           "AttributeSetInstance.product");
       String strIsSOTrx = Utility.getContext(this, vars, "isSOTrx", strWindowId);
 
+      // Get attribute related variable values
+      String lotNo = vars.getStringParameter("inplot");
+      String serialNo = vars.getStringParameter("inpserno");
+      String expiryDate = vars.getStringParameter("inpDateFrom");
+
       // Set Attributes
-      AttributeSetInstanceValue attSetValue = new AttributeSetInstanceValue(
-          vars.getStringParameter("inplot"), vars.getStringParameter("inpserno"),
-          vars.getStringParameter("inpDateFrom"), vars.getStringParameter("inpislocked", "N"),
+      AttributeSetInstanceValue attSetValue = new AttributeSetInstanceValue(lotNo, serialNo,
+          expiryDate, vars.getStringParameter("inpislocked", "N"),
           vars.getStringParameter("inplockDescription"));
       AttributeSet attSet = OBDal.getInstance().get(AttributeSet.class, strAttributeSet);
       HashMap<String, String> attValues = new HashMap<String, String>();
@@ -162,8 +167,21 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
       } finally {
         OBContext.restorePreviousMode();
       }
-      OBError myMessage = attSetValue.setAttributeInstance(this, vars, strAttributeSet,
-          strInstance, strWindowId, strIsSOTrx, strProduct, attValues);
+
+      OBError myMessage = new OBError();
+      if (attSet != null) {
+        if (StringUtils.isEmpty(lotNo) && StringUtils.isEmpty(serialNo)
+            && StringUtils.isEmpty(expiryDate)) {
+          myMessage.setTitle("");
+          myMessage.setType("Success");
+          myMessage
+              .setMessage("Process completed succesfully without creating attributesetinstance");
+        } else {
+          myMessage = attSetValue.setAttributeInstance(this, vars, strAttributeSet, strInstance,
+              strWindowId, strIsSOTrx, strProduct, attValues);
+        }
+
+      }
       vars.setSessionValue("AttributeSetInstance.instance", attSetValue.getAttSetInstanceId());
       vars.setSessionValue("AttributeSetInstance.attribute", strAttributeSet);
       vars.setSessionValue("AttributeSetInstance.close", "Y");
