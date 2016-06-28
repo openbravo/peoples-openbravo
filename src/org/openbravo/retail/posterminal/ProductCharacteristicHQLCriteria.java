@@ -10,6 +10,9 @@ package org.openbravo.retail.posterminal;
 
 import javax.enterprise.context.ApplicationScoped;
 
+import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONTokener;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.mobile.core.process.HQLCriteriaProcess;
@@ -34,12 +37,16 @@ public class ProductCharacteristicHQLCriteria extends HQLCriteriaProcess {
   }
 
   private String[] getParams(String params) {
-    String[] array_params = new String[params.length()];
-    String[] array = (params.substring(1, params.length() - 1)).split(",");
-    for (int i = 0; i < array.length; i++) {
-      array_params[i] = array[i].substring(1, array[i].length() - 1);
+    try {
+      JSONArray array = new JSONArray(new JSONTokener(params));
+      String[] array_params = new String[array.length()];
+      for (int i = 0; i < array.length(); i++) {
+        array_params[i] = array.getString(i);
+      }
+      return array_params;
+    } catch (JSONException e) {
+      return new String[] { "%", "__all__" };
     }
-    return array_params;
   }
 
   public String getAllQuery() {

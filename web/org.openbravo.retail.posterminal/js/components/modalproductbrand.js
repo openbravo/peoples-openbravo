@@ -125,7 +125,7 @@ enyo.kind({
       }
     } else {
       var productFilterText = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.searchProductCharacteristicHeader.$.productFilterText.getValue();
-      var productcategory = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.searchProductCharacteristicHeader.$.productcategory.getValue();
+      var productCategory = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.getProductCategoryFilter();
       var remoteCriteria = [],
           characteristicValue = [],
           characteristic = [],
@@ -134,12 +134,14 @@ enyo.kind({
           productText;
       criteria = {};
       if (products.collection.length > 0) {
-        if (productFilterText !== "" || productcategory !== "__all__") {
+        if (productFilterText !== "" || productCategory.value !== "__all__") {
+          var productCat = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.searchProductCharacteristicHeader.getSelectedCategories(),
+              category = productCat.indexOf('OBPOS_bestsellercategory') >= 0 ? 'OBPOS_bestsellercategory' : (productCat.indexOf('__all__') >= 0 ? '__all__' : [productCategory.value]);
           brandfilter.columns = [];
           brandfilter.operator = OB.Dal.FILTER;
           brandfilter.value = this.brandValueFilterQualifier;
           productText = (OB.MobileApp.model.hasPermission('OBPOS_remote.product' + OB.Dal.USESCONTAINS, true) ? '%' : '') + productFilterText + '%';
-          brandfilter.params = [productText, productcategory];
+          brandfilter.params = [productText, productCategory.filter ? productCategory.params[0] : category];
           remoteCriteria.push(brandfilter);
         }
       }

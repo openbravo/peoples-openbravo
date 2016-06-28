@@ -179,10 +179,10 @@ enyo.kind({
       return true;
 
     }
-    var productFilterText, productcategory, productCharacteristicModel;
+    var productFilterText, productCategory, productCharacteristicModel;
 
     productFilterText = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.searchProductCharacteristicHeader.$.productFilterText.getValue();
-    productcategory = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.searchProductCharacteristicHeader.$.productcategory.getValue();
+    productCategory = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.getProductCategoryFilter();
     productCharacteristicModel = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.searchProductCharacteristicHeader.parent.model;
 
     var remoteCriteria = [],
@@ -216,12 +216,14 @@ enyo.kind({
         }
       }
 
-      if (productFilterText !== undefined || productcategory !== undefined) {
+      if (productFilterText !== undefined || productCategory !== undefined) {
+        var productCat = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.searchProductCharacteristicHeader.getSelectedCategories(),
+            category = productCat.indexOf('OBPOS_bestsellercategory') >= 0 ? 'OBPOS_bestsellercategory' : (productCat.indexOf('__all__') >= 0 ? '__all__' : [productCategory.value]);
         productFilter.columns = [];
         productFilter.operator = OB.Dal.FILTER;
         productFilter.value = this.productCharacteristicValueFilterQualifier;
         productText = (OB.MobileApp.model.hasPermission('OBPOS_remote.product' + OB.Dal.USESCONTAINS, true) ? '%' : '') + productFilterText + '%';
-        productFilter.params = [productText, productcategory];
+        productFilter.params = [productText, productCategory.filter ? productCategory.params[0] : category];
         remoteCriteria.push(productFilter);
       }
       if (me.parent.parent.model.get('filter').length > 0) {
