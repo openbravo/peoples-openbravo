@@ -82,18 +82,10 @@ public class SaveDataActionHandler extends BaseActionHandler {
         importEntryManager.createImportEntry(entryId, type, data.toString(), false);
         // We will create a new entry, and commit it (we need to commit it just in case the process
         // then rolls back the changes due to some error).
-        OBDal.getInstance().getConnection(true).commit();
         ImportEntry entry = OBDal.getInstance().get(ImportEntry.class, entryId);
 
         JSONObject result = syncProcess.exec(data, true);
 
-        // Execute post process hooks.
-        for (ImportEntryPostProcessor importEntryPostProcessor : importEntryPostProcessors
-            .select(new ImportEntryProcessorSelector(type))) {
-          importEntryPostProcessor.afterProcessing(entry);
-        }
-
-        importEntryManager.setImportEntryProcessed(entryId);
         if (result.get(JsonConstants.RESPONSE_STATUS).equals(
             JsonConstants.RPCREQUEST_STATUS_FAILURE)) {
           errorb = true;
@@ -101,6 +93,13 @@ public class SaveDataActionHandler extends BaseActionHandler {
           // transaction
           OBDal.getInstance().commitAndClose();
         } else {
+          // Execute post process hooks.
+          for (ImportEntryPostProcessor importEntryPostProcessor : importEntryPostProcessors
+              .select(new ImportEntryProcessorSelector(type))) {
+            importEntryPostProcessor.afterProcessing(entry);
+          }
+
+          importEntryManager.setImportEntryProcessed(entryId);
           OBContext.setAdminMode(true);
           try {
             error = OBDal.getInstance().get(OBPOSErrors.class, errorId);
