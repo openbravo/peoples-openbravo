@@ -746,7 +746,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
       var finishCancelLayaway = function () {
           var cancelLayawayObj = {},
               cancelLayawayModel = new OB.Model.CancelLayaway(),
-              docNo = OB.MobileApp.model.getNextDocumentno(),
               documentNo = receipt.get('documentNo'),
               process = new OB.DS.Process('org.openbravo.retail.posterminal.process.IsOrderCancelled');
 
@@ -762,7 +761,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
               return;
             } else {
               cancelLayawayObj.id = receipt.get('id');
-              cancelLayawayObj.negativeDocNo = docNo;
               cancelLayawayObj.orderId = receipt.get('id');
               cancelLayawayObj.payments = JSON.parse(JSON.stringify(receipt.get('payments')));
               cancelLayawayObj.gross = receipt.getPaymentStatus().isNegative ? OB.DEC.mul(receipt.get('gross'), -1) : receipt.get('gross');
@@ -789,32 +787,30 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
               cancelLayawayModel.set('json', JSON.stringify(cancelLayawayObj));
 
               OB.Dal.save(cancelLayawayModel, function () {
-                OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(docNo.documentnoSuffix, OB.MobileApp.model.set('quotationDocumentSequence'), function () {
-                  var orderId = receipt.id;
+                var orderId = receipt.id;
 
-                  OB.MobileApp.model.runSyncProcess();
-                  orderList.deleteCurrent();
-                  OB.Dal.get(OB.Model.Order, orderId, function (model) {
-                    function cancelAndNew() {
-                      OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgSuccessCancelLayaway', [documentNo]));
-                    }
-                    if (model) {
-                      OB.Dal.remove(model, function (tx) {
-                        cancelAndNew();
-                      }, function (tx, err) {
-                        OB.UTIL.showError(err);
-                      });
-                    } else {
+                OB.MobileApp.model.runSyncProcess();
+                orderList.deleteCurrent();
+                OB.Dal.get(OB.Model.Order, orderId, function (model) {
+                  function cancelAndNew() {
+                    OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgSuccessCancelLayaway', [documentNo]));
+                  }
+                  if (model) {
+                    OB.Dal.remove(model, function (tx) {
                       cancelAndNew();
-                    }
-                  }, function (tx, err) {
-                    OB.UTIL.showError(err);
-                  });
+                    }, function (tx, err) {
+                      OB.UTIL.showError(err);
+                    });
+                  } else {
+                    cancelAndNew();
+                  }
+                }, function (tx, err) {
+                  OB.UTIL.showError(err);
                 });
               }, function () {
                 OB.error(arguments);
               });
-              receipt.set('negativeDocNo', docNo.documentNo);
+              receipt.set('negativeDocNo', documentNo + '*R*');
               receipt.trigger('print');
             }
           }, function () {
