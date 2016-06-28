@@ -379,7 +379,7 @@ public class CancelAndReplaceUtils {
     inverseOrder.setScheduledDeliveryDate(today);
     String newDocumentNo = documentNo;
     if (newDocumentNo == null) {
-      newDocumentNo = FIN_Utility.getDocumentNo(oldOrder.getDocumentType(), Order.TABLE_NAME);
+      newDocumentNo = oldOrder.getDocumentNo() + "*R*";
     }
     inverseOrder.setDocumentNo(newDocumentNo);
     inverseOrder.setCancelledorder(oldOrder);
@@ -1090,4 +1090,37 @@ public class CancelAndReplaceUtils {
     }
     return paymentDocumentNo;
   }
+
+  /**
+   * Process that generates a document number for an order which cancels another order.
+   * 
+   * @param documentNo
+   *          Document number of the cancelled order.
+   * @return The new document number for the order which cancels the old order.
+   */
+  public static String getNextCancelDocNo(String documentNo) {
+    String newDocNo = "";
+    String[] splittedDocNo = documentNo.split("-");
+    if (splittedDocNo.length > 1) {
+      int nextNumber;
+      try {
+        nextNumber = Integer.parseInt(splittedDocNo[splittedDocNo.length - 1]) + 1;
+        for (int i = 0; i < splittedDocNo.length; i++) {
+          if (i == 0) {
+            newDocNo = splittedDocNo[i] + "-";
+          } else if (i < splittedDocNo.length - 1) {
+            newDocNo += splittedDocNo[i] + "-";
+          } else {
+            newDocNo += nextNumber;
+          }
+        }
+      } catch (NumberFormatException nfe) {
+        newDocNo = documentNo + "-1";
+      }
+    } else {
+      newDocNo = documentNo + "-1";
+    }
+    return newDocNo;
+  }
+
 }

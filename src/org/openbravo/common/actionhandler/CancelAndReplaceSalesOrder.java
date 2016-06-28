@@ -26,11 +26,11 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
-import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.businessUtility.CancelAndReplaceUtils;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
@@ -68,8 +68,7 @@ public class CancelAndReplaceSalesOrder extends BaseActionHandler {
       newOrder.setSummedLineAmount(BigDecimal.ZERO);
       Date today = new Date();
       newOrder.setOrderDate(today);
-      String newDocumentNo = FIN_Utility
-          .getDocumentNo(oldOrder.getDocumentType(), Order.TABLE_NAME);
+      String newDocumentNo = CancelAndReplaceUtils.getNextCancelDocNo(oldOrder.getDocumentNo());
       newOrder.setDocumentNo(newDocumentNo);
       newOrder.setReplacedorder(oldOrder);
       OBDal.getInstance().save(newOrder);
