@@ -330,6 +330,8 @@ enyo.kind({
   'promotionCandidates', 'promotionMessages', 'promotions', 'qty', 'qtyToApplyDiscount', 'splitline', //
   'tax', 'taxAmount', 'taxLines', 'uOM', 'warehouse', 'deliveredQuantity', 'replacedorderline'],
 
+  splittedLines: [],
+
   getAdjustedPromotion: function (promo, qty) {
     var clonedPromotion = JSON.parse(JSON.stringify(promo));
     if (clonedPromotion.discountType === 'D1D193305A6443B09B299259493B272A' || promo.discountType === '7B49D8CC4E084A75B7CB4D85A6A3A578') {
@@ -380,6 +382,7 @@ enyo.kind({
           },
           context: this,
           callback: function (success, addline) {
+            this.splittedLines.push(addline);
             addline.set('promotions', []);
             var promotionManual = _.filter(this.orderline.get('promotions'), function (promo) {
               return promo.manual;
@@ -400,6 +403,24 @@ enyo.kind({
       _.forEach(promotionManual, function (promo, index) {
         if (promo.discountType === 'D1D193305A6443B09B299259493B272A' || promo.discountType === '7B49D8CC4E084A75B7CB4D85A6A3A578') {
           var adjustedPromotion = this.getAdjustedPromotion(promo, this.orderline.get('qty'));
+          var splittedAmount = _.reduce(this.splittedLines, function (sum, line) {
+            var linePromo = _.find(line.get('promotions'), function (lp) {
+              return lp.discountType === promo.discountType;
+            });
+            if (linePromo) {
+              return sum + OB.DEC.toNumber(OB.DEC.toBigDecimal(OB.I18N.formatCurrency(linePromo.amt)));
+            }
+            return sum;
+          }, 0);
+          var bdSplittedAmount = OB.DEC.toBigDecimal(OB.I18N.formatCurrency(splittedAmount)),
+              bdPromoAmount = OB.DEC.toBigDecimal(OB.I18N.formatCurrency(promo.amt));
+          if (bdPromoAmount.compareTo(bdSplittedAmount.add(OB.DEC.toBigDecimal(OB.I18N.formatCurrency(adjustedPromotion.amt)))) !== 0) {
+            var amount = OB.DEC.toNumber(bdPromoAmount.subtract(bdSplittedAmount));
+            adjustedPromotion.amt = amount;
+            adjustedPromotion.displayedTotalAmount = amount;
+            adjustedPromotion.fullAmt = amount;
+            adjustedPromotion.userAmt = amount;
+          }
           this.orderline.get('promotions').splice(index, 1, adjustedPromotion);
         }
       }, this);
@@ -422,6 +443,7 @@ enyo.kind({
       context: this,
       callback: function (success, orderline) {
         if (success) {
+          this.splittedLines = [];
           this.addProductSplit(true, orderline);
         } else {
           this.orderline.set('splitline', false);

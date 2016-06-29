@@ -3129,13 +3129,16 @@
                 var clonedPromotion = JSON.parse(JSON.stringify(promotion));
                 if (promoQtyoffer > 0) {
                   clonedPromotion.obdiscQtyoffer = (line.get('qty') - promoQtyoffer >= 0) ? promoQtyoffer : line.get('qty');
-                  clonedPromotion.amt = (promotion.amt * (clonedPromotion.obdiscQtyoffer / promotion.qtyOffer));
-                  clonedPromotion.fullAmt = clonedPromotion.amt;
-                  clonedPromotion.displayedTotalAmount = (promotion.displayedTotalAmount * (clonedPromotion.obdiscQtyoffer / promotion.qtyOffer));
+                  clonedPromotion.amt = OB.DEC.toNumber(OB.DEC.toBigDecimal(OB.I18N.formatCurrency((promotion.amt * (clonedPromotion.obdiscQtyoffer / promotion.qtyOffer)))));
+                  clonedPromotion.fullAmt = OB.DEC.toNumber(OB.DEC.toBigDecimal(OB.I18N.formatCurrency(clonedPromotion.amt)));
+                  clonedPromotion.displayedTotalAmount = OB.DEC.toNumber(OB.DEC.toBigDecimal(OB.I18N.formatCurrency((promotion.displayedTotalAmount * (clonedPromotion.obdiscQtyoffer / promotion.qtyOffer)))));
                   clonedPromotion.pendingQtyoffer = line.get('qty') - clonedPromotion.obdiscQtyoffer;
                   clonedPromotion.qtyOffer = clonedPromotion.obdiscQtyoffer;
                   clonedPromotion.qtyOfferReserved = clonedPromotion.obdiscQtyoffer;
                   clonedPromotion.doNotMerge = true;
+                  if (!line.get('promotions')) {
+                    line.set('promotions', []);
+                  }
                   line.get('promotions').push(clonedPromotion);
                   promoQtyoffer -= clonedPromotion.obdiscQtyoffer;
                   promoAmt += clonedPromotion.amt;
@@ -3148,13 +3151,39 @@
               if (promotion.amt !== promoAmt) {
                 OB.error("There is an error in the sum");
               }
+              // Adjust splitted promotion amount
+              var splittedAmount = _.reduce(linesToApply.models, function (sum, line) {
+                var linePromo = _.find(line.get('promotions'), function (lp) {
+                  return lp.discountType === promotion.discountType;
+                });
+                if (linePromo) {
+                  return sum + OB.DEC.toNumber(OB.DEC.toBigDecimal(OB.I18N.formatCurrency(linePromo.amt)));
+                }
+                return sum;
+              }, 0);
+              var bdSplittedAmount = OB.DEC.toBigDecimal(OB.I18N.formatCurrency(splittedAmount)),
+                  bdPromoAmount = OB.DEC.toBigDecimal(OB.I18N.formatCurrency(promotion.amt));
+              if (bdPromoAmount.compareTo(bdSplittedAmount) !== 0) {
+                var linePromo = _.find(linesToApply.at(0).get('promotions'), function (lp) {
+                  return lp.discountType === promotion.discountType;
+                });
+                var amount = OB.DEC.toNumber(bdPromoAmount.subtract(bdSplittedAmount).add(OB.DEC.toBigDecimal(OB.I18N.formatCurrency(linePromo.amt))));
+                linePromo.amt = amount;
+                linePromo.displayedTotalAmount = amount;
+                linePromo.fullAmt = amount;
+                linePromo.userAmt = amount;
+              }
             } else {
+              var appliedPromotion = false;
               _.forEach(linesToApply.models, function (l) {
-                if (l.get('qty') === gli.get('qty')) {
-                  if (_.find(l.get('promotions'), function (promo) {
-                    return promo.promoType === promotion.promoType;
-                  }) === undefined) {
-                    l.get('promotions').push(promotion);
+                if (!appliedPromotion) {
+                  if (l.get('qty') === gli.get('qty')) {
+                    if (_.find(l.get('promotions'), function (promo) {
+                      return promo.discountType === promotion.discountType;
+                    }) === undefined) {
+                      l.get('promotions').push(promotion);
+                      appliedPromotion = true;
+                    }
                   }
                 }
               });
