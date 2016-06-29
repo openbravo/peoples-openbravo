@@ -55,8 +55,13 @@ enyo.kind({
     this.model = model;
     var me = this;
     this.model.on('change:otherInput', function () {
-      me.$.variableInput.setContent(me.model.get('otherInput'));
-      me.$.allowvariableamount.setQtyToKeep(me.model.get('otherInput'));
+      if (OB.DEC.isNumber(me.model.get('otherInput'))) {
+        me.$.variableInput.setContent(me.model.get('otherInput'));
+        me.$.allowvariableamount.setQtyToKeep(me.model.get('otherInput'));
+      } else {
+        me.$.variableInput.setContent('');
+        me.$.allowvariableamount.setQtyToKeep(null);
+      }
       me.$.allowvariableamount.tap();
     }, this);
   },
