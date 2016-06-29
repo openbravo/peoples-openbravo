@@ -341,6 +341,7 @@ public class CancelAndReplaceUtils {
         throw new OBException(e2);
       }
       Throwable e3 = DbUtility.getUnderlyingSQLException(e1);
+      log4j.error("Error executing Cancel and Replace", e1);
       throw new OBException(e3.getMessage());
     } finally {
       if (orderLines != null) {
