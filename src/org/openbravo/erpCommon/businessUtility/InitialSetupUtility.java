@@ -2104,27 +2104,7 @@ public class InitialSetupUtility {
   }
 
   public static String getTranslatedColumnName(Language language, String columnName) {
-    OBContext.setAdminMode();
-    try {
-      OBCriteria<org.openbravo.model.ad.ui.Element> obcElement = OBDal.getInstance()
-          .createCriteria(org.openbravo.model.ad.ui.Element.class);
-      obcElement.setFilterOnReadableClients(false);
-      obcElement.setFilterOnReadableOrganization(false);
-      obcElement.add(Restrictions.eq(org.openbravo.model.ad.ui.Element.PROPERTY_DBCOLUMNNAME,
-          columnName));
-      org.openbravo.model.ad.ui.Element element = (org.openbravo.model.ad.ui.Element) obcElement
-          .uniqueResult();
-
-      ElementTrl trl = getTranslationElement(language, element);
-      if (trl == null) {
-        return element.getName();
-      }
-      return trl.getName();
-    } catch (final Exception err) {
-      return "Error!";
-    } finally {
-      OBContext.restorePreviousMode();
-    }
+    return getTranslatedElement(language, columnName, null);
   }
 
   public static String getTranslatedElement(Language language, String columnName, String elementName) {
@@ -2134,14 +2114,20 @@ public class InitialSetupUtility {
           .createCriteria(org.openbravo.model.ad.ui.Element.class);
       obcElement.setFilterOnReadableClients(false);
       obcElement.setFilterOnReadableOrganization(false);
-      obcElement.add(Restrictions.eq(org.openbravo.model.ad.ui.Element.PROPERTY_NAME, elementName));
       obcElement.add(Restrictions.eq(org.openbravo.model.ad.ui.Element.PROPERTY_DBCOLUMNNAME,
           columnName));
+      if (StringUtils.isNotEmpty(elementName)) {
+        obcElement.add(Restrictions
+            .eq(org.openbravo.model.ad.ui.Element.PROPERTY_NAME, elementName));
+      }
       obcElement.setMaxResults(1);
       org.openbravo.model.ad.ui.Element element = (org.openbravo.model.ad.ui.Element) obcElement
           .uniqueResult();
 
-      ElementTrl trl = getTranslationElement(language, element);
+      OBCriteria<ElementTrl> obcElementTrl = OBDal.getInstance().createCriteria(ElementTrl.class);
+      obcElementTrl.add(Restrictions.eq(ElementTrl.PROPERTY_APPLICATIONELEMENT, element));
+      obcElementTrl.add(Restrictions.eq(ElementTrl.PROPERTY_LANGUAGE, language));
+      ElementTrl trl = (ElementTrl) obcElementTrl.uniqueResult();
       if (trl == null) {
         return element.getName();
       }
@@ -2151,15 +2137,6 @@ public class InitialSetupUtility {
     } finally {
       OBContext.restorePreviousMode();
     }
-  }
-
-  private static ElementTrl getTranslationElement(Language language,
-      org.openbravo.model.ad.ui.Element element) {
-    OBCriteria<ElementTrl> obcElementTrl = OBDal.getInstance().createCriteria(ElementTrl.class);
-    obcElementTrl.add(Restrictions.eq(ElementTrl.PROPERTY_APPLICATIONELEMENT, element));
-    obcElementTrl.add(Restrictions.eq(ElementTrl.PROPERTY_LANGUAGE, language));
-    ElementTrl trl = (ElementTrl) obcElementTrl.uniqueResult();
-    return trl;
   }
 
   /**
