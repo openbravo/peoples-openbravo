@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,6 +28,7 @@ isc.SimpleType.create({
     editorType: '${uiDefinition.formEditorType?js_string}',
     gridEditorType: '${uiDefinition.gridEditorType?js_string}',
     filterEditorType: '${uiDefinition.filterEditorType?js_string}',
+    readOnlyEditorType: '${uiDefinition.readOnlyEditorType?js_string}',
     </#if>
     ${uiDefinition.typeProperties}
     referenceName: '${uiDefinition.reference.name?js_string}'

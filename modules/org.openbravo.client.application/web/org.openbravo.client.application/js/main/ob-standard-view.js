@@ -2926,6 +2926,7 @@ isc.OBStandardView.addProperties({
       }
 
       type = isc.SimpleType.getType(fld.type);
+      fld.readOnlyEditorType = type.readOnlyEditorType;
       if (type.editorType && !fld.editorType) {
         fld.editorType = type.editorType;
       }
