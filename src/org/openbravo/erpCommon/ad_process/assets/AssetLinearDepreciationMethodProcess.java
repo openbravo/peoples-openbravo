@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2013-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2013-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -448,43 +448,45 @@ public class AssetLinearDepreciationMethodProcess extends DalBaseProcess {
             proportionaldPercentage = HUNDRED.subtract(totalizedPercentage);
           }
 
-          log4j.debug(OBDateUtils.formatDate(calFirstDayOfPeriod.getTime()) + " to "
-              + OBDateUtils.formatDate(calLastDayOfPeriod.getTime()) + "  " + proportionalAmount
-              + "  " + proportionaldPercentage);
+          if (proportionalAmount.compareTo(BigDecimal.ZERO) != 0
+              || proportionaldPercentage.compareTo(BigDecimal.ZERO) != 0) {
 
-          // Accumulate amount and percentage
-          totalizedAmount = totalizedAmount.add(proportionalAmount);
-          totalizedPercentage = totalizedPercentage.add(proportionaldPercentage);
+            log4j.debug(OBDateUtils.formatDate(calFirstDayOfPeriod.getTime()) + " to "
+                + OBDateUtils.formatDate(calLastDayOfPeriod.getTime()) + "  " + proportionalAmount
+                + "  " + proportionaldPercentage);
 
-          // Search for not processed amortization (calFirstDayOfPeriod - calLastDayOfPeriod)
-          Amortization amortization = getAmortization(asset.getOrganization(), null,
-              calLastDayOfPeriod.getTime(), asset.getProject());
-          if (amortization == null) {
-            amortization = createNewAmortization(asset.getOrganization(),
-                OBDateUtils.formatDate(calLastDayOfPeriod.getTime()), null /* description */,
-                calFirstDayOfPeriod.getTime(), calLastDayOfPeriod.getTime(), asset.getCurrency(),
-                asset.getProject(), null /* campaign */, null /* activity */, null /* user1 */,
-                null /* user2 */);
-          }
+            // Accumulate amount and percentage
+            totalizedAmount = totalizedAmount.add(proportionalAmount);
+            totalizedPercentage = totalizedPercentage.add(proportionaldPercentage);
 
-          // Calculate asset sequence number.
-          // Asset 1
-          // January lineno = 10, seqnoasset = 10
-          // February lineno = 10, seqnoasset = 20
-          if (seqNoAsset == null) {
-            seqNoAsset = getMaxSeqNoAsset(asset) + 10L;
-          }
+            // Search for not processed amortization (calFirstDayOfPeriod - calLastDayOfPeriod)
+            Amortization amortization = getAmortization(asset.getOrganization(), null,
+                calLastDayOfPeriod.getTime(), asset.getProject());
+            if (amortization == null) {
+              amortization = createNewAmortization(asset.getOrganization(),
+                  OBDateUtils.formatDate(calLastDayOfPeriod.getTime()), null /* description */,
+                  calFirstDayOfPeriod.getTime(), calLastDayOfPeriod.getTime(), asset.getCurrency(),
+                  asset.getProject(), null /* campaign */, null /* activity */, null /* user1 */,
+                  null /* user2 */);
+            }
 
-          // Calculate amortization line number because the amortization can already exists.
-          Long lineNo = getMaxLineNo(amortization) + 10L;
+            // Calculate asset sequence number.
+            // Asset 1
+            // January lineno = 10, seqnoasset = 10
+            // February lineno = 10, seqnoasset = 20
+            if (seqNoAsset == null) {
+              seqNoAsset = getMaxSeqNoAsset(asset) + 10L;
+            }
 
-          // Create the amortization line
-          if (proportionaldPercentage.compareTo(BigDecimal.ZERO) > 0
-              || proportionalAmount.compareTo(BigDecimal.ZERO) > 0) {
+            // Calculate amortization line number because the amortization can already exists.
+            Long lineNo = getMaxLineNo(amortization) + 10L;
+
+            // Create the amortization line
             amortizationLine = createNewAmortizationLine(amortization, lineNo, seqNoAsset, asset,
                 proportionaldPercentage, proportionalAmount, asset.getCurrency(),
                 asset.getProject(), null /* campaign */, null /* activity */, null /* user1 */,
                 null /* user2 */, null /* costcenter */);
+
             seqNoAsset += 10L;
           }
         }
