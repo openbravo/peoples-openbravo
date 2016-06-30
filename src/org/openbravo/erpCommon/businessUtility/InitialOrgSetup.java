@@ -152,8 +152,8 @@ public class InitialOrgSetup {
     if (!obResult.getType().equals(OKTYPE))
       return obResult;
     obResult.setType(ERRORTYPE);
-    logEvent(InitialSetupUtility.getTranslatedColumnName(language, "AD_Org_ID") + "="
-        + org.getName());
+    logEvent(InitialSetupUtility.getTranslatedElement(language, "AD_Org_ID", "Organization")
+        + " = " + org.getName());
 
     String strOrgId = org.getId();
 
