@@ -1320,10 +1320,11 @@
         OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_AddLine', [qty ? qty : 1, p.get('_identifier')]));
       }
       if (p.get('ispack')) {
-        OB.Model.Discounts.discountRules[p.get('productCategory')].addProductToOrder(this, p);
-        if (callback) {
-          callback(true);
-        }
+        OB.Model.Discounts.discountRules[p.get('productCategory')].addProductToOrder(this, p, function (success, orderline) {
+          if (callback) {
+            callback(success, orderline);
+          }
+        });
         return;
       }
       if (this.get('orderType') === 1) {
@@ -1334,7 +1335,7 @@
       if (((options && options.line) ? options.line.get('qty') + qty : qty) < 0 && p.get('productType') === 'S' && !p.get('returnable')) {
         OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_UnreturnableProduct'), OB.I18N.getLabel('OBPOS_UnreturnableProductMessage', [p.get('_identifier')]));
         if (callback) {
-          callback(false);
+          callback(false, null);
         }
         return;
       }
@@ -1343,7 +1344,7 @@
         if (me.get('isQuotation') && me.get('hasbeenpaid') === 'Y') {
           OB.UTIL.showError(OB.I18N.getLabel('OBPOS_QuotationClosed'));
           if (callback) {
-            callback(false);
+            callback(false, null);
           }
           return false;
         }
@@ -1378,12 +1379,10 @@
               attrs: attrs
             }, function (args) {
               if (args && args.cancelOperation) {
-                if (callback) {
-                  callback(false);
-                }
                 return;
               }
-              if (args.line && (qty !== 1 || args.line.get('qty') !== -1 || args.p.get('productType') !== 'S' || (args.p.get('productType') === 'S' && !args.p.get('isLinkedToProduct')))) {
+              var splitline = !(options && options.line) && !OB.UTIL.isNullOrUndefined(args.line) && !OB.UTIL.isNullOrUndefined(args.line.get('splitline')) && args.line.get('splitline');
+              if (args.line && !splitline && (qty !== 1 || args.line.get('qty') !== -1 || args.p.get('productType') !== 'S' || (args.p.get('productType') === 'S' && !args.p.get('isLinkedToProduct')))) {
                 args.receipt.addUnit(args.line, args.qty);
                 if (!_.isUndefined(args.attrs)) {
                   _.each(_.keys(args.attrs), function (key) {
@@ -1427,7 +1426,7 @@
           newLine: newLine
         }, function (args) {
           if (callback) {
-            callback(true);
+            callback(true, args.orderline);
           }
           if (args.newLine && me.get('lines').contains(line) && args.productToAdd.get('productType') !== 'S') {
             var subs = new subscribeToCalculateGross(me, function () {
@@ -1446,7 +1445,10 @@
                     }
                     args.receipt.save();
                     if (data.hasmandatoryservices) {
-                      args.receipt.trigger('showProductList', args.orderline, 'mandatory');
+                      var splitline = !OB.UTIL.isNullOrUndefined(args.orderline) && !OB.UTIL.isNullOrUndefined(args.orderline.get('splitline')) && args.orderline.get('splitline');
+                      if (!splitline) {
+                        args.receipt.trigger('showProductList', args.orderline, 'mandatory');
+                      }
                     }
                   }
                   OB.UTIL.SynchronizationHelper.finished(synchId, 'HasServices');
@@ -1458,7 +1460,7 @@
             subs.doSubscription();
           }
         });
-      }
+      } // End addProductToOrder
       if (((options && options.line) ? options.line.get('qty') + qty : qty) < 0 && p.get('productType') === 'S' && !p.get('ignoreReturnApproval')) {
         if (options && options.isVerifiedReturn) {
           OB.UTIL.showLoading(false);
@@ -1626,27 +1628,29 @@
               p.set('standardPrice', productPrices.at(0).get('pricestd'));
               p.set('listPrice', productPrices.at(0).get('pricelist'));
             }
-            me.addProductToOrder(p, qty, options, attrs);
-            if (callback) {
-              callback(true);
-            }
+            me.addProductToOrder(p, qty, options, attrs, function (success, orderline) {
+              if (callback) {
+                callback(success, orderline);
+              }
+            });
           } else {
             OB.UTIL.showI18NWarning('OBPOS_ProductNotFoundInPriceList');
             if (callback) {
-              callback(false);
+              callback(false, null);
             }
           }
         }, function () {
           OB.UTIL.showI18NWarning('OBPOS_ProductNotFoundInPriceList');
           if (callback) {
-            callback(false);
+            callback(false, null);
           }
         });
       } else {
-        me.addProductToOrder(p, qty, options, attrs);
-        if (callback) {
-          callback(true);
-        }
+        me.addProductToOrder(p, qty, options, attrs, function (success, orderline) {
+          if (callback) {
+            callback(success, orderline);
+          }
+        });
       }
     },
 
@@ -1662,7 +1666,7 @@
         if (args && args.productToAdd && args.productToAdd.get('isGeneric')) {
           OB.UTIL.showI18NWarning('OBPOS_GenericNotAllowed');
           if (callback) {
-            callback(false);
+            callback(false, null);
           }
           return;
         }
@@ -1677,7 +1681,7 @@
           }
 
           if (callback) {
-            callback(false);
+            callback(false, null);
           }
           return;
         }
@@ -1688,11 +1692,14 @@
         }
         if (args && args.useLines) {
           me._drawLinesDistribution(args);
+          if (callback) {
+            callback(false, null);
+          }
           return;
         }
-        me._addProduct(p, qty, options, attrs, function (success) {
+        me._addProduct(p, qty, options, attrs, function (success, orderline) {
           if (callback) {
-            callback(success);
+            callback(success, orderline);
           }
         });
       });
