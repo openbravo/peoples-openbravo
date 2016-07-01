@@ -3171,7 +3171,6 @@
                 linePromo.amt = amount;
                 linePromo.displayedTotalAmount = amount;
                 linePromo.fullAmt = amount;
-                linePromo.userAmt = amount;
               }
             } else {
               var appliedPromotion = false;
