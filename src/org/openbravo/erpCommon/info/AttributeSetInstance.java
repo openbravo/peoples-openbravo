@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -168,20 +168,18 @@ public class AttributeSetInstance extends HttpSecureAppServlet {
         OBContext.restorePreviousMode();
       }
 
-      OBError myMessage = new OBError();
-      if (attSet != null) {
-        if (StringUtils.isEmpty(lotNo) && StringUtils.isEmpty(serialNo)
-            && StringUtils.isEmpty(expiryDate)) {
-          myMessage.setTitle("");
-          myMessage.setType("Success");
-          myMessage
-              .setMessage("Process completed succesfully without creating attributesetinstance");
-        } else {
-          myMessage = attSetValue.setAttributeInstance(this, vars, strAttributeSet, strInstance,
-              strWindowId, strIsSOTrx, strProduct, attValues);
-        }
-
+      OBError myMessage = null;
+      if (StringUtils.isEmpty(lotNo) && StringUtils.isEmpty(serialNo)
+          && StringUtils.isEmpty(expiryDate)) {
+        myMessage = new OBError();
+        myMessage.setTitle("");
+        myMessage.setType("Success");
+        myMessage.setMessage(Utility.messageBD(this, "Success", vars.getLanguage()));
+      } else {
+        myMessage = attSetValue.setAttributeInstance(this, vars, strAttributeSet, strInstance,
+            strWindowId, strIsSOTrx, strProduct, attValues);
       }
+
       vars.setSessionValue("AttributeSetInstance.instance", attSetValue.getAttSetInstanceId());
       vars.setSessionValue("AttributeSetInstance.attribute", strAttributeSet);
       vars.setSessionValue("AttributeSetInstance.close", "Y");
