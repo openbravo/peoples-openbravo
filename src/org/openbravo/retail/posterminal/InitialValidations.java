@@ -15,8 +15,10 @@ import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
 
 import org.codehaus.jettison.json.JSONException;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.businessUtility.Preferences;
@@ -134,6 +136,16 @@ public class InitialValidations {
         }
       } catch (PropertyException e) {
         // Preferences wrongly defined. Process will fail later on, so no need to do anything here.
+      }
+    }
+
+    if (posTerminal.isMaster()) {
+      OBCriteria<OBPOSApplications> obCriteria = OBDal.getInstance().createCriteria(
+          OBPOSApplications.class);
+      obCriteria.add(Restrictions.eq(OBPOSApplications.PROPERTY_MASTERTERMINAL, posTerminal));
+      obCriteria.addOrderBy(OBPOSApplications.PROPERTY_SEARCHKEY, true);
+      if (obCriteria.list().size() == 0) {
+        throw new JSONException("OBPOS_NoSlaveTerminal");
       }
     }
 

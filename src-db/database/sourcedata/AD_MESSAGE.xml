@@ -139,7 +139,7 @@
 <!--043D9CD78F8A439AB3EED76467C5926F-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--043D9CD78F8A439AB3EED76467C5926F-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--043D9CD78F8A439AB3EED76467C5926F-->  <VALUE><![CDATA[OBPOS_errorLoadingProductList]]></VALUE>
-<!--043D9CD78F8A439AB3EED76467C5926F-->  <MSGTEXT><![CDATA[There was an error loading the Pos Terminal. Make sure the store is associated with an Assortment.]]></MSGTEXT>
+<!--043D9CD78F8A439AB3EED76467C5926F-->  <MSGTEXT><![CDATA[Make sure the store is associated with an Assortment.]]></MSGTEXT>
 <!--043D9CD78F8A439AB3EED76467C5926F-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
 <!--043D9CD78F8A439AB3EED76467C5926F-->  <AD_MODULE_ID><![CDATA[FF808181326CC34901326D53DBCF0018]]></AD_MODULE_ID>
 <!--043D9CD78F8A439AB3EED76467C5926F-->  <ISINCLUDEINI18N><![CDATA[N]]></ISINCLUDEINI18N>
@@ -343,7 +343,7 @@
 <!--0AA9B3F9D65740D097A0C255217506DB-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--0AA9B3F9D65740D097A0C255217506DB-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--0AA9B3F9D65740D097A0C255217506DB-->  <VALUE><![CDATA[OBPOS_CMEVAccountIsUsedInPayMethod]]></VALUE>
-<!--0AA9B3F9D65740D097A0C255217506DB-->  <MSGTEXT><![CDATA[There was an error while loading the POS terminal. A financial account used in a Payment Method is also used in a Cash Management Event. Make sure to change your configuration to use different financial accounts for payment methods and cash management events before accessing the Web POS.]]></MSGTEXT>
+<!--0AA9B3F9D65740D097A0C255217506DB-->  <MSGTEXT><![CDATA[A financial account used in a Payment Method is also used in a Cash Management Event. Make sure to change your configuration to use different financial accounts for payment methods and cash management events before accessing the Web POS.]]></MSGTEXT>
 <!--0AA9B3F9D65740D097A0C255217506DB-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--0AA9B3F9D65740D097A0C255217506DB-->  <AD_MODULE_ID><![CDATA[FF808181326CC34901326D53DBCF0018]]></AD_MODULE_ID>
 <!--0AA9B3F9D65740D097A0C255217506DB-->  <ISINCLUDEINI18N><![CDATA[N]]></ISINCLUDEINI18N>
@@ -2336,7 +2336,7 @@ Please contact your system administrator.]]></MSGTEXT>
 <!--526F0B212B18417E809E65F8B87A6C36-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--526F0B212B18417E809E65F8B87A6C36-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--526F0B212B18417E809E65F8B87A6C36-->  <VALUE><![CDATA[OBPOS_errorLoadingPriceList]]></VALUE>
-<!--526F0B212B18417E809E65F8B87A6C36-->  <MSGTEXT><![CDATA[There was an error loading the Pos Terminal. Make sure the store is associated with a Price List.]]></MSGTEXT>
+<!--526F0B212B18417E809E65F8B87A6C36-->  <MSGTEXT><![CDATA[Make sure the store is associated with a Price List.]]></MSGTEXT>
 <!--526F0B212B18417E809E65F8B87A6C36-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
 <!--526F0B212B18417E809E65F8B87A6C36-->  <AD_MODULE_ID><![CDATA[FF808181326CC34901326D53DBCF0018]]></AD_MODULE_ID>
 <!--526F0B212B18417E809E65F8B87A6C36-->  <ISINCLUDEINI18N><![CDATA[N]]></ISINCLUDEINI18N>
@@ -3404,7 +3404,7 @@ Please contact your system administrator.]]></MSGTEXT>
 <!--7882B27146574E2AA554DFD47CE171F1-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--7882B27146574E2AA554DFD47CE171F1-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--7882B27146574E2AA554DFD47CE171F1-->  <VALUE><![CDATA[OBPOS_FinAccSharedPayment]]></VALUE>
-<!--7882B27146574E2AA554DFD47CE171F1-->  <MSGTEXT><![CDATA[There was an error while loading the POS terminal. The Financial Accounts for the Shared Payment Methods of this terminal are not the same as the Financial Accounts of their master terminal. Review the configuration of the Payment Methods on POS Terminal Window.]]></MSGTEXT>
+<!--7882B27146574E2AA554DFD47CE171F1-->  <MSGTEXT><![CDATA[The Financial Accounts for the Shared Payment Methods of this terminal are not the same as the Financial Accounts of their master terminal. Review the configuration of the Payment Methods on POS Terminal Window.]]></MSGTEXT>
 <!--7882B27146574E2AA554DFD47CE171F1-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
 <!--7882B27146574E2AA554DFD47CE171F1-->  <AD_MODULE_ID><![CDATA[FF808181326CC34901326D53DBCF0018]]></AD_MODULE_ID>
 <!--7882B27146574E2AA554DFD47CE171F1-->  <ISINCLUDEINI18N><![CDATA[N]]></ISINCLUDEINI18N>
@@ -3585,7 +3585,7 @@ Are you sure you want to use %0 of %1 's credit to complete this receipt?]]></MS
 <!--7EF083B7E1F246EC81CFECAF0B81DB78-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--7EF083B7E1F246EC81CFECAF0B81DB78-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--7EF083B7E1F246EC81CFECAF0B81DB78-->  <VALUE><![CDATA[OBPOS_LeaveAsCreditNotConfigured]]></VALUE>
-<!--7EF083B7E1F246EC81CFECAF0B81DB78-->  <MSGTEXT><![CDATA[There was an error loading the POS terminal. There is one payment type defined for this terminal whose payment method is checked as Leave as Credit and it has a Financial Account. To fix this, go to the POS Terminal window in Openbravo, look for the financial account of the affected payment method, and make sure to set the appropriate payment method in the "Payment Method" tab.]]></MSGTEXT>
+<!--7EF083B7E1F246EC81CFECAF0B81DB78-->  <MSGTEXT><![CDATA[There is one payment type defined for this terminal whose payment method is checked as Leave as Credit and it has a Financial Account. To fix this, go to the POS Terminal window in Openbravo, look for the financial account of the affected payment method, and make sure to set the appropriate payment method in the "Payment Method" tab.]]></MSGTEXT>
 <!--7EF083B7E1F246EC81CFECAF0B81DB78-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--7EF083B7E1F246EC81CFECAF0B81DB78-->  <AD_MODULE_ID><![CDATA[FF808181326CC34901326D53DBCF0018]]></AD_MODULE_ID>
 <!--7EF083B7E1F246EC81CFECAF0B81DB78-->  <ISINCLUDEINI18N><![CDATA[N]]></ISINCLUDEINI18N>
@@ -3638,6 +3638,18 @@ Are you sure you want to use %0 of %1 's credit to complete this receipt?]]></MS
 <!--8109E36E97274C50945566BFA7B38B9F-->  <AD_MODULE_ID><![CDATA[FF808181326CC34901326D53DBCF0018]]></AD_MODULE_ID>
 <!--8109E36E97274C50945566BFA7B38B9F-->  <ISINCLUDEINI18N><![CDATA[N]]></ISINCLUDEINI18N>
 <!--8109E36E97274C50945566BFA7B38B9F--></AD_MESSAGE>
+
+<!--81A7613E88E342CCAC4B556C106668F7--><AD_MESSAGE>
+<!--81A7613E88E342CCAC4B556C106668F7-->  <AD_MESSAGE_ID><![CDATA[81A7613E88E342CCAC4B556C106668F7]]></AD_MESSAGE_ID>
+<!--81A7613E88E342CCAC4B556C106668F7-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--81A7613E88E342CCAC4B556C106668F7-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--81A7613E88E342CCAC4B556C106668F7-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--81A7613E88E342CCAC4B556C106668F7-->  <VALUE><![CDATA[OBPOS_NoSlaveTerminal]]></VALUE>
+<!--81A7613E88E342CCAC4B556C106668F7-->  <MSGTEXT><![CDATA[Terminal doesn't have any slave terminal. Review the configuration of terminal.]]></MSGTEXT>
+<!--81A7613E88E342CCAC4B556C106668F7-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
+<!--81A7613E88E342CCAC4B556C106668F7-->  <AD_MODULE_ID><![CDATA[FF808181326CC34901326D53DBCF0018]]></AD_MODULE_ID>
+<!--81A7613E88E342CCAC4B556C106668F7-->  <ISINCLUDEINI18N><![CDATA[N]]></ISINCLUDEINI18N>
+<!--81A7613E88E342CCAC4B556C106668F7--></AD_MESSAGE>
 
 <!--81E82C29A17A4E9692A0EFFE8B323970--><AD_MESSAGE>
 <!--81E82C29A17A4E9692A0EFFE8B323970-->  <AD_MESSAGE_ID><![CDATA[81E82C29A17A4E9692A0EFFE8B323970]]></AD_MESSAGE_ID>
@@ -4329,7 +4341,7 @@ Are you sure you want to use %0 of %1 's credit to complete this receipt?]]></MS
 <!--97728BD0F5FB4B0DB86D4CEE5D687C1C-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--97728BD0F5FB4B0DB86D4CEE5D687C1C-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--97728BD0F5FB4B0DB86D4CEE5D687C1C-->  <VALUE><![CDATA[OBPOS_OrgLocationConfigured]]></VALUE>
-<!--97728BD0F5FB4B0DB86D4CEE5D687C1C-->  <MSGTEXT><![CDATA[There was an error loading the POS terminal. There is no location defined for the store organization. A location must be provided in the Organization window, in the Organization Information tab, before accessing the Web POS.]]></MSGTEXT>
+<!--97728BD0F5FB4B0DB86D4CEE5D687C1C-->  <MSGTEXT><![CDATA[There is no location defined for the store organization. A location must be provided in the Organization window, in the Organization Information tab, before accessing the Web POS.]]></MSGTEXT>
 <!--97728BD0F5FB4B0DB86D4CEE5D687C1C-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--97728BD0F5FB4B0DB86D4CEE5D687C1C-->  <AD_MODULE_ID><![CDATA[FF808181326CC34901326D53DBCF0018]]></AD_MODULE_ID>
 <!--97728BD0F5FB4B0DB86D4CEE5D687C1C-->  <ISINCLUDEINI18N><![CDATA[N]]></ISINCLUDEINI18N>
@@ -6454,7 +6466,7 @@ Please contact your system administrator.]]></MSGTEXT>
 <!--DBD6D1C3667740D3B94DB8FEDB7A8A72-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--DBD6D1C3667740D3B94DB8FEDB7A8A72-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--DBD6D1C3667740D3B94DB8FEDB7A8A72-->  <VALUE><![CDATA[OBPOS_OrgCurrencyConfigured]]></VALUE>
-<!--DBD6D1C3667740D3B94DB8FEDB7A8A72-->  <MSGTEXT><![CDATA[There was an error loading the POS terminal. The currency of the store organization is not configured. Make sure to configure it before accessing the Web POS.]]></MSGTEXT>
+<!--DBD6D1C3667740D3B94DB8FEDB7A8A72-->  <MSGTEXT><![CDATA[The currency of the store organization is not configured. Make sure to configure it before accessing the Web POS.]]></MSGTEXT>
 <!--DBD6D1C3667740D3B94DB8FEDB7A8A72-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--DBD6D1C3667740D3B94DB8FEDB7A8A72-->  <AD_MODULE_ID><![CDATA[FF808181326CC34901326D53DBCF0018]]></AD_MODULE_ID>
 <!--DBD6D1C3667740D3B94DB8FEDB7A8A72-->  <ISINCLUDEINI18N><![CDATA[N]]></ISINCLUDEINI18N>
@@ -6502,7 +6514,7 @@ Please contact your system administrator.]]></MSGTEXT>
 <!--DC993585922B41FEA651C3F281146897-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--DC993585922B41FEA651C3F281146897-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--DC993585922B41FEA651C3F281146897-->  <VALUE><![CDATA[OBPOS_PayMethodNotConfiguredInAccount]]></VALUE>
-<!--DC993585922B41FEA651C3F281146897-->  <MSGTEXT><![CDATA[There was an error loading the POS terminal. There is one payment type defined for this terminal whose payment method is not included in the list of accepted payment methods for its financial account. To fix this, go to the Financial Account window in Openbravo, look for the financial account of the affected payment method, and make sure to include the appropriate payment method in the "Payment Method" tab.]]></MSGTEXT>
+<!--DC993585922B41FEA651C3F281146897-->  <MSGTEXT><![CDATA[There is one payment type defined for this terminal whose payment method is not included in the list of accepted payment methods for its financial account. To fix this, go to the Financial Account window in Openbravo, look for the financial account of the affected payment method, and make sure to include the appropriate payment method in the "Payment Method" tab.]]></MSGTEXT>
 <!--DC993585922B41FEA651C3F281146897-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--DC993585922B41FEA651C3F281146897-->  <AD_MODULE_ID><![CDATA[FF808181326CC34901326D53DBCF0018]]></AD_MODULE_ID>
 <!--DC993585922B41FEA651C3F281146897-->  <ISINCLUDEINI18N><![CDATA[N]]></ISINCLUDEINI18N>
@@ -7246,7 +7258,7 @@ Please contact your system administrator.]]></MSGTEXT>
 <!--F1AA30A93DCF4152AAC0D5F8E20031EC-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--F1AA30A93DCF4152AAC0D5F8E20031EC-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--F1AA30A93DCF4152AAC0D5F8E20031EC-->  <VALUE><![CDATA[OBPOS_errorLoadingTerminal]]></VALUE>
-<!--F1AA30A93DCF4152AAC0D5F8E20031EC-->  <MSGTEXT><![CDATA[There was an error loading the Pos Terminal.]]></MSGTEXT>
+<!--F1AA30A93DCF4152AAC0D5F8E20031EC-->  <MSGTEXT><![CDATA[There was an error loading the POS Terminal.]]></MSGTEXT>
 <!--F1AA30A93DCF4152AAC0D5F8E20031EC-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
 <!--F1AA30A93DCF4152AAC0D5F8E20031EC-->  <AD_MODULE_ID><![CDATA[FF808181326CC34901326D53DBCF0018]]></AD_MODULE_ID>
 <!--F1AA30A93DCF4152AAC0D5F8E20031EC-->  <ISINCLUDEINI18N><![CDATA[N]]></ISINCLUDEINI18N>
