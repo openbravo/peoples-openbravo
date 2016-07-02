@@ -339,8 +339,9 @@
           me.receipt = receipt;
         }
         var receiptId = me.receipt.get('id');
+        var currentReceipt = me.receipt;
 
-        var normalizedCreationDate = OB.I18N.normalizeDate(me.receipt.get('creationDate'));
+        var normalizedCreationDate = OB.I18N.normalizeDate(currentReceipt.get('creationDate'));
         var creationDate;
         if (normalizedCreationDate === null) {
           creationDate = new Date();
@@ -349,36 +350,36 @@
           creationDate = new Date(normalizedCreationDate);
         }
 
-        me.receipt.set('creationDate', normalizedCreationDate);
-        me.receipt.set('movementDate', OB.I18N.normalizeDate(new Date()));
-        me.receipt.set('accountingDate', OB.I18N.normalizeDate(new Date()));
-        me.receipt.set('hasbeenpaid', 'Y');
-        me.context.get('multiOrders').trigger('integrityOk', me.receipt);
+        currentReceipt.set('creationDate', normalizedCreationDate);
+        currentReceipt.set('movementDate', OB.I18N.normalizeDate(new Date()));
+        currentReceipt.set('accountingDate', OB.I18N.normalizeDate(new Date()));
+        currentReceipt.set('hasbeenpaid', 'Y');
+        me.context.get('multiOrders').trigger('integrityOk', currentReceipt);
 
         if (!OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
           OB.UTIL.calculateCurrentCash();
-          me.context.get('multiOrders').trigger('integrityOk', me.receipt);
-          OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(me.receipt.get('documentnoSuffix'), me.receipt.get('quotationnoSuffix'), receipt.get('returnnoSuffix'));
+          me.context.get('multiOrders').trigger('integrityOk', currentReceipt);
+          OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(currentReceipt.get('documentnoSuffix'), currentReceipt.get('quotationnoSuffix'), receipt.get('returnnoSuffix'));
         }
 
-        delete me.receipt.attributes.json;
-        me.receipt.set('timezoneOffset', creationDate.getTimezoneOffset());
-        me.receipt.set('created', creationDate.getTime());
-        me.receipt.set('obposCreatedabsolute', OB.I18N.formatDateISO(creationDate)); // Absolute date in ISO format
+        delete currentReceipt.attributes.json;
+        currentReceipt.set('timezoneOffset', creationDate.getTimezoneOffset());
+        currentReceipt.set('created', creationDate.getTime());
+        currentReceipt.set('obposCreatedabsolute', OB.I18N.formatDateISO(creationDate)); // Absolute date in ISO format
         // multiterminal support
         // be sure that the active terminal is the one set as the order proprietary
         receipt.set('posTerminal', OB.MobileApp.model.get('terminal').id);
         receipt.set('posTerminal' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, OB.MobileApp.model.get('terminal')._identifier);
 
-        me.receipt.set('obposAppCashup', OB.MobileApp.model.get('terminal').cashUpId);
-        me.receipt.set('json', JSON.stringify(me.receipt.serializeToJSON()));
+        currentReceipt.set('obposAppCashup', OB.MobileApp.model.get('terminal').cashUpId);
+        currentReceipt.set('json', JSON.stringify(currentReceipt.serializeToJSON()));
 
         OB.trace('Executing pre order save hook.');
 
         OB.UTIL.HookManager.executeHooks('OBPOS_PreOrderSave', {
           context: this,
           model: model,
-          receipt: me.receipt
+          receipt: currentReceipt
         }, function (args) {
 
           OB.trace('Execution of pre order save hook OK.');
@@ -390,7 +391,7 @@
 
           OB.trace('Saving receipt.');
 
-          OB.Dal.save(me.receipt, function () {
+          OB.Dal.save(currentReceipt, function () {
             OB.Dal.get(OB.Model.Order, receiptId, function (receipt) {
 
               var successCallback = function () {
