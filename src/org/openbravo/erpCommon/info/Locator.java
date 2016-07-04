@@ -108,10 +108,24 @@ public class Locator extends HttpSecureAppServlet {
       vars.setSessionValue("Locator.name", strKeyValue);
       vars.setSessionValue("Locator.warehousename", LocatorData.selectname(this, strWarehouse));
       String strOrg = vars.getStringParameter("inpadOrgId");
-      vars.setSessionValue("Locator.adorgid", strOrg);
+
       if ("".equals(strOrg) || strOrg == null) {
         strOrg = vars.getStringParameter("paramOrgTree");
       }
+      if (strOrg == null || "".equals(strOrg)) {
+        String windowId = vars.getRequestGlobalVariable("WindowID", "Locator.windowId");
+        if (WINDOWID_GOODSRECEIPT.equals(windowId) || WINDOWID_GOODSSHIPMENT.equals(windowId)
+            || WINDOWID_INCOMINGSHIPMENT.equals(windowId)
+            || WINDOWID_OUTGOINGSHIPMENT.equals(windowId)) {
+          strOrg = vars.getGlobalVariable("inpadOrgId", "CreateFrom|adOrgId", "");
+        } else if (WINDOWID_PHYSICALINVENTORY.equals(windowId)
+            || WINDOWID_GOODSMOVEMENT.equals(windowId)) {
+          strOrg = vars.getGlobalVariable("inpadOrgId", windowId + "|ad_org_id", "");
+        } else {
+          strOrg = vars.getStringParameter("paramOrgTree");
+        }
+      }
+      vars.setSessionValue("Locator.adorgid", strOrg);
       LocatorData[] data = LocatorData.selectKey(this,
           Utility.getContext(this, vars, "#User_Client", "Locator"),
           Utility.getSelectorOrgs(this, vars, strOrg), LocatorData.selectname(this, strWarehouse),
