@@ -1358,19 +1358,13 @@
             }
           });
         } else {
-          if (p.get('groupProduct') || (options && options.packId)) {
-            var affectedByPack;
+          if (p.get('groupProduct')) {
             if (options && options.line) {
               line = options.line;
             } else {
               line = me.get('lines').find(function (l) {
                 if (l.get('product').id === p.id && ((l.get('qty') > 0 && qty > 0) || (l.get('qty') < 0 && qty < 0))) {
-                  affectedByPack = l.isAffectedByPack();
-                  if (!affectedByPack) {
-                    return true;
-                  } else if ((options && options.packId === affectedByPack.ruleId) || !(options && options.packId)) {
-                    return true;
-                  }
+                  return true;
                 }
               });
             }
