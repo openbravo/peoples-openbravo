@@ -1113,23 +1113,18 @@
   };
 
 }());
-var origTap = OB.UI.ProfileDialogApply.prototype.tap;
-OB.UI.ProfileDialogApply.prototype.tap = _.wrap(OB.UI.ProfileDialogApply.prototype.tap, function () {
-  var tap = _.bind(origTap, this),
-      widgetForm = this.owner.owner.$.bodyContent.$,
+OB.UTIL.HookManager.registerHook('OBMOBC_ProfileDialogApply', function (args, callbacks) {
+  var widgetForm = args.profileDialogProp.owner.owner.$.bodyContent.$,
       newRoleId = widgetForm.roleList.getValue(),
       isDefault = widgetForm.defaultBox.checked,
       process = new OB.DS.Process('org.openbravo.retail.posterminal.Profile');
-  if (!this.isActive) {
-    return;
-  }
   if (isDefault) {
-    this.isActive = true;
+    args.profileDialogProp.isActive = true;
     process.exec({
       role: newRoleId
     }, function (data) {
       if (data.success) {
-        tap();
+        OB.UTIL.HookManager.callbackExecutor(args, callbacks);
       } else {
         OB.UTIL.showError(OB.I18N.getLabel('OBPOS_ErrorWhileSavingUser'));
       }
@@ -1137,6 +1132,6 @@ OB.UI.ProfileDialogApply.prototype.tap = _.wrap(OB.UI.ProfileDialogApply.prototy
       OB.UTIL.showError(OB.I18N.getLabel('OBPOS_OfflineWindowRequiresOnline'));
     });
   } else {
-    tap();
+    OB.UTIL.HookManager.callbackExecutor(args, callbacks);
   }
 });
