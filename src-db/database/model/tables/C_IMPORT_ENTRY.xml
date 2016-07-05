@@ -57,6 +57,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="CREATEDTIMESTAMP" primaryKey="false" required="false" type="DECIMAL" size="16,0" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_ROLE" name="C_IMPORT_ENTRY_AD_ROLE">
         <reference local="AD_ROLE_ID" foreign="AD_ROLE_ID"/>
       </foreign-key>
