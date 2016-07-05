@@ -14,7 +14,6 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.mobile.core.process.JSONProcessSimple;
 import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.access.User;
 import org.openbravo.service.json.JsonConstants;
@@ -44,6 +43,11 @@ public class Profile extends JSONProcessSimple {
       OBContext.restorePreviousMode();
     }
 
+  }
+
+  @Override
+  protected boolean bypassPreferenceCheck() {
+    return true;
   }
 
 }
