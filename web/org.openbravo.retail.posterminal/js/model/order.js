@@ -3125,14 +3125,17 @@
               var promoAmt = 0,
                   promoQtyoffer = promotion.qtyOffer;
 
-              promotion.amt = promotion.amt || 0;
               _.forEach(linesToApply.models, function (line) {
                 var clonedPromotion = JSON.parse(JSON.stringify(promotion));
                 if (promoQtyoffer > 0) {
                   clonedPromotion.obdiscQtyoffer = (line.get('qty') - promoQtyoffer >= 0) ? promoQtyoffer : line.get('qty');
-                  clonedPromotion.amt = OB.DEC.toNumber(OB.DEC.toBigDecimal(OB.I18N.formatCurrency((promotion.amt * (clonedPromotion.obdiscQtyoffer / promotion.qtyOffer)))));
-                  clonedPromotion.fullAmt = OB.DEC.toNumber(OB.DEC.toBigDecimal(OB.I18N.formatCurrency(clonedPromotion.amt)));
-                  clonedPromotion.displayedTotalAmount = OB.DEC.toNumber(OB.DEC.toBigDecimal(OB.I18N.formatCurrency((promotion.displayedTotalAmount * (clonedPromotion.obdiscQtyoffer / promotion.qtyOffer)))));
+                  if (!promotion.hidden) {
+                    clonedPromotion.amt = OB.DEC.toNumber(OB.DEC.toBigDecimal(OB.I18N.formatCurrency((promotion.amt * (clonedPromotion.obdiscQtyoffer / promotion.qtyOffer)))));
+                    clonedPromotion.fullAmt = OB.DEC.toNumber(OB.DEC.toBigDecimal(OB.I18N.formatCurrency(clonedPromotion.amt)));
+                    clonedPromotion.displayedTotalAmount = OB.DEC.toNumber(OB.DEC.toBigDecimal(OB.I18N.formatCurrency((promotion.displayedTotalAmount * (clonedPromotion.obdiscQtyoffer / promotion.qtyOffer)))));
+                  } else {
+                    clonedPromotion.amt = undefined;
+                  }
                   clonedPromotion.pendingQtyoffer = line.get('qty') - clonedPromotion.obdiscQtyoffer;
                   clonedPromotion.qtyOffer = clonedPromotion.obdiscQtyoffer;
                   clonedPromotion.qtyOfferReserved = clonedPromotion.obdiscQtyoffer;
@@ -3149,29 +3152,28 @@
               });
 
               // Check the amount discount is the same
-              if (OB.DEC.toNumber(OB.DEC.toBigDecimal(OB.I18N.formatCurrency(promotion.amt))) !== promoAmt) {
-                OB.error("There is an error in the sum");
-              }
-              // Adjust splitted promotion amount
-              var splittedAmount = _.reduce(linesToApply.models, function (sum, line) {
-                var linePromo = _.find(line.get('promotions'), function (lp) {
-                  return lp.discountType === promotion.discountType;
-                });
-                if (linePromo) {
-                  return sum + OB.DEC.toNumber(OB.DEC.toBigDecimal(OB.I18N.formatCurrency(linePromo.amt)));
+              if (promotion.amt !== promoAmt && !promotion.hidden) {
+                // Adjust splitted promotion amount                
+                var splittedAmount = _.reduce(linesToApply.models, function (sum, line) {
+                  var linePromo = _.find(line.get('promotions'), function (lp) {
+                    return lp.discountType === promotion.discountType && !lp.hidden;
+                  });
+                  if (linePromo) {
+                    return sum + OB.DEC.toNumber(OB.DEC.toBigDecimal(OB.I18N.formatCurrency(linePromo.amt)));
+                  }
+                  return sum;
+                }, 0);
+                var bdSplittedAmount = OB.DEC.toBigDecimal(OB.I18N.formatCurrency(splittedAmount)),
+                    bdPromoAmount = OB.DEC.toBigDecimal(OB.I18N.formatCurrency(promotion.amt));
+                if (bdPromoAmount.compareTo(bdSplittedAmount) !== 0) {
+                  var linePromo = _.find(linesToApply.at(0).get('promotions'), function (lp) {
+                    return lp.discountType === promotion.discountType && !lp.hidden;
+                  });
+                  var amount = OB.DEC.toNumber(bdPromoAmount.subtract(bdSplittedAmount).add(OB.DEC.toBigDecimal(OB.I18N.formatCurrency(linePromo.amt))));
+                  linePromo.amt = amount;
+                  linePromo.displayedTotalAmount = amount;
+                  linePromo.fullAmt = amount;
                 }
-                return sum;
-              }, 0);
-              var bdSplittedAmount = OB.DEC.toBigDecimal(OB.I18N.formatCurrency(splittedAmount)),
-                  bdPromoAmount = OB.DEC.toBigDecimal(OB.I18N.formatCurrency(promotion.amt));
-              if (bdPromoAmount.compareTo(bdSplittedAmount) !== 0) {
-                var linePromo = _.find(linesToApply.at(0).get('promotions'), function (lp) {
-                  return lp.discountType === promotion.discountType;
-                });
-                var amount = OB.DEC.toNumber(bdPromoAmount.subtract(bdSplittedAmount).add(OB.DEC.toBigDecimal(OB.I18N.formatCurrency(linePromo.amt))));
-                linePromo.amt = amount;
-                linePromo.displayedTotalAmount = amount;
-                linePromo.fullAmt = amount;
               }
             } else {
               var appliedPromotion = false;
