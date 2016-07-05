@@ -91,13 +91,15 @@ public class VoidLayawayEntryProcessor extends ImportEntryProcessor {
     private int countEntries(String importStatus, ImportEntry importEntry) {
       final String whereClause = ImportEntry.PROPERTY_IMPORTSTATUS + "='" + importStatus + "' and "
           + ImportEntry.PROPERTY_TYPEOFDATA + "='Order' and " + ImportEntry.PROPERTY_CREATIONDATE
-          + "<:creationDate and " + ImportEntry.PROPERTY_OBPOSPOSTERMINAL
+          + "<=:creationDate and " + ImportEntry.PROPERTY_CREATEDTIMESTAMP
+          + "<:createdtimestamp and " + ImportEntry.PROPERTY_OBPOSPOSTERMINAL
           + "=:terminal and id!=:id";
       final Query qry = OBDal.getInstance().getSession()
           .createQuery("select count(*) from " + ImportEntry.ENTITY_NAME + " where " + whereClause);
       qry.setParameter("id", importEntry.getId());
       qry.setTimestamp("creationDate", importEntry.getCreationDate());
       qry.setParameter("terminal", importEntry.getOBPOSPOSTerminal());
+      qry.setParameter("createdtimestamp", importEntry.getCreatedtimestamp());
 
       return ((Number) qry.uniqueResult()).intValue();
     }
