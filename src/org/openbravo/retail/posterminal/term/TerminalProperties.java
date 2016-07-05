@@ -50,6 +50,7 @@ public class TerminalProperties extends ModelExtension {
     list.add(new HQLProperty("pos.client.name", getIdentifierAlias("client")));
     list.add(new HQLProperty("pos.hardwareurl", "hardwareurl"));
     list.add(new HQLProperty("pos.scaleurl", "scaleurl"));
+    list.add(new HQLProperty("pos.organization.obposLayawayPartpaid", "layaway_voidpartiallypaid"));
     list.add(new HQLProperty("pos.organization.obretcoDbpIrulesid", "defaultbp_invoiceterm"));
     list.add(new HQLProperty("pos.organization.obretcoDbpPtermid.id", "defaultbp_paymentterm"));
     list.add(new HQLProperty("pos.organization.obretcoDbpPmethodid.id", "defaultbp_paymentmethod"));

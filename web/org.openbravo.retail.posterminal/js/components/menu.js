@@ -93,6 +93,11 @@ enyo.kind({
     if (this.model.get('order').get('orderType') === 3) {
       return;
     }
+    var haspayments = this.model.get('order').get('payments').length > 0;
+    if (!OB.MobileApp.model.get('terminal').layaway_voidpartiallypaid && haspayments) {
+      OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_LayawayPartpaid'));
+      return;
+    }
     enyo.forEach(this.model.get('order').get('payments').models, function (curPayment) {
       if (_.isUndefined(curPayment.get('isPrePayment')) || _.isNull(curPayment.get('isPrePayment'))) {
         voidAllowed = false;
