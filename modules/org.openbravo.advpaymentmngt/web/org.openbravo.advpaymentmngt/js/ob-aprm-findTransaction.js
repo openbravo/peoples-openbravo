@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2015 Openbravo SLU
+ * All portions are Copyright (C) 2014-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -31,16 +31,19 @@ OB.APRM.FindTransactions.onProcess = function (view, actionHandlerCall, clientSi
   };
 
   if (view && typeof view.getContextInfo === 'function' && view.callerField && view.callerField.view && typeof view.callerField.view.getContextInfo === 'function') {
-    var trxSelection = view.getContextInfo().findtransactiontomatch._selection;
+    var i, trxSelection = view.getContextInfo().findtransactiontomatch._selection;
 
-    if (trxSelection && trxSelection[0]) {
-      var trxDepositAmt = trxSelection[0].depositAmount,
-          trxPaymentAmt = trxSelection[0].paymentAmount,
+    if (trxSelection) {
+      var totalTrxAmt = 0,
           blineAmt = view.callerField.record.amount,
-          trxAmt = trxDepositAmt - trxPaymentAmt,
           hideSplitConfirmation = OB.PropertyStore.get('APRM_MATCHSTATEMENT_HIDE_PARTIALMATCH_POPUP', view.windowId);
-
-      if (trxAmt !== blineAmt) {
+      for (i = 0; i < trxSelection.length; i++) {
+        var trxDepositAmt = trxSelection[i].depositAmount,
+            trxPaymentAmt = trxSelection[i].paymentAmount,
+            trxAmt = trxDepositAmt - trxPaymentAmt;
+        totalTrxAmt = totalTrxAmt + trxAmt;
+      }
+      if (Math.abs(totalTrxAmt) <= Math.abs(blineAmt)) {
         // Split required
         if (hideSplitConfirmation === 'Y') {
           // Continue with the match
@@ -53,8 +56,10 @@ OB.APRM.FindTransactions.onProcess = function (view, actionHandlerCall, clientSi
           }
         }
       } else {
-        // Continue with the match
-        actionHandlerCall();
+        // Sum of amounts of selected transaction
+        // exceeds bank statement line amount
+        view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('APRM_TRXAMT_EXCEED_BSLAMT', [totalTrxAmt, blineAmt]));
+        clientSideValidationFail();
       }
     } else {
       // No Transaction selected
