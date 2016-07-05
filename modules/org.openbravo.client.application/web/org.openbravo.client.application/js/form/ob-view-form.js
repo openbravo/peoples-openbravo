@@ -1715,6 +1715,7 @@ OB.ViewFormProperties = {
         }
 
         view.viewGrid.markForRedraw();
+        view.viewForm.markForRedraw();
 
         keepSelection = true;
         view.refreshChildViews(keepSelection);
