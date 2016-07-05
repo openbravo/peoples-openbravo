@@ -3,11 +3,6 @@
     <trigger name="C_ORDER_CHK_RESTRINCTIONS_TRG" table="C_ORDER" fires="before" insert="true" update="true" delete="true" foreach="row">
       <body><![CDATA[
 v_n NUMBER;
-v_OrderLine_Offer_ID VARCHAR2(32);
-v_Price NUMBER;
-v_lineNo NUMBER;
-v_PriceNew NUMBER;
-v_amt NUMBER;
 v_DateNull DATE := TO_DATE('01-01-1900','DD-MM-YYYY');
 
 BEGIN

@@ -19,14 +19,12 @@
     * under the License.
     * The Original Code is Openbravo ERP.
     * The Initial Developer of the Original Code is Openbravo SLU
-    * All portions are Copyright (C) 2001-2012 Openbravo SLU
+    * All portions are Copyright (C) 2001-2016 Openbravo SLU
     * All Rights Reserved.
     * Contributor(s):  ______________________________________.
     ************************************************************************/
   v_Processed VARCHAR(60) ;
   v_C_Remittance_ID VARCHAR2(32) ;
-  v_Prec NUMBER:=2;
-  v_Currency        VARCHAR2(32);
     
 BEGIN
     

@@ -19,14 +19,13 @@
     * under the License.
     * The Original Code is Openbravo ERP.
     * The Initial Developer of the Original Code is Openbravo SLU
-    * All portions are Copyright (C) 2009-2010 Openbravo SLU
+    * All portions are Copyright (C) 2009-2016 Openbravo SLU
     * All Rights Reserved.
     * Contributor(s):  ______________________________________.
     ************************************************************************/
     /*************************************************************************
     * Title: Check the introduced BP is the same as the Invoice
     ************************************************************************/
-   v_n NUMBER;
    v_isprocessed C_Invoice.Processed%TYPE;
    v_bpheader_id C_Invoice.C_BPARTNER_ID%TYPE;
    v_bpreversed_id C_Invoice.C_BPARTNER_ID%TYPE;

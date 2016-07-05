@@ -17,7 +17,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2010-2015 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2010-2016 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -34,8 +34,6 @@ v_Rate  C_TAX.RATE%TYPE;
 v_Processed   VARCHAR(60);
 v_Increment_Amount C_ORDERTAX.TAXAMT%TYPE ;
 v_Increment_Base C_ORDERTAX.TAXBASEAMT%TYPE ;
-v_totallines NUMBER:=0;
-v_grandtotal NUMBER:=0;
 v_istaxincluded CHAR(1);
     
 BEGIN
