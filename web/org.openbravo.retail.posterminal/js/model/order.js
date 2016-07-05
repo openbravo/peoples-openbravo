@@ -3125,6 +3125,7 @@
               var promoAmt = 0,
                   promoQtyoffer = promotion.qtyOffer;
 
+              promotion.amt = promotion.amt || 0;
               _.forEach(linesToApply.models, function (line) {
                 var clonedPromotion = JSON.parse(JSON.stringify(promotion));
                 if (promoQtyoffer > 0) {
@@ -3148,7 +3149,7 @@
               });
 
               // Check the amount discount is the same
-              if (promotion.amt !== promoAmt) {
+              if (OB.DEC.toNumber(OB.DEC.toBigDecimal(OB.I18N.formatCurrency(promotion.amt))) !== promoAmt) {
                 OB.error("There is an error in the sum");
               }
               // Adjust splitted promotion amount
