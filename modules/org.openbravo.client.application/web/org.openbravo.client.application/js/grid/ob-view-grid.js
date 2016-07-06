@@ -2911,6 +2911,11 @@ isc.OBViewGrid.addProperties({
           }
         }
       }
+      if (colNum === undefined && !this.isThereAnyEditableField(rowNum)) {
+        //The focus is set in the field 2 because the fiel 0 is the checkbox to select a record and
+        //the 1 are the buttons to edit and open the record in form view.
+        colNum = 2;
+      }
     }
 
     // make sure that we are visible    
@@ -2919,6 +2924,10 @@ isc.OBViewGrid.addProperties({
     ret = this.Super('startEditing', [rowNum, colNum, suppressFocus, eCe, suppressWarning]);
 
     return ret;
+  },
+
+  isThereAnyEditableField: function (rowNum) {
+    return this.findNextEditCell(rowNum, 0, 1, true, true) !== null;
   },
 
   startEditingNew: function (rowNum) {
