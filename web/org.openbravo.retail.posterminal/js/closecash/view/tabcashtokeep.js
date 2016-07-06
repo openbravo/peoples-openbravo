@@ -157,14 +157,19 @@ enyo.kind({
             this.$.allowdontmove.disableRadio();
             this.$.allowvariableamount.disableRadio();
 
-            this.$.variableInput.setContent('');
-            if (modelToDraw) {
-              var paymentMethod = modelToDraw.get('paymentMethod');
-              if (paymentMethod && paymentMethod.allowvariableamount) {
-                this.doResetQtyToKeep({
-                  qtyToKeep: null
-                });
+            if (modelToDraw && modelToDraw.get('selectedCashToKeep')) {
+              if (modelToDraw.get('selectedCashToKeep') === 'keepfixedamount') {
+                this.$.keepfixedamount.tap();
+              } else if (modelToDraw.get('selectedCashToKeep') === 'allowmoveeverything') {
+                this.$.allowmoveeverything.tap();
+              } else if (modelToDraw.get('selectedCashToKeep') === 'allowdontmove') {
+                this.$.allowdontmove.tap();
+              } else if (modelToDraw.get('selectedCashToKeep') === 'allowvariableamount') {
+                this.$.allowvariableamount.tap();
+                this.$.variableInput.setContent((modelToDraw.get('variableAmtToKeep') && modelToDraw.get('variableAmtToKeep') >= 0) ? modelToDraw.get('variableAmtToKeep') : '');
               }
+            } else {
+              this.$.variableInput.setContent('');
             }
           },
           renderFixedAmount: function (modelToDraw) {
@@ -233,8 +238,8 @@ enyo.kind({
   },
   displayStep: function (model) {
     this.model = model;
-    // this function is invoked when displayed.        
-    this.$.formkeep.disableControls();
+    // this function is invoked when displayed.
     this.setPaymentToKeep(model.get('paymentList').at(model.get('substep')));
+    this.$.formkeep.disableControls(model.get('paymentList').at(model.get('substep')));
   }
 });

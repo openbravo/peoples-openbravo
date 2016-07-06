@@ -122,9 +122,11 @@ enyo.kind({
     return false;
   },
   allowNext: function () {
-    var qtyToKeep = this.model.get('paymentList').at(this.model.get('substep')).get('qtyToKeep');
-    var foreignCounted = this.model.get('paymentList').at(this.model.get('substep')).get('foreignCounted');
-    return _.isNumber(qtyToKeep) && foreignCounted >= qtyToKeep;
+    var paymentMethod = this.model.get('paymentList').at(this.model.get('substep')),
+        cashToKeepSelected = paymentMethod.get('isCashToKeepSelected') || false,
+        qtyToKeep = paymentMethod.get('qtyToKeep'),
+        foreignCounted = paymentMethod.get('foreignCounted');
+    return cashToKeepSelected && _.isNumber(qtyToKeep) && foreignCounted >= qtyToKeep;
   },
   getSubstepsLength: function (model) {
     return model.get('paymentList').length;
@@ -134,6 +136,7 @@ enyo.kind({
     var paymentMethod = payment.get('paymentMethod');
     var options = 0;
 
+    payment.set('isCashToKeepSelected', false);
     if (paymentMethod.automatemovementtoother) {
 
       // Option 1

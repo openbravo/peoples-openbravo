@@ -552,6 +552,9 @@ enyo.kind({
     var validationResult = this.model.validateCashKeep(inEvent.qtyToKeep);
     if (validationResult.result) {
       this.model.get('paymentList').at(this.model.get('substep')).set('qtyToKeep', inEvent.qtyToKeep);
+      this.model.get('paymentList').at(this.model.get('substep')).set('selectedCashToKeep', inEvent.name);
+      this.model.get('paymentList').at(this.model.get('substep')).set('variableAmtToKeep', inEvent.qtyToKeep);
+      this.model.get('paymentList').at(this.model.get('substep')).set('isCashToKeepSelected', true);
     } else {
       OB.UTIL.showWarning(validationResult.message);
     }
