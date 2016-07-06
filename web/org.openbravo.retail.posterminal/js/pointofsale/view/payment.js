@@ -605,7 +605,7 @@ enyo.kind({
     this.receipt.stopAddingPayments = !_.isEmpty(this.getShowingErrorMessages());
     resultOK = !selectedPayment.paymentMethod.iscash || paymentstatus.changeAmt > 0 ? this.checkValidCashOverpayment(paymentstatus, selectedPayment) : undefined;
     if (resultOK || _.isUndefined(resultOK)) {
-      if (!_.isNull(paymentstatus.change) || (paymentstatus.isReturn && !_.isNull(paymentstatus.pending))) {
+      if (!_.isNull(paymentstatus.change) || (paymentstatus.isNegative && !_.isNull(paymentstatus.pending))) {
         resultOK = this.checkEnoughCashAvailable(paymentstatus, selectedPayment, this, function (success) {
           var lsuccess = success;
           if (lsuccess) {
