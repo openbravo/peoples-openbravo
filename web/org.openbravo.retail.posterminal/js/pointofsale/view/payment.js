@@ -969,7 +969,14 @@ enyo.kind({
   tap: function () {
     var myModel = this.owner.model,
         me = this,
-        payments, avoidPayment = false;
+        payments, avoidPayment = false,
+        orderDesc = '';
+    if (this && this.owner && this.owner.receipt && this.owner.receipt.getOrderDescription) {
+      orderDesc = this.owner.receipt.getOrderDescription();
+    }
+    OB.info('Payment Button Pressed ( Status: ' + this.disabled + ') ' + orderDesc);
+
+
     this.allowOpenDrawer = false;
 
     if (this.disabled) {
