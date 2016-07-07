@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -91,5 +91,15 @@
       <Parameter name="user2Id"/>
       <Parameter name="cCostcenterId"/>
       <Parameter name="aAssetId"/>
+  </SqlMethod>
+  <SqlMethod name="updateInvoiceOrder" type="preparedStatement" connection="true" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      UPDATE C_InvoiceLine SET M_InoutLine_id = ?
+      WHERE C_OrderLine_ID= ?
+      AND M_InOutLine_ID IS NULL
+    </Sql>
+    <Parameter name="mInoutlineId"/>
+    <Parameter name="cOrderlineId"/>
   </SqlMethod>
 </SqlClass>
