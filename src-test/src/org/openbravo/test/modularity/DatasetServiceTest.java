@@ -146,17 +146,6 @@ public class DatasetServiceTest extends OBBaseTest {
             final List<Property> ps = dss.getExportableProperties(bob, dt, dcs);
             final StringBuilder sb = new StringBuilder();
             sb.append(bob.getIdentifier() + " has " + ps.size() + " properties to export");
-            // . Values: ");
-            // for (Property p : ps) {
-            // final Object value = bob.get(p.getName());
-            // sb.append(", " + p.getName() + ": ");
-            // if (value instanceof BaseOBObject) {
-            // sb.append(((BaseOBObject) value).getIdentifier());
-            // } else {
-            // sb.append(value);
-            // }
-            // log.debug(sb.toString());
-            // }
           }
         }
       }
