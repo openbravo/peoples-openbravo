@@ -86,7 +86,7 @@ public class ProcessCashCloseMaster extends JSONProcessSimple {
    * @param parentCashUp
    *          Parent cash up id.
    */
-  public static OBPOSAppCashup getTerminalCashUp(String posterminal, String parentCashUp) {
+  private OBPOSAppCashup getTerminalCashUp(String posterminal, String parentCashUp) {
     OBCriteria<OBPOSAppCashup> obCriteria = OBDal.getInstance()
         .createCriteria(OBPOSAppCashup.class);
     obCriteria.add(Restrictions.eq(OBPOSAppCashup.PROPERTY_POSTERMINAL + ".id", posterminal));
@@ -103,7 +103,7 @@ public class ProcessCashCloseMaster extends JSONProcessSimple {
    *          Cash up id.
    * @return 1 if has transactions, 0 if no transactions.
    */
-  public static int getnoOfTransactions(String cashUp) {
+  private int getnoOfTransactions(String cashUp) {
     OBCriteria<FIN_FinaccTransaction> obCriteria = OBDal.getInstance().createCriteria(
         FIN_FinaccTransaction.class);
     obCriteria.add(Restrictions.eq(FIN_FinaccTransaction.PROPERTY_OBPOSAPPCASHUP + ".id", cashUp));

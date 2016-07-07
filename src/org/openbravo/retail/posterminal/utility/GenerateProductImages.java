@@ -166,7 +166,7 @@ public class GenerateProductImages extends DalBaseProcess {
     return newname;
   }
 
-  public static byte[] resizeImageByteToSquare(byte[] bytea) throws IOException {
+  private byte[] resizeImageByteToSquare(byte[] bytea) throws IOException {
     ByteArrayInputStream bis = new ByteArrayInputStream(bytea);
     BufferedImage rImage = ImageIO.read(bis);
     int oldW = rImage.getWidth();

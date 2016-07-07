@@ -83,7 +83,7 @@ public class CustomerAddrLoader extends POSDataSynchronizationProcess implements
     return jsonResponse;
   }
 
-  protected Location getCustomerAddress(String id) {
+  private Location getCustomerAddress(String id) {
     Location location = OBDal.getInstance().get(Location.class, id);
     if (location != null) {
       return location;
@@ -91,7 +91,7 @@ public class CustomerAddrLoader extends POSDataSynchronizationProcess implements
     return new Location();
   }
 
-  protected Location createBPartnerAddr(BusinessPartner customer, JSONObject jsonCustomerAddr)
+  private Location createBPartnerAddr(BusinessPartner customer, JSONObject jsonCustomerAddr)
       throws JSONException {
     try {
       Entity locationEntity = ModelProvider.getInstance().getEntity(Location.class);
@@ -165,7 +165,7 @@ public class CustomerAddrLoader extends POSDataSynchronizationProcess implements
     return null;
   }
 
-  protected Location editBPartnerAddr(BusinessPartner customer, Location location,
+  private Location editBPartnerAddr(BusinessPartner customer, Location location,
       JSONObject jsonCustomerAddr) throws JSONException {
     try {
       if (location != null) {
@@ -196,12 +196,6 @@ public class CustomerAddrLoader extends POSDataSynchronizationProcess implements
       log.error("Exception while updating BPartner Address", e);
     }
     return null;
-  }
-
-  public static String getErrorMessage(Exception e) {
-    StringWriter sb = new StringWriter();
-    e.printStackTrace(new PrintWriter(sb));
-    return sb.toString();
   }
 
   @Override

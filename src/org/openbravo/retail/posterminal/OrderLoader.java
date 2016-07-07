@@ -505,7 +505,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     }
   }
 
-  protected void executeHooks(Instance<? extends Object> hooks, JSONObject jsonorder, Order order,
+  private void executeHooks(Instance<? extends Object> hooks, JSONObject jsonorder, Order order,
       ShipmentInOut shipment, Invoice invoice) throws Exception {
 
     for (Iterator<? extends Object> procIter = hooks.iterator(); procIter.hasNext();) {
@@ -528,7 +528,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     }
   }
 
-  protected void associateOrderToQuotation(JSONObject jsonorder, Order order) throws JSONException {
+  private void associateOrderToQuotation(JSONObject jsonorder, Order order) throws JSONException {
     String quotationId = jsonorder.getString("oldId");
     Order quotation = OBDal.getInstance().get(Order.class, quotationId);
     order.setQuotation(quotation);
@@ -541,7 +541,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
   }
 
-  protected Locator getBinForReturns(String posTerminalId) {
+  private Locator getBinForReturns(String posTerminalId) {
     if (binForRetuns == null) {
       OBPOSApplications posTerminal = OBDal.getInstance().get(OBPOSApplications.class,
           posTerminalId);
@@ -558,7 +558,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     return jsonResponse;
   }
 
-  protected void deleteOldDocument(JSONObject jsonorder) throws JSONException {
+  private void deleteOldDocument(JSONObject jsonorder) throws JSONException {
     /*
      * Issue 0029953 Instead of remove old order, we set it as rejected (CJ). The new quotation will
      * be linked to the rejected one
@@ -569,7 +569,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     jsonorder.put("obposRejectedQuotation", jsonorder.getString("oldId"));
   }
 
-  protected boolean verifyOrderExistance(JSONObject jsonorder) throws Exception {
+  private boolean verifyOrderExistance(JSONObject jsonorder) throws Exception {
     OBContext.setAdminMode(false);
     try {
       if (jsonorder.has("id") && jsonorder.getString("id") != null
@@ -601,7 +601,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     return false;
   }
 
-  protected String getPaymentDescription() {
+  private String getPaymentDescription() {
     if (paymentDescription == null) {
       String language = RequestContext.get().getVariablesSecureApp().getLanguage();
       paymentDescription = Utility.messageBD(new DalConnectionProvider(false), "OrderDocumentno",
@@ -610,7 +610,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     return paymentDescription;
   }
 
-  protected DocumentType getPaymentDocumentType(Organization org) {
+  private DocumentType getPaymentDocumentType(Organization org) {
     if (paymentDocTypes.get(DalUtil.getId(org)) != null) {
       return paymentDocTypes.get(DalUtil.getId(org));
     }
@@ -620,7 +620,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
   }
 
-  protected DocumentType getInvoiceDocumentType(String documentTypeId) {
+  private DocumentType getInvoiceDocumentType(String documentTypeId) {
     if (invoiceDocTypes.get(documentTypeId) != null) {
       return invoiceDocTypes.get(documentTypeId);
     }
@@ -635,7 +635,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     return docType;
   }
 
-  protected DocumentType getShipmentDocumentType(String documentTypeId) {
+  private DocumentType getShipmentDocumentType(String documentTypeId) {
     if (shipmentDocTypes.get(documentTypeId) != null) {
       return shipmentDocTypes.get(documentTypeId);
     }
@@ -844,7 +844,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     }
   }
 
-  protected List<Invoice> getInvoicesRelatedToOrder(String orderId) {
+  private List<Invoice> getInvoicesRelatedToOrder(String orderId) {
     List<String> lstInvoicesIds = new ArrayList<String>();
     List<Invoice> lstInvoices = new ArrayList<Invoice>();
     StringBuffer involvedInvoicedHqlQueryWhereStr = new StringBuffer();
@@ -996,17 +996,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       taxInv.setTaxAmount(taxAmt.setScale(pricePrecision, RoundingMode.HALF_UP));
       OBDal.getInstance().save(taxInv);
     }
-  }
-
-  protected boolean isMultipleShipmentLine(Invoice invoice) {
-    OrderLine ol = null;
-    for (InvoiceLine il : invoice.getInvoiceLineList()) {
-      if (ol != null && ol.equals(il.getSalesOrderLine())) {
-        return true;
-      }
-      ol = il.getSalesOrderLine();
-    }
-    return false;
   }
 
   public static BigDecimal convertCurrencyInvoice(Invoice invoice) {
@@ -1695,7 +1684,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     }
   }
 
-  protected Date getCalculatedDueDateBasedOnPaymentTerms(Date startingDate, PaymentTerm paymentTerms) {
+  private Date getCalculatedDueDateBasedOnPaymentTerms(Date startingDate, PaymentTerm paymentTerms) {
     // TODO Take into account the flag "Next business date"
     // TODO Take into account the flag "Fixed due date"
     long daysToAdd = paymentTerms.getOverduePaymentDaysRule();
@@ -2162,7 +2151,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     return ((Number) qry.uniqueResult()).intValue();
   }
 
-  protected void verifyCashupStatus(JSONObject jsonorder) throws JSONException, OBException {
+  private void verifyCashupStatus(JSONObject jsonorder) throws JSONException, OBException {
     OBContext.setAdminMode(false);
     try {
       if (jsonorder.has("obposAppCashup") && jsonorder.getString("obposAppCashup") != null
@@ -2179,7 +2168,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     }
   }
 
-  protected void createApprovals(Order order, JSONObject jsonorder) {
+  private void createApprovals(Order order, JSONObject jsonorder) {
     if (!jsonorder.has("approvals")) {
       return;
     }
@@ -2207,83 +2196,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     } catch (JSONException e) {
       log.error("Error creating approvals for order" + order, e);
     }
-  }
-
-  protected void fillBobFromJSON(Entity entity, BaseOBObject bob, JSONObject json)
-      throws JSONException {
-    @SuppressWarnings("unchecked")
-    Iterator<String> keys = json.keys();
-    while (keys.hasNext()) {
-      String key = keys.next();
-      if (key.equals("id")) {
-        continue;
-      }
-      String oldKey = key;
-      if (entity.hasProperty(key)) {
-        if (log.isDebugEnabled()) {
-          log.debug("Found property: " + key + " in entity " + entity.getName());
-        }
-      } else {
-        key = getEquivalentKey(key);
-        if (key == null) {
-          if (log.isDebugEnabled()) {
-            log.debug("Did not find property: " + oldKey);
-          }
-          continue;
-        } else {
-          if (entity.hasProperty(key)) {
-            if (log.isDebugEnabled()) {
-              log.debug("Found equivalent key: " + key);
-            }
-          } else {
-            if (log.isDebugEnabled()) {
-              log.debug("Did not find property: " + oldKey);
-            }
-            continue;
-          }
-        }
-      }
-
-      Property p = entity.getProperty(key);
-      Object value = json.get(oldKey);
-      if (p.isPrimitive()) {
-        if (p.isDate()) {
-          bob.set(p.getName(),
-              (Date) JsonToDataConverter.convertJsonToPropertyValue(PropertyByType.DATE, value));
-        } else if (p.isNumericType()) {
-          value = json.getString(oldKey);
-          bob.set(key, new BigDecimal((String) value));
-        } else {
-          bob.set(p.getName(), value);
-        }
-      } else {
-        Property refProp = p.getReferencedProperty();
-        Entity refEntity = refProp.getEntity();
-        if (value instanceof JSONObject) {
-          value = ((JSONObject) value).getString("id");
-        }
-        BaseOBObject refBob = OBDal.getInstance().getProxy(refEntity.getName(), value.toString());
-        bob.set(p.getName(), refBob);
-      }
-
-    }
-  }
-
-  private static String getEquivalentKey(String key) {
-    if (key.equals("bp")) {
-      return "businessPartner";
-    } else if (key.equals("bploc")) {
-      return "partnerAddress";
-    } else if (key.equals("qty")) {
-      return "orderedQuantity";
-    } else if (key.equals("price")) {
-      return "grossUnitPrice";
-    } else if (key.equals("posTerminal")) {
-      return "obposApplications";
-    } else if (key.equals("pricenet")) {
-      return "unitPrice";
-    }
-    return null;
   }
 
   protected String getDocumentNo(Entity entity, DocumentType doctypeTarget, DocumentType doctype) {

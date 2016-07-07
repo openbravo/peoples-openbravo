@@ -8,8 +8,6 @@
  */
 package org.openbravo.retail.posterminal;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Iterator;
@@ -92,7 +90,7 @@ public class CustomerLoader extends POSDataSynchronizationProcess implements
     return jsonResponse;
   }
 
-  protected BusinessPartner getCustomer(String id) {
+  private BusinessPartner getCustomer(String id) {
     BusinessPartner customer = OBDal.getInstance().get(BusinessPartner.class, id);
     if (customer != null) {
       return customer;
@@ -100,7 +98,7 @@ public class CustomerLoader extends POSDataSynchronizationProcess implements
     return new BusinessPartner();
   }
 
-  protected BusinessPartner createBPartner(JSONObject jsonCustomer) throws JSONException {
+  private BusinessPartner createBPartner(JSONObject jsonCustomer) throws JSONException {
     BusinessPartner customer = OBProvider.getInstance().get(BusinessPartner.class);
     Entity BusinessPartnerEntity = ModelProvider.getInstance().getEntity(BusinessPartner.class);
     JSONPropertyToEntity.fillBobFromJSON(BusinessPartnerEntity, customer, jsonCustomer);
@@ -171,7 +169,7 @@ public class CustomerLoader extends POSDataSynchronizationProcess implements
     return customer;
   }
 
-  protected BusinessPartner editBPartner(BusinessPartner customer, JSONObject jsonCustomer)
+  private BusinessPartner editBPartner(BusinessPartner customer, JSONObject jsonCustomer)
       throws JSONException {
     String previousSK = customer.getSearchKey();
     BigDecimal previousCL = customer.getCreditLimit();
@@ -189,7 +187,7 @@ public class CustomerLoader extends POSDataSynchronizationProcess implements
     return customer;
   }
 
-  protected void editBPartnerContact(BusinessPartner customer, JSONObject jsonCustomer)
+  private void editBPartnerContact(BusinessPartner customer, JSONObject jsonCustomer)
       throws JSONException {
     Entity userEntity = ModelProvider.getInstance().getEntity(
         org.openbravo.model.ad.access.User.class);
@@ -263,8 +261,7 @@ public class CustomerLoader extends POSDataSynchronizationProcess implements
     }
   }
 
-  protected void editLocation(BusinessPartner customer, JSONObject jsonCustomer)
-      throws JSONException {
+  private void editLocation(BusinessPartner customer, JSONObject jsonCustomer) throws JSONException {
     Entity locationEntity = ModelProvider.getInstance().getEntity(Location.class);
     Entity baseLocationEntity = ModelProvider.getInstance().getEntity(
         org.openbravo.model.common.geography.Location.class);
@@ -323,12 +320,6 @@ public class CustomerLoader extends POSDataSynchronizationProcess implements
       newLocation.setNewOBObject(true);
       OBDal.getInstance().save(newLocation);
     }
-  }
-
-  public static String getErrorMessage(Exception e) {
-    StringWriter sb = new StringWriter();
-    e.printStackTrace(new PrintWriter(sb));
-    return sb.toString();
   }
 
   @Override

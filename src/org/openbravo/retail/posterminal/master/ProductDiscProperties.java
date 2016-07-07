@@ -24,7 +24,7 @@ import org.openbravo.mobile.core.model.ModelExtension;
 @Qualifier(Product.productDiscPropertyExtension)
 public class ProductDiscProperties extends ModelExtension {
 
-  public static final Logger log = Logger.getLogger(ProductDiscProperties.class);
+  private static final Logger log = Logger.getLogger(ProductDiscProperties.class);
 
   @Override
   public List<HQLProperty> getHQLProperties(Object params) {

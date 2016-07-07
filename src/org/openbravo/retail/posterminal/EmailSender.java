@@ -46,7 +46,7 @@ public class EmailSender implements Runnable {
     }
   }
 
-  public void sendDocumentEmail() throws JSONException, IOException, ServletException {
+  private void sendDocumentEmail() throws JSONException, IOException, ServletException {
     boolean setFailed = false;
     String toEmail = jsonorder.getJSONObject("bp").getString("email");
 

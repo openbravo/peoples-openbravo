@@ -37,7 +37,7 @@ import org.openbravo.retail.posterminal.ProcessHQLQuery;
 
 public class ProductPrice extends ProcessHQLQuery {
   public static final String productPricePropertyExtension = "OBPOS_ProductPriceExtension";
-  public static final Logger log = Logger.getLogger(ProductPrice.class);
+  private static final Logger log = Logger.getLogger(ProductPrice.class);
 
   @Inject
   @Any

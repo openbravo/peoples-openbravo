@@ -47,11 +47,11 @@ public class BrandProductHQLCriteria extends HQLCriteriaProcess {
     }
   }
 
-  public String getAllQuery() {
+  private String getAllQuery() {
     return " exists (select 1 from Product as p where p.brand.id = brand.id and upper(p.name) like upper ('$1'))";
   }
 
-  public String getProdCategoryQuery() {
+  private String getProdCategoryQuery() {
     return " exists (select 1 from Product as p where p.brand.id = brand.id and upper(p.name) like upper ('$1') and p.productCategory.id in ( $2 ))";
   }
 

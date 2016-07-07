@@ -40,7 +40,7 @@ import org.openbravo.retail.posterminal.POSUtils;
 @Qualifier(Product.productPropertyExtension)
 public class ProductProperties extends ModelExtension {
 
-  public static final Logger log = Logger.getLogger(ProductProperties.class);
+  private static final Logger log = Logger.getLogger(ProductProperties.class);
 
   @Override
   public List<HQLProperty> getHQLProperties(Object params) {

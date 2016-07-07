@@ -29,7 +29,6 @@ import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.model.Entity;
-import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
@@ -51,10 +50,8 @@ import org.openbravo.model.common.invoice.InvoiceTax;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.common.order.OrderLineOffer;
-import org.openbravo.model.financialmgmt.payment.FIN_OrigPaymentScheduleDetail;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentSchedule;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
-import org.openbravo.model.financialmgmt.payment.Fin_OrigPaymentSchedule;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.json.JsonConstants;
@@ -252,7 +249,7 @@ public class OrderGroupingProcessor {
     return jsonResponse;
   }
 
-  protected void executeHooks(Invoice invoice, String cashUpId) {
+  private void executeHooks(Invoice invoice, String cashUpId) {
     for (Iterator<FinishInvoiceHook> processIterator = invoiceProcesses.iterator(); processIterator
         .hasNext();) {
       FinishInvoiceHook process = processIterator.next();
@@ -260,90 +257,7 @@ public class OrderGroupingProcessor {
     }
   }
 
-  protected FIN_PaymentSchedule createNewPaymentSchedule(Invoice invoice, Date currentDate) {
-    FIN_PaymentSchedule paymentScheduleInvoice = OBProvider.getInstance().get(
-        FIN_PaymentSchedule.class);
-    paymentScheduleInvoice.setCurrency(invoice.getCurrency());
-    paymentScheduleInvoice.setInvoice(invoice);
-    paymentScheduleInvoice.setOrganization(invoice.getOrganization());
-    paymentScheduleInvoice.setFinPaymentmethod(invoice.getPaymentMethod());
-    paymentScheduleInvoice.setAmount(BigDecimal.ZERO);
-    paymentScheduleInvoice.setOutstandingAmount(BigDecimal.ZERO);
-    paymentScheduleInvoice.setDueDate(currentDate);
-    paymentScheduleInvoice.setExpectedDate(currentDate);
-    if (ModelProvider.getInstance().getEntity(FIN_PaymentSchedule.class).hasProperty("origDueDate")) {
-      // This property is checked and set this way to force compatibility with both MP13, MP14
-      // and
-      // later releases of Openbravo. This property is mandatory and must be set. Check issue
-      paymentScheduleInvoice.set("origDueDate", paymentScheduleInvoice.getDueDate());
-    }
-    paymentScheduleInvoice.setFINPaymentPriority(invoice.getFINPaymentPriority());
-    return paymentScheduleInvoice;
-  }
-
-  protected Fin_OrigPaymentSchedule createOriginalPaymentSchedule(Invoice invoice,
-      FIN_PaymentSchedule paymentScheduleInvoice) {
-
-    Fin_OrigPaymentSchedule origPaymentSchedule = OBProvider.getInstance().get(
-        Fin_OrigPaymentSchedule.class);
-    origPaymentSchedule.setCurrency(invoice.getCurrency());
-    origPaymentSchedule.setInvoice(invoice);
-    origPaymentSchedule.setOrganization(invoice.getOrganization());
-    origPaymentSchedule.setPaymentMethod(invoice.getPaymentMethod());
-    origPaymentSchedule.setAmount(BigDecimal.ZERO);
-    origPaymentSchedule.setDueDate(invoice.getOrderDate());
-    origPaymentSchedule.setPaymentPriority(paymentScheduleInvoice.getFINPaymentPriority());
-    return origPaymentSchedule;
-
-  }
-
-  protected boolean processPaymentsFromOrder(Invoice invoice, Order order,
-      FIN_PaymentSchedule paymentScheduleInvoice, Fin_OrigPaymentSchedule originalPaymentSchedule) {
-    FIN_PaymentSchedule orderPaymentSchedule = null;
-    // In case order is payed using different payment methods, payment schedule list size will be >1
-    for (FIN_PaymentSchedule sched : order.getFINPaymentScheduleList()) {
-      orderPaymentSchedule = sched;
-
-      FIN_PaymentScheduleDetail paymentScheduleDetail = null;
-      for (FIN_PaymentScheduleDetail detail : sched
-          .getFINPaymentScheduleDetailOrderPaymentScheduleList()) {
-        paymentScheduleDetail = detail;
-
-        paymentScheduleInvoice.getFINPaymentScheduleDetailInvoicePaymentScheduleList().add(
-            paymentScheduleDetail);
-        paymentScheduleDetail.setInvoicePaymentSchedule(paymentScheduleInvoice);
-        paymentScheduleDetail.setInvoicePaid(Boolean.TRUE);
-
-        paymentScheduleInvoice.setAmount(paymentScheduleInvoice.getAmount().add(
-            paymentScheduleDetail.getAmount()));
-
-        FIN_OrigPaymentScheduleDetail origDetail = OBProvider.getInstance().get(
-            FIN_OrigPaymentScheduleDetail.class);
-        origDetail.setArchivedPaymentPlan(originalPaymentSchedule);
-        origDetail.setPaymentScheduleDetail(paymentScheduleDetail);
-        origDetail.setAmount(paymentScheduleDetail.getAmount());
-        origDetail.setWriteoffAmount(paymentScheduleDetail.getWriteoffAmount());
-
-        OBDal.getInstance().save(origDetail);
-      }
-
-      if (paymentScheduleDetail == null) {
-        log.error("Couldn't find payment schedule detail for order : " + order.getDocumentNo()
-            + ". Ignoring order");
-        return false;
-      }
-    }
-
-    if (orderPaymentSchedule == null) {
-      log.error("Couldn't find payment schedule for order: " + order.getDocumentNo()
-          + ". Ignoring order");
-      return false;
-    } else {
-      return true;
-    }
-  }
-
-  protected List<InvoiceLineTax> createInvoiceLineTaxes(OrderLine orderLine) {
+  private List<InvoiceLineTax> createInvoiceLineTaxes(OrderLine orderLine) {
     List<InvoiceLineTax> taxes = new ArrayList<InvoiceLineTax>();
     for (OrderLineTax orgTax : orderLine.getOrderLineTaxList()) {
       InvoiceLineTax tax = OBProvider.getInstance().get(InvoiceLineTax.class);
@@ -356,7 +270,7 @@ public class OrderGroupingProcessor {
     return taxes;
   }
 
-  protected InvoiceLine createInvoiceLine(OrderLine orderLine, OrderLine origOrderLine) {
+  private InvoiceLine createInvoiceLine(OrderLine orderLine, OrderLine origOrderLine) {
     InvoiceLine invoiceLine = OBProvider.getInstance().get(InvoiceLine.class);
     copyObject(orderLine, invoiceLine);
     invoiceLine.setTaxableAmount(BigDecimal.ZERO);
@@ -416,14 +330,14 @@ public class OrderGroupingProcessor {
 
   }
 
-  protected String getInvoiceDocumentNo(DocumentType doctypeTarget, DocumentType doctype) {
+  private String getInvoiceDocumentNo(DocumentType doctypeTarget, DocumentType doctype) {
     return Utility.getDocumentNo(OBDal.getInstance().getConnection(false),
         new DalConnectionProvider(false), RequestContext.get().getVariablesSecureApp(), "",
         "C_Invoice", doctypeTarget == null ? "" : doctypeTarget.getId(), doctype == null ? ""
             : doctype.getId(), false, true);
   }
 
-  protected void finishInvoice(Invoice oriInvoice, Date currentDate) throws SQLException {
+  private void finishInvoice(Invoice oriInvoice, Date currentDate) throws SQLException {
     if (oriInvoice == null) {
       return;
     }
@@ -482,7 +396,7 @@ public class OrderGroupingProcessor {
     }
   }
 
-  OrderLine[] splitOrderLineByShipmentLine(OrderLine ol) {
+  private OrderLine[] splitOrderLineByShipmentLine(OrderLine ol) {
     BigDecimal qtyTotal = ol.getOrderedQuantity();
     // if qtyOrdered is ZERO then the line can not be splitted
     if (qtyTotal.equals(BigDecimal.ZERO)) {
@@ -586,7 +500,7 @@ public class OrderGroupingProcessor {
     }
   }
 
-  protected boolean processPaymentsFromOrder(Order order, Invoice invoice) {
+  private boolean processPaymentsFromOrder(Order order, Invoice invoice) {
     FIN_PaymentSchedule orderPaymentSchedule = null;
     FIN_PaymentSchedule paymentScheduleInvoice = null;
     // In case order is payed using different payment methods, payment schedule list size will be >1

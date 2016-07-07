@@ -95,13 +95,6 @@ public class TerminalProperties extends ModelExtension {
     return list;
   }
 
-  protected String getTemplateHQLForProperty(String property) {
-    // cannot query directly for template path: it is a compound hql path that results in a SQL
-    // inner join not returning null values
-    return "(select case when t is not null then t.templatePath else null end from OBPOS_Print_Template t where t = "
-        + property + ")";
-  }
-
   private String getIdentifierAlias(String propertyName) {
     return propertyName + DalUtil.FIELDSEPARATOR + JsonConstants.IDENTIFIER;
   }

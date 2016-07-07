@@ -160,7 +160,7 @@ public class CashCloseProcessor {
     return result;
   }
 
-  protected String executeHooks(JSONArray messages, OBPOSApplications posTerminal,
+  private String executeHooks(JSONArray messages, OBPOSApplications posTerminal,
       OBPOSAppCashup cashUp, JSONObject jsonCashup) throws Exception {
     String next = null; // the first next action of all hooks wins
     for (CashupHook hook : cashupHooks) {
@@ -177,7 +177,7 @@ public class CashCloseProcessor {
     return next;
   }
 
-  protected void associateTransactions(OBPOSAppPayment paymentType,
+  private void associateTransactions(OBPOSAppPayment paymentType,
       FIN_Reconciliation reconciliation, String cashUpId, JSONArray cashMgmtIds,
       List<String> slaveCashupIds) {
     if (slaveCashupIds == null) {
@@ -192,7 +192,7 @@ public class CashCloseProcessor {
     associateTransactionsFromQuery(transactionsQuery, reconciliation);
   }
 
-  protected void associateTransactionsFromQuery(OBQuery<FIN_FinaccTransaction> transactionQuery,
+  private void associateTransactionsFromQuery(OBQuery<FIN_FinaccTransaction> transactionQuery,
       FIN_Reconciliation reconciliation) {
     ScrollableResults transactions = transactionQuery.scroll(ScrollMode.FORWARD_ONLY);
     try {
@@ -212,7 +212,7 @@ public class CashCloseProcessor {
     }
   }
 
-  protected FIN_Reconciliation createReconciliation(JSONObject cashCloseObj,
+  private FIN_Reconciliation createReconciliation(JSONObject cashCloseObj,
       OBPOSApplications posTerminal, FIN_FinancialAccount account, Date currentDate)
       throws JSONException {
 
@@ -256,13 +256,13 @@ public class CashCloseProcessor {
 
   }
 
-  protected String getReconciliationDocumentNo(DocumentType doctype) {
+  private String getReconciliationDocumentNo(DocumentType doctype) {
     return Utility.getDocumentNo(OBDal.getInstance().getConnection(false),
         new DalConnectionProvider(false), RequestContext.get().getVariablesSecureApp(), "",
         "FIN_Reconciliation", "", doctype == null ? "" : doctype.getId(), false, true);
   }
 
-  protected FIN_FinaccTransaction createDifferenceTransaction(OBPOSApplications terminal,
+  private FIN_FinaccTransaction createDifferenceTransaction(OBPOSApplications terminal,
       FIN_Reconciliation reconciliation, OBPOSAppPayment payment, BigDecimal difference,
       Date currentDate, OBPOSAppCashup cashUp) {
     FIN_FinancialAccount account = payment.getFinancialAccount();
@@ -299,7 +299,7 @@ public class CashCloseProcessor {
     return transaction;
   }
 
-  protected FIN_FinaccTransaction createTotalTransferTransactionPayment(OBPOSApplications terminal,
+  private FIN_FinaccTransaction createTotalTransferTransactionPayment(OBPOSApplications terminal,
       FIN_Reconciliation reconciliation, OBPOSAppPayment paymentType,
       BigDecimal reconciliationTotal, Date currentDate, OBPOSAppCashup cashUp) {
     TerminalTypePaymentMethod paymentMethod = paymentType.getPaymentMethod();
@@ -334,7 +334,7 @@ public class CashCloseProcessor {
 
   }
 
-  protected FIN_FinaccTransaction createTotalTransferTransactionDeposit(OBPOSApplications terminal,
+  private FIN_FinaccTransaction createTotalTransferTransactionDeposit(OBPOSApplications terminal,
       FIN_Reconciliation reconciliation, OBPOSAppPayment paymentType,
       BigDecimal reconciliationTotal, Date currentDate, OBPOSAppCashup cashUp) {
     GLItem glItem = null;
@@ -389,7 +389,7 @@ public class CashCloseProcessor {
 
   }
 
-  protected OBPOSAppCashReconcil createCashUpReconciliation(OBPOSApplications posTerminal,
+  private OBPOSAppCashReconcil createCashUpReconciliation(OBPOSApplications posTerminal,
       OBPOSAppPayment paymentType, FIN_Reconciliation reconciliation, OBPOSAppCashup cashUp) {
     OBPOSAppCashReconcil recon = OBProvider.getInstance().get(OBPOSAppCashReconcil.class);
     recon.setId(reconciliation.getId());

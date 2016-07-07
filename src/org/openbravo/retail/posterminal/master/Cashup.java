@@ -123,7 +123,8 @@ public class Cashup extends JSONProcessSimple {
 
   }
 
-  public JSONArray getPayments(String cashupId, DataToJsonConverter converter) throws JSONException {
+  private JSONArray getPayments(String cashupId, DataToJsonConverter converter)
+      throws JSONException {
     JSONArray respArray = new JSONArray();
     OBPOSAppCashup cashupObj = OBDal.getInstance().get(OBPOSAppCashup.class, cashupId);
     OBCriteria<OBPOSPaymentMethodCashup> paymentMethodCashupCriteria = OBDal.getInstance()
@@ -145,7 +146,7 @@ public class Cashup extends JSONProcessSimple {
     return respArray;
   }
 
-  public JSONArray getTaxes(String cashupId, DataToJsonConverter converter) throws JSONException {
+  private JSONArray getTaxes(String cashupId, DataToJsonConverter converter) throws JSONException {
     JSONArray respArray = new JSONArray();
     OBPOSAppCashup cashupObj = OBDal.getInstance().get(OBPOSAppCashup.class, cashupId);
     OBCriteria<OBPOSTaxCashup> taxCashupCriteria = OBDal.getInstance().createCriteria(
@@ -166,7 +167,7 @@ public class Cashup extends JSONProcessSimple {
     return respArray;
   }
 
-  public JSONArray getCashMgmt(String cashupId, DataToJsonConverter converter) throws JSONException {
+  private JSONArray getCashMgmt(String cashupId, DataToJsonConverter converter) throws JSONException {
     JSONArray respArray = new JSONArray();
     String posId = RequestContext.get().getSessionAttribute("POSTerminal").toString();
 

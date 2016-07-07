@@ -28,7 +28,6 @@ import org.openbravo.retail.posterminal.ProcessHQLQuery;
 public class LoadedCustomer extends ProcessHQLQuery {
   public static final String businessPartnerPropertyExtension = "OBPOS_BusinessPartnerExtension";
   public static final String bpLocationPropertyExtension = "OBPOS_BPLocationExtension";
-  public static final Logger log = Logger.getLogger(BusinessPartner.class);
 
   @Inject
   @Any

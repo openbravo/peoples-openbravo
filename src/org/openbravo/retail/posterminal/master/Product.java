@@ -40,7 +40,7 @@ import org.openbravo.retail.posterminal.ProcessHQLQuery;
 public class Product extends ProcessHQLQuery {
   public static final String productPropertyExtension = "OBPOS_ProductExtension";
   public static final String productDiscPropertyExtension = "OBPOS_ProductDiscExtension";
-  public static final Logger log = Logger.getLogger(Product.class);
+  private static final Logger log = Logger.getLogger(Product.class);
 
   @Inject
   @Any
