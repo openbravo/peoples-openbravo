@@ -76,7 +76,7 @@ public class PreferenceAccessInjector extends AccessTypeInjector {
     if (preference.getVisibleAtRole() == null) {
       return null;
     }
-    String roleId = (String) DalUtil.getId(preference.getVisibleAtRole());
+    String roleId = preference.getVisibleAtRole().getId();
     return OBDal.getInstance().get(Role.class, roleId);
   }
 

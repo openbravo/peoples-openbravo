@@ -98,7 +98,7 @@ public class TestAllowUnpagedDatasourcePreference extends BaseDataSourceTestDal 
           .getDefaultClient()) : null;
       defaultOrg = user.getDefaultOrganization() != null ? (String) DalUtil.getId(user
           .getDefaultOrganization()) : null;
-      defaultRole = (String) DalUtil.getId(user.getDefaultRole());
+      defaultRole = user.getDefaultRole().getId();
 
       // Execute ws with system administrator credentials
       user.setDefaultClient(OBDal.getInstance().get(Client.class, "0"));

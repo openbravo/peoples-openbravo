@@ -81,7 +81,7 @@ public class NoteDataSource extends DefaultDataSourceService {
         String noteId = parameter.get("id");
         Note note = OBDal.getInstance().get(Note.class, noteId);
         Table table = note.getTable();
-        String tableId = (String) DalUtil.getId(table);
+        String tableId = table.getId();
         String recordId = note.getRecord();
         readableAccesForUser(tableId, recordId);
       } catch (Exception ex) {

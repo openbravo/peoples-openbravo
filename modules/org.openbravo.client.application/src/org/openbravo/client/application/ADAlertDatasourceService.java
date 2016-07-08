@@ -111,8 +111,8 @@ public class ADAlertDatasourceService extends DefaultDataSourceService {
 
       OBQuery<AlertRule> alertRulesQuery = OBDal.getInstance().createQuery(AlertRule.class,
           whereClause.toString());
-      alertRulesQuery.setNamedParameter("user", DalUtil.getId(OBContext.getOBContext().getUser()));
-      alertRulesQuery.setNamedParameter("role", DalUtil.getId(OBContext.getOBContext().getRole()));
+      alertRulesQuery.setNamedParameter("user", OBContext.getOBContext().getUser().getId());
+      alertRulesQuery.setNamedParameter("role", OBContext.getOBContext().getRole().getId());
 
       return getAlertIdsFromAlertRules(alertRulesQuery.list());
     } finally {
@@ -127,7 +127,7 @@ public class ADAlertDatasourceService extends DefaultDataSourceService {
       // case it returns data after applying the filter clause.
       if (alertRule.getFilterClause() == null) {
         for (Alert alert : alertRule.getADAlertList()) {
-          alertIds.add((String) DalUtil.getId(alert));
+          alertIds.add(alert.getId());
         }
       }
 
@@ -153,7 +153,7 @@ public class ADAlertDatasourceService extends DefaultDataSourceService {
           log.debug("Alert " + alertRule.getName() + " (" + alertRule.getId() + ") - SQL:'" + sql
               + "' - Rows: " + alertsWithFilterClause.size());
           for (Alert alert : alertsWithFilterClause) {
-            alertIds.add((String) DalUtil.getId(alert));
+            alertIds.add(alert.getId());
           }
         } catch (SQLGrammarException e) {
           log.error("An error has ocurred when trying to process the alerts: " + e.getMessage(), e);

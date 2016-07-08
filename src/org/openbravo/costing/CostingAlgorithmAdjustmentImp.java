@@ -85,7 +85,7 @@ public abstract class CostingAlgorithmAdjustmentImp {
    */
   protected void init(CostAdjustmentLine costAdjLine) {
     strCostAdjLineId = costAdjLine.getId();
-    strCostAdjId = (String) DalUtil.getId(costAdjLine.getCostAdjustment());
+    strCostAdjId = costAdjLine.getCostAdjustment().getId();
     MaterialTransaction transaction = costAdjLine.getInventoryTransaction();
     strTransactionId = transaction.getId();
     isManufacturingProduct = transaction.getProduct().isProduction();

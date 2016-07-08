@@ -88,7 +88,7 @@ public class RoleInheritanceWarningFICExtension implements FICExtension {
 
   private boolean isValidEvent(String mode, Tab tab) {
     if (EDIT_MODE.equals(mode) || NEW_MODE.equals(mode)) {
-      final String tabId = (String) DalUtil.getId(tab.getTable());
+      final String tabId = tab.getTable().getId();
       Boolean valid = validTabsCache.get(tabId);
       if (valid != null) {
         return valid;
@@ -119,7 +119,7 @@ public class RoleInheritanceWarningFICExtension implements FICExtension {
       }
     } else {
       String entityClassName = ModelProvider.getInstance()
-          .getEntityByTableId((String) DalUtil.getId(tab.getTable())).getClassName();
+          .getEntityByTableId(tab.getTable().getId()).getClassName();
       InheritedAccessEnabled access = (InheritedAccessEnabled) row;
       return manager.getRole(access, entityClassName);
     }

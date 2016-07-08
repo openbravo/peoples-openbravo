@@ -78,7 +78,7 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
       field = OBDal.getInstance().get(Field.class, fieldId);
       column = field.getColumn();
       targetEntity = ModelProvider.getInstance().getEntityByTableId(
-          (String) DalUtil.getId(column.getTable()));
+          column.getTable().getId());
 
       if (!StringUtils.isEmpty(parameters.get("criteria"))) {
         String criteria = parameters.get("criteria");
@@ -113,15 +113,15 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
 
       RequestContext rq = RequestContext.get();
       VariablesSecureApp vars = rq.getVariablesSecureApp();
-      String ref = (String) DalUtil.getId(column.getReference());
+      String ref = column.getReference().getId();
       String objectReference = "";
 
       if (column.getReferenceSearchKey() != null) {
-        objectReference = (String) DalUtil.getId(column.getReferenceSearchKey());
+        objectReference = column.getReferenceSearchKey().getId();
       }
       String validation = "";
       if (column.getValidation() != null) {
-        validation = (String) DalUtil.getId(column.getValidation());
+        validation = column.getValidation().getId();
       }
 
       String orgList = Utility.getReferenceableOrg(vars, vars.getStringParameter("inpadOrgId"));
@@ -244,7 +244,7 @@ public class ComboTableDatasourceService extends BaseDataSourceService {
       field = OBDal.getInstance().get(Field.class, fieldId);
       column = field.getColumn();
       targetEntity = ModelProvider.getInstance().getEntityByTableId(
-          (String) DalUtil.getId(column.getTable()));
+          column.getTable().getId());
       OBContext.getOBContext().getEntityAccessChecker().checkReadableAccess(targetEntity);
     } finally {
       OBContext.restorePreviousMode();

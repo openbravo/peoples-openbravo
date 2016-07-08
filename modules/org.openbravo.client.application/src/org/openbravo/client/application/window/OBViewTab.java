@@ -467,7 +467,7 @@ public class OBViewTab extends BaseTemplateComponent {
       if (OBContext.hasTranslationInstalled()) {
         final String userLanguageId = OBContext.getOBContext().getLanguage().getId();
         for (TabTrl tabTrl : tab.getADTabTrlList()) {
-          final String trlLanguageId = (String) DalUtil.getId(tabTrl.getLanguage());
+          final String trlLanguageId = tabTrl.getLanguage().getId();
           if (trlLanguageId.equals(userLanguageId)) {
             tabTitle = tabTrl.getName();
           }

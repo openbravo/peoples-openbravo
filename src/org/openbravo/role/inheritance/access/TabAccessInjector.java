@@ -85,9 +85,9 @@ public class TabAccessInjector extends AccessTypeInjector {
    *          Parent role
    */
   private void setParentWindow(TabAccess newTabAccess, TabAccess parentTabAccess, Role role) {
-    String parentWindowId = (String) DalUtil.getId(parentTabAccess.getWindowAccess().getWindow());
+    String parentWindowId = parentTabAccess.getWindowAccess().getWindow().getId();
     for (WindowAccess wa : role.getADWindowAccessList()) {
-      String currentWindowId = (String) DalUtil.getId(wa.getWindow());
+      String currentWindowId = wa.getWindow().getId();
       if (currentWindowId.equals(parentWindowId)) {
         newTabAccess.setWindowAccess(wa);
         break;
@@ -98,7 +98,7 @@ public class TabAccessInjector extends AccessTypeInjector {
   @Override
   public void clearInheritFromFieldInChilds(InheritedAccessEnabled access, boolean clearAll) {
     if (access.getInheritedFrom() != null) {
-      String inheritedFromId = (String) DalUtil.getId(access.getInheritedFrom());
+      String inheritedFromId = access.getInheritedFrom().getId();
       TabAccess ta = (TabAccess) access;
       for (FieldAccess fa : ta.getADFieldAccessList()) {
         if (clearAll) {
@@ -114,7 +114,7 @@ public class TabAccessInjector extends AccessTypeInjector {
   public void removeReferenceInParentList(InheritedAccessEnabled access) {
     TabAccess ta = (TabAccess) access;
     boolean accessExists = OBDal.getInstance().exists(WindowAccess.ENTITY_NAME,
-        DalUtil.getId(ta.getWindowAccess()));
+        ta.getWindowAccess().getId());
     if (accessExists) {
       ta.getWindowAccess().getADTabAccessList().remove(ta);
     }

@@ -61,7 +61,7 @@ public class ActionButtonUtility {
       OBContext.setAdminMode(true);
       try {
         Tab tab = OBDal.getInstance().get(Tab.class, tabId);
-        windowId = DalUtil.getId(tab.getWindow()).toString();
+        windowId = tab.getWindow().getId().toString();
       } finally {
         OBContext.restorePreviousMode();
       }

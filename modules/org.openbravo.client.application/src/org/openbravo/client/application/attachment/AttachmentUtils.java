@@ -73,7 +73,7 @@ public class AttachmentUtils {
    */
   public static AttachmentConfig getAttachmentConfig() {
     Client client = OBContext.getOBContext().getCurrentClient();
-    return getAttachmentConfig((String) DalUtil.getId(client));
+    return getAttachmentConfig(client.getId());
   }
 
   /**
@@ -166,7 +166,7 @@ public class AttachmentUtils {
    * @return List of JSONOject with attachments information values
    */
   public static List<JSONObject> getTabAttachmentsForRows(Tab tab, String[] recordIds) {
-    String tableId = (String) DalUtil.getId(tab.getTable());
+    String tableId = tab.getTable().getId();
     OBCriteria<Attachment> attachmentFiles = OBDao.getFilteredCriteria(Attachment.class,
         Restrictions.eq("table.id", tableId), Restrictions.in("record", recordIds));
     attachmentFiles.addOrderBy("creationDate", false);
@@ -214,7 +214,7 @@ public class AttachmentUtils {
       throws OBException {
     Tab tab = adcs.getTab(tabId);
     Entity entity = ModelProvider.getInstance().getEntityByTableId(
-        (String) DalUtil.getId(tab.getTable()));
+        tab.getTable().getId());
     final String hql = "SELECT a." + parameter.getPropertyPath() + " FROM " + entity.getName()
         + " AS a WHERE a.id=:recordId";
     final Query query = OBDal.getInstance().getSession().createQuery(hql);

@@ -79,7 +79,7 @@ public class MyOBUtils {
     final String userLanguageId = OBContext.getOBContext().getLanguage().getId();
 
     for (WidgetClassTrl widgetClassTrl : widgetClass.getOBKMOWidgetClassTrlList()) {
-      final String trlLanguageId = (String) DalUtil.getId(widgetClassTrl.getLanguage());
+      final String trlLanguageId = widgetClassTrl.getLanguage().getId();
       if (trlLanguageId.equals(userLanguageId)) {
         return widgetClassTrl.getTitle();
       }

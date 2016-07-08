@@ -314,7 +314,7 @@ public class MyOpenbravoComponent extends BaseTemplateComponent {
       roleId = OBContext.getOBContext().getRole().getId();
     }
     for (WidgetClassAccess widgetClassAccess : widgetClass.getOBKMOWidgetClassAccessList()) {
-      if (DalUtil.getId(widgetClassAccess.getRole()).equals(roleId)) {
+      if (widgetClassAccess.getRole().getId().equals(roleId)) {
         return true;
       }
     }

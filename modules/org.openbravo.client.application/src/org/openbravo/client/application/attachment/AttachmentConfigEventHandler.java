@@ -67,7 +67,7 @@ public class AttachmentConfigEventHandler extends EntityPersistenceEventObserver
     final AttachmentConfig newAttConfig = (AttachmentConfig) event.getTargetInstance();
 
     isAnyActivated(event);
-    String clientId = (String) DalUtil.getId(newAttConfig.getClient());
+    String clientId = newAttConfig.getClient().getId();
     if ((Boolean) event.getCurrentState(propActive)) {
       AttachmentUtils.setAttachmentConfig(clientId, event.getId());
     } else if ((Boolean) event.getPreviousState(propActive)) {
@@ -87,7 +87,7 @@ public class AttachmentConfigEventHandler extends EntityPersistenceEventObserver
     final AttachmentConfig newAttConfig = (AttachmentConfig) event.getTargetInstance();
 
     isAnyActivated(event);
-    String clientId = (String) DalUtil.getId(newAttConfig.getClient());
+    String clientId = newAttConfig.getClient().getId();
     if ((Boolean) event.getCurrentState(propActive)) {
       AttachmentUtils.setAttachmentConfig(clientId, newAttConfig.getId());
     }
@@ -102,7 +102,7 @@ public class AttachmentConfigEventHandler extends EntityPersistenceEventObserver
     }
 
     final AttachmentConfig deletedAttachmentConfig = (AttachmentConfig) event.getTargetInstance();
-    String clientId = (String) DalUtil.getId(deletedAttachmentConfig.getClient());
+    String clientId = deletedAttachmentConfig.getClient().getId();
     if (deletedAttachmentConfig.isActive()) {
       // The active config of the client is deleted. Update AttachmentUtils with an empty config
       AttachmentUtils.setAttachmentConfig(clientId, null);

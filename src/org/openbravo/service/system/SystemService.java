@@ -317,7 +317,7 @@ public class SystemService implements OBSingleton {
       OBContext.setAdminMode(false);
       OBDal.getInstance().flush();
       OBDal.getInstance().getConnection().commit();
-      String clientId = (String) DalUtil.getId(client);
+      String clientId = client.getId();
 
       List<String> sqlCommands = new ArrayList<String>();
 

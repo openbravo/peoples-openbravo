@@ -484,8 +484,8 @@ public class CostingRuleProcess implements Process {
     if (localDate == null) {
       localDate = new Date();
     }
-    String clientId = (String) DalUtil.getId(rule.getClient());
-    String orgId = (String) DalUtil.getId(rule.getOrganization());
+    String clientId = rule.getClient().getId();
+    String orgId = rule.getOrganization().getId();
     CostingRuleInit cri = OBProvider.getInstance().get(CostingRuleInit.class);
     cri.setClient((Client) OBDal.getInstance().getProxy(Client.ENTITY_NAME, clientId));
     cri.setOrganization((Organization) OBDal.getInstance()

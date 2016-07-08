@@ -53,7 +53,7 @@ public class ComputeTranslatedNameActionHandler extends BaseActionHandler {
 
       String title = process.getName();
       for (org.openbravo.model.ad.ui.ProcessTrl processtrl : process.getADProcessTrlList()) {
-        final String trlLanguageId = (String) DalUtil.getId(processtrl.getLanguage());
+        final String trlLanguageId = processtrl.getLanguage().getId();
         if (trlLanguageId.equals(userLanguageId)) {
           title = processtrl.getName();
         }

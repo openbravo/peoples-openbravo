@@ -1085,7 +1085,7 @@ public class FIN_Utility {
       invoiceDocNo = invoice.getDocumentNo();
 
       final String paymentDescription = OBDal.getInstance()
-          .get(OrganizationInformation.class, (DalUtil.getId(organization)))
+          .get(OrganizationInformation.class, (organization.getId()))
           .getAPRMPaymentDescription();
       // In case of a purchase invoice and the Supplier Reference is selected use
       // Reference

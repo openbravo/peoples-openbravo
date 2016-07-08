@@ -131,7 +131,7 @@ public class TreeTablesEventHandler extends EntityPersistenceEventObserver {
       dataSource = dataSourceServiceProvider.getDataSource(LINKTOPARENT_DATASOURCE);
     } else if (CUSTOM_STRUCTURE.equals(mainTableTree.getTreeStructure())
         && mainTableTree.getDatasource() != null) {
-      String customDataSourceId = (String) DalUtil.getId(mainTableTree.getDatasource());
+      String customDataSourceId = mainTableTree.getDatasource().getId();
       dataSource = dataSourceServiceProvider.getDataSource(customDataSourceId);
     }
     return dataSource;

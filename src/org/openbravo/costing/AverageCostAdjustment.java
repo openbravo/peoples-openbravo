@@ -231,7 +231,7 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
     }
 
     // Modify isManufacturingProduct flag in case it has changed at some point.
-    isManufacturingProduct = ((String) DalUtil.getId(costing.getOrganization())).equals("0");
+    isManufacturingProduct = (costing.getOrganization().getId()).equals("0");
 
     ScrollableResults trxs = getRelatedTransactions();
     String strCurrentCurId = strCostCurrencyId;

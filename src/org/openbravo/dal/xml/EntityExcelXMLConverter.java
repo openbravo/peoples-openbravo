@@ -231,7 +231,7 @@ public class EntityExcelXMLConverter implements OBNotSingleton {
         String searchKey = list.getSearchKey();
         String name = list.getName();
         for (ListTrl listTrl : list.getADListTrlList()) {
-          if (DalUtil.getId(listTrl.getLanguage()).equals(languageId)) {
+          if (listTrl.getLanguage().getId().equals(languageId)) {
             name = listTrl.getName();
             break;
           }

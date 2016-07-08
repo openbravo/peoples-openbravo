@@ -88,7 +88,7 @@ public class OBViewGridComponent extends BaseTemplateComponent {
 
   public void setTab(Tab tab) {
     this.tab = tab;
-    entity = ModelProvider.getInstance().getEntityByTableId((String) DalUtil.getId(tab.getTable()));
+    entity = ModelProvider.getInstance().getEntityByTableId(tab.getTable().getId());
   }
 
   public String getWhereClauseSQL() {

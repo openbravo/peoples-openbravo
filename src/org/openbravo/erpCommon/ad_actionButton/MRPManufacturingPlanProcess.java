@@ -50,9 +50,9 @@ public class MRPManufacturingPlanProcess extends DalBaseProcess {
     final String strManufacturingMRPID = (String) bundle.getParams().get("MRP_Run_Production_ID");
     final ProductionRun productionRun = OBDal.getInstance().get(ProductionRun.class,
         strManufacturingMRPID);
-    final String userId = (String) DalUtil.getId(OBContext.getOBContext().getUser());
-    final String orgId = (String) DalUtil.getId(productionRun.getOrganization());
-    final String clientId = (String) DalUtil.getId(productionRun.getClient());
+    final String userId = OBContext.getOBContext().getUser().getId();
+    final String orgId = productionRun.getOrganization().getId();
+    final String clientId = productionRun.getClient().getId();
     final String plannerId = productionRun.getPlanner() != null ? (String) DalUtil
         .getId(productionRun.getPlanner()) : NULL;
     final String productId = productionRun.getProduct() != null ? (String) DalUtil

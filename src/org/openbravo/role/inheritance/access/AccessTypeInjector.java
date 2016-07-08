@@ -209,7 +209,7 @@ public abstract class AccessTypeInjector implements Comparable<AccessTypeInjecto
       whereClause.append(" where p.").append(roleProperty).append(" = :roleId");
       addEntityWhereClause(whereClause);
       final OBQuery<T> query = OBDal.getInstance().createQuery(clazz, whereClause.toString());
-      query.setNamedParameter("roleId", DalUtil.getId(role));
+      query.setNamedParameter("roleId", role.getId());
       doEntityParameterReplacement(query);
       query.setFilterOnActive(false);
       return (List<? extends InheritedAccessEnabled>) query.list();

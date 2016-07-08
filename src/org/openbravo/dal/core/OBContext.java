@@ -1031,7 +1031,7 @@ public class OBContext implements OBNotSingleton {
   }
 
   public void setRole(Role role) {
-    isAdministrator = ((String) DalUtil.getId(role)).equals("0");
+    isAdministrator = (role.getId()).equals("0");
     isPortalRole = role.isForPortalUsers();
     isWebServiceEnabled = role.isWebServiceEnabled();
     setUserLevel(role.getUserLevel());
@@ -1084,7 +1084,7 @@ public class OBContext implements OBNotSingleton {
       entityAccessChecker = OBProvider.getInstance().get(EntityAccessChecker.class);
       // use the DalUtil.getId because it does not resolve hibernate
       // proxies
-      entityAccessChecker.setRoleId((String) DalUtil.getId(getRole()));
+      entityAccessChecker.setRoleId(getRole().getId());
       entityAccessChecker.setObContext(this);
       entityAccessChecker.initialize();
     }

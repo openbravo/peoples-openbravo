@@ -46,8 +46,8 @@ public class SE_Payment_FinAccount extends SimpleCallout {
     FIN_FinancialAccount financialAccount = OBDal.getInstance().get(FIN_FinancialAccount.class,
         financialAccountId);
     if (financialAccount != null) {
-      info.addResult("inpcCurrencyId", DalUtil.getId(financialAccount.getCurrency()).toString());
-      info.addResult("inpfinancialaccountcurrencyid", DalUtil.getId(financialAccount.getCurrency())
+      info.addResult("inpcCurrencyId", financialAccount.getCurrency().getId().toString());
+      info.addResult("inpfinancialaccountcurrencyid", financialAccount.getCurrency().getId()
           .toString());
 
       info.addResult("inpfinaccTxnConvertRate", BigDecimal.ONE);

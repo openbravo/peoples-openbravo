@@ -324,7 +324,7 @@ public class EntityXMLConverter implements OBNotSingleton {
 
     final AttributesImpl entityAttrs = new AttributesImpl();
     // set the id and identifier attributes
-    final Object id = DalUtil.getId(obObject);
+    final Object id = obObject.getId();
     if (id != null) {
       entityAttrs.addAttribute("", "", XMLConstants.ID_ATTRIBUTE, "CDATA", id.toString());
     }
@@ -576,7 +576,7 @@ public class EntityXMLConverter implements OBNotSingleton {
     }
     // final Element refElement =
     // currentElement.addElement(REFERENCE_ELEMENT_NAME);
-    attrs.addAttribute("", "", XMLConstants.ID_ATTRIBUTE, "CDATA", DalUtil.getId(referedObject)
+    attrs.addAttribute("", "", XMLConstants.ID_ATTRIBUTE, "CDATA", referedObject.getId()
         .toString());
     if (!isOptionMinimizeXMLSize()) {
       attrs.addAttribute("", "", XMLConstants.ENTITYNAME_ATTRIBUTE, "CDATA",
@@ -603,7 +603,7 @@ public class EntityXMLConverter implements OBNotSingleton {
   private boolean objectBelongsToCurrentClient(BaseOBObject bob) {
     Client currentClient = getClient();
     if (currentClient != null && bob instanceof ClientEnabled) {
-      String currentClientId = (String) DalUtil.getId(currentClient);
+      String currentClientId = currentClient.getId();
       String bobClientId = (String) DalUtil.getId(((ClientEnabled) bob).getClient());
       return currentClientId.equals(bobClientId);
     }

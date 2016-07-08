@@ -159,7 +159,7 @@ public abstract class BaseDataSourceService implements DataSourceService {
         try {
           Selector sel = OBDal.getInstance().get(Selector.class, selectorId);
           entityToCheck = ModelProvider.getInstance().getEntityByTableId(
-              (String) DalUtil.getId(sel.getTable()));
+              sel.getTable().getId());
         } finally {
           OBContext.restorePreviousMode();
         }
@@ -239,7 +239,7 @@ public abstract class BaseDataSourceService implements DataSourceService {
   }
 
   private String getFilterClause(Tab tab) {
-    String tableId = (String) DalUtil.getId(tab.getTable());
+    String tableId = tab.getTable().getId();
     Entity ent = ModelProvider.getInstance().getEntityByTableId(tableId);
     boolean isTransactionalWindow = tab.getWindow().getWindowType().equals("T");
     String filterClause = null;

@@ -80,10 +80,10 @@ public class FieldAccessInjector extends AccessTypeInjector {
    *          Parent role
    */
   private void setParentTab(FieldAccess newFieldAccess, FieldAccess parentFieldAccess, Role role) {
-    String parentTabId = (String) DalUtil.getId(parentFieldAccess.getTabAccess().getTab());
+    String parentTabId = parentFieldAccess.getTabAccess().getTab().getId();
     for (WindowAccess wa : role.getADWindowAccessList()) {
       for (TabAccess ta : wa.getADTabAccessList()) {
-        String currentTabId = (String) DalUtil.getId(ta.getTab());
+        String currentTabId = ta.getTab().getId();
         if (currentTabId.equals(parentTabId)) {
           newFieldAccess.setTabAccess(ta);
           break;
@@ -96,7 +96,7 @@ public class FieldAccessInjector extends AccessTypeInjector {
   public void removeReferenceInParentList(InheritedAccessEnabled access) {
     FieldAccess fa = (FieldAccess) access;
     boolean accessExists = OBDal.getInstance().exists(TabAccess.ENTITY_NAME,
-        DalUtil.getId(fa.getTabAccess()));
+        fa.getTabAccess().getId());
     if (accessExists) {
       fa.getTabAccess().getADFieldAccessList().remove(fa);
     }

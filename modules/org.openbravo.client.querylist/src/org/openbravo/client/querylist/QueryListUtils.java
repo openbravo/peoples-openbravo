@@ -164,7 +164,7 @@ class QueryListUtils {
 
     final String userLanguageId = OBContext.getOBContext().getLanguage().getId();
     for (QueryColumnTrl trl : column.getOBCQLQueryColumnTrlList()) {
-      if (DalUtil.getId(trl.getLanguage()).equals(userLanguageId)) {
+      if (trl.getLanguage().getId().equals(userLanguageId)) {
         return trl.getName();
       }
     }

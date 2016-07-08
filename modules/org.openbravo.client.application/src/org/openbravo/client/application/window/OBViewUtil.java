@@ -219,7 +219,7 @@ public class OBViewUtil {
       for (GCField fc : tabConf.getOBUIAPPGCFieldList()) {
         // field list is cached in memory, so can be reused for all fields without the need of reach
         // DB again
-        if (DalUtil.getId(fc.getField()).equals(DalUtil.getId(field))) {
+        if (fc.getField().getId().equals(field.getId())) {
           fieldConf = fc;
           break;
         }

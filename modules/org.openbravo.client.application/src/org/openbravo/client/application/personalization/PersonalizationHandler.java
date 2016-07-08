@@ -141,17 +141,17 @@ public class PersonalizationHandler {
       return true;
     }
     if (uiPersonalization.getVisibleAtOrganization() != null) {
-      final String orgId = (String) DalUtil.getId(uiPersonalization.getVisibleAtOrganization());
+      final String orgId = uiPersonalization.getVisibleAtOrganization().getId();
       for (RoleOrganization roleOrg : adminOrgs) {
-        if (DalUtil.getId(roleOrg.getOrganization()).equals(orgId)) {
+        if (roleOrg.getOrganization().getId().equals(orgId)) {
           return true;
         }
       }
     }
     if (uiPersonalization.getVisibleAtRole() != null) {
-      final String roleId = (String) DalUtil.getId(uiPersonalization.getVisibleAtRole());
+      final String roleId = uiPersonalization.getVisibleAtRole().getId();
       for (UserRoles userRole : adminRoles) {
-        if (DalUtil.getId(userRole.getRole()).equals(roleId)) {
+        if (userRole.getRole().getId().equals(roleId)) {
           return true;
         }
       }
@@ -566,7 +566,7 @@ public class PersonalizationHandler {
       // Remove from list organization that are not visible
       final Organization org = OBDal.getInstance().get(Organization.class, orgId);
       List<String> parentTree = OBContext.getOBContext()
-          .getOrganizationStructureProvider((String) DalUtil.getId(org.getClient()))
+          .getOrganizationStructureProvider(org.getClient().getId())
           .getParentList(orgId, true);
       List<UIPersonalization> auxPersonalizations = new ArrayList<UIPersonalization>();
       for (UIPersonalization pers : personalizations) {

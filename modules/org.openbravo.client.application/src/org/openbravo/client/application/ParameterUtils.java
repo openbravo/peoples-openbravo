@@ -108,7 +108,7 @@ public class ParameterUtils {
   }
 
   public static DomainType getParameterDomainType(Parameter parameter) {
-    String referenceId = (String) DalUtil.getId(parameter.getReference());
+    String referenceId = parameter.getReference().getId();
     return ModelProvider.getInstance().getReference(referenceId).getDomainType();
   }
 

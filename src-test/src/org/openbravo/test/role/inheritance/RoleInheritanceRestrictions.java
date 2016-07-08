@@ -46,11 +46,11 @@ public class RoleInheritanceRestrictions extends WeldBaseTest {
       inherited = RoleInheritanceTestUtils.createRole("testRole",
           RoleInheritanceTestUtils.CLIENT_ID, RoleInheritanceTestUtils.ASTERISK_ORG_ID, " C", true,
           false);
-      String inheritedId = (String) DalUtil.getId(inherited);
+      String inheritedId = inherited.getId();
       template = RoleInheritanceTestUtils.createRole("testTemplateRole",
           RoleInheritanceTestUtils.CLIENT_ID, RoleInheritanceTestUtils.ASTERISK_ORG_ID, " C", true,
           true);
-      String templateId = (String) DalUtil.getId(template);
+      String templateId = template.getId();
 
       // Add inheritances
       RoleInheritanceTestUtils.addInheritance(inherited, template, new Long(10));
@@ -91,11 +91,11 @@ public class RoleInheritanceRestrictions extends WeldBaseTest {
       template1 = RoleInheritanceTestUtils.createRole("template1",
           RoleInheritanceTestUtils.CLIENT_ID, RoleInheritanceTestUtils.ASTERISK_ORG_ID, " C", true,
           true);
-      String template1Id = (String) DalUtil.getId(template1);
+      String template1Id = template1.getId();
       template2 = RoleInheritanceTestUtils.createRole("template2",
           RoleInheritanceTestUtils.CLIENT_ID, RoleInheritanceTestUtils.ASTERISK_ORG_ID, " C", true,
           true);
-      String template2Id = (String) DalUtil.getId(template2);
+      String template2Id = template2.getId();
 
       // Add inheritances
       RoleInheritanceTestUtils.addInheritance(template2, template1, new Long(10));
@@ -139,16 +139,16 @@ public class RoleInheritanceRestrictions extends WeldBaseTest {
       OBContext.setAdminMode(true);
       roleA = RoleInheritanceTestUtils.createRole("roleA", RoleInheritanceTestUtils.CLIENT_ID,
           RoleInheritanceTestUtils.ASTERISK_ORG_ID, " C", true, true);
-      String roleAId = (String) DalUtil.getId(roleA);
+      String roleAId = roleA.getId();
       roleB = RoleInheritanceTestUtils.createRole("roleB", RoleInheritanceTestUtils.CLIENT_ID,
           RoleInheritanceTestUtils.ASTERISK_ORG_ID, " C", true, true);
-      String roleBId = (String) DalUtil.getId(roleB);
+      String roleBId = roleB.getId();
       roleC = RoleInheritanceTestUtils.createRole("roleC", RoleInheritanceTestUtils.CLIENT_ID,
           RoleInheritanceTestUtils.ASTERISK_ORG_ID, " C", true, false);
-      String roleCId = (String) DalUtil.getId(roleC);
+      String roleCId = roleC.getId();
       roleD = RoleInheritanceTestUtils.createRole("roleD", RoleInheritanceTestUtils.CLIENT_ID,
           RoleInheritanceTestUtils.ASTERISK_ORG_ID, " C", true, true);
-      String roleDId = (String) DalUtil.getId(roleD);
+      String roleDId = roleD.getId();
 
       // Add inheritances
       // roleB inherits from roleA
@@ -211,16 +211,16 @@ public class RoleInheritanceRestrictions extends WeldBaseTest {
       OBContext.setAdminMode(true);
       roleA = RoleInheritanceTestUtils.createRole("roleA", RoleInheritanceTestUtils.CLIENT_ID,
           RoleInheritanceTestUtils.ASTERISK_ORG_ID, " C", true, true);
-      String roleAId = (String) DalUtil.getId(roleA);
+      String roleAId = roleA.getId();
       roleB = RoleInheritanceTestUtils.createRole("roleB", RoleInheritanceTestUtils.CLIENT_ID,
           RoleInheritanceTestUtils.ASTERISK_ORG_ID, " C", true, true);
-      String roleBId = (String) DalUtil.getId(roleB);
+      String roleBId = roleB.getId();
       roleC = RoleInheritanceTestUtils.createRole("roleC", RoleInheritanceTestUtils.CLIENT_ID,
           RoleInheritanceTestUtils.ASTERISK_ORG_ID, " C", true, false);
-      String roleCId = (String) DalUtil.getId(roleC);
+      String roleCId = roleC.getId();
       roleD = RoleInheritanceTestUtils.createRole("roleD", RoleInheritanceTestUtils.CLIENT_ID,
           RoleInheritanceTestUtils.ASTERISK_ORG_ID, " C", true, true);
-      String roleDId = (String) DalUtil.getId(roleD);
+      String roleDId = roleD.getId();
 
       // Add inheritances
       // roleB inherits from roleA
@@ -282,16 +282,16 @@ public class RoleInheritanceRestrictions extends WeldBaseTest {
       OBContext.setAdminMode(true);
       roleA = RoleInheritanceTestUtils.createRole("roleA", RoleInheritanceTestUtils.CLIENT_ID,
           RoleInheritanceTestUtils.ASTERISK_ORG_ID, " C", true, true);
-      String roleAId = (String) DalUtil.getId(roleA);
+      String roleAId = roleA.getId();
       roleB = RoleInheritanceTestUtils.createRole("roleB", RoleInheritanceTestUtils.CLIENT_ID,
           RoleInheritanceTestUtils.ASTERISK_ORG_ID, " C", true, true);
-      String roleBId = (String) DalUtil.getId(roleB);
+      String roleBId = roleB.getId();
       roleC = RoleInheritanceTestUtils.createRole("roleC", RoleInheritanceTestUtils.CLIENT_ID,
           RoleInheritanceTestUtils.ASTERISK_ORG_ID, " C", true, false);
-      String roleCId = (String) DalUtil.getId(roleC);
+      String roleCId = roleC.getId();
       roleD = RoleInheritanceTestUtils.createRole("roleD", RoleInheritanceTestUtils.CLIENT_ID,
           RoleInheritanceTestUtils.ASTERISK_ORG_ID, " C", true, true);
-      String roleDId = (String) DalUtil.getId(roleD);
+      String roleDId = roleD.getId();
 
       // Add inheritances
       // roleB inherits from roleA
@@ -351,10 +351,10 @@ public class RoleInheritanceRestrictions extends WeldBaseTest {
       template = RoleInheritanceTestUtils.createRole("template",
           RoleInheritanceTestUtils.CLIENT_ID, RoleInheritanceTestUtils.ASTERISK_ORG_ID, " C", true,
           true);
-      String templateId = (String) DalUtil.getId(template);
+      String templateId = template.getId();
       role = RoleInheritanceTestUtils.createRole("role", RoleInheritanceTestUtils.CLIENT_ID,
           RoleInheritanceTestUtils.ASTERISK_ORG_ID, " C", true, false);
-      String roleId = (String) DalUtil.getId(role);
+      String roleId = role.getId();
 
       // Add inheritance
       RoleInheritanceTestUtils.addInheritance(role, template, new Long(10));
@@ -400,7 +400,7 @@ public class RoleInheritanceRestrictions extends WeldBaseTest {
       template = RoleInheritanceTestUtils.createRole("template",
           RoleInheritanceTestUtils.CLIENT_ID, RoleInheritanceTestUtils.ASTERISK_ORG_ID, " C",
           false, true);
-      String templateId = (String) DalUtil.getId(template);
+      String templateId = template.getId();
       try {
         OBDal.getInstance().flush();
         OBDal.getInstance().commitAndClose();
@@ -415,7 +415,7 @@ public class RoleInheritanceRestrictions extends WeldBaseTest {
       template2 = RoleInheritanceTestUtils.createRole("template2",
           RoleInheritanceTestUtils.CLIENT_ID, RoleInheritanceTestUtils.ASTERISK_ORG_ID, " C", true,
           true);
-      String template2Id = (String) DalUtil.getId(template2);
+      String template2Id = template2.getId();
       OBDal.getInstance().commitAndClose();
       try {
         template2 = OBDal.getInstance().get(Role.class, template2Id);

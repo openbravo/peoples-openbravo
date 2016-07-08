@@ -402,7 +402,7 @@ public class AdvancedQueryBuilder {
 
     if (localWhereClause.contains(JsonConstants.QUERY_PARAM_CLIENT)) {
       final String alias = getTypedParameterAlias();
-      String clientId = (String) DalUtil.getId(OBContext.getOBContext().getCurrentClient());
+      String clientId = OBContext.getOBContext().getCurrentClient().getId();
       localWhereClause = localWhereClause.replace(JsonConstants.QUERY_PARAM_CLIENT, alias);
       typedParameters.add(clientId);
     }

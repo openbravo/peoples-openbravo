@@ -330,7 +330,7 @@ public class ProductCharacteristicsDS extends DefaultDataSourceService {
 
     // Adding organizations in the trees of all granted ones
     for (RoleOrganization org : currentRole.getADRoleOrganizationList()) {
-      orgs.addAll(orgStructure.getNaturalTree((String) DalUtil.getId(org.getOrganization())));
+      orgs.addAll(orgStructure.getNaturalTree(org.getOrganization().getId()));
     }
 
     StringBuilder hqlBuilder = new StringBuilder();

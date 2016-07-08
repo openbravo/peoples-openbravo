@@ -208,7 +208,7 @@ public class PrimitiveReferenceHandler implements OBSingleton {
           treeNode.getTree().getTypeArea());
       if (entity == null && treeNode.getTree().getTable() != null) {
         entity = ModelProvider.getInstance().getEntityByTableId(
-            (String) DalUtil.getId(treeNode.getTree().getTable()));
+            treeNode.getTree().getTable().getId());
       }
 
       if (entity == null) {

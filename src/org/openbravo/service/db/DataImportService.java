@@ -312,7 +312,7 @@ public class DataImportService implements OBSingleton {
             tn.getTree().getTypeArea());
         if (entity == null && tn.getTree().getTable() != null) {
           entity = ModelProvider.getInstance().getEntityByTableId(
-              (String) DalUtil.getId(tn.getTree().getTable()));
+              tn.getTree().getTable().getId());
         }
         if (entity == null) {
           String msg = "Imported tree nodes belong to a tree  " + tn.getTree()

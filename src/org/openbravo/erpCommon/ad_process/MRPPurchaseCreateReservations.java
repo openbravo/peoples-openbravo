@@ -97,8 +97,8 @@ public class MRPPurchaseCreateReservations extends DalBaseProcess {
     try {
       while (outgoingRLs.next()) {
         PurchasingRunLine outgoingLine = (PurchasingRunLine) outgoingRLs.get(0);
-        if (!productID.equals(DalUtil.getId(outgoingLine.getProduct()))) {
-          productID = (String) DalUtil.getId(outgoingLine.getProduct());
+        if (!productID.equals(outgoingLine.getProduct().getId())) {
+          productID = outgoingLine.getProduct().getId();
           currentStock = BigDecimal.ZERO;
         }
         BigDecimal quantity = outgoingLine.getQuantity().negate();
@@ -107,7 +107,7 @@ public class MRPPurchaseCreateReservations extends DalBaseProcess {
         while (quantity.signum() == 1) {
           if (currentStock.signum() < 1 && incomingRLs.next()) {
             incomingLine = (PurchasingRunLine) incomingRLs.get(0);
-            if (!productID.equals(DalUtil.getId(outgoingLine.getProduct())) && incomingRLs.next()) {
+            if (!productID.equals(outgoingLine.getProduct().getId()) && incomingRLs.next()) {
               incomingLine = (PurchasingRunLine) incomingRLs.get(0);
             }
             currentStock = currentStock.add(incomingLine.getQuantity());

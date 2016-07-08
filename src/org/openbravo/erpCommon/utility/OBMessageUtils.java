@@ -89,7 +89,7 @@ public class OBMessageUtils {
         strMessage = msg.getMessageText();
         if (OBContext.getOBContext().isTranslationInstalled()) {
           for (MessageTrl msgTrl : msg.getADMessageTrlList()) {
-            if (DalUtil.getId(msgTrl.getLanguage()).equals(strLanguageId)) {
+            if (msgTrl.getLanguage().getId().equals(strLanguageId)) {
               strMessage = msgTrl.getMessageText();
               break;
             }
@@ -112,7 +112,7 @@ public class OBMessageUtils {
           Element element = obcElement.list().get(0);
           strMessage = element.getName();
           for (ElementTrl elementTrl : element.getADElementTrlList()) {
-            if (DalUtil.getId(elementTrl.getLanguage()).equals(strLanguageId)) {
+            if (elementTrl.getLanguage().getId().equals(strLanguageId)) {
               strMessage = elementTrl.getName();
             }
           }
@@ -528,7 +528,7 @@ public class OBMessageUtils {
       String label = message.getMessageText();
       final String languageId = OBContext.getOBContext().getLanguage().getId();
       for (MessageTrl messageTrl : message.getADMessageTrlList()) {
-        if (DalUtil.getId(messageTrl.getLanguage()).equals(languageId)) {
+        if (messageTrl.getLanguage().getId().equals(languageId)) {
           label = messageTrl.getMessageText();
           break;
         }

@@ -390,7 +390,7 @@ public class RptC_Bpartner extends HttpSecureAppServlet {
       final String userLanguageId = OBContext.getOBContext().getLanguage().getId();
       String tabTitle = null;
       for (WindowTrl windowTrl : tab.getWindow().getADWindowTrlList()) {
-        final String trlLanguageId = (String) DalUtil.getId(windowTrl.getLanguage());
+        final String trlLanguageId = windowTrl.getLanguage().getId();
         if (trlLanguageId.equals(userLanguageId)) {
           tabTitle = windowTrl.getName();
         }

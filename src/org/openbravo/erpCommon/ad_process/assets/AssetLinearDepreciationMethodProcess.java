@@ -732,7 +732,7 @@ public class AssetLinearDepreciationMethodProcess extends DalBaseProcess {
     hql.append(" select coalesce(max(al.sEQNoAsset), 0) as maxSeqNoAsset ");
     hql.append(" from FinancialMgmtAmortizationLine as al where al.asset.id = ? ");
     Query query = OBDal.getInstance().getSession().createQuery(hql.toString());
-    query.setString(0, (String) DalUtil.getId(asset));
+    query.setString(0, asset.getId());
     for (Object obj : query.list()) {
       if (obj != null) {
         return (Long) obj;
@@ -754,7 +754,7 @@ public class AssetLinearDepreciationMethodProcess extends DalBaseProcess {
     hql.append(" select coalesce(max(al.lineNo), 0) as maxSeqNoAsset ");
     hql.append(" from FinancialMgmtAmortizationLine as al where al.amortization.id = ? ");
     Query query = OBDal.getInstance().getSession().createQuery(hql.toString());
-    query.setString(0, (String) DalUtil.getId(amortization));
+    query.setString(0, amortization.getId());
     for (Object obj : query.list()) {
       if (obj != null) {
         return (Long) obj;

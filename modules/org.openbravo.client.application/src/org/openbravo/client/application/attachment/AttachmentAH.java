@@ -157,7 +157,7 @@ public class AttachmentAH extends BaseActionHandler {
   private void doDelete(Map<String, Object> parameters, Tab tab, String recordIds)
       throws OBException {
     String attachmentId = (String) parameters.get("attachId");
-    String tableId = (String) DalUtil.getId(tab.getTable());
+    String tableId = tab.getTable().getId();
 
     OBCriteria<Attachment> attachmentFiles = OBDao.getFilteredCriteria(Attachment.class,
         Restrictions.eq("table.id", tableId), Restrictions.in("record", recordIds.split(",")));

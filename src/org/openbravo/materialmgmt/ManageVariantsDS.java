@@ -321,7 +321,7 @@ public class ManageVariantsDS extends ReadOnlyDataSourceService {
               values.getString(j));
           chValueIds.add(chValue);
           if (strCharacteristicId == null) {
-            strCharacteristicId = (String) DalUtil.getId(chValue.getCharacteristic());
+            strCharacteristicId = chValue.getCharacteristic().getId();
           }
         }
         selectedChValues.put(strCharacteristicId, chValueIds);

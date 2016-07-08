@@ -1113,7 +1113,7 @@ public class ActivationKey {
    * mobile apps) if activity from them has been recently detected.
    */
   private boolean shouldDeactivateSession(Session expiredSession, Date lastValidPingTime) {
-    String sessionId = (String) DalUtil.getId(expiredSession);
+    String sessionId = expiredSession.getId();
     HttpSession session = SessionListener.getActiveSession(sessionId);
     if (session == null) {
       log4j.debug("Session " + sessionId + " not found in context");

@@ -274,7 +274,7 @@ public class InventoryCountProcess implements Process {
 
     Query queryInsert = OBDal.getInstance().getSession().createQuery(insert.toString());
     queryInsert.setString("inv", inventory.getId());
-    queryInsert.setString("user", (String) DalUtil.getId(OBContext.getOBContext().getUser()));
+    queryInsert.setString("user", OBContext.getOBContext().getUser().getId());
     final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
     queryInsert.setString("currentDate", dateFormatter.format(new Date()));
     // queryInsert.setBoolean("checkReservation", checkReservationQty);

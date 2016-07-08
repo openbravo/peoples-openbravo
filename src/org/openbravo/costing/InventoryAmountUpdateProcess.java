@@ -337,8 +337,8 @@ public class InventoryAmountUpdateProcess extends BaseActionHandler {
     if (localDate == null) {
       localDate = new Date();
     }
-    String clientId = (String) DalUtil.getId(invLine.getClient());
-    String orgId = (String) DalUtil.getId(invLine.getOrganization());
+    String clientId = invLine.getClient().getId();
+    String orgId = invLine.getOrganization().getId();
     InvAmtUpdLnInventories inv = OBProvider.getInstance().get(InvAmtUpdLnInventories.class);
     inv.setClient((Client) OBDal.getInstance().getProxy(Client.ENTITY_NAME, clientId));
     inv.setOrganization((Organization) OBDal.getInstance()

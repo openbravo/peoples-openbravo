@@ -69,7 +69,7 @@ public class ManualCostAdjustmentProcessHandler extends BaseActionHandler {
         return jsonResponse;
       }
       OrganizationStructureProvider osp = OBContext.getOBContext()
-          .getOrganizationStructureProvider((String) DalUtil.getId(transaction.getClient()));
+          .getOrganizationStructureProvider(transaction.getClient().getId());
 
       // MCC= Manual Cost Correction
       CostAdjustment costAdjustmentHeader = CostAdjustmentUtils.insertCostAdjustmentHeader(

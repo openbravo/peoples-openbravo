@@ -66,16 +66,16 @@ public class ComputedColumnsTest extends OBBaseTest {
 
     // check it is in memory but computed columns are not already loaded
     assertTrue("DAL Order loaded",
-        dalObjectLoaded(Order.ENTITY_NAME, (String) DalUtil.getId(order)));
+        dalObjectLoaded(Order.ENTITY_NAME, order.getId()));
     assertFalse("DAL Order computed columns shouldn't be loaded",
-        dalObjectLoaded(Order_ComputedColumns.ENTITY_NAME, (String) DalUtil.getId(order)));
+        dalObjectLoaded(Order_ComputedColumns.ENTITY_NAME, order.getId()));
 
     // load computed columns
     order.getDeliveryStatus();
 
     // check they are now loaded in memory
     assertTrue("DAL Order computed columns should be loaded",
-        dalObjectLoaded(Order_ComputedColumns.ENTITY_NAME, (String) DalUtil.getId(order)));
+        dalObjectLoaded(Order_ComputedColumns.ENTITY_NAME, order.getId()));
   }
 
   /**

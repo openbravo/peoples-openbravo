@@ -115,7 +115,7 @@ public abstract class BaseProcessActionHandler extends BaseActionHandler {
             Parameter gridParameter = null;
             boolean shouldConvert = false;
             for (Parameter param : process.getOBUIAPPParameterList()) {
-              if (GRID_REFERENCE_ID.equals(DalUtil.getId(param.getReference()))) {
+              if (GRID_REFERENCE_ID.equals(param.getReference().getId())) {
                 if (gridParameter != null) {
                   log.error("Error while trying to conver parameters to legacy mode. There are more than one grid parameter. Not converting it.");
                   shouldConvert = false;

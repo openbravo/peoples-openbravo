@@ -2207,9 +2207,9 @@ public abstract class AcctServer {
     } else {
       // there is no session, getting context info from OBContext
       OBContext ctx = OBContext.getOBContext();
-      vars = new VariablesSecureApp((String) DalUtil.getId(ctx.getUser()),
-          (String) DalUtil.getId(ctx.getCurrentClient()), (String) DalUtil.getId(ctx
-              .getCurrentOrganization()), (String) DalUtil.getId(ctx.getRole()), ctx.getLanguage()
+      vars = new VariablesSecureApp(ctx.getUser().getId(),
+          ctx.getCurrentClient().getId(), (String) DalUtil.getId(ctx
+              .getCurrentOrganization()), ctx.getRole().getId(), ctx.getLanguage()
               .getLanguage());
     }
     setMessageResult(conn, vars, _strStatus, strMessageType, _parameters);

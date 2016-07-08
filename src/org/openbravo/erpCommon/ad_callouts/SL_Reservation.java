@@ -20,7 +20,7 @@ public class SL_Reservation extends SimpleCallout {
       final String strProductId = info.getStringParameter("inpmProductId", IsIDFilter.instance);
       if (StringUtils.isNotEmpty(strProductId)) {
         final Product product = OBDal.getInstance().get(Product.class, strProductId);
-        info.addResult("inpcUomId", (String) DalUtil.getId(product.getUOM()));
+        info.addResult("inpcUomId", product.getUOM().getId());
       }
     }
   }

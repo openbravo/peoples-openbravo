@@ -164,7 +164,7 @@ public class ApplicationDictionaryCachedStructures implements Serializable {
       return fieldMap.get(tabId);
     }
     Tab tab = getTab(tabId);
-    String tableId = (String) DalUtil.getId(tab.getTable());
+    String tableId = tab.getTable().getId();
     List<Field> fields = tab.getADFieldList();
     for (Field f : fields) {
       if (f.getColumn() == null) {
@@ -175,7 +175,7 @@ public class ApplicationDictionaryCachedStructures implements Serializable {
 
       // Property fields can link to columns in a different table than tab's one, in this case
       // initialize table
-      if (!tableId.equals(DalUtil.getId(f.getColumn().getTable()))) {
+      if (!tableId.equals(f.getColumn().getTable().getId())) {
         initializeDALObject(f.getColumn().getTable());
       }
     }

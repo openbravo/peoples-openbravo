@@ -284,7 +284,7 @@ public class AttachImplementationManager {
     try {
       OBContext.setAdminMode(true);
       Tab tab = OBDal.getInstance().get(Tab.class, tabId);
-      String tableId = (String) DalUtil.getId(tab.getTable());
+      String tableId = tab.getTable().getId();
       final ZipOutputStream dest = new ZipOutputStream(os);
       HashMap<String, Integer> writtenFiles = new HashMap<String, Integer>();
       OBCriteria<Attachment> attachmentFiles = OBDao.getFilteredCriteria(Attachment.class,
@@ -512,7 +512,7 @@ public class AttachImplementationManager {
         metadataValues.put(strMetadataId, null);
         OBDal.getInstance().remove(metadataStoredValue);
       } else {
-        String strReferenceId = (String) DalUtil.getId(parameter.getReference());
+        String strReferenceId = parameter.getReference().getId();
         if (REFERENCE_LIST.equals(strReferenceId)) {
           strValue = (String) value;
           Reference reference = parameter.getReferenceSearchKey();
