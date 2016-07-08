@@ -413,11 +413,11 @@ public class DataSourceServlet extends BaseKernelServlet {
 
           boolean preferenceCalculateFirst = true;
           boolean translateYesNoReferences = false;
-          String formatedPropKey = "";
+          String formattedPropKey;
           for (String propKey : properties.keySet()) {
             final Property prop = properties.get(propKey);
             Column col = OBDal.getInstance().get(Column.class, prop.getColumnId());
-            formatedPropKey = propKey.replace("$", ".");
+            formattedPropKey = propKey.replace("$", ".");
             if (prop.isAuditInfo()) {
               Element element = null;
               if ("creationDate".equals(propKey)) {
@@ -440,7 +440,7 @@ public class DataSourceServlet extends BaseKernelServlet {
               Tab tab = OBDal.getInstance().get(Tab.class,
                   parameters.get(JsonConstants.TAB_PARAMETER));
               for (Field field : tab.getADFieldList()) {
-                if (field.getProperty() != null && !formatedPropKey.equals(field.getProperty())) {
+                if (field.getProperty() != null && !formattedPropKey.equals(field.getProperty())) {
                   continue;
                 } else if (field.getColumn() == null
                     || !field.getColumn().getId().equals(col.getId())) {
