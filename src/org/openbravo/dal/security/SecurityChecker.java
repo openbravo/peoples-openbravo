@@ -30,7 +30,6 @@ import org.openbravo.base.provider.OBSingleton;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.structure.ClientEnabled;
 import org.openbravo.base.structure.OrganizationEnabled;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.model.ad.system.Client;
@@ -117,16 +116,16 @@ public class SecurityChecker implements OBSingleton {
 
     String clientId = "";
     if (obj instanceof ClientEnabled && ((ClientEnabled) obj).getClient() != null) {
-      clientId = (String) DalUtil.getId(((ClientEnabled) obj).getClient());
+      clientId = ((ClientEnabled) obj).getClient().getId();
     } else if (obj instanceof Client) {
-      clientId = (String) DalUtil.getId(obj);
+      clientId = ((Client) obj).getId();
     }
 
     String orgId = "";
     if (obj instanceof OrganizationEnabled && ((OrganizationEnabled) obj).getOrganization() != null) {
-      orgId = (String) DalUtil.getId(((OrganizationEnabled) obj).getOrganization());
+      orgId = ((OrganizationEnabled) obj).getOrganization().getId();
     } else if (obj instanceof Organization) {
-      orgId = (String) DalUtil.getId(obj);
+      orgId = ((Organization) obj).getId();
     }
 
     final Entity entity = ((BaseOBObject) obj).getEntity();
@@ -183,7 +182,7 @@ public class SecurityChecker implements OBSingleton {
     final Entity entity = ((BaseOBObject) organizationEnabledObject).getEntity();
 
     obContext.getEntityAccessChecker().checkReadable(entity);
-    String orgId = (String) DalUtil.getId(organizationEnabledObject.getOrganization());
+    String orgId = organizationEnabledObject.getOrganization().getId();
     String readableOrganizations[] = obContext.getReadableOrganizations();
     List<String> organizations = Arrays.asList(readableOrganizations);
     if (!organizations.contains(orgId)) {

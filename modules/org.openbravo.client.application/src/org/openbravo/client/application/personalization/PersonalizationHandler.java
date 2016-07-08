@@ -34,6 +34,7 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
+import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.client.application.ApplicationUtils;
 import org.openbravo.client.application.UIPersonalization;
 import org.openbravo.dal.core.DalUtil;
@@ -159,11 +160,11 @@ public class PersonalizationHandler {
     return false;
   }
 
-  private Object getNullOrId(Object object) {
+  private Object getNullOrId(BaseOBObject object) {
     if (object == null) {
       return null;
     }
-    return DalUtil.getId(object);
+    return object.getId();
   }
 
   // when changing code here, also check the

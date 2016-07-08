@@ -181,7 +181,7 @@ public abstract class AccessTypeInjector implements Comparable<AccessTypeInjecto
     try {
       Class<?> myClass = Class.forName(getClassName());
       BaseOBObject bob = (BaseOBObject) myClass.getMethod(getSecuredElementGetter()).invoke(access);
-      String securedElementIndentifier = (String) DalUtil.getId(bob);
+      String securedElementIndentifier = (String) bob.getId();
       return securedElementIndentifier;
     } catch (Exception ex) {
       log.error("Error getting secured element identifier with method {}",
