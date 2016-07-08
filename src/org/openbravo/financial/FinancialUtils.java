@@ -33,7 +33,6 @@ import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.util.Check;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -95,8 +94,7 @@ public class FinancialUtils {
       throws OBException {
     ProductPrice pp = getProductPrice(product, date, useSalesPriceList, pricelist);
     BigDecimal price = pp.getStandardPrice();
-    if (!DalUtil.getId(pp.getPriceListVersion().getPriceList().getCurrency()).equals(
-        currency.getId())) {
+    if (!pp.getPriceListVersion().getPriceList().getCurrency().getId().equals(currency.getId())) {
       // Conversion is needed.
       price = getConvertedAmount(price, pp.getPriceListVersion().getPriceList().getCurrency(),
           currency, date, organization, PRECISION_PRICE);

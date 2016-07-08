@@ -27,7 +27,6 @@ import javax.servlet.ServletException;
 import org.apache.commons.lang.StringUtils;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.structure.BaseOBObject;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBError;
@@ -62,8 +61,7 @@ public class ReservationUtils {
     try {
       cs = ReservationUtilsData.createReserveFromSalesOrderLine(
           OBDal.getInstance().getConnection(false), new DalConnectionProvider(false),
-          soLine.getId(), doProcess ? "Y" : "N",
-          OBContext.getOBContext().getUser().getId());
+          soLine.getId(), doProcess ? "Y" : "N", OBContext.getOBContext().getUser().getId());
     } catch (ServletException e) {
     }
 
@@ -80,8 +78,8 @@ public class ReservationUtils {
     CSResponse cs = null;
     try {
       cs = ReservationUtilsData.reserveStockAuto(OBDal.getInstance().getConnection(false),
-          new DalConnectionProvider(false), reservation.getId(),
-          OBContext.getOBContext().getUser().getId());
+          new DalConnectionProvider(false), reservation.getId(), OBContext.getOBContext().getUser()
+              .getId());
     } catch (ServletException e) {
       String message = OBMessageUtils.translateError(e.getMessage()).getMessage();
       throw new OBException(message, e);
@@ -123,8 +121,8 @@ public class ReservationUtils {
     try {
       cs = ReservationUtilsData.reserveStockManual(OBDal.getInstance().getConnection(false),
           new DalConnectionProvider(false), reservation.getId(), strType, obObject.getId()
-              .toString(), quantity.toString(), (String) DalUtil.getId(OBContext.getOBContext()
-              .getUser()), allocated);
+              .toString(), quantity.toString(), OBContext.getOBContext().getUser().getId(),
+          allocated);
     } catch (ServletException e) {
       String message = OBMessageUtils.translateError(e.getMessage()).getMessage();
       throw new OBException(message, e);

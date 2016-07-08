@@ -39,7 +39,6 @@ import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.costing.CostingAlgorithm.CostDimension;
 import org.openbravo.costing.CostingServer.TrxType;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBCriteria;
@@ -159,8 +158,7 @@ public class CostingUtils {
       return qty.abs().multiply(standardCost);
     } else if (stdCost == null && pp != null) {
       BigDecimal cost = pp.getStandardPrice().multiply(qty.abs());
-      if (DalUtil.getId(pp.getPriceListVersion().getPriceList().getCurrency()).equals(
-          currency.getId())) {
+      if (pp.getPriceListVersion().getPriceList().getCurrency().getId().equals(currency.getId())) {
         // no conversion needed
         return cost;
       }
@@ -170,8 +168,7 @@ public class CostingUtils {
     } else if (stdCost != null && pp != null
         && stdCost.getStartingDate().before(pp.getPriceListVersion().getValidFromDate())) {
       BigDecimal cost = pp.getStandardPrice().multiply(qty.abs());
-      if (DalUtil.getId(pp.getPriceListVersion().getPriceList().getCurrency()).equals(
-          currency.getId())) {
+      if (pp.getPriceListVersion().getPriceList().getCurrency().getId().equals(currency.getId())) {
         // no conversion needed
         return cost;
       }

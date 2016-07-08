@@ -154,8 +154,7 @@ public class RoleInheritanceManager {
       String inheritFromId = inheritFromToDelete.getId();
       List<InheritedAccessEnabled> iaeToDelete = new ArrayList<InheritedAccessEnabled>();
       for (InheritedAccessEnabled ih : roleAccessList) {
-        String inheritedFromId = ih.getInheritedFrom() != null ? (String) DalUtil.getId(ih
-            .getInheritedFrom()) : "";
+        String inheritedFromId = ih.getInheritedFrom() != null ? ih.getInheritedFrom().getId() : "";
         if (!StringUtils.isEmpty(inheritedFromId) && inheritFromId.equals(inheritedFromId)) {
           iaeToDelete.add(ih);
         }
@@ -505,11 +504,10 @@ public class RoleInheritanceManager {
    */
   private InheritedAccessEnabled findInheritedAccess(Role role, InheritedAccessEnabled access,
       AccessTypeInjector injector) {
-    String accessRole = (String) DalUtil.getId(injector.getRole(access));
+    String accessRole = injector.getRole(access).getId();
     InheritedAccessEnabled iae = getAccess(role, injector, access);
     if (iae != null) {
-      String inheritFromRole = iae.getInheritedFrom() != null ? (String) DalUtil.getId(iae
-          .getInheritedFrom()) : "";
+      String inheritFromRole = iae.getInheritedFrom() != null ? iae.getInheritedFrom().getId() : "";
       if (accessRole.equals(inheritFromRole)) {
         return iae;
       }
@@ -591,8 +589,8 @@ public class RoleInheritanceManager {
     Role role = roleInheritance.getRole();
     InheritedAccessEnabled access = getAccess(role, injector, inheritedAccess);
     if (access != null) {
-      String currentInheritedFromId = access.getInheritedFrom() != null ? (String) DalUtil
-          .getId(access.getInheritedFrom()) : "";
+      String currentInheritedFromId = access.getInheritedFrom() != null ? access.getInheritedFrom()
+          .getId() : "";
       if (!StringUtils.isEmpty(currentInheritedFromId)
           && isPrecedent(inheritanceInheritFromIdList, currentInheritedFromId, newInheritedFromId)) {
         updateRoleAccess(access, inheritedAccess, injector);

@@ -25,7 +25,6 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
@@ -282,16 +281,15 @@ public class Preferences {
   public static boolean existsPreference(Preference preference) {
     String property = preference.isPropertyList() ? preference.getProperty() : preference
         .getAttribute();
-    String clientId = preference.getVisibleAtClient() != null ? (String) DalUtil.getId(preference
-        .getVisibleAtClient()) : null;
-    String orgId = preference.getVisibleAtOrganization() != null ? (String) DalUtil
-        .getId(preference.getVisibleAtOrganization()) : null;
-    String userId = preference.getUserContact() != null ? (String) DalUtil.getId(preference
-        .getUserContact()) : null;
-    String roleId = preference.getVisibleAtRole() != null ? (String) DalUtil.getId(preference
-        .getVisibleAtRole()) : null;
-    String windowId = preference.getWindow() != null ? (String) DalUtil.getId(preference
-        .getWindow()) : null;
+    String clientId = preference.getVisibleAtClient() != null ? preference.getVisibleAtClient()
+        .getId() : null;
+    String orgId = preference.getVisibleAtOrganization() != null ? preference
+        .getVisibleAtOrganization().getId() : null;
+    String userId = preference.getUserContact() != null ? preference.getUserContact().getId()
+        : null;
+    String roleId = preference.getVisibleAtRole() != null ? preference.getVisibleAtRole().getId()
+        : null;
+    String windowId = preference.getWindow() != null ? preference.getWindow().getId() : null;
     return existsPreference(property, preference.isPropertyList(), clientId, orgId, userId, roleId,
         windowId);
   }
@@ -494,10 +492,10 @@ public class Preferences {
     // Check priority by client
 
     // undefined client visibility is handled as system
-    String clientId1 = pref1.getVisibleAtClient() == null ? SYSTEM : (String) DalUtil.getId(pref1
-        .getVisibleAtClient());
-    String clientId2 = pref2.getVisibleAtClient() == null ? SYSTEM : (String) DalUtil.getId(pref2
-        .getVisibleAtClient());
+    String clientId1 = pref1.getVisibleAtClient() == null ? SYSTEM : pref1.getVisibleAtClient()
+        .getId();
+    String clientId2 = pref2.getVisibleAtClient() == null ? SYSTEM : pref2.getVisibleAtClient()
+        .getId();
     if (!SYSTEM.equals(clientId1) && SYSTEM.equals(clientId2)) {
       return 1;
     }

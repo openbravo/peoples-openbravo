@@ -33,7 +33,6 @@ import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.filter.ValueListFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
@@ -112,8 +111,8 @@ public class PaymentReport extends HttpSecureAppServlet {
       OBContext.setAdminMode(true);
       try {
         strConvertCurrency = vars.getGlobalVariable("inpConvertCurrencyId",
-            "PaymentReport|ConvertCurrency",
-            (String) DalUtil.getId(OBContext.getOBContext().getCurrentClient().getCurrency()));
+            "PaymentReport|ConvertCurrency", OBContext.getOBContext().getCurrentClient()
+                .getCurrency().getId());
       } finally {
         OBContext.restorePreviousMode();
       }

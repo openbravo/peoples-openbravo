@@ -39,7 +39,6 @@ import org.openbravo.client.application.Parameter;
 import org.openbravo.client.application.ParameterUtils;
 import org.openbravo.client.application.ParameterValue;
 import org.openbravo.client.application.window.ApplicationDictionaryCachedStructures;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -184,8 +183,7 @@ public class AttachmentUtils {
         attachmentobj.put("updatedby", attachment.getUpdatedBy().getName());
         String attachmentMethod = DEFAULT_METHOD_ID;
         if (attachment.getAttachmentConf() != null) {
-          attachmentMethod = (String) DalUtil.getId(attachment.getAttachmentConf()
-              .getAttachmentMethod());
+          attachmentMethod = attachment.getAttachmentConf().getAttachmentMethod().getId();
         }
         attachmentobj.put("attmethod", attachmentMethod);
         attachmentobj.put("description",
@@ -213,8 +211,7 @@ public class AttachmentUtils {
   public static Object getPropertyPathValue(Parameter parameter, String tabId, String recordId)
       throws OBException {
     Tab tab = adcs.getTab(tabId);
-    Entity entity = ModelProvider.getInstance().getEntityByTableId(
-        tab.getTable().getId());
+    Entity entity = ModelProvider.getInstance().getEntityByTableId(tab.getTable().getId());
     final String hql = "SELECT a." + parameter.getPropertyPath() + " FROM " + entity.getName()
         + " AS a WHERE a.id=:recordId";
     final Query query = OBDal.getInstance().getSession().createQuery(hql);

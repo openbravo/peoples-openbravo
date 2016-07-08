@@ -45,7 +45,6 @@ import org.hibernate.type.DateType;
 import org.hibernate.type.StringType;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.exception.OBException;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.security.OrganizationStructureProvider;
@@ -385,7 +384,7 @@ public class InventoryCountProcess implements Process {
     if (!iclList.isEmpty()) {
       for (InventoryCountLine icl2 : iclList) {
         if (!headerLEorBU.getId().equals(
-            DalUtil.getId(osp.getLegalEntityOrBusinessUnit(icl2.getOrganization())))) {
+            osp.getLegalEntityOrBusinessUnit(icl2.getOrganization()).getId())) {
           throw new OBException(OBMessageUtils.parseTranslation("@LinesAndHeaderDifferentLEorBU@"));
         }
       }
