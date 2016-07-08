@@ -52,6 +52,7 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.ad_forms.AcctServer;
+import org.openbravo.erpCommon.businessUtility.CancelAndReplaceUtils;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.PropertyException;
@@ -1534,68 +1535,70 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
     boolean doCancelAndReplace = jsonorder.has("doCancelAndReplace")
         && jsonorder.getBoolean("doCancelAndReplace") ? true : false;
-    if (!doCancelAndReplace && order.getDocumentNo().indexOf("/") > -1) {
-      long documentno = Long.parseLong(order.getDocumentNo().substring(
-          order.getDocumentNo().lastIndexOf("/") + 1));
+    if (!doCancelAndReplace) {
+      if (order.getDocumentNo().indexOf("/") > -1) {
+        long documentno = Long.parseLong(order.getDocumentNo().substring(
+            order.getDocumentNo().lastIndexOf("/") + 1));
 
-      if (isQuotation) {
-        if (order.getObposApplications().getQuotationslastassignednum() == null
-            || documentno > order.getObposApplications().getQuotationslastassignednum()) {
-          OBPOSApplications terminal = order.getObposApplications();
-          terminal.setQuotationslastassignednum(documentno);
-          OBDal.getInstance().save(terminal);
-        }
-      } else if (jsonorder.optLong("returnnoSuffix", -1L) > -1L) {
-        if (order.getObposApplications().getReturnslastassignednum() == null
-            || documentno > order.getObposApplications().getReturnslastassignednum()) {
-          OBPOSApplications terminal = order.getObposApplications();
-          terminal.setReturnslastassignednum(documentno);
-          OBDal.getInstance().save(terminal);
-        }
-      } else {
-        if (order.getObposApplications().getLastassignednum() == null
-            || documentno > order.getObposApplications().getLastassignednum()) {
-          OBPOSApplications terminal = order.getObposApplications();
-          terminal.setLastassignednum(documentno);
-          OBDal.getInstance().save(terminal);
-        }
-      }
-    } else {
-      long documentno;
-      if (isQuotation) {
-        if (jsonorder.has("quotationnoPrefix")) {
-          documentno = Long.parseLong(order.getDocumentNo().replace(
-              jsonorder.getString("quotationnoPrefix"), ""));
-
+        if (isQuotation) {
           if (order.getObposApplications().getQuotationslastassignednum() == null
               || documentno > order.getObposApplications().getQuotationslastassignednum()) {
             OBPOSApplications terminal = order.getObposApplications();
             terminal.setQuotationslastassignednum(documentno);
             OBDal.getInstance().save(terminal);
           }
-        }
-      } else if (jsonorder.optLong("returnnoSuffix", -1L) > -1L) {
-        if (jsonorder.has("returnnoPrefix")) {
-          documentno = Long.parseLong(order.getDocumentNo().replace(
-              jsonorder.getString("returnnoPrefix"), ""));
-
+        } else if (jsonorder.optLong("returnnoSuffix", -1L) > -1L) {
           if (order.getObposApplications().getReturnslastassignednum() == null
               || documentno > order.getObposApplications().getReturnslastassignednum()) {
             OBPOSApplications terminal = order.getObposApplications();
             terminal.setReturnslastassignednum(documentno);
             OBDal.getInstance().save(terminal);
           }
-        }
-      } else {
-        if (jsonorder.has("documentnoPrefix")) {
-          documentno = Long.parseLong(order.getDocumentNo().replace(
-              jsonorder.getString("documentnoPrefix"), ""));
-
+        } else {
           if (order.getObposApplications().getLastassignednum() == null
               || documentno > order.getObposApplications().getLastassignednum()) {
             OBPOSApplications terminal = order.getObposApplications();
             terminal.setLastassignednum(documentno);
             OBDal.getInstance().save(terminal);
+          }
+        }
+      } else {
+        long documentno;
+        if (isQuotation) {
+          if (jsonorder.has("quotationnoPrefix")) {
+            documentno = Long.parseLong(order.getDocumentNo().replace(
+                jsonorder.getString("quotationnoPrefix"), ""));
+
+            if (order.getObposApplications().getQuotationslastassignednum() == null
+                || documentno > order.getObposApplications().getQuotationslastassignednum()) {
+              OBPOSApplications terminal = order.getObposApplications();
+              terminal.setQuotationslastassignednum(documentno);
+              OBDal.getInstance().save(terminal);
+            }
+          }
+        } else if (jsonorder.optLong("returnnoSuffix", -1L) > -1L) {
+          if (jsonorder.has("returnnoPrefix")) {
+            documentno = Long.parseLong(order.getDocumentNo().replace(
+                jsonorder.getString("returnnoPrefix"), ""));
+
+            if (order.getObposApplications().getReturnslastassignednum() == null
+                || documentno > order.getObposApplications().getReturnslastassignednum()) {
+              OBPOSApplications terminal = order.getObposApplications();
+              terminal.setReturnslastassignednum(documentno);
+              OBDal.getInstance().save(terminal);
+            }
+          }
+        } else {
+          if (jsonorder.has("documentnoPrefix")) {
+            documentno = Long.parseLong(order.getDocumentNo().replace(
+                jsonorder.getString("documentnoPrefix"), ""));
+
+            if (order.getObposApplications().getLastassignednum() == null
+                || documentno > order.getObposApplications().getLastassignednum()) {
+              OBPOSApplications terminal = order.getObposApplications();
+              terminal.setLastassignednum(documentno);
+              OBDal.getInstance().save(terminal);
+            }
           }
         }
       }
