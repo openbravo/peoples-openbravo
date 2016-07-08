@@ -20,7 +20,6 @@ import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.secureApp.LoginUtils.RoleDefaults;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.kernel.RequestContext;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -131,10 +130,10 @@ public class POSLoginHandler extends MobileCoreLoginHandler {
 
     // terminal defines client, org and warehouse
     OBPOSApplications terminal = apps.get(0);
-    defaults.client = (String) DalUtil.getId(terminal.getClient());
-    defaults.org = (String) DalUtil.getId(terminal.getOrganization());
+    defaults.client = terminal.getClient().getId();
+    defaults.org = terminal.getOrganization().getId();
     Warehouse warehouse = POSUtils.getWarehouseForTerminal(terminal);
-    defaults.warehouse = warehouse != null ? (String) DalUtil.getId(warehouse) : null;
+    defaults.warehouse = warehouse != null ? warehouse.getId() : null;
     RequestContext.get().setSessionAttribute("POSTerminal", terminal.getId());
     return defaults;
   }

@@ -19,7 +19,6 @@ import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.client.application.window.FICExtension;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.model.ad.ui.Tab;
@@ -62,7 +61,7 @@ public class POSLicenseWarningFICExtension implements FICExtension {
   }
 
   private boolean isValidEvent(String mode, Tab tab) {
-    return ModelProvider.getInstance().getEntityByTableId((String) DalUtil.getId(tab.getTable()))
+    return ModelProvider.getInstance().getEntityByTableId(tab.getTable().getId())
         .getMappingClass() == OBPOSApplications.class
         && (mode.equals("EDIT") || mode.equals("NEW"));
   }

@@ -40,12 +40,10 @@ import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
-import org.openbravo.base.model.Property;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.client.kernel.RequestContext;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.TriggerHandler;
 import org.openbravo.dal.service.OBCriteria;
@@ -62,7 +60,6 @@ import org.openbravo.mobile.core.process.DataSynchronizationImportProcess;
 import org.openbravo.mobile.core.process.DataSynchronizationProcess.DataSynchronization;
 import org.openbravo.mobile.core.process.JSONPropertyToEntity;
 import org.openbravo.mobile.core.process.OutDatedDataChangeException;
-import org.openbravo.mobile.core.process.PropertyByType;
 import org.openbravo.mobile.core.utils.OBMOBCUtils;
 import org.openbravo.model.ad.access.InvoiceLineTax;
 import org.openbravo.model.ad.access.OrderLineTax;
@@ -102,7 +99,6 @@ import org.openbravo.service.db.CallStoredProcedure;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.importprocess.ImportEntryManager;
 import org.openbravo.service.json.JsonConstants;
-import org.openbravo.service.json.JsonToDataConverter;
 
 @DataSynchronization(entity = "Order")
 public class OrderLoader extends POSDataSynchronizationProcess implements
@@ -611,11 +607,11 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
   }
 
   private DocumentType getPaymentDocumentType(Organization org) {
-    if (paymentDocTypes.get(DalUtil.getId(org)) != null) {
-      return paymentDocTypes.get(DalUtil.getId(org));
+    if (paymentDocTypes.get(org.getId()) != null) {
+      return paymentDocTypes.get(org.getId());
     }
     final DocumentType docType = FIN_Utility.getDocumentType(org, AcctServer.DOCTYPE_ARReceipt);
-    paymentDocTypes.put((String) DalUtil.getId(org), docType);
+    paymentDocTypes.put(org.getId(), docType);
     return docType;
 
   }
@@ -899,10 +895,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     }
 
     invoice.setDescription(description);
-    invoice
-        .setDocumentType(getInvoiceDocumentType((String) DalUtil.getId(order.getDocumentType())));
-    invoice.setTransactionDocument(getInvoiceDocumentType((String) DalUtil.getId(order
-        .getDocumentType())));
+    invoice.setDocumentType(getInvoiceDocumentType(order.getDocumentType().getId()));
+    invoice.setTransactionDocument(getInvoiceDocumentType(order.getDocumentType().getId()));
 
     if (useOrderDocumentNoForRelatedDocs) {
       invoice.setDocumentNo(order.getDocumentNo());
@@ -1052,7 +1046,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       boolean useSingleBin = foundSingleBin != null && orderLine.getAttributeSetValue() == null
           && orderLine.getProduct().getAttributeSet() == null
           && orderLine.getWarehouseRule() == null
-          && (DalUtil.getId(order.getWarehouse()).equals(DalUtil.getId(warehouse)));
+          && (order.getWarehouse().getId().equals(warehouse.getId()));
 
       AttributeSetInstance oldAttributeSetValues = null;
 
@@ -1074,18 +1068,12 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         HashMap<String, ShipmentInOutLine> usedBins = new HashMap<String, ShipmentInOutLine>();
         if (pendingQty.compareTo(BigDecimal.ZERO) > 0) {
 
-          String id = callProcessGetStock(
-              orderLine.getId(),
-              (String) DalUtil.getId(orderLine.getClient()),
-              (String) DalUtil.getId(orderLine.getOrganization()),
-              (String) DalUtil.getId(orderLine.getProduct()),
-              (String) DalUtil.getId(orderLine.getUOM()),
-              (String) DalUtil.getId(warehouse),
-              orderLine.getAttributeSetValue() != null ? (String) DalUtil.getId(orderLine
-                  .getAttributeSetValue()) : null,
-              pendingQty,
-              orderLine.getWarehouseRule() != null ? (String) DalUtil.getId(orderLine
-                  .getWarehouseRule()) : null, null);
+          String id = callProcessGetStock(orderLine.getId(), orderLine.getClient().getId(),
+              orderLine.getOrganization().getId(), orderLine.getProduct().getId(), orderLine
+                  .getUOM().getId(), warehouse.getId(),
+              orderLine.getAttributeSetValue() != null ? orderLine.getAttributeSetValue().getId()
+                  : null, pendingQty, orderLine.getWarehouseRule() != null ? orderLine
+                  .getWarehouseRule().getId() : null, null);
 
           OBCriteria<StockProposed> stockProposed = OBDal.getInstance().createCriteria(
               StockProposed.class);
@@ -1211,8 +1199,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       shipment.setId(jsonorder.getString("id"));
       shipment.setNewOBObject(true);
     }
-    shipment
-        .setDocumentType(getShipmentDocumentType((String) DalUtil.getId(order.getDocumentType())));
+    shipment.setDocumentType(getShipmentDocumentType(order.getDocumentType().getId()));
 
     if (useOrderDocumentNoForRelatedDocs) {
       String docNum = order.getDocumentNo();

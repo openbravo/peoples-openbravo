@@ -18,7 +18,6 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.mobile.core.process.SimpleQueryBuilder;
@@ -48,7 +47,7 @@ public class HasServices extends JSONProcessSimple {
           jsonData.getJSONObject("parameters").getLong("terminalTimeOffset"));
 
       PriceListVersion priceListVersion = POSUtils.getPriceListVersionByOrgId(
-          (String) DalUtil.getId(terminalOrganization), terminalDate);
+          terminalOrganization.getId(), terminalDate);
 
       final StringBuilder hqlString = new StringBuilder();
 
@@ -57,11 +56,10 @@ public class HasServices extends JSONProcessSimple {
       hqlString.append("where s.productType = 'S'  and s.linkedToProduct = true ");
       hqlString.append("and s.$orgCriteria and s.$activeCriteria ");
       hqlString.append("and assort.obretcoProductlist.id = '"
-          + DalUtil.getId(POSUtils.getProductListByOrgId((String) DalUtil
-              .getId(terminalOrganization))) + "' ");
+          + POSUtils.getProductListByOrgId(terminalOrganization.getId()).getId() + "' ");
       hqlString
           .append("and exists (select 1 from PricingProductPrice as ppp where ppp.product.id = '"
-              + productId + "' and ppp.priceListVersion.id= '" + DalUtil.getId(priceListVersion)
+              + productId + "' and ppp.priceListVersion.id= '" + priceListVersion.getId()
               + "' and ppp.$activeCriteria ) ");
       hqlString.append("and ((s.includedProducts = 'Y' and ");
       hqlString
@@ -82,8 +80,8 @@ public class HasServices extends JSONProcessSimple {
       hqlString.append("group by s.obposProposalType ");
 
       SimpleQueryBuilder querybuilder = new SimpleQueryBuilder(hqlString.toString(), OBContext
-          .getOBContext().getCurrentClient().getId(), (String) DalUtil.getId(terminalOrganization),
-          null, null, null);
+          .getOBContext().getCurrentClient().getId(), terminalOrganization.getId(), null, null,
+          null);
 
       final Session session = OBDal.getInstance().getSession();
       final Query query = session.createQuery(querybuilder.getHQLQuery());

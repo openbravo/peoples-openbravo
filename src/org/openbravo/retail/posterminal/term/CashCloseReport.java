@@ -17,7 +17,6 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Query;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
@@ -59,7 +58,7 @@ public class CashCloseReport extends JSONProcessSimple {
         + " group by olt.tax.name order by olt.tax.name asc";
     Query salesTaxesQuery = OBDal.getInstance().getSession().createQuery(hqlTaxes);
     salesTaxesQuery.setString(0,
-        (String) DalUtil.getId(terminal.getObposTerminaltype().getDocumentType()));
+        terminal.getObposTerminaltype().getDocumentType().getId());
     salesTaxesQuery.setString(1, posTerminalId);
     JSONArray salesTaxes = new JSONArray();
     BigDecimal totalSalesTax = BigDecimal.ZERO;
@@ -84,7 +83,7 @@ public class CashCloseReport extends JSONProcessSimple {
 
     Query salesQuery = OBDal.getInstance().getSession().createQuery(hqlSales);
     salesQuery.setString(0,
-        (String) DalUtil.getId(terminal.getObposTerminaltype().getDocumentType()));
+        terminal.getObposTerminaltype().getDocumentType().getId());
     salesQuery.setString(1, posTerminalId);
     BigDecimal totalNetAmount = (BigDecimal) salesQuery.uniqueResult();
     if (totalNetAmount == null) {
@@ -98,7 +97,7 @@ public class CashCloseReport extends JSONProcessSimple {
 
     Query returnTaxesQuery = OBDal.getInstance().getSession().createQuery(hqlTaxes);
     returnTaxesQuery.setString(0,
-        (String) DalUtil.getId(terminal.getObposTerminaltype().getDocumentTypeForReturns()));
+        terminal.getObposTerminaltype().getDocumentTypeForReturns().getId());
     returnTaxesQuery.setString(1, posTerminalId);
     JSONArray returnTaxes = new JSONArray();
     BigDecimal totalReturnsTax = BigDecimal.ZERO;
@@ -114,7 +113,7 @@ public class CashCloseReport extends JSONProcessSimple {
 
     Query returnsQuery = OBDal.getInstance().getSession().createQuery(hqlSales);
     returnsQuery.setString(0,
-        (String) DalUtil.getId(terminal.getObposTerminaltype().getDocumentTypeForReturns()));
+        terminal.getObposTerminaltype().getDocumentTypeForReturns().getId());
     returnsQuery.setString(1, posTerminalId);
     BigDecimal totalReturnsAmount = (BigDecimal) returnsQuery.uniqueResult();
     if (totalReturnsAmount == null) {
