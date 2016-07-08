@@ -499,7 +499,9 @@ enyo.kind({
               relatedLine.qty = currentLine[0].get('qty');
               relatedLine.gross = currentLine[0].get('gross');
               relatedLine.net = currentLine[0].get('net');
-              relatedLine.promotions = currentLine[0].get('promotions').slice();
+              if (currentLine[0].get('promotions')) {
+                relatedLine.promotions = currentLine[0].get('promotions').slice();
+              }
             });
 
             // Select open ticket or create a new one
