@@ -24,7 +24,6 @@ import javax.servlet.ServletException;
 
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentMethod;

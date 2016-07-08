@@ -32,7 +32,6 @@ import org.openbravo.base.model.ModelProvider;
 import org.openbravo.client.application.CachedPreference;
 import org.openbravo.client.application.window.ApplicationDictionaryCachedStructures;
 import org.openbravo.client.kernel.Template;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.ui.Tab;

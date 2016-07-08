@@ -34,7 +34,6 @@ import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.structure.InheritedAccessEnabled;
 import org.openbravo.client.application.ApplicationConstants;
 import org.openbravo.client.application.window.FICExtension;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.ad.access.Role;

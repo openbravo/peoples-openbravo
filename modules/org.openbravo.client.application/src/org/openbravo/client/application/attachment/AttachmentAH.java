@@ -34,7 +34,6 @@ import org.openbravo.base.util.CheckException;
 import org.openbravo.client.application.Parameter;
 import org.openbravo.client.application.window.ApplicationDictionaryCachedStructures;
 import org.openbravo.client.kernel.BaseActionHandler;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;

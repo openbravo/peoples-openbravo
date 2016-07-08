@@ -28,7 +28,6 @@ import org.openbravo.client.application.OBUIAPPViewImplementation;
 import org.openbravo.client.application.ViewRoleAccess;
 import org.openbravo.client.myob.WidgetClass;
 import org.openbravo.client.myob.WidgetClassAccess;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.access.FieldAccess;

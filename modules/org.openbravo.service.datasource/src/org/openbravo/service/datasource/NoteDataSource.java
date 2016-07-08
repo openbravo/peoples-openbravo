@@ -30,7 +30,6 @@ import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.structure.OrganizationEnabled;
 import org.openbravo.client.application.Note;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.security.SecurityChecker;
 import org.openbravo.dal.service.OBDal;

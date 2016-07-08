@@ -33,7 +33,6 @@ import org.openbravo.client.application.attachment.AttachmentWindowComponent;
 import org.openbravo.client.kernel.BaseTemplateComponent;
 import org.openbravo.client.kernel.reference.UIDefinition;
 import org.openbravo.client.kernel.reference.UIDefinitionController;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.model.ad.domain.ListTrl;
 import org.openbravo.model.ad.domain.Reference;

@@ -32,7 +32,6 @@ import org.hibernate.engine.EntityKey;
 import org.hibernate.stat.SessionStatistics;
 import org.junit.Test;
 import org.openbravo.base.provider.OBProvider;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;

@@ -4,7 +4,6 @@ import javax.servlet.ServletException;
 
 import org.apache.commons.lang.StringUtils;
 import org.openbravo.base.filter.IsIDFilter;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.plm.Product;
 

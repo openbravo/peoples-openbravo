@@ -29,7 +29,6 @@ import java.util.Set;
 import org.hibernate.Query;
 import org.openbravo.base.provider.OBNotSingleton;
 import org.openbravo.base.util.Check;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.service.OBDal;

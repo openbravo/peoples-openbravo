@@ -18,7 +18,6 @@
 package org.openbravo.role.inheritance.access;
 
 import org.openbravo.base.structure.InheritedAccessEnabled;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.model.ad.access.FieldAccess;
 import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.access.TabAccess;

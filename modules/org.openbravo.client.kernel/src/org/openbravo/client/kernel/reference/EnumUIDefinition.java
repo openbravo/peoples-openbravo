@@ -21,7 +21,6 @@ package org.openbravo.client.kernel.reference;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.model.ad.ui.Field;
 
 /**
