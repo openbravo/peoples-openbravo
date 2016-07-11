@@ -116,6 +116,7 @@ public class ConfirmCancelAndReplaceSalesOrder extends BaseActionHandler {
 
         // Set inverse order delivered quantity zero
         inverseOrderLine.setDeliveredQuantity(BigDecimal.ZERO);
+        inverseOrderLine.setReservedQuantity(BigDecimal.ZERO);
         OBDal.getInstance().save(inverseOrderLine);
         OBDal.getInstance().flush();
 
@@ -279,8 +280,6 @@ public class ConfirmCancelAndReplaceSalesOrder extends BaseActionHandler {
             OBDal.getInstance().save(newReservation);
           }
 
-          newOrderLine.setDeliveredQuantity(replacedOrderLine.getDeliveredQuantity());
-
           // Set old order delivered quantity zero
           replacedOrderLine.setDeliveredQuantity(BigDecimal.ZERO);
           OBDal.getInstance().save(replacedOrderLine);
@@ -310,6 +309,8 @@ public class ConfirmCancelAndReplaceSalesOrder extends BaseActionHandler {
             goodsShipment.setSalesOrder(newOrder);
             // Assign old shipment line to the new order line
             goodsShipmentLine.setSalesOrderLine(newOrderLine);
+            newOrderLine.setDeliveredQuantity(goodsShipmentLine.getMovementQuantity());
+            OBDal.getInstance().save(newOrderLine);
             OBDal.getInstance().save(goodsShipmentLine);
             OBDal.getInstance().flush();
             // Restore flags

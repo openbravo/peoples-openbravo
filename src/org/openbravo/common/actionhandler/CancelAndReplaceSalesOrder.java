@@ -70,6 +70,7 @@ public class CancelAndReplaceSalesOrder extends BaseActionHandler {
       for (OrderLine oldOrderLine : oldOrderLineList) {
         OrderLine newOrderLine = (OrderLine) DalUtil.copy(oldOrderLine, false, true);
         newOrderLine.setDeliveredQuantity(BigDecimal.ZERO);
+        newOrderLine.setReservedQuantity(BigDecimal.ZERO);
         newOrderLine.setInvoicedQuantity(BigDecimal.ZERO);
         newOrderLine.setSalesOrder(newOrder);
         newOrderLine.setReplacedorderline(oldOrderLine);
