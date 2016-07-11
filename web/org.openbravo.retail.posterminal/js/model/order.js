@@ -3261,7 +3261,13 @@
     canAddAsServices: function (model, product, callback, scope) {
       if (product.get('productType') === 'S') {
         if (!OB.UTIL.isNullOrUndefined(product.get('allowDeferredSell')) && product.get('allowDeferredSell')) {
-          if (!OB.UTIL.isNullOrUndefined(product.get('deferredSellMaxDays'))) {
+          if (model.get('order') && model.get('order').get('isQuotation') && model.get('order').get('isEditable') === false) {
+            // Not allow deferred sell in quotation under evaluation
+            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_modalNoEditableHeader'), OB.I18N.getLabel('OBPOS_modalNoEditableBody'), [{
+              label: OB.I18N.getLabel('OBMOBC_LblOk')
+            }]);
+            callback.call(scope, 'NOT_ALLOW');
+          } else if (!OB.UTIL.isNullOrUndefined(product.get('deferredSellMaxDays'))) {
             var oneDay = 24 * 60 * 60 * 1000,
                 today = new Date(),
                 orderDate = new Date(this.get('orderDate'));
