@@ -3120,8 +3120,11 @@
           });
 
           var groupedPromos = gli.get('promotions');
+          var promoManual = _.find(groupedPromos, function (promo) {
+            return promo.manual;
+          });
           _.forEach(groupedPromos, function (promotion) {
-            if (!promotion.manual) {
+            if (!promoManual) {
               var promoAmt = 0,
                   promoQtyoffer = promotion.qtyOffer;
 
@@ -3143,7 +3146,20 @@
                   if (!line.get('promotions')) {
                     line.set('promotions', []);
                   }
-                  line.get('promotions').push(clonedPromotion);
+
+                  if (clonedPromotion.pendingQtyoffer && clonedPromotion.pendingQtyoffer > 0) {
+                    var auxPromo = _.find(line.get('promotions'), function (lpromo) {
+                      return lpromo.ruleId === clonedPromotion.ruleId && lpromo.preserve !== true;
+                    });
+                    if (auxPromo) {
+                      var idx = line.get('promotions').indexOf(auxPromo);
+                      line.get('promotions').splice(idx, 1, clonedPromotion);
+                    } else {
+                      line.get('promotions').push(clonedPromotion);
+                    }
+                  } else {
+                    line.get('promotions').push(clonedPromotion);
+                  }
                   promoQtyoffer -= clonedPromotion.obdiscQtyoffer;
                   promoAmt += clonedPromotion.amt;
                 } else if (promoQtyoffer < 0) {
