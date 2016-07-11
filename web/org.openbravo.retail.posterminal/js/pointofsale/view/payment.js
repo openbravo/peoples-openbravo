@@ -184,9 +184,6 @@ enyo.kind({
               }),
               renderLine: 'OB.OBPOSPointOfSale.UI.RenderPaymentLine'
             }, {
-              style: 'position: absolute; bottom: 20px; height: 20px; font-weight: bold; color:DodgerBlue;',
-              name: 'extrainfo'
-            }, {
               style: 'overflow: hidden; height: 30px; margin-top: 3px; color: #ff0000; padding: 5px; position: relative;',
               name: 'errorLabelArea',
               components: [{
@@ -216,6 +213,11 @@ enyo.kind({
               }, {
                 name: 'paymentMethodSelect',
                 style: 'color: orange',
+                type: 'info',
+                showing: false
+              }, {
+                name: 'extrainfo',
+                style: 'font-weight: bold; color: dodgerblue;',
                 type: 'info',
                 showing: false
               }]
@@ -280,6 +282,11 @@ enyo.kind({
     this.$.extrainfo.setContent('');
     this.receipt.on('extrainfo', function (info) {
       this.$.extrainfo.setContent(info || '');
+      if (info && info.trim() !== '') {
+        this.$.extrainfo.show();
+      } else {
+        this.$.extrainfo.hide();
+      }
     }, this);
   },
 
@@ -696,6 +703,7 @@ enyo.kind({
     errorLabelArray.push(this.$.onlycashpaymentmethod);
     errorLabelArray.push(this.$.errorMaxlimitamount);
     errorLabelArray.push(this.$.paymentMethodSelect);
+    errorLabelArray.push(this.$.extrainfo);
     return errorLabelArray;
   },
   getFirstShowingObject: function (errorLabelArray) {
