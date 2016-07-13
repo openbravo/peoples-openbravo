@@ -8,11 +8,12 @@
  */
 package org.openbravo.retail.posterminal.master;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
@@ -44,24 +45,54 @@ public class Category extends ProcessHQLQuery {
   private Instance<ModelExtension> extensions;
 
   @Override
-  protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
+  protected Map<String, Object> getParameterValues(JSONObject jsonsent) throws JSONException {
+    try {
+      OBContext.setAdminMode(true);
+      String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
+      final OBRETCOProductList productList = POSUtils.getProductListByOrgId(orgId);
+      boolean isRemote = false;
+      try {
+        OBContext.setAdminMode(false);
+        isRemote = "Y".equals(Preferences.getPreferenceValue("OBPOS_remote.product", true,
+            OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
+                .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
+                .getOBContext().getRole(), null));
+      } catch (PropertyException e) {
+        log.error("Error getting preference OBPOS_remote.product " + e.getMessage(), e);
+      } finally {
+        OBContext.restorePreviousMode();
+      }
 
-    String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
+      Map<String, Object> paramValues = new HashMap<String, Object>();
+      paramValues.put("productListId", productList.getId());
+      if (isRemote) {
+        paramValues.put("productCategoryTableId", CategoryTree.productCategoryTableId);
+      }
+      if (!isRemote) {
+        final Date terminalDate = OBMOBCUtils.calculateServerDate(
+            jsonsent.getJSONObject("parameters").getString("terminalTime"),
+            jsonsent.getJSONObject("parameters").getJSONObject("terminalTimeOffset")
+                .getLong("value"));
 
-    final OBRETCOProductList productList = POSUtils.getProductListByOrgId(orgId);
-
-    final Date terminalDate = OBMOBCUtils.calculateServerDate(jsonsent.getJSONObject("parameters")
-        .getString("terminalTime"),
-        jsonsent.getJSONObject("parameters").getJSONObject("terminalTimeOffset").getLong("value"));
-
-    final PriceListVersion priceListVersion = POSUtils.getPriceListVersionByOrgId(orgId,
-        terminalDate);
-    if (productList == null) {
-      throw new JSONException("Product list not found");
+        final PriceListVersion priceListVersion = POSUtils.getPriceListVersionByOrgId(orgId,
+            terminalDate);
+        paramValues.put("priceListVersionId", priceListVersion.getId());
+      }
+      if (OBContext.hasTranslationInstalled()) {
+        paramValues.put("languageId", OBContext.getOBContext().getLanguage().getId());
+      }
+      Calendar now = Calendar.getInstance();
+      paramValues.put("endingDate", now.getTime());
+      paramValues.put("startingDate", now.getTime());
+      paramValues.put("orgId", orgId);
+      return paramValues;
+    } finally {
+      OBContext.restorePreviousMode();
     }
+  }
 
-    SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd");
-    Calendar now = Calendar.getInstance();
+  @Override
+  protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
 
     List<String> hqlQueries = new ArrayList<String>();
 
@@ -84,42 +115,40 @@ public class Category extends ProcessHQLQuery {
           .add("select"
               + regularProductsCategoriesHQLProperties.getHqlSelect() //
               + "from OBRETCO_Productcategory aCat left outer join aCat.productCategory as pCat left outer join pCat.image as img"
-              + " where ( aCat.obretcoProductlist.id = '" + productList.getId() + "') "
-              + " order by pCat.name");
+              + " where ( aCat.obretcoProductlist.id = :productListId ) " + " order by pCat.name");
       hqlQueries
           .add("select"
               + regularProductsCategoriesHQLProperties.getHqlSelect() //
               + "from ADTreeNode tn, ProductCategory pCat left outer join pCat.image as img "
               + "where tn.$incrementalUpdateCriteria and tn.$naturalOrgCriteria and tn.$readableSimpleClientCriteria "
-              + " and tn.node = pCat.id and tn.tree.table.id = '"
-              + CategoryTree.productCategoryTableId
-              + "' and pCat.summaryLevel = 'Y'"
+              + " and tn.node = pCat.id and tn.tree.table.id = :productCategoryTableId "
+              + " and pCat.summaryLevel = 'Y'"
               + " and not exists (select pc.id from OBRETCO_Productcategory pc where tn.node = pc.productCategory.id) "
               + "order by tn.sequenceNumber");
 
     } else {
-      hqlQueries.add("select"
-          + regularProductsCategoriesHQLProperties.getHqlSelect() //
-          + "from ProductCategory as pCat left outer join pCat.image as img  " + " where (exists("
-          + "from OBRETCO_Prol_Product pli, " + "PricingProductPrice ppp, "
-          + "PricingPriceListVersion pplv "
-          + "WHERE pCat=pli.product.productCategory and (pli.obretcoProductlist = '"
-          + productList.getId() + "') " + "AND (pplv.id='" + priceListVersion.getId() + "') AND ("
-          + "ppp.priceListVersion.id = pplv.id" + ") AND (" + "pli.product.id = ppp.product.id"
-          + ") AND (" + "pli.product.active = true)) "
-          + "OR (pCat.summaryLevel = 'Y' AND pCat.$naturalOrgCriteria AND "
-          + "pCat.$readableSimpleClientCriteria)) AND pCat.$incrementalUpdateCriteria "
-          + "order by pCat.name");
+      hqlQueries
+          .add("select"
+              + regularProductsCategoriesHQLProperties.getHqlSelect() //
+              + "from ProductCategory as pCat left outer join pCat.image as img  "
+              + " where (exists("
+              + "from OBRETCO_Prol_Product pli, "
+              + "PricingProductPrice ppp, "
+              + "PricingPriceListVersion pplv "
+              + "WHERE pCat=pli.product.productCategory and (pli.obretcoProductlist.id = :productListId ) "
+              + "AND (pplv.id= :priceListVersionId) AND (" + "ppp.priceListVersion.id = pplv.id"
+              + ") AND (" + "pli.product.id = ppp.product.id" + ") AND ("
+              + "pli.product.active = true)) "
+              + "OR (pCat.summaryLevel = 'Y' AND pCat.$naturalOrgCriteria AND "
+              + "pCat.$readableSimpleClientCriteria)) AND pCat.$incrementalUpdateCriteria "
+              + "order by pCat.name");
     }
-
     String promoNameTrl;
     if (OBContext.hasTranslationInstalled()) {
-      promoNameTrl = "coalesce ((select t.commercialName from PromotionTypeTrl t where t.discountPromotionType=pt and t.language='"
-          + OBContext.getOBContext().getLanguage().getLanguage() + "'), pt.commercialName)";
+      promoNameTrl = "coalesce ((select t.commercialName from PromotionTypeTrl t where t.discountPromotionType=pt and t.language.id= :languageId), pt.commercialName)";
     } else {
       promoNameTrl = "pt.commercialName";
     }
-
     // Discounts marked as category
     hqlQueries.add("select pt.id as id, "
         + promoNameTrl
@@ -130,7 +159,7 @@ public class Category extends ProcessHQLQuery {
         + " as _identifier, "
         + "'N' as realCategory "
         + " from PromotionType as pt left outer join pt.obposImage img " //
-        + "where pt.obposIsCategory = true "//
+        + " where pt.obposIsCategory = true "//
         + "  and pt.$readableSimpleClientCriteria" //
         + "  and (pt.$incrementalUpdateCriteria)"//
         + "  and exists (select 1"//
@@ -138,30 +167,23 @@ public class Category extends ProcessHQLQuery {
         + "               where p.discountType.active = true " //
         + "                 and p.active = true"//
         + "                 and p.discountType = pt"//
-        + "                 and (p.endingDate is null or p.endingDate >= TO_DATE('"
-        + format.format(now.getTime())
-        + "','yyyy/MM/dd'))" //
-        + "                 and p.startingDate <= TO_DATE('"
-        + format.format(now.getTime())
-        + "', 'yyyy/MM/dd')"
+        + "                 and (p.endingDate is null or p.endingDate >=  :endingDate )" //
+        + "                 and p.startingDate <= :startingDate "
         // assortment products
         + " and ((p.includedProducts = 'N' "
         + "  and not exists (select 1 from PricingAdjustmentProduct pap"
         + "    where pap.active = true and pap.priceAdjustment = p and pap.product.sale = true "
         + "      and pap.product not in (select ppl.product.id from OBRETCO_Prol_Product ppl "
-        + "         where ppl.obretcoProductlist.id = '"
-        + productList.getId()
-        + "'        and ppl.active = true))) "
+        + "         where ppl.obretcoProductlist.id = :productListId and ppl.active = true))) "
         + " or p.includedProducts = 'Y') "
         // organization
         + "and ((p.includedOrganizations='Y' " + "  and not exists (select 1 "
         + "         from PricingAdjustmentOrganization o" + "        where active = true"
-        + "          and o.priceAdjustment = p" + "          and o.organization.id ='" + orgId
-        + "')) " + "   or (p.includedOrganizations='N' " + "  and  exists (select 1 "
+        + "          and o.priceAdjustment = p" + "          and o.organization.id = :orgId )) "
+        + "   or (p.includedOrganizations='N' " + "  and  exists (select 1 "
         + "         from PricingAdjustmentOrganization o" + "        where active = true"
-        + "          and o.priceAdjustment = p" + "          and o.organization.id ='" + orgId
-        + "')) " + "    ) " + ")");
-
+        + "          and o.priceAdjustment = p" + "          and o.organization.id = :orgId )) "
+        + "    ) " + ")");
     return hqlQueries;
   }
 

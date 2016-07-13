@@ -9,7 +9,9 @@
 package org.openbravo.retail.posterminal.master;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
@@ -20,6 +22,7 @@ import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.client.kernel.RequestContext;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.mobile.core.model.HQLPropertyList;
 import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.mobile.core.model.ModelExtensionUtils;
@@ -44,6 +47,30 @@ public class TaxZone extends ProcessHQLQuery {
   }
 
   @Override
+  protected Map<String, Object> getParameterValues(JSONObject jsonsent) throws JSONException {
+    try {
+      OBContext.setAdminMode(true);
+      OBPOSApplications posDetail = POSUtils.getTerminalById(RequestContext.get()
+          .getSessionAttribute("POSTerminal").toString());
+      final OrganizationInformation storeInfo = posDetail.getOrganization()
+          .getOrganizationInformationList().get(0);
+      final Country fromCountry = storeInfo.getLocationAddress().getCountry();
+      final Region fromRegion = storeInfo.getLocationAddress().getRegion();
+      Map<String, Object> paramValues = new HashMap<String, Object>();
+      if (fromCountry != null) {
+        paramValues.put("fromCountryId", fromCountry.getId());
+      }
+      if (fromRegion != null) {
+        paramValues.put("fromRegionId", fromRegion.getId());
+      }
+
+      return paramValues;
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
+  @Override
   protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
 
     OBPOSApplications posDetail;
@@ -59,7 +86,6 @@ public class TaxZone extends ProcessHQLQuery {
     final OrganizationInformation storeInfo = posDetail.getOrganization()
         .getOrganizationInformationList().get(0); // FIXME: expected org info?
                                                   // IndexOutOfBoundsException?
-
     final Country fromCountry = storeInfo.getLocationAddress().getCountry();
     final Region fromRegion = storeInfo.getLocationAddress().getRegion();
 
@@ -68,24 +94,18 @@ public class TaxZone extends ProcessHQLQuery {
 
     if (fromCountry != null) {
       hqlTax = hqlTax
-          + "and (financialMgmtTaxRate.country.id = '"
-          + fromCountry.getId()
-          + "' or (financialMgmtTaxRate.country is null and (not exists (select z from FinancialMgmtTaxZone as z where z.tax = financialMgmtTaxRate))"
-          + "  or exists (select z from FinancialMgmtTaxZone as z where z.tax = financialMgmtTaxRate and z.fromCountry.id = '"
-          + fromCountry.getId()
-          + "')"
+          + "and (financialMgmtTaxRate.country.id = :fromCountryId "
+          + "  or (financialMgmtTaxRate.country is null and (not exists (select z from FinancialMgmtTaxZone as z where z.tax = financialMgmtTaxRate))"
+          + "  or exists (select z from FinancialMgmtTaxZone as z where z.tax = financialMgmtTaxRate and z.fromCountry.id = :fromCountryId )"
           + "  or exists (select z from FinancialMgmtTaxZone as z where z.tax = financialMgmtTaxRate and z.fromCountry is null)))";
     } else {
       hqlTax = hqlTax + "and financialMgmtTaxRate.country is null ";
     }
     if (fromRegion != null) {
       hqlTax = hqlTax
-          + "and (financialMgmtTaxRate.region.id = '"
-          + fromRegion.getId()
-          + "' or (financialMgmtTaxRate.region is null and (not exists (select z from FinancialMgmtTaxZone as z where z.tax = financialMgmtTaxRate))"
-          + "  or exists (select z from FinancialMgmtTaxZone as z where z.tax = financialMgmtTaxRate and z.fromRegion.id = '"
-          + fromRegion.getId()
-          + "')"
+          + "and (financialMgmtTaxRate.region.id = :fromRegionId "
+          + " or (financialMgmtTaxRate.region is null and (not exists (select z from FinancialMgmtTaxZone as z where z.tax = financialMgmtTaxRate))"
+          + "  or exists (select z from FinancialMgmtTaxZone as z where z.tax = financialMgmtTaxRate and z.fromRegion.id =  :fromRegionId )"
           + "  or exists (select z from FinancialMgmtTaxZone as z where z.tax = financialMgmtTaxRate and z.fromRegion is null))))";
 
     } else {
@@ -103,14 +123,14 @@ public class TaxZone extends ProcessHQLQuery {
         + "and financialMgmtTaxZone.tax in (" + hqlTax + ")";
 
     if (fromCountry != null) {
-      hql = hql + "and (financialMgmtTaxZone.fromCountry.id = '" + fromCountry.getId()
-          + "' or financialMgmtTaxZone.fromCountry is null) ";
+      hql = hql
+          + "and (financialMgmtTaxZone.fromCountry.id = :fromCountryId or financialMgmtTaxZone.fromCountry is null) ";
     } else {
       hql = hql + "and financialMgmtTaxZone.fromCountry is null ";
     }
     if (fromRegion != null) {
-      hql = hql + "and (financialMgmtTaxZone.fromRegion.id = '" + fromRegion.getId()
-          + "' or financialMgmtTaxZone.fromRegion is null) ";
+      hql = hql
+          + "and (financialMgmtTaxZone.fromRegion.id = :fromRegionId or financialMgmtTaxZone.fromRegion is null) ";
     } else {
       hql = hql + "and financialMgmtTaxZone.fromRegion is null ";
     }

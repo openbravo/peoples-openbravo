@@ -21,7 +21,6 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Query;
-import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.client.kernel.RequestContext;
@@ -56,8 +55,7 @@ public class Cashup extends JSONProcessSimple {
       String isprocessed = jsonsent.getString("isprocessed");
       String isprocessedbo = "";
       if (jsonsent.has("isprocessedbo")) {
-        isprocessedbo = " and c.isprocessedbo = "
-            + jsonsent.getString("isprocessedbo").equalsIgnoreCase("Y");
+        isprocessedbo = " and c.isprocessedbo = :isprocessedbo";
       }
 
       String hqlCashup = "select c.id, c.netsales as netSales, c.grosssales as grossSales, "
@@ -70,9 +68,12 @@ public class Cashup extends JSONProcessSimple {
           .getCurrentClient().getId(), OBContext.getOBContext().getCurrentOrganization().getId(),
           null, null, null);
 
-      final Session session = OBDal.getInstance().getSession();
-      final Query cashupquery = session.createQuery(querybuilder.getHQLQuery());
+      final Query cashupquery = querybuilder.getDalQuery();
       cashupquery.setParameter("isprocessed", isprocessed.equalsIgnoreCase("Y"));
+      if (jsonsent.has("isprocessedbo")) {
+        cashupquery.setParameter("isprocessedbo", jsonsent.getString("isprocessedbo")
+            .equalsIgnoreCase("Y"));
+      }
       cashupquery.setParameter("terminal", posId);
       @SuppressWarnings("unchecked")
       List<Object[]> cashupList = cashupquery.list();
@@ -167,7 +168,8 @@ public class Cashup extends JSONProcessSimple {
     return respArray;
   }
 
-  private JSONArray getCashMgmt(String cashupId, DataToJsonConverter converter) throws JSONException {
+  private JSONArray getCashMgmt(String cashupId, DataToJsonConverter converter)
+      throws JSONException {
     JSONArray respArray = new JSONArray();
     String posId = RequestContext.get().getSessionAttribute("POSTerminal").toString();
 
@@ -186,8 +188,7 @@ public class Cashup extends JSONProcessSimple {
           .getCurrentClient().getId(), OBContext.getOBContext().getCurrentOrganization().getId(),
           null, null, null);
 
-      final Session session = OBDal.getInstance().getSession();
-      final Query glitemquery = session.createQuery(querybuilder.getHQLQuery());
+      final Query glitemquery = querybuilder.getDalQuery();
       glitemquery.setParameter("terminal", posId);
 
       @SuppressWarnings("unchecked")
@@ -202,9 +203,7 @@ public class Cashup extends JSONProcessSimple {
     SimpleQueryBuilder querybuilder = new SimpleQueryBuilder(hqlFinanAcct, OBContext.getOBContext()
         .getCurrentClient().getId(), OBContext.getOBContext().getCurrentOrganization().getId(),
         null, null, null);
-
-    final Session session = OBDal.getInstance().getSession();
-    final Query finacctquery = session.createQuery(querybuilder.getHQLQuery());
+    final Query finacctquery = querybuilder.getDalQuery();
     finacctquery.setParameter("terminal", posId);
     @SuppressWarnings("unchecked")
     List<FIN_FinancialAccount> finAcctList = finacctquery.list();
@@ -233,10 +232,7 @@ public class Cashup extends JSONProcessSimple {
       SimpleQueryBuilder paymentMethodbuilder = new SimpleQueryBuilder(hqlPaymentMethod, OBContext
           .getOBContext().getCurrentClient().getId(), OBContext.getOBContext()
           .getCurrentOrganization().getId(), null, null, null);
-
-      final Session paymentsession = OBDal.getInstance().getSession();
-      final Query paymentfinacctquery = paymentsession.createQuery(paymentMethodbuilder
-          .getHQLQuery());
+      final Query paymentfinacctquery = paymentMethodbuilder.getDalQuery();
       paymentfinacctquery.setParameter("terminal", posId);
       paymentfinacctquery.setParameter("financialacct", financialacct);
       Object[] paymentmethod = (Object[]) paymentfinacctquery.uniqueResult();

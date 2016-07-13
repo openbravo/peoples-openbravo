@@ -61,7 +61,16 @@ public class ProductPrice extends ProcessHQLQuery {
       String posId = RequestContext.get().getSessionAttribute("POSTerminal").toString();
       OBPOSApplications POSTerminal = POSUtils.getTerminalById(posId);
       String pricelist = POSUtils.getPriceListByTerminal(POSTerminal.getSearchKey()).getId();
+      String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
+      OBRETCOProductList productList = POSUtils.getProductListByOrgId(orgId);
+      Date terminalDate = OBMOBCUtils
+          .calculateServerDate(
+              jsonsent.getJSONObject("parameters").getString("terminalTime"),
+              jsonsent.getJSONObject("parameters").getJSONObject("terminalTimeOffset")
+                  .getLong("value"));
       Map<String, Object> paramValues = new HashMap<String, Object>();
+      paramValues.put("productListId", productList.getId());
+      paramValues.put("validFromDate", terminalDate);
       paramValues.put("priceList", pricelist);
       return paramValues;
     } finally {
@@ -88,10 +97,6 @@ public class ProductPrice extends ProcessHQLQuery {
       log.error("Error getting Preference: " + e1.getMessage(), e1);
     }
 
-    Date terminalDate = OBMOBCUtils.calculateServerDate(jsonsent.getJSONObject("parameters")
-        .getString("terminalTime"),
-        jsonsent.getJSONObject("parameters").getJSONObject("terminalTimeOffset").getLong("value"));
-
     List<String> hqlQueries = new ArrayList<String>();
 
     HQLPropertyList priceListHQLProperties = ModelExtensionUtils.getPropertyExtensions(extensions);
@@ -99,16 +104,20 @@ public class ProductPrice extends ProcessHQLQuery {
       hqlQueries
           .add("select "
               + priceListHQLProperties.getHqlSelect()
-              + "from OBRETCO_Prol_Product as pli, PricingProductPrice ppp "
-              + "where pli.product.id = ppp.product.id and pli.obretcoProductlist = '"
-              + productList.getId()
-              + "' and ppp.priceListVersion.id in ("
-              + PriceList.getSelectPriceListVersionIds(orgId, terminalDate)
-              + ") and $filtersCriteria AND $hqlCriteria "
-              + "and pli.$naturalOrgCriteria and pli.$readableClientCriteria and (ppp.$incrementalUpdateCriteria) "
-              + "order by ppp.id asc");
+              + "from OBRETCO_Prol_Product as pli, PricingProductPrice ppp  "
+              + " left join  ppp.priceListVersion as plv "
+              + " where pli.product.id = ppp.product.id and pli.obretcoProductlist.id = :productListId "
+              + " and plv.active = true "
+              + " and plv.validFromDate = ( select max(pplv.validFromDate) from PricingPriceListVersion as pplv "
+              + " where pplv.active=true and pplv.priceList.id = plv.priceList.id "
+              + " and pplv.validFromDate  <= :validFromDate ) and (plv.priceList.id in (select distinct priceList.id from BusinessPartner where customer = 'Y') "
+              + " and plv.priceList.id <> (:priceList))"
+              + " and $filtersCriteria AND $hqlCriteria "
+              + " and pli.$naturalOrgCriteria and pli.$readableClientCriteria and (ppp.$incrementalUpdateCriteria) "
+              + " order by ppp.id asc");
     }
 
     return hqlQueries;
   }
+
 }

@@ -52,16 +52,32 @@ public class ProductCharacteristicValue extends ProcessHQLQuery {
   }
 
   @Override
+  protected Map<String, Object> getParameterValues(JSONObject jsonsent) throws JSONException {
+    try {
+      OBContext.setAdminMode(true);
+      String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
+      final OBRETCOProductList productList = POSUtils.getProductListByOrgId(orgId);
+
+      final Date terminalDate = OBMOBCUtils
+          .calculateServerDate(
+              jsonsent.getJSONObject("parameters").getString("terminalTime"),
+              jsonsent.getJSONObject("parameters").getJSONObject("terminalTimeOffset")
+                  .getLong("value"));
+
+      final PriceListVersion priceListVersion = POSUtils.getPriceListVersionByOrgId(orgId,
+          terminalDate);
+      Map<String, Object> paramValues = new HashMap<String, Object>();
+      paramValues.put("productListId", productList.getId());
+      paramValues.put("priceListVersionId", priceListVersion.getId());
+
+      return paramValues;
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
+  @Override
   protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
-    String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
-    final OBRETCOProductList productList = POSUtils.getProductListByOrgId(orgId);
-
-    final Date terminalDate = OBMOBCUtils.calculateServerDate(jsonsent.getJSONObject("parameters")
-        .getString("terminalTime"),
-        jsonsent.getJSONObject("parameters").getJSONObject("terminalTimeOffset").getLong("value"));
-
-    final PriceListVersion priceListVersion = POSUtils.getPriceListVersionByOrgId(orgId,
-        terminalDate);
 
     List<String> hqlQueries = new ArrayList<String>();
 
@@ -72,12 +88,8 @@ public class ProductCharacteristicValue extends ProcessHQLQuery {
         .add("select "
             + regularProductsCharacteristicHQLProperties.getHqlSelect()
             + "from ProductCharacteristicValue pcv "
-            + "where pcv.product.id in (select product.id from OBRETCO_Prol_Product assort where obretcoProductlist.id= '"
-            + productList.getId()
-            + "') "
-            + "AND exists (select 1 from PricingProductPrice ppp WHERE (ppp.priceListVersion.id='"
-            + priceListVersion.getId()
-            + "') AND (ppp.product.id=pcv.product.id) ) "
+            + "where pcv.product.id in (select product.id from OBRETCO_Prol_Product assort where obretcoProductlist.id= :productListId) "
+            + "AND exists (select 1 from PricingProductPrice ppp WHERE (ppp.priceListVersion.id= :priceListVersionId ) AND (ppp.product.id=pcv.product.id) ) "
             + "and pcv.characteristicValue.characteristic.obposUseonwebpos = true "
             + "and $filtersCriteria AND $hqlCriteria and $naturalOrgCriteria and $readableSimpleClientCriteria and (pcv.$incrementalUpdateCriteria "
             + "OR pcv.characteristic.$incrementalUpdateCriteria OR pcv.characteristicValue.$incrementalUpdateCriteria) "

@@ -9,12 +9,15 @@
 package org.openbravo.retail.posterminal.master;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.client.kernel.RequestContext;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.model.common.enterprise.OrganizationInformation;
 import org.openbravo.model.common.geography.Country;
 import org.openbravo.model.common.geography.Region;
@@ -27,6 +30,30 @@ public class TaxRate extends ProcessHQLQuery {
   @Override
   protected boolean isAdminMode() {
     return true;
+  }
+
+  @Override
+  protected Map<String, Object> getParameterValues(JSONObject jsonsent) throws JSONException {
+    try {
+      OBContext.setAdminMode(true);
+      OBPOSApplications posDetail = POSUtils.getTerminalById(RequestContext.get()
+          .getSessionAttribute("POSTerminal").toString());
+      final OrganizationInformation storeInfo = posDetail.getOrganization()
+          .getOrganizationInformationList().get(0);
+      final Country fromCountry = storeInfo.getLocationAddress().getCountry();
+      final Region fromRegion = storeInfo.getLocationAddress().getRegion();
+      Map<String, Object> paramValues = new HashMap<String, Object>();
+      if (fromCountry != null) {
+        paramValues.put("fromCountryId", fromCountry.getId());
+      }
+      if (fromRegion != null) {
+        paramValues.put("fromRegionId", fromRegion.getId());
+      }
+
+      return paramValues;
+    } finally {
+      OBContext.restorePreviousMode();
+    }
   }
 
   @Override
@@ -57,25 +84,19 @@ public class TaxRate extends ProcessHQLQuery {
 
     if (fromCountry != null) {
       hql = hql
-          + "and (financialMgmtTaxRate.country.id = '"
-          + fromCountry.getId()
-          + "' or (financialMgmtTaxRate.country is null and (not exists (select z from FinancialMgmtTaxZone as z where z.tax = financialMgmtTaxRate))"
-          + "  or exists (select z from FinancialMgmtTaxZone as z where z.tax = financialMgmtTaxRate and z.fromCountry.id = '"
-          + fromCountry.getId()
-          + "')"
+          + "and (financialMgmtTaxRate.country.id = :fromCountryId "
+          + "  or (financialMgmtTaxRate.country is null and (not exists (select z from FinancialMgmtTaxZone as z where z.tax = financialMgmtTaxRate))"
+          + "  or exists (select z from FinancialMgmtTaxZone as z where z.tax = financialMgmtTaxRate and z.fromCountry.id = :fromCountryId )"
           + "  or exists (select z from FinancialMgmtTaxZone as z where z.tax = financialMgmtTaxRate and z.fromCountry is null)))";
     } else {
       hql = hql + "and financialMgmtTaxRate.country is null ";
     }
     if (fromRegion != null) {
       hql = hql
-          + "and (financialMgmtTaxRate.region.id = '"
-          + fromRegion.getId()
-          + "' or (financialMgmtTaxRate.region is null and (not exists (select z from FinancialMgmtTaxZone as z where z.tax = financialMgmtTaxRate))"
-          + "  or exists (select z from FinancialMgmtTaxZone as z where z.tax = financialMgmtTaxRate and z.fromRegion.id = '"
-          + fromRegion.getId()
-          + "')"
-          + "  or exists (select z from FinancialMgmtTaxZone as z where z.tax = financialMgmtTaxRate and z.fromRegion is null))))";
+          + "and (financialMgmtTaxRate.region.id = :fromRegionId  "
+          + " or (financialMgmtTaxRate.region is null and (not exists (select z from FinancialMgmtTaxZone as z where z.tax = financialMgmtTaxRate))"
+          + " or exists (select z from FinancialMgmtTaxZone as z where z.tax = financialMgmtTaxRate and z.fromRegion.id = :fromRegionId )"
+          + "  or exists (select z from FinancialMgmtTaxZone as z where z.tax = financialMgmtTaxRate and z.fromRegion is null)))";
 
     } else {
       hql = hql + "and financialMgmtTaxRate.region is null ";

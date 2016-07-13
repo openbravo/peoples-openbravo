@@ -10,7 +10,9 @@
 package org.openbravo.retail.posterminal.master;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
@@ -20,6 +22,7 @@ import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.mobile.core.model.HQLPropertyList;
 import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.mobile.core.model.ModelExtensionUtils;
@@ -40,6 +43,22 @@ public class LoadedCustomer extends ProcessHQLQuery {
   private Instance<ModelExtension> extensionsLoc;
 
   @Override
+  protected Map<String, Object> getParameterValues(JSONObject jsonsent) throws JSONException {
+    try {
+      OBContext.setAdminMode(true);
+      Map<String, Object> paramValues = new HashMap<String, Object>();
+      paramValues.put("businessPartnerId",
+          jsonsent.getJSONObject("parameters").getJSONObject("bpartnerId").get("value"));
+      paramValues.put("bplocId", jsonsent.getJSONObject("parameters").getJSONObject("bpLocationId")
+          .get("value"));
+
+      return paramValues;
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
+  @Override
   protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
     List<String> customers = new ArrayList<String>();
     HQLPropertyList bpartnerHQLProperties = ModelExtensionUtils.getPropertyExtensions(extensions);
@@ -49,18 +68,16 @@ public class LoadedCustomer extends ProcessHQLQuery {
         + bpartnerHQLProperties.getHqlSelect() //
         + "FROM BusinessPartnerLocation AS bpl left outer join bpl.businessPartner.aDUserList AS ulist "
         + "left outer join bpl.businessPartner.priceList AS plist "
-        + "Where bpl.businessPartner.id='"
-        + jsonsent.getJSONObject("parameters").getJSONObject("bpartnerId").get("value")
-        + "'"
-        + " and bpl.id in (select max(bpls.id) as bpLocId from BusinessPartnerLocation AS bpls where bpls.businessPartner.id=bpl.businessPartner.id and bpls.invoiceToAddress = true and bpls.$readableSimpleClientCriteria AND "
+        + "Where bpl.businessPartner.id= :businessPartnerId "
+        + " and bpl.id in (select max(bpls.id) as bpLocId from BusinessPartnerLocation AS bpls where bpls.businessPartner.id=bpl.businessPartner.id and bpls.invoiceToAddress = true "
+        + " and bpls.$readableSimpleClientCriteria AND "
         + " bpls.$naturalOrgCriteria group by bpls.businessPartner.id)"
         + " and (ulist.id in (select max(ulist2.id) from ADUser as ulist2 where ulist2.businessPartner=bpl.businessPartner  group by ulist2.businessPartner))"
         + " ORDER BY bpl.businessPartner.name";
     customers.add(hql);
-    hql = "select" + bpartnerLocHQLProperties.getHqlSelect()
-        + "from BusinessPartnerLocation AS bploc " + "Where bploc.id='"
-        + jsonsent.getJSONObject("parameters").getJSONObject("bpLocationId").get("value") + "'"
-        + "ORDER BY bploc.locationAddress.addressLine1";
+    hql = " select" + bpartnerLocHQLProperties.getHqlSelect()
+        + " from BusinessPartnerLocation AS bploc " + "Where bploc.id= :bplocId"
+        + " ORDER BY bploc.locationAddress.addressLine1";
     customers.add(hql);
     return customers;
   }
