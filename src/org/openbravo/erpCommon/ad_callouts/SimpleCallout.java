@@ -11,32 +11,39 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2014 Openbravo SLU
+ * All portions are Copyright (C) 2010-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.erpCommon.ad_callouts;
 
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Map;
 
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
+import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.filter.RegexFilter;
 import org.openbravo.base.filter.RequestFilter;
-import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.client.application.window.servlet.CalloutServletConfig;
+import org.openbravo.client.kernel.RequestContext;
+import org.openbravo.dal.core.DalUtil;
+import org.openbravo.data.Sqlc;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.ad.datamodel.Column;
+import org.openbravo.model.ad.ui.AuxiliaryInput;
+import org.openbravo.model.ad.ui.Field;
+import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.service.db.DalConnectionProvider;
-import org.openbravo.utils.FormatUtilities;
-import org.openbravo.xmlEngine.XmlDocument;
+import org.openbravo.service.json.JsonConstants;
 
 /**
  * This class is used to implement Openbravo ERP servlet callouts in a simple manner.
@@ -58,10 +65,12 @@ import org.openbravo.xmlEngine.XmlDocument;
  * 
  * @author aro
  */
-public abstract class SimpleCallout extends HttpSecureAppServlet {
+public abstract class SimpleCallout extends DelegateConnectionProvider {
 
   private static final long serialVersionUID = 1L;
   private static Logger log = Logger.getLogger(SimpleCallout.class);
+
+  public static final String SIMPLE_CALLOUT_NOT_SELECTED = "not_selected";
 
   /**
    * Overwrite this method to implement a new servlet callout based in <code>SimlpleCallout</code>
@@ -74,46 +83,142 @@ public abstract class SimpleCallout extends HttpSecureAppServlet {
   protected abstract void execute(CalloutInfo info) throws ServletException;
 
   @Override
-  public void init(ServletConfig config) {
+  public void init(CalloutServletConfig config) {
     super.init(config);
-    boolHist = false;
   }
 
-  @Override
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  public SimpleCalloutResult executeSimpleCallout(RequestContext request,
+      SimpleCalloutResult valuesFromFIC) throws ServletException, JSONException {
+    // prepare values for callout
+    VariablesSecureApp vars = new VariablesSecureApp(request.getRequest());
+    CalloutInfo info = new CalloutInfo(vars);
 
-    VariablesSecureApp vars = new VariablesSecureApp(request);
-
-    if (vars.commandIn("DEFAULT")) {
-      try {
-        printPage(response, vars);
-      } catch (ServletException ex) {
-        pageErrorCallOut(response);
-      }
-    } else {
-      pageError(response);
-    }
-  }
-
-  private void printPage(HttpServletResponse response, VariablesSecureApp vars) throws IOException,
-      ServletException {
-
-    log.debug("Output: dataSheet");
-
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
-
-    CalloutInfo info = new CalloutInfo(vars, getSimpleClassName(), getServletConfig());
-
+    // execute and parse response of the callout
     execute(info);
+    parseResponeSimpleCallout(request, info, valuesFromFIC);
 
-    xmlDocument.setParameter("array", info.finishResult());
-    xmlDocument.setParameter("frameName", "appFrame");
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
+    return valuesFromFIC;
+  }
+
+  private void parseResponeSimpleCallout(RequestContext request, CalloutInfo info,
+      SimpleCalloutResult valuesFromFIC) throws JSONException {
+
+    Map<String, Field> inpFields = valuesFromFIC.getInpFields();
+    Tab tab = valuesFromFIC.getTab();
+    JSONObject result = info.getJSONObjectResult();
+
+    // parsing response and updated values in SimpleCalloutResult to retrieves a result.
+    @SuppressWarnings("unchecked")
+    Iterator<String> keys = result.keys();
+    while (keys.hasNext()) {
+      String key = keys.next();
+      JSONObject element = result.getJSONObject(key);
+
+      if (isMessageElement(key)) {
+        // first check messages
+        JSONObject message = parseMessage(key, element);
+        valuesFromFIC.addMessages(message);
+
+      } else if (SimpleCalloutConstants.SC_JSEXECUTE.equals(key)) {
+        // The code on a JSEXECUTE command is sent directly to the client for eval()
+        String code = element.getString(SimpleCalloutConstants.CLASSIC_VALUE);
+        if (code != null) {
+          valuesFromFIC.addJsExecuteCode(code);
+        }
+
+      } else if (SimpleCalloutConstants.SC_EXECUTE.equals(key)) {
+        String js = element.getString(SimpleCalloutConstants.CLASSIC_VALUE) == null ? null
+            : element.getString(SimpleCalloutConstants.CLASSIC_VALUE);
+        if (js != null && !js.equals("")) {
+          if (js.equals("displayLogic();")) {
+            // We don't do anything, this is a harmless js response
+          } else {
+            JSONObject message = createMessage("ERROR", Utility.messageBD(
+                new DalConnectionProvider(false), "OBUIAPP_ExecuteInCallout", RequestContext.get()
+                    .getVariablesSecureApp().getLanguage()));
+            valuesFromFIC.addMessages(message);
+            valuesFromFIC.addWarningForWindow();
+          }
+        }
+      } else if (inpFields.containsKey(key)) {
+        Column col = inpFields.get(key).getColumn();
+        String colID = DalUtil.getId(col).toString();
+        String oldValue = request.getRequestParameter(colID);
+        Boolean changed = false;
+        if (element.has(SimpleCalloutConstants.CLASSIC_VALUE)) {
+          String newValue = element.getString(SimpleCalloutConstants.CLASSIC_VALUE);
+          if ((oldValue == null && newValue != null) || (oldValue != null && newValue == null)
+              || (oldValue != null && newValue != null && !oldValue.equals(newValue))) {
+            valuesFromFIC.addColumnValues(
+                "inp" + Sqlc.TransformaNombreColumna(col.getDBColumnName()), element);
+            // to check refire a callout
+            changed = true;
+            if (valuesFromFIC.getDynamicCols().contains(colID)) {
+              valuesFromFIC.addChangedCols(col.getDBColumnName());
+            }
+            request.setRequestParameter(key,
+                element.getString(SimpleCalloutConstants.CLASSIC_VALUE));
+          }
+          // If the column is mandatory and it is a combo
+        } else if (element.has(SimpleCalloutConstants.ENTRIES) && col.isMandatory()) {
+          // remove empty value and we choose the first value as selected
+          element.getJSONObject(SimpleCalloutConstants.ENTRIES).get(key);
+        } else {
+          log.debug("Column value didn't change. We do not attempt to execute any additional callout");
+        }
+
+        if (changed && col.getCallout() != null) {
+          // We need to fire this callout, as the column value was changed
+          // but only if the callout we are firing is different
+          if (!getSimpleClassName().equals(
+              col.getCallout().getADModelImplementationList().get(0).getJavaClassName())) {
+            // add callouts to call and lastFieldChangedList in
+            valuesFromFIC.addCalloutsToFire(col);
+          }
+        }
+
+      } else {
+        for (AuxiliaryInput aux : tab.getADAuxiliaryInputList()) {
+          if (key.equalsIgnoreCase("inp" + Sqlc.TransformaNombreColumna(aux.getName()))) {
+            valuesFromFIC.addColumnValues(key, element);
+            // Add the auxiliary input to the list of auxiliary inputs modified by
+            // callouts
+            if (!valuesFromFIC.getOverwrittenAuxiliaryInputs().contains(aux.getName())) {
+              valuesFromFIC.addOverwrittenAuxiliaryInputs(aux.getName());
+            }
+          }
+        }
+        if (!valuesFromFIC.getColumnValues().containsKey(key)) {
+          // This returned value wasn't found to be either a column or an auxiliary
+          // input. We assume it is a hidden input, which are used in places like
+          // selectors
+          String hiddenValue = element.getString(SimpleCalloutConstants.CLASSIC_VALUE);
+          valuesFromFIC.addHiddenInputs(key, hiddenValue);
+          // We set the hidden fields in the request, so that subsequent callouts
+          // can use them
+          request.setRequestParameter(key, element.toString());
+        }
+      }
+    }
+    // set result json in SimpleCalloutResult
+    valuesFromFIC.setResultJson(result);
+  }
+
+  private boolean isMessageElement(String key) {
+    return ("MESSAGE".equals(key) || "INFO".equals(key) || "WARNING".equals(key)
+        || "ERROR".equals(key) || "SUCCESS".equals(key));
+  }
+
+  private JSONObject parseMessage(String key, JSONObject element) throws JSONException {
+    String elementValue = element.getString(SimpleCalloutConstants.CLASSIC_VALUE);
+    return createMessage(key, elementValue);
+  }
+
+  private JSONObject createMessage(String key, String elementValue) throws JSONException {
+    JSONObject message = new JSONObject();
+    message.put("text", elementValue);
+    message.put("severity", "MESSAGE".equals(key) ? "TYPE_INFO" : "TYPE_" + key);
+    return message;
   }
 
   private String getSimpleClassName() {
@@ -131,32 +236,21 @@ public abstract class SimpleCallout extends HttpSecureAppServlet {
    */
   protected static class CalloutInfo {
 
-    private StringBuilder result;
-    private int rescounter;
-    private int selectcounter;
-    private final ServletConfig config;
+    private JSONObject result;
+    private String currentElement;
+    private ArrayList<JSONObject> currentSelectResult;
+
     /**
      * Provides the coder friendly methods to retrieve certain environment, session and servlet call
      * variables.
      */
     public VariablesSecureApp vars;
 
-    private CalloutInfo(VariablesSecureApp vars, String classname, ServletConfig config) {
-      this.config = config;
+    private CalloutInfo(VariablesSecureApp vars) {
       this.vars = vars;
-
-      result = new StringBuilder();
-      result.append("var calloutName='");
-      result.append(classname);
-      result.append("';\nvar respuesta = new Array(");
-
-      rescounter = 0;
-      selectcounter = 0;
-    }
-
-    private String finishResult() {
-      result.append(");");
-      return result.toString();
+      result = new JSONObject();
+      currentElement = null;
+      currentSelectResult = new ArrayList<JSONObject>();
     }
 
     /**
@@ -168,7 +262,6 @@ public abstract class SimpleCallout extends HttpSecureAppServlet {
      *          SimpleCallout instance to invoke
      */
     public void executeCallout(SimpleCallout callout) throws ServletException {
-      callout.init(config);
       callout.execute(this);
     }
 
@@ -226,17 +319,8 @@ public abstract class SimpleCallout extends HttpSecureAppServlet {
      *          The name of the select field to set the values.
      */
     public void addSelect(String param) {
-
-      if (rescounter > 0) {
-        result.append(',');
-      }
-      rescounter++;
-      result.append("\nnew Array(\"");
-      result.append(param);
-      result.append("\", ");
-      result.append("new Array(");
-
-      selectcounter = 0;
+      currentSelectResult = new ArrayList<JSONObject>();
+      currentElement = param;
     }
 
     /**
@@ -262,29 +346,49 @@ public abstract class SimpleCallout extends HttpSecureAppServlet {
      *          Whether this entry field is selected or not.
      */
     public void addSelectResult(String name, String value, boolean selected) {
+      JSONObject entry = new JSONObject();
+      try {
+        entry.put(JsonConstants.ID, name);
+        entry.put(JsonConstants.IDENTIFIER, value);
+        currentSelectResult.add(entry);
 
-      if (selectcounter > 0) {
-        result.append(',');
+        if (selected) {
+          // If value of combo is selected
+          JSONObject valueSelected = new JSONObject();
+          valueSelected.put(SimpleCalloutConstants.VALUE, name.toString());
+          valueSelected.put(SimpleCalloutConstants.CLASSIC_VALUE, name.toString());
+          result.put(currentElement, valueSelected);
+        }
+      } catch (JSONException e) {
+        log.error("Error parsing JSON Object.", e);
       }
-      selectcounter++;
-      result.append("new Array(\"");
-      result.append(name);
-      result.append("\", \"");
-      result.append(FormatUtilities.replaceJS(value));
-      result.append("\",");
-      result.append(selected ? "\"true\"" : "\"false\"");
-      result.append(")");
     }
 
     /**
-     * Finish the inclusion of values to the select field.
+     * Finish the inclusion of values to the select field and destroy data.
      */
     public void endSelect() {
-      if (selectcounter == 0) {
-        result.append("null");
+      try {
+        // Added an initial blank element
+        if (result.isNull(currentElement)) {
+          ArrayList<JSONObject> blankElement = new ArrayList<JSONObject>();
+          blankElement.add(new JSONObject());
+          blankElement.addAll(currentSelectResult);
+          currentSelectResult = blankElement;
+
+          JSONObject jsonobject = new JSONObject();
+          jsonobject.put(SimpleCalloutConstants.ENTRIES, new JSONArray(currentSelectResult));
+          result.put(currentElement, jsonobject);
+        } else {
+          result.getJSONObject(currentElement).accumulate(SimpleCalloutConstants.ENTRIES,
+              new JSONArray(currentSelectResult));
+        }
+      } catch (JSONException e) {
+        log.error("Error parsing JSON Object.", e);
       }
-      result.append(")");
-      result.append(")");
+      // reset current elements
+      currentElement = null;
+      currentSelectResult = null;
     }
 
     /**
@@ -294,19 +398,18 @@ public abstract class SimpleCallout extends HttpSecureAppServlet {
      *          The name of the field to get the value.
      * @param value
      *          The value to assign to the field.
+     * @throws JSONException
      */
     public void addResult(String param, Object value) {
-
-      if (rescounter > 0) {
-        result.append(',');
+      JSONObject columnValue = new JSONObject();
+      try {
+        columnValue.put(SimpleCalloutConstants.VALUE, value.toString());
+        columnValue.put(SimpleCalloutConstants.CLASSIC_VALUE, value.toString());
+        result.put(param, columnValue);
+      } catch (JSONException e) {
+        log.error("Error parsing JSON Object.", e);
       }
-      rescounter++;
 
-      result.append("\nnew Array(\"");
-      result.append(param);
-      result.append("\", ");
-      result.append(value == null ? "null" : value.toString());
-      result.append(")");
     }
 
     /**
@@ -317,10 +420,10 @@ public abstract class SimpleCallout extends HttpSecureAppServlet {
      *          The name of the field to get the value.
      * @param value
      *          The value to assign to the field.
+     * @throws JSONException
      */
     public void addResult(String param, String value) {
-      addResult(param, (Object) (value == null ? null : "\"" + FormatUtilities.replaceJS(value)
-          + "\""));
+      addResult(param, (Object) (value == null ? null : value));
     }
 
     /**
@@ -401,6 +504,13 @@ public abstract class SimpleCallout extends HttpSecureAppServlet {
      */
     public String getResult() {
       return result.toString();
+    }
+
+    /**
+     * Returns the value of the result variable
+     */
+    public JSONObject getJSONObjectResult() {
+      return result;
     }
   }
 }
