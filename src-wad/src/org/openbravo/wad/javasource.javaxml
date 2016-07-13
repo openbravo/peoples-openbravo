@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -954,12 +954,13 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
     out.close();
   }
 
-  private void printPageEdit(HttpServletResponse response, HttpServletRequest request, VariablesSecureApp vars,boolean _boolNew, String str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP><PARAMETER_TMP id="parent">, String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>, TableSQLData tableSQL)
+  private void printPageEdit(HttpServletResponse response, HttpServletRequest request, VariablesSecureApp vars,boolean _boolNew, String _<KEY_TMP id="key">id</KEY_TMP><PARAMETER_TMP id="parent">, String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>, TableSQLData tableSQL)
     throws IOException, ServletException {
     if (log4j.isDebugEnabled()) log4j.debug("Output: edit");
-    
-    // copy param to variable as will be modified later
+
+    // copy params to variables as they will be modified later
     boolean boolNew = _boolNew;
+    String str<KEY_TMP id="key">id</KEY_TMP> = _<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>;
 
     HashMap&#60;String, String&#62; usedButtonShortCuts;
   <PARAMETER_TMP id="buttonFixed">
