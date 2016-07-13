@@ -103,7 +103,8 @@ export.database: exports database structure and data to xml files.
   <property name="checkTranslationConsistency" value="true"/>
   <property name="buildValidation" value="true"/>
   <property name="disableCheckReferencedOrganizations" value="false"/>
-
+  <property name="modules" value=""/> 
+ 
   <available file=".hg" property="is.hg" />
 
   <condition property="calculate.core.rev">
@@ -633,9 +634,10 @@ export.database: exports database structure and data to xml files.
                   stableDBdir="${stableDBdir}"
                   testDBdir="${basedir}"
                   verbosity="${bbdd.verbosity}"
+                  modules="${modules}"
     />    
   </target>
-
+  
   <target name="export.sample.data.old" depends="code.rev">
     <ant dir="${base.src}" target="export.sample.data.old" inheritAll="true" inheritRefs="true" />
   </target>
