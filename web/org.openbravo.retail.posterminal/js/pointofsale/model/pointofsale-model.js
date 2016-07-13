@@ -762,6 +762,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
             } else {
               cancelLayawayObj.id = receipt.get('id');
               cancelLayawayObj.orderId = receipt.get('id');
+              cancelLayawayObj.organization = receipt.get('organization');
               cancelLayawayObj.payments = JSON.parse(JSON.stringify(receipt.get('payments')));
               cancelLayawayObj.gross = receipt.getPaymentStatus().isNegative ? OB.DEC.mul(receipt.get('gross'), -1) : receipt.get('gross');
               cancelLayawayObj.paidOnCredit = receipt.get("paidOnCredit");
