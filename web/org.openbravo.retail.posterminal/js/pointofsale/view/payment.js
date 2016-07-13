@@ -380,7 +380,7 @@ enyo.kind({
         this.$.layawayaction.hide();
       } else if (!_.isUndefined(this.receipt.get('paidInNegativeStatusAmt'))) {
         this.$.layawayaction.hide();
-        this.$.exactaction.show();
+        this.$.exactbutton.show();
       }
     }
     if (paymentstatus.done && !paymentstatus.change && !paymentstatus.overpayment) {
