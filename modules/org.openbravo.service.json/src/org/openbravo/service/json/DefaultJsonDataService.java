@@ -845,7 +845,7 @@ public class DefaultJsonDataService implements JsonDataService {
         for (BaseOBObject bob : bobs) {
           // forcing fetch from DB
           BaseOBObject refreshedBob = OBDal.getInstance().get(bob.getEntityName(),
-              DalUtil.getId(bob));
+              bob.getId());
 
           // if object has computed columns refresh from the database too
           if (refreshedBob.getEntity().hasComputedColumns()) {

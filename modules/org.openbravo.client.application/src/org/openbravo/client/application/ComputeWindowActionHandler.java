@@ -29,7 +29,6 @@ import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.client.kernel.StaticResourceComponent;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
@@ -76,7 +75,7 @@ public class ComputeWindowActionHandler extends BaseActionHandler {
       final String userLanguageId = OBContext.getOBContext().getLanguage().getId();
       String tabTitle = null;
       for (WindowTrl windowTrl : tab.getWindow().getADWindowTrlList()) {
-        final String trlLanguageId = (String) DalUtil.getId(windowTrl.getLanguage());
+        final String trlLanguageId = windowTrl.getLanguage().getId();
         if (trlLanguageId.equals(userLanguageId)) {
           tabTitle = windowTrl.getName();
         }

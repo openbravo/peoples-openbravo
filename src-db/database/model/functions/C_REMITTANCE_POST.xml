@@ -19,7 +19,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2012 Openbravo SLU
+* All portions are Copyright (C) 2001-2016 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -35,12 +35,8 @@
   v_Posted CHAR(1) ;
   v_Processing CHAR(1);
   v_Currency VARCHAR2(32);
-  v_Date DATE;
-  v_CashBook_ISO_Code VARCHAR(10) ;
-  v_Record_Description VARCHAR2(2000):='';
   v_SettlementDocType_ID VARCHAR2(32) ;
   v_DPManagementDocType_ID VARCHAR2(32) ;
-  v_Debt_Payment_ID VARCHAR2(32) ;
   --Addesd by PSarobe 12062007
   v_Remittanceline_ID VARCHAR2(32);
   v_documentno_Settlement VARCHAR2(40);
@@ -64,7 +60,6 @@
     --  Parameter
     --  Parameter Variables
     v_Aux NUMBER;
-    v_CanceledNotChargeAmt NUMBER:=0;
     v_DateTrx DATE;
     v_DueDate DATE;
     v_Status_to VARCHAR(60) ;

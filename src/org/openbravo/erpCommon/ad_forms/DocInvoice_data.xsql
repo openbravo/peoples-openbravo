@@ -62,6 +62,17 @@
      </Sql>
      <Parameter name="client"/>
      <Parameter name="id"/>
+  </SqlMethod>
+  <SqlMethod name="getIsReversedInvoice" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        SELECT C_INVOICE_ID
+        FROM C_INVOICE_REVERSE
+        WHERE C_INVOICE_ID=?
+     ]]>
+     </Sql>
+     <Parameter name="id"/>
    </SqlMethod>
   <SqlMethod name="selectDebtPayments" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>

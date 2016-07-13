@@ -39,7 +39,6 @@ import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.provider.OBProvider;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBDal;
@@ -330,7 +329,7 @@ public class ProductCharacteristicsDS extends DefaultDataSourceService {
 
     // Adding organizations in the trees of all granted ones
     for (RoleOrganization org : currentRole.getADRoleOrganizationList()) {
-      orgs.addAll(orgStructure.getNaturalTree((String) DalUtil.getId(org.getOrganization())));
+      orgs.addAll(orgStructure.getNaturalTree(org.getOrganization().getId()));
     }
 
     StringBuilder hqlBuilder = new StringBuilder();

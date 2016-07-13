@@ -27,8 +27,6 @@
     * Title: ReadOnly Check
     * Description:
     ************************************************************************/
-    v_ID VARCHAR2(32);
-  v_RO         NUMBER;
   v_Processed  VARCHAR(60) ;
   v_C_ORDER_ID VARCHAR2(32) ;
   v_Docaction VARCHAR(60) ;

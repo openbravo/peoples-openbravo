@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012 Openbravo SLU
+ * All portions are Copyright (C) 2012-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -54,7 +54,8 @@ public class ElementValueEventHandler extends EntityPersistenceEventObserver {
     return entities;
   }
 
-  public void onSave(@Observes EntityNewEvent event) {
+  public void onSave(@Observes
+  EntityNewEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
@@ -83,7 +84,8 @@ public class ElementValueEventHandler extends EntityPersistenceEventObserver {
     doIt(account);
   }
 
-  public void onUpdate(@Observes EntityUpdateEvent event) {
+  public void onUpdate(@Observes
+  EntityUpdateEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
@@ -117,6 +119,7 @@ public class ElementValueEventHandler extends EntityPersistenceEventObserver {
       OBDal.getInstance().save(node);
     } else {
       TreeNode treeElement = OBProvider.getInstance().get(TreeNode.class);
+      treeElement.setOrganization(account.getOrganization());
       treeElement.setNode(account.getId());
       treeElement.setTree(account.getAccountingElement().getTree());
       treeElement.setReportSet(!isNumber ? rootNode : parent_ID);

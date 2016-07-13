@@ -90,7 +90,6 @@
       v_Invoice_ID VARCHAR2(32) ;
       v_NextNo VARCHAR2(32) ;
       v_DocType_ID VARCHAR2(32) ;
-      v_InvoiceNo NUMBER(10) ;
       v_DocumentNo C_INVOICE.DocumentNo%TYPE;
       v_IsDiscountPrinted CHAR(1) ;
       v_PaymentRule VARCHAR2(60) ;

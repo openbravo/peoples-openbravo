@@ -35,7 +35,6 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.client.kernel.ComponentProvider;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -92,7 +91,7 @@ public class LogCleanUpProcess extends DalBaseProcess {
         // force reload of log clean up configuration to prevent LazyInitializationException
         config = OBDal.getInstance().get(LogCleanUpConfig.class, config.getId());
         Entity entity = ModelProvider.getInstance().getEntityByTableId(
-            (String) DalUtil.getId(config.getTable()));
+            config.getTable().getId());
 
         if (config.isTruncateTable()) {
           // tables to be truncated don't use CleanEntity

@@ -40,29 +40,23 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2010-2012 Openbravo SLU
+* All portions are Copyright (C) 2010-2016 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
   -- Logistice
   v_ResultStr VARCHAR2(2000):='';
-  v_Message VARCHAR2(2000):='';
-  v_Result NUMBER:=1; -- 0=failure
   v_IsSummary C_TAX.ISSUMMARY%TYPE;
   v_Cascade C_TAX.CASCADE%TYPE;
   v_TaxBaseAmount NUMBER;
   v_BaseAmount C_TAX.BASEAMOUNT%TYPE;
-  v_AlreadyExists NUMBER;
   v_C_TaxBase_ID C_TAX.C_TAXBASE_ID%TYPE;
-  v_LineNet NUMBER;
-  v_AlternateTaxBaseAmt NUMBER;
   v_LineNo C_INVOICETAX.LINE%TYPE;
   v_Rate C_TAX.RATE%TYPE;
   v_Client_ID VARCHAR2(32) ;
   V_istaxincluded CHAR(1);
   TYPE RECORD IS REF CURSOR;
     Cur_Taxes RECORD;
-    FINISH_PROCESS BOOLEAN:=false;
   BEGIN --BODY
     v_TaxBaseAmount:=0;
     SELECT ISSUMMARY, CASCADE, RATE, BASEAMOUNT, AD_CLIENT_ID, C_TAXBASE_ID

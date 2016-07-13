@@ -16,7 +16,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2009 Openbravo SLU
+* All portions are Copyright (C) 2001-2016 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -30,7 +30,6 @@
     v_ProjectStatus VARCHAR(60) ;
     v_projectcategory   VARCHAR(60);
     v_temppricelist     VARCHAR(60);
-    v_Created NUMBER:=0;
     FINISH_PROCESS BOOLEAN:=false;
   BEGIN
     --  Update AD_PInstance

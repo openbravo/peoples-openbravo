@@ -102,6 +102,13 @@ public abstract class UIDefinition {
   }
 
   /**
+   * @return the read only editor type. As default will return "".
+   */
+  public String getReadOnlyEditorType() {
+    return "";
+  }
+
+  /**
    * @return the form item type used for filtering in grids. As a default will return
    *         {@link #getFormEditorType()}
    */

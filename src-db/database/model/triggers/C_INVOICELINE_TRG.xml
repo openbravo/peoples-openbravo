@@ -22,21 +22,8 @@
 
 
 
- v_newTaxBaseAmt  NUMBER;
- v_oldTaxBaseAmt  NUMBER;
- v_oldLine NUMBER:= 0;
- v_newLine NUMBER:= 0;
- v_taxAmt NUMBER:= 0;
- v_HasTaxLine  BOOLEAN := FALSE;
- v_isPosted   VARCHAR(60);
  v_ID    varchar2(32);
- v_Processed   VARCHAR(60);
- v_Prec NUMBER:=2;
   v_UOM_ID   varchar2(32);
- v_Currency   VARCHAR2(32);
- v_ChargeAmt   NUMBER;
- v_LineNetAmt  NUMBER;
- v_CinvoiceTaxID varchar2(32);
  v_AttrSetValueType M_Product.AttrSetValueType%TYPE;
  v_count NUMBER;
     

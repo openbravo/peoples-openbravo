@@ -39,7 +39,6 @@ import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.costing.CostingAlgorithm.CostDimension;
 import org.openbravo.costing.CostingServer.TrxType;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBCriteria;
@@ -148,8 +147,8 @@ public class CostingUtils {
     if (bp != null) {
       pricelist = bp.getPurchasePricelist();
     }
-    ProductPrice pp = FinancialUtils
-        .getProductPrice(product, movementDate, false, pricelist, false);
+    ProductPrice pp = FinancialUtils.getProductPrice(product, movementDate, false, pricelist,
+        false, false);
     if (stdCost == null && pp == null) {
       throw new OBException("@NoPriceListOrStandardCostForProduct@ @Organization@: "
           + org.getName() + ", @Product@: " + product.getName() + ", @Date@: "
@@ -159,8 +158,7 @@ public class CostingUtils {
       return qty.abs().multiply(standardCost);
     } else if (stdCost == null && pp != null) {
       BigDecimal cost = pp.getStandardPrice().multiply(qty.abs());
-      if (DalUtil.getId(pp.getPriceListVersion().getPriceList().getCurrency()).equals(
-          currency.getId())) {
+      if (pp.getPriceListVersion().getPriceList().getCurrency().getId().equals(currency.getId())) {
         // no conversion needed
         return cost;
       }
@@ -170,8 +168,7 @@ public class CostingUtils {
     } else if (stdCost != null && pp != null
         && stdCost.getStartingDate().before(pp.getPriceListVersion().getValidFromDate())) {
       BigDecimal cost = pp.getStandardPrice().multiply(qty.abs());
-      if (DalUtil.getId(pp.getPriceListVersion().getPriceList().getCurrency()).equals(
-          currency.getId())) {
+      if (pp.getPriceListVersion().getPriceList().getCurrency().getId().equals(currency.getId())) {
         // no conversion needed
         return cost;
       }
@@ -365,6 +362,9 @@ public class CostingUtils {
     Set<String> orgs = OBContext.getOBContext().getOrganizationStructureProvider()
         .getChildTree(costorg.getId(), true);
 
+    boolean existsCumulatedStock = costing != null && costing.getInventoryTransaction() != null
+        && costing.getTotalMovementQuantity() != null;
+
     StringBuffer select = new StringBuffer();
     select
         .append(" select sum(trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + ") as stock");
@@ -372,13 +372,13 @@ public class CostingUtils {
     if (costDimensions.get(CostDimension.Warehouse) != null) {
       select.append(" join trx." + MaterialTransaction.PROPERTY_STORAGEBIN + " as locator");
     }
-    if (costing != null && costing.getTotalMovementQuantity() != null) {
+    if (existsCumulatedStock) {
       select.append(", " + org.openbravo.model.ad.domain.List.ENTITY_NAME + " as trxtype");
     }
     select.append(" where trx." + MaterialTransaction.PROPERTY_PRODUCT + ".id = :product");
     select
         .append(" and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " <= :dateTo");
-    if (costing != null && costing.getTotalMovementQuantity() != null) {
+    if (existsCumulatedStock) {
       select.append(" and trxtype." + CostAdjustmentUtils.propADListValue + " = trx."
           + MaterialTransaction.PROPERTY_MOVEMENTTYPE);
       select.append(" and trxtype." + CostAdjustmentUtils.propADListReference + ".id = :refid");
@@ -402,7 +402,7 @@ public class CostingUtils {
     Query trxQry = OBDal.getInstance().getSession().createQuery(select.toString());
     trxQry.setParameter("product", product.getId());
     trxQry.setParameter("dateTo", dateTo);
-    if (costing != null && costing.getTotalMovementQuantity() != null) {
+    if (existsCumulatedStock) {
       trxQry.setParameter("refid", CostAdjustmentUtils.MovementTypeRefID);
       trxQry.setParameter("dateFrom", costing.getStartingDate());
       trxQry.setParameter("trxTypePrio",
@@ -418,7 +418,7 @@ public class CostingUtils {
     if (stock == null) {
       stock = BigDecimal.ZERO;
     }
-    if (costing != null && costing.getTotalMovementQuantity() != null) {
+    if (existsCumulatedStock) {
       stock = stock.add(costing.getTotalMovementQuantity());
     }
     return stock;
@@ -447,6 +447,9 @@ public class CostingUtils {
     Set<String> orgs = OBContext.getOBContext().getOrganizationStructureProvider()
         .getChildTree(costorg.getId(), true);
 
+    boolean existsCumulatedValuation = costing != null && costing.getInventoryTransaction() != null
+        && costing.getTotalStockValuation() != null;
+
     StringBuffer select = new StringBuffer();
     select.append(" select sum(case");
     select.append(" when trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " < 0 then -tc."
@@ -460,14 +463,14 @@ public class CostingUtils {
     if (costDimensions.get(CostDimension.Warehouse) != null) {
       select.append(" join trx." + MaterialTransaction.PROPERTY_STORAGEBIN + " as locator");
     }
-    if (costing != null && costing.getTotalStockValuation() != null) {
+    if (existsCumulatedValuation) {
       select.append(", " + org.openbravo.model.ad.domain.List.ENTITY_NAME + " as trxtype");
     }
 
     select.append(" where trx." + MaterialTransaction.PROPERTY_PRODUCT + ".id = :product");
     select
         .append(" and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " <= :dateTo");
-    if (costing != null && costing.getTotalStockValuation() != null) {
+    if (existsCumulatedValuation) {
       select.append(" and trxtype." + CostAdjustmentUtils.propADListValue + " = trx."
           + MaterialTransaction.PROPERTY_MOVEMENTTYPE);
       select.append(" and trxtype." + CostAdjustmentUtils.propADListReference + ".id = :refid");
@@ -494,7 +497,7 @@ public class CostingUtils {
     Query trxQry = OBDal.getInstance().getSession().createQuery(select.toString());
     trxQry.setParameter("product", product.getId());
     trxQry.setParameter("dateTo", dateTo);
-    if (costing != null && costing.getTotalStockValuation() != null) {
+    if (existsCumulatedValuation) {
       trxQry.setParameter("refid", CostAdjustmentUtils.MovementTypeRefID);
       trxQry.setParameter("dateFrom", costing.getStartingDate());
       trxQry.setParameter("trxTypePrio",
@@ -528,7 +531,7 @@ public class CostingUtils {
       scroll.close();
     }
 
-    if (costing != null && costing.getTotalStockValuation() != null) {
+    if (existsCumulatedValuation) {
       BigDecimal costingValuedStock = costing.getTotalStockValuation();
       if (!StringUtils.equals(costing.getCurrency().getId(), currency.getId())) {
         costingValuedStock = FinancialUtils.getConvertedAmount(costingValuedStock,

@@ -16,7 +16,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2006 Openbravo SLU
+* All portions are Copyright (C) 2001-2016 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -33,8 +33,6 @@
     v_Org_ID VARCHAR2(32);
     v_User_ID VARCHAR2(32);
     v_Shift VARCHAR2(60);
-    v_CCP_Group NUMBER;
-    v_Line NUMBER;
     v_Processed CHAR;
     v_Time DATE;
     v_Measure_Group VARCHAR2(32);

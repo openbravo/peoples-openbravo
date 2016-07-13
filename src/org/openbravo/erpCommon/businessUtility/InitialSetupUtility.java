@@ -2104,6 +2104,10 @@ public class InitialSetupUtility {
   }
 
   public static String getTranslatedColumnName(Language language, String columnName) {
+    return getTranslatedElement(language, columnName, null);
+  }
+
+  public static String getTranslatedElement(Language language, String columnName, String elementName) {
     OBContext.setAdminMode();
     try {
       OBCriteria<org.openbravo.model.ad.ui.Element> obcElement = OBDal.getInstance()
@@ -2112,6 +2116,11 @@ public class InitialSetupUtility {
       obcElement.setFilterOnReadableOrganization(false);
       obcElement.add(Restrictions.eq(org.openbravo.model.ad.ui.Element.PROPERTY_DBCOLUMNNAME,
           columnName));
+      if (StringUtils.isNotEmpty(elementName)) {
+        obcElement.add(Restrictions
+            .eq(org.openbravo.model.ad.ui.Element.PROPERTY_NAME, elementName));
+      }
+      obcElement.setMaxResults(1);
       org.openbravo.model.ad.ui.Element element = (org.openbravo.model.ad.ui.Element) obcElement
           .uniqueResult();
 

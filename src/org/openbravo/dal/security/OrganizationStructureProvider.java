@@ -29,7 +29,6 @@ import java.util.Set;
 import org.hibernate.Query;
 import org.openbravo.base.provider.OBNotSingleton;
 import org.openbravo.base.util.Check;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.service.OBDal;
@@ -153,8 +152,8 @@ public class OrganizationStructureProvider implements OBNotSingleton {
    */
   public boolean isInNaturalTree(Organization org1, Organization org2) {
     initialize();
-    final String id1 = (String) DalUtil.getId(org1);
-    final String id2 = (String) DalUtil.getId(org2);
+    final String id1 = org1.getId();
+    final String id2 = org2.getId();
 
     // org 0 is in everyones natural tree, and the other way around
     if (id2 != null && id2.equals("0")) {

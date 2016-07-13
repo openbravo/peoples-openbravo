@@ -43,7 +43,6 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import org.openbravo.base.exception.OBException;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
@@ -94,11 +93,10 @@ public class TestAllowUnpagedDatasourcePreference extends BaseDataSourceTestDal 
     String preferenceId = "";
     try {
       user = OBDal.getInstance().get(User.class, "100"); // Openbravo user;
-      defaultClient = user.getDefaultClient() != null ? (String) DalUtil.getId(user
-          .getDefaultClient()) : null;
-      defaultOrg = user.getDefaultOrganization() != null ? (String) DalUtil.getId(user
-          .getDefaultOrganization()) : null;
-      defaultRole = (String) DalUtil.getId(user.getDefaultRole());
+      defaultClient = user.getDefaultClient() != null ? user.getDefaultClient().getId() : null;
+      defaultOrg = user.getDefaultOrganization() != null ? user.getDefaultOrganization().getId()
+          : null;
+      defaultRole = user.getDefaultRole().getId();
 
       // Execute ws with system administrator credentials
       user.setDefaultClient(OBDal.getInstance().get(Client.class, "0"));

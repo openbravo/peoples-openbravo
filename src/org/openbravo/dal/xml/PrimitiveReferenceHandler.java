@@ -29,7 +29,6 @@ import org.openbravo.base.model.Property;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.provider.OBSingleton;
 import org.openbravo.base.structure.BaseOBObject;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.model.ad.alert.Alert;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.utility.Attachment;
@@ -208,7 +207,7 @@ public class PrimitiveReferenceHandler implements OBSingleton {
           treeNode.getTree().getTypeArea());
       if (entity == null && treeNode.getTree().getTable() != null) {
         entity = ModelProvider.getInstance().getEntityByTableId(
-            (String) DalUtil.getId(treeNode.getTree().getTable()));
+            treeNode.getTree().getTable().getId());
       }
 
       if (entity == null) {

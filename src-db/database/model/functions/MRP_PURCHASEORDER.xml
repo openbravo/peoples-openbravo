@@ -33,8 +33,6 @@
   v_COrder_ID VARCHAR2(32);
   v_COrderLine_ID VARCHAR2(32);
   v_DocumentNo NVARCHAR2(60);
-  v_created BOOLEAN := FALSE;
-  FINISH_PROCESS BOOLEAN DEFAULT FALSE;
 
   v_M_Warehouse_ID VARCHAR2(32);
   v_Description nvarchar2(255);
@@ -47,7 +45,6 @@
   v_CDocTypeID varchar2(32);
   v_BPartner_Location_ID VARCHAR2(32);
   v_BillTo_ID VARCHAR2(32);
-  v_PriceListVersion NUMBER;
   v_PriceStd NUMBER;
   v_TaxId varchar2(32);
   v_ProductName NVARCHAR2(90);

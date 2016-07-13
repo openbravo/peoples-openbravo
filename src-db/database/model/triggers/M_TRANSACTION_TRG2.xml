@@ -15,7 +15,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2012-2013 Openbravo SLU
+* All portions are Copyright (C) 2012-2016 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -24,7 +24,7 @@
   v_count       NUMBER;
   v_productname m_product.name%TYPE;
   v_isgeneric   CHAR(1);
-  v_product     VARCHAR(60);
+
   v_attr_description    VARCHAR2(255);
   v_product_value       VARCHAR2(40);
   v_locator_value       VARCHAR2(40);

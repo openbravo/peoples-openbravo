@@ -28,8 +28,9 @@ import org.junit.Test;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
-import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBQuery;
+import org.openbravo.erpCommon.utility.ModulesInOB3Distribution;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.utility.DataSet;
 import org.openbravo.model.ad.utility.DataSetColumn;
@@ -61,8 +62,7 @@ public class DatasetServiceTest extends OBBaseTest {
     Map<String, Object> parameters = new HashMap<String, Object>();
     parameters.put("ClientID", "0");
 
-    final OBCriteria<DataSet> obc = OBDal.getInstance().createCriteria(DataSet.class);
-    final List<DataSet> dss = obc.list();
+    final List<DataSet> dss = getDatasetsOfModulesInOb3Distribution();
     setSystemAdministratorContext();
     for (final DataSet ds : dss) {
       if (!ds.getName().equalsIgnoreCase("AD") && !ds.getName().equalsIgnoreCase("ADRD")) {
@@ -84,8 +84,7 @@ public class DatasetServiceTest extends OBBaseTest {
   @Test
   public void testExportAllDataSets() {
     setTestAdminContext();
-    final OBCriteria<DataSet> obc = OBDal.getInstance().createCriteria(DataSet.class);
-    final List<DataSet> dss = obc.list();
+    final List<DataSet> dss = getDatasetsOfModulesInOb3Distribution();
     setSystemAdministratorContext();
 
     Map<String, Object> parameters = new HashMap<String, Object>();
@@ -130,8 +129,7 @@ public class DatasetServiceTest extends OBBaseTest {
     parameters.put("ClientID", "0");
 
     final DataSetService dss = DataSetService.getInstance();
-    final OBCriteria<DataSet> obc = OBDal.getInstance().createCriteria(DataSet.class);
-    final List<DataSet> ds = obc.list();
+    final List<DataSet> ds = getDatasetsOfModulesInOb3Distribution();
     for (final DataSet d : ds) {
       if (!d.getName().equalsIgnoreCase("AD") && !d.getName().equalsIgnoreCase("ADRD")) {
         log.debug("Exporting DataSet: " + d.getName());
@@ -146,20 +144,16 @@ public class DatasetServiceTest extends OBBaseTest {
             final List<Property> ps = dss.getExportableProperties(bob, dt, dcs);
             final StringBuilder sb = new StringBuilder();
             sb.append(bob.getIdentifier() + " has " + ps.size() + " properties to export");
-            // . Values: ");
-            // for (Property p : ps) {
-            // final Object value = bob.get(p.getName());
-            // sb.append(", " + p.getName() + ": ");
-            // if (value instanceof BaseOBObject) {
-            // sb.append(((BaseOBObject) value).getIdentifier());
-            // } else {
-            // sb.append(value);
-            // }
-            // log.debug(sb.toString());
-            // }
           }
         }
       }
     }
+  }
+
+  private List<DataSet> getDatasetsOfModulesInOb3Distribution() {
+    OBQuery<DataSet> query = OBDal.getInstance().createQuery(DataSet.class,
+        " as e where e.module.id in (:moduleList)");
+    query.setNamedParameter("moduleList", ModulesInOB3Distribution.getModules());
+    return query.list();
   }
 }

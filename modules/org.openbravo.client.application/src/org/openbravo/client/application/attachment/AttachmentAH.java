@@ -34,7 +34,6 @@ import org.openbravo.base.util.CheckException;
 import org.openbravo.client.application.Parameter;
 import org.openbravo.client.application.window.ApplicationDictionaryCachedStructures;
 import org.openbravo.client.kernel.BaseActionHandler;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -157,7 +156,7 @@ public class AttachmentAH extends BaseActionHandler {
   private void doDelete(Map<String, Object> parameters, Tab tab, String recordIds)
       throws OBException {
     String attachmentId = (String) parameters.get("attachId");
-    String tableId = (String) DalUtil.getId(tab.getTable());
+    String tableId = tab.getTable().getId();
 
     OBCriteria<Attachment> attachmentFiles = OBDao.getFilteredCriteria(Attachment.class,
         Restrictions.eq("table.id", tableId), Restrictions.in("record", recordIds.split(",")));

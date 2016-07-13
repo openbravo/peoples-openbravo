@@ -30,7 +30,6 @@ import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.structure.OrganizationEnabled;
 import org.openbravo.client.application.Note;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.security.SecurityChecker;
 import org.openbravo.dal.service.OBDal;
@@ -81,7 +80,7 @@ public class NoteDataSource extends DefaultDataSourceService {
         String noteId = parameter.get("id");
         Note note = OBDal.getInstance().get(Note.class, noteId);
         Table table = note.getTable();
-        String tableId = (String) DalUtil.getId(table);
+        String tableId = table.getId();
         String recordId = note.getRecord();
         readableAccesForUser(tableId, recordId);
       } catch (Exception ex) {

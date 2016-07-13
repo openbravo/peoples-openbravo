@@ -16,7 +16,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2015 Openbravo SLU
+* All portions are Copyright (C) 2001-2016 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -33,12 +33,10 @@
     v_ProjectStatus VARCHAR(60) ;
     v_projectcategory   VARCHAR(60);
     v_temppricelist     VARCHAR(60);
-    v_Created NUMBER:=0;
     v_PriceListVersion varchar2(32);
     v_PriceList varchar2(32);
     v_PriceListVersionPO varchar2(32);
     v_PriceListPO varchar2(32);
-    v_C_Currency_ID VARCHAR2(32);
     v_TotalPhases NUMBER;
     v_TotalLines NUMBER;
     v_BPName VARCHAR2(2000):='';

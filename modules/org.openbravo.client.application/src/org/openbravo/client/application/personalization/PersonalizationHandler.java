@@ -34,9 +34,9 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
+import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.client.application.ApplicationUtils;
 import org.openbravo.client.application.UIPersonalization;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
@@ -140,17 +140,17 @@ public class PersonalizationHandler {
       return true;
     }
     if (uiPersonalization.getVisibleAtOrganization() != null) {
-      final String orgId = (String) DalUtil.getId(uiPersonalization.getVisibleAtOrganization());
+      final String orgId = uiPersonalization.getVisibleAtOrganization().getId();
       for (RoleOrganization roleOrg : adminOrgs) {
-        if (DalUtil.getId(roleOrg.getOrganization()).equals(orgId)) {
+        if (roleOrg.getOrganization().getId().equals(orgId)) {
           return true;
         }
       }
     }
     if (uiPersonalization.getVisibleAtRole() != null) {
-      final String roleId = (String) DalUtil.getId(uiPersonalization.getVisibleAtRole());
+      final String roleId = uiPersonalization.getVisibleAtRole().getId();
       for (UserRoles userRole : adminRoles) {
-        if (DalUtil.getId(userRole.getRole()).equals(roleId)) {
+        if (userRole.getRole().getId().equals(roleId)) {
           return true;
         }
       }
@@ -159,11 +159,11 @@ public class PersonalizationHandler {
     return false;
   }
 
-  private Object getNullOrId(Object object) {
+  private Object getNullOrId(BaseOBObject object) {
     if (object == null) {
       return null;
     }
-    return DalUtil.getId(object);
+    return object.getId();
   }
 
   // when changing code here, also check the
@@ -565,7 +565,7 @@ public class PersonalizationHandler {
       // Remove from list organization that are not visible
       final Organization org = OBDal.getInstance().get(Organization.class, orgId);
       List<String> parentTree = OBContext.getOBContext()
-          .getOrganizationStructureProvider((String) DalUtil.getId(org.getClient()))
+          .getOrganizationStructureProvider(org.getClient().getId())
           .getParentList(orgId, true);
       List<UIPersonalization> auxPersonalizations = new ArrayList<UIPersonalization>();
       for (UIPersonalization pers : personalizations) {

@@ -37,7 +37,7 @@
 * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
 * All Rights Reserved.
 * Contributor(s): Openbravo SLU
-* Contributions are Copyright (C) 2001-2010 Openbravo, S.L.U.
+* Contributions are Copyright (C) 2001-2016 Openbravo, S.L.U.
 *
 * Specifically, this derivative work is based upon the following Compiere
 * file and version.
@@ -52,7 +52,7 @@
 * Test:
 *  SELECT C_Currency_Convert(100,116,100,null,null) FROM DUAL => 64.72
 ************************************************************************/
-  v_Rate NUMBER;
+
 BEGIN
   RETURN C_CURRENCY_CONVERT_PRECISION(p_amount, p_curfrom_id, p_curto_id, p_convdate, p_ratetype, p_client_id, p_org_id, 'A');
 EXCEPTION

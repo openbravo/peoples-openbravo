@@ -16,7 +16,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2006 Openbravo SLU
+* All portions are Copyright (C) 2001-2016 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -40,11 +40,11 @@
     v_Dateordered DATE;
     v_BillTo VARCHAR2(32);
     v_BpartnerLocation VARCHAR2(32);
-    v_Pricelist VARCHAR2(32);
+    v_Pricelist M_ProductPrice.PriceList%TYPE;
     v_Pricelimit NUMBER;
-    v_Pricestd NUMBER;
+    v_Pricestd M_ProductPrice.PriceStd%TYPE;
     v_Linenetamount NUMBER;
-    v_Discount VARCHAR2(32);
+    v_Discount NUMBER;
     v_Tax VARCHAR2(32);
     v_Issotrx CHAR;
     v_NoOfLines NUMBER:=0;

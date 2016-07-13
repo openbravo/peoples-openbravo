@@ -37,7 +37,6 @@ import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.structure.BaseOBObject;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -122,7 +121,7 @@ public class ReferencedLink extends HttpSecureAppServlet {
       final String userLanguageId = OBContext.getOBContext().getLanguage().getId();
       String tabTitle = null;
       for (WindowTrl windowTrl : tab.getWindow().getADWindowTrlList()) {
-        final String trlLanguageId = (String) DalUtil.getId(windowTrl.getLanguage());
+        final String trlLanguageId = windowTrl.getLanguage().getId();
         if (trlLanguageId.equals(userLanguageId)) {
           tabTitle = windowTrl.getName();
         }
@@ -206,14 +205,14 @@ public class ReferencedLink extends HttpSecureAppServlet {
       throw new ServletException("Window not found");
     }
     // Only in case an adWindowId is returned
-    strWindowId = DalUtil.getId(window).toString();
+    strWindowId = window.getId().toString();
 
     boolean isSOTrx = isSOTrx(strTableReferenceId, strKeyReferenceColumnName, strKeyReferenceId,
         vars, strWindowId);
     if (!isSOTrx) {
       Window poWindow = table.getPOWindow();
       if (poWindow != null) {
-        strWindowId = DalUtil.getId(poWindow).toString();
+        strWindowId = poWindow.getId().toString();
       }
     }
 

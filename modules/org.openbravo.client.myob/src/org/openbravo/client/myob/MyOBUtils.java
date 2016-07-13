@@ -31,7 +31,6 @@ import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.util.OBClassLoader;
 import org.openbravo.base.weld.WeldUtils;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -79,7 +78,7 @@ public class MyOBUtils {
     final String userLanguageId = OBContext.getOBContext().getLanguage().getId();
 
     for (WidgetClassTrl widgetClassTrl : widgetClass.getOBKMOWidgetClassTrlList()) {
-      final String trlLanguageId = (String) DalUtil.getId(widgetClassTrl.getLanguage());
+      final String trlLanguageId = widgetClassTrl.getLanguage().getId();
       if (trlLanguageId.equals(userLanguageId)) {
         return widgetClassTrl.getTitle();
       }

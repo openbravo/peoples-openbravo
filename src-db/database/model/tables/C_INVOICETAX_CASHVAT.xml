@@ -69,6 +69,9 @@
       <foreign-key foreignTable="FIN_PAYMENT_DETAIL" name="C_INVOICETAXCASHVAT_FPD" onDelete="cascade">
         <reference local="FIN_PAYMENT_DETAIL_ID" foreign="FIN_PAYMENT_DETAIL_ID"/>
       </foreign-key>
+      <index name="C_INVOICETAX_CASHVAT_FPD" unique="false">
+        <index-column name="FIN_PAYMENT_DETAIL_ID"/>
+      </index>
       <index name="C_INVOICETAX_CASHVAT_INVTAX" unique="false">
         <index-column name="C_INVOICETAX_ID"/>
       </index>

@@ -91,8 +91,9 @@ public class ResetAccounting {
     String client = adClientId;
     List<String> tables = getTables(adTableId);
     try {
-      Set<String> orgIds = StringUtils.equals(adOrgId, "0") ? getLegalOrBusinessOrgsChilds(client)
-          : new OrganizationStructureProvider().getChildTree(adOrgId, true);
+      Organization org = OBDal.getInstance().get(Organization.class, adOrgId);
+      Set<String> orgIds = StringUtils.equals(org.getOrganizationType().getName(), "Organization") ? getLegalOrBusinessOrgsChilds(
+          client, adOrgId) : new OrganizationStructureProvider().getChildTree(adOrgId, true);
       for (String table : tables) {
         List<String> docbasetypes = getDocbasetypes(client, table, localRecordId);
         String myQuery = "select distinct e.recordID from FinancialMgmtAccountingFact e where e.organization.id in (:orgIds) and e.client.id = :clientId and e.table.id = :tableId";
@@ -628,21 +629,20 @@ public class ResetAccounting {
   }
 
   @SuppressWarnings("unchecked")
-  private static Set<String> getLegalOrBusinessOrgsChilds(String clientId) {
+  private static Set<String> getLegalOrBusinessOrgsChilds(String clientId, String orgId) {
     StringBuffer hql = new StringBuffer();
     hql = new StringBuffer();
     hql.append(" select o1." + Organization.PROPERTY_ID);
     hql.append(" from " + Organization.ENTITY_NAME + " as o1");
     hql.append(" , " + Organization.ENTITY_NAME + " as o2");
     hql.append(" join o2." + Organization.PROPERTY_ORGANIZATIONTYPE + " as ot");
-    hql.append(" where o1." + Organization.PROPERTY_CLIENT + ".id = :clientId");
-    hql.append(" and o2." + Organization.PROPERTY_CLIENT + ".id = :clientId");
+    hql.append(" where o2." + Organization.PROPERTY_CLIENT + ".id = :clientId");
+    hql.append(" and ad_isorgincluded(o2." + Organization.PROPERTY_ID + ", :orgId, o2."
+        + Organization.PROPERTY_CLIENT + ".id) <> -1");
     hql.append(" and ad_isorgincluded(o1." + Organization.PROPERTY_ID + ", o2."
         + Organization.PROPERTY_ID + ", o1." + Organization.PROPERTY_CLIENT + ".id) <> -1");
     hql.append(" and (ot." + OrganizationType.PROPERTY_LEGALENTITY + " = true");
     hql.append(" or ot." + OrganizationType.PROPERTY_BUSINESSUNIT + " = true)");
-    hql.append(" and o1." + Organization.PROPERTY_ACTIVE + " = true");
-    hql.append(" and o1." + Organization.PROPERTY_READY + " = true");
     hql.append(" and o2." + Organization.PROPERTY_ACTIVE + " = true");
     hql.append(" and o2." + Organization.PROPERTY_READY + " = true");
     hql.append(" order by o2." + Organization.PROPERTY_NAME);
@@ -651,6 +651,7 @@ public class ResetAccounting {
     hql.append(" , o1." + Organization.PROPERTY_NAME);
     Query query = OBDal.getInstance().getSession().createQuery(hql.toString());
     query.setParameter("clientId", clientId);
+    query.setParameter("orgId", orgId);
     return new HashSet<String>(query.list());
   }
 }

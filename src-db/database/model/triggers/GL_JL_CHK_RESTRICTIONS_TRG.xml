@@ -19,14 +19,13 @@
     * under the License.
     * The Original Code is Openbravo ERP.
     * The Initial Developer of the Original Code is Openbravo SLU
-    * All portions are Copyright (C) 2001-2012 Openbravo SLU
+    * All portions are Copyright (C) 2001-2016 Openbravo SLU
     * All Rights Reserved.
     * Contributor(s):  ______________________________________.
     ************************************************************************/
   v_Processed VARCHAR(60) ;
   v_Posted        VARCHAR(60) ;
   v_GL_JOURNAL_ID VARCHAR2(32) ;
-  v_DateNull DATE :=TO_DATE('01-01-1900','DD-MM-YYYY');
     
 BEGIN
     

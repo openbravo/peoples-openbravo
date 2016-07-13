@@ -29,7 +29,6 @@ import org.junit.Test;
 import org.openbravo.base.weld.test.ParameterCdiTest;
 import org.openbravo.base.weld.test.ParameterCdiTestRule;
 import org.openbravo.base.weld.test.WeldBaseTest;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.access.Role;
@@ -90,13 +89,13 @@ public class VerticalInheritance extends WeldBaseTest {
       // Create roles
       roleA = RoleInheritanceTestUtils.createRole("roleA", RoleInheritanceTestUtils.CLIENT_ID,
           RoleInheritanceTestUtils.ASTERISK_ORG_ID, " C", true, true);
-      String roleAId = (String) DalUtil.getId(roleA);
+      String roleAId = roleA.getId();
       roleB = RoleInheritanceTestUtils.createRole("roleB", RoleInheritanceTestUtils.CLIENT_ID,
           RoleInheritanceTestUtils.ASTERISK_ORG_ID, " C", true, true);
-      String roleBId = (String) DalUtil.getId(roleB);
+      String roleBId = roleB.getId();
       roleC = RoleInheritanceTestUtils.createRole("roleC", RoleInheritanceTestUtils.CLIENT_ID,
           RoleInheritanceTestUtils.ASTERISK_ORG_ID, " C", true, false);
-      String roleCId = (String) DalUtil.getId(roleC);
+      String roleCId = roleC.getId();
 
       List<String> accesses = ACCESSES.get(testCounter);
       // Add window accesses for template roles

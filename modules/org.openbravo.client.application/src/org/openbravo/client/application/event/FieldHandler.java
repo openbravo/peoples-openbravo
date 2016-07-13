@@ -81,7 +81,7 @@ public class FieldHandler extends EntityPersistenceEventObserver {
       return;
     }
     final Tab tab = (Tab) event.getCurrentState(getTabProperty());
-    final String tableId = (String) DalUtil.getId(tab.getTable());
+    final String tableId = tab.getTable().getId();
     final Entity entity = ModelProvider.getInstance().getEntityByTableId(tableId);
     final Property property = DalUtil.getPropertyFromPath(entity, propertyPath);
     if (property == null) {

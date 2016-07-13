@@ -57,6 +57,7 @@ public class DocInvoice extends AcctServer {
   DocLine[] p_lines_taxes = null;
 
   boolean isCashVAT = false;
+  boolean isReversedInvoice = false;
   String prepaymentamt;
 
   String SeqNo = "0";
@@ -98,9 +99,21 @@ public class DocInvoice extends AcctServer {
     m_payments = loadPayments();
     m_debt_payments = loadDebtPayments();
     isCashVAT = StringUtils.equals("Y", data[0].getField("iscashvat"));
+    isReversedInvoice = isReversedInvoice();
     prepaymentamt = data[0].getField("prepaymentamt");
+
     return true;
 
+  }
+
+  private boolean isReversedInvoice() {
+    try {
+      DocInvoiceData[] revInv = DocInvoiceData.getIsReversedInvoice(connectionProvider, Record_ID);
+      return (revInv != null && revInv.length != 0);
+    } catch (ServletException e) {
+      log4jDocInvoice.warn(e);
+    }
+    return false;
   }
 
   private DocLine[] loadLines() {
@@ -367,7 +380,7 @@ public class DocInvoice extends AcctServer {
         BigDecimal difference = grossamt.abs().subtract(prepayment.abs());
         if (!prepaymentamt.equals("0")) {
           if (grossamt.abs().compareTo(prepayment.abs()) > 0) {
-            if (IsReturn.equals("Y")) {
+            if (IsReturn.equals("Y") || isReversedInvoice) {
               fact.createLine(null, getAccountBPartner(C_BPartner_ID, as, true, true, conn),
                   this.C_Currency_ID, "", prepaymentamt, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
                   DocumentType, conn);
@@ -383,7 +396,7 @@ public class DocInvoice extends AcctServer {
                   nextSeqNo(SeqNo), DocumentType, conn);
             }
           } else {
-            if (IsReturn.equals("Y")) {
+            if (IsReturn.equals("Y") || isReversedInvoice) {
               fact.createLine(null, getAccountBPartner(C_BPartner_ID, as, true, true, conn),
                   this.C_Currency_ID, "", prepaymentamt, Fact_Acct_Group_ID, nextSeqNo(SeqNo),
                   DocumentType, conn);
@@ -736,7 +749,7 @@ public class DocInvoice extends AcctServer {
         BigDecimal difference = grossamt.abs().subtract(prepayment.abs());
         if (!prepaymentamt.equals("0")) {
           if (grossamt.abs().compareTo(prepayment.abs()) > 0) {
-            if (IsReturn.equals("Y")) {
+            if (IsReturn.equals("Y") || isReversedInvoice) {
               fact.createLine(null, getAccountBPartner(C_BPartner_ID, as, false, true, conn),
                   this.C_Currency_ID, prepaymentamt, "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
                   DocumentType, conn);
@@ -752,7 +765,7 @@ public class DocInvoice extends AcctServer {
                   nextSeqNo(SeqNo), DocumentType, conn);
             }
           } else {
-            if (IsReturn.equals("Y")) {
+            if (IsReturn.equals("Y") || isReversedInvoice) {
               fact.createLine(null, getAccountBPartner(C_BPartner_ID, as, false, true, conn),
                   this.C_Currency_ID, prepaymentamt, "", Fact_Acct_Group_ID, nextSeqNo(SeqNo),
                   DocumentType, conn);

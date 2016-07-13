@@ -95,7 +95,7 @@ public class RoleInheritanceManager {
    */
   private InheritedAccessEnabled getAccess(Role role, AccessTypeInjector injector,
       InheritedAccessEnabled access) {
-    String roleId = (String) DalUtil.getId(role);
+    String roleId = role.getId();
     try {
       return injector.findAccess(access, roleId);
     } catch (Exception ex) {
@@ -151,11 +151,10 @@ public class RoleInheritanceManager {
       List<? extends InheritedAccessEnabled> roleAccessList, AccessTypeInjector injector) {
     try {
       OBContext.setAdminMode(false);
-      String inheritFromId = (String) DalUtil.getId(inheritFromToDelete);
+      String inheritFromId = inheritFromToDelete.getId();
       List<InheritedAccessEnabled> iaeToDelete = new ArrayList<InheritedAccessEnabled>();
       for (InheritedAccessEnabled ih : roleAccessList) {
-        String inheritedFromId = ih.getInheritedFrom() != null ? (String) DalUtil.getId(ih
-            .getInheritedFrom()) : "";
+        String inheritedFromId = ih.getInheritedFrom() != null ? ih.getInheritedFrom().getId() : "";
         if (!StringUtils.isEmpty(inheritedFromId) && inheritFromId.equals(inheritedFromId)) {
           iaeToDelete.add(ih);
         }
@@ -505,11 +504,10 @@ public class RoleInheritanceManager {
    */
   private InheritedAccessEnabled findInheritedAccess(Role role, InheritedAccessEnabled access,
       AccessTypeInjector injector) {
-    String accessRole = (String) DalUtil.getId(injector.getRole(access));
+    String accessRole = injector.getRole(access).getId();
     InheritedAccessEnabled iae = getAccess(role, injector, access);
     if (iae != null) {
-      String inheritFromRole = iae.getInheritedFrom() != null ? (String) DalUtil.getId(iae
-          .getInheritedFrom()) : "";
+      String inheritFromRole = iae.getInheritedFrom() != null ? iae.getInheritedFrom().getId() : "";
       if (accessRole.equals(inheritFromRole)) {
         return iae;
       }
@@ -587,12 +585,12 @@ public class RoleInheritanceManager {
    */
   private int handleAccess(RoleInheritance roleInheritance, InheritedAccessEnabled inheritedAccess,
       List<String> inheritanceInheritFromIdList, AccessTypeInjector injector) {
-    String newInheritedFromId = (String) DalUtil.getId(roleInheritance.getInheritFrom());
+    String newInheritedFromId = roleInheritance.getInheritFrom().getId();
     Role role = roleInheritance.getRole();
     InheritedAccessEnabled access = getAccess(role, injector, inheritedAccess);
     if (access != null) {
-      String currentInheritedFromId = access.getInheritedFrom() != null ? (String) DalUtil
-          .getId(access.getInheritedFrom()) : "";
+      String currentInheritedFromId = access.getInheritedFrom() != null ? access.getInheritedFrom()
+          .getId() : "";
       if (!StringUtils.isEmpty(currentInheritedFromId)
           && isPrecedent(inheritanceInheritFromIdList, currentInheritedFromId, newInheritedFromId)) {
         updateRoleAccess(access, inheritedAccess, injector);
@@ -706,12 +704,12 @@ public class RoleInheritanceManager {
     final OBCriteria<RoleInheritance> obCriteria = OBDal.getInstance().createCriteria(
         RoleInheritance.class);
     obCriteria.add(Restrictions.eq(RoleInheritance.PROPERTY_ROLE, inheritance.getRole()));
-    obCriteria.add(Restrictions.ne(RoleInheritance.PROPERTY_ID, DalUtil.getId(inheritance)));
+    obCriteria.add(Restrictions.ne(RoleInheritance.PROPERTY_ID, inheritance.getId()));
     obCriteria.addOrderBy(RoleInheritance.PROPERTY_SEQUENCENUMBER, true);
     boolean added = false;
     for (RoleInheritance rh : obCriteria.list()) {
-      String inheritFromId = (String) DalUtil.getId(rh.getInheritFrom());
-      String inheritanceInheritFromId = (String) DalUtil.getId(inheritance.getInheritFrom());
+      String inheritFromId = rh.getInheritFrom().getId();
+      String inheritanceInheritFromId = inheritance.getInheritFrom().getId();
       if (inheritFromId.equals(inheritanceInheritFromId)) {
         Utility.throwErrorMessage("RoleInheritanceInheritFromDuplicated");
       } else if (rh.getSequenceNumber().equals(inheritance.getSequenceNumber())) {
@@ -741,7 +739,7 @@ public class RoleInheritanceManager {
       List<RoleInheritance> roleInheritanceList) {
     final ArrayList<String> roleIdsList = new ArrayList<String>();
     for (RoleInheritance roleInheritance : roleInheritanceList) {
-      roleIdsList.add((String) DalUtil.getId(roleInheritance.getInheritFrom()));
+      roleIdsList.add(roleInheritance.getInheritFrom().getId());
     }
     return roleIdsList;
   }

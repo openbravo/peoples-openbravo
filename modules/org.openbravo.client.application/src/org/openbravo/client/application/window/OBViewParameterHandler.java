@@ -33,7 +33,6 @@ import org.openbravo.client.application.attachment.AttachmentWindowComponent;
 import org.openbravo.client.kernel.BaseTemplateComponent;
 import org.openbravo.client.kernel.reference.UIDefinition;
 import org.openbravo.client.kernel.reference.UIDefinitionController;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.model.ad.domain.ListTrl;
 import org.openbravo.model.ad.domain.Reference;
@@ -125,7 +124,7 @@ public class OBViewParameterHandler {
       // 17 is the list reference
       if (param.getReferenceSearchKey() != null
           && param.getReferenceSearchKey().getParentReference() != null
-          && DalUtil.getId(param.getReferenceSearchKey().getParentReference()).equals("17")) {
+          && param.getReferenceSearchKey().getParentReference().getId().equals("17")) {
         parameter.addListReferenceValues(param.getReferenceSearchKey());
       }
 
@@ -212,7 +211,7 @@ public class OBViewParameterHandler {
           if (!listTrl.isActive()) {
             continue;
           }
-          if (DalUtil.getId(listTrl.getLanguage()).equals(languageId)) {
+          if (listTrl.getLanguage().getId().equals(languageId)) {
             name = listTrl.getName();
             break;
           }

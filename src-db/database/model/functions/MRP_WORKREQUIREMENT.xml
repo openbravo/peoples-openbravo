@@ -16,26 +16,21 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2008 Openbravo SLU
+* All portions are Copyright (C) 2001-2016 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
   -- Logistice
   v_ResultStr VARCHAR2(2000):='';
   v_Message VARCHAR2(2000):='';
-  v_Result NUMBER:=1; -- 0=failure
   v_Record_ID VARCHAR2(32);
   v_User_ID VARCHAR2(32):='0';
   v_Client_ID VARCHAR2(32);
   v_Org_ID VARCHAR2(32);
-  v_TimeHorizon NUMBER;
-  v_PlanningDate DATE;
-  v_SecurityMargin NUMBER;
 
   v_WR_ID VARCHAR2(32);
   v_DocumentNo NVARCHAR2(60);
 
-  FINISH_PROCESS BOOLEAN DEFAULT FALSE;
   --  Parameter
   TYPE RECORD IS REF CURSOR;
     Cur_Parameter RECORD;

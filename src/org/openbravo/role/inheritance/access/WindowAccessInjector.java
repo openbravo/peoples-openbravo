@@ -18,7 +18,6 @@
 package org.openbravo.role.inheritance.access;
 
 import org.openbravo.base.structure.InheritedAccessEnabled;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.model.ad.access.FieldAccess;
 import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.access.TabAccess;
@@ -57,7 +56,7 @@ public class WindowAccessInjector extends AccessTypeInjector {
   @Override
   public void clearInheritFromFieldInChilds(InheritedAccessEnabled access, boolean clearAll) {
     if (access.getInheritedFrom() != null) {
-      String inheritedFromId = (String) DalUtil.getId(access.getInheritedFrom());
+      String inheritedFromId = access.getInheritedFrom().getId();
       WindowAccess wa = (WindowAccess) access;
       for (TabAccess ta : wa.getADTabAccessList()) {
         if (clearAll) {

@@ -73,7 +73,6 @@
     --
     v_Result NUMBER:=1;
     v_AD_Org_ID VARCHAR2(32);
-    v_Locator_Org_ID VARCHAR2(32);
     v_Warehouse_Org VARCHAR2(32);
     v_AD_Client_ID VARCHAR2(32);
     v_NextNo VARCHAR2(32);
@@ -88,17 +87,11 @@
     v_IsStocked NUMBER;
     v_DoctypeReversed_ID VARCHAR2(32);
     --MODIFIED BY F.IRIAZABAL
-    v_QtyOrder NUMBER;
-    v_ProductUOM NUMBER;
-    v_BreakDown VARCHAR2(60) ;
-    v_ActualQty NUMBER;
-    v_QtyAux NUMBER;
     v_Count NUMBER:=0;
     v_Line VARCHAR2(10) ;
     v_OrderDocumentNo C_ORDER.DocumentNo%TYPE;
     v_OrderLineNo C_ORDERLINE.Line%TYPE;
     v_OrderID_old VARCHAR2(32);
-    Cur_MILines RECORD;
     FINISH_PROCESS BOOLEAN:=false;
     v_Aux NUMBER;
     v_isSoTrx CHAR(1);

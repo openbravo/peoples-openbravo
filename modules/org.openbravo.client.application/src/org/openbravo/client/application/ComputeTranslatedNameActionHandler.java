@@ -26,7 +26,6 @@ import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.client.kernel.StaticResourceComponent;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 
@@ -53,7 +52,7 @@ public class ComputeTranslatedNameActionHandler extends BaseActionHandler {
 
       String title = process.getName();
       for (org.openbravo.model.ad.ui.ProcessTrl processtrl : process.getADProcessTrlList()) {
-        final String trlLanguageId = (String) DalUtil.getId(processtrl.getLanguage());
+        final String trlLanguageId = processtrl.getLanguage().getId();
         if (trlLanguageId.equals(userLanguageId)) {
           title = processtrl.getName();
         }

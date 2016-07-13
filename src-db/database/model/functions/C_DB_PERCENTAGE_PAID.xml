@@ -16,14 +16,13 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2006 Openbravo SLU
+* All portions are Copyright (C) 2001-2016 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
   v_percentaje NUMBER;
   v_Status CHAR;
   TYPE RECORD IS REF CURSOR;
-    CUR_SETTLEMENT RECORD;
 BEGIN
   v_Status := C_DEBT_PAYMENT_STATUS0(p_Debt_Payment_ID);
   IF (v_Status IN ('C', 'A')) THEN

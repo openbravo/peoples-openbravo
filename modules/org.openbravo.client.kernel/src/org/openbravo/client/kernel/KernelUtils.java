@@ -445,7 +445,7 @@ public class KernelUtils {
    * Calls {@link #getProperty(Entity, Field)} using the entity of the tab of the field.
    */
   public static Property getProperty(org.openbravo.model.ad.ui.Field field) {
-    final String tableId = (String) DalUtil.getId(field.getTab().getTable());
+    final String tableId = field.getTab().getTable().getId();
     final Entity entity = ModelProvider.getInstance().getEntityByTableId(tableId);
     return KernelUtils.getProperty(entity, field);
   }

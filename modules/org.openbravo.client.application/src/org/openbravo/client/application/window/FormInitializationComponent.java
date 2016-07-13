@@ -398,7 +398,7 @@ public class FormInitializationComponent extends BaseActionHandler {
    * @return count of attachment found for the given records.
    */
   private int computeAttachmentCount(Tab tab, String[] recordIds, boolean doExists) {
-    String tableId = (String) DalUtil.getId(tab.getTable());
+    String tableId = tab.getTable().getId();
     OBCriteria<Attachment> attachmentFiles = OBDao.getFilteredCriteria(Attachment.class,
         Restrictions.eq("table.id", tableId), Restrictions.in("record", recordIds));
     // do not filter by the attachment's organization
@@ -418,7 +418,7 @@ public class FormInitializationComponent extends BaseActionHandler {
     OBQuery<Note> obq = OBDal.getInstance().createQuery(Note.class,
         " table.id=:tableId and record=:recordId");
     obq.setFilterOnReadableOrganization(false);
-    obq.setNamedParameter("tableId", DalUtil.getId(tab.getTable()));
+    obq.setNamedParameter("tableId", tab.getTable().getId());
     obq.setNamedParameter("recordId", rowId);
     return obq.count();
   }

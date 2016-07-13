@@ -36,6 +36,7 @@
   <script language="JavaScript" src="../../../../../web/js/messages.js" type="text/javascript"></script>
   <script language="JavaScript" src="../../../../../web/js/windowKeyboard.js" type="text/javascript"></script>
   <script language="JavaScript" src="../../../../../web/js/searchs.js" type="text/javascript"></script>
+  <script language="JavaScript" src="../../../../../web/js/appStatus.js" type="text/javascript"></script>
   <script type="text/javascript">
     window.onunload = reloadOpener; // reloads opener on closing
   </script>
@@ -53,6 +54,8 @@
               inp[i].removeAttribute("disabled");
           }
         submitCommandForm(strCommand, false, null, null);
+        disableButton('buttonOK');
+        disableButton('buttonCancel');
         return true;
       }
       return true;
