@@ -17,12 +17,18 @@ import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
+import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
+import org.openbravo.dal.core.OBContext;
+import org.openbravo.erpCommon.businessUtility.Preferences;
+import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.mobile.core.model.HQLPropertyList;
 import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.mobile.core.model.ModelExtensionUtils;
+import org.openbravo.retail.config.OBRETCOProductList;
+import org.openbravo.retail.posterminal.POSUtils;
 import org.openbravo.retail.posterminal.ProcessHQLQuery;
 
 /*
@@ -30,6 +36,7 @@ import org.openbravo.retail.posterminal.ProcessHQLQuery;
  */
 public class CharacteristicValue extends ProcessHQLQuery {
   public static final String characteristicValuePropertyExtension = "OBPOS_CharacteristicValueExtension";
+  public static final Logger log = Logger.getLogger(CharacteristicValue.class);
 
   @Inject
   @Any
@@ -51,19 +58,37 @@ public class CharacteristicValue extends ProcessHQLQuery {
   @Override
   protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
     List<String> hqlQueries = new ArrayList<String>();
-
     HQLPropertyList regularProductsChValueHQLProperties = ModelExtensionUtils
         .getPropertyExtensions(extensions);
-
+    String assortmentFilter = "";
+    String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
+    final OBRETCOProductList productList = POSUtils.getProductListByOrgId(orgId);
+    boolean isRemote = false;
+    try {
+      OBContext.setAdminMode(false);
+      isRemote = "Y".equals(Preferences.getPreferenceValue("OBPOS_remote.product", true, OBContext
+          .getOBContext().getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(),
+          OBContext.getOBContext().getUser(), OBContext.getOBContext().getRole(), null));
+    } catch (PropertyException e) {
+      log.error("Error getting preference OBPOS_remote.product " + e.getMessage(), e);
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+    if (!isRemote) {
+      assortmentFilter = "exists (select 1 from  ProductCharacteristicValue pcv, OBRETCO_Prol_Product assort  "
+          + " where pcv.characteristicValue.id=cv.id "
+          + " and pcv.product.id= assort.product.id "
+          + " and assort.obretcoProductlist.id= '" + productList.getId() + "' ) and ";
+    }
     hqlQueries
         .add("select"
             + regularProductsChValueHQLProperties.getHqlSelect()
             + "from CharacteristicValue cv, ADTreeNode node "
             + "where cv.characteristic.tree =  node.tree and cv.id = node.node and  $filtersCriteria AND $hqlCriteria "
-            + "and cv.characteristic.obposUseonwebpos = true "
-            + "and cv.$naturalOrgCriteria and cv.$readableSimpleClientCriteria and (cv.$incrementalUpdateCriteria) "
+            + "and cv.characteristic.obposUseonwebpos = true  and "
+            + assortmentFilter
+            + " cv.$naturalOrgCriteria and cv.$readableSimpleClientCriteria and (cv.$incrementalUpdateCriteria) "
             + "order by cv.name");
-
     return hqlQueries;
   }
 }
