@@ -28,6 +28,18 @@ enyo.kind({
   },
   tap: function () {
     if (!this.disabled) {
+      var qty = 0;
+      enyo.forEach(this.order.get('lines').models, function (l) {
+        if (l.get('originalOrderLineId')) {
+          qty = qty + 1;
+          return;
+        }
+      });
+      if (qty !== 0) {
+        OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_Cannot_Change_BPartner'));
+        return;
+      }
+
       this.hiddenPopup = true;
       this.doHidePopup({
         popup: this.popup,
