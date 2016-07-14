@@ -279,15 +279,20 @@ enyo.kind({
       }
       this.updateCreditSalesAction();
     }, this);
-    this.$.extrainfo.setContent('');
+    this.updateExtraInfo('');
     this.receipt.on('extrainfo', function (info) {
-      this.$.extrainfo.setContent(info || '');
-      if (info && info.trim() !== '') {
-        this.$.extrainfo.show();
-      } else {
-        this.$.extrainfo.hide();
-      }
+      this.updateExtraInfo(info);
     }, this);
+  },
+
+  updateExtraInfo: function (info) {
+    this.$.extrainfo.setContent(info || '');
+    if (info && info.trim() !== '') {
+      this.$.extrainfo.show();
+    } else {
+      this.$.extrainfo.hide();
+    }
+    this.alignErrorMessages();
   },
 
   updateCreditSalesAction: function () {
@@ -416,6 +421,7 @@ enyo.kind({
         rate = OB.DEC.One,
         isCashType = true,
         selectedPayment;
+    this.updateExtraInfo('');
     this.$.layawayaction.hide();
     if (_.isEmpty(OB.MobileApp.model.paymentnames)) {
       symbol = OB.MobileApp.model.get('terminal').symbol;
@@ -658,9 +664,9 @@ enyo.kind({
       // Min Interval Fuction Get Exexuted Based On the Max Interval 
       // Paramaters ,It will Reset After Every Max Interval 
       // In Order To Behave Like Animation Of The Text Error Messages 
-      // To Fit into the Payment Area Where Error Messages To Be Shown 
+      // To Fit into the Payment Area Where Error Messages To Be Shown
+      me.animateErrorMessages();
       if (this.showingCount > 1) {
-        me.animateErrorMessages();
         this.maxAnimateErrorInterval = setInterval(function () {
           clearInterval(this.animateErrorInterval);
           me.animateErrorMessages();
