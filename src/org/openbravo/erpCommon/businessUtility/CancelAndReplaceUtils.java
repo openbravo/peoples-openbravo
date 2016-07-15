@@ -153,12 +153,8 @@ public class CancelAndReplaceUtils {
       releaseOldReservations(oldOrder);
 
       // Get documentNo for the inverse Order Header coming from jsonorder, if exists
-      JSONObject negativeDocumentNoJSON = jsonorder != null && jsonorder.has("negativeDocNo") ? jsonorder
-          .getJSONObject("negativeDocNo") : null;
-      String negativeDocNo = negativeDocumentNoJSON != null
-          && negativeDocumentNoJSON.has("documentNo")
-          && negativeDocumentNoJSON.get("documentNo") != JSONObject.NULL ? negativeDocumentNoJSON
-          .getString("documentNo") : null;
+      String negativeDocNo = jsonorder != null && jsonorder.has("negativeDocNo") ? jsonorder
+          .getString("negativeDocNo") : null;
 
       // Create inverse Order header
       Order inverseOrder = createOrder(oldOrder, jsonorder, negativeDocNo, triggersDisabled);
