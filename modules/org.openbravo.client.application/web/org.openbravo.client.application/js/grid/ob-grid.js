@@ -91,7 +91,7 @@ isc.OBGrid.addProperties({
   },
 
   isFilterClauseApplied: function () {
-    return true === this.filterClause;
+    return !!this.filterClause;
   },
 
   cellHoverHTML: function (record, rowNum, colNum) {
