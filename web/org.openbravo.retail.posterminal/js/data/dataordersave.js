@@ -165,9 +165,6 @@
               receipt.set('hasbeenpaid', 'Y');
               frozenReceipt.set('hasbeenpaid', 'Y');
               // when all the properties of the receipt have been set, keep a copy
-              //            OB.UTIL.cashUpReport(receipt, function (cashUp) {
-              //              receipt.set('cashUpReportInformation', JSON.parse(cashUp.models[0].get('objToSend')));
-              //              receipt.set('json', JSON.stringify(receipt.serializeToJSON()));
               if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
                 OB.Dal.saveInTransaction(tx, receipt);
               } else {
