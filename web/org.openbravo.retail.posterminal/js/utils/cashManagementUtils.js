@@ -69,6 +69,8 @@
         return;
       } else {
         cashUp = cashUpResults.at(0);
+        // Prepare object to Send
+        cashUp.set('objToSend', JSON.stringify(cashUp));
 
         //validate
         if (newCashManagementTransaction.get('cashManagementEvent').type === 'drop' && !newCashManagementTransaction.get('paymentMethod').paymentMethod.allowdrops) {
@@ -108,6 +110,7 @@
             OB.Dal.transaction(function (tx) {
               OB.Dal.saveInTransaction(tx, paymentMethod, function () {
                 var now = new Date();
+                cashUp.set('objToSend', JSON.stringify(cashUp));
                 cashManagementTransactionToAdd = new OB.Model.CashManagement({
                   id: OB.Dal.get_uuid(),
                   description: newCashManagementTransaction.get('paymentMethod').payment._identifier + ' - ' + newCashManagementTransaction.get('cashManagementEvent').name,
@@ -124,7 +127,8 @@
                   glItem: optionsObj.glItem,
                   cashup_id: cashUp.get('id'),
                   posTerminal: OB.MobileApp.model.get('terminal').id,
-                  isbeingprocessed: 'N'
+                  isbeingprocessed: 'N',
+                  cashUpReportInformation: JSON.parse(cashUp.get('objToSend'))
                 });
 
                 OB.UTIL.HookManager.executeHooks('OBPOS_cashManagementTransactionHook', {
@@ -134,6 +138,7 @@
                   if (args && args.cancelOperation) {
                     errorCallback(args.errorMessage);
                   }
+                  cashManagementTransactionToAdd.set('json', JSON.stringify(cashManagementTransactionToAdd));
                   OB.Dal.saveInTransaction(tx, cashManagementTransactionToAdd, function () {
                     if (optionsObj.executeSync) {
                       OB.MobileApp.model.runSyncProcess(function () {

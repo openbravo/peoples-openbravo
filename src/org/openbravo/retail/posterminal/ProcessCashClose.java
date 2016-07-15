@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2015 Openbravo S.L.U.
+ * Copyright (C) 2012-2016 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -9,7 +9,6 @@
 package org.openbravo.retail.posterminal;
 
 import java.math.BigDecimal;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -18,29 +17,23 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
-import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.LockOptions;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.weld.WeldUtils;
-import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.TriggerHandler;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.mobile.core.process.DataSynchronizationImportProcess;
 import org.openbravo.mobile.core.process.DataSynchronizationProcess.DataSynchronization;
-import org.openbravo.mobile.core.process.JSONPropertyToEntity;
-import org.openbravo.mobile.core.process.PropertyByType;
 import org.openbravo.mobile.core.utils.OBMOBCUtils;
 import org.openbravo.model.ad.access.User;
 import org.openbravo.model.financialmgmt.payment.FIN_Reconciliation;
 import org.openbravo.service.json.JsonConstants;
-import org.openbravo.service.json.JsonToDataConverter;
 
 @DataSynchronization(entity = "OBPOS_App_Cashup")
 public class ProcessCashClose extends POSDataSynchronizationProcess implements
@@ -84,7 +77,7 @@ public class ProcessCashClose extends POSDataSynchronizationProcess implements
       log.debug("Error processing cash close (2): error retrieving cashUp date. Using current server date");
     }
 
-    OBPOSAppCashup cashUp = getCashUp(cashUpId, jsonCashup, cashUpDate);
+    OBPOSAppCashup cashUp = UpdateCashup.getAndUpdateCashUp(cashUpId, jsonCashup, cashUpDate);
 
     if (jsonCashup.has("approvals")) {
       JSONObject jsonApprovals = jsonCashup.getJSONObject("approvals");
@@ -145,16 +138,10 @@ public class ProcessCashClose extends POSDataSynchronizationProcess implements
         doReconciliationAndInvoices(posTerminal, cashUpId, cashUpDate, jsonCashup, jsonData, true,
             null);
       }
-    } else {
-      // This cashup is a cash order. Nothing needs to be done
-      jsonData.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
-      // Associate master/slave cashup
-      if ((posTerminal.isMaster() && posTerminal.getOBPOSApplicationsMasterterminalIDList().size() != cashUp
-          .getOBPOSAppCashupObposParentCashupIDList().size())
-          || (posTerminal.getMasterterminal() != null && cashUp.getObposParentCashup() == null)) {
-        associateMasterSlave(cashUp, posTerminal);
-      }
     }
+
+    jsonData.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
+
     return jsonData;
   }
 
@@ -267,8 +254,6 @@ public class ProcessCashClose extends POSDataSynchronizationProcess implements
     try {
       getOrderGroupingProcessor().groupOrders(posTerminal, cashUpId, currentDate);
 
-      posTerminal = OBDal.getInstance().get(OBPOSApplications.class,
-          jsonCashup.getString("posterminal"));
       CashCloseProcessor processor = getCashCloseProcessor();
       JSONArray cashMgmtIds = jsonCashup.getJSONArray("cashMgmtIds");
       JSONObject result = processor.processCashClose(posTerminal, jsonCashup, cashMgmtIds,
@@ -289,266 +274,6 @@ public class ProcessCashClose extends POSDataSynchronizationProcess implements
 
   protected OrderGroupingProcessor getOrderGroupingProcessor() {
     return WeldUtils.getInstanceFromStaticBeanManager(OrderGroupingProcessor.class);
-  }
-
-  private synchronized void associateMasterSlave(OBPOSAppCashup cashUp,
-      OBPOSApplications posTerminal) {
-    if (posTerminal.isMaster()) {
-      // Find slaves cashup
-      String query = OBPOSAppCashup.PROPERTY_POSTERMINAL + "."
-          + OBPOSApplications.PROPERTY_MASTERTERMINAL + ".id = :terminalId and "
-          + OBPOSAppCashup.PROPERTY_ISPROCESSEDBO + " = 'N' and "
-          + OBPOSAppCashup.PROPERTY_ISPROCESSED + " = 'N' and "
-          + OBPOSAppCashup.PROPERTY_OBPOSPARENTCASHUP + " is null";
-      OBQuery<OBPOSAppCashup> appCashupQuery = OBDal.getInstance().createQuery(
-          OBPOSAppCashup.class, query);
-      appCashupQuery.setNamedParameter("terminalId", posTerminal.getId());
-      List<OBPOSAppCashup> appCashupList = appCashupQuery.list();
-      for (OBPOSAppCashup appCashup : appCashupList) {
-        // Determine if exist close slave cashup for slave terminal and this master cashup
-        query = "select count(*) from " + OBPOSAppCashup.ENTITY_NAME + " where "
-            + OBPOSAppCashup.PROPERTY_POSTERMINAL + ".id = ? and "
-            + OBPOSAppCashup.PROPERTY_ISPROCESSEDBO + " = 'Y' and "
-            + OBPOSAppCashup.PROPERTY_ISPROCESSED + " = 'Y' and "
-            + OBPOSAppCashup.PROPERTY_OBPOSPARENTCASHUP + " is not null and "
-            + OBPOSAppCashup.PROPERTY_OBPOSPARENTCASHUP + ".id = ?";
-        if (countAppCashup(query, appCashup.getPOSTerminal().getId(), cashUp.getId()) == 0) {
-          appCashup.setObposParentCashup(cashUp);
-        }
-      }
-    } else if (posTerminal.getMasterterminal() != null && cashUp.getObposParentCashup() == null) {
-      // Determine if exist open master cashup
-      String query = "select count(*) from " + OBPOSAppCashup.ENTITY_NAME + " where "
-          + OBPOSAppCashup.PROPERTY_POSTERMINAL + ".id = ? and "
-          + OBPOSAppCashup.PROPERTY_ISPROCESSED + " = 'Y' and "
-          + OBPOSAppCashup.PROPERTY_ISPROCESSEDBO + " = 'Y' and "
-          + OBPOSAppCashup.PROPERTY_OBPOSPARENTCASHUP + " is not null and "
-          + OBPOSAppCashup.PROPERTY_OBPOSPARENTCASHUP + "." + OBPOSAppCashup.PROPERTY_ISPROCESSED
-          + " = 'N' and " + OBPOSAppCashup.PROPERTY_OBPOSPARENTCASHUP + "."
-          + OBPOSAppCashup.PROPERTY_ISPROCESSEDBO + " = 'N'";
-      if (countAppCashup(query, cashUp.getPOSTerminal().getId(), null) == 0) {
-        // Find master cashup
-        query = OBPOSAppCashup.PROPERTY_POSTERMINAL + ".id = :terminalId and "
-            + OBPOSAppCashup.PROPERTY_ISPROCESSEDBO + " = 'N' and "
-            + OBPOSAppCashup.PROPERTY_ISPROCESSED + " = 'N' ";
-        OBQuery<OBPOSAppCashup> appCashupQuery = OBDal.getInstance().createQuery(
-            OBPOSAppCashup.class, query);
-        appCashupQuery.setNamedParameter("terminalId", posTerminal.getMasterterminal().getId());
-        List<OBPOSAppCashup> appCashupList = appCashupQuery.list();
-        if (appCashupList.size() > 0 && cashUp.getObposParentCashup() == null) {
-          cashUp.setObposParentCashup(appCashupList.get(0));
-        }
-      }
-    }
-  }
-
-  private Long countAppCashup(String query, String posterminal, String parentCashUp) {
-    final Session session = OBDal.getInstance().getSession();
-    final Query count = session.createQuery(query);
-    count.setParameter(0, posterminal);
-    if (parentCashUp != null) {
-      count.setParameter(1, parentCashUp);
-    }
-    Long value = (Long) count.uniqueResult();
-    return value != null ? value.longValue() : 0;
-  }
-
-  /**
-   * Get a cashup. If cashup not exist it's created, otherwise update the cashup data into database.
-   * 
-   * @param cashUpId
-   *          The cashUp identifier
-   * @param jsonCashup
-   *          The input object with cashup data
-   * @return Cashup object
-   * @throws JSONException
-   */
-  private OBPOSAppCashup getCashUp(String cashUpId, JSONObject jsonCashup, Date cashUpDate)
-      throws JSONException, SQLException {
-    // CashUp record will be read from the database with a "for update" clause to force the process
-    // to get the lock on the record. The reason for this is to prevent the same cash up from being
-    // processed twice in case of very quick duplicated requests.
-    // These shouldn't happen in general but may happen specifically in case of unreliable networks
-    OBPOSAppCashup cashUp = null;
-    Query cashUpQuery = OBDal.getInstance().getSession()
-        .createQuery("from OBPOS_App_Cashup where id=?");
-    cashUpQuery.setString(0, cashUpId);
-    // The record will be locked to this process until it ends. Other requests to process this cash
-    // up will be locked until this one finishes
-    cashUpQuery.setLockOptions(LockOptions.UPGRADE);
-    cashUp = (OBPOSAppCashup) cashUpQuery.uniqueResult();
-
-    if (cashUp == null) {
-      // create the cashup if no exists
-      try {
-        OBPOSApplications posTerminal = OBDal.getInstance().get(OBPOSApplications.class,
-            jsonCashup.getString("posterminal"));
-        cashUp = OBProvider.getInstance().get(OBPOSAppCashup.class);
-        cashUp.setId(cashUpId);
-        cashUp.setOrganization(posTerminal.getOrganization());
-        cashUp.setCashUpDate(cashUpDate);
-        cashUp.setPOSTerminal(posTerminal);
-        cashUp.setUserContact(OBContext.getOBContext().getUser());
-        cashUp.setBeingprocessed(jsonCashup.getString("isbeingprocessed").equalsIgnoreCase("Y"));
-        cashUp.setNewOBObject(true);
-        OBDal.getInstance().save(cashUp);
-        if (jsonCashup.has("creationDate")) {
-          String cashUpCreationDate = jsonCashup.getString("creationDate");
-          cashUp.set("creationDate", (Date) JsonToDataConverter.convertJsonToPropertyValue(
-              PropertyByType.DATETIME,
-              (cashUpCreationDate).subSequence(0, (cashUpCreationDate).lastIndexOf("."))));
-        }
-      } catch (JSONException e) {
-        e.printStackTrace();
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
-    }
-    updateOrCreateCashupInfo(cashUpId, jsonCashup, cashUpDate);
-    OBDal.getInstance().flush();
-    return cashUp;
-  }
-
-  private void updateOrCreateCashupInfo(String cashUpId, JSONObject jsonCashup, Date cashUpDate)
-      throws JSONException, OBException {
-    OBPOSAppCashup cashup = OBDal.getInstance().get(OBPOSAppCashup.class, cashUpId);
-    // Update cashup info
-    updateCashUpInfo(cashup, jsonCashup, cashUpDate);
-
-    // Update taxes
-    if (jsonCashup.has("cashTaxInfo")) {
-      JSONArray taxCashupInfo = jsonCashup.getJSONArray("cashTaxInfo");
-      for (int i = 0; i < taxCashupInfo.length(); ++i) {
-        JSONObject tax = taxCashupInfo.getJSONObject(i);
-        createTaxCashUp(cashup, tax);
-      }
-    }
-
-    // Update paymentmethodcashup
-    if (jsonCashup.has("cashPaymentMethodInfo")) {
-      JSONArray paymentCashupInfo = jsonCashup.getJSONArray("cashPaymentMethodInfo");
-      for (int i = 0; i < paymentCashupInfo.length(); ++i) {
-        JSONObject payment = paymentCashupInfo.getJSONObject(i);
-        // Set Amount To Keep
-        if (jsonCashup.has("cashCloseInfo")) {
-          // Get the paymentMethod id
-          JSONArray cashCloseInfo = jsonCashup.getJSONArray("cashCloseInfo");
-          for (int j = 0; j < cashCloseInfo.length(); ++j) {
-            JSONObject paymentMethod = cashCloseInfo.getJSONObject(j);
-            if (paymentMethod.getString("paymentTypeId").equals(
-                payment.getString("paymentMethodId"))) {
-              payment.put("amountToKeep",
-                  paymentMethod.getJSONObject("paymentMethod").getString("amountToKeep"));
-            }
-          }
-        }
-        createPaymentMethodCashUp(cashup, payment);
-      }
-    }
-  }
-
-  /**
-   * Update the cashup info
-   * 
-   * @param cashup
-   * @param jsonCashup
-   * @throws JSONException
-   */
-  private void updateCashUpInfo(OBPOSAppCashup cashup, JSONObject jsonCashup, Date cashUpDate)
-      throws JSONException, OBException {
-
-    if (cashup.isProcessed() && jsonCashup.getString("isprocessed").equalsIgnoreCase("N")) {
-      throw new OBException("The cashup is processed, and it can not be set as unprocessed");
-    }
-    cashup.setNetsales(new BigDecimal(jsonCashup.getString("netSales")));
-    cashup.setGrosssales(new BigDecimal(jsonCashup.getString("grossSales")));
-    cashup.setNetreturns(new BigDecimal(jsonCashup.getString("netReturns")));
-    cashup.setGrossreturns(new BigDecimal(jsonCashup.getString("grossReturns")));
-    cashup.setTotalretailtransactions(new BigDecimal(jsonCashup
-        .getString("totalRetailTransactions")));
-    cashup.setProcessed(jsonCashup.getString("isprocessed").equalsIgnoreCase("Y"));
-    cashup.setCashUpDate(cashUpDate);
-    OBDal.getInstance().save(cashup);
-    if (cashup.isProcessed()) {
-      // In case of Slave/Master Check if slave is processed or not
-      for (OBPOSAppCashup slaveCashup : cashup.getOBPOSAppCashupObposParentCashupIDList()) {
-        if (!slaveCashup.isProcessed()) {
-          slaveCashup.setObposParentCashup(null);
-          OBDal.getInstance().save(slaveCashup);
-        }
-      }
-    }
-
-  }
-
-  /**
-   * Create the OBPOSPaymentMethodCashup object from json
-   * 
-   * @throws JSONException
-   */
-  private void createPaymentMethodCashUp(OBPOSAppCashup cashup, JSONObject jsonCashup)
-      throws JSONException {
-    OBPOSPaymentMethodCashup newPaymentMethodCashUp = OBDal.getInstance().get(
-        OBPOSPaymentMethodCashup.class, jsonCashup.get("id"));
-
-    if (newPaymentMethodCashUp == null) {
-      newPaymentMethodCashUp = OBProvider.getInstance().get(OBPOSPaymentMethodCashup.class);
-      newPaymentMethodCashUp.setNewOBObject(true);
-      newPaymentMethodCashUp.setId(jsonCashup.get("id"));
-    }
-    JSONPropertyToEntity.fillBobFromJSON(newPaymentMethodCashUp.getEntity(),
-        newPaymentMethodCashUp, jsonCashup);
-    newPaymentMethodCashUp.setCashUp(cashup);
-
-    newPaymentMethodCashUp.setOrganization(cashup.getOrganization());
-
-    newPaymentMethodCashUp.setClient(cashup.getClient());
-
-    newPaymentMethodCashUp.setSearchkey((String) jsonCashup.get("searchKey"));
-    newPaymentMethodCashUp.setStartingcash(new BigDecimal(jsonCashup.getString("startingCash")));
-
-    newPaymentMethodCashUp.setTotalsales(new BigDecimal(jsonCashup.getString("totalSales")));
-    newPaymentMethodCashUp.setTotalreturns(new BigDecimal(jsonCashup.getString("totalReturns")));
-    newPaymentMethodCashUp.setTotalDeposits(new BigDecimal(jsonCashup.getString("totalDeposits")));
-    newPaymentMethodCashUp.setTotalDrops(new BigDecimal(jsonCashup.getString("totalDrops")));
-
-    if (jsonCashup.has("amountToKeep")) {
-      newPaymentMethodCashUp.setAmountToKeep(new BigDecimal(jsonCashup.getString("amountToKeep")));
-    }
-    newPaymentMethodCashUp.setRate(new BigDecimal(jsonCashup.getString("rate")));
-    newPaymentMethodCashUp.setIsocode((String) jsonCashup.get("isocode"));
-
-    OBPOSAppPayment appPayment = OBDal.getInstance().get(OBPOSAppPayment.class,
-        jsonCashup.getString("paymentMethodId"));
-    newPaymentMethodCashUp.setPaymentType(appPayment);
-
-    String name = appPayment.getCommercialName();
-    newPaymentMethodCashUp.setName(name);
-    OBDal.getInstance().save(newPaymentMethodCashUp);
-  }
-
-  /**
-   * Create the OBPOSTaxCashup object from json
-   * 
-   * @throws JSONException
-   */
-  private void createTaxCashUp(OBPOSAppCashup cashup, JSONObject jsonCashup) throws JSONException {
-    OBPOSTaxCashup newTax = OBDal.getInstance().get(OBPOSTaxCashup.class,
-        jsonCashup.getString("id"));
-    if (newTax == null) {
-      newTax = OBProvider.getInstance().get(OBPOSTaxCashup.class);
-      newTax.setNewOBObject(true);
-      newTax.setId(jsonCashup.get("id"));
-    }
-    JSONPropertyToEntity.fillBobFromJSON(newTax.getEntity(), newTax, jsonCashup);
-
-    newTax.setCashup(cashup);
-    newTax.setName((String) jsonCashup.get("name"));
-    newTax.setAmount(new BigDecimal(jsonCashup.getString("amount")));
-    newTax.setOrdertype((String) jsonCashup.get("orderType"));
-    newTax.setOrganization(cashup.getOrganization());
-    newTax.setClient(cashup.getClient());
-    OBDal.getInstance().save(newTax);
   }
 
   // We do not have to check if the role has access because now, we update cashup with every order.

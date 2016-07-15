@@ -190,19 +190,42 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.WindowModel.extend({
           }
         }, this);
 
-        var runSyncProcessCM = _.after(me.depsdropstosave.models.length, runSync);
         // Sending drops/deposits to backend
-        _.each(me.depsdropstosave.models, function (depdrop, index) {
-          OB.Dal.save(depdrop, function () {
-            OB.UTIL.sumCashManagementToCashup(paymentList.models[index]);
+        var updateCashupAndAddCashupInfo = null;
+        var updateCashupInfo = null;
+        var setCashupObjectInCashMgmt;
+
+        setCashupObjectInCashMgmt = function (depdrops, cashUp, index) {
+          if (index === depdrops.length) {
             OB.UTIL.calculateCurrentCash();
-            runSyncProcessCM();
-          }, function () {
-            OB.UTIL.showLoading(false);
-            me.set("finishedWrongly", true);
-            return;
-          }, true);
-        }, this);
+            runSync();
+          } else {
+            var depdrop = depdrops[index];
+            depdrop.set('cashUpReportInformation', JSON.parse(cashUp.models[0].get('objToSend')));
+            depdrop.set('json', JSON.stringify(depdrop.serializeToJSON()));
+            OB.Dal.save(depdrop, function () {
+              setCashupObjectInCashMgmt(depdrops, cashUp, index + 1);
+            }, function () {
+              OB.UTIL.showLoading(false);
+              me.set("finishedWrongly", true);
+              return;
+            }, true);
+          }
+        };
+
+        updateCashupInfo = function (paymentList, index, cashUpReport, callback) {
+          if (index === paymentList.length && callback) {
+            callback(cashUpReport);
+          } else {
+            OB.UTIL.sumCashManagementToCashup(paymentList[index], function (cashUp) {
+              updateCashupInfo(paymentList, index + 1, cashUp, callback);
+            });
+          }
+        };
+
+        updateCashupInfo(paymentList.models, 0, null, function (cashUpReport) {
+          setCashupObjectInCashMgmt(me.depsdropstosave.models, cashUpReport, 0);
+        });
         };
 
     this.depsdropstosave.on('makeDeposits', function (receipt) {
