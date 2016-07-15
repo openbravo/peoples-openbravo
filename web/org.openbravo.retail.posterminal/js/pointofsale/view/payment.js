@@ -1046,6 +1046,7 @@ enyo.kind({
         } else {
           //Void Layaway
           if (this.owner.receipt.get('orderType') === 3) {
+            enyo.$.scrim.show();
             this.owner.receipt.trigger('voidLayaway');
           } else {
             this.setDisabled(true);
