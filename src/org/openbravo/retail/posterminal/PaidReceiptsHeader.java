@@ -81,7 +81,7 @@ public class PaidReceiptsHeader extends ProcessHQLQuery {
             paramValues.put("endDate", getDateFormated(json.getString("endDate"), "yyyy-MM-dd"));
           }
         } catch (ParseException e) {
-          e.printStackTrace();
+          log.error(e.getMessage(), e);
         }
       }
       return paramValues;
