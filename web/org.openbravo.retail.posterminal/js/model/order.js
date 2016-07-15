@@ -2551,6 +2551,7 @@
         me.set('orderDate', new Date());
         me.set('creationDate', null);
 
+        me.set('negativeDocNo', me.get('documentNo') + '*R*');
         newDocNo = '';
         splittedDocNo = me.get('documentNo').split('-');
         if (splittedDocNo.length > 1) {
