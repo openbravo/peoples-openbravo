@@ -38,6 +38,7 @@ public class CategoryProperties extends ModelExtension {
     list.add(new HQLProperty("img.bindaryData", "img"));
     list.add(new HQLProperty("pCat.active", "active"));
     list.add(new HQLProperty("'Y'", "realCategory"));
+    list.add(new HQLProperty("pCat.summaryLevel", "summaryLevel"));
     return list;
   }
 

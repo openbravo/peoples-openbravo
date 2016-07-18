@@ -49,6 +49,10 @@
     column: '_identifier',
     type: 'TEXT'
   }, {
+    name: 'summaryLevel',
+    column: 'isSummary',
+    type: 'TEXT'
+  }, {
     name: 'realCategory',
     column: 'real_category',
     type: 'TEXT'
