@@ -201,7 +201,7 @@ enyo.kind({
       name: 'dateFormatError',
       showing: false,
       initComponents: function () {
-        this.setContent(enyo.format(OB.I18N.getLabel('OBPOS_DateFormatError'), OB.Format.date));
+        this.setContent(enyo.format(OB.I18N.getLabel('OBPOS_DateFormatError'), OB.I18N.getDateFormatLabel()));
       }
     }, {
       kind: 'OB.UI.AdvancedFilterTable',
