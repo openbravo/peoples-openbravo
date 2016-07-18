@@ -25,8 +25,6 @@ isc.ClassFactory.defineClass('OBOnChangeRegistry', isc.OBFunctionRegistry);
 
 isc.OBOnChangeRegistry.addProperties({
 
-  registry: {},
-
   hasOnChange: function (tabId, item) {
     return this.getEntries(tabId, item);
   },

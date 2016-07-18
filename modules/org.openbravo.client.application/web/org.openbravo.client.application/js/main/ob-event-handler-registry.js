@@ -29,7 +29,6 @@ isc.OBEventHandlerRegistry.addProperties({
   POSTSAVE: 'POSTSAVE',
 
   actionTypes: ['PRESAVE', 'POSTSAVE'],
-  registry: {},
 
   isValidElement: function (actionType) {
     var findType;

@@ -22,6 +22,8 @@ isc.ClassFactory.defineClass('OBFunctionRegistry');
 
 isc.OBFunctionRegistry.addProperties({
 
+  registry: null,
+
   // Registers a function (callback) for a particular element within a registry (registryId).
   // An optional id parameter can be provided so that the functions inside the register can be overridden.
   // The callback function accepts two properties together with the function definition itself:
@@ -29,6 +31,10 @@ isc.OBFunctionRegistry.addProperties({
   // callback.sort: number used to determine the execution order when having multiple actions for the same element.
   register: function (registryId, element, callback, id) {
     var registryEntry, i, overwritten = false;
+
+    if (!this.registry) {
+      this.registry = {};
+    }
 
     if (!this.isValidElement(element)) {
       return;
