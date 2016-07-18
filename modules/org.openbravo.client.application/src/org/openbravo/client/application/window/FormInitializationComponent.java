@@ -272,7 +272,6 @@ public class FormInitializationComponent extends BaseActionHandler {
 
       // Execution of callouts
       long t6 = System.currentTimeMillis();
-
       List<String> changedCols = executeCallouts(mode, tab, columnValues, changedColumn,
           calloutsToCall, lastfieldChanged, calloutMessages, changeEventCols, jsExcuteCode,
           hiddenInputs, overwrittenAuxiliaryInputs);
@@ -1468,7 +1467,6 @@ public class FormInitializationComponent extends BaseActionHandler {
         continue;
       }
       log.debug("Calling callout " + calloutClassName + " with field changed " + lastFieldChanged);
-
       Class<?> calloutClass;
       try {
         calloutClass = Class.forName(calloutClassName);
@@ -1565,7 +1563,6 @@ public class FormInitializationComponent extends BaseActionHandler {
           if (calloutNameJS != null && calloutNameJS != "") {
             calledCallouts.add(calloutNameJS);
           }
-
           if (returnedArray.size() > 0) {
             for (NativeArray element : returnedArray) {
               String name = (String) element.get(0, null);
@@ -1766,7 +1763,7 @@ public class FormInitializationComponent extends BaseActionHandler {
    * 
    * @param window
    */
-  protected void createNewPreferenceForWindow(Window window) {
+  private void createNewPreferenceForWindow(Window window) {
 
     OBCriteria<Preference> prefCriteria = OBDao.getFilteredCriteria(Preference.class,
         Restrictions.eq(Preference.PROPERTY_PROPERTY, "OBUIAPP_UseClassicMode"),

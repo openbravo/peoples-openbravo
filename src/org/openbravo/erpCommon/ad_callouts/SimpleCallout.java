@@ -69,8 +69,6 @@ public abstract class SimpleCallout extends DelegateConnectionProvider {
   private static final long serialVersionUID = 1L;
   private static Logger log = Logger.getLogger(SimpleCallout.class);
 
-  public static final String SIMPLE_CALLOUT_NOT_SELECTED = "not_selected";
-
   /**
    * Overwrite this method to implement a new servlet callout based in <code>SimlpleCallout</code>
    * 
@@ -92,8 +90,8 @@ public abstract class SimpleCallout extends DelegateConnectionProvider {
     VariablesSecureApp vars = new VariablesSecureApp(request.getRequest());
     CalloutInfo info = new CalloutInfo(vars);
 
-    // execute and parse response of the callout
     try {
+      // execute and parse response of the callout
       execute(info);
     } catch (ServletException ex) {
       // Error in current callout, continue with following callout
