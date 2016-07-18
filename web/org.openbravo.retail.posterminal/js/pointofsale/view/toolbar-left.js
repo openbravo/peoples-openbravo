@@ -65,8 +65,10 @@ enyo.kind({
   },
   enableButton: function () {
     if (!this.model.get('leftColumnViewManager').isMultiOrder()) {
-      this.isEnabled = true;
-      this.setDisabled(false);
+      if (OB.UTIL.isNullOrUndefined(OB.MobileApp.model.get('serviceSearchMode')) || !OB.MobileApp.model.get('serviceSearchMode')) {
+        this.isEnabled = true;
+        this.setDisabled(false);
+      }
     }
   },
   disabledButton: function (inSender, inEvent) {
@@ -129,8 +131,10 @@ enyo.kind({
     this.setDisabled(true);
   },
   enableButton: function () {
-    this.isEnabled = true;
-    this.setDisabled(false);
+    if (OB.UTIL.isNullOrUndefined(OB.MobileApp.model.get('serviceSearchMode')) || !OB.MobileApp.model.get('serviceSearchMode')) {
+      this.isEnabled = true;
+      this.setDisabled(false);
+    }
   },
   disabledButton: function (inSender, inEvent) {
     this.isEnabled = !inEvent.status;
