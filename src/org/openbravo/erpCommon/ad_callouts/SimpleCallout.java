@@ -35,7 +35,6 @@ import org.openbravo.base.filter.RequestFilter;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.application.window.servlet.CalloutServletConfig;
 import org.openbravo.client.kernel.RequestContext;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.data.Sqlc;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.datamodel.Column;
@@ -94,7 +93,11 @@ public abstract class SimpleCallout extends DelegateConnectionProvider {
     CalloutInfo info = new CalloutInfo(vars);
 
     // execute and parse response of the callout
-    execute(info);
+    try {
+      execute(info);
+    } catch (ServletException ex) {
+      // Error in current callout, continue with following callout
+    }
     parseResponeSimpleCallout(request, info, valuesFromFIC);
 
     return valuesFromFIC;
@@ -142,9 +145,10 @@ public abstract class SimpleCallout extends DelegateConnectionProvider {
         }
       } else if (inpFields.containsKey(key)) {
         Column col = inpFields.get(key).getColumn();
-        String colID = DalUtil.getId(col).toString();
+        String colID = col.getId();
         String oldValue = request.getRequestParameter(colID);
         Boolean changed = false;
+
         if (element.has(SimpleCalloutConstants.CLASSIC_VALUE)) {
           String newValue = element.getString(SimpleCalloutConstants.CLASSIC_VALUE);
           if ((oldValue == null && newValue != null) || (oldValue != null && newValue == null)
@@ -193,10 +197,12 @@ public abstract class SimpleCallout extends DelegateConnectionProvider {
           // input. We assume it is a hidden input, which are used in places like
           // selectors
           String hiddenValue = element.getString(SimpleCalloutConstants.CLASSIC_VALUE);
-          valuesFromFIC.addHiddenInputs(key, hiddenValue);
-          // We set the hidden fields in the request, so that subsequent callouts
-          // can use them
-          request.setRequestParameter(key, element.toString());
+          if (!hiddenValue.equals("null")) {
+            valuesFromFIC.addHiddenInputs(key, hiddenValue);
+            // We set the hidden fields in the request, so that subsequent callouts
+            // can use them
+            request.setRequestParameter(key, element.toString());
+          }
         }
       }
     }
@@ -403,8 +409,9 @@ public abstract class SimpleCallout extends DelegateConnectionProvider {
     public void addResult(String param, Object value) {
       JSONObject columnValue = new JSONObject();
       try {
-        columnValue.put(SimpleCalloutConstants.VALUE, value.toString());
-        columnValue.put(SimpleCalloutConstants.CLASSIC_VALUE, value.toString());
+        columnValue.put(SimpleCalloutConstants.VALUE, value == null ? "null" : value.toString());
+        columnValue.put(SimpleCalloutConstants.CLASSIC_VALUE,
+            value == null ? "null" : value.toString());
         result.put(param, columnValue);
       } catch (JSONException e) {
         log.error("Error parsing JSON Object.", e);
