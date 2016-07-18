@@ -3414,10 +3414,12 @@
       order.set('documentnoPrefix', OB.MobileApp.model.get('terminal').docNoPrefix);
       order.set('documentnoSuffix', nextDocumentno.documentnoSuffix);
       order.set('documentNo', nextDocumentno.documentNo);
-
       order.set('print', true);
       order.set('sendEmail', false);
       order.set('openDrawer', false);
+      OB.UTIL.HookManager.executeHooks('OBPOS_NewReceipt', {
+        newOrder: order
+      });
       return order;
     },
 
