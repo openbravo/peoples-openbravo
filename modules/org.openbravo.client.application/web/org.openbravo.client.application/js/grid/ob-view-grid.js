@@ -1563,11 +1563,7 @@ isc.OBViewGrid.addProperties({
     return ret;
   },
 
-  updateRowCountDisplay: function (delayed) {
-    if (!delayed) {
-      this.delayCall('updateRowCountDisplay', [true], 100);
-      return;
-    }
+  updateRowCountDisplay: function () {
     var newValue = '',
         length = isc.isA.Tree(this.data) ? this.countGroupContent() : this.data.getLength();
     if (length > this.dataPageSize) {
