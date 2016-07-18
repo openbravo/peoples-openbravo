@@ -855,14 +855,14 @@ isc.OBStandardWindow.addProperties({
         OB.Utilities.callAction(action);
         return;
       }
-      if (this.getDirtyEditForm() && this.activeView.existsAction && this.activeView.existsAction('PRESAVE')) {
+      if (this.getDirtyEditForm() && this.activeView.existsAction && this.activeView.existsAction(OB.EventHandlerRegistry.PRESAVE)) {
         isc.ask(OB.I18N.getLabel('OBUIAPP_AutosaveConfirm'), preSaveCallback);
         return;
       }
       isc.ask(OB.I18N.getLabel('OBUIAPP_AutosaveConfirm'), saveCallback);
     } else {
       // Auto save confirmation not required: continue as confirmation was accepted
-      if (this.getDirtyEditForm() && this.activeView.existsAction && this.activeView.existsAction('PRESAVE')) {
+      if (this.getDirtyEditForm() && this.activeView.existsAction && this.activeView.existsAction(OB.EventHandlerRegistry.PRESAVE)) {
         preSaveCallback(true);
         return;
       }
@@ -876,7 +876,7 @@ isc.OBStandardWindow.addProperties({
     if (!action) {
       return;
     }
-    if (this.activeView && this.activeView.existsAction && this.activeView.existsAction('POSTSAVE')) {
+    if (this.activeView && this.activeView.existsAction && this.activeView.existsAction(OB.EventHandlerRegistry.POSTSAVE)) {
       // If there exists post-save actions, the auto save action will be fired right after them
       return;
     }

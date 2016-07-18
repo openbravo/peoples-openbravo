@@ -2120,7 +2120,7 @@ isc.OBStandardView.addProperties({
 
   saveRow: function () {
     var me = this;
-    if (me.existsAction('PRESAVE')) {
+    if (me.existsAction(OB.EventHandlerRegistry.PRESAVE)) {
       me.executePreSaveActions(function () {
         me.doSaveRow();
       });
@@ -2150,7 +2150,7 @@ isc.OBStandardView.addProperties({
       eventHandlerParams.data = isc.clone(this.viewForm.getValues());
       eventHandlerParams.isNewRecord = this.viewForm.isNew;
     }
-    this.callSaveActions('PRESAVE', eventHandlerParams, saveRowCallback);
+    this.callSaveActions(OB.EventHandlerRegistry.PRESAVE, eventHandlerParams, saveRowCallback);
   },
 
   existsAction: function (actionType) {
@@ -2158,8 +2158,18 @@ isc.OBStandardView.addProperties({
   },
 
   callSaveActions: function (actionType, extraParameters, callback) {
+    var params;
     if (this.existsAction(actionType)) {
-      OB.EventHandlerRegistry.call(this.tabId, actionType, this, this.viewForm, this.viewGrid, extraParameters, callback);
+      params = {
+        tabId: this.tabId,
+        actionType: actionType,
+        view: this,
+        form: this.viewForm,
+        grid: this.viewGrid,
+        extraParameters: extraParameters,
+        callback: callback
+      };
+      OB.EventHandlerRegistry.call(params);
     }
   },
 

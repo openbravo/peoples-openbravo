@@ -1840,7 +1840,7 @@ OB.ViewFormProperties = {
             OB.Utilities.callAction(autoSaveAction);
           };
         }
-        view.callSaveActions('POSTSAVE', eventHandlerParams, eventHandlerCallback);
+        view.callSaveActions(OB.EventHandlerRegistry.POSTSAVE, eventHandlerParams, eventHandlerCallback);
       }
 
       return false;

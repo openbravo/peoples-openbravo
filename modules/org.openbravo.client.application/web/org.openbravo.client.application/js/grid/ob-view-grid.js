@@ -3352,7 +3352,7 @@ isc.OBViewGrid.addProperties({
     colNum = me.getEditCol();
     nextEditCell = ((rowNum || rowNum === 0) && (colNum || colNum === 0) ? me.getNextEditCell(rowNum, colNum, editCompletionEvent) : null);
     newRow = nextEditCell && nextEditCell[0] !== rowNum;
-    if (newRow !== false && me.keyPressedForEditCompletion(editCompletionEvent) && me.view.existsAction && me.view.existsAction('PRESAVE')) {
+    if (newRow !== false && me.keyPressedForEditCompletion(editCompletionEvent) && me.view.existsAction && me.view.existsAction(OB.EventHandlerRegistry.PRESAVE)) {
       me.view.executePreSaveActions(function () {
         me.doCellEditEnd(editCompletionEvent, newValue, ficCallDone, autoSaveDone);
       });
@@ -3578,7 +3578,7 @@ isc.OBViewGrid.addProperties({
               OB.Utilities.callAction(autoSaveAction);
             };
           }
-          this.view.callSaveActions('POSTSAVE', eventHandlerParams, eventHandlerCallback);
+          this.view.callSaveActions(OB.EventHandlerRegistry.POSTSAVE, eventHandlerParams, eventHandlerCallback);
         }
       }
     };
@@ -4278,7 +4278,7 @@ isc.OBGridButtonsComponent.addProperties({
       buttonType: 'save',
       prompt: OB.I18N.getLabel('OBUIAPP_GridSaveButtonPrompt'),
       action: function () {
-        if (me.grid.view && me.grid.view.existsAction && me.grid.view.existsAction('PRESAVE')) {
+        if (me.grid.view && me.grid.view.existsAction && me.grid.view.existsAction(OB.EventHandlerRegistry.PRESAVE)) {
           me.grid.view.executePreSaveActions(function () {
             me.doSave();
           });

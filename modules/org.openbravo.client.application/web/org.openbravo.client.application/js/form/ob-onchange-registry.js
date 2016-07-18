@@ -25,6 +25,8 @@ isc.ClassFactory.defineClass('OBOnChangeRegistry', isc.OBFunctionRegistry);
 
 isc.OBOnChangeRegistry.addProperties({
 
+  registry: {},
+
   hasOnChange: function (tabId, item) {
     return this.getEntries(tabId, item);
   },
@@ -41,10 +43,6 @@ isc.OBOnChangeRegistry.addProperties({
       field = item.name;
     }
     return this.Super('getEntries', [tabId, field]);
-  },
-
-  TestFunction: function (item) {
-    alert('You changed ' + item.name);
   }
 
 });

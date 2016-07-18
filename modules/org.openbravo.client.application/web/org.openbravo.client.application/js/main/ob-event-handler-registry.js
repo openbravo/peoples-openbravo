@@ -25,7 +25,11 @@ isc.ClassFactory.defineClass('OBEventHandlerRegistry', isc.OBFunctionRegistry);
 
 isc.OBEventHandlerRegistry.addProperties({
 
+  PRESAVE: 'PRESAVE',
+  POSTSAVE: 'POSTSAVE',
+
   actionTypes: ['PRESAVE', 'POSTSAVE'],
+  registry: {},
 
   isValidElement: function (actionType) {
     var findType;
@@ -39,28 +43,26 @@ isc.OBEventHandlerRegistry.addProperties({
     return this.getEntries(tabId, actionType);
   },
 
-  getSortDirection: function () {
-    // actions ordered descending by sort property
-    return false;
-  },
-
-  call: function (tabId, actionType, view, form, grid, extraParameters, callback) {
-    var callResult, entries = this.getEntries(tabId, actionType),
+  // Overrides call function in order to implement the asynchronous execution of the actions.
+  call: function (params) {
+    var callResult, entries = this.getEntries(params.tabId, params.actionType),
         actions, i;
 
-    if (callback && !isc.isA.Function(callback)) {
+    if (params.callback && !isc.isA.Function(params.callback)) {
       return;
     }
     actions = isc.clone(entries) || [];
-    if (callback) {
-      actions.unshift(callback);
+    if (params.callback) {
+      actions.push(params.callback);
     }
-    this.callbackExecutor(view, form, grid, extraParameters, actions);
+    this.callbackExecutor(params.view, params.form, params.grid, params.extraParameters, actions);
   },
 
+  // Function to be invoked by event handler actions once they are done
+  // in order to continue with the action chain.
   callbackExecutor: function (view, form, grid, extraParameters, actions) {
     var func;
-    func = actions.pop();
+    func = actions.shift();
     if (func) {
       func(view, form, grid, extraParameters, actions);
     }
