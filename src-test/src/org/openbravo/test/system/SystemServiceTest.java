@@ -84,7 +84,9 @@ public class SystemServiceTest extends OBBaseTest {
     assertFalse(SystemService.getInstance().hasChanged(clzs, tomorrow));
 
     // 600 days in the past
-    final Date past = new Date(System.currentTimeMillis() - (1000 * 60 * 60 * 24 * 600));
+    // 1000 * 60 * 60 * 24 * 600 is larger than Integer.MAX_VALUE, and therefore the value overflows
+    // Turn the value to create the Date into long to calculate the 600 days in the past properly
+    final Date past = new Date(System.currentTimeMillis() - ((long) 1000 * 60 * 60 * 24 * 600));
     assertTrue(SystemService.getInstance().hasChanged(clzs, past));
   }
 }
