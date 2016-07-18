@@ -166,7 +166,34 @@ public abstract class SimpleCallout extends DelegateConnectionProvider {
           // If the column is mandatory and it is a combo
         } else if (element.has(SimpleCalloutConstants.ENTRIES) && col.isMandatory()) {
           // remove empty value and we choose the first value as selected
-          element.getJSONObject(SimpleCalloutConstants.ENTRIES).get(key);
+          JSONArray jsonArr = element.getJSONArray(SimpleCalloutConstants.ENTRIES);
+          ArrayList<JSONObject> newJsonArr = new ArrayList<JSONObject>();
+          JSONObject temporal = null;
+          for (int i = 0; i < jsonArr.length(); i++) {
+            temporal = jsonArr.getJSONObject(i);
+            if (i == 0) {
+              continue;
+            } else {
+              newJsonArr.add(temporal);
+            }
+          }
+
+          // create element with new values
+          String valueSelected = newJsonArr.get(0).getString(JsonConstants.ID);
+          JSONObject temporalyElement = new JSONObject();
+          temporalyElement.put(SimpleCalloutConstants.VALUE, valueSelected);
+          temporalyElement.put(SimpleCalloutConstants.CLASSIC_VALUE, valueSelected);
+          temporalyElement.put(SimpleCalloutConstants.ENTRIES, new JSONArray(newJsonArr));
+
+          // added this new value and check refire a callout
+          valuesFromFIC.addColumnValues(
+              "inp" + Sqlc.TransformaNombreColumna(col.getDBColumnName()), temporalyElement);
+          changed = true;
+          if (valuesFromFIC.getDynamicCols().contains(colID)) {
+            valuesFromFIC.addChangedCols(col.getDBColumnName());
+          }
+          request.setRequestParameter(key,
+              temporalyElement.getString(SimpleCalloutConstants.CLASSIC_VALUE));
         } else {
           log.debug("Column value didn't change. We do not attempt to execute any additional callout");
         }
