@@ -58,9 +58,6 @@ enyo.kind({
   initComponents: function () {
     this.inherited(arguments);
     this.$.numberQty.setNumberId(this.name);
-    if (this.maxLines) {
-      this.$.numberQty.max = this.maxLines;
-    }
   }
 });
 
@@ -269,7 +266,8 @@ enyo.kind({
         components: [{
           kind: 'OB.UI.ModalNumberEditor',
           name: 'numberlinesQtyMobile',
-          style: 'float: left; '
+          style: 'float: left; ',
+          maxLines: 100
         }]
       }]
     }, {
@@ -297,21 +295,23 @@ enyo.kind({
     }]
   },
 
-  executeOnHide: function () {
-    //executed when popup is hiden.
-    //to access to argumens -> this.args
-  },
-
   executeOnShow: function () {
-    //executed when popup is shown.
-    //to access to argumens -> this.args
+
+    var maxRows, mobileMaxRows;
+
     this.orderline = this.args.model;
     this.receipt = this.args.receipt;
+
+    maxRows = Math.min(this.orderline.get('qty'), this.$.bodyContent.$.numberlinesQty.maxLines);
+    mobileMaxRows = Math.min(this.orderline.get('qty'), this.$.bodyContent.$.numberlinesQtyMobile.maxLines);
+
     this.$.bodyContent.$.originalQty.setValue(this.orderline.get('qty'));
     this.$.bodyContent.$.numberlinesQty.$.numberQty.setValue(2);
     this.$.bodyContent.$.numberlinesQty.$.numberQty.setMin(2);
+    this.$.bodyContent.$.numberlinesQty.$.numberQty.setMax(maxRows);
     this.$.bodyContent.$.numberlinesQtyMobile.$.numberQty.setValue(2);
     this.$.bodyContent.$.numberlinesQtyMobile.$.numberQty.setMin(2);
+    this.$.bodyContent.$.numberlinesQtyMobile.$.numberQty.setMax(mobileMaxRows);
     this.$.bodyContent.$.qtyLines.removeAllLine();
     _.each(this.getSplitProposal(), function (qty) {
       this.$.bodyContent.$.qtyLines.createLine(qty);
