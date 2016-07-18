@@ -131,7 +131,7 @@ public class SecurityChecker implements OBSingleton {
     final Entity entity = ((BaseOBObject) obj).getEntity();
     if ((!obContext.isInAdministratorMode() || obContext.doOrgClientAccessCheck())
         && clientId.length() > 0) {
-      if (obj instanceof ClientEnabled) {
+      if (obj instanceof ClientEnabled || obj instanceof Client) {
         if (!obContext.getCurrentClient().getId().equals(clientId)) {
           // TODO: maybe move rollback to exception throwing
           SessionHandler.getInstance().setDoRollback(true);
