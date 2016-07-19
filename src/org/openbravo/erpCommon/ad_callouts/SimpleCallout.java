@@ -432,11 +432,11 @@ public abstract class SimpleCallout extends DelegateConnectionProvider {
      * @throws JSONException
      */
     public void addResult(String param, Object value) {
+      String strValue = value == null ? "null" : value.toString().replaceAll("\"\"", "");
       JSONObject columnValue = new JSONObject();
       try {
-        columnValue.put(SimpleCalloutConstants.VALUE, value == null ? "null" : value.toString());
-        columnValue.put(SimpleCalloutConstants.CLASSIC_VALUE,
-            value == null ? "null" : value.toString());
+        columnValue.put(SimpleCalloutConstants.VALUE, strValue);
+        columnValue.put(SimpleCalloutConstants.CLASSIC_VALUE, strValue);
         result.put(param, columnValue);
       } catch (JSONException e) {
         log.error("Error parsing JSON Object.", e);
