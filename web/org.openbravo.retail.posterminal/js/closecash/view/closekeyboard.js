@@ -21,19 +21,9 @@ enyo.kind({
     var me = this;
     this.inherited(arguments);
     this.showSidepad('sidecashup');
-    this.addCommand('+', {
-      stateless: true,
-      action: function (keyboard, txt) {
-        var t = keyboard.$.editbox.getContent();
-        keyboard.$.editbox.setContent(t + '+');
-      }
-    });
-    this.addCommand('-', {
-      stateless: true,
-      action: function (keyboard, txt) {
-        var t = keyboard.$.editbox.getContent();
-        keyboard.$.editbox.setContent(t + '-');
-      }
+    this.disableCommandKey(this, {
+      disabled: true,
+      commands: ['%']
     });
     this.addToolbar({
       name: 'toolbarempty',
