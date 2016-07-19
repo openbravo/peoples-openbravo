@@ -1614,7 +1614,7 @@ OB.ViewFormProperties = {
   saveRow: function (parameters) {
     var savingNewRecord = this.isNew,
         storedFocusItem, i, length, flds, form = this,
-        ficCallDone, record, recordIndex, callback, viewsNotToRefresh;
+        ficCallDone, record, recordIndex, callback, viewsNotToRefresh, autoSaveAction;
 
     if (this.getFocusItem()) {
       storedFocusItem = this.getFocusItem();
@@ -1648,10 +1648,15 @@ OB.ViewFormProperties = {
       this.view.messageBar.hide();
     }
 
+    if (this.view.standardWindow) {
+      autoSaveAction = this.view.standardWindow.autoSaveAction;
+    }
+
     callback = function (resp, data, req) {
       var index1, index2, view = form.view,
           localRecord, status = resp.status,
-          sessionProperties, keepSelection, gridRefreshCallback, theGrid, theId, id;
+          sessionProperties, keepSelection, gridRefreshCallback, theGrid, theId, id, eventHandlerParams = {},
+          eventHandlerCallback;
 
       if (this.hasOwnProperty('previousExplicitOffline')) {
         isc.Offline.explicitOffline = this.previousExplicitOffline;
@@ -1826,6 +1831,17 @@ OB.ViewFormProperties = {
       // Summary Functions are refreshed when data gets refreshed
       if (view.viewGrid.showGridSummary) {
         view.viewGrid.getSummaryRow();
+      }
+
+      if (status === isc.RPCResponse.STATUS_SUCCESS && view.callSaveActions) {
+        eventHandlerParams.data = isc.clone(data);
+        eventHandlerParams.isNewRecord = savingNewRecord;
+        if (autoSaveAction) {
+          eventHandlerCallback = function () {
+            OB.Utilities.callAction(autoSaveAction);
+          };
+        }
+        view.callSaveActions(OB.EventHandlerRegistry.POSTSAVE, eventHandlerParams, eventHandlerCallback);
       }
 
       return false;

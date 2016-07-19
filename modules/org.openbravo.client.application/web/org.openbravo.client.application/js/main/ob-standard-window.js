@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2015 Openbravo SLU
+ * All portions are Copyright (C) 2010-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -776,7 +776,17 @@ isc.OBStandardWindow.addProperties({
 
   doActionAfterAutoSave: function (action, forceDialogOnFailure, ignoreAutoSaveEnabled) {
     var me = this,
-        saveCallback;
+        preSaveCallback, saveCallback;
+
+    preSaveCallback = function (ok) {
+      if (ok) {
+        me.activeView.executePreSaveActions(function () {
+          saveCallback(true);
+        });
+        return;
+      }
+      saveCallback(false);
+    };
 
     saveCallback = function (ok) {
       var dirtyEditForm = me.getDirtyEditForm();
@@ -845,9 +855,17 @@ isc.OBStandardWindow.addProperties({
         OB.Utilities.callAction(action);
         return;
       }
+      if (this.getDirtyEditForm() && this.activeView.existsAction && this.activeView.existsAction(OB.EventHandlerRegistry.PRESAVE)) {
+        isc.ask(OB.I18N.getLabel('OBUIAPP_AutosaveConfirm'), preSaveCallback);
+        return;
+      }
       isc.ask(OB.I18N.getLabel('OBUIAPP_AutosaveConfirm'), saveCallback);
     } else {
       // Auto save confirmation not required: continue as confirmation was accepted
+      if (this.getDirtyEditForm() && this.activeView.existsAction && this.activeView.existsAction(OB.EventHandlerRegistry.PRESAVE)) {
+        preSaveCallback(true);
+        return;
+      }
       saveCallback(true);
     }
   },
@@ -856,6 +874,10 @@ isc.OBStandardWindow.addProperties({
     var action = this.autoSaveAction;
     this.cleanUpAutoSaveProperties();
     if (!action) {
+      return;
+    }
+    if (this.activeView && this.activeView.existsAction && this.activeView.existsAction(OB.EventHandlerRegistry.POSTSAVE)) {
+      // If there exists post-save actions, the auto save action will be fired right after them
       return;
     }
     OB.Utilities.callAction(action);
