@@ -380,6 +380,9 @@ enyo.kind({
           attrs: {
             'splitline': true
           },
+          options: {
+            at: addline.collection.indexOf(addline) + 1
+          },
           context: this,
           callback: function (success, addline) {
             this.splittedLines.push(addline);
