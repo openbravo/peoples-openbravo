@@ -14,12 +14,10 @@ enyo.kind({
   events: {
     onNumberChange: ''
   },
-  style: 'clear: both; padding: 0',
   components: [{
     kind: 'OB.UI.SmallButton',
     name: 'btnQtyMinus',
-    classes: 'btnlink-white',
-    style: 'border: 1px solid #E2E2E2; margin: -2px 2px 0 0',
+    classes: 'btnlink-white splitline-numbereditor-minusbtn',
     content: '−',
     tap: function () {
       var qty = parseInt(this.owner.$.numberQty.getValue(), 10),
@@ -40,8 +38,7 @@ enyo.kind({
   }, {
     kind: 'OB.UI.SmallButton',
     name: 'btnQtyPlus',
-    classes: 'btnlink-white',
-    style: 'border: 1px solid #E2E2E2; margin: -2px 0 0 2px;',
+    classes: 'btnlink-white splitline-numbereditor-plusbtn',
     content: '+',
     tap: function () {
       var qty = parseInt(this.owner.$.numberQty.getValue(), 10),
@@ -64,8 +61,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.ModalSplitLinesTable',
   kind: 'Scroller',
-  maxHeight: '200px',
-  style: 'width: 100%; background-color: #fff; overflow: auto',
+  classes: 'splitline-table',
   initComponents: function () {
     this.inherited(arguments);
     this.lines = [];
@@ -73,7 +69,7 @@ enyo.kind({
   createLine: function (qty) {
     var lineNum = this.lines.length,
         line = this.createComponent({
-        style: 'width: 100%; clear:both; background-color: #fff; height: 35px; padding-top: 2px;',
+        classes: 'split-line',
         components: [{
           classes: 'splitline-line-label',
           name: 'lineNum_' + lineNum,
@@ -83,13 +79,12 @@ enyo.kind({
           components: [{
             kind: 'OB.UI.ModalNumberEditor',
             name: 'qty_' + lineNum,
-            style: 'float: left; '
+            classes: 'float-left'
           }, {
             kind: 'OB.UI.SmallButton',
             name: 'btnRemove_' + lineNum,
             lineNum: lineNum,
-            classes: 'btnlink-gray',
-            style: 'float: left; border: 1px solid #D2D2D2; margin: 2px 0 0 5px',
+            classes: 'btnlink-gray float-left splitline-deletebtn',
             content: 'x',
             tap: function () {
               this.owner.removeLine(this.lineNum, true);
@@ -184,7 +179,7 @@ enyo.kind({
   //body of the popup
   bodyContent: {
     components: [{
-      style: 'padding: 6px 0px 0px 14px;',
+      classes: 'splitline-message',
       initComponents: function () {
         this.setContent(OB.I18N.getLabel('OBPOS_lblSplitWarning'));
       }
@@ -212,13 +207,13 @@ enyo.kind({
         }
       }]
     }, {
-      style: 'background-color: #fff; height: 34px; color: black; font-size: 16px; padding-top: 1px',
+      classes: 'splitline-info-numbers',
       components: [{
         classes: 'splitline-info-editor',
         components: [{
           kind: 'OB.UI.EditNumber',
           name: 'originalQty',
-          style: 'width: 40px; height: 23px;',
+          classes: 'splitline-info-editor-input',
           initComponents: function () {
             this.setDisabled(true);
           }
@@ -228,7 +223,7 @@ enyo.kind({
         components: [{
           kind: 'OB.UI.EditNumber',
           name: 'splitQty',
-          style: 'width: 40px; height: 23px;',
+          classes: 'splitline-info-editor-input',
           initComponents: function () {
             this.setDisabled(true);
           }
@@ -238,7 +233,7 @@ enyo.kind({
         components: [{
           kind: 'OB.UI.EditNumber',
           name: 'differenceQty',
-          style: 'width: 40px; height: 23px;',
+          classes: 'splitline-info-editor-input',
           initComponents: function () {
             this.setDisabled(true);
           }
@@ -252,10 +247,9 @@ enyo.kind({
         }]
       }]
     }, {
-      style: 'height: 15px;'
+      classes: 'height15'
     }, {
-      classes: 'splitline-lines-number-hide',
-      style: 'width: 100%; clear:both; background-color: #fff; height: 55px; padding-top: 2px;',
+      classes: 'splitline-lines-number-hide splitline-numberinfo',
       components: [{
         classes: 'splitline-line-label',
         initComponents: function () {
@@ -266,18 +260,17 @@ enyo.kind({
         components: [{
           kind: 'OB.UI.ModalNumberEditor',
           name: 'numberlinesQtyMobile',
-          style: 'float: left; ',
+          classes: 'float-left',
           maxLines: 100
         }]
       }]
     }, {
-      classes: 'splitline-lines-number-hide',
-      style: 'height: 15px;'
+      classes: 'splitline-lines-number-hide height15'
     }, {
       kind: 'OB.UI.ModalSplitLinesTable',
       name: 'qtyLines'
     }, {
-      style: 'padding: 6px 0px 0px 14px; color: yellow',
+      classes: 'splitline-message color-yellow',
       name: 'labelError',
       showing: false,
       initComponents: function () {
