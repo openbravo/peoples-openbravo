@@ -570,29 +570,24 @@ enyo.kind({
       if (!this.selectedModels || this.selectedModels.length <= 1) {
         if (this.model.get('order').get('isEditable')) {
           this.$.actionButtonsContainer.$.descriptionButton.show();
-          var showSplitBtn = line && line.get('qty') > 1 && line.get('product').get('productType') !== 'S';
+          var showSplitBtn = line && line.get('qty') > 1 && line.get('product').get('productType') !== 'S' && !_.find(this.model.get('order').get('lines').models, function (l) {
+            return l.get('relatedLines') && _.find(l.get('relatedLines'), function (rl) {
+              return rl.orderlineId === line.id;
+            }) !== undefined;
+          });
           if (showSplitBtn) {
-            var relatedServices = _.find(this.model.get('order').get('lines').models, function (l) {
-              return l.get('relatedLines') && _.find(l.get('relatedLines'), function (rl) {
-                return rl.orderlineId === line.id;
-              }) !== undefined;
+            var me = this;
+            OB.UTIL.HookManager.executeHooks('OBPOS_CheckSplitLine', {
+              receipt: me.model.get('order'),
+              orderline: line
+            }, function (args) {
+              if (args && args.cancelOperation) {
+                me.$.actionButtonsContainer.$.splitlineButton.hide();
+              } else {
+                me.$.actionButtonsContainer.$.splitlineButton.show();
+              }
             });
-            showSplitBtn = OB.UTIL.isNullOrUndefined(relatedServices);
-            if (showSplitBtn) {
-              var me = this;
-              OB.UTIL.HookManager.executeHooks('OBPOS_CheckSplitLine', {
-                receipt: me.model.get('order'),
-                orderline: line
-              }, function (args) {
-                if (args && args.cancelOperation) {
-                  me.$.actionButtonsContainer.$.splitlineButton.hide();
-                } else {
-                  me.$.actionButtonsContainer.$.splitlineButton.show();
-                }
-              });
-            }
-          }
-          if (!showSplitBtn) {
+          } else {
             this.$.actionButtonsContainer.$.splitlineButton.hide();
           }
         }
