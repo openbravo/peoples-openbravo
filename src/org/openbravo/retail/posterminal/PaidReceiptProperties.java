@@ -59,6 +59,7 @@ public class PaidReceiptProperties extends ModelExtension {
         add(new HQLProperty("ord.priceList.priceIncludesTax", "priceIncludesTax"));
         add(new HQLProperty("replacedOrder.documentNo", "replacedorder_documentNo"));
         add(new HQLProperty("replacedOrder.id", "replacedorder"));
+        add(new HQLProperty("ord.iscancelled", "iscancelled"));
       }
     };
 

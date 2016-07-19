@@ -236,6 +236,10 @@ enyo.kind({
       return true;
     }
     this.inherited(arguments); // Manual dropdown menu closure
+    if (this.model.get('order').get('iscancelled')) {
+      OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_AlreadyCancelledHeader'), OB.I18N.getLabel('OBPOS_AlreadyCancelled'));
+      return;
+    }
     if (this.model.get('order').get('isFullyDelivered')) {
       OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_FullyDeliveredHeader'), OB.I18N.getLabel('OBPOS_FullyDelivered'));
       return;
