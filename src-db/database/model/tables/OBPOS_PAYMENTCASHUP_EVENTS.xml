@@ -61,6 +61,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="RELATED_TRANSACTION_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="OBPOS_CASHUP_EVENTS_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -72,6 +76,9 @@
       </foreign-key>
       <foreign-key foreignTable="OBPOS_PAYMENTMETHODCASHUP" name="OBPOS_CASHUP_EVENTS_PM_CASHUP">
         <reference local="OBPOS_PAYMENTMETHODCASHUP_ID" foreign="OBPOS_PAYMENTMETHODCASHUP_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="FIN_FINACC_TRANSACTION" name="OBPOS_CASHUP_EVENTS_RLT_TRANS">
+        <reference local="RELATED_TRANSACTION_ID" foreign="FIN_FINACC_TRANSACTION_ID"/>
       </foreign-key>
       <check name="OBPOS_CASHUP_EVENTS_ISACT_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
