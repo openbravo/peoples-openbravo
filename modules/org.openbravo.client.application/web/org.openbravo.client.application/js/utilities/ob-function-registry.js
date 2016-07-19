@@ -103,7 +103,7 @@ isc.OBFunctionRegistry.addProperties({
   // Retrieves all functions for a particular element within a registry.
   getEntries: function (registryId, element) {
     var entry;
-    if (!this.registry[registryId]) {
+    if (!this.registry || !this.registry[registryId]) {
       return;
     }
     entry = this.registry[registryId];
