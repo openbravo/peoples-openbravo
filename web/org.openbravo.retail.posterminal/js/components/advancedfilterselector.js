@@ -387,15 +387,8 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.UI.FilterSelectorRenderLine',
-  kind: 'OB.UI.listItemButton',
+  kind: 'OB.UI.ListSelectorLine',
   allowHtml: true,
-  events: {
-    onHideThisPopup: ''
-  },
-  tap: function () {
-    this.inherited(arguments);
-    this.doHideThisPopup();
-  },
   components: [{
     name: 'line',
     style: 'line-height: 23px; width: 100%',
