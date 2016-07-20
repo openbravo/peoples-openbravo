@@ -326,8 +326,7 @@ enyo.kind({
 /*items of collection*/
 enyo.kind({
   name: 'OB.UI.ListBpsLine',
-  kind: 'OB.UI.listItemButton',
-  style: 'padding: 2px 0px 2px 10px;',
+  kind: 'OB.UI.ListSelectorLine',
   components: [{
     name: 'line',
     style: 'line-height: 23px; width: 100%',
@@ -368,13 +367,6 @@ enyo.kind({
       }]
     }]
   }],
-  events: {
-    onHideThisPopup: ''
-  },
-  tap: function () {
-    this.inherited(arguments);
-    this.doHideThisPopup();
-  },
   create: function () {
     this.inherited(arguments);
     this.$.identifier.setContent(this.model.get('_identifier'));
@@ -745,6 +737,9 @@ enyo.kind({
       }
     }
     return true;
+  },
+  getScrollableTable: function () {
+    return this.$.body.$.listBps.$.stBPAssignToReceipt;
   },
   getFilterSelectorTableHeader: function () {
     return this.$.body.$.listBps.$.stBPAssignToReceipt.$.theader.$.modalBpScrollableHeader.$.filterSelector;

@@ -49,13 +49,28 @@ enyo.kind({
   }
 });
 
+enyo.kind({
+  name: 'OB.UI.ListSelectorLine',
+  kind: 'OB.UI.listItemButton',
+  style: 'padding: 2px 0px 2px 10px;',
+  events: {
+    onHideThisPopup: ''
+  },
+  tap: function () {
+    this.inherited(arguments);
+    this.owner.owner.owner.selectedItem = true;
+    this.doHideThisPopup();
+  }
+});
+
 /* Modal definition */
 enyo.kind({
   name: 'OB.UI.ModalSelector',
   kind: 'OB.UI.Modal',
   events: {
     onSetSelectorAdvancedSearch: '',
-    onClearAllFilterSelector: ''
+    onClearAllFilterSelector: '',
+    onCloseSelector: ''
   },
   handlers: {
     onHideSelector: 'hideSelector',
@@ -67,6 +82,9 @@ enyo.kind({
   },
   showSelector: function () {
     this.show();
+  },
+  getScrollableTable: function () {
+    return null;
   },
   getFilterSelectorTableHeader: function () {
     return null;
@@ -81,6 +99,10 @@ enyo.kind({
     var advancedFilterBtn = this.getAdvancedFilterBtn(),
         advancedFilterDialog = this.getAdvancedFilterDialog(),
         filterSelectorTableHeader = this.getFilterSelectorTableHeader();
+    this.scrollableTable = this.getScrollableTable();
+    if (this.scrollableTable) {
+      this.scrollableTable.selectedItem = false;
+    }
     if (filterSelectorTableHeader) {
       filterSelectorTableHeader.advancedFilterBtn = advancedFilterBtn;
       filterSelectorTableHeader.advancedFilterDialog = advancedFilterDialog;
@@ -95,6 +117,7 @@ enyo.kind({
     if (!this.initialized) {
       this.selectorHide = false;
       this.initialized = true;
+      this.target = this.args.target;
       var filterSelectorTableHeader = this.getFilterSelectorTableHeader();
       if (filterSelectorTableHeader) {
         filterSelectorTableHeader.setAdvancedFilterBtnCaption();
@@ -110,6 +133,15 @@ enyo.kind({
       this.doSetSelectorAdvancedSearch({
         isAdvanced: false
       });
+      if (this.scrollableTable) {
+        if (!this.scrollableTable.selectedItem) {
+          this.doCloseSelector({
+            target: this.target
+          });
+        } else {
+          this.scrollableTable.selectedItem = false;
+        }
+      }
     }
   }
 });
@@ -404,6 +436,7 @@ enyo.kind({
     onSearchActionByKey: 'searchAction',
     onFiltered: 'searchAction',
     onChangeColumn: 'changeColumn',
+    onCloseCancelSelector: 'closeCancelSelector',
     onUpdateFilterSelector: 'updateFilterSelector'
   },
   components: [{
@@ -537,6 +570,12 @@ enyo.kind({
       }]
     }]
   }],
+  closeCancelSelector: function (inSender, inEvent) {
+    if (this.$.entityFilterButton.showSelector) {
+      this.$.entityFilterButton.showSelector = false;
+      this.owner.owner.owner.owner.owner.owner.show();
+    }
+  },
   updateFilterSelector: function (inSender, inEvent) {
     if (this.$.entityFilterButton.showSelector) {
       this.$.entityFilterButton.showSelector = false;

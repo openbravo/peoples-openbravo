@@ -103,6 +103,7 @@ enyo.kind({
     onCheckPresetFilterSelector: 'checkPresetFilterSelector',
     onAdvancedFilterSelector: 'advancedFilterSelector',
     onSetSelectorAdvancedSearch: 'setSelectorAdvancedSearch',
+    onCloseSelector: 'closeSelector',
     onRearrangeEditButtonBar: 'rearrangeEditButtonBar'
   },
   events: {
@@ -1279,6 +1280,9 @@ enyo.kind({
   },
   setMultiSelectionItems: function (inSender, inEvent) {
     this.waterfall('onTableMultiSelectedItems', inEvent);
+  },
+  closeSelector: function (inSender, inEvent) {
+    this.waterfall('onCloseCancelSelector', inEvent);
   },
   rearrangeEditButtonBar: function (inSender, inEvent) {
     this.waterfall('onRearrangedEditButtonBar', inEvent);

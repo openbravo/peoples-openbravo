@@ -257,6 +257,7 @@ enyo.kind({
     onClearFilterSelector: 'clearFilterSelector',
     onGetAdvancedFilterSelector: 'getAdvancedFilterSelector',
     onHasPresetFilterSelector: 'hasPresetFilterSelector',
+    onCloseCancelSelector: 'closeCancelSelector',
     onApplyFilters: 'applyFilters'
   },
   body: {
@@ -297,6 +298,13 @@ enyo.kind({
         this.$.body.$.filters.addFilter(prop);
       }
     }, this);
+  },
+
+  closeCancelSelector: function (inSender, inEvent) {
+    if (this.$.body.showSelector) {
+      this.$.body.showSelector = false;
+      this.show();
+    }
   },
 
   updateFilterSelector: function (inSender, inEvent) {
