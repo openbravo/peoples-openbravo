@@ -3169,7 +3169,7 @@
 
               // Check the amount discount is the same
               if (promotion.amt !== promoAmt && !promotion.hidden) {
-                // Adjust splitted promotion amount                
+                // Adjust splitted promotion amount
                 var splittedAmount = _.reduce(linesToApply.models, function (sum, line) {
                   var linePromo = _.find(line.get('promotions'), function (lp) {
                     return lp.discountType === promotion.discountType && !lp.hidden;
