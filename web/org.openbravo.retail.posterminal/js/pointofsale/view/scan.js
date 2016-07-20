@@ -79,7 +79,8 @@ enyo.kind({
         showing: false,
         components: [{
           name: 'txtaction',
-          style: 'padding: 10px; float: left; width: 320px; line-height: 23px;'
+          style: 'overflow-x:hidden; overflow-y:auto; max-height:134px; padding: 10px; float: left; width: 400px; line-height: 23px',
+          classes: 'enyo-scroller span7'
         }, {
           style: 'float: right;',
           components: [{
