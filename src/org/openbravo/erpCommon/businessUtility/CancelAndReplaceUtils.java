@@ -20,6 +20,7 @@ package org.openbravo.erpCommon.businessUtility;
 
 import java.math.BigDecimal;
 import java.sql.CallableStatement;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -48,6 +49,7 @@ import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.ad_forms.AcctServer;
+import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.materialmgmt.ReservationUtils;
@@ -355,7 +357,7 @@ public class CancelAndReplaceUtils {
   }
 
   private static Order createOrder(Order oldOrder, JSONObject jsonorder, String documentNo,
-      boolean triggersDisabled) throws JSONException {
+      boolean triggersDisabled) throws JSONException, ParseException {
     Order inverseOrder = (Order) DalUtil.copy(oldOrder, false, true);
     // Change order values
     inverseOrder.setCreatedBy(OBContext.getOBContext().getUser());
@@ -370,7 +372,8 @@ public class CancelAndReplaceUtils {
       inverseOrder.setGrandTotalAmount(BigDecimal.ZERO);
       inverseOrder.setSummedLineAmount(BigDecimal.ZERO);
     }
-    inverseOrder.setOrderDate(today);
+
+    inverseOrder.setOrderDate(OBDateUtils.getDate(OBDateUtils.formatDate(today)));
     inverseOrder.setCreationDate(today);
     inverseOrder.setUpdated(today);
     inverseOrder.setScheduledDeliveryDate(today);
