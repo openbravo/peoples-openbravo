@@ -29,13 +29,15 @@ public class FINPaymentEventHandler extends EntityPersistenceEventObserver {
       return;
     }
     FIN_Payment payment = (FIN_Payment) event.getTargetInstance();
+    int index = payment.getDocumentNo().indexOf("*R*");
     if (payment.getAmount().compareTo(BigDecimal.ZERO) == 0) {
-      final Entity paymentEntity = ModelProvider.getInstance().getEntity(FIN_Payment.ENTITY_NAME);
-      final Property paymentDocumentNoProperty = paymentEntity
-          .getProperty(FIN_Payment.PROPERTY_DOCUMENTNO);
-      event.setCurrentState(paymentDocumentNoProperty, payment.getDocumentNo() + "*R*");
+      if (index == -1) {
+        final Entity paymentEntity = ModelProvider.getInstance().getEntity(FIN_Payment.ENTITY_NAME);
+        final Property paymentDocumentNoProperty = paymentEntity
+            .getProperty(FIN_Payment.PROPERTY_DOCUMENTNO);
+        event.setCurrentState(paymentDocumentNoProperty, payment.getDocumentNo() + "*R*");
+      }
     } else {
-      int index = payment.getDocumentNo().indexOf("*R*");
       if (index != -1) {
         final Entity paymentEntity = ModelProvider.getInstance().getEntity(FIN_Payment.ENTITY_NAME);
         final Property paymentDocumentNoProperty = paymentEntity
