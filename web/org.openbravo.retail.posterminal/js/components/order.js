@@ -684,7 +684,7 @@ enyo.kind({
       }
       this.updating = true;
       //Check Return No logic and change
-      if (!this.order.get('isLayaway') && !this.order.get('isQuotation')) {
+      if (!this.order.get('isLayaway') && !this.order.get('isQuotation') && !this.order.get('doCancelAndReplace')) {
         var negativeLinesLength = _.filter(this.order.get('lines').models, function (line) {
           return line.get('qty') < 0;
         }).length;
