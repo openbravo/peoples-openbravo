@@ -35,6 +35,10 @@ import org.openbravo.base.filter.RequestFilter;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.application.window.servlet.CalloutServletConfig;
 import org.openbravo.client.kernel.RequestContext;
+import org.openbravo.client.kernel.reference.EnumUIDefinition;
+import org.openbravo.client.kernel.reference.ForeignKeyUIDefinition;
+import org.openbravo.client.kernel.reference.UIDefinition;
+import org.openbravo.client.kernel.reference.UIDefinitionController;
 import org.openbravo.data.Sqlc;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.datamodel.Column;
@@ -148,18 +152,38 @@ public abstract class SimpleCallout extends DelegateConnectionProvider {
         Boolean changed = false;
 
         if (element.has(SimpleCalloutConstants.CLASSIC_VALUE)) {
-          String newValue = element.getString(SimpleCalloutConstants.CLASSIC_VALUE);
-          if ((oldValue == null && newValue != null) || (oldValue != null && newValue == null)
-              || (oldValue != null && newValue != null && !oldValue.equals(newValue))) {
-            valuesFromFIC.addColumnValues(
-                "inp" + Sqlc.TransformaNombreColumna(col.getDBColumnName()), element);
-            // to check refire a callout
-            changed = true;
-            if (valuesFromFIC.getDynamicCols().contains(colID)) {
-              valuesFromFIC.addChangedCols(col.getDBColumnName());
+          // We set the new value in the request, so that the JSONObject is computed
+          // with the new value
+          UIDefinition uiDef = UIDefinitionController.getInstance().getUIDefinition(col.getId());
+          request.setRequestParameter(key, element.getString(SimpleCalloutConstants.CLASSIC_VALUE));
+
+          String jsonStr = uiDef.getFieldProperties(inpFields.get(key), true);
+          JSONObject jsonobj = new JSONObject(jsonStr);
+
+          // TODO: Check special case
+          if (element == null
+              && (uiDef instanceof ForeignKeyUIDefinition || uiDef instanceof EnumUIDefinition)) {
+            // Special case for null values for combos: we must clean the combo values
+            jsonobj.put("value", "");
+            jsonobj.put("classicValue", "");
+            jsonobj.put("entries", new JSONArray());
+          }
+          if (jsonobj.has(SimpleCalloutConstants.CLASSIC_VALUE)) {
+            String newValue = element.getString(SimpleCalloutConstants.CLASSIC_VALUE);
+            if ((oldValue == null && newValue != null) || (oldValue != null && newValue == null)
+                || (oldValue != null && newValue != null && !oldValue.equals(newValue))) {
+              valuesFromFIC.addColumnValues(
+                  "inp" + Sqlc.TransformaNombreColumna(col.getDBColumnName()), jsonobj);
+              // to check refire a callout
+              changed = true;
+              if (valuesFromFIC.getDynamicCols().contains(key)) {
+                valuesFromFIC.addChangedCols(col.getDBColumnName());
+              }
+              request.setRequestParameter(key,
+                  jsonobj.getString(SimpleCalloutConstants.CLASSIC_VALUE));
             }
-            request.setRequestParameter(key,
-                element.getString(SimpleCalloutConstants.CLASSIC_VALUE));
+          } else {
+            log.debug("Column value didn't change. We do not attempt to execute any additional callout");
           }
           // If the column is mandatory and it is a combo
         } else if (element.has(SimpleCalloutConstants.ENTRIES) && col.isMandatory()) {
@@ -187,7 +211,7 @@ public abstract class SimpleCallout extends DelegateConnectionProvider {
           valuesFromFIC.addColumnValues(
               "inp" + Sqlc.TransformaNombreColumna(col.getDBColumnName()), temporalyElement);
           changed = true;
-          if (valuesFromFIC.getDynamicCols().contains(colID)) {
+          if (valuesFromFIC.getDynamicCols().contains(key)) {
             valuesFromFIC.addChangedCols(col.getDBColumnName());
           }
           request.setRequestParameter(key,
@@ -432,8 +456,13 @@ public abstract class SimpleCallout extends DelegateConnectionProvider {
      * @throws JSONException
      */
     public void addResult(String param, Object value) {
-      String strValue = value == null ? "null" : value.toString().replaceAll("\"\"", "");
       JSONObject columnValue = new JSONObject();
+      String strValue = value == null ? "null" : value.toString();
+
+      // handle case when callouts are sending us "\"\"" string.
+      if ("\"\"".equals(strValue)) {
+        strValue = "";
+      }
       try {
         columnValue.put(SimpleCalloutConstants.VALUE, strValue);
         columnValue.put(SimpleCalloutConstants.CLASSIC_VALUE, strValue);
