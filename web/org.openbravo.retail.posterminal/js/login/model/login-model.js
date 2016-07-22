@@ -63,7 +63,8 @@
           version: OB.UTIL.VersionManagement.current.posterminal.WebSQLDatabase.dbVersion
         },
         logDBTrxThreshold: 300,
-        logDBStmtThreshold: 1000
+        logDBStmtThreshold: 1000,
+        shouldExecuteBenchmark: true
       });
 
       me.setTerminalName(OB.UTIL.localStorage.getItem('terminalAuthentication') === 'Y' ? OB.UTIL.localStorage.getItem('terminalName') : OB.UTIL.getParameterByName("terminal"));
