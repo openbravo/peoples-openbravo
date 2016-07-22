@@ -3111,11 +3111,15 @@
       _.forEach(groupedOrder.get('lines').models, function (gli, index) {
         if (gli.get('promotions') && gli.get('promotions').length > 0) {
           var linesToApply = new Backbone.Collection();
-          var finalQty = 0;
           _.forEach(receipt.get('lines').models, function (rli) {
-            if (gli.get('product').id === rli.get('product').id && gli.get('price') === rli.get('price')) { // Here could be more checks
-              linesToApply.add(rli);
-              finalQty += rli.get('qty');
+            if (gli.get('product').get('groupProduct')) {
+              if (gli.get('product').id === rli.get('product').id && gli.get('price') === rli.get('price')) {
+                linesToApply.add(rli);
+              }
+            } else {
+              if (gli.get('id') === rli.get('id')) {
+                linesToApply.add(rli);
+              }
             }
           });
 
