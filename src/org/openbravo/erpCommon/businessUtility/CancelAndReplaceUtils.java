@@ -73,6 +73,7 @@ import org.openbravo.model.materialmgmt.onhandquantity.ReservationStock;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
+import org.openbravo.retail.posterminal.POSUtils;
 import org.openbravo.service.db.CallStoredProcedure;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.db.DbUtility;
@@ -901,10 +902,10 @@ public class CancelAndReplaceUtils {
     FIN_PaymentMethod paymentPaymentMethod = null;
     FIN_FinancialAccount financialAccount = null;
     if (jsonorder != null) {
-      paymentPaymentMethod = (FIN_PaymentMethod) jsonorder.getJSONObject("defaultPaymentType").get(
-          "paymentMethod");
-      financialAccount = (FIN_FinancialAccount) jsonorder.getJSONObject("defaultPaymentType").get(
-          "financialAccount");
+      // Set default payment type to order in case there is no payment on the order
+      JSONObject paymentTypeValues = POSUtils.setDefaultPaymentType(jsonorder, oldOrder);
+      paymentPaymentMethod = (FIN_PaymentMethod) paymentTypeValues.get("paymentMethod");
+      financialAccount = (FIN_FinancialAccount) paymentTypeValues.get("financialAccount");
     } else {
       paymentPaymentMethod = oldOrder.getPaymentMethod();
       // Find a financial account belong the organization tree
