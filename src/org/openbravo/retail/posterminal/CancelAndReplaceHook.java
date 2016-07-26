@@ -15,6 +15,11 @@ import org.openbravo.model.common.order.Order;
 
 public class CancelAndReplaceHook extends CancelAndReplaceOrderHook {
 
+  /**
+   * Hook executed during the Cancel and Replace and Cancel Layaway processes. If this processes are
+   * executed from the Web POS, the OBPOSAppCashup is assigned to the order that inverses the
+   * original one.
+   */
   @Override
   public void exec(Boolean replaceOrder, Boolean triggersDisabled, Order oldOrder, Order newOrder,
       Order inverseOrder, JSONObject jsonorder) throws Exception {

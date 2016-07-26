@@ -289,6 +289,8 @@ enyo.kind({
     isReturn = receipt.get('orderType') === 1 || receipt.get('documentType') === OB.MobileApp.model.get('terminal').terminalType.documentTypeForReturns || receipt.get('documentType') === 'VBS RFC Order';
     receiptLines = OB.MobileApp.model.receipt.get('receiptLines');
 
+    // Function to know the delivered status of the current order
+
     function delivered() {
       var shipqty = OB.DEC.Zero;
       var qty = OB.DEC.Zero;
@@ -314,9 +316,12 @@ enyo.kind({
     }
 
     if (isLayaway && ((OB.MobileApp.model.hasPermission('OBPOS_payments.cancelLayaway', true) && this.model.get('orderList').current.get('payment') > 0) || !OB.MobileApp.model.hasPermission('OBPOS_payments.cancelLayaway', true))) {
+      // Show if the current order is a layaway and has both the 'OBPOS_payments.cancelLayaway' property and some payment,
+      // or is a layaway and doesn't have the 'OBPOS_payments.cancelLayaway' property
       this.show();
       this.adjustVisibilityBasedOnPermissions();
     } else if (isPaidReceipt && !isReturn && receipt.get('orderType') !== 3 && delivered() !== 'TD') {
+      // Show if the current order is a fully paid receipt but not fully delivered, return nor a cancelled ticket
       this.show();
       this.adjustVisibilityBasedOnPermissions();
     } else {

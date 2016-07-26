@@ -149,6 +149,8 @@ enyo.kind({
             cancelQtyChangeReturn = false;
         if (me.selectedModelsSameQty) {
 
+          // Check if is trying to remove delivered units or to modify negative lines in a cancel and replace ticket.
+          // In that case stop the flow and show an error popup.
           if (keyboard.receipt.get('replacedorder')) {
             _.each(me.selectedModels, function (l) {
               var oldqty = l.get('qty'),

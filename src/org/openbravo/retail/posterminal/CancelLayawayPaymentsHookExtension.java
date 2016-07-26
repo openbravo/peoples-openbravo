@@ -19,6 +19,11 @@ import org.openbravo.model.common.order.Order;
 @ApplicationScoped
 public class CancelLayawayPaymentsHookExtension implements CancelLayawayPaymentsHook {
 
+  /**
+   * Hook to execute the handlePayments public method that creates the payments sent from the Web
+   * POS during the Cancel Layaway process. These payments are added to the inverse order created
+   * during the Cancel Layaway process.
+   */
   @Override
   public void exec(JSONObject jsonorder, Order inverseOrder) throws Exception {
     OrderLoader orderLoader = WeldUtils.getInstanceFromStaticBeanManager(OrderLoader.class);

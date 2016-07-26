@@ -2017,6 +2017,10 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       } else if (writeoffAmt.signum() == -1
           && ((!notpaidLayaway && !creditpaidLayaway && !fullypaidLayaway && !checkPaidOnCreditChecked) || jsonorder
               .has("paidInNegativeStatusAmt"))) {
+        // If the overpayment is negative and the order is not a fully or not paid layaway, a
+        // quotation nor an order paid on credit, or the overpayment is negative and having a
+        // positive tickets in which the created payments are negative (this may occur in C&R flow)
+        // the negative writeoffAmt must be take into account
         if (totalIsNegative) {
           amount = amount.add(writeoffAmt).setScale(pricePrecision, RoundingMode.HALF_UP);
         } else {
@@ -2103,7 +2107,11 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           false, false, order.getCurrency(), mulrate, origAmount, true,
           payment.has("id") ? payment.getString("id") : null);
 
-      if (writeoffAmt.signum() == 1 || jsonorder.has("paidInNegativeStatusAmt")) {
+      // Associate a GLItem with the overpayment amount to the payment which generates the
+      // overpayment for positive writeoffAmt and for negative overpayments generated in a positive
+      // order (specific in C&R flow)
+      if (writeoffAmt.signum() == 1
+          || (writeoffAmt.signum() == -1 && jsonorder.has("paidInNegativeStatusAmt"))) {
         if (totalIsNegative) {
           FIN_AddPayment.saveGLItem(finPayment, writeoffAmt.negate(), paymentType
               .getPaymentMethod().getGlitemWriteoff(),
