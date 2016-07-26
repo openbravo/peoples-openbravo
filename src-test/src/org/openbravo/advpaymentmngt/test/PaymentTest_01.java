@@ -17,7 +17,7 @@
  *************************************************************************
  */
 
-package org.openbravo.advpaymentmngt.test.draft;
+package org.openbravo.advpaymentmngt.test;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -65,9 +65,9 @@ public class PaymentTest_01 extends OBBaseTest {
 
   /**
    * Initial Set up.
-   *  
-   * This before method is named setUpP01() to avoid overwriting the super 
-   * setUp method that is invoke automatically before this one.
+   * 
+   * This before method is named setUpP01() to avoid overwriting the super setUp method that is
+   * invoke automatically before this one.
    * 
    */
   @Before

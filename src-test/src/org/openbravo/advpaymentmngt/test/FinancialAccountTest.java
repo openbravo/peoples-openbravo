@@ -17,7 +17,7 @@
  *************************************************************************
  */
 
-package org.openbravo.advpaymentmngt.test.draft;
+package org.openbravo.advpaymentmngt.test;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -40,8 +40,8 @@ public class FinancialAccountTest extends OBBaseTest {
   private static final String STANDARD_DESCRIPTION = "JUnit Test";
 
   /**
-   * This before method is named setUpF() to avoid overwriting the super 
-   * setUp method that is invoke automatically before this one.
+   * This before method is named setUpF() to avoid overwriting the super setUp method that is invoke
+   * automatically before this one.
    */
   @Before
   public void setUpF() throws Exception {

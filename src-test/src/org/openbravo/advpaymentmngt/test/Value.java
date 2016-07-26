@@ -17,7 +17,7 @@
  *************************************************************************
  */
 
-package org.openbravo.advpaymentmngt.test.draft;
+package org.openbravo.advpaymentmngt.test;
 
 public class Value {
   private String field;

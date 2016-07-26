@@ -17,7 +17,7 @@
  *************************************************************************
  */
 
-package org.openbravo.advpaymentmngt.test.draft;
+package org.openbravo.advpaymentmngt.test;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;

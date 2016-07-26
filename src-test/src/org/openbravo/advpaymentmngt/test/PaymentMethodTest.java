@@ -17,7 +17,7 @@
  *************************************************************************
  */
 
-package org.openbravo.advpaymentmngt.test.draft;
+package org.openbravo.advpaymentmngt.test;
 
 import java.util.List;
 
@@ -40,8 +40,8 @@ public class PaymentMethodTest extends OBBaseTest {
   private static final String STANDARD_DESCRIPTION = "JUnit Test";
 
   /**
-   * This before method is named setUpP() to avoid overwriting the super 
-   * setUp method that is invoke automatically before this one.
+   * This before method is named setUpP() to avoid overwriting the super setUp method that is invoke
+   * automatically before this one.
    */
   @Before
   public void setUpP() throws Exception {

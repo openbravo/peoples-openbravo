@@ -17,23 +17,10 @@
  ************************************************************************
  */
 
-package org.openbravo.advpaymentmngt.test.draft;
+package org.openbravo.advpaymentmngt.test;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
-import org.openbravo.advpaymentmngt.test.draft.FinancialAccountTest;
-import org.openbravo.advpaymentmngt.test.draft.PaymentMethodTest;
-import org.openbravo.advpaymentmngt.test.draft.PaymentTest_01;
-import org.openbravo.advpaymentmngt.test.draft.PaymentTest_02;
-import org.openbravo.advpaymentmngt.test.draft.PaymentTest_03;
-import org.openbravo.advpaymentmngt.test.draft.PaymentTest_04;
-import org.openbravo.advpaymentmngt.test.draft.PaymentTest_05;
-import org.openbravo.advpaymentmngt.test.draft.PaymentTest_06;
-import org.openbravo.advpaymentmngt.test.draft.PaymentTest_07;
-import org.openbravo.advpaymentmngt.test.draft.PaymentTest_08;
-import org.openbravo.advpaymentmngt.test.draft.PaymentTest_09;
-import org.openbravo.advpaymentmngt.test.draft.PaymentTest_10;
-import org.openbravo.advpaymentmngt.test.draft.PaymentTest_11;
 
 /**
  * 
@@ -43,11 +30,11 @@ import org.openbravo.advpaymentmngt.test.draft.PaymentTest_11;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-  
-    // Master Data Configuration
+
+// Master Data Configuration
     FinancialAccountTest.class, //
     PaymentMethodTest.class,
-    
+
     // Payment scenarios
     PaymentTest_01.class, //
     PaymentTest_02.class, //
