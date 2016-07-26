@@ -11,7 +11,6 @@ package org.openbravo.retail.posterminal.importprocess;
 import javax.enterprise.context.ApplicationScoped;
 
 import org.openbravo.base.weld.WeldUtils;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.mobile.core.process.DataSynchronizationProcess;
 import org.openbravo.mobile.core.process.MobileImportEntryProcessorRunnable;
 import org.openbravo.retail.posterminal.CancelLayawayLoader;
@@ -35,7 +34,7 @@ public class CancelLayawayImportEntryProcessor extends ImportEntryProcessor {
   }
 
   protected String getProcessSelectionKey(ImportEntry importEntry) {
-    return (String) DalUtil.getId(importEntry.getOrganization());
+    return importEntry.getOrganization().getId();
   }
 
   private static class CancelLayawayRunnable extends MobileImportEntryProcessorRunnable {
