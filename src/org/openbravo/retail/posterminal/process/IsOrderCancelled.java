@@ -9,50 +9,46 @@
 
 package org.openbravo.retail.posterminal.process;
 
-import javax.servlet.ServletException;
-
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.retail.posterminal.JSONProcessSimple;
 import org.openbravo.service.json.JsonConstants;
 
 public class IsOrderCancelled extends JSONProcessSimple {
   @Override
-  public JSONObject exec(JSONObject jsonData) throws JSONException, ServletException {
+  public JSONObject exec(JSONObject jsonData) throws OBException, JSONException {
     OBContext.setAdminMode(true);
     JSONObject result = new JSONObject();
     JSONObject data = new JSONObject();
 
-    try {
-      String orderId = jsonData.getString("orderId");
-      Boolean cancelOrder = jsonData.getBoolean("setCancelled");
-      Order order = OBDal.getInstance().get(Order.class, orderId);
+    String orderId = jsonData.getString("orderId");
+    String documentNo = jsonData.getString("documentNo");
+    Boolean cancelOrder = jsonData.getBoolean("setCancelled");
+    Order order = OBDal.getInstance().get(Order.class, orderId);
 
-      if (order != null) {
-        if (order.isCancelled()) {
-          data.put("orderCancelled", true);
-        } else {
-          data.put("orderCancelled", false);
-          if (cancelOrder) {
-            order.setCancelled(true);
-          }
-        }
-      } else {
-        // This flow should never be executed
+    if (order != null) {
+      if (order.isCancelled()) {
         data.put("orderCancelled", true);
+      } else {
+        data.put("orderCancelled", false);
+        if (cancelOrder) {
+          order.setCancelled(true);
+        }
       }
-
-      result.put("data", data);
-      result.put("status", JsonConstants.RPCREQUEST_STATUS_SUCCESS);
-
-    } catch (Exception e) {
-      result.put("status", JsonConstants.RPCREQUEST_STATUS_FAILURE);
-    } finally {
-      OBContext.restorePreviousMode();
+    } else {
+      // The layaway was not found in the database.
+      throw new OBException(OBMessageUtils.getI18NMessage("OBPOS_OrderNotFound",
+          new String[] { documentNo }));
     }
+
+    result.put("data", data);
+    result.put("status", JsonConstants.RPCREQUEST_STATUS_SUCCESS);
+
     return result;
   }
 }
