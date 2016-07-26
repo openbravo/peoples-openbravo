@@ -41,6 +41,7 @@ public class PaidReceipts extends JSONProcessSimple {
   public static final String paidReceiptsLinesPropertyExtension = "PRExtensionLines";
   public static final String paidReceiptsShipLinesPropertyExtension = "PRExtensionShipLines";
   public static final String paidReceiptsRelatedLinesPropertyExtension = "PRExtensionRelatedLines";
+  public static final String paidReceiptsPaymentsPropertyExtension = "PRExtensionPayments";
 
   @Inject
   @Any
@@ -58,6 +59,10 @@ public class PaidReceipts extends JSONProcessSimple {
   @Any
   @Qualifier(paidReceiptsRelatedLinesPropertyExtension)
   private Instance<ModelExtension> extensionsRelatedLines;
+  @Inject
+  @Any
+  @Qualifier(paidReceiptsPaymentsPropertyExtension)
+  private Instance<ModelExtension> extensionsPayments;
 
   @Override
   public JSONObject exec(JSONObject jsonsent) throws JSONException, ServletException {
@@ -213,35 +218,16 @@ public class PaidReceipts extends JSONProcessSimple {
         }
         paidReceipt.put("receiptLines", listpaidReceiptsLines);
 
-        JSONArray listPaymentsIn = new JSONArray();
-
-        // TODO: make this extensible
-        String hqlPaymentsIn = "select scheduleDetail.amount, scheduleDetail.paymentDetails.finPayment.account.id, "
-            + "scheduleDetail.paymentDetails.finPayment.paymentDate, scheduleDetail.paymentDetails.finPayment.id, "
-            + "scheduleDetail.paymentDetails.finPayment.amount, scheduleDetail.paymentDetails.finPayment.obposPaymentdata "
+        HQLPropertyList hqlPropertiesPayments = ModelExtensionUtils
+            .getPropertyExtensions(extensionsPayments);
+        String hqlPaymentsIn = "select "
+            + hqlPropertiesPayments.getHqlSelect()
             + "from FIN_Payment_ScheduleDetail as scheduleDetail where scheduleDetail.orderPaymentSchedule.order.id=? "
             + "order by scheduleDetail.paymentDetails.finPayment.documentNo";
-        Query paymentsInQuery = OBDal.getInstance().getSession().createQuery(hqlPaymentsIn);
-        // paidReceiptsQuery.setString(0, id);
-        paymentsInQuery.setString(0, orderid);
-        for (Object objPaymentIn : paymentsInQuery.list()) {
-          Object[] objPaymentsIn = (Object[]) objPaymentIn;
-          JSONObject paymentsIn = new JSONObject();
-          paymentsIn.put("amount", objPaymentsIn[0]);
-          paymentsIn.put("account", objPaymentsIn[1]);
-          String dateFormat = "yyyy-MM-dd";
-          SimpleDateFormat outputFormat = new SimpleDateFormat(dateFormat);
-          paymentsIn.put("paymentDate", outputFormat.format(((Date) objPaymentsIn[2])));
-          paymentsIn.put("paymentId", objPaymentsIn[3]);
-          paymentsIn.put("paymentAmount", objPaymentsIn[4]);
-          try {
-            // ensure that just valid JSONObjects are accepted
-            paymentsIn.put("paymentData", new JSONObject((String) objPaymentsIn[5]));
-          } catch (Exception e) {
-            // This property will not exist
-          }
-          listPaymentsIn.put(paymentsIn);
-        }
+        Query paidReceiptsPaymentsQuery = OBDal.getInstance().getSession()
+            .createQuery(hqlPaymentsIn);
+        paidReceiptsPaymentsQuery.setString(0, orderid);
+        JSONArray listPaymentsIn = hqlPropertiesPayments.getJSONArray(paidReceiptsPaymentsQuery);
 
         JSONArray listpaidReceiptsPayments = new JSONArray();
         JSONArray listPaymentsType = new JSONArray();
@@ -294,9 +280,9 @@ public class PaidReceipts extends JSONProcessSimple {
               paidReceiptPayment.put("isocode", objectType.get("isocode"));
               paidReceiptPayment.put("openDrawer", objectType.get("openDrawer"));
               paidReceiptPayment.put("isPrePayment", true);
-              paidReceiptPayment.put("paymentAmount",
-                  new BigDecimal((String) objectIn.get("paymentAmount").toString())
-                      .multiply(new BigDecimal((String) objectType.get("mulrate").toString())));
+              paidReceiptPayment.put("paymentAmount", new BigDecimal(objectIn.get("paymentAmount")
+                  .toString()).multiply(new BigDecimal((String) objectType.get("mulrate")
+                  .toString())));
               added = true;
               listpaidReceiptsPayments.put(paidReceiptPayment);
             }
