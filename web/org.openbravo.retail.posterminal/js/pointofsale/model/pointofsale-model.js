@@ -423,16 +423,21 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     }, this);
 
     receipt.on('paymentDone', function (openDrawer) {
-      var process = new OB.DS.Process('org.openbravo.retail.posterminal.process.IsOrderCancelled'),
+      var isOrderCancelledProcess = new OB.DS.Process('org.openbravo.retail.posterminal.process.IsOrderCancelled'),
           triggerPaymentAccepted;
 
       triggerPaymentAccepted = function () {
         if (receipt.get('doCancelAndReplace') && receipt.get('replacedorder')) {
-          process.exec({
+          isOrderCancelledProcess.exec({
             orderId: receipt.get('replacedorder'),
+            documentNo: receipt.get('documentNo'),
             setCancelled: true
           }, function (data) {
             if (data && data.exception) {
+              if (data.exception.message) {
+                OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), data.exception.message);
+                return;
+              }
               OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBMOBC_OfflineWindowRequiresOnline'));
               return;
             } else if (data && data.orderCancelled) {
@@ -441,6 +446,8 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
             } else {
               receipt.trigger('paymentAccepted');
             }
+          }, function () {
+            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBMOBC_OfflineWindowRequiresOnline'));
           });
         } else {
           receipt.trigger('paymentAccepted');
@@ -751,9 +758,14 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
 
           process.exec({
             orderId: receipt.get('id'),
+            documentNo: receipt.get('documentNo'),
             setCancelled: true
           }, function (data) {
             if (data && data.exception) {
+              if (data.exception.message) {
+                OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), data.exception.message);
+                return;
+              }
               OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBMOBC_OfflineWindowRequiresOnline'));
               return;
             } else if (data && data.orderCancelled) {
@@ -815,6 +827,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
               receipt.trigger('print');
             }
           }, function () {
+            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBMOBC_OfflineWindowRequiresOnline'));
             OB.error(arguments);
           });
           };
