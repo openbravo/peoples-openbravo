@@ -491,7 +491,8 @@ public class CashVATUtil {
     try {
       if (invoice.isCashVAT() && !line.getInvoiceTaxCashVAT_V().isEmpty()) {
         FactLine factLine2 = null;
-        for (final InvoiceTaxCashVAT_V itcv : line.getInvoiceTaxCashVAT_V()) {
+        for (final String itcvId : line.getInvoiceTaxCashVAT_V()) {
+          InvoiceTaxCashVAT_V itcv = OBDal.getInstance().get(InvoiceTaxCashVAT_V.class, itcvId);
           final TaxRate tax = itcv.getInvoiceTax().getTax();
           Invoice inv = itcv.getInvoiceTax().getInvoice();
           if (tax.isCashVAT() && StringUtils.equals(inv.getId(), invoice.getId())) {
