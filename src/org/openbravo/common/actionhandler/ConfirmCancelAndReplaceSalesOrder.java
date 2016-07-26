@@ -22,15 +22,15 @@ import java.util.Map;
 
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
-import org.openbravo.client.kernel.BaseActionHandler;
+import org.openbravo.client.application.process.BaseProcessActionHandler;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.CancelAndReplaceUtils;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 
-public class ConfirmCancelAndReplaceSalesOrder extends BaseActionHandler {
+public class ConfirmCancelAndReplaceSalesOrder extends BaseProcessActionHandler {
 
   @Override
-  protected JSONObject execute(Map<String, Object> parameters, String content) throws OBException {
+  protected JSONObject doExecute(Map<String, Object> parameters, String content) throws OBException {
     JSONObject result = new JSONObject();
     try {
 

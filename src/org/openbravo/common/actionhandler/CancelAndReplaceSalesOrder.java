@@ -27,7 +27,7 @@ import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
-import org.openbravo.client.kernel.BaseActionHandler;
+import org.openbravo.client.application.process.BaseProcessActionHandler;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.CancelAndReplaceUtils;
@@ -36,11 +36,11 @@ import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.service.db.DbUtility;
 
-public class CancelAndReplaceSalesOrder extends BaseActionHandler {
+public class CancelAndReplaceSalesOrder extends BaseProcessActionHandler {
   private static final Logger log = Logger.getLogger(CancelAndReplaceSalesOrder.class);
 
   @Override
-  protected JSONObject execute(Map<String, Object> parameters, String content) {
+  protected JSONObject doExecute(Map<String, Object> parameters, String content) {
 
     // Declare json to be returned
     JSONObject result = new JSONObject();
