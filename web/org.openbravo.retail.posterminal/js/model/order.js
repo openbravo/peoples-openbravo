@@ -2507,6 +2507,74 @@
       });
     },
 
+    verifyCancelAndReplace: function (context) {
+      var me = this,
+          process = new OB.DS.Process('org.openbravo.retail.posterminal.process.IsOrderCancelled');
+
+      process.exec({
+        orderId: this.get('id'),
+        documentNo: this.get('documentNo'),
+        setCancelled: false
+      }, function (data) {
+        if (data && data.exception) {
+          if (data.exception.message) {
+            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), data.exception.message);
+            return;
+          }
+          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBMOBC_OfflineWindowRequiresOnline'));
+          return;
+        } else if (data && data.orderCancelled) {
+          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_OrderReplacedError'));
+          return;
+        } else {
+          OB.UTIL.HookManager.executeHooks('OBPOS_PreCancelAndReplace', {
+            context: context
+          }, function (args) {
+            if (args && args.cancelOperation) {
+              return;
+            }
+
+            if (me.get('payments').length) {
+              var notPrePayments = _.filter(me.get('payments').models, function (payment) {
+                return !payment.get('isPrePayment');
+              });
+              if (notPrePayments.length !== 0) {
+                var paymentList = [OB.I18N.getLabel('OBPOS_C&RDeletePaymentsBodyInit')];
+                var symbol = OB.MobileApp.model.get('terminal').symbol;
+                var symbolAtRight = OB.MobileApp.model.get('terminal').currencySymbolAtTheRight;
+                _.each(notPrePayments, function (payment) {
+                  paymentList.push('· ' + payment.get('name') + ' (' + OB.I18N.formatCurrencyWithSymbol(payment.get('amount'), symbol, symbolAtRight) + ')');
+                });
+                paymentList.push(OB.I18N.getLabel('OBPOS_C&RDeletePaymentsBodyEnd'));
+                OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_C&RDeletePaymentsHeader'), paymentList, [{
+                  label: OB.I18N.getLabel('OBMOBC_LblOk'),
+                  isConfirmButton: true,
+                  order: me,
+                  notPrePayments: notPrePayments,
+                  action: function () {
+                    var confirmationPopup = this;
+                    _.each(this.notPrePayments, function (payment) {
+                      var location = confirmationPopup.order.get('payments').models.indexOf(payment);
+                      confirmationPopup.order.get('payments').remove(confirmationPopup.order.get('payments').at(location));
+                    });
+                    this.order.cancelAndReplaceOrder();
+                  }
+                }, {
+                  label: OB.I18N.getLabel('OBMOBC_LblCancel')
+                }]);
+              } else {
+                me.cancelAndReplaceOrder();
+              }
+            } else {
+              me.cancelAndReplaceOrder();
+            }
+          });
+        }
+      }, function () {
+        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBMOBC_OfflineWindowRequiresOnline'));
+      });
+    },
+
     cancelAndReplaceOrder: function () {
       var documentseq, documentseqstr, idMap = {},
           me = this,
@@ -2574,26 +2642,71 @@
         }
         me.set('documentNo', newDocNo);
         me.set('posTerminal', OB.MobileApp.model.get('terminal').id);
-        me.save();
+        me.save(function () {
+          me.get('lines').each(function (line) {
+            if (line.get('relatedLines')) {
+              line.get('relatedLines').forEach(function (rl) {
+                rl.orderId = me.get('id');
+                if (idMap[rl.orderlineId]) {
+                  rl.orderlineId = idMap[rl.orderlineId];
+                }
+              });
+            }
+          }, me);
+          me.get('payments').reset(me.get('payments').models);
+          me.set('doCancelAndReplace', true);
 
-        me.get('lines').each(function (line) {
-          if (line.get('relatedLines')) {
-            line.get('relatedLines').forEach(function (rl) {
-              rl.orderId = me.get('id');
-              if (idMap[rl.orderlineId]) {
-                rl.orderlineId = idMap[rl.orderlineId];
-              }
-            });
-          }
-        }, me);
-        me.get('payments').reset(me.get('payments').models);
-        me.set('doCancelAndReplace', true);
-
-        OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_OrderReplaced', [me.get('replacedorder_documentNo'), me.get('documentNo')]));
-        me.calculateGross();
-        me.unset('skipApplyPromotions');
+          OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_OrderReplaced', [me.get('replacedorder_documentNo'), me.get('documentNo')]));
+          me.calculateReceipt(function () {
+            me.unset('skipApplyPromotions');
+          });
+        });
       }, function () {
         OB.UTIL.showError('Error removing');
+      });
+    },
+
+    cancelLayaway: function (context) {
+      var me = this,
+          cancelAllowed = true,
+          notValid, i;
+      OB.UTIL.HookManager.executeHooks('OBPOS_PreCancelLayaway', {
+        context: context
+      }, function (args) {
+        if (args && args.cancelOperation) {
+          return;
+        }
+
+        // Verify if there is any payment that is not prePayment. In that case the cancel layaway process stops immediately
+        for (i = 0; i < me.get('payments').models.length; i++) {
+          var curPayment = me.get('payments').models[i];
+          if (_.isUndefined(curPayment.get('isPrePayment')) || _.isNull(curPayment.get('isPrePayment'))) {
+            cancelAllowed = false;
+            notValid = curPayment;
+            break;
+          }
+        }
+
+        if (cancelAllowed) {
+          me.set('cancelLayaway', true);
+          context.doShowDivText({
+            permission: context.permission,
+            orderType: 3
+          });
+          // If the canceling layaway is partially delivered, the payment and gross must be updated to don't create payments
+          // to return the delivered quantity
+          if (me.get('isPartiallyDelivered')) {
+            me.set('gross', OB.DEC.sub(me.get('deliveredQuantityAmount'), me.get('gross')));
+            me.set('payment', OB.DEC.Zero);
+          }
+          context.doTabChange({
+            tabPanel: 'payment',
+            keyboard: 'toolbarpayment',
+            edit: false
+          });
+        } else {
+          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_lblPaymentNotProcessedHeader'), OB.I18N.getLabel('OBPOS_lblPaymentNotProcessedMessage', [notValid.get('name'), notValid.get('origAmount'), OB.MobileApp.model.paymentnames[notValid.get('kind')].isocode]));
+        }
       });
     },
 
