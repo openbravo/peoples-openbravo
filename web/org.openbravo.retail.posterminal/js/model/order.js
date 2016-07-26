@@ -1280,6 +1280,9 @@
 
       if (me.get('replacedorder') && line.get('remainingQuantity')) {
         OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_CancelReplaceDeleteLine'));
+        if (callback) {
+          callback();
+        }
         return;
       }
 
