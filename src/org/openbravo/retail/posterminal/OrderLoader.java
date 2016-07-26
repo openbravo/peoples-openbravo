@@ -40,7 +40,6 @@ import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
-import org.openbravo.base.model.Property;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.structure.BaseOBObject;
@@ -63,7 +62,6 @@ import org.openbravo.mobile.core.process.DataSynchronizationImportProcess;
 import org.openbravo.mobile.core.process.DataSynchronizationProcess.DataSynchronization;
 import org.openbravo.mobile.core.process.JSONPropertyToEntity;
 import org.openbravo.mobile.core.process.OutDatedDataChangeException;
-import org.openbravo.mobile.core.process.PropertyByType;
 import org.openbravo.mobile.core.utils.OBMOBCUtils;
 import org.openbravo.model.ad.access.InvoiceLineTax;
 import org.openbravo.model.ad.access.OrderLineTax;
@@ -103,7 +101,6 @@ import org.openbravo.service.db.CallStoredProcedure;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.importprocess.ImportEntryManager;
 import org.openbravo.service.json.JsonConstants;
-import org.openbravo.service.json.JsonToDataConverter;
 
 @DataSynchronization(entity = "Order")
 public class OrderLoader extends POSDataSynchronizationProcess implements
@@ -406,6 +403,19 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
             updateStockStatement.close();
           }
         }
+
+        boolean doCancelAndReplace = jsonorder.has("doCancelAndReplace")
+            && jsonorder.getBoolean("doCancelAndReplace") ? true : false;
+        if (doCancelAndReplace && order.getReplacedorder() != null) {
+          try {
+            // Cancel and Replace the order
+            CancelAndReplaceUtils.cancelAndReplaceOrder(order.getId(), jsonorder,
+                useOrderDocumentNoForRelatedDocs);
+          } catch (Exception ex) {
+            throw new OBException("CancelAndReplaceUtils.cancelAndReplaceOrder: ", ex);
+          }
+        }
+
         if (log.isDebugEnabled()) {
           t4 = System.currentTimeMillis();
 
@@ -448,23 +458,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         JSONObject paymentResponse = handlePayments(jsonorder, order, invoice, wasPaidOnCredit);
         if (paymentResponse != null) {
           return paymentResponse;
-        }
-
-        boolean doCancelAndReplace = jsonorder.has("doCancelAndReplace")
-            && jsonorder.getBoolean("doCancelAndReplace") ? true : false;
-        if (doCancelAndReplace && order.getReplacedorder() != null) {
-          TriggerHandler.getInstance().disable();
-          try {
-            // Set default payment type to order in case there is no payment on the order
-            POSUtils.setDefaultPaymentType(jsonorder, order);
-            // Cancel and Replace the order
-            CancelAndReplaceUtils.cancelAndReplaceOrder(order.getId(), jsonorder,
-                useOrderDocumentNoForRelatedDocs);
-          } catch (Exception ex) {
-            throw new OBException("CancelAndReplaceUtils.cancelAndReplaceOrder: ", ex);
-          } finally {
-            TriggerHandler.getInstance().enable();
-          }
         }
 
         // Call all OrderProcess injected.

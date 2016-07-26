@@ -733,32 +733,39 @@ public class POSUtils {
     return false;
   }
 
-  public static void setDefaultPaymentType(JSONObject jsonorder, Order order) {
-    try {
-      TerminalTypePaymentMethod defaultPaymentMethod = order.getObposApplications()
-          .getObposTerminaltype().getPaymentMethod();
-      OBCriteria<OBPOSAppPayment> paymentTypes = OBDal.getInstance().createCriteria(
-          OBPOSAppPayment.class);
-      paymentTypes.add(Restrictions.eq(OBPOSAppPayment.PROPERTY_OBPOSAPPLICATIONS,
-          order.getObposApplications()));
-      if (defaultPaymentMethod != null) {
-        paymentTypes.add(Restrictions.eq(OBPOSAppPayment.PROPERTY_PAYMENTMETHOD,
-            defaultPaymentMethod));
-      }
-      paymentTypes.addOrderBy(OBPOSAppPayment.PROPERTY_ID, false);
-      paymentTypes.setMaxResults(1);
-      OBPOSAppPayment defaultPaymentType = (OBPOSAppPayment) paymentTypes.uniqueResult();
-
-      if (defaultPaymentType != null) {
-        JSONObject paymentTypeValues = new JSONObject();
-        paymentTypeValues.put("paymentMethod", defaultPaymentType.getPaymentMethod()
-            .getPaymentMethod());
-        paymentTypeValues.put("financialAccount", defaultPaymentType.getFinancialAccount());
-        jsonorder.put("defaultPaymentType", paymentTypeValues);
-      }
-    } catch (JSONException e) {
-      log.error("Error setting default payment type to order" + order, e);
+  /**
+   * Method to calculate the default payment method and financial account of an order
+   * 
+   * @param jsonorder
+   *          JSONObject with the information sent from the Web POS
+   * @param order
+   *          The order to obtain data
+   * @return The JSONObject with the payment method and financial account
+   */
+  public static JSONObject setDefaultPaymentType(JSONObject jsonorder, Order order)
+      throws JSONException {
+    TerminalTypePaymentMethod defaultPaymentMethod = order.getObposApplications()
+        .getObposTerminaltype().getPaymentMethod();
+    OBCriteria<OBPOSAppPayment> paymentTypes = OBDal.getInstance().createCriteria(
+        OBPOSAppPayment.class);
+    paymentTypes.add(Restrictions.eq(OBPOSAppPayment.PROPERTY_OBPOSAPPLICATIONS,
+        order.getObposApplications()));
+    if (defaultPaymentMethod != null) {
+      paymentTypes.add(Restrictions
+          .eq(OBPOSAppPayment.PROPERTY_PAYMENTMETHOD, defaultPaymentMethod));
     }
+    paymentTypes.addOrderBy(OBPOSAppPayment.PROPERTY_ID, false);
+    paymentTypes.setMaxResults(1);
+    OBPOSAppPayment defaultPaymentType = (OBPOSAppPayment) paymentTypes.uniqueResult();
+
+    JSONObject paymentTypeValues = null;
+    if (defaultPaymentType != null) {
+      paymentTypeValues = new JSONObject();
+      paymentTypeValues.put("paymentMethod", defaultPaymentType.getPaymentMethod()
+          .getPaymentMethod());
+      paymentTypeValues.put("financialAccount", defaultPaymentType.getFinancialAccount());
+    }
+    return paymentTypeValues;
   }
 
 }
