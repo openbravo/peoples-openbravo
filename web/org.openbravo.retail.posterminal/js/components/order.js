@@ -741,7 +741,7 @@ enyo.kind({
               }
             }
           } else if (siblingServicesLines.length > qtyService) {
-            linesToRemove = OB.UTIL.mergeArrays(linesToRemove, _.last(siblingServicesLines, siblingServicesLines.length - qtyService));
+            linesToRemove = OB.UTIL.mergeArrays(linesToRemove, _.initial(siblingServicesLines, qtyService));
           }
 
           return qtyLineServ;
