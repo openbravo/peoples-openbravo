@@ -802,7 +802,11 @@
     },
 
     getPending: function () {
-      return _.isUndefined(this.get('paidInNegativeStatusAmt')) ? OB.DEC.sub(OB.DEC.abs(this.getTotal()), this.getPayment()) : OB.DEC.abs(OB.DEC.sub(OB.DEC.abs(this.getTotal()), this.get('paidInNegativeStatusAmt')));
+      if (_.isUndefined(this.get('paidInNegativeStatusAmt'))) {
+        return OB.DEC.sub(OB.DEC.abs(this.getTotal()), this.getPayment());
+      } else {
+        return OB.DEC.abs(OB.DEC.sub(OB.DEC.abs(this.getTotal()), this.get('paidInNegativeStatusAmt')));
+      }
     },
 
     getDeliveredQuantityAmount: function () {
@@ -2909,17 +2913,7 @@
       var precision;
       var processedPaymentsAmount = OB.DEC.Zero;
       var paymentstatus = this.getPaymentStatus();
-
-      for (i = 0, max = payments.length; i < max; i++) {
-        p = payments.at(i);
-        precision = this.getPrecision(p);
-        if (p.get('rate') && p.get('rate') !== '1') {
-          p.set('origAmount', OB.DEC.mul(p.get('amount'), p.get('rate')));
-        } else {
-          p.set('origAmount', p.get('amount'));
-        }
-        p.set('paid', p.get('origAmount'));
-        if (_.isUndefined(this.get('paidInNegativeStatusAmt'))) {
+      var sumCash = function () {
           if (p.get('kind') === OB.MobileApp.model.get('paymentcash')) {
             // The default cash method
             cash = OB.DEC.add(cash, p.get('origAmount'));
@@ -2933,21 +2927,22 @@
           } else {
             nocash = OB.DEC.add(nocash, p.get('origAmount'));
           }
+          };
+
+      for (i = 0, max = payments.length; i < max; i++) {
+        p = payments.at(i);
+        precision = this.getPrecision(p);
+        if (p.get('rate') && p.get('rate') !== '1') {
+          p.set('origAmount', OB.DEC.mul(p.get('amount'), p.get('rate')));
+        } else {
+          p.set('origAmount', p.get('amount'));
+        }
+        p.set('paid', p.get('origAmount'));
+        if (_.isUndefined(this.get('paidInNegativeStatusAmt'))) {
+          sumCash();
         } else {
           if (!p.get('isPrePayment')) {
-            if (p.get('kind') === OB.MobileApp.model.get('paymentcash')) {
-              // The default cash method
-              cash = OB.DEC.add(cash, p.get('origAmount'));
-              pcash = p;
-              paidCash = OB.DEC.add(paidCash, p.get('origAmount'));
-            } else if (OB.MobileApp.model.hasPayment(p.get('kind')) && OB.MobileApp.model.hasPayment(p.get('kind')).paymentMethod.iscash) {
-              // Another cash method
-              origCash = OB.DEC.add(origCash, p.get('origAmount'));
-              pcash = p;
-              paidCash = OB.DEC.add(paidCash, p.get('origAmount'));
-            } else {
-              nocash = OB.DEC.add(nocash, p.get('origAmount'));
-            }
+            sumCash();
           } else {
             processedPaymentsAmount = OB.DEC.add(processedPaymentsAmount, p.get('origAmount'));
           }

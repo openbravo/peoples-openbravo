@@ -270,8 +270,6 @@ enyo.kind({
       if ((model.get('orderType') === 2 || (model.get('isLayaway'))) && model.get('orderType') !== 3 && !model.getPaymentStatus().done && _.isUndefined(model.get('paidInNegativeStatusAmt'))) {
         this.$.layawayaction.setContent(OB.I18N.getLabel('OBPOS_LblLayaway'));
         this.$.layawayaction.show();
-      } else if (model.get('orderType') === 3 && _.isUndefined(model.get('paidInNegativeStatusAmt'))) {
-        this.$.layawayaction.hide();
       } else {
         this.$.layawayaction.hide();
       }
@@ -971,8 +969,7 @@ enyo.kind({
   tap: function () {
     var myModel = this.owner.model,
         me = this,
-        payments, process = new OB.DS.Process('org.openbravo.retail.posterminal.process.IsOrderCancelled'),
-        avoidPayment = false,
+        payments, avoidPayment = false,
         orderDesc = '';
     if (this && this.owner && this.owner.receipt && this.owner.receipt.getOrderDescription) {
       orderDesc = this.owner.receipt.getOrderDescription();

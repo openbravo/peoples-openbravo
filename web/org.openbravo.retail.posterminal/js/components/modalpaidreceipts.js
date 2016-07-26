@@ -296,7 +296,7 @@ enyo.kind({
   searchAction: function (inSender, inEvent) {
     var me = this,
         ordersLoaded = [],
-        existentOrders = [],
+        existingOrders = [],
         process = new OB.DS.Process('org.openbravo.retail.posterminal.PaidReceiptsHeader'),
         i;
     me.filters = inEvent.filters;
@@ -309,7 +309,7 @@ enyo.kind({
     for (i = 0; i < this.model.get('orderList').length; i++) {
       // When an canceller order is ready, the cancelled order cannot be opened
       if (this.model.get('orderList').models[i].get('replacedorder')) {
-        existentOrders.push(this.model.get('orderList').models[i].get('replacedorder'));
+        existingOrders.push(this.model.get('orderList').models[i].get('replacedorder'));
       }
     }
     if (OB.MobileApp.model.hasPermission('OBPOS_orderLimit', true)) {
@@ -325,7 +325,7 @@ enyo.kind({
         ordersLoaded = [];
         _.each(data, function (iter) {
           me.model.get('orderList').newDynamicOrder(iter, function (order) {
-            if (existentOrders.indexOf(order.id) === -1) {
+            if (existingOrders.indexOf(order.id) === -1) {
               // Only push the order if not exists in previous receipts
               ordersLoaded.push(order);
             }
