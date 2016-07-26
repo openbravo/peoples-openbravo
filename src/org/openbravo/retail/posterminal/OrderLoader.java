@@ -408,6 +408,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
             && jsonorder.getBoolean("doCancelAndReplace") ? true : false;
         if (doCancelAndReplace && order.getReplacedorder() != null) {
           try {
+            // Set default payment type to order in case there is no payment on the order
+            POSUtils.setDefaultPaymentType(jsonorder, order);
             // Cancel and Replace the order
             CancelAndReplaceUtils.cancelAndReplaceOrder(order.getId(), jsonorder,
                 useOrderDocumentNoForRelatedDocs);
