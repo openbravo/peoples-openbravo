@@ -42,9 +42,9 @@ public class CancelLayawayLoader extends POSDataSynchronizationProcess implement
     }
 
     try {
-      Order order = OBDal.getInstance().get(Order.class, json.getString("orderId"));
+      Order order = OBDal.getInstance().get(Order.class, json.getString("orderid"));
       POSUtils.setDefaultPaymentType(json, order);
-      CancelAndReplaceUtils.cancelOrder(json.getString("orderId"), json,
+      CancelAndReplaceUtils.cancelOrder(json.getString("orderid"), json,
           useOrderDocumentNoForRelatedDocs);
     } catch (Exception ex) {
       throw new OBException("CancelLayawayLoader.cancelOrder: ", ex);

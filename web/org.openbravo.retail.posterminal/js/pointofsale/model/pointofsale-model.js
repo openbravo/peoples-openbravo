@@ -772,23 +772,14 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
               OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_LayawayCancelledError'));
               return;
             } else {
-              cancelLayawayObj.id = receipt.get('id');
-              cancelLayawayObj.orderId = receipt.get('id');
-              cancelLayawayObj.organization = receipt.get('organization');
-              cancelLayawayObj.payments = JSON.parse(JSON.stringify(receipt.get('payments')));
-              cancelLayawayObj.gross = receipt.getPaymentStatus().isNegative ? OB.DEC.mul(receipt.get('gross'), -1) : receipt.get('gross');
-              cancelLayawayObj.paidOnCredit = receipt.get("paidOnCredit");
-              cancelLayawayObj.posTerminal = receipt.get("posTerminal");
-              cancelLayawayObj.payment = receipt.get("payment");
-              cancelLayawayObj.isQuotation = receipt.get("isQuotation");
+              var cancelLayawayObj = receipt.serializeToJSON();
+
+              if (cancelLayawayObj.payments) {
+                cancelLayawayObj.gross = OB.DEC.mul(cancelLayawayObj.gross, -1);
+              }
               cancelLayawayObj.orderType = 2;
-              cancelLayawayObj.isPaid = receipt.get("isPaid");
-              cancelLayawayObj.isLayaway = receipt.get("isLayaway");
-              cancelLayawayObj.paidOnCredit = receipt.get("paidOnCredit");
-              cancelLayawayObj.defaultPaymentType = receipt.get("defaultPaymentType");
               cancelLayawayObj.obposAppCashup = OB.MobileApp.model.get('terminal').cashUpId;
-              cancelLayawayObj.timezoneOffset = new Date().getTimezoneOffset();
-              if (receipt.get('deliveredQuantityAmount')) {
+              if (cancelLayawayObj.deliveredQuantityAmount) {
                 cancelLayawayObj.deliveredQuantityAmount = OB.I18N.formatCurrency(receipt.getDeliveredQuantityAmount());
               }
 
