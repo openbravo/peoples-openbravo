@@ -419,6 +419,10 @@ enyo.kind({
     var me = this,
         criteria = {};
     if (this.disabled === false) {
+      if (this.model.get('order').get('orderType') === 3) {
+        this.showPaymentTab();
+        return;
+      }
       var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('toolbarButtonTabTap');
       this.model.on('approvalChecked', function (event) {
         this.model.off('approvalChecked');
