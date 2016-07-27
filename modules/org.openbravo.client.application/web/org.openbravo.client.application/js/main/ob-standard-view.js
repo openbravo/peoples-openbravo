@@ -2119,10 +2119,57 @@ isc.OBStandardView.addProperties({
   },
 
   saveRow: function () {
+    var me = this;
+    if (me.existsAction(OB.EventHandlerRegistry.PRESAVE)) {
+      me.executePreSaveActions(function () {
+        me.doSaveRow();
+      });
+      return;
+    }
+    me.doSaveRow();
+  },
+
+  doSaveRow: function () {
     if (this.isEditingGrid) {
       this.viewGrid.endEditing();
     } else {
       this.viewForm.saveRow();
+    }
+  },
+
+  executePreSaveActions: function (saveRowCallback) {
+    var editForm, eventHandlerParams = {};
+
+    if (this.isEditingGrid) {
+      editForm = this.viewGrid.getEditForm();
+      if (editForm) {
+        eventHandlerParams.data = isc.clone(editForm.getValues());
+        eventHandlerParams.isNewRecord = editForm.isNew;
+      }
+    } else {
+      eventHandlerParams.data = isc.clone(this.viewForm.getValues());
+      eventHandlerParams.isNewRecord = this.viewForm.isNew;
+    }
+    this.callSaveActions(OB.EventHandlerRegistry.PRESAVE, eventHandlerParams, saveRowCallback);
+  },
+
+  existsAction: function (actionType) {
+    return this.tabId && OB.EventHandlerRegistry.hasAction(this.tabId, actionType);
+  },
+
+  callSaveActions: function (actionType, extraParameters, callback) {
+    var params;
+    if (this.existsAction(actionType)) {
+      params = {
+        tabId: this.tabId,
+        actionType: actionType,
+        view: this,
+        form: this.viewForm,
+        grid: this.viewGrid,
+        extraParameters: extraParameters,
+        callback: callback
+      };
+      OB.EventHandlerRegistry.call(params);
     }
   },
 
@@ -3057,5 +3104,4 @@ isc.OBStandardView.addProperties({
 
     return result;
   }
-
 });

@@ -142,6 +142,7 @@ public class ApplicationDictionaryCachedStructures implements Serializable {
     // initialize other elements related with the tab
     getAuxiliarInputList(tabId);
     getFieldsOfTab(tabId);
+    initializeDALObject(tab.getTable());
     getColumnsOfTable(tab.getTable().getId());
   }
 

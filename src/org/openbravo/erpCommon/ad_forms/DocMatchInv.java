@@ -327,11 +327,6 @@ public class DocMatchInv extends AcctServer {
     BigDecimal bdExpenses = new BigDecimal(strExpenses).multiply(
         new BigDecimal(data[0].getField("QTY"))).divide(
         new BigDecimal(data[0].getField("QTYINVOICED")));
-    if ((new BigDecimal(data[0].getField("QTYINVOICED")).signum() != (new BigDecimal(
-        data[0].getField("MOVEMENTQTY"))).signum())
-        && data[0].getField("InOutStatus").equals("VO")) {
-      bdExpenses = bdExpenses.multiply(new BigDecimal(-1));
-    }
 
     DocLine docLine = new DocLine(DocumentType, Record_ID, "");
     docLine.m_C_Project_ID = data[0].getField("INOUTPROJECT");
