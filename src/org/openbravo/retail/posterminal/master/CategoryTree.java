@@ -8,10 +8,11 @@
  */
 package org.openbravo.retail.posterminal.master;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
@@ -40,12 +41,40 @@ public class CategoryTree extends ProcessHQLQuery {
   private Instance<ModelExtension> extensions;
 
   @Override
+  protected Map<String, Object> getParameterValues(JSONObject jsonsent) throws JSONException {
+    try {
+      OBContext.setAdminMode(true);
+      Map<String, Object> paramValues = new HashMap<String, Object>();
+      String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
+      boolean isRemote = false;
+      try {
+        OBContext.setAdminMode(false);
+        isRemote = "Y".equals(Preferences.getPreferenceValue("OBPOS_remote.product", true,
+            OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
+                .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
+                .getOBContext().getRole(), null));
+      } catch (PropertyException e) {
+        log.error("Error getting preference OBPOS_remote.product " + e.getMessage(), e);
+      } finally {
+        OBContext.restorePreviousMode();
+      }
+
+      paramValues.put("productCategoryTableId", CategoryTree.productCategoryTableId);
+      if (isRemote) {
+        paramValues.put("productCategoryTableId", CategoryTree.productCategoryTableId);
+      }
+      Calendar now = Calendar.getInstance();
+      paramValues.put("endingDate", now.getTime());
+      paramValues.put("startingDate", now.getTime());
+      paramValues.put("orgId", orgId);
+      return paramValues;
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
+  @Override
   protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
-
-    String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
-
-    SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd");
-    Calendar now = Calendar.getInstance();
 
     List<String> hqlQueries = new ArrayList<String>();
 
@@ -69,25 +98,24 @@ public class CategoryTree extends ProcessHQLQuery {
               + regularProductsCategoriesTreeHQLProperties.getHqlSelect() //
               + "from ADTreeNode tn, OBRETCO_Productcategory pc "
               + "where tn.$incrementalUpdateCriteria and tn.$naturalOrgCriteria and tn.$readableSimpleClientCriteria "
-              + " and tn.node = pc.productCategory.id and tn.tree.table.id = '"
-              + productCategoryTableId + "' " + "order by tn.sequenceNumber");
+              + " and tn.node = pc.productCategory.id and tn.tree.table.id = :productCategoryTableId  "
+              + " order by tn.sequenceNumber");
       hqlQueries
           .add("select"
               + regularProductsCategoriesTreeHQLProperties.getHqlSelect() //
               + "from ADTreeNode tn, ProductCategory pc "
               + "where tn.$incrementalUpdateCriteria and tn.$naturalOrgCriteria and tn.$readableSimpleClientCriteria "
-              + " and tn.node = pc.id and tn.tree.table.id = '"
-              + productCategoryTableId
-              + "' and pc.summaryLevel = 'Y'"
-              + "and not exists (select obpc.id from OBRETCO_Productcategory obpc where tn.node = obpc.productCategory.id)"
-              + "order by tn.sequenceNumber");
+              + " and tn.node = pc.id and tn.tree.table.id = :productCategoryTableId "
+              + " and pc.summaryLevel = 'Y'"
+              + " and not exists (select obpc.id from OBRETCO_Productcategory obpc where tn.node = obpc.productCategory.id)"
+              + " order by tn.sequenceNumber");
     } else {
       hqlQueries
           .add("select"
               + regularProductsCategoriesTreeHQLProperties.getHqlSelect() //
               + "from ADTreeNode tn, ProductCategory pc "
               + "where tn.$incrementalUpdateCriteria and tn.$naturalOrgCriteria and tn.$readableSimpleClientCriteria "
-              + " and tn.node = pc.id and tn.tree.table.id = '" + productCategoryTableId + "' "
+              + " and tn.node = pc.id and tn.tree.table.id = :productCategoryTableId "
               + "order by tn.sequenceNumber");
     }
     // Discounts marked as category
@@ -101,29 +129,15 @@ public class CategoryTree extends ProcessHQLQuery {
         + "               where p.discountType.active = true " //
         + "                 and p.active = true"//
         + "                 and p.discountType = pt"//
-        + "                 and (p.endingDate is null or p.endingDate >= TO_DATE('"
-        + format.format(now.getTime())
-        + "','yyyy/MM/dd'))" //
-        + "                 and p.startingDate <= TO_DATE('"
-        + format.format(now.getTime())
-        + "', 'yyyy/MM/dd')"
+        + "                 and (p.endingDate is null or p.endingDate >= :endingDate ) " //
+        + "                 and p.startingDate <= :startingDate "
         // organization
-        + "and ((p.includedOrganizations='Y' "
-        + "  and not exists (select 1 "
-        + "         from PricingAdjustmentOrganization o"
-        + "        where active = true"
-        + "          and o.priceAdjustment = p"
-        + "          and o.organization.id ='"
-        + orgId
-        + "')) "
-        + "   or (p.includedOrganizations='N' "
-        + "  and  exists (select 1 "
-        + "         from PricingAdjustmentOrganization o"
-        + "        where active = true"
-        + "          and o.priceAdjustment = p"
-        + "          and o.organization.id ='"
-        + orgId
-        + "')) " //
+        + "and ((p.includedOrganizations='Y' " + "  and not exists (select 1 "
+        + "         from PricingAdjustmentOrganization o" + "        where active = true"
+        + "          and o.priceAdjustment = p" + "          and o.organization.id = :orgId )) "
+        + "   or (p.includedOrganizations='N' " + "  and  exists (select 1 "
+        + "         from PricingAdjustmentOrganization o" + "        where active = true"
+        + "          and o.priceAdjustment = p" + "          and o.organization.id = :orgId )) " //
         + "    ) "//
         + ")");
 

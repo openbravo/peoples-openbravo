@@ -16,7 +16,10 @@
     tableName: 'cashmanagement',
     entityName: 'CashManagement',
     source: '',
-    local: true
+    local: true,
+    serializeToJSON: function () {
+      return JSON.parse(JSON.stringify(this.toJSON()));
+    }
   });
 
 
@@ -37,6 +40,10 @@
     name: 'origAmount',
     column: 'origAmount',
     type: 'NUMERIC'
+  }, {
+    name: 'json',
+    column: 'json',
+    type: 'TEXT'
   }, {
     name: 'type',
     column: 'type',

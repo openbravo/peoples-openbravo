@@ -9,9 +9,7 @@
 package org.openbravo.retail.posterminal;
 
 import java.math.BigDecimal;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 
 import javax.enterprise.inject.Any;
@@ -32,7 +30,6 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.mobile.core.model.HQLPropertyList;
 import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.mobile.core.model.ModelExtensionUtils;
-import org.openbravo.mobile.core.utils.OBMOBCUtils;
 import org.openbravo.model.common.order.OrderLineOffer;
 import org.openbravo.service.json.JsonConstants;
 
@@ -82,11 +79,6 @@ public class PaidReceipts extends JSONProcessSimple {
       Query paidReceiptsQuery = OBDal.getInstance().getSession().createQuery(hqlPaidReceipts);
       paidReceiptsQuery.setString("orderId", orderid);
 
-      // get the timezoneOffset
-      final long timezoneOffset = ((Calendar.getInstance().get(Calendar.ZONE_OFFSET) + Calendar
-          .getInstance().get(Calendar.DST_OFFSET)) / (60 * 1000));
-      final DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-
       // cycle through the lines of the selected order
       JSONArray paidReceipts = hqlPropertiesReceipts.getJSONArray(paidReceiptsQuery);
 
@@ -94,10 +86,6 @@ public class PaidReceipts extends JSONProcessSimple {
         JSONObject paidReceipt = paidReceipts.getJSONObject(receipt);
 
         paidReceipt.put("orderid", orderid);
-
-        Date creationDate = OBMOBCUtils.calculateClientDatetime(
-            paidReceipt.getString("creationDate"), timezoneOffset);
-        paidReceipt.put("creationDate", df.format(creationDate));
 
         // get the Invoice for the Order
         String hqlPaidReceiptsInvoice = "select inv.id from Invoice as inv where inv.salesOrder.id = :orderId";

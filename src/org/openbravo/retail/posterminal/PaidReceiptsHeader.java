@@ -8,6 +8,7 @@
  */
 package org.openbravo.retail.posterminal;
 
+import java.text.ParseException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -18,7 +19,6 @@ import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
 import org.apache.log4j.Logger;
-import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
@@ -40,7 +40,8 @@ public class PaidReceiptsHeader extends ProcessHQLQuery {
 
   @Override
   protected Map<String, Object> getParameterValues(JSONObject jsonsent) throws JSONException {
-    if (!jsonsent.getJSONObject("filters").getString("filterText").isEmpty()) {
+    try {
+      OBContext.setAdminMode(true);
       boolean useContains = true;
       try {
         OBContext.setAdminMode(false);
@@ -54,16 +55,39 @@ public class PaidReceiptsHeader extends ProcessHQLQuery {
         OBContext.restorePreviousMode();
       }
       Map<String, Object> paramValues = new HashMap<String, Object>();
-      if (useContains) {
-        paramValues.put("filterT1", ("%"
-            + jsonsent.getJSONObject("filters").getString("filterText").trim() + "%"));
-      } else {
-        paramValues.put("filterT1", (jsonsent.getJSONObject("filters").getString("filterText")
-            .trim() + "%"));
+
+      paramValues.put("organization", jsonsent.getString("organization"));
+      JSONObject json = jsonsent.getJSONObject("filters");
+      if (!json.getString("filterText").isEmpty()) {
+        if (useContains) {
+          paramValues.put("filterT1", ("%" + json.getString("filterText").trim() + "%"));
+        } else {
+          paramValues.put("filterT1", (json.getString("filterText").trim() + "%"));
+        }
+      }
+      if (jsonsent.has("filters")) {
+        if (!json.isNull("documentType")) {
+          paramValues.put("documentTypes", json.getJSONArray("documentType"));
+        }
+        if (!json.getString("docstatus").isEmpty() && !json.getString("docstatus").equals("null")) {
+          paramValues.put("docstatus", json.getString("docstatus"));
+        }
+        try {
+          if (!json.getString("startDate").isEmpty()) {
+            paramValues
+                .put("startDate", getDateFormated(json.getString("startDate"), "yyyy-MM-dd"));
+          }
+          if (!json.getString("endDate").isEmpty()) {
+            paramValues.put("endDate", getDateFormated(json.getString("endDate"), "yyyy-MM-dd"));
+          }
+        } catch (ParseException e) {
+          log.error(e.getMessage(), e);
+        }
       }
       return paramValues;
-    } else {
-      return null;
+
+    } finally {
+      OBContext.restorePreviousMode();
     }
   }
 
@@ -82,9 +106,8 @@ public class PaidReceiptsHeader extends ProcessHQLQuery {
         + "' as isLayaway from Order as ord "
         + "where ord.client='"
         + json.getString("client")
-        + "' and ord.organization='"
-        + json.getString("organization")
-        + "' and ord.obposIsDeleted = false ";
+        + "' and ord.organization.id= :organization"
+        + " and ord.obposIsDeleted = false ";
 
     if (!json.getString("filterText").isEmpty()) {
       String hqlFilter = "ord.documentNo like :filterT1 or REPLACE(ord.documentNo, '/', '') like :filterT1 or upper(ord.businessPartner.name) like upper(:filterT1)";
@@ -99,26 +122,16 @@ public class PaidReceiptsHeader extends ProcessHQLQuery {
       hqlPaidReceipts += " and (" + hqlFilter + ") ";
     }
     if (!json.isNull("documentType")) {
-      JSONArray docTypes = json.getJSONArray("documentType");
-      hqlPaidReceipts += " and ( ";
-      for (int docType_i = 0; docType_i < docTypes.length(); docType_i++) {
-        hqlPaidReceipts += "ord.documentType.id='" + docTypes.getString(docType_i) + "'";
-        if (docType_i != docTypes.length() - 1) {
-          hqlPaidReceipts += " or ";
-        }
-      }
-      hqlPaidReceipts += " )";
+      hqlPaidReceipts += " and ( ord.documentType.id in (:documentTypes) ) ";
     }
     if (!json.getString("docstatus").isEmpty() && !json.getString("docstatus").equals("null")) {
-      hqlPaidReceipts += " and ord.documentStatus='" + json.getString("docstatus") + "'";
+      hqlPaidReceipts += " and ord.documentStatus= :docstatus";
     }
     if (!json.getString("startDate").isEmpty()) {
-      hqlPaidReceipts += " and ord.orderDate >= to_date('" + json.getString("startDate")
-          + "', 'YYYY/MM/DD')";
+      hqlPaidReceipts += " and ord.orderDate >= :startDate ";
     }
     if (!json.getString("endDate").isEmpty()) {
-      hqlPaidReceipts += " and ord.orderDate <= to_date('" + json.getString("endDate")
-          + "', 'YYYY/MM/DD')";
+      hqlPaidReceipts += " and ord.orderDate <= :endDate ";
     }
 
     if (json.has("isQuotation") && json.getBoolean("isQuotation")) {

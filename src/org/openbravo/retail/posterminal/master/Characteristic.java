@@ -27,6 +27,8 @@ import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.mobile.core.model.HQLPropertyList;
 import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.mobile.core.model.ModelExtensionUtils;
+import org.openbravo.retail.config.OBRETCOProductList;
+import org.openbravo.retail.posterminal.POSUtils;
 import org.openbravo.retail.posterminal.ProcessHQLQuery;
 
 public class Characteristic extends ProcessHQLQuery {
@@ -69,21 +71,24 @@ public class Characteristic extends ProcessHQLQuery {
       OBContext.restorePreviousMode();
     }
 
-    String isFilterOnWebPos = "";
-    if (isRemote) {
-      // only need to filter if remote as in the case it is stored in the client
-      // the filtering is done on the client
-      isFilterOnWebPos = " ch.obposFilteronwebpos=true AND ";
+    String assortmentFilter = "";
+    String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
+    final OBRETCOProductList productList = POSUtils.getProductListByOrgId(orgId);
+    if (!isRemote) {
+      assortmentFilter = "exists (select 1 from  ProductCharacteristicValue pcv, OBRETCO_Prol_Product assort "
+          + " where pcv.characteristic.id=ch.id "
+          + " and pcv.product.id= assort.product.id "
+          + " and assort.obretcoProductlist.id= '" + productList.getId() + "'" + ") and";
     }
-
     hqlQueries
         .add("select"
             + regularProductsChValueHQLProperties.getHqlSelect()
             + "from Characteristic ch "
             + "where  $filtersCriteria AND $hqlCriteria and "
-            + isFilterOnWebPos
+            + "ch.obposFilteronwebpos=true AND "
+            + assortmentFilter
             + " ch.$naturalOrgCriteria and ch.$readableSimpleClientCriteria and (ch.$incrementalUpdateCriteria) "
-            + "order by ch.name");
+            + " order by ch.name");
 
     return hqlQueries;
   }

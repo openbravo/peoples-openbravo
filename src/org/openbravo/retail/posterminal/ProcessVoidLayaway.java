@@ -8,6 +8,7 @@
  */
 package org.openbravo.retail.posterminal;
 
+import java.util.Date;
 import java.util.HashMap;
 
 import org.codehaus.jettison.json.JSONArray;
@@ -30,6 +31,13 @@ public class ProcessVoidLayaway extends POSDataSynchronizationProcess implements
 
     JSONArray respArray = new JSONArray();
     JSONObject jsonorder = (JSONObject) jsonRecord.get("order");
+
+    // Update CashUp Report
+    JSONObject jsoncashup = jsonorder.getJSONObject("cashUpReportInformation");
+    Date cashUpDate = new Date();
+
+    UpdateCashup.getAndUpdateCashUp(jsoncashup.getString("id"), jsoncashup, cashUpDate);
+
     Order order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
 
     VoidLayaway proc = WeldUtils.getInstanceFromStaticBeanManager(VoidLayaway.class);

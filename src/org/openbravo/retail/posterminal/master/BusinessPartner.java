@@ -67,7 +67,7 @@ public class BusinessPartner extends ProcessHQLQuery {
         + "(bpl.$incrementalUpdateCriteria"
         + operator
         + "bpl.businessPartner.$incrementalUpdateCriteria) "
-        + " and bpl.id in (select max(bpls.id) as bpLocId from BusinessPartnerLocation AS bpls where bpls.businessPartner.id=bpl.businessPartner.id and bpls.invoiceToAddress = true and bpls.$readableSimpleClientCriteria AND "
+        + " and bpl.id in (select max(bpls.id) as bpLocId from BusinessPartnerLocation AS bpls where bpls.active=true and bpls.businessPartner.id=bpl.businessPartner.id and bpls.invoiceToAddress = true and bpls.$readableSimpleClientCriteria AND "
         + " bpls.$naturalOrgCriteria group by bpls.businessPartner.id)"
         + " and (not exists (select 1 from ADUser usr where usr.businessPartner = bpl.businessPartner)) "
         + " ORDER BY bpl.businessPartner.name";
@@ -84,7 +84,7 @@ public class BusinessPartner extends ProcessHQLQuery {
         + "(bpl.$incrementalUpdateCriteria"
         + operator
         + "bpl.businessPartner.$incrementalUpdateCriteria) "
-        + " and bpl.id in (select max(bpls.id) as bpLocId from BusinessPartnerLocation AS bpls where bpls.businessPartner.id=bpl.businessPartner.id and bpls.invoiceToAddress = true and bpls.$readableSimpleClientCriteria AND "
+        + " and bpl.id in (select max(bpls.id) as bpLocId from BusinessPartnerLocation AS bpls where bpls.active=true and bpls.businessPartner.id=bpl.businessPartner.id and bpls.invoiceToAddress = true and bpls.$readableSimpleClientCriteria AND "
         + " bpls.$naturalOrgCriteria group by bpls.businessPartner.id)"
         + " and (ulist.id in (select max(ulist2.id) from ADUser as ulist2 where ulist2.businessPartner=bpl.businessPartner  group by ulist2.businessPartner))"
         + " ORDER BY bpl.businessPartner.name";

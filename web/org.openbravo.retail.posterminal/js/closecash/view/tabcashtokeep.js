@@ -56,8 +56,8 @@ enyo.kind({
     var me = this;
     this.model.on('change:otherInput', function () {
       if (OB.DEC.isNumber(me.model.get('otherInput'))) {
-        me.$.variableInput.setContent(me.model.get('otherInput'));
-        me.$.allowvariableamount.setQtyToKeep(me.model.get('otherInput'));
+        me.$.variableInput.setContent(OB.DEC.abs(me.model.get('otherInput')));
+        me.$.allowvariableamount.setQtyToKeep(OB.DEC.abs(me.model.get('otherInput')));
       } else {
         me.$.variableInput.setContent('');
         me.$.allowvariableamount.setQtyToKeep(null);

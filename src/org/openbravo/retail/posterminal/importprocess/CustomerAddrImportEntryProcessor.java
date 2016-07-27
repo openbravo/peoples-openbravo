@@ -13,7 +13,6 @@ import javax.enterprise.context.ApplicationScoped;
 import org.hibernate.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.weld.WeldUtils;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.mobile.core.process.DataSynchronizationProcess;
@@ -41,7 +40,7 @@ public class CustomerAddrImportEntryProcessor extends ImportEntryProcessor {
   }
 
   protected String getProcessSelectionKey(ImportEntry importEntry) {
-    return (String) DalUtil.getId(importEntry.getOrganization());
+    return importEntry.getOrganization().getId();
   }
 
   private static class BusinessPartnerLocationRunnable extends MobileImportEntryProcessorRunnable {

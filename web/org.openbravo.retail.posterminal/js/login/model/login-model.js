@@ -156,7 +156,7 @@
               OB.MobileApp.view.scanningFocus(true);
               if (!terminalModel.usermodel) {
                 OB.MobileApp.model.loadingErrorsActions("The terminal.usermodel should be loaded at this point");
-              } else if (OB.MobileApp.model.attributes.loadManifeststatus && OB.MobileApp.model.attributes.loadManifeststatus.type === 'error') {
+              } else if (OB.MobileApp.model.attributes.loadManifeststatus && OB.MobileApp.model.attributes.loadManifeststatus.type === 'error' && !OB.RR.RequestRouter.ignoreManifestLoadError()) {
                 var error = OB.MobileApp.model.attributes.loadManifeststatus;
                 OB.debug(error.reason + ' failed to load: ' + error.url);
                 OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_TitleFailedAppCache'), OB.I18N.getLabel('OBPOS_FailedAppCache'), [{
@@ -336,9 +336,17 @@
         className: 'org.openbravo.retail.posterminal.ProcessCashClose',
         timeout: 600000,
         timePerRecord: 10000,
-        criteria: {},
         getIdentifier: function (model) {
           return OB.I18N.formatDateISO(new Date(model.creationDate));
+        },
+        getCriteria: function () {
+          if (OB.UTIL.isNullOrUndefined(OB.MobileApp.model.get('terminal')) || (OB.MobileApp.model.get('terminal') && (OB.MobileApp.model.get('terminal').ismaster || OB.MobileApp.model.get('terminal').isslave))) {
+            return {};
+          } else {
+            return {
+              isprocessed: 'Y'
+            };
+          }
         },
         changesPendingCriteria: {
           'isprocessed': 'Y'
@@ -365,14 +373,18 @@
         },
         // skip the syncing of the cashup if it is the same as the last one
         preSendModel: function (me, dataToSync) {
-          if (dataToSync.length === 1 && this.model === OB.Model.CashUp && localStorage.lastCashupInfo === dataToSync.models[0].get('objToSend')) {
-            me.skipSyncModel = true;
+          if (dataToSync.length === 0) {
+            return;
+          } else {
+            if (dataToSync.length === 1 && this.model === OB.Model.CashUp && !OB.UTIL.isNullOrUndefined(OB.UTIL.localStorage.getItem('lastCashupSendInfo')) && OB.UTIL.localStorage.getItem('lastCashupSendInfo') === dataToSync.models[0].get('objToSend')) {
+              me.skipSyncModel = true;
+            }
+            OB.UTIL.localStorage.setItem('lastCashupSendInfo', dataToSync.models[0].get('objToSend'));
           }
-          localStorage.lastCashupSendInfo = dataToSync.models[0].get('objToSend');
         },
         // keep track of successfull send
         successSendModel: function () {
-          localStorage.lastCashupInfo = localStorage.lastCashupSendInfo;
+          OB.UTIL.localStorage.setItem('lastCashupInfo', OB.UTIL.localStorage.getItem('lastCashupSendInfo'));
         }
       });
 

@@ -90,7 +90,8 @@ public class Discount extends ProcessHQLQuery {
     hql += "         and ppl.active = true))) ";
     hql += " or p.includedProducts = 'Y') ";
     // organization
-    hql += "and p.$naturalOrgCriteria and ((includedOrganizations='Y' ";
+    hql += " and p.$naturalOrgCriteria";
+    hql += " and ((includedOrganizations='Y' ";
     hql += "  and not exists (select 1 ";
     hql += "         from PricingAdjustmentOrganization o";
     hql += "        where active = true";

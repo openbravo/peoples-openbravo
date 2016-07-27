@@ -43,12 +43,15 @@ public class POSDataSynchronizationErrorHandler extends DataSynchronizationError
     log.error("An error happened when processing a record: ", t);
     OBPOSErrors errorEntry = null;
     if (jsonRecord.has("posErrorId")) {
+      // note: error entry may have been removed, in that case the errorEntry remains null
+      // and a new one will be created
       try {
         errorEntry = OBDal.getInstance().get(OBPOSErrors.class, jsonRecord.getString("posErrorId"));
       } catch (JSONException e1) {
         // won't happen
       }
-    } else {
+    }
+    if (errorEntry == null) {
       errorEntry = OBProvider.getInstance().get(OBPOSErrors.class);
     }
     errorEntry.setError(getErrorMessage(t));

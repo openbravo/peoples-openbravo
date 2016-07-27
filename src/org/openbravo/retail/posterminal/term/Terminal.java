@@ -24,7 +24,6 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.codehaus.jettison.json.JSONTokener;
 import org.hibernate.Query;
-import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.client.kernel.RequestContext;
@@ -129,7 +128,7 @@ public class Terminal extends JSONProcessSimple {
         selectOrgImage = " image.bindaryData as organizationImage,"
             + "image.mimetype as organizationImageMime,";
         fromOrgImage = ", ADImage image ";
-        whereOrgImage = " and image.id ='" + myOrgInfo.getYourCompanyDocumentImage().getId() + "'";
+        whereOrgImage = " and image.id = :imageId ";
       }
 
       int sessionTimeout;
@@ -147,32 +146,60 @@ public class Terminal extends JSONProcessSimple {
         sessionTimeout = getSessionTimeoutFromDatabase();
       }
 
-      String terminalhqlquery = "select " + "'" + pricesList.getId() + "' as priceList, " + "'"
-          + pricesList.getCurrency().getId() + "' as currency, " + "'"
-          + pricesList.getCurrency().getIdentifier() + "' as " + getIdentifierAlias("currency")
-          + ", " + "'" + pricesList.getCurrency().isCurrencySymbolAtTheRight()
-          + "' as currencySymbolAtTheRight, " + "'" + pricesList.getCurrency().getSymbol()
-          + "' as symbol, " + "'" + warehouseId + "' as warehouse, " + lastDocumentNumber
-          + " as lastDocumentNumber, " + lastQuotationDocumentNumber
-          + " as lastQuotationDocumentNumber, " + lastReturnDocumentNumber
-          + " as lastReturnDocumentNumber, " + "'" + regionId + "'" + " as organizationRegionId, "
-          + "'" + countryId + "'" + " as organizationCountryId, '"
-          + ProcessHQLQuery.escape(storeAddress) + "' as organizationAddressIdentifier, "
-          + sessionTimeout + " as sessionTimeout, " + selectOrgImage
+      String terminalhqlquery = "select " + "'"
+          + pricesList.getId()
+          + "' as priceList, "
+          + "'"
+          + pricesList.getCurrency().getId()
+          + "' as currency, "
+          + "'"
+          + pricesList.getCurrency().getIdentifier()
+          + "' as "
+          + getIdentifierAlias("currency")
+          + ", "
+          + "'"
+          + pricesList.getCurrency().isCurrencySymbolAtTheRight()
+          + "' as currencySymbolAtTheRight, "
+          + "'"
+          + pricesList.getCurrency().getSymbol()
+          + "' as symbol, "
+          + "'"
+          + warehouseId
+          + "' as warehouse, "
+          + lastDocumentNumber
+          + " as lastDocumentNumber, "
+          + lastQuotationDocumentNumber
+          + " as lastQuotationDocumentNumber, "
+          + lastReturnDocumentNumber
+          + " as lastReturnDocumentNumber, "
+          + "'"
+          + regionId
+          + "'"
+          + " as organizationRegionId, "
+          + "'"
+          + countryId
+          + "'"
+          + " as organizationCountryId, '"
+          + ProcessHQLQuery.escape(storeAddress)
+          + "' as organizationAddressIdentifier, "
+          + sessionTimeout
+          + " as sessionTimeout, "
+          + selectOrgImage
           + regularTerminalHQLProperties.getHqlSelect()
           + " from OBPOS_Applications AS pos inner join pos.obposTerminaltype as postype "
           + fromOrgImage
-          + " where pos.$readableSimpleCriteria and pos.$activeCriteria and pos.searchKey = '"
-          + pOSTerminal.getSearchKey() + "' " + whereOrgImage;
+          + " where pos.$readableSimpleCriteria and pos.$activeCriteria  and pos.searchKey = :searchKey "
+          + whereOrgImage;
 
       SimpleQueryBuilder querybuilder = new SimpleQueryBuilder(terminalhqlquery, OBContext
           .getOBContext().getCurrentClient().getId(), OBContext.getOBContext()
           .getCurrentOrganization().getId(), null, null, null);
 
-      final Session session = OBDal.getInstance().getSession();
-
-      final Query terminalquery = session.createQuery(querybuilder.getHQLQuery());
-
+      final Query terminalquery = querybuilder.getDalQuery();
+      terminalquery.setParameter("searchKey", pOSTerminal.getSearchKey());
+      if (myOrgInfo.getYourCompanyDocumentImage() != null) {
+        terminalquery.setParameter("imageId", myOrgInfo.getYourCompanyDocumentImage().getId());
+      }
       StringWriter w = new StringWriter();
       JSONRowConverter.startResponse(w);
       int totalRows = ProcessHQLQuery.StrategyQueryScroll.buildResponse(w, terminalquery, true);

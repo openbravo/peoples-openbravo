@@ -454,6 +454,7 @@ enyo.kind({
         }
 
         function actionAddProducts() {
+          keyboard.receipt.set('undo', null);
           if (me.selectedModels.length > 1) {
             actionAddMultiProduct(keyboard, -qty);
           } else {

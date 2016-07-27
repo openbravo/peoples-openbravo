@@ -8,9 +8,7 @@
  */
 package org.openbravo.retail.posterminal.master;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -52,6 +50,7 @@ public class PriceList extends ProcessHQLQuery {
       String pricelist = POSUtils.getPriceListByTerminal(POSTerminal.getSearchKey()).getId();
       Map<String, Object> paramValues = new HashMap<String, Object>();
       paramValues.put("priceList", pricelist);
+
       return paramValues;
     } finally {
       OBContext.restorePreviousMode();
@@ -85,19 +84,6 @@ public class PriceList extends ProcessHQLQuery {
     }
 
     return hqlQueries;
-  }
-
-  public static String getSelectPriceListVersionIds(String orgId, Date terminalDate) {
-    SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd");
-    return "select plv.id from PricingPriceListVersion AS plv "
-        + "where plv.active = true"
-        + " and plv.validFromDate = ("
-        + "  select max(pplv.validFromDate) from PricingPriceListVersion as pplv "
-        + "  where pplv.active=true and pplv.priceList.id = plv.priceList.id "
-        + "    and to_char(pplv.validFromDate, 'yyyy-mm-dd') <= '"
-        + format.format(terminalDate)
-        + " ') and (plv.priceList.id in (select distinct priceList.id from BusinessPartner where customer = 'Y') "
-        + " and plv.priceList.id <> (:priceList))";
   }
 
 }

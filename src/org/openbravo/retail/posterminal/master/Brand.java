@@ -53,9 +53,41 @@ public class Brand extends ProcessHQLQuery {
   }
 
   @Override
+  protected Map<String, Object> getParameterValues(JSONObject jsonsent) throws JSONException {
+    try {
+      OBContext.setAdminMode(true);
+      String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
+      final OBRETCOProductList productList = POSUtils.getProductListByOrgId(orgId);
+      boolean forceRemote = false;
+      boolean isRemote = false;
+      try {
+        OBContext.setAdminMode(false);
+        isRemote = "Y".equals(Preferences.getPreferenceValue("OBPOS_remote.product", true,
+            OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
+                .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
+                .getOBContext().getRole(), null));
+      } catch (PropertyException e) {
+        log.error("Error getting preference OBPOS_remote.product " + e.getMessage(), e);
+      } finally {
+        OBContext.restorePreviousMode();
+      }
+
+      if (!isRemote && jsonsent.has("remoteFilters")) {
+        forceRemote = true;
+        Map<String, Object> args = new HashMap<String, Object>();
+        args.put("forceRemote", forceRemote);
+      }
+      Map<String, Object> paramValues = new HashMap<String, Object>();
+      paramValues.put("productListId", productList.getId());
+
+      return paramValues;
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
+  @Override
   protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
-    String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
-    final OBRETCOProductList productList = POSUtils.getProductListByOrgId(orgId);
     List<String> hqlQueries = new ArrayList<String>();
     boolean forceRemote = false;
     HQLPropertyList regularBrandsHQLProperties = ModelExtensionUtils
@@ -87,20 +119,18 @@ public class Brand extends ProcessHQLQuery {
               + " exists (select 1 from  Product p, OBRETCO_Prol_Product assort "
               + " where brand.id=p.brand.id "
               + " and p.id= assort.product.id "
-              + " and assort.obretcoProductlist.id= '"
-              + productList.getId()
-              + "'"
-              + ")"
+              + " and assort.obretcoProductlist.id= :productListId)"
               + " AND $filtersCriteria AND $hqlCriteria and  $naturalOrgCriteria and $incrementalUpdateCriteria and brand.active = true "
               + "order by brand.name");
     } else {
-      hqlQueries.add("select"
-          + regularBrandsHQLProperties.getHqlSelect() //
-          + "from Product product " //
-          + "where exists (select 1 from OBRETCO_Prol_Product assort where obretcoProductlist= '"
-          + productList.getId() + "' and assort.product = product) "
-          + "and $naturalOrgCriteria and $incrementalUpdateCriteria and product.active = true "
-          + "order by product.brand.name");
+      hqlQueries
+          .add("select"
+              + regularBrandsHQLProperties.getHqlSelect() //
+              + "from Product product " //
+              + "where exists (select 1 from OBRETCO_Prol_Product assort where obretcoProductlist.id= :productListId "
+              + "and assort.product = product) "
+              + "and $naturalOrgCriteria and $incrementalUpdateCriteria and product.active = true "
+              + "order by product.brand.name");
     }
 
     return hqlQueries;

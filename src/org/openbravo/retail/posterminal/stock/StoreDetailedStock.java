@@ -44,17 +44,15 @@ public class StoreDetailedStock extends JSONProcessSimple {
           + "SELECT ow.warehouse.id "
           + "FROM OrganizationWarehouse as ow "
           + "WHERE "
-          + "ow.organization.id = '"
-          + orgId
-          + "') "
-          + "and ms.product.id = '"
-          + prodId
-          + "' "
+          + "ow.organization.id = :orgId ) "
+          + "and ms.product.id = :prodId "
           + "group by ms.storageBin.warehouse.id, ms.storageBin.warehouse.name, ms.storageBin.warehouse.id, ms.storageBin.id, ms.storageBin.searchKey "
           + "order by ms.storageBin.warehouse.name";
 
       final Session session = OBDal.getInstance().getSession();
       final Query query = session.createQuery(hqlQuery);
+      query.setParameter("orgId", orgId);
+      query.setParameter("prodId", prodId);
 
       ScrollableResults results = query.scroll(ScrollMode.FORWARD_ONLY);
       boolean resultsAvailable = false;

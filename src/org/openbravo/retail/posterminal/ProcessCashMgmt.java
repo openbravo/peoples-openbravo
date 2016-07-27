@@ -40,6 +40,12 @@ public class ProcessCashMgmt extends POSDataSynchronizationProcess implements
 
   public JSONObject saveRecord(JSONObject jsonsent) throws Exception {
 
+    // Update CashUp Report
+    JSONObject jsoncashup = jsonsent.getJSONObject("cashUpReportInformation");
+    Date cashUpDate = new Date();
+
+    UpdateCashup.getAndUpdateCashUp(jsoncashup.getString("id"), jsoncashup, cashUpDate);
+
     OBPOSAppPayment paymentMethod = OBDal.getInstance().get(OBPOSAppPayment.class,
         jsonsent.getString("paymentMethodId"));
     OBContext.setOBContext(jsonsent.getString("userId"),

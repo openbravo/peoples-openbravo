@@ -182,7 +182,11 @@
         });
       }
     } else if (typeof callback === 'function') {
-      callback();
+      if (OB.UTIL.isNullOrUndefined(cashUp.at(0).get('objToSend'))) {
+        cashUp.at(0).set('objToSend', JSON.stringify(cashUp.models[0]));
+      }
+      cashUp.at(0).set('objToSend', JSON.stringify(cashUp.models[0]));
+      callback(cashUp);
     }
   }
 
@@ -227,6 +231,7 @@
   };
   OB.UTIL.createNewCashupFromServer = function (cashup, callback) {
     OB.Dal.save(cashup, function () {
+      OB.MobileApp.model.get('terminal').cashUpId = cashup.get('id');
       // Create taxes
       _.each(cashup.get('cashTaxInfo'), function (taxCashup) {
         var taxModel = new OB.Model.TaxCashUp();
@@ -540,7 +545,7 @@
       }
     }
   };
-  OB.UTIL.sumCashManagementToCashup = function (payment) {
+  OB.UTIL.sumCashManagementToCashup = function (payment, callback) {
     if (!OB.UTIL.isNullOrUndefined(payment)) {
       var cashupId = payment.get('cashup_id'),
           criteria = {
@@ -561,12 +566,16 @@
           OB.Dal.find(OB.Model.CashUp, {
             'id': cashupId
           }, function (cashUpObj) {
-            OB.UTIL.composeCashupInfo(cashUpObj, null, null);
+            OB.UTIL.composeCashupInfo(cashUpObj, null, callback);
           });
         }, function (error) {
           // Error
         });
       });
+    } else {
+      if (callback) {
+        callback();
+      }
     }
   };
   OB.UTIL.calculateCurrentCash = function (callback, tx) {
@@ -660,7 +669,7 @@
     cashUp.at(0).set('objToSend', JSON.stringify(objToSend));
     OB.Dal.saveInTransaction(tx, cashUp.at(0), function () {
       if (callback) {
-        callback(me);
+        callback(cashUp, me);
       }
     }, null);
   };

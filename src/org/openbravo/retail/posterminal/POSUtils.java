@@ -34,7 +34,6 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.client.kernel.RequestContext;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -283,14 +282,14 @@ public class POSUtils {
               RequestContext.get().getVariablesSecureApp().getLanguage()));
     }
 
-    String priceListId = (String) DalUtil.getId(priceList);
+    String priceListId = priceList.getId();
     return POSUtils.getPriceListVersionForPriceList(priceListId, terminalDate);
   }
 
   public static PriceListVersion getPriceListVersionByOrgId(String orgId, Date terminalDate) {
 
     PriceList priceList = POSUtils.getPriceListByOrgId(orgId);
-    String priceListId = (String) DalUtil.getId(priceList);
+    String priceListId = priceList.getId();
     return POSUtils.getPriceListVersionForPriceList(priceListId, terminalDate);
   }
 

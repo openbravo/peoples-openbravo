@@ -3567,7 +3567,13 @@
     canAddAsServices: function (model, product, callback, scope) {
       if (product.get('productType') === 'S') {
         if (!OB.UTIL.isNullOrUndefined(product.get('allowDeferredSell')) && product.get('allowDeferredSell')) {
-          if (!OB.UTIL.isNullOrUndefined(product.get('deferredSellMaxDays'))) {
+          if (model.get('order') && model.get('order').get('isQuotation') && model.get('order').get('isEditable') === false) {
+            // Not allow deferred sell in quotation under evaluation
+            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_modalNoEditableHeader'), OB.I18N.getLabel('OBPOS_modalNoEditableBody'), [{
+              label: OB.I18N.getLabel('OBMOBC_LblOk')
+            }]);
+            callback.call(scope, 'NOT_ALLOW');
+          } else if (!OB.UTIL.isNullOrUndefined(product.get('deferredSellMaxDays'))) {
             var oneDay = 24 * 60 * 60 * 1000,
                 today = new Date(),
                 orderDate = new Date(this.get('orderDate'));
@@ -3715,10 +3721,12 @@
       order.set('documentnoPrefix', OB.MobileApp.model.get('terminal').docNoPrefix);
       order.set('documentnoSuffix', nextDocumentno.documentnoSuffix);
       order.set('documentNo', nextDocumentno.documentNo);
-
       order.set('print', true);
       order.set('sendEmail', false);
       order.set('openDrawer', false);
+      OB.UTIL.HookManager.executeHooks('OBPOS_NewReceipt', {
+        newOrder: order
+      });
       return order;
     },
 

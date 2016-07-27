@@ -677,10 +677,11 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
     OB.Dal.find(OB.Model.CashUp, {
       'isprocessed': 'N'
     }, function (cashUp) {
-      OB.UTIL.composeCashupInfo(cashUp, currentMe, function (me) {
+      OB.UTIL.composeCashupInfo(cashUp, currentMe, function (cashUp, me) {
         var i, paymentMethodInfo, objToSend = JSON.parse(cashUp.at(0).get('objToSend'));
         var now = new Date();
         objToSend.cashUpDate = OB.I18N.normalizeDate(now);
+        objToSend.lastcashupeportdate = OB.I18N.normalizeDate(now);
         objToSend.timezoneOffset = now.getTimezoneOffset();
         for (i = 0; i < me.additionalProperties.length; i++) {
           objToSend[me.additionalProperties[i]] = me.propertyFunctions[i](OB.POS.modelterminal.get('terminal').id, cashUp.at(0));
@@ -738,10 +739,15 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
                 };
 
             var callbackFunc = function () {
+                var synchronizedPreferenceValue;
                 OB.UTIL.SynchronizationHelper.finished(synchId, 'processAndFinishCashUp');
+                // prevent synchronized mode for cashups
+                synchronizedPreferenceValue = OB.MobileApp.model.setSynchronizedPreference(false);
                 OB.MobileApp.model.runSyncProcess(function () {
+                  OB.MobileApp.model.setSynchronizedPreference(synchronizedPreferenceValue);
                   callbackFinishedSuccess();
                 }, function () {
+                  OB.MobileApp.model.setSynchronizedPreference(synchronizedPreferenceValue);
                   callbackFinishedWrongly();
                 });
                 };
