@@ -9,8 +9,6 @@
 package org.openbravo.retail.posterminal;
 
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
@@ -269,8 +267,7 @@ public class PaidReceipts extends JSONProcessSimple {
               paidReceiptPayment.put("openDrawer", objectType.get("openDrawer"));
               paidReceiptPayment.put("isPrePayment", true);
               paidReceiptPayment.put("paymentAmount", new BigDecimal(objectIn.get("paymentAmount")
-                  .toString()).multiply(new BigDecimal((String) objectType.get("mulrate")
-                  .toString())));
+                  .toString()).multiply(new BigDecimal(objectType.get("mulrate").toString())));
               added = true;
               listpaidReceiptsPayments.put(paidReceiptPayment);
             }
