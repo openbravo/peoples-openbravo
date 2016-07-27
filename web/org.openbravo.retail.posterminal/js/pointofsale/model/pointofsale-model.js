@@ -774,7 +774,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
             } else {
               var cancelLayawayObj = receipt.serializeToJSON();
 
-              if (cancelLayawayObj.payments) {
+              if (receipt.getPaymentStatus().isNegative) {
                 cancelLayawayObj.gross = OB.DEC.mul(cancelLayawayObj.gross, -1);
               }
               cancelLayawayObj.orderType = 2;
