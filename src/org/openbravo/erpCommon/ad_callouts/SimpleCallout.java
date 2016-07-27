@@ -35,8 +35,6 @@ import org.openbravo.base.filter.RequestFilter;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.application.window.servlet.CalloutServletConfig;
 import org.openbravo.client.kernel.RequestContext;
-import org.openbravo.client.kernel.reference.EnumUIDefinition;
-import org.openbravo.client.kernel.reference.ForeignKeyUIDefinition;
 import org.openbravo.client.kernel.reference.UIDefinition;
 import org.openbravo.client.kernel.reference.UIDefinitionController;
 import org.openbravo.data.Sqlc;
@@ -70,7 +68,6 @@ import org.openbravo.service.json.JsonConstants;
  */
 public abstract class SimpleCallout extends DelegateConnectionProvider {
 
-  private static final long serialVersionUID = 1L;
   private static Logger log = Logger.getLogger(SimpleCallout.class);
 
   /**
@@ -150,38 +147,56 @@ public abstract class SimpleCallout extends DelegateConnectionProvider {
         String colID = col.getId();
         String oldValue = request.getRequestParameter(colID);
         Boolean changed = false;
-        // If the column is mandatory and it is a combo
-        if (element.has(SimpleCalloutConstants.ENTRIES) && col.isMandatory()) {
-          // remove empty value and we choose the first value as selected
-          JSONArray jsonArr = element.getJSONArray(SimpleCalloutConstants.ENTRIES);
-          ArrayList<JSONObject> newJsonArr = new ArrayList<JSONObject>();
-          JSONObject temporal = null;
-          for (int i = 0; i < jsonArr.length(); i++) {
-            temporal = jsonArr.getJSONObject(i);
-            if (i == 0 && temporal.getString(JsonConstants.ID) == null
-                && temporal.getString(JsonConstants.ID).isEmpty()) {
-              continue;
-            } else {
+
+        // If the column is a combo
+        if (element.has(SimpleCalloutConstants.ENTRIES)) {
+          JSONObject temporalyElement = new JSONObject();
+          // if value is not selected
+          if (!element.has(SimpleCalloutConstants.CLASSIC_VALUE)) {
+            JSONArray jsonArr = element.getJSONArray(SimpleCalloutConstants.ENTRIES);
+            ArrayList<JSONObject> newJsonArr = new ArrayList<JSONObject>();
+            JSONObject temporal = null;
+
+            // If column is not mandatory and first value is not empty, we add an initial blank
+            // element
+            if (!col.isMandatory() && !jsonArr.getJSONObject(0).isNull(JsonConstants.ID)) {
+              temporal = new JSONObject();
+              temporal.put(JsonConstants.ID, (String) null);
+              temporal.put(JsonConstants.IDENTIFIER, (String) null);
               newJsonArr.add(temporal);
             }
+            for (int i = 0; i < jsonArr.length(); i++) {
+              temporal = jsonArr.getJSONObject(i);
+              newJsonArr.add(temporal);
+            }
+
+            if (newJsonArr.get(0).has(JsonConstants.ID)) {
+              // create element with new values
+              String valueSelected = newJsonArr.get(0).getString(JsonConstants.ID);
+              temporalyElement.put(SimpleCalloutConstants.VALUE, valueSelected);
+              temporalyElement.put(SimpleCalloutConstants.CLASSIC_VALUE, valueSelected);
+            }
+
+          } else {
+            // value is selected before parsing
+            temporalyElement.put(SimpleCalloutConstants.VALUE,
+                element.getString(SimpleCalloutConstants.VALUE));
+            temporalyElement.put(SimpleCalloutConstants.CLASSIC_VALUE,
+                element.getString(SimpleCalloutConstants.CLASSIC_VALUE));
           }
 
-          // create element with new values
-          String valueSelected = newJsonArr.get(0).getString(JsonConstants.ID);
-          JSONObject temporalyElement = new JSONObject();
-          temporalyElement.put(SimpleCalloutConstants.VALUE, valueSelected);
-          temporalyElement.put(SimpleCalloutConstants.CLASSIC_VALUE, valueSelected);
-          temporalyElement.put(SimpleCalloutConstants.ENTRIES, new JSONArray(newJsonArr));
-
-          // added this new value and check refire a callout
+          // added this new value and set parameter into request
           valuesFromFIC.addColumnValues(
               "inp" + Sqlc.TransformaNombreColumna(col.getDBColumnName()), temporalyElement);
           changed = true;
           if (valuesFromFIC.getDynamicCols().contains(key)) {
             valuesFromFIC.addChangedCols(col.getDBColumnName());
           }
-          request.setRequestParameter(key,
-              temporalyElement.getString(SimpleCalloutConstants.CLASSIC_VALUE));
+          if (temporalyElement.has(SimpleCalloutConstants.CLASSIC_VALUE)) {
+            request.setRequestParameter(key,
+                temporalyElement.getString(SimpleCalloutConstants.CLASSIC_VALUE));
+          }
+
           // normal data
         } else if (element.has(SimpleCalloutConstants.CLASSIC_VALUE)) {
           // We set the new value in the request, so that the JSONObject is computed
@@ -192,14 +207,6 @@ public abstract class SimpleCallout extends DelegateConnectionProvider {
           String jsonStr = uiDef.getFieldProperties(inpFields.get(key), true);
           JSONObject jsonobj = new JSONObject(jsonStr);
 
-          // TODO: Check special case
-          if (element == null
-              && (uiDef instanceof ForeignKeyUIDefinition || uiDef instanceof EnumUIDefinition)) {
-            // Special case for null values for combos: we must clean the combo values
-            jsonobj.put("value", "");
-            jsonobj.put("classicValue", "");
-            jsonobj.put("entries", new JSONArray());
-          }
           if (jsonobj.has(SimpleCalloutConstants.CLASSIC_VALUE)) {
             String newValue = element.getString(SimpleCalloutConstants.CLASSIC_VALUE);
             if ((oldValue == null && newValue != null) || (oldValue != null && newValue == null)
