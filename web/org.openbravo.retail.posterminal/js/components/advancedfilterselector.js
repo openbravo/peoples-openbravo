@@ -78,6 +78,7 @@ enyo.kind({
   },
   hideSelector: function (inSender, inEvent) {
     this.selectorHide = inEvent && !OB.UTIL.isNullOrUndefined(inEvent.selectorHide) ? inEvent.selectorHide : true;
+    this.selectorHide = true;
     this.hide();
   },
   showSelector: function () {
@@ -233,7 +234,7 @@ enyo.kind({
     tap: function () {
       this.owner.owner.owner.showSelector = true;
       this.owner.showSelector = true;
-      this.bubble('onHideThisPopup');
+      this.bubble('onHideSelector');
       this.bubble('onShowPopup', {
         popup: this.owner.selectorPopup,
         args: {
@@ -666,6 +667,11 @@ enyo.kind({
     this.$.filterInputs.setShowing(true);
     this.$.entitySearchBtn.putDisabled(false);
     this.setAdvancedFilterBtnCaption();
+    if (this.showFields && !this.fixedColumn) {
+      this.changeColumn(this, {
+        value: this.$.entityFilterColumn.getValue()
+      });
+    }
     this.doClearAllFilterSelector({
       name: this.advancedFilterDialog
     });
@@ -711,6 +717,7 @@ enyo.kind({
     var fixed = _.find(this.filters, function (filter) {
       return filter.isFixed;
     });
+    this.showFields = true;
     this.fixedColumn = fixed;
     if (fixed) {
       this.fixColumn(fixed);
