@@ -97,7 +97,7 @@ enyo.kind({
     onkeyup: 'keyUpHandler',
     onRearrangeEditButtonBar: 'rearrangeEditButtonBar',
     onModalSelectPrinters: 'modalSelectPrinters',
-    onModalSelectPDFPrinters: 'modalSelectPDFPrinters'    
+    onModalSelectPDFPrinters: 'modalSelectPDFPrinters'
   },
   events: {
     onShowPopup: '',
