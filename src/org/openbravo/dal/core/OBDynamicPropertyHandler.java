@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -39,23 +39,37 @@ import org.openbravo.base.structure.BaseOBObject;
 @SuppressWarnings("rawtypes")
 public class OBDynamicPropertyHandler implements PropertyAccessor {
   public Getter getGetter(Class theClass, String propertyName) throws PropertyNotFoundException {
-    return new Getter(NamingUtil.getStaticPropertyName(theClass, propertyName));
+    return new Getter(theClass, propertyName);
   }
 
   public Setter getSetter(Class theClass, String propertyName) throws PropertyNotFoundException {
-    return new Setter(NamingUtil.getStaticPropertyName(theClass, propertyName));
+    return new Setter(theClass, propertyName);
   }
 
   public static class Getter implements org.hibernate.property.Getter {
     private static final long serialVersionUID = 1L;
+    private static final String ID_GETTER = "getId";
 
     private String propertyName;
+    private Class theClass;
 
-    public Getter(String propertyName) {
-      this.propertyName = propertyName;
+    public Getter(Class theClass, String propertyName) {
+      this.theClass = theClass;
+      this.propertyName = NamingUtil.getStaticPropertyName(theClass, propertyName);
     }
 
+    @SuppressWarnings("unchecked")
     public Method getMethod() {
+      // special case for IDs, so when executing getId() in a proxy, it is not necessary to load the
+      // whole object from DB
+      if (BaseOBObject.ID.equals(propertyName)) {
+        try {
+          return theClass.getDeclaredMethod(ID_GETTER);
+        } catch (NoSuchMethodException e) {
+        } catch (SecurityException e) {
+        }
+      }
+
       return null;
     }
 
@@ -83,14 +97,26 @@ public class OBDynamicPropertyHandler implements PropertyAccessor {
 
   public static class Setter implements org.hibernate.property.Setter {
     private static final long serialVersionUID = 1L;
+    private static final String ID_SETTER = "setId";
 
     private String propertyName;
+    private Class theClass;
 
-    public Setter(String propertyName) {
-      this.propertyName = propertyName;
+    public Setter(Class theClass, String propertyName) {
+      this.theClass = theClass;
+      this.propertyName = NamingUtil.getStaticPropertyName(theClass, propertyName);
     }
 
+    @SuppressWarnings("unchecked")
     public Method getMethod() {
+      if (BaseOBObject.ID.equals(propertyName)) {
+        try {
+          return theClass.getDeclaredMethod(ID_SETTER, String.class);
+        } catch (NoSuchMethodException e) {
+        } catch (SecurityException e) {
+        }
+      }
+
       return null;
     }
 

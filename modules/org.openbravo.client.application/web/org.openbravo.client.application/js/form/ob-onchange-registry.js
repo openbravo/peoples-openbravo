@@ -11,59 +11,25 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2012 Openbravo SLU
+ * All portions are Copyright (C) 2011-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 
-// == OB.CalloutRegistry ==
+// == OB.OnChangeRegistry ==
 // A registry which can be used to register callouts for a certain
 // tab and field combination. Multiple callouts can be registered
 // for one field.
-OB.OnChangeRegistry = {
-  registry: {},
+isc.ClassFactory.defineClass('OBOnChangeRegistry', isc.OBFunctionRegistry);
 
-  register: function (tabId, field, callback, id) {
-    var tabEntry, fieldEntry, i, overwritten = false;
-
-    if (!this.registry[tabId]) {
-      this.registry[tabId] = {};
-    }
-
-    tabEntry = this.registry[tabId];
-    if (!tabEntry[field]) {
-      tabEntry[field] = [];
-    }
-
-    if (id && !callback.id) {
-      callback.id = id;
-    }
-
-    // just set a default sort if not defined
-    if (callback.sort !== 0 && !callback.sort) {
-      callback.sort = 100;
-    }
-
-    // check if there is one with the same name
-    for (i = 0; i < tabEntry[field].length; i++) {
-      if (tabEntry[field][i] && tabEntry[field][i].id === callback.id) {
-        tabEntry[field][i] = callback;
-        overwritten = true;
-        break;
-      }
-    }
-
-    // add
-    if (!overwritten) {
-      tabEntry[field].push(callback);
-    }
-
-    // and sort according to the sort property
-    tabEntry[field].sortByProperty('sort', true);
-  },
+isc.OBOnChangeRegistry.addProperties({
 
   hasOnChange: function (tabId, item) {
+    return this.getEntries(tabId, item);
+  },
+
+  getEntries: function (tabId, item) {
     return this.getFieldEntry(tabId, item);
   },
 
@@ -74,31 +40,9 @@ OB.OnChangeRegistry = {
     } else {
       field = item.name;
     }
-    if (!this.registry[tabId]) {
-      return;
-    }
-    tabEntry = this.registry[tabId];
-    return tabEntry[field];
-  },
-
-  call: function (tabId, item, view, form, grid) {
-    var callResult, fieldEntry = this.getFieldEntry(tabId, item),
-        i;
-
-    if (!fieldEntry) {
-      return;
-    }
-    for (i = 0; i < fieldEntry.length; i++) {
-      if (fieldEntry[i]) {
-        callResult = fieldEntry[i](item, view, form, grid);
-        if (callResult === false) {
-          return;
-        }
-      }
-    }
+    return this.Super('getEntries', [tabId, field]);
   }
-};
 
-OB.OnChangeRegistry.TestFunction = function (item) {
-  alert('You changed ' + item.name);
-};
+});
+
+OB.OnChangeRegistry = isc.OBOnChangeRegistry.create();

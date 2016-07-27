@@ -29,7 +29,6 @@ import org.apache.log4j.Logger;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.costing.CostingServer.TrxType;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBDateUtils;
@@ -548,7 +547,7 @@ public abstract class CostingAlgorithm {
     try {
       List<Object> params = new ArrayList<Object>();
       params.add(production.getId());
-      params.add(DalUtil.getId(OBContext.getOBContext().getUser()));
+      params.add(OBContext.getOBContext().getUser().getId());
       CallStoredProcedure.getInstance().call("MA_PRODUCTION_COST", params, null, true, false);
 
     } catch (Exception e) {
@@ -594,8 +593,7 @@ public abstract class CostingAlgorithm {
     ProductPrice pp = FinancialUtils.getProductPrice(transaction.getProduct(),
         transaction.getMovementDate(), false, pricelist, true, false);
     BigDecimal cost = pp.getStandardPrice().multiply(transaction.getMovementQuantity().abs());
-    if (DalUtil.getId(pp.getPriceListVersion().getPriceList().getCurrency()).equals(
-        costCurrency.getId())) {
+    if (pp.getPriceListVersion().getPriceList().getCurrency().getId().equals(costCurrency.getId())) {
       // no conversion needed
       return cost;
     }

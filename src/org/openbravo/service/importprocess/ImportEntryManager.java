@@ -33,6 +33,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
@@ -165,7 +166,8 @@ public class ImportEntryManager {
     return isShutDown;
   }
 
-  public ImportEntryManager() {
+  @PostConstruct
+  private void init() {
     instance = this;
     importBatchSize = ImportProcessUtils.getCheckIntProperty(log, "import.batch.size",
         importBatchSize, 1000);

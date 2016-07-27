@@ -34,7 +34,6 @@ import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -390,7 +389,7 @@ public class RptC_Bpartner extends HttpSecureAppServlet {
       final String userLanguageId = OBContext.getOBContext().getLanguage().getId();
       String tabTitle = null;
       for (WindowTrl windowTrl : tab.getWindow().getADWindowTrlList()) {
-        final String trlLanguageId = (String) DalUtil.getId(windowTrl.getLanguage());
+        final String trlLanguageId = windowTrl.getLanguage().getId();
         if (trlLanguageId.equals(userLanguageId)) {
           tabTitle = windowTrl.getName();
         }

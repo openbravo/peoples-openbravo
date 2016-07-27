@@ -1563,11 +1563,7 @@ isc.OBViewGrid.addProperties({
     return ret;
   },
 
-  updateRowCountDisplay: function (delayed) {
-    if (!delayed) {
-      this.delayCall('updateRowCountDisplay', [true], 100);
-      return;
-    }
+  updateRowCountDisplay: function () {
     var newValue = '',
         length = isc.isA.Tree(this.data) ? this.countGroupContent() : this.data.getLength();
     if (length > this.dataPageSize) {
@@ -1772,7 +1768,7 @@ isc.OBViewGrid.addProperties({
     return criteria.criteria.get(0);
   },
 
-  refreshGrid: function (callback, newRecordsToBeIncluded) {
+  refreshGrid: function (callback, newRecordsToBeIncluded, afterFilterCallback) {
     var originalCriteria, criteria = {},
         newRecordsCriteria, newRecordsLength, i, index, selectedRecordIndex, visibleRows, filterDataCallback, me = this;
 
@@ -1889,6 +1885,10 @@ isc.OBViewGrid.addProperties({
         }
         delete me.selectedRecordsBeforeRefresh;
       }
+
+      if (afterFilterCallback) {
+        afterFilterCallback();
+      }
     };
     this.filterData(criteria, filterDataCallback, context);
     // Set the refreshingWithRecordSelected and refreshingWithScrolledGrid flags to true when needed after
@@ -1903,6 +1903,10 @@ isc.OBViewGrid.addProperties({
     // It is not possible to do it here, though, because a this.setCriteria(originalCriteria)
     // would trigger an automatic refresh that would leave without effect that last filterData
     // The additional criteria will be removed in the next call to refreshGrid
+  },
+
+  refreshGridFromClientEventHandler: function (callback) {
+    this.refreshGrid(null, null, callback);
   },
 
   // with a delay to handle the target record when the body has been drawn
@@ -3346,10 +3350,34 @@ isc.OBViewGrid.addProperties({
     return ret;
   },
 
+  cellEditEnd: function (editCompletionEvent, newValue, ficCallDone, autoSaveDone) {
+    var rowNum, colNum, nextEditCell, newRow, me = this;
+
+    rowNum = me.getEditRow();
+    colNum = me.getEditCol();
+    nextEditCell = ((rowNum || rowNum === 0) && (colNum || colNum === 0) ? me.getNextEditCell(rowNum, colNum, editCompletionEvent) : null);
+    newRow = nextEditCell && nextEditCell[0] !== rowNum;
+    if (newRow !== false && me.keyPressedForEditCompletion(editCompletionEvent) && me.view.existsAction && me.view.existsAction(OB.EventHandlerRegistry.PRESAVE)) {
+      me.view.executePreSaveActions(function () {
+        me.doCellEditEnd(editCompletionEvent, newValue, ficCallDone, autoSaveDone);
+      });
+      return;
+    }
+    me.doCellEditEnd(editCompletionEvent, newValue, ficCallDone, autoSaveDone);
+  },
+
+  keyPressedForEditCompletion: function (editCompletionEvent) {
+    return editCompletionEvent === isc.ListGrid.DOWN_ARROW_KEYPRESS //
+    || editCompletionEvent === isc.ListGrid.UP_ARROW_KEYPRESS //
+    || editCompletionEvent === isc.ListGrid.ENTER_KEYPRESS //
+    || editCompletionEvent === isc.ListGrid.TAB_KEYPRESS //
+    || editCompletionEvent === isc.ListGrid.SHIFT_TAB_KEYPRESS;
+  },
+
   // check if a fic call needs to be done when leaving a cell and moving to the next
   // row
   // see description in saveEditvalues
-  cellEditEnd: function (editCompletionEvent, newValue, ficCallDone, autoSaveDone) {
+  doCellEditEnd: function (editCompletionEvent, newValue, ficCallDone, autoSaveDone) {
     var rowNum = this.getEditRow(),
         colNum = this.getEditCol();
     var editForm = this.getEditForm(),
@@ -3499,7 +3527,8 @@ isc.OBViewGrid.addProperties({
   // done, at that point first try to force a fic call (handleItemChange) and if that
   // indeed happens stop the saveEdit until the fic returns
   saveEditedValues: function (rowNum, colNum, newValues, oldValues, editValuesID, editCompletionEvent, originalCallback, ficCallDone) {
-    var previousExplicitOffline, saveCallback;
+    var previousExplicitOffline, saveCallback, editForm = this.getEditForm(),
+        autoSaveAction, isNewRecord = false;
     if (!rowNum && rowNum !== 0) {
       rowNum = this.getEditRow();
     }
@@ -3508,14 +3537,25 @@ isc.OBViewGrid.addProperties({
     }
 
     // nothing changed just fire the calback and bail
-    if (!ficCallDone && this.getEditForm() && !this.getEditForm().hasChanged && !this.getEditForm().isNew) {
+    if (!ficCallDone && editForm && !editForm.hasChanged && !editForm.isNew) {
       if (originalCallback) {
         this.fireCallback(originalCallback, 'rowNum,colNum,editCompletionEvent,success', [rowNum, colNum, editCompletionEvent]);
       }
       return true;
     }
 
+    if (editForm && editForm.isNew) {
+      isNewRecord = true;
+    }
+
+    if (this.view.standardWindow) {
+      autoSaveAction = this.view.standardWindow.autoSaveAction;
+    }
+
     saveCallback = function () {
+      var eventHandlerParams = {},
+          eventHandlerCallback;
+
       if (originalCallback) {
         if (this.getSelectedRecord() && this.getSelectedRecord()[OB.Constants.ID]) {
           if (this.view.parentRecordId) {
@@ -3534,12 +3574,22 @@ isc.OBViewGrid.addProperties({
           }
         }
         this.fireCallback(originalCallback, 'rowNum,colNum,editCompletionEvent,success', [rowNum, colNum, editCompletionEvent]);
+
+        if (!this.hasErrors() && this.view.callSaveActions) {
+          eventHandlerParams.data = isc.clone(this.getRecord(rowNum));
+          eventHandlerParams.isNewRecord = isNewRecord;
+          if (autoSaveAction) {
+            eventHandlerCallback = function () {
+              OB.Utilities.callAction(autoSaveAction);
+            };
+          }
+          this.view.callSaveActions(OB.EventHandlerRegistry.POSTSAVE, eventHandlerParams, eventHandlerCallback);
+        }
       }
     };
 
     if (!ficCallDone) {
-      var editForm = this.getEditForm(),
-          focusItem = editForm.getFocusItem();
+      var focusItem = editForm.getFocusItem();
       if (focusItem && !focusItem.hasPickList) {
         focusItem.blur(focusItem.form, focusItem);
         if (editForm.inFicCall) {
@@ -4233,6 +4283,12 @@ isc.OBGridButtonsComponent.addProperties({
       buttonType: 'save',
       prompt: OB.I18N.getLabel('OBUIAPP_GridSaveButtonPrompt'),
       action: function () {
+        if (me.grid.view && me.grid.view.existsAction && me.grid.view.existsAction(OB.EventHandlerRegistry.PRESAVE)) {
+          me.grid.view.executePreSaveActions(function () {
+            me.doSave();
+          });
+          return;
+        }
         me.doSave();
       }
     });

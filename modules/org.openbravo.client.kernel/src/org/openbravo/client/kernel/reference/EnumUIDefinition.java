@@ -21,7 +21,6 @@ package org.openbravo.client.kernel.reference;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.model.ad.ui.Field;
 
 /**
@@ -69,7 +68,7 @@ public class EnumUIDefinition extends UIDefinition {
     try {
       value = new JSONObject(super.getFieldProperties(field, getValueFromSession));
       if (!getValueFromSession
-          && ((String) DalUtil.getId(field.getColumn().getReference())).equals("28")
+          && (field.getColumn().getReference().getId()).equals("28")
           && !value.has("value")) {
         // When reference is button, set 'N' as default if there is default
         value.put("value", "N");
@@ -87,7 +86,7 @@ public class EnumUIDefinition extends UIDefinition {
     try {
       JSONObject value = new JSONObject(super.getFieldProperties(field, getValueFromSession));
       if (!getValueFromSession
-          && ((String) DalUtil.getId(field.getColumn().getReference())).equals("28")
+          && (field.getColumn().getReference().getId()).equals("28")
           && !value.has("value")) {
         // When reference is button, set 'N' as default if there is default
         value.put("value", "N");

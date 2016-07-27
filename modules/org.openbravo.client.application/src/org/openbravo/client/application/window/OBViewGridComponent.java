@@ -38,7 +38,6 @@ import org.openbravo.client.kernel.BaseTemplateComponent;
 import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.client.kernel.Template;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -88,7 +87,7 @@ public class OBViewGridComponent extends BaseTemplateComponent {
 
   public void setTab(Tab tab) {
     this.tab = tab;
-    entity = ModelProvider.getInstance().getEntityByTableId((String) DalUtil.getId(tab.getTable()));
+    entity = ModelProvider.getInstance().getEntityByTableId(tab.getTable().getId());
   }
 
   public String getWhereClauseSQL() {

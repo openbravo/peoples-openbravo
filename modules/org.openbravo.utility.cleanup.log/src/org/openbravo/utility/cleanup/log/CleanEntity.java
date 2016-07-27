@@ -26,7 +26,6 @@ import org.hibernate.Session;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBDal;
@@ -70,7 +69,7 @@ public class CleanEntity {
    */
   public int clean(LogCleanUpConfig config, Client client, Organization org, ProcessLogger bgLogger) {
     Entity entity = ModelProvider.getInstance().getEntityByTableId(
-        (String) DalUtil.getId(config.getTable()));
+        config.getTable().getId());
 
     String hql = "delete from " + entity.getName();
 
@@ -120,14 +119,14 @@ public class CleanEntity {
 
   /** Returns the where clause to add to the HQL query to add client/org filtering */
   protected String getClientOrgFilter(Client client, Organization org) {
-    String clientId = (String) DalUtil.getId(client);
+    String clientId = client.getId();
     if (SYSTEM.equals(clientId)) {
       return "";
     }
 
     String filter = "client.id = '" + clientId + "'";
 
-    String orgId = (String) DalUtil.getId(org);
+    String orgId = org.getId();
     if (!SYSTEM.equals(orgId)) {
       OrganizationStructureProvider orgTree = OBContext.getOBContext()
           .getOrganizationStructureProvider(clientId);

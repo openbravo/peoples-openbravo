@@ -44,7 +44,6 @@ import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.provider.OBSingleton;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.structure.BaseOBObject;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.core.TriggerHandler;
@@ -317,7 +316,7 @@ public class SystemService implements OBSingleton {
       OBContext.setAdminMode(false);
       OBDal.getInstance().flush();
       OBDal.getInstance().getConnection().commit();
-      String clientId = (String) DalUtil.getId(client);
+      String clientId = client.getId();
 
       List<String> sqlCommands = new ArrayList<String>();
 

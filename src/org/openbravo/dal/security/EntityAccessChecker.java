@@ -36,7 +36,6 @@ import org.openbravo.base.provider.OBNotSingleton;
 import org.openbravo.client.application.Process;
 import org.openbravo.client.application.ProcessAccess;
 import org.openbravo.client.application.RefWindow;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.service.OBDal;
@@ -600,7 +599,7 @@ public class EntityAccessChecker implements OBNotSingleton {
     final ModelProvider mp = ModelProvider.getInstance();
 
     // RefWindows reference is checked and added to readable and writable entities
-    if (WINDOW_REFERENCE.equals(DalUtil.getId(ref.getParentReference()))) {
+    if (WINDOW_REFERENCE.equals(ref.getParentReference().getId())) {
       RefWindow refWindow = !ref.getOBUIAPPRefWindowList().isEmpty() ? ref
           .getOBUIAPPRefWindowList().get(0) : null;
       if (refWindow == null) {
@@ -610,8 +609,8 @@ public class EntityAccessChecker implements OBNotSingleton {
       addEntitiesOfWindowReference(mp, window);
 
       // Selector reference is checked and added to derivedReadableEntities entities
-    } else if (SELECTOR_REFERENCE.equals(DalUtil.getId(ref.getParentReference()))
-        || MULTI_SELECTOR_REFERENCE.equals(DalUtil.getId(ref.getParentReference()))) {
+    } else if (SELECTOR_REFERENCE.equals(ref.getParentReference().getId())
+        || MULTI_SELECTOR_REFERENCE.equals(ref.getParentReference().getId())) {
       addEntitiesOfSelectorReference(mp, ref);
     }
   }
@@ -627,7 +626,7 @@ public class EntityAccessChecker implements OBNotSingleton {
       if (table == null) {
         continue;
       }
-      final Entity derivedEntity = mp.getEntityByTableId((String) DalUtil.getId(table));
+      final Entity derivedEntity = mp.getEntityByTableId(table.getId());
       if (!writableEntities.contains(derivedEntity) && !readableEntities.contains(derivedEntity)
           && !derivedReadableEntities.contains(derivedEntity)
           && !nonReadableEntities.contains(derivedEntity)) {
@@ -642,8 +641,8 @@ public class EntityAccessChecker implements OBNotSingleton {
   private void addEntitiesOfWindowReference(ModelProvider mp, Window window) {
     Set<String> tabs = new HashSet<String>();
     for (Tab tab : window.getADTabList()) {
-      tabs.add((String) DalUtil.getId(tab));
-      final Entity derivedEntity = mp.getEntityByTableId((String) DalUtil.getId(tab.getTable()));
+      tabs.add(tab.getId());
+      final Entity derivedEntity = mp.getEntityByTableId(tab.getTable().getId());
       if (!writableEntities.contains(derivedEntity) && !readableEntities.contains(derivedEntity)
           && !nonReadableEntities.contains(derivedEntity)) {
         readableEntities.add(derivedEntity);

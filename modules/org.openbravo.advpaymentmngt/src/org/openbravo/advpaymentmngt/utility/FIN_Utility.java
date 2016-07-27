@@ -48,7 +48,6 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.client.kernel.reference.UIDefinitionController;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBCriteria;
@@ -1085,7 +1084,7 @@ public class FIN_Utility {
       invoiceDocNo = invoice.getDocumentNo();
 
       final String paymentDescription = OBDal.getInstance()
-          .get(OrganizationInformation.class, (DalUtil.getId(organization)))
+          .get(OrganizationInformation.class, (organization.getId()))
           .getAPRMPaymentDescription();
       // In case of a purchase invoice and the Supplier Reference is selected use
       // Reference

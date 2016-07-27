@@ -26,7 +26,6 @@ import javax.inject.Inject;
 
 import org.junit.Test;
 import org.openbravo.base.weld.test.WeldBaseTest;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.access.Role;
@@ -56,10 +55,10 @@ public class RecalculatePermissions extends WeldBaseTest {
       template = RoleInheritanceTestUtils.createRole("template",
           RoleInheritanceTestUtils.CLIENT_ID, RoleInheritanceTestUtils.ASTERISK_ORG_ID, " C", true,
           true);
-      String templateId = (String) DalUtil.getId(template);
+      String templateId = template.getId();
       role = RoleInheritanceTestUtils.createRole("role", RoleInheritanceTestUtils.CLIENT_ID,
           RoleInheritanceTestUtils.ASTERISK_ORG_ID, " C", true, true);
-      String roleId = (String) DalUtil.getId(role);
+      String roleId = role.getId();
 
       OBDal.getInstance().commitAndClose();
       template = OBDal.getInstance().get(Role.class, templateId);
@@ -121,13 +120,13 @@ public class RecalculatePermissions extends WeldBaseTest {
       template = RoleInheritanceTestUtils.createRole("template",
           RoleInheritanceTestUtils.CLIENT_ID, RoleInheritanceTestUtils.ASTERISK_ORG_ID, " C", true,
           true);
-      String templateId = (String) DalUtil.getId(template);
+      String templateId = template.getId();
       role1 = RoleInheritanceTestUtils.createRole("role1", RoleInheritanceTestUtils.CLIENT_ID,
           RoleInheritanceTestUtils.ASTERISK_ORG_ID, " C", true, false);
-      String role1Id = (String) DalUtil.getId(role1);
+      String role1Id = role1.getId();
       role2 = RoleInheritanceTestUtils.createRole("role2", RoleInheritanceTestUtils.CLIENT_ID,
           RoleInheritanceTestUtils.ASTERISK_ORG_ID, " C", true, false);
-      String role2Id = (String) DalUtil.getId(role2);
+      String role2Id = role2.getId();
       OBDal.getInstance().commitAndClose();
 
       template = OBDal.getInstance().get(Role.class, templateId);

@@ -26,7 +26,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.provider.OBSingleton;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.access.User;
@@ -83,7 +82,7 @@ public class UserContextCache implements OBSingleton {
     CacheEntry ce = cache.get(userId);
     purgeCache();
     if (ce != null) {
-      if (!userId.equals(DalUtil.getId(ce.getObContext().getUser()))) {
+      if (!userId.equals(ce.getObContext().getUser().getId())) {
         // check cached OBContext has the same userId than the one used as key, if not invalidate it
         // and get new one this can happen in case of: existent ws cache entry for a user and login
         // in app with same browser and different user at this point OBContext is reset to new user

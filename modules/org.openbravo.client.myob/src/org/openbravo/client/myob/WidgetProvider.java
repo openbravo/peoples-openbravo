@@ -50,7 +50,6 @@ import org.openbravo.client.kernel.reference.EnumUIDefinition;
 import org.openbravo.client.kernel.reference.FKComboUIDefinition;
 import org.openbravo.client.kernel.reference.UIDefinition;
 import org.openbravo.client.kernel.reference.UIDefinitionController;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
@@ -317,7 +316,7 @@ public abstract class WidgetProvider {
     final String userLanguageId = OBContext.getOBContext().getLanguage().getId();
 
     for (ParameterTrl trl : parameter.getOBUIAPPParameterTrlList()) {
-      if (DalUtil.getId(trl.getLanguage()).equals(userLanguageId)) {
+      if (trl.getLanguage().getId().equals(userLanguageId)) {
         return trl.getName();
       }
     }
@@ -355,7 +354,7 @@ public abstract class WidgetProvider {
     Property displayProperty = null;
     // for now always display the identifier
     // if (false && refTable.getDisplayedColumn() != null) {
-    // final String displayColId = (String) DalUtil.getId(refTable.getDisplayedColumn());
+    // final String displayColId = refTable.getDisplayedColumn().getId();
     // for (Property prop : entity.getProperties()) {
     // if (prop.getColumnId().equals(displayColId)) {
     // displayProperty = prop;

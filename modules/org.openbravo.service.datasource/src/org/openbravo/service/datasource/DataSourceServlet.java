@@ -534,7 +534,7 @@ public class DataSourceServlet extends BaseKernelServlet {
 
     private boolean isYesNoReference(Property prop) {
       final Column column = OBDal.getInstance().get(Column.class, prop.getColumnId());
-      return YES_NO_REFERENCE_ID.equals((String) DalUtil.getId(column.getReference()));
+      return YES_NO_REFERENCE_ID.equals(column.getReference().getId());
     }
 
     private boolean translateYesNoReferencesInCsv(Window windowToCsv) {
@@ -1124,7 +1124,7 @@ public class DataSourceServlet extends BaseKernelServlet {
         final List<String> windowCheck = new ArrayList<String>();
         for (Field f : fields) {
           // Check access with OBUIAPPProcess & windowId for each field.
-          String windowId = (String) DalUtil.getId(f.getTab().getWindow());
+          String windowId = f.getTab().getWindow().getId();
           if (!windowCheck.contains(windowId)) {
             windowCheck.add(windowId);
             parameters.put("windowId", windowId);
