@@ -52,7 +52,7 @@ public class SimpleCalloutResult {
   private boolean createNewPreferenceForWindow;
 
   /**
-   * This constructor receives all values except two atributes:
+   * This constructor receives all values except three attributes:
    * <p>
    * * resultJson JSONObject because it is used to retrieves result of SimpleCallout execution and
    * at this moment the callout has not been executed.

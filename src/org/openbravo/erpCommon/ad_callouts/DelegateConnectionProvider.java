@@ -32,6 +32,15 @@ import org.openbravo.client.application.window.servlet.CalloutServletConfig;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.exception.NoConnectionAvailableException;
 
+/**
+ * A connection provider which is used on current SimpleCallout infrastructure (see
+ * {@link SimpleCallout}).
+ *
+ * This implementation is required to maintain backwards compatibility in SimpleCallouts
+ * implementations.
+ *
+ * @author inigo.sanchez
+ */
 public class DelegateConnectionProvider implements ConnectionProvider {
 
   protected ConnectionProvider pool;

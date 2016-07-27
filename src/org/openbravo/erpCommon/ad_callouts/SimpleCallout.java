@@ -60,7 +60,7 @@ import org.openbravo.service.json.JsonConstants;
  * 
  * </blockquote>
  * <p>
- * In this method you can develop the logic of the callout and use the infoobject of class
+ * In this method you can develop the logic of the callout and use the info object of class
  * <code>CalloutInfo<code/> to access window fields,
  * database and other methods
  * 
@@ -102,9 +102,16 @@ public abstract class SimpleCallout extends DelegateConnectionProvider {
     return valuesFromFIC;
   }
 
+  /**
+   * This method is used to manage updated values from a SimpleCallout. SimpleCalloutResult is used
+   * to send new values to the FIC.
+   *
+   * This method duplicates code from a parser section in runCallouts() in
+   * FormInitializationComponent class.
+   *
+   */
   private void parseResponeSimpleCallout(RequestContext request, CalloutInfo info,
       SimpleCalloutResult valuesFromFIC) throws JSONException {
-
     Map<String, Field> inpFields = valuesFromFIC.getInpFields();
     Tab tab = valuesFromFIC.getTab();
     JSONObject result = info.getJSONObjectResult();
@@ -132,9 +139,7 @@ public abstract class SimpleCallout extends DelegateConnectionProvider {
         String js = element.getString(SimpleCalloutConstants.CLASSIC_VALUE) == null ? null
             : element.getString(SimpleCalloutConstants.CLASSIC_VALUE);
         if (js != null && !js.equals("")) {
-          if (js.equals("displayLogic();")) {
-            // We don't do anything, this is a harmless js response
-          } else {
+          if (!js.equals("displayLogic();")) {
             JSONObject message = createMessage("ERROR", Utility.messageBD(
                 new DalConnectionProvider(false), "OBUIAPP_ExecuteInCallout", RequestContext.get()
                     .getVariablesSecureApp().getLanguage()));
@@ -142,6 +147,7 @@ public abstract class SimpleCallout extends DelegateConnectionProvider {
             valuesFromFIC.addWarningForWindow();
           }
         }
+
       } else if (inpFields.containsKey(key)) {
         Column col = inpFields.get(key).getColumn();
         String colID = col.getId();
@@ -171,14 +177,14 @@ public abstract class SimpleCallout extends DelegateConnectionProvider {
             }
 
             if (newJsonArr.get(0).has(JsonConstants.ID)) {
-              // create element with new values
+              // create element with selected value
               String valueSelected = newJsonArr.get(0).getString(JsonConstants.ID);
               temporalyElement.put(SimpleCalloutConstants.VALUE, valueSelected);
               temporalyElement.put(SimpleCalloutConstants.CLASSIC_VALUE, valueSelected);
             }
 
           } else {
-            // value is selected before parsing
+            // value is selected before this parsing
             temporalyElement.put(SimpleCalloutConstants.VALUE,
                 element.getString(SimpleCalloutConstants.VALUE));
             temporalyElement.put(SimpleCalloutConstants.CLASSIC_VALUE,
@@ -206,7 +212,6 @@ public abstract class SimpleCallout extends DelegateConnectionProvider {
 
           String jsonStr = uiDef.getFieldProperties(inpFields.get(key), true);
           JSONObject jsonobj = new JSONObject(jsonStr);
-
           if (jsonobj.has(SimpleCalloutConstants.CLASSIC_VALUE)) {
             String newValue = element.getString(SimpleCalloutConstants.CLASSIC_VALUE);
             if ((oldValue == null && newValue != null) || (oldValue != null && newValue == null)
@@ -224,8 +229,6 @@ public abstract class SimpleCallout extends DelegateConnectionProvider {
           } else {
             log.debug("Column value didn't change. We do not attempt to execute any additional callout");
           }
-        } else {
-          log.debug("Column value didn't change. We do not attempt to execute any additional callout");
         }
 
         if (changed && col.getCallout() != null) {
