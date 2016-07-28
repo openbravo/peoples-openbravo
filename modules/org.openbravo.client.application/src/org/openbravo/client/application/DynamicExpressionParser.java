@@ -440,6 +440,20 @@ public class DynamicExpressionParser {
         isBoolean);
   }
 
+  public String replaceSystemPreferencesInDisplayLogic() {
+    String result = code;
+    CachedPreference cachedPreference = org.openbravo.base.weld.WeldUtils
+        .getInstanceFromStaticBeanManager(CachedPreference.class);
+
+    Pattern pattern = Pattern.compile("@(.*?)@");
+    Matcher matcher = pattern.matcher(code);
+    while (matcher.find()) {
+      result = result.replaceAll("@" + matcher.group(1) + "@",
+          "'" + cachedPreference.getPreferenceValue(matcher.group(1), true) + "'");
+    }
+    return result;
+  }
+
   private Field lookForFieldInAncestorTabs(String fieldName) {
     Field aField = null;
     Tab parentTab = KernelUtils.getInstance().getParentTab(tab);

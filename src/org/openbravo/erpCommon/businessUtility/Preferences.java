@@ -308,9 +308,8 @@ public class Preferences {
    */
   public static List<Preference> getPreferences(String property, boolean isListProperty,
       String clientId, String orgId, String userId, String roleId, String windowId) {
-    List<Preference> prefs = getPreferences(property, isListProperty, clientId, orgId, userId,
-        roleId, windowId, true, true, false);
-    return prefs;
+    return getPreferences(property, isListProperty, clientId, orgId, userId, roleId, windowId,
+        true, true, false);
   }
 
   /**
@@ -333,7 +332,7 @@ public class Preferences {
    * @see Preferences#getPreferences(String, boolean, String, String, String , String , String ,
    *      boolean , boolean , boolean)
    */
-  private static List<Preference> getPreferences(String property, boolean isListProperty,
+  public static List<Preference> getPreferences(String property, boolean isListProperty,
       String client, String org, String user, String role, String window, boolean exactMatch,
       boolean checkWindow) {
     return getPreferences(property, isListProperty, client, org, user, role, window, exactMatch,

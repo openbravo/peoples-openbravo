@@ -26,6 +26,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
@@ -35,6 +40,7 @@ import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.model.domaintype.ForeignKeyDomainType;
 import org.openbravo.client.application.ApplicationUtils;
+import org.openbravo.client.application.CachedPreference;
 import org.openbravo.client.application.DynamicExpressionParser;
 import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.client.kernel.reference.FKSearchUIDefinition;
@@ -61,6 +67,9 @@ public class OBViewFieldHandler {
   private static Logger log = Logger.getLogger(OBViewFieldHandler.class);
 
   private String parentProperty;
+
+  @Inject
+  private CachedPreference cachedPreference;
 
   private static List<String> STANDARD_SUMMARY_FN = Arrays.asList("sum", "avg", "max", "min",
       "multiplier", "count", "title");
@@ -1543,8 +1552,32 @@ public class OBViewFieldHandler {
       if (field.isShownInStatusBar()) {
         return false;
       } else {
-        return field.isDisplayed() != null && field.isDisplayed();
+        return field.isDisplayed() != null && field.isDisplayed()
+            && evaluateDisplayLogicAtServerLevel(field.getDisplayLogicEvaluatedInTheServer());
       }
+    }
+
+    public boolean evaluateDisplayLogicAtServerLevel(String displayLogicEvaluatedInTheServer) {
+      if (displayLogicEvaluatedInTheServer == null) {
+        return true;
+      }
+
+      DynamicExpressionParser parser = new DynamicExpressionParser(
+          displayLogicEvaluatedInTheServer, tab);
+      String translatedDisplayLogic = parser.replaceSystemPreferencesInDisplayLogic();
+
+      final ScriptEngineManager manager = new ScriptEngineManager();
+      final ScriptEngine engine = manager.getEngineByName("js");
+      boolean result = false;
+
+      parser = new DynamicExpressionParser(translatedDisplayLogic, tab);
+
+      try {
+        result = (Boolean) engine.eval(parser.getJSExpression());
+      } catch (ScriptException e) {
+        log.error("Error while evaluating the Display Logic at Server Level. ", e);
+      }
+      return result;
     }
 
     public boolean isStatusBarField() {

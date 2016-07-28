@@ -59,7 +59,8 @@ public class CachedPreference {
 
   private static final Logger log = LoggerFactory.getLogger(CachedPreference.class);
   private List<String> propertyList = new ArrayList<String>(Arrays.asList(
-      ALLOW_UNPAGED_DS_MANUAL_REQUEST, ALLOW_UNSECURED_DS_REQUEST, ALLOW_WHERE_PARAMETER, RESTRICT_ERP_ACCESS_IN_STORE_SERVER));
+      ALLOW_UNPAGED_DS_MANUAL_REQUEST, ALLOW_UNSECURED_DS_REQUEST, ALLOW_WHERE_PARAMETER,
+      RESTRICT_ERP_ACCESS_IN_STORE_SERVER));
   private Map<String, String> cachedPreference = new HashMap<String, String>();
 
   /**
@@ -91,6 +92,14 @@ public class CachedPreference {
     }
     log.debug("preference value retrieved in {} ns", (System.nanoTime() - t));
     return cachedPreference.get(propertyName);
+  }
+
+  public String getPreferenceValue(String propertyName, boolean cachePreference) {
+    String result = this.getPreferenceValue(propertyName);
+    if (cachePreference) {
+      addCachedPreference(propertyName);
+    }
+    return result;
   }
 
   /**

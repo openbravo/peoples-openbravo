@@ -18,8 +18,14 @@
  */
 package org.openbravo.client.application;
 
+import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -42,9 +48,13 @@ import org.openbravo.client.kernel.OBUserException;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBQuery;
+import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.obps.ActivationKey.FeatureRestriction;
+import org.openbravo.model.ad.domain.Preference;
 import org.openbravo.model.ad.module.Module;
+import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.Window;
 import org.openbravo.model.ad.utility.AttachmentMethod;
@@ -301,10 +311,66 @@ public class ViewComponent extends BaseComponent {
         viewVersions += t.getTable().isFullyAudited() + "|";
       }
       viewVersions += getLastGridConfigurationChange(window) + "|";
+      viewVersions += getLastSystemPrefrenceChage(window) + "|";
       viewVersionHash = DigestUtils.md5Hex(viewVersions);
     } finally {
       OBContext.restorePreviousMode();
     }
     return viewVersionHash;
+  }
+
+  private String getLastSystemPrefrenceChage(Window window) {
+    Date lastModification = new Date(0);
+
+    Set<String> preferences = new HashSet<String>();
+
+    for (Field field : getFieldsWithDisplayLogicAtServerLevel(window.getId())) {
+      Pattern p = Pattern.compile("@(.*?)@");
+      Matcher m = p.matcher(field.getDisplayLogicEvaluatedInTheServer());
+      while (m.find()) {
+        preferences.add(m.group(1));
+      }
+    }
+
+    Iterator<String> preferenceIt = preferences.iterator();
+    while (preferenceIt.hasNext()) {
+      String preference = preferenceIt.next();
+      Date upated = getLastUpdated(preference);
+      if (lastModification.compareTo(upated) < 0) {
+        lastModification = upated;
+      }
+    }
+
+    return lastModification.toString();
+  }
+
+  private List<Field> getFieldsWithDisplayLogicAtServerLevel(String windowID) {
+    StringBuffer where = new StringBuffer();
+    where.append(" as f");
+    where.append(" where f.displayLogicEvaluatedInTheServer is not null");
+    where.append(" and f.tab.id in (select t.id");
+    where.append("                  from ADTab t");
+    where.append("                  where t.window.id = :windowId)");
+
+    OBQuery<Field> qry = OBDal.getInstance().createQuery(Field.class, where.toString());
+    qry.setNamedParameter("windowId", windowID);
+    return qry.list();
+  }
+
+  private Date getLastUpdated(String preference) {
+    OBContext.setAdminMode(false);
+    List<Preference> preferencesWihtPropertyList = Preferences.getPreferences(preference, true,
+        "0", "0", null, null, null, false, true);
+    if (preferencesWihtPropertyList.isEmpty()) {
+      List<Preference> preferencesWithAttribute = Preferences.getPreferences(preference, false,
+          "0", "0", null, null, null, false, true);
+      if (preferencesWithAttribute.isEmpty()) {
+        Calendar cal = Calendar.getInstance();
+        cal.set(9999, 9, 9);
+        return new Date(cal.getTimeInMillis());
+      }
+      return preferencesWithAttribute.get(0).getUpdated();
+    }
+    return preferencesWihtPropertyList.get(0).getUpdated();
   }
 }
