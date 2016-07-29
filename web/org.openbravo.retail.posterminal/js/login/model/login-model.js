@@ -309,6 +309,7 @@
       this.get('dataSyncModels').push({
         name: 'Cancel Layaway',
         model: OB.Model.CancelLayaway,
+        modelFunc: 'OB.Model.CancelLayaway',
         className: 'org.openbravo.retail.posterminal.CancelLayawayLoader',
         criteria: {},
         isPersistent: false
