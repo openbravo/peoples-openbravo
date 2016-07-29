@@ -257,7 +257,8 @@ public class PaidReceipts extends JSONProcessSimple {
                   .toString())));
               paidReceiptPayment.put("paymentDate", objectIn.get("paymentDate"));
               if (objectIn.has("paymentData")) {
-                paidReceiptPayment.put("paymentData", objectIn.get("paymentData"));
+                paidReceiptPayment.put("paymentData",
+                    new JSONObject((String) objectIn.get("paymentData")));
               }
               paidReceiptPayment.put("name", objectType.get("name"));
               paidReceiptPayment.put("kind", objectType.get("kind"));
@@ -303,7 +304,8 @@ public class PaidReceipts extends JSONProcessSimple {
                   .toString())));
               paidReceiptPayment.put("paymentDate", objectIn.get("paymentDate"));
               if (objectIn.has("paymentData")) {
-                paidReceiptPayment.put("paymentData", objectIn.get("paymentData"));
+                paidReceiptPayment.put("paymentData",
+                    new JSONObject((String) objectIn.get("paymentData")));
               }
               paidReceiptPayment.put("name", paymentsType.get("name"));
               paidReceiptPayment.put("kind", paymentsType.get("kind"));
