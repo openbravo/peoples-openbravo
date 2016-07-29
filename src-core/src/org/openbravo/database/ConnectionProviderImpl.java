@@ -264,7 +264,6 @@ public class ConnectionProviderImpl implements ConnectionProvider {
     } else {
       conn = getCommonsDbcpPoolConnection(poolName);
     }
-
     return conn;
   }
 
@@ -341,6 +340,7 @@ public class ConnectionProviderImpl implements ConnectionProvider {
     if (conn == null)
       throw new NoConnectionAvailableException("Couldn´t get an available connection");
     conn.setAutoCommit(false);
+    SessionInfo.setDBSessionInfo(conn);
     return conn;
   }
 
