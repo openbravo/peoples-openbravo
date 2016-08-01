@@ -277,6 +277,12 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           createInvoice = false;
         }
 
+        // If the ticket is a deleted ticket the invoice mustn't be created
+        if (createInvoice && jsonorder.has("obposIsDeleted")
+            && jsonorder.getBoolean("obposIsDeleted")) {
+          createInvoice = false;
+        }
+
         // Order header
         if (log.isDebugEnabled()) {
           t111 = System.currentTimeMillis();
