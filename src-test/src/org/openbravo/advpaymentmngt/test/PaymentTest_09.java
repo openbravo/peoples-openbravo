@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2014 Openbravo SLU
+ * All portions are Copyright (C) 2011-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -79,7 +79,7 @@ public class PaymentTest_09 extends OBBaseTest {
   private static final String DEPOSIT_ACCOUNT = "DEP";
   private static final String CASH = "C";
   private static final String STANDARD_DESCRIPTION = "JUnit Test Payment_09";
-  private static final String SIMPLE_EXECUTION_PROCESS = "717D521D5F454FAD9199B831001BB4E0";
+  private static final String SIMPLE_EXECUTION_PROCESS = "301950D5D2F24F49916EDE06A473DF02";
 
   private String financialAccountId;
 
@@ -158,16 +158,16 @@ public class PaymentTest_09 extends OBBaseTest {
   private Invoice dataSetup() throws Exception {
 
     // DATA SETUP
-    String bpartnerId = "8A64B71A2B0B2946012B0FE1E86301FA"; // Hoteles Buenas Noches, S.A.
-    String priceListId = "8A64B71A2B0B2946012B0BD97324018A"; // Precios de Venta
-    String paymentTermId = "3F22D83730EE4FD5AE42542A2839DAC4"; // 30 days
+    String bpartnerId = "9E6850C866BD4921AD0EB7F7796CE2C7"; // Hoteles Buenas Noches, S.A.
+    String priceListId = "AEE66281A08F42B6BC509B8A80A33C29"; // Tarifa de ventas
+    String paymentTermId = "66BA1164A7394344BB9CD1A6ECEED05D"; // 30 days
     String currencyId = "102"; // EUR
-    String productId = "8A64B71A2B0B2946012B0BC438410118"; // Vino Tinto 0,75L
-    String taxId = "F27A37C66749487A876F4DA0EF7467E3"; // Ventas Exentas
-    String docTypeId = "40EE9B1CD3B345FABEFDA62B407B407F"; // AR Invoice
-    String orderDocTypeId = "CB6EEA256BBC41109911215C5A14D39B"; // Standard Order
-    String warehouseId = "71B43F2AAE3641CA849B131960BCEFF4";
-    String discountId = "831A7639FBE348B1A06EA3C0B0616B75"; // Descuento 10%
+    String productId = "FDDBB89508D24D2C8D97A2A57BEA8788"; // Vino Tinto 0,75L
+    String taxId = "4BF9470755AD4395AABCB77F5014CBE8"; // Ventas Exentas
+    String docTypeId = "7FCD49652E104E6BB06C3A0D787412E3"; // AR Invoice
+    String orderDocTypeId = "466AF4B0136A4A3F9F84129711DA8BD3"; // Standard Order
+    String warehouseId = "B2D40D8A5D644DD89E329DC297309055"; // España Región Norte
+    String discountId = "BA7E0BA75C0D42B7A25A401895420679"; // Descuento 10%
 
     // Process
     BigDecimal quantity = new BigDecimal("10");

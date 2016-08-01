@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2014 Openbravo SLU
+ * All portions are Copyright (C) 2010-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -541,17 +541,17 @@ public class TestUtility extends OBBaseTest {
     // Role = F&B International Group Admin
     // Client = F&B International Group
     // Org = F&B US, Inc.
-    OBContext.setOBContext("100", "FF8080812AFBCB14012AFBD3E4340031",
-        "FF8080812AFBCB14012AFBD3E373001F", "B9C7088AB859483A9B1FB342AC2BE17A");
+    OBContext.setOBContext("100", "42D0EEB1C66F497A90DD526DC597E6F0",
+        "23C59575B9CF467C9620760EB255B389", "2E60544D37534C0B89E765FE29BC0B43");
   }
 
   public static void setTestContextSpain() {
     // User = Openbravo
     // Role = F&B International Group Admin
     // Client = F&B International Group
-    // Org = F&B US, Inc.
-    OBContext.setOBContext("100", "FF8080812AFBCB14012AFBD3E4340031",
-        "FF8080812AFBCB14012AFBD3E373001F", "4F68EB1C1B734E79B27DE9D2DF56089F");
+    // Org = F&B España, S.A
+    OBContext.setOBContext("100", "42D0EEB1C66F497A90DD526DC597E6F0",
+        "23C59575B9CF467C9620760EB255B389", "B843C30461EA4501935CB1D125C9C25A");
   }
 
   private static ConnectionProvider getConnectionProviderMy() {

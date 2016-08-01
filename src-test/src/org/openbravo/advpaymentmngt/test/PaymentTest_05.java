@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2014 Openbravo SLU
+ * All portions are Copyright (C) 2010-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -88,8 +88,8 @@ public class PaymentTest_05 extends OBBaseTest {
    */
   @Test
   public void testRunPayment_05() {
-    String fruitBio = "8A64B71A2B0B2946012B0FE1E45F01B0";
-    String happyDrinks = "8A64B71A2B0B2946012B0FE1E37001AB";
+    String fruitBio = "EB3110511DAB445382CDB316DCDA407C"; // Fruit & Bio is Life, Inc.
+    String happyDrinks = "C4C5C87CB62548B3B44B93FF3075FB87"; // Happy Drinks, Inc.
     String currencyId = "102"; // EUR
     Invoice inv1;
     Invoice inv2;
@@ -146,12 +146,12 @@ public class PaymentTest_05 extends OBBaseTest {
   private Invoice createPurchaseInvoice(String businessPartnerId) throws Exception {
 
     // DATA SETUP
-    String priceListId = "8A64B71A2B0B2946012B0BD96C470131"; // Happy Drinks Price List
-    String paymentTermId = "3F22D83730EE4FD5AE42542A2839DAC4"; // 30 days
+    String priceListId = "C3EA1FF8AAD8452B96AB766B8B2133A6"; // Happy Drinks Price List
+    String paymentTermId = "66BA1164A7394344BB9CD1A6ECEED05D"; // 30 days
     String currencyId = "102"; // EUR
-    String productId = "8A64B71A2B0B2946012B0BC4345000FB"; // Ale Beer
-    String taxId = "1FE610D3A8844F85B17CA32525C15353"; // NY Sales Tax
-    String docTypeId = "71F835BC045742ADAAF5B6856914BB26"; // US AP Invoice
+    String productId = "34560A057833457D962F7A573F76F5BB"; // Ale Beer
+    String taxId = "3CCDACCCF02C4D209174159A8AF43127"; // NY Sales Tax
+    String docTypeId = "4F914856B90A4F25B4ABA83C5A0C25FE"; // AP Invoice
     BigDecimal invoicedQuantity = new BigDecimal("5");
     BigDecimal netUnitPrice = new BigDecimal("1.36");
     BigDecimal netListPrice = new BigDecimal("1.36");
