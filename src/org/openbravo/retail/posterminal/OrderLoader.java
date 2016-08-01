@@ -417,20 +417,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           }
         }
 
-        boolean doCancelAndReplace = jsonorder.has("doCancelAndReplace")
-            && jsonorder.getBoolean("doCancelAndReplace") ? true : false;
-        if (doCancelAndReplace && order.getReplacedorder() != null) {
-          try {
-            // Set default payment type to order in case there is no payment on the order
-            POSUtils.setDefaultPaymentType(jsonorder, order);
-            // Cancel and Replace the order
-            CancelAndReplaceUtils.cancelAndReplaceOrder(order.getId(), jsonorder,
-                useOrderDocumentNoForRelatedDocs);
-          } catch (Exception ex) {
-            throw new OBException("CancelAndReplaceUtils.cancelAndReplaceOrder: ", ex);
-          }
-        }
-
         if (log.isDebugEnabled()) {
           t4 = System.currentTimeMillis();
 
@@ -473,6 +459,23 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         JSONObject paymentResponse = handlePayments(jsonorder, order, invoice, wasPaidOnCredit);
         if (paymentResponse != null) {
           return paymentResponse;
+        }
+
+        boolean doCancelAndReplace = jsonorder.has("doCancelAndReplace")
+            && jsonorder.getBoolean("doCancelAndReplace") ? true : false;
+        if (doCancelAndReplace && order.getReplacedorder() != null) {
+          TriggerHandler.getInstance().disable();
+          try {
+            // Set default payment type to order in case there is no payment on the order
+            POSUtils.setDefaultPaymentType(jsonorder, order);
+            // Cancel and Replace the order
+            CancelAndReplaceUtils.cancelAndReplaceOrder(order.getId(), jsonorder,
+                useOrderDocumentNoForRelatedDocs);
+          } catch (Exception ex) {
+            throw new OBException("CancelAndReplaceUtils.cancelAndReplaceOrder: ", ex);
+          } finally {
+            TriggerHandler.getInstance().enable();
+          }
         }
 
         // Call all OrderProcess injected.
