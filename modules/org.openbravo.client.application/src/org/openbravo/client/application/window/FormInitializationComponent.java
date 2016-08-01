@@ -1514,13 +1514,13 @@ public class FormInitializationComponent extends BaseActionHandler {
               rq, resultCallout);
 
           // retrieves result of callout updates
-          columnValues = result.getColumnValues();
-          hiddenInputs = result.getHiddenInputs();
-          overwrittenAuxiliaryInputs = result.getOverwrittenAuxiliaryInputs();
-          dynamicCols = result.getDynamicCols();
-          changedCols = result.getChangedCols();
-          messages = result.getMessages();
-          jsExecuteCode = result.getJsExecuteCode();
+          columnValues.putAll(result.getColumnValues());
+          hiddenInputs.putAll(result.getHiddenInputs());
+          overwrittenAuxiliaryInputs.addAll(result.getOverwrittenAuxiliaryInputs());
+          dynamicCols.addAll(result.getDynamicCols());
+          messages.addAll(result.getMessages());
+          jsExecuteCode.addAll(result.getJsExecuteCode());
+          changedCols.addAll(result.getChangedCols());
 
           // We need to fire callouts stored in calloutsToFire
           for (Column columnChanged : result.getCalloutsToFire()) {

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012 Openbravo SLU
+ * All portions are Copyright (C) 2012-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -24,7 +24,6 @@ import javax.servlet.ServletException;
 import org.apache.log4j.Logger;
 
 public class SL_StatusFieldDefaults extends SimpleCallout {
-  private static final long serialVersionUID = 1L;
   private static Logger logger = Logger.getLogger(SL_StatusFieldDefaults.class);
 
   @Override

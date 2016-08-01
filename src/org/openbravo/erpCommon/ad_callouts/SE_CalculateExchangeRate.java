@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010 Openbravo SLU
+ * All portions are Copyright (C) 2010-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -30,7 +30,6 @@ import org.openbravo.model.financialmgmt.payment.FIN_Payment;
 
 public class SE_CalculateExchangeRate extends SimpleCallout {
 
-  private static final long serialVersionUID = 1L;
   private static final String ADWINDOW_PurchaseInvoice = "183";
   private static final String ADWINDOW_SalesInvoice = "167";
   private static final String ADWINDOW_PaymentOut = "6F8F913FA60F4CBD93DC1D3AA696E76E";

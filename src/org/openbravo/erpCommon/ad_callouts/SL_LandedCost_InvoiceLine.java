@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2014 Openbravo SLU 
+ * All portions are Copyright (C) 2014-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -30,8 +30,6 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.invoice.InvoiceLine;
 
 public class SL_LandedCost_InvoiceLine extends SimpleCallout {
-
-  private static final long serialVersionUID = 1L;
 
   @Override
   protected void execute(CalloutInfo info) throws ServletException {

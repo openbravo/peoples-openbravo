@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2015 Openbravo SLU
+ * All portions are Copyright (C) 2015-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -33,7 +33,6 @@ import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.common.geography.Location;
 
 public class SL_BPartnerLocation extends SimpleCallout {
-  private static final long serialVersionUID = 1L;
   private static Logger log = Logger.getLogger(SL_BPartnerLocation.class);
 
   private static final RequestFilter filterYesNo = new ValueListFilter("Y", "N");

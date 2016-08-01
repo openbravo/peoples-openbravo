@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012 Openbravo SLU
+ * All portions are Copyright (C) 2012-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -35,7 +35,6 @@ import org.openbravo.model.materialmgmt.onhandquantity.StorageDetail;
 import org.openbravo.model.materialmgmt.onhandquantity.StoragePending;
 
 public class SE_Locator_Activate extends SimpleCallout {
-  private static final long serialVersionUID = 1L;
 
   private final String STORAGEBIN_TAB = "178";
   private final String WAREHOUSE_TAB = "177";
