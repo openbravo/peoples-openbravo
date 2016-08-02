@@ -35,6 +35,15 @@
     <hQLWhereClause xsi:nil="true"/>
     <truncateTable>false</truncateTable>
   </OBULOG_Config>
+  <OBULOG_Config id="DDC89EDD91964A738467EB188EEF7CAB" identifier="C_Import_Entry_Archive">
+    <id>DDC89EDD91964A738467EB188EEF7CAB</id>
+    <active>true</active>
+    <table id="1B19E761F8E24E00B5FBF2C22082A006" entity-name="ADTable" identifier="C_Import_Entry_Archive"/>
+    <olderThan>30</olderThan>
+    <column xsi:nil="true"/>
+    <hQLWhereClause xsi:nil="true"/>
+    <truncateTable>false</truncateTable>
+  </OBULOG_Config>
   <OBULOG_Config id="E0BDF5E5F6E2475D8F8CE77B65EFAFC6" identifier="AD_Process_Run">
     <id>E0BDF5E5F6E2475D8F8CE77B65EFAFC6</id>
     <active>true</active>
