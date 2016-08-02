@@ -71,7 +71,8 @@
 			documenttemplate.c_doctype_id = ? and
 			ad_isorgincluded(?,documenttemplate.ad_org_id,documenttemplate.ad_client_id)<>-1 and
 			documenttemplate.isactive = 'Y'
-		order by ad_isorgincluded(?,documenttemplate.ad_org_id,documenttemplate.ad_client_id) desc
+		order by documenttemplate.isdefault desc,
+		         ad_isorgincluded(?,documenttemplate.ad_org_id,documenttemplate.ad_client_id) desc
         ]]>
         </Sql>
         <Parameter name="docTypeId"/>
