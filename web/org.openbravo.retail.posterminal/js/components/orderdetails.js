@@ -28,7 +28,9 @@ enyo.kind({
     onPricelistChanged: '',
     onShowReceiptProperties: ''
   },
-  initComponents: function () {},
+  initComponents: function () {
+    return this;
+  },
   renderData: function (docNo) {
     this.preSetContentDetail(this.order, docNo);
   },
@@ -39,11 +41,8 @@ enyo.kind({
   preSetContentDetail: function (order, docNo) {
     var orderDate = new Date(order.get('orderDate'));
     if (order.get('hasbeenpaid') === 'Y' || order.get('isLayaway')) {
-      orderDate = OB.I18N.normalizeDate(this.order.get('creationDate'));
-      if (_.isNull(orderDate)) {
-        OB.error("The creationDate cannot be null");
-      } else {
-        orderDate = new Date(orderDate);
+      if (this.order.get('creationDate') !== null) {
+        orderDate = new Date(OB.I18N.normalizeDate(this.order.get('creationDate')));
       }
     }
     var content = OB.I18N.formatHour(orderDate) + ' - ' + docNo;
@@ -51,9 +50,7 @@ enyo.kind({
   },
   setContentDetail: function (content, docNo, orderDate) {
     var me = this;
-    if (OB.MobileApp.model.hasPermission('EnableMultiPriceList', true)) {
-      OB.UTIL.getPriceListName(this.order.get('priceList'), function (priceListName) {
-        content += " - " + priceListName;
+    var setContentHookFn = function () {
         OB.UTIL.HookManager.executeHooks('OBPOS_OrderDetailContentHook', {
           content: content,
           docNo: docNo,
@@ -62,16 +59,14 @@ enyo.kind({
         }, function (args) {
           me.setContent(args.content);
         });
+        };
+    if (OB.MobileApp.model.hasPermission('EnableMultiPriceList', true)) {
+      OB.UTIL.getPriceListName(this.order.get('priceList'), function (priceListName) {
+        content += " - " + priceListName;
+        setContentHookFn();
       });
     } else {
-      OB.UTIL.HookManager.executeHooks('OBPOS_OrderDetailContentHook', {
-        content: content,
-        docNo: docNo,
-        order: me.order,
-        orderDate: orderDate
-      }, function (args) {
-        me.setContent(args.content);
-      });
+      setContentHookFn();
     }
   },
   orderChanged: function () {
