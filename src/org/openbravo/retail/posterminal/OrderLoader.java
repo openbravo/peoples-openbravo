@@ -354,8 +354,10 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           OBCriteria<Locator> locators = OBDal.getInstance().createCriteria(Locator.class);
           locators.add(Restrictions.eq(Locator.PROPERTY_ACTIVE, true));
           locators.add(Restrictions.eq(Locator.PROPERTY_WAREHOUSE, order.getWarehouse()));
+          locators.setMaxResults(2);
+          List<Locator> locatorList = locators.list();
 
-          if (locators.list().isEmpty()) {
+          if (locatorList.isEmpty()) {
             throw new OBException(Utility.messageBD(new DalConnectionProvider(false),
                 "OBPOS_WarehouseNotStorageBin", OBContext.getOBContext().getLanguage()
                     .getLanguage()));
@@ -364,7 +366,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           shipment = OBProvider.getInstance().get(ShipmentInOut.class);
           createShipment(shipment, order, jsonorder);
           OBDal.getInstance().save(shipment);
-          createShipmentLines(shipment, order, jsonorder, orderlines, lineReferences);
+          createShipmentLines(shipment, order, jsonorder, orderlines, lineReferences, locatorList);
         }
         if (log.isDebugEnabled()) {
           t115 = System.currentTimeMillis();
@@ -1037,18 +1039,14 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
   }
 
   protected void createShipmentLines(ShipmentInOut shipment, Order order, JSONObject jsonorder,
-      JSONArray orderlines, ArrayList<OrderLine> lineReferences) throws JSONException {
+      JSONArray orderlines, ArrayList<OrderLine> lineReferences, List<Locator> locatorList)
+      throws JSONException {
     int lineNo = 0;
     Locator foundSingleBin = null;
     Entity shplineentity = ModelProvider.getInstance().getEntity(ShipmentInOutLine.class);
 
-    final OBCriteria<Locator> locators = OBDal.getInstance().createCriteria(Locator.class);
-    locators.add(Restrictions.eq(Locator.PROPERTY_ACTIVE, true));
-    locators.add(Restrictions.eq(Locator.PROPERTY_WAREHOUSE, shipment.getWarehouse()));
-    // note the count causes a query but the good thing is that it doesn't cause loading
-    // additional bin locations if there are too many
-    if (locators.count() == 1) {
-      foundSingleBin = (Locator) locators.uniqueResult();
+    if (locatorList.size() == 1) {
+      foundSingleBin = locatorList.get(0);
     }
     for (int i = 0; i < orderlines.length(); i++) {
       String hqlWhereClause;
