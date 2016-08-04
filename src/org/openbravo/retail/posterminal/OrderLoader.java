@@ -205,13 +205,13 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     try {
 
       initializeVariables(jsonorder);
-      executeHooks(orderPreProcesses, jsonorder, null, null, null);
+      Order order = null;
+      OrderLine orderLine = null;
+      ShipmentInOut shipment = null;
+      Invoice invoice = null;
+      boolean createInvoice = false;
       boolean wasPaidOnCredit = false;
       boolean isDeleted = false;
-
-      if (jsonorder.has("deletedLines")) {
-        mergeDeletedLines(jsonorder);
-      }
 
       if (jsonorder.getLong("orderType") != 2 && !jsonorder.getBoolean("isLayaway") && !isQuotation
           && verifyOrderExistance(jsonorder)
@@ -219,16 +219,32 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         return successMessage(jsonorder);
       }
 
+      if (jsonorder.getBoolean("isLayaway")) {
+        order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
+
+        final Date updated = OBMOBCUtils.calculateClientDatetime(jsonorder.getString("updated"),
+            Long.parseLong(jsonorder.getString("timezoneOffset")));
+
+        final Date loaded = OBMOBCUtils.calculateClientDatetime(jsonorder.getString("loaded"),
+            Long.parseLong(jsonorder.getString("timezoneOffset")));
+
+        if (!((updated.compareTo(order.getUpdated()) >= 0) && (loaded.compareTo(order.getUpdated()) >= 0))) {
+          throw new OutDatedDataChangeException(Utility.messageBD(new DalConnectionProvider(false),
+              "OBPOS_outdatedLayaway", OBContext.getOBContext().getLanguage().getLanguage()));
+        }
+      }
+
       if (!isQuotation && !jsonorder.getBoolean("isLayaway")) {
         verifyCashupStatus(jsonorder);
       }
 
+      executeHooks(orderPreProcesses, jsonorder, null, null, null);
+
+      if (jsonorder.has("deletedLines")) {
+        mergeDeletedLines(jsonorder);
+      }
+
       t0 = System.currentTimeMillis();
-      Order order = null;
-      OrderLine orderLine = null;
-      ShipmentInOut shipment = null;
-      Invoice invoice = null;
-      boolean createInvoice = false;
       TriggerHandler.getInstance().disable();
       try {
         if (jsonorder.has("oldId") && !jsonorder.getString("oldId").equals("null") && isQuotation) {
@@ -288,23 +304,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         }
         ArrayList<OrderLine> lineReferences = new ArrayList<OrderLine>();
         JSONArray orderlines = jsonorder.getJSONArray("lines");
-        if (jsonorder.getBoolean("isLayaway")) {
-          order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
-
-          final Date updated = OBMOBCUtils.calculateClientDatetime(jsonorder.getString("updated"),
-              Long.parseLong(jsonorder.getString("timezoneOffset")));
-
-          final Date loaded = OBMOBCUtils.calculateClientDatetime(jsonorder.getString("loaded"),
-              Long.parseLong(jsonorder.getString("timezoneOffset")));
-
-          if (!((updated.compareTo(order.getUpdated()) >= 0) && (loaded.compareTo(order
-              .getUpdated()) >= 0))) {
-            throw new OutDatedDataChangeException(Utility.messageBD(
-                new DalConnectionProvider(false), "OBPOS_outdatedLayaway", OBContext.getOBContext()
-                    .getLanguage().getLanguage()));
-          }
-
-        }
 
         if (!newLayaway && notpaidLayaway) {
           order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
