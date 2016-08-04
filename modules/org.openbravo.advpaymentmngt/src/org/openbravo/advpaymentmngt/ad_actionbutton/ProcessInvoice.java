@@ -227,24 +227,22 @@ public class ProcessInvoice extends HttpSecureAppServlet {
                 && invoice.getBusinessPartner().getAccount() != null
                 && FIN_Utility.getFinancialAccountPaymentMethod(invoice.getPaymentMethod().getId(),
                     invoice.getBusinessPartner().getAccount().getId(), isSOTrx, invoice
-                        .getCurrency().getId()) != null
-                && osp.isInNaturalTree(invoice.getBusinessPartner().getAccount().getOrganization(),
-                    invoice.getOrganization())) {
+                        .getCurrency().getId(), invoice.getBusinessPartner().getAccount()
+                        .getOrganization().getId(), invoice.getOrganization().getId()) != null) {
               bpFinAccount = invoice.getBusinessPartner().getAccount();
             } else if (!isSOTrx
                 && invoice.getBusinessPartner().getPOFinancialAccount() != null
                 && FIN_Utility.getFinancialAccountPaymentMethod(invoice.getPaymentMethod().getId(),
                     invoice.getBusinessPartner().getPOFinancialAccount().getId(), isSOTrx, invoice
-                        .getCurrency().getId()) != null
-                && osp.isInNaturalTree(invoice.getBusinessPartner().getPOFinancialAccount()
-                    .getOrganization(), invoice.getOrganization())) {
+                        .getCurrency().getId(), invoice.getBusinessPartner()
+                        .getPOFinancialAccount().getOrganization().getId(), invoice
+                        .getOrganization().getId()) != null) {
               bpFinAccount = invoice.getBusinessPartner().getPOFinancialAccount();
             } else {
               FinAccPaymentMethod fpm = FIN_Utility.getFinancialAccountPaymentMethod(invoice
-                  .getPaymentMethod().getId(), null, isSOTrx, invoice.getCurrency().getId());
-              if (fpm != null
-                  && osp.isInNaturalTree(fpm.getAccount().getOrganization(),
-                      invoice.getOrganization())) {
+                  .getPaymentMethod().getId(), null, isSOTrx, invoice.getCurrency().getId(), null,
+                  invoice.getOrganization().getId());
+              if (fpm != null) {
                 bpFinAccount = fpm.getAccount();
               }
             }
