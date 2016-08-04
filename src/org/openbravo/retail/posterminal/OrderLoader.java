@@ -472,6 +472,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
             CancelAndReplaceUtils.cancelAndReplaceOrder(order.getId(), jsonorder,
                 useOrderDocumentNoForRelatedDocs);
           } catch (Exception ex) {
+            OBDal.getInstance().rollbackAndClose();
             throw new OBException("CancelAndReplaceUtils.cancelAndReplaceOrder: ", ex);
           } finally {
             TriggerHandler.getInstance().enable();

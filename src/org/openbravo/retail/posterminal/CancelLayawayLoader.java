@@ -47,6 +47,7 @@ public class CancelLayawayLoader extends POSDataSynchronizationProcess implement
       CancelAndReplaceUtils.cancelOrder(json.getString("orderid"), json,
           useOrderDocumentNoForRelatedDocs);
     } catch (Exception ex) {
+      OBDal.getInstance().rollbackAndClose();
       throw new OBException("CancelLayawayLoader.cancelOrder: ", ex);
     }
 
