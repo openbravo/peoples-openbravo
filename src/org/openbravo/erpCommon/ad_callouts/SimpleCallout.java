@@ -150,8 +150,7 @@ public abstract class SimpleCallout extends DelegateConnectionProvider {
 
       } else if (inpFields.containsKey(key)) {
         Column col = inpFields.get(key).getColumn();
-        String colID = col.getId();
-        String oldValue = request.getRequestParameter(colID);
+        String oldValue = request.getRequestParameter(key);
         Boolean changed = false;
 
         // If the column is a combo
@@ -192,17 +191,22 @@ public abstract class SimpleCallout extends DelegateConnectionProvider {
           }
 
           // added this new value and set parameter into request
+          if (temporalyElement.has(SimpleCalloutConstants.CLASSIC_VALUE)) {
+            request.setRequestParameter(key,
+                temporalyElement.getString(SimpleCalloutConstants.CLASSIC_VALUE));
+          }
+
           valuesFromFIC.addColumnValues(
               "inp" + Sqlc.TransformaNombreColumna(col.getDBColumnName()), temporalyElement);
           changed = true;
           if (valuesFromFIC.getDynamicCols().contains(key)) {
             valuesFromFIC.addChangedCols(col.getDBColumnName());
           }
-          if (temporalyElement.has(SimpleCalloutConstants.CLASSIC_VALUE)) {
-            request.setRequestParameter(key,
-                temporalyElement.getString(SimpleCalloutConstants.CLASSIC_VALUE));
-          }
 
+          if (element.has(SimpleCalloutConstants.ENTRIES)) {
+            temporalyElement.put(SimpleCalloutConstants.ENTRIES,
+                element.getJSONArray(SimpleCalloutConstants.ENTRIES));
+          }
           // normal data
         } else if (element.has(SimpleCalloutConstants.CLASSIC_VALUE)) {
           // We set the new value in the request, so that the JSONObject is computed
