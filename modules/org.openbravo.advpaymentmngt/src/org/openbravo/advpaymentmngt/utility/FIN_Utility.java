@@ -1084,8 +1084,7 @@ public class FIN_Utility {
       invoiceDocNo = invoice.getDocumentNo();
 
       final String paymentDescription = OBDal.getInstance()
-          .get(OrganizationInformation.class, (organization.getId()))
-          .getAPRMPaymentDescription();
+          .get(OrganizationInformation.class, (organization.getId())).getAPRMPaymentDescription();
       // In case of a purchase invoice and the Supplier Reference is selected use
       // Reference
       if (paymentDescription.equals("Supplier Reference") && !invoice.isSalesTransaction()) {
@@ -1638,6 +1637,69 @@ public class FIN_Utility {
     }
 
     return (FinAccPaymentMethod) qry.uniqueResult();
+  }
+
+  /**
+   * Get an active FinAccPaymentMethod related to paymentMethodId FIN_PaymentMethod and
+   * financialAccountId FIN_FinancialAccount, if exists. If paymentMethodId is null it will retrieve
+   * any FinAccPaymentMethod related to paymentMethodId FIN_PaymentMethod ordered by default field.
+   * FinAccPaymentMethod must have pay in/out active and must be compatible with currencyId Currency
+   * if currencyId is not null. Also must validate the condition that orgId1 is in natural tree of
+   * the orgId2 to avoid get records related to financial accounts that does not belong to the
+   * natural tree of the document's organization, if the orgId1 @param is null then it will use as
+   * organization id the organization id of the account related to the financial account payment
+   * method. These validations guarantees that only is returned a valid FinAccPaymentMethod.
+   */
+  public static FinAccPaymentMethod getFinancialAccountPaymentMethod(String paymentMethodId,
+      String financialAccountId, boolean issotrx, String currencyId, String orgId1, String orgId2) {
+    StringBuffer where = new StringBuffer();
+    where.append(" as fapm");
+    where.append(" join fapm." + FinAccPaymentMethod.PROPERTY_ACCOUNT + " as fa");
+    where.append(" where fapm." + FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD + " = :paymentMethod");
+    where.append(" and fa." + FIN_FinancialAccount.PROPERTY_ACTIVE + " = true");
+    if (issotrx) {
+      where.append(" and fapm." + FinAccPaymentMethod.PROPERTY_PAYINALLOW + " = true");
+    } else {
+      where.append(" and fapm." + FinAccPaymentMethod.PROPERTY_PAYOUTALLOW + " = true");
+    }
+    if (!StringUtils.isEmpty(financialAccountId)) {
+      where.append(" and fapm." + FinAccPaymentMethod.PROPERTY_ACCOUNT + " = :financialAccount");
+    }
+    if (!StringUtils.isEmpty(currencyId)) {
+      where.append(" and (fa." + FIN_FinancialAccount.PROPERTY_CURRENCY + " = :currency");
+      if (issotrx) {
+        where.append(" or fapm." + FinAccPaymentMethod.PROPERTY_PAYINISMULTICURRENCY + " = true)");
+      } else {
+        where.append(" or fapm." + FinAccPaymentMethod.PROPERTY_PAYOUTISMULTICURRENCY + " = true)");
+      }
+    }
+    if (!StringUtils.isEmpty(orgId2)) {
+      final String fapmAccOrg = "fapm." + FinAccPaymentMethod.PROPERTY_ACCOUNT + "."
+          + FIN_FinancialAccount.PROPERTY_ORGANIZATION;
+      where
+          .append(" and ad_org_isinnaturaltree("
+              + (orgId1 == null ? ("CASE WHEN " + fapmAccOrg + " IS NOT NULL THEN " + fapmAccOrg + ".id ELSE '-1' END")
+                  : "'" + orgId1 + "'") + ",'" + orgId2 + "','"
+              + OBContext.getOBContext().getCurrentClient().getId() + "') = 'Y'");
+    }
+    where.append(" order by fapm." + FinAccPaymentMethod.PROPERTY_DEFAULT + " desc");
+
+    OBQuery<FinAccPaymentMethod> qry = OBDal.getInstance().createQuery(FinAccPaymentMethod.class,
+        where.toString());
+    qry.setFilterOnReadableOrganization(false);
+    qry.setMaxResult(1);
+
+    qry.setNamedParameter("paymentMethod",
+        OBDal.getInstance().get(FIN_PaymentMethod.class, paymentMethodId));
+    if (!StringUtils.isEmpty(financialAccountId)) {
+      qry.setNamedParameter("financialAccount",
+          OBDal.getInstance().get(FIN_FinancialAccount.class, financialAccountId));
+    }
+    if (!StringUtils.isEmpty(currencyId)) {
+      qry.setNamedParameter("currency", OBDal.getInstance().get(Currency.class, currencyId));
+    }
+
+    return qry.uniqueResult();
   }
 
   /**
