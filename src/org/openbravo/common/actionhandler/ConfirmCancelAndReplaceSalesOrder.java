@@ -47,7 +47,7 @@ public class ConfirmCancelAndReplaceSalesOrder extends BaseProcessActionHandler 
 
     } catch (Exception e1) {
       try {
-        OBDal.getInstance().getConnection().rollback();
+        OBDal.getInstance().rollbackAndClose();
         JSONObject resultMessage = new JSONObject();
         resultMessage.put("severity", "error");
         resultMessage.put("title", OBMessageUtils.messageBD("Error"));

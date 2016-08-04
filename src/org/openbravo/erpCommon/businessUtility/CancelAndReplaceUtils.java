@@ -62,6 +62,8 @@ import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.common.order.OrderLineOffer;
 import org.openbravo.model.common.order.OrderTax;
+import org.openbravo.model.common.plm.AttributeSetInstance;
+import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentDetail;
@@ -316,7 +318,6 @@ public class CancelAndReplaceUtils {
         newOrder.setDocumentStatus("DR");
         OBDal.getInstance().save(newOrder);
         callCOrderPost(newOrder);
-
       }
       // Create new reservations
       createNewReservations(newOrder);
@@ -333,14 +334,9 @@ public class CancelAndReplaceUtils {
           .executeHook(replaceOrder, triggersDisabled, oldOrder, newOrder, inverseOrder, jsonorder);
 
     } catch (Exception e1) {
-      try {
-        OBDal.getInstance().getConnection().rollback();
-      } catch (Exception e2) {
-        throw new OBException(e2);
-      }
-      Throwable e3 = DbUtility.getUnderlyingSQLException(e1);
+      Throwable e2 = DbUtility.getUnderlyingSQLException(e1);
       log4j.error("Error executing Cancel and Replace", e1);
-      throw new OBException(e3.getMessage());
+      throw new OBException(e2.getMessage());
     } finally {
       if (orderLines != null) {
         orderLines.close();
@@ -656,12 +652,13 @@ public class CancelAndReplaceUtils {
 
   protected static void createMTransaction(ShipmentInOutLine line,
       CallableStatement updateStockStatement, boolean triggersDisabled) {
-    if (line.getProduct().getProductType().equals("I") && line.getProduct().isStocked()) {
+    Product prod = line.getProduct();
+    if (prod.getProductType().equals("I") && line.getProduct().isStocked()) {
       // Stock is changed only for stocked products of type "Item"
       MaterialTransaction transaction = OBProvider.getInstance().get(MaterialTransaction.class);
       transaction.setOrganization(line.getOrganization());
       transaction.setMovementType(line.getShipmentReceipt().getMovementType());
-      transaction.setProduct(line.getProduct());
+      transaction.setProduct(prod);
       transaction.setStorageBin(line.getStorageBin());
       transaction.setOrderUOM(line.getOrderUOM());
       transaction.setUOM(line.getUOM());
@@ -669,7 +666,20 @@ public class CancelAndReplaceUtils {
       transaction.setMovementQuantity(line.getMovementQuantity().multiply(NEGATIVE_ONE));
       transaction.setMovementDate(line.getShipmentReceipt().getMovementDate());
       transaction.setGoodsShipmentLine(line);
-      transaction.setAttributeSetValue(line.getAttributeSetValue());
+      if (line.getAttributeSetValue() != null) {
+        transaction.setAttributeSetValue(line.getAttributeSetValue());
+      } else if (prod.getAttributeSet() != null
+          && (prod.getUseAttributeSetValueAs() == null || !"F".equals(prod
+              .getUseAttributeSetValueAs())) && prod.getAttributeSet().isRequireAtLeastOneValue()) {
+        // Set fake AttributeSetInstance to transaction line for netting shipment as otherwise it
+        // will return an error when the product has an attribute set and
+        // "Is Required at Least One Value" property of the attribute set is "Y"
+        AttributeSetInstance attr = OBProvider.getInstance().get(AttributeSetInstance.class);
+        attr.setAttributeSet(prod.getAttributeSet());
+        attr.setDescription("1");
+        OBDal.getInstance().save(attr);
+        transaction.setAttributeSetValue(attr);
+      }
 
       // Execute M_UPDATE_INVENTORY stored procedure, it is done when is executed from Web POS
       // because triggers are disabled
