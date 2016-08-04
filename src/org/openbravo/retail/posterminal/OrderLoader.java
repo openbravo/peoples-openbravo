@@ -1423,24 +1423,48 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         jsonorder.getJSONObject("bp").getString("locId")));
     order.setInvoiceAddress(order.getPartnerAddress());
 
-    if (!jsonorder.getJSONObject("bp").isNull("paymentMethod")
-        && !jsonorder.getJSONObject("bp").getString("paymentMethod").equals("null")) {
-      order.setPaymentMethod((FIN_PaymentMethod) OBDal.getInstance().getProxy("FIN_PaymentMethod",
-          jsonorder.getJSONObject("bp").getString("paymentMethod")));
-    } else if (bp.getPaymentMethod() != null) {
-      order.setPaymentMethod((FIN_PaymentMethod) bp.getPaymentMethod());
-    } else if (order.getOrganization().getObretcoDbpPmethodid() != null) {
-      order.setPaymentMethod((FIN_PaymentMethod) order.getOrganization().getObretcoDbpPmethodid());
-    } else {
-      String paymentMethodHqlWhereClause = " pmethod where EXISTS (SELECT 1 FROM FinancialMgmtFinAccPaymentMethod fapm "
-          + "WHERE pmethod.id = fapm.paymentMethod.id AND fapm.payinAllow = 'Y')";
-      OBQuery<FIN_PaymentMethod> queryPaymentMethod = OBDal.getInstance().createQuery(
-          FIN_PaymentMethod.class, paymentMethodHqlWhereClause);
-      queryPaymentMethod.setFilterOnReadableOrganization(true);
-      queryPaymentMethod.setMaxResult(1);
-      List<FIN_PaymentMethod> lstPaymentMethod = queryPaymentMethod.list();
-      if (lstPaymentMethod != null && lstPaymentMethod.size() > 0) {
-        order.setPaymentMethod(lstPaymentMethod.get(0));
+    Boolean paymenthMethod = false;
+    if (!jsonorder.isNull("paymentMethodKind")
+        && !jsonorder.getString("paymentMethodKind").equals("null")) {
+      String posTerminalId = jsonorder.getString("posTerminal");
+      OBPOSApplications posTerminal = OBDal.getInstance().get(OBPOSApplications.class,
+          posTerminalId);
+      if (posTerminal != null) {
+        String paymentTypeName = jsonorder.getString("paymentMethodKind");
+        OBPOSAppPayment paymentType = null;
+        for (OBPOSAppPayment type : posTerminal.getOBPOSAppPaymentList()) {
+          if (type.getSearchKey().equals(paymentTypeName)) {
+            paymentType = type;
+          }
+        }
+        if (paymentType != null) {
+          order.setPaymentMethod(paymentType.getPaymentMethod().getPaymentMethod());
+          paymenthMethod = true;
+        }
+      }
+    }
+
+    if (!paymenthMethod) {
+      if (!jsonorder.getJSONObject("bp").isNull("paymentMethod")
+          && !jsonorder.getJSONObject("bp").getString("paymentMethod").equals("null")) {
+        order.setPaymentMethod((FIN_PaymentMethod) OBDal.getInstance().getProxy(
+            "FIN_PaymentMethod", jsonorder.getJSONObject("bp").getString("paymentMethod")));
+      } else if (bp.getPaymentMethod() != null) {
+        order.setPaymentMethod((FIN_PaymentMethod) bp.getPaymentMethod());
+      } else if (order.getOrganization().getObretcoDbpPmethodid() != null) {
+        order
+            .setPaymentMethod((FIN_PaymentMethod) order.getOrganization().getObretcoDbpPmethodid());
+      } else {
+        String paymentMethodHqlWhereClause = " pmethod where EXISTS (SELECT 1 FROM FinancialMgmtFinAccPaymentMethod fapm "
+            + "WHERE pmethod.id = fapm.paymentMethod.id AND fapm.payinAllow = 'Y')";
+        OBQuery<FIN_PaymentMethod> queryPaymentMethod = OBDal.getInstance().createQuery(
+            FIN_PaymentMethod.class, paymentMethodHqlWhereClause);
+        queryPaymentMethod.setFilterOnReadableOrganization(true);
+        queryPaymentMethod.setMaxResult(1);
+        List<FIN_PaymentMethod> lstPaymentMethod = queryPaymentMethod.list();
+        if (lstPaymentMethod != null && lstPaymentMethod.size() > 0) {
+          order.setPaymentMethod(lstPaymentMethod.get(0));
+        }
       }
     }
 
