@@ -21,19 +21,6 @@ package org.openbravo.test;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
-import org.openbravo.advpaymentmngt.test.FinancialAccountTest;
-import org.openbravo.advpaymentmngt.test.PaymentMethodTest;
-import org.openbravo.advpaymentmngt.test.PaymentTest_01;
-import org.openbravo.advpaymentmngt.test.PaymentTest_02;
-import org.openbravo.advpaymentmngt.test.PaymentTest_03;
-import org.openbravo.advpaymentmngt.test.PaymentTest_04;
-import org.openbravo.advpaymentmngt.test.PaymentTest_05;
-import org.openbravo.advpaymentmngt.test.PaymentTest_06;
-import org.openbravo.advpaymentmngt.test.PaymentTest_07;
-import org.openbravo.advpaymentmngt.test.PaymentTest_08;
-import org.openbravo.advpaymentmngt.test.PaymentTest_09;
-import org.openbravo.advpaymentmngt.test.PaymentTest_10;
-import org.openbravo.advpaymentmngt.test.PaymentTest_11;
 import org.openbravo.base.weld.test.testinfrastructure.CdiInfrastructure;
 import org.openbravo.base.weld.test.testinfrastructure.DalPersistanceEventTest;
 import org.openbravo.base.weld.test.testinfrastructure.ParameterizedCdi;
@@ -248,22 +235,7 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     // Product Services
     ServicesTest.class, //
     ServicesTest2.class, //
-    ServicesTest3.class, //
-
-    // APRM
-    FinancialAccountTest.class, //
-    PaymentMethodTest.class, //
-    PaymentTest_01.class, //
-    PaymentTest_02.class, //
-    PaymentTest_03.class, //
-    PaymentTest_04.class, //
-    PaymentTest_05.class, //
-    PaymentTest_06.class, //
-    PaymentTest_07.class, //
-    PaymentTest_08.class, //
-    PaymentTest_09.class, //
-    PaymentTest_10.class, //
-    PaymentTest_11.class
+    ServicesTest3.class
 
 })
 public class AllAntTaskTests {

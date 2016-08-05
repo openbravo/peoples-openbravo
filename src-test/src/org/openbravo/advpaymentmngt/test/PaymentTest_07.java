@@ -131,12 +131,11 @@ public class PaymentTest_07 extends OBBaseTest {
             order.getGrandTotalAmount().compareTo(getPaidAmount(order.getFINPaymentScheduleList())) == 0);
         assertTrue("Status != Payment Received", "RPR".equals(payment.getStatus()));
         // CHECK OUTPUT DATA INVOICE
-        // FIXME: Invoice is not fully paid due to discount in the order
-        // assertTrue(
-        // "Invoice Payment Schedule Outstanding Amount != 0",
-        // BigDecimal.ZERO.compareTo(invoice.getFINPaymentScheduleList().get(0)
-        // .getOutstandingAmount()) == 0);
-        // assertTrue("Invoice remains not paid", invoice.isPaymentComplete());
+        assertTrue(
+            "Invoice Payment Schedule Outstanding Amount != 0",
+            BigDecimal.ZERO.compareTo(invoice.getFINPaymentScheduleList().get(0)
+                .getOutstandingAmount()) == 0);
+        assertTrue("Invoice remains not paid", invoice.isPaymentComplete());
         assertTrue(
             "Invoice Payment Schedule Received Amount != Total Amount",
             invoice.getGrandTotalAmount().compareTo(
