@@ -145,6 +145,7 @@ enyo.kind({
           num, brandStr;
       sql = "select distinct(id), name, characteristic_id, parent from m_ch_value chv where  chv.characteristic_id = ?";
       params.push(this.parent.parent.characteristic.get('id'));
+      // brand filter
       if (productCharacteristicModel.get('brandFilter').length > 0) {
         num = 0;
         brandStr = "";
@@ -157,6 +158,7 @@ enyo.kind({
         }
         BChV_Filter = "and (exists (select 1 from M_Product_Ch_Value mpchv , M_Product p where mpchv.M_Product_ID=p.M_Product_ID and " + "chv.id=mpchv.m_ch_value_id  and (p.brand in (" + brandStr + "))))";
       }
+      // product name and category filter
       if (productFilterText !== undefined && productCategory !== undefined) {
         if (productFilterText !== "" || productCategory !== "__all__" || productCategory !== "'__all__'") {
           params.push("%" + productFilterText + "%");
@@ -170,6 +172,7 @@ enyo.kind({
           }
         }
       }
+      // characteristics filter
       if (me.parent.parent.model.get('filter').length > 0) {
         for (i = 0; i < me.parent.parent.model.get('filter').length; i++) {
           if (!characteristic.includes(me.parent.parent.model.get('filter')[i].characteristic_id)) {
@@ -193,6 +196,7 @@ enyo.kind({
           chFilterQuery += " and (exists (select 1 from M_Product_Ch_Value pchv where chv.id=pchv.m_ch_value_id and (exists (select 1 from M_Product_Ch_Value mpcharv where mpcharv.M_Product_ID=pchv.M_Product_ID and mpcharv.m_ch_value_id in (" + characteristicsValuesStr + " ))))) ";
         }
       }
+      //external modules filter
       var sqlCriteriaFilter = "";
       productCharacteristic.customFilters.forEach(function (sqlFilter) {
         if (!_.isUndefined(sqlFilter.sqlFilterQueryCharacteristics)) {
@@ -231,6 +235,7 @@ enyo.kind({
     } else {
 
       var remoteCriteria = [],
+          characteristicParams = "",
           brandparams = [],
           characteristicValue = [];
       var productFilter = {},
@@ -243,7 +248,7 @@ enyo.kind({
           value: this.parent.parent.characteristic.get('id'),
           isId: true
           };
-
+      // brand filter
       if (productCharacteristicModel.get('brandFilter').length > 0) {
         for (i = 0; i < productCharacteristicModel.get('brandFilter').length; i++) {
           brandparams.push(productCharacteristicModel.get('brandFilter')[i].id);
@@ -258,7 +263,7 @@ enyo.kind({
           remoteCriteria.push(brandfilter);
         }
       }
-
+      // product name and category filter
       if (productFilterText !== undefined || productCategory !== undefined) {
         var productCat = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.searchProductCharacteristicHeader.getSelectedCategories(),
             category = productCat.indexOf('OBPOS_bestsellercategory') >= 0 ? 'OBPOS_bestsellercategory' : (productCat.indexOf('__all__') >= 0 ? '__all__' : [productCategory.value]);
@@ -269,6 +274,7 @@ enyo.kind({
         productFilter.params = [productText, productCategory.filter ? productCategory.params[0] : category];
         remoteCriteria.push(productFilter);
       }
+      // characteristic filter
       if (me.parent.parent.model.get('filter').length > 0) {
         for (i = 0; i < me.parent.parent.model.get('filter').length; i++) {
           if (!characteristic.includes(me.parent.parent.model.get('filter')[i].characteristic_id)) {
@@ -281,20 +287,26 @@ enyo.kind({
               characteristicValue.push(me.parent.parent.model.get('filter')[j].id);
             }
           }
-          if (characteristicValue.length > 0) {
+          if (i > 0) {
+            characteristicParams += ";";
+          }
+          characteristicParams += characteristicValue;
+          characteristicValue = [];
+
+          if (characteristicParams.length > 0) {
             chFilter = {
               columns: [],
               operator: OB.Dal.FILTER,
               value: 'Chv_Filter',
               filter: characteristic[i],
-              params: [characteristicValue]
+              params: [characteristicParams]
             };
             remoteCriteria.push(chFilter);
-            characteristicValue = [];
+            characteristicParams = "";
           }
         }
       }
-
+      // external modules filter
       criteria.hqlCriteria = [];
       productCharacteristic.customFilters.forEach(function (hqlFilter) {
         if (!_.isUndefined(hqlFilter.hqlCriteriaCharacteristicsValue)) {
@@ -308,7 +320,6 @@ enyo.kind({
           }
         }
       });
-
       remoteCriteria.push(characteristicfilter);
       criteria.remoteFilters = remoteCriteria;
       criteria.forceRemote = forceRemote;
