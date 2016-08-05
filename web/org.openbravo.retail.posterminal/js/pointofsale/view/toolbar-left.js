@@ -413,6 +413,7 @@ enyo.kind({
     me.bubble('onShowColumn', {
       colNum: 1
     });
+    OB.MobileApp.view.scanningFocus(false);
     OB.UTIL.SynchronizationHelper.finished(synchId, 'showPaymentTab');
   },
   tap: function () {
