@@ -100,7 +100,13 @@ public class OBCriteria<E extends BaseOBObject> extends CriteriaImpl {
   public int count() {
     initialize();
     setProjection(Projections.rowCount());
-    log.debug("Counting using criteria " + toString());
+    /*
+     * check for debug first, as toString() does initialize some hibernate proxies of other entities
+     * used in the criteria
+     */
+    if (log.isDebugEnabled()) {
+      log.debug("Counting using criteria " + toString());
+    }
     final int result = ((Number) uniqueResult()).intValue();
     setProjection(null);
     return result;
