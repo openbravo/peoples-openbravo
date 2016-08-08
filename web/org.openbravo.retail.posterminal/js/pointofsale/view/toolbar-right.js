@@ -245,7 +245,7 @@ enyo.kind({
     components: [{
       name: 'rfidIcon',
       showing: false,
-      classes: 'btn-icon-toolbartabrfid'
+      classes: 'btn-icon-toolbartabrfid btn-icon-rfidoffline'
     }]
   }],
   init: function (model) {

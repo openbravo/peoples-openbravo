@@ -34,6 +34,12 @@ enyo.kind({
     kind: 'OB.UI.CheckboxButton',
     tag: 'div',
     tap: function () {
+      var model = this.owner.model;
+      if (this.checked) {
+        model.trigger('uncheck', model);
+      } else {
+        model.trigger('check', model);
+      }
       return this;
     },
     style: 'float: left; width: 10%;'
