@@ -51,6 +51,9 @@
       <index name="EM_OBPOS_ORDERDATE" unique="false">
         <index-column name="DATEORDERED"/>
       </index>
+      <index name="EM_OBPOS_REJECTED_QUOTAT_IND" unique="false">
+        <index-column name="EM_OBPOS_REJECTED_QUOTAT_ID"/>
+      </index>
       <check name="EM_OBPOS_ISDELETED_CHECK"><![CDATA[EM_OBPOS_ISDELETED IN ('Y', 'N')]]></check>
     </table>
   </database>
