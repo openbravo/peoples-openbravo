@@ -1484,6 +1484,7 @@ isc.OBStandardView.addProperties({
     this.viewForm.recordIdInForm = OB.Utilities.getTemporaryId();
 
     if (!this.isShowingForm) {
+      this.viewGrid.markForCalculateSummaries();
       this.switchFormGridVisibility();
     }
 
@@ -2299,6 +2300,7 @@ isc.OBStandardView.addProperties({
           selection = currentGrid.getSelection().duplicate();
           // deselect the current records
           currentGrid.deselectAllRecords();
+          view.viewGrid.markForCalculateSummaries();
 
           if (selection.length > 1) {
             deleteData = {};

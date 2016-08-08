@@ -637,6 +637,10 @@ isc.OBViewGrid.addProperties({
     if (this.isGrouped) {
       this.regroup();
     }
+    if (this.lazyFiltering) {
+      this.markForCalculateSummaries();
+      return;
+    }
     if (!clear) {
       if (!this.showGridSummary) {
         this.setShowGridSummary(true);
@@ -2978,6 +2982,7 @@ isc.OBViewGrid.addProperties({
     }
 
     if (this.lazyFiltering && !isc.isA.ResultSet(this.data)) {
+      this.markForCalculateSummaries();
       OB.Utilities.createResultSetManually(this);
     }
 
@@ -3770,6 +3775,7 @@ isc.OBViewGrid.addProperties({
     }
 
     this.view.messageBar.hide();
+    this.markForCalculateSummaries();
 
     delete this._showingEditor;
     return ret;
