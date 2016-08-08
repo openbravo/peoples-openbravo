@@ -35,6 +35,8 @@ import org.openbravo.base.filter.RequestFilter;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.application.window.servlet.CalloutServletConfig;
 import org.openbravo.client.kernel.RequestContext;
+import org.openbravo.client.kernel.reference.EnumUIDefinition;
+import org.openbravo.client.kernel.reference.ForeignKeyUIDefinition;
 import org.openbravo.client.kernel.reference.UIDefinition;
 import org.openbravo.client.kernel.reference.UIDefinitionController;
 import org.openbravo.data.Sqlc;
@@ -218,6 +220,12 @@ public abstract class SimpleCallout extends DelegateConnectionProvider {
           JSONObject jsonobj = new JSONObject(jsonStr);
           if (jsonobj.has(SimpleCalloutConstants.CLASSIC_VALUE)) {
             String newValue = element.getString(SimpleCalloutConstants.CLASSIC_VALUE);
+            // Special case for null values for combos: we must clean the combo values
+            if (newValue.equals("null")
+                && (uiDef instanceof ForeignKeyUIDefinition || uiDef instanceof EnumUIDefinition)) {
+              newValue = "";
+            }
+
             if ((oldValue == null && newValue != null) || (oldValue != null && newValue == null)
                 || (oldValue != null && newValue != null && !oldValue.equals(newValue))) {
               valuesFromFIC.addColumnValues(
