@@ -6368,7 +6368,7 @@ The 'Compatibility with Legacy Grids' flag should only be checked if its handler
 <!--B222E0B3174A43D0935CCDD7520C37EF-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--B222E0B3174A43D0935CCDD7520C37EF-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--B222E0B3174A43D0935CCDD7520C37EF-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--B222E0B3174A43D0935CCDD7520C37EF-->  <NAME><![CDATA[IsLazyFiltering]]></NAME>
+<!--B222E0B3174A43D0935CCDD7520C37EF-->  <NAME><![CDATA[Lazy Filtering on Grid]]></NAME>
 <!--B222E0B3174A43D0935CCDD7520C37EF-->  <DESCRIPTION><![CDATA[If it is set, the grid won't perform a filter and/or a sorting action until the 'Apply Filters' button be pressed. In the same way, the summary functions present in the grid won't be recalculated until this button be pressed.]]></DESCRIPTION>
 <!--B222E0B3174A43D0935CCDD7520C37EF-->  <HELP><![CDATA[If it is set, the grid won't perform a filter and/or a sorting action until the 'Apply Filters' button be pressed. In the same way, the summary functions present in the grid won't be recalculated until this button be pressed.]]></HELP>
 <!--B222E0B3174A43D0935CCDD7520C37EF-->  <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
@@ -6396,7 +6396,7 @@ The 'Compatibility with Legacy Grids' flag should only be checked if its handler
 <!--B46E1D7D67054980830418FDA0F571BF-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--B46E1D7D67054980830418FDA0F571BF-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--B46E1D7D67054980830418FDA0F571BF-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--B46E1D7D67054980830418FDA0F571BF-->  <NAME><![CDATA[IsLazyFiltering]]></NAME>
+<!--B46E1D7D67054980830418FDA0F571BF-->  <NAME><![CDATA[Lazy Filtering on Grid]]></NAME>
 <!--B46E1D7D67054980830418FDA0F571BF-->  <DESCRIPTION><![CDATA[If it is set, the grid won't perform a filter and/or a sorting action until the 'Apply Filters' button be pressed. In the same way, the summary functions present in the grid won't be recalculated until this button be pressed.]]></DESCRIPTION>
 <!--B46E1D7D67054980830418FDA0F571BF-->  <HELP><![CDATA[If it is set, the grid won't perform a filter and/or a sorting action until the 'Apply Filters' button be pressed. In the same way, the summary functions present in the grid won't be recalculated until this button be pressed.]]></HELP>
 <!--B46E1D7D67054980830418FDA0F571BF-->  <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
