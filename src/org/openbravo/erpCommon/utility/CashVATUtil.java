@@ -490,9 +490,10 @@ public class CashVATUtil {
       String Fact_Acct_Group_ID, DocLineCashVATReady_PaymentTransactionReconciliation line,
       Invoice invoice, final String documentType, final String SeqNo) {
     try {
-      if (invoice.isCashVAT() && !line.getInvoiceTaxCashVAT_V().isEmpty()) {
+      if (invoice.isCashVAT() && !line.getInvoiceTaxCashVAT_V_IDs().isEmpty()) {
         FactLine factLine2 = null;
-        for (final InvoiceTaxCashVAT_V itcv : line.getInvoiceTaxCashVAT_V()) {
+        for (final String itcvId : line.getInvoiceTaxCashVAT_V_IDs()) {
+          InvoiceTaxCashVAT_V itcv = OBDal.getInstance().get(InvoiceTaxCashVAT_V.class, itcvId);
           final TaxRate tax = itcv.getInvoiceTax().getTax();
           Invoice inv = itcv.getInvoiceTax().getInvoice();
           if (tax.isCashVAT() && StringUtils.equals(inv.getId(), invoice.getId())) {
