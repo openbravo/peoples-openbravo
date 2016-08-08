@@ -81,7 +81,7 @@ public class InvoiceImportEntryProcessor extends ImportEntryProcessor {
       final Query<Number> qry = OBDal
           .getInstance()
           .getSession()
-          .createQuery("select count(*) from " + ImportEntry.ENTITY_NAME + " where " + whereClause,
+          .createQuery("select 1 from " + ImportEntry.ENTITY_NAME + " where " + whereClause,
               Number.class);
       qry.setParameter("creationDate", importEntry.getCreationDate());
       qry.setParameter("terminal", importEntry.getOBPOSPOSTerminal());
