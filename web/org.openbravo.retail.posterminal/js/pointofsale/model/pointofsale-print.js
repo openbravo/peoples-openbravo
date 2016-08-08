@@ -126,6 +126,9 @@
                     sendfunction: '_sendPDF'
                   }));
                 }
+                if (args.callback) {
+                  args.callback();
+                }
                 };
             // Create dialog buttons
             var dialogbuttons = [];
@@ -207,6 +210,9 @@
                           data: result.data,
                           sendfunction: '_sendFile'
                         }));
+                      }
+                      if (args.callback) {
+                        args.callback();
                       }
                       };
                   // Create dialog buttons
