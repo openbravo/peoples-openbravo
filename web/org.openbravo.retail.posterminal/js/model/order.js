@@ -5845,23 +5845,25 @@
           paidReceipt = (this.get('orderType') === 0 || this.get('orderType') === 1) && this.get('isPaid'),
           receiptShouldBeShipped = false;
 
-      if ((this.get('bp').get('invoiceTerms') === 'I' && this.get('generateInvoice')) || this.get('paidOnCredit')) {
-        receiptShouldBeInvoiced = true;
-      } else if (this.get('bp').get('invoiceTerms') === 'O') {
-        linesPendingToDeliver = _.find(this.get('lines').models, function (line) {
-          return line.get('qty') !== (!OB.UTIL.isNullOrUndefined(line.get('obposQtytodeliver')) ? line.get('obposQtytodeliver') : 0);
-        });
-        if (!linesPendingToDeliver) {
+      if (!isDeleted) {
+        if ((this.get('bp').get('invoiceTerms') === 'I' && this.get('generateInvoice')) || this.get('paidOnCredit')) {
           receiptShouldBeInvoiced = true;
-        }
-      } else if (this.get('bp').get('invoiceTerms') === 'D') {
-        receiptShouldBeShipped = !isQuotation && !notpaidLayaway && !isDeleted && !paidReceipt;
-        if (receiptShouldBeShipped) {
-          linesToInvoice = _.find(this.get('lines').models, function (line) {
-            return (!OB.UTIL.isNullOrUndefined(line.get('obposQtytodeliver')) ? line.get('obposQtytodeliver') : line.get('qty')) !== 0;
+        } else if (this.get('bp').get('invoiceTerms') === 'O') {
+          linesPendingToDeliver = _.find(this.get('lines').models, function (line) {
+            return line.get('qty') !== (!OB.UTIL.isNullOrUndefined(line.get('obposQtytodeliver')) ? line.get('obposQtytodeliver') : 0);
           });
-          if (linesToInvoice) {
+          if (!linesPendingToDeliver) {
             receiptShouldBeInvoiced = true;
+          }
+        } else if (this.get('bp').get('invoiceTerms') === 'D') {
+          receiptShouldBeShipped = !isQuotation && !notpaidLayaway && !isDeleted && !paidReceipt;
+          if (receiptShouldBeShipped) {
+            linesToInvoice = _.find(this.get('lines').models, function (line) {
+              return (!OB.UTIL.isNullOrUndefined(line.get('obposQtytodeliver')) ? line.get('obposQtytodeliver') : line.get('qty')) !== 0;
+            });
+            if (linesToInvoice) {
+              receiptShouldBeInvoiced = true;
+            }
           }
         }
       }
