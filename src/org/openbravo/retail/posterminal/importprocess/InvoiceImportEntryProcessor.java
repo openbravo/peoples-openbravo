@@ -86,7 +86,8 @@ public class InvoiceImportEntryProcessor extends ImportEntryProcessor {
       qry.setParameter("creationDate", importEntry.getCreationDate());
       qry.setParameter("terminal", importEntry.getOBPOSPOSTerminal());
 
-      return (qry.uniqueResult()).intValue();
+      qry.setMaxResults(1);
+      return qry.list().size();
     }
   }
 
