@@ -265,7 +265,7 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
               strcAcctSchemaId, Tree.getMembers(this, strTreeOrg, strOrg),
               "'" + year.getFiscalYear() + "'" + strYearsToClose, openingEntryOwner, strCompareTo,
               localStrDateFromRef, DateTimeData.nDaysAfter(this, localStrDateToRef, "1"), "'"
-                  + yearRef.getFiscalYear() + "'" + strYearsToCloseRef, openingEntryOwnerRef);
+                  + yrRef + "'" + strYearsToCloseRef, openingEntryOwnerRef);
           {
             if (log4j.isDebugEnabled())
               log4j.debug("*********** strIncomeSummaryAccount: " + strIncomeSummaryAccount);
@@ -326,7 +326,7 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
         parameters.put("period", localStrDateFrom + " - " + localStrDateTo);
         parameters.put("periodRef", localStrDateFromRef + " - " + localStrDateToRef);
         parameters.put("agnoInitial", year.getFiscalYear());
-        parameters.put("agnoRef", yearRef.getFiscalYear());
+        parameters.put("agnoRef", yrRef);
         parameters.put("compareTo", (strCompareTo.equals("Y") ? "Y" : "N"));
         parameters.put(
             "principalTitle",
