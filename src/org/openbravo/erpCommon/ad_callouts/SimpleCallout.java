@@ -373,10 +373,26 @@ public abstract class SimpleCallout extends DelegateConnectionProvider {
      *          The name of the field to get the value.
      * @param filter
      *          Filter used to validate the input against list of allowed inputs.
-     * @return The value of a field named param as an {@code String}.
+     * @return The value of a field named param as an {@code String}. If value is modified
+     *         previously by a parent callout, updated value is returned.
      */
     public String getStringParameter(String param, RequestFilter filter) {
-      return vars.getStringParameter(param, filter);
+      String value = "";
+      try {
+        // if a parent callout modified any value, updated value is returned.
+        if (result.has(param)) {
+          value = result.getJSONObject(param).get(SimpleCalloutConstants.CLASSIC_VALUE).toString();
+        } else {
+          value = vars.getStringParameter(param, filter);
+        }
+      } catch (JSONException e) {
+        log.error("Error parsing JSON Object.", e);
+      }
+      return value;
+    }
+
+    public String getStringParameter(String param) {
+      return getStringParameter(param, null);
     }
 
     /**
@@ -596,5 +612,6 @@ public abstract class SimpleCallout extends DelegateConnectionProvider {
     public JSONObject getJSONObjectResult() {
       return result;
     }
+
   }
 }
