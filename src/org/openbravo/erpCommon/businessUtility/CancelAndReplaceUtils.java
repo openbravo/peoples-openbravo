@@ -87,14 +87,52 @@ public class CancelAndReplaceUtils {
   private static final String ASSOCIATE_SHIPMENT_TO_REPLACE_TICKET = "CancelAndReplaceAssociateShipmentToNewTicket";
   private static OrganizationStructureProvider osp = null;
 
-  public static void cancelOrder(String newOrderId, JSONObject jsonorder,
-      boolean useOrderDocumentNoForRelatedDocs) {
-    cancelAndReplaceOrder(newOrderId, jsonorder, useOrderDocumentNoForRelatedDocs, false);
+  /**
+   * Process that creates a replacement order in temporal status in order to Cancel and Replace an
+   * original order
+   * 
+   * @param oldOrder
+   *          Order that will be cancelled and replaced
+   * @return
+   */
+  public static Order createReplacementOrder(Order oldOrder) {
+    // Create new Order header
+    Order newOrder = (Order) DalUtil.copy(oldOrder, false, true);
+    // Change order values
+    newOrder.setProcessed(false);
+    newOrder.setPosted("N");
+    newOrder.setDocumentStatus("TMP");
+    newOrder.setDocumentAction("CO");
+    newOrder.setGrandTotalAmount(BigDecimal.ZERO);
+    newOrder.setSummedLineAmount(BigDecimal.ZERO);
+    today = new Date();
+    newOrder.setOrderDate(today);
+    newOrder.setReplacedorder(oldOrder);
+    OBDal.getInstance().save(newOrder);
+
+    // Create new Order lines
+    List<OrderLine> oldOrderLineList = oldOrder.getOrderLineList();
+    for (OrderLine oldOrderLine : oldOrderLineList) {
+      OrderLine newOrderLine = (OrderLine) DalUtil.copy(oldOrderLine, false, true);
+      newOrderLine.setDeliveredQuantity(BigDecimal.ZERO);
+      newOrderLine.setReservedQuantity(BigDecimal.ZERO);
+      newOrderLine.setInvoicedQuantity(BigDecimal.ZERO);
+      newOrderLine.setSalesOrder(newOrder);
+      newOrderLine.setReplacedorderline(oldOrderLine);
+      OBDal.getInstance().save(newOrderLine);
+    }
+
+    return newOrder;
   }
 
-  public static void cancelAndReplaceOrder(String newOrderId, JSONObject jsonorder,
+  public static Order cancelOrder(String newOrderId, JSONObject jsonorder,
       boolean useOrderDocumentNoForRelatedDocs) {
-    cancelAndReplaceOrder(newOrderId, jsonorder, useOrderDocumentNoForRelatedDocs, true);
+    return cancelAndReplaceOrder(newOrderId, jsonorder, useOrderDocumentNoForRelatedDocs, false);
+  }
+
+  public static Order cancelAndReplaceOrder(String newOrderId, JSONObject jsonorder,
+      boolean useOrderDocumentNoForRelatedDocs) {
+    return cancelAndReplaceOrder(newOrderId, jsonorder, useOrderDocumentNoForRelatedDocs, true);
   }
 
   /**
@@ -118,18 +156,17 @@ public class CancelAndReplaceUtils {
    *          one, if == false, it will only be cancelled
    * @return
    */
-  protected static void cancelAndReplaceOrder(String orderId, JSONObject jsonorder,
+  protected static Order cancelAndReplaceOrder(String orderId, JSONObject jsonorder,
       boolean useOrderDocumentNoForRelatedDocs, boolean replaceOrder) {
     ScrollableResults orderLines = null;
+    Order newOrder = null;
+    Order oldOrder = null;
     try {
 
       boolean triggersDisabled = false;
       if (jsonorder != null && replaceOrder) {
         triggersDisabled = true;
       }
-
-      Order newOrder = null;
-      Order oldOrder = null;
 
       // If replaceOrder == true, the original order will be cancelled and replaced with a new one,
       // if == false, it will only be cancelled
@@ -342,6 +379,7 @@ public class CancelAndReplaceUtils {
         orderLines.close();
       }
     }
+    return newOrder;
   }
 
   protected static void callCOrderPost(Order order) throws OBException {

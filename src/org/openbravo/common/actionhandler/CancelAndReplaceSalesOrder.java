@@ -18,9 +18,6 @@
  */
 package org.openbravo.common.actionhandler;
 
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -28,12 +25,10 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.client.application.process.BaseProcessActionHandler;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.CancelAndReplaceUtils;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.common.order.Order;
-import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.service.db.DbUtility;
 
 public class CancelAndReplaceSalesOrder extends BaseProcessActionHandler {
@@ -54,39 +49,14 @@ public class CancelAndReplaceSalesOrder extends BaseProcessActionHandler {
       String oldOrderId = request.getString("inpcOrderId");
       String tabId = request.getString("inpTabId");
 
-      // Get new Order
+      // Get Order to be replaced and cancelled
       Order oldOrder = OBDal.getInstance().get(Order.class, oldOrderId);
 
-      // Create new Order header
-      Order newOrder = (Order) DalUtil.copy(oldOrder, false, true);
-      // Change order values
-      newOrder.setProcessed(false);
-      newOrder.setPosted("N");
-      newOrder.setDocumentStatus("TMP");
-      newOrder.setDocumentAction("CO");
-      newOrder.setGrandTotalAmount(BigDecimal.ZERO);
-      newOrder.setSummedLineAmount(BigDecimal.ZERO);
-      Date today = new Date();
-      newOrder.setOrderDate(today);
+      // Get new Order
+      Order newOrder = CancelAndReplaceUtils.createReplacementOrder(oldOrder);
+
       String newDocumentNo = CancelAndReplaceUtils.getNextCancelDocNo(oldOrder.getDocumentNo());
       newOrder.setDocumentNo(newDocumentNo);
-      newOrder.setReplacedorder(oldOrder);
-      OBDal.getInstance().save(newOrder);
-
-      // Create new Order lines
-      List<OrderLine> oldOrderLineList = oldOrder.getOrderLineList();
-      for (OrderLine oldOrderLine : oldOrderLineList) {
-        OrderLine newOrderLine = (OrderLine) DalUtil.copy(oldOrderLine, false, true);
-        newOrderLine.setDeliveredQuantity(BigDecimal.ZERO);
-        newOrderLine.setReservedQuantity(BigDecimal.ZERO);
-        newOrderLine.setInvoicedQuantity(BigDecimal.ZERO);
-        newOrderLine.setSalesOrder(newOrder);
-        newOrderLine.setReplacedorderline(oldOrderLine);
-        OBDal.getInstance().save(newOrderLine);
-      }
-
-      // Get new Order id
-      String newOrderId = newOrder.getId();
 
       // Execute process and prepare an array with actions to be executed after execution
       JSONArray actions = new JSONArray();
@@ -105,7 +75,7 @@ public class CancelAndReplaceSalesOrder extends BaseProcessActionHandler {
 
       // New record info
       openDirectTab.put("tabId", tabId);
-      openDirectTab.put("recordId", newOrderId);
+      openDirectTab.put("recordId", newOrder.getId());
       openDirectTab.put("wait", true);
 
       JSONObject openDirectTabAction = new JSONObject();
