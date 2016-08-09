@@ -94,19 +94,14 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
           "GeneralAccountingReports|conImporte", "N");
       String strConCodigo = vars.getGlobalVariable("inpConCodigo",
           "GeneralAccountingReports|conCodigo", "N");
-      /* Improved Balance Sheet */
-      String strCompareTo = vars.getGlobalVariable("inpCompareTo",
-          "GeneralAccountingReports|compareTo", "Y");
-
       String strLevel = vars.getGlobalVariable("inpLevel", "GeneralAccountingReports|level", "");
       printPageDataSheet(response, vars, "", "", strDateFrom, strDateTo, strPageNo, strDateFromRef,
           strDateToRef, strAsDateTo, strAsDateToRef, strElementValue, strConImporte, "", strLevel,
-          strConCodigo, "", strCompareTo);
+          strConCodigo, "");
     } else if (vars.commandIn("FIND")) {
       String strcAcctSchemaId = vars.getStringParameter("inpcAcctSchemaId", "");
       String strAgno = vars.getRequiredGlobalVariable("inpAgno", "GeneralAccountingReports|agno");
-      /* Improved Balance Sheet */
-      String strAgnoRef = vars.getRequestGlobalVariable("inpAgnoRef",
+      String strAgnoRef = vars.getRequiredGlobalVariable("inpAgnoRef",
           "GeneralAccountingReports|agnoRef");
       String strDateFrom = vars.getRequestGlobalVariable("inpDateFrom",
           "GeneralAccountingReports|dateFrom");
@@ -128,15 +123,12 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
           "GeneralAccountingReports|conImporte");
       String strConCodigo = vars.getRequestGlobalVariable("inpConCodigo",
           "GeneralAccountingReports|conCodigo");
-      /* Improved Balance Sheet */
-      String strCompareTo = vars.getRequestGlobalVariable("inpCompareTo",
-          "GeneralAccountingReports|compareTo");
       String strOrg = vars.getRequestGlobalVariable("inpOrganizacion",
           "GeneralAccountingReports|organizacion");
       String strLevel = vars.getRequestGlobalVariable("inpLevel", "GeneralAccountingReports|level");
       printPagePDF(request, response, vars, strAgno, strAgnoRef, strDateFrom, strDateTo,
           strDateFromRef, strDateToRef, strAsDateTo, strAsDateToRef, strElementValue,
-          strConImporte, strOrg, strLevel, strConCodigo, strcAcctSchemaId, strPageNo, strCompareTo);
+          strConImporte, strOrg, strLevel, strConCodigo, strcAcctSchemaId, strPageNo);
     } else if (vars.commandIn("LEDGER")) {
       String strOrg = vars.getStringParameter("inpOrganizacion");
       if (StringUtils.isEmpty(strOrg)) {
@@ -158,8 +150,8 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
       VariablesSecureApp vars, String strYearId, String strYearRefId, String strDateFrom,
       String strDateTo, String strDateFromRef, String strDateToRef, String strAsDateTo,
       String strAsDateToRef, String strElementValue, String strConImporte, String strOrg,
-      String strLevel, String strConCodigo, String strcAcctSchemaId, String strPageNo,
-      String strCompareTo) throws IOException, ServletException {
+      String strLevel, String strConCodigo, String strcAcctSchemaId, String strPageNo)
+      throws IOException, ServletException {
     String localStrElementValue = strElementValue;
     String localStrDateToRef = strDateToRef;
     String localStrDateFrom = strDateFrom;
@@ -209,13 +201,7 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
         Year year = OBDal.getInstance().get(Year.class, strYearId);
         Year yearRef = OBDal.getInstance().get(Year.class, strYearRefId);
         HashMap<String, Date> startingEndingDate = getStartingEndingDate(year);
-        /* Improved Balance Sheet */
-        String yrRef = "";
-        HashMap<String, Date> startingEndingDateRef = null;
-        if (strCompareTo.equals("Y")) {
-          yrRef = yearRef.getFiscalYear();
-          startingEndingDateRef = getStartingEndingDate(yearRef);
-        }
+        HashMap<String, Date> startingEndingDateRef = getStartingEndingDate(yearRef);
         // Years to be included as no closing is present
         String strYearsToClose = "";
         String strYearsToCloseRef = "";
@@ -233,16 +219,13 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
             strCalculateOpening = "Y";
             strYearsToClose = "," + strYearsToClose;
           }
-          /* Improved Balance Sheet */
-          if (strCompareTo.equals("Y")) {
-            yearsInfo = getYearsToClose(startingEndingDateRef.get("startingDate"), strOrg,
-                yearRef.getCalendar(), strcAcctSchemaId, true);
-            strYearsToCloseRef = yearsInfo[0];
-            openingEntryOwnerRef = yearsInfo[1];
-            if (strYearsToCloseRef.length() > 0) {
-              strCalculateOpening = "Y";
-              strYearsToCloseRef = "," + strYearsToCloseRef;
-            }
+          yearsInfo = getYearsToClose(startingEndingDateRef.get("startingDate"), strOrg,
+              yearRef.getCalendar(), strcAcctSchemaId, true);
+          strYearsToCloseRef = yearsInfo[0];
+          openingEntryOwnerRef = yearsInfo[1];
+          if (strYearsToCloseRef.length() > 0) {
+            strCalculateOpening = "Y";
+            strYearsToCloseRef = "," + strYearsToCloseRef;
           }
         }
         // Income summary amount is calculated and included in the balance sheet data
@@ -263,9 +246,9 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
               Utility.getContext(this, vars, "#User_Client", "GeneralAccountingReports"),
               localStrDateFrom, DateTimeData.nDaysAfter(this, localStrDateTo, "1"),
               strcAcctSchemaId, Tree.getMembers(this, strTreeOrg, strOrg),
-              "'" + year.getFiscalYear() + "'" + strYearsToClose, openingEntryOwner, strCompareTo,
+              "'" + year.getFiscalYear() + "'" + strYearsToClose, openingEntryOwner,
               localStrDateFromRef, DateTimeData.nDaysAfter(this, localStrDateToRef, "1"), "'"
-                  + yrRef + "'" + strYearsToCloseRef, openingEntryOwnerRef);
+                  + yearRef.getFiscalYear() + "'" + strYearsToCloseRef, openingEntryOwnerRef);
           {
             if (log4j.isDebugEnabled())
               log4j.debug("*********** strIncomeSummaryAccount: " + strIncomeSummaryAccount);
@@ -274,16 +257,12 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
                     + "'" + strYearsToClose, strTreeOrg, strOrg, strcAcctSchemaId);
             if (log4j.isDebugEnabled())
               log4j.debug("*********** strISyear: " + strISyear);
-            /* Improved Balance Sheet */
-            String strISyearRef = "0";
-            if (strCompareTo.equals("Y")) {
-              strISyearRef = processIncomeSummary(localStrDateFromRef,
-                  DateTimeData.nDaysAfter(this, localStrDateToRef, "1"),
-                  "'" + yearRef.getFiscalYear() + "'" + strYearsToCloseRef, strTreeOrg, strOrg,
-                  strcAcctSchemaId);
-              if (log4j.isDebugEnabled())
-                log4j.debug("*********** strISyearRef: " + strISyearRef);
-            }
+            String strISyearRef = processIncomeSummary(localStrDateFromRef,
+                DateTimeData.nDaysAfter(this, localStrDateToRef, "1"),
+                "'" + yearRef.getFiscalYear() + "'" + strYearsToCloseRef, strTreeOrg, strOrg,
+                strcAcctSchemaId);
+            if (log4j.isDebugEnabled())
+              log4j.debug("*********** strISyearRef: " + strISyearRef);
             accounts = appendRecords(accounts, strIncomeSummaryAccount, strISyear, strISyearRef);
 
           }
@@ -303,12 +282,12 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
         parameters.put("group", strGroups);
         parameters.put("agno", year.getFiscalYear());
 
-        parameters.put("agno2", yrRef);
+        parameters.put("agno2", yearRef.getFiscalYear());
         parameters.put("column", year.getFiscalYear());
-        parameters.put("columnRef", yrRef);
+        parameters.put("columnRef", yearRef.getFiscalYear());
         parameters.put("org", OrganizationData.selectOrgName(this, strOrg));
         parameters.put("column1", year.getFiscalYear());
-        parameters.put("columnRef1", yrRef);
+        parameters.put("columnRef1", yearRef.getFiscalYear());
         parameters.put("companyName",
             GeneralAccountingReportsData.companyName(this, vars.getClient()));
         parameters.put("date", DateTimeData.today(this));
@@ -316,18 +295,15 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
           localStrDateFrom = OBDateUtils.formatDate(startingEndingDate.get("startingDate"));
         if (localStrDateTo.equals(""))
           localStrDateTo = OBDateUtils.formatDate(startingEndingDate.get("endingDate"));
-        /* Improved Balance Sheet */
-        if (strCompareTo.equals("Y")) {
-          if (localStrDateFromRef.equals(""))
-            localStrDateFromRef = OBDateUtils.formatDate(startingEndingDateRef.get("startingDate"));
-          if (localStrDateToRef.equals(""))
-            localStrDateToRef = OBDateUtils.formatDate(startingEndingDateRef.get("endingDate"));
-        }
+        if (localStrDateFromRef.equals(""))
+          localStrDateFromRef = OBDateUtils.formatDate(startingEndingDateRef.get("startingDate"));
+        if (localStrDateToRef.equals(""))
+          localStrDateToRef = OBDateUtils.formatDate(startingEndingDateRef.get("endingDate"));
         parameters.put("period", localStrDateFrom + " - " + localStrDateTo);
         parameters.put("periodRef", localStrDateFromRef + " - " + localStrDateToRef);
         parameters.put("agnoInitial", year.getFiscalYear());
-        parameters.put("agnoRef", yrRef);
-        parameters.put("compareTo", (strCompareTo.equals("Y") ? "Y" : "N"));
+        parameters.put("agnoRef", yearRef.getFiscalYear());
+
         parameters.put(
             "principalTitle",
             strCalculateOpening.equals("Y") ? GeneralAccountingReportsData.rptTitle(this,
@@ -510,8 +486,7 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
       String strAgno, String strAgnoRef, String strDateFrom, String strDateTo, String strPageNo,
       String strDateFromRef, String strDateToRef, String strAsDateTo, String strAsDateToRef,
       String strElementValue, String strConImporte, String strOrg, String strLevel,
-      String strConCodigo, String strcAcctSchemaId, String strCompareTo) throws IOException,
-      ServletException {
+      String strConCodigo, String strcAcctSchemaId) throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
@@ -574,8 +549,6 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
     xmlDocument.setParameter("asDateToRefsaveFormat", vars.getSessionValue("#AD_SqlDateFormat"));
     xmlDocument.setParameter("conImporte", strConImporte);
     xmlDocument.setParameter("conCodigo", strConCodigo);
-    /* Improved Balance Sheet */
-    xmlDocument.setParameter("compareTo", strCompareTo);
     xmlDocument.setParameter("C_Org_ID", strOrg);
     xmlDocument.setParameter("C_ElementValue_ID", strElementValue);
     xmlDocument.setParameter("level", strLevel);

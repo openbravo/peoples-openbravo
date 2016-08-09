@@ -85,7 +85,7 @@ function validate(command) {
 		setWindowElementFocus(frm.inpAgno);
 		showJSMessage(7);
 		return false;
-	} else if (frm.inpCompareTo.checked && (frm.inpAgnoRef.value == null || frm.inpAgnoRef.value == "")) {
+	} else if (frm.inpAgnoRef.value == null || frm.inpAgnoRef.value == "") {
 		setWindowElementFocus(frm.inpAgnoRef);
 		showJSMessage(7);
 		return false;
@@ -169,13 +169,6 @@ function setDefaultLedger() {
     } catch (e) {
         alert(e);
     }
-}
-
-function onClickCompare() {
-	if(document.frmMain.inpCompareTo.checked)
-		displayLogicElement('trReferenceDetails', true);
-	else
-		displayLogicElement('trReferenceDetails', false);
 }
 
 function onloadFunctions() {
@@ -497,15 +490,8 @@ function onResizeDo(){
                     </TABLE>
                   </TD>
                 </tr>
-                
-                <!-- Improved Balance Sheet -->
-                <tr>
-                  <td class="TitleCell"><span class="LabelText">Compare To</span></td>
-                  <td class="Radio_Check_ContentCell"><input name="inpCompareTo" type="checkbox" id="fieldCompareTo" value="Y" onclick="onClickCompare();"></input></td>
-                </tr>
-                <!-- Improved Balance Sheet -->
 
-                <tr id="trReferenceDetails">
+                <tr>
                 <td class="TitleCell"><span class="LabelText">Reference Year</span></td>
                   <td class="Combo_ContentCell"> <SELECT name="inpAgnoRef" id="paramAgnoRef" class="ComboKey Combo_OneCell_width" onchange="displayLogic(); return true;">
                       <OPTION value=""></OPTION>
