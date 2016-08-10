@@ -3114,7 +3114,30 @@
           _.forEach(receipt.get('lines').models, function (rli) {
             if (gli.get('product').get('groupProduct')) {
               if (gli.get('product').id === rli.get('product').id && gli.get('price') === rli.get('price')) {
-                linesToApply.add(rli);
+                if (rli.get('promotions') && rli.get('promotions').length > 0) {
+                  var samePromos = [];
+                  var qtyOffer = 0;
+                  _.forEach(rli.get('promotions'), function (promot) {
+                    if (!promot.applyNext) {
+                      samePromos.push(promot);
+                    }
+                  });
+                  if (samePromos && samePromos.length > 0) {
+                    _.forEach(samePromos, function (samePromo) {
+                      qtyOffer += samePromo.qtyOffer;
+                    });
+                    if (rli.get('qty') - qtyOffer === 0) {
+                      return;
+                    } else if (rli.get('qty') - qtyOffer > 0) {
+                      var auxrli = new Backbone.Model();
+                      OB.UTIL.clone(rli, auxrli);
+                      auxrli.set('qty', rli.get('qty') - qtyOffer);
+                      linesToApply.add(auxrli);
+                    }
+                  }
+                } else {
+                  linesToApply.add(rli);
+                }
               }
             } else {
               if (gli.get('id') === rli.get('id')) {
@@ -3133,6 +3156,20 @@
                   promoQtyoffer = promotion.qtyOffer;
 
               _.forEach(linesToApply.models, function (line) {
+                // If it's not the first execution, there could be some promotions already applied and are set in the groupedorder lines too.
+                if (!isFirstTime) {
+                  var actProm, indx;
+                  actProm = _.find(line.get('promotions'), function (prom) {
+                    return prom.ruleId === promotion.ruleId;
+                  });
+                  if (actProm) {
+                    indx = line.get('promotions').indexOf(actProm);
+                    if (indx > -1) {
+                      line.get('promotions').splice(indx, 1);
+                    }
+                  }
+                }
+
                 var clonedPromotion = JSON.parse(JSON.stringify(promotion));
                 if (promoQtyoffer > 0) {
                   clonedPromotion.obdiscQtyoffer = (line.get('qty') - promoQtyoffer >= 0) ? promoQtyoffer : line.get('qty');
@@ -3176,7 +3213,7 @@
                 // Adjust splitted promotion amount
                 var splittedAmount = _.reduce(linesToApply.models, function (sum, line) {
                   var linePromo = _.find(line.get('promotions'), function (lp) {
-                    return lp.discountType === promotion.discountType && !lp.hidden;
+                    return lp.ruleId === promotion.ruleId && lp.discountType === promotion.discountType && !lp.hidden;
                   });
                   if (linePromo) {
                     return sum + OB.DEC.toNumber(OB.DEC.toBigDecimal(OB.I18N.formatCurrency(linePromo.amt)));
