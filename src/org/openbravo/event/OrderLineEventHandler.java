@@ -18,16 +18,21 @@
  */
 package org.openbravo.event;
 
+import java.math.BigDecimal;
+
 import javax.enterprise.event.Observes;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.client.kernel.event.EntityDeleteEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
+import org.openbravo.client.kernel.event.EntityUpdateEvent;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.common.order.OrderLine;
 
 public class OrderLineEventHandler extends EntityPersistenceEventObserver {
@@ -39,6 +44,17 @@ public class OrderLineEventHandler extends EntityPersistenceEventObserver {
     return entities;
   }
 
+  public void onUpdate(@Observes
+  EntityUpdateEvent event) {
+    if (!isValidEvent(event)) {
+      return;
+    }
+    final OrderLine line = (OrderLine) event.getTargetInstance();
+    if (line.getReplacedorderline() != null) {
+      checkIfOriginalOrderLineIsDelivered(line.getReplacedorderline(), line, false);
+    }
+  }
+
   public void onDelete(@Observes
   EntityDeleteEvent event) {
     if (!isValidEvent(event)) {
@@ -46,6 +62,11 @@ public class OrderLineEventHandler extends EntityPersistenceEventObserver {
     }
 
     removeSoPoReference(event);
+
+    final OrderLine line = (OrderLine) event.getTargetInstance();
+    if (line.getReplacedorderline() != null) {
+      checkIfOriginalOrderLineIsDelivered(line.getReplacedorderline(), line, true);
+    }
   }
 
   private void removeSoPoReference(EntityDeleteEvent event) {
@@ -64,6 +85,18 @@ public class OrderLineEventHandler extends EntityPersistenceEventObserver {
       query.executeUpdate();
     } finally {
       OBContext.restorePreviousMode();
+    }
+  }
+
+  private void checkIfOriginalOrderLineIsDelivered(OrderLine oldLine, OrderLine newLine,
+      boolean deleting) {
+    if (oldLine.getDeliveredQuantity().compareTo(BigDecimal.ZERO) > 0) {
+      if (deleting) {
+        throw new OBException(OBMessageUtils.translateError("@20201@").getMessage());
+      } else if (oldLine.getDeliveredQuantity().compareTo(newLine.getOrderedQuantity()) > 0) {
+        throw new OBException(OBMessageUtils.translateError(
+            "@CannotOrderLessThanDeliveredInCancelReplace@").getMessage());
+      }
     }
   }
 }
