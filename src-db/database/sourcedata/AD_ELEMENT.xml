@@ -25716,7 +25716,7 @@ Glossary orphan elements are preserved when running Synchronize Terminology proc
 <!--5BD4AC040C044BB1A5817915C0961F35-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--5BD4AC040C044BB1A5817915C0961F35-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--5BD4AC040C044BB1A5817915C0961F35-->  <COLUMNNAME><![CDATA[Iscancelled]]></COLUMNNAME>
-<!--5BD4AC040C044BB1A5817915C0961F35-->  <NAME><![CDATA[Is Cancelled]]></NAME>
+<!--5BD4AC040C044BB1A5817915C0961F35-->  <NAME><![CDATA[Is Canceled]]></NAME>
 <!--5BD4AC040C044BB1A5817915C0961F35-->  <PRINTNAME><![CDATA[Is Canceled]]></PRINTNAME>
 <!--5BD4AC040C044BB1A5817915C0961F35-->  <DESCRIPTION><![CDATA[The Sales Order has been canceled or cancelled and replaced.]]></DESCRIPTION>
 <!--5BD4AC040C044BB1A5817915C0961F35-->  <HELP><![CDATA[The Sales Order has been canceled and canceled and replaced. A new Cancellation Sales Order has been created in Closed Status and if it is replaced also a new Sales Order in Book Status has been created replacing the original one.]]></HELP>
@@ -34139,7 +34139,7 @@ This P&E is only visible for Service Type Products]]></HELP>
 <!--EB7F6DD0A85D48AD84ED48CF6D2C3776-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--EB7F6DD0A85D48AD84ED48CF6D2C3776-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--EB7F6DD0A85D48AD84ED48CF6D2C3776-->  <COLUMNNAME><![CDATA[Cancelledorder_id]]></COLUMNNAME>
-<!--EB7F6DD0A85D48AD84ED48CF6D2C3776-->  <NAME><![CDATA[Cancelled Order]]></NAME>
+<!--EB7F6DD0A85D48AD84ED48CF6D2C3776-->  <NAME><![CDATA[Canceled Order]]></NAME>
 <!--EB7F6DD0A85D48AD84ED48CF6D2C3776-->  <PRINTNAME><![CDATA[Canceled Order]]></PRINTNAME>
 <!--EB7F6DD0A85D48AD84ED48CF6D2C3776-->  <DESCRIPTION><![CDATA[Link to the order that has been canceled]]></DESCRIPTION>
 <!--EB7F6DD0A85D48AD84ED48CF6D2C3776-->  <HELP><![CDATA[Link to the order that has been canceled]]></HELP>
