@@ -56,7 +56,6 @@ import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.model.domaintype.EnumerateDomainType;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.client.application.Parameter;
 import org.openbravo.client.application.Process;
@@ -914,8 +913,7 @@ public class DataSourceServlet extends BaseKernelServlet {
     // setting session info
     // Reset Session Info in DB manually as it was set in the service but actual information is not
     // available till now.
-    SessionInfo.setDBSessionInfo(OBDal.getInstance().getConnection(), OBPropertiesProvider
-        .getInstance().getOpenbravoProperties().getProperty("bbdd.rdbms"));
+    SessionInfo.setDBSessionInfo(OBDal.getInstance().getConnection());
   }
 
   private boolean checkSetParameters(HttpServletRequest request, HttpServletResponse response,
