@@ -161,6 +161,7 @@ public class CancelAndReplaceUtils {
     ScrollableResults orderLines = null;
     Order newOrder = null;
     Order oldOrder = null;
+    OBContext.setAdminMode(false);
     try {
 
       boolean triggersDisabled = false;
@@ -378,6 +379,7 @@ public class CancelAndReplaceUtils {
       if (orderLines != null) {
         orderLines.close();
       }
+      OBContext.restorePreviousMode();
     }
     return newOrder;
   }
