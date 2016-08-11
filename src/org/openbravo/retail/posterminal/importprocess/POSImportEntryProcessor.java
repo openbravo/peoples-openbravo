@@ -56,57 +56,56 @@ public class POSImportEntryProcessor extends EntityPersistenceEventObserver {
 
     final ImportEntry importEntry = (ImportEntry) event.getTargetInstance();
 
-//    try {
+    try {
       if (POSTTYPEOFDATA.contains(importEntry.getTypeofdata())) {
+        JSONObject jsonObject = new JSONObject(importEntry.getJsonInfo());
 
-        throw new OBException("import entry error");
-        
-//        // TODO: using 2 different ways of writing posTerminal is just not nice...
-//        String posTerminalId = ImportProcessUtils.getJSONProperty(jsonObject, "posterminal");
-//        if (posTerminalId == null) {
-//          posTerminalId = ImportProcessUtils.getJSONProperty(jsonObject, "posTerminal");
-//        }
-//        if (posTerminalId == null) {
-//          posTerminalId = ImportProcessUtils.getJSONProperty(jsonObject, "pos");
-//        }
-//        if (posTerminalId != null) {
-//          OBPOSApplications posTerminal = OBDal.getInstance().getProxy(OBPOSApplications.class,
-//              posTerminalId);
-//          final Entity importEntryEntity = ModelProvider.getInstance().getEntity(
-//              ImportEntry.ENTITY_NAME);
-//
-//          final Property posTerminalProperty = importEntryEntity
-//              .getProperty(ImportEntry.PROPERTY_OBPOSPOSTERMINAL);
-//          event.setCurrentState(posTerminalProperty, posTerminal);
-//
-//          // determine the organization without reading the pos terminal
-//          // at the moment only specific structured json is supported
-//          Organization organization = null;
-//          final JSONObject content = new JSONObject(importEntry.getJsonInfo());
-//          if (content.has("organization") && content.get("organization") instanceof String) {
-//            organization = OBDal.getInstance().getProxy(Organization.class,
-//                content.getString("organization"));
-//          } else if (content.has("data") && content.get("data") instanceof JSONArray) {
-//            final JSONArray data = content.getJSONArray("data");
-//            if (data.length() > 0 && data.get(0) instanceof JSONObject) {
-//              final JSONObject json = data.getJSONObject(0);
-//              if (json.has("organization") && json.get("organization") instanceof String) {
-//                organization = OBDal.getInstance().getProxy(Organization.class,
-//                    json.getString("organization"));
-//              }
-//            }
-//          }
-//          // not found read it from the posterminal which will get loaded
-//          if (organization == null) {
-//            organization = posTerminal.getOrganization();
-//          }
-//          final Property orgProperty = importEntryEntity
-//              .getProperty(ImportEntry.PROPERTY_ORGANIZATION);
-//          event.setCurrentState(orgProperty, organization);
-//        }
+        // TODO: using 2 different ways of writing posTerminal is just not nice...
+        String posTerminalId = ImportProcessUtils.getJSONProperty(jsonObject, "posterminal");
+        if (posTerminalId == null) {
+          posTerminalId = ImportProcessUtils.getJSONProperty(jsonObject, "posTerminal");
+        }
+        if (posTerminalId == null) {
+          posTerminalId = ImportProcessUtils.getJSONProperty(jsonObject, "pos");
+        }
+        if (posTerminalId != null) {
+          OBPOSApplications posTerminal = OBDal.getInstance().getProxy(OBPOSApplications.class,
+              posTerminalId);
+          final Entity importEntryEntity = ModelProvider.getInstance().getEntity(
+              ImportEntry.ENTITY_NAME);
+
+          final Property posTerminalProperty = importEntryEntity
+              .getProperty(ImportEntry.PROPERTY_OBPOSPOSTERMINAL);
+          event.setCurrentState(posTerminalProperty, posTerminal);
+
+          // determine the organization without reading the pos terminal
+          // at the moment only specific structured json is supported
+          Organization organization = null;
+          final JSONObject content = new JSONObject(importEntry.getJsonInfo());
+          if (content.has("organization") && content.get("organization") instanceof String) {
+            organization = OBDal.getInstance().getProxy(Organization.class,
+                content.getString("organization"));
+          } else if (content.has("data") && content.get("data") instanceof JSONArray) {
+            final JSONArray data = content.getJSONArray("data");
+            if (data.length() > 0 && data.get(0) instanceof JSONObject) {
+              final JSONObject json = data.getJSONObject(0);
+              if (json.has("organization") && json.get("organization") instanceof String) {
+                organization = OBDal.getInstance().getProxy(Organization.class,
+                    json.getString("organization"));
+              }
+            }
+          }
+          // not found read it from the posterminal which will get loaded
+          if (organization == null) {
+            organization = posTerminal.getOrganization();
+          }
+          final Property orgProperty = importEntryEntity
+              .getProperty(ImportEntry.PROPERTY_ORGANIZATION);
+          event.setCurrentState(orgProperty, organization);
+        }
       }
-//    } catch (JSONException e) {
-//      throw new OBException(e);
-//    }
+    } catch (JSONException e) {
+      throw new OBException(e);
+    }
   }
 }
