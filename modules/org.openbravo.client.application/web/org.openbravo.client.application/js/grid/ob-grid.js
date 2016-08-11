@@ -906,7 +906,19 @@ isc.OBGrid.addProperties({
       }
       return this.summaryRow;
     }
+    if (this.summaryRow && this.isParentGridFetchingData()) {
+      // return the summaryRow if the grid is child of another grid whose data is being fetched
+      // this prevents unneeded datasource requests by not calling the Super 'getSummaryRow' function
+      return this.summaryRow;
+    }
     return this.Super('getSummaryRow');
+  },
+
+  isParentGridFetchingData: function () {
+    if (this.view && this.view.parentView && this.view.parentView.viewGrid) {
+      return this.view.parentView.viewGrid.isFetchingData();
+    }
+    return false;
   },
 
   // puts the grid in a state pending of recalculate summaries

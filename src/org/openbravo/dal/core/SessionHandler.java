@@ -40,6 +40,7 @@ import org.openbravo.base.structure.Identifiable;
 import org.openbravo.base.util.Check;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ExternalConnectionPool;
+import org.openbravo.database.SessionInfo;
 import org.openbravo.service.db.DbUtility;
 
 /**
@@ -55,6 +56,7 @@ public class SessionHandler implements OBNotSingleton {
   private static final Logger log = Logger.getLogger(SessionHandler.class);
 
   private static ExternalConnectionPool externalConnectionPool;
+  private static String rbdms;
 
   {
     String poolClassName = OBPropertiesProvider.getInstance().getOpenbravoProperties()
@@ -67,6 +69,7 @@ public class SessionHandler implements OBNotSingleton {
         log.warn("External connection pool class not found: " + poolClassName, e);
       }
     }
+    rbdms = (String) OBPropertiesProvider.getInstance().getOpenbravoProperties().get("bbdd.rdbms");
   }
 
   // The threadlocal which handles the session
@@ -178,6 +181,7 @@ public class SessionHandler implements OBNotSingleton {
       // getting connection from Hibernate pool
       newConnection = ((DalSessionFactory) SessionFactoryController.getInstance()
           .getSessionFactory()).getConnectionProvider().getConnection();
+      SessionInfo.initDB(newConnection, rbdms);
     }
     return newConnection;
   }

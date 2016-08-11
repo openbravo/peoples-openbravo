@@ -199,7 +199,9 @@ public class SessionInfo {
    *          Connection where the session information will be stored in
    * @param rdbms
    *          Database type
+   * @deprecated
    */
+  @Deprecated
   public static void setDBSessionInfo(Connection conn, String rdbms) {
     if (!isAuditActive) {
       return;

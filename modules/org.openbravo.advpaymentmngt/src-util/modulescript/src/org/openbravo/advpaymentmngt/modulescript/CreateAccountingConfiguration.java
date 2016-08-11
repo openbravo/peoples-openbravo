@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2015 Openbravo SLU
+ * All portions are Copyright (C) 2010-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -55,7 +55,7 @@ public class CreateAccountingConfiguration extends ModuleScript {
   @Override
   protected ModuleScriptExecutionLimits getModuleScriptExecutionLimits() {
     return new ModuleScriptExecutionLimits("A918E3331C404B889D69AA9BFAFB23AC", null, 
-        new OpenbravoVersion(3,0,19579));
+        new OpenbravoVersion(3,0,29718));
   }
 
   void createAcctSchemaTables(ConnectionProvider cp) throws Exception {
@@ -64,7 +64,8 @@ public class CreateAccountingConfiguration extends ModuleScript {
     // Tables to be added hardcoded due to problem when executing module script. The tables
     // sometimes do not exist yet
     String tables[] = { "4D8C3B3C31D1410DA046140C9F024D17", "B1B7075C46934F0A9FD4C4D0F1457B42",
-        "D1A97202E832470285C9B1EB026D54E2", "D4C23A17190649E7B78F55A05AF3438C", "30721072789F410E9606D2235CB2A226"};
+        "D1A97202E832470285C9B1EB026D54E2", "D4C23A17190649E7B78F55A05AF3438C",
+        "30721072789F410E9606D2235CB2A226", "D022B92163074E5E82449C8E0B5AFDF6" };
     for (int i = 0; i < data.length; i++) {
       for (int j = 0; j < tables.length; j++) {
         boolean exist = CreateAccountingConfigurationData.selectTables(cp, data[i].cAcctschemaId,
