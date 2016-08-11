@@ -498,6 +498,10 @@ public abstract class SimpleCallout extends DelegateConnectionProvider {
       JSONObject columnValue = new JSONObject();
       String strValue = value == null ? "null" : value.toString();
 
+      if (value instanceof BigDecimal) {
+        strValue = manageBigDecimalValues((BigDecimal) value);
+      }
+
       // handle case when callouts are sending us "\"\"" string.
       if ("\"\"".equals(strValue)) {
         strValue = "";
@@ -510,6 +514,18 @@ public abstract class SimpleCallout extends DelegateConnectionProvider {
         log.error("Error parsing JSON Object.", e);
       }
 
+    }
+
+    /**
+     * Returns representation of BigDecimal with properly precision.
+     */
+    private String manageBigDecimalValues(BigDecimal value) {
+      String valueToReturn = value.toString();
+      int precision = value.scale();
+      if (precision >= 0) {
+        valueToReturn = value.setScale((precision == 0 ? 1 : precision)).toPlainString();
+      }
+      return valueToReturn;
     }
 
     /**
