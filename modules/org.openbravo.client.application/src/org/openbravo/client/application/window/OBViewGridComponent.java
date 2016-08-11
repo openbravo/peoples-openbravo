@@ -404,9 +404,15 @@ public class OBViewGridComponent extends BaseTemplateComponent {
    */
   public boolean getLazyFiltering() {
     Boolean lazyFiltering = null;
+    List<Object> parameterList = new ArrayList<Object>();
+
+    String tabConfsHql = " as p where p.tab.id = ? ";
+    parameterList.add(tab.getId());
 
     // Trying to get parameters from "Grid Configuration (Tab/Field)" -> "Tab" window
-    List<GCTab> tabConfs = getGridConfigurationForTab();
+    OBQuery<GCTab> query = OBDal.getInstance().createQuery(GCTab.class, tabConfsHql);
+    query.setParameters(parameterList);
+    List<GCTab> tabConfs = query.list();
     if (!tabConfs.isEmpty()) {
       if ("Y".equals(tabConfs.get(0).getIsLazyFiltering())) {
         lazyFiltering = true;
@@ -428,49 +434,6 @@ public class OBViewGridComponent extends BaseTemplateComponent {
     } else {
       return false;
     }
-  }
-
-  /**
-   * Returns true if the grid allows adding summary functions
-   */
-  public boolean getAllowSummaryFunctions() {
-    Boolean summaryFunctionsAllowed = null;
-
-    // Trying to get parameters from "Grid Configuration (Tab/Field)" -> "Tab" window
-    List<GCTab> tabConfs = getGridConfigurationForTab();
-    if (!tabConfs.isEmpty()) {
-      if ("Y".equals(tabConfs.get(0).getAllowSummaryFunctions())) {
-        summaryFunctionsAllowed = true;
-      } else if ("N".equals(tabConfs.get(0).getAllowSummaryFunctions())) {
-        summaryFunctionsAllowed = false;
-      }
-    }
-    if (summaryFunctionsAllowed == null) {
-      // Trying to get parameters from "Grid Configuration (System)" window
-      List<GCSystem> sysConfs = OBDal.getInstance().createQuery(GCSystem.class, "").list();
-      if (!sysConfs.isEmpty()) {
-        if (summaryFunctionsAllowed == null) {
-          summaryFunctionsAllowed = sysConfs.get(0).isAllowSummaryFunctions();
-        }
-      }
-    }
-    if (summaryFunctionsAllowed != null) {
-      return summaryFunctionsAllowed;
-    } else {
-      return true;
-    }
-  }
-
-  private List<GCTab> getGridConfigurationForTab() {
-    List<Object> parameterList = new ArrayList<Object>();
-
-    String tabConfsHql = " as p where p.tab.id = ? ";
-    parameterList.add(tab.getId());
-
-    // Trying to get parameters from "Grid Configuration (Tab/Field)" -> "Tab" window
-    OBQuery<GCTab> query = OBDal.getInstance().createQuery(GCTab.class, tabConfsHql);
-    query.setParameters(parameterList);
-    return query.list();
   }
 
   public boolean getAlwaysFilterFksByIdentifier() {

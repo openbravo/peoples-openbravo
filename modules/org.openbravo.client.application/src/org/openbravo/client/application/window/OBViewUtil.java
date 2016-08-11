@@ -60,7 +60,6 @@ public class OBViewUtil {
   private static final String DISABLEFKCOMBO_PROPERTY = "PROPERTY_DISABLEFKCOMBO";
   private static final String THRESHOLDTOFILTER_PROPERTY = "PROPERTY_THRESHOLDTOFILTER";
   private static final String ISLAZYFILTERING_PROPERTY = "PROPERTY_ISLAZYFILTERING";
-  private static final String ALLOWSUMMARYFUNCTIONS_PROPERTY = "PROPERTY_ALLOWSUMMARYFUNCTIONS";
 
   static {
     createdElement = OBDal.getInstance().get(Element.class, "245");
@@ -268,7 +267,6 @@ public class OBViewUtil {
     private Boolean canFilter = null;
     private Boolean filterOnChange = null;
     private Boolean lazyFiltering = null;
-    private Boolean allowSummaryFunctions = null;
     private Boolean allowFkFilterByIdentifier = null;
     private Boolean showFkDropdownUnfiltered = null;
     private Boolean disableFkDropdown = null;
@@ -294,8 +292,7 @@ public class OBViewUtil {
     private boolean shouldContinueProcessing() {
       return canSort == null || canFilter == null || operator == null || filterOnChange == null
           || thresholdToFilter == null || allowFkFilterByIdentifier == null
-          || showFkDropdownUnfiltered == null || disableFkDropdown == null || lazyFiltering == null
-          || allowSummaryFunctions == null;
+          || showFkDropdownUnfiltered == null || disableFkDropdown == null || lazyFiltering == null;
     }
 
     private void processConfig(BaseOBObject gcItem) {
@@ -329,9 +326,6 @@ public class OBViewUtil {
         }
         if (lazyFiltering == null && !(gcItem instanceof GCField)) {
           lazyFiltering = convertBoolean(gcItem, ISLAZYFILTERING_PROPERTY);
-        }
-        if (allowSummaryFunctions == null && !(gcItem instanceof GCField)) {
-          allowSummaryFunctions = convertBoolean(gcItem, ALLOWSUMMARYFUNCTIONS_PROPERTY);
         }
       } catch (Exception e) {
         log.error("Error while getting the properties of " + gcItem, e);

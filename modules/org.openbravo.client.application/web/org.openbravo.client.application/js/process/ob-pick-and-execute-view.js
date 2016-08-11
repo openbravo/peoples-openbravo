@@ -128,12 +128,7 @@ isc.OBPickAndExecuteView.addProperties({
 
   prepareGridFields: function (fields) {
     var result = isc.OBStandardView.getPrototype().prepareGridFields.apply(this, arguments),
-        i, f, len = result.length,
-        allowSummaryFunctions = true;
-
-    if (this.viewProperties && this.viewProperties.gridProperties) {
-      allowSummaryFunctions = this.viewProperties.gridProperties.allowSummaryFunctions;
-    }
+        i, f, len = result.length;
 
     for (i = 0; i < len; i++) {
       if (result[i].editorProperties && result[i].editorProperties.disabled) {
@@ -145,7 +140,7 @@ isc.OBPickAndExecuteView.addProperties({
         result[i].validateOnExit = true;
       }
 
-      if (result[i].showGridSummary && allowSummaryFunctions) {
+      if (result[i].showGridSummary) {
         if (!this.showGridSummary) {
           this.showGridSummary = true;
         }
