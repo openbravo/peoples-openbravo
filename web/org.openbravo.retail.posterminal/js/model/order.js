@@ -2563,6 +2563,7 @@
       }, this);
       this.set('id', null);
       this.save();
+      this.calculateReceipt();
     },
     rejectQuotation: function (rejectReasonId, scope, callback) {
       if (!this.get('id')) {
