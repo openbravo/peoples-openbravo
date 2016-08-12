@@ -119,8 +119,9 @@ public class DataSourceServiceProvider {
     DataSource dataSource = null;
     final OBCriteria<Table> qTable = OBDal.getInstance().createCriteria(Table.class);
     qTable.add(Restrictions.eq(Table.PROPERTY_NAME, tableName));
-    if (!qTable.list().isEmpty()) {
-      Table table = qTable.list().get(0);
+    // ad_table.name is unique
+    Table table = (Table) qTable.uniqueResult();
+    if (table != null) {
       if (ApplicationConstants.DATASOURCEBASEDTABLE.equals(table.getDataOriginType())) {
         // If the table is based on a manual datasource, return that particular datasource
         dataSource = table.getObserdsDatasource();
