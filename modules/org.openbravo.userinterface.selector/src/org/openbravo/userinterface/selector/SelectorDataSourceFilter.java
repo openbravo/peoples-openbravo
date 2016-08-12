@@ -311,7 +311,8 @@ public class SelectorDataSourceFilter implements DataSourceFilter {
       OBCriteria<SelectorField> sfc, HttpServletRequest request, String hqlFilterClause) {
 
     String currentWhere = "";
-    if (sfc.count() == 0) {
+    List<SelectorField> selectorFields = sfc.list();
+    if (selectorFields.size() == 0) {
       return;
     }
 
@@ -336,7 +337,7 @@ public class SelectorDataSourceFilter implements DataSourceFilter {
 
     Entity entity = ModelProvider.getInstance().getEntityByTableId(sel.getTable().getId());
 
-    for (SelectorField sf : sfc.list()) {
+    for (SelectorField sf : selectorFields) {
       // skip selector fields which do not have a property defined (needed for selector definitions
       // using a custom query
       if (sf.getProperty() == null) {
