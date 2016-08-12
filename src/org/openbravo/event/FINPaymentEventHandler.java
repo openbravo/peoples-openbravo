@@ -47,7 +47,7 @@ public class FINPaymentEventHandler extends EntityPersistenceEventObserver {
         event.setCurrentState(paymentDocumentNoProperty, payment.getDocumentNo() + "*R*");
       }
     } else {
-      if (index != -1) {
+      if (index > 0) {
         final Entity paymentEntity = ModelProvider.getInstance().getEntity(FIN_Payment.ENTITY_NAME);
         final Property paymentDocumentNoProperty = paymentEntity
             .getProperty(FIN_Payment.PROPERTY_DOCUMENTNO);
