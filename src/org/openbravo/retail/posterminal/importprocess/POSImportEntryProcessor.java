@@ -13,6 +13,7 @@ import java.util.List;
 
 import javax.enterprise.event.Observes;
 
+import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -35,6 +36,8 @@ import org.openbravo.service.importprocess.ImportProcessUtils;
  * @author mtaal
  */
 public class POSImportEntryProcessor extends EntityPersistenceEventObserver {
+
+  private static final Logger log = Logger.getLogger(POSImportEntryProcessor.class);
 
   private static Entity[] ENTITIES = { ModelProvider.getInstance().getEntity(
       ImportEntry.ENTITY_NAME) };
@@ -68,6 +71,9 @@ public class POSImportEntryProcessor extends EntityPersistenceEventObserver {
         if (posTerminalId == null) {
           posTerminalId = ImportProcessUtils.getJSONProperty(jsonObject, "pos");
         }
+        if (posTerminalId == null) {
+          log.warn("No posterminal can be determined from json " + jsonObject);
+        }
         if (posTerminalId != null) {
           OBPOSApplications posTerminal = OBDal.getInstance().getProxy(OBPOSApplications.class,
               posTerminalId);
@@ -97,6 +103,8 @@ public class POSImportEntryProcessor extends EntityPersistenceEventObserver {
           }
           // not found read it from the posterminal which will get loaded
           if (organization == null) {
+            log.warn("Not possible to determine organization from json reading it from posterminal "
+                + content);
             organization = posTerminal.getOrganization();
           }
           final Property orgProperty = importEntryEntity
