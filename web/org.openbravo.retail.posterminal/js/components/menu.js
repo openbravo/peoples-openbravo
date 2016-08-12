@@ -279,7 +279,7 @@ enyo.kind({
       return 'DN';
     }
 
-    if (isLayaway && ((OB.MobileApp.model.hasPermission('OBPOS_payments.cancelLayaway', true) && this.model.get('orderList').current.get('payment') > 0) || !OB.MobileApp.model.hasPermission('OBPOS_payments.cancelLayaway', true))) {
+    if (isLayaway && OB.MobileApp.model.hasPermission('OBPOS_receipt.cancelLayaway', true) && ((OB.MobileApp.model.hasPermission('OBPOS_payments.cancelLayaway', true) && this.model.get('orderList').current.get('payment') > 0) || !OB.MobileApp.model.hasPermission('OBPOS_payments.cancelLayaway', true))) {
       // Show if the current order is a layaway and has both the 'OBPOS_payments.cancelLayaway' property and some payment,
       // or is a layaway and doesn't have the 'OBPOS_payments.cancelLayaway' property
       this.show();
