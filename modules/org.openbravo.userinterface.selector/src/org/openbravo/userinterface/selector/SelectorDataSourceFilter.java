@@ -97,14 +97,12 @@ public class SelectorDataSourceFilter implements DataSourceFilter {
 
       String processId = parameters.get(SelectorConstants.DS_REQUEST_PROCESS_DEFINITION_ID);
       if (!StringUtils.isEmpty(processId)) {
-        OBCriteria<Parameter> qParam = OBDal.getInstance().createCriteria(Parameter.class);
-        qParam.add(Restrictions.eq(Parameter.PROPERTY_ID,
-            parameters.get(SelectorConstants.DS_REQUEST_SELECTOR_FIELD_ID)));
-        Parameter param = qParam.list().get(0);
-        Validation validation = qParam.list().get(0).getValidation();
+        Parameter param = OBDal.getInstance().get(Parameter.class,
+            parameters.get(SelectorConstants.DS_REQUEST_SELECTOR_FIELD_ID));
+        Validation validation = param.getValidation();
         if (validation != null) {
           if (validation.getType().equals("HQL_JS")) {
-            String validationCode = qParam.list().get(0).getValidation().getValidationCode();
+            String validationCode = param.getValidation().getValidationCode();
             String validationHQL = applyFilterExpression(validationCode, sel, parameters, request);
 
             if (!StringUtils.isEmpty(validationHQL)) {
