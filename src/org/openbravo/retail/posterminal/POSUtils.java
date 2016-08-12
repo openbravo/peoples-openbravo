@@ -306,10 +306,11 @@ public class POSUtils {
     OBCriteria<OBPOSApplications> termCrit = OBDal.getInstance().createCriteria(
         OBPOSApplications.class);
     termCrit.add(Restrictions.eq(OBPOSApplications.PROPERTY_SEARCHKEY, searchKey));
-    if (termCrit.count() != 1) {
+    // obpos_applications.value has unique constraint
+    OBPOSApplications terminal = (OBPOSApplications) termCrit.uniqueResult();
+    if (terminal == null) {
       throw new OBException("Error while loading the terminal " + searchKey);
     }
-    OBPOSApplications terminal = (OBPOSApplications) termCrit.uniqueResult();
 
     String curDbms = OBPropertiesProvider.getInstance().getOpenbravoProperties()
         .getProperty("bbdd.rdbms");
@@ -396,10 +397,11 @@ public class POSUtils {
     OBCriteria<OBPOSApplications> termCrit = OBDal.getInstance().createCriteria(
         OBPOSApplications.class);
     termCrit.add(Restrictions.eq(OBPOSApplications.PROPERTY_SEARCHKEY, searchKey));
-    if (termCrit.count() != 1) {
+    // obpos_applications.value has unique constraint
+    OBPOSApplications terminal = (OBPOSApplications) termCrit.uniqueResult();
+    if (terminal == null) {
       throw new OBException("Error while loading the terminal " + searchKey);
     }
-    OBPOSApplications terminal = (OBPOSApplications) termCrit.uniqueResult();
 
     String curDbms = OBPropertiesProvider.getInstance().getOpenbravoProperties()
         .getProperty("bbdd.rdbms");
@@ -483,10 +485,11 @@ public class POSUtils {
     OBCriteria<OBPOSApplications> termCrit = OBDal.getInstance().createCriteria(
         OBPOSApplications.class);
     termCrit.add(Restrictions.eq(OBPOSApplications.PROPERTY_SEARCHKEY, searchKey));
-    if (termCrit.count() != 1) {
+    // obpos_applications.value has unique constraint
+    OBPOSApplications terminal = (OBPOSApplications) termCrit.uniqueResult();
+    if (terminal == null) {
       throw new OBException("Error while loading the terminal " + searchKey);
     }
-    OBPOSApplications terminal = (OBPOSApplications) termCrit.uniqueResult();
 
     String curDbms = OBPropertiesProvider.getInstance().getOpenbravoProperties()
         .getProperty("bbdd.rdbms");
