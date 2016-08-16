@@ -13,8 +13,12 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
@@ -93,6 +97,8 @@ public class ExternalOrderLoader extends OrderLoader {
   @Inject
   @Any
   private Instance<DataResolver> dataResolvers;
+
+  private List<DataResolver> dataResolversList = null;
 
   @Override
   public String getAppName() {
@@ -911,17 +917,20 @@ public class ExternalOrderLoader extends OrderLoader {
    * Same as {@link #resolveJsonValue(String, String, String...)}, except will return null if the value does not resolve to an
    * instance and will not throw an exception in that case.
    */
-  protected String resolveJsonValueNoException(String entityName, String searchValue,
+  private String resolveJsonValueNoException(String entityName, String searchValue,
       String... properties) {
+
+    // the deprecated resolve will not resolve the value by default,
+    // only an overriding class may do something
     for (String property : properties) {
       String id = resolve(entityName, property, searchValue);
       if (id != null) {
         return id;
       }
     }
+
     // not found in normal way, use the dataresolvers
-    for (Iterator<DataResolver> procIter = dataResolvers.iterator(); procIter.hasNext();) {
-      final DataResolver dataResolver = procIter.next();
+    for (DataResolver dataResolver : getDataResolvers()) {
       String id = dataResolver.resolveJsonValue(entityName, searchValue, properties);
       if (id != null) {
         return id;
@@ -930,24 +939,29 @@ public class ExternalOrderLoader extends OrderLoader {
     return null;
   }
 
-  protected String resolve(String entityName, String property, String value) {
-    try {
-      String qryStr = "select id from " + entityName + " where " + property + "=:value"
-          + " and organization.id " + OBDal.getInstance().getReadableOrganizationsInClause();
-
-      final Query qry = OBDal.getInstance().getSession().createQuery(qryStr);
-      qry.setString("value", value);
-      final java.util.List<?> values = qry.list();
-      if (values.isEmpty() || values.size() > 1) {
-        return null;
+  private List<DataResolver> getDataResolvers() {
+    if (dataResolversList == null) {
+      dataResolversList = new ArrayList<DataResolver>();
+      for (Iterator<DataResolver> procIter = dataResolvers.iterator(); procIter.hasNext();) {
+        final DataResolver dataResolver = procIter.next();
+        dataResolversList.add(dataResolver);
       }
-      final String result = (String) values.get(0);
-      return result;
-    } catch (Throwable t) {
-      final Throwable cause = DbUtility.getUnderlyingSQLException(t);
-      log.error(cause.getMessage(), cause);
-      return null;
+      Collections.sort(dataResolversList, new Comparator<DataResolver>() {
+        @Override
+        public int compare(DataResolver o1, DataResolver o2) {
+          return o1.getOrder() - o2.getOrder();
+        }
+      });
     }
+    return dataResolversList;
+  }
+
+  /**
+   * @deprecated by default this one now returns null. It is still called to provide backward compatibility for overriding
+   *             classes. If not overridden then the new logic in the {@link DefaultDataResolver} is used.
+   */
+  protected String resolve(String entityName, String property, String value) {
+    return null;
   }
 
   protected void writeSuccessMessage(Writer w) {
@@ -988,7 +1002,49 @@ public class ExternalOrderLoader extends OrderLoader {
    * 
    * @author mtaal
    */
-  public static interface DataResolver {
-    public String resolveJsonValue(String entityName, String searchValue, String... properties);
+  public static abstract class DataResolver {
+    public abstract String resolveJsonValue(String entityName, String searchValue,
+        String... properties);
+
+    public int getOrder() {
+      return 110;
+    }
   }
+
+  public static class DefaultDataResolver extends DataResolver {
+    public String resolveJsonValue(String entityName, String searchValue, String... properties) {
+      for (String property : properties) {
+        String id = resolve(entityName, property, searchValue);
+        if (id != null) {
+          return id;
+        }
+      }
+      return null;
+    }
+
+    protected String resolve(String entityName, String property, String value) {
+      try {
+        String qryStr = "select id from " + entityName + " where " + property + "=:value"
+            + " and organization.id " + OBDal.getInstance().getReadableOrganizationsInClause();
+
+        final Query qry = OBDal.getInstance().getSession().createQuery(qryStr);
+        qry.setString("value", value);
+        final java.util.List<?> values = qry.list();
+        if (values.isEmpty() || values.size() > 1) {
+          return null;
+        }
+        final String result = (String) values.get(0);
+        return result;
+      } catch (Throwable t) {
+        final Throwable cause = DbUtility.getUnderlyingSQLException(t);
+        log.error(cause.getMessage(), cause);
+        return null;
+      }
+    }
+
+    public int getOrder() {
+      return 100;
+    }
+  }
+
 }
