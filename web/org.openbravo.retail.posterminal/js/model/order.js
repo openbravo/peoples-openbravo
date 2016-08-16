@@ -11,20 +11,6 @@
 
 (function () {
 
-  var subscribeToCalculateGross = function (receipt, f) {
-      this.f = f;
-      this.receipt = receipt;
-      };
-
-  subscribeToCalculateGross.prototype.doSubscription = function () {
-    this.receipt.on('saveCurrent', this._callback, this);
-  };
-
-  subscribeToCalculateGross.prototype._callback = function () {
-    this.receipt.off('saveCurrent', this._callback);
-    this.f();
-  };
-
   // Sales.OrderLine Model
   var OrderLine = Backbone.Model.extend({
     modelName: 'OrderLine',
@@ -1382,36 +1368,33 @@
           options: options,
           newLine: newLine
         }, function (args) {
-          if (callback) {
-            callback(true);
-          }
           if (args.newLine && me.get('lines').contains(line) && args.productToAdd.get('productType') !== 'S') {
             var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('HasServices');
-            var subs = new subscribeToCalculateGross(me, function () {
-              if (me.get('lines').contains(line)) {
-                // Display related services after calculate gross, if it is new line and if the line has not been deleted.
-                // The line might has been deleted during calculate gross for examples if there was an error in taxes.
-                var productId = args.productToAdd.get('forceFilterId') ? args.productToAdd.get('forceFilterId') : args.productToAdd.id;
-                args.receipt._loadRelatedServices(args.productToAdd.get('productType'), productId, args.productToAdd.get('productCategory'), function (data) {
-                  if (data) {
-                    if (data.hasservices) {
-                      args.orderline.set('hasRelatedServices', true);
-                      args.orderline.trigger('showServicesButton');
-                    } else {
-                      args.orderline.set('hasRelatedServices', false);
-                    }
-                    args.receipt.save();
-                    if (data.hasmandatoryservices) {
-                      args.receipt.trigger('showProductList', args.orderline, 'mandatory');
-                    }
-                  }
-                  OB.UTIL.SynchronizationHelper.finished(synchId, 'HasServices');
-                }, args.orderline);
-              } else {
-                OB.UTIL.SynchronizationHelper.finished(synchId, 'HasServices');
+            // Display related services after calculate gross, if it is new line and if the line has not been deleted.
+            // The line might has been deleted during calculate gross for examples if there was an error in taxes.
+            var productId = args.productToAdd.get('forceFilterId') ? args.productToAdd.get('forceFilterId') : args.productToAdd.id;
+            args.receipt._loadRelatedServices(args.productToAdd.get('productType'), productId, args.productToAdd.get('productCategory'), function (data) {
+              if (data) {
+                if (data.hasservices) {
+                  args.orderline.set('hasRelatedServices', true);
+                  args.orderline.trigger('showServicesButton');
+                } else {
+                  args.orderline.set('hasRelatedServices', false);
+                }
+                args.receipt.save();
+                if (data.hasmandatoryservices) {
+                  args.receipt.trigger('showProductList', args.orderline, 'mandatory');
+                }
               }
-            });
-            subs.doSubscription();
+              OB.UTIL.SynchronizationHelper.finished(synchId, 'HasServices');
+              if (callback) {
+                callback(true);
+              }
+            }, args.orderline);
+          } else {
+            if (callback) {
+              callback(true);
+            }
           }
         });
       }
@@ -1570,7 +1553,11 @@
             p = p.clone();
             p.set('standardPrice', productPrices.at(0).get('pricestd'));
             p.set('listPrice', productPrices.at(0).get('pricelist'));
-            me.addProductToOrder(p, qty, options, attrs);
+            me.addProductToOrder(p, qty, options, attrs, function (success) {
+              if (callback) {
+                callback(success);
+              }
+            });
             if (callback) {
               callback(true);
             }
@@ -1587,10 +1574,11 @@
           }
         });
       } else {
-        me.addProductToOrder(p, qty, options, attrs);
-        if (callback) {
-          callback(true);
-        }
+        me.addProductToOrder(p, qty, options, attrs, function (success) {
+          if (callback) {
+            callback(success);
+          }
+        });
       }
     },
 
@@ -1632,6 +1620,9 @@
         }
         if (args && args.useLines) {
           me._drawLinesDistribution(args);
+          if (callback) {
+            callback(false);
+          }
           return;
         }
         me._addProduct(p, qty, options, attrs, function (success) {
