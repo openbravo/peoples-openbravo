@@ -450,12 +450,13 @@ enyo.kind({
           me.model.get('order').trigger('showProductList', null, 'final', function () {
             me.model.completePayment();
             me.doClearUserInput();
+            OB.UTIL.SynchronizationHelper.finished(synchId, 'toolbarButtonTabTap');
           });
         } else {
           me.model.completePayment(this);
           me.doClearUserInput();
+          OB.UTIL.SynchronizationHelper.finished(synchId, 'toolbarButtonTabTap');
         }
-        OB.UTIL.SynchronizationHelper.finished(synchId, 'toolbarButtonTabTap');
       }, function (trx, error) {
         me.model.completePayment(this);
         me.doClearUserInput();
