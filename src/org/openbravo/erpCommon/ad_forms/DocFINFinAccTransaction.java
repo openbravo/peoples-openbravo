@@ -298,7 +298,7 @@ public class DocFINFinAccTransaction extends AcctServer {
             paymentDetail.isPrepayment() ? (pso != null ? pso.getId() : "") : (psi != null ? psi
                 .getId() : ""));
 
-        if (i % 100 == 0) {
+        if ((i + 1) % 100 == 0) {
           OBDal.getInstance().getSession().clear();
         }
       }
@@ -632,12 +632,13 @@ public class DocFINFinAccTransaction extends AcctServer {
           }
         }
 
-        if (i % 100 == 0) {
+        if ((i + 1) % 100 == 0) {
           OBDal.getInstance().getSession().clear();
         }
       }
       // Pre-payment is consumed when Used Credit Amount not equals Zero. When consuming Credit no
       // credit is generated
+      transaction = OBDal.getInstance().get(FIN_FinaccTransaction.class, Record_ID);
       if (transaction.getFinPayment().getUsedCredit().compareTo(ZERO) != 0
           && transaction.getFinPayment().getGeneratedCredit().compareTo(ZERO) == 0) {
         List<FIN_Payment_Credit> creditPayments = transaction.getFinPayment()
