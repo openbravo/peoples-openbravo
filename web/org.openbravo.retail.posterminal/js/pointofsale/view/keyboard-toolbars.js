@@ -197,6 +197,7 @@ enyo.kind({
     if (!hasSideButton) {
       OB.OBPOSPointOfSale.UI.PaymentMethods.prototype.sideButtons.push(btncomponent);
     }
+    this.owner.owner.addCommand(btncomponent.btn.command, btncomponent.btn.definition);
   },
   initComponents: function () {
     //TODO: modal payments
@@ -441,20 +442,24 @@ enyo.kind({
       }]
     }]
   },
+  createPaymentButtons: function () {
+    enyo.forEach(this.sideButtons, function (sidebutton) {
+      sidebutton.btn.definition.includedInPopUp = true;
+      this.$.body.$.buttonslist.createComponent(sidebutton, {
+        owner: this.parent
+      });
+    }, this);
+  },
   executeOnShow: function () {
-    // build only the first time...
-    if (this.$.body.$.buttonslist.children.length === 0) {
-      enyo.forEach(this.sideButtons, function (sidebutton) {
-        sidebutton.btn.definition.includedInPopUp = true;
-        this.$.body.$.buttonslist.createComponent(sidebutton, {
-          owner: this.args.toolbar
-        });
-      }, this);
+    if (this.$.body.$.buttonslist.children.length !== this.sideButtons.length) {
+      this.$.body.$.buttonslist.destroyComponents();
+      this.createPaymentButtons();
     }
     return true;
   },
   init: function (model) {
     this.model = model;
+    this.createPaymentButtons();
   }
 });
 
@@ -482,9 +487,6 @@ enyo.kind({
     this.activegreen = false;
   },
   tap: function () {
-    // this.toolbar.keyboard
-    // this.dialogbuttons
-    this.toolbar.keyboard.setStatus('');
     this.doShowAllButtons();
   },
   buttonStatusChanged: function (inSender, inEvent) {
