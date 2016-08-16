@@ -280,6 +280,7 @@
     entityName: 'Order',
     source: '',
     dataLimit: OB.Dal.DATALIMIT,
+    remoteDataLimit: OB.Dal.REMOTE_DATALIMIT,
     properties: ['id', 'json', 'session', 'hasbeenpaid', 'isbeingprocessed'],
     propertyMap: {
       'id': 'c_order_id',
