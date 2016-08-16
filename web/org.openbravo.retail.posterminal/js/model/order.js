@@ -1951,8 +1951,8 @@
           priceList: OB.DEC.number(p.get('listPrice')),
           priceIncludesTax: me.get('priceIncludesTax'),
           warehouse: {
-            id: OB.MobileApp.model.get('warehouses')[0].warehouseid,
-            warehousename: OB.MobileApp.model.get('warehouses')[0].warehousename
+            id: OB.UTIL.isNullOrUndefined(attrs) || (!OB.UTIL.isNullOrUndefined(attrs) && OB.UTIL.isNullOrUndefined(attrs.splitline)) ? OB.MobileApp.model.get('warehouses')[0].warehouseid : attrs.originalLine.get('warehouse').id,
+            warehousename: OB.UTIL.isNullOrUndefined(attrs) || (!OB.UTIL.isNullOrUndefined(attrs) && OB.UTIL.isNullOrUndefined(attrs.splitline)) ? OB.MobileApp.model.get('warehouses')[0].warehousename : attrs.originalLine.get('warehouse').warehousename
           }
         });
 

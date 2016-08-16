@@ -371,7 +371,8 @@ enyo.kind({
           product: this.orderline.get('product'),
           qty: this.qtysToAdd[this.indexToAdd++],
           attrs: {
-            'splitline': true
+            'splitline': true,
+            originalLine: this.orderline
           },
           options: {
             at: addline.collection.indexOf(addline) + 1
