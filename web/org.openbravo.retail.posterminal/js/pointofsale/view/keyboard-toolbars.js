@@ -60,6 +60,7 @@ enyo.kind({
     onShowAllButtons: 'showAllButtons',
     onCloseAllPopups: 'closeAllPopups',
     onButtonPaymentChanged: 'paymentChanged',
+    onButtonStatusChanged: 'buttonStatusChanged',
     onActionPay: 'actionPay'
   },
   components: [{
@@ -318,6 +319,7 @@ enyo.kind({
 
     // Fallback assign of the payment for the exact command.
     exactdefault = exactdefault || cashdefault || payments[0];
+    this.defaultPayment = exactdefault;
 
     enyo.forEach(this.sideButtons, function (sidebutton) {
       btncomponent = this.getButtonComponent(sidebutton);
@@ -386,7 +388,12 @@ enyo.kind({
   paymentChanged: function (inSender, inEvent) {
     this.currentPayment = inEvent.payment;
   },
-
+  buttonStatusChanged: function (inSender, inEvent) {
+    var status = inEvent.value.status;
+    if (this.showing && this.keyboard.lastStatus !== '' && status === '') {
+      this.keyboard.setStatus(this.defaultPayment.payment.searchKey);
+    }
+  },
   shown: function () {
     var me = this,
         i, max, p, keyboard = this.owner.owner;
@@ -482,13 +489,11 @@ enyo.kind({
   },
   buttonStatusChanged: function (inSender, inEvent) {
     var status = inEvent.value.status;
-
     if (this.activegreen) {
       this.$.btn.setContent(OB.I18N.getLabel('OBPOS_MorePayments'));
       this.$.btn.removeClass('btnactive-green');
       this.activegreen = false;
     }
-
     if (this.dialogbuttons[status]) {
       this.$.btn.setContent(OB.I18N.getLabel('OBPOS_MorePayments') + ' (' + this.dialogbuttons[status] + ')');
       this.$.btn.addClass('btnactive-green');
@@ -500,7 +505,6 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.ButtonSwitch',
-
   style: 'display:table; width:100%;',
   components: [{
     style: 'margin: 5px;',
@@ -516,7 +520,6 @@ enyo.kind({
   tap: function () {
     this.keyboard.showNextKeypad();
   },
-
   create: function () {
     this.inherited(arguments);
     this.keyboard.state.on('change:keypadNextLabel', function () {
