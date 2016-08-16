@@ -259,9 +259,17 @@ public class TransactionAddPaymentDefaultValues extends AddPaymentDefaultValuesH
   @Override
   public String getBankStatementLineAmount(Map<String, String> requestMap) throws JSONException {
     JSONObject context = new JSONObject(requestMap.get("context"));
-    if (context.has("depositamt") && context.has("withdrawalamt")) {
+    if (context.has("depositamt") && context.has("withdrawalamt")
+        && context.get("depositamt") != JSONObject.NULL
+        && context.get("withdrawalamt") != JSONObject.NULL) {
       return new BigDecimal(context.getString("depositamt")).subtract(
           new BigDecimal(context.getString("withdrawalamt"))).toString();
+    }
+    if (context.has("inpdepositamt") && context.has("inppaymentamt")
+        && context.get("inpdepositamt") != JSONObject.NULL
+        && context.get("inppaymentamt") != JSONObject.NULL) {
+      return new BigDecimal(context.getString("inpdepositamt")).subtract(
+          new BigDecimal(context.getString("inppaymentamt"))).toString();
     }
     return BigDecimal.ZERO.toPlainString();
   }
