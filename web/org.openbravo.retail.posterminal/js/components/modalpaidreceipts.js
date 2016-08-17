@@ -304,7 +304,7 @@ enyo.kind({
     this.$.prslistitemprinter.$.tlimit.hide();
     this.$.renderLoading.show();
     var limit;
-    if (!OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
+    if (!OB.MobileApp.model.hasPermission('OBPOS_remote.order', true)) {
       limit = OB.Model.Order.prototype.dataLimit;
     } else {
       limit = OB.Model.Order.prototype.remoteDataLimit ? OB.Model.Order.prototype.remoteDataLimit : OB.Model.Order.prototype.dataLimit;

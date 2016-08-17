@@ -224,7 +224,7 @@ enyo.kind({
         re, actualDate, i, processHeader = new OB.DS.Process('org.openbravo.retail.posterminal.PaidReceiptsHeader');
     me.filters = inEvent.filters;
     var limit;
-    if (!OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
+    if (!OB.MobileApp.model.hasPermission('OBPOS_remote.order', true)) {
       limit = OB.Model.Order.prototype.dataLimit;
     } else {
       limit = OB.Model.Order.prototype.remoteDataLimit ? OB.Model.Order.prototype.remoteDataLimit : OB.Model.Order.prototype.dataLimit;
