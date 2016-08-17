@@ -445,6 +445,13 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
               OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_OrderReplacedError'));
               return;
             } else {
+              if (_.isUndefined(_.find(receipt.get('lines').models, function (line) {
+                var qty = line.get('qty'),
+                    remainingQuantity = line.get('remainingQuantity');
+                return (qty > 0 && qty > remainingQuantity) || (qty < 0 && qty < remainingQuantity);
+              }))) {
+                receipt.set('generateShipment', false);
+              }
               receipt.trigger('paymentAccepted');
             }
           }, function () {

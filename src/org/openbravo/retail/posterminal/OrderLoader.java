@@ -1075,7 +1075,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       if (orderlines.getJSONObject(i).has("remainingQuantity")
           && orderlines.getJSONObject(i).get("remainingQuantity") != JSONObject.NULL) {
         pendingQty = pendingQty.subtract(new BigDecimal(orderlines.getJSONObject(i).getLong(
-            "remainingQuantity")));
+            "remainingQuantity")).abs());
       }
       boolean negativeLine = orderLine.getOrderedQuantity().compareTo(BigDecimal.ZERO) < 0;
 
@@ -1089,7 +1089,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
       AttributeSetInstance oldAttributeSetValues = null;
 
-      if (negativeLine) {
+      if (negativeLine && pendingQty.compareTo(BigDecimal.ZERO) > 0) {
         lineNo += 10;
         Locator binForReturn = null;
         if (orderLine.getWarehouse() != null && orderLine.getWarehouse().getReturnlocator() != null) {
