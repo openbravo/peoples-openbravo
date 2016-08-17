@@ -303,7 +303,12 @@ enyo.kind({
     this.$.prslistitemprinter.$.tbody.hide();
     this.$.prslistitemprinter.$.tlimit.hide();
     this.$.renderLoading.show();
-    var limit = OB.Model.Order.prototype.remoteDataLimit ? OB.Model.Order.prototype.remoteDataLimit : OB.Model.Order.prototype.dataLimit;
+    var limit;
+    if (!OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
+      limit = OB.Model.Order.prototype.dataLimit;
+    } else {
+      limit = OB.Model.Order.prototype.remoteDataLimit ? OB.Model.Order.prototype.remoteDataLimit : OB.Model.Order.prototype.dataLimit;
+    }
     if (OB.MobileApp.model.hasPermission('OBPOS_orderLimit', true)) {
       limit = OB.DEC.abs(OB.MobileApp.model.hasPermission('OBPOS_orderLimit', true));
       OB.Model.Order.prototype.tempDataLimit = OB.DEC.abs(OB.MobileApp.model.hasPermission('OBPOS_orderLimit', true));
