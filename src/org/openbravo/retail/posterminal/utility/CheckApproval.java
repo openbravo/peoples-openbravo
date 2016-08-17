@@ -70,7 +70,8 @@ public class CheckApproval extends JSONProcessSimple {
             + "   and (userContact.id = :user" //
             + "        or exists (from ADUserRoles r"
             + "                  where r.role = p.visibleAtRole"
-            + "                    and r.userContact.id = :user))"
+            + "                    and r.userContact.id = :user"
+            + "                    and r.active=true))"
             + "   and (p.visibleAtOrganization.id = :org " //
             + "   or p.visibleAtOrganization.id in (:orgList) "
             + "   or p.visibleAtOrganization is null) group by p.property";
@@ -97,7 +98,7 @@ public class CheckApproval extends JSONProcessSimple {
             }
           }
           jsonData.put("userId", qUserList.get(0).getId());
-          jsonData.put("canApprove", c == approvalType.length());
+          jsonData.put("canApprove", c >= approvalType.length());
           jsonData.put("preference", jsonPreference);
           result.put("data", jsonData);
         }
