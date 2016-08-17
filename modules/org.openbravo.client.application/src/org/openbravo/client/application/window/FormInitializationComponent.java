@@ -1477,31 +1477,34 @@ public class FormInitializationComponent extends BaseActionHandler {
         calloutsToCall.remove(calloutClassName);
         lastfieldChangedList.remove(lastFieldChanged);
 
-        Object theInstance;
+        Object calloutObject;
         boolean wasCached = false;
         if (calloutInstances.get(calloutClassName) != null) {
-          theInstance = calloutInstances.get(calloutClassName);
+          calloutObject = calloutInstances.get(calloutClassName);
           wasCached = true;
         } else {
-          theInstance = calloutClass.newInstance();
-          calloutInstances.put(calloutClassName, theInstance);
+          calloutObject = calloutClass.newInstance();
+          calloutInstances.put(calloutClassName, calloutObject);
         }
 
-        if (!(theInstance instanceof HttpServlet) && !(theInstance instanceof SimpleCallout)) {
-          log.info("Couldn't find method in Callout " + calloutClassName);
+        if (!(calloutObject instanceof HttpServlet) && !(calloutObject instanceof SimpleCallout)) {
+          log.info("Callout "
+              + calloutClassName
+              + " only allows reference instances of type SimpleCallout and HttpServlet but the callout is an instance of "
+              + calloutObject.getClass().getName());
           continue;
         }
 
         RequestContext rq = RequestContext.get();
         RequestContext.get().setRequestParameter("inpLastFieldChanged", lastFieldChanged);
         RequestContext.get().setRequestParameter("inpOB3UIMode", "Y");
+        CalloutServletConfig config = new CalloutServletConfig(calloutClassName,
+            RequestContext.getServletContext());
 
         // execute SimpleCallout callouts
         if (SimpleCallout.class.isAssignableFrom(calloutClass)) {
 
-          SimpleCallout calloutInstance = (SimpleCallout) theInstance;
-          CalloutServletConfig config = new CalloutServletConfig(calloutClassName,
-              RequestContext.getServletContext());
+          SimpleCallout calloutInstance = (SimpleCallout) calloutObject;
           calloutInstance.init(config);
 
           // send info and values to SimpleCallout
@@ -1531,10 +1534,8 @@ public class FormInitializationComponent extends BaseActionHandler {
           calledCallouts.add(calloutClassName);
         } else {
           // We then execute the callout
-          HttpServlet calloutInstance = (HttpServlet) theInstance;
+          HttpServlet calloutInstance = (HttpServlet) calloutObject;
           CalloutHttpServletResponse fakeResponse = new CalloutHttpServletResponse(rq.getResponse());
-          CalloutServletConfig config = new CalloutServletConfig(calloutClassName,
-              RequestContext.getServletContext());
 
           if (wasCached) {
             Method doPost = calloutClass.getMethod("doPost", HttpServletRequest.class,
