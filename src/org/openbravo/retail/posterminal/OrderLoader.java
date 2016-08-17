@@ -1794,6 +1794,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
             FIN_PaymentScheduleDetail.class);
         paymentScheduleDetail.setOrderPaymentSchedule(paymentSchedule);
         paymentScheduleDetail.setAmount(diffPaid);
+        paymentScheduleDetail.setBusinessPartner(order.getBusinessPartner());
         if (paymentScheduleInvoice != null) {
           paymentScheduleDetail.setInvoicePaymentSchedule(paymentScheduleInvoice);
         }
@@ -1827,6 +1828,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
               FIN_PaymentScheduleDetail.class);
           paymentScheduleDetail.setOrderPaymentSchedule(paymentSchedule);
           paymentScheduleDetail.setAmount(diffPaid);
+          paymentScheduleDetail.setBusinessPartner(order.getBusinessPartner());
           if (paymentScheduleInvoice != null) {
             paymentScheduleDetail.setInvoicePaymentSchedule(paymentScheduleInvoice);
           }
@@ -1899,6 +1901,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           FIN_PaymentScheduleDetail.class);
       paymentScheduleDetail.setOrderPaymentSchedule(paymentSchedule);
       paymentScheduleDetail.setAmount(amount);
+      paymentScheduleDetail.setBusinessPartner(order.getBusinessPartner());
       paymentSchedule.getFINPaymentScheduleDetailOrderPaymentScheduleList().add(
           paymentScheduleDetail);
       if (payment.has("id")) {
