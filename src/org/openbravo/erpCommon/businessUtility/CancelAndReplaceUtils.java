@@ -108,6 +108,8 @@ public class CancelAndReplaceUtils {
     today = new Date();
     newOrder.setOrderDate(today);
     newOrder.setReplacedorder(oldOrder);
+    String newDocumentNo = CancelAndReplaceUtils.getNextCancelDocNo(oldOrder.getDocumentNo());
+    newOrder.setDocumentNo(newDocumentNo);
     OBDal.getInstance().save(newOrder);
 
     // Create new Order lines
@@ -119,6 +121,7 @@ public class CancelAndReplaceUtils {
       newOrderLine.setInvoicedQuantity(BigDecimal.ZERO);
       newOrderLine.setSalesOrder(newOrder);
       newOrderLine.setReplacedorderline(oldOrderLine);
+      newOrder.getOrderLineList().add(newOrderLine);
       OBDal.getInstance().save(newOrderLine);
     }
 
@@ -1061,7 +1064,7 @@ public class CancelAndReplaceUtils {
   }
 
   protected static String getPaymentDescription() {
-    String language = RequestContext.get().getVariablesSecureApp().getLanguage();
+    String language = OBContext.getOBContext().getLanguage().getLanguage();
     String paymentDescription = Utility.messageBD(new DalConnectionProvider(false),
         "OrderDocumentno", language);
     return paymentDescription;

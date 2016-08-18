@@ -52,11 +52,13 @@ public class CancelAndReplaceSalesOrder extends BaseProcessActionHandler {
       // Get Order to be replaced and cancelled
       Order oldOrder = OBDal.getInstance().get(Order.class, oldOrderId);
 
+      if ("WR".equals(oldOrder.getDocumentType().getSOSubType())
+          || "WP".equals(oldOrder.getDocumentType().getSOSubType())) {
+        throw new OBException("@CancelAndReplaceNotAllowedForWRWP@");
+      }
+
       // Get new Order
       Order newOrder = CancelAndReplaceUtils.createReplacementOrder(oldOrder);
-
-      String newDocumentNo = CancelAndReplaceUtils.getNextCancelDocNo(oldOrder.getDocumentNo());
-      newOrder.setDocumentNo(newDocumentNo);
 
       // Execute process and prepare an array with actions to be executed after execution
       JSONArray actions = new JSONArray();
@@ -65,7 +67,7 @@ public class CancelAndReplaceSalesOrder extends BaseProcessActionHandler {
       showMsgInProcessView.put("msgType", "success");
       showMsgInProcessView.put("msgTitle", OBMessageUtils.messageBD("Success"));
       showMsgInProcessView.put("msgText", OBMessageUtils.messageBD("OrderCreatedInTemporalStatus")
-          + " " + newDocumentNo);
+          + " " + newOrder.getDocumentNo());
       showMsgInProcessView.put("wait", true);
 
       JSONObject showMsgInProcessViewAction = new JSONObject();
@@ -105,15 +107,14 @@ public class CancelAndReplaceSalesOrder extends BaseProcessActionHandler {
         OBDal.getInstance().getConnection().rollback();
         result = new JSONObject();
         JSONObject errorMessage = new JSONObject();
+        Throwable ex = DbUtility.getUnderlyingSQLException(e);
+        String message = OBMessageUtils.translateError(ex.getMessage()).getMessage();
         errorMessage.put("severity", "error");
         errorMessage.put("title", OBMessageUtils.messageBD("Error"));
-        errorMessage.put("text", e.getMessage());
+        errorMessage.put("text", message);
         result.put("message", errorMessage);
-      } catch (Exception e2) {
-        throw new OBException(e2);
+      } catch (Exception ignore) {
       }
-      Throwable e3 = DbUtility.getUnderlyingSQLException(e);
-      throw new OBException(e3);
     }
     return result;
   }
