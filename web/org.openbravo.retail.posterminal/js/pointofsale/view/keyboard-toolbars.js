@@ -190,6 +190,7 @@ enyo.kind({
         i;
     for (i = 0; i < sideButtons.length; i++) {
       if (_.isEqual(sideButtons[i].btn.command, btncomponent.btn.command)) {
+        OB.OBPOSPointOfSale.UI.PaymentMethods.prototype.sideButtons.splice(i, 1, btncomponent);
         hasSideButton = true;
         break;
       }
