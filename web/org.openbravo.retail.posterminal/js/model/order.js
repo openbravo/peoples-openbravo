@@ -257,7 +257,7 @@
     },
     printAmount: function () {
       if (this.get('rate')) {
-        return OB.I18N.formatCurrency(OB.DEC.mul(this.get('amount'), this.get('rate')));
+        return OB.I18N.formatCurrency(OB.DEC.div(this.get('amount'), this.get('mulrate')));
       } else {
         return OB.I18N.formatCurrency(this.get('amount'));
       }
@@ -2925,7 +2925,7 @@
         p = payments.at(i);
         precision = this.getPrecision(p);
         if (p.get('rate') && p.get('rate') !== '1') {
-          p.set('origAmount', OB.DEC.mul(p.get('amount'), p.get('rate')));
+          p.set('origAmount', OB.DEC.div(p.get('amount'), p.get('mulrate')));
         } else {
           p.set('origAmount', p.get('amount'));
         }
@@ -4283,7 +4283,7 @@
         p = payments.at(i);
         precision = this.getPrecision(p);
         if (p.get('rate') && p.get('rate') !== '1') {
-          p.set('origAmount', OB.DEC.mul(p.get('amount'), p.get('rate')));
+          p.set('origAmount', OB.DEC.div(p.get('amount'), p.get('mulrate')));
         } else {
           p.set('origAmount', p.get('amount'));
         }
