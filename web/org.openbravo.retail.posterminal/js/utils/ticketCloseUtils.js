@@ -53,7 +53,8 @@
 
               // verify that the receipt was not cancelled
               if (args.isCancelled !== true) {
-                var orderToPrint = OB.UTIL.clone(args.frozenReceipt);
+                var orderToPrint = OB.UTIL.clone(args.frozenReceipt),
+                    invoice = orderToPrint.get('calculatedInvoice');
                 orderToPrint.get('payments').reset();
                 clonedCollection.each(function (model) {
                   orderToPrint.get('payments').add(new Backbone.Model(model.toJSON()), {
@@ -64,9 +65,9 @@
                 receipt.trigger('print', orderToPrint, {
                   offline: true
                 });
-                if (receipt.get('calculatedInvoice').get('id')) {
+                if (invoice && invoice.get('id')) {
                   var printInvoice = function () {
-                      receipt.trigger('print', orderToPrint.get('calculatedInvoice'), {
+                      receipt.trigger('print', invoice, {
                         offline: true
                       });
                       };
