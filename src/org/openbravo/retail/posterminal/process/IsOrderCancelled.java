@@ -12,7 +12,6 @@ package org.openbravo.retail.posterminal.process;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
-import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.common.order.Order;
@@ -22,7 +21,6 @@ import org.openbravo.service.json.JsonConstants;
 public class IsOrderCancelled extends JSONProcessSimple {
   @Override
   public JSONObject exec(JSONObject jsonData) throws OBException, JSONException {
-    OBContext.setAdminMode(true);
     JSONObject result = new JSONObject();
     JSONObject data = new JSONObject();
 
