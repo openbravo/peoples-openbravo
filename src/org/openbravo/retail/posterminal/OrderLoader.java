@@ -2053,11 +2053,13 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         } else {
           amount = amount.add(writeoffAmt.abs()).setScale(pricePrecision, RoundingMode.HALF_UP);
         }
-        origAmount = amount;
-        if (payment.has("mulrate") && payment.getDouble("mulrate") != 1) {
-          mulrate = BigDecimal.valueOf(payment.getDouble("mulrate"));
-          origAmount = amount.multiply(BigDecimal.valueOf(payment.getDouble("mulrate"))).setScale(
-              pricePrecision, RoundingMode.HALF_UP);
+        if (!doCancelAndReplace) {
+          origAmount = amount;
+          if (payment.has("mulrate") && payment.getDouble("mulrate") != 1) {
+            mulrate = BigDecimal.valueOf(payment.getDouble("mulrate"));
+            origAmount = amount.multiply(BigDecimal.valueOf(payment.getDouble("mulrate")))
+                .setScale(pricePrecision, RoundingMode.HALF_UP);
+          }
         }
       }
 
