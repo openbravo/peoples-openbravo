@@ -637,6 +637,10 @@ isc.OBViewGrid.addProperties({
     if (this.isGrouped) {
       this.regroup();
     }
+    if (this.lazyFiltering) {
+      this.markForCalculateSummaries();
+      return;
+    }
     if (!clear) {
       if (!this.showGridSummary) {
         this.setShowGridSummary(true);
@@ -2885,6 +2889,28 @@ isc.OBViewGrid.addProperties({
   },
 
   // +++++++++++++++++ functions for grid editing +++++++++++++++++
+  setEditValue: function () {
+    if (!this.showGridSummary) {
+      this.Super('setEditValue', arguments);
+      return;
+    }
+    // suppress summary function recalculation when editing values
+    this.showGridSummary = false;
+    this.Super('setEditValue', arguments);
+    this.showGridSummary = true;
+  },
+
+  setEditValues: function () {
+    if (!this.showGridSummary) {
+      this.Super('setEditValues', arguments);
+      return;
+    }
+    // suppress summary function recalculation when editing values
+    this.showGridSummary = false;
+    this.Super('setEditValues', arguments);
+    this.showGridSummary = true;
+  },
+
   startEditing: function (rowNum, colNum, suppressFocus, eCe, suppressWarning) {
     var i, ret, fld, length = this.getFields().length;
     // if a row is set and not a col then check if we should focus in the
@@ -2956,6 +2982,7 @@ isc.OBViewGrid.addProperties({
     }
 
     if (this.lazyFiltering && !isc.isA.ResultSet(this.data)) {
+      this.markForCalculateSummaries();
       OB.Utilities.createResultSetManually(this);
     }
 
@@ -3215,9 +3242,9 @@ isc.OBViewGrid.addProperties({
       this.refreshRow(rowNum);
     }
 
-    // If there is a summary row update its value
-    // Refer issue https://issues.openbravo.com/view.php?id=26363
-    if (this.showGridSummary) {
+    // If there is a summary row update its value just when creating a new record.
+    // When updating a record this summary update is done by dataChanged method.
+    if (this.showGridSummary && this.getEditForm() && this.getEditForm().isNew) {
       this.getSummaryRow();
     }
 
@@ -3612,10 +3639,6 @@ isc.OBViewGrid.addProperties({
     isc.Offline.explicitOffline = previousExplicitOffline;
     // commented out as it removes an autosave action which is done in the edit complete method
     //    this.view.standardWindow.setDirtyEditForm(null);
-    // Summary Functions are refreshed when data gets refreshed
-    if (this.showGridSummary) {
-      this.getSummaryRow();
-    }
   },
 
   autoSave: function () {
@@ -3752,6 +3775,7 @@ isc.OBViewGrid.addProperties({
     }
 
     this.view.messageBar.hide();
+    this.markForCalculateSummaries();
 
     delete this._showingEditor;
     return ret;

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2015 Openbravo SLU
+ * All portions are Copyright (C) 2013-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -25,9 +25,9 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.Query;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.dal.service.OBQuery;
 import org.openbravo.model.common.invoice.InvoiceTaxCashVAT_V;
 
 /**
@@ -37,7 +37,7 @@ import org.openbravo.model.common.invoice.InvoiceTaxCashVAT_V;
  */
 public class DocLineCashVATReady_PaymentTransactionReconciliation extends DocLine {
 
-  List<InvoiceTaxCashVAT_V> invoiceTaxCashVAT_V = new ArrayList<InvoiceTaxCashVAT_V>();
+  private List<String> invoiceTaxCashVAT_V = new ArrayList<String>();
 
   public DocLineCashVATReady_PaymentTransactionReconciliation(String DocumentType,
       String TrxHeader_ID, String TrxLine_ID) {
@@ -49,14 +49,40 @@ public class DocLineCashVATReady_PaymentTransactionReconciliation extends DocLin
    * 
    * It internally creates a Set from the invoiceTaxCashVAT_V attribute and returns a List
    */
+  public List<String> getInvoiceTaxCashVAT_V_IDs() {
+    final Set<String> invoiceTaxCashVAT_V_Set = new HashSet<String>(invoiceTaxCashVAT_V);
+    return new ArrayList<String>(invoiceTaxCashVAT_V_Set);
+  }
+
+  /**
+   * Returns a list of different InvoiceTaxCashVAT_V records.
+   * 
+   * It internally creates a Set from the invoiceTaxCashVAT_V attribute and returns a List
+   * 
+   * @deprecated Use {@link #getInvoiceTaxCashVAT_V_IDs()}
+   */
   public List<InvoiceTaxCashVAT_V> getInvoiceTaxCashVAT_V() {
+    List<InvoiceTaxCashVAT_V> itcvList = new ArrayList<InvoiceTaxCashVAT_V>();
+    for (String itcv : invoiceTaxCashVAT_V) {
+      itcvList.add(OBDal.getInstance().get(InvoiceTaxCashVAT_V.class, itcv));
+    }
     final Set<InvoiceTaxCashVAT_V> invoiceTaxCashVAT_V_Set = new HashSet<InvoiceTaxCashVAT_V>(
-        invoiceTaxCashVAT_V);
+        itcvList);
     return new ArrayList<InvoiceTaxCashVAT_V>(invoiceTaxCashVAT_V_Set);
   }
 
-  public void setInvoiceTaxCashVAT_V(List<InvoiceTaxCashVAT_V> invoiceTaxCashVAT_V) {
+  public void setInvoiceTaxCashVAT_V_IDs(List<String> invoiceTaxCashVAT_V) {
     this.invoiceTaxCashVAT_V = invoiceTaxCashVAT_V;
+  }
+
+  /**
+   * 
+   * @deprecated Use {@link #setInvoiceTaxCashVAT_V_IDs()}
+   */
+  public void setInvoiceTaxCashVAT_V(List<InvoiceTaxCashVAT_V> invoiceTaxCashVAT_V) {
+    for (InvoiceTaxCashVAT_V itcv : invoiceTaxCashVAT_V) {
+      this.invoiceTaxCashVAT_V.add(itcv.getId());
+    }
   }
 
   /**
@@ -66,21 +92,20 @@ public class DocLineCashVATReady_PaymentTransactionReconciliation extends DocLin
    * will add (not override) the associated invoiceTaxCashVAT_V records to the object
    * 
    */
+  @SuppressWarnings("unchecked")
   public void setInvoiceTaxCashVAT_V(String finPaymentDetailID) {
     if (StringUtils.isNotBlank(finPaymentDetailID)) {
       try {
         OBContext.setAdminMode(true);
         final StringBuffer hql = new StringBuffer();
-        hql.append(" as itcv ");
+        hql.append(" select distinct " + InvoiceTaxCashVAT_V.PROPERTY_ID);
+        hql.append(" from " + InvoiceTaxCashVAT_V.ENTITY_NAME + " as itcv ");
         hql.append(" where itcv." + InvoiceTaxCashVAT_V.PROPERTY_PAYMENTDETAILS
             + ".id = :finPaymentDetailID ");
         hql.append(" and itcv." + InvoiceTaxCashVAT_V.PROPERTY_CANCELED + " = false");
-        OBQuery<InvoiceTaxCashVAT_V> obq = OBDal.getInstance().createQuery(
-            InvoiceTaxCashVAT_V.class, hql.toString());
-        obq.setNamedParameter("finPaymentDetailID", finPaymentDetailID);
-        obq.setFilterOnReadableClients(false);
-        obq.setFilterOnReadableOrganization(false);
-
+        hql.append(" and itcv." + InvoiceTaxCashVAT_V.PROPERTY_ACTIVE + " = true");
+        Query obq = OBDal.getInstance().getSession().createQuery(hql.toString());
+        obq.setParameter("finPaymentDetailID", finPaymentDetailID);
         this.invoiceTaxCashVAT_V.addAll(obq.list());
       } finally {
         OBContext.restorePreviousMode();

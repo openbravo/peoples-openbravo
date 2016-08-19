@@ -7879,8 +7879,8 @@ or  (C_ATTACHMENT_METHOD_ID is not null and C_ATTACHMENT_METHOD_ID = @C_Attachme
 <!--93DDA487C86244A28FB80B6F09E74385-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--93DDA487C86244A28FB80B6F09E74385-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--93DDA487C86244A28FB80B6F09E74385-->  <NAME><![CDATA[IsLazyFiltering]]></NAME>
-<!--93DDA487C86244A28FB80B6F09E74385-->  <DESCRIPTION><![CDATA[If it is set, the grid won't perform a filter and/or a sorting action until a button be pressed.]]></DESCRIPTION>
-<!--93DDA487C86244A28FB80B6F09E74385-->  <HELP><![CDATA[If it is set, the grid won't perform a filter and/or a sorting action until the 'Apply Filters' button be pressed.]]></HELP>
+<!--93DDA487C86244A28FB80B6F09E74385-->  <DESCRIPTION><![CDATA[If it is set, the grid won't perform a filter and/or a sorting action until the 'Apply Filters' button be pressed. In the same way, the summary functions present in the grid won't be recalculated until this button be pressed.]]></DESCRIPTION>
+<!--93DDA487C86244A28FB80B6F09E74385-->  <HELP><![CDATA[If it is set, the grid won't perform a filter and/or a sorting action until the 'Apply Filters' button be pressed. In the same way, the summary functions present in the grid won't be recalculated until this button be pressed.]]></HELP>
 <!--93DDA487C86244A28FB80B6F09E74385-->  <COLUMNNAME><![CDATA[IsLazyFiltering]]></COLUMNNAME>
 <!--93DDA487C86244A28FB80B6F09E74385-->  <AD_TABLE_ID><![CDATA[5D50320222DD4865ADFD50364C84291D]]></AD_TABLE_ID>
 <!--93DDA487C86244A28FB80B6F09E74385-->  <AD_REFERENCE_ID><![CDATA[20]]></AD_REFERENCE_ID>
@@ -11576,8 +11576,8 @@ This function (manually coded), can:
 <!--FEEFB3DC943940A08FE7DCF663BFF90F-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--FEEFB3DC943940A08FE7DCF663BFF90F-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--FEEFB3DC943940A08FE7DCF663BFF90F-->  <NAME><![CDATA[IsLazyFiltering]]></NAME>
-<!--FEEFB3DC943940A08FE7DCF663BFF90F-->  <DESCRIPTION><![CDATA[If it is set, the grid won't perform a filter and/or a sorting action until a button be pressed.]]></DESCRIPTION>
-<!--FEEFB3DC943940A08FE7DCF663BFF90F-->  <HELP><![CDATA[If it is set, the grid won't perform a filter and/or a sorting action until the 'Apply Filters' button be pressed.]]></HELP>
+<!--FEEFB3DC943940A08FE7DCF663BFF90F-->  <DESCRIPTION><![CDATA[If it is set, the grid won't perform a filter and/or a sorting action until the 'Apply Filters' button be pressed. In the same way, the summary functions present in the grid won't be recalculated until this button be pressed.]]></DESCRIPTION>
+<!--FEEFB3DC943940A08FE7DCF663BFF90F-->  <HELP><![CDATA[If it is set, the grid won't perform a filter and/or a sorting action until the 'Apply Filters' button be pressed. In the same way, the summary functions present in the grid won't be recalculated until this button be pressed.]]></HELP>
 <!--FEEFB3DC943940A08FE7DCF663BFF90F-->  <COLUMNNAME><![CDATA[IsLazyFiltering]]></COLUMNNAME>
 <!--FEEFB3DC943940A08FE7DCF663BFF90F-->  <AD_TABLE_ID><![CDATA[8A16662B37184121A1EDAA89890E160C]]></AD_TABLE_ID>
 <!--FEEFB3DC943940A08FE7DCF663BFF90F-->  <AD_REFERENCE_ID><![CDATA[17]]></AD_REFERENCE_ID>

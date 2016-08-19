@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2015 Openbravo SLU
+ * All portions are Copyright (C) 2014-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -51,7 +51,7 @@ public class ConnectionInitializerInterceptor extends JdbcInterceptor implements
       HashMap<Object, Object> attributes = con.getAttributes();
       Boolean connectionInitialized = (Boolean) attributes.get("OB_INITIALIZED");
       if (connectionInitialized == null || connectionInitialized == false) {
-        SessionInfo.setDBSessionInfo(con.getConnection(), rbdms);
+        SessionInfo.initDB(con.getConnection(), rbdms);
         PreparedStatement pstmt = null;
         try {
           final Properties props = OBPropertiesProvider.getInstance().getOpenbravoProperties();

@@ -317,7 +317,8 @@ OB.Styles.OBFormField.DefaultDateInput = {
 
 isc.OBDateItem.addProperties(isc.addProperties({}, OB.Styles.OBFormField.DefaultDateInput));
 isc.OBDateItem.addProperties({
-  textAlign: 'left'
+  textAlign: 'left',
+  pickerIconPrompt: OB.I18N.getLabel('OBUIAPP_pickerIconPrompt')
 });
 
 isc.OBDateTimeItem.addProperties(isc.addProperties({}, OB.Styles.OBFormField.DefaultDateInput));

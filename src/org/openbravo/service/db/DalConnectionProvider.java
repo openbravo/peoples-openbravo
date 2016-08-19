@@ -31,6 +31,7 @@ import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.database.SessionInfo;
 import org.openbravo.exception.NoConnectionAvailableException;
 
 /**
@@ -113,6 +114,7 @@ public class DalConnectionProvider implements ConnectionProvider {
       throw new NoConnectionAvailableException("Couldn't get an available connection");
     }
     conn.setAutoCommit(false);
+    SessionInfo.setDBSessionInfo(conn);
     return conn;
   }
 
