@@ -23,7 +23,6 @@ enyo.kind({
     kind: 'OB.UI.SmallButton',
     name: 'btnQtyMinus',
     classes: 'btnlink-white splitline-numbereditor-minusbtn',
-    content: '−',
     tap: function () {
       var qty = parseInt(this.owner.$.numberQty.getValue(), 10),
           min = this.owner.$.numberQty.getMin();
@@ -37,6 +36,9 @@ enyo.kind({
           value: parseInt(this.owner.$.numberQty.getValue(), 10)
         });
       }
+    },
+    initComponents: function () {
+      this.setContent(OB.I18N.getLabel('OBMOBC_Character')[3]);
     }
   }, {
     kind: 'OB.UI.EditNumber',
@@ -47,7 +49,6 @@ enyo.kind({
     kind: 'OB.UI.SmallButton',
     name: 'btnQtyPlus',
     classes: 'btnlink-white splitline-numbereditor-plusbtn',
-    content: '+',
     tap: function () {
       var qty = parseInt(this.owner.$.numberQty.getValue(), 10),
           min = this.owner.$.numberQty.getMin(),
@@ -62,6 +63,9 @@ enyo.kind({
           value: parseInt(this.owner.$.numberQty.getValue(), 10)
         });
       }
+    },
+    initComponents: function () {
+      this.setContent(OB.I18N.getLabel('OBMOBC_Character')[4]);
     }
   }],
   initComponents: function () {
