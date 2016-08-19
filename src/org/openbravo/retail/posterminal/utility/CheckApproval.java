@@ -22,6 +22,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
+import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.access.User;
 import org.openbravo.retail.posterminal.JSONProcessSimple;
 import org.openbravo.utils.FormatUtilities;
@@ -46,7 +47,9 @@ public class CheckApproval extends JSONProcessSimple {
       OBCriteria<User> qUser = OBDal.getInstance().createCriteria(User.class);
       qUser.add(Restrictions.eq(User.PROPERTY_USERNAME, username));
       qUser.add(Restrictions.eq(User.PROPERTY_PASSWORD, FormatUtilities.sha1Base64(password)));
-      if (qUser.list().size() == 0) {
+      List<User> qUserList = qUser.list();
+
+      if (qUserList.size() == 0) {
         result.put("status", 1);
         JSONObject jsonError = new JSONObject();
         jsonError.put("message", OBMessageUtils.getI18NMessage("OBPOS_InvalidUserPassword", null));
@@ -57,6 +60,9 @@ public class CheckApproval extends JSONProcessSimple {
           approvals = approvals + ",'" + approvalType.getString(i) + "'";
         }
 
+        String naturalTreeOrgList = Utility.getInStrSet(OBContext.getOBContext()
+            .getOrganizationStructureProvider(client).getNaturalTree(organization));
+
         String hqlQuery = "select p.property from ADPreference as p"
             + " where property IS NOT NULL "
             + "   and active = true" //
@@ -64,14 +70,15 @@ public class CheckApproval extends JSONProcessSimple {
             + "   and (userContact.id = :user" //
             + "        or exists (from ADUserRoles r"
             + "                  where r.role = p.visibleAtRole"
-            + "                    and r.userContact.id = :user))"
+            + "                    and r.userContact.id = :user"
+            + "                    and r.active=true))"
             + "   and (p.visibleAtOrganization.id = :org " //
-            + "   or ad_isorgincluded(:org, p.visibleAtOrganization, :client) <> -1 "
+            + "   or p.visibleAtOrganization.id in (:orgList) "
             + "   or p.visibleAtOrganization is null) group by p.property";
         Query preferenceQuery = OBDal.getInstance().getSession().createQuery(hqlQuery);
-        preferenceQuery.setParameter("user", qUser.list().get(0).getId());
+        preferenceQuery.setParameter("user", qUserList.get(0).getId());
         preferenceQuery.setParameter("org", organization);
-        preferenceQuery.setParameter("client", client);
+        preferenceQuery.setParameter("orgList", naturalTreeOrgList);
 
         List preferenceList = preferenceQuery.list();
         if (preferenceList.size() == 0) {
@@ -90,8 +97,8 @@ public class CheckApproval extends JSONProcessSimple {
               c++;
             }
           }
-          jsonData.put("userId", qUser.list().get(0).getId());
-          jsonData.put("canApprove", c == approvalType.length());
+          jsonData.put("userId", qUserList.get(0).getId());
+          jsonData.put("canApprove", c >= approvalType.length());
           jsonData.put("preference", jsonPreference);
           result.put("data", jsonData);
         }

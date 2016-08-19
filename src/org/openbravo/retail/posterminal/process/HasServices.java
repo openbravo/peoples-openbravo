@@ -17,7 +17,6 @@ import javax.servlet.ServletException;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Query;
-import org.hibernate.Session;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.mobile.core.process.SimpleQueryBuilder;

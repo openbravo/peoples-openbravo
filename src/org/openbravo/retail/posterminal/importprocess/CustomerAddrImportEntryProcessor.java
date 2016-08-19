@@ -81,11 +81,11 @@ public class CustomerAddrImportEntryProcessor extends ImportEntryProcessor {
           + ImportEntry.PROPERTY_CREATIONDATE + "<:creationDate and "
           + ImportEntry.PROPERTY_OBPOSPOSTERMINAL + "=:terminal";
       final Query qry = OBDal.getInstance().getSession()
-          .createQuery("select count(*) from " + ImportEntry.ENTITY_NAME + " where " + whereClause);
+          .createQuery("select 1 from " + ImportEntry.ENTITY_NAME + " where " + whereClause);
       qry.setTimestamp("creationDate", importEntry.getCreationDate());
       qry.setParameter("terminal", importEntry.getOBPOSPOSTerminal());
-
-      return ((Number) qry.uniqueResult()).intValue();
+      qry.setMaxResults(1);
+      return qry.list().size();
     }
   }
 

@@ -305,7 +305,12 @@ enyo.kind({
     this.$.prslistitemprinter.$.tbody.hide();
     this.$.prslistitemprinter.$.tlimit.hide();
     this.$.renderLoading.show();
-    var limit = OB.Model.Order.prototype.dataLimit;
+    var limit;
+    if (!OB.MobileApp.model.hasPermission('OBPOS_remote.order', true)) {
+      limit = OB.Model.Order.prototype.dataLimit;
+    } else {
+      limit = OB.Model.Order.prototype.remoteDataLimit ? OB.Model.Order.prototype.remoteDataLimit : OB.Model.Order.prototype.dataLimit;
+    }
     for (i = 0; i < this.model.get('orderList').length; i++) {
       // When an canceller order is ready, the cancelled order cannot be opened
       if (this.model.get('orderList').models[i].get('replacedorder')) {
@@ -494,7 +499,20 @@ enyo.kind({
   },
   changePaidReceipt: function (inSender, inEvent) {
     this.model.get('orderList').addPaidReceipt(inEvent.newPaidReceipt);
-    this.model.attributes.order.calculateReceipt();
+    if (inEvent.newPaidReceipt.get('isLayaway')) {
+      this.model.attributes.order.calculateReceipt();
+    } else {
+      var order = this.model.attributes.order;
+      var qty = order.get('lines').reduce(function (memo, e) {
+        var qtyLine = e.getQty();
+        if (qtyLine > 0) {
+          return OB.DEC.add(memo, qtyLine, OB.I18N.qtyScale());
+        } else {
+          return memo;
+        }
+      }, OB.DEC.Zero);
+      order.set('qty', qty);
+    }
     return true;
   },
   executeOnShow: function () {

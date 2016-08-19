@@ -476,6 +476,9 @@ enyo.kind({
     } else {
       targetOrder = this.model.get('order');
     }
+    if (targetOrder.pendingAddProduct && targetOrder.pendingAddProduct === true) {
+      return false;
+    }
     if (targetOrder.get('isEditable') === false) {
       targetOrder.canAddAsServices(this.model, inEvent.product, function (addAsServices) {
         if (addAsServices !== 'ABORT') {
@@ -573,7 +576,9 @@ enyo.kind({
         }
         return true;
       }
+      args.receipt.pendingAddProduct = true;
       args.receipt.addProduct(args.productToAdd, args.qtyToAdd, args.options, args.attrs, function (success) {
+        args.receipt.pendingAddProduct = false;
         args.context.model.get('orderList').saveCurrent();
         if (inEvent.callback) {
           inEvent.callback.call(inEvent.context, success);
@@ -851,6 +856,7 @@ enyo.kind({
       this.$.multiColumn.$.rightPanel.$.keyboard.hide();
     }
     if (!_.isUndefined(inEvent.status)) {
+      this.$.multiColumn.$.rightPanel.$.keyboard.lastStatus = '';
       this.$.multiColumn.$.rightPanel.$.keyboard.setStatus(inEvent.status);
     }
   },
@@ -1156,6 +1162,7 @@ enyo.kind({
     me.model.get('multiOrders').get('multiOrdersList').reset();
     _.each(inEvent.value, function (iter) {
       //iter.set('isMultiOrder', true);
+      iter.set('belongsToMultiOrder', true);
       me.model.get('orderList').addMultiReceipt(iter);
       me.model.get('multiOrders').get('multiOrdersList').add(iter);
     });

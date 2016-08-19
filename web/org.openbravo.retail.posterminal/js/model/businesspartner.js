@@ -17,6 +17,7 @@
     entityName: 'BusinessPartner',
     source: 'org.openbravo.retail.posterminal.master.BusinessPartner',
     dataLimit: OB.Dal.DATALIMIT,
+    remoteDataLimit: OB.Dal.REMOTE_DATALIMIT,
     remote: 'OBPOS_remote.customer',
     saveCustomer: function (callback) {
       var nameLength, newSk;

@@ -63,7 +63,8 @@
           version: OB.UTIL.VersionManagement.current.posterminal.WebSQLDatabase.dbVersion
         },
         logDBTrxThreshold: 300,
-        logDBStmtThreshold: 1000
+        logDBStmtThreshold: 1000,
+        shouldExecuteBenchmark: true
       });
 
       me.setTerminalName(OB.UTIL.localStorage.getItem('terminalAuthentication') === 'Y' ? OB.UTIL.localStorage.getItem('terminalName') : OB.UTIL.getParameterByName("terminal"));
@@ -561,18 +562,22 @@
       this.paymentnames = {};
       for (i = 0, max = this.get('payments').length; i < max; i++) {
         this.paymentnames[this.get('payments')[i].payment.searchKey] = this.get('payments')[i];
-        if (this.get('payments')[i].payment.searchKey === 'OBPOS_payment.cash') {
+        if (!paymentlegacy && this.get('payments')[i].payment.searchKey === 'OBPOS_payment.cash') {
           paymentlegacy = this.get('payments')[i].payment.searchKey;
         }
         if (this.get('payments')[i].paymentMethod.iscash) {
-          paymentcash = this.get('payments')[i].payment.searchKey;
+          if (!paymentcash) {
+            paymentcash = this.get('payments')[i].payment.searchKey;
+          }
           if (this.get('payments')[i].paymentMethod.currency === this.get('terminal').currency) {
-            paymentcashcurrency = this.get('payments')[i].payment.searchKey;
-            if (this.get('payments')[i].paymentMethod.defaultCashPaymentMethod) {
+            if (!paymentcashcurrency) {
+              paymentcashcurrency = this.get('payments')[i].payment.searchKey;
+            }
+            if (!defaultpaymentcashcurrency && this.get('payments')[i].paymentMethod.defaultCashPaymentMethod) {
               defaultpaymentcashcurrency = this.get('payments')[i].payment.searchKey;
             }
           }
-          if (this.get('payments')[i].paymentMethod.defaultCashPaymentMethod) {
+          if (!defaultpaymentcash && this.get('payments')[i].paymentMethod.defaultCashPaymentMethod) {
             defaultpaymentcash = this.get('payments')[i].payment.searchKey;
           }
         }

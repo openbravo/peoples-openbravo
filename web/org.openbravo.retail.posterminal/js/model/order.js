@@ -11,20 +11,6 @@
 
 (function () {
 
-  var subscribeToCalculateGross = function (receipt, f) {
-      this.f = f;
-      this.receipt = receipt;
-      };
-
-  subscribeToCalculateGross.prototype.doSubscription = function () {
-    this.receipt.on('saveCurrent', this._callback, this);
-  };
-
-  subscribeToCalculateGross.prototype._callback = function () {
-    this.receipt.off('saveCurrent', this._callback);
-    this.f();
-  };
-
   // Sales.OrderLine Model
   var OrderLine = Backbone.Model.extend({
     modelName: 'OrderLine',
@@ -294,6 +280,7 @@
     entityName: 'Order',
     source: '',
     dataLimit: OB.Dal.DATALIMIT,
+    remoteDataLimit: OB.Dal.REMOTE_DATALIMIT,
     properties: ['id', 'json', 'session', 'hasbeenpaid', 'isbeingprocessed'],
     propertyMap: {
       'id': 'c_order_id',
@@ -1505,36 +1492,33 @@
           options: options,
           newLine: newLine
         }, function (args) {
-          if (callback) {
-            callback(true);
-          }
           if (args.newLine && me.get('lines').contains(line) && args.productToAdd.get('productType') !== 'S') {
-            var subs = new subscribeToCalculateGross(me, function () {
-              var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('HasServices');
-              if (me.get('lines').contains(line)) {
-                // Display related services after calculate gross, if it is new line and if the line has not been deleted.
-                // The line might has been deleted during calculate gross for examples if there was an error in taxes.
-                var productId = args.productToAdd.get('forceFilterId') ? args.productToAdd.get('forceFilterId') : args.productToAdd.id;
-                args.receipt._loadRelatedServices(args.productToAdd.get('productType'), productId, args.productToAdd.get('productCategory'), function (data) {
-                  if (data) {
-                    if (data.hasservices) {
-                      args.orderline.set('hasRelatedServices', true);
-                      args.orderline.trigger('showServicesButton');
-                    } else {
-                      args.orderline.set('hasRelatedServices', false);
-                    }
-                    args.receipt.save();
-                    if (data.hasmandatoryservices) {
-                      args.receipt.trigger('showProductList', args.orderline, 'mandatory');
-                    }
-                  }
-                  OB.UTIL.SynchronizationHelper.finished(synchId, 'HasServices');
-                }, args.orderline);
-              } else {
-                OB.UTIL.SynchronizationHelper.finished(synchId, 'HasServices');
+            var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('HasServices');
+            // Display related services after calculate gross, if it is new line and if the line has not been deleted.
+            // The line might has been deleted during calculate gross for examples if there was an error in taxes.
+            var productId = args.productToAdd.get('forceFilterId') ? args.productToAdd.get('forceFilterId') : args.productToAdd.id;
+            args.receipt._loadRelatedServices(args.productToAdd.get('productType'), productId, args.productToAdd.get('productCategory'), function (data) {
+              if (data) {
+                if (data.hasservices) {
+                  args.orderline.set('hasRelatedServices', true);
+                  args.orderline.trigger('showServicesButton');
+                } else {
+                  args.orderline.set('hasRelatedServices', false);
+                }
+                args.receipt.save();
+                if (data.hasmandatoryservices) {
+                  args.receipt.trigger('showProductList', args.orderline, 'mandatory');
+                }
               }
-            });
-            subs.doSubscription();
+              OB.UTIL.SynchronizationHelper.finished(synchId, 'HasServices');
+              if (callback) {
+                callback(true);
+              }
+            }, args.orderline);
+          } else {
+            if (callback) {
+              callback(true);
+            }
           }
         });
       }
@@ -1705,10 +1689,11 @@
               p.set('standardPrice', productPrices.at(0).get('pricestd'));
               p.set('listPrice', productPrices.at(0).get('pricelist'));
             }
-            me.addProductToOrder(p, qty, options, attrs);
-            if (callback) {
-              callback(true);
-            }
+            me.addProductToOrder(p, qty, options, attrs, function (success) {
+              if (callback) {
+                callback(success);
+              }
+            });
           } else {
             OB.UTIL.showI18NWarning('OBPOS_ProductNotFoundInPriceList');
             if (callback) {
@@ -1722,10 +1707,11 @@
           }
         });
       } else {
-        me.addProductToOrder(p, qty, options, attrs);
-        if (callback) {
-          callback(true);
-        }
+        me.addProductToOrder(p, qty, options, attrs, function (success) {
+          if (callback) {
+            callback(success);
+          }
+        });
       }
     },
 
@@ -1758,7 +1744,6 @@
           } else {
             OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_AnonymousSaleNotAllowed'));
           }
-
           if (callback) {
             callback(false);
           }
@@ -1771,6 +1756,9 @@
         }
         if (args && args.useLines) {
           me._drawLinesDistribution(args);
+          if (callback) {
+            callback(false);
+          }
           return;
         }
         me._addProduct(p, qty, options, attrs, function (success) {
@@ -2862,6 +2850,7 @@
       }, this);
       this.set('id', null);
       this.save();
+      this.calculateReceipt();
     },
     rejectQuotation: function (rejectReasonId, scope, callback) {
       if (!this.get('id')) {

@@ -44,11 +44,27 @@ public class Brand extends ProcessHQLQuery {
   protected List<HQLPropertyList> getHqlProperties(JSONObject jsonsent) {
     // Get Product Properties
     List<HQLPropertyList> propertiesList = new ArrayList<HQLPropertyList>();
+    boolean forceRemote = false;
+    boolean isRemote = false;
+    try {
+      OBContext.setAdminMode(false);
+      isRemote = "Y".equals(Preferences.getPreferenceValue("OBPOS_remote.product", true, OBContext
+          .getOBContext().getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(),
+          OBContext.getOBContext().getUser(), OBContext.getOBContext().getRole(), null));
+    } catch (PropertyException e) {
+      log.error("Error getting preference OBPOS_remote.product " + e.getMessage(), e);
+    } finally {
+      OBContext.restorePreviousMode();
+    }
     Map<String, Object> args = new HashMap<String, Object>();
+
+    if (!isRemote && jsonsent.has("remoteFilters")) {
+      forceRemote = true;
+      args.put("forceRemote", forceRemote);
+    }
     HQLPropertyList brandHQLProperties = ModelExtensionUtils
         .getPropertyExtensions(extensions, args);
     propertiesList.add(brandHQLProperties);
-
     return propertiesList;
   }
 
@@ -90,8 +106,7 @@ public class Brand extends ProcessHQLQuery {
   protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
     List<String> hqlQueries = new ArrayList<String>();
     boolean forceRemote = false;
-    HQLPropertyList regularBrandsHQLProperties = ModelExtensionUtils
-        .getPropertyExtensions(extensions);
+    HQLPropertyList regularBrandsHQLProperties;
     boolean isRemote = false;
     try {
       OBContext.setAdminMode(false);
@@ -109,6 +124,8 @@ public class Brand extends ProcessHQLQuery {
       Map<String, Object> args = new HashMap<String, Object>();
       args.put("forceRemote", forceRemote);
       regularBrandsHQLProperties = ModelExtensionUtils.getPropertyExtensions(extensions, args);
+    } else {
+      regularBrandsHQLProperties = ModelExtensionUtils.getPropertyExtensions(extensions);
     }
     if (isRemote || forceRemote) {
       hqlQueries

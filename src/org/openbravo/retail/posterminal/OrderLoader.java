@@ -213,12 +213,12 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     try {
 
       initializeVariables(jsonorder);
-      executeHooks(orderPreProcesses, jsonorder, null, null, null);
+      Order order = null;
+      OrderLine orderLine = null;
+      ShipmentInOut shipment = null;
+      Invoice invoice = null;
+      boolean createInvoice = false;
       boolean wasPaidOnCredit = false;
-
-      if (jsonorder.has("deletedLines")) {
-        mergeDeletedLines(jsonorder);
-      }
 
       if (jsonorder.getLong("orderType") != 2 && !jsonorder.getBoolean("isLayaway") && !isQuotation
           && verifyOrderExistance(jsonorder)
@@ -226,16 +226,32 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         return successMessage(jsonorder);
       }
 
+      if (jsonorder.getBoolean("isLayaway")) {
+        order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
+
+        final Date updated = OBMOBCUtils.calculateClientDatetime(jsonorder.getString("updated"),
+            Long.parseLong(jsonorder.getString("timezoneOffset")));
+
+        final Date loaded = OBMOBCUtils.calculateClientDatetime(jsonorder.getString("loaded"),
+            Long.parseLong(jsonorder.getString("timezoneOffset")));
+
+        if (!((updated.compareTo(order.getUpdated()) >= 0) && (loaded.compareTo(order.getUpdated()) >= 0))) {
+          throw new OutDatedDataChangeException(Utility.messageBD(new DalConnectionProvider(false),
+              "OBPOS_outdatedLayaway", OBContext.getOBContext().getLanguage().getLanguage()));
+        }
+      }
+
       if (!isQuotation && !jsonorder.getBoolean("isLayaway")) {
         verifyCashupStatus(jsonorder);
       }
 
+      executeHooks(orderPreProcesses, jsonorder, null, null, null);
+
+      if (jsonorder.has("deletedLines")) {
+        mergeDeletedLines(jsonorder);
+      }
+
       t0 = System.currentTimeMillis();
-      Order order = null;
-      OrderLine orderLine = null;
-      ShipmentInOut shipment = null;
-      Invoice invoice = null;
-      boolean createInvoice = false;
       TriggerHandler.getInstance().disable();
       try {
         if (jsonorder.has("oldId") && !jsonorder.getString("oldId").equals("null") && isQuotation) {
@@ -293,23 +309,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         }
         ArrayList<OrderLine> lineReferences = new ArrayList<OrderLine>();
         JSONArray orderlines = jsonorder.getJSONArray("lines");
-        if (jsonorder.getBoolean("isLayaway")) {
-          order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
-
-          final Date updated = OBMOBCUtils.calculateClientDatetime(jsonorder.getString("updated"),
-              Long.parseLong(jsonorder.getString("timezoneOffset")));
-
-          final Date loaded = OBMOBCUtils.calculateClientDatetime(jsonorder.getString("loaded"),
-              Long.parseLong(jsonorder.getString("timezoneOffset")));
-
-          if (!((updated.compareTo(order.getUpdated()) >= 0) && (loaded.compareTo(order
-              .getUpdated()) >= 0))) {
-            throw new OutDatedDataChangeException(Utility.messageBD(
-                new DalConnectionProvider(false), "OBPOS_outdatedLayaway", OBContext.getOBContext()
-                    .getLanguage().getLanguage()));
-          }
-
-        }
 
         if (!newLayaway && notpaidLayaway) {
           order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
@@ -369,8 +368,10 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           OBCriteria<Locator> locators = OBDal.getInstance().createCriteria(Locator.class);
           locators.add(Restrictions.eq(Locator.PROPERTY_ACTIVE, true));
           locators.add(Restrictions.eq(Locator.PROPERTY_WAREHOUSE, order.getWarehouse()));
+          locators.setMaxResults(2);
+          List<Locator> locatorList = locators.list();
 
-          if (locators.list().isEmpty()) {
+          if (locatorList.isEmpty()) {
             throw new OBException(Utility.messageBD(new DalConnectionProvider(false),
                 "OBPOS_WarehouseNotStorageBin", OBContext.getOBContext().getLanguage()
                     .getLanguage()));
@@ -379,7 +380,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           shipment = OBProvider.getInstance().get(ShipmentInOut.class);
           createShipment(shipment, order, jsonorder);
           OBDal.getInstance().save(shipment);
-          createShipmentLines(shipment, order, jsonorder, orderlines, lineReferences);
+          createShipmentLines(shipment, order, jsonorder, orderlines, lineReferences, locatorList);
         }
         if (log.isDebugEnabled()) {
           t115 = System.currentTimeMillis();
@@ -1056,18 +1057,14 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
   }
 
   protected void createShipmentLines(ShipmentInOut shipment, Order order, JSONObject jsonorder,
-      JSONArray orderlines, ArrayList<OrderLine> lineReferences) throws JSONException {
+      JSONArray orderlines, ArrayList<OrderLine> lineReferences, List<Locator> locatorList)
+      throws JSONException {
     int lineNo = 0;
     Locator foundSingleBin = null;
     Entity shplineentity = ModelProvider.getInstance().getEntity(ShipmentInOutLine.class);
 
-    final OBCriteria<Locator> locators = OBDal.getInstance().createCriteria(Locator.class);
-    locators.add(Restrictions.eq(Locator.PROPERTY_ACTIVE, true));
-    locators.add(Restrictions.eq(Locator.PROPERTY_WAREHOUSE, shipment.getWarehouse()));
-    // note the count causes a query but the good thing is that it doesn't cause loading
-    // additional bin locations if there are too many
-    if (locators.count() == 1) {
-      foundSingleBin = (Locator) locators.uniqueResult();
+    if (locatorList.size() == 1) {
+      foundSingleBin = locatorList.get(0);
     }
     for (int i = 0; i < orderlines.length(); i++) {
       String hqlWhereClause;
@@ -1454,24 +1451,48 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         jsonorder.getJSONObject("bp").getString("locId")));
     order.setInvoiceAddress(order.getPartnerAddress());
 
-    if (!jsonorder.getJSONObject("bp").isNull("paymentMethod")
-        && !jsonorder.getJSONObject("bp").getString("paymentMethod").equals("null")) {
-      order.setPaymentMethod((FIN_PaymentMethod) OBDal.getInstance().getProxy("FIN_PaymentMethod",
-          jsonorder.getJSONObject("bp").getString("paymentMethod")));
-    } else if (bp.getPaymentMethod() != null) {
-      order.setPaymentMethod((FIN_PaymentMethod) bp.getPaymentMethod());
-    } else if (order.getOrganization().getObretcoDbpPmethodid() != null) {
-      order.setPaymentMethod((FIN_PaymentMethod) order.getOrganization().getObretcoDbpPmethodid());
-    } else {
-      String paymentMethodHqlWhereClause = " pmethod where EXISTS (SELECT 1 FROM FinancialMgmtFinAccPaymentMethod fapm "
-          + "WHERE pmethod.id = fapm.paymentMethod.id AND fapm.payinAllow = 'Y')";
-      OBQuery<FIN_PaymentMethod> queryPaymentMethod = OBDal.getInstance().createQuery(
-          FIN_PaymentMethod.class, paymentMethodHqlWhereClause);
-      queryPaymentMethod.setFilterOnReadableOrganization(true);
-      queryPaymentMethod.setMaxResult(1);
-      List<FIN_PaymentMethod> lstPaymentMethod = queryPaymentMethod.list();
-      if (lstPaymentMethod != null && lstPaymentMethod.size() > 0) {
-        order.setPaymentMethod(lstPaymentMethod.get(0));
+    Boolean paymenthMethod = false;
+    if (!jsonorder.isNull("paymentMethodKind")
+        && !jsonorder.getString("paymentMethodKind").equals("null")) {
+      String posTerminalId = jsonorder.getString("posTerminal");
+      OBPOSApplications posTerminal = OBDal.getInstance().get(OBPOSApplications.class,
+          posTerminalId);
+      if (posTerminal != null) {
+        String paymentTypeName = jsonorder.getString("paymentMethodKind");
+        OBPOSAppPayment paymentType = null;
+        for (OBPOSAppPayment type : posTerminal.getOBPOSAppPaymentList()) {
+          if (type.getSearchKey().equals(paymentTypeName)) {
+            paymentType = type;
+          }
+        }
+        if (paymentType != null) {
+          order.setPaymentMethod(paymentType.getPaymentMethod().getPaymentMethod());
+          paymenthMethod = true;
+        }
+      }
+    }
+
+    if (!paymenthMethod) {
+      if (!jsonorder.getJSONObject("bp").isNull("paymentMethod")
+          && !jsonorder.getJSONObject("bp").getString("paymentMethod").equals("null")) {
+        order.setPaymentMethod((FIN_PaymentMethod) OBDal.getInstance().getProxy(
+            "FIN_PaymentMethod", jsonorder.getJSONObject("bp").getString("paymentMethod")));
+      } else if (bp.getPaymentMethod() != null) {
+        order.setPaymentMethod((FIN_PaymentMethod) bp.getPaymentMethod());
+      } else if (order.getOrganization().getObretcoDbpPmethodid() != null) {
+        order
+            .setPaymentMethod((FIN_PaymentMethod) order.getOrganization().getObretcoDbpPmethodid());
+      } else {
+        String paymentMethodHqlWhereClause = " pmethod where EXISTS (SELECT 1 FROM FinancialMgmtFinAccPaymentMethod fapm "
+            + "WHERE pmethod.id = fapm.paymentMethod.id AND fapm.payinAllow = 'Y')";
+        OBQuery<FIN_PaymentMethod> queryPaymentMethod = OBDal.getInstance().createQuery(
+            FIN_PaymentMethod.class, paymentMethodHqlWhereClause);
+        queryPaymentMethod.setFilterOnReadableOrganization(true);
+        queryPaymentMethod.setMaxResult(1);
+        List<FIN_PaymentMethod> lstPaymentMethod = queryPaymentMethod.list();
+        if (lstPaymentMethod != null && lstPaymentMethod.size() > 0) {
+          order.setPaymentMethod(lstPaymentMethod.get(0));
+        }
       }
     }
 
@@ -1932,6 +1953,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
             FIN_PaymentScheduleDetail.class);
         paymentScheduleDetail.setOrderPaymentSchedule(paymentSchedule);
         paymentScheduleDetail.setAmount(diffPaid);
+        paymentScheduleDetail.setBusinessPartner(order.getBusinessPartner());
         if (paymentScheduleInvoice != null) {
           paymentScheduleDetail.setInvoicePaymentSchedule(paymentScheduleInvoice);
         }
@@ -1965,6 +1987,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
               FIN_PaymentScheduleDetail.class);
           paymentScheduleDetail.setOrderPaymentSchedule(paymentSchedule);
           paymentScheduleDetail.setAmount(diffPaid);
+          paymentScheduleDetail.setBusinessPartner(order.getBusinessPartner());
           if (paymentScheduleInvoice != null) {
             paymentScheduleDetail.setInvoicePaymentSchedule(paymentScheduleInvoice);
           }
@@ -2042,6 +2065,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           FIN_PaymentScheduleDetail.class);
       paymentScheduleDetail.setOrderPaymentSchedule(paymentSchedule);
       paymentScheduleDetail.setAmount(amount);
+      paymentScheduleDetail.setBusinessPartner(order.getBusinessPartner());
       paymentSchedule.getFINPaymentScheduleDetailOrderPaymentScheduleList().add(
           paymentScheduleDetail);
       if (payment.has("id")) {

@@ -247,7 +247,7 @@ public class Product extends ProcessHQLQuery {
     String hql = "select"
         + regularProductsHQLProperties.getHqlSelect()
         + "FROM OBRETCO_Prol_Product as pli left outer join pli.product.image img inner join pli.product as product, "
-        + "PricingProductPrice ppp, " + "PricingPriceListVersion pplv ";
+        + "PricingProductPrice ppp ";
     if (isRemote && isMultipricelist && jsonsent.has("remoteParams")) {
       hql += ", PricingProductPrice pp WHERE pp.product=pli.product and pp.priceListVersion.id= :multipriceListVersionId ";
     } else {
@@ -255,10 +255,9 @@ public class Product extends ProcessHQLQuery {
     }
 
     hql += " AND $filtersCriteria AND $hqlCriteria AND (pli.obretcoProductlist.id = :productListId) "
-        + "AND (pplv.id= :priceListVersionId ) "
+        + "AND (ppp.priceListVersion.id= :priceListVersionId ) "
         + " AND ("
-        + "ppp.priceListVersion.id = pplv.id"
-        + ") AND (" + "pli.product.id = ppp.product.id" + ") ";
+        + "pli.product.id = ppp.product.id" + ") ";
 
     if (lastUpdated != null) {
       hql += "AND ((pli.product.$incrementalUpdateCriteria) OR (pli.$incrementalUpdateCriteria) OR (ppp.$incrementalUpdateCriteria)) ";

@@ -8,8 +8,6 @@
  */
 package org.openbravo.retail.posterminal;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.Date;
 
 import org.apache.log4j.Logger;

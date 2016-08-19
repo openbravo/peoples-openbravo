@@ -94,13 +94,13 @@ public class VoidLayawayEntryProcessor extends ImportEntryProcessor {
           + "<:createdtimestamp and " + ImportEntry.PROPERTY_OBPOSPOSTERMINAL
           + "=:terminal and id!=:id";
       final Query qry = OBDal.getInstance().getSession()
-          .createQuery("select count(*) from " + ImportEntry.ENTITY_NAME + " where " + whereClause);
+          .createQuery("select 1 from " + ImportEntry.ENTITY_NAME + " where " + whereClause);
       qry.setParameter("id", importEntry.getId());
       qry.setTimestamp("creationDate", importEntry.getCreationDate());
       qry.setParameter("terminal", importEntry.getOBPOSPOSTerminal());
       qry.setParameter("createdtimestamp", importEntry.getCreatedtimestamp());
-
-      return ((Number) qry.uniqueResult()).intValue();
+      qry.setMaxResults(1);
+      return qry.list().size();
     }
   }
 

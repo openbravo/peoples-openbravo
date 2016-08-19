@@ -17,6 +17,7 @@
     entityName: 'Product',
     source: 'org.openbravo.retail.posterminal.master.Product',
     dataLimit: OB.Dal.DATALIMIT,
+    remoteDataLimit: OB.Dal.REMOTE_DATALIMIT,
     includeTerminalDate: true,
     remote: 'OBPOS_remote.product',
     initialize: function () {

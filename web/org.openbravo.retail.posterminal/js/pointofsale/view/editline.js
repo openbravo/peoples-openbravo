@@ -804,16 +804,16 @@ enyo.kind({
     var me = this;
 
     function resetSelectedModel() {
-      me.line = null;
-      me.selectedModels = null;
-      me.render();
-    }
-    this.receipt.get('lines').on('remove', function () {
       if (me.receipt.get('lines').length === 0) {
-        resetSelectedModel();
+        me.line = null;
+        me.selectedModels = null;
+        me.render();
       }
+    }
+    this.receipt.on('clear', function () {
+      resetSelectedModel();
     }, this);
-    this.model.get('orderList').on('remove', function () {
+    this.receipt.get('lines').on('remove', function () {
       resetSelectedModel();
     }, this);
     this.receipt.get('lines').on('selected', function (lineSelected) {

@@ -132,6 +132,12 @@
           receipt.set('undo', null);
           receipt.set('multipleUndo', null);
 
+          receipt.set('paymentMethodKind', null);
+          if (receipt.get('payments').length === 1 && receipt.get('orderType') === 0 && !receipt.get('isLayaway') && !receipt.get('isQuotation')) {
+            var payment = receipt.get('payments').models[0];
+            receipt.set('paymentMethodKind', payment.get('kind'));
+          }
+
           // multiterminal support
           // be sure that the active terminal is the one set as the order proprietary
           receipt.set('posTerminal', OB.MobileApp.model.get('terminal').id);
