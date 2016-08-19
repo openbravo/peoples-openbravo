@@ -132,6 +132,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
   private Locator binForRetuns = null;
   private boolean isQuotation = false;
   private boolean isDeleted = false;
+  private boolean doCancelAndReplace = false;
 
   @Inject
   @Any
@@ -191,6 +192,9 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     if (jsonorder.has("generateShipment")) {
       createShipment &= jsonorder.getBoolean("generateShipment");
     }
+
+    doCancelAndReplace = jsonorder.has("doCancelAndReplace")
+        && jsonorder.getBoolean("doCancelAndReplace") ? true : false;
   }
 
   @Override
@@ -461,8 +465,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           return paymentResponse;
         }
 
-        boolean doCancelAndReplace = jsonorder.has("doCancelAndReplace")
-            && jsonorder.getBoolean("doCancelAndReplace") ? true : false;
         if (doCancelAndReplace && order.getReplacedorder() != null) {
           TriggerHandler.getInstance().disable();
           try {
@@ -1302,8 +1304,9 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       orderline.setLineNetAmount(BigDecimal.valueOf(jsonOrderLine.getDouble("net")).setScale(
           pricePrecision, RoundingMode.HALF_UP));
 
-      if (createShipment) {
-        // shipment is created, so all is delivered
+      if (createShipment
+          || (doCancelAndReplace && !newLayaway && !notpaidLayaway && !partialpaidLayaway)) {
+        // shipment is created or is a C&R and is not a layaway, so all is delivered
         orderline.setDeliveredQuantity(orderline.getOrderedQuantity());
       }
 
@@ -1536,8 +1539,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       order.setDelivered(true);
     }
 
-    boolean doCancelAndReplace = jsonorder.has("doCancelAndReplace")
-        && jsonorder.getBoolean("doCancelAndReplace") ? true : false;
     if (!doCancelAndReplace) {
       if (order.getDocumentNo().indexOf("/") > -1) {
         long documentno = Long.parseLong(order.getDocumentNo().substring(
