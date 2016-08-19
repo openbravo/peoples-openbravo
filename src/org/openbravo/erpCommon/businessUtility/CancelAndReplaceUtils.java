@@ -1007,7 +1007,6 @@ public class CancelAndReplaceUtils {
     // There should be only one with null paymentDetails
     paymentScheduleDetailCriteria.add(Restrictions
         .isNull(FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS));
-    paymentScheduleDetailCriteria.setMaxResults(1);
     List<FIN_PaymentScheduleDetail> paymentScheduleDetailList = paymentScheduleDetailCriteria
         .list();
     if (paymentScheduleDetailList.size() != 0) {
