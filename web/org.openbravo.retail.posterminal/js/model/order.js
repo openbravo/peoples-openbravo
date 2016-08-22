@@ -1558,9 +1558,6 @@
                 callback(success);
               }
             });
-            if (callback) {
-              callback(true);
-            }
           } else {
             OB.UTIL.showI18NWarning('OBPOS_ProductNotFoundInPriceList');
             if (callback) {
