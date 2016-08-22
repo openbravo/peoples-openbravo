@@ -404,17 +404,13 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         if (log.isDebugEnabled()) {
           t116 = System.currentTimeMillis();
         }
-        if (!paidReceipt) {
-          createApprovals(order, jsonorder);
-        }
+        createApprovals(order, jsonorder);
 
         if (log.isDebugEnabled()) {
           t11 = System.currentTimeMillis();
           t2 = System.currentTimeMillis();
         }
-        if (!paidReceipt) {
-          updateAuditInfo(order, invoice, jsonorder);
-        }
+        updateAuditInfo(order, invoice, jsonorder);
         if (log.isDebugEnabled()) {
           t3 = System.currentTimeMillis();
         }
