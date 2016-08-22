@@ -205,6 +205,9 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
     Tree tree = (Tree) datasourceParameters.get("tree");
 
     JSONArray responseData = new JSONArray();
+    if (tree == null) {
+      return responseData;
+    }
     Entity entity = ModelProvider.getInstance().getEntityByTableId(tree.getTable().getId());
     final DataToJsonConverter toJsonConverter = OBProvider.getInstance().get(
         DataToJsonConverter.class);
