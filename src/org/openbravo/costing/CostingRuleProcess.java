@@ -580,6 +580,9 @@ public class CostingRuleProcess implements Process {
           if (existsPreviousRule) {
             trxCost = CostingUtils.getTransactionCost(trx, startingDate, true, cur);
             if (trx.getMovementQuantity().compareTo(BigDecimal.ZERO) != 0) {
+              if (trxCost == null) {
+                throw new OBException("@NoCostCalculated@: " + trx.getIdentifier());
+              }
               cost = trxCost.divide(trx.getMovementQuantity().abs(), cur.getCostingPrecision()
                   .intValue(), RoundingMode.HALF_UP);
               trx = OBDal.getInstance().get(MaterialTransaction.class, trx.getId());
