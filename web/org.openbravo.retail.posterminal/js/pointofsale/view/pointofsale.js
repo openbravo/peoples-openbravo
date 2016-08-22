@@ -607,6 +607,7 @@ enyo.kind({
     }
   },
   showLeftSubWindow: function (inSender, inEvent) {
+    var me = this;
     if (this.$.multiColumn.$.leftPanel.$[inEvent.leftSubWindow]) {
       if (this.$.multiColumn.$.leftPanel.$[inEvent.leftSubWindow].mainBeforeSetShowing) {
         var allHidden = true;
@@ -621,9 +622,16 @@ enyo.kind({
           }
         }, this);
         if (this.$.multiColumn.$.leftPanel.$[inEvent.leftSubWindow].mainBeforeSetShowing(inEvent) && allHidden) {
-          this.$.multiColumn.$.leftPanel.$.receiptview.setShowing(false);
-          this.$.multiColumn.$.leftPanel.$[inEvent.leftSubWindow].setShowing(true);
-          this.$.multiColumn.$.leftPanel.$[inEvent.leftSubWindow].inEvent = inEvent;
+          OB.UTIL.HookManager.executeHooks('OBPOS_LeftSubWindow_beforeSetShowing', {
+            context: this.$.multiColumn.$.leftPanel.$[inEvent.leftSubWindow],
+            params: inEvent
+          }, function (args) {
+            if (args && !args.cancelOperation) {
+              me.$.multiColumn.$.leftPanel.$.receiptview.setShowing(false);
+              me.$.multiColumn.$.leftPanel.$[inEvent.leftSubWindow].setShowing(true);
+              me.$.multiColumn.$.leftPanel.$[inEvent.leftSubWindow].inEvent = inEvent;
+            }
+          });
         }
       }
     }

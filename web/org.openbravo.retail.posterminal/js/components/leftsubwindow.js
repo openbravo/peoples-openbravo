@@ -28,23 +28,10 @@ enyo.kind({
   }],
   mainBeforeSetShowing: function (params) {
     //TODO
-    var ret;
     if (this.beforeSetShowing) {
-      if (!this.beforeSetShowing(params)) {
-        return false;
-      }
+      return this.beforeSetShowing(params);
     }
-    OB.UTIL.HookManager.executeHooks('OBPOS_LeftSubWindow_beforeSetShowing', {
-      context: this,
-      params: params
-    }, function (args) {
-      if (args && args.cancelOperation && args.cancelOperation === true) {
-        ret = false;
-      } else {
-        ret = true;
-      }
-    });
-    return ret;
+    return true;
   },
   mainBeforeSetHidden: function (params) {
     //TODO
