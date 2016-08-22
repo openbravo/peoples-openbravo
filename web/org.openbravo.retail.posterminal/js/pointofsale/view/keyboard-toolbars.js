@@ -60,6 +60,7 @@ enyo.kind({
     onShowAllButtons: 'showAllButtons',
     onCloseAllPopups: 'closeAllPopups',
     onButtonPaymentChanged: 'paymentChanged',
+    onButtonStatusChanged: 'buttonStatusChanged',
     onActionPay: 'actionPay'
   },
   components: [{
@@ -189,6 +190,7 @@ enyo.kind({
         i;
     for (i = 0; i < sideButtons.length; i++) {
       if (_.isEqual(sideButtons[i].btn.command, btncomponent.btn.command)) {
+        OB.OBPOSPointOfSale.UI.PaymentMethods.prototype.sideButtons.splice(i, 1, btncomponent);
         hasSideButton = true;
         break;
       }
@@ -196,6 +198,7 @@ enyo.kind({
     if (!hasSideButton) {
       OB.OBPOSPointOfSale.UI.PaymentMethods.prototype.sideButtons.push(btncomponent);
     }
+    this.owner.owner.addCommand(btncomponent.btn.command, btncomponent.btn.definition);
   },
   initComponents: function () {
     //TODO: modal payments
@@ -318,6 +321,7 @@ enyo.kind({
 
     // Fallback assign of the payment for the exact command.
     exactdefault = exactdefault || cashdefault || payments[0];
+    this.defaultPayment = exactdefault;
 
     enyo.forEach(this.sideButtons, function (sidebutton) {
       btncomponent = this.getButtonComponent(sidebutton);
@@ -386,7 +390,12 @@ enyo.kind({
   paymentChanged: function (inSender, inEvent) {
     this.currentPayment = inEvent.payment;
   },
-
+  buttonStatusChanged: function (inSender, inEvent) {
+    var status = inEvent.value.status;
+    if (this.showing && this.keyboard.lastStatus !== '' && status === '') {
+      this.keyboard.setStatus(this.defaultPayment.payment.searchKey);
+    }
+  },
   shown: function () {
     var me = this,
         i, max, p, keyboard = this.owner.owner;
@@ -434,20 +443,24 @@ enyo.kind({
       }]
     }]
   },
+  createPaymentButtons: function () {
+    enyo.forEach(this.sideButtons, function (sidebutton) {
+      sidebutton.btn.definition.includedInPopUp = true;
+      this.$.body.$.buttonslist.createComponent(sidebutton, {
+        owner: this.parent
+      });
+    }, this);
+  },
   executeOnShow: function () {
-    // build only the first time...
-    if (this.$.body.$.buttonslist.children.length === 0) {
-      enyo.forEach(this.sideButtons, function (sidebutton) {
-        sidebutton.btn.definition.includedInPopUp = true;
-        this.$.body.$.buttonslist.createComponent(sidebutton, {
-          owner: this.args.toolbar
-        });
-      }, this);
+    if (this.$.body.$.buttonslist.children.length !== this.sideButtons.length) {
+      this.$.body.$.buttonslist.destroyComponents();
+      this.createPaymentButtons();
     }
     return true;
   },
   init: function (model) {
     this.model = model;
+    this.createPaymentButtons();
   }
 });
 
@@ -475,20 +488,15 @@ enyo.kind({
     this.activegreen = false;
   },
   tap: function () {
-    // this.toolbar.keyboard
-    // this.dialogbuttons
-    this.toolbar.keyboard.setStatus('');
     this.doShowAllButtons();
   },
   buttonStatusChanged: function (inSender, inEvent) {
     var status = inEvent.value.status;
-
     if (this.activegreen) {
       this.$.btn.setContent(OB.I18N.getLabel('OBPOS_MorePayments'));
       this.$.btn.removeClass('btnactive-green');
       this.activegreen = false;
     }
-
     if (this.dialogbuttons[status]) {
       this.$.btn.setContent(OB.I18N.getLabel('OBPOS_MorePayments') + ' (' + this.dialogbuttons[status] + ')');
       this.$.btn.addClass('btnactive-green');
@@ -500,7 +508,6 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.ButtonSwitch',
-
   style: 'display:table; width:100%;',
   components: [{
     style: 'margin: 5px;',
@@ -516,7 +523,6 @@ enyo.kind({
   tap: function () {
     this.keyboard.showNextKeypad();
   },
-
   create: function () {
     this.inherited(arguments);
     this.keyboard.state.on('change:keypadNextLabel', function () {

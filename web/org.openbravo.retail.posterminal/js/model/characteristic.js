@@ -17,6 +17,7 @@
     entityName: 'Characteristic',
     remote: 'OBPOS_remote.product',
     dataLimit: OB.Dal.DATALIMIT,
+    remoteDataLimit: OB.Dal.REMOTE_DATALIMIT,
     source: 'org.openbravo.retail.posterminal.master.Characteristic'
   });
 

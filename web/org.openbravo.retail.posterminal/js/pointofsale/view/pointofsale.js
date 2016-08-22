@@ -861,6 +861,7 @@ enyo.kind({
       this.$.multiColumn.$.rightPanel.$.keyboard.hide();
     }
     if (!_.isUndefined(inEvent.status)) {
+      this.$.multiColumn.$.rightPanel.$.keyboard.lastStatus = '';
       this.$.multiColumn.$.rightPanel.$.keyboard.setStatus(inEvent.status);
     }
   },

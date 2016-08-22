@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2015 Openbravo S.L.U.
+ * Copyright (C) 2015-2016 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -13,8 +13,16 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 
@@ -86,6 +94,12 @@ public class ExternalOrderLoader extends OrderLoader {
     return param != null && param.toLowerCase().equals("true");
   }
 
+  @Inject
+  @Any
+  private Instance<DataResolver> dataResolvers;
+
+  private List<DataResolver> dataResolversList = null;
+
   @Override
   public String getAppName() {
     return "External";
@@ -134,8 +148,11 @@ public class ExternalOrderLoader extends OrderLoader {
         } finally {
           OBContext.restorePreviousMode();
         }
+
+        // Now execute the orderloader directly
         // pass in a dummy writer, we will create our own successmessage in the next step
         super.exec(new StringWriter(), message);
+
         if (exception.get() != null) {
           writeJson(w, createErrorJSON(message, exception.get()));
         } else {
@@ -374,13 +391,22 @@ public class ExternalOrderLoader extends OrderLoader {
   }
 
   protected void transformLines(JSONObject orderJson) throws JSONException {
+
     for (int i = 0; i < orderJson.getJSONArray("lines").length(); i++) {
       transformLine(orderJson, orderJson.getJSONArray("lines").getJSONObject(i));
     }
+
+    // link any related lines, this needs to be done after the product and line id
+    // of the lines has been set
+    handleRelatedLines(orderJson);
   }
 
   protected void transformLine(JSONObject orderJson, JSONObject lineJson) throws JSONException {
     setProduct(lineJson);
+
+    if (!lineJson.has("id")) {
+      lineJson.put("id", SequenceIdData.getUUID());
+    }
 
     copyPropertyValue(lineJson, "quantity", "qty");
 
@@ -408,6 +434,39 @@ public class ExternalOrderLoader extends OrderLoader {
     }
     setLineTaxInformation(lineJson);
     transformPriceInformation(lineJson);
+  }
+
+  protected void handleRelatedLines(JSONObject orderJson) throws JSONException {
+    for (int i = 0; i < orderJson.getJSONArray("lines").length(); i++) {
+      final JSONObject lineJson = orderJson.getJSONArray("lines").getJSONObject(i);
+      if (!lineJson.has("relatedLines")) {
+        continue;
+      }
+      final JSONArray relatedLines = lineJson.getJSONArray("relatedLines");
+      for (int j = 0; j < relatedLines.length(); j++) {
+        final JSONObject relatedLine = relatedLines.getJSONObject(j);
+        // if no orderLineId then hopefully there is a product..
+        if (relatedLine.has("orderlineId")) {
+          // no need, already pointing to an orderline
+          continue;
+        }
+        final String productId = getProductIdFromJson(relatedLine);
+        // now search any of the lines if they have a product with the same id
+        String relatedOrderLineId = null;
+        for (int k = 0; k < orderJson.getJSONArray("lines").length(); k++) {
+          final JSONObject checkLineJson = orderJson.getJSONArray("lines").getJSONObject(k);
+          final JSONObject product = checkLineJson.getJSONObject("product");
+          if (productId.equals(product.getString("id"))) {
+            relatedOrderLineId = checkLineJson.getString("id");
+            break;
+          }
+        }
+        if (relatedOrderLineId == null) {
+          throw new OBException("Related line information can't be resolved, line " + relatedLine + " of order line " + lineJson + " of order "+ orderJson);
+        }
+        relatedLine.put("orderlineId", relatedOrderLineId);
+      }
+    }
   }
 
   protected void transformPriceInformation(JSONObject lineJson) throws JSONException {
@@ -590,11 +649,9 @@ public class ExternalOrderLoader extends OrderLoader {
   }
 
   protected void setProduct(JSONObject lineJson) throws JSONException {
-    final String productId = resolveJsonValue(Product.ENTITY_NAME, lineJson.getString("product"),
-        new String[] { "id", "searchKey", "name", "uPCEAN" });
-    final Product product = OBDal.getInstance().get(Product.class, productId);
+    final Product product = OBDal.getInstance().get(Product.class, getProductIdFromJson(lineJson));
     final JSONObject productJson = new JSONObject();
-    productJson.put("id", productId);
+    productJson.put("id", product.getId());
     lineJson.put("product", productJson);
     if (lineJson.has("uom")) {
       lineJson.put(
@@ -604,6 +661,30 @@ public class ExternalOrderLoader extends OrderLoader {
     } else {
       lineJson.put("uOM", product.getUOM().getId());
     }
+  }
+
+  protected String getProductIdFromJson(JSONObject json) throws JSONException {
+    String productId = resolveJsonValueNoException(Product.ENTITY_NAME, json.getString("product"),
+        new String[] { "id", "searchKey", "name", "uPCEAN" });
+    if (productId == null) {
+      productId = findProductIdForLine(json);
+    }
+    if (productId == null) {
+      throw new OBException("No product could be found for the orderline " + json);
+    }
+    return productId;
+  }
+
+  /**
+   * Can be overridden by subclass to add other specific ways of finding a product. By default returns null. Is only called if a
+   * product could not be found using the standard approach of searching by id, searchKey, name, etc.
+   * 
+   * @param lineJson
+   *          the orderline json
+   * @return the product id
+   */
+  protected String findProductIdForLine(JSONObject lineJson) {
+    return null;
   }
 
   protected void transformTaxes(JSONObject taxes) throws JSONException {
@@ -676,10 +757,10 @@ public class ExternalOrderLoader extends OrderLoader {
 
   protected void setDocumentNo(JSONObject orderJson) throws JSONException {
     if (!orderJson.has("documentNo")) {
-      orderJson.put(
-          "documentNo",
-          getDocumentNo(ModelProvider.getInstance().getEntity(Order.ENTITY_NAME), null, OBDal
-              .getInstance().get(DocumentType.class, orderJson.getString("documentType"))));
+      final String documentNo = getDocumentNo(
+          ModelProvider.getInstance().getEntity(Order.ENTITY_NAME), null,
+          OBDal.getInstance().get(DocumentType.class, orderJson.getString("documentType")));
+      orderJson.put("documentNo", documentNo);
     }
   }
 
@@ -811,35 +892,76 @@ public class ExternalOrderLoader extends OrderLoader {
     return result;
   }
 
+  /**
+   * Search for the id of referenced entity by querying the entities for each of its properties (passed as a parameter) using the
+   * searchValue
+   * 
+   * @param entityName
+   *          the entity to search for
+   * @param searchValue
+   *          the value to search with
+   * @param properties
+   *          the properties of the entity which are one-by-one used to query
+   * @return
+   */
   protected String resolveJsonValue(String entityName, String searchValue, String... properties) {
+    final String id = resolveJsonValueNoException(entityName, searchValue, properties);
+    if (id == null) {
+      throw new OBException("Value " + searchValue + " does not resolve to an instance of "
+          + entityName);
+    }
+    return id;
+  }
+
+  /**
+   * Same as {@link #resolveJsonValue(String, String, String...)}, except will return null if the value does not resolve to an
+   * instance and will not throw an exception in that case.
+   */
+  private String resolveJsonValueNoException(String entityName, String searchValue,
+      String... properties) {
+
+    // the deprecated resolve will not resolve the value by default,
+    // only an overriding class may do something
     for (String property : properties) {
       String id = resolve(entityName, property, searchValue);
       if (id != null) {
         return id;
       }
     }
-    throw new OBException("Value " + searchValue + " does not resolve to an instance of "
-        + entityName);
+
+    // not found in normal way, use the dataresolvers
+    for (DataResolver dataResolver : getDataResolvers()) {
+      String id = dataResolver.resolveJsonValue(entityName, searchValue, properties);
+      if (id != null) {
+        return id;
+      }
+    }
+    return null;
   }
 
-  protected String resolve(String entityName, String property, String value) {
-    try {
-      String qryStr = "select id from " + entityName + " where " + property + "=:value"
-          + " and organization.id " + OBDal.getInstance().getReadableOrganizationsInClause();
-
-      final Query qry = OBDal.getInstance().getSession().createQuery(qryStr);
-      qry.setString("value", value);
-      final java.util.List<?> values = qry.list();
-      if (values.isEmpty() || values.size() > 1) {
-        return null;
+  private List<DataResolver> getDataResolvers() {
+    if (dataResolversList == null) {
+      dataResolversList = new ArrayList<DataResolver>();
+      for (Iterator<DataResolver> procIter = dataResolvers.iterator(); procIter.hasNext();) {
+        final DataResolver dataResolver = procIter.next();
+        dataResolversList.add(dataResolver);
       }
-      final String result = (String) values.get(0);
-      return result;
-    } catch (Throwable t) {
-      final Throwable cause = DbUtility.getUnderlyingSQLException(t);
-      log.error(cause.getMessage(), cause);
-      return null;
+      Collections.sort(dataResolversList, new Comparator<DataResolver>() {
+        @Override
+        public int compare(DataResolver o1, DataResolver o2) {
+          return o1.getOrder() - o2.getOrder();
+        }
+      });
     }
+    return dataResolversList;
+  }
+
+  /**
+   * @deprecated by default this one now returns null. It is still called to provide backward compatibility for overriding
+   *             classes. If not overridden then the new logic in the {@link DefaultDataResolver} is used.
+   */
+  protected String resolve(String entityName, String property, String value) {
+    return null;
   }
 
   protected void writeSuccessMessage(Writer w) {
@@ -870,4 +992,59 @@ public class ExternalOrderLoader extends OrderLoader {
       jsonorder.put("_createdOrderId", order.getId());
     }
   }
+
+  /**
+   * Interface which can be implemented by modules to resolving data in different ways. Is only called if the ExternalOrderLoader
+   * can not resolve the reference using its own internal logic. The order by which data resolvers are called is undetermined.
+   * 
+   * A data resolver will be called for all types of entities. So when implementing you should only handle the ones you can handle
+   * and return null in other cases.
+   * 
+   * @author mtaal
+   */
+  public static abstract class DataResolver {
+    public abstract String resolveJsonValue(String entityName, String searchValue,
+        String... properties);
+
+    public int getOrder() {
+      return 110;
+    }
+  }
+
+  public static class DefaultDataResolver extends DataResolver {
+    public String resolveJsonValue(String entityName, String searchValue, String... properties) {
+      for (String property : properties) {
+        String id = resolve(entityName, property, searchValue);
+        if (id != null) {
+          return id;
+        }
+      }
+      return null;
+    }
+
+    protected String resolve(String entityName, String property, String value) {
+      try {
+        String qryStr = "select id from " + entityName + " where " + property + "=:value"
+            + " and organization.id " + OBDal.getInstance().getReadableOrganizationsInClause();
+
+        final Query qry = OBDal.getInstance().getSession().createQuery(qryStr);
+        qry.setString("value", value);
+        final java.util.List<?> values = qry.list();
+        if (values.isEmpty() || values.size() > 1) {
+          return null;
+        }
+        final String result = (String) values.get(0);
+        return result;
+      } catch (Throwable t) {
+        final Throwable cause = DbUtility.getUnderlyingSQLException(t);
+        log.error(cause.getMessage(), cause);
+        return null;
+      }
+    }
+
+    public int getOrder() {
+      return 100;
+    }
+  }
+
 }

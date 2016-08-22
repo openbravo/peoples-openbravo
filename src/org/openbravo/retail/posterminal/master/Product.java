@@ -257,8 +257,6 @@ public class Product extends ProcessHQLQuery {
     hql += " AND $filtersCriteria AND $hqlCriteria AND (pli.obretcoProductlist.id = :productListId) "
         + "AND (ppp.priceListVersion.id= :priceListVersionId ) "
         + " AND ("
-        + "ppp.priceListVersion.id = ppp.priceListVersion.id"
-        + ") AND ("
         + "pli.product.id = ppp.product.id" + ") ";
 
     if (lastUpdated != null) {

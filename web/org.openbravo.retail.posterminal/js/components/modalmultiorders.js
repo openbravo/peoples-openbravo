@@ -223,7 +223,12 @@ enyo.kind({
         toMatch = 0,
         re, actualDate, i, processHeader = new OB.DS.Process('org.openbravo.retail.posterminal.PaidReceiptsHeader');
     me.filters = inEvent.filters;
-    var limit = OB.Model.Order.prototype.dataLimit;
+    var limit;
+    if (!OB.MobileApp.model.hasPermission('OBPOS_remote.order', true)) {
+      limit = OB.Model.Order.prototype.dataLimit;
+    } else {
+      limit = OB.Model.Order.prototype.remoteDataLimit ? OB.Model.Order.prototype.remoteDataLimit : OB.Model.Order.prototype.dataLimit;
+    }
     if (OB.MobileApp.model.hasPermission('OBPOS_orderLimit', true)) {
       limit = OB.DEC.abs(OB.MobileApp.model.hasPermission('OBPOS_orderLimit', true));
     }

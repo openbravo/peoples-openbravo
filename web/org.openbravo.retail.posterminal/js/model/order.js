@@ -280,6 +280,7 @@
     entityName: 'Order',
     source: '',
     dataLimit: OB.Dal.DATALIMIT,
+    remoteDataLimit: OB.Dal.REMOTE_DATALIMIT,
     properties: ['id', 'json', 'session', 'hasbeenpaid', 'isbeingprocessed'],
     propertyMap: {
       'id': 'c_order_id',
@@ -2563,6 +2564,7 @@
       }, this);
       this.set('id', null);
       this.save();
+      this.calculateReceipt();
     },
     rejectQuotation: function (rejectReasonId, scope, callback) {
       if (!this.get('id')) {

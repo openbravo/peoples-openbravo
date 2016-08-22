@@ -17,6 +17,7 @@
     entityName: 'BusinessPartner',
     source: 'org.openbravo.retail.posterminal.master.BusinessPartner',
     dataLimit: OB.Dal.DATALIMIT,
+    remoteDataLimit: OB.Dal.REMOTE_DATALIMIT,
     remote: 'OBPOS_remote.customer',
     saveCustomer: function (callback) {
       var nameLength, newSk;
@@ -144,6 +145,7 @@
       editedBp.set('updated', this.get('updated'));
       editedBp.set('timezoneOffset', this.get('timezoneOffset'));
       editedBp.set('loaded', this.get('loaded'));
+      editedBp.set('posTerminal', this.get('posTerminal'));
       //Set only form attributes
       _.each(OB.OBPOSPointOfSale.UI.customers.edit_createcustomers_impl.prototype.newAttributes, function (model) {
         editedBp.set(model.modelProperty, me.get(model.modelProperty));
