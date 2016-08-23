@@ -204,9 +204,9 @@ public class OrgTree implements Serializable {
     String s = "";
     if (nodes == null)
       return "";
-    for (int i = 0; i < nodes.toArray().length; i++) {
+    for (int i = 0; i < nodes.size(); i++) {
       if (nodes.get(i) != null)
-        s += "'" + nodes.get(i).getId() + "'" + ((i < nodes.toArray().length - 1) ? "," : "");
+        s += "'" + nodes.get(i).getId() + "'" + ((i < nodes.size() - 1) ? "," : "");
     }
     return s;
   }
@@ -218,10 +218,10 @@ public class OrgTree implements Serializable {
     String s = "";
     if (nodes == null)
       return "";
-    for (int i = 0; i < nodes.toArray().length; i++) {
+    for (int i = 0; i < nodes.size(); i++) {
       if (nodes.get(i) != null)
         s += nodes.get(i).getId() + " - " + nodes.get(i).getValue()
-            + ((i < nodes.toArray().length - 1) ? "\n" : "");
+            + ((i < nodes.size() - 1) ? "\n" : "");
     }
     return s;
   }
@@ -233,7 +233,7 @@ public class OrgTree implements Serializable {
    */
   private void addTree(OrgTree t1) {
     if ((t1 != null) && (t1.nodes != null)) {
-      for (int i = 0; i < t1.nodes.toArray().length; i++) {
+      for (int i = 0; i < t1.nodes.size(); i++) {
         if (!this.isNodeInTree(t1.nodes.get(i).getId()))
           this.nodes.add(t1.nodes.get(i));
       }
@@ -278,15 +278,15 @@ public class OrgTree implements Serializable {
         list.add(getNodeById(parentNodeId));
       else {
         boolean exists = false;
-        for (int i = 0; i < list.toArray().length; i++)
+        for (int i = 0; i < list.size(); i++)
           if (list.get(i).equals(parentNodeId))
             exists = true;
         if ((!exists) && (withZero || !getNodeById(parentNodeId).getId().equals("0")))
           list.add(getNodeById(parentNodeId));
       }
     }
-    if (childNodes.toArray().length != 0)
-      for (int i = 0; i < childNodes.toArray().length; i++)
+    if (childNodes.size() != 0)
+      for (int i = 0; i < childNodes.size(); i++)
         getDescendantTreeList(childNodes.get(i).getId(), list, repeatNodes, withZero);
 
   }
@@ -307,7 +307,7 @@ public class OrgTree implements Serializable {
   private OrgTreeNode getNodeById(String id) {
     if (nodes == null)
       return null;
-    for (int i = 0; i < nodes.toArray().length; i++)
+    for (int i = 0; i < nodes.size(); i++)
       if (nodes.get(i).equals(id))
         return nodes.get(i);
     return null;
@@ -319,7 +319,7 @@ public class OrgTree implements Serializable {
   private boolean isNodeInTree(String id) {
     if (nodes == null)
       return false;
-    for (int i = 0; i < nodes.toArray().length; i++)
+    for (int i = 0; i < nodes.size(); i++)
       if (nodes.get(i).equals(id))
         return true;
     return false;
@@ -331,7 +331,7 @@ public class OrgTree implements Serializable {
   private List<OrgTreeNode> getNodesWithParent(String parentId) {
     List<OrgTreeNode> vecNodes = new ArrayList<OrgTreeNode>();
     int idx = 0;
-    for (int i = 0; i < nodes.toArray().length; i++)
+    for (int i = 0; i < nodes.size(); i++)
       if (nodes.get(i).getParentId().equals(parentId)) {
         vecNodes.add(idx++, nodes.get(i));
       }
