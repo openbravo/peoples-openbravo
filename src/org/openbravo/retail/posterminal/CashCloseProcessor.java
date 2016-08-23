@@ -53,7 +53,8 @@ public class CashCloseProcessor {
 
   public JSONObject processCashClose(OBPOSApplications posTerminal, JSONObject jsonCashup,
       JSONArray cashMgmtIds, Date cashUpDate) throws Exception {
-    return processCashClose(posTerminal, jsonCashup, cashMgmtIds, cashUpDate, null);
+    return processCashClose(posTerminal, jsonCashup, cashMgmtIds, cashUpDate,
+        new ArrayList<String>());
   }
 
   public JSONObject processCashClose(OBPOSApplications posTerminal, JSONObject jsonCashup,
@@ -179,9 +180,6 @@ public class CashCloseProcessor {
   private void associateTransactions(OBPOSAppPayment paymentType,
       FIN_Reconciliation reconciliation, String cashUpId, JSONArray cashMgmtIds,
       List<String> slaveCashupIds) {
-    if (slaveCashupIds == null) {
-      slaveCashupIds = new ArrayList<String>();
-    }
     slaveCashupIds.add(cashUpId);
     OBQuery<FIN_FinaccTransaction> transactionsQuery = OBDal.getInstance().createQuery(
         FIN_FinaccTransaction.class,
