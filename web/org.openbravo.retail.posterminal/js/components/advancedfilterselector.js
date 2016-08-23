@@ -192,10 +192,12 @@ enyo.kind({
 
 enyo.kind({
   name: 'OB.UI.FilterSelectorButton',
+  selectFilterKey: 'OBPOS_SELECTFILTER',
   components: [{
     kind: 'OB.UI.SmallButton',
     name: 'filterButton',
     classes: 'btnlink-gray obrcifp-btn',
+    style: 'text-align: left; width: 100%;',
     tap: function () {
       this.owner.owner.owner.showSelector = true;
       this.owner.showSelector = true;
@@ -215,7 +217,7 @@ enyo.kind({
   setValue: function (value) {
     this.value = value;
     if (value === '') {
-      this.$.filterButton.setContent(' --- ');
+      this.$.filterButton.setContent(OB.I18N.getLabel(this.selectFilterKey));
     }
     if (this.hasRemoveButton) {
       if (value === '') {
@@ -227,14 +229,14 @@ enyo.kind({
   },
   setSelectorValue: function (value, text) {
     this.setValue(value);
-    this.$.filterButton.setContent(text ? text : ' --- ');
+    this.$.filterButton.setContent(text ? text : OB.I18N.getLabel(this.selectFilterKey));
   },
   setPresetValue: function (preset) {
     this.setSelectorValue(preset.id, preset.name);
   },
   initComponents: function () {
     this.inherited(arguments);
-    this.$.filterButton.setContent(' --- ');
+    this.$.filterButton.setContent(OB.I18N.getLabel(this.selectFilterKey));
     this.value = '';
   }
 });
