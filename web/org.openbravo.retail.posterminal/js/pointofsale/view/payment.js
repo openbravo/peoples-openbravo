@@ -980,15 +980,29 @@ enyo.kind({
       this.setDisabled(false);
     }, this);
   },
+  blocked: false,
   tap: function () {
     var myModel = this.owner.model,
         me = this,
         payments, avoidPayment = false,
         orderDesc = '';
+    //*** Avoid double click ***
+    if (this.getContent() === OB.I18N.getLabel('OBPOS_LblDone')) {
+      if (me.blocked) {
+        OB.info('Time: ' + new Date().getTime() + '. Done button has been pressed 2 times and second execution is discarded');
+        return;
+      } else {
+        me.blocked = true;
+        setTimeout(function () {
+          me.blocked = false;
+        }, 1000);
+      }
+    }
+
     if (this && this.owner && this.owner.receipt && this.owner.receipt.getOrderDescription) {
       orderDesc = this.owner.receipt.getOrderDescription();
     }
-    OB.info('Payment Button Pressed ( Status: ' + this.disabled + ') ' + orderDesc);
+    OB.info('Time: ' + new Date().getTime() + '. Payment Button Pressed ( Status: ' + this.disabled + ') ' + orderDesc);
 
 
     this.allowOpenDrawer = false;
