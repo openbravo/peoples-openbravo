@@ -651,8 +651,12 @@ public class POSUtils {
       // We haven't found a warehouse with a return bin
       // We are going to select the bin with greater priority
       // of the warehouse of greater priority
+      OBCriteria<Locator> locatorCriteria = OBDal.getInstance().createCriteria(Locator.class);
+      locatorCriteria.add(Restrictions.eq(Locator.PROPERTY_WAREHOUSE, lstWarehouses.get(0)));
+      locatorCriteria.addOrderBy(Locator.PROPERTY_RELATIVEPRIORITY, true);
+      locatorCriteria.setMaxResults(1);
 
-      List<Locator> lstLocators = lstWarehouses.get(0).getLocatorList();
+      List<Locator> lstLocators = locatorCriteria.list();
       if (lstLocators.size() > 0) {
         return lstLocators.get(0);
       } else {
