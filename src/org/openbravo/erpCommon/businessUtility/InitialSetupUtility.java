@@ -1886,8 +1886,9 @@ public class InitialSetupUtility {
           .createCriteria(org.openbravo.model.ad.domain.List.class);
       obcRefList.add(Restrictions.eq(org.openbravo.model.ad.domain.List.PROPERTY_REFERENCE, OBDal
           .getInstance().get(Reference.class, "181")));
-      if (obcRefList.list().size() > 0) {
-        return obcRefList.list();
+      List<org.openbravo.model.ad.domain.List> listRefList = obcRefList.list();
+      if (listRefList.size() > 0) {
+        return listRefList;
       } else {
         return null;
       }
