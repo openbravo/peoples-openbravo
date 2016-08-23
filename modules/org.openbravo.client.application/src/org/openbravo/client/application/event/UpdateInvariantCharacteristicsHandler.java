@@ -56,6 +56,7 @@ import org.slf4j.LoggerFactory;
 public class UpdateInvariantCharacteristicsHandler extends BaseActionHandler {
   final static private Logger log = LoggerFactory
       .getLogger(UpdateInvariantCharacteristicsHandler.class);
+  private static final String NO_SUBSET = "-1";
 
   @Override
   protected JSONObject execute(Map<String, Object> parameters, String content) {
@@ -119,7 +120,7 @@ public class UpdateInvariantCharacteristicsHandler extends BaseActionHandler {
             productChar
                 .put("productCharSubsetId", characteristic.getCharacteristicSubset().getId());
           } else {
-            productChar.put("productCharSubsetId", "-1");
+            productChar.put("productCharSubsetId", NO_SUBSET);
           }
         }
         response.put("productCharList", productCharArray);
