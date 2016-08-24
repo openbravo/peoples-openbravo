@@ -344,9 +344,20 @@ public class OrderGroupingProcessor {
     Invoice invoice = OBDal.getInstance().get(Invoice.class, oriInvoice.getId());
 
     OBDal.getInstance().save(invoice);
-    BigDecimal grossamount = invoice.getSummedLineAmount();
+    BigDecimal grossamount = invoice.getGrandTotalAmount();
+    InvoiceTax taxCandidate = null;
+    BigDecimal summedLineGross = invoice.getSummedLineAmount();
     for (InvoiceTax tax : invoice.getInvoiceTaxList()) {
-      grossamount = grossamount.add(tax.getTaxAmount());
+      if (taxCandidate == null
+          || tax.getTaxAmount().abs().compareTo(taxCandidate.getTaxAmount().abs()) == 1) {
+        taxCandidate = tax;
+      }
+      summedLineGross = summedLineGross.add(tax.getTaxAmount());
+    }
+    if (summedLineGross.compareTo(invoice.getGrandTotalAmount()) != 0) {
+      BigDecimal difference = invoice.getGrandTotalAmount().subtract(summedLineGross);
+      taxCandidate.setTaxAmount(taxCandidate.getTaxAmount().add(difference));
+      OBDal.getInstance().save(taxCandidate);
     }
 
     BigDecimal totalPaid = BigDecimal.ZERO;
