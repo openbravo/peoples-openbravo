@@ -83,8 +83,8 @@ public class CancelAndReplaceUtils {
   private static Logger log4j = Logger.getLogger(CancelAndReplaceUtils.class);
   private static Date today = null;
   private static final BigDecimal NEGATIVE_ONE = new BigDecimal(-1);
-  private static final String CREATE_NETTING_SHIPMENT = "CancelAndReplaceCreateNetShipment";
-  private static final String ASSOCIATE_SHIPMENT_TO_REPLACE_TICKET = "CancelAndReplaceAssociateShipmentToNewTicket";
+  public static final String CREATE_NETTING_SHIPMENT = "CancelAndReplaceCreateNetShipment";
+  public static final String ASSOCIATE_SHIPMENT_TO_REPLACE_TICKET = "CancelAndReplaceAssociateShipmentToNewTicket";
   private static OrganizationStructureProvider osp = null;
 
   /**
@@ -310,6 +310,12 @@ public class CancelAndReplaceUtils {
           }
         } else if (associateShipmentToNewReceipt) {
           OBDal.getInstance().flush();
+          ShipmentInOut shipment = null;
+          // Unprocess the shipment
+          if (goodsShipmentLineList.size() > 0) {
+            shipment = goodsShipmentLineList.get(0).getShipmentReceipt();
+            processShipment(shipment);
+          }
           for (ShipmentInOutLine shipmentLine : goodsShipmentLineList) {
             OBCriteria<OrderLine> olc = OBDal.getInstance().createCriteria(OrderLine.class);
             olc.add(Restrictions.eq(OrderLine.PROPERTY_REPLACEDORDERLINE, oldOrderLine));
@@ -318,7 +324,17 @@ public class CancelAndReplaceUtils {
             OrderLine newOrderLine = (OrderLine) olc.uniqueResult();
             if (newOrderLine != null) {
               shipmentLine.setSalesOrderLine(newOrderLine);
+              newOrderLine.setDeliveredQuantity(newOrderLine.getDeliveredQuantity().add(
+                  shipmentLine.getMovementQuantity()));
+              OBDal.getInstance().save(shipmentLine);
+              OBDal.getInstance().save(newOrderLine);
             }
+          }
+          OBDal.getInstance().flush();
+          // Process the shipment
+          if (shipment != null) {
+            OBDal.getInstance().refresh(shipment);
+            processShipment(shipment);
           }
         }
 
@@ -776,12 +792,10 @@ public class CancelAndReplaceUtils {
 
   protected static void processShipment(ShipmentInOut shipment) {
     if (shipment.isProcessed()) {
-      shipment.setPosted("N");
       shipment.setProcessed(false);
       shipment.setDocumentStatus("DR");
       shipment.setDocumentAction("CO");
     } else {
-      shipment.setPosted("Y");
       shipment.setProcessed(true);
       shipment.setDocumentStatus("CO");
       shipment.setDocumentAction("--");
