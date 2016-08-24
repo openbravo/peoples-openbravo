@@ -405,7 +405,8 @@ public class SE_Invoice_BPartner extends HttpSecureAppServlet {
           obc.add(Restrictions.in(FinAccPaymentMethod.PROPERTY_ORGANIZATION + ".id", OBContext
               .getOBContext().getOrganizationStructureProvider().getNaturalTree(strOrgId)));
 
-          if (obc.list() == null || obc.list().size() == 0) {
+          // filter is on unique constraint so list().size() <=1 always
+          if (obc.list().isEmpty()) {
             message = Utility.messageBD(this, "PaymentmethodNotbelongsFinAccount",
                 vars.getLanguage());
           }
