@@ -674,8 +674,8 @@ public class DefaultJsonDataService implements JsonDataService {
    * Returns the value for a FK property, in case the entity of the row is the referencedEntity for
    * that FK, it returns the row id.
    */
-  private Object getFKValue(JSONObject row, String propertyName,
-      String referencedEntityName) throws JSONException {
+  private Object getFKValue(JSONObject row, String propertyName, String referencedEntityName)
+      throws JSONException {
     Object value = null;
     if (row.has(propertyName)) {
       value = row.get(propertyName);
@@ -844,8 +844,7 @@ public class DefaultJsonDataService implements JsonDataService {
         final List<BaseOBObject> refreshedBobs = new ArrayList<BaseOBObject>();
         for (BaseOBObject bob : bobs) {
           // forcing fetch from DB
-          BaseOBObject refreshedBob = OBDal.getInstance().get(bob.getEntityName(),
-              bob.getId());
+          BaseOBObject refreshedBob = OBDal.getInstance().get(bob.getEntityName(), bob.getId());
 
           // if object has computed columns refresh from the database too
           if (refreshedBob.getEntity().hasComputedColumns()) {

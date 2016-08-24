@@ -2363,8 +2363,9 @@ public class ModuleManagement extends HttpSecureAppServlet {
       qList.add(Restrictions.eq(org.openbravo.model.ad.domain.List.PROPERTY_REFERENCE + ".id",
           "8BA0A3775CE14CE69989B6C09982FB2E"));
       qList.addOrder(Order.asc(org.openbravo.model.ad.domain.List.PROPERTY_SEQUENCENUMBER));
-      SQLReturnObject[] fpEnforcementCombo = new SQLReturnObject[qList.list().size()];
-      for (org.openbravo.model.ad.domain.List value : qList.list()) {
+      List<org.openbravo.model.ad.domain.List> rList = qList.list();
+      SQLReturnObject[] fpEnforcementCombo = new SQLReturnObject[rList.size()];
+      for (org.openbravo.model.ad.domain.List value : rList) {
         SQLReturnObject val = new SQLReturnObject();
         val.setData("ID", value.getSearchKey());
         val.setData(

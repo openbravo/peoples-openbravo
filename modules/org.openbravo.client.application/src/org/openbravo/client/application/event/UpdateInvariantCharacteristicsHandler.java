@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2013-2014 Openbravo SLU
+ * All portions are Copyright (C) 2013-2016 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -56,6 +56,7 @@ import org.slf4j.LoggerFactory;
 public class UpdateInvariantCharacteristicsHandler extends BaseActionHandler {
   final static private Logger log = LoggerFactory
       .getLogger(UpdateInvariantCharacteristicsHandler.class);
+  private static final String NO_SUBSET = "-1";
 
   @Override
   protected JSONObject execute(Map<String, Object> parameters, String content) {
@@ -115,6 +116,12 @@ public class UpdateInvariantCharacteristicsHandler extends BaseActionHandler {
           }
           productChar.put("valueMap", productCharValuesValueMap);
           productCharArray.put(productChar);
+          if (characteristic.getCharacteristicSubset() != null) {
+            productChar
+                .put("productCharSubsetId", characteristic.getCharacteristicSubset().getId());
+          } else {
+            productChar.put("productCharSubsetId", NO_SUBSET);
+          }
         }
         response.put("productCharList", productCharArray);
         response.put("productId", productId);

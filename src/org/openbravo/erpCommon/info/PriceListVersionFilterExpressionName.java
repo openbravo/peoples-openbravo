@@ -127,11 +127,9 @@ public class PriceListVersionFilterExpressionName implements FilterExpression {
         PriceListVersion.class);
     plVersionCrit.add(Restrictions.eq(PriceListVersion.PROPERTY_PRICELIST, priceList));
     plVersionCrit.add(Restrictions.le(PriceListVersion.PROPERTY_VALIDFROMDATE, date));
-    if (plVersionCrit.count() > 0) {
-      plVersionCrit.addOrderBy(PriceListVersion.PROPERTY_VALIDFROMDATE, false);
-      return plVersionCrit.list().get(0);
-    }
-    return null;
+    plVersionCrit.addOrderBy(PriceListVersion.PROPERTY_VALIDFROMDATE, false);
+    plVersionCrit.setMaxResults(1);
+    return (PriceListVersion) plVersionCrit.uniqueResult();
   }
 
   private boolean isSalesTransaction() {
