@@ -106,13 +106,10 @@ public class DataSourceServiceProvider {
   }
 
   private DataSource getDataSourceFromDataSourceName(String dataSourceName) {
-    DataSource dataSource = null;
     final OBCriteria<DataSource> obCriteria = OBDal.getInstance().createCriteria(DataSource.class);
     obCriteria.add(Restrictions.eq(DataSource.PROPERTY_NAME, dataSourceName));
-    if (!obCriteria.list().isEmpty()) {
-      dataSource = obCriteria.list().get(0);
-    }
-    return dataSource;
+    // obserds_datasource.name has unique constraint
+    return (DataSource) obCriteria.uniqueResult();
   }
 
   private DataSource getDataSourceFromTableName(String tableName) {
