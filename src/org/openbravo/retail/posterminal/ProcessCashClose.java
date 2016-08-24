@@ -126,7 +126,8 @@ public class ProcessCashClose extends POSDataSynchronizationProcess implements
           }
           JSONObject slaveJsonCashup = new JSONObject(dbJsoncashup);
           doReconciliationAndInvoices(posTerminalList.get(i), slaveCashup.getId(),
-              slaveCashup.getCashUpDate(), slaveJsonCashup, jsonData, false, null);
+              slaveCashup.getCashUpDate(), slaveJsonCashup, jsonData, false,
+              new ArrayList<String>());
           slaveCashupIds.add(slaveCashup.getId());
         }
         // Reconciliation and invoices of master
@@ -136,7 +137,7 @@ public class ProcessCashClose extends POSDataSynchronizationProcess implements
         doAccumulatePaymentMethodCashup(cashUpId);
       } else {
         doReconciliationAndInvoices(posTerminal, cashUpId, cashUpDate, jsonCashup, jsonData, true,
-            null);
+            new ArrayList<String>());
       }
     }
 

@@ -943,8 +943,10 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           invoice.getDocumentType());
     }
 
+    final Date orderDate = OBMOBCUtils.calculateClientDatetime(jsonorder.getString("orderDate"),
+        Long.parseLong(jsonorder.getString("timezoneOffset")));
     invoice.setAccountingDate(order.getOrderDate());
-    invoice.setInvoiceDate(order.getOrderDate());
+    invoice.setInvoiceDate(orderDate);
     invoice.setSalesTransaction(true);
     invoice.setDocumentStatus("CO");
     invoice.setDocumentAction("RE");
@@ -1181,18 +1183,19 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
               .createQuery(Locator.class, hqlWhereClause);
           queryLoc.setNamedParameter("warehouse", warehouse);
           queryLoc.setMaxResult(1);
+          Locator loc = queryLoc.uniqueResult();
           lineNo += 10;
           if (jsonorder.getLong("orderType") == 1) {
             pendingQty = pendingQty.negate();
           }
-          ShipmentInOutLine objShipmentInOutLine = usedBins.get(queryLoc.list().get(0).getId());
+          ShipmentInOutLine objShipmentInOutLine = usedBins.get(loc.getId());
           if (objShipmentInOutLine != null) {
             objShipmentInOutLine.setMovementQuantity(objShipmentInOutLine.getMovementQuantity()
                 .add(pendingQty));
             OBDal.getInstance().save(objShipmentInOutLine);
           } else {
             addShipmentline(shipment, shplineentity, orderlines.getJSONObject(i), orderLine,
-                jsonorder, lineNo, pendingQty, queryLoc.list().get(0), oldAttributeSetValues, i);
+                jsonorder, lineNo, pendingQty, loc, oldAttributeSetValues, i);
           }
         }
       }
