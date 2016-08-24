@@ -1156,18 +1156,19 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
               .createQuery(Locator.class, hqlWhereClause);
           queryLoc.setNamedParameter("warehouse", warehouse);
           queryLoc.setMaxResult(1);
+          Locator loc = queryLoc.uniqueResult();
           lineNo += 10;
           if (jsonorder.getLong("orderType") == 1) {
             pendingQty = pendingQty.negate();
           }
-          ShipmentInOutLine objShipmentInOutLine = usedBins.get(queryLoc.list().get(0).getId());
+          ShipmentInOutLine objShipmentInOutLine = usedBins.get(loc.getId());
           if (objShipmentInOutLine != null) {
             objShipmentInOutLine.setMovementQuantity(objShipmentInOutLine.getMovementQuantity()
                 .add(pendingQty));
             OBDal.getInstance().save(objShipmentInOutLine);
           } else {
             addShipmentline(shipment, shplineentity, orderlines.getJSONObject(i), orderLine,
-                jsonorder, lineNo, pendingQty, queryLoc.list().get(0), oldAttributeSetValues, i);
+                jsonorder, lineNo, pendingQty, loc, oldAttributeSetValues, i);
           }
         }
       }
