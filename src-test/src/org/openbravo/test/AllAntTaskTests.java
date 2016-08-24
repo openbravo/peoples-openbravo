@@ -36,6 +36,7 @@ import org.openbravo.client.kernel.freemarker.test.LabelTest;
 import org.openbravo.erpCommon.info.ClassicSelectorTest;
 import org.openbravo.test.accounting.PostDocumentTest;
 import org.openbravo.test.accounting.RecordID2Test;
+import org.openbravo.test.cancelandreplace.CancelAndReplaceTest;
 import org.openbravo.test.costing.TestCosting;
 import org.openbravo.test.dal.AdminContextTest;
 import org.openbravo.test.dal.ComputedColumnsTest;
@@ -235,7 +236,10 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     // Product Services
     ServicesTest.class, //
     ServicesTest2.class, //
-    ServicesTest3.class
+    ServicesTest3.class,
+
+    // Cancel and Replace Tests
+    CancelAndReplaceTest.class
 
 })
 public class AllAntTaskTests {
