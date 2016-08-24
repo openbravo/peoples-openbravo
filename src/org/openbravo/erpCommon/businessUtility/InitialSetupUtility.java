@@ -1862,7 +1862,7 @@ public class InitialSetupUtility {
       obcDataSets.add(Restrictions.in(DataSet.PROPERTY_DATAACCESSLEVEL, accessLevel));
       obcDataSets.addOrder(Order.asc(DataSet.PROPERTY_NAME));
       List<DataSet> listDataSets = obcDataSets.list();
-      if (listDataSets.size() > 0) {
+      if (!listDataSets.isEmpty()) {
         return listDataSets;
       } else {
         return null;
