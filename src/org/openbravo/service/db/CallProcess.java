@@ -25,6 +25,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -85,12 +86,13 @@ public class CallProcess {
         .createCriteria(org.openbravo.model.ad.ui.Process.class);
     processCriteria.add(Restrictions.eq(org.openbravo.model.ad.ui.Process.PROPERTY_PROCEDURE,
         processName));
-    if (processCriteria.list().size() != 1) {
+    List<org.openbravo.model.ad.ui.Process> processList = processCriteria.list();
+    if (processList.size() != 1) {
       throw new OBException("No process or more than one process found using procedurename "
           + processName);
 
     }
-    return call(processCriteria.list().get(0), recordID, parameters, doCommit);
+    return call(processList.get(0), recordID, parameters, doCommit);
   }
 
   /**
