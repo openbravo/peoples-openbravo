@@ -102,7 +102,7 @@ public class SelectorDataSourceFilter implements DataSourceFilter {
         Validation validation = param.getValidation();
         if (validation != null) {
           if (validation.getType().equals("HQL_JS")) {
-            String validationCode = param.getValidation().getValidationCode();
+            String validationCode = validation.getValidationCode();
             String validationHQL = applyFilterExpression(validationCode, sel, parameters, request);
 
             if (!StringUtils.isEmpty(validationHQL)) {
