@@ -82,7 +82,7 @@ public class OBMessageUtils {
       } else {
         obcMessage.add(Restrictions.eq(Message.PROPERTY_SEARCHKEY, strCode));
       }
-      // ad_message.value has unique constraint
+      obcMessage.setMaxResults(1);
       Message msg = (Message) obcMessage.uniqueResult();
       if (msg != null) {
         strMessage = msg.getMessageText();
