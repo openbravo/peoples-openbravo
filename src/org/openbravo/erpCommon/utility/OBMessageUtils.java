@@ -515,6 +515,7 @@ public class OBMessageUtils {
           Message.PROPERTY_SEARCHKEY + "=:key");
       messages.setNamedParameter("key", key);
 
+      // ad_message.value has unique constraint
       final Message message = messages.uniqueResult();
       if (message == null) {
         return null;

@@ -120,7 +120,16 @@ public class ModifyPaymentPlanActionHandler extends BaseProcessActionHandler {
       OBDal.getInstance().rollbackAndClose();
       log4j.error("Exception! " + e);
       String constraint = e.getConstraintName();
-      constraint = constraint.substring(constraint.lastIndexOf(".") + 1, constraint.length());
+      if (StringUtils.isNotEmpty(constraint)) {
+        constraint = constraint.substring(constraint.lastIndexOf(".") + 1, constraint.length());
+      } else {
+        constraint = e.getSQLException().getNextException().getMessage();
+        constraint = constraint.substring(constraint.lastIndexOf("constraint") + 12,
+            constraint.lastIndexOf("on table") - 2);
+        if (!constraint.startsWith("APRM")) {
+          constraint = "APRM" + constraint.substring(constraint.indexOf("_"));
+        }
+      }
       try {
         return addMessage(jsonRequest, "@" + constraint + "@", "error");
       } catch (Exception ex) {
