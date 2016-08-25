@@ -16,7 +16,17 @@ enyo.kind({
     onShowPopup: ''
   },
   handlers: {
-    onCancelClose: 'cancelClose'
+    onCancelClose: 'cancelClose',
+    onSetValues: 'setValues',
+    onRetrieveCustomer: 'retrieveCustomers'
+  },
+  setValues: function (inSender, inEvent) {
+    this.waterfall('onSetValue', inEvent);
+  },
+  retrieveCustomers: function (inSender, inEvent) {
+    var retrievedValues = inEvent || {};
+    this.waterfall('onRetrieveValues', retrievedValues);
+    return retrievedValues;
   },
   beforeSetShowing: function (params) {
     if (OB.MobileApp.model.get('terminal').defaultbp_paymentmethod !== null && OB.MobileApp.model.get('terminal').defaultbp_bpcategory !== null && OB.MobileApp.model.get('terminal').defaultbp_paymentterm !== null && OB.MobileApp.model.get('terminal').defaultbp_invoiceterm !== null && OB.MobileApp.model.get('terminal').defaultbp_bpcountry !== null && OB.MobileApp.model.get('terminal').defaultbp_bporg !== null) {
@@ -250,7 +260,17 @@ enyo.kind({
     i18nLabel: 'OBPOS_LblBirthday',
     handlers: {
       onLoadValue: 'loadValue',
-      onSaveChange: 'saveChange'
+      onSaveChange: 'saveChange',
+      onSetValue: 'valueSet',
+      onRetrieveValues: 'retrieveValue'
+    },
+    valueSet: function (inSender, inEvent) {
+      if (inEvent.data.hasOwnProperty(this.modelProperty)) {
+        this.setValue(inEvent.data[this.modelProperty]);
+      }
+    },
+    retrieveValue: function (inSender, inEvent) {
+      inEvent[this.modelProperty] = this.getValue();
     },
     displayLogic: function () {
       return OB.MobileApp.model.hasPermission('OBPOS_ShowBusinessPartnerBirthInfo', true);

@@ -55,11 +55,29 @@ enyo.kind({
   style: 'width: 100%; height: 30px; margin:0;',
   handlers: {
     onLoadValue: 'loadValue',
-    onSaveChange: 'saveChange'
+    onSaveChange: 'saveChange',
+    onblur: 'blur',
+    onchange: 'change',
+    oninput: 'input',
+    onSetValue: 'valueSet',
+    onRetrieveValues: 'retrieveValue'
   },
   events: {
-    onSaveProperty: ''
+    onSaveProperty: '',
+    onRetrieveCustomer: '',
+    onSetValues: ''
   },
+  valueSet: function (inSender, inEvent) {
+    if (inEvent.data.hasOwnProperty(this.modelProperty)) {
+      this.setValue(inEvent.data[this.modelProperty]);
+    }
+  },
+  retrieveValue: function (inSender, inEvent) {
+    inEvent[this.modelProperty] = this.getValue();
+  },
+  blur: function () {},
+  input: function () {},
+  change: function () {},
   loadValue: function (inSender, inEvent) {
     if (inEvent.customer !== undefined) {
       if (inEvent.customer.get(this.modelProperty) !== undefined) {
@@ -113,7 +131,9 @@ enyo.kind({
   name: 'OB.UI.SwitchShippingInvoicingAddr',
   handlers: {
     onLoadValue: 'loadValue',
-    onSaveChange: 'saveChange'
+    onSaveChange: 'saveChange',
+    onSetValue: 'valueSet',
+    onRetrieveValues: 'retrieveValue'
   },
   events: {
     onHideShowFields: ''
@@ -148,6 +168,21 @@ enyo.kind({
     this.$.infotext.setContent(OB.I18N.getLabel('OBPOS_SameAddrInfo'));
     this.$.shipLbl.setContent(OB.I18N.getLabel('OBPOS_LblShipAddr'));
     this.$.invLbl.setContent(OB.I18N.getLabel('OBPOS_LblBillAddr'));
+  },
+  valueSet: function (inSender, inEvent) {
+    if (inEvent.data.hasOwnProperty('btnUseSameCheck')) {
+      this.doHideShowFields({
+        checked: inEvent.data.btnUseSameCheck
+      });
+      if (inEvent.data.btnUseSameCheck) {
+        this.$.btnUseSameCheck.check();
+      } else {
+        this.$.btnUseSameCheck.unCheck();
+      }
+    }
+  },
+  retrieveValue: function (inSender, inEvent) {
+    inEvent.btnUseSameCheck = this.$.btnUseSameCheck.checked;
   },
   rendered: function () {
     this.inherited(arguments);
@@ -184,7 +219,9 @@ enyo.kind({
   handlers: {
     onLoadValue: 'loadValue',
     onSaveChange: 'saveChange',
-    onHideShow: 'hideShow'
+    onHideShow: 'hideShow',
+    onSetValue: 'valueSet',
+    onRetrieveValues: 'retrieveValue'
   },
   events: {
     onSaveProperty: ''
@@ -204,6 +241,19 @@ enyo.kind({
     }),
     renderEmpty: 'enyo.Control'
   }],
+  valueSet: function (inSender, inEvent) {
+    if (inEvent.data.hasOwnProperty(this.modelProperty)) {
+      for (var i = 0; i < this.$.customerCombo.getCollection().length; i++) {
+        if (this.$.customerCombo.getCollection().models[i].get('id') === inEvent.data[this.modelProperty]) {
+          this.$.customerCombo.setSelected(i);
+          break;
+        }
+      }
+    }
+  },
+  retrieveValue: function (inSender, inEvent) {
+    inEvent[this.modelProperty] = this.$.customerCombo.getValue();
+  },
   loadValue: function (inSender, inEvent) {
     this.$.customerCombo.setCollection(this.collection);
     this.fetchDataFunction(inEvent);
@@ -308,6 +358,9 @@ enyo.kind({
       meObject: me,
       validations: inEvent.validations
     }, function (args) {
+      if (args.cancellation) {
+        return;
+      }
       if (args.passValidation) {
         args.meObject.saveCustomer(args.inSender, args.inEvent);
       } else {

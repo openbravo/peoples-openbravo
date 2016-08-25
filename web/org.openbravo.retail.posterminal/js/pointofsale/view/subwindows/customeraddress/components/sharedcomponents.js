@@ -36,10 +36,28 @@ enyo.kind({
   style: 'width: 100%; height: 30px; margin:0;',
   handlers: {
     onLoadValue: 'loadValue',
-    onSaveChange: 'saveChange'
+    onSaveChange: 'saveChange',
+    onblur: 'blur',
+    onchange: 'change',
+    oninput: 'input',
+    onSetValue: 'valueSet',
+    onRetrieveValues: 'retrieveValue'
   },
   events: {
-    onSaveProperty: ''
+    onSaveProperty: '',
+    onRetrieveCustomer: '',
+    onSetValues: ''
+  },
+  blur: function () {},
+  input: function () {},
+  change: function () {},
+  valueSet: function (inSender, inEvent) {
+    if (inEvent.data.hasOwnProperty(this.modelProperty)) {
+      this.setValue(inEvent.data[this.modelProperty]);
+    }
+  },
+  retrieveValue: function (inSender, inEvent) {
+    inEvent[this.modelProperty] = this.getValue();
   },
   loadValue: function (inSender, inEvent) {
     if (inEvent.customerAddr !== undefined) {
@@ -100,6 +118,9 @@ enyo.kind({
       error: '',
       meObject: me
     }, function (args) {
+      if (args.cancellation) {
+        return;
+      }
       if (args.passValidation) {
         args.meObject.saveCustomerAddr(args.inSender, args.inEvent);
       } else {
@@ -160,13 +181,21 @@ enyo.kind({
         OB.UTIL.showError(OB.I18N.getLabel('OBPOS_NameReqForBPAddress'));
         return false;
       } else {
-        var callback = function () {
-            goToViewWindow(sw, {
-              customer: OB.UTIL.clone(me.customer),
-              customerAddr: OB.UTIL.clone(me.model.get('customerAddr'))
-            });
-            };
-        this.model.get('customerAddr').saveCustomerAddr(callback);
+        OB.UTIL.HookManager.executeHooks('OBPOS_BeforeCustomerAddrSave', {
+          customerAddr: this.model.get('customerAddr'),
+          isNew: true
+        }, function (args) {
+          if (args && args.cancellation && args.cancellation === true) {
+            return true;
+          }
+          var callback = function () {
+              goToViewWindow(sw, {
+                customer: OB.UTIL.clone(me.customer),
+                customerAddr: OB.UTIL.clone(me.model.get('customerAddr'))
+              });
+              };
+          me.model.get('customerAddr').saveCustomerAddr(callback);
+        });
       }
     } else {
       this.model.get('customerAddr').loadById(this.customerAddr.get('id'), function (customerAddr) {
@@ -282,10 +311,24 @@ enyo.kind({
   style: 'margin: 5px 0px 0px 5px;',
   handlers: {
     onLoadValue: 'loadValue',
-    onSaveChange: 'saveChange'
+    onSaveChange: 'saveChange',
+    onSetValue: 'valueSet',
+    onRetrieveValues: 'retrieveValue'
   },
   events: {
     onSaveProperty: ''
+  },
+  valueSet: function (inSender, inEvent) {
+    if (inEvent.data.hasOwnProperty(this.modelProperty)) {
+      if (inEvent.data[this.modelProperty]) {
+        this.check();
+      } else {
+        this.unCheck();
+      }
+    }
+  },
+  retrieveValue: function (inSender, inEvent) {
+    inEvent[this.modelProperty] = this.checked;
   },
   loadValue: function (inSender, inEvent) {
     var me = this;
@@ -321,7 +364,9 @@ enyo.kind({
   name: 'OB.UI.CustomerAddrComboProperty',
   handlers: {
     onLoadValue: 'loadValue',
-    onSaveChange: 'saveChange'
+    onSaveChange: 'saveChange',
+    onSetValue: 'valueSet',
+    onRetrieveValues: 'retrieveValue'
   },
   events: {
     onSaveProperty: ''
@@ -341,6 +386,19 @@ enyo.kind({
     }),
     renderEmpty: 'enyo.Control'
   }],
+  valueSet: function (inSender, inEvent) {
+    if (inEvent.data.hasOwnProperty(this.modelProperty)) {
+      for (var i = 0; i < this.$.customerAddrCombo.getCollection().length; i++) {
+        if (this.$.customerAddrCombo.getCollection().models[i].get('id') === inEvent.data[this.modelProperty]) {
+          this.$.customerAddrCombo.setSelected(i);
+          break;
+        }
+      }
+    }
+  },
+  retrieveValue: function (inSender, inEvent) {
+    inEvent[this.modelProperty] = this.$.customerAddrCombo.getValue();
+  },
   loadValue: function (inSender, inEvent) {
     this.$.customerAddrCombo.setCollection(this.collection);
     this.fetchDataFunction(inEvent);
