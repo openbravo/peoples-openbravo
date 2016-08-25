@@ -324,10 +324,12 @@ public class CancelAndReplaceUtils {
             OrderLine newOrderLine = (OrderLine) olc.uniqueResult();
             if (newOrderLine != null) {
               shipmentLine.setSalesOrderLine(newOrderLine);
-              newOrderLine.setDeliveredQuantity(newOrderLine.getDeliveredQuantity().add(
-                  shipmentLine.getMovementQuantity()));
+              if (jsonorder == null) {
+                newOrderLine.setDeliveredQuantity(newOrderLine.getDeliveredQuantity().add(
+                    shipmentLine.getMovementQuantity()));
+                OBDal.getInstance().save(newOrderLine);
+              }
               OBDal.getInstance().save(shipmentLine);
-              OBDal.getInstance().save(newOrderLine);
             }
           }
           OBDal.getInstance().flush();
