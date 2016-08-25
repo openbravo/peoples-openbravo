@@ -625,7 +625,7 @@
             var grossLine = e.getGross();
             if (e.get('promotions')) {
               grossLine = e.get('promotions').reduce(function (memo, e) {
-                return OB.DEC.sub(memo, e.actualAmt || e.amt || 0);
+                return OB.DEC.sub(memo, e.actualAmt || OB.DEC.toNumber(OB.DEC.toBigDecimal(e.amt), OB.DEC.getScale()) || 0);
               }, grossLine);
             }
             return OB.DEC.add(memo, grossLine);
