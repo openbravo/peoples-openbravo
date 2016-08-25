@@ -235,7 +235,7 @@ enyo.kind({
           setCustomerAddr: function (inSender, inEvent) {
             this.customer = inEvent.customer;
             this.customerAddr = inEvent.customerAddr;
-            if (!OB.MobileApp.model.hasPermission('OBPOS_retail.editCustomers', true)) {
+            if (!OB.MobileApp.model.hasPermission('OBPOS_retail.editCustomerLocationButton', true)) {
               this.disabled = true;
               this.setAttribute("disabled", "disabled");
             } else {

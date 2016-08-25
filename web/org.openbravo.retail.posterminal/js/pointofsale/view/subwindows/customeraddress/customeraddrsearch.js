@@ -180,7 +180,7 @@ enyo.kind({
   },
   initComponents: function () {
     this.inherited(arguments);
-    this.putDisabled(!OB.MobileApp.model.hasPermission('OBPOS_retail.editCustomers'));
+    this.putDisabled(!OB.MobileApp.model.hasPermission('OBPOS_retail.createCustomerLocationButton'));
     this.setContent(this.i18nLabel ? OB.I18N.getLabel(this.i18nLabel) : this.label);
   }
 });

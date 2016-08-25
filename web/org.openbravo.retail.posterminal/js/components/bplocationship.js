@@ -166,7 +166,7 @@ enyo.kind({
     this.$.body.$.listBpsShipLoc.setBPartner(this.model.get('order').get('bp'));
     this.$.body.$.listBpsShipLoc.setTarget(this.args.target);
     this.$.body.$.listBpsShipLoc.$.bpsloclistitemprinter.$.theader.$.modalBpLocScrollableHeader.searchAction();
-    this.$.body.$.listBpsShipLoc.$.bpsloclistitemprinter.$.theader.$.modalBpLocScrollableHeader.$.newAction.putDisabled(!OB.MobileApp.model.hasPermission('OBPOS_retail.editCustomers', true));
+    this.$.body.$.listBpsShipLoc.$.bpsloclistitemprinter.$.theader.$.modalBpLocScrollableHeader.$.newAction.putDisabled(!OB.MobileApp.model.hasPermission('OBPOS_retail.createCustomerLocationButton', true));
     return true;
   },
   executeOnHide: function () {

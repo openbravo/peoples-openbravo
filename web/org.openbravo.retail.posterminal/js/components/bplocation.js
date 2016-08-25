@@ -598,26 +598,26 @@ enyo.kind({
       permission: 'OBPOS_receipt.customers'
     }, {
       kind: 'OB.UI.BPLocEditContextMenuItem',
-      permission: 'OBPOS_retail.editCustomers'
+      permission: 'OBPOS_retail.editCustomerLocationButton'
     });
 
     if (bpLoc.get('isBillTo') && bpLoc.get('isShipTo')) {
       menuOptions.push({
         kind: 'OB.UI.BPLocAssignToReceiptContextMenuItem',
-        permission: 'OBPOS_retail.editCustomers'
+        permission: 'OBPOS_retail.assignToReceiptAddress'
       });
     }
     if (!bpLoc.get('onlyOneAddress') || !(bpLoc.get('isBillTo') && bpLoc.get('isShipTo'))) {
       if (bpLoc.get('isShipTo')) {
         menuOptions.push({
           kind: 'OB.UI.BPLocAssignToReceiptShippingContextMenuItem',
-          permission: 'OBPOS_retail.editCustomers'
+          permission: 'OBPOS_retail.assignToReceiptShippingAddress'
         });
       }
       if (bpLoc.get('isBillTo')) {
         menuOptions.push({
           kind: 'OB.UI.BPLocAssignToReceiptInvoicingContextMenuItem',
-          permission: 'OBPOS_retail.editCustomers'
+          permission: 'OBPOS_retail.assignToReceiptInvoicingAddress'
         });
       }
     }
@@ -857,7 +857,7 @@ enyo.kind({
     this.$.body.$.listBpsLoc.setTarget(this.args.target);
     this.$.body.$.listBpsLoc.setInitialLoad(true);
     this.$.body.$.listBpsLoc.$.bpsloclistitemprinter.$.theader.$.modalBpLocScrollableHeader.searchAction();
-    this.$.body.$.listBpsLoc.$.bpsloclistitemprinter.$.theader.$.modalBpLocScrollableHeader.$.newAction.putDisabled(!OB.MobileApp.model.hasPermission('OBPOS_retail.editCustomers', true));
+    this.$.body.$.listBpsLoc.$.bpsloclistitemprinter.$.theader.$.modalBpLocScrollableHeader.$.newAction.putDisabled(!OB.MobileApp.model.hasPermission('OBPOS_retail.createCustomerLocationButton', true));
     return true;
   },
   executeOnHide: function () {

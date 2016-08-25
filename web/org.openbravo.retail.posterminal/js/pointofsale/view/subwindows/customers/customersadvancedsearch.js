@@ -31,7 +31,7 @@ enyo.kind({
     if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
       this.$.subWindowBody.$.casbody.$.listcustomers.$.leftbar.$.searchByLetter.hide();
     }
-    this.$.subWindowBody.$.casbody.$.listcustomers.$.leftbar.$.newAction.putDisabled(!OB.MobileApp.model.hasPermission('OBPOS_retail.editCustomers'));
+    this.$.subWindowBody.$.casbody.$.listcustomers.$.leftbar.$.newAction.putDisabled(!OB.MobileApp.model.hasPermission('OBPOS_retail.createCustomerButton'));
     return true;
   },
   beforeClose: function (dest) {
