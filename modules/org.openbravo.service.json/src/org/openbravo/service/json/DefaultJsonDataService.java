@@ -52,6 +52,7 @@ import org.openbravo.database.SessionInfo;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.service.datasource.DataSourceUtils;
 import org.openbravo.service.db.DbUtility;
 import org.openbravo.service.json.JsonToDataConverter.JsonConversionError;
 import org.openbravo.userinterface.selector.Selector;
@@ -148,8 +149,24 @@ public class DefaultJsonDataService implements JsonDataService {
           bobs.add(bob);
         }
       } else {
+        // Retrieve parameter to identify if the fetch request comes from a Pick And Edit window
+        String isPickAndEditParam = parameters.get(JsonConstants.IS_PICK_AND_EDIT);
+        final boolean isPickAndEdit = StringUtils.isNotEmpty(isPickAndEditParam) ? Boolean
+            .valueOf(isPickAndEditParam) : Boolean.FALSE;
+
         final String startRowStr = parameters.get(JsonConstants.STARTROW_PARAMETER);
-        final String endRowStr = parameters.get(JsonConstants.ENDROW_PARAMETER);
+        final String endRowStr;
+        if (isPickAndEdit) {
+          endRowStr = getEndRowForSelectedRecords(parameters, startRowStr);
+          if (endRowStr != null
+              && !endRowStr.equals(parameters.get(JsonConstants.ENDROW_PARAMETER))) {
+            parameters.put(JsonConstants.ENDROW_PARAMETER, endRowStr);
+            log.debug("The amount of selected records is higher than the page size, "
+                + "setting page size equal to the amount of selected records: " + endRowStr);
+          }
+        } else {
+          endRowStr = parameters.get(JsonConstants.ENDROW_PARAMETER);
+        }
 
         boolean preventCountOperation = !parameters.containsKey(JsonConstants.NOCOUNT_PARAMETER)
             || "true".equals(parameters.get(JsonConstants.NOCOUNT_PARAMETER));
@@ -228,6 +245,17 @@ public class DefaultJsonDataService implements JsonDataService {
           long t = System.currentTimeMillis();
           bobs = queryService.list();
           log.debug("query time:" + (System.currentTimeMillis() - t));
+
+          // If the request is done from a P&E window, then we should adapt the page size to include
+          // all selected records into the response
+          if (isPickAndEdit && shouldIncreasePageSize(parameters, bobs, startRowStr, endRowStr)) {
+            String newEndRow = Integer.toString(Integer.parseInt(endRowStr)
+                + JsonConstants.PAE_DATA_PAGE_SIZE);
+            parameters.put(JsonConstants.ENDROW_PARAMETER, newEndRow);
+            log.debug("The amount of selected records is higher than the page size, increasing page size to "
+                + newEndRow);
+            return fetch(parameters, filterOnReadableOrganizations);
+          }
         }
 
         bobs = bobFetchTransformation(bobs, parameters);
@@ -282,6 +310,48 @@ public class DefaultJsonDataService implements JsonDataService {
       log.error(t.getMessage(), t);
       return JsonUtils.convertExceptionToJson(t);
     }
+  }
+
+  private String getEndRowForSelectedRecords(Map<String, String> parameters, String startRowStr) {
+    String endRowStr = parameters.get(JsonConstants.ENDROW_PARAMETER);
+    if (startRowStr == null || endRowStr == null) {
+      return endRowStr;
+    }
+    int startRow = Integer.parseInt(startRowStr);
+    int endRow = Integer.parseInt(endRowStr);
+    int selectedRecords = DataSourceUtils.getNumberOfSelectedRecords(parameters);
+    if (startRow == 0 && endRow != -1 && selectedRecords > JsonConstants.PAE_DATA_PAGE_SIZE) {
+      return Integer.toString(selectedRecords);
+    }
+    return endRowStr;
+  }
+
+  private boolean shouldIncreasePageSize(Map<String, String> parameters, List<BaseOBObject> bobs,
+      String startRowStr, String endRowStr) {
+    if (startRowStr == null || endRowStr == null) {
+      return false;
+    }
+    int startRow = Integer.parseInt(startRowStr);
+    int endRow = Integer.parseInt(endRowStr);
+    if (startRow == 0 && endRow != -1 && bobs.size() > endRow
+        && endRow <= JsonConstants.PAE_MAX_PAGE_SIZE) {
+      return isLastRecordSelected(bobs);
+    }
+    return false;
+  }
+
+  private boolean isLastRecordSelected(List<BaseOBObject> bobs) {
+    if (bobs.size() == 0) {
+      return false;
+    }
+    Boolean b = Boolean.FALSE;
+    try {
+      BaseOBObject bob = bobs.get(bobs.size() - 1);
+      b = (Boolean) bob.get("obSelected");
+    } catch (Exception ex) {
+      // Error retrieving obSelected property, do nothing: record not selected
+    }
+    return b.booleanValue();
   }
 
   public void fetch(Map<String, String> parameters, QueryResultWriter writer) {
