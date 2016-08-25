@@ -362,7 +362,7 @@ enyo.kind({
     if (paymentstatus.done) {
       this.$.totalpending.hide();
       this.$.totalpendinglbl.hide();
-      if (!_.isEmpty(OB.MobileApp.model.paymentnames)) {
+      if (!_.isEmpty(OB.MobileApp.model.paymentnames) || this.receipt.get('orderType') === 3) {
         this.$.donebutton.show();
       }
       this.updateCreditSalesAction();
