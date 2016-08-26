@@ -84,7 +84,7 @@ enyo.kind({
       } else if (!_.isNull(pending) && pending) {
         this.setTotalPending(pending, payment.mulrate, payment.symbol, payment.currencySymbolAtTheRight, inSender, inEvent);
       }
-      if (paymentstatus && inEvent.value.status !== "") {
+      if (paymentstatus && inEvent.value.status !== "" && !this.receipt.isCalculateReceiptLocked && !this.receipt.isCalculateGrossLocked) {
         this.checkValidPayments(paymentstatus, payment);
       }
       if (inEvent.value.amount) {
@@ -249,6 +249,10 @@ enyo.kind({
     this.$.payments.setCollection(this.receipt.get('payments'));
     this.$.multiPayments.setCollection(this.model.get('multiOrders').get('payments'));
     this.receipt.on('change:payment change:change calculategross change:bp change:gross', function () {
+      if (this.receipt.isCalculateReceiptLocked || this.receipt.isCalculateGrossLocked) {
+        //We are processing the receipt, we cannot update pending yet
+        return;
+      }
       this.updatePending();
     }, this);
     this.model.get('leftColumnViewManager').on('change:currentView', function () {
@@ -980,15 +984,29 @@ enyo.kind({
       this.setDisabled(false);
     }, this);
   },
+  blocked: false,
   tap: function () {
     var myModel = this.owner.model,
         me = this,
         payments, avoidPayment = false,
         orderDesc = '';
+    //*** Avoid double click ***
+    if (this.getContent() === OB.I18N.getLabel('OBPOS_LblDone')) {
+      if (me.blocked) {
+        OB.info('Time: ' + new Date().getTime() + '. Done button has been pressed 2 times and second execution is discarded');
+        return;
+      } else {
+        me.blocked = true;
+        setTimeout(function () {
+          me.blocked = false;
+        }, 1000);
+      }
+    }
+
     if (this && this.owner && this.owner.receipt && this.owner.receipt.getOrderDescription) {
       orderDesc = this.owner.receipt.getOrderDescription();
     }
-    OB.info('Payment Button Pressed ( Status: ' + this.disabled + ') ' + orderDesc);
+    OB.info('Time: ' + new Date().getTime() + '. Payment Button Pressed ( Status: ' + this.disabled + ') ' + orderDesc);
 
 
     this.allowOpenDrawer = false;

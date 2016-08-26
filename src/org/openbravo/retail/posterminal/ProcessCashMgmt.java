@@ -16,6 +16,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.advpaymentmngt.dao.TransactionsDao;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
@@ -58,6 +59,9 @@ public class ProcessCashMgmt extends POSDataSynchronizationProcess implements
     String cashManagementReasonId = jsonsent.getString("reasonId");
     String cashupId = jsonsent.getString("cashup_id");
     OBPOSAppCashup cashup = OBDal.getInstance().get(OBPOSAppCashup.class, cashupId);
+    if (cashup == null) {
+      throw new OBException("The cashup with ID '" + jsonsent.getString("cashup_id") + "' does not exists in the system. Please synchronize it first and then process this entry.");
+    }
     TerminalTypePaymentMethod terminalPaymentMethod = paymentMethod.getPaymentMethod();
     GLItem glItemMain;
     GLItem glItemSecondary;
