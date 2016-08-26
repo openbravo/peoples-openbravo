@@ -652,6 +652,26 @@ enyo.kind({
   },
 
   displayStep: function (model) {
+    if (OB.MobileApp.model.get('permissions').OBPOS_HideCashUpInfoToCashier) {
+      this.$.differenceTable.hide();
+      this.$.expectedTable.hide();
+      this.$.depositsTable.hide();
+      this.$.dropsTable.hide();
+      this.$.startingsTable.hide();
+      this.$.sales.hide();
+      this.$.totaltransactions.hide();
+      this.$.returns.hide();
+    } else {
+      this.$.differenceTable.show();
+      this.$.expectedTable.show();
+      this.$.depositsTable.show();
+      this.$.dropsTable.show();
+      this.$.startingsTable.show();
+      this.$.sales.show();
+      this.$.totaltransactions.show();
+      this.$.returns.show();
+    }
+
     // this function is invoked when displayed.
     this.$.reporttitle.renderHeader(model.stepNumber('OB.CashUp.PostPrintAndClose'), model.stepCount());
     if (!model.cashupStepsDefinition[model.stepIndex('OB.CashUp.CashToKeep')].active) {
