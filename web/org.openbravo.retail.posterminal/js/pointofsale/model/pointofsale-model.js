@@ -409,10 +409,11 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
               if (diffStringified !== '{}') {
                 OB.error("The receipt has been modified while it was being closed:\n" + diffStringified + "\n");
               }
+
+              orderList.deleteCurrent();
               receipt.setIsCalculateReceiptLockState(false);
               receipt.setIsCalculateGrossLockState(false);
 
-              orderList.deleteCurrent();
               orderList.synchronizeCurrentOrder();
             }
             enyo.$.scrim.hide();

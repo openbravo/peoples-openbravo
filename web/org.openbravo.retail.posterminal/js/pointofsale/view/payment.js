@@ -84,7 +84,7 @@ enyo.kind({
       } else if (!_.isNull(pending) && pending) {
         this.setTotalPending(pending, payment.mulrate, payment.symbol, payment.currencySymbolAtTheRight, inSender, inEvent);
       }
-      if (paymentstatus && inEvent.value.status !== "") {
+      if (paymentstatus && inEvent.value.status !== "" && !this.receipt.isCalculateReceiptLocked && !this.receipt.isCalculateGrossLocked) {
         this.checkValidPayments(paymentstatus, payment);
       }
       if (inEvent.value.amount) {
@@ -249,6 +249,10 @@ enyo.kind({
     this.$.payments.setCollection(this.receipt.get('payments'));
     this.$.multiPayments.setCollection(this.model.get('multiOrders').get('payments'));
     this.receipt.on('change:payment change:change calculategross change:bp change:gross', function () {
+      if (this.receipt.isCalculateReceiptLocked || this.receipt.isCalculateGrossLocked) {
+        //We are processing the receipt, we cannot update pending yet
+        return;
+      }
       this.updatePending();
     }, this);
     this.model.get('leftColumnViewManager').on('change:currentView', function () {
@@ -356,7 +360,7 @@ enyo.kind({
     if (paymentstatus.done) {
       this.$.totalpending.hide();
       this.$.totalpendinglbl.hide();
-      if (!_.isEmpty(OB.MobileApp.model.paymentnames)) {
+      if (!_.isEmpty(OB.MobileApp.model.paymentnames) || this.receipt.get('orderType') === 3) {
         this.$.donebutton.show();
       }
       this.updateCreditSalesAction();
