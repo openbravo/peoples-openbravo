@@ -1527,10 +1527,7 @@ public class FormInitializationComponent extends BaseActionHandler {
           if (result.isShouldCreateNewPreferenceForWindow()) {
             warningOrErrorForNewCreatedPreference(result.getTab(), calloutClassName, true);
           }
-
           // updated info values of callouts infrastructure
-          lastCalledCallout = calloutClassName;
-          lastFieldOfLastCalloutCalled = lastFieldChanged;
           calledCallouts.add(calloutClassName);
         } else {
           // We then execute the callout
@@ -1723,9 +1720,9 @@ public class FormInitializationComponent extends BaseActionHandler {
               }
             }
           }
-          lastCalledCallout = calloutClassName;
-          lastFieldOfLastCalloutCalled = lastFieldChanged;
         }
+        lastCalledCallout = calloutClassName;
+        lastFieldOfLastCalloutCalled = lastFieldChanged;
       } catch (Exception e) {
         throw new OBException("Couldn't execute callout (class " + calloutClassName + ")", e);
       }
