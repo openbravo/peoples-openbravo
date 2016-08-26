@@ -65,7 +65,7 @@ public class FindTransactionsToMatchActionHandler extends BaseActionHandler {
             "N");
         final FIN_BankStatementLine bankStatementLine = OBDal.getInstance().get(
             FIN_BankStatementLine.class, strBankLineId);
-        APRM_MatchingUtility.matchBankStatementLineWithTrxns(bankStatementLine,
+        APRM_MatchingUtility.matchBankStatementLine(bankStatementLine,
             selectedTransactionIds, reconciliation, null, true);
 
       } else {

@@ -203,40 +203,65 @@ public class APRM_MatchingUtility {
   }
 
   /**
-   * Handles a list of selected transactions to be matched with Bank Statement Line. Session is
-   * cleared after every 100 transaction. (see matchBankStatementLineToTrx(FIN_BankStatementLine,
-   * FIN_FinaccTransaction, FIN_Reconciliation, String, boolean))
+   * Improved version of
+   * {@link APRM_MatchingUtility#matchBankStatementLine(FIN_BankStatementLine, FIN_FinaccTransaction, FIN_Reconciliation, String, boolean)}
+   * which can handle a list of transactions for the same bank statement line.
+   * 
+   * The Bank statement line will be automatically split (and linked) as many times as transactions
+   * are selected.
+   * 
+   * Session is cleared after every 100 transaction.
+   * 
+   * @return the number of matched transactions
    * 
    */
-  public static void matchBankStatementLineWithTrxns(
-      final FIN_BankStatementLine _bankStatementLine, final List<String> transactionIds,
-      final FIN_Reconciliation reconciliation, final String matchLevel, boolean throwException) {
-    FIN_BankStatementLine bankStatementLine = _bankStatementLine;
+  public static int matchBankStatementLine(final FIN_BankStatementLine _bankStatementLine,
+      final List<String> transactionIds, final FIN_Reconciliation reconciliation,
+      final String matchLevel, boolean throwException) {
     int counter = 0;
-    for (String transactionId : transactionIds) {
-      counter++;
-      FIN_FinaccTransaction transaction = OBDal.getInstance().get(FIN_FinaccTransaction.class,
-          transactionId);
-      bankStatementLine = matchBankStatementLineToTrx(bankStatementLine, transaction,
-          reconciliation, null, true);
-      // Clear session every 100 transactions
-      if (counter % 100 == 0) {
-        OBDal.getInstance().getSession().flush();
-        OBDal.getInstance().getSession().clear();
-        log4j.info("Matched Transactions : " + counter + "\n");
+    try {
+      OBContext.setAdminMode(true);
+      FIN_BankStatementLine bankStatementLine = _bankStatementLine;
+      for (String transactionId : transactionIds) {
+        if (bankStatementLine == null) {
+          break;
+        }
+        FIN_FinaccTransaction transaction = OBDal.getInstance().get(FIN_FinaccTransaction.class,
+            transactionId);
+        bankStatementLine = matchBankStatementLineToTrx(bankStatementLine, transaction,
+            reconciliation, null, true);
+        // Clear session every 100 transactions
+        if (++counter % 100 == 0) {
+          OBDal.getInstance().getSession().flush();
+          OBDal.getInstance().getSession().clear();
+        }
       }
+
+    } finally {
+      OBContext.restorePreviousMode();
     }
+
+    return counter;
   }
 
   /**
+   * Match a bank statement line with a financial account transaction. If the bank statement has
+   * associated a transaction, it is first unmatched and then matched against the given transaction.
    * 
-   * @see matchBankStatementLineToTrx(FIN_BankStatementLine, FIN_FinaccTransaction,
-   *      FIN_Reconciliation, String, boolean)
+   * If the bank statement line amount is different from the transaction amount, the process will
+   * automatically split the bank statement line in two (see
+   * {@link #splitBankStatementLine(FIN_Reconciliation, FIN_BankStatementLine, FIN_FinaccTransaction)}
+   * 
+   * @return If success, the method automatically flushes and returns true. In case of exceptions,
+   *         the method will either throw the exception or return false. This behavior is controlled
+   *         by the throwException boolean parameter
+   * 
+   * 
    */
   public static boolean matchBankStatementLine(final FIN_BankStatementLine _bankStatementLine,
       final FIN_FinaccTransaction transaction, final FIN_Reconciliation reconciliation,
       final String matchLevel, boolean throwException) {
-    matchBankStatementLineToTrx(_bankStatementLine, transaction, reconciliation, null,
+    matchBankStatementLineToTrx(_bankStatementLine, transaction, reconciliation, matchLevel,
         throwException);
     return true;
   }
@@ -254,7 +279,7 @@ public class APRM_MatchingUtility {
    *         for pending amount or null value
    * 
    */
-  public static FIN_BankStatementLine matchBankStatementLineToTrx(
+  private static FIN_BankStatementLine matchBankStatementLineToTrx(
       final FIN_BankStatementLine _bankStatementLine, final FIN_FinaccTransaction transaction,
       final FIN_Reconciliation reconciliation, final String matchLevel, boolean throwException) {
     FIN_BankStatementLine clonedBSL = null;
@@ -286,6 +311,8 @@ public class APRM_MatchingUtility {
         OBDal.getInstance().save(transaction);
         OBDal.getInstance().save(bankStatementLine);
         OBDal.getInstance().flush();
+
+        return clonedBSL;
       }
     } catch (Exception e) {
       log4j.error("Error during matchBankStatementLine, performing a rollback");
@@ -295,8 +322,8 @@ public class APRM_MatchingUtility {
       }
     } finally {
       OBContext.restorePreviousMode();
-      return clonedBSL;
     }
+    return null;
   }
 
   private static String getMatchedDocument(FIN_FinaccTransaction transaction) {
@@ -718,7 +745,7 @@ public class APRM_MatchingUtility {
    * transaction
    * 
    * @return Clone Bank Statement Line for pending amount left after matching transaction with the
-   *         bank statement line
+   *         bank statement line, or null if no split was done
    */
   private static FIN_BankStatementLine splitBankStatementLine(
       final FIN_Reconciliation reconciliation, final FIN_BankStatementLine bankStatementLine,

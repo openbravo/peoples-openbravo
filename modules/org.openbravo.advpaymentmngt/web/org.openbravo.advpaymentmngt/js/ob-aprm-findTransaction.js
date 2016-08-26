@@ -33,7 +33,7 @@ OB.APRM.FindTransactions.onProcess = function (view, actionHandlerCall, clientSi
   if (view && typeof view.getContextInfo === 'function' && view.callerField && view.callerField.view && typeof view.callerField.view.getContextInfo === 'function') {
     var i, trxSelection = view.getContextInfo().findtransactiontomatch._selection;
 
-    if (trxSelection) {
+    if (trxSelection && trxSelection[0]) {
       var totalTrxAmt = 0,
           blineAmt = view.callerField.record.amount,
           hideSplitConfirmation = OB.PropertyStore.get('APRM_MATCHSTATEMENT_HIDE_PARTIALMATCH_POPUP', view.windowId);
@@ -43,23 +43,21 @@ OB.APRM.FindTransactions.onProcess = function (view, actionHandlerCall, clientSi
             trxAmt = trxDepositAmt - trxPaymentAmt;
         totalTrxAmt = totalTrxAmt + trxAmt;
       }
-      if (Math.abs(totalTrxAmt) <= Math.abs(blineAmt)) {
+      if (totalTrxAmt !== blineAmt) {
         // Split required
         if (hideSplitConfirmation === 'Y') {
           // Continue with the match
           actionHandlerCall();
         } else {
           if (isc.isA.emptyObject(OB.TestRegistry.registry)) {
-            isc.confirm(OB.I18N.getLabel('APRM_SplitBankStatementLineConfirm'), execute);
+            isc.confirm(OB.I18N.getLabel('APRM_SplitBankStatementLineConfirm', [OB.Utilities.Number.JSToOBMasked(blineAmt, OB.Format.defaultNumericMask, OB.Format.defaultDecimalSymbol, OB.Format.defaultGroupingSymbol, OB.Format.defaultGroupingSize), OB.Utilities.Number.JSToOBMasked(totalTrxAmt, OB.Format.defaultNumericMask, OB.Format.defaultDecimalSymbol, OB.Format.defaultGroupingSymbol, OB.Format.defaultGroupingSize)]), execute);
           } else {
             execute(true);
           }
         }
       } else {
-        // Sum of amounts of selected transaction
-        // exceeds bank statement line amount
-        view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('APRM_TRXAMT_EXCEED_BSLAMT', [totalTrxAmt, blineAmt]));
-        clientSideValidationFail();
+        // Continue with the match
+        actionHandlerCall();
       }
     } else {
       // No Transaction selected
