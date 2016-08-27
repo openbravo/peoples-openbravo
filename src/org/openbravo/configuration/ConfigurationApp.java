@@ -245,10 +245,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
         optionToCange.getOptions(p);
         boolean numberOk = false;
         do {
-          String optionS = null;
-          while (infoCollected.hasNextLine()) {
-            optionS = infoCollected.nextLine();
-          }
+          String optionS = infoCollected.nextLine();
           try {
             int option = Integer.parseInt(optionS);
             if (option >= 0 && option < optionToCange.getMax()) {
@@ -269,10 +266,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
       } else if (optionToCange.getType() == ConfigureOption.TYPE_OPT_STRING) {
         p.log("\nPlease introduce " + optionToCange.getAskInfo());
         optionToCange.getOptions(p);
-        String optionString = null;
-        while (infoCollected.hasNextLine()) {
-          optionString = infoCollected.nextLine();
-        }
+        String optionString = infoCollected.nextLine();
         if (!optionString.equals("")) {
           optionToCange.setChosenString(optionString);
         }
@@ -298,15 +292,10 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
    */
   private void reConfirmExit(Project p) {
     p.log("Do you want to exit this program? [y/n]: ");
-    String input = null;
-    while (agreementLicense.hasNextLine()) {
-      input = agreementLicense.nextLine();
-    }
+    String input = agreementLicense.nextLine();
     while (!("Y".equalsIgnoreCase(input) || "N".equalsIgnoreCase(input))) {
       p.log("Please introduce a correct option. Do you want to exit this program? [y/n]: ");
-      while (agreementLicense.hasNextLine()) {
-        input = agreementLicense.nextLine();
-      }
+      input = agreementLicense.nextLine();
     }
     if ("Y".equalsIgnoreCase(input)) {
       printMessage("You have not successfully completed the configuration process.", p);
@@ -338,8 +327,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
    * ...
    */
   private void changeAnOptionDatabase(Project p) {
-    String optionS = null;
-    String optionString = null;
+    String optionS, optionString;
     int option;
     optionForModify = optionForModify - optionForOpenbravo.size();
     if (!optionOracle.isEmpty()) {
@@ -349,9 +337,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
         optionToChange.getOptions(p);
         boolean numberOk = false;
         do {
-          while (infoCollected.hasNextLine()) {
-            optionS = infoCollected.nextLine();
-          }
+          optionS = infoCollected.nextLine();
           try {
             option = Integer.parseInt(optionS);
             if (option >= 0 && option < optionToChange.getMax()) {
@@ -372,9 +358,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
       } else if (optionToChange.getType() == ConfigureOption.TYPE_OPT_STRING) {
         p.log("\nPlease introduce " + optionToChange.getAskInfo());
         optionToChange.getOptions(p);
-        while (infoCollected.hasNextLine()) {
-          optionString = infoCollected.nextLine();
-        }
+        optionString = infoCollected.nextLine();
         if (!optionString.equals("")) {
           optionToChange.setChosenString(optionString);
         }
@@ -735,15 +719,10 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
    */
   private void acceptLicense(Project p) {
     p.log("Do you accept this license? [y/n]: ");
-    String input = null;
-    while (agreementLicense.hasNextLine()) {
-      input = agreementLicense.nextLine();
-    }
+    String input = agreementLicense.nextLine();
     while (!("Y".equalsIgnoreCase(input) || "N".equalsIgnoreCase(input))) {
       p.log("Please introduce a valid option. Do you accept this license? [y/n]: ");
-      while (agreementLicense.hasNextLine()) {
-        input = agreementLicense.nextLine();
-      }
+      input = agreementLicense.nextLine();
     }
     if ("Y".equalsIgnoreCase(input)) {
       mainFlowOption = MAIN_MENU;
@@ -771,9 +750,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     printMessage("Welcome to the Openbravo ERP Setup Wizard.", p1);
     p1.log("Please read the following License Agreement. You must accept the terms of this\n agreement before continuing with the installation.");
     p1.log("Press [Enter] to continue:");
-    while (inp.hasNextLine()) {
-      inp.nextLine();
-    }
+    inp.nextLine();
     inp.close();
   }
 
@@ -1514,9 +1491,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
         p.log(line);
         if (lineConsole == LINES_SHOWING_LICENSE) {
           p.log("Press [Enter] to continue:");
-          while (in.hasNextLine()) {
-            in.nextLine();
-          }
+          in.nextLine();
           lineConsole = 0;
         }
         lineConsole++;
