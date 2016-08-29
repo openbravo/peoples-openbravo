@@ -1495,7 +1495,7 @@ Please, unpost the reconciliation if you wan to split a bank statement line.]]><
 <!--EF56DCF572A94E6CAFE4F13948268050-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--EF56DCF572A94E6CAFE4F13948268050-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--EF56DCF572A94E6CAFE4F13948268050-->  <VALUE><![CDATA[APRM_SplitBankStatementLineConfirm]]></VALUE>
-<!--EF56DCF572A94E6CAFE4F13948268050-->  <MSGTEXT><![CDATA[Bank statement line and transaction amount does not match. Do you want to perform a partial match?]]></MSGTEXT>
+<!--EF56DCF572A94E6CAFE4F13948268050-->  <MSGTEXT><![CDATA[Bank statement line amount [%0] and transaction amount [%1] does not match. Do you want to perform a partial match?]]></MSGTEXT>
 <!--EF56DCF572A94E6CAFE4F13948268050-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
 <!--EF56DCF572A94E6CAFE4F13948268050-->  <AD_MODULE_ID><![CDATA[A918E3331C404B889D69AA9BFAFB23AC]]></AD_MODULE_ID>
 <!--EF56DCF572A94E6CAFE4F13948268050-->  <ISINCLUDEINI18N><![CDATA[N]]></ISINCLUDEINI18N>
