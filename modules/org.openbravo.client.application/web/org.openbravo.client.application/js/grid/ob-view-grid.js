@@ -1705,8 +1705,9 @@ isc.OBViewGrid.addProperties({
       delete this.isOpenDirectModeLeaf;
     }
 
-    if (this.targetOpenNewEdit) {
+    if (this.targetOpenNewEdit || this.view.deferOpenNewEdit) {
       delete this.targetOpenNewEdit;
+      delete this.view.deferOpenNewEdit;
       // not passing record opens new
       this.view.editRecord();
     } else if (this.targetOpenGrid) {
