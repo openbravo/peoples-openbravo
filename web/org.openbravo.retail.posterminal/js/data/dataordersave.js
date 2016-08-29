@@ -427,7 +427,7 @@
 
                     //this logic executed when all orders are ready to be sent
                     me.context.get('leftColumnViewManager').setOrderMode();
-                    if (me.context.get('orderList').length > _.filter(me.context.get('multiOrders').get('multiOrdersList').models, function (order) {
+                    if (me.context.get('orderList').length === _.filter(me.context.get('multiOrders').get('multiOrdersList').models, function (order) {
                       return !order.get('isLayaway');
                     }).length) {
                       me.context.get('orderList').addNewOrder();

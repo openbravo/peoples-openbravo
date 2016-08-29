@@ -1300,6 +1300,10 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       if (jsonOrderLine.has("obposIsDeleted") && jsonOrderLine.getBoolean("obposIsDeleted")) {
         orderline.setObposQtyDeleted(orderline.getOrderedQuantity());
         orderline.setOrderedQuantity(BigDecimal.ZERO);
+        orderline.setListPrice(BigDecimal.ZERO);
+        orderline.setStandardPrice(BigDecimal.ZERO);
+        orderline.setGrossUnitPrice(BigDecimal.ZERO);
+        orderline.setLineGrossAmount(BigDecimal.ZERO);
       }
       orderline.setLineNetAmount(BigDecimal.valueOf(jsonOrderLine.getDouble("net")).setScale(
           pricePrecision, RoundingMode.HALF_UP));

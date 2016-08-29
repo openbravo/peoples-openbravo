@@ -511,7 +511,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
       function readyToSendFunction() {
         //this function is executed when all orders are ready to be sent
         me.get('leftColumnViewManager').setOrderMode();
-        if (me.get('orderList').length > _.filter(me.get('multiOrders').get('multiOrdersList').models, function (order) {
+        if (me.get('orderList').length === _.filter(me.get('multiOrders').get('multiOrdersList').models, function (order) {
           return !order.get('isLayaway');
         }).length) {
           me.get('orderList').addNewOrder();
