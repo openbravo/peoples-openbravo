@@ -1320,11 +1320,10 @@
         OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_AddLine', [qty ? qty : 1, p.get('_identifier')]));
       }
       if (p.get('ispack')) {
-        OB.Model.Discounts.discountRules[p.get('productCategory')].addProductToOrder(this, p, function (success, orderline) {
-          if (callback) {
-            callback(success, orderline);
-          }
-        });
+        OB.Model.Discounts.discountRules[p.get('productCategory')].addProductToOrder(this, p);
+        if (callback) {
+          callback(true);
+        }
         return;
       }
       if (this.get('orderType') === 1) {
@@ -3156,6 +3155,26 @@
                   promoQtyoffer = promotion.qtyOffer;
 
               _.forEach(linesToApply.models, function (line) {
+
+                var samePromos = [];
+                var qtyOffer = 0;
+                var qtyToCheck = line.get('qty');
+                _.forEach(line.get('promotions'), function (promot) {
+                  if (!promot.applyNext || (promot.hidden !== promotion.hidden && promot.discountType === promotion.discountType)) {
+                    samePromos.push(promot);
+                  }
+                });
+                if (samePromos && samePromos.length > 0) {
+                  _.forEach(samePromos, function (samePromo) {
+                    qtyOffer += samePromo.qtyOffer;
+                  });
+                  if (line.get('qty') - qtyOffer === 0) {
+                    return;
+                  } else if (line.get('qty') - qtyOffer > 0) {
+                    qtyToCheck = line.get('qty') - qtyOffer;
+                  }
+                }
+
                 // If it's not the first execution, there could be some promotions already applied and are set in the groupedorder lines too.
                 if (!isFirstTime) {
                   var actProm, indx;
@@ -3172,13 +3191,13 @@
 
                 var clonedPromotion = JSON.parse(JSON.stringify(promotion));
                 if (promoQtyoffer > 0) {
-                  clonedPromotion.obdiscQtyoffer = (line.get('qty') - promoQtyoffer >= 0) ? promoQtyoffer : line.get('qty');
+                  clonedPromotion.obdiscQtyoffer = (qtyToCheck - promoQtyoffer >= 0) ? promoQtyoffer : qtyToCheck;
                   if (!promotion.hidden) {
                     clonedPromotion.amt = OB.DEC.toNumber(OB.DEC.toBigDecimal(OB.I18N.formatCurrency((promotion.amt * (clonedPromotion.obdiscQtyoffer / promotion.qtyOffer)))));
                     clonedPromotion.fullAmt = OB.DEC.toNumber(OB.DEC.toBigDecimal(OB.I18N.formatCurrency(clonedPromotion.amt)));
                     clonedPromotion.displayedTotalAmount = OB.DEC.toNumber(OB.DEC.toBigDecimal(OB.I18N.formatCurrency((promotion.displayedTotalAmount * (clonedPromotion.obdiscQtyoffer / promotion.qtyOffer)))));
                   } else {
-                    clonedPromotion.amt = undefined;
+                    clonedPromotion.amt = 0;
                   }
                   clonedPromotion.pendingQtyoffer = line.get('qty') - clonedPromotion.obdiscQtyoffer;
                   clonedPromotion.qtyOffer = clonedPromotion.obdiscQtyoffer;
@@ -3223,13 +3242,19 @@
                 var bdSplittedAmount = OB.DEC.toBigDecimal(OB.I18N.formatCurrency(splittedAmount)),
                     bdPromoAmount = OB.DEC.toBigDecimal(OB.I18N.formatCurrency(promotion.amt));
                 if (bdPromoAmount.compareTo(bdSplittedAmount) !== 0) {
-                  var linePromo = _.find(linesToApply.at(0).get('promotions'), function (lp) {
-                    return lp.discountType === promotion.discountType && !lp.hidden;
+                  var linePromo = _.find(linesToApply.map(function (lta) {
+                    return lta.get('promotions').find(function (lp) {
+                      return lp.discountType === promotion.discountType && !lp.hidden;
+                    });
+                  }), function (ltapromo) {
+                    return ltapromo;
                   });
-                  var amount = OB.DEC.toNumber(bdPromoAmount.subtract(bdSplittedAmount).add(OB.DEC.toBigDecimal(OB.I18N.formatCurrency(linePromo.amt))));
-                  linePromo.amt = amount;
-                  linePromo.displayedTotalAmount = amount;
-                  linePromo.fullAmt = amount;
+                  if (linePromo) {
+                    var amount = OB.DEC.toNumber(bdPromoAmount.subtract(bdSplittedAmount).add(OB.DEC.toBigDecimal(OB.I18N.formatCurrency(linePromo.amt))));
+                    linePromo.amt = amount;
+                    linePromo.displayedTotalAmount = amount;
+                    linePromo.fullAmt = amount;
+                  }
                 }
               }
             } else {
