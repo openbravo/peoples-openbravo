@@ -48,6 +48,7 @@ import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.financial.FinancialUtils;
+import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.DocumentType;
@@ -771,5 +772,14 @@ public class CostingUtils {
     }
     qry.setMaxResults(1);
     return StringUtils.equals(trx.getId(), (String) qry.uniqueResult());
+  }
+
+  public static boolean isAllowNegativeStock(Client client) {
+    try {
+      OBContext.setAdminMode(true);
+      return client.getClientInformationList().get(0).isAllowNegativeStock();
+    } finally {
+      OBContext.restorePreviousMode();
+    }
   }
 }
