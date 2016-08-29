@@ -52,8 +52,7 @@ public class CancelAndReplaceSalesOrder extends BaseProcessActionHandler {
       // Get Order to be replaced and cancelled
       Order oldOrder = OBDal.getInstance().get(Order.class, oldOrderId);
 
-      if ("WR".equals(oldOrder.getDocumentType().getSOSubType())
-          || "WP".equals(oldOrder.getDocumentType().getSOSubType())) {
+      if (!"SO".equals(oldOrder.getDocumentType().getSOSubType())) {
         throw new OBException("@CancelAndReplaceNotAllowedForWRWP@");
       }
 
