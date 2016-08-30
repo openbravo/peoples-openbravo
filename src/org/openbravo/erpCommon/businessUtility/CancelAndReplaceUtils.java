@@ -945,7 +945,7 @@ public class CancelAndReplaceUtils {
               OBDal.getInstance().get(Organization.class, oldOrder.getOrganization().getId()))) {
         financialAccount = oldOrder.getBusinessPartner().getAccount();
       } else {
-        financialAccount = FIN_Utility.getFinancialAccountPaymentMethodByOrganization(
+        financialAccount = FIN_Utility.getFinancialAccountPaymentMethod(
             paymentPaymentMethod.getId(), null, true, oldOrder.getCurrency().getId(),
             oldOrder.getOrganization().getId()).getAccount();
       }
@@ -999,7 +999,7 @@ public class CancelAndReplaceUtils {
       paymentSchedule.setOrganization(order.getOrganization());
       paymentSchedule.setCurrency(order.getCurrency());
       paymentSchedule.setOrder(order);
-      paymentSchedule.setFinPaymentmethod(order.getBusinessPartner().getPaymentMethod());
+      paymentSchedule.setFinPaymentmethod(order.getPaymentMethod());
       paymentSchedule.setAmount(amount);
       paymentSchedule.setOutstandingAmount(amount);
       paymentSchedule.setDueDate(order.getOrderDate());
