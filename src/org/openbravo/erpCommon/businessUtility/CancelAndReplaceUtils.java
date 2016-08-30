@@ -88,7 +88,7 @@ public class CancelAndReplaceUtils {
   private static OrganizationStructureProvider osp = null;
 
   /**
-   * Process that creates a replacement order in temporal status in order to Cancel and Replace an
+   * Process that creates a replacement order in temporary status in order to Cancel and Replace an
    * original order
    * 
    * @param oldOrder

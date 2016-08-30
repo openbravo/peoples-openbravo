@@ -110,18 +110,20 @@ public class CancelAndReplaceTest extends WeldBaseTest {
       new CancelAndReplaceTestData7(), new CancelAndReplaceTestData8(),
       new CancelAndReplaceTestData9(), new CancelAndReplaceTestData10());
 
-  /** defines the values the parameter will take. */
+  /** Defines the values the parameter will take. */
   @Rule
   public ParameterCdiTestRule<CancelAndReplaceTestData> parameterValuesRule = new ParameterCdiTestRule<CancelAndReplaceTestData>(
       PARAMS);
 
-  /** this field will take the values defined by parameterValuesRule field. */
+  /** This field will take the values defined by parameterValuesRule field. */
   private @ParameterCdiTest
   CancelAndReplaceTestData parameter;
 
   /**
-   * Verifies price computation for services. Add a relation line, update it and delete it. Review
-   * price computation for the service is correct
+   * Verifies Cancel and Replace functionality API. Clone and existing Order. Click on Cancel and
+   * Replace process that will create a new Order in temporary status. Update the Order depending on
+   * the test executed and finally confirm this order. Different check points have been added in
+   * each stage to verify the results of the processes.
    */
   @Test
   public void CancelAndReplaceTests() {
@@ -227,7 +229,7 @@ public class CancelAndReplaceTest extends WeldBaseTest {
       log.debug("New order Created:" + newOrder.getDocumentNo());
       log.debug(parameter.getTestDescription());
 
-      // Set Quantity to the orderline of the new order in Temporal Status
+      // Set Quantity to the orderline of the new order in temporary Status
       orderLine = newOrder.getOrderLineList().get(0);
       orderLine.setOrderedQuantity(parameter.getQuantity());
       OBDal.getInstance().save(orderLine);
