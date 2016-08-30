@@ -160,11 +160,9 @@ public class CancelAndReplaceTest extends WeldBaseTest {
       OBDal.getInstance().flush();
       OBDal.getInstance().refresh(oldOrder);
 
-      ShipmentInOut oldShipment = null;
-
       // Deliver old order if the test is for fully or partially delivered orders
       if (parameter.getOldOrderDeliveredQuantity().compareTo(BigDecimal.ZERO) != 0) {
-        oldShipment = createShipment(oldOrder, oldOrderLine, parameter);
+        createShipment(oldOrder, oldOrderLine, parameter);
       }
 
       OBDal.getInstance().refresh(oldOrderLine);
