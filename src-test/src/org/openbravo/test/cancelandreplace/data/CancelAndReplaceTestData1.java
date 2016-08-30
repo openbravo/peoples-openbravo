@@ -38,11 +38,11 @@ public class CancelAndReplaceTestData1 extends CancelAndReplaceTestData {
     setInverseOrderStatus("CL");
     setOldOrderReceivedPayment(new BigDecimal("4.14"));
     setInverseOrderReceivedPayment(new BigDecimal("-4.14"));
-    setNewOrderReceivedPayment(new BigDecimal("0.00"));
-    setOldOrderOutstandingPayment(new BigDecimal("0.00"));
-    setInverseOrderOutstandingPayment(new BigDecimal("0.00"));
+    setNewOrderReceivedPayment(BigDecimal.ZERO);
+    setOldOrderOutstandingPayment(BigDecimal.ZERO);
+    setInverseOrderOutstandingPayment(BigDecimal.ZERO);
     setNewOrderOutstandingPayment(new BigDecimal("4.14"));
-    setOldOrderPreviouslyPaidAmount(new BigDecimal("0.00"));
+    setOldOrderPreviouslyPaidAmount(BigDecimal.ZERO);
     setActivateNettingGoodsShipmentPref(false);
     setActivateAssociateNettingGoodsShipmentPref(false);
     setOldOrderLineDeliveredQuantity(new BigDecimal("2"));

@@ -57,6 +57,7 @@ import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.common.plm.AttributeSetInstance;
 import org.openbravo.model.common.plm.Product;
+import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentSchedule;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
@@ -149,6 +150,7 @@ public class CancelAndReplaceTest extends WeldBaseTest {
       oldOrderLine.setDeliveredQuantity(BigDecimal.ZERO);
       oldOrderLine.setInvoicedQuantity(BigDecimal.ZERO);
       oldOrderLine.setSalesOrder(oldOrder);
+      oldOrderLine.setReplacedorderline(null);
       OBDal.getInstance().save(oldOrderLine);
 
       OBDal.getInstance().flush();
@@ -432,13 +434,23 @@ public class CancelAndReplaceTest extends WeldBaseTest {
     paymentScheduleDetailAmount.put(paymentScheduleDetailId,
         parameter.getOldOrderPreviouslyPaidAmount());
 
+    FIN_FinancialAccount financialAccount = null;
+
+    if (oldOrder.getBusinessPartner().getAccount() != null) {
+      financialAccount = oldOrder.getBusinessPartner().getAccount();
+    } else {
+      financialAccount = FIN_Utility.getFinancialAccountPaymentMethod(
+          oldOrder.getPaymentMethod().getId(), null, true, oldOrder.getCurrency().getId(),
+          oldOrder.getOrganization().getId()).getAccount();
+    }
+
     // Create the payment
     FIN_Payment newPayment = FIN_AddPayment.savePayment(null, true, documentType,
-        strPaymentDocumentNo, oldOrder.getBusinessPartner(), oldOrder.getPaymentMethod(), oldOrder
-            .getBusinessPartner().getAccount(), parameter.getOldOrderPreviouslyPaidAmount()
-            .toPlainString(), oldOrder.getOrderDate(), oldOrder.getOrganization(), null,
-        paymentScheduleDetailList, paymentScheduleDetailAmount, false, false, oldOrder
-            .getCurrency(), BigDecimal.ZERO, BigDecimal.ZERO);
+        strPaymentDocumentNo, oldOrder.getBusinessPartner(), oldOrder.getPaymentMethod(),
+        financialAccount, parameter.getOldOrderPreviouslyPaidAmount().toPlainString(),
+        oldOrder.getOrderDate(), oldOrder.getOrganization(), null, paymentScheduleDetailList,
+        paymentScheduleDetailAmount, false, false, oldOrder.getCurrency(), BigDecimal.ZERO,
+        BigDecimal.ZERO);
 
     // Process the payment
     FIN_PaymentProcess.doProcessPayment(newPayment, "P", true, null, null);

@@ -30,7 +30,7 @@ public class CancelAndReplaceTestData7 extends CancelAndReplaceTestData {
     setBpartnerId(BP_CUSTOMER_A);
     setQuantity(new BigDecimal("2"));
     setOldOrderDeliveredQuantity(new BigDecimal("2"));
-    setOldOrderPreviouslyPaidAmount(new BigDecimal("0.00"));
+    setOldOrderPreviouslyPaidAmount(BigDecimal.ZERO);
     setOldOrderTotalAmount(new BigDecimal("4.14"));
     setInverseOrderTotalAmount(new BigDecimal("-4.14"));
     setNewOrderTotalAmount(new BigDecimal("4.14"));
@@ -39,9 +39,9 @@ public class CancelAndReplaceTestData7 extends CancelAndReplaceTestData {
     setInverseOrderStatus("CL");
     setOldOrderReceivedPayment(new BigDecimal("4.14"));
     setInverseOrderReceivedPayment(new BigDecimal("-4.14"));
-    setNewOrderReceivedPayment(new BigDecimal("0.00"));
-    setOldOrderOutstandingPayment(new BigDecimal("0.00"));
-    setInverseOrderOutstandingPayment(new BigDecimal("0.00"));
+    setNewOrderReceivedPayment(BigDecimal.ZERO);
+    setOldOrderOutstandingPayment(BigDecimal.ZERO);
+    setInverseOrderOutstandingPayment(BigDecimal.ZERO);
     setNewOrderOutstandingPayment(new BigDecimal("4.14"));
     setActivateNettingGoodsShipmentPref(true);
     setActivateAssociateNettingGoodsShipmentPref(false);

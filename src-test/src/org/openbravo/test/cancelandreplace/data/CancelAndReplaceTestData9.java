@@ -42,7 +42,7 @@ public class CancelAndReplaceTestData9 extends CancelAndReplaceTestData {
     setOldOrderOutstandingPayment(BigDecimal.ZERO);
     setInverseOrderOutstandingPayment(BigDecimal.ZERO);
     setNewOrderOutstandingPayment(new BigDecimal("2.07"));
-    setOldOrderPreviouslyPaidAmount(new BigDecimal("0.00"));
+    setOldOrderPreviouslyPaidAmount(BigDecimal.ZERO);
     setActivateNettingGoodsShipmentPref(false);
     setActivateAssociateNettingGoodsShipmentPref(true);
     setOldOrderLineDeliveredQuantity(new BigDecimal("2"));
