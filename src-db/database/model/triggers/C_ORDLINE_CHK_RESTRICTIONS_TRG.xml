@@ -101,6 +101,9 @@ BEGIN
     IF (v_Processed='Y' and v_Docaction<> 'CL') THEN
     RAISE_APPLICATION_ERROR(-20000, '@20501@') ;
   END IF;
+  IF (COALESCE(:OLD.REPLACEDORDERLINE_ID, '0') IS NOT NULL) THEN
+      RAISE_APPLICATION_ERROR(-20000, '@CannotDeleteReplacementOrderLine@') ;
+    END IF;
   END IF;
   IF (INSERTING OR UPDATING) THEN
     IF (:NEW.m_product_id IS NOT NULL) THEN

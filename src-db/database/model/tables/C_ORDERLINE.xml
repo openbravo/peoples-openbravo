@@ -354,9 +354,6 @@
       <foreign-key foreignTable="C_ORDERLINE" name="C_ORDERLINE_QUOTATION">
         <reference local="QUOTATIONLINE_ID" foreign="C_ORDERLINE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_ORDERLINE" name="C_ORDERLINE_REPLACEDORDERLINE">
-        <reference local="REPLACEDORDERLINE_ID" foreign="C_ORDERLINE_ID"/>
-      </foreign-key>
       <foreign-key foreignTable="S_RESOURCEASSIGNMENT" name="C_ORDERLINE_S_RESOURCEASSIGNME">
         <reference local="S_RESOURCEASSIGNMENT_ID" foreign="S_RESOURCEASSIGNMENT_ID"/>
       </foreign-key>

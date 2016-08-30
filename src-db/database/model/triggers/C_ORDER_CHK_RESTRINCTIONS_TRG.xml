@@ -68,6 +68,9 @@ BEGIN
     IF :OLD.Processed='Y' THEN
       RAISE_APPLICATION_ERROR(-20000, '@20501@') ;
     END IF;
+    IF (COALESCE(:OLD.replacedorder_id, '0') IS NOT NULL OR COALESCE(:OLD.replacedorder_id, '0') IS NOT NULL) THEN
+      RAISE_APPLICATION_ERROR(-20000, '@CannotDeleteReplacementOrder@') ;
+    END IF;
   END IF;
   IF(INSERTING) THEN
     IF :NEW.Processed='Y' THEN
