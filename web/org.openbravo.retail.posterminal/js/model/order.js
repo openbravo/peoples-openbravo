@@ -3895,11 +3895,11 @@
                   price = OB.DEC.number(iter.baseNetUnitPrice);
                 }
 
-                if (!iter.remainingQuantity) {
+                if (!iter.deliveredQuantity) {
                   hasNotDeliveredProducts = true;
                 } else {
                   hasDeliveredProducts = true;
-                  if (iter.remainingQuantity < iter.quantity) {
+                  if (iter.deliveredQuantity < iter.quantity) {
                     hasNotDeliveredProducts = true;
                   }
                 }
@@ -3931,9 +3931,9 @@
               if (order.get('isPartiallyDelivered')) {
                 var partiallyPaid = 0;
                 _.each(_.filter(order.get('receiptLines'), function (reciptLine) {
-                  return reciptLine.remainingQuantity;
+                  return reciptLine.deliveredQuantity;
                 }), function (deliveredLine) {
-                  partiallyPaid += deliveredLine.remainingQuantity * deliveredLine.unitPrice;
+                  partiallyPaid += deliveredLine.deliveredQuantity * deliveredLine.unitPrice;
                 });
                 if (partiallyPaid) {
                   order.set('deliveredQuantityAmount', partiallyPaid);
