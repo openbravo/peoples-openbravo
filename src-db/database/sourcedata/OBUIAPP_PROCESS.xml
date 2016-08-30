@@ -440,7 +440,7 @@ Sets all transactions prior to the reference date as permanently adjusted.]]></H
 <!--A2FAF49712D1445ABE750315CE1B473A-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--A2FAF49712D1445ABE750315CE1B473A-->  <VALUE><![CDATA[CancelAndReplaceSalesOrder]]></VALUE>
 <!--A2FAF49712D1445ABE750315CE1B473A-->  <NAME><![CDATA[Cancel and Replace Sales Order]]></NAME>
-<!--A2FAF49712D1445ABE750315CE1B473A-->  <HELP><![CDATA[This process action will open a copy of the current row in edit mode. After changing the desired values press Confirm Candel And Replace in order to create a copy of the opened Sales Order but with negative quantities and complete it. Aftewards the process will create a new Sales Order with the new values.]]></HELP>
+<!--A2FAF49712D1445ABE750315CE1B473A-->  <HELP><![CDATA[This process action will open a copy of the current row in edit mode. After changing the desired values press Confirm Cancel And Replace in order to create a copy of the opened Sales Order but with negative quantities and complete it. Afterwards the process will create a new Sales Order with the new values.]]></HELP>
 <!--A2FAF49712D1445ABE750315CE1B473A-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
 <!--A2FAF49712D1445ABE750315CE1B473A-->  <CLASSNAME><![CDATA[org.openbravo.common.actionhandler.CancelAndReplaceSalesOrder]]></CLASSNAME>
 <!--A2FAF49712D1445ABE750315CE1B473A-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>

@@ -21751,7 +21751,7 @@ You can upgrade the license of your instance by contacting Openbravo sales staff
 <!--7D94044078BF4910AEE38AA1A88FE8C2-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--7D94044078BF4910AEE38AA1A88FE8C2-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--7D94044078BF4910AEE38AA1A88FE8C2-->  <VALUE><![CDATA[CannotOrderLessThanDeliveredInCancelReplace]]></VALUE>
-<!--7D94044078BF4910AEE38AA1A88FE8C2-->  <MSGTEXT><![CDATA[Cannot order less than delivered in the original line that is being replaced.]]></MSGTEXT>
+<!--7D94044078BF4910AEE38AA1A88FE8C2-->  <MSGTEXT><![CDATA[Cannot order less quantity than delivered in the original line being replaced.]]></MSGTEXT>
 <!--7D94044078BF4910AEE38AA1A88FE8C2-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--7D94044078BF4910AEE38AA1A88FE8C2-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--7D94044078BF4910AEE38AA1A88FE8C2-->  <ISINCLUDEINI18N><![CDATA[Y]]></ISINCLUDEINI18N>
