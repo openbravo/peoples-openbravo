@@ -764,18 +764,26 @@ enyo.kind({
   },
   i18nLabel: 'OBPOS_LblPaidReceipts',
   tap: function () {
+    var me = this;
+    var connectedCallback = function () {
+        if (OB.MobileApp.model.hasPermission(me.permission)) {
+          me.doPaidReceipts({
+            isQuotation: false
+          });
+        }
+        };
+    var notConnectedCallback = function () {
+        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_OfflineWindowRequiresOnline'));
+        return;
+        };
     if (this.disabled) {
       return true;
     }
     this.inherited(arguments); // Manual dropdown menu closure
     if (!OB.MobileApp.model.get('connectedToERP')) {
-      OB.UTIL.showError(OB.I18N.getLabel('OBPOS_OfflineWindowRequiresOnline'));
-      return;
-    }
-    if (OB.MobileApp.model.hasPermission(this.permission)) {
-      this.doPaidReceipts({
-        isQuotation: false
-      });
+      OB.UTIL.checkOffLineConnectivity(500, connectedCallback, notConnectedCallback);
+    } else {
+      connectedCallback();
     }
   }
 });
@@ -789,16 +797,24 @@ enyo.kind({
   },
   i18nLabel: 'OBPOS_Quotations',
   tap: function () {
+    var me = this;
+    var connectedCallback = function () {
+        if (OB.MobileApp.model.hasPermission(me.permission)) {
+          me.doQuotations();
+        }
+        };
+    var notConnectedCallback = function () {
+        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_OfflineWindowRequiresOnline'));
+        return;
+        };
     if (this.disabled) {
       return true;
     }
     this.inherited(arguments); // Manual dropdown menu closure
     if (!OB.MobileApp.model.get('connectedToERP')) {
-      OB.UTIL.showError(OB.I18N.getLabel('OBPOS_OfflineWindowRequiresOnline'));
-      return;
-    }
-    if (OB.MobileApp.model.hasPermission(this.permission)) {
-      this.doQuotations();
+      OB.UTIL.checkOffLineConnectivity(500, connectedCallback, notConnectedCallback);
+    } else {
+      connectedCallback();
     }
   }
 });
@@ -812,16 +828,24 @@ enyo.kind({
   },
   i18nLabel: 'OBPOS_LblLayaways',
   tap: function () {
+    var me = this;
+    var connectedCallback = function () {
+        if (OB.MobileApp.model.hasPermission(me.permission)) {
+          me.doLayaways();
+        }
+        };
+    var notConnectedCallback = function () {
+        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_OfflineWindowRequiresOnline'));
+        return;
+        };
     if (this.disabled) {
       return true;
     }
     this.inherited(arguments); // Manual dropdown menu closure
     if (!OB.MobileApp.model.get('connectedToERP')) {
-      OB.UTIL.showError(OB.I18N.getLabel('OBPOS_OfflineWindowRequiresOnline'));
-      return;
-    }
-    if (OB.MobileApp.model.hasPermission(this.permission)) {
-      this.doLayaways();
+      OB.UTIL.checkOffLineConnectivity(500, connectedCallback, notConnectedCallback);
+    } else {
+      connectedCallback();
     }
   }
 });
