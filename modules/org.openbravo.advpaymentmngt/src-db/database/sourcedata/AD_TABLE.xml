@@ -254,6 +254,7 @@ left join e.gLItem as gl
 left join e.finPayment fp
 @joinClause@
 where @additional_filters@
+and e.processed = 'Y'
 and @whereclause@]]></HQLQUERY>
 <!--D56CF1065EF14D52ADAD2AAB0CB63EFC-->  <ENTITY_ALIAS><![CDATA[e]]></ENTITY_ALIAS>
 <!--D56CF1065EF14D52ADAD2AAB0CB63EFC--></AD_TABLE>
