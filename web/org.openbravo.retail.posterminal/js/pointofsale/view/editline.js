@@ -584,7 +584,7 @@ enyo.kind({
       if (!this.selectedModels || this.selectedModels.length <= 1) {
         if (this.model.get('order').get('isEditable')) {
           this.$.actionButtonsContainer.$.descriptionButton.show();
-          var showSplitBtn = line && line.get('qty') > 1 && line.get('product').get('productType') !== 'S' && !_.find(this.model.get('order').get('lines').models, function (l) {
+          var showSplitBtn = line && line.get('qty') > 1 && line.get('product').get('productType') !== 'S' && (!line.get('remainingQuantity') || line.get('remainingQuantity') < line.get('qty')) && !_.find(this.model.get('order').get('lines').models, function (l) {
             return l.get('relatedLines') && _.find(l.get('relatedLines'), function (rl) {
               return rl.orderlineId === line.id;
             }) !== undefined;

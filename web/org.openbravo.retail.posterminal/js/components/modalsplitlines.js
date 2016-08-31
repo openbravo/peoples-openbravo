@@ -55,6 +55,11 @@ enyo.kind({
   initComponents: function () {
     this.inherited(arguments);
     this.$.numberQty.setNumberId(this.name);
+    if (this.isDisabled) {
+      this.$.btnQtyMinus.setDisabled(true);
+      this.$.numberQty.setDisabled(true);
+      this.$.btnQtyPlus.setDisabled(true);
+    }
   }
 });
 
@@ -66,20 +71,21 @@ enyo.kind({
     this.inherited(arguments);
     this.lines = [];
   },
-  createLine: function (qty) {
+  createLine: function (qty, deliveredLine) {
     var lineNum = this.lines.length,
         line = this.createComponent({
         classes: 'split-line',
         components: [{
           classes: 'splitline-line-label',
           name: 'lineNum_' + lineNum,
-          content: OB.I18N.getLabel('OBPOS_lblSplitLinesQty', [lineNum + 1])
+          content: (deliveredLine ? OB.I18N.getLabel('OBPOS_lblSplitLinesQtyDelivered', [lineNum + 1]) : OB.I18N.getLabel('OBPOS_lblSplitLinesQty', [lineNum + 1]))
         }, {
           classes: 'splitline-line-editors',
           components: [{
             kind: 'OB.UI.ModalNumberEditor',
             name: 'qty_' + lineNum,
-            classes: 'float-left'
+            classes: 'float-left',
+            isDisabled: deliveredLine
           }, {
             kind: 'OB.UI.SmallButton',
             name: 'btnRemove_' + lineNum,
@@ -88,7 +94,8 @@ enyo.kind({
             content: 'x',
             tap: function () {
               this.owner.removeLine(this.lineNum, true);
-            }
+            },
+            disabled: deliveredLine
           }]
         }]
       });
@@ -99,7 +106,11 @@ enyo.kind({
   setValues: function (values) {
     var i;
     for (i = 0; i < values.length && i < this.lines.length; i++) {
-      this.lines[i].owner.$['qty_' + i].$.numberQty.setValue(values[i]);
+      if (values[i] instanceof Object) {
+        this.lines[i].owner.$['qty_' + i].$.numberQty.setValue(values[i].qty);
+      } else {
+        this.lines[i].owner.$['qty_' + i].$.numberQty.setValue(values[i]);
+      }
     }
   },
   getValues: function () {
@@ -307,7 +318,11 @@ enyo.kind({
     this.$.bodyContent.$.numberlinesQtyMobile.$.numberQty.setMax(mobileMaxRows);
     this.$.bodyContent.$.qtyLines.removeAllLine();
     _.each(this.getSplitProposal(), function (qty) {
-      this.$.bodyContent.$.qtyLines.createLine(qty);
+      if (qty instanceof Object) {
+        this.$.bodyContent.$.qtyLines.createLine(qty.qty, true);
+      } else {
+        this.$.bodyContent.$.qtyLines.createLine(qty);
+      }
     }, this);
     this.updateDifference();
     this.modified = false;
@@ -456,17 +471,40 @@ enyo.kind({
         proposal = [],
         qty = this.orderline.get('qty'),
         lines = parseInt(this.$.bodyContent.$.numberlinesQty.$.numberQty.getValue(), 10),
-        proposed = Math.floor(qty / lines);
+        proposed = Math.floor(qty / lines),
+        remainingQuantity = this.orderline.get('remainingQuantity');
     if (proposed < 1) {
       proposed = 1;
     }
-    for (i = 0; i < lines; i++) {
-      sum += proposed;
-      proposal.push(proposed);
-    }
-    for (i = 0; i < lines && sum < qty; i++) {
-      sum++;
-      proposal[i]++;
+    if (remainingQuantity) {
+      proposal.push({
+        qty: remainingQuantity,
+        delivered: true
+      });
+      sum += remainingQuantity;
+
+      proposed = Math.floor((qty - remainingQuantity) / lines);
+      if (proposed < 1) {
+        proposed = 1;
+      }
+
+      for (i = 1; i < lines; i++) {
+        sum += proposed;
+        proposal.push(proposed);
+      }
+      for (i = 1; i < lines && sum < qty; i++) {
+        sum++;
+        proposal[i]++;
+      }
+    } else {
+      for (i = 0; i < lines; i++) {
+        sum += proposed;
+        proposal.push(proposed);
+      }
+      for (i = 0; i < lines && sum < qty; i++) {
+        sum++;
+        proposal[i]++;
+      }
     }
     return proposal;
   },
