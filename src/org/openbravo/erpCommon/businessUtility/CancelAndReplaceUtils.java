@@ -81,11 +81,9 @@ import org.openbravo.service.db.DbUtility;
 
 public class CancelAndReplaceUtils {
   private static Logger log4j = Logger.getLogger(CancelAndReplaceUtils.class);
-  private static Date today = null;
   private static final BigDecimal NEGATIVE_ONE = new BigDecimal(-1);
   public static final String CREATE_NETTING_SHIPMENT = "CancelAndReplaceCreateNetShipment";
   public static final String ASSOCIATE_SHIPMENT_TO_REPLACE_TICKET = "CancelAndReplaceAssociateShipmentToNewTicket";
-  private static OrganizationStructureProvider osp = null;
   public static String REVERSE_PREFIX = "*R*";
 
   /**
@@ -106,7 +104,7 @@ public class CancelAndReplaceUtils {
     newOrder.setDocumentAction("CO");
     newOrder.setGrandTotalAmount(BigDecimal.ZERO);
     newOrder.setSummedLineAmount(BigDecimal.ZERO);
-    today = new Date();
+    Date today = new Date();
     newOrder.setOrderDate(today);
     newOrder.setReplacedorder(oldOrder);
     String newDocumentNo = CancelAndReplaceUtils.getNextCancelDocNo(oldOrder.getDocumentNo());
@@ -189,11 +187,6 @@ public class CancelAndReplaceUtils {
       if (jsonorder == null && oldOrder.isCancelled()) {
         throw new OBException("@APRM_Order@ " + oldOrder.getDocumentNo() + " @IsCancelled@");
       }
-
-      today = new Date();
-
-      osp = OBContext.getOBContext().getOrganizationStructureProvider(
-          oldOrder.getOrganization().getClient().getId());
 
       // Release old reservations
       releaseOldReservations(oldOrder);
@@ -429,6 +422,7 @@ public class CancelAndReplaceUtils {
       inverseOrder.setSummedLineAmount(BigDecimal.ZERO);
     }
 
+    Date today = new Date();
     inverseOrder.setOrderDate(OBDateUtils.getDate(OBDateUtils.formatDate(today)));
     inverseOrder.setCreationDate(today);
     inverseOrder.setUpdated(today);
@@ -540,6 +534,8 @@ public class CancelAndReplaceUtils {
   protected static ShipmentInOut createShipment(Order oldOrder,
       List<ShipmentInOutLine> goodsShipmentLineList) {
     ShipmentInOut nettingGoodsShipment = null;
+    OrganizationStructureProvider osp = OBContext.getOBContext().getOrganizationStructureProvider(
+        oldOrder.getOrganization().getClient().getId());
     // if (goodsShipmentLineList != null && goodsShipmentLineList.size() == 0) {
     if (goodsShipmentLineList.size() == 0) {
       // Create new Shipment
@@ -583,6 +579,7 @@ public class CancelAndReplaceUtils {
       nettingGoodsShipment = (ShipmentInOut) DalUtil.copy(goodsShipmentLineList.get(0)
           .getShipmentReceipt(), false, true);
     }
+    Date today = new Date();
     nettingGoodsShipment.setMovementDate(today);
     nettingGoodsShipment.setAccountingDate(today);
     nettingGoodsShipment.setSalesOrder(null);
@@ -931,6 +928,8 @@ public class CancelAndReplaceUtils {
     String paymentDocumentNo = null;
     FIN_PaymentMethod paymentPaymentMethod = null;
     FIN_FinancialAccount financialAccount = null;
+    OrganizationStructureProvider osp = OBContext.getOBContext().getOrganizationStructureProvider(
+        oldOrder.getOrganization().getClient().getId());
     if (jsonorder != null) {
       paymentPaymentMethod = (FIN_PaymentMethod) jsonorder.getJSONObject("defaultPaymentType").get(
           "paymentMethod");
