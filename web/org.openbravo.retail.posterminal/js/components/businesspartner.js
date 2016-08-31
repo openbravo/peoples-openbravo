@@ -569,7 +569,7 @@ enyo.kind({
         criteria._limit = OB.DEC.abs(OB.MobileApp.model.hasPermission('OBPOS_customerLimit', true));
       }
       if (inEvent.orderby && ((inEvent.orderby.isLocationFilter && hasLocation) || !inEvent.orderby.isLocationFilter)) {
-        criteria._orderByClause = inEvent.orderby.column + ' ' + inEvent.orderby.direction;
+        criteria._orderByClause = inEvent.orderby.serverColumn + ' ' + inEvent.orderby.direction;
       }
       OB.Dal.find(OB.Model.BPartnerFilter, criteria, successCallbackBPs, errorCallback, this);
     } else {
