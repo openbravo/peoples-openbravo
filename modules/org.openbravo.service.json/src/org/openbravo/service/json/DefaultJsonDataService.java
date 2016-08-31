@@ -312,6 +312,18 @@ public class DefaultJsonDataService implements JsonDataService {
     }
   }
 
+  /**
+   * Used on requests received from pick and execute windows in order to avoid losing the selection.
+   * It checks if the request has a criteria that contains the selected records. In that case, if
+   * the amount of selected records is higher than the page size, then the end row is increased so
+   * that all the selected records can be returned within the same page.
+   * 
+   * @param parameters
+   *          map of request parameters
+   * @param startRowStr
+   *          start row of the page
+   * @return the new value for the end row
+   */
   private String getEndRowForSelectedRecords(Map<String, String> parameters, String startRowStr) {
     String endRowStr = parameters.get(JsonConstants.ENDROW_PARAMETER);
     if (startRowStr == null || endRowStr == null) {
@@ -326,6 +338,23 @@ public class DefaultJsonDataService implements JsonDataService {
     return endRowStr;
   }
 
+  /**
+   * Used on requests received from pick and execute windows in order to avoid losing the selection.
+   * It is used when the request does not contain information about the selected records. In that
+   * case, this method decides if the query should be done again with a higher page size, according
+   * to the the selection status of the last record returned by the database query and the current
+   * page size.
+   * 
+   * @param parameters
+   *          map of request parameters
+   * @param bobs
+   *          list of objects returned by the database query
+   * @param startRowStr
+   *          start row of the page
+   * @param endRowStr
+   *          end row of the page
+   * @return true if the page size should be increased, false otherwise
+   */
   private boolean shouldIncreasePageSize(Map<String, String> parameters, List<BaseOBObject> bobs,
       String startRowStr, String endRowStr) {
     if (startRowStr == null || endRowStr == null) {
