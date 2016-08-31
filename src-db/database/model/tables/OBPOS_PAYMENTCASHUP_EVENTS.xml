@@ -80,6 +80,9 @@
       <foreign-key foreignTable="FIN_FINACC_TRANSACTION" name="OBPOS_CASHUP_EVENTS_RLT_TRANS">
         <reference local="RELATED_TRANSACTION_ID" foreign="FIN_FINACC_TRANSACTION_ID"/>
       </foreign-key>
+      <index name="OBPOS_PCEV_PMCASHUP_IDX" unique="false">
+        <index-column name="OBPOS_PAYMENTMETHODCASHUP_ID"/>
+      </index>
       <check name="OBPOS_CASHUP_EVENTS_ISACT_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>
