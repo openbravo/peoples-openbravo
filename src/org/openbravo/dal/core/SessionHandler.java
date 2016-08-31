@@ -40,6 +40,7 @@ import org.openbravo.base.structure.Identifiable;
 import org.openbravo.base.util.Check;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ExternalConnectionPool;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.database.SessionInfo;
 import org.openbravo.service.db.DbUtility;
 
@@ -163,6 +164,26 @@ public class SessionHandler implements OBNotSingleton {
     } else {
       return sf.openSession();
     }
+  }
+
+  /**
+   * Returns true when the current SessionHandler has a transaction and it is active.
+   */
+  public boolean isCurrentTransactionActive() {
+    return tx != null && tx.isActive();
+  }
+
+  /**
+   * Begins a new Transaction on the current HibernateSession and assigns it to the SessionHandler.
+   * 
+   * @throws OBException
+   *           if there is already an available active transaction.
+   */
+  public void beginNewTransaction() throws OBException {
+    if (isCurrentTransactionActive()) {
+      throw new OBException(OBMessageUtils.messageBD("NewTrxCreationCheck"));
+    }
+    tx = getSession().beginTransaction();
   }
 
   /** Gets a new {@code Connection} from the connection pool. */
