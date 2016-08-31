@@ -143,11 +143,37 @@ public class CancelAndReplaceUtils {
     return newOrder;
   }
 
+  /**
+   * Method that given an Order Id it cancels it and creates another one equal but with negative
+   * quantities.
+   * 
+   * @param newOrderId
+   *          Id of the Sales Order to be cancelled.
+   * @param jsonorder
+   *          Parameter with order information coming from Web POS.
+   * @param useOrderDocumentNoForRelatedDocs
+   *          flag coming from Web POS. If it is true, it will set the same document of the order to
+   *          netting payment.
+   * @return
+   */
   public static Order cancelOrder(String newOrderId, JSONObject jsonorder,
       boolean useOrderDocumentNoForRelatedDocs) {
     return cancelAndReplaceOrder(newOrderId, jsonorder, useOrderDocumentNoForRelatedDocs, false);
   }
 
+  /**
+   * * Method that given an Order Id it cancels it and creates another one equal but with negative
+   * quantities. It also creates a new order replacing the cancelled one.
+   * 
+   * @param newOrderId
+   *          Id of the Sales Order to be cancelled.
+   * @param jsonorder
+   *          Parameter with order information coming from Web POS
+   * @param useOrderDocumentNoForRelatedDocs
+   *          . flag coming from Web POS. If it is true, it will set the same document of the order
+   *          to netting payment.
+   * @return
+   */
   public static Order cancelAndReplaceOrder(String newOrderId, JSONObject jsonorder,
       boolean useOrderDocumentNoForRelatedDocs) {
     return cancelAndReplaceOrder(newOrderId, jsonorder, useOrderDocumentNoForRelatedDocs, true);
@@ -772,6 +798,19 @@ public class CancelAndReplaceUtils {
     return orderLines;
   }
 
+  /**
+   * This method creates an M_TRANSACTION record for a given M_INOUT_LINE. This is done because
+   * M_INOUT_POST is not executed for a Netting Shipment, so material transactions needs to be
+   * created manually. If triggers are disabled, as it happens when the process is executed from Web
+   * POS it is necessary to manually update the stock running M_UPDATE_INVENTORY stored procedure.
+   * 
+   * @param line
+   *          Shipment Line related to the transaction.
+   * @param updateStockStatement
+   *          M_UPDATE_INVENTORY callable statement.
+   * @param triggersDisabled
+   *          Flag that tells if triggers are disabled or not while executing this method.
+   */
   protected static void createMTransaction(ShipmentInOutLine line,
       CallableStatement updateStockStatement, boolean triggersDisabled) {
     Product prod = line.getProduct();
@@ -813,6 +852,14 @@ public class CancelAndReplaceUtils {
     }
   }
 
+  /**
+   * Method that updates the inventory based on an M_TRANSACTION record.
+   * 
+   * @param transaction
+   *          The transaction that triggers the update of the inventory.
+   * @param updateStockStatement
+   *          The query to be executed.
+   */
   protected static void updateInventory(MaterialTransaction transaction,
       CallableStatement updateStockStatement) {
     try {
