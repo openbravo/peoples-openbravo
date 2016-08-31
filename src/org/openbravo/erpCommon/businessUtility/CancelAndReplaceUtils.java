@@ -314,11 +314,7 @@ public class CancelAndReplaceUtils {
 
           if (replaceOrder) {
             // Get the the new order line that replaces the old order line, should be only one
-            OBCriteria<OrderLine> olc = OBDal.getInstance().createCriteria(OrderLine.class);
-            olc.add(Restrictions.eq(OrderLine.PROPERTY_REPLACEDORDERLINE, oldOrderLine));
-            olc.add(Restrictions.eq(OrderLine.PROPERTY_SALESORDER, newOrder));
-            olc.setMaxResults(1);
-            OrderLine newOrderLine = (OrderLine) olc.uniqueResult();
+            OrderLine newOrderLine = getReplacementOrderLine(newOrder, oldOrderLine);
             if (newOrderLine != null) {
               // Create Netting goods shipment Line for the new order line
               movementQty = oldOrderLineDeliveredQty;
@@ -353,11 +349,8 @@ public class CancelAndReplaceUtils {
             processShipment(shipment);
           }
           for (ShipmentInOutLine shipmentLine : goodsShipmentLineList) {
-            OBCriteria<OrderLine> olc = OBDal.getInstance().createCriteria(OrderLine.class);
-            olc.add(Restrictions.eq(OrderLine.PROPERTY_REPLACEDORDERLINE, oldOrderLine));
-            olc.add(Restrictions.eq(OrderLine.PROPERTY_SALESORDER, newOrder));
-            olc.setMaxResults(1);
-            OrderLine newOrderLine = (OrderLine) olc.uniqueResult();
+            // Get the the new order line that replaces the old order line, should be only one
+            OrderLine newOrderLine = getReplacementOrderLine(newOrder, oldOrderLine);
             if (newOrderLine != null) {
               shipmentLine.setSalesOrderLine(newOrderLine);
               if (jsonorder == null) {
@@ -1260,6 +1253,15 @@ public class CancelAndReplaceUtils {
       associateShipmentToNewReceipt = false;
     }
     return associateShipmentToNewReceipt;
+  }
+
+  private static OrderLine getReplacementOrderLine(Order newOrder, OrderLine oldOrderLine) {
+    OBCriteria<OrderLine> olc = OBDal.getInstance().createCriteria(OrderLine.class);
+    olc.add(Restrictions.eq(OrderLine.PROPERTY_REPLACEDORDERLINE, oldOrderLine));
+    olc.add(Restrictions.eq(OrderLine.PROPERTY_SALESORDER, newOrder));
+    olc.setMaxResults(1);
+    OrderLine newOrderLine = (OrderLine) olc.uniqueResult();
+    return newOrderLine;
   }
 
 }
