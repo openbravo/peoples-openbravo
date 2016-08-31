@@ -134,5 +134,6 @@ enyo.kind({
     this.setHeader(OB.I18N.getLabel('OBPOS_PaymentsSelectCaption'));
     this.searchAction();
     this.bubble('onClearPaymentSelect');
+    this.bubble('onPaymentChanged');
   }
 });
