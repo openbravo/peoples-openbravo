@@ -182,10 +182,21 @@ public class Preferences {
       String userId = user == null ? null : user.getId();
       String roleId = role == null ? null : role.getId();
       String windowId = window == null ? null : window.getId();
+      return getPreferenceValue(property, isListProperty, clientId, orgId, userId, roleId, windowId);
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
 
+  /**
+   * @see Preferences#getPreferenceValue(String, boolean, Client, Organization, User, Role, Window)
+   */
+  public static String getPreferenceValue(String property, boolean isListProperty, String clientId,
+      String orgId, String userId, String roleId, String windowId) throws PropertyException {
+    OBContext.setAdminMode();
+    try {
       List<Preference> prefs = getPreferences(property, isListProperty, clientId, orgId, userId,
           roleId, windowId, false, true);
-
       Preference selectedPreference = null;
       List<String> parentTree = OBContext.getOBContext().getOrganizationStructureProvider(clientId)
           .getParentList(orgId, true);
@@ -210,7 +221,6 @@ public class Preferences {
           break;
         }
       }
-
       if (conflict) {
         throw new PropertyConflictException();
       }
@@ -218,25 +228,6 @@ public class Preferences {
         throw new PropertyNotFoundException();
       }
       return selectedPreference.getSearchKey();
-    } finally {
-      OBContext.restorePreviousMode();
-    }
-  }
-
-  /**
-   * @see Preferences#getPreferenceValue(String, boolean, Client, Organization, User, Role, Window)
-   */
-  public static String getPreferenceValue(String property, boolean isListProperty,
-      String strClient, String strOrg, String strUser, String strRole, String strWindow)
-      throws PropertyException {
-    try {
-      OBContext.setAdminMode();
-      Client client = OBDal.getInstance().get(Client.class, strClient == null ? "" : strClient);
-      Organization org = OBDal.getInstance().get(Organization.class, strOrg == null ? "" : strOrg);
-      User user = OBDal.getInstance().get(User.class, strUser == null ? "" : strUser);
-      Role role = OBDal.getInstance().get(Role.class, strRole == null ? "" : strRole);
-      Window window = OBDal.getInstance().get(Window.class, strWindow == null ? "" : strWindow);
-      return getPreferenceValue(property, isListProperty, client, org, user, role, window);
     } finally {
       OBContext.restorePreviousMode();
     }
