@@ -111,19 +111,35 @@ public class CancelAndReplaceUtils {
     newOrder.setDocumentNo(newDocumentNo);
     OBDal.getInstance().save(newOrder);
 
-    // Create new Order lines
-    List<OrderLine> oldOrderLineList = oldOrder.getOrderLineList();
-    for (OrderLine oldOrderLine : oldOrderLineList) {
-      OrderLine newOrderLine = (OrderLine) DalUtil.copy(oldOrderLine, false, true);
-      newOrderLine.setDeliveredQuantity(BigDecimal.ZERO);
-      newOrderLine.setReservedQuantity(BigDecimal.ZERO);
-      newOrderLine.setInvoicedQuantity(BigDecimal.ZERO);
-      newOrderLine.setSalesOrder(newOrder);
-      newOrderLine.setReplacedorderline(oldOrderLine);
-      newOrder.getOrderLineList().add(newOrderLine);
-      OBDal.getInstance().save(newOrderLine);
-    }
+    String newOrderId = newOrder.getId();
 
+    // Create new Order lines
+    ScrollableResults orderLines = null;
+    long i = 0;
+    try {
+      orderLines = getOrderLineList(oldOrder);
+      while (orderLines.next()) {
+        OrderLine oldOrderLine = (OrderLine) orderLines.get(0);
+        OrderLine newOrderLine = (OrderLine) DalUtil.copy(oldOrderLine, false, true);
+        newOrderLine.setDeliveredQuantity(BigDecimal.ZERO);
+        newOrderLine.setReservedQuantity(BigDecimal.ZERO);
+        newOrderLine.setInvoicedQuantity(BigDecimal.ZERO);
+        newOrderLine.setSalesOrder(newOrder);
+        newOrderLine.setReplacedorderline(oldOrderLine);
+        newOrder.getOrderLineList().add(newOrderLine);
+        OBDal.getInstance().save(newOrderLine);
+        if ((i % 100) == 0) {
+          OBDal.getInstance().flush();
+          OBDal.getInstance().getSession().clear();
+          newOrder = OBDal.getInstance().get(Order.class, newOrderId);
+        }
+        i++;
+      }
+    } finally {
+      if (orderLines != null) {
+        orderLines.close();
+      }
+    }
     return newOrder;
   }
 
@@ -163,6 +179,9 @@ public class CancelAndReplaceUtils {
     ScrollableResults orderLines = null;
     Order newOrder = null;
     Order oldOrder = null;
+    String newOrderId = null;
+    String oldOrderId = null;
+    String inverseOrderId = null;
     OBContext.setAdminMode(false);
     try {
 
@@ -176,11 +195,14 @@ public class CancelAndReplaceUtils {
       if (replaceOrder) {
         // Get new Order
         newOrder = OBDal.getInstance().get(Order.class, orderId);
+        newOrderId = newOrder.getId();
         // Get old Order
         oldOrder = newOrder.getReplacedorder();
+        oldOrderId = oldOrder.getId();
       } else {
         // Get old Order
         oldOrder = OBDal.getInstance().get(Order.class, orderId);
+        oldOrderId = oldOrder.getId();
       }
 
       // Added check in case Cancel and Replace button is hit more than once
@@ -191,20 +213,28 @@ public class CancelAndReplaceUtils {
       // Release old reservations
       releaseOldReservations(oldOrder);
 
+      // Refresh documents
+      if (newOrderId != null) {
+        newOrder = OBDal.getInstance().get(Order.class, newOrderId);
+      }
+      oldOrder = OBDal.getInstance().get(Order.class, oldOrderId);
+
       // Get documentNo for the inverse Order Header coming from jsonorder, if exists
       String negativeDocNo = jsonorder != null && jsonorder.has("negativeDocNo") ? jsonorder
           .getString("negativeDocNo") : null;
 
       // Create inverse Order header
       Order inverseOrder = createOrder(oldOrder, negativeDocNo, triggersDisabled);
+      inverseOrderId = inverseOrder.getId();
 
       // Define netting goods shipment and its lines
       ShipmentInOut nettingGoodsShipment = null;
+      String nettingGoodsShipmentId = null;
       ShipmentInOutLine newGoodsShipmentLine1 = null;
 
       // Iterate old order lines
       orderLines = getOrderLineList(oldOrder);
-      long lineNoCounter = 1;
+      long lineNoCounter = 1, i = 0;
       while (orderLines.next()) {
         OrderLine oldOrderLine = (OrderLine) orderLines.get(0);
 
@@ -243,6 +273,7 @@ public class CancelAndReplaceUtils {
           // Create Netting goods shipment Header
           if (nettingGoodsShipment == null) {
             nettingGoodsShipment = createShipment(oldOrder, goodsShipmentLineList);
+            nettingGoodsShipmentId = nettingGoodsShipment.getId();
           }
 
           // Stock manipulation
@@ -343,6 +374,22 @@ public class CancelAndReplaceUtils {
           inverseOrderLine.setDeliveredQuantity(inverseOrderLine.getOrderedQuantity());
           OBDal.getInstance().save(inverseOrderLine);
         }
+        if ((i % 100) == 0) {
+          OBDal.getInstance().flush();
+          OBDal.getInstance().getSession().clear();
+
+          // Refresh documents
+          if (nettingGoodsShipmentId != null) {
+            nettingGoodsShipment = OBDal.getInstance().get(ShipmentInOut.class,
+                nettingGoodsShipmentId);
+          }
+          if (replaceOrder) {
+            newOrder = OBDal.getInstance().get(Order.class, newOrderId);
+          }
+          oldOrder = OBDal.getInstance().get(Order.class, oldOrderId);
+          inverseOrder = OBDal.getInstance().get(Order.class, inverseOrderId);
+        }
+        i++;
       }
       if (nettingGoodsShipment != null) {
         processShipment(nettingGoodsShipment);
@@ -374,6 +421,16 @@ public class CancelAndReplaceUtils {
       createNewReservations(newOrder);
 
       OBDal.getInstance().flush();
+
+      // Refresh documents
+      if (nettingGoodsShipmentId != null) {
+        nettingGoodsShipment = OBDal.getInstance().get(ShipmentInOut.class, nettingGoodsShipmentId);
+      }
+      if (replaceOrder) {
+        newOrder = OBDal.getInstance().get(Order.class, newOrderId);
+      }
+      oldOrder = OBDal.getInstance().get(Order.class, oldOrderId);
+      inverseOrder = OBDal.getInstance().get(Order.class, inverseOrderId);
 
       // Payment Creation
       // Get the payment schedule detail of the oldOrder
@@ -629,6 +686,7 @@ public class CancelAndReplaceUtils {
     try {
       // Iterate old order lines
       oldOrderLines = getOrderLineList(oldOrder);
+      int i = 0;
       while (oldOrderLines.next()) {
         OrderLine oldOrderLine = (OrderLine) oldOrderLines.get(0);
         OBCriteria<Reservation> reservationCriteria = OBDal.getInstance().createCriteria(
@@ -639,6 +697,9 @@ public class CancelAndReplaceUtils {
         if (reservation != null) {
           releaseReservation(reservation);
           OBDal.getInstance().save(reservation);
+        }
+        if ((i % 100) == 0) {
+          OBDal.getInstance().getSession().clear();
         }
       }
     } catch (Exception e) {
@@ -671,6 +732,7 @@ public class CancelAndReplaceUtils {
     try {
       // Iterate old order lines
       newOrderLines = getOrderLineList(newOrder);
+      int i = 0;
       while (newOrderLines.next()) {
         OrderLine newOrderLine = (OrderLine) newOrderLines.get(0);
         if (newOrderLine.getDeliveredQuantity() != null) {
@@ -687,6 +749,9 @@ public class CancelAndReplaceUtils {
         Reservation reservation = (Reservation) reservationCriteria.uniqueResult();
         if (reservation != null) {
           ReservationUtils.createReserveFromSalesOrderLine(newOrderLine, true);
+        }
+        if ((i % 100) == 0) {
+          OBDal.getInstance().getSession().clear();
         }
       }
     } catch (Exception e) {

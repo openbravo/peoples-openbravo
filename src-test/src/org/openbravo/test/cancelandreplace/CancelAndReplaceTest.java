@@ -147,6 +147,8 @@ public class CancelAndReplaceTest extends WeldBaseTest {
       oldOrder.setNewOBObject(true);
       OBDal.getInstance().save(oldOrder);
 
+      String oldOrderId = oldOrder.getId();
+
       OrderLine orderLine = order.getOrderLineList().get(0);
       OrderLine oldOrderLine = (OrderLine) DalUtil.copy(orderLine, false);
       oldOrderLine.setDeliveredQuantity(BigDecimal.ZERO);
@@ -154,6 +156,8 @@ public class CancelAndReplaceTest extends WeldBaseTest {
       oldOrderLine.setSalesOrder(oldOrder);
       oldOrderLine.setReplacedorderline(null);
       OBDal.getInstance().save(oldOrderLine);
+
+      String oldOrderLineId = oldOrderLine.getId();
 
       OBDal.getInstance().flush();
       OBDal.getInstance().refresh(oldOrder);
@@ -225,6 +229,7 @@ public class CancelAndReplaceTest extends WeldBaseTest {
 
       // Create the new replacement order
       Order newOrder = CancelAndReplaceUtils.createReplacementOrder(oldOrder);
+      String newOrderId = newOrder.getId();
 
       log.debug("New order Created:" + newOrder.getDocumentNo());
       log.debug(parameter.getTestDescription());
@@ -238,6 +243,10 @@ public class CancelAndReplaceTest extends WeldBaseTest {
 
       // Cancel and Replace Sales Order
       newOrder = CancelAndReplaceUtils.cancelAndReplaceOrder(newOrder.getId(), null, true);
+
+      oldOrder = OBDal.getInstance().get(Order.class, oldOrderId);
+      oldOrderLine = OBDal.getInstance().get(OrderLine.class, oldOrderLineId);
+      newOrder = OBDal.getInstance().get(Order.class, newOrderId);
 
       Order inverseOrder = oldOrder.getOrderCancelledorderList().get(0);
       OrderLine inverseOrderLine = inverseOrder.getOrderLineList().get(0);
