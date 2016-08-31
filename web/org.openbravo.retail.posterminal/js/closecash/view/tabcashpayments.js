@@ -438,6 +438,19 @@ enyo.kind({
     this.model = model;
     var payment = model.get('paymentList').at(model.get('substep'));
 
+    // If the cashier is not trusty, hide expected and total amount that should be.
+    if (OB.MobileApp.model.get('permissions').OBPOS_HideCashUpInfoToCashier) {
+      this.$.total.hide();
+      this.$.totalLbl.hide();
+      this.$.difference.hide();
+      this.$.differenceLbl.hide();
+    } else {
+      this.$.total.show();
+      this.$.totalLbl.show();
+      this.$.difference.show();
+      this.$.differenceLbl.show();
+    }
+
     // this function is invoked when displayed.      
     this.initPaymentToCount(payment);
 

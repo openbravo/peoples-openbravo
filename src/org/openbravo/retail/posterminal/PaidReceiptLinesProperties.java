@@ -54,6 +54,7 @@ public class PaidReceiptLinesProperties extends ModelExtension {
             "overdueReturnDays"));
         add(new HQLProperty("ordLine.product.productType", "productType"));
         add(new HQLProperty("ordLine.product.returnable", "returnable"));
+        add(new HQLProperty("ordLine.returnReason.id", "returnReason"));
       }
     };
 

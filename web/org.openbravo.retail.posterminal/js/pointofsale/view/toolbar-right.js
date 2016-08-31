@@ -254,35 +254,20 @@ enyo.kind({
     if (OB.UTIL.RfidController.isRfidConfigured()) {
       this.$.rfidIcon.show();
     }
-    OB.UTIL.RfidController.on('change:connected', function (model) {
+    OB.UTIL.RfidController.on('change:connected change:connectionLost', function (model) {
       if (this.$.rfidIcon) {
-        if (OB.UTIL.RfidController.get('connected')) {
-          this.$.rfidIcon.removeClass(this.rfidOffIcon);
-          this.$.rfidIcon.removeClass(this.rfidOfflineIcon);
-          this.$.rfidIcon.addClass(this.rfidOnIcon);
-        } else {
-          this.$.rfidIcon.removeClass(this.rfidOnIcon);
-          this.$.rfidIcon.removeClass(this.rfidOfflineIcon);
-          this.$.rfidIcon.addClass(this.rfidOffIcon);
-        }
-      }
-    }, this);
-
-    OB.UTIL.RfidController.on('change:connectionLost', function (model) {
-      if (this.$.rfidIcon) {
-
         if (OB.UTIL.RfidController.get('connectionLost')) {
           this.$.rfidIcon.removeClass(this.rfidOnIcon);
           this.$.rfidIcon.removeClass(this.rfidOffIcon);
           this.$.rfidIcon.addClass(this.rfidOfflineIcon);
         } else {
           this.$.rfidIcon.removeClass(this.rfidOfflineIcon);
-          if (!OB.UTIL.RfidController.get('isRFIDEnabled')) {
-            this.$.rfidIcon.removeClass(this.rfidOnIcon);
-            this.$.rfidIcon.addClass(this.rfidOffIcon);
-          } else {
+          if (OB.UTIL.RfidController.get('isRFIDEnabled') && OB.UTIL.RfidController.get('connected')) {
             this.$.rfidIcon.removeClass(this.rfidOffIcon);
             this.$.rfidIcon.addClass(this.rfidOnIcon);
+          } else {
+            this.$.rfidIcon.removeClass(this.rfidOnIcon);
+            this.$.rfidIcon.addClass(this.rfidOffIcon);
           }
         }
       }

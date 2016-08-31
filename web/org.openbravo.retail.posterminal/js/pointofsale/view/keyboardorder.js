@@ -109,11 +109,15 @@ enyo.kind({
       });
       return false;
     }
-    if (validateLine && keyboard.line && keyboard.line.get('product').get('isEditableQty') === false) {
-      this.doShowPopup({
-        popup: 'modalNotEditableLine'
-      });
-      return false;
+    if (validateLine) {
+      if (keyboard.line && keyboard.line.get('product').get('isEditableQty') === false) {
+        this.doShowPopup({
+          popup: 'modalNotEditableLine'
+        });
+        return false;
+      } else if (!keyboard.line) {
+        return false;
+      }
     }
     return true;
   },
@@ -345,7 +349,7 @@ enyo.kind({
     this.addCommand('line:dto', {
       permission: 'OBPOS_order.discount',
       action: function (keyboard, txt) {
-        if (!me.validateReceipt(keyboard, false)) {
+        if (!me.validateReceipt(keyboard, true)) {
           return true;
         }
         if (OB.MobileApp.model.get('permissions')["OBPOS_retail.discountkeyboard"] === true || keyboard.line.getQty() < 0) {
@@ -366,7 +370,7 @@ enyo.kind({
       stateless: true,
       permission: 'OBPOS_order.discount',
       action: function (keyboard, txt) {
-        if (!me.validateReceipt(keyboard, false)) {
+        if (!me.validateReceipt(keyboard, true)) {
           return true;
         }
         me.doDiscountsMode({

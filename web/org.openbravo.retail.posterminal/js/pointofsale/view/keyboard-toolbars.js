@@ -393,11 +393,37 @@ enyo.kind({
   },
   paymentChanged: function (inSender, inEvent) {
     this.currentPayment = inEvent.payment;
+    this.keyboard.payment = inEvent.payment ? inEvent.payment.payment.searchKey : null;
   },
   buttonStatusChanged: function (inSender, inEvent) {
-    var status = inEvent.value.status;
-    if (this.showing && this.keyboard.lastStatus !== '' && status === '') {
-      this.keyboard.setStatus(this.defaultPayment.payment.searchKey);
+    var me = this,
+        status = inEvent.value.status,
+        statusPayment = OB.MobileApp.model.paymentnames ? OB.MobileApp.model.paymentnames[status] : null;
+
+    function setPaymentMethodInfo(payment) {
+      me.keyboard.status = 'paymentMethodCategory.showitems.' + payment.paymentMethod.paymentMethodCategory;
+      me.bubble('onPaymentChanged', {
+        payment: payment,
+        status: payment.payment.searchKey
+      });
+    }
+    if (this.showing) {
+      me.bubble('onPaymentChanged');
+      if (this.keyboard.lastStatus !== '' && status === '') {
+        if (this.defaultPayment.paymentMethod.paymentMethodCategory) {
+          var searchKey = 'paymentMethodCategory.showitems.' + this.defaultPayment.paymentMethod.paymentMethodCategory;
+          if (searchKey === this.keyboard.lastStatus) {
+            this.keyboard.setStatus(searchKey);
+          } else {
+            setPaymentMethodInfo(this.defaultPayment);
+          }
+        } else {
+          this.keyboard.setStatus(this.defaultPayment.payment.searchKey);
+        }
+      }
+      if (statusPayment && statusPayment.paymentMethod.paymentMethodCategory) {
+        setPaymentMethodInfo(statusPayment);
+      }
     }
   },
   shown: function () {

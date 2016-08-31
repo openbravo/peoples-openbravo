@@ -997,7 +997,7 @@ enyo.kind({
       return true;
     }
     this.setDisabled(true);
-    if (OB.MobileApp.model.hasPermission(this.permission) && OB.UTIL.RfidController.get('connectionLost') !== true) {
+    if (OB.MobileApp.model.hasPermission(this.permission)) {
       if (OB.UTIL.RfidController.get('isRFIDEnabled')) {
         OB.UTIL.RfidController.set('reconnectOnScanningFocus', false);
         OB.UTIL.RfidController.disconnectRFIDDevice();
@@ -1024,24 +1024,7 @@ enyo.kind({
     if (!OB.UTIL.RfidController.isRfidConfigured()) {
       this.hide();
     }
-
-    OB.UTIL.RfidController.on('change:connected', function (model) {
-      if (OB.UTIL.RfidController.get('connected')) {
-        OB.UTIL.RfidController.set('isRFIDEnabled', true);
-        this.removeClass('btn-icon-switchoff');
-        this.removeClass('btn-icon-switchoffline');
-        this.addClass('btn-icon-switchon');
-        this.setDisabled(false);
-      } else {
-        OB.UTIL.RfidController.set('isRFIDEnabled', false);
-        this.removeClass('btn-icon-switchon');
-        this.removeClass('btn-icon-switchoffline');
-        this.addClass('btn-icon-switchoff');
-        this.setDisabled(false);
-      }
-    }, this);
-
-    OB.UTIL.RfidController.on('change:connectionLost', function (model) {
+    OB.UTIL.RfidController.on('change:connected change:connectionLost', function (model) {
       if (OB.UTIL.RfidController.get('connectionLost')) {
         this.removeClass('btn-icon-switchon');
         this.removeClass('btn-icon-switchoff');
@@ -1049,13 +1032,13 @@ enyo.kind({
         this.setDisabled(true);
       } else {
         this.removeClass('btn-icon-switchoffline');
-        if (!OB.UTIL.RfidController.get('isRFIDEnabled')) {
+        if (OB.UTIL.RfidController.get('isRFIDEnabled') && OB.UTIL.RfidController.get('connected')) {
+          this.addClass('btn-icon-switchon');
+          this.removeClass('btn-icon-switchoff');
+        } else {
           OB.UTIL.RfidController.disconnectRFIDDevice();
           this.removeClass('btn-icon-switchon');
           this.addClass('btn-icon-switchoff');
-        } else {
-          this.addClass('btn-icon-switchon');
-          this.removeClass('btn-icon-switchoff');
         }
         this.setDisabled(false);
       }

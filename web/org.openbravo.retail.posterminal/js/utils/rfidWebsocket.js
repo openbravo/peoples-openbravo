@@ -9,7 +9,9 @@
 
 /*global, WebSocket, _ Backbone */
 
-OB.UTIL.RfidController = new Backbone.Model({});
+OB.UTIL.RfidController = new Backbone.Model({
+  connected: true
+});
 
 OB.UTIL.RfidController.isRfidConfigured = function () {
   if (OB.POS.hwserver && OB.POS.modelterminal.get('terminal')) {
