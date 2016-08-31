@@ -38,7 +38,7 @@ public class CancelAndReplaceOrderHookCaller {
     executeHooks(replaceOrder, triggersDisabled, oldOrder, newOrder, inverseOrder, jsonorder);
   }
 
-  protected void executeHooks(boolean replaceOrder, boolean triggersDisabled, Order oldOrder,
+  private void executeHooks(boolean replaceOrder, boolean triggersDisabled, Order oldOrder,
       Order newOrder, Order inverseOrder, JSONObject jsonorder) throws Exception {
     for (Iterator<CancelAndReplaceOrderHook> processIterator = cancelAndReplaceOrderHookProcesses
         .iterator(); processIterator.hasNext();) {
