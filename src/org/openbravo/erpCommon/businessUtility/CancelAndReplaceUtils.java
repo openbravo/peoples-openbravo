@@ -258,6 +258,10 @@ public class CancelAndReplaceUtils {
       String nettingGoodsShipmentId = null;
       ShipmentInOutLine newGoodsShipmentLine1 = null;
 
+      // Get preferences values
+      boolean createNettingGoodsShipment = getCreateNettingGoodsShipmentPreferenceValue(oldOrder);
+      boolean associateShipmentToNewReceipt = getAssociateGoodsShipmentToNewSalesOrderPreferenceValue(oldOrder);
+
       // Iterate old order lines
       orderLines = getOrderLineList(oldOrder);
       long lineNoCounter = 1, i = 0;
@@ -275,25 +279,6 @@ public class CancelAndReplaceUtils {
             oldOrderLine));
         goodsShipmentLineCriteria.addOrderBy(ShipmentInOutLine.PROPERTY_UPDATED, true);
         List<ShipmentInOutLine> goodsShipmentLineList = goodsShipmentLineCriteria.list();
-
-        // check "Don't create netting shipment in Cancel and Replace" preference value
-        boolean createNettingGoodsShipment = false;
-        try {
-          createNettingGoodsShipment = ("Y").equals(Preferences.getPreferenceValue(
-              CancelAndReplaceUtils.CREATE_NETTING_SHIPMENT, true, oldOrder.getClient(),
-              oldOrder.getOrganization(), OBContext.getOBContext().getUser(), null, null));
-        } catch (PropertyException e1) {
-          createNettingGoodsShipment = false;
-        }
-        boolean associateShipmentToNewReceipt = false;
-        try {
-          associateShipmentToNewReceipt = ("Y").equals(Preferences.getPreferenceValue(
-              CancelAndReplaceUtils.ASSOCIATE_SHIPMENT_TO_REPLACE_TICKET, true,
-              oldOrder.getClient(), oldOrder.getOrganization(), OBContext.getOBContext().getUser(),
-              null, null));
-        } catch (PropertyException e1) {
-          associateShipmentToNewReceipt = false;
-        }
 
         if (createNettingGoodsShipment && inverseOrderLine != null) {
           // Create Netting goods shipment Header
@@ -1249,6 +1234,32 @@ public class CancelAndReplaceUtils {
       newDocNo = documentNo + "-1";
     }
     return newDocNo;
+  }
+
+  private static boolean getCreateNettingGoodsShipmentPreferenceValue(Order order) {
+    boolean createNettingGoodsShipment = false;
+    try {
+      createNettingGoodsShipment = ("Y").equals(Preferences.getPreferenceValue(
+          CancelAndReplaceUtils.CREATE_NETTING_SHIPMENT, true, OBContext.getOBContext()
+              .getCurrentClient(), order.getOrganization(), OBContext.getOBContext().getUser(),
+          null, null));
+    } catch (PropertyException e1) {
+      createNettingGoodsShipment = false;
+    }
+    return createNettingGoodsShipment;
+  }
+
+  private static boolean getAssociateGoodsShipmentToNewSalesOrderPreferenceValue(Order order) {
+    boolean associateShipmentToNewReceipt = false;
+    try {
+      associateShipmentToNewReceipt = ("Y").equals(Preferences.getPreferenceValue(
+          CancelAndReplaceUtils.ASSOCIATE_SHIPMENT_TO_REPLACE_TICKET, true, OBContext
+              .getOBContext().getCurrentClient(), order.getOrganization(), OBContext.getOBContext()
+              .getUser(), null, null));
+    } catch (PropertyException e1) {
+      associateShipmentToNewReceipt = false;
+    }
+    return associateShipmentToNewReceipt;
   }
 
 }
