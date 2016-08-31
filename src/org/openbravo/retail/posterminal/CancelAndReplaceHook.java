@@ -21,7 +21,7 @@ public class CancelAndReplaceHook extends CancelAndReplaceOrderHook {
    * original one.
    */
   @Override
-  public void exec(Boolean replaceOrder, Boolean triggersDisabled, Order oldOrder, Order newOrder,
+  public void exec(boolean replaceOrder, boolean triggersDisabled, Order oldOrder, Order newOrder,
       Order inverseOrder, JSONObject jsonorder) throws Exception {
     if (jsonorder != null) {
       inverseOrder.setObposAppCashup(jsonorder.getString("obposAppCashup"));
