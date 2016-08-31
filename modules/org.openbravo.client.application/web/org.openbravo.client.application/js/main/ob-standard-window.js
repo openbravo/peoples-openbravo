@@ -94,9 +94,6 @@ isc.OBStandardWindow.addProperties({
     if (this.command === isc.OBStandardWindow.COMMAND_NEW) {
       this.viewProperties.allowDefaultEditMode = false;
     }
-    if (this.deferOpenNewEdit) {
-      this.viewProperties.deferOpenNewEdit = this.deferOpenNewEdit;
-    }
 
     if (OB.Utilities.checkProfessionalLicense(null, true)) {
       this.viewState = OB.PropertyStore.get('OBUIAPP_GridConfiguration', this.windowId);
@@ -1181,13 +1178,7 @@ isc.OBStandardWindow.addProperties({
       }
     } else if (this.command === isc.OBStandardWindow.COMMAND_NEW) {
       var currentView = this.activeView || this.view;
-      if (this.deferOpenNewEdit) {
-        // if deferOpenNewEdit is enabled, the form opening in NEW mode is postponed
-        // the form will be opened once the window view is completely loaded (including its saved views, if any)
-        delete this.deferOpenNewEdit;
-      } else {
-        currentView.editRecord();
-      }
+      currentView.editRecord();
       this.command = null;
     } else {
       this.setFocusInView(this.view);
