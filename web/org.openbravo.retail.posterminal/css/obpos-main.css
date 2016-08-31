@@ -32,6 +32,160 @@
   }
 }
 
+.float-left {
+  float: left !important;
+}
+
+.height15 {
+  height: 15px;
+}
+
+.color-yellow {
+  color: yellow;
+}
+
+.splitline-table {
+  width: 100%;
+  background-color: #fff;
+  max-height: 200px !important;
+}
+
+.split-line {
+  width: 100%;
+  clear:both;
+  background-color:#fff;
+  height: 35px;
+  padding-top: 2px;
+}
+
+.splitline-message {
+  padding: 6px 0px 0px 14px;
+}
+
+.splitline-deletebtn {
+  border: 1px solid #D2D2D2 !important;
+  margin: 2px 0 0 5px !important;
+}
+
+.splitline-number-edit {
+  width: 30px;
+  height: 23px;
+}
+
+.splitline-line-label {
+  float: left;
+  width: 50%;
+  background-color: #e2e2e2;
+  height: 35px;
+  padding-right: 5px;
+  text-align: right;
+  font-size: 16px;
+  color: black;
+}
+
+.splitline-line-editors {
+  float: left;
+  width: 40%;
+  text-align: left;
+  padding-left: 5px;
+}
+
+.splitline-numbereditor-minusbtn {
+  border: 1px solid #E2E2E2 !important;
+  margin: -2px 2px 0 0 !important;
+}
+
+.splitline-numbereditor-plusbtn {
+  border: 1px solid #E2E2E2 !important;
+  margin: -2px 0 0 2px !important;
+}
+
+.splitline-info {
+  background-color: #fff;
+  height: 32px;
+  color: black;
+  font-size: 16px;
+}
+
+.splitline-info-numbers {
+  background-color: #fff;
+  height: 34px;
+  color: black;
+  font-size: 16px;
+  padding-top: 1px;
+}
+
+.splitline-info-label {
+  width: 25%;
+  float: left;
+  background-color: #e2e2e2;
+  border: 1px solid #fff;
+  vertical-align: middle;
+}
+
+.splitline-info-label-difference {
+  width: calc(25% - 12px);
+}
+
+.splitline-info-editor {
+  width: 25%;
+  float: left;
+  background-color: #fff;
+  text-align: center
+}
+
+.splitline-info-editor-input {
+  width: 40px;
+  height: 23px;
+}
+
+.splitline-lines-number-hide {
+  display: none;
+}
+
+.splitline-numberinfo {
+  width: 100%;
+  clear:both;
+  background-color: #fff;
+  height: 55px;
+  padding-top: 2px;
+}
+
+@media all and (max-width: 800px) {
+  .splitline-number-edit {
+    height: 45px;
+  }
+  .splitline-line-label {
+    width: 35%;
+    height: 53px;
+  }
+  .splitline-line-editors {
+    width: 59%;
+  }
+  .splitline-info {
+    height: 60px;
+  }
+  .splitline-info-label {
+    width: 33%;
+    height: 58px;
+  }
+  .splitline-info-label-difference {
+    width: calc(33% - 4px);
+    height: 58px;
+  }
+  .splitline-info-hide-lines {
+    display: none;
+  }
+  .splitline-info-editor {
+    width: 33%;
+  }
+  .splitline-lines-number-hide {
+    display: block;
+  }
+  .splitline-table {
+    max-height: 110px !important;
+  }
+}
 .paymentmethoditemstext {
   font-family: 'Helvetica Neue', 'Nimbus Sans L', Arial, sans-serif;
   font-size: 16px;

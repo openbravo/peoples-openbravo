@@ -733,7 +733,7 @@
         me.calculateGross();
       });
       // If line is null or undefined, we calculate the Promotions of the receipt
-      if (OB.UTIL.isNullOrUndefined(line)) {
+      if (OB.UTIL.isNullOrUndefined(line) || line.get('splitline')) {
         OB.Model.Discounts.applyPromotions(this);
       } else {
         OB.Model.Discounts.applyPromotions(this, line);
@@ -1400,7 +1400,7 @@
       if (((options && options.line) ? options.line.get('qty') + qty : qty) < 0 && p.get('productType') === 'S' && !p.get('returnable')) {
         OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_UnreturnableProduct'), OB.I18N.getLabel('OBPOS_UnreturnableProductMessage', [p.get('_identifier')]));
         if (callback) {
-          callback(false);
+          callback(false, null);
         }
         return;
       }
@@ -1409,7 +1409,7 @@
         if (me.get('isQuotation') && me.get('hasbeenpaid') === 'Y') {
           OB.UTIL.showError(OB.I18N.getLabel('OBPOS_QuotationClosed'));
           if (callback) {
-            callback(false);
+            callback(false, null);
           }
           return false;
         }
@@ -1444,12 +1444,10 @@
               attrs: attrs
             }, function (args) {
               if (args && args.cancelOperation) {
-                if (callback) {
-                  callback(false);
-                }
                 return;
               }
-              if (args.line && (args.line.get('qty') > 0 || !args.line.get('replacedorderline')) && (qty !== 1 || args.line.get('qty') !== -1 || args.p.get('productType') !== 'S' || (args.p.get('productType') === 'S' && !args.p.get('isLinkedToProduct')))) {
+              var splitline = !(options && options.line) && !OB.UTIL.isNullOrUndefined(args.line) && !OB.UTIL.isNullOrUndefined(args.line.get('splitline')) && args.line.get('splitline');
+              if (args.line && !splitline && (args.line.get('qty') > 0 || !args.line.get('replacedorderline')) && (qty !== 1 || args.line.get('qty') !== -1 || args.p.get('productType') !== 'S' || (args.p.get('productType') === 'S' && !args.p.get('isLinkedToProduct')))) {
                 args.receipt.addUnit(args.line, args.qty);
                 if (!_.isUndefined(args.attrs)) {
                   _.each(_.keys(args.attrs), function (key) {
@@ -1507,21 +1505,24 @@
                 }
                 args.receipt.save();
                 if (data.hasmandatoryservices) {
-                  args.receipt.trigger('showProductList', args.orderline, 'mandatory');
+                  var splitline = !OB.UTIL.isNullOrUndefined(args.orderline) && !OB.UTIL.isNullOrUndefined(args.orderline.get('splitline')) && args.orderline.get('splitline');
+                  if (!splitline) {
+                    args.receipt.trigger('showProductList', args.orderline, 'mandatory');
+                  }
                 }
               }
               OB.UTIL.SynchronizationHelper.finished(synchId, 'HasServices');
               if (callback) {
-                callback(true);
+                callback(true, args.orderline);
               }
             }, args.orderline);
           } else {
             if (callback) {
-              callback(true);
+              callback(true, args.orderline);
             }
           }
         });
-      }
+      } // End addProductToOrder
       if (((options && options.line) ? options.line.get('qty') + qty : qty) < 0 && p.get('productType') === 'S' && !p.get('ignoreReturnApproval')) {
         if (options && options.isVerifiedReturn) {
           OB.UTIL.showLoading(false);
@@ -1689,27 +1690,27 @@
               p.set('standardPrice', productPrices.at(0).get('pricestd'));
               p.set('listPrice', productPrices.at(0).get('pricelist'));
             }
-            me.addProductToOrder(p, qty, options, attrs, function (success) {
+            me.addProductToOrder(p, qty, options, attrs, function (success, orderline) {
               if (callback) {
-                callback(success);
+                callback(success, orderline);
               }
             });
           } else {
             OB.UTIL.showI18NWarning('OBPOS_ProductNotFoundInPriceList');
             if (callback) {
-              callback(false);
+              callback(false, null);
             }
           }
         }, function () {
           OB.UTIL.showI18NWarning('OBPOS_ProductNotFoundInPriceList');
           if (callback) {
-            callback(false);
+            callback(false, null);
           }
         });
       } else {
-        me.addProductToOrder(p, qty, options, attrs, function (success) {
+        me.addProductToOrder(p, qty, options, attrs, function (success, orderline) {
           if (callback) {
-            callback(success);
+            callback(success, orderline);
           }
         });
       }
@@ -1727,7 +1728,7 @@
         if (args && args.productToAdd && args.productToAdd.get('isGeneric')) {
           OB.UTIL.showI18NWarning('OBPOS_GenericNotAllowed');
           if (callback) {
-            callback(false);
+            callback(false, null);
           }
           return;
         }
@@ -1748,7 +1749,7 @@
             OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_AnonymousSaleNotAllowed'));
           }
           if (callback) {
-            callback(false);
+            callback(false, null);
           }
           return;
         }
@@ -1764,9 +1765,9 @@
           }
           return;
         }
-        me._addProduct(p, qty, options, attrs, function (success) {
+        me._addProduct(p, qty, options, attrs, function (success, orderline) {
           if (callback) {
-            callback(success);
+            callback(success, orderline);
           }
         });
       });
@@ -2018,8 +2019,8 @@
           priceList: OB.DEC.number(p.get('listPrice')),
           priceIncludesTax: me.get('priceIncludesTax'),
           warehouse: {
-            id: OB.MobileApp.model.get('warehouses')[0].warehouseid,
-            warehousename: OB.MobileApp.model.get('warehouses')[0].warehousename
+            id: OB.UTIL.isNullOrUndefined(attrs) || (!OB.UTIL.isNullOrUndefined(attrs) && OB.UTIL.isNullOrUndefined(attrs.splitline)) ? OB.MobileApp.model.get('warehouses')[0].warehouseid : attrs.originalLine.get('warehouse').id,
+            warehousename: OB.UTIL.isNullOrUndefined(attrs) || (!OB.UTIL.isNullOrUndefined(attrs) && OB.UTIL.isNullOrUndefined(attrs.splitline)) ? OB.MobileApp.model.get('warehouses')[0].warehousename : attrs.originalLine.get('warehouse').warehousename
           }
         });
 
@@ -3130,9 +3131,7 @@
     groupLinesByProduct: function () {
       var lineToMerge, lines = this.get('lines'),
           auxLines = lines.models.slice(0),
-          localSkipApplyPromotions;
-
-      localSkipApplyPromotions = this.get('skipApplyPromotions');
+          localSkipApplyPromotions = this.get('skipApplyPromotions');
       this.set({
         'skipApplyPromotions': true
       }, {
@@ -3163,18 +3162,11 @@
         silent: true
       });
     },
-    fillPromotionsWith: function (groupedOrder, isFirstTime) {
+    fillPromotionsStandard: function (groupedOrder, isFirstTime) {
       var me = this,
           copiedPromo, linesToMerge, auxPromo, idx, actProm, linesToCreate = [],
-          qtyToReduce, lineToEdit, lineProm, linesToReduce, linesCreated = false,
-          localSkipApplyPromotions;
+          qtyToReduce, lineToEdit, lineProm, linesToReduce, linesCreated = false;
 
-      localSkipApplyPromotions = this.get('skipApplyPromotions');
-      this.set({
-        'skipApplyPromotions': true
-      }, {
-        silent: true
-      });
       //reset pendingQtyOffer value of each promotion
       groupedOrder.get('lines').forEach(function (l) {
         _.each(l.get('promotions'), function (promo) {
@@ -3403,6 +3395,196 @@
         });
         linesCreated = true;
       }
+    },
+
+    fillPromotionsSplitted: function (groupedOrder, isFirstTime) {
+      var receipt = this;
+      // Receipt with split lines
+      _.forEach(groupedOrder.get('lines').models, function (gli, index) {
+        if (gli.get('promotions') && gli.get('promotions').length > 0) {
+          var linesToApply = new Backbone.Collection();
+          _.forEach(receipt.get('lines').models, function (rli) {
+            if (gli.get('product').get('groupProduct')) {
+              if (gli.get('product').id === rli.get('product').id && gli.get('price') === rli.get('price')) {
+                if (rli.get('promotions') && rli.get('promotions').length > 0) {
+                  var samePromos = [];
+                  var qtyOffer = 0;
+                  _.forEach(rli.get('promotions'), function (promot) {
+                    if (!promot.applyNext) {
+                      samePromos.push(promot);
+                    }
+                  });
+                  if (samePromos && samePromos.length > 0) {
+                    _.forEach(samePromos, function (samePromo) {
+                      qtyOffer += samePromo.qtyOffer;
+                    });
+                    if (rli.get('qty') - qtyOffer === 0) {
+                      return;
+                    } else if (rli.get('qty') - qtyOffer > 0) {
+                      var auxrli = new Backbone.Model();
+                      OB.UTIL.clone(rli, auxrli);
+                      auxrli.set('qty', rli.get('qty') - qtyOffer);
+                      linesToApply.add(auxrli);
+                    }
+                  }
+                } else {
+                  linesToApply.add(rli);
+                }
+              }
+            } else {
+              if (gli.get('id') === rli.get('id')) {
+                linesToApply.add(rli);
+              }
+            }
+          });
+
+          var groupedPromos = gli.get('promotions');
+          var promoManual = _.find(groupedPromos, function (promo) {
+            return promo.manual;
+          });
+          _.forEach(groupedPromos, function (promotion) {
+            if (!promoManual) {
+              var promoAmt = 0,
+                  promoQtyoffer = promotion.qtyOffer;
+
+              _.forEach(linesToApply.models, function (line) {
+
+                var samePromos = [];
+                var qtyOffer = 0;
+                var qtyToCheck = line.get('qty');
+                _.forEach(line.get('promotions'), function (promot) {
+                  if (!promot.applyNext || (promot.hidden !== promotion.hidden && promot.discountType === promotion.discountType)) {
+                    samePromos.push(promot);
+                  }
+                });
+                if (samePromos && samePromos.length > 0) {
+                  _.forEach(samePromos, function (samePromo) {
+                    qtyOffer += samePromo.qtyOffer;
+                  });
+                  if (line.get('qty') - qtyOffer === 0) {
+                    return;
+                  } else if (line.get('qty') - qtyOffer > 0) {
+                    qtyToCheck = line.get('qty') - qtyOffer;
+                  }
+                }
+
+                // If it's not the first execution, there could be some promotions already applied and are set in the groupedorder lines too.
+                if (!isFirstTime) {
+                  var actProm, indx;
+                  actProm = _.find(line.get('promotions'), function (prom) {
+                    return prom.ruleId === promotion.ruleId;
+                  });
+                  if (actProm) {
+                    indx = line.get('promotions').indexOf(actProm);
+                    if (indx > -1) {
+                      line.get('promotions').splice(indx, 1);
+                    }
+                  }
+                }
+
+                var clonedPromotion = JSON.parse(JSON.stringify(promotion));
+                if (promoQtyoffer > 0) {
+                  clonedPromotion.obdiscQtyoffer = (qtyToCheck - promoQtyoffer >= 0) ? promoQtyoffer : qtyToCheck;
+                  if (!promotion.hidden) {
+                    clonedPromotion.amt = OB.DEC.toNumber(OB.DEC.toBigDecimal(OB.I18N.formatCurrency((promotion.amt * (clonedPromotion.obdiscQtyoffer / promotion.qtyOffer)))));
+                    clonedPromotion.fullAmt = OB.DEC.toNumber(OB.DEC.toBigDecimal(OB.I18N.formatCurrency(clonedPromotion.amt)));
+                    clonedPromotion.displayedTotalAmount = OB.DEC.toNumber(OB.DEC.toBigDecimal(OB.I18N.formatCurrency((promotion.displayedTotalAmount * (clonedPromotion.obdiscQtyoffer / promotion.qtyOffer)))));
+                  } else {
+                    clonedPromotion.amt = 0;
+                  }
+                  clonedPromotion.pendingQtyoffer = line.get('qty') - clonedPromotion.obdiscQtyoffer;
+                  clonedPromotion.qtyOffer = clonedPromotion.obdiscQtyoffer;
+                  clonedPromotion.qtyOfferReserved = clonedPromotion.obdiscQtyoffer;
+                  clonedPromotion.doNotMerge = true;
+                  if (!line.get('promotions')) {
+                    line.set('promotions', []);
+                  }
+
+                  if (clonedPromotion.pendingQtyoffer && clonedPromotion.pendingQtyoffer > 0) {
+                    var auxPromo = _.find(line.get('promotions'), function (lpromo) {
+                      return lpromo.ruleId === clonedPromotion.ruleId && lpromo.preserve !== true;
+                    });
+                    if (auxPromo) {
+                      var idx = line.get('promotions').indexOf(auxPromo);
+                      line.get('promotions').splice(idx, 1, clonedPromotion);
+                    } else {
+                      line.get('promotions').push(clonedPromotion);
+                    }
+                  } else {
+                    line.get('promotions').push(clonedPromotion);
+                  }
+                  promoQtyoffer -= clonedPromotion.obdiscQtyoffer;
+                  promoAmt += clonedPromotion.amt;
+                } else if (promoQtyoffer < 0) {
+                  OB.error("There is more units consumed than the original promotion");
+                }
+              });
+
+              // Check the amount discount is the same
+              if (promotion.amt !== promoAmt && !promotion.hidden) {
+                // Adjust splitted promotion amount
+                var splittedAmount = _.reduce(linesToApply.models, function (sum, line) {
+                  var linePromo = _.find(line.get('promotions'), function (lp) {
+                    return lp.ruleId === promotion.ruleId && lp.discountType === promotion.discountType && !lp.hidden;
+                  });
+                  if (linePromo) {
+                    return sum + OB.DEC.toNumber(OB.DEC.toBigDecimal(OB.I18N.formatCurrency(linePromo.amt)));
+                  }
+                  return sum;
+                }, 0);
+                var bdSplittedAmount = OB.DEC.toBigDecimal(OB.I18N.formatCurrency(splittedAmount)),
+                    bdPromoAmount = OB.DEC.toBigDecimal(OB.I18N.formatCurrency(promotion.amt));
+                if (bdPromoAmount.compareTo(bdSplittedAmount) !== 0) {
+                  var linePromo = _.find(linesToApply.map(function (lta) {
+                    return lta.get('promotions').find(function (lp) {
+                      return lp.discountType === promotion.discountType && !lp.hidden;
+                    });
+                  }), function (ltapromo) {
+                    return ltapromo;
+                  });
+                  if (linePromo) {
+                    var amount = OB.DEC.toNumber(bdPromoAmount.subtract(bdSplittedAmount).add(OB.DEC.toBigDecimal(OB.I18N.formatCurrency(linePromo.amt))));
+                    linePromo.amt = amount;
+                    linePromo.displayedTotalAmount = amount;
+                    linePromo.fullAmt = amount;
+                  }
+                }
+              }
+            } else {
+              var appliedPromotion = false;
+              _.forEach(linesToApply.models, function (l) {
+                if (!appliedPromotion) {
+                  if (l.get('qty') === gli.get('qty')) {
+                    if (_.find(l.get('promotions'), function (promo) {
+                      return promo.discountType === promotion.discountType;
+                    }) === undefined) {
+                      l.get('promotions').push(promotion);
+                      appliedPromotion = true;
+                    }
+                  }
+                }
+              });
+            }
+          });
+        }
+      });
+    },
+
+    fillPromotionsWith: function (groupedOrder, isFirstTime) {
+      var countSplited = _.reduce(this.get('lines').models, function (count, line) {
+        return count + (line.get('splitline') ? 1 : 0);
+      }, 0);
+      var localSkipApplyPromotions = this.get('skipApplyPromotions');
+      this.set({
+        'skipApplyPromotions': true
+      }, {
+        silent: true
+      });
+      if (countSplited > 1) {
+        this.fillPromotionsSplitted(groupedOrder, isFirstTime);
+      } else {
+        this.fillPromotionsStandard(groupedOrder, isFirstTime);
+      }
       this.set({
         'skipApplyPromotions': localSkipApplyPromotions
       }, {
@@ -3410,6 +3592,7 @@
       });
       this.trigger('promotionsUpdated');
     },
+
     // for each line, decrease the qtyOffer of promotions and remove the lines with qty 0
     removeQtyOffer: function () {
       var linesPending = new Backbone.Collection();

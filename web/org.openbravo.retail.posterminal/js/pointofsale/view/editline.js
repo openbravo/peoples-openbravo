@@ -434,6 +434,21 @@ enyo.kind({
     }
   }, {
     kind: 'OB.UI.SmallButton',
+    name: 'splitlineButton',
+    i18nContent: 'OBPOS_lblSplit',
+    showing: false,
+    classes: 'btnlink-orange',
+    tap: function () {
+      this.owner.owner.doShowPopup({
+        popup: 'OBPOS_modalSplitLine',
+        args: {
+          receipt: this.owner.owner.model.get('order'),
+          model: this.owner.owner.line
+        }
+      });
+    }
+  }, {
+    kind: 'OB.UI.SmallButton',
     name: 'showRelatedServices',
     classes: 'btnlink-orange',
     style: 'width: 45px; background-repeat: no-repeat; background-position: center; color: rgba(0, 0, 0, 0)',
@@ -569,6 +584,26 @@ enyo.kind({
       if (!this.selectedModels || this.selectedModels.length <= 1) {
         if (this.model.get('order').get('isEditable')) {
           this.$.actionButtonsContainer.$.descriptionButton.show();
+          var showSplitBtn = line && line.get('qty') > 1 && line.get('product').get('productType') !== 'S' && !_.find(this.model.get('order').get('lines').models, function (l) {
+            return l.get('relatedLines') && _.find(l.get('relatedLines'), function (rl) {
+              return rl.orderlineId === line.id;
+            }) !== undefined;
+          });
+          if (showSplitBtn) {
+            var me = this;
+            OB.UTIL.HookManager.executeHooks('OBPOS_CheckSplitLine', {
+              receipt: me.model.get('order'),
+              orderline: line
+            }, function (args) {
+              if (args && args.cancelOperation) {
+                me.$.actionButtonsContainer.$.splitlineButton.hide();
+              } else {
+                me.$.actionButtonsContainer.$.splitlineButton.show();
+              }
+            });
+          } else {
+            this.$.actionButtonsContainer.$.splitlineButton.hide();
+          }
         }
         if (this.line) {
           if (this.line.get('product').get('stocked') && this.line.get('product').get('productType') === 'I' && !this.line.get('product').get('ispack') && OB.MobileApp.model.get('connectedToERP')) {
@@ -582,6 +617,7 @@ enyo.kind({
       } else {
         this.$.actionButtonsContainer.$.checkStockButton.hide();
         this.$.actionButtonsContainer.$.descriptionButton.hide();
+        this.$.actionButtonsContainer.$.splitlineButton.hide();
       }
       var promotions = false;
       if (this.selectedModels) {
