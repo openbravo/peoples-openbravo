@@ -200,7 +200,7 @@ public class CancelAndReplaceUtils {
    *          one, if == false, it will only be cancelled
    * @return
    */
-  protected static Order cancelAndReplaceOrder(String orderId, JSONObject jsonorder,
+  private static Order cancelAndReplaceOrder(String orderId, JSONObject jsonorder,
       boolean useOrderDocumentNoForRelatedDocs, boolean replaceOrder) {
     ScrollableResults orderLines = null;
     Order newOrder = null;
@@ -288,9 +288,9 @@ public class CancelAndReplaceUtils {
         boolean associateShipmentToNewReceipt = false;
         try {
           associateShipmentToNewReceipt = ("Y").equals(Preferences.getPreferenceValue(
-              CancelAndReplaceUtils.ASSOCIATE_SHIPMENT_TO_REPLACE_TICKET, true,
-              oldOrder.getClient(), oldOrder.getOrganization(), OBContext.getOBContext().getUser(),
-              null, null));
+              CancelAndReplaceUtils.ASSOCIATE_SHIPMENT_TO_REPLACE_TICKET, true, oldOrder
+                  .gcancelAndReplaceOrderetClient(), oldOrder.getOrganization(), OBContext
+                  .getOBContext().getUser(), null, null));
         } catch (PropertyException e1) {
           associateShipmentToNewReceipt = false;
         }
@@ -480,7 +480,7 @@ public class CancelAndReplaceUtils {
     return newOrder;
   }
 
-  protected static void callCOrderPost(Order order) throws OBException {
+  private static void callCOrderPost(Order order) throws OBException {
     final List<Object> parameters = new ArrayList<Object>();
     parameters.add(null);
     parameters.add(order.getId());
@@ -527,7 +527,7 @@ public class CancelAndReplaceUtils {
     return inverseOrder;
   }
 
-  protected static void createOrderTaxes(Order oldOrder, Order inverseOrder) {
+  private static void createOrderTaxes(Order oldOrder, Order inverseOrder) {
     for (OrderTax orderTax : oldOrder.getOrderTaxList()) {
       OrderTax inverseOrderTax = (OrderTax) DalUtil.copy(orderTax, false, true);
       BigDecimal inverseTaxAmount = orderTax.getTaxAmount().negate();
@@ -541,7 +541,7 @@ public class CancelAndReplaceUtils {
     OBDal.getInstance().flush();
   }
 
-  protected static OrderLine createOrderLine(OrderLine oldOrderLine, Order inverseOrder,
+  private static OrderLine createOrderLine(OrderLine oldOrderLine, Order inverseOrder,
       boolean replaceOrder, boolean triggersDisabled) {
     if (!replaceOrder
         && oldOrderLine.getDeliveredQuantity().compareTo(oldOrderLine.getOrderedQuantity()) == 0) {
@@ -578,7 +578,7 @@ public class CancelAndReplaceUtils {
     return inverseOrderLine;
   }
 
-  protected static void creteOrderLineDiscounts(OrderLine oldOrderLine, OrderLine inverseOrderLine,
+  private static void creteOrderLineDiscounts(OrderLine oldOrderLine, OrderLine inverseOrderLine,
       Order inverseOrder) {
     for (OrderLineOffer orderLineOffer : oldOrderLine.getOrderLineOfferList()) {
       final OrderLineOffer inverseOrderLineOffer = (OrderLineOffer) DalUtil.copy(orderLineOffer,
@@ -596,7 +596,7 @@ public class CancelAndReplaceUtils {
     OBDal.getInstance().flush();
   }
 
-  protected static void createOrderLineTaxes(OrderLine oldOrderLine, OrderLine inverseOrderLine,
+  private static void createOrderLineTaxes(OrderLine oldOrderLine, OrderLine inverseOrderLine,
       Order inverseOrder) {
     for (OrderLineTax orderLineTax : oldOrderLine.getOrderLineTaxList()) {
       final OrderLineTax inverseOrderLineTax = (OrderLineTax) DalUtil.copy(orderLineTax, false,
@@ -614,7 +614,7 @@ public class CancelAndReplaceUtils {
     OBDal.getInstance().flush();
   }
 
-  protected static ShipmentInOut createShipment(Order oldOrder,
+  private static ShipmentInOut createShipment(Order oldOrder,
       List<ShipmentInOutLine> goodsShipmentLineList) {
     ShipmentInOut nettingGoodsShipment = null;
     OrganizationStructureProvider osp = OBContext.getOBContext().getOrganizationStructureProvider(
@@ -679,7 +679,7 @@ public class CancelAndReplaceUtils {
     return nettingGoodsShipment;
   }
 
-  protected static ShipmentInOutLine createShipmentLine(ShipmentInOut nettingGoodsShipment,
+  private static ShipmentInOutLine createShipmentLine(ShipmentInOut nettingGoodsShipment,
       ShipmentInOutLine nettingGoodsShipmentLine, OrderLine orderLine, long lineNoCounter,
       BigDecimal movementQty, CallableStatement updateStockStatement, boolean triggersDisabled) {
     ShipmentInOutLine newGoodsShipmentLine = null;
@@ -707,7 +707,7 @@ public class CancelAndReplaceUtils {
     return newGoodsShipmentLine;
   }
 
-  protected static void releaseOldReservations(Order oldOrder) {
+  private static void releaseOldReservations(Order oldOrder) {
     ScrollableResults oldOrderLines = null;
     try {
       // Iterate old order lines
@@ -739,7 +739,7 @@ public class CancelAndReplaceUtils {
   }
 
   // Release a reservation
-  protected static void releaseReservation(Reservation reservation) {
+  private static void releaseReservation(Reservation reservation) {
     final StringBuilder hqlReservations = new StringBuilder();
     hqlReservations.append(" update " + ReservationStock.ENTITY_NAME + " as rs set rs."
         + ReservationStock.PROPERTY_RELEASED + " = rs." + ReservationStock.PROPERTY_QUANTITY);
@@ -753,7 +753,7 @@ public class CancelAndReplaceUtils {
     OBDal.getInstance().flush();
   }
 
-  protected static void createNewReservations(Order newOrder) {
+  private static void createNewReservations(Order newOrder) {
     ScrollableResults newOrderLines = null;
     try {
       // Iterate old order lines
@@ -790,7 +790,7 @@ public class CancelAndReplaceUtils {
     }
   }
 
-  protected static ScrollableResults getOrderLineList(Order order) {
+  private static ScrollableResults getOrderLineList(Order order) {
     OBCriteria<OrderLine> orderLinesCriteria = OBDal.getInstance().createCriteria(OrderLine.class);
     orderLinesCriteria.add(Restrictions.eq(OrderLine.PROPERTY_SALESORDER, order));
 
@@ -811,7 +811,7 @@ public class CancelAndReplaceUtils {
    * @param triggersDisabled
    *          Flag that tells if triggers are disabled or not while executing this method.
    */
-  protected static void createMTransaction(ShipmentInOutLine line,
+  private static void createMTransaction(ShipmentInOutLine line,
       CallableStatement updateStockStatement, boolean triggersDisabled) {
     Product prod = line.getProduct();
     if (prod.getProductType().equals("I") && line.getProduct().isStocked()) {
@@ -860,7 +860,7 @@ public class CancelAndReplaceUtils {
    * @param updateStockStatement
    *          The query to be executed.
    */
-  protected static void updateInventory(MaterialTransaction transaction,
+  private static void updateInventory(MaterialTransaction transaction,
       CallableStatement updateStockStatement) {
     try {
       // client
@@ -902,7 +902,7 @@ public class CancelAndReplaceUtils {
     }
   }
 
-  protected static void processShipment(ShipmentInOut shipment) {
+  private static void processShipment(ShipmentInOut shipment) {
     if (shipment.isProcessed()) {
       shipment.setProcessed(false);
       shipment.setDocumentStatus("DR");
@@ -916,7 +916,7 @@ public class CancelAndReplaceUtils {
     OBDal.getInstance().flush();
   }
 
-  protected static void createPayments(Order oldOrder, Order newOrder, Order inverseOrder,
+  private static void createPayments(Order oldOrder, Order newOrder, Order inverseOrder,
       JSONObject jsonorder, boolean useOrderDocumentNoForRelatedDocs, boolean replaceOrder,
       boolean triggersDisabled) {
     try {
@@ -1092,7 +1092,7 @@ public class CancelAndReplaceUtils {
     return _newPayment;
   }
 
-  protected static FIN_Payment createPayment(FIN_Payment payment, Order order,
+  private static FIN_Payment createPayment(FIN_Payment payment, Order order,
       FIN_PaymentMethod paymentPaymentMethod, BigDecimal amount, DocumentType paymentDocumentType,
       FIN_FinancialAccount financialAccount, String paymentDocumentNo) throws Exception {
     FIN_Payment newPayment = payment;
@@ -1190,14 +1190,14 @@ public class CancelAndReplaceUtils {
     return newPayment;
   }
 
-  protected static String getPaymentDescription() {
+  private static String getPaymentDescription() {
     String language = OBContext.getOBContext().getLanguage().getLanguage();
     String paymentDescription = Utility.messageBD(new DalConnectionProvider(false),
         "OrderDocumentno", language);
     return paymentDescription;
   }
 
-  protected static String getDocumentNo(Entity entity, DocumentType doctypeTarget,
+  private static String getDocumentNo(Entity entity, DocumentType doctypeTarget,
       DocumentType doctype) {
     return Utility.getDocumentNo(OBDal.getInstance().getConnection(false),
         new DalConnectionProvider(false), RequestContext.get().getVariablesSecureApp(), "", entity
@@ -1205,8 +1205,8 @@ public class CancelAndReplaceUtils {
         doctype == null ? "" : doctype.getId(), false, true);
   }
 
-  protected static String getPaymentDocumentNo(boolean useOrderDocumentNoForRelatedDocs,
-      Order order, DocumentType paymentDocumentType) {
+  private static String getPaymentDocumentNo(boolean useOrderDocumentNoForRelatedDocs, Order order,
+      DocumentType paymentDocumentType) {
     String paymentDocumentNo = null;
     // Get Payment DocumentNo
     Entity paymentEntity = ModelProvider.getInstance().getEntity(FIN_Payment.class);
@@ -1226,7 +1226,7 @@ public class CancelAndReplaceUtils {
    *          Document number of the cancelled order.
    * @return The new document number for the order which cancels the old order.
    */
-  public static String getNextCancelDocNo(String documentNo) {
+  private static String getNextCancelDocNo(String documentNo) {
     String newDocNo = "";
     String[] splittedDocNo = documentNo.split("-");
     if (splittedDocNo.length > 1) {
