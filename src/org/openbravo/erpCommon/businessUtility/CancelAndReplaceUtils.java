@@ -86,6 +86,7 @@ public class CancelAndReplaceUtils {
   public static final String CREATE_NETTING_SHIPMENT = "CancelAndReplaceCreateNetShipment";
   public static final String ASSOCIATE_SHIPMENT_TO_REPLACE_TICKET = "CancelAndReplaceAssociateShipmentToNewTicket";
   private static OrganizationStructureProvider osp = null;
+  public static String REVERSE_PREFIX = "*R*";
 
   /**
    * Process that creates a replacement order in temporary status in order to Cancel and Replace an
@@ -434,7 +435,7 @@ public class CancelAndReplaceUtils {
     inverseOrder.setScheduledDeliveryDate(today);
     String newDocumentNo = documentNo;
     if (newDocumentNo == null) {
-      newDocumentNo = oldOrder.getDocumentNo() + "*R*";
+      newDocumentNo = oldOrder.getDocumentNo() + REVERSE_PREFIX;
     }
     inverseOrder.setDocumentNo(newDocumentNo);
     inverseOrder.setCancelledorder(oldOrder);

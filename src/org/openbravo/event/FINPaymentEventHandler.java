@@ -21,6 +21,7 @@ import org.openbravo.client.kernel.event.EntityDeleteEvent;
 import org.openbravo.client.kernel.event.EntityNewEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
 import org.openbravo.client.kernel.event.EntityUpdateEvent;
+import org.openbravo.erpCommon.businessUtility.CancelAndReplaceUtils;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
 
 public class FINPaymentEventHandler extends EntityPersistenceEventObserver {
@@ -38,13 +39,14 @@ public class FINPaymentEventHandler extends EntityPersistenceEventObserver {
       return;
     }
     FIN_Payment payment = (FIN_Payment) event.getTargetInstance();
-    int index = payment.getDocumentNo().indexOf("*R*");
+    int index = payment.getDocumentNo().indexOf(CancelAndReplaceUtils.REVERSE_PREFIX);
     if (payment.getAmount().compareTo(BigDecimal.ZERO) == 0) {
       if (index == -1) {
         final Entity paymentEntity = ModelProvider.getInstance().getEntity(FIN_Payment.ENTITY_NAME);
         final Property paymentDocumentNoProperty = paymentEntity
             .getProperty(FIN_Payment.PROPERTY_DOCUMENTNO);
-        event.setCurrentState(paymentDocumentNoProperty, payment.getDocumentNo() + "*R*");
+        event.setCurrentState(paymentDocumentNoProperty, payment.getDocumentNo()
+            + CancelAndReplaceUtils.REVERSE_PREFIX);
       }
     } else {
       if (index > 0) {
@@ -66,7 +68,8 @@ public class FINPaymentEventHandler extends EntityPersistenceEventObserver {
       final Entity paymentEntity = ModelProvider.getInstance().getEntity(FIN_Payment.ENTITY_NAME);
       final Property paymentDocumentNoProperty = paymentEntity
           .getProperty(FIN_Payment.PROPERTY_DOCUMENTNO);
-      event.setCurrentState(paymentDocumentNoProperty, payment.getDocumentNo() + "*R*");
+      event.setCurrentState(paymentDocumentNoProperty, payment.getDocumentNo()
+          + CancelAndReplaceUtils.REVERSE_PREFIX);
     }
   }
 
