@@ -1100,7 +1100,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         }
         addShipmentline(shipment, shplineentity, orderlines.getJSONObject(i), orderLine, jsonorder,
             lineNo, pendingQty.negate(), binForReturn, null, i);
-      } else if (useSingleBin) {
+      } else if (useSingleBin && pendingQty.compareTo(BigDecimal.ZERO) > 0) {
         lineNo += 10;
         addShipmentline(shipment, shplineentity, orderlines.getJSONObject(i), orderLine, jsonorder,
             lineNo, pendingQty, foundSingleBin, null, i);
