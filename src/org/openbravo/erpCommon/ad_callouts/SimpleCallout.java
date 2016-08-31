@@ -32,6 +32,7 @@ import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.filter.RegexFilter;
 import org.openbravo.base.filter.RequestFilter;
+import org.openbravo.base.model.domaintype.PrimitiveDomainType;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.application.window.servlet.CalloutServletConfig;
 import org.openbravo.client.kernel.RequestContext;
@@ -124,6 +125,10 @@ public abstract class SimpleCallout extends DelegateConnectionProvider {
     while (keys.hasNext()) {
       String key = keys.next();
       JSONObject element = result.getJSONObject(key);
+      Object elem = null;
+      if (result.getJSONObject(key).has(SimpleCalloutConstants.CLASSIC_VALUE)) {
+        elem = result.getJSONObject(key).get(SimpleCalloutConstants.CLASSIC_VALUE);
+      }
 
       if (isMessageElement(key)) {
         // first check messages
@@ -214,7 +219,12 @@ public abstract class SimpleCallout extends DelegateConnectionProvider {
           // We set the new value in the request, so that the JSONObject is computed
           // with the new value
           UIDefinition uiDef = UIDefinitionController.getInstance().getUIDefinition(col.getId());
-          request.setRequestParameter(key, element.getString(SimpleCalloutConstants.CLASSIC_VALUE));
+          if (!(uiDef.getDomainType() instanceof PrimitiveDomainType)) {
+            request.setRequestParameter(key,
+                element.getString(SimpleCalloutConstants.CLASSIC_VALUE));
+          } else {
+            request.setRequestParameter(key, uiDef.convertToClassicString(elem));
+          }
 
           String jsonStr = uiDef.getFieldProperties(inpFields.get(key), true);
           JSONObject jsonobj = new JSONObject(jsonStr);
@@ -245,7 +255,6 @@ public abstract class SimpleCallout extends DelegateConnectionProvider {
 
         if (changed && col.getCallout() != null) {
           // We need to fire this callout, as the column value was changed
-          // but only if the callout we are firing is different
           if (!getSimpleClassName().equals(
               col.getCallout().getADModelImplementationList().get(0).getJavaClassName())) {
             // add callouts to call and lastFieldChangedList in
@@ -496,11 +505,7 @@ public abstract class SimpleCallout extends DelegateConnectionProvider {
      */
     public void addResult(String param, Object value) {
       JSONObject columnValue = new JSONObject();
-      String strValue = value == null ? "null" : value.toString();
-
-      if (value instanceof BigDecimal) {
-        strValue = manageBigDecimalValues((BigDecimal) value);
-      }
+      Object strValue = value == null ? "null" : value;
 
       // handle case when callouts are sending us "\"\"" string.
       if ("\"\"".equals(strValue)) {
@@ -513,19 +518,6 @@ public abstract class SimpleCallout extends DelegateConnectionProvider {
       } catch (JSONException e) {
         log.error("Error parsing JSON Object.", e);
       }
-
-    }
-
-    /**
-     * Returns representation of BigDecimal with properly precision.
-     */
-    private String manageBigDecimalValues(BigDecimal value) {
-      String valueToReturn = value.toString();
-      int precision = value.scale();
-      if (precision >= 0) {
-        valueToReturn = value.setScale((precision == 0 ? 1 : precision)).toPlainString();
-      }
-      return valueToReturn;
     }
 
     /**
