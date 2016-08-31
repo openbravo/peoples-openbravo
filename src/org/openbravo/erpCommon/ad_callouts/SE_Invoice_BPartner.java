@@ -404,7 +404,6 @@ public class SE_Invoice_BPartner extends HttpSecureAppServlet {
               .eq(FinAccPaymentMethod.PROPERTY_PAYMENTMETHOD, selectedPaymentMethod));
           obc.add(Restrictions.in(FinAccPaymentMethod.PROPERTY_ORGANIZATION + ".id", OBContext
               .getOBContext().getOrganizationStructureProvider().getNaturalTree(strOrgId)));
-          obc.setMaxResults(1);
 
           // filter is on unique constraint so list().size() <=1 always
           if (obc.uniqueResult() == null) {
