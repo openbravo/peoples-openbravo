@@ -35,17 +35,15 @@ public class CancelLayawayPaymentsHookCaller {
   private Instance<CancelLayawayPaymentsHook> cancelLayawayPaymentsHook;
 
   public void executeHook(JSONObject jsonorder, Order inverseOrder) throws Exception {
-    executeHooks(cancelLayawayPaymentsHook, jsonorder, inverseOrder);
+    executeHooks(jsonorder, inverseOrder);
   }
 
-  private void executeHooks(Instance<? extends Object> hooks, JSONObject jsonorder,
-      Order inverseOrder) throws Exception {
+  private void executeHooks(JSONObject jsonorder, Order inverseOrder) throws Exception {
 
-    for (Iterator<? extends Object> procIter = hooks.iterator(); procIter.hasNext();) {
-      Object proc = procIter.next();
-      if (proc instanceof CancelLayawayPaymentsHook) {
-        ((CancelLayawayPaymentsHook) proc).exec(jsonorder, inverseOrder);
-      }
+    for (Iterator<CancelLayawayPaymentsHook> procIter = cancelLayawayPaymentsHook.iterator(); procIter
+        .hasNext();) {
+      CancelLayawayPaymentsHook proc = procIter.next();
+      proc.exec(jsonorder, inverseOrder);
     }
   }
 
