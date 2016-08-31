@@ -22,8 +22,33 @@ package org.openbravo.erpCommon.businessUtility;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.model.common.order.Order;
 
+/**
+ * Abstract class created to implement hooks inside Cancel and Replace process. All hooks in that
+ * process must extend this class so they implement exec process.
+ * 
+ * @author openbravo
+ * 
+ */
 public abstract class CancelAndReplaceOrderHook {
 
+  /**
+   * Exec method that all hooks extending this abstract class must implement.
+   * 
+   * @param replaceOrder
+   *          boolean that informs if the old sales order has been replaced or not.
+   * @param triggersDisabled
+   *          boolean that informs if triggers have been disabled previous to execute this hook.
+   * @param oldOrder
+   *          Sales Order that has been replaced.
+   * @param newOrder
+   *          New Sales Order that has replaced the old Sales Order
+   * @param inverseOrder
+   *          New Sales Order equal to old sales order but with negative quantities. Cancellation
+   *          Order.
+   * @param jsonorder
+   *          JSONObject with information of the order coming with values when the hook is invoked
+   *          because the Cancel and Replace has been executed from Web POS.
+   */
   public abstract void exec(boolean replaceOrder, boolean triggersDisabled, Order oldOrder,
       Order newOrder, Order inverseOrder, JSONObject jsonorder) throws Exception;
 }

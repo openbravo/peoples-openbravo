@@ -28,12 +28,29 @@ import javax.inject.Inject;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.model.common.order.Order;
 
+/**
+ * Public class implemented to execute all hooks of type CancelLayawayPaymentsHook. This class is
+ * called from Cancel and Replace process, inside createPayments method.
+ * 
+ * @author openbravo
+ * 
+ */
 public class CancelLayawayPaymentsHookCaller {
 
   @Inject
   @Any
   private Instance<CancelLayawayPaymentsHook> cancelLayawayPaymentsHook;
 
+  /**
+   * Method that executes all classes of type CancelLayawayPaymentsHook.
+   * 
+   * @param inverseOrder
+   *          New Sales Order equal to old sales order but with negative quantities. Cancellation
+   *          Order.
+   * @param jsonorder
+   *          JSONObject with information of the order coming with values when the hook is invoked
+   *          because the Cancel and Replace has been executed from Web POS.
+   */
   public void executeHook(JSONObject jsonorder, Order inverseOrder) throws Exception {
     executeHooks(jsonorder, inverseOrder);
   }

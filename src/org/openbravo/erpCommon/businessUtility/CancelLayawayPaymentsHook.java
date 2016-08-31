@@ -22,6 +22,23 @@ package org.openbravo.erpCommon.businessUtility;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.model.common.order.Order;
 
+/**
+ * Interface created to implement hooks inside Cancel and Replace process in createPayments method.
+ * All hooks in that process must implement this class so they implement exec process.
+ * 
+ * @author openbravo
+ * 
+ */
 public interface CancelLayawayPaymentsHook {
+  /**
+   * Exec method that all hooks implementing this interface must implement.
+   * 
+   * @param inverseOrder
+   *          New Sales Order equal to old sales order but with negative quantities. Cancellation
+   *          Order.
+   * @param jsonorder
+   *          JSONObject with information of the order coming with values when the hook is invoked
+   *          because the Cancel and Replace has been executed from Web POS.
+   */
   public void exec(JSONObject jsonorder, Order inverseOrder) throws Exception;
 }

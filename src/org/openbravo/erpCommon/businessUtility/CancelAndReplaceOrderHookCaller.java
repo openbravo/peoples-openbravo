@@ -28,11 +28,36 @@ import javax.inject.Inject;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.model.common.order.Order;
 
+/**
+ * Public class implemented to execute all hooks of type CancelAndReplaceOrderHook. This class is
+ * called from Cancel and Replace process.
+ * 
+ * @author openbravo
+ * 
+ */
 public class CancelAndReplaceOrderHookCaller {
   @Inject
   @Any
   private Instance<CancelAndReplaceOrderHook> cancelAndReplaceOrderHookProcesses;
 
+  /**
+   * Method that executes all classes of type CancelAndReplaceOrderHook.
+   * 
+   * @param replaceOrder
+   *          boolean that informs if the old sales order has been replaced or not.
+   * @param triggersDisabled
+   *          boolean that informs if triggers have been disabled previous to execute this hook.
+   * @param oldOrder
+   *          Sales Order that has been replaced.
+   * @param newOrder
+   *          New Sales Order that has replaced the old Sales Order
+   * @param inverseOrder
+   *          New Sales Order equal to old sales order but with negative quantities. Cancellation
+   *          Order.
+   * @param jsonorder
+   *          JSONObject with information of the order coming with values when the hook is invoked
+   *          because the Cancel and Replace has been executed from Web POS.
+   */
   public void executeHook(boolean replaceOrder, boolean triggersDisabled, Order oldOrder,
       Order newOrder, Order inverseOrder, JSONObject jsonorder) throws Exception {
     executeHooks(replaceOrder, triggersDisabled, oldOrder, newOrder, inverseOrder, jsonorder);
