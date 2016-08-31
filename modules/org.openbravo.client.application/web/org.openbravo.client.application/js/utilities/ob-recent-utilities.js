@@ -133,7 +133,12 @@
           }
         }
       }
-      currentRecentValue[0] = choiceObject;
+      currentRecentValue[0] = isc.clone(choiceObject);
+      if (propertyName !== 'UINAVBA_RecentCreateList' && currentRecentValue[0].deferOpenNewEdit) {
+        // keep deferOpenNewEdit property just for 'Create New' recent entries
+        // it should not be used for the rest of the recent entries
+        delete currentRecentValue[0].deferOpenNewEdit;
+      }
       currentRecentValue.length = newLength;
       OB.PropertyStore.set(propertyName, currentRecentValue);
     }

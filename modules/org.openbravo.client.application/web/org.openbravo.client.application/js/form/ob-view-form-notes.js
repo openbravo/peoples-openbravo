@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2015 Openbravo SLU
+ * All portions are Copyright (C) 2011-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s): Valery Lezhebokov.
  ************************************************************************
@@ -292,8 +292,9 @@ isc.OBNoteLayout.addProperties({
           return this.Super('change', arguments);
         },
         isDisabled: function () {
+          var windowId = view.standardWindow ? view.standardWindow.windowId : null;
           this.Super('isDisabled', arguments);
-          if (OB.PropertyStore.get("DisableNotesForReadOnlyTabs", this.windowId) === 'Y' && view.readOnly === true) {
+          if (OB.PropertyStore.get("DisableNotesForReadOnlyTabs", windowId) === 'Y' && view.readOnly === true) {
             this.readOnly = true;
             this.canEdit = false;
           }

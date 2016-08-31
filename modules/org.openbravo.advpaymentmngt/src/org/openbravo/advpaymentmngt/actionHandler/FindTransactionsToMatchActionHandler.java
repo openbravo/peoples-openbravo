@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014 Openbravo SLU
+ * All portions are Copyright (C) 2014-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,6 +19,8 @@
 
 package org.openbravo.advpaymentmngt.actionHandler;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.codehaus.jettison.json.JSONArray;
@@ -29,7 +31,6 @@ import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.financialmgmt.payment.FIN_BankStatementLine;
-import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_Reconciliation;
 import org.openbravo.service.db.DbUtility;
@@ -53,7 +54,10 @@ public class FindTransactionsToMatchActionHandler extends BaseActionHandler {
 
       if (selection.length() > 0) {
         final String strBankLineId = params.getString("bankStatementLineId");
-        final String strSelectedTransactionId = selection.getJSONObject(0).getString("id");
+        final List<String> selectedTransactionIds = new ArrayList<String>();
+        for (int i = 0; i < selection.length(); i++) {
+          selectedTransactionIds.add(selection.getJSONObject(i).getString("id"));
+        }
 
         final FIN_FinancialAccount account = OBDal.getInstance().get(FIN_FinancialAccount.class,
             jsonData.getString("inpfinFinancialAccountId"));
@@ -61,10 +65,8 @@ public class FindTransactionsToMatchActionHandler extends BaseActionHandler {
             "N");
         final FIN_BankStatementLine bankStatementLine = OBDal.getInstance().get(
             FIN_BankStatementLine.class, strBankLineId);
-        final FIN_FinaccTransaction transaction = OBDal.getInstance().get(
-            FIN_FinaccTransaction.class, strSelectedTransactionId);
-        APRM_MatchingUtility.matchBankStatementLine(bankStatementLine, transaction, reconciliation,
-            null, true);
+        APRM_MatchingUtility.matchBankStatementLine(bankStatementLine,
+            selectedTransactionIds, reconciliation, null, true);
 
       } else {
         final JSONArray actions = APRM_MatchingUtility.createMessageInProcessView(

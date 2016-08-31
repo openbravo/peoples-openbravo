@@ -284,10 +284,8 @@ public class InitialSetupUtility {
   public static Language getLanguage(String strLanguage) throws Exception {
     final OBCriteria<Language> obcLanguage = OBDal.getInstance().createCriteria(Language.class);
     obcLanguage.add(Restrictions.eq(Language.PROPERTY_LANGUAGE, strLanguage));
-    if (obcLanguage.list().size() > 0)
-      return obcLanguage.list().get(0);
-    else
-      return null;
+    // ad_language.ad_language is unique
+    return (Language) obcLanguage.uniqueResult();
   }
 
   /**
@@ -1863,8 +1861,9 @@ public class InitialSetupUtility {
       obcDataSets.add(Restrictions.eq(DataSet.PROPERTY_MODULE, module));
       obcDataSets.add(Restrictions.in(DataSet.PROPERTY_DATAACCESSLEVEL, accessLevel));
       obcDataSets.addOrder(Order.asc(DataSet.PROPERTY_NAME));
-      if (obcDataSets.list().size() > 0) {
-        return obcDataSets.list();
+      List<DataSet> listDataSets = obcDataSets.list();
+      if (!listDataSets.isEmpty()) {
+        return listDataSets;
       } else {
         return null;
       }
@@ -1887,8 +1886,9 @@ public class InitialSetupUtility {
           .createCriteria(org.openbravo.model.ad.domain.List.class);
       obcRefList.add(Restrictions.eq(org.openbravo.model.ad.domain.List.PROPERTY_REFERENCE, OBDal
           .getInstance().get(Reference.class, "181")));
-      if (obcRefList.list().size() > 0) {
-        return obcRefList.list();
+      List<org.openbravo.model.ad.domain.List> listRefList = obcRefList.list();
+      if (!listRefList.isEmpty()) {
+        return listRefList;
       } else {
         return null;
       }

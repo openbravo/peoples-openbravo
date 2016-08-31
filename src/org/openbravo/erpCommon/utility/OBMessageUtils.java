@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2012-2015 Openbravo SLU
+ * All portions are Copyright (C) 2012-2016 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -514,16 +514,13 @@ public class OBMessageUtils {
       final OBQuery<Message> messages = OBDal.getInstance().createQuery(Message.class,
           Message.PROPERTY_SEARCHKEY + "=:key");
       messages.setNamedParameter("key", key);
-      if (messages.list().isEmpty()) {
+
+      // ad_message.value has unique constraint
+      final Message message = messages.uniqueResult();
+      if (message == null) {
         return null;
       }
 
-      if (messages.list().size() > 1) {
-        log4j.warn("More than one message found using key " + key);
-      }
-
-      // pick the first one
-      final Message message = messages.list().get(0);
       String label = message.getMessageText();
       final String languageId = OBContext.getOBContext().getLanguage().getId();
       for (MessageTrl messageTrl : message.getADMessageTrlList()) {

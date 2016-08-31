@@ -18,7 +18,6 @@
  */
 package org.openbravo.service.datasource;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -46,10 +45,8 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class ReadOnlyDataSourceService extends DefaultDataSourceService {
   private static final Logger log = LoggerFactory.getLogger(ReadOnlyDataSourceService.class);
-  private static final int DATA_PAGE_SIZE = 100;
   private static final int MAX_PAGE_SIZE_INCREASE = 3;
   private static final String NEW_END_ROW = "_newEndRow";
-  private static final String IS_PICK_AND_EDIT = "_isPickAndEdit";
 
   /*
    * (non-Javadoc)
@@ -142,7 +139,7 @@ public abstract class ReadOnlyDataSourceService extends DefaultDataSourceService
     if (tableId != null) {
       entity = ModelProvider.getInstance().getEntityByTableId(tableId);
     }
-    final String isPickAndEditParam = parameters.get(IS_PICK_AND_EDIT);
+    final String isPickAndEditParam = parameters.get(JsonConstants.IS_PICK_AND_EDIT);
     final boolean isPickAndEdit = isPickAndEditParam != null ? Boolean.valueOf(isPickAndEditParam)
         : Boolean.FALSE;
     final List<Map<String, Object>> data;
@@ -162,8 +159,8 @@ public abstract class ReadOnlyDataSourceService extends DefaultDataSourceService
       int endRow) {
     List<Map<String, Object>> data;
     int pageSizeIncreaseCount = 0;
-    int selectedRecords = getNumberOfSelectedRecords(parameters);
-    if (selectedRecords > DATA_PAGE_SIZE) {
+    int selectedRecords = DataSourceUtils.getNumberOfSelectedRecords(parameters);
+    if (selectedRecords > JsonConstants.PAE_DATA_PAGE_SIZE) {
       data = getData(parameters, startRow, selectedRecords);
       parameters.put(NEW_END_ROW, Integer.toString(selectedRecords));
     } else {
@@ -183,36 +180,6 @@ public abstract class ReadOnlyDataSourceService extends DefaultDataSourceService
       }
     }
     return data;
-  }
-
-  private int getNumberOfSelectedRecords(Map<String, String> parameters) {
-    List<String> selectedRecords = new ArrayList<String>();
-    boolean hasCriteria = parameters.containsKey("criteria");
-    if (hasCriteria) {
-      try {
-        selectedRecords = getSelectedRecordsFromCriteria(JsonUtils.buildCriteria(parameters));
-      } catch (JSONException jsonex) {
-        log.error("Error retrieving number of selected records", jsonex);
-      }
-    }
-    return selectedRecords.size();
-  }
-
-  private List<String> getSelectedRecordsFromCriteria(JSONObject buildCriteria)
-      throws JSONException {
-    List<String> selectedRecords = new ArrayList<String>();
-    JSONArray criteriaArray = buildCriteria.getJSONArray("criteria");
-    for (int i = 0; i < criteriaArray.length(); i++) {
-      JSONObject criteria = criteriaArray.getJSONObject(i);
-      if (criteria.has("fieldName") && criteria.getString("fieldName").equals("id")
-          && criteria.has("value")) {
-        String value = criteria.getString("value");
-        for (String recordId : value.split(",")) {
-          selectedRecords.add(recordId.trim());
-        }
-      }
-    }
-    return selectedRecords;
   }
 
   private boolean isLastRecordSelected(List<Map<String, Object>> data) {

@@ -97,14 +97,12 @@ public class SelectorDataSourceFilter implements DataSourceFilter {
 
       String processId = parameters.get(SelectorConstants.DS_REQUEST_PROCESS_DEFINITION_ID);
       if (!StringUtils.isEmpty(processId)) {
-        OBCriteria<Parameter> qParam = OBDal.getInstance().createCriteria(Parameter.class);
-        qParam.add(Restrictions.eq(Parameter.PROPERTY_ID,
-            parameters.get(SelectorConstants.DS_REQUEST_SELECTOR_FIELD_ID)));
-        Parameter param = qParam.list().get(0);
-        Validation validation = qParam.list().get(0).getValidation();
+        Parameter param = OBDal.getInstance().get(Parameter.class,
+            parameters.get(SelectorConstants.DS_REQUEST_SELECTOR_FIELD_ID));
+        Validation validation = param.getValidation();
         if (validation != null) {
           if (validation.getType().equals("HQL_JS")) {
-            String validationCode = qParam.list().get(0).getValidation().getValidationCode();
+            String validationCode = validation.getValidationCode();
             String validationHQL = applyFilterExpression(validationCode, sel, parameters, request);
 
             if (!StringUtils.isEmpty(validationHQL)) {
@@ -311,7 +309,8 @@ public class SelectorDataSourceFilter implements DataSourceFilter {
       OBCriteria<SelectorField> sfc, HttpServletRequest request, String hqlFilterClause) {
 
     String currentWhere = "";
-    if (sfc.count() == 0) {
+    List<SelectorField> selectorFields = sfc.list();
+    if (selectorFields.size() == 0) {
       return;
     }
 
@@ -336,7 +335,7 @@ public class SelectorDataSourceFilter implements DataSourceFilter {
 
     Entity entity = ModelProvider.getInstance().getEntityByTableId(sel.getTable().getId());
 
-    for (SelectorField sf : sfc.list()) {
+    for (SelectorField sf : selectorFields) {
       // skip selector fields which do not have a property defined (needed for selector definitions
       // using a custom query
       if (sf.getProperty() == null) {
