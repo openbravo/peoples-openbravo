@@ -227,6 +227,9 @@ enyo.kind({
     }, {
       kind: 'OB.UI.ModalSelectOpenedReceipt',
       name: 'OBPOS_modalSelectOpenedReceipt'
+    }, {
+      kind: 'OB.UI.ModalSplitLine',
+      name: 'OBPOS_modalSplitLine'
     }]
   }, {
     name: 'mainSubWindow',
@@ -577,11 +580,11 @@ enyo.kind({
         return true;
       }
       args.receipt.pendingAddProduct = true;
-      args.receipt.addProduct(args.productToAdd, args.qtyToAdd, args.options, args.attrs, function (success) {
+      args.receipt.addProduct(args.productToAdd, args.qtyToAdd, args.options, args.attrs, function (success, orderline) {
         args.receipt.pendingAddProduct = false;
         args.context.model.get('orderList').saveCurrent();
         if (inEvent.callback) {
-          inEvent.callback.call(inEvent.context, success);
+          inEvent.callback.call(inEvent.context, success, orderline);
         }
       });
     });
