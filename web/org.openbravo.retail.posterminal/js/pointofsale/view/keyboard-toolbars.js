@@ -116,11 +116,15 @@ enyo.kind({
         });
       } else {
         // Calculate total amount to pay with selected PaymentMethod  
-        var amountToPay = amount;
+        var amountToPay = _.isUndefined(receiptToPay.get('paidInNegativeStatusAmt')) ? amount : -amount;
         if (receiptToPay.get("payments").length > 0) {
           receiptToPay.get("payments").each(function (item) {
             if (item.get("kind") === key) {
-              amountToPay += item.get("amount");
+              if (_.isUndefined(receiptToPay.get('paidInNegativeStatusAmt')) || (!_.isUndefined(receiptToPay.get('paidInNegativeStatusAmt')) && item.get('isPrePayment'))) {
+                amountToPay += item.get("amount");
+              } else {
+                amountToPay -= item.get("amount");
+              }
             }
           });
         }
