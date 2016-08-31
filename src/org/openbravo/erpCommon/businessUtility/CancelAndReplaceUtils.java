@@ -288,9 +288,9 @@ public class CancelAndReplaceUtils {
         boolean associateShipmentToNewReceipt = false;
         try {
           associateShipmentToNewReceipt = ("Y").equals(Preferences.getPreferenceValue(
-              CancelAndReplaceUtils.ASSOCIATE_SHIPMENT_TO_REPLACE_TICKET, true, oldOrder
-                  .gcancelAndReplaceOrderetClient(), oldOrder.getOrganization(), OBContext
-                  .getOBContext().getUser(), null, null));
+              CancelAndReplaceUtils.ASSOCIATE_SHIPMENT_TO_REPLACE_TICKET, true,
+              oldOrder.getClient(), oldOrder.getOrganization(), OBContext.getOBContext().getUser(),
+              null, null));
         } catch (PropertyException e1) {
           associateShipmentToNewReceipt = false;
         }
