@@ -81,7 +81,7 @@ import org.openbravo.service.db.DbUtility;
 
 public class CancelAndReplaceUtils {
   private static Logger log4j = Logger.getLogger(CancelAndReplaceUtils.class);
-  private static final BigDecimal NEGATIVE_ONE = new BigDecimal(-1);
+  private static final BigDecimal NEGATIVE_ONE = new BigDecimal("-1");
   public static final String CREATE_NETTING_SHIPMENT = "CancelAndReplaceCreateNetShipment";
   public static final String ASSOCIATE_SHIPMENT_TO_REPLACE_TICKET = "CancelAndReplaceAssociateShipmentToNewTicket";
   public static String REVERSE_PREFIX = "*R*";
