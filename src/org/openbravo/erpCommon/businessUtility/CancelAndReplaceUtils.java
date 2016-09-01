@@ -65,7 +65,6 @@ import org.openbravo.model.common.plm.AttributeSetInstance;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
-import org.openbravo.model.financialmgmt.payment.FIN_PaymentDetail;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentMethod;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentSchedule;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
@@ -938,16 +937,18 @@ public class CancelAndReplaceUtils {
       if (paymentSchedule != null) {
         FIN_Payment nettingPayment = null;
 
-        // Get paid amount on original order
-        final String countHql = "select coalesce(sum(pd." + FIN_PaymentDetail.PROPERTY_AMOUNT
-            + "), 0) as amount from " + FIN_PaymentScheduleDetail.ENTITY_NAME + " as psd join psd."
-            + FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS + " as pd where psd."
-            + FIN_PaymentScheduleDetail.PROPERTY_ORDERPAYMENTSCHEDULE + ".id =:paymentScheduleId";
+        // Get outstanding amount on original order
+        final String countHql = "select coalesce(sum(psd."
+            + FIN_PaymentScheduleDetail.PROPERTY_AMOUNT + "), 0) as amount from "
+            + FIN_PaymentScheduleDetail.ENTITY_NAME + " as psd where psd."
+            + FIN_PaymentScheduleDetail.PROPERTY_ORDERPAYMENTSCHEDULE
+            + ".id =:paymentScheduleId and psd."
+            + FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS + " is null";
         final Query qry = OBDal.getInstance().getSession().createQuery(countHql);
         qry.setParameter("paymentScheduleId", paymentSchedule.getId());
         qry.setMaxResults(1);
-        BigDecimal paidAmount = (BigDecimal) qry.uniqueResult();
-        BigDecimal outstandingAmount = paymentSchedule.getAmount().subtract(paidAmount);
+        BigDecimal outstandingAmount = (BigDecimal) qry.uniqueResult();
+        BigDecimal paidAmount = paymentSchedule.getAmount().subtract(outstandingAmount);
         BigDecimal negativeAmount = BigDecimal.ZERO;
 
         if (replaceOrder) {
