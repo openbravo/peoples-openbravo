@@ -974,8 +974,8 @@ public class CancelAndReplaceUtils {
             nettingPayment = createOrUdpatePayment(nettingPayment, newOrder, null, paidAmount,
                 null, null, null);
             String description = nettingPayment.getDescription() + ": " + newOrder.getDocumentNo();
-            String truncatedDescription = (description.length() > 255) ? description.substring(0,
-                252).concat("...") : description.toString();
+            String truncatedDescription = (description.length() > 255) ? description
+                .substring(0, 252).concat("...").toString() : description.toString();
             nettingPayment.setDescription(truncatedDescription);
           }
         } else {
@@ -1088,7 +1088,7 @@ public class CancelAndReplaceUtils {
     nettingPayment.setAmount(BigDecimal.ZERO);
     nettingPayment.setUsedCredit(BigDecimal.ZERO);
     String truncatedDescription = (description.length() > 255) ? description.substring(0, 252)
-        .concat("...") : description.toString();
+        .concat("...").toString() : description.toString();
     nettingPayment.setDescription(truncatedDescription);
     return nettingPayment;
   }
