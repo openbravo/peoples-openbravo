@@ -81,6 +81,8 @@ import org.openbravo.service.db.DbUtility;
 public class CancelAndReplaceUtils {
   private static Logger log4j = Logger.getLogger(CancelAndReplaceUtils.class);
   private static final BigDecimal NEGATIVE_ONE = new BigDecimal("-1");
+  private static final String HYPHENONE = "-1";
+  private static final String HYPHEN = "-1";
   public static final String CREATE_NETTING_SHIPMENT = "CancelAndReplaceCreateNetShipment";
   public static final String ASSOCIATE_SHIPMENT_TO_REPLACE_TICKET = "CancelAndReplaceAssociateShipmentToNewTicket";
   public static String REVERSE_PREFIX = "*R*";
@@ -1062,7 +1064,7 @@ public class CancelAndReplaceUtils {
         paymentDocumentType);
 
     // Get Payment Description
-    String description = getPaymentDescription();
+    String description = getOrderDocumentNoLabel();
     description += ": " + inverseOrder.getDocumentNo();
 
     // Duplicate payment with negative amount
@@ -1181,19 +1183,11 @@ public class CancelAndReplaceUtils {
     return _nettingPayment;
   }
 
-  private static String getPaymentDescription() {
+  private static String getOrderDocumentNoLabel() {
     String language = OBContext.getOBContext().getLanguage().getLanguage();
     String paymentDescription = Utility.messageBD(new DalConnectionProvider(false),
         "OrderDocumentno", language);
     return paymentDescription;
-  }
-
-  private static String getDocumentNo(Entity entity, DocumentType doctypeTarget,
-      DocumentType doctype) {
-    return Utility.getDocumentNo(OBDal.getInstance().getConnection(false),
-        new DalConnectionProvider(false), RequestContext.get().getVariablesSecureApp(), "", entity
-            .getTableName(), doctypeTarget == null ? "" : doctypeTarget.getId(),
-        doctype == null ? "" : doctype.getId(), false, true);
   }
 
   private static String getPaymentDocumentNo(boolean useOrderDocumentNoForRelatedDocs, Order order,
@@ -1205,7 +1199,10 @@ public class CancelAndReplaceUtils {
     if (useOrderDocumentNoForRelatedDocs) {
       paymentDocumentNo = order.getDocumentNo();
     } else {
-      paymentDocumentNo = getDocumentNo(paymentEntity, null, paymentDocumentType);
+      paymentDocumentNo = Utility.getDocumentNo(OBDal.getInstance().getConnection(false),
+          new DalConnectionProvider(false), RequestContext.get().getVariablesSecureApp(), "",
+          paymentEntity.getTableName(), null, paymentDocumentType == null ? ""
+              : paymentDocumentType.getId(), false, true);
     }
     return paymentDocumentNo;
   }
@@ -1219,25 +1216,25 @@ public class CancelAndReplaceUtils {
    */
   private static String getNextCancelDocNo(String documentNo) {
     String newDocNo = "";
-    String[] splittedDocNo = documentNo.split("-");
+    String[] splittedDocNo = documentNo.split(HYPHEN);
     if (splittedDocNo.length > 1) {
       int nextNumber;
       try {
         nextNumber = Integer.parseInt(splittedDocNo[splittedDocNo.length - 1]) + 1;
         for (int i = 0; i < splittedDocNo.length; i++) {
           if (i == 0) {
-            newDocNo = splittedDocNo[i] + "-";
+            newDocNo = splittedDocNo[i] + HYPHEN;
           } else if (i < splittedDocNo.length - 1) {
-            newDocNo += splittedDocNo[i] + "-";
+            newDocNo += splittedDocNo[i] + HYPHEN;
           } else {
             newDocNo += nextNumber;
           }
         }
       } catch (NumberFormatException nfe) {
-        newDocNo = documentNo + "-1";
+        newDocNo = documentNo + HYPHENONE;
       }
     } else {
-      newDocNo = documentNo + "-1";
+      newDocNo = documentNo + HYPHENONE;
     }
     return newDocNo;
   }
