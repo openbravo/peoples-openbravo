@@ -568,18 +568,18 @@ public class CancelAndReplaceUtils {
     OBDal.getInstance().save(inverseOrderLine);
 
     // Copy the discounts of the original line
-    createInverseOrderLineDiscounts(oldOrderLine, inverseOrderLine, inverseOrder);
+    createInverseOrderLineDiscounts(oldOrderLine, inverseOrderLine);
     // Copy old order taxes to inverse, it is done when is executed from Web POS because triggers
     // are disabled
     if (triggersDisabled) {
-      createInverseOrderLineTaxes(oldOrderLine, inverseOrderLine, inverseOrder);
+      createInverseOrderLineTaxes(oldOrderLine, inverseOrderLine);
     }
 
     return inverseOrderLine;
   }
 
   private static void createInverseOrderLineDiscounts(OrderLine oldOrderLine,
-      OrderLine inverseOrderLine, Order inverseOrder) {
+      OrderLine inverseOrderLine) {
     for (OrderLineOffer orderLineOffer : oldOrderLine.getOrderLineOfferList()) {
       final OrderLineOffer inverseOrderLineOffer = (OrderLineOffer) DalUtil.copy(orderLineOffer,
           false, true);
@@ -596,8 +596,7 @@ public class CancelAndReplaceUtils {
     OBDal.getInstance().flush();
   }
 
-  private static void createInverseOrderLineTaxes(OrderLine oldOrderLine,
-      OrderLine inverseOrderLine, Order inverseOrder) {
+  private static void createInverseOrderLineTaxes(OrderLine oldOrderLine, OrderLine inverseOrderLine) {
     for (OrderLineTax orderLineTax : oldOrderLine.getOrderLineTaxList()) {
       final OrderLineTax inverseOrderLineTax = (OrderLineTax) DalUtil.copy(orderLineTax, false,
           true);
@@ -605,10 +604,10 @@ public class CancelAndReplaceUtils {
       BigDecimal inverseTaxableAmount = orderLineTax.getTaxableAmount().negate();
       inverseOrderLineTax.setTaxAmount(inverseTaxAmount);
       inverseOrderLineTax.setTaxableAmount(inverseTaxableAmount);
-      inverseOrderLineTax.setSalesOrder(inverseOrder);
+      inverseOrderLineTax.setSalesOrder(inverseOrderLine.getSalesOrder());
       inverseOrderLineTax.setSalesOrderLine(inverseOrderLine);
       inverseOrderLine.getOrderLineTaxList().add(inverseOrderLineTax);
-      inverseOrder.getOrderLineTaxList().add(inverseOrderLineTax);
+      inverseOrderLine.getSalesOrder().getOrderLineTaxList().add(inverseOrderLineTax);
       OBDal.getInstance().save(inverseOrderLineTax);
     }
     OBDal.getInstance().flush();
