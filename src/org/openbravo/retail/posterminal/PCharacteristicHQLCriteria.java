@@ -33,6 +33,10 @@ public class PCharacteristicHQLCriteria extends HQLCriteriaProcess {
     } else {
       sql = getProdCategoryQuery();
     }
+    if (array_params.length > 2 && !array_params[2].equals("")) {
+      sql = sql + getCharacteristics(array_params[2]);
+    }
+    sql = sql + ") ";
     return sql;
   }
 
@@ -55,7 +59,7 @@ public class PCharacteristicHQLCriteria extends HQLCriteriaProcess {
     return " exists (select 1 from ProductCharacteristicValue as pchv , OBRETCO_Prol_Product pli "
         + "where ch.id = pchv.characteristic.id "
         + "and pchv.product.id= pli.product.id  and   pli.obretcoProductlist.id='"
-        + productList.getId() + "' and upper(pchv.product.name) like upper('$1') ) ";
+        + productList.getId() + "' and upper(pchv.product.name) like upper('$1')  ";
   }
 
   public String getProdCategoryQuery() {
@@ -65,7 +69,7 @@ public class PCharacteristicHQLCriteria extends HQLCriteriaProcess {
         + "where ch.id = pchv.characteristic.id "
         + "and pchv.product.id= pli.product.id  and   pli.obretcoProductlist.id='"
         + productList.getId()
-        + "' and upper(pchv.product.name) like upper('$1') and pchv.product.productCategory.id in ( '$2') ) ";
+        + "' and upper(pchv.product.name) like upper('$1') and pchv.product.productCategory.id in ( '$2')  ";
   }
 
   public String getBestsellers() {
@@ -74,6 +78,21 @@ public class PCharacteristicHQLCriteria extends HQLCriteriaProcess {
     return " exists (select 1 from ProductCharacteristicValue as pchv, OBRETCO_Prol_Product pli "
         + "where pchv.product.id=pli.product.id and ch.id = pchv.characteristic.id "
         + "and pli.bestseller = true and upper(pchv.product.name) like upper('$1') and pli.obretcoProductlist.id='"
-        + productList.getId() + "') ";
+        + productList.getId() + "'";
+  }
+
+  public String getCharacteristics(String params) {
+    String[] array = params.split(";");
+    String hql = "";
+    for (int i = 0; i < array.length; i++) {
+      hql = hql
+          + " and  exists (select 1  from ProductCharacteristicValue p  where p.product.id = pchv.product.id and  p.characteristicValue.id in ('"
+          + getIds(array, i) + "'))  ";
+    }
+    return hql;
+  }
+
+  private String getIds(String[] array, int i) {
+    return array[i].replace(",", "','");
   }
 }
