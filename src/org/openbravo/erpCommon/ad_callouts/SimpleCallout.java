@@ -76,6 +76,11 @@ public abstract class SimpleCallout extends DelegateConnectionProvider {
     super.init(config);
   }
 
+  /**
+   * This method execute the SimpleCallout operations.
+   * 
+   * @return JSONObject with the values updated by the SimpleCallout.
+   */
   public JSONObject executeSimpleCallout(RequestContext request) throws ServletException,
       JSONException {
     // prepare values for callout
@@ -83,23 +88,13 @@ public abstract class SimpleCallout extends DelegateConnectionProvider {
     CalloutInfo info = new CalloutInfo(vars);
 
     try {
-      // execute and parse response of the callout
+      // execute the callout
       execute(info);
     } catch (ServletException ex) {
-      // Error in current callout, continue with following callout
+      // Error in current SimpleCallout, continue with following callout.
     }
 
     return info.getJSONObjectResult();
-  }
-
-  private String getSimpleClassName() {
-    String classname = getClass().getName();
-    int i = classname.lastIndexOf(".");
-    if (i < 0) {
-      return classname;
-    } else {
-      return classname.substring(i + 1);
-    }
   }
 
   /**

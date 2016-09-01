@@ -1552,7 +1552,7 @@ public class FormInitializationComponent extends BaseActionHandler {
             calledCallouts.add(calloutNameJS);
           }
           CalloutResponseManager calloutResponseManager = new CalloutResponseManager(returnedArray);
-          if (calloutResponseManager.getNativeArraySize() > 0) {
+          if (returnedArray.size() > 0) {
             for (NativeArray element : calloutResponseManager.getNativeArray()) {
               parseCalloutResponse(columnValues, tab, calloutsToCall, lastfieldChangedList,
                   messages, dynamicCols, jsExecuteCode, hiddenInputs, overwrittenAuxiliaryInputs,
@@ -1619,56 +1619,8 @@ public class FormInitializationComponent extends BaseActionHandler {
             String colId = "inp" + Sqlc.TransformaNombreColumna(col.getDBColumnName());
             if (calloutResponse.isComboData(element)) {
               // Combo data
-              // NativeArray subelements = (NativeArray) element.get(1, null);
-              NativeArray subelements = (NativeArray) calloutResponse.getValue(element, 1);
-
-              JSONObject jsonobject = new JSONObject();
-              ArrayList<JSONObject> comboEntries = new ArrayList<JSONObject>();
-              // If column is not mandatory, we add an initial blank element
-              if (!col.isMandatory()) {
-                JSONObject entry = new JSONObject();
-                entry.put(JsonConstants.ID, (String) null);
-                entry.put(JsonConstants.IDENTIFIER, (String) null);
-                comboEntries.add(entry);
-              }
-              for (int j = 0; j < subelements.getLength(); j++) {
-                // NativeArray subelement = (NativeArray) subelements.get(j, null);
-                NativeArray subelement = (NativeArray) calloutResponse.getValue(subelements, j);
-                // if (subelement != null && subelement.get(2, null) != null) {
-                if (subelement != null && calloutResponse.getValue(subelement, 2) != null) {
-                  JSONObject entry = new JSONObject();
-                  // entry.put(JsonConstants.ID, subelement.get(0, null));
-                  entry.put(JsonConstants.ID, calloutResponse.getNameElement(subelement));
-                  // entry.put(JsonConstants.IDENTIFIER, subelement.get(1, null));
-                  entry.put(JsonConstants.IDENTIFIER, calloutResponse.getValue(subelement, 1));
-                  comboEntries.add(entry);
-                  // if ((j == 0 && col.isMandatory()) || subelement.get(2,
-                  // null).toString().equalsIgnoreCase("True")) {
-                  if ((j == 0 && col.isMandatory())
-                      || calloutResponse.getValue(subelement, 2).toString()
-                          .equalsIgnoreCase("True")) {
-                    // If the column is mandatory, we choose the first value as selected
-                    // In any case, we select the one which is marked as selected "true"
-                    UIDefinition uiDef = UIDefinitionController.getInstance().getUIDefinition(
-                        col.getId());
-                    // String newValue = subelement.get(0, null).toString();
-                    String newValue = calloutResponse.getNameElement(subelement).toString();
-
-                    jsonobject.put("value", newValue);
-                    jsonobject.put("classicValue", uiDef.convertToClassicString(newValue));
-                    rq.setRequestParameter(colId, uiDef.convertToClassicString(newValue));
-                    log.debug("Column: " + col.getDBColumnName() + "  Value: " + newValue);
-                  }
-                }
-              }
-              // If the callout returns a combo, we in any case set the new value with what
-              // the callout returned
-              columnValues.put(colId, jsonobject);
-              changed = true;
-              if (dynamicCols.contains(colId)) {
-                changedCols.add(col.getDBColumnName());
-              }
-              jsonobject.put("entries", new JSONArray(comboEntries));
+              changed = calloutResponse.manageComboData(columnValues, dynamicCols, changedCols, rq,
+                  element, calloutResponse, col, colId);
             } else {
               // Normal data
               Object el = calloutResponse.getValue(element, 1);
