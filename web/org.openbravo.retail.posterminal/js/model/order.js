@@ -3928,7 +3928,7 @@
     addMultiReceipt: function (model) {
       OB.Dal.save(model, function () {}, function () {
         OB.error(arguments);
-      }, model.get('isLayaway'));
+      }, model.get('loadedFromServer'));
     },
 
     doRemoteBPSettings: function (businessPartner) {
