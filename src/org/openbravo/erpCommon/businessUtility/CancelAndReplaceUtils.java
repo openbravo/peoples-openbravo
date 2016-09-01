@@ -338,10 +338,10 @@ public class CancelAndReplaceUtils {
         } else if (associateShipmentToNewReceipt) {
           OBDal.getInstance().flush();
           ShipmentInOut shipment = null;
-          // Unprocess the shipment
+          // The netting shipment is flaged as unprocessed.
           if (shipmentLine != null) {
             shipment = shipmentLine.getShipmentReceipt();
-            processShipment(shipment);
+            unprocessShipmentHeader(shipment);
           }
           try {
             shipmentLines = getShipmentLineListOfOrderLine(oldOrderLine);
@@ -377,10 +377,10 @@ public class CancelAndReplaceUtils {
           }
 
           OBDal.getInstance().flush();
-          // Process the shipment
+          // The netting shipment is flaged as processed.
           if (shipment != null) {
             OBDal.getInstance().refresh(shipment);
-            processShipment(shipment);
+            processShipmentHeader(shipment);
           }
         }
 
@@ -410,8 +410,9 @@ public class CancelAndReplaceUtils {
         }
         i++;
       }
+      // The netting shipment is flaged as processed.
       if (nettingGoodsShipment != null) {
-        processShipment(nettingGoodsShipment);
+        processShipmentHeader(nettingGoodsShipment);
       }
 
       // Close inverse order
@@ -891,16 +892,30 @@ public class CancelAndReplaceUtils {
     }
   }
 
-  private static void processShipment(ShipmentInOut shipment) {
-    if (shipment.isProcessed()) {
-      shipment.setProcessed(false);
-      shipment.setDocumentStatus("DR");
-      shipment.setDocumentAction("CO");
-    } else {
-      shipment.setProcessed(true);
-      shipment.setDocumentStatus("CO");
-      shipment.setDocumentAction("--");
-    }
+  /**
+   * Process that flags the shipment as processed and Completed. M_INOUT_POST is not used as
+   * triggers are disabled.
+   * 
+   * @param shipment
+   */
+  private static void processShipmentHeader(ShipmentInOut shipment) {
+    shipment.setProcessed(true);
+    shipment.setDocumentStatus("CO");
+    shipment.setDocumentAction("--");
+    OBDal.getInstance().save(shipment);
+    OBDal.getInstance().flush();
+  }
+
+  /**
+   * Process that flags the shipment as not processed and draft. M_INOUT_POST is not used as
+   * triggers are disabled.
+   * 
+   * @param shipment
+   */
+  private static void unprocessShipmentHeader(ShipmentInOut shipment) {
+    shipment.setProcessed(false);
+    shipment.setDocumentStatus("DR");
+    shipment.setDocumentAction("CO");
     OBDal.getInstance().save(shipment);
     OBDal.getInstance().flush();
   }
