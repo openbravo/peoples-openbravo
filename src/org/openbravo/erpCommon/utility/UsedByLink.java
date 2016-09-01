@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -29,6 +29,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
@@ -40,7 +41,9 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.Sqlc;
+import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.model.ad.datamodel.Table;
+import org.openbravo.model.ad.ui.Window;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class UsedByLink extends HttpSecureAppServlet {
@@ -56,6 +59,9 @@ public class UsedByLink extends HttpSecureAppServlet {
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
     final VariablesSecureApp vars = new VariablesSecureApp(request);
+
+    // checks if Linked Items section is enabled for the current window
+    checkLinkedItemSectionState(vars);
 
     if (vars.commandIn("DEFAULT")) {
       final String strWindow = vars.getStringParameter("inpwindowId");
@@ -90,6 +96,27 @@ public class UsedByLink extends HttpSecureAppServlet {
       throw new ServletException();
     }
 
+  }
+
+  private void checkLinkedItemSectionState(VariablesSecureApp vars) {
+    final String preferenceName = "OBUIAPP_DisableLinkedItemsSection";
+    String preferenceValue = "";
+    String windowId = vars.getStringParameter("inpwindowId");
+    if (StringUtils.isEmpty(windowId)) {
+      windowId = vars.getStringParameter("windowId");
+    }
+    try {
+      OBContext currentContext = OBContext.getOBContext();
+      preferenceValue = Preferences.getPreferenceValue(preferenceName, true,
+          currentContext.getCurrentClient(), currentContext.getCurrentOrganization(),
+          currentContext.getUser(), currentContext.getRole(),
+          OBDal.getInstance().getProxy(Window.class, windowId));
+    } catch (PropertyException e) {
+      // preference not found, continue without throwing exception
+    }
+    if ("Y".equals(preferenceValue)) {
+      throw new OBException("Linked Items section is disabled for window with id " + windowId);
+    }
   }
 
   private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strWindow,
