@@ -93,6 +93,7 @@ isc.OBStandardWindow.addProperties({
     this.viewProperties.isRootView = true;
     if (this.command === isc.OBStandardWindow.COMMAND_NEW) {
       this.viewProperties.allowDefaultEditMode = false;
+      this.viewProperties.deferOpenNewEdit = true;
     }
 
     if (OB.Utilities.checkProfessionalLicense(null, true)) {
@@ -126,6 +127,9 @@ isc.OBStandardWindow.addProperties({
 
     } else if (this.getClass().personalization) {
       this.setPersonalization(this.getClass().personalization);
+    } else {
+      // not applying personalization, not need to defer the form opening
+      this.viewProperties.deferOpenNewEdit = false;
     }
   },
 
@@ -547,7 +551,7 @@ isc.OBStandardWindow.addProperties({
   },
 
   setPersonalization: function (personalization) {
-    var i, defaultView, persDefaultValue, views, length, me = this;
+    var i, defaultView, persDefaultValue, views, currentView, length, me = this;
 
     // only personalize if there is a professional license
     if (!OB.Utilities.checkProfessionalLicense(null, true)) {
@@ -636,6 +640,13 @@ isc.OBStandardWindow.addProperties({
     // restore focus as the focusitem may have been hidden now
     // https://issues.openbravo.com/view.php?id=21249
     this.setFocusInView();
+
+    // personalization has been applied, open new record in form if the form opening has been deferred
+    currentView = this.activeView || this.view;
+    if (currentView.deferOpenNewEdit) {
+      currentView.editRecord();
+      this.command = null;
+    }
   },
 
   // reapplies partial states that couldn't be initially applied because
@@ -1178,8 +1189,10 @@ isc.OBStandardWindow.addProperties({
       }
     } else if (this.command === isc.OBStandardWindow.COMMAND_NEW) {
       var currentView = this.activeView || this.view;
-      currentView.editRecord();
-      this.command = null;
+      if (!currentView.deferOpenNewEdit) {
+        currentView.editRecord();
+        this.command = null;
+      }
     } else {
       this.setFocusInView(this.view);
     }
