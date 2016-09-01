@@ -414,6 +414,9 @@
                       });
                       me.context.get('multiOrders').trigger('integrityOk', theReceipt);
                       OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(theReceipt.get('documentnoSuffix'), theReceipt.get('quotationnoSuffix'), receipt.get('returnnoSuffix'));
+
+                      me.context.get('orderList').current = receipt;
+                      me.context.get('orderList').deleteCurrent();
                     });
 
                     OB.UTIL.cashUpReport(model.get('multiOrders').get('multiOrdersList').models);
@@ -453,8 +456,10 @@
               if (!_.isUndefined(receipt.get('amountToLayaway')) && !_.isNull(receipt.get('amountToLayaway')) && receipt.get('generateInvoice')) {
                 me.hasInvLayaways = true;
               }
-              model.get('orderList').current = receipt;
-              model.get('orderList').deleteCurrent();
+              if (!OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
+                model.get('orderList').current = receipt;
+                model.get('orderList').deleteCurrent();
+              }
               me.ordersToSend += 1;
               if (model.get('multiOrders').get('multiOrdersList').length === me.ordersToSend) {
                 OB.trace('Execution Sync process.');
