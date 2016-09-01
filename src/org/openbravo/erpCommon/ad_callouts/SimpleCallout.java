@@ -20,8 +20,6 @@ package org.openbravo.erpCommon.ad_callouts;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Map;
 
 import javax.servlet.ServletException;
 
@@ -32,20 +30,10 @@ import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.filter.RegexFilter;
 import org.openbravo.base.filter.RequestFilter;
-import org.openbravo.base.model.domaintype.PrimitiveDomainType;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.application.window.servlet.CalloutServletConfig;
 import org.openbravo.client.kernel.RequestContext;
-import org.openbravo.client.kernel.reference.EnumUIDefinition;
-import org.openbravo.client.kernel.reference.ForeignKeyUIDefinition;
-import org.openbravo.client.kernel.reference.UIDefinition;
-import org.openbravo.client.kernel.reference.UIDefinitionController;
-import org.openbravo.data.Sqlc;
 import org.openbravo.erpCommon.utility.Utility;
-import org.openbravo.model.ad.datamodel.Column;
-import org.openbravo.model.ad.ui.AuxiliaryInput;
-import org.openbravo.model.ad.ui.Field;
-import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.json.JsonConstants;
 
@@ -88,8 +76,8 @@ public abstract class SimpleCallout extends DelegateConnectionProvider {
     super.init(config);
   }
 
-  public SimpleCalloutResult executeSimpleCallout(RequestContext request,
-      SimpleCalloutResult valuesFromFIC) throws ServletException, JSONException {
+  public JSONObject executeSimpleCallout(RequestContext request) throws ServletException,
+      JSONException {
     // prepare values for callout
     VariablesSecureApp vars = new VariablesSecureApp(request.getRequest());
     CalloutInfo info = new CalloutInfo(vars);
@@ -100,212 +88,8 @@ public abstract class SimpleCallout extends DelegateConnectionProvider {
     } catch (ServletException ex) {
       // Error in current callout, continue with following callout
     }
-    parseResponeSimpleCallout(request, info, valuesFromFIC);
 
-    return valuesFromFIC;
-  }
-
-  /**
-   * This method is used to manage updated values from a SimpleCallout. SimpleCalloutResult is used
-   * to send new values to the FIC.
-   *
-   * This method duplicates code from a parser section in runCallouts() in
-   * FormInitializationComponent class.
-   *
-   */
-  private void parseResponeSimpleCallout(RequestContext request, CalloutInfo info,
-      SimpleCalloutResult valuesFromFIC) throws JSONException {
-    Map<String, Field> inpFields = valuesFromFIC.getInpFields();
-    Tab tab = valuesFromFIC.getTab();
-    JSONObject result = info.getJSONObjectResult();
-
-    // parsing response and updated values in SimpleCalloutResult to retrieves a result.
-    @SuppressWarnings("unchecked")
-    Iterator<String> keys = result.keys();
-    while (keys.hasNext()) {
-      String key = keys.next();
-      JSONObject element = result.getJSONObject(key);
-      Object elem = null;
-      if (result.getJSONObject(key).has(SimpleCalloutConstants.CLASSIC_VALUE)) {
-        elem = result.getJSONObject(key).get(SimpleCalloutConstants.CLASSIC_VALUE);
-      }
-
-      if (isMessageElement(key)) {
-        // first check messages
-        JSONObject message = parseMessage(key, element);
-        valuesFromFIC.addMessages(message);
-
-      } else if (SimpleCalloutConstants.SC_JSEXECUTE.equals(key)) {
-        // The code on a JSEXECUTE command is sent directly to the client for eval()
-        String code = element.getString(SimpleCalloutConstants.CLASSIC_VALUE);
-        if (code != null) {
-          valuesFromFIC.addJsExecuteCode(code);
-        }
-
-      } else if (SimpleCalloutConstants.SC_EXECUTE.equals(key)) {
-        String js = element.getString(SimpleCalloutConstants.CLASSIC_VALUE) == null ? null
-            : element.getString(SimpleCalloutConstants.CLASSIC_VALUE);
-        if (js != null && !js.equals("")) {
-          if (!js.equals("displayLogic();")) {
-            JSONObject message = createMessage("ERROR", Utility.messageBD(
-                new DalConnectionProvider(false), "OBUIAPP_ExecuteInCallout", RequestContext.get()
-                    .getVariablesSecureApp().getLanguage()));
-            valuesFromFIC.addMessages(message);
-            valuesFromFIC.addWarningForWindow();
-          }
-        }
-
-      } else if (inpFields.containsKey(key)) {
-        Column col = inpFields.get(key).getColumn();
-        String oldValue = request.getRequestParameter(key);
-        Boolean changed = false;
-
-        // If the column is a combo
-        if (element.has(SimpleCalloutConstants.ENTRIES)) {
-          JSONObject temporalyElement = new JSONObject();
-          // if value is not selected
-          if (!element.has(SimpleCalloutConstants.CLASSIC_VALUE)) {
-            JSONArray jsonArr = element.getJSONArray(SimpleCalloutConstants.ENTRIES);
-            ArrayList<JSONObject> newJsonArr = new ArrayList<JSONObject>();
-            JSONObject temporal = null;
-
-            // If column is not mandatory and first value is not empty, we add an initial blank
-            // element
-            if (!col.isMandatory() && !jsonArr.getJSONObject(0).isNull(JsonConstants.ID)) {
-              temporal = new JSONObject();
-              temporal.put(JsonConstants.ID, (String) null);
-              temporal.put(JsonConstants.IDENTIFIER, (String) null);
-              newJsonArr.add(temporal);
-            }
-            for (int i = 0; i < jsonArr.length(); i++) {
-              temporal = jsonArr.getJSONObject(i);
-              newJsonArr.add(temporal);
-            }
-
-            if (newJsonArr.get(0).has(JsonConstants.ID)) {
-              // create element with selected value
-              String valueSelected = newJsonArr.get(0).getString(JsonConstants.ID);
-              temporalyElement.put(SimpleCalloutConstants.VALUE, valueSelected);
-              temporalyElement.put(SimpleCalloutConstants.CLASSIC_VALUE, valueSelected);
-            }
-
-          } else {
-            // value is selected before this parsing
-            temporalyElement.put(SimpleCalloutConstants.VALUE,
-                element.getString(SimpleCalloutConstants.VALUE));
-            temporalyElement.put(SimpleCalloutConstants.CLASSIC_VALUE,
-                element.getString(SimpleCalloutConstants.CLASSIC_VALUE));
-          }
-
-          // added this new value and set parameter into request
-          if (temporalyElement.has(SimpleCalloutConstants.CLASSIC_VALUE)) {
-            request.setRequestParameter(key,
-                temporalyElement.getString(SimpleCalloutConstants.CLASSIC_VALUE));
-          }
-
-          valuesFromFIC.addColumnValues(
-              "inp" + Sqlc.TransformaNombreColumna(col.getDBColumnName()), temporalyElement);
-          changed = true;
-          if (valuesFromFIC.getDynamicCols().contains(key)) {
-            valuesFromFIC.addChangedCols(col.getDBColumnName());
-          }
-
-          if (element.has(SimpleCalloutConstants.ENTRIES)) {
-            temporalyElement.put(SimpleCalloutConstants.ENTRIES,
-                element.getJSONArray(SimpleCalloutConstants.ENTRIES));
-          }
-          // normal data
-        } else if (element.has(SimpleCalloutConstants.CLASSIC_VALUE)) {
-          // We set the new value in the request, so that the JSONObject is computed
-          // with the new value
-          UIDefinition uiDef = UIDefinitionController.getInstance().getUIDefinition(col.getId());
-          if (!(uiDef.getDomainType() instanceof PrimitiveDomainType)) {
-            request.setRequestParameter(key,
-                element.getString(SimpleCalloutConstants.CLASSIC_VALUE));
-          } else {
-            request.setRequestParameter(key, uiDef.convertToClassicString(elem));
-          }
-
-          String jsonStr = uiDef.getFieldProperties(inpFields.get(key), true);
-          JSONObject jsonobj = new JSONObject(jsonStr);
-          if (jsonobj.has(SimpleCalloutConstants.CLASSIC_VALUE)) {
-            String newValue = element.getString(SimpleCalloutConstants.CLASSIC_VALUE);
-            // Special case for null values for combos: we must clean the combo values
-            if (newValue.equals("null")
-                && (uiDef instanceof ForeignKeyUIDefinition || uiDef instanceof EnumUIDefinition)) {
-              newValue = "";
-            }
-
-            if ((oldValue == null && newValue != null) || (oldValue != null && newValue == null)
-                || (oldValue != null && newValue != null && !oldValue.equals(newValue))) {
-              valuesFromFIC.addColumnValues(
-                  "inp" + Sqlc.TransformaNombreColumna(col.getDBColumnName()), jsonobj);
-              // to check refire a callout
-              changed = true;
-              if (valuesFromFIC.getDynamicCols().contains(key)) {
-                valuesFromFIC.addChangedCols(col.getDBColumnName());
-              }
-              request.setRequestParameter(key,
-                  jsonobj.getString(SimpleCalloutConstants.CLASSIC_VALUE));
-            }
-          } else {
-            log.debug("Column value didn't change. We do not attempt to execute any additional callout");
-          }
-        }
-
-        if (changed && col.getCallout() != null) {
-          // We need to fire this callout, as the column value was changed
-          if (!getSimpleClassName().equals(
-              col.getCallout().getADModelImplementationList().get(0).getJavaClassName())) {
-            // add callouts to call and lastFieldChangedList in
-            valuesFromFIC.addCalloutsToFire(col);
-          }
-        }
-
-      } else {
-        for (AuxiliaryInput aux : tab.getADAuxiliaryInputList()) {
-          if (key.equalsIgnoreCase("inp" + Sqlc.TransformaNombreColumna(aux.getName()))) {
-            valuesFromFIC.addColumnValues(key, element);
-            // Add the auxiliary input to the list of auxiliary inputs modified by
-            // callouts
-            if (!valuesFromFIC.getOverwrittenAuxiliaryInputs().contains(aux.getName())) {
-              valuesFromFIC.addOverwrittenAuxiliaryInputs(aux.getName());
-            }
-          }
-        }
-        if (!valuesFromFIC.getColumnValues().containsKey(key)) {
-          // This returned value wasn't found to be either a column or an auxiliary
-          // input. We assume it is a hidden input, which are used in places like
-          // selectors
-          String hiddenValue = element.getString(SimpleCalloutConstants.CLASSIC_VALUE);
-          if (!hiddenValue.equals("null")) {
-            valuesFromFIC.addHiddenInputs(key, hiddenValue);
-            // We set the hidden fields in the request, so that subsequent callouts
-            // can use them
-            request.setRequestParameter(key, element.toString());
-          }
-        }
-      }
-    }
-    // set result json in SimpleCalloutResult
-    valuesFromFIC.setResultJson(result);
-  }
-
-  private boolean isMessageElement(String key) {
-    return ("MESSAGE".equals(key) || "INFO".equals(key) || "WARNING".equals(key)
-        || "ERROR".equals(key) || "SUCCESS".equals(key));
-  }
-
-  private JSONObject parseMessage(String key, JSONObject element) throws JSONException {
-    String elementValue = element.getString(SimpleCalloutConstants.CLASSIC_VALUE);
-    return createMessage(key, elementValue);
-  }
-
-  private JSONObject createMessage(String key, String elementValue) throws JSONException {
-    JSONObject message = new JSONObject();
-    message.put("text", elementValue);
-    message.put("severity", "MESSAGE".equals(key) ? "TYPE_INFO" : "TYPE_" + key);
-    return message;
+    return info.getJSONObjectResult();
   }
 
   private String getSimpleClassName() {
