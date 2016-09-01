@@ -924,12 +924,7 @@ public class CancelAndReplaceUtils {
       JSONObject jsonorder, boolean useOrderDocumentNoForRelatedDocs, boolean replaceOrder,
       boolean triggersDisabled) {
     try {
-      FIN_PaymentSchedule paymentSchedule;
-      OBCriteria<FIN_PaymentSchedule> paymentScheduleCriteria = OBDal.getInstance().createCriteria(
-          FIN_PaymentSchedule.class);
-      paymentScheduleCriteria.add(Restrictions.eq(FIN_PaymentSchedule.PROPERTY_ORDER, oldOrder));
-      paymentScheduleCriteria.setMaxResults(1);
-      paymentSchedule = (FIN_PaymentSchedule) paymentScheduleCriteria.uniqueResult();
+      FIN_PaymentSchedule paymentSchedule = getPaymentScheduleOfOrder(oldOrder);
       if (paymentSchedule != null) {
         FIN_Payment newPayment = null;
 
@@ -954,14 +949,7 @@ public class CancelAndReplaceUtils {
             // Get the payment schedule of the new order to check the outstanding amount, could
             // have been automatically paid on C_ORDER_POST if is automatically invoiced and the
             // payment method of the financial account is configured as 'Automatic Receipt'
-            FIN_PaymentSchedule paymentScheduleNewOrder = null;
-            OBCriteria<FIN_PaymentSchedule> paymentScheduleCriteriaNewOrder = OBDal.getInstance()
-                .createCriteria(FIN_PaymentSchedule.class);
-            paymentScheduleCriteriaNewOrder.add(Restrictions.eq(FIN_PaymentSchedule.PROPERTY_ORDER,
-                newOrder));
-            paymentScheduleCriteriaNewOrder.setMaxResults(1);
-            paymentScheduleNewOrder = (FIN_PaymentSchedule) paymentScheduleCriteriaNewOrder
-                .uniqueResult();
+            FIN_PaymentSchedule paymentScheduleNewOrder = getPaymentScheduleOfOrder(newOrder);
             if (paymentScheduleNewOrder.getOutstandingAmount().compareTo(BigDecimal.ZERO) == 0) {
               createPayments = false;
             }
@@ -987,13 +975,7 @@ public class CancelAndReplaceUtils {
             // In a cancel layaway the gross value of the jsonorder was the amount to
             // return to the customer, not the amount of the ticket. In this case the amount and
             // outstanding needs to be fixed as are created in a wrong way.
-            OBCriteria<FIN_PaymentSchedule> newPaymentScheduleList = OBDal.getInstance()
-                .createCriteria(FIN_PaymentSchedule.class);
-            newPaymentScheduleList.add(Restrictions.eq(FIN_PaymentSchedule.PROPERTY_ORDER,
-                inverseOrder));
-            newPaymentScheduleList.setMaxResults(1);
-            FIN_PaymentSchedule newPaymentSchedule = (FIN_PaymentSchedule) newPaymentScheduleList
-                .uniqueResult();
+            FIN_PaymentSchedule newPaymentSchedule = getPaymentScheduleOfOrder(inverseOrder);
             newPaymentSchedule.setAmount(paymentSchedule.getAmount().negate());
             newPaymentSchedule.setOutstandingAmount(newPaymentSchedule.getAmount().subtract(
                 newPaymentSchedule.getPaidAmount()));
@@ -1102,12 +1084,7 @@ public class CancelAndReplaceUtils {
     FIN_Payment newPayment = payment;
 
     // Get the payment schedule of the order
-    FIN_PaymentSchedule paymentSchedule = null;
-    OBCriteria<FIN_PaymentSchedule> paymentScheduleCriteria = OBDal.getInstance().createCriteria(
-        FIN_PaymentSchedule.class);
-    paymentScheduleCriteria.add(Restrictions.eq(FIN_PaymentSchedule.PROPERTY_ORDER, order));
-    paymentScheduleCriteria.setMaxResults(1);
-    paymentSchedule = (FIN_PaymentSchedule) paymentScheduleCriteria.uniqueResult();
+    FIN_PaymentSchedule paymentSchedule = getPaymentScheduleOfOrder(order);
     if (paymentSchedule == null) {
       // Create a Payment Schedule if the order hasn't got
       paymentSchedule = OBProvider.getInstance().get(FIN_PaymentSchedule.class);
@@ -1288,6 +1265,16 @@ public class CancelAndReplaceUtils {
     olc.setMaxResults(1);
     OrderLine newOrderLine = (OrderLine) olc.uniqueResult();
     return newOrderLine;
+  }
+
+  private static FIN_PaymentSchedule getPaymentScheduleOfOrder(Order order) {
+    FIN_PaymentSchedule paymentSchedule;
+    OBCriteria<FIN_PaymentSchedule> paymentScheduleCriteria = OBDal.getInstance().createCriteria(
+        FIN_PaymentSchedule.class);
+    paymentScheduleCriteria.add(Restrictions.eq(FIN_PaymentSchedule.PROPERTY_ORDER, order));
+    paymentScheduleCriteria.setMaxResults(1);
+    paymentSchedule = (FIN_PaymentSchedule) paymentScheduleCriteria.uniqueResult();
+    return paymentSchedule;
   }
 
 }
