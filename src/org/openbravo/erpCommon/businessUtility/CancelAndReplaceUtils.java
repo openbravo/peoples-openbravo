@@ -926,7 +926,7 @@ public class CancelAndReplaceUtils {
     try {
       FIN_PaymentSchedule paymentSchedule = getPaymentScheduleOfOrder(oldOrder);
       if (paymentSchedule != null) {
-        FIN_Payment newPayment = null;
+        FIN_Payment nettingPayment = null;
 
         // Get paid amount on original order
         final String countHql = "select coalesce(sum(pd." + FIN_PaymentDetail.PROPERTY_AMOUNT
@@ -955,15 +955,18 @@ public class CancelAndReplaceUtils {
             }
           }
 
-          newPayment = payOriginalAndInverseOrder(jsonorder, oldOrder, inverseOrder, newPayment,
+          nettingPayment = payOriginalAndInverseOrder(jsonorder, oldOrder, inverseOrder,
               outstandingAmount, negativeAmount, useOrderDocumentNoForRelatedDocs,
               triggersDisabled, replaceOrder);
 
           // Pay of the new order the amount already paid in original order
           if (createPayments && paidAmount.compareTo(BigDecimal.ZERO) != 0) {
-            newPayment = createPayment(newPayment, newOrder, null, paidAmount, null, null, null);
-            String description = newPayment.getDescription() + ": " + newOrder.getDocumentNo();
-            newPayment.setDescription(description);
+            nettingPayment = createOrUdpatePayment(nettingPayment, newOrder, null, paidAmount,
+                null, null, null);
+            String description = nettingPayment.getDescription() + ": " + newOrder.getDocumentNo();
+            String truncatedDescription = (description.length() > 255) ? description.substring(0,
+                252).concat("...") : description.toString();
+            nettingPayment.setDescription(truncatedDescription);
           }
         } else {
           // To only cancel a layaway two payments must be added to fully pay the old order and add
@@ -984,7 +987,7 @@ public class CancelAndReplaceUtils {
 
           negativeAmount = outstandingAmount.negate();
           if (outstandingAmount.compareTo(BigDecimal.ZERO) != 0) {
-            newPayment = payOriginalAndInverseOrder(jsonorder, oldOrder, inverseOrder, newPayment,
+            nettingPayment = payOriginalAndInverseOrder(jsonorder, oldOrder, inverseOrder,
                 outstandingAmount, negativeAmount, useOrderDocumentNoForRelatedDocs,
                 triggersDisabled, replaceOrder);
           }
@@ -994,8 +997,8 @@ public class CancelAndReplaceUtils {
         if (triggersDisabled && replaceOrder) {
           TriggerHandler.getInstance().enable();
         }
-        if (newPayment != null) {
-          FIN_PaymentProcess.doProcessPayment(newPayment, "P", true, null, null);
+        if (nettingPayment != null) {
+          FIN_PaymentProcess.doProcessPayment(nettingPayment, "P", true, null, null);
         }
         if (triggersDisabled && replaceOrder) {
           TriggerHandler.getInstance().disable();
@@ -1019,10 +1022,10 @@ public class CancelAndReplaceUtils {
 
   // Pay original order and inverse order.
   private static FIN_Payment payOriginalAndInverseOrder(JSONObject jsonorder, Order oldOrder,
-      Order inverseOrder, FIN_Payment newPayment, BigDecimal outstandingAmount,
-      BigDecimal negativeAmount, boolean useOrderDocumentNoForRelatedDocs,
-      boolean triggersDisabled, boolean replaceOrder) throws Exception {
-    FIN_Payment _newPayment = newPayment;
+      Order inverseOrder, BigDecimal outstandingAmount, BigDecimal negativeAmount,
+      boolean useOrderDocumentNoForRelatedDocs, boolean triggersDisabled, boolean replaceOrder)
+      throws Exception {
+    FIN_Payment nettingPayment = null;
     String paymentDocumentNo = null;
     FIN_PaymentMethod paymentPaymentMethod = null;
     FIN_FinancialAccount financialAccount = null;
@@ -1063,26 +1066,33 @@ public class CancelAndReplaceUtils {
     description += ": " + inverseOrder.getDocumentNo();
 
     // Duplicate payment with negative amount
-    _newPayment = createPayment(_newPayment, inverseOrder, paymentPaymentMethod, negativeAmount,
-        paymentDocumentType, financialAccount, paymentDocumentNo);
+    nettingPayment = createOrUdpatePayment(nettingPayment, inverseOrder, paymentPaymentMethod,
+        negativeAmount, paymentDocumentType, financialAccount, paymentDocumentNo);
 
     // Duplicate payment with positive amount
-    _newPayment = createPayment(_newPayment, oldOrder, paymentPaymentMethod, outstandingAmount,
-        paymentDocumentType, financialAccount, paymentDocumentNo);
+    nettingPayment = createOrUdpatePayment(nettingPayment, oldOrder, paymentPaymentMethod,
+        outstandingAmount, paymentDocumentType, financialAccount, paymentDocumentNo);
     description += ": " + oldOrder.getDocumentNo() + "\n";
 
     // Set amount and used credit to zero
-    _newPayment.setAmount(BigDecimal.ZERO);
-    _newPayment.setUsedCredit(BigDecimal.ZERO);
-    _newPayment.setDescription(description);
-    return _newPayment;
+    nettingPayment.setAmount(BigDecimal.ZERO);
+    nettingPayment.setUsedCredit(BigDecimal.ZERO);
+    String truncatedDescription = (description.length() > 255) ? description.substring(0, 252)
+        .concat("...") : description.toString();
+    nettingPayment.setDescription(truncatedDescription);
+    return nettingPayment;
   }
 
-  private static FIN_Payment createPayment(FIN_Payment payment, Order order,
+  /**
+   * Method that given an amount, payment method, financial account, document type, and a document
+   * number, it creates a payment for a given Order. Also a payment is passed as parameter, if that
+   * payment is null a new payment is created, if not, a new detail is added to the payment.
+   */
+  private static FIN_Payment createOrUdpatePayment(FIN_Payment nettingPayment, Order order,
       FIN_PaymentMethod paymentPaymentMethod, BigDecimal amount, DocumentType paymentDocumentType,
       FIN_FinancialAccount financialAccount, String paymentDocumentNo) throws Exception {
-    FIN_Payment newPayment = payment;
 
+    FIN_Payment _nettingPayment = nettingPayment;
     // Get the payment schedule of the order
     FIN_PaymentSchedule paymentSchedule = getPaymentScheduleOfOrder(order);
     if (paymentSchedule == null) {
@@ -1123,9 +1133,9 @@ public class CancelAndReplaceUtils {
       String paymentScheduleDetailId = paymentScheduleDetailList.get(0).getId();
       paymentScheduleDetailAmount.put(paymentScheduleDetailId, amount);
 
-      if (payment == null) {
+      if (_nettingPayment == null) {
         // Call to savePayment in order to create a new payment in
-        newPayment = FIN_AddPayment.savePayment(payment, true, paymentDocumentType,
+        _nettingPayment = FIN_AddPayment.savePayment(_nettingPayment, true, paymentDocumentType,
             paymentDocumentNo, order.getBusinessPartner(), paymentPaymentMethod, financialAccount,
             amount.toPlainString(), order.getOrderDate(), order.getOrganization(), null,
             paymentScheduleDetailList, paymentScheduleDetailAmount, false, false,
@@ -1133,8 +1143,8 @@ public class CancelAndReplaceUtils {
       }
       // Create a new line
       else {
-        FIN_AddPayment.updatePaymentDetail(paymentScheduleDetailList.get(0), newPayment, amount,
-            false);
+        FIN_AddPayment.updatePaymentDetail(paymentScheduleDetailList.get(0), _nettingPayment,
+            amount, false);
       }
 
     } else {
@@ -1155,9 +1165,9 @@ public class CancelAndReplaceUtils {
       HashMap<String, BigDecimal> paymentScheduleDetailAmount = new HashMap<String, BigDecimal>();
       String paymentScheduleDetailId = paymentScheduleDetail.getId();
       paymentScheduleDetailAmount.put(paymentScheduleDetailId, amount);
-      if (payment == null) {
+      if (_nettingPayment == null) {
         // Call to savePayment in order to create a new payment in
-        newPayment = FIN_AddPayment.savePayment(payment, true, paymentDocumentType,
+        _nettingPayment = FIN_AddPayment.savePayment(_nettingPayment, true, paymentDocumentType,
             paymentDocumentNo, order.getBusinessPartner(), paymentPaymentMethod, financialAccount,
             amount.toPlainString(), order.getOrderDate(), order.getOrganization(), null,
             paymentScheduleDetailList, paymentScheduleDetailAmount, false, false,
@@ -1165,10 +1175,10 @@ public class CancelAndReplaceUtils {
       }
       // Create a new line
       else {
-        FIN_AddPayment.updatePaymentDetail(paymentScheduleDetail, newPayment, amount, false);
+        FIN_AddPayment.updatePaymentDetail(paymentScheduleDetail, _nettingPayment, amount, false);
       }
     }
-    return newPayment;
+    return _nettingPayment;
   }
 
   private static String getPaymentDescription() {
