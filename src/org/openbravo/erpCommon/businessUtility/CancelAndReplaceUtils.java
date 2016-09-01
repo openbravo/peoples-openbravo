@@ -288,11 +288,6 @@ public class CancelAndReplaceUtils {
             nettingGoodsShipmentId = nettingGoodsShipment.getId();
           }
 
-          // Stock manipulation
-          org.openbravo.database.ConnectionProvider cp = new DalConnectionProvider(false);
-          CallableStatement updateStockStatement = cp.getConnection().prepareCall(
-              "{call M_UPDATE_INVENTORY (?,?,?,?,?,?,?,?,?,?,?,?,?)}");
-
           // Create Netting goods shipment Line for the old order line
           BigDecimal movementQty = oldOrderLine.getOrderedQuantity().subtract(
               oldOrderLine.getDeliveredQuantity());
@@ -302,15 +297,14 @@ public class CancelAndReplaceUtils {
           OBDal.getInstance().flush();
           if (movementQty.compareTo(BigDecimal.ZERO) != 0) {
             newGoodsShipmentLine1 = createNettingShipmentLine(nettingGoodsShipment, shipmentLine,
-                oldOrderLine, lineNoCounter++, movementQty, updateStockStatement, triggersDisabled);
+                oldOrderLine, lineNoCounter++, movementQty, triggersDisabled);
           }
           // Create Netting goods shipment Line for the inverse order line
           movementQty = inverseOrderLine.getOrderedQuantity().subtract(
               inverseOrderLine.getDeliveredQuantity());
           if (movementQty.compareTo(BigDecimal.ZERO) != 0) {
             createNettingShipmentLine(nettingGoodsShipment, newGoodsShipmentLine1,
-                inverseOrderLine, lineNoCounter++, movementQty, updateStockStatement,
-                triggersDisabled);
+                inverseOrderLine, lineNoCounter++, movementQty, triggersDisabled);
           }
 
           if (replaceOrder) {
@@ -325,8 +319,7 @@ public class CancelAndReplaceUtils {
               OBDal.getInstance().flush();
               if (movementQty.compareTo(BigDecimal.ZERO) != 0) {
                 createNettingShipmentLine(nettingGoodsShipment, newGoodsShipmentLine1,
-                    newOrderLine, lineNoCounter++, movementQty, updateStockStatement,
-                    triggersDisabled);
+                    newOrderLine, lineNoCounter++, movementQty, triggersDisabled);
               }
               if (newOrderLineDeliveredQty == null
                   || newOrderLineDeliveredQty.compareTo(BigDecimal.ZERO) == 0) {
@@ -647,9 +640,27 @@ public class CancelAndReplaceUtils {
     return nettingGoodsShipment;
   }
 
+  /**
+   * Method that creates a netting goods shipment line for a netting shipment.
+   * 
+   * @param nettingGoodsShipment
+   *          The header of the shipment.
+   * @param nettingGoodsShipmentLine
+   *          If this parameter is passed it will create the new shipment as a copy of this one. If
+   *          not it will create from scratch.
+   * @param orderLine
+   *          OrderLine what the shipment line delivers
+   * @param lineNoCounter
+   *          Line number of the shipment line.
+   * @param movementQty
+   *          Movement quantity of the shipment line.
+   * @param triggersDisabled
+   *          Flag that tells if triggers are disabled or not while executing this method.
+   * @return
+   */
   private static ShipmentInOutLine createNettingShipmentLine(ShipmentInOut nettingGoodsShipment,
       ShipmentInOutLine nettingGoodsShipmentLine, OrderLine orderLine, long lineNoCounter,
-      BigDecimal movementQty, CallableStatement updateStockStatement, boolean triggersDisabled) {
+      BigDecimal movementQty, boolean triggersDisabled) {
     ShipmentInOutLine newGoodsShipmentLine = null;
     if (nettingGoodsShipmentLine == null) {
       newGoodsShipmentLine = OBProvider.getInstance().get(ShipmentInOutLine.class);
@@ -669,7 +680,7 @@ public class CancelAndReplaceUtils {
     newGoodsShipmentLine.setMovementQuantity(movementQty);
 
     // Create Material Transaction record
-    createMTransaction(newGoodsShipmentLine, updateStockStatement, triggersDisabled);
+    createMTransaction(newGoodsShipmentLine, triggersDisabled);
 
     OBDal.getInstance().save(newGoodsShipmentLine);
     return newGoodsShipmentLine;
@@ -787,8 +798,7 @@ public class CancelAndReplaceUtils {
    * @param triggersDisabled
    *          Flag that tells if triggers are disabled or not while executing this method.
    */
-  private static void createMTransaction(ShipmentInOutLine line,
-      CallableStatement updateStockStatement, boolean triggersDisabled) {
+  private static void createMTransaction(ShipmentInOutLine line, boolean triggersDisabled) {
     Product prod = line.getProduct();
     if (prod.getProductType().equals("I") && line.getProduct().isStocked()) {
       // Stock is changed only for stocked products of type "Item"
@@ -821,7 +831,7 @@ public class CancelAndReplaceUtils {
       // Execute M_UPDATE_INVENTORY stored procedure, it is done when is executed from Web POS
       // because triggers are disabled
       if (triggersDisabled) {
-        updateInventory(transaction, updateStockStatement);
+        updateInventory(transaction);
       }
 
       OBDal.getInstance().save(transaction);
@@ -836,9 +846,12 @@ public class CancelAndReplaceUtils {
    * @param updateStockStatement
    *          The query to be executed.
    */
-  private static void updateInventory(MaterialTransaction transaction,
-      CallableStatement updateStockStatement) {
+  private static void updateInventory(MaterialTransaction transaction) {
     try {
+      // Stock manipulation
+      org.openbravo.database.ConnectionProvider cp = new DalConnectionProvider(false);
+      CallableStatement updateStockStatement = cp.getConnection().prepareCall(
+          "{call M_UPDATE_INVENTORY (?,?,?,?,?,?,?,?,?,?,?,?,?)}");
       // client
       updateStockStatement.setString(1, OBContext.getOBContext().getCurrentClient().getId());
       // org
