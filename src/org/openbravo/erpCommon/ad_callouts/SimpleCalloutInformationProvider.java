@@ -26,23 +26,22 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.kernel.RequestContext;
-import org.openbravo.data.Sqlc;
 import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.service.json.JsonConstants;
 
 /**
- * SimpleCalloutResponseManager provides the information that is used to populate the messages,
+ * SimpleCalloutInformationProvider provides the information that is used to populate the messages,
  * comboEntries,etc in the FIC. These information are updated by a SimpleCallout.
  * 
  * @author inigo.sanchez
  *
  */
-public class SimpleCalloutResponseManager implements CalloutInformationProvider {
+public class SimpleCalloutInformationProvider implements CalloutInformationProvider {
 
   JSONObject returnedJSONObject;
   String currentElement = null;
 
-  public SimpleCalloutResponseManager(JSONObject json) {
+  public SimpleCalloutInformationProvider(JSONObject json) {
     returnedJSONObject = json;
   }
 
@@ -50,52 +49,39 @@ public class SimpleCalloutResponseManager implements CalloutInformationProvider 
     return returnedJSONObject;
   }
 
-  public String getCurrentElement() {
-    return currentElement;
-  }
-
   public void setCurrentElement(String nameElement) {
     currentElement = nameElement;
   }
 
   @Override
-  public Object getNameElement(Object values) {
+  public Object getElementName(Object values) {
     return currentElement;
   }
 
-  public Object getValue(Object values, int position) {
-    if (position == 1) {
-      JSONObject json = (JSONObject) values;
-      String value = null;
-      try {
-        value = json.getString(SimpleCalloutConstants.CLASSIC_VALUE);
-      } catch (JSONException e) {
-        log.error("Error parsing JSON Object.", e);
-      }
-      return value;
-    } else {
-      log.warn("Method getValue() can't manage position value bigger and lower than 1.");
-      return null;
+  public Object getValue(Object values) {
+    JSONObject json = (JSONObject) values;
+    String value = null;
+    try {
+      value = json.getString(SimpleCalloutConstants.CLASSIC_VALUE);
+    } catch (JSONException e) {
+      log.error("Error parsing JSON Object.", e);
     }
+    return value;
   }
 
   @Override
   public Boolean isComboData(Object values) {
-    Boolean isCombo = false;
-    if (values instanceof org.codehaus.jettison.json.JSONObject) {
+    if (values instanceof JSONObject) {
       JSONObject json = (JSONObject) values;
-      if (json.has(SimpleCalloutConstants.ENTRIES)) {
-        isCombo = true;
-      }
+      return json.has(SimpleCalloutConstants.ENTRIES);
     }
-    return isCombo;
+    return false;
   }
 
   @Override
   public boolean manageComboData(Map<String, JSONObject> columnValues, List<String> dynamicCols,
-      List<String> changedCols, RequestContext rq, Object element,
-      CalloutInformationProvider calloutResponse, Column col, String colId) throws JSONException {
-
+      List<String> changedCols, RequestContext request, Object element, Column col, String colIdent)
+      throws JSONException {
     boolean changed = false;
     JSONObject temporalyElement = new JSONObject();
     JSONObject elem = (JSONObject) element;
@@ -104,20 +90,19 @@ public class SimpleCalloutResponseManager implements CalloutInformationProvider 
     if (!elem.has(SimpleCalloutConstants.CLASSIC_VALUE)) {
       JSONArray jsonArr = elem.getJSONArray(SimpleCalloutConstants.ENTRIES);
       ArrayList<JSONObject> newJsonArr = new ArrayList<JSONObject>();
-      JSONObject temporal = null;
+      JSONObject temporaly = null;
 
-      // If column is not mandatory and first value is not empty, we add an initial blank
-      // element
+      // If it is not mandatory and first value is not empty, we add an initial blank element
       if (!col.isMandatory() && !jsonArr.getJSONObject(0).isNull(JsonConstants.ID)) {
-        temporal = new JSONObject();
-        temporal.put(JsonConstants.ID, (String) null);
-        temporal.put(JsonConstants.IDENTIFIER, (String) null);
-        newJsonArr.add(temporal);
+        temporaly = new JSONObject();
+        temporaly.put(JsonConstants.ID, (String) null);
+        temporaly.put(JsonConstants.IDENTIFIER, (String) null);
+        newJsonArr.add(temporaly);
       }
 
       for (int i = 0; i < jsonArr.length(); i++) {
-        temporal = jsonArr.getJSONObject(i);
-        newJsonArr.add(temporal);
+        temporaly = jsonArr.getJSONObject(i);
+        newJsonArr.add(temporaly);
       }
 
       if (newJsonArr.get(0).has(JsonConstants.ID)) {
@@ -137,13 +122,13 @@ public class SimpleCalloutResponseManager implements CalloutInformationProvider 
 
     // added this new value and set parameter into request
     if (temporalyElement.has(SimpleCalloutConstants.CLASSIC_VALUE)) {
-      rq.setRequestParameter((String) calloutResponse.getNameElement(null),
+      request.setRequestParameter((String) this.getElementName(null),
           temporalyElement.getString(SimpleCalloutConstants.CLASSIC_VALUE));
     }
 
-    columnValues.put("inp" + Sqlc.TransformaNombreColumna(col.getDBColumnName()), temporalyElement);
+    columnValues.put(colIdent, temporalyElement);
     changed = true;
-    if (dynamicCols.contains((String) calloutResponse.getNameElement(null))) {
+    if (dynamicCols.contains((String) this.getElementName(null))) {
       changedCols.add(col.getDBColumnName());
     }
 
@@ -151,7 +136,6 @@ public class SimpleCalloutResponseManager implements CalloutInformationProvider 
       temporalyElement.put(SimpleCalloutConstants.ENTRIES,
           elem.getJSONArray(SimpleCalloutConstants.ENTRIES));
     }
-
     return changed;
   }
 }

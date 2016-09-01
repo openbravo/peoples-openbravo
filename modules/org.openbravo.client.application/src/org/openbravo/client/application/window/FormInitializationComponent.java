@@ -71,9 +71,9 @@ import org.openbravo.dal.service.OBDao;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.data.Sqlc;
 import org.openbravo.erpCommon.ad_callouts.CalloutInformationProvider;
-import org.openbravo.erpCommon.ad_callouts.CalloutResponseManager;
+import org.openbravo.erpCommon.ad_callouts.HttpServletCalloutInformationProvider;
 import org.openbravo.erpCommon.ad_callouts.SimpleCallout;
-import org.openbravo.erpCommon.ad_callouts.SimpleCalloutResponseManager;
+import org.openbravo.erpCommon.ad_callouts.SimpleCalloutInformationProvider;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.ad.domain.Preference;
@@ -1480,10 +1480,10 @@ public class FormInitializationComponent extends BaseActionHandler {
         lastfieldChangedList.remove(lastFieldChanged);
 
         Object calloutObject;
-        boolean wasCached = false;
+        boolean isCalloutInitialized = false;
         if (calloutInstances.get(calloutClassName) != null) {
           calloutObject = calloutInstances.get(calloutClassName);
-          wasCached = true;
+          isCalloutInitialized = true;
         } else {
           calloutObject = calloutClass.newInstance();
           calloutInstances.put(calloutClassName, calloutObject);
@@ -1497,7 +1497,7 @@ public class FormInitializationComponent extends BaseActionHandler {
           continue;
         }
 
-        RequestContext rq = RequestContext.get();
+        RequestContext request = RequestContext.get();
         RequestContext.get().setRequestParameter("inpLastFieldChanged", lastFieldChanged);
         RequestContext.get().setRequestParameter("inpOB3UIMode", "Y");
         CalloutServletConfig config = new CalloutServletConfig(calloutClassName,
@@ -1510,8 +1510,8 @@ public class FormInitializationComponent extends BaseActionHandler {
           calloutInstance.init(config);
 
           // execute SimpleCallout callout
-          JSONObject result = calloutInstance.executeSimpleCallout(rq);
-          SimpleCalloutResponseManager simpleCalloutResponseManager = new SimpleCalloutResponseManager(
+          JSONObject result = calloutInstance.executeSimpleCallout(request);
+          SimpleCalloutInformationProvider simpleCalloutResponseManager = new SimpleCalloutInformationProvider(
               result);
 
           @SuppressWarnings("unchecked")
@@ -1520,9 +1520,10 @@ public class FormInitializationComponent extends BaseActionHandler {
             String key = keys.next();
             simpleCalloutResponseManager.setCurrentElement(key);
             JSONObject element = result.getJSONObject(key);
-            parseCalloutResponse(columnValues, tab, calloutsToCall, lastfieldChangedList, messages,
-                dynamicCols, jsExecuteCode, hiddenInputs, overwrittenAuxiliaryInputs, changedCols,
-                inpFields, calloutClassName, rq, element, simpleCalloutResponseManager);
+            managesUpdatedValuesForCallout(columnValues, tab, calloutsToCall, lastfieldChangedList,
+                messages, dynamicCols, jsExecuteCode, hiddenInputs, overwrittenAuxiliaryInputs,
+                changedCols, inpFields, calloutClassName, request, element,
+                simpleCalloutResponseManager);
           }
 
           // updated info values of callouts infrastructure
@@ -1531,16 +1532,17 @@ public class FormInitializationComponent extends BaseActionHandler {
         } else {
           // We then execute the callout
           HttpServlet calloutInstance = (HttpServlet) calloutObject;
-          CalloutHttpServletResponse fakeResponse = new CalloutHttpServletResponse(rq.getResponse());
+          CalloutHttpServletResponse fakeResponse = new CalloutHttpServletResponse(
+              request.getResponse());
 
-          if (wasCached) {
+          if (isCalloutInitialized) {
             Method doPost = calloutClass.getMethod("doPost", HttpServletRequest.class,
                 HttpServletResponse.class);
             doPost.setAccessible(true);
-            doPost.invoke(calloutInstance, rq.getRequest(), fakeResponse);
+            doPost.invoke(calloutInstance, request.getRequest(), fakeResponse);
           } else {
             calloutInstance.init(config);
-            calloutInstance.service(rq.getRequest(), fakeResponse);
+            calloutInstance.service(request.getRequest(), fakeResponse);
           }
 
           String calloutResponse = fakeResponse.getOutputFromWriter();
@@ -1551,12 +1553,14 @@ public class FormInitializationComponent extends BaseActionHandler {
           if (calloutNameJS != null && calloutNameJS != "") {
             calledCallouts.add(calloutNameJS);
           }
-          CalloutResponseManager calloutResponseManager = new CalloutResponseManager(returnedArray);
+          HttpServletCalloutInformationProvider calloutResponseManager = new HttpServletCalloutInformationProvider(
+              returnedArray);
           if (returnedArray.size() > 0) {
             for (NativeArray element : calloutResponseManager.getNativeArray()) {
-              parseCalloutResponse(columnValues, tab, calloutsToCall, lastfieldChangedList,
-                  messages, dynamicCols, jsExecuteCode, hiddenInputs, overwrittenAuxiliaryInputs,
-                  changedCols, inpFields, calloutClassName, rq, element, calloutResponseManager);
+              managesUpdatedValuesForCallout(columnValues, tab, calloutsToCall,
+                  lastfieldChangedList, messages, dynamicCols, jsExecuteCode, hiddenInputs,
+                  overwrittenAuxiliaryInputs, changedCols, inpFields, calloutClassName, request,
+                  element, calloutResponseManager);
             }
           }
         }
@@ -1573,29 +1577,29 @@ public class FormInitializationComponent extends BaseActionHandler {
 
   }
 
-  private void parseCalloutResponse(Map<String, JSONObject> columnValues, Tab tab,
+  private void managesUpdatedValuesForCallout(Map<String, JSONObject> columnValues, Tab tab,
       List<String> calloutsToCall, List<String> lastfieldChangedList, List<JSONObject> messages,
       List<String> dynamicCols, List<String> jsExecuteCode, Map<String, Object> hiddenInputs,
       List<String> overwrittenAuxiliaryInputs, List<String> changedCols,
-      HashMap<String, Field> inpFields, String calloutClassName, RequestContext rq, Object element,
-      CalloutInformationProvider calloutResponse) throws JSONException {
-    String name = (String) calloutResponse.getNameElement(element);
+      HashMap<String, Field> inpFields, String calloutClassName, RequestContext request,
+      Object element, CalloutInformationProvider calloutInformationProvider) throws JSONException {
+    String name = (String) calloutInformationProvider.getElementName(element);
     if (name.equals("MESSAGE") || name.equals("INFO") || name.equals("WARNING")
         || name.equals("ERROR") || name.equals("SUCCESS")) {
-      log.debug("Callout message: " + calloutResponse.getValue(element, 1));
+      log.debug("Callout message: " + calloutInformationProvider.getValue(element));
       JSONObject message = new JSONObject();
-      message.put("text", calloutResponse.getValue(element, 1).toString());
+      message.put("text", calloutInformationProvider.getValue(element).toString());
       message.put("severity", name.equals("MESSAGE") ? "TYPE_INFO" : "TYPE_" + name);
       messages.add(message);
     } else if (name.equals("JSEXECUTE")) {
       // The code on a JSEXECUTE command is sent directly to the client for eval()
-      String code = (String) calloutResponse.getValue(element, 1);
+      String code = (String) calloutInformationProvider.getValue(element);
       if (code != null) {
         jsExecuteCode.add(code);
       }
     } else if (name.equals("EXECUTE")) {
-      String js = calloutResponse.getValue(element, 1) == null ? null : calloutResponse.getValue(
-          element, 1).toString();
+      String js = calloutInformationProvider.getValue(element) == null ? null
+          : calloutInformationProvider.getValue(element).toString();
       if (js != null && !js.equals("")) {
         if (js.equals("displayLogic();")) {
           // We don't do anything, this is a harmless js response
@@ -1606,8 +1610,13 @@ public class FormInitializationComponent extends BaseActionHandler {
                   .getLanguage()));
           message.put("severity", "TYPE_ERROR");
           messages.add(message);
-          createNewPreferenceForWindow(tab.getWindow());
-          warningOrErrorForNewCreatedPreference(tab, calloutClassName, false);
+          // Create preference to activate classic window only for HttpServlet callouts
+          if (calloutInformationProvider instanceof HttpServletCalloutInformationProvider) {
+            createNewPreferenceForWindow(tab.getWindow());
+            log.warn(getMessageForNewCreatedPreference(tab, calloutClassName));
+          } else {
+            log.error(getMessageForNewCreatedPreference(tab, calloutClassName));
+          }
         }
       }
     } else {
@@ -1617,22 +1626,22 @@ public class FormInitializationComponent extends BaseActionHandler {
           Column col = inpFields.get(name).getColumn();
           if (col != null) {
             String colId = "inp" + Sqlc.TransformaNombreColumna(col.getDBColumnName());
-            if (calloutResponse.isComboData(element)) {
+            if (calloutInformationProvider.isComboData(element)) {
               // Combo data
-              changed = calloutResponse.manageComboData(columnValues, dynamicCols, changedCols, rq,
-                  element, calloutResponse, col, colId);
+              changed = calloutInformationProvider.manageComboData(columnValues, dynamicCols,
+                  changedCols, request, element, col, colId);
             } else {
               // Normal data
-              Object el = calloutResponse.getValue(element, 1);
-              String oldValue = rq.getRequestParameter(colId);
+              Object el = calloutInformationProvider.getValue(element);
+              String oldValue = request.getRequestParameter(colId);
               // We set the new value in the request, so that the JSONObject is computed
               // with the new value
               UIDefinition uiDef = UIDefinitionController.getInstance()
                   .getUIDefinition(col.getId());
               if (el instanceof String || !(uiDef.getDomainType() instanceof PrimitiveDomainType)) {
-                rq.setRequestParameter(colId, el == null ? null : el.toString());
+                request.setRequestParameter(colId, el == null ? null : el.toString());
               } else {
-                rq.setRequestParameter(colId, uiDef.convertToClassicString(el));
+                request.setRequestParameter(colId, uiDef.convertToClassicString(el));
               }
               String jsonStr = uiDef.getFieldProperties(inpFields.get(name), true);
               JSONObject jsonobj = new JSONObject(jsonStr);
@@ -1655,7 +1664,7 @@ public class FormInitializationComponent extends BaseActionHandler {
                   if (dynamicCols.contains(colId)) {
                     changedCols.add(col.getDBColumnName());
                   }
-                  rq.setRequestParameter(colId, jsonobj.getString("classicValue"));
+                  request.setRequestParameter(colId, jsonobj.getString("classicValue"));
                 }
               } else {
                 log.debug("Column value didn't change. We do not attempt to execute any additional callout");
@@ -1672,7 +1681,7 @@ public class FormInitializationComponent extends BaseActionHandler {
         } else {
           for (AuxiliaryInput aux : tab.getADAuxiliaryInputList()) {
             if (name.equalsIgnoreCase("inp" + Sqlc.TransformaNombreColumna(aux.getName()))) {
-              Object el = calloutResponse.getValue(element, 1);
+              Object el = calloutInformationProvider.getValue(element);
               JSONObject obj = new JSONObject();
               obj.put("value", el);
               obj.put("classicValue", el);
@@ -1688,16 +1697,16 @@ public class FormInitializationComponent extends BaseActionHandler {
             // This returned value wasn't found to be either a column or an auxiliary
             // input. We assume it is a hidden input, which are used in places like
             // selectors
-            Object el = calloutResponse.getValue(element, 1);
+            Object el = calloutInformationProvider.getValue(element);
             if (el != null) {
-              if (calloutResponse.isComboData(el)) {
+              if (calloutInformationProvider.isComboData(element)) {
                 // In this case, we ignore the value, as a hidden input cannot be an array
                 // of elements
               } else {
                 hiddenInputs.put(name, el);
                 // We set the hidden fields in the request, so that subsequent callouts
                 // can use them
-                rq.setRequestParameter(name, el.toString());
+                request.setRequestParameter(name, el.toString());
               }
             }
           }
@@ -1725,7 +1734,6 @@ public class FormInitializationComponent extends BaseActionHandler {
    * @param window
    */
   private void createNewPreferenceForWindow(Window window) {
-
     OBCriteria<Preference> prefCriteria = OBDao.getFilteredCriteria(Preference.class,
         Restrictions.eq(Preference.PROPERTY_PROPERTY, "OBUIAPP_UseClassicMode"),
         Restrictions.eq(Preference.PROPERTY_WINDOW, window));
@@ -1740,12 +1748,11 @@ public class FormInitializationComponent extends BaseActionHandler {
     newPref.setPropertyList(true);
     OBDal.getInstance().save(newPref);
     OBDal.getInstance().flush();
-
   }
 
   /**
-   * Show and error or warning related with the creation of a new preference to activate window
-   * classic mode
+   * Retrieves the message related with the creation of a new preference to activate window classic
+   * mode.
    * 
    * @param tab
    *          tab in wich preference should be created
@@ -1754,17 +1761,12 @@ public class FormInitializationComponent extends BaseActionHandler {
    * @param isError
    *          true to shows an error, false to shows a warn.
    */
-  private void warningOrErrorForNewCreatedPreference(Tab tab, String callout, boolean isError) {
-    String messageToShow = "An EXECUTE element has been found in the response of the callout "
+  private String getMessageForNewCreatedPreference(Tab tab, String callout) {
+    return "An EXECUTE element has been found in the response of the callout "
         + callout
         + ". A preference has been created for the window "
         + tab.getWindow().getName()
         + "so that it's shown in classic mode until this problem is fixed. This requires to build the system to generate this classic window.";
-    if (isError) {
-      log.error(messageToShow);
-    } else {
-      log.warn(messageToShow);
-    }
   }
 
   private void addCalloutToList(Column col, List<String> listOfCallouts,

@@ -38,12 +38,19 @@ public interface CalloutInformationProvider {
 
   static final Logger log = Logger.getLogger(CalloutInformationProvider.class);
 
-  public Object getNameElement(Object values);
-
-  public Object getValue(Object values, int pos);
+  /**
+   * Retrieves the name of the current parameter allocated inside Object values.
+   */
+  public Object getElementName(Object values);
 
   /**
-   * This method checks if an object represents a combo to apply a particular parser operations.
+   * Retrieves the value of the current parameter allocated inside Object values.
+   */
+  public Object getValue(Object values);
+
+  /**
+   * This method checks if an object represents a combo data to apply a particular parser
+   * operations.
    *
    * @return true if values represents a combo data.
    */
@@ -56,6 +63,6 @@ public interface CalloutInformationProvider {
    * @return true if any value are changed.
    */
   public boolean manageComboData(Map<String, JSONObject> columnValues, List<String> dynamicCols,
-      List<String> changedCols, RequestContext rq, Object element,
-      CalloutInformationProvider calloutResponse, Column col, String colId) throws JSONException;
+      List<String> changedCols, RequestContext rq, Object element, Column col, String colIdent)
+      throws JSONException;
 }
