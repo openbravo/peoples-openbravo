@@ -449,6 +449,8 @@ enyo.kind({
       dataBps.set('shipPostalCode', bploc.get('postalCode'));
       dataBps.set('shipCityName', bploc.get('cityName'));
       dataBps.set('shipCountryName', bploc.get('countryName'));
+      dataBps.set('shipRegionId', bploc.get('regionId'));
+      dataBps.set('shipCountryId', bploc.get('countryId'));
 
       if (contextMenu.dialog.owner.owner.args.flowTrigger) { // The arguments of the modal dialog
         OB.MobileApp.model.trigger(contextMenu.dialog.owner.owner.args.flowTrigger, {
@@ -492,6 +494,8 @@ enyo.kind({
       dataBps.set('shipPostalCode', bploc.get('postalCode'));
       dataBps.set('shipCityName', bploc.get('cityName'));
       dataBps.set('shipCountryName', bploc.get('countryName'));
+      dataBps.set('shipRegionId', bploc.get('regionId'));
+      dataBps.set('shipCountryId', bploc.get('countryId'));
 
       //Keep the other address:
       if (!contextMenu.bPartner.get('locId')) {

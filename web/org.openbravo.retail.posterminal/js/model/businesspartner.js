@@ -303,6 +303,14 @@
     filter: true,
     type: 'TEXT'
   }, {
+    name: 'shipRegionId',
+    column: 'shipRegionId',
+    type: 'TEXT'
+  }, {
+    name: 'shipCountryId',
+    column: 'shipCountryId',
+    type: 'TEXT'
+  }, {
     name: 'contactId',
     column: 'ad_user_id',
     type: 'TEXT'

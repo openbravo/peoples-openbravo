@@ -76,6 +76,14 @@ public class BusinessPartnerProperties extends ModelExtension {
             "(select max(bpls.locationAddress.postalCode) from BusinessPartnerLocation AS bpls where bpls.businessPartner.id=bpl.businessPartner.id and bpls.shipToAddress = true and bpls.$readableSimpleClientCriteria AND "
                 + " bpls.$naturalOrgCriteria group by bpls.businessPartner.id)",
             "shipPostalCode"));
+        add(new HQLProperty(
+            "(select max(bpls.locationAddress.region.id) from BusinessPartnerLocation AS bpls where bpls.businessPartner.id=bpl.businessPartner.id and bpls.shipToAddress = true and bpls.$readableSimpleClientCriteria AND "
+                + " bpls.$naturalOrgCriteria group by bpls.businessPartner.id)",
+            "shipRegionId"));
+        add(new HQLProperty(
+            "(select max(bpls.locationAddress.country.id) from BusinessPartnerLocation AS bpls where bpls.businessPartner.id=bpl.businessPartner.id and bpls.shipToAddress = true and bpls.$readableSimpleClientCriteria AND "
+                + " bpls.$naturalOrgCriteria group by bpls.businessPartner.id)",
+            "shipCountryId"));
         add(new HQLProperty("bpl.locationAddress.country.name", "countryName"));
         add(new HQLProperty("bpl.businessPartner.businessPartnerCategory.id",
             "businessPartnerCategory"));

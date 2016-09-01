@@ -196,12 +196,16 @@ enyo.kind({
                 me.customer.set('shipLocName', null);
                 me.customer.set('shipPostalCode', null);
                 me.customer.set('shipCityName', null);
+                me.customer.set('shipRegionId', null);
+                me.customer.set('shipCountryId', null);
                 me.customer.set('shipCountryName', null);
               } else {
                 me.customer.set('shipLocId', customerAddr.get('id'));
                 me.customer.set('shipLocName', customerAddr.get('name'));
                 me.customer.set('shipPostalCode', customerAddr.get('postalCode'));
                 me.customer.set('shipCityName', customerAddr.get('cityName'));
+                me.customer.set('shipRegionId', customerAddr.get('regionId'));
+                me.customer.set('shipCountryId', customerAddr.get('countryId'));
                 me.customer.set('shipCountryName', customerAddr.get('countryName'));
               }
               me.customer.set('locationModel', customerAddr);

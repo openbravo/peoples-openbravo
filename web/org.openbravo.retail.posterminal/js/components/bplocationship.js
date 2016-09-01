@@ -121,6 +121,8 @@ enyo.kind({
         dataBps.set('shipPostalCode', model.get('postalCode'));
         dataBps.set('shipCityName', model.get('cityName'));
         dataBps.set('shipCountryName', model.get('countryName'));
+        dataBps.set('shipRegionId', model.get('regionId'));
+        dataBps.set('shipCountryId', model.get('countryId'));
 
         //Keep the other address:
         dataBps.set('locId', me.bPartner.get('locId'));

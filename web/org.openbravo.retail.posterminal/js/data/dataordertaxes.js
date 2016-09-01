@@ -109,8 +109,8 @@
             bpTaxCategory = receipt.get('bp').get('taxCategory'),
             bpIsExempt = receipt.get('bp').get('taxExempt'),
             bpShipLocId = receipt.get('bp').get('shipLocId'),
-            bplCountryId = receipt.get('bp').get('locationModel') ? receipt.get('bp').get('locationModel').get('countryId') : null,
-            bplRegionId = receipt.get('bp').get('locationModel') ? receipt.get('bp').get('locationModel').get('regionId') : null,
+            bplCountryId = receipt.get('bp').get('shipCountryId') ? receipt.get('bp').get('shipCountryId') : null,
+            bplRegionId = receipt.get('bp').get('shipRegionId') ? receipt.get('bp').get('shipRegionId') : null;
             bpName = receipt.get('bp').get('name') || OB.I18N.getLabel('OBPOS_LblEmptyAddress'),
             bpLocName = receipt.get('bp').get('locName') || OB.I18N.getLabel('OBPOS_LblEmptyAddress');
         // SQL build
