@@ -917,9 +917,13 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
             if (bpLoc.get('isShipTo')) {
               dataBps.set('shipLocId', bpLoc.get('id'));
               dataBps.set('shipLocName', bpLoc.get('name'));
+              dataBps.set('shipRegionId', bpLoc.get('regionId'));
+              dataBps.set('shipCountryId', bpLoc.get('countryId'));
             } else {
               dataBps.set('shipLocId', null);
               dataBps.set('shipLocName', null);
+              dataBps.set('shipRegionId', null);
+              dataBps.set('shipCountryId', null);
             }
             dataBps.set('cityName', bpLoc.get('cityName'));
             dataBps.set('countryName', bpLoc.get('countryName'));
