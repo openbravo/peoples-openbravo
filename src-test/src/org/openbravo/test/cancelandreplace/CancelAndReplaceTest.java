@@ -95,8 +95,8 @@ public class CancelAndReplaceTest extends WeldBaseTest {
   private final String ROLE_ID = "4028E6C72959682B01295A071429011E";
   // English Language code
   private final String LANGUAGE_CODE = "en_US";
-  // Sales order: 50025
-  private final String SALESORDER_ID = "1F1A77D8DCFA410586EB5AE4C5074CB7";
+  // Sales order: 50017
+  private final String SALESORDER_ID = "F1AAB8C608AA434C9FC7FC1D685BA016";
   // Goods Shipment: 500014
   private final static String M_INOUT_ID = "09658144E1AF40AC81A3E5F5C3D0F132";
 
