@@ -1209,8 +1209,8 @@ public class CancelAndReplaceUtils {
     } else {
       paymentDocumentNo = Utility.getDocumentNo(OBDal.getInstance().getConnection(false),
           new DalConnectionProvider(false), RequestContext.get().getVariablesSecureApp(), "",
-          paymentEntity.getTableName(), null, paymentDocumentType == null ? ""
-              : paymentDocumentType.getId(), false, true);
+          paymentEntity.getTableName(), "",
+          paymentDocumentType == null ? "" : paymentDocumentType.getId(), false, true);
     }
     return paymentDocumentNo;
   }
