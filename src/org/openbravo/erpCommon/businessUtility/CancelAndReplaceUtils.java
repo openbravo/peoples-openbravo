@@ -69,7 +69,6 @@ import org.openbravo.model.financialmgmt.payment.FIN_PaymentMethod;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentSchedule;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentScheduleDetail;
 import org.openbravo.model.materialmgmt.onhandquantity.Reservation;
-import org.openbravo.model.materialmgmt.onhandquantity.ReservationStock;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
@@ -238,8 +237,8 @@ public class CancelAndReplaceUtils {
         throw new OBException("@APRM_Order@ " + oldOrder.getDocumentNo() + " @IsCancelled@");
       }
 
-      // Release old reservations
-      releaseOldReservations(oldOrder);
+      // Close old reservations
+      closeOldReservations(oldOrder);
 
       // Refresh documents
       if (newOrderId != null) {
@@ -439,6 +438,7 @@ public class CancelAndReplaceUtils {
         OBDal.getInstance().save(newOrder);
         callCOrderPost(newOrder);
       }
+
       // Create new reservations
       createNewReservations(newOrder);
 
@@ -689,7 +689,7 @@ public class CancelAndReplaceUtils {
     return newGoodsShipmentLine;
   }
 
-  private static void releaseOldReservations(Order oldOrder) {
+  private static void closeOldReservations(Order oldOrder) {
     if (getEnableStockReservationsPreferenceValue(oldOrder)) {
       ScrollableResults oldOrderLines = null;
       try {
@@ -700,8 +700,7 @@ public class CancelAndReplaceUtils {
           OrderLine oldOrderLine = (OrderLine) oldOrderLines.get(0);
           Reservation reservation = getReservationForOrderLine(oldOrderLine);
           if (reservation != null) {
-            releaseReservation(reservation);
-            OBDal.getInstance().save(reservation);
+            ReservationUtils.processReserve(reservation, "CL");
           }
           if ((i % 100) == 0) {
             OBDal.getInstance().flush();
@@ -717,21 +716,6 @@ public class CancelAndReplaceUtils {
         }
       }
     }
-  }
-
-  // Release a reservation
-  private static void releaseReservation(Reservation reservation) {
-    final StringBuilder hqlReservations = new StringBuilder();
-    hqlReservations.append(" update " + ReservationStock.ENTITY_NAME + " as rs set rs."
-        + ReservationStock.PROPERTY_RELEASED + " = rs." + ReservationStock.PROPERTY_QUANTITY);
-    hqlReservations.append(" where rs." + ReservationStock.PROPERTY_RESERVATION + "."
-        + Reservation.PROPERTY_ID + " = :reservationId");
-    Query updateTransactions = OBDal.getInstance().getSession()
-        .createQuery(hqlReservations.toString());
-    updateTransactions.setParameter("reservationId", reservation.getId());
-    updateTransactions.executeUpdate();
-
-    OBDal.getInstance().flush();
   }
 
   private static void createNewReservations(Order newOrder) {
@@ -772,8 +756,7 @@ public class CancelAndReplaceUtils {
   private static Reservation getReservationForOrderLine(OrderLine line) {
     OBCriteria<Reservation> reservationCriteria = OBDal.getInstance().createCriteria(
         Reservation.class);
-    reservationCriteria.add(Restrictions.eq(Reservation.PROPERTY_SALESORDERLINE,
-        line.getReplacedorderline()));
+    reservationCriteria.add(Restrictions.eq(Reservation.PROPERTY_SALESORDERLINE, line));
     reservationCriteria.setMaxResults(1);
     Reservation reservation = (Reservation) reservationCriteria.uniqueResult();
     return reservation;
