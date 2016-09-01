@@ -54,7 +54,7 @@ import org.slf4j.LoggerFactory;
  */
 public class FundsTransferActionHandler extends BaseProcessActionHandler {
   private static final String ERROR_IN_PROCESS = "Error in process";
-  private static final Logger log = LoggerFactory.getLogger(AddPaymentActionHandler.class);
+  private static final Logger log = LoggerFactory.getLogger(FundsTransferActionHandler.class);
   private static final String BP_DEPOSIT = "BPD";
   private static final String BP_WITHDRAWAL = "BPW";
   private static final String BANK_FEE = "BF";
