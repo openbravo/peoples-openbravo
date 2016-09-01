@@ -54,7 +54,6 @@ import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.materialmgmt.ReservationUtils;
 import org.openbravo.model.ad.access.OrderLineTax;
-import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.enterprise.Locator;
 import org.openbravo.model.common.enterprise.Organization;
@@ -618,45 +617,15 @@ public class CancelAndReplaceUtils {
   private static ShipmentInOut createNettingGoodShipmentHeader(Order oldOrder,
       ShipmentInOutLine shipmentLine) {
     ShipmentInOut nettingGoodsShipment = null;
-    OrganizationStructureProvider osp = OBContext.getOBContext().getOrganizationStructureProvider(
-        oldOrder.getOrganization().getClient().getId());
     if (shipmentLine == null) {
       // Create new Shipment
       nettingGoodsShipment = OBProvider.getInstance().get(ShipmentInOut.class);
       nettingGoodsShipment.setOrganization(oldOrder.getOrganization());
-      // Set Document Type
-      OBCriteria<DocumentType> goodsShipmentDocumentTypeCriteria = OBDal.getInstance()
-          .createCriteria(DocumentType.class);
-      OBCriteria<Table> goodsShipmentTableCriteria = OBDal.getInstance()
-          .createCriteria(Table.class);
-      goodsShipmentTableCriteria.add(Restrictions.eq(Table.PROPERTY_DBTABLENAME,
-          ShipmentInOut.TABLE_NAME));
-      List<Table> goodsShipmentTableList = goodsShipmentTableCriteria.list();
-      if (goodsShipmentTableList.size() != 1) {
-        throw new OBException("Only one table named M_InOut can exists");
-      }
-      Table goodsShipmentTable = goodsShipmentTableList.get(0);
-      goodsShipmentDocumentTypeCriteria.add(Restrictions.eq(DocumentType.PROPERTY_TABLE,
-          goodsShipmentTable));
-      goodsShipmentDocumentTypeCriteria.add(Restrictions.eq(DocumentType.PROPERTY_SALESTRANSACTION,
-          true));
-      List<String> parentOrganizationIdList = osp.getParentList(oldOrder.getOrganization().getId(),
-          true);
-      goodsShipmentDocumentTypeCriteria.add(Restrictions.in(DocumentType.PROPERTY_ORGANIZATION
-          + ".id", parentOrganizationIdList));
-      goodsShipmentDocumentTypeCriteria.add(Restrictions.eq(DocumentType.PROPERTY_ACTIVE, true));
-      goodsShipmentDocumentTypeCriteria.addOrderBy(DocumentType.PROPERTY_DEFAULT, false);
-      List<DocumentType> goodsShipmentDocumentTypeList = goodsShipmentDocumentTypeCriteria.list();
-      if (goodsShipmentDocumentTypeList.size() == 0) {
-        throw new OBException("No document type found for the new shipment");
-      }
-      DocumentType goodsShipmentDocumentType = goodsShipmentDocumentTypeList.get(0);
+      DocumentType goodsShipmentDocumentType = FIN_Utility.getDocumentType(
+          oldOrder.getOrganization(), "MMS");
       nettingGoodsShipment.setDocumentType(goodsShipmentDocumentType);
       nettingGoodsShipment.setWarehouse(oldOrder.getWarehouse());
       nettingGoodsShipment.setBusinessPartner(oldOrder.getBusinessPartner());
-      if (oldOrder.getPartnerAddress() == null) {
-        throw new OBException("The business partner location can not be null");
-      }
       nettingGoodsShipment.setPartnerAddress(oldOrder.getPartnerAddress());
     } else {
       nettingGoodsShipment = (ShipmentInOut) DalUtil.copy(shipmentLine.getShipmentReceipt(), false,
