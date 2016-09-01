@@ -250,7 +250,7 @@ public class CancelAndReplaceUtils {
           .getString("negativeDocNo") : null;
 
       // Create inverse Order header
-      Order inverseOrder = createOrder(oldOrder, negativeDocNo, triggersDisabled);
+      Order inverseOrder = createInverseOrder(oldOrder, negativeDocNo, triggersDisabled);
       inverseOrderId = inverseOrder.getId();
 
       // Define netting goods shipment and its lines
@@ -269,8 +269,8 @@ public class CancelAndReplaceUtils {
         OrderLine oldOrderLine = (OrderLine) orderLines.get(0);
 
         // Create inverse Order line
-        OrderLine inverseOrderLine = createOrderLine(oldOrderLine, inverseOrder, replaceOrder,
-            triggersDisabled);
+        OrderLine inverseOrderLine = createInverseOrderLine(oldOrderLine, inverseOrder,
+            replaceOrder, triggersDisabled);
 
         // Get Shipment lines of old order line
         OBCriteria<ShipmentInOutLine> goodsShipmentLineCriteria = OBDal.getInstance()
@@ -283,7 +283,7 @@ public class CancelAndReplaceUtils {
         if (createNettingGoodsShipment && inverseOrderLine != null) {
           // Create Netting goods shipment Header
           if (nettingGoodsShipment == null) {
-            nettingGoodsShipment = createShipment(oldOrder, goodsShipmentLineList);
+            nettingGoodsShipment = createNettingGoodShipmentHeader(oldOrder, goodsShipmentLineList);
             nettingGoodsShipmentId = nettingGoodsShipment.getId();
           }
 
@@ -300,7 +300,7 @@ public class CancelAndReplaceUtils {
           OBDal.getInstance().save(oldOrderLine);
           OBDal.getInstance().flush();
           if (movementQty.compareTo(BigDecimal.ZERO) != 0) {
-            newGoodsShipmentLine1 = createShipmentLine(nettingGoodsShipment,
+            newGoodsShipmentLine1 = createNettingShipmentLine(nettingGoodsShipment,
                 goodsShipmentLineList.size() > 0 ? goodsShipmentLineList.get(0) : null,
                 oldOrderLine, lineNoCounter++, movementQty, updateStockStatement, triggersDisabled);
           }
@@ -308,8 +308,9 @@ public class CancelAndReplaceUtils {
           movementQty = inverseOrderLine.getOrderedQuantity().subtract(
               inverseOrderLine.getDeliveredQuantity());
           if (movementQty.compareTo(BigDecimal.ZERO) != 0) {
-            createShipmentLine(nettingGoodsShipment, newGoodsShipmentLine1, inverseOrderLine,
-                lineNoCounter++, movementQty, updateStockStatement, triggersDisabled);
+            createNettingShipmentLine(nettingGoodsShipment, newGoodsShipmentLine1,
+                inverseOrderLine, lineNoCounter++, movementQty, updateStockStatement,
+                triggersDisabled);
           }
 
           if (replaceOrder) {
@@ -323,8 +324,9 @@ public class CancelAndReplaceUtils {
               OBDal.getInstance().save(newOrderLine);
               OBDal.getInstance().flush();
               if (movementQty.compareTo(BigDecimal.ZERO) != 0) {
-                createShipmentLine(nettingGoodsShipment, newGoodsShipmentLine1, newOrderLine,
-                    lineNoCounter++, movementQty, updateStockStatement, triggersDisabled);
+                createNettingShipmentLine(nettingGoodsShipment, newGoodsShipmentLine1,
+                    newOrderLine, lineNoCounter++, movementQty, updateStockStatement,
+                    triggersDisabled);
               }
               if (newOrderLineDeliveredQty == null
                   || newOrderLineDeliveredQty.compareTo(BigDecimal.ZERO) == 0) {
@@ -466,8 +468,8 @@ public class CancelAndReplaceUtils {
     CallStoredProcedure.getInstance().call(procedureName, parameters, null, true, false);
   }
 
-  private static Order createOrder(Order oldOrder, String documentNo, boolean triggersDisabled)
-      throws JSONException, ParseException {
+  private static Order createInverseOrder(Order oldOrder, String documentNo,
+      boolean triggersDisabled) throws JSONException, ParseException {
     Order inverseOrder = (Order) DalUtil.copy(oldOrder, false, true);
     // Change order values
     inverseOrder.setCreatedBy(OBContext.getOBContext().getUser());
@@ -499,13 +501,13 @@ public class CancelAndReplaceUtils {
     // Copy old order taxes to inverse, it is done when is executed from Web POS because triggers
     // are disabled
     if (triggersDisabled) {
-      createOrderTaxes(oldOrder, inverseOrder);
+      createInverseOrderTaxes(oldOrder, inverseOrder);
     }
 
     return inverseOrder;
   }
 
-  private static void createOrderTaxes(Order oldOrder, Order inverseOrder) {
+  private static void createInverseOrderTaxes(Order oldOrder, Order inverseOrder) {
     for (OrderTax orderTax : oldOrder.getOrderTaxList()) {
       OrderTax inverseOrderTax = (OrderTax) DalUtil.copy(orderTax, false, true);
       BigDecimal inverseTaxAmount = orderTax.getTaxAmount().negate();
@@ -519,7 +521,7 @@ public class CancelAndReplaceUtils {
     OBDal.getInstance().flush();
   }
 
-  private static OrderLine createOrderLine(OrderLine oldOrderLine, Order inverseOrder,
+  private static OrderLine createInverseOrderLine(OrderLine oldOrderLine, Order inverseOrder,
       boolean replaceOrder, boolean triggersDisabled) {
     if (!replaceOrder
         && oldOrderLine.getDeliveredQuantity().compareTo(oldOrderLine.getOrderedQuantity()) == 0) {
@@ -546,18 +548,18 @@ public class CancelAndReplaceUtils {
     OBDal.getInstance().save(inverseOrderLine);
 
     // Copy the discounts of the original line
-    creteOrderLineDiscounts(oldOrderLine, inverseOrderLine, inverseOrder);
+    createInverseOrderLineDiscounts(oldOrderLine, inverseOrderLine, inverseOrder);
     // Copy old order taxes to inverse, it is done when is executed from Web POS because triggers
     // are disabled
     if (triggersDisabled) {
-      createOrderLineTaxes(oldOrderLine, inverseOrderLine, inverseOrder);
+      createInverseOrderLineTaxes(oldOrderLine, inverseOrderLine, inverseOrder);
     }
 
     return inverseOrderLine;
   }
 
-  private static void creteOrderLineDiscounts(OrderLine oldOrderLine, OrderLine inverseOrderLine,
-      Order inverseOrder) {
+  private static void createInverseOrderLineDiscounts(OrderLine oldOrderLine,
+      OrderLine inverseOrderLine, Order inverseOrder) {
     for (OrderLineOffer orderLineOffer : oldOrderLine.getOrderLineOfferList()) {
       final OrderLineOffer inverseOrderLineOffer = (OrderLineOffer) DalUtil.copy(orderLineOffer,
           false, true);
@@ -574,8 +576,8 @@ public class CancelAndReplaceUtils {
     OBDal.getInstance().flush();
   }
 
-  private static void createOrderLineTaxes(OrderLine oldOrderLine, OrderLine inverseOrderLine,
-      Order inverseOrder) {
+  private static void createInverseOrderLineTaxes(OrderLine oldOrderLine,
+      OrderLine inverseOrderLine, Order inverseOrder) {
     for (OrderLineTax orderLineTax : oldOrderLine.getOrderLineTaxList()) {
       final OrderLineTax inverseOrderLineTax = (OrderLineTax) DalUtil.copy(orderLineTax, false,
           true);
@@ -592,7 +594,7 @@ public class CancelAndReplaceUtils {
     OBDal.getInstance().flush();
   }
 
-  private static ShipmentInOut createShipment(Order oldOrder,
+  private static ShipmentInOut createNettingGoodShipmentHeader(Order oldOrder,
       List<ShipmentInOutLine> goodsShipmentLineList) {
     ShipmentInOut nettingGoodsShipment = null;
     OrganizationStructureProvider osp = OBContext.getOBContext().getOrganizationStructureProvider(
@@ -657,7 +659,7 @@ public class CancelAndReplaceUtils {
     return nettingGoodsShipment;
   }
 
-  private static ShipmentInOutLine createShipmentLine(ShipmentInOut nettingGoodsShipment,
+  private static ShipmentInOutLine createNettingShipmentLine(ShipmentInOut nettingGoodsShipment,
       ShipmentInOutLine nettingGoodsShipmentLine, OrderLine orderLine, long lineNoCounter,
       BigDecimal movementQty, CallableStatement updateStockStatement, boolean triggersDisabled) {
     ShipmentInOutLine newGoodsShipmentLine = null;
