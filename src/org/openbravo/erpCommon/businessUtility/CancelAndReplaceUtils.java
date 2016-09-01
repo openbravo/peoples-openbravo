@@ -85,6 +85,7 @@ public class CancelAndReplaceUtils {
   private static final String HYPHEN = "-1";
   public static final String CREATE_NETTING_SHIPMENT = "CancelAndReplaceCreateNetShipment";
   public static final String ASSOCIATE_SHIPMENT_TO_REPLACE_TICKET = "CancelAndReplaceAssociateShipmentToNewTicket";
+  public static final String ENABLE_STOCK_RESERVATIONS = "StockReservations";
   public static String REVERSE_PREFIX = "*R*";
 
   /**
@@ -690,32 +691,31 @@ public class CancelAndReplaceUtils {
   }
 
   private static void releaseOldReservations(Order oldOrder) {
-    ScrollableResults oldOrderLines = null;
-    try {
-      // Iterate old order lines
-      oldOrderLines = getOrderLineList(oldOrder);
-      int i = 0;
-      while (oldOrderLines.next()) {
-        OrderLine oldOrderLine = (OrderLine) oldOrderLines.get(0);
-        OBCriteria<Reservation> reservationCriteria = OBDal.getInstance().createCriteria(
-            Reservation.class);
-        reservationCriteria.add(Restrictions.eq(Reservation.PROPERTY_SALESORDERLINE, oldOrderLine));
-        reservationCriteria.setMaxResults(1);
-        Reservation reservation = (Reservation) reservationCriteria.uniqueResult();
-        if (reservation != null) {
-          releaseReservation(reservation);
-          OBDal.getInstance().save(reservation);
+    if (getEnableStockReservationsPreferenceValue(oldOrder)) {
+      ScrollableResults oldOrderLines = null;
+      try {
+        // Iterate old order lines
+        oldOrderLines = getOrderLineList(oldOrder);
+        int i = 0;
+        while (oldOrderLines.next()) {
+          OrderLine oldOrderLine = (OrderLine) oldOrderLines.get(0);
+          Reservation reservation = getReservationForOrderLine(oldOrderLine);
+          if (reservation != null) {
+            releaseReservation(reservation);
+            OBDal.getInstance().save(reservation);
+          }
+          if ((i % 100) == 0) {
+            OBDal.getInstance().flush();
+            OBDal.getInstance().getSession().clear();
+          }
         }
-        if ((i % 100) == 0) {
-          OBDal.getInstance().getSession().clear();
+      } catch (Exception e) {
+        log4j.error("Error in CancelAndReplaceUtils.releaseOldReservations", e);
+        throw new OBException(e.getMessage(), e);
+      } finally {
+        if (oldOrderLines != null) {
+          oldOrderLines.close();
         }
-      }
-    } catch (Exception e) {
-      log4j.error("Error in CancelAndReplaceUtils.releaseOldReservations", e);
-      throw new OBException(e.getMessage(), e);
-    } finally {
-      if (oldOrderLines != null) {
-        oldOrderLines.close();
       }
     }
   }
@@ -736,40 +736,48 @@ public class CancelAndReplaceUtils {
   }
 
   private static void createNewReservations(Order newOrder) {
-    ScrollableResults newOrderLines = null;
-    try {
-      // Iterate old order lines
-      newOrderLines = getOrderLineList(newOrder);
-      int i = 0;
-      while (newOrderLines.next()) {
-        OrderLine newOrderLine = (OrderLine) newOrderLines.get(0);
-        if (newOrderLine.getDeliveredQuantity() != null) {
-          if (newOrderLine.getOrderedQuantity().subtract(newOrderLine.getDeliveredQuantity())
-              .compareTo(BigDecimal.ZERO) == 0) {
-            continue;
+    if (getEnableStockReservationsPreferenceValue(newOrder)) {
+      ScrollableResults newOrderLines = null;
+      try {
+        // Iterate old order lines
+        newOrderLines = getOrderLineList(newOrder);
+        int i = 0;
+        while (newOrderLines.next()) {
+          OrderLine newOrderLine = (OrderLine) newOrderLines.get(0);
+          if (newOrderLine.getDeliveredQuantity() != null) {
+            if (newOrderLine.getOrderedQuantity().subtract(newOrderLine.getDeliveredQuantity())
+                .compareTo(BigDecimal.ZERO) == 0) {
+              continue;
+            }
+          }
+          Reservation reservation = getReservationForOrderLine(newOrderLine.getReplacedorderline());
+          if (reservation != null) {
+            ReservationUtils.createReserveFromSalesOrderLine(newOrderLine, true);
+          }
+          if ((i % 100) == 0) {
+            OBDal.getInstance().flush();
+            OBDal.getInstance().getSession().clear();
           }
         }
-        OBCriteria<Reservation> reservationCriteria = OBDal.getInstance().createCriteria(
-            Reservation.class);
-        reservationCriteria.add(Restrictions.eq(Reservation.PROPERTY_SALESORDERLINE,
-            newOrderLine.getReplacedorderline()));
-        reservationCriteria.setMaxResults(1);
-        Reservation reservation = (Reservation) reservationCriteria.uniqueResult();
-        if (reservation != null) {
-          ReservationUtils.createReserveFromSalesOrderLine(newOrderLine, true);
+      } catch (Exception e) {
+        log4j.error("Error in CancelAndReplaceUtils.createNewReservations", e);
+        throw new OBException(e.getMessage(), e);
+      } finally {
+        if (newOrderLines != null) {
+          newOrderLines.close();
         }
-        if ((i % 100) == 0) {
-          OBDal.getInstance().getSession().clear();
-        }
-      }
-    } catch (Exception e) {
-      log4j.error("Error in CancelAndReplaceUtils.createNewReservations", e);
-      throw new OBException(e.getMessage(), e);
-    } finally {
-      if (newOrderLines != null) {
-        newOrderLines.close();
       }
     }
+  }
+
+  private static Reservation getReservationForOrderLine(OrderLine line) {
+    OBCriteria<Reservation> reservationCriteria = OBDal.getInstance().createCriteria(
+        Reservation.class);
+    reservationCriteria.add(Restrictions.eq(Reservation.PROPERTY_SALESORDERLINE,
+        line.getReplacedorderline()));
+    reservationCriteria.setMaxResults(1);
+    Reservation reservation = (Reservation) reservationCriteria.uniqueResult();
+    return reservation;
   }
 
   private static ScrollableResults getOrderLineList(Order order) {
@@ -1263,6 +1271,19 @@ public class CancelAndReplaceUtils {
       associateShipmentToNewReceipt = false;
     }
     return associateShipmentToNewReceipt;
+  }
+
+  private static boolean getEnableStockReservationsPreferenceValue(Order order) {
+    boolean enableStockReservations = false;
+    try {
+      enableStockReservations = ("Y").equals(Preferences.getPreferenceValue(
+          CancelAndReplaceUtils.ENABLE_STOCK_RESERVATIONS, true, OBContext.getOBContext()
+              .getCurrentClient(), order.getOrganization(), OBContext.getOBContext().getUser(),
+          null, null));
+    } catch (PropertyException e1) {
+      enableStockReservations = false;
+    }
+    return enableStockReservations;
   }
 
   private static OrderLine getReplacementOrderLine(Order newOrder, OrderLine oldOrderLine) {
