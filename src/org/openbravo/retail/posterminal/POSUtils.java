@@ -765,9 +765,10 @@ public class POSUtils {
 
       if (defaultPaymentType != null) {
         JSONObject paymentTypeValues = new JSONObject();
-        paymentTypeValues.put("paymentMethod", defaultPaymentType.getPaymentMethod()
-            .getPaymentMethod());
-        paymentTypeValues.put("financialAccount", defaultPaymentType.getFinancialAccount());
+        paymentTypeValues.put("paymentMethodId", defaultPaymentType.getPaymentMethod()
+            .getPaymentMethod().getId());
+        paymentTypeValues.put("financialAccountId", defaultPaymentType.getFinancialAccount()
+            .getId());
         jsonorder.put("defaultPaymentType", paymentTypeValues);
       }
     } catch (JSONException e) {
