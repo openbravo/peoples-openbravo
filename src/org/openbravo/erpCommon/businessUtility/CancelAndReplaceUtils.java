@@ -1025,10 +1025,10 @@ public class CancelAndReplaceUtils {
     OrganizationStructureProvider osp = OBContext.getOBContext().getOrganizationStructureProvider(
         oldOrder.getOrganization().getClient().getId());
     if (jsonorder != null) {
-      paymentPaymentMethod = (FIN_PaymentMethod) jsonorder.getJSONObject("defaultPaymentType").get(
-          "paymentMethod");
-      financialAccount = (FIN_FinancialAccount) jsonorder.getJSONObject("defaultPaymentType").get(
-          "financialAccount");
+      paymentPaymentMethod = OBDal.getInstance().get(FIN_PaymentMethod.class,
+          (String) jsonorder.getJSONObject("defaultPaymentType").get("paymentMethodId"));
+      financialAccount = OBDal.getInstance().get(FIN_FinancialAccount.class,
+          (String) jsonorder.getJSONObject("defaultPaymentType").get("financialAccountId"));
     } else {
       paymentPaymentMethod = oldOrder.getPaymentMethod();
       // Find a financial account belong the organization tree
