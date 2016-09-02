@@ -39,6 +39,9 @@ enyo.kind({
     onTapCloseButton: function () {
       var subWindow = this.subWindow,
           params = this.owner.owner.owner.params;
+      if (_.isUndefined(params)) { //For the flow when press the ESC Key. The 'this' changed because is relative. Dependent if press 'X' button or ESC key for closed the Popup.
+        params = this.owner.owner.params;
+      }
       if (params.navigateType === 'modal') {
         subWindow.doChangeSubWindow({
           newWindow: {
