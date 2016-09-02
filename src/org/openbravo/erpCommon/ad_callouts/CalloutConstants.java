@@ -21,26 +21,16 @@ package org.openbravo.erpCommon.ad_callouts;
 import org.openbravo.client.application.window.FormInitializationComponent;
 
 /**
- * Defines constants used for parsing SimpleCallouts response in the
- * {@link FormInitializationComponent} and {@link SimpleCallout} classes.
+ * Defines constants used for manage Callouts. These constants are used in
+ * {@link FormInitializationComponent}, {@link SimpleCalloutInformationProvider} and
+ * {@link HttpServletCalloutInformationProvider} classes.
  * 
  * @author inigo.sanchez
  */
-public class SimpleCalloutConstants {
-
-  public static final String SC_COLUMN_VALUES = "columnValues";
-  public static final String SC_HIDDEN_INPUTS = "hiddenInputs";
-  public static final String SC_OVERWRITTEN_AUXILIARY = "overwrittenAuxiliaryInputs";
-  public static final String SC_DYNAMIC_COLS = "dynamicCols";
-  public static final String SC_CHANGED_COLS = "changedCols";
-  public static final String SC_RESULT_CALLOUT = "result";
-  public static final String SC_INP_FIELDS = "inpFields";
-  public static final String SC_TAB = "tab";
+public class CalloutConstants {
 
   public static final String VALUE = "value";
   public static final String CLASSIC_VALUE = "classicValue";
   public static final String ENTRIES = "entries";
 
-  public static final String SC_JSEXECUTE = "JSEXECUTE";
-  public static final String SC_EXECUTE = "EXECUTE";
 }

@@ -169,7 +169,7 @@ public abstract class SimpleCallout extends DelegateConnectionProvider {
       try {
         // if a parent callout modified any value, updated value is returned.
         if (result.has(param)) {
-          value = result.getJSONObject(param).get(SimpleCalloutConstants.CLASSIC_VALUE).toString();
+          value = result.getJSONObject(param).get(CalloutConstants.CLASSIC_VALUE).toString();
         } else {
           value = vars.getStringParameter(param, filter);
         }
@@ -237,8 +237,8 @@ public abstract class SimpleCallout extends DelegateConnectionProvider {
         if (selected) {
           // If value of combo is selected
           JSONObject valueSelected = new JSONObject();
-          valueSelected.put(SimpleCalloutConstants.VALUE, name.toString());
-          valueSelected.put(SimpleCalloutConstants.CLASSIC_VALUE, name.toString());
+          valueSelected.put(CalloutConstants.VALUE, name.toString());
+          valueSelected.put(CalloutConstants.CLASSIC_VALUE, name.toString());
           result.put(currentElement, valueSelected);
         }
       } catch (JSONException e) {
@@ -259,10 +259,10 @@ public abstract class SimpleCallout extends DelegateConnectionProvider {
           currentSelectResult = blankElement;
 
           JSONObject jsonobject = new JSONObject();
-          jsonobject.put(SimpleCalloutConstants.ENTRIES, new JSONArray(currentSelectResult));
+          jsonobject.put(CalloutConstants.ENTRIES, new JSONArray(currentSelectResult));
           result.put(currentElement, jsonobject);
         } else {
-          result.getJSONObject(currentElement).accumulate(SimpleCalloutConstants.ENTRIES,
+          result.getJSONObject(currentElement).accumulate(CalloutConstants.ENTRIES,
               new JSONArray(currentSelectResult));
         }
       } catch (JSONException e) {
@@ -291,8 +291,8 @@ public abstract class SimpleCallout extends DelegateConnectionProvider {
         strValue = "";
       }
       try {
-        columnValue.put(SimpleCalloutConstants.VALUE, strValue);
-        columnValue.put(SimpleCalloutConstants.CLASSIC_VALUE, strValue);
+        columnValue.put(CalloutConstants.VALUE, strValue);
+        columnValue.put(CalloutConstants.CLASSIC_VALUE, strValue);
         result.put(param, columnValue);
       } catch (JSONException e) {
         log.error("Error parsing JSON Object.", e);

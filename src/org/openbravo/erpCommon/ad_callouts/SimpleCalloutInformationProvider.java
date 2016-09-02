@@ -19,6 +19,7 @@
 package org.openbravo.erpCommon.ad_callouts;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -38,42 +39,52 @@ import org.openbravo.service.json.JsonConstants;
  */
 public class SimpleCalloutInformationProvider implements CalloutInformationProvider {
 
-  JSONObject returnedJSONObject;
-  String currentElement = null;
+  private JSONObject calloutResult;
+  private Iterator<String> keys;
+  private String elementName;
 
-  public SimpleCalloutInformationProvider(JSONObject json) {
-    returnedJSONObject = json;
-  }
-
-  public JSONObject getJSONResult() {
-    return returnedJSONObject;
-  }
-
-  public void setCurrentElement(String nameElement) {
-    currentElement = nameElement;
+  @SuppressWarnings("unchecked")
+  public SimpleCalloutInformationProvider(JSONObject calloutResult) {
+    this.calloutResult = calloutResult;
+    this.keys = this.calloutResult.keys();
+    this.elementName = "";
   }
 
   @Override
   public Object getElementName(Object values) {
-    return currentElement;
+    return elementName;
   }
 
-  public Object getValue(Object values) {
-    JSONObject json = (JSONObject) values;
+  @Override
+  public Object getValue(Object element) {
+    JSONObject json = (JSONObject) element;
     String value = null;
     try {
-      value = json.getString(SimpleCalloutConstants.CLASSIC_VALUE);
+      value = json.getString(CalloutConstants.CLASSIC_VALUE);
     } catch (JSONException e) {
-      log.error("Error parsing JSON Object.", e);
+      log.error("Error retrieving value from json {}", json);
     }
     return value;
   }
 
   @Override
-  public Boolean isComboData(Object values) {
-    if (values instanceof JSONObject) {
-      JSONObject json = (JSONObject) values;
-      return json.has(SimpleCalloutConstants.ENTRIES);
+  public Object getNextElement() {
+    try {
+      if (keys.hasNext()) {
+        elementName = keys.next();
+        return calloutResult.getJSONObject(elementName);
+      }
+    } catch (JSONException e) {
+      log.error("Error retrieving next element with key {}", elementName);
+    }
+    return null;
+  }
+
+  @Override
+  public Boolean isComboData(Object element) {
+    if (element instanceof JSONObject) {
+      JSONObject json = (JSONObject) element;
+      return json.has(CalloutConstants.ENTRIES);
     }
     return false;
   }
@@ -87,8 +98,8 @@ public class SimpleCalloutInformationProvider implements CalloutInformationProvi
     JSONObject elem = (JSONObject) element;
 
     // if value is not selected
-    if (!elem.has(SimpleCalloutConstants.CLASSIC_VALUE)) {
-      JSONArray jsonArr = elem.getJSONArray(SimpleCalloutConstants.ENTRIES);
+    if (!elem.has(CalloutConstants.CLASSIC_VALUE)) {
+      JSONArray jsonArr = elem.getJSONArray(CalloutConstants.ENTRIES);
       ArrayList<JSONObject> newJsonArr = new ArrayList<JSONObject>();
       JSONObject temporaly = null;
 
@@ -108,22 +119,21 @@ public class SimpleCalloutInformationProvider implements CalloutInformationProvi
       if (newJsonArr.get(0).has(JsonConstants.ID)) {
         // create element with selected value
         String valueSelected = newJsonArr.get(0).getString(JsonConstants.ID);
-        temporalyElement.put(SimpleCalloutConstants.VALUE, valueSelected);
-        temporalyElement.put(SimpleCalloutConstants.CLASSIC_VALUE, valueSelected);
+        temporalyElement.put(CalloutConstants.VALUE, valueSelected);
+        temporalyElement.put(CalloutConstants.CLASSIC_VALUE, valueSelected);
       }
 
     } else {
       // value is selected before this parsing
-      temporalyElement.put(SimpleCalloutConstants.VALUE,
-          elem.getString(SimpleCalloutConstants.VALUE));
-      temporalyElement.put(SimpleCalloutConstants.CLASSIC_VALUE,
-          elem.getString(SimpleCalloutConstants.CLASSIC_VALUE));
+      temporalyElement.put(CalloutConstants.VALUE, elem.getString(CalloutConstants.VALUE));
+      temporalyElement.put(CalloutConstants.CLASSIC_VALUE,
+          elem.getString(CalloutConstants.CLASSIC_VALUE));
     }
 
     // added this new value and set parameter into request
-    if (temporalyElement.has(SimpleCalloutConstants.CLASSIC_VALUE)) {
+    if (temporalyElement.has(CalloutConstants.CLASSIC_VALUE)) {
       request.setRequestParameter((String) this.getElementName(null),
-          temporalyElement.getString(SimpleCalloutConstants.CLASSIC_VALUE));
+          temporalyElement.getString(CalloutConstants.CLASSIC_VALUE));
     }
 
     columnValues.put(colIdent, temporalyElement);
@@ -132,9 +142,8 @@ public class SimpleCalloutInformationProvider implements CalloutInformationProvi
       changedCols.add(col.getDBColumnName());
     }
 
-    if (elem.has(SimpleCalloutConstants.ENTRIES)) {
-      temporalyElement.put(SimpleCalloutConstants.ENTRIES,
-          elem.getJSONArray(SimpleCalloutConstants.ENTRIES));
+    if (elem.has(CalloutConstants.ENTRIES)) {
+      temporalyElement.put(CalloutConstants.ENTRIES, elem.getJSONArray(CalloutConstants.ENTRIES));
     }
     return changed;
   }

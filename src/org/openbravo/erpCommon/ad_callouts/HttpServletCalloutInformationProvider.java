@@ -41,37 +41,40 @@ import org.openbravo.service.json.JsonConstants;
  */
 public class HttpServletCalloutInformationProvider implements CalloutInformationProvider {
 
-  private ArrayList<NativeArray> returnedArray;
+  private ArrayList<NativeArray> calloutResult;
+  private int current;
 
-  public HttpServletCalloutInformationProvider(ArrayList<NativeArray> nativeArray) {
-    returnedArray = nativeArray;
-  }
-
-  public ArrayList<NativeArray> getNativeArray() {
-    return returnedArray;
-  }
-
-  @Override
-  public Object getElementName(Object values) {
-    NativeArray element = (NativeArray) values;
-    return element.get(0, null);
+  public HttpServletCalloutInformationProvider(ArrayList<NativeArray> calloutResult) {
+    this.calloutResult = calloutResult;
+    this.current = 0;
   }
 
   @Override
-  public Object getValue(Object values) {
-    return getValue(values, 1);
-  }
-
-  private Object getValue(Object values, int position) {
-    NativeArray element = (NativeArray) values;
-    return element.get(position, null);
+  public Object getElementName(Object element) {
+    NativeArray nativeArrayElement = (NativeArray) element;
+    return nativeArrayElement.get(0, null);
   }
 
   @Override
-  public Boolean isComboData(Object values) {
-    if (values instanceof NativeArray) {
-      NativeArray element = (NativeArray) values;
-      return element.get(1, null) instanceof NativeArray;
+  public Object getValue(Object element) {
+    return getValue(element, 1);
+  }
+
+  @Override
+  public Object getNextElement() {
+    Object element = null;
+    if (current < calloutResult.size() - 1) {
+      element = calloutResult.get(current);
+      current++;
+    }
+    return element;
+  }
+
+  @Override
+  public Boolean isComboData(Object element) {
+    if (element instanceof NativeArray) {
+      NativeArray nativeArrayElement = (NativeArray) element;
+      return nativeArrayElement.get(1, null) instanceof NativeArray;
     }
     return false;
   }
@@ -105,8 +108,8 @@ public class HttpServletCalloutInformationProvider implements CalloutInformation
           UIDefinition uiDef = UIDefinitionController.getInstance().getUIDefinition(col.getId());
           String newValue = this.getElementName(subelement).toString();
 
-          jsonobject.put("value", newValue);
-          jsonobject.put("classicValue", uiDef.convertToClassicString(newValue));
+          jsonobject.put(CalloutConstants.VALUE, newValue);
+          jsonobject.put(CalloutConstants.CLASSIC_VALUE, uiDef.convertToClassicString(newValue));
           request.setRequestParameter(colIdent, uiDef.convertToClassicString(newValue));
           log.debug("Column: " + col.getDBColumnName() + "  Value: " + newValue);
         }
@@ -119,8 +122,13 @@ public class HttpServletCalloutInformationProvider implements CalloutInformation
     if (dynamicCols.contains(colIdent)) {
       changedCols.add(col.getDBColumnName());
     }
-    jsonobject.put("entries", new JSONArray(comboEntries));
+    jsonobject.put(CalloutConstants.ENTRIES, new JSONArray(comboEntries));
 
     return changed;
+  }
+
+  private Object getValue(Object element, int position) {
+    NativeArray nativeArrayElement = (NativeArray) element;
+    return nativeArrayElement.get(position, null);
   }
 }

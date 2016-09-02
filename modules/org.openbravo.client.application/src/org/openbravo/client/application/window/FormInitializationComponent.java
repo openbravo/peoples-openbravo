@@ -70,6 +70,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBDao;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.data.Sqlc;
+import org.openbravo.erpCommon.ad_callouts.CalloutConstants;
 import org.openbravo.erpCommon.ad_callouts.CalloutInformationProvider;
 import org.openbravo.erpCommon.ad_callouts.HttpServletCalloutInformationProvider;
 import org.openbravo.erpCommon.ad_callouts.SimpleCallout;
@@ -1511,20 +1512,12 @@ public class FormInitializationComponent extends BaseActionHandler {
 
           // execute SimpleCallout callout
           JSONObject result = calloutInstance.executeSimpleCallout(request);
+
           SimpleCalloutInformationProvider simpleCalloutResponseManager = new SimpleCalloutInformationProvider(
               result);
-
-          @SuppressWarnings("unchecked")
-          Iterator<String> keys = simpleCalloutResponseManager.getJSONResult().keys();
-          while (keys.hasNext()) {
-            String key = keys.next();
-            simpleCalloutResponseManager.setCurrentElement(key);
-            JSONObject element = result.getJSONObject(key);
-            managesUpdatedValuesForCallout(columnValues, tab, calloutsToCall, lastfieldChangedList,
-                messages, dynamicCols, jsExecuteCode, hiddenInputs, overwrittenAuxiliaryInputs,
-                changedCols, inpFields, calloutClassName, request, element,
-                simpleCalloutResponseManager);
-          }
+          managesUpdatedValuesForCallout(columnValues, tab, calloutsToCall, lastfieldChangedList,
+              messages, dynamicCols, jsExecuteCode, hiddenInputs, overwrittenAuxiliaryInputs,
+              changedCols, inpFields, calloutClassName, request, simpleCalloutResponseManager);
 
           // updated info values of callouts infrastructure
           String calloutNameJS = calloutClassName.substring(calloutClassName.lastIndexOf(".") + 1);
@@ -1553,16 +1546,12 @@ public class FormInitializationComponent extends BaseActionHandler {
           if (calloutNameJS != null && calloutNameJS != "") {
             calledCallouts.add(calloutNameJS);
           }
+
           HttpServletCalloutInformationProvider calloutResponseManager = new HttpServletCalloutInformationProvider(
               returnedArray);
-          if (returnedArray.size() > 0) {
-            for (NativeArray element : calloutResponseManager.getNativeArray()) {
-              managesUpdatedValuesForCallout(columnValues, tab, calloutsToCall,
-                  lastfieldChangedList, messages, dynamicCols, jsExecuteCode, hiddenInputs,
-                  overwrittenAuxiliaryInputs, changedCols, inpFields, calloutClassName, request,
-                  element, calloutResponseManager);
-            }
-          }
+          managesUpdatedValuesForCallout(columnValues, tab, calloutsToCall, lastfieldChangedList,
+              messages, dynamicCols, jsExecuteCode, hiddenInputs, overwrittenAuxiliaryInputs,
+              changedCols, inpFields, calloutClassName, request, calloutResponseManager);
         }
         lastCalledCallout = calloutClassName;
         lastFieldOfLastCalloutCalled = lastFieldChanged;
@@ -1582,136 +1571,141 @@ public class FormInitializationComponent extends BaseActionHandler {
       List<String> dynamicCols, List<String> jsExecuteCode, Map<String, Object> hiddenInputs,
       List<String> overwrittenAuxiliaryInputs, List<String> changedCols,
       HashMap<String, Field> inpFields, String calloutClassName, RequestContext request,
-      Object element, CalloutInformationProvider calloutInformationProvider) throws JSONException {
-    String name = (String) calloutInformationProvider.getElementName(element);
-    if (name.equals("MESSAGE") || name.equals("INFO") || name.equals("WARNING")
-        || name.equals("ERROR") || name.equals("SUCCESS")) {
-      log.debug("Callout message: " + calloutInformationProvider.getValue(element));
-      JSONObject message = new JSONObject();
-      message.put("text", calloutInformationProvider.getValue(element).toString());
-      message.put("severity", name.equals("MESSAGE") ? "TYPE_INFO" : "TYPE_" + name);
-      messages.add(message);
-    } else if (name.equals("JSEXECUTE")) {
-      // The code on a JSEXECUTE command is sent directly to the client for eval()
-      String code = (String) calloutInformationProvider.getValue(element);
-      if (code != null) {
-        jsExecuteCode.add(code);
-      }
-    } else if (name.equals("EXECUTE")) {
-      String js = calloutInformationProvider.getValue(element) == null ? null
-          : calloutInformationProvider.getValue(element).toString();
-      if (js != null && !js.equals("")) {
-        if (js.equals("displayLogic();")) {
-          // We don't do anything, this is a harmless js response
-        } else {
-          JSONObject message = new JSONObject();
-          message.put("text", Utility.messageBD(new DalConnectionProvider(false),
-              "OBUIAPP_ExecuteInCallout", RequestContext.get().getVariablesSecureApp()
-                  .getLanguage()));
-          message.put("severity", "TYPE_ERROR");
-          messages.add(message);
-          // Create preference to activate classic window only for HttpServlet callouts
-          if (calloutInformationProvider instanceof HttpServletCalloutInformationProvider) {
-            createNewPreferenceForWindow(tab.getWindow());
-            log.warn(getMessageForNewCreatedPreference(tab, calloutClassName));
+      CalloutInformationProvider calloutInformationProvider) throws JSONException {
+    Object element = calloutInformationProvider.getNextElement();
+    while (element != null) {
+      String name = (String) calloutInformationProvider.getElementName(element);
+      if (name.equals("MESSAGE") || name.equals("INFO") || name.equals("WARNING")
+          || name.equals("ERROR") || name.equals("SUCCESS")) {
+        log.debug("Callout message: " + calloutInformationProvider.getValue(element));
+        JSONObject message = new JSONObject();
+        message.put("text", calloutInformationProvider.getValue(element).toString());
+        message.put("severity", name.equals("MESSAGE") ? "TYPE_INFO" : "TYPE_" + name);
+        messages.add(message);
+      } else if (name.equals("JSEXECUTE")) {
+        // The code on a JSEXECUTE command is sent directly to the client for eval()
+        String code = (String) calloutInformationProvider.getValue(element);
+        if (code != null) {
+          jsExecuteCode.add(code);
+        }
+      } else if (name.equals("EXECUTE")) {
+        String js = calloutInformationProvider.getValue(element) == null ? null
+            : calloutInformationProvider.getValue(element).toString();
+        if (js != null && !js.equals("")) {
+          if (js.equals("displayLogic();")) {
+            // We don't do anything, this is a harmless js response
           } else {
-            log.error(getMessageForNewCreatedPreference(tab, calloutClassName));
-          }
-        }
-      }
-    } else {
-      if (name.startsWith("inp")) {
-        boolean changed = false;
-        if (inpFields.containsKey(name)) {
-          Column col = inpFields.get(name).getColumn();
-          if (col != null) {
-            String colId = "inp" + Sqlc.TransformaNombreColumna(col.getDBColumnName());
-            if (calloutInformationProvider.isComboData(element)) {
-              // Combo data
-              changed = calloutInformationProvider.manageComboData(columnValues, dynamicCols,
-                  changedCols, request, element, col, colId);
+            JSONObject message = new JSONObject();
+            message.put("text", Utility.messageBD(new DalConnectionProvider(false),
+                "OBUIAPP_ExecuteInCallout", RequestContext.get().getVariablesSecureApp()
+                    .getLanguage()));
+            message.put("severity", "TYPE_ERROR");
+            messages.add(message);
+            // Create preference to activate classic window only for HttpServlet callouts
+            if (calloutInformationProvider instanceof HttpServletCalloutInformationProvider) {
+              createNewPreferenceForWindow(tab.getWindow());
+              log.warn(getMessageForNewCreatedPreference(tab, calloutClassName));
             } else {
-              // Normal data
-              Object el = calloutInformationProvider.getValue(element);
-              String oldValue = request.getRequestParameter(colId);
-              // We set the new value in the request, so that the JSONObject is computed
-              // with the new value
-              UIDefinition uiDef = UIDefinitionController.getInstance()
-                  .getUIDefinition(col.getId());
-              if (el instanceof String || !(uiDef.getDomainType() instanceof PrimitiveDomainType)) {
-                request.setRequestParameter(colId, el == null ? null : el.toString());
-              } else {
-                request.setRequestParameter(colId, uiDef.convertToClassicString(el));
-              }
-              String jsonStr = uiDef.getFieldProperties(inpFields.get(name), true);
-              JSONObject jsonobj = new JSONObject(jsonStr);
-              if (el == null
-                  && (uiDef instanceof ForeignKeyUIDefinition || uiDef instanceof EnumUIDefinition)) {
-                // Special case for null values for combos: we must clean the combo values
-                jsonobj.put("value", "");
-                jsonobj.put("classicValue", "");
-                jsonobj.put("entries", new JSONArray());
-              }
-              if (jsonobj.has("classicValue")) {
-                String newValue = jsonobj.getString("classicValue");
-                log.debug("Modified column: " + col.getDBColumnName() + "  Value: " + el);
-                if ((oldValue == null && newValue != null)
-                    || (oldValue != null && newValue == null)
-                    || (oldValue != null && newValue != null && !oldValue.equals(newValue))) {
-                  columnValues.put("inp" + Sqlc.TransformaNombreColumna(col.getDBColumnName()),
-                      jsonobj);
-                  changed = true;
-                  if (dynamicCols.contains(colId)) {
-                    changedCols.add(col.getDBColumnName());
-                  }
-                  request.setRequestParameter(colId, jsonobj.getString("classicValue"));
-                }
-              } else {
-                log.debug("Column value didn't change. We do not attempt to execute any additional callout");
-              }
-            }
-            if (changed && col.getCallout() != null) {
-              // We need to fire this callout, as the column value was changed
-              // but only if the callout we are firing is different
-              if (isShouldBeFired(calloutClassName, col)) {
-                addCalloutToList(col, calloutsToCall, lastfieldChangedList);
-              }
+              log.error(getMessageForNewCreatedPreference(tab, calloutClassName));
             }
           }
-        } else {
-          for (AuxiliaryInput aux : tab.getADAuxiliaryInputList()) {
-            if (name.equalsIgnoreCase("inp" + Sqlc.TransformaNombreColumna(aux.getName()))) {
-              Object el = calloutInformationProvider.getValue(element);
-              JSONObject obj = new JSONObject();
-              obj.put("value", el);
-              obj.put("classicValue", el);
-              columnValues.put(name, obj);
-              // Add the auxiliary input to the list of auxiliary inputs modified by
-              // callouts
-              if (!overwrittenAuxiliaryInputs.contains(aux.getName())) {
-                overwrittenAuxiliaryInputs.add(aux.getName());
-              }
-            }
-          }
-          if (!columnValues.containsKey(name)) {
-            // This returned value wasn't found to be either a column or an auxiliary
-            // input. We assume it is a hidden input, which are used in places like
-            // selectors
-            Object el = calloutInformationProvider.getValue(element);
-            if (el != null) {
+        }
+      } else {
+        if (name.startsWith("inp")) {
+          boolean changed = false;
+          if (inpFields.containsKey(name)) {
+            Column col = inpFields.get(name).getColumn();
+            if (col != null) {
+              String colId = "inp" + Sqlc.TransformaNombreColumna(col.getDBColumnName());
               if (calloutInformationProvider.isComboData(element)) {
-                // In this case, we ignore the value, as a hidden input cannot be an array
-                // of elements
+                // Combo data
+                changed = calloutInformationProvider.manageComboData(columnValues, dynamicCols,
+                    changedCols, request, element, col, colId);
               } else {
-                hiddenInputs.put(name, el);
-                // We set the hidden fields in the request, so that subsequent callouts
-                // can use them
-                request.setRequestParameter(name, el.toString());
+                // Normal data
+                Object el = calloutInformationProvider.getValue(element);
+                String oldValue = request.getRequestParameter(colId);
+                // We set the new value in the request, so that the JSONObject is computed
+                // with the new value
+                UIDefinition uiDef = UIDefinitionController.getInstance().getUIDefinition(
+                    col.getId());
+                if (el instanceof String || !(uiDef.getDomainType() instanceof PrimitiveDomainType)) {
+                  request.setRequestParameter(colId, el == null ? null : el.toString());
+                } else {
+                  request.setRequestParameter(colId, uiDef.convertToClassicString(el));
+                }
+                String jsonStr = uiDef.getFieldProperties(inpFields.get(name), true);
+                JSONObject jsonobj = new JSONObject(jsonStr);
+                if (el == null
+                    && (uiDef instanceof ForeignKeyUIDefinition || uiDef instanceof EnumUIDefinition)) {
+                  // Special case for null values for combos: we must clean the combo values
+                  jsonobj.put(CalloutConstants.VALUE, "");
+                  jsonobj.put(CalloutConstants.CLASSIC_VALUE, "");
+                  jsonobj.put(CalloutConstants.ENTRIES, new JSONArray());
+                }
+                if (jsonobj.has(CalloutConstants.CLASSIC_VALUE)) {
+                  String newValue = jsonobj.getString(CalloutConstants.CLASSIC_VALUE);
+                  log.debug("Modified column: " + col.getDBColumnName() + "  Value: " + el);
+                  if ((oldValue == null && newValue != null)
+                      || (oldValue != null && newValue == null)
+                      || (oldValue != null && newValue != null && !oldValue.equals(newValue))) {
+                    columnValues.put("inp" + Sqlc.TransformaNombreColumna(col.getDBColumnName()),
+                        jsonobj);
+                    changed = true;
+                    if (dynamicCols.contains(colId)) {
+                      changedCols.add(col.getDBColumnName());
+                    }
+                    request.setRequestParameter(colId,
+                        jsonobj.getString(CalloutConstants.CLASSIC_VALUE));
+                  }
+                } else {
+                  log.debug("Column value didn't change. We do not attempt to execute any additional callout");
+                }
+              }
+              if (changed && col.getCallout() != null) {
+                // We need to fire this callout, as the column value was changed
+                // but only if the callout we are firing is different
+                if (isShouldBeFired(calloutClassName, col)) {
+                  addCalloutToList(col, calloutsToCall, lastfieldChangedList);
+                }
+              }
+            }
+          } else {
+            for (AuxiliaryInput aux : tab.getADAuxiliaryInputList()) {
+              if (name.equalsIgnoreCase("inp" + Sqlc.TransformaNombreColumna(aux.getName()))) {
+                Object el = calloutInformationProvider.getValue(element);
+                JSONObject obj = new JSONObject();
+                obj.put(CalloutConstants.VALUE, el);
+                obj.put(CalloutConstants.CLASSIC_VALUE, el);
+                columnValues.put(name, obj);
+                // Add the auxiliary input to the list of auxiliary inputs modified by
+                // callouts
+                if (!overwrittenAuxiliaryInputs.contains(aux.getName())) {
+                  overwrittenAuxiliaryInputs.add(aux.getName());
+                }
+              }
+            }
+            if (!columnValues.containsKey(name)) {
+              // This returned value wasn't found to be either a column or an auxiliary
+              // input. We assume it is a hidden input, which are used in places like
+              // selectors
+              Object el = calloutInformationProvider.getValue(element);
+              if (el != null) {
+                if (calloutInformationProvider.isComboData(element)) {
+                  // In this case, we ignore the value, as a hidden input cannot be an array
+                  // of elements
+                } else {
+                  hiddenInputs.put(name, el);
+                  // We set the hidden fields in the request, so that subsequent callouts
+                  // can use them
+                  request.setRequestParameter(name, el.toString());
+                }
               }
             }
           }
         }
       }
+      element = calloutInformationProvider.getNextElement();
     }
   }
 
