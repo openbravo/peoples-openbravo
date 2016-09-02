@@ -414,13 +414,16 @@
                       });
                       me.context.get('multiOrders').trigger('integrityOk', theReceipt);
                       OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(theReceipt.get('documentnoSuffix'), theReceipt.get('quotationnoSuffix'), receipt.get('returnnoSuffix'));
+
+                      me.context.get('orderList').current = receipt;
+                      me.context.get('orderList').deleteCurrent();
                     });
 
                     OB.UTIL.cashUpReport(model.get('multiOrders').get('multiOrdersList').models);
 
                     //this logic executed when all orders are ready to be sent
                     me.context.get('leftColumnViewManager').setOrderMode();
-                    if (me.context.get('orderList').length > _.filter(me.context.get('multiOrders').get('multiOrdersList').models, function (order) {
+                    if (me.context.get('orderList').length === _.filter(me.context.get('multiOrders').get('multiOrdersList').models, function (order) {
                       return !order.get('isLayaway');
                     }).length) {
                       me.context.get('orderList').addNewOrder();
@@ -453,8 +456,10 @@
               if (!_.isUndefined(receipt.get('amountToLayaway')) && !_.isNull(receipt.get('amountToLayaway')) && receipt.get('generateInvoice')) {
                 me.hasInvLayaways = true;
               }
-              model.get('orderList').current = receipt;
-              model.get('orderList').deleteCurrent();
+              if (!OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
+                model.get('orderList').current = receipt;
+                model.get('orderList').deleteCurrent();
+              }
               me.ordersToSend += 1;
               if (model.get('multiOrders').get('multiOrdersList').length === me.ordersToSend) {
                 OB.trace('Execution Sync process.');

@@ -240,6 +240,27 @@ enyo.kind({
     this.$.buttonAllOk.applyStyle('visibility', 'hidden'); //hiding in this way to keep the space
   },
   displayStep: function (model) {
+    // If the cashier is not trusty, hide expected and total amount that should be.
+    if (OB.MobileApp.model.get('permissions').OBPOS_HideCashUpInfoToCashier) {
+      this.$.total.hide();
+      this.$.totalLbl.hide();
+      this.$.difference.hide();
+      _.forEach(this.$.paymentsList.$.tbody.children, function (payment) {
+        if (payment.controls[0].model.get('paymentMethod').countcash) {
+          payment.hide();
+        }
+      });
+    } else {
+      this.$.total.show();
+      this.$.totalLbl.show();
+      this.$.difference.show();
+      _.forEach(this.$.paymentsList.$.tbody.children, function (payment) {
+        if (payment.controls[0].model.get('paymentMethod').countcash) {
+          payment.show();
+        }
+      });
+    }
+
     this.$.stepsheader.renderHeader(model.stepNumber('OB.CashUp.PaymentMethods'), model.stepCount());
     // this function is invoked when displayed.  
     var opendrawer = model.get('paymentList').any(function (payment) {

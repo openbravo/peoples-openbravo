@@ -1273,6 +1273,10 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       if (jsonOrderLine.has("obposIsDeleted") && jsonOrderLine.getBoolean("obposIsDeleted")) {
         orderline.setObposQtyDeleted(orderline.getOrderedQuantity());
         orderline.setOrderedQuantity(BigDecimal.ZERO);
+        orderline.setListPrice(BigDecimal.ZERO);
+        orderline.setStandardPrice(BigDecimal.ZERO);
+        orderline.setGrossUnitPrice(BigDecimal.ZERO);
+        orderline.setLineGrossAmount(BigDecimal.ZERO);
       }
       orderline.setLineNetAmount(BigDecimal.valueOf(jsonOrderLine.getDouble("net")).setScale(
           pricePrecision, RoundingMode.HALF_UP));
@@ -1722,6 +1726,23 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     }
     if (daysToAdd > 0) {
       calculatedDueDate.add(Calendar.DATE, (int) daysToAdd);
+    }
+    // Calculating due date based on "Fixed due date"
+    if (paymentTerms.isFixedDueDate()) {
+      long dueDateDay = calculatedDueDate.get(Calendar.DAY_OF_MONTH), finalDueDateDay = 0;
+      long maturityDate1 = paymentTerms.getMaturityDate1(), maturityDate2 = paymentTerms
+          .getMaturityDate2(), maturityDate3 = paymentTerms.getMaturityDate3();
+      if (maturityDate2 < dueDateDay && maturityDate3 >= dueDateDay) {
+        finalDueDateDay = maturityDate3;
+      } else if (maturityDate1 < dueDateDay && maturityDate2 >= dueDateDay) {
+        finalDueDateDay = maturityDate2;
+      } else {
+        finalDueDateDay = maturityDate1;
+      }
+      calculatedDueDate.set(Calendar.DAY_OF_MONTH, (int) finalDueDateDay);
+      if (finalDueDateDay < dueDateDay) {
+        calculatedDueDate.add(Calendar.MONTH, 1);
+      }
     }
     if (dayToPay != null && !dayToPay.equals("")) {
       // for us: 1 -> Monday

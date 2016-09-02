@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+/*
+ ************************************************************************************
+ * Copyright (C) 2016 Openbravo S.L.U.
+ * Licensed under the Openbravo Commercial License version 1.0
+ * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
+ * or in the legal folder of this module distribution.
+ ************************************************************************************
+ */
+-->
+<SqlClass name="FixDataIssue33744Data" package="org.openbravo.retail.posterminal.modulescript">
+  <SqlClassComment></SqlClassComment>
+   <SqlMethod name="select" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql><![CDATA[
+      SELECT '' AS counter
+      FROM DUAL
+      ]]>
+    </Sql>
+  </SqlMethod>
+  <SqlMethod name="insertPreference" type="preparedStatement" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+      INSERT INTO AD_PREFERENCE
+      (AD_PREFERENCE_ID,AD_CLIENT_ID,AD_ORG_ID,ISACTIVE,CREATED,CREATEDBY,UPDATED,UPDATEDBY,AD_WINDOW_ID,AD_USER_ID,ATTRIBUTE,VALUE,PROPERTY,ISPROPERTYLIST,VISIBLEAT_CLIENT_ID,VISIBLEAT_ORG_ID,VISIBLEAT_ROLE_ID,SELECTED,AD_MODULE_ID)
+      VALUES (get_uuid(),'0','0','Y',now(),'100',now(),'100',null,null,'Fix 33744 executed','Y',null,'N',null,null,null,'N',null)
+      ]]>
+    </Sql>
+  </SqlMethod>
+  <SqlMethod name="selectExistsPreference" type="preparedStatement" return="string">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+      SELECT COUNT(1) as counter FROM AD_PREFERENCE WHERE ATTRIBUTE  = 'Fix 33744 executed'
+      ]]>
+    </Sql>
+  </SqlMethod>
+  <SqlMethod name="fixFinPaymentScheduleDetailInvoices" type="preparedStatement" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        update fin_payment_scheduledetail psd
+        set c_bpartner_id = (select c_bpartner_id from c_invoice i, fin_payment_schedule ps
+                            where ps.fin_payment_schedule_id = fin_payment_schedule_invoice
+                            and ps.c_invoice_id = i.c_invoice_id)
+        where c_bpartner_id is null and fin_payment_schedule_invoice is not null and isinvoicepaid = 'N'
+      ]]>
+    </Sql>
+  </SqlMethod>
+  <SqlMethod name="fixFinPaymentScheduleDetailOrders" type="preparedStatement" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        update fin_payment_scheduledetail psd
+        set c_bpartner_id = (select c_bpartner_id from c_order o, fin_payment_schedule ps
+                             where ps.fin_payment_schedule_id = fin_payment_schedule_order
+                             and ps.c_order_id = o.c_order_id)
+        where c_bpartner_id is null and fin_payment_schedule_order is not null
+        and fin_payment_schedule_invoice is null and isinvoicepaid = 'N'
+      ]]>
+    </Sql>
+  </SqlMethod>
+</SqlClass>

@@ -41,8 +41,7 @@ enyo.kind({
     this.$.paymentMethodSelect.hide();
   },
   buttonStatusChanged: function (inSender, inEvent) {
-    this.$.paymentMethodSelect.setContent('');
-    this.$.paymentMethodSelect.hide();
+    this.clearPaymentMethodSelect(inSender, inEvent);
     if (inEvent.value.status && inEvent.value.status.indexOf('paymentMethodCategory.showitems.') === 0) {
       this.doShowPopup({
         popup: 'modalPaymentsSelect',
@@ -102,7 +101,7 @@ enyo.kind({
     }
   },
   paymentChanged: function (inSender, inEvent) {
-    if (!inEvent.amount) {
+    if (!inEvent.amount && inEvent.payment) {
       this.$.paymentMethodSelect.setContent(OB.I18N.getLabel('OBPOS_PaymentsSelectedMethod', [inEvent.payment.payment._identifier]));
       this.$.paymentMethodSelect.show();
     }
@@ -362,7 +361,7 @@ enyo.kind({
     if (paymentstatus.done) {
       this.$.totalpending.hide();
       this.$.totalpendinglbl.hide();
-      if (!_.isEmpty(OB.MobileApp.model.paymentnames)) {
+      if (!_.isEmpty(OB.MobileApp.model.paymentnames) || this.receipt.get('orderType') === 3) {
         this.$.donebutton.show();
       }
       this.updateCreditSalesAction();
@@ -1204,7 +1203,6 @@ enyo.kind({
         currency: '',
         symbolAtRight: true
       });
-      this.bubble('onClearPaymentSelect');
       this.doRemovePayment({
         payment: this.owner.model,
         removeCallback: function () {

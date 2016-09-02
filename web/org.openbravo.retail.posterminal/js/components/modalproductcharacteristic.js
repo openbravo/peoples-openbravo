@@ -164,11 +164,11 @@ enyo.kind({
           params.push("%" + productFilterText + "%");
           productCharacteristicFilter = " AND (EXISTS (SELECT 1 FROM m_product_ch_value pchvf, m_product pf WHERE  pchvf.m_product_id = pf.m_product_id AND chv.id = pchvf.m_ch_value_id AND ";
           if (productCategory === "OBPOS_bestsellercategory") {
-            productCharacteristicFilter += "pf.bestseller = 'true' AND ( Upper(pf._filter) LIKE Upper(?) )) )";
+            productCharacteristicFilter += "pf.bestseller = 'true' AND ( Upper(pf._filter) LIKE Upper(?) )";
           } else if ((productCategory === "__all__") || productCategory === "'__all__'" || (productCategory === "")) {
-            productCharacteristicFilter += " (Upper(pf._filter) LIKE Upper(?))))";
+            productCharacteristicFilter += " (Upper(pf._filter) LIKE Upper(?))";
           } else {
-            productCharacteristicFilter += " (Upper(pf._filter) LIKE Upper(?)) AND(pf.m_product_category_id IN (" + productCategory + "))))";
+            productCharacteristicFilter += " (Upper(pf._filter) LIKE Upper(?)) AND(pf.m_product_category_id IN (" + productCategory + "))";
           }
         }
       }
@@ -193,8 +193,11 @@ enyo.kind({
             }
 
           }
-          chFilterQuery += " and (exists (select 1 from M_Product_Ch_Value pchv where chv.id=pchv.m_ch_value_id and (exists (select 1 from M_Product_Ch_Value mpcharv where mpcharv.M_Product_ID=pchv.M_Product_ID and mpcharv.m_ch_value_id in (" + characteristicsValuesStr + " ))))) ";
+          productCharacteristicFilter += " and (exists (select 1 from M_Product_Ch_Value mpcharv where mpcharv.M_Product_ID=pchvf.M_Product_ID and mpcharv.m_ch_value_id in (" + characteristicsValuesStr + " ))) ";
         }
+      }
+      if (productFilterText !== undefined && productCategory !== undefined) {
+        productCharacteristicFilter += "))";
       }
       //external modules filter
       var sqlCriteriaFilter = "";
@@ -207,7 +210,7 @@ enyo.kind({
           }
         }
       });
-      sql = sql + BChV_Filter + productCharacteristicFilter + chFilterQuery + sqlCriteriaFilter;
+      sql = sql + BChV_Filter + productCharacteristicFilter + sqlCriteriaFilter;
       OB.Dal.query(OB.Model.CharacteristicValue, sql, params, function (dataValues, me) {
         if (dataValues && dataValues.length > 0) {
           for (i = 0; i < dataValues.length; i++) {
@@ -265,46 +268,34 @@ enyo.kind({
       }
       // product name and category filter
       if (productFilterText !== undefined || productCategory !== undefined) {
+        // characteristic filter
+        if (me.parent.parent.model.get('filter').length > 0) {
+          for (i = 0; i < me.parent.parent.model.get('filter').length; i++) {
+            if (!characteristic.includes(me.parent.parent.model.get('filter')[i].characteristic_id)) {
+              characteristic.push(me.parent.parent.model.get('filter')[i].characteristic_id);
+            }
+          }
+          for (i = 0; i < characteristic.length; i++) {
+            for (j = 0; j < me.parent.parent.model.get('filter').length; j++) {
+              if (characteristic[i] === me.parent.parent.model.get('filter')[j].characteristic_id) {
+                characteristicValue.push(me.parent.parent.model.get('filter')[j].id);
+              }
+            }
+            if (i > 0) {
+              characteristicParams += ";";
+            }
+            characteristicParams += characteristicValue;
+            characteristicValue = [];
+          }
+        }
         var productCat = inSender.parent.parent.$.multiColumn.$.rightPanel.$.toolbarpane.$.searchCharacteristic.$.searchCharacteristicTabContent.$.searchProductCharacteristicHeader.getSelectedCategories(),
             category = productCat.indexOf('OBPOS_bestsellercategory') >= 0 ? 'OBPOS_bestsellercategory' : (productCat.indexOf('__all__') >= 0 ? '__all__' : [productCategory.value]);
         productFilter.columns = [];
         productFilter.operator = OB.Dal.FILTER;
         productFilter.value = this.productCharacteristicValueFilterQualifier;
         productText = (OB.MobileApp.model.hasPermission('OBPOS_remote.product' + OB.Dal.USESCONTAINS, true) ? '%' : '') + productFilterText + '%';
-        productFilter.params = [productText, productCategory.filter ? productCategory.params[0] : category];
+        productFilter.params = [productText, productCategory.filter ? productCategory.params[0] : category, characteristicParams];
         remoteCriteria.push(productFilter);
-      }
-      // characteristic filter
-      if (me.parent.parent.model.get('filter').length > 0) {
-        for (i = 0; i < me.parent.parent.model.get('filter').length; i++) {
-          if (!characteristic.includes(me.parent.parent.model.get('filter')[i].characteristic_id)) {
-            characteristic.push(me.parent.parent.model.get('filter')[i].characteristic_id);
-          }
-        }
-        for (i = 0; i < characteristic.length; i++) {
-          for (j = 0; j < me.parent.parent.model.get('filter').length; j++) {
-            if (characteristic[i] === me.parent.parent.model.get('filter')[j].characteristic_id) {
-              characteristicValue.push(me.parent.parent.model.get('filter')[j].id);
-            }
-          }
-          if (i > 0) {
-            characteristicParams += ";";
-          }
-          characteristicParams += characteristicValue;
-          characteristicValue = [];
-
-          if (characteristicParams.length > 0) {
-            chFilter = {
-              columns: [],
-              operator: OB.Dal.FILTER,
-              value: 'Chv_Filter',
-              filter: characteristic[i],
-              params: [characteristicParams]
-            };
-            remoteCriteria.push(chFilter);
-            characteristicParams = "";
-          }
-        }
       }
       // external modules filter
       criteria.hqlCriteria = [];
