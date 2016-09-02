@@ -952,8 +952,7 @@ public class CancelAndReplaceUtils {
           }
 
           nettingPayment = payOriginalAndInverseOrder(jsonorder, oldOrder, inverseOrder,
-              outstandingAmount, negativeAmount, useOrderDocumentNoForRelatedDocs,
-              triggersDisabled, replaceOrder);
+              outstandingAmount, negativeAmount, useOrderDocumentNoForRelatedDocs);
 
           // Pay of the new order the amount already paid in original order
           if (createPayments && paidAmount.compareTo(BigDecimal.ZERO) != 0) {
@@ -984,8 +983,7 @@ public class CancelAndReplaceUtils {
           negativeAmount = outstandingAmount.negate();
           if (outstandingAmount.compareTo(BigDecimal.ZERO) != 0) {
             nettingPayment = payOriginalAndInverseOrder(jsonorder, oldOrder, inverseOrder,
-                outstandingAmount, negativeAmount, useOrderDocumentNoForRelatedDocs,
-                triggersDisabled, replaceOrder);
+                outstandingAmount, negativeAmount, useOrderDocumentNoForRelatedDocs);
           }
         }
 
@@ -1019,8 +1017,7 @@ public class CancelAndReplaceUtils {
   // Pay original order and inverse order.
   private static FIN_Payment payOriginalAndInverseOrder(JSONObject jsonorder, Order oldOrder,
       Order inverseOrder, BigDecimal outstandingAmount, BigDecimal negativeAmount,
-      boolean useOrderDocumentNoForRelatedDocs, boolean triggersDisabled, boolean replaceOrder)
-      throws Exception {
+      boolean useOrderDocumentNoForRelatedDocs) throws Exception {
     FIN_Payment nettingPayment = null;
     String paymentDocumentNo = null;
     FIN_PaymentMethod paymentPaymentMethod = null;
