@@ -439,8 +439,10 @@ public class CancelAndReplaceUtils {
         callCOrderPost(newOrder);
       }
 
-      // Create new reservations
-      createNewReservations(newOrder);
+      if (newOrder != null) {
+        // Create new reservations
+        createNewReservations(newOrder);
+      }
 
       OBDal.getInstance().flush();
 
