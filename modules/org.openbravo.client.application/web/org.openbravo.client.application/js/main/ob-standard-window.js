@@ -551,10 +551,16 @@ isc.OBStandardWindow.addProperties({
   },
 
   setPersonalization: function (personalization) {
-    var i, defaultView, persDefaultValue, views, currentView, length, me = this;
+    var i, defaultView, persDefaultValue, views, currentView = this.activeView || this.view,
+        length, me = this;
 
     // only personalize if there is a professional license
     if (!OB.Utilities.checkProfessionalLicense(null, true)) {
+      // open new record in form if the form opening has been deferred
+      if (currentView.deferOpenNewEdit) {
+        currentView.editRecord();
+        this.command = null;
+      }
       return;
     }
 
@@ -642,7 +648,6 @@ isc.OBStandardWindow.addProperties({
     this.setFocusInView();
 
     // personalization has been applied, open new record in form if the form opening has been deferred
-    currentView = this.activeView || this.view;
     if (currentView.deferOpenNewEdit) {
       currentView.editRecord();
       this.command = null;
