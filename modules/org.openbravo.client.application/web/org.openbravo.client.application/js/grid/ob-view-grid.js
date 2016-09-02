@@ -505,7 +505,9 @@ isc.OBViewGrid.addProperties({
       }
     }
 
-    if (this.lazyFiltering) {
+    if (this.view && this.view.deferOpenNewEdit) {
+      this.noDataEmptyMessage = '<span class="' + this.emptyMessageStyle + '">' + OB.I18N.getLabel('OBUIAPP_GridFilterNoResults') + '</span>' + '<span onclick="window[\'' + this.ID + '\'].clearFilter();" class="' + this.emptyMessageLinkStyle + '">' + OB.I18N.getLabel('OBUIAPP_GridClearFilter') + '</span>';
+    } else if (this.lazyFiltering) {
       this.noDataEmptyMessage = '<span class="' + this.emptyMessageStyle + '">' + OB.I18N.getLabel('OBUIAPP_LazyFilteringNoFetch') + '</span>';
     } else {
       this.noDataEmptyMessage = '<span class="' + this.emptyMessageStyle + '">' + OB.I18N.getLabel('OBUISC_ListGrid.loadingDataMessage') + '</span>'; // OB.I18N.getLabel('OBUIAPP_GridNoRecords')
