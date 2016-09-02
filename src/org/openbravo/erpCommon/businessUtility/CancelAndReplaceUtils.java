@@ -120,6 +120,10 @@ public class CancelAndReplaceUtils {
       orderLines = getOrderLineList(oldOrder);
       while (orderLines.next()) {
         OrderLine oldOrderLine = (OrderLine) orderLines.get(0);
+        // Skip discount lines as they will be created when booking the replacement order
+        if (oldOrderLine.getOrderDiscount() != null) {
+        	continue;
+        }
         OrderLine newOrderLine = (OrderLine) DalUtil.copy(oldOrderLine, false, true);
         newOrderLine.setDeliveredQuantity(BigDecimal.ZERO);
         newOrderLine.setReservedQuantity(BigDecimal.ZERO);
