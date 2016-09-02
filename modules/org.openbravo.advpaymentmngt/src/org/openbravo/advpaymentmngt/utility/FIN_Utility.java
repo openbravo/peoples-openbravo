@@ -1435,7 +1435,7 @@ public class FIN_Utility {
     String status = null;
     for (FinAccPaymentMethod finaccpaymentmethod : financialAccount
         .getFinancialMgmtFinAccPaymentMethodList()) {
-      if (finaccpaymentmethod.getPaymentMethod().equals(paymentMethod)) {
+      if (finaccpaymentmethod.getPaymentMethod().getId().equals(paymentMethod.getId())) {
         if (isReceipt) {
           status = finaccpaymentmethod.getPayinInvoicepaidstatus();
         } else {
