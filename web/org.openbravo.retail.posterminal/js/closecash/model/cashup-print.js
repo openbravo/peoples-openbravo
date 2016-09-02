@@ -53,11 +53,22 @@
             return true;
             };
         var cancelfunc = function () {
-            me.cashUpSuccess();
+            if (closed) {
+              me.cashUpSuccess();
+            } else {
+              OB.POS.navigate('retail.pointofsale');
+              OB.MobileApp.view.$.confirmationContainer.setAttribute('openedPopup', '');
+            }
             return true;
             };
         var hidefunc = function () {
-            me.cashUpSuccess();
+            if (closed) {
+              me.cashUpSuccess();
+            } else {
+              OB.POS.navigate('retail.pointofsale');
+              OB.MobileApp.view.$.confirmationContainer.setAttribute('openedPopup', '');
+            }
+            return true;
             };
         // Create dialog buttons
         var dialogbuttons = [];
