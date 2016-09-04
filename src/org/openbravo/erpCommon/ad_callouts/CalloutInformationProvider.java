@@ -40,9 +40,9 @@ public interface CalloutInformationProvider {
   static final Logger log = LoggerFactory.getLogger(CalloutInformationProvider.class);
 
   /**
-   * Retrieves the name of the current parameter allocated inside Object element.
+   * Retrieves the name of the current element.
    */
-  public Object getElementName(Object element);
+  public Object getCurrentElementName();
 
   /**
    * Retrieves the value of the current parameter allocated inside Object element.

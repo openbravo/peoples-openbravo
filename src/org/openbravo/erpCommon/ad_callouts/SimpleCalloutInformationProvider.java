@@ -32,7 +32,7 @@ import org.openbravo.service.json.JsonConstants;
 
 /**
  * SimpleCalloutInformationProvider provides the information that is used to populate the messages,
- * comboEntries,etc in the FIC. These information are updated by a SimpleCallout.
+ * comboEntries,etc in the FIC. These information is updated by a SimpleCallout.
  * 
  * @author inigo.sanchez
  *
@@ -41,18 +41,18 @@ public class SimpleCalloutInformationProvider implements CalloutInformationProvi
 
   private JSONObject calloutResult;
   private Iterator<String> keys;
-  private String elementName;
+  private String currentElementName;
 
   @SuppressWarnings("unchecked")
   public SimpleCalloutInformationProvider(JSONObject calloutResult) {
     this.calloutResult = calloutResult;
     this.keys = this.calloutResult.keys();
-    this.elementName = "";
+    this.currentElementName = "";
   }
 
   @Override
-  public Object getElementName(Object values) {
-    return elementName;
+  public Object getCurrentElementName() {
+    return currentElementName;
   }
 
   @Override
@@ -71,11 +71,11 @@ public class SimpleCalloutInformationProvider implements CalloutInformationProvi
   public Object getNextElement() {
     try {
       if (keys.hasNext()) {
-        elementName = keys.next();
-        return calloutResult.getJSONObject(elementName);
+        currentElementName = keys.next();
+        return calloutResult.getJSONObject(currentElementName);
       }
     } catch (JSONException e) {
-      log.error("Error retrieving next element with key {}", elementName);
+      log.error("Error retrieving next element with key {}", currentElementName);
     }
     return null;
   }
@@ -94,56 +94,57 @@ public class SimpleCalloutInformationProvider implements CalloutInformationProvi
       List<String> changedCols, RequestContext request, Object element, Column col, String colIdent)
       throws JSONException {
     boolean changed = false;
-    JSONObject temporalyElement = new JSONObject();
-    JSONObject elem = (JSONObject) element;
+    JSONObject firstComboEntry = new JSONObject();
+    JSONObject entryRecieved = (JSONObject) element;
 
     // if value is not selected
-    if (!elem.has(CalloutConstants.CLASSIC_VALUE)) {
-      JSONArray jsonArr = elem.getJSONArray(CalloutConstants.ENTRIES);
+    if (!entryRecieved.has(CalloutConstants.CLASSIC_VALUE)) {
+      JSONArray jsonArr = entryRecieved.getJSONArray(CalloutConstants.ENTRIES);
       ArrayList<JSONObject> newJsonArr = new ArrayList<JSONObject>();
-      JSONObject temporaly = null;
+      JSONObject comboEntry = null;
 
       // If it is not mandatory and first value is not empty, we add an initial blank element
       if (!col.isMandatory() && !jsonArr.getJSONObject(0).isNull(JsonConstants.ID)) {
-        temporaly = new JSONObject();
-        temporaly.put(JsonConstants.ID, (String) null);
-        temporaly.put(JsonConstants.IDENTIFIER, (String) null);
-        newJsonArr.add(temporaly);
+        comboEntry = new JSONObject();
+        comboEntry.put(JsonConstants.ID, (String) null);
+        comboEntry.put(JsonConstants.IDENTIFIER, (String) null);
+        newJsonArr.add(comboEntry);
       }
 
       for (int i = 0; i < jsonArr.length(); i++) {
-        temporaly = jsonArr.getJSONObject(i);
-        newJsonArr.add(temporaly);
+        comboEntry = jsonArr.getJSONObject(i);
+        newJsonArr.add(comboEntry);
       }
 
       if (newJsonArr.get(0).has(JsonConstants.ID)) {
         // create element with selected value
         String valueSelected = newJsonArr.get(0).getString(JsonConstants.ID);
-        temporalyElement.put(CalloutConstants.VALUE, valueSelected);
-        temporalyElement.put(CalloutConstants.CLASSIC_VALUE, valueSelected);
+        firstComboEntry.put(CalloutConstants.VALUE, valueSelected);
+        firstComboEntry.put(CalloutConstants.CLASSIC_VALUE, valueSelected);
       }
 
     } else {
       // value is selected before this parsing
-      temporalyElement.put(CalloutConstants.VALUE, elem.getString(CalloutConstants.VALUE));
-      temporalyElement.put(CalloutConstants.CLASSIC_VALUE,
-          elem.getString(CalloutConstants.CLASSIC_VALUE));
+      firstComboEntry.put(CalloutConstants.VALUE, entryRecieved.getString(CalloutConstants.VALUE));
+      firstComboEntry.put(CalloutConstants.CLASSIC_VALUE,
+          entryRecieved.getString(CalloutConstants.CLASSIC_VALUE));
     }
 
     // added this new value and set parameter into request
-    if (temporalyElement.has(CalloutConstants.CLASSIC_VALUE)) {
-      request.setRequestParameter((String) this.getElementName(null),
-          temporalyElement.getString(CalloutConstants.CLASSIC_VALUE));
+    if (firstComboEntry.has(CalloutConstants.CLASSIC_VALUE)) {
+      request.setRequestParameter((String) this.getCurrentElementName(),
+          firstComboEntry.getString(CalloutConstants.CLASSIC_VALUE));
     }
 
-    columnValues.put(colIdent, temporalyElement);
+    columnValues.put(colIdent, firstComboEntry);
     changed = true;
-    if (dynamicCols.contains((String) this.getElementName(null))) {
+    if (dynamicCols.contains((String) this.getCurrentElementName())) {
       changedCols.add(col.getDBColumnName());
     }
 
-    if (elem.has(CalloutConstants.ENTRIES)) {
-      temporalyElement.put(CalloutConstants.ENTRIES, elem.getJSONArray(CalloutConstants.ENTRIES));
+    if (entryRecieved.has(CalloutConstants.ENTRIES)) {
+      firstComboEntry.put(CalloutConstants.ENTRIES,
+          entryRecieved.getJSONArray(CalloutConstants.ENTRIES));
     }
     return changed;
   }

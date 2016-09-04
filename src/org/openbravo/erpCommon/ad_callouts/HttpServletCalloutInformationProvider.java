@@ -34,7 +34,7 @@ import org.openbravo.service.json.JsonConstants;
 
 /**
  * HttpServletCalloutInformationProvider provides the information that is used to populate the
- * messages, comboEntries,etc in the FIC. These information are updated by a HttpServlet Callout.
+ * messages, comboEntries,etc in the FIC. These information is updated by a HttpServlet Callout.
  * 
  * @author inigo.sanchez
  *
@@ -43,16 +43,17 @@ public class HttpServletCalloutInformationProvider implements CalloutInformation
 
   private ArrayList<NativeArray> calloutResult;
   private int current;
+  private String currentElementName;
 
   public HttpServletCalloutInformationProvider(ArrayList<NativeArray> calloutResult) {
     this.calloutResult = calloutResult;
     this.current = 0;
+    this.currentElementName = "";
   }
 
   @Override
-  public Object getElementName(Object element) {
-    NativeArray nativeArrayElement = (NativeArray) element;
-    return nativeArrayElement.get(0, null);
+  public Object getCurrentElementName() {
+    return currentElementName;
   }
 
   @Override
@@ -60,12 +61,20 @@ public class HttpServletCalloutInformationProvider implements CalloutInformation
     return getValue(element, 1);
   }
 
+  private Object getValue(Object element, int position) {
+    NativeArray nativeArrayElement = (NativeArray) element;
+    return nativeArrayElement.get(position, null);
+  }
+
   @Override
   public Object getNextElement() {
     Object element = null;
-    if (current < calloutResult.size() - 1) {
+    if (current < calloutResult.size()) {
       element = calloutResult.get(current);
       current++;
+      // Update current element name
+      NativeArray nativeArrayElement = (NativeArray) element;
+      currentElementName = (String) nativeArrayElement.get(0, null);
     }
     return element;
   }
@@ -127,8 +136,8 @@ public class HttpServletCalloutInformationProvider implements CalloutInformation
     return changed;
   }
 
-  private Object getValue(Object element, int position) {
+  private Object getElementName(Object element) {
     NativeArray nativeArrayElement = (NativeArray) element;
-    return nativeArrayElement.get(position, null);
+    return nativeArrayElement.get(0, null);
   }
 }

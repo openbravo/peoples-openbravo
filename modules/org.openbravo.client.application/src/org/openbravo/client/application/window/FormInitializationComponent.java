@@ -1503,6 +1503,7 @@ public class FormInitializationComponent extends BaseActionHandler {
         RequestContext.get().setRequestParameter("inpOB3UIMode", "Y");
         CalloutServletConfig config = new CalloutServletConfig(calloutClassName,
             RequestContext.getServletContext());
+        CalloutInformationProvider calloutResponseManager = null;
 
         // execute SimpleCallout callouts
         if (SimpleCallout.class.isAssignableFrom(calloutClass)) {
@@ -1513,15 +1514,11 @@ public class FormInitializationComponent extends BaseActionHandler {
           // execute SimpleCallout callout
           JSONObject result = calloutInstance.executeSimpleCallout(request);
 
-          SimpleCalloutInformationProvider simpleCalloutResponseManager = new SimpleCalloutInformationProvider(
-              result);
-          managesUpdatedValuesForCallout(columnValues, tab, calloutsToCall, lastfieldChangedList,
-              messages, dynamicCols, jsExecuteCode, hiddenInputs, overwrittenAuxiliaryInputs,
-              changedCols, inpFields, calloutClassName, request, simpleCalloutResponseManager);
-
           // updated info values of callouts infrastructure
           String calloutNameJS = calloutClassName.substring(calloutClassName.lastIndexOf(".") + 1);
           calledCallouts.add(calloutNameJS);
+
+          calloutResponseManager = new SimpleCalloutInformationProvider(result);
         } else {
           // We then execute the callout
           HttpServlet calloutInstance = (HttpServlet) calloutObject;
@@ -1547,12 +1544,13 @@ public class FormInitializationComponent extends BaseActionHandler {
             calledCallouts.add(calloutNameJS);
           }
 
-          HttpServletCalloutInformationProvider calloutResponseManager = new HttpServletCalloutInformationProvider(
-              returnedArray);
-          managesUpdatedValuesForCallout(columnValues, tab, calloutsToCall, lastfieldChangedList,
-              messages, dynamicCols, jsExecuteCode, hiddenInputs, overwrittenAuxiliaryInputs,
-              changedCols, inpFields, calloutClassName, request, calloutResponseManager);
+          calloutResponseManager = new HttpServletCalloutInformationProvider(returnedArray);
         }
+
+        managesUpdatedValuesForCallout(columnValues, tab, calloutsToCall, lastfieldChangedList,
+            messages, dynamicCols, jsExecuteCode, hiddenInputs, overwrittenAuxiliaryInputs,
+            changedCols, inpFields, calloutClassName, request, calloutResponseManager);
+
         lastCalledCallout = calloutClassName;
         lastFieldOfLastCalloutCalled = lastFieldChanged;
       } catch (Exception e) {
@@ -1574,7 +1572,7 @@ public class FormInitializationComponent extends BaseActionHandler {
       CalloutInformationProvider calloutInformationProvider) throws JSONException {
     Object element = calloutInformationProvider.getNextElement();
     while (element != null) {
-      String name = (String) calloutInformationProvider.getElementName(element);
+      String name = (String) calloutInformationProvider.getCurrentElementName();
       if (name.equals("MESSAGE") || name.equals("INFO") || name.equals("WARNING")
           || name.equals("ERROR") || name.equals("SUCCESS")) {
         log.debug("Callout message: " + calloutInformationProvider.getValue(element));
@@ -1601,12 +1599,18 @@ public class FormInitializationComponent extends BaseActionHandler {
                     .getLanguage()));
             message.put("severity", "TYPE_ERROR");
             messages.add(message);
-            // Create preference to activate classic window only for HttpServlet callouts
+            // Create preference to activate classic window only for HttpServlet callouts and in
+            // other cases error is shown.
             if (calloutInformationProvider instanceof HttpServletCalloutInformationProvider) {
               createNewPreferenceForWindow(tab.getWindow());
-              log.warn(getMessageForNewCreatedPreference(tab, calloutClassName));
+              log.warn("An EXECUTE element has been found in the response of the callout "
+                  + calloutClassName
+                  + ". A preference has been created for the window "
+                  + tab.getWindow().getName()
+                  + " so that it's shown in classic mode until this problem is fixed. This requires to build the system to generate this classic window.");
             } else {
-              log.error(getMessageForNewCreatedPreference(tab, calloutClassName));
+              log.error("An EXECUTE element has been found in the response of the SimpleCallout "
+                  + calloutClassName + ".");
             }
           }
         }
@@ -1742,25 +1746,6 @@ public class FormInitializationComponent extends BaseActionHandler {
     newPref.setPropertyList(true);
     OBDal.getInstance().save(newPref);
     OBDal.getInstance().flush();
-  }
-
-  /**
-   * Retrieves the message related with the creation of a new preference to activate window classic
-   * mode.
-   * 
-   * @param tab
-   *          tab in wich preference should be created
-   * @param callout
-   *          name of the callout
-   * @param isError
-   *          true to shows an error, false to shows a warn.
-   */
-  private String getMessageForNewCreatedPreference(Tab tab, String callout) {
-    return "An EXECUTE element has been found in the response of the callout "
-        + callout
-        + ". A preference has been created for the window "
-        + tab.getWindow().getName()
-        + "so that it's shown in classic mode until this problem is fixed. This requires to build the system to generate this classic window.";
   }
 
   private void addCalloutToList(Column col, List<String> listOfCallouts,
