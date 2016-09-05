@@ -84,8 +84,6 @@ public class CancelAndReplaceSalesOrder extends BaseProcessActionHandler {
 
       actions.put(openDirectTabAction);
 
-      // result.put("openDirectTab", openDirectTab);
-
       // Message of the new opened tab
       showMsgInView.put("msgType", "success");
       showMsgInView.put("msgTitle", OBMessageUtils.messageBD("Success"));
@@ -97,8 +95,6 @@ public class CancelAndReplaceSalesOrder extends BaseProcessActionHandler {
       actions.put(showMsgInViewAction);
 
       result.put("responseActions", actions);
-
-      // result.put("showMsgInView", showMsgInView);
 
     } catch (Exception e) {
       log.error("Error in process", e);
