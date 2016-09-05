@@ -302,9 +302,10 @@ enyo.kind({
     var serverCallStoreDetailedStock = new OB.DS.Process('org.openbravo.retail.posterminal.stock.StoreDetailedStock'),
         me = this;
     this.bodyComponent.$.stockHere.setContent(OB.I18N.getLabel('OBPOS_loadingStock'));
+    this.bodyComponent.$.productAddToReceipt.setDisabled(true);
     serverCallStoreDetailedStock.exec({
       organization: OB.MobileApp.model.get('terminal').organization,
-      product: this.product.get('id')
+      product: me.product.get('id')
     }, function (data) {
       if (data && data.exception) {
         me.bodyComponent.$.stockHere.setContent(OB.I18N.getLabel('OBPOS_stockCannotBeRetrieved'));
@@ -323,6 +324,7 @@ enyo.kind({
           me.bodyComponent.$.stockHere.removeClass('error');
           me.bodyComponent.$.stockHere.setContent(OB.I18N.getLabel('OBPOS_storeStock') + data.qty);
         }
+        me.bodyComponent.$.productAddToReceipt.setDisabled(false);
       }
     });
   },
