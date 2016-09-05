@@ -1155,6 +1155,7 @@ public class CancelAndReplaceUtils {
           FIN_PaymentScheduleDetail.class);
       paymentScheduleDetail.setOrganization(order.getOrganization());
       paymentScheduleDetail.setOrderPaymentSchedule(paymentSchedule);
+      paymentScheduleDetail.setBusinessPartner(order.getBusinessPartner());
       paymentScheduleDetail.setAmount(amount);
       OBDal.getInstance().save(paymentScheduleDetail);
       paymentScheduleDetailList.add(paymentScheduleDetail);
