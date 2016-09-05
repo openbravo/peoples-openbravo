@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2011 Openbravo SLU 
+ * All portions are Copyright (C) 2011-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -82,7 +82,7 @@ public class KernelApplicationInitializer implements ApplicationInitializer {
     Date date = null;
     try {
       // We retrieve the time from the database, using the predefined sql date-time format
-      String now = DateTimeData.now(new DalConnectionProvider(), sqlDateTimeFormat);
+      String now = DateTimeData.now(new DalConnectionProvider(false), sqlDateTimeFormat);
       SimpleDateFormat formatter = new SimpleDateFormat(javaDateTimeFormat);
       date = formatter.parse(now);
     } catch (Exception ex) {

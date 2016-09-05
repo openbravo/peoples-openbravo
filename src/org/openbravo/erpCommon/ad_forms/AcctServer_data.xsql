@@ -12,7 +12,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SLU
- * Contributions are Copyright (C) 2001-2013 Openbravo S.L.U.
+ * Contributions are Copyright (C) 2001-2016 Openbravo S.L.U.
  ******************************************************************************
 -->
 
@@ -529,30 +529,37 @@
       <![CDATA[
         select 1 as id from dual where exists ( select 1 from (
          SELECT a.dateacct as dateacct
-         from   c_invoice a, c_periodcontrol, c_period
+         FROM   c_invoice a
          WHERE a.ad_client_id = ?
-           AND a.ad_org_id in ('1')
-           AND a.posted = 'N'
-           AND a.processed = 'Y'
-           AND (a.processing = 'N' OR a.processing IS NULL)
-           and c_periodcontrol.c_period_id = c_period.c_period_id
-           AND c_periodcontrol.docbasetype = ?
-           AND c_periodcontrol.periodstatus = 'O'
-           AND ad_org_getperiodcontrolallow(a.ad_org_id) = c_periodcontrol.ad_org_id
-           AND  a.dateacct >= c_period.StartDate
-           AND   a.dateacct < c_period.EndDate + 1
-           ) b
+         AND a.ad_org_id in ('1')
+         AND a.posted = 'N'
+         AND a.processed = 'Y'
+         AND (a.processing = 'N' OR a.processing IS NULL)
+         AND EXISTS (
+           SELECT 1
+           FROM c_period p
+           WHERE  a.dateacct >= p.StartDate
+           AND   a.dateacct < p.EndDate + 1
+           AND EXISTS (
+             SELECT 1
+             FROM c_periodcontrol pc
+             WHERE pc.c_period_id = p.c_period_id
+             AND ad_org_getperiodcontrolallow(a.ad_org_id) = pc.ad_org_id
+             AND pc.docbasetype = ?
+             AND pc.periodstatus = 'O'
+           )
+         )) b
          where 1=1
          )
       ]]>
       </Sql>
       <Parameter name="columnName" type="replace" optional="true" after="SELECT a." text="dateacct"/>
-      <Parameter name="tableName" type="replace" optional="true" after="from   " text="c_invoice"/>
+      <Parameter name="tableName" type="replace" optional="true" after="FROM   " text="c_invoice"/>
       <Parameter name="adClientId" />
       <Parameter name="StrOrg" type="replace" optional="true" after="a.ad_org_id in (" text="'1'"/>
-      <Parameter name="docbasetype"/>
-      <Parameter name="columnName" type="replace" optional="true" after="AND  a." text="dateacct"/>
+      <Parameter name="columnName" type="replace" optional="true" after="WHERE  a." text="dateacct"/>
       <Parameter name="columnName" type="replace" optional="true" after="AND   a." text="dateacct"/>
+      <Parameter name="docbasetype"/>
       <Parameter name="dateFrom" optional="true" after="where 1=1"><![CDATA[ AND b.dateacct >= TO_DATE(?)]]></Parameter>
       <Parameter name="dateTo" optional="true" after="where 1=1"><![CDATA[ AND b.dateacct <= TO_DATE(?)]]></Parameter>
    </SqlMethod>

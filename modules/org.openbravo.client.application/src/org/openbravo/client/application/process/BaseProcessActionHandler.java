@@ -31,7 +31,6 @@ import org.openbravo.client.application.ParameterUtils;
 import org.openbravo.client.application.Process;
 import org.openbravo.client.application.ProcessAccess;
 import org.openbravo.client.kernel.BaseActionHandler;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -115,7 +114,7 @@ public abstract class BaseProcessActionHandler extends BaseActionHandler {
             Parameter gridParameter = null;
             boolean shouldConvert = false;
             for (Parameter param : process.getOBUIAPPParameterList()) {
-              if (GRID_REFERENCE_ID.equals(DalUtil.getId(param.getReference()))) {
+              if (GRID_REFERENCE_ID.equals(param.getReference().getId())) {
                 if (gridParameter != null) {
                   log.error("Error while trying to conver parameters to legacy mode. There are more than one grid parameter. Not converting it.");
                   shouldConvert = false;

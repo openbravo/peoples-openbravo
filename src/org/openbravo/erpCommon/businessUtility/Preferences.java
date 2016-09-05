@@ -25,7 +25,6 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
@@ -118,11 +117,11 @@ public class Preferences {
     try {
       OBContext.setAdminMode();
       Preference preference;
-      String clientId = client == null ? null : (String) DalUtil.getId(client);
-      String orgId = org == null ? null : (String) DalUtil.getId(org);
-      String userId = user == null ? null : (String) DalUtil.getId(user);
-      String roleId = role == null ? null : (String) DalUtil.getId(role);
-      String windowId = window == null ? null : (String) DalUtil.getId(window);
+      String clientId = client == null ? null : client.getId();
+      String orgId = org == null ? null : org.getId();
+      String userId = user == null ? null : user.getId();
+      String roleId = role == null ? null : role.getId();
+      String windowId = window == null ? null : window.getId();
 
       List<Preference> prefs = getPreferences(property, isListProperty, clientId, orgId, userId,
           roleId, windowId, true, true);
@@ -178,15 +177,26 @@ public class Preferences {
       Organization org, User user, Role role, Window window) throws PropertyException {
     try {
       OBContext.setAdminMode();
-      String clientId = client == null ? null : (String) DalUtil.getId(client);
-      String orgId = org == null ? null : (String) DalUtil.getId(org);
-      String userId = user == null ? null : (String) DalUtil.getId(user);
-      String roleId = role == null ? null : (String) DalUtil.getId(role);
-      String windowId = window == null ? null : (String) DalUtil.getId(window);
+      String clientId = client == null ? null : client.getId();
+      String orgId = org == null ? null : org.getId();
+      String userId = user == null ? null : user.getId();
+      String roleId = role == null ? null : role.getId();
+      String windowId = window == null ? null : window.getId();
+      return getPreferenceValue(property, isListProperty, clientId, orgId, userId, roleId, windowId);
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
 
+  /**
+   * @see Preferences#getPreferenceValue(String, boolean, Client, Organization, User, Role, Window)
+   */
+  public static String getPreferenceValue(String property, boolean isListProperty, String clientId,
+      String orgId, String userId, String roleId, String windowId) throws PropertyException {
+    OBContext.setAdminMode();
+    try {
       List<Preference> prefs = getPreferences(property, isListProperty, clientId, orgId, userId,
           roleId, windowId, false, true);
-
       Preference selectedPreference = null;
       List<String> parentTree = OBContext.getOBContext().getOrganizationStructureProvider(clientId)
           .getParentList(orgId, true);
@@ -211,7 +221,6 @@ public class Preferences {
           break;
         }
       }
-
       if (conflict) {
         throw new PropertyConflictException();
       }
@@ -219,25 +228,6 @@ public class Preferences {
         throw new PropertyNotFoundException();
       }
       return selectedPreference.getSearchKey();
-    } finally {
-      OBContext.restorePreviousMode();
-    }
-  }
-
-  /**
-   * @see Preferences#getPreferenceValue(String, boolean, Client, Organization, User, Role, Window)
-   */
-  public static String getPreferenceValue(String property, boolean isListProperty,
-      String strClient, String strOrg, String strUser, String strRole, String strWindow)
-      throws PropertyException {
-    try {
-      OBContext.setAdminMode();
-      Client client = OBDal.getInstance().get(Client.class, strClient == null ? "" : strClient);
-      Organization org = OBDal.getInstance().get(Organization.class, strOrg == null ? "" : strOrg);
-      User user = OBDal.getInstance().get(User.class, strUser == null ? "" : strUser);
-      Role role = OBDal.getInstance().get(Role.class, strRole == null ? "" : strRole);
-      Window window = OBDal.getInstance().get(Window.class, strWindow == null ? "" : strWindow);
-      return getPreferenceValue(property, isListProperty, client, org, user, role, window);
     } finally {
       OBContext.restorePreviousMode();
     }
@@ -282,16 +272,15 @@ public class Preferences {
   public static boolean existsPreference(Preference preference) {
     String property = preference.isPropertyList() ? preference.getProperty() : preference
         .getAttribute();
-    String clientId = preference.getVisibleAtClient() != null ? (String) DalUtil.getId(preference
-        .getVisibleAtClient()) : null;
-    String orgId = preference.getVisibleAtOrganization() != null ? (String) DalUtil
-        .getId(preference.getVisibleAtOrganization()) : null;
-    String userId = preference.getUserContact() != null ? (String) DalUtil.getId(preference
-        .getUserContact()) : null;
-    String roleId = preference.getVisibleAtRole() != null ? (String) DalUtil.getId(preference
-        .getVisibleAtRole()) : null;
-    String windowId = preference.getWindow() != null ? (String) DalUtil.getId(preference
-        .getWindow()) : null;
+    String clientId = preference.getVisibleAtClient() != null ? preference.getVisibleAtClient()
+        .getId() : null;
+    String orgId = preference.getVisibleAtOrganization() != null ? preference
+        .getVisibleAtOrganization().getId() : null;
+    String userId = preference.getUserContact() != null ? preference.getUserContact().getId()
+        : null;
+    String roleId = preference.getVisibleAtRole() != null ? preference.getVisibleAtRole().getId()
+        : null;
+    String windowId = preference.getWindow() != null ? preference.getWindow().getId() : null;
     return existsPreference(property, preference.isPropertyList(), clientId, orgId, userId, roleId,
         windowId);
   }
@@ -494,10 +483,10 @@ public class Preferences {
     // Check priority by client
 
     // undefined client visibility is handled as system
-    String clientId1 = pref1.getVisibleAtClient() == null ? SYSTEM : (String) DalUtil.getId(pref1
-        .getVisibleAtClient());
-    String clientId2 = pref2.getVisibleAtClient() == null ? SYSTEM : (String) DalUtil.getId(pref2
-        .getVisibleAtClient());
+    String clientId1 = pref1.getVisibleAtClient() == null ? SYSTEM : pref1.getVisibleAtClient()
+        .getId();
+    String clientId2 = pref2.getVisibleAtClient() == null ? SYSTEM : pref2.getVisibleAtClient()
+        .getId();
     if (!SYSTEM.equals(clientId1) && SYSTEM.equals(clientId2)) {
       return 1;
     }

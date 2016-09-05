@@ -31,7 +31,6 @@
   v_Count NUMBER;
   v_CountRelations NUMBER;
   v_reservation_id    VARCHAR2(32);
-  v_prereservedqty    NUMBER;
   v_istaxincluded CHAR(1);
   v_PriceActual NUMBER;
   

@@ -30,7 +30,6 @@ import org.openbravo.client.kernel.event.EntityDeleteEvent;
 import org.openbravo.client.kernel.event.EntityNewEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
 import org.openbravo.client.kernel.event.EntityUpdateEvent;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.access.Role;
@@ -63,8 +62,8 @@ public class RoleInheritanceEventHandler extends EntityPersistenceEventObserver 
       return;
     }
     final RoleInheritance inheritance = (RoleInheritance) event.getTargetInstance();
-    String roleId = (String) DalUtil.getId(inheritance.getRole());
-    String inheritFromId = (String) DalUtil.getId(inheritance.getInheritFrom());
+    String roleId = inheritance.getRole().getId();
+    String inheritFromId = inheritance.getInheritFrom().getId();
     // Check correct Inherit From
     if (!inheritance.getInheritFrom().isTemplate()) {
       Utility.throwErrorMessage("InheritFromNotTemplate");
@@ -108,7 +107,7 @@ public class RoleInheritanceEventHandler extends EntityPersistenceEventObserver 
     }
     final RoleInheritance inheritance = (RoleInheritance) event.getTargetInstance();
     boolean notDeletingParent = OBDal.getInstance().exists(Role.ENTITY_NAME,
-        DalUtil.getId(inheritance.getRole()));
+        inheritance.getRole().getId());
     if (notDeletingParent) {
       manager.applyRemoveInheritance(inheritance);
     }
@@ -123,7 +122,7 @@ public class RoleInheritanceEventHandler extends EntityPersistenceEventObserver 
   private boolean existCycles(Role role, String roleIdToFind) {
     boolean result = false;
     for (RoleInheritance ri : role.getADRoleInheritanceInheritFromList()) {
-      if (ri.isActive() && roleIdToFind.equals(DalUtil.getId(ri.getRole()))) {
+      if (ri.isActive() && roleIdToFind.equals(ri.getRole().getId())) {
         return true;
       }
       if (!result) {
@@ -136,7 +135,7 @@ public class RoleInheritanceEventHandler extends EntityPersistenceEventObserver 
   private void checkAncestors(Role role, Role parent) {
     Set<String> ancestorList = new HashSet<String>();
     getAncestorList(parent, ancestorList);
-    ancestorList.add((String) DalUtil.getId(parent));
+    ancestorList.add(parent.getId());
     // check if the role is inheriting from the new parent role
     if (findAncestor(role, ancestorList)) {
       Utility.throwErrorMessage("RoleExistsInRoleInheritance");
@@ -162,7 +161,7 @@ public class RoleInheritanceEventHandler extends EntityPersistenceEventObserver 
 
   private void getAncestorList(Role role, Set<String> result) {
     for (RoleInheritance ri : role.getADRoleInheritanceList()) {
-      result.add((String) DalUtil.getId(ri.getInheritFrom()));
+      result.add(ri.getInheritFrom().getId());
       getAncestorList(ri.getInheritFrom(), result);
     }
   }
@@ -170,7 +169,7 @@ public class RoleInheritanceEventHandler extends EntityPersistenceEventObserver 
   private boolean findAncestor(Role role, Set<String> roleIdsToFind) {
     boolean result = false;
     for (RoleInheritance ri : role.getADRoleInheritanceList()) {
-      if (ri.isActive() && roleIdsToFind.contains(DalUtil.getId(ri.getInheritFrom()))) {
+      if (ri.isActive() && roleIdsToFind.contains(ri.getInheritFrom().getId())) {
         return true;
       }
       if (!result) {

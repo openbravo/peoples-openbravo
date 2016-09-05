@@ -31,28 +31,28 @@ public class ReturnToFromCustomerVendorHQLTransformer extends HqlQueryTransforme
 
   private static final String returnToVendorTabId = "5A5CCFC8359B4D79BA705DC487FE8173";
 
-  private static final String rtv_unitPriceLeftClause = "(case when (select e.salesOrderLine.salesOrder.priceList.priceIncludesTax from ProcurementPOInvoiceMatch as e where e.goodsShipmentLine = iol) = true then  coalesce((select ol.unitPrice from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol), (select e.salesOrderLine.grossUnitPrice from ProcurementPOInvoiceMatch as e where e.goodsShipmentLine = iol)) else   coalesce((select ol.unitPrice from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol), (select e.salesOrderLine.unitPrice from ProcurementPOInvoiceMatch as e where e.goodsShipmentLine = iol)) end)";
-  private static final String rtv_orderNoLeftClause = " coalesce ((select e.salesOrderLine.salesOrder.documentNo from ProcurementPOInvoiceMatch as e where e.goodsShipmentLine = iol), '')";
-  private static final String rfc_unitPriceLeftClause = "(case when (iol.salesOrderLine.salesOrder.priceList.priceIncludesTax) = true then  coalesce((select ol.unitPrice from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol), (iol.salesOrderLine.grossUnitPrice)) else   coalesce((select ol.unitPrice from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol), (coalesce(iol.salesOrderLine.unitPrice,0))) end)";
+  private static final String rtv_unitPriceLeftClause = "(case when (select e.salesOrderLine.salesOrder.priceList.priceIncludesTax from ProcurementPOInvoiceMatch as e where e.goodsShipmentLine.id = iol) = true then  coalesce((select ol.unitPrice from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine.id = iol), (select e.salesOrderLine.grossUnitPrice from ProcurementPOInvoiceMatch as e where e.goodsShipmentLine.id = iol)) else   coalesce((select ol.unitPrice from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine.id = iol), (select e.salesOrderLine.unitPrice from ProcurementPOInvoiceMatch as e where e.goodsShipmentLine.id = iol)) end)";
+  private static final String rtv_orderNoLeftClause = " coalesce ((select e.salesOrderLine.salesOrder.documentNo from ProcurementPOInvoiceMatch as e where e.goodsShipmentLine.id = iol), '')";
+  private static final String rfc_unitPriceLeftClause = "(case when (iol.salesOrderLine.salesOrder.priceList.priceIncludesTax) = true then  coalesce((select ol.unitPrice from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine.id = iol), (iol.salesOrderLine.grossUnitPrice)) else   coalesce((select ol.unitPrice from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine.id = iol), (coalesce(iol.salesOrderLine.unitPrice,0))) end)";
   private static final String rfc_orderNoLeftClause = " coalesce((select e.salesOrderLine.salesOrder.documentNo from MaterialMgmtShipmentInOutLine as e where e.id = iol), '')";
-  private static final String returnedLeftClause = " coalesce((select ol.orderedQuantity from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol),0)";
-  private static final String returnedOthersLeftClause = " coalesce((select sum(ol.orderedQuantity) from OrderLine as ol left join ol.salesOrder as o where ol.goodsShipmentLine = iol and o.processed = true and o.documentStatus <> 'VO'), 0)";
-  private static final String returnReasonLeftClause = " coalesce((select ol.returnReason.id from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol), '')";
-  private static final String returnReasonLeftClause2 = " coalesce((select ol.returnReason.name from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol), '')";
+  private static final String returnedLeftClause = " coalesce((select ol.orderedQuantity from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine.id = iol),0)";
+  private static final String returnedOthersLeftClause = " coalesce((select sum(ol.orderedQuantity) from OrderLine as ol join ol.salesOrder as o where ol.goodsShipmentLine.id = iol and o.processed = true and o.documentStatus <> 'VO'), 0)";
+  private static final String returnReasonLeftClause = " coalesce((select ol.returnReason.id from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine.id = iol), '')";
+  private static final String returnReasonLeftClause2 = " coalesce((select ol.returnReason.name from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine.id = iol), '')";
   private static final String returnReasonCountQuery = " select count(distinct e.name) from ReturnReason as e where exists (select distinct ol.returnReason from OrderLine as ol where ol.returnReason = e and ol.salesOrder.id = :salesOrderId  and ol.goodsShipmentLine is not null) ";
   private static final String returnReasonDataQuery = " select distinct e, e.name from ReturnReason as e where exists (select distinct ol.returnReason from OrderLine as ol where ol.returnReason = e and ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine is not null) ";
   private static final String unitPriceProperty = "unitPrice";
   private static final String grossUnitPriceProperty = "grossUnitPrice";
 
-  private static final String rtv_orderNo = "(select e.salesOrderLine.salesOrder.documentNo from ProcurementPOInvoiceMatch as e where e.goodsShipmentLine = iol)";
+  private static final String rtv_orderNo = "(select e.salesOrderLine.salesOrder.documentNo from ProcurementPOInvoiceMatch as e where e.goodsShipmentLine.id = iol)";
   private static final String rfc_orderNo = "(select e.salesOrderLine.salesOrder.documentNo from MaterialMgmtShipmentInOutLine as e where e.id = iol)";
-  private static final String rtv_unitPrice = "(select e.salesOrderLine.unitPrice from ProcurementPOInvoiceMatch as e where e.goodsShipmentLine = iol)";
+  private static final String rtv_unitPrice = "(select e.salesOrderLine.unitPrice from ProcurementPOInvoiceMatch as e where e.goodsShipmentLine.id = iol)";
   private static final String rfc_unitPrice = "(select e.salesOrderLine.unitPrice from MaterialMgmtShipmentInOutLine as e where e.id = iol)";
-  private static final String rtv_grossUnitPrice = "(select e.salesOrderLine.grossUnitPrice from ProcurementPOInvoiceMatch as e where e.goodsShipmentLine = iol)";
+  private static final String rtv_grossUnitPrice = "(select e.salesOrderLine.grossUnitPrice from ProcurementPOInvoiceMatch as e where e.goodsShipmentLine.id = iol)";
   private static final String rfc_grossUnitPrice = "(select e.salesOrderLine.grossUnitPrice from MaterialMgmtShipmentInOutLine as e where e.id = iol)";
-  private static final String rtv_tax = "(select e.salesOrderLine.tax from ProcurementPOInvoiceMatch as e where e.goodsShipmentLine = iol)";
-  private static final String rfc_tax = "(select e.salesOrderLine.tax from MaterialMgmtShipmentInOutLine as e where e.id = iol)";
-  private static final String rtv_priceIncludeTax = "(select e.salesOrderLine.salesOrder.priceList.priceIncludesTax from ProcurementPOInvoiceMatch as e where e.goodsShipmentLine = iol)";
+  private static final String rtv_tax = "(select e.salesOrderLine.tax.id from ProcurementPOInvoiceMatch as e where e.goodsShipmentLine.id = iol)";
+  private static final String rfc_tax = "(select e.salesOrderLine.tax.id from MaterialMgmtShipmentInOutLine as e where e.id = iol)";
+  private static final String rtv_priceIncludeTax = "(select e.salesOrderLine.salesOrder.priceList.priceIncludesTax from ProcurementPOInvoiceMatch as e where e.goodsShipmentLine.id = iol)";
   private static final String rfc_priceIncludeTax = "(select e.priceList.priceIncludesTax from Order as e where e.id = :salesOrderId)";
 
   @Override

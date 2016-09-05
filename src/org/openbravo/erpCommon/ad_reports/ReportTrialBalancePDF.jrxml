@@ -56,78 +56,7 @@
 	<parameter name="DATE_TO" class="java.lang.String"/>
 	<parameter name="PAGEOF" class="java.lang.String"/>
 	<queryString>
-		<![CDATA[SELECT ID, ACCOUNT_ID, NAME,
-              SUM(SALDO_INICIAL) AS SALDO_INICIAL,
-              SUM(AMTACCTDR) AS AMTACCTDR,
-              SUM(AMTACCTCR) AS AMTACCTCR,
-              SUM(SALDO_INICIAL+AMTACCTDR-AMTACCTCR) AS SALDO_FINAL,
-              groupbyid, groupbyname
-       FROM
-         ((SELECT ID, ACCOUNT_ID, NAME,
-                  0 AS AMTACCTDR, 0 AS AMTACCTCR,
-                  COALESCE(SUM(AMTACCTDR-AMTACCTCR), 0) AS SALDO_INICIAL,
-                  groupbyname, groupbyid
-           FROM
-             (SELECT F.ACCOUNT_ID AS ID, EV.VALUE AS ACCOUNT_ID, EV.NAME AS NAME,
-                     F.AMTACCTDR, F.AMTACCTCR, F.FACTACCTTYPE,
-                     CASE ?
-                       WHEN 'BPartner' THEN c_bpartner.c_bpartner_id
-                       WHEN 'Product' THEN m_product.m_product_id
-                       WHEN 'Project' THEN c_project.c_project_id
-                       ELSE '' END AS groupbyid,
-                     CASE ?
-                       WHEN 'BPartner' THEN to_char(c_bpartner.name)
-                       WHEN 'Product' THEN to_char(m_product.name)
-                       WHEN 'Project' THEN to_char(c_project.name)
-                       ELSE '' END AS groupbyname
-              FROM C_ELEMENTVALUE EV, FACT_ACCT F
-                   LEFT JOIN C_BPARTNER ON f.C_BPARTNER_ID = C_BPARTNER.C_BPARTNER_ID
-                   LEFT JOIN M_PRODUCT ON f.M_PRODUCT_ID = M_PRODUCT.M_PRODUCT_ID
-                   LEFT JOIN C_PROJECT ON f.C_PROJECT_ID = C_PROJECT.C_PROJECT_ID
-              WHERE F.ACCOUNT_ID = EV.C_ELEMENTVALUE_ID
-                    AND EV.ELEMENTLEVEL = ?
-                    AND f.AD_ORG_ID IN('2')
-                    AND F.AD_CLIENT_ID IN ('1')
-                    AND F.AD_ORG_ID IN('1')
-                    AND 1=1
-                    AND F.ISACTIVE = 'Y') A
-           GROUP BY ACCOUNT_ID, ID, groupbyname, groupbyid, NAME
-           HAVING SUM(AMTACCTDR) - SUM(AMTACCTCR) <> 0
-           ORDER BY ACCOUNT_ID, ID, groupbyname, groupbyid, NAME )
-           UNION
-           (SELECT ID, ACCOUNT_ID, NAME,
-                   SUM((CASE FACTACCTTYPE WHEN 'O' THEN 0 ELSE AMTACCTDR END)) AS AMTACCTDR,
-                   SUM((CASE FACTACCTTYPE WHEN 'O' THEN 0 ELSE AMTACCTCR END)) AS AMTACCTCR,
-                   0 AS SALDO_INICIAL, groupbyname, groupbyid
-            FROM (SELECT F.ACCOUNT_ID AS ID, EV.VALUE AS ACCOUNT_ID, EV.NAME AS NAME,
-                         F.AMTACCTDR, F.AMTACCTCR, F.FACTACCTTYPE,
-                         CASE ?
-                           WHEN 'BPartner' THEN c_bpartner.c_bpartner_id
-                           WHEN 'Product' THEN m_product.m_product_id
-                           WHEN 'Project' THEN c_project.c_project_id
-                           ELSE '' END AS groupbyid,
-                         CASE ?
-                           WHEN 'BPartner' THEN to_char(c_bpartner.name)
-                           WHEN 'Product' THEN to_char(m_product.name)
-                           WHEN 'Project' THEN to_char(c_project.name)
-                           ELSE '' END AS groupbyname
-                  FROM C_ELEMENTVALUE EV, FACT_ACCT F
-                       LEFT JOIN C_BPARTNER ON f.C_BPARTNER_ID = C_BPARTNER.C_BPARTNER_ID
-                       LEFT JOIN M_PRODUCT ON f.M_PRODUCT_ID = M_PRODUCT.M_PRODUCT_ID
-                       LEFT JOIN C_PROJECT ON f.C_PROJECT_ID = C_PROJECT.C_PROJECT_ID
-                  WHERE F.ACCOUNT_ID = EV.C_ELEMENTVALUE_ID
-                        AND EV.ELEMENTLEVEL = ?
-                        AND  f.AD_ORG_ID IN('2')
-                        AND  F.AD_CLIENT_ID IN ('1')
-                        AND  F.AD_ORG_ID IN('1')
-                        AND 2=2
-                        AND F.FACTACCTTYPE <> 'R'
-                        AND F.FACTACCTTYPE <> 'C'
-                        AND F.ISACTIVE = 'Y') A
-            GROUP BY ACCOUNT_ID, ID, groupbyname, groupbyid, NAME
-            ORDER BY ACCOUNT_ID, ID, groupbyname, groupbyid, NAME)) B
-       GROUP BY ACCOUNT_ID, ID, groupbyid, groupbyname, NAME
-       ORDER BY ACCOUNT_ID, ID, groupbyid, groupbyname, NAME]]>
+		<![CDATA[]]>
 	</queryString>
 	<field name="ID" class="java.lang.String"/>
 	<field name="ACCOUNT_ID" class="java.lang.String"/>

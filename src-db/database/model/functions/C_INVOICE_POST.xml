@@ -22,7 +22,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2015 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2001-2016 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -59,7 +59,6 @@
   Cur_LastContact RECORD;
   Cur_lineqty RECORD;
   Cur_InvoiceTax RECORD;
-  Cur_TaxMAct RECORD;
   Cur_Offer RECORD;
 
   -- Record Info
@@ -130,7 +129,6 @@
   v_InvoiceLine VARCHAR2(32);
   v_Discount NUMBER;
   v_Line NUMBER;
-  v_InvoiceDiscount NUMBER;
   v_C_Project_ID VARCHAR2(32);
   v_acctAmount NUMBER;
   v_partialAmount NUMBER;
@@ -1526,7 +1524,6 @@ IF (NOT FINISH_PROCESS) THEN
     -- Generate C_Debt_Payment linked to this invoice
     DECLARE
       v_totalCash NUMBER:=0;
-      v_processed CHAR(1):='N';
       v_debtPaymentID varchar2(32) ;
       v_amount NUMBER;
       v_cashBook VARCHAR2(32) ;

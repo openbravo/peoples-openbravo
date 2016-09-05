@@ -47,8 +47,6 @@ import org.openbravo.base.model.Property;
 import org.openbravo.base.model.domaintype.PrimitiveDomainType;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
-import org.openbravo.base.structure.ClientEnabled;
-import org.openbravo.base.structure.OrganizationEnabled;
 import org.openbravo.client.application.ApplicationConstants;
 import org.openbravo.client.application.DynamicExpressionParser;
 import org.openbravo.client.application.Note;
@@ -63,6 +61,7 @@ import org.openbravo.client.kernel.reference.UIDefinition;
 import org.openbravo.client.kernel.reference.UIDefinitionController;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.security.SecurityChecker;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBDao;
@@ -393,7 +392,7 @@ public class FormInitializationComponent extends BaseActionHandler {
    * @return count of attachment found for the given records.
    */
   private int computeAttachmentCount(Tab tab, String[] recordIds, boolean doExists) {
-    String tableId = (String) DalUtil.getId(tab.getTable());
+    String tableId = tab.getTable().getId();
     OBCriteria<Attachment> attachmentFiles = OBDao.getFilteredCriteria(Attachment.class,
         Restrictions.eq("table.id", tableId), Restrictions.in("record", recordIds));
     // do not filter by the attachment's organization
@@ -413,7 +412,7 @@ public class FormInitializationComponent extends BaseActionHandler {
     OBQuery<Note> obq = OBDal.getInstance().createQuery(Note.class,
         " table.id=:tableId and record=:recordId");
     obq.setFilterOnReadableOrganization(false);
-    obq.setNamedParameter("tableId", DalUtil.getId(tab.getTable()));
+    obq.setNamedParameter("tableId", tab.getTable().getId());
     obq.setNamedParameter("recordId", rowId);
     return obq.count();
   }
@@ -533,27 +532,10 @@ public class FormInitializationComponent extends BaseActionHandler {
       }
 
       if ((mode.equals("EDIT") || mode.equals("CHANGE")) && row != null) {
-        if ((row instanceof ClientEnabled && ((ClientEnabled) row).getClient() != null)) {
-          final String rowClientId = ((ClientEnabled) row).getClient().getId();
-          final String currentClientId = OBContext.getOBContext().getCurrentClient().getId();
-          if (!rowClientId.equals(currentClientId)) {
-            finalObject.put("_readOnly", true);
-          }
+        if (!SecurityChecker.getInstance().isWritable(row)) {
+          finalObject.put("_readOnly", true);
         }
-        if (row instanceof OrganizationEnabled
-            && ((OrganizationEnabled) row).getOrganization() != null) {
-          boolean writable = false;
-          final String objectOrgId = ((OrganizationEnabled) row).getOrganization().getId();
-          for (String orgId : OBContext.getOBContext().getWritableOrganizations()) {
-            if (orgId.equals(objectOrgId)) {
-              writable = true;
-              break;
-            }
-          }
-          if (!writable) {
-            finalObject.put("_readOnly", true);
-          }
-        }
+
         finalObject.put("noteCount", noteCount);
       }
       if (attachments.size() > 0) {

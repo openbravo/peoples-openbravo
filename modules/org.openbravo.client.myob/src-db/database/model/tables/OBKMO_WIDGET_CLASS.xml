@@ -81,6 +81,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="AVAILABLE_IN_WORKSPACE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[Y]]></default>
+        <onCreateDefault><![CDATA['Y']]></onCreateDefault>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="OBKMO_WIDGET_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -98,6 +102,7 @@
         <unique-column name="TITLE"/>
       </unique>
       <check name="OBKMO_WIDGETCLASS_ALLOWANONACC"><![CDATA[ALLOW_ANONYMOUS_ACCESS IN ('Y', 'N')]]></check>
+      <check name="OBKMO_WIDGETCLASS_AVAILABL_CHK"><![CDATA[AVAILABLE_IN_WORKSPACE IN ('Y', 'N')]]></check>
       <check name="OBKMO_WIDGETCLASS_CAN_MAX_CHK"><![CDATA[CAN_MAXIMIZE IN ('Y', 'N')]]></check>
       <check name="OBKMO_WIDGETCLASS_CLASNAME"><![CDATA[WIDGET_SUPERCLASS_ID IS NOT NULL OR JAVACLASS IS NOT NULL]]></check>
       <check name="OBKMO_WIDGETCLASS_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>

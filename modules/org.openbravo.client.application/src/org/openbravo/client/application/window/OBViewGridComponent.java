@@ -38,12 +38,12 @@ import org.openbravo.client.kernel.BaseTemplateComponent;
 import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.client.kernel.Template;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.ui.AuxiliaryInput;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.common.order.OrderLine;
@@ -87,7 +87,7 @@ public class OBViewGridComponent extends BaseTemplateComponent {
 
   public void setTab(Tab tab) {
     this.tab = tab;
-    entity = ModelProvider.getInstance().getEntityByTableId((String) DalUtil.getId(tab.getTable()));
+    entity = ModelProvider.getInstance().getEntityByTableId(tab.getTable().getId());
   }
 
   public String getWhereClauseSQL() {
@@ -441,5 +441,11 @@ public class OBViewGridComponent extends BaseTemplateComponent {
     // always filter using the identifier if the grid fetches its data from a manual datasource and
     // if that datasource does not support filtering foreign keys using their ids
     return (dataSource != null && !dataSource.isSupportIdFkFiltering());
+  }
+
+  public String getTableAlias() {
+    Table table = tab.getTable();
+    return "HQL".equals(table.getDataOriginType()) && !StringUtils.isBlank(table.getEntityAlias()) ? table
+        .getEntityAlias() : "e";
   }
 }

@@ -22,11 +22,10 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2006 Openbravo SLU
+* All portions are Copyright (C) 2001-2016 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
-  v_Offer_ID VARCHAR2(32);
   TYPE RECORD IS REF CURSOR;
     Cur_Offer RECORD;
     v_Names varchar2(10000) := '';

@@ -62,7 +62,7 @@ OB.APRM.AddTransaction.onProcess = function (view, actionHandlerCall, clientSide
         // Continue with the match
         actionHandlerCall();
       } else {
-        isc.confirm(OB.I18N.getLabel('APRM_SplitBankStatementLineConfirm'), execute);
+        isc.confirm(OB.I18N.getLabel('APRM_SplitBankStatementLineConfirm', [OB.Utilities.Number.JSToOBMasked(blineAmt, OB.Format.defaultNumericMask, OB.Format.defaultDecimalSymbol, OB.Format.defaultGroupingSymbol, OB.Format.defaultGroupingSize), OB.Utilities.Number.JSToOBMasked(trxAmt, OB.Format.defaultNumericMask, OB.Format.defaultDecimalSymbol, OB.Format.defaultGroupingSymbol, OB.Format.defaultGroupingSize)]), execute);
       }
     } else {
       // Continue with the match

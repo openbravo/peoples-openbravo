@@ -17,7 +17,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2012 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2001-2016 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -37,7 +37,6 @@
  UPDATE C_CashLine cl SET C_Currency_ID = (SELECT b.C_Currency_ID FROM C_Cash c, C_CashBook b WHERE c.C_Cash_ID=cl.C_Cash_ID AND c.C_CashBook_ID=b.C_CashBook_ID) WHERE C_Currency_ID IS NULL;
  ************************************************************************/
 
- v_NextNo    VARCHAR2(32);
  v_Currency_ID   varchar2(32) := NULL;
  -- CashBook
  v_CB_Currency_ID  varchar2(32);
@@ -48,9 +47,7 @@
  v_Org_ID    varchar2(32);
  v_Cash_ID    varchar2(32);
  v_Debt_Payment_ID  varchar2(32) := NULL;
- v_RO     NUMBER;
  --
- v_Trace     VARCHAR2(2000) := 'CashLine: ';
     
 BEGIN
     

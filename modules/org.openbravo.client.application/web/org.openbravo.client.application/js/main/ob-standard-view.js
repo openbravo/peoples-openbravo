@@ -368,7 +368,7 @@ isc.OBStandardView.addProperties({
     // a specific tab with a record, the direct link logic will already take care
     // of fetching data
     if (this.isRootView && !this.standardWindow.directTabInfo) {
-      if (!lazyFiltering) {
+      if (!lazyFiltering && !this.deferOpenNewEdit) {
         if (!this.standardWindow.checkIfDefaultSavedView()) {
           this.viewGrid.fetchData(this.viewGrid.getCriteria());
         } else {
@@ -1484,6 +1484,7 @@ isc.OBStandardView.addProperties({
     this.viewForm.recordIdInForm = OB.Utilities.getTemporaryId();
 
     if (!this.isShowingForm) {
+      this.viewGrid.markForCalculateSummaries();
       this.switchFormGridVisibility();
     }
 
@@ -2006,6 +2007,9 @@ isc.OBStandardView.addProperties({
         this.treeGrid.setData([]);
         this.treeGrid.refreshGrid(refreshCallback);
       } else {
+        if (this.deferOpenNewEdit && this.messageBar.isVisible()) {
+          this.messageBar.hide();
+        }
         this.viewGrid.refreshGrid(refreshCallback, newRecordsToBeIncluded);
       }
     } else {
@@ -2119,10 +2123,57 @@ isc.OBStandardView.addProperties({
   },
 
   saveRow: function () {
+    var me = this;
+    if (me.existsAction(OB.EventHandlerRegistry.PRESAVE)) {
+      me.executePreSaveActions(function () {
+        me.doSaveRow();
+      });
+      return;
+    }
+    me.doSaveRow();
+  },
+
+  doSaveRow: function () {
     if (this.isEditingGrid) {
       this.viewGrid.endEditing();
     } else {
       this.viewForm.saveRow();
+    }
+  },
+
+  executePreSaveActions: function (saveRowCallback) {
+    var editForm, eventHandlerParams = {};
+
+    if (this.isEditingGrid) {
+      editForm = this.viewGrid.getEditForm();
+      if (editForm) {
+        eventHandlerParams.data = isc.clone(editForm.getValues());
+        eventHandlerParams.isNewRecord = editForm.isNew;
+      }
+    } else {
+      eventHandlerParams.data = isc.clone(this.viewForm.getValues());
+      eventHandlerParams.isNewRecord = this.viewForm.isNew;
+    }
+    this.callSaveActions(OB.EventHandlerRegistry.PRESAVE, eventHandlerParams, saveRowCallback);
+  },
+
+  existsAction: function (actionType) {
+    return this.tabId && OB.EventHandlerRegistry.hasAction(this.tabId, actionType);
+  },
+
+  callSaveActions: function (actionType, extraParameters, callback) {
+    var params;
+    if (this.existsAction(actionType)) {
+      params = {
+        tabId: this.tabId,
+        actionType: actionType,
+        view: this,
+        form: this.viewForm,
+        grid: this.viewGrid,
+        extraParameters: extraParameters,
+        callback: callback
+      };
+      OB.EventHandlerRegistry.call(params);
     }
   },
 
@@ -2252,6 +2303,7 @@ isc.OBStandardView.addProperties({
           selection = currentGrid.getSelection().duplicate();
           // deselect the current records
           currentGrid.deselectAllRecords();
+          view.viewGrid.markForCalculateSummaries();
 
           if (selection.length > 1) {
             deleteData = {};
@@ -2926,6 +2978,7 @@ isc.OBStandardView.addProperties({
       }
 
       type = isc.SimpleType.getType(fld.type);
+      fld.readOnlyEditorType = type.readOnlyEditorType;
       if (type.editorType && !fld.editorType) {
         fld.editorType = type.editorType;
       }
@@ -3056,5 +3109,4 @@ isc.OBStandardView.addProperties({
 
     return result;
   }
-
 });

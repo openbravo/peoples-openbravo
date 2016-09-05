@@ -12,7 +12,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SLU
- * Contributions are Copyright (C) 2001-2013 Openbravo S.L.U.
+ * Contributions are Copyright (C) 2001-2016 Openbravo S.L.U.
  ******************************************************************************
 -->
 
@@ -134,7 +134,8 @@
                 (COALESCE(f.AMTACCTCR,0) - COALESCE(f.AMTACCTDR, 0)) AS qtyCredit_ref 
                 FROM C_ElementValue m, Fact_Acct f, C_Period p, C_Year y 
                 WHERE m.AD_Org_ID IN('2') 
-                AND m.AD_Client_ID IN('2') 
+                AND m.AD_Client_ID IN('2')
+                AND (1=2 )  
                 AND 2=2 
                 AND f.FACTACCTTYPE <> 'R'
                 AND f.FACTACCTTYPE <> 'C'
@@ -160,6 +161,7 @@
         <Parameter name="openingEntryOwner"/>
         <Parameter name="adOrgClient" type="replace" optional="true" after="m.AD_Org_ID IN(" text="'2'"/>
         <Parameter name="adUserClient" type="replace" optional="true" after="m.AD_Client_ID IN(" text="'2'"/>
+        <Parameter name="compareTo" optional="true" after="AND (1=2 "><![CDATA[ OR to_char('Y')=to_char(?)]]></Parameter>
         <Parameter name="dateFromRef" optional="true" after="AND 2=2 "><![CDATA[ AND f.DATEACCT >= to_date(?)]]></Parameter>
         <Parameter name="dateToRef" optional="true" after="AND 2=2 "><![CDATA[ AND f.DATEACCT < to_date(?)]]></Parameter>
         <Parameter name="acctschema" optional="true" after="AND 2=2 "><![CDATA[ AND f.C_ACCTSCHEMA_ID = ?]]></Parameter>

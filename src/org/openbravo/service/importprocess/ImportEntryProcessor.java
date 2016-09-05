@@ -36,7 +36,6 @@ import javax.inject.Inject;
 import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.kernel.RequestContext;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.core.TriggerHandler;
@@ -556,15 +555,15 @@ public abstract class ImportEntryProcessor {
 
       QueuedEntry(ImportEntry importEntry) {
         importEntryId = importEntry.getId();
-        userId = (String) DalUtil.getId(importEntry.getCreatedBy());
-        orgId = (String) DalUtil.getId(importEntry.getOrganization());
+        userId = importEntry.getCreatedBy().getId();
+        orgId = importEntry.getOrganization().getId();
         if (importEntry.getRole() != null) {
-          roleId = (String) DalUtil.getId(importEntry.getRole());
+          roleId = importEntry.getRole().getId();
         } else {
           // will use the default role of the user
           roleId = null;
         }
-        clientId = (String) DalUtil.getId(importEntry.getClient());
+        clientId = importEntry.getClient().getId();
       }
     }
   }

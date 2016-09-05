@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2012 Openbravo SLU 
+ * All portions are Copyright (C) 2012-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -127,11 +127,9 @@ public class PriceListVersionFilterExpressionName implements FilterExpression {
         PriceListVersion.class);
     plVersionCrit.add(Restrictions.eq(PriceListVersion.PROPERTY_PRICELIST, priceList));
     plVersionCrit.add(Restrictions.le(PriceListVersion.PROPERTY_VALIDFROMDATE, date));
-    if (plVersionCrit.count() > 0) {
-      plVersionCrit.addOrderBy(PriceListVersion.PROPERTY_VALIDFROMDATE, false);
-      return plVersionCrit.list().get(0);
-    }
-    return null;
+    plVersionCrit.addOrderBy(PriceListVersion.PROPERTY_VALIDFROMDATE, false);
+    plVersionCrit.setMaxResults(1);
+    return (PriceListVersion) plVersionCrit.uniqueResult();
   }
 
   private boolean isSalesTransaction() {

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2015 Openbravo SLU
+ * All portions are Copyright (C) 2012-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -29,7 +29,6 @@ import org.apache.log4j.Logger;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.costing.CostingServer.TrxType;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBDateUtils;
@@ -274,7 +273,7 @@ public abstract class CostingAlgorithm {
 
     PriceList pricelist = bp.getPurchasePricelist();
     ProductPrice pp = FinancialUtils.getProductPrice(transaction.getProduct(),
-        transaction.getTransactionProcessDate(), false, pricelist, false);
+        transaction.getTransactionProcessDate(), false, pricelist, false, false);
     OrderLine orderLine = CostingUtils.getOrderLine(transaction.getProduct(), bp, costOrg);
 
     if (stdCost == null && pp == null && orderLine == null) {
@@ -548,7 +547,7 @@ public abstract class CostingAlgorithm {
     try {
       List<Object> params = new ArrayList<Object>();
       params.add(production.getId());
-      params.add(DalUtil.getId(OBContext.getOBContext().getUser()));
+      params.add(OBContext.getOBContext().getUser().getId());
       CallStoredProcedure.getInstance().call("MA_PRODUCTION_COST", params, null, true, false);
 
     } catch (Exception e) {
@@ -592,10 +591,9 @@ public abstract class CostingAlgorithm {
       pricelist = bp.getPurchasePricelist();
     }
     ProductPrice pp = FinancialUtils.getProductPrice(transaction.getProduct(),
-        transaction.getMovementDate(), false, pricelist);
+        transaction.getMovementDate(), false, pricelist, true, false);
     BigDecimal cost = pp.getStandardPrice().multiply(transaction.getMovementQuantity().abs());
-    if (DalUtil.getId(pp.getPriceListVersion().getPriceList().getCurrency()).equals(
-        costCurrency.getId())) {
+    if (pp.getPriceListVersion().getPriceList().getCurrency().getId().equals(costCurrency.getId())) {
       // no conversion needed
       return cost;
     }

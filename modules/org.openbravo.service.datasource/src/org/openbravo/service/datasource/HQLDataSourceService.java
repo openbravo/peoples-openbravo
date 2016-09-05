@@ -64,6 +64,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class HQLDataSourceService extends ReadOnlyDataSourceService {
+  public static final String PROPERTY_FIELD_SEPARATOR = "___";
+
   private static final Logger log = LoggerFactory.getLogger(HQLDataSourceService.class);
   private static final String AND = " AND ";
   private static final String WHERE = " WHERE ";
@@ -75,6 +77,7 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
   private static final String INSERTION_POINT_GENERIC_ID = "@insertion_point_#@";
   private static final String INSERTION_POINT_INDEX_PLACEHOLDER = "#";
   private static final String DUMMY_INSERTION_POINT_REPLACEMENT = " 1 = 1 ";
+
   @Inject
   @Any
   private Instance<HqlInserter> hqlInserters;
@@ -205,13 +208,21 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
       } else {
         Object[] properties = (Object[]) row;
         for (int i = 0; i < returnAliases.length; i++) {
-          Property property = entity.getPropertyByColumnName(returnAliases[i].toLowerCase(),
-              checkIsNotNull);
-          if (property == null) {
-            property = entity.getPropertyByColumnName(columns.get(i).getDBColumnName()
-                .toLowerCase());
+          String aliasName = returnAliases[i];
+          String propertyName;
+          if (aliasName.contains(PROPERTY_FIELD_SEPARATOR)) {
+            propertyName = aliasName.replace(PROPERTY_FIELD_SEPARATOR,
+                JsonConstants.FIELD_SEPARATOR);
+          } else {
+            Property property = entity.getPropertyByColumnName(aliasName.toLowerCase(),
+                checkIsNotNull);
+            if (property == null) {
+              property = entity.getPropertyByColumnName(columns.get(i).getDBColumnName()
+                  .toLowerCase());
+            }
+            propertyName = property.getName();
           }
-          record.put(property.getName(), properties[i]);
+          record.put(propertyName, properties[i]);
         }
       }
       data.add(record);

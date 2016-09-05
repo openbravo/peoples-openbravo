@@ -262,7 +262,7 @@ public class DocFINPayment extends AcctServer {
             paymentDetail.isPrepayment() ? (pso != null ? pso.getId() : "") : (psi != null ? psi
                 .getId() : ""));
 
-        if (i % 100 == 0) {
+        if ((i + 1) % 100 == 0) {
           OBDal.getInstance().getSession().clear();
         }
       }
@@ -476,7 +476,7 @@ public class DocFINPayment extends AcctServer {
               (isReceipt ? bpAmount : ""), Fact_Acct_Group_ID, nextSeqNo(SeqNo), DocumentType, conn);
         }
 
-        if (i % 100 == 0) {
+        if ((i + 1) % 100 == 0) {
           OBDal.getInstance().getSession().clear();
         }
       }

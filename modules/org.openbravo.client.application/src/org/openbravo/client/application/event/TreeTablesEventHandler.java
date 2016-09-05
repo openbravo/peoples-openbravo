@@ -37,7 +37,6 @@ import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.client.kernel.event.EntityDeleteEvent;
 import org.openbravo.client.kernel.event.EntityNewEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -131,7 +130,7 @@ public class TreeTablesEventHandler extends EntityPersistenceEventObserver {
       dataSource = dataSourceServiceProvider.getDataSource(LINKTOPARENT_DATASOURCE);
     } else if (CUSTOM_STRUCTURE.equals(mainTableTree.getTreeStructure())
         && mainTableTree.getDatasource() != null) {
-      String customDataSourceId = (String) DalUtil.getId(mainTableTree.getDatasource());
+      String customDataSourceId = mainTableTree.getDatasource().getId();
       dataSource = dataSourceServiceProvider.getDataSource(customDataSourceId);
     }
     return dataSource;

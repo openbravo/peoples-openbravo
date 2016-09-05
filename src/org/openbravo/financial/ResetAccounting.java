@@ -27,6 +27,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.ScrollMode;
@@ -42,12 +44,31 @@ import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.model.common.enterprise.OrganizationType;
 import org.openbravo.model.financialmgmt.accounting.AccountingFact;
 import org.openbravo.model.financialmgmt.calendar.Period;
 
 public class ResetAccounting {
   final static int FETCH_SIZE = 1000;
   private static final Logger log4j = Logger.getLogger(ResetAccounting.class);
+
+  public static HashMap<String, Integer> delete(String adClientId, String adOrgId,
+      List<String> tableIds, String strdatefrom, String strdateto) throws OBException {
+    if (tableIds.isEmpty()) {
+      return delete(adClientId, adOrgId, "", null, strdatefrom, strdateto);
+    } else {
+      HashMap<String, Integer> results = new HashMap<String, Integer>();
+      results.put("deleted", 0);
+      results.put("updated", 0);
+      for (String tableId : tableIds) {
+        HashMap<String, Integer> partial = delete(adClientId, adOrgId, tableId, null, strdatefrom,
+            strdateto);
+        results.put("deleted", results.get("deleted") + partial.get("deleted"));
+        results.put("updated", results.get("updated") + partial.get("updated"));
+      }
+      return results;
+    }
+  }
 
   @SuppressWarnings("unchecked")
   public static HashMap<String, Integer> delete(String adClientId, String adOrgId,
@@ -70,7 +91,9 @@ public class ResetAccounting {
     String client = adClientId;
     List<String> tables = getTables(adTableId);
     try {
-      Set<String> orgIds = new OrganizationStructureProvider().getChildTree(adOrgId, true);
+      Organization org = OBDal.getInstance().get(Organization.class, adOrgId);
+      Set<String> orgIds = StringUtils.equals(org.getOrganizationType().getName(), "Organization") ? getLegalOrBusinessOrgsChilds(
+          client, adOrgId) : new OrganizationStructureProvider().getChildTree(adOrgId, true);
       for (String table : tables) {
         List<String> docbasetypes = getDocbasetypes(client, table, localRecordId);
         String myQuery = "select distinct e.recordID from FinancialMgmtAccountingFact e where e.organization.id in (:orgIds) and e.client.id = :clientId and e.table.id = :tableId";
@@ -85,7 +108,6 @@ public class ResetAccounting {
           // organizationPeriodControl: hashmap with organizations and their organization allow
           // period control associated
           Map<String, String> organizationPeriodControl = new HashMap<String, String>();
-          String calendarId = getCalendarId(adOrgId);
 
           String myQuery1 = "select ad_org_id, ad_org_getperiodcontrolallow(ad_org_id) from ad_org where ad_org_id in (:orgIds)";
           Query query1 = OBDal.getInstance().getSession().createSQLQuery(myQuery1);
@@ -101,8 +123,9 @@ public class ResetAccounting {
               if (orgperiodcontrol != null) {
                 organizationPeriodControl.put(organization, orgperiodcontrol);
                 if (!organizationPeriod.keySet().contains(orgperiodcontrol)) {
-                  periods = getPeriodsDates(getOpenPeriods(client, dbt, orgIds, calendarId, table,
-                      localRecordId, strdatefrom, strdateto, orgperiodcontrol));
+                  periods = getPeriodsDates(getOpenPeriods(client, dbt, orgIds,
+                      getCalendarId(organization), table, localRecordId, strdatefrom, strdateto,
+                      orgperiodcontrol));
                   organizationPeriod.put(orgperiodcontrol, periods);
                 }
               }
@@ -166,8 +189,8 @@ public class ResetAccounting {
               // all
               // dates are within an open period
               HashMap<String, Integer> partial = treatExceptions(exceptionsSql, localRecordId,
-                  table, orgIds, client, p[0], p[1], calendarId, strdatefrom, strdateto, dbt,
-                  orgAllow, organization);
+                  table, orgIds, client, p[0], p[1], getCalendarId(organization), strdatefrom,
+                  strdateto, dbt, orgAllow, organization);
               deleted = deleted + partial.get("deleted");
               updated = updated + partial.get("updated");
               docUpdated = docUpdated + partial.get("updated");
@@ -294,15 +317,21 @@ public class ResetAccounting {
 
   public static HashMap<String, Integer> restore(String clientId, String adOrgId, String datefrom,
       String dateto) throws OBException {
+    List<String> tableIds = null;
+    return restore(clientId, adOrgId, tableIds, datefrom, dateto);
+  }
+
+  public static HashMap<String, Integer> restore(String clientId, String adOrgId,
+      List<String> tableIds, String datefrom, String dateto) throws OBException {
     HashMap<String, Integer> results = new HashMap<String, Integer>();
     results.put("deleted", 0);
     results.put("updated", 0);
-    List<String> tableIds = getActiveTables(clientId, adOrgId);
-    for (String tableId : tableIds) {
+    List<String> tableIdList = CollectionUtils.isEmpty(tableIds) ? getActiveTables(clientId,
+        adOrgId) : tableIds;
+    for (String tableId : tableIdList) {
       HashMap<String, Integer> partial = restore(clientId, adOrgId, tableId, datefrom, dateto);
       results.put("deleted", results.get("deleted") + partial.get("deleted"));
       results.put("updated", results.get("updated") + partial.get("updated"));
-
     }
     return results;
   }
@@ -597,5 +626,32 @@ public class ResetAccounting {
     Query query = OBDal.getInstance().getSession().createQuery(hql);
     count = ((Long) query.list().get(0)).intValue();
     return (count == 1);
+  }
+
+  @SuppressWarnings("unchecked")
+  private static Set<String> getLegalOrBusinessOrgsChilds(String clientId, String orgId) {
+    StringBuffer hql = new StringBuffer();
+    hql = new StringBuffer();
+    hql.append(" select o1." + Organization.PROPERTY_ID);
+    hql.append(" from " + Organization.ENTITY_NAME + " as o1");
+    hql.append(" , " + Organization.ENTITY_NAME + " as o2");
+    hql.append(" join o2." + Organization.PROPERTY_ORGANIZATIONTYPE + " as ot");
+    hql.append(" where o2." + Organization.PROPERTY_CLIENT + ".id = :clientId");
+    hql.append(" and ad_isorgincluded(o2." + Organization.PROPERTY_ID + ", :orgId, o2."
+        + Organization.PROPERTY_CLIENT + ".id) <> -1");
+    hql.append(" and ad_isorgincluded(o1." + Organization.PROPERTY_ID + ", o2."
+        + Organization.PROPERTY_ID + ", o1." + Organization.PROPERTY_CLIENT + ".id) <> -1");
+    hql.append(" and (ot." + OrganizationType.PROPERTY_LEGALENTITY + " = true");
+    hql.append(" or ot." + OrganizationType.PROPERTY_BUSINESSUNIT + " = true)");
+    hql.append(" and o2." + Organization.PROPERTY_ACTIVE + " = true");
+    hql.append(" and o2." + Organization.PROPERTY_READY + " = true");
+    hql.append(" order by o2." + Organization.PROPERTY_NAME);
+    hql.append(" , ad_isorgincluded(o1." + Organization.PROPERTY_ID + ", o2."
+        + Organization.PROPERTY_ID + ", o1." + Organization.PROPERTY_CLIENT + ".id)");
+    hql.append(" , o1." + Organization.PROPERTY_NAME);
+    Query query = OBDal.getInstance().getSession().createQuery(hql.toString());
+    query.setParameter("clientId", clientId);
+    query.setParameter("orgId", orgId);
+    return new HashSet<String>(query.list());
   }
 }

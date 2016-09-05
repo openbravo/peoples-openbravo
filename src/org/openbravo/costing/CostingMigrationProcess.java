@@ -39,7 +39,6 @@ import org.hibernate.type.DateType;
 import org.hibernate.type.StringType;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.security.OrganizationStructureProvider;
@@ -475,7 +474,7 @@ public class CostingMigrationProcess implements Process {
 
   private void processRule(CostingRule rule) {
     OrganizationStructureProvider osp = OBContext.getOBContext().getOrganizationStructureProvider(
-        (String) DalUtil.getId(rule.getClient()));
+        rule.getClient().getId());
     final Set<String> childOrgs = osp.getChildTree(rule.getOrganization().getId(), true);
     CostingRuleProcess crp = new CostingRuleProcess();
     crp.createCostingRuleInits(rule.getId(), childOrgs, null);
@@ -700,7 +699,7 @@ public class CostingMigrationProcess implements Process {
     trxQry.setFilterOnActive(false);
     trxQry.setFilterOnReadableClients(false);
     trxQry.setFilterOnReadableOrganization(false);
-    trxQry.setNamedParameter("product", DalUtil.getId(cost.getProduct()));
+    trxQry.setNamedParameter("product", cost.getProduct().getId());
     trxQry.setNamedParameter("orgs", naturalTree);
     trxQry.setNamedParameter("dateFrom", cost.getStartingDate());
     trxQry.setNamedParameter("dateTo", cost.getEndingDate());
@@ -774,8 +773,8 @@ public class CostingMigrationProcess implements Process {
     try {
       while (trxs.next()) {
         MaterialTransaction trx = (MaterialTransaction) trxs.get(0);
-        if (!orgId.equals(DalUtil.getId(trx.getOrganization()))) {
-          orgId = (String) DalUtil.getId(trx.getOrganization());
+        if (!orgId.equals(trx.getOrganization().getId())) {
+          orgId = trx.getOrganization().getId();
           Currency cur = FinancialUtils.getLegalEntityCurrency(trx.getOrganization());
           curId = cur.getId();
         }
@@ -877,7 +876,7 @@ public class CostingMigrationProcess implements Process {
     insert.append("    and u.id = :user");
 
     Query queryInsert = OBDal.getInstance().getSession().createQuery(insert.toString());
-    queryInsert.setString("user", (String) DalUtil.getId(OBContext.getOBContext().getUser()));
+    queryInsert.setString("user", OBContext.getOBContext().getUser().getId());
     queryInsert.executeUpdate();
   }
 
@@ -947,7 +946,7 @@ public class CostingMigrationProcess implements Process {
     queryInsert.setString("startingDate", startingDate);
     queryInsert.setString("limitDate", startingDate);
     queryInsert.setString("limitDate2", startingDate);
-    queryInsert.setString("user", (String) DalUtil.getId(OBContext.getOBContext().getUser()));
+    queryInsert.setString("user", OBContext.getOBContext().getUser().getId());
     queryInsert.executeUpdate();
 
   }
@@ -1044,7 +1043,7 @@ public class CostingMigrationProcess implements Process {
       obcRoleAccess.setFilterOnReadableClients(false);
       obcRoleAccess.setFilterOnReadableOrganization(false);
       for (ProcessAccess processAccess : obcRoleAccess.list()) {
-        String idprocess = (String) DalUtil.getId(processAccess.getProcess());
+        String idprocess = processAccess.getProcess().getId();
 
         if (paretoLegacy.equals(idprocess)) {
           processAccess.setProcess((org.openbravo.model.ad.ui.Process) OBDal.getInstance()

@@ -428,6 +428,8 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
                 "N", qtyorder, dataLine[0].mProductUomId, dataLine[0].cProjectId,
                 dataLine[0].user1Id, dataLine[0].user2Id, dataLine[0].cCostcenterId,
                 dataLine[0].aAssetId);
+            MaterialReceiptPendingLinesData.updateInvoiceOrder(conn, this, strSequenceLine,
+                strOrderlineId);
           } catch (ServletException ex) {
             myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
             releaseRollbackConnection(conn);

@@ -20,7 +20,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 1999-2009 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 1999-2016 Openbravo, S.L.U.
   *************************************************************************
   * $Id: C_Cash_Post.sql,v 1.10 2003/03/17 20:32:25 jjanke Exp $
   ***
@@ -37,7 +37,6 @@
   v_Record_ID VARCHAR2(32) ;
   v_User VARCHAR2(32);
   v_C_Debt_Payment_ID VARCHAR2(32);
-  v_C_Order_ID VARCHAR2(32);
   --Added by P.SAROBE
 	v_documentno_Settlement VARCHAR2(40);
 	v_dateSettlement DATE;
@@ -74,7 +73,6 @@
     v_CB_Date DATE;
     v_AD_Org_ID VARCHAR2(32);
     v_AD_Client_ID VARCHAR2(32);
-    v_C_Settlement_ID VARCHAR2(32);
     v_C_CashBook_ID VARCHAR2(32) ;
     FINISH_PROCESS BOOLEAN:=false;
   BEGIN

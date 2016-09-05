@@ -121,6 +121,8 @@ import org.openbravo.model.materialmgmt.transaction.ProductionPlan;
 import org.openbravo.model.materialmgmt.transaction.ProductionTransaction;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
+import org.openbravo.model.pricing.pricelist.PriceList;
+import org.openbravo.model.pricing.pricelist.PriceListVersion;
 import org.openbravo.model.pricing.pricelist.ProductPrice;
 import org.openbravo.model.procurement.ReceiptInvoiceMatch;
 import org.openbravo.scheduling.ProcessBundle;
@@ -10141,11 +10143,21 @@ public class TestCosting extends WeldBaseTest {
 
       if (productIdList.isEmpty()) {
 
-        OBCriteria<ProductPrice> criteria = OBDal.getInstance().createCriteria(ProductPrice.class);
-        criteria.add(Restrictions.eq(ProductPrice.PROPERTY_PRODUCT, product));
-        criteria.addOrderBy(ProductPrice.PROPERTY_CREATIONDATE, true);
+        StringBuffer where = new StringBuffer();
+        where.append(" as pp ");
+        where.append(" join pp." + ProductPrice.PROPERTY_PRICELISTVERSION + " as plv");
+        where.append(" join plv." + PriceListVersion.PROPERTY_PRICELIST + " as pl");
+        where.append(" where pp." + ProductPrice.PROPERTY_PRODUCT + ".id = :productId");
+        if (purchasePrice.compareTo(salesPrice) == 0) {
+          where.append(" and pl." + PriceList.PROPERTY_SALESPRICELIST + " = false");
+        }
+        where.append(" order by pl." + PriceList.PROPERTY_NAME);
+        OBQuery<ProductPrice> hql = OBDal.getInstance().createQuery(ProductPrice.class,
+            where.toString());
+        hql.setNamedParameter("productId", PRODUCT_ID);
+
         int i = 0;
-        for (ProductPrice productPrice : criteria.list()) {
+        for (ProductPrice productPrice : hql.list()) {
           ProductPrice productPriceClone = (ProductPrice) DalUtil.copy(productPrice, false);
           setGeneralData(productPriceClone);
           if (i % 2 == 0) {
@@ -10160,6 +10172,7 @@ public class TestCosting extends WeldBaseTest {
             productPriceClone.setListPrice(salesPrice);
           }
           productPriceClone.setProduct(productClone);
+          OBDal.getInstance().save(productPriceClone);
           productClone.getPricingProductPriceList().add(productPriceClone);
           i++;
         }

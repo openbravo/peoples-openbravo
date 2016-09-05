@@ -158,7 +158,7 @@ public class DalPerformanceExampleTest extends OBBaseTest {
     Assert.assertTrue(((HibernateProxy) category).getHibernateLazyInitializer().isUninitialized());
 
     // get the id and entityname in a way which does not load the object
-    final Object id = DalUtil.getId(category);
+    final Object id = category.getId();
 
     // still unloaded
     Assert.assertTrue(((HibernateProxy) category).getHibernateLazyInitializer().isUninitialized());

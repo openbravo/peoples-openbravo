@@ -30,7 +30,6 @@ import org.openbravo.client.kernel.event.EntityNewEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
 import org.openbravo.client.kernel.event.EntityUpdateEvent;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.TriggerHandler;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.Utility;
@@ -135,6 +134,6 @@ public class InheritedAccessEnabledEventHandler extends EntityPersistenceEventOb
     if (role == null) {
       return true;
     }
-    return OBDal.getInstance().exists(Role.ENTITY_NAME, DalUtil.getId(role));
+    return OBDal.getInstance().exists(Role.ENTITY_NAME, role.getId());
   }
 }

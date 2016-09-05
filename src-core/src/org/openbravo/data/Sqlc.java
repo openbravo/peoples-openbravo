@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2015 Openbravo S.L.U.
+ * Copyright (C) 2001-2016 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -736,10 +736,9 @@ public class Sqlc extends DefaultHandler {
       // Get the ResultSetMetaData. This will be used for
       // the column headings
       if (sql.executeType.equals("executeQuery")) {
-        result = preparedStatement.executeQuery();
-        if (log4j.isDebugEnabled())
-          log4j.debug("query done");
-        rsmd = result.getMetaData();
+        // No need to really run the query. Both pg & ora allow to get ResultSetMetaData from a
+        // PreparedStatement already
+        rsmd = preparedStatement.getMetaData();
         // Get the number of columns in the result set
         numCols = rsmd.getColumnCount();
         if (log4j.isDebugEnabled())
@@ -1515,7 +1514,7 @@ public class Sqlc extends DefaultHandler {
           if (parameter.strInOut.equals("out")) {
             outParamName = parameter.strName;
             paramsReceipt.append("      object").append(sql.sqlObject).append(".")
-                .append(outParamName).append(" = (String) vecTotal.elementAt(").append(outParams)
+                .append(outParamName).append(" = vecTotal.elementAt(").append(outParams)
                 .append(");\n");
             outParams++;
           }

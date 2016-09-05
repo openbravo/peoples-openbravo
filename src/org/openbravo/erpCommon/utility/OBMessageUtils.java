@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2012-2015 Openbravo SLU
+ * All portions are Copyright (C) 2012-2016 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -25,7 +25,6 @@ import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.kernel.RequestContext;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -89,7 +88,7 @@ public class OBMessageUtils {
         strMessage = msg.getMessageText();
         if (OBContext.getOBContext().isTranslationInstalled()) {
           for (MessageTrl msgTrl : msg.getADMessageTrlList()) {
-            if (DalUtil.getId(msgTrl.getLanguage()).equals(strLanguageId)) {
+            if (msgTrl.getLanguage().getId().equals(strLanguageId)) {
               strMessage = msgTrl.getMessageText();
               break;
             }
@@ -112,7 +111,7 @@ public class OBMessageUtils {
           Element element = obcElement.list().get(0);
           strMessage = element.getName();
           for (ElementTrl elementTrl : element.getADElementTrlList()) {
-            if (DalUtil.getId(elementTrl.getLanguage()).equals(strLanguageId)) {
+            if (elementTrl.getLanguage().getId().equals(strLanguageId)) {
               strMessage = elementTrl.getName();
             }
           }
@@ -515,20 +514,17 @@ public class OBMessageUtils {
       final OBQuery<Message> messages = OBDal.getInstance().createQuery(Message.class,
           Message.PROPERTY_SEARCHKEY + "=:key");
       messages.setNamedParameter("key", key);
-      if (messages.list().isEmpty()) {
+
+      // ad_message.value has unique constraint
+      final Message message = messages.uniqueResult();
+      if (message == null) {
         return null;
       }
 
-      if (messages.list().size() > 1) {
-        log4j.warn("More than one message found using key " + key);
-      }
-
-      // pick the first one
-      final Message message = messages.list().get(0);
       String label = message.getMessageText();
       final String languageId = OBContext.getOBContext().getLanguage().getId();
       for (MessageTrl messageTrl : message.getADMessageTrlList()) {
-        if (DalUtil.getId(messageTrl.getLanguage()).equals(languageId)) {
+        if (messageTrl.getLanguage().getId().equals(languageId)) {
           label = messageTrl.getMessageText();
           break;
         }

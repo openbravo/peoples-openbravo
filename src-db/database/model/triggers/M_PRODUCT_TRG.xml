@@ -29,9 +29,6 @@
    Cur_Warehouses RECORD;
    Cur_Legal RECORD;
 
-    v_xTree_ID    			           varchar2(32);
-    v_xParent_ID  			           varchar2(32);
-    v_NextNo      			           VARCHAR2(32);
     v_ControlNo 	 	               NUMBER;
     v_P_Revenue_Acct    		       VARCHAR2(32);
     v_P_Def_Revenue_Acct    		   VARCHAR2(32);

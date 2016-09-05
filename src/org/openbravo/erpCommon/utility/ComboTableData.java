@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -36,6 +36,7 @@ import org.openbravo.data.UtilSql;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.reference.Reference;
 import org.openbravo.reference.ui.UIReference;
+import org.openbravo.service.db.DalConnectionProvider;
 
 /**
  * @author Fernando Iriazabal
@@ -134,6 +135,7 @@ public class ComboTableData {
     setIndex(_index);
     generateSQL();
     parseNames();
+    pool = null;
   }
 
   /**
@@ -177,7 +179,11 @@ public class ComboTableData {
    * @return Database handler object.
    */
   public ConnectionProvider getPool() {
-    return this.pool;
+    if (pool != null) {
+      return pool;
+    }
+
+    return new DalConnectionProvider(false);
   }
 
   /**

@@ -25,19 +25,17 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2013 Openbravo SLU
+* All portions are Copyright (C) 2001-2016 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
   --  Logistice
   v_ResultStr VARCHAR2(2000):='';
   v_Message VARCHAR2(2000):='';
-  v_Record_ID VARCHAR2(32);
-  v_Result NUMBER:=1; --  Success
+
   --  Parameter
   TYPE RECORD IS REF CURSOR;
     --  Record Info
-    v_UpdatedBy VARCHAR2(32);
     --  v_Processing        CHAR;
     --  v_Processed         CHAR;
     v_Count NUMBER;
@@ -48,7 +46,6 @@
     v_ProductName VARCHAR2(100);
     Cur_GlobalUse RECORD;
     Cur_ProductionPlan RECORD;
-    v_AD_Client_ID VARCHAR2(32);
   BEGIN
     --  Get Parameters
     v_ResultStr:='ReadingParameters';

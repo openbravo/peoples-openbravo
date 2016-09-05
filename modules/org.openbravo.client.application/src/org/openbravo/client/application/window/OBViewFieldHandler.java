@@ -634,6 +634,8 @@ public class OBViewFieldHandler {
   }
 
   public class OBViewFieldAudit implements OBViewFieldDefinition {
+    private static final String SEARCH_REFERENCE = "30";
+    private static final String DATETIME_REFERENCE = "16";
     private String name;
     private String refType;
     private String refEntity;
@@ -686,17 +688,20 @@ public class OBViewFieldHandler {
       name = type;
       if (type.endsWith("By")) {
         // User search
-        refType = "30";
+        refType = SEARCH_REFERENCE;
         refEntity = "User";
       } else {
         // Date time
-        refType = "16";
+        refType = DATETIME_REFERENCE;
         refEntity = "";
       }
     }
 
     public String getGridFieldProperties() {
       StringBuffer result = new StringBuffer();
+      if (SEARCH_REFERENCE.equals(refType)) {
+        result.append(", fkField: true");
+      }
       if (this.gridConfiguration != null) {
         Boolean canSort = null;
         Boolean canFilter = null;

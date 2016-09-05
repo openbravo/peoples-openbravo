@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2013 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2016 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -199,7 +199,9 @@ public class SessionInfo {
    *          Connection where the session information will be stored in
    * @param rdbms
    *          Database type
+   * @deprecated
    */
+  @Deprecated
   public static void setDBSessionInfo(Connection conn, String rdbms) {
     if (!isAuditActive) {
       return;

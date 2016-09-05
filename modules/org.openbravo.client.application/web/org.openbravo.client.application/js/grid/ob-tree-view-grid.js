@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2014 Openbravo SLU
+ * All portions are Copyright (C) 2013-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -91,11 +91,11 @@ isc.OBTreeViewGrid.addProperties({
       me.parentTabRecordId = me.getParentTabRecordId();
       dsRequest.params.parentRecordId = me.parentTabRecordId;
       dsRequest.params.tabId = me.view.tabId;
+      dsRequest.params._extraProperties = me.view.dataSource && me.view.dataSource.requestProperties.params._extraProperties;
       if (dsRequest.dropIndex || dsRequest.dropIndex === 0) {
         //Only send the index if the tree is ordered
         dsRequest = me.addOrderedTreeParameters(dsRequest);
       }
-      dsRequest.params._selectedProperties = me.getSelectedPropertiesString();
       // Includes the context, it could be used in the hqlwhereclause
       isc.addProperties(dsRequest.params, me.view.getContextInfo(true, false));
       dsRequest.willHandleError = true;
@@ -208,7 +208,7 @@ isc.OBTreeViewGrid.addProperties({
 
   // Returns the id of the parent tab, if any
   getParentTabRecordId: function () {
-    if (!this.view.parentView) {
+    if (!this.view.parentView || !this.view.parentView.viewGrid.getSelectedRecord()) {
       return null;
     }
     return this.view.parentView.viewGrid.getSelectedRecord().id;

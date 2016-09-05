@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2014 Openbravo SLU
+ * All portions are Copyright (C) 2010-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -85,17 +85,7 @@ public class MyOpenbravoComponent extends BaseTemplateComponent {
     return COMPONENT_ID;
   }
 
-  public List<String> getAvailableWidgetClasses() throws Exception {
-    return getAvailableWidgetClasses(null);
-  }
-
-  public List<String> getAvailableWidgetClasses(String roleId) throws Exception {
-    boolean isAdminMode = false;
-    return getAvailableWidgetClasses(roleId, isAdminMode);
-  }
-
-  public List<String> getAvailableWidgetClasses(String roleId, boolean isAdminMode)
-      throws Exception {
+  List<String> getAvailableWidgetClasses(String roleId, boolean shouldBeDisplayed) throws Exception {
     OBContext.setAdminMode();
     try {
       if (widgetClassDefinitions != null) {
@@ -105,8 +95,13 @@ public class MyOpenbravoComponent extends BaseTemplateComponent {
       final List<JSONObject> definitions = new ArrayList<JSONObject>();
       final List<String> tmp = new ArrayList<String>();
       String classDef = "";
+      String strConditionQuery = WidgetClass.PROPERTY_SUPERCLASS + " is false";
+      if (shouldBeDisplayed) {
+        strConditionQuery += " and " + WidgetClass.PROPERTY_AVAILABLEINWORKSPACE + " is true";
+      }
+
       final OBQuery<WidgetClass> widgetClassesQry = OBDal.getInstance().createQuery(
-          WidgetClass.class, WidgetClass.PROPERTY_SUPERCLASS + " is false");
+          WidgetClass.class, strConditionQuery);
       for (WidgetClass widgetClass : widgetClassesQry.list()) {
         if (isAccessible(widgetClass, roleId)) {
           final WidgetProvider widgetProvider = myOBUtils.getWidgetProvider(widgetClass);
@@ -319,7 +314,7 @@ public class MyOpenbravoComponent extends BaseTemplateComponent {
       roleId = OBContext.getOBContext().getRole().getId();
     }
     for (WidgetClassAccess widgetClassAccess : widgetClass.getOBKMOWidgetClassAccessList()) {
-      if (DalUtil.getId(widgetClassAccess.getRole()).equals(roleId)) {
+      if (widgetClassAccess.getRole().getId().equals(roleId)) {
         return true;
       }
     }

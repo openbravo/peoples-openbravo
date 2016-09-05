@@ -9242,6 +9242,7 @@ left join sol.attributeSetValue as at]]></HQLQUERY>
 <!--1B19E761F8E24E00B5FBF2C22082A006-->  <CLASSNAME><![CDATA[ImportEntryArchive]]></CLASSNAME>
 <!--1B19E761F8E24E00B5FBF2C22082A006-->  <ISVIEW><![CDATA[N]]></ISVIEW>
 <!--1B19E761F8E24E00B5FBF2C22082A006-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
+<!--1B19E761F8E24E00B5FBF2C22082A006-->  <AD_WINDOW_ID><![CDATA[F88B1280DE564BDBB1D80D159F0D2889]]></AD_WINDOW_ID>
 <!--1B19E761F8E24E00B5FBF2C22082A006-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
 <!--1B19E761F8E24E00B5FBF2C22082A006-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
 <!--1B19E761F8E24E00B5FBF2C22082A006-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
@@ -11966,6 +11967,7 @@ group by  coalesce(lcm.id, lcc.id), lcc, lct.name, lcc.amount, lcc.currency.iSOC
 <!--C2968EF014C146B99A0C136BA9D6331F-->  <CLASSNAME><![CDATA[ImportEntry]]></CLASSNAME>
 <!--C2968EF014C146B99A0C136BA9D6331F-->  <ISVIEW><![CDATA[N]]></ISVIEW>
 <!--C2968EF014C146B99A0C136BA9D6331F-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
+<!--C2968EF014C146B99A0C136BA9D6331F-->  <AD_WINDOW_ID><![CDATA[17F3B5BC762145B9AAD2F6483BC12CF4]]></AD_WINDOW_ID>
 <!--C2968EF014C146B99A0C136BA9D6331F-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
 <!--C2968EF014C146B99A0C136BA9D6331F-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
 <!--C2968EF014C146B99A0C136BA9D6331F-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
@@ -12096,16 +12098,16 @@ iol.uOM as uOM, iol.id as goodsShipmentLine, iol.movementQuantity as movementQua
 iol.shipmentReceipt.businessPartner as businessPartner, iol.shipmentReceipt.documentNo as shipmentNumber,
 iol.shipmentReceipt.movementDate as movementDate,  attributeSetValue as attributeSetValue,
 (@returnedOthersLeftClause@)*(-1) as returnQtyOtherRM,
-(case when (select ('Y') from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol) is null then false else true end) as obSelected,
+(case when (select ('Y') from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine.id = iol) is null then false else true end) as obSelected,
 (@returnedLeftClause@)*(-1) as returned,
-(select ol.returnReason from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol) as returnReason,
-coalesce((select ol.tax from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol) ,
+(select ol.returnReason from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine.id = iol) as returnReason,
+coalesce((select ol.tax.id from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine.id = iol) ,
 @taxSubQuery@) as tax,
 (case when @priceIncludeTaxSubQuery@ = true then
- coalesce((select ol.@unitPriceProperty@ from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol), 
+ coalesce((select ol.@unitPriceProperty@ from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine.id = iol), 
           @grossUnitPriceSubQuery@)
 else 
- coalesce((select ol.@unitPriceProperty@ from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol), 
+ coalesce((select ol.@unitPriceProperty@ from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine.id = iol), 
           @unitPriceSubQuery@)
 end) as unitPrice,
 @orderNoSubQuery@ as orderNo

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,10 +28,10 @@ import java.sql.Statement;
 import java.util.Properties;
 
 import org.openbravo.base.session.OBPropertiesProvider;
-import org.openbravo.base.session.SessionFactoryController;
-import org.openbravo.dal.core.DalSessionFactory;
+import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.database.SessionInfo;
 import org.openbravo.exception.NoConnectionAvailableException;
 
 /**
@@ -108,13 +108,13 @@ public class DalConnectionProvider implements ConnectionProvider {
   }
 
   public Connection getTransactionConnection() throws NoConnectionAvailableException, SQLException {
-    Connection conn = ((DalSessionFactory) SessionFactoryController.getInstance()
-        .getSessionFactory()).getConnectionProvider().getConnection();
+    Connection conn = SessionHandler.getInstance().getNewConnection();
 
     if (conn == null) {
-      throw new NoConnectionAvailableException("Couldn´t get an available connection");
+      throw new NoConnectionAvailableException("Couldn't get an available connection");
     }
     conn.setAutoCommit(false);
+    SessionInfo.setDBSessionInfo(conn);
     return conn;
   }
 

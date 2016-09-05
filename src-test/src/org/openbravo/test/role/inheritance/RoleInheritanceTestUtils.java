@@ -28,7 +28,6 @@ import org.openbravo.client.application.OBUIAPPViewImplementation;
 import org.openbravo.client.application.ViewRoleAccess;
 import org.openbravo.client.myob.WidgetClass;
 import org.openbravo.client.myob.WidgetClassAccess;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.access.FieldAccess;
@@ -1179,7 +1178,7 @@ public class RoleInheritanceTestUtils {
     int i = 0;
     for (RoleOrganization ro : list) {
       result[i] = ro.getOrganization().getName();
-      result[i + 1] = ro.getInheritedFrom() != null ? (String) DalUtil.getId(ro.getInheritedFrom())
+      result[i + 1] = ro.getInheritedFrom() != null ? ro.getInheritedFrom().getId()
           : "";
       i += 2;
     }
@@ -1196,7 +1195,7 @@ public class RoleInheritanceTestUtils {
     int i = 0;
     for (WindowAccess wa : list) {
       result[i] = wa.getWindow().getName();
-      result[i + 1] = wa.getInheritedFrom() != null ? (String) DalUtil.getId(wa.getInheritedFrom())
+      result[i + 1] = wa.getInheritedFrom() != null ? wa.getInheritedFrom().getId()
           : "";
       i += 2;
     }
@@ -1223,7 +1222,7 @@ public class RoleInheritanceTestUtils {
     int i = 0;
     for (TabAccess ta : list) {
       result[i] = ta.getTab().getName();
-      result[i + 1] = ta.getInheritedFrom() != null ? (String) DalUtil.getId(ta.getInheritedFrom())
+      result[i + 1] = ta.getInheritedFrom() != null ? ta.getInheritedFrom().getId()
           : "";
       i += 2;
     }
@@ -1265,7 +1264,7 @@ public class RoleInheritanceTestUtils {
     int i = 0;
     for (FieldAccess fa : list) {
       result[i] = fa.getField().getName();
-      result[i + 1] = fa.getInheritedFrom() != null ? (String) DalUtil.getId(fa.getInheritedFrom())
+      result[i + 1] = fa.getInheritedFrom() != null ? fa.getInheritedFrom().getId()
           : "";
       i += 2;
     }
@@ -1284,7 +1283,7 @@ public class RoleInheritanceTestUtils {
     int i = 0;
     for (org.openbravo.model.ad.access.ProcessAccess pa : list) {
       result[i] = pa.getProcess().getName();
-      result[i + 1] = pa.getInheritedFrom() != null ? (String) DalUtil.getId(pa.getInheritedFrom())
+      result[i + 1] = pa.getInheritedFrom() != null ? pa.getInheritedFrom().getId()
           : "";
       i += 2;
     }
@@ -1300,7 +1299,7 @@ public class RoleInheritanceTestUtils {
     int i = 0;
     for (FormAccess fa : list) {
       result[i] = fa.getSpecialForm().getName();
-      result[i + 1] = fa.getInheritedFrom() != null ? (String) DalUtil.getId(fa.getInheritedFrom())
+      result[i + 1] = fa.getInheritedFrom() != null ? fa.getInheritedFrom().getId()
           : "";
       i += 2;
     }
@@ -1318,7 +1317,7 @@ public class RoleInheritanceTestUtils {
     int i = 0;
     for (WidgetClassAccess wa : list) {
       result[i] = wa.getWidgetClass().getWidgetTitle();
-      result[i + 1] = wa.getInheritedFrom() != null ? (String) DalUtil.getId(wa.getInheritedFrom())
+      result[i + 1] = wa.getInheritedFrom() != null ? wa.getInheritedFrom().getId()
           : "";
       i += 2;
     }
@@ -1336,7 +1335,7 @@ public class RoleInheritanceTestUtils {
     int i = 0;
     for (ViewRoleAccess va : list) {
       result[i] = va.getViewImplementation().getName();
-      result[i + 1] = va.getInheritedFrom() != null ? (String) DalUtil.getId(va.getInheritedFrom())
+      result[i + 1] = va.getInheritedFrom() != null ? va.getInheritedFrom().getId()
           : "";
       i += 2;
     }
@@ -1355,7 +1354,7 @@ public class RoleInheritanceTestUtils {
     int i = 0;
     for (org.openbravo.client.application.ProcessAccess pa : list) {
       result[i] = pa.getObuiappProcess().getName();
-      result[i + 1] = pa.getInheritedFrom() != null ? (String) DalUtil.getId(pa.getInheritedFrom())
+      result[i + 1] = pa.getInheritedFrom() != null ? pa.getInheritedFrom().getId()
           : "";
       i += 2;
     }
@@ -1372,7 +1371,7 @@ public class RoleInheritanceTestUtils {
     int i = 0;
     for (TableAccess ta : list) {
       result[i] = ta.getTable().getDBTableName();
-      result[i + 1] = ta.getInheritedFrom() != null ? (String) DalUtil.getId(ta.getInheritedFrom())
+      result[i + 1] = ta.getInheritedFrom() != null ? ta.getInheritedFrom().getId()
           : "";
       i += 2;
     }
@@ -1389,7 +1388,7 @@ public class RoleInheritanceTestUtils {
     int i = 0;
     for (AlertRecipient ar : list) {
       result[i] = ar.getAlertRule().getName();
-      result[i + 1] = ar.getInheritedFrom() != null ? (String) DalUtil.getId(ar.getInheritedFrom())
+      result[i + 1] = ar.getInheritedFrom() != null ? ar.getInheritedFrom().getId()
           : "";
       i += 2;
     }
@@ -1405,7 +1404,7 @@ public class RoleInheritanceTestUtils {
     int i = 0;
     for (Preference p : list) {
       result[i] = p.getProperty();
-      result[i + 1] = p.getInheritedFrom() != null ? (String) DalUtil.getId(p.getInheritedFrom())
+      result[i + 1] = p.getInheritedFrom() != null ? p.getInheritedFrom().getId()
           : "";
       i += 2;
     }

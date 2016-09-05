@@ -19,9 +19,18 @@
 -->
 
 <SqlClass name="DatabaseDecimalNumberCheckData" package="org.openbravo.buildvalidation">
-  <SqlMethod name="checkToNumber" type="preparedStatement" return="String">
+  <SqlMethod name="checkToNumberPG" type="preparedStatement" return="String">
       <Sql><![CDATA[
          SELECT TO_NUMBER(?, 'S99D99') as NUM
+         FROM DUAL
+          ]]>
+      </Sql>
+      <Parameter name="number"/>
+  </SqlMethod>
+
+  <SqlMethod name="checkToNumberORA" type="preparedStatement" return="String">
+      <Sql><![CDATA[
+         SELECT TO_NUMBER(?) as NUM
          FROM DUAL
           ]]>
       </Sql>

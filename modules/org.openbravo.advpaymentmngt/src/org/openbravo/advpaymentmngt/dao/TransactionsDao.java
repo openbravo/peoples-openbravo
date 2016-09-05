@@ -33,7 +33,6 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.session.OBPropertiesProvider;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -152,7 +151,7 @@ public class TransactionsDao {
         .getSession()
         .createQuery(
             "select max(f.lineNo) as maxLineno from FIN_Finacc_Transaction as f where account.id=?");
-    query.setString(0, (String) DalUtil.getId(financialAccount));
+    query.setString(0, financialAccount.getId());
     for (Object obj : query.list()) {
       if (obj != null) {
         return (Long) obj;

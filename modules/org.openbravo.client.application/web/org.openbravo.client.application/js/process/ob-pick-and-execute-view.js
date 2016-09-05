@@ -133,7 +133,9 @@ isc.OBPickAndExecuteView.addProperties({
     for (i = 0; i < len; i++) {
       if (result[i].editorProperties && result[i].editorProperties.disabled) {
         result[i].canEdit = false;
-        result[i].readOnlyEditorType = 'OBTextItem';
+        if (!result[i].readOnlyEditorType) {
+          result[i].readOnlyEditorType = 'OBTextItem';
+        }
       } else {
         result[i].validateOnExit = true;
       }

@@ -29,7 +29,6 @@ import org.junit.Test;
 import org.openbravo.base.weld.test.ParameterCdiTest;
 import org.openbravo.base.weld.test.ParameterCdiTestRule;
 import org.openbravo.base.weld.test.WeldBaseTest;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.access.Role;
@@ -89,11 +88,11 @@ public class AccessPropagation extends WeldBaseTest {
       // Create roles
       role = RoleInheritanceTestUtils.createRole("role", RoleInheritanceTestUtils.CLIENT_ID,
           RoleInheritanceTestUtils.ASTERISK_ORG_ID, " C", true, false);
-      String roleId = (String) DalUtil.getId(role);
+      String roleId = role.getId();
       template = RoleInheritanceTestUtils.createRole("template",
           RoleInheritanceTestUtils.CLIENT_ID, RoleInheritanceTestUtils.ASTERISK_ORG_ID, " C", true,
           true);
-      String templateId = (String) DalUtil.getId(template);
+      String templateId = template.getId();
 
       // Add inheritance
       RoleInheritanceTestUtils.addInheritance(role, template, new Long(10));

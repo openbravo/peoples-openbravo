@@ -174,7 +174,8 @@ public class CostAdjustmentUtils {
     where.append("   and trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " >= :trxqty");
     where.append(" ))");
 
-    where.append("   and trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " > :movementDate");
+    where.append("   and trunc(trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE
+        + ") > :movementDate");
     where.append("   and trx." + MaterialTransaction.PROPERTY_PRODUCT + ".id = :productId");
     where.append("   and trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
 
@@ -389,6 +390,12 @@ public class CostAdjustmentUtils {
     CostingRule costingRule = CostingUtils.getCostDimensionRule(costorg,
         trx.getTransactionProcessDate());
 
+    boolean existsCumulatedStockOnTrxDate = costing != null
+        && costing.getTotalMovementQuantity() != null
+        && costing.getInventoryTransaction() != null
+        && (!costingRule.isBackdatedTransactionsFixed() || trx.getMovementDate().after(
+            costing.getInventoryTransaction().getMovementDate()));
+
     StringBuffer select = new StringBuffer();
     select
         .append(" select sum(trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + ") as stock");
@@ -403,10 +410,7 @@ public class CostAdjustmentUtils {
     select.append("   and trx." + MaterialTransaction.PROPERTY_PRODUCT + " = :product");
     // Include only transactions that have its cost calculated. Should be all.
     select.append("   and trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = true");
-    if (costing != null
-        && costing.getTotalMovementQuantity() != null
-        && (!costingRule.isBackdatedTransactionsFixed() || trx.getMovementDate().after(
-            costing.getInventoryTransaction().getMovementDate()))) {
+    if (existsCumulatedStockOnTrxDate) {
       select.append(" and (trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
           + " > :dateFrom");
       select.append(" or (trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
@@ -483,10 +487,7 @@ public class CostAdjustmentUtils {
     trxQry.setParameter("trxqty", trx.getMovementQuantity());
     trxQry.setParameter("trxid", trx.getId());
 
-    if (costing != null
-        && costing.getTotalMovementQuantity() != null
-        && (!costingRule.isBackdatedTransactionsFixed() || trx.getMovementDate().after(
-            costing.getInventoryTransaction().getMovementDate()))) {
+    if (existsCumulatedStockOnTrxDate) {
       trxQry.setParameter("dateFrom", costing.getStartingDate());
     }
 
@@ -503,10 +504,7 @@ public class CostAdjustmentUtils {
     if (stock == null) {
       stock = BigDecimal.ZERO;
     }
-    if (costing != null
-        && costing.getTotalMovementQuantity() != null
-        && (!costingRule.isBackdatedTransactionsFixed() || trx.getMovementDate().after(
-            costing.getInventoryTransaction().getMovementDate()))) {
+    if (existsCumulatedStockOnTrxDate) {
       stock = stock.add(costing.getTotalMovementQuantity());
     }
     return stock;
@@ -699,6 +697,12 @@ public class CostAdjustmentUtils {
     CostingRule costingRule = CostingUtils.getCostDimensionRule(costorg,
         trx.getTransactionProcessDate());
 
+    boolean existsCumulatedValuationOnTrxDate = costing != null
+        && costing.getTotalStockValuation() != null
+        && costing.getInventoryTransaction() != null
+        && (!costingRule.isBackdatedTransactionsFixed() || trx.getMovementDate().after(
+            costing.getInventoryTransaction().getMovementDate()));
+
     StringBuffer select = new StringBuffer();
     select.append(" select sum(case");
     select.append("     when trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY
@@ -721,10 +725,7 @@ public class CostAdjustmentUtils {
     select.append("  and trx." + MaterialTransaction.PROPERTY_PRODUCT + " = :product");
     // Include only transactions that have its cost calculated
     select.append("  and trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = true");
-    if (costing != null
-        && costing.getTotalStockValuation() != null
-        && (!costingRule.isBackdatedTransactionsFixed() || trx.getMovementDate().after(
-            costing.getInventoryTransaction().getMovementDate()))) {
+    if (existsCumulatedValuationOnTrxDate) {
       select.append(" and (trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
           + " > :dateFrom");
       select.append(" or (trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
@@ -798,10 +799,7 @@ public class CostAdjustmentUtils {
     Query trxQry = OBDal.getInstance().getSession().createQuery(select.toString());
     trxQry.setParameter("refid", MovementTypeRefID);
     trxQry.setParameter("product", trx.getProduct());
-    if (costing != null
-        && costing.getTotalStockValuation() != null
-        && (!costingRule.isBackdatedTransactionsFixed() || trx.getMovementDate().after(
-            costing.getInventoryTransaction().getMovementDate()))) {
+    if (existsCumulatedValuationOnTrxDate) {
       trxQry.setParameter("dateFrom", costing.getStartingDate());
     }
     if (costDimensions.get(CostDimension.Warehouse) != null) {
@@ -838,10 +836,7 @@ public class CostAdjustmentUtils {
       scroll.close();
     }
 
-    if (costing != null
-        && costing.getTotalStockValuation() != null
-        && (!costingRule.isBackdatedTransactionsFixed() || trx.getMovementDate().after(
-            costing.getInventoryTransaction().getMovementDate()))) {
+    if (existsCumulatedValuationOnTrxDate) {
       BigDecimal costingValuedStock = costing.getTotalStockValuation();
       if (!StringUtils.equals(costing.getCurrency().getId(), currency.getId())) {
         costingValuedStock = FinancialUtils.getConvertedAmount(costingValuedStock,

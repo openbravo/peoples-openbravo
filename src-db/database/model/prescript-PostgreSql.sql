@@ -838,7 +838,6 @@ pos integer NOT NULL DEFAULT 0;
 occur_number integer NOT NULL DEFAULT 0;
 temp_str varchar;
 beg integer;
-i integer;
 length integer;
 ss_length integer; BEGIN
     IF ((string IS NULL) OR (string_to_search IS NULL) OR (beg_index IS NULL) OR (occur_index IS NULL)) THEN RETURN 0; END IF;

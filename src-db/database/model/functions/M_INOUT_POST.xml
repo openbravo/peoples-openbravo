@@ -73,7 +73,6 @@
     --
     v_Result NUMBER:=1;
     v_AD_Org_ID VARCHAR2(32);
-    v_Locator_Org_ID VARCHAR2(32);
     v_Warehouse_Org VARCHAR2(32);
     v_AD_Client_ID VARCHAR2(32);
     v_NextNo VARCHAR2(32);
@@ -88,15 +87,11 @@
     v_IsStocked NUMBER;
     v_DoctypeReversed_ID VARCHAR2(32);
     --MODIFIED BY F.IRIAZABAL
-    v_QtyOrder NUMBER;
-    v_ProductUOM NUMBER;
-    v_BreakDown VARCHAR2(60) ;
-    v_ActualQty NUMBER;
-    v_QtyAux NUMBER;
     v_Count NUMBER:=0;
     v_Line VARCHAR2(10) ;
+    v_OrderDocumentNo C_ORDER.DocumentNo%TYPE;
+    v_OrderLineNo C_ORDERLINE.Line%TYPE;
     v_OrderID_old VARCHAR2(32);
-    Cur_MILines RECORD;
     FINISH_PROCESS BOOLEAN:=false;
     v_Aux NUMBER;
     v_isSoTrx CHAR(1);
@@ -353,18 +348,26 @@
         IF (v_Count=0) THEN
           RAISE_APPLICATION_ERROR(-20000, '@NotCorrectOrgDoctypeShipment@') ;
         END IF;
-        SELECT COUNT(*), MAX(M.line)
-        INTO v_Count, v_line
-        FROM M_InOutLine M,
-          M_Product P
-        WHERE M.M_PRODUCT_ID=P.M_PRODUCT_ID
-          AND P.M_ATTRIBUTESET_ID IS NOT NULL
+        SELECT COUNT(*), MAX(M.line), MAX(O.documentno), Max(OL.line)
+        INTO v_Count, v_line, v_OrderDocumentNo, v_OrderLineNo
+        FROM M_InOutLine M
+        JOIN M_Product P
+        ON M.m_product_id = P.m_product_id
+        LEFT JOIN C_OrderLine OL
+        ON M.c_orderline_id = OL.c_orderline_id
+        LEFT JOIN C_Order O
+        ON OL.c_order_id = O.c_order_id
+        WHERE P.M_ATTRIBUTESET_ID IS NOT NULL
           AND (P.ATTRSETVALUETYPE IS NULL OR P.ATTRSETVALUETYPE <> 'F')
           AND (SELECT ISONEATTRSETVALREQUIRED FROM M_ATTRIBUTESET WHERE M_ATTRIBUTESET_ID = P.M_ATTRIBUTESET_ID) = 'Y'
           AND COALESCE(M.M_ATTRIBUTESETINSTANCE_ID, '0') = '0'
           AND M.M_INOUT_ID=v_Record_ID;
-        IF v_Count<>0 THEN
-          RAISE_APPLICATION_ERROR(-20000, '@Inline@'||' '||v_line||' '||'@productWithoutAttributeSet@') ;
+        IF (v_Count <> 0) THEN
+          IF (v_orderDocumentNo IS NULL) THEN
+            RAISE_APPLICATION_ERROR(-20000, '@Inline@'||' '||v_line||' '||'@productWithoutAttributeSet@');
+          ELSE
+            RAISE_APPLICATION_ERROR(-20000, '@Inline@'||' '||v_line||' '||'@productWithoutAttributeSet@'||'. '||'@INS_POREFERENCE@'||' '||v_OrderDocumentNo||' '||'@line@'||' '||v_OrderLineNo);
+          END IF;
         END IF;
         SELECT COUNT(*), MAX(M.line)
         INTO v_Count, v_Line

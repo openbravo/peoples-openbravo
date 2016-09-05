@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2013-2015 Openbravo SLU
+ * All portions are Copyright (C) 2013-2016 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -62,6 +62,8 @@ public class CashVATUtil {
   private static Logger log4j = Logger.getLogger(CashVATUtil.class);
 
   public static final BigDecimal _100 = new BigDecimal("100");
+  /* Defaulted a big value to avoid precision issues */
+  private static final int CASHVAT_PERCENTAGE_PRECISION = 15;
 
   /**
    * Returns the associated legal entity Cash VAT configuration. Useful for sales flows
@@ -262,8 +264,7 @@ public class CashVATUtil {
             final boolean isReversal = invoice.getDocumentType().isReversal();
             final BigDecimal grandTotalAmt = isReversal ? invoice.getGrandTotalAmount().negate()
                 : invoice.getGrandTotalAmount();
-            final int currencyPrecission = invoice.getCurrency().getStandardPrecision().intValue();
-            percentage = amount.multiply(_100).divide(grandTotalAmt, currencyPrecission,
+            percentage = amount.multiply(_100).divide(grandTotalAmt, CASHVAT_PERCENTAGE_PRECISION,
                 RoundingMode.HALF_UP);
           }
 
@@ -489,12 +490,13 @@ public class CashVATUtil {
       String Fact_Acct_Group_ID, DocLineCashVATReady_PaymentTransactionReconciliation line,
       Invoice invoice, final String documentType, final String SeqNo) {
     try {
-      if (invoice.isCashVAT() && !line.getInvoiceTaxCashVAT_V().isEmpty()) {
+      if (invoice.isCashVAT() && !line.getInvoiceTaxCashVAT_V_IDs().isEmpty()) {
         FactLine factLine2 = null;
-        for (final InvoiceTaxCashVAT_V itcv : line.getInvoiceTaxCashVAT_V()) {
+        for (final String itcvId : line.getInvoiceTaxCashVAT_V_IDs()) {
+          InvoiceTaxCashVAT_V itcv = OBDal.getInstance().get(InvoiceTaxCashVAT_V.class, itcvId);
           final TaxRate tax = itcv.getInvoiceTax().getTax();
           Invoice inv = itcv.getInvoiceTax().getInvoice();
-          if (tax.isCashVAT() && inv.equals(invoice)) {
+          if (tax.isCashVAT() && StringUtils.equals(inv.getId(), invoice.getId())) {
             final BigDecimal taxAmt = itcv.getTaxAmount();
             if (taxAmt.compareTo(BigDecimal.ZERO) != 0) {
               final DocTax m_tax = new DocTax(tax.getId(), tax.getName(), tax.getRate().toString(),

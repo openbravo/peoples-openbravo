@@ -29,7 +29,6 @@ import org.junit.Test;
 import org.openbravo.base.weld.test.ParameterCdiTest;
 import org.openbravo.base.weld.test.ParameterCdiTestRule;
 import org.openbravo.base.weld.test.WeldBaseTest;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.access.Role;
@@ -91,19 +90,19 @@ public class DeletedAccessPropagation extends WeldBaseTest {
       // Create roles
       role = RoleInheritanceTestUtils.createRole("role", RoleInheritanceTestUtils.CLIENT_ID,
           RoleInheritanceTestUtils.ASTERISK_ORG_ID, " C", true, false);
-      String roleId = (String) DalUtil.getId(role);
+      String roleId = role.getId();
       template1 = RoleInheritanceTestUtils.createRole("template1",
           RoleInheritanceTestUtils.CLIENT_ID, RoleInheritanceTestUtils.ASTERISK_ORG_ID, " C", true,
           true);
-      String template1Id = (String) DalUtil.getId(template1);
+      String template1Id = template1.getId();
       template2 = RoleInheritanceTestUtils.createRole("template2",
           RoleInheritanceTestUtils.CLIENT_ID, RoleInheritanceTestUtils.ASTERISK_ORG_ID, " C", true,
           true);
-      String template2Id = (String) DalUtil.getId(template2);
+      String template2Id = template2.getId();
       template3 = RoleInheritanceTestUtils.createRole("template3",
           RoleInheritanceTestUtils.CLIENT_ID, RoleInheritanceTestUtils.ASTERISK_ORG_ID, " C", true,
           true);
-      String template3Id = (String) DalUtil.getId(template3);
+      String template3Id = template3.getId();
 
       List<String> accesses = ACCESSES.get(testCounter);
       // Add accesses

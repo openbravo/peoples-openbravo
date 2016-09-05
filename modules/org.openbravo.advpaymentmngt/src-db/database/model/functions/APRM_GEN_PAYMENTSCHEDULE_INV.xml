@@ -61,8 +61,6 @@ v_reversalinvoice_id VARCHAR2(32);
 v_delete_paymentplan BOOLEAN := FALSE;
 v_Financial_Account_ID FIN_FINANCIAL_ACCOUNT.FIN_FINANCIAL_ACCOUNT_ID%TYPE;
 v_Financial_Account_Org VARCHAR2(32);
-v_CreatePayment CHAR(1):='N';
-v_CreateFinTransaction CHAR(1):='N';
 v_PaymentDocType_ID FIN_PAYMENT.C_DOCTYPE_ID%TYPE;
 v_PaymentDocumentNo FIN_PAYMENT.DOCUMENTNO%TYPE;
 v_FIN_PAYMENT_ID FIN_PAYMENT.FIN_PAYMENT_ID%TYPE;
@@ -93,7 +91,6 @@ cur_finaccpaymentmethod RECORD;
 cur_PaymentScheduleOrder RECORD;
 cur_linktopayment_scheddetails RECORD;
 cur_update_scheddetails RECORD;
-cur_invoicepaid RECORD;
 
 v_paymentamt NUMBER:=0;
 v_depositamt NUMBER:=0;

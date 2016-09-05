@@ -56,7 +56,6 @@
   v_DocTypeTarget_ID VARCHAR2(32);
   v_DocSubTypeSO VARCHAR(60) ;
   v_DocSubTypeSOTarget VARCHAR(60) ;
-  v_DocBaseTypeTarget VARCHAR(60);
   v_IsReturnDocType CHAR(1);
   v_IsBinding CHAR(1):='Y';
   v_istaxincluded CHAR(1);
@@ -77,7 +76,6 @@
   v_dateCash DATE;
   v_Bankstatementline_ID VARCHAR2(32);
   --Finish added by P.Sarobe
-  v_AuxCashLine_ID VARCHAR2(32);
   v_CashLine_ID VARCHAR2(32);
   v_ispaid CHAR(1);
   v_Settlement_Cancel_ID VARCHAR2(32);
@@ -91,7 +89,6 @@
   v_Multiplier NUMBER:=1;
   v_Date DATE;
   v_WarehouseName VARCHAR2(60) ;
-  v_CashProcessed NUMBER;
   v_count NUMBER;
   v_isSoTrx CHAR(1) ;
   v_Aux NUMBER;
@@ -148,6 +145,9 @@
       LOOP
         v_Record_ID:=Cur_Parameter.Record_ID;
         v_User:=Cur_Parameter.AD_User_ID;
+        IF (Cur_Parameter.ParameterName = 'recalculateDiscounts') THEN
+          v_recalculateDiscounts := Cur_Parameter.P_String;
+        END IF;
       END LOOP; -- Get Parameter
     ELSE
       v_Record_ID:=p_Order_ID;
@@ -1111,8 +1111,6 @@
       DECLARE
         -- Order Lines with non-stocked BOMs
         CUR_BOM_Line RECORD;
-        -- BOM Product List
-        CountNo NUMBER;
       BEGIN
         FOR CUR_BOM_Line IN
           (SELECT l.c_orderline_id

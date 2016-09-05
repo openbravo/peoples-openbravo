@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -29,7 +29,6 @@ import java.util.Set;
 import org.hibernate.Query;
 import org.openbravo.base.provider.OBNotSingleton;
 import org.openbravo.base.util.Check;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.service.OBDal;
@@ -77,25 +76,27 @@ public class OrganizationStructureProvider implements OBNotSingleton {
     }
 
     // read all trees of all clients, bypass DAL to prevent security checks
-    final String qryStr = "select t from " + Tree.class.getName() + " t where table.id='"
+    final String qryStr = "select t.id from " + Tree.class.getName() + " t where table.id='"
         + AD_ORG_TABLE_ID + "' and client.id='" + getClientId() + "'";
     final Query qry = SessionHandler.getInstance().createQuery(qryStr);
     @SuppressWarnings("unchecked")
-    final List<Tree> ts = qry.list();
-    final List<TreeNode> treeNodes = new ArrayList<TreeNode>();
-    for (final Tree t : ts) {
-      final String nodeQryStr = "select tn from " + TreeNode.class.getName()
-          + " tn where tn.tree.id='" + t.getId() + "'";
+    final List<String> ts = qry.list();
+    final List<Object[]> treeNodes = new ArrayList<Object[]>();
+    for (final String treeId : ts) {
+      final String nodeQryStr = "select tn.node, tn.reportSet from " + TreeNode.class.getName()
+          + " tn where tn.tree.id='" + treeId + "'";
       final Query nodeQry = SessionHandler.getInstance().createQuery(nodeQryStr);
       @SuppressWarnings("unchecked")
-      final List<TreeNode> tns = nodeQry.list();
+      final List<Object[]> tns = nodeQry.list();
       treeNodes.addAll(tns);
     }
 
     final List<OrgNode> orgNodes = new ArrayList<OrgNode>(treeNodes.size());
-    for (final TreeNode tn : treeNodes) {
+    for (final Object[] tn : treeNodes) {
       final OrgNode on = new OrgNode();
-      on.setTreeNode(tn);
+      String nodeId = (String) tn[0];
+      String parentId = (String) tn[1];
+      on.setTreeNodeData(nodeId, parentId);
       orgNodes.add(on);
     }
 
@@ -105,18 +106,17 @@ public class OrganizationStructureProvider implements OBNotSingleton {
 
     for (final OrgNode on : orgNodes) {
       if (on.getParent() != null) {
-        parentByOrganizationID.put(on.getTreeNode().getNode(), on.getParent().getTreeNode()
-            .getNode());
+        parentByOrganizationID.put(on.getNodeId(), on.getParent().getNodeId());
       }
     }
 
     for (final OrgNode on : orgNodes) {
-      naturalTreesByOrgID.put(on.getTreeNode().getNode(), on.getNaturalTree());
+      naturalTreesByOrgID.put(on.getNodeId(), on.getNaturalTree());
       if (on.getChildren() != null) {
         Set<String> os = new HashSet<String>();
         for (OrgNode o : on.getChildren())
-          os.add(o.getTreeNode().getNode());
-        childByOrganizationID.put(on.getTreeNode().getNode(), os);
+          os.add(o.getNodeId());
+        childByOrganizationID.put(on.getNodeId(), os);
       }
     }
     isInitialized = true;
@@ -152,8 +152,8 @@ public class OrganizationStructureProvider implements OBNotSingleton {
    */
   public boolean isInNaturalTree(Organization org1, Organization org2) {
     initialize();
-    final String id1 = (String) DalUtil.getId(org1);
-    final String id2 = (String) DalUtil.getId(org2);
+    final String id1 = org1.getId();
+    final String id2 = org2.getId();
 
     // org 0 is in everyones natural tree, and the other way around
     if (id2 != null && id2.equals("0")) {
@@ -293,7 +293,8 @@ public class OrganizationStructureProvider implements OBNotSingleton {
 
   class OrgNode {
 
-    private TreeNode treeNode;
+    private String nodeId;
+    private String parentNodeId;
     private OrgNode parent;
     private List<OrgNode> children = new ArrayList<OrgNode>();
 
@@ -306,11 +307,11 @@ public class OrganizationStructureProvider implements OBNotSingleton {
     }
 
     public void resolve(List<OrgNode> nodes) {
-      if (treeNode.getReportSet() == null) {
+      if (parentNodeId == null) {
         return;
       }
       for (final OrgNode on : nodes) {
-        if (on.getTreeNode().getNode().equals(treeNode.getReportSet())) {
+        if (on.getNodeId().equals(parentNodeId)) {
           on.addChild(this);
           setParent(on);
           break;
@@ -321,7 +322,7 @@ public class OrganizationStructureProvider implements OBNotSingleton {
     public Set<String> getNaturalTree() {
       if (naturalTree == null) {
         naturalTree = new HashSet<String>();
-        naturalTree.add(getTreeNode().getNode());
+        naturalTree.add(getNodeId());
         if (getParent() != null) {
           getParent().getParentPath(naturalTree);
         }
@@ -335,7 +336,7 @@ public class OrganizationStructureProvider implements OBNotSingleton {
     public void getParentPath(Set<String> theNaturalTree) {
       if (naturalTreeParent == null) {
         naturalTreeParent = new HashSet<String>();
-        naturalTreeParent.add(getTreeNode().getNode());
+        naturalTreeParent.add(getNodeId());
         if (getParent() != null) {
           getParent().getParentPath(naturalTreeParent);
         }
@@ -346,7 +347,7 @@ public class OrganizationStructureProvider implements OBNotSingleton {
     public void getChildPath(Set<String> theNaturalTree) {
       if (naturalTreeChildren == null) {
         naturalTreeChildren = new HashSet<String>();
-        naturalTreeChildren.add(getTreeNode().getNode());
+        naturalTreeChildren.add(getNodeId());
         for (final OrgNode child : getChildren()) {
           child.getChildPath(naturalTreeChildren);
         }
@@ -354,12 +355,17 @@ public class OrganizationStructureProvider implements OBNotSingleton {
       theNaturalTree.addAll(naturalTreeChildren);
     }
 
-    public TreeNode getTreeNode() {
-      return treeNode;
+    public String getNodeId() {
+      return nodeId;
     }
 
-    public void setTreeNode(TreeNode treeNode) {
-      this.treeNode = treeNode;
+    public String getParentNodeId() {
+      return parentNodeId;
+    }
+
+    public void setTreeNodeData(String nodeId, String parentNodeId) {
+      this.nodeId = nodeId;
+      this.parentNodeId = parentNodeId;
     }
 
     public OrgNode getParent() {

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -106,21 +106,19 @@ public class DataSourceServiceProvider {
   }
 
   private DataSource getDataSourceFromDataSourceName(String dataSourceName) {
-    DataSource dataSource = null;
     final OBCriteria<DataSource> obCriteria = OBDal.getInstance().createCriteria(DataSource.class);
     obCriteria.add(Restrictions.eq(DataSource.PROPERTY_NAME, dataSourceName));
-    if (!obCriteria.list().isEmpty()) {
-      dataSource = obCriteria.list().get(0);
-    }
-    return dataSource;
+    // obserds_datasource.name has unique constraint
+    return (DataSource) obCriteria.uniqueResult();
   }
 
   private DataSource getDataSourceFromTableName(String tableName) {
     DataSource dataSource = null;
     final OBCriteria<Table> qTable = OBDal.getInstance().createCriteria(Table.class);
     qTable.add(Restrictions.eq(Table.PROPERTY_NAME, tableName));
-    if (!qTable.list().isEmpty()) {
-      Table table = qTable.list().get(0);
+    // ad_table.name is unique
+    Table table = (Table) qTable.uniqueResult();
+    if (table != null) {
       if (ApplicationConstants.DATASOURCEBASEDTABLE.equals(table.getDataOriginType())) {
         // If the table is based on a manual datasource, return that particular datasource
         dataSource = table.getObserdsDatasource();

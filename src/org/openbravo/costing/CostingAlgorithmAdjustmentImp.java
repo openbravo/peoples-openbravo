@@ -32,7 +32,6 @@ import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.costing.CostingAlgorithm.CostDimension;
 import org.openbravo.costing.CostingServer.TrxType;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -85,7 +84,7 @@ public abstract class CostingAlgorithmAdjustmentImp {
    */
   protected void init(CostAdjustmentLine costAdjLine) {
     strCostAdjLineId = costAdjLine.getId();
-    strCostAdjId = (String) DalUtil.getId(costAdjLine.getCostAdjustment());
+    strCostAdjId = costAdjLine.getCostAdjustment().getId();
     MaterialTransaction transaction = costAdjLine.getInventoryTransaction();
     strTransactionId = transaction.getId();
     isManufacturingProduct = transaction.getProduct().isProduction();

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2013 Openbravo SLU
+ * All portions are Copyright (C) 2010-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -80,10 +80,20 @@
       for (i = 0; i < length; i++) {
         OB.AlertManager.listeners[i](rpcResponse, data, rpcRequest);
       }
+      OB.AlertManager.schedule();
+    },
+
+    schedule: function () {
       isc.Timer.setTimeout(OB.AlertManager.call, OB.AlertManager.delay);
     },
 
     call: function () {
+      if (OB.User && OB.User.loggingIn) {
+        // do not perform requests while logging in
+        OB.AlertManager.schedule();
+        return;
+      }
+
       OB.RemoteCallManager.call('org.openbravo.client.application.AlertActionHandler', {}, {
         IsAjaxCall: '1',
         ignoreForSessionTimeout: '1'

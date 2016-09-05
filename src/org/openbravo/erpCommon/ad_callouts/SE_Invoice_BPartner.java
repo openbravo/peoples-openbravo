@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2015 Openbravo SLU
+ * All portions are Copyright (C) 2001-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -405,7 +405,8 @@ public class SE_Invoice_BPartner extends HttpSecureAppServlet {
           obc.add(Restrictions.in(FinAccPaymentMethod.PROPERTY_ORGANIZATION + ".id", OBContext
               .getOBContext().getOrganizationStructureProvider().getNaturalTree(strOrgId)));
 
-          if (obc.list() == null || obc.list().size() == 0) {
+          // filter is on unique constraint so list().size() <=1 always
+          if (obc.uniqueResult() == null) {
             message = Utility.messageBD(this, "PaymentmethodNotbelongsFinAccount",
                 vars.getLanguage());
           }

@@ -25,7 +25,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2009 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2001-2016 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -41,8 +41,6 @@
   v_ResultStr VARCHAR2(2000):='';
   v_Message VARCHAR2(2000):='';
   v_Record_ID VARCHAR2(32);
-  v_IsProcessing CHAR(1) ;
-  v_IsProcessed VARCHAR(60) ;
   v_myResult NUMBER:=1; -- Success
   -- Parameter
   TYPE RECORD IS REF CURSOR;
@@ -51,8 +49,6 @@
     v_C_BP_Group_ID VARCHAR2(32);
     v_C_AcctSchema_ID VARCHAR2(32);
     -- A Group can only have one client
-    Cur_Acct RECORD;
-    Cur_BPartner RECORD;
     Cur_BP RECORD;
     --
     v_Deleted NUMBER:=0;

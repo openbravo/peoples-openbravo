@@ -132,7 +132,6 @@
   v_QtyOrder NUMBER;
   v_ProductUOM VARCHAR2(32);
   v_ActualQty NUMBER;
-  v_QtyAux NUMBER;
   --
   v_lines NUMBER:=0;
   v_lines_per_orderline NUMBER:=0;

@@ -47,7 +47,7 @@ public class AccountTreeDatasourceService extends ADTreeDatasourceService {
   protected Map<String, Object> getDatasourceSpecificParams(Map<String, String> parameters) {
     Map<String, Object> datasourceParams = new HashMap<String, Object>();
     String accountTreeId = parameters.get(FINANCIALMGMTELEMENT_ID);
-    if (accountTreeId == null) {
+    if (accountTreeId == null || "null".equals(accountTreeId)) {
       return datasourceParams;
     }
     Element element = OBDal.getInstance().get(Element.class, accountTreeId);

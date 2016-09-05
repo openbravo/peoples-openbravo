@@ -32,7 +32,6 @@ import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.session.SessionFactoryController;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -517,7 +516,7 @@ public class MenuManager implements Serializable {
     public void setMenu(Menu menu, String userLanguageId) {
       this.menu = menu;
       for (MenuTrl menuTrl : menu.getADMenuTrlList()) {
-        final String trlLanguageId = (String) DalUtil.getId(menuTrl.getLanguage());
+        final String trlLanguageId = menuTrl.getLanguage().getId();
         if (trlLanguageId.equals(userLanguageId)) {
           setLabel(menuTrl.getName());
         }
@@ -543,7 +542,7 @@ public class MenuManager implements Serializable {
       if (isProcess()) {
         // done via isModelProcess(String) as is called from different request and getProcess() is
         // not initialized
-        String processId = (String) DalUtil.getId(getMenu().getProcess());
+        String processId = getMenu().getProcess().getId();
         return Utility.isModalProcess(processId);
       }
       return true;

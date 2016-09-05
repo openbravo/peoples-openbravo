@@ -546,7 +546,7 @@ public class OBContext implements OBNotSingleton {
   private Language language;
   private boolean translationInstalled;
   private Warehouse warehouse;
-  private List<Organization> organizationList;
+  private List<String> organizationList;
   private String[] readableOrganizations;
   private String[] readableClients;
   private Set<String> writableOrganizations;
@@ -613,9 +613,9 @@ public class OBContext implements OBNotSingleton {
       writableOrganizations.add("0");
     }
 
-    final List<Organization> os = getOrganizationList(role);
-    for (final Organization o : os) {
-      writableOrganizations.add(o.getId());
+    final List<String> os = getOrganizationList(role);
+    for (final String o : os) {
+      writableOrganizations.add(o);
     }
 
     if (localUserLevel.equals("O")) { // remove *
@@ -625,31 +625,30 @@ public class OBContext implements OBNotSingleton {
   }
 
   @SuppressWarnings("unchecked")
-  private List<Organization> getOrganizationList(Role thisRole) {
+  private List<String> getOrganizationList(Role thisRole) {
     if (organizationList != null) {
-      return new ArrayList<Organization>(organizationList);
+      return new ArrayList<String>(organizationList);
     }
     final Query qry = SessionHandler.getInstance().createQuery(
-        "select o from " + Organization.class.getName() + " o, " + RoleOrganization.class.getName()
-            + " roa where o." + Organization.PROPERTY_ID + "=roa."
-            + RoleOrganization.PROPERTY_ORGANIZATION + "." + Organization.PROPERTY_ID + " and roa."
-            + RoleOrganization.PROPERTY_ROLE + "." + Organization.PROPERTY_ID + "='"
+        "select o.id from " + Organization.class.getName() + " o, "
+            + RoleOrganization.class.getName() + " roa where o." + Organization.PROPERTY_ID
+            + "=roa." + RoleOrganization.PROPERTY_ORGANIZATION + "." + Organization.PROPERTY_ID
+            + " and roa." + RoleOrganization.PROPERTY_ROLE + "." + Organization.PROPERTY_ID + "='"
             + thisRole.getId() + "' and roa." + RoleOrganization.PROPERTY_ACTIVE + "='Y' and o."
             + Organization.PROPERTY_ACTIVE + "='Y'");
     organizationList = qry.list();
     for (final String orgId : additionalWritableOrganizations) {
-      final Organization org = OBDal.getInstance().get(Organization.class, orgId);
-      if (!organizationList.contains(org)) {
-        organizationList.add(org);
+      if (!organizationList.contains(orgId)) {
+        organizationList.add(orgId);
       }
     }
-    return new ArrayList<Organization>(organizationList);
+    return new ArrayList<String>(organizationList);
   }
 
   @SuppressWarnings("unchecked")
-  private List<Organization> getOrganizations(Client client) {
+  private List<String> getOrganizations(Client client) {
     final Query qry = SessionHandler.getInstance().createQuery(
-        "select o from " + Organization.class.getName() + " o where " + "o."
+        "select o.id from " + Organization.class.getName() + " o where " + "o."
             + Organization.PROPERTY_CLIENT + "=? and o." + Organization.PROPERTY_ACTIVE + "='Y'");
     qry.setParameter(0, client);
     organizationList = qry.list();
@@ -657,14 +656,14 @@ public class OBContext implements OBNotSingleton {
   }
 
   private void setReadableOrganizations(Role role) {
-    final List<Organization> os = getOrganizationList(role);
+    final List<String> os = getOrganizationList(role);
     final Set<String> readableOrgs = new HashSet<String>();
-    for (final Organization o : os) {
-      readableOrgs.addAll(getOrganizationStructureProvider().getNaturalTree(o.getId()));
+    for (final String o : os) {
+      readableOrgs.addAll(getOrganizationStructureProvider().getNaturalTree(o));
       // if zero is an organization then add them all!
-      if (o.getId().equals("0")) {
-        for (final Organization org : getOrganizations(getCurrentClient())) {
-          readableOrgs.add(org.getId());
+      if (o.equals("0")) {
+        for (final String org : getOrganizations(getCurrentClient())) {
+          readableOrgs.add(org);
         }
       }
     }
@@ -1032,7 +1031,7 @@ public class OBContext implements OBNotSingleton {
   }
 
   public void setRole(Role role) {
-    isAdministrator = ((String) DalUtil.getId(role)).equals("0");
+    isAdministrator = (role.getId()).equals("0");
     isPortalRole = role.isForPortalUsers();
     isWebServiceEnabled = role.isWebServiceEnabled();
     setUserLevel(role.getUserLevel());
@@ -1085,7 +1084,7 @@ public class OBContext implements OBNotSingleton {
       entityAccessChecker = OBProvider.getInstance().get(EntityAccessChecker.class);
       // use the DalUtil.getId because it does not resolve hibernate
       // proxies
-      entityAccessChecker.setRoleId((String) DalUtil.getId(getRole()));
+      entityAccessChecker.setRoleId(getRole().getId());
       entityAccessChecker.setObContext(this);
       entityAccessChecker.initialize();
     }

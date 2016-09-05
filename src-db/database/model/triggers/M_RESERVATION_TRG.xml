@@ -23,7 +23,6 @@
   v_linecount           NUMBER;
   v_creservedcount      NUMBER;
   v_preservedcount      NUMBER;
-  v_reservedcount       NUMBER;
   v_count               NUMBER;
   v_dummy               VARCHAR2(2000);
   v_productname         m_product.name%TYPE;

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2014 Openbravo SLU
+ * All portions are Copyright (C) 2011-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s): ___________
  ************************************************************************
@@ -191,10 +191,11 @@ OB.Personalization.applyViewDefinitionToView = function (view, viewTabDefinition
     //clear grouping, will be applied later
     view.viewGrid.clearGroupBy();
     view.viewGrid.setViewState(viewTabDefinition.grid);
-    if (!view.viewGrid.lazyFiltering && !view.viewGrid.targetRecordId) {
+    if (!view.viewGrid.lazyFiltering && !view.viewGrid.targetRecordId && !view.deferOpenNewEdit) {
       // do not refresh contents if:
       //  -lazy: requires user action to refresh
       //  -direct navigation: it is done centrally after applying personalizations
+      //  -create new from navigation bar
       view.viewGrid.refreshContents();
     }
   }

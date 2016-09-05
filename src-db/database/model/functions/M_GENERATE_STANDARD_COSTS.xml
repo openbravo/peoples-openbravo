@@ -28,7 +28,6 @@
 ************************************************************************/
   -- Logistice
   v_ResultStr VARCHAR2(2000):='';
-  v_Result NUMBER;
   v_Message VARCHAR2(2000):='';
   v_Record_ID VARCHAR2(32);
   v_User VARCHAR2(32);

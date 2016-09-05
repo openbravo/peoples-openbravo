@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2013-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2013-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -170,17 +170,19 @@ isc.UpdateInvariantCharacteristicsPopup.addProperties({
 
       this.Super('init', arguments);
 
-      // Place the picklist to the front
-      this.Super('init', arguments);
       this.tree.originalShow = this.tree.show;
       this.tree.treeItem.addParamsToRequest = function () {
         return {
-          parentCharId: this.parentCharId
+          parentCharId: this.parentCharId,
+          productCharSubsetId: this.productCharSubsetId
         }
       };
+      // It will not be possible to open the dropdown until there exists a dataSource
       this.tree.show = function (explicitCriteria) {
-        this.originalShow(explicitCriteria);
-        this.bringToFront();
+        if (this.dataSource) {
+          this.originalShow(explicitCriteria);
+          this.bringToFront();
+        }
       };
     };
 
@@ -217,6 +219,8 @@ isc.UpdateInvariantCharacteristicsPopup.addProperties({
           displayField: 'name',
           valueField: 'id',
           referencedTableId: 'E913D17C9B3847CF92235082DBE2EC44',
+          productCharSubsetId: this.characteristicList[i].productCharSubsetId,
+          showTreePopupWindow: false,
           pickListFields: [{
             title: ' ',
             name: 'name',

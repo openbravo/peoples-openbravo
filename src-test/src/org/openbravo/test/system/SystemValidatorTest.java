@@ -19,7 +19,9 @@
 
 package org.openbravo.test.system;
 
+import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.fail;
+import static org.junit.Assume.assumeThat;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,6 +55,9 @@ public class SystemValidatorTest extends OBBaseTest {
    */
   @Test
   public void testModulesValidation() {
+    String postPublication = System.getProperty("post.publication");
+    assumeThat("Ignoring test case during post publication cycle", postPublication, not("true"));
+
     setSystemAdministratorContext();
     List<String> updatedModules = null;
     try {
@@ -113,7 +118,7 @@ public class SystemValidatorTest extends OBBaseTest {
     }
 
     Query upd = OBDal.getInstance().getSession()
-        .createQuery("update ADModule set inDevelopment = true where id in (:mods)");
+        .createQuery("update ADModule set inDevelopment = false where id in (:mods)");
     upd.setParameterList("mods", updatedModules);
     upd.executeUpdate();
 

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012 Openbravo SLU
+ * All portions are Copyright (C) 2012-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -120,7 +120,16 @@ public class ModifyPaymentPlanActionHandler extends BaseProcessActionHandler {
       OBDal.getInstance().rollbackAndClose();
       log4j.error("Exception! " + e);
       String constraint = e.getConstraintName();
-      constraint = constraint.substring(constraint.lastIndexOf(".") + 1, constraint.length());
+      if (StringUtils.isNotEmpty(constraint)) {
+        constraint = constraint.substring(constraint.lastIndexOf(".") + 1, constraint.length());
+      } else {
+        constraint = e.getSQLException().getNextException().getMessage();
+        constraint = constraint.substring(constraint.lastIndexOf("constraint") + 12,
+            constraint.lastIndexOf("on table") - 2);
+        if (!constraint.startsWith("APRM")) {
+          constraint = "APRM" + constraint.substring(constraint.indexOf("_"));
+        }
+      }
       try {
         return addMessage(jsonRequest, "@" + constraint + "@", "error");
       } catch (Exception ex) {
@@ -270,12 +279,26 @@ public class ModifyPaymentPlanActionHandler extends BaseProcessActionHandler {
       while (ite.hasNext()) {
         FIN_PaymentDetail pd = ite.next();
         BigDecimal amount = canceledPSDs.get(pd);
-        FIN_PaymentScheduleDetail psd = dao.getNewPaymentScheduleDetail(ps, null, amount,
-            BigDecimal.ZERO, pd);
-        psd.setCanceled(true);
+        if (!existsPaymentScheduleDetail(pd)) {
+          FIN_PaymentScheduleDetail psd = dao.getNewPaymentScheduleDetail(ps, null, amount,
+              BigDecimal.ZERO, pd);
+          psd.setCanceled(true);
+        }
       }
       return;
     }
+  }
+
+  /**
+   * Returns if exists any payment schedule detail for the payment detail
+   * 
+   */
+  private boolean existsPaymentScheduleDetail(FIN_PaymentDetail pd) {
+    OBCriteria<FIN_PaymentScheduleDetail> obcPSD = OBDal.getInstance().createCriteria(
+        FIN_PaymentScheduleDetail.class);
+    obcPSD.add(Restrictions.eq(FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS, pd));
+    obcPSD.setMaxResults(1);
+    return obcPSD.uniqueResult() != null;
   }
 
   /**

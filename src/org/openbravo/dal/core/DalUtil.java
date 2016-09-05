@@ -433,14 +433,8 @@ public class DalUtil {
   }
 
   /**
-   * This method returns the id of the object without loading/resolving it in Hibernate (if
-   * possible). If the object is a HibernateProxy then the id is retrieved from the proxy object
-   * instead of calling the method on the 'real' object. This prevents loading of the object through
-   * Hibernate.
-   * 
-   * @param o
-   *          the object (either a {@link BaseOBObject BaseOBObject} or a Hibernate Proxy object
-   * @return the id, most of the time a String
+   * @deprecated It is not needed to used this method for lazy loading of id in a proxy. Kept only
+   *             for backwards compatibility.
    */
   public static Serializable getId(Object o) {
     if (o instanceof HibernateProxy) {

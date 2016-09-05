@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2016 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -162,6 +162,7 @@ public class DalSessionFactory implements SessionFactory {
   /**
    * Note method sets user session information in the database and opens a connection for this.
    */
+  @Override
   public Session openSession() throws HibernateException {
     // NOTE: workaround for this issue:
     // http://opensource.atlassian.com/projects/hibernate/browse/HHH-3529
@@ -171,6 +172,7 @@ public class DalSessionFactory implements SessionFactory {
       Thread.currentThread().setContextClassLoader(BorrowedConnectionProxy.class.getClassLoader());
       final Properties props = OBPropertiesProvider.getInstance().getOpenbravoProperties();
       Connection conn = ((SessionImplementor) session).connection();
+      // When a connection is obtained using the DAL pool it is necessary to call the initDB method.
       SessionInfo.initDB(conn, props.getProperty("bbdd.rdbms"));
       SessionInfo.setDBSessionInfo(conn);
       PreparedStatement pstmt = null;
@@ -198,26 +200,20 @@ public class DalSessionFactory implements SessionFactory {
   /**
    * Note method sets user session information in the database and opens a connection for this.
    */
+  @Override
   public Session openSession(Connection connection, Interceptor interceptor) {
     // NOTE: workaround for this issue:
     // http://opensource.atlassian.com/projects/hibernate/browse/HHH-3529
     final Session session = delegateSessionFactory.openSession(connection, interceptor);
-    final ClassLoader currentLoader = Thread.currentThread().getContextClassLoader();
-    try {
-      Thread.currentThread().setContextClassLoader(BorrowedConnectionProxy.class.getClassLoader());
-      Connection conn = ((SessionImplementor) session).connection();
-      SessionInfo.initDB(conn, OBPropertiesProvider.getInstance().getOpenbravoProperties()
-          .getProperty("bbdd.rdbms"));
-      SessionInfo.setDBSessionInfo(conn);
-    } finally {
-      Thread.currentThread().setContextClassLoader(currentLoader);
-    }
+    Connection conn = ((SessionImplementor) session).connection();
+    initializeDBSessionInfo(conn);
     return session;
   }
 
   /**
    * Note method sets user session information in the database and opens a connection for this.
    */
+  @Override
   public Session openSession(Connection connection) {
     // NOTE: workaround for this issue:
     // http://opensource.atlassian.com/projects/hibernate/browse/HHH-3529
@@ -226,8 +222,6 @@ public class DalSessionFactory implements SessionFactory {
     try {
       Thread.currentThread().setContextClassLoader(BorrowedConnectionProxy.class.getClassLoader());
       Connection conn = ((SessionImplementor) session).connection();
-      SessionInfo.initDB(conn, OBPropertiesProvider.getInstance().getOpenbravoProperties()
-          .getProperty("bbdd.rdbms"));
       SessionInfo.setDBSessionInfo(conn);
     } finally {
       Thread.currentThread().setContextClassLoader(currentLoader);
@@ -238,61 +232,52 @@ public class DalSessionFactory implements SessionFactory {
   /**
    * Note method sets user session information in the database and opens a connection for this.
    */
+  @Override
   public Session openSession(Interceptor interceptor) throws HibernateException {
     // NOTE: workaround for this issue:
     // http://opensource.atlassian.com/projects/hibernate/browse/HHH-3529
     final Session session = delegateSessionFactory.openSession(interceptor);
-    final ClassLoader currentLoader = Thread.currentThread().getContextClassLoader();
-    try {
-      Thread.currentThread().setContextClassLoader(BorrowedConnectionProxy.class.getClassLoader());
-      Connection conn = ((SessionImplementor) session).connection();
-      SessionInfo.initDB(conn, OBPropertiesProvider.getInstance().getOpenbravoProperties()
-          .getProperty("bbdd.rdbms"));
-      SessionInfo.setDBSessionInfo(conn);
-    } finally {
-      Thread.currentThread().setContextClassLoader(currentLoader);
-    }
+    Connection conn = ((SessionImplementor) session).connection();
+    initializeDBSessionInfo(conn);
     return session;
   }
 
   /**
    * Note method sets user session information in the database and opens a connection for this.
    */
+  @Override
   public StatelessSession openStatelessSession() {
     // NOTE: workaround for this issue:
     // http://opensource.atlassian.com/projects/hibernate/browse/HHH-3529
     final StatelessSession session = delegateSessionFactory.openStatelessSession();
-    final ClassLoader currentLoader = Thread.currentThread().getContextClassLoader();
-    try {
-      Thread.currentThread().setContextClassLoader(BorrowedConnectionProxy.class.getClassLoader());
-      Connection conn = ((SessionImplementor) session).connection();
-      SessionInfo.initDB(conn, OBPropertiesProvider.getInstance().getOpenbravoProperties()
-          .getProperty("bbdd.rdbms"));
-      SessionInfo.setDBSessionInfo(conn);
-    } finally {
-      Thread.currentThread().setContextClassLoader(currentLoader);
-    }
+    Connection conn = ((SessionImplementor) session).connection();
+    initializeDBSessionInfo(conn);
     return session;
   }
 
   /**
    * Note method sets user session information in the database and opens a connection for this.
    */
+  @Override
   public StatelessSession openStatelessSession(Connection connection) {
     // NOTE: workaround for this issue:
     // http://opensource.atlassian.com/projects/hibernate/browse/HHH-3529
     final StatelessSession session = delegateSessionFactory.openStatelessSession(connection);
+    Connection conn = ((SessionImplementor) session).connection();
+    initializeDBSessionInfo(conn);
+    return session;
+  }
+
+  private void initializeDBSessionInfo(Connection conn) {
     final ClassLoader currentLoader = Thread.currentThread().getContextClassLoader();
     try {
       Thread.currentThread().setContextClassLoader(BorrowedConnectionProxy.class.getClassLoader());
-      Connection conn = ((SessionImplementor) session).connection();
       SessionInfo.initDB(conn, OBPropertiesProvider.getInstance().getOpenbravoProperties()
           .getProperty("bbdd.rdbms"));
       SessionInfo.setDBSessionInfo(conn);
     } finally {
       Thread.currentThread().setContextClassLoader(currentLoader);
     }
-    return session;
   }
 
   public Cache getCache() {

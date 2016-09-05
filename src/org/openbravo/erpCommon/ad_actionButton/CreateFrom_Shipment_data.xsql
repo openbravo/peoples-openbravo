@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -140,19 +140,33 @@
     <Sql>
       <![CDATA[
         SELECT o.C_ORDER_ID as ID, Ad_Column_Identifier(TO_CHAR('C_Order'), TO_CHAR(o.c_order_id), TO_CHAR(?)) AS NAME
-        FROM M_INOUT_CANDIDATE_V ic, C_ORDER o JOIN C_DOCTYPE dt ON o.c_doctype_id = dt.c_doctype_id AND dt.isreturn='N'
-        WHERE o.C_ORDER_ID = ic.C_ORDER_ID 
-        AND ic.AD_Client_ID IN ('1') 
-        AND ic.AD_Org_ID IN ('1') 
-        AND ic.C_BPartner_ID = ? 
-        GROUP BY o.C_ORDER_ID, o.DocumentNo, o.DateOrdered, o.GrandTotal 
+        FROM C_ORDER o
+        JOIN C_DOCTYPE dt
+        ON o.c_doctype_id = dt.c_doctype_id
+        WHERE o.docstatus = 'CO'
+        AND o.isdelivered = 'N'
+        AND o.AD_Client_ID IN ('1')
+        AND o.AD_Org_ID IN ('1')
+        AND o.C_BPartner_ID = ?
+        AND dt.isreturn = 'N'
+        AND dt.docbasetype = 'SOO'
+        AND dt.docsubtypeso NOT IN ('ON', 'OB')
+        AND EXISTS (
+          SELECT 1
+          FROM C_ORDERLINE ol
+          WHERE ol.c_order_id = o.c_order_id
+          AND ol.qtyordered <> ol.qtydelivered
+          AND ol.directship = 'N'
+          AND ol.m_product_id IS NOT NULL
+        )
+        GROUP BY o.C_ORDER_ID, o.DocumentNo, o.DateOrdered, o.GrandTotal
         ORDER BY NAME
       ]]>
     </Sql>
     <Field name="rownum" value="count"/>
     <Parameter name="language"/>
-    <Parameter name="adUserClient" type="replace" optional="true" after="ic.AD_Client_ID IN (" text="'1'"/>
-    <Parameter name="adOrgClient" type="replace" optional="true" after="ic.AD_Org_ID IN (" text="'1'"/>
+    <Parameter name="adUserClient" type="replace" optional="true" after="o.AD_Client_ID IN (" text="'1'"/>
+    <Parameter name="adOrgClient" type="replace" optional="true" after="o.AD_Org_ID IN (" text="'1'"/>
     <Parameter name="cBpartnerId"/>
   </SqlMethod>
   <SqlMethod name="selectFromPOTrl" type="preparedStatement" return="multiple">
@@ -407,17 +421,27 @@
     <Sql>
       <![CDATA[
         SELECT i.C_Invoice_ID AS ID, Ad_Column_Identifier(TO_CHAR('C_Invoice'), TO_CHAR(i.C_Invoice_ID), TO_CHAR(?)) AS NAME
-        FROM C_INVOICE i JOIN C_DOCTYPE dt ON i.c_doctype_id = dt.c_doctype_id AND dt.isreturn='N'
+        FROM C_INVOICE i
+        JOIN C_DOCTYPE dt
+        ON i.c_doctype_id = dt.c_doctype_id
         WHERE i.DocStatus IN ('CL','CO')
         AND i.AD_Client_ID IN ('1')
         AND i.AD_Org_ID IN ('1')
         AND i.IsSOTrx='Y'
         AND i.C_BPartner_ID = ?
-        AND EXISTS (SELECT 1                      
-                FROM C_INVOICELINE l LEFT JOIN M_INOUTLINE MI ON l.M_INOUTLINE_ID = MI.M_INOUTLINE_ID                        
-                WHERE l.C_INVOICE_ID = i.C_INVOICE_ID                
-                GROUP BY l.C_InvoiceLine_ID ,l.QtyInvoiced                
-                HAVING (l.QtyInvoiced-SUM(COALESCE(mi.MOVEMENTQTY,0))) <> 0 ) 
+        AND dt.isreturn = 'N'
+        AND EXISTS (
+          SELECT 1
+          FROM C_INVOICELINE il
+          WHERE il.C_INVOICE_ID = i.C_INVOICE_ID
+          AND ((il.M_INOUTLINE_ID IS NULL AND il.QtyInvoiced <> 0)
+          OR (il.M_INOUTLINE_ID IS NOT NULL AND EXISTS (
+            SELECT 1
+            FROM M_INOUTLINE iol
+            WHERE iol.M_INOUTLINE_ID = il.M_INOUTLINE_ID
+            AND (il.QtyInvoiced - iol.MOVEMENTQTY) <> 0
+          )))
+        )
         ORDER BY NAME
       ]]>
     </Sql>

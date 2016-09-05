@@ -19,7 +19,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2008 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2001-2016 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -35,7 +35,6 @@
   v_Result NUMBER:=1; -- 0=failure
   v_Record_ID VARCHAR2(32);
   v_AD_User_ID VARCHAR2(32);
-  v_DayHours  NUMBER;
   v_Processed VARCHAR2(60);
   v_CInvoicelineId varchar2(32);
   v_COrderlineId varchar2(32);
@@ -78,7 +77,6 @@ BEGIN --BODY
   DBMS_OUTPUT.PUT_LINE('  Record_ID=' || v_Record_ID) ;
   DECLARE
     CUR_te RECORD;
-    v_Hours NUMBER;
   BEGIN
 
   /* Check if there are expense lines to process */

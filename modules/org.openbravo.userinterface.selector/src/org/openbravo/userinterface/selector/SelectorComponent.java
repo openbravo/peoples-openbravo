@@ -380,7 +380,7 @@ public class SelectorComponent extends BaseTemplateComponent {
     final String userLanguageId = OBContext.getOBContext().getLanguage().getId();
     String description = null;
     for (SelectorTrl selectorTrl : getSelector().getOBUISELSelectorTrlList()) {
-      final String trlLanguageId = (String) DalUtil.getId(selectorTrl.getLanguageID());
+      final String trlLanguageId = selectorTrl.getLanguageID().getId();
       if (trlLanguageId.equals(userLanguageId)) {
         description = selectorTrl.getDescription();
       }
@@ -479,7 +479,7 @@ public class SelectorComponent extends BaseTemplateComponent {
     List<Field> result = new ArrayList<Field>();
     for (Field f : tabFields) {
       if (f.getObuiselOutfield() != null) {
-        String outFieldId = (String) DalUtil.getId(f.getObuiselOutfield());
+        String outFieldId = f.getObuiselOutfield().getId();
         if (outFieldId.equals(selectorFieldId)) {
           result.add(f);
         }
@@ -709,8 +709,8 @@ public class SelectorComponent extends BaseTemplateComponent {
     final String userLanguageId = OBContext.getOBContext().getLanguage().getId();
 
     for (SelectorFieldTrl selectorFieldTrl : getTranslatedFields()) {
-      if (DalUtil.getId(selectorFieldTrl.getObuiselSelectorField()).equals(selectorField.getId())) {
-        final String trlLanguageId = (String) DalUtil.getId(selectorFieldTrl.getLanguageID());
+      if (selectorFieldTrl.getObuiselSelectorField().getId().equals(selectorField.getId())) {
+        final String trlLanguageId = selectorFieldTrl.getLanguageID().getId();
         if (trlLanguageId.equals(userLanguageId)) {
           return selectorFieldTrl;
         }

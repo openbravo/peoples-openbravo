@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2015 Openbravo SLU
+ * All portions are Copyright (C) 2013-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -33,30 +33,32 @@ isc.OBTreeItem.addProperties({
   pickerIconHSpace: 0,
   iconHSpace: 0,
   tree: null,
-  init: function () {
+  init: function (parameters) {
     this.pickerIconSrc = OB.Styles.OBFormField.DefaultComboBox.pickerIconSrc;
-    this.icons = [{
-      src: OB.Styles.OBFormField.DefaultSearch.pickerIconSrc,
-      width: OB.Styles.OBFormField.DefaultSearch.pickerIconWidth,
-      height: OB.Styles.OBFormField.DefaultSearch.pickerIconHeight,
-      click: function (form, item, icon) {
-        item.openTreeWindow();
-      }
-    }];
+    if (parameters.showTreePopupWindow !== false) {
+      this.icons = [{
+        src: OB.Styles.OBFormField.DefaultSearch.pickerIconSrc,
+        width: OB.Styles.OBFormField.DefaultSearch.pickerIconWidth,
+        height: OB.Styles.OBFormField.DefaultSearch.pickerIconHeight,
+        click: function (form, item, icon) {
+          item.openTreeWindow();
+        }
+      }];
+      this.treeWindow = isc.OBTreeItemPopupWindow.create({
+        // solves issue: https://issues.openbravo.com/view.php?id=17268
+        title: (this.form && this.form.grid ? this.form.grid.getField(this.name).title : this.title),
+        dataSource: this.optionDataSource,
+        treeItem: this,
+        valueField: this.valueField,
+        displayField: this.displayField,
+        treeGridFields: isc.shallowClone(this.treeGridFields)
+      });
+    }
     this.Super('init', arguments);
     this.tree = isc.OBTreeItemTree.create({
       treeItem: this
     });
     this.treeDisplayField = this.getTreeDisplayField();
-    this.treeWindow = isc.OBTreeItemPopupWindow.create({
-      // solves issue: https://issues.openbravo.com/view.php?id=17268
-      title: (this.form && this.form.grid ? this.form.grid.getField(this.name).title : this.title),
-      dataSource: this.optionDataSource,
-      treeItem: this,
-      valueField: this.valueField,
-      displayField: this.displayField,
-      treeGridFields: isc.shallowClone(this.treeGridFields)
-    });
     this.enableShortcuts();
   },
 

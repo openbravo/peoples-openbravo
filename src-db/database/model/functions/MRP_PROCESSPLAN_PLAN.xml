@@ -31,14 +31,12 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2006 Openbravo SLU
+* All portions are Copyright (C) 2001-2016 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
   -- Logistice
   v_ResultStr VARCHAR2(2000):='';
-  v_Message VARCHAR2(2000):='';
-  v_Result NUMBER:=1; -- 0=failure
 
   v_Stock NUMBER:= 0;
   v_AvailableStock NUMBER:= 0;
@@ -46,7 +44,6 @@
   v_NeededQty_New NUMBER;
   v_PlannedOrderDate_New DATE;
 
-  FINISH_PROCESS BOOLEAN DEFAULT FALSE;
   --  Parameter
   TYPE RECORD IS REF CURSOR;
   Cur_Lines RECORD;

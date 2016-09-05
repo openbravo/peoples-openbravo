@@ -91,7 +91,7 @@ isc.OBGrid.addProperties({
   },
 
   isFilterClauseApplied: function () {
-    return true === this.filterClause;
+    return !!this.filterClause;
   },
 
   cellHoverHTML: function (record, rowNum, colNum) {
@@ -708,9 +708,13 @@ isc.OBGrid.addProperties({
       this.showSortArrow = isc.ListGrid.BOTH;
       this.sorterDefaults = {
         click: function () {
-          var grid = this.parentElement;
+          var grid = this.parentElement,
+              alreadySorted;
           if (!this._iconEnabled) {
             return;
+          }
+          if (grid.summaryFunctionsHaveChanged && !grid.showGridSummary) {
+            grid.setShowGridSummary(true);
           }
           if (grid.filterHasChanged || grid.filterClauseJustRemoved) {
             // the filter clause can only be removed once
@@ -721,15 +725,31 @@ isc.OBGrid.addProperties({
             delete grid.filterHasChanged;
             delete grid.sortingHasChanged;
             delete grid._filteringAndSortingManually;
+            delete grid.summaryFunctionsHaveChanged;
           } else if (!isc.isA.ResultSet(grid.data) || grid.serverDataNotLoaded) {
             // The initial data has not been loaded yet, refreshGrid
             // refreshGrid applies also the current sorting
             grid.refreshGrid();
             delete grid.sortingHasChanged;
             delete grid.serverDataNotLoaded;
+            delete grid.summaryFunctionsHaveChanged;
           } else if (grid.sortingHasChanged) {
-            grid.setSort(grid.savedSortSpecifiers, true);
+            if (grid.summaryFunctionsHaveChanged) {
+              alreadySorted = grid.isSortApplied();
+              grid.setSort(grid.savedSortSpecifiers, true);
+              if (!grid.savedSortSpecifiers) {
+                grid.recalculateGridSummary();
+              } else if (alreadySorted) {
+                grid.data.resort();
+              }
+            } else {
+              grid.setSort(grid.savedSortSpecifiers, true);
+            }
             delete grid.sortingHasChanged;
+            delete grid.summaryFunctionsHaveChanged;
+          } else if (grid.summaryFunctionsHaveChanged) {
+            grid.recalculateGridSummary();
+            delete grid.summaryFunctionsHaveChanged;
           }
           if (grid && grid.sorter) {
             grid.sorter.disable();
@@ -755,6 +775,29 @@ isc.OBGrid.addProperties({
     this.Super('initWidget', arguments);
   },
 
+  isSortApplied: function () {
+    var i, gridSortSpecifiers, gridDataSortSpecifiers;
+
+    if (!this.data || !this.data.getSort) {
+      return false;
+    }
+
+    gridSortSpecifiers = this.getSort() || [];
+    gridDataSortSpecifiers = this.data.getSort() || [];
+
+    if (gridSortSpecifiers.length !== gridDataSortSpecifiers.length) {
+      return false;
+    }
+
+    for (i = 0; i < gridSortSpecifiers.length; i++) {
+      if (gridSortSpecifiers[i].property !== gridDataSortSpecifiers[i].property || gridSortSpecifiers[i].direction !== gridDataSortSpecifiers[i].direction) {
+        return false;
+      }
+    }
+
+    return true;
+  },
+
   clearFilter: function (keepFilterClause, noPerformAction) {
     var i = 0,
         fld, length, groupState, forceRefresh;
@@ -773,7 +816,7 @@ isc.OBGrid.addProperties({
       // forcing fetch from server in case default filters are removed, in other
       // cases adaptive filtering can be used if possible
       if (this.data) {
-        forceRefresh = this.filterClause || this.sqlFilterClause;
+        forceRefresh = this.filterClause || this.sqlFilterClause || (this.view && this.view.deferOpenNewEdit);
 
         groupState = this.getGroupState();
         if (forceRefresh && groupState && groupState.groupByFields) {
@@ -816,6 +859,9 @@ isc.OBGrid.addProperties({
     if (this.view && this.view.directNavigation) {
       delete this.view.directNavigation;
     }
+    if (this.view && this.view.deferOpenNewEdit) {
+      delete this.view.deferOpenNewEdit;
+    }
   },
 
   showSummaryRow: function () {
@@ -844,6 +890,69 @@ isc.OBGrid.addProperties({
       this.summaryRow.setFields(newFields);
     }
     return ret;
+  },
+
+  // overwritten to prevent undesired requests having summary functions and lazy filtering enabled
+  // creates (or updates) and returns the summaryRow autoChild
+  // not called directly -- call 'setShowGridSummary' instead
+  getSummaryRow: function () {
+    if (this.lazyFiltering && this.summaryRow) {
+      if (this.getSummaryRowDataSource && this.completeFields) {
+        this.summaryRow.setDataSource(this.getSummaryRowDataSource(), this.completeFields.duplicate());
+      }
+      if (this.summaryFunctionsHaveChanged) {
+        return this.summaryRow;
+      }
+      this.summaryFunctionsHaveChanged = true;
+      if (this.sorter) {
+        this.sorter.enable();
+      }
+      return this.summaryRow;
+    }
+    if (this.summaryRow && this.isParentGridFetchingData()) {
+      // return the summaryRow if the grid is child of another grid whose data is being fetched
+      // this prevents unneeded datasource requests by not calling the Super 'getSummaryRow' function
+      return this.summaryRow;
+    }
+    return this.Super('getSummaryRow');
+  },
+
+  isParentGridFetchingData: function () {
+    if (this.view && this.view.parentView && this.view.parentView.viewGrid) {
+      return this.view.parentView.viewGrid.isFetchingData();
+    }
+    return false;
+  },
+
+  // puts the grid in a state pending of recalculate summaries
+  markForCalculateSummaries: function () {
+    if (!this.lazyFiltering) {
+      return;
+    }
+    if (this.showGridSummary) {
+      this.setShowGridSummary(false);
+      if (!this.hasSummaryFunctions()) {
+        // the grid does not have any summary function
+        // not mark it as pending for recalculation
+        return;
+      }
+    }
+    if (!this.summaryFunctionsHaveChanged) {
+      this.summaryFunctionsHaveChanged = true;
+      if (this.sorter) {
+        this.sorter.enable();
+      }
+    }
+  },
+
+  hasSummaryFunctions: function () {
+    var i, fields = this.getFields() || [];
+    for (i = 0; i < fields.length; i++) {
+      if (fields[i].summaryFunction) {
+        return true;
+      }
+    }
+    return false;
   },
 
   // show or hide the filter button
@@ -914,6 +1023,17 @@ isc.OBGrid.addProperties({
       }
     }
     return fkFilterAuxCache;
+  },
+
+  setNewRecordFilterMessage: function () {
+    var showMessageProperty, showMessage;
+
+    showMessageProperty = OB.PropertyStore.get('OBUIAPP_ShowNewRecordFilterMsg');
+    showMessage = showMessageProperty !== 'N' && showMessageProperty !== '"N"';
+    if (showMessage) {
+      this.view.messageBar.setMessage(isc.OBMessageBar.TYPE_INFO, '<div><div style="float: left;">' + OB.I18N.getLabel('OBUIAPP_NewRecordFilterMsg') + '<br/>' + OB.I18N.getLabel('OBUIAPP_ClearFilters') + '</div><div style="float: right; padding-top: 15px;"><a href="#" style="font-weight:normal; color:inherit;" onclick="' + 'window[\'' + this.view.messageBar.ID + '\'].hide(); OB.PropertyStore.set(\'OBUIAPP_ShowNewRecordFilterMsg\', \'N\');">' + OB.I18N.getLabel('OBUIAPP_NeverShowMessageAgain') + '</a></div></div>', ' ');
+      this.view.messageBar.hasFilterMessage = true;
+    }
   },
 
   setSingleRecordFilterMessage: function () {

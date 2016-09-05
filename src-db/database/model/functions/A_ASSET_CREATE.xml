@@ -22,7 +22,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2008 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2001-2016 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -49,7 +49,6 @@
     Cur_ShipLine RECORD;
     --
     v_A_Asset_ID VARCHAR2(32) ;
-    v_A_Asset_Delivery_ID VARCHAR2(32) ;
     v_DocumentNo VARCHAR2(40) ;
     v_Value VARCHAR2(60) ;
     v_Name VARCHAR2(80) ;

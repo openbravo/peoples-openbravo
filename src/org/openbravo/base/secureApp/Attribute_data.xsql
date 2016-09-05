@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!--
  ************************************************************************************
- * Copyright (C) 2001-2011 Openbravo S.L.U.
+ * Copyright (C) 2001-2016 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -28,6 +28,21 @@
       ]]></Sql>
       <Parameter name="clientlist" optional="true" type="replace" after="AND a.AD_CLIENT_ID IN (" text="'1'"/>
       <Parameter name="orglist" optional="true" type="replace" after="AND a.AD_ORG_ID IN (" text="'1'"/>
+   </SqlMethod>
+   <SqlMethod name="selectAcctSchema" type="preparedStatement" return="multiple">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql><![CDATA[
+        SELECT a.C_ACCTSCHEMA_ID as VALUE, a.C_CURRENCY_ID as Attribute, a.HASALIAS,
+        ae.ELEMENTTYPE, '' as AD_Window_ID, '' as C_CURRENCY_ID
+        FROM C_AcctSchema a
+        JOIN C_AcctSchema_Element ae
+        ON a.C_AcctSchema_ID=ae.C_ACCTSCHEMA_ID
+        WHERE a.C_AcctSchema_ID = ?
+        AND a.AD_CLIENT_ID IN ('1')
+        AND ae.ISACTIVE = 'Y'
+      ]]></Sql>
+      <Parameter name="acctId"/>
+      <Parameter name="clientlist" optional="true" type="replace" after="AND a.AD_CLIENT_ID IN (" text="'1'"/>
    </SqlMethod>
    <SqlMethod name="selectIsSOTrx" type="preparedStatement" return="multiple">
       <SqlMethodComment></SqlMethodComment>

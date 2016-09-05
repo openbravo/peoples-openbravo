@@ -50,6 +50,9 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.database.SessionInfo;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
+import org.openbravo.model.ad.system.Client;
+import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.service.datasource.DataSourceUtils;
 import org.openbravo.service.db.DbUtility;
 import org.openbravo.service.json.JsonToDataConverter.JsonConversionError;
 import org.openbravo.userinterface.selector.Selector;
@@ -146,8 +149,24 @@ public class DefaultJsonDataService implements JsonDataService {
           bobs.add(bob);
         }
       } else {
+        // Retrieve parameter to identify if the fetch request comes from a Pick And Edit window
+        String isPickAndEditParam = parameters.get(JsonConstants.IS_PICK_AND_EDIT);
+        final boolean isPickAndEdit = StringUtils.isNotEmpty(isPickAndEditParam) ? Boolean
+            .valueOf(isPickAndEditParam) : Boolean.FALSE;
+
         final String startRowStr = parameters.get(JsonConstants.STARTROW_PARAMETER);
-        final String endRowStr = parameters.get(JsonConstants.ENDROW_PARAMETER);
+        final String endRowStr;
+        if (isPickAndEdit) {
+          endRowStr = getEndRowForSelectedRecords(parameters, startRowStr);
+          if (endRowStr != null
+              && !endRowStr.equals(parameters.get(JsonConstants.ENDROW_PARAMETER))) {
+            parameters.put(JsonConstants.ENDROW_PARAMETER, endRowStr);
+            log.debug("The amount of selected records is higher than the page size, "
+                + "setting page size equal to the amount of selected records: " + endRowStr);
+          }
+        } else {
+          endRowStr = parameters.get(JsonConstants.ENDROW_PARAMETER);
+        }
 
         boolean preventCountOperation = !parameters.containsKey(JsonConstants.NOCOUNT_PARAMETER)
             || "true".equals(parameters.get(JsonConstants.NOCOUNT_PARAMETER));
@@ -226,6 +245,17 @@ public class DefaultJsonDataService implements JsonDataService {
           long t = System.currentTimeMillis();
           bobs = queryService.list();
           log.debug("query time:" + (System.currentTimeMillis() - t));
+
+          // If the request is done from a P&E window, then we should adapt the page size to include
+          // all selected records into the response
+          if (isPickAndEdit && shouldIncreasePageSize(parameters, bobs, startRowStr, endRowStr)) {
+            String newEndRow = Integer.toString(Integer.parseInt(endRowStr)
+                + JsonConstants.PAE_DATA_PAGE_SIZE);
+            parameters.put(JsonConstants.ENDROW_PARAMETER, newEndRow);
+            log.debug("The amount of selected records is higher than the page size, increasing page size to "
+                + newEndRow);
+            return fetch(parameters, filterOnReadableOrganizations);
+          }
         }
 
         bobs = bobFetchTransformation(bobs, parameters);
@@ -280,6 +310,77 @@ public class DefaultJsonDataService implements JsonDataService {
       log.error(t.getMessage(), t);
       return JsonUtils.convertExceptionToJson(t);
     }
+  }
+
+  /**
+   * Used on requests received from pick and execute windows in order to avoid losing the selection.
+   * It checks if the request has a criteria that contains the selected records. In that case, if
+   * the amount of selected records is higher than the page size, then the end row is increased so
+   * that all the selected records can be returned within the same page.
+   * 
+   * @param parameters
+   *          map of request parameters
+   * @param startRowStr
+   *          start row of the page
+   * @return the new value for the end row
+   */
+  private String getEndRowForSelectedRecords(Map<String, String> parameters, String startRowStr) {
+    String endRowStr = parameters.get(JsonConstants.ENDROW_PARAMETER);
+    if (startRowStr == null || endRowStr == null) {
+      return endRowStr;
+    }
+    int startRow = Integer.parseInt(startRowStr);
+    int endRow = Integer.parseInt(endRowStr);
+    int selectedRecords = DataSourceUtils.getNumberOfSelectedRecords(parameters);
+    if (startRow == 0 && endRow != -1 && selectedRecords > JsonConstants.PAE_DATA_PAGE_SIZE) {
+      return Integer.toString(selectedRecords);
+    }
+    return endRowStr;
+  }
+
+  /**
+   * Used on requests received from pick and execute windows in order to avoid losing the selection.
+   * It is used when the request does not contain information about the selected records. In that
+   * case, this method decides if the query should be done again with a higher page size, according
+   * to the the selection status of the last record returned by the database query and the current
+   * page size.
+   * 
+   * @param parameters
+   *          map of request parameters
+   * @param bobs
+   *          list of objects returned by the database query
+   * @param startRowStr
+   *          start row of the page
+   * @param endRowStr
+   *          end row of the page
+   * @return true if the page size should be increased, false otherwise
+   */
+  private boolean shouldIncreasePageSize(Map<String, String> parameters, List<BaseOBObject> bobs,
+      String startRowStr, String endRowStr) {
+    if (startRowStr == null || endRowStr == null) {
+      return false;
+    }
+    int startRow = Integer.parseInt(startRowStr);
+    int endRow = Integer.parseInt(endRowStr);
+    if (startRow == 0 && endRow != -1 && bobs.size() > endRow
+        && endRow <= JsonConstants.PAE_MAX_PAGE_SIZE) {
+      return isLastRecordSelected(bobs);
+    }
+    return false;
+  }
+
+  private boolean isLastRecordSelected(List<BaseOBObject> bobs) {
+    if (bobs.size() == 0) {
+      return false;
+    }
+    Boolean b = Boolean.FALSE;
+    try {
+      BaseOBObject bob = bobs.get(bobs.size() - 1);
+      b = (Boolean) bob.get("obSelected");
+    } catch (Exception ex) {
+      // Error retrieving obSelected property, do nothing: record not selected
+    }
+    return b.booleanValue();
   }
 
   public void fetch(Map<String, String> parameters, QueryResultWriter writer) {
@@ -642,12 +743,12 @@ public class DefaultJsonDataService implements JsonDataService {
 
   private void addWritableAttribute(List<JSONObject> jsonObjects) throws JSONException {
     for (JSONObject jsonObject : jsonObjects) {
-      if (!jsonObject.has("client") || !jsonObject.has("organization")) {
-        continue;
-      }
-      final Object rowClient = jsonObject.get("client");
-      final Object rowOrganization = jsonObject.get("organization");
-      if (!(rowClient instanceof String) || !(rowOrganization instanceof String)) {
+      final Object rowClient = getFKValue(jsonObject, "client", Client.ENTITY_NAME);
+      final Object rowOrganization = getFKValue(jsonObject, "organization",
+          Organization.ENTITY_NAME);
+
+      if (rowClient == null || !(rowClient instanceof String) || rowOrganization == null
+          || !(rowOrganization instanceof String)) {
         continue;
       }
       final String currentClientId = OBContext.getOBContext().getCurrentClient().getId();
@@ -666,6 +767,23 @@ public class DefaultJsonDataService implements JsonDataService {
         }
       }
     }
+  }
+
+  /**
+   * Returns the value for a FK property, in case the entity of the row is the referencedEntity for
+   * that FK, it returns the row id.
+   */
+  private Object getFKValue(JSONObject row, String propertyName, String referencedEntityName)
+      throws JSONException {
+    Object value = null;
+    if (row.has(propertyName)) {
+      value = row.get(propertyName);
+    } else if (row.has(JsonConstants.ENTITYNAME)
+        && referencedEntityName.equals(row.get(JsonConstants.ENTITYNAME))
+        && row.has(BaseOBObject.ID)) {
+      value = row.get(BaseOBObject.ID);
+    }
+    return value;
   }
 
   /*
@@ -825,8 +943,7 @@ public class DefaultJsonDataService implements JsonDataService {
         final List<BaseOBObject> refreshedBobs = new ArrayList<BaseOBObject>();
         for (BaseOBObject bob : bobs) {
           // forcing fetch from DB
-          BaseOBObject refreshedBob = OBDal.getInstance().get(bob.getEntityName(),
-              DalUtil.getId(bob));
+          BaseOBObject refreshedBob = OBDal.getInstance().get(bob.getEntityName(), bob.getId());
 
           // if object has computed columns refresh from the database too
           if (refreshedBob.getEntity().hasComputedColumns()) {

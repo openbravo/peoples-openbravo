@@ -21,6 +21,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.openbravo.base.HttpBaseUtils;
 import org.openbravo.base.exception.OBException;
@@ -32,6 +34,7 @@ import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.security.SessionLogin;
 import org.openbravo.erpCommon.utility.DimensionDisplayUtility;
+import org.openbravo.erpCommon.utility.OBLedgerUtils;
 import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.access.RoleOrganization;
@@ -273,9 +276,19 @@ public class LoginUtils {
       vars.setSessionValue("#Client_SMTP", data[0].smtphost);
       data = null;
 
-      AttributeData[] attr = AttributeData.select(conn,
-          Utility.getContext(conn, vars, "#User_Client", "LoginHandler"),
-          Utility.getContext(conn, vars, "#User_Org", "LoginHandler"));
+      AttributeData[] attr = null;
+      String[] orgList = Utility.getContext(conn, vars, "#User_Org", "LoginHandler").split(",");
+      for (String orgId : orgList) {
+        String acctSchemaId = OBLedgerUtils.getOrgLedger(orgId.replace("'", ""));
+        if (StringUtils.isNotEmpty(acctSchemaId)) {
+          attr = AttributeData.selectAcctSchema(conn, acctSchemaId,
+              Utility.getContext(conn, vars, "#User_Client", "LoginHandler"));
+          if (ArrayUtils.isNotEmpty(attr)) {
+            break;
+          }
+        }
+      }
+
       if (attr != null && attr.length > 0) {
         vars.setSessionValue("$C_AcctSchema_ID", attr[0].value);
         if (orgCurrency.length > 0) {

@@ -1162,7 +1162,7 @@ public class ReportingUtils {
     SimplePdfExporterConfiguration configuration = reportConfiguration != null ? reportConfiguration
         : new SimplePdfExporterConfiguration();
 
-    reportConfiguration.setCreatingBatchModeBookmarks(createBookmarks);
+    configuration.setCreatingBatchModeBookmarks(createBookmarks);
     exporter.setConfiguration(configuration);
     exporter.setExporterInput(SimpleExporterInput.getInstance(jasperPrintList));
     exporter.setExporterOutput(exporterOutput);

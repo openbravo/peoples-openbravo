@@ -32,7 +32,6 @@
   v_LINE NUMBER;
   v_DateNull DATE := TO_DATE('01-01-1900', 'DD-MM-YYYY');
   v_DocumentLineNo M_InventoryLine.line%TYPE;
-  v_sv_count NUMBER;
   v_warehouse VARCHAR(32);
   v_count NUMBER;
   v_doIncrease BOOLEAN:= FALSE;

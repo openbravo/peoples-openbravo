@@ -20,7 +20,6 @@
 * Contributor(s):  ______________________________________.
 ************************************************************************/
 v_count NUMBER;
-v_relateddocs BOOLEAN;
 BEGIN
   IF AD_isTriggerEnabled()='N' THEN RETURN;
   END IF;

@@ -151,7 +151,7 @@ public class DefaultDataSourceService extends BaseDataSourceService {
       if (bob.getId().equals(bob.get(parentProperty))) {
         parentId = (String) bob.getId();
       } else {
-        parentId = (String) DalUtil.getId(bob.get(parentProperty));
+        parentId = (String) ((BaseOBObject) bob.get(parentProperty)).getId();
       }
 
       final String whereClause;

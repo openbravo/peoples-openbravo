@@ -271,7 +271,7 @@ OB.ViewFormProperties = {
   editNewRecord: function (preventFocus) {
     var grid = this.view.viewGrid;
     this.clearValues();
-    if (grid.lazyFiltering && !isc.isA.ResultSet(grid.data)) {
+    if ((grid.lazyFiltering || this.view.deferOpenNewEdit) && !isc.isA.ResultSet(grid.data)) {
       OB.Utilities.createResultSetManually(grid);
     }
     var ret = this.Super('editNewRecord', arguments);
@@ -1584,6 +1584,13 @@ OB.ViewFormProperties = {
       // back to grid
       this.view.viewGrid.setSingleRecordFilterMessage();
     }
+    if (this.view.deferOpenNewEdit) {
+      // create new opens form view without loading grid data, set message in toolbar
+      // and show the funnel icon when switching back to grid
+      this.view.viewGrid.filterImage.prompt = OB.I18N.getLabel('OBUIAPP_GridFilterNewRecord');
+      this.view.viewGrid.filterImage.show(true);
+      this.view.viewGrid.setNewRecordFilterMessage();
+    }
 
     this.view.standardWindow.setDirtyEditForm(null);
     this.view.clearTargetRecordInWindow();
@@ -1614,7 +1621,7 @@ OB.ViewFormProperties = {
   saveRow: function (parameters) {
     var savingNewRecord = this.isNew,
         storedFocusItem, i, length, flds, form = this,
-        ficCallDone, record, recordIndex, callback, viewsNotToRefresh;
+        ficCallDone, record, recordIndex, callback, viewsNotToRefresh, autoSaveAction;
 
     if (this.getFocusItem()) {
       storedFocusItem = this.getFocusItem();
@@ -1648,10 +1655,15 @@ OB.ViewFormProperties = {
       this.view.messageBar.hide();
     }
 
+    if (this.view.standardWindow) {
+      autoSaveAction = this.view.standardWindow.autoSaveAction;
+    }
+
     callback = function (resp, data, req) {
       var index1, index2, view = form.view,
           localRecord, status = resp.status,
-          sessionProperties, keepSelection, gridRefreshCallback, theGrid, theId, id;
+          sessionProperties, keepSelection, gridRefreshCallback, theGrid, theId, id, eventHandlerParams = {},
+          eventHandlerCallback;
 
       if (this.hasOwnProperty('previousExplicitOffline')) {
         isc.Offline.explicitOffline = this.previousExplicitOffline;
@@ -1715,6 +1727,7 @@ OB.ViewFormProperties = {
         }
 
         view.viewGrid.markForRedraw();
+        view.viewForm.markForRedraw();
 
         keepSelection = true;
         view.refreshChildViews(keepSelection);
@@ -1825,6 +1838,17 @@ OB.ViewFormProperties = {
       // Summary Functions are refreshed when data gets refreshed
       if (view.viewGrid.showGridSummary) {
         view.viewGrid.getSummaryRow();
+      }
+
+      if (status === isc.RPCResponse.STATUS_SUCCESS && view.callSaveActions) {
+        eventHandlerParams.data = isc.clone(data);
+        eventHandlerParams.isNewRecord = savingNewRecord;
+        if (autoSaveAction) {
+          eventHandlerCallback = function () {
+            OB.Utilities.callAction(autoSaveAction);
+          };
+        }
+        view.callSaveActions(OB.EventHandlerRegistry.POSTSAVE, eventHandlerParams, eventHandlerCallback);
       }
 
       return false;

@@ -56,7 +56,6 @@ import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.model.domaintype.EnumerateDomainType;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.client.application.Parameter;
 import org.openbravo.client.application.Process;
@@ -413,10 +412,11 @@ public class DataSourceServlet extends BaseKernelServlet {
 
           boolean preferenceCalculateFirst = true;
           boolean translateYesNoReferences = false;
+          String formattedPropKey;
           for (String propKey : properties.keySet()) {
             final Property prop = properties.get(propKey);
             Column col = OBDal.getInstance().get(Column.class, prop.getColumnId());
-
+            formattedPropKey = propKey.replace("$", ".");
             if (prop.isAuditInfo()) {
               Element element = null;
               if ("creationDate".equals(propKey)) {
@@ -439,9 +439,13 @@ public class DataSourceServlet extends BaseKernelServlet {
               Tab tab = OBDal.getInstance().get(Tab.class,
                   parameters.get(JsonConstants.TAB_PARAMETER));
               for (Field field : tab.getADFieldList()) {
-                if (field.getColumn() == null || !field.getColumn().getId().equals(col.getId())) {
+                if (field.getProperty() != null && !formattedPropKey.equals(field.getProperty())) {
+                  continue;
+                } else if (field.getColumn() == null
+                    || !field.getColumn().getId().equals(col.getId())) {
                   continue;
                 }
+
                 niceFieldProperties.put(propKey, field.getName());
                 for (FieldTrl fieldTrl : field.getADFieldTrlList()) {
                   if (fieldTrl.getLanguage().getId().equals(userLanguageId)) {
@@ -529,7 +533,7 @@ public class DataSourceServlet extends BaseKernelServlet {
 
     private boolean isYesNoReference(Property prop) {
       final Column column = OBDal.getInstance().get(Column.class, prop.getColumnId());
-      return YES_NO_REFERENCE_ID.equals((String) DalUtil.getId(column.getReference()));
+      return YES_NO_REFERENCE_ID.equals(column.getReference().getId());
     }
 
     private boolean translateYesNoReferencesInCsv(Window windowToCsv) {
@@ -909,8 +913,7 @@ public class DataSourceServlet extends BaseKernelServlet {
     // setting session info
     // Reset Session Info in DB manually as it was set in the service but actual information is not
     // available till now.
-    SessionInfo.setDBSessionInfo(OBDal.getInstance().getConnection(), OBPropertiesProvider
-        .getInstance().getOpenbravoProperties().getProperty("bbdd.rdbms"));
+    SessionInfo.setDBSessionInfo(OBDal.getInstance().getConnection());
   }
 
   private boolean checkSetParameters(HttpServletRequest request, HttpServletResponse response,
@@ -1119,7 +1122,7 @@ public class DataSourceServlet extends BaseKernelServlet {
         final List<String> windowCheck = new ArrayList<String>();
         for (Field f : fields) {
           // Check access with OBUIAPPProcess & windowId for each field.
-          String windowId = (String) DalUtil.getId(f.getTab().getWindow());
+          String windowId = f.getTab().getWindow().getId();
           if (!windowCheck.contains(windowId)) {
             windowCheck.add(windowId);
             parameters.put("windowId", windowId);

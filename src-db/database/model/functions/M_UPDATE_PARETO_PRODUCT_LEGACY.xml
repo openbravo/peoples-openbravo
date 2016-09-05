@@ -25,7 +25,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2008 Openbravo SLU
+* All portions are Copyright (C) 2001-2016 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -43,7 +43,6 @@
   TYPE RECORD IS REF CURSOR;
   Cur_Cursor RECORD;
   Cur_Parameter RECORD;
-  v_AD_Client_ID VARCHAR2(32);
 BEGIN
 
   IF(p_PInstance_ID IS NOT NULL) THEN

@@ -33,6 +33,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
@@ -165,7 +166,8 @@ public class ImportEntryManager {
     return isShutDown;
   }
 
-  public ImportEntryManager() {
+  @PostConstruct
+  private void init() {
     instance = this;
     importBatchSize = ImportProcessUtils.getCheckIntProperty(log, "import.batch.size",
         importBatchSize, 1000);
@@ -301,10 +303,11 @@ public class ImportEntryManager {
 
       ImportEntry importEntry = OBProvider.getInstance().get(ImportEntry.class);
       importEntry.setId(id);
-      importEntry.setRole(OBDal.getInstance().get(Role.class,
+      importEntry.setRole(OBDal.getInstance().getProxy(Role.class,
           OBContext.getOBContext().getRole().getId()));
       importEntry.setNewOBObject(true);
       importEntry.setImportStatus("Initial");
+      importEntry.setCreatedtimestamp((new Date()).getTime());
       importEntry.setImported(null);
       importEntry.setTypeofdata(typeOfData);
       importEntry.setJsonInfo(json);
@@ -563,7 +566,8 @@ public class ImportEntryManager {
                 final String importEntryQryStr = "from " + ImportEntry.ENTITY_NAME + " where "
                     + ImportEntry.PROPERTY_TYPEOFDATA + "='" + typeOfData + "' and "
                     + ImportEntry.PROPERTY_IMPORTSTATUS + "='Initial' order by "
-                    + ImportEntry.PROPERTY_CREATIONDATE;
+                    + ImportEntry.PROPERTY_CREATIONDATE + ", "
+                    + ImportEntry.PROPERTY_CREATEDTIMESTAMP;
 
                 final Query entriesQry = OBDal.getInstance().getSession()
                     .createQuery(importEntryQryStr);

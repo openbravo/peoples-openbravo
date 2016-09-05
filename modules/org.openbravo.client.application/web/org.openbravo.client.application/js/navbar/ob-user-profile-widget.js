@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2015 Openbravo SLU
+ * All portions are Copyright (C) 2010-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -327,6 +327,7 @@ isc.OBUserProfile.addProperties({
 
       // call the server to save the information
       doSave: function () {
+        OB.User.loggingIn = true;
         OB.RemoteCallManager.call(this.widgetInstance.formActionHandler, this.getValues(), {
           'command': 'save'
         }, this.doSaveCallback);
@@ -334,6 +335,7 @@ isc.OBUserProfile.addProperties({
 
       // and reload
       doSaveCallback: function (rpcResponse, data, rpcRequest) {
+        delete OB.User.loggingIn;
         // if not success then an error, can not really occur
         // is handled as an exception is returned anyway
         if (data.result === OB.Constants.SUCCESS) {

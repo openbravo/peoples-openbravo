@@ -39,7 +39,6 @@ import org.openbravo.client.application.Parameter;
 import org.openbravo.client.application.ParameterUtils;
 import org.openbravo.client.application.ParameterValue;
 import org.openbravo.client.application.window.ApplicationDictionaryCachedStructures;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -73,7 +72,7 @@ public class AttachmentUtils {
    */
   public static AttachmentConfig getAttachmentConfig() {
     Client client = OBContext.getOBContext().getCurrentClient();
-    return getAttachmentConfig((String) DalUtil.getId(client));
+    return getAttachmentConfig(client.getId());
   }
 
   /**
@@ -166,7 +165,7 @@ public class AttachmentUtils {
    * @return List of JSONOject with attachments information values
    */
   public static List<JSONObject> getTabAttachmentsForRows(Tab tab, String[] recordIds) {
-    String tableId = (String) DalUtil.getId(tab.getTable());
+    String tableId = tab.getTable().getId();
     OBCriteria<Attachment> attachmentFiles = OBDao.getFilteredCriteria(Attachment.class,
         Restrictions.eq("table.id", tableId), Restrictions.in("record", recordIds));
     attachmentFiles.addOrderBy("creationDate", false);
@@ -184,8 +183,7 @@ public class AttachmentUtils {
         attachmentobj.put("updatedby", attachment.getUpdatedBy().getName());
         String attachmentMethod = DEFAULT_METHOD_ID;
         if (attachment.getAttachmentConf() != null) {
-          attachmentMethod = (String) DalUtil.getId(attachment.getAttachmentConf()
-              .getAttachmentMethod());
+          attachmentMethod = attachment.getAttachmentConf().getAttachmentMethod().getId();
         }
         attachmentobj.put("attmethod", attachmentMethod);
         attachmentobj.put("description",
@@ -213,8 +211,7 @@ public class AttachmentUtils {
   public static Object getPropertyPathValue(Parameter parameter, String tabId, String recordId)
       throws OBException {
     Tab tab = adcs.getTab(tabId);
-    Entity entity = ModelProvider.getInstance().getEntityByTableId(
-        (String) DalUtil.getId(tab.getTable()));
+    Entity entity = ModelProvider.getInstance().getEntityByTableId(tab.getTable().getId());
     final String hql = "SELECT a." + parameter.getPropertyPath() + " FROM " + entity.getName()
         + " AS a WHERE a.id=:recordId";
     final Query query = OBDal.getInstance().getSession().createQuery(hql);

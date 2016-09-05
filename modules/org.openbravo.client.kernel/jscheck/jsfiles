@@ -31,4 +31,5 @@ find $1 -name '*.js' -and ! -path '*isomorphic*' \
 -and ! -path '*enyo*' \
 -and ! -path '*smartclient*' \
 -and ! -path '*scopeleaks*' \
--and ! -path '*BigDecimal*'
+-and ! -path '*BigDecimal*' \
+-and ! -path '*AppDynamics*'

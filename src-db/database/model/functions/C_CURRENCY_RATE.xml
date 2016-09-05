@@ -34,7 +34,7 @@
 * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
 * All Rights Reserved.
 * Contributor(s): Openbravo SLU
-* Contributions are Copyright (C) 2001-2009 Openbravo, S.L.U.
+* Contributions are Copyright (C) 2001-2016 Openbravo, S.L.U.
 *
 * Specifically, this derivative work is based upon the following Compiere
 * file and version.
@@ -48,12 +48,10 @@
 * Test
 *  SELECT C_Currency_Rate(116, 100, null, null) FROM DUAL; => .647169
 ************************************************************************/
-  -- Currency From variables
-  v_cf_IsEuro      char(1);
+
   -- Triangle
   v_CurrencyFrom VARCHAR(32);
   v_CurrencyTo   VARCHAR(32);
-  v_CurrencyEuro VARCHAR(32);
   --
   v_ConvDate DATE := now();
   v_RateType VARCHAR(60) := 'S';

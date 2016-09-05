@@ -30,7 +30,6 @@ import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.client.kernel.ComponentProvider;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -57,7 +56,7 @@ public class CoreAttachImplementation extends AttachImplementation {
   public void uploadFile(Attachment attachment, String dataType, Map<String, Object> parameters,
       File file, String tabId) throws OBException {
     log.debug("CoreAttachImplemententation - Uploading files");
-    String tableId = (String) DalUtil.getId(attachment.getTable());
+    String tableId = attachment.getTable().getId();
     String key = attachment.getRecord();
     String fileDirPath = getAttachmentDirectoryForNewAttachments(tableId, key);
 
@@ -84,7 +83,7 @@ public class CoreAttachImplementation extends AttachImplementation {
   @Override
   public File downloadFile(Attachment attachment) {
     log.debug("CoreAttachImplemententation - download file");
-    String fileDirPath = getAttachmentDirectory((String) DalUtil.getId(attachment.getTable()),
+    String fileDirPath = getAttachmentDirectory(attachment.getTable().getId(),
         attachment.getRecord(), attachment.getName());
     String attachmentFolderPath = OBPropertiesProvider.getInstance().getOpenbravoProperties()
         .getProperty("attach.path");
@@ -98,7 +97,7 @@ public class CoreAttachImplementation extends AttachImplementation {
     log.debug("CoreAttachImplemententation - Removing files");
     String attachmentFolderPath = OBPropertiesProvider.getInstance().getOpenbravoProperties()
         .getProperty("attach.path");
-    String fileFolderPath = getAttachmentDirectory((String) DalUtil.getId(attachment.getTable()),
+    String fileFolderPath = getAttachmentDirectory(attachment.getTable().getId(),
         attachment.getRecord(), attachment.getName());
     String absoluteFileFolderPath = attachmentFolderPath + "/" + fileFolderPath;
     final File file = new File(absoluteFileFolderPath, attachment.getName());

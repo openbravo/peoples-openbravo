@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2015 Openbravo SLU
+ * All portions are Copyright (C) 2008-2016 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -29,6 +29,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.provider.OBNotSingleton;
 import org.openbravo.base.provider.OBProvider;
@@ -39,6 +40,7 @@ import org.openbravo.base.structure.Identifiable;
 import org.openbravo.base.util.Check;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ExternalConnectionPool;
+import org.openbravo.database.SessionInfo;
 import org.openbravo.service.db.DbUtility;
 
 /**
@@ -54,6 +56,7 @@ public class SessionHandler implements OBNotSingleton {
   private static final Logger log = Logger.getLogger(SessionHandler.class);
 
   private static ExternalConnectionPool externalConnectionPool;
+  private static String rbdms;
 
   {
     String poolClassName = OBPropertiesProvider.getInstance().getOpenbravoProperties()
@@ -66,6 +69,7 @@ public class SessionHandler implements OBNotSingleton {
         log.warn("External connection pool class not found: " + poolClassName, e);
       }
     }
+    rbdms = (String) OBPropertiesProvider.getInstance().getOpenbravoProperties().get("bbdd.rdbms");
   }
 
   // The threadlocal which handles the session
@@ -133,6 +137,7 @@ public class SessionHandler implements OBNotSingleton {
     this.connection = connection;
   }
 
+  /** Gets current session's {@code Connection} if it's set, {@code null} if not. */
   public Connection getConnection() {
     return this.connection;
   }
@@ -140,25 +145,66 @@ public class SessionHandler implements OBNotSingleton {
   protected Session createSession() {
     SessionFactory sf = SessionFactoryController.getInstance().getSessionFactory();
     // Checks if the session connection has to be obtained using an external connection pool
-    if (externalConnectionPool != null && this.getConnection() == null) {
-      Connection externalConnection = externalConnectionPool.getConnection();
+    if (externalConnectionPool != null && connection == null) {
+      Connection externalConnection;
       try {
-        // Autocommit is disabled because DAL is taking into account his logical and DAL is setting
-        // autoCommint to false to maintain transactional way of working.
-        externalConnection.setAutoCommit(false);
+        externalConnection = getNewConnection();
+        setConnection(externalConnection);
       } catch (SQLException e) {
-        log.error("Error setting this connection's to auto-commit mode", e);
+        throw new OBException("Could not get connection to create DAL session", e);
       }
-      this.setConnection(externalConnection);
     }
-    if (this.connection != null) {
+
+    if (connection != null) {
       // If the connection has been obtained using an external connection pool it is passed to
       // openSession, to prevent a new connection to be created using the Hibernate default
       // connection pool
-      return sf.openSession(this.connection);
+      return sf.openSession(connection);
     } else {
       return sf.openSession();
     }
+  }
+
+  /**
+   * Returns true when the current SessionHandler has a transaction and it is active.
+   */
+  public boolean isCurrentTransactionActive() {
+    return tx != null && tx.isActive();
+  }
+
+  /**
+   * Begins a new Transaction on the current HibernateSession and assigns it to the SessionHandler.
+   * 
+   * @throws OBException
+   *           if there is already an available active transaction.
+   */
+  public void beginNewTransaction() throws OBException {
+    if (isCurrentTransactionActive()) {
+      throw new OBException(
+          "Not possible to start a new transaction while there is still one active.");
+    }
+    tx = getSession().beginTransaction();
+  }
+
+  /** Gets a new {@code Connection} from the connection pool. */
+  public Connection getNewConnection() throws SQLException {
+    Connection newConnection;
+    if (externalConnectionPool != null) {
+      newConnection = externalConnectionPool.getConnection();
+      try {
+        // Autocommit is disabled because DAL is taking into account his logical and DAL is setting
+        // autoCommint to false to maintain transactional way of working.
+        newConnection.setAutoCommit(false);
+      } catch (SQLException e) {
+        log.error("Error setting connection to auto-commit mode", e);
+      }
+    } else {
+      // getting connection from Hibernate pool
+      newConnection = ((DalSessionFactory) SessionFactoryController.getInstance()
+          .getSessionFactory()).getConnectionProvider().getConnection();
+      SessionInfo.initDB(newConnection, rbdms);
+    }
+    return newConnection;
   }
 
   protected void closeSession() {

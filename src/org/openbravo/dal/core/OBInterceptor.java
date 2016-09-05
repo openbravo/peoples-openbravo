@@ -45,6 +45,7 @@ import org.openbravo.base.structure.ClientEnabled;
 import org.openbravo.base.structure.OrganizationEnabled;
 import org.openbravo.base.structure.Traceable;
 import org.openbravo.dal.security.SecurityChecker;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.access.User;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.enterprise.Organization;
@@ -298,7 +299,7 @@ public class OBInterceptor extends EmptyInterceptor {
             && bob.getEntity().getProperty(propertyNames[i]).isAllowedCrossOrgReference();
 
         if (!skipCrossOrgCheck
-            && !obContext.getOrganizationStructureProvider((String) DalUtil.getId(o1.getClient()))
+            && !obContext.getOrganizationStructureProvider(o1.getClient().getId())
                 .isInNaturalTree(o1, o2)) {
           throw new OBSecurityException("Entity " + bob.getIdentifier() + " ("
               + bob.getEntityName() + ") with organization " + o1.getIdentifier()
@@ -351,16 +352,18 @@ public class OBInterceptor extends EmptyInterceptor {
     // the changes from currentState to the object. This happens slighlty later.
     final OBContext obContext = OBContext.getOBContext();
     final User currentUser = getCurrentUser();
-    log.debug("OBEvent for new object " + traceable.getClass().getName() + " user "
-        + currentUser.getName());
+    if (log.isDebugEnabled()) {
+      log.debug("OBEvent for new object " + traceable.getClass().getName() + " user "
+          + currentUser.getName());
+    }
 
     Client client = null;
     Organization org = null;
     if (traceable instanceof ClientEnabled || traceable instanceof OrganizationEnabled) {
-      // reread the client and organization
-      client = SessionHandler.getInstance()
-          .find(Client.class, obContext.getCurrentClient().getId());
-      org = SessionHandler.getInstance().find(Organization.class,
+      // Client and organization in context could have been created in another session, use proxies
+      // to set them. Note DalUtil.getId won't help here as objects are already loaded in memory
+      client = OBDal.getInstance().getProxy(Client.class, obContext.getCurrentClient().getId());
+      org = OBDal.getInstance().getProxy(Organization.class,
           obContext.getCurrentOrganization().getId());
     }
     final Date currentDate = new Date();
@@ -405,8 +408,10 @@ public class OBInterceptor extends EmptyInterceptor {
       return;
     }
     final User currentUser = getCurrentUser();
-    log.debug("OBEvent for updated object " + t.getClass().getName() + " user "
-        + currentUser.getName());
+    if (log.isDebugEnabled()) {
+      log.debug("OBEvent for updated object " + t.getClass().getName() + " user "
+          + currentUser.getName());
+    }
     for (int i = 0; i < propertyNames.length; i++) {
       if (PROPERTY_UPDATED.equals(propertyNames[i])) {
         currentState[i] = new Date();
@@ -426,11 +431,9 @@ public class OBInterceptor extends EmptyInterceptor {
     }
   }
 
-  // reads the current user from the database, note multiple reads
-  // will hit the session cache
+  /** Returns a proxy for current session's user without need of a DB query */
   private User getCurrentUser() {
-    return SessionHandler.getInstance()
-        .find(User.class, OBContext.getOBContext().getUser().getId());
+    return OBDal.getInstance().getProxy(User.class, OBContext.getOBContext().getUser().getId());
   }
 
   public Interceptor getInterceptorListener() {

@@ -123,6 +123,7 @@ public class JsonConstants {
   public static final String QUERY_PARAM_TRANSACTIONAL_RANGE = "@transactionalRange@";
 
   public static final String IS_WS_CALL = "_isWsCall";
+  public static final String IS_PICK_AND_EDIT = "_isPickAndEdit";
   public static final String WHERE_AND_FILTER_CLAUSE = "whereAndFilterClause";
   public static final String TABLE_ID = "tableId";
   public static final String WHERE_CLAUSE_HAS_BEEN_CHECKED = "whereClauseHasBeenChecked";
@@ -131,4 +132,8 @@ public class JsonConstants {
 
   public static final String UNDEFINED = "undefined";
   public static final String NULL = "null";
+  public static final String FIELD_SEPARATOR = "$";
+
+  public static final int PAE_DATA_PAGE_SIZE = 100;
+  public static final int PAE_MAX_PAGE_SIZE = 300;
 }

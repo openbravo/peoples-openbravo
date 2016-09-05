@@ -32,7 +32,6 @@ import org.apache.commons.lang.StringUtils;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.structure.InheritedAccessEnabled;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.model.ad.access.Role;
@@ -181,7 +180,7 @@ public abstract class AccessTypeInjector implements Comparable<AccessTypeInjecto
     try {
       Class<?> myClass = Class.forName(getClassName());
       BaseOBObject bob = (BaseOBObject) myClass.getMethod(getSecuredElementGetter()).invoke(access);
-      String securedElementIndentifier = (String) DalUtil.getId(bob);
+      String securedElementIndentifier = (String) bob.getId();
       return securedElementIndentifier;
     } catch (Exception ex) {
       log.error("Error getting secured element identifier with method {}",
@@ -209,7 +208,7 @@ public abstract class AccessTypeInjector implements Comparable<AccessTypeInjecto
       whereClause.append(" where p.").append(roleProperty).append(" = :roleId");
       addEntityWhereClause(whereClause);
       final OBQuery<T> query = OBDal.getInstance().createQuery(clazz, whereClause.toString());
-      query.setNamedParameter("roleId", DalUtil.getId(role));
+      query.setNamedParameter("roleId", role.getId());
       doEntityParameterReplacement(query);
       query.setFilterOnActive(false);
       return (List<? extends InheritedAccessEnabled>) query.list();
@@ -308,8 +307,8 @@ public abstract class AccessTypeInjector implements Comparable<AccessTypeInjecto
    *          The access with the Inherit From field to be nullified
    */
   protected void clearInheritedFromField(InheritedAccessEnabled access) {
-    String inheritedFromId = access.getInheritedFrom() != null ? (String) DalUtil.getId(access
-        .getInheritedFrom()) : "";
+    String inheritedFromId = access.getInheritedFrom() != null ? access.getInheritedFrom().getId()
+        : "";
     if (!StringUtils.isEmpty(inheritedFromId)) {
       access.setInheritedFrom(null);
     }
@@ -325,8 +324,8 @@ public abstract class AccessTypeInjector implements Comparable<AccessTypeInjecto
    *          The id of the role used to decide whether the field should be nullified or not
    */
   protected void clearInheritedFromField(InheritedAccessEnabled access, String roleId) {
-    String inheritedFromId = access.getInheritedFrom() != null ? (String) DalUtil.getId(access
-        .getInheritedFrom()) : "";
+    String inheritedFromId = access.getInheritedFrom() != null ? access.getInheritedFrom().getId()
+        : "";
     if (!StringUtils.isEmpty(inheritedFromId) && roleId.equals(inheritedFromId)) {
       access.setInheritedFrom(null);
     }

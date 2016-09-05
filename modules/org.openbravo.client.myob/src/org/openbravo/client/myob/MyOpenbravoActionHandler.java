@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2015 Openbravo SLU
+ * All portions are Copyright (C) 2010-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -182,8 +182,11 @@ public class MyOpenbravoActionHandler extends BaseActionHandler implements Porta
 
   private void addAvailableWidgetClasses(JSONObject o, String roleId, boolean isAdminMode) {
     MyOpenbravoComponent component = weldUtils.getInstance(MyOpenbravoComponent.class);
+    List<String> availableClasses = null;
     try {
-      List<String> availableClasses = component.getAvailableWidgetClasses(roleId, isAdminMode);
+      final String strEventType = o.getString("eventType");
+      boolean onlyWorkspaceWidgets = GET_AVAILABLE_WIDGET_CLASSES.equals(strEventType);
+      availableClasses = component.getAvailableWidgetClasses(roleId, onlyWorkspaceWidgets);
       o.put("availableWidgetClasses", availableClasses);
     } catch (Exception e) {
       log.error("Error retreiving widget classes", e);

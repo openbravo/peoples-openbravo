@@ -504,5 +504,17 @@ isc.OBBaseParameterWindowView.addProperties({
       activeView.viewGrid.enableShortcuts();
       activeView.toolBar.enableShortcuts();
     }
+  },
+
+  getBookMarkParams: function () {
+    var result = {};
+    result.viewId = this.getClassName();
+    result.tabTitle = this.tabTitle;
+    return result;
+  },
+
+  isSameTab: function (viewName, params) {
+    // process definition based windows can be opened in more than one tab at the same time
+    return false;
   }
 });

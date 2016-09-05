@@ -19,6 +19,7 @@
 package org.openbravo.userinterface.selector;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -87,7 +88,8 @@ public class SelectorDefaultFilterActionHandler extends BaseActionHandler {
       obc.add(Restrictions.eq(SelectorField.PROPERTY_OBUISELSELECTOR, sel));
       obc.add(Restrictions.isNotNull(SelectorField.PROPERTY_DEFAULTEXPRESSION));
 
-      if (obc.count() == 0) {
+      List<SelectorField> selFields = obc.list();
+      if (selFields.size() == 0) {
         return result;
       }
 
@@ -103,7 +105,7 @@ public class SelectorDefaultFilterActionHandler extends BaseActionHandler {
           && "true".equals(params.get(SelectorConstants.DS_REQUEST_IS_FILTER_BY_ID_SUPPORTED));
       Object exprResult = null;
       JSONArray idFilters = new JSONArray();
-      for (SelectorField f : obc.list()) {
+      for (SelectorField f : selFields) {
         try {
           exprResult = engine.eval(f.getDefaultExpression());
           Object bobId = null;

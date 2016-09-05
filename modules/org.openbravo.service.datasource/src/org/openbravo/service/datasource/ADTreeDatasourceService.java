@@ -51,7 +51,6 @@ import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.domain.ReferencedTree;
-import org.openbravo.model.ad.domain.ReferencedTreeField;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.utility.TableTree;
@@ -196,19 +195,9 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
     String tabId = parameters.get("tabId");
     String treeReferenceId = parameters.get("treeReferenceId");
     Tab tab = null;
-    JSONArray selectedProperties = null;
     if (tabId != null) {
       tab = OBDal.getInstance().get(Tab.class, tabId);
-      String selectedPropertiesStr = parameters.get("_selectedProperties");
-      selectedProperties = new JSONArray(selectedPropertiesStr);
-    } else if (treeReferenceId != null) {
-      ReferencedTree treeReference = OBDal.getInstance().get(ReferencedTree.class, treeReferenceId);
-      treeReference.getADReferencedTreeFieldList();
-      selectedProperties = new JSONArray();
-      for (ReferencedTreeField treeField : treeReference.getADReferencedTreeFieldList()) {
-        selectedProperties.put(treeField.getProperty());
-      }
-    } else {
+    } else if (treeReferenceId == null) {
       logger
           .error("A request to the TreeDatasourceService must include the tabId or the treeReferenceId parameter");
       return new JSONArray();
@@ -216,9 +205,13 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
     Tree tree = (Tree) datasourceParameters.get("tree");
 
     JSONArray responseData = new JSONArray();
+    if (tree == null) {
+      return responseData;
+    }
     Entity entity = ModelProvider.getInstance().getEntityByTableId(tree.getTable().getId());
     final DataToJsonConverter toJsonConverter = OBProvider.getInstance().get(
         DataToJsonConverter.class);
+    toJsonConverter.setAdditionalProperties(JsonUtils.getAdditionalProperties(parameters));
 
     // Joins the ADTreeNode with the referenced table
     StringBuilder joinClause = new StringBuilder();
@@ -350,6 +343,7 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
     OBQuery<BaseOBObject> obq = OBDal.getInstance()
         .createQuery("ADTreeNode", joinClause.toString());
     obq.setFilterOnActive(false);
+    obq.setFilterOnReadableOrganization(entity.getMappingClass() != Organization.class);
     final List<Object> parameters = new ArrayList<Object>();
     parameters.add(nodeId);
     obq.setParameters(parameters);
@@ -563,19 +557,11 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
     String tableId = null;
     String referencedTableId = parameters.get("referencedTableId");
     String treeReferenceId = parameters.get("treeReferenceId");
-    JSONArray selectedProperties = null;
     if (referencedTableId != null) {
       tableId = referencedTableId;
-      String selectedPropertiesStr = parameters.get("_selectedProperties");
-      selectedProperties = new JSONArray(selectedPropertiesStr);
     } else if (treeReferenceId != null) {
       ReferencedTree treeReference = OBDal.getInstance().get(ReferencedTree.class, treeReferenceId);
-      treeReference.getADReferencedTreeFieldList();
       tableId = treeReference.getTable().getId();
-      selectedProperties = new JSONArray();
-      for (ReferencedTreeField treeField : treeReference.getADReferencedTreeFieldList()) {
-        selectedProperties.put(treeField.getProperty());
-      }
     } else {
       logger
           .error("A request to the TreeDatasourceService must include the tabId or the treeReferenceId parameter");
@@ -650,6 +636,7 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
 
     final DataToJsonConverter toJsonConverter = OBProvider.getInstance().get(
         DataToJsonConverter.class);
+    toJsonConverter.setAdditionalProperties(JsonUtils.getAdditionalProperties(parameters));
 
     JSONObject json = null;
     try {

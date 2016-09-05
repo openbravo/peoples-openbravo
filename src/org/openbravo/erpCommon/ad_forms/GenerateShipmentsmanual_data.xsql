@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,27 +28,52 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
     <![CDATA[
-      SELECT C_Order_ID, o.Name as adorgname, COALESCE(dttrl.Name, dt.Name) as cdoctypename, DocumentNo, bp.Name as cbpartnername, DateOrdered, 
-      amountlines, TotalLines 
-      FROM M_InOut_Candidate_v ic, AD_Org o, C_BPartner bp, C_DocType dt left join C_DocType_trl dttrl on dt.C_DocType_ID=dttrl.C_DocType_ID AND dttrl.ad_language=?
-      WHERE ic.AD_Org_ID=o.AD_Org_ID
-      AND ic.C_BPartner_ID=bp.C_BPartner_ID
-      AND ic.C_DocType_ID=dt.C_DocType_ID
-      AND dt.isreturn='N'
-      AND ic.ad_client_id in ('1')
-      AND ic.ad_org_id in ('1')
+      SELECT o.C_Order_ID, org.Name as adorgname, COALESCE(dttrl.Name, dt.Name) as cdoctypename, o.DocumentNo, bp.Name as cbpartnername, o.DateOrdered, o.totallines as amountlines,
+      (
+        SELECT sum((ol.qtyordered - ol.qtydelivered) * ol.priceactual)
+        FROM c_orderline ol
+        WHERE ol.c_order_id = o.c_order_id
+        AND ol.qtyordered <> ol.qtydelivered
+        AND ol.directship = 'N'
+        AND ol.m_product_id IS NOT NULL
+      ) as TotalLines
+      FROM C_Order o
+      JOIN AD_Org org
+      ON o.AD_Org_ID = org.AD_Org_ID
+      JOIN C_BPartner bp
+      ON o.C_BPartner_ID = bp.C_BPartner_ID
+      JOIN C_DocType dt
+      ON o.C_DocType_ID = dt.C_DocType_ID
+      LEFT JOIN C_DocType_trl dttrl
+      ON dt.C_DocType_ID = dttrl.C_DocType_ID
+      AND dttrl.ad_language = ?
+      WHERE o.docstatus = 'CO'
+      AND o.isdelivered = 'N'
+      AND dt.isreturn = 'N'
+      AND dt.docbasetype = 'SOO'
+      AND dt.docsubtypeso NOT IN ('ON', 'OB')
+      AND EXISTS (
+        SELECT 1
+        FROM C_ORDERLINE ol
+        WHERE ol.c_order_id = o.c_order_id
+        AND ol.qtyordered <> ol.qtydelivered
+        AND ol.directship = 'N'
+        AND ol.m_product_id IS NOT NULL
+      )
+      AND o.ad_client_id IN ('1')
+      AND o.ad_org_id IN ('1')
       AND 1=1
-      AND 2=2 AND ic.ad_org_id in ('1')
-      ORDER BY o.Name,bp.Name,DateOrdered
+      AND 2=2 AND o.ad_org_id IN ('1')
+      ORDER BY org.Name, bp.Name, DateOrdered
       ]]></Sql>
     <Field name="rownum" value="count"/>
     <Parameter name="language"/>
-    <Parameter name="adUserClient" type="replace" optional="true" after="AND ic.ad_client_id in (" text="'1'"/>
-    <Parameter name="adUserOrg" type="replace" optional="true" after="AND ic.ad_org_id in (" text="'1'"/>
-    <Parameter name="parBPartner" optional="true" after="AND 1=1">AND ic.C_BPartner_ID= ?</Parameter>
-    <Parameter name="parDateFrom" optional="true" after="AND 1=1"><![CDATA[ AND ic.DateOrdered >= TO_DATE(?)]]></Parameter>
-    <Parameter name="parDateTo" optional="true" after="AND 1=1"><![CDATA[ AND ic.DateOrdered < TO_DATE(?)]]></Parameter>
-    <Parameter name="adOrgId" optional="true" type="replace" after="AND 2=2 AND ic.ad_org_id in (" text="'1'"/>
+    <Parameter name="adUserClient" type="replace" optional="true" after="AND o.ad_client_id IN (" text="'1'"/>
+    <Parameter name="adUserOrg" type="replace" optional="true" after="AND o.ad_org_id IN (" text="'1'"/>
+    <Parameter name="parBPartner" optional="true" after="AND 1=1">AND o.C_BPartner_ID = ?</Parameter>
+    <Parameter name="parDateFrom" optional="true" after="AND 1=1"><![CDATA[ AND o.DateOrdered >= TO_DATE(?)]]></Parameter>
+    <Parameter name="parDateTo" optional="true" after="AND 1=1"><![CDATA[ AND o.DateOrdered < TO_DATE(?)]]></Parameter>
+    <Parameter name="adOrgId" optional="true" type="replace" after="AND 2=2 AND o.ad_org_id IN (" text="'1'"/>
   </SqlMethod>
     <SqlMethod name="set" type="constant" return="multiple">
       <SqlMethodComment></SqlMethodComment>

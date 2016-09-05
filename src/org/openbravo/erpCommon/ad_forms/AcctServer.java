@@ -44,7 +44,6 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.client.kernel.RequestContext;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -2207,10 +2206,8 @@ public abstract class AcctServer {
     } else {
       // there is no session, getting context info from OBContext
       OBContext ctx = OBContext.getOBContext();
-      vars = new VariablesSecureApp((String) DalUtil.getId(ctx.getUser()),
-          (String) DalUtil.getId(ctx.getCurrentClient()), (String) DalUtil.getId(ctx
-              .getCurrentOrganization()), (String) DalUtil.getId(ctx.getRole()), ctx.getLanguage()
-              .getLanguage());
+      vars = new VariablesSecureApp(ctx.getUser().getId(), ctx.getCurrentClient().getId(), ctx
+          .getCurrentOrganization().getId(), ctx.getRole().getId(), ctx.getLanguage().getLanguage());
     }
     setMessageResult(conn, vars, _strStatus, strMessageType, _parameters);
   }

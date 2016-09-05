@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2014 Openbravo SLU
+ * All portions are Copyright (C) 2010-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -152,7 +152,7 @@ public class InitialOrgSetup {
     if (!obResult.getType().equals(OKTYPE))
       return obResult;
     obResult.setType(ERRORTYPE);
-    logEvent(InitialSetupUtility.getTranslatedColumnName(language, "AD_Org_ID") + "="
+    logEvent(InitialSetupUtility.getTranslatedElement(language, "AD_Org_ID", "Organization") + "="
         + org.getName());
 
     String strOrgId = org.getId();

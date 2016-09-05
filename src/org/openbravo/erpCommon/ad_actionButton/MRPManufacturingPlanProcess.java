@@ -26,7 +26,6 @@ import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
@@ -50,19 +49,19 @@ public class MRPManufacturingPlanProcess extends DalBaseProcess {
     final String strManufacturingMRPID = (String) bundle.getParams().get("MRP_Run_Production_ID");
     final ProductionRun productionRun = OBDal.getInstance().get(ProductionRun.class,
         strManufacturingMRPID);
-    final String userId = (String) DalUtil.getId(OBContext.getOBContext().getUser());
-    final String orgId = (String) DalUtil.getId(productionRun.getOrganization());
-    final String clientId = (String) DalUtil.getId(productionRun.getClient());
-    final String plannerId = productionRun.getPlanner() != null ? (String) DalUtil
-        .getId(productionRun.getPlanner()) : NULL;
-    final String productId = productionRun.getProduct() != null ? (String) DalUtil
-        .getId(productionRun.getProduct()) : NULL;
-    final String productCategoryId = productionRun.getProductCategory() != null ? (String) DalUtil
-        .getId(productionRun.getProductCategory()) : NULL;
-    final String bpId = productionRun.getBusinessPartner() != null ? (String) DalUtil
-        .getId(productionRun.getBusinessPartner()) : NULL;
-    final String bpCatId = productionRun.getBusinessPartnerCategory() != null ? (String) DalUtil
-        .getId(productionRun.getBusinessPartnerCategory()) : NULL;
+    final String userId = OBContext.getOBContext().getUser().getId();
+    final String orgId = productionRun.getOrganization().getId();
+    final String clientId = productionRun.getClient().getId();
+    final String plannerId = productionRun.getPlanner() != null ? productionRun.getPlanner()
+        .getId() : NULL;
+    final String productId = productionRun.getProduct() != null ? productionRun.getProduct()
+        .getId() : NULL;
+    final String productCategoryId = productionRun.getProductCategory() != null ? productionRun
+        .getProductCategory().getId() : NULL;
+    final String bpId = productionRun.getBusinessPartner() != null ? productionRun
+        .getBusinessPartner().getId() : NULL;
+    final String bpCatId = productionRun.getBusinessPartnerCategory() != null ? productionRun
+        .getBusinessPartnerCategory().getId() : NULL;
     final long timeHorizon = productionRun.getTimeHorizon();
     final long safetyLeadTime = productionRun.getSafetyLeadTime();
     final Date docDate = productionRun.getDocumentDate();

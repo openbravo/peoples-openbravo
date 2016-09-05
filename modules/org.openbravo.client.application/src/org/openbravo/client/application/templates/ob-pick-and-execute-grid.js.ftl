@@ -49,7 +49,7 @@
   </#if>  
   <#if data.alwaysFilterFksByIdentifier>
   alwaysFilterFksByIdentifier: ${data.alwaysFilterFksByIdentifier?string},
-  </#if>   
-  dummy: true
+  </#if>
+  alias: '${data.tableAlias?js_string}'
 </@compress>
 }

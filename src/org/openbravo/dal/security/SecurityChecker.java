@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -30,9 +30,10 @@ import org.openbravo.base.provider.OBSingleton;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.structure.ClientEnabled;
 import org.openbravo.base.structure.OrganizationEnabled;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
+import org.openbravo.model.ad.system.Client;
+import org.openbravo.model.common.enterprise.Organization;
 
 /**
  * This class combines all security checks which are performed on entity level:
@@ -83,51 +84,9 @@ public class SecurityChecker implements OBSingleton {
    * @return true if writable, false otherwise
    * @see Entity
    */
-  // NOTE: this method needs to be kept insync with the checkWritable method
   public boolean isWritable(Object obj) {
-
-    // check that the client id and organization id are resp. in the list of
-    // user_client and user_org
-    // TODO: throw specific and translated exception, for more info:
-    // Utility.translateError(this, vars, vars.getLanguage(),
-    // Utility.messageBD(this, "NoWriteAccess", vars.getLanguage()))
-
-    final OBContext obContext = OBContext.getOBContext();
-
-    String clientId = "";
-    if (obj instanceof ClientEnabled && ((ClientEnabled) obj).getClient() != null) {
-      clientId = (String) DalUtil.getId(((ClientEnabled) obj).getClient());
-    }
-    String orgId = "";
-    if (obj instanceof OrganizationEnabled && ((OrganizationEnabled) obj).getOrganization() != null) {
-      orgId = (String) DalUtil.getId(((OrganizationEnabled) obj).getOrganization());
-    }
-
-    final Entity entity = ((BaseOBObject) obj).getEntity();
-    if (!obContext.isInAdministratorMode() && clientId.length() > 0) {
-      if (obj instanceof ClientEnabled) {
-        if (!obContext.getCurrentClient().getId().equals(clientId)) {
-          return false;
-        }
-      }
-
-      // todo can be improved by only checking if the client or
-      // organization
-      // actually changed...
-      if (!obContext.getEntityAccessChecker().isWritable(entity)) {
-        return false;
-      }
-
-      if (obj instanceof OrganizationEnabled && orgId.length() > 0) {
-        if (!obContext.getWritableOrganizations().contains(orgId)) {
-          return false;
-        }
-      }
-    }
-
-    // accesslevel check must also be done for administrators
     try {
-      entity.checkAccessLevel(clientId, orgId);
+      checkWriteAccess(obj, false);
     } catch (final OBSecurityException e) {
       return false;
     }
@@ -142,8 +101,11 @@ public class SecurityChecker implements OBSingleton {
    *          the object to check
    * @throws OBSecurityException
    */
-  // NOTE: this method needs to be kept insync with the isWritable method
   public void checkWriteAccess(Object obj) {
+    checkWriteAccess(obj, true);
+  }
+
+  private void checkWriteAccess(Object obj, boolean logError) {
 
     // check that the client id and organization id are resp. in the list of
     // user_client and user_org
@@ -154,36 +116,36 @@ public class SecurityChecker implements OBSingleton {
 
     String clientId = "";
     if (obj instanceof ClientEnabled && ((ClientEnabled) obj).getClient() != null) {
-      clientId = (String) DalUtil.getId(((ClientEnabled) obj).getClient());
+      clientId = ((ClientEnabled) obj).getClient().getId();
+    } else if (obj instanceof Client) {
+      clientId = ((Client) obj).getId();
     }
+
     String orgId = "";
     if (obj instanceof OrganizationEnabled && ((OrganizationEnabled) obj).getOrganization() != null) {
-      orgId = (String) DalUtil.getId(((OrganizationEnabled) obj).getOrganization());
+      orgId = ((OrganizationEnabled) obj).getOrganization().getId();
+    } else if (obj instanceof Organization) {
+      orgId = ((Organization) obj).getId();
     }
 
     final Entity entity = ((BaseOBObject) obj).getEntity();
     if ((!obContext.isInAdministratorMode() || obContext.doOrgClientAccessCheck())
         && clientId.length() > 0) {
-      if (obj instanceof ClientEnabled) {
+      if (obj instanceof ClientEnabled || obj instanceof Client) {
         if (!obContext.getCurrentClient().getId().equals(clientId)) {
           // TODO: maybe move rollback to exception throwing
           SessionHandler.getInstance().setDoRollback(true);
           throw new OBSecurityException("Client (" + clientId + ") of object (" + obj
-              + ") is not present in ClientList " + obContext.getCurrentClient().getId());
+              + ") is not present in ClientList " + obContext.getCurrentClient().getId(), logError);
         }
       }
 
-      // todo can be improved by only checking if the client or
-      // organization
-      // actually changed...
-      obContext.getEntityAccessChecker().checkWritable(entity);
+      if (!obContext.getEntityAccessChecker().isWritable(entity)) {
+        throw new OBSecurityException("Entity " + entity + " is not writable by this user",
+            logError);
+      }
 
-      if (obj instanceof OrganizationEnabled && orgId != null && orgId.length() > 0) {
-        // todo as only the id is required this can be made much more
-        // efficient
-        // by
-        // not loading the hibernate proxy
-
+      if (orgId != null && orgId.length() > 0) {
         // Due to issue 23419: Impossible to add an organization to one role, it has been necessary
         // to add the below check. The system is going to check if it can avoid the permission
         // during the record insertion. The application is allowed to avoid the permission when the
@@ -197,7 +159,8 @@ public class SecurityChecker implements OBSingleton {
           // TODO: maybe move rollback to exception throwing
           SessionHandler.getInstance().setDoRollback(true);
           throw new OBSecurityException("Organization " + orgId + " of object (" + obj
-              + ") is not present in OrganizationList " + obContext.getWritableOrganizations());
+              + ") is not present in OrganizationList " + obContext.getWritableOrganizations(),
+              logError);
         }
       }
     }
@@ -219,7 +182,7 @@ public class SecurityChecker implements OBSingleton {
     final Entity entity = ((BaseOBObject) organizationEnabledObject).getEntity();
 
     obContext.getEntityAccessChecker().checkReadable(entity);
-    String orgId = (String) DalUtil.getId(organizationEnabledObject.getOrganization());
+    String orgId = organizationEnabledObject.getOrganization().getId();
     String readableOrganizations[] = obContext.getReadableOrganizations();
     List<String> organizations = Arrays.asList(readableOrganizations);
     if (!organizations.contains(orgId)) {

@@ -37,10 +37,10 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012 Openbravo SLU
+ * All portions are Copyright (C) 2012-2016 Openbravo SLU
  * All Rights Reserved.
 ************************************************************************/
-  v_Rate NUMBER;
+
 BEGIN
   IF (p_convrate IS NULL) THEN
     RETURN C_CURRENCY_CONVERT_PRECISION(p_amount, p_curfrom_id, p_curto_id, p_convdate, p_ratetype, p_client_id, p_org_id, 'A');

@@ -11,15 +11,18 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013 Openbravo SLU
+ * All portions are Copyright (C) 2013-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
  */
 package org.openbravo.erpCommon.ad_process;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
@@ -28,6 +31,12 @@ import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.service.db.DalBaseProcess;
 import org.quartz.JobExecutionException;
 
+/**
+ * 
+ * @deprecated use {@link org.openbravo.common.actionhandler.ResetAccountingHandler}
+ * 
+ */
+@Deprecated
 public class ResetAccountingProcess extends DalBaseProcess {
 
   public void doExecute(ProcessBundle bundle) throws Exception {
@@ -44,11 +53,8 @@ public class ResetAccountingProcess extends DalBaseProcess {
         results = ResetAccounting
             .delete(adClientId, adOrgId, adTableId, recordId, datefrom, dateto);
       } else {
-        if (!"".equals(adTableId)) {
-          results = ResetAccounting.restore(adClientId, adOrgId, adTableId, datefrom, dateto);
-        } else {
-          results = ResetAccounting.restore(adClientId, adOrgId, datefrom, dateto);
-        }
+        List<String> tableIds = StringUtils.isEmpty(adTableId) ? null : Arrays.asList(adTableId);
+        results = ResetAccounting.restore(adClientId, adOrgId, tableIds, datefrom, dateto);
       }
       int counter = results.get("updated");
       int counterDeleted = results.get("deleted");

@@ -33,7 +33,6 @@ import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.client.kernel.BaseActionHandler;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBCriteria;
@@ -337,8 +336,8 @@ public class InventoryAmountUpdateProcess extends BaseActionHandler {
     if (localDate == null) {
       localDate = new Date();
     }
-    String clientId = (String) DalUtil.getId(invLine.getClient());
-    String orgId = (String) DalUtil.getId(invLine.getOrganization());
+    String clientId = invLine.getClient().getId();
+    String orgId = invLine.getOrganization().getId();
     InvAmtUpdLnInventories inv = OBProvider.getInstance().get(InvAmtUpdLnInventories.class);
     inv.setClient((Client) OBDal.getInstance().getProxy(Client.ENTITY_NAME, clientId));
     inv.setOrganization((Organization) OBDal.getInstance()

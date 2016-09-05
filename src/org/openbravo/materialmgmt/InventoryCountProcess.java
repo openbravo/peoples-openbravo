@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2015 Openbravo SLU
+ * All portions are Copyright (C) 2012-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -45,7 +45,7 @@ import org.hibernate.type.DateType;
 import org.hibernate.type.StringType;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.exception.OBException;
-import org.openbravo.dal.core.DalUtil;
+import org.openbravo.costing.CostingUtils;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.security.OrganizationStructureProvider;
@@ -274,13 +274,13 @@ public class InventoryCountProcess implements Process {
 
     Query queryInsert = OBDal.getInstance().getSession().createQuery(insert.toString());
     queryInsert.setString("inv", inventory.getId());
-    queryInsert.setString("user", (String) DalUtil.getId(OBContext.getOBContext().getUser()));
+    queryInsert.setString("user", OBContext.getOBContext().getUser().getId());
     final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
     queryInsert.setString("currentDate", dateFormatter.format(new Date()));
     // queryInsert.setBoolean("checkReservation", checkReservationQty);
     queryInsert.executeUpdate();
 
-    if (!inventory.getClient().getClientInformationList().get(0).isAllowNegativeStock()
+    if (!CostingUtils.isAllowNegativeStock(inventory.getClient())
         && !"C".equals(inventory.getInventoryType()) && !"O".equals(inventory.getInventoryType())) {
       checkStock(inventory);
     }
@@ -385,7 +385,7 @@ public class InventoryCountProcess implements Process {
     if (!iclList.isEmpty()) {
       for (InventoryCountLine icl2 : iclList) {
         if (!headerLEorBU.getId().equals(
-            DalUtil.getId(osp.getLegalEntityOrBusinessUnit(icl2.getOrganization())))) {
+            osp.getLegalEntityOrBusinessUnit(icl2.getOrganization()).getId())) {
           throw new OBException(OBMessageUtils.parseTranslation("@LinesAndHeaderDifferentLEorBU@"));
         }
       }

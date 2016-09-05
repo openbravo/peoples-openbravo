@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2015 Openbravo SLU
+ * All portions are Copyright (C) 2012-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -33,7 +33,6 @@ import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.util.Check;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -95,8 +94,7 @@ public class FinancialUtils {
       throws OBException {
     ProductPrice pp = getProductPrice(product, date, useSalesPriceList, pricelist);
     BigDecimal price = pp.getStandardPrice();
-    if (!DalUtil.getId(pp.getPriceListVersion().getPriceList().getCurrency()).equals(
-        currency.getId())) {
+    if (!pp.getPriceListVersion().getPriceList().getCurrency().getId().equals(currency.getId())) {
       // Conversion is needed.
       price = getConvertedAmount(price, pp.getPriceListVersion().getPriceList().getCurrency(),
           currency, date, organization, PRECISION_PRICE);
@@ -122,6 +120,14 @@ public class FinancialUtils {
   }
 
   /**
+   * @see #getProductPrice(Product, Date, boolean, PriceList, boolean, boolean)
+   */
+  public static ProductPrice getProductPrice(Product product, Date date, boolean useSalesPriceList,
+      PriceList priceList, boolean throwException) throws OBException {
+    return getProductPrice(product, date, useSalesPriceList, priceList, throwException, true);
+  }
+
+  /**
    * Method to get a valid ProductPrice for the given Product. It only considers PriceList versions
    * valid on the given date. If a PriceList is given it searches on that one. If PriceList null is
    * passed it search on any Sales or Purchase PriceList based on the useSalesPriceList.
@@ -136,12 +142,14 @@ public class FinancialUtils {
    *          PriceList to get its ProductPrice
    * @param throwException
    *          boolean to determine if an exception has to be thrown when no pricelist is found.
+   * @param usePriceIncludeTax
+   *          boolean to set if price lists including taxes should be considered or not.
    * @return a valid ProductPrice for the given parameters. Null is no exception is to be thrown.
    * @throws OBException
    *           when no valid ProductPrice is found and throwException is true.
    */
   public static ProductPrice getProductPrice(Product product, Date date, boolean useSalesPriceList,
-      PriceList priceList, boolean throwException) throws OBException {
+      PriceList priceList, boolean throwException, boolean usePriceIncludeTax) throws OBException {
     StringBuffer where = new StringBuffer();
     where.append(" as pp");
     where.append("   join pp." + ProductPrice.PROPERTY_PRICELISTVERSION + " as plv");
@@ -152,6 +160,9 @@ public class FinancialUtils {
       where.append("   and pl = :pricelist");
     } else {
       where.append("   and pl." + PriceList.PROPERTY_SALESPRICELIST + " = :salespricelist");
+    }
+    if (!usePriceIncludeTax) {
+      where.append("   and pl." + PriceList.PROPERTY_PRICEINCLUDESTAX + " = false");
     }
     where.append(" order by pl." + PriceList.PROPERTY_DEFAULT + " desc, plv."
         + PriceListVersion.PROPERTY_VALIDFROMDATE + " desc");

@@ -35,7 +35,6 @@ import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.costing.CostingAlgorithm.CostDimension;
 import org.openbravo.costing.CostingServer.TrxType;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBCriteria;
@@ -231,7 +230,7 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
     }
 
     // Modify isManufacturingProduct flag in case it has changed at some point.
-    isManufacturingProduct = ((String) DalUtil.getId(costing.getOrganization())).equals("0");
+    isManufacturingProduct = (costing.getOrganization().getId()).equals("0");
 
     ScrollableResults trxs = getRelatedTransactions();
     String strCurrentCurId = strCostCurrencyId;

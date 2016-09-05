@@ -24,7 +24,6 @@ import java.util.Set;
 
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.structure.InheritedAccessEnabled;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.businessUtility.Preferences;
@@ -76,7 +75,7 @@ public class PreferenceAccessInjector extends AccessTypeInjector {
     if (preference.getVisibleAtRole() == null) {
       return null;
     }
-    String roleId = (String) DalUtil.getId(preference.getVisibleAtRole());
+    String roleId = preference.getVisibleAtRole().getId();
     return OBDal.getInstance().get(Role.class, roleId);
   }
 
@@ -112,14 +111,13 @@ public class PreferenceAccessInjector extends AccessTypeInjector {
     String identifier = preference.isPropertyList() ? preference.getProperty() : preference
         .getAttribute();
     String isPropertyList = preference.isPropertyList() ? "Y" : "N";
-    String visibleAtClient = preference.getVisibleAtClient() != null ? (String) DalUtil
-        .getId(preference.getVisibleAtClient()) : " ";
-    String visibleAtOrg = preference.getVisibleAtOrganization() != null ? (String) DalUtil
-        .getId(preference.getVisibleAtOrganization()) : " ";
-    String visibleAtUser = preference.getUserContact() != null ? (String) DalUtil.getId(preference
-        .getUserContact()) : " ";
-    String visibleAtWindow = preference.getWindow() != null ? (String) DalUtil.getId(preference
-        .getWindow()) : " ";
+    String visibleAtClient = preference.getVisibleAtClient() != null ? preference
+        .getVisibleAtClient().getId() : " ";
+    String visibleAtOrg = preference.getVisibleAtOrganization() != null ? preference
+        .getVisibleAtOrganization().getId() : " ";
+    String visibleAtUser = preference.getUserContact() != null ? preference.getUserContact()
+        .getId() : " ";
+    String visibleAtWindow = preference.getWindow() != null ? preference.getWindow().getId() : " ";
     return identifier + "_" + isPropertyList + "_" + visibleAtClient + "_" + visibleAtOrg + "_"
         + visibleAtUser + "_" + visibleAtWindow;
   }
@@ -132,14 +130,13 @@ public class PreferenceAccessInjector extends AccessTypeInjector {
     if (propertyBlackList.contains(property)) {
       return null;
     }
-    String clientId = preference.getVisibleAtClient() != null ? (String) DalUtil.getId(preference
-        .getVisibleAtClient()) : null;
-    String orgId = preference.getVisibleAtOrganization() != null ? (String) DalUtil
-        .getId(preference.getVisibleAtOrganization()) : null;
-    String userId = preference.getUserContact() != null ? (String) DalUtil.getId(preference
-        .getUserContact()) : null;
-    String windowId = preference.getWindow() != null ? (String) DalUtil.getId(preference
-        .getWindow()) : null;
+    String clientId = preference.getVisibleAtClient() != null ? preference.getVisibleAtClient()
+        .getId() : null;
+    String orgId = preference.getVisibleAtOrganization() != null ? preference
+        .getVisibleAtOrganization().getId() : null;
+    String userId = preference.getUserContact() != null ? preference.getUserContact().getId()
+        : null;
+    String windowId = preference.getWindow() != null ? preference.getWindow().getId() : null;
     List<Preference> prefList = Preferences.getPreferences(property, preference.isPropertyList(),
         clientId, orgId, userId, roleId, windowId);
     if (prefList.size() == 0) {

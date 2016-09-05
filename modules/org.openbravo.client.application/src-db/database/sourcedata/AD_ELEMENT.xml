@@ -88,8 +88,8 @@
 <!--10922048465547F48765035389E22977-->  <COLUMNNAME><![CDATA[IsLazyFiltering]]></COLUMNNAME>
 <!--10922048465547F48765035389E22977-->  <NAME><![CDATA[Lazy Filtering on Grid]]></NAME>
 <!--10922048465547F48765035389E22977-->  <PRINTNAME><![CDATA[Lazy Filtering on Grid]]></PRINTNAME>
-<!--10922048465547F48765035389E22977-->  <DESCRIPTION><![CDATA[If it is set, the grid won't perform a filter and/or a sorting action until a button be pressed.]]></DESCRIPTION>
-<!--10922048465547F48765035389E22977-->  <HELP><![CDATA[If it is set, the grid won't perform a filter and/or a sorting action until the 'Apply Filters' button be pressed.]]></HELP>
+<!--10922048465547F48765035389E22977-->  <DESCRIPTION><![CDATA[If it is set, the grid won't perform a filter and/or a sorting action until the 'Apply Filters' button be pressed. In the same way, the summary functions present in the grid won't be recalculated until this button be pressed.]]></DESCRIPTION>
+<!--10922048465547F48765035389E22977-->  <HELP><![CDATA[If it is set, the grid won't perform a filter and/or a sorting action until the 'Apply Filters' button be pressed. In the same way, the summary functions present in the grid won't be recalculated until this button be pressed.]]></HELP>
 <!--10922048465547F48765035389E22977-->  <AD_MODULE_ID><![CDATA[9BA0836A3CD74EE4AB48753A47211BCC]]></AD_MODULE_ID>
 <!--10922048465547F48765035389E22977-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--10922048465547F48765035389E22977--></AD_ELEMENT>
