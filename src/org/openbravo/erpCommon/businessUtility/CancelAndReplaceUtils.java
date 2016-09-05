@@ -50,6 +50,7 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.ad_forms.AcctServer;
 import org.openbravo.erpCommon.utility.OBDateUtils;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.materialmgmt.ReservationUtils;
@@ -237,10 +238,10 @@ public class CancelAndReplaceUtils {
       }
 
       // Added check in case Cancel and Replace button is hit more than once
-      if (jsonorder == null && oldOrder.isCancelled()) {
-        throw new OBException("@APRM_Order@ " + oldOrder.getDocumentNo() + " @IsCancelled@");
+      if (jsonorder != null && oldOrder.isCancelled()) {
+        throw new OBException(String.format(OBMessageUtils.messageBD("IsCancelled"),
+            oldOrder.getDocumentNo()));
       }
-
       // Close old reservations
       closeOldReservations(oldOrder);
 
@@ -1049,7 +1050,7 @@ public class CancelAndReplaceUtils {
     final DocumentType paymentDocumentType = FIN_Utility.getDocumentType(
         oldOrder.getOrganization(), AcctServer.DOCTYPE_ARReceipt);
     if (paymentDocumentType == null) {
-      throw new OBException("No document type found for the new payment");
+      throw new OBException(OBMessageUtils.messageBD("NoDocTypeDefinedForPaymentIn"));
     }
 
     paymentDocumentNo = getPaymentDocumentNo(useOrderDocumentNoForRelatedDocs, oldOrder,
