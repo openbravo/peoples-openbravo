@@ -368,7 +368,7 @@ isc.OBStandardView.addProperties({
     // a specific tab with a record, the direct link logic will already take care
     // of fetching data
     if (this.isRootView && !this.standardWindow.directTabInfo) {
-      if (!lazyFiltering) {
+      if (!lazyFiltering && !this.deferOpenNewEdit) {
         if (!this.standardWindow.checkIfDefaultSavedView()) {
           this.viewGrid.fetchData(this.viewGrid.getCriteria());
         } else {
@@ -2007,6 +2007,9 @@ isc.OBStandardView.addProperties({
         this.treeGrid.setData([]);
         this.treeGrid.refreshGrid(refreshCallback);
       } else {
+        if (this.deferOpenNewEdit && this.messageBar.isVisible()) {
+          this.messageBar.hide();
+        }
         this.viewGrid.refreshGrid(refreshCallback, newRecordsToBeIncluded);
       }
     } else {

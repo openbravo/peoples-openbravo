@@ -271,7 +271,7 @@ OB.ViewFormProperties = {
   editNewRecord: function (preventFocus) {
     var grid = this.view.viewGrid;
     this.clearValues();
-    if (grid.lazyFiltering && !isc.isA.ResultSet(grid.data)) {
+    if ((grid.lazyFiltering || this.view.deferOpenNewEdit) && !isc.isA.ResultSet(grid.data)) {
       OB.Utilities.createResultSetManually(grid);
     }
     var ret = this.Super('editNewRecord', arguments);
@@ -1595,6 +1595,13 @@ OB.ViewFormProperties = {
       // direct navigation opens form view, set message in toolbar when switching 
       // back to grid
       this.view.viewGrid.setSingleRecordFilterMessage();
+    }
+    if (this.view.deferOpenNewEdit) {
+      // create new opens form view without loading grid data, set message in toolbar
+      // and show the funnel icon when switching back to grid
+      this.view.viewGrid.filterImage.prompt = OB.I18N.getLabel('OBUIAPP_GridFilterNewRecord');
+      this.view.viewGrid.filterImage.show(true);
+      this.view.viewGrid.setNewRecordFilterMessage();
     }
 
     this.view.standardWindow.setDirtyEditForm(null);

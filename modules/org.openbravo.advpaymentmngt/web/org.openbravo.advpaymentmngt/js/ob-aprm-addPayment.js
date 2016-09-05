@@ -571,6 +571,7 @@ OB.APRM.AddPayment.doSelectionChanged = function (record, state, view) {
       selectedIds = orderInvoice.selectedIds,
       glitem = new BigDecimal(String(view.theForm.getItem('amount_gl_items').getValue() || 0)),
       credit = new BigDecimal(String(view.theForm.getItem('used_credit').getValue() || 0)),
+      bslamount = new BigDecimal(String(view.theForm.getItem('bslamount').getValue() || 0)),
       i;
 
   amount = amount.subtract(distributedAmount);
@@ -600,7 +601,16 @@ OB.APRM.AddPayment.doSelectionChanged = function (record, state, view) {
   } else {
     for (i = 0; i < selectedIds.length; i++) {
       if (selectedIds[i] === record.id) {
-        orderInvoice.setEditValue(orderInvoice.getRecordIndex(record), 'amount', Number(outstandingAmount.toString()));
+        if (bslamount.compareTo(BigDecimal.prototype.ZERO) !== 0) {
+          if (outstandingAmount.compareTo(amount) > 0) {
+            orderInvoice.setEditValue(orderInvoice.getRecordIndex(record), 'amount', Number(amount.toString()));
+          } else {
+            orderInvoice.setEditValue(orderInvoice.getRecordIndex(record), 'amount', Number(outstandingAmount.toString()));
+          }
+        } else {
+          orderInvoice.setEditValue(orderInvoice.getRecordIndex(record), 'amount', Number(outstandingAmount.toString()));
+        }
+
       }
     }
   }
@@ -636,6 +646,7 @@ OB.APRM.AddPayment.updateActualExpected = function (form) {
       generateCredit = new BigDecimal(String(form.getItem('generateCredit').getValue() || 0)),
       glitemtotal = new BigDecimal(String(form.getItem('amount_gl_items').getValue() || 0)),
       credit = new BigDecimal(String(form.getItem('used_credit').getValue() || 0)),
+      bslamount = new BigDecimal(String(form.getItem('bslamount').getValue() || 0)),
       selectedRecords = orderInvoice.selectedIds,
       actpayment, i;
   for (i = 0; i < selectedRecords.length; i++) {
@@ -655,6 +666,15 @@ OB.APRM.AddPayment.updateActualExpected = function (form) {
         actualPayment.setValue(Number('0'));
       } else {
         actualPayment.setValue(Number(actpayment.subtract(credit)));
+      }
+    }
+    if (bslamount.compareTo(BigDecimal.prototype.ZERO) !== 0) {
+      if (actpayment.compareTo(BigDecimal.prototype.ZERO) === 0) {
+        actpayment = actpayment.add(bslamount.abs());
+        actualPayment.setValue(Number(actpayment));
+      } else if (actpayment.compareTo(bslamount.abs()) < 0) {
+        actpayment = bslamount.abs();
+        actualPayment.setValue(Number(actpayment));
       }
     }
     OB.APRM.AddPayment.updateDifference(form);

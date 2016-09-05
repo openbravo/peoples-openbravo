@@ -39,9 +39,9 @@ public class JSONWebServicesWhereParameter extends BaseWSTest {
     JSONWebServices jws = new JSONWebServices();
     JSONObject resp = new JSONObject(jws.request("Country", null, "_where=name='Spain'", "GET"))
         .getJSONObject("response");
+    assertThat("Total Rows", resp.getInt("totalRows"), is(1));
     JSONObject firstRecord = resp.getJSONArray("data").getJSONObject(0);
     assertThat("Spanish Country", firstRecord.getString("_identifier"), is(equalTo("Spain")));
     assertThat("Sucess status", resp.getInt("status"), is(0));
-    assertThat("Total Rows", resp.getInt("totalRows"), is(1));
   }
 }

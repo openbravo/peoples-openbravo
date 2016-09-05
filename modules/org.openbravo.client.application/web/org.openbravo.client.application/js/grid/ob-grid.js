@@ -816,7 +816,7 @@ isc.OBGrid.addProperties({
       // forcing fetch from server in case default filters are removed, in other
       // cases adaptive filtering can be used if possible
       if (this.data) {
-        forceRefresh = this.filterClause || this.sqlFilterClause;
+        forceRefresh = this.filterClause || this.sqlFilterClause || (this.view && this.view.deferOpenNewEdit);
 
         groupState = this.getGroupState();
         if (forceRefresh && groupState && groupState.groupByFields) {
@@ -858,6 +858,9 @@ isc.OBGrid.addProperties({
     }
     if (this.view && this.view.directNavigation) {
       delete this.view.directNavigation;
+    }
+    if (this.view && this.view.deferOpenNewEdit) {
+      delete this.view.deferOpenNewEdit;
     }
   },
 
@@ -1020,6 +1023,17 @@ isc.OBGrid.addProperties({
       }
     }
     return fkFilterAuxCache;
+  },
+
+  setNewRecordFilterMessage: function () {
+    var showMessageProperty, showMessage;
+
+    showMessageProperty = OB.PropertyStore.get('OBUIAPP_ShowNewRecordFilterMsg');
+    showMessage = showMessageProperty !== 'N' && showMessageProperty !== '"N"';
+    if (showMessage) {
+      this.view.messageBar.setMessage(isc.OBMessageBar.TYPE_INFO, '<div><div style="float: left;">' + OB.I18N.getLabel('OBUIAPP_NewRecordFilterMsg') + '<br/>' + OB.I18N.getLabel('OBUIAPP_ClearFilters') + '</div><div style="float: right; padding-top: 15px;"><a href="#" style="font-weight:normal; color:inherit;" onclick="' + 'window[\'' + this.view.messageBar.ID + '\'].hide(); OB.PropertyStore.set(\'OBUIAPP_ShowNewRecordFilterMsg\', \'N\');">' + OB.I18N.getLabel('OBUIAPP_NeverShowMessageAgain') + '</a></div></div>', ' ');
+      this.view.messageBar.hasFilterMessage = true;
+    }
   },
 
   setSingleRecordFilterMessage: function () {

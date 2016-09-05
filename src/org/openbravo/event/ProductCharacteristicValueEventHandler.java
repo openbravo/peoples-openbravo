@@ -18,35 +18,36 @@
  */
 package org.openbravo.event;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
 import javax.enterprise.event.Observes;
+import javax.inject.Inject;
 
 import org.apache.log4j.Logger;
+import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
-import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.client.kernel.event.EntityDeleteEvent;
 import org.openbravo.client.kernel.event.EntityNewEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
 import org.openbravo.client.kernel.event.EntityUpdateEvent;
 import org.openbravo.client.kernel.event.TransactionBeginEvent;
 import org.openbravo.client.kernel.event.TransactionCompletedEvent;
-import org.openbravo.dal.core.OBContext;
-import org.openbravo.materialmgmt.VariantChDescUpdateProcess;
+import org.openbravo.dal.core.SessionHandler;
+import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.model.common.plm.ProductCharacteristicValue;
-import org.openbravo.scheduling.OBScheduler;
-import org.openbravo.scheduling.ProcessBundle;
-import org.openbravo.service.db.DalConnectionProvider;
+import org.openbravo.service.importprocess.ImportEntryManager;
 
 public class ProductCharacteristicValueEventHandler extends EntityPersistenceEventObserver {
   protected Logger logger = Logger.getLogger(this.getClass());
   private static Entity[] entities = { ModelProvider.getInstance().getEntity(
       ProductCharacteristicValue.ENTITY_NAME) };
   private static ThreadLocal<Set<String>> prodchvalueUpdated = new ThreadLocal<Set<String>>();
+  @Inject
+  ImportEntryManager importEntryManager;
 
   @Override
   protected Entity[] getObservedEntities() {
@@ -88,36 +89,20 @@ public class ProductCharacteristicValueEventHandler extends EntityPersistenceEve
     if (productList == null || productList.isEmpty() || event.getTransaction().wasRolledBack()) {
       return;
     }
-    try {
-      VariablesSecureApp vars = null;
-      try {
-        if (RequestContext.get().getRequest() == null) {
-          vars = new VariablesSecureApp(OBContext.getOBContext().getUser().getId(), OBContext
-              .getOBContext().getCurrentClient().getId(), OBContext.getOBContext()
-              .getCurrentOrganization().getId(), OBContext.getOBContext().getRole().getId(),
-              OBContext.getOBContext().getLanguage().getLanguage());
-        } else {
-          vars = RequestContext.get().getVariablesSecureApp();
-        }
-      } catch (Exception e) {
-        vars = new VariablesSecureApp(OBContext.getOBContext().getUser().getId(), OBContext
-            .getOBContext().getCurrentClient().getId(), OBContext.getOBContext()
-            .getCurrentOrganization().getId(), OBContext.getOBContext().getRole().getId(),
-            OBContext.getOBContext().getLanguage().getLanguage());
-      }
-
-      for (String strProductId : productList) {
-        ProcessBundle pb = new ProcessBundle(VariantChDescUpdateProcess.AD_PROCESS_ID, vars)
-            .init(new DalConnectionProvider(false));
-        HashMap<String, Object> parameters = new HashMap<String, Object>();
-        parameters.put("mProductId", strProductId);
-        parameters.put("mChValueId", null);
-        pb.setParams(parameters);
-        OBScheduler.getInstance().schedule(pb);
-      }
-    } catch (Exception e) {
-      logger.error("Error executing process", e);
+    JSONArray productIds = new JSONArray();
+    for (String productId : productList) {
+      productIds.put(productId);
     }
+    JSONObject entryJson = new JSONObject();
+    try {
+      entryJson.put("productIds", productIds);
+    } catch (JSONException ignore) {
+    }
+    if (!SessionHandler.getInstance().isCurrentTransactionActive()) {
+      SessionHandler.getInstance().beginNewTransaction();
+    }
+    importEntryManager.createImportEntry(SequenceIdData.getUUID(), "VariantChDescUpdate",
+        entryJson.toString());
   }
 
   private void addProductToList(ProductCharacteristicValue pchv) {

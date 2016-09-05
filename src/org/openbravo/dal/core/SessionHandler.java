@@ -165,6 +165,27 @@ public class SessionHandler implements OBNotSingleton {
     }
   }
 
+  /**
+   * Returns true when the current SessionHandler has a transaction and it is active.
+   */
+  public boolean isCurrentTransactionActive() {
+    return tx != null && tx.isActive();
+  }
+
+  /**
+   * Begins a new Transaction on the current HibernateSession and assigns it to the SessionHandler.
+   * 
+   * @throws OBException
+   *           if there is already an available active transaction.
+   */
+  public void beginNewTransaction() throws OBException {
+    if (isCurrentTransactionActive()) {
+      throw new OBException(
+          "Not possible to start a new transaction while there is still one active.");
+    }
+    tx = getSession().beginTransaction();
+  }
+
   /** Gets a new {@code Connection} from the connection pool. */
   public Connection getNewConnection() throws SQLException {
     Connection newConnection;
