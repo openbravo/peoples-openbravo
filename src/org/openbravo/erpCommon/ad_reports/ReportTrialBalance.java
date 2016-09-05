@@ -234,19 +234,33 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
 
     log4j.debug("Output: Expand subaccount details " + strAccountId);
 
-    data = ReportTrialBalanceData.selectLines(this, "BPartner".equals(strGroupBy) ? "C_BPARTNER"
-        : ("Product".equals(strGroupBy) ? "M_PRODUCT" : ("Project".equals(strGroupBy) ? "C_PROJECT"
-            : null)), vars.getLanguage(), strDateFrom, (strNotInitialBalance.equals("Y") ? "O"
-        : null), (strNotInitialBalance.equals("Y") ? null : "O"),
+    data = ReportTrialBalanceData.selectLines(
+        this,
+        "BPartner".equals(strGroupBy) ? "C_BPARTNER" : ("Product".equals(strGroupBy) ? "M_PRODUCT"
+            : ("Project".equals(strGroupBy) ? "C_PROJECT"
+                : ("CostCenter".equals(strGroupBy) ? "C_COSTCENTER" : null))),
+        vars.getLanguage(),
+        strDateFrom,
+        (strNotInitialBalance.equals("Y") ? "O" : null),
+        (strNotInitialBalance.equals("Y") ? null : "O"),
         "BPartner".equals(strGroupBy) ? "f.c_bpartner_id"
             : ("Product".equals(strGroupBy) ? "f.m_product_id"
-                : ("Project".equals(strGroupBy) ? "f.c_project_id" : "to_char('')")), strOrgFamily,
-        Utility.getContext(this, vars, "#User_Client", "ReportTrialBalance"), Utility.getContext(
-            this, vars, "#AccessibleOrgTree", "ReportTrialBalance"), DateTimeData.nDaysAfter(this,
-            strDateTo, "1"), strAccountId, strcBpartnerId, strmProductId, strcProjectId,
-        strcAcctSchemaId, strLevel, "BPartner".equals(strGroupBy) ? ", f.c_bpartner_id"
+                : ("Project".equals(strGroupBy) ? "f.c_project_id" : ("CostCenter"
+                    .equals(strGroupBy) ? "f.c_costcenter_id" : "to_char('')"))),
+        strOrgFamily,
+        Utility.getContext(this, vars, "#User_Client", "ReportTrialBalance"),
+        Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportTrialBalance"),
+        DateTimeData.nDaysAfter(this, strDateTo, "1"),
+        strAccountId,
+        strcBpartnerId,
+        strmProductId,
+        strcProjectId,
+        strcAcctSchemaId,
+        strLevel,
+        "BPartner".equals(strGroupBy) ? ", f.c_bpartner_id"
             : ("Product".equals(strGroupBy) ? ", f.m_product_id"
-                : ("Project".equals(strGroupBy) ? ", f.c_project_id" : " ")), null, null);
+                : ("Project".equals(strGroupBy) ? ", f.c_project_id" : ("CostCenter"
+                    .equals(strGroupBy) ? ", f.c_costcenter_id" : " "))), null, null);
 
     if (data == null) {
       data = ReportTrialBalanceData.set();
@@ -506,6 +520,7 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
     boolean showbpartner = false;
     boolean showproduct = false;
     boolean showProject = false;
+    boolean showCostcenter = false;
     String strTreeOrg = TreeData.getTreeOrg(this, vars.getClient());
     String strOrgFamily = getFamily(strTreeOrg, strOrg);
     String strTreeAccount = ReportTrialBalanceData.treeAccount(this, vars.getClient());
@@ -534,18 +549,27 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
           showbpartner = true;
           showproduct = false;
           showProject = false;
+          showCostcenter = false;
         } else if (strGroupBy.equals("Product")) {
           showbpartner = false;
           showproduct = true;
           showProject = false;
+          showCostcenter = false;
         } else if (strGroupBy.equals("Project")) {
           showbpartner = false;
           showproduct = false;
           showProject = true;
+          showCostcenter = false;
+        } else if (strGroupBy.equals("CostCenter")) {
+          showbpartner = false;
+          showproduct = false;
+          showProject = false;
+          showCostcenter = true;
         } else {
           showbpartner = true;
           showproduct = true;
           showProject = true;
+          showCostcenter = true;
         }
       } else {
         data = getDataWhenNotSubAccount(vars, strDateFrom, strDateTo, strOrg, strOrgFamily,
@@ -588,6 +612,7 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
         parameters.put("SHOWBPARTNER", showbpartner);
         parameters.put("SHOWPRODUCT", showproduct);
         parameters.put("SHOWPROJECT", showProject);
+        parameters.put("SHOWCOSTCENTER", showCostcenter);
         parameters.put("DATE_FROM", strDateFrom);
         parameters.put("DATE_TO", strDateTo);
 
@@ -634,14 +659,16 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
             this,
             "BPartner".equals(strGroupBy) ? "C_BPARTNER"
                 : ("Product".equals(strGroupBy) ? "M_PRODUCT"
-                    : ("Project".equals(strGroupBy) ? "C_PROJECT" : null)),
+                    : ("Project".equals(strGroupBy) ? "C_PROJECT" : ("CostCenter"
+                        .equals(strGroupBy) ? "C_COSTCENTER" : null))),
             vars.getLanguage(),
             strDateFrom,
             (strNotInitialBalance.equals("Y") ? "O" : null),
             (strNotInitialBalance.equals("Y") ? null : "O"),
             "BPartner".equals(strGroupBy) ? "f.c_bpartner_id"
                 : ("Product".equals(strGroupBy) ? "f.m_product_id"
-                    : ("Project".equals(strGroupBy) ? "f.c_project_id" : "to_char('')")),
+                    : ("Project".equals(strGroupBy) ? "f.c_project_id" : ("CostCenter"
+                        .equals(strGroupBy) ? "f.c_costcenter_id" : "to_char('')"))),
             strOrgFamily,
             Utility.getContext(this, vars, "#User_Client", "ReportTrialBalance"),
             Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportTrialBalance"),
@@ -654,8 +681,9 @@ public class ReportTrialBalance extends HttpSecureAppServlet {
             strLevel,
             "BPartner".equals(strGroupBy) ? ", f.c_bpartner_id"
                 : ("Product".equals(strGroupBy) ? ", f.m_product_id" : ("Project"
-                    .equals(strGroupBy) ? ", f.c_project_id" : " ")), strAccountFromValue,
-            strAccountToValue);
+                    .equals(strGroupBy) ? ", f.c_project_id"
+                    : ("CostCenter".equals(strGroupBy) ? ", f.c_costcenter_id" : " "))),
+            strAccountFromValue, strAccountToValue);
         if (!strGroupBy.equals(""))
           strIsSubAccount = true;
 

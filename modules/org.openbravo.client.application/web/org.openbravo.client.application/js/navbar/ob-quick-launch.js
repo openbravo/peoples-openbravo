@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2016 Openbravo SLU
+ * All portions are Copyright (C) 2011-2014 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -266,7 +266,7 @@ isc.OBQuickLaunch.addProperties({
             isc.OBQuickRun.currentQuickRun.doHide();
             var openObject = isc.addProperties({}, record);
             if (record.optionType && record.optionType === 'tab') {
-              openObject = this.openViewUsingRecordInfo(record, this.command);
+              openObject = OB.Utilities.openView(record.windowId, viewValue, record[OB.Constants.IDENTIFIER], null, this.command, record.icon, record.readOnly, record.singleRecord, null, record.editOrDeleteOnly);
               if (openObject) {
                 OB.RecentUtilities.addRecent(this.recentPropertyName, openObject);
               }
@@ -346,35 +346,6 @@ isc.OBQuickLaunch.addProperties({
 
             this.setValue(null);
           }
-        },
-
-        openViewUsingRecordInfo: function (record, command) {
-          var openObject = {
-            windowId: record.windowId,
-            tabId: record.viewValue,
-            id: record.viewValue,
-            tabTitle: record[OB.Constants.IDENTIFIER],
-            icon: record.icon
-          };
-
-          if (OB.Utilities.useClassicMode(record.windowId)) {
-            openObject.viewId = 'OBClassicWindow';
-            openObject.command = 'DEFAULT';
-          } else {
-            openObject.viewId = '_' + record.windowId;
-            openObject.readOnly = record.readOnly;
-            openObject.singleRecord = record.singleRecord;
-            openObject.editOrDeleteOnly = record.editOrDeleteOnly;
-            if (command) {
-              openObject.command = command;
-              if (command === isc.OBStandardWindow.COMMAND_NEW) {
-                openObject.deferOpenNewEdit = true;
-              }
-            }
-          }
-
-          OB.Layout.ViewManager.openView(openObject.viewId, openObject);
-          return openObject;
         },
 
         handleKeyPress: function () {

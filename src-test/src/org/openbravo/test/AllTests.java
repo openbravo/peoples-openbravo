@@ -21,6 +21,7 @@ package org.openbravo.test;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
+import org.openbravo.advpaymentmngt.test.FundsTransferTest;
 import org.openbravo.base.weld.test.testinfrastructure.CdiInfrastructure;
 import org.openbravo.erpCommon.info.ClassicSelectorTest;
 import org.openbravo.test.dal.ComputedColumnsTest;
@@ -103,7 +104,10 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     ClassicSelectorTest.class,
 
     // cdi
-    CdiInfrastructure.class
+    CdiInfrastructure.class,
+    
+    // Funds transfer
+    FundsTransferTest.class
 
 })
 public class AllTests {

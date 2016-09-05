@@ -93,9 +93,7 @@ isc.OBStandardWindow.addProperties({
     this.viewProperties.isRootView = true;
     if (this.command === isc.OBStandardWindow.COMMAND_NEW) {
       this.viewProperties.allowDefaultEditMode = false;
-    }
-    if (this.deferOpenNewEdit) {
-      this.viewProperties.deferOpenNewEdit = this.deferOpenNewEdit;
+      this.viewProperties.deferOpenNewEdit = true;
     }
 
     if (OB.Utilities.checkProfessionalLicense(null, true)) {
@@ -129,6 +127,9 @@ isc.OBStandardWindow.addProperties({
 
     } else if (this.getClass().personalization) {
       this.setPersonalization(this.getClass().personalization);
+    } else {
+      // not applying personalization, not need to defer the form opening
+      this.viewProperties.deferOpenNewEdit = false;
     }
   },
 
@@ -550,10 +551,16 @@ isc.OBStandardWindow.addProperties({
   },
 
   setPersonalization: function (personalization) {
-    var i, defaultView, persDefaultValue, views, length, me = this;
+    var i, defaultView, persDefaultValue, views, currentView = this.activeView || this.view,
+        length, me = this;
 
     // only personalize if there is a professional license
     if (!OB.Utilities.checkProfessionalLicense(null, true)) {
+      // open new record in form if the form opening has been deferred
+      if (currentView.deferOpenNewEdit) {
+        currentView.editRecord();
+        this.command = null;
+      }
       return;
     }
 
@@ -639,6 +646,12 @@ isc.OBStandardWindow.addProperties({
     // restore focus as the focusitem may have been hidden now
     // https://issues.openbravo.com/view.php?id=21249
     this.setFocusInView();
+
+    // personalization has been applied, open new record in form if the form opening has been deferred
+    if (currentView.deferOpenNewEdit) {
+      currentView.editRecord();
+      this.command = null;
+    }
   },
 
   // reapplies partial states that couldn't be initially applied because
@@ -1181,14 +1194,10 @@ isc.OBStandardWindow.addProperties({
       }
     } else if (this.command === isc.OBStandardWindow.COMMAND_NEW) {
       var currentView = this.activeView || this.view;
-      if (this.deferOpenNewEdit) {
-        // if deferOpenNewEdit is enabled, the form opening in NEW mode is postponed
-        // the form will be opened once the window view is completely loaded (including its saved views, if any)
-        delete this.deferOpenNewEdit;
-      } else {
+      if (!currentView.deferOpenNewEdit) {
         currentView.editRecord();
+        this.command = null;
       }
-      this.command = null;
     } else {
       this.setFocusInView(this.view);
     }
