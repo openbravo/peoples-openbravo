@@ -34,7 +34,7 @@ import org.openbravo.service.json.JsonConstants;
 
 /**
  * HttpServletCalloutInformationProvider provides the information that is used to populate the
- * messages, comboEntries,etc in the FIC. These information is updated by a HttpServlet Callout.
+ * messages, comboEntries,etc in the FIC. This information is updated by a HttpServlet Callout.
  * 
  * @author inigo.sanchez
  *
@@ -68,13 +68,12 @@ public class HttpServletCalloutInformationProvider implements CalloutInformation
 
   @Override
   public Object getNextElement() {
-    Object element = null;
+    NativeArray element = null;
     if (current < calloutResult.size()) {
-      element = calloutResult.get(current);
+      element = (NativeArray) calloutResult.get(current);
       current++;
       // Update current element name
-      NativeArray nativeArrayElement = (NativeArray) element;
-      currentElementName = (String) nativeArrayElement.get(0, null);
+      currentElementName = (String) element.get(0, null);
     }
     return element;
   }
@@ -120,7 +119,7 @@ public class HttpServletCalloutInformationProvider implements CalloutInformation
           jsonobject.put(CalloutConstants.VALUE, newValue);
           jsonobject.put(CalloutConstants.CLASSIC_VALUE, uiDef.convertToClassicString(newValue));
           request.setRequestParameter(colIdent, uiDef.convertToClassicString(newValue));
-          log.debug("Column: " + col.getDBColumnName() + "  Value: " + newValue);
+          log.debug("Column: {} Value: {}", col.getDBColumnName(), newValue);
         }
       }
     }

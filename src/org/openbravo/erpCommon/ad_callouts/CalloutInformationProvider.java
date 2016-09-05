@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
  */
 public interface CalloutInformationProvider {
 
-  static final Logger log = LoggerFactory.getLogger(CalloutInformationProvider.class);
+  protected static final Logger log = LoggerFactory.getLogger(CalloutInformationProvider.class);
 
   /**
    * Retrieves the name of the current element.

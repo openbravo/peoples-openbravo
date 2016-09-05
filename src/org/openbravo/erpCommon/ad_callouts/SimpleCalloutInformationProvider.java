@@ -32,7 +32,7 @@ import org.openbravo.service.json.JsonConstants;
 
 /**
  * SimpleCalloutInformationProvider provides the information that is used to populate the messages,
- * comboEntries,etc in the FIC. These information is updated by a SimpleCallout.
+ * comboEntries,etc in the FIC. This information is updated by a SimpleCallout.
  * 
  * @author inigo.sanchez
  *
@@ -95,11 +95,11 @@ public class SimpleCalloutInformationProvider implements CalloutInformationProvi
       throws JSONException {
     boolean changed = false;
     JSONObject firstComboEntry = new JSONObject();
-    JSONObject entryRecieved = (JSONObject) element;
+    JSONObject entry = (JSONObject) element;
 
     // if value is not selected
-    if (!entryRecieved.has(CalloutConstants.CLASSIC_VALUE)) {
-      JSONArray jsonArr = entryRecieved.getJSONArray(CalloutConstants.ENTRIES);
+    if (!entry.has(CalloutConstants.CLASSIC_VALUE)) {
+      JSONArray jsonArr = entry.getJSONArray(CalloutConstants.ENTRIES);
       ArrayList<JSONObject> newJsonArr = new ArrayList<JSONObject>();
       JSONObject comboEntry = null;
 
@@ -125,9 +125,9 @@ public class SimpleCalloutInformationProvider implements CalloutInformationProvi
 
     } else {
       // value is selected before this parsing
-      firstComboEntry.put(CalloutConstants.VALUE, entryRecieved.getString(CalloutConstants.VALUE));
+      firstComboEntry.put(CalloutConstants.VALUE, entry.getString(CalloutConstants.VALUE));
       firstComboEntry.put(CalloutConstants.CLASSIC_VALUE,
-          entryRecieved.getString(CalloutConstants.CLASSIC_VALUE));
+          entry.getString(CalloutConstants.CLASSIC_VALUE));
     }
 
     // added this new value and set parameter into request
@@ -142,9 +142,9 @@ public class SimpleCalloutInformationProvider implements CalloutInformationProvi
       changedCols.add(col.getDBColumnName());
     }
 
-    if (entryRecieved.has(CalloutConstants.ENTRIES)) {
+    if (entry.has(CalloutConstants.ENTRIES)) {
       firstComboEntry.put(CalloutConstants.ENTRIES,
-          entryRecieved.getJSONArray(CalloutConstants.ENTRIES));
+          entry.getJSONArray(CalloutConstants.ENTRIES));
     }
     return changed;
   }
