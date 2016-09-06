@@ -382,6 +382,12 @@ public class DatabaseValidator implements SystemValidator {
   private void checkForeignKeys(Module module, org.apache.ddlutils.model.Table table,
       SystemValidationResult result) {
     final Entity entity = ModelProvider.getInstance().getEntityByTableName(table.getName());
+    List<String> fkWhiteList = new ArrayList<String>();
+    fkWhiteList.add("ad_module_log.ad_module_id");
+    fkWhiteList.add("C_ORDER.Cancelledorder_id");
+    fkWhiteList.add("C_ORDER.Replacedorder_id");
+    fkWhiteList.add("C_ORDER.Replacementorder_ID");
+    fkWhiteList.add("C_ORDERLINE.Replacedorderline_id");
     if (entity == null) {
       // can happen with mismatches
       return;
@@ -410,8 +416,7 @@ public class DatabaseValidator implements SystemValidator {
         final String colName = property.getColumnName().toUpperCase();
 
         // ignore this specific case
-        if (entity.getTableName().equalsIgnoreCase("ad_module_log")
-            && colName.equalsIgnoreCase("ad_module_id")) {
+        if (fkWhiteList.contains(entity.getTableName().toLowerCase() + "." + colName.toLowerCase())) {
           continue;
         }
 
