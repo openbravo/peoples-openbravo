@@ -46,6 +46,7 @@ public class ClassLoaderTest extends OBBaseTest {
   private static final Logger log = Logger.getLogger(ClassLoaderTest.class);
   private static List<String> notFoundClasses = new ArrayList<String>();
   private static List<String> notServletClasses = new ArrayList<String>();
+  private static boolean initialized = false;
 
   /**
    * Test if all registered classes in Application Dictionary can be loaded. Consistency test to
@@ -73,11 +74,11 @@ public class ClassLoaderTest extends OBBaseTest {
   }
 
   private void loadModel() {
-    if (notFoundClasses != null) {
-      // already initialized
+    if (initialized) {
       return;
     }
 
+    initialized = true;
     notFoundClasses = new ArrayList<String>();
     notServletClasses = new ArrayList<String>();
 
