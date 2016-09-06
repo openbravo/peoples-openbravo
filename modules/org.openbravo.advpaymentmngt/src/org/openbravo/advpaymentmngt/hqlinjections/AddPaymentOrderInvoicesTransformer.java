@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014 - 2016 Openbravo SLU
+ * All portions are Copyright (C) 2014-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -162,7 +162,6 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
     }
     selectClause.append(" bp.id as businessPartner, ");
     selectClause.append(" bp.name as businessPartnerName, ");
-
     selectClause.append(" SUM(psd.amount + psd.writeoffAmount) as outstandingAmount, ");
     selectClause.append(" COALESCE(sum(pd.amount), 0) as amount, ");
     selectClause
@@ -305,7 +304,8 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
       groupByClause.append(" oinfo.aPRMPaymentDescription, ");
       groupByClause.append(" inv.orderReference, ");
     }
-    groupByClause.append(" bp ");
+    groupByClause.append(" bp.id, ");
+    groupByClause.append(" bp.name ");
     return groupByClause;
   }
 
