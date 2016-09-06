@@ -113,8 +113,8 @@ public class SimpleCalloutInformationProvider implements CalloutInformationProvi
         newJsonArr.add(comboEntry);
       }
 
-      // For no mandatory column it is selected blank element always. For mandatory column it is
-      // selected first element.
+      // As we do not have selected value information in the entry, select the first element. For
+      // not mandatory columns, this will be a blank element.
       if (newJsonArr.size() > 0 && newJsonArr.get(0).has(JsonConstants.ID)) {
         // create element with selected value
         String selectedValue = newJsonArr.get(0).getString(JsonConstants.ID);

@@ -1625,8 +1625,8 @@ public class FormInitializationComponent extends BaseActionHandler {
                 // Combo data
                 calloutInformationProvider.manageComboData(columnValues, dynamicCols, changedCols,
                     request, element, col, colId);
-                // If a combo is received, variable changed is true always. It is not take into
-                // account if value is changed or is the same.
+                // When managing combos, it is not taken into account if the column value has
+                // changed, so 'changed' is always true.
                 changed = true;
               } else {
                 // Normal data
