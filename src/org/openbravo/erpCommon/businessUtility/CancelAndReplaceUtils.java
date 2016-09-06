@@ -238,7 +238,7 @@ public class CancelAndReplaceUtils {
       }
 
       // Added check in case Cancel and Replace button is hit more than once
-      if (jsonorder != null && oldOrder.isCancelled()) {
+      if (jsonorder == null && oldOrder.isCancelled()) {
         throw new OBException(String.format(OBMessageUtils.messageBD("IsCancelled"),
             oldOrder.getDocumentNo()));
       }
