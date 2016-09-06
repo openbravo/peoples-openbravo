@@ -345,6 +345,11 @@ public class ProcessInvoice extends HttpSecureAppServlet {
                 message.setMessage(OBMessageUtils.messageBD("PaymentError") + " "
                     + message.getMessage());
                 vars.setMessage(strTabId, message);
+                String strWindowPath = Utility.getTabURL(strTabId, "R", true);
+                if (strWindowPath.equals(""))
+                  strWindowPath = strDefaultServlet;
+                printPageClosePopUp(response, vars, strWindowPath);
+                return;
               }
             }
           } catch (final Exception e) {

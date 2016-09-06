@@ -300,21 +300,6 @@
     <Parameter name="tableName"/>
   </SqlMethod>
   
-  <SqlMethod name="selectKeyValue" type="preparedStatement" return="string">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      <![CDATA[
-        SELECT TABLENAME as ID
-        FROM AD_TABLE
-        WHERE AD_TABLE_ID = ?
-      ]]>
-    </Sql>
-    <Parameter name="columnnname" optional="true" type="replace" after="SELECT " text="TABLENAME"/>
-    <Parameter name="tablename" optional="true" type="replace" after="FROM " text="AD_TABLE"/>
-    <Parameter name="keyColumn" optional="true" type="replace" after="WHERE " text="AD_TABLE_ID"/>
-    <Parameter name="key"/>
-  </SqlMethod>
-  
    <SqlMethod name="selectKeyColumnId" type="preparedStatement" return="string">
     <SqlMethodComment></SqlMethodComment>
     <Sql>

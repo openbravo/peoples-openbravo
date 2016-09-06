@@ -342,16 +342,6 @@ public class UsedByLink extends HttpSecureAppServlet {
       if (data != null && data.length > 0) {
         final Vector<UsedByLinkData> vecTotal = new Vector<UsedByLinkData>();
         for (int i = 0; i < data.length; i++) {
-          String keyValue = keyId;
-          if (!data[i].referencedColumnId.equals(keyColumnId)) {
-            try {
-              keyValue = UsedByLinkData.selectKeyValue(this,
-                  UsedByLinkData.selectColumnName(this, data[i].referencedColumnId),
-                  data[i].tablename, data[i].columnname, keyId);
-            } catch (Exception e) {
-              // TODO: handle exception
-            }
-          }
           if (log4j.isDebugEnabled())
             log4j.debug("***Referenced tab: " + data[i].adTabId);
           final UsedByLinkData[] dataRef = UsedByLinkData.windowRef(this, data[i].adTabId);
@@ -368,7 +358,7 @@ public class UsedByLink extends HttpSecureAppServlet {
           if (!nonAccessible) {
             final String strNonAccessibleWhere = strWhereClause + " AND AD_ORG_ID NOT IN ("
                 + vars.getUserOrg() + ")";
-            if (!UsedByLinkData.countLinks(this, data[i].tablename, data[i].columnname, keyValue,
+            if (!UsedByLinkData.countLinks(this, data[i].tablename, data[i].columnname, keyId,
                 strNonAccessibleWhere).equals("0")) {
               nonAccessible = true;
             }
@@ -376,7 +366,7 @@ public class UsedByLink extends HttpSecureAppServlet {
           strWhereClause += " AND AD_ORG_ID IN (" + vars.getUserOrg() + ") AND AD_CLIENT_ID IN ("
               + vars.getUserClient() + ")";
           int total = Integer.valueOf(
-              UsedByLinkData.countLinks(this, data[i].tablename, data[i].columnname, keyValue,
+              UsedByLinkData.countLinks(this, data[i].tablename, data[i].columnname, keyId,
                   strWhereClause)).intValue();
 
           if (log4j.isDebugEnabled())

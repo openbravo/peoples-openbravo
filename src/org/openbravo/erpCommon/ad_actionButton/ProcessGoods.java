@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2015 Openbravo SLU
+ * All portions are Copyright (C) 2012-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -38,6 +38,7 @@ import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.costing.CostingUtils;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
@@ -113,8 +114,7 @@ public class ProcessGoods extends HttpSecureAppServlet {
       Client client = OBDal.getInstance().get(Client.class, vars.getClient());
 
       if (StringUtils.equals(strWindowId, Goods_Receipt_Window)
-          && StringUtils.equals(strdocaction, "RC")
-          && !client.getClientInformationList().get(0).isAllowNegativeStock()) {
+          && StringUtils.equals(strdocaction, "RC") && !CostingUtils.isAllowNegativeStock(client)) {
         List<String> receiptLineIdList = getReceiptLinesWithoutStock(receiptId);
         if (!receiptLineIdList.isEmpty()) {
           ShipmentInOut receipt = OBDal.getInstance().get(ShipmentInOut.class, receiptId);
