@@ -44,7 +44,7 @@ public class ConfigParameters {
   public final String strBBDD = null;
   public final String strVersion;
   public final String strParentVersion;
-  public final String prefix;
+  public String prefix;
   public final String strContext;
   private final String strFileFormat;
   public final String strSystemLanguage;
@@ -80,6 +80,9 @@ public class ConfigParameters {
 
   public ConfigParameters(ServletContext context) {
     prefix = context.getRealPath("/");
+    if (!prefix.endsWith("/")) {
+      prefix += "/";
+    }
     strContext = extractContext(getActualPathContext());
 
     strBaseConfigPath = getResolvedParameter(context, "BaseConfigPath");
@@ -381,7 +384,8 @@ public class ConfigParameters {
       while (em.hasMoreElements()) {
         String obProperty = (String) em.nextElement();
         String overrideValue = overrideProperties.getProperty(obProperty);
-        Object object = obProperties.setProperty(obProperty, overrideValue); // replace original
+        Object object = obProperties.setProperty(obProperty, overrideValue); // replace
+                                                                             // original
 
         log4j.info("Overriding property " + obProperty + ": " + object + "->"
             + obProperties.getProperty(obProperty));
