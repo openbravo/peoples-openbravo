@@ -257,7 +257,7 @@
     },
     printAmount: function () {
       if (this.get('rate')) {
-        return OB.I18N.formatCurrency(OB.DEC.mul(this.get('amount'), this.get('rate')));
+        return OB.I18N.formatCurrency(this.get('origAmount') || OB.DEC.mul(this.get('amount'), this.get('rate')));
       } else {
         return OB.I18N.formatCurrency(this.get('amount'));
       }
@@ -2605,6 +2605,42 @@
         }
       }
     },
+    getSumOfOrigAmounts: function (paymentToIgnore) {
+      //returns a result with the sum up of every payments based on origAmount field
+      //if paymentToIignore parameter is provided the result will exclude that payment
+      var payments = this.get('payments');
+      var sumOfPayments = OB.DEC.Zero;
+      if (payments && payments.length > 0) {
+        sumOfPayments = _.reduce(payments.models, function (memo, pymnt, index) {
+          if (paymentToIgnore && (pymnt.get('kind') === paymentToIgnore.get('kind'))) {
+            return OB.DEC.add(memo, OB.DEC.Zero);
+          } else {
+            return OB.DEC.add(memo, pymnt.get('origAmount'));
+          }
+        }, OB.DEC.Zero);
+        return sumOfPayments;
+      } else {
+        return sumOfPayments;
+      }
+    },
+    getDifferenceBetweenPaymentsAndTotal: function (paymentToIgnore) {
+      //Returns the difference (abs) between total to pay and payments.
+      //if paymentToIignore parameter is provided the result will exclude that payment.
+      return OB.DEC.abs(OB.DEC.sub(OB.DEC.abs(this.getTotal()), this.getSumOfOrigAmounts(paymentToIgnore)));
+    },
+    getDifferenceRemovingSpecificPayment: function (currentPayment) {
+      //Returns the difference (abs) between total to pay and payments without take into account currentPayment
+      //Result is returned in the currency used by current payment
+      var differenceInDefaultCurrency;
+      var differenceInForeingCurrency;
+      differenceInDefaultCurrency = this.getDifferenceBetweenPaymentsAndTotal(currentPayment);
+      if (currentPayment && currentPayment.get('rate')) {
+        differenceInForeingCurrency = OB.DEC.div(differenceInDefaultCurrency, currentPayment.get('rate'));
+        return differenceInForeingCurrency;
+      } else {
+        return differenceInDefaultCurrency;
+      }
+    },
     adjustPayment: function () {
       var i, max, p;
       var payments = this.get('payments');
@@ -2618,12 +2654,25 @@
       var paidCash = OB.DEC.Zero;
       var pcash;
       var precision;
+      var multiCurrencyDifference;
 
       for (i = 0, max = payments.length; i < max; i++) {
         p = payments.at(i);
         precision = this.getPrecision(p);
         if (p.get('rate') && p.get('rate') !== '1') {
           p.set('origAmount', OB.DEC.mul(p.get('amount'), p.get('rate')));
+          //Here we are trying to know if the current payment is making the pending to pay 0.
+          //to know that we are suming up every payments except the current one (getSumOfOrigAmounts)
+          //then we substract this amount from the total (getDifferenceBetweenPaymentsAndTotal)
+          //and finally we transform this difference to the foreign amount
+          //if the payment in the foreign amount makes pending to pay zero, then we will ensure that the payment
+          //in the default currency is satisfied
+          if (OB.DEC.compare(OB.DEC.sub(this.getDifferenceRemovingSpecificPayment(p), OB.DEC.abs(p.get('amount')))) === OB.DEC.Zero) {
+            multiCurrencyDifference = this.getDifferenceBetweenPaymentsAndTotal(p);
+            if (p.get('origAmount') !== this.getDifferenceBetweenPaymentsAndTotal(p)) {
+              p.set('origAmount', this.getDifferenceBetweenPaymentsAndTotal(p));
+            }
+          }
         } else {
           p.set('origAmount', p.get('amount'));
         }
@@ -4112,6 +4161,42 @@
         }
       }
     },
+    getSumOfOrigAmounts: function (paymentToIgnore) {
+      //returns a result with the sum up of every payments based on origAmount field
+      //if paymentToIignore parameter is provided the result will exclude that payment
+      var payments = this.get('payments');
+      var sumOfPayments = OB.DEC.Zero;
+      if (payments && payments.length > 0) {
+        sumOfPayments = _.reduce(payments.models, function (memo, pymnt, index) {
+          if (paymentToIgnore && (pymnt.get('kind') === paymentToIgnore.get('kind'))) {
+            return OB.DEC.add(memo, OB.DEC.Zero);
+          } else {
+            return OB.DEC.add(memo, pymnt.get('origAmount'));
+          }
+        }, OB.DEC.Zero);
+        return sumOfPayments;
+      } else {
+        return sumOfPayments;
+      }
+    },
+    getDifferenceBetweenPaymentsAndTotal: function (paymentToIgnore) {
+      //Returns the difference (abs) between total to pay and payments.
+      //if paymentToIignore parameter is provided the result will exclude that payment.
+      return OB.DEC.abs(OB.DEC.sub(OB.DEC.abs(this.getTotal()), this.getSumOfOrigAmounts(paymentToIgnore)));
+    },
+    getDifferenceRemovingSpecificPayment: function (currentPayment) {
+      //Returns the difference (abs) between total to pay and payments without take into account currentPayment
+      //Result is returned in the currency used by current payment
+      var differenceInDefaultCurrency;
+      var differenceInForeingCurrency;
+      differenceInDefaultCurrency = this.getDifferenceBetweenPaymentsAndTotal(currentPayment);
+      if (currentPayment && currentPayment.get('rate')) {
+        differenceInForeingCurrency = OB.DEC.div(differenceInDefaultCurrency, currentPayment.get('rate'));
+        return differenceInForeingCurrency;
+      } else {
+        return differenceInDefaultCurrency;
+      }
+    },
     adjustPayment: function () {
       var i, max, p;
       var payments = this.get('payments');
@@ -4125,12 +4210,25 @@
       var paidCash = OB.DEC.Zero;
       var pcash;
       var precision;
+      var multiCurrencyDifference;
 
       for (i = 0, max = payments.length; i < max; i++) {
         p = payments.at(i);
         precision = this.getPrecision(p);
         if (p.get('rate') && p.get('rate') !== '1') {
           p.set('origAmount', OB.DEC.mul(p.get('amount'), p.get('rate')));
+          //Here we are trying to know if the current payment is making the pending to pay 0.
+          //to know that we are suming up every payments except the current one (getSumOfOrigAmounts)
+          //then we substract this amount from the total (getDifferenceBetweenPaymentsAndTotal)
+          //and finally we transform this difference to the foreign amount
+          //if the payment in the foreign amount makes pending to pay zero, then we will ensure that the payment
+          //in the default currency is satisfied
+          if (OB.DEC.compare(OB.DEC.sub(this.getDifferenceRemovingSpecificPayment(p), OB.DEC.abs(p.get('amount')))) === OB.DEC.Zero) {
+            multiCurrencyDifference = this.getDifferenceBetweenPaymentsAndTotal(p);
+            if (p.get('origAmount') !== multiCurrencyDifference) {
+              p.set('origAmount', multiCurrencyDifference);
+            }
+          }
         } else {
           p.set('origAmount', p.get('amount'));
         }
