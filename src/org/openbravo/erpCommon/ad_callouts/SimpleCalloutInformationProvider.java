@@ -29,6 +29,8 @@ import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.service.json.JsonConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * SimpleCalloutInformationProvider provides the information that is used to populate the messages,
@@ -43,6 +45,8 @@ public class SimpleCalloutInformationProvider implements CalloutInformationProvi
   private Iterator<String> keys;
   private String currentElementName;
 
+  private final Logger log = LoggerFactory.getLogger(SimpleCalloutInformationProvider.class);
+
   @SuppressWarnings("unchecked")
   public SimpleCalloutInformationProvider(JSONObject calloutResult) {
     this.calloutResult = calloutResult;
@@ -51,12 +55,12 @@ public class SimpleCalloutInformationProvider implements CalloutInformationProvi
   }
 
   @Override
-  public Object getCurrentElementName() {
+  public String getCurrentElementName() {
     return currentElementName;
   }
 
   @Override
-  public Object getValue(Object element) {
+  public Object getCurrentElementValue(Object element) {
     JSONObject json = (JSONObject) element;
     String value = null;
     try {
@@ -90,44 +94,45 @@ public class SimpleCalloutInformationProvider implements CalloutInformationProvi
   }
 
   @Override
-  public boolean manageComboData(Map<String, JSONObject> columnValues, List<String> dynamicCols,
+  public void manageComboData(Map<String, JSONObject> columnValues, List<String> dynamicCols,
       List<String> changedCols, RequestContext request, Object element, Column col, String colIdent)
       throws JSONException {
-    boolean changed = false;
     JSONObject firstComboEntry = new JSONObject();
     JSONObject entry = (JSONObject) element;
+    JSONArray entryValues = entry.getJSONArray(CalloutConstants.ENTRIES);
+    ArrayList<JSONObject> newJsonArr = new ArrayList<JSONObject>();
+    JSONObject comboEntry = null;
 
-    // if value is not selected
-    if (!entry.has(CalloutConstants.CLASSIC_VALUE)) {
-      JSONArray jsonArr = entry.getJSONArray(CalloutConstants.ENTRIES);
-      ArrayList<JSONObject> newJsonArr = new ArrayList<JSONObject>();
-      JSONObject comboEntry = null;
-
+    if (!entry.has(CalloutConstants.COMBO_SELECTED_VALUE)) {
       // If it is not mandatory and first value is not empty, we add an initial blank element
-      if (!col.isMandatory() && !jsonArr.getJSONObject(0).isNull(JsonConstants.ID)) {
+      if (!col.isMandatory()
+          && (entryValues.length() == 0 || !entryValues.getJSONObject(0).isNull(JsonConstants.ID))) {
         comboEntry = new JSONObject();
         comboEntry.put(JsonConstants.ID, (String) null);
         comboEntry.put(JsonConstants.IDENTIFIER, (String) null);
         newJsonArr.add(comboEntry);
       }
 
-      for (int i = 0; i < jsonArr.length(); i++) {
-        comboEntry = jsonArr.getJSONObject(i);
-        newJsonArr.add(comboEntry);
-      }
-
-      if (newJsonArr.get(0).has(JsonConstants.ID)) {
+      // For no mandatory column it is selected blank element always. For mandatory column it is
+      // selected first element.
+      if (newJsonArr.size() > 0 && newJsonArr.get(0).has(JsonConstants.ID)) {
         // create element with selected value
-        String valueSelected = newJsonArr.get(0).getString(JsonConstants.ID);
-        firstComboEntry.put(CalloutConstants.VALUE, valueSelected);
-        firstComboEntry.put(CalloutConstants.CLASSIC_VALUE, valueSelected);
+        String selectedValue = newJsonArr.get(0).getString(JsonConstants.ID);
+        firstComboEntry.put(CalloutConstants.VALUE, selectedValue);
+        firstComboEntry.put(CalloutConstants.CLASSIC_VALUE, selectedValue);
       }
 
     } else {
-      // value is selected before this parsing
+      // selected value is chosen
       firstComboEntry.put(CalloutConstants.VALUE, entry.getString(CalloutConstants.VALUE));
       firstComboEntry.put(CalloutConstants.CLASSIC_VALUE,
           entry.getString(CalloutConstants.CLASSIC_VALUE));
+    }
+
+    // Added all combo entries
+    for (int i = 0; i < entryValues.length(); i++) {
+      comboEntry = entryValues.getJSONObject(i);
+      newJsonArr.add(comboEntry);
     }
 
     // added this new value and set parameter into request
@@ -137,15 +142,13 @@ public class SimpleCalloutInformationProvider implements CalloutInformationProvi
     }
 
     columnValues.put(colIdent, firstComboEntry);
-    changed = true;
+
     if (dynamicCols.contains((String) this.getCurrentElementName())) {
       changedCols.add(col.getDBColumnName());
     }
 
     if (entry.has(CalloutConstants.ENTRIES)) {
-      firstComboEntry.put(CalloutConstants.ENTRIES,
-          entry.getJSONArray(CalloutConstants.ENTRIES));
+      firstComboEntry.put(CalloutConstants.ENTRIES, newJsonArr);
     }
-    return changed;
   }
 }

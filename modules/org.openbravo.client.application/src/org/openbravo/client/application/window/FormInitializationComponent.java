@@ -1575,20 +1575,20 @@ public class FormInitializationComponent extends BaseActionHandler {
       String name = (String) calloutInformationProvider.getCurrentElementName();
       if (name.equals("MESSAGE") || name.equals("INFO") || name.equals("WARNING")
           || name.equals("ERROR") || name.equals("SUCCESS")) {
-        log.debug("Callout message: " + calloutInformationProvider.getValue(element));
+        log.debug("Callout message: " + calloutInformationProvider.getCurrentElementValue(element));
         JSONObject message = new JSONObject();
-        message.put("text", calloutInformationProvider.getValue(element).toString());
+        message.put("text", calloutInformationProvider.getCurrentElementValue(element).toString());
         message.put("severity", name.equals("MESSAGE") ? "TYPE_INFO" : "TYPE_" + name);
         messages.add(message);
       } else if (name.equals("JSEXECUTE")) {
         // The code on a JSEXECUTE command is sent directly to the client for eval()
-        String code = (String) calloutInformationProvider.getValue(element);
+        String code = (String) calloutInformationProvider.getCurrentElementValue(element);
         if (code != null) {
           jsExecuteCode.add(code);
         }
       } else if (name.equals("EXECUTE")) {
-        String js = calloutInformationProvider.getValue(element) == null ? null
-            : calloutInformationProvider.getValue(element).toString();
+        String js = calloutInformationProvider.getCurrentElementValue(element) == null ? null
+            : calloutInformationProvider.getCurrentElementValue(element).toString();
         if (js != null && !js.equals("")) {
           if (js.equals("displayLogic();")) {
             // We don't do anything, this is a harmless js response
@@ -1623,11 +1623,14 @@ public class FormInitializationComponent extends BaseActionHandler {
               String colId = "inp" + Sqlc.TransformaNombreColumna(col.getDBColumnName());
               if (calloutInformationProvider.isComboData(element)) {
                 // Combo data
-                changed = calloutInformationProvider.manageComboData(columnValues, dynamicCols,
-                    changedCols, request, element, col, colId);
+                calloutInformationProvider.manageComboData(columnValues, dynamicCols, changedCols,
+                    request, element, col, colId);
+                // If a combo is received, variable changed is true always. It is not take into
+                // account if value is changed or is the same.
+                changed = true;
               } else {
                 // Normal data
-                Object el = calloutInformationProvider.getValue(element);
+                Object el = calloutInformationProvider.getCurrentElementValue(element);
                 String oldValue = request.getRequestParameter(colId);
                 // We set the new value in the request, so that the JSONObject is computed
                 // with the new value
@@ -1677,7 +1680,7 @@ public class FormInitializationComponent extends BaseActionHandler {
           } else {
             for (AuxiliaryInput aux : tab.getADAuxiliaryInputList()) {
               if (name.equalsIgnoreCase("inp" + Sqlc.TransformaNombreColumna(aux.getName()))) {
-                Object el = calloutInformationProvider.getValue(element);
+                Object el = calloutInformationProvider.getCurrentElementValue(element);
                 JSONObject obj = new JSONObject();
                 obj.put(CalloutConstants.VALUE, el);
                 obj.put(CalloutConstants.CLASSIC_VALUE, el);
@@ -1693,7 +1696,7 @@ public class FormInitializationComponent extends BaseActionHandler {
               // This returned value wasn't found to be either a column or an auxiliary
               // input. We assume it is a hidden input, which are used in places like
               // selectors
-              Object el = calloutInformationProvider.getValue(element);
+              Object el = calloutInformationProvider.getCurrentElementValue(element);
               if (el != null) {
                 if (calloutInformationProvider.isComboData(element)) {
                   // In this case, we ignore the value, as a hidden input cannot be an array

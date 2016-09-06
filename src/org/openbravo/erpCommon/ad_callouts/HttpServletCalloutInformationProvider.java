@@ -31,6 +31,8 @@ import org.openbravo.client.kernel.reference.UIDefinition;
 import org.openbravo.client.kernel.reference.UIDefinitionController;
 import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.service.json.JsonConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * HttpServletCalloutInformationProvider provides the information that is used to populate the
@@ -45,6 +47,8 @@ public class HttpServletCalloutInformationProvider implements CalloutInformation
   private int current;
   private String currentElementName;
 
+  private final Logger log = LoggerFactory.getLogger(HttpServletCalloutInformationProvider.class);
+
   public HttpServletCalloutInformationProvider(ArrayList<NativeArray> calloutResult) {
     this.calloutResult = calloutResult;
     this.current = 0;
@@ -52,12 +56,12 @@ public class HttpServletCalloutInformationProvider implements CalloutInformation
   }
 
   @Override
-  public Object getCurrentElementName() {
+  public String getCurrentElementName() {
     return currentElementName;
   }
 
   @Override
-  public Object getValue(Object element) {
+  public Object getCurrentElementValue(Object element) {
     return getValue(element, 1);
   }
 
@@ -88,11 +92,10 @@ public class HttpServletCalloutInformationProvider implements CalloutInformation
   }
 
   @Override
-  public boolean manageComboData(Map<String, JSONObject> columnValues, List<String> dynamicCols,
+  public void manageComboData(Map<String, JSONObject> columnValues, List<String> dynamicCols,
       List<String> changedCols, RequestContext request, Object element, Column col, String colIdent)
       throws JSONException {
-    boolean changed = false;
-    NativeArray subelements = (NativeArray) this.getValue(element);
+    NativeArray subelements = (NativeArray) this.getCurrentElementValue(element);
     JSONObject jsonobject = new JSONObject();
     ArrayList<JSONObject> comboEntries = new ArrayList<JSONObject>();
     // If column is not mandatory, we add an initial blank element
@@ -107,7 +110,7 @@ public class HttpServletCalloutInformationProvider implements CalloutInformation
       if (subelement != null && getValue(subelement, 2) != null) {
         JSONObject entry = new JSONObject();
         entry.put(JsonConstants.ID, this.getElementName(subelement));
-        entry.put(JsonConstants.IDENTIFIER, this.getValue(subelement));
+        entry.put(JsonConstants.IDENTIFIER, this.getCurrentElementValue(subelement));
         comboEntries.add(entry);
         if ((j == 0 && col.isMandatory())
             || getValue(subelement, 2).toString().equalsIgnoreCase("True")) {
@@ -126,13 +129,11 @@ public class HttpServletCalloutInformationProvider implements CalloutInformation
     // If the callout returns a combo, we in any case set the new value with what
     // the callout returned
     columnValues.put(colIdent, jsonobject);
-    changed = true;
+
     if (dynamicCols.contains(colIdent)) {
       changedCols.add(col.getDBColumnName());
     }
     jsonobject.put(CalloutConstants.ENTRIES, new JSONArray(comboEntries));
-
-    return changed;
   }
 
   private Object getElementName(Object element) {

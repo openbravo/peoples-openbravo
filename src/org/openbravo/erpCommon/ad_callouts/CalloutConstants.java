@@ -33,4 +33,6 @@ public class CalloutConstants {
   public static final String CLASSIC_VALUE = "classicValue";
   public static final String ENTRIES = "entries";
 
+  public static final String COMBO_SELECTED_VALUE = "classicValue";
+
 }
