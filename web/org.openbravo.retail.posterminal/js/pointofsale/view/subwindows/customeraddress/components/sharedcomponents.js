@@ -171,16 +171,34 @@ enyo.kind({
       }
     }
 
+    function validateForm(form) {
+      var errors = '',
+          customerAddr = form.model.get('customerAddr');
+      _.each(form.$.customerAddrAttributes.children, function (item) {
+        if (item.newAttribute.mandatory) {
+          var value = customerAddr.get(item.newAttribute.modelProperty);
+          if (!value) {
+            if (errors) {
+              errors += ', ';
+            }
+            errors += OB.I18N.getLabel(item.newAttribute.i18nLabel);
+          }
+        }
+      });
+      if (errors) {
+        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_BPartnerRequiredFields', [errors]));
+        return false;
+      }
+      return true;
+    }
+
     if (this.customerAddr === undefined) {
       this.model.get('customerAddr').newCustomerAddr();
       this.model.get('customerAddr').set('bpartner', this.customer.get('id'));
       this.waterfall('onSaveChange', {
         customerAddr: this.model.get('customerAddr')
       });
-      if (this.model.get('customerAddr').get('name') === '') {
-        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_NameReqForBPAddress'));
-        return false;
-      } else {
+      if (validateForm(this)) {
         OB.UTIL.HookManager.executeHooks('OBPOS_BeforeCustomerAddrSave', {
           customerAddr: this.model.get('customerAddr'),
           isNew: true
@@ -198,15 +216,14 @@ enyo.kind({
         });
       }
     } else {
+      var that = this;
       this.model.get('customerAddr').loadById(this.customerAddr.get('id'), function (customerAddr) {
-
-        function continueSaving() {
-          customerAddr.saveCustomerAddr(function () {
+        var callback = function () {
             goToViewWindow(sw, {
               customer: me.customer,
               customerAddr: customerAddr
             });
-            if (customerAddr.get('id') === me.customer.get("locId") || customerAddr.get('id') === me.customer.get("shipLocId")) {
+            if (customerAddr.get('id') === me.customer.get('locId') || customerAddr.get('id') === me.customer.get('shipLocId')) {
               if (!customerAddr.get('isBillTo')) {
                 me.customer.set('locId', null);
                 me.customer.set('locName', null);
@@ -247,30 +264,47 @@ enyo.kind({
                 OB.error(tx);
               });
             }
-          });
-        }
+            };
 
         getCustomerAddrValues({
           customerAddr: customerAddr
         });
 
-        if (OB.MobileApp.model.receipt.get('lines').length > 0 && OB.MobileApp.model.receipt.get('bp').get('shipLocId') === customerAddr.get('id') && !customerAddr.get('isShipTo')) {
-          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_InformationTitle'), OB.I18N.getLabel('OBPOS_UncheckShipToText'), [{
-            label: OB.I18N.getLabel('OBPOS_LblOk'),
-            isConfirmButton: true,
-            action: function () {
-              continueSaving();
-            }
-          }, {
-            label: OB.I18N.getLabel('OBMOBC_LblCancel')
-          }], {
-            autoDismiss: false,
-            onHideFunction: function () {
-              return;
-            }
-          });
-        } else {
-          continueSaving();
+        if (validateForm(me)) {
+          if (OB.MobileApp.model.receipt.get('lines').length > 0 && OB.MobileApp.model.receipt.get('bp').get('shipLocId') === customerAddr.get('id') && !customerAddr.get('isShipTo')) {
+            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_InformationTitle'), OB.I18N.getLabel('OBPOS_UncheckShipToText'), [{
+              label: OB.I18N.getLabel('OBPOS_LblOk'),
+              isConfirmButton: true,
+              action: function () {
+                OB.UTIL.HookManager.executeHooks('OBPOS_BeforeCustomerAddrSave', {
+                  customerAddr: me.model.get('customerAddr'),
+                  isNew: true
+                }, function (args) {
+                  if (args && args.cancellation && args.cancellation === true) {
+                    return true;
+                  }
+                  args.customerAddr.saveCustomerAddr(callback);
+                });
+              }
+            }, {
+              label: OB.I18N.getLabel('OBMOBC_LblCancel')
+            }], {
+              autoDismiss: false,
+              onHideFunction: function () {
+                return;
+              }
+            });
+          } else {
+            OB.UTIL.HookManager.executeHooks('OBPOS_BeforeCustomerAddrSave', {
+              customerAddr: me.model.get('customerAddr'),
+              isNew: true
+            }, function (args) {
+              if (args && args.cancellation && args.cancellation === true) {
+                return true;
+              }
+              args.customerAddr.saveCustomerAddr(callback);
+            });
+          }
         }
       });
     }

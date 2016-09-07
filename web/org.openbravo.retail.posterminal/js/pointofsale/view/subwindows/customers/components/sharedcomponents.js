@@ -406,49 +406,97 @@ enyo.kind({
       }
     }
 
+    function checkMandatoryFields(items, customer) {
+      var errors = '';
+      _.each(items, function (item) {
+        if (item.newAttribute.mandatory) {
+          var value = customer.get(item.newAttribute.modelProperty);
+          if (!value) {
+            if (errors) {
+              errors += ', ';
+            }
+            errors += OB.I18N.getLabel(item.newAttribute.i18nLabel);
+          }
+        }
+      });
+      return errors;
+    }
+
+    function validateForm(form) {
+      var customer = form.model.get('customer'),
+          errors = checkMandatoryFields(form.$.customerOnlyFields.children, customer);
+      if (form.$.invoicingAddrFields.showing) {
+        var invoicingErrors = checkMandatoryFields(form.$.invoicingAddrFields.children, customer);
+        if (invoicingErrors) {
+          if (errors) {
+            errors += ', ';
+          }
+          errors += (form.$.invoicingAddrFields.getClassAttribute().indexOf("twoAddrLayout") === 0 ? OB.I18N.getLabel('OBPOS_LblBillAddr') + ' [' + invoicingErrors + ']' : invoicingErrors);
+        }
+      }
+      if (form.$.shippingAddrFields.showing && form.$.shippingAddrFields.getClassAttribute().indexOf("twoAddrLayout") === 0) {
+        var shippingErrors = checkMandatoryFields(form.$.shippingAddrFields.children, customer);
+        if (shippingErrors) {
+          if (errors) {
+            errors += ', ';
+          }
+          errors += OB.I18N.getLabel('OBPOS_LblShipAddr') + ' (' + shippingErrors + ')';
+        }
+      }
+      if (errors) {
+        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_BPartnerRequiredFields', [errors]));
+        return false;
+      }
+      return true;
+    }
+
     if (this.customer === undefined) {
       this.model.get('customer').newCustomer();
       this.waterfall('onSaveChange', {
         customer: this.model.get('customer')
       });
-      this.model.get('customer').adjustNames();
-      OB.UTIL.HookManager.executeHooks('OBPOS_BeforeCustomerSave', {
-        customer: this.model.get('customer'),
-        isNew: true,
-        validations: inEvent.validations
-      }, function (args) {
-        if (args && args.cancellation && args.cancellation === true) {
-          return true;
-        }
-        args.customer.saveCustomer(function () {
-          goToViewWindow(sw, {
-            customer: OB.UTIL.clone(args.customer)
-          });
-        });
-      });
-    } else {
-      var that = this;
-      this.model.get('customer').loadById(this.customer.get('id'), function (customer) {
-        getCustomerValues({
-          customer: customer
-        });
-        customer.adjustNames();
+      if (validateForm(this)) {
+        this.model.get('customer').adjustNames();
         OB.UTIL.HookManager.executeHooks('OBPOS_BeforeCustomerSave', {
-          customer: customer,
-          isNew: false,
+          customer: this.model.get('customer'),
+          isNew: true,
           validations: inEvent.validations
         }, function (args) {
           if (args && args.cancellation && args.cancellation === true) {
             return true;
           }
           args.customer.saveCustomer(function () {
-            if (!inEvent.silent) {
-              goToViewWindow(sw, {
-                customer: args.customer
-              });
-            }
+            goToViewWindow(sw, {
+              customer: OB.UTIL.clone(args.customer)
+            });
           });
         });
+      }
+    } else {
+      var that = this;
+      this.model.get('customer').loadById(this.customer.get('id'), function (customer) {
+        getCustomerValues({
+          customer: customer
+        });
+        if (validateForm(that)) {
+          customer.adjustNames();
+          OB.UTIL.HookManager.executeHooks('OBPOS_BeforeCustomerSave', {
+            customer: customer,
+            isNew: false,
+            validations: inEvent.validations
+          }, function (args) {
+            if (args && args.cancellation && args.cancellation === true) {
+              return true;
+            }
+            args.customer.saveCustomer(function () {
+              if (!inEvent.silent) {
+                goToViewWindow(sw, {
+                  customer: args.customer
+                });
+              }
+            });
+          });
+        }
       });
     }
   },
