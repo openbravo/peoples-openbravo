@@ -257,7 +257,7 @@
     },
     printAmount: function () {
       if (this.get('rate')) {
-        return OB.I18N.formatCurrency(OB.DEC.div(this.get('amount'), this.get('mulrate')));
+        return OB.I18N.formatCurrency(this.get('origAmount') || OB.DEC.mul(this.get('amount'), this.get('rate')));
       } else {
         return OB.I18N.formatCurrency(this.get('amount'));
       }
@@ -2966,7 +2966,7 @@
         p = payments.at(i);
         precision = this.getPrecision(p);
         if (p.get('rate') && p.get('rate') !== '1') {
-          p.set('origAmount', OB.DEC.div(p.get('amount'), p.get('mulrate')));
+          p.set('origAmount', OB.DEC.mul(p.get('amount'), p.get('rate')));
           //Here we are trying to know if the current payment is making the pending to pay 0.
           //to know that we are suming up every payments except the current one (getSumOfOrigAmounts)
           //then we substract this amount from the total (getDifferenceBetweenPaymentsAndTotal)
@@ -4555,7 +4555,7 @@
         p = payments.at(i);
         precision = this.getPrecision(p);
         if (p.get('rate') && p.get('rate') !== '1') {
-          p.set('origAmount', OB.DEC.div(p.get('amount'), p.get('mulrate')));
+          p.set('origAmount', OB.DEC.mul(p.get('amount'), p.get('rate')));
           //Here we are trying to know if the current payment is making the pending to pay 0.
           //to know that we are suming up every payments except the current one (getSumOfOrigAmounts)
           //then we substract this amount from the total (getDifferenceBetweenPaymentsAndTotal)
