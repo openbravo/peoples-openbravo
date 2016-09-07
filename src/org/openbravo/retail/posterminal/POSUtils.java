@@ -383,12 +383,18 @@ public class POSUtils {
           String documentNo = jsonError.getString("documentNo");
           if (documentNo.indexOf("/") > -1) {
             String number = documentNo.substring(documentNo.indexOf("/") + 1);
+            if (number.indexOf("-") > -1) {
+              number = number.substring(0, number.indexOf("-"));
+            }
             int errorNumber = new Long(number).intValue();
             if (errorNumber > maxDocNo) {
               maxDocNo = errorNumber;
             }
           } else if (jsonError.has("documentnoPrefix")) {
             String number = documentNo.replace(jsonError.getString("documentnoPrefix"), "");
+            if (number.indexOf("-") > -1) {
+              number = number.substring(0, number.indexOf("-"));
+            }
             int errorNumber = new Long(number).intValue();
             if (errorNumber > maxDocNo) {
               maxDocNo = errorNumber;
@@ -472,12 +478,18 @@ public class POSUtils {
           String documentNo = jsonError.getString("documentNo");
           if (documentNo.indexOf("/") > -1) {
             String number = documentNo.substring(documentNo.indexOf("/") + 1);
+            if (number.indexOf("-") > -1) {
+              number = number.substring(0, number.indexOf("-"));
+            }
             int errorNumber = new Long(number).intValue();
             if (errorNumber > maxDocNo) {
               maxDocNo = errorNumber;
             }
           } else if (jsonError.has("quotationnoPrefix")) {
             String number = documentNo.replace(jsonError.getString("quotationnoPrefix"), "");
+            if (number.indexOf("-") > -1) {
+              number = number.substring(0, number.indexOf("-"));
+            }
             int errorNumber = new Long(number).intValue();
             if (errorNumber > maxDocNo) {
               maxDocNo = errorNumber;
@@ -558,12 +570,18 @@ public class POSUtils {
           String documentNo = jsonError.getString("documentNo");
           if (documentNo.indexOf("/") > -1) {
             String number = documentNo.substring(documentNo.indexOf("/") + 1);
+            if (number.indexOf("-") > -1) {
+              number = number.substring(0, number.indexOf("-"));
+            }
             int errorNumber = new Long(number).intValue();
             if (errorNumber > maxDocNo) {
               maxDocNo = errorNumber;
             }
           } else if (jsonError.has("returnnoPrefix")) {
             String number = documentNo.replace(jsonError.getString("returnnoPrefix"), "");
+            if (number.indexOf("-") > -1) {
+              number = number.substring(0, number.indexOf("-"));
+            }
             int errorNumber = new Long(number).intValue();
             if (errorNumber > maxDocNo) {
               maxDocNo = errorNumber;
