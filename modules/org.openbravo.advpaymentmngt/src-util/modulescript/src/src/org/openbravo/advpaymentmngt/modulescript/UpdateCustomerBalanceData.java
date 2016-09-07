@@ -226,18 +226,25 @@ static Logger log4j = Logger.getLogger(UpdateCustomerBalanceData.class);
     String strSql = "";
     strSql = strSql + 
       "        SELECT A.c_bpartner_id, SUM(A.amount) as customercredit" +
-      "        FROM (SELECT c_bpartner_id, COALESCE(SUM(ps.outstandingamt * (CASE WHEN inv.issotrx = 'Y' THEN 1 ELSE -1 END)), 0) as amount" +
-      "              FROM fin_payment_schedule ps join c_invoice inv on (ps.c_invoice_id = inv.c_invoice_id)" +
-      "              WHERE ps.outstandingamt <> 0" +
-      "              GROUP BY c_bpartner_id" +
-      "              UNION ALL" +
-      "              SELECT p.c_bpartner_id, COALESCE(SUM((p.generated_credit - p.used_credit) * (CASE WHEN p.isreceipt = 'Y' THEN -1 ELSE 1 END)), 0) as amount" +
-      "              FROM FIN_PAYMENT p" +
-      "              WHERE p.c_bpartner_id is not null" +
-      "                    AND (p.generated_credit - p.used_credit) <> 0" +
-      "                    AND p.generated_credit <> 0" +
-      "                    AND p.processed = 'Y'" +
-      "              GROUP BY p.c_bpartner_id) A" +
+      "        FROM (" +
+      "          SELECT bp.c_bpartner_id, COALESCE(SUM(c_currency_convert(ps.outstandingamt * (CASE WHEN inv.issotrx = 'Y' THEN 1 ELSE -1 END), inv.c_currency_id, bp.bp_currency_id, inv.created, null, inv.ad_client_id, inv.ad_org_id)), 0) as amount" +
+      "          FROM c_invoice inv" +
+      "          JOIN c_bpartner bp" +
+      "          ON inv.c_bpartner_id = bp.c_bpartner_id" +
+      "          JOIN fin_payment_schedule ps" +
+      "          ON inv.c_invoice_id = ps.c_invoice_id" +
+      "          WHERE ps.outstandingamt <> 0" +
+      "          GROUP BY bp.c_bpartner_id" +
+      "          UNION ALL" +
+      "          SELECT bp.c_bpartner_id, COALESCE(SUM(c_currency_convert((p.generated_credit - p.used_credit) * (CASE WHEN p.isreceipt = 'Y' THEN -1 ELSE 1 END), p.c_currency_id, bp.bp_currency_id, p.created, null, p.ad_client_id, p.ad_org_id)), 0) as amount" +
+      "          FROM FIN_PAYMENT p" +
+      "          JOIN c_bpartner bp" +
+      "          ON p.c_bpartner_id = bp.c_bpartner_id" +
+      "          WHERE (p.generated_credit - p.used_credit) <> 0" +
+      "          AND p.generated_credit <> 0" +
+      "          AND p.processed = 'Y'" +
+      "          GROUP BY bp.c_bpartner_id" +
+      "        ) A" +
       "        GROUP BY A.c_bpartner_id";
 
     ResultSet result;
