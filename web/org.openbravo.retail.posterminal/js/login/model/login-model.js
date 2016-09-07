@@ -705,15 +705,30 @@
       if (OB.POS.hwserver !== undefined) {
         OB.POS.hwserver.print(new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.GoodByeTemplate), {});
       }
-      if (!OB.MobileApp.model.attributes.permissions || !OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
-        this.cleanSessionInfo();
-      }
     },
 
     postCloseSession: function (session) {
       var criteria = {},
           model;
       var me = this;
+
+      function successRemove(collection) {
+        var i, j, removeCallback;
+        if (collection.length > 0) {
+          removeCallback = _.after(collection.length, function () {
+            me.cleanSessionInfo();
+            OB.MobileApp.model.triggerLogout();
+          });
+          _.forEach(collection.models, function (model) {
+            model.deleteOrder(me, true, function () {
+              OB.Dal.remove(model, removeCallback);
+            });
+          });
+        } else {
+          me.cleanSessionInfo();
+          OB.MobileApp.model.triggerLogout();
+        }
+      }
 
       function success(collection) {
         var i, j, saveCallback;
@@ -748,17 +763,12 @@
         OB.MobileApp.model.triggerLogout();
       }
       //All pending to be paid orders will be removed on logout
+      criteria.session = session.get('id');
+      criteria.hasbeenpaid = 'N';
       if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
-        criteria.session = session.get('id');
-        criteria.hasbeenpaid = 'N';
         OB.Dal.find(OB.Model.Order, criteria, success, error);
       } else {
-        OB.Dal.removeAll(OB.Model.Order, {
-          'session': session.get('id'),
-          'hasbeenpaid': 'N'
-        }, function () {
-          OB.MobileApp.model.triggerLogout();
-        }, error);
+        OB.Dal.find(OB.Model.Order, criteria, successRemove, error);
       }
       this.set('currentView', {
         name: 'order',

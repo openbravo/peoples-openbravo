@@ -165,12 +165,10 @@ enyo.kind({
           me.markOrderAsDeleted(model);
         } else {
           // approved so remove the entry
-          if (OB.UTIL.RfidController.isRfidConfigured()) {
-            OB.UTIL.RfidController.eraseEpcOrder(model);
-          }
-          OB.Dal.remove(model, function () {
-            me.collection.remove(model);
-          }, OB.UTIL.showError);
+          var callback = function () {
+              me.collection.remove(model);
+              };
+          model.deleteOrder(me, true, callback);
         }
       }
     });
@@ -215,9 +213,10 @@ enyo.kind({
       if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
         me.markOrderAsDeleted(model);
       } else {
-        OB.Dal.remove(model, function () {
-          collection.remove(model);
-        }, OB.UTIL.showError);
+        var callback = function () {
+            collection.remove(model);
+            };
+        model.deleteOrder(me, true, callback);
       }
     }
 
