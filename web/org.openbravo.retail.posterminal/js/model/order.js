@@ -4223,7 +4223,7 @@
 
       function removePayments(context, callback) {
         var payments = context.model.get('order').get('payments');
-        if (payments && payments.length > 0) {
+        if (context.model.get('order').get('isEditable') && payments && payments.length > 0) {
           OB.UTIL.HookManager.executeHooks('OBPOS_preRemovePayment', {
             paymentToRem: payments.at(0),
             payments: payments,
