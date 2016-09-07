@@ -86,6 +86,7 @@ public class CancelAndReplaceUtils {
   public static final String ASSOCIATE_SHIPMENT_TO_REPLACE_TICKET = "CancelAndReplaceAssociateShipmentToNewTicket";
   public static final String ENABLE_STOCK_RESERVATIONS = "StockReservations";
   public static String REVERSE_PREFIX = "*R*";
+  public static String DOCTYPE_MatShipment = "MMS";
 
   /**
    * Process that creates a replacement order in temporary status in order to Cancel and Replace an
@@ -620,7 +621,7 @@ public class CancelAndReplaceUtils {
       nettingGoodsShipment = OBProvider.getInstance().get(ShipmentInOut.class);
       nettingGoodsShipment.setOrganization(oldOrder.getOrganization());
       DocumentType goodsShipmentDocumentType = FIN_Utility.getDocumentType(
-          oldOrder.getOrganization(), "MMS");
+          oldOrder.getOrganization(), DOCTYPE_MatShipment);
       nettingGoodsShipment.setDocumentType(goodsShipmentDocumentType);
       nettingGoodsShipment.setWarehouse(oldOrder.getWarehouse());
       nettingGoodsShipment.setBusinessPartner(oldOrder.getBusinessPartner());
