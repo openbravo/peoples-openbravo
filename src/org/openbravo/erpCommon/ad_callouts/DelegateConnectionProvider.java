@@ -43,7 +43,7 @@ import org.openbravo.exception.NoConnectionAvailableException;
  */
 public class DelegateConnectionProvider implements ConnectionProvider {
 
-  protected ConnectionProvider pool;
+  protected ConnectionProvider myPool;
   private ServletContext context;
   protected Logger log4j = Logger.getLogger(this.getClass());
 
@@ -52,10 +52,10 @@ public class DelegateConnectionProvider implements ConnectionProvider {
   }
 
   private ConnectionProvider getPool() {
-    if (pool == null) {
-      pool = ConnectionProviderContextListener.getPool(context);
+    if (myPool == null) {
+      myPool = ConnectionProviderContextListener.getPool(context);
     }
-    return pool;
+    return myPool;
   }
 
   public Connection getConnection() throws NoConnectionAvailableException {
