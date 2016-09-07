@@ -55,6 +55,8 @@ public class FINPaymentEventHandler extends EntityPersistenceEventObserver {
         setDocumentNoToPayment(payment, event, newDocumentNo);
       }
     }
+    // Index == 0 case is not managed here because with Openbravo Reverse Payments functionality we
+    // could have payment document numbers starting with "*R*"
   }
 
   public void onSave(@Observes EntityNewEvent event) {
