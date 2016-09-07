@@ -133,12 +133,11 @@ public class CancelAndReplaceUtils {
         newOrderLine.setReplacedorderline(oldOrderLine);
         newOrder.getOrderLineList().add(newOrderLine);
         OBDal.getInstance().save(newOrderLine);
-        if ((i % 100) == 0) {
+        if ((++i % 100) == 0) {
           OBDal.getInstance().flush();
           OBDal.getInstance().getSession().clear();
           newOrder = OBDal.getInstance().get(Order.class, newOrderId);
         }
-        i++;
       }
     } finally {
       if (orderLines != null) {
@@ -706,7 +705,7 @@ public class CancelAndReplaceUtils {
           if (reservation != null) {
             ReservationUtils.processReserve(reservation, "CL");
           }
-          if ((i % 100) == 0) {
+          if ((++i % 100) == 0) {
             OBDal.getInstance().flush();
             OBDal.getInstance().getSession().clear();
           }
@@ -741,7 +740,7 @@ public class CancelAndReplaceUtils {
           if (reservation != null) {
             ReservationUtils.createReserveFromSalesOrderLine(newOrderLine, true);
           }
-          if ((i % 100) == 0) {
+          if ((++i % 100) == 0) {
             OBDal.getInstance().flush();
             OBDal.getInstance().getSession().clear();
           }
