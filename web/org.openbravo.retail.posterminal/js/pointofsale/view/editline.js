@@ -885,7 +885,7 @@ enyo.kind({
         }
         this.$.icon.parent.hide();
       }
-      if (this.line.get('qty') < OB.DEC.Zero) {
+      if (this.line.get('qty') < OB.DEC.Zero && !this.receipt.get('iscancelled')) {
         if (!_.isUndefined(this.line.get('returnReason'))) {
           selectedReason = _.filter(this.$.returnreason.children, function (reason) {
             return reason.getValue() === me.line.get('returnReason');
