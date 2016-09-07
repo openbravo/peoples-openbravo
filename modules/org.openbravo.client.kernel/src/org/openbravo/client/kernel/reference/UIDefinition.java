@@ -211,8 +211,7 @@ public abstract class UIDefinition {
         if (defaultS.equalsIgnoreCase("@#Date@")) {
           return setNOWDefault();
         } else if (!defaultS.startsWith("@SQL=")) {
-          columnValue = Utility.getDefault(new DalConnectionProvider(false),
-              rq.getVariablesSecureApp(), colName, defaultS, windowId, "");
+          columnValue = getDefaultValue(rq.getVariablesSecureApp(), colName, defaultS, windowId);
         } else {
           ArrayList<String> params = new ArrayList<String>();
           String sql = parseSQL(defaultS, params);
@@ -266,6 +265,27 @@ public abstract class UIDefinition {
           + field.getColumn().getDBColumnName());
     }
     return jsnobject.toString();
+  }
+
+  /**
+   * Returns the value for a default value expression which represents a session value or a fixed
+   * value. This method is not used to calculate SQL based expressions (those that start with
+   * '@SQL=') and NOW expression ('@#Date@').
+   *
+   * @param vars
+   *          Handler for the session info.
+   * @param columnName
+   *          String with the name of the column that has the default value.
+   * @param defaultValueExpression
+   *          String with the default value expression.
+   * @param window
+   *          String with the window id.
+   * @return String with the calculated default value.
+   */
+  public String getDefaultValue(VariablesSecureApp vars, String columnName,
+      String defaultValueExpression, String windowId) {
+    return Utility.getDefault(new DalConnectionProvider(false), vars, columnName,
+        defaultValueExpression, windowId, "");
   }
 
   /**
