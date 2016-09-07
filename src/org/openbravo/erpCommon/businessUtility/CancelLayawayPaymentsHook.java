@@ -26,8 +26,6 @@ import org.openbravo.model.common.order.Order;
  * Interface created to implement hooks inside Cancel and Replace process in createPayments method.
  * All hooks in that process must implement this class so they implement exec process.
  * 
- * @author openbravo
- * 
  */
 public interface CancelLayawayPaymentsHook {
   /**

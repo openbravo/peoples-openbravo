@@ -32,8 +32,6 @@ import org.openbravo.model.common.order.Order;
  * Public class implemented to execute all hooks of type CancelLayawayPaymentsHook. This class is
  * called from Cancel and Replace process, inside createPayments method.
  * 
- * @author openbravo
- * 
  */
 public class CancelLayawayPaymentsHookCaller {
 
