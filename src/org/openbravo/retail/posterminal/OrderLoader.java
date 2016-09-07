@@ -526,20 +526,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     }
   }
 
-  @Override
-  protected boolean additionalCheckForDuplicates(JSONObject record) {
-    try {
-      Order orderInDatabase = OBDal.getInstance().get(Order.class, record.getString("id"));
-      String docNoInDatabase = orderInDatabase.getDocumentNo();
-      String docNoInJSON = "";
-      docNoInJSON = record.getString("documentNo");
-      return docNoInDatabase.equals(docNoInJSON);
-    } catch (JSONException e) {
-      log.error("JSON information couldn't be read when verifying duplicate", e);
-      return false;
-    }
-  }
-
   private void executeHooks(Instance<? extends Object> hooks, JSONObject jsonorder, Order order,
       ShipmentInOut shipment, Invoice invoice) throws Exception {
 
@@ -607,21 +593,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
   private boolean verifyOrderExistance(JSONObject jsonorder) throws Exception {
     OBContext.setAdminMode(false);
     try {
-      if (jsonorder.has("id") && jsonorder.getString("id") != null
-          && !jsonorder.getString("id").equals("")) {
-        Order order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
-        if (order != null) {
-          // Additional check to verify that the order is indeed a duplicate
-          if (!additionalCheckForDuplicates(jsonorder)) {
-            throw new OBException(
-                "An order has the same id, but it's not a duplicate. Existing order id:"
-                    + order.getId() + ". Existing order documentNo:" + order.getDocumentNo()
-                    + ". New documentNo:" + jsonorder.getString("documentNo"));
-          } else {
-            return true;
-          }
-        }
-      }
       if ((!jsonorder.has("obposIsDeleted") || !jsonorder.getBoolean("obposIsDeleted"))
           && (!jsonorder.has("gross") || jsonorder.getString("gross").equals("0"))
           && (jsonorder.isNull("lines") || (jsonorder.getJSONArray("lines") != null && jsonorder
