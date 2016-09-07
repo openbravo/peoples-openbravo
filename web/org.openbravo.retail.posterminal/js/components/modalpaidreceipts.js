@@ -491,16 +491,7 @@ enyo.kind({
     if (inEvent.newPaidReceipt.get('isLayaway')) {
       this.model.attributes.order.calculateReceipt();
     } else {
-      var order = this.model.attributes.order;
-      var qty = order.get('lines').reduce(function (memo, e) {
-        var qtyLine = e.getQty();
-        if (qtyLine > 0) {
-          return OB.DEC.add(memo, qtyLine, OB.I18N.qtyScale());
-        } else {
-          return memo;
-        }
-      }, OB.DEC.Zero);
-      order.set('qty', qty);
+      this.model.attributes.order.calculateGrossAndSave(false);
     }
     return true;
   },
