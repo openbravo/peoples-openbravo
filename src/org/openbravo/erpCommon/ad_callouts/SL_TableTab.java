@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2014 Openbravo SLU 
+ * All portions are Copyright (C) 2014-2016 Openbravo SLU 
  * All Rights Reserved. 
  ************************************************************************
  */
@@ -30,7 +30,6 @@ import org.openbravo.model.ad.datamodel.Table;
  * 
  */
 public class SL_TableTab extends SimpleCallout {
-  private static final long serialVersionUID = 1L;
   private static final String READ_ONLY_UIPATTERN = "RO";
 
   @Override

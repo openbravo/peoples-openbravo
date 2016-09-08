@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012 Openbravo SLU
+ * All portions are Copyright (C) 2012-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -25,7 +25,6 @@ import org.openbravo.base.filter.ValueListFilter;
 
 public class SL_RefreshSequenceAndLength extends SimpleCallout {
 
-  private static final long serialVersionUID = 1L;
   private static final RequestFilter filterYesNo = new ValueListFilter("Y", "N", "");
 
   @Override

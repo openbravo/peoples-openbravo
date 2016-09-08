@@ -20,7 +20,6 @@ package org.openbravo.erpCommon.ad_callouts;
 
 import javax.servlet.ServletException;
 
-@SuppressWarnings("serial")
 public class SE_Sales_Pricelist extends SimpleCallout {
 
   @Override
