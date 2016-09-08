@@ -164,6 +164,17 @@ public class UpdateCashup {
       // In case of Slave/Master Check if slave is processed or not
       for (OBPOSAppCashup slaveCashup : cashup.getOBPOSAppCashupObposParentCashupIDList()) {
         if (!slaveCashup.isProcessed()) {
+          log.debug("Master/Slave association ("
+              + new Date()
+              + "): Unlink slave terminal: "
+              + slaveCashup.getPOSTerminal().getName()
+              + " and Cashup id: "
+              + slaveCashup.getId()
+              + " linked with master terminal: "
+              + cashup.getPOSTerminal().getName()
+              + " and Cashup id: "
+              + cashup.getId()
+              + " because slave terminal has no transactions and it will be associated with the next master terminal cashup");
           slaveCashup.setObposParentCashup(null);
           OBDal.getInstance().save(slaveCashup);
         }
@@ -308,6 +319,10 @@ public class UpdateCashup {
             + OBPOSAppCashup.PROPERTY_OBPOSPARENTCASHUP + " is not null and "
             + OBPOSAppCashup.PROPERTY_OBPOSPARENTCASHUP + ".id = ?";
         if (countAppCashup(query, appCashup.getPOSTerminal().getId(), cashUp.getId()) == 0) {
+          log.debug("Master/Slave association (" + new Date() + "): Associating slave terminal: "
+              + appCashup.getPOSTerminal().getName() + " and Cashup id: " + appCashup.getId()
+              + " with master terminal: " + cashUp.getPOSTerminal().getName() + " and Cashup id: "
+              + cashUp.getId());
           appCashup.setObposParentCashup(cashUp);
         }
       }
@@ -331,6 +346,10 @@ public class UpdateCashup {
         appCashupQuery.setNamedParameter("terminalId", posTerminal.getMasterterminal().getId());
         List<OBPOSAppCashup> appCashupList = appCashupQuery.list();
         if (appCashupList.size() > 0 && cashUp.getObposParentCashup() == null) {
+          log.debug("Master/Slave association (" + new Date() + "): Associating slave terminal: "
+              + cashUp.getPOSTerminal().getName() + " and Cashup id: " + cashUp.getId()
+              + " with master terminal: " + appCashupList.get(0).getPOSTerminal().getName()
+              + " and Cashup id: " + appCashupList.get(0).getId());
           cashUp.setObposParentCashup(appCashupList.get(0));
         }
       }
