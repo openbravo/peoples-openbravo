@@ -374,7 +374,7 @@ build.war: build a war file in the lib directory.
   
   <target name="wad" depends="init, wadvalidation">
     <java classname="org.openbravo.wad.Wad" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="${build.maxmemory}" failonerror="true">
-      <arg line="'${base.config}' '${tab}' '${build.AD}/org/openbravo/erpWindows' '${build.AD}/org/openbravo/erpCommon' '${build.sqlc}/src' '${webTab}' '${build.AD}/org/openbravo/erpCommon/ad_actionButton' '${base.design}' '${base.translate.structure}' 'dummyValueUnused' '..' '${attach.path}' '${web.url}' '${base.src}' '${complete}' '${module}' 'noquick' '${wad.generateAllClassic250Windows}'" />
+      <arg line="'${base.config}' '${tab}' '${build.AD}/org/openbravo/erpWindows' '${build.AD}/org/openbravo/erpCommon' '${build.sqlc}/src' '${webTab}' '${build.AD}/org/openbravo/erpCommon/ad_actionButton' '${base.design}' '${base.translate.structure}' 'dummyValueUnused' '..' '${attach.path}' '${web.url}' '${base.src}' '${complete}' '${module}' 'noquick' '${wad.generateAllClassic250Windows}' '${exclude.cdi}'" />
       <classpath refid="wad.class.path" />
       <syspropertyset>
          <propertyref name="java.security.egd" />
@@ -385,7 +385,7 @@ build.war: build a war file in the lib directory.
 
   <target name="wad.quick" depends="init, wadvalidation">
     <java classname="org.openbravo.wad.Wad" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="${build.maxmemory}">
-      <arg line="'${base.config}' '${tab}' '${build.AD}/org/openbravo/erpWindows' '${build.AD}/org/openbravo/erpCommon' '${build.sqlc}/src' '${webTab}' '${build.AD}/org/openbravo/erpCommon/ad_actionButton' '${base.design}' '${base.translate.structure}' 'dummyValueUnused' '..' '${attach.path}' '${web.url}' '${base.src}' '${complete}' '${module}' 'quick' '${wad.generateAllClassic250Windows}'" />
+      <arg line="'${base.config}' '${tab}' '${build.AD}/org/openbravo/erpWindows' '${build.AD}/org/openbravo/erpCommon' '${build.sqlc}/src' '${webTab}' '${build.AD}/org/openbravo/erpCommon/ad_actionButton' '${base.design}' '${base.translate.structure}' 'dummyValueUnused' '..' '${attach.path}' '${web.url}' '${base.src}' '${complete}' '${module}' 'quick' '${wad.generateAllClassic250Windows}' '${exclude.cdi}'" />
       <classpath refid="wad.class.path" />
       <syspropertyset>
          <propertyref name="java.security.egd" />

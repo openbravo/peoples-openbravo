@@ -177,9 +177,11 @@
       FROM AD_MODEL_OBJECT 
       WHERE ISACTIVE = 'Y' 
       AND OBJECT_TYPE = 'L'
+      AND AD_MODEL_OBJECT_ID != ?
       ORDER BY SEQNO, NAME
       ]]>
     </Sql>
+    <Parameter name="excludeObject"/>
   </SqlMethod>
   
   <SqlMethod name="genereteWebXml" type="preparedStatement" return="boolean" default="true">
