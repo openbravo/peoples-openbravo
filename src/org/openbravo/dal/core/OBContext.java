@@ -46,6 +46,7 @@ import org.openbravo.base.util.Check;
 import org.openbravo.dal.security.EntityAccessChecker;
 import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.ad_forms.AcctSchemaStructureProvider;
 import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.access.RoleOrganization;
 import org.openbravo.model.ad.access.User;
@@ -474,6 +475,7 @@ public class OBContext implements OBNotSingleton {
   private Set<String> writableOrganizations;
   private String userLevel;
   private Map<String, OrganizationStructureProvider> organizationStructureProviderByClient;
+  private Map<String, AcctSchemaStructureProvider> acctSchemaStructureProviderByClient;
   private EntityAccessChecker entityAccessChecker;
 
   // the "0" user is the administrator
@@ -699,6 +701,7 @@ public class OBContext implements OBNotSingleton {
     writableOrganizations = null;
     userLevel = null;
     organizationStructureProviderByClient = null;
+    acctSchemaStructureProviderByClient = null;
     entityAccessChecker = null;
 
     isAdministrator = false;
@@ -762,6 +765,7 @@ public class OBContext implements OBNotSingleton {
       }
 
       organizationStructureProviderByClient = new HashMap<String, OrganizationStructureProvider>();
+      acctSchemaStructureProviderByClient = new HashMap<String, AcctSchemaStructureProvider>();
 
       // first take the passed role, if any
       // now check if the default role is active, if not another one needs
@@ -977,6 +981,22 @@ public class OBContext implements OBNotSingleton {
       organizationStructureProviderByClient.put(clientId, orgProvider);
     }
     return orgProvider;
+  }
+
+  public AcctSchemaStructureProvider getAcctSchemaStructureProvider() {
+    return getAcctSchemaStructureProvider(getCurrentClient().getId());
+  }
+
+  public AcctSchemaStructureProvider getAcctSchemaStructureProvider(String clientId) {
+    AcctSchemaStructureProvider acctSchemaSP = acctSchemaStructureProviderByClient.get(clientId);
+
+    // create one
+    if (acctSchemaSP == null) {
+      acctSchemaSP = OBProvider.getInstance().get(AcctSchemaStructureProvider.class);
+      acctSchemaSP.setClientId(clientId);
+      acctSchemaStructureProviderByClient.put(clientId, acctSchemaSP);
+    }
+    return acctSchemaSP;
   }
 
   public String[] getReadableOrganizations() {
