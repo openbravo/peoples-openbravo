@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011 Openbravo SLU
+ * All portions are Copyright (C) 2011-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -30,7 +30,6 @@ import org.openbravo.model.manufacturing.transaction.WorkRequirementOperation;
 
 public class SL_ProductionPlan_WRPhase_Quantity extends SimpleCallout {
 
-  private static final long serialVersionUID = 1L;
   private static final IsIDFilter idFilter = new IsIDFilter();
   private static final NumberFilter numFilter = new NumberFilter();
 

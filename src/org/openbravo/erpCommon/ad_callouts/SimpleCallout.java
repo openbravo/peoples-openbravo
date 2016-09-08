@@ -11,32 +11,31 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2014 Openbravo SLU
+ * All portions are Copyright (C) 2010-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.erpCommon.ad_callouts;
 
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
+import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.filter.RegexFilter;
 import org.openbravo.base.filter.RequestFilter;
-import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.client.application.window.servlet.CalloutServletConfig;
+import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.service.db.DalConnectionProvider;
-import org.openbravo.utils.FormatUtilities;
-import org.openbravo.xmlEngine.XmlDocument;
+import org.openbravo.service.json.JsonConstants;
 
 /**
  * This class is used to implement Openbravo ERP servlet callouts in a simple manner.
@@ -52,15 +51,14 @@ import org.openbravo.xmlEngine.XmlDocument;
  * 
  * </blockquote>
  * <p>
- * In this method you can develop the logic of the callout and use the infoobject of class
+ * In this method you can develop the logic of the callout and use the info object of class
  * <code>CalloutInfo<code/> to access window fields,
  * database and other methods
  * 
  * @author aro
  */
-public abstract class SimpleCallout extends HttpSecureAppServlet {
+public abstract class SimpleCallout extends DelegateConnectionProvider {
 
-  private static final long serialVersionUID = 1L;
   private static Logger log = Logger.getLogger(SimpleCallout.class);
 
   /**
@@ -74,56 +72,29 @@ public abstract class SimpleCallout extends HttpSecureAppServlet {
   protected abstract void execute(CalloutInfo info) throws ServletException;
 
   @Override
-  public void init(ServletConfig config) {
+  public void init(CalloutServletConfig config) {
     super.init(config);
-    boolHist = false;
   }
 
-  @Override
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  /**
+   * This method execute the SimpleCallout operations.
+   * 
+   * @return JSONObject with the values updated by the SimpleCallout.
+   */
+  public JSONObject executeSimpleCallout(RequestContext request) throws ServletException,
+      JSONException {
+    // prepare values for callout
+    VariablesSecureApp vars = new VariablesSecureApp(request.getRequest());
+    CalloutInfo info = new CalloutInfo(vars);
 
-    VariablesSecureApp vars = new VariablesSecureApp(request);
-
-    if (vars.commandIn("DEFAULT")) {
-      try {
-        printPage(response, vars);
-      } catch (ServletException ex) {
-        pageErrorCallOut(response);
-      }
-    } else {
-      pageError(response);
+    try {
+      // execute the callout
+      execute(info);
+    } catch (ServletException ex) {
+      // Error in current SimpleCallout, continue with following callout.
     }
-  }
 
-  private void printPage(HttpServletResponse response, VariablesSecureApp vars) throws IOException,
-      ServletException {
-
-    log.debug("Output: dataSheet");
-
-    XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
-        "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
-
-    CalloutInfo info = new CalloutInfo(vars, getSimpleClassName(), getServletConfig());
-
-    execute(info);
-
-    xmlDocument.setParameter("array", info.finishResult());
-    xmlDocument.setParameter("frameName", "appFrame");
-    response.setContentType("text/html; charset=UTF-8");
-    PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
-  }
-
-  private String getSimpleClassName() {
-    String classname = getClass().getName();
-    int i = classname.lastIndexOf(".");
-    if (i < 0) {
-      return classname;
-    } else {
-      return classname.substring(i + 1);
-    }
+    return info.getJSONObjectResult();
   }
 
   /**
@@ -131,32 +102,21 @@ public abstract class SimpleCallout extends HttpSecureAppServlet {
    */
   protected static class CalloutInfo {
 
-    private StringBuilder result;
-    private int rescounter;
-    private int selectcounter;
-    private final ServletConfig config;
+    private JSONObject result;
+    private String currentElement;
+    private ArrayList<JSONObject> currentSelectResult;
+
     /**
      * Provides the coder friendly methods to retrieve certain environment, session and servlet call
      * variables.
      */
     public VariablesSecureApp vars;
 
-    private CalloutInfo(VariablesSecureApp vars, String classname, ServletConfig config) {
-      this.config = config;
+    private CalloutInfo(VariablesSecureApp vars) {
       this.vars = vars;
-
-      result = new StringBuilder();
-      result.append("var calloutName='");
-      result.append(classname);
-      result.append("';\nvar respuesta = new Array(");
-
-      rescounter = 0;
-      selectcounter = 0;
-    }
-
-    private String finishResult() {
-      result.append(");");
-      return result.toString();
+      result = new JSONObject();
+      currentElement = null;
+      currentSelectResult = new ArrayList<JSONObject>();
     }
 
     /**
@@ -168,7 +128,6 @@ public abstract class SimpleCallout extends HttpSecureAppServlet {
      *          SimpleCallout instance to invoke
      */
     public void executeCallout(SimpleCallout callout) throws ServletException {
-      callout.init(config);
       callout.execute(this);
     }
 
@@ -202,10 +161,26 @@ public abstract class SimpleCallout extends HttpSecureAppServlet {
      *          The name of the field to get the value.
      * @param filter
      *          Filter used to validate the input against list of allowed inputs.
-     * @return The value of a field named param as an {@code String}.
+     * @return The value of a field named param as an {@code String}. If value is modified
+     *         previously by a parent callout, updated value is returned.
      */
     public String getStringParameter(String param, RequestFilter filter) {
-      return vars.getStringParameter(param, filter);
+      String value = "";
+      try {
+        // if a parent callout modified any value, updated value is returned.
+        if (result.has(param)) {
+          value = result.getJSONObject(param).get(CalloutConstants.CLASSIC_VALUE).toString();
+        } else {
+          value = vars.getStringParameter(param, filter);
+        }
+      } catch (JSONException e) {
+        log.error("Error parsing JSON Object.", e);
+      }
+      return value;
+    }
+
+    public String getStringParameter(String param) {
+      return getStringParameter(param, null);
     }
 
     /**
@@ -226,17 +201,8 @@ public abstract class SimpleCallout extends HttpSecureAppServlet {
      *          The name of the select field to set the values.
      */
     public void addSelect(String param) {
-
-      if (rescounter > 0) {
-        result.append(',');
-      }
-      rescounter++;
-      result.append("\nnew Array(\"");
-      result.append(param);
-      result.append("\", ");
-      result.append("new Array(");
-
-      selectcounter = 0;
+      currentSelectResult = new ArrayList<JSONObject>();
+      currentElement = param;
     }
 
     /**
@@ -262,29 +228,49 @@ public abstract class SimpleCallout extends HttpSecureAppServlet {
      *          Whether this entry field is selected or not.
      */
     public void addSelectResult(String name, String value, boolean selected) {
+      JSONObject entry = new JSONObject();
+      try {
+        entry.put(JsonConstants.ID, name);
+        entry.put(JsonConstants.IDENTIFIER, value);
+        currentSelectResult.add(entry);
 
-      if (selectcounter > 0) {
-        result.append(',');
+        if (selected) {
+          // If value of combo is selected
+          JSONObject valueSelected = new JSONObject();
+          valueSelected.put(CalloutConstants.VALUE, name.toString());
+          valueSelected.put(CalloutConstants.CLASSIC_VALUE, name.toString());
+          result.put(currentElement, valueSelected);
+        }
+      } catch (JSONException e) {
+        log.error("Error parsing JSON Object.", e);
       }
-      selectcounter++;
-      result.append("new Array(\"");
-      result.append(name);
-      result.append("\", \"");
-      result.append(FormatUtilities.replaceJS(value));
-      result.append("\",");
-      result.append(selected ? "\"true\"" : "\"false\"");
-      result.append(")");
     }
 
     /**
-     * Finish the inclusion of values to the select field.
+     * Finish the inclusion of values to the select field and destroy data.
      */
     public void endSelect() {
-      if (selectcounter == 0) {
-        result.append("null");
+      try {
+        // Added an initial blank element
+        if (result.isNull(currentElement)) {
+          ArrayList<JSONObject> blankElement = new ArrayList<JSONObject>();
+          blankElement.add(new JSONObject());
+          blankElement.addAll(currentSelectResult);
+          currentSelectResult = blankElement;
+
+          JSONObject jsonobject = new JSONObject();
+          jsonobject.put(CalloutConstants.ENTRIES, new JSONArray(currentSelectResult));
+          result.put(currentElement, jsonobject);
+        } else {
+          result.getJSONObject(currentElement).accumulate(CalloutConstants.ENTRIES,
+              new JSONArray(currentSelectResult));
+        }
+      } catch (JSONException e) {
+        log.error("Error parsing JSON Object.", e);
       }
-      result.append(")");
-      result.append(")");
+      // reset current elements
+      currentElement = null;
+      currentSelectResult = null;
     }
 
     /**
@@ -294,19 +280,23 @@ public abstract class SimpleCallout extends HttpSecureAppServlet {
      *          The name of the field to get the value.
      * @param value
      *          The value to assign to the field.
+     * @throws JSONException
      */
     public void addResult(String param, Object value) {
+      JSONObject columnValue = new JSONObject();
+      Object strValue = value == null ? "null" : value;
 
-      if (rescounter > 0) {
-        result.append(',');
+      // handle case when callouts are sending us "\"\"" string.
+      if ("\"\"".equals(strValue)) {
+        strValue = "";
       }
-      rescounter++;
-
-      result.append("\nnew Array(\"");
-      result.append(param);
-      result.append("\", ");
-      result.append(value == null ? "null" : value.toString());
-      result.append(")");
+      try {
+        columnValue.put(CalloutConstants.VALUE, strValue);
+        columnValue.put(CalloutConstants.CLASSIC_VALUE, strValue);
+        result.put(param, columnValue);
+      } catch (JSONException e) {
+        log.error("Error parsing JSON Object.", e);
+      }
     }
 
     /**
@@ -317,10 +307,10 @@ public abstract class SimpleCallout extends HttpSecureAppServlet {
      *          The name of the field to get the value.
      * @param value
      *          The value to assign to the field.
+     * @throws JSONException
      */
     public void addResult(String param, String value) {
-      addResult(param, (Object) (value == null ? null : "\"" + FormatUtilities.replaceJS(value)
-          + "\""));
+      addResult(param, (Object) (value == null ? null : value));
     }
 
     /**
@@ -402,5 +392,13 @@ public abstract class SimpleCallout extends HttpSecureAppServlet {
     public String getResult() {
       return result.toString();
     }
+
+    /**
+     * Returns the value of the result variable
+     */
+    public JSONObject getJSONObjectResult() {
+      return result;
+    }
+
   }
 }

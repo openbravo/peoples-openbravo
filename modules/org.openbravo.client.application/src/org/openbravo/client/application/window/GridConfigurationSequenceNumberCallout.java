@@ -38,7 +38,6 @@ import org.openbravo.model.ad.ui.Tab;
  */
 public class GridConfigurationSequenceNumberCallout extends SimpleCallout {
 
-  private static final long serialVersionUID = 1L;
   private static final String GC_SYSTEM_TAB_ID = "13FE911F7F684A47801DF55525BAD4A1";
   private static final String GC_TAB_TAB_ID = "49B33DC2EDFD45A48EECE139AD5E9AC9";
   private static final String warningMessage = "SameSeqNoForGridConfiguration";

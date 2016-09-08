@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011 Openbravo SLU
+ * All portions are Copyright (C) 2011-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -32,7 +32,6 @@ import org.openbravo.model.manufacturing.processplan.OperationProduct;
 
 public class SL_SequenceProduct_Product_Attribute extends SimpleCallout {
 
-  private static final long serialVersionUID = 1L;
   private static final IsIDFilter idFilter = new IsIDFilter();
   private static final String specialAttListId = "FF808181322476640132249E3417002F";
   private static final String lotSearchKey = "LOT";
