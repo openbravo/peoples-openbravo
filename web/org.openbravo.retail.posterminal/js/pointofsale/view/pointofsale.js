@@ -401,76 +401,8 @@ enyo.kind({
     return true;
   },
   deleteCurrentOrder: function (inSender, inEvent) {
-    function removeOrder(context) {
-      var isPaidQuotation = (context.model.get('order').has('isQuotation') && context.model.get('order').get('isQuotation') && context.model.get('order').has('hasbeenpaid') && context.model.get('order').get('hasbeenpaid') === 'Y');
-      var receipt = context.model.get('order');
-      if (OB.UTIL.RfidController.isRfidConfigured()) {
-        OB.UTIL.RfidController.eraseEpcOrder(context.model.get('order'));
-      }
-      if (receipt.get('id') && !isPaidQuotation && receipt.get('lines') && receipt.get('lines').length > 0) {
-        if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true) && !inEvent.originator.hasClass('paidticket')) {
-          receipt.setIsCalculateGrossLockState(true);
-          receipt.set('obposIsDeleted', true);
-          var i;
-          for (i = 0; i < receipt.get('lines').length; i++) {
-            receipt.get('lines').at(i).set('obposIsDeleted', true);
-          }
-
-          receipt.prepareToSend(function () {
-            receipt.trigger('closed', {
-              callback: function () {
-                context.model.get('orderList').deleteCurrent();
-                context.model.get('orderList').synchronizeCurrentOrder();
-                receipt.setIsCalculateGrossLockState(false);
-              }
-            });
-          });
-        } else {
-          context.model.get('orderList').saveCurrent();
-          OB.Dal.remove(context.model.get('orderList').current, null, null);
-          context.model.get('orderList').deleteCurrent();
-        }
-      } else if (receipt.has('deletedLines')) {
-        if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
-          receipt.setIsCalculateGrossLockState(true);
-          receipt.set('obposIsDeleted', true);
-          receipt.prepareToSend(function () {
-            receipt.trigger('closed', {
-              callback: function () {
-                context.model.get('orderList').deleteCurrent();
-                context.model.get('orderList').synchronizeCurrentOrder();
-                receipt.setIsCalculateGrossLockState(false);
-              }
-            });
-          });
-        } else {
-          context.model.get('orderList').saveCurrent();
-          OB.Dal.remove(context.model.get('orderList').current, null, null);
-          context.model.get('orderList').deleteCurrent();
-        }
-      } else {
-        if (receipt.get('id')) {
-          context.model.get('orderList').saveCurrent();
-          OB.Dal.remove(context.model.get('orderList').current, null, null);
-        }
-        context.model.get('orderList').deleteCurrent();
-      }
-    }
-
-    if (inEvent && inEvent.notSavedOrder === true) {
-      OB.UTIL.HookManager.executeHooks('OBPOS_PreDeleteCurrentOrder', {
-        context: this,
-        receipt: this.model.get('order')
-      }, function (args) {
-        if (args && args.cancelOperation && args.cancelOperation === true) {
-          return;
-        }
-        removeOrder(args.context);
-      });
-    } else {
-      removeOrder(this);
-    }
-    return true;
+    var receipt = this.model.get('order');
+    receipt.deleteOrder(this, inEvent.notSavedOrder);
   },
   addProductToOrder: function (inSender, inEvent) {
     var targetOrder;

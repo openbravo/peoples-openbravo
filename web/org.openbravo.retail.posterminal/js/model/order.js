@@ -3840,6 +3840,84 @@
         }
       });
       return index;
+    },
+    deleteOrder: function (context, notSaved, callback) {
+      function removeOrder(receipt) {
+        var orderList = OB.MobileApp.model.orderList;
+        var isPaidQuotation = (receipt.has('isQuotation') && receipt.get('isQuotation') && receipt.has('hasbeenpaid') && receipt.get('hasbeenpaid') === 'Y');
+        if (OB.UTIL.RfidController.isRfidConfigured()) {
+          OB.UTIL.RfidController.eraseEpcOrder(receipt);
+        }
+        if (receipt.get('id') && !isPaidQuotation && receipt.get('lines') && receipt.get('lines').length > 0) {
+          if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
+            receipt.setIsCalculateGrossLockState(true);
+            receipt.set('obposIsDeleted', true);
+            var i;
+            for (i = 0; i < receipt.get('lines').length; i++) {
+              receipt.get('lines').at(i).set('obposIsDeleted', true);
+            }
+
+            receipt.prepareToSend(function () {
+              receipt.trigger('closed', {
+                callback: function () {
+                  orderList.deleteCurrent();
+                  orderList.synchronizeCurrentOrder();
+                  receipt.setIsCalculateGrossLockState(false);
+                }
+              });
+            });
+          } else {
+            orderList.saveCurrent();
+            OB.Dal.remove(orderList.current, null, null);
+            orderList.deleteCurrent();
+          }
+        } else if (receipt.has('deletedLines')) {
+          if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
+            receipt.setIsCalculateGrossLockState(true);
+            receipt.set('obposIsDeleted', true);
+            receipt.prepareToSend(function () {
+              receipt.trigger('closed', {
+                callback: function () {
+                  orderList.deleteCurrent();
+                  orderList.synchronizeCurrentOrder();
+                  receipt.setIsCalculateGrossLockState(false);
+                }
+              });
+            });
+          } else {
+            orderList.saveCurrent();
+            OB.Dal.remove(orderList.current, null, null);
+            orderList.deleteCurrent();
+          }
+        } else {
+          if (receipt.get('id')) {
+            orderList.saveCurrent();
+            OB.Dal.remove(orderList.current, null, null);
+          }
+          orderList.deleteCurrent();
+        }
+      }
+
+      if (notSaved === true) {
+        OB.UTIL.HookManager.executeHooks('OBPOS_PreDeleteCurrentOrder', {
+          context: context,
+          receipt: this
+        }, function (args) {
+          if (args && args.cancelOperation && args.cancelOperation === true) {
+            return;
+          }
+          removeOrder(args.receipt);
+          if (callback) {
+            callback();
+          }
+        });
+      } else {
+        removeOrder(this);
+        if (callback) {
+          callback();
+        }
+      }
+      return true;
     }
   });
 
