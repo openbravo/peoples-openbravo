@@ -216,7 +216,6 @@ enyo.kind({
         });
       }
     } else {
-      var that = this;
       this.model.get('customerAddr').loadById(this.customerAddr.get('id'), function (customerAddr) {
         var callback = function () {
             goToViewWindow(sw, {

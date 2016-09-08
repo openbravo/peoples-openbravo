@@ -442,7 +442,7 @@ enyo.kind({
           if (errors) {
             errors += ', ';
           }
-          errors += OB.I18N.getLabel('OBPOS_LblShipAddr') + ' (' + shippingErrors + ')';
+          errors += OB.I18N.getLabel('OBPOS_LblShipAddr') + ' [' + shippingErrors + ']';
         }
       }
       if (errors) {
@@ -475,12 +475,11 @@ enyo.kind({
         });
       }
     } else {
-      var that = this;
       this.model.get('customer').loadById(this.customer.get('id'), function (customer) {
         getCustomerValues({
           customer: customer
         });
-        if (validateForm(that)) {
+        if (validateForm(me)) {
           customer.adjustNames();
           OB.UTIL.HookManager.executeHooks('OBPOS_BeforeCustomerSave', {
             customer: customer,
