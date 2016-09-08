@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.database.ConnectionProvider;
 
 public final class AcctSchema implements Serializable {
@@ -241,14 +242,9 @@ public final class AcctSchema implements Serializable {
     // Create New
     ArrayList<Object> list = new ArrayList<Object>();
     AcctSchemaData[] data = null;
-    try {
-      data = AcctSchemaData.selectAcctSchemas(conn, AD_Client_ID, AD_Org_ID);
-      for (int i = 0; data.length > i; i++) {
-        String as = data[i].cAcctschemaId;
-        list.add(new AcctSchema(conn, as));
-      }
-    } catch (ServletException e) {
-      log4jAcctSchema.warn(e);
+    for (String as : OBContext.getOBContext().getAcctSchemaStructureProvider()
+        .getAcctSchemas(AD_Org_ID, AD_Client_ID)) {
+      list.add(new AcctSchema(conn, as));
     }
     // Save
     return list;
