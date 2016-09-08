@@ -287,6 +287,7 @@ public class CancelAndReplaceUtils {
         ShipmentInOutLine shipmentLine = (ShipmentInOutLine) goodsShipmentLineCriteria
             .uniqueResult();
 
+        // Netting goods shipment is created
         if (createNettingGoodsShipment && inverseOrderLine != null) {
           // Create Netting goods shipment Header
           if (nettingGoodsShipment == null) {
@@ -341,7 +342,8 @@ public class CancelAndReplaceUtils {
               OBDal.getInstance().save(newOrderLine);
             }
           }
-        } else if (associateShipmentToNewReceipt) {
+          // Shipment lines of original order lines are reassigned to the new order line
+        } else if (associateShipmentToNewReceipt && replaceOrder) {
           ShipmentInOut shipment = null;
           // The netting shipment is flaged as unprocessed.
           if (shipmentLine != null) {
@@ -387,6 +389,13 @@ public class CancelAndReplaceUtils {
             OBDal.getInstance().refresh(shipment);
             processShipmentHeader(shipment);
           }
+          // Netting shipment is not created and original shipment lines are not associated to the
+          // new order line. Set delivered quantity of the new order line to same as original order
+          // line. Do this only in backend workflow, as everything is always delivered in Web POS
+        } else if (jsonorder == null) {
+          // Get the the new order line that replaces the old order line, should be only one
+          OrderLine newOrderLine = getReplacementOrderLine(newOrder, oldOrderLine);
+          newOrderLine.setDeliveredQuantity(oldOrderLine.getDeliveredQuantity());
         }
 
         // Set old order delivered quantity to the ordered quantity

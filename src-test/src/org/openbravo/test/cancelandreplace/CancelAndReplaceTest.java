@@ -67,6 +67,7 @@ import org.openbravo.service.db.CallStoredProcedure;
 import org.openbravo.test.cancelandreplace.data.CancelAndReplaceTestData;
 import org.openbravo.test.cancelandreplace.data.CancelAndReplaceTestData1;
 import org.openbravo.test.cancelandreplace.data.CancelAndReplaceTestData10;
+import org.openbravo.test.cancelandreplace.data.CancelAndReplaceTestData11;
 import org.openbravo.test.cancelandreplace.data.CancelAndReplaceTestData2;
 import org.openbravo.test.cancelandreplace.data.CancelAndReplaceTestData3;
 import org.openbravo.test.cancelandreplace.data.CancelAndReplaceTestData4;
@@ -108,7 +109,8 @@ public class CancelAndReplaceTest extends WeldBaseTest {
       new CancelAndReplaceTestData3(), new CancelAndReplaceTestData4(),
       new CancelAndReplaceTestData5(), new CancelAndReplaceTestData6(),
       new CancelAndReplaceTestData7(), new CancelAndReplaceTestData8(),
-      new CancelAndReplaceTestData9(), new CancelAndReplaceTestData10());
+      new CancelAndReplaceTestData9(), new CancelAndReplaceTestData10(),
+      new CancelAndReplaceTestData11());
 
   /** Defines the values the parameter will take. */
   @Rule
