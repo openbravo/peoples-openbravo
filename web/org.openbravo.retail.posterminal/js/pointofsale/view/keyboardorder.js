@@ -102,6 +102,17 @@ enyo.kind({
       this.clearInput();
     }, this);
   },
+  validateQuantity: function (keyboard, value) {
+    if (!isFinite(value)) {
+      return true;
+    }
+    var valueBigDecimal = OB.DEC.toBigDecimal(value);
+    if (valueBigDecimal.scale() > keyboard.line.get('product').get('uOMstandardPrecision')) {
+      OB.UTIL.showError(OB.I18N.getLabel('OBPOS_StdPrecisionLimitError', [keyboard.line.get('product').get('uOMstandardPrecision')]));
+      return false;
+    }
+    return true;
+  },
   validateReceipt: function (keyboard, validateLine) {
     if (keyboard.receipt.get('isEditable') === false) {
       this.doShowPopup({
@@ -231,6 +242,9 @@ enyo.kind({
           return true;
         }
         if (value || value === 0) {
+          if (!me.validateQuantity(keyboard, value)) {
+            return true;
+          }
           keyboard.receipt.set('undo', null);
           var selection = [];
           if (me.selectedModels && me.selectedModels.length > 1) {
@@ -384,6 +398,9 @@ enyo.kind({
 
         if ((!_.isNull(txt) || !_.isUndefined(txt)) && !_.isNaN(OB.I18N.parseNumber(txt))) {
           qty = OB.I18N.parseNumber(txt);
+          if (!me.validateQuantity(keyboard, qty)) {
+            return true;
+          }
         }
         if (me.selectedModels.length > 1) {
           actionAddMultiProduct(keyboard, qty);
@@ -431,6 +448,9 @@ enyo.kind({
 
         if ((!_.isNull(txt) || !_.isUndefined(txt)) && !_.isNaN(OB.I18N.parseNumber(txt))) {
           qty = OB.I18N.parseNumber(txt);
+          if (!me.validateQuantity(keyboard, qty)) {
+            return true;
+          }
         }
         if (me.selectedModels.length > 0) {
           value = me.selectedModels[0].get('qty') - qty;

@@ -176,6 +176,7 @@ public class ProductProperties extends ModelExtension {
           add(new HQLProperty("product.obposScale", "obposScale"));
           add(new HQLProperty("product.uOM.id", "uOM"));
           add(new HQLProperty("product.uOM.symbol", "uOMsymbol"));
+          add(new HQLProperty("coalesce(product.uOM.standardPrecision)", "uOMstandardPrecision"));
           add(new HQLProperty("upper(product.uPCEAN)", "uPCEAN"));
           add(new HQLProperty("product.description", "description"));
           add(new HQLProperty("product.obposGroupedproduct", "groupProduct"));
