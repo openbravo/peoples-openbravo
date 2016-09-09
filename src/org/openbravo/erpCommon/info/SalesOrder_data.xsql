@@ -45,6 +45,7 @@
         WHERE o.AD_Client_ID IN ('1') 
         AND o.AD_Org_ID IN ('1') 
         AND o.IsActive='Y'
+        AND o.CANCELLEDORDER_ID IS NULL
         ORDER BY o.C_Order_ID
 	    ) A ) B
 	    WHERE 1=1
@@ -77,6 +78,7 @@
         WHERE o.AD_Client_ID IN ('1') 
         AND o.AD_Org_ID IN ('1') 
         AND o.IsActive='Y'
+        AND o.CANCELLEDORDER_ID IS NULL
         AND 1=1
       ) B
       ) A 
