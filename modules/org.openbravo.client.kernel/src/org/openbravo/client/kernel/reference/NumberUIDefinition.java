@@ -168,7 +168,7 @@ public abstract class NumberUIDefinition extends UIDefinition {
       return df.format(numericDefaultValue);
     } catch (Exception ex) {
       throw new OBException("Invalid numeric default value (" + defaultValueExpression
-          + ") defined for column " + columnName, ex);
+          + ") defined for column " + columnName + " in window " + windowId, ex);
     }
   }
 

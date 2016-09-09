@@ -137,13 +137,13 @@ public class SimpleCalloutInformationProvider implements CalloutInformationProvi
 
     // added this new value and set parameter into request
     if (firstComboEntry.has(CalloutConstants.CLASSIC_VALUE)) {
-      request.setRequestParameter((String) this.getCurrentElementName(),
+      request.setRequestParameter(getCurrentElementName(),
           firstComboEntry.getString(CalloutConstants.CLASSIC_VALUE));
     }
 
     columnValues.put(colIdent, firstComboEntry);
 
-    if (dynamicCols.contains((String) this.getCurrentElementName())) {
+    if (dynamicCols.contains(getCurrentElementName())) {
       changedCols.add(col.getDBColumnName());
     }
 
