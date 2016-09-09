@@ -255,7 +255,7 @@ public abstract class UIDefinition {
 
   /**
    * Returns the value for a default value expression based on a SQL expression. This kind of
-   * expressions that start with '@SQL='.
+   * expressions start with '@SQL='.
    *
    * @param vars
    *          Handler for the session info.
