@@ -1136,25 +1136,12 @@ public class CancelAndReplaceUtils {
         .isNull(FIN_PaymentScheduleDetail.PROPERTY_PAYMENTDETAILS));
     List<FIN_PaymentScheduleDetail> paymentScheduleDetailList = paymentScheduleDetailCriteria
         .list();
+
+    HashMap<String, BigDecimal> paymentScheduleDetailAmount = new HashMap<String, BigDecimal>();
+    FIN_PaymentScheduleDetail paymentScheduleDetail = null;
     if (paymentScheduleDetailList.size() != 0) {
-      HashMap<String, BigDecimal> paymentScheduleDetailAmount = new HashMap<String, BigDecimal>();
-      String paymentScheduleDetailId = paymentScheduleDetailList.get(0).getId();
-      paymentScheduleDetailAmount.put(paymentScheduleDetailId, amount);
-
-      if (_nettingPayment == null) {
-        // Call to savePayment in order to create a new payment in
-        _nettingPayment = FIN_AddPayment.savePayment(_nettingPayment, true, paymentDocumentType,
-            paymentDocumentNo, order.getBusinessPartner(), paymentPaymentMethod, financialAccount,
-            amount.toPlainString(), order.getOrderDate(), order.getOrganization(), null,
-            paymentScheduleDetailList, paymentScheduleDetailAmount, false, false,
-            order.getCurrency(), BigDecimal.ZERO, BigDecimal.ZERO);
-      }
-      // Create a new line
-      else {
-        FIN_AddPayment.updatePaymentDetail(paymentScheduleDetailList.get(0), _nettingPayment,
-            amount, false);
-      }
-
+      paymentScheduleDetail = paymentScheduleDetailList.get(0);
+      paymentScheduleDetailAmount.put(paymentScheduleDetail.getId(), amount);
     } else {
       // Two possibilities
       // 1.- All the payments have been created
@@ -1162,8 +1149,7 @@ public class CancelAndReplaceUtils {
       // null payment detail is missing
       // Lets assume that in this point the payment was created trough Web POS
       // Create missing payment schedule detail
-      FIN_PaymentScheduleDetail paymentScheduleDetail = OBProvider.getInstance().get(
-          FIN_PaymentScheduleDetail.class);
+      paymentScheduleDetail = OBProvider.getInstance().get(FIN_PaymentScheduleDetail.class);
       paymentScheduleDetail.setOrganization(order.getOrganization());
       paymentScheduleDetail.setOrderPaymentSchedule(paymentSchedule);
       paymentScheduleDetail.setBusinessPartner(order.getBusinessPartner());
@@ -1171,22 +1157,21 @@ public class CancelAndReplaceUtils {
       OBDal.getInstance().save(paymentScheduleDetail);
       paymentScheduleDetailList.add(paymentScheduleDetail);
 
-      // Continue with the payment
-      HashMap<String, BigDecimal> paymentScheduleDetailAmount = new HashMap<String, BigDecimal>();
       String paymentScheduleDetailId = paymentScheduleDetail.getId();
       paymentScheduleDetailAmount.put(paymentScheduleDetailId, amount);
-      if (_nettingPayment == null) {
-        // Call to savePayment in order to create a new payment in
-        _nettingPayment = FIN_AddPayment.savePayment(_nettingPayment, true, paymentDocumentType,
-            paymentDocumentNo, order.getBusinessPartner(), paymentPaymentMethod, financialAccount,
-            amount.toPlainString(), order.getOrderDate(), order.getOrganization(), null,
-            paymentScheduleDetailList, paymentScheduleDetailAmount, false, false,
-            order.getCurrency(), BigDecimal.ZERO, BigDecimal.ZERO);
-      }
-      // Create a new line
-      else {
-        FIN_AddPayment.updatePaymentDetail(paymentScheduleDetail, _nettingPayment, amount, false);
-      }
+    }
+    if (_nettingPayment == null) {
+      // Call to savePayment in order to create a new payment in
+      _nettingPayment = FIN_AddPayment.savePayment(_nettingPayment, true, paymentDocumentType,
+          paymentDocumentNo, order.getBusinessPartner(), paymentPaymentMethod, financialAccount,
+          amount.toPlainString(), order.getOrderDate(), order.getOrganization(), null,
+          paymentScheduleDetailList, paymentScheduleDetailAmount, false, false,
+          order.getCurrency(), BigDecimal.ZERO, BigDecimal.ZERO);
+    }
+    // Create a new line
+    else {
+      FIN_AddPayment.updatePaymentDetail(paymentScheduleDetailList.get(0), _nettingPayment, amount,
+          false);
     }
     return _nettingPayment;
   }
