@@ -1075,10 +1075,12 @@ public class CancelAndReplaceUtils {
     nettingPayment = createOrUdpatePayment(nettingPayment, inverseOrder, paymentPaymentMethod,
         negativeAmount, paymentDocumentType, financialAccount, paymentDocumentNo);
 
-    // Duplicate payment with positive amount
-    nettingPayment = createOrUdpatePayment(nettingPayment, oldOrder, paymentPaymentMethod,
-        outstandingAmount, paymentDocumentType, financialAccount, paymentDocumentNo);
-    description += ": " + oldOrder.getDocumentNo() + "\n";
+    if (outstandingAmount.compareTo(BigDecimal.ZERO) > 0) {
+      // Duplicate payment with positive amount
+      nettingPayment = createOrUdpatePayment(nettingPayment, oldOrder, paymentPaymentMethod,
+          outstandingAmount, paymentDocumentType, financialAccount, paymentDocumentNo);
+      description += ": " + oldOrder.getDocumentNo() + "\n";
+    }
 
     // Set amount and used credit to zero
     nettingPayment.setAmount(BigDecimal.ZERO);
