@@ -395,7 +395,9 @@ public class CancelAndReplaceUtils {
         } else if (jsonorder == null) {
           // Get the the new order line that replaces the old order line, should be only one
           OrderLine newOrderLine = getReplacementOrderLine(newOrder, oldOrderLine);
-          newOrderLine.setDeliveredQuantity(oldOrderLine.getDeliveredQuantity());
+          if (newOrderLine != null) {
+            newOrderLine.setDeliveredQuantity(oldOrderLine.getDeliveredQuantity());
+          }
         }
 
         // Set old order delivered quantity to the ordered quantity
