@@ -560,6 +560,10 @@
         OB.error("calculateGross should only be called by the UI receipt");
       }
 
+      this.calculateGrossAndSave(true);
+    },
+
+    calculateGrossAndSave: function (save) {
       this.calculatingGross = true;
       var me = this;
       // reset some vital receipt values because, at this point, they are obsolete. do not fire the change event
@@ -571,7 +575,7 @@
       }, {
         silent: true
       });
-      var saveAndTriggerEvents = function (gross) {
+      var saveAndTriggerEvents = function (gross, save) {
           var now = new Date();
           me.set('loaded', OB.I18N.normalizeDate(now));
           me.set('timezoneOffset', now.getTimezoneOffset());
@@ -600,19 +604,24 @@
           });
 
           me.adjustPayment();
-          me.save(function () {
-            // Reset the flag that protects reentrant invocations to calculateGross().
-            // And if there is pending any execution of calculateGross(), do it and do not continue.
+          if (save) {
+            me.save(function () {
+              // Reset the flag that protects reentrant invocations to calculateGross().
+              // And if there is pending any execution of calculateGross(), do it and do not continue.
+              me.calculatingGross = false;
+              me.calculatingReceipt = false;
+              if (me.pendingCalculateGross) {
+                me.pendingCalculateGross = false;
+                me.calculateGross();
+                return;
+              }
+              me.trigger('calculategross');
+              me.trigger('saveCurrent');
+            });
+          } else {
             me.calculatingGross = false;
             me.calculatingReceipt = false;
-            if (me.pendingCalculateGross) {
-              me.pendingCalculateGross = false;
-              me.calculateGross();
-              return;
-            }
-            me.trigger('calculategross');
-            me.trigger('saveCurrent');
-          });
+          }
           };
 
       this.get('lines').forEach(function (line) {
@@ -630,7 +639,7 @@
             }
             return OB.DEC.add(memo, grossLine);
           }, OB.DEC.Zero);
-          saveAndTriggerEvents(gross);
+          saveAndTriggerEvents(gross, save);
         });
       } else {
         this.calculateTaxes(function () {
@@ -646,7 +655,7 @@
               return memo;
             }
           }, OB.DEC.Zero);
-          saveAndTriggerEvents(gross);
+          saveAndTriggerEvents(gross, save);
         });
       }
     },

@@ -107,6 +107,7 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
         + "user.id = userRoles.userContact.id and "
         + "userRoles.role.id = role.id and "
         + "userRoles.role.id = formAccess.role.id and "
+        + "userRoles.role.forPortalUsers = false and "
         + "formAccess.specialForm.id = :webPOSFormId and "
         + "((ad_isorgincluded(user.organization, terminal.organization, terminal.client.id) <> -1) or "
         + "(ad_isorgincluded(terminal.organization, user.organization, terminal.client.id) <> -1)) ";

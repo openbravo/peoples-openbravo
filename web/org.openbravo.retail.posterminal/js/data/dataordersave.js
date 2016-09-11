@@ -422,7 +422,7 @@
                       me.context.get('multiOrders').trigger('integrityOk', theReceipt);
                       OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(theReceipt.get('documentnoSuffix'), theReceipt.get('quotationnoSuffix'), receipt.get('returnnoSuffix'));
 
-                      me.context.get('orderList').current = receipt;
+                      me.context.get('orderList').current = theReceipt;
                       me.context.get('orderList').deleteCurrent();
                     });
 
