@@ -4144,11 +4144,7 @@
         var createNew = forceCreateNew || me.length === 0;
         if (createNew) {
           var order = me.newOrder();
-          if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
-            if (!order.isNew()) {
-              order.save();
-            }
-          }
+
           me.add(order);
           if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
             me.doRemoteBPSettings(OB.MobileApp.model.get('businessPartner'));
