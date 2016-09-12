@@ -29,7 +29,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
@@ -60,8 +59,12 @@ public class UsedByLink extends HttpSecureAppServlet {
       ServletException {
     final VariablesSecureApp vars = new VariablesSecureApp(request);
 
-    // checks if Linked Items section is enabled for the current window
-    checkLinkedItemSectionState(vars);
+    if (isLinkedItemsSectionDisabled(vars)) {
+      response.setContentType("application/json;charset=UTF-8");
+      final PrintWriter out = response.getWriter();
+      out.print(getDisabledLinkedItemsSectionResponse(vars.getLanguage()));
+      return;
+    }
 
     if (vars.commandIn("DEFAULT")) {
       final String strWindow = vars.getStringParameter("inpwindowId");
@@ -98,25 +101,34 @@ public class UsedByLink extends HttpSecureAppServlet {
 
   }
 
-  private void checkLinkedItemSectionState(VariablesSecureApp vars) {
-    final String preferenceName = "OBUIAPP_DisableLinkedItemsSection";
-    String preferenceValue = "";
-    String windowId = vars.getStringParameter("inpwindowId");
-    if (StringUtils.isEmpty(windowId)) {
-      windowId = vars.getStringParameter("windowId");
-    }
+  private boolean isLinkedItemsSectionDisabled(VariablesSecureApp vars) {
+    final String disableLinkedItemsSectionPreference = "OBUIAPP_DisableLinkedItemsSection";
+    String windowId = vars.getStringParameter("windowId");
     try {
       OBContext currentContext = OBContext.getOBContext();
-      preferenceValue = Preferences.getPreferenceValue(preferenceName, true,
-          currentContext.getCurrentClient(), currentContext.getCurrentOrganization(),
+      String preferenceValue = Preferences.getPreferenceValue(disableLinkedItemsSectionPreference,
+          true, currentContext.getCurrentClient(), currentContext.getCurrentOrganization(),
           currentContext.getUser(), currentContext.getRole(),
           OBDal.getInstance().getProxy(Window.class, windowId));
+
+      if ("Y".equals(preferenceValue)) {
+        log4j.error("Linked Items section is disabled for window with id " + windowId);
+        return true;
+      }
     } catch (PropertyException e) {
-      // preference not found, continue without throwing exception
+      // preference not found, Linked Items Section is not disabled
     }
-    if ("Y".equals(preferenceValue)) {
-      throw new OBException("Linked Items section is disabled for window with id " + windowId);
+    return false;
+  }
+
+  private String getDisabledLinkedItemsSectionResponse(String language) {
+    JSONObject jsonObject = new JSONObject();
+    try {
+      jsonObject.put("msg", Utility.messageBD(this, "LinkedItemsSectionIsDisabled", language));
+    } catch (JSONException e) {
+      log4j.error("Error trying to generate message for Disabled Linked Items Section");
     }
+    return jsonObject.toString();
   }
 
   private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strWindow,
