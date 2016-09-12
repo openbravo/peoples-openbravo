@@ -111,7 +111,7 @@ public class UsedByLink extends HttpSecureAppServlet {
           currentContext.getUser(), currentContext.getRole(),
           OBDal.getInstance().getProxy(Window.class, windowId));
 
-      if ("Y".equals(preferenceValue)) {
+      if (Preferences.YES.equals(preferenceValue)) {
         log4j.error("Linked Items section is disabled for window with id " + windowId);
         return true;
       }

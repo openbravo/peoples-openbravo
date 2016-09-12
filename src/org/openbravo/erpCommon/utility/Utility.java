@@ -2492,16 +2492,16 @@ public class Utility {
     }
 
     if (processModal != null) {
-      modal = "Y".equals(processModal);
+      modal = Preferences.YES.equals(processModal);
     } else {
       try {
-        modal = "Y".equals(Preferences.getPreferenceValue("ModalModule"
+        modal = Preferences.YES.equals(Preferences.getPreferenceValue("ModalModule"
             + process.getModule().getJavaPackage(), false, OBContext.getOBContext()
             .getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(), OBContext
             .getOBContext().getUser(), OBContext.getOBContext().getRole(), null));
       } catch (PropertyException e1) {
         try {
-          modal = "Y".equals(Preferences.getPreferenceValue("ModalModule"
+          modal = Preferences.YES.equals(Preferences.getPreferenceValue("ModalModule"
               + process.getModule().getId(), false, OBContext.getOBContext().getCurrentClient(),
               OBContext.getOBContext().getCurrentOrganization(),
               OBContext.getOBContext().getUser(), OBContext.getOBContext().getRole(), null));

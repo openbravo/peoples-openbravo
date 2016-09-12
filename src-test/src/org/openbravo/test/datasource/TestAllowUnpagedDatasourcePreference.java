@@ -45,6 +45,7 @@ import org.junit.runners.Parameterized.Parameters;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.access.User;
@@ -122,7 +123,7 @@ public class TestAllowUnpagedDatasourcePreference extends BaseDataSourceTestDal 
       }
       // Compare the error message in response, if any
       String errorMsg = "";
-      if ("N".equals(preferenceValue)) {
+      if (Preferences.NO.equals(preferenceValue)) {
         errorMsg = OBMessageUtils.messageBD("OBJSON_NoPagedFetchManual");
       }
       assertThat("Datasource returned error message", getResponseErrorMessage(response),

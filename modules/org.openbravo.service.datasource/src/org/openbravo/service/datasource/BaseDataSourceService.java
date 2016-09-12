@@ -34,6 +34,7 @@ import org.openbravo.client.application.window.ApplicationDictionaryCachedStruct
 import org.openbravo.client.kernel.Template;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.service.json.JsonConstants;
@@ -157,8 +158,7 @@ public abstract class BaseDataSourceService implements DataSourceService {
         OBContext.setAdminMode(true);
         try {
           Selector sel = OBDal.getInstance().get(Selector.class, selectorId);
-          entityToCheck = ModelProvider.getInstance().getEntityByTableId(
-              sel.getTable().getId());
+          entityToCheck = ModelProvider.getInstance().getEntityByTableId(sel.getTable().getId());
         } finally {
           OBContext.restorePreviousMode();
         }
@@ -213,7 +213,7 @@ public abstract class BaseDataSourceService implements DataSourceService {
   }
 
   protected void handleExceptionUnsecuredDSAccess(OBSecurityException securityException) {
-    if (!"Y".equals(cachedPreference
+    if (!Preferences.YES.equals(cachedPreference
         .getPreferenceValue(CachedPreference.ALLOW_UNSECURED_DS_REQUEST))) {
       throw new OBSecurityException(securityException);
     } else {

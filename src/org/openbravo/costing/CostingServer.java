@@ -149,7 +149,7 @@ public class CostingServer {
           CostAdjustmentUtils.ENABLE_AUTO_PRICE_CORRECTION_PREF, true,
           OBContext.getOBContext().getCurrentClient(),
           OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
-          OBContext.getOBContext().getRole(), null).equals("Y");
+          OBContext.getOBContext().getRole(), null).equals(Preferences.YES);
     } catch (PropertyException e1) {
       checkPriceCorrectionTrxs = false;
     }
@@ -286,7 +286,7 @@ public class CostingServer {
           CostAdjustmentUtils.ENABLE_NEGATIVE_STOCK_CORRECTION_PREF, true,
           OBContext.getOBContext().getCurrentClient(),
           OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
-          OBContext.getOBContext().getRole(), null).equals("Y");
+          OBContext.getOBContext().getRole(), null).equals(Preferences.YES);
     } catch (PropertyException e1) {
       checkNegativeStockCorrectionTrxs = false;
     }
