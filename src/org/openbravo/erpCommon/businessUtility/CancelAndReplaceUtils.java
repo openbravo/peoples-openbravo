@@ -262,7 +262,6 @@ public class CancelAndReplaceUtils {
       // Define netting goods shipment and its lines
       ShipmentInOut nettingGoodsShipment = null;
       String nettingGoodsShipmentId = null;
-      ShipmentInOutLine newGoodsShipmentLine1 = null;
 
       // Get preferences values
       boolean createNettingGoodsShipment = getCreateNettingGoodsShipmentPreferenceValue(oldOrder);
@@ -278,20 +277,11 @@ public class CancelAndReplaceUtils {
         OrderLine inverseOrderLine = createInverseOrderLine(oldOrderLine, inverseOrder,
             replaceOrder, triggersDisabled);
 
-        // Get Shipment lines of old order line
-        OBCriteria<ShipmentInOutLine> goodsShipmentLineCriteria = OBDal.getInstance()
-            .createCriteria(ShipmentInOutLine.class);
-        goodsShipmentLineCriteria.add(Restrictions.eq(ShipmentInOutLine.PROPERTY_SALESORDERLINE,
-            oldOrderLine));
-        goodsShipmentLineCriteria.setMaxResults(1);
-        ShipmentInOutLine shipmentLine = (ShipmentInOutLine) goodsShipmentLineCriteria
-            .uniqueResult();
-
         // Netting goods shipment is created
         if (createNettingGoodsShipment && inverseOrderLine != null) {
           // Create Netting goods shipment Header
           if (nettingGoodsShipment == null) {
-            nettingGoodsShipment = createNettingGoodShipmentHeader(oldOrder, shipmentLine);
+            nettingGoodsShipment = createNettingGoodShipmentHeader(oldOrder);
             nettingGoodsShipmentId = nettingGoodsShipment.getId();
           }
 
@@ -303,15 +293,15 @@ public class CancelAndReplaceUtils {
           OBDal.getInstance().save(oldOrderLine);
           OBDal.getInstance().flush();
           if (movementQty.compareTo(BigDecimal.ZERO) != 0) {
-            newGoodsShipmentLine1 = createNettingShipmentLine(nettingGoodsShipment, shipmentLine,
-                oldOrderLine, lineNoCounter++, movementQty, triggersDisabled);
+            createNettingShipmentLine(nettingGoodsShipment, oldOrderLine, lineNoCounter++,
+                movementQty, triggersDisabled);
           }
           // Create Netting goods shipment Line for the inverse order line
           movementQty = inverseOrderLine.getOrderedQuantity().subtract(
               inverseOrderLine.getDeliveredQuantity());
           if (movementQty.compareTo(BigDecimal.ZERO) != 0) {
-            createNettingShipmentLine(nettingGoodsShipment, newGoodsShipmentLine1,
-                inverseOrderLine, lineNoCounter++, movementQty, triggersDisabled);
+            createNettingShipmentLine(nettingGoodsShipment, inverseOrderLine, lineNoCounter++,
+                movementQty, triggersDisabled);
           }
 
           if (replaceOrder) {
@@ -325,8 +315,8 @@ public class CancelAndReplaceUtils {
               OBDal.getInstance().save(newOrderLine);
               OBDal.getInstance().flush();
               if (movementQty.compareTo(BigDecimal.ZERO) != 0) {
-                createNettingShipmentLine(nettingGoodsShipment, newGoodsShipmentLine1,
-                    newOrderLine, lineNoCounter++, movementQty, triggersDisabled);
+                createNettingShipmentLine(nettingGoodsShipment, newOrderLine, lineNoCounter++,
+                    movementQty, triggersDisabled);
               }
               if (newOrderLineDeliveredQty == null
                   || newOrderLineDeliveredQty.compareTo(BigDecimal.ZERO) == 0) {
@@ -344,18 +334,19 @@ public class CancelAndReplaceUtils {
           }
           // Shipment lines of original order lines are reassigned to the new order line
         } else if (associateShipmentToNewReceipt && replaceOrder) {
-          ShipmentInOut shipment = null;
-          // The netting shipment is flaged as unprocessed.
-          if (shipmentLine != null) {
-            shipment = shipmentLine.getShipmentReceipt();
-            unprocessShipmentHeader(shipment);
-          }
           try {
             shipmentLines = getShipmentLineListOfOrderLine(oldOrderLine);
             long k = 0;
+            List<ShipmentInOut> shipments = new ArrayList<ShipmentInOut>();
             List<ShipmentInOutLine> shipLines = new ArrayList<ShipmentInOutLine>();
             while (shipmentLines.next()) {
               ShipmentInOutLine shipLine = (ShipmentInOutLine) shipmentLines.get(0);
+              // The netting shipment is flagged as unprocessed.
+              ShipmentInOut shipment = shipLine.getShipmentReceipt();
+              if (shipment.isProcessed()) {
+                unprocessShipmentHeader(shipment);
+                shipments.add(shipment);
+              }
               // Get the the new order line that replaces the old order line, should be only one
               OrderLine newOrderLine = getReplacementOrderLine(newOrder, oldOrderLine);
               if (newOrderLine != null) {
@@ -368,26 +359,24 @@ public class CancelAndReplaceUtils {
                 OBDal.getInstance().save(shipLine);
               }
               shipLines.add(shipLine);
-              if ((k % 100) == 0) {
+              if ((++k % 100) == 0) {
                 OBDal.getInstance().flush();
                 for (ShipmentInOutLine shipLineToRemove : shipLines) {
                   OBDal.getInstance().getSession().evict(shipLineToRemove);
                 }
                 shipLines.clear();
               }
-              k++;
+            }
+            OBDal.getInstance().flush();
+            // The netting shipment is flagged as processed.
+            for (ShipmentInOut ship : shipments) {
+              OBDal.getInstance().refresh(ship);
+              processShipmentHeader(ship);
             }
           } finally {
             if (shipmentLines != null) {
               shipmentLines.close();
             }
-          }
-
-          OBDal.getInstance().flush();
-          // The netting shipment is flaged as processed.
-          if (shipment != null) {
-            OBDal.getInstance().refresh(shipment);
-            processShipmentHeader(shipment);
           }
           // Netting shipment is not created and original shipment lines are not associated to the
           // new order line. Set delivered quantity of the new order line to same as original order
@@ -409,7 +398,7 @@ public class CancelAndReplaceUtils {
           inverseOrderLine.setDeliveredQuantity(inverseOrderLine.getOrderedQuantity());
           OBDal.getInstance().save(inverseOrderLine);
         }
-        if ((i % 100) == 0) {
+        if ((++i % 100) == 0) {
           OBDal.getInstance().flush();
           OBDal.getInstance().getSession().clear();
 
@@ -424,7 +413,6 @@ public class CancelAndReplaceUtils {
           oldOrder = OBDal.getInstance().get(Order.class, oldOrderId);
           inverseOrder = OBDal.getInstance().get(Order.class, inverseOrderId);
         }
-        i++;
       }
       // The netting shipment is flaged as processed.
       if (nettingGoodsShipment != null) {
@@ -624,23 +612,16 @@ public class CancelAndReplaceUtils {
     OBDal.getInstance().flush();
   }
 
-  private static ShipmentInOut createNettingGoodShipmentHeader(Order oldOrder,
-      ShipmentInOutLine shipmentLine) {
+  private static ShipmentInOut createNettingGoodShipmentHeader(Order oldOrder) {
     ShipmentInOut nettingGoodsShipment = null;
-    if (shipmentLine == null) {
-      // Create new Shipment
-      nettingGoodsShipment = OBProvider.getInstance().get(ShipmentInOut.class);
-      nettingGoodsShipment.setOrganization(oldOrder.getOrganization());
-      DocumentType goodsShipmentDocumentType = FIN_Utility.getDocumentType(
-          oldOrder.getOrganization(), DOCTYPE_MatShipment);
-      nettingGoodsShipment.setDocumentType(goodsShipmentDocumentType);
-      nettingGoodsShipment.setWarehouse(oldOrder.getWarehouse());
-      nettingGoodsShipment.setBusinessPartner(oldOrder.getBusinessPartner());
-      nettingGoodsShipment.setPartnerAddress(oldOrder.getPartnerAddress());
-    } else {
-      nettingGoodsShipment = (ShipmentInOut) DalUtil.copy(shipmentLine.getShipmentReceipt(), false,
-          true);
-    }
+    nettingGoodsShipment = OBProvider.getInstance().get(ShipmentInOut.class);
+    nettingGoodsShipment.setOrganization(oldOrder.getOrganization());
+    DocumentType goodsShipmentDocumentType = FIN_Utility.getDocumentType(
+        oldOrder.getOrganization(), DOCTYPE_MatShipment);
+    nettingGoodsShipment.setDocumentType(goodsShipmentDocumentType);
+    nettingGoodsShipment.setWarehouse(oldOrder.getWarehouse());
+    nettingGoodsShipment.setBusinessPartner(oldOrder.getBusinessPartner());
+    nettingGoodsShipment.setPartnerAddress(oldOrder.getPartnerAddress());
     Date today = new Date();
     nettingGoodsShipment.setMovementDate(today);
     nettingGoodsShipment.setAccountingDate(today);
@@ -663,9 +644,6 @@ public class CancelAndReplaceUtils {
    * 
    * @param nettingGoodsShipment
    *          The header of the shipment.
-   * @param nettingGoodsShipmentLine
-   *          If this parameter is passed it will create the new shipment as a copy of this one. If
-   *          not it will create from scratch.
    * @param orderLine
    *          OrderLine what the shipment line delivers
    * @param lineNoCounter
@@ -677,21 +655,15 @@ public class CancelAndReplaceUtils {
    * @return
    */
   private static ShipmentInOutLine createNettingShipmentLine(ShipmentInOut nettingGoodsShipment,
-      ShipmentInOutLine nettingGoodsShipmentLine, OrderLine orderLine, long lineNoCounter,
-      BigDecimal movementQty, boolean triggersDisabled) {
+      OrderLine orderLine, long lineNoCounter, BigDecimal movementQty, boolean triggersDisabled) {
     ShipmentInOutLine newGoodsShipmentLine = null;
-    if (nettingGoodsShipmentLine == null) {
-      newGoodsShipmentLine = OBProvider.getInstance().get(ShipmentInOutLine.class);
-      newGoodsShipmentLine.setOrganization(orderLine.getOrganization());
-      newGoodsShipmentLine.setProduct(orderLine.getProduct());
-      newGoodsShipmentLine.setUOM(orderLine.getUOM());
-      // Get first storage bin
-      Locator locator1 = nettingGoodsShipment.getWarehouse().getLocatorList().get(0);
-      newGoodsShipmentLine.setStorageBin(locator1);
-    } else {
-      newGoodsShipmentLine = (ShipmentInOutLine) DalUtil
-          .copy(nettingGoodsShipmentLine, false, true);
-    }
+    newGoodsShipmentLine = OBProvider.getInstance().get(ShipmentInOutLine.class);
+    newGoodsShipmentLine.setOrganization(orderLine.getOrganization());
+    newGoodsShipmentLine.setProduct(orderLine.getProduct());
+    newGoodsShipmentLine.setUOM(orderLine.getUOM());
+    // Get first storage bin
+    Locator locator1 = nettingGoodsShipment.getWarehouse().getLocatorList().get(0);
+    newGoodsShipmentLine.setStorageBin(locator1);
     newGoodsShipmentLine.setLineNo(10 * lineNoCounter);
     newGoodsShipmentLine.setSalesOrderLine(orderLine);
     newGoodsShipmentLine.setShipmentReceipt(nettingGoodsShipment);
