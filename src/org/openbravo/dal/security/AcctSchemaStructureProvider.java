@@ -11,13 +11,13 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 
-package org.openbravo.erpCommon.ad_forms;
+package org.openbravo.dal.security;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -43,28 +43,23 @@ public class AcctSchemaStructureProvider implements OBNotSingleton {
   }
 
   public List<String> getAcctSchemas(String orgID, String clientID) {
-
     if (acctSchemaByOrg.containsKey(orgID)) {
       return acctSchemaByOrg.get(orgID);
     } else {
       initialize(orgID, clientID);
       return getAcctSchemas(orgID, clientID);
     }
-
   }
 
   private synchronized void initialize(String orgId, String clientID) {
-
     if (getClientId() == null) {
       setClientId(OBContext.getOBContext().getCurrentClient().getId());
     }
     acctSchemaByOrg.put(orgId, getAcctSchemasFromDB(orgId, clientID));
-
   }
 
   @SuppressWarnings("unchecked")
   private ArrayList<String> getAcctSchemasFromDB(String orgId, String clientID) {
-
     String where = " select a.id"
         + " from OrganizationAcctSchema as oas"
         + " join oas.accountingSchema as a"
@@ -76,6 +71,5 @@ public class AcctSchemaStructureProvider implements OBNotSingleton {
     qry.setParameter("clientId", clientID);
     qry.setParameter("orgId", orgId);
     return (ArrayList<String>) qry.list();
-
   }
 }

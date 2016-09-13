@@ -11,7 +11,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SLU
- * Contributions are Copyright (C) 2001-2010 Openbravo S.L.U.
+ * Contributions are Copyright (C) 2001-2016 Openbravo S.L.U.
  ******************************************************************************
  */
 package org.openbravo.erpCommon.ad_forms;
@@ -241,7 +241,6 @@ public final class AcctSchema implements Serializable {
       String AD_Client_ID, String AD_Org_ID) {
     // Create New
     ArrayList<Object> list = new ArrayList<Object>();
-    AcctSchemaData[] data = null;
     for (String as : OBContext.getOBContext().getAcctSchemaStructureProvider()
         .getAcctSchemas(AD_Org_ID, AD_Client_ID)) {
       list.add(new AcctSchema(conn, as));
