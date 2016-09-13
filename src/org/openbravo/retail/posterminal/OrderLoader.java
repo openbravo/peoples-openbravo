@@ -289,12 +289,14 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
         // We have to check if there is any line in the order which have been already invoiced. If
         // it is the case we will not create the invoice.
-        List<Invoice> lstInvoice = getInvoicesRelatedToOrder(jsonorder.getString("id"));
-        if (lstInvoice != null) {
-          // We have found and invoice, so it will be used to assign payments
-          // TODO several invoices involved
-          invoice = lstInvoice.get(0);
-          createInvoice = false;
+        if (createInvoice && jsonorder.getBoolean("isLayaway")) {
+          List<Invoice> lstInvoice = getInvoicesRelatedToOrder(jsonorder.getString("id"));
+          if (lstInvoice != null) {
+            // We have found and invoice, so it will be used to assign payments
+            // TODO several invoices involved
+            invoice = lstInvoice.get(0);
+            createInvoice = false;
+          }
         }
 
         // If the ticket is a deleted ticket the invoice mustn't be created
