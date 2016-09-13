@@ -185,6 +185,9 @@ public class ManageReservationActionHandler extends BaseProcessActionHandler {
         }
 
         List<ReservationStock> resStocks = reservation.getMaterialMgmtReservationStockList();
+        if (resStock.getReleased() == null) {
+          resStock.setReleased(BigDecimal.ZERO);
+        }
         resStocks.add(resStock);
         reservation.setMaterialMgmtReservationStockList(resStocks);
       }
