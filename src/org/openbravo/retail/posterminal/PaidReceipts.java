@@ -247,7 +247,7 @@ public class PaidReceipts extends JSONProcessSimple {
               jsonPromo.put("identifier", promotion.getObdiscIdentifier());
             }
             if (promotion.getObdiscQtyoffer() != null) {
-              jsonPromo.put("obdiscQtyoffer", promotion.getObdiscIdentifier());
+              jsonPromo.put("obdiscQtyoffer", promotion.getObdiscQtyoffer());
             }
             promotions.put(jsonPromo);
             hasPromotions = true;
