@@ -43,10 +43,10 @@ import org.openbravo.base.provider.OBNotSingleton;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.util.Check;
+import org.openbravo.dal.security.AcctSchemaStructureProvider;
 import org.openbravo.dal.security.EntityAccessChecker;
 import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.erpCommon.ad_forms.AcctSchemaStructureProvider;
 import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.access.RoleOrganization;
 import org.openbravo.model.ad.access.User;
@@ -1067,15 +1067,16 @@ public class OBContext implements OBNotSingleton {
   }
 
   public AcctSchemaStructureProvider getAcctSchemaStructureProvider(String clientId) {
-    AcctSchemaStructureProvider acctSchemaSP = acctSchemaStructureProviderByClient.get(clientId);
+    AcctSchemaStructureProvider acctSchemaProvider = acctSchemaStructureProviderByClient
+        .get(clientId);
 
     // create one
-    if (acctSchemaSP == null) {
-      acctSchemaSP = OBProvider.getInstance().get(AcctSchemaStructureProvider.class);
-      acctSchemaSP.setClientId(clientId);
-      acctSchemaStructureProviderByClient.put(clientId, acctSchemaSP);
+    if (acctSchemaProvider == null) {
+      acctSchemaProvider = OBProvider.getInstance().get(AcctSchemaStructureProvider.class);
+      acctSchemaProvider.setClientId(clientId);
+      acctSchemaStructureProviderByClient.put(clientId, acctSchemaProvider);
     }
-    return acctSchemaSP;
+    return acctSchemaProvider;
   }
 
   public String[] getReadableOrganizations() {
