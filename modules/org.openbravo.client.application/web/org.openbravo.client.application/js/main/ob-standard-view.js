@@ -230,8 +230,8 @@ isc.OBStandardView.addProperties({
     // to the form, so they will be retrieved when getContextInfo() is called for the form
     if (this.sessionAttributesNames) {
       this.preferenceValues = {};
-      preferenceValue = OB.PropertyStore.get(this.sessionAttributesNames[i], this.standardWindow.windowId);
       for (i = 0; i < this.sessionAttributesNames.length; i++) {
+        preferenceValue = OB.PropertyStore.get(this.sessionAttributesNames[i], this.standardWindow.windowId);
         if (preferenceValue !== null) {
           this.preferenceValues[this.sessionAttributesNames[i]] = preferenceValue;
         }
