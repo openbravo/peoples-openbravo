@@ -2160,11 +2160,24 @@ isc.OBStandardView.addProperties({
     this.callSaveActions(OB.EventHandlerRegistry.PRESAVE, eventHandlerParams, saveRowCallback);
   },
 
+  executePreDeleteActions: function (deleteRowCallback) {
+    var eventHandlerParams = {};
+    eventHandlerParams.selectedRecords = isc.clone(this.viewGrid.getSelectedRecords());
+    this.callClientEventHandlerActions(OB.EventHandlerRegistry.PREDELETE, eventHandlerParams, deleteRowCallback, true);
+  },
+
   existsAction: function (actionType) {
     return this.tabId && OB.EventHandlerRegistry.hasAction(this.tabId, actionType);
   },
 
   callSaveActions: function (actionType, extraParameters, callback) {
+    if (actionType !== OB.EventHandlerRegistry.PRESAVE && actionType !== OB.EventHandlerRegistry.POSTSAVE) {
+      return;
+    }
+    this.callClientEventHandlerActions(actionType, extraParameters, callback);
+  },
+
+  callClientEventHandlerActions: function (actionType, extraParameters, callback, executeCallback) {
     var params;
     if (this.existsAction(actionType)) {
       params = {
@@ -2177,6 +2190,8 @@ isc.OBStandardView.addProperties({
         callback: callback
       };
       OB.EventHandlerRegistry.call(params);
+    } else if (executeCallback) {
+      callback();
     }
   },
 
@@ -2337,8 +2352,10 @@ isc.OBStandardView.addProperties({
           }
         }
       };
-      isc.ask(msg, callback, {
-        title: dialogTitle
+      this.executePreDeleteActions(function () {
+        isc.ask(msg, callback, {
+          title: dialogTitle
+        });
       });
     }
   },

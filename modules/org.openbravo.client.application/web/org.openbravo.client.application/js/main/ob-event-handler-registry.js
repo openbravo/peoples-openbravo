@@ -27,8 +27,9 @@ isc.OBEventHandlerRegistry.addProperties({
 
   PRESAVE: 'PRESAVE',
   POSTSAVE: 'POSTSAVE',
+  PREDELETE: 'PREDELETE',
 
-  actionTypes: ['PRESAVE', 'POSTSAVE'],
+  actionTypes: ['PRESAVE', 'POSTSAVE', 'PREDELETE'],
 
   isValidElement: function (actionType) {
     var findType;
