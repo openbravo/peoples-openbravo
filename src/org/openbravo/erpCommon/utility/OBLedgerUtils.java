@@ -18,10 +18,13 @@
  */
 package org.openbravo.erpCommon.utility;
 
+import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.financialmgmt.accounting.coa.AcctSchema;
@@ -56,7 +59,7 @@ public class OBLedgerUtils {
         // No organization
         return null;
       }
-      String acctSchemaId = getOrgLedgerRecursive(orgId);
+      String acctSchemaId = getOrgLedgerRecursive(org);
       if (!StringUtils.isEmpty(acctSchemaId)) {
         // Get ledger of organization tree
         return acctSchemaId;
@@ -75,21 +78,35 @@ public class OBLedgerUtils {
     return null;
   }
 
-  private static String getOrgLedgerRecursive(String orgId) {
+  /**
+   * If the Organization has a General Ledger defined return its id. If not get the parent
+   * organization list and loop through it until a organization with a GeneralLedger defined is
+   * found. In case none has it defined return null.
+   * 
+   * @param org
+   *          the Organization whose General Ledger is required.
+   * @return the General Ledger Id of the organization in case the organization or one of its parent
+   *         has a General Ledger defined.
+   */
+  private static String getOrgLedgerRecursive(Organization org) {
     try {
       OBContext.setAdminMode(true);
-      StringBuffer where = new StringBuffer();
-      where.append(" select " + Organization.PROPERTY_GENERALLEDGER + ".id");
-      where.append(" from " + Organization.ENTITY_NAME);
-      where.append(" where ad_isorgincluded(:orgId, " + Organization.PROPERTY_ID + ", "
-          + Organization.PROPERTY_CLIENT + ".id) <> -1");
-      where.append(" and " + Organization.PROPERTY_GENERALLEDGER + " is not null");
-      where.append(" order by ad_isorgincluded(:orgId, " + Organization.PROPERTY_ID + ", "
-          + Organization.PROPERTY_CLIENT + ".id)");
-      Query qry = OBDal.getInstance().getSession().createQuery(where.toString());
-      qry.setParameter("orgId", orgId);
-      qry.setMaxResults(1);
-      return (String) qry.uniqueResult();
+      if (org.getGeneralLedger() != null) {
+        return org.getGeneralLedger().getId();
+      }
+      if (org.getId().equals("0")) {
+        return null;
+      }
+      OrganizationStructureProvider osp = OBContext.getOBContext()
+          .getOrganizationStructureProvider(org.getClient().getId());
+      List<String> parentOrgIds = osp.getParentList(org.getId(), false);
+      for (String orgId : parentOrgIds) {
+        Organization parentOrg = OBDal.getInstance().get(Organization.class, orgId);
+        if (parentOrg.getGeneralLedger() != null) {
+          return parentOrg.getGeneralLedger().getId();
+        }
+      }
+      return null;
     } finally {
       OBContext.restorePreviousMode();
     }
