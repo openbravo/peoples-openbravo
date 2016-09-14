@@ -636,7 +636,7 @@ isc.OBGrid.addProperties({
         field.filterEditorProperties.keyDown = this.filterFieldsKeyDown;
 
         if (OB.Properties.EnableFullScreenReader && OB.Properties.EnableFullScreenReader === 'Y') {
-          field.filterEditorProperties.title = 'Filtered by' + field.name;
+          field.filterEditorProperties.title = 'Filtered by ' + field.name;
         }
 
         if (field.criteriaField) {
