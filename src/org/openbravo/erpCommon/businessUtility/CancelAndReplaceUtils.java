@@ -442,7 +442,9 @@ public class CancelAndReplaceUtils {
         callCOrderPost(newOrder);
       }
 
-      if (newOrder != null) {
+      // Only create new reservations for new orders if coming from Web POS. For backend workflow it
+      // will attend to Order Line Reservation field.
+      if (newOrder != null && jsonorder != null) {
         // Create new reservations
         createNewReservations(newOrder);
       }
