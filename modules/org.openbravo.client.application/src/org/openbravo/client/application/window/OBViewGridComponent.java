@@ -403,73 +403,50 @@ public class OBViewGridComponent extends BaseTemplateComponent {
    * 'Apply changes' button
    */
   public boolean getLazyFiltering() {
-    Boolean lazyFiltering = null;
-
-    // Trying to get parameters from "Grid Configuration (Tab/Field)" -> "Tab" window
-    List<GCTab> tabConfs = getGridConfigurationForTab();
-    if (!tabConfs.isEmpty()) {
-      if ("Y".equals(tabConfs.get(0).getIsLazyFiltering())) {
-        lazyFiltering = true;
-      } else if ("N".equals(tabConfs.get(0).getIsLazyFiltering())) {
-        lazyFiltering = false;
-      }
-    }
-    if (lazyFiltering == null) {
-      // Trying to get parameters from "Grid Configuration (System)" window
-      List<GCSystem> sysConfs = OBDal.getInstance().createQuery(GCSystem.class, "").list();
-      if (!sysConfs.isEmpty()) {
-        if (lazyFiltering == null) {
-          lazyFiltering = sysConfs.get(0).isLazyFiltering();
-        }
-      }
-    }
-    if (lazyFiltering != null) {
-      return lazyFiltering;
-    } else {
-      return false;
-    }
+    return isConfigurationPropertyEnabled(GCTab.PROPERTY_ISLAZYFILTERING,
+        GCSystem.PROPERTY_ISLAZYFILTERING, false);
   }
 
   /**
    * Returns true if the grid allows adding summary functions
    */
   public boolean getAllowSummaryFunctions() {
-    Boolean summaryFunctionsAllowed = null;
+    return isConfigurationPropertyEnabled(GCTab.PROPERTY_ALLOWSUMMARYFUNCTIONS,
+        GCSystem.PROPERTY_ALLOWSUMMARYFUNCTIONS, true);
+  }
+
+  public boolean isConfigurationPropertyEnabled(String propertyNameAtTabLevel,
+      String propertyNameAtSystemLevel, boolean defaultReturnValue) {
+    Boolean propertyEnabled = null;
 
     // Trying to get parameters from "Grid Configuration (Tab/Field)" -> "Tab" window
     List<GCTab> tabConfs = getGridConfigurationForTab();
     if (!tabConfs.isEmpty()) {
-      if ("Y".equals(tabConfs.get(0).getAllowSummaryFunctions())) {
-        summaryFunctionsAllowed = true;
-      } else if ("N".equals(tabConfs.get(0).getAllowSummaryFunctions())) {
-        summaryFunctionsAllowed = false;
+      if ("Y".equals(tabConfs.get(0).get(propertyNameAtTabLevel))) {
+        propertyEnabled = true;
+      } else if ("N".equals(tabConfs.get(0).get(propertyNameAtTabLevel))) {
+        propertyEnabled = false;
       }
     }
-    if (summaryFunctionsAllowed == null) {
+    if (propertyEnabled == null) {
       // Trying to get parameters from "Grid Configuration (System)" window
       List<GCSystem> sysConfs = OBDal.getInstance().createQuery(GCSystem.class, "").list();
       if (!sysConfs.isEmpty()) {
-        if (summaryFunctionsAllowed == null) {
-          summaryFunctionsAllowed = sysConfs.get(0).isAllowSummaryFunctions();
-        }
+        propertyEnabled = (Boolean) sysConfs.get(0).get(propertyNameAtSystemLevel);
       }
     }
-    if (summaryFunctionsAllowed != null) {
-      return summaryFunctionsAllowed;
+    if (propertyEnabled != null) {
+      return propertyEnabled;
     } else {
-      return true;
+      return defaultReturnValue;
     }
   }
 
   private List<GCTab> getGridConfigurationForTab() {
-    List<Object> parameterList = new ArrayList<Object>();
-
-    String tabConfsHql = " as p where p.tab.id = ? ";
-    parameterList.add(tab.getId());
-
+    String tabConfsHql = " as p where p.tab.id = :tabId";
     // Trying to get parameters from "Grid Configuration (Tab/Field)" -> "Tab" window
     OBQuery<GCTab> query = OBDal.getInstance().createQuery(GCTab.class, tabConfsHql);
-    query.setParameters(parameterList);
+    query.setNamedParameter("tabId", tab.getId());
     return query.list();
   }
 
