@@ -89,12 +89,9 @@ public class ProductCharacteristicValueEventHandler extends EntityPersistenceEve
     if (productList == null || productList.isEmpty() || event.getTransaction().wasRolledBack()) {
       return;
     }
-    JSONArray productIds = new JSONArray();
-    for (String productId : productList) {
-      productIds.put(productId);
-    }
     JSONObject entryJson = new JSONObject();
     try {
+      JSONArray productIds = new JSONArray(productList);
       entryJson.put("productIds", productIds);
     } catch (JSONException ignore) {
     }
@@ -102,7 +99,7 @@ public class ProductCharacteristicValueEventHandler extends EntityPersistenceEve
       SessionHandler.getInstance().beginNewTransaction();
     }
     importEntryManager.createImportEntry(SequenceIdData.getUUID(), "VariantChDescUpdate",
-        entryJson.toString());
+        entryJson.toString(), false);
   }
 
   private void addProductToList(ProductCharacteristicValue pchv) {

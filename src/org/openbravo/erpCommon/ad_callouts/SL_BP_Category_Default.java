@@ -11,12 +11,11 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012 Openbravo SLU
+ * All portions are Copyright (C) 2012-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
-
 package org.openbravo.erpCommon.ad_callouts;
 
 import java.util.List;
@@ -32,7 +31,6 @@ import org.openbravo.model.common.businesspartner.Category;
 import org.openbravo.model.common.enterprise.Organization;
 
 public class SL_BP_Category_Default extends SimpleCallout {
-  private static final long serialVersionUID = 1L;
 
   @Override
   protected void execute(CalloutInfo info) throws ServletException {

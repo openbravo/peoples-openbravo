@@ -2911,7 +2911,9 @@ public abstract class AcctServer {
    * Returns the writeoff and the amount of a Payment Detail. In case the related Payment Schedule
    * Detail was generated for compensate the difference between an Order and a related Invoice, it
    * merges it's amount with the next Payment Schedule Detail. Issue 19567:
-   * https://issues.openbravo.com/view.php?id=19567
+   * https://issues.openbravo.com/view.php?id=19567. Use
+   * {@link #getPaymentDetailIdWriteOffAndAmount(List, FIN_PaymentSchedule, FIN_PaymentSchedule, FIN_PaymentSchedule, int)}
+   * instead
    * 
    * @param paymentDetails
    *          List of payment Details
@@ -2924,11 +2926,46 @@ public abstract class AcctServer {
    * @param currentPaymentDetailIndex
    *          Index
    */
+  @Deprecated
   public HashMap<String, BigDecimal> getPaymentDetailWriteOffAndAmount(
       List<FIN_PaymentDetail> paymentDetails, FIN_PaymentSchedule ps, FIN_PaymentSchedule psi,
       FIN_PaymentSchedule pso, int currentPaymentDetailIndex) {
     return getPaymentDetailWriteOffAndAmount(paymentDetails, ps, psi, pso,
         currentPaymentDetailIndex, null);
+  }
+
+  /**
+   * Returns the writeoff and the amount of a Payment Detail. In case the related Payment Schedule
+   * Detail was generated for compensate the difference between an Order and a related Invoice, it
+   * merges it's amount with the next Payment Schedule Detail. Issue 19567:
+   * https://issues.openbravo.com/view.php?id=19567
+   * 
+   * @param paymentDetailsIds
+   *          List of payment Details Ids
+   * @param ps
+   *          Previous Payment Schedule
+   * @param psi
+   *          Invoice Payment Schedule of actual Payment Detail
+   * @param pso
+   *          Order Payment Schedule of actual Payment Detail
+   * @param currentPaymentDetailIndex
+   *          Index
+   */
+  public HashMap<String, BigDecimal> getPaymentDetailIdWriteOffAndAmount(
+      List<String> paymentDetailsIds, FIN_PaymentSchedule ps, FIN_PaymentSchedule psi,
+      FIN_PaymentSchedule pso, int currentPaymentDetailIndex) {
+    FIN_PaymentDetail paymentDetail = OBDal.getInstance().get(FIN_PaymentDetail.class,
+        paymentDetailsIds.get(currentPaymentDetailIndex));
+    String paymentDetailNextId = null;
+    String paymentDetailPreviousId = null;
+    if (currentPaymentDetailIndex < paymentDetailsIds.size() - 1) {
+      paymentDetailNextId = paymentDetailsIds.get(currentPaymentDetailIndex + 1);
+    }
+    if (currentPaymentDetailIndex > 0) {
+      paymentDetailPreviousId = paymentDetailsIds.get(currentPaymentDetailIndex - 1);
+    }
+    return getPaymentDetailWriteOffAndAmount(paymentDetail, paymentDetailNextId,
+        paymentDetailPreviousId, ps, psi, pso, null);
   }
 
   /**

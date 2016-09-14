@@ -231,7 +231,9 @@ isc.OBStandardView.addProperties({
     if (this.sessionAttributesNames) {
       this.preferenceValues = {};
       for (i = 0; i < this.sessionAttributesNames.length; i++) {
-        this.preferenceValues[this.sessionAttributesNames[i]] = OB.PropertyStore.get(this.sessionAttributesNames[i], this.standardWindow.windowId);
+        if (OB.PropertyStore.get(this.sessionAttributesNames[i], this.standardWindow.windowId) !== null) {
+          this.preferenceValues[this.sessionAttributesNames[i]] = OB.PropertyStore.get(this.sessionAttributesNames[i], this.standardWindow.windowId);
+        }
       }
     }
 

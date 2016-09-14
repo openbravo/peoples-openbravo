@@ -21,6 +21,7 @@ package org.openbravo.test;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
+import org.openbravo.advpaymentmngt.test.DocumentNumberGeneration;
 import org.openbravo.base.weld.test.testinfrastructure.CdiInfrastructure;
 import org.openbravo.base.weld.test.testinfrastructure.DalPersistanceEventTest;
 import org.openbravo.base.weld.test.testinfrastructure.ParameterizedCdi;
@@ -235,7 +236,10 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     // Product Services
     ServicesTest.class, //
     ServicesTest2.class, //
-    ServicesTest3.class
+    ServicesTest3.class,
+
+    // others
+    DocumentNumberGeneration.class
 
 })
 public class AllAntTaskTests {
