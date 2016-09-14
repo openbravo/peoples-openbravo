@@ -664,27 +664,51 @@
       var me = this;
 
       function success(collection) {
-        var i, j, saveCallback;
+        var i, j, saveCallback, lastDocWithData = -1;
         if (collection.length > 0) {
-          saveCallback = _.after(collection.length, function () {
+          saveCallback = function () {
             me.cleanSessionInfo();
             OB.MobileApp.model.triggerLogout();
-          });
-          _.forEach(collection.models, function (model) {
+          };
+          if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
+            for (i = collection.models.length - 1; i >= 0; i--) {
+              var model = collection.models[i];
+              if (model.get('lines').length > 0) {
+                lastDocWithData = i;
+                break;
+              }
+            }
+          }
+          var setValuesOnLogout;
+          setValuesOnLogout = function (models, index, callback) {
+            if (index >= models.length) {
+              if (callback) {
+                callback();
+              }
+              return;
+            }
+            var model = models[index];
             var creationDate = new Date();
             model.set('creationDate', creationDate);
             model.set('timezoneOffset', creationDate.getTimezoneOffset());
             model.set('created', creationDate.getTime());
             model.set('obposCreatedabsolute', OB.I18N.formatDateISO(creationDate));
-            model.set('obposIsDeleted', true);
-            for (i = 0; i < model.get('lines').length; i++) {
-              model.get('lines').at(i).set('obposIsDeleted', true);
+            if (index <= lastDocWithData || (OB.MobileApp.model.get('permissions').OBPOS_remove_ticket === false)) {
+              model.set('obposIsDeleted', true);
+              for (i = 0; i < model.get('lines').length; i++) {
+                model.get('lines').at(i).set('obposIsDeleted', true);
+              }
+              model.set('hasbeenpaid', 'Y');
+              OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(model.get('documentnoSuffix'), model.get('quotationnoSuffix'), function () {
+                model.save(function () {
+                  setValuesOnLogout(models, index + 1, callback);
+                }, models);
+              });
+            } else {
+              setValuesOnLogout(models, index + 1, callback);
             }
-            model.set('hasbeenpaid', 'Y');
-            OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(model.get('documentnoSuffix'), model.get('quotationnoSuffix'), function () {
-              model.save(saveCallback);
-            });
-          });
+          };
+          setValuesOnLogout(collection.models, 0, saveCallback);
         } else {
           me.cleanSessionInfo();
           OB.MobileApp.model.triggerLogout();
