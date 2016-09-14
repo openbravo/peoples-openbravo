@@ -301,7 +301,7 @@ public class CostingRuleProcess implements Process {
 
     Query queryInsert = OBDal.getInstance().getSession().createQuery(insert.toString());
     queryInsert.setParameterList("orgs", childOrgs);
-    queryInsert.setDate("date", date);
+    queryInsert.setTimestamp("date", date);
     queryInsert.setString("client", client.getId());
     int n1 = queryInsert.executeUpdate();
     log4j.debug("InitializeOldTrx inserted " + n1 + " records. Took: "
@@ -324,7 +324,7 @@ public class CostingRuleProcess implements Process {
     Query queryUpdate = OBDal.getInstance().getSession().createQuery(update.toString());
     queryUpdate.setParameter("currency", client.getCurrency());
     queryUpdate.setParameterList("orgs", childOrgs);
-    queryUpdate.setDate("date", date);
+    queryUpdate.setTimestamp("date", date);
     queryUpdate.setString("client", client.getId());
     int n2 = queryUpdate.executeUpdate();
     log4j.debug("InitializeOldTrx updated " + n2 + " records. Took: "
@@ -718,7 +718,7 @@ public class CostingRuleProcess implements Process {
     update.append(" )");
 
     Query queryUpdate = OBDal.getInstance().getSession().createQuery(update.toString());
-    queryUpdate.setDate("date", startingDate);
+    queryUpdate.setTimestamp("date", startingDate);
     queryUpdate.setString("cr", ruleId);
     queryUpdate.executeUpdate();
 

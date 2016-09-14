@@ -69,14 +69,13 @@
 <!--58AF4D3E594B421A9A7307480736F03E-->  <ISTREE><![CDATA[N]]></ISTREE>
 <!--58AF4D3E594B421A9A7307480736F03E-->  <HQLQUERY><![CDATA[select @selectClause@
 from FIN_Payment_ScheduleDetail as psd
+join psd.businessPartner as bp
 left outer join psd.orderPaymentSchedule as ops  
 left outer join ops.order as ord @joinClauseOrder@
-left outer join ord.businessPartner as ordbp
 left outer join ops.fINPaymentPriority as opriority 
 left outer join ops.finPaymentmethod opsfp
 left outer join psd.invoicePaymentSchedule as ips  
 left outer join ips.invoice as inv @joinClauseInvoice@
-left outer join inv.businessPartner as invbp
 left outer join ips.fINPaymentPriority as ipriority 
 left outer join ips.finPaymentmethod as ipsfp
 left outer join psd.organization as org 

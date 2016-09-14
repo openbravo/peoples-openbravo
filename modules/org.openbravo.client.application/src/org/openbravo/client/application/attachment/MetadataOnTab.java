@@ -38,7 +38,6 @@ import org.openbravo.model.ad.utility.AttachmentMethod;
  * Sequence Number to set on the new metadata when the Attachment Method is selected.
  */
 public class MetadataOnTab extends SimpleCallout {
-  private static final long serialVersionUID = 1L;
   private static final String WINDOWTABSFIELDS_WINDOW_ID = "102";
 
   @Override

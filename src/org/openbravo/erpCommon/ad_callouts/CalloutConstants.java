@@ -11,19 +11,28 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2014-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.erpCommon.ad_callouts;
 
-import javax.servlet.ServletException;
+import org.openbravo.client.application.window.FormInitializationComponent;
 
-public class SL_LandedCost_Receipt extends SimpleCallout {
+/**
+ * Defines constants used for manage Callouts. These constants are used in
+ * {@link FormInitializationComponent}, {@link SimpleCalloutInformationProvider} and
+ * {@link HttpServletCalloutInformationProvider} classes.
+ * 
+ * @author inigo.sanchez
+ */
+public class CalloutConstants {
 
-  @Override
-  protected void execute(CalloutInfo info) throws ServletException {
-    info.addResult("inpmInoutlineId", "");
-  }
+  public static final String VALUE = "value";
+  public static final String CLASSIC_VALUE = "classicValue";
+  public static final String ENTRIES = "entries";
+
+  public static final String COMBO_SELECTED_VALUE = "classicValue";
+
 }

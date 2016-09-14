@@ -94,6 +94,8 @@ isc.OBStandardWindow.addProperties({
     if (this.command === isc.OBStandardWindow.COMMAND_NEW) {
       this.viewProperties.allowDefaultEditMode = false;
       this.viewProperties.deferOpenNewEdit = true;
+    } else {
+      this.viewProperties.deferOpenNewEdit = false;
     }
 
     if (OB.Utilities.checkProfessionalLicense(null, true)) {

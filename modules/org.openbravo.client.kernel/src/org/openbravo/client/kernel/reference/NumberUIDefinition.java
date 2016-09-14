@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,6 +19,7 @@
 package org.openbravo.client.kernel.reference;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -27,6 +28,7 @@ import org.openbravo.base.model.domaintype.PrimitiveDomainType;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.client.kernel.reference.UIDefinitionController.FormatDefinition;
+import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.ui.Field;
 
 /**
@@ -150,6 +152,41 @@ public abstract class NumberUIDefinition extends UIDefinition {
 
   public String getFormat() {
     return "generalQtyEdition";
+  }
+
+  @Override
+  public String getDefaultValue(VariablesSecureApp vars, String columnName,
+      String defaultValueExpression, String windowId) {
+    String defaultValue = super.getDefaultValue(vars, columnName, defaultValueExpression, windowId);
+    try {
+      return formatDefaultValue(vars, defaultValue);
+    } catch (Exception ex) {
+      throw new OBException("Invalid numeric default value (" + defaultValueExpression
+          + ") defined for column " + columnName + " in window " + windowId, ex);
+    }
+  }
+
+  @Override
+  public String getDefaultValueFromSQLExpression(VariablesSecureApp vars, Field field,
+      String defaultValueExpression) {
+    String defaultValue = super.getDefaultValueFromSQLExpression(vars, field,
+        defaultValueExpression);
+    try {
+      return formatDefaultValue(vars, defaultValue);
+    } catch (Exception ex) {
+      throw new OBException("Invalid numeric value retrieved from default expression ("
+          + defaultValueExpression + ") defined for field " + field.getName(), ex);
+    }
+  }
+
+  private String formatDefaultValue(VariablesSecureApp vars, String defaultValue) {
+    if (defaultValue == null || defaultValue.length() == 0) {
+      return defaultValue;
+    }
+    // Format the numeric default value
+    DecimalFormat df = Utility.getFormat(vars, getFormat());
+    BigDecimal numericDefaultValue = new BigDecimal(defaultValue);
+    return df.format(numericDefaultValue);
   }
 
   @Override

@@ -252,12 +252,14 @@ public class ProcessInvoice extends HttpSecureAppServlet {
               return;
             }
 
+            // Reversed invoice's date: voidDate in Purchase Invoice, new Date() in Sales Invoice
+            Date reversedDate = voidDate != null ? voidDate : new Date();
+
             // Calculate Conversion Rate
-            Date date = voidDate != null ? voidDate : invoice.getInvoiceDate();
             BigDecimal rate = null;
             if (!StringUtils.equals(invoice.getCurrency().getId(), bpFinAccount.getCurrency()
                 .getId())) {
-              final ConversionRate conversionRate = FinancialUtils.getConversionRate(date,
+              final ConversionRate conversionRate = FinancialUtils.getConversionRate(reversedDate,
                   invoice.getCurrency(), bpFinAccount.getCurrency(), invoice.getOrganization(),
                   invoice.getClient());
               if (conversionRate != null) {
@@ -266,10 +268,10 @@ public class ProcessInvoice extends HttpSecureAppServlet {
             }
 
             // Create dummy payment
-            dummyPayment = dao
-                .getNewPayment(isSOTrx, invoice.getOrganization(), docType, strPaymentDocumentNo,
-                    invoice.getBusinessPartner(), invoice.getPaymentMethod(), bpFinAccount, "0",
-                    date, invoice.getDocumentNo(), invoice.getCurrency(), rate, null);
+            dummyPayment = dao.getNewPayment(isSOTrx, invoice.getOrganization(), docType,
+                strPaymentDocumentNo, invoice.getBusinessPartner(), invoice.getPaymentMethod(),
+                bpFinAccount, "0", reversedDate, invoice.getDocumentNo(), invoice.getCurrency(),
+                rate, null);
             OBDal.getInstance().save(dummyPayment);
 
             List<FIN_PaymentDetail> paymentDetails = new ArrayList<FIN_PaymentDetail>();
