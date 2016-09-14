@@ -197,7 +197,7 @@ isc.OBStandardView.addProperties({
   initWidget: function (properties) {
     var length, rightMemberButtons = [],
         leftMemberButtons = [],
-        i, actionButton;
+        i, actionButton, preferenceValue;
 
     if (this.isRootView) {
       this.buildStructure();
@@ -230,9 +230,10 @@ isc.OBStandardView.addProperties({
     // to the form, so they will be retrieved when getContextInfo() is called for the form
     if (this.sessionAttributesNames) {
       this.preferenceValues = {};
+      preferenceValue = OB.PropertyStore.get(this.sessionAttributesNames[i], this.standardWindow.windowId);
       for (i = 0; i < this.sessionAttributesNames.length; i++) {
-        if (OB.PropertyStore.get(this.sessionAttributesNames[i], this.standardWindow.windowId) !== null) {
-          this.preferenceValues[this.sessionAttributesNames[i]] = OB.PropertyStore.get(this.sessionAttributesNames[i], this.standardWindow.windowId);
+        if (preferenceValue !== null) {
+          this.preferenceValues[this.sessionAttributesNames[i]] = preferenceValue;
         }
       }
     }
