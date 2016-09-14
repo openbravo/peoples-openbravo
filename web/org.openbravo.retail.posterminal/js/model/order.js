@@ -2571,16 +2571,16 @@
                       var location = confirmationPopup.order.get('payments').models.indexOf(payment);
                       confirmationPopup.order.get('payments').remove(confirmationPopup.order.get('payments').at(location));
                     });
-                    this.order.cancelAndReplaceOrder();
+                    this.order.cancelAndReplaceOrder(context);
                   }
                 }, {
                   label: OB.I18N.getLabel('OBMOBC_LblCancel')
                 }]);
               } else {
-                me.cancelAndReplaceOrder();
+                me.cancelAndReplaceOrder(context);
               }
             } else {
-              me.cancelAndReplaceOrder();
+              me.cancelAndReplaceOrder(context);
             }
           });
         }
@@ -2589,7 +2589,7 @@
       });
     },
 
-    cancelAndReplaceOrder: function () {
+    cancelAndReplaceOrder: function (context) {
       var documentseq, documentseqstr, idMap = {},
           me = this,
           i, splittedDocNo = [],
@@ -2671,8 +2671,12 @@
           me.set('doCancelAndReplace', true);
 
           OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_OrderReplaced', [me.get('replacedorder_documentNo'), me.get('documentNo')]));
-          me.calculateReceipt(function () {
-            me.unset('skipApplyPromotions');
+          OB.UTIL.HookManager.executeHooks('OBPOS_PostCancelAndReplace', {
+            context: context
+          }, function (args) {
+            me.calculateReceipt(function () {
+              me.unset('skipApplyPromotions');
+            });
           });
         });
       }, function () {
