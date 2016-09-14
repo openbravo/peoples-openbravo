@@ -139,7 +139,19 @@ isc.OBAlertGrid.addProperties({
     this.Super('destroy', arguments);
   },
 
+  isFullReaderPreferenceEnabled: function () {
+    return (OB.Properties.EnableFullScreenReader && OB.Properties.EnableFullScreenReader === 'Y');
+  },
+
   setDataSource: function (ds) {
+    var i;
+    if (this.isFullReaderPreferenceEnabled) {
+      for (i = 0; i < this.gridFields.length; i++) {
+        this.gridFields[i].filterEditorProperties = {
+          title: 'Filtered by ' + this.gridFields[i].title
+        };
+      }
+    }
     this.Super('setDataSource', [ds, this.gridFields]);
     // Some properties need to be set when the datasource is loaded to avoid errors when form is
     // open the first time.
