@@ -2672,7 +2672,8 @@
 
           OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_OrderReplaced', [me.get('replacedorder_documentNo'), me.get('documentNo')]));
           OB.UTIL.HookManager.executeHooks('OBPOS_PostCancelAndReplace', {
-            context: context
+            context: context,
+            receipt: me
           }, function (args) {
             me.calculateReceipt(function () {
               me.unset('skipApplyPromotions');
