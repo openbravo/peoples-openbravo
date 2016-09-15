@@ -49,6 +49,10 @@
     column: 'c_uom_symbol',
     type: 'TEXT'
   }, {
+    name: 'uOMstandardPrecision',
+    column: 'c_uom_standardprecision',
+    type: 'NUMERIC'
+  }, {
     name: 'productCategory',
     column: 'm_product_category_id',
     type: 'TEXT'

@@ -384,26 +384,32 @@
       }
     },
 
-    save: function (callback) {
+    save: function (callback, collection) {
       var undoCopy = this.get('undo'),
           me = this,
-          previousOrder;
+          orderList, previousOrder;
+
 
       var now = new Date();
       this.set('updated', OB.I18N.normalizeDate(now));
       this.set('timezoneOffset', now.getTimezoneOffset());
       this.set('json', JSON.stringify(this.serializeToJSON()));
+      if (OB.UTIL.isNullOrUndefined(collection)) {
+        orderList = OB.MobileApp.model.orderList.models;
+      } else {
+        orderList = collection;
+      }
       if (callback === undefined || !callback instanceof Function) {
         callback = function () {};
       }
       if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
-        previousOrder = _.max(_.filter(OB.MobileApp.model.orderList.models, function (previousOrder) {
-          return previousOrder.get('documentnoSuffix') < me.get('documentnoSuffix') && previousOrder.get('session') === OB.MobileApp.model.get('session');
+        previousOrder = _.max(_.filter(orderList, function (previousOrder) {
+          return previousOrder.get('documentnoSuffix') < me.get('documentnoSuffix') && previousOrder.get('session') === OB.MobileApp.model.get('session') && previousOrder.get('hasbeenpaid') === 'N';
         }), function (maxDocumentNoOrder) {
           return maxDocumentNoOrder.get('documentnoSuffix');
         });
         if (previousOrder) {
-          previousOrder.save();
+          previousOrder.save(null, orderList);
         }
       }
       if (!OB.MobileApp.model.get('preventOrderSave')) {
@@ -4646,9 +4652,7 @@
         var createNew = forceCreateNew || me.length === 0;
         if (createNew) {
           var order = me.newOrder();
-          if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
-            order.save();
-          }
+
           me.add(order);
           if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
             me.doRemoteBPSettings(OB.MobileApp.model.get('businessPartner'));
