@@ -251,13 +251,10 @@ public abstract class SimpleCallout extends DelegateConnectionProvider {
      */
     public void endSelect() {
       try {
-        // Added an initial blank element
+        if (currentSelectResult.isEmpty()) {
+          currentSelectResult.add(new JSONObject());
+        }
         if (result.isNull(currentElement)) {
-          ArrayList<JSONObject> blankElement = new ArrayList<JSONObject>();
-          blankElement.add(new JSONObject());
-          blankElement.addAll(currentSelectResult);
-          currentSelectResult = blankElement;
-
           JSONObject jsonobject = new JSONObject();
           jsonobject.put(CalloutConstants.ENTRIES, new JSONArray(currentSelectResult));
           result.put(currentElement, jsonobject);

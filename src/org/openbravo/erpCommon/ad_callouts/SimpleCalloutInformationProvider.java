@@ -97,58 +97,52 @@ public class SimpleCalloutInformationProvider implements CalloutInformationProvi
   public void manageComboData(Map<String, JSONObject> columnValues, List<String> dynamicCols,
       List<String> changedCols, RequestContext request, Object element, Column col, String colIdent)
       throws JSONException {
-    JSONObject firstComboEntry = new JSONObject();
+    JSONObject selectedEntry = new JSONObject();
     JSONObject entry = (JSONObject) element;
     JSONArray entryValues = entry.getJSONArray(CalloutConstants.ENTRIES);
     ArrayList<JSONObject> newJsonArr = new ArrayList<JSONObject>();
-    JSONObject comboEntry = null;
 
     if (!entry.has(CalloutConstants.COMBO_SELECTED_VALUE)) {
-      // If it is not mandatory and first value is not empty, we add an initial blank element
-      if (!col.isMandatory()
-          && (entryValues.length() == 0 || !entryValues.getJSONObject(0).isNull(JsonConstants.ID))) {
-        comboEntry = new JSONObject();
-        comboEntry.put(JsonConstants.ID, (String) null);
-        comboEntry.put(JsonConstants.IDENTIFIER, (String) null);
-        newJsonArr.add(comboEntry);
+      // selected value is not defined for the combo
+      JSONObject firstEntry = entryValues.getJSONObject(0);
+      if (!col.isMandatory()) {
+        // If column is not mandatory, we add an initial blank element
+        JSONObject blankComboEntry = new JSONObject();
+        blankComboEntry.put(JsonConstants.ID, (String) null);
+        blankComboEntry.put(JsonConstants.IDENTIFIER, (String) null);
+        newJsonArr.add(blankComboEntry);
+      } else if (firstEntry.has(JsonConstants.ID)) {
+        // If the column is mandatory and the combo has entries, we choose the first one as selected
+        String selectedValue = firstEntry.getString(JsonConstants.ID);
+        selectedEntry.put(CalloutConstants.VALUE, selectedValue);
+        selectedEntry.put(CalloutConstants.CLASSIC_VALUE, selectedValue);
       }
-
-      // As we do not have selected value information in the entry, select the first element. For
-      // not mandatory columns, this will be a blank element.
-      if (newJsonArr.size() > 0 && newJsonArr.get(0).has(JsonConstants.ID)) {
-        // create element with selected value
-        String selectedValue = newJsonArr.get(0).getString(JsonConstants.ID);
-        firstComboEntry.put(CalloutConstants.VALUE, selectedValue);
-        firstComboEntry.put(CalloutConstants.CLASSIC_VALUE, selectedValue);
-      }
-
     } else {
       // selected value is chosen
-      firstComboEntry.put(CalloutConstants.VALUE, entry.getString(CalloutConstants.VALUE));
-      firstComboEntry.put(CalloutConstants.CLASSIC_VALUE,
+      selectedEntry.put(CalloutConstants.VALUE, entry.getString(CalloutConstants.VALUE));
+      selectedEntry.put(CalloutConstants.CLASSIC_VALUE,
           entry.getString(CalloutConstants.CLASSIC_VALUE));
     }
 
     // Added all combo entries
     for (int i = 0; i < entryValues.length(); i++) {
-      comboEntry = entryValues.getJSONObject(i);
-      newJsonArr.add(comboEntry);
+      newJsonArr.add(entryValues.getJSONObject(i));
     }
 
     // added this new value and set parameter into request
-    if (firstComboEntry.has(CalloutConstants.CLASSIC_VALUE)) {
+    if (selectedEntry.has(CalloutConstants.CLASSIC_VALUE)) {
       request.setRequestParameter(getCurrentElementName(),
-          firstComboEntry.getString(CalloutConstants.CLASSIC_VALUE));
+          selectedEntry.getString(CalloutConstants.CLASSIC_VALUE));
     }
 
-    columnValues.put(colIdent, firstComboEntry);
+    columnValues.put(colIdent, selectedEntry);
 
     if (dynamicCols.contains(getCurrentElementName())) {
       changedCols.add(col.getDBColumnName());
     }
 
     if (entry.has(CalloutConstants.ENTRIES)) {
-      firstComboEntry.put(CalloutConstants.ENTRIES, newJsonArr);
+      selectedEntry.put(CalloutConstants.ENTRIES, newJsonArr);
     }
   }
 }
