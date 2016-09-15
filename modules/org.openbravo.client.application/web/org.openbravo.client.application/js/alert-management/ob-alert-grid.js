@@ -139,13 +139,13 @@ isc.OBAlertGrid.addProperties({
     this.Super('destroy', arguments);
   },
 
-  isFullReaderPreferenceEnabled: function () {
-    return (OB.Properties.EnableFullScreenReader && OB.Properties.EnableFullScreenReader === 'Y');
+  isFullScreenReaderPreferenceEnabled: function () {
+    return OB.Properties.EnableFullScreenReader && OB.Properties.EnableFullScreenReader === 'Y';
   },
 
   setDataSource: function (ds) {
     var i;
-    if (this.isFullReaderPreferenceEnabled) {
+    if (this.isFullScreenReaderPreferenceEnabled()) {
       for (i = 0; i < this.gridFields.length; i++) {
         this.gridFields[i].filterEditorProperties = {
           title: OB.I18N.getLabel('OBUIAPP_Filter_By_Column') + this.gridFields[i].title
