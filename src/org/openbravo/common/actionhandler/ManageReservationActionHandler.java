@@ -183,11 +183,9 @@ public class ManageReservationActionHandler extends BaseProcessActionHandler {
           resStock.setSalesOrderLine((OrderLine) OBDal.getInstance().getProxy(
               OrderLine.ENTITY_NAME, strOrderLineId));
         }
+        resStock.setReleased(BigDecimal.ZERO);
 
         List<ReservationStock> resStocks = reservation.getMaterialMgmtReservationStockList();
-        if (resStock.getReleased() == null) {
-          resStock.setReleased(BigDecimal.ZERO);
-        }
         resStocks.add(resStock);
         reservation.setMaterialMgmtReservationStockList(resStocks);
       }

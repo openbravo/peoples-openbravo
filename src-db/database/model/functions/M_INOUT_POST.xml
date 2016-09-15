@@ -1282,12 +1282,12 @@
                   INSERT INTO M_RESERVATION_STOCK (
                     m_reservation_stock_id, ad_client_id, ad_org_id, isactive,
                     created, createdby, updated, updatedby,
-                    m_reservation_id, quantity, isallocated,
+                    m_reservation_id, quantity, releasedqty, isallocated,
                     m_locator_id, m_attributesetinstance_id
                   ) VALUES (
                     get_uuid(), Cur_Reservation.ad_client_id, Cur_Reservation.ad_org_id, 'Y',
                     now(), v_user, now(), v_user,
-                    v_reservation_id, v_RS_Quantity, 'N',
+                    v_reservation_id, v_RS_Quantity, 0, 'N',
                     Cur_InOutLine.m_locator_id, Cur_InOutLine.m_attributesetinstance_id
                   );
                   v_R_Reservedqty := v_R_Reservedqty + v_RS_Quantity;
