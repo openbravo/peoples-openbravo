@@ -137,7 +137,7 @@ enyo.kind({
       OB.Dal.find(OB.Model.BPLocation, criteria, function (dataBps) {
         if (dataBps && dataBps.length > 1) {
           me.changeStyle(true);
-        } else if ((dataBps.models[0].get('isBillTo') && !dataBps.models[0].get('isShipTo')) || (!dataBps.models[0].get('isBillTo') && dataBps.models[0].get('isShipTo'))) {
+        } else if (dataBps.models[0] && ((dataBps.models[0].get('isBillTo') && !dataBps.models[0].get('isShipTo')) || (!dataBps.models[0].get('isBillTo') && dataBps.models[0].get('isShipTo')))) {
           me.changeStyle(true);
         } else {
           me.changeStyle(false);
