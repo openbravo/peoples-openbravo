@@ -106,7 +106,7 @@ public class SimpleCalloutInformationProvider implements CalloutInformationProvi
       // selected value is not defined for the combo
       JSONObject firstEntry = entryValues.getJSONObject(0);
       if (!col.isMandatory()) {
-        // If column is not mandatory and first value is not empty, add an initial blank element
+        // If column is not mandatory, we add an initial blank element
         JSONObject blankComboEntry = new JSONObject();
         blankComboEntry.put(JsonConstants.ID, (String) null);
         blankComboEntry.put(JsonConstants.IDENTIFIER, (String) null);
