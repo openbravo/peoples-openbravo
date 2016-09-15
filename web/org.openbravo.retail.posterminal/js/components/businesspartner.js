@@ -536,7 +536,7 @@ enyo.kind({
       }
       OB.Dal.find(OB.Model.BPartnerFilter, criteria, successCallbackBPs, errorCallback, this);
     } else {
-      var index = 0,
+      var limit, index = 0,
           params = [],
           select = 'select ',
           orderby = ' order by ' + (inEvent.advanced && inEvent.orderby ? inEvent.orderby.column + ' ' + inEvent.orderby.direction : 'bp.name');
@@ -580,7 +580,10 @@ enyo.kind({
         params.push('%' + text + '%');
         params.push('%' + text + '%');
       }
-      OB.Dal.query(OB.Model.BPartnerFilter, select + orderby, params, successCallbackBPs, errorCallback, null, null, OB.Model.BPartnerFilter.prototype.dataLimit);
+      if (OB.MobileApp.model.hasPermission('OBPOS_customerLimit', true)) {
+        limit = OB.DEC.abs(OB.MobileApp.model.hasPermission('OBPOS_customerLimit', true));
+      }
+      OB.Dal.query(OB.Model.BPartnerFilter, select + orderby, params, successCallbackBPs, errorCallback, null, null, limit);
     }
 
     return true;
