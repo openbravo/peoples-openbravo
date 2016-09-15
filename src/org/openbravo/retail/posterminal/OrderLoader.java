@@ -407,7 +407,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           t11 = System.currentTimeMillis();
           t2 = System.currentTimeMillis();
         }
-        updateAuditInfo(order, invoice, jsonorder);
+
         if (log.isDebugEnabled()) {
           t3 = System.currentTimeMillis();
         }
@@ -537,15 +537,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       } else {
         ((OrderLoaderPreProcessHook) proc).exec(jsonorder);
       }
-    }
-  }
-
-  private void updateAuditInfo(Order order, Invoice invoice, JSONObject jsonorder)
-      throws JSONException {
-    Long value = jsonorder.getLong("created");
-    order.set("creationDate", new Date(value));
-    if (invoice != null) {
-      invoice.set("creationDate", new Date(value));
     }
   }
 
@@ -915,7 +906,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       addDocumentNoHandler(invoice, invoiceEntity, invoice.getTransactionDocument(),
           invoice.getDocumentType());
     }
-
+    Long value = jsonorder.getLong("created");
+    invoice.set("creationDate", new Date(value));
     final Date orderDate = OBMOBCUtils.calculateClientDatetime(jsonorder.getString("orderDate"),
         Long.parseLong(jsonorder.getString("timezoneOffset")));
     invoice.setAccountingDate(order.getOrderDate());
@@ -1534,6 +1526,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     } else {
       order.setDocumentStatus("CO");
     }
+    Long value = jsonorder.getLong("created");
+    order.set("creationDate", new Date(value));
     order.setDocumentAction("--");
     order.setProcessed(true);
     order.setProcessNow(false);
