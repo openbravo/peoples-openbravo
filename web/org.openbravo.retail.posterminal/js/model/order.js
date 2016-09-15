@@ -365,7 +365,6 @@
         this.set('reApplyDiscounts', false);
         this.set('calculateReceiptCallbacks', []);
         this.set('loaded', attributes.loaded);
-        this.set('updated', attributes.updated);
         _.each(_.keys(attributes), function (key) {
           if (!this.has(key)) {
             this.set(key, attributes[key]);
@@ -384,7 +383,6 @@
 
 
       var now = new Date();
-      this.set('updated', OB.I18N.normalizeDate(now));
       this.set('timezoneOffset', now.getTimezoneOffset());
       this.set('json', JSON.stringify(this.serializeToJSON()));
       if (OB.UTIL.isNullOrUndefined(collection)) {

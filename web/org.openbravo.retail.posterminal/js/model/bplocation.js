@@ -132,10 +132,6 @@
     filter: true,
     type: 'TEXT'
   }, {
-    name: 'updated',
-    column: 'updated',
-    type: 'TEXT'
-  }, {
     name: 'loaded',
     column: 'loaded',
     type: 'TEXT'

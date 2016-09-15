@@ -35,7 +35,6 @@
       if (customerId) {
         customer.set('posTerminal', OB.MobileApp.model.get('terminal').id);
         var now = new Date();
-        customer.set('updated', OB.I18N.normalizeDate(now));
         customer.set('timezoneOffset', now.getTimezoneOffset());
         customer.set('loaded', OB.I18N.normalizeDate(new Date(customer.get('loaded'))));
         bpToSave.set('json', JSON.stringify(this.customer.serializeEditedToJSON()));

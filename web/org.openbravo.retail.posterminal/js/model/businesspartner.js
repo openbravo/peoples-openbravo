@@ -142,7 +142,6 @@
       editedBp.set('id', this.get('id'));
       editedBp.set('locId', this.get('locId'));
       editedBp.set('contactId', this.get('contactId'));
-      editedBp.set('updated', this.get('updated'));
       editedBp.set('timezoneOffset', this.get('timezoneOffset'));
       editedBp.set('loaded', this.get('loaded'));
       editedBp.set('posTerminal', this.get('posTerminal'));
@@ -292,10 +291,6 @@
   }, {
     name: 'priceListName',
     column: 'priceListName',
-    type: 'TEXT'
-  }, {
-    name: 'updated',
-    column: 'updated',
     type: 'TEXT'
   }, {
     name: 'loaded',

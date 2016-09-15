@@ -229,13 +229,9 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       if (jsonorder.getBoolean("isLayaway")) {
         order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
 
-        final Date updated = OBMOBCUtils.calculateClientDatetime(jsonorder.getString("updated"),
-            Long.parseLong(jsonorder.getString("timezoneOffset")));
-
         final Date loaded = OBMOBCUtils.calculateClientDatetime(jsonorder.getString("loaded"),
             Long.parseLong(jsonorder.getString("timezoneOffset")));
-
-        if (!((updated.compareTo(order.getUpdated()) >= 0) && (loaded.compareTo(order.getUpdated()) >= 0))) {
+        if (!(loaded.compareTo(order.getUpdated()) >= 0)) {
           throw new OutDatedDataChangeException(Utility.messageBD(new DalConnectionProvider(false),
               "OBPOS_outdatedLayaway", OBContext.getOBContext().getLanguage().getLanguage()));
         }
@@ -548,7 +544,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       throws JSONException {
     Long value = jsonorder.getLong("created");
     order.set("creationDate", new Date(value));
-    order.set("updated", new Date(value));
     if (invoice != null) {
       invoice.set("creationDate", new Date(value));
     }
