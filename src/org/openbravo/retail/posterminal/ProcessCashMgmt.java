@@ -60,7 +60,10 @@ public class ProcessCashMgmt extends POSDataSynchronizationProcess implements
     String cashupId = jsonsent.getString("cashup_id");
     OBPOSAppCashup cashup = OBDal.getInstance().get(OBPOSAppCashup.class, cashupId);
     if (cashup == null) {
-      throw new OBException("The cashup with ID '" + jsonsent.getString("cashup_id") + "' does not exists in the system. Please synchronize it first and then process this entry.");
+      throw new OBException(
+          "The cashup with ID '"
+              + jsonsent.getString("cashup_id")
+              + "' does not exists in the system. Please synchronize it first and then process this entry.");
     }
     TerminalTypePaymentMethod terminalPaymentMethod = paymentMethod.getPaymentMethod();
     GLItem glItemMain;
@@ -150,12 +153,13 @@ public class ProcessCashMgmt extends POSDataSynchronizationProcess implements
       if (type.equals("deposit")) {
         secondTransaction.setPaymentAmount(origAmount);
         secondAccount.setCurrentBalance(secondAccount.getCurrentBalance().subtract(origAmount));
+        secondTransaction.setTransactionType("BPD");
       } else {
         secondTransaction.setDepositAmount(origAmount);
         secondAccount.setCurrentBalance(secondAccount.getCurrentBalance().add(origAmount));
+        secondTransaction.setTransactionType("BPW");
       }
       secondTransaction.setProcessed(true);
-      secondTransaction.setTransactionType("BPW");
       secondTransaction.setDescription(description);
       secondTransaction.setDateAcct(cashMgmtTrxDate);
       secondTransaction.setTransactionDate(cashMgmtTrxDate);
