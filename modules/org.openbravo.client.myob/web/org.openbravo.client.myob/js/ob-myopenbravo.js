@@ -289,6 +289,11 @@ isc.OBMyOpenbravo.addProperties({
       height: 10
     }));
 
+    if (this.isFullScreenReaderPreferenceEnabled()) {
+      adminOtherMyOBLayout.canFocus = true;
+      addWidgetLayout.canFocus = true;
+      refreshLayout.canFocus = true;
+    }
     this.leftColumnLayout.recentViewsLayout = recentViewsLayout;
     this.leftColumnLayout.recentDocumentsLayout = recentDocumentsLayout;
     this.leftColumnLayout.addWidgetLayout = addWidgetLayout;
@@ -506,7 +511,9 @@ isc.OBMyOpenbravo.addProperties({
             iconOrientation: 'left',
             icon: icon
           });
-
+          if (this.isFullScreenReaderPreferenceEnabled()) {
+            lbl.canFocus = true;
+          }
           entryLayout = isc.HLayout.create({
             defaultLayoutAlign: 'center',
             width: '100%',
@@ -585,6 +592,9 @@ isc.OBMyOpenbravo.addProperties({
             icon: OB.Styles.OBMyOpenbravo.recentDocumentsLayout.Label.icon
           });
 
+          if (this.isFullScreenReaderPreferenceEnabled()) {
+            lbl.canFocus = true;
+          }
           entryLayout = isc.HLayout.create({
             defaultLayoutAlign: 'center',
             width: '100%'
@@ -958,6 +968,10 @@ isc.OBMyOpenbravo.addProperties({
     this.portalLayout.getMembers()[0].removeAllRows();
     this.portalLayout.getMembers()[1].removeAllRows();
     this.notifyEvent('RELOAD_WIDGETS');
+  },
+
+  isFullScreenReaderPreferenceEnabled: function () {
+    return OB.Properties.EnableFullScreenReader && OB.Properties.EnableFullScreenReader === 'Y';
   }
 });
 
