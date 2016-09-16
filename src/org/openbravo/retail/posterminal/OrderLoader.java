@@ -319,7 +319,9 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
           order.setObposAppCashup(jsonorder.getString("obposAppCashup"));
           order.setDelivered(true);
-
+          if (jsonorder.has("oBPOSNotInvoiceOnCashUp")) {
+            order.setOBPOSNotInvoiceOnCashUp(jsonorder.getBoolean("oBPOSNotInvoiceOnCashUp"));
+          }
           String olsHqlWhereClause = " ol where ol.salesOrder.id = :orderId order by lineNo";
           OBQuery<OrderLine> queryOls = OBDal.getInstance().createQuery(OrderLine.class,
               olsHqlWhereClause);
@@ -335,6 +337,9 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
           if (!jsonorder.has("channel")) {
             order.setObposAppCashup(jsonorder.getString("obposAppCashup"));
+          }
+          if (jsonorder.has("oBPOSNotInvoiceOnCashUp")) {
+            order.setOBPOSNotInvoiceOnCashUp(jsonorder.getBoolean("oBPOSNotInvoiceOnCashUp"));
           }
         } else {
           order = OBProvider.getInstance().get(Order.class);
