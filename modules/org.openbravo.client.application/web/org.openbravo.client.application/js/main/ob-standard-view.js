@@ -2161,8 +2161,15 @@ isc.OBStandardView.addProperties({
   },
 
   executePreDeleteActions: function (deleteRowCallback) {
-    var eventHandlerParams = {};
-    eventHandlerParams.selectedRecords = isc.clone(this.viewGrid.getSelectedRecords());
+    var eventHandlerParams = {},
+        currentGrid;
+
+    if (this.isShowingTree) {
+      currentGrid = this.treeGrid;
+    } else {
+      currentGrid = this.viewGrid;
+    }
+    eventHandlerParams.recordsToDelete = isc.clone(currentGrid.getSelection());
     this.callClientEventHandlerActions(OB.EventHandlerRegistry.PREDELETE, eventHandlerParams, deleteRowCallback, true);
   },
 
@@ -2179,19 +2186,21 @@ isc.OBStandardView.addProperties({
 
   callClientEventHandlerActions: function (actionType, extraParameters, callback, executeCallback) {
     var params;
-    if (this.existsAction(actionType)) {
-      params = {
-        tabId: this.tabId,
-        actionType: actionType,
-        view: this,
-        form: this.viewForm,
-        grid: this.viewGrid,
-        extraParameters: extraParameters,
-        callback: callback
-      };
-      OB.EventHandlerRegistry.call(params);
-    } else if (executeCallback) {
-      callback();
+    if (isc.A.Function(callback)) {
+      if (this.existsAction(actionType)) {
+        params = {
+          tabId: this.tabId,
+          actionType: actionType,
+          view: this,
+          form: this.viewForm,
+          grid: this.viewGrid,
+          extraParameters: extraParameters,
+          callback: callback
+        };
+        OB.EventHandlerRegistry.call(params);
+      } else if (executeCallback) {
+        callback();
+      }
     }
   },
 
