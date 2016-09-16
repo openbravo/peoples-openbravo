@@ -91,6 +91,8 @@ isc.OBMyOpenbravo.addProperties({
   adminMode: false,
   adminLevel: '',
   adminLevelValue: '',
+
+
   createLeftColumnLayout: function () {
     var me = this,
         i, recentViewsLayout, recentViewsLinksLayout, recentDocumentsLayout, recentDocumentsLinksLayout, addWidgetLayout, adminOtherMyOBLayout, refreshLayout;
@@ -291,8 +293,11 @@ isc.OBMyOpenbravo.addProperties({
 
     if (this.isFullScreenReaderPreferenceEnabled()) {
       adminOtherMyOBLayout.canFocus = true;
+      adminOtherMyOBLayout.handleKeyPress = this.handleKeyPressFunctionForLayouts;
       addWidgetLayout.canFocus = true;
+      addWidgetLayout.handleKeyPress = this.handleKeyPressFunctionForLayouts;
       refreshLayout.canFocus = true;
+      refreshLayout.handleKeyPress = this.handleKeyPressFunctionForLayouts;
     }
     this.leftColumnLayout.recentViewsLayout = recentViewsLayout;
     this.leftColumnLayout.recentDocumentsLayout = recentDocumentsLayout;
@@ -441,7 +446,7 @@ isc.OBMyOpenbravo.addProperties({
 
   setRecentList: function (layout) {
     var recentList, newRecent, handleClickFunction, recentIndex = 0,
-        recent, lbl, newIcon, entryLayout, icon, destroyFunction;
+        recent, lbl, newIcon, entryLayout, icon, destroyFunction, handleEnterKeyPressFunction;
 
     // start with a fresh content
     layout.destroyAndRemoveMembers(layout.members);
@@ -465,6 +470,27 @@ isc.OBMyOpenbravo.addProperties({
           }
         } else {
           OB.Layout.ViewManager.openView('OBClassicWindow', this.recent);
+        }
+      };
+
+      handleEnterKeyPressFunction = function () {
+        var keyName = isc.EH.lastEvent.keyName;
+        if (keyName === 'Enter') {
+          if (this.recent.viewId) {
+            if (this.recent.openLinkInBrowser && this.recent.viewId === 'OBExternalPage') {
+              if (this.recent.contentsURL.indexOf('://') === -1) {
+                this.recent.contentsURL = 'http://' + this.recent.contentsURL;
+              }
+              OB.ViewManager.recentManager.addRecent('OBUIAPP_RecentViewList', isc.addProperties({
+                icon: OB.Styles.OBApplicationMenu.Icons.externalLink
+              }, this.recent));
+              window.open(this.recent.contentsURL);
+            } else {
+              OB.Layout.ViewManager.openView(this.recent.viewId, this.recent);
+            }
+          } else {
+            OB.Layout.ViewManager.openView('OBClassicWindow', this.recent);
+          }
         }
       };
 
@@ -513,6 +539,7 @@ isc.OBMyOpenbravo.addProperties({
           });
           if (this.isFullScreenReaderPreferenceEnabled()) {
             lbl.canFocus = true;
+            lbl.handleKeyPress = handleEnterKeyPressFunction;
           }
           entryLayout = isc.HLayout.create({
             defaultLayoutAlign: 'center',
@@ -555,7 +582,7 @@ isc.OBMyOpenbravo.addProperties({
 
   setRecentDocumentsList: function (layout) {
     var recentList, newRecent, recentIndex = 0,
-        recent, lbl, newIcon, entryLayout, icon, handleClickFunction;
+        recent, lbl, newIcon, entryLayout, icon, handleClickFunction, handleEnterKeyPressFunction;
 
     // start with a fresh content
     layout.destroyAndRemoveMembers(layout.members);
@@ -571,6 +598,16 @@ isc.OBMyOpenbravo.addProperties({
         }
         //Direct set to true in order to open just the record selected
         OB.Layout.ViewManager.openView(this.recent.viewId, this.recent, null, true);
+      };
+
+      handleEnterKeyPressFunction = function () {
+        var keyName = isc.EH.lastEvent.keyName;
+        if (keyName === 'Enter') {
+          if (this.recent) {
+            this.recent.id = this.recent.targetTabId;
+          }
+          OB.Layout.ViewManager.openView(this.recent.viewId, this.recent, null, true);
+        }
       };
 
       for (; recentIndex < recentList.length; recentIndex++) {
@@ -594,6 +631,7 @@ isc.OBMyOpenbravo.addProperties({
 
           if (this.isFullScreenReaderPreferenceEnabled()) {
             lbl.canFocus = true;
+            lbl.handleKeyPress = handleEnterKeyPressFunction;
           }
           entryLayout = isc.HLayout.create({
             defaultLayoutAlign: 'center',
@@ -972,6 +1010,13 @@ isc.OBMyOpenbravo.addProperties({
 
   isFullScreenReaderPreferenceEnabled: function () {
     return OB.Properties.EnableFullScreenReader && OB.Properties.EnableFullScreenReader === 'Y';
+  },
+
+  handleKeyPressFunctionForLayouts: function () {
+    var keyName = isc.EH.lastEvent.keyName;
+    if (keyName === 'Enter') {
+      this.getMember(0).action();
+    }
   }
 });
 
