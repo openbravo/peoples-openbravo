@@ -2186,21 +2186,19 @@ isc.OBStandardView.addProperties({
 
   callClientEventHandlerActions: function (actionType, extraParameters, callback, executeCallback) {
     var params;
-    if (isc.A.Function(callback)) {
-      if (this.existsAction(actionType)) {
-        params = {
-          tabId: this.tabId,
-          actionType: actionType,
-          view: this,
-          form: this.viewForm,
-          grid: this.viewGrid,
-          extraParameters: extraParameters,
-          callback: callback
-        };
-        OB.EventHandlerRegistry.call(params);
-      } else if (executeCallback) {
-        callback();
-      }
+    if (this.existsAction(actionType)) {
+      params = {
+        tabId: this.tabId,
+        actionType: actionType,
+        view: this,
+        form: this.viewForm,
+        grid: this.viewGrid,
+        extraParameters: extraParameters,
+        callback: callback
+      };
+      OB.EventHandlerRegistry.call(params);
+    } else if (executeCallback && isc.A.Function(callback)) {
+      callback();
     }
   },
 
