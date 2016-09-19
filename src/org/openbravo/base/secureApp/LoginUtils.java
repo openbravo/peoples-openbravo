@@ -276,15 +276,28 @@ public class LoginUtils {
       vars.setSessionValue("#Client_SMTP", data[0].smtphost);
       data = null;
 
+      // Get General Ledger of login organization
       AttributeData[] attr = null;
-      String[] orgList = Utility.getContext(conn, vars, "#User_Org", "LoginHandler").split(",");
-      for (String orgId : orgList) {
-        String acctSchemaId = OBLedgerUtils.getOrgLedger(orgId.replace("'", ""));
-        if (StringUtils.isNotEmpty(acctSchemaId)) {
-          attr = AttributeData.selectAcctSchema(conn, acctSchemaId,
-              Utility.getContext(conn, vars, "#User_Client", "LoginHandler"));
-          if (ArrayUtils.isNotEmpty(attr)) {
-            break;
+      String acctSchemaId = OBLedgerUtils.getOrgLedger(strOrg);
+      if (StringUtils.isNotEmpty(acctSchemaId)) {
+        attr = AttributeData.selectAcctSchema(conn, acctSchemaId,
+            Utility.getContext(conn, vars, "#User_Client", "LoginHandler"));
+      }
+
+      // Get General Ledger of context organizations
+      if (ArrayUtils.isEmpty(attr)) {
+        String[] orgList = Utility.getContext(conn, vars, "#User_Org", "LoginHandler")
+            .replace("'", "").split(",");
+        for (String orgId : orgList) {
+          if (!StringUtils.equals(orgId, strOrg)) {
+            acctSchemaId = OBLedgerUtils.getOrgLedger(orgId);
+            if (StringUtils.isNotEmpty(acctSchemaId)) {
+              attr = AttributeData.selectAcctSchema(conn, acctSchemaId,
+                  Utility.getContext(conn, vars, "#User_Client", "LoginHandler"));
+              if (ArrayUtils.isNotEmpty(attr)) {
+                break;
+              }
+            }
           }
         }
       }
