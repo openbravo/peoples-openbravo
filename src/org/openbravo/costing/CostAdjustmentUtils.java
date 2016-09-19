@@ -411,6 +411,11 @@ public class CostAdjustmentUtils {
     // Include only transactions that have its cost calculated. Should be all.
     select.append("   and trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = true");
     if (existsCumulatedStockOnTrxDate) {
+      if (costingRule.isBackdatedTransactionsFixed()) {
+        select
+            .append(" and (trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " > :movementdate");
+        select.append(" or (trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " = :movementdate");
+      }
       select.append(" and (trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
           + " > :dateFrom");
       select.append(" or (trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
@@ -421,6 +426,9 @@ public class CostAdjustmentUtils {
       select.append(" or (trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " = :ctrxqty");
       select.append(" and trx." + MaterialTransaction.PROPERTY_ID + " > :ctrxid");
       select.append(" ))))))");
+      if (costingRule.isBackdatedTransactionsFixed()) {
+        select.append(" ))");
+      }
     }
     select.append("  and ( ");
 
@@ -488,6 +496,9 @@ public class CostAdjustmentUtils {
     trxQry.setParameter("trxid", trx.getId());
 
     if (existsCumulatedStockOnTrxDate) {
+      if (costingRule.isBackdatedTransactionsFixed()) {
+        trxQry.setParameter("movementdate", costing.getInventoryTransaction().getMovementDate());
+      }
       trxQry.setParameter("dateFrom", costing.getStartingDate());
       trxQry.setParameter("ctrxtypeprio", getTrxTypePrio(ctrx.getMovementType()));
       trxQry.setParameter("ctrxqty", ctrx.getMovementQuantity());
@@ -729,6 +740,11 @@ public class CostAdjustmentUtils {
     // Include only transactions that have its cost calculated
     select.append("  and trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = true");
     if (existsCumulatedValuationOnTrxDate) {
+      if (costingRule.isBackdatedTransactionsFixed()) {
+        select
+            .append(" and (trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " > :movementdate");
+        select.append(" or (trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " = :movementdate");
+      }
       select.append(" and (trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
           + " > :dateFrom");
       select.append(" or (trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
@@ -739,6 +755,9 @@ public class CostAdjustmentUtils {
       select.append(" or (trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " = :ctrxqty");
       select.append(" and trx." + MaterialTransaction.PROPERTY_ID + " > :ctrxid");
       select.append(" ))))))");
+      if (costingRule.isBackdatedTransactionsFixed()) {
+        select.append("))");
+      }
     }
     select.append("  and (");
 
@@ -803,6 +822,9 @@ public class CostAdjustmentUtils {
     trxQry.setParameter("refid", MovementTypeRefID);
     trxQry.setParameter("product", trx.getProduct());
     if (existsCumulatedValuationOnTrxDate) {
+      if (costingRule.isBackdatedTransactionsFixed()) {
+        trxQry.setParameter("movementdate", costing.getInventoryTransaction().getMovementDate());
+      }
       trxQry.setParameter("dateFrom", costing.getStartingDate());
       trxQry.setParameter("ctrxtypeprio", getTrxTypePrio(ctrx.getMovementType()));
       trxQry.setParameter("ctrxqty", ctrx.getMovementQuantity());
