@@ -209,7 +209,8 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
         Costing curCosting = basetrx.getMaterialMgmtCostingList().get(0);
 
         if (curCosting.getCost().compareTo(cost) != 0
-            || curCosting.getTotalMovementQuantity().compareTo(currentStock) != 0) {
+            || (curCosting.getTotalMovementQuantity() != null && curCosting
+                .getTotalMovementQuantity().compareTo(currentStock) != 0)) {
           curCosting.setPermanent(Boolean.FALSE);
           OBDal.getInstance().save(curCosting);
           OBDal.getInstance().flush();
@@ -221,8 +222,8 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
             curCosting.setCost(cost);
             curCosting.setPrice(trxPrice);
           }
-          curCosting.setTotalMovementQuantity(currentStock);
-          curCosting.setTotalStockValuation(currentValueAmt.add(adjustmentBalance));
+          curCosting.setTotalMovementQuantity(null);
+          curCosting.setTotalStockValuation(null);
           curCosting.setPermanent(Boolean.TRUE);
           OBDal.getInstance().flush();
           OBDal.getInstance().save(curCosting);
@@ -342,8 +343,10 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
                 negCorrAmt.toPlainString(), cost.toPlainString());
           }
 
-          if (curCosting.getCost().compareTo(cost) == 0 && StringUtils.isEmpty(bdCostingId)
-              && curCosting.getTotalMovementQuantity().compareTo(currentStock) == 0) {
+          if (curCosting.getCost().compareTo(cost) == 0
+              && StringUtils.isEmpty(bdCostingId)
+              && (curCosting.getTotalMovementQuantity() != null && curCosting
+                  .getTotalMovementQuantity().compareTo(currentStock) == 0)) {
             // new cost hasn't changed and total movement qty is equal to current stock, following
             // transactions will have the same cost, so no more
             // related transactions are needed to include.
@@ -363,8 +366,8 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
               curCosting.setPrice(trxPrice);
               curCosting.setCost(cost);
             }
-            curCosting.setTotalMovementQuantity(currentStock);
-            curCosting.setTotalStockValuation(currentValueAmt.add(adjustmentBalance));
+            curCosting.setTotalMovementQuantity(null);
+            curCosting.setTotalStockValuation(null);
             curCosting.setPermanent(Boolean.TRUE);
             OBDal.getInstance().save(curCosting);
           }
@@ -418,8 +421,8 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
                 curCosting.setPrice(trxPrice);
                 curCosting.setCost(cost);
               }
-              curCosting.setTotalMovementQuantity(currentStock);
-              curCosting.setTotalStockValuation(currentValueAmt.add(adjustmentBalance));
+              curCosting.setTotalMovementQuantity(null);
+              curCosting.setTotalStockValuation(null);
               curCosting.setPermanent(Boolean.TRUE);
               OBDal.getInstance().save(curCosting);
             }
@@ -453,8 +456,8 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
         }
         currentCosting.setPrice(cost);
         currentCosting.setCost(cost);
-        currentCosting.setTotalMovementQuantity(currentStock);
-        currentCosting.setTotalStockValuation(currentValueAmt.add(adjustmentBalance));
+        currentCosting.setTotalMovementQuantity(null);
+        currentCosting.setTotalStockValuation(null);
         currentCosting.setManual(Boolean.FALSE);
         currentCosting.setPermanent(Boolean.TRUE);
         OBDal.getInstance().save(currentCosting);
