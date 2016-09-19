@@ -2238,6 +2238,8 @@
               businessPartner.set('locationModel', location);
               me.set('bp', businessPartner);
               me.save();
+              // copy the modelOrder again, as the get/save are async
+              OB.MobileApp.model.orderList.saveCurrent();
             }, function () {
               OB.error(arguments);
             });
@@ -2250,6 +2252,8 @@
           OB.Dal.saveIfNew(businessPartner.get('locationModel'), function () {
             me.set('bp', businessPartner);
             me.save();
+            // copy the modelOrder again, as saveIfNew is possibly async
+            OB.MobileApp.model.orderList.saveCurrent();
           }, function () {
             OB.error(arguments);
           });
