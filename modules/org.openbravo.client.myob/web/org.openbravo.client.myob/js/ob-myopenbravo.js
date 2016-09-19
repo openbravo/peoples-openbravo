@@ -476,21 +476,7 @@ isc.OBMyOpenbravo.addProperties({
       handleEnterKeyPressFunction = function () {
         var keyName = isc.EH.lastEvent.keyName;
         if (keyName === 'Enter') {
-          if (this.recent.viewId) {
-            if (this.recent.openLinkInBrowser && this.recent.viewId === 'OBExternalPage') {
-              if (this.recent.contentsURL.indexOf('://') === -1) {
-                this.recent.contentsURL = 'http://' + this.recent.contentsURL;
-              }
-              OB.ViewManager.recentManager.addRecent('OBUIAPP_RecentViewList', isc.addProperties({
-                icon: OB.Styles.OBApplicationMenu.Icons.externalLink
-              }, this.recent));
-              window.open(this.recent.contentsURL);
-            } else {
-              OB.Layout.ViewManager.openView(this.recent.viewId, this.recent);
-            }
-          } else {
-            OB.Layout.ViewManager.openView('OBClassicWindow', this.recent);
-          }
+          return this.handleClick();
         }
       };
 
@@ -603,10 +589,7 @@ isc.OBMyOpenbravo.addProperties({
       handleEnterKeyPressFunction = function () {
         var keyName = isc.EH.lastEvent.keyName;
         if (keyName === 'Enter') {
-          if (this.recent) {
-            this.recent.id = this.recent.targetTabId;
-          }
-          OB.Layout.ViewManager.openView(this.recent.viewId, this.recent, null, true);
+          this.handleClick();
         }
       };
 
