@@ -363,8 +363,8 @@ public class CostingUtils {
     Set<String> orgs = OBContext.getOBContext().getOrganizationStructureProvider()
         .getChildTree(costorg.getId(), true);
 
-    boolean existsCumulatedStock = costing != null && costing.getInventoryTransaction() != null
-        && costing.getTotalMovementQuantity() != null;
+    MaterialTransaction ctrx = costing != null ? costing.getInventoryTransaction() : null;
+    boolean existsCumulatedStock = ctrx != null && costing.getTotalMovementQuantity() != null;
 
     StringBuffer select = new StringBuffer();
     select
@@ -387,11 +387,11 @@ public class CostingUtils {
           + " > :dateFrom");
       select.append(" or (trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
           + " = :dateFrom");
-      select.append(" and (trxtype." + CostAdjustmentUtils.propADListPriority + " > :trxTypePrio");
-      select.append(" or (trxtype." + CostAdjustmentUtils.propADListPriority + " = :trxTypePrio");
-      select.append(" and (trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " < :trxQty");
-      select.append(" or (trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " = :trxQty");
-      select.append(" and trx." + MaterialTransaction.PROPERTY_ID + " > :trxId");
+      select.append(" and (trxtype." + CostAdjustmentUtils.propADListPriority + " > :ctrxtypeprio");
+      select.append(" or (trxtype." + CostAdjustmentUtils.propADListPriority + " = :ctrxtypeprio");
+      select.append(" and (trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " < :ctrxqty");
+      select.append(" or (trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " = :ctrxqty");
+      select.append(" and trx." + MaterialTransaction.PROPERTY_ID + " > :ctrxid");
       select.append(" ))))))");
     }
     // Include only transactions that have its cost calculated
@@ -406,10 +406,10 @@ public class CostingUtils {
     if (existsCumulatedStock) {
       trxQry.setParameter("refid", CostAdjustmentUtils.MovementTypeRefID);
       trxQry.setParameter("dateFrom", costing.getStartingDate());
-      trxQry.setParameter("trxTypePrio",
-          CostAdjustmentUtils.getTrxTypePrio(costing.getInventoryTransaction().getMovementType()));
-      trxQry.setParameter("trxQty", costing.getInventoryTransaction().getMovementQuantity());
-      trxQry.setParameter("trxId", costing.getInventoryTransaction().getId());
+      trxQry.setParameter("ctrxtypeprio",
+          CostAdjustmentUtils.getTrxTypePrio(ctrx.getMovementType()));
+      trxQry.setParameter("ctrxqty", ctrx.getMovementQuantity());
+      trxQry.setParameter("ctrxid", ctrx.getId());
     }
     if (costDimensions.get(CostDimension.Warehouse) != null) {
       trxQry.setParameter("warehouse", costDimensions.get(CostDimension.Warehouse).getId());
@@ -448,8 +448,8 @@ public class CostingUtils {
     Set<String> orgs = OBContext.getOBContext().getOrganizationStructureProvider()
         .getChildTree(costorg.getId(), true);
 
-    boolean existsCumulatedValuation = costing != null && costing.getInventoryTransaction() != null
-        && costing.getTotalStockValuation() != null;
+    MaterialTransaction ctrx = costing != null ? costing.getInventoryTransaction() : null;
+    boolean existsCumulatedValuation = ctrx != null && costing.getTotalStockValuation() != null;
 
     StringBuffer select = new StringBuffer();
     select.append(" select sum(case");
@@ -479,11 +479,11 @@ public class CostingUtils {
           + " > :dateFrom");
       select.append(" or (trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
           + " = :dateFrom");
-      select.append(" and (trxtype." + CostAdjustmentUtils.propADListPriority + " > :trxTypePrio");
-      select.append(" or (trxtype." + CostAdjustmentUtils.propADListPriority + " = :trxTypePrio");
-      select.append(" and (trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " < :trxQty");
-      select.append(" or (trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " = :trxQty");
-      select.append(" and trx." + MaterialTransaction.PROPERTY_ID + " > :trxId");
+      select.append(" and (trxtype." + CostAdjustmentUtils.propADListPriority + " > :ctrxtypeprio");
+      select.append(" or (trxtype." + CostAdjustmentUtils.propADListPriority + " = :ctrxtypeprio");
+      select.append(" and (trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " < :ctrxqty");
+      select.append(" or (trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " = :ctrxqty");
+      select.append(" and trx." + MaterialTransaction.PROPERTY_ID + " > :ctrxid");
       select.append(" ))))))");
     }
     // Include only transactions that have its cost calculated
@@ -501,10 +501,10 @@ public class CostingUtils {
     if (existsCumulatedValuation) {
       trxQry.setParameter("refid", CostAdjustmentUtils.MovementTypeRefID);
       trxQry.setParameter("dateFrom", costing.getStartingDate());
-      trxQry.setParameter("trxTypePrio",
-          CostAdjustmentUtils.getTrxTypePrio(costing.getInventoryTransaction().getMovementType()));
-      trxQry.setParameter("trxQty", costing.getInventoryTransaction().getMovementQuantity());
-      trxQry.setParameter("trxId", costing.getInventoryTransaction().getId());
+      trxQry.setParameter("ctrxtypeprio",
+          CostAdjustmentUtils.getTrxTypePrio(ctrx.getMovementType()));
+      trxQry.setParameter("ctrxqty", ctrx.getMovementQuantity());
+      trxQry.setParameter("ctrxid", ctrx.getId());
     }
     if (costDimensions.get(CostDimension.Warehouse) != null) {
       trxQry.setParameter("warehouse", costDimensions.get(CostDimension.Warehouse).getId());
