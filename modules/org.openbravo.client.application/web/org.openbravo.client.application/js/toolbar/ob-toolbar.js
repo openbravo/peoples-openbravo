@@ -387,6 +387,7 @@ isc.OBToolbar.addClassProperties({
     disabled: false,
     buttonType: 'attach',
     sortPosition: 90,
+    title: this.prompt = OB.I18N.getLabel('OBUIAPP_CreateAttachments'),
     updateState: function () {
       var selectedRows = this.view.viewGrid.getSelectedRecords();
       var attachmentExists = this.view.attachmentExists;
@@ -1578,7 +1579,7 @@ isc.OBToolbarIconButton.addProperties({
   showFocused: true,
   showDown: true,
   showFocusedAsOver: false,
-  title: '.',
+  title: '',
   showHover: true,
   customState: '',
   showMenuButtonImage: false,

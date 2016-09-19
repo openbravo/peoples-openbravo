@@ -177,6 +177,7 @@
     },
     disabled: false,
     buttonType: 'manageviews',
+    title: OB.I18N.getLabel('OBUIAPP_ManageViews_Toolbar_Button'),
     prompt: OB.I18N.getLabel('OBUIAPP_ManageViews_Toolbar_Button'),
     updateState: function () {
       this.resetBaseStyle();
