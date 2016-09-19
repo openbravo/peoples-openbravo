@@ -150,12 +150,16 @@ public class DocFINPayment extends AcctServer {
         // details if header is null
         BusinessPartner bPartner = paymentDetail.getFINPaymentScheduleDetailList().get(0)
             .getBusinessPartner() != null ? paymentDetail.getFINPaymentScheduleDetailList().get(0)
-            .getBusinessPartner() : (payment.getBusinessPartner() != null ? payment
-            .getBusinessPartner() : (paymentDetail.getFINPaymentScheduleDetailList().get(0)
-            .getInvoicePaymentSchedule() != null ? paymentDetail.getFINPaymentScheduleDetailList()
-            .get(0).getInvoicePaymentSchedule().getInvoice().getBusinessPartner() : paymentDetail
-            .getFINPaymentScheduleDetailList().get(0).getOrderPaymentSchedule().getOrder()
-            .getBusinessPartner()));
+            .getBusinessPartner()
+            : payment.getBusinessPartner() != null ? payment.getBusinessPartner()
+                : paymentDetail.getFINPaymentScheduleDetailList().get(0)
+                    .getInvoicePaymentSchedule() != null ? paymentDetail
+                    .getFINPaymentScheduleDetailList().get(0).getInvoicePaymentSchedule()
+                    .getInvoice().getBusinessPartner()
+                    : paymentDetail.getFINPaymentScheduleDetailList().get(0)
+                        .getOrderPaymentSchedule() != null ? paymentDetail
+                        .getFINPaymentScheduleDetailList().get(0).getOrderPaymentSchedule()
+                        .getOrder().getBusinessPartner() : null;
         FieldProviderFactory.setField(data[i], "cBpartnerId", bPartner != null ? bPartner.getId()
             : "");
         FieldProviderFactory.setField(data[i], "DoubtFulDebtAmount", paymentDetail
