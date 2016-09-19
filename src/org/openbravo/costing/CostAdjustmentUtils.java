@@ -399,27 +399,29 @@ public class CostAdjustmentUtils {
     StringBuffer select = new StringBuffer();
     select
         .append(" select sum(trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + ") as stock");
+
     select.append("\n from " + MaterialTransaction.ENTITY_NAME + " as trx");
     if (costDimensions.get(CostDimension.Warehouse) != null) {
       select.append("\n join trx." + MaterialTransaction.PROPERTY_STORAGEBIN + " as locator");
     }
     select.append("\n , " + org.openbravo.model.ad.domain.List.ENTITY_NAME + " as trxtype");
+
     select.append("\n where trxtype." + propADListReference + ".id = :refid");
     select.append("  and trxtype." + propADListValue + " = trx."
         + MaterialTransaction.PROPERTY_MOVEMENTTYPE);
     select.append("   and trx." + MaterialTransaction.PROPERTY_PRODUCT + " = :product");
     // Include only transactions that have its cost calculated. Should be all.
     select.append("   and trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = true");
+
     if (existsCumulatedStockOnTrxDate) {
       if (costingRule.isBackdatedTransactionsFixed()) {
-        select
-            .append(" and (trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " > :movementdate");
-        select.append(" or (trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " = :movementdate");
+        select.append(" and (trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " > :cmvtdate");
+        select.append(" or (trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " = :cmvtdate");
       }
       select.append(" and (trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
-          + " > :dateFrom");
+          + " > :ctrxdate");
       select.append(" or (trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
-          + " = :dateFrom");
+          + " = :ctrxdate");
       select.append(" and (trxtype." + CostAdjustmentUtils.propADListPriority + " > :ctrxtypeprio");
       select.append(" or (trxtype." + CostAdjustmentUtils.propADListPriority + " = :ctrxtypeprio");
       select.append(" and (trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " < :ctrxqty");
@@ -430,6 +432,7 @@ public class CostAdjustmentUtils {
         select.append(" ))");
       }
     }
+
     select.append("  and ( ");
 
     if (costingRule.isBackdatedTransactionsFixed()) {
@@ -453,17 +456,16 @@ public class CostAdjustmentUtils {
     select.append("         trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " = :trxqty");
     select.append("         and trx." + MaterialTransaction.PROPERTY_ID + " <= :trxid");
     select.append("   ))))");
+
     if (costingRule.isBackdatedTransactionsFixed()) {
       select.append(" )) or (");
-
       select.append("  trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " >= :fixbdt");
       select.append("  and (");
       select.append("   trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " < :mvtdate");
       select.append("   or (");
       select.append("    trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " = :mvtdate");
       // If there are more than one trx on the same trx process date filter out those types with
-      // less
-      // priority and / or higher quantity.
+      // less priority and / or higher quantity.
       select.append("    and (");
       select.append("     trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
           + " < :trxdate");
@@ -482,11 +484,15 @@ public class CostAdjustmentUtils {
       select.append("    ))))");
       select.append("   ))))");
     }
+
     select.append("  )");
+
     if (costDimensions.get(CostDimension.Warehouse) != null) {
       select.append("  and locator." + Locator.PROPERTY_WAREHOUSE + ".id = :warehouse");
     }
+
     select.append("   and trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
+
     Query trxQry = OBDal.getInstance().getSession().createQuery(select.toString());
     trxQry.setParameter("refid", MovementTypeRefID);
     trxQry.setParameter("product", trx.getProduct());
@@ -494,12 +500,13 @@ public class CostAdjustmentUtils {
     trxQry.setParameter("trxtypeprio", getTrxTypePrio(trx.getMovementType()));
     trxQry.setParameter("trxqty", trx.getMovementQuantity());
     trxQry.setParameter("trxid", trx.getId());
+    trxQry.setParameterList("orgs", orgs);
 
     if (existsCumulatedStockOnTrxDate) {
       if (costingRule.isBackdatedTransactionsFixed()) {
-        trxQry.setParameter("movementdate", costing.getInventoryTransaction().getMovementDate());
+        trxQry.setParameter("cmvtdate", ctrx.getMovementDate());
       }
-      trxQry.setParameter("dateFrom", costing.getStartingDate());
+      trxQry.setParameter("ctrxdate", ctrx.getTransactionProcessDate());
       trxQry.setParameter("ctrxtypeprio", getTrxTypePrio(ctrx.getMovementType()));
       trxQry.setParameter("ctrxqty", ctrx.getMovementQuantity());
       trxQry.setParameter("ctrxid", ctrx.getId());
@@ -513,7 +520,7 @@ public class CostAdjustmentUtils {
     if (costDimensions.get(CostDimension.Warehouse) != null) {
       trxQry.setParameter("warehouse", costDimensions.get(CostDimension.Warehouse).getId());
     }
-    trxQry.setParameterList("orgs", orgs);
+
     BigDecimal stock = (BigDecimal) trxQry.uniqueResult();
     if (stock == null) {
       stock = BigDecimal.ZERO;
@@ -732,23 +739,23 @@ public class CostAdjustmentUtils {
       select.append("\n  join trx." + MaterialTransaction.PROPERTY_STORAGEBIN + " as locator");
     }
     select.append("\n , " + org.openbravo.model.ad.domain.List.ENTITY_NAME + " as trxtype");
+
     select.append("\n where trxtype." + propADListReference + ".id = :refid");
     select.append("  and trxtype." + propADListValue + " = trx."
         + MaterialTransaction.PROPERTY_MOVEMENTTYPE);
-
     select.append("  and trx." + MaterialTransaction.PROPERTY_PRODUCT + " = :product");
     // Include only transactions that have its cost calculated
     select.append("  and trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = true");
+
     if (existsCumulatedValuationOnTrxDate) {
       if (costingRule.isBackdatedTransactionsFixed()) {
-        select
-            .append(" and (trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " > :movementdate");
-        select.append(" or (trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " = :movementdate");
+        select.append(" and (trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " > :cmvtdate");
+        select.append(" or (trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " = :cmvtdate");
       }
       select.append(" and (trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
-          + " > :dateFrom");
+          + " > :ctrxdate");
       select.append(" or (trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
-          + " = :dateFrom");
+          + " = :ctrxdate");
       select.append(" and (trxtype." + CostAdjustmentUtils.propADListPriority + " > :ctrxtypeprio");
       select.append(" or (trxtype." + CostAdjustmentUtils.propADListPriority + " = :ctrxtypeprio");
       select.append(" and (trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " < :ctrxqty");
@@ -756,9 +763,10 @@ public class CostAdjustmentUtils {
       select.append(" and trx." + MaterialTransaction.PROPERTY_ID + " > :ctrxid");
       select.append(" ))))))");
       if (costingRule.isBackdatedTransactionsFixed()) {
-        select.append("))");
+        select.append(" ))");
       }
     }
+
     select.append("  and (");
 
     if (costingRule.isBackdatedTransactionsFixed()) {
@@ -766,6 +774,7 @@ public class CostAdjustmentUtils {
           + " < :fixbdt");
       select.append(" and (");
     }
+
     // If there are more than one trx on the same trx process date filter out those types with less
     // priority and / or higher quantity.
     select.append("  trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " < :trxdate");
@@ -785,13 +794,11 @@ public class CostAdjustmentUtils {
       select.append(" )) or (");
       select
           .append("   trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " >= :fixbdt");
-
       select.append("   and (trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " < :mvtdate");
       select.append("   or (");
       select.append("    trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " = :mvtdate");
       // If there are more than one trx on the same trx process date filter out those types with
-      // less
-      // priority and / or higher quantity.
+      // less priority and / or higher quantity.
       select.append(" and (");
       select.append("  trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " < :trxdate");
       select.append("  or (");
@@ -808,11 +815,13 @@ public class CostAdjustmentUtils {
       select.append("  ))))))");
       select.append(" ))");
     }
+
     select.append(" )");
 
     if (costDimensions.get(CostDimension.Warehouse) != null) {
       select.append("  and locator." + Locator.PROPERTY_WAREHOUSE + ".id = :warehouse");
     }
+
     select.append("   and trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
 
     select.append(" group by tc." + TransactionCost.PROPERTY_CURRENCY);
@@ -821,27 +830,30 @@ public class CostAdjustmentUtils {
     Query trxQry = OBDal.getInstance().getSession().createQuery(select.toString());
     trxQry.setParameter("refid", MovementTypeRefID);
     trxQry.setParameter("product", trx.getProduct());
-    if (existsCumulatedValuationOnTrxDate) {
-      if (costingRule.isBackdatedTransactionsFixed()) {
-        trxQry.setParameter("movementdate", costing.getInventoryTransaction().getMovementDate());
-      }
-      trxQry.setParameter("dateFrom", costing.getStartingDate());
-      trxQry.setParameter("ctrxtypeprio", getTrxTypePrio(ctrx.getMovementType()));
-      trxQry.setParameter("ctrxqty", ctrx.getMovementQuantity());
-      trxQry.setParameter("ctrxid", ctrx.getId());
-    }
-    if (costDimensions.get(CostDimension.Warehouse) != null) {
-      trxQry.setParameter("warehouse", costDimensions.get(CostDimension.Warehouse).getId());
-    }
     trxQry.setParameter("trxdate", trx.getTransactionProcessDate());
     trxQry.setParameter("trxtypeprio", getTrxTypePrio(trx.getMovementType()));
     trxQry.setParameter("trxqty", trx.getMovementQuantity());
     trxQry.setParameter("trxid", trx.getId());
+    trxQry.setParameterList("orgs", orgs);
+
+    if (existsCumulatedValuationOnTrxDate) {
+      if (costingRule.isBackdatedTransactionsFixed()) {
+        trxQry.setParameter("cmvtdate", ctrx.getMovementDate());
+      }
+      trxQry.setParameter("ctrxdate", ctrx.getTransactionProcessDate());
+      trxQry.setParameter("ctrxtypeprio", getTrxTypePrio(ctrx.getMovementType()));
+      trxQry.setParameter("ctrxqty", ctrx.getMovementQuantity());
+      trxQry.setParameter("ctrxid", ctrx.getId());
+    }
+
     if (costingRule.isBackdatedTransactionsFixed()) {
       trxQry.setParameter("mvtdate", trx.getMovementDate());
       trxQry.setParameter("fixbdt", CostingUtils.getCostingRuleFixBackdatedFrom(costingRule));
     }
-    trxQry.setParameterList("orgs", orgs);
+
+    if (costDimensions.get(CostDimension.Warehouse) != null) {
+      trxQry.setParameter("warehouse", costDimensions.get(CostDimension.Warehouse).getId());
+    }
 
     ScrollableResults scroll = trxQry.scroll(ScrollMode.FORWARD_ONLY);
     BigDecimal sum = BigDecimal.ZERO;
