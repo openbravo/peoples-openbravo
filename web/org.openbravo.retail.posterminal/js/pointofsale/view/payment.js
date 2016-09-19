@@ -1220,11 +1220,11 @@ enyo.kind({
         style: 'width: 75%; max-width: 50px; height: 25px; margin-left: 10%;'
       }]
     }, {
-      style: 'float: left; width: 15%;',
+      style: 'float: left; width: 15%; text-align: right;',
       components: [{
         name: 'reversePayment',
         kind: 'OB.OBPOSPointOfSale.UI.ReversePayment',
-        style: 'float: left; width: 75%; max-width: 50px; height: 25px; margin-left: 10%;'
+        style: 'width: 75%; max-width: 50px; height: 25px; margin-left: 10%;'
       }]
     }, {
       style: 'clear: both;'
