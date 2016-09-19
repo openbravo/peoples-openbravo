@@ -43,9 +43,9 @@
         and a.ad_org_id in ('1')
         AND PROCESSED='Y'
         AND (PROCESSING='N' OR PROCESSING IS NULL)
-        AND POSTED='N'
-        ORDER BY a.CREATED) A
+        AND POSTED='N') A
         where 1=1
+        AND 2=2 AND 3=3
      ]]>
      </Sql>
      <Parameter name="tableName" type="replace" optional="true" after="SELECT  a." text="C_INVOICE"/>
@@ -53,10 +53,10 @@
      <Parameter name="tableName" type="replace" optional="true" after="FROM " text="C_INVOICE"/>
      <Parameter name="client"/>
      <Parameter name="StrOrg" type="replace" optional="true" after="a.ad_org_id in (" text="'1'"/>
-     <Parameter name="dateColumn" type="replace" optional="true" after="ORDER BY a." text="CREATED"/>
      <Parameter name="dateFrom" optional="true" after="where 1=1"><![CDATA[ AND a.da >= TO_DATE(?)]]></Parameter>
      <Parameter name="dateTo" optional="true" after="where 1=1"><![CDATA[ AND a.da <= TO_DATE(?)]]></Parameter>
-   </SqlMethod>
+     <Parameter name="limit" optional="true" type="replace" after="AND 2=2 " text="AND 3=3"/>
+  </SqlMethod>
   <SqlMethod name="update" type="preparedStatement" return="rowCount">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
@@ -149,6 +149,28 @@
       and c_periodcontrol.periodstatus = 'O'
       and c_period.periodtype <> 'A'
       and c_periodcontrol.ad_org_id = ad_org_getcalendarowner(?)
+      and to_date(?) >= c_period.StartDate
+      and to_date(?) < c_period.EndDate + 1
+      ]]>
+      </Sql>
+      <Parameter name="AD_Client_ID"/>
+      <Parameter name="DocumentType"/>
+      <Parameter name="Org"/>
+      <Parameter name="DateAcct"/>
+      <Parameter name="DateAcct"/>
+   </SqlMethod>
+   <SqlMethod name="selectPeriodOpen" type="preparedStatement" return="multiple">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql>
+      <![CDATA[
+      select max(c_period.c_period_id) as period
+      from c_period, c_periodcontrol
+      where c_period.c_period_id = c_periodcontrol.c_period_id
+      and c_period.ad_client_id = ?
+      and c_periodcontrol.docbasetype = ?
+      and c_periodcontrol.periodstatus = 'O'
+      and c_period.periodtype <> 'A'
+      and c_periodcontrol.ad_org_id = ?
       and to_date(?) >= c_period.StartDate
       and to_date(?) < c_period.EndDate + 1
       ]]>

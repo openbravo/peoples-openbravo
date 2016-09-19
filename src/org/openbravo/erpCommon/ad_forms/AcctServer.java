@@ -66,6 +66,7 @@ import org.openbravo.model.common.businesspartner.VendorAccounts;
 import org.openbravo.model.common.currency.ConversionRateDoc;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.AcctSchemaTableDocType;
+import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.common.invoice.ReversedInvoice;
 import org.openbravo.model.financialmgmt.accounting.FIN_FinancialAccountAccounting;
@@ -399,8 +400,11 @@ public abstract class AcctServer {
       final Set<String> orgSet = OBContext.getOBContext()
           .getOrganizationStructureProvider(AD_Client_ID).getChildTree(AD_Org_ID, true);
       String strOrgs = Utility.getInStrSet(orgSet);
+      // Send limit manually to SQL because auto-generated query doesn't limit properly
+      String limit = StringUtils.equals(connectionProvider.getRDBMS(), "ORACLE") ? " AND ROWNUM < "
+          + batchSize : " LIMIT " + batchSize;
       data = AcctServerData.select(connectionProvider, tableName, strDateColumn, AD_Client_ID,
-          strOrgs, strDateFrom, strDateTo, 0, Integer.valueOf(batchSize).intValue());
+          strOrgs, strDateFrom, strDateTo, limit);
       if (data != null && data.length > 0) {
         if (log4j.isDebugEnabled()) {
           log4j.debug("AcctServer - Run -Select inicial realizada N = " + data.length + " - Key: "
@@ -1452,9 +1456,16 @@ public abstract class AcctServer {
       if (log4j.isDebugEnabled())
         log4j.debug("setC_Period_ID - inside try - AD_Client_ID - " + AD_Client_ID
             + " -- DateAcct - " + DateAcct + " -- DocumentType - " + DocumentType);
-      data = AcctServerData.periodOpen(connectionProvider, AD_Client_ID, DocumentType, AD_Org_ID,
-          DateAcct);
+
+      String strOrgCalendarOwner = OBContext
+          .getOBContext()
+          .getOrganizationStructureProvider(AD_Client_ID)
+          .getPeriodControlAllowedOrganization(
+              OBDal.getInstance().get(Organization.class, AD_Org_ID)).getId();
+      data = AcctServerData.selectPeriodOpen(connectionProvider, AD_Client_ID, DocumentType,
+          strOrgCalendarOwner, DateAcct);
       C_Period_ID = data[0].period;
+
       if (log4j.isDebugEnabled())
         log4j.debug("AcctServer - setC_Period_ID - " + AD_Client_ID + "/" + DateAcct + "/"
             + DocumentType + " => " + C_Period_ID);
