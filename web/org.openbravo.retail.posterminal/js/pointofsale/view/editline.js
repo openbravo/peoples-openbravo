@@ -800,6 +800,7 @@ enyo.kind({
         }, {
           classes: 'span3',
           sytle: 'text-align: right',
+          name: 'contextImage',
           components: [{
             style: 'padding: 2px 10px 10px 10px;',
             components: [{
@@ -870,6 +871,9 @@ enyo.kind({
     if (this.line) {
       this.$.msgaction.hide();
       this.$.msgedit.show();
+      if (OB.MobileApp.model.hasPermission('OBPOS_HideProductImages', true)) {
+        this.$.contextImage.hide();
+      }
       if (OB.MobileApp.model.get('permissions')["OBPOS_retail.productImages"]) {
         if (this.selectedModels && this.selectedModels.length > 1) {
           this.$.icon.applyStyle('background-image', 'url(' + "../org.openbravo.mobile.core/assets/img/box.png" + ')');

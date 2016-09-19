@@ -149,7 +149,7 @@ enyo.kind({
       this.$.bestseller.addStyles('display: block');
     }
 
-    if (OB.MobileApp.model.hasPermission('OBPOS_HideProductImagesInSearchAndBrowse', true)) {
+    if (OB.MobileApp.model.hasPermission('OBPOS_HideProductImages', true) || OB.MobileApp.model.hasPermission('OBPOS_HideProductImagesInSearchAndBrowse', true)) {
       this.$.thumbnail.hide();
       this.$.icon.parent.hide();
       this.$.identifierContainer.addStyles('width: 70%;');
