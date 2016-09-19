@@ -194,8 +194,8 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
               Organization.ENTITY_NAME, strCostOrgId));
         }
         newCosting.setQuantity(basetrx.getMovementQuantity());
-        newCosting.setTotalMovementQuantity(currentStock);
-        newCosting.setTotalStockValuation(currentValueAmt.add(adjustmentBalance));
+        newCosting.setTotalMovementQuantity(null);
+        newCosting.setTotalStockValuation(null);
         newCosting.setPrice(cost);
         newCosting.setCostType("AVA");
         newCosting.setManual(Boolean.FALSE);
@@ -409,7 +409,8 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
                   costCurPrecission, RoundingMode.HALF_UP);
             }
             if (curCosting.getCost().compareTo(cost) != 0
-                || curCosting.getTotalMovementQuantity().compareTo(currentStock) != 0) {
+                || (curCosting.getTotalMovementQuantity() != null && curCosting
+                    .getTotalMovementQuantity().compareTo(currentStock) != 0)) {
               curCosting.setPermanent(Boolean.FALSE);
               OBDal.getInstance().save(curCosting);
               OBDal.getInstance().flush();
