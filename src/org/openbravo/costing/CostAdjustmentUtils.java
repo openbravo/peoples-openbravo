@@ -415,11 +415,11 @@ public class CostAdjustmentUtils {
           + " > :dateFrom");
       select.append(" or (trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
           + " = :dateFrom");
-      select.append(" and (trxtype." + CostAdjustmentUtils.propADListPriority + " > :trxtypeprio");
-      select.append(" or (trxtype." + CostAdjustmentUtils.propADListPriority + " = :trxtypeprio");
-      select.append(" and (trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " < :trxqty");
-      select.append(" or (trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " = :trxqty");
-      select.append(" and trx." + MaterialTransaction.PROPERTY_ID + " > :trxid");
+      select.append(" and (trxtype." + CostAdjustmentUtils.propADListPriority + " > :ctrxtypeprio");
+      select.append(" or (trxtype." + CostAdjustmentUtils.propADListPriority + " = :ctrxtypeprio");
+      select.append(" and (trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " < :ctrxqty");
+      select.append(" or (trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " = :ctrxqty");
+      select.append(" and trx." + MaterialTransaction.PROPERTY_ID + " > :ctrxid");
       select.append(" ))))))");
     }
     select.append("  and ( ");
@@ -489,6 +489,10 @@ public class CostAdjustmentUtils {
 
     if (existsCumulatedStockOnTrxDate) {
       trxQry.setParameter("dateFrom", costing.getStartingDate());
+      trxQry.setParameter("ctrxtypeprio", getTrxTypePrio(costing.getInventoryTransaction()
+          .getMovementType()));
+      trxQry.setParameter("ctrxqty", costing.getInventoryTransaction().getMovementQuantity());
+      trxQry.setParameter("ctrxid", costing.getInventoryTransaction().getId());
     }
 
     if (costingRule.isBackdatedTransactionsFixed()) {
@@ -730,11 +734,11 @@ public class CostAdjustmentUtils {
           + " > :dateFrom");
       select.append(" or (trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
           + " = :dateFrom");
-      select.append(" and (trxtype." + CostAdjustmentUtils.propADListPriority + " > :trxtypeprio");
-      select.append(" or (trxtype." + CostAdjustmentUtils.propADListPriority + " = :trxtypeprio");
-      select.append(" and (trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " < :trxqty");
-      select.append(" or (trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " = :trxqty");
-      select.append(" and trx." + MaterialTransaction.PROPERTY_ID + " > :trxid");
+      select.append(" and (trxtype." + CostAdjustmentUtils.propADListPriority + " > :ctrxtypeprio");
+      select.append(" or (trxtype." + CostAdjustmentUtils.propADListPriority + " = :ctrxtypeprio");
+      select.append(" and (trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " < :ctrxqty");
+      select.append(" or (trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " = :ctrxqty");
+      select.append(" and trx." + MaterialTransaction.PROPERTY_ID + " > :ctrxid");
       select.append(" ))))))");
     }
     select.append("  and (");
@@ -801,6 +805,10 @@ public class CostAdjustmentUtils {
     trxQry.setParameter("product", trx.getProduct());
     if (existsCumulatedValuationOnTrxDate) {
       trxQry.setParameter("dateFrom", costing.getStartingDate());
+      trxQry.setParameter("ctrxtypeprio", getTrxTypePrio(costing.getInventoryTransaction()
+          .getMovementType()));
+      trxQry.setParameter("ctrxqty", costing.getInventoryTransaction().getMovementQuantity());
+      trxQry.setParameter("ctrxid", costing.getInventoryTransaction().getId());
     }
     if (costDimensions.get(CostDimension.Warehouse) != null) {
       trxQry.setParameter("warehouse", costDimensions.get(CostDimension.Warehouse).getId());
