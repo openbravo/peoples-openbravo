@@ -161,33 +161,12 @@ enyo.kind({
     OB.UTIL.Approval.requestApproval(
     this.model, 'OBPOS_approval.cashupremovereceipts', function (approved, supervisor, approvalType) {
       if (approved) {
-        if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
-          me.markOrderAsDeleted(model);
-        } else {
-          // approved so remove the entry
-          var callback = function () {
-              me.collection.remove(model);
-              };
-          model.deleteOrder(me, true, callback);
-        }
+        // approved so remove the entry
+        var callback = function () {
+            me.collection.remove(model);
+            };
+        model.deleteOrder(me, callback);
       }
-    });
-  },
-  markOrderAsDeleted: function (model) {
-    var i, me = this,
-        creationDate = model.get('creationDate') || new Date();
-    model.set('creationDate', creationDate);
-    model.set('timezoneOffset', creationDate.getTimezoneOffset());
-    model.set('created', creationDate.getTime());
-    model.set('obposCreatedabsolute', OB.I18N.formatDateISO(creationDate));
-    model.set('obposIsDeleted', true);
-    for (i = 0; i < model.get('lines').length; i++) {
-      model.get('lines').at(i).set('obposIsDeleted', true);
-    }
-    model.set('hasbeenpaid', 'Y');
-    model.save();
-    OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(model.get('documentnoSuffix'), model.get('quotationnoSuffix'), model.get('returnnoSuffix'), function () {
-      me.collection.remove(model);
     });
   },
   voidAllPendingReceipts: function (inSender, inEvent) {
@@ -206,28 +185,21 @@ enyo.kind({
     var me = this,
         i;
 
-    function removeOneModel(collection, model) {
-      if (OB.UTIL.RfidController.isRfidConfigured()) {
-        OB.UTIL.RfidController.eraseEpcOrder(model);
+    function removeOneModel(model, collection) {
+      if (collection.length === 0) {
+        return;
       }
-      if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
-        me.markOrderAsDeleted(model);
-      } else {
-        var callback = function () {
-            collection.remove(model);
-            };
-        model.deleteOrder(me, true, callback);
-      }
+      var callback = function () {
+          collection.remove(model);
+          removeOneModel(collection.at(0), collection);
+          };
+      model.deleteOrder(me, callback);
     }
 
     OB.UTIL.Approval.requestApproval(
     this.model, 'OBPOS_approval.cashupremovereceipts', function (approved, supervisor, approvalType) {
       if (approved) {
-        var models = me.collection.toArray();
-        var i;
-        for (i = 0; i < models.length; i++) {
-          removeOneModel(me.collection, models[i]);
-        }
+        removeOneModel(me.collection.at(0), me.collection);
       }
     });
   },
