@@ -54,28 +54,30 @@ public class OBLedgerUtils {
         // No organization
         return null;
       }
+
       final Organization org = OBDal.getInstance().get(Organization.class, orgId);
       if (org == null) {
         // No organization
         return null;
       }
+
       String acctSchemaId = getOrgLedgerRecursive(org);
-      if (!StringUtils.isEmpty(acctSchemaId)) {
-        // Get ledger of organization tree
+      if (StringUtils.isNotEmpty(acctSchemaId)) {
+        // Get general ledger of organization tree
         return acctSchemaId;
       }
+
       String clientId = StringUtils.equals(orgId, "0") ? OBContext.getOBContext()
           .getCurrentClient().getId() : org.getClient().getId();
-      // Get client base Ledger
+      // Get client base general ledger
       return getClientLedger(clientId);
 
     } catch (Exception e) {
       log4j.error("Impossible to get ledger for organization id " + orgId, e);
+      return null;
     } finally {
       OBContext.restorePreviousMode();
     }
-
-    return null;
   }
 
   /**
@@ -89,43 +91,40 @@ public class OBLedgerUtils {
    *         has a General Ledger defined.
    */
   private static String getOrgLedgerRecursive(Organization org) {
-    try {
-      OBContext.setAdminMode(true);
-      if (org.getGeneralLedger() != null) {
-        return org.getGeneralLedger().getId();
-      }
-      if (org.getId().equals("0")) {
-        return null;
-      }
-      OrganizationStructureProvider osp = OBContext.getOBContext()
-          .getOrganizationStructureProvider(org.getClient().getId());
-      List<String> parentOrgIds = osp.getParentList(org.getId(), false);
-      for (String orgId : parentOrgIds) {
-        Organization parentOrg = OBDal.getInstance().get(Organization.class, orgId);
-        if (parentOrg.getGeneralLedger() != null) {
-          return parentOrg.getGeneralLedger().getId();
-        }
-      }
-      return null;
-    } finally {
-      OBContext.restorePreviousMode();
+
+    if (org.getGeneralLedger() != null) {
+      // Get general ledger of organization
+      return org.getGeneralLedger().getId();
     }
+
+    if (StringUtils.equals(org.getId(), "0")) {
+      // * organization doesn't have parents
+      return null;
+    }
+
+    // Loop through parent organization list
+    OrganizationStructureProvider osp = OBContext.getOBContext().getOrganizationStructureProvider(
+        org.getClient().getId());
+    List<String> parentOrgIds = osp.getParentList(org.getId(), false);
+    for (String orgId : parentOrgIds) {
+      Organization parentOrg = OBDal.getInstance().get(Organization.class, orgId);
+      if (parentOrg.getGeneralLedger() != null) {
+        return parentOrg.getGeneralLedger().getId();
+      }
+    }
+
+    return null;
   }
 
   private static String getClientLedger(String clientId) {
-    try {
-      OBContext.setAdminMode(true);
-      StringBuffer where = new StringBuffer();
-      where.append(" select " + AcctSchema.PROPERTY_ID);
-      where.append(" from " + AcctSchema.ENTITY_NAME);
-      where.append(" where " + AcctSchema.PROPERTY_CLIENT + ".id = :clientId");
-      where.append(" order by " + AcctSchema.PROPERTY_NAME);
-      Query qry = OBDal.getInstance().getSession().createQuery(where.toString());
-      qry.setParameter("clientId", clientId);
-      qry.setMaxResults(1);
-      return (String) qry.uniqueResult();
-    } finally {
-      OBContext.restorePreviousMode();
-    }
+    StringBuffer where = new StringBuffer();
+    where.append(" select " + AcctSchema.PROPERTY_ID);
+    where.append(" from " + AcctSchema.ENTITY_NAME);
+    where.append(" where " + AcctSchema.PROPERTY_CLIENT + ".id = :clientId");
+    where.append(" order by " + AcctSchema.PROPERTY_NAME);
+    Query qry = OBDal.getInstance().getSession().createQuery(where.toString());
+    qry.setParameter("clientId", clientId);
+    qry.setMaxResults(1);
+    return (String) qry.uniqueResult();
   }
 }
