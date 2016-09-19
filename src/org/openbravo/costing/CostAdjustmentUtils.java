@@ -390,11 +390,11 @@ public class CostAdjustmentUtils {
     CostingRule costingRule = CostingUtils.getCostDimensionRule(costorg,
         trx.getTransactionProcessDate());
 
-    boolean existsCumulatedStockOnTrxDate = costing != null
+    MaterialTransaction ctrx = costing != null ? costing.getInventoryTransaction() : null;
+    boolean existsCumulatedStockOnTrxDate = ctrx != null
         && costing.getTotalMovementQuantity() != null
-        && costing.getInventoryTransaction() != null
         && (!costingRule.isBackdatedTransactionsFixed() || trx.getMovementDate().after(
-            costing.getInventoryTransaction().getMovementDate()));
+            ctrx.getMovementDate()));
 
     StringBuffer select = new StringBuffer();
     select
@@ -489,10 +489,9 @@ public class CostAdjustmentUtils {
 
     if (existsCumulatedStockOnTrxDate) {
       trxQry.setParameter("dateFrom", costing.getStartingDate());
-      trxQry.setParameter("ctrxtypeprio", getTrxTypePrio(costing.getInventoryTransaction()
-          .getMovementType()));
-      trxQry.setParameter("ctrxqty", costing.getInventoryTransaction().getMovementQuantity());
-      trxQry.setParameter("ctrxid", costing.getInventoryTransaction().getId());
+      trxQry.setParameter("ctrxtypeprio", getTrxTypePrio(ctrx.getMovementType()));
+      trxQry.setParameter("ctrxqty", ctrx.getMovementQuantity());
+      trxQry.setParameter("ctrxid", ctrx.getId());
     }
 
     if (costingRule.isBackdatedTransactionsFixed()) {
@@ -701,11 +700,11 @@ public class CostAdjustmentUtils {
     CostingRule costingRule = CostingUtils.getCostDimensionRule(costorg,
         trx.getTransactionProcessDate());
 
-    boolean existsCumulatedValuationOnTrxDate = costing != null
+    MaterialTransaction ctrx = costing != null ? costing.getInventoryTransaction() : null;
+    boolean existsCumulatedValuationOnTrxDate = ctrx != null
         && costing.getTotalStockValuation() != null
-        && costing.getInventoryTransaction() != null
         && (!costingRule.isBackdatedTransactionsFixed() || trx.getMovementDate().after(
-            costing.getInventoryTransaction().getMovementDate()));
+            ctrx.getMovementDate()));
 
     StringBuffer select = new StringBuffer();
     select.append(" select sum(case");
@@ -805,10 +804,9 @@ public class CostAdjustmentUtils {
     trxQry.setParameter("product", trx.getProduct());
     if (existsCumulatedValuationOnTrxDate) {
       trxQry.setParameter("dateFrom", costing.getStartingDate());
-      trxQry.setParameter("ctrxtypeprio", getTrxTypePrio(costing.getInventoryTransaction()
-          .getMovementType()));
-      trxQry.setParameter("ctrxqty", costing.getInventoryTransaction().getMovementQuantity());
-      trxQry.setParameter("ctrxid", costing.getInventoryTransaction().getId());
+      trxQry.setParameter("ctrxtypeprio", getTrxTypePrio(ctrx.getMovementType()));
+      trxQry.setParameter("ctrxqty", ctrx.getMovementQuantity());
+      trxQry.setParameter("ctrxid", ctrx.getId());
     }
     if (costDimensions.get(CostDimension.Warehouse) != null) {
       trxQry.setParameter("warehouse", costDimensions.get(CostDimension.Warehouse).getId());
