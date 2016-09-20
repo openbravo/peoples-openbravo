@@ -873,6 +873,8 @@ enyo.kind({
       this.$.msgedit.show();
       if (OB.MobileApp.model.hasPermission('OBPOS_HideProductImages', true)) {
         this.$.contextImage.hide();
+      } else {
+        this.$.contextImage.show();
       }
       if (OB.MobileApp.model.get('permissions')["OBPOS_retail.productImages"]) {
         if (this.selectedModels && this.selectedModels.length > 1) {
