@@ -20,10 +20,12 @@ package org.openbravo.costing;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -273,7 +275,8 @@ public class CostingServer {
 
     if (getCostingRule().isBackdatedTransactionsFixed()
         && transaction.getMovementDate().compareTo(
-            CostingUtils.getCostingRuleFixBackdatedFrom(getCostingRule())) >= 0
+            DateUtils.truncate(CostingUtils.getCostingRuleFixBackdatedFrom(getCostingRule()),
+                Calendar.DATE)) >= 0
         && CostAdjustmentUtils.isNeededBackdatedCostAdjustment(transaction, getCostingRule()
             .isWarehouseDimension(), CostingUtils.getCostingRuleStartingDate(getCostingRule()))) {
       // BDT = Backdated transaction
