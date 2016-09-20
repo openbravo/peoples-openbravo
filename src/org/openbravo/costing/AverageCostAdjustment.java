@@ -340,6 +340,29 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
             cost = trxPrice;
             log.debug("Negative stock correction. Amount: {}, new cost {}",
                 negCorrAmt.toPlainString(), cost.toPlainString());
+          } else if (checkNegativeStockCorrection
+              && currentStock.compareTo(trx.getMovementQuantity()) >= 0) {
+            List<CostAdjustmentLine> costAdjustmentLineList = getNegativeStockAdjustments(trx);
+            BigDecimal revertedNegativeAdjustment = BigDecimal.ZERO;
+            if (!costAdjustmentLineList.isEmpty()) {
+              for (CostAdjustmentLine costAdjustmentLine : costAdjustmentLineList) {
+                revertedNegativeAdjustment = revertedNegativeAdjustment.add(costAdjustmentLine
+                    .getAdjustmentAmount().negate());
+              }
+              adjustmentBalance = adjustmentBalance.add(revertedNegativeAdjustment);
+              trxAdjAmt = trxAdjAmt.add(revertedNegativeAdjustment);
+              // If there is a difference insert a cost adjustment line.
+              CostAdjustmentLine newCAL = insertCostAdjustmentLine(trx, revertedNegativeAdjustment,
+                  null);
+              newCAL.setNegativeStockCorrection(Boolean.TRUE);
+              newCAL.setRelatedTransactionAdjusted(Boolean.TRUE);
+              newCAL.setUnitCost(Boolean.FALSE);
+              OBDal.getInstance().save(newCAL);
+              cost = currentValueAmt.add(adjustmentBalance).divide(currentStock, costCurPrecission,
+                  RoundingMode.HALF_UP);
+              log.debug("Revert Negative stock correction. Amount: {}, new cost {}",
+                  revertedNegativeAdjustment.toPlainString(), cost.toPlainString());
+            }
           }
 
           if (curCosting.getCost().compareTo(cost) == 0
@@ -463,6 +486,15 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
         OBDal.getInstance().save(currentCosting);
       }
     }
+  }
+
+  private List<CostAdjustmentLine> getNegativeStockAdjustments(MaterialTransaction trx) {
+    OBCriteria<CostAdjustmentLine> critLines = OBDal.getInstance().createCriteria(
+        CostAdjustmentLine.class);
+    critLines.add(Restrictions.eq(CostAdjustmentLine.PROPERTY_INVENTORYTRANSACTION, trx));
+    critLines.add(Restrictions.eq(CostAdjustmentLine.PROPERTY_ISNEGATIVESTOCKCORRECTION, true));
+
+    return critLines.list();
   }
 
   @Override
