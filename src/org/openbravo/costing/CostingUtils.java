@@ -351,16 +351,9 @@ public class CostingUtils {
    * only takes transactions that have its cost calculated.
    */
   public static BigDecimal getCurrentStock(Product product, Organization org, Date date,
-      HashMap<CostDimension, BaseOBObject> costDimensions, MaterialTransaction transaction) {
-    CostingRule costingRule = CostingUtils.getCostDimensionRule(org, date);
-    Costing costing = null;
-    if (costingRule.isBackdatedTransactionsFixed()) {
-      costing = AverageAlgorithm.getLastCumulatedCosting(transaction.getMovementDate(), product,
-          costDimensions, org);
-    } else {
-      costing = AverageAlgorithm.getLastCumulatedCosting(date, product, costDimensions, org);
-    }
-    return getCurrentStock(product, org, date, costDimensions, costing, transaction);
+      HashMap<CostDimension, BaseOBObject> costDimensions) {
+    Costing costing = AverageAlgorithm.getLastCumulatedCosting(date, product, costDimensions, org);
+    return getCurrentStock(product, org, date, costDimensions, costing);
   }
 
   /**
@@ -368,8 +361,7 @@ public class CostingUtils {
    * only takes transactions that have its cost calculated.
    */
   public static BigDecimal getCurrentStock(Product product, Organization costorg, Date dateTo,
-      HashMap<CostDimension, BaseOBObject> costDimensions, Costing costing,
-      MaterialTransaction transaction) {
+      HashMap<CostDimension, BaseOBObject> costDimensions, Costing costing) {
     // Get child tree of organizations.
     Set<String> orgs = OBContext.getOBContext().getOrganizationStructureProvider()
         .getChildTree(costorg.getId(), true);
@@ -442,17 +434,9 @@ public class CostingUtils {
    * calculated.
    */
   public static BigDecimal getCurrentValuedStock(Product product, Organization org, Date date,
-      HashMap<CostDimension, BaseOBObject> costDimensions, Currency currency,
-      MaterialTransaction transaction) {
-    Costing costing = null;
-    CostingRule costingRule = CostingUtils.getCostDimensionRule(org, date);
-    if (costingRule.isBackdatedTransactionsFixed()) {
-      costing = AverageAlgorithm.getLastCumulatedCosting(transaction.getMovementDate(), product,
-          costDimensions, org);
-    } else {
-      costing = AverageAlgorithm.getLastCumulatedCosting(date, product, costDimensions, org);
-    }
-    return getCurrentValuedStock(product, org, date, costDimensions, currency, costing, transaction);
+      HashMap<CostDimension, BaseOBObject> costDimensions, Currency currency) {
+    Costing costing = AverageAlgorithm.getLastCumulatedCosting(date, product, costDimensions, org);
+    return getCurrentValuedStock(product, org, date, costDimensions, currency, costing);
   }
 
   /**
@@ -462,7 +446,7 @@ public class CostingUtils {
    */
   public static BigDecimal getCurrentValuedStock(Product product, Organization costorg,
       Date dateTo, HashMap<CostDimension, BaseOBObject> costDimensions, Currency currency,
-      Costing costing, MaterialTransaction transaction) {
+      Costing costing) {
     // Get child tree of organizations.
     Set<String> orgs = OBContext.getOBContext().getOrganizationStructureProvider()
         .getChildTree(costorg.getId(), true);
