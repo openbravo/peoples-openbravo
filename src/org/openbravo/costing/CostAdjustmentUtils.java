@@ -364,7 +364,7 @@ public class CostAdjustmentUtils {
   public static BigDecimal getStockOnTransactionDate(Organization costorg, MaterialTransaction trx,
       HashMap<CostDimension, BaseOBObject> _costDimensions, boolean isManufacturingProduct,
       boolean areBackdatedTrxFixed) {
-    Costing costing = AverageAlgorithm.getProductCost(trx.getTransactionProcessDate(),
+    Costing costing = AverageAlgorithm.getLastCumulatedCosting(trx.getTransactionProcessDate(),
         trx.getProduct(), _costDimensions, costorg);
     return getStockOnTransactionDate(costorg, trx, _costDimensions, isManufacturingProduct,
         areBackdatedTrxFixed, costing);
