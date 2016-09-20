@@ -50,11 +50,12 @@ public class AverageAlgorithm extends CostingAlgorithm {
       BigDecimal trxCostWithSign = (transaction.getMovementQuantity().signum() == -1) ? trxCost
           .negate() : trxCost;
       BigDecimal newCost = null;
+      Date date = costingRule.isBackdatedTransactionsFixed() ? transaction.getMovementDate()
+          : transaction.getTransactionProcessDate();
       BigDecimal currentStock = CostingUtils.getCurrentStock(transaction.getProduct(), costOrg,
-          transaction.getTransactionProcessDate(), costDimensions, transaction);
+          date, costDimensions);
       BigDecimal currentValuedStock = CostingUtils.getCurrentValuedStock(transaction.getProduct(),
-          costOrg, transaction.getTransactionProcessDate(), costDimensions, costCurrency,
-          transaction);
+          costOrg, date, costDimensions, costCurrency);
       if (currentCosting == null) {
         if (transaction.getMovementQuantity().signum() == 0) {
           newCost = BigDecimal.ZERO;
@@ -266,6 +267,7 @@ public class AverageAlgorithm extends CostingAlgorithm {
     where.append("  and " + Costing.PROPERTY_COSTTYPE + " = 'AVA'");
     where.append("  and " + Costing.PROPERTY_COST + " is not null");
     where.append("  and " + Costing.PROPERTY_TOTALMOVEMENTQUANTITY + " is not null");
+    where.append("  and " + Costing.PROPERTY_TOTALSTOCKVALUATION + " is not null");
     if (costDimensions.get(CostDimension.Warehouse) != null) {
       where.append("  and " + Costing.PROPERTY_WAREHOUSE + ".id = :warehouse");
     } else {
@@ -292,19 +294,9 @@ public class AverageAlgorithm extends CostingAlgorithm {
     } else {
       costQry.setNamedParameter("org", costOrg.getId());
     }
-    costQry.setMaxResult(1);
 
-    List<Costing> costList = costQry.list();
-    int size = costList.size();
-    // If no average cost is found return null.
-    if (size == 0) {
-      return null;
-    }
-    if (size > 1) {
-      log4j.warn("More than one cost found for same date: " + OBDateUtils.formatDate(date)
-          + " for product: " + product.getName() + " (" + product.getId() + ")");
-    }
-    return costList.get(0);
+    costQry.setMaxResult(1);
+    return costQry.uniqueResult();
   }
 
   private Date getLastDate() {
