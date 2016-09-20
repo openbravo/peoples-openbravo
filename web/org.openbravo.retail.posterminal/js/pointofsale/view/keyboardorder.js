@@ -102,6 +102,17 @@ enyo.kind({
       this.clearInput();
     }, this);
   },
+  validateQuantity: function (keyboard, value) {
+    if (!isFinite(value)) {
+      return true;
+    }
+    var valueBigDecimal = OB.DEC.toBigDecimal(value);
+    if (valueBigDecimal.scale() > keyboard.line.get('product').get('uOMstandardPrecision')) {
+      OB.UTIL.showError(OB.I18N.getLabel('OBPOS_StdPrecisionLimitError', [keyboard.line.get('product').get('uOMstandardPrecision')]));
+      return false;
+    }
+    return true;
+  },
   validateReceipt: function (keyboard, validateLine) {
     if (keyboard.receipt.get('isEditable') === false) {
       this.doShowPopup({
@@ -149,7 +160,32 @@ enyo.kind({
         };
 
     var actionAddMultiProduct = function (keyboard, qty) {
+        var cancelQtyChange = false,
+            cancelQtyChangeReturn = false;
         if (me.selectedModelsSameQty) {
+
+          // Check if is trying to remove delivered units or to modify negative lines in a cancel and replace ticket.
+          // In that case stop the flow and show an error popup.
+          if (keyboard.receipt.get('replacedorder')) {
+            _.each(me.selectedModels, function (l) {
+              var oldqty = l.get('qty'),
+                  newqty = oldqty + qty;
+
+              if (oldqty > 0 && newqty < l.get('remainingQuantity')) {
+                cancelQtyChange = true;
+              } else if (oldqty < 0 && l.get('remainingQuantity')) {
+                cancelQtyChangeReturn = true;
+              }
+            });
+          }
+          if (cancelQtyChange) {
+            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_CancelReplaceQtyEdit'));
+            return;
+          } else if (cancelQtyChangeReturn) {
+            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_CancelReplaceQtyEditReturn'));
+            return;
+          }
+
           keyboard.receipt.set('undo', null);
           keyboard.receipt.set('multipleUndo', true);
           var selection = [];
@@ -231,6 +267,9 @@ enyo.kind({
           return true;
         }
         if (value || value === 0) {
+          if (!me.validateQuantity(keyboard, value)) {
+            return true;
+          }
           keyboard.receipt.set('undo', null);
           var selection = [];
           if (me.selectedModels && me.selectedModels.length > 1) {
@@ -289,10 +328,23 @@ enyo.kind({
           OB.UTIL.Approval.requestApproval(
           me.model, 'OBPOS_approval.setPrice', function (approved, supervisor, approvalType) {
             if (approved) {
-              var price = OB.I18N.parseNumber(txt);
+              var price = OB.I18N.parseNumber(txt),
+                  cancelChange = false;
               if (me.selectedModels.length > 1) {
                 keyboard.receipt.set('undo', null);
                 keyboard.receipt.set('multipleUndo', true);
+
+                _.each(me.selectedModels, function (model) {
+                  if (model.get('replacedorderline') && model.get('qty') < 0) {
+                    cancelChange = true;
+                  }
+                });
+
+                if (cancelChange) {
+                  OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_CancelReplaceReturnPriceChange'));
+                  return;
+                }
+
                 _.each(me.selectedModels, function (model) {
                   keyboard.receipt.setPrice(model, price);
                 });
@@ -384,6 +436,9 @@ enyo.kind({
 
         if ((!_.isNull(txt) || !_.isUndefined(txt)) && !_.isNaN(OB.I18N.parseNumber(txt))) {
           qty = OB.I18N.parseNumber(txt);
+          if (!me.validateQuantity(keyboard, qty)) {
+            return true;
+          }
         }
         if (me.selectedModels.length > 1) {
           actionAddMultiProduct(keyboard, qty);
@@ -431,6 +486,9 @@ enyo.kind({
 
         if ((!_.isNull(txt) || !_.isUndefined(txt)) && !_.isNaN(OB.I18N.parseNumber(txt))) {
           qty = OB.I18N.parseNumber(txt);
+          if (!me.validateQuantity(keyboard, qty)) {
+            return true;
+          }
         }
         if (me.selectedModels.length > 0) {
           value = me.selectedModels[0].get('qty') - qty;

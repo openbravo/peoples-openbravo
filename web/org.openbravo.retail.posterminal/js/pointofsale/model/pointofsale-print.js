@@ -85,6 +85,8 @@
       extendHWResource(this.templatewelcome, "printWelcomeTemplate");
       this.templateclosedinvoice = new OB.DS.HWResource(terminal.printClosedInvoiceTemplate || OB.OBPOSPointOfSale.Print.ClosedInvoiceTemplate);
       extendHWResource(this.templateclosedinvoice, "printClosedInvoiceTemplate");
+      this.templatecanceledreceipt = new OB.DS.HWResource(terminal.printCanceledReceiptTemplate || OB.OBPOSPointOfSale.Print.CanceledReceiptTemplate);
+      extendHWResource(this.templatecanceledreceipt, "printCanceledReceiptTemplate");
       };
 
   PrintReceipt.prototype.print = function (order, printargs) {
@@ -351,6 +353,8 @@
 
       if (args.forcedtemplate) {
         args.template = args.forcedtemplate;
+      } else if (receipt.get('ordercanceled') || receipt.get('cancelLayaway')) {
+        args.template = me.templatecanceledreceipt;
       } else if (receipt.get('generateInvoice') && receipt.get('orderType') !== 2 && receipt.get('orderType') !== 3 && !receipt.get('isLayaway')) {
         if (receipt.get('orderType') === 1 || hasNegativeLines) {
           args.template = me.templatereturninvoice;
@@ -384,7 +388,16 @@
       }
       if (args.template.ispdf) {
         args.template.dateFormat = OB.Format.date;
-        printPDF(receipt, args);
+        if (receipt.get('canceledorder')) {
+          var clonedreceipt = new OB.Model.Order();
+          OB.UTIL.clone(receipt, clonedreceipt);
+          clonedreceipt.unset("canceledorder", {
+            silent: true
+          });
+          printPDF(clonedreceipt, args);
+        } else {
+          printPDF(receipt, args);
+        }
         if ((receipt.get('orderType') === 1 && !OB.MobileApp.model.hasPermission('OBPOS_print.once')) || OB.MobileApp.model.get('terminal').terminalType.printTwice) {
           printPDF(receipt, args);
         }
@@ -548,6 +561,12 @@
           }
         } // order property.
       }
+      if (receipt.get('canceledorder')) {
+        var negativeDocNo = receipt.get('negativeDocNo').documentNo;
+        receipt.get('canceledorder').set('ordercanceled', true);
+        receipt.get('canceledorder').set('negativeDocNo', negativeDocNo);
+        me.print(receipt.get('canceledorder'), args);
+      }
     });
   };
 
@@ -620,4 +639,5 @@
   OB.OBPOSPointOfSale.Print.WelcomeTemplate = '../org.openbravo.retail.posterminal/res/welcome.xml';
   OB.OBPOSPointOfSale.Print.QuotationTemplate = '../org.openbravo.retail.posterminal/res/printquotation.xml';
   OB.OBPOSPointOfSale.Print.ClosedInvoiceTemplate = '../org.openbravo.retail.posterminal/res/printclosedinvoice.xml';
+  OB.OBPOSPointOfSale.Print.CanceledReceiptTemplate = '../org.openbravo.retail.posterminal/res/printcanceledreceipt.xml';
 }());

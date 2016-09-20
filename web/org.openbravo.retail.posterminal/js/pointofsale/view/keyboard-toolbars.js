@@ -116,11 +116,15 @@ enyo.kind({
         });
       } else {
         // Calculate total amount to pay with selected PaymentMethod  
-        var amountToPay = amount;
+        var amountToPay = _.isUndefined(receiptToPay.get('paidInNegativeStatusAmt')) ? amount : -amount;
         if (receiptToPay.get("payments").length > 0) {
           receiptToPay.get("payments").each(function (item) {
             if (item.get("kind") === key) {
-              amountToPay += item.get("amount");
+              if (_.isUndefined(receiptToPay.get('paidInNegativeStatusAmt')) || (!_.isUndefined(receiptToPay.get('paidInNegativeStatusAmt')) && item.get('isPrePayment'))) {
+                amountToPay += item.get("amount");
+              } else {
+                amountToPay -= item.get("amount");
+              }
             }
           });
         }
@@ -371,7 +375,7 @@ enyo.kind({
             amount = altexactamount[exactpayment.payment.searchKey];
           }
           if (exactpayment.rate && exactpayment.rate !== '1') {
-            amount = OB.DEC.div(amount, exactpayment.rate, 6);
+            amount = OB.DEC.div(amount, exactpayment.rate);
           }
 
           if (amount > 0 && exactpayment && OB.MobileApp.model.hasPermission(exactpayment.payment.searchKey)) {
@@ -523,8 +527,8 @@ enyo.kind({
       this.$.btn.removeClass('btnactive-green');
       this.activegreen = false;
     }
-    if (this.dialogbuttons[status]) {
-      this.$.btn.setContent(OB.I18N.getLabel('OBPOS_MorePayments') + ' (' + this.dialogbuttons[status] + ')');
+    if (this.owner.showing && (this.dialogbuttons[status] || this.dialogbuttons[this.owner.keyboard.status])) {
+      this.$.btn.setContent(OB.I18N.getLabel('OBPOS_MorePayments') + ' (' + (this.dialogbuttons[status] || this.dialogbuttons[this.owner.keyboard.status]) + ')');
       this.$.btn.addClass('btnactive-green');
       this.activegreen = true;
     }

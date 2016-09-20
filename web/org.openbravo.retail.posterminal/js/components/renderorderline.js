@@ -119,6 +119,21 @@ enyo.kind({
         }]
       });
     }
+
+    if (this.model.get('remainingQuantity')) {
+      this.createComponent({
+        style: 'display: block;',
+        components: [{
+          content: '-- ' + OB.I18N.getLabel('OBPOS_DeliveredQuantity') + ': ' + this.model.get('remainingQuantity'),
+          attributes: {
+            style: 'float: left; width: 100%; clear: left;'
+          }
+        }, {
+          style: 'clear: both;'
+        }]
+      });
+    }
+
     if (this.model.get('promotions')) {
       enyo.forEach(this.model.get('promotions'), function (d) {
         if (d.hidden) {
@@ -386,6 +401,9 @@ enyo.kind({
     var paymentDate;
     this.inherited(arguments);
     this.$.name.setContent(OB.MobileApp.model.getPaymentName(this.model.get('kind')) || this.model.get('name'));
+    if (!this.model.get('paymentAmount') && this.model.get('isPrePayment')) {
+      this.$.name.setContent(OB.I18N.getLabel('OBPOS_Cancelled'));
+    }
     if (this && this.model && this.model.get('paymentData') && this.model.get('paymentData').name && this.model.get('paymentData').name.length > 0) {
       this.$.name.setContent((OB.MobileApp.model.getPaymentName(this.model.get('kind')) || this.model.get('name')) + ' (' + this.model.get('paymentData').name + ')');
     }

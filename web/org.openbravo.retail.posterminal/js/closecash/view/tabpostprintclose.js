@@ -657,7 +657,6 @@ enyo.kind({
       this.$.expectedTable.hide();
       this.$.depositsTable.hide();
       this.$.dropsTable.hide();
-      this.$.startingsTable.hide();
       this.$.sales.hide();
       this.$.totaltransactions.hide();
       this.$.returns.hide();
@@ -666,7 +665,6 @@ enyo.kind({
       this.$.expectedTable.show();
       this.$.depositsTable.show();
       this.$.dropsTable.show();
-      this.$.startingsTable.show();
       this.$.sales.show();
       this.$.totaltransactions.show();
       this.$.returns.show();

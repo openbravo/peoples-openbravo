@@ -138,13 +138,14 @@ public class PaidReceiptsHeader extends ProcessHQLQuery {
       // not more filters
     } else if (json.getBoolean("isLayaway")) {
       // (It is Layaway)
-      hqlPaidReceipts += " and ord.obposApplications is not null and (select sum(deliveredQuantity) from ord.orderLineList where orderedQuantity > 0)=0 and ord.documentStatus = 'CO' ";
+      hqlPaidReceipts += " and ord.obposApplications is not null and not exists (select 1 from ord.orderLineList where deliveredQuantity != 0) ";
+
     } else if (json.getBoolean("isReturn")) {
       // (It is a Return)
-      hqlPaidReceipts += " and ord.obposApplications is not null and (exists( select 1 from ord.orderLineList where deliveredQuantity != 0) and exists( select 1 from ord.orderLineList where orderedQuantity > 0)) ";
+      hqlPaidReceipts += " and ord.obposApplications is not null and ord.iscancelled != true and (exists( select 1 from ord.orderLineList where deliveredQuantity != 0) and exists( select 1 from ord.orderLineList where orderedQuantity > 0)) ";
     } else {
       // (It is not Layaway and It is not a Return)
-      hqlPaidReceipts += " and ord.obposApplications is not null and exists(select 1 from ord.orderLineList where deliveredQuantity != 0) ";
+      hqlPaidReceipts += " and ord.obposApplications is not null and exists (select 1 from ord.orderLineList where deliveredQuantity != 0) ";
     }
 
     hqlPaidReceipts += " order by ord.orderDate desc, ord.documentNo desc";

@@ -257,7 +257,7 @@
     },
     printAmount: function () {
       if (this.get('rate')) {
-        return OB.I18N.formatCurrency(OB.DEC.mul(this.get('amount'), this.get('rate')));
+        return OB.I18N.formatCurrency(this.get('origAmount') || OB.DEC.mul(this.get('amount'), this.get('rate')));
       } else {
         return OB.I18N.formatCurrency(this.get('amount'));
       }
@@ -365,7 +365,6 @@
         this.set('reApplyDiscounts', false);
         this.set('calculateReceiptCallbacks', []);
         this.set('loaded', attributes.loaded);
-        this.set('updated', attributes.updated);
         _.each(_.keys(attributes), function (key) {
           if (!this.has(key)) {
             this.set(key, attributes[key]);
@@ -379,25 +378,13 @@
 
     save: function (callback) {
       var undoCopy = this.get('undo'),
-          me = this,
-          previousOrder;
+          me = this;
 
       var now = new Date();
-      this.set('updated', OB.I18N.normalizeDate(now));
       this.set('timezoneOffset', now.getTimezoneOffset());
       this.set('json', JSON.stringify(this.serializeToJSON()));
       if (callback === undefined || !callback instanceof Function) {
         callback = function () {};
-      }
-      if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
-        previousOrder = _.max(_.filter(OB.MobileApp.model.orderList.models, function (previousOrder) {
-          return previousOrder.get('documentnoSuffix') < me.get('documentnoSuffix') && previousOrder.get('session') === OB.MobileApp.model.get('session');
-        }), function (maxDocumentNoOrder) {
-          return maxDocumentNoOrder.get('documentnoSuffix');
-        });
-        if (previousOrder) {
-          previousOrder.save();
-        }
       }
       if (!OB.MobileApp.model.get('preventOrderSave')) {
         OB.Dal.save(this, function () {
@@ -560,6 +547,10 @@
         OB.error("calculateGross should only be called by the UI receipt");
       }
 
+      this.calculateGrossAndSave(true);
+    },
+
+    calculateGrossAndSave: function (save) {
       this.calculatingGross = true;
       var me = this;
       // reset some vital receipt values because, at this point, they are obsolete. do not fire the change event
@@ -571,7 +562,7 @@
       }, {
         silent: true
       });
-      var saveAndTriggerEvents = function (gross) {
+      var saveAndTriggerEvents = function (gross, save) {
           var now = new Date();
           me.set('loaded', OB.I18N.normalizeDate(now));
           me.set('timezoneOffset', now.getTimezoneOffset());
@@ -600,19 +591,24 @@
           });
 
           me.adjustPayment();
-          me.save(function () {
-            // Reset the flag that protects reentrant invocations to calculateGross().
-            // And if there is pending any execution of calculateGross(), do it and do not continue.
+          if (save) {
+            me.save(function () {
+              // Reset the flag that protects reentrant invocations to calculateGross().
+              // And if there is pending any execution of calculateGross(), do it and do not continue.
+              me.calculatingGross = false;
+              me.calculatingReceipt = false;
+              if (me.pendingCalculateGross) {
+                me.pendingCalculateGross = false;
+                me.calculateGross();
+                return;
+              }
+              me.trigger('calculategross');
+              me.trigger('saveCurrent');
+            });
+          } else {
             me.calculatingGross = false;
             me.calculatingReceipt = false;
-            if (me.pendingCalculateGross) {
-              me.pendingCalculateGross = false;
-              me.calculateGross();
-              return;
-            }
-            me.trigger('calculategross');
-            me.trigger('saveCurrent');
-          });
+          }
           };
 
       this.get('lines').forEach(function (line) {
@@ -630,7 +626,7 @@
             }
             return OB.DEC.add(memo, grossLine);
           }, OB.DEC.Zero);
-          saveAndTriggerEvents(gross);
+          saveAndTriggerEvents(gross, save);
         });
       } else {
         this.calculateTaxes(function () {
@@ -646,7 +642,7 @@
               return memo;
             }
           }, OB.DEC.Zero);
-          saveAndTriggerEvents(gross);
+          saveAndTriggerEvents(gross, save);
         });
       }
     },
@@ -789,8 +785,17 @@
     },
 
     getPending: function () {
-      return OB.DEC.sub(OB.DEC.abs(this.getTotal()), this.getPayment());
+      if (_.isUndefined(this.get('paidInNegativeStatusAmt'))) {
+        return OB.DEC.sub(OB.DEC.abs(this.getTotal()), this.getPayment());
+      } else {
+        return OB.DEC.abs(OB.DEC.sub(OB.DEC.abs(this.getTotal()), this.get('paidInNegativeStatusAmt')));
+      }
     },
+
+    getDeliveredQuantityAmount: function () {
+      return this.get('deliveredQuantityAmount') ? this.get('deliveredQuantityAmount') : 0;
+    },
+
     printPending: function () {
       return OB.I18N.formatCurrency(this.getPending());
     },
@@ -798,21 +803,55 @@
     getPaymentStatus: function () {
       var total = OB.DEC.abs(this.getTotal()),
           pay = this.getPayment(),
-          isReturn = true;
+          isReturn = true,
+          processedPaymentsAmount = OB.DEC.Zero,
+          paymentsAmount = OB.DEC.Zero,
+          isNegative, paidInNegativeStatus, done, pending, overpayment, totalToReturn, pendingAmt;
 
       _.each(this.get('lines').models, function (line) {
         if (line.get('qty') > 0) {
           isReturn = false;
         }
       }, this);
+
+      _.each(this.get('payments').models, function (payment) {
+        if (payment.get('isPrePayment')) {
+          processedPaymentsAmount = OB.DEC.add(processedPaymentsAmount, payment.get('origAmount'));
+        } else {
+          paymentsAmount = OB.DEC.add(paymentsAmount, payment.get('origAmount'));
+        }
+      });
+
+      isNegative = this.get('gross') < 0 || (this.get('gross') > 0 && this.get('orderType') === 3 && (!this.get('isPartiallyDelivered') || (this.get('isPartiallyDelivered') && this.get('isDeliveredGreaterThanGross'))));
+      // Check if the total amount is lower than the already paid (processed)
+      if (!isNegative && this.get('gross') >= 0 && OB.DEC.compare(OB.DEC.sub(processedPaymentsAmount, total)) === 1) {
+        isNegative = true;
+        paidInNegativeStatus = OB.DEC.sub(processedPaymentsAmount, paymentsAmount);
+        totalToReturn = OB.DEC.sub(processedPaymentsAmount, total);
+      }
+
+      if (_.isUndefined(paidInNegativeStatus)) {
+        this.unset('paidInNegativeStatusAmt');
+        done = this.get('lines').length > 0 && OB.DEC.compare(OB.DEC.sub(pay, total)) >= 0;
+        pending = OB.DEC.compare(OB.DEC.sub(pay, total)) >= 0 ? OB.I18N.formatCurrency(OB.DEC.Zero) : OB.I18N.formatCurrency(OB.DEC.sub(total, pay));
+        overpayment = OB.DEC.compare(OB.DEC.sub(pay, total)) > 0 ? OB.I18N.formatCurrency(OB.DEC.sub(pay, total)) : null;
+        pendingAmt = OB.DEC.compare(OB.DEC.sub(pay, total)) >= 0 ? OB.DEC.Zero : OB.DEC.sub(total, pay);
+      } else {
+        this.set('paidInNegativeStatusAmt', paidInNegativeStatus);
+        done = this.get('lines').length > 0 && OB.DEC.compare(OB.DEC.sub(paymentsAmount, totalToReturn)) >= 0;
+        pending = OB.DEC.compare(OB.DEC.sub(totalToReturn, paymentsAmount)) === 1 ? OB.I18N.formatCurrency(OB.DEC.sub(totalToReturn, paymentsAmount)) : null;
+        overpayment = OB.DEC.compare(OB.DEC.sub(OB.DEC.sub(paymentsAmount, totalToReturn), this.getChange())) === 1 ? OB.I18N.formatCurrency(OB.DEC.sub(OB.DEC.sub(paymentsAmount, totalToReturn), this.getChange())) : null;
+        pendingAmt = OB.DEC.compare(OB.DEC.sub(totalToReturn, paymentsAmount)) === 1 ? OB.DEC.sub(totalToReturn, paymentsAmount) : OB.DEC.Zero;
+      }
+
       return {
-        'done': (this.get('lines').length > 0 && OB.DEC.compare(total) >= 0 && OB.DEC.compare(OB.DEC.sub(pay, total)) >= 0),
+        'done': done,
         'total': OB.I18N.formatCurrency(total),
-        'pending': OB.DEC.compare(OB.DEC.sub(pay, total)) >= 0 ? OB.I18N.formatCurrency(OB.DEC.Zero) : OB.I18N.formatCurrency(OB.DEC.sub(total, pay)),
+        'pending': pending,
         'change': OB.DEC.compare(this.getChange()) > 0 ? OB.I18N.formatCurrency(this.getChange()) : null,
-        'overpayment': OB.DEC.compare(OB.DEC.sub(pay, total)) > 0 ? OB.I18N.formatCurrency(OB.DEC.sub(pay, total)) : null,
+        'overpayment': overpayment,
         'isReturn': isReturn,
-        'isNegative': (this.get('gross') < 0 || (this.get('gross') > 0 && this.get('orderType') === 3)) ? true : false,
+        'isNegative': isNegative,
         'changeAmt': this.getChange(),
         'pendingAmt': OB.DEC.compare(OB.DEC.sub(pay, total)) >= 0 ? OB.DEC.Zero : OB.DEC.sub(total, pay),
         'payments': this.get('payments')
@@ -882,6 +921,7 @@
       this.set('openDrawer', false);
       this.set('totalamount', null);
       this.set('approvals', []);
+      this.set('isPartiallyDelivered', false);
     },
 
     clearWith: function (_order) {
@@ -906,6 +946,7 @@
       this.set('isPaid', _order.get('isPaid'));
       this.set('paidOnCredit', _order.get('paidOnCredit'));
       this.set('isLayaway', _order.get('isLayaway'));
+      this.set('isPartiallyDelivered', _order.get('isPartiallyDelivered'));
       if (!_order.get('isEditable')) {
         // keeping it no editable as much as possible, to prevent
         // modifications to trigger editable events incorrectly
@@ -920,6 +961,10 @@
             _order.set('generateInvoice', true);
           }
         }
+      }
+
+      if (_order.get('replacedorder_documentNo')) {
+        this.set('replacedorder_documentNo', _order.get('replacedorder_documentNo'));
       }
 
       // the idExecution is saved so only this execution of clearWith will check cloningReceipt to false
@@ -975,6 +1020,15 @@
         if (qty > 0 && oldqty < 0 && this.get('orderType') === 1) {
           OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgCannotAddPostiveToReturn'));
           return;
+        }
+        if (this.get('replacedorder')) {
+          if (oldqty > 0 && qty < line.get('remainingQuantity')) {
+            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_CancelReplaceQtyEdit'));
+            return;
+          } else if ((oldqty < 0 && qty > line.get('remainingQuantity'))) {
+            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_CancelReplaceQtyEditReturn'));
+            return;
+          }
         }
         if (line.get('product').get('groupProduct') === false) {
           this.addProduct(line.get('product'));
@@ -1074,6 +1128,9 @@
 
         if (!OB.UTIL.isNullOrUndefined(args.line.get('originalOrderLineId'))) {
           OB.UTIL.showError(OB.I18N.getLabel('OBPOS_CannotChangePrice'));
+        } else if (args.line.get('replacedorderline') && args.line.get('qty') < 0) {
+          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_CancelReplaceReturnPriceChange'));
+          return;
         } else if (OB.DEC.isNumber(args.price)) {
           var oldprice = args.line.get('price');
           if (OB.DEC.compare(args.price) >= 0) {
@@ -1146,8 +1203,18 @@
 
     deleteLines: function (lines, idx, length, callback) {
       var me = this,
-          line = lines[idx];
+          line = lines[idx],
+          i;
       if (idx === 0) {
+        for (i = 0; i < lines.length; i++) {
+          if (me.get('replacedorder') && lines[i].get('remainingQuantity')) {
+            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_CancelReplaceDeleteLine'));
+            if (callback) {
+              callback();
+            }
+            return;
+          }
+        }
         this.set('undo', null);
       }
       idx++;
@@ -1193,6 +1260,14 @@
           pack = line.isAffectedByPack(),
           productId = line.get('product').id;
 
+
+      if (me.get('replacedorder') && line.get('remainingQuantity')) {
+        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_CancelReplaceDeleteLine'));
+        if (callback) {
+          callback();
+        }
+        return;
+      }
 
       if (pack) {
         // When deleting a line, check lines with other product that are affected by
@@ -1368,7 +1443,7 @@
                 return;
               }
               var splitline = !(options && options.line) && !OB.UTIL.isNullOrUndefined(args.line) && !OB.UTIL.isNullOrUndefined(args.line.get('splitline')) && args.line.get('splitline');
-              if (args.line && !splitline && (qty !== 1 || args.line.get('qty') !== -1 || args.p.get('productType') !== 'S' || (args.p.get('productType') === 'S' && !args.p.get('isLinkedToProduct')))) {
+              if (args.line && !splitline && (args.line.get('qty') > 0 || !args.line.get('replacedorderline')) && (qty !== 1 || args.line.get('qty') !== -1 || args.p.get('productType') !== 'S' || (args.p.get('productType') === 'S' && !args.p.get('isLinkedToProduct')))) {
                 args.receipt.addUnit(args.line, args.qty);
                 if (!_.isUndefined(args.attrs)) {
                   _.each(_.keys(args.attrs), function (key) {
@@ -1650,6 +1725,13 @@
           OB.UTIL.showI18NWarning('OBPOS_GenericNotAllowed');
           if (callback) {
             callback(false, null);
+          }
+          return;
+        }
+        if (args && args.options && args.options.line && args.options.line.get('replacedorderline') && args.options.line.get('qty') < 0) {
+          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_CancelReplaceQtyEditReturn'));
+          if (callback) {
+            callback(false);
           }
           return;
         }
@@ -2139,6 +2221,8 @@
               businessPartner.set('locationModel', location);
               me.set('bp', businessPartner);
               me.save();
+              // copy the modelOrder again, as the get/save are async
+              OB.MobileApp.model.orderList.saveCurrent();
             }, function () {
               OB.error(arguments);
             });
@@ -2151,6 +2235,8 @@
           OB.Dal.saveIfNew(businessPartner.get('locationModel'), function () {
             me.set('bp', businessPartner);
             me.save();
+            // copy the modelOrder again, as saveIfNew is possibly async
+            OB.MobileApp.model.orderList.saveCurrent();
           }, function () {
             OB.error(arguments);
           });
@@ -2420,6 +2506,214 @@
       });
     },
 
+    verifyCancelAndReplace: function (context) {
+      var me = this,
+          process = new OB.DS.Process('org.openbravo.retail.posterminal.process.IsOrderCancelled');
+
+      process.exec({
+        orderId: this.get('id'),
+        documentNo: this.get('documentNo'),
+        setCancelled: false
+      }, function (data) {
+        if (data && data.exception) {
+          if (data.exception.message) {
+            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), data.exception.message);
+            return;
+          }
+          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBMOBC_OfflineWindowRequiresOnline'));
+          return;
+        } else if (data && data.orderCancelled) {
+          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_OrderReplacedError'));
+          return;
+        } else {
+          OB.UTIL.HookManager.executeHooks('OBPOS_PreCancelAndReplace', {
+            context: context
+          }, function (args) {
+            if (args && args.cancelOperation) {
+              return;
+            }
+
+            if (me.get('payments').length) {
+              var notPrePayments = _.filter(me.get('payments').models, function (payment) {
+                return !payment.get('isPrePayment');
+              });
+              if (notPrePayments.length !== 0) {
+                var paymentList = [OB.I18N.getLabel('OBPOS_C&RDeletePaymentsBodyInit')];
+                var symbol = OB.MobileApp.model.get('terminal').symbol;
+                var symbolAtRight = OB.MobileApp.model.get('terminal').currencySymbolAtTheRight;
+                _.each(notPrePayments, function (payment) {
+                  paymentList.push('· ' + payment.get('name') + ' (' + OB.I18N.formatCurrencyWithSymbol(payment.get('amount'), symbol, symbolAtRight) + ')');
+                });
+                paymentList.push(OB.I18N.getLabel('OBPOS_C&RDeletePaymentsBodyEnd'));
+                OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_C&RDeletePaymentsHeader'), paymentList, [{
+                  label: OB.I18N.getLabel('OBMOBC_LblOk'),
+                  isConfirmButton: true,
+                  order: me,
+                  notPrePayments: notPrePayments,
+                  action: function () {
+                    var confirmationPopup = this;
+                    _.each(this.notPrePayments, function (payment) {
+                      var location = confirmationPopup.order.get('payments').models.indexOf(payment);
+                      confirmationPopup.order.get('payments').remove(confirmationPopup.order.get('payments').at(location));
+                    });
+                    this.order.cancelAndReplaceOrder(context);
+                  }
+                }, {
+                  label: OB.I18N.getLabel('OBMOBC_LblCancel')
+                }]);
+              } else {
+                me.cancelAndReplaceOrder(context);
+              }
+            } else {
+              me.cancelAndReplaceOrder(context);
+            }
+          });
+        }
+      }, function () {
+        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBMOBC_OfflineWindowRequiresOnline'));
+      });
+    },
+
+    cancelAndReplaceOrder: function (context) {
+      var documentseq, documentseqstr, idMap = {},
+          me = this,
+          i, splittedDocNo = [],
+          newDocNo = '',
+          nextNumber;
+
+      //Cloning order to be canceled
+      var clonedreceipt = new OB.Model.Order();
+      OB.UTIL.clone(me, clonedreceipt);
+      me.set('canceledorder', clonedreceipt);
+
+      OB.Dal.remove(this, function () {
+        me.get('lines').each(function (line) {
+          idMap[line.get('id')] = OB.Dal.get_uuid();
+          line.set('replacedorderline', line.get('id'));
+          line.set('id', idMap[line.get('id')]);
+        }, me);
+
+        me.set('replacedorder_documentNo', me.get('documentNo'));
+        me.set('replacedorder', me.get('id'));
+        me.set('id', null);
+        me.set('session', OB.MobileApp.model.get('session'));
+
+        me.set('generateInvoice', OB.MobileApp.model.get('terminal').terminalType.generateInvoice);
+        me.set('documentType', OB.MobileApp.model.get('terminal').terminalType.documentType);
+
+        if (me.get('isLayaway')) {
+          me.set('orderType', 2);
+        }
+        me.set('isLayaway', false);
+
+        me.set('createdBy', OB.MobileApp.model.get('orgUserId'));
+        if (!me.get('salesRepresentative')) {
+          if (OB.MobileApp.model.get('context').isSalesRepresentative) {
+            me.set('salesRepresentative', OB.MobileApp.model.get('context').user.id);
+          } else {
+            me.set('salesRepresentative', null);
+          }
+        }
+
+        me.set('hasbeenpaid', 'N');
+        me.set('isPaid', false);
+        me.set('isEditable', true);
+
+        me.set('orderDate', new Date());
+        me.set('creationDate', null);
+
+        me.set('negativeDocNo', me.get('documentNo') + '*R*');
+        newDocNo = '';
+        splittedDocNo = me.get('documentNo').split('-');
+        if (splittedDocNo.length > 1) {
+          nextNumber = parseInt(splittedDocNo[splittedDocNo.length - 1], 10) + 1;
+          for (i = 0; i < splittedDocNo.length; i++) {
+            if (i === 0) {
+              newDocNo = splittedDocNo[i] + '-';
+            } else if (i < splittedDocNo.length - 1) {
+              newDocNo += splittedDocNo[i] + '-';
+            } else {
+              newDocNo += nextNumber;
+            }
+          }
+        } else {
+          newDocNo = me.get('documentNo') + '-1';
+        }
+        me.set('documentNo', newDocNo);
+        me.set('posTerminal', OB.MobileApp.model.get('terminal').id);
+        me.save(function () {
+          me.get('lines').each(function (line) {
+            if (line.get('relatedLines')) {
+              line.get('relatedLines').forEach(function (rl) {
+                rl.orderId = me.get('id');
+                if (idMap[rl.orderlineId]) {
+                  rl.orderlineId = idMap[rl.orderlineId];
+                }
+              });
+            }
+          }, me);
+          me.get('payments').reset(me.get('payments').models);
+          me.set('doCancelAndReplace', true);
+
+          OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_OrderReplaced', [me.get('replacedorder_documentNo'), me.get('documentNo')]));
+          OB.UTIL.HookManager.executeHooks('OBPOS_PostCancelAndReplace', {
+            context: context,
+            receipt: me
+          }, function (args) {
+            me.calculateReceipt(function () {
+              me.unset('skipApplyPromotions');
+            });
+          });
+        });
+      }, function () {
+        OB.UTIL.showError('Error removing');
+      });
+    },
+
+    cancelLayaway: function (context) {
+      var me = this,
+          cancelAllowed = true,
+          notValid, i;
+      OB.UTIL.HookManager.executeHooks('OBPOS_PreCancelLayaway', {
+        context: context
+      }, function (args) {
+        if (args && args.cancelOperation) {
+          return;
+        }
+
+        // Verify if there is any payment that is not prePayment. In that case the cancel layaway process stops immediately
+        for (i = 0; i < me.get('payments').models.length; i++) {
+          var curPayment = me.get('payments').models[i];
+          if (_.isUndefined(curPayment.get('isPrePayment')) || _.isNull(curPayment.get('isPrePayment'))) {
+            cancelAllowed = false;
+            notValid = curPayment;
+            break;
+          }
+        }
+
+        if (cancelAllowed) {
+          me.set('cancelLayaway', true);
+          context.doShowDivText({
+            permission: context.permission,
+            orderType: 3
+          });
+          // If the canceling layaway is partially delivered, the payment and gross must be updated to don't create payments
+          // to return the delivered quantity
+          if (me.get('isPartiallyDelivered')) {
+            me.set('gross', OB.DEC.sub(me.get('deliveredQuantityAmount'), me.get('gross')));
+            me.set('payment', OB.DEC.Zero);
+          }
+          context.doTabChange({
+            tabPanel: 'payment',
+            keyboard: 'toolbarpayment',
+            edit: false
+          });
+        } else {
+          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_lblPaymentNotProcessedHeader'), OB.I18N.getLabel('OBPOS_lblPaymentNotProcessedMessage', [notValid.get('name'), notValid.get('origAmount'), OB.MobileApp.model.paymentnames[notValid.get('kind')].isocode]));
+        }
+      });
+    },
+
     createQuotation: function () {
       if (OB.MobileApp.model.hasPermission('OBPOS_receipt.quotation')) {
         this.set('isQuotation', true);
@@ -2605,6 +2899,42 @@
         }
       }
     },
+    getSumOfOrigAmounts: function (paymentToIgnore) {
+      //returns a result with the sum up of every payments based on origAmount field
+      //if paymentToIignore parameter is provided the result will exclude that payment
+      var payments = this.get('payments');
+      var sumOfPayments = OB.DEC.Zero;
+      if (payments && payments.length > 0) {
+        sumOfPayments = _.reduce(payments.models, function (memo, pymnt, index) {
+          if (paymentToIgnore && (pymnt.get('kind') === paymentToIgnore.get('kind'))) {
+            return OB.DEC.add(memo, OB.DEC.Zero);
+          } else {
+            return OB.DEC.add(memo, pymnt.get('origAmount'));
+          }
+        }, OB.DEC.Zero);
+        return sumOfPayments;
+      } else {
+        return sumOfPayments;
+      }
+    },
+    getDifferenceBetweenPaymentsAndTotal: function (paymentToIgnore) {
+      //Returns the difference (abs) between total to pay and payments.
+      //if paymentToIignore parameter is provided the result will exclude that payment.
+      return OB.DEC.abs(OB.DEC.sub(OB.DEC.abs(this.getTotal()), this.getSumOfOrigAmounts(paymentToIgnore)));
+    },
+    getDifferenceRemovingSpecificPayment: function (currentPayment) {
+      //Returns the difference (abs) between total to pay and payments without take into account currentPayment
+      //Result is returned in the currency used by current payment
+      var differenceInDefaultCurrency;
+      var differenceInForeingCurrency;
+      differenceInDefaultCurrency = this.getDifferenceBetweenPaymentsAndTotal(currentPayment);
+      if (currentPayment && currentPayment.get('rate')) {
+        differenceInForeingCurrency = OB.DEC.div(differenceInDefaultCurrency, currentPayment.get('rate'));
+        return differenceInForeingCurrency;
+      } else {
+        return differenceInDefaultCurrency;
+      }
+    },
     adjustPayment: function () {
       var i, max, p;
       var payments = this.get('payments');
@@ -2618,29 +2948,62 @@
       var paidCash = OB.DEC.Zero;
       var pcash;
       var precision;
+      var processedPaymentsAmount = OB.DEC.Zero;
+      var multiCurrencyDifference;
+      var paymentstatus = this.getPaymentStatus();
+      var sumCash = function () {
+          if (p.get('kind') === OB.MobileApp.model.get('paymentcash')) {
+            // The default cash method
+            cash = OB.DEC.add(cash, p.get('origAmount'));
+            pcash = p;
+            paidCash = OB.DEC.add(paidCash, p.get('origAmount'));
+          } else if (OB.MobileApp.model.hasPayment(p.get('kind')) && OB.MobileApp.model.hasPayment(p.get('kind')).paymentMethod.iscash) {
+            // Another cash method
+            origCash = OB.DEC.add(origCash, p.get('origAmount'));
+            pcash = p;
+            paidCash = OB.DEC.add(paidCash, p.get('origAmount'));
+          } else {
+            nocash = OB.DEC.add(nocash, p.get('origAmount'));
+          }
+          };
 
       for (i = 0, max = payments.length; i < max; i++) {
         p = payments.at(i);
         precision = this.getPrecision(p);
         if (p.get('rate') && p.get('rate') !== '1') {
           p.set('origAmount', OB.DEC.mul(p.get('amount'), p.get('rate')));
+          //Here we are trying to know if the current payment is making the pending to pay 0.
+          //to know that we are suming up every payments except the current one (getSumOfOrigAmounts)
+          //then we substract this amount from the total (getDifferenceBetweenPaymentsAndTotal)
+          //and finally we transform this difference to the foreign amount
+          //if the payment in the foreign amount makes pending to pay zero, then we will ensure that the payment
+          //in the default currency is satisfied
+          if (OB.DEC.compare(OB.DEC.sub(this.getDifferenceRemovingSpecificPayment(p), OB.DEC.abs(p.get('amount')))) === OB.DEC.Zero) {
+            multiCurrencyDifference = this.getDifferenceBetweenPaymentsAndTotal(p);
+            if (p.get('origAmount') !== multiCurrencyDifference) {
+              p.set('origAmount', multiCurrencyDifference);
+            }
+          }
         } else {
           p.set('origAmount', p.get('amount'));
         }
         p.set('paid', p.get('origAmount'));
-        if (p.get('kind') === OB.MobileApp.model.get('paymentcash')) {
-          // The default cash method
-          cash = OB.DEC.add(cash, p.get('origAmount'));
-          pcash = p;
-          paidCash = OB.DEC.add(paidCash, p.get('origAmount'));
-        } else if (OB.MobileApp.model.hasPayment(p.get('kind')) && OB.MobileApp.model.hasPayment(p.get('kind')).paymentMethod.iscash) {
-          // Another cash method
-          origCash = OB.DEC.add(origCash, p.get('origAmount'));
-          pcash = p;
-          paidCash = OB.DEC.add(paidCash, p.get('origAmount'));
+        if (_.isUndefined(this.get('paidInNegativeStatusAmt'))) {
+          sumCash();
         } else {
-          nocash = OB.DEC.add(nocash, p.get('origAmount'));
+          if (!p.get('isPrePayment')) {
+            sumCash();
+          } else {
+            processedPaymentsAmount = OB.DEC.add(processedPaymentsAmount, p.get('origAmount'));
+          }
         }
+      }
+
+      if (!_.isUndefined(this.get('paidInNegativeStatusAmt'))) {
+        total = OB.DEC.sub(processedPaymentsAmount, total);
+        payments = _.filter(payments.models, function (payment) {
+          return !payment.get('isPrePayment');
+        });
       }
 
       // Calculation of the change....
@@ -3482,6 +3845,104 @@
         }
       });
       return index;
+    },
+    deleteOrder: function (context, callback) {
+      var i;
+
+      function markOrderAsDeleted(model, orderList, callback) {
+        var me = this,
+            creationDate;
+        if (model.get('creationDate')) {
+          creationDate = new Date(model.get('creationDate'));
+        } else {
+          creationDate = new Date();
+        }
+        model.setIsCalculateGrossLockState(true);
+        model.set('creationDate', creationDate);
+        model.set('timezoneOffset', creationDate.getTimezoneOffset());
+        model.set('created', creationDate.getTime());
+        model.set('obposCreatedabsolute', OB.I18N.formatDateISO(creationDate));
+        model.set('obposIsDeleted', true);
+        for (i = 0; i < model.get('lines').length; i++) {
+          model.get('lines').at(i).set('obposIsDeleted', true);
+        }
+        model.set('hasbeenpaid', 'Y');
+        OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(model.get('documentnoSuffix'), model.get('quotationnoSuffix'), model.get('returnnoSuffix'), function () {
+          model.save(function () {
+            orderList.deleteCurrent();
+            orderList.synchronizeCurrentOrder();
+            model.setIsCalculateGrossLockState(false);
+            if (callback && callback instanceof Function) {
+              callback();
+            }
+          });
+        });
+      }
+
+      function removeOrder(receipt, callback) {
+        var orderList = OB.MobileApp.model.orderList;
+        var isPaidQuotation = (receipt.has('isQuotation') && receipt.get('isQuotation') && receipt.has('hasbeenpaid') && receipt.get('hasbeenpaid') === 'Y');
+        if (OB.UTIL.RfidController.isRfidConfigured()) {
+          OB.UTIL.RfidController.eraseEpcOrder(receipt);
+        }
+        if (receipt.get('id') && !isPaidQuotation && receipt.get('lines') && receipt.get('lines').length > 0) {
+          if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
+            markOrderAsDeleted(receipt, orderList, callback);
+          } else {
+            orderList.saveCurrent();
+            OB.Dal.remove(orderList.current, null, null);
+            orderList.deleteCurrent();
+            if (callback && callback instanceof Function) {
+              callback();
+            }
+          }
+        } else if (receipt.has('deletedLines')) {
+          if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
+            receipt.setIsCalculateGrossLockState(true);
+            receipt.set('obposIsDeleted', true);
+            receipt.prepareToSend(function () {
+              receipt.trigger('closed', {
+                callback: function () {
+                  orderList.deleteCurrent();
+                  orderList.synchronizeCurrentOrder();
+                  receipt.setIsCalculateGrossLockState(false);
+                  if (callback && callback instanceof Function) {
+                    callback();
+                  }
+                }
+              });
+            });
+          } else {
+            orderList.saveCurrent();
+            OB.Dal.remove(orderList.current, null, null);
+            orderList.deleteCurrent();
+            if (callback && callback instanceof Function) {
+              callback();
+            }
+          }
+        } else {
+          if (receipt.get('id')) {
+            orderList.saveCurrent();
+            OB.Dal.remove(orderList.current, null, null);
+          }
+          orderList.deleteCurrent();
+          if (callback && callback instanceof Function) {
+            callback();
+          }
+        }
+      }
+
+      OB.UTIL.HookManager.executeHooks('OBPOS_PreDeleteCurrentOrder', {
+        context: context,
+        receipt: this
+      }, function (args) {
+        if (args && args.cancelOperation && args.cancelOperation === true) {
+          return;
+        }
+        removeOrder(args.receipt, callback);
+      });
+
+      return true;
     }
   });
 
@@ -3580,6 +4041,7 @@
       order.set('isPaid', false);
       order.set('paidOnCredit', false);
       order.set('isLayaway', false);
+      order.set('isPartiallyDelivered', false);
       order.set('taxes', {});
 
       var nextDocumentno = OB.MobileApp.model.getNextDocumentno();
@@ -3666,7 +4128,9 @@
               order.set('gross', model.totalamount);
               order.set('net', model.totalNetAmount);
 
-              var linepos = 0;
+              var linepos = 0,
+                  hasDeliveredProducts = false,
+                  hasNotDeliveredProducts = false;
               _.each(model.receiptLines, function (iter) {
                 var price;
                 iter.linepos = linepos;
@@ -3766,6 +4230,15 @@
                   price = OB.DEC.number(iter.baseNetUnitPrice);
                 }
 
+                if (!iter.deliveredQuantity) {
+                  hasNotDeliveredProducts = true;
+                } else {
+                  hasDeliveredProducts = true;
+                  if (iter.deliveredQuantity < iter.quantity) {
+                    hasNotDeliveredProducts = true;
+                  }
+                }
+
                 OB.Dal.get(OB.Model.Product, iter.id, function (product) {
                   addLineForProduct(product);
                 }, null, function () {
@@ -3786,6 +4259,24 @@
                 });
                 linepos++;
               });
+              order.set('isPartiallyDelivered', hasDeliveredProducts && hasNotDeliveredProducts ? true : false);
+              if (hasDeliveredProducts && !hasNotDeliveredProducts) {
+                order.set('isFullyDelivered', true);
+              }
+              if (order.get('isPartiallyDelivered')) {
+                var partiallyPaid = 0;
+                _.each(_.filter(order.get('receiptLines'), function (reciptLine) {
+                  return reciptLine.deliveredQuantity;
+                }), function (deliveredLine) {
+                  partiallyPaid += deliveredLine.deliveredQuantity * deliveredLine.unitPrice;
+                });
+                if (partiallyPaid) {
+                  order.set('deliveredQuantityAmount', partiallyPaid);
+                }
+                if (order.get('deliveredQuantityAmount') && order.get('deliveredQuantityAmount') > order.get('gross')) {
+                  order.set('isDeliveredGreaterThanGross', true);
+                }
+              }
               //order.set('payments', model.receiptPayments);
               payments = new PaymentLineList();
               _.each(model.receiptPayments, function (iter) {
@@ -4002,9 +4493,7 @@
         var createNew = forceCreateNew || me.length === 0;
         if (createNew) {
           var order = me.newOrder();
-          if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
-            order.save();
-          }
+
           me.add(order);
           if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
             me.doRemoteBPSettings(OB.MobileApp.model.get('businessPartner'));
@@ -4112,6 +4601,42 @@
         }
       }
     },
+    getSumOfOrigAmounts: function (paymentToIgnore) {
+      //returns a result with the sum up of every payments based on origAmount field
+      //if paymentToIignore parameter is provided the result will exclude that payment
+      var payments = this.get('payments');
+      var sumOfPayments = OB.DEC.Zero;
+      if (payments && payments.length > 0) {
+        sumOfPayments = _.reduce(payments.models, function (memo, pymnt, index) {
+          if (paymentToIgnore && (pymnt.get('kind') === paymentToIgnore.get('kind'))) {
+            return OB.DEC.add(memo, OB.DEC.Zero);
+          } else {
+            return OB.DEC.add(memo, pymnt.get('origAmount'));
+          }
+        }, OB.DEC.Zero);
+        return sumOfPayments;
+      } else {
+        return sumOfPayments;
+      }
+    },
+    getDifferenceBetweenPaymentsAndTotal: function (paymentToIgnore) {
+      //Returns the difference (abs) between total to pay and payments.
+      //if paymentToIignore parameter is provided the result will exclude that payment.
+      return OB.DEC.abs(OB.DEC.sub(OB.DEC.abs(this.getTotal()), this.getSumOfOrigAmounts(paymentToIgnore)));
+    },
+    getDifferenceRemovingSpecificPayment: function (currentPayment) {
+      //Returns the difference (abs) between total to pay and payments without take into account currentPayment
+      //Result is returned in the currency used by current payment
+      var differenceInDefaultCurrency;
+      var differenceInForeingCurrency;
+      differenceInDefaultCurrency = this.getDifferenceBetweenPaymentsAndTotal(currentPayment);
+      if (currentPayment && currentPayment.get('rate')) {
+        differenceInForeingCurrency = OB.DEC.div(differenceInDefaultCurrency, currentPayment.get('rate'));
+        return differenceInForeingCurrency;
+      } else {
+        return differenceInDefaultCurrency;
+      }
+    },
     adjustPayment: function () {
       var i, max, p;
       var payments = this.get('payments');
@@ -4125,12 +4650,25 @@
       var paidCash = OB.DEC.Zero;
       var pcash;
       var precision;
+      var multiCurrencyDifference;
 
       for (i = 0, max = payments.length; i < max; i++) {
         p = payments.at(i);
         precision = this.getPrecision(p);
         if (p.get('rate') && p.get('rate') !== '1') {
           p.set('origAmount', OB.DEC.mul(p.get('amount'), p.get('rate')));
+          //Here we are trying to know if the current payment is making the pending to pay 0.
+          //to know that we are suming up every payments except the current one (getSumOfOrigAmounts)
+          //then we substract this amount from the total (getDifferenceBetweenPaymentsAndTotal)
+          //and finally we transform this difference to the foreign amount
+          //if the payment in the foreign amount makes pending to pay zero, then we will ensure that the payment
+          //in the default currency is satisfied
+          if (OB.DEC.compare(OB.DEC.sub(this.getDifferenceRemovingSpecificPayment(p), OB.DEC.abs(p.get('amount')))) === OB.DEC.Zero) {
+            multiCurrencyDifference = this.getDifferenceBetweenPaymentsAndTotal(p);
+            if (p.get('origAmount') !== multiCurrencyDifference) {
+              p.set('origAmount', multiCurrencyDifference);
+            }
+          }
         } else {
           p.set('origAmount', p.get('amount'));
         }

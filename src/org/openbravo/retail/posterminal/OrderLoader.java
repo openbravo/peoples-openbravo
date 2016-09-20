@@ -50,6 +50,7 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.ad_forms.AcctServer;
+import org.openbravo.erpCommon.businessUtility.CancelAndReplaceUtils;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.PropertyException;
@@ -130,6 +131,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
   private boolean createShipment = true;
   private Locator binForRetuns = null;
   private boolean isQuotation = false;
+  private boolean isDeleted = false;
+  private boolean doCancelAndReplace = false;
 
   @Inject
   @Any
@@ -183,10 +186,15 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     fullypaidLayaway = (jsonorder.getBoolean("isLayaway") || jsonorder.optLong("orderType") == 2)
         && jsonorder.getDouble("payment") >= jsonorder.getDouble("gross");
 
+    isDeleted = jsonorder.has("obposIsDeleted") && jsonorder.getBoolean("obposIsDeleted");
+
     createShipment = !isQuotation && !notpaidLayaway;
     if (jsonorder.has("generateShipment")) {
       createShipment &= jsonorder.getBoolean("generateShipment");
     }
+
+    doCancelAndReplace = jsonorder.has("doCancelAndReplace")
+        && jsonorder.getBoolean("doCancelAndReplace") ? true : false;
   }
 
   @Override
@@ -211,7 +219,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       Invoice invoice = null;
       boolean createInvoice = false;
       boolean wasPaidOnCredit = false;
-      boolean isDeleted = false;
 
       if (jsonorder.getLong("orderType") != 2 && !jsonorder.getBoolean("isLayaway") && !isQuotation
           && verifyOrderExistance(jsonorder)
@@ -222,13 +229,9 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       if (jsonorder.getBoolean("isLayaway")) {
         order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
 
-        final Date updated = OBMOBCUtils.calculateClientDatetime(jsonorder.getString("updated"),
-            Long.parseLong(jsonorder.getString("timezoneOffset")));
-
         final Date loaded = OBMOBCUtils.calculateClientDatetime(jsonorder.getString("loaded"),
             Long.parseLong(jsonorder.getString("timezoneOffset")));
-
-        if (!((updated.compareTo(order.getUpdated()) >= 0) && (loaded.compareTo(order.getUpdated()) >= 0))) {
+        if (!(loaded.compareTo(order.getUpdated()) >= 0)) {
           throw new OutDatedDataChangeException(Utility.messageBD(new DalConnectionProvider(false),
               "OBPOS_outdatedLayaway", OBContext.getOBContext().getLanguage().getLanguage()));
         }
@@ -258,8 +261,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         if (log.isDebugEnabled()) {
           t1 = System.currentTimeMillis();
         }
-        // Getting if the order is deleted or not
-        isDeleted = jsonorder.has("obposIsDeleted") && jsonorder.getBoolean("obposIsDeleted");
         // An invoice will be automatically created if:
         // - The order is not a layaway and is not completely paid (ie. it's paid on credit)
         // - Or, the order is a normal order or a fully paid layaway, and has the "generateInvoice"
@@ -284,12 +285,14 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
         // We have to check if there is any line in the order which have been already invoiced. If
         // it is the case we will not create the invoice.
-        List<Invoice> lstInvoice = getInvoicesRelatedToOrder(jsonorder.getString("id"));
-        if (lstInvoice != null) {
-          // We have found and invoice, so it will be used to assign payments
-          // TODO several invoices involved
-          invoice = lstInvoice.get(0);
-          createInvoice = false;
+        if (createInvoice && jsonorder.getBoolean("isLayaway")) {
+          List<Invoice> lstInvoice = getInvoicesRelatedToOrder(jsonorder.getString("id"));
+          if (lstInvoice != null) {
+            // We have found and invoice, so it will be used to assign payments
+            // TODO several invoices involved
+            invoice = lstInvoice.get(0);
+            createInvoice = false;
+          }
         }
 
         // If the ticket is a deleted ticket the invoice mustn't be created
@@ -312,7 +315,9 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
           order.setObposAppCashup(jsonorder.getString("obposAppCashup"));
           order.setDelivered(true);
-
+          if (jsonorder.has("oBPOSNotInvoiceOnCashUp")) {
+            order.setOBPOSNotInvoiceOnCashUp(jsonorder.getBoolean("oBPOSNotInvoiceOnCashUp"));
+          }
           String olsHqlWhereClause = " ol where ol.salesOrder.id = :orderId order by lineNo";
           OBQuery<OrderLine> queryOls = OBDal.getInstance().createQuery(OrderLine.class,
               olsHqlWhereClause);
@@ -328,6 +333,9 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
           if (!jsonorder.has("channel")) {
             order.setObposAppCashup(jsonorder.getString("obposAppCashup"));
+          }
+          if (jsonorder.has("oBPOSNotInvoiceOnCashUp")) {
+            order.setOBPOSNotInvoiceOnCashUp(jsonorder.getBoolean("oBPOSNotInvoiceOnCashUp"));
           }
         } else {
           order = OBProvider.getInstance().get(Order.class);
@@ -399,7 +407,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           t11 = System.currentTimeMillis();
           t2 = System.currentTimeMillis();
         }
-        updateAuditInfo(order, invoice, jsonorder);
+
         if (log.isDebugEnabled()) {
           t3 = System.currentTimeMillis();
         }
@@ -416,6 +424,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
             updateStockStatement.close();
           }
         }
+
         if (log.isDebugEnabled()) {
           t4 = System.currentTimeMillis();
 
@@ -460,6 +469,22 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           return paymentResponse;
         }
 
+        if (doCancelAndReplace && order.getReplacedorder() != null) {
+          TriggerHandler.getInstance().disable();
+          try {
+            // Set default payment type to order in case there is no payment on the order
+            POSUtils.setDefaultPaymentType(jsonorder, order);
+            // Cancel and Replace the order
+            CancelAndReplaceUtils.cancelAndReplaceOrder(order.getId(), jsonorder,
+                useOrderDocumentNoForRelatedDocs);
+          } catch (Exception ex) {
+            OBDal.getInstance().rollbackAndClose();
+            throw new OBException("CancelAndReplaceUtils.cancelAndReplaceOrder: ", ex);
+          } finally {
+            TriggerHandler.getInstance().enable();
+          }
+        }
+
         // Call all OrderProcess injected.
         executeHooks(orderProcesses, jsonorder, order, shipment, invoice);
       } else {
@@ -502,20 +527,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     }
   }
 
-  @Override
-  protected boolean additionalCheckForDuplicates(JSONObject record) {
-    try {
-      Order orderInDatabase = OBDal.getInstance().get(Order.class, record.getString("id"));
-      String docNoInDatabase = orderInDatabase.getDocumentNo();
-      String docNoInJSON = "";
-      docNoInJSON = record.getString("documentNo");
-      return docNoInDatabase.equals(docNoInJSON);
-    } catch (JSONException e) {
-      log.error("JSON information couldn't be read when verifying duplicate", e);
-      return false;
-    }
-  }
-
   private void executeHooks(Instance<? extends Object> hooks, JSONObject jsonorder, Order order,
       ShipmentInOut shipment, Invoice invoice) throws Exception {
 
@@ -526,16 +537,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       } else {
         ((OrderLoaderPreProcessHook) proc).exec(jsonorder);
       }
-    }
-  }
-
-  private void updateAuditInfo(Order order, Invoice invoice, JSONObject jsonorder)
-      throws JSONException {
-    Long value = jsonorder.getLong("created");
-    order.set("creationDate", new Date(value));
-    order.set("updated", new Date(value));
-    if (invoice != null) {
-      invoice.set("creationDate", new Date(value));
     }
   }
 
@@ -583,21 +584,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
   private boolean verifyOrderExistance(JSONObject jsonorder) throws Exception {
     OBContext.setAdminMode(false);
     try {
-      if (jsonorder.has("id") && jsonorder.getString("id") != null
-          && !jsonorder.getString("id").equals("")) {
-        Order order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
-        if (order != null) {
-          // Additional check to verify that the order is indeed a duplicate
-          if (!additionalCheckForDuplicates(jsonorder)) {
-            throw new OBException(
-                "An order has the same id, but it's not a duplicate. Existing order id:"
-                    + order.getId() + ". Existing order documentNo:" + order.getDocumentNo()
-                    + ". New documentNo:" + jsonorder.getString("documentNo"));
-          } else {
-            return true;
-          }
-        }
-      }
       if ((!jsonorder.has("obposIsDeleted") || !jsonorder.getBoolean("obposIsDeleted"))
           && (!jsonorder.has("gross") || jsonorder.getString("gross").equals("0"))
           && (jsonorder.isNull("lines") || (jsonorder.getJSONArray("lines") != null && jsonorder
@@ -920,7 +906,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       addDocumentNoHandler(invoice, invoiceEntity, invoice.getTransactionDocument(),
           invoice.getDocumentType());
     }
-
+    Long value = jsonorder.getLong("created");
+    invoice.set("creationDate", new Date(value));
     final Date orderDate = OBMOBCUtils.calculateClientDatetime(jsonorder.getString("orderDate"),
         Long.parseLong(jsonorder.getString("timezoneOffset")));
     invoice.setAccountingDate(order.getOrderDate());
@@ -1051,6 +1038,11 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
       OrderLine orderLine = lineReferences.get(i);
       BigDecimal pendingQty = orderLine.getOrderedQuantity().abs();
+      if (orderlines.getJSONObject(i).has("remainingQuantity")
+          && orderlines.getJSONObject(i).get("remainingQuantity") != JSONObject.NULL) {
+        pendingQty = pendingQty.subtract(new BigDecimal(orderlines.getJSONObject(i).getLong(
+            "remainingQuantity")).abs());
+      }
       boolean negativeLine = orderLine.getOrderedQuantity().compareTo(BigDecimal.ZERO) < 0;
 
       final Warehouse warehouse = (orderLine.getWarehouse() != null ? orderLine.getWarehouse()
@@ -1063,7 +1055,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
       AttributeSetInstance oldAttributeSetValues = null;
 
-      if (negativeLine) {
+      if (negativeLine && pendingQty.compareTo(BigDecimal.ZERO) > 0) {
         lineNo += 10;
         Locator binForReturn = null;
         if (orderLine.getWarehouse() != null && orderLine.getWarehouse().getReturnlocator() != null) {
@@ -1073,7 +1065,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         }
         addShipmentline(shipment, shplineentity, orderlines.getJSONObject(i), orderLine, jsonorder,
             lineNo, pendingQty.negate(), binForReturn, null, i);
-      } else if (useSingleBin) {
+      } else if (useSingleBin && pendingQty.compareTo(BigDecimal.ZERO) > 0) {
         lineNo += 10;
         addShipmentline(shipment, shplineentity, orderlines.getJSONObject(i), orderLine, jsonorder,
             lineNo, pendingQty, foundSingleBin, null, i);
@@ -1281,8 +1273,9 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       orderline.setLineNetAmount(BigDecimal.valueOf(jsonOrderLine.getDouble("net")).setScale(
           pricePrecision, RoundingMode.HALF_UP));
 
-      if (createShipment) {
-        // shipment is created, so all is delivered
+      if (createShipment
+          || (doCancelAndReplace && !newLayaway && !notpaidLayaway && !partialpaidLayaway)) {
+        // shipment is created or is a C&R and is not a layaway, so all is delivered
         orderline.setDeliveredQuantity(orderline.getOrderedQuantity());
       }
 
@@ -1533,6 +1526,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     } else {
       order.setDocumentStatus("CO");
     }
+    Long value = jsonorder.getLong("created");
+    order.set("creationDate", new Date(value));
     order.setDocumentAction("--");
     order.setProcessed(true);
     order.setProcessNow(false);
@@ -1541,68 +1536,70 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       order.setDelivered(true);
     }
 
-    if (order.getDocumentNo().indexOf("/") > -1) {
-      long documentno = Long.parseLong(order.getDocumentNo().substring(
-          order.getDocumentNo().lastIndexOf("/") + 1));
+    if (!doCancelAndReplace) {
+      if (order.getDocumentNo().indexOf("/") > -1) {
+        long documentno = Long.parseLong(order.getDocumentNo().substring(
+            order.getDocumentNo().lastIndexOf("/") + 1));
 
-      if (isQuotation) {
-        if (order.getObposApplications().getQuotationslastassignednum() == null
-            || documentno > order.getObposApplications().getQuotationslastassignednum()) {
-          OBPOSApplications terminal = order.getObposApplications();
-          terminal.setQuotationslastassignednum(documentno);
-          OBDal.getInstance().save(terminal);
-        }
-      } else if (jsonorder.optLong("returnnoSuffix", -1L) > -1L) {
-        if (order.getObposApplications().getReturnslastassignednum() == null
-            || documentno > order.getObposApplications().getReturnslastassignednum()) {
-          OBPOSApplications terminal = order.getObposApplications();
-          terminal.setReturnslastassignednum(documentno);
-          OBDal.getInstance().save(terminal);
-        }
-      } else {
-        if (order.getObposApplications().getLastassignednum() == null
-            || documentno > order.getObposApplications().getLastassignednum()) {
-          OBPOSApplications terminal = order.getObposApplications();
-          terminal.setLastassignednum(documentno);
-          OBDal.getInstance().save(terminal);
-        }
-      }
-    } else {
-      long documentno;
-      if (isQuotation) {
-        if (jsonorder.has("quotationnoPrefix")) {
-          documentno = Long.parseLong(order.getDocumentNo().replace(
-              jsonorder.getString("quotationnoPrefix"), ""));
-
+        if (isQuotation) {
           if (order.getObposApplications().getQuotationslastassignednum() == null
               || documentno > order.getObposApplications().getQuotationslastassignednum()) {
             OBPOSApplications terminal = order.getObposApplications();
             terminal.setQuotationslastassignednum(documentno);
             OBDal.getInstance().save(terminal);
           }
-        }
-      } else if (jsonorder.optLong("returnnoSuffix", -1L) > -1L) {
-        if (jsonorder.has("returnnoPrefix")) {
-          documentno = Long.parseLong(order.getDocumentNo().replace(
-              jsonorder.getString("returnnoPrefix"), ""));
-
+        } else if (jsonorder.optLong("returnnoSuffix", -1L) > -1L) {
           if (order.getObposApplications().getReturnslastassignednum() == null
               || documentno > order.getObposApplications().getReturnslastassignednum()) {
             OBPOSApplications terminal = order.getObposApplications();
             terminal.setReturnslastassignednum(documentno);
             OBDal.getInstance().save(terminal);
           }
-        }
-      } else {
-        if (jsonorder.has("documentnoPrefix")) {
-          documentno = Long.parseLong(order.getDocumentNo().replace(
-              jsonorder.getString("documentnoPrefix"), ""));
-
+        } else {
           if (order.getObposApplications().getLastassignednum() == null
               || documentno > order.getObposApplications().getLastassignednum()) {
             OBPOSApplications terminal = order.getObposApplications();
             terminal.setLastassignednum(documentno);
             OBDal.getInstance().save(terminal);
+          }
+        }
+      } else {
+        long documentno;
+        if (isQuotation) {
+          if (jsonorder.has("quotationnoPrefix")) {
+            documentno = Long.parseLong(order.getDocumentNo().replace(
+                jsonorder.getString("quotationnoPrefix"), ""));
+
+            if (order.getObposApplications().getQuotationslastassignednum() == null
+                || documentno > order.getObposApplications().getQuotationslastassignednum()) {
+              OBPOSApplications terminal = order.getObposApplications();
+              terminal.setQuotationslastassignednum(documentno);
+              OBDal.getInstance().save(terminal);
+            }
+          }
+        } else if (jsonorder.optLong("returnnoSuffix", -1L) > -1L) {
+          if (jsonorder.has("returnnoPrefix")) {
+            documentno = Long.parseLong(order.getDocumentNo().replace(
+                jsonorder.getString("returnnoPrefix"), ""));
+
+            if (order.getObposApplications().getReturnslastassignednum() == null
+                || documentno > order.getObposApplications().getReturnslastassignednum()) {
+              OBPOSApplications terminal = order.getObposApplications();
+              terminal.setReturnslastassignednum(documentno);
+              OBDal.getInstance().save(terminal);
+            }
+          }
+        } else {
+          if (jsonorder.has("documentnoPrefix")) {
+            documentno = Long.parseLong(order.getDocumentNo().replace(
+                jsonorder.getString("documentnoPrefix"), ""));
+
+            if (order.getObposApplications().getLastassignednum() == null
+                || documentno > order.getObposApplications().getLastassignednum()) {
+              OBPOSApplications terminal = order.getObposApplications();
+              terminal.setLastassignednum(documentno);
+              OBDal.getInstance().save(terminal);
+            }
           }
         }
       }
@@ -2038,17 +2035,24 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
               .setScale(pricePrecision, RoundingMode.HALF_UP);
         }
       } else if (writeoffAmt.signum() == -1
-          && (!notpaidLayaway && !creditpaidLayaway && !fullypaidLayaway && !checkPaidOnCreditChecked)) {
+          && ((!notpaidLayaway && !creditpaidLayaway && !fullypaidLayaway && !checkPaidOnCreditChecked) || jsonorder
+              .has("paidInNegativeStatusAmt"))) {
+        // If the overpayment is negative and the order is not a fully or not paid layaway, a
+        // quotation nor an order paid on credit, or the overpayment is negative and having a
+        // positive tickets in which the created payments are negative (this may occur in C&R flow)
+        // the negative writeoffAmt must be take into account
         if (totalIsNegative) {
           amount = amount.add(writeoffAmt).setScale(pricePrecision, RoundingMode.HALF_UP);
         } else {
           amount = amount.add(writeoffAmt.abs()).setScale(pricePrecision, RoundingMode.HALF_UP);
         }
-        origAmount = amount;
-        if (payment.has("mulrate") && payment.getDouble("mulrate") != 1) {
-          mulrate = BigDecimal.valueOf(payment.getDouble("mulrate"));
-          origAmount = amount.multiply(BigDecimal.valueOf(payment.getDouble("mulrate"))).setScale(
-              pricePrecision, RoundingMode.HALF_UP);
+        if (!doCancelAndReplace) {
+          origAmount = amount;
+          if (payment.has("mulrate") && payment.getDouble("mulrate") != 1) {
+            mulrate = BigDecimal.valueOf(payment.getDouble("mulrate"));
+            origAmount = amount.multiply(BigDecimal.valueOf(payment.getDouble("mulrate")))
+                .setScale(pricePrecision, RoundingMode.HALF_UP);
+          }
         }
       }
 
@@ -2126,7 +2130,11 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           false, false, order.getCurrency(), mulrate, origAmount, true,
           payment.has("id") ? payment.getString("id") : null);
 
-      if (writeoffAmt.signum() == 1) {
+      // Associate a GLItem with the overpayment amount to the payment which generates the
+      // overpayment for positive writeoffAmt and for negative overpayments generated in a positive
+      // order (specific in C&R flow)
+      if (writeoffAmt.signum() == 1
+          || (writeoffAmt.signum() == -1 && jsonorder.has("paidInNegativeStatusAmt"))) {
         if (totalIsNegative) {
           FIN_AddPayment.saveGLItem(finPayment, writeoffAmt.negate(), paymentType
               .getPaymentMethod().getGlitemWriteoff(),
@@ -2327,5 +2335,4 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       OBContext.restorePreviousMode();
     }
   }
-
 }

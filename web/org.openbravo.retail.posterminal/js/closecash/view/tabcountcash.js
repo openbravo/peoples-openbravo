@@ -75,6 +75,10 @@ enyo.kind({
   render: function () {
     var counted;
     this.inherited(arguments);
+    if (OB.MobileApp.model.get('permissions').OBPOS_HideCashUpInfoToCashier) {
+      this.$.expected.hide();
+      this.$.foreignExpected.hide();
+    }
     counted = this.model.get('counted');
     if (counted !== null && counted !== undefined) {
       this.$.counted.setContent(OB.I18N.formatCurrency(OB.DEC.add(0, counted)));
@@ -246,6 +250,8 @@ enyo.kind({
       this.$.totalLbl.hide();
       this.$.difference.hide();
       _.forEach(this.$.paymentsList.$.tbody.children, function (payment) {
+        payment.controls[0].$.expected.hide();
+        payment.controls[0].$.foreignExpected.hide();
         if (payment.controls[0].model.get('paymentMethod').countcash) {
           payment.hide();
         }
@@ -255,6 +261,8 @@ enyo.kind({
       this.$.totalLbl.show();
       this.$.difference.show();
       _.forEach(this.$.paymentsList.$.tbody.children, function (payment) {
+        payment.controls[0].$.expected.show();
+        payment.controls[0].$.foreignExpected.show();
         if (payment.controls[0].model.get('paymentMethod').countcash) {
           payment.show();
         }

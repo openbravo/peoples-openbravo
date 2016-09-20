@@ -22,7 +22,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     generatedModel: true,
     modelName: 'TaxZone'
   },
-  OB.Model.Product, OB.Model.ProductCategory, OB.Model.ProductCategoryTree, OB.Model.PriceList, OB.Model.ProductPrice, OB.Model.OfferPriceList, OB.Model.ServiceProduct, OB.Model.ServiceProductCategory, OB.Model.ServicePriceRule, OB.Model.ServicePriceRuleRange, OB.Model.ServicePriceRuleRangePrices, OB.Model.ServicePriceRuleVersion, OB.Model.BusinessPartner, OB.Model.BPCategory, OB.Model.BPLocation, OB.Model.Order, OB.Model.DocumentSequence, OB.Model.ChangedBusinessPartners, OB.Model.ChangedBPlocation, OB.Model.ProductBOM, OB.Model.TaxCategoryBOM,
+  OB.Model.Product, OB.Model.ProductCategory, OB.Model.ProductCategoryTree, OB.Model.PriceList, OB.Model.ProductPrice, OB.Model.OfferPriceList, OB.Model.ServiceProduct, OB.Model.ServiceProductCategory, OB.Model.ServicePriceRule, OB.Model.ServicePriceRuleRange, OB.Model.ServicePriceRuleRangePrices, OB.Model.ServicePriceRuleVersion, OB.Model.BusinessPartner, OB.Model.BPCategory, OB.Model.BPLocation, OB.Model.Order, OB.Model.DocumentSequence, OB.Model.ChangedBusinessPartners, OB.Model.ChangedBPlocation, OB.Model.ProductBOM, OB.Model.TaxCategoryBOM, OB.Model.CancelLayaway,
   {
     generatedModel: true,
     modelName: 'Discount'
@@ -310,7 +310,8 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
         //Create the negative payment for change
         var oldChange = receipt.get('change'),
             clonedCollection = new Backbone.Collection(),
-            paymentKind, i;
+            paymentKind, i, totalPrePayment = OB.DEC.Zero,
+            totalNotPrePayment = OB.DEC.Zero;
         if (receipt.get('orderType') !== 2 && receipt.get('orderType') !== 3) {
           var negativeLines = _.filter(receipt.get('lines').models, function (line) {
             return line.get('qty') < 0;
@@ -329,13 +330,18 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
         }
         receipt.get('payments').each(function (model) {
           clonedCollection.add(new Backbone.Model(model.toJSON()));
+          if (model.get('isPrePayment')) {
+            totalPrePayment = OB.DEC.add(totalPrePayment, model.get('origAmount'));
+          } else {
+            totalNotPrePayment = OB.DEC.add(totalNotPrePayment, model.get('origAmount'));
+          }
         });
         if (!_.isUndefined(receipt.get('selectedPayment')) && receipt.getChange() > 0) {
           var payment = OB.MobileApp.model.paymentnames[receipt.get('selectedPayment')];
           if (!payment.paymentMethod.iscash) {
             payment = OB.MobileApp.model.paymentnames[OB.MobileApp.model.get('paymentcash')];
           }
-          if (receipt.get('payment') >= receipt.get('gross')) {
+          if (receipt.get('payment') >= receipt.get('gross') || (!_.isUndefined(receipt.get('paidInNegativeStatusAmt')) && OB.DEC.compare(OB.DEC.sub(receipt.get('gross'), OB.DEC.sub(totalPrePayment, totalNotPrePayment))) >= 0)) {
             receipt.addPayment(new OB.Model.PaymentLine({
               'kind': payment.payment.searchKey,
               'name': payment.payment.commercialName,
@@ -419,6 +425,44 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     }, this);
 
     receipt.on('paymentDone', function (openDrawer) {
+      var isOrderCancelledProcess = new OB.DS.Process('org.openbravo.retail.posterminal.process.IsOrderCancelled'),
+          triggerPaymentAccepted;
+
+      triggerPaymentAccepted = function () {
+        if (receipt.get('doCancelAndReplace') && receipt.get('replacedorder')) {
+          isOrderCancelledProcess.exec({
+            orderId: receipt.get('replacedorder'),
+            documentNo: receipt.get('documentNo'),
+            setCancelled: true
+          }, function (data) {
+            if (data && data.exception) {
+              if (data.exception.message) {
+                OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), data.exception.message);
+                return;
+              }
+              OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBMOBC_OfflineWindowRequiresOnline'));
+              return;
+            } else if (data && data.orderCancelled) {
+              OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_OrderReplacedError'));
+              return;
+            } else {
+              if (_.isUndefined(_.find(receipt.get('lines').models, function (line) {
+                var qty = line.get('qty') ? line.get('qty') : 0,
+                    remainingQuantity = line.get('remainingQuantity') ? line.get('remainingQuantity') : 0;
+                return (qty > 0 && qty > remainingQuantity) || (qty < 0 && qty < remainingQuantity);
+              }))) {
+                receipt.set('generateShipment', false);
+              }
+              receipt.trigger('paymentAccepted');
+            }
+          }, function () {
+            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBMOBC_OfflineWindowRequiresOnline'));
+          });
+        } else {
+          receipt.trigger('paymentAccepted');
+        }
+      };
+
       if (receipt.overpaymentExists()) {
         var symbol = OB.MobileApp.model.get('terminal').symbol;
         var symbolAtRight = OB.MobileApp.model.get('terminal').currencySymbolAtTheRight;
@@ -433,17 +477,17 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                 receipt: receipt
               }, OB.MobileApp.model.get('permissions').OBPOS_timeAllowedDrawerSales);
             }
-            receipt.trigger('paymentAccepted');
+            triggerPaymentAccepted();
           }
         }, {
           label: OB.I18N.getLabel('OBMOBC_LblCancel')
         }]);
-      } else if ((OB.DEC.abs(receipt.getPayment()) !== OB.DEC.abs(receipt.getGross())) && (!receipt.isLayaway() && !receipt.get('paidOnCredit'))) {
+      } else if (OB.DEC.abs(receipt.getPayment()) !== OB.DEC.abs(receipt.getGross()) && _.isUndefined(receipt.get('paidInNegativeStatusAmt')) && !receipt.isLayaway() && !receipt.get('paidOnCredit')) {
         OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_PaymentAmountDistinctThanReceiptAmountTitle'), OB.I18N.getLabel('OBPOS_PaymentAmountDistinctThanReceiptAmountBody'), [{
           label: OB.I18N.getLabel('OBMOBC_LblOk'),
           isConfirmButton: true,
           action: function () {
-            receipt.trigger('paymentAccepted');
+            triggerPaymentAccepted();
           }
         }, {
           label: OB.I18N.getLabel('OBMOBC_LblCancel')
@@ -455,7 +499,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
             receipt: receipt
           }, OB.MobileApp.model.get('permissions').OBPOS_timeAllowedDrawerSales);
         }
-        receipt.trigger('paymentAccepted');
+        triggerPaymentAccepted();
       }
     }, this);
 
@@ -735,6 +779,97 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
         }]);
       } else {
         finishVoidLayaway();
+      }
+    }, this);
+
+    receipt.on('cancelLayaway', function () {
+      var finishCancelLayaway = function () {
+          var cancelLayawayObj = {},
+              cancelLayawayModel = new OB.Model.CancelLayaway(),
+              documentNo = receipt.get('documentNo'),
+              process = new OB.DS.Process('org.openbravo.retail.posterminal.process.IsOrderCancelled');
+
+          process.exec({
+            orderId: receipt.get('id'),
+            documentNo: receipt.get('documentNo'),
+            setCancelled: true
+          }, function (data) {
+            if (data && data.exception) {
+              if (data.exception.message) {
+                OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), data.exception.message);
+                return;
+              }
+              OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBMOBC_OfflineWindowRequiresOnline'));
+              return;
+            } else if (data && data.orderCancelled) {
+              OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_LayawayCancelledError'));
+              return;
+            } else {
+              var cancelLayawayObj = receipt.serializeToJSON();
+
+              if (receipt.getPaymentStatus().isNegative) {
+                cancelLayawayObj.gross = OB.DEC.mul(cancelLayawayObj.gross, -1);
+              }
+              cancelLayawayObj.orderType = 2;
+              cancelLayawayObj.obposAppCashup = OB.MobileApp.model.get('terminal').cashUpId;
+              if (cancelLayawayObj.deliveredQuantityAmount) {
+                cancelLayawayObj.deliveredQuantityAmount = OB.I18N.formatCurrency(receipt.getDeliveredQuantityAmount());
+              }
+
+              cancelLayawayObj.payments.forEach(function (payment) {
+                payment.origAmount = receipt.getPaymentStatus().isNegative ? OB.DEC.mul(payment.origAmount, -1) : payment.origAmount;
+                payment.paid = receipt.getPaymentStatus().isNegative ? OB.DEC.mul(payment.paid, -1) : payment.paid;
+              });
+
+              cancelLayawayModel.set('json', JSON.stringify(cancelLayawayObj));
+
+              OB.Dal.save(cancelLayawayModel, function () {
+                var orderId = receipt.id;
+
+                OB.MobileApp.model.runSyncProcess();
+                orderList.deleteCurrent();
+                OB.Dal.get(OB.Model.Order, orderId, function (model) {
+                  function cancelAndNew() {
+                    OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgSuccessCancelLayaway', [documentNo]));
+                  }
+                  if (model) {
+                    OB.Dal.remove(model, function (tx) {
+                      cancelAndNew();
+                    }, function (tx, err) {
+                      OB.UTIL.showError(err);
+                    });
+                  } else {
+                    cancelAndNew();
+                  }
+                }, function (tx, err) {
+                  OB.UTIL.showError(err);
+                });
+              }, function () {
+                OB.error(arguments);
+              });
+              receipt.set('negativeDocNo', documentNo + '*R*');
+              receipt.trigger('print');
+            }
+          }, function () {
+            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBMOBC_OfflineWindowRequiresOnline'));
+            OB.error(arguments);
+          });
+          };
+      if (receipt.overpaymentExists()) {
+        var symbol = OB.MobileApp.model.get('terminal').symbol;
+        var symbolAtRight = OB.MobileApp.model.get('terminal').currencySymbolAtTheRight;
+        var amount = receipt.getPaymentStatus().overpayment;
+        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_OverpaymentWarningTitle'), OB.I18N.getLabel('OBPOS_OverpaymentWarningBody', [OB.I18N.formatCurrencyWithSymbol(amount, symbol, symbolAtRight)]), [{
+          label: OB.I18N.getLabel('OBMOBC_LblOk'),
+          isConfirmButton: true,
+          action: function () {
+            finishCancelLayaway();
+          }
+        }, {
+          label: OB.I18N.getLabel('OBMOBC_LblCancel')
+        }]);
+      } else {
+        finishCancelLayaway();
       }
     }, this);
 

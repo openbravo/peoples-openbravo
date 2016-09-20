@@ -308,6 +308,15 @@
       });
 
       this.get('dataSyncModels').push({
+        name: 'Cancel Layaway',
+        model: OB.Model.CancelLayaway,
+        modelFunc: 'OB.Model.CancelLayaway',
+        className: 'org.openbravo.retail.posterminal.CancelLayawayLoader',
+        criteria: {},
+        isPersistent: false
+      });
+
+      this.get('dataSyncModels').push({
         name: 'Cash Management',
         model: OB.Model.CashManagement,
         modelFunc: 'OB.Model.CashManagement',
@@ -701,45 +710,41 @@
       this.cleanSessionInfo();
     },
 
-    preLogoutActions: function () {
+    preLogoutActions: function (finalCallback) {
       if (OB.POS.hwserver !== undefined) {
         OB.POS.hwserver.print(new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.GoodByeTemplate), {}, null, OB.DS.HWServer.DISPLAY);
       }
       if (!OB.MobileApp.model.attributes.permissions || !OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
         this.cleanSessionInfo();
       }
-    },
-
-    postCloseSession: function (session) {
       var criteria = {},
           model;
       var me = this;
 
-      function success(collection) {
-        var i, j, saveCallback;
-        if (collection.length > 0) {
-          saveCallback = _.after(collection.length, function () {
+      function removeOneModel(model, collection, callback) {
+        if (collection.length === 0) {
+          if (callback && callback instanceof Function) {
             me.cleanSessionInfo();
-            OB.MobileApp.model.triggerLogout();
-          });
-          _.forEach(collection.models, function (model) {
-            var creationDate = new Date();
-            model.set('creationDate', creationDate);
-            model.set('timezoneOffset', creationDate.getTimezoneOffset());
-            model.set('created', creationDate.getTime());
-            model.set('obposCreatedabsolute', OB.I18N.formatDateISO(creationDate));
-            model.set('obposIsDeleted', true);
-            for (i = 0; i < model.get('lines').length; i++) {
-              model.get('lines').at(i).set('obposIsDeleted', true);
-            }
-            model.set('hasbeenpaid', 'Y');
-            OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(model.get('documentnoSuffix'), model.get('quotationnoSuffix'), model.get('returnnoSuffix'), function () {
-              model.save(saveCallback);
-            });
-          });
+            callback();
+          }
+          return;
+        }
+
+        model.deleteOrder(me, function () {
+          collection.remove(model);
+          removeOneModel(collection.at(0), collection, callback);
+        });
+      }
+
+      function success(collection) {
+        var i, j, removeCallback;
+        if (collection.length > 0) {
+          removeOneModel(collection.at(0), collection, finalCallback);
         } else {
-          me.cleanSessionInfo();
-          OB.MobileApp.model.triggerLogout();
+          if (finalCallback && finalCallback instanceof Function) {
+            me.cleanSessionInfo();
+            finalCallback();
+          }
         }
       }
 
@@ -748,23 +753,18 @@
         OB.MobileApp.model.triggerLogout();
       }
       //All pending to be paid orders will be removed on logout
-      if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
-        criteria.session = session.get('id');
-        criteria.hasbeenpaid = 'N';
-        OB.Dal.find(OB.Model.Order, criteria, success, error);
-      } else {
-        OB.Dal.removeAll(OB.Model.Order, {
-          'session': session.get('id'),
-          'hasbeenpaid': 'N'
-        }, function () {
-          OB.MobileApp.model.triggerLogout();
-        }, error);
+      criteria.session = OB.MobileApp.model.get('session');
+      criteria.hasbeenpaid = 'N';
+      OB.Dal.find(OB.Model.Order, criteria, success, error);
+
+    },
+
+    postCloseSession: function (session) {
+      if (OB.POS.hwserver !== undefined) {
+        OB.POS.hwserver.print(new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.GoodByeTemplate), {});
       }
-      this.set('currentView', {
-        name: 'order',
-        params: null
-      });
-      OB.UTIL.localStorage.setItem('leftColumnCurrentView', JSON.stringify(this.get('currentView')));
+      OB.MobileApp.model.triggerLogout();
+
     },
 
     // these variables will keep the minimum value that the document order could have

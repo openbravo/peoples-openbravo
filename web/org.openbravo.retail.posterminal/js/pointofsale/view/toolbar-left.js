@@ -547,6 +547,9 @@ enyo.kind({
       kind: 'OB.UI.MenuReceiptLayaway'
     });
     this.menuEntries.push({
+      kind: 'OB.UI.MenuCancelLayaway'
+    });
+    this.menuEntries.push({
       kind: 'OB.UI.MenuProperties'
     });
     this.menuEntries.push({
@@ -557,6 +560,9 @@ enyo.kind({
     });
     this.menuEntries.push({
       kind: 'OB.UI.MenuLayaway'
+    });
+    this.menuEntries.push({
+      kind: 'OB.UI.MenuCancelAndReplace'
     });
     this.menuEntries.push({
       kind: 'OB.UI.MenuCustomers'

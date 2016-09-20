@@ -6,6 +6,15 @@
  * or in the legal folder of this module distribution.
  ************************************************************************************
  */
+/*
+ ************************************************************************************
+ * Copyright (C) 2015 Openbravo S.L.U.
+ * Licensed under the Openbravo Commercial License version 1.0
+ * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
+ * or in the legal folder of this module distribution.
+ ************************************************************************************
+ */
+
 package org.openbravo.retail.posterminal;
 
 import java.math.BigDecimal;
@@ -16,6 +25,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
@@ -35,6 +45,7 @@ import org.openbravo.model.common.enterprise.Locator;
 import org.openbravo.model.common.enterprise.OrgWarehouse;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.enterprise.Warehouse;
+import org.openbravo.model.common.order.Order;
 import org.openbravo.model.pricing.pricelist.PriceList;
 import org.openbravo.model.pricing.pricelist.PriceListVersion;
 import org.openbravo.retail.config.OBRETCOProductList;
@@ -372,12 +383,18 @@ public class POSUtils {
           String documentNo = jsonError.getString("documentNo");
           if (documentNo.indexOf("/") > -1) {
             String number = documentNo.substring(documentNo.indexOf("/") + 1);
+            if (number.indexOf("-") > -1) {
+              number = number.substring(0, number.indexOf("-"));
+            }
             int errorNumber = new Long(number).intValue();
             if (errorNumber > maxDocNo) {
               maxDocNo = errorNumber;
             }
           } else if (jsonError.has("documentnoPrefix")) {
             String number = documentNo.replace(jsonError.getString("documentnoPrefix"), "");
+            if (number.indexOf("-") > -1) {
+              number = number.substring(0, number.indexOf("-"));
+            }
             int errorNumber = new Long(number).intValue();
             if (errorNumber > maxDocNo) {
               maxDocNo = errorNumber;
@@ -461,12 +478,18 @@ public class POSUtils {
           String documentNo = jsonError.getString("documentNo");
           if (documentNo.indexOf("/") > -1) {
             String number = documentNo.substring(documentNo.indexOf("/") + 1);
+            if (number.indexOf("-") > -1) {
+              number = number.substring(0, number.indexOf("-"));
+            }
             int errorNumber = new Long(number).intValue();
             if (errorNumber > maxDocNo) {
               maxDocNo = errorNumber;
             }
           } else if (jsonError.has("quotationnoPrefix")) {
             String number = documentNo.replace(jsonError.getString("quotationnoPrefix"), "");
+            if (number.indexOf("-") > -1) {
+              number = number.substring(0, number.indexOf("-"));
+            }
             int errorNumber = new Long(number).intValue();
             if (errorNumber > maxDocNo) {
               maxDocNo = errorNumber;
@@ -547,12 +570,18 @@ public class POSUtils {
           String documentNo = jsonError.getString("documentNo");
           if (documentNo.indexOf("/") > -1) {
             String number = documentNo.substring(documentNo.indexOf("/") + 1);
+            if (number.indexOf("-") > -1) {
+              number = number.substring(0, number.indexOf("-"));
+            }
             int errorNumber = new Long(number).intValue();
             if (errorNumber > maxDocNo) {
               maxDocNo = errorNumber;
             }
           } else if (jsonError.has("returnnoPrefix")) {
             String number = documentNo.replace(jsonError.getString("returnnoPrefix"), "");
+            if (number.indexOf("-") > -1) {
+              number = number.substring(0, number.indexOf("-"));
+            }
             int errorNumber = new Long(number).intValue();
             if (errorNumber > maxDocNo) {
               maxDocNo = errorNumber;
@@ -726,6 +755,43 @@ public class POSUtils {
     }
     // The query failed, then the check is not valid.
     return false;
+  }
+
+  /**
+   * Method to calculate the default payment method and financial account of an order
+   * 
+   * @param jsonorder
+   *          JSONObject with the information sent from the Web POS
+   * @param order
+   *          The order to obtain data
+   */
+  public static void setDefaultPaymentType(JSONObject jsonorder, Order order) {
+    try {
+      TerminalTypePaymentMethod defaultPaymentMethod = order.getObposApplications()
+          .getObposTerminaltype().getPaymentMethod();
+      OBCriteria<OBPOSAppPayment> paymentTypes = OBDal.getInstance().createCriteria(
+          OBPOSAppPayment.class);
+      paymentTypes.add(Restrictions.eq(OBPOSAppPayment.PROPERTY_OBPOSAPPLICATIONS,
+          order.getObposApplications()));
+      if (defaultPaymentMethod != null) {
+        paymentTypes.add(Restrictions.eq(OBPOSAppPayment.PROPERTY_PAYMENTMETHOD,
+            defaultPaymentMethod));
+      }
+      paymentTypes.addOrderBy(OBPOSAppPayment.PROPERTY_ID, false);
+      paymentTypes.setMaxResults(1);
+      OBPOSAppPayment defaultPaymentType = (OBPOSAppPayment) paymentTypes.uniqueResult();
+
+      if (defaultPaymentType != null) {
+        JSONObject paymentTypeValues = new JSONObject();
+        paymentTypeValues.put("paymentMethodId", defaultPaymentType.getPaymentMethod()
+            .getPaymentMethod().getId());
+        paymentTypeValues.put("financialAccountId", defaultPaymentType.getFinancialAccount()
+            .getId());
+        jsonorder.put("defaultPaymentType", paymentTypeValues);
+      }
+    } catch (JSONException e) {
+      log.error("Error setting default payment type to order" + order, e);
+    }
   }
 
 }

@@ -362,6 +362,20 @@ enyo.kind({
       }
 
       function returnLines() {
+        var cancelReturn = false;
+
+        if (order.get('replacedorder')) {
+          _.each(me.owner.owner.selectedModels, function (l) {
+            if (l.get('remainingQuantity')) {
+              cancelReturn = true;
+            }
+          });
+        }
+        if (cancelReturn) {
+          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_CancelReplaceReturnLines'));
+          return;
+        }
+
         order.set('undo', null);
         order.set('multipleUndo', true);
         order.set('preventServicesUpdate', true);
@@ -570,7 +584,7 @@ enyo.kind({
       if (!this.selectedModels || this.selectedModels.length <= 1) {
         if (this.model.get('order').get('isEditable')) {
           this.$.actionButtonsContainer.$.descriptionButton.show();
-          var showSplitBtn = line && line.get('qty') > 1 && line.get('product').get('productType') !== 'S' && !_.find(this.model.get('order').get('lines').models, function (l) {
+          var showSplitBtn = line && line.get('qty') > 1 && line.get('product').get('productType') !== 'S' && (!line.get('remainingQuantity') || line.get('remainingQuantity') < line.get('qty')) && !_.find(this.model.get('order').get('lines').models, function (l) {
             return l.get('relatedLines') && _.find(l.get('relatedLines'), function (rl) {
               return rl.orderlineId === line.id;
             }) !== undefined;
@@ -786,6 +800,7 @@ enyo.kind({
         }, {
           classes: 'span3',
           sytle: 'text-align: right',
+          name: 'contextImage',
           components: [{
             style: 'padding: 2px 10px 10px 10px;',
             components: [{
@@ -856,6 +871,9 @@ enyo.kind({
     if (this.line) {
       this.$.msgaction.hide();
       this.$.msgedit.show();
+      if (OB.MobileApp.model.hasPermission('OBPOS_HideProductImages', true)) {
+        this.$.contextImage.hide();
+      }
       if (OB.MobileApp.model.get('permissions')["OBPOS_retail.productImages"]) {
         if (this.selectedModels && this.selectedModels.length > 1) {
           this.$.icon.applyStyle('background-image', 'url(' + "../org.openbravo.mobile.core/assets/img/box.png" + ')');
@@ -871,7 +889,7 @@ enyo.kind({
         }
         this.$.icon.parent.hide();
       }
-      if (this.line.get('qty') < OB.DEC.Zero) {
+      if (this.line.get('qty') < OB.DEC.Zero && !this.receipt.get('iscancelled')) {
         if (!_.isUndefined(this.line.get('returnReason'))) {
           selectedReason = _.filter(this.$.returnreason.children, function (reason) {
             return reason.getValue() === me.line.get('returnReason');

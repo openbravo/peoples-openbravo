@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, enyo */
+/*global OB, enyo, _ */
 
 enyo.kind({
   name: 'OB.UI.KeypadCoinsLegacy',
@@ -220,12 +220,16 @@ enyo.kind({
         }
       }
       // Calculate total amount to pay with selected PaymentMethod  
-      var amountToPay = me.amount;
+      var amountToPay = _.isUndefined(receipt.get('paidInNegativeStatusAmt')) ? me.amount : -me.amount;
       var receiptToPay = myWindowModel.isValidMultiOrderState() ? multiOrders : receipt;
       if (receiptToPay.get("payments").length > 0) {
         receiptToPay.get("payments").each(function (item) {
           if (item.get("kind") === me.paymenttype) {
-            amountToPay += item.get("amount");
+            if (_.isUndefined(receipt.get('paidInNegativeStatusAmt')) || (!_.isUndefined(receipt.get('paidInNegativeStatusAmt')) && item.get('isPrePayment'))) {
+              amountToPay += item.get("amount");
+            } else {
+              amountToPay -= item.get("amount");
+            }
           }
         });
       }
