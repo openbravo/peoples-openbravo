@@ -53,7 +53,7 @@ public class AverageAlgorithm extends CostingAlgorithm {
       Date date = costingRule.isBackdatedTransactionsFixed() ? transaction.getMovementDate()
           : transaction.getTransactionProcessDate();
       BigDecimal currentStock = CostingUtils.getCurrentStock(transaction.getProduct(), costOrg,
-          date, costDimensions, costCurrency);
+          date, costDimensions);
       BigDecimal currentValuedStock = CostingUtils.getCurrentValuedStock(transaction.getProduct(),
           costOrg, date, costDimensions, costCurrency);
       if (currentCosting == null) {

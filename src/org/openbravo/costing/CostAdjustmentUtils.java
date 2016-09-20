@@ -363,12 +363,12 @@ public class CostAdjustmentUtils {
    */
   public static BigDecimal getStockOnTransactionDate(Organization costorg, MaterialTransaction trx,
       HashMap<CostDimension, BaseOBObject> _costDimensions, boolean isManufacturingProduct,
-      boolean areBackdatedTrxFixed, Currency currency) {
+      boolean areBackdatedTrxFixed) {
     Date date = areBackdatedTrxFixed ? trx.getMovementDate() : trx.getTransactionProcessDate();
     Costing costing = AverageAlgorithm.getLastCumulatedCosting(date, trx.getProduct(),
         _costDimensions, costorg);
     return getStockOnTransactionDate(costorg, trx, _costDimensions, isManufacturingProduct,
-        areBackdatedTrxFixed, currency, costing);
+        areBackdatedTrxFixed, costing);
   }
 
   /**
@@ -377,7 +377,7 @@ public class CostAdjustmentUtils {
    */
   public static BigDecimal getStockOnTransactionDate(Organization costorg, MaterialTransaction trx,
       HashMap<CostDimension, BaseOBObject> _costDimensions, boolean isManufacturingProduct,
-      boolean areBackdatedTrxFixed, Currency currency, Costing costing) {
+      boolean areBackdatedTrxFixed, Costing costing) {
 
     // Get child tree of organizations.
     OrganizationStructureProvider osp = OBContext.getOBContext().getOrganizationStructureProvider(
@@ -392,6 +392,8 @@ public class CostAdjustmentUtils {
         trx.getTransactionProcessDate());
 
     BigDecimal cumulatedStock = null;
+    int costingPrecision = trx.getProduct().isProduction() ? costorg.getClient().getCurrency()
+        .getCostingPrecision().intValue() : costorg.getCurrency().getCostingPrecision().intValue();
     MaterialTransaction ctrx = costing != null ? costing.getInventoryTransaction() : null;
     boolean existsCumulatedStockOnTrxDate = ctrx != null
         && costing.getTotalMovementQuantity() != null
@@ -400,8 +402,7 @@ public class CostAdjustmentUtils {
     if (existsCumulatedStockOnTrxDate) {
       cumulatedStock = costing.getTotalMovementQuantity();
       if (StringUtils.equals(ctrx.getId(), trx.getId())) {
-        return cumulatedStock.setScale(currency.getCostingPrecision().intValue(),
-            RoundingMode.HALF_UP);
+        return cumulatedStock.setScale(costingPrecision, RoundingMode.HALF_UP);
       }
     }
 
@@ -537,7 +538,7 @@ public class CostAdjustmentUtils {
     if (existsCumulatedStockOnTrxDate) {
       stock = stock.add(cumulatedStock);
     }
-    return stock.setScale(currency.getCostingPrecision().intValue(), RoundingMode.HALF_UP);
+    return stock.setScale(costingPrecision, RoundingMode.HALF_UP);
   }
 
   /**
@@ -729,6 +730,8 @@ public class CostAdjustmentUtils {
         trx.getTransactionProcessDate());
 
     BigDecimal cumulatedValuation = null;
+    int costingPrecision = trx.getProduct().isProduction() ? costorg.getClient().getCurrency()
+        .getCostingPrecision().intValue() : costorg.getCurrency().getCostingPrecision().intValue();
     MaterialTransaction ctrx = costing != null ? costing.getInventoryTransaction() : null;
     boolean existsCumulatedValuationOnTrxDate = ctrx != null
         && costing.getTotalStockValuation() != null
@@ -742,8 +745,7 @@ public class CostAdjustmentUtils {
             FinancialUtils.PRECISION_COSTING);
       }
       if (StringUtils.equals(ctrx.getId(), trx.getId())) {
-        return cumulatedValuation.setScale(currency.getCostingPrecision().intValue(),
-            RoundingMode.HALF_UP);
+        return cumulatedValuation.setScale(costingPrecision, RoundingMode.HALF_UP);
       }
     }
 
@@ -902,7 +904,7 @@ public class CostAdjustmentUtils {
     if (existsCumulatedValuationOnTrxDate) {
       sum = sum.add(cumulatedValuation);
     }
-    return sum.setScale(currency.getCostingPrecision().intValue(), RoundingMode.HALF_UP);
+    return sum.setScale(costingPrecision, RoundingMode.HALF_UP);
   }
 
   /**
