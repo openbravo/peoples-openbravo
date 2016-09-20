@@ -363,12 +363,12 @@ public class CostAdjustmentUtils {
    */
   public static BigDecimal getStockOnTransactionDate(Organization costorg, MaterialTransaction trx,
       HashMap<CostDimension, BaseOBObject> _costDimensions, boolean isManufacturingProduct,
-      boolean areBackdatedTrxFixed) {
+      boolean areBackdatedTrxFixed, Currency currency) {
     Date date = areBackdatedTrxFixed ? trx.getMovementDate() : trx.getTransactionProcessDate();
     Costing costing = AverageAlgorithm.getLastCumulatedCosting(date, trx.getProduct(),
         _costDimensions, costorg);
     return getStockOnTransactionDate(costorg, trx, _costDimensions, isManufacturingProduct,
-        areBackdatedTrxFixed, costing);
+        areBackdatedTrxFixed, costing, currency);
   }
 
   /**
@@ -377,7 +377,7 @@ public class CostAdjustmentUtils {
    */
   public static BigDecimal getStockOnTransactionDate(Organization costorg, MaterialTransaction trx,
       HashMap<CostDimension, BaseOBObject> _costDimensions, boolean isManufacturingProduct,
-      boolean areBackdatedTrxFixed, Costing costing) {
+      boolean areBackdatedTrxFixed, Costing costing, Currency currency) {
 
     // Get child tree of organizations.
     OrganizationStructureProvider osp = OBContext.getOBContext().getOrganizationStructureProvider(
@@ -536,7 +536,7 @@ public class CostAdjustmentUtils {
     if (existsCumulatedStockOnTrxDate) {
       stock = stock.add(cumulatedStock);
     }
-    return stock;
+    return stock.setScale(currency.getCostingPrecision().intValue(), RoundingMode.HALF_UP);
   }
 
   /**
@@ -900,7 +900,7 @@ public class CostAdjustmentUtils {
     if (existsCumulatedValuationOnTrxDate) {
       sum = sum.add(cumulatedValuation);
     }
-    return sum;
+    return sum.setScale(currency.getCostingPrecision().intValue(), RoundingMode.HALF_UP);
   }
 
   /**
