@@ -19351,8 +19351,7 @@ This column is already checked as key: ]]></MSGTEXT>
 <!--47D88149F6D2473D892D25F4A86CA161-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--47D88149F6D2473D892D25F4A86CA161-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--47D88149F6D2473D892D25F4A86CA161-->  <VALUE><![CDATA[finnac_paymet_inact]]></VALUE>
-<!--47D88149F6D2473D892D25F4A86CA161-->  <MSGTEXT><![CDATA[The default financial account %s and the default payment method %s are inactive. Please, consider to activate them before continuing.
-]]></MSGTEXT>
+<!--47D88149F6D2473D892D25F4A86CA161-->  <MSGTEXT><![CDATA[The default financial account %s and the default payment method %s are inactive. Please, consider to activate them before continuing.]]></MSGTEXT>
 <!--47D88149F6D2473D892D25F4A86CA161-->  <MSGTYPE><![CDATA[W]]></MSGTYPE>
 <!--47D88149F6D2473D892D25F4A86CA161-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--47D88149F6D2473D892D25F4A86CA161-->  <ISINCLUDEINI18N><![CDATA[N]]></ISINCLUDEINI18N>
