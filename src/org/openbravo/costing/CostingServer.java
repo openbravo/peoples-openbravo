@@ -244,8 +244,9 @@ public class CostingServer {
         if (trxType != TrxType.InventoryClosing
             && trxType != TrxType.InventoryOpening
             && getCostingRule().isBackdatedTransactionsFixed()
-            && transaction.getMovementDate().compareTo(
-                CostingUtils.getCostingRuleFixBackdatedFrom(getCostingRule())) >= 0) {
+            && DateUtils.truncate(transaction.getMovementDate(), Calendar.DATE).compareTo(
+                DateUtils.truncate(CostingUtils.getCostingRuleFixBackdatedFrom(getCostingRule()),
+                    Calendar.DATE)) >= 0) {
           // BDT = Backdated transaction
           createAdjustment("BDT", BigDecimal.ZERO);
         }
@@ -274,7 +275,7 @@ public class CostingServer {
     }
 
     if (getCostingRule().isBackdatedTransactionsFixed()
-        && transaction.getMovementDate().compareTo(
+        && DateUtils.truncate(transaction.getMovementDate(), Calendar.DATE).compareTo(
             DateUtils.truncate(CostingUtils.getCostingRuleFixBackdatedFrom(getCostingRule()),
                 Calendar.DATE)) >= 0
         && CostAdjustmentUtils.isNeededBackdatedCostAdjustment(transaction, getCostingRule()
