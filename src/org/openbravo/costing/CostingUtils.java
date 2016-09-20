@@ -19,6 +19,7 @@
 package org.openbravo.costing;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -348,9 +349,9 @@ public class CostingUtils {
    * only takes transactions that have its cost calculated.
    */
   public static BigDecimal getCurrentStock(Product product, Organization org, Date date,
-      HashMap<CostDimension, BaseOBObject> costDimensions) {
+      HashMap<CostDimension, BaseOBObject> costDimensions, Currency currency) {
     Costing costing = AverageAlgorithm.getLastCumulatedCosting(date, product, costDimensions, org);
-    return getCurrentStock(product, org, date, costDimensions, costing);
+    return getCurrentStock(product, org, date, costDimensions, costing, currency);
   }
 
   /**
@@ -358,7 +359,7 @@ public class CostingUtils {
    * only takes transactions that have its cost calculated.
    */
   public static BigDecimal getCurrentStock(Product product, Organization costorg, Date dateTo,
-      HashMap<CostDimension, BaseOBObject> costDimensions, Costing costing) {
+      HashMap<CostDimension, BaseOBObject> costDimensions, Costing costing, Currency currency) {
     // Get child tree of organizations.
     Set<String> orgs = OBContext.getOBContext().getOrganizationStructureProvider()
         .getChildTree(costorg.getId(), true);
@@ -422,7 +423,8 @@ public class CostingUtils {
     if (existsCumulatedStock) {
       stock = stock.add(costing.getTotalMovementQuantity());
     }
-    return stock;
+
+    return stock.setScale(currency.getCostingPrecision().intValue(), RoundingMode.HALF_UP);
   }
 
   /**
@@ -541,7 +543,7 @@ public class CostingUtils {
       }
       sum = sum.add(costingValuedStock);
     }
-    return sum;
+    return sum.setScale(currency.getCostingPrecision().intValue(), RoundingMode.HALF_UP);
   }
 
   public static BusinessPartner getTrxBusinessPartner(MaterialTransaction transaction,
