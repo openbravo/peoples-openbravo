@@ -487,6 +487,9 @@
         <index-column name="DOCUMENTNO"/>
         <index-column name="C_ORDER_ID"/>
       </index>
+      <index name="C_ORDER_ISSELECTED" unique="false">
+        <index-column name="ISSELECTED"/>
+      </index>
       <index name="C_ORDER_POSTED" unique="false">
         <index-column name="POSTED"/>
       </index>
