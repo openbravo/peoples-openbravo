@@ -3847,6 +3847,38 @@
       return index;
     },
     deleteOrder: function (context, callback) {
+      var i;
+
+      function markOrderAsDeleted(model, orderList, callback) {
+        var me = this,
+            creationDate;
+        if (model.get('creationDate')) {
+          creationDate = new Date(model.get('creationDate'));
+        } else {
+          creationDate = new Date();
+        }
+        model.setIsCalculateGrossLockState(true);
+        model.set('creationDate', creationDate);
+        model.set('timezoneOffset', creationDate.getTimezoneOffset());
+        model.set('created', creationDate.getTime());
+        model.set('obposCreatedabsolute', OB.I18N.formatDateISO(creationDate));
+        model.set('obposIsDeleted', true);
+        for (i = 0; i < model.get('lines').length; i++) {
+          model.get('lines').at(i).set('obposIsDeleted', true);
+        }
+        model.set('hasbeenpaid', 'Y');
+        OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(model.get('documentnoSuffix'), model.get('quotationnoSuffix'), model.get('returnnoSuffix'), function () {
+          model.save(function () {
+            orderList.deleteCurrent();
+            orderList.synchronizeCurrentOrder();
+            model.setIsCalculateGrossLockState(false);
+            if (callback && callback instanceof Function) {
+              callback();
+            }
+          });
+        });
+      }
+
       function removeOrder(receipt, callback) {
         var orderList = OB.MobileApp.model.orderList;
         var isPaidQuotation = (receipt.has('isQuotation') && receipt.get('isQuotation') && receipt.has('hasbeenpaid') && receipt.get('hasbeenpaid') === 'Y');
@@ -3900,36 +3932,6 @@
         }
       }
 
-      function markOrderAsDeleted(model, orderList, callback) {
-        var me = this,
-            creationDate;
-        if (model.get('creationDate')) {
-          creationDate = new Date(model.get('creationDate'));
-        } else {
-          creationDate = new Date();
-        }
-        model.setIsCalculateGrossLockState(true);
-        model.set('creationDate', creationDate);
-        model.set('timezoneOffset', creationDate.getTimezoneOffset());
-        model.set('created', creationDate.getTime());
-        model.set('obposCreatedabsolute', OB.I18N.formatDateISO(creationDate));
-        model.set('obposIsDeleted', true);
-        for (i = 0; i < model.get('lines').length; i++) {
-          model.get('lines').at(i).set('obposIsDeleted', true);
-        }
-        model.set('hasbeenpaid', 'Y');
-        OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(model.get('documentnoSuffix'), model.get('quotationnoSuffix'), model.get('returnnoSuffix'), function () {
-          model.save(function () {
-            orderList.deleteCurrent();
-            orderList.synchronizeCurrentOrder();
-            model.setIsCalculateGrossLockState(false);
-            if (callback && callback instanceof Function) {
-              callback();
-            }
-          });
-        });
-      }
-
       OB.UTIL.HookManager.executeHooks('OBPOS_PreDeleteCurrentOrder', {
         context: context,
         receipt: this
@@ -3938,9 +3940,6 @@
           return;
         }
         removeOrder(args.receipt, callback);
-        //        if (callback) {
-        //          callback();
-        //        }
       });
 
       return true;

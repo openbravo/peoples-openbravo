@@ -718,8 +718,7 @@
       function removeOneModel(model, collection, callback) {
         if (collection.length === 0) {
           if (callback && callback instanceof Function) {
-            //me.cleanSessionInfo();
-            OB.MobileApp.model.triggerLogout();
+            me.cleanSessionInfo();
             callback();
           }
           return;
@@ -736,9 +735,8 @@
         if (collection.length > 0) {
           removeOneModel(collection.at(0), collection, finalCallback);
         } else {
-          // me.cleanSessionInfo();
-          OB.MobileApp.model.triggerLogout();
           if (finalCallback && finalCallback instanceof Function) {
+            me.cleanSessionInfo();
             finalCallback();
           }
         }
@@ -759,8 +757,8 @@
       if (OB.POS.hwserver !== undefined) {
         OB.POS.hwserver.print(new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.GoodByeTemplate), {});
       }
+      OB.MobileApp.model.triggerLogout();
 
-      this.cleanSessionInfo();
     },
 
     // these variables will keep the minimum value that the document order could have
