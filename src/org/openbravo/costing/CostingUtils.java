@@ -349,9 +349,9 @@ public class CostingUtils {
    * only takes transactions that have its cost calculated.
    */
   public static BigDecimal getCurrentStock(Product product, Organization org, Date date,
-      HashMap<CostDimension, BaseOBObject> costDimensions, Currency currency) {
+      HashMap<CostDimension, BaseOBObject> costDimensions) {
     Costing costing = AverageAlgorithm.getLastCumulatedCosting(date, product, costDimensions, org);
-    return getCurrentStock(product, org, date, costDimensions, currency, costing);
+    return getCurrentStock(product, org, date, costDimensions, costing);
   }
 
   /**
@@ -359,7 +359,7 @@ public class CostingUtils {
    * only takes transactions that have its cost calculated.
    */
   public static BigDecimal getCurrentStock(Product product, Organization costorg, Date dateTo,
-      HashMap<CostDimension, BaseOBObject> costDimensions, Currency currency, Costing costing) {
+      HashMap<CostDimension, BaseOBObject> costDimensions, Costing costing) {
     // Get child tree of organizations.
     Set<String> orgs = OBContext.getOBContext().getOrganizationStructureProvider()
         .getChildTree(costorg.getId(), true);
@@ -424,7 +424,9 @@ public class CostingUtils {
       stock = stock.add(costing.getTotalMovementQuantity());
     }
 
-    return stock.setScale(currency.getCostingPrecision().intValue(), RoundingMode.HALF_UP);
+    int costingPrecision = product.isProduction() ? costorg.getClient().getCurrency()
+        .getCostingPrecision().intValue() : costorg.getCurrency().getCostingPrecision().intValue();
+    return stock.setScale(costingPrecision, RoundingMode.HALF_UP);
   }
 
   /**
@@ -543,7 +545,10 @@ public class CostingUtils {
       }
       sum = sum.add(costingValuedStock);
     }
-    return sum.setScale(currency.getCostingPrecision().intValue(), RoundingMode.HALF_UP);
+
+    int costingPrecision = product.isProduction() ? costorg.getClient().getCurrency()
+        .getCostingPrecision().intValue() : costorg.getCurrency().getCostingPrecision().intValue();
+    return sum.setScale(costingPrecision, RoundingMode.HALF_UP);
   }
 
   public static BusinessPartner getTrxBusinessPartner(MaterialTransaction transaction,
