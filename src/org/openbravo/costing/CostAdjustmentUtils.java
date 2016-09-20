@@ -364,8 +364,9 @@ public class CostAdjustmentUtils {
   public static BigDecimal getStockOnTransactionDate(Organization costorg, MaterialTransaction trx,
       HashMap<CostDimension, BaseOBObject> _costDimensions, boolean isManufacturingProduct,
       boolean areBackdatedTrxFixed) {
-    Costing costing = AverageAlgorithm.getLastCumulatedCosting(trx.getTransactionProcessDate(),
-        trx.getProduct(), _costDimensions, costorg);
+    Date date = areBackdatedTrxFixed ? trx.getMovementDate() : trx.getTransactionProcessDate();
+    Costing costing = AverageAlgorithm.getLastCumulatedCosting(date, trx.getProduct(),
+        _costDimensions, costorg);
     return getStockOnTransactionDate(costorg, trx, _costDimensions, isManufacturingProduct,
         areBackdatedTrxFixed, costing);
   }
@@ -690,8 +691,9 @@ public class CostAdjustmentUtils {
   public static BigDecimal getValuedStockOnTransactionDate(Organization costorg,
       MaterialTransaction trx, HashMap<CostDimension, BaseOBObject> _costDimensions,
       boolean isManufacturingProduct, boolean areBackdatedTrxFixed, Currency currency) {
-    Costing costing = AverageAlgorithm.getProductCost(trx.getTransactionProcessDate(),
-        trx.getProduct(), _costDimensions, costorg);
+    Date date = areBackdatedTrxFixed ? trx.getMovementDate() : trx.getTransactionProcessDate();
+    Costing costing = AverageAlgorithm.getLastCumulatedCosting(date, trx.getProduct(),
+        _costDimensions, costorg);
     return getValuedStockOnTransactionDate(costorg, trx, _costDimensions, isManufacturingProduct,
         areBackdatedTrxFixed, currency, costing);
   }
