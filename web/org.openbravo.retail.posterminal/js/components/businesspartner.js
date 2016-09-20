@@ -284,7 +284,7 @@ enyo.kind({
           kind: 'OB.UI.SmallButton',
           classes: 'btnlink-yellow btn-icon-small btn-icon-search',
           style: 'width: 40px; margin: 0px 5px 8px 19px;',
-          ontap: 'clearAction'
+          ontap: 'searchAction'
         }]
       }, {
         style: 'display: table-cell;',
