@@ -488,15 +488,6 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
     }
   }
 
-  private List<CostAdjustmentLine> getNegativeStockAdjustments(MaterialTransaction trx) {
-    OBCriteria<CostAdjustmentLine> critLines = OBDal.getInstance().createCriteria(
-        CostAdjustmentLine.class);
-    critLines.add(Restrictions.eq(CostAdjustmentLine.PROPERTY_INVENTORYTRANSACTION, trx));
-    critLines.add(Restrictions.eq(CostAdjustmentLine.PROPERTY_ISNEGATIVESTOCKCORRECTION, true));
-
-    return critLines.list();
-  }
-
   @Override
   protected void calculateBackdatedTrxAdjustment(CostAdjustmentLine costAdjLine) {
     MaterialTransaction trx = costAdjLine.getInventoryTransaction();
@@ -989,5 +980,20 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
     critLines.add(Restrictions.eq(CostAdjustmentLine.PROPERTY_ISBACKDATEDTRX, true));
     critLines.setMaxResults(1);
     return critLines.uniqueResult() != null;
+  }
+
+  /**
+   * Get negative cost adjustment lines related to trx
+   * 
+   * @param trx
+   *          MaterialTransaction to get related negative cost adjustment lines
+   * @return CostAdjustmentLine list
+   */
+  private List<CostAdjustmentLine> getNegativeStockAdjustments(MaterialTransaction trx) {
+    OBCriteria<CostAdjustmentLine> critLines = OBDal.getInstance().createCriteria(
+        CostAdjustmentLine.class);
+    critLines.add(Restrictions.eq(CostAdjustmentLine.PROPERTY_INVENTORYTRANSACTION, trx));
+    critLines.add(Restrictions.eq(CostAdjustmentLine.PROPERTY_ISNEGATIVESTOCKCORRECTION, true));
+    return critLines.list();
   }
 }
