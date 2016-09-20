@@ -391,11 +391,18 @@ public class CostAdjustmentUtils {
     CostingRule costingRule = CostingUtils.getCostDimensionRule(costorg,
         trx.getTransactionProcessDate());
 
+    BigDecimal cumulatedStock = null;
     MaterialTransaction ctrx = costing != null ? costing.getInventoryTransaction() : null;
     boolean existsCumulatedStockOnTrxDate = ctrx != null
         && costing.getTotalMovementQuantity() != null
         && (!costingRule.isBackdatedTransactionsFixed() || trx.getMovementDate().after(
             ctrx.getMovementDate()));
+    if (existsCumulatedStockOnTrxDate) {
+      cumulatedStock = costing.getTotalMovementQuantity();
+      if (StringUtils.equals(ctrx.getId(), trx.getId())) {
+        return cumulatedStock;
+      }
+    }
 
     StringBuffer select = new StringBuffer();
     select
@@ -527,7 +534,7 @@ public class CostAdjustmentUtils {
       stock = BigDecimal.ZERO;
     }
     if (existsCumulatedStockOnTrxDate) {
-      stock = stock.add(costing.getTotalMovementQuantity());
+      stock = stock.add(cumulatedStock);
     }
     return stock;
   }
@@ -707,12 +714,12 @@ public class CostAdjustmentUtils {
       MaterialTransaction trx, HashMap<CostDimension, BaseOBObject> _costDimensions,
       boolean isManufacturingProduct, boolean areBackdatedTrxFixed, Currency currency,
       Costing costing) {
-    HashMap<CostDimension, BaseOBObject> costDimensions = _costDimensions;
 
     // Get child tree of organizations.
     OrganizationStructureProvider osp = OBContext.getOBContext().getOrganizationStructureProvider(
         trx.getClient().getId());
     Set<String> orgs = osp.getChildTree(costorg.getId(), true);
+    HashMap<CostDimension, BaseOBObject> costDimensions = _costDimensions;
     if (isManufacturingProduct) {
       orgs = osp.getChildTree("0", false);
       costDimensions = CostingUtils.getEmptyDimensions();
@@ -720,11 +727,23 @@ public class CostAdjustmentUtils {
     CostingRule costingRule = CostingUtils.getCostDimensionRule(costorg,
         trx.getTransactionProcessDate());
 
+    BigDecimal cumulatedValuation = null;
     MaterialTransaction ctrx = costing != null ? costing.getInventoryTransaction() : null;
     boolean existsCumulatedValuationOnTrxDate = ctrx != null
         && costing.getTotalStockValuation() != null
         && (!costingRule.isBackdatedTransactionsFixed() || trx.getMovementDate().after(
             ctrx.getMovementDate()));
+    if (existsCumulatedValuationOnTrxDate) {
+      cumulatedValuation = costing.getTotalStockValuation();
+      if (!StringUtils.equals(costing.getCurrency().getId(), currency.getId())) {
+        cumulatedValuation = FinancialUtils.getConvertedAmount(cumulatedValuation,
+            costing.getCurrency(), currency, ctrx.getTransactionProcessDate(), costorg,
+            FinancialUtils.PRECISION_COSTING);
+      }
+      if (StringUtils.equals(ctrx.getId(), trx.getId())) {
+        return cumulatedValuation;
+      }
+    }
 
     StringBuffer select = new StringBuffer();
     select.append(" select sum(case");
@@ -879,13 +898,7 @@ public class CostAdjustmentUtils {
     }
 
     if (existsCumulatedValuationOnTrxDate) {
-      BigDecimal costingValuedStock = costing.getTotalStockValuation();
-      if (!StringUtils.equals(costing.getCurrency().getId(), currency.getId())) {
-        costingValuedStock = FinancialUtils.getConvertedAmount(costingValuedStock,
-            costing.getCurrency(), currency, costing.getStartingDate(), costorg,
-            FinancialUtils.PRECISION_COSTING);
-      }
-      sum = sum.add(costingValuedStock);
+      sum = sum.add(cumulatedValuation);
     }
     return sum;
   }
