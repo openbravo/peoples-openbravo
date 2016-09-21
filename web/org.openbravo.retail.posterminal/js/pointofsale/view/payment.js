@@ -992,7 +992,7 @@ enyo.kind({
     //*** Avoid double click ***
     if (this.getContent() === OB.I18N.getLabel('OBPOS_LblDone')) {
       if (me.blocked) {
-        OB.info('Time: ' + new Date().getTime() + '. Done button has been pressed 2 times and second execution is discarded');
+        OB.error('Time: ' + new Date().getTime() + '. Done button has been pressed 2 times and second execution is discarded');
         return;
       } else {
         me.blocked = true;
