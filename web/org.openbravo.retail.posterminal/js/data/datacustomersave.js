@@ -67,8 +67,8 @@
           bpLocation.set('postalCode', customer.get('postalCode'));
           bpLocation.set('cityName', customer.get('cityName'));
           bpLocation.set('_identifier', customer.get('locName'));
-          bpLocation.set('countryName', me.customer.get('countryName'));
-          bpLocation.set('countryId', me.customer.get('countryId'));
+          bpLocation.set('countryName', customer.get('countryName'));
+          bpLocation.set('countryId', customer.get('countryId'));
           bpToSave.set('locationModel', bpLocation);
         }
 
@@ -102,7 +102,7 @@
         //save that the customer is being processed by server
         customer.set('loaded', OB.I18N.normalizeDate(new Date()));
         OB.Dal.save(customer, function () {
-          //OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_customerSavedSuccessfullyLocally',[me.customer.get('_identifier')]));
+          //OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_customerSavedSuccessfullyLocally',[customer.get('_identifier')]));
           // Saving Customer Address locally
           if (isNew) {
                   // update each order also so that new name is shown and the bp
@@ -133,44 +133,44 @@
                   }
 
             //create bploc from scratch
-            if (me.customer.get('useSameAddrForShipAndInv')) {
-              bpLocToSave.set('id', me.customer.get('locId'));
-              bpLocToSave.set('bpartner', me.customer.get('id'));
-              bpLocToSave.set('name', me.customer.get('locName'));
+            if (customer.get('useSameAddrForShipAndInv')) {
+              bpLocToSave.set('id', customer.get('locId'));
+              bpLocToSave.set('bpartner', customer.get('id'));
+              bpLocToSave.set('name', customer.get('locName'));
               bpLocToSave.set('isBillTo', true);
               bpLocToSave.set('isShipTo', true);
-              bpLocToSave.set('postalCode', me.customer.get('postalCode'));
-              bpLocToSave.set('cityName', me.customer.get('cityName'));
-              bpLocToSave.set('_identifier', me.customer.get('locName'));
-              bpLocToSave.set('countryName', me.customer.get('countryName'));
-              bpLocToSave.set('countryId', me.customer.get('countryId'));
+              bpLocToSave.set('postalCode', customer.get('postalCode'));
+              bpLocToSave.set('cityName', customer.get('cityName'));
+              bpLocToSave.set('_identifier', customer.get('locName'));
+              bpLocToSave.set('countryName', customer.get('countryName'));
+              bpLocToSave.set('countryId', customer.get('countryId'));
               OB.Dal.save(bpLocToSave, function () {
                 //customer location created successfully. Nothing to do here.
               }, function () {
                 OB.error(arguments);
               }, true);
             } else {
-              bpLocToSave.set('id', me.customer.get('locId'));
-              bpLocToSave.set('bpartner', me.customer.get('id'));
-              bpLocToSave.set('name', me.customer.get('locName'));
+              bpLocToSave.set('id', customer.get('locId'));
+              bpLocToSave.set('bpartner', customer.get('id'));
+              bpLocToSave.set('name', customer.get('locName'));
               bpLocToSave.set('isBillTo', true);
               bpLocToSave.set('isShipTo', false);
-              bpLocToSave.set('postalCode', me.customer.get('postalCode'));
-              bpLocToSave.set('cityName', me.customer.get('cityName'));
-              bpLocToSave.set('_identifier', me.customer.get('locName'));
-              bpLocToSave.set('countryName', me.customer.get('countryName'));
-              bpLocToSave.set('countryId', me.customer.get('countryId'));
+              bpLocToSave.set('postalCode', customer.get('postalCode'));
+              bpLocToSave.set('cityName', customer.get('cityName'));
+              bpLocToSave.set('_identifier', customer.get('locName'));
+              bpLocToSave.set('countryName', customer.get('countryName'));
+              bpLocToSave.set('countryId', customer.get('countryId'));
 
-              bpShipLocToSave.set('id', me.customer.get('shipLocId'));
-              bpShipLocToSave.set('bpartner', me.customer.get('id'));
-              bpShipLocToSave.set('name', me.customer.get('shipLocName'));
+              bpShipLocToSave.set('id', customer.get('shipLocId'));
+              bpShipLocToSave.set('bpartner', customer.get('id'));
+              bpShipLocToSave.set('name', customer.get('shipLocName'));
               bpShipLocToSave.set('isBillTo', false);
               bpShipLocToSave.set('isShipTo', true);
-              bpShipLocToSave.set('postalCode', me.customer.get('shipPostalCode'));
-              bpShipLocToSave.set('cityName', me.customer.get('shipCityName'));
-              bpShipLocToSave.set('_identifier', me.customer.get('shipLocName'));
-              bpShipLocToSave.set('countryName', me.customer.get('shipCountryName'));
-              bpShipLocToSave.set('countryId', me.customer.get('shipCountryId'));
+              bpShipLocToSave.set('postalCode', customer.get('shipPostalCode'));
+              bpShipLocToSave.set('cityName', customer.get('shipCityName'));
+              bpShipLocToSave.set('_identifier', customer.get('shipLocName'));
+              bpShipLocToSave.set('countryName', customer.get('shipCountryName'));
+              bpShipLocToSave.set('countryId', customer.get('shipCountryId'));
 
               OB.Dal.save(bpLocToSave, function () {
                 //customer billing location created successfully. Nothing to do here.
