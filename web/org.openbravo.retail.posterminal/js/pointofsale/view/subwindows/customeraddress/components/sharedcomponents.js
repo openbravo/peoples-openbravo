@@ -218,6 +218,7 @@ enyo.kind({
     } else {
       this.model.get('customerAddr').loadById(this.customerAddr.get('id'), function (customerAddr) {
         var callback = function () {
+            var i;
             goToViewWindow(sw, {
               customer: me.customer,
               customerAddr: customerAddr
@@ -254,6 +255,13 @@ enyo.kind({
                 me.customer.set('shipCountryName', customerAddr.get('countryName'));
               }
               me.customer.set('locationModel', customerAddr);
+              if (me.model.get('orderList').length > 1) {
+                for (i = 0; i < me.model.get('orderList').length; i++) {
+                  if (me.model.get('orderList').models[i].get('bp').get('id') === me.customer.get('id')) {
+                    me.model.get('orderList').models[i].set('bp', me.customer);
+                  }
+                }
+              }
               OB.Dal.save(me.customer, function success(tx) {
                 me.doChangeBusinessPartner({
                   businessPartner: me.customer,

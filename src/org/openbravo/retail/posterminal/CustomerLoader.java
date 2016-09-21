@@ -64,14 +64,10 @@ public class CustomerLoader extends POSDataSynchronizationProcess
       if (customer.getId() == null) {
         customer = createBPartner(jsoncustomer);
       } else {
-        final Date updated = OBMOBCUtils.calculateClientDatetime(jsoncustomer.getString("updated"),
-            Long.parseLong(jsoncustomer.getString("timezoneOffset")));
-
         final Date loaded = OBMOBCUtils.calculateClientDatetime(jsoncustomer.getString("loaded"),
             Long.parseLong(jsoncustomer.getString("timezoneOffset")));
 
-        if (!((updated.compareTo(customer.getUpdated()) >= 0)
-            && (loaded.compareTo(customer.getUpdated()) >= 0))) {
+        if (!(loaded.compareTo(customer.getUpdated()) >= 0)) {
           log.warn(Utility.messageBD(new DalConnectionProvider(false), "OBPOS_outdatedbp",
               OBContext.getOBContext().getLanguage().getLanguage()));
         }

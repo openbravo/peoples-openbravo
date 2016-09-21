@@ -234,8 +234,7 @@ public class OrderLoader extends POSDataSynchronizationProcess
 
         final Date loaded = OBMOBCUtils.calculateClientDatetime(jsonorder.getString("loaded"),
             Long.parseLong(jsonorder.getString("timezoneOffset")));
-        if (!((updated.compareTo(order.getUpdated()) >= 0)
-            && (loaded.compareTo(order.getUpdated()) >= 0))) {
+        if (!(loaded.compareTo(order.getUpdated()) >= 0)) {
           throw new OutDatedDataChangeException(Utility.messageBD(new DalConnectionProvider(false),
               "OBPOS_outdatedLayaway", OBContext.getOBContext().getLanguage().getLanguage()));
         }
