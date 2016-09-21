@@ -221,7 +221,9 @@
 
 .onyx-menu-item:hover {
   background-color: #e2e2e2 !important;
-}.paymentmethoditemstext {
+}
+
+.paymentmethoditemstext {
   font-family: 'Helvetica Neue', 'Nimbus Sans L', Arial, sans-serif;
   font-size: 16px;
   height: 40px;
@@ -324,7 +326,7 @@ button.btnbp:disabled {
   height: 22px;
 }
 
- .addressshiptext {
+.addressshiptext {
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
