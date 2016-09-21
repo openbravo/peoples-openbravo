@@ -327,6 +327,8 @@ enyo.kind({
     this.headerComponent.$.productName.setContent(params.product.get('_identifier') + ' (' + params.product.get('uOMsymbol') + ')');
     if (OB.MobileApp.model.hasPermission('OBPOS_HideProductImages', true)) {
       this.bodyComponent.$.contextImage.hide();
+    } else {
+      this.bodyComponent.$.contextImage.show();
     }
     if (OB.MobileApp.model.get('permissions')["OBPOS_retail.productImages"]) {
       this.bodyComponent.$.productImage.applyStyle('background-image', 'url(' + OB.UTIL.getImageURL(params.product.get('id')) + '), url(' + "../org.openbravo.mobile.core/assets/img/box.png" + ')');
