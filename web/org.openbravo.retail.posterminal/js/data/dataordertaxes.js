@@ -109,10 +109,10 @@
             bpTaxCategory = receipt.get('bp').get('taxCategory'),
             bpIsExempt = receipt.get('bp').get('taxExempt'),
             bpShipLocId = receipt.get('bp').get('shipLocId'),
+            bpName = receipt.get('bp').get('name') || OB.I18N.getLabel('OBPOS_LblEmptyAddress'),
+            bpShipLocName = receipt.get('bp').get('shipLocName') || OB.I18N.getLabel('OBPOS_LblEmptyAddress'),
             bplCountryId = receipt.get('bp').get('shipCountryId') ? receipt.get('bp').get('shipCountryId') : null,
             bplRegionId = receipt.get('bp').get('shipRegionId') ? receipt.get('bp').get('shipRegionId') : null;
-            bpName = receipt.get('bp').get('name') || OB.I18N.getLabel('OBPOS_LblEmptyAddress'),
-            bpLocName = receipt.get('bp').get('locName') || OB.I18N.getLabel('OBPOS_LblEmptyAddress');
         // SQL build
         // the query is ordered by countryId desc and regionId desc
         // (so, the first record will be the tax with the same country or
@@ -154,7 +154,7 @@
             if (coll && coll.length > 0) {
               fulfill(coll);
             } else {
-              reject(OB.I18N.getLabel('OBPOS_TaxNotFound_Message', [bpName, bpLocName]));
+              reject(OB.I18N.getLabel('OBPOS_TaxNotFound_Message', [bpName, bpShipLocName]));
             }
           }, function () { // error
             reject(OB.I18N.getLabel('OBPOS_TaxCalculationError_Message'));
