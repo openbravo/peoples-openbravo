@@ -229,8 +229,6 @@ public class IssuesTest extends OBBaseTest {
       r.setClient(c);
       r.setName("System Administrator"); // Fails unique name constraint
       r.setUserLevel("S");
-      r.setClientList("0");
-      r.setOrganizationList("0");
       OBDal.getInstance().save(r);
       OBDal.getInstance().commitAndClose();
     } catch (Exception e) {

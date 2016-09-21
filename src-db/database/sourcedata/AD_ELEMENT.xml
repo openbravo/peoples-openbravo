@@ -1328,20 +1328,6 @@ or All (AD_CLIENT=anything, AD_ORG_ID=anything)]]></HELP>
 <!--225-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--225--></AD_ELEMENT>
 
-<!--226--><AD_ELEMENT>
-<!--226-->  <AD_ELEMENT_ID><![CDATA[226]]></AD_ELEMENT_ID>
-<!--226-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--226-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--226-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--226-->  <COLUMNNAME><![CDATA[ClientList]]></COLUMNNAME>
-<!--226-->  <NAME><![CDATA[Client List]]></NAME>
-<!--226-->  <PRINTNAME><![CDATA[Client List]]></PRINTNAME>
-<!--226-->  <DESCRIPTION><![CDATA[Clients this Role can access]]></DESCRIPTION>
-<!--226-->  <HELP><![CDATA[Indicates the Clients (by client id) that this Role can access.  Multiple Clients are delimited by a comma ','.]]></HELP>
-<!--226-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--226-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
-<!--226--></AD_ELEMENT>
-
 <!--227--><AD_ELEMENT>
 <!--227-->  <AD_ELEMENT_ID><![CDATA[227]]></AD_ELEMENT_ID>
 <!--227-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>

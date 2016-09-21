@@ -504,8 +504,6 @@ public class ExplicitCrossOrganizationReference extends CrossOrganizationReferen
     spainRole.setName("QA Only Spain - " + System.currentTimeMillis()); // some randomness
     spainRole.setOrganization(OBDal.getInstance().getProxy(Organization.class, "0"));
     spainRole.setManual(true);
-    spainRole.setClientList("-");
-    spainRole.setOrganizationList("-");
     spainRole.setUserLevel("  O");
     OBDal.getInstance().save(spainRole);
     createdObjects.add(spainRole);
