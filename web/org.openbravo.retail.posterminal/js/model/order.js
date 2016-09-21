@@ -3869,8 +3869,10 @@
         model.set('hasbeenpaid', 'Y');
         OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(model.get('documentnoSuffix'), model.get('quotationnoSuffix'), model.get('returnnoSuffix'), function () {
           model.save(function () {
-            orderList.deleteCurrent();
-            orderList.synchronizeCurrentOrder();
+            if (orderList) {
+              orderList.deleteCurrent();
+              orderList.synchronizeCurrentOrder();
+            }
             model.setIsCalculateGrossLockState(false);
             if (callback && callback instanceof Function) {
               callback();
