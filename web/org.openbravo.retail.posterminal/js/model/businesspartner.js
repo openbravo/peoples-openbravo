@@ -22,8 +22,8 @@
     saveCustomer: function (callback) {
       var nameLength, newSk;
 
-      if (!this.get("name")) {
-        OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_NameReqForBP'));
+      if (!this.get('name')) {
+        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_BPartnerNameRequired'));
         return false;
       }
 
@@ -68,6 +68,10 @@
           }
           this.set('searchKey', newSk);
         }
+      }
+
+      if (this.get('birthDay') && typeof this.get('birthDay') !== 'object') {
+        return;
       }
 
       if (this.get('birthDay') && !OB.UTIL.isInThePast(OB.I18N.formatDate(this.get('birthDay')))) {
