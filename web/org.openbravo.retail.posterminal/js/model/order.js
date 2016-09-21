@@ -3891,9 +3891,13 @@
           if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
             markOrderAsDeleted(receipt, orderList, callback);
           } else {
-            orderList.saveCurrent();
-            OB.Dal.remove(orderList.current, null, null);
-            orderList.deleteCurrent();
+            if (orderList) {
+              orderList.saveCurrent();
+              OB.Dal.remove(orderList.current, null, null);
+              orderList.deleteCurrent();
+            } else {
+              OB.Dal.remove(receipt);
+            }
             if (callback && callback instanceof Function) {
               callback();
             }
