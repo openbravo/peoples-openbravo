@@ -415,7 +415,7 @@ public class OBViewGridComponent extends BaseTemplateComponent {
         GCSystem.PROPERTY_ALLOWSUMMARYFUNCTIONS, true);
   }
 
-  public boolean isConfigurationPropertyEnabled(String propertyNameAtTabLevel,
+  private boolean isConfigurationPropertyEnabled(String propertyNameAtTabLevel,
       String propertyNameAtSystemLevel, boolean defaultReturnValue) {
     Boolean propertyEnabled = null;
 
