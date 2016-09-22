@@ -110,7 +110,7 @@ public class PaidReceiptsHeader extends ProcessHQLQuery {
         + " and ord.obposIsDeleted = false ";
 
     if (!json.getString("filterText").isEmpty()) {
-      String hqlFilter = "ord.documentNo like :filterT1 or REPLACE(ord.documentNo, '/', '') like :filterT1 or upper(ord.businessPartner.name) like upper(:filterT1)";
+      String hqlFilter = "ord.documentNo like :filterT1 or upper(ord.businessPartner.name) like upper(:filterT1)";
       for (PaidReceiptsHeaderHook hook : paidReceiptHeaderHooks) {
         try {
           String hql = hook.exec(hqlFilter, json.getString("filterText"));
