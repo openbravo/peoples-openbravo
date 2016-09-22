@@ -510,7 +510,7 @@
           if (tax.docTaxAmount === 'D') {
             // Adjust taxes in case of taxes at doc level...
             taxFinal = OB.DEC.add(tax.net, tax.amount);
-            newNet = OB.DEC.div(taxFinal, OB.DEC.add(OB.DEC.One, getTaxRateNumber(tax.rate)));
+            newNet = OB.DEC.div(taxFinal, getTaxRateNumber(tax.rate).add(new BigDecimal('1')));
             newAmount = OB.DEC.sub(taxFinal, newNet);
             adjustAmount = OB.DEC.sub(tax.amount, newAmount);
             tax.net = newNet;
