@@ -415,6 +415,10 @@ END;
 ' language 'plpgsql' IMMUTABLE
 /-- END
 
+DROP function IF EXISTS hex_to_int(varchar);
+
+DROP function IF EXISTS hex_to_int(numeric);
+
 CREATE OR REPLACE FUNCTION add_months
 (
 date,
@@ -962,6 +966,8 @@ CREATE OPERATOR -(
   LEFTARG = timestamptz,
   RIGHTARG = numeric)
 /-- END
+
+DROP function IF EXISTS is_Trigger_Enabled(text);
 
 -- Creating auxiliar functions for view dropping
 CREATE or REPLACE function drop_view (view_name IN varchar) returns varchar as '
