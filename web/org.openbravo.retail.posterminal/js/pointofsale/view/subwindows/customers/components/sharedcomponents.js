@@ -242,8 +242,9 @@ enyo.kind({
     renderEmpty: 'enyo.Control'
   }],
   valueSet: function (inSender, inEvent) {
+    var i;
     if (inEvent.data.hasOwnProperty(this.modelProperty)) {
-      for (var i = 0; i < this.$.customerCombo.getCollection().length; i++) {
+      for (i = 0; i < this.$.customerCombo.getCollection().length; i++) {
         if (this.$.customerCombo.getCollection().models[i].get('id') === inEvent.data[this.modelProperty]) {
           this.$.customerCombo.setSelected(i);
           break;
@@ -312,6 +313,7 @@ enyo.kind({
     }
   }
 });
+
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.customers.edit_createcustomers',
   handlers: {

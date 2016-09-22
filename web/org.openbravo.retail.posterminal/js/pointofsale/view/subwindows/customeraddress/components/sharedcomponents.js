@@ -421,8 +421,9 @@ enyo.kind({
     renderEmpty: 'enyo.Control'
   }],
   valueSet: function (inSender, inEvent) {
+    var i;
     if (inEvent.data.hasOwnProperty(this.modelProperty)) {
-      for (var i = 0; i < this.$.customerAddrCombo.getCollection().length; i++) {
+      for (i = 0; i < this.$.customerAddrCombo.getCollection().length; i++) {
         if (this.$.customerAddrCombo.getCollection().models[i].get('id') === inEvent.data[this.modelProperty]) {
           this.$.customerAddrCombo.setSelected(i);
           break;
