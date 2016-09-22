@@ -47,6 +47,7 @@ import org.openbravo.xmlEngine.XmlDocument;
 
 public class UsedByLink extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
+  private static final String disableLinkedItemsSectionPreference = "OBUIAPP_DisableLinkedItemsSection";
 
   @Override
   public void init(ServletConfig config) {
@@ -102,7 +103,6 @@ public class UsedByLink extends HttpSecureAppServlet {
   }
 
   private boolean isLinkedItemsSectionDisabled(VariablesSecureApp vars) {
-    final String disableLinkedItemsSectionPreference = "OBUIAPP_DisableLinkedItemsSection";
     String windowId = vars.getStringParameter("windowId");
     try {
       OBContext currentContext = OBContext.getOBContext();
