@@ -81,8 +81,6 @@ enyo.kind({
     onSetBPartnerTarget: 'setBPartnerTarget'
   },
   events: {
-    onHideThisPopup: '',
-    onShowPopup: '',
     onChangeBusinessPartner: ''
   },
   setCustomer: function (inSender, inEvent) {
@@ -118,26 +116,39 @@ enyo.kind({
   style: 'margin: 0px 0px 8px 5px;',
   classes: 'btnlink btnlink-small',
   handlers: {
-    onSetCustomer: 'setCustomer'
+    onSetCustomer: 'setCustomer',
+    onSetBPartnerTarget: 'setBPartnerTarget'
   },
   events: {
-    onHideThisPopup: ''
+    onHideThisPopup: '',
+    onShowPopup: ''
   },
   setCustomer: function (inSender, inEvent) {
     this.customer = inEvent.customer;
+  },
+  setBPartnerTarget: function (inSender, inEvent) {
+    this.target = inEvent.target;
   },
   tap: function () {
     if (this.disabled) {
       return true;
     }
-    this.doHideThisPopup();
-    this.model.get('subWindowManager').set('currentWindow', {
-      name: 'customerAddressSearch',
-      params: {
-        caller: 'mainSubWindow',
-        bPartner: this.customer.get('id'),
-        showShipAndInv: true
+    var sw = this.subWindow;
+    sw.doChangeSubWindow({
+      newWindow: {
+        name: 'mainSubWindow'
       }
+    });
+    var me = this;
+    OB.Dal.get(OB.Model.BusinessPartner, this.customer.get('id'), function (bp) {
+      me.doShowPopup({
+        popup: 'modalcustomeraddress',
+        args: {
+          target: me.target,
+          businessPartner: bp,
+          manageAddress: true
+        }
+      });
     });
   },
   init: function (model) {
@@ -145,7 +156,7 @@ enyo.kind({
   },
   initComponents: function () {
     this.inherited(arguments);
-    this.setContent(OB.I18N.getLabel('OBPOS_TitleEditNewAddress'));
+    this.setContent(OB.I18N.getLabel('OBPOS_BPAddress'));
   }
 });
 
