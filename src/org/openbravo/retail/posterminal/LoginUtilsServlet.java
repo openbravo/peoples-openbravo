@@ -9,6 +9,7 @@
 package org.openbravo.retail.posterminal;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -85,6 +86,7 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
     return result;
   }
 
+  @SuppressWarnings("unchecked")
   @Override
   protected JSONObject getUserImages(HttpServletRequest request) throws JSONException {
     JSONObject result = new JSONObject();
@@ -95,40 +97,42 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
       approvalType = new JSONArray(request.getParameter("approvalType"));
     }
 
+    OBCriteria<OBPOSApplications> terminalCriteria = OBDal.getInstance()
+        .createCriteria(OBPOSApplications.class);
+    terminalCriteria.add(Restrictions.eq(OBPOSApplications.PROPERTY_SEARCHKEY, terminalName));
+    terminalCriteria.setFilterOnReadableOrganization(false);
+    terminalCriteria.setFilterOnReadableClients(false);
+    OBPOSApplications terminalObj = terminalCriteria.list().get(0);
+
+    List<String> naturalTreeOrgList = new ArrayList<String>(
+        OBContext.getOBContext().getOrganizationStructureProvider(terminalObj.getClient().getId())
+            .getNaturalTree(terminalObj.getOrganization().getId()));
+
     String hqlUser = "select distinct user.name, user.username, user.id "
         + "from ADUser user, ADUserRoles userRoles, ADRole role, "
-        + "ADFormAccess formAccess, OBPOS_Applications terminal "
-        + "where user.active = true and "
-        + "userRoles.active = true and "
-        + "role.active = true and "
-        + "formAccess.active = true and "
-        + "user.username is not null and "
+        + "ADFormAccess formAccess, OBPOS_Applications terminal " + "where user.active = true and "
+        + "userRoles.active = true and " + "role.active = true and "
+        + "formAccess.active = true and " + "user.username is not null and "
         + "user.password is not null and "
         + "exists (from ADRoleOrganization ro where ro.role = role and ro.organization = terminal.organization) and "
         + "(not exists(from OBPOS_TerminalAccess ta where ta.userContact = user) or exists(from OBPOS_TerminalAccess ta where ta.userContact = user and ta.pOSTerminal=terminal)) and "
         + "terminal.searchKey = :theTerminalSearchKey and "
-        + "user.id = userRoles.userContact.id and "
-        + "userRoles.role.id = role.id and "
+        + "user.id = userRoles.userContact.id and userRoles.role.id = role.id and "
         + "userRoles.role.id = formAccess.role.id and "
         + "formAccess.specialForm.id = :webPOSFormId and "
-        + "((ad_isorgincluded(user.organization, terminal.organization, terminal.client.id) <> -1) or "
-        + "(ad_isorgincluded(terminal.organization, user.organization, terminal.client.id) <> -1)) ";
+        + "((user.organization.id in (:orgList)) or (terminal.organization.id in (:orgList)))";
 
     if (approvalType.length() != 0) {
       // checking supervisor users for sent approval type
       for (int i = 0; i < approvalType.length(); i++) {
         String iter = approvalType.getString(i);
-        hqlUser += "and exists (from ADPreference as p"
-            + " where property = '"
-            + iter
-            + "'   and active = true"
-            + "   and to_char(searchKey) = 'Y'"
-            + "   and (userContact = user"
-            + "        or exists (from ADUserRoles r"
+        hqlUser += "and exists (from ADPreference as p where property = '" + iter
+            + "'   and active = true and to_char(searchKey) = 'Y'"
+            + "   and (userContact = user or exists (from ADUserRoles r"
             + "                  where r.role = p.visibleAtRole"
             + "                    and r.userContact = user)) "
             + "   and (p.visibleAtOrganization = terminal.organization "
-            + "   or ad_isorgincluded(terminal.organization, p.visibleAtOrganization, terminal.client.id) <> -1 "
+            + "   or p.visibleAtOrganization.id in (:orgList) "
             + "   or p.visibleAtOrganization is null)) ";
       }
 
@@ -139,8 +143,10 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
     Query qryUser = OBDal.getInstance().getSession().createQuery(hqlUser);
     qryUser.setParameter("theTerminalSearchKey", terminalName);
     qryUser.setParameter("webPOSFormId", "B7B7675269CD4D44B628A2C6CF01244F");
+    qryUser.setParameterList("orgList", naturalTreeOrgList);
 
-    for (Object qryUserObject : qryUser.list()) {
+    List<Object> queryUserList = qryUser.list();
+    for (Object qryUserObject : queryUserList) {
       final Object[] qryUserObjectItem = (Object[]) qryUserObject;
 
       JSONObject item = new JSONObject();
@@ -155,11 +161,11 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
       Query qryImage = OBDal.getInstance().getSession().createQuery(hqlImage);
       qryImage.setParameter("theUserId", qryUserObjectItem[2].toString());
       String imageData = "none";
-      for (Object qryImageObject : qryImage.list()) {
+
+      List<Object> qryImageList = qryImage.list();
+      for (Object qryImageObject : qryImageList) {
         final Object[] qryImageObjectItem = (Object[]) qryImageObject;
-        imageData = "data:"
-            + qryImageObjectItem[0].toString()
-            + ";base64,"
+        imageData = "data:" + qryImageObjectItem[0].toString() + ";base64,"
             + org.apache.commons.codec.binary.Base64
                 .encodeBase64String((byte[]) qryImageObjectItem[1]);
       }
@@ -193,8 +199,8 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
     if (RequestContext.get().getSessionAttribute("POSTerminal") == null) {
       final VariablesSecureApp vars = new VariablesSecureApp(request);
       final String terminalSearchKey = vars.getStringParameter("terminalName");
-      OBCriteria<OBPOSApplications> qApp = OBDal.getInstance().createCriteria(
-          OBPOSApplications.class);
+      OBCriteria<OBPOSApplications> qApp = OBDal.getInstance()
+          .createCriteria(OBPOSApplications.class);
       qApp.add(Restrictions.eq(OBPOSApplications.PROPERTY_SEARCHKEY, terminalSearchKey));
       qApp.setFilterOnReadableOrganization(false);
       qApp.setFilterOnReadableClients(false);
@@ -203,8 +209,8 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
         OBPOSApplications terminal = apps.get(0);
         RequestContext.get().setSessionAttribute("POSTerminal", terminal.getId());
 
-        result.put("appCaption", terminal.getIdentifier() + " - "
-            + terminal.getOrganization().getIdentifier());
+        result.put("appCaption",
+            terminal.getIdentifier() + " - " + terminal.getOrganization().getIdentifier());
       }
     }
     return result;
@@ -274,8 +280,8 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
           RequestContext.get().setSessionAttribute("POSTerminal", terminal.getId());
           result.put("terminalName", terminal.getSearchKey());
           result.put("terminalKeyIdentifier", terminal.getTerminalKey());
-          result.put("appCaption", terminal.getIdentifier() + " - "
-              + terminal.getOrganization().getIdentifier());
+          result.put("appCaption",
+              terminal.getIdentifier() + " - " + terminal.getOrganization().getIdentifier());
           result.put("servers", getServers(terminal));
           result.put("services", getServices());
           terminal.setLinked(true);
@@ -311,8 +317,8 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
     final String terminalName = request.getParameter("terminalName");
     if (terminalName != null) {
       OBPOSApplications terminal = null;
-      OBCriteria<OBPOSApplications> qApp = OBDal.getInstance().createCriteria(
-          OBPOSApplications.class);
+      OBCriteria<OBPOSApplications> qApp = OBDal.getInstance()
+          .createCriteria(OBPOSApplications.class);
       qApp.add(Restrictions.eq(OBPOSApplications.PROPERTY_SEARCHKEY, terminalName));
       qApp.setFilterOnReadableOrganization(false);
       qApp.setFilterOnReadableClients(false);
@@ -325,8 +331,8 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
 
     String value;
     try {
-      value = Preferences.getPreferenceValue("OBPOS_TerminalAuthentication", true, null, null,
-          null, null, (String) null);
+      value = Preferences.getPreferenceValue("OBPOS_TerminalAuthentication", true, null, null, null,
+          null, (String) null);
     } catch (PropertyException e) {
       result.put("terminalAuthentication", "Y");
       result.put("errorReadingTerminalAuthentication",
@@ -343,9 +349,9 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
     boolean multiServerEnabled = false;
     try {
       OBContext.setAdminMode(false);
-      multiServerEnabled = "Y".equals(Preferences.getPreferenceValue(
-          "OBMOBC_MultiServerArchitecture", true, terminal.getClient(), terminal.getOrganization(),
-          null, null, null).trim());
+      multiServerEnabled = "Y"
+          .equals(Preferences.getPreferenceValue("OBMOBC_MultiServerArchitecture", true,
+              terminal.getClient(), terminal.getOrganization(), null, null, null).trim());
     } catch (PropertyException ignore) {
       // ignore on purpose
     } finally {
@@ -362,15 +368,15 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
     servers.setFilterOnReadableClients(false);
     servers.setFilterOnReadableOrganization(false);
     servers.setNamedParameter("clientId", terminal.getClient().getId());
-    for (MobileServerDefinition server : servers.list()) {
+
+    List<MobileServerDefinition> serversList = servers.list();
+    for (MobileServerDefinition server : serversList) {
       if (server.isAllorgs()) {
         respArray.put(createServerJSON(server));
       } else {
-        Query filterQuery = OBDal
-            .getInstance()
-            .getSession()
-            .createFilter(server.getOBMOBCSERVERORGSList(),
-                "where this." + MobileServerOrganization.PROPERTY_SERVERORG + "=:org");
+        Query filterQuery = OBDal.getInstance().getSession().createFilter(
+            server.getOBMOBCSERVERORGSList(),
+            "where this." + MobileServerOrganization.PROPERTY_SERVERORG + "=:org");
         filterQuery.setParameter("org", terminal.getOrganization());
         if (filterQuery.list().size() > 0) {
           respArray.put(createServerJSON(server));
