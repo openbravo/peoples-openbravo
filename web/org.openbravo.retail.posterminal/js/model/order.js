@@ -2600,8 +2600,8 @@
           //in the default currency is satisfied
           if (OB.DEC.compare(OB.DEC.sub(this.getDifferenceRemovingSpecificPayment(p), OB.DEC.abs(p.get('amount')))) === OB.DEC.Zero) {
             multiCurrencyDifference = this.getDifferenceBetweenPaymentsAndTotal(p);
-            if (p.get('origAmount') !== this.getDifferenceBetweenPaymentsAndTotal(p)) {
-              p.set('origAmount', this.getDifferenceBetweenPaymentsAndTotal(p));
+            if (p.get('origAmount') !== multiCurrencyDifference) {
+              p.set('origAmount', multiCurrencyDifference);
             }
           }
         } else {
