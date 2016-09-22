@@ -79,11 +79,6 @@
         return false;
       }
 
-      if (this.get('birthDay') && typeof this.get('birthDay') !== 'object') {
-        return;
-      }
-
-
       this.set('_identifier', this.get('name'));
 
       // in case of synchronized then directly call customer save with the callback
