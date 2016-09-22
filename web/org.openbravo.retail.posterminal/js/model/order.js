@@ -3202,34 +3202,58 @@
       });
     },
 
-    reversePayment: function (payment, reverseCallback) {
+    reversePayment: function (payment, sender, reverseCallback) {
       var payments = this.get('payments'),
           me = this,
-          provider;
-      OB.UTIL.HookManager.executeHooks('OBPOS_preReversePayment', {
-        paymentToReverse: payment,
-        payments: payments,
-        receipt: me
-      }, function (args) {
-        if (args.cancellation) {
-          if (reverseCallback) {
-            reverseCallback();
+          provider, usedPayment;
+
+      function reversePaymentConfirmed() {
+        OB.UTIL.HookManager.executeHooks('OBPOS_preReversePayment', {
+          paymentToReverse: payment,
+          payments: payments,
+          receipt: me
+        }, function (args) {
+          if (args.cancellation) {
+            if (reverseCallback) {
+              reverseCallback();
+            }
+            return true;
           }
-          return true;
-        }
 
-        provider = me.getTotal() > 0 ? OB.MobileApp.model.paymentnames[payment.get('kind')].paymentMethod.paymentProvider : OB.MobileApp.model.paymentnames[payment.get('kind')].paymentMethod.refundProvider;
+          provider = me.getTotal() > 0 ? OB.MobileApp.model.paymentnames[payment.get('kind')].paymentMethod.paymentProvider : OB.MobileApp.model.paymentnames[payment.get('kind')].paymentMethod.refundProvider;
 
-        if (provider) {
-          OB.MobileApp.view.waterfall('onShowPopup', {
-            popup: 'modalpayment',
-            args: {
-              'receipt': me,
-              'provider': provider,
-              'key': payment.get('key'),
-              'name': payment.get('name'),
-              'paymentMethod': OB.MobileApp.model.paymentnames[payment.get('kind')].paymentMethod,
+          if (provider) {
+            OB.MobileApp.view.waterfall('onShowPopup', {
+              popup: 'modalpayment',
+              args: {
+                'receipt': me,
+                'provider': provider,
+                'key': payment.get('key'),
+                'name': payment.get('name'),
+                'paymentMethod': OB.MobileApp.model.paymentnames[payment.get('kind')].paymentMethod,
+                'amount': OB.DEC.sub(0, payment.get('amount')),
+                'rate': payment.get('rate'),
+                'mulrate': payment.get('mulrate'),
+                'isocode': payment.get('isocode'),
+                'allowOpenDrawer': payment.get('allowOpenDrawer'),
+                'isCash': payment.get('isCash'),
+                'openDrawer': payment.get('openDrawer'),
+                'printtwice': payment.get('printtwice'),
+                'origAmount': OB.DEC.sub(0, payment.get('origAmount')),
+                'paid': OB.DEC.sub(0, payment.get('paid')),
+                'reversedPaymentId': payment.get('paymentId'),
+                'reversedPayment': payment,
+                'index': OB.DEC.add(1, payments.indexOf(payment)),
+                'isNegativeOrder': me.getGross() < 0 ? true : false,
+                'paymentData': payment.get('paymentData') ? payment.get('paymentData') : null,
+                'reverseCallback': reverseCallback
+              }
+            });
+          } else {
+            me.addPayment(new OB.Model.PaymentLine({
+              'kind': payment.get('kind'),
               'amount': OB.DEC.sub(0, payment.get('amount')),
+              'name': payment.get('name'),
               'rate': payment.get('rate'),
               'mulrate': payment.get('mulrate'),
               'isocode': payment.get('isocode'),
@@ -3245,31 +3269,54 @@
               'isNegativeOrder': me.getGross() < 0 ? true : false,
               'paymentData': payment.get('paymentData') ? payment.get('paymentData') : null,
               'reverseCallback': reverseCallback
-            }
-          });
-        } else {
-          me.addPayment(new OB.Model.PaymentLine({
-            'kind': payment.get('kind'),
-            'amount': OB.DEC.sub(0, payment.get('amount')),
-            'name': payment.get('name'),
-            'rate': payment.get('rate'),
-            'mulrate': payment.get('mulrate'),
-            'isocode': payment.get('isocode'),
-            'allowOpenDrawer': payment.get('allowOpenDrawer'),
-            'isCash': payment.get('isCash'),
-            'openDrawer': payment.get('openDrawer'),
-            'printtwice': payment.get('printtwice'),
-            'origAmount': OB.DEC.sub(0, payment.get('origAmount')),
-            'paid': OB.DEC.sub(0, payment.get('paid')),
-            'reversedPaymentId': payment.get('paymentId'),
-            'reversedPayment': payment,
-            'index': OB.DEC.add(1, payments.indexOf(payment)),
-            'isNegativeOrder': me.getGross() < 0 ? true : false,
-            'paymentData': payment.get('paymentData') ? payment.get('paymentData') : null,
-            'reverseCallback': reverseCallback
-          }));
-        }
+            }));
+          }
+        });
+      }
+
+      function stopReverse() {
+        sender.deleting = false;
+        sender.removeClass('btn-icon-loading');
+        sender.addClass('btn-icon-reversePayment');
+      }
+
+      usedPayment = _.filter(OB.MobileApp.model.get('payments'), function (paymentType) {
+        return paymentType.payment.searchKey === payment.get('kind');
       });
+      if (usedPayment.length === 1) {
+        var usedPaymentMethod = usedPayment[0].paymentMethod;
+        if (usedPaymentMethod.isreversable) {
+          var currentDate = new Date();
+          currentDate.setHours(0);
+          currentDate.setMinutes(0);
+          currentDate.setSeconds(0);
+          currentDate.setMilliseconds(0);
+          if (usedPaymentMethod.availableReverseDelay === null || (currentDate.getTime() - usedPaymentMethod.availableReverseDelay * 86400000) <= (new Date(payment.get('paymentDate')).getTime())) {
+            reversePaymentConfirmed();
+          } else {
+            OB.UTIL.Approval.requestApproval(
+            OB.MobileApp.view.$.containerWindow.$.pointOfSale.model, [{
+              approval: 'OBPOS_approval.reversePayment',
+              message: 'OBPOS_approval.reversePayment'
+            }], function (approved, supervisor, approvalType) {
+              if (approved) {
+                reversePaymentConfirmed();
+              } else {
+                stopReverse();
+              }
+            });
+          }
+        } else {
+          stopReverse();
+          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_NotReversablePaymentHeader'), OB.I18N.getLabel('OBPOS_NotReversablePayment'));
+        }
+      } else if (usedPayment.length < 1) {
+        stopReverse();
+        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_NotReversablePayment', [payment.get('name')]));
+      } else {
+        stopReverse();
+        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MoreThanOnePaymentMethod', [payment.get('name')]));
+      }
     },
 
     serializeToJSON: function () {

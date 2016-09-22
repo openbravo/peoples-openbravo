@@ -983,7 +983,7 @@ enyo.kind({
   reversePayment: function (inSender, inEvent) {
     var me = this;
     if (me.model.get('leftColumnViewManager').isOrder()) {
-      me.model.get('order').reversePayment(inEvent.payment, inEvent.reverseCallback);
+      me.model.get('order').reversePayment(inEvent.payment, inEvent.sender, inEvent.reverseCallback);
       me.model.get('order').trigger('displayTotal');
       return;
     }
