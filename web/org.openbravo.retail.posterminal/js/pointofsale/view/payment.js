@@ -992,7 +992,10 @@ enyo.kind({
     //*** Avoid double click ***
     if (this.getContent() === OB.I18N.getLabel('OBPOS_LblDone')) {
       if (me.blocked) {
-        OB.error('Time: ' + new Date().getTime() + '. Done button has been pressed 2 times and second execution is discarded');
+        if (this.owner.receipt && this.owner.receipt.getOrderDescription) {
+          orderDesc = this.owner.receipt.getOrderDescription();
+        }
+        OB.error('Time: ' + new Date() + '. Done button has been pressed 2 times and second execution is discarded ' + orderDesc);
         return;
       } else {
         me.blocked = true;
@@ -1005,7 +1008,7 @@ enyo.kind({
     if (this && this.owner && this.owner.receipt && this.owner.receipt.getOrderDescription) {
       orderDesc = this.owner.receipt.getOrderDescription();
     }
-    OB.info('Time: ' + new Date().getTime() + '. Payment Button Pressed ( Status: ' + this.disabled + ') ' + orderDesc);
+    OB.info('Time: ' + new Date() + '. Payment Button Pressed ( Status: ' + this.disabled + ') ' + orderDesc);
 
 
     this.allowOpenDrawer = false;
