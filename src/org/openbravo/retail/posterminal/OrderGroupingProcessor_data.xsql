@@ -328,17 +328,21 @@
         insert into c_invoicetax
         (c_tax_id, c_invoice_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby,
          taxbaseamt, taxamt, line, c_invoicetax_id, recalculate)
-        select olt.c_tax_id, i.c_invoice_id, i.ad_client_id, i.ad_org_id, 'Y', now(), i.createdby, now(), i.updatedby,
-        sum(olt.taxbaseamt), sum(olt.taxamt),
-        row_number() over (partition by i.c_invoice_id order by olt.c_tax_id asc) * 10 as line, get_uuid(), 'Y'
-        from c_order o, c_orderline ol, c_orderlinetax olt, c_invoiceline il, c_invoice i
-        where o.c_order_id = ol.c_order_id
-        and ol.c_orderline_id = olt.c_orderline_id
-        and ol.c_orderline_id = il.c_orderline_id
-        and il.c_invoice_id = i.c_invoice_id
-        and i.documentno = ?
-        and i.c_bpartner_id = o.c_bpartner_id and i.c_bpartner_location_id = o.billto_id
-        group by olt.c_tax_id, i.c_invoice_id, i.ad_client_id, i.ad_org_id, i.createdby, i.updatedby
+        select c_tax_id, c_invoice_id, ad_client_id, ad_org_id, 'Y', now(), createdby, now(), updatedby,
+        sum(taxbaseamt), sum(taxamt),
+        row_number() over (partition by c_invoice_id order by c_tax_id asc) * 10 as line, get_uuid(), 'Y'
+        from (
+           select ot.c_tax_id, i.c_invoice_id, i.ad_client_id, i.ad_org_id, 'Y', now(), i.createdby, now(), i.updatedby,
+           ot.taxbaseamt, ot.taxamt
+           from c_ordertax ot inner join c_order o on ot.c_order_id=o.c_order_id
+           inner join c_orderline ol on o.c_order_id=ol.c_order_id
+           inner join c_invoiceline il on il.c_orderline_id = ol.c_orderline_id
+           inner join c_invoice i on i.c_invoice_id=il.c_invoice_id
+           where i.documentno = ?
+           and i.c_bpartner_id = o.c_bpartner_id and i.c_bpartner_location_id = o.billto_id
+           group by ot.c_ordertax_id, ot.c_tax_id , i.c_invoice_id, i.ad_client_id, i.ad_org_id,now(), i.createdby, now(), i.updatedby,        ot.taxbaseamt, ot.taxamt
+        ) d
+        group by c_tax_id, c_invoice_id,ad_client_id, ad_org_id, createdby, updatedby
       ]]>
     </Sql>
     <Parameter name="executionId"/>
@@ -350,17 +354,21 @@
         insert into c_invoicetax
         (c_tax_id, c_invoice_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby,
          taxbaseamt, taxamt, line, c_invoicetax_id, recalculate)
-        select olt.c_tax_id, i.c_invoice_id, i.ad_client_id, i.ad_org_id, 'Y', now(), i.createdby, now(), i.updatedby,
-        sum(olt.taxbaseamt), sum(olt.taxamt),
-        row_number() over (partition by i.c_invoice_id order by olt.c_tax_id asc) * 10 as line, get_uuid(), 'Y'
-        from c_order o, c_orderline ol, c_orderlinetax olt, c_invoiceline il, c_invoice i
-        where o.c_order_id = ol.c_order_id
-        and ol.c_orderline_id = olt.c_orderline_id
-        and ol.c_orderline_id = il.c_orderline_id
-        and il.c_invoice_id = i.c_invoice_id
-        and i.documentno = ?
-        and i.c_order_id = o.c_order_id
-        group by olt.c_tax_id, i.c_invoice_id, i.ad_client_id, i.ad_org_id, i.createdby, i.updatedby
+        select c_tax_id, c_invoice_id, ad_client_id, ad_org_id, 'Y', now(), createdby, now(), updatedby,
+        sum(taxbaseamt), sum(taxamt),
+        row_number() over (partition by c_invoice_id order by c_tax_id asc) * 10 as line, get_uuid(), 'Y'
+        from (
+           select ot.c_tax_id, i.c_invoice_id, i.ad_client_id, i.ad_org_id, 'Y', now(), i.createdby, now(), i.updatedby,
+           ot.taxbaseamt, ot.taxamt
+           from c_ordertax ot inner join c_order o on ot.c_order_id=o.c_order_id
+           inner join c_orderline ol on o.c_order_id=ol.c_order_id
+           inner join c_invoiceline il on il.c_orderline_id = ol.c_orderline_id
+           inner join c_invoice i on i.c_invoice_id=il.c_invoice_id
+           where i.documentno = ?
+           and i.c_order_id = o.c_order_id
+           group by ot.c_ordertax_id, ot.c_tax_id , i.c_invoice_id, i.ad_client_id, i.ad_org_id,now(), i.createdby, now(), i.updatedby,        ot.taxbaseamt, ot.taxamt
+        ) d
+        group by c_tax_id, c_invoice_id,ad_client_id, ad_org_id, createdby, updatedby
       ]]>
     </Sql>
     <Parameter name="executionId"/>
