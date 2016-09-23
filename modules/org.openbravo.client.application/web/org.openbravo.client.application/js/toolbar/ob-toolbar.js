@@ -401,7 +401,7 @@ isc.OBToolbar.addClassProperties({
         this.prompt = OB.I18N.getLabel('OBUIAPP_CreateAttachments');
         this.buttonType = 'attach';
       }
-      if (OB.Properties.EnableScreenReader === 'Y') {
+      if (OB.PropertyStore.get('EnableScreenReader') === 'Y') {
         this.setAriaState('label', this.prompt);
       }
       if (!selectedRows || selectedRows.size() === 0) {

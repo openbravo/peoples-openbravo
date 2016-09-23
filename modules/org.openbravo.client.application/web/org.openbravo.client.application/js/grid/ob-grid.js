@@ -635,7 +635,7 @@ isc.OBGrid.addProperties({
 
         field.filterEditorProperties.keyDown = this.filterFieldsKeyDown;
 
-        if (OB.Properties.EnableScreenReader === 'Y') {
+        if (OB.PropertyStore.get('EnableScreenReader') === 'Y') {
           field.filterEditorProperties.title = OB.I18N.getLabel('OBUIAPP_Filter_By_Column') + field.name;
         }
 

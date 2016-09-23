@@ -992,7 +992,7 @@ isc.OBMyOpenbravo.addProperties({
   },
 
   isScreenReaderPreferenceEnabled: function () {
-    return OB.Properties.EnableScreenReader === 'Y';
+    return OB.PropertyStore.get('EnableScreenReader') === 'Y';
   },
 
   handleKeyPressFunctionForLayouts: function () {

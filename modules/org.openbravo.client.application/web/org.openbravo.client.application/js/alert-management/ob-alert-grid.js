@@ -140,7 +140,7 @@ isc.OBAlertGrid.addProperties({
   },
 
   isScreenReaderPreferenceEnabled: function () {
-    return OB.Properties.EnableScreenReader === 'Y';
+    return OB.PropertyStore.get('EnableScreenReader') === 'Y';
   },
 
   setDataSource: function (ds) {
