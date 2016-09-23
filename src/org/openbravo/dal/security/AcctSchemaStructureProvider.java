@@ -60,16 +60,21 @@ public class AcctSchemaStructureProvider implements OBNotSingleton {
 
   @SuppressWarnings("unchecked")
   private ArrayList<String> getAcctSchemasFromDB(String orgId, String clientID) {
-    String where = " select a.id"
-        + " from OrganizationAcctSchema as oas"
-        + " join oas.accountingSchema as a"
-        + " where oas.client.id = :clientId"
-        + " and (ad_isorgincluded(:orgId, oas.organization.id, oas.client.id) <> -1 or :orgId = '0')"
-        + " and a.active = true" + " and oas.active = true" + " group by a.id";
+    try {
+      OBContext.setAdminMode(true);
+      String where = " select a.id"
+          + " from OrganizationAcctSchema as oas"
+          + " join oas.accountingSchema as a"
+          + " where oas.client.id = :clientId"
+          + " and (ad_isorgincluded(:orgId, oas.organization.id, oas.client.id) <> -1 or :orgId = '0')"
+          + " and a.active = true" + " and oas.active = true" + " group by a.id";
 
-    final Query qry = OBDal.getInstance().getSession().createQuery(where);
-    qry.setParameter("clientId", clientID);
-    qry.setParameter("orgId", orgId);
-    return (ArrayList<String>) qry.list();
+      final Query qry = OBDal.getInstance().getSession().createQuery(where);
+      qry.setParameter("clientId", clientID);
+      qry.setParameter("orgId", orgId);
+      return (ArrayList<String>) qry.list();
+    } finally {
+      OBContext.restorePreviousMode();
+    }
   }
 }

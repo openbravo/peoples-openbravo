@@ -465,15 +465,21 @@ public class OrganizationStructureProvider implements OBNotSingleton {
    *          Organization to get its period control allowed organization.
    */
   public Organization getPeriodControlAllowedOrganization(final Organization org) {
-    if (org.isAllowPeriodControl()) {
-      return org;
-    }
-    for (final String orgId : getParentList(org.getId(), false)) {
-      final Organization parentOrg = OBDal.getInstance().get(Organization.class, orgId);
-      if (parentOrg.isAllowPeriodControl()) {
-        return parentOrg;
+    // Admin mode needed to get the Organization type.
+    OBContext.setAdminMode(true);
+    try {
+      if (org.isAllowPeriodControl()) {
+        return org;
       }
+      for (final String orgId : getParentList(org.getId(), false)) {
+        final Organization parentOrg = OBDal.getInstance().get(Organization.class, orgId);
+        if (parentOrg.isAllowPeriodControl()) {
+          return parentOrg;
+        }
+      }
+      return null;
+    } finally {
+      OBContext.restorePreviousMode();
     }
-    return null;
   }
 }

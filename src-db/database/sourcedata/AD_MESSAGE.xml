@@ -19351,8 +19351,7 @@ This column is already checked as key: ]]></MSGTEXT>
 <!--47D88149F6D2473D892D25F4A86CA161-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--47D88149F6D2473D892D25F4A86CA161-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--47D88149F6D2473D892D25F4A86CA161-->  <VALUE><![CDATA[finnac_paymet_inact]]></VALUE>
-<!--47D88149F6D2473D892D25F4A86CA161-->  <MSGTEXT><![CDATA[The default financial account %s and the default payment method %s are inactive. Please, consider to activate them before continuing.
-]]></MSGTEXT>
+<!--47D88149F6D2473D892D25F4A86CA161-->  <MSGTEXT><![CDATA[The default financial account %s and the default payment method %s are inactive. Please, consider to activate them before continuing.]]></MSGTEXT>
 <!--47D88149F6D2473D892D25F4A86CA161-->  <MSGTYPE><![CDATA[W]]></MSGTYPE>
 <!--47D88149F6D2473D892D25F4A86CA161-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--47D88149F6D2473D892D25F4A86CA161-->  <ISINCLUDEINI18N><![CDATA[N]]></ISINCLUDEINI18N>
@@ -24136,12 +24135,8 @@ Reload the context to make the changes available.]]></MSGTEXT>
 <!--B080C88FF56E4F8594967A6164977D5F-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--B080C88FF56E4F8594967A6164977D5F-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--B080C88FF56E4F8594967A6164977D5F-->  <VALUE><![CDATA[BPCurrencyChange]]></VALUE>
-<!--B080C88FF56E4F8594967A6164977D5F-->  <MSGTEXT><![CDATA[Detected available credit for this business partner. <br/>
-Changing the Business Partner's currency will not allow you to use available credit in the old currency.
-
-If you want to convert the available credit in the old currency into credit in the new currency automatically, select a G/L Item. 
-<br/>
-Otherwise you will have to do it manually following this document: <a href='http://wiki.openbravo.com/wiki/How_to_convert_credit_to_a_different_currency' target='_blank'>How to convert credit to a different currency</a>]]></MSGTEXT>
+<!--B080C88FF56E4F8594967A6164977D5F-->  <MSGTEXT><![CDATA[Detected available credit for this business partner.<br/>
+Changing the Business Partner's currency will not allow you to use available credit in the old currency. If you want to convert the available credit in the old currency into credit in the new currency automatically, select a G/L Item.]]></MSGTEXT>
 <!--B080C88FF56E4F8594967A6164977D5F-->  <MSGTYPE><![CDATA[W]]></MSGTYPE>
 <!--B080C88FF56E4F8594967A6164977D5F-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--B080C88FF56E4F8594967A6164977D5F-->  <ISINCLUDEINI18N><![CDATA[Y]]></ISINCLUDEINI18N>

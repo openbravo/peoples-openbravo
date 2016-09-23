@@ -19,7 +19,9 @@
 package org.openbravo.erpCommon.ad_callouts;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.servlet.ServletException;
 
@@ -104,7 +106,7 @@ public abstract class SimpleCallout extends DelegateConnectionProvider {
 
     private JSONObject result;
     private String currentElement;
-    private ArrayList<JSONObject> currentSelectResult;
+    private Map<String, String> currentComboResult;
 
     /**
      * Provides the coder friendly methods to retrieve certain environment, session and servlet call
@@ -116,7 +118,6 @@ public abstract class SimpleCallout extends DelegateConnectionProvider {
       this.vars = vars;
       result = new JSONObject();
       currentElement = null;
-      currentSelectResult = new ArrayList<JSONObject>();
     }
 
     /**
@@ -198,11 +199,32 @@ public abstract class SimpleCallout extends DelegateConnectionProvider {
      * Starts the inclusion of values of a field named param of type select.
      * 
      * @param param
-     *          The name of the select field to set the values.
+     *          The name of the combo field to set the values.
      */
     public void addSelect(String param) {
-      currentSelectResult = new ArrayList<JSONObject>();
+      if (result.has(param)) {
+        try {
+          currentComboResult = getComboMap(result.getJSONObject(param).getJSONArray(
+              CalloutConstants.ENTRIES));
+        } catch (JSONException e) {
+          log.error("Error getting JSON Object.", e);
+        }
+      } else {
+        currentComboResult = new LinkedHashMap<String, String>();
+      }
+
       currentElement = param;
+    }
+
+    private Map<String, String> getComboMap(JSONArray entries) throws JSONException {
+      Map<String, String> comboMap = new LinkedHashMap<String, String>();
+      for (int i = 0; i < entries.length(); i++) {
+        JSONObject item = entries.getJSONObject(i);
+        if (item.has(JsonConstants.ID) && item.has(JsonConstants.IDENTIFIER)) {
+          comboMap.put(item.getString(JsonConstants.ID), item.getString(JsonConstants.IDENTIFIER));
+        }
+      }
+      return comboMap;
     }
 
     /**
@@ -218,27 +240,33 @@ public abstract class SimpleCallout extends DelegateConnectionProvider {
     }
 
     /**
+     * Removes an entry to the current combo.
+     * 
+     * @param id
+     *          The id value of the combo to remove the entry.
+     */
+    public void removeSelectResult(String id) {
+      currentComboResult.remove(id);
+    }
+
+    /**
      * Adds an entry value to the select field.
      * 
-     * @param name
-     *          The entry name to add.
-     * @param value
-     *          The entry value to add.
+     * @param id
+     *          The entry id to add.
+     * @param identifier
+     *          The entry identifier to add.
      * @param selected
      *          Whether this entry field is selected or not.
      */
-    public void addSelectResult(String name, String value, boolean selected) {
-      JSONObject entry = new JSONObject();
+    public void addSelectResult(String id, String identifier, boolean selected) {
       try {
-        entry.put(JsonConstants.ID, name);
-        entry.put(JsonConstants.IDENTIFIER, value);
-        currentSelectResult.add(entry);
-
+        currentComboResult.put(id, identifier);
         if (selected) {
           // If value of combo is selected
           JSONObject valueSelected = new JSONObject();
-          valueSelected.put(CalloutConstants.VALUE, name.toString());
-          valueSelected.put(CalloutConstants.CLASSIC_VALUE, name.toString());
+          valueSelected.put(CalloutConstants.VALUE, id);
+          valueSelected.put(CalloutConstants.CLASSIC_VALUE, id);
           result.put(currentElement, valueSelected);
         }
       } catch (JSONException e) {
@@ -247,27 +275,42 @@ public abstract class SimpleCallout extends DelegateConnectionProvider {
     }
 
     /**
-     * Finish the inclusion of values to the select field and destroy data.
+     * Finish the inclusion of values to the combo field.
      */
     public void endSelect() {
       try {
-        if (currentSelectResult.isEmpty()) {
-          currentSelectResult.add(new JSONObject());
-        }
-        if (result.isNull(currentElement)) {
-          JSONObject jsonobject = new JSONObject();
-          jsonobject.put(CalloutConstants.ENTRIES, new JSONArray(currentSelectResult));
-          result.put(currentElement, jsonobject);
+        // If any entry is marked as selected for currentElement combo
+        if (isValueNotSelectedForCombo()) {
+          JSONObject notSelectedItem = new JSONObject();
+          notSelectedItem.put(CalloutConstants.ENTRIES, getComboEntries());
+          result.put(currentElement, notSelectedItem);
         } else {
-          result.getJSONObject(currentElement).accumulate(CalloutConstants.ENTRIES,
-              new JSONArray(currentSelectResult));
+          result.getJSONObject(currentElement).put(CalloutConstants.ENTRIES, getComboEntries());
         }
       } catch (JSONException e) {
         log.error("Error parsing JSON Object.", e);
       }
-      // reset current elements
-      currentElement = null;
-      currentSelectResult = null;
+    }
+
+    private boolean isValueNotSelectedForCombo() throws JSONException {
+      return (result.isNull(currentElement) ? true : !result.getJSONObject(currentElement).has(
+          CalloutConstants.VALUE));
+    }
+
+    private JSONArray getComboEntries() throws JSONException {
+      JSONArray entries = new JSONArray();
+
+      if (currentComboResult.isEmpty()) {
+        entries.put(new JSONObject());
+      } else {
+        for (Entry<String, String> item : currentComboResult.entrySet()) {
+          JSONObject entry = new JSONObject();
+          entry.put(JsonConstants.ID, item.getKey());
+          entry.put(JsonConstants.IDENTIFIER, item.getValue());
+          entries.put(entry);
+        }
+      }
+      return entries;
     }
 
     /**
