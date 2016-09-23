@@ -47,7 +47,7 @@ import org.openbravo.xmlEngine.XmlDocument;
 
 public class UsedByLink extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
-  private static final String disableLinkedItemsSectionPreference = "OBUIAPP_DisableLinkedItemsSection";
+  private static final String DISABLE_LINKED_ITEMS_SECTION_PREFERENCE = "OBUIAPP_DisableLinkedItemsSection";
 
   @Override
   public void init(ServletConfig config) {
@@ -106,10 +106,10 @@ public class UsedByLink extends HttpSecureAppServlet {
     String windowId = vars.getStringParameter("windowId");
     try {
       OBContext currentContext = OBContext.getOBContext();
-      String preferenceValue = Preferences.getPreferenceValue(disableLinkedItemsSectionPreference,
-          true, currentContext.getCurrentClient(), currentContext.getCurrentOrganization(),
-          currentContext.getUser(), currentContext.getRole(),
-          OBDal.getInstance().getProxy(Window.class, windowId));
+      String preferenceValue = Preferences.getPreferenceValue(
+          DISABLE_LINKED_ITEMS_SECTION_PREFERENCE, true, currentContext.getCurrentClient(),
+          currentContext.getCurrentOrganization(), currentContext.getUser(),
+          currentContext.getRole(), OBDal.getInstance().getProxy(Window.class, windowId));
 
       if (Preferences.YES.equals(preferenceValue)) {
         log4j.error("Linked Items section is disabled for window with id " + windowId);
