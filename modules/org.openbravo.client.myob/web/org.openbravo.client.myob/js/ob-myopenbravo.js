@@ -291,7 +291,7 @@ isc.OBMyOpenbravo.addProperties({
       height: 10
     }));
 
-    if (this.isFullScreenReaderPreferenceEnabled()) {
+    if (this.isScreenReaderPreferenceEnabled()) {
       adminOtherMyOBLayout.canFocus = true;
       adminOtherMyOBLayout.handleKeyPress = this.handleKeyPressFunctionForLayouts;
       addWidgetLayout.canFocus = true;
@@ -523,7 +523,7 @@ isc.OBMyOpenbravo.addProperties({
             iconOrientation: 'left',
             icon: icon
           });
-          if (this.isFullScreenReaderPreferenceEnabled()) {
+          if (this.isScreenReaderPreferenceEnabled()) {
             lbl.canFocus = true;
             lbl.handleKeyPress = handleEnterKeyPressFunction;
           }
@@ -612,7 +612,7 @@ isc.OBMyOpenbravo.addProperties({
             icon: OB.Styles.OBMyOpenbravo.recentDocumentsLayout.Label.icon
           });
 
-          if (this.isFullScreenReaderPreferenceEnabled()) {
+          if (this.isScreenReaderPreferenceEnabled()) {
             lbl.canFocus = true;
             lbl.handleKeyPress = handleEnterKeyPressFunction;
           }
@@ -991,8 +991,8 @@ isc.OBMyOpenbravo.addProperties({
     this.notifyEvent('RELOAD_WIDGETS');
   },
 
-  isFullScreenReaderPreferenceEnabled: function () {
-    return OB.Properties.EnableFullScreenReader && OB.Properties.EnableFullScreenReader === 'Y';
+  isScreenReaderPreferenceEnabled: function () {
+    return OB.Properties.EnableScreenReader === 'Y';
   },
 
   handleKeyPressFunctionForLayouts: function () {

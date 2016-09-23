@@ -50,7 +50,7 @@ OB.Application.startPage = '${data.startPage}';
 
 //If the property Enable Full Screen Reader is set to 'Y', the isc.screenReader will be set to true.
 //This preference is the one which enables the accessibility for the people with reduced visual capabilities.
-if (OB.Properties.EnableFullScreenReader && OB.Properties.EnableFullScreenReader === 'Y') {
+if (OB.Properties.EnableScreenReader === 'Y') {
     isc.screenReader = true;
 } 
 
