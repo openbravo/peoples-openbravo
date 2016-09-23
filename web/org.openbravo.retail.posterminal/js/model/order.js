@@ -376,33 +376,17 @@
       }
     },
 
-    save: function (callback, collection) {
+    save: function (callback) {
       var undoCopy = this.get('undo'),
-          me = this,
-          orderList, previousOrder;
+          me = this;
 
 
       var now = new Date();
       this.set('updated', OB.I18N.normalizeDate(now));
       this.set('timezoneOffset', now.getTimezoneOffset());
       this.set('json', JSON.stringify(this.serializeToJSON()));
-      if (OB.UTIL.isNullOrUndefined(collection)) {
-        orderList = OB.MobileApp.model.orderList.models;
-      } else {
-        orderList = collection;
-      }
       if (callback === undefined || !callback instanceof Function) {
         callback = function () {};
-      }
-      if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
-        previousOrder = _.max(_.filter(orderList, function (previousOrder) {
-          return previousOrder.get('documentnoSuffix') < me.get('documentnoSuffix') && previousOrder.get('session') === OB.MobileApp.model.get('session') && previousOrder.get('hasbeenpaid') === 'N';
-        }), function (maxDocumentNoOrder) {
-          return maxDocumentNoOrder.get('documentnoSuffix');
-        });
-        if (previousOrder) {
-          previousOrder.save(null, orderList);
-        }
       }
       if (!OB.MobileApp.model.get('preventOrderSave')) {
         OB.Dal.save(this, function () {
@@ -3353,6 +3337,104 @@
         }
       });
       return index;
+    },
+    deleteOrder: function (context, callback) {
+      var i;
+
+      function markOrderAsDeleted(model, orderList, callback) {
+        var me = this,
+            creationDate;
+        if (model.get('creationDate')) {
+          creationDate = new Date(model.get('creationDate'));
+        } else {
+          creationDate = new Date();
+        }
+        model.setIsCalculateGrossLockState(true);
+        model.set('creationDate', creationDate);
+        model.set('timezoneOffset', creationDate.getTimezoneOffset());
+        model.set('created', creationDate.getTime());
+        model.set('obposCreatedabsolute', OB.I18N.formatDateISO(creationDate));
+        model.set('obposIsDeleted', true);
+        for (i = 0; i < model.get('lines').length; i++) {
+          model.get('lines').at(i).set('obposIsDeleted', true);
+        }
+        model.set('hasbeenpaid', 'Y');
+        OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(model.get('documentnoSuffix'), model.get('quotationnoSuffix'), model.get('returnnoSuffix'), function () {
+          model.save(function () {
+            orderList.deleteCurrent();
+            orderList.synchronizeCurrentOrder();
+            model.setIsCalculateGrossLockState(false);
+            if (callback && callback instanceof Function) {
+              callback();
+            }
+          });
+        });
+      }
+
+      function removeOrder(receipt, callback) {
+        var orderList = OB.MobileApp.model.orderList;
+        var isPaidQuotation = (receipt.has('isQuotation') && receipt.get('isQuotation') && receipt.has('hasbeenpaid') && receipt.get('hasbeenpaid') === 'Y');
+        if (OB.UTIL.RfidController.isRfidConfigured()) {
+          OB.UTIL.RfidController.eraseEpcOrder(receipt);
+        }
+        if (receipt.get('id') && !isPaidQuotation && receipt.get('lines') && receipt.get('lines').length > 0) {
+          if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
+            markOrderAsDeleted(receipt, orderList, callback);
+          } else {
+            orderList.saveCurrent();
+            OB.Dal.remove(orderList.current, null, null);
+            orderList.deleteCurrent();
+            if (callback && callback instanceof Function) {
+              callback();
+            }
+          }
+        } else if (receipt.has('deletedLines')) {
+          if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
+            receipt.setIsCalculateGrossLockState(true);
+            receipt.set('obposIsDeleted', true);
+            receipt.prepareToSend(function () {
+              receipt.trigger('closed', {
+                callback: function () {
+                  orderList.deleteCurrent();
+                  orderList.synchronizeCurrentOrder();
+                  receipt.setIsCalculateGrossLockState(false);
+                  if (callback && callback instanceof Function) {
+                    callback();
+                  }
+                }
+              });
+            });
+          } else {
+            orderList.saveCurrent();
+            OB.Dal.remove(orderList.current, null, null);
+            orderList.deleteCurrent();
+            if (callback && callback instanceof Function) {
+              callback();
+            }
+          }
+        } else {
+          if (receipt.get('id')) {
+            orderList.saveCurrent();
+            OB.Dal.remove(orderList.current, null, null);
+          }
+          orderList.deleteCurrent();
+          if (callback && callback instanceof Function) {
+            callback();
+          }
+        }
+      }
+
+      OB.UTIL.HookManager.executeHooks('OBPOS_PreDeleteCurrentOrder', {
+        context: context,
+        receipt: this
+      }, function (args) {
+        if (args && args.cancelOperation && args.cancelOperation === true) {
+          return;
+        }
+        removeOrder(args.receipt, callback);
+      });
+
+      return true;
     }
   });
 
