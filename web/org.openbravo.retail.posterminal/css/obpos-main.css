@@ -310,7 +310,7 @@ button.btnbp:disabled {
   height: 22px;
 }
 
- .addressbilltext {
+.addressbilltext {
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
