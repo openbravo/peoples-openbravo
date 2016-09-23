@@ -253,6 +253,9 @@ enyo.kind({
       }
       this.updatePending();
     }, this);
+    this.receipt.on('updatePending', function () {
+      this.updatePending();
+    }, this);
     this.model.get('leftColumnViewManager').on('change:currentView', function () {
       if (!this.model.get('leftColumnViewManager').isMultiOrder()) {
         this.updatePending();
