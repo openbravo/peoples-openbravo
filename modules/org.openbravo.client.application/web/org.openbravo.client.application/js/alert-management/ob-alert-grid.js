@@ -148,7 +148,7 @@ isc.OBAlertGrid.addProperties({
     if (this.isScreenReaderPreferenceEnabled()) {
       for (i = 0; i < this.gridFields.length; i++) {
         this.gridFields[i].filterEditorProperties = {
-          title: OB.I18N.getLabel('OBUIAPP_Filter_By_Column') + this.gridFields[i].title
+          title: OB.I18N.getLabel('OBUIAPP_Filter_By_Column', [this.gridFields[i].title])
         };
       }
     }
