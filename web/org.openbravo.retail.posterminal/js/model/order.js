@@ -4553,6 +4553,7 @@
         this.modelorder.clearWith(this.current);
         this.modelorder.set('isNewReceipt', false);
         this.modelorder.trigger('paintTaxes');
+        this.modelorder.trigger('updatePending');
         this.modelorder.setIsCalculateReceiptLockState(false);
         this.modelorder.setIsCalculateGrossLockState(false);
       }
