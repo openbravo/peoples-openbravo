@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2010-2015 Openbravo S.L.U.
+ * Copyright (C) 2010-2016 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -15,16 +15,20 @@ import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
+import org.openbravo.modulescript.OpenbravoVersion;
 
 public class BuildValidationHandler {
   private static final Logger log4j = Logger.getLogger(BuildValidationHandler.class);
 
   private static File basedir;
   private static String module;
+  private static Map<String, OpenbravoVersion> modulesVersionMap;
 
   public static void main(String[] args) {
     basedir = new File(args[0]);
@@ -90,8 +94,8 @@ public class BuildValidationHandler {
   @SuppressWarnings("unchecked")
   private static ArrayList<String> callExecute(Class<?> myClass, Object instance)
       throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-    return (ArrayList<String>) myClass.getMethod("execute", new Class[0]).invoke(instance,
-        new Object[0]);
+    return (ArrayList<String>) myClass.getMethod("preExecute", new Class[] { Map.class }).invoke(
+        instance, new Object[] { getModulesVersionMap() });
   }
 
   public static void readClassFiles(List<String> coreClasses, File file) {
@@ -137,4 +141,30 @@ public class BuildValidationHandler {
     BuildValidationHandler.module = module;
   }
 
+  /**
+   * Creates the OpenbravoVersion map from a map of version strings
+   *
+   * @param currentVersionsMap
+   *          A data structure that contains Strings with module versions mapped by module id
+   */
+  public void setModulesVersionMap(Map<String, String> currentVersionsMap) {
+    modulesVersionMap = new HashMap<String, OpenbravoVersion>();
+    for (Map.Entry<String, String> entry : currentVersionsMap.entrySet()) {
+      try {
+        modulesVersionMap.put(entry.getKey(), new OpenbravoVersion(entry.getValue()));
+      } catch (Exception ex) {
+        log4j.error(
+            "Not possible to recover the current version of module with id: " + entry.getKey(), ex);
+      }
+    }
+  }
+
+  /**
+   * Returns a map with the current module versions
+   *
+   * @return A data structure that contains module versions mapped by module id
+   */
+  public static Map<String, OpenbravoVersion> getModulesVersionMap() {
+    return modulesVersionMap;
+  }
 }
