@@ -4526,7 +4526,7 @@
         if (createNew) {
           var order = me.newOrder();
 
-          me.add(order);
+          me.unshift(order);
           if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
             me.doRemoteBPSettings(OB.MobileApp.model.get('businessPartner'));
           }
