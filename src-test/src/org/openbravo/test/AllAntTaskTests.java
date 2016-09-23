@@ -68,6 +68,7 @@ import org.openbravo.test.model.OneToManyTest;
 import org.openbravo.test.model.RuntimeModelTest;
 import org.openbravo.test.model.TrlColumnsOraTypeTest;
 import org.openbravo.test.model.UniqueConstraintTest;
+import org.openbravo.test.modularity.BuildValidationsVersions;
 import org.openbravo.test.modularity.DBPrefixTest;
 import org.openbravo.test.modularity.DatasetServiceTest;
 import org.openbravo.test.modularity.MergePropertiesTest;
@@ -220,6 +221,9 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     // moduleScripts
     ModuleScriptsVersions.class, //
 
+    // buildValidations
+    BuildValidationsVersions.class, //
+
     // role inheritance
     RoleInheritanceTestSuite.class, //
 
@@ -241,7 +245,7 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
 
     // others
     DocumentNumberGeneration.class,
-    
+
     // Cancel and Replace Tests
     CancelAndReplaceTest.class
 
