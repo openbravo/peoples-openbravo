@@ -69,10 +69,10 @@
     });
 
     // finished receipt verifications
-    var mainReceiptCloseFunction = function (eventParams) {
-        this.receipt = model.get('order');
+    var mainReceiptCloseFunction = function (eventParams, context) {
+        context.receipt = model.get('order');
 
-        if (this.receipt.get('isbeingprocessed') === 'Y') {
+        if (context.receipt.get('isbeingprocessed') === 'Y') {
 
           // clean up some synched data as this method is called in synchronized mode also
           OB.MobileApp.model.resetCheckpointData();
@@ -80,10 +80,10 @@
           return;
         }
 
-        OB.info('Ticket closed: ', OB.UTIL.argumentsToStringifyed(this.receipt.getOrderDescription()), "caller: " + OB.UTIL.getStackTrace('Backbone.Events.trigger', true));
+        OB.info('Ticket closed: ', OB.UTIL.argumentsToStringifyed(context.receipt.getOrderDescription()), "caller: " + OB.UTIL.getStackTrace('Backbone.Events.trigger', true));
 
         var orderDate = new Date();
-        var normalizedCreationDate = OB.I18N.normalizeDate(this.receipt.get('creationDate'));
+        var normalizedCreationDate = OB.I18N.normalizeDate(context.receipt.get('creationDate'));
         var creationDate;
         if (normalizedCreationDate === null) {
           creationDate = new Date();
@@ -95,7 +95,7 @@
         OB.trace('Executing pre order save hook.');
 
         OB.UTIL.HookManager.executeHooks('OBPOS_PreOrderSave', {
-          context: this,
+          context: context,
           model: model,
           receipt: model.get('order')
         }, function (args) {
@@ -321,12 +321,13 @@
         };
 
     this.receipt.on('closed', function (eventParams) {
+      var context = this;
       if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
         OB.MobileApp.model.setSynchronizedCheckpoint(function () {
-          mainReceiptCloseFunction(eventParams);
+          mainReceiptCloseFunction(eventParams, context);
         });
       } else {
-        mainReceiptCloseFunction(eventParams);
+        mainReceiptCloseFunction(eventParams, context);
       }
     }, this);
 
@@ -376,7 +377,7 @@
         OB.trace('Executing pre order save hook.');
 
         OB.UTIL.HookManager.executeHooks('OBPOS_PreOrderSave', {
-          context: this,
+          context: me,
           model: model,
           receipt: me.receipt
         }, function (args) {
