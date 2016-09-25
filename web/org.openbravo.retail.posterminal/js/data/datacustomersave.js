@@ -77,7 +77,6 @@
           bpToSave: bpToSave
         }, function (args) {
           OB.Dal.save(bpToSave, function () {
-            bpToSave.set('json', customer.serializeToJSON());
             var successCallback = function () {
                 if (callback) {
                   callback();
@@ -175,7 +174,6 @@
                 });
               }
 
-              bpToSave.set('json', customer.serializeToJSON());
               var successCallback, errorCallback, List;
               successCallback = function () {
                 if (callback) {

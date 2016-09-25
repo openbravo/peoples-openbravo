@@ -130,7 +130,6 @@
           }
           bpLocToSave.set('isbeingprocessed', 'Y');
           OB.Dal.save(bpLocToSave, function () {
-            bpLocToSave.set('json', customerAddr.serializeToJSON());
             var successCallback, errorCallback, List;
             successCallback = function () {
               if (callback) {
