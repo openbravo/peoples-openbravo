@@ -1042,8 +1042,8 @@ public class OrderLoader extends POSDataSynchronizationProcess
       BigDecimal pendingQty = orderLine.getOrderedQuantity().abs();
       if (orderlines.getJSONObject(i).has("remainingQuantity")
           && orderlines.getJSONObject(i).get("remainingQuantity") != JSONObject.NULL) {
-        pendingQty = pendingQty.subtract(new BigDecimal(orderlines.getJSONObject(i).getLong(
-            "remainingQuantity")).abs());
+        pendingQty = pendingQty.subtract(
+            new BigDecimal(orderlines.getJSONObject(i).getLong("remainingQuantity")).abs());
       }
       boolean negativeLine = orderLine.getOrderedQuantity().compareTo(BigDecimal.ZERO) < 0;
 
@@ -1429,7 +1429,7 @@ public class OrderLoader extends POSDataSynchronizationProcess
     order.setAccountingDate(order.getOrderDate());
     order.setScheduledDeliveryDate(order.getOrderDate());
     order.setPartnerAddress(OBDal.getInstance().get(Location.class,
-        jsonorder.getJSONObject("bp").getString("locShipId")));
+        jsonorder.getJSONObject("bp").getString("shipLocId")));
     order.setInvoiceAddress(
         OBDal.getInstance().get(Location.class, jsonorder.getJSONObject("bp").getString("locId")));
 
@@ -1546,8 +1546,8 @@ public class OrderLoader extends POSDataSynchronizationProcess
 
     if (!doCancelAndReplace) {
       if (order.getDocumentNo().indexOf("/") > -1) {
-        long documentno = Long.parseLong(order.getDocumentNo().substring(
-            order.getDocumentNo().lastIndexOf("/") + 1));
+        long documentno = Long
+            .parseLong(order.getDocumentNo().substring(order.getDocumentNo().lastIndexOf("/") + 1));
 
         if (isQuotation) {
           if (order.getObposApplications().getQuotationslastassignednum() == null
@@ -1575,8 +1575,8 @@ public class OrderLoader extends POSDataSynchronizationProcess
         long documentno;
         if (isQuotation) {
           if (jsonorder.has("quotationnoPrefix")) {
-            documentno = Long.parseLong(order.getDocumentNo().replace(
-                jsonorder.getString("quotationnoPrefix"), ""));
+            documentno = Long.parseLong(
+                order.getDocumentNo().replace(jsonorder.getString("quotationnoPrefix"), ""));
 
             if (order.getObposApplications().getQuotationslastassignednum() == null
                 || documentno > order.getObposApplications().getQuotationslastassignednum()) {
@@ -1587,8 +1587,8 @@ public class OrderLoader extends POSDataSynchronizationProcess
           }
         } else if (jsonorder.optLong("returnnoSuffix", -1L) > -1L) {
           if (jsonorder.has("returnnoPrefix")) {
-            documentno = Long.parseLong(order.getDocumentNo().replace(
-                jsonorder.getString("returnnoPrefix"), ""));
+            documentno = Long.parseLong(
+                order.getDocumentNo().replace(jsonorder.getString("returnnoPrefix"), ""));
 
             if (order.getObposApplications().getReturnslastassignednum() == null
                 || documentno > order.getObposApplications().getReturnslastassignednum()) {
@@ -1599,8 +1599,8 @@ public class OrderLoader extends POSDataSynchronizationProcess
           }
         } else {
           if (jsonorder.has("documentnoPrefix")) {
-            documentno = Long.parseLong(order.getDocumentNo().replace(
-                jsonorder.getString("documentnoPrefix"), ""));
+            documentno = Long.parseLong(
+                order.getDocumentNo().replace(jsonorder.getString("documentnoPrefix"), ""));
 
             if (order.getObposApplications().getLastassignednum() == null
                 || documentno > order.getObposApplications().getLastassignednum()) {
@@ -2048,8 +2048,8 @@ public class OrderLoader extends POSDataSynchronizationProcess
               RoundingMode.HALF_UP);
         }
       } else if (writeoffAmt.signum() == -1
-          && ((!notpaidLayaway && !creditpaidLayaway && !fullypaidLayaway && !checkPaidOnCreditChecked) || jsonorder
-              .has("paidInNegativeStatusAmt"))) {
+          && ((!notpaidLayaway && !creditpaidLayaway && !fullypaidLayaway
+              && !checkPaidOnCreditChecked) || jsonorder.has("paidInNegativeStatusAmt"))) {
         // If the overpayment is negative and the order is not a fully or not paid layaway, a
         // quotation nor an order paid on credit, or the overpayment is negative and having a
         // positive tickets in which the created payments are negative (this may occur in C&R flow)
