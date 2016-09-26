@@ -247,7 +247,7 @@ public class SetNewBPCurrency extends BaseProcessActionHandler {
             final String paymentCreditId = (String) scroll.get()[0];
             final FIN_Payment paymentCredit = OBDal.getInstance().get(FIN_Payment.class,
                 paymentCreditId);
-
+            creditAmount = paymentCredit.getGeneratedCredit();
             // Create a payment to create the credit with a glitem
             FIN_Payment payment3 = (FIN_Payment) DalUtil.copy(paymentCredit, false);
             payment3.setPaymentDate(new Date());
@@ -258,13 +258,14 @@ public class SetNewBPCurrency extends BaseProcessActionHandler {
             payment3.setProcessed(false);
             payment3.setPosted("N");
             payment3.setDescription(null);
+            if (strUseDefaultConversion) {
+              creditRate = getConversionRate(strOrgId, strFromCurrencyId, strToCurrencyId);
+            }
+            payment3.setFinancialTransactionConvertRate(creditRate);
             final BigDecimal generatedCredit = creditAmount.multiply(creditRate).setScale(
                 currency.getStandardPrecision().intValue(), RoundingMode.HALF_UP);
             payment3.setGeneratedCredit(generatedCredit);
             payment3.setUsedCredit(BigDecimal.ZERO);
-            final BigDecimal reverseConvRate = getConversionRate(strOrgId, strToCurrencyId,
-                strFromCurrencyId);
-            payment3.setFinancialTransactionConvertRate(reverseConvRate);
 
             // Create a payment detail to create the credit with a glitem
             FIN_PaymentDetail paymentDetail3 = OBProvider.getInstance()
