@@ -90,7 +90,7 @@ enyo.kind({
                 newCurrentOrder: orderModel
               });
               me.owner.owner.owner.model.get('order').calculateReceipt(function () {
-                me.owner.owner.owner.model.get('order').trigger('updateServicePrices');
+                me.owner.owner.owner.model.get('order').get('lines').trigger('updateRelations');
               });
             } else {
               //Hack to calculate totals even if the receipt is not the UI receipt
