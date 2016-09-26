@@ -31,11 +31,13 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.util.OBClassLoader;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.businessUtility.Preferences;
@@ -55,6 +57,7 @@ import org.openbravo.model.materialmgmt.cost.TransactionCost;
 import org.openbravo.model.materialmgmt.transaction.InternalConsumption;
 import org.openbravo.model.materialmgmt.transaction.InternalMovement;
 import org.openbravo.model.materialmgmt.transaction.InventoryCount;
+import org.openbravo.model.materialmgmt.transaction.LastTransaction;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 import org.openbravo.model.materialmgmt.transaction.ProductionTransaction;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
@@ -128,6 +131,9 @@ public class CostingServer {
 
         setNotPostedTransaction();
         checkCostAdjustments();
+        updateLastTransaction(transaction, getCostingRule().isWarehouseDimension(),
+            CostingUtils.getCostingRuleStartingDate(getCostingRule()), organization);
+        OBDal.getInstance().flush();
       } finally {
         OBContext.restorePreviousMode();
       }
@@ -137,6 +143,120 @@ public class CostingServer {
       transaction.setProcessed(true);
       OBDal.getInstance().flush();
     }
+  }
+
+  public static void updateLastTransaction(MaterialTransaction trx,
+      boolean includeWarehouseDimension, Date startingDate, Organization organization) {
+    LastTransaction lastTransaction = getLastTransaction(trx, includeWarehouseDimension,
+        startingDate);
+    boolean needsUpdate = true;
+    if (lastTransaction == null) {
+      lastTransaction = OBProvider.getInstance().get(LastTransaction.class);
+    } else {
+      needsUpdate = isAfterLastTransaction(trx, lastTransaction, startingDate);
+    }
+
+    if (needsUpdate) {
+      lastTransaction.setClient(trx.getClient());
+      lastTransaction.setOrganization(organization);
+      lastTransaction.setTransaction(trx);
+      lastTransaction.setProduct(trx.getProduct());
+      if (includeWarehouseDimension) {
+        lastTransaction.setWarehouse(trx.getStorageBin().getWarehouse());
+      }
+      lastTransaction.setMovementdate(trx.getMovementDate());
+      lastTransaction.setTrxprocessdate(trx.getTransactionProcessDate());
+      lastTransaction.setMovementtype(trx.getMovementType());
+      lastTransaction.setQty(trx.getMovementQuantity());
+      OBDal.getInstance().save(lastTransaction);
+    }
+  }
+
+  public static boolean isBeforeLastTransaction(MaterialTransaction trx,
+      LastTransaction lastTransaction, Date startingDate) {
+    if (trx.getId().equals(lastTransaction.getTransaction().getId())
+        || lastTransaction.getTrxprocessdate().compareTo(startingDate) < 1) {
+      return false;
+    }
+    if (lastTransaction.getMovementdate().compareTo(trx.getMovementDate()) < 1) {
+      return false;
+      // Only if trx Movement Date is greater than last Transaction Movement Date
+    } else {
+      if (lastTransaction.getTrxprocessdate().compareTo(trx.getTransactionProcessDate()) > 0) {
+        return false;
+      } else if (lastTransaction.getTrxprocessdate().compareTo(trx.getTransactionProcessDate()) < 0) {
+        return true;
+      } else {
+        // If both trxProcessDate are equals
+        long lastPrio = CostAdjustmentUtils.getTrxTypePrio(lastTransaction.getMovementtype());
+        long trxPrio = CostAdjustmentUtils.getTrxTypePrio(trx.getMovementType());
+        if (lastPrio > trxPrio) {
+          return false;
+        } else if (lastPrio < trxPrio) {
+          return true;
+        } else {
+          // If both priorities are equals
+          if (lastTransaction.getQty().compareTo(trx.getMovementQuantity()) == -1) {
+            return false;
+          } else {
+            return true;
+          }
+        }
+      }
+    }
+  }
+
+  public static boolean isAfterLastTransaction(MaterialTransaction trx,
+      LastTransaction lastTransaction, Date startingDate) {
+    if (trx.getId().equals(lastTransaction.getTransaction().getId())
+        || trx.getTransactionProcessDate().compareTo(startingDate) < 1) {
+      return false;
+    }
+    if (lastTransaction.getMovementdate().compareTo(trx.getMovementDate()) > 0) {
+      return false;
+    } else if (lastTransaction.getMovementdate().compareTo(trx.getMovementDate()) < 0) {
+      return true;
+      // If both movementDates are equal
+    } else {
+      if (lastTransaction.getTrxprocessdate().compareTo(trx.getTransactionProcessDate()) < 0) {
+        return false;
+      } else if (lastTransaction.getTrxprocessdate().compareTo(trx.getTransactionProcessDate()) > 0) {
+        return true;
+        // If both trxProcessDate are equals
+      } else {
+        long lastPrio = CostAdjustmentUtils.getTrxTypePrio(lastTransaction.getMovementtype());
+        long trxPrio = CostAdjustmentUtils.getTrxTypePrio(trx.getMovementType());
+        if (lastPrio < trxPrio) {
+          return false;
+        } else if (lastPrio > trxPrio) {
+          return true;
+        } else {
+          // If both priorities are equals
+          if (lastTransaction.getQty().compareTo(trx.getMovementQuantity()) == 1) {
+            return false;
+          } else {
+            return true;
+          }
+        }
+      }
+
+    }
+  }
+
+  public static LastTransaction getLastTransaction(MaterialTransaction trx,
+      boolean includeWarehouseDimension, Date startingDate) {
+    final Organization orgLegal = OBContext.getOBContext()
+        .getOrganizationStructureProvider(trx.getClient().getId())
+        .getLegalEntity(trx.getOrganization());
+
+    OBCriteria<LastTransaction> obc = OBDal.getInstance().createCriteria(LastTransaction.class);
+    obc.add(Restrictions.eq(LastTransaction.PROPERTY_ORGANIZATION, orgLegal));
+    obc.add(Restrictions.eq(LastTransaction.PROPERTY_PRODUCT, trx.getProduct()));
+    if (includeWarehouseDimension) {
+      obc.add(Restrictions.eq(LastTransaction.PROPERTY_WAREHOUSE, trx.getStorageBin()
+          .getWarehouse()));
+    }
+    return (LastTransaction) obc.uniqueResult();
   }
 
   private void checkCostAdjustments() {
