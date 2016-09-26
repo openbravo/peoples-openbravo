@@ -95,8 +95,15 @@ isc.OBMyOpenbravo.addProperties({
 
   createLeftColumnLayout: function () {
     var me = this,
-        i, recentViewsLayout, recentViewsLinksLayout, recentDocumentsLayout, recentDocumentsLinksLayout, addWidgetLayout, adminOtherMyOBLayout, refreshLayout;
+        i, recentViewsLayout, recentViewsLinksLayout, recentDocumentsLayout, recentDocumentsLinksLayout, addWidgetLayout, adminOtherMyOBLayout, refreshLayout, handleKeyPressFunctionForLayouts;
 
+    handleKeyPressFunctionForLayouts = function () {
+        var keyName = isc.EH.lastEvent.keyName;
+        if (keyName === 'Enter') {
+          this.action();
+        }
+      };
+      
     if (OB.User.isPortal && OB.Application.licenseType === 'C') {
       this.addMember(isc.HLayout.create({
         width: '100%',
@@ -193,7 +200,11 @@ isc.OBMyOpenbravo.addProperties({
       contents: OB.I18N.getLabel('OBKMO_WMO_Refresh'),
       action: function () {
         OB.MyOB.reloadWidgets();
-      }
+      },
+      canFocus: true,
+      handleKeyPress: handleKeyPressFunctionForLayouts,
+      showFocused: true,
+      showRollOver: true
     }));
 
     // the available widget classes the user may/can create
@@ -230,7 +241,11 @@ isc.OBMyOpenbravo.addProperties({
         } else {
           this.doOpen();
         }
-      }
+      },
+      canFocus: true,
+      handleKeyPress: handleKeyPressFunctionForLayouts,
+      showFocused: true,
+      showRollOver: true
     }));
 
     if (this.enableAdminMode) {
@@ -267,7 +282,11 @@ isc.OBMyOpenbravo.addProperties({
           } else {
             this.doOpen();
           }
-        }
+        },
+        canFocus: true,
+        handleKeyPress: handleKeyPressFunctionForLayouts,
+        showFocused: true,
+        showRollOver: true
       }));
     }
 
@@ -290,15 +309,6 @@ isc.OBMyOpenbravo.addProperties({
     this.leftColumnLayout.addMember(isc.VLayout.create({
       height: 10
     }));
-
-    if (this.isScreenReaderPreferenceEnabled()) {
-      adminOtherMyOBLayout.canFocus = true;
-      adminOtherMyOBLayout.handleKeyPress = this.handleKeyPressFunctionForLayouts;
-      addWidgetLayout.canFocus = true;
-      addWidgetLayout.handleKeyPress = this.handleKeyPressFunctionForLayouts;
-      refreshLayout.canFocus = true;
-      refreshLayout.handleKeyPress = this.handleKeyPressFunctionForLayouts;
-    }
     this.leftColumnLayout.recentViewsLayout = recentViewsLayout;
     this.leftColumnLayout.recentDocumentsLayout = recentDocumentsLayout;
     this.leftColumnLayout.addWidgetLayout = addWidgetLayout;
@@ -521,12 +531,12 @@ isc.OBMyOpenbravo.addProperties({
             baseStyle: OB.Styles.OBMyOpenbravo.recentViewsLayout.Label.baseStyle,
             handleClick: handleClickFunction,
             iconOrientation: 'left',
-            icon: icon
+            icon: icon,
+            canFocus: true,
+            handleKeyPress: handleEnterKeyPressFunction,
+            showFocused: true,
+            showRollOver: true
           });
-          if (this.isScreenReaderPreferenceEnabled()) {
-            lbl.canFocus = true;
-            lbl.handleKeyPress = handleEnterKeyPressFunction;
-          }
           entryLayout = isc.HLayout.create({
             defaultLayoutAlign: 'center',
             width: '100%',
@@ -609,13 +619,13 @@ isc.OBMyOpenbravo.addProperties({
             baseStyle: OB.Styles.OBMyOpenbravo.recentDocumentsLayout.Label.baseStyle,
             handleClick: handleClickFunction,
             iconOrientation: 'left',
-            icon: OB.Styles.OBMyOpenbravo.recentDocumentsLayout.Label.icon
+            icon: OB.Styles.OBMyOpenbravo.recentDocumentsLayout.Label.icon,
+            canFocus: true,
+            handleKeyPress: handleEnterKeyPressFunction,
+            showFocused: true,
+            showRollOver: true
           });
 
-          if (this.isScreenReaderPreferenceEnabled()) {
-            lbl.canFocus = true;
-            lbl.handleKeyPress = handleEnterKeyPressFunction;
-          }
           entryLayout = isc.HLayout.create({
             defaultLayoutAlign: 'center',
             width: '100%'
@@ -989,17 +999,6 @@ isc.OBMyOpenbravo.addProperties({
     this.portalLayout.getMembers()[0].removeAllRows();
     this.portalLayout.getMembers()[1].removeAllRows();
     this.notifyEvent('RELOAD_WIDGETS');
-  },
-
-  isScreenReaderPreferenceEnabled: function () {
-    return OB.PropertyStore.get('EnableScreenReader') === 'Y';
-  },
-
-  handleKeyPressFunctionForLayouts: function () {
-    var keyName = isc.EH.lastEvent.keyName;
-    if (keyName === 'Enter') {
-      this.getMember(0).action();
-    }
   }
 });
 
