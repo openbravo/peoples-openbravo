@@ -2256,6 +2256,7 @@
         }
       } else {
         this.set('bp', businessPartner);
+        this.save();
         OB.Dal.remove(new OB.Model.BusinessPartner(businessPartner), function () {
           OB.Dal.save(businessPartner, function () {}, function () {
             OB.error(arguments);
@@ -2263,7 +2264,6 @@
         }, function () {
           OB.UTIL.showError('Error removing');
         });
-        this.save();
       }
       // set the undo action
       if (showNotif === undef || showNotif === true) {
