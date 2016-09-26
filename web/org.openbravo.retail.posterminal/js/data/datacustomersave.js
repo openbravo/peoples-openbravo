@@ -27,7 +27,7 @@
           isNew = false,
           bpToSave = new OB.Model.ChangedBusinessPartners(),
           bpLocation, bpLocToSave = new OB.Model.BPLocation(),
-          customersListToChange, updateLocally;
+          updateLocally;
 
       bpToSave.set('isbeingprocessed', 'N');
       customer.set('createdBy', OB.MobileApp.model.get('orgUserId'));

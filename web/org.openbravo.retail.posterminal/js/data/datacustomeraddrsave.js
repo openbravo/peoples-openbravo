@@ -28,7 +28,7 @@
       var customerAddrList, customerAddrId = this.customerAddr.get('id'),
           isNew = false,
           bpLocToSave = new OB.Model.ChangedBPlocation(),
-          customerAddrListToChange, updateLocally;
+          updateLocally;
 
       bpLocToSave.set('isbeingprocessed', 'N');
       customerAddr.set('createdBy', OB.MobileApp.model.get('orgUserId'));
@@ -81,8 +81,6 @@
             }
             OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_customerAddrSaved', [customerAddr.get('_identifier')]));
           };
-          customerAddrListToChange = new OB.Collection.ChangedBPlocationList();
-          customerAddrListToChange.add(bpLocToSave);
           OB.MobileApp.model.runSyncProcess(successCallback);
         }, function () {
           //error saving BP changes with changes in changedbusinesspartners
@@ -156,8 +154,6 @@
               }
               OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_customerAddrSaved', [customerAddr.get('_identifier')]));
             };
-            customerAddrListToChange = new OB.Collection.ChangedBPlocationList();
-            customerAddrListToChange.add(bpLocToSave);
             if (!OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
               OB.MobileApp.model.runSyncProcess(successCallback);
             }
