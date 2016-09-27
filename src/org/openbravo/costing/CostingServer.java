@@ -55,10 +55,10 @@ import org.openbravo.model.materialmgmt.cost.TransactionCost;
 import org.openbravo.model.materialmgmt.transaction.InternalConsumption;
 import org.openbravo.model.materialmgmt.transaction.InternalMovement;
 import org.openbravo.model.materialmgmt.transaction.InventoryCount;
-import org.openbravo.model.materialmgmt.transaction.LastTransaction;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 import org.openbravo.model.materialmgmt.transaction.ProductionTransaction;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
+import org.openbravo.model.materialmgmt.transaction.TransactionLast;
 import org.openbravo.model.procurement.ReceiptInvoiceMatch;
 
 /**
@@ -142,11 +142,11 @@ public class CostingServer {
   }
 
   private void updateLastTransaction() {
-    LastTransaction lastTransaction = CostAdjustmentUtils.getLastTransaction(transaction,
+    TransactionLast lastTransaction = CostAdjustmentUtils.getLastTransaction(transaction,
         costingRule.isWarehouseDimension());
     boolean needsUpdate = true;
     if (lastTransaction == null) {
-      lastTransaction = OBProvider.getInstance().get(LastTransaction.class);
+      lastTransaction = OBProvider.getInstance().get(TransactionLast.class);
     } else {
       needsUpdate = CostAdjustmentUtils.compareToLastTransaction(transaction, lastTransaction,
           CostingUtils.getCostingRuleStartingDate(costingRule)) > 0;
@@ -160,10 +160,6 @@ public class CostingServer {
       if (costingRule.isWarehouseDimension()) {
         lastTransaction.setWarehouse(transaction.getStorageBin().getWarehouse());
       }
-      lastTransaction.setMovementdate(transaction.getMovementDate());
-      lastTransaction.setTrxprocessdate(transaction.getTransactionProcessDate());
-      lastTransaction.setMovementtype(transaction.getMovementType());
-      lastTransaction.setQty(transaction.getMovementQuantity());
       OBDal.getInstance().save(lastTransaction);
     }
   }
