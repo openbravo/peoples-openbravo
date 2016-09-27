@@ -55,8 +55,8 @@ import org.openbravo.model.materialmgmt.cost.CostingRule;
 import org.openbravo.model.materialmgmt.cost.TransactionCost;
 import org.openbravo.model.materialmgmt.transaction.InventoryCount;
 import org.openbravo.model.materialmgmt.transaction.InventoryCountLine;
-import org.openbravo.model.materialmgmt.transaction.LastTransaction;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
+import org.openbravo.model.materialmgmt.transaction.TransactionLast;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -139,7 +139,7 @@ public class CostAdjustmentUtils {
 
   public static boolean isNeededBackdatedCostAdjustment(MaterialTransaction transaction,
       boolean includeWarehouseDimension, Date startingDate) {
-    LastTransaction lastTransaction = CostAdjustmentUtils.getLastTransaction(transaction,
+    TransactionLast lastTransaction = CostAdjustmentUtils.getLastTransaction(transaction,
         includeWarehouseDimension);
     if (lastTransaction != null
         && CostAdjustmentUtils.compareToLastTransaction(transaction, lastTransaction, startingDate) < 0) {
@@ -149,40 +149,41 @@ public class CostAdjustmentUtils {
     }
   }
 
-  public static LastTransaction getLastTransaction(MaterialTransaction trx,
+  public static TransactionLast getLastTransaction(MaterialTransaction trx,
       boolean includeWarehouseDimension) {
     final Organization orgLegal = OBContext.getOBContext()
         .getOrganizationStructureProvider(trx.getClient().getId())
         .getLegalEntity(trx.getOrganization());
-    OBCriteria<LastTransaction> obc = OBDal.getInstance().createCriteria(LastTransaction.class);
-    obc.add(Restrictions.eq(LastTransaction.PROPERTY_PRODUCT, trx.getProduct()));
-    obc.add(Restrictions.eq(LastTransaction.PROPERTY_ORGANIZATION, orgLegal));
+    OBCriteria<TransactionLast> obc = OBDal.getInstance().createCriteria(TransactionLast.class);
+    obc.add(Restrictions.eq(TransactionLast.PROPERTY_PRODUCT, trx.getProduct()));
+    obc.add(Restrictions.eq(TransactionLast.PROPERTY_ORGANIZATION, orgLegal));
     if (includeWarehouseDimension) {
-      obc.add(Restrictions.eq(LastTransaction.PROPERTY_WAREHOUSE, trx.getStorageBin()
+      obc.add(Restrictions.eq(TransactionLast.PROPERTY_WAREHOUSE, trx.getStorageBin()
           .getWarehouse()));
     }
-    return (LastTransaction) obc.uniqueResult();
+    return (TransactionLast) obc.uniqueResult();
   }
 
-  public static int compareToLastTransaction(MaterialTransaction trx,
-      LastTransaction lastTransaction, Date startingDate) {
+  public static int compareToLastTransaction(MaterialTransaction trx, TransactionLast lastTrx,
+      Date startingDate) {
+    MaterialTransaction lastTransaction = lastTrx.getTransaction();
 
     // If trx is the same as lastTransaction or was processed before or is from previous costing
     // rule, return 0
-    if (trx.getId().equals(lastTransaction.getTransaction().getId())
-        || trx.getTransactionProcessDate().compareTo(lastTransaction.getTrxprocessdate()) < 0
-        || lastTransaction.getTrxprocessdate().compareTo(startingDate) <= 0) {
+    if (trx.getId().equals(lastTransaction.getId())
+        || trx.getTransactionProcessDate().compareTo(lastTransaction.getTransactionProcessDate()) < 0
+        || lastTransaction.getTransactionProcessDate().compareTo(startingDate) <= 0) {
       return 0;
     }
 
     int compareMovementDate = DateUtils.truncate(trx.getMovementDate(), Calendar.DATE).compareTo(
-        DateUtils.truncate(lastTransaction.getMovementdate(), Calendar.DATE));
+        DateUtils.truncate(lastTransaction.getMovementDate(), Calendar.DATE));
     int compareProcessDate = trx.getTransactionProcessDate().compareTo(
-        lastTransaction.getTrxprocessdate());
+        lastTransaction.getTransactionProcessDate());
     Long trxPrio = CostAdjustmentUtils.getTrxTypePrio(trx.getMovementType());
-    Long lastPrio = CostAdjustmentUtils.getTrxTypePrio(lastTransaction.getMovementtype());
+    Long lastPrio = CostAdjustmentUtils.getTrxTypePrio(lastTransaction.getMovementType());
     int comparePriority = trxPrio.compareTo(lastPrio);
-    int compareQty = trx.getMovementQuantity().compareTo(lastTransaction.getQty());
+    int compareQty = trx.getMovementQuantity().compareTo(lastTransaction.getMovementQuantity());
 
     // Before
     if (compareMovementDate < 0
