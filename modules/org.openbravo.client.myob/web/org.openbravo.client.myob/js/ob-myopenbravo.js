@@ -98,12 +98,12 @@ isc.OBMyOpenbravo.addProperties({
         i, recentViewsLayout, recentViewsLinksLayout, recentDocumentsLayout, recentDocumentsLinksLayout, addWidgetLayout, adminOtherMyOBLayout, refreshLayout, handleKeyPressFunctionForLayouts;
 
     handleKeyPressFunctionForLayouts = function () {
-        var keyName = isc.EH.lastEvent.keyName;
-        if (keyName === 'Enter') {
-          this.action();
-        }
-      };
-      
+      var keyName = isc.EH.lastEvent.keyName;
+      if (keyName === 'Enter') {
+        this.action();
+      }
+    };
+
     if (OB.User.isPortal && OB.Application.licenseType === 'C') {
       this.addMember(isc.HLayout.create({
         width: '100%',
