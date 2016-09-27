@@ -542,7 +542,7 @@
       }
 
       // verify that the ui receipt is the only one in which calculateGross is executed
-      var isTheUIReceipt = this === OB.MobileApp.model.receipt || this.get('belongsToMultiOrder') || this.get('ignocheCheckIfIsActiveOrder');
+      var isTheUIReceipt = this === OB.MobileApp.model.receipt || this.get('belongsToMultiOrder') || this.get('ignoreCheckIfIsActiveOrder');
       if (!isTheUIReceipt) {
         OB.error("calculateGross should only be called by the UI receipt");
       }
@@ -679,7 +679,7 @@
         OB.error("setting the isCalculateReceiptLocked state is mandatory before executing it the first time");
       }
       // verify that the ui receipt is the only one in which calculateReceipt is executed
-      var isTheUIReceipt = this === OB.MobileApp.model.receipt || this.get('belongsToMultiOrder') || this.get('ignocheCheckIfIsActiveOrder');
+      var isTheUIReceipt = this === OB.MobileApp.model.receipt || this.get('belongsToMultiOrder') || this.get('ignoreCheckIfIsActiveOrder');
       if (!isTheUIReceipt) {
         OB.error("calculateReceipt should only be called by the UI receipt");
       }
@@ -3908,8 +3908,9 @@
               line.set('qty', 0);
             });
             receipt.set('skipCalculateReceipt', false);
-            // This setIsCalculateGrossLockState must be done because this function may be called out of the pointofsale window, and in
-            // order to call the calculateReceipt function the isCalculateGrossLockState property must be initialized
+            // These setIsCalculateReceiptLockState and setIsCalculateGrossLockState calls must be done because this function
+            // may be called out of the pointofsale window, and in order to call the calculateReceipt function, the
+            // isCalculateReceiptLockState and isCalculateGrossLockState properties must be initialized
             receipt.setIsCalculateReceiptLockState(false);
             receipt.setIsCalculateGrossLockState(false);
             receipt.calculateReceipt(function () {

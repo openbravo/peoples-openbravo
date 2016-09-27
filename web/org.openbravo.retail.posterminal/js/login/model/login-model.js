@@ -734,7 +734,7 @@
         var i, j, removeCallback;
         if (collection.length > 0) {
           _.each(collection.models, function (model) {
-            model.set('ignocheCheckIfIsActiveOrder', true);
+            model.set('ignoreCheckIfIsActiveOrder', true);
           });
           removeOneModel(collection.at(0), collection, finalCallback);
         } else {

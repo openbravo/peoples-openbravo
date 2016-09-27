@@ -376,7 +376,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
       });
 
       _.each(pendingOrderList.models, function (order) {
-        order.set('ignocheCheckIfIsActiveOrder', true);
+        order.set('ignoreCheckIfIsActiveOrder', true);
       });
       me.get('orderlist').reset(pendingOrderList.models);
       var indexStepPendingOrders = me.stepIndex('OB.CashUp.StepPendingOrders');
