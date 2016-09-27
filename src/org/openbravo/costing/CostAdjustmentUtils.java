@@ -20,11 +20,13 @@ package org.openbravo.costing;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.Query;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
@@ -396,9 +398,19 @@ public class CostAdjustmentUtils {
         .getCostingPrecision().intValue() : costorg.getCurrency().getCostingPrecision().intValue();
     MaterialTransaction ctrx = costing != null ? costing.getInventoryTransaction() : null;
     boolean existsCumulatedStockOnTrxDate = ctrx != null
-        && costing.getTotalMovementQuantity() != null
-        && (!costingRule.isBackdatedTransactionsFixed() || trx.getMovementDate().after(
-            ctrx.getMovementDate()));
+        && costing.getTotalMovementQuantity() != null;
+
+    // Backdated transactions can't use cumulated values
+    if (existsCumulatedStockOnTrxDate && costingRule.isBackdatedTransactionsFixed()) {
+      Date trxMovementDate = DateUtils.truncate(trx.getMovementDate(), Calendar.DATE);
+      Date ctrxMovementDate = DateUtils.truncate(ctrx.getMovementDate(), Calendar.DATE);
+      if (trxMovementDate.compareTo(ctrxMovementDate) < 0
+          || (trxMovementDate.compareTo(ctrxMovementDate) == 0 && trx.getTransactionProcessDate()
+              .compareTo(ctrx.getTransactionProcessDate()) <= 0)) {
+        existsCumulatedStockOnTrxDate = false;
+      }
+    }
+
     if (existsCumulatedStockOnTrxDate) {
       cumulatedStock = costing.getTotalMovementQuantity();
       if (StringUtils.equals(ctrx.getId(), trx.getId())) {
@@ -734,9 +746,19 @@ public class CostAdjustmentUtils {
         .getCostingPrecision().intValue() : costorg.getCurrency().getCostingPrecision().intValue();
     MaterialTransaction ctrx = costing != null ? costing.getInventoryTransaction() : null;
     boolean existsCumulatedValuationOnTrxDate = ctrx != null
-        && costing.getTotalStockValuation() != null
-        && (!costingRule.isBackdatedTransactionsFixed() || trx.getMovementDate().after(
-            ctrx.getMovementDate()));
+        && costing.getTotalStockValuation() != null;
+
+    // Backdated transactions can't use cumulated values
+    if (existsCumulatedValuationOnTrxDate && costingRule.isBackdatedTransactionsFixed()) {
+      Date trxMovementDate = DateUtils.truncate(trx.getMovementDate(), Calendar.DATE);
+      Date ctrxMovementDate = DateUtils.truncate(ctrx.getMovementDate(), Calendar.DATE);
+      if (trxMovementDate.compareTo(ctrxMovementDate) < 0
+          || (trxMovementDate.compareTo(ctrxMovementDate) == 0 && trx.getTransactionProcessDate()
+              .compareTo(ctrx.getTransactionProcessDate()) <= 0)) {
+        existsCumulatedValuationOnTrxDate = false;
+      }
+    }
+
     if (existsCumulatedValuationOnTrxDate) {
       cumulatedValuation = costing.getTotalStockValuation();
       if (!StringUtils.equals(costing.getCurrency().getId(), currency.getId())) {
