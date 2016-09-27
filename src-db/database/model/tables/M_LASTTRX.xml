@@ -76,14 +76,13 @@
       <foreign-key foreignTable="M_WAREHOUSE" name="M_LASTTRX_M_WAREHOUSE">
         <reference local="M_WAREHOUSE_ID" foreign="M_WAREHOUSE_ID"/>
       </foreign-key>
-      <index name="M_LASTTRX_PRODUCT_IDX" unique="false">
+      <index name="M_LASTTRX_PRODUCT_ORG_WH" unique="false">
         <index-column name="M_PRODUCT_ID"/>
+        <index-column name="AD_ORG_ID"/>
+        <index-column name="M_WAREHOUSE_ID"/>
       </index>
       <index name="M_LASTTRX_TRX_IDX" unique="false">
         <index-column name="M_TRANSACTION_ID"/>
-      </index>
-      <index name="M_LASTTRX_WAREHOUSE_IDX" unique="false">
-        <index-column name="M_WAREHOUSE_ID"/>
       </index>
       <check name="M_LASTTRX_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
