@@ -227,6 +227,10 @@
   margin: 0px 6px !important;
 }
 
+.onyx-menu, .onyx.onyx-menu {
+  z-index: 1000 !important; 
+}
+
 .paymentmethoditemstext {
   font-family: 'Helvetica Neue', 'Nimbus Sans L', Arial, sans-serif;
   font-size: 16px;
