@@ -226,7 +226,6 @@ public class RequestContext {
       return delegate.getAttribute(arg0);
     }
 
-    @SuppressWarnings("unchecked")
     public Enumeration<String> getAttributeNames() {
       if (delegate == null) {
         final List<String> names = new ArrayList<String>();
@@ -275,7 +274,6 @@ public class RequestContext {
       return delegate.getParameter(arg0);
     }
 
-    @SuppressWarnings("unchecked")
     public Enumeration<String> getParameterNames() {
       final List<String> names = new ArrayList<String>();
       names.addAll(parameters.keySet());

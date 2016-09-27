@@ -20,9 +20,8 @@ public class CalloutServletConfig implements ServletConfig {
     return context.getInitParameter(name);
   }
 
-  @SuppressWarnings({ "rawtypes" })
   @Override
-  public Enumeration getInitParameterNames() {
+  public Enumeration<String> getInitParameterNames() {
     return context.getInitParameterNames();
   }
 
