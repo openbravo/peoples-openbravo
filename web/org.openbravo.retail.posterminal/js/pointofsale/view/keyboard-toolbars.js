@@ -367,7 +367,7 @@ enyo.kind({
             amount = altexactamount[exactpayment.payment.searchKey];
           }
           if (exactpayment.rate && exactpayment.rate !== '1') {
-            amount = OB.DEC.div(amount, exactpayment.rate, 6);
+            amount = OB.DEC.div(amount, exactpayment.rate);
           }
 
           if (amount > 0 && exactpayment && OB.MobileApp.model.hasPermission(exactpayment.payment.searchKey)) {
