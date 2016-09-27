@@ -95,14 +95,7 @@ isc.OBMyOpenbravo.addProperties({
 
   createLeftColumnLayout: function () {
     var me = this,
-        i, recentViewsLayout, recentViewsLinksLayout, recentDocumentsLayout, recentDocumentsLinksLayout, addWidgetLayout, adminOtherMyOBLayout, refreshLayout, handleKeyPressFunctionForLayouts;
-
-    handleKeyPressFunctionForLayouts = function () {
-      var keyName = isc.EH.lastEvent.keyName;
-      if (keyName === 'Enter') {
-        this.action();
-      }
-    };
+        i, recentViewsLayout, recentViewsLinksLayout, recentDocumentsLayout, recentDocumentsLinksLayout, addWidgetLayout, adminOtherMyOBLayout, refreshLayout;
 
     if (OB.User.isPortal && OB.Application.licenseType === 'C') {
       this.addMember(isc.HLayout.create({
@@ -202,7 +195,6 @@ isc.OBMyOpenbravo.addProperties({
         OB.MyOB.reloadWidgets();
       },
       canFocus: true,
-      handleKeyPress: handleKeyPressFunctionForLayouts,
       showFocused: true,
       showRollOver: true
     }));
@@ -243,7 +235,6 @@ isc.OBMyOpenbravo.addProperties({
         }
       },
       canFocus: true,
-      handleKeyPress: handleKeyPressFunctionForLayouts,
       showFocused: true,
       showRollOver: true
     }));
@@ -284,7 +275,6 @@ isc.OBMyOpenbravo.addProperties({
           }
         },
         canFocus: true,
-        handleKeyPress: handleKeyPressFunctionForLayouts,
         showFocused: true,
         showRollOver: true
       }));

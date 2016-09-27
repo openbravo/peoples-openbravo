@@ -57,7 +57,7 @@
 .OBMyOBLeftColumnLinkFocusedOver,
 .OBMyOBLeftColumnLinkFocused,
 .OBMyOBLeftColumnLink:focus {
-	color: #fa962f;
+  color: #fa962f;
 }
 
 
@@ -87,7 +87,7 @@
 .OBMyOBRecentViewsEntryFocusedOver,
 .OBMyOBRecentViewsEntryFocused,
 .OBMyOBRecentViewsEntry:focus {
-    color: #fa962f;
+  color: #fa962f;
 }
 
 
