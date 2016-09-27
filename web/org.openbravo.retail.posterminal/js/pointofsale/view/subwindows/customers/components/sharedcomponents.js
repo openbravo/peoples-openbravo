@@ -425,29 +425,31 @@ enyo.kind({
     }
 
     function validateForm(form) {
-      var customer = form.model.get('customer'),
-          errors = checkMandatoryFields(form.$.customerOnlyFields.children, customer);
-      if (form.$.invoicingAddrFields.showing) {
-        var invoicingErrors = checkMandatoryFields(form.$.invoicingAddrFields.children, customer);
-        if (invoicingErrors) {
-          if (errors) {
-            errors += ', ';
+      if (inEvent.validations) {
+        var customer = form.model.get('customer'),
+            errors = checkMandatoryFields(form.$.customerOnlyFields.children, customer);
+        if (form.$.invoicingAddrFields.showing) {
+          var invoicingErrors = checkMandatoryFields(form.$.invoicingAddrFields.children, customer);
+          if (invoicingErrors) {
+            if (errors) {
+              errors += ', ';
+            }
+            errors += (form.$.invoicingAddrFields.getClassAttribute().indexOf("twoAddrLayout") === 0 ? OB.I18N.getLabel('OBPOS_LblBillAddr') + ' [' + invoicingErrors + ']' : invoicingErrors);
           }
-          errors += (form.$.invoicingAddrFields.getClassAttribute().indexOf("twoAddrLayout") === 0 ? OB.I18N.getLabel('OBPOS_LblBillAddr') + ' [' + invoicingErrors + ']' : invoicingErrors);
         }
-      }
-      if (form.$.shippingAddrFields.showing && form.$.shippingAddrFields.getClassAttribute().indexOf("twoAddrLayout") === 0) {
-        var shippingErrors = checkMandatoryFields(form.$.shippingAddrFields.children, customer);
-        if (shippingErrors) {
-          if (errors) {
-            errors += ', ';
+        if (form.$.shippingAddrFields.showing && form.$.shippingAddrFields.getClassAttribute().indexOf("twoAddrLayout") === 0) {
+          var shippingErrors = checkMandatoryFields(form.$.shippingAddrFields.children, customer);
+          if (shippingErrors) {
+            if (errors) {
+              errors += ', ';
+            }
+            errors += OB.I18N.getLabel('OBPOS_LblShipAddr') + ' [' + shippingErrors + ']';
           }
-          errors += OB.I18N.getLabel('OBPOS_LblShipAddr') + ' [' + shippingErrors + ']';
         }
-      }
-      if (errors) {
-        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_BPartnerRequiredFields', [errors]));
-        return false;
+        if (errors) {
+          OB.UTIL.showError(OB.I18N.getLabel('OBPOS_BPartnerRequiredFields', [errors]));
+          return false;
+        }
       }
       return true;
     }

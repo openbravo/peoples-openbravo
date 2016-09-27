@@ -172,22 +172,24 @@ enyo.kind({
     }
 
     function validateForm(form) {
-      var errors = '',
-          customerAddr = form.model.get('customerAddr');
-      _.each(form.$.customerAddrAttributes.children, function (item) {
-        if (item.newAttribute.mandatory) {
-          var value = customerAddr.get(item.newAttribute.modelProperty);
-          if (!value) {
-            if (errors) {
-              errors += ', ';
+      if (inEvent.validations) {
+        var errors = '',
+            customerAddr = form.model.get('customerAddr');
+        _.each(form.$.customerAddrAttributes.children, function (item) {
+          if (item.newAttribute.mandatory) {
+            var value = customerAddr.get(item.newAttribute.modelProperty);
+            if (!value) {
+              if (errors) {
+                errors += ', ';
+              }
+              errors += OB.I18N.getLabel(item.newAttribute.i18nLabel);
             }
-            errors += OB.I18N.getLabel(item.newAttribute.i18nLabel);
           }
+        });
+        if (errors) {
+          OB.UTIL.showError(OB.I18N.getLabel('OBPOS_BPartnerRequiredFields', [errors]));
+          return false;
         }
-      });
-      if (errors) {
-        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_BPartnerRequiredFields', [errors]));
-        return false;
       }
       return true;
     }
