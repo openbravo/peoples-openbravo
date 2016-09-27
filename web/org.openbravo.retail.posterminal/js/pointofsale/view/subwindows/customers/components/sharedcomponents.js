@@ -252,7 +252,7 @@ enyo.kind({
       });
     } else {
       var that = this;
-      this.model.get('customer').loadById(this.customer.get('id'), function (customer) {
+      this.model.get('customer').loadModel(this.customer, function (customer) {
         getCustomerValues({
           customer: customer
         });
