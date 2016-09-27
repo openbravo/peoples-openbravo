@@ -239,10 +239,18 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.TerminalWindowModel.extend({
       var me = this;
       if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
         OB.MobileApp.model.setSynchronizedCheckpoint(function () {
-          makeDepositsFunction(me);
+          OB.UTIL.HookManager.executeHooks('OBPOS_PreSaveCashManagements', {
+            dropsdeps: me.depsdropstosave
+          }, function (args) {
+            makeDepositsFunction(me);
+          });
         });
       } else {
-        makeDepositsFunction(me);
+        OB.UTIL.HookManager.executeHooks('OBPOS_PreSaveCashManagements', {
+          dropsdeps: me.depsdropstosave
+        }, function (args) {
+          makeDepositsFunction(me);
+        });
       }
     }, this);
 
