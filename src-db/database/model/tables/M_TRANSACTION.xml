@@ -212,16 +212,6 @@
       <index name="M_TRANSSACTION_PRODUCT" unique="false">
         <index-column name="M_PRODUCT_ID"/>
       </index>
-      <index name="M_TRX_CALCULATED_MOVEMENTDATE" unique="false">
-        <index-column name="ISCOSTCALCULATED"/>
-        <index-column name="MOVEMENTDATE"/>
-      </index>
-      <index name="M_TRX_CALCULATED_PRODUCT_DATES" unique="false">
-        <index-column name="ISCOSTCALCULATED"/>
-        <index-column name="M_PRODUCT_ID"/>
-        <index-column name="MOVEMENTDATE"/>
-        <index-column name="TRXPROCESSDATE"/>
-      </index>
       <check name="M_TRANSACTION_CHECK1"><![CDATA[QUANTITYORDER IS NULL AND M_PRODUCT_UOM_ID IS NULL OR QUANTITYORDER IS NOT NULL AND M_PRODUCT_UOM_ID IS NOT NULL]]></check>
       <check name="M_TRANSACTION_CHECKPRICEDIFF"><![CDATA[CHECKPRICEDIFFERENCE IN ('Y', 'N')]]></check>
       <check name="M_TRANSACTION_COSTPERMANENT"><![CDATA[ISCOSTPERMANENT IN ('Y', 'N')]]></check>
