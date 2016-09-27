@@ -139,15 +139,64 @@ public class CostAdjustmentUtils {
 
   public static boolean isNeededBackdatedCostAdjustment(MaterialTransaction transaction,
       boolean includeWarehouseDimension, Date startingDate) {
-    LastTransaction lastTransaction = CostingServer.getLastTransaction(transaction,
-        includeWarehouseDimension, startingDate);
+    LastTransaction lastTransaction = CostAdjustmentUtils.getLastTransaction(transaction,
+        includeWarehouseDimension);
     if (lastTransaction != null
-        && CostingServer.isBeforeLastTransaction(transaction, lastTransaction, startingDate)) {
+        && CostAdjustmentUtils.compareToLastTransaction(transaction, lastTransaction, startingDate) < 0) {
       return true;
     } else {
       return false;
     }
+  }
 
+  public static LastTransaction getLastTransaction(MaterialTransaction trx,
+      boolean includeWarehouseDimension) {
+    final Organization orgLegal = OBContext.getOBContext()
+        .getOrganizationStructureProvider(trx.getClient().getId())
+        .getLegalEntity(trx.getOrganization());
+    OBCriteria<LastTransaction> obc = OBDal.getInstance().createCriteria(LastTransaction.class);
+    obc.add(Restrictions.eq(LastTransaction.PROPERTY_PRODUCT, trx.getProduct()));
+    obc.add(Restrictions.eq(LastTransaction.PROPERTY_ORGANIZATION, orgLegal));
+    if (includeWarehouseDimension) {
+      obc.add(Restrictions.eq(LastTransaction.PROPERTY_WAREHOUSE, trx.getStorageBin()
+          .getWarehouse()));
+    }
+    return (LastTransaction) obc.uniqueResult();
+  }
+
+  public static int compareToLastTransaction(MaterialTransaction trx,
+      LastTransaction lastTransaction, Date startingDate) {
+
+    // If trx is the same as lastTransaction or was processed before or is from previous costing
+    // rule, return 0
+    if (trx.getId().equals(lastTransaction.getTransaction().getId())
+        || trx.getTransactionProcessDate().compareTo(lastTransaction.getTrxprocessdate()) < 0
+        || lastTransaction.getTrxprocessdate().compareTo(startingDate) <= 0) {
+      return 0;
+    }
+
+    int compareMovementDate = DateUtils.truncate(trx.getMovementDate(), Calendar.DATE).compareTo(
+        DateUtils.truncate(lastTransaction.getMovementdate(), Calendar.DATE));
+    int compareProcessDate = trx.getTransactionProcessDate().compareTo(
+        lastTransaction.getTrxprocessdate());
+    Long trxPrio = CostAdjustmentUtils.getTrxTypePrio(trx.getMovementType());
+    Long lastPrio = CostAdjustmentUtils.getTrxTypePrio(lastTransaction.getMovementtype());
+    int comparePriority = trxPrio.compareTo(lastPrio);
+    int compareQty = trx.getMovementQuantity().compareTo(lastTransaction.getQty());
+
+    // Before
+    if (compareMovementDate < 0
+        && (compareProcessDate > 0 || (compareProcessDate == 0 && (comparePriority > 0 || (comparePriority == 0 && compareQty <= 0))))) {
+      return -1;
+    }
+
+    // After
+    if (compareMovementDate >= 0
+        && (compareProcessDate > 0 || (compareProcessDate == 0 && (comparePriority < 0 || (comparePriority == 0 && compareQty > 0))))) {
+      return 1;
+    }
+
+    return 0;
   }
 
   private static Long getNewLineNo(CostAdjustment cadj) {
