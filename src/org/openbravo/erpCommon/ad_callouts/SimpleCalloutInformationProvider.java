@@ -64,7 +64,9 @@ public class SimpleCalloutInformationProvider implements CalloutInformationProvi
     JSONObject json = (JSONObject) element;
     String value = null;
     try {
-      value = json.getString(CalloutConstants.CLASSIC_VALUE);
+      if (json.has(CalloutConstants.CLASSIC_VALUE)) {
+        value = json.getString(CalloutConstants.CLASSIC_VALUE);
+      }
     } catch (JSONException e) {
       log.error("Error retrieving value from json {}", json);
     }
