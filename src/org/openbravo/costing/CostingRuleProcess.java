@@ -60,6 +60,7 @@ import org.openbravo.model.materialmgmt.transaction.InventoryCountLine;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
+import org.openbravo.model.materialmgmt.transaction.TransactionLast;
 import org.openbravo.scheduling.Process;
 import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.scheduling.ProcessLogger;
@@ -130,6 +131,11 @@ public class CostingRuleProcess implements Process {
 
         // Update cost of inventories and process starting physical inventories.
         updateInventoriesCostAndProcessInitInventories(ruleId, startingDate, existsPreviousRule);
+
+        // Delete M_Transaction_Last
+        if (existsPreviousRule) {
+          deleteLastTransaction();
+        }
       }
 
       if (rule.getStartingDate() != null && rule.getFixbackdatedfrom() != null
@@ -724,5 +730,11 @@ public class CostingRuleProcess implements Process {
 
     OBDal.getInstance().flush();
     OBDal.getInstance().getSession().clear();
+  }
+
+  private void deleteLastTransaction() {
+    Query queryDelete = OBDal.getInstance().getSession()
+        .createQuery("delete from " + TransactionLast.ENTITY_NAME);
+    queryDelete.executeUpdate();
   }
 }
