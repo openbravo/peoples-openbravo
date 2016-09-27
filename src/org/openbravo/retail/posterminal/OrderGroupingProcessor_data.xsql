@@ -122,6 +122,7 @@
         c_orderline ol left join m_inoutline iol on ol.c_orderline_id = iol.c_orderline_id
         where ol.c_order_id = o.c_order_id
         and o.m_pricelist_id = pl.m_pricelist_id
+        and o.m_pricelist_id = i.m_pricelist_id
         and o.em_obpos_applications_id = ap.obpos_applications_id
         and ap.obpos_terminaltype_id = tt.obpos_terminaltype_id
         and tt.c_doctype_id = dt.c_doctype_id
@@ -170,6 +171,7 @@
         c_orderline ol left join m_inoutline iol on ol.c_orderline_id = iol.c_orderline_id
         where ol.c_order_id = o.c_order_id
         and o.m_pricelist_id = pl.m_pricelist_id
+        and o.m_pricelist_id = i.m_pricelist_id
         and o.em_obpos_applications_id = ap.obpos_applications_id
         and ap.obpos_terminaltype_id = tt.obpos_terminaltype_id
         and tt.c_doctype_id = dt.c_doctype_id
