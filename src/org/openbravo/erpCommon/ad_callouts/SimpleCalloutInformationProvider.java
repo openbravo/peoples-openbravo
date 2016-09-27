@@ -89,8 +89,8 @@ public class SimpleCalloutInformationProvider implements CalloutInformationProvi
   @Override
   public Boolean isComboData(Object element) {
     if (element instanceof JSONObject) {
-      JSONObject json = (JSONObject) element;
-      return json.has(CalloutConstants.ENTRIES);
+      JSONObject comboElement = (JSONObject) element;
+      return comboElement.has(CalloutConstants.ENTRIES);
     }
     return false;
   }
@@ -143,8 +143,6 @@ public class SimpleCalloutInformationProvider implements CalloutInformationProvi
       changedCols.add(col.getDBColumnName());
     }
 
-    if (entry.has(CalloutConstants.ENTRIES)) {
-      selectedEntry.put(CalloutConstants.ENTRIES, newJsonArr);
-    }
+    selectedEntry.put(CalloutConstants.ENTRIES, newJsonArr);
   }
 }
