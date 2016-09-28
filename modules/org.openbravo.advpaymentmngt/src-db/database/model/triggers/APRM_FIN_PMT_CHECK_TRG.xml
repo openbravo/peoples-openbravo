@@ -15,7 +15,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2010-2011 Openbravo SLU
+* All portions are Copyright (C) 2010-2016 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 *************************************************************************/
@@ -46,6 +46,7 @@ BEGIN
       OR((COALESCE(:OLD.AMOUNT, 0) <> COALESCE(:NEW.AMOUNT, 0)
           AND COALESCE(:OLD.STATUS, '0') <> TO_CHAR('RPAE'))
           OR (COALESCE(:OLD.STATUS, '0') = TO_CHAR('RPAE')
+              AND COALESCE(:NEW.STATUS, '0') <> TO_CHAR('RPVOID')
               AND (COALESCE(:NEW.AMOUNT, 0) - COALESCE(:OLD.AMOUNT, 0))  <> (COALESCE(:NEW.GENERATED_CREDIT, 0) - COALESCE(:OLD.GENERATED_CREDIT, 0))))
       )) THEN
       RAISE_APPLICATION_ERROR(-20000, '@20501@');

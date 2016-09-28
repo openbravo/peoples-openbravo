@@ -324,15 +324,21 @@ public abstract class SimpleCallout extends DelegateConnectionProvider {
      */
     public void addResult(String param, Object value) {
       JSONObject columnValue = new JSONObject();
-      Object strValue = value == null ? "null" : value;
 
-      // handle case when callouts are sending us "\"\"" string.
-      if ("\"\"".equals(strValue)) {
-        strValue = "";
+      Object resultValue = value;
+      if (resultValue != null) {
+        // handle case when SimpleCallouts are sending us "\"\"" string.
+        if ("\"\"".equals(resultValue)) {
+          resultValue = "";
+        }
+        // handle case when SimpleCallouts are sending us "null" string. Force to be null object in
+        // order to ensure backwards compatibility.
+        resultValue = JsonConstants.NULL.equals(resultValue) ? null : resultValue;
       }
+
       try {
-        columnValue.put(CalloutConstants.VALUE, strValue);
-        columnValue.put(CalloutConstants.CLASSIC_VALUE, strValue);
+        columnValue.put(CalloutConstants.VALUE, resultValue);
+        columnValue.put(CalloutConstants.CLASSIC_VALUE, resultValue);
         result.put(param, columnValue);
       } catch (JSONException e) {
         log.error("Error parsing JSON Object.", e);
