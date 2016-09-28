@@ -408,6 +408,7 @@ public class CostingUtils {
           + " > :dateFrom");
       select.append(" or (trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
           + " = :dateFrom");
+      //
       if (costing.getInventoryTransaction().getMovementType().equals("M-")) {
         select.append(" and (( trx." + MaterialTransaction.PROPERTY_MOVEMENTTYPE
             + " <> 'M+' and trxtype." + CostAdjustmentUtils.propADListPriority
@@ -529,6 +530,7 @@ public class CostingUtils {
           + " > :dateFrom");
       select.append(" or (trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
           + " = :dateFrom");
+      //
       if (costing.getInventoryTransaction().getMovementType().equals("M-")) {
         select.append(" and (( trx." + MaterialTransaction.PROPERTY_MOVEMENTTYPE
             + " <> 'M+' and trxtype." + CostAdjustmentUtils.propADListPriority

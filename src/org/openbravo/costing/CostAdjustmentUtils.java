@@ -443,7 +443,15 @@ public class CostAdjustmentUtils {
           + " > :ctrxdate");
       select.append(" or (trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
           + " = :ctrxdate");
-      select.append(" and (trxtype." + CostAdjustmentUtils.propADListPriority + " > :ctrxtypeprio");
+      //
+      if (costing.getInventoryTransaction().getMovementType().equals("M-")) {
+        select.append(" and (( trx." + MaterialTransaction.PROPERTY_MOVEMENTTYPE
+            + " <> 'M+' and trxtype." + CostAdjustmentUtils.propADListPriority
+            + " > :ctrxtypeprio)");
+      } else {
+        select.append(" and (trxtype." + CostAdjustmentUtils.propADListPriority
+            + " > :ctrxtypeprio");
+      }
       select.append(" or (trxtype." + CostAdjustmentUtils.propADListPriority + " = :ctrxtypeprio");
       select.append(" and (trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " < :ctrxqty");
       select.append(" or (trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " = :ctrxqty");
@@ -801,7 +809,15 @@ public class CostAdjustmentUtils {
           + " > :ctrxdate");
       select.append(" or (trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
           + " = :ctrxdate");
-      select.append(" and (trxtype." + CostAdjustmentUtils.propADListPriority + " > :ctrxtypeprio");
+      //
+      if (costing.getInventoryTransaction().getMovementType().equals("M-")) {
+        select.append(" and (( trx." + MaterialTransaction.PROPERTY_MOVEMENTTYPE
+            + " <> 'M+' and trxtype." + CostAdjustmentUtils.propADListPriority
+            + " > :ctrxtypeprio)");
+      } else {
+        select.append(" and (trxtype." + CostAdjustmentUtils.propADListPriority
+            + " > :ctrxtypeprio");
+      }
       select.append(" or (trxtype." + CostAdjustmentUtils.propADListPriority + " = :ctrxtypeprio");
       select.append(" and (trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " < :ctrxqty");
       select.append(" or (trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " = :ctrxqty");
