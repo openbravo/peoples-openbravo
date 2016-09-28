@@ -301,7 +301,8 @@ public class CostingServer {
         && !adjustmentAlreadyCreated) {
       BigDecimal currentStock = CostAdjustmentUtils.getStockOnTransactionDate(getOrganization(),
           transaction, getCostingAlgorithm().costDimensions, transaction.getProduct()
-              .isProduction(), costingRule.isBackdatedTransactionsFixed());
+              .isProduction(), costingRule.isBackdatedTransactionsFixed(), transaction
+              .getCurrency());
       if (currentStock.compareTo(transaction.getMovementQuantity()) < 0
           || (trxType != TrxType.InventoryOpening
               && currentStock.compareTo(transaction.getMovementQuantity()) == 0 && CostingUtils
@@ -318,7 +319,8 @@ public class CostingServer {
     if (trxType == TrxType.InventoryClosing) {
       BigDecimal currentStock = CostAdjustmentUtils.getStockOnTransactionDate(getOrganization(),
           transaction, getCostingAlgorithm().costDimensions, transaction.getProduct()
-              .isProduction(), costingRule.isBackdatedTransactionsFixed());
+              .isProduction(), costingRule.isBackdatedTransactionsFixed(), transaction
+              .getCurrency());
 
       if (BigDecimal.ZERO.compareTo(currentStock) == 0) {
         BigDecimal currentValuedStock = CostAdjustmentUtils.getValuedStockOnTransactionDate(
