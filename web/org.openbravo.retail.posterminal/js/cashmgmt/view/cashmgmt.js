@@ -75,7 +75,8 @@ enyo.kind({
     onShowPopup: ''
   },
   handlers: {
-    onAdvancedFilterSelector: 'advancedFilterSelector'
+    onAdvancedFilterSelector: 'advancedFilterSelector',
+    onChangeFilterSelector: 'changeFilterSelector'
   },
   components: [{
     kind: 'OB.UI.MultiColumn',
@@ -135,10 +136,23 @@ enyo.kind({
     }, {
       kind: 'OB.UI.ModalSelectPrinters'
     }]
+  }, {
+    name: 'otherSubWindowsContainer',
+    components: [{
+      kind: 'OB.UI.ModalBusinessPartners',
+      name: 'modalcustomer'
+    }, {
+      kind: 'OB.UI.ModalAdvancedFilterBP',
+      name: 'modalAdvancedFilterBP'
+    }]
   }],
 
   advancedFilterSelector: function (inSender, inEvent) {
     this.waterfall('onGetAdvancedFilterSelector', inEvent);
+  },
+
+  changeFilterSelector: function (inSender, inEvent) {
+    this.waterfall('onUpdateFilterSelector', inEvent);
   },
 
   init: function () {
