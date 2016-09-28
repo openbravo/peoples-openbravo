@@ -365,12 +365,12 @@ public class CostAdjustmentUtils {
    */
   public static BigDecimal getStockOnTransactionDate(Organization costorg, MaterialTransaction trx,
       HashMap<CostDimension, BaseOBObject> _costDimensions, boolean isManufacturingProduct,
-      boolean areBackdatedTrxFixed) {
+      boolean areBackdatedTrxFixed, Currency currency) {
     Date date = areBackdatedTrxFixed ? trx.getMovementDate() : trx.getTransactionProcessDate();
     Costing costing = AverageAlgorithm.getLastCumulatedCosting(date, trx.getProduct(),
         _costDimensions, costorg);
     return getStockOnTransactionDate(costorg, trx, _costDimensions, isManufacturingProduct,
-        areBackdatedTrxFixed, costing);
+        areBackdatedTrxFixed, currency, costing);
   }
 
   /**
@@ -379,7 +379,7 @@ public class CostAdjustmentUtils {
    */
   public static BigDecimal getStockOnTransactionDate(Organization costorg, MaterialTransaction trx,
       HashMap<CostDimension, BaseOBObject> _costDimensions, boolean isManufacturingProduct,
-      boolean areBackdatedTrxFixed, Costing costing) {
+      boolean areBackdatedTrxFixed, Currency currency, Costing costing) {
 
     // Get child tree of organizations.
     OrganizationStructureProvider osp = OBContext.getOBContext().getOrganizationStructureProvider(
@@ -394,8 +394,7 @@ public class CostAdjustmentUtils {
         trx.getTransactionProcessDate());
 
     BigDecimal cumulatedStock = null;
-    int costingPrecision = trx.getProduct().isProduction() ? costorg.getClient().getCurrency()
-        .getCostingPrecision().intValue() : costorg.getCurrency().getCostingPrecision().intValue();
+    int costingPrecision = currency.getCostingPrecision().intValue();
     MaterialTransaction ctrx = costing != null ? costing.getInventoryTransaction() : null;
     boolean existsCumulatedStockOnTrxDate = ctrx != null
         && costing.getTotalMovementQuantity() != null;
@@ -742,8 +741,7 @@ public class CostAdjustmentUtils {
         trx.getTransactionProcessDate());
 
     BigDecimal cumulatedValuation = null;
-    int costingPrecision = trx.getProduct().isProduction() ? costorg.getClient().getCurrency()
-        .getCostingPrecision().intValue() : costorg.getCurrency().getCostingPrecision().intValue();
+    int costingPrecision = currency.getCostingPrecision().intValue();
     MaterialTransaction ctrx = costing != null ? costing.getInventoryTransaction() : null;
     boolean existsCumulatedValuationOnTrxDate = ctrx != null
         && costing.getTotalStockValuation() != null;
