@@ -353,11 +353,13 @@ public class CostingUtils {
    * only takes transactions that have its cost calculated.
    */
   public static BigDecimal getCurrentStock(MaterialTransaction trx, Organization org,
-      HashMap<CostDimension, BaseOBObject> costDimensions, boolean areBackdatedTrxFixed) {
+      HashMap<CostDimension, BaseOBObject> costDimensions, boolean areBackdatedTrxFixed,
+      Currency currency) {
     Product product = trx.getProduct();
     Date date = areBackdatedTrxFixed ? trx.getMovementDate() : trx.getTransactionProcessDate();
     Costing costing = AverageAlgorithm.getLastCumulatedCosting(date, product, costDimensions, org);
-    return getCurrentStock(product, org, trx.getTransactionProcessDate(), costDimensions, costing);
+    return getCurrentStock(product, org, trx.getTransactionProcessDate(), costDimensions, currency,
+        costing);
   }
 
   /**
@@ -365,7 +367,7 @@ public class CostingUtils {
    * only takes transactions that have its cost calculated.
    */
   public static BigDecimal getCurrentStock(Product product, Organization costorg, Date dateTo,
-      HashMap<CostDimension, BaseOBObject> costDimensions, Costing costing) {
+      HashMap<CostDimension, BaseOBObject> costDimensions, Currency currency, Costing costing) {
     // Get child tree of organizations.
     Set<String> orgs = OBContext.getOBContext().getOrganizationStructureProvider()
         .getChildTree(costorg.getId(), true);
@@ -453,8 +455,7 @@ public class CostingUtils {
       stock = stock.add(costing.getTotalMovementQuantity());
     }
 
-    int costingPrecision = product.isProduction() ? costorg.getClient().getCurrency()
-        .getCostingPrecision().intValue() : costorg.getCurrency().getCostingPrecision().intValue();
+    int costingPrecision = currency.getCostingPrecision().intValue();
     return stock.setScale(costingPrecision, RoundingMode.HALF_UP);
   }
 
@@ -602,8 +603,7 @@ public class CostingUtils {
       sum = sum.add(costingValuedStock);
     }
 
-    int costingPrecision = product.isProduction() ? costorg.getClient().getCurrency()
-        .getCostingPrecision().intValue() : costorg.getCurrency().getCostingPrecision().intValue();
+    int costingPrecision = currency.getCostingPrecision().intValue();
     return sum.setScale(costingPrecision, RoundingMode.HALF_UP);
   }
 

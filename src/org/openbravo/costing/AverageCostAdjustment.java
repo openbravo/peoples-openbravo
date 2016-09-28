@@ -117,7 +117,7 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
 
     // Initialize current stock qty and value amt.
     BigDecimal currentStock = CostAdjustmentUtils.getStockOnTransactionDate(getCostOrg(), basetrx,
-        getCostDimensions(), isManufacturingProduct, areBackdatedTrxFixed);
+        getCostDimensions(), isManufacturingProduct, areBackdatedTrxFixed, getCostCurrency());
     BigDecimal currentValueAmt = CostAdjustmentUtils.getValuedStockOnTransactionDate(getCostOrg(),
         basetrx, getCostDimensions(), isManufacturingProduct, areBackdatedTrxFixed,
         getCostCurrency());
@@ -706,7 +706,7 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
         && !CostingUtils.getCostingRuleFixBackdatedFrom(getCostingRule()).before(
             basetrx.getTransactionProcessDate());
     BigDecimal currentStock = CostAdjustmentUtils.getStockOnTransactionDate(getCostOrg(), basetrx,
-        getCostDimensions(), isManufacturingProduct, areBaseTrxBackdatedFixed);
+        getCostDimensions(), isManufacturingProduct, areBaseTrxBackdatedFixed, getCostCurrency());
     BigDecimal currentValueAmt = CostAdjustmentUtils.getValuedStockOnTransactionDate(getCostOrg(),
         basetrx, getCostDimensions(), isManufacturingProduct, areBaseTrxBackdatedFixed,
         getCostCurrency());
