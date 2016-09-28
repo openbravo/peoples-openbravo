@@ -287,7 +287,7 @@ public abstract class SimpleCallout extends DelegateConnectionProvider {
      */
     public void endSelect() {
       try {
-        if (hasSelectedComboEntry()) {
+        if (isComboWithoutSelectedEntry()) {
           JSONObject notSelectedItem = new JSONObject();
           notSelectedItem.put(CalloutConstants.ENTRIES, getComboEntries());
           result.put(currentElement, notSelectedItem);
@@ -299,7 +299,7 @@ public abstract class SimpleCallout extends DelegateConnectionProvider {
       }
     }
 
-    private boolean hasSelectedComboEntry() throws JSONException {
+    private boolean isComboWithoutSelectedEntry() throws JSONException {
       return (result.isNull(currentElement) ? true : !result.getJSONObject(currentElement).has(
           CalloutConstants.VALUE));
     }
