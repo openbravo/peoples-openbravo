@@ -355,10 +355,12 @@ public class CostingUtils {
    * Calculates the stock of the product on the given date and for the given cost dimensions. It
    * only takes transactions that have its cost calculated.
    */
-  public static BigDecimal getCurrentStock(Product product, Organization org, Date date,
-      HashMap<CostDimension, BaseOBObject> costDimensions) {
+  public static BigDecimal getCurrentStock(MaterialTransaction trx, Organization org,
+      HashMap<CostDimension, BaseOBObject> costDimensions, boolean areBackdatedTrxFixed) {
+    Product product = trx.getProduct();
+    Date date = areBackdatedTrxFixed ? trx.getMovementDate() : trx.getTransactionProcessDate();
     Costing costing = AverageAlgorithm.getLastCumulatedCosting(date, product, costDimensions, org);
-    return getCurrentStock(product, org, date, costDimensions, costing);
+    return getCurrentStock(product, org, trx.getTransactionProcessDate(), costDimensions, costing);
   }
 
   /**
@@ -464,10 +466,14 @@ public class CostingUtils {
    * dimensions and for the given currency. It only takes transactions that have its cost
    * calculated.
    */
-  public static BigDecimal getCurrentValuedStock(Product product, Organization org, Date date,
-      HashMap<CostDimension, BaseOBObject> costDimensions, Currency currency) {
+  public static BigDecimal getCurrentValuedStock(MaterialTransaction trx, Organization org,
+      HashMap<CostDimension, BaseOBObject> costDimensions, boolean areBackdatedTrxFixed,
+      Currency currency) {
+    Product product = trx.getProduct();
+    Date date = areBackdatedTrxFixed ? trx.getMovementDate() : trx.getTransactionProcessDate();
     Costing costing = AverageAlgorithm.getLastCumulatedCosting(date, product, costDimensions, org);
-    return getCurrentValuedStock(product, org, date, costDimensions, currency, costing);
+    return getCurrentValuedStock(product, org, trx.getTransactionProcessDate(), costDimensions,
+        currency, costing);
   }
 
   /**
