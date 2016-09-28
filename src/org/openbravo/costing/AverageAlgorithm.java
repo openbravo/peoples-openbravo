@@ -50,12 +50,10 @@ public class AverageAlgorithm extends CostingAlgorithm {
       BigDecimal trxCostWithSign = (transaction.getMovementQuantity().signum() == -1) ? trxCost
           .negate() : trxCost;
       BigDecimal newCost = null;
-      Date date = costingRule.isBackdatedTransactionsFixed() ? transaction.getMovementDate()
-          : transaction.getTransactionProcessDate();
-      BigDecimal currentStock = CostingUtils.getCurrentStock(transaction.getProduct(), costOrg,
-          date, costDimensions);
-      BigDecimal currentValuedStock = CostingUtils.getCurrentValuedStock(transaction.getProduct(),
-          costOrg, date, costDimensions, costCurrency);
+      BigDecimal currentStock = CostingUtils.getCurrentStock(transaction, costOrg, costDimensions,
+          costingRule.isBackdatedTransactionsFixed());
+      BigDecimal currentValuedStock = CostingUtils.getCurrentValuedStock(transaction, costOrg,
+          costDimensions, costingRule.isBackdatedTransactionsFixed(), costCurrency);
       if (currentCosting == null) {
         if (transaction.getMovementQuantity().signum() == 0) {
           newCost = BigDecimal.ZERO;
