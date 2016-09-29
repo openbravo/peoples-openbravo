@@ -12,7 +12,6 @@
 package org.openbravo.buildvalidation;
 
 import java.io.File;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -64,11 +63,10 @@ public class BuildValidationHandler {
       ArrayList<String> errors = new ArrayList<String>();
       try {
         Class<?> myClass = Class.forName(s);
-        if (myClass.getGenericSuperclass().equals(
-            Class.forName("org.openbravo.buildvalidation.BuildValidation"))) {
-          Object instance = myClass.newInstance();
-          log4j.info("Executing build validation: " + s);
-          errors = callExecute(myClass, instance);
+        if (BuildValidation.class.isAssignableFrom(myClass)) {
+          BuildValidation instance = (BuildValidation) myClass.newInstance();
+          errors = (ArrayList<String>) instance.preExecute(getModulesVersionMap());
+
         }
       } catch (Exception e) {
         log4j.info("Error executing build-validation: " + s, e);
@@ -89,13 +87,6 @@ public class BuildValidationHandler {
       errorMessage += error + "\n";
     }
     log4j.error(errorMessage);
-  }
-
-  @SuppressWarnings("unchecked")
-  private static ArrayList<String> callExecute(Class<?> myClass, Object instance)
-      throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-    return (ArrayList<String>) myClass.getMethod("preExecute", new Class[] { Map.class }).invoke(
-        instance, new Object[] { getModulesVersionMap() });
   }
 
   public static void readClassFiles(List<String> coreClasses, File file) {
