@@ -511,7 +511,7 @@ enyo.kind({
       if (paymentstatus.isReversal) {
         paymentstatus.payments.each(function (payment) {
           var paymentmethod = OB.POS.terminal.terminal.paymentnames[payment.get('kind')];
-          if (!payment.get('isPrePayment') && selectedPayment === paymentmethod && paymentmethod.paymentMethod.iscash) {
+          if (!payment.get('isPrePayment') && paymentmethod.paymentMethod.iscash) {
             reversePaymentsCash = OB.DEC.sub(reversePaymentsCash, payment.get('origAmount'));
           }
         });
@@ -671,7 +671,7 @@ enyo.kind({
     this.receipt.stopAddingPayments = !_.isEmpty(this.getShowingErrorMessages());
     resultOK = !selectedPayment.paymentMethod.iscash || paymentstatus.changeAmt > 0 ? this.checkValidCashOverpayment(paymentstatus, selectedPayment) : undefined;
     if (resultOK || _.isUndefined(resultOK)) {
-      if (!_.isNull(paymentstatus.change) || (paymentstatus.isNegative && !_.isNull(paymentstatus.pending))) {
+      if (!_.isNull(paymentstatus.change) || ((paymentstatus.isNegative || paymentstatus.isReversal) && !_.isNull(paymentstatus.pending))) {
         resultOK = this.checkEnoughCashAvailable(paymentstatus, selectedPayment, this, function (success) {
           var lsuccess = success;
           if (lsuccess) {
@@ -1235,13 +1235,13 @@ enyo.kind({
     this.addStyles('min-height: 29px;');
     if (this.model.get('reversedPaymentId')) {
       this.$.name.setContent((OB.MobileApp.model.getPaymentName(this.model.get('kind')) || this.model.get('name')) + OB.I18N.getLabel('OBPOS_ReversedPayment'));
-      this.$.amount.setContent(this.model.printAmountWithSignum(this.model.get('isNegativeOrder')));
+      this.$.amount.setContent(this.model.printAmount());
     } else if (this.model.get('isReversed')) {
       this.$.name.setContent('*' + (OB.MobileApp.model.getPaymentName(this.model.get('kind')) || this.model.get('name')));
-      this.$.amount.setContent(this.model.printAmountWithSignum(this.model.get('isNegativeOrder')));
+      this.$.amount.setContent(this.model.printAmount());
     } else {
       this.$.name.setContent(OB.MobileApp.model.getPaymentName(this.model.get('kind')) || this.model.get('name'));
-      this.$.amount.setContent(this.model.printAmount());
+      this.$.amount.setContent(this.model.printAmountWithSignum());
     }
     if (this.model.get('rate') && this.model.get('rate') !== '1') {
       this.$.foreignAmount.setContent(this.model.printForeignAmount());

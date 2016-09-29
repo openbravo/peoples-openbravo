@@ -34,9 +34,6 @@ public class PaidReceiptsPaymentsProperties extends ModelExtension {
         add(new HQLProperty(
             "(select f.id from FIN_Payment as f where f.reversedPayment.id = finPayment.id)",
             "reversalPayment"));
-        add(new HQLProperty(
-            "(case when scheduleDetail.orderPaymentSchedule.order.grandTotalAmount < 0 then true else false end)",
-            "isNegativeOrder"));
       }
     };
 

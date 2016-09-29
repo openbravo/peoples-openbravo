@@ -265,11 +265,13 @@
     printForeignAmount: function () {
       return '(' + OB.I18N.formatCurrency(this.get('amount')) + ' ' + this.get('isocode') + ')';
     },
-    printAmountWithSignum: function (negate) {
+    printAmountWithSignum: function () {
+      var paidReturn = this.get('isPaid') && (this.get('orderGross') < 0);
+      // if the ticket is a paid return, new payments must be displayed in negative
       if (this.get('rate')) {
-        return OB.I18N.formatCurrency(negate ? OB.DEC.mul(OB.DEC.mul(this.get('amount'), this.get('rate')), -1) : OB.DEC.mul(this.get('amount'), this.get('rate')));
+        return OB.I18N.formatCurrency(paidReturn ? OB.DEC.mul(OB.DEC.abs(this.get('origAmount') || OB.DEC.mul(this.get('amount'), this.get('rate'))), -1) : this.printAmount());
       } else {
-        return OB.I18N.formatCurrency(negate ? OB.DEC.mul(this.get('amount'), -1) : this.get('amount'));
+        return OB.I18N.formatCurrency(paidReturn ? OB.DEC.mul(OB.DEC.abs(this.get('amount')), -1) : this.printAmount());
       }
     }
   });
@@ -858,6 +860,8 @@
         }
       });
       payAndCredit = (this.get('gross') < 0 || (this.get('gross') > 0 && this.get('orderType') === 3)) ? OB.DEC.abs(payAndCredit) : payAndCredit;
+      processedPaymentsAmount = OB.DEC.add(processedPaymentsAmount, credit);
+
       isNegative = this.get('gross') < 0 || (this.get('gross') > 0 && this.get('orderType') === 3 && (!this.get('isPartiallyDelivered') || (this.get('isPartiallyDelivered') && this.get('isDeliveredGreaterThanGross'))));
       // Check if the total amount is lower than the already paid (processed)
       if (!isNegative && this.get('gross') >= 0 && OB.DEC.compare(OB.DEC.sub(processedPaymentsAmount, total)) === 1) {
@@ -2996,19 +3000,20 @@
       var processedPaymentsAmount = OB.DEC.Zero;
       var multiCurrencyDifference;
       var paymentstatus = this.getPaymentStatus();
+      var origAmount;
       var sumCash = function () {
           if (p.get('kind') === OB.MobileApp.model.get('paymentcash')) {
             // The default cash method
-            cash = OB.DEC.add(cash, p.get('origAmount'));
+            cash = OB.DEC.add(cash, origAmount);
             pcash = p;
-            paidCash = OB.DEC.add(paidCash, p.get('origAmount'));
+            paidCash = OB.DEC.add(paidCash, origAmount);
           } else if (OB.MobileApp.model.hasPayment(p.get('kind')) && OB.MobileApp.model.hasPayment(p.get('kind')).paymentMethod.iscash) {
             // Another cash method
-            origCash = OB.DEC.add(origCash, p.get('origAmount'));
+            origCash = OB.DEC.add(origCash, origAmount);
             pcash = p;
-            paidCash = OB.DEC.add(paidCash, p.get('origAmount'));
+            paidCash = OB.DEC.add(paidCash, origAmount);
           } else {
-            nocash = OB.DEC.add(nocash, p.get('origAmount'));
+            nocash = OB.DEC.add(nocash, origAmount);
           }
           };
 
@@ -3033,6 +3038,8 @@
           p.set('origAmount', p.get('amount'));
         }
         p.set('paid', p.get('origAmount'));
+        paidReturnNewPayment = !p.get('isPrePayment') && p.get('orderGross') < 0 && p.get('isPaid') && _.isUndefined(p.get('reversedPaymentId')) && _.isUndefined(p.get('isReversed'))
+        origAmount = paidReturnNewPayment ? -p.get('origAmount') : p.get('origAmount')
         if (_.isUndefined(this.get('paidInNegativeStatusAmt'))) {
           sumCash();
         } else {
@@ -3154,13 +3161,14 @@
         }
         payment.set('date', new Date());
         payment.set('id', OB.UTIL.get_UUID());
+        payment.set('orderGross', order.getGross());
+        payment.set('isPaid', order.get('isPaid'));
         payments.add(payment, {
           at: payment.get('index')
         });
-        // If there is a reversed payment set isReversed and isNegativeOrder properties
+        // If there is a reversed payment set isReversed properties
         if (payment.get('reversedPayment')) {
           payment.get('reversedPayment').set('isReversed', true);
-          payment.get('reversedPayment').set('isNegativeOrder', order.getGross() < 0 ? true : false);
         }
         order.adjustPayment();
         order.trigger('displayTotal');
@@ -3244,7 +3252,6 @@
                 'reversedPaymentId': payment.get('paymentId'),
                 'reversedPayment': payment,
                 'index': OB.DEC.add(1, payments.indexOf(payment)),
-                'isNegativeOrder': me.getGross() < 0 ? true : false,
                 'paymentData': payment.get('paymentData') ? payment.get('paymentData') : null,
                 'reverseCallback': reverseCallback
               }
@@ -3266,7 +3273,6 @@
               'reversedPaymentId': payment.get('paymentId'),
               'reversedPayment': payment,
               'index': OB.DEC.add(1, payments.indexOf(payment)),
-              'isNegativeOrder': me.getGross() < 0 ? true : false,
               'paymentData': payment.get('paymentData') ? payment.get('paymentData') : null,
               'reverseCallback': reverseCallback
             }));
@@ -4506,6 +4512,8 @@
                     }
                   }
                 }
+                curPayment.set('orderGross', order.get('gross'));
+                curPayment.set('isPaid', order.get('isPaid'));
                 payments.add(curPayment);
               });
               order.set('payments', payments);
@@ -4885,7 +4893,7 @@
           p.set('origAmount', p.get('amount'));
         }
         p.set('paid', p.get('origAmount'));
-        origAmount = p.get('isNegativeOrder') ? -p.get('origAmount') : p.get('origAmount');
+        origAmount = (p.get('orderGross') < 0 && p.get('isPaid')) ? -p.get('origAmount') : p.get('origAmount');
         if (p.get('kind') === OB.MobileApp.model.get('paymentcash')) {
           // The default cash method
           cash = OB.DEC.add(cash, origAmount);

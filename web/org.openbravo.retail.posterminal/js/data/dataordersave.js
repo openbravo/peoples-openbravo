@@ -155,14 +155,10 @@
           if (receipt.getGross() < 0 || !_.isUndefined(receipt.get('paidInNegativeStatusAmt'))) {
             var paymentTotalAmt = OB.DEC.Zero;
             _.forEach(receipt.get('payments').models, function (item) {
-              if (_.isUndefined(receipt.get('paidInNegativeStatusAmt')) || !item.get('isPrePayment')) {
-                if (!item.get('isNegativeOrder')) {
-                  item.set('amount', -item.get('amount'));
-                  item.set('origAmount', -item.get('origAmount'));
-                  item.set('paid', item.get('reversedPaymentId') ? item.get('amount') : -item.get('paid'));
-                } else {
-                  item.set('paid', item.get('amount'));
-                }
+              if (!item.get('isPrePayment') && !item.get('reversedPaymentId')) {
+                item.set('amount', -item.get('amount'));
+                item.set('origAmount', -item.get('origAmount'));
+                item.set('paid', -item.get('paid'));
               }
               paymentTotalAmt = OB.DEC.add(paymentTotalAmt, item.get('origAmount'));
             });
