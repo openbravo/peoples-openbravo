@@ -278,7 +278,8 @@ public abstract class SimpleCallout extends DelegateConnectionProvider {
           result.put(currentElement, valueSelected);
         }
       } catch (JSONException e) {
-        log.error("Error adding combo entry for combo field " + currentElement, e);
+        log.error("Error adding combo entry with id " + id + " and identifier " + identifier
+            + " for combo field " + currentElement, e);
       }
     }
 
