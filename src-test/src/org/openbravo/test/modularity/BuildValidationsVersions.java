@@ -32,8 +32,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
+import org.openbravo.base.ExecutionLimits;
 import org.openbravo.buildvalidation.BuildValidation;
-import org.openbravo.buildvalidation.BuildValidationExecutionLimits;
 import org.openbravo.modulescript.OpenbravoVersion;
 
 /**
@@ -148,11 +148,11 @@ public class BuildValidationsVersions {
     }
 
     @Override
-    public BuildValidationExecutionLimits getBuildValidationLimits() {
+    public ExecutionLimits getBuildValidationLimits() {
       if (moduleId == null) {
         return null;
       }
-      return new BuildValidationExecutionLimits(moduleId, //
+      return new ExecutionLimits(moduleId, //
           fromVersion == null ? null : new OpenbravoVersion(fromVersion),//
           toVersion == null ? null : new OpenbravoVersion(toVersion));
     }
