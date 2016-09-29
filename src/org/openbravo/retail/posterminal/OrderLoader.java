@@ -221,7 +221,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       boolean wasPaidOnCredit = false;
 
       if (jsonorder.getLong("orderType") != 2 && !jsonorder.getBoolean("isLayaway") && !isQuotation
-          && verifyOrderExistance(jsonorder)
+          && validateOrder(jsonorder)
           && (!jsonorder.has("preserveId") || jsonorder.getBoolean("preserveId"))) {
         return successMessage(jsonorder);
       }
@@ -581,7 +581,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     jsonorder.put("obposRejectedQuotation", jsonorder.getString("oldId"));
   }
 
-  private boolean verifyOrderExistance(JSONObject jsonorder) throws Exception {
+  private boolean validateOrder(JSONObject jsonorder) throws Exception {
     OBContext.setAdminMode(false);
     try {
       if ((!jsonorder.has("obposIsDeleted") || !jsonorder.getBoolean("obposIsDeleted"))
