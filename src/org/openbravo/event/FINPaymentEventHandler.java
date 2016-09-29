@@ -35,7 +35,8 @@ public class FINPaymentEventHandler extends EntityPersistenceEventObserver {
     return entities;
   }
 
-  public void onUpdate(@Observes EntityUpdateEvent event) {
+  public void onUpdate(@Observes
+  EntityUpdateEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
@@ -45,12 +46,12 @@ public class FINPaymentEventHandler extends EntityPersistenceEventObserver {
     BigDecimal oldPaymentAmount = (BigDecimal) event.getPreviousState(paymentAmountProperty);
     int index = payment.getDocumentNo().indexOf(CancelAndReplaceUtils.REVERSE_PREFIX);
     if (payment.getAmount().compareTo(BigDecimal.ZERO) == 0) {
-      if (index == -1 && payment.getUsedCredit().compareTo(BigDecimal.ZERO) == 0) {
+      if (index == -1) {
         String newDocumentNo = payment.getDocumentNo() + CancelAndReplaceUtils.REVERSE_PREFIX;
         setDocumentNoToPayment(payment, event, newDocumentNo);
-      } else if (index > 0 && payment.getUsedCredit().compareTo(BigDecimal.ZERO) > 0){
-    	  String newDocumentNo = payment.getDocumentNo().substring(0, index);
-          setDocumentNoToPayment(payment, event, newDocumentNo);
+      } else if (index > 0) {
+        String newDocumentNo = payment.getDocumentNo().substring(0, index);
+        setDocumentNoToPayment(payment, event, newDocumentNo);
       }
     } else if (oldPaymentAmount.compareTo(BigDecimal.ZERO) == 0) {
       if (index > 0) {
@@ -62,18 +63,20 @@ public class FINPaymentEventHandler extends EntityPersistenceEventObserver {
     // could have payment document numbers starting with "*R*"
   }
 
-  public void onSave(@Observes EntityNewEvent event) {
+  public void onSave(@Observes
+  EntityNewEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
     FIN_Payment payment = (FIN_Payment) event.getTargetInstance();
-    if (payment.getAmount().compareTo(BigDecimal.ZERO) == 0 && payment.getUsedCredit().compareTo(BigDecimal.ZERO) == 0) {
+    if (payment.getAmount().compareTo(BigDecimal.ZERO) == 0) {
       String newDocumentNo = payment.getDocumentNo() + CancelAndReplaceUtils.REVERSE_PREFIX;
       setDocumentNoToPayment(payment, event, newDocumentNo);
     }
   }
 
-  public void onDelete(@Observes EntityDeleteEvent event) {
+  public void onDelete(@Observes
+  EntityDeleteEvent event) {
     if (!isValidEvent(event)) {
       return;
     }

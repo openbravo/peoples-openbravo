@@ -29,6 +29,7 @@ import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.filter.RegexFilter;
 import org.openbravo.base.filter.RequestFilter;
@@ -196,7 +197,7 @@ public abstract class SimpleCallout extends DelegateConnectionProvider {
     }
 
     /**
-     * Starts the inclusion of values of a field named param of type select.
+     * Starts the inclusion of values to the combo field with the name passed as parameter.
      * 
      * @param param
      *          The name of the combo field to set the values.
@@ -204,19 +205,26 @@ public abstract class SimpleCallout extends DelegateConnectionProvider {
     public void addSelect(String param) {
       if (result.has(param)) {
         try {
-          currentComboResult = getComboMap(result.getJSONObject(param).getJSONArray(
-              CalloutConstants.ENTRIES));
+          currentComboResult = getComboMap(result.getJSONObject(param));
         } catch (JSONException e) {
-          log.error("Error getting JSON Object.", e);
+          log.error("Error retrieving combo entries for field " + param, e);
         }
       } else {
         currentComboResult = new LinkedHashMap<String, String>();
       }
 
+      if (currentComboResult == null) {
+        throw new OBException("Could not retrieve entries for combo field with name " + param);
+      }
+
       currentElement = param;
     }
 
-    private Map<String, String> getComboMap(JSONArray entries) throws JSONException {
+    private Map<String, String> getComboMap(JSONObject comboField) throws JSONException {
+      if (!comboField.has(CalloutConstants.ENTRIES)) {
+        return null;
+      }
+      JSONArray entries = comboField.getJSONArray(CalloutConstants.ENTRIES);
       Map<String, String> comboMap = new LinkedHashMap<String, String>();
       for (int i = 0; i < entries.length(); i++) {
         JSONObject item = entries.getJSONObject(i);
@@ -240,22 +248,22 @@ public abstract class SimpleCallout extends DelegateConnectionProvider {
     }
 
     /**
-     * Removes an entry to the current combo.
+     * Removes an entry of the combo field.
      * 
      * @param id
-     *          The id value of the combo to remove the entry.
+     *          The id of the combo entry to be removed.
      */
     public void removeSelectResult(String id) {
       currentComboResult.remove(id);
     }
 
     /**
-     * Adds an entry value to the select field.
+     * Adds an entry value to the combo field.
      * 
      * @param id
-     *          The entry id to add.
+     *          The id of the combo entry to add.
      * @param identifier
-     *          The entry identifier to add.
+     *          The identifier of the combo entry to add
      * @param selected
      *          Whether this entry field is selected or not.
      */
@@ -270,7 +278,8 @@ public abstract class SimpleCallout extends DelegateConnectionProvider {
           result.put(currentElement, valueSelected);
         }
       } catch (JSONException e) {
-        log.error("Error parsing JSON Object.", e);
+        log.error("Error adding combo entry with id " + id + " and identifier " + identifier
+            + " for combo field " + currentElement, e);
       }
     }
 
@@ -279,8 +288,7 @@ public abstract class SimpleCallout extends DelegateConnectionProvider {
      */
     public void endSelect() {
       try {
-        // If any entry is marked as selected for currentElement combo
-        if (isValueNotSelectedForCombo()) {
+        if (isComboWithoutSelectedEntry()) {
           JSONObject notSelectedItem = new JSONObject();
           notSelectedItem.put(CalloutConstants.ENTRIES, getComboEntries());
           result.put(currentElement, notSelectedItem);
@@ -292,7 +300,7 @@ public abstract class SimpleCallout extends DelegateConnectionProvider {
       }
     }
 
-    private boolean isValueNotSelectedForCombo() throws JSONException {
+    private boolean isComboWithoutSelectedEntry() throws JSONException {
       return (result.isNull(currentElement) ? true : !result.getJSONObject(currentElement).has(
           CalloutConstants.VALUE));
     }
@@ -324,15 +332,21 @@ public abstract class SimpleCallout extends DelegateConnectionProvider {
      */
     public void addResult(String param, Object value) {
       JSONObject columnValue = new JSONObject();
-      Object strValue = value == null ? "null" : value;
 
-      // handle case when callouts are sending us "\"\"" string.
-      if ("\"\"".equals(strValue)) {
-        strValue = "";
+      Object resultValue = value;
+      if (resultValue != null) {
+        // handle case when SimpleCallouts are sending us "\"\"" string.
+        if ("\"\"".equals(resultValue)) {
+          resultValue = "";
+        }
+        // handle case when SimpleCallouts are sending us "null" string. Force to be null object in
+        // order to ensure backwards compatibility.
+        resultValue = JsonConstants.NULL.equals(resultValue) ? null : resultValue;
       }
+
       try {
-        columnValue.put(CalloutConstants.VALUE, strValue);
-        columnValue.put(CalloutConstants.CLASSIC_VALUE, strValue);
+        columnValue.put(CalloutConstants.VALUE, resultValue);
+        columnValue.put(CalloutConstants.CLASSIC_VALUE, resultValue);
         result.put(param, columnValue);
       } catch (JSONException e) {
         log.error("Error parsing JSON Object.", e);
