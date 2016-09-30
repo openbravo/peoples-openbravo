@@ -21,12 +21,7 @@
 *************************************************************************/
 
 v_DateNull DATE := TO_DATE('01-01-1900','DD-MM-YYYY');
-TYPE RECORD IS REF CURSOR;
-Cur_Recon RECORD;
-
-v_startingbalance NUMBER;
-v_endingbalance NUMBER;
-v_curdiffbalance NUMBER;
+v_balance NUMBER;
   
 BEGIN
    
@@ -55,33 +50,18 @@ BEGIN
    END IF;
 
    --Is necessary update starting and ending balances of subsequents reconciliations
-   v_startingbalance := :OLD.startingbalance;
-   FOR Cur_Recon IN (
-     SELECT documentno, startingbalance, endingbalance, statementdate, fin_reconciliation_id
-       FROM fin_reconciliation
-       WHERE fin_financial_account_id = :OLD.fin_financial_account_id
-         AND trunc(statementdate) >= trunc(:OLD.statementdate)
-       ORDER by statementdate, documentno
-   )
-   LOOP
-      --Do not process record that will be deleted
-     IF (Cur_Recon.fin_reconciliation_id <> :OLD.fin_reconciliation_id) THEN
-       --Recalculate ending balance using new starting balance and actual
-       --difference between starting and ending balances
-       v_curdiffbalance := Cur_Recon.endingbalance - Cur_Recon.startingbalance;
-       v_endingbalance := v_startingbalance + v_curdiffbalance;
+   SELECT endingbalance - startingbalance
+   INTO v_balance
+   FROM fin_reconciliation
+   WHERE fin_reconciliation_id = :old.fin_reconciliation_id;
 
-       --Update the current balance
-       UPDATE fin_reconciliation
-       SET startingbalance = v_startingbalance,
-           endingbalance = v_endingbalance
-       WHERE fin_reconciliation_id = Cur_Recon.fin_reconciliation_id;
+   UPDATE fin_reconciliation
+   SET startingbalance = startingbalance - v_balance,
+   endingbalance = endingbalance - v_balance
+   WHERE fin_financial_account_id = :old.fin_financial_account_id
+   AND statementdate > :old.statementdate;
 
-       --The ending balance will be the starting balance of the next reconciliation
-       v_startingbalance := v_endingbalance;
-     END IF;
-   END LOOP;
- END IF;
+  END IF;
 END APRM_FIN_RECON_CHECK_TRG
 ]]></body>
     </trigger>
