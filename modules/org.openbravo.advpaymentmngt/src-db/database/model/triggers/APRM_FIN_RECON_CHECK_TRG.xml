@@ -15,13 +15,12 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2010-2016 Openbravo SLU
+* All portions are Copyright (C) 2010 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 *************************************************************************/
 
 v_DateNull DATE := TO_DATE('01-01-1900','DD-MM-YYYY');
-v_balance NUMBER;
   
 BEGIN
    
@@ -48,19 +47,6 @@ BEGIN
    IF(:OLD.PROCESSED='Y') THEN
      RAISE_APPLICATION_ERROR(-20000, '@20501@');
    END IF;
-
-   --Is necessary update starting and ending balances of subsequents reconciliations
-   SELECT endingbalance - startingbalance
-   INTO v_balance
-   FROM fin_reconciliation
-   WHERE fin_reconciliation_id = :old.fin_reconciliation_id;
-
-   UPDATE fin_reconciliation
-   SET startingbalance = startingbalance - v_balance,
-   endingbalance = endingbalance - v_balance
-   WHERE fin_financial_account_id = :old.fin_financial_account_id
-   AND statementdate > :old.statementdate;
-
   END IF;
 END APRM_FIN_RECON_CHECK_TRG
 ]]></body>
