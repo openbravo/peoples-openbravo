@@ -650,8 +650,8 @@ public class ExternalOrderLoader extends OrderLoader {
 
   protected void setProduct(JSONObject lineJson) throws JSONException {
     final Product product = OBDal.getInstance().get(Product.class, getProductIdFromJson(lineJson));
-    final JSONObject productJson = new JSONObject();
-    productJson.put("id", product.getId());
+    final DataToJsonConverter jsonConverter = new DataToJsonConverter();
+    final JSONObject productJson = jsonConverter.toJsonObject(product, DataResolvingMode.FULL);
     lineJson.put("product", productJson);
     if (lineJson.has("uom")) {
       lineJson.put(

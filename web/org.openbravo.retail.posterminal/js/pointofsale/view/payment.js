@@ -254,6 +254,9 @@ enyo.kind({
       }
       this.updatePending();
     }, this);
+    this.receipt.on('updatePending', function () {
+      this.updatePending();
+    }, this);
     this.model.get('leftColumnViewManager').on('change:currentView', function () {
       if (!this.model.get('leftColumnViewManager').isMultiOrder()) {
         this.updatePending();
@@ -991,8 +994,12 @@ enyo.kind({
         orderDesc = '';
     //*** Avoid double click ***
     if (this.getContent() === OB.I18N.getLabel('OBPOS_LblDone')) {
+      if (this.owner.receipt && this.owner.receipt.getOrderDescription) {
+        orderDesc = this.owner.receipt.getOrderDescription();
+      }
+      OB.info('Time: ' + new Date() + '. Payment Button Pressed ( Status: ' + this.disabled + ') ' + orderDesc);
       if (me.blocked) {
-        OB.error('Time: ' + new Date().getTime() + '. Done button has been pressed 2 times and second execution is discarded');
+        OB.error('Time: ' + new Date() + '. Done button has been pressed 2 times and second execution is discarded ' + orderDesc);
         return;
       } else {
         me.blocked = true;
@@ -1001,12 +1008,6 @@ enyo.kind({
         }, 1000);
       }
     }
-
-    if (this && this.owner && this.owner.receipt && this.owner.receipt.getOrderDescription) {
-      orderDesc = this.owner.receipt.getOrderDescription();
-    }
-    OB.info('Time: ' + new Date().getTime() + '. Payment Button Pressed ( Status: ' + this.disabled + ') ' + orderDesc);
-
 
     this.allowOpenDrawer = false;
 

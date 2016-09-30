@@ -453,7 +453,7 @@
         }, this);
 
         gross = OB.DEC.sub(gross, totalDiscount);
-        price = OB.DEC.div(gross, line.get('qty'));
+        price = line.get('qty') !== 0 ? OB.DEC.div(gross, line.get('qty')) : 0;
 
         if (grossListPrice === undefined) {
           grossListPrice = price;
@@ -462,7 +462,7 @@
         if (this.get('priceIncludesTax')) {
           line.set({
             net: OB.UTIL.getFirstValidValue([OB.DEC.toNumber(line.get('discountedNet')), line.get('net'), OB.DEC.div(gross, line.get('linerate'))]),
-            pricenet: line.get('discountedNet') ? OB.DEC.div(line.get('discountedNet'), line.get('qty')) : OB.DEC.div(OB.DEC.div(gross, line.get('linerate')), line.get('qty')),
+            pricenet: line.get('qty') !== 0 ? (line.get('discountedNet') ? OB.DEC.div(line.get('discountedNet'), line.get('qty')) : OB.DEC.div(OB.DEC.div(gross, line.get('linerate')), line.get('qty'))) : 0,
             listPrice: OB.DEC.div(grossListPrice, line.get('linerate')),
             standardPrice: OB.DEC.div((grossListPrice || price), line.get('linerate')),
             grossListPrice: grossListPrice,
@@ -542,7 +542,7 @@
       }
 
       // verify that the ui receipt is the only one in which calculateGross is executed
-      var isTheUIReceipt = this === OB.MobileApp.model.receipt || this.get('belongsToMultiOrder');
+      var isTheUIReceipt = this === OB.MobileApp.model.receipt || this.get('belongsToMultiOrder') || this.get('ignoreCheckIfIsActiveOrder');
       if (!isTheUIReceipt) {
         OB.error("calculateGross should only be called by the UI receipt");
       }
@@ -676,10 +676,10 @@
         OB.error("calculateReceipt execution is forbidden right now");
         return;
       } else if (this.isCalculateReceiptLocked !== false && !this.get('belongsToMultiOrder')) {
-        OB.error("setting the isCalculateGrossLocked state is mandatory before executing it the first time");
+        OB.error("setting the isCalculateReceiptLocked state is mandatory before executing it the first time");
       }
       // verify that the ui receipt is the only one in which calculateReceipt is executed
-      var isTheUIReceipt = this === OB.MobileApp.model.receipt || this.get('belongsToMultiOrder');
+      var isTheUIReceipt = this === OB.MobileApp.model.receipt || this.get('belongsToMultiOrder') || this.get('ignoreCheckIfIsActiveOrder');
       if (!isTheUIReceipt) {
         OB.error("calculateReceipt should only be called by the UI receipt");
       }
@@ -1366,11 +1366,20 @@
         }
         if (!line.get('hasTaxError')) {
           line.set('obposIsDeleted', true);
-          this.get('deletedLines').push(new OrderLine(line.attributes));
+          this.set('skipCalculateReceipt', true);
+          line.set('obposQtyDeleted', line.get('qty'));
+          line.set('qty', 0);
+          this.set('skipCalculateReceipt', false);
+          this.calculateReceipt(function () {
+            me.get('deletedLines').push(new OrderLine(line.attributes));
+            // remove the line
+            finishDelete();
+          });
         }
+      } else {
+        // remove the line
+        finishDelete();
       }
-      // remove the line
-      finishDelete();
     },
 
     //Attrs is an object of attributes that will be set in order
@@ -2058,16 +2067,20 @@
                     order.set('deletedLines', []);
                   }
                   newline.set('obposIsDeleted', true);
-                  order.get('deletedLines').push(new OrderLine(newline.attributes));
-                  order.save(function () {
-                    order.get('lines').remove(newline);
-                    order.calculateGross();
-                    order.set('undo', null);
+                  order.set('skipCalculateReceipt', true);
+                  newline.set('obposQtyDeleted', newline.get('qty'));
+                  newline.set('qty', 0);
+                  order.set('skipCalculateReceipt', false);
+                  order.calculateReceipt(function () {
+                    order.get('deletedLines').push(new OrderLine(newline.attributes));
+                    order.save(function () {
+                      order.get('lines').remove(newline);
+                      order.set('undo', null);
+                    });
                   });
                 } else {
                   // remove the line
                   order.get('lines').remove(newline);
-                  order.calculateGross();
                   order.set('undo', null);
                 }
               }
@@ -3869,8 +3882,10 @@
         model.set('hasbeenpaid', 'Y');
         OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(model.get('documentnoSuffix'), model.get('quotationnoSuffix'), model.get('returnnoSuffix'), function () {
           model.save(function () {
-            orderList.deleteCurrent();
-            orderList.synchronizeCurrentOrder();
+            if (orderList) {
+              orderList.deleteCurrent();
+              orderList.synchronizeCurrentOrder();
+            }
             model.setIsCalculateGrossLockState(false);
             if (callback && callback instanceof Function) {
               callback();
@@ -3887,11 +3902,28 @@
         }
         if (receipt.get('id') && !isPaidQuotation && receipt.get('lines') && receipt.get('lines').length > 0) {
           if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
-            markOrderAsDeleted(receipt, orderList, callback);
+            receipt.set('skipCalculateReceipt', true);
+            _.each(receipt.get('lines').models, function (line) {
+              line.set('obposQtyDeleted', line.get('qty'));
+              line.set('qty', 0);
+            });
+            receipt.set('skipCalculateReceipt', false);
+            // These setIsCalculateReceiptLockState and setIsCalculateGrossLockState calls must be done because this function
+            // may be called out of the pointofsale window, and in order to call the calculateReceipt function, the
+            // isCalculateReceiptLockState and isCalculateGrossLockState properties must be initialized
+            receipt.setIsCalculateReceiptLockState(false);
+            receipt.setIsCalculateGrossLockState(false);
+            receipt.calculateReceipt(function () {
+              markOrderAsDeleted(receipt, orderList, callback);
+            });
           } else {
-            orderList.saveCurrent();
-            OB.Dal.remove(orderList.current, null, null);
-            orderList.deleteCurrent();
+            if (orderList) {
+              orderList.saveCurrent();
+              OB.Dal.remove(orderList.current, null, null);
+              orderList.deleteCurrent();
+            } else {
+              OB.Dal.remove(receipt);
+            }
             if (callback && callback instanceof Function) {
               callback();
             }
@@ -4494,7 +4526,7 @@
         if (createNew) {
           var order = me.newOrder();
 
-          me.add(order);
+          me.unshift(order);
           if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
             me.doRemoteBPSettings(OB.MobileApp.model.get('businessPartner'));
           }
@@ -4547,6 +4579,7 @@
         this.modelorder.clearWith(this.current);
         this.modelorder.set('isNewReceipt', false);
         this.modelorder.trigger('paintTaxes');
+        this.modelorder.trigger('updatePending');
         this.modelorder.setIsCalculateReceiptLockState(false);
         this.modelorder.setIsCalculateGrossLockState(false);
       }

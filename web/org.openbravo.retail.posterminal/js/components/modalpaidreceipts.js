@@ -30,7 +30,9 @@ enyo.kind({
         components: [{
           kind: 'OB.UI.SearchInputAutoFilter',
           name: 'filterText',
-          style: 'width: 100%'
+          style: 'width: 100%',
+          skipAutoFilterPref: 'OBPOS_remote.order'
+
         }]
       }, {
         style: 'display: table-cell;',
