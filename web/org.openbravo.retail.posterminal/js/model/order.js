@@ -3004,16 +3004,16 @@
       var sumCash = function () {
           if (p.get('kind') === OB.MobileApp.model.get('paymentcash')) {
             // The default cash method
-            cash = OB.DEC.add(cash, origAmount);
+            cash = OB.DEC.add(cash, p.get('origAmount'));
             pcash = p;
-            paidCash = OB.DEC.add(paidCash, origAmount);
+            paidCash = OB.DEC.add(paidCash, p.get('origAmount'));
           } else if (OB.MobileApp.model.hasPayment(p.get('kind')) && OB.MobileApp.model.hasPayment(p.get('kind')).paymentMethod.iscash) {
             // Another cash method
-            origCash = OB.DEC.add(origCash, origAmount);
+            origCash = OB.DEC.add(origCash, p.get('origAmount'));
             pcash = p;
-            paidCash = OB.DEC.add(paidCash, origAmount);
+            paidCash = OB.DEC.add(paidCash, p.get('origAmount'));
           } else {
-            nocash = OB.DEC.add(nocash, origAmount);
+            nocash = OB.DEC.add(nocash, p.get('origAmount'));
           }
           };
 
@@ -3038,8 +3038,6 @@
           p.set('origAmount', p.get('amount'));
         }
         p.set('paid', p.get('origAmount'));
-        paidReturnNewPayment = !p.get('isPrePayment') && p.get('orderGross') < 0 && p.get('isPaid') && _.isUndefined(p.get('reversedPaymentId')) && _.isUndefined(p.get('isReversed'))
-        origAmount = paidReturnNewPayment ? -p.get('origAmount') : p.get('origAmount')
         if (_.isUndefined(this.get('paidInNegativeStatusAmt'))) {
           sumCash();
         } else {
@@ -3070,22 +3068,22 @@
         }
         if (OB.DEC.compare(nocash - total) > 0) {
           pcash.set('paid', OB.DEC.Zero);
-          this.set('payment', nocash);
+          this.set('payment', OB.DEC.abs(nocash));
           this.set('change', OB.DEC.add(cash, origCash));
         } else if (OB.DEC.compare(OB.DEC.sub(OB.DEC.add(OB.DEC.add(nocash, cash), origCash), total)) > 0) {
           pcash.set('paid', OB.DEC.sub(total, OB.DEC.add(nocash, OB.DEC.sub(paidCash, pcash.get('origAmount')))));
-          this.set('payment', total);
+          this.set('payment', OB.DEC.abs(total));
           //The change value will be computed through a rounded total value, to ensure that the total plus change
           //add up to the paid amount without any kind of precission loss
           this.set('change', OB.DEC.sub(OB.DEC.add(OB.DEC.add(nocash, cash, precision), origCash, precision), OB.Utilities.Number.roundJSNumber(total, 2), precision));
         } else {
           pcash.set('paid', auxCash);
-          this.set('payment', OB.DEC.add(OB.DEC.add(nocash, cash), origCash));
+          this.set('payment', OB.DEC.abs(OB.DEC.add(OB.DEC.add(nocash, cash), origCash)));
           this.set('change', OB.DEC.Zero);
         }
       } else {
         if (payments.length > 0) {
-          this.set('payment', nocash);
+          this.set('payment', OB.DEC.abs(nocash));
         } else {
           this.set('payment', OB.DEC.Zero);
         }
