@@ -48,8 +48,7 @@ OB.KeyboardManager.Shortcuts.setPredefinedList('UINAVBA_KeyboardShortcuts');
 // placed here to prevent dependencies of client.kernel on Preferences
 OB.Application.startPage = '${data.startPage}';
 
-//If the property Enable Full Screen Reader is set to 'Y', the isc.screenReader will be set to true.
-//This preference is the one which enables the accessibility for the people with reduced visual capabilities.
+// This preference is the one which enables the accessibility for the people with reduced visual capabilities.
 if (OB.PropertyStore.get('EnableScreenReader') === 'Y') {
     isc.screenReader = true;
 } 
