@@ -224,7 +224,7 @@ public class OrderLoader extends POSDataSynchronizationProcess
       boolean wasPaidOnCredit = false;
 
       if (jsonorder.getLong("orderType") != 2 && !jsonorder.getBoolean("isLayaway") && !isQuotation
-          && verifyOrderExistance(jsonorder)
+          && validateOrder(jsonorder)
           && (!jsonorder.has("preserveId") || jsonorder.getBoolean("preserveId"))) {
         return successMessage(jsonorder);
       }
@@ -581,7 +581,7 @@ public class OrderLoader extends POSDataSynchronizationProcess
     jsonorder.put("obposRejectedQuotation", jsonorder.getString("oldId"));
   }
 
-  private boolean verifyOrderExistance(JSONObject jsonorder) throws Exception {
+  private boolean validateOrder(JSONObject jsonorder) throws Exception {
     OBContext.setAdminMode(false);
     try {
       if ((!jsonorder.has("obposIsDeleted") || !jsonorder.getBoolean("obposIsDeleted"))
@@ -1268,14 +1268,6 @@ public class OrderLoader extends POSDataSynchronizationProcess
       }
       orderline.setActive(true);
       orderline.setSalesOrder(order);
-      if (jsonOrderLine.has("obposIsDeleted") && jsonOrderLine.getBoolean("obposIsDeleted")) {
-        orderline.setObposQtyDeleted(orderline.getOrderedQuantity());
-        orderline.setOrderedQuantity(BigDecimal.ZERO);
-        orderline.setListPrice(BigDecimal.ZERO);
-        orderline.setStandardPrice(BigDecimal.ZERO);
-        orderline.setGrossUnitPrice(BigDecimal.ZERO);
-        orderline.setLineGrossAmount(BigDecimal.ZERO);
-      }
       orderline.setLineNetAmount(BigDecimal.valueOf(jsonOrderLine.getDouble("net"))
           .setScale(pricePrecision, RoundingMode.HALF_UP));
 
@@ -1527,8 +1519,6 @@ public class OrderLoader extends POSDataSynchronizationProcess
     if (jsonorder.has("obposIsDeleted") && jsonorder.has("isQuotation")
         && jsonorder.getBoolean("obposIsDeleted")) {
       order.setDocumentStatus("CL");
-      order.setGrandTotalAmount(BigDecimal.ZERO);
-      order.setSummedLineAmount(BigDecimal.ZERO);
     } else if (isQuotation) {
       order.setDocumentStatus("UE");
     } else {

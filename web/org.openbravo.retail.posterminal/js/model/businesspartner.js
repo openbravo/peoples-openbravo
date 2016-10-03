@@ -104,6 +104,20 @@
         }
       });
     },
+    loadModel: function (customerCol, userCallback) {
+      //search data in local DB and load it to this
+      var me = this;
+      if (!customerCol || customerCol.length === 0) {
+        me.clearModelWith(null);
+        userCallback(me);
+      } else {
+        OB.Dal.get(OB.Model.BPLocation, customerCol.get('locId'), function (location) { //OB.Dal.find success
+          customerCol.set('locationModel', location);
+          me.clearModelWith(customerCol);
+          userCallback(me);
+        });
+      }
+    },
     loadByModel: function (cusToLoad) {
       //copy data from model to this
     },

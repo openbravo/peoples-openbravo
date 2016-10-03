@@ -32,6 +32,7 @@ import org.openbravo.mobile.core.process.DataSynchronizationImportProcess;
 import org.openbravo.mobile.core.process.DataSynchronizationProcess.DataSynchronization;
 import org.openbravo.mobile.core.process.JSONPropertyToEntity;
 import org.openbravo.mobile.core.utils.OBMOBCUtils;
+import org.openbravo.model.ad.access.User;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.businesspartner.Location;
 import org.openbravo.model.common.geography.Country;
@@ -58,6 +59,8 @@ public class CustomerLoader extends POSDataSynchronizationProcess
 
   public JSONObject saveRecord(JSONObject jsoncustomer) throws Exception {
     BusinessPartner customer = null;
+    User user = null;
+    Location location = null;
     OBContext.setAdminMode(false);
     try {
       customer = getCustomer(jsoncustomer.getString("id"));
@@ -66,8 +69,16 @@ public class CustomerLoader extends POSDataSynchronizationProcess
       } else {
         final Date loaded = OBMOBCUtils.calculateClientDatetime(jsoncustomer.getString("loaded"),
             Long.parseLong(jsoncustomer.getString("timezoneOffset")));
+        if (jsoncustomer.has("contactId")) {
+          user = OBDal.getInstance().get(User.class, jsoncustomer.getString("contactId"));
+        }
+        if (jsoncustomer.has("locId")) {
+          location = OBDal.getInstance().get(Location.class, jsoncustomer.getString("locId"));
+        }
 
-        if (!(loaded.compareTo(customer.getUpdated()) >= 0)) {
+        if (!(loaded.compareTo(customer.getUpdated()) >= 0)
+            || !(user != null && (loaded.compareTo(user.getUpdated()) >= 0))
+            || !(user != null && (loaded.compareTo(location.getUpdated()) >= 0))) {
           log.warn(Utility.messageBD(new DalConnectionProvider(false), "OBPOS_outdatedbp",
               OBContext.getOBContext().getLanguage().getLanguage()));
         }

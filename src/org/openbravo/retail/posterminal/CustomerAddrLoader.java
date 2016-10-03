@@ -54,16 +54,13 @@ public class CustomerAddrLoader extends POSDataSynchronizationProcess
     OBContext.setAdminMode(false);
     try {
       Location location = null;
-
       BusinessPartner customer = OBDal.getInstance().get(BusinessPartner.class,
           jsonCustomerAddr.getString("bpartner"));
-
       location = getCustomerAddress(jsonCustomerAddr.getString("id"));
 
       if (location.getId() == null) {
         location = createBPartnerAddr(customer, jsonCustomerAddr);
       } else {
-
         final Date loaded = OBMOBCUtils.calculateClientDatetime(
             jsonCustomerAddr.getString("loaded"),
             Long.parseLong(jsonCustomerAddr.getString("timezoneOffset")));

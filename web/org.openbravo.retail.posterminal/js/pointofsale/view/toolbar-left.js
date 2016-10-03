@@ -413,7 +413,10 @@ enyo.kind({
     me.bubble('onShowColumn', {
       colNum: 1
     });
-    OB.MobileApp.view.scanningFocus(false);
+
+    if (OB.UTIL.RfidController.isRfidConfigured()) {
+      OB.UTIL.RfidController.disconnectRFIDDevice();
+    }
     OB.UTIL.SynchronizationHelper.finished(synchId, 'showPaymentTab');
   },
   tap: function () {

@@ -733,6 +733,9 @@
       function success(collection) {
         var i, j, removeCallback;
         if (collection.length > 0) {
+          _.each(collection.models, function (model) {
+            model.set('ignoreCheckIfIsActiveOrder', true);
+          });
           removeOneModel(collection.at(0), collection, finalCallback);
         } else {
           if (finalCallback && finalCallback instanceof Function) {

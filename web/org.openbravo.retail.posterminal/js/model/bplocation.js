@@ -56,6 +56,18 @@
         }
       });
     },
+    loadModel: function (customerAddr, userCallback) {
+      //search data in local DB and load it to this
+      var me = this;
+      var successCallback, errorCallback;
+      if (!customerAddr || customerAddr.length === 0) {
+        me.clearModelWith(null);
+        userCallback(me);
+      } else {
+        me.clearModelWith(customerAddr);
+        userCallback(me);
+      }
+    },
     newCustomerAddr: function () {
       //set values of new attrs in bplocation model
       //this values will be copied to the created one

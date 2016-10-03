@@ -144,7 +144,6 @@
                     }
                   });
                 }
-
               }, function () {
                 OB.error(arguments);
               }, true);
@@ -195,7 +194,33 @@
             bpToSave: bpToSave
           }, function (args) {
             OB.Dal.save(bpToSave, function () {
-              bpToSave.set('json', customer.serializeToJSON());
+              // update each order also so that new name is shown and the bp
+              // in the order is the same as what got saved
+              if (OB.MobileApp.model.orderList) {
+                _.forEach(OB.MobileApp.model.orderList.models, function (order) {
+                  if (order.get('bp').get('id') === customerId) {
+                    var clonedBP = new OB.Model.BusinessPartner();
+                    OB.UTIL.clone(customer, clonedBP);
+                    if (order.get('bp').get('locId') !== customer.get('locId')) {
+                      // if the order has a different address but same BP than the bp
+                      // then copy over the address data
+                      var bp = order.get('bp');
+                      clonedBP.set('locId', bp.get('locId'));
+                      clonedBP.set('locName', bp.get('locName'));
+                      clonedBP.set('postalCode', bp.get('postalCode'));
+                      clonedBP.set('cityName', bp.get('cityName'));
+                      clonedBP.set('countryName', bp.get('countryName'));
+                      clonedBP.set('locationModel', bp.get('locationModel'));
+                    }
+                    order.set('bp', clonedBP);
+                    order.save();
+                    if (OB.MobileApp.model.orderList.modelorder && OB.MobileApp.model.orderList.modelorder.get('id') === order.get('id')) {
+                      OB.MobileApp.model.orderList.modelorder.setBPandBPLoc(clonedBP, false, true);
+                    }
+                  }
+                });
+              }
+
               var successCallback, errorCallback, List;
               successCallback = function () {
                 if (callback) {
