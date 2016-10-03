@@ -189,6 +189,10 @@
         <default><![CDATA[Y]]></default>
         <onCreateDefault/>
       </column>
+      <column name="COUNTPAYMENTINCASHUP" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[Y]]></default>
+        <onCreateDefault><![CDATA['Y']]></onCreateDefault>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="OBPOS_APPPAYTYPE_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -263,5 +267,6 @@
       <check name="OBPOS_APPPAYTYPE_PTWICE_CHK"><![CDATA[PRINTTWICE IN ('Y', 'N')]]></check>
       <check name="OBPOS_APPPAYTYPE_SHARED_CHK"><![CDATA[ISSHARED IN ('Y', 'N')]]></check>
       <check name="OBPOS_APPPAYTYPE_VARAMT_CHK"><![CDATA[ALLOWVARIABLEAMOUNT IN ('Y', 'N')]]></check>
+      <check name="OBPOS_PAYTYPE_COUNTCASHUP_CHK"><![CDATA[COUNTPAYMENTINCASHUP IN ('Y', 'N')]]></check>
     </table>
   </database>

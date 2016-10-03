@@ -57,7 +57,10 @@ public class PaymentMethodTypeEventHandler extends EntityPersistenceEventObserve
       event.setCurrentState(appPaymentTypeEntity.getProperty("cashDifferences"), null);
       event.setCurrentState(appPaymentTypeEntity.getProperty("glitemDropdep"), null);
     } else {
-      if (event.getCurrentState(appPaymentTypeEntity.getProperty("cashDifferences")) == null) {
+      Boolean countPaymentInCashUp = (Boolean) event.getCurrentState(appPaymentTypeEntity
+          .getProperty("countpaymentincashup"));
+      if (event.getCurrentState(appPaymentTypeEntity.getProperty("cashDifferences")) == null
+          && countPaymentInCashUp) {
         throw new OBException(Utility.messageBD(new DalConnectionProvider(false),
             "OBPOS_CashDiffLeaveCredit", OBContext.getOBContext().getLanguage().getLanguage()));
       }
@@ -84,7 +87,10 @@ public class PaymentMethodTypeEventHandler extends EntityPersistenceEventObserve
       event.setCurrentState(appPaymentTypeEntity.getProperty("cashDifferences"), null);
       event.setCurrentState(appPaymentTypeEntity.getProperty("glitemDropdep"), null);
     } else {
-      if (event.getCurrentState(appPaymentTypeEntity.getProperty("cashDifferences")) == null) {
+      Boolean countPaymentInCashUp = (Boolean) event.getCurrentState(appPaymentTypeEntity
+          .getProperty("countpaymentincashup"));
+      if (event.getCurrentState(appPaymentTypeEntity.getProperty("cashDifferences")) == null
+          && countPaymentInCashUp) {
         throw new OBException(Utility.messageBD(new DalConnectionProvider(false),
             "OBPOS_CashDiffLeaveCredit", OBContext.getOBContext().getLanguage().getLanguage()));
       }
