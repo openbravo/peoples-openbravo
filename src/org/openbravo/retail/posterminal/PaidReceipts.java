@@ -210,8 +210,8 @@ public class PaidReceipts extends JSONProcessSimple {
             + "from FIN_Payment_ScheduleDetail as scheduleDetail "
             + "join scheduleDetail.paymentDetails as paymentDetail "
             + "join paymentDetail.finPayment as finPayment "
-            + "left join finPayment.reversedPayment as reversedPayment "
-            + "where scheduleDetail.orderPaymentSchedule.order.id=? "
+            + "join scheduleDetail.orderPaymentSchedule.order as order "
+            + "left join finPayment.reversedPayment as reversedPayment " + "where order.id=? "
             + "order by finPayment.documentNo";
         Query paidReceiptsPaymentsQuery = OBDal.getInstance().getSession()
             .createQuery(hqlPaymentsIn);
