@@ -504,41 +504,54 @@ enyo.kind({
   },
 
   checkEnoughCashAvailable: function (paymentstatus, selectedPayment, scope, callback) {
-    var requiredCash, hasEnoughCash, hasAllEnoughCash = true,
-        reversePaymentsCash = OB.DEC.Zero;
+    var requiredCash, hasEnoughCash = true,
+        hasAllEnoughCash = true,
+        reversedPayments = [],
+        currentSelectedPaymentCashAmount = OB.DEC.Zero,
+        reversedCash;
     // Check slave cash 
     this.checkSlaveCashAvailable(selectedPayment, this, function (currentCash) {
+      // If there are reverse payments search for those of cash payment method. It will be needed to check if there is enough cash to reverse those payments.
       if (paymentstatus.isReversal) {
         paymentstatus.payments.each(function (payment) {
           var paymentmethod = OB.POS.terminal.terminal.paymentnames[payment.get('kind')];
           if (!payment.get('isPrePayment') && paymentmethod.paymentMethod.iscash) {
-            reversePaymentsCash = OB.DEC.sub(reversePaymentsCash, payment.get('origAmount'));
-          }
-        });
-      }
-      if (OB.UTIL.isNullOrUndefined(selectedPayment) || !selectedPayment.paymentMethod.iscash) {
-        requiredCash = reversePaymentsCash;
-      } else if (!_.isUndefined(paymentstatus) && (paymentstatus.isNegative)) {
-        requiredCash = OB.DEC.add(reversePaymentsCash, paymentstatus.pendingAmt);
-        paymentstatus.payments.each(function (payment) {
-          var paymentmethod;
-          if (payment.get('kind') === selectedPayment.payment.searchKey && !payment.get('isPrePayment') && !payment.get('reversedPaymentId')) {
-            requiredCash = OB.DEC.add(requiredCash, payment.get('origAmount'));
-          } else {
-            paymentmethod = OB.POS.terminal.terminal.paymentnames[payment.get('kind')];
-            if (paymentmethod && payment.get('amount') > paymentmethod.currentCash && payment.get('isCash')) {
-              hasAllEnoughCash = false;
+            reversedCash = OB.DEC.sub(reversedPayments[payment.get('kind')] || OB.DEC.Zero, payment.get('origAmount'));
+            reversedPayments[payment.get('kind')] = reversedCash;
+            if (selectedPayment !== paymentmethod && OB.DEC.compare(OB.DEC.sub(paymentmethod.currentCash, reversedCash)) <= 0) {
+              hasEnoughCash = false;
+            } else {
+              currentSelectedPaymentCashAmount = reversedCash;
             }
           }
         });
-      } else if (!_.isUndefined(paymentstatus)) {
-        requiredCash = OB.DEC.sub(OB.DEC.add(reversePaymentsCash, paymentstatus.changeAmt), paymentstatus.pendingAmt);
       }
 
-      if (!_.isUndefined(requiredCash) && requiredCash === 0) {
-        hasEnoughCash = true;
-      } else if (!_.isUndefined(requiredCash)) {
-        hasEnoughCash = OB.DEC.compare(OB.DEC.sub(currentCash, requiredCash)) >= 0;
+      if (hasEnoughCash) {
+        if (OB.UTIL.isNullOrUndefined(selectedPayment) || !selectedPayment.paymentMethod.iscash) {
+          requiredCash = OB.DEC.Zero;
+        } else if (!_.isUndefined(paymentstatus) && (paymentstatus.isNegative)) {
+          requiredCash = OB.DEC.add(currentSelectedPaymentCashAmount, paymentstatus.pendingAmt);
+          paymentstatus.payments.each(function (payment) {
+            var paymentmethod;
+            if (payment.get('kind') === selectedPayment.payment.searchKey && !payment.get('isPrePayment') && !payment.get('reversedPaymentId')) {
+              requiredCash = OB.DEC.add(requiredCash, payment.get('origAmount'));
+            } else {
+              paymentmethod = OB.POS.terminal.terminal.paymentnames[payment.get('kind')];
+              if (paymentmethod && payment.get('amount') > paymentmethod.currentCash && payment.get('isCash')) {
+                hasAllEnoughCash = false;
+              }
+            }
+          });
+        } else if (!_.isUndefined(paymentstatus)) {
+          requiredCash = OB.DEC.sub(OB.DEC.add(currentSelectedPaymentCashAmount, paymentstatus.changeAmt), paymentstatus.pendingAmt);
+        }
+
+        if (!_.isUndefined(requiredCash) && requiredCash === 0) {
+          hasEnoughCash = true;
+        } else if (!_.isUndefined(requiredCash)) {
+          hasEnoughCash = OB.DEC.compare(OB.DEC.sub(currentCash, requiredCash)) >= 0;
+        }
       }
 
       if (hasEnoughCash && hasAllEnoughCash) {
@@ -550,27 +563,39 @@ enyo.kind({
   },
 
   checkEnoughCashAvailableforLayaway: function (paymentstatus, selectedPayment, scope, callback) {
-    var requiredCash, hasEnoughCash, reversePaymentsCash = OB.DEC.Zero;
+    var requiredCash, hasEnoughCash = true,
+        reversedPayments = [],
+        currentSelectedPaymentCashAmount = OB.DEC.Zero,
+        reversedCash;
     // Check slave cash 
     this.checkSlaveCashAvailable(selectedPayment, this, function (currentCash) {
+      // If there are reverse payments search for those of cash payment method. It will be needed to check if there is enough cash to reverse those payments.
       if (paymentstatus.isReversal) {
         paymentstatus.payments.each(function (payment) {
           var paymentmethod = OB.POS.terminal.terminal.paymentnames[payment.get('kind')];
-          if (!payment.get('isPrePayment') && selectedPayment === paymentmethod && paymentmethod.paymentMethod.iscash) {
-            reversePaymentsCash = OB.DEC.sub(reversePaymentsCash, payment.get('origAmount'));
+          if (!payment.get('isPrePayment') && paymentmethod.paymentMethod.iscash) {
+            reversedCash = OB.DEC.sub(reversedPayments[payment.get('kind')] || OB.DEC.Zero, payment.get('origAmount'));
+            reversedPayments[payment.get('kind')] = reversedCash;
+            if (selectedPayment !== paymentmethod && OB.DEC.compare(OB.DEC.sub(paymentmethod.currentCash, reversedCash)) <= 0) {
+              hasEnoughCash = false;
+            } else {
+              currentSelectedPaymentCashAmount = reversedCash;
+            }
           }
         });
       }
-      if (OB.UTIL.isNullOrUndefined(selectedPayment) || !selectedPayment.paymentMethod.iscash) {
-        requiredCash = reversePaymentsCash;
-      } else if (!_.isUndefined(paymentstatus)) {
-        requiredCash = OB.DEC.add(reversePaymentsCash, paymentstatus.changeAmt);
-      }
+      if (hasEnoughCash) {
+        if (OB.UTIL.isNullOrUndefined(selectedPayment) || !selectedPayment.paymentMethod.iscash) {
+          requiredCash = OB.DEC.Zero;
+        } else if (!_.isUndefined(paymentstatus)) {
+          requiredCash = OB.DEC.sub(OB.DEC.add(currentSelectedPaymentCashAmount, paymentstatus.changeAmt), paymentstatus.pendingAmt);
+        }
 
-      if (!_.isUndefined(requiredCash) && requiredCash === 0) {
-        hasEnoughCash = true;
-      } else if (!_.isUndefined(requiredCash)) {
-        hasEnoughCash = OB.DEC.compare(OB.DEC.sub(currentCash, requiredCash)) >= 0;
+        if (!_.isUndefined(requiredCash) && requiredCash === 0) {
+          hasEnoughCash = true;
+        } else if (!_.isUndefined(requiredCash)) {
+          hasEnoughCash = OB.DEC.compare(OB.DEC.sub(currentCash, requiredCash)) >= 0;
+        }
       }
 
       if (hasEnoughCash) {
@@ -690,6 +715,7 @@ enyo.kind({
       } else if (!this.receipt.stopAddingPayments) {
         this.$.donebutton.setLocalDisabled(false);
         this.$.exactbutton.setLocalDisabled(false);
+        this.$.layawayaction.setLocalDisabled(false);
       }
 
     } else {

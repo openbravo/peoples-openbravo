@@ -4532,7 +4532,7 @@
               if (!model.isLayaway && !model.isQuotation) {
                 if (model.totalamount > 0 && order.get('payment') < model.totalamount) {
                   order.set('paidOnCredit', true);
-                } else if (model.totalamount < 0 && (order.get('payment') === 0 || (order.get('payment') > model.totalamount))) {
+                } else if (model.totalamount < 0 && (order.get('payment') === 0 || (OB.DEC.abs(model.totalamount)) > order.get('payment'))) {
                   order.set('paidOnCredit', true);
                 }
               }
