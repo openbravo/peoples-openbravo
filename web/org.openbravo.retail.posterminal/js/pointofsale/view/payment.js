@@ -588,7 +588,7 @@ enyo.kind({
         if (OB.UTIL.isNullOrUndefined(selectedPayment) || !selectedPayment.paymentMethod.iscash) {
           requiredCash = OB.DEC.Zero;
         } else if (!_.isUndefined(paymentstatus)) {
-          requiredCash = OB.DEC.sub(OB.DEC.add(currentSelectedPaymentCashAmount, paymentstatus.changeAmt), paymentstatus.pendingAmt);
+          requiredCash = OB.DEC.add(currentSelectedPaymentCashAmount, paymentstatus.changeAmt);
         }
 
         if (!_.isUndefined(requiredCash) && requiredCash === 0) {
