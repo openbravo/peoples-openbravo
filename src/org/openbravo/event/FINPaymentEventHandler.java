@@ -46,11 +46,8 @@ public class FINPaymentEventHandler extends EntityPersistenceEventObserver {
     BigDecimal oldPaymentAmount = (BigDecimal) event.getPreviousState(paymentAmountProperty);
     int index = payment.getDocumentNo().indexOf(CancelAndReplaceUtils.REVERSE_PREFIX);
     if (payment.getAmount().compareTo(BigDecimal.ZERO) == 0) {
-      if (index == -1) {
+      if (index <= 0) {
         String newDocumentNo = payment.getDocumentNo() + CancelAndReplaceUtils.REVERSE_PREFIX;
-        setDocumentNoToPayment(payment, event, newDocumentNo);
-      } else if (index > 0) {
-        String newDocumentNo = payment.getDocumentNo().substring(0, index);
         setDocumentNoToPayment(payment, event, newDocumentNo);
       }
     } else if (oldPaymentAmount.compareTo(BigDecimal.ZERO) == 0) {
