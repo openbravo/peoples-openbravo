@@ -665,6 +665,7 @@ enyo.kind({
     if (!this.$.btnContextMenu.dialog.manageAddress || this.$.btnContextMenu.dialog.menuSelected) {
       this.doHideThisPopup();
     }
+    return true;
   },
   create: function () {
     this.inherited(arguments);
