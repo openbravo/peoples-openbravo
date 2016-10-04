@@ -710,86 +710,38 @@
       this.cleanSessionInfo();
     },
 
-    preLogoutActions: function () {
-      if (OB.POS.hwserver !== undefined) {
-        OB.POS.hwserver.print(new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.GoodByeTemplate), {});
-      }
-    },
-
-    postCloseSession: function (session) {
+    preLogoutActions: function (finalCallback) {
       var criteria = {},
           model;
       var me = this;
 
-      function successRemove(collection) {
-        var i, j, removeCallback;
-        if (collection.length > 0) {
-          removeCallback = _.after(collection.length, function () {
+      function removeOneModel(model, collection, callback) {
+        if (collection.length === 0) {
+          if (callback && callback instanceof Function) {
             me.cleanSessionInfo();
-            OB.MobileApp.model.triggerLogout();
-          });
-          _.forEach(collection.models, function (model) {
-            model.deleteOrder(me, true, function () {
-              OB.Dal.remove(model, removeCallback);
-            });
-          });
-        } else {
-          me.cleanSessionInfo();
-          OB.MobileApp.model.triggerLogout();
+            callback();
+          }
+          return;
         }
+
+        model.deleteOrder(me, function () {
+          collection.remove(model);
+          removeOneModel(collection.at(0), collection, callback);
+        });
       }
 
       function success(collection) {
-        var i, j, saveCallback, lastDocWithData = -1;
+        var i, j, removeCallback;
         if (collection.length > 0) {
-          saveCallback = function () {
-            me.cleanSessionInfo();
-            OB.MobileApp.model.triggerLogout();
-          };
-          if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
-            for (i = collection.models.length - 1; i >= 0; i--) {
-              var model = collection.models[i];
-              if (model.get('lines').length > 0) {
-                lastDocWithData = i;
-                break;
-              }
-            }
-          }
-
-          var setValuesOnLogout;
-          setValuesOnLogout = function (models, index, callback) {
-            if (index >= models.length) {
-              if (callback) {
-                callback();
-              }
-              return;
-            }
-            var model = models[index];
-            var creationDate = new Date();
-            model.set('creationDate', creationDate);
-            model.set('timezoneOffset', creationDate.getTimezoneOffset());
-            model.set('created', creationDate.getTime());
-            model.set('obposCreatedabsolute', OB.I18N.formatDateISO(creationDate));
-            //
-            if (index <= lastDocWithData || (OB.MobileApp.model.get('permissions').OBPOS_remove_ticket === false)) {
-              model.set('obposIsDeleted', true);
-              for (i = 0; i < model.get('lines').length; i++) {
-                model.get('lines').at(i).set('obposIsDeleted', true);
-              }
-              model.set('hasbeenpaid', 'Y');
-              OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(model.get('documentnoSuffix'), model.get('quotationnoSuffix'), model.get('returnnoSuffix'), function () {
-                model.save(function () {
-                  setValuesOnLogout(models, index + 1, callback);
-                }, models);
-              });
-            } else {
-              setValuesOnLogout(models, index + 1, callback);
-            }
-          };
-          setValuesOnLogout(collection.models, 0, saveCallback);
+          _.each(collection.models, function (model) {
+            model.set('ignoreCheckIfIsActiveOrder', true);
+          });
+          removeOneModel(collection.at(0), collection, finalCallback);
         } else {
-          me.cleanSessionInfo();
-          OB.MobileApp.model.triggerLogout();
+          if (finalCallback && finalCallback instanceof Function) {
+            me.cleanSessionInfo();
+            finalCallback();
+          }
         }
       }
 
@@ -798,18 +750,18 @@
         OB.MobileApp.model.triggerLogout();
       }
       //All pending to be paid orders will be removed on logout
-      criteria.session = session.get('id');
+      criteria.session = OB.MobileApp.model.get('session');
       criteria.hasbeenpaid = 'N';
-      if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
-        OB.Dal.find(OB.Model.Order, criteria, success, error);
-      } else {
-        OB.Dal.find(OB.Model.Order, criteria, successRemove, error);
+      OB.Dal.find(OB.Model.Order, criteria, success, error);
+
+    },
+
+    postCloseSession: function (session) {
+      if (OB.POS.hwserver !== undefined) {
+        OB.POS.hwserver.print(new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.GoodByeTemplate), {});
       }
-      this.set('currentView', {
-        name: 'order',
-        params: null
-      });
-      OB.UTIL.localStorage.setItem('leftColumnCurrentView', JSON.stringify(this.get('currentView')));
+      OB.MobileApp.model.triggerLogout();
+
     },
 
     // these variables will keep the minimum value that the document order could have

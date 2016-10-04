@@ -184,7 +184,7 @@ enyo.kind({
         this.model.get('customerAddr').saveCustomerAddr(callback);
       }
     } else {
-      this.model.get('customerAddr').loadById(this.customerAddr.get('id'), function (customerAddr) {
+      this.model.get('customerAddr').loadModel(this.customerAddr, function (customerAddr) {
         if (customerAddr.get('name') === "") {
           OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_BPartnerAddressRequired'));
           return false;

@@ -9,6 +9,7 @@
 package org.openbravo.retail.posterminal;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -21,6 +22,7 @@ import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.secureApp.LoginUtils;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.kernel.RequestContext;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
@@ -82,6 +84,7 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
     return result;
   }
 
+  @SuppressWarnings("unchecked")
   @Override
   protected JSONObject getUserImages(HttpServletRequest request) throws JSONException {
     JSONObject result = new JSONObject();
@@ -91,6 +94,17 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
     if (request.getParameter("approvalType") != null) {
       approvalType = new JSONArray(request.getParameter("approvalType"));
     }
+
+    OBCriteria<OBPOSApplications> terminalCriteria = OBDal.getInstance().createCriteria(
+        OBPOSApplications.class);
+    terminalCriteria.add(Restrictions.eq(OBPOSApplications.PROPERTY_SEARCHKEY, terminalName));
+    terminalCriteria.setFilterOnReadableOrganization(false);
+    terminalCriteria.setFilterOnReadableClients(false);
+    OBPOSApplications terminalObj = terminalCriteria.list().get(0);
+
+    List<String> naturalTreeOrgList = new ArrayList<String>(OBContext.getOBContext()
+        .getOrganizationStructureProvider(terminalObj.getClient().getId())
+        .getNaturalTree(terminalObj.getOrganization().getId()));
 
     String hqlUser = "select distinct user.name, user.username, user.id "
         + "from ADUser user, ADUserRoles userRoles, ADRole role, "
@@ -104,29 +118,23 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
         + "exists (from ADRoleOrganization ro where ro.role = role and ro.organization = terminal.organization) and "
         + "(not exists(from OBPOS_TerminalAccess ta where ta.userContact = user) or exists(from OBPOS_TerminalAccess ta where ta.userContact = user and ta.pOSTerminal=terminal)) and "
         + "terminal.searchKey = :theTerminalSearchKey and "
-        + "user.id = userRoles.userContact.id and "
-        + "userRoles.role.id = role.id and "
+        + "user.id = userRoles.userContact.id and userRoles.role.id = role.id and "
         + "userRoles.role.id = formAccess.role.id and "
         + "userRoles.role.forPortalUsers = false and "
         + "formAccess.specialForm.id = :webPOSFormId and "
-        + "((ad_isorgincluded(user.organization, terminal.organization, terminal.client.id) <> -1) or "
-        + "(ad_isorgincluded(terminal.organization, user.organization, terminal.client.id) <> -1)) ";
+        + "((user.organization.id in (:orgList)) or (terminal.organization.id in (:orgList)))";
 
     if (approvalType.length() != 0) {
       // checking supervisor users for sent approval type
       for (int i = 0; i < approvalType.length(); i++) {
         String iter = approvalType.getString(i);
-        hqlUser += "and exists (from ADPreference as p"
-            + " where property = '"
-            + iter
-            + "'   and active = true"
-            + "   and to_char(searchKey) = 'Y'"
-            + "   and (userContact = user"
-            + "        or exists (from ADUserRoles r"
+        hqlUser += "and exists (from ADPreference as p where property = '" + iter
+            + "'   and active = true and to_char(searchKey) = 'Y'"
+            + "   and (userContact = user or exists (from ADUserRoles r"
             + "                  where r.role = p.visibleAtRole"
             + "                    and r.userContact = user)) "
             + "   and (p.visibleAtOrganization = terminal.organization "
-            + "   or ad_isorgincluded(terminal.organization, p.visibleAtOrganization, terminal.client.id) <> -1 "
+            + "   or p.visibleAtOrganization.id in (:orgList) "
             + "   or p.visibleAtOrganization is null)) ";
       }
 
@@ -137,8 +145,10 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
     Query qryUser = OBDal.getInstance().getSession().createQuery(hqlUser);
     qryUser.setParameter("theTerminalSearchKey", terminalName);
     qryUser.setParameter("webPOSFormId", "B7B7675269CD4D44B628A2C6CF01244F");
+    qryUser.setParameterList("orgList", naturalTreeOrgList);
 
-    for (Object qryUserObject : qryUser.list()) {
+    List<Object> queryUserList = qryUser.list();
+    for (Object qryUserObject : queryUserList) {
       final Object[] qryUserObjectItem = (Object[]) qryUserObject;
 
       JSONObject item = new JSONObject();
@@ -153,7 +163,9 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
       Query qryImage = OBDal.getInstance().getSession().createQuery(hqlImage);
       qryImage.setParameter("theUserId", qryUserObjectItem[2].toString());
       String imageData = "none";
-      for (Object qryImageObject : qryImage.list()) {
+
+      List<Object> qryImageList = qryImage.list();
+      for (Object qryImageObject : qryImageList) {
         final Object[] qryImageObjectItem = (Object[]) qryImageObject;
         imageData = "data:"
             + qryImageObjectItem[0].toString()
@@ -348,7 +360,9 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
     servers.setFilterOnReadableClients(false);
     servers.setFilterOnReadableOrganization(false);
     servers.setNamedParameter("clientId", terminal.getClient().getId());
-    for (MobileServerDefinition server : servers.list()) {
+
+    List<MobileServerDefinition> serversList = servers.list();
+    for (MobileServerDefinition server : serversList) {
       if (server.isAllorgs()) {
         respArray.put(createServerJSON(server));
       } else {

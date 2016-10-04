@@ -110,7 +110,7 @@ public class PaidReceiptsHeader extends ProcessHQLQuery {
         + " and ord.obposIsDeleted = false ";
 
     if (!json.getString("filterText").isEmpty()) {
-      String hqlFilter = "ord.documentNo like :filterT1 or REPLACE(ord.documentNo, '/', '') like :filterT1 or upper(ord.businessPartner.name) like upper(:filterT1)";
+      String hqlFilter = "ord.documentNo like :filterT1 or upper(ord.businessPartner.name) like upper(:filterT1)";
       for (PaidReceiptsHeaderHook hook : paidReceiptHeaderHooks) {
         try {
           String hql = hook.exec(hqlFilter, json.getString("filterText"));
@@ -142,7 +142,7 @@ public class PaidReceiptsHeader extends ProcessHQLQuery {
 
     } else if (json.getBoolean("isReturn")) {
       // (It is a Return)
-      hqlPaidReceipts += " and ord.obposApplications is not null and ord.iscancelled != true and (exists( select 1 from ord.orderLineList where deliveredQuantity != 0) and exists( select 1 from ord.orderLineList where orderedQuantity > 0)) ";
+      hqlPaidReceipts += " and ord.obposApplications is not null and ord.iscancelled != true and exists (select 1 from ord.orderLineList where deliveredQuantity > 0) ";
     } else {
       // (It is not Layaway and It is not a Return)
       hqlPaidReceipts += " and ord.obposApplications is not null and exists (select 1 from ord.orderLineList where deliveredQuantity != 0) ";

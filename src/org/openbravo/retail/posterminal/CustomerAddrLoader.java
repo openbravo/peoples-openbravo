@@ -45,25 +45,18 @@ public class CustomerAddrLoader extends POSDataSynchronizationProcess implements
     OBContext.setAdminMode(false);
     try {
       Location location = null;
-
       BusinessPartner customer = OBDal.getInstance().get(BusinessPartner.class,
           jsonCustomerAddr.getString("bpartner"));
-
       location = getCustomerAddress(jsonCustomerAddr.getString("id"));
 
       if (location.getId() == null) {
         location = createBPartnerAddr(customer, jsonCustomerAddr);
       } else {
-        final Date updated = OBMOBCUtils.calculateClientDatetime(
-            jsonCustomerAddr.getString("updated"),
-            Long.parseLong(jsonCustomerAddr.getString("timezoneOffset")));
-
         final Date loaded = OBMOBCUtils.calculateClientDatetime(
             jsonCustomerAddr.getString("loaded"),
             Long.parseLong(jsonCustomerAddr.getString("timezoneOffset")));
 
-        if (!((updated.compareTo(location.getUpdated()) >= 0) && (loaded.compareTo(location
-            .getUpdated()) >= 0))) {
+        if (!(loaded.compareTo(location.getUpdated()) >= 0)) {
           log.warn(Utility.messageBD(new DalConnectionProvider(false), "OBPOS_outdatedbpl",
               OBContext.getOBContext().getLanguage().getLanguage()));
         }

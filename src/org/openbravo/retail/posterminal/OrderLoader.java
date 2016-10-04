@@ -225,7 +225,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       boolean wasPaidOnCredit = false;
 
       if (jsonorder.getLong("orderType") != 2 && !jsonorder.getBoolean("isLayaway") && !isQuotation
-          && verifyOrderExistance(jsonorder)
+          && validateOrder(jsonorder)
           && (!jsonorder.has("preserveId") || jsonorder.getBoolean("preserveId")) && !paidReceipt) {
         return successMessage(jsonorder);
       }
@@ -233,13 +233,9 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       if (jsonorder.getBoolean("isLayaway")) {
         order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
 
-        final Date updated = OBMOBCUtils.calculateClientDatetime(jsonorder.getString("updated"),
-            Long.parseLong(jsonorder.getString("timezoneOffset")));
-
         final Date loaded = OBMOBCUtils.calculateClientDatetime(jsonorder.getString("loaded"),
             Long.parseLong(jsonorder.getString("timezoneOffset")));
-
-        if (!((updated.compareTo(order.getUpdated()) >= 0) && (loaded.compareTo(order.getUpdated()) >= 0))) {
+        if (!(loaded.compareTo(order.getUpdated()) >= 0)) {
           throw new OutDatedDataChangeException(Utility.messageBD(new DalConnectionProvider(false),
               "OBPOS_outdatedLayaway", OBContext.getOBContext().getLanguage().getLanguage()));
         }
@@ -325,7 +321,9 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
           order.setObposAppCashup(jsonorder.getString("obposAppCashup"));
           order.setDelivered(true);
-
+          if (jsonorder.has("oBPOSNotInvoiceOnCashUp")) {
+            order.setOBPOSNotInvoiceOnCashUp(jsonorder.getBoolean("oBPOSNotInvoiceOnCashUp"));
+          }
           String olsHqlWhereClause = " ol where ol.salesOrder.id = :orderId order by lineNo";
           OBQuery<OrderLine> queryOls = OBDal.getInstance().createQuery(OrderLine.class,
               olsHqlWhereClause);
@@ -341,6 +339,9 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
           if (!jsonorder.has("channel")) {
             order.setObposAppCashup(jsonorder.getString("obposAppCashup"));
+          }
+          if (jsonorder.has("oBPOSNotInvoiceOnCashUp")) {
+            order.setOBPOSNotInvoiceOnCashUp(jsonorder.getBoolean("oBPOSNotInvoiceOnCashUp"));
           }
         } else {
           order = OBProvider.getInstance().get(Order.class);
@@ -412,7 +413,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           t11 = System.currentTimeMillis();
           t2 = System.currentTimeMillis();
         }
-        updateAuditInfo(order, invoice, jsonorder);
+
         if (log.isDebugEnabled()) {
           t3 = System.currentTimeMillis();
         }
@@ -534,20 +535,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     }
   }
 
-  @Override
-  protected boolean additionalCheckForDuplicates(JSONObject record) {
-    try {
-      Order orderInDatabase = OBDal.getInstance().get(Order.class, record.getString("id"));
-      String docNoInDatabase = orderInDatabase.getDocumentNo();
-      String docNoInJSON = "";
-      docNoInJSON = record.getString("documentNo");
-      return docNoInDatabase.equals(docNoInJSON);
-    } catch (JSONException e) {
-      log.error("JSON information couldn't be read when verifying duplicate", e);
-      return false;
-    }
-  }
-
   private void executeHooks(Instance<? extends Object> hooks, JSONObject jsonorder, Order order,
       ShipmentInOut shipment, Invoice invoice) throws Exception {
 
@@ -558,16 +545,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       } else {
         ((OrderLoaderPreProcessHook) proc).exec(jsonorder);
       }
-    }
-  }
-
-  private void updateAuditInfo(Order order, Invoice invoice, JSONObject jsonorder)
-      throws JSONException {
-    Long value = jsonorder.getLong("created");
-    order.set("creationDate", new Date(value));
-    order.set("updated", new Date(value));
-    if (invoice != null) {
-      invoice.set("creationDate", new Date(value));
     }
   }
 
@@ -612,24 +589,9 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     jsonorder.put("obposRejectedQuotation", jsonorder.getString("oldId"));
   }
 
-  private boolean verifyOrderExistance(JSONObject jsonorder) throws Exception {
+  private boolean validateOrder(JSONObject jsonorder) throws Exception {
     OBContext.setAdminMode(false);
     try {
-      if (jsonorder.has("id") && jsonorder.getString("id") != null
-          && !jsonorder.getString("id").equals("")) {
-        Order order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
-        if (order != null) {
-          // Additional check to verify that the order is indeed a duplicate
-          if (!additionalCheckForDuplicates(jsonorder)) {
-            throw new OBException(
-                "An order has the same id, but it's not a duplicate. Existing order id:"
-                    + order.getId() + ". Existing order documentNo:" + order.getDocumentNo()
-                    + ". New documentNo:" + jsonorder.getString("documentNo"));
-          } else {
-            return true;
-          }
-        }
-      }
       if ((!jsonorder.has("obposIsDeleted") || !jsonorder.getBoolean("obposIsDeleted"))
           && (!jsonorder.has("gross") || jsonorder.getString("gross").equals("0"))
           && (jsonorder.isNull("lines") || (jsonorder.getJSONArray("lines") != null && jsonorder
@@ -952,7 +914,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       addDocumentNoHandler(invoice, invoiceEntity, invoice.getTransactionDocument(),
           invoice.getDocumentType());
     }
-
+    Long value = jsonorder.getLong("created");
+    invoice.set("creationDate", new Date(value));
     final Date orderDate = OBMOBCUtils.calculateClientDatetime(jsonorder.getString("orderDate"),
         Long.parseLong(jsonorder.getString("timezoneOffset")));
     invoice.setAccountingDate(order.getOrderDate());
@@ -1307,14 +1270,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       }
       orderline.setActive(true);
       orderline.setSalesOrder(order);
-      if (jsonOrderLine.has("obposIsDeleted") && jsonOrderLine.getBoolean("obposIsDeleted")) {
-        orderline.setObposQtyDeleted(orderline.getOrderedQuantity());
-        orderline.setOrderedQuantity(BigDecimal.ZERO);
-        orderline.setListPrice(BigDecimal.ZERO);
-        orderline.setStandardPrice(BigDecimal.ZERO);
-        orderline.setGrossUnitPrice(BigDecimal.ZERO);
-        orderline.setLineGrossAmount(BigDecimal.ZERO);
-      }
       orderline.setLineNetAmount(BigDecimal.valueOf(jsonOrderLine.getDouble("net")).setScale(
           pricePrecision, RoundingMode.HALF_UP));
 
@@ -1564,13 +1519,13 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     if (jsonorder.has("obposIsDeleted") && jsonorder.has("isQuotation")
         && jsonorder.getBoolean("obposIsDeleted")) {
       order.setDocumentStatus("CL");
-      order.setGrandTotalAmount(BigDecimal.ZERO);
-      order.setSummedLineAmount(BigDecimal.ZERO);
     } else if (isQuotation) {
       order.setDocumentStatus("UE");
     } else {
       order.setDocumentStatus("CO");
     }
+    Long value = jsonorder.getLong("created");
+    order.set("creationDate", new Date(value));
     order.setDocumentAction("--");
     order.setProcessed(true);
     order.setProcessNow(false);

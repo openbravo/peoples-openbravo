@@ -403,7 +403,9 @@ enyo.kind({
   },
   deleteCurrentOrder: function (inSender, inEvent) {
     var receipt = this.model.get('order');
-    receipt.deleteOrder(this, inEvent.notSavedOrder);
+    receipt.deleteOrder(this, function () {
+      OB.MobileApp.model.runSyncProcess();
+    });
   },
   addProductToOrder: function (inSender, inEvent) {
     var targetOrder;

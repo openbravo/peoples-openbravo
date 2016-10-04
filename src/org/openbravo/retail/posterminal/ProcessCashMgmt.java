@@ -121,16 +121,18 @@ public class ProcessCashMgmt extends POSDataSynchronizationProcess implements
     if (type.equals("drop")) {
       transaction.setPaymentAmount(amount);
       account.setCurrentBalance(account.getCurrentBalance().subtract(amount));
+      transaction.setTransactionType("BPW");
+      transaction.setStatus("PWNC");
     } else {
       transaction.setDepositAmount(amount);
       account.setCurrentBalance(account.getCurrentBalance().add(amount));
+      transaction.setTransactionType("BPD");
+      transaction.setStatus("RDNC");
     }
     transaction.setProcessed(true);
-    transaction.setTransactionType("BPW");
     transaction.setDescription(description);
     transaction.setDateAcct(cashMgmtTrxDate);
     transaction.setTransactionDate(cashMgmtTrxDate);
-    transaction.setStatus("RDNC");
 
     OBDal.getInstance().save(transaction);
 
@@ -153,17 +155,18 @@ public class ProcessCashMgmt extends POSDataSynchronizationProcess implements
       if (type.equals("deposit")) {
         secondTransaction.setPaymentAmount(origAmount);
         secondAccount.setCurrentBalance(secondAccount.getCurrentBalance().subtract(origAmount));
-        secondTransaction.setTransactionType("BPD");
+        secondTransaction.setTransactionType("BPW");
+        secondTransaction.setStatus("PWNC");
       } else {
         secondTransaction.setDepositAmount(origAmount);
         secondAccount.setCurrentBalance(secondAccount.getCurrentBalance().add(origAmount));
-        secondTransaction.setTransactionType("BPW");
+        secondTransaction.setTransactionType("BPD");
+        secondTransaction.setStatus("RDNC");
       }
       secondTransaction.setProcessed(true);
       secondTransaction.setDescription(description);
       secondTransaction.setDateAcct(cashMgmtTrxDate);
       secondTransaction.setTransactionDate(cashMgmtTrxDate);
-      secondTransaction.setStatus("RDNC");
       OBDal.getInstance().save(secondTransaction);
     }
 

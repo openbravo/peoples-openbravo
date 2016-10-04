@@ -527,8 +527,8 @@ enyo.kind({
       this.$.btn.removeClass('btnactive-green');
       this.activegreen = false;
     }
-    if (this.dialogbuttons[status]) {
-      this.$.btn.setContent(OB.I18N.getLabel('OBPOS_MorePayments') + ' (' + this.dialogbuttons[status] + ')');
+    if (this.owner.showing && (this.dialogbuttons[status] || this.dialogbuttons[this.owner.keyboard.status])) {
+      this.$.btn.setContent(OB.I18N.getLabel('OBPOS_MorePayments') + ' (' + (this.dialogbuttons[status] || this.dialogbuttons[this.owner.keyboard.status]) + ')');
       this.$.btn.addClass('btnactive-green');
       this.activegreen = true;
     }

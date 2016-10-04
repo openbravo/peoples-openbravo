@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB */
+/*global OB, _ */
 
 (function () {
 
@@ -27,7 +27,7 @@
           isNew = false,
           bpToSave = new OB.Model.ChangedBusinessPartners(),
           bpLocation, bpLocToSave = new OB.Model.BPLocation(),
-          customersListToChange;
+          updateLocally;
 
       bpToSave.set('isbeingprocessed', 'N');
       customer.set('createdBy', OB.MobileApp.model.get('orgUserId'));
@@ -35,7 +35,6 @@
       if (customerId) {
         customer.set('posTerminal', OB.MobileApp.model.get('terminal').id);
         var now = new Date();
-        customer.set('updated', OB.I18N.normalizeDate(now));
         customer.set('timezoneOffset', now.getTimezoneOffset());
         customer.set('loaded', OB.I18N.normalizeDate(new Date(customer.get('loaded'))));
         bpToSave.set('json', JSON.stringify(this.customer.serializeEditedToJSON()));
@@ -78,7 +77,6 @@
           bpToSave: bpToSave
         }, function (args) {
           OB.Dal.save(bpToSave, function () {
-            bpToSave.set('json', customer.serializeToJSON());
             var successCallback = function () {
                 if (callback) {
                   callback();
@@ -91,7 +89,14 @@
             OB.UTIL.showError(OB.I18N.getLabel('OBPOS_errorSavingCustomerChanges', [customer.get('_identifier')]));
           }, isNew);
         });
-      } else {
+      }
+
+      // if the bp is already used in one of the orders then update locally also
+      updateLocally = !OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true) || (!isNew && OB.MobileApp.model.orderList && _.filter(OB.MobileApp.model.orderList.models, function (order) {
+        return order.get('bp').get('id') === customerId;
+      }).length > 0);
+
+      if (updateLocally) {
         //save that the customer is being processed by server
         customer.set('loaded', OB.I18N.normalizeDate(new Date()));
         OB.Dal.save(customer, function () {
@@ -105,9 +110,7 @@
                 bpLocToUpdate.set('postalCode', customer.get('postalCode'));
                 bpLocToUpdate.set('cityName', customer.get('cityName'));
                 bpLocToUpdate.set('_identifier', customer.get('locName'));
-                OB.Dal.save(bpLocToUpdate, function () {
-                  //customer location updated successfully. Nothing to do here.
-                }, function () {
+                OB.Dal.save(bpLocToUpdate, function () {}, function () {
                   OB.error(arguments);
                 }, isNew);
               } else {
@@ -144,7 +147,33 @@
             bpToSave: bpToSave
           }, function (args) {
             OB.Dal.save(bpToSave, function () {
-              bpToSave.set('json', customer.serializeToJSON());
+              // update each order also so that new name is shown and the bp
+              // in the order is the same as what got saved
+              if (OB.MobileApp.model.orderList) {
+                _.forEach(OB.MobileApp.model.orderList.models, function (order) {
+                  if (order.get('bp').get('id') === customerId) {
+                    var clonedBP = new OB.Model.BusinessPartner();
+                    OB.UTIL.clone(customer, clonedBP);
+                    if (order.get('bp').get('locId') !== customer.get('locId')) {
+                      // if the order has a different address but same BP than the bp
+                      // then copy over the address data
+                      var bp = order.get('bp');
+                      clonedBP.set('locId', bp.get('locId'));
+                      clonedBP.set('locName', bp.get('locName'));
+                      clonedBP.set('postalCode', bp.get('postalCode'));
+                      clonedBP.set('cityName', bp.get('cityName'));
+                      clonedBP.set('countryName', bp.get('countryName'));
+                      clonedBP.set('locationModel', bp.get('locationModel'));
+                    }
+                    order.set('bp', clonedBP);
+                    order.save();
+                    if (OB.MobileApp.model.orderList.modelorder && OB.MobileApp.model.orderList.modelorder.get('id') === order.get('id')) {
+                      OB.MobileApp.model.orderList.modelorder.setBPandBPLoc(clonedBP, false, true);
+                    }
+                  }
+                });
+              }
+
               var successCallback, errorCallback, List;
               successCallback = function () {
                 if (callback) {

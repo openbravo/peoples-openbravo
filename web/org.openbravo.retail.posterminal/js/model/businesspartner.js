@@ -76,6 +76,20 @@
         }
       });
     },
+    loadModel: function (customerCol, userCallback) {
+      //search data in local DB and load it to this
+      var me = this;
+      if (!customerCol || customerCol.length === 0) {
+        me.clearModelWith(null);
+        userCallback(me);
+      } else {
+        OB.Dal.get(OB.Model.BPLocation, customerCol.get('locId'), function (location) { //OB.Dal.find success
+          customerCol.set('locationModel', location);
+          me.clearModelWith(customerCol);
+          userCallback(me);
+        });
+      }
+    },
     loadByModel: function (cusToLoad) {
       //copy data from model to this
     },
@@ -142,7 +156,6 @@
       editedBp.set('id', this.get('id'));
       editedBp.set('locId', this.get('locId'));
       editedBp.set('contactId', this.get('contactId'));
-      editedBp.set('updated', this.get('updated'));
       editedBp.set('timezoneOffset', this.get('timezoneOffset'));
       editedBp.set('loaded', this.get('loaded'));
       editedBp.set('posTerminal', this.get('posTerminal'));
@@ -292,10 +305,6 @@
   }, {
     name: 'priceListName',
     column: 'priceListName',
-    type: 'TEXT'
-  }, {
-    name: 'updated',
-    column: 'updated',
     type: 'TEXT'
   }, {
     name: 'loaded',
