@@ -86,6 +86,7 @@ public class CancelAndReplaceUtils {
   public static final String ASSOCIATE_SHIPMENT_TO_REPLACE_TICKET = "CancelAndReplaceAssociateShipmentToNewTicket";
   public static final String ENABLE_STOCK_RESERVATIONS = "StockReservations";
   public static String REVERSE_PREFIX = "*R*";
+  public static String ZERO_PAYMENT_SUFIX = "*Z*";
   public static String DOCTYPE_MatShipment = "MMS";
 
   /**

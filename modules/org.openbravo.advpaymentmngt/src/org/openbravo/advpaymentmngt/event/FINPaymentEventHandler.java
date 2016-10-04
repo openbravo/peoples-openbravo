@@ -1,13 +1,23 @@
 /*
- ************************************************************************************
- * Copyright (C) 2016 Openbravo S.L.U.
- * Licensed under the Openbravo Commercial License version 1.0
- * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
- * or in the legal folder of this module distribution.
- ************************************************************************************
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.0  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License.
+ * The Original Code is Openbravo ERP.
+ * The Initial Developer of the Original Code is Openbravo SLU
+ * All portions are Copyright (C) 2016 Openbravo SLU
+ * All Rights Reserved.
+ * Contributor(s):  ______________________________________.
+ *************************************************************************
  */
 
-package org.openbravo.event;
+package org.openbravo.advpaymentmngt.event;
 
 import java.math.BigDecimal;
 
@@ -44,20 +54,22 @@ public class FINPaymentEventHandler extends EntityPersistenceEventObserver {
     final Entity paymentEntity = ModelProvider.getInstance().getEntity(FIN_Payment.ENTITY_NAME);
     final Property paymentAmountProperty = paymentEntity.getProperty(FIN_Payment.PROPERTY_AMOUNT);
     BigDecimal oldPaymentAmount = (BigDecimal) event.getPreviousState(paymentAmountProperty);
-    int index = payment.getDocumentNo().indexOf(CancelAndReplaceUtils.REVERSE_PREFIX);
+    String documentNo = payment.getDocumentNo();
+    int documentNoLength = payment.getDocumentNo().length();
     if (payment.getAmount().compareTo(BigDecimal.ZERO) == 0) {
-      if (index <= 0) {
-        String newDocumentNo = payment.getDocumentNo() + CancelAndReplaceUtils.REVERSE_PREFIX;
+      // Payment has no already an *Z* at the end of the document number
+      if (!CancelAndReplaceUtils.ZERO_PAYMENT_SUFIX.equals(documentNo
+          .substring(documentNoLength - 3))) {
+        String newDocumentNo = documentNo + CancelAndReplaceUtils.ZERO_PAYMENT_SUFIX;
         setDocumentNoToPayment(payment, event, newDocumentNo);
       }
     } else if (oldPaymentAmount.compareTo(BigDecimal.ZERO) == 0) {
-      if (index > 0) {
-        String newDocumentNo = payment.getDocumentNo().substring(0, index);
+      if (CancelAndReplaceUtils.ZERO_PAYMENT_SUFIX.equals(documentNo
+          .substring(documentNoLength - 3))) {
+        String newDocumentNo = documentNo.substring(0, documentNoLength - 3);
         setDocumentNoToPayment(payment, event, newDocumentNo);
       }
     }
-    // Index == 0 case is not managed here because with Openbravo Reverse Payments functionality we
-    // could have payment document numbers starting with "*R*"
   }
 
   public void onSave(@Observes
@@ -66,8 +78,23 @@ public class FINPaymentEventHandler extends EntityPersistenceEventObserver {
       return;
     }
     FIN_Payment payment = (FIN_Payment) event.getTargetInstance();
+    final Entity paymentEntity = ModelProvider.getInstance().getEntity(FIN_Payment.ENTITY_NAME);
+    final Property processedProperty = paymentEntity.getProperty(FIN_Payment.PROPERTY_PROCESSED);
     if (payment.getAmount().compareTo(BigDecimal.ZERO) == 0) {
-      String newDocumentNo = payment.getDocumentNo() + CancelAndReplaceUtils.REVERSE_PREFIX;
+      String newDocumentNo = payment.getDocumentNo();
+      boolean processed = false;
+      Object oProcessed = (processedProperty == null ? false : event
+          .getCurrentState(processedProperty));
+      if (oProcessed instanceof String) {
+        processed = "Y".equals(oProcessed.toString());
+      } else if (oProcessed instanceof Boolean) {
+        processed = (Boolean) oProcessed;
+      }
+      if (newDocumentNo.startsWith("<") && newDocumentNo.endsWith(">") && !processed) {
+        // Remove "<" and ">" characters from documentNo if payment is not processed
+        newDocumentNo = newDocumentNo.substring(1, newDocumentNo.length() - 1);
+      }
+      newDocumentNo = newDocumentNo + CancelAndReplaceUtils.ZERO_PAYMENT_SUFIX;
       setDocumentNoToPayment(payment, event, newDocumentNo);
     }
   }
