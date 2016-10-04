@@ -17,8 +17,8 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
+import org.openbravo.base.ExecutionLimitBaseProcess;
 import org.openbravo.base.ExecutionLimits;
-import org.openbravo.base.ManagerBuildValidationModuleScript;
 import org.openbravo.database.ConnectionProvider;
 
 /**
@@ -27,7 +27,7 @@ import org.openbravo.database.ConnectionProvider;
  * update.database.mod)
  * 
  */
-public abstract class ModuleScript extends ManagerBuildValidationModuleScript {
+public abstract class ModuleScript extends ExecutionLimitBaseProcess {
 
   private static final Logger log4j = Logger.getLogger(ModuleScript.class);
 
@@ -58,6 +58,13 @@ public abstract class ModuleScript extends ManagerBuildValidationModuleScript {
    */
   public final List<String> preExecute(Map<String, OpenbravoVersion> modulesVersionMap) {
     return super.preExecute(modulesVersionMap);
+  }
+
+  /**
+   * This method returns the name of the class.
+   */
+  protected String getTypeName() {
+    return this.getClass().getName();
   }
 
   /**

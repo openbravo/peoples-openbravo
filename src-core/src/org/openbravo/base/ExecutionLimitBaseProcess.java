@@ -17,17 +17,17 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.openbravo.buildvalidation.BuildValidation;
 import org.openbravo.database.CPStandAlone;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.modulescript.OpenbravoVersion;
 
 /**
- * ManagerBuildValidationModuleScript implements shared methods between BuildValidation and
- * ModuleScript classes.
+ * ExecutionLimitBaseProcess implements shared methods between BuildValidation and ModuleScript
+ * classes.
  */
-public abstract class ManagerBuildValidationModuleScript {
-  private static final Logger log4j = Logger.getLogger(ManagerBuildValidationModuleScript.class);
+public abstract class ExecutionLimitBaseProcess {
+
+  private static final Logger log4j = Logger.getLogger(ExecutionLimitBaseProcess.class);
 
   private ConnectionProvider cp;
 
@@ -36,9 +36,7 @@ public abstract class ManagerBuildValidationModuleScript {
   /**
    * This method allows to implement in subclasses doExecute() method.
    */
-  protected List<String> doExecute() {
-    return null;
-  }
+  protected abstract List<String> doExecute();
 
   /**
    * This method checks whether the BuildValidation or ModuleScript can be executed before invoke
@@ -50,7 +48,8 @@ public abstract class ManagerBuildValidationModuleScript {
   public List<String> preExecute(Map<String, OpenbravoVersion> modulesVersionMap) {
     ArrayList<String> errors = null;
     if (modulesVersionMap == null || modulesVersionMap.size() == 0) {
-      // if we do not have module versions to compare with (install.source) then execute depending
+      // if we do not have module versions to compare with (install.source) then
+      // execute depending
       // on the value of the executeOnInstall() method
       if (executeOnInstall()) {
         errors = (ArrayList<String>) doExecute();
@@ -101,13 +100,13 @@ public abstract class ManagerBuildValidationModuleScript {
     return errors;
   }
 
-  private String getTypeName() {
-    String type = "ModuleScript";
-    if (this instanceof BuildValidation) {
-      type = "BuildValidation";
-    }
-    return type;
-  }
+  /**
+   * This method can be overridden by the BuildValidation and ModuleScript subclasses, to retrieves
+   * name of the class.
+   * 
+   * @return Name of the class.
+   */
+  protected abstract String getTypeName();
 
   /**
    * This method can be overridden by the BuildValidation and ModuleScript subclasses, to specify
@@ -117,9 +116,7 @@ public abstract class ManagerBuildValidationModuleScript {
    * @return a ExecutionLimits object which contains the dependent module id and the first and last
    *         versions of the module that define the execution logic.
    */
-  protected ExecutionLimits getExecutionLimits() {
-    return null;
-  }
+  protected abstract ExecutionLimits getExecutionLimits();
 
   /**
    * This method can be overridden by the BuildValidation or ModuleScript subclasses, to specify if
