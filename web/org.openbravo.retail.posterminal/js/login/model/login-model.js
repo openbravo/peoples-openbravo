@@ -179,6 +179,7 @@
                 if (OB.MobileApp.model.orderList) {
                   OB.MobileApp.model.orderList.synchronizeCurrentOrder();
                 }
+                OB.UTIL.HookManager.executeHooks('OBPOS_PostDocumentSequenceUpdated', {});
               });
 
               OB.UTIL.localStorage.setItem('terminalId', data[0].terminal.id);
