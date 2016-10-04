@@ -1033,9 +1033,11 @@ enyo.kind({
     }
     // if no 'not isPrePayment' payments, the 'Done' button must be disabled
     if (!value) {
-      if (this.owner.receipt && this.owner.receipt.get('payments') && this.owner.receipt.get('payments').size() > 0 && _.filter(this.owner.receipt.get('payments').models, function (payment) {
-        return (!payment.get('isPrePayment'));
-      }).length === 0 && !this.owner.receipt.get('doCancelAndReplace')) {
+      if (this.owner.receipt && this.owner.receipt.get('payments') && this.owner.receipt.get('payments').size() > 0 && _.reduce(_.filter(this.owner.receipt.get('payments').models, function (payment) {
+        return payment.get('isPrePayment') && !payment.get('isReversed');
+      }), function (memo, pymnt) {
+        return OB.DEC.add(memo, pymnt.get('origAmount'));
+      }, OB.DEC.Zero) === this.owner.receipt.getTotal() && !this.owner.receipt.get('doCancelAndReplace')) {
         value = true;
       }
     }
