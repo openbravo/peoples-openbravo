@@ -3038,6 +3038,11 @@
           p.set('origAmount', p.get('amount'));
         }
         p.set('paid', p.get('origAmount'));
+        if (!p.get('isPrePayment') && p.get('orderGross') < 0 && p.get('isPaid') && !p.get('reversedPaymentId')) {
+          p.set('amount', -p.get('amount'));
+          p.set('origAmount', -p.get('origAmount'));
+          p.set('paid', -p.get('paid'));
+        }
         if (_.isUndefined(this.get('paidInNegativeStatusAmt'))) {
           sumCash();
         } else {
