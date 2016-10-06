@@ -3220,7 +3220,8 @@
             return line;
           }
         });
-        if (lineToMerge && lineToMerge.get('product').get('groupProduct')) {
+        //When it Comes To Technically , Consider The Product As Non-Grouped When scaled and groupproduct Are Checked 
+        if (lineToMerge && lineToMerge.get('product').get('groupProduct') && !(lineToMerge.get('product').get('groupProduct') && lineToMerge.get('product').get('obposScale'))) {
           lineToMerge.set({
             qty: lineToMerge.get('qty') + l.get('qty')
           }, {
@@ -3245,6 +3246,9 @@
         _.each(l.get('promotions'), function (promo) {
           promo.pendingQtyOffer = promo.qtyOffer;
           if (!l.get('product').get('groupProduct')) {
+            promo.doNotMerge = true;
+          }
+          if (l.get('product').get('groupProduct') && l.get('product').get('obposScale')) {
             promo.doNotMerge = true;
           }
         });
