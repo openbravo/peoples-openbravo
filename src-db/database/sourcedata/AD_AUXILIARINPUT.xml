@@ -1538,6 +1538,25 @@ and c.costcenter_acctdim_isenable = 'Y']]></CODE>
 <!--34E27119A7B74205B025002E9CD5074F-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--34E27119A7B74205B025002E9CD5074F--></AD_AUXILIARINPUT>
 
+<!--34E955EADE8843BD9A0342895CB8AAF0--><AD_AUXILIARINPUT>
+<!--34E955EADE8843BD9A0342895CB8AAF0-->  <AD_AUXILIARINPUT_ID><![CDATA[34E955EADE8843BD9A0342895CB8AAF0]]></AD_AUXILIARINPUT_ID>
+<!--34E955EADE8843BD9A0342895CB8AAF0-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--34E955EADE8843BD9A0342895CB8AAF0-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--34E955EADE8843BD9A0342895CB8AAF0-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--34E955EADE8843BD9A0342895CB8AAF0-->  <AD_TAB_ID><![CDATA[186]]></AD_TAB_ID>
+<!--34E955EADE8843BD9A0342895CB8AAF0-->  <NAME><![CDATA[showAddPayment]]></NAME>
+<!--34E955EADE8843BD9A0342895CB8AAF0-->  <CODE><![CDATA[@SQL=select case when sum(fpsd.amount)=co.GrandTotal then 'N' else 'Y' end
+          from fin_payment_scheduledetail fpsd
+              join fin_payment_detail fpd on fpsd.fin_payment_detail_id=fpd.fin_payment_detail_id
+              join fin_payment fp on fpd.fin_payment_id=fp.fin_payment_id
+              join fin_payment_schedule ps ON ps.fin_payment_schedule_id = fpsd.fin_payment_schedule_order
+              join c_order co on co.c_order_id=ps.c_order_id
+                WHERE ps.c_order_id =@c_order_id@
+                and to_number(aprm_seqnumberpaymentstatus(fp.status)) >= 40
+                group by co.GrandTotal]]></CODE>
+<!--34E955EADE8843BD9A0342895CB8AAF0-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--34E955EADE8843BD9A0342895CB8AAF0--></AD_AUXILIARINPUT>
+
 <!--35586436B2FB4809B66D519BC02230F4--><AD_AUXILIARINPUT>
 <!--35586436B2FB4809B66D519BC02230F4-->  <AD_AUXILIARINPUT_ID><![CDATA[35586436B2FB4809B66D519BC02230F4]]></AD_AUXILIARINPUT_ID>
 <!--35586436B2FB4809B66D519BC02230F4-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -3370,6 +3389,25 @@ where io.m_inout_id = @m_inout_id@]]></CODE>
 <!--A5153957017944A08E6A504455417843-->  <CODE><![CDATA[POO]]></CODE>
 <!--A5153957017944A08E6A504455417843-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--A5153957017944A08E6A504455417843--></AD_AUXILIARINPUT>
+
+<!--A53F5DC798974EBD9707C988B0C72D63--><AD_AUXILIARINPUT>
+<!--A53F5DC798974EBD9707C988B0C72D63-->  <AD_AUXILIARINPUT_ID><![CDATA[A53F5DC798974EBD9707C988B0C72D63]]></AD_AUXILIARINPUT_ID>
+<!--A53F5DC798974EBD9707C988B0C72D63-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--A53F5DC798974EBD9707C988B0C72D63-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--A53F5DC798974EBD9707C988B0C72D63-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--A53F5DC798974EBD9707C988B0C72D63-->  <AD_TAB_ID><![CDATA[294]]></AD_TAB_ID>
+<!--A53F5DC798974EBD9707C988B0C72D63-->  <NAME><![CDATA[showAddPayment]]></NAME>
+<!--A53F5DC798974EBD9707C988B0C72D63-->  <CODE><![CDATA[@SQL=select case when sum(fpsd.amount)=co.GrandTotal then 'N' else 'Y' end
+          from fin_payment_scheduledetail fpsd
+              join fin_payment_detail fpd on fpsd.fin_payment_detail_id=fpd.fin_payment_detail_id
+              join fin_payment fp on fpd.fin_payment_id=fp.fin_payment_id
+              join fin_payment_schedule ps ON ps.fin_payment_schedule_id = fpsd.fin_payment_schedule_order
+              join c_order co on co.c_order_id=ps.c_order_id
+                WHERE ps.c_order_id =@c_order_id@
+                and to_number(aprm_seqnumberpaymentstatus(fp.status)) >= 40
+                group by co.GrandTotal]]></CODE>
+<!--A53F5DC798974EBD9707C988B0C72D63-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--A53F5DC798974EBD9707C988B0C72D63--></AD_AUXILIARINPUT>
 
 <!--A6000327591C4D82A8F20A0311167B94--><AD_AUXILIARINPUT>
 <!--A6000327591C4D82A8F20A0311167B94-->  <AD_AUXILIARINPUT_ID><![CDATA[A6000327591C4D82A8F20A0311167B94]]></AD_AUXILIARINPUT_ID>
