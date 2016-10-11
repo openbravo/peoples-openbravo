@@ -155,7 +155,7 @@ public class CostingServer {
     if (needsUpdate) {
       lastTransaction.setClient(transaction.getClient());
       lastTransaction.setOrganization(organization);
-      lastTransaction.setTransaction(transaction);
+      lastTransaction.setInventoryTransaction(transaction);
       lastTransaction.setProduct(transaction.getProduct());
       if (costingRule.isWarehouseDimension()) {
         lastTransaction.setWarehouse(transaction.getStorageBin().getWarehouse());
