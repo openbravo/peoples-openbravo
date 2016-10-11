@@ -22,7 +22,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2014 Openbravo SLU
+* All portions are Copyright (C) 2014-2016 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -75,6 +75,7 @@ BEGIN
               LEFT JOIN m_transaction_cost tc ON (trx.m_transaction_id = tc.m_transaction_id)
             WHERE trx.m_product_id = cur_products.m_product_id
               AND trx.iscostcalculated = 'Y'
+              AND tc.isunitcost = 'Y'
               AND AD_ORG_ISINNATURALTREE(trx.ad_org_id, Cur_legal_entities.ad_org_id, p_client) ='Y'
               AND trx.ad_client_id = p_client
             GROUP BY trx.m_transaction_id, trx.m_product_id, tc.c_currency_id, tc.dateacct, w.m_warehouse_id, trx.movementqty
