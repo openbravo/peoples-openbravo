@@ -405,7 +405,8 @@ public class CostingUtils {
           + " > :dateFrom");
       select.append(" or (trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
           + " = :dateFrom");
-      //
+      // If the costing Transaction is an M- exclude the M+ Transactions with same movementDate and
+      // TrxProcessDate due to how data is going to be ordered in further queries using the priority
       if (costing.getInventoryTransaction().getMovementType().equals("M-")) {
         select.append(" and (( trx." + MaterialTransaction.PROPERTY_MOVEMENTTYPE
             + " <> 'M+' and trxtype." + CostAdjustmentUtils.propADListPriority
@@ -527,7 +528,8 @@ public class CostingUtils {
           + " > :dateFrom");
       select.append(" or (trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
           + " = :dateFrom");
-      //
+      // If the costing Transaction is an M- exclude the M+ Transactions with same movementDate and
+      // TrxProcessDate due to how data is going to be ordered in further queries using the priority
       if (costing.getInventoryTransaction().getMovementType().equals("M-")) {
         select.append(" and (( trx." + MaterialTransaction.PROPERTY_MOVEMENTTYPE
             + " <> 'M+' and trxtype." + CostAdjustmentUtils.propADListPriority
