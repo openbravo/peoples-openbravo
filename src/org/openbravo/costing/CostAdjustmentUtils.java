@@ -166,7 +166,7 @@ public class CostAdjustmentUtils {
 
   public static int compareToLastTransaction(MaterialTransaction trx, TransactionLast lastTrx,
       Date startingDate) {
-    MaterialTransaction lastTransaction = lastTrx.getTransaction();
+    MaterialTransaction lastTransaction = lastTrx.getInventoryTransaction();
 
     // If trx is the same as lastTransaction or was processed before or is from previous costing
     // rule, return 0
