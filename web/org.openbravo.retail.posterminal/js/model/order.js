@@ -2738,8 +2738,10 @@
 
     createOrderFromQuotation: function (updatePrices) {
       var idMap = {},
+          oldIdMap = {},
           me = this;
       this.get('lines').each(function (line) {
+        var oldId = line.get('id');
         line.set('id', OB.UTIL.get_UUID());
         //issue 25055 -> If we don't do the following prices and taxes are calculated
         //wrongly because the calculation starts with discountedNet instead of
@@ -2764,6 +2766,9 @@
         line.unset('lineGrossAmount');
         idMap[line.get('id')] = OB.Dal.get_uuid();
         line.set('id', idMap[line.get('id')]);
+        if (line.get('hasRelatedServices')) {
+          oldIdMap[oldId] = line.get('id');
+        }
       }, this);
 
       this.set('id', null);
@@ -2799,8 +2804,9 @@
         if (line.get('relatedLines')) {
           line.get('relatedLines').forEach(function (rl) {
             rl.orderId = me.get('id');
-            if (idMap[rl.orderlineId]) {
-              rl.orderlineId = idMap[rl.orderlineId];
+            rl.orderDocumentNo = me.get('documentNo');
+            if (oldIdMap[rl.orderlineId]) {
+              rl.orderlineId = oldIdMap[rl.orderlineId];
             }
           });
         }
