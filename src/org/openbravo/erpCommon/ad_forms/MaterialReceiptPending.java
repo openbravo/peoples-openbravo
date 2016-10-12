@@ -389,35 +389,39 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
           String qtyorder = null;
           MaterialReceiptPendingLinesData[] dataLine = MaterialReceiptPendingLinesData.select(this,
               strOrderlineId);
+          // Recalculate quantityorder only if qtyordered has been updated
           if (dataLine[0].quantityorder != "") {
-            OBCriteria<UOMConversion> conversion = OBDal.getInstance().createCriteria(
-                UOMConversion.class);
-            conversion.add(Restrictions.eq(UOMConversion.PROPERTY_UOM,
-                OBDal.getInstance().get(UOM.class, dataLine[0].cUomId)));
-            conversion.add(Restrictions.eq(UOMConversion.PROPERTY_TOUOM,
-                OBDal.getInstance().get(ProductUOM.class, dataLine[0].mProductUomId).getUOM()));
-
-            Boolean useDivideRateBy = false;
-            // Inverting search of UOM conversion if conversion list is empty
-            if (conversion.list().size() == 0) {
-              conversion = OBDal.getInstance().createCriteria(UOMConversion.class);
+            if (new BigDecimal(dataLine[0].qtyordered).compareTo(new BigDecimal(strQtyordered)) == 0) {
+              qtyorder = dataLine[0].quantityorder;
+            } else {
+              OBCriteria<UOMConversion> conversion = OBDal.getInstance().createCriteria(
+                  UOMConversion.class);
               conversion.add(Restrictions.eq(UOMConversion.PROPERTY_UOM,
-                  OBDal.getInstance().get(ProductUOM.class, dataLine[0].mProductUomId).getUOM()));
-              conversion.add(Restrictions.eq(UOMConversion.PROPERTY_TOUOM,
                   OBDal.getInstance().get(UOM.class, dataLine[0].cUomId)));
-              useDivideRateBy = true;
-            }
+              conversion.add(Restrictions.eq(UOMConversion.PROPERTY_TOUOM,
+                  OBDal.getInstance().get(ProductUOM.class, dataLine[0].mProductUomId).getUOM()));
 
-            for (UOMConversion conv : conversion.list()) {
-              if (!useDivideRateBy) {
-                qtyorder = new BigDecimal(strQtyordered).multiply(conv.getMultipleRateBy())
-                    .toString();
-              } else {
-                qtyorder = new BigDecimal(strQtyordered).multiply(conv.getDivideRateBy())
-                    .toString();
+              Boolean useDivideRateBy = false;
+              // Inverting search of UOM conversion if conversion list is empty
+              if (conversion.list().size() == 0) {
+                conversion = OBDal.getInstance().createCriteria(UOMConversion.class);
+                conversion.add(Restrictions.eq(UOMConversion.PROPERTY_UOM,
+                    OBDal.getInstance().get(ProductUOM.class, dataLine[0].mProductUomId).getUOM()));
+                conversion.add(Restrictions.eq(UOMConversion.PROPERTY_TOUOM, OBDal.getInstance()
+                    .get(UOM.class, dataLine[0].cUomId)));
+                useDivideRateBy = true;
+              }
+
+              for (UOMConversion conv : conversion.list()) {
+                if (!useDivideRateBy) {
+                  qtyorder = new BigDecimal(strQtyordered).multiply(conv.getMultipleRateBy())
+                      .toString();
+                } else {
+                  qtyorder = new BigDecimal(strQtyordered).multiply(conv.getDivideRateBy())
+                      .toString();
+                }
               }
             }
-
           }
           try {
             MaterialReceiptPendingLinesData.insert(conn, this, strSequenceLine, vars.getClient(),
