@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -69,7 +69,7 @@
             isdeferred, defplantype, periodnumber, c_period_id,
             C_PROJECT_ID, A_ASSET_ID, C_COSTCENTER_ID, USER1_ID, USER2_ID
         )
-        SELECT ?, ?, ?, l.AD_ORG_ID, 'Y', now(), ?, now(), ?,
+        SELECT ?, ?, ?, ?, 'Y', now(), ?, now(), ?,
         (SELECT COALESCE(MAX(LINE),0)+10 FROM C_InvoiceLine WHERE C_Invoice_ID = ?), l.DESCRIPTION, l.M_PRODUCT_ID,
         l.QTYINVOICED, TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), l.C_CHARGE_ID, l.CHARGEAMT, l.C_UOM_ID, ?,
         l.S_RESOURCEASSIGNMENT_ID, l.TAXAMT, l.M_ATTRIBUTESETINSTANCE_ID, l.ISDESCRIPTION, l.QUANTITYORDER, l.M_PRODUCT_UOM_ID,
@@ -89,6 +89,7 @@
     <Parameter name="cNewInvoiceId"/>
     <Parameter name="cInvoiceId"/>
     <Parameter name="adClientId"/>
+    <Parameter name="adOrgId"/>
     <Parameter name="adUserId"/>
     <Parameter name="adUserId"/>
     <Parameter name="cInvoiceId"/>
