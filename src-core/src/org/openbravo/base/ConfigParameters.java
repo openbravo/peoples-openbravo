@@ -384,8 +384,7 @@ public class ConfigParameters {
       while (em.hasMoreElements()) {
         String obProperty = (String) em.nextElement();
         String overrideValue = overrideProperties.getProperty(obProperty);
-        Object object = obProperties.setProperty(obProperty, overrideValue); // replace
-                                                                             // original
+        Object object = obProperties.setProperty(obProperty, overrideValue); // replace original
 
         log4j.info("Overriding property " + obProperty + ": " + object + "->"
             + obProperties.getProperty(obProperty));
