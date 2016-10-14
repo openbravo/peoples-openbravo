@@ -29,6 +29,7 @@ import javax.servlet.Servlet;
 
 import org.apache.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -65,6 +66,7 @@ public class ClassLoaderTest extends OBBaseTest {
    * Consistency test to have a clean web.xml
    */
   @Test
+  @Ignore
   public void modelClassesShouldImplementServlet() {
     loadModel();
 
