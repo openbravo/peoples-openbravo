@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -65,12 +65,15 @@ public class Wad extends DefaultHandler {
   private static final int MAX_SIZE_EDITION_2_COLUMNS = 45;
   private static final int MAX_TEXTBOX_LENGTH = 110;
   private static final double PIXEL_TO_LENGTH = 5.6;
+  private static final String WELD_LISTENER_ID = "3F88D97C7E9E4DD9847A5488771F4AB3";
+  private static final String NONE = "none";
   private XmlEngine xmlEngine;
   private WadConnection pool;
   private String strSystemSeparator;
   private static String jsDateFormat;
   private static String sqlDateFormat;
   private static boolean generateAllClassic250Windows;
+  private static boolean excludeCDI;
 
   private static final Logger log4j = Logger.getLogger(Wad.class);
 
@@ -233,6 +236,12 @@ public class Wad extends DefaultHandler {
         generateAllClassic250Windows = argv[17].equals("true");
       }
 
+      if (argv.length <= 18) {
+        excludeCDI = false;
+      } else {
+        excludeCDI = argv[18].equals("true");
+      }
+
       log4j.info("File connection: " + strFileConnection);
       log4j.info("window: " + strWindowName);
       log4j.info("module: " + module);
@@ -247,6 +256,7 @@ public class Wad extends DefaultHandler {
       log4j.info("Web path: " + webPath);
       log4j.info("Quick mode: " + quick);
       log4j.info("Generate all 2.50 windows: " + generateAllClassic250Windows);
+      log4j.info("Exclude CDI: " + excludeCDI);
 
       final File fileFin = new File(dirFin);
       if (!fileFin.exists()) {
@@ -789,7 +799,10 @@ public class Wad extends DefaultHandler {
 
       xmlDocument.setParameter("webPath", webPath);
       xmlDocument.setParameter("attachPath", attachPath);
-      xmlDocument.setData("structureListener", WadData.selectListener(pool));
+
+      String excludeWeldListener = excludeCDI ? WELD_LISTENER_ID : NONE;
+      xmlDocument.setData("structureListener", WadData.selectListener(pool, excludeWeldListener));
+
       xmlDocument.setData("structureResource", WadData.selectResource(pool));
       final WadData[] filters = WadData.selectFilter(pool);
       WadData[][] filterParams = null;

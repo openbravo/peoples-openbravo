@@ -11,17 +11,21 @@
  * under the License. 
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2014 Openbravo SLU
+ * All portions are Copyright (C) 2010-2016 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.test.model;
 
-import static org.junit.Assert.assertEquals;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.empty;
+import static org.junit.Assert.assertThat;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.servlet.Servlet;
 
 import org.apache.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
@@ -40,15 +44,43 @@ import org.openbravo.test.base.OBBaseTest;
 public class ClassLoaderTest extends OBBaseTest {
 
   private static final Logger log = Logger.getLogger(ClassLoaderTest.class);
+  private static List<String> notFoundClasses = new ArrayList<String>();
+  private static List<String> notServletClasses = new ArrayList<String>();
+  private static boolean initialized = false;
 
   /**
    * Test if all registered classes in Application Dictionary can be loaded. Consistency test to
    * have a clean web.xml
    */
   @Test
-  public void testModelObject() {
+  public void modelClassesShouldBeImplemented() {
+    loadModel();
 
-    final List<String> notFoundClasses = new ArrayList<String>();
+    logErrors(notFoundClasses, "Missing classes");
+    assertThat("Missing classes defined in AD_Model_Object", notFoundClasses, is(empty()));
+  }
+
+  /**
+   * Test if all registered classes in Application Dictionary implement Servlet when needed.
+   * Consistency test to have a clean web.xml
+   */
+  @Test
+  public void modelClassesShouldImplementServlet() {
+    loadModel();
+
+    logErrors(notServletClasses, "Classes not implementing Servlet");
+    assertThat("Classes not implement Servlet defined in AD_Model_Object", notServletClasses,
+        is(empty()));
+  }
+
+  private void loadModel() {
+    if (initialized) {
+      return;
+    }
+
+    initialized = true;
+    notFoundClasses = new ArrayList<String>();
+    notServletClasses = new ArrayList<String>();
 
     setSystemAdministratorContext();
 
@@ -66,13 +98,8 @@ public class ClassLoaderTest extends OBBaseTest {
         ModelImplementation.class);
     obc.add(Restrictions.in(ModelImplementation.PROPERTY_OBJECTTYPE, in));
 
-    for (ModelImplementation mi : obc.list()) {
-      try {
-        Class.forName(mi.getJavaClassName());
-      } catch (ClassNotFoundException e) {
-        notFoundClasses.add(mi.getId() + " : " + mi.getJavaClassName());
-      }
-    }
+    // these don't need to implement Servlet
+    checkClasses("Listener/Filter", obc.list(), notFoundClasses, new ArrayList<String>());
 
     // Checking manual servlets
     obc = OBDal.getInstance().createCriteria(ModelImplementation.class);
@@ -81,59 +108,53 @@ public class ClassLoaderTest extends OBBaseTest {
     obc.add(Restrictions.isNull(ModelImplementation.PROPERTY_SPECIALFORM));
     obc.add(Restrictions.isNull(ModelImplementation.PROPERTY_PROCESS));
 
-    for (ModelImplementation mi : obc.list()) {
-      try {
-        if (mi.getId().equals("801180")) {
-          // Ugly hack! check issue https://issues.openbravo.com/view.php?id=12429
-          continue;
-        }
-        Class.forName(mi.getJavaClassName());
-      } catch (ClassNotFoundException e) {
-        notFoundClasses.add(mi.getId() + " : " + mi.getJavaClassName());
-      }
-    }
+    checkClasses("Manual Servlet", obc.list(), notFoundClasses, notServletClasses);
 
     // Checking servlets associated to forms
     OBQuery<ModelImplementation> obq = OBDal.getInstance().createQuery(ModelImplementation.class,
         "objectType = 'S' and specialForm is not null and specialForm.active = true");
 
-    for (ModelImplementation mi : obq.list()) {
-      try {
-        Class.forName(mi.getJavaClassName());
-      } catch (ClassNotFoundException e) {
-        notFoundClasses.add(mi.getId() + " : " + mi.getJavaClassName());
-      }
-    }
+    checkClasses("Form", obq.list(), notFoundClasses, notServletClasses);
 
     // Check servlets associated to processes/reports
-    obq = OBDal.getInstance().createQuery(ModelImplementation.class,
-        "objectType = 'S' and process is not null and process.active = true");
+    obq = OBDal
+        .getInstance()
+        .createQuery(
+            ModelImplementation.class,
+            "objectType = 'S' and process is not null and process.active = true and process.uIPattern = 'M' and process.report = false");
 
-    for (ModelImplementation mi : obq.list()) {
-      try {
-        Class.forName(mi.getJavaClassName());
-      } catch (ClassNotFoundException e) {
-        notFoundClasses.add(mi.getId() + " : " + mi.getJavaClassName());
-      }
-    }
+    checkClasses("Process", obq.list(), notFoundClasses, notServletClasses);
 
     // Checking servlets associated to tabs
     obq = OBDal.getInstance().createQuery(ModelImplementation.class,
         "objectType = 'S' and tab is not null and tab.active = true and tab.window.active = true");
 
-    for (ModelImplementation mi : obq.list()) {
-      try {
-        Class.forName(mi.getJavaClassName());
-      } catch (ClassNotFoundException e) {
-        notFoundClasses.add(mi.getId() + " : " + mi.getJavaClassName());
-      }
-    }
+    checkClasses("Tab", obq.list(), notFoundClasses, notServletClasses);
+  }
 
-    if (notFoundClasses.size() > 0) {
-      for (String nf : notFoundClasses) {
-        log.error(nf);
+  private void checkClasses(String type, List<ModelImplementation> models, List<String> notFound,
+      List<String> notServlet) {
+    for (ModelImplementation mi : models) {
+      try {
+        Class<?> clz = Class.forName(mi.getJavaClassName());
+        if (!Servlet.class.isAssignableFrom(clz)) {
+          notServlet.add(type + " - " + mi.getId() + ": " + mi.getJavaClassName());
+        }
+
+      } catch (ClassNotFoundException e) {
+        notFound.add(type + " - " + mi.getId() + " : " + mi.getJavaClassName());
       }
     }
-    assertEquals(0, notFoundClasses.size());
+  }
+
+  private void logErrors(final List<String> classes, String msg) {
+    if (classes.isEmpty()) {
+      return;
+    }
+    log.error("== " + msg + " ==");
+    for (String nf : classes) {
+      log.error("  " + nf);
+    }
+    log.error("Total: " + classes.size());
   }
 }

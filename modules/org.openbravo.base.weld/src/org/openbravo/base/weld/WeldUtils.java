@@ -29,7 +29,6 @@ import javax.inject.Inject;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
-import org.jboss.weld.environment.servlet.Listener;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.dal.core.DalContextListener;
 import org.slf4j.Logger;
@@ -45,11 +44,12 @@ public class WeldUtils {
 
   private static BeanManager staticBeanManager = null;
   private static final Logger log = LoggerFactory.getLogger(WeldUtils.class);
+  private static final String BEAN_MANAGER_ATTRIBUTE_NAME = "org.jboss.weld.environment.servlet.javax.enterprise.inject.spi.BeanManager";
 
   public static BeanManager getStaticInstanceBeanManager() {
     if (staticBeanManager == null) {
       staticBeanManager = (BeanManager) DalContextListener.getServletContext().getAttribute(
-          Listener.BEAN_MANAGER_ATTRIBUTE_NAME);
+          BEAN_MANAGER_ATTRIBUTE_NAME);
 
       if (staticBeanManager == null) {
         // In wildfly, bean manager is not saved in servlet context.
