@@ -3900,7 +3900,7 @@
         if (OB.UTIL.RfidController.isRfidConfigured()) {
           OB.UTIL.RfidController.eraseEpcOrder(receipt);
         }
-        if (receipt.get('id') && !isPaidQuotation && receipt.get('lines') && receipt.get('lines').length > 0) {
+        if (receipt.get('id') && !isPaidQuotation && receipt.get('lines') && receipt.get('lines').length > 0 && receipt.get('isEditable')) {
           if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
             receipt.set('skipCalculateReceipt', true);
             _.each(receipt.get('lines').models, function (line) {
