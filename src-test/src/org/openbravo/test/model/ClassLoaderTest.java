@@ -29,7 +29,6 @@ import javax.servlet.Servlet;
 
 import org.apache.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -66,7 +65,6 @@ public class ClassLoaderTest extends OBBaseTest {
    * Consistency test to have a clean web.xml
    */
   @Test
-  @Ignore
   public void modelClassesShouldImplementServlet() {
     loadModel();
 
@@ -109,6 +107,7 @@ public class ClassLoaderTest extends OBBaseTest {
     obc.add(Restrictions.isNull(ModelImplementation.PROPERTY_TAB));
     obc.add(Restrictions.isNull(ModelImplementation.PROPERTY_SPECIALFORM));
     obc.add(Restrictions.isNull(ModelImplementation.PROPERTY_PROCESS));
+    obc.add(Restrictions.isNull(ModelImplementation.PROPERTY_CALLOUT));
 
     checkClasses("Manual Servlet", obc.list(), notFoundClasses, notServletClasses);
 
