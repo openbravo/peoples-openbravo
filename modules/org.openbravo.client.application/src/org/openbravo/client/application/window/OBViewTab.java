@@ -269,7 +269,7 @@ public class OBViewTab extends BaseTemplateComponent {
     } catch (PropertyException e) {
       // The property is not defined, so the classic popup tree should not be used
     }
-    boolean useClassicPopupTree = ("Y".equals(useClassicPopupTreeStr));
+    boolean useClassicPopupTree = (Preferences.YES.equals(useClassicPopupTreeStr));
 
     if (tab.getTableTree() != null) {
       if (useClassicPopupTree) {

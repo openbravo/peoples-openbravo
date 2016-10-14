@@ -178,8 +178,8 @@ public abstract class BaseProcessActionHandler extends BaseActionHandler {
 
       if (!checkPermission) {
         try {
-          checkPermission = "Y".equals(Preferences.getPreferenceValue("SecuredProcess", true,
-              OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
+          checkPermission = Preferences.YES.equals(Preferences.getPreferenceValue("SecuredProcess",
+              true, OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
                   .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
                   .getOBContext().getRole(), window));
         } catch (PropertyException e) {

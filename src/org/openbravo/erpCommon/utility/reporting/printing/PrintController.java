@@ -1486,7 +1486,7 @@ public class PrintController extends HttpSecureAppServlet {
     } finally {
       OBContext.restorePreviousMode();
     }
-    return "Y".equals(preferenceValue);
+    return Preferences.YES.equals(preferenceValue);
   }
 
   @Override

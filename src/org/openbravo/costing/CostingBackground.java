@@ -224,7 +224,7 @@ public class CostingBackground extends DalBaseProcess implements KillableProcess
     try {
       transactionCostDateacctInitialized = Preferences.getPreferenceValue(
           CostingBackground.TRANSACTION_COST_DATEACCT_INITIALIZED, false, client, organization,
-          null, null, null).equals("Y");
+          null, null, null).equals(Preferences.YES);
     } catch (PropertyException e1) {
       transactionCostDateacctInitialized = false;
     }

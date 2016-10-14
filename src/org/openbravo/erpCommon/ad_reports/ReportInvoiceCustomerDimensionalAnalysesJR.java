@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2016 Openbravo SLU 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -994,7 +994,7 @@ public class ReportInvoiceCustomerDimensionalAnalysesJR extends HttpSecureAppSer
     try {
       transactionCostDateacctInitialized = Preferences.getPreferenceValue(
           CostingBackground.TRANSACTION_COST_DATEACCT_INITIALIZED, false, client, organization,
-          null, null, null).equals("Y");
+          null, null, null).equals(Preferences.YES);
     } catch (PropertyException e1) {
       transactionCostDateacctInitialized = false;
     }

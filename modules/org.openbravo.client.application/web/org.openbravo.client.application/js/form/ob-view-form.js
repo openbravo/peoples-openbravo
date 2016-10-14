@@ -331,6 +331,14 @@ OB.ViewFormProperties = {
     if (!this.linkedItemSection) {
       return;
     }
+    if (this.isLinkedItemSectionDisabled()) {
+      // linked items section is hidden by preference
+      if (!this.linkedItemSection.hiddenInForm) {
+        this.linkedItemSection.hiddenInForm = true;
+        this.linkedItemSection.hide();
+      }
+      return;
+    }
     if (enable) {
       this.linkedItemSection.collapseSection(true);
       this.linkedItemSection.setRecordInfo(this.view.entity, this.getValue(OB.Constants.ID), this);
@@ -340,6 +348,10 @@ OB.ViewFormProperties = {
       this.linkedItemSection.hiddenInForm = true;
       this.linkedItemSection.hide();
     }
+  },
+
+  isLinkedItemSectionDisabled: function () {
+    return 'Y' === OB.PropertyStore.get('OBUIAPP_DisableLinkedItemsSection', this.view.windowId);
   },
 
   enableAttachmentsSection: function (enable) {

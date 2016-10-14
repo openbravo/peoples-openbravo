@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014 Openbravo SLU
+ * All portions are Copyright (C) 2014-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -27,6 +27,7 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.erpCommon.utility.PropertyNotFoundException;
 import org.openbravo.model.ad.ui.Window;
@@ -139,7 +140,7 @@ public abstract class AddPaymentReadOnlyLogicsHandler {
           "NotAllowChangeExchange", true, OBContext.getOBContext().getCurrentClient(), OBContext
               .getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
           OBContext.getOBContext().getRole(), window);
-      return "Y".equals(value);
+      return Preferences.YES.equals(value);
     } catch (PropertyNotFoundException e) {
       logger.debug("Property NotAllowChangeExchange not found");
       return false;
@@ -178,7 +179,7 @@ public abstract class AddPaymentReadOnlyLogicsHandler {
           "NotAllowChangeExchange", true, OBContext.getOBContext().getCurrentClient(), OBContext
               .getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
           OBContext.getOBContext().getRole(), window);
-      return "Y".equals(value);
+      return Preferences.YES.equals(value);
     } catch (PropertyNotFoundException e) {
       logger.debug("Property NotAllowChangeExchange not found");
       return false;

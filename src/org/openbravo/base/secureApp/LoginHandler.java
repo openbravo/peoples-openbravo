@@ -32,6 +32,7 @@ import org.openbravo.client.application.CachedPreference;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.obps.ActivationKey.LicenseRestriction;
 import org.openbravo.erpCommon.security.Login;
@@ -417,7 +418,7 @@ public class LoginHandler extends HttpBaseServlet {
   protected boolean isErpAccessRestrictedInStoreServer() {
     String restrictErpAccessInStoreServer = cachedPreference
         .getPreferenceValue(CachedPreference.RESTRICT_ERP_ACCESS_IN_STORE_SERVER);
-    return "Y".equals(restrictErpAccessInStoreServer);
+    return Preferences.YES.equals(restrictErpAccessInStoreServer);
   }
 
   private void updateDBSession(String sessionId, boolean sessionActive, String status) {
