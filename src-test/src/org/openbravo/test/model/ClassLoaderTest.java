@@ -119,8 +119,9 @@ public class ClassLoaderTest extends OBBaseTest {
     // Check servlets associated to processes/reports
     obq = OBDal
         .getInstance()
-        .createQuery(ModelImplementation.class,
-            "objectType = 'S' and process is not null and process.active = true and process.uIPattern != 'S'");
+        .createQuery(
+            ModelImplementation.class,
+            "objectType = 'S' and process is not null and process.active = true and process.uIPattern = 'M' and process.report = false");
 
     checkClasses("Process", obq.list(), notFoundClasses, notServletClasses);
 
