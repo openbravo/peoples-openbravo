@@ -34,7 +34,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2014 Openbravo SLU
+* All portions are Copyright (C) 2014-2016 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -71,7 +71,7 @@ BEGIN
     JOIN ad_client c ON o.ad_client_id = c.ad_client_id
   WHERE o.ad_org_id = p_org;
 
-  SELECT COUNT(*), COALESCE(SUM(stock), 0), COALESCE(SUM(stock_valuation),0)
+  SELECT COUNT(*), COALESCE(SUM(stock), 0), COALESCE(SUM(stock_valuation), 0)
     INTO v_count, v_stock, v_valuation
   FROM m_stock_valuation
   WHERE ad_client_id = p_client
@@ -84,15 +84,17 @@ BEGIN
 
   IF (v_stock = 0) THEN
     v_unit_price := 0;
-    v_valuation := 0;
+    IF (p_stock <> 0) THEN
+      v_valuation := 0;
+    END IF;
   ELSE
     v_unit_price := ROUND(v_valuation/v_stock, v_costprecission);
   END IF;
 
   IF (v_count > 0) THEN
     UPDATE m_stock_valuation
-    SET stock = stock + p_stock,
-        stock_valuation = stock_valuation + p_valuation,
+    SET stock = v_stock,
+        stock_valuation = v_valuation,
         unit_price = v_unit_price
     WHERE ad_client_id = p_client
       AND ad_org_id = p_org

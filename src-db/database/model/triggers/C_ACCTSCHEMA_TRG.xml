@@ -18,7 +18,7 @@
     * under the License.
     * The Original Code is Openbravo ERP.
     * The Initial Developer of the Original Code is Openbravo SLU
-    * All portions are Copyright (C) 2001-2006 Openbravo SLU
+    * All portions are Copyright (C) 2001-2016 Openbravo SLU
     * All Rights Reserved.
     * Contributor(s):  ______________________________________.
     ************************************************************************/
@@ -67,7 +67,8 @@ BEGIN
   END LOOP;
   UPDATE C_ACCTSCHEMA_TABLE
     SET ISACTIVE='Y'
-  WHERE AD_TABLE_ID IN
+  WHERE c_acctschema_id = :new.c_acctschema_id
+  AND AD_TABLE_ID IN
     (SELECT AD_TABLE_ID FROM AD_TABLE WHERE ISDEFAULTACCT='Y')
     ;
 END C_ACCTSCHEMA_TRG
