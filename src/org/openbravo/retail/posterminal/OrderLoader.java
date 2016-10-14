@@ -1038,10 +1038,10 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
       OrderLine orderLine = lineReferences.get(i);
       BigDecimal pendingQty = orderLine.getOrderedQuantity().abs();
-      if (orderlines.getJSONObject(i).has("remainingQuantity")
-          && orderlines.getJSONObject(i).get("remainingQuantity") != JSONObject.NULL) {
+      if (orderlines.getJSONObject(i).has("deliveredQuantity")
+          && orderlines.getJSONObject(i).get("deliveredQuantity") != JSONObject.NULL) {
         pendingQty = pendingQty.subtract(new BigDecimal(orderlines.getJSONObject(i).getLong(
-            "remainingQuantity")).abs());
+            "deliveredQuantity")).abs());
       }
       boolean negativeLine = orderLine.getOrderedQuantity().compareTo(BigDecimal.ZERO) < 0;
 
