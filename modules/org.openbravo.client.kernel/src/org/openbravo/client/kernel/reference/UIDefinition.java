@@ -211,46 +211,10 @@ public abstract class UIDefinition {
         if (defaultS.equalsIgnoreCase("@#Date@")) {
           return setNOWDefault();
         } else if (!defaultS.startsWith("@SQL=")) {
-          columnValue = Utility.getDefault(new DalConnectionProvider(false),
-              rq.getVariablesSecureApp(), colName, defaultS, windowId, "");
+          columnValue = getDefaultValue(rq.getVariablesSecureApp(), colName, defaultS, windowId);
         } else {
-          ArrayList<String> params = new ArrayList<String>();
-          String sql = parseSQL(defaultS, params);
-          int indP = 1;
-          PreparedStatement ps = null;
-          try {
-            ps = OBDal.getInstance().getConnection(false).prepareStatement(sql);
-            for (String parameter : params) {
-              String value = "";
-              if (parameter.substring(0, 1).equals("#")) {
-                value = Utility.getContext(new DalConnectionProvider(false), RequestContext.get()
-                    .getVariablesSecureApp(), parameter, field.getTab().getWindow().getId());
-              } else {
-                String fieldId = "inp" + Sqlc.TransformaNombreColumna(parameter);
-                if (RequestContext.get().getParameterMap().containsKey(fieldId)) {
-                  value = RequestContext.get().getRequestParameter(fieldId);
-                }
-                if (value == null || value.equals("")) {
-                  value = Utility.getContext(new DalConnectionProvider(false), RequestContext.get()
-                      .getVariablesSecureApp(), parameter, field.getTab().getWindow().getId());
-                }
-              }
-              ps.setObject(indP++, value);
-            }
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-              columnValue = getValueFromSQLDefault(rs);
-            }
-          } catch (Exception e) {
-            log.error("Error computing default value for field " + field.getName() + " of tab "
-                + field.getTab().getName(), e);
-          } finally {
-            try {
-              ps.close();
-            } catch (SQLException e) {
-              // won't happen
-            }
-          }
+          columnValue = getDefaultValueFromSQLExpression(rq.getVariablesSecureApp(), field,
+              defaultS);
         }
       }
     }
@@ -266,6 +230,82 @@ public abstract class UIDefinition {
           + field.getColumn().getDBColumnName());
     }
     return jsnobject.toString();
+  }
+
+  /**
+   * Returns the value for a default value expression which represents a session value or a fixed
+   * value. This method is not used to calculate SQL based expressions (those that start with
+   * '@SQL=') and NOW expression ('@#Date@').
+   *
+   * @param vars
+   *          Handler for the session info.
+   * @param columnName
+   *          String with the name of the column that has the default value.
+   * @param defaultValueExpression
+   *          String with the default value expression.
+   * @param window
+   *          String with the window id.
+   * @return String with the calculated default value.
+   */
+  public String getDefaultValue(VariablesSecureApp vars, String columnName,
+      String defaultValueExpression, String windowId) {
+    return Utility.getDefault(new DalConnectionProvider(false), vars, columnName,
+        defaultValueExpression, windowId, "");
+  }
+
+  /**
+   * Returns the value for a default value expression based on a SQL expression. This kind of
+   * expressions start with '@SQL='.
+   *
+   * @param vars
+   *          Handler for the session info.
+   * @param field
+   *          Field whose column has the default value.
+   * @param defaultValueExpression
+   *          String with the default value expression.
+   * @return String with the calculated default value.
+   */
+  public String getDefaultValueFromSQLExpression(VariablesSecureApp vars, Field field,
+      String defaultValueExpression) {
+    ArrayList<String> params = new ArrayList<String>();
+    String sql = parseSQL(defaultValueExpression, params);
+    int indP = 1;
+    PreparedStatement ps = null;
+    String columnValue = null;
+    try {
+      ps = OBDal.getInstance().getConnection(false).prepareStatement(sql);
+      for (String parameter : params) {
+        String value = "";
+        if (parameter.substring(0, 1).equals("#")) {
+          value = Utility.getContext(new DalConnectionProvider(false), RequestContext.get()
+              .getVariablesSecureApp(), parameter, field.getTab().getWindow().getId());
+        } else {
+          String fieldId = "inp" + Sqlc.TransformaNombreColumna(parameter);
+          if (RequestContext.get().getParameterMap().containsKey(fieldId)) {
+            value = RequestContext.get().getRequestParameter(fieldId);
+          }
+          if (value == null || value.equals("")) {
+            value = Utility.getContext(new DalConnectionProvider(false), RequestContext.get()
+                .getVariablesSecureApp(), parameter, field.getTab().getWindow().getId());
+          }
+        }
+        ps.setObject(indP++, value);
+      }
+      ResultSet rs = ps.executeQuery();
+      if (rs.next()) {
+        columnValue = getValueFromSQLDefault(rs);
+      }
+    } catch (Exception e) {
+      log.error("Error computing default value for field " + field.getName() + " of tab "
+          + field.getTab().getName(), e);
+    } finally {
+      try {
+        ps.close();
+      } catch (SQLException e) {
+        // won't happen
+      }
+    }
+    return columnValue;
   }
 
   /**

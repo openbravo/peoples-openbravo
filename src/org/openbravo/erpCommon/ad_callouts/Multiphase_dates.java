@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012 Openbravo SLU
+ * All portions are Copyright (C) 2012-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -32,7 +32,6 @@ import org.openbravo.model.project.ProjectPhase;
 
 public class Multiphase_dates extends SimpleCallout {
 
-  private static final long serialVersionUID = 1L;
   private final String PROJECTTASK_TAB = "490";
   private final String PROJECTPHASE_TAB = "478";
 

@@ -105,6 +105,7 @@ public class SetNewBPCurrency extends BaseProcessActionHandler {
       Currency currency = OBDal.getInstance().get(Currency.class, strToCurrencyId);
       BigDecimal creditAmount = BigDecimal.ZERO;
       BigDecimal creditRate = BigDecimal.ONE;
+      BigDecimal reverseCreditRate = BigDecimal.ONE;
 
       // Convert available credit automatically
       if (!StringUtils.equals(strFromCurrencyId, strToCurrencyId) && !StringUtils.isEmpty(glItemId)
@@ -115,6 +116,11 @@ public class SetNewBPCurrency extends BaseProcessActionHandler {
           creditRate = rate;
         } else if (creditUsed.compareTo(BigDecimal.ZERO) != 0) {
           creditRate = BigDecimal.valueOf(amount).divide(creditUsed,
+              FIN_Utility.getConversionRatePrecision(RequestContext.get().getVariablesSecureApp()),
+              RoundingMode.HALF_UP);
+        }
+        if (creditRate.compareTo(BigDecimal.ZERO) != 0) {
+          reverseCreditRate = BigDecimal.ONE.divide(creditRate,
               FIN_Utility.getConversionRatePrecision(RequestContext.get().getVariablesSecureApp()),
               RoundingMode.HALF_UP);
         }
@@ -247,6 +253,7 @@ public class SetNewBPCurrency extends BaseProcessActionHandler {
             final String paymentCreditId = (String) scroll.get()[0];
             final FIN_Payment paymentCredit = OBDal.getInstance().get(FIN_Payment.class,
                 paymentCreditId);
+            creditAmount = paymentCredit.getGeneratedCredit();
 
             // Create a payment to create the credit with a glitem
             FIN_Payment payment3 = (FIN_Payment) DalUtil.copy(paymentCredit, false);
@@ -262,9 +269,7 @@ public class SetNewBPCurrency extends BaseProcessActionHandler {
                 currency.getStandardPrecision().intValue(), RoundingMode.HALF_UP);
             payment3.setGeneratedCredit(generatedCredit);
             payment3.setUsedCredit(BigDecimal.ZERO);
-            final BigDecimal reverseConvRate = getConversionRate(strOrgId, strToCurrencyId,
-                strFromCurrencyId);
-            payment3.setFinancialTransactionConvertRate(reverseConvRate);
+            payment3.setFinancialTransactionConvertRate(reverseCreditRate);
 
             // Create a payment detail to create the credit with a glitem
             FIN_PaymentDetail paymentDetail3 = OBProvider.getInstance()

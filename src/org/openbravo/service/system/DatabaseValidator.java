@@ -382,6 +382,7 @@ public class DatabaseValidator implements SystemValidator {
   private void checkForeignKeys(Module module, org.apache.ddlutils.model.Table table,
       SystemValidationResult result) {
     final Entity entity = ModelProvider.getInstance().getEntityByTableName(table.getName());
+    List<String> fkWhiteList = getFkWhiteList();
     if (entity == null) {
       // can happen with mismatches
       return;
@@ -410,8 +411,7 @@ public class DatabaseValidator implements SystemValidator {
         final String colName = property.getColumnName().toUpperCase();
 
         // ignore this specific case
-        if (entity.getTableName().equalsIgnoreCase("ad_module_log")
-            && colName.equalsIgnoreCase("ad_module_id")) {
+        if (fkWhiteList.contains(entity.getTableName().toLowerCase() + "." + colName.toLowerCase())) {
           continue;
         }
 
@@ -447,6 +447,17 @@ public class DatabaseValidator implements SystemValidator {
         }
       }
     }
+  }
+
+  // Get List of Foreign Keys to be skipped in the validation while exporting database.
+  private List<String> getFkWhiteList() {
+    List<String> fkWhiteList = new ArrayList<String>();
+    fkWhiteList.add("ad_module_log.ad_module_id");
+    fkWhiteList.add("c_order.cancelledorder_id");
+    fkWhiteList.add("c_order.replacedorder_id");
+    fkWhiteList.add("c_order.replacementorder_id");
+    fkWhiteList.add("c_orderline.replacedorderline_id");
+    return fkWhiteList;
   }
 
   private void matchColumns(Table adTable, org.apache.ddlutils.model.Table dbTable,

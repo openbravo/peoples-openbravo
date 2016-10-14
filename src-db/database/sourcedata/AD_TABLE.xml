@@ -12095,19 +12095,19 @@ group by  coalesce(lcm.id, lcc.id), lcc, lct.name, lcc.amount, lcc.currency.iSOC
 <!--CDB9DC9655F24DF8AB41AA0ADBD04390-->  <ISTREE><![CDATA[N]]></ISTREE>
 <!--CDB9DC9655F24DF8AB41AA0ADBD04390-->  <HQLQUERY><![CDATA[select iol.id as id, iol.organization as organization, iol.client as client,  iol.product as product,  
 iol.uOM as uOM, iol.id as goodsShipmentLine, iol.movementQuantity as movementQuantity,
-iol.shipmentReceipt.businessPartner as businessPartner, iol.shipmentReceipt.documentNo as shipmentNumber,
-iol.shipmentReceipt.movementDate as movementDate,  attributeSetValue as attributeSetValue,
+io.businessPartner as businessPartner, io.documentNo as shipmentNumber,
+io.movementDate as movementDate,  attributeSetValue as attributeSetValue,
 (@returnedOthersLeftClause@)*(-1) as returnQtyOtherRM,
-(case when (select ('Y') from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine.id = iol) is null then false else true end) as obSelected,
+(case when (select ('Y') from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine.id = iol.id) is null then false else true end) as obSelected,
 (@returnedLeftClause@)*(-1) as returned,
-(select ol.returnReason from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine.id = iol) as returnReason,
-coalesce((select ol.tax.id from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine.id = iol) ,
+(select ol.returnReason from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine.id = iol.id) as returnReason,
+coalesce((select ol.tax.id from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine.id = iol.id) ,
 @taxSubQuery@) as tax,
 (case when @priceIncludeTaxSubQuery@ = true then
- coalesce((select ol.@unitPriceProperty@ from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine.id = iol), 
+ coalesce((select ol.@unitPriceProperty@ from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine.id = iol.id), 
           @grossUnitPriceSubQuery@)
 else 
- coalesce((select ol.@unitPriceProperty@ from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine.id = iol), 
+ coalesce((select ol.@unitPriceProperty@ from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine.id = iol.id), 
           @unitPriceSubQuery@)
 end) as unitPrice,
 @orderNoSubQuery@ as orderNo

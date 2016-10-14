@@ -21,6 +21,7 @@ package org.openbravo.test;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
+import org.openbravo.advpaymentmngt.test.DocumentNumberGeneration;
 import org.openbravo.base.weld.test.testinfrastructure.CdiInfrastructure;
 import org.openbravo.base.weld.test.testinfrastructure.DalPersistanceEventTest;
 import org.openbravo.base.weld.test.testinfrastructure.ParameterizedCdi;
@@ -36,6 +37,7 @@ import org.openbravo.client.kernel.freemarker.test.LabelTest;
 import org.openbravo.erpCommon.info.ClassicSelectorTest;
 import org.openbravo.test.accounting.PostDocumentTest;
 import org.openbravo.test.accounting.RecordID2Test;
+import org.openbravo.test.cancelandreplace.CancelAndReplaceTest;
 import org.openbravo.test.costing.TestCosting;
 import org.openbravo.test.dal.AdminContextTest;
 import org.openbravo.test.dal.ComputedColumnsTest;
@@ -235,7 +237,13 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     // Product Services
     ServicesTest.class, //
     ServicesTest2.class, //
-    ServicesTest3.class
+    ServicesTest3.class,
+
+    // others
+    DocumentNumberGeneration.class,
+    
+    // Cancel and Replace Tests
+    CancelAndReplaceTest.class
 
 })
 public class AllAntTaskTests {

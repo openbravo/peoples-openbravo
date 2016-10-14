@@ -341,6 +341,30 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="CANCELANDREPLACE" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="CONFIRMCANCELANDREPLACE" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="CANCELLEDORDER_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="REPLACEDORDER_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="ISCANCELLED" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault><![CDATA['N']]></onCreateDefault>
+      </column>
+      <column name="REPLACEMENTORDER_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="C_DOCTYPE" name="C_DOCTYPE_CORDER">
         <reference local="C_DOCTYPE_ID" foreign="C_DOCTYPE_ID"/>
       </foreign-key>
@@ -463,6 +487,9 @@
         <index-column name="DOCUMENTNO"/>
         <index-column name="C_ORDER_ID"/>
       </index>
+      <index name="C_ORDER_ISSELECTED" unique="false">
+        <index-column name="ISSELECTED"/>
+      </index>
       <index name="C_ORDER_POSTED" unique="false">
         <index-column name="POSTED"/>
       </index>
@@ -470,6 +497,7 @@
         <index-column name="UPDATED"/>
       </index>
       <check name="C_ORDER_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="C_ORDER_ISCANCELANDREPLA_CHECK"><![CDATA[ISCANCELLED IN ('Y', 'N')]]></check>
       <check name="C_ORDER_ISCASHVAT_CH"><![CDATA[ISCASHVAT IN ('Y', 'N')]]></check>
       <check name="C_ORDER_ISDELIVERED_CHECK"><![CDATA[ISDELIVERED IN ('Y', 'N')]]></check>
       <check name="C_ORDER_ISDISCOUNTPRINTED_CHK"><![CDATA[ISDISCOUNTPRINTED IN ('Y', 'N')]]></check>

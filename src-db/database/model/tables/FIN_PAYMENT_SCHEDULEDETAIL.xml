@@ -143,6 +143,9 @@
       <foreign-key foreignTable="USER2" name="FIN_SCHEDULEDETAIL_USER2">
         <reference local="USER2_ID" foreign="USER2_ID"/>
       </foreign-key>
+      <index name="FIN_PAY_SCHEDULEDETAIL_BP" unique="false">
+        <index-column name="C_BPARTNER_ID"/>
+      </index>
       <index name="FIN_PAY_SCHEDULEDETAIL_IN" unique="false">
         <index-column name="FIN_PAYMENT_SCHEDULE_INVOICE"/>
       </index>

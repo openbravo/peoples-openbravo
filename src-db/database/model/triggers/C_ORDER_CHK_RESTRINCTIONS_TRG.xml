@@ -68,6 +68,9 @@ BEGIN
     IF :OLD.Processed='Y' THEN
       RAISE_APPLICATION_ERROR(-20000, '@20501@') ;
     END IF;
+    IF (:OLD.DOCSTATUS <> 'TMP' AND :OLD.REPLACEDORDER_ID IS NOT NULL) THEN
+      RAISE_APPLICATION_ERROR(-20000, '@CannotDeleteReplacementOrder@') ;
+    END IF;
   END IF;
   IF(INSERTING) THEN
     IF :NEW.Processed='Y' THEN

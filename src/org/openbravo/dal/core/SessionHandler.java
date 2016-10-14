@@ -208,7 +208,9 @@ public class SessionHandler implements OBNotSingleton {
   }
 
   protected void closeSession() {
-    session.close();
+    if (session != null && session.isOpen()) {
+      session.close();
+    }
   }
 
   /**

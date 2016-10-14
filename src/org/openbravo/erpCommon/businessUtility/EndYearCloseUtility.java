@@ -68,7 +68,8 @@ public class EndYearCloseUtility {
     String strOrgId = organization.getId();
     OBError myError = new OBError();
     try {
-      boolean isYearNotClose = EndYearCloseUtilityData.selectYearNotClosed(conn, strYearId);
+      boolean isYearNotClose = EndYearCloseUtilityData.selectYearNotClosed(conn, strYearId,
+          strOrgId);
       if (isYearNotClose) {
         throw new OBException(Utility.messageBD(conn, "YearNotClose", vars.getLanguage()));
       }
@@ -384,7 +385,8 @@ public class EndYearCloseUtility {
       String strRegFactAcctGroupId, String strCloseFactAcctGroupId,
       String strDivideUpFactAcctGroupId, String strOpenUpFactAcctGroupId, String strOrgClosingId)
       throws ServletException {
-    boolean isYearNotAllowed = EndYearCloseUtilityData.selectUndoAllowed(conn, strYearId);
+    boolean isYearNotAllowed = EndYearCloseUtilityData.selectUndoAllowed(conn, strYearId,
+        stradOrgId);
     if (isYearNotAllowed) {
       return "UndoNotAllowedForYear";
     }

@@ -1265,9 +1265,10 @@
                   )
             ) LOOP
               SELECT count(*), max(m_reservation_id)
-                INTO v_aux, v_reservation_id
+              INTO v_aux, v_reservation_id
               FROM m_reservation
-              WHERE c_orderline_id = cur_orderline.c_orderline_id;
+              WHERE c_orderline_id = cur_orderline.c_orderline_id
+              AND res_status <> 'CL';
               -- Initialize so_res_status
               UPDATE c_orderline
               SET so_res_status = 'NR'
@@ -1324,6 +1325,7 @@
                   END IF;
                   UPDATE m_reservation
                   SET quantity = cur_orderline.qtyordered,
+                      res_status = 'CL',
                       updated = now(),
                       updatedby = v_user
                   WHERE m_reservation_id = v_reservation_id;
@@ -1342,10 +1344,20 @@
                                       END
                   WHERE c_orderline_id = cur_orderline.c_orderline_id;
                 END IF;
-              ELSIF (cur_orderline.create_reservation = 'CRP') THEN
-                M_CREATE_RESERVE_FROM_SOL(cur_orderline.c_orderline_id, 'Y', v_user, v_reservation_id);
-              ELSIF (cur_orderline.create_reservation = 'CR') THEN
-                M_CREATE_RESERVE_FROM_SOL(cur_orderline.c_orderline_id, 'N', v_user, v_reservation_id);
+              ELSE
+                SELECT count(*)
+                INTO v_aux
+                FROM dual
+                WHERE EXISTS (
+                  SELECT 1
+                  FROM m_reservation
+                  WHERE c_orderline_id = cur_orderline.c_orderline_id
+                );
+                IF (v_aux = 0 AND cur_orderline.create_reservation = 'CRP') THEN
+                  M_CREATE_RESERVE_FROM_SOL(cur_orderline.c_orderline_id, 'Y', v_user, v_reservation_id);
+                ELSIF (v_aux = 0 AND cur_orderline.create_reservation = 'CR') THEN
+                  M_CREATE_RESERVE_FROM_SOL(cur_orderline.c_orderline_id, 'N', v_user, v_reservation_id);
+                END IF;
               END IF;
             END LOOP;
             SELECT COUNT(*), SUM(CASE ol.so_res_status WHEN 'CR' THEN 1 ELSE 0 END), SUM(CASE ol.so_res_status WHEN 'PR' THEN 1 ELSE 0 END)

@@ -520,7 +520,7 @@
             (SELECT *
             FROM M_INOUTLINE
             WHERE M_InOut_ID=Cur_InOut.M_InOut_ID
-              AND IsActive='Y'  FOR UPDATE
+              AND IsActive='Y' ORDER BY line FOR UPDATE
             )
           LOOP
             -- Incomming or Outgoing :1:2
@@ -1180,10 +1180,13 @@
               JOIN M_INOUTLINE iol
               ON ol.c_orderline_id = iol.c_orderline_id
               AND ol.m_product_id = iol.m_product_id
+              JOIN C_ORDER o
+              ON ol.c_order_id = o.c_order_id
               WHERE iol.m_inout_id = Cur_InOut.m_inout_id
               AND r.res_status <> 'DR'
               AND iol.movementqty > 0
               AND iol.canceled_inoutline_id IS NULL
+              AND o.docstatus <> 'CL'
               AND r.created = (
                 SELECT max(created)
                 FROM M_RESERVATION
@@ -1282,12 +1285,12 @@
                   INSERT INTO M_RESERVATION_STOCK (
                     m_reservation_stock_id, ad_client_id, ad_org_id, isactive,
                     created, createdby, updated, updatedby,
-                    m_reservation_id, quantity, isallocated,
+                    m_reservation_id, quantity, releasedqty, isallocated,
                     m_locator_id, m_attributesetinstance_id
                   ) VALUES (
                     get_uuid(), Cur_Reservation.ad_client_id, Cur_Reservation.ad_org_id, 'Y',
                     now(), v_user, now(), v_user,
-                    v_reservation_id, v_RS_Quantity, 'N',
+                    v_reservation_id, v_RS_Quantity, 0, 'N',
                     Cur_InOutLine.m_locator_id, Cur_InOutLine.m_attributesetinstance_id
                   );
                   v_R_Reservedqty := v_R_Reservedqty + v_RS_Quantity;

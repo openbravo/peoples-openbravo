@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014 - 2016 Openbravo SLU
+ * All portions are Copyright (C) 2014-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -129,8 +129,6 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
       selectClause
           .append(" COALESCE(ips.finPaymentmethod.id, ops.finPaymentmethod.id) as paymentMethod, ");
       selectClause.append(" COALESCE(ipsfp.name, opsfp.name) as paymentMethodName, ");
-      selectClause.append(" COALESCE(invbp.id, ordbp.id) as businessPartner, ");
-      selectClause.append(" COALESCE(invbp.name, ordbp.name) as businessPartnerName, ");
       selectClause.append(" COALESCE(ips.expectedDate, ops.expectedDate) as expectedDate, ");
       selectClause.append(" max(COALESCE(ips.amount, ops.amount)) as expectedAmount, ");
       selectClause.append(" max(COALESCE(inv.grandTotalAmount, 0)) as invoicedAmount, ");
@@ -145,8 +143,6 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
       selectClause
           .append(" COALESCE(ops.finPaymentmethod.id, ips.finPaymentmethod.id) as paymentMethod, ");
       selectClause.append(" COALESCE(opsfp.name, ipsfp.name) as paymentMethodName, ");
-      selectClause.append(" COALESCE(invbp.id, ordbp.id) as businessPartner, ");
-      selectClause.append(" COALESCE(invbp.name, ordbp.name) as businessPartnerName, ");
       selectClause.append(" COALESCE(ops.expectedDate, ips.expectedDate) as expectedDate, ");
       selectClause.append(" max(COALESCE(ips.amount, ops.amount)) as expectedAmount, ");
       selectClause.append(" sum(COALESCE(inv.grandTotalAmount, 0)) as invoicedAmount, ");
@@ -160,12 +156,12 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
       selectClause
           .append(" COALESCE(ips.finPaymentmethod.id, ops.finPaymentmethod.id) as paymentMethod, ");
       selectClause.append(" COALESCE(ipsfp.name, opsfp.name) as paymentMethodName, ");
-      selectClause.append(" COALESCE(invbp.id, ordbp.id) as businessPartner, ");
-      selectClause.append(" COALESCE(invbp.name, ordbp.name) as businessPartnerName, ");
       selectClause.append(" COALESCE(ips.expectedDate, ops.expectedDate) as expectedDate, ");
       selectClause.append(" max(COALESCE(ips.amount, ops.amount)) as expectedAmount, ");
       selectClause.append(" max(COALESCE(inv.grandTotalAmount, 0)) as invoicedAmount, ");
     }
+    selectClause.append(" bp.id as businessPartner, ");
+    selectClause.append(" bp.name as businessPartnerName, ");
     selectClause.append(" SUM(psd.amount + psd.writeoffAmount) as outstandingAmount, ");
     selectClause.append(" COALESCE(sum(pd.amount), 0) as amount, ");
     selectClause
@@ -244,38 +240,24 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
       }
       whereClause.append(") or ");
     }
+
+    whereClause.append(" ( ");
     if ("I".equals(transactionType)) {
-
-      whereClause.append(" ( ");
       whereClause.append(" inv.salesTransaction = :isSalesTransaction");
-      if (strBusinessPartnerId != null && !"null".equals(strBusinessPartnerId)) {
-        whereClause.append(" and invbp.id = :businessPartnerId ");
-      }
       whereClause.append(" and inv.currency.id = :currencyId ) ");
-
     } else if ("O".equals(transactionType)) {
-      whereClause.append(" ( ");
       whereClause.append(" ord.salesTransaction = :isSalesTransaction");
-      if (strBusinessPartnerId != null && !"null".equals(strBusinessPartnerId)) {
-        whereClause.append(" and ordbp.id = :businessPartnerId ");
-      }
       whereClause.append(" and ord.currency.id = :currencyId ) ");
-
     } else {
-
-      whereClause.append(" ( ");
       whereClause.append(" inv.salesTransaction = :isSalesTransaction");
-      if (strBusinessPartnerId != null && !"null".equals(strBusinessPartnerId)) {
-        whereClause.append(" and invbp.id = :businessPartnerId ");
-      }
       whereClause.append(" and inv.currency.id = :currencyId ) ");
       whereClause.append(" or ( ");
       whereClause.append(" ord.salesTransaction = :isSalesTransaction");
-      if (strBusinessPartnerId != null && !"null".equals(strBusinessPartnerId)) {
-        whereClause.append(" and ordbp.id = :businessPartnerId");
-      }
       whereClause.append(" and ord.currency.id = :currencyId ) ");
+    }
 
+    if (strBusinessPartnerId != null && !"null".equals(strBusinessPartnerId)) {
+      whereClause.append(" and bp.id = :businessPartnerId ");
     }
 
     whereClause.append(")");
@@ -322,8 +304,8 @@ public class AddPaymentOrderInvoicesTransformer extends HqlQueryTransformer {
       groupByClause.append(" oinfo.aPRMPaymentDescription, ");
       groupByClause.append(" inv.orderReference, ");
     }
-    groupByClause.append(" COALESCE(invbp.id, ordbp.id), ");
-    groupByClause.append(" COALESCE(invbp.name, ordbp.name) ");
+    groupByClause.append(" bp.id, ");
+    groupByClause.append(" bp.name ");
     return groupByClause;
   }
 

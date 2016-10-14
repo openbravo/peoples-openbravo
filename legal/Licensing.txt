@@ -216,7 +216,7 @@ way.
 # jboss-el-api_2.2_spec-1.0.0.Final.jar
 Under the LGPL license (included as LGPL-2.1.txt in this folder)
 
-# cal10n-api-0.7.4.jar
+# cal10n-api-0.7.7.jar
 # slf4j-ext-1.6.1.jar
 Under the MIT license (available at http://www.slf4j.org/license.html)
 

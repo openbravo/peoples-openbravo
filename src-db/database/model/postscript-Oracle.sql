@@ -22,6 +22,17 @@ BEGIN
 END NOW;
 /-- END NOW
 
+DECLARE
+  isPresent number;
+BEGIN
+  SELECT count(*) INTO isPresent
+  FROM USER_PROCEDURES WHERE object_name ='HEX_TO_INT' AND object_type = 'FUNCTION';
+  IF isPresent != 0 THEN
+    EXECUTE IMMEDIATE 'drop function hex_to_int';
+  end if;
+END;
+/-- END
+
 CREATE OR REPLACE FUNCTION ad_script_execute (param_Message VARCHAR2)
   RETURN VARCHAR2
 AS

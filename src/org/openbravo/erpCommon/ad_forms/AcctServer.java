@@ -66,6 +66,7 @@ import org.openbravo.model.common.businesspartner.VendorAccounts;
 import org.openbravo.model.common.currency.ConversionRateDoc;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.AcctSchemaTableDocType;
+import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.common.invoice.ReversedInvoice;
 import org.openbravo.model.financialmgmt.accounting.FIN_FinancialAccountAccounting;
@@ -399,8 +400,11 @@ public abstract class AcctServer {
       final Set<String> orgSet = OBContext.getOBContext()
           .getOrganizationStructureProvider(AD_Client_ID).getChildTree(AD_Org_ID, true);
       String strOrgs = Utility.getInStrSet(orgSet);
+      // Send limit manually to SQL because auto-generated query doesn't limit properly
+      String limit = StringUtils.equals(connectionProvider.getRDBMS(), "ORACLE") ? " AND ROWNUM < "
+          + batchSize : " LIMIT " + batchSize;
       data = AcctServerData.select(connectionProvider, tableName, strDateColumn, AD_Client_ID,
-          strOrgs, strDateFrom, strDateTo, 0, Integer.valueOf(batchSize).intValue());
+          strOrgs, strDateFrom, strDateTo, limit);
       if (data != null && data.length > 0) {
         if (log4j.isDebugEnabled()) {
           log4j.debug("AcctServer - Run -Select inicial realizada N = " + data.length + " - Key: "
@@ -1452,9 +1456,16 @@ public abstract class AcctServer {
       if (log4j.isDebugEnabled())
         log4j.debug("setC_Period_ID - inside try - AD_Client_ID - " + AD_Client_ID
             + " -- DateAcct - " + DateAcct + " -- DocumentType - " + DocumentType);
-      data = AcctServerData.periodOpen(connectionProvider, AD_Client_ID, DocumentType, AD_Org_ID,
-          DateAcct);
+
+      String strOrgCalendarOwner = OBContext
+          .getOBContext()
+          .getOrganizationStructureProvider(AD_Client_ID)
+          .getPeriodControlAllowedOrganization(
+              OBDal.getInstance().get(Organization.class, AD_Org_ID)).getId();
+      data = AcctServerData.selectPeriodOpen(connectionProvider, AD_Client_ID, DocumentType,
+          strOrgCalendarOwner, DateAcct);
       C_Period_ID = data[0].period;
+
       if (log4j.isDebugEnabled())
         log4j.debug("AcctServer - setC_Period_ID - " + AD_Client_ID + "/" + DateAcct + "/"
             + DocumentType + " => " + C_Period_ID);
@@ -2911,7 +2922,9 @@ public abstract class AcctServer {
    * Returns the writeoff and the amount of a Payment Detail. In case the related Payment Schedule
    * Detail was generated for compensate the difference between an Order and a related Invoice, it
    * merges it's amount with the next Payment Schedule Detail. Issue 19567:
-   * https://issues.openbravo.com/view.php?id=19567
+   * https://issues.openbravo.com/view.php?id=19567. Use
+   * {@link #getPaymentDetailIdWriteOffAndAmount(List, FIN_PaymentSchedule, FIN_PaymentSchedule, FIN_PaymentSchedule, int)}
+   * instead
    * 
    * @param paymentDetails
    *          List of payment Details
@@ -2924,11 +2937,46 @@ public abstract class AcctServer {
    * @param currentPaymentDetailIndex
    *          Index
    */
+  @Deprecated
   public HashMap<String, BigDecimal> getPaymentDetailWriteOffAndAmount(
       List<FIN_PaymentDetail> paymentDetails, FIN_PaymentSchedule ps, FIN_PaymentSchedule psi,
       FIN_PaymentSchedule pso, int currentPaymentDetailIndex) {
     return getPaymentDetailWriteOffAndAmount(paymentDetails, ps, psi, pso,
         currentPaymentDetailIndex, null);
+  }
+
+  /**
+   * Returns the writeoff and the amount of a Payment Detail. In case the related Payment Schedule
+   * Detail was generated for compensate the difference between an Order and a related Invoice, it
+   * merges it's amount with the next Payment Schedule Detail. Issue 19567:
+   * https://issues.openbravo.com/view.php?id=19567
+   * 
+   * @param paymentDetailsIds
+   *          List of payment Details Ids
+   * @param ps
+   *          Previous Payment Schedule
+   * @param psi
+   *          Invoice Payment Schedule of actual Payment Detail
+   * @param pso
+   *          Order Payment Schedule of actual Payment Detail
+   * @param currentPaymentDetailIndex
+   *          Index
+   */
+  public HashMap<String, BigDecimal> getPaymentDetailIdWriteOffAndAmount(
+      List<String> paymentDetailsIds, FIN_PaymentSchedule ps, FIN_PaymentSchedule psi,
+      FIN_PaymentSchedule pso, int currentPaymentDetailIndex) {
+    FIN_PaymentDetail paymentDetail = OBDal.getInstance().get(FIN_PaymentDetail.class,
+        paymentDetailsIds.get(currentPaymentDetailIndex));
+    String paymentDetailNextId = null;
+    String paymentDetailPreviousId = null;
+    if (currentPaymentDetailIndex < paymentDetailsIds.size() - 1) {
+      paymentDetailNextId = paymentDetailsIds.get(currentPaymentDetailIndex + 1);
+    }
+    if (currentPaymentDetailIndex > 0) {
+      paymentDetailPreviousId = paymentDetailsIds.get(currentPaymentDetailIndex - 1);
+    }
+    return getPaymentDetailWriteOffAndAmount(paymentDetail, paymentDetailNextId,
+        paymentDetailPreviousId, ps, psi, pso, null);
   }
 
   /**

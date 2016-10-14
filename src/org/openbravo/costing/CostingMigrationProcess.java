@@ -41,6 +41,7 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
+import org.openbravo.dal.core.TriggerHandler;
 import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -98,7 +99,6 @@ public class CostingMigrationProcess implements Process {
 
   @Override
   public void execute(ProcessBundle bundle) throws Exception {
-
     logger = bundle.getLogger();
     OBError msg = new OBError();
     msg.setType("Success");
@@ -118,11 +118,12 @@ public class CostingMigrationProcess implements Process {
 
       if (!isMigrationFirstPhaseCompleted()) {
         doChecks();
-
         updateLegacyCosts();
         createRules();
         createMigrationFirstPhaseCompletedPreference();
-      } else {
+      }
+
+      else {
         checkAllInventoriesAreProcessed();
         for (CostingRule rule : getRules()) {
           rule.setValidated(true);
@@ -132,8 +133,8 @@ public class CostingMigrationProcess implements Process {
         updateReportRoles();
         CostingStatus.getInstance().setMigrated();
         deleteMigrationFirstPhaseCompletedPreference();
-
       }
+
     } catch (final OBException e) {
       OBDal.getInstance().rollbackAndClose();
       String resultMsg = OBMessageUtils.parseTranslation(e.getMessage());
@@ -153,11 +154,12 @@ public class CostingMigrationProcess implements Process {
       msg.setTitle(OBMessageUtils.messageBD("Error"));
       msg.setMessage(message);
       bundle.setResult(msg);
+
     } finally {
       OBContext.restorePreviousMode();
     }
-    bundle.setResult(msg);
 
+    bundle.setResult(msg);
   }
 
   private void doChecks() {
@@ -364,21 +366,8 @@ public class CostingMigrationProcess implements Process {
 
   private void updateLegacyCosts() {
     log4j.debug("UpdateLegacyCosts");
-    // Reset costs in m_transaction and m_transaction_cost.
-    Query queryDelete = OBDal.getInstance().getSession()
-        .createQuery("delete from " + TransactionCost.ENTITY_NAME);
-    queryDelete.executeUpdate();
 
-    // FIXME: Update should be done with a loop based on scroll.
-    StringBuffer update = new StringBuffer();
-    update.append("update " + MaterialTransaction.ENTITY_NAME);
-    update.append(" set " + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = false,");
-    update.append("     " + MaterialTransaction.PROPERTY_TRANSACTIONCOST + " = null");
-    update.append(" where " + MaterialTransaction.PROPERTY_TRANSACTIONCOST + " <> 0");
-    update.append("   or " + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = true");
-    Query updateQry = OBDal.getInstance().getSession().createQuery(update.toString());
-    updateQry.executeUpdate();
-    OBDal.getInstance().flush();
+    resetTransactionCosts();
     fixLegacyCostingCurrency();
 
     for (Client client : getClients()) {
@@ -415,38 +404,56 @@ public class CostingMigrationProcess implements Process {
     }
 
     updateWithZeroCostRemainingTrx();
-
     insertTrxCosts();
     insertStandardCosts();
   }
 
-  private void fixLegacyCostingCurrency() {
-    StringBuffer where = new StringBuffer();
-    where.append(" as c");
-    where.append("   join c." + Costing.PROPERTY_CLIENT + " as cl");
-    where.append(" where c." + Costing.PROPERTY_CURRENCY + " <> cl." + Client.PROPERTY_CURRENCY);
-    final OBQuery<Costing> costQry = OBDal.getInstance().createQuery(Costing.class,
-        where.toString());
-    costQry.setFilterOnActive(false);
-    costQry.setFilterOnReadableClients(false);
-    costQry.setFilterOnReadableOrganization(false);
-    costQry.setFetchSize(1000);
-
-    final ScrollableResults costs = costQry.scroll(ScrollMode.FORWARD_ONLY);
-    int i = 0;
+  private void resetTransactionCosts() {
+    TriggerHandler.getInstance().disable();
     try {
-      while (costs.next()) {
-        Costing cost = (Costing) costs.get(0);
-        cost.setCurrency(cost.getClient().getCurrency());
-        OBDal.getInstance().save(cost);
-        if ((i % 100) == 0) {
-          OBDal.getInstance().flush();
-          OBDal.getInstance().getSession().clear();
-        }
-        i++;
-      }
+      // Reset costs in m_transaction_cost
+      Query queryDelete = OBDal.getInstance().getSession()
+          .createQuery("delete from " + TransactionCost.ENTITY_NAME);
+      queryDelete.executeUpdate();
+      OBDal.getInstance().flush();
+      OBDal.getInstance().getSession().clear();
+
+      // Reset costs in m_transaction
+      StringBuffer update = new StringBuffer();
+      update.append(" update " + MaterialTransaction.ENTITY_NAME);
+      update.append(" set " + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = false,");
+      update.append(" " + MaterialTransaction.PROPERTY_TRANSACTIONCOST + " = null");
+      update.append(" where " + MaterialTransaction.PROPERTY_TRANSACTIONCOST + " <> 0");
+      update.append(" or " + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = true");
+      Query updateQry = OBDal.getInstance().getSession().createQuery(update.toString());
+      updateQry.executeUpdate();
+      OBDal.getInstance().flush();
+      OBDal.getInstance().getSession().clear();
     } finally {
-      costs.close();
+      TriggerHandler.getInstance().enable();
+    }
+  }
+
+  private void fixLegacyCostingCurrency() {
+    TriggerHandler.getInstance().disable();
+    try {
+      // Fix legacy costing currency
+      for (Client client : getClients()) {
+        StringBuffer update = new StringBuffer();
+        update.append(" update " + Costing.ENTITY_NAME);
+        update.append(" set " + Costing.PROPERTY_CURRENCY + " = :currency");
+        update.append(" where " + Costing.PROPERTY_CLIENT + ".id = :clientId");
+        update.append(" and " + Costing.PROPERTY_CURRENCY + ".id <> :currencyId");
+        Query updateQry = OBDal.getInstance().getSession().createQuery(update.toString());
+        updateQry.setParameter("currency", client.getCurrency());
+        updateQry.setString("clientId", client.getId());
+        updateQry.setString("currencyId", client.getCurrency().getId());
+        updateQry.executeUpdate();
+      }
+      OBDal.getInstance().flush();
+      OBDal.getInstance().getSession().clear();
+    } finally {
+      TriggerHandler.getInstance().enable();
     }
   }
 
@@ -757,48 +764,44 @@ public class CostingMigrationProcess implements Process {
    */
   private void updateWithZeroCostRemainingTrx() {
     log4j.debug("****** updateWithCeroRemainingTrx");
-    StringBuffer where = new StringBuffer();
-    where.append(MaterialTransaction.PROPERTY_TRANSACTIONCOST + " is null");
-    where.append(" order by " + MaterialTransaction.PROPERTY_ORGANIZATION);
-    OBQuery<MaterialTransaction> trxsQry = OBDal.getInstance().createQuery(
-        MaterialTransaction.class, where.toString());
-    trxsQry.setFilterOnActive(false);
-    trxsQry.setFilterOnReadableClients(false);
-    trxsQry.setFilterOnReadableOrganization(false);
-    trxsQry.setFetchSize(1000);
-    ScrollableResults trxs = trxsQry.scroll(ScrollMode.FORWARD_ONLY);
-    int i = 0;
-    String orgId = "";
-    String curId = "";
+    int n = 0;
+    TriggerHandler.getInstance().disable();
     try {
-      while (trxs.next()) {
-        MaterialTransaction trx = (MaterialTransaction) trxs.get(0);
-        if (!orgId.equals(trx.getOrganization().getId())) {
-          orgId = trx.getOrganization().getId();
-          Currency cur = FinancialUtils.getLegalEntityCurrency(trx.getOrganization());
-          curId = cur.getId();
-        }
-        trx.setTransactionCost(BigDecimal.ZERO);
-        trx.setCurrency((Currency) OBDal.getInstance().getProxy(Currency.ENTITY_NAME, curId));
-        trx.setCostCalculated(true);
-        trx.setCostingStatus("CC");
-        trx.setProcessed(true);
-        OBDal.getInstance().save(trx);
 
-        if ((i % 100) == 0) {
-          OBDal.getInstance().flush();
-          OBDal.getInstance().getSession().clear();
+      for (Client client : getClients()) {
+        OrganizationStructureProvider osp = OBContext.getOBContext()
+            .getOrganizationStructureProvider(client.getId());
+        for (Organization org : osp.getLegalEntitiesList()) {
+          final Set<String> childOrgs = osp.getChildTree(org.getId(), true);
+
+          StringBuffer update = new StringBuffer();
+          update.append(" update " + MaterialTransaction.ENTITY_NAME);
+          update.append(" set " + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = true");
+          update.append(", " + MaterialTransaction.PROPERTY_COSTINGSTATUS + " = 'CC'");
+          update.append(", " + MaterialTransaction.PROPERTY_TRANSACTIONCOST + " = "
+              + BigDecimal.ZERO);
+          update.append(", " + MaterialTransaction.PROPERTY_CURRENCY + " = :currency");
+          update.append(", " + MaterialTransaction.PROPERTY_ISPROCESSED + " = true");
+          update.append(" where " + MaterialTransaction.PROPERTY_TRANSACTIONCOST + " is null");
+          update.append(" and " + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
+
+          Query updateQry = OBDal.getInstance().getSession().createQuery(update.toString());
+          updateQry.setParameter("currency", org.getCurrency() != null ? org.getCurrency() : org
+              .getClient().getCurrency());
+          updateQry.setParameterList("orgs", childOrgs);
+          n = updateQry.executeUpdate();
         }
-        i++;
       }
+
+      OBDal.getInstance().flush();
+      OBDal.getInstance().getSession().clear();
     } finally {
-      trxs.close();
+      TriggerHandler.getInstance().enable();
     }
-    log4j.debug("****** updateWithCeroRemainingTrx updated:" + i);
+    log4j.debug("****** updateWithCeroRemainingTrx updated:" + n);
   }
 
   private void insertAlertRecipients(AlertRule alertRule) {
-    // FIXME: Insert should be done with a loop based on scroll.
     StringBuffer insert = new StringBuffer();
     insert.append("insert into " + AlertRecipient.ENTITY_NAME);
     insert.append(" (id ");
@@ -836,119 +839,126 @@ public class CostingMigrationProcess implements Process {
   }
 
   private void insertTrxCosts() {
-    // FIXME: Insert should be done with a loop based on scroll.
-    StringBuffer insert = new StringBuffer();
-    insert.append("insert into " + TransactionCost.ENTITY_NAME);
-    insert.append(" (id ");
-    insert.append(", " + TransactionCost.PROPERTY_ACTIVE);
-    insert.append(", " + TransactionCost.PROPERTY_CLIENT);
-    insert.append(", " + TransactionCost.PROPERTY_ORGANIZATION);
-    insert.append(", " + TransactionCost.PROPERTY_CREATIONDATE);
-    insert.append(", " + TransactionCost.PROPERTY_CREATEDBY);
-    insert.append(", " + TransactionCost.PROPERTY_UPDATED);
-    insert.append(", " + TransactionCost.PROPERTY_UPDATEDBY);
-    insert.append(", " + TransactionCost.PROPERTY_INVENTORYTRANSACTION);
-    insert.append(", " + TransactionCost.PROPERTY_COST);
-    insert.append(", " + TransactionCost.PROPERTY_COSTDATE);
-    insert.append(", " + TransactionCost.PROPERTY_CURRENCY);
-    insert.append(", " + TransactionCost.PROPERTY_ACCOUNTINGDATE);
-    insert.append(" )\n select get_uuid()");
-    insert.append(", t." + MaterialTransaction.PROPERTY_ACTIVE);
-    insert.append(", t." + MaterialTransaction.PROPERTY_CLIENT);
-    insert.append(", t." + MaterialTransaction.PROPERTY_ORGANIZATION);
-    insert.append(", now()");
-    insert.append(", u");
-    insert.append(", now()");
-    insert.append(", u");
-    insert.append(", t");
-    insert.append(", t." + MaterialTransaction.PROPERTY_TRANSACTIONCOST);
-    insert.append(", t." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE);
-    insert.append(", t." + MaterialTransaction.PROPERTY_CURRENCY);
-    insert.append(", coalesce(io." + ShipmentInOut.PROPERTY_ACCOUNTINGDATE + ", t."
-        + MaterialTransaction.PROPERTY_MOVEMENTDATE + ")");
-    insert.append(" from  " + TransactionCost.ENTITY_NAME + " as tc ");
-    insert.append("   right join tc." + TransactionCost.PROPERTY_INVENTORYTRANSACTION + " as t");
-    insert.append("   left join t." + MaterialTransaction.PROPERTY_GOODSSHIPMENTLINE + " as iol");
-    insert.append("   left join iol." + ShipmentInOutLine.PROPERTY_SHIPMENTRECEIPT + " as io");
-    insert.append(", " + User.ENTITY_NAME + " as u");
-    insert.append("  where t." + MaterialTransaction.PROPERTY_TRANSACTIONCOST + " is not null");
-    insert.append("    and tc.id is null");
-    insert.append("    and u.id = :user");
+    TriggerHandler.getInstance().disable();
+    try {
+      StringBuffer insert = new StringBuffer();
+      insert.append(" insert into " + TransactionCost.ENTITY_NAME);
+      insert.append(" (" + TransactionCost.PROPERTY_ID);
+      insert.append(", " + TransactionCost.PROPERTY_ACTIVE);
+      insert.append(", " + TransactionCost.PROPERTY_CLIENT);
+      insert.append(", " + TransactionCost.PROPERTY_ORGANIZATION);
+      insert.append(", " + TransactionCost.PROPERTY_CREATIONDATE);
+      insert.append(", " + TransactionCost.PROPERTY_CREATEDBY);
+      insert.append(", " + TransactionCost.PROPERTY_UPDATED);
+      insert.append(", " + TransactionCost.PROPERTY_UPDATEDBY);
+      insert.append(", " + TransactionCost.PROPERTY_INVENTORYTRANSACTION);
+      insert.append(", " + TransactionCost.PROPERTY_COST);
+      insert.append(", " + TransactionCost.PROPERTY_COSTDATE);
+      insert.append(", " + TransactionCost.PROPERTY_CURRENCY);
+      insert.append(", " + TransactionCost.PROPERTY_ACCOUNTINGDATE);
+      insert.append(")");
+      insert.append(" select get_uuid()");
+      insert.append(", t." + MaterialTransaction.PROPERTY_ACTIVE);
+      insert.append(", t." + MaterialTransaction.PROPERTY_CLIENT);
+      insert.append(", t." + MaterialTransaction.PROPERTY_ORGANIZATION);
+      insert.append(", now()");
+      insert.append(", t." + MaterialTransaction.PROPERTY_CREATEDBY);
+      insert.append(", now()");
+      insert.append(", t." + MaterialTransaction.PROPERTY_UPDATEDBY);
+      insert.append(", t");
+      insert.append(", t." + MaterialTransaction.PROPERTY_TRANSACTIONCOST);
+      insert.append(", t." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE);
+      insert.append(", t." + MaterialTransaction.PROPERTY_CURRENCY);
+      insert.append(", coalesce(io." + ShipmentInOut.PROPERTY_ACCOUNTINGDATE + ", t."
+          + MaterialTransaction.PROPERTY_MOVEMENTDATE + ")");
+      insert.append(" from " + MaterialTransaction.ENTITY_NAME + " as t");
+      insert.append(" left join t." + MaterialTransaction.PROPERTY_GOODSSHIPMENTLINE + " as iol");
+      insert.append(" left join iol." + ShipmentInOutLine.PROPERTY_SHIPMENTRECEIPT + " as io");
+      insert.append(" where t." + MaterialTransaction.PROPERTY_TRANSACTIONCOST + " is not null");
 
-    Query queryInsert = OBDal.getInstance().getSession().createQuery(insert.toString());
-    queryInsert.setString("user", OBContext.getOBContext().getUser().getId());
-    queryInsert.executeUpdate();
+      Query queryInsert = OBDal.getInstance().getSession().createQuery(insert.toString());
+      queryInsert.executeUpdate();
+
+      OBDal.getInstance().flush();
+      OBDal.getInstance().getSession().clear();
+    } finally {
+      TriggerHandler.getInstance().enable();
+    }
   }
 
   private void insertStandardCosts() {
     // Insert STANDARD cost for products with costtype = 'ST'.
-    // FIXME: Insert should be done with a loop based on scroll.
-    StringBuffer insert = new StringBuffer();
-    insert.append("insert into " + Costing.ENTITY_NAME);
-    insert.append(" (id ");
-    insert.append(", " + Costing.PROPERTY_ACTIVE);
-    insert.append(", " + Costing.PROPERTY_CLIENT);
-    insert.append(", " + Costing.PROPERTY_ORGANIZATION);
-    insert.append(", " + Costing.PROPERTY_CREATIONDATE);
-    insert.append(", " + Costing.PROPERTY_CREATEDBY);
-    insert.append(", " + Costing.PROPERTY_UPDATED);
-    insert.append(", " + Costing.PROPERTY_UPDATEDBY);
-    insert.append(", " + Costing.PROPERTY_PRODUCT);
-    insert.append(", " + Costing.PROPERTY_COSTTYPE);
-    insert.append(", " + Costing.PROPERTY_COST);
-    insert.append(", " + Costing.PROPERTY_STARTINGDATE);
-    insert.append(", " + Costing.PROPERTY_ENDINGDATE);
-    insert.append(", " + Costing.PROPERTY_MANUAL);
-    insert.append(", " + Costing.PROPERTY_PERMANENT);
-    insert.append(", " + Costing.PROPERTY_CURRENCY);
-    insert.append(" )\n select get_uuid()");
-    insert.append(", c." + Costing.PROPERTY_ACTIVE);
-    insert.append(", c." + Costing.PROPERTY_CLIENT);
-    insert.append(", org");
-    insert.append(", now()");
-    insert.append(", u");
-    insert.append(", now()");
-    insert.append(", u");
-    insert.append(", c." + Costing.PROPERTY_PRODUCT);
-    insert.append(", 'STA'");
-    insert.append(", c." + Costing.PROPERTY_COST);
-    insert.append(", to_date(to_char(:startingDate), to_char('DD-MM-YYYY HH24:MI:SS'))");
+    TriggerHandler.getInstance().disable();
+    try {
+      StringBuffer insert = new StringBuffer();
+      insert.append(" insert into " + Costing.ENTITY_NAME);
+      insert.append(" (" + Costing.PROPERTY_ID);
+      insert.append(", " + Costing.PROPERTY_ACTIVE);
+      insert.append(", " + Costing.PROPERTY_CLIENT);
+      insert.append(", " + Costing.PROPERTY_ORGANIZATION);
+      insert.append(", " + Costing.PROPERTY_CREATIONDATE);
+      insert.append(", " + Costing.PROPERTY_CREATEDBY);
+      insert.append(", " + Costing.PROPERTY_UPDATED);
+      insert.append(", " + Costing.PROPERTY_UPDATEDBY);
+      insert.append(", " + Costing.PROPERTY_PRODUCT);
+      insert.append(", " + Costing.PROPERTY_COSTTYPE);
+      insert.append(", " + Costing.PROPERTY_COST);
+      insert.append(", " + Costing.PROPERTY_STARTINGDATE);
+      insert.append(", " + Costing.PROPERTY_ENDINGDATE);
+      insert.append(", " + Costing.PROPERTY_MANUAL);
+      insert.append(", " + Costing.PROPERTY_PERMANENT);
+      insert.append(", " + Costing.PROPERTY_CURRENCY);
+      insert.append(")");
+      insert.append(" select get_uuid()");
+      insert.append(", c." + Costing.PROPERTY_ACTIVE);
+      insert.append(", c." + Costing.PROPERTY_CLIENT);
+      insert.append(", org");
+      insert.append(", now()");
+      insert.append(", c." + Costing.PROPERTY_CREATEDBY);
+      insert.append(", now()");
+      insert.append(", c." + Costing.PROPERTY_UPDATEDBY);
+      insert.append(", c." + Costing.PROPERTY_PRODUCT);
+      insert.append(", 'STA'");
+      insert.append(", c." + Costing.PROPERTY_COST);
+      insert.append(", to_date(to_char(:startingDate), to_char('DD-MM-YYYY HH24:MI:SS'))");
+      insert.append(", c." + Costing.PROPERTY_ENDINGDATE);
+      insert.append(", c." + Costing.PROPERTY_MANUAL);
+      insert.append(", c." + Costing.PROPERTY_PERMANENT);
+      insert.append(", c." + Costing.PROPERTY_CURRENCY);
+      insert.append(" \n from " + Costing.ENTITY_NAME + " as c");
+      insert.append("   join c." + Costing.PROPERTY_PRODUCT + " as p");
+      insert.append(", " + Organization.ENTITY_NAME + " as org");
+      insert.append("   join org." + Organization.PROPERTY_ORGANIZATIONTYPE + " as ot");
+      insert.append("\n where c." + Costing.PROPERTY_COSTTYPE + " = 'ST'");
+      insert.append("   and c." + Costing.PROPERTY_STARTINGDATE
+          + " <= to_date(to_char(:limitDate), to_char('DD-MM-YYYY HH24:MI:SS'))");
+      insert.append("   and c." + Costing.PROPERTY_ENDINGDATE
+          + " > to_date(to_char(:limitDate2), to_char('DD-MM-YYYY HH24:MI:SS'))");
+      insert.append("   and ot." + OrganizationType.PROPERTY_LEGALENTITY + " = true");
+      insert.append("   and org." + Organization.PROPERTY_CLIENT + " = c."
+          + Costing.PROPERTY_CLIENT);
+      insert.append("   and (ad_isorgincluded(c." + Costing.PROPERTY_ORGANIZATION + ".id, org."
+          + Organization.PROPERTY_ID + ", c." + Costing.PROPERTY_CLIENT + ".id) <> -1");
+      insert.append("   or ad_isorgincluded(org." + Organization.PROPERTY_ID + ".id, c."
+          + Costing.PROPERTY_ORGANIZATION + ", c." + Costing.PROPERTY_CLIENT + ".id) <> -1)");
+      insert.append("   and (ad_isorgincluded(p." + Product.PROPERTY_ORGANIZATION + ".id, org."
+          + Organization.PROPERTY_ID + ", p." + Product.PROPERTY_CLIENT + ".id) <> -1");
+      insert.append("   or ad_isorgincluded(org." + Organization.PROPERTY_ID + ".id, p."
+          + Product.PROPERTY_ORGANIZATION + ", p." + Product.PROPERTY_CLIENT + ".id) <> -1)");
 
-    insert.append(", c." + Costing.PROPERTY_ENDINGDATE);
-    insert.append(", c." + Costing.PROPERTY_MANUAL);
-    insert.append(", c." + Costing.PROPERTY_PERMANENT);
-    insert.append(", c." + Costing.PROPERTY_CURRENCY);
-    insert.append("\n from " + Costing.ENTITY_NAME + " as c");
-    insert.append("   join c." + Costing.PROPERTY_PRODUCT + " as p");
-    insert.append(", " + User.ENTITY_NAME + " as u");
-    insert.append(", " + Organization.ENTITY_NAME + " as org");
-    insert.append("   join org." + Organization.PROPERTY_ORGANIZATIONTYPE + " as ot");
-    insert.append("\n where c." + Costing.PROPERTY_COSTTYPE + " = 'ST'");
-    insert.append("   and c." + Costing.PROPERTY_STARTINGDATE
-        + " <= to_date(to_char(:limitDate), to_char('DD-MM-YYYY HH24:MI:SS'))");
-    insert.append("   and c." + Costing.PROPERTY_ENDINGDATE
-        + " > to_date(to_char(:limitDate2), to_char('DD-MM-YYYY HH24:MI:SS'))");
-    insert.append("   and u.id = :user");
-    insert.append("   and ot." + OrganizationType.PROPERTY_LEGALENTITY + " = true");
-    insert.append("   and org." + Organization.PROPERTY_CLIENT + " = c." + Costing.PROPERTY_CLIENT);
-    insert.append("   and (ad_isorgincluded(c." + Costing.PROPERTY_ORGANIZATION + ".id, org."
-        + Organization.PROPERTY_ID + ", c." + Costing.PROPERTY_CLIENT + ".id) <> -1");
-    insert.append("   or ad_isorgincluded(org." + Organization.PROPERTY_ID + ".id, c."
-        + Costing.PROPERTY_ORGANIZATION + ", c." + Costing.PROPERTY_CLIENT + ".id) <> -1)");
-    insert.append("   and (ad_isorgincluded(p." + Product.PROPERTY_ORGANIZATION + ".id, org."
-        + Organization.PROPERTY_ID + ", p." + Product.PROPERTY_CLIENT + ".id) <> -1");
-    insert.append("   or ad_isorgincluded(org." + Organization.PROPERTY_ID + ".id, p."
-        + Product.PROPERTY_ORGANIZATION + ", p." + Product.PROPERTY_CLIENT + ".id) <> -1)");
+      Query queryInsert = OBDal.getInstance().getSession().createQuery(insert.toString());
+      final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+      String startingDate = dateFormatter.format(new Date());
+      queryInsert.setString("startingDate", startingDate);
+      queryInsert.setString("limitDate", startingDate);
+      queryInsert.setString("limitDate2", startingDate);
+      queryInsert.executeUpdate();
 
-    Query queryInsert = OBDal.getInstance().getSession().createQuery(insert.toString());
-    final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-    String startingDate = dateFormatter.format(new Date());
-    queryInsert.setString("startingDate", startingDate);
-    queryInsert.setString("limitDate", startingDate);
-    queryInsert.setString("limitDate2", startingDate);
-    queryInsert.setString("user", OBContext.getOBContext().getUser().getId());
-    queryInsert.executeUpdate();
-
+      OBDal.getInstance().flush();
+      OBDal.getInstance().getSession().clear();
+    } finally {
+      TriggerHandler.getInstance().enable();
+    }
   }
 
   private CostingRule createCostingRule(Organization org) {

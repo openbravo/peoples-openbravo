@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2011 Openbravo SLU 
+ * All portions are Copyright (C) 2011-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -80,6 +80,8 @@ public class ReorderCascadingChildDeletionsHandler extends EntityPersistenceEven
       otc.add(Restrictions.eq(InvoiceTax.PROPERTY_INVOICE, event.getTargetInstance()));
       List<InvoiceTax> otList = otc.list();
       for (InvoiceTax ot : otList) {
+        // Before delete InvoiceTax set recalculate=N to avoid raise error in InvoiceTaxEventHandler
+        ot.setRecalculate(false);
         OBDal.getInstance().remove(ot);
       }
     }

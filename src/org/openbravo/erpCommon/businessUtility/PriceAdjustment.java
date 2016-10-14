@@ -61,6 +61,12 @@ public class PriceAdjustment {
       BigDecimal qty, BigDecimal priceStd) {
     BigDecimal priceActual = priceStd;
     try {
+
+      // Discounts and Promotions only work for Sales flow
+      if (!(Boolean) orderOrInvoice.get(Invoice.PROPERTY_SALESTRANSACTION)) {
+        return priceStd;
+      }
+
       int precision = ((Currency) orderOrInvoice.get(Invoice.PROPERTY_CURRENCY))
           .getPricePrecision().intValue();
       for (org.openbravo.model.pricing.priceadjustment.PriceAdjustment promo : getApplicablePriceAdjustments(
@@ -78,8 +84,7 @@ public class PriceAdjustment {
             priceActual = priceActual
                 .subtract(promo.getDiscountAmount())
                 .multiply(
-                    BigDecimal.ONE.subtract(promo.getDiscount().divide(BigDecimal.valueOf(100),
-                        precision, BigDecimal.ROUND_HALF_UP)))
+                    BigDecimal.ONE.subtract(promo.getDiscount().divide(BigDecimal.valueOf(100))))
                 .setScale(precision, BigDecimal.ROUND_HALF_UP);
           }
         }
@@ -105,6 +110,12 @@ public class PriceAdjustment {
       BigDecimal qty, BigDecimal priceActual) {
     BigDecimal priceStd = priceActual;
     try {
+
+      // Discounts and Promotions only work for Sales flow
+      if (!(Boolean) orderOrInvoice.get(Invoice.PROPERTY_SALESTRANSACTION)) {
+        return priceActual;
+      }
+
       int precision = ((Currency) orderOrInvoice.get(Invoice.PROPERTY_CURRENCY))
           .getPricePrecision().intValue();
       for (org.openbravo.model.pricing.priceadjustment.PriceAdjustment promo : getApplicablePriceAdjustments(
@@ -117,12 +128,11 @@ public class PriceAdjustment {
         log.debug("promo: " + promo + "- " + promo.getDiscount());
         if (applyDiscount) {
           // Avoids divide by zero error
-          if (BigDecimal.ONE.subtract(
-              promo.getDiscount().divide(BigDecimal.valueOf(100), precision,
-                  BigDecimal.ROUND_HALF_UP)).compareTo(BigDecimal.ZERO) != 0) {
+          if (BigDecimal.ONE.subtract(promo.getDiscount().divide(BigDecimal.valueOf(100)))
+              .compareTo(BigDecimal.ZERO) != 0) {
             priceStd = priceStd.add(promo.getDiscountAmount()).divide(
-                BigDecimal.ONE.subtract(promo.getDiscount().divide(BigDecimal.valueOf(100),
-                    precision, BigDecimal.ROUND_HALF_UP)), precision, BigDecimal.ROUND_HALF_UP);
+                BigDecimal.ONE.subtract(promo.getDiscount().divide(BigDecimal.valueOf(100))),
+                precision, BigDecimal.ROUND_HALF_UP);
           } else {
             // 100 % Discount in price adjustment results in priceStd = Zero
             priceStd = BigDecimal.ZERO;

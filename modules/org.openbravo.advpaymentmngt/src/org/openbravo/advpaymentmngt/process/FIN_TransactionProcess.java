@@ -96,7 +96,7 @@ public class FIN_TransactionProcess implements org.openbravo.scheduling.Process 
     String msg = "";
     try {
       OBContext.setAdminMode(false);
-      if (strAction.equals("P")) {
+      if (strAction.equals("P") && !transaction.isProcessed()) {
         // ***********************
         // Process Transaction
         // ***********************
@@ -177,7 +177,7 @@ public class FIN_TransactionProcess implements org.openbravo.scheduling.Process 
         OBDal.getInstance().save(financialAccount);
         OBDal.getInstance().save(transaction);
 
-      } else if (strAction.equals("R")) {
+      } else if (strAction.equals("R") && transaction.isProcessed()) {
         // ***********************
         // Reactivate Transaction
         // ***********************

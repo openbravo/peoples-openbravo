@@ -39,8 +39,7 @@ public class OrderLineEventHandler extends EntityPersistenceEventObserver {
     return entities;
   }
 
-  public void onDelete(@Observes
-  EntityDeleteEvent event) {
+  public void onDelete(@Observes EntityDeleteEvent event) {
     if (!isValidEvent(event)) {
       return;
     }

@@ -197,7 +197,7 @@ isc.OBStandardView.addProperties({
   initWidget: function (properties) {
     var length, rightMemberButtons = [],
         leftMemberButtons = [],
-        i, actionButton;
+        i, actionButton, preferenceValue;
 
     if (this.isRootView) {
       this.buildStructure();
@@ -231,7 +231,10 @@ isc.OBStandardView.addProperties({
     if (this.sessionAttributesNames) {
       this.preferenceValues = {};
       for (i = 0; i < this.sessionAttributesNames.length; i++) {
-        this.preferenceValues[this.sessionAttributesNames[i]] = OB.PropertyStore.get(this.sessionAttributesNames[i], this.standardWindow.windowId);
+        preferenceValue = OB.PropertyStore.get(this.sessionAttributesNames[i], this.standardWindow.windowId);
+        if (preferenceValue !== null) {
+          this.preferenceValues[this.sessionAttributesNames[i]] = preferenceValue;
+        }
       }
     }
 

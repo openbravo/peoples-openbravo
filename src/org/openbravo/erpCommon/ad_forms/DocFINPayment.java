@@ -146,17 +146,20 @@ public class DocFINPayment extends AcctServer {
         FieldProviderFactory
             .setField(data[i], "AD_Org_ID", paymentDetail.getOrganization().getId());
         FieldProviderFactory.setField(data[i], "FIN_Payment_Detail_ID", paymentDetail.getId());
-        // Calculate Business Partner from payment header or from details if header is null or from
-        // the PSD in case of GL Item
-        BusinessPartner bPartner = payment.getBusinessPartner() != null ? payment
+        // Calculate Business Partner from the PSD in case of GL Item or from payment header or from
+        // details if header is null
+        BusinessPartner bPartner = paymentDetail.getFINPaymentScheduleDetailList().get(0)
+            .getBusinessPartner() != null ? paymentDetail.getFINPaymentScheduleDetailList().get(0)
             .getBusinessPartner()
-            : (paymentDetail.getFINPaymentScheduleDetailList().get(0).getInvoicePaymentSchedule() != null ? paymentDetail
-                .getFINPaymentScheduleDetailList().get(0).getInvoicePaymentSchedule().getInvoice()
-                .getBusinessPartner()
-                : (paymentDetail.getFINPaymentScheduleDetailList().get(0).getOrderPaymentSchedule() != null ? paymentDetail
-                    .getFINPaymentScheduleDetailList().get(0).getOrderPaymentSchedule().getOrder()
-                    .getBusinessPartner()
-                    : (paymentDetail.getFINPaymentScheduleDetailList().get(0).getBusinessPartner())));
+            : payment.getBusinessPartner() != null ? payment.getBusinessPartner()
+                : paymentDetail.getFINPaymentScheduleDetailList().get(0)
+                    .getInvoicePaymentSchedule() != null ? paymentDetail
+                    .getFINPaymentScheduleDetailList().get(0).getInvoicePaymentSchedule()
+                    .getInvoice().getBusinessPartner()
+                    : paymentDetail.getFINPaymentScheduleDetailList().get(0)
+                        .getOrderPaymentSchedule() != null ? paymentDetail
+                        .getFINPaymentScheduleDetailList().get(0).getOrderPaymentSchedule()
+                        .getOrder().getBusinessPartner() : null;
         FieldProviderFactory.setField(data[i], "cBpartnerId", bPartner != null ? bPartner.getId()
             : "");
         FieldProviderFactory.setField(data[i], "DoubtFulDebtAmount", paymentDetail
