@@ -29,11 +29,11 @@
       LOADONSTARTUP, '' AS VALUE, '' AS LINE, '' AS AUTH, '' as buildxml, 
          '' as tabId, '' as windowName, '' as tabName, '' as windowPackage, '' as windowmodule, '' as tabPackage, '' as tabmodule,
          '' as key, '' as tablevel
-      FROM AD_MODEL_OBJECT o left join ad_process p on o.ad_process_id = p.ad_process_id and p.isReport='N'
+      FROM AD_MODEL_OBJECT o LEFT JOIN ad_process p ON o.ad_process_id = p.ad_process_id AND p.isReport='N'
       WHERE o.ISACTIVE = 'Y'
       AND OBJECT_TYPE = 'S'
       AND ACTION != 'W'
-      and coalesce(p.uiPattern,'M') = 'M'
+      AND COALESCE(p.uiPattern,'M') = 'M'
       ORDER BY NAME
       ]]>
     </Sql>
