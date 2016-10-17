@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2013 Openbravo SLU
+ * All portions are Copyright (C) 2010-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -47,6 +47,11 @@ OB.KeyboardManager.Shortcuts.setPredefinedList('UINAVBA_KeyboardShortcuts');
 // should be moved to client.kernel component
 // placed here to prevent dependencies of client.kernel on Preferences
 OB.Application.startPage = '${data.startPage}';
+
+// This preference is the one which enables the accessibility for the people with reduced visual capabilities.
+if (OB.PropertyStore.get('EnableScreenReader') === 'Y') {
+    isc.screenReader = true;
+} 
 
 // the OB.Layout contains everything
 OB.Layout = isc.VLayout.create({

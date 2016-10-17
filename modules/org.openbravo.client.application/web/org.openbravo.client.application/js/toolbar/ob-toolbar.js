@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2015 Openbravo SLU
+ * All portions are Copyright (C) 2010-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):   Sreedhar Sirigiri (TDS), Mallikarjun M (TDS)
  ************************************************************************
@@ -400,6 +400,9 @@ isc.OBToolbar.addClassProperties({
       } else {
         this.prompt = OB.I18N.getLabel('OBUIAPP_CreateAttachments');
         this.buttonType = 'attach';
+      }
+      if (OB.PropertyStore.get('EnableScreenReader') === 'Y') {
+        this.setAriaState('label', this.prompt);
       }
       if (!selectedRows || selectedRows.size() === 0) {
         // If there are now selected rows then attachments button will be disabled
@@ -1578,7 +1581,7 @@ isc.OBToolbarIconButton.addProperties({
   showFocused: true,
   showDown: true,
   showFocusedAsOver: false,
-  title: '.',
+  title: '',
   showHover: true,
   customState: '',
   showMenuButtonImage: false,

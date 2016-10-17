@@ -139,7 +139,19 @@ isc.OBAlertGrid.addProperties({
     this.Super('destroy', arguments);
   },
 
+  isScreenReaderPreferenceEnabled: function () {
+    return OB.PropertyStore.get('EnableScreenReader') === 'Y';
+  },
+
   setDataSource: function (ds) {
+    var i;
+    if (this.isScreenReaderPreferenceEnabled()) {
+      for (i = 0; i < this.gridFields.length; i++) {
+        this.gridFields[i].filterEditorProperties = {
+          title: OB.I18N.getLabel('OBUIAPP_Filter_By_Column', [this.gridFields[i].title])
+        };
+      }
+    }
     this.Super('setDataSource', [ds, this.gridFields]);
     // Some properties need to be set when the datasource is loaded to avoid errors when form is
     // open the first time.

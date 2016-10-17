@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2014 Openbravo SLU
+ * All portions are Copyright (C) 2010-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -91,6 +91,8 @@ isc.OBMyOpenbravo.addProperties({
   adminMode: false,
   adminLevel: '',
   adminLevelValue: '',
+
+
   createLeftColumnLayout: function () {
     var me = this,
         i, recentViewsLayout, recentViewsLinksLayout, recentDocumentsLayout, recentDocumentsLinksLayout, addWidgetLayout, adminOtherMyOBLayout, refreshLayout;
@@ -191,7 +193,10 @@ isc.OBMyOpenbravo.addProperties({
       contents: OB.I18N.getLabel('OBKMO_WMO_Refresh'),
       action: function () {
         OB.MyOB.reloadWidgets();
-      }
+      },
+      canFocus: true,
+      showFocused: true,
+      showRollOver: true
     }));
 
     // the available widget classes the user may/can create
@@ -228,7 +233,10 @@ isc.OBMyOpenbravo.addProperties({
         } else {
           this.doOpen();
         }
-      }
+      },
+      canFocus: true,
+      showFocused: true,
+      showRollOver: true
     }));
 
     if (this.enableAdminMode) {
@@ -265,7 +273,10 @@ isc.OBMyOpenbravo.addProperties({
           } else {
             this.doOpen();
           }
-        }
+        },
+        canFocus: true,
+        showFocused: true,
+        showRollOver: true
       }));
     }
 
@@ -288,7 +299,6 @@ isc.OBMyOpenbravo.addProperties({
     this.leftColumnLayout.addMember(isc.VLayout.create({
       height: 10
     }));
-
     this.leftColumnLayout.recentViewsLayout = recentViewsLayout;
     this.leftColumnLayout.recentDocumentsLayout = recentDocumentsLayout;
     this.leftColumnLayout.addWidgetLayout = addWidgetLayout;
@@ -436,7 +446,7 @@ isc.OBMyOpenbravo.addProperties({
 
   setRecentList: function (layout) {
     var recentList, newRecent, handleClickFunction, recentIndex = 0,
-        recent, lbl, newIcon, entryLayout, icon, destroyFunction;
+        recent, lbl, newIcon, entryLayout, icon, destroyFunction, handleEnterKeyPressFunction;
 
     // start with a fresh content
     layout.destroyAndRemoveMembers(layout.members);
@@ -460,6 +470,13 @@ isc.OBMyOpenbravo.addProperties({
           }
         } else {
           OB.Layout.ViewManager.openView('OBClassicWindow', this.recent);
+        }
+      };
+
+      handleEnterKeyPressFunction = function () {
+        var keyName = isc.EH.lastEvent.keyName;
+        if (keyName === 'Enter' || keyName === 'Space') {
+          return this.handleClick();
         }
       };
 
@@ -504,9 +521,12 @@ isc.OBMyOpenbravo.addProperties({
             baseStyle: OB.Styles.OBMyOpenbravo.recentViewsLayout.Label.baseStyle,
             handleClick: handleClickFunction,
             iconOrientation: 'left',
-            icon: icon
+            icon: icon,
+            canFocus: true,
+            handleKeyPress: handleEnterKeyPressFunction,
+            showFocused: true,
+            showRollOver: true
           });
-
           entryLayout = isc.HLayout.create({
             defaultLayoutAlign: 'center',
             width: '100%',
@@ -548,7 +568,7 @@ isc.OBMyOpenbravo.addProperties({
 
   setRecentDocumentsList: function (layout) {
     var recentList, newRecent, recentIndex = 0,
-        recent, lbl, newIcon, entryLayout, icon, handleClickFunction;
+        recent, lbl, newIcon, entryLayout, icon, handleClickFunction, handleEnterKeyPressFunction;
 
     // start with a fresh content
     layout.destroyAndRemoveMembers(layout.members);
@@ -564,6 +584,13 @@ isc.OBMyOpenbravo.addProperties({
         }
         //Direct set to true in order to open just the record selected
         OB.Layout.ViewManager.openView(this.recent.viewId, this.recent, null, true);
+      };
+
+      handleEnterKeyPressFunction = function () {
+        var keyName = isc.EH.lastEvent.keyName;
+        if (keyName === 'Enter' || keyName === 'Space') {
+          this.handleClick();
+        }
       };
 
       for (; recentIndex < recentList.length; recentIndex++) {
@@ -582,7 +609,11 @@ isc.OBMyOpenbravo.addProperties({
             baseStyle: OB.Styles.OBMyOpenbravo.recentDocumentsLayout.Label.baseStyle,
             handleClick: handleClickFunction,
             iconOrientation: 'left',
-            icon: OB.Styles.OBMyOpenbravo.recentDocumentsLayout.Label.icon
+            icon: OB.Styles.OBMyOpenbravo.recentDocumentsLayout.Label.icon,
+            canFocus: true,
+            handleKeyPress: handleEnterKeyPressFunction,
+            showFocused: true,
+            showRollOver: true
           });
 
           entryLayout = isc.HLayout.create({
