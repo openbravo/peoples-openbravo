@@ -289,10 +289,25 @@ enyo.kind({
                   customerAddr: me.model.get('customerAddr'),
                   isNew: true
                 }, function (args) {
+                  var receipt = OB.MobileApp.model.receipt,
+                      orderlines = [];
                   if (args && args.cancellation && args.cancellation === true) {
                     return true;
                   }
+                  receipt.set('skipCalculateReceipt', true);
+                  receipt.set('preventServicesUpdate', true);
+                  receipt.set('deleting', true);
+                  _.each(receipt.get('lines').models, function (line) {
+                    orderlines.push(line);
+                  });
+                  _.each(orderlines, function (line) {
+                    receipt.deleteLine(line, true);
+                  });
+                  receipt.unset('preventServicesUpdate');
+                  receipt.unset('deleting');
+                  receipt.calculateGross();
                   args.customerAddr.saveCustomerAddr(callback);
+                  receipt.set('skipCalculateReceipt', false);
                 });
               }
             }, {
