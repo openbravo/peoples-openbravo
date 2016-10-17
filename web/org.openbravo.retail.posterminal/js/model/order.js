@@ -3965,15 +3965,19 @@
         }
       }
 
-      OB.UTIL.HookManager.executeHooks('OBPOS_PreDeleteCurrentOrder', {
-        context: context,
-        receipt: this
-      }, function (args) {
-        if (args && args.cancelOperation && args.cancelOperation === true) {
-          return;
-        }
-        removeOrder(args.receipt, callback);
-      });
+      if (this.get('isEditable') === true) {
+        OB.UTIL.HookManager.executeHooks('OBPOS_PreDeleteCurrentOrder', {
+          context: context,
+          receipt: this
+        }, function (args) {
+          if (args && args.cancelOperation && args.cancelOperation === true) {
+            return;
+          }
+          removeOrder(args.receipt, callback);
+        });
+      } else {
+        removeOrder(this, callback);
+      }
 
       return true;
     }
