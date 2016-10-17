@@ -332,11 +332,25 @@ public class Preferences {
    * @see Preferences#getPreferences(String, boolean, String, String, String , String , String ,
    *      boolean , boolean , boolean)
    */
-  public static List<Preference> getPreferences(String property, boolean isListProperty,
+  private static List<Preference> getPreferences(String property, boolean isListProperty,
       String client, String org, String user, String role, String window, boolean exactMatch,
       boolean checkWindow) {
     return getPreferences(property, isListProperty, client, org, user, role, window, exactMatch,
         checkWindow, true);
+  }
+
+  private static List<Preference> getPreferences(String property, boolean isListProperty,
+      String client, String org, String user, String role, String window, boolean exactMatch,
+      boolean checkWindow, boolean activeFilterEnabled) {
+    return getPreferences(property, isListProperty, client, org, user, role, window, exactMatch,
+        checkWindow, activeFilterEnabled, "id", true);
+  }
+
+  public static List<Preference> getPreferencesOrdered(String property, boolean isListProperty,
+      String client, String org, String user, String role, String window, boolean exactMatch,
+      boolean checkWindow, boolean activeFilterEnabled, String oderProperty, boolean orderAsc) {
+    return getPreferences(property, isListProperty, client, org, user, role, window, exactMatch,
+        checkWindow, activeFilterEnabled, oderProperty, orderAsc);
   }
 
   /**
@@ -351,7 +365,7 @@ public class Preferences {
    */
   private static List<Preference> getPreferences(String property, boolean isListProperty,
       String client, String org, String user, String role, String window, boolean exactMatch,
-      boolean checkWindow, boolean activeFilterEnabled) {
+      boolean checkWindow, boolean activeFilterEnabled, String orderProperty, boolean orderAsc) {
 
     List<Object> parameters = new ArrayList<Object>();
     StringBuilder hql = new StringBuilder();
@@ -440,7 +454,7 @@ public class Preferences {
       parameters.add(property);
     }
 
-    hql.append(" order by p.id");
+    hql.append(" order by p." + orderProperty + (orderAsc ? " asc" : " desc"));
 
     OBQuery<Preference> qPref = OBDal.getInstance().createQuery(Preference.class, hql.toString());
     qPref.setParameters(parameters);

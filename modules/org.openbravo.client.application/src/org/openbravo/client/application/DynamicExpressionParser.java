@@ -440,6 +440,11 @@ public class DynamicExpressionParser {
         isBoolean);
   }
 
+  /**
+   * Given the Display logic expression, it replaces the preferences properties with its values
+   * 
+   * @return Returns the Display logic expression with the properties replaced
+   */
   public String replaceSystemPreferencesInDisplayLogic() {
     String result = code;
     CachedPreference cachedPreference = org.openbravo.base.weld.WeldUtils

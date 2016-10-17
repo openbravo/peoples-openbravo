@@ -345,7 +345,7 @@ public class ViewComponent extends BaseComponent {
   }
 
   private List<Field> getFieldsWithDisplayLogicAtServerLevel(String windowID) {
-    StringBuffer where = new StringBuffer();
+    StringBuilder where = new StringBuilder();
     where.append(" as f");
     where.append(" where f.displayLogicEvaluatedInTheServer is not null");
     where.append(" and f.tab.id in (select t.id");
@@ -359,18 +359,17 @@ public class ViewComponent extends BaseComponent {
 
   private Date getLastUpdated(String preference) {
     OBContext.setAdminMode(false);
-    List<Preference> preferencesWihtPropertyList = Preferences.getPreferences(preference, true,
-        "0", "0", null, null, null, false, true);
-    if (preferencesWihtPropertyList.isEmpty()) {
-      List<Preference> preferencesWithAttribute = Preferences.getPreferences(preference, false,
-          "0", "0", null, null, null, false, true);
-      if (preferencesWithAttribute.isEmpty()) {
+    try {
+      List<Preference> preferencesWihtPropertyList = Preferences.getPreferencesOrdered(preference,
+          true, "0", "0", null, null, null, false, true, true, "updated", false);
+      if (preferencesWihtPropertyList.isEmpty()) {
         Calendar cal = Calendar.getInstance();
         cal.set(9999, 9, 9);
         return new Date(cal.getTimeInMillis());
       }
-      return preferencesWithAttribute.get(0).getUpdated();
+      return preferencesWihtPropertyList.get(0).getUpdated();
+    } finally {
+      OBContext.restorePreviousMode();
     }
-    return preferencesWihtPropertyList.get(0).getUpdated();
   }
 }

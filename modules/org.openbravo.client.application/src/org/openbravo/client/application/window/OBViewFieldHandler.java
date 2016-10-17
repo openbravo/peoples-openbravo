@@ -1557,6 +1557,14 @@ public class OBViewFieldHandler {
       }
     }
 
+    /**
+     * Evaluates the Display logic at server level and returns true if the field must be shown,
+     * false otherwise
+     * 
+     * @param displayLogicEvaluatedInTheServer
+     *          Display logic to be evaluated
+     * @return True if the field must be shown, false otherwise
+     */
     public boolean evaluateDisplayLogicAtServerLevel(String displayLogicEvaluatedInTheServer) {
       if (displayLogicEvaluatedInTheServer == null) {
         return true;
@@ -1585,7 +1593,8 @@ public class OBViewFieldHandler {
     }
 
     public boolean isShowInitiallyInGrid() {
-      return field.isShowInGridView();
+      return field.isShowInGridView()
+          && evaluateDisplayLogicAtServerLevel(field.getDisplayLogicEvaluatedInTheServer());
     }
 
     public int getGridSort() {
