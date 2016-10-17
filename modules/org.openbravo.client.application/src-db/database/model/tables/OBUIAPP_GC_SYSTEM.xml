@@ -73,6 +73,10 @@
         <default><![CDATA[10]]></default>
         <onCreateDefault><![CDATA['10']]></onCreateDefault>
       </column>
+      <column name="ALLOWSUMMARYFUNCTIONS" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[Y]]></default>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="OBUIAPP_GC_SYSTEM_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -84,6 +88,7 @@
       <check name="OBUIAPP_GC_SYS_ISLAZY_CHK"><![CDATA[ISLAZYFILTERING IN ('Y', 'N')]]></check>
       <check name="OBUIAPP_GC_SYS_ISSORT_CHK"><![CDATA[ISSORTABLE IN ('Y', 'N')]]></check>
       <check name="OBUIAPP_GC_SYS_ONCHNG_CHK"><![CDATA[FILTERONCHANGE IN ('Y', 'N')]]></check>
+      <check name="OBUIAPP_GC_SYS_SUMMARY_CHK"><![CDATA[ALLOWSUMMARYFUNCTIONS IN ('Y', 'N')]]></check>
       <check name="OBUIAPP_GC_SYS_UNFILTDD_CHK"><![CDATA[ISFKDROPDOWNUNFILTERED IN ('Y', 'N')]]></check>
     </table>
   </database>
