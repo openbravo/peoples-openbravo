@@ -351,7 +351,7 @@ OB.ViewFormProperties = {
   },
 
   isLinkedItemSectionDisabled: function () {
-    return 'Y' === OB.PropertyStore.get('OBUIAPP_DisableLinkedItemsSection', this.view.windowId);
+    return 'Y' === OB.PropertyStore.get('OBUIAPP_DisableLinkedItemsSection', this.view.standardWindow.windowId);
   },
 
   enableAttachmentsSection: function (enable) {
