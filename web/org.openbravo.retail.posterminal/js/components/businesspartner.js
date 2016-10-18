@@ -632,7 +632,8 @@ enyo.kind({
         var filterBpartnerId = {
           columns: ['bpartner'],
           operator: OB.Dal.EQ,
-          value: bpartner.get('bpartnerId')
+          value: bpartner.get('bpartnerId'),
+          isId: true
         };
         criteria.remoteFilters = [filterBpartnerId];
       }
