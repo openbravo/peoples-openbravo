@@ -1,7 +1,27 @@
+/*************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SLU 
+ * All portions are Copyright (C) 2016 Openbravo SLU 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+ */
+
 package org.openbravo.client.application.test;
 
-import static org.junit.Assert.assertEquals;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.junit.Assert.assertThat;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.openbravo.base.weld.test.WeldBaseTest;
 import org.openbravo.client.application.CachedPreference;
@@ -13,14 +33,33 @@ import org.openbravo.model.ad.ui.Tab;
 
 public class DisplayLogicAtServerLevelTest extends WeldBaseTest {
 
-  @Test
-  public void testReplaceSystemPreferencesInDisplayLogic() {
+  CachedPreference cachedPreference;
+  Tab tab;
+  OBViewField field;
 
+  /**
+   * Initializes the global variables for the rest of the tests
+   */
+  @Before
+  public void initializeTest() {
     setSystemAdministratorContext();
 
-    CachedPreference cachedPreference = org.openbravo.base.weld.WeldUtils
+    cachedPreference = org.openbravo.base.weld.WeldUtils
         .getInstanceFromStaticBeanManager(CachedPreference.class);
-    Tab tab = OBDal.getInstance().get(Tab.class, "270");
+    tab = OBDal.getInstance().get(Tab.class, "270");
+
+    OBViewFieldHandler handler = new OBViewFieldHandler();
+    handler.setTab(tab);
+    field = handler.new OBViewField();
+  }
+
+  /**
+   * Tests that the replacement of the DisplayLogic at Server level works correctly
+   * 
+   * @return True if the test is ok, false otherwise
+   */
+  @Test
+  public void testReplaceSystemPreferencesInDisplayLogic() {
 
     cachedPreference.addCachedPreference("enableNegativeStockCorrections");
     cachedPreference.setPreferenceValue("enableNegativeStockCorrections", "Y");
@@ -29,21 +68,20 @@ public class DisplayLogicAtServerLevelTest extends WeldBaseTest {
 
     String displayLogicEvaluatedInServerExpression = "@uomManagement@ = 'Y' & @enableNegativeStockCorrections@ = 'Y'";
     String expectedTranslatedDisplayLogic = "'Y' = 'Y' & 'Y' = 'Y'";
+    String translatedDisplayLogic = DynamicExpressionParser
+        .replaceSystemPreferencesInDisplayLogic(displayLogicEvaluatedInServerExpression);
 
-    DynamicExpressionParser parser = new DynamicExpressionParser(
-        displayLogicEvaluatedInServerExpression, tab);
-
-    assertEquals(expectedTranslatedDisplayLogic, parser.replaceSystemPreferencesInDisplayLogic());
+    assertThat(translatedDisplayLogic, equalTo(expectedTranslatedDisplayLogic));
   }
 
+  /**
+   * Tests that the replacement of the DisplayLogic at Server level works correctly containing null
+   * values
+   * 
+   * @return True if the test is ok, false otherwise
+   */
   @Test
   public void testReplaceSystemPreferencesInDisplayLogicWithNullValue() {
-
-    setSystemAdministratorContext();
-
-    CachedPreference cachedPreference = org.openbravo.base.weld.WeldUtils
-        .getInstanceFromStaticBeanManager(CachedPreference.class);
-    Tab tab = OBDal.getInstance().get(Tab.class, "270");
 
     cachedPreference.addCachedPreference("enableNegativeStockCorrections");
     cachedPreference.setPreferenceValue("enableNegativeStockCorrections", "Y");
@@ -51,24 +89,19 @@ public class DisplayLogicAtServerLevelTest extends WeldBaseTest {
     String displayLogicEvaluatedInServerExpression = "@uomManagement@ = 'Y' & @enableNegativeStockCorrections@ = 'N'";
     String expectedTranslatedDisplayLogic = "'null' = 'Y' & 'Y' = 'N'";
 
-    DynamicExpressionParser parser = new DynamicExpressionParser(
-        displayLogicEvaluatedInServerExpression, tab);
+    String translatedDisplayLogic = DynamicExpressionParser
+        .replaceSystemPreferencesInDisplayLogic(displayLogicEvaluatedInServerExpression);
 
-    assertEquals(expectedTranslatedDisplayLogic, parser.replaceSystemPreferencesInDisplayLogic());
+    assertThat(translatedDisplayLogic, equalTo(expectedTranslatedDisplayLogic));
   }
 
+  /**
+   * Tests that the evaluation of the DisplayLogic at Server level works correctly
+   * 
+   * @return True if the test is ok, false otherwise
+   */
   @Test
   public void testEvaluatePreferencesInDisplayLogic() {
-
-    setSystemAdministratorContext();
-
-    CachedPreference cachedPreference = org.openbravo.base.weld.WeldUtils
-        .getInstanceFromStaticBeanManager(CachedPreference.class);
-
-    Tab tab = OBDal.getInstance().get(Tab.class, "270");
-    OBViewFieldHandler handler = new OBViewFieldHandler();
-    handler.setTab(tab);
-    OBViewField field = handler.new OBViewField();
 
     cachedPreference.addCachedPreference("enableNegativeStockCorrections");
     cachedPreference.setPreferenceValue("enableNegativeStockCorrections", "Y");
@@ -77,37 +110,33 @@ public class DisplayLogicAtServerLevelTest extends WeldBaseTest {
 
     String displayLogicEvaluatedInServerExpression = "@uomManagement@ = 'Y' & @enableNegativeStockCorrections@ = 'Y'";
 
-    boolean evaluatedDisplayLogic = field
-        .evaluateDisplayLogicAtServerLevel(displayLogicEvaluatedInServerExpression);
+    boolean evaluatedDisplayLogic = field.evaluateDisplayLogicAtServerLevel(
+        displayLogicEvaluatedInServerExpression, "0");
     boolean expectedEvaluatedDisplayLogic = true;
 
-    assertEquals(expectedEvaluatedDisplayLogic, evaluatedDisplayLogic);
+    assertThat(evaluatedDisplayLogic, equalTo(expectedEvaluatedDisplayLogic));
 
   }
 
+  /**
+   * Tests that the evaluation of the DisplayLogic at Server level works correctly containing null
+   * values
+   * 
+   * @return True if the test is ok, false otherwise
+   */
   @Test
   public void testEvaluatePreferencesInDisplayLogicWithNullValue() {
-
-    setSystemAdministratorContext();
-
-    CachedPreference cachedPreference = org.openbravo.base.weld.WeldUtils
-        .getInstanceFromStaticBeanManager(CachedPreference.class);
-
-    Tab tab = OBDal.getInstance().get(Tab.class, "270");
-    OBViewFieldHandler handler = new OBViewFieldHandler();
-    handler.setTab(tab);
-    OBViewField field = handler.new OBViewField();
 
     cachedPreference.addCachedPreference("enableNegativeStockCorrections");
     cachedPreference.setPreferenceValue("enableNegativeStockCorrections", "N");
 
     String displayLogicEvaluatedInServerExpression = "@uomManagement@ = 'Y' & @enableNegativeStockCorrections@ = 'Y'";
 
-    boolean evaluatedDisplayLogic = field
-        .evaluateDisplayLogicAtServerLevel(displayLogicEvaluatedInServerExpression);
+    boolean evaluatedDisplayLogic = field.evaluateDisplayLogicAtServerLevel(
+        displayLogicEvaluatedInServerExpression, "0");
     boolean expectedEvaluatedDisplayLogic = false;
 
-    assertEquals(expectedEvaluatedDisplayLogic, evaluatedDisplayLogic);
+    assertThat(evaluatedDisplayLogic, equalTo(expectedEvaluatedDisplayLogic));
 
   }
 

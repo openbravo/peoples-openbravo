@@ -103,11 +103,9 @@ public class CachedPreference {
    *          true if the propertyName must be cached, false if not
    * @return The preference value of the propertyName given
    */
-  public String getPreferenceValue(String propertyName, boolean cachePreference) {
-    String result = this.getPreferenceValue(propertyName);
-    if (cachePreference) {
-      addCachedPreference(propertyName);
-    }
+  public String getPreferenceValueAndStoreInCache(String propertyName) {
+    String result = getPreferenceValue(propertyName);
+    addCachedPreference(propertyName);
     return result;
   }
 

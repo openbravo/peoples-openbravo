@@ -96,7 +96,10 @@ public class StandardWindowComponent extends BaseTemplateComponent {
   }
 
   public String generate() {
+    long startTime = System.currentTimeMillis();
     final String jsCode = super.generate();
+    long endTime = System.currentTimeMillis();
+    System.out.println("-------------------------> Elapsed Time: " + (endTime - startTime));
     // System.err.println(jsCode);
     return jsCode;
   }

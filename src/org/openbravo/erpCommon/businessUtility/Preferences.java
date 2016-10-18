@@ -346,6 +346,12 @@ public class Preferences {
         checkWindow, activeFilterEnabled, "id", true);
   }
 
+  /**
+   * Returns a list of all the preferences that matches the filters ordered by the order parameters
+   * set
+   * 
+   * @return A List of preferences
+   */
   public static List<Preference> getPreferencesOrdered(String property, boolean isListProperty,
       String client, String org, String user, String role, String window, boolean exactMatch,
       boolean checkWindow, boolean activeFilterEnabled, String oderProperty, boolean orderAsc) {

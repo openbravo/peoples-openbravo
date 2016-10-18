@@ -21,7 +21,6 @@ package org.openbravo.client.application;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -33,6 +32,7 @@ import javax.inject.Inject;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
+import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.util.OBClassLoader;
@@ -48,13 +48,11 @@ import org.openbravo.client.kernel.OBUserException;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.obps.ActivationKey.FeatureRestriction;
 import org.openbravo.model.ad.domain.Preference;
 import org.openbravo.model.ad.module.Module;
-import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.Window;
 import org.openbravo.model.ad.utility.AttachmentMethod;
@@ -324,17 +322,15 @@ public class ViewComponent extends BaseComponent {
 
     Set<String> preferences = new HashSet<String>();
 
-    for (Field field : getFieldsWithDisplayLogicAtServerLevel(window.getId())) {
+    for (String displayLogic : getFieldsWithDisplayLogicAtServerLevel(window.getId())) {
       Pattern p = Pattern.compile("@(.*?)@");
-      Matcher m = p.matcher(field.getDisplayLogicEvaluatedInTheServer());
+      Matcher m = p.matcher(displayLogic);
       while (m.find()) {
         preferences.add(m.group(1));
       }
     }
 
-    Iterator<String> preferenceIt = preferences.iterator();
-    while (preferenceIt.hasNext()) {
-      String preference = preferenceIt.next();
+    for (String preference : preferences) {
       Date upated = getLastUpdated(preference);
       if (lastModification.compareTo(upated) < 0) {
         lastModification = upated;
@@ -344,32 +340,31 @@ public class ViewComponent extends BaseComponent {
     return lastModification.toString();
   }
 
-  private List<Field> getFieldsWithDisplayLogicAtServerLevel(String windowID) {
+  @SuppressWarnings("unchecked")
+  private List<String> getFieldsWithDisplayLogicAtServerLevel(String windowID) {
     StringBuilder where = new StringBuilder();
-    where.append(" as f");
+    where.append(" select displayLogicEvaluatedInTheServer");
+    where.append(" from ADField as f");
     where.append(" where f.displayLogicEvaluatedInTheServer is not null");
     where.append(" and f.tab.id in (select t.id");
     where.append("                  from ADTab t");
     where.append("                  where t.window.id = :windowId)");
 
-    OBQuery<Field> qry = OBDal.getInstance().createQuery(Field.class, where.toString());
-    qry.setNamedParameter("windowId", windowID);
-    return qry.list();
+    Session session = OBDal.getInstance().getSession();
+    Query query = session.createQuery(where.toString());
+    query.setParameter("windowId", windowID);
+
+    return (List<String>) query.list();
   }
 
   private Date getLastUpdated(String preference) {
-    OBContext.setAdminMode(false);
-    try {
-      List<Preference> preferencesWihtPropertyList = Preferences.getPreferencesOrdered(preference,
-          true, "0", "0", null, null, null, false, true, true, "updated", false);
-      if (preferencesWihtPropertyList.isEmpty()) {
-        Calendar cal = Calendar.getInstance();
-        cal.set(9999, 9, 9);
-        return new Date(cal.getTimeInMillis());
-      }
-      return preferencesWihtPropertyList.get(0).getUpdated();
-    } finally {
-      OBContext.restorePreviousMode();
+    List<Preference> preferencesWihtPropertyList = Preferences.getPreferencesOrdered(preference,
+        true, "0", "0", null, null, null, false, true, true, "updated", false);
+    if (preferencesWihtPropertyList.isEmpty()) {
+      Calendar cal = Calendar.getInstance();
+      cal.set(9999, 9, 9);
+      return new Date(cal.getTimeInMillis());
     }
+    return preferencesWihtPropertyList.get(0).getUpdated();
   }
 }

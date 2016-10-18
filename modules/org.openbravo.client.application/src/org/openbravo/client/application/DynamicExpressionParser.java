@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2014 Openbravo SLU
+ * All portions are Copyright (C) 2011-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -443,18 +443,20 @@ public class DynamicExpressionParser {
   /**
    * Given the Display logic expression, it replaces the preferences properties with its values
    * 
+   * @param displayLogic
+   *          DisplayLogic to be replaced
    * @return Returns the Display logic expression with the properties replaced
    */
-  public String replaceSystemPreferencesInDisplayLogic() {
-    String result = code;
+  public static String replaceSystemPreferencesInDisplayLogic(String displayLogic) {
+    String result = displayLogic;
     CachedPreference cachedPreference = org.openbravo.base.weld.WeldUtils
         .getInstanceFromStaticBeanManager(CachedPreference.class);
 
     Pattern pattern = Pattern.compile("@(.*?)@");
-    Matcher matcher = pattern.matcher(code);
+    Matcher matcher = pattern.matcher(displayLogic);
     while (matcher.find()) {
       result = result.replaceAll("@" + matcher.group(1) + "@",
-          "'" + cachedPreference.getPreferenceValue(matcher.group(1), true) + "'");
+          "'" + cachedPreference.getPreferenceValueAndStoreInCache(matcher.group(1)) + "'");
     }
     return result;
   }
