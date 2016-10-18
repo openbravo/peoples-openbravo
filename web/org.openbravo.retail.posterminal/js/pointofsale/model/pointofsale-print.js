@@ -163,7 +163,7 @@
 
       var hasNegativeLines = _.filter(receipt.get('lines').models, function (line) {
         return line.get('qty') < 0;
-      }).length === receipt.get('lines').models ? true : false;
+      }).length === receipt.get('lines').size() ? true : false;
 
       var linesToRemove = [];
       receipt.get('lines').forEach(function (line) {

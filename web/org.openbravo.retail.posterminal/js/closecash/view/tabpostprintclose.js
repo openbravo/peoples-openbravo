@@ -559,6 +559,10 @@ enyo.kind({
   }],
 
   create: function () {
+    //Force removal of wrong css class to enable scrolling in ios
+    if (OB.UTIL.isIOS()) {
+      document.body.classList.remove('webkitOverflowScrolling');
+    }
     this.inherited(arguments);
     this.$.store.setContent(OB.I18N.getLabel('OBPOS_LblStore') + ': ' + OB.MobileApp.model.get('terminal').organization$_identifier);
     this.$.terminal.setContent(OB.I18N.getLabel('OBPOS_LblTerminal') + ': ' + OB.MobileApp.model.get('terminal')._identifier);

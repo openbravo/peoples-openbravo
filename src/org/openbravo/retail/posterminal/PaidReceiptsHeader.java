@@ -142,7 +142,7 @@ public class PaidReceiptsHeader extends ProcessHQLQuery {
 
     } else if (json.getBoolean("isReturn")) {
       // (It is a Return)
-      hqlPaidReceipts += " and ord.obposApplications is not null and ord.iscancelled != true and exists (select 1 from ord.orderLineList where deliveredQuantity > 0) ";
+      hqlPaidReceipts += " and ord.obposApplications is not null and ord.cancelledorder is null and exists (select 1 from ord.orderLineList where deliveredQuantity > 0) ";
     } else {
       // (It is not Layaway and It is not a Return)
       hqlPaidReceipts += " and ord.obposApplications is not null and exists (select 1 from ord.orderLineList where deliveredQuantity != 0) ";
