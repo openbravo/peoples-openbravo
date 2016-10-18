@@ -18,6 +18,8 @@
  */
 package org.openbravo.base.weld;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -119,5 +121,22 @@ public class WeldUtils {
       }
     }
     throw new IllegalArgumentException("No bean found for type " + type);
+  }
+
+  /**
+   * Returns a set of instances for a specified type/class
+   */
+  @SuppressWarnings("unchecked")
+  public static <T> List<T> getInstances(Class<T> type) {
+    final BeanManager beanManager = WeldUtils.getStaticInstanceBeanManager();
+    final Set<Bean<?>> beans = beanManager.getBeans(type);
+
+    final List<T> instances = new ArrayList<T>();
+    for (Bean<?> bean : beans) {
+      T instance = (T) beanManager.getReference(bean, type,
+          beanManager.createCreationalContext(bean));
+      instances.add(instance);
+    }
+    return instances;
   }
 }
