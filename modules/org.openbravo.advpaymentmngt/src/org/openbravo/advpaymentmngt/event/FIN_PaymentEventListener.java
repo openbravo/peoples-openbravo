@@ -59,12 +59,8 @@ public class FIN_PaymentEventListener extends EntityPersistenceEventObserver {
       return;
     }
     FIN_Payment payment = (FIN_Payment) event.getTargetInstance();
-    if (payment.getAmount().compareTo(BigDecimal.ZERO) == 0) {
+    if (payment.isProcessed() && payment.getAmount().compareTo(BigDecimal.ZERO) == 0) {
       String newDocumentNo = payment.getDocumentNo();
-      if (newDocumentNo.startsWith("<") && newDocumentNo.endsWith(">") && !payment.isProcessed()) {
-        // Remove "<" and ">" characters from documentNo if payment is not processed
-        newDocumentNo = newDocumentNo.substring(1, newDocumentNo.length() - 1);
-      }
       newDocumentNo = newDocumentNo + CancelAndReplaceUtils.ZERO_PAYMENT_SUFIX;
       setDocumentNoToPayment(event, newDocumentNo);
     }
@@ -85,18 +81,25 @@ public class FIN_PaymentEventListener extends EntityPersistenceEventObserver {
 
     String documentNo = payment.getDocumentNo();
     int documentNoLength = payment.getDocumentNo().length();
-    if (payment.getAmount().compareTo(BigDecimal.ZERO) == 0) {
-      // Payment has no already an *Z* at the end of the document number
-      if (!CancelAndReplaceUtils.ZERO_PAYMENT_SUFIX.equals(documentNo
-          .substring(documentNoLength - 3))) {
-        String newDocumentNo = documentNo + CancelAndReplaceUtils.ZERO_PAYMENT_SUFIX;
-        setDocumentNoToPayment(event, newDocumentNo);
-      }
-    } else if (oldPaymentAmount.compareTo(BigDecimal.ZERO) == 0) {
-      if (CancelAndReplaceUtils.ZERO_PAYMENT_SUFIX.equals(documentNo
-          .substring(documentNoLength - 3))) {
-        String newDocumentNo = documentNo.substring(0, documentNoLength - 3);
-        setDocumentNoToPayment(event, newDocumentNo);
+    if (payment.isProcessed()) {
+      if (payment.getAmount().compareTo(BigDecimal.ZERO) == 0) {
+        // Payment has no already an *Z* at the end of the document number
+        if (documentNo.length() < CancelAndReplaceUtils.ZERO_PAYMENT_SUFIX.length()
+            || !CancelAndReplaceUtils.ZERO_PAYMENT_SUFIX.equals(documentNo
+                .substring(documentNoLength - CancelAndReplaceUtils.ZERO_PAYMENT_SUFIX.length()))) {
+          String newDocumentNo = documentNo + CancelAndReplaceUtils.ZERO_PAYMENT_SUFIX;
+          setDocumentNoToPayment(event, newDocumentNo);
+        }
+      } else if (oldPaymentAmount.compareTo(BigDecimal.ZERO) == 0) {
+        // The payment has already the *Z* at the end of the document number and is not a payment of
+        // 0
+        if (documentNo.length() >= CancelAndReplaceUtils.ZERO_PAYMENT_SUFIX.length()
+            && CancelAndReplaceUtils.ZERO_PAYMENT_SUFIX.equals(documentNo
+                .substring(documentNoLength - CancelAndReplaceUtils.ZERO_PAYMENT_SUFIX.length()))) {
+          String newDocumentNo = documentNo.substring(0, documentNoLength
+              - CancelAndReplaceUtils.ZERO_PAYMENT_SUFIX.length());
+          setDocumentNoToPayment(event, newDocumentNo);
+        }
       }
     }
 
