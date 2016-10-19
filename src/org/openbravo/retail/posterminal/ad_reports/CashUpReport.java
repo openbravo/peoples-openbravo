@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2015 Openbravo SLU
+ * All portions are Copyright (C) 2013-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -67,6 +67,8 @@ public class CashUpReport extends HttpSecureAppServlet {
   HashMap<String, String> psData;
   String reconIds;
   String cashupId;
+  String processId;
+  String outputType;
 
   private static final Logger log = Logger.getLogger(CashUpReport.class);
 
@@ -116,6 +118,12 @@ public class CashUpReport extends HttpSecureAppServlet {
     reconIds = new String();
     vars = new VariablesSecureApp(request);
     cashupId = vars.getStringParameter("inpobposAppCashupId");
+    processId = vars.getStringParameter("inpProcessId");
+    if (processId.equals("7AB6243FC4764B85996E5B61DBCF7884")) { 
+       outputType = "xls";
+    } else { 
+       outputType = "pdf";
+    }
 
     OBContext.setAdminMode(false);
     try {
@@ -710,7 +718,7 @@ public class CashUpReport extends HttpSecureAppServlet {
     }
 
     data = FieldProviderFactory.getFieldProviderArray(hashMapList);
-    renderJR(vars, response, strReportName, "pdf", parameters, data, null);
+    renderJR(vars, response, strReportName, outputType, parameters, data, null);
 
   }
 
