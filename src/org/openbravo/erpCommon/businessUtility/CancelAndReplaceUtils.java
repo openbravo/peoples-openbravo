@@ -283,6 +283,7 @@ public class CancelAndReplaceUtils {
           // Create Netting goods shipment Header
           if (nettingGoodsShipment == null) {
             nettingGoodsShipment = createNettingGoodShipmentHeader(oldOrder);
+            nettingGoodsShipment.setNettingshipment(true);
             nettingGoodsShipmentId = nettingGoodsShipment.getId();
           }
 

@@ -13,7 +13,7 @@
  * and  limitations under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2005-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2005-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s): Openbravo S.L.U.
  ************************************************************************
@@ -73,6 +73,11 @@ build.war: build a war file in the lib directory.
   <property name="extension" value="html" />
   <property name="src" value="." />
   <property name="tr" value="yes" />
+
+  <condition property="exclude.cdi">
+    <equals arg1="wildfly" arg2="${application.server}" />
+  </condition>
+
   <condition property="translation">
     <not>
       <equals arg1="no" arg2="${tr}" />
@@ -369,7 +374,7 @@ build.war: build a war file in the lib directory.
   
   <target name="wad" depends="init, wadvalidation">
     <java classname="org.openbravo.wad.Wad" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="${build.maxmemory}" failonerror="true">
-      <arg line="'${base.config}' '${tab}' '${build.AD}/org/openbravo/erpWindows' '${build.AD}/org/openbravo/erpCommon' '${build.sqlc}/src' '${webTab}' '${build.AD}/org/openbravo/erpCommon/ad_actionButton' '${base.design}' '${base.translate.structure}' 'dummyValueUnused' '..' '${attach.path}' '${web.url}' '${base.src}' '${complete}' '${module}' 'noquick' '${wad.generateAllClassic250Windows}'" />
+      <arg line="'${base.config}' '${tab}' '${build.AD}/org/openbravo/erpWindows' '${build.AD}/org/openbravo/erpCommon' '${build.sqlc}/src' '${webTab}' '${build.AD}/org/openbravo/erpCommon/ad_actionButton' '${base.design}' '${base.translate.structure}' 'dummyValueUnused' '..' '${attach.path}' '${web.url}' '${base.src}' '${complete}' '${module}' 'noquick' '${wad.generateAllClassic250Windows}' '${exclude.cdi}'" />
       <classpath refid="wad.class.path" />
       <syspropertyset>
          <propertyref name="java.security.egd" />
@@ -380,7 +385,7 @@ build.war: build a war file in the lib directory.
 
   <target name="wad.quick" depends="init, wadvalidation">
     <java classname="org.openbravo.wad.Wad" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="${build.maxmemory}">
-      <arg line="'${base.config}' '${tab}' '${build.AD}/org/openbravo/erpWindows' '${build.AD}/org/openbravo/erpCommon' '${build.sqlc}/src' '${webTab}' '${build.AD}/org/openbravo/erpCommon/ad_actionButton' '${base.design}' '${base.translate.structure}' 'dummyValueUnused' '..' '${attach.path}' '${web.url}' '${base.src}' '${complete}' '${module}' 'quick' '${wad.generateAllClassic250Windows}'" />
+      <arg line="'${base.config}' '${tab}' '${build.AD}/org/openbravo/erpWindows' '${build.AD}/org/openbravo/erpCommon' '${build.sqlc}/src' '${webTab}' '${build.AD}/org/openbravo/erpCommon/ad_actionButton' '${base.design}' '${base.translate.structure}' 'dummyValueUnused' '..' '${attach.path}' '${web.url}' '${base.src}' '${complete}' '${module}' 'quick' '${wad.generateAllClassic250Windows}' '${exclude.cdi}'" />
       <classpath refid="wad.class.path" />
       <syspropertyset>
          <propertyref name="java.security.egd" />
@@ -511,6 +516,9 @@ build.war: build a war file in the lib directory.
     <copy todir="${base.context}/WEB-INF/lib" encoding="UTF-8">
       <fileset dir="${base.modules}">
         <include name="*/lib/runtime/**" />
+        <exclude if="exclude.cdi" name="org.openbravo.base.weld/lib/runtime/weld*"/>
+        <exclude if="exclude.cdi" name="org.openbravo.base.weld/lib/runtime/*api*"/>
+        <exclude if="exclude.cdi" name="org.openbravo.base.weld/lib/runtime/javax*"/>
       </fileset>
       <mapper type="regexp" from="(.*\${file.separator}lib\${file.separator}runtime)(.*)" to="\2" />
     </copy>

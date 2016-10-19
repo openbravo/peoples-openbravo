@@ -672,7 +672,7 @@ isc.OBSelectorItem.addProperties({
 
     // check if the whole item identifier has been entered
     // see issue https://issues.openbravo.com/view.php?id=22821
-    if (OB.Utilities.isUUID(this.mapDisplayToValue(identifier)) && this._notUpdatingManually !== true) {
+    if (OB.Utilities.isUUID(this.mapDisplayToValue(identifier)) && this._notUpdatingManually !== true && !this.valuePicked) {
       this.fullIdentifierEntered = true;
     } else {
       delete this.fullIdentifierEntered;
@@ -1004,10 +1004,13 @@ isc.OBSelectorItem.addProperties({
   },
 
   pickValue: function (value) {
+    var selectedRecord, ret;
     // get the selected record before calling the super, as this super call
     // will deselect the record
-    var selectedRecord = this.pickList.getSelectedRecord(),
-        ret = this.Super('pickValue', arguments);
+    selectedRecord = this.pickList.getSelectedRecord();
+    this.valuePicked = true;
+    ret = this.Super('pickValue', arguments);
+    delete this.valuePicked;
     this.setValueFromRecord(selectedRecord);
     delete this.fullIdentifierEntered;
     return ret;

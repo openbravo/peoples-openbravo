@@ -1275,19 +1275,24 @@ public abstract class AcctServer {
         if (conversionQuery != null) {
           conversionCount = conversionQuery.count();
         }
-        if (conversionCount > 0) {
-          List<ConversionRateDoc> conversionRate = conversionQuery.list();
-          OBCriteria<Currency> currencyCrit = OBDal.getInstance().createCriteria(Currency.class);
-          currencyCrit.add(Restrictions.eq(Currency.PROPERTY_ID, acctSchema.m_C_Currency_ID));
-          currencyCrit.setProjection(Projections.max(Currency.PROPERTY_STANDARDPRECISION));
-          Long precision = 0L;
-          if (currencyCrit.count() > 0) {
-            List<Currency> toCurrency = currencyCrit.list();
-            precision = toCurrency.get(0).getStandardPrecision();
+        try {
+          OBContext.setAdminMode(true);
+          if (conversionCount > 0) {
+            List<ConversionRateDoc> conversionRate = conversionQuery.list();
+            OBCriteria<Currency> currencyCrit = OBDal.getInstance().createCriteria(Currency.class);
+            currencyCrit.add(Restrictions.eq(Currency.PROPERTY_ID, acctSchema.m_C_Currency_ID));
+            currencyCrit.setProjection(Projections.max(Currency.PROPERTY_STANDARDPRECISION));
+            Long precision = 0L;
+            if (currencyCrit.count() > 0) {
+              List<Currency> toCurrency = currencyCrit.list();
+              precision = toCurrency.get(0).getStandardPrecision();
+            }
+            BigDecimal convertedAmount = new BigDecimal("1").multiply(conversionRate.get(0)
+                .getRate());
+            amt = convertedAmount.setScale(precision.intValue(), RoundingMode.HALF_UP).toString();
           }
-          BigDecimal convertedAmount = new BigDecimal("1")
-              .multiply(conversionRate.get(0).getRate());
-          amt = convertedAmount.setScale(precision.intValue(), RoundingMode.HALF_UP).toString();
+        } finally {
+          OBContext.restorePreviousMode();
         }
         if (("").equals(amt) || amt == null)
           amt = getConvertedAmt("1", currency, acctSchema.m_C_Currency_ID, DateAcct,

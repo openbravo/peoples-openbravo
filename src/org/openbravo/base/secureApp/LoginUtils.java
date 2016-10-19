@@ -217,7 +217,7 @@ public class LoginUtils {
     boolean shouldCheckAccessLevel = true;
 
     try {
-      shouldCheckAccessLevel = "N".equals(Preferences.getPreferenceValue(
+      shouldCheckAccessLevel = Preferences.NO.equals(Preferences.getPreferenceValue(
           "BypassAccessLevelEntityCheck", true, OBContext.getOBContext().getCurrentClient(),
           OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
           OBContext.getOBContext().getRole(), null));

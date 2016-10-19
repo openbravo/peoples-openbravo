@@ -84,7 +84,7 @@ BEGIN
 
   IF (v_stock = 0) THEN
     v_unit_price := 0;
-    IF (p_stock <> 0) THEN
+    IF (p_stock <> 0 OR v_count = 0) THEN
       v_valuation := 0;
     END IF;
   ELSE

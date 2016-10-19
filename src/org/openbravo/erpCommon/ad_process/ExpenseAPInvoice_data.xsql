@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2012 Openbravo SLU
+ * All portions are Copyright (C) 2001-2016 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -169,7 +169,7 @@
   <SqlMethod name="selectLine" type="preparedStatement" connection="true" return="String" default="10">
     <SqlMethodComment>Select for relation</SqlMethodComment>
     <Sql><![CDATA[
-      SELECT MAX(LINE) AS LINE
+      SELECT COALESCE(MAX(Line), 0) + 10 AS LINE
       FROM C_INVOICELINE
       WHERE C_INVOICE_ID = ?
       ]]></Sql>

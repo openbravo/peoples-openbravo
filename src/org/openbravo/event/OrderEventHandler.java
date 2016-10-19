@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2013-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2013-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -49,16 +49,16 @@ public class OrderEventHandler extends EntityPersistenceEventObserver {
     return entities;
   }
 
-  public void onUpdate(@Observes
-  EntityUpdateEvent event) {
+  public void onUpdate(@Observes EntityUpdateEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
     final Entity orderEntity = ModelProvider.getInstance().getEntity(Order.ENTITY_NAME);
     final Property orderDateProperty = orderEntity.getProperty(Order.PROPERTY_ORDERDATE);
-    final Property scheduledDateProperty = orderEntity.getProperty(Order.PROPERTY_SCHEDULEDDELIVERYDATE);
+    final Property scheduledDateProperty = orderEntity
+        .getProperty(Order.PROPERTY_SCHEDULEDDELIVERYDATE);
     final Property warehouseProperty = orderEntity.getProperty(Order.PROPERTY_WAREHOUSE);
-    String syncDateOrdered = null, syncDateDelivered = null , syncWarehouse = null;
+    String syncDateOrdered = null, syncDateDelivered = null, syncWarehouse = null;
     String orderId = (String) event.getTargetInstance().getId();
     Date newOrderDate = (Date) event.getCurrentState(orderDateProperty);
     Date oldOrderDate = (Date) event.getPreviousState(orderDateProperty);
@@ -74,7 +74,7 @@ public class OrderEventHandler extends EntityPersistenceEventObserver {
           OBContext.getOBContext().getUser(), OBContext.getOBContext().getRole(), null);
     } catch (PropertyException e) {
       // if property not found, sync the ordered date
-      syncDateOrdered = "N";
+      syncDateOrdered = Preferences.NO;
     }
     try {
       syncDateDelivered = Preferences.getPreferenceValue("DoNotSyncDateDelivered", true, OBContext
@@ -82,51 +82,53 @@ public class OrderEventHandler extends EntityPersistenceEventObserver {
           OBContext.getOBContext().getUser(), OBContext.getOBContext().getRole(), null);
     } catch (PropertyException e) {
       // if property not found, sync the delivered date
-      syncDateDelivered = "N";
+      syncDateDelivered = Preferences.NO;
     }
     OBCriteria<OrderLine> orderLineCriteria = OBDal.getInstance().createCriteria(OrderLine.class);
     orderLineCriteria.add(Restrictions.eq(OrderLine.PROPERTY_SALESORDER,
         OBDal.getInstance().get(Order.class, orderId)));
     if (orderLineCriteria.count() > 0) {
-      if (newOrderDate.compareTo(oldOrderDate) != 0 && !"Y".equals(syncDateOrdered)) {
+      if (newOrderDate.compareTo(oldOrderDate) != 0 && !Preferences.YES.equals(syncDateOrdered)) {
         for (OrderLine lines : orderLineCriteria.list()) {
           lines.setOrderDate(newOrderDate);
         }
       }
       if (newScheduledDate != null && oldScheduledDate != null
-          && newScheduledDate.compareTo(oldScheduledDate) != 0 && !"Y".equals(syncDateDelivered)) {
+          && newScheduledDate.compareTo(oldScheduledDate) != 0
+          && !Preferences.YES.equals(syncDateDelivered)) {
         for (OrderLine lines : orderLineCriteria.list()) {
           lines.setScheduledDeliveryDate(newScheduledDate);
         }
       }
       // check preferences is set to sync warehouse in header and lines
-      if (newWarehouseId != null && oldWarehouseId != null && !newWarehouseId.getId().equals(oldWarehouseId.getId())) {
+      if (newWarehouseId != null && oldWarehouseId != null
+          && !newWarehouseId.getId().equals(oldWarehouseId.getId())) {
         try {
           syncWarehouse = Preferences.getPreferenceValue("DoNotSyncWarehouse", true, OBContext
-              .getOBContext().getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(),
+              .getOBContext().getCurrentClient(),
+              OBContext.getOBContext().getCurrentOrganization(),
               OBContext.getOBContext().getUser(), OBContext.getOBContext().getRole(), null);
         } catch (PropertyException e) {
           // if property not found, sync the warehouse
-          syncWarehouse = "N";
+          syncWarehouse = Preferences.NO;
         }
-        if (!"Y".equals(syncWarehouse) ) {
-              for (OrderLine lines : orderLineCriteria.list()) {
-              lines.setWarehouse(newWarehouseId);
+        if (!Preferences.YES.equals(syncWarehouse)) {
+          for (OrderLine lines : orderLineCriteria.list()) {
+            lines.setWarehouse(newWarehouseId);
           }
-        } 
+        }
       }
     }
   }
-  
-  public void onDelete(@Observes
-  EntityDeleteEvent event) {
+
+  public void onDelete(@Observes EntityDeleteEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
     final Entity orderEntity = ModelProvider.getInstance().getEntity(Order.ENTITY_NAME);
     final Property quotationProperty = orderEntity.getProperty(Order.PROPERTY_QUOTATION);
     Order quotation = (Order) event.getCurrentState(quotationProperty);
-    if (quotation != null){
+    if (quotation != null) {
       quotation.setDocumentStatus("UE");
     }
   }

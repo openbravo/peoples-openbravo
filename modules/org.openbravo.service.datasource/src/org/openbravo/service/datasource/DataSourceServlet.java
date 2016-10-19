@@ -539,7 +539,7 @@ public class DataSourceServlet extends BaseKernelServlet {
     private boolean translateYesNoReferencesInCsv(Window windowToCsv) {
       boolean shouldCheck = false;
       try {
-        shouldCheck = "Y".equals(Preferences.getPreferenceValue(
+        shouldCheck = Preferences.YES.equals(Preferences.getPreferenceValue(
             "OBSERDS_CSVExportTranslateYesNoReference", true, OBContext.getOBContext()
                 .getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(), OBContext
                 .getOBContext().getUser(), OBContext.getOBContext().getRole(), windowToCsv));
