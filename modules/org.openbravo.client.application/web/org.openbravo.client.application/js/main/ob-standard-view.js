@@ -2197,7 +2197,7 @@ isc.OBStandardView.addProperties({
         callback: callback
       };
       OB.EventHandlerRegistry.call(params);
-    } else if (executeCallback && isc.A.Function(callback)) {
+    } else if (executeCallback && isc.isA.Function(callback)) {
       callback();
     }
   },
