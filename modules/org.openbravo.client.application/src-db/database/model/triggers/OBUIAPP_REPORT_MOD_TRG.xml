@@ -55,7 +55,9 @@ BEGIN
         COALESCE(:NEW.OBUIAPP_Process_ID , '.') != COALESCE(:OLD.OBUIAPP_Process_ID , '.') OR
         COALESCE(:NEW.PDF_Template , '.') != COALESCE(:OLD.PDF_Template , '.') OR
         COALESCE(:NEW.XLS_Template , '.') != COALESCE(:OLD.XLS_Template , '.') OR
+        COALESCE(:NEW.HTML_Template , '.') != COALESCE(:OLD.HTML_Template , '.') OR
         COALESCE(:NEW.USE_PDF_AS_XLS_TEMPLATE , '.') != COALESCE(:OLD.USE_PDF_AS_XLS_TEMPLATE , '.') OR
+        COALESCE(:NEW.USE_PDF_AS_HTML_TEMPLATE , '.') != COALESCE(:OLD.USE_PDF_AS_HTML_TEMPLATE , '.') OR
         1=2) THEN
       RAISE_APPLICATION_ERROR(-20000, '@20532@');
     END IF;

@@ -49,6 +49,14 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
+      <column name="HTML_TEMPLATE" primaryKey="false" required="false" type="VARCHAR" size="255" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="USE_PDF_AS_HTML_TEMPLATE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault><![CDATA['N']]></onCreateDefault>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="OBUIAPP_REPORT_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -62,7 +70,8 @@
         <unique-column name="OBUIAPP_PROCESS_ID"/>
       </unique>
       <check name="OBUIAPP_REPORT_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="OBUIAPP_REPORT_PDF_AS_HTML_CHK"><![CDATA[USE_PDF_AS_HTML_TEMPLATE IN ('Y', 'N')]]></check>
       <check name="OBUIAPP_REPORT_PDF_AS_XLS_CHK"><![CDATA[USE_PDF_AS_XLS_TEMPLATE IN ('Y', 'N')]]></check>
-      <check name="OBUIAPP_REPORT_TMP_CHK"><![CDATA[PDF_TEMPLATE IS NOT NULL OR XLS_TEMPLATE IS NOT NULL]]></check>
+      <check name="OBUIAPP_REPORT_TMP_CHK"><![CDATA[PDF_TEMPLATE IS NOT NULL OR XLS_TEMPLATE IS NOT NULL OR HTML_TEMPLATE IS NOT NULL]]></check>
     </table>
   </database>

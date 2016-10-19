@@ -452,6 +452,9 @@ isc.OBBaseParameterWindowView.addProperties({
       if (this.xlsExport) {
         this.xlsButton.setEnabled(enabled);
       }
+      if (this.htmlExport) {
+        this.htmlButton.setEnabled(enabled);
+      }
     } else {
       if (this.okButton) {
         this.okButton.setEnabled(enabled);

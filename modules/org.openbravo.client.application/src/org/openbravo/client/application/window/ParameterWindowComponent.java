@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2015 Openbravo SLU
+ * All portions are Copyright (C) 2012-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -183,6 +183,14 @@ public class ParameterWindowComponent extends BaseTemplateComponent {
       return false;
     }
     return StringUtils.isNotEmpty(report.getPDFTemplate());
+  }
+
+  public boolean isHtmlExport() {
+    ReportDefinition report = getReportDefinition();
+    if (report == null) {
+      return false;
+    }
+    return StringUtils.isNotEmpty(report.getHTMLTemplate()) || report.isUsePDFAsHTMLTemplate();
   }
 
   private ReportDefinition getReportDefinition() {
