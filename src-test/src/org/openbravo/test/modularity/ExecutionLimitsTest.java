@@ -172,14 +172,14 @@ public class ExecutionLimitsTest {
   /** Executes the buildValidation or ModuleScript with current version boundaries */
   @Test
   public void isExecutedBasedOnVersionLimits() {
-    if (Type.BUILD_VALIDATION.name().equals(type.name())) {
+    if (type == Type.BUILD_VALIDATION) {
       FakeBuildValidation ms = new FakeBuildValidation();
       ms.preExecute(modulesVersionMap);
       assertThat("BuildValidation was executed", ms.wasExecuted, is(shouldExecute));
-    } else if (Type.MODULE_SCRIPT.name().equals(type.name())) {
+    } else if (type == Type.MODULE_SCRIPT) {
       FakeModuleScript ms = new FakeModuleScript();
       ms.preExecute(modulesVersionMap);
-      assertThat("Script was executed", ms.wasExecuted, is(shouldExecute));
+      assertThat("ModuleScript was executed", ms.wasExecuted, is(shouldExecute));
     }
 
   }

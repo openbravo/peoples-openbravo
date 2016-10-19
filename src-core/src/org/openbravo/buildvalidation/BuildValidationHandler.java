@@ -12,6 +12,9 @@
 package org.openbravo.buildvalidation;
 
 import java.io.File;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -20,6 +23,8 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
+import org.openbravo.database.CPStandAlone;
+import org.openbravo.database.ConnectionProvider;
 import org.openbravo.modulescript.OpenbravoVersion;
 
 public class BuildValidationHandler {
@@ -27,7 +32,8 @@ public class BuildValidationHandler {
 
   private static File basedir;
   private static String module;
-  private static Map<String, OpenbravoVersion> modulesVersionMap;
+
+  private static final String PATH_CONFIG = "config/Openbravo.properties";
 
   public static void main(String[] args) {
     basedir = new File(args[0]);
@@ -59,14 +65,14 @@ public class BuildValidationHandler {
         }
       }
     }
+    Map<String, OpenbravoVersion> modulesVersionMap = getModulesVersionMap();
     for (String s : classes) {
       ArrayList<String> errors = new ArrayList<String>();
       try {
         Class<?> myClass = Class.forName(s);
         if (BuildValidation.class.isAssignableFrom(myClass)) {
           BuildValidation instance = (BuildValidation) myClass.newInstance();
-          errors = (ArrayList<String>) instance.preExecute(getModulesVersionMap());
-
+          errors = (ArrayList<String>) instance.preExecute(modulesVersionMap);
         }
       } catch (Exception e) {
         log4j.info("Error executing build-validation: " + s, e);
@@ -133,29 +139,46 @@ public class BuildValidationHandler {
   }
 
   /**
-   * Creates the OpenbravoVersion map from a map of version strings
-   *
-   * @param currentVersionsMap
-   *          A data structure that contains Strings with module versions mapped by module id
-   */
-  public void setModulesVersionMap(Map<String, String> currentVersionsMap) {
-    modulesVersionMap = new HashMap<String, OpenbravoVersion>();
-    for (Map.Entry<String, String> entry : currentVersionsMap.entrySet()) {
-      try {
-        modulesVersionMap.put(entry.getKey(), new OpenbravoVersion(entry.getValue()));
-      } catch (Exception ex) {
-        log4j.error(
-            "Not possible to recover the current version of module with id: " + entry.getKey(), ex);
-      }
-    }
-  }
-
-  /**
    * Returns a map with the current module versions
    *
    * @return A data structure that contains module versions mapped by module id
    */
-  public static Map<String, OpenbravoVersion> getModulesVersionMap() {
-    return modulesVersionMap;
+  private static Map<String, OpenbravoVersion> getModulesVersionMap() {
+    Map<String, OpenbravoVersion> modulesVersion = new HashMap<String, OpenbravoVersion>();
+    File fProp = getPropertiesFile();
+    ConnectionProvider cp = new CPStandAlone(fProp.getAbsolutePath());
+    String sql = "SELECT ad_module_id AS moduleid, version AS version FROM ad_module";
+    ResultSet resultSet = null;
+    Connection connection = null;
+    try {
+      connection = cp.getConnection();
+      PreparedStatement statement = connection.prepareStatement(sql);
+      statement.execute();
+      resultSet = statement.getResultSet();
+      while (resultSet.next()) {
+        String moduleId = resultSet.getString("moduleid");
+        String modVersion = resultSet.getString("version");
+        modulesVersion.put(moduleId, new OpenbravoVersion(modVersion));
+      }
+      resultSet.close();
+      connection.close();
+    } catch (Exception e) {
+      log4j.error("Not possible to recover the current version of modules", e);
+    }
+    return modulesVersion;
+  }
+
+  private static File getPropertiesFile() {
+    File fProp = null;
+    if (new File(PATH_CONFIG).exists())
+      fProp = new File(PATH_CONFIG);
+    else if (new File("../" + PATH_CONFIG).exists())
+      fProp = new File("../" + PATH_CONFIG);
+    else if (new File("../../" + PATH_CONFIG).exists())
+      fProp = new File("../../" + PATH_CONFIG);
+    if (fProp == null) {
+      log4j.error("Could not find Openbravo.properties");
+    }
+    return fProp;
   }
 }

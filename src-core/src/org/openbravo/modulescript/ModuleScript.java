@@ -30,6 +30,7 @@ import org.openbravo.database.ConnectionProvider;
 public abstract class ModuleScript extends ExecutionLimitBaseProcess {
 
   private static final Logger log4j = Logger.getLogger(ModuleScript.class);
+  private static final String MODULE_SCRIPT = "ModuleScript";
 
   /**
    * This method must be implemented by the ModuleScripts, and is used to define the actions that
@@ -64,7 +65,7 @@ public abstract class ModuleScript extends ExecutionLimitBaseProcess {
    * This method returns the name of the class.
    */
   protected String getTypeName() {
-    return this.getClass().getName();
+    return MODULE_SCRIPT;
   }
 
   /**

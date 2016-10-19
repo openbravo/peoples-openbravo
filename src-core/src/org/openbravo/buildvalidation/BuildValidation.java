@@ -29,6 +29,7 @@ import org.openbravo.modulescript.OpenbravoVersion;
  */
 public abstract class BuildValidation extends ExecutionLimitBaseProcess {
   private static final Logger log4j = Logger.getLogger(BuildValidation.class);
+  private static final String BUILD_VALIDATION = "BuildValidation";
 
   /**
    * This method must be implemented by the BuildValidations, and is used to define the actions that
@@ -69,7 +70,7 @@ public abstract class BuildValidation extends ExecutionLimitBaseProcess {
    * This method returns the name of the class.
    */
   protected String getTypeName() {
-    return this.getClass().getName();
+    return BUILD_VALIDATION;
   }
 
   /**

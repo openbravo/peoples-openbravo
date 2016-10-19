@@ -34,19 +34,20 @@ public abstract class ExecutionLimitBaseProcess {
   private static final String PATH_CONFIG = "config/Openbravo.properties";
 
   /**
-   * This method allows to implement in subclasses doExecute() method.
+   * This method must be overridden by the BuildValidation and ModuleScript subclasses, to specify
+   * some actions before calling the execute() method.
    */
   protected abstract List<String> doExecute();
 
   /**
    * This method checks whether the BuildValidation or ModuleScript can be executed before invoke
-   * the doExecute() method
-   *
+   * the doExecute() method. The doExecute() method is invoked if possible.
+   * 
    * @param modulesVersionMap
    *          A data structure that contains module versions mapped by module id
    */
   public List<String> preExecute(Map<String, OpenbravoVersion> modulesVersionMap) {
-    ArrayList<String> errors = null;
+    ArrayList<String> errors = new ArrayList<String>();
     if (modulesVersionMap == null || modulesVersionMap.size() == 0) {
       // if we do not have module versions to compare with (install.source) then
       // execute depending
@@ -101,10 +102,10 @@ public abstract class ExecutionLimitBaseProcess {
   }
 
   /**
-   * This method can be overridden by the BuildValidation and ModuleScript subclasses, to retrieves
-   * name of the class.
+   * This method is overridden to retrieve the name of the process type which is extending this
+   * class.
    * 
-   * @return Name of the class.
+   * @return Name of the process type.
    */
   protected abstract String getTypeName();
 
