@@ -3886,6 +3886,7 @@
         model.set('created', creationDate.getTime());
         model.set('obposCreatedabsolute', OB.I18N.formatDateISO(creationDate));
         model.set('obposIsDeleted', true);
+        model.set('obposAppCashup', OB.MobileApp.model.get('terminal').cashUpId);
         for (i = 0; i < model.get('lines').length; i++) {
           model.get('lines').at(i).set('obposIsDeleted', true);
         }
@@ -3940,20 +3941,10 @@
           }
         } else if (receipt.has('deletedLines')) {
           if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
-            receipt.setIsCalculateGrossLockState(true);
-            receipt.set('obposIsDeleted', true);
-            receipt.prepareToSend(function () {
-              receipt.trigger('closed', {
-                callback: function () {
-                  orderList.deleteCurrent();
-                  orderList.synchronizeCurrentOrder();
-                  receipt.setIsCalculateGrossLockState(false);
-                  if (callback && callback instanceof Function) {
-                    callback();
-                  }
-                }
-              });
-            });
+            receipt.set('skipCalculateReceipt', false);
+            receipt.setIsCalculateReceiptLockState(false);
+            receipt.setIsCalculateGrossLockState(false);
+            markOrderAsDeleted(receipt, orderList, callback);
           } else {
             orderList.saveCurrent();
             OB.Dal.remove(orderList.current, null, null);
@@ -4545,7 +4536,7 @@
         me.loadCurrent(createNew);
       }
 
-      if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true) && !this.current.get('isQuotation') && OB.MobileApp.model.receipt.id === this.current.id && this.current.get('lines').length === 0 && (this.current.get('documentnoSuffix') <= OB.MobileApp.model.documentnoThreshold || OB.MobileApp.model.documentnoThreshold === 0)) {
+      if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true) && !this.current.get('isQuotation') && OB.MobileApp.model.receipt.id === this.current.id && this.current.get('lines').length === 0 && !this.current.has('deletedLines') && (this.current.get('documentnoSuffix') <= OB.MobileApp.model.documentnoThreshold || OB.MobileApp.model.documentnoThreshold === 0)) {
         OB.MobileApp.model.receipt.setIsCalculateGrossLockState(true);
         OB.MobileApp.model.receipt.set('obposIsDeleted', true);
         OB.MobileApp.model.receipt.prepareToSend(function () {
