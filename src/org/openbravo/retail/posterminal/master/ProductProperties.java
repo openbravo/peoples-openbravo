@@ -76,17 +76,8 @@ public class ProductProperties extends ModelExtension {
         }
         add(new HQLProperty("pli.bestseller", "bestseller"));
         add(new HQLProperty("'false'", "ispack"));
-        if (posPrecision != null && !"".equals(posPrecision)) {
-          add(new HQLProperty("round(ppp.listPrice, " + posPrecision + ")", "listPrice"));
-        } else {
-          add(new HQLProperty("ppp.listPrice", "listPrice"));
-        }
-        if (posPrecision != null && !"".equals(posPrecision)) {
-          add(new HQLProperty("round(ppp.standardPrice, " + posPrecision + ")", "standardPrice"));
-        } else {
-          add(new HQLProperty("ppp.standardPrice", "standardPrice"));
-        }
-
+        add(new HQLProperty("ppp.listPrice", "listPrice"));
+        add(new HQLProperty("ppp.standardPrice", "standardPrice"));
         add(new HQLProperty("ppp.priceLimit", "priceLimit"));
         add(new HQLProperty("ppp.cost", "cost"));
         Entity ProductPrice = ModelProvider.getInstance().getEntity(ProductPrice.class);
