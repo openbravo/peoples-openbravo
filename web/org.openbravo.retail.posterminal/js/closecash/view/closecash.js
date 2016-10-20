@@ -231,9 +231,6 @@ enyo.kind({
   }, {
     kind: 'OB.OBPOSCashUp.UI.modalPendingToProcess',
     name: 'modalPendingToProcess'
-  }, {
-    kind: 'OB.UI.ModalSelectPrinters',
-    name: 'modalSelectPrinters'
   }],
   finalAction: function () {
     OB.POS.navigate('retail.pointofsale');

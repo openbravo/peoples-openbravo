@@ -116,7 +116,6 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/modalnoteditableorder",
         "components/modalnoteditableline",
         "components/modalmodulesindev",
-        "components/modalselectprinters",
         // Web POS window
         "utils/eventbus",
         "utils/cashUpReportUtils",

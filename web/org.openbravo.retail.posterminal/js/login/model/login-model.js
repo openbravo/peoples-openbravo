@@ -136,7 +136,7 @@
             if (data.exception) {
               handleError(data);
             } else if (data[0]) {
-              // load the OB.MobileApp.model
+              // load the OB.MobileApp.model              
               for (i = 0, max = data.length; i < max; i++) {
                 if (Object.keys(data[i])[0] === "businesspartner") {
                   terminalModel.set(Object.keys(data[i])[0], data[i][Object.keys(data[i])[0]].id);
@@ -402,7 +402,7 @@
         var terminal = this.get('terminal');
         OB.UTIL.initCashUp(OB.UTIL.calculateCurrentCash);
         // Set Hardware..
-        OB.POS.hwserver = new OB.DS.HWServer(this.get('hardwareURL'), terminal.hardwareurl, terminal.scaleurl);
+        OB.POS.hwserver = new OB.DS.HWServer(terminal.hardwareurl, terminal.scaleurl);
 
         // If the hardware URL is set and the terminal uses RFID
         if (OB.UTIL.RfidController.isRfidConfigured()) {
@@ -438,7 +438,7 @@
           OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_OfflineLogin'));
         }
 
-        OB.POS.hwserver.print(new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.WelcomeTemplate), {}, null, OB.DS.HWServer.DISPLAY);
+        OB.POS.hwserver.print(new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.WelcomeTemplate), {});
       });
 
       OB.Model.Terminal.prototype.initialize.call(me);
@@ -711,12 +711,6 @@
     },
 
     preLogoutActions: function (finalCallback) {
-      if (OB.POS.hwserver !== undefined) {
-        OB.POS.hwserver.print(new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.GoodByeTemplate), {}, null, OB.DS.HWServer.DISPLAY);
-      }
-      if (!OB.MobileApp.model.attributes.permissions || !OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
-        this.cleanSessionInfo();
-      }
       var criteria = {},
           model;
       var me = this;

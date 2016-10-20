@@ -1085,45 +1085,6 @@ enyo.kind({
   }
 });
 
-
-enyo.kind({
-  name: 'OB.UI.MenuSelectPrinter',
-  kind: 'OB.UI.MenuAction',
-  permission: 'OBPOS_retail.selectprinter',
-  events: {
-    onModalSelectPrinters: ''
-  },
-  i18nLabel: 'OBPOS_MenuSelectPrinter',
-  tap: function () {
-    if (this.disabled) {
-      return true;
-    }
-    this.inherited(arguments); // Manual dropdown menu closure
-    if (OB.MobileApp.model.hasPermission(this.permission)) {
-      this.doModalSelectPrinters();
-    }
-  }
-});
-
-enyo.kind({
-  name: 'OB.UI.MenuSelectPDFPrinter',
-  kind: 'OB.UI.MenuAction',
-  permission: 'OBPOS_retail.selectprinter',
-  events: {
-    onModalSelectPDFPrinters: ''
-  },
-  i18nLabel: 'OBPOS_MenuSelectPDFPrinter',
-  tap: function () {
-    if (this.disabled) {
-      return true;
-    }
-    this.inherited(arguments); // Manual dropdown menu closure
-    if (OB.MobileApp.model.hasPermission(this.permission)) {
-      this.doModalSelectPDFPrinters();
-    }
-  }
-});
-
 enyo.kind({
   name: 'OB.UI.MenuCancelAndReplace',
   kind: 'OB.UI.MenuAction',
