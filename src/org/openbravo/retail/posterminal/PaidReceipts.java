@@ -116,8 +116,10 @@ public class PaidReceipts extends JSONProcessSimple {
           // get shipmentLines for returns
           HQLPropertyList hqlPropertiesShipLines = ModelExtensionUtils
               .getPropertyExtensions(extensionsShipLines);
-          String hqlPaidReceiptsShipLines = "select " + hqlPropertiesShipLines.getHqlSelect() //
-              + " from MaterialMgmtShipmentInOutLine as m where salesOrderLine.id= ? ";
+          String hqlPaidReceiptsShipLines = "select "
+              + hqlPropertiesShipLines.getHqlSelect() //
+              + " from MaterialMgmtShipmentInOutLine as m where salesOrderLine.id= ? "
+              + " and m.shipmentReceipt.isnettingshipment = false";
           OBDal.getInstance().getSession().createQuery(hqlPaidReceiptsShipLines);
           Query paidReceiptsShipLinesQuery = OBDal.getInstance().getSession()
               .createQuery(hqlPaidReceiptsShipLines);

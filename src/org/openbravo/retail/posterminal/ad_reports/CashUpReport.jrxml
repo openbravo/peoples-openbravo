@@ -26,7 +26,9 @@
 	<parameter name="USER" class="java.lang.String"/>
 	<parameter name="TERMINAL_ORGANIZATION" class="java.lang.String"/>
 	<parameter name="TIME" class="java.lang.String"/>
-	<parameter name="NUMBERFORMAT" class="java.text.DecimalFormat" isForPrompting="false"/>
+	<parameter name="NUMBERFORMAT" class="java.text.DecimalFormat" isForPrompting="false">
+		<defaultValueExpression><![CDATA[new DecimalFormat("###,##0.00", new DecimalFormatSymbols())]]></defaultValueExpression>
+	</parameter>
 	<field name="LABEL" class="java.lang.String"/>
 	<field name="VALUE" class="java.lang.String"/>
 	<field name="GROUPFIELD" class="java.lang.String"/>

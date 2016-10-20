@@ -606,7 +606,7 @@ enyo.kind({
           }
         }
         if (this.line) {
-          if (this.line.get('product').get('stocked') && this.line.get('product').get('productType') === 'I' && !this.line.get('product').get('ispack') && OB.MobileApp.model.get('connectedToERP')) {
+          if (this.line.get('product').get('productType') === 'I' && !this.line.get('product').get('ispack') && OB.MobileApp.model.get('connectedToERP')) {
             this.$.actionButtonsContainer.$.checkStockButton.show();
           } else {
             this.$.actionButtonsContainer.$.checkStockButton.hide();
@@ -1045,7 +1045,7 @@ enyo.kind({
     var product = this.owner.owner.line.get('product');
     var params = {};
     //show always or just when the product has been set to show stock screen?
-    if (product.get('stocked') && product.get('productType') === 'I' && !product.get('ispack') && OB.MobileApp.model.get('connectedToERP')) {
+    if (product.get('productType') === 'I' && !product.get('ispack') && OB.MobileApp.model.get('connectedToERP')) {
       params.leftSubWindow = OB.OBPOSPointOfSale.UICustomization.stockLeftSubWindow;
       params.product = product;
       params.line = line;
