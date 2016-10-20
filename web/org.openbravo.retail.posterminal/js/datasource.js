@@ -35,7 +35,7 @@ OB.DS.HWServer = function (urllist, url, scaleurl) {
   if (this.mainurl && this.mainurl.indexOf('/printer', this.mainurl.length - 8) !== -1) { // endswith '/printer'
     this.mainurl = this.mainurl.substring(0, this.mainurl.length - 8);
   }
-
+  this.url = this.mainurl; // keep backward compatibility
   // load activeurl from localStorage
   this.setActiveURL(localStorage.getItem('hw_activeurl'));
   //load activepdfurl from localStorage
