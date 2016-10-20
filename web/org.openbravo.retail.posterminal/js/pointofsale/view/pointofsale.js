@@ -95,7 +95,9 @@ enyo.kind({
     onFinishServiceProposal: 'finishServiceProposal',
     onkeydown: 'keyDownHandler',
     onkeyup: 'keyUpHandler',
-    onRearrangeEditButtonBar: 'rearrangeEditButtonBar'
+    onRearrangeEditButtonBar: 'rearrangeEditButtonBar',
+    onModalSelectPrinters: 'modalSelectPrinters',
+    onModalSelectPDFPrinters: 'modalSelectPDFPrinters'
   },
   events: {
     onShowPopup: '',
@@ -221,6 +223,9 @@ enyo.kind({
     }, {
       kind: 'OB.OBPOSPointOfSale.UI.Modals.ModalPaymentsSelect',
       name: 'modalPaymentsSelect'
+    }, {
+      kind: 'OB.UI.ModalSelectPrinters',
+      name: 'modalSelectPrinters'
     }, {
       kind: 'OB.UI.ModalModulesInDev',
       name: 'modalModulesInDev'
@@ -991,6 +996,30 @@ enyo.kind({
   showModalReceiptProperties: function (inSender, inEvent) {
     this.doShowPopup({
       popup: 'receiptPropertiesDialog'
+    });
+    return true;
+  },
+  modalSelectPrinters: function (inSender, inEvent) {
+    this.doShowPopup({
+      popup: 'modalSelectPrinters',
+      args: {
+        title: OB.I18N.getLabel('OBPOS_SelectPrintersTitle'),
+        hasPrinterProperty: 'hasReceiptPrinter',
+        serverURLProperty: 'activeurl',
+        serverURLSetter: 'setActiveURL'
+      }
+    });
+    return true;
+  },
+  modalSelectPDFPrinters: function (inSender, inEvent) {
+    this.doShowPopup({
+      popup: 'modalSelectPrinters',
+      args: {
+        title: OB.I18N.getLabel('OBPOS_SelectPDFPrintersTitle'),
+        hasPrinterProperty: 'hasPDFPrinter',
+        serverURLProperty: 'activepdfurl',
+        serverURLSetter: 'setActivePDFURL'
+      }
     });
     return true;
   },

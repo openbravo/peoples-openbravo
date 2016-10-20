@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, $, Backbone, _, enyo, Audio, setTimeout, setInterval, clearTimeout, clearInterval, Promise */
+/*global OB, $, Backbone, _, enyo, Audio, setTimeout, setInterval, clearTimeout, clearInterval, Promise, localStorage */
 
 // HWServer: TODO: this should be implemented in HW Manager module
 OB.DS.HWResource = function (res) {
@@ -26,9 +26,80 @@ OB.DS.HWResource.prototype.getData = function (callback) {
   }
 };
 
-OB.DS.HWServer = function (url, scaleurl) {
-  this.url = url;
+OB.DS.HWServer = function (urllist, url, scaleurl) {
+  this.urllist = urllist;
+  this.mainurl = url;
   this.scaleurl = scaleurl;
+
+  // Remove suffix if needed
+  if (this.mainurl && this.mainurl.indexOf('/printer', this.mainurl.length - 8) !== -1) { // endswith '/printer'
+    this.mainurl = this.mainurl.substring(0, this.mainurl.length - 8);
+  }
+  this.url = this.mainurl; // keep backward compatibility
+  // load activeurl from localStorage
+  this.setActiveURL(localStorage.getItem('hw_activeurl'));
+  //load activepdfurl from localStorage
+  this.setActivePDFURL(localStorage.getItem('hw_activepdfurl'));
+};
+
+OB.DS.HWServer.PRINTER = 0;
+OB.DS.HWServer.DISPLAY = 1;
+OB.DS.HWServer.DRAWER = 2;
+
+OB.DS.HWServer.prototype.setActiveURL = function (url) {
+
+  // assign the active url
+  this.activeurl = url;
+
+  // validate urls
+  if (this.urllist) { // Check only in the case urllist is a valid to prevent wrong initializations
+    var validprinter = _.find(this.urllist, function (item) {
+      return item.active && item.hasReceiptPrinter && item.hardwareURL === this.activeurl;
+    }, this);
+    if (validprinter) {
+      this.activeidentifier = validprinter._identifier;
+    } else {
+      this.activeurl = this.mainurl;
+      this.activeidentifier = OB.I18N.getLabel('OBPOS_MainPrinter');
+    }
+  }
+
+  // save
+  if (this.activeurl) {
+    localStorage.setItem('hw_activeurl', this.activeurl);
+    localStorage.setItem('hw_activeidentifier', this.activeidentifier);
+  } else {
+    localStorage.removeItem('hw_activeurl');
+    localStorage.removeItem('hw_activeidentifier');
+  }
+};
+
+OB.DS.HWServer.prototype.setActivePDFURL = function (url) {
+
+  // assign the active PDF url
+  this.activepdfurl = url;
+
+  // validate urls
+  if (this.urllist) { // Check only in the case urllist is a valid to prevent wrong initializations
+    var validprinter = _.find(this.urllist, function (item) {
+      return item.active && item.hasPDFPrinter && item.hardwareURL === this.activepdfurl;
+    }, this);
+    if (validprinter) {
+      this.activepdfidentifier = validprinter._identifier;
+    } else {
+      this.activepdfurl = this.mainurl;
+      this.activepdfidentifier = OB.I18N.getLabel('OBPOS_MainPrinter');
+    }
+  }
+
+  // save
+  if (this.activepdfurl) {
+    localStorage.setItem('hw_activepdfurl', this.activepdfurl);
+    localStorage.setItem('hw_activepdfidentifier', this.activepdfidentifier);
+  } else {
+    localStorage.removeItem('hw_activepdfurl');
+    localStorage.removeItem('hw_activepdfidentifier');
+  }
 };
 
 OB.DS.HWServer.prototype.getWeight = function (callback) {
@@ -69,7 +140,7 @@ OB.DS.HWServer.prototype.openDrawer = function (popup, timeout) {
     if (args && args.exception && args.exception.message) {
       OB.info('Error opening the drawer');
     }
-  });
+  }, OB.DS.HWServer.DRAWER);
   if (OB.MobileApp.model.get('permissions').OBPOS_closeDrawerBeforeContinue) {
     this.drawerClosed = false;
     OB.POS.hwserver.isDrawerClosed(popup, timeout);
@@ -199,24 +270,24 @@ OB.DS.HWServer.prototype.isDrawerClosed = function (popup, timeout) {
           popupDrawerOpened.hide();
         }
       }
-    });
+    }, OB.DS.HWServer.DRAWER);
   }, 700);
 };
 
-OB.DS.HWServer.prototype.print = function (template, params, callback) {
+OB.DS.HWServer.prototype.print = function (template, params, callback, device) {
   if (template) {
     if (template.getData) {
       var me = this;
       template.getData(function (data) {
-        me.print(data, params, callback);
+        me.print(data, params, callback, device);
       });
     } else {
-      this._print(template, params, callback);
+      this._print(template, params, callback, device);
     }
   }
 };
 
-OB.DS.HWServer.prototype._print = function (templatedata, params, callback) {
+OB.DS.HWServer.prototype._print = function (templatedata, params, callback, device) {
 
   var promisedata = function (template) {
       return new Promise(function (resolve, reject) {
@@ -258,7 +329,7 @@ OB.DS.HWServer.prototype._print = function (templatedata, params, callback) {
       });
     } else {
       // Print the computed receipt as usual
-      this._send(computeddata, callback);
+      this._send(computeddata, callback, device);
     }
   } catch (ex) {
     OB.error('Error computing the template to print.', ex);
@@ -275,11 +346,21 @@ OB.DS.HWServer.prototype._template = function (templatedata, params) {
   return params ? _.template(templatedata, params) : templatedata;
 };
 
-OB.DS.HWServer.prototype._send = function (data, callback) {
-  if (this.url) {
+OB.DS.HWServer.prototype._send = function (data, callback, device) {
+
+  var sendurl;
+  if (OB.DS.HWServer.DRAWER === device || OB.DS.HWServer.DISPLAY === device) {
+    // DRAWER and DISPLAY URL is allways the main url defined in POS terminal
+    sendurl = this.mainurl;
+  } else {
+    // PRINTER and default is the active URL
+    sendurl = this.activeurl;
+  }
+
+  if (sendurl) {
     var me = this;
     var ajaxRequest = new enyo.Ajax({
-      url: me.url,
+      url: sendurl + '/printer',
       cacheBust: false,
       method: 'POST',
       handleAs: 'json',
@@ -323,10 +404,10 @@ OB.DS.HWServer.prototype._printPDF = function (params, callback) {
 };
 
 OB.DS.HWServer.prototype._sendPDF = function (data, callback) {
-  if (this.url) {
+  if (this.activepdfurl) {
     var me = this;
     var ajaxRequest = new enyo.Ajax({
-      url: me.url + 'pdf',
+      url: me.activepdfurl + '/printerpdf',
       cacheBust: false,
       method: 'POST',
       handleAs: 'json',
@@ -362,5 +443,52 @@ OB.DS.HWServer.prototype._sendPDF = function (data, callback) {
     if (callback) {
       callback();
     }
+  }
+};
+
+OB.DS.HWServer.prototype._printFile = function (params, callback) {
+  this._sendFile(JSON.stringify(params), callback);
+};
+
+OB.DS.HWServer.prototype._sendFile = function (data, callback) {
+  if (this.activepdfurl) {
+    var me = this,
+        rr;
+    var ajaxRequest = new enyo.Ajax({
+      url: me.activepdfurl + '/process/printpdf',
+      cacheBust: false,
+      method: 'POST',
+      handleAs: 'json',
+      timeout: 20000,
+      contentType: 'application/json;charset=utf-8',
+      data: data,
+      success: function (inSender, inResponse) {
+        if (callback) {
+          callback(inResponse);
+        }
+      },
+      fail: function (inSender, inResponse) {
+        // prevent more than one entry.
+        if (this.failed) {
+          return;
+        }
+        this.failed = true;
+
+        if (callback) {
+          callback({
+            exception: {
+              data: data,
+              message: (OB.I18N.getLabel('OBPOS_MsgHardwareServerNotAvailable'))
+            }
+          });
+        } else {
+          OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgHardwareServerNotAvailable'));
+        }
+      }
+    });
+    rr = new OB.RR.Request({
+      ajaxRequest: ajaxRequest
+    });
+    rr.exec(me.activepdfurl + '/process/printpdf');
   }
 };
