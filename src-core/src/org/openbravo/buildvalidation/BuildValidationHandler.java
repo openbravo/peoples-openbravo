@@ -12,7 +12,6 @@
 package org.openbravo.buildvalidation;
 
 import java.io.File;
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
@@ -32,6 +31,7 @@ public class BuildValidationHandler {
 
   private static File basedir;
   private static String module;
+  private static String propertiesFile;
 
   private static final String PATH_CONFIG = "config/Openbravo.properties";
 
@@ -39,6 +39,8 @@ public class BuildValidationHandler {
     basedir = new File(args[0]);
     module = null; // The module is not set so that all BuildValidations are always executed.
     PropertyConfigurator.configure("log4j.lcf");
+    propertiesFile = args[2];
+    log4j.debug("basedir = " + basedir + ", propertiesFile = " + propertiesFile);
     List<String> classes = new ArrayList<String>();
     ArrayList<File> modFolders = new ArrayList<File>();
     if (module != null && !module.equals("%")) {
@@ -145,40 +147,26 @@ public class BuildValidationHandler {
    */
   private static Map<String, OpenbravoVersion> getModulesVersionMap() {
     Map<String, OpenbravoVersion> modulesVersion = new HashMap<String, OpenbravoVersion>();
-    File fProp = getPropertiesFile();
-    ConnectionProvider cp = new CPStandAlone(fProp.getAbsolutePath());
-    String sql = "SELECT ad_module_id AS moduleid, version AS version FROM ad_module";
-    ResultSet resultSet = null;
-    Connection connection = null;
+    String strSql = "SELECT ad_module_id AS moduleid, version AS version FROM ad_module";
     try {
-      connection = cp.getConnection();
-      PreparedStatement statement = connection.prepareStatement(sql);
-      statement.execute();
-      resultSet = statement.getResultSet();
-      while (resultSet.next()) {
-        String moduleId = resultSet.getString("moduleid");
-        String modVersion = resultSet.getString("version");
+      ConnectionProvider cp = getConnectionProvider();
+      PreparedStatement ps = cp.getPreparedStatement(strSql);
+      ResultSet rs = ps.executeQuery();
+      while (rs.next()) {
+        String moduleId = rs.getString("moduleid");
+        String modVersion = rs.getString("version");
         modulesVersion.put(moduleId, new OpenbravoVersion(modVersion));
       }
-      resultSet.close();
-      connection.close();
+      rs.close();
     } catch (Exception e) {
       log4j.error("Not possible to recover the current version of modules", e);
     }
     return modulesVersion;
   }
 
-  private static File getPropertiesFile() {
-    File fProp = null;
-    if (new File(PATH_CONFIG).exists())
-      fProp = new File(PATH_CONFIG);
-    else if (new File("../" + PATH_CONFIG).exists())
-      fProp = new File("../" + PATH_CONFIG);
-    else if (new File("../../" + PATH_CONFIG).exists())
-      fProp = new File("../../" + PATH_CONFIG);
-    if (fProp == null) {
-      log4j.error("Could not find Openbravo.properties");
-    }
-    return fProp;
+  private static ConnectionProvider getConnectionProvider() {
+    ConnectionProvider cp = null;
+    cp = new CPStandAlone(propertiesFile);
+    return cp;
   }
 }

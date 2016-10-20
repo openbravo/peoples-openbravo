@@ -103,6 +103,7 @@
     <java classname="org.openbravo.buildvalidation.BuildValidationHandler" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="${build.maxmemory}" failonerror="yes">
       <arg value="${base.src}/../"/>
       <arg value="${module}"/>
+      <arg value="${base.config}/Openbravo.properties"/>
       <classpath refid="buildvalidation.class.path" />
       <syspropertyset>
         <propertyref name="java.security.egd" />
