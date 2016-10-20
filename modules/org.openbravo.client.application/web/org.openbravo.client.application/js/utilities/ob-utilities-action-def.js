@@ -145,6 +145,23 @@ OB.Utilities.Action.set('refreshGrid', function (paramObj) {
   }
 });
 
+//** {{{ refreshGridParameter }}} **
+//It refreshes a grid parameter defined within a parameter window
+//Parameters:
+//* {{{gridName}}}: The name of the grid parameter
+OB.Utilities.Action.set('refreshGridParameter', function (paramObj) {
+  var processView = paramObj._processView,
+      gridName = paramObj.gridName,
+      gridItem;
+  if (processView && processView.theForm && processView.theForm.getItem && gridName) {
+    gridItem = processView.theForm.getItem(gridName);
+    if (gridItem && gridItem.canvas && gridItem.canvas.viewGrid) {
+      // force parameter grid refresh by invalidating cache
+      gridItem.canvas.viewGrid.invalidateCache();
+    }
+  }
+});
+
 //** {{{ OBUIAPP_downloadReport }}} **
 //This action is used by the BaseReportActionHandler to download the generated file with the
 //report result from the temporary location using the postThroughHiddenForm function. The mode is
