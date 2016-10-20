@@ -44,10 +44,9 @@ public abstract class ModuleScript extends ExecutionLimitBaseProcess {
    * This method prints some log information before calling the execute() method
    */
   @Override
-  protected List<String> doExecute() {
+  protected void doExecute() {
     log4j.info("Executing moduleScript: " + this.getClass().getName());
     execute();
-    return null;
   }
 
   /**
@@ -57,8 +56,8 @@ public abstract class ModuleScript extends ExecutionLimitBaseProcess {
    * @param modulesVersionMap
    *          A data structure that contains module versions mapped by module id
    */
-  public final List<String> preExecute(Map<String, OpenbravoVersion> modulesVersionMap) {
-    return super.preExecute(modulesVersionMap);
+  public final void preExecute(Map<String, OpenbravoVersion> modulesVersionMap) {
+    super.preExecute(modulesVersionMap);
   }
 
   /**

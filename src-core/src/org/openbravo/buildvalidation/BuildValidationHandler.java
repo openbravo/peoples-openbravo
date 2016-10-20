@@ -74,7 +74,8 @@ public class BuildValidationHandler {
         Class<?> myClass = Class.forName(s);
         if (BuildValidation.class.isAssignableFrom(myClass)) {
           BuildValidation instance = (BuildValidation) myClass.newInstance();
-          errors = (ArrayList<String>) instance.preExecute(modulesVersionMap);
+          instance.preExecute(modulesVersionMap);
+          errors = (ArrayList<String>) instance.getErrors();
         }
       } catch (Exception e) {
         log4j.info("Error executing build-validation: " + s, e);

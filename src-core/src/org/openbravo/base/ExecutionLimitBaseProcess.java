@@ -13,7 +13,6 @@ package org.openbravo.base;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -37,7 +36,7 @@ public abstract class ExecutionLimitBaseProcess {
    * This method must be overridden by the BuildValidation and ModuleScript subclasses, to specify
    * some actions before calling the execute() method.
    */
-  protected abstract List<String> doExecute();
+  protected abstract void doExecute();
 
   /**
    * This method checks whether the BuildValidation or ModuleScript can be executed before invoke
@@ -46,22 +45,22 @@ public abstract class ExecutionLimitBaseProcess {
    * @param modulesVersionMap
    *          A data structure that contains module versions mapped by module id
    */
-  public List<String> preExecute(Map<String, OpenbravoVersion> modulesVersionMap) {
+  public void preExecute(Map<String, OpenbravoVersion> modulesVersionMap) {
     ArrayList<String> errors = new ArrayList<String>();
     if (modulesVersionMap == null || modulesVersionMap.size() == 0) {
       // if we do not have module versions to compare with (install.source) then
       // execute depending
       // on the value of the executeOnInstall() method
       if (executeOnInstall()) {
-        errors = (ArrayList<String>) doExecute();
+        doExecute();
       }
-      return errors;
+      return;
     }
 
     ExecutionLimits executionLimits = getExecutionLimits();
     if (executionLimits == null || executionLimits.getModuleId() == null) {
-      errors = (ArrayList<String>) doExecute();
-      return errors;
+      doExecute();
+      return;
     }
 
     String type = getTypeName();
@@ -69,7 +68,7 @@ public abstract class ExecutionLimitBaseProcess {
       log4j.error(type + " " + this.getClass().getName()
           + " not executed because its execution limits are incorrect. "
           + "Last version should be greater than first version.");
-      return errors;
+      return;
     }
     OpenbravoVersion currentVersion = modulesVersionMap.get(executionLimits.getModuleId());
     OpenbravoVersion firstVersion = executionLimits.getFirstVersion();
@@ -79,8 +78,8 @@ public abstract class ExecutionLimitBaseProcess {
     if (currentVersion == null) {
       // Dependent module is being installed
       if (executeOnInstall()) {
-        errors = (ArrayList<String>) doExecute();
-        return errors;
+        doExecute();
+        return;
       }
       additionalInfo = this.getClass().getName()
           + " is configured to not execute it during dependent module installation.";
@@ -88,8 +87,8 @@ public abstract class ExecutionLimitBaseProcess {
       // Dependent module is already installed
       if ((firstVersion == null || firstVersion.compareTo(currentVersion) < 0)
           && (lastVersion == null || lastVersion.compareTo(currentVersion) > 0)) {
-        errors = (ArrayList<String>) doExecute();
-        return errors;
+        doExecute();
+        return;
       }
       additionalInfo = "Dependent module current version (" + currentVersion + ") is not between "
           + type + " execution limits: first version = " + firstVersion + ", last version = "
@@ -98,7 +97,6 @@ public abstract class ExecutionLimitBaseProcess {
     }
     log4j.debug("Not necessary to execute " + type + ": " + this.getClass().getName());
     log4j.debug(additionalInfo);
-    return errors;
   }
 
   /**
