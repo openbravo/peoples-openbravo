@@ -28,12 +28,12 @@ OB.DS.HWResource.prototype.getData = function (callback) {
 
 OB.DS.HWServer = function (urllist, url, scaleurl) {
   this.urllist = urllist;
-  this.url = url;
+  this.mainurl = url;
   this.scaleurl = scaleurl;
 
   // Remove suffix if needed
-  if (this.url && this.url.indexOf('/printer', this.url.length - 8) !== -1) { // endswith '/printer'
-    this.url = this.url.substring(0, this.url.length - 8);
+  if (this.mainurl && this.mainurl.indexOf('/printer', this.mainurl.length - 8) !== -1) { // endswith '/printer'
+    this.mainurl = this.mainurl.substring(0, this.mainurl.length - 8);
   }
 
   // load activeurl from localStorage
@@ -59,7 +59,7 @@ OB.DS.HWServer.prototype.setActiveURL = function (url) {
     if (validprinter) {
       this.activeidentifier = validprinter._identifier;
     } else {
-      this.activeurl = this.url;
+      this.activeurl = this.mainurl;
       this.activeidentifier = OB.I18N.getLabel('OBPOS_MainPrinter');
     }
   }
@@ -87,7 +87,7 @@ OB.DS.HWServer.prototype.setActivePDFURL = function (url) {
     if (validprinter) {
       this.activepdfidentifier = validprinter._identifier;
     } else {
-      this.activepdfurl = this.url;
+      this.activepdfurl = this.mainurl;
       this.activepdfidentifier = OB.I18N.getLabel('OBPOS_MainPrinter');
     }
   }
@@ -351,7 +351,7 @@ OB.DS.HWServer.prototype._send = function (data, callback, device) {
   var sendurl;
   if (OB.DS.HWServer.DRAWER === device || OB.DS.HWServer.DISPLAY === device) {
     // DRAWER and DISPLAY URL is allways the main url defined in POS terminal
-    sendurl = this.url;
+    sendurl = this.mainurl;
   } else {
     // PRINTER and default is the active URL
     sendurl = this.activeurl;

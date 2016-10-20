@@ -170,7 +170,7 @@ enyo.kind({
       printerscontainer: this.printerscontainer,
       printer: {
         _identifier: OB.I18N.getLabel('OBPOS_MainPrinter'),
-        hardwareURL: OB.POS.hwserver.url
+        hardwareURL: OB.POS.hwserver.mainurl
       }
     }).render();
 
