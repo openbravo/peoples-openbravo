@@ -17,7 +17,6 @@ import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -126,20 +125,5 @@ public class POSImportEntryProcessor extends EntityPersistenceEventObserver {
     } catch (JSONException e) {
       throw new OBException("Exception occurred " + importEntry.getJsonInfo(), e);
     }
-  }
-
-  public static int countEntries(String importStatus, ImportEntry importEntry) {
-    final String whereClause = ImportEntry.PROPERTY_IMPORTSTATUS + "='" + importStatus + "' and "
-        + ImportEntry.PROPERTY_CREATIONDATE + "<=:creationDate and "
-        + ImportEntry.PROPERTY_CREATEDTIMESTAMP + "<:createdtimestamp and "
-        + ImportEntry.PROPERTY_OBPOSPOSTERMINAL + "=:terminal and id!=:id";
-    final Query qry = OBDal.getInstance().getSession()
-        .createQuery("select count(*) from " + ImportEntry.ENTITY_NAME + " where " + whereClause);
-    qry.setParameter("id", importEntry.getId());
-    qry.setTimestamp("creationDate", importEntry.getCreationDate());
-    qry.setParameter("terminal", importEntry.getOBPOSPOSTerminal());
-    qry.setParameter("createdtimestamp", importEntry.getCreatedtimestamp());
-
-    return ((Number) qry.uniqueResult()).intValue();
   }
 }
