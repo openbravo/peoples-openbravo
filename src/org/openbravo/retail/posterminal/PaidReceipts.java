@@ -41,9 +41,6 @@ import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.mobile.core.model.ModelExtensionUtils;
 import org.openbravo.model.ad.access.OrderLineTax;
 import org.openbravo.model.common.order.OrderLineOffer;
-import org.openbravo.retail.posterminal.POSUtils;
-import org.openbravo.retail.posterminal.PaidReceiptsPaymentsInHook;
-import org.openbravo.retail.posterminal.PaidReceiptsPaymentsTypeHook;
 import org.openbravo.service.json.JsonConstants;
 
 public class PaidReceipts extends JSONProcessSimple {
@@ -383,8 +380,10 @@ public class PaidReceipts extends JSONProcessSimple {
               if (objectIn.has("reversedPaymentId")) {
                 paidReceiptPayment.put("reversedPaymentId", objectIn.get("reversedPaymentId"));
               }
-              paidReceiptPayment.put("obposAppCashup", objectIn.get("cashup"));
-              paidReceiptPayment.put("oBPOSPOSTerminal", objectIn.get("posTerminal"));
+              paidReceiptPayment.put("obposAppCashup",
+                  objectIn.has("cashup") ? objectIn.get("cashup") : null);
+              paidReceiptPayment.put("oBPOSPOSTerminal",
+                  objectIn.has("posTerminal") ? objectIn.get("posTerminal") : null);
               // Call all payments in processes injected.
               executeHooks(paymentsInProcesses, paidReceiptPayment, null,
                   (String) objectIn.get("paymentId"));
