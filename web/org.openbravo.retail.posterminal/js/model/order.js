@@ -2719,6 +2719,7 @@
       me.set('doCancelAndReplace', true);
 
       OB.Dal.remove(this, function () {
+        var deliveredQty = 0;
         me.get('lines').each(function (line) {
           idMap[line.get('id')] = OB.UTIL.get_UUID();
           line.set('replacedorderline', line.get('id'));
@@ -2733,7 +2734,10 @@
         me.set('generateInvoice', OB.MobileApp.model.get('terminal').terminalType.generateInvoice);
         me.set('documentType', OB.MobileApp.model.get('terminal').terminalType.documentType);
 
-        if (me.get('isLayaway')) {
+        _.each(me.get('lines').models, function (line) {
+          deliveredQty += line.get('deliveredQuantity');
+        });
+        if (me.get('isLayaway') || (OB.MobileApp.model.get('terminal').terminalType.layawayorder && deliveredQty === 0)) {
           me.set('orderType', 2);
         }
         me.set('isLayaway', false);
