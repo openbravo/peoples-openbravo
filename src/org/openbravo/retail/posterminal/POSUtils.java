@@ -767,26 +767,19 @@ public class POSUtils {
    */
   public static void setDefaultPaymentType(JSONObject jsonorder, Order order) {
     try {
-      TerminalTypePaymentMethod defaultPaymentMethod = order.getObposApplications()
-          .getObposTerminaltype().getPaymentMethod();
-      OBCriteria<OBPOSAppPayment> paymentTypes = OBDal.getInstance().createCriteria(
-          OBPOSAppPayment.class);
-      paymentTypes.add(Restrictions.eq(OBPOSAppPayment.PROPERTY_OBPOSAPPLICATIONS,
-          order.getObposApplications()));
-      if (defaultPaymentMethod != null) {
-        paymentTypes.add(Restrictions.eq(OBPOSAppPayment.PROPERTY_PAYMENTMETHOD,
-            defaultPaymentMethod));
-      }
-      paymentTypes.addOrderBy(OBPOSAppPayment.PROPERTY_ID, false);
-      paymentTypes.setMaxResults(1);
-      OBPOSAppPayment defaultPaymentType = (OBPOSAppPayment) paymentTypes.uniqueResult();
+      OBQuery<OBPOSAppPayment> paymentQuery = OBDal.getInstance().createQuery(OBPOSAppPayment.class,
+          "as e where e.obposApplications = :terminal and e.financialAccount.currency = :currency order by e.id");
+      paymentQuery.setNamedParameter("terminal", order.getObposApplications());
+      paymentQuery.setNamedParameter("currency", order.getOrganization().getCurrency());
+      paymentQuery.setMaxResult(1);
+      OBPOSAppPayment defaultPaymentType = (OBPOSAppPayment) paymentQuery.uniqueResult();
 
       if (defaultPaymentType != null) {
         JSONObject paymentTypeValues = new JSONObject();
-        paymentTypeValues.put("paymentMethodId", defaultPaymentType.getPaymentMethod()
-            .getPaymentMethod().getId());
-        paymentTypeValues.put("financialAccountId", defaultPaymentType.getFinancialAccount()
-            .getId());
+        paymentTypeValues.put("paymentMethodId",
+            defaultPaymentType.getPaymentMethod().getPaymentMethod().getId());
+        paymentTypeValues.put("financialAccountId",
+            defaultPaymentType.getFinancialAccount().getId());
         jsonorder.put("defaultPaymentType", paymentTypeValues);
       }
     } catch (JSONException e) {
