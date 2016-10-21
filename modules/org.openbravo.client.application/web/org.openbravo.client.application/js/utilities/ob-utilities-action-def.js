@@ -165,7 +165,7 @@ OB.Utilities.Action.set('refreshGridParameter', function (paramObj) {
 //** {{{ OBUIAPP_downloadReport }}} **
 //This action is used by the BaseReportActionHandler to download the generated file with the
 //report result from the temporary location using the postThroughHiddenForm function. The mode is
-//changed to DOWNLOAD so the BaseReportActionHanlder execute the logic to download the report.
+//changed to DOWNLOAD so the BaseReportActionHandler executes the logic to download the report.
 //Parameters:
 //* {{{processParameters}}}: The process parameters is an object that includes the action handler implementing the download, the report id that it is being executed and the process definition id.
 //* {{{tmpfileName}}}: Name of the temporary file.
@@ -184,9 +184,9 @@ OB.Utilities.Action.set('OBUIAPP_downloadReport', function (paramObj) {
 });
 
 //** {{{ OBUIAPP_browseReport }}} **
-//This action is used by the BaseReportActionHandler to open a new tab to show the generated file with the
-//report result in HTML format from the temporary location. The mode is
-//changed to BROWSE in order to the BaseReportActionHanlder execute the logic to browse the report.
+//This action is used by the BaseReportActionHandler to show in a new tab the generated file with the
+//report result from the temporary location. The mode is changed to BROWSE so the BaseReportActionHandler
+//executes the logic to display the report.
 //Parameters:
 //* {{{processParameters}}}: The process parameters is an object that includes the action handler implementing the browsing, the report id that it is being executed and the process definition id.
 //* {{{tmpfileName}}}: Name of the temporary file.

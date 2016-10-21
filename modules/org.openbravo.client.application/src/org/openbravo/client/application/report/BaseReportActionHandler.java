@@ -34,8 +34,6 @@ import javax.mail.internet.MimeUtility;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.sf.jasperreports.engine.JRDataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
@@ -72,9 +70,11 @@ import org.openbravo.utils.FileUtility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.sf.jasperreports.engine.JRDataSource;
+
 /**
- * Action Handler used as base for jasper reports generated from process defition. This handler can
- * be extended to customize its behavior.
+ * Action Handler used as base for jasper reports generated from process definition. This handler
+ * can be extended to customize its behavior.
  * 
  */
 public class BaseReportActionHandler extends BaseProcessActionHandler {
@@ -82,8 +82,8 @@ public class BaseReportActionHandler extends BaseProcessActionHandler {
   private static final String JASPER_PARAM_PROCESS = "jasper_process";
 
   /**
-   * execute() method overridden to add the logic to download the report file stored in the
-   * temporary folder.
+   * execute() method overridden to add the logic to download or display the report file stored in
+   * the temporary folder.
    */
   @Override
   public void execute() {
@@ -149,8 +149,11 @@ public class BaseReportActionHandler extends BaseProcessActionHandler {
 
   /**
    * Returns the report output. The file containing the output is stored in a temporary folder with
-   * a generated name. Its content is sent back to the browser to be shown in a new tab. Once the
-   * process is finished the file is removed from the server.
+   * a generated name. Its content is sent back to the browser to be shown in a new Openbravo tab.
+   * Once the process is finished the file is removed from the server.
+   *
+   * @param request
+   *          The HTTP request for this handler.
    */
   private void doBrowse(HttpServletRequest request) throws IOException {
     final Map<String, Object> parameters = getParameterMapFromRequest(request);
@@ -163,8 +166,11 @@ public class BaseReportActionHandler extends BaseProcessActionHandler {
 
   /**
    * Downloads the file with the report result. The file is stored in a temporary folder with a
-   * generated name. It is renamed and download as an attachment of the response. Once it is
+   * generated name. It is renamed and download as an attachment of the HTTP response. Once it is
    * finished the file is removed from the server.
+   *
+   * @param request
+   *          The HTTP request for this handler.
    */
   private void doDownload(HttpServletRequest request) throws IOException {
     final Map<String, Object> parameters = getParameterMapFromRequest(request);
@@ -236,15 +242,18 @@ public class BaseReportActionHandler extends BaseProcessActionHandler {
   }
 
   /**
-   * Get the PDF or XLS template path from the Report Definition. Override this method to add custom
-   * logic to get report template paths.
+   * Get the PDF, XLS or HTML template path from the Report Definition. Override this method to add
+   * custom logic to get report template paths.
    * 
    * @param expType
    *          The export type.
    * @param report
    *          The Report Definition.
    * @param jsonContent
-   *          JSONObject with the values set in the filter parameters.
+   *          JSONObject with the values set in the filter parameters, used by the classes extending
+   *          this one when generating reports which use more than one template. In that case, the
+   *          selection of the template can be done based on the values of the parameters present in
+   *          this JSONObject.
    * @return The template path.
    */
 
@@ -281,7 +290,7 @@ public class BaseReportActionHandler extends BaseProcessActionHandler {
 
   /**
    * Manages the report generation. It sets the proper response actions to download the generated
-   * file or open it in a new tab.
+   * file or to open it in a new Openbravo tab.
    * 
    * @param result
    *          JSONObject with the response that is returned to the client.
@@ -291,10 +300,7 @@ public class BaseReportActionHandler extends BaseProcessActionHandler {
    *          JSONObject with the values set in the filter parameters.
    * @param action
    *          String with the output type of the report.
-   * @param conn
-   *          The Connection Provider to use
-   * @param data
-   *          The JRDataSource to use
+   *
    * @throws JSONException
    * @throws OBException
    *           Exception thrown when a validation fails.
@@ -535,6 +541,9 @@ public class BaseReportActionHandler extends BaseProcessActionHandler {
    * Get the data to pass to the report generation method. Override this method to put logic for
    * getting the data
    * 
+   * @param parameters
+   *          map with the parameters of the call that can be used to generate the report data
+   *
    * @return
    */
   protected JRDataSource getReportData(Map<String, Object> parameters) {
@@ -544,7 +553,7 @@ public class BaseReportActionHandler extends BaseProcessActionHandler {
   /**
    * Get the connection provider to use in report generation. Override this method to put logic for
    * getting the connection provider
-   * 
+   *
    * @return
    */
   protected ConnectionProvider getReportConnectionProvider() {
