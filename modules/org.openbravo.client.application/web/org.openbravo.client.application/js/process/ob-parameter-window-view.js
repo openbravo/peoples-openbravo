@@ -35,6 +35,7 @@ isc.OBParameterWindowView.addProperties({
   reportId: null,
   pdfExport: false,
   xlsExport: false,
+  htmlExport: false,
 
   gridFields: [],
   defaultsActionHandler: 'org.openbravo.client.application.process.DefaultsProcessActionHandler',
@@ -54,6 +55,9 @@ isc.OBParameterWindowView.addProperties({
       }
       if (this.xlsExport) {
         OB.TestRegistry.register('org.openbravo.client.application.ParameterWindow_XLS_Export_' + this.processId, this.xlsExport);
+      }
+      if (this.htmlExport) {
+        OB.TestRegistry.register('org.openbravo.client.application.ParameterWindow_HTML_Export_' + this.processId, this.htmlExport);
       }
     } else {
       OB.TestRegistry.register('org.openbravo.client.application.ParameterWindow_OK_Button_' + this.processId, this.okButton);
@@ -93,6 +97,8 @@ isc.OBParameterWindowView.addProperties({
           this.firstFocusedItem = this.pdfButton;
         } else if (this.xlsExport) {
           this.firstFocusedItem = this.xlsButton;
+        } else if (this.htmlExport) {
+          this.firstFocusedItem = this.htmlButton;
         }
       } else {
         this.firstFocusedItem = this.okButton;
@@ -123,6 +129,20 @@ isc.OBParameterWindowView.addProperties({
       }
     } else {
       if (this.isReport) {
+        if (this.htmlExport) {
+          this.htmlButton = isc.OBFormButton.create({
+            title: OB.I18N.getLabel('OBUIAPP_HTMLExport'),
+            realTitle: '',
+            _buttonValue: 'HTML',
+            click: actionClick
+          });
+          buttonLayout.push(this.htmlButton);
+          if (this.popup) {
+            buttonLayout.push(isc.LayoutSpacer.create({
+              width: 32
+            }));
+          }
+        }
         if (this.pdfExport) {
           this.pdfButton = isc.OBFormButton.create({
             title: OB.I18N.getLabel('OBUIAPP_PDFExport'),

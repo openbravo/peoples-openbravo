@@ -12,7 +12,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2014 Openbravo SLU
+ * All portions are Copyright (C) 2011-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -49,6 +49,9 @@ isc.ClassFactory.defineClass('<#if !data.popup>processDefinition</#if>${data.win
         </#if>
         <#if data.xlsExport>
             xlsExport: true,
+        </#if>
+        <#if data.htmlExport>
+            htmlExport: true,
         </#if>
     </#if>
     viewProperties: {

@@ -78,7 +78,7 @@
         tab = OB.MainView.TabSet.tabs[i];
         bookMarkParams = null;
 
-        if (tab.viewName !== 'OBQueryListView' && tab.viewName !== 'OBCalendarWidgetView') {
+        if (tab.viewName !== 'OBQueryListView' && tab.viewName !== 'OBCalendarWidgetView' && !tab.isProcessDefinitionReport) {
           state.bm[i] = {};
 
           // get the original tab object
@@ -109,7 +109,7 @@
             data[i] = tabObject.pane.getState();
           }
         } else {
-          // Not updating history in case of query-list and calendar widgets
+          // Not updating history in case of query-list, calendar widgets and process definition reports
           // https://issues.openbravo.com/view.php?id=29025
           tabWidgetNumber = OB.MainView.TabSet.getTabNumber(tab);
           if (tabWidgetNumber <= state.st) {

@@ -18,17 +18,19 @@
  */
 
 OB.CancelAndReplace = {};
-OB.CancelAndReplace.ClientSideEventHandlers = {};
+OB.CancelAndReplace.ClientSideEventHandlersPreSaveUpdate = {};
+OB.CancelAndReplace.ClientSideEventHandlersPreDelete = {};
 OB.CancelAndReplace.SALES_ORDERLINES_TAB = '187';
 
-OB.CancelAndReplace.ClientSideEventHandlers.showMessage = function (view, form, grid, extraParameters, actions) {
+OB.CancelAndReplace.ClientSideEventHandlersPreSaveUpdate.showMessage = function (view, form, grid, extraParameters, actions) {
   var data = extraParameters.data,
-      newOrderedQuantity = data.orderedQuantity;
+      newOrderedQuantity = data.orderedQuantity,
+      replacementRecords = [];
 
   view.messageBar.keepOnAutomaticRefresh = true;
 
   callback = function (response, cdata, request) {
-    if (cdata && cdata.deliveredQuantity && cdata.deliveredQuantity > newOrderedQuantity) {
+    if (cdata && cdata.result.length && cdata.result[0].deliveredQuantity > newOrderedQuantity) {
       // Update flow
       view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('CannotOrderLessThanDeliveredInCancelReplace'));
       return;
@@ -36,10 +38,11 @@ OB.CancelAndReplace.ClientSideEventHandlers.showMessage = function (view, form, 
     OB.EventHandlerRegistry.callbackExecutor(view, form, grid, extraParameters, actions);
   }
 
-  if (data.replacedorderline && !extraParameters.isNewRecord) {
+  if (data.replacedorderline && !extraParameters.isNewRecord && view.getParentRecord().documentStatus === 'TMP') {
+    replacementRecords.push(data);
     // Calling action handler
     OB.RemoteCallManager.call('org.openbravo.common.actionhandler.CancelAndReplaceGetCancelledOrderLine', {
-      orderLineId: data.replacedorderline
+      records: replacementRecords
     }, {}, callback);
   } else {
     OB.EventHandlerRegistry.callbackExecutor(view, form, grid, extraParameters, actions);
@@ -47,4 +50,49 @@ OB.CancelAndReplace.ClientSideEventHandlers.showMessage = function (view, form, 
 
 };
 
-OB.EventHandlerRegistry.register(OB.CancelAndReplace.SALES_ORDERLINES_TAB, OB.EventHandlerRegistry.PRESAVE, OB.CancelAndReplace.ClientSideEventHandlers.showMessage, 'OBCancelAndReplace_ShowMessage');
+OB.EventHandlerRegistry.register(OB.CancelAndReplace.SALES_ORDERLINES_TAB, OB.EventHandlerRegistry.PRESAVE, OB.CancelAndReplace.ClientSideEventHandlersPreSaveUpdate.showMessage, 'OBCancelAndReplace_ShowMessage');
+
+OB.CancelAndReplace.ClientSideEventHandlersPreDelete.showMessage = function (view, form, grid, extraParameters, actions) {
+  var selectedRecords = extraParameters.selectedRecords,
+      record, replacementRecords = [],
+      record, deliveredQuantity;
+
+  view.messageBar.keepOnAutomaticRefresh = true;
+
+  callback = function (response, cdata, request) {
+    for (i = 0; i < cdata.result.length; i++) {
+      record = cdata.result[i].record;
+      deliveredQuantity = cdata.result[i].deliveredQuantity;
+      if (deliveredQuantity !== 0) {
+        var msgInfo = [];
+        msgInfo.push(record.lineNo);
+        msgInfo.push(record.product$_identifier);
+        view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('CannotDeleteLineWithDeliveredQtyInReplacementLine', msgInfo));
+        return;
+      }
+    }
+    OB.EventHandlerRegistry.callbackExecutor(view, form, grid, extraParameters, actions);
+  };
+
+  if (view.getParentRecord().documentStatus === 'TMP') {
+    for (i = 0; i < selectedRecords.length; i++) {
+      record = selectedRecords[i];
+      if (record.replacedorderline) {
+        replacementRecords.push(record);
+      }
+    }
+
+    if (replacementRecords.length) {
+      //Calling action handler
+      OB.RemoteCallManager.call('org.openbravo.common.actionhandler.CancelAndReplaceGetCancelledOrderLine', {
+        records: replacementRecords
+      }, {}, callback);
+    } else {
+      OB.EventHandlerRegistry.callbackExecutor(view, form, grid, extraParameters, actions);
+    }
+  } else {
+    OB.EventHandlerRegistry.callbackExecutor(view, form, grid, extraParameters, actions);
+  }
+};
+
+OB.EventHandlerRegistry.register(OB.CancelAndReplace.SALES_ORDERLINES_TAB, OB.EventHandlerRegistry.PREDELETE, OB.CancelAndReplace.ClientSideEventHandlersPreDelete.showMessage, 'OBCancelAndReplace_ShowMessage');

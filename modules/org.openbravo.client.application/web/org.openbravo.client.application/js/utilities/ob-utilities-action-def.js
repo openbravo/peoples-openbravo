@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2015 Openbravo SLU
+ * All portions are Copyright (C) 2012-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -145,10 +145,27 @@ OB.Utilities.Action.set('refreshGrid', function (paramObj) {
   }
 });
 
+//** {{{ refreshGridParameter }}} **
+//It refreshes a grid parameter defined within a parameter window
+//Parameters:
+//* {{{gridName}}}: The name of the grid parameter
+OB.Utilities.Action.set('refreshGridParameter', function (paramObj) {
+  var processView = paramObj._processView,
+      gridName = paramObj.gridName,
+      gridItem;
+  if (processView && processView.theForm && processView.theForm.getItem && gridName) {
+    gridItem = processView.theForm.getItem(gridName);
+    if (gridItem && gridItem.canvas && gridItem.canvas.viewGrid) {
+      // force parameter grid refresh by invalidating cache
+      gridItem.canvas.viewGrid.invalidateCache();
+    }
+  }
+});
+
 //** {{{ OBUIAPP_downloadReport }}} **
 //This action is used by the BaseReportActionHandler to download the generated file with the
 //report result from the temporary location using the postThroughHiddenForm function. The mode is
-//changed to DOWNLOAD so the BaseReportActionHanlder execute the logic to download the report.
+//changed to DOWNLOAD so the BaseReportActionHandler executes the logic to download the report.
 //Parameters:
 //* {{{processParameters}}}: The process parameters is an object that includes the action handler implementing the download, the report id that it is being executed and the process definition id.
 //* {{{tmpfileName}}}: Name of the temporary file.
@@ -164,4 +181,24 @@ OB.Utilities.Action.set('OBUIAPP_downloadReport', function (paramObj) {
   params.mode = 'DOWNLOAD';
   OB.Utilities.postThroughHiddenForm(OB.Application.contextUrl + 'org.openbravo.client.kernel', params);
 
+});
+
+//** {{{ OBUIAPP_browseReport }}} **
+//This action is used by the BaseReportActionHandler to show in a new tab the generated file with the
+//report result from the temporary location. The mode is changed to BROWSE so the BaseReportActionHandler
+//executes the logic to display the report.
+//Parameters:
+//* {{{processParameters}}}: The process parameters is an object that includes the action handler implementing the browsing, the report id that it is being executed and the process definition id.
+//* {{{tmpfileName}}}: Name of the temporary file.
+//* {{{fileName}}}: The name to be used in the file to download.
+OB.Utilities.Action.set('OBUIAPP_browseReport', function (paramObj) {
+  var processParameters = paramObj.processParameters,
+      params = isc.clone(processParameters);
+  OB.Layout.ViewManager.openView('OBClassicWindow', {
+    tabTitle: paramObj.tabTitle,
+    addToRecents: false,
+    isProcessDefinitionReport: true,
+    obManualURL: '/org.openbravo.client.kernel?_action=' + processParameters.actionHandler + '&reportId=' + processParameters.reportId + '&processId=' + processParameters.processId + '&tmpfileName=' + paramObj.tmpfileName + '&fileName=' + paramObj.fileName + '&mode=BROWSE&vScroll=auto',
+    command: 'DEFAULT'
+  });
 });
