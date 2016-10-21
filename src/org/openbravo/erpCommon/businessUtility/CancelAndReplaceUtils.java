@@ -88,6 +88,7 @@ public class CancelAndReplaceUtils {
   public static String REVERSE_PREFIX = "*R*";
   public static String ZERO_PAYMENT_SUFIX = "*Z*";
   public static String DOCTYPE_MatShipment = "MMS";
+  public static int PAYMENT_DOCNO_LENGTH = 30;
 
   /**
    * Process that creates a replacement order in temporary status in order to Cancel and Replace an
