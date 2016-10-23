@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletResponseWrapper;
 import javax.servlet.http.HttpSession;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
+import org.openbravo.mobile.core.utils.OBMOBCUtils;
 
 /**
  * A servlet base class which handles redirects and other base tasks.
@@ -50,6 +51,10 @@ public abstract class BaseKernelServlet extends HttpSecureAppServlet {
 
   public void service(final HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
+
+    // always set the cors headers
+    OBMOBCUtils.setCORSHeaders(request, response);
+
     // encapsulate the response to catch any redirects
     // redirects are done by the authentication manager
     final KernelHttpServletResponse localResponse = new KernelHttpServletResponse(response);
