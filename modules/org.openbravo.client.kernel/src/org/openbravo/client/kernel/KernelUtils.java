@@ -11,18 +11,21 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.client.kernel;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
@@ -506,6 +509,25 @@ public class KernelUtils {
       targetColumnName = fkProp.getColumnName();
     }
     return targetColumnName;
+  }
+
+  /**
+   * See https://en.wikipedia.org/wiki/Cross-origin_resource_sharing
+   */
+  public void setCORSHeaders(HttpServletRequest request, HttpServletResponse response)
+      throws ServletException, IOException {
+
+    String origin = request.getHeader("Origin");
+
+    if (origin != null && !origin.equals("")) {
+      response.setHeader("Access-Control-Allow-Origin", origin);
+      response.setHeader("Access-Control-Allow-Credentials", "true");
+      response.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
+      response.setHeader("Access-Control-Allow-Headers",
+          "Content-Type, Origin, Accept, X-Requested-With, Access-Control-Allow-Credentials");
+
+      response.setHeader("Access-Control-Max-Age", "10000");
+    }
   }
 
   /**
