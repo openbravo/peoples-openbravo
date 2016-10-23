@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -68,9 +68,7 @@ public class UserContextCache implements OBSingleton {
   private Map<String, CacheEntry> cache = new ConcurrentHashMap<String, CacheEntry>();
 
   /**
-   * Searches the ContextCache for an OBContext. If none is found a new one is created and placed in
-   * the cache.
-   * 
+   * Searches the ContextCache for an OBContext. If none is found a new one is created and placed in the cache.
    * 
    * @param userId
    *          the user for which an OBContext is required
@@ -79,7 +77,25 @@ public class UserContextCache implements OBSingleton {
    * @see OBContext
    */
   public OBContext getCreateOBContext(String userId) {
-    CacheEntry ce = cache.get(userId);
+    return getCreateOBContext(userId, null, null);
+  }
+
+  /**
+   * Searches the ContextCache for an OBContext. If none is found a new one is created and placed in the cache.
+   * 
+   * @param userId
+   *          the user for which an OBContext is required
+   * @param roleId
+   *          the role id of the user
+   * @param orgId
+   *          the org id of the user
+   * @return the OBContext object
+   * 
+   * @see OBContext
+   */
+  public OBContext getCreateOBContext(String userId, String roleId, String orgId) {
+    final String cacheKey = userId + (roleId != null ? roleId : "") + (orgId != null ? orgId : "");
+    CacheEntry ce = cache.get(cacheKey);
     purgeCache();
     if (ce != null) {
       if (!userId.equals(ce.getObContext().getUser().getId())) {
@@ -102,12 +118,15 @@ public class UserContextCache implements OBSingleton {
         return ce.getObContext();
       }
     }
-    final OBContext obContext = OBContext.createOBContext(userId);
+
+    final OBContext obContext = new OBContext();
+    obContext.initialize(userId, roleId, null, orgId);
+
     ce = new CacheEntry();
     ce.setLastUsed(System.currentTimeMillis());
     ce.setObContext(obContext);
     ce.setUserId(userId);
-    cache.put(userId, ce);
+    cache.put(cacheKey, ce);
     if (log.isDebugEnabled()) {
       log.debug("Created new cache entry.  User: {}, Role: {}", ce.getObContext().getUser(), ce
           .getObContext().getRole());
