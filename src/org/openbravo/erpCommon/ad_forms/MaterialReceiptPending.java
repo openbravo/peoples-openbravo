@@ -394,31 +394,34 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
             if (new BigDecimal(dataLine[0].qtyordered).compareTo(new BigDecimal(strQtyordered)) == 0) {
               qtyorder = dataLine[0].quantityorder;
             } else {
+              UOM uom = OBDal.getInstance().get(UOM.class, dataLine[0].cUomId);
+              UOM orderUom = OBDal.getInstance().get(ProductUOM.class, dataLine[0].mProductUomId)
+                  .getUOM();
+              int stdPrecision = orderUom.getStandardPrecision().intValue();
+
               OBCriteria<UOMConversion> conversion = OBDal.getInstance().createCriteria(
                   UOMConversion.class);
-              conversion.add(Restrictions.eq(UOMConversion.PROPERTY_UOM,
-                  OBDal.getInstance().get(UOM.class, dataLine[0].cUomId)));
-              conversion.add(Restrictions.eq(UOMConversion.PROPERTY_TOUOM,
-                  OBDal.getInstance().get(ProductUOM.class, dataLine[0].mProductUomId).getUOM()));
-
+              conversion.add(Restrictions.eq(UOMConversion.PROPERTY_UOM, uom));
+              conversion.add(Restrictions.eq(UOMConversion.PROPERTY_TOUOM, orderUom));
+              List<UOMConversion> conversionList = conversion.list();
               Boolean useDivideRateBy = false;
+
               // Inverting search of UOM conversion if conversion list is empty
-              if (conversion.list().size() == 0) {
+              if (conversionList.isEmpty()) {
                 conversion = OBDal.getInstance().createCriteria(UOMConversion.class);
-                conversion.add(Restrictions.eq(UOMConversion.PROPERTY_UOM,
-                    OBDal.getInstance().get(ProductUOM.class, dataLine[0].mProductUomId).getUOM()));
-                conversion.add(Restrictions.eq(UOMConversion.PROPERTY_TOUOM, OBDal.getInstance()
-                    .get(UOM.class, dataLine[0].cUomId)));
+                conversion.add(Restrictions.eq(UOMConversion.PROPERTY_UOM, orderUom));
+                conversion.add(Restrictions.eq(UOMConversion.PROPERTY_TOUOM, uom));
+                conversionList = conversion.list();
                 useDivideRateBy = true;
               }
 
-              for (UOMConversion conv : conversion.list()) {
+              for (UOMConversion conv : conversionList) {
                 if (!useDivideRateBy) {
                   qtyorder = new BigDecimal(strQtyordered).multiply(conv.getMultipleRateBy())
-                      .toString();
+                      .setScale(stdPrecision, BigDecimal.ROUND_HALF_UP).toString();
                 } else {
                   qtyorder = new BigDecimal(strQtyordered).multiply(conv.getDivideRateBy())
-                      .toString();
+                      .setScale(stdPrecision, BigDecimal.ROUND_HALF_UP).toString();
                 }
               }
             }
