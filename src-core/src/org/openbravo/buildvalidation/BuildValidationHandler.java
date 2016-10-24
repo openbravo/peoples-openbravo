@@ -43,8 +43,6 @@ public class BuildValidationHandler {
   private static String module;
   private static String propertiesFile;
 
-  private static final String PATH_CONFIG = "config/Openbravo.properties";
-
   public static void main(String[] args) {
     basedir = new File(args[0]);
     module = null; // The module is not set so that all BuildValidations are always executed.
