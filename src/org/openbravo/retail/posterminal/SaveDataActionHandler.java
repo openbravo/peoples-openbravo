@@ -52,7 +52,7 @@ public class SaveDataActionHandler extends BaseActionHandler {
   private Instance<ImportEntryPostProcessor> importEntryPostProcessors;
 
   @Override
-  protected JSONObject execute(Map<String, Object> parameters, String content) {
+  public JSONObject execute(Map<String, Object> parameters, String content) {
     JSONArray errorIds = null;
     List<OBPOSErrors> errors = new ArrayList<OBPOSErrors>();
     boolean errorb = false;
