@@ -339,7 +339,7 @@ isc.OBStandardView.addProperties({
       OB.Personalization.personalizeForm(personalizationData, this.viewForm);
     }
     this.setMaximizeRestoreButtonState();
-    // The tabIndex of the child tabs will be forced to have a higher index number than the tabIndexes of it's parent elements.
+    // The tabIndex of the child tabs will be recalculated to have a higher index number than the tabIndex of their parent elements.
     if (this.viewForm.view.childTabSet) {
       this.viewForm.parentElement.updateMemberTabIndex(this.viewForm.view.childTabSet);
     }
