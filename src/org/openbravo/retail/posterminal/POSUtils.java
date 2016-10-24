@@ -339,13 +339,13 @@ public class POSUtils {
     Long lastDocNum = terminal.getLastassignednum();
     if (lastDocNum == null) {
       if (curDbms.equals("POSTGRE")) {
-        sqlToExecute = "select max(a.docno) from (select to_number(substring(documentno, '/([0-9]+)$')) docno from c_order where em_obpos_applications_id= (select obpos_applications_id from obpos_applications where value = ?) and c_doctype_id in ("
-            + doctypeIds
-            + ") and documentno like (select orderdocno_prefix from obpos_applications where value = ?)||'%') a";
+        sqlToExecute = "select max(a.docno) from (select to_number(substring(replace(co.documentno, app.orderdocno_prefix, ''), '^/{0,1}([0-9]+)$')) docno from c_order co "
+            + "inner join obpos_applications app on app.obpos_applications_id = co.em_obpos_applications_id and app.value = ? "
+            + "where co.c_doctype_id in (" + doctypeIds + ")) a";
       } else if (curDbms.equals("ORACLE")) {
-        sqlToExecute = "select max(a.docno) from (select to_number(substr(REGEXP_SUBSTR(documentno, '/([0-9]+)$'), 2)) docno from c_order where em_obpos_applications_id= (select obpos_applications_id from obpos_applications where value = ?) and c_doctype_id in ("
-            + doctypeIds
-            + ") and documentno like (select orderdocno_prefix from obpos_applications where value = ?)||'%' ) a";
+        sqlToExecute = "select max(a.docno) from (select to_number(substr(REGEXP_SUBSTR(REPLACE(co.documentno, app.orderdocno_prefix), '^/{0,1}([0-9]+)$'), 2)) docno from c_order co "
+            + "inner join obpos_applications app on app.obpos_applications_id = co.em_obpos_applications_id and app.value = ? "
+            + "where co.c_doctype_id in (" + doctypeIds + ")) a";
       } else {
         // unknow DBMS
         // shouldn't happen
@@ -354,7 +354,6 @@ public class POSUtils {
       }
       SQLQuery query = OBDal.getInstance().getSession().createSQLQuery(sqlToExecute);
       query.setString(0, searchKey);
-      query.setString(1, searchKey);
 
       Object result = query.uniqueResult();
       if (result == null) {
@@ -434,13 +433,13 @@ public class POSUtils {
     Long quotationlastDocNum = terminal.getQuotationslastassignednum();
     if (quotationlastDocNum == null) {
       if (curDbms.equals("POSTGRE")) {
-        sqlToExecute = "select max(a.docno) from (select to_number(substring(documentno, '/([0-9]+)$')) docno from c_order where em_obpos_applications_id= (select obpos_applications_id from obpos_applications where value = ?) and c_doctype_id in ("
-            + doctypeIds
-            + ") and documentno like (select quotationdocno_prefix from obpos_applications where value = ?)||'%') a";
+        sqlToExecute = "select max(a.docno) from (select to_number(substring(replace(co.documentno, app.quotationdocno_prefix, ''), '^/{0,1}([0-9]+)$')) docno from c_order co "
+            + "inner join obpos_applications app on app.obpos_applications_id = co.em_obpos_applications_id and app.value = ? "
+            + "where co.c_doctype_id in (" + doctypeIds + ")) a";
       } else if (curDbms.equals("ORACLE")) {
-        sqlToExecute = "select max(a.docno) from (select to_number(substr(REGEXP_SUBSTR(documentno, '/([0-9]+)$'), 2)) docno from c_order where em_obpos_applications_id= (select obpos_applications_id from obpos_applications where value = ?) and c_doctype_id in ("
-            + doctypeIds
-            + ") and documentno like (select quotationdocno_prefix from obpos_applications where value = ?)||'%' ) a";
+        sqlToExecute = "select max(a.docno) from (select to_number(substr(REGEXP_SUBSTR(REPLACE(co.documentno, app.quotationdocno_prefix), '^/{0,1}([0-9]+)$'), 2)) docno from c_order co "
+            + "inner join obpos_applications app on app.obpos_applications_id = co.em_obpos_applications_id and app.value = ? "
+            + "where co.c_doctype_id in (" + doctypeIds + ")) a";
       } else {
         // unknow DBMS
         // shouldn't happen
@@ -449,7 +448,6 @@ public class POSUtils {
       }
       SQLQuery query = OBDal.getInstance().getSession().createSQLQuery(sqlToExecute);
       query.setString(0, searchKey);
-      query.setString(1, searchKey);
 
       Object result = query.uniqueResult();
       if (result == null) {
@@ -528,13 +526,13 @@ public class POSUtils {
     Long returnlastDocNum = terminal.getReturnslastassignednum();
     if (returnlastDocNum == null) {
       if (curDbms.equals("POSTGRE")) {
-        sqlToExecute = "select max(a.docno) from (select to_number(substring(documentno, '/([0-9]+)$')) docno from c_order where em_obpos_applications_id= (select obpos_applications_id from obpos_applications where value = ?) and c_doctype_id in ("
-            + doctypeIds
-            + ") and documentno like (select returndocno_prefix from obpos_applications where value = ?)||'%') a";
+        sqlToExecute = "select max(a.docno) from (select to_number(substring(replace(co.documentno, app.returndocno_prefix, ''), '^/{0,1}([0-9]+)$')) docno from c_order co "
+            + "inner join obpos_applications app on app.obpos_applications_id = co.em_obpos_applications_id and app.value = ? "
+            + "where co.c_doctype_id in (" + doctypeIds + ")) a";
       } else if (curDbms.equals("ORACLE")) {
-        sqlToExecute = "select max(a.docno) from (select to_number(substr(REGEXP_SUBSTR(documentno, '/([0-9]+)$'), 2)) docno from c_order where em_obpos_applications_id= (select obpos_applications_id from obpos_applications where value = ?) and c_doctype_id in ("
-            + doctypeIds
-            + ") and documentno like (select returndocno_prefix from obpos_applications where value = ?)||'%' ) a";
+        sqlToExecute = "select max(a.docno) from (select to_number(substr(REGEXP_SUBSTR(REPLACE(co.documentno, app.returndocno_prefix), '^/{0,1}([0-9]+)$'), 2)) docno from c_order co "
+            + "inner join obpos_applications app on app.obpos_applications_id = co.em_obpos_applications_id and app.value = ? "
+            + "where co.c_doctype_id in (" + doctypeIds + ")) a";
       } else {
         // unknow DBMS
         // shouldn't happen
@@ -543,7 +541,6 @@ public class POSUtils {
       }
       SQLQuery query = OBDal.getInstance().getSession().createSQLQuery(sqlToExecute);
       query.setString(0, searchKey);
-      query.setString(1, searchKey);
       Object result = query.uniqueResult();
       if (result == null) {
         maxDocNo = 0;

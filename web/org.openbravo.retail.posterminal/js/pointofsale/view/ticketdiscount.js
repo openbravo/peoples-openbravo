@@ -149,9 +149,11 @@ enyo.kind({
         checkedLines: me.checkedLines
       });
       //set the keyboard for selected discount
-      me.discountChanged({}, {
-        originator: me.$.discountsList
-      });
+      if (promos.length > 0) {
+        me.discountChanged({}, {
+          originator: me.$.discountsList
+        });
+      }
     }, function () {
       //show an error in combo
       var tr;

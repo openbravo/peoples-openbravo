@@ -20,12 +20,18 @@
     for (i = 0; i < selectedRecords.length; i++) {
       recordIds.push(selectedRecords[i].id);
     }
+    var callback = function (response, data, request) {
+        if (data.title === 'Error') {
+          isc.say(data.message);
+        } else {
+          OB.RemoteCallManager.call('org.openbravo.retail.posterminal.SaveDataActionHandler', recordIds, {}, function (response, data, request) {
+            isc.say(data.message);
+            params.button.closeProcessPopup();
+          });
+        }
+        };
 
-    OB.RemoteCallManager.call('org.openbravo.retail.posterminal.SaveDataActionHandler', recordIds, {}, function (response, data, request) {
-      isc.say(data.message);
-      params.button.closeProcessPopup();
-    });
-
+    OB.RemoteCallManager.call('org.openbravo.retail.posterminal.SaveDataOnProcessHandler', recordIds, {}, callback);
     return;
   };
   OB.OBPOS.Errors.clearError = function (params, view) {

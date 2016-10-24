@@ -2771,8 +2771,10 @@
 
     createOrderFromQuotation: function (updatePrices) {
       var idMap = {},
+          oldIdMap = {},
           me = this;
       this.get('lines').each(function (line) {
+        var oldId = line.get('id');
         line.set('id', OB.UTIL.get_UUID());
         //issue 25055 -> If we don't do the following prices and taxes are calculated
         //wrongly because the calculation starts with discountedNet instead of
@@ -2797,6 +2799,9 @@
         line.unset('lineGrossAmount');
         idMap[line.get('id')] = OB.Dal.get_uuid();
         line.set('id', idMap[line.get('id')]);
+        if (line.get('hasRelatedServices')) {
+          oldIdMap[oldId] = line.get('id');
+        }
       }, this);
 
       this.set('id', null);
@@ -2832,8 +2837,9 @@
         if (line.get('relatedLines')) {
           line.get('relatedLines').forEach(function (rl) {
             rl.orderId = me.get('id');
-            if (idMap[rl.orderlineId]) {
-              rl.orderlineId = idMap[rl.orderlineId];
+            rl.orderDocumentNo = me.get('documentNo');
+            if (oldIdMap[rl.orderlineId]) {
+              rl.orderlineId = oldIdMap[rl.orderlineId];
             }
           });
         }
@@ -3393,7 +3399,8 @@
             return line;
           }
         });
-        if (lineToMerge && lineToMerge.get('product').get('groupProduct')) {
+        //When it Comes To Technically , Consider The Product As Non-Grouped When scaled and groupproduct Are Checked 
+        if (lineToMerge && lineToMerge.get('product').get('groupProduct') && !(lineToMerge.get('product').get('groupProduct') && lineToMerge.get('product').get('obposScale'))) {
           lineToMerge.set({
             qty: lineToMerge.get('qty') + l.get('qty')
           }, {
@@ -3418,6 +3425,9 @@
         _.each(l.get('promotions'), function (promo) {
           promo.pendingQtyOffer = promo.qtyOffer;
           if (!l.get('product').get('groupProduct')) {
+            promo.doNotMerge = true;
+          }
+          if (l.get('product').get('groupProduct') && l.get('product').get('obposScale')) {
             promo.doNotMerge = true;
           }
         });
@@ -4055,6 +4065,7 @@
         model.set('created', creationDate.getTime());
         model.set('obposCreatedabsolute', OB.I18N.formatDateISO(creationDate));
         model.set('obposIsDeleted', true);
+        model.set('obposAppCashup', OB.MobileApp.model.get('terminal').cashUpId);
         for (i = 0; i < model.get('lines').length; i++) {
           model.get('lines').at(i).set('obposIsDeleted', true);
         }
@@ -4079,7 +4090,7 @@
         if (OB.UTIL.RfidController.isRfidConfigured()) {
           OB.UTIL.RfidController.eraseEpcOrder(receipt);
         }
-        if (receipt.get('id') && !isPaidQuotation && receipt.get('lines') && receipt.get('lines').length > 0) {
+        if (receipt.get('id') && !isPaidQuotation && receipt.get('lines') && receipt.get('lines').length > 0 && receipt.get('isEditable')) {
           if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
             receipt.set('skipCalculateReceipt', true);
             _.each(receipt.get('lines').models, function (line) {
@@ -4109,20 +4120,10 @@
           }
         } else if (receipt.has('deletedLines')) {
           if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
-            receipt.setIsCalculateGrossLockState(true);
-            receipt.set('obposIsDeleted', true);
-            receipt.prepareToSend(function () {
-              receipt.trigger('closed', {
-                callback: function () {
-                  orderList.deleteCurrent();
-                  orderList.synchronizeCurrentOrder();
-                  receipt.setIsCalculateGrossLockState(false);
-                  if (callback && callback instanceof Function) {
-                    callback();
-                  }
-                }
-              });
-            });
+            receipt.set('skipCalculateReceipt', false);
+            receipt.setIsCalculateReceiptLockState(false);
+            receipt.setIsCalculateGrossLockState(false);
+            markOrderAsDeleted(receipt, orderList, callback);
           } else {
             orderList.saveCurrent();
             OB.Dal.remove(orderList.current, null, null);
@@ -4143,15 +4144,19 @@
         }
       }
 
-      OB.UTIL.HookManager.executeHooks('OBPOS_PreDeleteCurrentOrder', {
-        context: context,
-        receipt: this
-      }, function (args) {
-        if (args && args.cancelOperation && args.cancelOperation === true) {
-          return;
-        }
-        removeOrder(args.receipt, callback);
-      });
+      if (this.get('isEditable') === true) {
+        OB.UTIL.HookManager.executeHooks('OBPOS_PreDeleteCurrentOrder', {
+          context: context,
+          receipt: this
+        }, function (args) {
+          if (args && args.cancelOperation && args.cancelOperation === true) {
+            return;
+          }
+          removeOrder(args.receipt, callback);
+        });
+      } else {
+        removeOrder(this, callback);
+      }
 
       return true;
     }
@@ -4762,7 +4767,7 @@
         me.loadCurrent(createNew);
       }
 
-      if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true) && !this.current.get('isQuotation') && OB.MobileApp.model.receipt.id === this.current.id && this.current.get('lines').length === 0 && (this.current.get('documentnoSuffix') <= OB.MobileApp.model.documentnoThreshold || OB.MobileApp.model.documentnoThreshold === 0)) {
+      if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true) && !this.current.get('isQuotation') && OB.MobileApp.model.receipt.id === this.current.id && this.current.get('lines').length === 0 && !this.current.has('deletedLines') && (this.current.get('documentnoSuffix') <= OB.MobileApp.model.documentnoThreshold || OB.MobileApp.model.documentnoThreshold === 0)) {
         OB.MobileApp.model.receipt.setIsCalculateGrossLockState(true);
         OB.MobileApp.model.receipt.set('obposIsDeleted', true);
         OB.MobileApp.model.receipt.prepareToSend(function () {

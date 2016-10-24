@@ -116,8 +116,10 @@ public class PaidReceipts extends JSONProcessSimple {
           // get shipmentLines for returns
           HQLPropertyList hqlPropertiesShipLines = ModelExtensionUtils
               .getPropertyExtensions(extensionsShipLines);
-          String hqlPaidReceiptsShipLines = "select " + hqlPropertiesShipLines.getHqlSelect() //
-              + " from MaterialMgmtShipmentInOutLine as m where salesOrderLine.id= ? ";
+          String hqlPaidReceiptsShipLines = "select "
+              + hqlPropertiesShipLines.getHqlSelect() //
+              + " from MaterialMgmtShipmentInOutLine as m where salesOrderLine.id= ? "
+              + " and m.shipmentReceipt.isnettingshipment = false";
           OBDal.getInstance().getSession().createQuery(hqlPaidReceiptsShipLines);
           Query paidReceiptsShipLinesQuery = OBDal.getInstance().getSession()
               .createQuery(hqlPaidReceiptsShipLines);
@@ -249,15 +251,23 @@ public class PaidReceipts extends JSONProcessSimple {
         }
         for (int i = 0; i < listPaymentsIn.length(); i++) {
           JSONObject objectIn = (JSONObject) listPaymentsIn.get(i);
+
+          String hqlPaymentTrxAmount = "select p.financialTransactionAmount as amount "
+              + " from FIN_Payment as p where p.id=?)";
+          Query paymentTrxQuery = OBDal.getInstance().getSession().createQuery(hqlPaymentTrxAmount);
+          paymentTrxQuery.setString(0, objectIn.getString("paymentId"));
+          BigDecimal objPaymentTrx = BigDecimal.ZERO;
+          if (paymentTrxQuery.list().size() > 0) {
+            objPaymentTrx = (BigDecimal) paymentTrxQuery.list().get(0);
+          }
+
           boolean added = false;
           for (int j = 0; j < listPaymentsType.length(); j++) {
             JSONObject objectType = (JSONObject) listPaymentsType.get(j);
             if (objectIn.get("account").equals(objectType.get("account"))) {
               JSONObject paidReceiptPayment = new JSONObject();
               // FIXME: Multicurrency problem, amount always in terminal currency
-              paidReceiptPayment.put("amount", new BigDecimal((String) objectIn.get("amount")
-                  .toString()).multiply(new BigDecimal((String) objectType.get("mulrate")
-                  .toString())));
+              paidReceiptPayment.put("amount", objPaymentTrx);
               paidReceiptPayment.put("paymentDate", objectIn.get("paymentDate"));
               if (objectIn.has("paymentData")) {
                 paidReceiptPayment.put("paymentData",
@@ -271,8 +281,7 @@ public class PaidReceipts extends JSONProcessSimple {
               paidReceiptPayment.put("openDrawer", objectType.get("openDrawer"));
               paidReceiptPayment.put("isPrePayment", true);
               paidReceiptPayment.put("paymentId", objectIn.get("paymentId"));
-              paidReceiptPayment.put("paymentAmount", new BigDecimal(objectIn.get("paymentAmount")
-                  .toString()).multiply(new BigDecimal(objectType.get("mulrate").toString())));
+              paidReceiptPayment.put("paymentAmount", objPaymentTrx);
               if (objectIn.has("reversedPaymentId")) {
                 paidReceiptPayment.put("isReversed", true);
               }

@@ -88,9 +88,19 @@ public class SaveDataActionHandler extends BaseActionHandler {
         if (result.get(JsonConstants.RESPONSE_STATUS).equals(
             JsonConstants.RPCREQUEST_STATUS_FAILURE)) {
           errorb = true;
-          // The process may have changed the error information, we need to commit and close the
-          // transaction
-          OBDal.getInstance().commitAndClose();
+
+          OBContext.setAdminMode(true);
+          try {
+            error = OBDal.getInstance().get(OBPOSErrors.class, errorId);
+            error.setProcessNow(false);
+            OBDal.getInstance().save(error);
+            OBDal.getInstance().flush();
+            // The process may have changed the error information, we need to commit and close the
+            // transaction
+            OBDal.getInstance().commitAndClose();
+          } finally {
+            OBContext.restorePreviousMode();
+          }
         } else {
           // Execute post process hooks.
           for (ImportEntryPostProcessor importEntryPostProcessor : importEntryPostProcessors
@@ -102,6 +112,7 @@ public class SaveDataActionHandler extends BaseActionHandler {
           try {
             error = OBDal.getInstance().get(OBPOSErrors.class, errorId);
             error.setOrderstatus("Y");
+            error.setProcessNow(false);
             OBDal.getInstance().save(error);
             OBDal.getInstance().flush();
             OBDal.getInstance().commitAndClose();

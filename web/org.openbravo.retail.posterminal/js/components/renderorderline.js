@@ -120,11 +120,11 @@ enyo.kind({
       });
     }
 
-    if (this.model.get('remainingQuantity')) {
+    if (this.model.get('deliveredQuantity')) {
       this.createComponent({
         style: 'display: block;',
         components: [{
-          content: '-- ' + OB.I18N.getLabel('OBPOS_DeliveredQuantity') + ': ' + this.model.get('remainingQuantity'),
+          content: '-- ' + OB.I18N.getLabel('OBPOS_DeliveredQuantity') + ': ' + this.model.get('deliveredQuantity'),
           attributes: {
             style: 'float: left; width: 100%; clear: left;'
           }
