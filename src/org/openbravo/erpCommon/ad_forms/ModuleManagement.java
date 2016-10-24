@@ -2108,7 +2108,6 @@ public class ModuleManagement extends HttpSecureAppServlet {
     out.close();
   }
 
-  @SuppressWarnings("unchecked")
   private void printPageSettings(HttpServletResponse response, HttpServletRequest request)
       throws ServletException, IOException {
     VariablesSecureApp vars = new VariablesSecureApp(request);

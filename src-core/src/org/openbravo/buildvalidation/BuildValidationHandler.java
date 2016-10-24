@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2010-2015 Openbravo S.L.U.
+ * Copyright (C) 2010-2016 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -22,6 +22,16 @@ import org.apache.log4j.PropertyConfigurator;
 
 public class BuildValidationHandler {
   private static final Logger log4j = Logger.getLogger(BuildValidationHandler.class);
+
+  /** Prerequisite validations are ensured to be executed before the rest of other ones */
+  @SuppressWarnings("serial")
+  private static final List<String> prerequisiteValidations = new ArrayList<String>() {
+    {
+      // guarantee current JVM version before executing other validations that can be compiled with
+      // a higher version
+      add("org.openbravo.buildvalidation.JdkVersionCheck");
+    }
+  };
 
   private static File basedir;
   private static String module;
@@ -48,6 +58,7 @@ public class BuildValidationHandler {
       }
       Collections.sort(modFolders);
     }
+
     for (File modFolder : modFolders) {
       if (modFolder.isDirectory()) {
         File validationFolder = new File(modFolder, "build/classes");
@@ -56,6 +67,9 @@ public class BuildValidationHandler {
         }
       }
     }
+
+    sortPrerequisites(classes);
+
     for (String s : classes) {
       ArrayList<String> errors = new ArrayList<String>();
       try {
@@ -75,6 +89,16 @@ public class BuildValidationHandler {
         log4j.error("The build validation failed.");
         printMessage(errors);
         System.exit(1);
+      }
+    }
+  }
+
+  /** Prerequisites are set at the beginning of the list */
+  private static void sortPrerequisites(List<String> classes) {
+    Collections.reverse(prerequisiteValidations);
+    for (String prerequisite : prerequisiteValidations) {
+      if (classes.remove(prerequisite)) {
+        classes.add(0, prerequisite);
       }
     }
   }
