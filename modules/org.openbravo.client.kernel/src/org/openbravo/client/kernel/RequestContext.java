@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -226,7 +226,6 @@ public class RequestContext {
       return delegate.getAttribute(arg0);
     }
 
-    @SuppressWarnings("unchecked")
     public Enumeration<String> getAttributeNames() {
       if (delegate == null) {
         final List<String> names = new ArrayList<String>();
@@ -275,7 +274,6 @@ public class RequestContext {
       return delegate.getParameter(arg0);
     }
 
-    @SuppressWarnings("unchecked")
     public Enumeration<String> getParameterNames() {
       final List<String> names = new ArrayList<String>();
       names.addAll(parameters.keySet());

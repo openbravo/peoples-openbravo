@@ -1164,7 +1164,6 @@ public class VariablesBase {
   /**
    * @return the parameter names of the request object
    */
-  @SuppressWarnings("unchecked")
   public Enumeration<String> getParameterNames() {
     return httpRequest.getParameterNames();
   }

@@ -56,16 +56,15 @@ public class LoginUtils {
   }
 
   /**
-   * Returns a userId which matches the login and password. If no user is found then null is
-   * returned. The combination of login and password is used to find the user.
+   * Returns a userId which matches the login and password. If no user is found then null is returned. The combination of login
+   * and password is used to find the user.
    * 
    * Blocking users is taking into account
    * 
    * Note that only active users are returned.
    * 
    * @param connectionProvider
-   *          , see the {@link DalConnectionProvider} for an instance of a ConnectionProvider for
-   *          the DAL.
+   *          , see the {@link DalConnectionProvider} for an instance of a ConnectionProvider for the DAL.
    * @param login
    *          the login
    * @param unHashedPassword
@@ -94,8 +93,7 @@ public class LoginUtils {
   }
 
   /**
-   * Similar to {@link LoginUtils#getValidUserId(ConnectionProvider, String, String)} but not
-   * blocking user accounts.
+   * Similar to {@link LoginUtils#getValidUserId(ConnectionProvider, String, String)} but not blocking user accounts.
    * 
    */
   public static String checkUserPassword(ConnectionProvider connectionProvider, String login,
@@ -194,6 +192,8 @@ public class LoginUtils {
       String strUserAuth, String strLanguage, String strIsRTL, String strRol, String strCliente,
       String strOrg, String strAlmacen) throws ServletException {
 
+    boolean lightLogin = "Y".equals(vars.getSessionValue("#Light_Login"));
+
     // variable to save organization currency
     AttributeData[] orgCurrency;
     Client client = null;
@@ -208,7 +208,18 @@ public class LoginUtils {
     OBContext currentContext = OBContext.getOBContext();
     // set the obcontext
     try {
-      OBContext.setOBContext(strUserAuth, strRol, strCliente, strOrg, strLanguage, strAlmacen);
+      boolean sameContext = currentContext != null
+          && currentContext.getUser().getId().equals(strUserAuth)
+          && currentContext.getRole().getId().equals(strRol)
+          && currentContext.getCurrentClient().getId().equals(strCliente)
+          && currentContext.getCurrentOrganization().getId().equals(strOrg)
+          && currentContext.getLanguage() != null
+          && currentContext.getLanguage().getLanguage().equals(strLanguage)
+          && currentContext.getWarehouse() != null
+          && currentContext.getWarehouse().getId().equals(strAlmacen);
+      if (!lightLogin || !sameContext) {
+        OBContext.setOBContext(strUserAuth, strRol, strCliente, strOrg, strLanguage, strAlmacen);
+      }
     } catch (final OBSecurityException e) {
       log4j.error("Error trying to initialize OBContext: " + e.getMessage(), e);
       return false;
@@ -277,119 +288,121 @@ public class LoginUtils {
       data = null;
 
       // Get General Ledger of login organization
-      AttributeData[] attr = null;
-      String acctSchemaId = OBLedgerUtils.getOrgLedger(strOrg);
-      if (StringUtils.isNotEmpty(acctSchemaId)) {
-        attr = AttributeData.selectAcctSchema(conn, acctSchemaId,
-            Utility.getContext(conn, vars, "#User_Client", "LoginHandler"));
-      }
+      if (!lightLogin) {
+        AttributeData[] attr = null;
+        String acctSchemaId = OBLedgerUtils.getOrgLedger(strOrg);
+        if (StringUtils.isNotEmpty(acctSchemaId)) {
+          attr = AttributeData.selectAcctSchema(conn, acctSchemaId,
+              Utility.getContext(conn, vars, "#User_Client", "LoginHandler"));
+        }
 
-      // Get General Ledger of context organizations
-      if (ArrayUtils.isEmpty(attr)) {
-        String[] orgList = Utility.getContext(conn, vars, "#User_Org", "LoginHandler")
-            .replace("'", "").split(",");
-        for (String orgId : orgList) {
-          if (!StringUtils.equals(orgId, strOrg)) {
-            acctSchemaId = OBLedgerUtils.getOrgLedger(orgId);
-            if (StringUtils.isNotEmpty(acctSchemaId)) {
-              attr = AttributeData.selectAcctSchema(conn, acctSchemaId,
-                  Utility.getContext(conn, vars, "#User_Client", "LoginHandler"));
-              if (ArrayUtils.isNotEmpty(attr)) {
-                break;
+        // Get General Ledger of context organizations
+        if (ArrayUtils.isEmpty(attr)) {
+          String[] orgList = Utility.getContext(conn, vars, "#User_Org", "LoginHandler")
+              .replace("'", "").split(",");
+          for (String orgId : orgList) {
+            if (!StringUtils.equals(orgId, strOrg)) {
+              acctSchemaId = OBLedgerUtils.getOrgLedger(orgId);
+              if (StringUtils.isNotEmpty(acctSchemaId)) {
+                attr = AttributeData.selectAcctSchema(conn, acctSchemaId,
+                    Utility.getContext(conn, vars, "#User_Client", "LoginHandler"));
+                if (ArrayUtils.isNotEmpty(attr)) {
+                  break;
+                }
               }
             }
           }
         }
-      }
 
-      if (attr != null && attr.length > 0) {
-        vars.setSessionValue("$C_AcctSchema_ID", attr[0].value);
-        if (orgCurrency.length > 0) {
-          vars.setSessionValue("$C_Currency_ID", orgCurrency[0].cCurrencyId);
-        } else
-          vars.setSessionValue("$C_Currency_ID", attr[0].attribute);
-        vars.setSessionValue(
-            "#StdPrecision",
-            AttributeData.selectStdPrecision(conn, attr[0].attribute,
-                Utility.getContext(conn, vars, "#User_Client", "LoginHandler"),
-                Utility.getContext(conn, vars, "#User_Org", "LoginHandler")));
-        vars.setSessionValue("$HasAlias", attr[0].hasalias);
+        if (attr != null && attr.length > 0) {
+          vars.setSessionValue("$C_AcctSchema_ID", attr[0].value);
+          if (orgCurrency.length > 0) {
+            vars.setSessionValue("$C_Currency_ID", orgCurrency[0].cCurrencyId);
+          } else
+            vars.setSessionValue("$C_Currency_ID", attr[0].attribute);
+          vars.setSessionValue(
+              "#StdPrecision",
+              AttributeData.selectStdPrecision(conn, attr[0].attribute,
+                  Utility.getContext(conn, vars, "#User_Client", "LoginHandler"),
+                  Utility.getContext(conn, vars, "#User_Org", "LoginHandler")));
+          vars.setSessionValue("$HasAlias", attr[0].hasalias);
 
-        // Load also old accounting dimension visibility session variables
-        // Some of the dimensions still use old behavior: Activity, Sales Campaign, Asset
-        for (int i = 0; i < attr.length; i++) {
-          vars.setSessionValue("$Element_" + attr[i].elementtype, "Y");
+          // Load also old accounting dimension visibility session variables
+          // Some of the dimensions still use old behavior: Activity, Sales Campaign, Asset
+          for (int i = 0; i < attr.length; i++) {
+            vars.setSessionValue("$Element_" + attr[i].elementtype, "Y");
+          }
         }
-      }
-      attr = null;
+        attr = null;
 
-      // Compute accounting dimensions visibility session variables
-      // Project, Business Partner, Product, Cost Center, User1, User2
-      vars.setSessionValue(DimensionDisplayUtility.IsAcctDimCentrally,
-          isAccountingDimensionConfigCentrally ? "Y" : "N");
-      if (isAccountingDimensionConfigCentrally) {
-        Map<String, String> acctDimMap = DimensionDisplayUtility
-            .getAccountingDimensionConfiguration(client);
-        for (Map.Entry<String, String> entry : acctDimMap.entrySet()) {
+        // Compute accounting dimensions visibility session variables
+        // Project, Business Partner, Product, Cost Center, User1, User2
+        vars.setSessionValue(DimensionDisplayUtility.IsAcctDimCentrally,
+            isAccountingDimensionConfigCentrally ? "Y" : "N");
+        if (isAccountingDimensionConfigCentrally) {
+          Map<String, String> acctDimMap = DimensionDisplayUtility
+              .getAccountingDimensionConfiguration(client);
+          for (Map.Entry<String, String> entry : acctDimMap.entrySet()) {
+            vars.setSessionValue(entry.getKey(), entry.getValue());
+          }
+        }
+        // Load session variables for computing read only logic for accounting dimension
+        // configuration in in Client window
+        Map<String, String> readOnlySessionVariableMap = DimensionDisplayUtility
+            .getReadOnlyLogicSessionVariables();
+        for (Map.Entry<String, String> entry : readOnlySessionVariableMap.entrySet()) {
           vars.setSessionValue(entry.getKey(), entry.getValue());
         }
-      }
-      // Load session variables for computing read only logic for accounting dimension
-      // configuration in in Client window
-      Map<String, String> readOnlySessionVariableMap = DimensionDisplayUtility
-          .getReadOnlyLogicSessionVariables();
-      for (Map.Entry<String, String> entry : readOnlySessionVariableMap.entrySet()) {
-        vars.setSessionValue(entry.getKey(), entry.getValue());
-      }
 
-      List<Preference> preferences = Preferences.getAllPreferences(strCliente, strOrg, strUserAuth,
-          strRol);
-      for (Preference preference : preferences) {
-        Preferences.savePreferenceInSession(vars, preference);
-      }
-
-      attr = AttributeData.selectIsSOTrx(conn);
-      if (attr != null && attr.length > 0) {
-        for (int i = 0; i < attr.length; i++)
-          vars.setSessionValue(attr[i].adWindowId + "|isSOTrx", attr[i].value);
-      }
-      attr = null;
-
-      DefaultSessionValuesData[] ds = DefaultSessionValuesData.select(conn);
-      if (ds != null && ds.length > 0) {
-        for (int i = 0; i < ds.length; i++) {
-          String value = DefaultValuesData.select(conn, ds[i].columnname, ds[i].tablename,
-              Utility.getContext(conn, vars, "#User_Client", "LoginHandler"),
-              Utility.getContext(conn, vars, "#AccessibleOrgTree", "LoginHandler"));
-          if (ds[i].tablename.equals("C_DocType"))
-            vars.setSessionValue("#C_DocTypeTarget_ID", value);
-          vars.setSessionValue("#" + ds[i].columnname, value);
+        List<Preference> preferences = Preferences.getAllPreferences(strCliente, strOrg,
+            strUserAuth, strRol);
+        for (Preference preference : preferences) {
+          Preferences.savePreferenceInSession(vars, preference);
         }
-      }
-      vars.setSessionValue("#Date", Utility.getContext(conn, vars, "#Date", "LoginHandler"));
-      vars.setSessionValue("#ShowTrl", Utility.getPreference(vars, "ShowTrl", ""));
-      vars.setSessionValue("#ShowAcct", Utility.getPreference(vars, "ShowAcct", ""));
-      vars.setSessionValue("#ShowAudit", Utility.getPreference(vars, "ShowAuditDefault", ""));
-      vars.setSessionValue("#ShowConfirmation",
-          Utility.getPreference(vars, "ShowConfirmationDefault", ""));
-      vars.setSessionValue("#Autosave", Utility.getPreference(vars, "Autosave", ""));
 
-      SystemPreferencesData[] dataSystem = SystemPreferencesData.select(conn);
-      if (dataSystem != null && dataSystem.length > 0) {
-        vars.setSessionValue("#RecordRange", dataSystem[0].tadRecordrange);
-        vars.setSessionValue("#RecordRangeInfo", dataSystem[0].tadRecordrangeInfo);
-        vars.setSessionValue("#Transactional$Range", dataSystem[0].tadTransactionalrange);
-        if (strIsRTL.equals("Y")) {
-          vars.setSessionValue("#Theme", "rtl/" + dataSystem[0].tadTheme);
-          vars.setSessionValue("#TextDirection", "RTL");
-        } else if (strIsRTL.equals("N")) {
-          vars.setSessionValue("#Theme", "ltr/" + dataSystem[0].tadTheme);
-          vars.setSessionValue("#TextDirection", "LTR");
-        } else {
-          OBContext.setOBContext(currentContext);
-          log4j
-              .error("Can't detect direction of language: ltr? rtl? parameter isRTL missing in call to LoginUtils.getStringParameter");
-          return false;
+        attr = AttributeData.selectIsSOTrx(conn);
+        if (attr != null && attr.length > 0) {
+          for (int i = 0; i < attr.length; i++)
+            vars.setSessionValue(attr[i].adWindowId + "|isSOTrx", attr[i].value);
+        }
+        attr = null;
+
+        DefaultSessionValuesData[] ds = DefaultSessionValuesData.select(conn);
+        if (ds != null && ds.length > 0) {
+          for (int i = 0; i < ds.length; i++) {
+            String value = DefaultValuesData.select(conn, ds[i].columnname, ds[i].tablename,
+                Utility.getContext(conn, vars, "#User_Client", "LoginHandler"),
+                Utility.getContext(conn, vars, "#AccessibleOrgTree", "LoginHandler"));
+            if (ds[i].tablename.equals("C_DocType"))
+              vars.setSessionValue("#C_DocTypeTarget_ID", value);
+            vars.setSessionValue("#" + ds[i].columnname, value);
+          }
+        }
+        vars.setSessionValue("#Date", Utility.getContext(conn, vars, "#Date", "LoginHandler"));
+        vars.setSessionValue("#ShowTrl", Utility.getPreference(vars, "ShowTrl", ""));
+        vars.setSessionValue("#ShowAcct", Utility.getPreference(vars, "ShowAcct", ""));
+        vars.setSessionValue("#ShowAudit", Utility.getPreference(vars, "ShowAuditDefault", ""));
+        vars.setSessionValue("#ShowConfirmation",
+            Utility.getPreference(vars, "ShowConfirmationDefault", ""));
+        vars.setSessionValue("#Autosave", Utility.getPreference(vars, "Autosave", ""));
+
+        SystemPreferencesData[] dataSystem = SystemPreferencesData.select(conn);
+        if (dataSystem != null && dataSystem.length > 0) {
+          vars.setSessionValue("#RecordRange", dataSystem[0].tadRecordrange);
+          vars.setSessionValue("#RecordRangeInfo", dataSystem[0].tadRecordrangeInfo);
+          vars.setSessionValue("#Transactional$Range", dataSystem[0].tadTransactionalrange);
+          if (strIsRTL.equals("Y")) {
+            vars.setSessionValue("#Theme", "rtl/" + dataSystem[0].tadTheme);
+            vars.setSessionValue("#TextDirection", "RTL");
+          } else if (strIsRTL.equals("N")) {
+            vars.setSessionValue("#Theme", "ltr/" + dataSystem[0].tadTheme);
+            vars.setSessionValue("#TextDirection", "LTR");
+          } else {
+            OBContext.setOBContext(currentContext);
+            log4j
+                .error("Can't detect direction of language: ltr? rtl? parameter isRTL missing in call to LoginUtils.getStringParameter");
+            return false;
+          }
         }
       }
 
@@ -408,8 +421,7 @@ public class LoginUtils {
   }
 
   /**
-   * Obtains defaults defined for a user and throws DefaultValidationException in case they are not
-   * correct.
+   * Obtains defaults defined for a user and throws DefaultValidationException in case they are not correct.
    */
   public static RoleDefaults getLoginDefaults(String strUserAuth, String role, ConnectionProvider cp)
       throws ServletException, DefaultValidationException {

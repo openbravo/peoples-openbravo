@@ -31,7 +31,6 @@ import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.client.kernel.event.EntityDeleteEvent;
-import org.openbravo.client.kernel.event.EntityNewEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
 import org.openbravo.client.kernel.event.EntityUpdateEvent;
@@ -54,18 +53,6 @@ public class FIN_PaymentEventListener extends EntityPersistenceEventObserver {
     return entities;
   }
 
-  public void onSave(@Observes EntityNewEvent event) {
-    if (!isValidEvent(event)) {
-      return;
-    }
-    FIN_Payment payment = (FIN_Payment) event.getTargetInstance();
-    if (payment.isProcessed() && payment.getAmount().compareTo(BigDecimal.ZERO) == 0) {
-      String newDocumentNo = payment.getDocumentNo();
-      newDocumentNo = newDocumentNo + CancelAndReplaceUtils.ZERO_PAYMENT_SUFIX;
-      setDocumentNoToPayment(event, newDocumentNo);
-    }
-  }
-
   public void onUpdate(@Observes EntityUpdateEvent event) {
     if (!isValidEvent(event)) {
       return;
@@ -73,34 +60,46 @@ public class FIN_PaymentEventListener extends EntityPersistenceEventObserver {
 
     final FIN_Payment payment = (FIN_Payment) event.getTargetInstance();
     final Entity paymentEntity = ModelProvider.getInstance().getEntity(FIN_Payment.ENTITY_NAME);
+    final Property paymentProcessedProperty = paymentEntity
+        .getProperty(FIN_Payment.PROPERTY_PROCESSED);
+    final Boolean currentPaymentProcessed = (Boolean) event
+        .getCurrentState(paymentProcessedProperty);
+    final Boolean oldPaymentProcessed = (Boolean) event.getPreviousState(paymentProcessedProperty);
     final Property paymentAmountProperty = paymentEntity.getProperty(FIN_Payment.PROPERTY_AMOUNT);
-    BigDecimal oldPaymentAmount = (BigDecimal) event.getPreviousState(paymentAmountProperty);
+    final BigDecimal currentPaymentAmount = (BigDecimal) event
+        .getCurrentState(paymentAmountProperty);
+    final BigDecimal oldPaymentAmount = (BigDecimal) event.getPreviousState(paymentAmountProperty);
     final Property paymentStatusProperty = paymentEntity.getProperty(FIN_Payment.PROPERTY_STATUS);
     final String currentPaymentStatus = (String) event.getCurrentState(paymentStatusProperty);
     final String oldPaymentStatus = (String) event.getPreviousState(paymentStatusProperty);
 
-    String documentNo = payment.getDocumentNo();
-    int documentNoLength = payment.getDocumentNo().length();
-    if (payment.isProcessed()) {
-      if (payment.getAmount().compareTo(BigDecimal.ZERO) == 0) {
-        // Payment has no already an *Z* at the end of the document number
-        if (documentNo.length() < CancelAndReplaceUtils.ZERO_PAYMENT_SUFIX.length()
-            || !CancelAndReplaceUtils.ZERO_PAYMENT_SUFIX.equals(documentNo
-                .substring(documentNoLength - CancelAndReplaceUtils.ZERO_PAYMENT_SUFIX.length()))) {
-          String newDocumentNo = documentNo + CancelAndReplaceUtils.ZERO_PAYMENT_SUFIX;
-          setDocumentNoToPayment(event, newDocumentNo);
-        }
-      } else if (oldPaymentAmount.compareTo(BigDecimal.ZERO) == 0) {
-        // The payment has already the *Z* at the end of the document number and is not a payment of
-        // 0
-        if (documentNo.length() >= CancelAndReplaceUtils.ZERO_PAYMENT_SUFIX.length()
-            && CancelAndReplaceUtils.ZERO_PAYMENT_SUFIX.equals(documentNo
-                .substring(documentNoLength - CancelAndReplaceUtils.ZERO_PAYMENT_SUFIX.length()))) {
-          String newDocumentNo = documentNo.substring(0, documentNoLength
-              - CancelAndReplaceUtils.ZERO_PAYMENT_SUFIX.length());
-          setDocumentNoToPayment(event, newDocumentNo);
-        }
-      }
+    final String documentNo = payment.getDocumentNo();
+    final int documentNoLength = documentNo.length();
+
+    if (!oldPaymentProcessed
+        && currentPaymentProcessed
+        && currentPaymentAmount.compareTo(BigDecimal.ZERO) == 0
+        && (documentNoLength < CancelAndReplaceUtils.ZERO_PAYMENT_SUFIX.length() || !CancelAndReplaceUtils.ZERO_PAYMENT_SUFIX
+            .equals(documentNo.substring(documentNoLength
+                - CancelAndReplaceUtils.ZERO_PAYMENT_SUFIX.length())))) {
+      // Processing a zero payment: add sufix
+      final int documentNoLimit = CancelAndReplaceUtils.PAYMENT_DOCNO_LENGTH
+          - CancelAndReplaceUtils.ZERO_PAYMENT_SUFIX.length();
+      String newDocumentNo = (documentNoLength > documentNoLimit ? documentNo.substring(0,
+          documentNoLimit) : documentNo) + CancelAndReplaceUtils.ZERO_PAYMENT_SUFIX;
+      setDocumentNoToPayment(event, newDocumentNo);
+    }
+
+    else if (oldPaymentProcessed
+        && !currentPaymentProcessed
+        && oldPaymentAmount.compareTo(BigDecimal.ZERO) == 0
+        && documentNoLength > CancelAndReplaceUtils.ZERO_PAYMENT_SUFIX.length()
+        && CancelAndReplaceUtils.ZERO_PAYMENT_SUFIX.equals(documentNo.substring(documentNoLength
+            - CancelAndReplaceUtils.ZERO_PAYMENT_SUFIX.length()))) {
+      // Reactivating a zero payment: remove sufix
+      String newDocumentNo = documentNo.substring(0, documentNoLength
+          - CancelAndReplaceUtils.ZERO_PAYMENT_SUFIX.length());
+      setDocumentNoToPayment(event, newDocumentNo);
     }
 
     manageAPRMPendingPaymentFromInvoiceRecord(payment, currentPaymentStatus, oldPaymentStatus);
@@ -209,11 +208,9 @@ public class FIN_PaymentEventListener extends EntityPersistenceEventObserver {
   }
 
   private void setDocumentNoToPayment(EntityPersistenceEvent event, String newDocumentNo) {
-    String truncatedDocumentNo = (newDocumentNo.length() > 30) ? newDocumentNo.substring(0, 30)
-        : newDocumentNo.toString();
     final Entity paymentEntity = ModelProvider.getInstance().getEntity(FIN_Payment.ENTITY_NAME);
     final Property paymentDocumentNoProperty = paymentEntity
         .getProperty(FIN_Payment.PROPERTY_DOCUMENTNO);
-    event.setCurrentState(paymentDocumentNoProperty, truncatedDocumentNo);
+    event.setCurrentState(paymentDocumentNoProperty, newDocumentNo);
   }
 }
