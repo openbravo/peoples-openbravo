@@ -11,13 +11,14 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2015 Openbravo SLU
+ * All portions are Copyright (C) 2012-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
  */
 package org.openbravo.advpaymentmngt.event;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import javax.enterprise.event.Observes;
@@ -30,11 +31,13 @@ import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.client.kernel.event.EntityDeleteEvent;
+import org.openbravo.client.kernel.event.EntityPersistenceEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
 import org.openbravo.client.kernel.event.EntityUpdateEvent;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.erpCommon.businessUtility.CancelAndReplaceUtils;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.financialmgmt.payment.FIN_Payment;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentDetail;
@@ -55,7 +58,51 @@ public class FIN_PaymentEventListener extends EntityPersistenceEventObserver {
       return;
     }
 
-    manageAPRMPendingPaymentFromInvoiceRecord(event);
+    final FIN_Payment payment = (FIN_Payment) event.getTargetInstance();
+    final Entity paymentEntity = ModelProvider.getInstance().getEntity(FIN_Payment.ENTITY_NAME);
+    final Property paymentProcessedProperty = paymentEntity
+        .getProperty(FIN_Payment.PROPERTY_PROCESSED);
+    final Boolean currentPaymentProcessed = (Boolean) event
+        .getCurrentState(paymentProcessedProperty);
+    final Boolean oldPaymentProcessed = (Boolean) event.getPreviousState(paymentProcessedProperty);
+    final Property paymentAmountProperty = paymentEntity.getProperty(FIN_Payment.PROPERTY_AMOUNT);
+    final BigDecimal currentPaymentAmount = (BigDecimal) event
+        .getCurrentState(paymentAmountProperty);
+    final BigDecimal oldPaymentAmount = (BigDecimal) event.getPreviousState(paymentAmountProperty);
+    final Property paymentStatusProperty = paymentEntity.getProperty(FIN_Payment.PROPERTY_STATUS);
+    final String currentPaymentStatus = (String) event.getCurrentState(paymentStatusProperty);
+    final String oldPaymentStatus = (String) event.getPreviousState(paymentStatusProperty);
+
+    final String documentNo = payment.getDocumentNo();
+    final int documentNoLength = documentNo.length();
+
+    if (!oldPaymentProcessed
+        && currentPaymentProcessed
+        && currentPaymentAmount.compareTo(BigDecimal.ZERO) == 0
+        && (documentNoLength < CancelAndReplaceUtils.ZERO_PAYMENT_SUFIX.length() || !CancelAndReplaceUtils.ZERO_PAYMENT_SUFIX
+            .equals(documentNo.substring(documentNoLength
+                - CancelAndReplaceUtils.ZERO_PAYMENT_SUFIX.length())))) {
+      // Processing a zero payment: add sufix
+      final int documentNoLimit = CancelAndReplaceUtils.PAYMENT_DOCNO_LENGTH
+          - CancelAndReplaceUtils.ZERO_PAYMENT_SUFIX.length();
+      String newDocumentNo = (documentNoLength > documentNoLimit ? documentNo.substring(0,
+          documentNoLimit) : documentNo) + CancelAndReplaceUtils.ZERO_PAYMENT_SUFIX;
+      setDocumentNoToPayment(event, newDocumentNo);
+    }
+
+    else if (oldPaymentProcessed
+        && !currentPaymentProcessed
+        && oldPaymentAmount.compareTo(BigDecimal.ZERO) == 0
+        && documentNoLength > CancelAndReplaceUtils.ZERO_PAYMENT_SUFIX.length()
+        && CancelAndReplaceUtils.ZERO_PAYMENT_SUFIX.equals(documentNo.substring(documentNoLength
+            - CancelAndReplaceUtils.ZERO_PAYMENT_SUFIX.length()))) {
+      // Reactivating a zero payment: remove sufix
+      String newDocumentNo = documentNo.substring(0, documentNoLength
+          - CancelAndReplaceUtils.ZERO_PAYMENT_SUFIX.length());
+      setDocumentNoToPayment(event, newDocumentNo);
+    }
+
+    manageAPRMPendingPaymentFromInvoiceRecord(payment, currentPaymentStatus, oldPaymentStatus);
   }
 
   public void onDelete(@Observes EntityDeleteEvent event) {
@@ -88,17 +135,11 @@ public class FIN_PaymentEventListener extends EntityPersistenceEventObserver {
    * Returns the number of records updated or deleted (0 or 1)
    * 
    */
-  private int manageAPRMPendingPaymentFromInvoiceRecord(final EntityUpdateEvent event) {
+  private int manageAPRMPendingPaymentFromInvoiceRecord(FIN_Payment payment,
+      String currentPaymentStatus, String oldPaymentStatus) {
     try {
       OBContext.setAdminMode(true);
-
       int rowCount = 0;
-
-      final FIN_Payment payment = (FIN_Payment) event.getTargetInstance();
-      final Entity paymentEntity = ModelProvider.getInstance().getEntity(FIN_Payment.ENTITY_NAME);
-      final Property paymentStatusProperty = paymentEntity.getProperty(FIN_Payment.PROPERTY_STATUS);
-      final String currentPaymentStatus = (String) event.getCurrentState(paymentStatusProperty);
-      final String oldPaymentStatus = (String) event.getPreviousState(paymentStatusProperty);
 
       if (StringUtils.equals("RPAE", currentPaymentStatus)) {
         final PaymentExecutionProcess executionProcess = new AdvPaymentMngtDao()
@@ -164,5 +205,12 @@ public class FIN_PaymentEventListener extends EntityPersistenceEventObserver {
     updateQry.setString("paymentId", payment.getId());
     rowCount = updateQry.executeUpdate();
     return rowCount;
+  }
+
+  private void setDocumentNoToPayment(EntityPersistenceEvent event, String newDocumentNo) {
+    final Entity paymentEntity = ModelProvider.getInstance().getEntity(FIN_Payment.ENTITY_NAME);
+    final Property paymentDocumentNoProperty = paymentEntity
+        .getProperty(FIN_Payment.PROPERTY_DOCUMENTNO);
+    event.setCurrentState(paymentDocumentNoProperty, newDocumentNo);
   }
 }

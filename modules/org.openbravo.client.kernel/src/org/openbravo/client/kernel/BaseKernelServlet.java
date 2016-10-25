@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -50,6 +50,10 @@ public abstract class BaseKernelServlet extends HttpSecureAppServlet {
 
   public void service(final HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
+
+    // always set the cors headers
+    KernelUtils.getInstance().setCORSHeaders(request, response);
+
     // encapsulate the response to catch any redirects
     // redirects are done by the authentication manager
     final KernelHttpServletResponse localResponse = new KernelHttpServletResponse(response);

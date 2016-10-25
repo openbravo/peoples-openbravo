@@ -39,7 +39,8 @@ isc.OBViewGrid.create({
     </#if>
     <#if data.lazyFiltering>
         lazyFiltering: ${data.lazyFiltering?string},
-    </#if>    
+    </#if>
+    allowSummaryFunctions: ${data.allowSummaryFunctions?string},
     <#if data.alwaysFilterFksByIdentifier>
         alwaysFilterFksByIdentifier: ${data.alwaysFilterFksByIdentifier?string},
     </#if>       

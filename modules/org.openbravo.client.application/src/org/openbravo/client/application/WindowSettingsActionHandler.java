@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2011-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2011-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -99,7 +99,7 @@ public class WindowSettingsActionHandler extends BaseActionHandler {
       final String autoSaveStr = Preferences.getPreferenceValue("Autosave", false, OBContext
           .getOBContext().getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(),
           OBContext.getOBContext().getUser(), OBContext.getOBContext().getRole(), window);
-      json.put("autoSave", "Y".equals(autoSaveStr));
+      json.put("autoSave", Preferences.YES.equals(autoSaveStr));
 
       try {
         json.put("personalization", personalizationHandler.getPersonalizationForWindow(window));
@@ -112,7 +112,7 @@ public class WindowSettingsActionHandler extends BaseActionHandler {
           false, OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
               .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
               .getOBContext().getRole(), window);
-      json.put("showAutoSaveConfirmation", "Y".equals(showConfirmationStr));
+      json.put("showAutoSaveConfirmation", Preferences.YES.equals(showConfirmationStr));
 
       // Field Level Roles
       final JSONArray tabs = new JSONArray();
@@ -164,8 +164,8 @@ public class WindowSettingsActionHandler extends BaseActionHandler {
       // - None of the above: permission is inherited from window
       boolean securedProcess = false;
       try {
-        securedProcess = "Y".equals(Preferences.getPreferenceValue("SecuredProcess", true,
-            OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
+        securedProcess = Preferences.YES.equals(Preferences.getPreferenceValue("SecuredProcess",
+            true, OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
                 .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
                 .getOBContext().getRole(), window));
       } catch (PropertyException e) {

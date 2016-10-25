@@ -44,6 +44,7 @@ import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
+import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.Tab;
@@ -168,7 +169,8 @@ public class DefaultDataSourceService extends BaseDataSourceService {
   }
 
   private boolean manualWhereClausePreferenceIsEnabled() {
-    return "Y".equals(cachedPreference.getPreferenceValue(CachedPreference.ALLOW_WHERE_PARAMETER));
+    return Preferences.YES.equals(cachedPreference
+        .getPreferenceValue(CachedPreference.ALLOW_WHERE_PARAMETER));
   }
 
   private boolean whereParameterIsNotBlank(Map<String, String> parameters) {

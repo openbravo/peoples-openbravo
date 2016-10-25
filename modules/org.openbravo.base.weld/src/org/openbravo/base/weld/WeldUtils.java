@@ -18,6 +18,8 @@
  */
 package org.openbravo.base.weld;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -29,7 +31,6 @@ import javax.inject.Inject;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
-import org.jboss.weld.environment.servlet.Listener;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.dal.core.DalContextListener;
 import org.slf4j.Logger;
@@ -45,11 +46,12 @@ public class WeldUtils {
 
   private static BeanManager staticBeanManager = null;
   private static final Logger log = LoggerFactory.getLogger(WeldUtils.class);
+  private static final String BEAN_MANAGER_ATTRIBUTE_NAME = "org.jboss.weld.environment.servlet.javax.enterprise.inject.spi.BeanManager";
 
   public static BeanManager getStaticInstanceBeanManager() {
     if (staticBeanManager == null) {
       staticBeanManager = (BeanManager) DalContextListener.getServletContext().getAttribute(
-          Listener.BEAN_MANAGER_ATTRIBUTE_NAME);
+          BEAN_MANAGER_ATTRIBUTE_NAME);
 
       if (staticBeanManager == null) {
         // In wildfly, bean manager is not saved in servlet context.
@@ -119,5 +121,22 @@ public class WeldUtils {
       }
     }
     throw new IllegalArgumentException("No bean found for type " + type);
+  }
+
+  /**
+   * Returns a set of instances for a specified type/class
+   */
+  @SuppressWarnings("unchecked")
+  public static <T> List<T> getInstances(Class<T> type) {
+    final BeanManager beanManager = WeldUtils.getStaticInstanceBeanManager();
+    final Set<Bean<?>> beans = beanManager.getBeans(type);
+
+    final List<T> instances = new ArrayList<T>();
+    for (Bean<?> bean : beans) {
+      T instance = (T) beanManager.getReference(bean, type,
+          beanManager.createCreationalContext(bean));
+      instances.add(instance);
+    }
+    return instances;
   }
 }

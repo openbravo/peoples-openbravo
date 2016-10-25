@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2012 Openbravo SLU
+ * All portions are Copyright (C) 2012-2016 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -136,7 +136,9 @@ public class AccDefUtility {
       Product product = OBDal.getInstance().get(Product.class, productId);
       final String CURRENT_MONTH = "C";
       final String NEXT_MONTH = "N";
-      isSOTRX = invoice.isSalesTransaction();
+      if (invoice != null) {
+        isSOTRX = invoice.isSalesTransaction();
+      }
       if (isSOTRX && product.isDeferredRevenue()) {
         if (CURRENT_MONTH.equals(product.getDefaultPeriod())) {
           startingPeriodId = AccDefUtility.getCurrentPeriod(invoice.getAccountingDate(),

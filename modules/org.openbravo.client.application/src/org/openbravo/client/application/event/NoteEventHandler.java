@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2013 Openbravo SLU 
+ * All portions are Copyright (C) 2013-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -56,24 +56,21 @@ public class NoteEventHandler extends EntityPersistenceEventObserver {
     return entities;
   }
 
-  public void onUpdate(@Observes
-  EntityUpdateEvent event) {
+  public void onUpdate(@Observes EntityUpdateEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
     isReadOnly();
   }
 
-  public void onNew(@Observes
-  EntityNewEvent event) {
+  public void onNew(@Observes EntityNewEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
     isReadOnly();
   }
 
-  public void onDelete(@Observes
-  EntityDeleteEvent event) {
+  public void onDelete(@Observes EntityDeleteEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
@@ -99,7 +96,7 @@ public class NoteEventHandler extends EntityPersistenceEventObserver {
         disableNotesForReadOnly = "N";
       }
 
-      if ("Y".equals(disableNotesForReadOnly)) {
+      if (Preferences.YES.equals(disableNotesForReadOnly)) {
         tabId = RequestContext.get().getRequestParameter("tabId");
         roleId = OBContext.getOBContext().getRole().getId();
 

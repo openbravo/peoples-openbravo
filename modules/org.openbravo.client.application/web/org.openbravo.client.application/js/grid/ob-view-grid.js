@@ -490,10 +490,14 @@ isc.OBViewGrid.addProperties({
 
     var ret = this.Super('initWidget', arguments);
 
-    // only show summary rows if there are summary functions
-    for (i = 0; i < this.getFields().length; i++) {
-      if (this.getFields()[i].summaryFunction && !this.lazyFiltering) {
-        this.showGridSummary = true;
+    if (!this.allowSummaryFunctions) {
+      this.showGridSummary = false;
+    } else {
+      // only show summary rows if there are summary functions
+      for (i = 0; i < this.getFields().length; i++) {
+        if (this.getFields()[i].summaryFunction && !this.lazyFiltering) {
+          this.showGridSummary = true;
+        }
       }
     }
 
@@ -664,6 +668,20 @@ isc.OBViewGrid.addProperties({
     }
   },
 
+  setShowGridSummary: function (showGridSummary) {
+    if (!this.allowSummaryFunctions) {
+      return;
+    }
+    this.Super('setShowGridSummary', arguments);
+  },
+
+  markForCalculateSummaries: function () {
+    if (!this.allowSummaryFunctions) {
+      return;
+    }
+    this.Super('markForCalculateSummaries');
+  },
+
   getHeaderContextMenuItems: function (colNum) {
     var field = this.getField(colNum),
         i, summarySubMenu = [],
@@ -683,7 +701,7 @@ isc.OBViewGrid.addProperties({
       }
     }
 
-    if (field) {
+    if (field && this.allowSummaryFunctions) {
       type = isc.SimpleType.getType(field.type);
       isDate = isc.SimpleType.inheritsFrom(type, 'date');
       isNumber = isc.SimpleType.inheritsFrom(type, 'integer') || isc.SimpleType.inheritsFrom(type, 'float');

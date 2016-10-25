@@ -21,6 +21,7 @@ package org.openbravo.common.actionhandler;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.dal.service.OBDal;
@@ -32,12 +33,20 @@ public class CancelAndReplaceGetCancelledOrderLine extends BaseActionHandler {
   @Override
   protected JSONObject execute(Map<String, Object> parameters, String data) {
     JSONObject result = new JSONObject();
+    JSONObject resultOrderLine = new JSONObject();
+    JSONArray resultJSONArray = new JSONArray();
     String orderLineId = "";
     try {
-      final JSONObject jsonData = new JSONObject(data);
-      orderLineId = jsonData.getString("orderLineId");
-      OrderLine orderLine = OBDal.getInstance().get(OrderLine.class, orderLineId);
-      result.put("deliveredQuantity", orderLine.getDeliveredQuantity());
+      final JSONArray jsonArray = new JSONObject(data).getJSONArray("records");
+      for (int i = 0, size = jsonArray.length(); i < size; i++) {
+        JSONObject jsonOrderLine = jsonArray.getJSONObject(i);
+        orderLineId = jsonOrderLine.getString("replacedorderline");
+        OrderLine orderLine = OBDal.getInstance().get(OrderLine.class, orderLineId);
+        resultOrderLine.put("deliveredQuantity", orderLine.getDeliveredQuantity());
+        resultOrderLine.put("record", jsonOrderLine);
+        resultJSONArray.put(resultOrderLine);
+      }
+      result.put("result", resultJSONArray);
     } catch (Exception e) {
       log.error("Error retrieving OrderLine with id {}", e);
     }

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2013 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -73,10 +73,10 @@ public class PrinterReports extends HttpSecureAppServlet {
       if ("printButton".equals(strButtonType)) {
         String directAttachPref = isDirectAttach(OBContext.getOBContext(), window);
         if (strIsDirectPDF == null || "".equals(strIsDirectPDF)) {
-          strIsDirectPDF = "N".equals(directAttachPref) ? "true" : "false";
+          strIsDirectPDF = Preferences.NO.equals(directAttachPref) ? "true" : "false";
         }
         if (strIsDirectAttach == null || "".equals(strIsDirectAttach)) {
-          strIsDirectAttach = "Y".equals(directAttachPref) ? "true" : "false";
+          strIsDirectAttach = Preferences.YES.equals(directAttachPref) ? "true" : "false";
         }
       } else {
         strIsDirectPDF = "false";

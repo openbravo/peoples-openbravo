@@ -49,6 +49,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.database.SessionInfo;
+import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.enterprise.Organization;
@@ -579,7 +580,7 @@ public class DefaultJsonDataService implements JsonDataService {
 
         // for standard tab and selector datasources pagination is mandatory
         throw new OBException(OBMessageUtils.messageBD("OBJSON_NoPagedFetch"));
-      } else if (!"Y".equals(cachedPreference
+      } else if (!Preferences.YES.equals(cachedPreference
           .getPreferenceValue(CachedPreference.ALLOW_UNPAGED_DS_MANUAL_REQUEST)) && !isWsCall) {
         throw new OBException(OBMessageUtils.messageBD("OBJSON_NoPagedFetchManual"));
       }

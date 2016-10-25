@@ -449,8 +449,8 @@ public class ModuleManagement extends HttpSecureAppServlet {
     boolean externalRebuild = false;
     try {
       // ExternalRebuild Property needs to be configured at system level
-      externalRebuild = "Y".equals(Preferences.getPreferenceValue("ExternalRebuild", true, OBDal
-          .getInstance().getProxy(Client.class, "0"),
+      externalRebuild = Preferences.YES.equals(Preferences.getPreferenceValue("ExternalRebuild",
+          true, OBDal.getInstance().getProxy(Client.class, "0"),
           OBDal.getInstance().getProxy(Organization.class, "0"), null, null, null));
     } catch (PropertyException noPrefDefined) {
     }
@@ -2108,7 +2108,6 @@ public class ModuleManagement extends HttpSecureAppServlet {
     out.close();
   }
 
-  @SuppressWarnings("unchecked")
   private void printPageSettings(HttpServletResponse response, HttpServletRequest request)
       throws ServletException, IOException {
     VariablesSecureApp vars = new VariablesSecureApp(request);

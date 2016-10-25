@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -63,8 +63,8 @@ public class HeartBeatPopupActionHandler extends BaseActionHandler implements Po
       boolean sysAdmin = false;
       boolean isUpgrading = false;
       try {
-        isUpgrading = "Y".equals(Preferences.getPreferenceValue("isUpgrading", true, "0", "0",
-            null, null, null));
+        isUpgrading = Preferences.YES.equals(Preferences.getPreferenceValue("isUpgrading", true,
+            "0", "0", null, null, null));
       } catch (PropertyException e) {
         isUpgrading = false;
       }

@@ -590,6 +590,28 @@
     v_Created:=v_Created + v_rowcount;
     DBMS_OUTPUT.PUT_LINE('- AD_TextInterfaces ' || v_rowcount) ;
 
+    -- Offer_Type
+    INSERT
+    INTO M_Offer_Type_Trl
+      (
+        M_Offer_Type_Trl_ID, M_Offer_Type_ID, AD_Language, Name, Description, IsTranslated,
+        Createdby, UpdatedBy, Created, Updated,
+        AD_Client_ID, AD_Org_ID, IsActive
+      )
+    SELECT get_uuid(), M_Offer_Type_ID, AD_Language.AD_Language, M_Offer_Type.name, M_Offer_Type.description, 'N', '0', '0', now(), now(), M_Offer_Type.AD_Client_ID, M_Offer_Type.AD_Org_ID, 'Y'
+    FROM M_Offer_Type, AD_Language, AD_module m
+    WHERE AD_Language.IsActive='Y'  
+    AND AD_Language.IsSystemLanguage='Y'  
+    and m.ad_module_id = M_Offer_Type.AD_MODULE_ID
+    and m.ad_language != AD_Language.AD_Language
+    AND NOT EXISTS (SELECT 1 FROM M_Offer_Type_Trl
+                 WHERE M_Offer_Type_ID = M_Offer_Type.M_Offer_Type_ID
+                   AND AD_LANGUAGE = AD_Language.AD_Language); 
+
+    v_rowcount:=SQL%ROWCOUNT;
+    v_Created:=v_Created + v_rowcount;
+    DBMS_OUTPUT.PUT_LINE('- M_Offer_Type ' || v_rowcount) ;
+    
     -- Call extension points
     SELECT count(*) INTO v_count
     FROM DUAL

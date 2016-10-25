@@ -90,7 +90,7 @@ isc.OBPickAndExecuteView.addProperties({
       saveLocally: (this.viewProperties.allowDelete || this.viewProperties.allowAdd ? true : false),
       autoSaveEdits: (this.viewProperties.allowDelete || this.viewProperties.allowAdd ? true : false),
       neverValidate: (this.viewProperties.allowDelete || this.viewProperties.allowAdd ? true : false),
-      showGridSummary: this.showGridSummary,
+      showGridSummary: this.showGridSummary && this.viewProperties.gridProperties && this.viewProperties.gridProperties.allowSummaryFunctions,
       viewProperties: this.viewProperties,
       parameterName: this.parameterName,
       onGridLoadFunction: this.onGridLoadFunction
