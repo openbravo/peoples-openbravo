@@ -73,14 +73,14 @@ public class VoidLayawayEntryProcessor extends ImportEntryProcessor {
       try {
         OBContext.setAdminMode(false);
 
-        if (0 < super.countEntries("Error", importEntry)) {
+        if (0 < countEntries("Error", importEntry)) {
           // if there are related error entries before this one then this is an error
           // throw an exception to move this entry also to error status
           throw new OBException("There are error records before this record " + importEntry
               + ", moving this entry also to error status.");
         }
 
-        return 0 < super.countEntries("Initial", importEntry);
+        return 0 < countEntries("Initial", importEntry);
       } finally {
         OBContext.restorePreviousMode();
       }
