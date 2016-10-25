@@ -16,7 +16,7 @@ import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.mobile.core.process.DataSynchronizationProcess;
-import org.openbravo.mobile.core.process.MobileImportEntryProcessorRunnable;
+import org.openbravo.mobile.core.process.SerializedByTermImportEntryProcessorRunnable;
 import org.openbravo.retail.posterminal.QuotationsReject;
 import org.openbravo.service.importprocess.ImportEntry;
 import org.openbravo.service.importprocess.ImportEntryManager.ImportEntryQualifier;
@@ -43,7 +43,8 @@ public class QuotationsRejectEntryProcessor extends ImportEntryProcessor {
     return importEntry.getOrganization().getId();
   }
 
-  private static class QuotationsRejectRunnable extends MobileImportEntryProcessorRunnable {
+  private static class QuotationsRejectRunnable extends
+      SerializedByTermImportEntryProcessorRunnable {
     protected Class<? extends DataSynchronizationProcess> getDataSynchronizationClass() {
       return QuotationsReject.class;
     }
@@ -73,14 +74,14 @@ public class QuotationsRejectEntryProcessor extends ImportEntryProcessor {
       try {
         OBContext.setAdminMode(false);
 
-        if (0 < POSImportEntryProcessor.countEntries("Error", importEntry)) {
+        if (0 < countEntries("Error", importEntry)) {
           // if there are related error entries before this one then this is an error
           // throw an exception to move this entry also to error status
           throw new OBException("There are error records before this record " + importEntry
               + ", moving this entry also to error status.");
         }
 
-        return 0 < POSImportEntryProcessor.countEntries("Initial", importEntry);
+        return 0 < countEntries("Initial", importEntry);
       } finally {
         OBContext.restorePreviousMode();
       }
