@@ -1040,10 +1040,10 @@ public class OrderLoader extends POSDataSynchronizationProcess
 
       OrderLine orderLine = lineReferences.get(i);
       BigDecimal pendingQty = orderLine.getOrderedQuantity().abs();
-      if (orderlines.getJSONObject(i).has("remainingQuantity")
-          && orderlines.getJSONObject(i).get("remainingQuantity") != JSONObject.NULL) {
-        pendingQty = pendingQty.subtract(
-            new BigDecimal(orderlines.getJSONObject(i).getLong("remainingQuantity")).abs());
+      if (orderlines.getJSONObject(i).has("deliveredQuantity")
+          && orderlines.getJSONObject(i).get("deliveredQuantity") != JSONObject.NULL) {
+        pendingQty = pendingQty.subtract(new BigDecimal(orderlines.getJSONObject(i).getLong(
+            "deliveredQuantity")).abs());
       }
       boolean negativeLine = orderLine.getOrderedQuantity().compareTo(BigDecimal.ZERO) < 0;
 
@@ -1923,13 +1923,16 @@ public class OrderLoader extends POSDataSynchronizationProcess
         invoice.setTotalPaid(invoice.getGrandTotalAmount().subtract(amountPaidWithCredit));
         invoice.setOutstandingAmount(amountPaidWithCredit);
         invoice.setDueAmount(amountPaidWithCredit);
-        invoice.setDaysTillDue(FIN_Utility.getDaysToDue(paymentScheduleInvoice.getDueDate()));
         invoice.setPaymentComplete(amountPaidWithCredit.compareTo(BigDecimal.ZERO) == 0);
-        paymentScheduleInvoice.setOutstandingAmount(amountPaidWithCredit);
+        invoice.setDaysTillDue(FIN_Utility.getDaysToDue(paymentScheduleInvoice == null ? invoice
+            .getInvoiceDate() : paymentScheduleInvoice.getDueDate()));
+        if (paymentScheduleInvoice != null) {
+          paymentScheduleInvoice.setOutstandingAmount(amountPaidWithCredit);
         paymentScheduleInvoice
             .setPaidAmount(invoice.getGrandTotalAmount().subtract(amountPaidWithCredit));
-        invoice.getFINPaymentScheduleList().add(paymentScheduleInvoice);
-        OBDal.getInstance().save(paymentScheduleInvoice);
+          invoice.getFINPaymentScheduleList().add(paymentScheduleInvoice);
+          OBDal.getInstance().save(paymentScheduleInvoice);
+        }
         OBDal.getInstance().save(invoice);
       }
 

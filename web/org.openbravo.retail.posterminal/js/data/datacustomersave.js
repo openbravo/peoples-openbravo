@@ -30,6 +30,35 @@
           bpShipLocToSave = new OB.Model.BPLocation(),
           customersListToChange, updateLocally;
 
+      var setBPLocationProperty = function (location, customer, isNew, sucesscallback) {
+          if (!OB.UTIL.isNullOrUndefined(location) && !OB.UTIL.isNullOrUndefined(customer)) {
+            if (isNew) {
+              location.set('id', customer.get('locId'));
+            }
+            _.each(OB.Model.BPLocation.getPropertiesForUpdate(), function (property) {
+              var key = property.name;
+              if (!OB.UTIL.isNullOrUndefined(key)) {
+                if (key === '_identifier') {
+                  location.set(key, customer.get('locName'));
+                } else if (key === 'bpartner') {
+                  location.set(key, customer.get('id'));
+                } else if (key === 'name') {
+                  location.set(key, customer.get('locName'));
+                } else if (key === 'countryName') {
+                  location.set(key, OB.MobileApp.model.get('terminal').defaultbp_bpcountry_name);
+                } else if (key === 'countryId') {
+                  location.set(key, OB.MobileApp.model.get('terminal').defaultbp_bpcountry);
+                } else {
+                  location.set(key, customer.get(key));
+                }
+              }
+            });
+            if (sucesscallback) {
+              sucesscallback();
+            }
+          }
+          };
+
       bpToSave.set('isbeingprocessed', 'N');
       customer.set('createdBy', OB.MobileApp.model.get('orgUserId'));
       bpToSave.set('createdBy', OB.MobileApp.model.get('orgUserId'));

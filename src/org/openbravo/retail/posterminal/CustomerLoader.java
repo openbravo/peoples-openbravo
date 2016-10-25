@@ -238,8 +238,8 @@ public class CustomerLoader extends POSDataSynchronizationProcess
 
       if (usersWithPossibleUsername > 0) {
         // username exist -> make it unique
-        finalUsername = possibleUsername + "_"
-            + jsonCustomer.getString("contactId").substring(0, 4);
+        finalUsername = (possibleUsername.length() > 55 ? possibleUsername.substring(0, 55)
+            : possibleUsername) + "_" + jsonCustomer.getString("contactId").substring(0, 4);
       } else {
         // we can use this username
         finalUsername = possibleUsername;

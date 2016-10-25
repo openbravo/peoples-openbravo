@@ -155,9 +155,26 @@ enyo.kind({
     }
   },
   tap: function () {
-    var i, me = this;
+    var i, me = this,
+        hasPayments = false,
+        isMultiOrders = this.model.isValidMultiOrderState();
+    // validate payments
+    if (isMultiOrders && me.model.get('multiOrders').get('payments').length > 0) {
+      hasPayments = true;
+    } else if (!isMultiOrders && me.model.get('order').get('payments').length > 0) {
+      if (me.model.get('order').get('receiptPayments') && me.model.get('order').get('payments').length > me.model.get('order').get('receiptPayments').length) {
+        hasPayments = true;
+      } else if (!me.model.get('order').get('receiptPayments')) {
+        hasPayments = true;
+      }
+    }
 
-    if (me.model.get('leftColumnViewManager').isMultiOrder()) {
+    if (hasPayments) {
+      OB.UTIL.showConfirmation.display('', OB.I18N.getLabel('OBPOS_RemoveReceiptWithPayment'));
+      return true;
+    }
+
+    if (isMultiOrders) {
       me.model.deleteMultiOrderList();
       me.model.get('multiOrders').resetValues();
       me.model.get('leftColumnViewManager').setOrderMode();
