@@ -1034,14 +1034,22 @@ enyo.kind({
     if (this.isLocked) {
       value = true;
     }
-    // if no 'not isPrePayment' payments, the 'Done' button must be disabled
+    // if there are no not synchronized payments reversed and the full amount qty is paid by prePayment payments,
+    // the button 'Done' will be desabled (except for the case of doing a cancel and replace)
     if (!value) {
-      if (this.owner.receipt && this.owner.receipt.get('payments') && this.owner.receipt.get('payments').size() > 0 && _.reduce(_.filter(this.owner.receipt.get('payments').models, function (payment) {
-        return payment.get('isPrePayment') && !payment.get('isReversed');
-      }), function (memo, pymnt) {
-        return OB.DEC.add(memo, pymnt.get('origAmount'));
-      }, OB.DEC.Zero) === this.owner.receipt.getTotal() && !this.owner.receipt.get('doCancelAndReplace')) {
-        value = true;
+      if (this.owner.receipt && this.owner.receipt.get('payments') && this.owner.receipt.get('payments').size() > 0) {
+        var prePaymentQty = _.reduce(_.filter(this.owner.receipt.get('payments').models, function (payment) {
+          return payment.get('isPrePayment');
+        }), function (memo, pymnt) {
+          return OB.DEC.add(memo, pymnt.get('origAmount'));
+        }, OB.DEC.Zero),
+            isNewReversed = _.filter(this.owner.receipt.get('payments').models, function (payment) {
+            return !payment.get('isPrePayment') && payment.get('isReversePayment');
+          }).length > 0;
+
+        if (prePaymentQty === this.owner.receipt.getTotal() && !isNewReversed && !this.owner.receipt.get('doCancelAndReplace')) {
+          value = true;
+        }
       }
     }
     this.disabled = value; // for getDisabled() to return the correct value

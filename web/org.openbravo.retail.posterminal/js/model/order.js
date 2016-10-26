@@ -3265,7 +3265,8 @@
                 'reversedPayment': payment,
                 'index': OB.DEC.add(1, payments.indexOf(payment)),
                 'paymentData': payment.get('paymentData') ? payment.get('paymentData') : null,
-                'reverseCallback': reverseCallback
+                'reverseCallback': reverseCallback,
+                'isReversePayment': true
               }
             });
           } else {
@@ -3286,7 +3287,8 @@
               'reversedPayment': payment,
               'index': OB.DEC.add(1, payments.indexOf(payment)),
               'paymentData': payment.get('paymentData') ? payment.get('paymentData') : null,
-              'reverseCallback': reverseCallback
+              'reverseCallback': reverseCallback,
+              'isReversePayment': true
             }));
           }
         });
