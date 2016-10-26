@@ -12,7 +12,6 @@
 package org.openbravo.base;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -46,7 +45,6 @@ public abstract class ExecutionLimitBaseProcess {
    *          A data structure that contains module versions mapped by module id
    */
   public void preExecute(Map<String, OpenbravoVersion> modulesVersionMap) {
-    ArrayList<String> errors = new ArrayList<String>();
     if (modulesVersionMap == null || modulesVersionMap.size() == 0) {
       // if we do not have module versions to compare with (install.source) then
       // execute depending

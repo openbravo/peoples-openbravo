@@ -94,6 +94,9 @@ public abstract class BuildValidation extends ExecutionLimitBaseProcess {
    * @return A list of errors
    */
   public List<String> getErrors() {
+    if (errors == null) {
+      errors = new ArrayList<String>();
+    }
     return errors;
   }
 
