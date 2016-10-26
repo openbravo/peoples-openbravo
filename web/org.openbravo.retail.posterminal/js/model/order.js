@@ -4193,7 +4193,7 @@
               OB.Dal.get(OB.Model.BPLocation, bpBillLocId, function (bpLoc) {
                 bp.set('locName', bpLoc.get('name'));
                 bp.set('locId', bpLoc.get('id'));
-                OB.MobileApp.model.receipt.trigger('change:bp', order);
+                order.trigger('change:bp', order);
               }, null, null);
 
               var linepos = 0,

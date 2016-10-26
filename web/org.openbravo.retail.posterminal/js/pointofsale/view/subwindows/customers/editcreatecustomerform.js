@@ -276,7 +276,7 @@ enyo.kind({
       return OB.MobileApp.model.hasPermission('OBPOS_ShowBusinessPartnerBirthInfo', true);
     },
     loadValue: function (inSender, inEvent) {
-      this.setLocale(OB.Application.language_string);
+      this.setLocale(OB.MobileApp.model.get('terminal').language_string);
       if (inEvent.customer && inEvent.customer.get(this.modelProperty)) {
         this.setValue(new Date(inEvent.customer.get(this.modelProperty)));
       } else {

@@ -304,7 +304,7 @@ enyo.kind({
     if (column.idList && !OB.MobileApp.model.get(column.termProperty)) {
       var me = this;
       new OB.DS.Request('org.openbravo.retail.posterminal.term.ListReference').exec({
-        language: OB.Application.language_string,
+        language: OB.MobileApp.model.get('terminal').language_string,
         reference: column.idList
       }, function (data) {
         // data is ready. Save it

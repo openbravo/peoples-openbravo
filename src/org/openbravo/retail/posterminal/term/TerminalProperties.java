@@ -30,20 +30,20 @@ public class TerminalProperties extends ModelExtension {
   private static Logger log = LoggerFactory.getLogger(TerminalProperties.class);
 
   @Override
-  public List<HQLProperty> getHQLProperties(Object params) {
+  public List<HQLProperty> getHQLProperties(final Object params) {
 
-    ArrayList<HQLProperty> list = new ArrayList<HQLProperty>();
+    final ArrayList<HQLProperty> list = new ArrayList<HQLProperty>();
     list.add(new HQLProperty("pos.id", "id"));
-    list.add(new HQLProperty(
-        "(COALESCE(pos.defaultCustomer.id, pos.organization.obretcoCBpartner.id))",
-        "businessPartner"));
+    list.add(
+        new HQLProperty("(COALESCE(pos.defaultCustomer.id, pos.organization.obretcoCBpartner.id))",
+            "businessPartner"));
     list.add(new HQLProperty("pos.name", "_identifier"));
     list.add(new HQLProperty("pos.searchKey", "searchKey"));
     list.add(new HQLProperty(
         "(COALESCE(pos.obposCBpartnerLoc.id, pos.organization.obretcoCBpLocation.id))",
         "partnerAddress"));
-    list.add(new HQLProperty("pos.organization.obposLayawayAnonymousbp",
-        "layaway_anonymouscustomer"));
+    list.add(
+        new HQLProperty("pos.organization.obposLayawayAnonymousbp", "layaway_anonymouscustomer"));
     list.add(new HQLProperty("pos.organization.id", "organization"));
     list.add(new HQLProperty("pos.organization.name", getIdentifierAlias("organization")));
     list.add(new HQLProperty("pos.client.id", "client"));
@@ -75,8 +75,10 @@ public class TerminalProperties extends ModelExtension {
     list.add(new HQLProperty("postype", "terminalType"));
     list.add(new HQLProperty("pos.printoffline", "printoffline"));
     list.add(new HQLProperty("pos.ismaster", "ismaster"));
-    list.add(new HQLProperty(
-        "CASE WHEN pos.masterterminal.id is not null THEN true ELSE false END", "isslave"));
+    list.add(new HQLProperty("CASE WHEN pos.masterterminal.id is not null THEN true ELSE false END",
+        "isslave"));
+    list.add(new HQLProperty("'" + OBContext.getOBContext().getLanguage().getLanguage() + "'",
+        "language_string"));
 
     addTemplateProperty(Organization.PROPERTY_OBPOSCASHUPTEMPLATE, "printCashUpTemplate", list);
     addTemplateProperty(Organization.PROPERTY_OBPOSCASHMGMTEMPLATE, "printCashMgmTemplate", list);
@@ -97,15 +99,16 @@ public class TerminalProperties extends ModelExtension {
     return list;
   }
 
-  private String getIdentifierAlias(String propertyName) {
+  private String getIdentifierAlias(final String propertyName) {
     return propertyName + DalUtil.FIELDSEPARATOR + JsonConstants.IDENTIFIER;
   }
 
-  protected void addTemplateProperty(String propertyName, String alias, List<HQLProperty> list) {
+  protected void addTemplateProperty(final String propertyName, final String alias,
+      final List<HQLProperty> list) {
     try {
       OBContext.setAdminMode(false);
-      PrintTemplate value = (PrintTemplate) POSUtils.getPropertyInOrgTree(OBContext.getOBContext()
-          .getCurrentOrganization(), propertyName);
+      final PrintTemplate value = (PrintTemplate) POSUtils
+          .getPropertyInOrgTree(OBContext.getOBContext().getCurrentOrganization(), propertyName);
       if (value != null) {
         list.add(new HQLProperty("'" + value.getTemplatePath() + "'", alias));
         list.add(new HQLProperty("'" + value.isPdf() + "'", alias + "IsPdf"));
@@ -113,12 +116,12 @@ public class TerminalProperties extends ModelExtension {
           list.add(new HQLProperty("'" + value.getPrinter() + "'", alias + "Printer"));
         }
         int i = 0;
-        for (PrintTemplateSubrep subrep : value.getOBPOSPrintTemplateSubrepList()) {
+        for (final PrintTemplateSubrep subrep : value.getOBPOSPrintTemplateSubrepList()) {
           list.add(new HQLProperty("'" + subrep.getTemplatePath() + "'", alias + "Subrep" + i));
           i++;
         }
       }
-    } catch (Exception e) {
+    } catch (final Exception e) {
       log.error("Error getting property " + propertyName, e);
     } finally {
       OBContext.restorePreviousMode();
