@@ -431,6 +431,8 @@ enyo.kind({
       colNum: 1
     });
 
+    OB.MobileApp.view.scanningFocus(true);
+
     if (OB.UTIL.RfidController.isRfidConfigured()) {
       OB.UTIL.RfidController.disconnectRFIDDevice();
     }

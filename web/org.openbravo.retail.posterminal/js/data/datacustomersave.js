@@ -29,6 +29,35 @@
           bpLocation, bpLocToSave = new OB.Model.BPLocation(),
           updateLocally;
 
+      var setBPLocationProperty = function (location, customer, isNew, sucesscallback) {
+          if (!OB.UTIL.isNullOrUndefined(location) && !OB.UTIL.isNullOrUndefined(customer)) {
+            if (isNew) {
+              location.set('id', customer.get('locId'));
+            }
+            _.each(OB.Model.BPLocation.getPropertiesForUpdate(), function (property) {
+              var key = property.name;
+              if (!OB.UTIL.isNullOrUndefined(key)) {
+                if (key === '_identifier') {
+                  location.set(key, customer.get('locName'));
+                } else if (key === 'bpartner') {
+                  location.set(key, customer.get('id'));
+                } else if (key === 'name') {
+                  location.set(key, customer.get('locName'));
+                } else if (key === 'countryName') {
+                  location.set(key, OB.MobileApp.model.get('terminal').defaultbp_bpcountry_name);
+                } else if (key === 'countryId') {
+                  location.set(key, OB.MobileApp.model.get('terminal').defaultbp_bpcountry);
+                } else {
+                  location.set(key, customer.get(key));
+                }
+              }
+            });
+            if (sucesscallback) {
+              sucesscallback();
+            }
+          }
+          };
+
       bpToSave.set('isbeingprocessed', 'N');
       customer.set('createdBy', OB.MobileApp.model.get('orgUserId'));
       bpToSave.set('createdBy', OB.MobileApp.model.get('orgUserId'));
@@ -106,13 +135,14 @@
             //load the BPlocation and then update it
             OB.Dal.get(OB.Model.BPLocation, customer.get('locId'), function (bpLocToUpdate) {
               if (bpLocToUpdate) {
-                bpLocToUpdate.set('name', customer.get('locName'));
-                bpLocToUpdate.set('postalCode', customer.get('postalCode'));
-                bpLocToUpdate.set('cityName', customer.get('cityName'));
-                bpLocToUpdate.set('_identifier', customer.get('locName'));
-                OB.Dal.save(bpLocToUpdate, function () {}, function () {
-                  OB.error(arguments);
-                }, isNew);
+                // Set all properties to bplocation
+                setBPLocationProperty(bpLocToUpdate, customer, isNew, function () {
+                  OB.Dal.save(bpLocToUpdate, function () {
+                    //customer location created successfully. Nothing to do here.
+                  }, function () {
+                    OB.error(arguments);
+                  }, isNew);
+                });
               } else {
                 OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_errorSavingBPLoc_header'), OB.I18N.getLabel('OBPOS_errorSavingBPLoc_body'));
               }
@@ -120,20 +150,14 @@
               OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_errorSavingBPLoc_header'), OB.I18N.getLabel('OBPOS_errorSavingBPLoc_body'));
             });
           } else {
-            //create bploc from scratch
-            bpLocToSave.set('id', customer.get('locId'));
-            bpLocToSave.set('bpartner', customer.get('id'));
-            bpLocToSave.set('name', customer.get('locName'));
-            bpLocToSave.set('postalCode', customer.get('postalCode'));
-            bpLocToSave.set('cityName', customer.get('cityName'));
-            bpLocToSave.set('_identifier', customer.get('locName'));
-            bpLocToSave.set('countryName', OB.MobileApp.model.get('terminal').defaultbp_bpcountry_name);
-            bpLocToSave.set('countryId', OB.MobileApp.model.get('terminal').defaultbp_bpcountry);
-            OB.Dal.save(bpLocToSave, function () {
-              //customer location created successfully. Nothing to do here.
-            }, function () {
-              OB.error(arguments);
-            }, isNew);
+            //create bploc from scratch and set all properties
+            setBPLocationProperty(bpLocToSave, customer, isNew, function () {
+              OB.Dal.save(bpLocToSave, function () {
+                //customer location created successfully. Nothing to do here.
+              }, function () {
+                OB.error(arguments);
+              }, isNew);
+            });
           }
 
           if (isNew) {

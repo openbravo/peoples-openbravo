@@ -392,7 +392,6 @@ enyo.kind({
         keyboard: false,
         edit: false
       });
-      OB.MobileApp.view.scanningFocus(true);
     }
   },
   initComponents: function () {
@@ -549,19 +548,29 @@ enyo.kind({
     }
   },
   showPane: function (tabName, options) {
-    OB.MobileApp.model.set('lastPaneShown', 'unknown');
-    var paneArray = this.getComponents(),
-        i;
-    for (i = 0; i < paneArray.length; i++) {
-      paneArray[i].removeClass('active');
-      if (paneArray[i].name === tabName) {
-        if (paneArray[i].executeOnShow) {
-          paneArray[i].executeOnShow(options);
-        }
-        paneArray[i].addClass('active');
-        OB.MobileApp.model.set('lastPaneShown', tabName);
+    var me = this;
+    OB.UTIL.HookManager.executeHooks('OBPOS_PreShowPane', {
+      context: me,
+      options: options,
+      tabName: tabName
+    }, function (args) {
+      if (args && args.cancelOperation && args.cancelOperation === true) {
+        return;
       }
-    }
+      OB.MobileApp.model.set('lastPaneShown', 'unknown');
+      var paneArray = me.getComponents(),
+          i;
+      for (i = 0; i < paneArray.length; i++) {
+        paneArray[i].removeClass('active');
+        if (paneArray[i].name === tabName) {
+          if (paneArray[i].executeOnShow) {
+            paneArray[i].executeOnShow(options);
+          }
+          paneArray[i].addClass('active');
+          OB.MobileApp.model.set('lastPaneShown', tabName);
+        }
+      }
+    });
   },
   modelChanged: function () {
     var receipt = this.model.get('order');

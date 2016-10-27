@@ -11,25 +11,18 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2015 Openbravo SLU
+ * All portions are Copyright (C) 2012-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.retail.posterminal;
 
-import java.io.File;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.enterprise.context.RequestScoped;
-import javax.enterprise.inject.Any;
-import javax.enterprise.inject.Instance;
-import javax.inject.Inject;
 
-import org.apache.commons.io.FileUtils;
-import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.mobile.core.MobileCoreApplicationCacheComponent;
@@ -41,12 +34,6 @@ import org.openbravo.mobile.core.MobileCoreApplicationCacheComponent;
 
 @RequestScoped
 public class ApplicationCacheComponent extends MobileCoreApplicationCacheComponent {
-
-  private static final String PATH_PREFIX = "web" + File.separatorChar;
-
-  @Inject
-  @Any
-  private Instance<POSAppCacheResourceProvider> resourceProviders;
 
   @Override
   public List<String> getAppList() {
@@ -112,51 +99,6 @@ public class ApplicationCacheComponent extends MobileCoreApplicationCacheCompone
     resources
         .add("../../org.openbravo.mobile.core/OBCLKER_Kernel/StyleSheetResources?_appName=WebPOS");
 
-    // include all resources defined by other modules
-    for (POSAppCacheResourceProvider resourceProvider : resourceProviders) {
-      resources.addAll(resourceProvider.getResources());
-    }
-
-    return resources;
-  }
-
-  @Override
-  public List<String> getImageFileList() {
-    final String[] extensions = { "png", "gif" };
-    return transformPath(getFileList(extensions));
-  }
-
-  @Override
-  public List<String> getcssFileList() {
-    final String[] extensions = { "css", "less" };
-    return transformPath(getFileList(extensions));
-  }
-
-  private List<String> getFileList(String[] extensions) {
-
-    final String relativePath = "/" + PATH_PREFIX + getModulePackageName();
-
-    List<String> fileList = new ArrayList<String>();
-
-    final File directory = new File(RequestContext.getServletContext().getRealPath(relativePath));
-
-    final Iterator<File> it = FileUtils.iterateFiles(directory, extensions, true);
-
-    while (it.hasNext()) {
-      final File f = it.next();
-      fileList.add(f.getPath());
-    }
-    return fileList;
-  }
-
-  private List<String> transformPath(List<String> stringFileList) {
-    final List<String> resources = new ArrayList<String>();
-    final String relativePath = PATH_PREFIX + getModulePackageName();
-
-    for (final String f : stringFileList) {
-      final int pos = f.indexOf(relativePath);
-      resources.add("../../" + f.substring(pos));
-    }
     return resources;
   }
 

@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2015 Openbravo S.L.U.
+ * Copyright (C) 2015-2016 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -10,13 +10,12 @@ package org.openbravo.retail.posterminal.importprocess;
 
 import javax.enterprise.context.ApplicationScoped;
 
-import org.hibernate.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.mobile.core.process.DataSynchronizationProcess;
-import org.openbravo.mobile.core.process.MobileImportEntryProcessorRunnable;
+import org.openbravo.mobile.core.process.SerializedByTermImportEntryProcessorRunnable;
 import org.openbravo.retail.posterminal.ProcessCashMgmt;
 import org.openbravo.service.importprocess.ImportEntry;
 import org.openbravo.service.importprocess.ImportEntryManager.ImportEntryQualifier;
@@ -43,7 +42,7 @@ public class CashManagementImportEntryProcessor extends ImportEntryProcessor {
     return importEntry.getOrganization().getId();
   }
 
-  private static class CashManagementRunnable extends MobileImportEntryProcessorRunnable {
+  private static class CashManagementRunnable extends SerializedByTermImportEntryProcessorRunnable {
     protected Class<? extends DataSynchronizationProcess> getDataSynchronizationClass() {
       return ProcessCashMgmt.class;
     }
@@ -83,24 +82,6 @@ public class CashManagementImportEntryProcessor extends ImportEntryProcessor {
         OBContext.restorePreviousMode();
       }
     }
-
-    private int countEntries(String importStatus, ImportEntry importEntry) {
-      final String whereClause = ImportEntry.PROPERTY_IMPORTSTATUS + "='" + importStatus
-          + "' and (" + ImportEntry.PROPERTY_TYPEOFDATA + "='Order' or "
-          + ImportEntry.PROPERTY_TYPEOFDATA + "='FIN_Finacc_Transaction') and "
-          + ImportEntry.PROPERTY_CREATIONDATE + "<=:creationDate and "
-          + ImportEntry.PROPERTY_CREATEDTIMESTAMP + "<:createdtimestamp and "
-          + ImportEntry.PROPERTY_OBPOSPOSTERMINAL + "=:terminal and id!=:id";
-      final Query qry = OBDal.getInstance().getSession()
-          .createQuery("select 1 from " + ImportEntry.ENTITY_NAME + " where " + whereClause);
-      qry.setParameter("id", importEntry.getId());
-      qry.setTimestamp("creationDate", importEntry.getCreationDate());
-      qry.setParameter("terminal", importEntry.getOBPOSPOSTerminal());
-      qry.setParameter("createdtimestamp", importEntry.getCreatedtimestamp());
-      qry.setMaxResults(1);
-      return qry.list().size();
-    }
-
   }
 
 }

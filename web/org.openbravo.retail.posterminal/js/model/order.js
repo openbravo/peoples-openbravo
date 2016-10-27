@@ -378,10 +378,19 @@
 
     save: function (callback) {
       var undoCopy = this.get('undo'),
-          me = this;
+          me = this,
+          forceInsert = false;
 
       var now = new Date();
       this.set('timezoneOffset', now.getTimezoneOffset());
+
+      if (!this.get('id') || !this.id) {
+        var uuid = OB.UTIL.get_UUID();
+        this.set('id', uuid);
+        this.id = uuid;
+        forceInsert = true;
+      }
+
       this.set('json', JSON.stringify(this.serializeToJSON()));
       if (callback === undefined || !callback instanceof Function) {
         callback = function () {};
@@ -393,7 +402,7 @@
           }
         }, function () {
           OB.error(arguments);
-        });
+        }, forceInsert);
       } else {
         if (callback) {
           callback();
@@ -2739,9 +2748,9 @@
     createOrderFromQuotation: function (updatePrices) {
       var idMap = {},
           oldIdMap = {},
-          me = this;
+          oldId, me = this;
       this.get('lines').each(function (line) {
-        var oldId = line.get('id');
+        oldId = line.get('id');
         line.set('id', OB.UTIL.get_UUID());
         //issue 25055 -> If we don't do the following prices and taxes are calculated
         //wrongly because the calculation starts with discountedNet instead of
@@ -2833,8 +2842,10 @@
 
     reactivateQuotation: function () {
       var nextQuotationno, idMap = {},
-          me = this;
+          oldIdMap = {},
+          oldId, me = this;
       this.get('lines').each(function (line) {
+        oldId = line.get('id');
         line.set('id', OB.UTIL.get_UUID());
         if (!this.get('priceIncludesTax')) {
           line.set('net', line.get('nondiscountednet'));
@@ -2847,6 +2858,9 @@
         line.unset('lineGrossAmount');
         idMap[line.get('id')] = OB.Dal.get_uuid();
         line.set('id', idMap[line.get('id')]);
+        if (line.get('hasRelatedServices')) {
+          oldIdMap[oldId] = line.get('id');
+        }
       }, this);
       this.set('hasbeenpaid', 'N');
       this.set('isEditable', true);
@@ -2870,8 +2884,8 @@
         if (line.get('relatedLines')) {
           line.get('relatedLines').forEach(function (rl) {
             rl.orderId = me.get('id');
-            if (idMap[rl.orderlineId]) {
-              rl.orderlineId = idMap[rl.orderlineId];
+            if (oldIdMap[rl.orderlineId]) {
+              rl.orderlineId = oldIdMap[rl.orderlineId];
             }
           });
         }
@@ -3965,15 +3979,19 @@
         }
       }
 
-      OB.UTIL.HookManager.executeHooks('OBPOS_PreDeleteCurrentOrder', {
-        context: context,
-        receipt: this
-      }, function (args) {
-        if (args && args.cancelOperation && args.cancelOperation === true) {
-          return;
-        }
-        removeOrder(args.receipt, callback);
-      });
+      if (this.get('isEditable') === true) {
+        OB.UTIL.HookManager.executeHooks('OBPOS_PreDeleteCurrentOrder', {
+          context: context,
+          receipt: this
+        }, function (args) {
+          if (args && args.cancelOperation && args.cancelOperation === true) {
+            return;
+          }
+          removeOrder(args.receipt, callback);
+        });
+      } else {
+        removeOrder(this, callback);
+      }
 
       return true;
     }
