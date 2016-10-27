@@ -378,10 +378,19 @@
 
     save: function (callback) {
       var undoCopy = this.get('undo'),
-          me = this;
+          me = this,
+          forceInsert = false;
 
       var now = new Date();
       this.set('timezoneOffset', now.getTimezoneOffset());
+
+      if (!this.get('id') || !this.id) {
+        var uuid = OB.UTIL.get_UUID();
+        this.set('id', uuid);
+        this.id = uuid;
+        forceInsert = true;
+      }
+
       this.set('json', JSON.stringify(this.serializeToJSON()));
       if (callback === undefined || !callback instanceof Function) {
         callback = function () {};
@@ -393,7 +402,7 @@
           }
         }, function () {
           OB.error(arguments);
-        });
+        }, forceInsert);
       } else {
         if (callback) {
           callback();
