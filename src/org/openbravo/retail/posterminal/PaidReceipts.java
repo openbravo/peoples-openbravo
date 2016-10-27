@@ -267,7 +267,13 @@ public class PaidReceipts extends JSONProcessSimple {
             if (objectIn.get("account").equals(objectType.get("account"))) {
               JSONObject paidReceiptPayment = new JSONObject();
               // FIXME: Multicurrency problem, amount always in terminal currency
-              paidReceiptPayment.put("amount", objPaymentTrx);
+              if ((objectIn.getDouble("paymentAmount")) == ((double) 0)) {
+                paidReceiptPayment.put("amount", new BigDecimal((String) objectIn.get("amount")
+                    .toString()).multiply(new BigDecimal((String) objectType.get("mulrate")
+                    .toString())));
+              } else {
+                paidReceiptPayment.put("amount", objPaymentTrx);
+              }
               paidReceiptPayment.put("paymentDate", objectIn.get("paymentDate"));
               if (objectIn.has("paymentData")) {
                 paidReceiptPayment.put("paymentData",
@@ -281,7 +287,13 @@ public class PaidReceipts extends JSONProcessSimple {
               paidReceiptPayment.put("openDrawer", objectType.get("openDrawer"));
               paidReceiptPayment.put("isPrePayment", true);
               paidReceiptPayment.put("paymentId", objectIn.get("paymentId"));
-              paidReceiptPayment.put("paymentAmount", objPaymentTrx);
+              if ((objectIn.getDouble("paymentAmount")) == ((double) 0)) {
+                paidReceiptPayment.put("paymentAmount", new BigDecimal(objectIn
+                    .get("paymentAmount").toString()).multiply(new BigDecimal(objectType.get(
+                    "mulrate").toString())));
+              } else {
+                paidReceiptPayment.put("paymentAmount", objPaymentTrx);
+              }
               if (objectIn.has("reversedPaymentId")) {
                 paidReceiptPayment.put("isReversed", true);
               }

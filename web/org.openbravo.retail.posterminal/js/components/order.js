@@ -692,7 +692,7 @@ enyo.kind({
         var negativeLinesLength = _.filter(this.order.get('lines').models, function (line) {
           return line.get('qty') < 0;
         }).length;
-        if (negativeLinesLength === this.order.get('lines').models.length) {
+        if (negativeLinesLength === this.order.get('lines').models.length && negativeLinesLength > 0) {
           //isReturn
           OB.MobileApp.model.receipt.setDocumentNo(true, false);
         } else {
