@@ -92,7 +92,7 @@ OB.UTIL.RfidController.startRfidWebsocket = function startRfidWebsocket(websocke
         },
         attrs: data.dataToSave
       });
-    }, data.dataToSave);
+    }, null, data.dataToSave);
   };
 
   // Called when socket connection closed
