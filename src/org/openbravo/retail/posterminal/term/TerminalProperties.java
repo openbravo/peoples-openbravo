@@ -34,16 +34,16 @@ public class TerminalProperties extends ModelExtension {
 
     final ArrayList<HQLProperty> list = new ArrayList<HQLProperty>();
     list.add(new HQLProperty("pos.id", "id"));
-    list.add(
-        new HQLProperty("(COALESCE(pos.defaultCustomer.id, pos.organization.obretcoCBpartner.id))",
-            "businessPartner"));
+    list.add(new HQLProperty(
+        "(COALESCE(pos.defaultCustomer.id, pos.organization.obretcoCBpartner.id))",
+        "businessPartner"));
     list.add(new HQLProperty("pos.name", "_identifier"));
     list.add(new HQLProperty("pos.searchKey", "searchKey"));
     list.add(new HQLProperty(
         "(COALESCE(pos.obposCBpartnerLoc.id, pos.organization.obretcoCBpLocation.id))",
         "partnerAddress"));
-    list.add(
-        new HQLProperty("pos.organization.obposLayawayAnonymousbp", "layaway_anonymouscustomer"));
+    list.add(new HQLProperty("pos.organization.obposLayawayAnonymousbp",
+        "layaway_anonymouscustomer"));
     list.add(new HQLProperty("pos.organization.id", "organization"));
     list.add(new HQLProperty("pos.organization.name", getIdentifierAlias("organization")));
     list.add(new HQLProperty("pos.client.id", "client"));
@@ -75,8 +75,8 @@ public class TerminalProperties extends ModelExtension {
     list.add(new HQLProperty("postype", "terminalType"));
     list.add(new HQLProperty("pos.printoffline", "printoffline"));
     list.add(new HQLProperty("pos.ismaster", "ismaster"));
-    list.add(new HQLProperty("CASE WHEN pos.masterterminal.id is not null THEN true ELSE false END",
-        "isslave"));
+    list.add(new HQLProperty(
+        "CASE WHEN pos.masterterminal.id is not null THEN true ELSE false END", "isslave"));
     list.add(new HQLProperty("'" + OBContext.getOBContext().getLanguage().getLanguage() + "'",
         "language_string"));
 
@@ -107,8 +107,8 @@ public class TerminalProperties extends ModelExtension {
       final List<HQLProperty> list) {
     try {
       OBContext.setAdminMode(false);
-      final PrintTemplate value = (PrintTemplate) POSUtils
-          .getPropertyInOrgTree(OBContext.getOBContext().getCurrentOrganization(), propertyName);
+      final PrintTemplate value = (PrintTemplate) POSUtils.getPropertyInOrgTree(OBContext
+          .getOBContext().getCurrentOrganization(), propertyName);
       if (value != null) {
         list.add(new HQLProperty("'" + value.getTemplatePath() + "'", alias));
         list.add(new HQLProperty("'" + value.isPdf() + "'", alias + "IsPdf"));
