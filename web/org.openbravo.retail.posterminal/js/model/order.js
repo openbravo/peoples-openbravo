@@ -2199,6 +2199,64 @@
       var me = this,
           undef;
       var i, oldbp = this.get('bp');
+
+      var errorSaveData = function (callback) {
+          if (callback) {
+            callback();
+          }
+          };
+
+      var finishSaveData = function (callback) {
+          // set the undo action
+          if (showNotif === undef || showNotif === true) {
+            this.setUndo('SetBPartner', {
+              text: businessPartner ? OB.I18N.getLabel('OBPOS_SetBP', [businessPartner.get('_identifier')]) : OB.I18N.getLabel('OBPOS_ResetBP'),
+              bp: businessPartner,
+              undo: function () {
+                me.set('bp', oldbp);
+                me.save();
+                me.set('undo', null);
+              }
+            });
+          }
+          if (OB.MobileApp.model.hasPermission('EnableMultiPriceList', true)) {
+            if (oldbp.get('priceList') !== businessPartner.get('priceList')) {
+              me.set('priceList', businessPartner.get('priceList'));
+              var priceIncludesTax = businessPartner.get('priceIncludesTax');
+              if (OB.UTIL.isNullOrUndefined(priceIncludesTax)) {
+                priceIncludesTax = OB.MobileApp.model.get('pricelist').priceIncludesTax;
+              }
+              me.set('priceIncludesTax', priceIncludesTax);
+              me.removeAndInsertLines(function () {
+                me.calculateReceipt(function () {
+                  if (saveChange) {
+                    me.save();
+                  }
+                  if (callback) {
+                    callback();
+                  }
+                });
+              });
+            } else {
+              me.calculateReceipt(function () {
+                if (saveChange) {
+                  me.save();
+                }
+                if (callback) {
+                  callback();
+                }
+              });
+            }
+          } else {
+            if (saveChange) {
+              me.save();
+            }
+            if (callback) {
+              callback();
+            }
+          }
+          };
+
       if (OB.MobileApp.model.get('terminal').businessPartner === businessPartner.id) {
         for (i = 0; i < me.get('lines').models.length; i++) {
           if (!me.get('lines').models[i].get('product').get('oBPOSAllowAnonymousSale')) {
@@ -2245,12 +2303,14 @@
               me.save();
               // copy the modelOrder again, as the get/save are async
               OB.MobileApp.model.orderList.saveCurrent();
+              finishSaveData(callback);
             }, function () {
               OB.error(arguments);
             });
 
           }, function () {
             OB.error(arguments);
+            errorSaveData(callback);
           });
 
         } else if (businessPartner.get('locationModel')) { //Location has changed or we are assigning current bp
@@ -2259,61 +2319,18 @@
             me.save();
             // copy the modelOrder again, as saveIfNew is possibly async
             OB.MobileApp.model.orderList.saveCurrent();
+            finishSaveData(callback);
           }, function () {
             OB.error(arguments);
+            errorSaveData(callback);
           });
+        } else {
+          finishSaveData(callback);
         }
       } else {
         this.set('bp', businessPartner);
         this.save();
-      }
-      // set the undo action
-      if (showNotif === undef || showNotif === true) {
-        this.setUndo('SetBPartner', {
-          text: businessPartner ? OB.I18N.getLabel('OBPOS_SetBP', [businessPartner.get('_identifier')]) : OB.I18N.getLabel('OBPOS_ResetBP'),
-          bp: businessPartner,
-          undo: function () {
-            me.set('bp', oldbp);
-            me.save();
-            me.set('undo', null);
-          }
-        });
-      }
-      if (OB.MobileApp.model.hasPermission('EnableMultiPriceList', true)) {
-        if (oldbp.get('priceList') !== businessPartner.get('priceList')) {
-          me.set('priceList', businessPartner.get('priceList'));
-          var priceIncludesTax = businessPartner.get('priceIncludesTax');
-          if (OB.UTIL.isNullOrUndefined(priceIncludesTax)) {
-            priceIncludesTax = OB.MobileApp.model.get('pricelist').priceIncludesTax;
-          }
-          me.set('priceIncludesTax', priceIncludesTax);
-          me.removeAndInsertLines(function () {
-            me.calculateReceipt(function () {
-              if (saveChange) {
-                me.save();
-              }
-              if (callback) {
-                callback();
-              }
-            });
-          });
-        } else {
-          me.calculateReceipt(function () {
-            if (saveChange) {
-              me.save();
-            }
-            if (callback) {
-              callback();
-            }
-          });
-        }
-      } else {
-        if (saveChange) {
-          this.save();
-        }
-        if (callback) {
-          callback();
-        }
+        finishSaveData(callback);
       }
     },
 
