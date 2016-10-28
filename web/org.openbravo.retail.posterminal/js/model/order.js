@@ -4301,6 +4301,18 @@
           NoFoundCustomer = true,
           isLoadedPartiallyFromBackend = false;
 
+      // Each payment that has been reverted stores the id of the reversal payment
+      // Web POS, instead of that, need to have the information of the payment reverted on the reversal payment
+      // This loop switches the information between them
+      _.each(_.filter(model.receiptPayments, function (payment) {
+        return payment.isReversed;
+      }), function (payment) {
+        var reversalPayment = _.find(model.receiptPayments, function (currentPayment) {
+          return currentPayment.paymentId === payment.reversedPaymentId;
+        });
+        reversalPayment.reversedPaymentId = payment.paymentId;
+        delete payment['reversedPaymentId'];
+      });
 
       // Call orderLoader plugings to adjust remote model to local model first
       // ej: sales on credit: Add a new payment if total payment < total receipt

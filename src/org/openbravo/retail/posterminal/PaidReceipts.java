@@ -294,11 +294,11 @@ public class PaidReceipts extends JSONProcessSimple {
               } else {
                 paidReceiptPayment.put("paymentAmount", objPaymentTrx);
               }
-              if (objectIn.has("reversedPaymentId")) {
+              if (objectIn.getBoolean("isReversed") == true) {
                 paidReceiptPayment.put("isReversed", true);
               }
-              if (objectIn.has("reversalPayment")) {
-                paidReceiptPayment.put("reversedPaymentId", objectIn.get("reversalPayment"));
+              if (objectIn.has("reversedPaymentId")) {
+                paidReceiptPayment.put("reversedPaymentId", objectIn.get("reversedPaymentId"));
               }
               added = true;
               listpaidReceiptsPayments.put(paidReceiptPayment);

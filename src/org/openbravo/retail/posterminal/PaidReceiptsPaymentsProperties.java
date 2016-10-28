@@ -30,10 +30,9 @@ public class PaidReceiptsPaymentsProperties extends ModelExtension {
         add(new HQLProperty("finPayment.id", "paymentId"));
         add(new HQLProperty("finPayment.amount", "paymentAmount"));
         add(new HQLProperty("finPayment.obposPaymentdata", "paymentData"));
+        add(new HQLProperty("case when reversedPayment.id <> null then true else false end",
+            "isReversed"));
         add(new HQLProperty("reversedPayment.id", "reversedPaymentId"));
-        add(new HQLProperty(
-            "(select f.id from FIN_Payment as f where f.reversedPayment.id = finPayment.id)",
-            "reversalPayment"));
       }
     };
 
