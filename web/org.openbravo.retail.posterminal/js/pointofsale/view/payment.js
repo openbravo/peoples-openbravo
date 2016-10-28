@@ -1277,10 +1277,10 @@ enyo.kind({
       this.$.name.setContent('*' + (OB.MobileApp.model.getPaymentName(this.model.get('kind')) || this.model.get('name')));
       this.$.amount.setContent(this.model.printAmount());
     } else {
-      if (!this.model.get('isPrePayment') || (this.model.get('isPrePayment') && this.model.get('paymentAmount'))) {
-        this.$.name.setContent(OB.MobileApp.model.getPaymentName(this.model.get('kind')) || this.model.get('name'));
-      } else {
+      if (this.model.get('isPrePayment') && !this.model.get('paymentAmount')) {
         this.$.name.setContent(OB.I18N.getLabel('OBPOS_Cancelled'));
+      } else {
+        this.$.name.setContent(OB.MobileApp.model.getPaymentName(this.model.get('kind')) || this.model.get('name'));
       }
       this.$.amount.setContent(this.model.printAmountWithSignum());
     }
