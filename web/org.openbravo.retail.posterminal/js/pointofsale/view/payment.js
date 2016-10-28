@@ -1277,7 +1277,11 @@ enyo.kind({
       this.$.name.setContent('*' + (OB.MobileApp.model.getPaymentName(this.model.get('kind')) || this.model.get('name')));
       this.$.amount.setContent(this.model.printAmount());
     } else {
-      this.$.name.setContent(OB.MobileApp.model.getPaymentName(this.model.get('kind')) || this.model.get('name'));
+      if (!this.model.get('isPrePayment') || (this.model.get('isPrePayment') && this.model.get('paymentAmount'))) {
+        this.$.name.setContent(OB.MobileApp.model.getPaymentName(this.model.get('kind')) || this.model.get('name'));
+      } else {
+        this.$.name.setContent(OB.I18N.getLabel('OBPOS_Cancelled'));
+      }
       this.$.amount.setContent(this.model.printAmountWithSignum());
     }
     if (this.model.get('rate') && this.model.get('rate') !== '1') {
@@ -1302,7 +1306,7 @@ enyo.kind({
     if (this.$.foreignAmount.content || this.$.info.content) {
       this.$.removePayment.style = this.$.removePayment.style + ' margin-top: 10px;';
     }
-    if ((this.model.get('isPrePayment') && (this.model.get('reversedPaymentId'))) || this.model.get('isReversed') || (this.owner.owner.owner.owner.receipt.get('replacedorder') && this.model.get('isPrePayment'))) {
+    if ((this.model.get('isPrePayment') && (this.model.get('reversedPaymentId'))) || this.model.get('isReversed') || (this.model.get('isPrePayment') && !this.model.get('paymentAmount'))) {
       this.$.removePayment.hide();
       this.$.reversePayment.hide();
     } else if (this.model.get('isPrePayment') && OB.MobileApp.model.hasPermission("OBPOS_EnableReversePayments")) {
