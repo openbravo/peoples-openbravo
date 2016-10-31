@@ -45,14 +45,6 @@
         <default><![CDATA[  O]]></default>
         <onCreateDefault/>
       </column>
-      <column name="CLIENTLIST" primaryKey="false" required="true" type="NVARCHAR" size="2000" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
-      <column name="ORGLIST" primaryKey="false" required="true" type="NVARCHAR" size="2000" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
       <column name="C_CURRENCY_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>

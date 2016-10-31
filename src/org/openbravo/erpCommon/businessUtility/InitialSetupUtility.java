@@ -592,8 +592,6 @@ public class InitialSetupUtility {
     newRole.setOrganization(organization);
     newRole.setName(name);
     newRole.setDescription(name);
-    newRole.setClientList(client.getId());
-    newRole.setOrganizationList(organization.getId());
     newRole.setUserLevel(strUserLevel);
     newRole.setClientAdmin(isClientAdmin);
     OBDal.getInstance().save(newRole);

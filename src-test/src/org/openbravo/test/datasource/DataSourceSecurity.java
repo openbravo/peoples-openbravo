@@ -408,8 +408,6 @@ public class DataSourceSecurity extends BaseDataSourceTestDal {
     noAccessRole.setName("Test No Access");
     noAccessRole.setManual(true);
     noAccessRole.setUserLevel(" CO");
-    noAccessRole.setClientList(OBContext.getOBContext().getCurrentClient().getId());
-    noAccessRole.setOrganizationList(ASTERISK_ORG_ID);
     OBDal.getInstance().save(noAccessRole);
 
     RoleOrganization noAcessRoleOrg = OBProvider.getInstance().get(RoleOrganization.class);

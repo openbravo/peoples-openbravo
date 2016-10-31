@@ -50,10 +50,10 @@ public class AverageAlgorithm extends CostingAlgorithm {
       BigDecimal trxCostWithSign = (transaction.getMovementQuantity().signum() == -1) ? trxCost
           .negate() : trxCost;
       BigDecimal newCost = null;
-      BigDecimal currentStock = CostingUtils.getCurrentStock(transaction.getProduct(), costOrg,
-          transaction.getTransactionProcessDate(), costDimensions);
-      BigDecimal currentValuedStock = CostingUtils.getCurrentValuedStock(transaction.getProduct(),
-          costOrg, transaction.getTransactionProcessDate(), costDimensions, costCurrency);
+      BigDecimal currentStock = CostingUtils.getCurrentStock(transaction, costOrg, costDimensions,
+          costingRule.isBackdatedTransactionsFixed(), costCurrency);
+      BigDecimal currentValuedStock = CostingUtils.getCurrentValuedStock(transaction, costOrg,
+          costDimensions, costingRule.isBackdatedTransactionsFixed(), costCurrency);
       if (currentCosting == null) {
         if (transaction.getMovementQuantity().signum() == 0) {
           newCost = BigDecimal.ZERO;
@@ -255,6 +255,46 @@ public class AverageAlgorithm extends CostingAlgorithm {
           + " for product: " + product.getName() + " (" + product.getId() + ")");
     }
     return costList.get(0);
+  }
+
+  protected static Costing getLastCumulatedCosting(Date date, Product product,
+      HashMap<CostDimension, BaseOBObject> costDimensions, Organization costOrg) {
+    StringBuffer where = new StringBuffer();
+    where.append(Costing.PROPERTY_PRODUCT + ".id = :product");
+    where.append("  and " + Costing.PROPERTY_STARTINGDATE + " <= :startingDate");
+    where.append("  and " + Costing.PROPERTY_COSTTYPE + " = 'AVA'");
+    where.append("  and " + Costing.PROPERTY_COST + " is not null");
+    where.append("  and " + Costing.PROPERTY_TOTALMOVEMENTQUANTITY + " is not null");
+    where.append("  and " + Costing.PROPERTY_TOTALSTOCKVALUATION + " is not null");
+    if (costDimensions.get(CostDimension.Warehouse) != null) {
+      where.append("  and " + Costing.PROPERTY_WAREHOUSE + ".id = :warehouse");
+    } else {
+      where.append("  and " + Costing.PROPERTY_WAREHOUSE + " is null");
+    }
+    // FIXME: remove when manufacturing costs are fully migrated
+    if (product.isProduction()) {
+      where.append("  and " + Costing.PROPERTY_CLIENT + ".id = :client");
+    } else {
+      where.append("  and " + Costing.PROPERTY_ORGANIZATION + ".id = :org");
+    }
+    where.append("  order by " + Costing.PROPERTY_STARTINGDATE + " desc,");
+    where.append(" " + Costing.PROPERTY_ENDINGDATE + " desc");
+    OBQuery<Costing> costQry = OBDal.getInstance().createQuery(Costing.class, where.toString());
+    costQry.setFilterOnReadableOrganization(false);
+    costQry.setNamedParameter("product", product.getId());
+    costQry.setNamedParameter("startingDate", date);
+    if (costDimensions.get(CostDimension.Warehouse) != null) {
+      costQry.setNamedParameter("warehouse", costDimensions.get(CostDimension.Warehouse).getId());
+    }
+    // FIXME: remove when manufacturing costs are fully migrated
+    if (product.isProduction()) {
+      costQry.setNamedParameter("client", costOrg.getClient().getId());
+    } else {
+      costQry.setNamedParameter("org", costOrg.getId());
+    }
+
+    costQry.setMaxResult(1);
+    return costQry.uniqueResult();
   }
 
   private Date getLastDate() {
