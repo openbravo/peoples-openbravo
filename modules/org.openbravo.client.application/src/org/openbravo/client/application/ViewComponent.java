@@ -48,10 +48,8 @@ import org.openbravo.client.kernel.OBUserException;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.obps.ActivationKey.FeatureRestriction;
-import org.openbravo.model.ad.domain.Preference;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.Window;
@@ -323,18 +321,16 @@ public class ViewComponent extends BaseComponent {
     Set<String> preferences = new HashSet<String>();
 
     for (String displayLogic : getFieldsWithDisplayLogicAtServerLevel(window.getId())) {
-      Pattern p = Pattern.compile("@(.*?)@");
+      Pattern p = Pattern.compile(DynamicExpressionParser.replaceDisplayLogicServerPattern);
       Matcher m = p.matcher(displayLogic);
       while (m.find()) {
         preferences.add(m.group(1));
       }
     }
 
-    for (String preference : preferences) {
-      Date upated = getLastUpdated(preference);
-      if (lastModification.compareTo(upated) < 0) {
-        lastModification = upated;
-      }
+    Date upated = getLastUpdated(preferences);
+    if (lastModification.compareTo(upated) < 0) {
+      lastModification = upated;
     }
 
     return lastModification.toString();
@@ -357,14 +353,28 @@ public class ViewComponent extends BaseComponent {
     return (List<String>) query.list();
   }
 
-  private Date getLastUpdated(String preference) {
-    List<Preference> preferencesWihtPropertyList = Preferences.getPreferencesOrdered(preference,
-        true, "0", "0", null, null, null, false, true, true, "updated", false);
-    if (preferencesWihtPropertyList.isEmpty()) {
+  private Date getLastUpdated(Set<String> preferenceSet) {
+
+    StringBuilder where = new StringBuilder();
+    where.append(" select max(p.updated)");
+    where.append(" from ADPreference p");
+    where.append(" where p.propertyList = true");
+    where.append(" and p.property in :properties");
+    where.append(" and p.client.id = '0'");
+    where.append(" and p.organization = '0'");
+    where.append(" and coalesce(p.visibleAtClient, '0') = '0'");
+    where.append(" and coalesce(p.visibleAtOrganization, '0') = '0'");
+
+    Session session = OBDal.getInstance().getSession();
+    Query query = session.createQuery(where.toString());
+    query.setParameterList("properties", preferenceSet);
+    Date lastUpdated = (Date) query.uniqueResult();
+    if (lastUpdated == null) {
       Calendar cal = Calendar.getInstance();
       cal.set(9999, 9, 9);
       return new Date(cal.getTimeInMillis());
     }
-    return preferencesWihtPropertyList.get(0).getUpdated();
+    return lastUpdated;
+
   }
 }
