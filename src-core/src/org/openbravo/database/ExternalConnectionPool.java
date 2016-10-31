@@ -51,6 +51,10 @@ public abstract class ExternalConnectionPool {
     return instance;
   }
 
+  public final static ExternalConnectionPool getInstance() {
+    return instance;
+  }
+
   /**
    * If the external connection pool should be closed this method should be overwritten
    */
@@ -71,5 +75,9 @@ public abstract class ExternalConnectionPool {
    * @return A Connection from the external connection pool
    */
   public abstract Connection getConnection();
+
+  public Connection getConnection(String poolName) {
+    return getConnection();
+  }
 
 }
