@@ -38,10 +38,6 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JasperPrint;
-import net.sf.jasperreports.export.SimplePdfExporterConfiguration;
-
 import org.apache.commons.fileupload.FileItem;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -54,6 +50,7 @@ import org.openbravo.client.application.report.ReportingUtils.ExportType;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.database.ConnectionProvider;
 import org.openbravo.email.EmailUtils;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.BasicUtility;
@@ -78,8 +75,13 @@ import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.enterprise.EmailServerConfiguration;
 import org.openbravo.model.common.enterprise.EmailTemplate;
 import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.utils.FormatUtilities;
 import org.openbravo.xmlEngine.XmlDocument;
+
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.export.SimplePdfExporterConfiguration;
 
 @SuppressWarnings("serial")
 public class PrintController extends HttpSecureAppServlet {
@@ -585,7 +587,8 @@ public class PrintController extends HttpSecureAppServlet {
       localStrDocumentId = localStrDocumentId.replaceAll("\\(|\\)|'", "");
     }
     try {
-      report = new Report(this, documentType, localStrDocumentId, vars.getLanguage(), templateId,
+      ConnectionProvider cp = new DalConnectionProvider("RO");
+      report = new Report(cp, documentType, localStrDocumentId, vars.getLanguage(), templateId,
           multiReports, outputType);
     } catch (final ReportingException e) {
       log4j.error(e);
