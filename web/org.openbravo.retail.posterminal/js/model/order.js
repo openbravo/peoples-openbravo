@@ -378,10 +378,19 @@
 
     save: function (callback) {
       var undoCopy = this.get('undo'),
-          me = this;
+          me = this,
+          forceInsert = false;
 
       var now = new Date();
       this.set('timezoneOffset', now.getTimezoneOffset());
+
+      if (!this.get('id') || !this.id) {
+        var uuid = OB.UTIL.get_UUID();
+        this.set('id', uuid);
+        this.id = uuid;
+        forceInsert = true;
+      }
+
       this.set('json', JSON.stringify(this.serializeToJSON()));
       if (callback === undefined || !callback instanceof Function) {
         callback = function () {};
@@ -393,7 +402,7 @@
           }
         }, function () {
           OB.error(arguments);
-        });
+        }, forceInsert);
       } else {
         if (callback) {
           callback();
@@ -2190,6 +2199,64 @@
       var me = this,
           undef;
       var i, oldbp = this.get('bp');
+
+      var errorSaveData = function (callback) {
+          if (callback) {
+            callback();
+          }
+          };
+
+      var finishSaveData = function (callback) {
+          // set the undo action
+          if (showNotif === undef || showNotif === true) {
+            this.setUndo('SetBPartner', {
+              text: businessPartner ? OB.I18N.getLabel('OBPOS_SetBP', [businessPartner.get('_identifier')]) : OB.I18N.getLabel('OBPOS_ResetBP'),
+              bp: businessPartner,
+              undo: function () {
+                me.set('bp', oldbp);
+                me.save();
+                me.set('undo', null);
+              }
+            });
+          }
+          if (OB.MobileApp.model.hasPermission('EnableMultiPriceList', true)) {
+            if (oldbp.get('priceList') !== businessPartner.get('priceList')) {
+              me.set('priceList', businessPartner.get('priceList'));
+              var priceIncludesTax = businessPartner.get('priceIncludesTax');
+              if (OB.UTIL.isNullOrUndefined(priceIncludesTax)) {
+                priceIncludesTax = OB.MobileApp.model.get('pricelist').priceIncludesTax;
+              }
+              me.set('priceIncludesTax', priceIncludesTax);
+              me.removeAndInsertLines(function () {
+                me.calculateReceipt(function () {
+                  if (saveChange) {
+                    me.save();
+                  }
+                  if (callback) {
+                    callback();
+                  }
+                });
+              });
+            } else {
+              me.calculateReceipt(function () {
+                if (saveChange) {
+                  me.save();
+                }
+                if (callback) {
+                  callback();
+                }
+              });
+            }
+          } else {
+            if (saveChange) {
+              me.save();
+            }
+            if (callback) {
+              callback();
+            }
+          }
+          };
+
       if (OB.MobileApp.model.get('terminal').businessPartner === businessPartner.id) {
         for (i = 0; i < me.get('lines').models.length; i++) {
           if (!me.get('lines').models[i].get('product').get('oBPOSAllowAnonymousSale')) {
@@ -2236,12 +2303,14 @@
               me.save();
               // copy the modelOrder again, as the get/save are async
               OB.MobileApp.model.orderList.saveCurrent();
+              finishSaveData(callback);
             }, function () {
               OB.error(arguments);
             });
 
           }, function () {
             OB.error(arguments);
+            errorSaveData(callback);
           });
 
         } else {
@@ -2251,6 +2320,7 @@
               me.save();
               // copy the modelOrder again, as saveIfNew is possibly async
               OB.MobileApp.model.orderList.saveCurrent();
+            finishSaveData(callback);
             }, function () {
               OB.UTIL.showError('Error removing');
             });
@@ -2267,9 +2337,6 @@
             });
           }
         }
-      } else {
-        this.set('bp', businessPartner);
-        this.save();
         OB.Dal.remove(new OB.Model.BusinessPartner(businessPartner), function () {
           OB.Dal.save(businessPartner, function () {}, function () {
             OB.error(arguments);
@@ -2277,54 +2344,14 @@
         }, function () {
           OB.UTIL.showError('Error removing');
         });
-      }
-      // set the undo action
-      if (showNotif === undef || showNotif === true) {
-        this.setUndo('SetBPartner', {
-          text: businessPartner ? OB.I18N.getLabel('OBPOS_SetBP', [businessPartner.get('_identifier')]) : OB.I18N.getLabel('OBPOS_ResetBP'),
-          bp: businessPartner,
-          undo: function () {
-            me.set('bp', oldbp);
-            me.save();
-            me.set('undo', null);
-          }
-        });
-      }
-      if (OB.MobileApp.model.hasPermission('EnableMultiPriceList', true)) {
-        if (oldbp.get('priceList') !== businessPartner.get('priceList')) {
-          me.set('priceList', businessPartner.get('priceList'));
-          var priceIncludesTax = businessPartner.get('priceIncludesTax');
-          if (OB.UTIL.isNullOrUndefined(priceIncludesTax)) {
-            priceIncludesTax = OB.MobileApp.model.get('pricelist').priceIncludesTax;
-          }
-          me.set('priceIncludesTax', priceIncludesTax);
-          me.removeAndInsertLines(function () {
-            me.calculateReceipt(function () {
-              if (saveChange) {
-                me.save();
-              }
-              if (callback) {
-                callback();
-              }
-            });
           });
         } else {
-          me.calculateReceipt(function () {
-            if (saveChange) {
-              me.save();
-            }
-            if (callback) {
-              callback();
-            }
-          });
+          finishSaveData(callback);
         }
       } else {
-        if (saveChange) {
-          this.save();
-        }
-        if (callback) {
-          callback();
-        }
+        this.set('bp', businessPartner);
+        this.save();
+        finishSaveData(callback);
       }
     },
 

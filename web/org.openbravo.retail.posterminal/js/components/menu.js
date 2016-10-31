@@ -329,7 +329,7 @@ enyo.kind({
   },
   i18nLabel: 'OBPOS_LblLayawayReceipt',
   tap: function () {
-    var negativeLines;
+    var negativeLines, me = this;
     if (this.disabled) {
       return true;
     }
@@ -345,11 +345,18 @@ enyo.kind({
       OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_layawaysOrdersWithReturnsNotAllowed'));
       return true;
     }
-    this.doShowDivText({
-      permission: this.permission,
-      orderType: 2
+    OB.UTIL.HookManager.executeHooks('OBPOS_LayawayReceipt', {
+      context: me
+    }, function (args) {
+      if (args && args.cancelOperation && args.cancelOperation === true) {
+        return;
+      }
+      me.doShowDivText({
+        permission: me.permission,
+        orderType: 2
+      });
+      me.doRearrangeEditButtonBar();
     });
-    this.doRearrangeEditButtonBar();
   },
   updateVisibility: function (isVisible) {
     if (!OB.MobileApp.model.hasPermission(this.permission)) {

@@ -811,7 +811,7 @@ enyo.kind({
     OB.UTIL.showError("OBDAL error: " + error);
   },
 
-  findProductByBarcode: function (code, callback, attrs) {
+  findProductByBarcode: function (code, callback, keyboard, attrs) {
     var me = this;
     OB.debug('BarcodeActionHandler - id: ' + code);
     if (code.length > 0) {
@@ -865,7 +865,7 @@ enyo.kind({
       }
       if (args.dataProducts && args.dataProducts.length > 0) {
         OB.debug('productfound');
-        args.callback(args.dataProducts.at(0));
+        args.callback(args.dataProducts.at(0), args.attrs);
       } else {
         // If rfid has been used remove code from buffer
         if (args.attrs && args.attrs.obposEpccode) {
@@ -881,10 +881,11 @@ enyo.kind({
     });
   },
 
-  addProductToReceipt: function (keyboard, product) {
+  addProductToReceipt: function (keyboard, product, attrs) {
     keyboard.doAddProduct({
       product: product,
-      ignoreStockTab: true
+      ignoreStockTab: true,
+      attrs: attrs
     });
     keyboard.receipt.trigger('scan');
   }
