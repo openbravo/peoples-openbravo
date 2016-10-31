@@ -21,6 +21,9 @@ package org.openbravo.client.application.test;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.openbravo.base.weld.test.WeldBaseTest;
@@ -110,10 +113,26 @@ public class DisplayLogicAtServerLevelTest extends WeldBaseTest {
 
     String displayLogicEvaluatedInServerExpression = "@uomManagement@ = 'Y' & @enableNegativeStockCorrections@ = 'Y'";
 
-    boolean evaluatedDisplayLogic = field.evaluateDisplayLogicAtServerLevel(
-        displayLogicEvaluatedInServerExpression, "0");
-    boolean expectedEvaluatedDisplayLogic = true;
+    boolean evaluatedDisplayLogic = false;
 
+    Class<?> clazz = field.getClass();
+    Method evaluateDisplayLogicAtServerLevel;
+
+    try {
+      evaluateDisplayLogicAtServerLevel = clazz.getDeclaredMethod(
+          "evaluateDisplayLogicAtServerLevel", String.class, String.class);
+      boolean originallyAccessible = evaluateDisplayLogicAtServerLevel.isAccessible();
+      evaluateDisplayLogicAtServerLevel.setAccessible(true);
+      evaluatedDisplayLogic = (boolean) evaluateDisplayLogicAtServerLevel.invoke(field,
+          displayLogicEvaluatedInServerExpression, "0");
+      evaluateDisplayLogicAtServerLevel.setAccessible(originallyAccessible);
+    } catch (NoSuchMethodException | SecurityException | IllegalAccessException
+        | IllegalArgumentException | InvocationTargetException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+
+    boolean expectedEvaluatedDisplayLogic = true;
     assertThat(evaluatedDisplayLogic, equalTo(expectedEvaluatedDisplayLogic));
 
   }
@@ -132,8 +151,25 @@ public class DisplayLogicAtServerLevelTest extends WeldBaseTest {
 
     String displayLogicEvaluatedInServerExpression = "@uomManagement@ = 'Y' & @enableNegativeStockCorrections@ = 'Y'";
 
-    boolean evaluatedDisplayLogic = field.evaluateDisplayLogicAtServerLevel(
-        displayLogicEvaluatedInServerExpression, "0");
+    boolean evaluatedDisplayLogic = true;
+
+    Class<?> clazz = field.getClass();
+    Method evaluateDisplayLogicAtServerLevel;
+
+    try {
+      evaluateDisplayLogicAtServerLevel = clazz.getDeclaredMethod(
+          "evaluateDisplayLogicAtServerLevel", String.class, String.class);
+      boolean originallyAccessible = evaluateDisplayLogicAtServerLevel.isAccessible();
+      evaluateDisplayLogicAtServerLevel.setAccessible(true);
+      evaluatedDisplayLogic = (boolean) evaluateDisplayLogicAtServerLevel.invoke(field,
+          displayLogicEvaluatedInServerExpression, "0");
+      evaluateDisplayLogicAtServerLevel.setAccessible(originallyAccessible);
+    } catch (NoSuchMethodException | SecurityException | IllegalAccessException
+        | IllegalArgumentException | InvocationTargetException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+
     boolean expectedEvaluatedDisplayLogic = false;
 
     assertThat(evaluatedDisplayLogic, equalTo(expectedEvaluatedDisplayLogic));

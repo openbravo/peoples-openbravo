@@ -1564,7 +1564,7 @@ public class OBViewFieldHandler {
      *          Id of the field with the displaylogic to be evaluated
      * @return True if the field must be shown, false otherwise
      */
-    public boolean evaluateDisplayLogicAtServerLevel(String displayLogicEvaluatedInTheServer,
+    private boolean evaluateDisplayLogicAtServerLevel(String displayLogicEvaluatedInTheServer,
         String fieldId) {
       if (displayLogicEvaluatedInTheServer == null) {
         return true;
