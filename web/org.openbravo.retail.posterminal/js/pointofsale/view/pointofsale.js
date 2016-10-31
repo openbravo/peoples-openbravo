@@ -590,7 +590,7 @@ enyo.kind({
     return true;
   },
   changeBusinessPartner: function (inSender, inEvent) {
-    if (inEvent.target === 'order') {
+    if (inEvent.target === 'order' || inEvent.target === undefined) {
       if (this.model.get('order').get('isEditable') === false) {
         this.doShowPopup({
           popup: 'modalNotEditableOrder'
