@@ -22,9 +22,7 @@ package org.openbravo.dal.core;
 import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -123,7 +121,6 @@ public class SessionHandler implements OBNotSingleton {
   private Map<String, Session> session = new HashMap<>();
   private Map<String, Transaction> tx = new HashMap<>();
   private Map<String, Connection> connection = new HashMap<>();
-  private List<Connection> associatedConnections = new ArrayList<>();
 
   // Sets the session handler at rollback so that the controller can rollback
   // at the end
@@ -249,17 +246,6 @@ public class SessionHandler implements OBNotSingleton {
   }
 
   protected void closeSession(String pool) {
-    for (Connection conn : associatedConnections) {
-      try {
-        if (!conn.isClosed()) {
-          conn.setAutoCommit(false);
-          conn.close();
-        }
-      } catch (SQLException e) {
-        e.printStackTrace();
-      }
-    }
-
     if (session.get(pool) != null && session.get(pool).isOpen()) {
       session.get(pool).close();
     }
@@ -536,9 +522,5 @@ public class SessionHandler implements OBNotSingleton {
    */
   public boolean doSessionInViewPatter() {
     return true;
-  }
-
-  public void associateConnection(Connection connection2) {
-    associatedConnections.add(connection2);
   }
 }

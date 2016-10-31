@@ -27,12 +27,10 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Properties;
 
-import org.apache.commons.lang.StringUtils;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
-import org.openbravo.database.ExternalConnectionPool;
 import org.openbravo.database.SessionInfo;
 import org.openbravo.exception.NoConnectionAvailableException;
 
@@ -66,11 +64,11 @@ public class DalConnectionProvider implements ConnectionProvider {
   }
 
   public DalConnectionProvider() {
-
+    pool = "DEFAULT";
   }
 
   public DalConnectionProvider(String poolName) {
-    this.pool = poolName;
+    pool = poolName;
     flush = false;
   }
 
@@ -85,17 +83,12 @@ public class DalConnectionProvider implements ConnectionProvider {
 
   public Connection getConnection() throws NoConnectionAvailableException {
     if (connection == null) {
-      if (StringUtils.isNotBlank(pool)) {
-        connection = ExternalConnectionPool.getInstance().getConnection(pool);
-        SessionHandler.getInstance().associateConnection(connection);
-        return connection;
-      }
-      connection = OBDal.getInstance().getConnection(flush);
+      connection = OBDal.getInstance(pool).getConnection(flush);
     }
 
     // always flush all remaining actions
     if (flush) {
-      OBDal.getInstance().flush();
+      OBDal.getInstance(pool).flush();
     }
     return connection;
   }
@@ -121,7 +114,7 @@ public class DalConnectionProvider implements ConnectionProvider {
   }
 
   public Connection getTransactionConnection() throws NoConnectionAvailableException, SQLException {
-    Connection conn = SessionHandler.getInstance().getNewConnection();
+    Connection conn = SessionHandler.getInstance().getNewConnection(pool);
 
     if (conn == null) {
       throw new NoConnectionAvailableException("Couldn't get an available connection");
