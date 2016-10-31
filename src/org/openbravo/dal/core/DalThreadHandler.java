@@ -50,7 +50,7 @@ public abstract class DalThreadHandler extends ThreadHandler {
         } else if (SessionHandler.getInstance().getSession().getTransaction().isActive()) {
           SessionHandler.getInstance().commitAndClose();
         } else {
-          SessionHandler.getInstance().closeSession();
+          SessionHandler.getInstance().closeSession("DEFAULT");
         }
       }
     } finally {
