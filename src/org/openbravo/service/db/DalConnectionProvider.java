@@ -27,10 +27,12 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Properties;
 
+import org.apache.commons.lang.StringUtils;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.database.ExternalConnectionPool;
 import org.openbravo.database.SessionInfo;
 import org.openbravo.exception.NoConnectionAvailableException;
 
@@ -57,6 +59,7 @@ public class DalConnectionProvider implements ConnectionProvider {
   // This parameter can be used to define whether the OBDal needs to be flushed when the connection
   // is retrieved or not
   private boolean flush = true;
+  private String pool;
 
   public void destroy() throws Exception {
     // never close
@@ -64,6 +67,11 @@ public class DalConnectionProvider implements ConnectionProvider {
 
   public DalConnectionProvider() {
 
+  }
+
+  public DalConnectionProvider(String poolName) {
+    this.pool = poolName;
+    flush = false;
   }
 
   /**
@@ -77,6 +85,11 @@ public class DalConnectionProvider implements ConnectionProvider {
 
   public Connection getConnection() throws NoConnectionAvailableException {
     if (connection == null) {
+      if (StringUtils.isNotBlank(pool)) {
+        connection = ExternalConnectionPool.getInstance().getConnection(pool);
+        SessionHandler.getInstance().associateConnection(connection);
+        return connection;
+      }
       connection = OBDal.getInstance().getConnection(flush);
     }
 
