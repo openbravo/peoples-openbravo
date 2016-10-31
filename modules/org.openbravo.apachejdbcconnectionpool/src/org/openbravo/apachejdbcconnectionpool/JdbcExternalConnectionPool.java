@@ -19,7 +19,9 @@
 package org.openbravo.apachejdbcconnectionpool;
 
 import java.sql.Connection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.naming.Context;
@@ -43,7 +45,7 @@ public class JdbcExternalConnectionPool extends ExternalConnectionPool {
 
   final static private Logger log = LoggerFactory.getLogger(JdbcExternalConnectionPool.class);
 
-  private DataSource dataSource = null;
+  private Map<String, DataSource> availableDataSources = null;
 
   /**
    * This method loads all the interceptors of apache jdbc connection pool injected with weld.
@@ -61,7 +63,7 @@ public class JdbcExternalConnectionPool extends ExternalConnectionPool {
    * Gets the data source of apache jdbc connection pool.
    */
   public DataSource getDataSource() {
-    return dataSource;
+    return availableDataSources.get("DEFAULT");
   }
 
   /**
@@ -70,12 +72,23 @@ public class JdbcExternalConnectionPool extends ExternalConnectionPool {
    */
   @Override
   public Connection getConnection() {
-    if (dataSource == null) {
+    if (availableDataSources == null) {
       initPool();
     }
+    return getConnectionFromDS(getDataSource());
+  }
+
+  @Override
+  public Connection getConnection(String poolName) {
+    DataSource ds = availableDataSources.get(poolName);
+    return getConnectionFromDS(ds);
+  }
+
+  private Connection getConnectionFromDS(DataSource datasource) {
     Connection connection = null;
     try {
-      connection = dataSource.getConnection();
+      connection = datasource.getConnection();
+
       // All connections are setting autoCommit to true. DAL is taking into account his logical and
       // DAL is setting autoCommint to false to maintain transactional way of working.
       connection.setAutoCommit(true);
@@ -87,8 +100,17 @@ public class JdbcExternalConnectionPool extends ExternalConnectionPool {
   }
 
   private void initPool() {
-    dataSource = new DataSource();
-    dataSource.setPoolProperties(getPoolProperties());
+    availableDataSources = new HashMap<>(1);
+    DataSource defaultDS = new DataSource();
+    defaultDS.setPoolProperties(getPoolProperties());
+    availableDataSources.put("DEFAULT", defaultDS);
+
+    // TODO: read from properties
+    DataSource ro = new DataSource();
+    PoolProperties p = getPoolProperties();
+    p.setUrl(p.getUrl() + "2");
+    ro.setPoolProperties(p);
+    availableDataSources.put("RO", ro);
   }
 
   private PoolProperties getPoolProperties() {
