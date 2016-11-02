@@ -14,6 +14,7 @@ package org.openbravo.buildvalidation;
 import java.io.File;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -81,13 +82,13 @@ public class BuildValidationHandler {
     sortPrerequisites(classes);
 
     for (String s : classes) {
-      ArrayList<String> errors = new ArrayList<String>();
+      List<String> errors = new ArrayList<String>();
       try {
         Class<?> myClass = Class.forName(s);
         if (BuildValidation.class.isAssignableFrom(myClass)) {
           BuildValidation instance = (BuildValidation) myClass.newInstance();
           instance.preExecute(modulesVersionMap);
-          errors = (ArrayList<String>) instance.getErrors();
+          errors = instance.getErrors();
         }
       } catch (Exception e) {
         log4j.info("Error executing build-validation: " + s, e);
@@ -171,18 +172,24 @@ public class BuildValidationHandler {
   private static Map<String, OpenbravoVersion> getModulesVersionMap() {
     Map<String, OpenbravoVersion> modulesVersion = new HashMap<String, OpenbravoVersion>();
     String strSql = "SELECT ad_module_id AS moduleid, version AS version FROM ad_module";
+    ResultSet rs = null;
     try {
       ConnectionProvider cp = getConnectionProvider();
       PreparedStatement ps = cp.getPreparedStatement(strSql);
-      ResultSet rs = ps.executeQuery();
+      rs = ps.executeQuery();
       while (rs.next()) {
         String moduleId = rs.getString("moduleid");
         String modVersion = rs.getString("version");
         modulesVersion.put(moduleId, new OpenbravoVersion(modVersion));
       }
-      rs.close();
     } catch (Exception e) {
       log4j.error("Not possible to recover the current version of modules", e);
+    } finally {
+      try {
+        rs.close();
+      } catch (SQLException e) {
+        // won't happen
+      }
     }
     return modulesVersion;
   }

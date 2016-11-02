@@ -14,10 +14,9 @@ package org.openbravo.base;
 import org.openbravo.modulescript.OpenbravoVersion;
 
 /**
- * This class is used by BuildValidation and ModuleScript objects to store the limits that define if
- * they should be executed or not. This class holds a String with a module version id, together with
- * the first and last module versions that establish under which versions a BuildValidation or
- * ModuleScript must be executed.
+ * This class is used by the subclasses to store the limits that define if they should be executed
+ * or not. This class holds a String with a module version id, together with the first and last
+ * module versions that establish under which versions they must be executed.
  */
 public class ExecutionLimits {
   private String moduleId;
@@ -26,19 +25,19 @@ public class ExecutionLimits {
   private boolean correct;
 
   /**
-   * Basic ExecutionLimits constructor. Used to define a dependency between a BuildValidation or
-   * ModuleScript and a module. When upgrading the module whose id is moduleId, the BuildValidation
-   * or ModuleScript will be executed only if its version before upgrading is higher than
-   * firstVersion and lower than lastVersion. Otherwise it will not be executed.
+   * Basic ExecutionLimits constructor. Used to define a dependency between the subclasses of this
+   * class and a module. When upgrading the module whose id is moduleId, they will be executed only
+   * if its version before upgrading is higher than firstVersion and lower than lastVersion.
+   * Otherwise it will not be executed.
    * 
    * @param moduleId
    *          A String with the module id
    * @param firstVersion
    *          An OpenbravoVersion which defines the first version of the module with id = moduleId
-   *          since the BuildValidation or ModuleScript can be executed
+   *          since the subclasses of this class can be executed
    * @param lastVersion
    *          An OpenbravoVersion with the last version of the module with id = moduleId which
-   *          allows the BuildValidation or ModuleScript execution
+   *          allows the subclasses of this class execution
    */
   public ExecutionLimits(String moduleId, OpenbravoVersion firstVersion,
       OpenbravoVersion lastVersion) {
@@ -53,7 +52,7 @@ public class ExecutionLimits {
   }
 
   /**
-   * Returns the BuildValidation or ModuleScript dependent module id
+   * Returns the dependent module id
    * 
    * @return a String with the module id
    */
@@ -62,7 +61,7 @@ public class ExecutionLimits {
   }
 
   /**
-   * Returns the first version of the dependent module for which the BuildValidation or ModuleScript
+   * Returns the first version of the dependent module for which the the subclasses of this class
    * should be executed.
    * 
    * @return a OpenbravoVersion with the first execution version of the dependent module
@@ -72,7 +71,7 @@ public class ExecutionLimits {
   }
 
   /**
-   * Returns the last version of the dependent module for which the BuildValidation or ModuleScript
+   * Returns the last version of the dependent module for which the the subclasses of this class
    * should be executed.
    * 
    * @return a OpenbravoVersion with the last execution version of the dependent module

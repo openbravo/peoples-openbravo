@@ -20,8 +20,7 @@ import org.openbravo.database.ConnectionProvider;
 import org.openbravo.modulescript.OpenbravoVersion;
 
 /**
- * ExecutionLimitBaseProcess implements shared methods between BuildValidation and ModuleScript
- * classes.
+ * ExecutionLimitBaseProcess implements shared methods between the subclasses of this class.
  */
 public abstract class ExecutionLimitBaseProcess {
 
@@ -32,14 +31,14 @@ public abstract class ExecutionLimitBaseProcess {
   private static final String PATH_CONFIG = "config/Openbravo.properties";
 
   /**
-   * This method must be overridden by the BuildValidation and ModuleScript subclasses, to specify
-   * some actions before calling the execute() method.
+   * Override this method to implement the actions to be executed by the process.
    */
   protected abstract void doExecute();
 
   /**
-   * This method checks whether the BuildValidation or ModuleScript can be executed before invoke
-   * the doExecute() method. The doExecute() method is invoked if possible.
+   * This method checks whether the doExecute() method should be executed or not according to the
+   * execution limits and the executeOnInstall() method when it applies. If eventually the
+   * doExecute() method should be executed, it is invoked in this very same method.
    * 
    * @param modulesVersionMap
    *          A data structure that contains module versions mapped by module id
@@ -106,9 +105,8 @@ public abstract class ExecutionLimitBaseProcess {
   protected abstract String getTypeName();
 
   /**
-   * This method can be overridden by the BuildValidation and ModuleScript subclasses, to specify
-   * the module and the limit versions to define whether the BuildValidation or ModuleScript should
-   * be executed or not.
+   * This method can be overridden by the subclasses of this class, to specify the module and the
+   * limit versions to define whether they should be executed or not.
    *
    * @return a ExecutionLimits object which contains the dependent module id and the first and last
    *         versions of the module that define the execution logic.
@@ -116,11 +114,11 @@ public abstract class ExecutionLimitBaseProcess {
   protected abstract ExecutionLimits getExecutionLimits();
 
   /**
-   * This method can be overridden by the BuildValidation or ModuleScript subclasses, to specify if
-   * the BuildValidation or ModuleScript should be executed when installing the dependent module.
+   * This method can be overridden by the subclasses of this class, to specify if they should be
+   * executed when installing the dependent module.
    *
-   * @return a boolean that indicates if the BuildValidation or ModuleScript should be executed when
-   *         installing the dependent module.
+   * @return a boolean that indicates if they should be executed when installing the dependent
+   *         module.
    */
   protected boolean executeOnInstall() {
     return true;
