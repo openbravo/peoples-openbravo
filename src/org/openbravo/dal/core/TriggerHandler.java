@@ -65,7 +65,8 @@ public class TriggerHandler {
     PreparedStatement ps = null;
     try {
       ps = con
-          .prepareStatement("INSERT INTO AD_SESSION_STATUS VALUES (get_uuid(), '0', '0', 'Y', now(), '0', now(), '0', 'Y')");
+          .prepareStatement("INSERT INTO AD_SESSION_STATUS (ad_session_status_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, isimporting)"
+              + " VALUES (get_uuid(), '0', '0', 'Y', now(), '0', now(), '0', 'Y')");
       ps.executeUpdate();
       sessionStatus.set(Boolean.TRUE);
     } catch (Exception e) {
