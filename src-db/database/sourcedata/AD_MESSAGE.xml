@@ -4426,7 +4426,7 @@ Are you sure you want to use %0 of %1 's credit to complete this receipt?]]></MS
 <!--916D974347B84A7497E2F28E361F48CF-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--916D974347B84A7497E2F28E361F48CF-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--916D974347B84A7497E2F28E361F48CF-->  <VALUE><![CDATA[OBPOS_approval.reversePayment]]></VALUE>
-<!--916D974347B84A7497E2F28E361F48CF-->  <MSGTEXT><![CDATA[The available days to reverse this payment has expired.<br>A supervisor needs to approve the reverse.]]></MSGTEXT>
+<!--916D974347B84A7497E2F28E361F48CF-->  <MSGTEXT><![CDATA[The number of days to reverse this payment has expired.<br>A supervisor needs to approve the reverse.]]></MSGTEXT>
 <!--916D974347B84A7497E2F28E361F48CF-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
 <!--916D974347B84A7497E2F28E361F48CF-->  <AD_MODULE_ID><![CDATA[FF808181326CC34901326D53DBCF0018]]></AD_MODULE_ID>
 <!--916D974347B84A7497E2F28E361F48CF-->  <ISINCLUDEINI18N><![CDATA[N]]></ISINCLUDEINI18N>
