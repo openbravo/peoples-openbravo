@@ -11,14 +11,12 @@
  */
 package org.openbravo.buildvalidation;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.openbravo.base.ExecutionLimitBaseProcess;
 import org.openbravo.base.ExecutionLimits;
-import org.openbravo.database.ConnectionProvider;
 
 /**
  * A class extending the BuildValidation class can be used to implement a validation which will be
@@ -87,20 +85,6 @@ public abstract class BuildValidation extends ExecutionLimitBaseProcess {
       errors = new ArrayList<String>();
     }
     return errors;
-  }
-
-  /**
-   * This method returns a connection provider, which can be used to execute statements in the
-   * database
-   * 
-   * @return a ConnectionProvider
-   */
-  protected ConnectionProvider getConnectionProvider() {
-    return super.getConnectionProvider();
-  }
-
-  protected File getPropertiesFile() {
-    return super.getPropertiesFile();
   }
 
   protected List<String> handleError(Throwable t) {

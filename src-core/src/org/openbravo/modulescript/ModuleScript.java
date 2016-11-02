@@ -11,15 +11,10 @@
  */
 package org.openbravo.modulescript;
 
-import java.io.File;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
 import org.openbravo.base.ExecutionLimitBaseProcess;
 import org.openbravo.base.ExecutionLimits;
-import org.openbravo.database.ConnectionProvider;
 
 /**
  * Classes extending ModuleScript can be included in Openbravo Core or a module and will be
@@ -50,17 +45,6 @@ public abstract class ModuleScript extends ExecutionLimitBaseProcess {
   }
 
   /**
-   * This method checks whether the ModuleScript can be executed before invoke the doExecute()
-   * method
-   * 
-   * @param modulesVersionMap
-   *          A data structure that contains module versions mapped by module id
-   */
-  public final void preExecute(Map<String, OpenbravoVersion> modulesVersionMap) {
-    super.preExecute(modulesVersionMap);
-  }
-
-  /**
    * This method returns the name of the class.
    */
   protected String getTypeName() {
@@ -81,31 +65,6 @@ public abstract class ModuleScript extends ExecutionLimitBaseProcess {
   @Override
   protected ExecutionLimits getExecutionLimits() {
     return getModuleScriptExecutionLimits();
-  }
-
-  /**
-   * This method can be overridden by the ModuleScript subclasses, to specify if the ModuleScript
-   * should be executed when installing the dependent module.
-   * 
-   * @return a boolean that indicates if the ModuleScript should be executed when installing the
-   *         dependent module.
-   */
-  protected boolean executeOnInstall() {
-    return super.executeOnInstall();
-  }
-
-  /**
-   * This method returns a connection provider, which can be used to execute statements in the
-   * database
-   * 
-   * @return a ConnectionProvider
-   */
-  protected ConnectionProvider getConnectionProvider() {
-    return super.getConnectionProvider();
-  }
-
-  protected File getPropertiesFile() {
-    return super.getPropertiesFile();
   }
 
   protected void handleError(Throwable t) {
