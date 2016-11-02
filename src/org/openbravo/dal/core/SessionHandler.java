@@ -154,7 +154,7 @@ public class SessionHandler implements OBNotSingleton {
     setConnection(DEFAULT_POOL, newConnection);
   }
 
-  public void setConnection(String pool, Connection newConnection) {
+  private void setConnection(String pool, Connection newConnection) {
     connection.put(pool, newConnection);
   }
 
@@ -163,7 +163,7 @@ public class SessionHandler implements OBNotSingleton {
     return getConnection(DEFAULT_POOL);
   }
 
-  public Connection getConnection(String pool) {
+  private Connection getConnection(String pool) {
     return connection.get(pool);
   }
 
@@ -171,7 +171,7 @@ public class SessionHandler implements OBNotSingleton {
     return createSession(DEFAULT_POOL);
   }
 
-  protected Session createSession(String pool) {
+  private Session createSession(String pool) {
     SessionFactory sf = SessionFactoryController.getInstance().getSessionFactory();
     // Checks if the session connection has to be obtained using an external connection pool
     if (externalConnectionPool != null && connection.get(pool) == null) {
@@ -201,7 +201,7 @@ public class SessionHandler implements OBNotSingleton {
     return isCurrentTransactionActive(DEFAULT_POOL);
   }
 
-  public boolean isCurrentTransactionActive(String pool) {
+  private boolean isCurrentTransactionActive(String pool) {
     return tx.containsKey(pool) && tx.get(pool).isActive();
   }
 
@@ -215,7 +215,7 @@ public class SessionHandler implements OBNotSingleton {
     beginNewTransaction(DEFAULT_POOL);
   }
 
-  public void beginNewTransaction(String pool) throws OBException {
+  private void beginNewTransaction(String pool) throws OBException {
     if (isCurrentTransactionActive(pool)) {
       throw new OBException(
           "Not possible to start a new transaction while there is still one active.");
@@ -248,7 +248,7 @@ public class SessionHandler implements OBNotSingleton {
     return newConnection;
   }
 
-  protected void closeSession(String pool) {
+  void closeSession(String pool) {
     // TODO: review me!
     try {
       for (Entry<String, Connection> c : connection.entrySet()) {
@@ -367,7 +367,7 @@ public class SessionHandler implements OBNotSingleton {
     return createQuery(DEFAULT_POOL, qryStr);
   }
 
-  public Query createQuery(String pool, String qryStr) {
+  private Query createQuery(String pool, String qryStr) {
     return getSession().createQuery(qryStr);
   }
 
@@ -378,7 +378,7 @@ public class SessionHandler implements OBNotSingleton {
     begin(DEFAULT_POOL);
   }
 
-  protected void begin(String pool) {
+  private void begin(String pool) {
     Check.isTrue(session.get(pool) == null, "Session must be null before begin");
     setSession(pool, createSession(pool));
     getSession(pool).setFlushMode(FlushMode.COMMIT);
@@ -445,7 +445,7 @@ public class SessionHandler implements OBNotSingleton {
     commitAndStart(DEFAULT_POOL);
   }
 
-  public void commitAndStart(String pool) {
+  private void commitAndStart(String pool) {
     Check.isFalse(TriggerHandler.getInstance().isDisabled(),
         "Triggers disabled, commit is not allowed when in triggers-disabled mode, "
             + "call TriggerHandler.enable() before committing");
