@@ -3056,6 +3056,9 @@
           p.set('origAmount', p.get('amount'));
         }
         p.set('paid', p.get('origAmount'));
+        // When doing a reverse payment in a negative ticket, the payments introduced to pay again the same quantity
+        // must be set to negative (Web POS creates payments in positive by default).
+        // This doesn't affect to reversal payments but to the payments introduced to add the quantity reversed
         if (!p.get('isPrePayment') && p.get('orderGross') < 0 && p.get('isPaid') && !p.get('reversedPaymentId')) {
           p.set('amount', -p.get('amount'));
           p.set('origAmount', -p.get('origAmount'));
