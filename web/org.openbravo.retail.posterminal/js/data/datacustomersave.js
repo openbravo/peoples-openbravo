@@ -37,7 +37,11 @@
         var now = new Date();
         customer.set('updated', OB.I18N.normalizeDate(now));
         customer.set('timezoneOffset', now.getTimezoneOffset());
-        customer.set('loaded', OB.I18N.normalizeDate(new Date(customer.get('loaded'))));
+        if (OB.UTIL.isNullOrUndefined(customer.get('loaded'))) {
+          customer.set('loaded', OB.I18N.normalizeDate(new Date()));
+        } else {
+          customer.set('loaded', OB.I18N.normalizeDate(new Date(customer.get('loaded'))));
+        }
         bpToSave.set('json', JSON.stringify(this.customer.serializeEditedToJSON()));
         bpToSave.set('c_bpartner_id', this.customer.get('id'));
       } else {
