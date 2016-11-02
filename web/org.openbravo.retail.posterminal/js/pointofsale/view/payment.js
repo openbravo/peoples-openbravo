@@ -1364,7 +1364,7 @@ enyo.kind({
     var me = this;
 
     OB.UTIL.showConfirmation.display(
-    OB.I18N.getLabel('OBPOS_LblReverse'), OB.I18N.getLabel('OBPOS_ReverseConform'), [{
+    OB.I18N.getLabel('OBPOS_LblReverse'), OB.I18N.getLabel('OBPOS_ReverseConfirm'), [{
       label: OB.I18N.getLabel('OBPOS_LblOk'),
       action: function () {
         if ((_.isUndefined(me.deleting) || me.deleting === false)) {
