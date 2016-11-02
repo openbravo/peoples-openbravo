@@ -24,6 +24,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
 import org.hibernate.FlushMode;
@@ -246,8 +247,31 @@ public class SessionHandler implements OBNotSingleton {
   }
 
   protected void closeSession(String pool) {
-    if (session.get(pool) != null && session.get(pool).isOpen()) {
-      session.get(pool).close();
+    // TODO: review me!
+    try {
+      for (Entry<String, Connection> c : connection.entrySet()) {
+        String p = c.getKey();
+        Connection con = connection.get(p);
+        if (con == null || (con != null && !con.isClosed())) {
+          if (con != null) {
+            con.setAutoCommit(false);
+          }
+          tx.get(p).commit();
+          if (con != null && !con.isClosed()) {
+            con.close();
+          }
+        }
+        tx.remove(p);
+      }
+
+      for (Session s : session.values()) {
+        if (s != null && s.isOpen()) {
+          s.close();
+        }
+      }
+    } catch (SQLException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
     }
   }
 
