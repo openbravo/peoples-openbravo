@@ -748,7 +748,6 @@ public class ExternalOrderLoader extends OrderLoader {
     defaultJson.put("change", 0);
     defaultJson.put("timezoneOffset", 0);
     defaultJson.put("generateInvoice", false);
-    defaultJson.put("isPaid", false);
 
     final SimpleDateFormat dtFormat = createOrderLoaderDateTimeFormat();
     defaultJson.put("orderDate", dtFormat.format(new Date()));
