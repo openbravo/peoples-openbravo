@@ -29,6 +29,7 @@ import org.apache.log4j.Logger;
 public abstract class ExternalConnectionPool {
 
   static Logger log = Logger.getLogger(ExternalConnectionPool.class);
+  public static final String DEFAULT_POOL = "DEFAULT";
 
   private static ExternalConnectionPool instance;
 

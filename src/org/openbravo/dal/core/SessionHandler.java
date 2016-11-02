@@ -19,6 +19,8 @@
 
 package org.openbravo.dal.core;
 
+import static org.openbravo.database.ExternalConnectionPool.DEFAULT_POOL;
+
 import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -129,7 +131,7 @@ public class SessionHandler implements OBNotSingleton {
 
   /** @return the session */
   public Session getSession() {
-    return getSession("DEFAULT");
+    return getSession(DEFAULT_POOL);
   }
 
   public Session getSession(String pool) {
@@ -141,7 +143,7 @@ public class SessionHandler implements OBNotSingleton {
   }
 
   protected void setSession(Session thisSession) {
-    setSession("DEFAULT", thisSession);
+    setSession(DEFAULT_POOL, thisSession);
   }
 
   private void setSession(String pool, Session thisSession) {
@@ -149,7 +151,7 @@ public class SessionHandler implements OBNotSingleton {
   }
 
   public void setConnection(Connection newConnection) {
-    setConnection("DEFAULT", newConnection);
+    setConnection(DEFAULT_POOL, newConnection);
   }
 
   public void setConnection(String pool, Connection newConnection) {
@@ -158,7 +160,7 @@ public class SessionHandler implements OBNotSingleton {
 
   /** Gets current session's {@code Connection} if it's set, {@code null} if not. */
   public Connection getConnection() {
-    return getConnection("DEFAULT");
+    return getConnection(DEFAULT_POOL);
   }
 
   public Connection getConnection(String pool) {
@@ -166,7 +168,7 @@ public class SessionHandler implements OBNotSingleton {
   }
 
   protected Session createSession() {
-    return createSession("DEFAULT");
+    return createSession(DEFAULT_POOL);
   }
 
   protected Session createSession(String pool) {
@@ -196,7 +198,7 @@ public class SessionHandler implements OBNotSingleton {
    * Returns true when the current SessionHandler has a transaction and it is active.
    */
   public boolean isCurrentTransactionActive() {
-    return isCurrentTransactionActive("DEFAULT");
+    return isCurrentTransactionActive(DEFAULT_POOL);
   }
 
   public boolean isCurrentTransactionActive(String pool) {
@@ -210,7 +212,7 @@ public class SessionHandler implements OBNotSingleton {
    *           if there is already an available active transaction.
    */
   public void beginNewTransaction() throws OBException {
-    beginNewTransaction("DEFAULT");
+    beginNewTransaction(DEFAULT_POOL);
   }
 
   public void beginNewTransaction(String pool) throws OBException {
@@ -223,7 +225,7 @@ public class SessionHandler implements OBNotSingleton {
 
   /** Gets a new {@code Connection} from the connection pool. */
   public Connection getNewConnection() throws SQLException {
-    return getNewConnection("DEFAULT");
+    return getNewConnection(DEFAULT_POOL);
   }
 
   public Connection getNewConnection(String pool) throws SQLException {
@@ -282,7 +284,7 @@ public class SessionHandler implements OBNotSingleton {
    *          the object to persist
    */
   public void save(Object obj) {
-    save("DEFAULT", obj);
+    save(DEFAULT_POOL, obj);
   }
 
   public void save(String pool, Object obj) {
@@ -300,7 +302,7 @@ public class SessionHandler implements OBNotSingleton {
    *          the object to remove
    */
   public void delete(Object obj) {
-    delete("DEFAULT", obj);
+    delete(DEFAULT_POOL, obj);
   }
 
   public void delete(String pool, Object obj) {
@@ -321,7 +323,7 @@ public class SessionHandler implements OBNotSingleton {
    * @return the retrieved object, can be null
    */
   public <T extends Object> T find(Class<T> clazz, Object id) {
-    return find("DEFAULT", clazz, id);
+    return find(DEFAULT_POOL, clazz, id);
   }
 
   @SuppressWarnings("unchecked")
@@ -347,7 +349,7 @@ public class SessionHandler implements OBNotSingleton {
    * @see Entity
    */
   public BaseOBObject find(String entityName, Object id) {
-    return find("DEFAULT", entityName, id);
+    return find(DEFAULT_POOL, entityName, id);
   }
 
   public BaseOBObject find(String pool, String entityName, Object id) {
@@ -362,7 +364,7 @@ public class SessionHandler implements OBNotSingleton {
    * @return a new Query object
    */
   public Query createQuery(String qryStr) {
-    return createQuery("DEFAULT", qryStr);
+    return createQuery(DEFAULT_POOL, qryStr);
   }
 
   public Query createQuery(String pool, String qryStr) {
@@ -373,7 +375,7 @@ public class SessionHandler implements OBNotSingleton {
    * Starts a transaction.
    */
   protected void begin() {
-    begin("DEFAULT");
+    begin(DEFAULT_POOL);
   }
 
   protected void begin(String pool) {
@@ -390,7 +392,7 @@ public class SessionHandler implements OBNotSingleton {
    * work.
    */
   public void commitAndClose() {
-    commitAndClose("DEFAULT");
+    commitAndClose(DEFAULT_POOL);
   }
 
   public void commitAndClose(String pool) {
@@ -440,7 +442,7 @@ public class SessionHandler implements OBNotSingleton {
    * Commits the transaction and starts a new transaction.
    */
   public void commitAndStart() {
-    commitAndStart("DEFAULT");
+    commitAndStart(DEFAULT_POOL);
   }
 
   public void commitAndStart(String pool) {
@@ -477,7 +479,7 @@ public class SessionHandler implements OBNotSingleton {
    * Rolls back the transaction and closes the getSession().
    */
   public void rollback() {
-    rollback("DEFAULT");
+    rollback(DEFAULT_POOL);
   }
 
   public void rollback(String pool) {
@@ -510,7 +512,7 @@ public class SessionHandler implements OBNotSingleton {
    * The invariant is that for begin, rollback and commit the session etc. are alive
    */
   private void checkInvariant() {
-    checkInvariant("DEFAULT");
+    checkInvariant(DEFAULT_POOL);
   }
 
   private void checkInvariant(String pool) {

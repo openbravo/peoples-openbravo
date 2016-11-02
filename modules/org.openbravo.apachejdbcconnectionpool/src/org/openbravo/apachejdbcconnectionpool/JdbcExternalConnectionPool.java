@@ -63,7 +63,7 @@ public class JdbcExternalConnectionPool extends ExternalConnectionPool {
    * Gets the data source of apache jdbc connection pool.
    */
   public DataSource getDataSource() {
-    return availableDataSources.get("DEFAULT");
+    return availableDataSources.get(DEFAULT_POOL);
   }
 
   /**
@@ -103,7 +103,7 @@ public class JdbcExternalConnectionPool extends ExternalConnectionPool {
     availableDataSources = new HashMap<>(1);
     DataSource defaultDS = new DataSource();
     defaultDS.setPoolProperties(getPoolProperties());
-    availableDataSources.put("DEFAULT", defaultDS);
+    availableDataSources.put(DEFAULT_POOL, defaultDS);
 
     // TODO: read from properties
     DataSource ro = new DataSource();

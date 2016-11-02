@@ -31,6 +31,7 @@ import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.database.ExternalConnectionPool;
 import org.openbravo.database.SessionInfo;
 import org.openbravo.exception.NoConnectionAvailableException;
 
@@ -64,7 +65,7 @@ public class DalConnectionProvider implements ConnectionProvider {
   }
 
   public DalConnectionProvider() {
-    pool = "DEFAULT";
+    pool = ExternalConnectionPool.DEFAULT_POOL;
   }
 
   public DalConnectionProvider(String poolName) {
@@ -78,7 +79,7 @@ public class DalConnectionProvider implements ConnectionProvider {
    *          if set to true, the getConnection method will flush the OBDal instance.
    */
   public DalConnectionProvider(boolean flush) {
-    pool = "DEFAULT";
+    pool = ExternalConnectionPool.DEFAULT_POOL;
     this.flush = flush;
   }
 

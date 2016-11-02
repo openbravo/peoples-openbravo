@@ -50,6 +50,7 @@ import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.security.SecurityChecker;
+import org.openbravo.database.ExternalConnectionPool;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.enterprise.Organization;
 
@@ -80,7 +81,7 @@ public class OBDal implements OBNotSingleton {
   public static OBDal getInstance() {
     if (instance == null) {
       instance = OBProvider.getInstance().get(OBDal.class);
-      instance.poolName = "DEFAULT";
+      instance.poolName = ExternalConnectionPool.DEFAULT_POOL;
     }
     return instance;
   }
