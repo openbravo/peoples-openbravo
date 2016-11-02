@@ -1309,10 +1309,10 @@ enyo.kind({
     if ((this.model.get('isPrePayment') && (this.model.get('reversedPaymentId'))) || this.model.get('isReversed') || (this.model.get('isPrePayment') && !this.model.get('paymentAmount'))) {
       this.$.removePayment.hide();
       this.$.reversePayment.hide();
-    } else if (this.model.get('isPrePayment') && OB.MobileApp.model.hasPermission("OBPOS_EnableReversePayments")) {
+    } else if (this.model.get('isPrePayment') && OB.MobileApp.model.hasPermission('OBPOS_EnableReversePayments', true)) {
       this.$.removePayment.hide();
       this.$.reversePayment.show();
-    } else if (this.model.get('isPrePayment') && !OB.MobileApp.model.hasPermission("OBPOS_EnableReversePayments")) {
+    } else if (this.model.get('isPrePayment') && !OB.MobileApp.model.hasPermission('OBPOS_EnableReversePayments', true)) {
       this.$.removePayment.hide();
       this.$.reversePayment.hide();
     } else {
