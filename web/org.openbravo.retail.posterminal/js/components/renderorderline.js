@@ -415,7 +415,6 @@ enyo.kind({
       if (typeof (this.model.get('paymentDate')) === 'string') {
         paymentDate = new Date(paymentDate);
       }
-      paymentDate = new Date(paymentDate.getTime() + (60000 * paymentDate.getTimezoneOffset()));
     }
     this.$.date.setContent(OB.I18N.formatDate(paymentDate));
     if (this.model.get('rate') && this.model.get('rate') !== '1') {
