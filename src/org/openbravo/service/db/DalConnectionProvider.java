@@ -78,6 +78,7 @@ public class DalConnectionProvider implements ConnectionProvider {
    *          if set to true, the getConnection method will flush the OBDal instance.
    */
   public DalConnectionProvider(boolean flush) {
+    pool = "DEFAULT";
     this.flush = flush;
   }
 
