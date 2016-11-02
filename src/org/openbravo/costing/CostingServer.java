@@ -20,10 +20,12 @@ package org.openbravo.costing;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -242,8 +244,9 @@ public class CostingServer {
         if (trxType != TrxType.InventoryClosing
             && trxType != TrxType.InventoryOpening
             && getCostingRule().isBackdatedTransactionsFixed()
-            && transaction.getMovementDate().compareTo(
-                CostingUtils.getCostingRuleFixBackdatedFrom(getCostingRule())) >= 0) {
+            && DateUtils.truncate(transaction.getMovementDate(), Calendar.DATE).compareTo(
+                DateUtils.truncate(CostingUtils.getCostingRuleFixBackdatedFrom(getCostingRule()),
+                    Calendar.DATE)) >= 0) {
           // BDT = Backdated transaction
           createAdjustment("BDT", BigDecimal.ZERO);
         }
@@ -272,8 +275,9 @@ public class CostingServer {
     }
 
     if (getCostingRule().isBackdatedTransactionsFixed()
-        && transaction.getMovementDate().compareTo(
-            CostingUtils.getCostingRuleFixBackdatedFrom(getCostingRule())) >= 0
+        && DateUtils.truncate(transaction.getMovementDate(), Calendar.DATE).compareTo(
+            DateUtils.truncate(CostingUtils.getCostingRuleFixBackdatedFrom(getCostingRule()),
+                Calendar.DATE)) >= 0
         && CostAdjustmentUtils.isNeededBackdatedCostAdjustment(transaction, getCostingRule()
             .isWarehouseDimension(), CostingUtils.getCostingRuleStartingDate(getCostingRule()))) {
       // BDT = Backdated transaction
@@ -297,7 +301,8 @@ public class CostingServer {
         && !adjustmentAlreadyCreated) {
       BigDecimal currentStock = CostAdjustmentUtils.getStockOnTransactionDate(getOrganization(),
           transaction, getCostingAlgorithm().costDimensions, transaction.getProduct()
-              .isProduction(), costingRule.isBackdatedTransactionsFixed());
+              .isProduction(), costingRule.isBackdatedTransactionsFixed(), transaction
+              .getCurrency());
       if (currentStock.compareTo(transaction.getMovementQuantity()) < 0
           || (trxType != TrxType.InventoryOpening
               && currentStock.compareTo(transaction.getMovementQuantity()) == 0 && CostingUtils
@@ -314,7 +319,8 @@ public class CostingServer {
     if (trxType == TrxType.InventoryClosing) {
       BigDecimal currentStock = CostAdjustmentUtils.getStockOnTransactionDate(getOrganization(),
           transaction, getCostingAlgorithm().costDimensions, transaction.getProduct()
-              .isProduction(), costingRule.isBackdatedTransactionsFixed());
+              .isProduction(), costingRule.isBackdatedTransactionsFixed(), transaction
+              .getCurrency());
 
       if (BigDecimal.ZERO.compareTo(currentStock) == 0) {
         BigDecimal currentValuedStock = CostAdjustmentUtils.getValuedStockOnTransactionDate(

@@ -206,9 +206,10 @@ public class CopyFromInvoice extends HttpSecureAppServlet {
                 dataInvoice[0].cBpartnerLocationId);
           }
           CopyFromInvoiceData.insert(conn, this, strSequence, strKey, dataInvoice[0].adClientId,
-              vars.getUser(), priceList.toString(), priceActual.toString(), priceLimit.toString(),
-              lineNetAmt.toString(), strCTaxID, priceGross.toString(), lineGrossAmt.toString(),
-              priceListGross.toString(), priceStdGross.toString(), data[i].cInvoicelineId);
+              dataInvoice[0].adOrgId, vars.getUser(), priceList.toString(), priceActual.toString(),
+              priceLimit.toString(), lineNetAmt.toString(), strCTaxID, priceGross.toString(),
+              lineGrossAmt.toString(), priceListGross.toString(), priceStdGross.toString(),
+              data[i].cInvoicelineId);
 
           // Copy accounting dimensions
           CopyFromInvoiceData.insertAcctDimension(conn, this, dataInvoice[0].adClientId,

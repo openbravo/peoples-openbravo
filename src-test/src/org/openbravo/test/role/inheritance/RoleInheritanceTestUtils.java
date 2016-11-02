@@ -93,9 +93,7 @@ public class RoleInheritanceTestUtils {
     Client client = OBDal.getInstance().get(Client.class, clientId);
     Organization org = OBDal.getInstance().get(Organization.class, organizationId);
     role.setClient(client);
-    role.setClientList(clientId);
     role.setOrganization(org);
-    role.setOrganizationList(organizationId);
     role.setTemplate(isTemplate);
     role.setManual(isManual);
     role.setName(name);
