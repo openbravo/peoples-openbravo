@@ -137,83 +137,33 @@
         OB.Dal.save(customer, function () {
           //OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_customerSavedSuccessfullyLocally',[customer.get('_identifier')]));
           // Saving Customer Address locally
-          if (isNew) {
-            //create bploc from scratch
-            if (customer.get('useSameAddrForShipAndInv')) {
-              bpLocToSave.set('id', customer.get('locId'));
-              bpLocToSave.set('bpartner', customer.get('id'));
-              bpLocToSave.set('name', customer.get('locName'));
-              bpLocToSave.set('isBillTo', true);
-              bpLocToSave.set('isShipTo', true);
-              bpLocToSave.set('postalCode', customer.get('postalCode'));
-              bpLocToSave.set('cityName', customer.get('cityName'));
-              bpLocToSave.set('_identifier', customer.get('locName'));
-              bpLocToSave.set('countryName', customer.get('countryName'));
-              bpLocToSave.set('countryId', customer.get('countryId'));
+          if (!isNew) {
+            //load the BPlocation and then update it
+            OB.Dal.get(OB.Model.BPLocation, customer.get('locId'), function (bpLocToUpdate) {
+              if (bpLocToUpdate) {
+                // Set all properties to bplocation
+                setBPLocationProperty(bpLocToUpdate, customer, isNew, function () {
+                  OB.Dal.save(bpLocToUpdate, function () {
+                    //customer location created successfully. Nothing to do here.
+                  }, function () {
+                    OB.error(arguments);
+                  }, isNew);
+                });
+              } else {
+                OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_errorSavingBPLoc_header'), OB.I18N.getLabel('OBPOS_errorSavingBPLoc_body'));
+              }
+            }, function () {
+              OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_errorSavingBPLoc_header'), OB.I18N.getLabel('OBPOS_errorSavingBPLoc_body'));
+            });
+          } else {
+            //create bploc from scratch and set all properties
+            setBPLocationProperty(bpLocToSave, customer, isNew, function () {
               OB.Dal.save(bpLocToSave, function () {
-                // update each order also so that new name is shown and the bp
-                // in the order is the same as what got saved
-                if (OB.MobileApp.model.orderList) {
-                  _.forEach(OB.MobileApp.model.orderList.models, function (order) {
-                    if (order.get('bp').get('id') === customerId) {
-                      var clonedBP = new OB.Model.BusinessPartner();
-                      OB.UTIL.clone(customer, clonedBP);
-                      if (order.get('bp').get('locId') !== customer.get('locId')) {
-                        // if the order has a different address than the bp
-                        // then copy over the address data
-                        var bp = order.get('bp');
-                        clonedBP.set('locId', bp.get('locId'));
-                        clonedBP.set('locName', bp.get('locName'));
-                        clonedBP.set('postalCode', bp.get('postalCode'));
-                        clonedBP.set('cityName', bp.get('cityName'));
-                        clonedBP.set('countryName', bp.get('countryName'));
-                        clonedBP.set('locationModel', bp.get('locationModel'));
-                      }
-                      order.set('bp', clonedBP);
-                      order.save();
-                      if (OB.MobileApp.model.orderList.modelorder && OB.MobileApp.model.orderList.modelorder.get('id') === order.get('id')) {
-                        OB.MobileApp.model.orderList.modelorder.setBPandBPLoc(clonedBP, false, true);
-                      }
-                    }
-                  });
-                }
+                //customer location created successfully. Nothing to do here.
               }, function () {
                 OB.error(arguments);
-              }, true);
-            } else {
-              bpLocToSave.set('id', customer.get('locId'));
-              bpLocToSave.set('bpartner', customer.get('id'));
-              bpLocToSave.set('name', customer.get('locName'));
-              bpLocToSave.set('isBillTo', true);
-              bpLocToSave.set('isShipTo', false);
-              bpLocToSave.set('postalCode', customer.get('postalCode'));
-              bpLocToSave.set('cityName', customer.get('cityName'));
-              bpLocToSave.set('_identifier', customer.get('locName'));
-              bpLocToSave.set('countryName', customer.get('countryName'));
-              bpLocToSave.set('countryId', customer.get('countryId'));
-
-              bpShipLocToSave.set('id', customer.get('shipLocId'));
-              bpShipLocToSave.set('bpartner', customer.get('id'));
-              bpShipLocToSave.set('name', customer.get('shipLocName'));
-              bpShipLocToSave.set('isBillTo', false);
-              bpShipLocToSave.set('isShipTo', true);
-              bpShipLocToSave.set('postalCode', customer.get('shipPostalCode'));
-              bpShipLocToSave.set('cityName', customer.get('shipCityName'));
-              bpShipLocToSave.set('_identifier', customer.get('shipLocName'));
-              bpShipLocToSave.set('countryName', customer.get('shipCountryName'));
-              bpShipLocToSave.set('countryId', customer.get('shipCountryId'));
-
-              OB.Dal.save(bpLocToSave, function () {
-                //customer billing location created successfully. Nothing to do here.
-              }, function () {
-                OB.error(arguments);
-              }, true);
-              OB.Dal.save(bpShipLocToSave, function () {
-                //customer shipping location created successfully. Nothing to do here.
-              }, function () {
-                OB.error(arguments);
-              }, true);
-            }
+              }, isNew);
+            });
           }
 
           if (isNew) {

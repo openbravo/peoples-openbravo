@@ -2320,7 +2320,7 @@
               me.save();
               // copy the modelOrder again, as saveIfNew is possibly async
               OB.MobileApp.model.orderList.saveCurrent();
-            finishSaveData(callback);
+              finishSaveData(callback);
             }, function () {
               OB.UTIL.showError('Error removing');
             });
@@ -2344,10 +2344,6 @@
         }, function () {
           OB.UTIL.showError('Error removing');
         });
-          });
-        } else {
-          finishSaveData(callback);
-        }
       } else {
         this.set('bp', businessPartner);
         this.save();
