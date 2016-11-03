@@ -506,7 +506,7 @@ enyo.kind({
     }
   },
 
-  checkEnoughCashAvailable: function (paymentstatus, selectedPayment, scope, callback) {
+  checkEnoughCashAvailable: function (paymentstatus, selectedPayment, scope, checkLayaway, callback) {
     var requiredCash, hasEnoughCash = true,
         hasAllEnoughCash = true,
         reversedPayments = [],
@@ -533,7 +533,7 @@ enyo.kind({
       if (hasEnoughCash) {
         if (OB.UTIL.isNullOrUndefined(selectedPayment) || !selectedPayment.paymentMethod.iscash) {
           requiredCash = OB.DEC.Zero;
-        } else if (!_.isUndefined(paymentstatus) && (paymentstatus.isNegative)) {
+        } else if (!checkLayaway && !_.isUndefined(paymentstatus) && (paymentstatus.isNegative)) {
           requiredCash = OB.DEC.add(currentSelectedPaymentCashAmount, paymentstatus.pendingAmt);
           paymentstatus.payments.each(function (payment) {
             var paymentmethod;
@@ -547,51 +547,11 @@ enyo.kind({
             }
           });
         } else if (!_.isUndefined(paymentstatus)) {
-          requiredCash = OB.DEC.sub(OB.DEC.add(currentSelectedPaymentCashAmount, paymentstatus.changeAmt), paymentstatus.pendingAmt);
-        }
-
-        if (!_.isUndefined(requiredCash) && requiredCash === 0) {
-          hasEnoughCash = true;
-        } else if (!_.isUndefined(requiredCash)) {
-          hasEnoughCash = OB.DEC.compare(OB.DEC.sub(currentCash, requiredCash)) >= 0;
-        }
-      }
-
-      if (hasEnoughCash && hasAllEnoughCash) {
-        return callback.call(scope, true);
-      } else {
-        return callback.call(scope, false); // check failed.
-      }
-    });
-  },
-
-  checkEnoughCashAvailableforLayaway: function (paymentstatus, selectedPayment, scope, callback) {
-    var requiredCash, hasEnoughCash = true,
-        reversedPayments = [],
-        currentSelectedPaymentCashAmount = OB.DEC.Zero,
-        reversedCash;
-    // Check slave cash 
-    this.checkSlaveCashAvailable(selectedPayment, this, function (currentCash) {
-      // If there are reverse payments search for those of cash payment method. It will be needed to check if there is enough cash to reverse those payments.
-      if (paymentstatus.isReversal) {
-        paymentstatus.payments.each(function (payment) {
-          var paymentmethod = OB.POS.terminal.terminal.paymentnames[payment.get('kind')];
-          if (!payment.get('isPrePayment') && paymentmethod.paymentMethod.iscash) {
-            reversedCash = OB.DEC.sub(reversedPayments[payment.get('kind')] || OB.DEC.Zero, payment.get('origAmount'));
-            reversedPayments[payment.get('kind')] = reversedCash;
-            if (selectedPayment !== paymentmethod && OB.DEC.compare(OB.DEC.sub(paymentmethod.currentCash, reversedCash)) <= 0) {
-              hasEnoughCash = false;
-            } else {
-              currentSelectedPaymentCashAmount = reversedCash;
-            }
+          if (checkLayaway) {
+            requiredCash = OB.DEC.add(currentSelectedPaymentCashAmount, paymentstatus.changeAmt);
+          } else {
+            requiredCash = OB.DEC.sub(OB.DEC.add(currentSelectedPaymentCashAmount, paymentstatus.changeAmt), paymentstatus.pendingAmt);
           }
-        });
-      }
-      if (hasEnoughCash) {
-        if (OB.UTIL.isNullOrUndefined(selectedPayment) || !selectedPayment.paymentMethod.iscash) {
-          requiredCash = OB.DEC.Zero;
-        } else if (!_.isUndefined(paymentstatus)) {
-          requiredCash = OB.DEC.add(currentSelectedPaymentCashAmount, paymentstatus.changeAmt);
         }
 
         if (!_.isUndefined(requiredCash) && requiredCash === 0) {
@@ -601,7 +561,7 @@ enyo.kind({
         }
       }
 
-      if (hasEnoughCash) {
+      if (hasEnoughCash && (checkLayaway || (!checkLayaway && hasAllEnoughCash))) {
         return callback.call(scope, true);
       } else {
         return callback.call(scope, false); // check failed.
@@ -700,7 +660,7 @@ enyo.kind({
     resultOK = !selectedPayment.paymentMethod.iscash || paymentstatus.changeAmt > 0 ? this.checkValidCashOverpayment(paymentstatus, selectedPayment) : undefined;
     if (resultOK || _.isUndefined(resultOK)) {
       if (!_.isNull(paymentstatus.change) || ((paymentstatus.isNegative || paymentstatus.isReversal) && !_.isNull(paymentstatus.pending))) {
-        resultOK = this.checkEnoughCashAvailable(paymentstatus, selectedPayment, this, function (success) {
+        resultOK = this.checkEnoughCashAvailable(paymentstatus, selectedPayment, this, false, function (success) {
           var lsuccess = success;
           if (lsuccess) {
             lsuccess = this.checkValidPaymentMethod(paymentstatus, selectedPayment);
@@ -711,7 +671,7 @@ enyo.kind({
           }
           me.receipt.stopAddingPayments = !_.isEmpty(me.getShowingErrorMessages());
           this.setStatusButtons(lsuccess);
-          this.checkEnoughCashAvailableforLayaway(paymentstatus, selectedPayment, this, function (success) {
+          this.checkEnoughCashAvailable(paymentstatus, selectedPayment, this, true, function (success) {
             this.setStatusLayawayButton(success);
           });
         });
