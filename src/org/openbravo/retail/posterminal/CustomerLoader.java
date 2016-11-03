@@ -40,8 +40,8 @@ import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.json.JsonConstants;
 
 @DataSynchronization(entity = "BusinessPartner")
-public class CustomerLoader extends POSDataSynchronizationProcess
-    implements DataSynchronizationImportProcess {
+public class CustomerLoader extends POSDataSynchronizationProcess implements
+    DataSynchronizationImportProcess {
 
   private static final Logger log = Logger.getLogger(CustomerLoader.class);
 
@@ -117,8 +117,7 @@ public class CustomerLoader extends POSDataSynchronizationProcess
 
     // customer.setClient(OBDal.getInstance().get(Client.class, jsonCustomer.getString("client")));
     // BP org (required)
-    if (!jsonCustomer.has("organization")
-        && jsonCustomer.getString("organization").equals("null")) {
+    if (!jsonCustomer.has("organization") && jsonCustomer.getString("organization").equals("null")) {
       String errorMessage = "Business partner organization is a mandatory field to create a new customer from Web Pos";
       log.error(errorMessage);
       throw new OBException(errorMessage, null);
@@ -149,8 +148,8 @@ public class CustomerLoader extends POSDataSynchronizationProcess
 
       int bpsWithPossibleSK = 0;
 
-      final OBCriteria<BusinessPartner> bpCriteria = OBDal.getInstance()
-          .createCriteria(BusinessPartner.class);
+      final OBCriteria<BusinessPartner> bpCriteria = OBDal.getInstance().createCriteria(
+          BusinessPartner.class);
       bpCriteria.setFilterOnActive(false);
       bpCriteria.setFilterOnReadableOrganization(false);
       bpCriteria.add(Restrictions.eq("searchKey", possibleSK));
@@ -202,10 +201,10 @@ public class CustomerLoader extends POSDataSynchronizationProcess
 
   private void editBPartnerContact(BusinessPartner customer, JSONObject jsonCustomer)
       throws JSONException {
-    Entity userEntity = ModelProvider.getInstance()
-        .getEntity(org.openbravo.model.ad.access.User.class);
-    final org.openbravo.model.ad.access.User user = OBDal.getInstance()
-        .get(org.openbravo.model.ad.access.User.class, jsonCustomer.getString("contactId"));
+    Entity userEntity = ModelProvider.getInstance().getEntity(
+        org.openbravo.model.ad.access.User.class);
+    final org.openbravo.model.ad.access.User user = OBDal.getInstance().get(
+        org.openbravo.model.ad.access.User.class, jsonCustomer.getString("contactId"));
     if (user != null) {
 
       JSONPropertyToEntity.fillBobFromJSON(userEntity, user, jsonCustomer);
@@ -247,8 +246,8 @@ public class CustomerLoader extends POSDataSynchronizationProcess
 
       // create the user
 
-      final org.openbravo.model.ad.access.User usr = OBProvider.getInstance()
-          .get(org.openbravo.model.ad.access.User.class);
+      final org.openbravo.model.ad.access.User usr = OBProvider.getInstance().get(
+          org.openbravo.model.ad.access.User.class);
 
       JSONPropertyToEntity.fillBobFromJSON(userEntity, usr, jsonCustomer);
 
@@ -286,8 +285,8 @@ public class CustomerLoader extends POSDataSynchronizationProcess
           .getInstance().get(org.openbravo.model.common.geography.Location.class);
 
       if (!jsonCustomer.has("useSameAddrForShipAndInv")
-          || (jsonCustomer.has("useSameAddrForShipAndInv")
-              && jsonCustomer.getBoolean("useSameAddrForShipAndInv"))) {
+          || (jsonCustomer.has("useSameAddrForShipAndInv") && jsonCustomer
+              .getBoolean("useSameAddrForShipAndInv"))) {
         createBPLoc(rootLocation, customer, jsonCustomer, true, true);
       } else {
         createBPLoc(rootLocation, customer, jsonCustomer, true, false);
@@ -299,8 +298,8 @@ public class CustomerLoader extends POSDataSynchronizationProcess
   private void createBPLoc(org.openbravo.model.common.geography.Location location,
       BusinessPartner customer, JSONObject jsonCustomer, Boolean isInvoicing, Boolean isShipping)
       throws Exception {
-    Entity baseLocationEntity = ModelProvider.getInstance()
-        .getEntity(org.openbravo.model.common.geography.Location.class);
+    Entity baseLocationEntity = ModelProvider.getInstance().getEntity(
+        org.openbravo.model.common.geography.Location.class);
     Entity locationEntity = ModelProvider.getInstance().getEntity(Location.class);
     // Field mapping:
     String locName = (isInvoicing ? "locName" : "shipLocName");
