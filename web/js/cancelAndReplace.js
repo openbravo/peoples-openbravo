@@ -54,7 +54,7 @@ OB.EventHandlerRegistry.register(OB.CancelAndReplace.SALES_ORDERLINES_TAB, OB.Ev
 
 OB.CancelAndReplace.ClientSideEventHandlersPreDelete.showMessage = function (view, form, grid, extraParameters, actions) {
   var recordsToDelete = extraParameters.recordsToDelete,
-      record, replacementRecords = [],
+      replacementRecords = [],
       record, deliveredQuantity;
 
   view.messageBar.keepOnAutomaticRefresh = true;
