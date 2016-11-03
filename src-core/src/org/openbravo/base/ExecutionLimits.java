@@ -28,16 +28,16 @@ public class ExecutionLimits {
    * Basic ExecutionLimits constructor. Used to define a dependency between
    * ExecutionLimitBaseProcess subclasses and a module. When upgrading the module whose id is
    * moduleId, they will be executed only if its version before upgrading is higher than
-   * firstVersion and lower than lastVersion. Otherwise it will not be executed.
+   * firstVersion and lower than lastVersion. Otherwise they will not be executed.
    * 
    * @param moduleId
    *          A String with the module id
    * @param firstVersion
    *          An OpenbravoVersion which defines the first version of the module with id = moduleId
-   *          since ExecutionLimitBaseProcess subclasses can be executed.
+   *          since an ExecutionLimitBaseProcess subclass can be executed.
    * @param lastVersion
    *          An OpenbravoVersion with the last version of the module with id = moduleId which
-   *          allows ExecutionLimitBaseProcess subclasses execution.
+   *          allows the execution of an ExecutionLimitBaseProcess subclass.
    */
   public ExecutionLimits(String moduleId, OpenbravoVersion firstVersion,
       OpenbravoVersion lastVersion) {
@@ -61,8 +61,8 @@ public class ExecutionLimits {
   }
 
   /**
-   * Returns the first version of the dependent module for which the ExecutionLimitBaseProcess
-   * subclasses should be executed.
+   * Returns the first version of the dependent module for which an ExecutionLimitBaseProcess
+   * subclass should be executed.
    * 
    * @return a OpenbravoVersion with the first execution version of the dependent module
    */
@@ -71,8 +71,8 @@ public class ExecutionLimits {
   }
 
   /**
-   * Returns the last version of the dependent module for which the ExecutionLimitBaseProcess
-   * subclasses should be executed.
+   * Returns the last version of the dependent module for which an ExecutionLimitBaseProcess
+   * subclass should be executed.
    * 
    * @return a OpenbravoVersion with the last execution version of the dependent module
    */
