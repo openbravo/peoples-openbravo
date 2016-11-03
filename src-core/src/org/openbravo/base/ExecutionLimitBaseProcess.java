@@ -19,9 +19,6 @@ import org.openbravo.database.CPStandAlone;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.modulescript.OpenbravoVersion;
 
-/**
- * ExecutionLimitBaseProcess implements shared methods between the subclasses of this class.
- */
 public abstract class ExecutionLimitBaseProcess {
 
   private static final Logger log4j = Logger.getLogger(ExecutionLimitBaseProcess.class);
@@ -45,8 +42,7 @@ public abstract class ExecutionLimitBaseProcess {
    */
   public void preExecute(Map<String, OpenbravoVersion> modulesVersionMap) {
     if (modulesVersionMap == null || modulesVersionMap.size() == 0) {
-      // if we do not have module versions to compare with (install.source) then
-      // execute depending
+      // if we do not have module versions to compare with (install.source) then execute depending
       // on the value of the executeOnInstall() method
       if (executeOnInstall()) {
         doExecute();
@@ -71,7 +67,6 @@ public abstract class ExecutionLimitBaseProcess {
     OpenbravoVersion firstVersion = executionLimits.getFirstVersion();
     OpenbravoVersion lastVersion = executionLimits.getLastVersion();
     String additionalInfo = "";
-    // Installing module first time with ERP previously installed.
     if (currentVersion == null) {
       // Dependent module is being installed
       if (executeOnInstall()) {

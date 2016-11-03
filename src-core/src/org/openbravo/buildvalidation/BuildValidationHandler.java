@@ -172,11 +172,11 @@ public class BuildValidationHandler {
   private static Map<String, OpenbravoVersion> getModulesVersionMap() {
     Map<String, OpenbravoVersion> modulesVersion = new HashMap<String, OpenbravoVersion>();
     String strSql = "SELECT ad_module_id AS moduleid, version AS version FROM ad_module";
-    ResultSet rs = null;
+    PreparedStatement ps = null;
     try {
       ConnectionProvider cp = getConnectionProvider();
-      PreparedStatement ps = cp.getPreparedStatement(strSql);
-      rs = ps.executeQuery();
+      ps = cp.getPreparedStatement(strSql);
+      ResultSet rs = ps.executeQuery();
       while (rs.next()) {
         String moduleId = rs.getString("moduleid");
         String modVersion = rs.getString("version");
@@ -186,7 +186,7 @@ public class BuildValidationHandler {
       log4j.error("Not possible to recover the current version of modules", e);
     } finally {
       try {
-        rs.close();
+        ps.close();
       } catch (SQLException e) {
         // won't happen
       }
