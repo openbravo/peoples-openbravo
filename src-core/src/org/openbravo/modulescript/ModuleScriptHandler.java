@@ -12,7 +12,6 @@
 package org.openbravo.modulescript;
 
 import java.io.File;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -60,23 +59,15 @@ public class ModuleScriptHandler extends Task {
     for (String s : classes) {
       try {
         Class<?> myClass = Class.forName(s);
-        if (myClass.getGenericSuperclass().equals(
-            Class.forName("org.openbravo.modulescript.ModuleScript"))) {
-          Object instance = myClass.newInstance();
-          callExecute(myClass, instance);
+        if (ModuleScript.class.isAssignableFrom(myClass)) {
+          ModuleScript instance = (ModuleScript) myClass.newInstance();
+          instance.preExecute(getModulesVersionMap());
         }
       } catch (Exception e) {
         log4j.error("Error executing moduleScript: " + s, e);
         throw new BuildException("Execution of moduleScript " + s + " failed.");
       }
     }
-  }
-
-  @SuppressWarnings("unchecked")
-  private ArrayList<String> callExecute(Class<?> myClass, Object instance)
-      throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-    return (ArrayList<String>) myClass.getMethod("preExecute", new Class[] { Map.class }).invoke(
-        instance, new Object[] { getModulesVersionMap() });
   }
 
   /**

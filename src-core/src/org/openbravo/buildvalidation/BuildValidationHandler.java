@@ -12,13 +12,20 @@
 package org.openbravo.buildvalidation;
 
 import java.io.File;
-import java.lang.reflect.InvocationTargetException;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
+import org.openbravo.database.CPStandAlone;
+import org.openbravo.database.ConnectionProvider;
+import org.openbravo.modulescript.OpenbravoVersion;
 
 public class BuildValidationHandler {
   private static final Logger log4j = Logger.getLogger(BuildValidationHandler.class);
@@ -35,11 +42,14 @@ public class BuildValidationHandler {
 
   private static File basedir;
   private static String module;
+  private static String propertiesFile;
 
   public static void main(String[] args) {
     basedir = new File(args[0]);
     module = null; // The module is not set so that all BuildValidations are always executed.
     PropertyConfigurator.configure("log4j.lcf");
+    propertiesFile = args[2];
+    log4j.debug("basedir = " + basedir + ", propertiesFile = " + propertiesFile);
     List<String> classes = new ArrayList<String>();
     ArrayList<File> modFolders = new ArrayList<File>();
     if (module != null && !module.equals("%")) {
@@ -68,17 +78,17 @@ public class BuildValidationHandler {
       }
     }
 
+    Map<String, OpenbravoVersion> modulesVersionMap = getModulesVersionMap();
     sortPrerequisites(classes);
 
     for (String s : classes) {
-      ArrayList<String> errors = new ArrayList<String>();
+      List<String> errors = new ArrayList<String>();
       try {
         Class<?> myClass = Class.forName(s);
-        if (myClass.getGenericSuperclass().equals(
-            Class.forName("org.openbravo.buildvalidation.BuildValidation"))) {
-          Object instance = myClass.newInstance();
-          log4j.info("Executing build validation: " + s);
-          errors = callExecute(myClass, instance);
+        if (BuildValidation.class.isAssignableFrom(myClass)) {
+          BuildValidation instance = (BuildValidation) myClass.newInstance();
+          instance.preExecute(modulesVersionMap);
+          errors = instance.getErrors();
         }
       } catch (Exception e) {
         log4j.info("Error executing build-validation: " + s, e);
@@ -109,13 +119,6 @@ public class BuildValidationHandler {
       errorMessage += error + "\n";
     }
     log4j.error(errorMessage);
-  }
-
-  @SuppressWarnings("unchecked")
-  private static ArrayList<String> callExecute(Class<?> myClass, Object instance)
-      throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-    return (ArrayList<String>) myClass.getMethod("execute", new Class[0]).invoke(instance,
-        new Object[0]);
   }
 
   public static void readClassFiles(List<String> coreClasses, File file) {
@@ -161,4 +164,39 @@ public class BuildValidationHandler {
     BuildValidationHandler.module = module;
   }
 
+  /**
+   * Returns a map with the current module versions
+   *
+   * @return A data structure that contains module versions mapped by module id
+   */
+  private static Map<String, OpenbravoVersion> getModulesVersionMap() {
+    Map<String, OpenbravoVersion> modulesVersion = new HashMap<String, OpenbravoVersion>();
+    String strSql = "SELECT ad_module_id AS moduleid, version AS version FROM ad_module";
+    PreparedStatement ps = null;
+    try {
+      ConnectionProvider cp = getConnectionProvider();
+      ps = cp.getPreparedStatement(strSql);
+      ResultSet rs = ps.executeQuery();
+      while (rs.next()) {
+        String moduleId = rs.getString("moduleid");
+        String modVersion = rs.getString("version");
+        modulesVersion.put(moduleId, new OpenbravoVersion(modVersion));
+      }
+    } catch (Exception e) {
+      log4j.error("Not possible to recover the current version of modules", e);
+    } finally {
+      try {
+        ps.close();
+      } catch (SQLException e) {
+        // won't happen
+      }
+    }
+    return modulesVersion;
+  }
+
+  private static ConnectionProvider getConnectionProvider() {
+    ConnectionProvider cp = null;
+    cp = new CPStandAlone(propertiesFile);
+    return cp;
+  }
 }

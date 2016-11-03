@@ -70,8 +70,8 @@ import org.openbravo.test.model.TrlColumnsOraTypeTest;
 import org.openbravo.test.model.UniqueConstraintTest;
 import org.openbravo.test.modularity.DBPrefixTest;
 import org.openbravo.test.modularity.DatasetServiceTest;
+import org.openbravo.test.modularity.ExecutionLimitsTest;
 import org.openbravo.test.modularity.MergePropertiesTest;
-import org.openbravo.test.modularity.ModuleScriptsVersions;
 import org.openbravo.test.modularity.TableNameTest;
 import org.openbravo.test.preference.PreferenceTest;
 import org.openbravo.test.reporting.JasperReportsCompilation;
@@ -217,8 +217,8 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     GenerateComponentTest.class, //
     LabelTest.class, //
 
-    // moduleScripts
-    ModuleScriptsVersions.class, //
+    // buildValidations and moduleScripts
+    ExecutionLimitsTest.class, //
 
     // role inheritance
     RoleInheritanceTestSuite.class, //
@@ -241,7 +241,7 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
 
     // others
     DocumentNumberGeneration.class,
-    
+
     // Cancel and Replace Tests
     CancelAndReplaceTest.class
 
