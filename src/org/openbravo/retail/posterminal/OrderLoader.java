@@ -273,7 +273,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         wasPaidOnCredit = !isQuotation
             && !isDeleted
             && !notpaidLayaway
-            && !paidReceipt
             && Math.abs(jsonorder.getDouble("payment")) < Math.abs(new Double(jsonorder
                 .getDouble("gross")));
         if (jsonorder.has("oBPOSNotInvoiceOnCashUp")
@@ -291,7 +290,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
         // We have to check if there is any line in the order which have been already invoiced. If
         // it is the case we will not create the invoice.
-        if (createInvoice && jsonorder.getBoolean("isLayaway")) {
+        if (createInvoice && (jsonorder.getBoolean("isLayaway") || paidReceipt)) {
           List<Invoice> lstInvoice = getInvoicesRelatedToOrder(jsonorder.getString("id"));
           if (lstInvoice != null) {
             // We have found and invoice, so it will be used to assign payments
@@ -1945,57 +1944,54 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       // if (payments.length() == 0 ) or (writeoffAmt<0) means that use credit was used
       if ((payments.length() == 0 || diffPaid.compareTo(BigDecimal.ZERO) != 0) && invoice != null
           && invoice.getGrandTotalAmount().compareTo(BigDecimal.ZERO) != 0) {
-        FIN_PaymentScheduleDetail paymentScheduleDetail = OBProvider.getInstance().get(
-            FIN_PaymentScheduleDetail.class);
-        paymentScheduleDetail.setOrderPaymentSchedule(paymentSchedule);
-        paymentScheduleDetail.setAmount(diffPaid);
-        paymentScheduleDetail.setBusinessPartner(order.getBusinessPartner());
-        if (paymentScheduleInvoice != null) {
-          paymentScheduleDetail.setInvoicePaymentSchedule(paymentScheduleInvoice);
-        }
-        paymentScheduleDetail.setId(paymentScheduleInvoice.getId());
-        paymentScheduleDetail.setNewOBObject(true);
-        OBDal.getInstance().save(paymentScheduleDetail);
+        setRemainingPayment(order, paymentScheduleInvoice, diffPaid, true);
       } else if (notpaidLayaway || fullypaidLayaway) {
-        // Unlinked PaymentScheduleDetail records will be recreated
-        // First all non linked PaymentScheduleDetail records are deleted
-        List<FIN_PaymentScheduleDetail> pScheduleDetails = new ArrayList<FIN_PaymentScheduleDetail>();
-        pScheduleDetails.addAll(paymentSchedule
-            .getFINPaymentScheduleDetailOrderPaymentScheduleList());
-        for (FIN_PaymentScheduleDetail pSched : pScheduleDetails) {
-          if (pSched.getPaymentDetails() == null) {
-            paymentSchedule.getFINPaymentScheduleDetailOrderPaymentScheduleList().remove(pSched);
-            if (paymentScheduleInvoice != null
-                && paymentScheduleInvoice.getFINPaymentScheduleDetailInvoicePaymentScheduleList() != null
-                && paymentScheduleInvoice.getFINPaymentScheduleDetailInvoicePaymentScheduleList()
-                    .size() > 0) {
-              paymentScheduleInvoice.getFINPaymentScheduleDetailInvoicePaymentScheduleList()
-                  .remove(pSched);
-            }
-
-            OBDal.getInstance().remove(pSched);
-          }
-        }
-        // Then a new one for the amount remaining to be paid is created if there is still something
-        // to be paid
-        if (diffPaid.compareTo(BigDecimal.ZERO) != 0) {
-          FIN_PaymentScheduleDetail paymentScheduleDetail = OBProvider.getInstance().get(
-              FIN_PaymentScheduleDetail.class);
-          paymentScheduleDetail.setOrderPaymentSchedule(paymentSchedule);
-          paymentScheduleDetail.setAmount(diffPaid);
-          paymentScheduleDetail.setBusinessPartner(order.getBusinessPartner());
-          if (paymentScheduleInvoice != null) {
-            paymentScheduleDetail.setInvoicePaymentSchedule(paymentScheduleInvoice);
-          }
-          paymentScheduleDetail.setId(paymentSchedule.getId());
-          paymentScheduleDetail.setNewOBObject(true);
-          OBDal.getInstance().save(paymentScheduleDetail);
-        }
+        setRemainingPayment(order, paymentSchedule, diffPaid, false);
       }
 
       return null;
     }
 
+  }
+
+  private void setRemainingPayment(Order order, FIN_PaymentSchedule paymentSchedule,
+      BigDecimal diffPaid, boolean usedCredit) {
+    // Unlinked PaymentScheduleDetail records will be recreated
+    // First all non linked PaymentScheduleDetail records are deleted
+    String pSchedId = null;
+    List<FIN_PaymentScheduleDetail> fINPaymentScheduleDetailPaymentScheduleList = usedCredit ? paymentSchedule
+        .getFINPaymentScheduleDetailInvoicePaymentScheduleList() : paymentSchedule
+        .getFINPaymentScheduleDetailOrderPaymentScheduleList();
+    List<FIN_PaymentScheduleDetail> pScheduleDetails = new ArrayList<FIN_PaymentScheduleDetail>();
+    pScheduleDetails.addAll(fINPaymentScheduleDetailPaymentScheduleList);
+    for (FIN_PaymentScheduleDetail pSched : pScheduleDetails) {
+      if (pSched.getPaymentDetails() == null) {
+        fINPaymentScheduleDetailPaymentScheduleList.remove(pSched);
+        if (paymentSchedule != null
+            && paymentSchedule.getFINPaymentScheduleDetailInvoicePaymentScheduleList() != null
+            && paymentSchedule.getFINPaymentScheduleDetailInvoicePaymentScheduleList().size() > 0) {
+          paymentSchedule.getFINPaymentScheduleDetailInvoicePaymentScheduleList().remove(pSched);
+        }
+        pSchedId = pSched.getId();
+        OBDal.getInstance().remove(pSched);
+      }
+    }
+    // Then a new one for the amount remaining to be paid is created if there is still something
+    // to be paid
+    if (diffPaid.compareTo(BigDecimal.ZERO) != 0) {
+      FIN_PaymentScheduleDetail paymentScheduleDetail = OBProvider.getInstance().get(
+          FIN_PaymentScheduleDetail.class);
+      paymentScheduleDetail.setOrderPaymentSchedule(paymentSchedule);
+      paymentScheduleDetail.setAmount(diffPaid);
+      paymentScheduleDetail.setBusinessPartner(order.getBusinessPartner());
+      if (paymentSchedule != null) {
+        paymentScheduleDetail.setInvoicePaymentSchedule(paymentSchedule);
+      }
+      paymentScheduleDetail.setId(paymentSchedule.getId());
+      paymentScheduleDetail.setId(pSchedId == null ? paymentSchedule.getId() : pSchedId);
+      paymentScheduleDetail.setNewOBObject(true);
+      OBDal.getInstance().save(paymentScheduleDetail);
+    }
   }
 
   protected void processPayments(FIN_PaymentSchedule paymentSchedule,
