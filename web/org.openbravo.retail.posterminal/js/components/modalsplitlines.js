@@ -9,6 +9,11 @@
 
 /*global enyo, _, Backbone */
 
+OB.SplitLine = OB.SplitLine || {};
+(function () {
+  OB.SplitLine.MAX_SPLITLINE = 20;
+}());
+
 enyo.kind({
   name: 'OB.UI.ModalNumberEditor',
   events: {
@@ -203,6 +208,7 @@ enyo.kind({
   bodyContent: {
     components: [{
       classes: 'splitline-message',
+      name: 'splitlineMessage',
       initComponents: function () {
         this.setContent(OB.I18N.getLabel('OBPOS_lblSplitWarning'));
       }
@@ -266,7 +272,7 @@ enyo.kind({
         components: [{
           kind: 'OB.UI.ModalNumberEditor',
           name: 'numberlinesQty',
-          maxLines: 100
+          maxLines: OB.SplitLine.MAX_SPLITLINE
         }]
       }]
     }, {
@@ -448,12 +454,14 @@ enyo.kind({
           this.orderline.get('promotions').splice(index, 1, adjustedPromotion);
         }
       }, this);
+      OB.UTIL.SynchronizationHelper.finished(this.synchId, 'splitLines');
       this.receipt.set('skipCalculateReceipt', false);
       this.receipt.calculateReceipt();
     }
   },
 
   splitLines: function () {
+    this.synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('splitLines');
     this.indexToAdd = 1;
     this.qtysToAdd = this.$.bodyContent.$.qtyLines.getValues();
     this.orderline.set('splitline', true);
@@ -470,6 +478,7 @@ enyo.kind({
           this.splittedLines = [];
           this.addProductSplit(true, orderline);
         } else {
+          OB.UTIL.SynchronizationHelper.finished(this.synchId, 'splitLines');
           this.orderline.set('splitline', false);
           this.receipt.set('skipCalculateReceipt', false);
           OB.log('error ', 'Can not change units');
