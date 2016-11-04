@@ -506,7 +506,7 @@ enyo.kind({
     }
   },
 
-  checkEnoughCashAvailable: function (paymentstatus, selectedPayment, scope, checkLayaway, callback) {
+  checkEnoughCashAvailable: function (paymentstatus, selectedPayment, scope, button, callback) {
     var requiredCash, hasEnoughCash = true,
         hasAllEnoughCash = true,
         reversedPayments = [],
@@ -533,7 +533,7 @@ enyo.kind({
       if (hasEnoughCash) {
         if (OB.UTIL.isNullOrUndefined(selectedPayment) || !selectedPayment.paymentMethod.iscash) {
           requiredCash = OB.DEC.Zero;
-        } else if (!checkLayaway && !_.isUndefined(paymentstatus) && (paymentstatus.isNegative)) {
+        } else if ((button === 'Done' || button === 'Credit') && !_.isUndefined(paymentstatus) && (paymentstatus.isNegative)) {
           requiredCash = OB.DEC.add(currentSelectedPaymentCashAmount, paymentstatus.pendingAmt);
           paymentstatus.payments.each(function (payment) {
             var paymentmethod;
@@ -547,7 +547,7 @@ enyo.kind({
             }
           });
         } else if (!_.isUndefined(paymentstatus)) {
-          if (checkLayaway) {
+          if (button === 'Layaway' || button === 'Credit') {
             requiredCash = OB.DEC.add(currentSelectedPaymentCashAmount, paymentstatus.changeAmt);
           } else {
             requiredCash = OB.DEC.sub(OB.DEC.add(currentSelectedPaymentCashAmount, paymentstatus.changeAmt), paymentstatus.pendingAmt);
@@ -561,7 +561,7 @@ enyo.kind({
         }
       }
 
-      if (hasEnoughCash && (checkLayaway || (!checkLayaway && hasAllEnoughCash))) {
+      if (hasEnoughCash && ((button === 'Layaway' || button === 'Credit') || (button === 'Done' && hasAllEnoughCash))) {
         return callback.call(scope, true);
       } else {
         return callback.call(scope, false); // check failed.
@@ -660,7 +660,7 @@ enyo.kind({
     resultOK = !selectedPayment.paymentMethod.iscash || paymentstatus.changeAmt > 0 ? this.checkValidCashOverpayment(paymentstatus, selectedPayment) : undefined;
     if (resultOK || _.isUndefined(resultOK)) {
       if (!_.isNull(paymentstatus.change) || ((paymentstatus.isNegative || paymentstatus.isReversal) && !_.isNull(paymentstatus.pending))) {
-        resultOK = this.checkEnoughCashAvailable(paymentstatus, selectedPayment, this, false, function (success) {
+        resultOK = this.checkEnoughCashAvailable(paymentstatus, selectedPayment, this, 'Done', function (success) {
           var lsuccess = success;
           if (lsuccess) {
             lsuccess = this.checkValidPaymentMethod(paymentstatus, selectedPayment);
@@ -670,21 +670,25 @@ enyo.kind({
             this.$.exactbutton.setLocalDisabled(true);
           }
           me.receipt.stopAddingPayments = !_.isEmpty(me.getShowingErrorMessages());
-          this.setStatusButtons(lsuccess);
-          this.checkEnoughCashAvailable(paymentstatus, selectedPayment, this, true, function (success) {
-            this.setStatusLayawayButton(success);
+          this.setStatusButtons(lsuccess, 'Done');
+          this.checkEnoughCashAvailable(paymentstatus, selectedPayment, this, 'Layaway', function (success) {
+            this.setStatusButtons(success, 'Layaway');
+          });
+          this.checkEnoughCashAvailable(paymentstatus, selectedPayment, this, 'Credit', function (success) {
+            this.setStatusButtons(success, 'Credit');
           });
         });
       } else if (!this.receipt.stopAddingPayments) {
         this.$.donebutton.setLocalDisabled(false);
         this.$.exactbutton.setLocalDisabled(false);
         this.$.layawayaction.setLocalDisabled(false);
+        this.$.creditsalesaction.setLocalDisabled(false);
       }
 
     } else {
       me.receipt.stopAddingPayments = !_.isEmpty(me.getShowingErrorMessages());
       // Finally set status of buttons
-      this.setStatusButtons(resultOK);
+      this.setStatusButtons(resultOK, 'Done');
       this.setStatusLayawayButton(resultOK);
     }
     if (resultOK) {
@@ -810,26 +814,38 @@ enyo.kind({
     }
     return msgToReturn;
   },
-  setStatusButtons: function (resultOK) {
-    if (resultOK) {
-      this.$.donebutton.setLocalDisabled(false);
-      this.$.exactbutton.setLocalDisabled(false);
-    } else {
-      if (this.$.changeexceedlimit.showing || this.$.overpaymentnotavailable.showing || this.$.overpaymentexceedlimit.showing || this.$.onlycashpaymentmethod.showing) {
-        this.$.noenoughchangelbl.hide();
+  setStatusButtons: function (resultOK, button) {
+    if (button === 'Done') {
+      if (resultOK) {
+        this.$.donebutton.setLocalDisabled(false);
+        this.$.exactbutton.setLocalDisabled(false);
       } else {
-        this.$.noenoughchangelbl.show();
+        if (this.$.changeexceedlimit.showing || this.$.overpaymentnotavailable.showing || this.$.overpaymentexceedlimit.showing || this.$.onlycashpaymentmethod.showing) {
+          this.$.noenoughchangelbl.hide();
+        } else {
+          this.$.noenoughchangelbl.show();
+        }
+        this.$.donebutton.setLocalDisabled(true);
+        this.$.exactbutton.setLocalDisabled(true);
       }
-      this.$.donebutton.setLocalDisabled(true);
-      this.$.exactbutton.setLocalDisabled(true);
-    }
-  },
-
-  setStatusLayawayButton: function (resultOK) {
-    if (resultOK) {
-      this.$.layawayaction.setLocalDisabled(false);
-    } else {
-      this.$.layawayaction.setLocalDisabled(true);
+    } else if (button === 'Layaway') {
+      if (resultOK) {
+        this.$.layawayaction.setLocalDisabled(false);
+      } else {
+        this.$.layawayaction.setLocalDisabled(true);
+      }
+    } else if (button === 'Credit') {
+      if (resultOK) {
+        this.$.creditsalesaction.setLocalDisabled(false);
+      } else {
+        // If there is not enought cash to return and the user is doing a reverse payment (the negative cash payment has
+        // been introduced), the "Use Credit" button must also be disabled
+        // In a return or a positive ticket with negative payments, the "Use Credit" button can be enabled, because the cash
+        // payment has not been added yet
+        if (this.receipt.getPaymentStatus().isReversal) {
+          this.$.creditsalesaction.setLocalDisabled(true);
+        }
+      }
     }
   },
 

@@ -845,7 +845,7 @@
         } else {
           paymentsAmount = OB.DEC.add(paymentsAmount, payment.get('origAmount'));
         }
-        if (payment.get('reversedPaymentId')) {
+        if (payment.get('reversedPaymentId') && !payment.get('isPrePayment')) {
           isReversal = true;
         }
       });
