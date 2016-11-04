@@ -38,6 +38,7 @@ enyo.kind({
         style: 'display: table-cell;',
         components: [{
           kind: 'OB.UI.SmallButton',
+          name: 'clearButton',
           classes: 'btnlink-gray btn-icon-small btn-icon-clear',
           style: 'width: 100px; margin: 0px 5px 8px 19px;',
           ontap: 'clearAction'
@@ -46,6 +47,7 @@ enyo.kind({
         style: 'display: table-cell;',
         components: [{
           kind: 'OB.UI.SmallButton',
+          name: 'searchButton',
           classes: 'btnlink-yellow btn-icon-small btn-icon-search',
           style: 'width: 100px; margin: 0px 0px 8px 5px;',
           ontap: 'searchAction'
@@ -129,6 +131,10 @@ enyo.kind({
   },
   disableFilterText: function (value) {
     this.$.filterText.setDisabled(value);
+  },
+  disableFilterButtons: function (value) {
+    this.$.searchButton.setDisabled(value);
+    this.$.clearButton.setDisabled(value);
   },
   clearAction: function () {
     if (!this.$.filterText.disabled) {
@@ -307,6 +313,7 @@ enyo.kind({
     this.$.prslistitemprinter.$.tbody.hide();
     this.$.prslistitemprinter.$.tlimit.hide();
     this.$.renderLoading.show();
+    this.$.prslistitemprinter.$.theader.$.modalPRScrollableHeader.disableFilterButtons(true);
     var limit;
     if (!OB.MobileApp.model.hasPermission('OBPOS_remote.order', true)) {
       limit = OB.Model.Order.prototype.dataLimit;
@@ -347,13 +354,14 @@ enyo.kind({
         }
         me.$.prslistitemprinter.getScrollArea().scrollToTop();
 
-
       } else {
         OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorDropDep'));
       }
+      me.$.prslistitemprinter.$.theader.$.modalPRScrollableHeader.disableFilterButtons(false);
     }, function (error) {
       if (error) {
         OB.UTIL.showError(OB.I18N.getLabel('OBPOS_OfflineWindowRequiresOnline'));
+        me.$.prslistitemprinter.$.theader.$.modalPRScrollableHeader.disableFilterButtons(false);
       }
     });
     return true;

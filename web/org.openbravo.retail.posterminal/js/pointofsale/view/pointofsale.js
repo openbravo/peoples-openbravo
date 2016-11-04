@@ -408,13 +408,18 @@ enyo.kind({
     });
   },
   addProductToOrder: function (inSender, inEvent) {
-    var targetOrder;
+    var targetOrder, me = this;
     if (inEvent && inEvent.targetOrder) {
       targetOrder = inEvent.targetOrder;
     } else {
       targetOrder = this.model.get('order');
     }
-    if (targetOrder.pendingAddProduct && targetOrder.pendingAddProduct === true) {
+    if (targetOrder.addProcess && targetOrder.addProcess.pending === true) {
+      targetOrder.addProcess.hasProduct = true;
+      targetOrder.addProcess.products.push({
+        inSender: inSender,
+        inEvent: inEvent
+      });
       return false;
     }
     if (targetOrder.get('isEditable') === false) {
@@ -514,9 +519,19 @@ enyo.kind({
         }
         return true;
       }
-      args.receipt.pendingAddProduct = true;
+      args.receipt.addProcess = {};
+      args.receipt.addProcess.pending = true;
+      args.receipt.addProcess.hasProduct = false;
+      args.receipt.addProcess.products = [];
       args.receipt.addProduct(args.productToAdd, args.qtyToAdd, args.options, args.attrs, function (success, orderline) {
-        args.receipt.pendingAddProduct = false;
+        args.receipt.addProcess.pending = false;
+        if (success && orderline) {
+          if (orderline.get('hasRelatedServices') === false && args.receipt.addProcess.hasProduct === true) {
+            args.receipt.addProcess.products.forEach(function (product) {
+              me.addProductToOrder(product.inSender, product.inEvent);
+            });
+          }
+        }
         args.context.model.get('orderList').saveCurrent();
         if (inEvent.callback) {
           inEvent.callback.call(inEvent.context, success, orderline);

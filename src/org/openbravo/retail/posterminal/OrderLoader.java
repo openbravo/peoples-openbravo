@@ -1409,7 +1409,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     }
     JSONPropertyToEntity.fillBobFromJSON(orderEntity, order, jsonorder,
         jsonorder.getLong("timezoneOffset"));
-    if (jsonorder.has("id") && jsonorder.getString("id") != null) {
+    if (jsonorder.has("id")) {
       order.setId(jsonorder.getString("id"));
       order.setNewOBObject(true);
     }
