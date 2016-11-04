@@ -102,90 +102,95 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
     terminalCriteria.add(Restrictions.eq(OBPOSApplications.PROPERTY_SEARCHKEY, terminalName));
     terminalCriteria.setFilterOnReadableOrganization(false);
     terminalCriteria.setFilterOnReadableClients(false);
-    OBPOSApplications terminalObj = terminalCriteria.list().get(0);
 
-    List<String> naturalTreeOrgList = new ArrayList<String>(
-        OBContext.getOBContext().getOrganizationStructureProvider(terminalObj.getClient().getId())
-            .getNaturalTree(terminalObj.getOrganization().getId()));
+    List<OBPOSApplications> terminalList = terminalCriteria.list();
+    if (terminalList.size() != 0) {
+      OBPOSApplications terminalObj = terminalList.get(0);
 
-    String hqlUser = "select distinct user.name, user.username, user.id "
-        + "from ADUser user, ADUserRoles userRoles, ADRole role, "
-        + "ADFormAccess formAccess, OBPOS_Applications terminal " + "where user.active = true and "
-        + "userRoles.active = true and " + "role.active = true and "
-        + "formAccess.active = true and " + "user.username is not null and "
-        + "user.password is not null and "
-        + "exists (from ADRoleOrganization ro where ro.role = role and ro.organization = terminal.organization) and "
-        + "(not exists(from OBPOS_TerminalAccess ta where ta.userContact = user) or exists(from OBPOS_TerminalAccess ta where ta.userContact = user and ta.pOSTerminal=terminal)) and "
-        + "terminal.searchKey = :theTerminalSearchKey and "
-        + "user.id = userRoles.userContact.id and userRoles.role.id = role.id and "
-        + "userRoles.role.id = formAccess.role.id and "
-        + "formAccess.specialForm.id = :webPOSFormId and "
-        + "((user.organization.id in (:orgList)) or (terminal.organization.id in (:orgList)))";
+      List<String> naturalTreeOrgList = new ArrayList<String>(
+          OBContext.getOBContext().getOrganizationStructureProvider(terminalObj.getClient().getId())
+              .getNaturalTree(terminalObj.getOrganization().getId()));
 
-    if (approvalType.length() != 0) {
-      // checking supervisor users for sent approval type
-      for (int i = 0; i < approvalType.length(); i++) {
-        String iter = approvalType.getString(i);
-        hqlUser += "and exists (from ADPreference as p where property = '" + iter
-            + "'   and active = true and to_char(searchKey) = 'Y'"
-            + "   and (userContact = user or exists (from ADUserRoles r"
-            + "                  where r.role = p.visibleAtRole"
-            + "                    and r.userContact = user)) "
-            + "   and (p.visibleAtOrganization = terminal.organization "
-            + "   or p.visibleAtOrganization.id in (:orgList) "
-            + "   or p.visibleAtOrganization is null)) ";
+      String hqlUser = "select distinct user.name, user.username, user.id "
+          + "from ADUser user, ADUserRoles userRoles, ADRole role, "
+          + "ADFormAccess formAccess, OBPOS_Applications terminal "
+          + "where user.active = true and " + "userRoles.active = true and "
+          + "role.active = true and " + "formAccess.active = true and "
+          + "user.username is not null and " + "user.password is not null and "
+          + "exists (from ADRoleOrganization ro where ro.role = role and ro.organization = terminal.organization) and "
+          + "(not exists(from OBPOS_TerminalAccess ta where ta.userContact = user) or exists(from OBPOS_TerminalAccess ta where ta.userContact = user and ta.pOSTerminal=terminal)) and "
+          + "terminal.searchKey = :theTerminalSearchKey and "
+          + "user.id = userRoles.userContact.id and userRoles.role.id = role.id and "
+          + "userRoles.role.id = formAccess.role.id and "
+          + "userRoles.role.forPortalUsers = false and "
+          + "formAccess.specialForm.id = :webPOSFormId and "
+          + "((user.organization.id in (:orgList)) or (terminal.organization.id in (:orgList)))";
+
+      if (approvalType.length() != 0) {
+        // checking supervisor users for sent approval type
+        for (int i = 0; i < approvalType.length(); i++) {
+          String iter = approvalType.getString(i);
+          hqlUser += "and exists (from ADPreference as p where property = '" + iter
+              + "'   and active = true and to_char(searchKey) = 'Y'"
+              + "   and (userContact = user or exists (from ADUserRoles r"
+              + "                  where r.role = p.visibleAtRole"
+              + "                    and r.userContact = user)) "
+              + "   and (p.visibleAtOrganization = terminal.organization "
+              + "   or p.visibleAtOrganization.id in (:orgList) "
+              + "   or p.visibleAtOrganization is null)) ";
+        }
+
       }
 
-    }
+      hqlUser += "order by user.name";
+      Query qryUser = OBDal.getInstance().getSession().createQuery(hqlUser);
+      qryUser.setParameter("theTerminalSearchKey", terminalName);
+      qryUser.setParameter("webPOSFormId", "B7B7675269CD4D44B628A2C6CF01244F");
+      qryUser.setParameterList("orgList", naturalTreeOrgList);
 
-    hqlUser += "order by user.name";
+      List<Object> queryUserList = qryUser.list();
+      for (Object qryUserObject : queryUserList) {
+        final Object[] qryUserObjectItem = (Object[]) qryUserObject;
 
-    Query qryUser = OBDal.getInstance().getSession().createQuery(hqlUser);
-    qryUser.setParameter("theTerminalSearchKey", terminalName);
-    qryUser.setParameter("webPOSFormId", "B7B7675269CD4D44B628A2C6CF01244F");
-    qryUser.setParameterList("orgList", naturalTreeOrgList);
+        JSONObject item = new JSONObject();
+        item.put("name", qryUserObjectItem[0]);
+        item.put("userName", qryUserObjectItem[1]);
+        item.put("userId", qryUserObjectItem[2]);
 
-    List<Object> queryUserList = qryUser.list();
-    for (Object qryUserObject : queryUserList) {
-      final Object[] qryUserObjectItem = (Object[]) qryUserObject;
+        // Get the image for the current user
+        String hqlImage = "select image.mimetype, image.bindaryData "
+            + "from ADImage image, ADUser user "
+            + "where user.image = image.id and user.id = :theUserId";
+        Query qryImage = OBDal.getInstance().getSession().createQuery(hqlImage);
+        qryImage.setParameter("theUserId", qryUserObjectItem[2].toString());
+        String imageData = "none";
 
-      JSONObject item = new JSONObject();
-      item.put("name", qryUserObjectItem[0]);
-      item.put("userName", qryUserObjectItem[1]);
-      item.put("userId", qryUserObjectItem[2]);
+        List<Object> qryImageList = qryImage.list();
+        for (Object qryImageObject : qryImageList) {
+          final Object[] qryImageObjectItem = (Object[]) qryImageObject;
+          imageData = "data:" + qryImageObjectItem[0].toString() + ";base64,"
+              + org.apache.commons.codec.binary.Base64
+                  .encodeBase64String((byte[]) qryImageObjectItem[1]);
+        }
+        item.put("image", imageData);
 
-      // Get the image for the current user
-      String hqlImage = "select image.mimetype, image.bindaryData "
-          + "from ADImage image, ADUser user "
-          + "where user.image = image.id and user.id = :theUserId";
-      Query qryImage = OBDal.getInstance().getSession().createQuery(hqlImage);
-      qryImage.setParameter("theUserId", qryUserObjectItem[2].toString());
-      String imageData = "none";
+        // Get the session status for the current user
+        String hqlSession = "select distinct session.username, session.sessionActive "
+            + "from ADSession session "
+            + "where session.username = :theUsername and session.sessionActive = 'Y' and "
+            + "session.loginStatus = 'OBPOS_POS'";
+        Query qrySession = OBDal.getInstance().getSession().createQuery(hqlSession);
+        qrySession.setParameter("theUsername", qryUserObjectItem[1].toString());
+        qrySession.setMaxResults(1);
+        String sessionData = "false";
+        if (qrySession.uniqueResult() != null) {
+          sessionData = "true";
+        }
+        item.put("connected", sessionData);
 
-      List<Object> qryImageList = qryImage.list();
-      for (Object qryImageObject : qryImageList) {
-        final Object[] qryImageObjectItem = (Object[]) qryImageObject;
-        imageData = "data:" + qryImageObjectItem[0].toString() + ";base64,"
-            + org.apache.commons.codec.binary.Base64
-                .encodeBase64String((byte[]) qryImageObjectItem[1]);
+        data.put(item);
       }
-      item.put("image", imageData);
 
-      // Get the session status for the current user
-      String hqlSession = "select distinct session.username, session.sessionActive "
-          + "from ADSession session "
-          + "where session.username = :theUsername and session.sessionActive = 'Y' and "
-          + "session.loginStatus = 'OBPOS_POS'";
-      Query qrySession = OBDal.getInstance().getSession().createQuery(hqlSession);
-      qrySession.setParameter("theUsername", qryUserObjectItem[1].toString());
-      qrySession.setMaxResults(1);
-      String sessionData = "false";
-      if (qrySession.uniqueResult() != null) {
-        sessionData = "true";
-      }
-      item.put("connected", sessionData);
-
-      data.put(item);
     }
     result.put("data", data);
     return result;
