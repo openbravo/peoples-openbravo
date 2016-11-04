@@ -125,11 +125,11 @@ public class CostingServer {
         transaction.setCostingStatus("CC");
         // insert on m_transaction_cost
         createTransactionCost();
+        updateLastTransaction();
         OBDal.getInstance().flush();
 
         setNotPostedTransaction();
         checkCostAdjustments();
-        updateLastTransaction();
       } finally {
         OBContext.restorePreviousMode();
       }
