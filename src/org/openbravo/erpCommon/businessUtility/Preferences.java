@@ -339,26 +339,6 @@ public class Preferences {
         checkWindow, true);
   }
 
-  private static List<Preference> getPreferences(String property, boolean isListProperty,
-      String client, String org, String user, String role, String window, boolean exactMatch,
-      boolean checkWindow, boolean activeFilterEnabled) {
-    return getPreferences(property, isListProperty, client, org, user, role, window, exactMatch,
-        checkWindow, activeFilterEnabled, "id", true);
-  }
-
-  /**
-   * Returns a list of all the preferences that matches the filters ordered by the order parameters
-   * set
-   * 
-   * @return A List of preferences
-   */
-  public static List<Preference> getPreferencesOrdered(String property, boolean isListProperty,
-      String client, String org, String user, String role, String window, boolean exactMatch,
-      boolean checkWindow, boolean activeFilterEnabled, String oderProperty, boolean orderAsc) {
-    return getPreferences(property, isListProperty, client, org, user, role, window, exactMatch,
-        checkWindow, activeFilterEnabled, oderProperty, orderAsc);
-  }
-
   /**
    * Obtains a list of preferences. All the parameters can be null; when a parameter is null, it
    * will not be used in the filtering for the preference.
@@ -371,7 +351,7 @@ public class Preferences {
    */
   private static List<Preference> getPreferences(String property, boolean isListProperty,
       String client, String org, String user, String role, String window, boolean exactMatch,
-      boolean checkWindow, boolean activeFilterEnabled, String orderProperty, boolean orderAsc) {
+      boolean checkWindow, boolean activeFilterEnabled) {
 
     List<Object> parameters = new ArrayList<Object>();
     StringBuilder hql = new StringBuilder();
@@ -460,7 +440,7 @@ public class Preferences {
       parameters.add(property);
     }
 
-    hql.append(" order by p." + orderProperty + (orderAsc ? " asc" : " desc"));
+    hql.append(" order by p.id");
 
     OBQuery<Preference> qPref = OBDal.getInstance().createQuery(Preference.class, hql.toString());
     qPref.setParameters(parameters);
