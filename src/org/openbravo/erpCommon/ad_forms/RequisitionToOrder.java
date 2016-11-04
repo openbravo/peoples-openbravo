@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -23,12 +23,13 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.sql.Connection;
+import java.util.HashMap;
+import java.util.Map.Entry;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.StringUtils;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -516,11 +517,8 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
 
       int line = 0;
       String strCOrderlineID = "";
-      BigDecimal qty = new BigDecimal("0");
       BigDecimal qtyOrder = new BigDecimal("0");
-      BigDecimal quantity = new BigDecimal("0");
       BigDecimal quantityOrder = new BigDecimal("0");
-      boolean insertLine = false;
 
       RequisitionToOrderData[] lines = RequisitionToOrderData.linesToOrder(
           this,
@@ -532,6 +530,8 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
               .billto(this, strVendor),
           RequisitionToOrderData.cBPartnerLocationId(this, strVendor), cCurrencyId,
           strPriceListVersionId, strSelected);
+
+      HashMap<String, RequisitionToOrderData> groupedLines = new HashMap<String, RequisitionToOrderData>();
       for (int i = 0; lines != null && i < lines.length; i++) {
         if ("".equals(lines[i].tax)) {
           RequisitionLine rl = OBDal.getInstance().get(RequisitionLine.class,
@@ -543,71 +543,58 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
           return myMessage;
         }
 
-        if (i == 0)
-          strCOrderlineID = SequenceIdData.getUUID();
-        if (i == lines.length - 1) {
-          insertLine = true;
-          qtyOrder = qty;
-          quantityOrder = quantity;
-        } else if (!lines[i + 1].mProductId.equals(lines[i].mProductId)
-            || !lines[i + 1].mAttributesetinstanceId.equals(lines[i].mAttributesetinstanceId)
-            || !lines[i + 1].description.equals(lines[i].description)
-            || !lines[i + 1].priceactual.equals(lines[i].priceactual)
-            || !StringUtils.equals(lines[i + 1].mProductUomId, lines[i].mProductUomId)) {
-          insertLine = true;
-          qtyOrder = qty;
-          qty = new BigDecimal(0);
-          quantityOrder = quantity;
-          quantity = new BigDecimal(0);
+        // Group entries with same attributes set into a hash map
+        String strGroupId = String.format("%s-%s-%s-%s-%s", lines[i].mProductId,
+            lines[i].mAttributesetinstanceId, lines[i].description, lines[i].priceactual,
+            lines[i].mProductUomId);
+        RequisitionToOrderData hashLine = groupedLines.get(strGroupId);
+        if (hashLine != null) {
+          qtyOrder = new BigDecimal(lines[i].lockqty).add(new BigDecimal(hashLine.lockqty));
+          quantityOrder = new BigDecimal(lines[i].quantityorder).add(new BigDecimal(
+              hashLine.quantityorder));
+          hashLine.lockqty = qtyOrder.toString();
+          hashLine.quantityorder = quantityOrder.toString();
+          lines[i].cOrderlineId = hashLine.cOrderlineId;
         } else {
-          qty = qty.add(new BigDecimal(lines[i].lockqty));
-          quantity = quantity.add(new BigDecimal(lines[i].quantityorder));
-        }
-        lines[i].cOrderlineId = strCOrderlineID;
-        if (insertLine) {
-          insertLine = false;
-          line += 10;
-          BigDecimal qtyAux = new BigDecimal(lines[i].lockqty);
-          qtyOrder = qtyOrder.add(qtyAux);
-          BigDecimal quantityAux = new BigDecimal(lines[i].quantityorder);
-          quantityOrder = quantityOrder.add(quantityAux);
-          if (log4j.isDebugEnabled())
-            log4j.debug("Lockqty: " + lines[i].lockqty + " qtyorder: " + qtyOrder.toPlainString()
-                + " new BigDecimal: " + (new BigDecimal(lines[i].lockqty)).toString() + " qtyAux: "
-                + qtyAux.toString());
-
-          try {
-            RequisitionToOrderData
-                .insertCOrderline(
-                    conn,
-                    this,
-                    strCOrderlineID,
-                    vars.getClient(),
-                    strOrg,
-                    vars.getUser(),
-                    strCOrderId,
-                    Integer.toString(line),
-                    strVendor,
-                    RequisitionToOrderData.cBPartnerLocationId(this, strVendor),
-                    strOrderDate,
-                    lines[i].needbydate,
-                    lines[i].description,
-                    lines[i].mProductId,
-                    lines[i].mAttributesetinstanceId,
-                    strWarehouse,
-                    lines[i].mProductUomId,
-                    lines[i].cUomId,
-                    quantityOrder != null && BigDecimal.ZERO.compareTo(quantityOrder) != 0 ? quantityOrder
-                        .toPlainString() : "", qtyOrder.toPlainString(), cCurrencyId,
-                    lines[i].pricelist, lines[i].priceactual, strPriceListId, lines[i].pricelimit,
-                    lines[i].tax, "", lines[i].discount, lines[i].grossUnit, lines[i].grossAmt);
-          } catch (ServletException ex) {
-            myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
-            releaseRollbackConnection(conn);
-            return myMessage;
-          }
-
           strCOrderlineID = SequenceIdData.getUUID();
+          lines[i].cOrderlineId = strCOrderlineID;
+          line += 10;
+          lines[i].rownum = String.valueOf(line);
+          groupedLines.put(strGroupId, lines[i]);
+        }
+      }
+
+      for (Entry<String, RequisitionToOrderData> groupedLine : groupedLines.entrySet()) {
+        RequisitionToOrderData l = groupedLine.getValue();
+        try {
+          RequisitionToOrderData
+              .insertCOrderline(
+                  conn,
+                  this,
+                  l.cOrderlineId,
+                  vars.getClient(),
+                  strOrg,
+                  vars.getUser(),
+                  strCOrderId,
+                  l.rownum,
+                  strVendor,
+                  RequisitionToOrderData.cBPartnerLocationId(this, strVendor),
+                  strOrderDate,
+                  l.needbydate,
+                  l.description,
+                  l.mProductId,
+                  l.mAttributesetinstanceId,
+                  strWarehouse,
+                  l.mProductUomId,
+                  l.cUomId,
+                  l.quantityorder != null
+                      && BigDecimal.ZERO.compareTo(new BigDecimal(l.quantityorder)) != 0 ? l.quantityorder
+                      : "", l.lockqty, cCurrencyId, l.pricelist, l.priceactual, strPriceListId,
+                  l.pricelimit, l.tax, "", l.discount, l.grossUnit, l.grossAmt);
+        } catch (ServletException ex) {
+          myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
+          releaseRollbackConnection(conn);
+          return myMessage;
         }
       }
 
