@@ -328,9 +328,14 @@ public class ViewComponent extends BaseComponent {
       }
     }
 
-    Date upated = getLastUpdated(preferences);
-    if (lastModification.compareTo(upated) < 0) {
-      lastModification = upated;
+    Calendar cal = Calendar.getInstance();
+    cal.set(9999, 9, 9);
+    Date updated = new Date(cal.getTimeInMillis());
+    if (preferences.size() > 0) {
+      updated = getLastUpdated(preferences, updated);
+    }
+    if (lastModification.compareTo(updated) < 0) {
+      lastModification = updated;
     }
 
     return lastModification.toString();
@@ -353,7 +358,7 @@ public class ViewComponent extends BaseComponent {
     return (List<String>) query.list();
   }
 
-  private Date getLastUpdated(Set<String> preferenceSet) {
+  private Date getLastUpdated(Set<String> preferenceSet, Date lastUpdatedParam) {
 
     StringBuilder where = new StringBuilder();
     where.append(" select max(p.updated)");
@@ -370,9 +375,7 @@ public class ViewComponent extends BaseComponent {
     query.setParameterList("properties", preferenceSet);
     Date lastUpdated = (Date) query.uniqueResult();
     if (lastUpdated == null) {
-      Calendar cal = Calendar.getInstance();
-      cal.set(9999, 9, 9);
-      return new Date(cal.getTimeInMillis());
+      lastUpdated = lastUpdatedParam;
     }
     return lastUpdated;
 
