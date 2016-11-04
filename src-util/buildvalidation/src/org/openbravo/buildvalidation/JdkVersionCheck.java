@@ -20,18 +20,20 @@ package org.openbravo.buildvalidation;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import javax.servlet.ServletException;
-
-import org.apache.commons.lang.StringUtils;
-import org.openbravo.buildvalidation.BuildValidation;
-import org.openbravo.database.ConnectionProvider;
+import org.openbravo.base.ExecutionLimits;
+import org.openbravo.modulescript.OpenbravoVersion;
 
 public class JdkVersionCheck extends BuildValidation {
   private static final int JAVA7_MAJOR_VERSION = 51;
 
+  @Override
+  protected ExecutionLimits getBuildValidationLimits() {
+    ExecutionLimits pr17Q1 = new ExecutionLimits("0", null, new OpenbravoVersion(3, 0, 30600));
+    return pr17Q1;
+  }
+
+  @Override
   public List<String> execute() {
     ArrayList<String> errors = new ArrayList<String>();
     try {
