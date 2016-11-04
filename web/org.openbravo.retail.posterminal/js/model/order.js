@@ -2337,13 +2337,6 @@
             });
           }
         }
-        OB.Dal.remove(new OB.Model.BusinessPartner(businessPartner), function () {
-          OB.Dal.save(businessPartner, function () {}, function () {
-            OB.error(arguments);
-          }, true);
-        }, function () {
-          OB.UTIL.showError('Error removing');
-        });
       } else {
         this.set('bp', businessPartner);
         this.save();
