@@ -160,7 +160,7 @@
               } else if (OB.MobileApp.model.attributes.loadManifeststatus && OB.MobileApp.model.attributes.loadManifeststatus.type === 'error' && !OB.RR.RequestRouter.ignoreManifestLoadError()) {
                 var error = OB.MobileApp.model.attributes.loadManifeststatus;
                 OB.debug(error.reason + ' failed to load: ' + error.url);
-                OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_TitleFailedAppCache'), OB.I18N.getLabel('OBPOS_FailedAppCache'), [{
+                OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_TitleFailedAppCache'), enyo.format("%s %s: %s", OB.I18N.getLabel('OBPOS_FailedAppCache'), error.type, error.message), [{
                   label: OB.I18N.getLabel('OBMOBC_LblOk'),
                   isConfirmButton: true
                 }], {
