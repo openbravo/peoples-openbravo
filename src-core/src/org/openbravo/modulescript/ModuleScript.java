@@ -11,7 +11,6 @@
  */
 package org.openbravo.modulescript;
 
-import org.apache.log4j.Logger;
 import org.apache.tools.ant.BuildException;
 import org.openbravo.base.ExecutionLimitBaseProcess;
 import org.openbravo.base.ExecutionLimits;
@@ -24,7 +23,6 @@ import org.openbravo.base.ExecutionLimits;
  */
 public abstract class ModuleScript extends ExecutionLimitBaseProcess {
 
-  private static final Logger log4j = Logger.getLogger(ModuleScript.class);
   private static final String MODULE_SCRIPT = "ModuleScript";
 
   /**

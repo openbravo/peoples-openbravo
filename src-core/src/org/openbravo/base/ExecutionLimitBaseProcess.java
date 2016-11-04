@@ -21,7 +21,7 @@ import org.openbravo.modulescript.OpenbravoVersion;
 
 public abstract class ExecutionLimitBaseProcess {
 
-  private static final Logger log4j = Logger.getLogger(ExecutionLimitBaseProcess.class);
+  protected static final Logger log4j = Logger.getLogger(ExecutionLimitBaseProcess.class);
 
   private ConnectionProvider cp;
 

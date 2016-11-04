@@ -14,7 +14,6 @@ package org.openbravo.buildvalidation;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
 import org.openbravo.base.ExecutionLimitBaseProcess;
 import org.openbravo.base.ExecutionLimits;
 
@@ -24,10 +23,10 @@ import org.openbravo.base.ExecutionLimits;
  * 
  */
 public abstract class BuildValidation extends ExecutionLimitBaseProcess {
-  private static final Logger log4j = Logger.getLogger(BuildValidation.class);
+
   private static final String BUILD_VALIDATION = "BuildValidation";
 
-  private ArrayList<String> errors;
+  private List<String> errors;
 
   /**
    * This method must be implemented by the BuildValidations, and is used to define the actions that
