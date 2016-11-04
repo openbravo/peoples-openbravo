@@ -533,6 +533,8 @@ enyo.kind({
       }
       if (inEvent.orderby && ((inEvent.orderby.isLocationFilter && hasLocation) || !inEvent.orderby.isLocationFilter)) {
         criteria._orderByClause = inEvent.orderby.serverColumn + ' ' + inEvent.orderby.direction;
+      } else {
+        criteria._orderByClause = 'bp.name asc';
       }
       OB.Dal.find(OB.Model.BPartnerFilter, criteria, successCallbackBPs, errorCallback, this);
     } else {
