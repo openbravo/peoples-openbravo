@@ -9,10 +9,13 @@
 package org.openbravo.retail.posterminal.term;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.retail.posterminal.ProcessHQLQuery;
 
 public class ListReference extends ProcessHQLQuery {
@@ -23,14 +26,20 @@ public class ListReference extends ProcessHQLQuery {
   }
 
   @Override
-  protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
+  protected Map<String, Object> getParameterValues(JSONObject jsonsent) throws JSONException {
     JSONObject parameters = jsonsent.getJSONObject("parameters");
-    String reference = parameters.getJSONObject("reference").getString("value");
-    String language = parameters.getJSONObject("language").getString("value");
+    Map<String, Object> paramValues = new HashMap<String, Object>();
+    paramValues.put("reference", parameters.getJSONObject("reference").getString("value"));
+    return paramValues;
+  }
+
+  @Override
+  protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
     return Arrays.asList(new String[] { "select list.searchKey as id, coalesce("
-        + " (select trl.name from list.aDListTrlList trl where  trl.language = '" + language
-        + "'), list.name) as name from ADList list " + "where list.reference.id = '" + reference
-        + "' " + " and list.$readableSimpleCriteria and list.$activeCriteria "
+        + " (select trl.name from list.aDListTrlList trl where  trl.language = '"
+        + OBContext.getOBContext().getLanguage().getLanguage()
+        + "'), list.name) as name from ADList list " + "where list.reference.id = :reference"
+        + " and list.$readableSimpleCriteria and list.$activeCriteria "
         + "order by list.sequenceNumber" });
   }
 
