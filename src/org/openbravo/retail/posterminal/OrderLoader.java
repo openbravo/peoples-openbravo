@@ -1413,9 +1413,9 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         jsonorder.getString("documentType")));
     order.setAccountingDate(order.getOrderDate());
     order.setScheduledDeliveryDate(order.getOrderDate());
-    order.setPartnerAddress(OBDal.getInstance().get(Location.class,
+    order.setPartnerAddress(OBDal.getInstance().getProxy(Location.class,
         jsonorder.getJSONObject("bp").getString("shipLocId")));
-    order.setInvoiceAddress(OBDal.getInstance().get(Location.class,
+    order.setInvoiceAddress(OBDal.getInstance().getProxy(Location.class,
         jsonorder.getJSONObject("bp").getString("locId")));
 
     Boolean paymenthMethod = false;

@@ -152,16 +152,8 @@ public class CustomerAddrLoader extends POSDataSynchronizationProcess implements
         log.error(errorMessage);
         throw new OBException(errorMessage, null);
       }
-      if (jsonCustomerAddr.getBoolean("isBillTo")) {
-        newLocation.setInvoiceToAddress(true);
-      } else {
-        newLocation.setInvoiceToAddress(false);
-      }
-      if (jsonCustomerAddr.getBoolean("isShipTo")) {
-        newLocation.setShipToAddress(true);
-      } else {
-        newLocation.setShipToAddress(false);
-      }
+      newLocation.setInvoiceToAddress(jsonCustomerAddr.getBoolean("isBillTo"));
+      newLocation.setShipToAddress(jsonCustomerAddr.getBoolean("isShipTo"));
       // don't set phone of location, the phone is set in contact
       newLocation.setPhone(null);
 

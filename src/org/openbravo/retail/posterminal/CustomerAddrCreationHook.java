@@ -13,9 +13,9 @@ import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.businesspartner.Location;
 
-public interface CustomerAddrCreationHook {
+public abstract class CustomerAddrCreationHook {
 
-  public void exec(JSONObject jsonCustomerAddr, BusinessPartner customer, Location location)
+  public abstract void exec(JSONObject jsonCustomerAddr, BusinessPartner customer, Location location)
       throws Exception;
 
 }

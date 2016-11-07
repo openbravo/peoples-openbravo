@@ -113,31 +113,42 @@
   color: black;
 }
 
-.width6{
+.width6 {
   width: 6% !important;
 }
 
-.width40{
+.width40 {
   width: 40% !important;
 }
 
-.width52{
+.width52 {
   width: 52% !important;
 }
 
-.twoAddrLayout{
+.twoAddrLayout {
   width: 50%;
   float: left;
 }
 
-.twoAddrLayoutHeader{
-  width: 50%;
+.twoAddrLayoutHeader {
   float: left;
   font-weight: bold;
   font-size: 22px;
   line-height: 30px;
   font-size: 16px;
   padding-top: 1px;
+}
+
+@media all and (max-width: 800px) {
+  .twoAddrLayout {
+    width: 100%;
+  }     
+  .width40 {
+   width: 20% !important;
+  }
+  .width52 {
+    width: 75% !important;
+  }
 }
 
 .splitline-info-label {
@@ -385,7 +396,7 @@ button.btnbp:disabled {
 .iconRemove {
   width: 30px;
   height: 30px;
-  background-image: url('./../img/iconSelectorRemove.png');
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconSelectorRemove.png');
   background-repeat: no-repeat;
   background-position: 3px 3px;
 }
@@ -393,21 +404,21 @@ button.btnbp:disabled {
 .iconSortNone {
   width: 58px;
   height: 30px;
-  background-image: url('./../img/iconSelectorSortDisabled.png');
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconSelectorSortDisabled.png');
   background-repeat: no-repeat;
 }
 
 .iconSortAsc {
   width: 58px;
   height: 30px;
-  background-image: url('./../img/iconSelectorSortAscending.png');
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconSelectorSortAscending.png');
   background-repeat: no-repeat;
 }
 
 .iconSortDesc {
   width: 58px;
   height: 30px;
-  background-image: url('./../img/iconSelectorSortDescending.png');
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconSelectorSortDescending.png');
   background-repeat: no-repeat;
 }
 

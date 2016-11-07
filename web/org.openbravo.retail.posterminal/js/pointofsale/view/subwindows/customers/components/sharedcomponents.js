@@ -153,21 +153,11 @@ enyo.kind({
       name: 'infotext',
       style: 'display: table-cell; vertical-align: middle; height: 30px; padding: 4px; '
     }]
-  }, {
-    style: 'clear:both'
-  }, {
-    name: 'shipLbl',
-    classes: 'twoAddrLayoutHeader'
-  }, {
-    name: 'invLbl',
-    classes: 'twoAddrLayoutHeader'
   }],
   initComponents: function () {
     this.inherited(arguments);
     this.owner.owner.$.labelLine.hide();
     this.$.infotext.setContent(OB.I18N.getLabel('OBPOS_SameAddrInfo'));
-    this.$.shipLbl.setContent(OB.I18N.getLabel('OBPOS_LblShipAddr'));
-    this.$.invLbl.setContent(OB.I18N.getLabel('OBPOS_LblBillAddr'));
   },
   valueSet: function (inSender, inEvent) {
     if (inEvent.data.hasOwnProperty('btnUseSameCheck')) {
@@ -198,8 +188,6 @@ enyo.kind({
       this.doHideShowFields({
         checked: this.$.btnUseSameCheck.checked
       });
-      this.$.shipLbl.hide();
-      this.$.invLbl.hide();
     }
   },
   saveChange: function (inSender, inEvent) {
@@ -209,8 +197,6 @@ enyo.kind({
     this.doHideShowFields({
       checked: this.$.btnUseSameCheck.checked
     });
-    this.$.shipLbl.setShowing(!this.$.btnUseSameCheck.checked);
-    this.$.invLbl.setShowing(!this.$.btnUseSameCheck.checked);
   }
 });
 
@@ -330,14 +316,30 @@ enyo.kind({
     components: [{
       name: 'customerOnlyFields'
     }, {
-      name: 'shippingAddrFields'
+      name: 'shipAddress',
+      components: [{
+        name: 'shipLbl',
+        classes: 'twoAddrLayoutHeader'
+      }, {
+        style: 'clear:both',
+        name: 'shippingAddrFields'
+      }]
     }, {
-      name: 'invoicingAddrFields'
+      name: 'invAddress',
+      components: [{
+        name: 'invLbl',
+        classes: 'twoAddrLayoutHeader'
+      }, {
+        style: 'clear:both',
+        name: 'invoicingAddrFields'
+      }]
     }]
   }],
   hideShowFields: function (inSender, inEvent) {
-    this.$.shippingAddrFields.addRemoveClass('twoAddrLayout', !inEvent.checked);
-    this.$.invoicingAddrFields.addRemoveClass('twoAddrLayout', !inEvent.checked);
+    this.$.shipLbl.setShowing(!inEvent.checked);
+    this.$.invLbl.setShowing(!inEvent.checked);
+    this.$.shipAddress.addRemoveClass('twoAddrLayout', !inEvent.checked);
+    this.$.invAddress.addRemoveClass('twoAddrLayout', !inEvent.checked);
     this.waterfall('onHideShow', {
       checked: inEvent.checked
     });
@@ -509,6 +511,8 @@ enyo.kind({
     this.$.bodyheader.createComponent({
       kind: this.windowHeader
     });
+    this.$.shipLbl.setContent(OB.I18N.getLabel('OBPOS_LblShipAddr'));
+    this.$.invLbl.setContent(OB.I18N.getLabel('OBPOS_LblBillAddr'));
     this.attributeContainer = this.$.customerAttributes;
     enyo.forEach(this.newAttributes, function (natt) {
       this.$.customerOnlyFields.createComponent({
