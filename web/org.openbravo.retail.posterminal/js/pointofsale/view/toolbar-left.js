@@ -454,8 +454,21 @@ enyo.kind({
   },
   tap: function () {
     var me = this,
-        criteria = {};
+        criteria = {},
+        paymentModels = OB.MobileApp.model.get('payments');
     if (this.disabled === false) {
+      // for Return Order if all payments are not refundable throw error
+      if (this.model.get('order').get('orderType') === 1) {
+        var hasNoRefundablePayment = _.filter(paymentModels, function (payment) {
+          return !payment.paymentMethod.refundPayment;
+        }).length === paymentModels.length;
+        if (hasNoRefundablePayment) {
+          OB.UTIL.showConfirmation.display('', OB.I18N.getLabel('OBPOS_LblNoRefundablePayments'), [{
+            label: OB.I18N.getLabel('OBMOBC_LblOk')
+          }]);
+          return;
+        }
+      }
       if (this.model.get('order').get('orderType') === 3) {
         this.showPaymentTab();
         return;
