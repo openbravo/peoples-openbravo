@@ -775,15 +775,10 @@ IF (NOT FINISH_PROCESS) THEN
 
         -- Check if there is any manually added tax
         FOR Cur_InvoiceTax IN
-          (SELECT c_tax_id, ad_client_id, ad_org_id, isactive,
-            taxbaseamt, taxamt, recalculate
+          (SELECT c_tax_id, ad_client_id, ad_org_id, isactive, taxbaseamt, taxamt, recalculate
           FROM c_invoicetax
           WHERE c_invoice_id = v_Record_ID
-          MINUS
-          SELECT c_tax_id, ad_client_id, ad_org_id, isactive,
-            -taxbaseamt, -taxamt, recalculate
-          FROM c_invoicetax
-          WHERE c_invoice_id = v_RInvoice_ID)
+          AND RECALCULATE = 'N')
         LOOP
           SELECT MAX(line) + 10 INTO v_LineMax FROM c_invoicetax WHERE c_invoice_id = v_RInvoice_ID;
           INSERT INTO c_invoicetax(c_tax_id, c_invoice_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby,
