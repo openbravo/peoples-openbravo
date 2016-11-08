@@ -26,6 +26,7 @@ import org.openbravo.base.weld.test.testinfrastructure.CdiInfrastructure;
 import org.openbravo.base.weld.test.testinfrastructure.DalPersistanceEventTest;
 import org.openbravo.base.weld.test.testinfrastructure.ParameterizedCdi;
 import org.openbravo.client.application.test.ApplicationTest;
+import org.openbravo.client.application.test.DisplayLogicAtServerLevelTest;
 import org.openbravo.client.application.test.DynamicExpressionParserTest;
 import org.openbravo.client.application.test.GenerateTypesJSTest;
 import org.openbravo.client.application.test.MenuTemplateTest;
@@ -211,6 +212,7 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     MenuTest.class, //
     MenuTemplateTest.class, //
     DatasourceEventObserver.class, //
+    DisplayLogicAtServerLevelTest.class, //
 
     // client kernel
     FreemarkerTemplateProcessorTest.class, //
