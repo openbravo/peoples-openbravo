@@ -131,7 +131,8 @@ enyo.kind({
   sumLines: function () {
     var sum = 0;
     _.each(this.lines, function (line, indx) {
-      sum += parseInt(line.owner.$['qty_' + indx].$.numberQty.getValue(), 10);
+      var val = parseInt(line.owner.$['qty_' + indx].$.numberQty.getValue(), 10);
+      sum += (isNaN(val) ? 0 : val);
     });
     return sum;
   },
