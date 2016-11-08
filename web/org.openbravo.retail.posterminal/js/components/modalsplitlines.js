@@ -27,6 +27,9 @@ enyo.kind({
     tap: function () {
       var qty = parseInt(this.owner.$.numberQty.getValue(), 10),
           min = this.owner.$.numberQty.getMin();
+      if (isNaN(qty) && !isNaN(min)) {
+        qty = min + 1;
+      }
       if (qty > min) {
         this.owner.$.numberQty.setValue(qty - 1);
         this.owner.doNumberChange({
@@ -47,7 +50,11 @@ enyo.kind({
     content: '+',
     tap: function () {
       var qty = parseInt(this.owner.$.numberQty.getValue(), 10),
+          min = this.owner.$.numberQty.getMin(),
           max = this.owner.$.numberQty.getMax();
+      if (isNaN(qty) && !isNaN(min)) {
+        qty = min - 1;
+      }
       if (!max || qty < max) {
         this.owner.$.numberQty.setValue(qty + 1);
         this.owner.doNumberChange({
