@@ -533,7 +533,7 @@ enyo.kind({
       if (OB.MobileApp.model.hasPermission('OBPOS_customerLimit', true)) {
         criteria._limit = OB.DEC.abs(OB.MobileApp.model.hasPermission('OBPOS_customerLimit', true));
       }
-      if (inEvent.orderby && ((inEvent.orderby.isLocationFilter && hasLocation) || !inEvent.orderby.isLocationFilter)) {
+      if (inEvent.orderby) {
         criteria._orderByClause = inEvent.orderby.serverColumn + ' ' + inEvent.orderby.direction;
       } else {
         criteria._orderByClause = 'bp.name asc';

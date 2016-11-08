@@ -94,12 +94,20 @@ public class BPartnerFilter extends ProcessHQLQuery {
     }
     if ("N".equals(pref)) {
       try {
-        JSONArray remoteFilters = jsonsent.getJSONArray("remoteFilters");
-        for (int i = 0; i < remoteFilters.length(); i++) {
-          JSONObject filter = remoteFilters.getJSONObject(i);
-          if (filter.has("location") && filter.getBoolean("location")) {
+        if (jsonsent.has("orderByClause")) {
+          String orderByClause = jsonsent.getString("orderByClause");
+          if (orderByClause.contains("bpl.")) {
             location = true;
-            break;
+          }
+        }
+        if (!location) {
+          JSONArray remoteFilters = jsonsent.getJSONArray("remoteFilters");
+          for (int i = 0; i < remoteFilters.length(); i++) {
+            JSONObject filter = remoteFilters.getJSONObject(i);
+            if (filter.has("location") && filter.getBoolean("location")) {
+              location = true;
+              break;
+            }
           }
         }
       } catch (JSONException e) {
