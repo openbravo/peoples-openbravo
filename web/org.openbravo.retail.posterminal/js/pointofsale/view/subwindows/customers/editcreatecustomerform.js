@@ -22,6 +22,7 @@ enyo.kind({
   },
   setValues: function (inSender, inEvent) {
     this.waterfall('onSetValue', inEvent);
+    return true;
   },
   retrieveCustomers: function (inSender, inEvent) {
     var retrievedValues = inEvent || {};
@@ -81,6 +82,13 @@ enyo.kind({
       this.bubble('onCancelClose');
     }
   },
+  showingChanged: function () {
+    this.inherited(arguments);
+    if (!this.showing) {
+      this.$.subWindowBody.$.edit_createcustomers_impl.$.invLbl.setShowing(false);
+      this.$.subWindowBody.$.edit_createcustomers_impl.$.shipLbl.setShowing(false);
+    }
+  },
   cancelClose: function () {
     if (this.params.navigateType === 'modal' && !this.params.navigateOnCloseParent) {
       this.doChangeSubWindow({
@@ -114,6 +122,7 @@ enyo.kind({
           }
         });
       }
+      return true;
     }
   },
   body: {
@@ -257,7 +266,7 @@ enyo.kind({
     kind: 'OB.UI.DatePicker',
     name: 'birthDay',
     modelProperty: 'birthDay',
-    i18nLabel: 'OBPOS_LblBirthday',
+    i18nLabel: 'OBPOS_LblBirthdate',
     handlers: {
       onLoadValue: 'loadValue',
       onSaveChange: 'saveChange',

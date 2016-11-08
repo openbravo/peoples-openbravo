@@ -319,6 +319,7 @@ enyo.kind({
       name: 'shipAddress',
       components: [{
         name: 'shipLbl',
+        showing: false,
         classes: 'twoAddrLayoutHeader'
       }, {
         style: 'clear:both',
@@ -328,6 +329,7 @@ enyo.kind({
       name: 'invAddress',
       components: [{
         name: 'invLbl',
+        showing: false,
         classes: 'twoAddrLayoutHeader'
       }, {
         style: 'clear:both',
@@ -343,12 +345,14 @@ enyo.kind({
     this.waterfall('onHideShow', {
       checked: inEvent.checked
     });
+    return true;
   },
   setCustomer: function (inSender, inEvent) {
     this.customer = inEvent.customer;
     this.waterfall('onLoadValue', {
       customer: this.customer
     });
+    return true;
   },
   preSaveCustomer: function (inSender, inEvent) {
     var me = this,
@@ -371,6 +375,7 @@ enyo.kind({
         OB.UTIL.showError(args.error);
       }
     });
+    return true;
   },
   saveCustomer: function (inSender, inEvent) {
     var me = this,

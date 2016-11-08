@@ -80,9 +80,11 @@ enyo.kind({
     this.selectorHide = inEvent && !OB.UTIL.isNullOrUndefined(inEvent.selectorHide) ? inEvent.selectorHide : true;
     this.selectorHide = true;
     this.hide();
+    return true;
   },
   showSelector: function () {
     this.show();
+    return true;
   },
   getScrollableTable: function () {
     return null;
@@ -181,6 +183,7 @@ enyo.kind({
           this.owner.parent.showRemove();
         }
       }
+      return true;
     }
   }],
   getValue: function () {
@@ -299,6 +302,7 @@ enyo.kind({
         this.parent.showRemove();
       }
     }
+    return true;
   },
   changeColumn: function (column) {
     if (column.idList && !OB.MobileApp.model.get(column.termProperty)) {
@@ -389,6 +393,7 @@ enyo.kind({
         this.parent.showRemove();
       }
     }
+    return true;
   }
 });
 
@@ -575,6 +580,7 @@ enyo.kind({
       this.$.entityFilterButton.showSelector = false;
       this.owner.owner.owner.owner.owner.owner.show();
     }
+    return true;
   },
   updateFilterSelector: function (inSender, inEvent) {
     if (this.$.entityFilterButton.showSelector) {
@@ -582,6 +588,7 @@ enyo.kind({
       this.$.entityFilterButton.setSelectorValue(inEvent.selector.value, inEvent.selector.text);
       this.owner.owner.owner.owner.owner.owner.show();
     }
+    return true;
   },
   changeColumn: function (inSender, inEvent) {
     var column = _.find(this.filters, function (flt) {
@@ -600,6 +607,7 @@ enyo.kind({
         this.$.entityFilterButton.filterName = column.name;
       }
     }
+    return true;
   },
   searchAction: function () {
     var me = this,
@@ -659,6 +667,7 @@ enyo.kind({
         advanced: false
       });
     }
+    return true;
   },
   clearFilter: function () {
     this.$.entityFilterText.setValue('');
@@ -681,6 +690,7 @@ enyo.kind({
     this.doClearAllFilterSelector({
       name: this.advancedFilterDialog
     });
+    return true;
   },
   setAdvancedFilterBtnCaption: function () {
     if (this.advancedFilterBtn && this.advancedFilterDialog) {
@@ -696,6 +706,7 @@ enyo.kind({
         }
       });
     }
+    return true;
   },
   setAdvancedSearchMode: function (inSender, inEvent) {
     this.$.advancedFilterInfo.setShowing(inEvent.isAdvanced);
@@ -704,11 +715,13 @@ enyo.kind({
     if (inEvent.isAdvanced && this.advancedFilterBtn) {
       this.advancedFilterBtn.setContent(OB.I18N.getLabel(this.advancedFilterBtn.i18nLabel));
     }
+    return true;
   },
   hideFilterCombo: function () {
     this.showFields = false;
     this.$.entityFilterColumnContainer.setStyle('display: none');
     this.$.entitySearchContainer.setStyle('display: table-cell; width: 425px;');
+    return true;
   },
   fixColumn: function (column) {
     this.$.entityFilterColumn.hide();
@@ -717,6 +730,7 @@ enyo.kind({
     this.changeColumn(null, {
       value: column.column
     });
+    return true;
   },
   initComponents: function () {
     this.inherited(arguments);

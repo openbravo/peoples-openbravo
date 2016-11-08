@@ -291,7 +291,7 @@ enyo.kind({
     kind: 'OB.UI.CustomerTextProperty',
     name: 'birthDay',
     modelProperty: 'birthDay',
-    i18nLabel: 'OBPOS_LblBirthday',
+    i18nLabel: 'OBPOS_LblBirthdate',
     readOnly: true,
     displayLogic: function () {
       return OB.MobileApp.model.hasPermission('OBPOS_ShowBusinessPartnerBirthInfo', true);

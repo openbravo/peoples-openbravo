@@ -194,6 +194,7 @@ enyo.kind({
     },
     setShow: function (inSender, inEvent) {
       this.setShowing(inEvent.visibility);
+      return true;
     },
     components: [{
       style: 'display: table; width: 100%',
@@ -444,6 +445,7 @@ enyo.kind({
   }],
   setBusinessPartnerTarget: function (inSender, inEvent) {
     this.target = inEvent.target;
+    return true;
   },
   clearAction: function (inSender, inEvent) {
     this.bpsList.reset();
