@@ -33,12 +33,21 @@ import org.openbravo.client.application.window.OBViewFieldHandler;
 import org.openbravo.client.application.window.OBViewFieldHandler.OBViewField;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.ui.Tab;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+/**
+ * 
+ * This class is used to test the correct behavior of the Display Logic Evaluated at Server Level
+ * functionality
+ *
+ */
 public class DisplayLogicAtServerLevelTest extends WeldBaseTest {
 
   CachedPreference cachedPreference;
   Tab tab;
   OBViewField field;
+  private static Logger log = LoggerFactory.getLogger(DisplayLogicAtServerLevelTest.class);
 
   /**
    * Initializes the global variables for the rest of the tests
@@ -58,11 +67,9 @@ public class DisplayLogicAtServerLevelTest extends WeldBaseTest {
 
   /**
    * Tests that the replacement of the DisplayLogic at Server level works correctly
-   * 
-   * @return True if the test is ok, false otherwise
    */
   @Test
-  public void testReplaceSystemPreferencesInDisplayLogic() {
+  public void replaceSystemPreferencesInDisplayLogic() {
 
     cachedPreference.addCachedPreference("enableNegativeStockCorrections");
     cachedPreference.setPreferenceValue("enableNegativeStockCorrections", "Y");
@@ -71,20 +78,17 @@ public class DisplayLogicAtServerLevelTest extends WeldBaseTest {
 
     String displayLogicEvaluatedInServerExpression = "@uomManagement@ = 'Y' & @enableNegativeStockCorrections@ = 'Y'";
     String expectedTranslatedDisplayLogic = "'Y' = 'Y' & 'Y' = 'Y'";
-    String translatedDisplayLogic = DynamicExpressionParser
-        .replaceSystemPreferencesInDisplayLogic(displayLogicEvaluatedInServerExpression);
 
-    assertThat(translatedDisplayLogic, equalTo(expectedTranslatedDisplayLogic));
+    testTranslationOfDisplayLogic(displayLogicEvaluatedInServerExpression,
+        expectedTranslatedDisplayLogic);
   }
 
   /**
    * Tests that the replacement of the DisplayLogic at Server level works correctly containing null
    * values
-   * 
-   * @return True if the test is ok, false otherwise
    */
   @Test
-  public void testReplaceSystemPreferencesInDisplayLogicWithNullValue() {
+  public void replaceSystemPreferencesInDisplayLogicWithNullValue() {
 
     cachedPreference.addCachedPreference("enableNegativeStockCorrections");
     cachedPreference.setPreferenceValue("enableNegativeStockCorrections", "Y");
@@ -92,19 +96,15 @@ public class DisplayLogicAtServerLevelTest extends WeldBaseTest {
     String displayLogicEvaluatedInServerExpression = "@uomManagement@ = 'Y' & @enableNegativeStockCorrections@ = 'N'";
     String expectedTranslatedDisplayLogic = "'null' = 'Y' & 'Y' = 'N'";
 
-    String translatedDisplayLogic = DynamicExpressionParser
-        .replaceSystemPreferencesInDisplayLogic(displayLogicEvaluatedInServerExpression);
-
-    assertThat(translatedDisplayLogic, equalTo(expectedTranslatedDisplayLogic));
+    testTranslationOfDisplayLogic(displayLogicEvaluatedInServerExpression,
+        expectedTranslatedDisplayLogic);
   }
 
   /**
    * Tests that the evaluation of the DisplayLogic at Server level works correctly
-   * 
-   * @return True if the test is ok, false otherwise
    */
   @Test
-  public void testEvaluatePreferencesInDisplayLogic() {
+  public void evaluatePreferencesInDisplayLogic() {
 
     cachedPreference.addCachedPreference("enableNegativeStockCorrections");
     cachedPreference.setPreferenceValue("enableNegativeStockCorrections", "Y");
@@ -114,37 +114,19 @@ public class DisplayLogicAtServerLevelTest extends WeldBaseTest {
     String displayLogicEvaluatedInServerExpression = "@uomManagement@ = 'Y' & @enableNegativeStockCorrections@ = 'Y'";
 
     boolean evaluatedDisplayLogic = false;
-
-    Class<?> clazz = field.getClass();
-    Method evaluateDisplayLogicAtServerLevel;
-
-    try {
-      evaluateDisplayLogicAtServerLevel = clazz.getDeclaredMethod(
-          "evaluateDisplayLogicAtServerLevel", String.class, String.class);
-      boolean originallyAccessible = evaluateDisplayLogicAtServerLevel.isAccessible();
-      evaluateDisplayLogicAtServerLevel.setAccessible(true);
-      evaluatedDisplayLogic = (boolean) evaluateDisplayLogicAtServerLevel.invoke(field,
-          displayLogicEvaluatedInServerExpression, "0");
-      evaluateDisplayLogicAtServerLevel.setAccessible(originallyAccessible);
-    } catch (NoSuchMethodException | SecurityException | IllegalAccessException
-        | IllegalArgumentException | InvocationTargetException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
-
     boolean expectedEvaluatedDisplayLogic = true;
-    assertThat(evaluatedDisplayLogic, equalTo(expectedEvaluatedDisplayLogic));
+
+    testEvaluationOfDisplayLogic(displayLogicEvaluatedInServerExpression, evaluatedDisplayLogic,
+        expectedEvaluatedDisplayLogic);
 
   }
 
   /**
    * Tests that the evaluation of the DisplayLogic at Server level works correctly containing null
    * values
-   * 
-   * @return True if the test is ok, false otherwise
    */
   @Test
-  public void testEvaluatePreferencesInDisplayLogicWithNullValue() {
+  public void evaluatePreferencesInDisplayLogicWithNullValue() {
 
     cachedPreference.addCachedPreference("enableNegativeStockCorrections");
     cachedPreference.setPreferenceValue("enableNegativeStockCorrections", "N");
@@ -152,6 +134,25 @@ public class DisplayLogicAtServerLevelTest extends WeldBaseTest {
     String displayLogicEvaluatedInServerExpression = "@uomManagement@ = 'Y' & @enableNegativeStockCorrections@ = 'Y'";
 
     boolean evaluatedDisplayLogic = true;
+    boolean expectedEvaluatedDisplayLogic = false;
+
+    testEvaluationOfDisplayLogic(displayLogicEvaluatedInServerExpression, evaluatedDisplayLogic,
+        expectedEvaluatedDisplayLogic);
+
+  }
+
+  private void testTranslationOfDisplayLogic(String displayLogicEvaluatedInServerExpression,
+      String expectedTranslatedDisplayLogic) {
+    String translatedDisplayLogic = DynamicExpressionParser
+        .replaceSystemPreferencesInDisplayLogic(displayLogicEvaluatedInServerExpression);
+
+    assertThat("The translation from the display logic expression was different than expected: ",
+        translatedDisplayLogic, equalTo(expectedTranslatedDisplayLogic));
+  }
+
+  private void testEvaluationOfDisplayLogic(String displayLogicEvaluatedInServerExpression,
+      boolean _evaluatedDisplayLogic, boolean expectedEvaluatedDisplayLogic) {
+    boolean evaluatedDisplayLogic = _evaluatedDisplayLogic;
 
     Class<?> clazz = field.getClass();
     Method evaluateDisplayLogicAtServerLevel;
@@ -166,14 +167,13 @@ public class DisplayLogicAtServerLevelTest extends WeldBaseTest {
       evaluateDisplayLogicAtServerLevel.setAccessible(originallyAccessible);
     } catch (NoSuchMethodException | SecurityException | IllegalAccessException
         | IllegalArgumentException | InvocationTargetException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      log.error(
+          "Error in Method testEvaluationOfDisplayLogic of class DisplayLogicAtServerLevelTest", e);
     }
 
-    boolean expectedEvaluatedDisplayLogic = false;
-
-    assertThat(evaluatedDisplayLogic, equalTo(expectedEvaluatedDisplayLogic));
-
+    assertThat(
+        "The result of the evaluation of the Display Logic Expression was different than expected: ",
+        evaluatedDisplayLogic, equalTo(expectedEvaluatedDisplayLogic));
   }
 
 }
