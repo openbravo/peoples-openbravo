@@ -320,8 +320,8 @@ public class ViewComponent extends BaseComponent {
 
     Set<String> preferences = new HashSet<String>();
 
+    Pattern p = Pattern.compile(DynamicExpressionParser.REPLACE_DISPLAY_LOGIC_SERVER_PATTERN);
     for (String displayLogic : getFieldsWithDisplayLogicAtServerLevel(window.getId())) {
-      Pattern p = Pattern.compile(DynamicExpressionParser.replaceDisplayLogicServerPattern);
       Matcher m = p.matcher(displayLogic);
       while (m.find()) {
         preferences.add(m.group(1));
@@ -331,7 +331,7 @@ public class ViewComponent extends BaseComponent {
     Calendar cal = Calendar.getInstance();
     cal.set(9999, 9, 9);
     Date updated = new Date(cal.getTimeInMillis());
-    if (preferences.size() > 0) {
+    if (!preferences.isEmpty()) {
       updated = getLastUpdated(preferences, updated);
     }
     if (lastModification.compareTo(updated) < 0) {
