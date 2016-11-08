@@ -83,7 +83,7 @@ public class DynamicExpressionParser {
 
   private ApplicationDictionaryCachedStructures cachedStructures;
 
-  public static String replaceDisplayLogicServerPattern = "@(.*?)@";
+  public static final String REPLACE_DISPLAY_LOGIC_SERVER_PATTERN = "@(.*?)@";
 
   public DynamicExpressionParser(String code, Process process, boolean parameterDisplayLogic) {
     this.code = code;
@@ -454,7 +454,7 @@ public class DynamicExpressionParser {
     CachedPreference cachedPreference = org.openbravo.base.weld.WeldUtils
         .getInstanceFromStaticBeanManager(CachedPreference.class);
 
-    Pattern pattern = Pattern.compile(replaceDisplayLogicServerPattern);
+    Pattern pattern = Pattern.compile(REPLACE_DISPLAY_LOGIC_SERVER_PATTERN);
     Matcher matcher = pattern.matcher(displayLogic);
     while (matcher.find()) {
       result = result.replaceAll("@" + matcher.group(1) + "@",
