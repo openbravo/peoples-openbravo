@@ -1600,7 +1600,7 @@
           criteria.params.push(productId);
           criteria.params.push(productCategory);
           criteria.params.push(productCategory);
-          OB.Dal.find(OB.Model.Product, criteria, function (data) {
+          OB.Dal.findUsingCache('productServiceCache', OB.Model.Product, criteria, function (data) {
             if (data) {
               data.hasservices = data.length > 0;
               data.hasmandatoryservices = _.find(data.models, function (model) {
