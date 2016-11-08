@@ -146,7 +146,8 @@ public class DisplayLogicAtServerLevelTest extends WeldBaseTest {
     String translatedDisplayLogic = DynamicExpressionParser
         .replaceSystemPreferencesInDisplayLogic(displayLogicEvaluatedInServerExpression);
 
-    assertThat("The translation from the display logic expression was different than expected: ",
+    assertThat(
+        "The translation from the Display Logic Evaluated at Server Level expression was different than expected: ",
         translatedDisplayLogic, equalTo(expectedTranslatedDisplayLogic));
   }
 
@@ -172,7 +173,7 @@ public class DisplayLogicAtServerLevelTest extends WeldBaseTest {
     }
 
     assertThat(
-        "The result of the evaluation of the Display Logic Expression was different than expected: ",
+        "The result of the evaluation of the Display Logic Evaluated at Server Level expression was different than expected: ",
         evaluatedDisplayLogic, equalTo(expectedEvaluatedDisplayLogic));
   }
 
