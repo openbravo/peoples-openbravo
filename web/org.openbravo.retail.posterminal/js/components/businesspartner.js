@@ -178,9 +178,6 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.ModalBpScrollableHeader',
   kind: 'OB.UI.ScrollableTableHeader',
-  events: {
-    onSearchAction: ''
-  },
   components: [{
     style: 'padding: 10px;',
     kind: 'OB.UI.FilterSelectorTableHeader',
@@ -445,7 +442,6 @@ enyo.kind({
   }],
   setBusinessPartnerTarget: function (inSender, inEvent) {
     this.target = inEvent.target;
-    return true;
   },
   clearAction: function (inSender, inEvent) {
     this.bpsList.reset();

@@ -352,7 +352,6 @@ enyo.kind({
     this.waterfall('onLoadValue', {
       customer: this.customer
     });
-    return true;
   },
   preSaveCustomer: function (inSender, inEvent) {
     var me = this,
