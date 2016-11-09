@@ -520,7 +520,7 @@ enyo.kind({
           }
           criteria.remoteFilters.push({
             columns: [column.name],
-            operator: OB.Dal.CONTAINS,
+            operator: OB.MobileApp.model.hasPermission('OBPOS_remote.customer_usesContains', true) ? OB.Dal.CONTAINS : OB.Dal.STARTSWITH,
             value: flt.value,
             location: column.location
           });
