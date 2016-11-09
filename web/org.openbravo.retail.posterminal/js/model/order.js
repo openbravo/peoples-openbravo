@@ -2657,6 +2657,7 @@
       var clonedreceipt = new OB.Model.Order();
       OB.UTIL.clone(me, clonedreceipt);
       me.set('canceledorder', clonedreceipt);
+      me.set('doCancelAndReplace', true);
 
       OB.Dal.remove(this, function () {
         me.get('lines').each(function (line) {
@@ -2725,7 +2726,6 @@
             }
           }, me);
           me.get('payments').reset(me.get('payments').models);
-          me.set('doCancelAndReplace', true);
 
           OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_OrderReplaced', [me.get('replacedorder_documentNo'), me.get('documentNo')]));
           OB.UTIL.HookManager.executeHooks('OBPOS_PostCancelAndReplace', {

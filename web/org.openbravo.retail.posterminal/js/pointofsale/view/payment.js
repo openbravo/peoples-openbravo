@@ -1282,7 +1282,7 @@ enyo.kind({
     if (this.$.foreignAmount.content || this.$.info.content) {
       this.$.removePayment.style = this.$.removePayment.style + ' margin-top: 10px;';
     }
-    if ((this.model.get('isPrePayment') && (this.model.get('reversedPaymentId'))) || this.model.get('isReversed') || (this.model.get('isPrePayment') && !this.model.get('paymentAmount'))) {
+    if (this.model.get('isReversed') || (this.model.get('isPrePayment') && (this.model.get('reversedPaymentId') || !this.model.get('paymentAmount') || OB.MobileApp.model.receipt.get('doCancelAndReplace')))) {
       this.$.removePayment.hide();
       this.$.reversePayment.hide();
     } else if (this.model.get('isPrePayment') && OB.MobileApp.model.hasPermission('OBPOS_EnableReversePayments', true)) {
