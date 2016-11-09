@@ -34,6 +34,10 @@ public class AcctSchemaStructureProvider implements OBNotSingleton {
   private Map<String, List<String>> acctSchemaByOrg = new HashMap<String, List<String>>();
   private String clientId;
 
+  
+  private AcctSchemaStructureProvider() {
+	// TODO Auto-generated constructor stub
+}
   public String getClientId() {
     return clientId;
   }
