@@ -290,8 +290,6 @@ public class SystemInfo {
   }
 
   public final static synchronized String getMacAddress() {
-    if (true)
-      return "aaa";
     if (macAddress == null)
       macAddress = calculateMacIdentifier();
     return macAddress;
@@ -535,8 +533,8 @@ public class SystemInfo {
         modInfo.add(mod.getName());
 
         if (usageAuditEnabled) {
-          OBCriteria<SessionUsageAudit> qUsage = OBDal.getInstance()
-              .createCriteria(SessionUsageAudit.class);
+          OBCriteria<SessionUsageAudit> qUsage = OBDal.getInstance().createCriteria(
+              SessionUsageAudit.class);
           qUsage.setFilterOnReadableClients(false);
           qUsage.setFilterOnReadableOrganization(false);
           qUsage.add(Restrictions.eq(SessionUsageAudit.PROPERTY_MODULE, mod));
@@ -709,12 +707,11 @@ public class SystemInfo {
       }
       calculateNumberOfRejectedLoginsDueConcurrentUsersLastMonth(startOfPeriod);
 
-      BigDecimal totalTime = new BigDecimal(
-          now.getTimeInMillis() - startOfPeriod.getTimeInMillis());
+      BigDecimal totalTime = new BigDecimal(now.getTimeInMillis() - startOfPeriod.getTimeInMillis());
       if (totalUsageTime.compareTo(BigDecimal.ZERO) != 0) {
         avgUsers = usersPeriod.divide(totalUsageTime, 3, RoundingMode.HALF_DOWN);
-        usagePercentageTime = totalUsageTime.divide(totalTime, 5, RoundingMode.HALF_DOWN)
-            .multiply(new BigDecimal(100));
+        usagePercentageTime = totalUsageTime.divide(totalTime, 5, RoundingMode.HALF_DOWN).multiply(
+            new BigDecimal(100));
       }
       log4j.debug("max:" + maxUsers + " total:" + totalUsageTime + " "
           + usagePercentageTime.toString() + "% avg usr:" + avgUsers.toString());
@@ -742,8 +739,8 @@ public class SystemInfo {
           maxDayRejectedWsLogins = dayRWsLogins;
         }
       }
-      avgRejectedWsLogins = BigDecimal.valueOf(totalRejectedWsLogins).divide(BigDecimal.valueOf(30),
-          3, RoundingMode.HALF_DOWN);
+      avgRejectedWsLogins = BigDecimal.valueOf(totalRejectedWsLogins).divide(
+          BigDecimal.valueOf(30), 3, RoundingMode.HALF_DOWN);
       log4j.debug("WS Rejected Calls: total:" + totalRejectedWsLogins + " - max:"
           + maxDayRejectedWsLogins + " - avg:" + avgRejectedWsLogins.toString());
 
@@ -833,57 +830,23 @@ public class SystemInfo {
   public enum Item {
     SYSTEM_IDENTIFIER("systemIdentifier", true), MAC_IDENTIFIER("macId", true), DB_IDENTIFIER(
         "dbIdentifier", true), OPERATING_SYSTEM("os", false), OPERATING_SYSTEM_VERSION("osVersion",
-            false), DATABASE("db", false), DATABASE_VERSION("dbVersion",
-                false), WEBSERVER("webserver", false), WEBSERVER_VERSION("webserverVersion",
-                    false), SERVLET_CONTAINER("servletContainer", false), SERVLET_CONTAINER_VERSION(
-                        "servletContainerVersion", false), ANT_VERSION("antVersion",
-                            false), OB_VERSION("obVersion", false), OB_INSTALL_MODE("obInstallMode",
-                                false), CODE_REVISION("codeRevision", false), NUM_REGISTERED_USERS(
-                                    "numRegisteredUsers",
-                                    false), ISHEARTBEATACTIVE("isheartbeatactive",
-                                        true), ISPROXYREQUIRED("isproxyrequired",
-                                            false), PROXY_SERVER("proxyServer", false), PROXY_PORT(
-                                                "proxyPort",
-                                                false), JAVA_VERSION("javaVersion", false), MODULES(
-                                                    "modules", false), OBPS_INSTANCE("obpsId",
-                                                        false), FIRST_LOGIN("firstLogin",
-                                                            false), LAST_LOGIN("lastLogin",
-                                                                false), TOTAL_LOGINS("totalLogins",
-                                                                    false), TOTAL_LOGINS_LAST_MOTH(
-                                                                        "loginsMoth",
-                                                                        false), MAX_CONCURRENT_USERS(
-                                                                            "maxUsers",
-                                                                            false), AVG_CONCURRENT_USERS(
-                                                                                "avgUsers",
-                                                                                false), PERC_TIME_USAGE(
-                                                                                    "timeUsage",
-                                                                                    false), NUMBER_OF_CLIENTS(
-                                                                                        "clientNum",
-                                                                                        false), NUMBER_OF_ORGS(
-                                                                                            "orgNum",
-                                                                                            false), USAGE_AUDIT(
-                                                                                                "usageAudit",
-                                                                                                false), INSTANCE_PURPOSE(
-                                                                                                    "instancePurpose",
-                                                                                                    false), REJECTED_LOGINS_DUE_CONC_USERS(
-                                                                                                        "rejectedLoginsDueConcUsers",
-                                                                                                        false), INSTANCE_NUMBER(
-                                                                                                            "instanceNo",
-                                                                                                            false), CUSTOM_QUERY_ENABLED(
-                                                                                                                "enabledCustomQuery",
-                                                                                                                false), WS_CALLS_MAX(
-                                                                                                                    "wsCallsMax",
-                                                                                                                    false), WS_CALLS_AVG(
-                                                                                                                        "wsCallsAvg",
-                                                                                                                        false), WSC_CALLS_MAX(
-                                                                                                                            "wscCallsMax",
-                                                                                                                            false), WSC_CALLS_AVG(
-                                                                                                                                "wscCallsAvg",
-                                                                                                                                false), WSR_CALLS_MAX(
-                                                                                                                                    "wsRejectedCallsMax",
-                                                                                                                                    false), WSR_CALLS_AVG(
-                                                                                                                                        "wsRejectedCallsAvg",
-                                                                                                                                        false);
+        false), DATABASE("db", false), DATABASE_VERSION("dbVersion", false), WEBSERVER("webserver",
+        false), WEBSERVER_VERSION("webserverVersion", false), SERVLET_CONTAINER("servletContainer",
+        false), SERVLET_CONTAINER_VERSION("servletContainerVersion", false), ANT_VERSION(
+        "antVersion", false), OB_VERSION("obVersion", false), OB_INSTALL_MODE("obInstallMode",
+        false), CODE_REVISION("codeRevision", false), NUM_REGISTERED_USERS("numRegisteredUsers",
+        false), ISHEARTBEATACTIVE("isheartbeatactive", true), ISPROXYREQUIRED("isproxyrequired",
+        false), PROXY_SERVER("proxyServer", false), PROXY_PORT("proxyPort", false), JAVA_VERSION(
+        "javaVersion", false), MODULES("modules", false), OBPS_INSTANCE("obpsId", false), FIRST_LOGIN(
+        "firstLogin", false), LAST_LOGIN("lastLogin", false), TOTAL_LOGINS("totalLogins", false), TOTAL_LOGINS_LAST_MOTH(
+        "loginsMoth", false), MAX_CONCURRENT_USERS("maxUsers", false), AVG_CONCURRENT_USERS(
+        "avgUsers", false), PERC_TIME_USAGE("timeUsage", false), NUMBER_OF_CLIENTS("clientNum",
+        false), NUMBER_OF_ORGS("orgNum", false), USAGE_AUDIT("usageAudit", false), INSTANCE_PURPOSE(
+        "instancePurpose", false), REJECTED_LOGINS_DUE_CONC_USERS("rejectedLoginsDueConcUsers",
+        false), INSTANCE_NUMBER("instanceNo", false), CUSTOM_QUERY_ENABLED("enabledCustomQuery",
+        false), WS_CALLS_MAX("wsCallsMax", false), WS_CALLS_AVG("wsCallsAvg", false), WSC_CALLS_MAX(
+        "wscCallsMax", false), WSC_CALLS_AVG("wscCallsAvg", false), WSR_CALLS_MAX(
+        "wsRejectedCallsMax", false), WSR_CALLS_AVG("wsRejectedCallsAvg", false);
 
     private String label;
     private boolean isIdInfo;
