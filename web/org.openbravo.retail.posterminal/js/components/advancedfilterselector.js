@@ -513,6 +513,7 @@ enyo.kind({
               kind: 'OB.UI.SearchInputAutoFilter',
               name: 'entityFilterText',
               hasRemoveButton: false,
+              minLengthToSearch: 2,
               style: 'width: 100%; margin-bottom: 0px;'
             }, {
               kind: 'OB.UI.FilterSelectorList',
