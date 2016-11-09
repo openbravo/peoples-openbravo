@@ -96,7 +96,7 @@ enyo.kind({
           me.model.get('multiOrders').resetValues();
           me.model.get('leftColumnViewManager').setOrderMode();
         } else {
-          if (OB.MobileApp.model.get('permissions')['OBPOS_print.suspended'] && this.model.get('order').get('lines').length !== 0) {
+          if (OB.MobileApp.model.get('permissions')['OBPOS_print.suspended'] && me.model.get('order').get('lines').length !== 0) {
             me.model.get('order').trigger('print');
           }
         }
