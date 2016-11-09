@@ -20,7 +20,6 @@ package org.openbravo.erpCommon.ad_callouts;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.List;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -29,12 +28,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.DateTimeData;
+import org.openbravo.erpCommon.utility.OBCurrencyUtils;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
-import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.financialmgmt.accounting.coa.AcctSchema;
 import org.openbravo.xmlEngine.XmlDocument;
 
@@ -54,6 +52,7 @@ public class SL_Journal_Period extends HttpSecureAppServlet {
       String strWindowId = vars.getStringParameter("inpWindowId");
       if (log4j.isDebugEnabled())
         log4j.debug("CHANGED: " + strChanged);
+      String strOrgId = vars.getStringParameter("inpadOrgId");
       String strDateAcct = vars.getStringParameter("inpdateacct");
       String strDateDoc = vars.getStringParameter("inpdatedoc");
       String strcPeriodId = vars.getStringParameter("inpcPeriodId");
@@ -61,11 +60,9 @@ public class SL_Journal_Period extends HttpSecureAppServlet {
       String strCurrencyId = vars.getStringParameter("inpcCurrencyId");
       String strAcctSchemaId = vars.getStringParameter("inpcAcctschemaId");
       String strCurrencyRateType = vars.getStringParameter("inpcurrencyratetype", "S");
-      final String strAdOrgId = vars.getGlobalVariable("inpadOrgId", "SL_Journal_Period|adOrgId",
-          "");
       try {
-        printPage(response, vars, strDateAcct, strDateDoc, strcPeriodId, strWindowId, strChanged,
-            strTabId, strCurrencyId, strAcctSchemaId, strCurrencyRateType, strAdOrgId);
+        printPage(response, vars, strOrgId, strDateAcct, strDateDoc, strcPeriodId, strWindowId,
+            strChanged, strTabId, strCurrencyId, strAcctSchemaId, strCurrencyRateType);
       } catch (ServletException ex) {
         pageErrorCallOut(response);
       }
@@ -73,33 +70,21 @@ public class SL_Journal_Period extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  private void printPage(HttpServletResponse response, VariablesSecureApp vars,
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strOrgId,
       String strDateAcctNew, String strDateDocNew, String strcPeriodIdNew, String strWindowId,
       String strChanged, String strTabId, String strCurrencyId, String strAcctSchemaId,
-      String strCurrencyRateType, String stradOrgId) throws IOException, ServletException {
+      String strCurrencyRateType) throws IOException, ServletException {
     String localStrChanged = strChanged;
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
-
     String stradClientId = vars.getClient();
-    String strNewCurrencyId = null;
-    boolean isCurrencyChanged = false;
 
+    // When organization is changed, update currency
+    String currency = null;
     if (localStrChanged.equals("inpadOrgId")) {
-      OrganizationStructureProvider osp = new OrganizationStructureProvider();
-      List<String> orgParentL = osp.getParentList(stradOrgId, true);
-      for (String strOrgId : orgParentL) {
-        Organization o = OBDal.getInstance().get(Organization.class, strOrgId);
-        if (o.getCurrency() != null) {
-          if (!strCurrencyId.equals(o.getCurrency().getId())) {
-            strNewCurrencyId = o.getCurrency().getId();
-            isCurrencyChanged = true;
-          }
-          break;
-        }
-      }
+      currency = OBCurrencyUtils.getOrgCurrency(strOrgId);
     }
 
     OBError myMessage = null;
@@ -108,7 +93,7 @@ public class SL_Journal_Period extends HttpSecureAppServlet {
       AcctSchema acctSchema = OBDal.getInstance().get(AcctSchema.class, strAcctSchemaId);
       try {
         currencyRate = SLJournalPeriodData.getCurrencyRate(this, strCurrencyId, acctSchema
-            .getCurrency().getId(), strDateAcctNew, strCurrencyRateType, stradClientId, stradOrgId,
+            .getCurrency().getId(), strDateAcctNew, strCurrencyRateType, stradClientId, strOrgId,
             strAcctSchemaId);
       } catch (Exception e) {
         myMessage = Utility.translateError(this, vars, vars.getLanguage(), e.getMessage());
@@ -125,7 +110,7 @@ public class SL_Journal_Period extends HttpSecureAppServlet {
     }
     // When DateAcct is changed, set C_Period_ID
     if (localStrChanged.equals("inpdateacct")) {
-      strcPeriodId = SLJournalPeriodData.period(this, stradClientId, stradOrgId, strDateAcct);
+      strcPeriodId = SLJournalPeriodData.period(this, stradClientId, strOrgId, strDateAcct);
       if (strcPeriodId.equals("")) {
         StringBuffer resultado = new StringBuffer();
         resultado.append("var calloutName='SL_Journal_Period';\n\n");
@@ -165,11 +150,11 @@ public class SL_Journal_Period extends HttpSecureAppServlet {
     resultado.append("var calloutName='SL_Journal_Period';\n\n");
     resultado.append("var respuesta = new Array(");
     resultado.append("new Array(\"inpdateacct\", \"" + strDateAcct + "\"),");
+    if (currency != null) {
+      resultado.append("new Array(\"inpcCurrencyId\", \"" + currency + "\"),");
+    }
     if (!isStandardPeriod) {
       resultado.append("new Array(\"inpdatedoc\", \"" + strDateAcct + "\"),");
-    }
-    if (isCurrencyChanged) {
-      resultado.append("new Array(\"inpcCurrencyId\", \"" + strNewCurrencyId + "\"),");
     }
     resultado.append("new Array(\"inpcPeriodId\", \"" + strcPeriodId + "\"),");
     if (myMessage != null) {
