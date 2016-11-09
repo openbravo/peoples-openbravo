@@ -1944,9 +1944,9 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       // if (payments.length() == 0 ) or (writeoffAmt<0) means that use credit was used
       if ((payments.length() == 0 || diffPaid.compareTo(BigDecimal.ZERO) != 0) && invoice != null
           && invoice.getGrandTotalAmount().compareTo(BigDecimal.ZERO) != 0) {
-        setRemainingPayment(order, paymentScheduleInvoice, diffPaid, true);
+        setRemainingPayment(order, paymentSchedule, paymentScheduleInvoice, diffPaid, true);
       } else if (notpaidLayaway || fullypaidLayaway) {
-        setRemainingPayment(order, paymentSchedule, diffPaid, false);
+        setRemainingPayment(order, paymentSchedule, paymentScheduleInvoice, diffPaid, false);
       }
 
       return null;
@@ -1955,22 +1955,21 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
   }
 
   private void setRemainingPayment(Order order, FIN_PaymentSchedule paymentSchedule,
-      BigDecimal diffPaid, boolean usedCredit) {
+      FIN_PaymentSchedule paymentScheduleInvoice, BigDecimal diffPaid, boolean usedCredit) {
     // Unlinked PaymentScheduleDetail records will be recreated
     // First all non linked PaymentScheduleDetail records are deleted
     String pSchedId = null;
-    List<FIN_PaymentScheduleDetail> fINPaymentScheduleDetailPaymentScheduleList = usedCredit ? paymentSchedule
-        .getFINPaymentScheduleDetailInvoicePaymentScheduleList() : paymentSchedule
-        .getFINPaymentScheduleDetailOrderPaymentScheduleList();
     List<FIN_PaymentScheduleDetail> pScheduleDetails = new ArrayList<FIN_PaymentScheduleDetail>();
-    pScheduleDetails.addAll(fINPaymentScheduleDetailPaymentScheduleList);
+    pScheduleDetails.addAll(paymentSchedule.getFINPaymentScheduleDetailOrderPaymentScheduleList());
     for (FIN_PaymentScheduleDetail pSched : pScheduleDetails) {
       if (pSched.getPaymentDetails() == null) {
-        fINPaymentScheduleDetailPaymentScheduleList.remove(pSched);
-        if (paymentSchedule != null
-            && paymentSchedule.getFINPaymentScheduleDetailInvoicePaymentScheduleList() != null
-            && paymentSchedule.getFINPaymentScheduleDetailInvoicePaymentScheduleList().size() > 0) {
-          paymentSchedule.getFINPaymentScheduleDetailInvoicePaymentScheduleList().remove(pSched);
+        paymentSchedule.getFINPaymentScheduleDetailOrderPaymentScheduleList().remove(pSched);
+        if (paymentScheduleInvoice != null
+            && paymentScheduleInvoice.getFINPaymentScheduleDetailInvoicePaymentScheduleList() != null
+            && paymentScheduleInvoice.getFINPaymentScheduleDetailInvoicePaymentScheduleList()
+                .size() > 0) {
+          paymentScheduleInvoice.getFINPaymentScheduleDetailInvoicePaymentScheduleList().remove(
+              pSched);
         }
         pSchedId = pSched.getId();
         OBDal.getInstance().remove(pSched);
@@ -1978,17 +1977,20 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     }
     // Then a new one for the amount remaining to be paid is created if there is still something
     // to be paid
-    if (diffPaid.compareTo(BigDecimal.ZERO) != 0) {
+    if (usedCredit || diffPaid.compareTo(BigDecimal.ZERO) != 0) {
       FIN_PaymentScheduleDetail paymentScheduleDetail = OBProvider.getInstance().get(
           FIN_PaymentScheduleDetail.class);
       paymentScheduleDetail.setOrderPaymentSchedule(paymentSchedule);
       paymentScheduleDetail.setAmount(diffPaid);
       paymentScheduleDetail.setBusinessPartner(order.getBusinessPartner());
-      if (paymentSchedule != null) {
-        paymentScheduleDetail.setInvoicePaymentSchedule(paymentSchedule);
+      if (paymentScheduleInvoice != null) {
+        paymentScheduleDetail.setInvoicePaymentSchedule(paymentScheduleInvoice);
       }
-      paymentScheduleDetail.setId(paymentSchedule.getId());
-      paymentScheduleDetail.setId(pSchedId == null ? paymentSchedule.getId() : pSchedId);
+      if (usedCredit) {
+        paymentScheduleDetail.setId(pSchedId == null ? paymentScheduleInvoice.getId() : pSchedId);
+      } else {
+        paymentScheduleDetail.setId(pSchedId == null ? paymentSchedule.getId() : pSchedId);
+      }
       paymentScheduleDetail.setNewOBObject(true);
       OBDal.getInstance().save(paymentScheduleDetail);
     }
