@@ -773,6 +773,9 @@ enyo.kind({
     this.waterfall('onSetModel', {
       model: this.model
     });
+    if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
+      this.$.body.$.listBps.$.stBPAssignToReceipt.$.theader.$.modalBpScrollableHeader.$.filterSelector.$.entityFilterText.skipAutoFilterPref = true;
+    }
   }
 });
 
