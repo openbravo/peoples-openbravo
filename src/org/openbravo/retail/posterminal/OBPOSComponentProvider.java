@@ -142,6 +142,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/order",
         "components/orderdetails",
         "components/businesspartner",
+        "components/businesspartner_selector",
         "components/bplocation", // Button for selecting customer address
         "components/bplocationship",
         "components/customershipbill",

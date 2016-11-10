@@ -147,7 +147,7 @@ enyo.kind({
       kind: 'OB.UI.ModalNotEditableLine',
       name: 'modalNotEditableLine'
     }, {
-      kind: 'OB.UI.ModalBusinessPartners',
+      kind: 'OB.UI.ModalSelectorBusinessPartners',
       name: 'modalcustomer'
     }, {
       kind: 'OB.UI.ModalAdvancedFilterBP',
