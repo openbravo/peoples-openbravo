@@ -76,7 +76,7 @@
 
   var calculateDiscountedGross = function (line) {
       var discountedGross = line.get('gross');
-      if (line.get('promotions')) {
+      if (discountedGross !== 0 && line.get('promotions')) {
         discountedGross = line.get('promotions').reduce(function (memo, element) {
           return OB.DEC.sub(memo, element.actualAmt || element.amt || 0);
         }, discountedGross);
@@ -742,7 +742,7 @@
         var linenet = line.get('net');
         var discAmt = null;
         var discountedprice, discountedNet;
-        if (line.get('promotions') && line.get('promotions').length > 0) {
+        if (line.get('qty') !== 0 && line.get('promotions') && line.get('promotions').length > 0) {
           discAmt = new BigDecimal(String(line.get('net')));
           discAmt = line.get('promotions').reduce(function (memo, element) {
             return memo.subtract(new BigDecimal(String(element.actualAmt || element.amt || 0)));
