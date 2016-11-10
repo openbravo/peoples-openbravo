@@ -404,7 +404,7 @@ enyo.kind({
           showing: false
         }, {
           name: 'divText',
-          style: 'float: right; text-align: right; font-weight:bold; font-size: 30px;',
+          style: 'float: right; text-align: right; font-weight:bold; font-size: 30px; line-height: 30px;',
           showing: false,
           content: ''
         }, {
