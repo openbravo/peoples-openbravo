@@ -628,7 +628,7 @@
         this.calculateTaxes(function () {
           var gross = me.get('lines').reduce(function (memo, e) {
             var grossLine = e.getGross();
-            if (e.get('promotions')) {
+            if (e.get('qty') !== 0 && e.get('promotions')) {
               grossLine = e.get('promotions').reduce(function (memo, e) {
                 return OB.DEC.sub(memo, e.actualAmt || OB.DEC.toNumber(OB.DEC.toBigDecimal(e.amt), OB.DEC.getScale()) || 0);
               }, grossLine);
@@ -3924,6 +3924,10 @@
         model.set('obposAppCashup', OB.MobileApp.model.get('terminal').cashUpId);
         for (i = 0; i < model.get('lines').length; i++) {
           model.get('lines').at(i).set('obposIsDeleted', true);
+          model.get('lines').at(i).set('listPrice', 0);
+          model.get('lines').at(i).set('standardPrice', 0);
+          model.get('lines').at(i).set('grossUnitPrice', 0);
+          model.get('lines').at(i).set('lineGrossAmount', 0);
         }
         model.set('hasbeenpaid', 'Y');
         OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(model.get('documentnoSuffix'), model.get('quotationnoSuffix'), model.get('returnnoSuffix'), function () {
@@ -3948,25 +3952,22 @@
         }
         if (receipt.get('id') && !isPaidQuotation && receipt.get('lines') && receipt.get('lines').length > 0 && receipt.get('isEditable')) {
           if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
-            receipt.set('skipCalculateReceipt', true);
-            _.each(receipt.get('lines').models, function (line) {
-              line.set('obposQtyDeleted', line.get('qty'));
-              line.set('qty', 0);
-              if (line.get('promotions')) {
-                line.get('promotions').forEach(function (promotion) {
-                  promotion.actualAmt = 0;
-                  promotion.amt = 0;
-                });
-              }
-            });
-            receipt.set('skipCalculateReceipt', false);
-            // These setIsCalculateReceiptLockState and setIsCalculateGrossLockState calls must be done because this function
-            // may be called out of the pointofsale window, and in order to call the calculateReceipt function, the
-            // isCalculateReceiptLockState and isCalculateGrossLockState properties must be initialized
-            receipt.setIsCalculateReceiptLockState(false);
-            receipt.setIsCalculateGrossLockState(false);
-            receipt.calculateReceipt(function () {
-              markOrderAsDeleted(receipt, orderList, callback);
+            receipt.prepareToSend(function () {
+              receipt.set('skipApplyPromotions', true);
+              receipt.set('skipCalculateReceipt', true);
+              _.each(receipt.get('lines').models, function (line) {
+                line.set('obposQtyDeleted', line.get('qty'));
+                line.set('qty', 0);
+              });
+              receipt.set('skipCalculateReceipt', false);
+              // These setIsCalculateReceiptLockState and setIsCalculateGrossLockState calls must be done because this function
+              // may be called out of the pointofsale window, and in order to call the calculateReceipt function, the
+              // isCalculateReceiptLockState and isCalculateGrossLockState properties must be initialized
+              receipt.setIsCalculateReceiptLockState(false);
+              receipt.setIsCalculateGrossLockState(false);
+              receipt.calculateReceipt(function () {
+                markOrderAsDeleted(receipt, orderList, callback);
+              });
             });
           } else {
             if (orderList) {
