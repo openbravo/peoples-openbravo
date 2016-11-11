@@ -24,10 +24,10 @@ import org.junit.runners.Suite;
 import org.openbravo.advpaymentmngt.test.FundsTransferTest;
 import org.openbravo.base.weld.test.testinfrastructure.CdiInfrastructure;
 import org.openbravo.erpCommon.info.ClassicSelectorTest;
+import org.openbravo.test.centralbroker.CentralBrokerTest;
 import org.openbravo.test.dal.ComputedColumnsTest;
 import org.openbravo.test.dal.DalConnectionProviderTest;
 import org.openbravo.test.dal.DalCopyTest;
-import org.openbravo.test.dal.DalFilterTest;
 import org.openbravo.test.dal.DalPerformanceProxyTest;
 import org.openbravo.test.dal.DalQueryTest;
 import org.openbravo.test.dal.DalStoredProcedureTest;
@@ -60,7 +60,7 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
 
-// security
+    // security
     EntityAccessTest.class, //
     AccessLevelTest.class, //
     AllowedOrganizationsTest.class, //
@@ -72,7 +72,7 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     ValidationTest.class, //
     DynamicEntityTest.class, //
     DalTest.class, //
-    DalFilterTest.class, //
+    CentralBrokerTest.class, //
     DalUtilTest.class, //
     IssuesTest.class, //
     DalQueryTest.class, //

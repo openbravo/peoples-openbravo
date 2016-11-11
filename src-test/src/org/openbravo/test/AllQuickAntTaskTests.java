@@ -22,9 +22,9 @@ package org.openbravo.test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.openbravo.erpCommon.info.ClassicSelectorTest;
+import org.openbravo.test.centralbroker.CentralBrokerTest;
 import org.openbravo.test.dal.AdminContextTest;
 import org.openbravo.test.dal.DalConnectionProviderTest;
-import org.openbravo.test.dal.DalFilterTest;
 import org.openbravo.test.dal.DalPerformanceProxyTest;
 import org.openbravo.test.dal.DalStoredProcedureTest;
 import org.openbravo.test.dal.DalTest;
@@ -66,10 +66,10 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-// dal
+    // dal
     DalPerformanceProxyTest.class, //
     DalTest.class, //
-    DalFilterTest.class, //
+    CentralBrokerTest.class, //
     DalUtilTest.class, //
     DalConnectionProviderTest.class, //
     ValidationTest.class, //
