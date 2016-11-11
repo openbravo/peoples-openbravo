@@ -48,8 +48,12 @@ import org.openbravo.model.common.plm.ProductCharacteristicConf;
 import org.openbravo.model.common.plm.ProductCharacteristicValue;
 import org.openbravo.service.datasource.ReadOnlyDataSourceService;
 import org.openbravo.service.json.JsonUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ManageVariantsDS extends ReadOnlyDataSourceService {
+
+  private static final Logger log = LoggerFactory.getLogger(ManageVariantsDS.class);
   private static final int searchKeyLength = getSearchKeyColumnLength();
   private static final String MANAGE_VARIANTS_TABLE_ID = "147D4D709FAC4AF0B611ABFED328FA12";
 
@@ -234,11 +238,12 @@ public class ManageVariantsDS extends ReadOnlyDataSourceService {
         }
         if (StringUtils.isNotEmpty(searchKeyFilter)) {
           includeInResult = includeInResult
-              && StringUtils.contains((String) variantMap.get("searchKey"), searchKeyFilter);
+              && StringUtils.containsIgnoreCase((String) variantMap.get("searchKey"),
+                  searchKeyFilter);
         }
         if (StringUtils.isNotEmpty(nameFilter)) {
           includeInResult = includeInResult
-              && StringUtils.contains((String) variantMap.get("name"), nameFilter);
+              && StringUtils.containsIgnoreCase((String) variantMap.get("name"), nameFilter);
         }
         if (variantCreated != null) {
           includeInResult = includeInResult && variantCreated == (existingProduct != null);
@@ -275,7 +280,7 @@ public class ManageVariantsDS extends ReadOnlyDataSourceService {
       Collections.sort(result, new ResultComparator(strSortBy, ascending));
 
     } catch (JSONException e) {
-      // Do nothing
+      log.error("Error while managing the variant characteristics", e);
     } finally {
       OBContext.restorePreviousMode();
     }
@@ -291,6 +296,7 @@ public class ManageVariantsDS extends ReadOnlyDataSourceService {
     variantCreated = null;
 
     for (int i = 0; i < criteriaArray.length(); i++) {
+      String value = "";
       JSONObject criteria = criteriaArray.getJSONObject(i);
       // Basic advanced criteria handling
       if (criteria.has("_constructor")
@@ -300,8 +306,16 @@ public class ManageVariantsDS extends ReadOnlyDataSourceService {
         criteria = innerCriteriaArray.getJSONObject(0);
       }
       String fieldName = criteria.getString("fieldName");
-      // String operatorName = criteria.getString("operator");
-      String value = criteria.getString("value");
+      String operatorName = criteria.getString("operator");
+      if (criteria.has("value")) {
+        value = criteria.getString("value");
+      }
+      if (fieldName.equals("id") && operatorName.equals("notNull")) {
+        // In the case of having the criteria "fieldName":"id","operator":"notNull" don't do
+        // nothing.
+        // this case is the one which should return every record.
+        continue;
+      }
       if (fieldName.equals("name")) {
         nameFilter = value;
       } else if (fieldName.equals("searchKey")) {
