@@ -39,7 +39,9 @@
         '' AS ISSOTRX, '' AS TAXDATE,
         '' AS PRICESTD, '' AS VALIDFROM,
         '' AS StdPrecision, '' AS PricePrecision, '' AS EnforcePriceLimit,
-        C_INVOICELINE.ACCOUNT_ID AS ACCOUNT_ID
+        C_INVOICELINE.ACCOUNT_ID AS ACCOUNT_ID,
+        C_AUM, AUMQTY,
+        M_PRODUCT_UOM_ID
         FROM C_INVOICELINE 
         LEFT JOIN C_INVOICE ON C_INVOICE.C_INVOICE_ID = C_INVOICELINE.C_INVOICE_ID
         LEFT OUTER JOIN C_INVOICE_DISCOUNT ON C_INVOICELINE.C_INVOICE_DISCOUNT_ID = C_INVOICE_DISCOUNT.C_INVOICE_DISCOUNT_ID
@@ -67,11 +69,12 @@
             PRICESTD, ACCOUNT_ID,FINANCIAL_INVOICE_LINE,
             gross_unit_price, line_gross_amount, grosspricelist, grosspricestd,
             isdeferred, defplantype, periodnumber, c_period_id,
-            C_PROJECT_ID, A_ASSET_ID, C_COSTCENTER_ID, USER1_ID, USER2_ID
+            C_PROJECT_ID, A_ASSET_ID, C_COSTCENTER_ID, USER1_ID, USER2_ID,
+            C_AUM, AUMQTY
         )
         SELECT ?, ?, ?, ?, 'Y', now(), ?, now(), ?,
         (SELECT COALESCE(MAX(LINE),0)+10 FROM C_InvoiceLine WHERE C_Invoice_ID = ?), l.DESCRIPTION, l.M_PRODUCT_ID,
-        l.QTYINVOICED, TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), l.C_CHARGE_ID, l.CHARGEAMT, l.C_UOM_ID, ?,
+        TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), l.C_CHARGE_ID, l.CHARGEAMT, l.C_UOM_ID, ?,
         l.S_RESOURCEASSIGNMENT_ID, l.TAXAMT, l.M_ATTRIBUTESETINSTANCE_ID, l.ISDESCRIPTION, l.QUANTITYORDER, l.M_PRODUCT_UOM_ID,
         l.PRICESTD, l.ACCOUNT_ID,l.FINANCIAL_INVOICE_LINE,
         TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?), TO_NUMBER(?),
@@ -80,7 +83,8 @@
         COALESCE(l.A_Asset_ID, inv.A_Asset_ID) AS A_Asset_ID,
         COALESCE(l.C_Costcenter_ID, inv.C_Costcenter_ID) AS C_Costcenter_ID,
         COALESCE(l.User1_ID, inv.User1_ID) AS User1_ID,
-        COALESCE(l.User2_ID, inv.User2_ID) AS User2_ID
+        COALESCE(l.User2_ID, inv.User2_ID) AS User2_ID,
+        ?, TO_NUMBER(?)
         FROM C_INVOICELINE l, C_Invoice inv
         WHERE C_INVOICELINE_ID = ? 
         AND l.C_Invoice_ID = inv.C_Invoice_ID
@@ -93,6 +97,7 @@
     <Parameter name="adUserId"/>
     <Parameter name="adUserId"/>
     <Parameter name="cInvoiceId"/>
+    <Parameter name="qtyInvoiced"/>
     <Parameter name="priceList"/>
     <Parameter name="priceActual"/>
     <Parameter name="priceLimit"/>
@@ -102,6 +107,8 @@
     <Parameter name="amtGross"/>
     <Parameter name="priceListGros"/>
     <Parameter name="priceStdGross"/>
+    <Parameter name="cAum"/>
+    <Parameter name="aumQty"/>
     <Parameter name="cInvoicelineId"/>
   </SqlMethod>
   <SqlMethod name="insertAcctDimension" type="preparedStatement" connection="true" return="rowCount">
@@ -128,12 +135,14 @@
       <![CDATA[
         SELECT I.AD_ORG_ID,I.AD_CLIENT_ID,I.C_BPartner_Location_ID,I.DateInvoiced,I.C_Project_ID,
          I.C_Bpartner_ID,I.C_Currency_ID,I.M_Pricelist_ID,COALESCE(MAX(IL.Line),0) AS LINE,I.IsSOTrx AS ISSOTRX, I.TaxDate,
-         IL.PRICELIST, IL.PRICEACTUAL, IL.PRICELIMIT, IL.LINENETAMT
+         IL.PRICELIST, IL.PRICEACTUAL, IL.PRICELIMIT, IL.LINENETAMT,
+         C_AUM, AUMQTY
          FROM C_Invoice I LEFT JOIN C_INVOICELINE IL ON I.C_INVOICE_ID = IL.C_INVOICE_ID 
         WHERE I.C_Invoice_ID = ? 
         AND I.ISACTIVE = 'Y'
         GROUP BY I.AD_ORG_ID,I.AD_CLIENT_ID,I.C_BPartner_Location_ID,I.DateInvoiced,I.C_Project_ID,
-         I.C_Bpartner_ID,I.C_Currency_ID,I.M_Pricelist_ID,I.IsSOTrx, I.TaxDate,IL.PRICELIST, IL.PRICEACTUAL, IL.PRICELIMIT, IL.LINENETAMT
+         I.C_Bpartner_ID,I.C_Currency_ID,I.M_Pricelist_ID,I.IsSOTrx, I.TaxDate,IL.PRICELIST, IL.PRICEACTUAL, IL.PRICELIMIT, IL.LINENETAMT,
+         C_AUM, AUMQTY
       ]]>
     </Sql>
     <Parameter name="cInvoiceId"/>

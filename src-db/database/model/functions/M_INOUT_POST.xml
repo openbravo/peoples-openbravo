@@ -1082,7 +1082,8 @@
                 QuantityOrder, M_Product_UOM_ID, IsDescription,
                 canceled_inoutline_id, A_Asset_ID, C_Project_ID, C_BPartner_ID,
                 User1_ID, User2_ID, C_CostCenter_ID, 
-                explode
+                explode,
+                C_AUM, AUMQTY
               )
               VALUES
               (
@@ -1094,7 +1095,8 @@
                 Cur_InOutLine.QuantityOrder * -1, Cur_InOutLine.M_PRODUCT_UOM_ID, Cur_InOutLine.IsDescription,
                 Cur_InOutLine.M_InOutLine_ID, Cur_InOutLine.A_Asset_ID, Cur_InOutLine.C_Project_ID, Cur_InOutLine.C_BPartner_ID,
                 Cur_InOutLine.User1_ID, Cur_InOutLine.User2_ID, Cur_InOutLine.C_CostCenter_ID, 
-                Cur_InOutLine.explode 
+                Cur_InOutLine.explode ,
+                Cur_InOutLine.C_AUM, Cur_InOutLine.AUMQTY
               )
               ;
 

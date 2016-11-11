@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -41,6 +41,7 @@ import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.financial.FinancialUtils;
+import org.openbravo.materialmgmt.CentralBroker;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.pricing.pricelist.ProductPrice;
@@ -135,6 +136,20 @@ public class CopyFromOrder extends HttpSecureAppServlet {
         String strcTaxId = vars.getStringParameter("inpcTaxId" + strRownum);
         String strcUOMId = vars.getStringParameter("inpcUOMId" + strRownum);
         String strCOrderlineID = SequenceIdData.getUUID();
+        
+        String propertyValue = CentralBroker.getInstance().isUomManagementEnabled();
+        String strAumQty = null;
+        String strcAumId = null;
+        if (propertyValue.equalsIgnoreCase("Y")) {
+          strAumQty = vars.getNumericParameter("inpaumquantity" + strRownum);
+          strcAumId = vars.getStringParameter("inpcAUMId" + strRownum);
+          strQty = strAumQty;
+          if (!strcAumId.equals(strcUOMId)) {
+            strQty = CentralBroker.getInstance()
+                .getConvertedQty(strmProductId, new BigDecimal(strAumQty), strcAumId).toString();
+          }
+        }
+
         priceStd = new BigDecimal(CopyFromOrderData.getOffersStdPrice(this,
             orderData[0].cBpartnerId, strLastpriceso, strmProductId, orderData[0].dateordered,
             strQty, orderData[0].mPricelistId, strKey));
@@ -207,7 +222,7 @@ public class CopyFromOrder extends HttpSecureAppServlet {
               netPriceList.toString(), priceActual.toString(), priceLimit.toString(), priceStd
                   .toString(), discount.toString(), strcTaxId, strmAttributesetinstanceId,
               grossPriceList.toString(), priceGross.toString(), amtGross.toString(), pricestdgross
-                  .toString());
+                  .toString(), strcAumId, strAumQty);
         } catch (ServletException ex) {
           myError = OBMessageUtils.translateError(this, vars, vars.getLanguage(), ex.getMessage());
           releaseRollbackConnection(conn);
@@ -245,10 +260,17 @@ public class CopyFromOrder extends HttpSecureAppServlet {
     CopyFromOrderData[] data = CopyFromOrderData.select(this, strBpartner, strmPricelistId,
         dataOrder[0].dateordered, order.getPriceList().isPriceIncludesTax() ? "Y" : "N", strSOTrx,
         dataOrder[0].lastDays.equals("") ? "0" : dataOrder[0].lastDays);
+    CopyFromOrderData[][] dataAUM = new CopyFromOrderData[data.length][];
     for (int i = 0; i < data.length; i++) {
       Product product = OBDal.getInstance().get(Product.class, data[i].mProductId);
       data[i].lastpriceso = (PriceAdjustment.calculatePriceActual(order, product, new BigDecimal(
           data[i].qty), new BigDecimal(data[i].lastpriceso))).toString();
+      
+      dataAUM[i] = CopyFromOrderData.selectAUM(this, data[i].mProductId);
+      if (dataAUM[i].length == 0) {
+        dataAUM[i] = CopyFromOrderData.selectAUMDefault(this, data[i].mProductId,
+            data[i].cDoctypeId);
+      }
     }
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
@@ -287,6 +309,17 @@ public class CopyFromOrder extends HttpSecureAppServlet {
     xmlDocument.setParameter("invoicing", strInvoicing);
     xmlDocument.setParameter("bpartnername", dataOrder[0].bpartnername);
 
+    String propertyValue = CentralBroker.getInstance().isUomManagementEnabled();
+    if (propertyValue.equalsIgnoreCase("Y")) {
+      xmlDocument.setParameter("aumQtyVisible", "table-cell");
+      xmlDocument.setParameter("aumVisible", "table-cell");
+      xmlDocument.setParameter("uomEnabled", "Y");
+    } else {
+      xmlDocument.setParameter("aumQtyVisible", "none");
+      xmlDocument.setParameter("aumVisible", "none");
+      xmlDocument.setParameter("uomEnabled", "N");
+    }
+
     BigDecimal invoicing, total, totalAverage;
 
     invoicing = (strInvoicing.equals("") ? ZERO : (new BigDecimal(strInvoicing)));
@@ -299,11 +332,12 @@ public class CopyFromOrder extends HttpSecureAppServlet {
       strTotalAverage = totalAverage.toPlainString();
       // int intscale = totalAverage.scale();
     }
-
+    
     xmlDocument.setParameter("totalAverage", strTotalAverage);
 
     xmlDocument.setData("structure1", data);
     xmlDocument.setData("structure2", dataOrder);
+    xmlDocument.setDataArray("reportAUM_ID", "liststructure", dataAUM);
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());

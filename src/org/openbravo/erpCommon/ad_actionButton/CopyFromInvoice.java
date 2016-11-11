@@ -43,6 +43,7 @@ import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.financial.FinancialUtils;
+import org.openbravo.materialmgmt.CentralBroker;
 import org.openbravo.model.common.businesspartner.Location;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.common.invoice.InvoiceLine;
@@ -133,6 +134,21 @@ public class CopyFromInvoice extends HttpSecureAppServlet {
           String strWharehouse = Utility.getContext(this, vars, "#M_Warehouse_ID", strWindowId);
           String strIsSOTrx = Utility.getContext(this, vars, "isSOTrx", strWindowId);
 
+          String propertyValue = CentralBroker.getInstance().isUomManagementEnabled();
+          if (propertyValue.equalsIgnoreCase("Y") && data[i].mProductUomId.isEmpty()) {
+            if (data[i].cAum.isEmpty() && data[i].aumqty.isEmpty()) {
+              String defaultAum = CentralBroker.getInstance().getDefaultAUMForDocument(
+                  data[i].productId, invToCopy.getTransactionDocument().getId());
+              data[i].aumqty = data[i].qtyinvoiced;
+              data[i].cAum = defaultAum;
+              if (!defaultAum.equals(data[i].cUomId)) {
+                data[i].qtyinvoiced = CentralBroker.getInstance()
+                    .getConvertedQty(data[i].productId, new BigDecimal(data[i].aumqty), defaultAum)
+                    .toString();
+              }
+            }
+          }
+
           String strCTaxID = Tax.get(this, data[i].productId, dataInvoice[0].dateinvoiced,
               dataInvoice[0].adOrgId, strWharehouse, dataInvoice[0].cBpartnerLocationId,
               dataInvoice[0].cBpartnerLocationId, dataInvoice[0].cProjectId,
@@ -206,10 +222,10 @@ public class CopyFromInvoice extends HttpSecureAppServlet {
                 dataInvoice[0].cBpartnerLocationId);
           }
           CopyFromInvoiceData.insert(conn, this, strSequence, strKey, dataInvoice[0].adClientId,
-              dataInvoice[0].adOrgId, vars.getUser(), priceList.toString(), priceActual.toString(),
+              dataInvoice[0].adOrgId, vars.getUser(), data[i].qtyinvoiced, priceList.toString(), priceActual.toString(),
               priceLimit.toString(), lineNetAmt.toString(), strCTaxID, priceGross.toString(),
               lineGrossAmt.toString(), priceListGross.toString(), priceStdGross.toString(),
-              data[i].cInvoicelineId);
+              data[i].cAum, data[i].aumqty, data[i].cInvoicelineId);
 
           // Copy accounting dimensions
           CopyFromInvoiceData.insertAcctDimension(conn, this, dataInvoice[0].adClientId,

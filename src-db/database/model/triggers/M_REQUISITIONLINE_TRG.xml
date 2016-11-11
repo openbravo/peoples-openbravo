@@ -14,7 +14,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2008-2014 Openbravo SLU
+* All portions are Copyright (C) 2008-2016 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -28,7 +28,6 @@ BEGIN
     
     IF AD_isTriggerEnabled()='N' THEN RETURN;
     END IF;
-
 
   IF INSERTING THEN
     SELECT DocStatus, :new.ReqStatus, 0 INTO v_DocStatus, v_ReqStatus, v_OrderedQty
@@ -78,6 +77,8 @@ BEGIN
        OR (COALESCE(:old.C_BPartner_ID, '0') <> COALESCE(:new.C_BPartner_ID, '0' ))
        OR (COALESCE(:old.C_UOM_ID, '0') <> COALESCE(:new.C_UOM_ID, '0' ))
        OR (COALESCE(:old.M_Product_UOM_ID, '0') <> COALESCE(:new.M_Product_UOM_ID, '0' ))
+       OR (COALESCE(:OLD.C_AUM, '0') <> COALESCE(:NEW.C_AUM, '0'))
+       OR (COALESCE(:OLD.AUMQTY, 0) <> COALESCE(:NEW.AUMQTY, 0))
        OR (COALESCE(:old.QuantityOrder, -1) <> COALESCE(:new.QuantityOrder, -1 ))
        OR (COALESCE(:old.M_AttributeSetInstance_ID, '-1') <> COALESCE(:new.M_AttributeSetInstance_ID, '-1' ))
        OR (COALESCE(:old.NeedByDate, TO_DATE('01-01-1900', 'DD-MM-YYYY')) <> COALESCE(:new.NeedByDate, TO_DATE('01-01-1900', 'DD-MM-YYYY')))) THEN
@@ -96,6 +97,9 @@ BEGIN
       WHERE m_product_id = :NEW.m_product_id;
       IF (v_isgeneric = 'Y') THEN
         RAISE_APPLICATION_ERROR(-20000, '@CannotUseGenericProduct@');
+      END IF;
+      IF (:NEW.C_AUM IS NOT NULL AND :NEW.AUMQTY IS NOT NULL AND :NEW.M_PRODUCT_UOM_ID IS NOT NULL AND :NEW.QUANTITYORDER IS NOT NULL) THEN
+        RAISE_APPLICATION_ERROR(-20000, '@CannotUseAUMandSecondUOM@');
       END IF;
     END IF;
   END IF;

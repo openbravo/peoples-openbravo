@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,20 +21,27 @@ package org.openbravo.erpCommon.ad_callouts;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
+import java.util.List;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
+import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.DateTimeData;
+import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.materialmgmt.CentralBroker;
+import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.plm.AttributeSet;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.pricing.pricelist.PriceList;
@@ -64,10 +71,11 @@ public class SL_RequisitionLine_Product extends HttpSecureAppServlet {
       String strPriceListId = vars.getStringParameter("inpmPricelistId");
       String strAttributeSetInstance = vars.getStringParameter("inpmProductId_ATR");
       String strUOM = vars.getStringParameter("inpmProductId_UOM");
+      String strUOMProduct = vars.getStringParameter("inpmProductUomId");
 
       try {
         printPage(response, vars, strMProductID, strWindowId, strTabId, strAttributeSetInstance,
-            strUOM, strRequisition, strPriceListId, strChanged);
+            strUOM, strRequisition, strPriceListId, strChanged, strUOMProduct);
       } catch (ServletException ex) {
         pageErrorCallOut(response);
       }
@@ -77,8 +85,8 @@ public class SL_RequisitionLine_Product extends HttpSecureAppServlet {
 
   private void printPage(HttpServletResponse response, VariablesSecureApp vars,
       String strMProductID, String strWindowId, String strTabId, String strAttribute,
-      String strUOM, String strRequisition, String strPriceListId, String strChanged)
-      throws IOException, ServletException {
+      String strUOM, String strRequisition, String strPriceListId, String strChanged,
+      String strUOMProduct) throws IOException, ServletException {
     String localStrPriceListId = strPriceListId;
     String localStrAttribute = strAttribute;
     if (log4j.isDebugEnabled())
@@ -162,6 +170,32 @@ public class SL_RequisitionLine_Product extends HttpSecureAppServlet {
       }
     }
 
+    String strHasSecondaryUOM = SLRequisitionLineProductData.hasSecondaryUOM(this, strMProductID);
+    String propertyValue = "N";
+    try {
+      propertyValue = Preferences.getPreferenceValue("UomManagement", true, OBContext
+          .getOBContext().getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(),
+          OBContext.getOBContext().getUser(), OBContext.getOBContext().getRole(), null);
+    } catch (PropertyException e) {
+      log4j.debug("Preference UomManagement not found", e);
+    }
+    if (propertyValue.equalsIgnoreCase("Y") && "".equals(strUOMProduct)) {
+      // Set AUM based on default
+      // As Requisition is a purchase document, the document type 'Purchase Order' is used to get
+      // the
+      // default AUM
+      OBCriteria<DocumentType> dtCriteria = OBDal.getInstance().createCriteria(DocumentType.class);
+      dtCriteria.add(Restrictions.eq("documentCategory", "POO"));
+      List<DocumentType> dtList = dtCriteria.list();
+      if (dtList.size() > 0) {
+        String finalAUM = CentralBroker.getInstance().getDefaultAUMForDocument(strMProductID,
+            dtList.get(0).getId());
+        if (finalAUM != null) {
+          strResult.append("new Array(\"inpcAum\", \"" + finalAUM + "\"),\n");
+        }
+      }
+    }
+
     if (strChanged.equals("inpmProductId")) {
       strResult.append("new Array(\"inpcUomId\", "
           + (strUOM.equals("") ? "\"\"" : "\"" + strUOM + "\"") + "),\n");
@@ -192,34 +226,38 @@ public class SL_RequisitionLine_Product extends HttpSecureAppServlet {
       strResult.append("new Array(\"inpattrsetvaluetype\", \""
           + (strAttrSetValueType == null || strAttrSetValueType.equals("") ? "" : FormatUtilities
               .replaceJS(strAttrSetValueType)) + "\"),\n");
-      String strHasSecondaryUOM = SLRequisitionLineProductData.hasSecondaryUOM(this, strMProductID);
       strResult.append("new Array(\"inphasseconduom\", " + strHasSecondaryUOM + "),\n");
-      strResult.append("new Array(\"inpmProductUomId\", ");
-      FieldProvider[] tld = null;
-      try {
-        ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR",
-            "M_Product_UOM_ID", "", "M_Product_UOM_ID", Utility.getContext(this, vars,
-                "#AccessibleOrgTree", "SLRequisitionLineProduct"), Utility.getContext(this, vars,
-                "#User_Client", "SLRequisitionLineProduct"), 0);
-        Utility.fillSQLParameters(this, vars, null, comboTableData, strTabId, "");
-        tld = comboTableData.select(false);
-        comboTableData = null;
-      } catch (Exception ex) {
-        throw new ServletException(ex);
+      if (strHasSecondaryUOM.equals("1")
+          && (!propertyValue.equalsIgnoreCase("Y") || (propertyValue.equalsIgnoreCase("Y") && !""
+              .equals(strUOMProduct)))) {
+        strResult.append("new Array(\"inpmProductUomId\", ");
+        FieldProvider[] tld = null;
+        try {
+          ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR",
+              "M_Product_UOM_ID", "", "M_Product_UOM_ID", Utility.getContext(this, vars,
+                  "#AccessibleOrgTree", "SLRequisitionLineProduct"), Utility.getContext(this, vars,
+                  "#User_Client", "SLRequisitionLineProduct"), 0);
+          Utility.fillSQLParameters(this, vars, null, comboTableData, strTabId, "");
+          tld = comboTableData.select(false);
+          comboTableData = null;
+        } catch (Exception ex) {
+          throw new ServletException(ex);
+        }
+
+        if (tld != null && tld.length > 0) {
+          strResult.append("new Array(");
+          for (int i = 0; i < tld.length; i++) {
+            strResult.append("\n\tnew Array(\"" + tld[i].getField("id") + "\", \""
+                + FormatUtilities.replaceJS(tld[i].getField("name")) + "\", \"false\")");
+            if (i < tld.length - 1)
+              strResult.append(",");
+          }
+          strResult.append(")");
+        } else
+          strResult.append("null");
+        strResult.append("),\n");
       }
 
-      if (tld != null && tld.length > 0) {
-        strResult.append("new Array(");
-        for (int i = 0; i < tld.length; i++) {
-          strResult.append("\n\tnew Array(\"" + tld[i].getField("id") + "\", \""
-              + FormatUtilities.replaceJS(tld[i].getField("name")) + "\", \"false\")");
-          if (i < tld.length - 1)
-            strResult.append(",");
-        }
-        strResult.append(")");
-      } else
-        strResult.append("null");
-      strResult.append("),\n");
       // To set the cursor focus in the amount field
       if (!strMProductID.equals("")) {
         strResult.append("new Array(\"CURSOR_FIELD\", \"inpqty\"),\n");

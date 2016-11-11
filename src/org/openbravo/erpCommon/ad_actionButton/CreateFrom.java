@@ -47,6 +47,7 @@ import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.financial.FinancialUtils;
+import org.openbravo.materialmgmt.CentralBroker;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
@@ -530,6 +531,22 @@ public class CreateFrom extends HttpSecureAppServlet {
       }
     }
 
+    for (int i = 0; i < data.length; i++) {
+      if (CentralBroker.getInstance().isUomManagementEnabled().equals("Y")) {
+        if (data[i].aumqty.isEmpty()) {
+          data[i].aumqty = data[i].qty;
+          if (!data[i].cAum.equals(data[i].cUomId)) {
+            data[i].qty = CentralBroker.getInstance()
+                .getConvertedQty(data[i].mProductId, new BigDecimal(data[i].aumqty), data[i].cAum)
+                .toString();
+          }
+        }
+        data[i].aumvisible = "table-cell";
+      } else {
+        data[i].aumvisible = "none";
+      }
+    }
+
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("theme", vars.getTheme());
@@ -591,6 +608,13 @@ public class CreateFrom extends HttpSecureAppServlet {
         xmlDocument.setParameter("messageMessage",
             Utility.messageBD(this, "CreateFromMatchPOQtys", vars.getLanguage()));
       }
+    }
+
+    String preferenceUomEnabled = CentralBroker.getInstance().isUomManagementEnabled();
+    if (preferenceUomEnabled.equals("Y")) {
+      xmlDocument.setParameter("aumVisible", "table-cell");
+    } else {
+      xmlDocument.setParameter("aumVisible", "none");
     }
 
     xmlDocument.setData("structure1", data);
@@ -739,6 +763,25 @@ public class CreateFrom extends HttpSecureAppServlet {
     if (isSOTrx.equals("N")) {
       final CreateFromShipmentData[][] dataUOM = new CreateFromShipmentData[data.length][];
 
+      final String strUomPreference = CentralBroker.getInstance().isUomManagementEnabled();
+      boolean strHaveSecUom = false;
+      boolean strHaveAum = false;
+      for (int i = 0; i < data.length; i++) {
+        try {
+          if (!data[i].havesec.equals("0")) {
+            strHaveSecUom = true;
+          }
+          if (strUomPreference.equals("Y") && data[i].havesec.equals("0")) {
+            strHaveAum = true;
+          }
+          if (strHaveSecUom && strHaveAum) {
+            break;
+          }
+        } catch (NullPointerException e) {
+
+        }
+      }
+
       for (int i = 0; i < data.length; i++) {
         // Obtain the specific units for each product
 
@@ -748,12 +791,67 @@ public class CreateFrom extends HttpSecureAppServlet {
 
         final String strhavesec = data[i].havesec;
 
-        if ("0".equals(strhavesec)) {
+        if (strHaveSecUom && strHaveAum) {
+          // UOM preference is Y and at least one line has secondary UOM
+          if (!data[i].havesec.equals("0")) {
+            data[i].havesec = "text";
+            data[i].haveuompreference = "hidden";
+          }
+          if (strUomPreference.equals("Y") && data[i].havesec.equals("0")) {
+            data[i].haveuompreference = "text";
+            data[i].havesec = "hidden";
+          }
+          xmlDocument.setParameter("uompreference", "");
+          xmlDocument.setParameter("havesecuom", "");
+          if (data[i].cAum.isEmpty() && data[i].aumqty.isEmpty()
+              && data[i].secProductUomId.isEmpty() && data[i].secqty.isEmpty()) {
+            CreateFromShipmentData[] defaultAumData = CreateFromShipmentData.selectAUMDefault(this,
+                data[i].mProductId, data[i].cDoctypeId);
+            String defaultAum = (defaultAumData.length > 0) ? defaultAumData[0].cAum
+                : data[i].cUomId;
+            data[i].aumqty = data[i].qty;
+            data[i].cAum = defaultAum;
+            data[i].aumname = (defaultAumData.length > 0) ? defaultAumData[0].aumname
+                : data[i].uomsymbol;
+            data[i].mProductUomId = null;
+            if (!defaultAum.equals(data[i].cUomId)) {
+              data[i].qty = CentralBroker
+                  .getInstance()
+                  .getConvertedQty(data[i].mProductId, new BigDecimal(data[i].aumqty), data[i].cAum)
+                  .toString();
+            }
+          }
+        } else if (strUomPreference.equals("Y") && "0".equals(strhavesec)) {
+          // UOM preference is Y and no line has secondary UOM
           data[i].havesec = "hidden";
           data[i].havesecuom = "none";
+          data[i].haveuompreference = "text";
+          xmlDocument.setParameter("uompreference", "");
+          xmlDocument.setParameter("havesecuom", "display:none;");
+          if (data[i].cAum.isEmpty() && data[i].aumqty.isEmpty()) {
+            CreateFromShipmentData[] defaultAumData = CreateFromShipmentData.selectAUMDefault(this,
+                data[i].mProductId, data[i].cDoctypeId);
+            String defaultAum = (defaultAumData.length > 0) ? defaultAumData[0].cAum
+                : data[i].cUomId;
+            data[i].aumqty = data[i].qty;
+            data[i].cAum = defaultAum;
+            data[i].aumname = (defaultAumData.length > 0) ? defaultAumData[0].aumname
+                : data[i].uomsymbol;
+            data[i].mProductUomId = null;
+            if (!defaultAum.equals(data[i].cUomId)) {
+              data[i].qty = CentralBroker
+                  .getInstance()
+                  .getConvertedQty(data[i].mProductId, new BigDecimal(data[i].aumqty), data[i].cAum)
+                  .toString();
+            }
+          }
         } else {
+          // UOM preference is N
           data[i].havesec = "text";
-          data[i].havesecuom = "block";
+          data[i].uompreference = "none";
+          data[i].haveuompreference = "hidden";
+          xmlDocument.setParameter("uompreference", "display:none;");
+          xmlDocument.setParameter("havesecuom", "");
         }
       }
       xmlDocument.setDataArray("reportM_Product_Uom_To_ID", "liststructure", dataUOM);
@@ -1535,6 +1633,23 @@ public class CreateFrom extends HttpSecureAppServlet {
             else
               C_Tax_ID = CreateFromInvoiceData.getTax(this, data[i].cOrderlineId);
 
+            String propertyValue = CentralBroker.getInstance().isUomManagementEnabled();
+            if (propertyValue.equalsIgnoreCase("Y") && data[i].mProductUomId.isEmpty()) {
+              if (data[i].cAum.isEmpty() && data[i].aumqty.isEmpty()) {
+                String defaultAum = CentralBroker.getInstance().getDefaultAUMForDocument(
+                    data[i].mProductId, data[i].cDoctypeId);
+                data[i].aumqty = data[i].id;
+                data[i].cAum = defaultAum;
+                data[i].mProductUomId = null;
+                if (!defaultAum.equals(data[i].cUomId)) {
+                  data[i].id = CentralBroker
+                      .getInstance()
+                      .getConvertedQty(data[i].mProductId, new BigDecimal(data[i].aumqty),
+                          defaultAum).toString();
+                }
+              }
+            }
+
             final int curPrecision;
             if (strType.equals("SHIPMENT")) {
               curPrecision = Integer.valueOf(dataAux[0].priceprecision).intValue();
@@ -1651,7 +1766,7 @@ public class CreateFrom extends HttpSecureAppServlet {
                   startingPeriodId, data[i].aAssetId, data[i].cProjectId, data[i].cCostcenterId,
                   data[i].user1Id, data[i].user2Id, data[i].explode,
                   data[i].mInoutlineId.equals("") || data[i].mInoutlineId == null ? data[i].isorder
-                      : "N");
+                      : "N", data[i].cAum, data[i].aumqty);
 
               if (!data[i].mInoutlineId.isEmpty() && strType.equals("SHIPMENT")) {
                 CreateFromInvoiceData.insertShipmentAcctDimension(conn, this, strSequence,
@@ -1743,6 +1858,7 @@ public class CreateFrom extends HttpSecureAppServlet {
                 .selectFromPOUpdate(conn, this, vars.getLanguage(), ids[k]);
         }
         if (data != null) {
+          String uomManagementPreference = CentralBroker.getInstance().isUomManagementEnabled();
           for (int i = 0; i < data.length; i++) {
 
             // Obtain the values from the window
@@ -1755,8 +1871,29 @@ public class CreateFrom extends HttpSecureAppServlet {
               strLineId = data[i].cOrderlineId;
             }
 
-            final String strMovementqty = vars.getRequiredNumericParameter("inpmovementqty"
-                + strLineId);
+            String strMovementqty = "";
+            String strAumQty = "";
+            if (uomManagementPreference.equals("Y") && data[i].mProductUomId.isEmpty()) {
+              try {
+                BigDecimal qtyAum = new BigDecimal(
+                    vars.getNumericParameter("inpaumqty" + strLineId));
+                strAumQty = qtyAum.toString();
+                strMovementqty = qtyAum.toString();
+                if (data[i].cAum.isEmpty()) {
+                  CreateFromShipmentData[] defaultAumData = CreateFromShipmentData
+                      .selectAUMDefault(this, data[i].mProductId, data[i].cDoctypeId);
+                  data[i].cAum = (defaultAumData.length > 0) ? defaultAumData[0].cAum
+                      : data[i].cUomId;
+                }
+                if (!data[i].cUomId.equals(data[i].cAum)) {
+                  strMovementqty = CentralBroker.getInstance()
+                      .getConvertedQty(data[i].mProductId, qtyAum, data[i].cAum).toString();
+                }
+              } catch (NumberFormatException e) {
+              }
+            } else {
+              strMovementqty = vars.getRequiredNumericParameter("inpmovementqty" + strLineId);
+            }
             String strQuantityorder = "";
             String strProductUomId = "";
             String strLocator = vars.getStringParameter("inpmLocatorId" + strLineId);
@@ -1848,7 +1985,7 @@ public class CreateFrom extends HttpSecureAppServlet {
                   CreateFromShipmentData.insert(conn, this, strSequence, strKey, vars.getClient(),
                       data[i].adOrgId, vars.getUser(), data[i].description, data[i].mProductId,
                       data[i].cUomId, (qtyIsNegative ? "-" + strConversion : strConversion),
-                      data[i].cOrderlineId, strLocator,
+                      strAumQty, data[i].cAum, data[i].cOrderlineId, strLocator,
                       CreateFromShipmentData.isInvoiced(conn, this, data[i].cInvoicelineId),
                       (qtyIsNegative ? "-" + total : total), data[i].mProductUomId,
                       strmAttributesetinstanceId, data[i].aAssetId, data[i].cProjectId,
@@ -1880,7 +2017,8 @@ public class CreateFrom extends HttpSecureAppServlet {
               try {
                 CreateFromShipmentData.insert(conn, this, strSequence, strKey, vars.getClient(),
                     data[i].adOrgId, vars.getUser(), data[i].description, data[i].mProductId,
-                    data[i].cUomId, strMovementqty, data[i].cOrderlineId, strLocator,
+                    data[i].cUomId, strMovementqty, strAumQty, data[i].cAum, data[i].cOrderlineId,
+                    strLocator,
                     CreateFromShipmentData.isInvoiced(conn, this, data[i].cInvoicelineId),
                     strQuantityorder, strProductUomId, strmAttributesetinstanceId,
                     data[i].aAssetId, data[i].cProjectId, data[i].cCostcenterId, data[i].user1Id,
@@ -2060,7 +2198,7 @@ public class CreateFrom extends HttpSecureAppServlet {
                   CreateFromShipmentData.insert(conn, this, strSequence, strKey, vars.getClient(),
                       data[i].adOrgId, vars.getUser(), data[i].description, data[i].mProductId,
                       data[i].cUomId, (qtyIsNegative ? "-" + strConversion : strConversion),
-                      data[i].cOrderlineId, strLocator,
+                      data[i].aumqty, data[i].cAum, data[i].cOrderlineId, strLocator,
                       CreateFromShipmentData.isInvoiced(conn, this, data[i].cInvoicelineId),
                       (qtyIsNegative ? "-" + total : total), data[i].mProductUomId,
                       data[i].mAttributesetinstanceId, data[i].aAssetId, data[i].cProjectId,
@@ -2093,7 +2231,8 @@ public class CreateFrom extends HttpSecureAppServlet {
               try {
                 CreateFromShipmentData.insert(conn, this, strSequence, strKey, vars.getClient(),
                     data[i].adOrgId, vars.getUser(), data[i].description, data[i].mProductId,
-                    data[i].cUomId, data[i].id, data[i].cOrderlineId, strLocator,
+                    data[i].cUomId, data[i].id, data[i].aumqty, data[i].cAum, data[i].cOrderlineId,
+                    strLocator,
                     CreateFromShipmentData.isInvoiced(conn, this, data[i].cInvoicelineId),
                     data[i].quantityorder, data[i].mProductUomId, data[i].mAttributesetinstanceId,
                     data[i].aAssetId, data[i].cProjectId, data[i].cCostcenterId, data[i].user1Id,

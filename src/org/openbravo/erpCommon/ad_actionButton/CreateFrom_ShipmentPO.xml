@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -53,7 +53,12 @@
   <PARAMETER id="messageBoxID" name="messageType" attribute="class" replace="yy" default="HIDDEN"/>
   <PARAMETER id="messageBoxIDTitle" name="messageTitle" default=""/>
   <PARAMETER id="messageBoxIDMessage" name="messageMessage" default=""/>
-
+  
+  <PARAMETER id="headerAumQty" name="uompreference" attribute="style" replace="xx"/>
+  <PARAMETER id="headerAum" name="uompreference" attribute="style" replace="xx"/>
+  <PARAMETER id="headerSecQty" name="havesecuom" attribute="style" replace="xx"/>
+  <PARAMETER id="headerSecUom" name="havesecuom" attribute="style" replace="xx"/>
+  
     <PARAMETER id="param2" name="param2" default="2"/>
     <PARAMETER id="paramCheck" name="check" default="N"/>
     <structure name="structure1">
@@ -69,6 +74,13 @@
         <FIELD id="fieldBomParent" attribute="name" replace="xx">bom_parent_id</FIELD>
         <FIELD id="fieldQuantity" attribute="value" format="qtyEdition">qty</FIELD>
         <FIELD id="fieldQuantity" attribute="name" replace="xx">id</FIELD>
+        <FIELD id="fieldAUMQuantity" attribute="value" format="qtyEdition">aumqty</FIELD>
+        <FIELD id="fieldAUMQuantity" attribute="name" replace="xx">id</FIELD>
+        <FIELD id="fieldAUMQuantity" attribute="onkeyup" replace="ff">id</FIELD>
+        <FIELD id="fieldAUMQuantity" attribute="type" replace="zzz">haveuompreference</FIELD>
+        <FIELD id="fieldAumUnit" replaceCharacters="html">aumname</FIELD>
+        <FIELD id="fieldCAUM" attribute="name" replace="xx">id</FIELD>
+        <FIELD id="fieldCAUM" attribute="value">cAum</FIELD>
         <FIELD id="fieldSecQuantity" attribute="value" format="qtyEdition">secqty</FIELD>
         <FIELD id="fieldSecQuantity" attribute="name" replace="xx">id</FIELD>
         <FIELD id="fieldSecQuantity" attribute="type" replace="zzz">havesec</FIELD>
@@ -76,6 +88,16 @@
         <FIELD id="fieldCuomName" replaceCharacters="html">uomsymbol</FIELD>
         <FIELD id="fieldCuomId" attribute="name" replace="xx">id</FIELD>
         <FIELD id="fieldCuomId" attribute="value">cUomId</FIELD>
+        <!-- Show/hidde Aum and Sec columns -->
+        <FIELD id="showFieldAUMQuantity" attribute="style" replace="xx">uompreference</FIELD>
+        <FIELD id="fieldAumUnit" attribute="style" replace="xx">uompreference</FIELD>
+        <FIELD id="showFieldSecQuantity" attribute="style" replace="xx">havesecuom</FIELD>
+        <FIELD id="showFieldSecUom" attribute="style" replace="xx">havesecuom</FIELD>
+        <FIELD id="fieldPreference" attribute="name" replace="xx">id</FIELD>
+        <FIELD id="fieldPreference" attribute="value" >uompreference</FIELD>
+        <FIELD id="fieldHaveSecUOM" attribute="name" replace="xx">id</FIELD>
+        <FIELD id="fieldHaveSecUOM" attribute="value" >havesecuom</FIELD>
+        <!-- Show/hidde Aum and Sec column -->
         <FIELD id="fieldMproductid" replaceCharacters="html">relationName</FIELD>
         <FIELD id="fieldPurchaseorder">line</FIELD>
         <FIELD id="fieldSecUom" attribute="name" replace="xx">id</FIELD>

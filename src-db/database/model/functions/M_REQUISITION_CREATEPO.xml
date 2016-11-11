@@ -61,6 +61,12 @@
   p_PriceList_ID VARCHAR2(32);
   p_Org_ID VARCHAR2(32);
   p_Warehouse_ID VARCHAR2(32);
+
+  v_UomManagement_Pref VARCHAR2(60);
+  v_Aum VARCHAR2(32);
+  v_AumQty NUMBER;
+  v_uom_preference VARCHAR(1);
+  v_count NUMBER;
   
   --  Parameter
   TYPE RECORD IS REF CURSOR;
@@ -277,6 +283,20 @@ BEGIN
         END IF;
       END IF;
 
+      SELECT COUNT(1) INTO v_count
+      FROM ad_preference
+      WHERE property = 'UomManagement';
+      IF (v_count > 0) THEN
+        v_uom_preference := AD_GET_PREFERENCE_VALUE('UomManagement', 'Y', v_client_ID, p_org_ID, v_User_ID, NULL, NULL);
+      END IF;
+
+      v_Aum := NULL;
+      v_AumQty := NULL;
+      IF (v_uom_preference = 'Y') THEN
+        v_Aum := Cur_Lines.c_aum;
+        v_AumQty := Cur_Lines.aumqty;
+      END IF;
+
       v_Description := COALESCE(Cur_Lines.DESCRIPTION, '');
       IF (Cur_Lines.SUPPLIERNOTES IS NOT NULL) THEN
         v_Description := v_Description || ' ' || Cur_Lines.SUPPLIERNOTES;
@@ -291,7 +311,8 @@ BEGIN
           M_WAREHOUSE_ID, C_UOM_ID, QTYORDERED, C_CURRENCY_ID,
           PRICELIST, PRICEACTUAL, PRICELIMIT,
           PRICESTD, LINENETAMT, DISCOUNT,
-          C_TAX_ID, M_PRODUCT_UOM_ID, QUANTITYORDER, GROSS_UNIT_PRICE, LINE_GROSS_AMOUNT
+          C_TAX_ID, M_PRODUCT_UOM_ID, QUANTITYORDER, GROSS_UNIT_PRICE, LINE_GROSS_AMOUNT,
+          C_AUM, AUMQTY
       ) VALUES (
           v_COrderLine_ID,v_Client_ID, p_Org_ID,'Y',
           now(), v_User_ID, now(), v_User_ID,
@@ -301,7 +322,8 @@ BEGIN
           p_Warehouse_ID, Cur_Lines.C_UOM_ID, Cur_Lines.QTY - Cur_Lines.ORDEREDQTY, v_Currency_ID,
           v_PriceList, v_PriceActual, v_PriceLimit,
           v_PriceStd, v_LineNetAmt,v_Discount,
-          v_Tax_ID, Cur_Lines.M_Product_UOM_ID, Cur_Lines.QuantityOrder, v_gross_unit_price, v_line_gross_amount
+          v_Tax_ID, Cur_Lines.M_Product_UOM_ID, Cur_Lines.QuantityOrder, v_gross_unit_price, v_line_gross_amount,
+          v_Aum, v_AumQty
       );
 
       Ad_Sequence_Next('M_RequisitionOrder', v_User_ID, v_RequisitionOrder_ID);

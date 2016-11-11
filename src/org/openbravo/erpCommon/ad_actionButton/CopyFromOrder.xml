@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -49,6 +49,11 @@
 <PARAMETER id="messageBoxIDTitle" name="messageTitle" default=""/>
 <PARAMETER id="messageBoxIDMessage" name="messageMessage" default=""/>
 
+
+<PARAMETER id="paramAumQtyVisible" name="aumQtyVisible" attribute="style" replace="xx"/>
+<PARAMETER id="paramAumVisible" name="aumVisible" attribute="style" replace="xx"/>
+<PARAMETER id="paramUomEnabled" name="uomEnabled" attribute="value" replace="xx"/>
+
 <PARAMETER id="param2" name="param2" default="2"/>
 
 <structure name="structure1">
@@ -83,13 +88,25 @@
 <FIELD id="fieldTaxid" attribute="name" replace="xx">rownum</FIELD>
 <FIELD id="fieldNametax" replaceCharacters="html">nametax</FIELD>
 <FIELD id="fieldUomid" attribute="value">cUomId</FIELD>
+ 
+<FIELD id="fieldAum" attribute="value">cAum</FIELD>
+<FIELD id="fieldAumCombo" attribute="name" replace="xx">rownum</FIELD>
+<FIELD id="fieldAumCombo" attribute="onchange" replace="yy">rownum</FIELD>
 <FIELD id="fieldUomid" attribute="name" replace="xx">rownum</FIELD>
 <FIELD id="fieldUomsymbol" replaceCharacters="html">uomsymbol</FIELD>
+<FIELD id="fieldAumsymbol" replaceCharacters="html">cAumsymbol</FIELD>
 <FIELD id="fieldQty" attribute="value" format="euroEdition">qty</FIELD>
 <FIELD id="fieldQty" attribute="name" replace="xx">rownum</FIELD>
+<FIELD id="fieldAumQty" attribute="value" format="euroEdition">aumqty</FIELD>
+<FIELD id="fieldAumQty" attribute="name" replace="xx">rownum</FIELD>
+<FIELD id="fieldAumQty" attribute="onkeyup" replace="yy">rownum</FIELD>
 <FIELD id="lpinvalidxx" attribute="id" replace="xx">rownum</FIELD>
 <FIELD id="qtyinvalidxx" attribute="id" replace="xx">rownum</FIELD>
+<FIELD id="aumqtyinvalidxx" attribute="id" replace="xx">rownum</FIELD>
 
+<SUBREPORT id="reportAUM_ID" name="reportAUM_ID" report="org/openbravo/erpCommon/reference/List">
+  <ARGUMENT name="parameterListSelected"  withId="fieldAum"/>
+</SUBREPORT>
 <SECTION id="sectionDetail"/>
 </structure>
 

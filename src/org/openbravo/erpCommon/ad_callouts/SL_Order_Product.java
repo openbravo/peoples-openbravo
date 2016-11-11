@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2013 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -29,14 +29,18 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.businessUtility.PAttributeSet;
 import org.openbravo.erpCommon.businessUtility.PAttributeSetData;
+import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.businessUtility.PriceAdjustment;
 import org.openbravo.erpCommon.businessUtility.Tax;
 import org.openbravo.erpCommon.utility.ComboTableData;
+import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.materialmgmt.CentralBroker;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.utils.FormatUtilities;
@@ -71,23 +75,25 @@ public class SL_Order_Product extends HttpSecureAppServlet {
       String strWindowId = vars.getStringParameter("inpwindowId");
       String strIsSOTrx = Utility.getContext(this, vars, "isSOTrx", strWindowId);
       String cancelPriceAd = vars.getStringParameter("inpcancelpricead");
+      String strUOMProduct = vars.getStringParameter("inpmProductUomId");
 
       try {
         printPage(response, vars, strUOM, strPriceList, strPriceStd, strPriceLimit, strCurrency,
             strMProductID, strCBPartnerLocationID, strADOrgID, strMWarehouseID, strCOrderId,
-            strIsSOTrx, strQty, cancelPriceAd);
+            strIsSOTrx, strQty, cancelPriceAd, strUOMProduct);
       } catch (ServletException ex) {
         pageErrorCallOut(response);
       }
     } else
       pageError(response);
   }
-
+  
   private void printPage(HttpServletResponse response, VariablesSecureApp vars, String _strUOM,
       String strPriceList, String _strPriceStd, String _strPriceLimit, String strCurrency,
       String strMProductID, String strCBPartnerLocationID, String strADOrgID,
       String strMWarehouseID, String strCOrderId, String strIsSOTrx, String strQty,
-      String cancelPriceAd) throws IOException, ServletException {
+      String cancelPriceAd, String strUOMProduct) throws IOException, ServletException {
+    
     log4j.debug("Output: dataSheet");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
@@ -128,12 +134,12 @@ public class SL_Order_Product extends HttpSecureAppServlet {
               new BigDecimal(strPriceStd.equals("") ? "0" : strPriceStd)).toString();
           strGrossPriceList = "0";
         }
-     } else {
+      } else {
         if (isTaxIncludedPriceList)
           strPriceActual = strGrossBaseUnitPrice;
         else
           strPriceActual = strPriceList;
-     }
+      }
     } else {
       strUOM = strNetPriceList = strGrossPriceList = strPriceLimit = strPriceStd = "";
     }
@@ -227,68 +233,94 @@ public class SL_Order_Product extends HttpSecureAppServlet {
       resultado.append("new Array(\"inpcTaxId\", \"" + strCTaxID + "\"),\n");
     }
 
-    resultado.append("new Array(\"inpmProductUomId\", ");
-    // if (strUOM.startsWith("\""))
-    // strUOM=strUOM.substring(1,strUOM.length()-1);
-    // String strmProductUOMId =
-    // SLOrderProductData.strMProductUOMID(this,strMProductID,strUOM);
-    if (vars.getLanguage().equals("en_US")) {
-      FieldProvider[] tld = null;
-      try {
-        ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "",
-            "M_Product_UOM", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
-                "SLOrderProduct"),
-            Utility.getContext(this, vars, "#User_Client", "SLOrderProduct"), 0);
-        Utility.fillSQLParameters(this, vars, null, comboTableData, "SLOrderProduct", "");
-        tld = comboTableData.select(false);
-        comboTableData = null;
-      } catch (Exception ex) {
-        throw new ServletException(ex);
-      }
-
-      if (tld != null && tld.length > 0) {
-        resultado.append("new Array(");
-        for (int i = 0; i < tld.length; i++) {
-          resultado.append("new Array(\"" + tld[i].getField("id") + "\", \""
-              + FormatUtilities.replaceJS(tld[i].getField("name")) + "\", \"false\")");
-          if (i < tld.length - 1) {
-            resultado.append(",\n");
-          }
-        }
-        resultado.append("\n)");
-      } else {
-        resultado.append("null");
-      }
-      resultado.append("\n),");
-    } else {
-      FieldProvider[] tld = null;
-      try {
-        ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "",
-            "M_Product_UOM", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
-                "SLOrderProduct"),
-            Utility.getContext(this, vars, "#User_Client", "SLOrderProduct"), 0);
-        Utility.fillSQLParameters(this, vars, null, comboTableData, "SLOrderProduct", "");
-        tld = comboTableData.select(false);
-        comboTableData = null;
-      } catch (Exception ex) {
-        throw new ServletException(ex);
-      }
-
-      if (tld != null && tld.length > 0) {
-        resultado.append("new Array(");
-        for (int i = 0; i < tld.length; i++) {
-          resultado.append("new Array(\"" + tld[i].getField("id") + "\", \""
-              + FormatUtilities.replaceJS(tld[i].getField("name")) + "\", \"false\")");
-          if (i < tld.length - 1) {
-            resultado.append(",\n");
-          }
-        }
-        resultado.append("\n)");
-      } else {
-        resultado.append("null");
-      }
-      resultado.append("\n),");
+    strHasSecondaryUOM = SLOrderProductData.hasSecondaryUOM(this, strMProductID);
+    String propertyValue = "N";
+    try {
+      propertyValue = Preferences.getPreferenceValue("UomManagement", true,
+          OBContext.getOBContext().getCurrentClient(),
+          OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
+          OBContext.getOBContext().getRole(), null);
+      
+    } catch (PropertyException e) {
+      log4j.debug("Preference UomManagement not found", e);
     }
+    
+    if (propertyValue.equalsIgnoreCase("Y")  && "".equals(strUOMProduct)) {
+      // Set AUM based on default
+      Order order = OBDal.getInstance().get(Order.class, strCOrderId);
+      String finalAUM = CentralBroker.getInstance().getDefaultAUMForDocument(strMProductID,
+          order.getTransactionDocument().getId());
+      if (finalAUM != null) {
+        resultado.append("new Array(\"inpcAum\", \"" + finalAUM + "\"),\n");
+      }
+    }
+
+    if (strHasSecondaryUOM.equals("1") && (!propertyValue.equalsIgnoreCase("Y")
+        || (propertyValue.equalsIgnoreCase("Y") && !"".equals(strUOMProduct)))) {
+      resultado.append("new Array(\"inpmProductUomId\", ");
+      // if (strUOM.startsWith("\""))
+      // strUOM=strUOM.substring(1,strUOM.length()-1);
+      // String strmProductUOMId =
+      // SLOrderProductData.strMProductUOMID(this,strMProductID,strUOM);
+      if (vars.getLanguage().equals("en_US")) {
+        FieldProvider[] tld = null;
+        try {
+          ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "",
+              "M_Product_UOM", "",
+              Utility.getContext(this, vars, "#AccessibleOrgTree", "SLOrderProduct"),
+              Utility.getContext(this, vars, "#User_Client", "SLOrderProduct"), 0);
+          Utility.fillSQLParameters(this, vars, null, comboTableData, "SLOrderProduct", "");
+          tld = comboTableData.select(false);
+          comboTableData = null;
+        } catch (Exception ex) {
+          throw new ServletException(ex);
+        }
+
+        if (tld != null && tld.length > 0) {
+          resultado.append("new Array(");
+          for (int i = 0; i < tld.length; i++) {
+            resultado.append("new Array(\"" + tld[i].getField("id") + "\", \""
+                + FormatUtilities.replaceJS(tld[i].getField("name")) + "\", \"false\")");
+            if (i < tld.length - 1) {
+              resultado.append(",\n");
+            }
+          }
+          resultado.append("\n)");
+        } else {
+          resultado.append("null");
+        }
+        resultado.append("\n),");
+      } else {
+        FieldProvider[] tld = null;
+        try {
+          ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "",
+              "M_Product_UOM", "",
+              Utility.getContext(this, vars, "#AccessibleOrgTree", "SLOrderProduct"),
+              Utility.getContext(this, vars, "#User_Client", "SLOrderProduct"), 0);
+          Utility.fillSQLParameters(this, vars, null, comboTableData, "SLOrderProduct", "");
+          tld = comboTableData.select(false);
+          comboTableData = null;
+        } catch (Exception ex) {
+          throw new ServletException(ex);
+        }
+
+        if (tld != null && tld.length > 0) {
+          resultado.append("new Array(");
+          for (int i = 0; i < tld.length; i++) {
+            resultado.append("new Array(\"" + tld[i].getField("id") + "\", \""
+                + FormatUtilities.replaceJS(tld[i].getField("name")) + "\", \"false\")");
+            if (i < tld.length - 1) {
+              resultado.append(",\n");
+            }
+          }
+          resultado.append("\n)");
+        } else {
+          resultado.append("null");
+        }
+        resultado.append("\n),");
+      }
+    }
+
     resultado.append("new Array(\"EXECUTE\", \"displayLogic();\"),\n");
     // Para posicionar el cursor en el campo de cantidad
     resultado.append("new Array(\"CURSOR_FIELD\", \"inpqtyordered\")\n");

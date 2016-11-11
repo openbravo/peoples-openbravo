@@ -24,10 +24,14 @@ import org.apache.commons.lang.StringUtils;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
+import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.ComboTableData;
+import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.materialmgmt.CentralBroker;
 import org.openbravo.model.common.plm.AttributeSet;
 import org.openbravo.model.common.plm.Product;
+import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
 
 public class SL_InOutLine_Product extends SimpleCallout {
 
@@ -92,6 +96,17 @@ public class SL_InOutLine_Product extends SimpleCallout {
     String strQtyOrder = info.vars.getNumericParameter("inpmProductId_PQTY");
     String strmInoutlineId = info.vars.getStringParameter("inpmInoutlineId");
     String strQty = info.vars.getNumericParameter("inpmProductId_QTY");
+    String strHasSecondaryUOM = SLOrderProductData.hasSecondaryUOM(this, strMProductID);
+    String propertyValue = "N";
+    String strUOMProduct = info.vars.getStringParameter("inpmProductUomId");
+
+    try {
+      propertyValue = Preferences.getPreferenceValue("UomManagement", true, OBContext
+          .getOBContext().getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(),
+          OBContext.getOBContext().getUser(), OBContext.getOBContext().getRole(), null);
+    } catch (PropertyException e) {
+      log4j.debug("Preference UomManagement not found", e);
+    }
 
     // This 'if' is used when the delivery note is created based in a
     // sale-order, to make it not ask for the quantity of the delivery-note
@@ -102,43 +117,62 @@ public class SL_InOutLine_Product extends SimpleCallout {
     if (fromOrder.equals("0")) {
       info.addResult("inpquantityorder", StringUtils.isEmpty(strQtyOrder) ? "\"\""
           : (Object) strQtyOrder);
+      if (strHasSecondaryUOM.equals("1")
+          && (!propertyValue.equalsIgnoreCase("Y") || (propertyValue.equalsIgnoreCase("Y") && !""
+              .equals(strUOMProduct)))) {
+        info.addResult("inpquantityorder", StringUtils.isEmpty(strQtyOrder) ? "\"\""
+           : (Object) strQtyOrder);
+      }
       info.addResult("inpmovementqty", StringUtils.isEmpty(strQty) ? "\"\"" : (Object) strQty);
+    }
+
+    if (propertyValue.equalsIgnoreCase("Y") && "".equals(strUOMProduct)) {
+      // Set AUM based on default
+
+      ShipmentInOut mInOut = OBDal.getInstance().get(ShipmentInOut.class,
+          info.vars.getStringParameter("inpmInoutId"));
+      String finalAUM = CentralBroker.getInstance().getDefaultAUMForDocument(strMProductID,
+          mInOut.getDocumentType().getId());
+      if (finalAUM != null) {
+        info.addResult("inpcAum", finalAUM);
+      }
     }
 
     // Secondary UOM
 
+    if (strHasSecondaryUOM.equals("1")
+      && (!propertyValue.equalsIgnoreCase("Y") || (propertyValue.equalsIgnoreCase("Y") && !""
+          .equals(strUOMProduct)))) {
     String strPUOM = info.vars.getStringParameter("inpmProductId_PUOM");
-
-    String strHasSecondaryUOM = SLOrderProductData.hasSecondaryUOM(this, strMProductID);
     info.addResult("inphasseconduom", (Object) strHasSecondaryUOM);
 
     if (strPUOM.startsWith("\"")) {
       strPUOM = strPUOM.substring(1, strPUOM.length() - 1);
     }
-
-    FieldProvider[] tld = null;
-    try {
-      ComboTableData comboTableData = new ComboTableData(info.vars, this, "TABLE", "",
-          "M_Product_UOM", "", Utility.getContext(this, info.vars, "#AccessibleOrgTree",
-              "SLOrderProduct"), Utility.getContext(this, info.vars, "#User_Client",
-              "SLOrderProduct"), 0);
-      Utility.fillSQLParameters(this, info.vars, null, comboTableData, "SLOrderProduct", "");
-      tld = comboTableData.select(false);
-      comboTableData = null;
-    } catch (Exception ex) {
-      throw new ServletException(ex);
-    }
-
-    if (tld != null && tld.length > 0) {
-      info.addSelect("inpmProductUomId");
-      for (int i = 0; i < tld.length; i++) {
-        info.addSelectResult(tld[i].getField("id"), tld[i].getField("name"), tld[i].getField("id")
-            .equalsIgnoreCase(strPUOM));
+      FieldProvider[] tld = null;
+      try {
+        ComboTableData comboTableData = new ComboTableData(info.vars, this, "TABLE", "",
+            "M_Product_UOM", "", Utility.getContext(this, info.vars, "#AccessibleOrgTree",
+                "SLOrderProduct"), Utility.getContext(this, info.vars, "#User_Client",
+                "SLOrderProduct"), 0);
+        Utility.fillSQLParameters(this, info.vars, null, comboTableData, "SLOrderProduct", "");
+        tld = comboTableData.select(false);
+        comboTableData = null;
+      } catch (Exception ex) {
+        throw new ServletException(ex);
       }
-      info.endSelect();
-    } else {
-      info.addResult("inpmProductUomId", null);
-    }
+
+      if (tld != null && tld.length > 0) {
+        info.addSelect("inpmProductUomId");
+        for (int i = 0; i < tld.length; i++) {
+          info.addSelectResult(tld[i].getField("id"), tld[i].getField("name"), tld[i]
+              .getField("id").equalsIgnoreCase(strPUOM));
+        }
+        info.endSelect();
+      } else {
+        info.addResult("inpmProductUomId", null);
+     }
+   }
 
     // UOM
 

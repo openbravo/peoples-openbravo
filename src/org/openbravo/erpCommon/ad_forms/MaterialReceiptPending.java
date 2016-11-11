@@ -54,6 +54,7 @@ import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.materialmgmt.CentralBroker;
 import org.openbravo.model.common.enterprise.Locator;
 import org.openbravo.model.common.enterprise.OrgWarehouse;
 import org.openbravo.model.common.enterprise.Organization;
@@ -150,6 +151,31 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
           DateTimeData.nDaysAfter(this, strDateTo, "1"), strC_BPartner_ID, strDocumentNo);
     }
 
+    String preference = CentralBroker.getInstance().isUomManagementEnabled();
+    xmlDocument.setParameter("paramIsUomEnabled", preference);
+    if (preference.equals("Y")) {
+      xmlDocument.setParameter("aumVisible", "table-cell");
+      xmlDocument.setParameter("paramColSpanDocument", "5");
+      xmlDocument.setParameter("paramColSpanDate", "3");
+      xmlDocument.setParameter("paramColSpanBPartner", "4");
+      xmlDocument.setParameter("paramColSpanCalendar", "2");
+    } else {
+      xmlDocument.setParameter("aumVisible", "none");
+      xmlDocument.setParameter("paramColSpanDocument", "4");
+      xmlDocument.setParameter("paramColSpanDate", "2");
+      xmlDocument.setParameter("paramColSpanBPartner", "3");
+      xmlDocument.setParameter("paramColSpanCalendar", "1");
+    }
+    
+    MaterialReceiptPendingData[][] dataAum = new MaterialReceiptPendingData[data.length][];
+    for (int i = 0; i < data.length; i++) {
+      dataAum[i] = MaterialReceiptPendingData.selectAUM(this, data[i].mProductId);
+      if (dataAum[i].length == 0) {
+        dataAum[i] = MaterialReceiptPendingData.selectAUMDefault(this, data[i].mProductId,
+            data[i].cDoctypeId);
+      }
+    }
+    
     ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "MaterialReceiptPending", false, "",
         "", "", false, "ad_forms", strReplaceWith, false, true);
     toolbar.prepareSimpleToolBarTemplate();
@@ -250,13 +276,14 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
     }
 
     xmlDocument.setData("structure1", data);
+    xmlDocument.setDataArray("reportAUM_ID", "liststructure", dataAum);
     out.println(xmlDocument.print());
     out.close();
   }
 
-  private OBError processPurchaseOrder(VariablesSecureApp vars, String strcOrderLineId)
+  private OBError processPurchaseOrder(VariablesSecureApp vars, String strcOrderLineIdParam)
       throws IOException, ServletException {
-    String localStrcOrderLineId = strcOrderLineId;
+    String localStrcOrderLineId = strcOrderLineIdParam;
     String strMessageResult = "";
     String strMessageType = "Success";
     String strWindowName = WindowTabsData.selectWindowInfo(this, vars.getLanguage(), "184");
@@ -426,6 +453,17 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
               }
             }
           }
+          String propertyValue = CentralBroker.getInstance().isUomManagementEnabled();
+          if (propertyValue.equalsIgnoreCase("Y") && dataLine[0].mProductUomId.isEmpty()) {
+            dataLine[0].aumqty = vars.getStringParameter("inpAumQty" + strOrderlineId);
+            strQtyordered = dataLine[0].aumqty;
+            String defaultAum = vars.getStringParameter("inpcAUMId" + strOrderlineId);
+            dataLine[0].cAum = defaultAum;
+            if (!defaultAum.equals(dataLine[0].cUomId)) {
+              strQtyordered = CentralBroker.getInstance().getConvertedQty(dataLine[0].mProductId,
+                  new BigDecimal(dataLine[0].aumqty), defaultAum).toString();
+            }
+          }
           try {
             MaterialReceiptPendingLinesData.insert(conn, this, strSequenceLine, vars.getClient(),
                 dataLine[0].adOrgId, "Y", vars.getUser(), vars.getUser(), String.valueOf(line),
@@ -434,7 +472,7 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
                 new BigDecimal(strQtyordered).toString(), "N", dataLine[0].mAttributesetinstanceId,
                 "N", qtyorder, dataLine[0].mProductUomId, dataLine[0].cProjectId,
                 dataLine[0].user1Id, dataLine[0].user2Id, dataLine[0].cCostcenterId,
-                dataLine[0].aAssetId);
+                dataLine[0].aAssetId, dataLine[0].cAum, dataLine[0].aumqty);
             MaterialReceiptPendingLinesData.updateInvoiceOrder(conn, this, strSequenceLine,
                 strOrderlineId);
           } catch (ServletException ex) {

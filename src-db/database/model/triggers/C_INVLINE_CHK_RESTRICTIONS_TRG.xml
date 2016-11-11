@@ -18,7 +18,7 @@
     * under the License.
     * The Original Code is Openbravo ERP.
     * The Initial Developer of the Original Code is Openbravo SLU
-    * All portions are Copyright (C) 2001-2015 Openbravo SLU
+    * All portions are Copyright (C) 2001-2016 Openbravo SLU
     * All Rights Reserved.
     * Contributor(s):  ______________________________________.
     ************************************************************************/
@@ -66,6 +66,8 @@ BEGIN
       OR(COALESCE(:OLD.QUANTITYORDER, 0) <> COALESCE(:NEW.QUANTITYORDER, 0))
       OR(COALESCE(:OLD.C_ORDERLINE_ID, '0') <> COALESCE(:NEW.C_ORDERLINE_ID, '0'))
       OR(COALESCE(:OLD.M_PRODUCT_UOM_ID, '0') <> COALESCE(:NEW.M_PRODUCT_UOM_ID, '0'))
+      OR(COALESCE(:OLD.C_AUM, '0') <> COALESCE(:NEW.C_AUM, '0'))
+      OR(COALESCE(:OLD.AUMQTY, 0) <> COALESCE(:NEW.AUMQTY, 0))	
       OR(COALESCE(:OLD.AD_ORG_ID, '0') <> COALESCE(:NEW.AD_ORG_ID, '0'))
       OR(COALESCE(:OLD.AD_CLIENT_ID, '0') <> COALESCE(:NEW.AD_CLIENT_ID, '0'))
       )) THEN
@@ -127,6 +129,13 @@ BEGIN
       END IF;
     END IF;
   END IF;
+
+  IF (INSERTING OR UPDATING) THEN
+    IF (:NEW.C_AUM IS NOT NULL AND :NEW.AUMQTY IS NOT NULL AND :NEW.M_PRODUCT_UOM_ID IS NOT NULL AND :NEW.QUANTITYORDER IS NOT NULL) THEN
+      RAISE_APPLICATION_ERROR(-20000, '@CannotUseAUMandSecondUOM@');
+    END IF;
+  END IF;
+  
 END C_INVLINE_CHK_RESTRICTIONS_TRG
 ]]></body>
     </trigger>

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -35,13 +35,16 @@ import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.businessUtility.Tax;
 import org.openbravo.erpCommon.reference.PInstanceProcessData;
 import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.OBError;
+import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.financial.FinancialUtils;
+import org.openbravo.materialmgmt.CentralBroker;
 import org.openbravo.model.ad.process.ProcessInstance;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.service.db.CallProcess;
@@ -117,6 +120,23 @@ public class CopyFromPOOrder extends HttpSecureAppServlet {
       }
       int lineCount = 0;
       for (i = 0; data != null && i < data.length; i++) {
+
+        String propertyValue = CentralBroker.getInstance().isUomManagementEnabled();
+        if (propertyValue.equalsIgnoreCase("Y") && data[i].mProductUomId.isEmpty()) {
+          if (data[i].cAum.isEmpty() && data[i].aumqty.isEmpty()) {
+            String defaultAum = CentralBroker.getInstance().getDefaultAUMForDocument(
+                data[i].mProductId, order.getTransactionDocument().getId());
+            data[i].aumqty = data[i].qtyordered;
+            data[i].cAum = defaultAum;
+            data[i].mProductUomId = null;
+            if (!defaultAum.equals(data[i].cUomId)) {
+              data[i].qtyordered = CentralBroker.getInstance()
+                  .getConvertedQty(data[i].mProductId, new BigDecimal(data[i].aumqty), defaultAum)
+                  .toString();
+            }
+          }
+        }
+
         CopyFromPOOrderData[] data3 = CopyFromPOOrderData.selectPriceForProduct(this,
             data[i].mProductId,
             orderData[0].mPricelistId.equals("") ? CopyFromPOOrderData.defaultPriceList(this)
@@ -234,7 +254,8 @@ public class CopyFromPOOrder extends HttpSecureAppServlet {
                 strPriceLimit, strCTaxID, strDiscount, data[i].mProductUomId, data[i].orderline,
                 data[i].mAttributesetinstanceId, strGrossPriceList, strGrossUnitPrice,
                 strGrossAmount, strGrossBaseUnitPrice, data[i].cProjectId, data[i].user1Id,
-                data[i].user2Id, data[i].cCostcenterId, data[i].aAssetId);
+                data[i].user2Id, data[i].cCostcenterId, data[i].aAssetId, data[i].cAum,
+                data[i].aumqty);
             lineCount++;
             if (data[i].explode.equals("Y")) {
               strOrderLineList.add(strCOrderlineID);

@@ -33,11 +33,13 @@
     <PARAMETER id="paramWindowId" name="windowId" attribute="value"/>
     <PARAMETER id="paramTabName" name="tabName" attribute="value"/>
     <PARAMETER id="paramBPartnerId" name="cBpartnerId" attribute="value"/>
-  <PARAMETER id="keyMap" name="keyMap"/>
-  <PARAMETER id="messageBoxID" name="messageType" attribute="class" replace="yy" default="HIDDEN"/>
-  <PARAMETER id="messageBoxIDTitle" name="messageTitle" default=""/>
-  <PARAMETER id="messageBoxIDMessage" name="messageMessage" default=""/>
+    <PARAMETER id="keyMap" name="keyMap"/>
+    <PARAMETER id="messageBoxID" name="messageType" attribute="class" replace="yy" default="HIDDEN"/>
+    <PARAMETER id="messageBoxIDTitle" name="messageTitle" default=""/>
+    <PARAMETER id="messageBoxIDMessage" name="messageMessage" default=""/>
 
+	<PARAMETER id="paramAUMVisible" name="aumVisible" attribute="style" replace="xx">aumVisible</PARAMETER>
+	<PARAMETER id="paramAUMVisible" name="aumVisible" attribute="style" replace="xx">aumVisible</PARAMETER>
 
     <PARAMETER id="paramBPartnerDescription" name="BPartnerDescription" attribute="value"/>
     <PARAMETER id="paramPurchaseOrder" name="PurchaseOrder"/>
@@ -50,26 +52,29 @@
         <ARGUMENT name="parameterListSelected" withId="paramShipment"/>
     </SUBREPORT>
     <PARAMETER id="param2" name="param2" default="2"/>
-  <PARAMETER id="paramCheck" name="check" default="N"/>
+    <PARAMETER id="paramCheck" name="check" default="N"/>
+  
     <structure name="structure1">
-    <FIELD id="fieldRownum1">rownum</FIELD>
-    <FUNCTION id="funcEvenOddRowxx" name="MODULE" arg1="fieldRownum1" arg2="param2" format="integerEdition" attribute="class" replace="yy"/>
-
-    <FIELD id="funcEvenOddRowxx" attribute="id" replace="xx">rownum</FIELD>
-
-    <FIELD id="CheckNumxx" attribute="id" replace="xx">cOrderlineId</FIELD>
-    <FIELD id="CheckNumxx" attribute="value">cOrderlineId</FIELD>
-    <FIELD id="CheckNumxx" boolean="disabled" withId="paramCheck">isparent</FIELD>
-    <FIELD id="fieldBomParent" attribute="value">cOrderlineId</FIELD>
-    <FIELD id="fieldBomParent" attribute="name" replace="xx">bom_parent_id</FIELD>
-    
-    
-        <FIELD id="fieldQuantity" format="euroRelation">qty</FIELD>
-        <FIELD id="fieldCuomid" replaceCharacters="html">uomsymbol</FIELD>
-        <FIELD id="fieldMproductid" replaceCharacters="html">relationName</FIELD>
-        <FIELD id="fieldPurchaseorder">line</FIELD>
-        <FIELD id="fieldNameOrder" replaceCharacters="html">nameorder</FIELD>
-        <FIELD id="fieldNameShipment" replaceCharacters="html">nameshipment</FIELD>
-        <SECTION id="sectionDetail"/>
+	  <FIELD id="fieldRownum1">rownum</FIELD>
+	  <FUNCTION id="funcEvenOddRowxx" name="MODULE" arg1="fieldRownum1" arg2="param2" format="integerEdition" attribute="class" replace="yy"/>
+	
+	  <FIELD id="funcEvenOddRowxx" attribute="id" replace="xx">rownum</FIELD>
+	
+	  <FIELD id="CheckNumxx" attribute="id" replace="xx">cOrderlineId</FIELD>
+	  <FIELD id="CheckNumxx" attribute="value">cOrderlineId</FIELD>
+	  <FIELD id="CheckNumxx" boolean="disabled" withId="paramCheck">isparent</FIELD>
+	  <FIELD id="fieldBomParent" attribute="value">cOrderlineId</FIELD>
+	  <FIELD id="fieldBomParent" attribute="name" replace="xx">bom_parent_id</FIELD>
+	  <FIELD id="fieldQuantity" format="euroRelation">qty</FIELD>
+	  <FIELD id="fieldCuomid" replaceCharacters="html">uomsymbol</FIELD>
+	  <FIELD id="fieldMproductid" replaceCharacters="html">relationName</FIELD>
+	  <FIELD id="fieldPurchaseorder">line</FIELD>
+	  <FIELD id="fieldNameOrder" replaceCharacters="html">nameorder</FIELD>
+	  <FIELD id="fieldNameShipment" replaceCharacters="html">nameshipment</FIELD>
+	  <FIELD id="fieldAUMQtyValue" replaceCharacters="html">aumqty</FIELD>
+	  <FIELD id="fieldAUMQtyValue" attribute="style" replace="xx">aumVisible</FIELD>
+	  <FIELD id="fieldAUMValue" replaceCharacters="html">aumsymbol</FIELD>
+	  <FIELD id="fieldAUMValue" attribute="style" replace="xx">aumVisible</FIELD>
+	  <SECTION id="sectionDetail"/>
     </structure>
 </REPORT>

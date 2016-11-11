@@ -84,11 +84,22 @@ function validate(action) {
               showJSMessage(1);
               return false;
             }
-            if (document.getElementsByName("inpQtyordered"+frm.inpOrder[i].value)[0].value==null ||
-                document.getElementsByName("inpQtyordered"+frm.inpOrder[i].value)[0].value=="") {
-              setWindowElementFocus(document.getElementsByName("inpQtyordered"+frm.inpOrder[i].value)[0]);
-              showJSMessage(1);
-              return false;
+            if (frm.elements["inpIsUomEnabled"].value == 'N') {
+              if (document.getElementsByName("inpQtyordered"+frm.inpOrder[i].value)[0].value==null ||
+                  document.getElementsByName("inpQtyordered"+frm.inpOrder[i].value)[0].value=="" ||
+                  !isValidNumber(document.getElementsByName("inpQtyordered"+frm.inpOrder[i].value)[0])) {
+                setWindowElementFocus(document.getElementsByName("inpQtyordered"+frm.inpOrder[i].value)[0]);
+                showJSMessage(1);
+                return false;
+              }
+            }else {
+              if (document.getElementsByName("inpAumQty"+frm.inpOrder[i].value)[0].value==null ||
+                  document.getElementsByName("inpAumQty"+frm.inpOrder[i].value)[0].value=="" ||
+                  !isValidNumber(document.getElementsByName("inpAumQty"+frm.inpOrder[i].value)[0])) {
+                setWindowElementFocus(document.getElementsByName("inpAumQty"+frm.inpOrder[i].value)[0]);
+                showJSMessage(1);
+                return false;
+              }
             }
           }
         }
@@ -116,15 +127,27 @@ function setCheckedValue(radioObj, newValue) {
 function updateData(key, mark) {
 	if (mark==null) mark=false;
 	var frm = document.frmMain;
-	frm.elements["inpQtyordered" + key].disabled=!mark;
+	if(frm.elements["inpIsUomEnabled"].value == 'N'){
+	  frm.elements["inpQtyordered" + key].disabled=!mark;
+	}else{
+	  frm.elements["inpAumQty" + key].disabled=!mark;
+	}
 	frm.elements["inpmLocatorId_D" + key].disabled=!mark;
 
   if (mark)
   {
-    frm.elements["inpQtyordered" + key].className = frm.elements["inpQtyordered" + key].className.replace(' readonly', '');
+	if(frm.elements["inpIsUomEnabled"].value == 'N'){
+      frm.elements["inpQtyordered" + key].className = frm.elements["inpQtyordered" + key].className.replace(' readonly', '');
+	}else{
+	  frm.elements["inpAumQty" + key].className = frm.elements["inpAumQty" + key].className.replace(' readonly', '');
+	}
     frm.elements["inpmLocatorId_D" + key].className = frm.elements["inpmLocatorId_D" + key].className.replace(' readonly', '');
   } else {
-    frm.elements["inpQtyordered" + key].className += " readonly";
+	if(frm.elements["inpIsUomEnabled"].value == 'N'){
+      frm.elements["inpQtyordered" + key].className += " readonly";
+	}else{
+	  frm.elements["inpAumQty" + key].className += " readonly";
+	}
     frm.elements["inpmLocatorId_D" + key].className += " readonly";
   }
 	return true;
@@ -177,6 +200,32 @@ function onloadFunctions() {
         }
     }
 	</script>
+    <script language="JavaScript" type="text/javascript">
+      function updateQty(selKey) {
+        var frm = document.frmMain;
+        if(frm.elements["inpcUOMId" + selKey].value != frm.elements["inpcAUMId" + selKey].value){
+          callback = function (response, data, request) {
+    	    frm.elements["inpQtyordered" + selKey].value = data.qty;
+   	      };
+   	
+          window.parent.parent.OB.RemoteCallManager.call('org.openbravo.common.actionhandler.GetConvertedQtyActionHandler', {
+            mProductId: frm.elements["inpProductId" + selKey].value,
+            qty: frm.elements["inpAumQty" + selKey].value,
+            toUOM: frm.elements["inpcAUMId" + selKey].value
+          }, {}, callback);
+        }else {
+    	  frm.elements["inpQtyordered" + selKey].value = frm.elements["inpAumQty" + selKey].value;
+        }
+      }
+      
+      function isValidNumber(input) {
+        var isValid = validateNumber(input.value, true, true);
+        if (!isValid) {
+          return false;
+        }
+        return true;
+      } 
+    </script>
 </head>
 <body onload="onLoadDo();" onresize="onResizeDo();" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" id="paramMessage">
 <form method="post" action="MaterialReceiptPending.html" name="frmMain" >
@@ -184,6 +233,7 @@ function onloadFunctions() {
 <input type="hidden" name="inpcOrderId"></input>
 <input type="hidden" name="inpParamValue" value="" id="paramValue"></input> 
 <input type="hidden" name="inpissotrx" value="Y"></input>
+<input type="hidden" name="inpIsUomEnabled" value="xx" id="paramIsUomEnabled"></input>
 <table height="100%" border="0" cellpadding="0" cellspacing="0" id="main">
     <tr>
       <td valign="top" id="tdleftTabs"></td>
@@ -434,10 +484,10 @@ function onloadFunctions() {
         <br></br>
         <table cellspacing="0" cellpadding="0" width="100%" class="DataGrid_Header_Table DataGrid_Body_Table" style="table-layout: auto;">
           <tr class="DataGrid_Body_Row"> 
-            <th width="20" class="DataGrid_Header_Cell" colspan="3" class="DataGrid_Header_Cell" id="fieldPartnerName"></th>
+            <th width="20" class="DataGrid_Header_Cell" class="DataGrid_Header_Cell" id="paramBPartner" colspan="xx"><span id="fieldPartnerName"></span></th>
             <th class="DataGrid_Header_Cell"><span>Lines</span>&nbsp;<span id="fieldCount"></span></th>
             <th class="DataGrid_Header_Cell"> <span>Reception date</span></th>
-            <th class="DataGrid_Header_Cell">
+            <th class="DataGrid_Header_Cell" id="paramCalendar" colspan="xx">
                     <table border="0" cellspacing="0" cellpadding="0" summary="" style="padding-top: 0px;">
                       <tr>
 					      <td class="TextBox_ContentCell">
@@ -507,11 +557,19 @@ function onloadFunctions() {
 		  <div id="sectionDocumentno"> 
 
               <tr class="DataGrid_Body_Row"> 
-                <th class="DataGrid_Header_Cell" colspan="4"> <a href="#" onclick="openGoodsReceipt('xx');return false;" onmouseover="window.status='Purchase order';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="idfieldCOrderId"> 
+                <th id="paramDocument" class="DataGrid_Header_Cell" colspan="xx"> <a href="#" onclick="openGoodsReceipt('xx');return false;" onmouseover="window.status='Purchase order';return true;" onmouseout="window.status='';return true;" class="LabelLink" id="idfieldCOrderId"> 
                   <span>Document No.</span>&nbsp;<span id="fieldDocumentno"></span></a></th>
-                <th class="DataGrid_Header_Cell" colspan="2"><span>Date</span>&nbsp;<span id="fieldDateordered"></span></th>
+                <th id="paramDate" class="DataGrid_Header_Cell" colspan="xx"><span>Date</span>&nbsp;<span id="fieldDateordered"></span></th>
               </tr>
-
+              <tr class="DataGrid_Body_Row">
+                <th class="DataGrid_Header_Cell" colspan="2">Product</th>
+                <th class="DataGrid_Header_Cell">Description</th>
+                <th class="DataGrid_Header_Cell">Quantity</th>
+                <th class="DataGrid_Header_Cell">Movement Quantity</th>
+                <th class="DataGrid_Header_Cell" id="paramAumVisible" style="display:xx;">Quantity in Alternative UOM</th>
+                <th class="DataGrid_Header_Cell" id="paramAumVisible" style="display:xx;">Alternative UOM</th>
+                <th class="DataGrid_Header_Cell">Warehouse</th>
+              </tr>
               <div id="sectionDetail"> 
 
                 <tr id="funcEvenOddRow" class="DataGrid_Body_Row DataGrid_Body_Row_xx"> 
@@ -520,8 +578,14 @@ function onloadFunctions() {
                   <td width="409" class="DataGrid_Body_Cell" id="fieldProductName">xx</td>
                   <td width="198" class="DataGrid_Body_Cell" id="fieldDescription">xx</td>
                   <td width="146" class="DataGrid_Body_Cell" id="fieldTotalQty">xx</td>
-                  <td width="131" class="DataGrid_Body_Cell"> <input name="inpQtyorderedxx" type="text" id="fieldQtyordered" size="5" style="width:80px" value="0" outputformat="qtyEdition" class="dojoValidateValid readonly required" required="true" disabled onfocus="numberInputEvent('onfocus', this);" onblur="numberInputEvent('onblur', this);" onkeydown="numberInputEvent('onkeydown', this, event);" onchange="numberInputEvent('onchange', this);" ></input>
+                  <td width="131" class="DataGrid_Body_Cell"> <input name="inpQtyorderedxx" type="text" id="fieldQtyordered" size="5" style="width:80px" value="0" outputformat="qtyEdition" class="dojoValidateValid readonly required" required="true" disabled onfocus="numberInputEvent('onfocus', this);" onblur="numberInputEvent('onblur', this);" onkeydown="numberInputEvent('onkeydown', this, event);" onchange="numberInputEvent('onchange', this);" ></input></td>
+                  <td width="131" class="DataGrid_Body_Cell" id="paramAumVisible" style="display:xx;">
+                    <input name="inpAumQtyxx" type="text" id="fieldAumQty" size="5" style="width:80px" value="0" outputformat="qtyEdition" class="dojoValidateValid readonly required" required="true" disabled onfocus="numberInputEvent('onfocus', this);" onblur="numberInputEvent('onblur', this);" onkeydown="numberInputEvent('onkeydown', this, event);" onchange="numberInputEvent('onchange', this);" onkeyup="updateQty('yy');"></input>
+                    <input name="inpProductIdxx" type="hidden" id="fieldProductId" value="0"></input>
+                    <input name="inpHiddenQtyOrderedxx" type="hidden" id="fieldHiddenQtyordered" value="0"></input>
+                    <input name="inpcUOMIdxx" type="hidden" id="fieldUomId" value="0"></input>
                   </td>
+                  <td width="131" class="DataGrid_Body_Cell" id="paramAumVisible" style="display:xx;"><select class="DataGrid_Body_Cell" name="inpcAUMIdxx" id="fieldAumCombo" disabled="true" onchange="updateQty('yy');return true;"><div id="reportAUM_ID"></div></select></td>
                   <td class="DataGrid_Body_Cell">
                     <table border="0" cellspacing="0" cellpadding="0" summary=""  style="padding-top: 0px;">
                       <tr>
