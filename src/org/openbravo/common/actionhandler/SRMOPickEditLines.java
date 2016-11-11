@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2011-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2011-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -41,6 +41,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBDao;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.financial.FinancialUtils;
+import org.openbravo.materialmgmt.CentralBroker;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.common.order.ReturnReason;
@@ -180,8 +181,35 @@ public class SRMOPickEditLines extends BaseProcessActionHandler {
       newOrderLine.setProduct(product);
       newOrderLine.setAttributeSetValue(asi);
       newOrderLine.setUOM(uom);
-      // Ordered Quantity = returned quantity.
+      newOrderLine.setOperativeUOM(shipmentLine.getOperativeUOM());
+      newOrderLine.setOperativeQuantity(shipmentLine.getOperativeQuantity());
+      
       BigDecimal qtyReturned = new BigDecimal(selectedLine.getString("returned")).negate();
+
+      String isUomManagementEnabled = CentralBroker.getInstance().isUomManagementEnabled();
+      boolean applyAUM = isUomManagementEnabled.equals("Y") && shipmentLine.getOrderUOM() == null;
+      try{
+            selectedLine.getString("aum");
+      }catch(JSONException jse){
+        /**
+         * The line is an orphan line, no AUM logic is applied
+         */
+        applyAUM = false;
+      }
+      if (applyAUM) {
+        String aumId = selectedLine.getString("returnedUOM");
+        UOM aum = OBDal.getInstance().get(UOM.class, aumId);
+        newOrderLine.setOperativeUOM(aum);
+        if (!aum.getId().equals(shipmentLine.getUOM().getId())) {
+          qtyReturned = CentralBroker.getInstance()
+              .getConvertedQty(shipmentLine.getProduct().getId(),
+                  new BigDecimal(selectedLine.getString("returned")), aum.getId())
+              .negate();
+        }
+        newOrderLine.setOperativeQuantity(new BigDecimal(selectedLine.getString("returned")));
+      }
+
+      // Ordered Quantity = returned quantity.
       newOrderLine.setOrderedQuantity(qtyReturned);
 
       TaxRate tax = null;

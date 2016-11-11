@@ -23,6 +23,7 @@ import java.util.Map;
 
 import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.materialmgmt.CentralBroker;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.service.datasource.hql.HqlQueryTransformer;
 
@@ -54,6 +55,53 @@ public class ReturnToFromCustomerVendorHQLTransformer extends HqlQueryTransforme
   private static final String rfc_tax = "(select e.salesOrderLine.tax.id from MaterialMgmtShipmentInOutLine as e where e.id = iol.id)";
   private static final String rtv_priceIncludeTax = "(select e.salesOrderLine.salesOrder.priceList.priceIncludesTax from ProcurementPOInvoiceMatch as e where e.goodsShipmentLine.id = iol.id)";
   private static final String rfc_priceIncludeTax = "(select e.priceList.priceIncludesTax from Order as e where e.id = :salesOrderId)";
+  
+  private final static String rm_aum = ""
+      + "(case when (select ('Y') from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol) is null "
+      + "then " // obSelected = false
+      + "(case when coalesce (iol.operativeUOM.id, '0') <> '0' then coalesce ((select u.name from UOM as u where u.id = iol.operativeUOM.id),'') else coalesce ((select u.name from UOM as u where u.id = M_GET_DEFAULT_AUM_FOR_DOCUMENT(iol.product.id, dt.id)),'') end) "
+      + "else " // obSelected = true
+      + "coalesce ((select u.name from UOM as u where u.id in (select ol.operativeUOM.id from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol)),'') "
+      + "end)";
+
+  private final static String rm_aumqty = ""
+      + "(case when (select ('Y') from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol) is null "
+      + "then " // obSelected = false
+      + "coalesce (iol.operativeQuantity, m_get_converted_aumqty(iol.product.id, iol.movementQuantity, M_GET_DEFAULT_AUM_FOR_DOCUMENT(iol.product.id, dt.id))) "
+      + "else " // obSelected = true
+      + "coalesce ((select ol.operativeQuantity from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol),0) "
+      + "end)";
+  
+  private final static String rm_aum_id = ""
+      + "(case when (select ('Y') from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol) is null "
+      + "then " // obSelected = false
+      + "coalesce (iol.operativeUOM.id, M_GET_DEFAULT_AUM_FOR_DOCUMENT(iol.product.id, dt.id)) "
+      + "else " // obSelected = true
+      + "coalesce ((select ol.operativeUOM.id from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol),'') "
+      + "end)";
+
+  private final static String rm_aum_conversion_rate = ""
+      + "(case when (select ('Y') from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol) is null "
+      + "then " // obSelected = false
+      + "(case when coalesce (iol.operativeUOM.id, '0') = '0' "
+      + "then "
+      + "TO_NUMBER(M_GET_CONVERTED_QTY(iol.product.id, 1.0, M_GET_DEFAULT_AUM_FOR_DOCUMENT(iol.product.id, dt.id))) "
+      + "else "
+      + "TO_NUMBER(M_GET_CONVERTED_QTY(iol.product.id, 1.0, iol.operativeUOM.id)) "
+      + "end) "
+      + "else " // obSelected = true
+      + "TO_NUMBER(M_GET_CONVERTED_QTY(iol.product.id, 1.0, coalesce ((select ol.operativeUOM.id from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol),''))) "
+      + "end)";
+  
+  private static final String returnedLeftClauseAUM = " coalesce((select ol.operativeQuantity from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol)*-1,0)";
+  
+  private static final String rm_returnedUOM = ""
+      + "(case when (select ('Y') from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol) is null "
+      + "then " // obSelected = false
+      + "(case when coalesce (iol.operativeUOM.id,'0') = '0' then coalesce ((select e from UOM as e where e.id = M_GET_DEFAULT_AUM_FOR_DOCUMENT(iol.product.id, dt.id)),'') else coalesce ((select e from UOM as e where e.id = iol.operativeUOM),'') end) "
+      + "else " // obSelected = true
+      + "coalesce ((select ol.operativeUOM from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol),'') "
+      + "end)";
 
   @Override
   public String transformHqlQuery(String hqlQuery, Map<String, String> requestParameters,
@@ -64,7 +112,13 @@ public class ReturnToFromCustomerVendorHQLTransformer extends HqlQueryTransforme
     queryNamedParameters.put("salesOrderId", salesOrderId);
     queryNamedParameters.put("businessPartnerId", businessPartnerId);
 
-    String transformedHqlQuery = hqlQuery.replace("@returnedLeftClause@", returnedLeftClause);
+    String transformedHqlQuery = null;
+    if(CentralBroker.getInstance().isUomManagementEnabled().equals("Y")){
+      transformedHqlQuery = hqlQuery.replace("@returnedLeftClause@", returnedLeftClauseAUM);      
+    }else{
+      transformedHqlQuery = hqlQuery.replace("@returnedLeftClause@", returnedLeftClause);
+    }
+    
     transformedHqlQuery = transformedHqlQuery.replace("@returnedOthersLeftClause@",
         returnedOthersLeftClause);
     Order order = OBDal.getInstance().get(Order.class, salesOrderId);
@@ -90,6 +144,12 @@ public class ReturnToFromCustomerVendorHQLTransformer extends HqlQueryTransforme
     } else {
       transformedHqlQuery = transformedHqlQuery.replace("ORDER BY", "ORDER BY obSelected desc,");
     }
+    transformedHqlQuery = transformedHqlQuery.replace("@rmAUM@", rm_aum);
+    transformedHqlQuery = transformedHqlQuery.replace("@rmAUMQty@", rm_aumqty);
+    transformedHqlQuery = transformedHqlQuery.replace("@rmAUMId@", rm_aum_id);
+    transformedHqlQuery = transformedHqlQuery.replace("@rmAUMConversionRate@",
+        rm_aum_conversion_rate);
+    transformedHqlQuery = transformedHqlQuery.replace("@rmReturnedUOM@", rm_returnedUOM);
     return transformedHqlQuery;
   }
 

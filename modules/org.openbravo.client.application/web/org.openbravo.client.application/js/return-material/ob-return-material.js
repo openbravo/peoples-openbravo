@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2015 Openbravo SLU
+ * All portions are Copyright (C) 2011-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -22,6 +22,30 @@ OB.RM = OB.RM || {};
 /**
  * Check that entered return quantity is less than original inout qty.
  */
+
+OB.RM.RMReturnedUOMValidate = function (item, validator, value, record) {
+  var movementQty = record.movementQuantity !== null ? new BigDecimal(String(record.movementQuantity)) : BigDecimal.prototype.ZERO,
+      returnedQty = record.returnQtyOtherRM !== null ? new BigDecimal(String(record.returnQtyOtherRM)) : BigDecimal.prototype.ZERO,
+      newReturnedQty = new BigDecimal(String(record.returned));
+
+  var applyUOM = OB.PropertyStore.get('UomManagement') !== null && OB.PropertyStore.get('UomManagement') === 'Y' && record.returnedUOM !== record.uOM;
+
+  if (applyUOM) {
+    newReturnedQty = newReturnedQty.multiply(new BigDecimal(String(record.aumConversionRate)));
+  }
+  if ((record.returned !== null) && (newReturnedQty.compareTo(movementQty.subtract(returnedQty))) <= 0 && (record.returned > 0)) {
+    item.grid.view.messageBar.hide(true);
+    return true;
+  } else {
+    if (applyUOM) {
+      item.grid.view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('OBUIAPP_RM_OutOfRange_AUM', [newReturnedQty.toString(), record.uOM$_identifier, movementQty.subtract(returnedQty).toString()]));
+    } else {
+      item.grid.view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('OBUIAPP_RM_OutOfRange', [movementQty.subtract(returnedQty).toString()]));
+    }
+    return false;
+  }
+};
+
 OB.RM.RMOrderQtyValidate = function (item, validator, value, record) {
   if (!isc.isA.Number(value)) {
     return false;
@@ -33,10 +57,21 @@ OB.RM.RMOrderQtyValidate = function (item, validator, value, record) {
   var movementQty = record.movementQuantity !== null ? new BigDecimal(String(record.movementQuantity)) : BigDecimal.prototype.ZERO,
       returnedQty = record.returnQtyOtherRM !== null ? new BigDecimal(String(record.returnQtyOtherRM)) : BigDecimal.prototype.ZERO,
       newReturnedQty = new BigDecimal(String(value));
+
+  var applyUOM = OB.PropertyStore.get('UomManagement') !== null && OB.PropertyStore.get('UomManagement') === 'Y' && record.returnedUOM !== record.uOM;
+
+  if (applyUOM) {
+    newReturnedQty = newReturnedQty.multiply(new BigDecimal(String(record.aumConversionRate)));
+  }
   if ((value !== null) && (newReturnedQty.compareTo(movementQty.subtract(returnedQty))) <= 0 && (value > 0)) {
+    item.grid.view.messageBar.hide(true);
     return true;
   } else {
-    item.grid.view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('OBUIAPP_RM_OutOfRange', [movementQty.subtract(returnedQty).toString()]));
+    if (applyUOM) {
+      item.grid.view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('OBUIAPP_RM_OutOfRange_AUM', [newReturnedQty.toString(), record.uOM$_identifier, movementQty.subtract(returnedQty).toString()]));
+    } else {
+      item.grid.view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('OBUIAPP_RM_OutOfRange', [movementQty.subtract(returnedQty).toString()]));
+    }
     return false;
   }
 };
@@ -126,14 +161,27 @@ OB.RM.RMShipmentQtyValidate = function (item, validator, value, record) {
   for (i = 0; i < selectedRecordsLength; i++) {
     editedRecord = isc.addProperties({}, selectedRecords[i], item.grid.getEditedRecord(selectedRecords[i]));
     if (editedRecord.orderLine === orderLine) {
-      pendingQty -= editedRecord.movementQuantity;
+      if (OB.PropertyStore.get('UomManagement') === 'Y') {
+        if (record.returnedUOM === editedRecord.returnedUOM) {
+          pendingQty -= editedRecord.movementQuantity;
+        } else {
+          var movementQuantity = new BigDecimal(String(editedRecord.movementQuantity));
+          var rate = new BigDecimal(String(editedRecord.rate));
+          pendingQty -= (editedRecord.returnedUOM !== editedRecord.uOM) ? movementQuantity.multiply(
+          rate).toString() : movementQuantity.divide(rate).toString();
+        }
+      }
       if (pendingQty < 0) {
-        item.grid.view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('OBUIAPP_RM_TooMuchShipped', [record.pending]));
+        if (OB.PropertyStore.get('UomManagement') === 'Y') {
+          item.grid.view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('OBUIAPP_RM_TooMuchShippedInUomManagement', []));
+        } else {
+          item.grid.view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('OBUIAPP_RM_TooMuchShipped', [record.pending]));
+        }
         return false;
       }
     }
   }
-
+  item.grid.view.messageBar.hide();
   return true;
 };
 
@@ -161,7 +209,16 @@ OB.RM.RMShipmentSelectionChange = function (grid, record, state) {
     for (i = 0; i < selectedRecords.length; i++) {
       editedRecord = isc.addProperties({}, selectedRecords[i], grid.getEditedRecord(selectedRecords[i]));
       if (editedRecord.orderLine === orderLine && selectedRecords[i].id !== record.id) {
-        shippedQty = shippedQty.add(new BigDecimal(String(editedRecord.movementQuantity)));
+        if (OB.PropertyStore.get('UomManagement') === 'Y') {
+          if (record.returnedUOM === editedRecord.returnedUOM) {
+            shippedQty = shippedQty.add(new BigDecimal(String(editedRecord.movementQuantity)));
+          } else {
+            var movementQuantity = new BigDecimal(String(editedRecord.movementQuantity));
+            var rate = new BigDecimal(String(editedRecord.rate));
+            shippedQty = (editedRecord.returnedUOM !== editedRecord.uOM) ? shippedQty.add(movementQuantity.multiply(rate)) : shippedQty.add(movementQuantity.divide(rate));
+          }
+        }
+
       }
     }
     pending = pending.subtract(shippedQty);
@@ -170,5 +227,46 @@ OB.RM.RMShipmentSelectionChange = function (grid, record, state) {
     } else {
       record.movementQuantity = availableQty.toString();
     }
+  }
+};
+
+
+/**
+ * Update Pending and Available Qty values
+ */
+OB.RM.RMShipmentQtyValuesChange = function (item, view, form, grid) {
+  var record = grid.getSelectionObject().lastSelectionItem;
+  if (typeof record === 'undefined') {
+    record = grid.getSelectedRecord();
+  }
+  if (item.pickList.getSelection()[0].id !== item.getValue()) {
+    grid.setEditValue(item.grid.getEditRow(), 'movementQuantity', record.pendingQtyInAUM);
+    record.movementQuantity = record.pendingQtyInAUM;
+    var pending = record.pending;
+    grid.setEditValue(item.grid.getEditRow(), 'pending', record.pendingQtyInAUM);
+    record.pending = record.pendingQtyInAUM;
+    record.pendingQtyInAUM = pending;
+    var availableQty = record.availableQty;
+    grid.setEditValue(item.grid.getEditRow(), 'availableQty', record.availableQtyInAUM);
+    record.availableQty = record.availableQtyInAUM;
+    record.availableQtyInAUM = availableQty;
+    grid.setEditValue(item.grid.getEditRow(), 'returnedUOM', record.pendingQtyInAUM);
+    record.returnedUOM = item.pickList.getSelection()[0].id;
+  }
+};
+
+/**
+ * Update Pending value
+ */
+OB.RM.RMReceiptQtyValuesChange = function (item, view, form, grid) {
+  var record = grid.getSelectionObject().lastSelectionItem;
+  if (item.pickList.getSelection()[0].id !== item.getValue()) {
+    grid.setEditValue(item.grid.getEditRow(), 'receiving', record.pendingQtyInAUM);
+    record.receiving = record.pendingQtyInAUM;
+    var pending = record.pending;
+    grid.setEditValue(item.grid.getEditRow(), 'pending', record.pendingQtyInAUM);
+    record.pending = record.pendingQtyInAUM;
+    record.pendingQtyInAUM = pending;
+    record.returnedUOM = item.pickList.getSelection()[0].id;
   }
 };
