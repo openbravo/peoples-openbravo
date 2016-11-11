@@ -39,6 +39,7 @@ public class IsOrderCancelled extends JSONProcessSimple {
           data.put("orderCancelled", false);
           if (cancelOrder) {
             order.setCancelled(true);
+            OBDal.getInstance().save(order);
           }
         }
       } else {

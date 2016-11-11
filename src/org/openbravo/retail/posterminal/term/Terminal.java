@@ -25,6 +25,7 @@ import org.codehaus.jettison.json.JSONObject;
 import org.codehaus.jettison.json.JSONTokener;
 import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.DalUtil;
@@ -217,12 +218,19 @@ public class Terminal extends JSONProcessSimple {
         queryterminal.exec(queryWriter, jsonsent);
         JSONObject queryaux = new JSONObject();
 
-        if (queryterminal.returnList()) {
-          queryaux.put(queryterminal.getProperty(), new JSONArray(new JSONTokener(new JSONObject(
-              "{" + queryWriter.toString() + "}").get("data").toString())).get(0));
+        JSONObject jsonQueryVal = new JSONObject("{" + queryWriter.toString() + "}");
+        if (jsonQueryVal.has("data")) {
+          JSONArray arrayQueryVal = new JSONArray(new JSONTokener(jsonQueryVal.get("data")
+              .toString()));
+          if (arrayQueryVal.length() > 0) {
+            queryaux.put(queryterminal.getProperty(),
+                queryterminal.returnList() ? arrayQueryVal.get(0) : arrayQueryVal);
+          } else {
+            queryaux.put(queryterminal.getProperty(), JSONObject.NULL);
+          }
         } else {
-          queryaux.put(queryterminal.getProperty(), new JSONArray(new JSONTokener(new JSONObject(
-              "{" + queryWriter.toString() + "}").get("data").toString())));
+          throw new OBException("Error while loading query terminal property of "
+              + queryterminal.getProperty());
         }
         arrayresult.put(queryaux);
       }

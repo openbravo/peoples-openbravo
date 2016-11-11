@@ -9,6 +9,11 @@
 
 /*global enyo, _, Backbone */
 
+OB.SplitLine = OB.SplitLine || {};
+(function () {
+  OB.SplitLine.MAX_SPLITLINE = 20;
+}());
+
 enyo.kind({
   name: 'OB.UI.ModalNumberEditor',
   events: {
@@ -21,6 +26,9 @@ enyo.kind({
     tap: function () {
       var qty = parseInt(this.owner.$.numberQty.getValue(), 10),
           min = this.owner.$.numberQty.getMin();
+      if (isNaN(qty) && !isNaN(min)) {
+        qty = min + 1;
+      }
       if (qty > min) {
         this.owner.$.numberQty.setValue(qty - 1);
         this.owner.doNumberChange({
@@ -43,7 +51,11 @@ enyo.kind({
     classes: 'btnlink-white splitline-numbereditor-plusbtn',
     tap: function () {
       var qty = parseInt(this.owner.$.numberQty.getValue(), 10),
+          min = this.owner.$.numberQty.getMin(),
           max = this.owner.$.numberQty.getMax();
+      if (isNaN(qty) && !isNaN(min)) {
+        qty = min - 1;
+      }
       if (!max || qty < max) {
         this.owner.$.numberQty.setValue(qty + 1);
         this.owner.doNumberChange({
@@ -130,7 +142,8 @@ enyo.kind({
   sumLines: function () {
     var sum = 0;
     _.each(this.lines, function (line, indx) {
-      sum += parseInt(line.owner.$['qty_' + indx].$.numberQty.getValue(), 10);
+      var val = parseInt(line.owner.$['qty_' + indx].$.numberQty.getValue(), 10);
+      sum += (isNaN(val) ? 0 : val);
     });
     return sum;
   },
@@ -195,6 +208,7 @@ enyo.kind({
   bodyContent: {
     components: [{
       classes: 'splitline-message',
+      name: 'splitlineMessage',
       initComponents: function () {
         this.setContent(OB.I18N.getLabel('OBPOS_lblSplitWarning'));
       }
@@ -258,7 +272,7 @@ enyo.kind({
         components: [{
           kind: 'OB.UI.ModalNumberEditor',
           name: 'numberlinesQty',
-          maxLines: 100
+          maxLines: OB.SplitLine.MAX_SPLITLINE
         }]
       }]
     }, {
@@ -440,12 +454,14 @@ enyo.kind({
           this.orderline.get('promotions').splice(index, 1, adjustedPromotion);
         }
       }, this);
+      OB.UTIL.SynchronizationHelper.finished(this.synchId, 'splitLines');
       this.receipt.set('skipCalculateReceipt', false);
       this.receipt.calculateReceipt();
     }
   },
 
   splitLines: function () {
+    this.synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('splitLines');
     this.indexToAdd = 1;
     this.qtysToAdd = this.$.bodyContent.$.qtyLines.getValues();
     this.orderline.set('splitline', true);
@@ -462,6 +478,7 @@ enyo.kind({
           this.splittedLines = [];
           this.addProductSplit(true, orderline);
         } else {
+          OB.UTIL.SynchronizationHelper.finished(this.synchId, 'splitLines');
           this.orderline.set('splitline', false);
           this.receipt.set('skipCalculateReceipt', false);
           OB.log('error ', 'Can not change units');

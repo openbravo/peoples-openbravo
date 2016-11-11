@@ -694,6 +694,7 @@
   };
 
   OB.UTIL.composeCashupInfo = function (cashUp, me, callback, tx) {
+    cashUp.at(0).set('lastcashupeportdate', OB.I18N.normalizeDate(new Date()));
     var objToSend = new Backbone.Model({
       posterminal: OB.MobileApp.model.get('terminal').id,
       id: cashUp.at(0).get('id'),
@@ -708,7 +709,8 @@
       cashTaxInfo: [],
       cashCloseInfo: [],
       cashUpDate: "",
-      creationDate: (new Date(cashUp.at(0).get('creationDate'))).toISOString()
+      creationDate: (new Date(cashUp.at(0).get('creationDate'))).toISOString(),
+      lastcashupeportdate: cashUp.at(0).get('lastcashupeportdate')
     });
 
     //process the payment method cash ups
