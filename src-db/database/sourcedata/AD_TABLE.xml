@@ -9607,6 +9607,28 @@ You can also select if transactions are allowed or not for this organization typ
 <!--3099A57126F24DC6BAFF15EDBF2B969D-->  <ISTREE><![CDATA[N]]></ISTREE>
 <!--3099A57126F24DC6BAFF15EDBF2B969D--></AD_TABLE>
 
+<!--339677E1B4854680A6BCCFBE5D6BE6B2--><AD_TABLE>
+<!--339677E1B4854680A6BCCFBE5D6BE6B2-->  <AD_TABLE_ID><![CDATA[339677E1B4854680A6BCCFBE5D6BE6B2]]></AD_TABLE_ID>
+<!--339677E1B4854680A6BCCFBE5D6BE6B2-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--339677E1B4854680A6BCCFBE5D6BE6B2-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--339677E1B4854680A6BCCFBE5D6BE6B2-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--339677E1B4854680A6BCCFBE5D6BE6B2-->  <NAME><![CDATA[ProductAUM]]></NAME>
+<!--339677E1B4854680A6BCCFBE5D6BE6B2-->  <TABLENAME><![CDATA[M_Product_AUM]]></TABLENAME>
+<!--339677E1B4854680A6BCCFBE5D6BE6B2-->  <CLASSNAME><![CDATA[ProductAUM]]></CLASSNAME>
+<!--339677E1B4854680A6BCCFBE5D6BE6B2-->  <ISVIEW><![CDATA[N]]></ISVIEW>
+<!--339677E1B4854680A6BCCFBE5D6BE6B2-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
+<!--339677E1B4854680A6BCCFBE5D6BE6B2-->  <ISSECURITYENABLED><![CDATA[N]]></ISSECURITYENABLED>
+<!--339677E1B4854680A6BCCFBE5D6BE6B2-->  <ISDELETEABLE><![CDATA[Y]]></ISDELETEABLE>
+<!--339677E1B4854680A6BCCFBE5D6BE6B2-->  <ISHIGHVOLUME><![CDATA[N]]></ISHIGHVOLUME>
+<!--339677E1B4854680A6BCCFBE5D6BE6B2-->  <IMPORTTABLE><![CDATA[N]]></IMPORTTABLE>
+<!--339677E1B4854680A6BCCFBE5D6BE6B2-->  <ISCHANGELOG><![CDATA[N]]></ISCHANGELOG>
+<!--339677E1B4854680A6BCCFBE5D6BE6B2-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
+<!--339677E1B4854680A6BCCFBE5D6BE6B2-->  <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
+<!--339677E1B4854680A6BCCFBE5D6BE6B2-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1DA4B84E040007F01006125]]></AD_PACKAGE_ID>
+<!--339677E1B4854680A6BCCFBE5D6BE6B2-->  <DATAORIGINTYPE><![CDATA[Table]]></DATAORIGINTYPE>
+<!--339677E1B4854680A6BCCFBE5D6BE6B2-->  <ISTREE><![CDATA[N]]></ISTREE>
+<!--339677E1B4854680A6BCCFBE5D6BE6B2--></AD_TABLE>
+
 <!--347B0AA5C3CD4D18910D2FE4990B790E--><AD_TABLE>
 <!--347B0AA5C3CD4D18910D2FE4990B790E-->  <AD_TABLE_ID><![CDATA[347B0AA5C3CD4D18910D2FE4990B790E]]></AD_TABLE_ID>
 <!--347B0AA5C3CD4D18910D2FE4990B790E-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -12119,6 +12141,10 @@ group by  coalesce(lcm.id, lcc.id), lcc, lct.name, lcc.amount, lcc.currency.iSOC
 iol.uOM as uOM, iol.id as goodsShipmentLine, iol.movementQuantity as movementQuantity,
 io.businessPartner as businessPartner, io.documentNo as shipmentNumber,
 io.movementDate as movementDate,  attributeSetValue as attributeSetValue,
+@rmAUM@ as aum,
+@rmAUMQty@ as aumqty,
+@rmAUMId@ as aumId,
+@rmAUMConversionRate@ as aumConversionRate,
 (@returnedOthersLeftClause@)*(-1) as returnQtyOtherRM,
 (case when (select ('Y') from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine.id = iol.id) is null then false else true end) as obSelected,
 (@returnedLeftClause@)*(-1) as returned,
@@ -12132,7 +12158,7 @@ else
  coalesce((select ol.@unitPriceProperty@ from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine.id = iol.id), 
           @unitPriceSubQuery@)
 end) as unitPrice,
-@orderNoSubQuery@ as orderNo
+@orderNoSubQuery@ as orderNo 
 MAINFROM MaterialMgmtShipmentInOutLine as iol 
 left join  iol.attributeSetValue as attributeSetValue
 join iol.shipmentReceipt as io 

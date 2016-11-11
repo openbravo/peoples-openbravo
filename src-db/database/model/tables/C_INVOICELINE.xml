@@ -221,6 +221,14 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="C_AUM" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="AUMQTY" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="C_INVOICELINE_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -232,6 +240,9 @@
       </foreign-key>
       <foreign-key foreignTable="C_INVOICELINE" name="C_INVOICELINE_BOMPARENTID">
         <reference local="BOM_PARENT_ID" foreign="C_INVOICELINE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_UOM" name="C_INVOICELINE_C_AUM">
+        <reference local="C_AUM" foreign="C_UOM_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_BPARTNER" name="C_INVOICELINE_C_BPARTNER">
         <reference local="C_BPARTNER_ID" foreign="C_BPARTNER_ID"/>

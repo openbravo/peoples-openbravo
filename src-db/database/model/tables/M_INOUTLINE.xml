@@ -129,6 +129,14 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="C_AUM" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="AUMQTY" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="M_CONDITION_GOODS" name="M_CONDITION_GOODS">
         <reference local="M_CONDITION_GOODS_ID" foreign="M_CONDITION_GOODS_ID"/>
       </foreign-key>
@@ -143,6 +151,9 @@
       </foreign-key>
       <foreign-key foreignTable="M_INOUTLINE" name="M_INOUTLINE_BOMPARENTID">
         <reference local="BOM_PARENT_ID" foreign="M_INOUTLINE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_UOM" name="M_INOUTLINE_C_AUM">
+        <reference local="C_AUM" foreign="C_UOM_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_BPARTNER" name="M_INOUTLINE_C_BPARTNER">
         <reference local="C_BPARTNER_ID" foreign="C_BPARTNER_ID"/>
