@@ -629,12 +629,9 @@ public class POSUtils {
     OBContext.setAdminMode(false);
     try {
       Organization org = pOSTerminal.getOrganization();
-      OBCriteria<OrgWarehouse> warehouses = OBDal.getInstance().createCriteria(OrgWarehouse.class);
-      warehouses.setFilterOnReadableClients(false);
-      warehouses.setFilterOnReadableOrganization(false);
-      warehouses.add(Restrictions.eq(OrgWarehouse.PROPERTY_ORGANIZATION, org));
-      warehouses.addOrderBy(OrgWarehouse.PROPERTY_PRIORITY, true);
-      warehouses.addOrderBy(OrgWarehouse.PROPERTY_ID, true);
+      OBQuery<OrgWarehouse> warehouses = OBDal.getInstance().createQuery(OrgWarehouse.class,
+          " e where e.organization=:org and e.warehouse.active=true order by priority, id");
+      warehouses.setNamedParameter("org", org);
       List<OrgWarehouse> warehouseList = warehouses.list();
       if (warehouseList.size() == 0) {
         return null;

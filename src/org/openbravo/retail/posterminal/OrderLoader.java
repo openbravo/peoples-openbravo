@@ -1054,6 +1054,9 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
       final Warehouse warehouse = (orderLine.getWarehouse() != null ? orderLine.getWarehouse()
           : order.getWarehouse());
+      if (!warehouse.equals(shipment.getWarehouse())) {
+        shipment.setWarehouse(warehouse);
+      }
 
       boolean useSingleBin = foundSingleBin != null && orderLine.getAttributeSetValue() == null
           && orderLine.getProduct().getAttributeSet() == null
