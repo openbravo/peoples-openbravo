@@ -1023,7 +1023,7 @@ enyo.kind({
             return !payment.get('isPrePayment') && payment.get('isReversePayment');
           }).length > 0;
 
-        if (prePaymentQty === this.owner.receipt.getTotal() && !isNewReversed && !this.owner.receipt.get('doCancelAndReplace')) {
+        if (prePaymentQty === OB.DEC.sub(this.owner.receipt.getTotal(), this.owner.receipt.getCredit()) && !isNewReversed && !this.owner.receipt.get('doCancelAndReplace')) {
           value = true;
         }
       }
