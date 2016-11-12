@@ -1342,7 +1342,7 @@ enyo.kind({
     OB.UTIL.showConfirmation.display(
     OB.I18N.getLabel('OBPOS_LblReverse'), OB.I18N.getLabel('OBPOS_ReverseConfirm'), [{
       label: OB.I18N.getLabel('OBPOS_LblOk'),
-      action: function () {
+      action: function (popup) {
         if ((_.isUndefined(me.deleting) || me.deleting === false)) {
           me.deleting = true;
           me.removeClass('btn-icon-reversePayment');
@@ -1354,6 +1354,11 @@ enyo.kind({
             symbolAtRight: true
           });
           me.bubble('onClearPaymentSelect');
+          popup.doHideThisPopup({
+            args: {
+              actionExecuted: true
+            }
+          });
           me.doReversePayment({
             payment: me.owner.model,
             sender: me,
