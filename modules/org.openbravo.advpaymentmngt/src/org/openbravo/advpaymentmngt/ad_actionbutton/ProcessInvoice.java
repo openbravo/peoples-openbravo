@@ -66,6 +66,7 @@ import org.openbravo.financial.FinancialUtils;
 import org.openbravo.model.ad.process.ProcessInstance;
 import org.openbravo.model.ad.ui.Process;
 import org.openbravo.model.common.currency.ConversionRate;
+import org.openbravo.model.common.currency.ConversionRateDoc;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.common.invoice.ReversedInvoice;
@@ -292,6 +293,12 @@ public class ProcessInvoice extends HttpSecureAppServlet {
             }
             dummyPayment.setFINPaymentDetailList(paymentDetails);
             OBDal.getInstance().save(dummyPayment);
+
+            // Get Exchange Rate from Invoice
+            List<ConversionRateDoc> crdList = getConversionRateDocumentForInvoice(invoice);
+            if (crdList.size() > 0) {
+              insertConversionRateDocument(crdList.get(0), dummyPayment);
+            }
 
           } catch (final Exception e) {
             log4j.error("Exception while creating dummy payment for the invoice: "
@@ -869,6 +876,37 @@ public class ProcessInvoice extends HttpSecureAppServlet {
       }
     }
     return false;
+  }
+
+  private List<ConversionRateDoc> getConversionRateDocumentForInvoice(Invoice invoice) {
+    OBContext.setAdminMode(true);
+    try {
+      OBCriteria<ConversionRateDoc> obc = OBDal.getInstance().createCriteria(
+          ConversionRateDoc.class);
+      obc.add(Restrictions.eq(ConversionRateDoc.PROPERTY_INVOICE, invoice));
+      return obc.list();
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
+  private void insertConversionRateDocument(ConversionRateDoc crd, FIN_Payment payment) {
+    OBContext.setAdminMode();
+    try {
+      ConversionRateDoc newConversionRateDoc = OBProvider.getInstance()
+          .get(ConversionRateDoc.class);
+      newConversionRateDoc.setOrganization(payment.getOrganization());
+      newConversionRateDoc.setCurrency(crd.getCurrency());
+      newConversionRateDoc.setToCurrency(crd.getToCurrency());
+      newConversionRateDoc.setRate(crd.getRate());
+      newConversionRateDoc.setForeignAmount(crd.getForeignAmount());
+      newConversionRateDoc.setPayment(payment);
+      newConversionRateDoc.setClient(payment.getClient());
+      OBDal.getInstance().save(newConversionRateDoc);
+      OBDal.getInstance().flush();
+    } finally {
+      OBContext.restorePreviousMode();
+    }
   }
 
   public String getServletInfo() {
