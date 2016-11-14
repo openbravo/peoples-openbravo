@@ -18,9 +18,6 @@ enyo.kind({
   published: {
     order: null
   },
-  events: {
-    onShowPopup: ''
-  },
   handlers: {
     onBPLocSelectionDisabled: 'buttonDisabled'
   },
@@ -66,6 +63,9 @@ enyo.kind({
   name: 'OB.UI.BPLocation',
   classes: 'btnlink-gray',
   locName: 'locName',
+  events: {
+    onShowPopup: ''
+  },
   components: [{
     name: 'bottomAddrIcon',
     classes: 'addressbillbutton',
@@ -81,7 +81,8 @@ enyo.kind({
       this.doShowPopup({
         popup: 'modalcustomeraddress',
         args: {
-          target: 'order'
+          target: 'order',
+          navigationPath: []
         }
       });
     }
@@ -94,6 +95,9 @@ enyo.kind({
   classes: 'btnlink-gray addressshipbutton_fixpadding',
   showing: false,
   locName: 'shipLocName',
+  events: {
+    onShowPopup: ''
+  },
   components: [{
     name: 'bottomAddrIcon',
     classes: 'addressshipbutton'
@@ -152,7 +156,8 @@ enyo.kind({
       this.doShowPopup({
         popup: 'modalcustomershipaddress',
         args: {
-          target: 'order'
+          target: 'order',
+          navigationPath: []
         }
       });
     }
@@ -164,6 +169,7 @@ enyo.kind({
   name: 'OB.UI.NewCustomerAddressWindowButton',
   events: {
     onChangeSubWindow: '',
+    onShowPopup: '',
     onHideThisPopup: ''
   },
   disabled: false,
@@ -200,13 +206,13 @@ enyo.kind({
     }
 
     function successCallbackBPs(dataBps) {
-      me.doChangeSubWindow({
-        newWindow: {
-          name: 'customerAddrCreateAndEdit',
-          params: {
-            navigateOnClose: 'mainSubWindow',
-            businessPartner: dataBps
-          }
+      var modalDlg = me.owner.owner.owner.owner.owner.owner;
+      me.doShowPopup({
+        popup: 'customerAddrCreateAndEdit',
+        args: {
+          businessPartner: dataBps,
+          target: modalDlg.target,
+          navigationPath: OB.UTIL.BusinessPartnerSelector.cloneAndPush(modalDlg.args.navigationPath, 'modalcustomeraddress')
         }
       });
     }
@@ -378,13 +384,13 @@ enyo.kind({
     });
     var contextMenu = this.owner.owner;
     contextMenu.dialog.menuSelected = true;
-    OB.MobileApp.view.$.containerWindow.getRoot().model.attributes.subWindowManager.set('currentWindow', {
-      name: 'customerAddressView',
-      params: {
+    contextMenu.dialog.owner.owner.selectorHide = true;
+    contextMenu.dialog.bubble('onShowPopup', {
+      popup: 'customerAddressView',
+      args: {
         businessPartner: contextMenu.bPartner,
         bPLocation: bploc,
-        navigateOnClose: contextMenu.owner.locId === 'locId' ? 'modalcustomeraddress' : 'modalcustomershipaddress',
-        navigateType: 'modal',
+        navigationPath: OB.UTIL.BusinessPartnerSelector.cloneAndPush(contextMenu.dialog.owner.owner.args.navigationPath, contextMenu.owner.locId === 'locId' ? 'modalcustomeraddress' : 'modalcustomershipaddress'),
         target: contextMenu.dialog.target
       }
     });
@@ -407,13 +413,13 @@ enyo.kind({
     });
     var contextMenu = this.owner.owner;
     contextMenu.dialog.menuSelected = true;
-    OB.MobileApp.view.$.containerWindow.getRoot().model.attributes.subWindowManager.set('currentWindow', {
-      name: 'customerAddrCreateAndEdit',
-      params: {
+    contextMenu.dialog.owner.owner.selectorHide = true;
+    contextMenu.dialog.bubble('onShowPopup', {
+      popup: 'customerAddrCreateAndEdit',
+      args: {
         businessPartner: contextMenu.bPartner,
         bPLocation: bploc,
-        navigateOnClose: contextMenu.owner.locId === 'locId' ? 'modalcustomeraddress' : 'modalcustomershipaddress',
-        navigateType: 'modal',
+        navigationPath: OB.UTIL.BusinessPartnerSelector.cloneAndPush(contextMenu.dialog.owner.owner.args.navigationPath, contextMenu.owner.locId === 'locId' ? 'modalcustomeraddress' : 'modalcustomershipaddress'),
         target: contextMenu.dialog.target
       }
     });
@@ -431,6 +437,8 @@ enyo.kind({
   i18NLabel: 'OBPOS_BPLocAssignToReceipt',
   selectItem: function (bploc) {
     var contextMenu = this.owner.owner;
+    contextMenu.dialog.menuSelected = true;
+    contextMenu.dialog.owner.owner.selectorHide = true;
     bploc.set('ignoreSetBPLoc', true, {
       silent: true
     });
@@ -466,7 +474,6 @@ enyo.kind({
         target: contextMenu.dialog.target
       });
     }
-    contextMenu.dialog.menuSelected = true;
     OB.Dal.get(OB.Model.BusinessPartner, contextMenu.bPartner.get('id'), successCallbackBPs, errorCallback);
     return true;
   },
@@ -482,6 +489,8 @@ enyo.kind({
   i18NLabel: 'OBPOS_BPLocAssignToReceiptShipping',
   selectItem: function (bploc) {
     var contextMenu = this.owner.owner;
+    contextMenu.dialog.menuSelected = true;
+    contextMenu.dialog.owner.owner.selectorHide = true;
     bploc.set('ignoreSetBPLoc', true, {
       silent: true
     });
@@ -523,7 +532,6 @@ enyo.kind({
       });
     }
 
-    contextMenu.dialog.menuSelected = true;
     OB.Dal.get(OB.Model.BusinessPartner, contextMenu.bPartner.get('id'), successCallbackBPs, errorCallback);
     return true;
   },
@@ -539,6 +547,8 @@ enyo.kind({
   i18NLabel: 'OBPOS_BPLocAssignToReceiptInvoicing',
   selectItem: function (bploc) {
     var contextMenu = this.owner.owner;
+    contextMenu.dialog.menuSelected = true;
+    contextMenu.dialog.owner.owner.selectorHide = true;
     bploc.set('ignoreSetBPLoc', true, {
       silent: true
     });
@@ -578,7 +588,6 @@ enyo.kind({
         target: contextMenu.dialog.target
       });
     }
-    contextMenu.dialog.menuSelected = true;
     OB.Dal.get(OB.Model.BusinessPartner, contextMenu.bPartner.get('id'), successCallbackBPs, errorCallback);
     return true;
   },
@@ -634,7 +643,7 @@ enyo.kind({
 /*items of collection*/
 enyo.kind({
   name: 'OB.UI.ListBpsLocLine',
-  kind: 'OB.UI.SelectButton',
+  kind: 'OB.UI.ListSelectorLine',
   locId: 'locId',
   components: [{
     name: 'line',
@@ -665,8 +674,8 @@ enyo.kind({
     onHideThisPopup: ''
   },
   tap: function () {
-    this.inherited(arguments);
     if (!this.$.btnContextMenu.dialog.manageAddress || this.$.btnContextMenu.dialog.menuSelected) {
+      this.inherited(arguments);
       this.doHideThisPopup();
     }
     return true;
@@ -842,6 +851,9 @@ enyo.kind({
   name: 'OB.UI.ModalBPLocation',
   topPosition: '125px',
   kind: 'OB.UI.Modal',
+  events: {
+    onShowPopup: ''
+  },
   executeOnShow: function () {
     if (_.isUndefined(this.args.visibilityButtons)) {
       this.args.visibilityButtons = true;
@@ -856,6 +868,7 @@ enyo.kind({
     this.bubble('onSetBusinessPartnerTarget', {
       target: this.args.target
     });
+    this.selectorHide = false;
     this.changedTitle(this.bPartner);
     this.$.body.$.listBpsLoc.setManageAddress(this.args.manageAddress);
     this.$.body.$.listBpsLoc.setBPartner(this.bPartner);
@@ -867,6 +880,16 @@ enyo.kind({
   },
   executeOnHide: function () {
     this.$.body.$.listBpsLoc.$.bpsloclistitemprinter.$.theader.$.modalBpLocScrollableHeader.$.bpsLocationSearchfilterText.setValue('');
+    if (!this.selectorHide && this.args.navigationPath.length > 0) {
+      this.doShowPopup({
+        popup: this.args.navigationPath[this.args.navigationPath.length - 1],
+        args: {
+          businessPartner: this.args.businessPartner,
+          target: this.args.target,
+          navigationPath: OB.UTIL.BusinessPartnerSelector.cloneAndPop(this.args.navigationPath)
+        }
+      });
+    }
   },
   changedTitle: function (bp) {
     if (this.args.manageAddress) {
@@ -912,6 +935,5 @@ enyo.kind({
     this.waterfall('onSetModel', {
       model: this.model
     });
-
   }
 });

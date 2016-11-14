@@ -9,6 +9,19 @@
 
 /*global enyo, Backbone, OB, _ */
 
+OB.UTIL.BusinessPartnerSelector = {
+  cloneAndPush: function (list, value) {
+    var result = _.clone(list);
+    result.push(value);
+    return result;
+  },
+  cloneAndPop: function (list) {
+    var result = _.clone(list);
+    result.pop();
+    return result;
+  }
+};
+
 enyo.kind({
   kind: 'OB.UI.SmallButton',
   name: 'OB.UI.BusinessPartnerSelector',
@@ -51,7 +64,8 @@ enyo.kind({
       this.doShowPopup({
         popup: 'modalcustomer',
         args: {
-          target: 'order'
+          target: 'order',
+          navigationPath: []
         }
       });
     }
@@ -100,7 +114,7 @@ enyo.kind({
   kind: 'OB.UI.Button',
   name: 'OB.UI.NewCustomerButton',
   events: {
-    onChangeSubWindow: '',
+    onShowPopup: '',
     onHideThisPopup: ''
   },
   disabled: false,
@@ -122,12 +136,13 @@ enyo.kind({
       return true;
     }
     this.doHideThisPopup();
-    this.doChangeSubWindow({
-      newWindow: {
-        name: 'customerCreateAndEdit',
-        params: {
-          navigateOnClose: 'mainSubWindow'
-        }
+    var modalDlg = this.owner.owner.owner.owner.owner.owner;
+    this.doShowPopup({
+      popup: 'customerCreateAndEdit',
+      args: {
+        businessPartner: null,
+        target: modalDlg.target,
+        navigationPath: OB.UTIL.BusinessPartnerSelector.cloneAndPush(modalDlg.args.navigationPath, 'modalcustomer')
       }
     });
   },
@@ -219,16 +234,15 @@ enyo.kind({
     bpartner.set('ignoreSetBP', true, {
       silent: true
     });
-    var target = this.owner.owner.dialog.target;
-    this.owner.owner.dialog.owner.owner.clearResult = false;
+    var dialog = this.owner.owner.dialog;
+    dialog.owner.owner.clearResult = false;
     OB.Dal.get(OB.Model.BusinessPartner, bpartner.get('bpartnerId'), function (bp) {
-      OB.MobileApp.view.$.containerWindow.getRoot().model.attributes.subWindowManager.set('currentWindow', {
-        name: 'customerView',
-        params: {
+      dialog.bubble('onShowPopup', {
+        popup: 'customerView',
+        args: {
           businessPartner: bp,
-          navigateOnClose: 'modalcustomer',
-          navigateType: 'modal',
-          target: target
+          target: dialog.target,
+          navigationPath: OB.UTIL.BusinessPartnerSelector.cloneAndPush(dialog.owner.owner.args.navigationPath, 'modalcustomer')
         }
       });
     });
@@ -248,16 +262,15 @@ enyo.kind({
     bpartner.set('ignoreSetBP', true, {
       silent: true
     });
-    var target = this.owner.owner.dialog.target;
-    this.owner.owner.dialog.owner.owner.clearResult = false;
+    var dialog = this.owner.owner.dialog;
+    dialog.owner.owner.clearResult = false;
     OB.Dal.get(OB.Model.BusinessPartner, bpartner.get('bpartnerId'), function (bp) {
-      OB.MobileApp.view.$.containerWindow.getRoot().model.attributes.subWindowManager.set('currentWindow', {
-        name: 'customerCreateAndEdit',
-        params: {
+      dialog.bubble('onShowPopup', {
+        popup: 'customerCreateAndEdit',
+        args: {
           businessPartner: bp,
-          navigateOnClose: 'modalcustomer',
-          navigateType: 'modal',
-          target: target
+          target: dialog.target,
+          navigationPath: OB.UTIL.BusinessPartnerSelector.cloneAndPush(dialog.owner.owner.args.navigationPath, 'modalcustomer')
         }
       });
     });
@@ -274,8 +287,8 @@ enyo.kind({
   name: 'OB.UI.BPAddressContextMenuItem',
   i18NLabel: 'OBPOS_BPAddress',
   selectItem: function (bpartner) {
-    var target = this.owner.owner.dialog.target;
-    this.owner.owner.dialog.owner.owner.clearResult = true;
+    var dialog = this.owner.owner.dialog;
+    dialog.owner.owner.clearResult = true;
     bpartner.set('ignoreSetBP', true, {
       silent: true
     });
@@ -283,9 +296,10 @@ enyo.kind({
       OB.MobileApp.view.$.containerWindow.$.pointOfSale.bubble('onShowPopup', {
         popup: 'modalcustomeraddress',
         args: {
-          target: target,
+          target: dialog.target,
           businessPartner: bp,
-          manageAddress: true
+          manageAddress: true,
+          navigationPath: OB.UTIL.BusinessPartnerSelector.cloneAndPush(dialog.owner.owner.args.navigationPath, 'modalcustomer')
         }
       });
     });

@@ -23,7 +23,10 @@ enyo.kind({
   kind: 'OB.UI.Button',
   style: 'width: 100px; margin: 0px 0px 8px 5px;',
   classes: 'btnlink-gray btnlink btnlink-small',
-  i18nContent: 'OBMOBC_LblCancel'
+  i18nContent: 'OBMOBC_LblCancel',
+  tap: function () {
+    this.bubble('onCancelClose');
+  }
 });
 
 enyo.kind({
@@ -303,7 +306,6 @@ enyo.kind({
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.customers.edit_createcustomers',
   handlers: {
-    onSetCustomer: 'setCustomer',
     onSaveCustomer: 'preSaveCustomer',
     onHideShowFields: 'hideShowFields'
   },
@@ -347,8 +349,8 @@ enyo.kind({
     });
     return true;
   },
-  setCustomer: function (inSender, inEvent) {
-    this.customer = inEvent.customer;
+  setCustomer: function (customer) {
+    this.customer = customer;
     this.waterfall('onLoadValue', {
       customer: this.customer
     });
@@ -378,40 +380,12 @@ enyo.kind({
   },
   saveCustomer: function (inSender, inEvent) {
     var me = this,
-        sw = me.subWindow;
+        customerEdited;
 
     function getCustomerValues(params) {
       me.waterfall('onSaveChange', {
         customer: params.customer
       });
-    }
-
-    function goToViewWindow(sw, params) {
-      if (sw.params.navigateType === 'modal' && !sw.params.navigateOnCloseParent) {
-        sw.doChangeSubWindow({
-          newWindow: {
-            name: 'mainSubWindow'
-          }
-        });
-        sw.doShowPopup({
-          popup: sw.params.navigateOnClose,
-          args: {
-            target: sw.params.target
-          }
-        });
-      } else {
-        sw.doChangeSubWindow({
-          newWindow: {
-            name: 'customerView',
-            params: {
-              businessPartner: params.customer,
-              navigateOnClose: sw.params.navigateType === 'modal' ? sw.params.navigateOnCloseParent : 'mainSubWindow',
-              navigateType: sw.params.navigateType,
-              target: sw.params.target
-            }
-          }
-        });
-      }
     }
 
     function checkMandatoryFields(items, customer) {
@@ -475,9 +449,10 @@ enyo.kind({
           if (args && args.cancellation && args.cancellation === true) {
             return true;
           }
+          customerEdited = args.customer;
           args.customer.saveCustomer(function () {
-            goToViewWindow(sw, {
-              customer: OB.UTIL.clone(args.customer)
+            me.bubble('onCancelClose', {
+              customer: customerEdited
             });
           });
         });
@@ -497,10 +472,11 @@ enyo.kind({
             if (args && args.cancellation && args.cancellation === true) {
               return true;
             }
+            customerEdited = args.customer;
             args.customer.saveCustomer(function () {
               if (!inEvent.silent) {
-                goToViewWindow(sw, {
-                  customer: args.customer
+                me.bubble('onCancelClose', {
+                  customer: customerEdited
                 });
               }
             });

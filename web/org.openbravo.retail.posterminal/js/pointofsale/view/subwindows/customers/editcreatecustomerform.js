@@ -10,34 +10,24 @@
 /*global OB, enyo, _ */
 
 enyo.kind({
-  kind: 'OB.UI.Subwindow',
+  kind: 'OB.UI.Modal',
   name: 'OB.OBPOSPointOfSale.UI.customers.newcustomer',
+  style: 'width: 90%;',
   events: {
     onShowPopup: ''
   },
   handlers: {
-    onCancelClose: 'cancelClose',
-    onSetValues: 'setValues',
-    onRetrieveCustomer: 'retrieveCustomers'
+    onCancelClose: 'cancelClose'
   },
-  setValues: function (inSender, inEvent) {
-    this.waterfall('onSetValue', inEvent);
+  cancelClose: function (inSender, inEvent) {
+    this.customer = inEvent.customer;
+    this.hide();
     return true;
   },
-  retrieveCustomers: function (inSender, inEvent) {
-    var retrievedValues = inEvent || {};
-    this.waterfall('onRetrieveValues', retrievedValues);
-    return retrievedValues;
-  },
-  beforeSetShowing: function (params) {
+  executeOnShow: function () {
     if (OB.MobileApp.model.get('terminal').defaultbp_paymentmethod !== null && OB.MobileApp.model.get('terminal').defaultbp_bpcategory !== null && OB.MobileApp.model.get('terminal').defaultbp_paymentterm !== null && OB.MobileApp.model.get('terminal').defaultbp_invoiceterm !== null && OB.MobileApp.model.get('terminal').defaultbp_bpcountry !== null && OB.MobileApp.model.get('terminal').defaultbp_bporg !== null) {
-      this.params = params;
-      this.waterfall('onSetCustomer', {
-        customer: params.businessPartner
-      });
-
       // Hide components depending on its displayLogic function
-      _.each(this.$.subWindowBody.$.edit_createcustomers_impl.$.customerAttributes.$, function (attribute) {
+      _.each(this.$.body.$.edit_createcustomers_impl.$.customerAttributes.$, function (attribute) {
         _.each(attribute.$.newAttribute.$, function (attrObject) {
           if (attrObject.displayLogic && !attrObject.displayLogic()) {
             this.hide();
@@ -46,14 +36,16 @@ enyo.kind({
       });
 
       //hide address fields while editing customers
-      if (params.businessPartner) {
-        this.$.subWindowBody.$.edit_createcustomers_impl.$.invoicingAddrFields.hide();
-        this.$.subWindowBody.$.edit_createcustomers_impl.$.shippingAddrFields.hide();
-        this.$.subWindowHeader.$['OB.OBPOSPointOfSale.UI.customers.newcustomerheader'].$.headermessage.setContent(OB.I18N.getLabel('OBPOS_TitleEditCustomer'));
+      if (this.args.businessPartner) {
+        this.$.body.$.edit_createcustomers_impl.setCustomer(this.args.businessPartner);
+        this.$.body.$.edit_createcustomers_impl.$.invoicingAddrFields.hide();
+        this.$.body.$.edit_createcustomers_impl.$.shippingAddrFields.hide();
+        this.$.header.setContent(OB.I18N.getLabel('OBPOS_TitleEditCustomer'));
       } else {
-        this.$.subWindowBody.$.edit_createcustomers_impl.$.invoicingAddrFields.show();
-        this.$.subWindowBody.$.edit_createcustomers_impl.$.shippingAddrFields.show();
-        this.$.subWindowHeader.$['OB.OBPOSPointOfSale.UI.customers.newcustomerheader'].$.headermessage.setContent(OB.I18N.getLabel('OBPOS_TitleNewCustomer'));
+        this.$.body.$.edit_createcustomers_impl.setCustomer(undefined);
+        this.$.body.$.edit_createcustomers_impl.$.invoicingAddrFields.show();
+        this.$.body.$.edit_createcustomers_impl.$.shippingAddrFields.show();
+        this.$.header.setContent(OB.I18N.getLabel('OBPOS_TitleNewCustomer'));
       }
       //show
       return true;
@@ -65,64 +57,21 @@ enyo.kind({
       return false;
     }
   },
-  defaultNavigateOnClose: 'customerView',
-  header: {
-    kind: 'OB.UI.SubwindowHeader',
-    name: 'OB.OBPOSPointOfSale.UI.customers.newcustomerheader',
-    handlers: {
-      onSetCustomer: 'setCustomer'
-    },
-    events: {
-      onShowPopup: ''
-    },
-    setCustomer: function (inSender, inEvent) {
-      this.customer = inEvent.customer;
-    },
-    onTapCloseButton: function () {
-      this.bubble('onCancelClose');
-    }
+  executeOnHide: function () {
+    this.doShowPopup({
+      popup: this.args.navigationPath[this.args.navigationPath.length - 1],
+      args: {
+        businessPartner: this.customer ? this.customer : this.args.businessPartner,
+        target: this.args.target,
+        navigationPath: OB.UTIL.BusinessPartnerSelector.cloneAndPop(this.args.navigationPath)
+      }
+    });
   },
   showingChanged: function () {
     this.inherited(arguments);
     if (!this.showing) {
-      this.$.subWindowBody.$.edit_createcustomers_impl.$.invLbl.setShowing(false);
-      this.$.subWindowBody.$.edit_createcustomers_impl.$.shipLbl.setShowing(false);
-    }
-  },
-  cancelClose: function () {
-    if (this.params.navigateType === 'modal' && !this.params.navigateOnCloseParent) {
-      this.doChangeSubWindow({
-        newWindow: {
-          name: 'mainSubWindow'
-        }
-      });
-      this.doShowPopup({
-        popup: this.params.navigateOnClose,
-        args: {
-          target: this.params.target
-        }
-      });
-    } else {
-      if (this.caller === 'mainSubWindow') {
-        this.doChangeSubWindow({
-          newWindow: {
-            name: this.caller
-          }
-        });
-      } else {
-        this.doChangeSubWindow({
-          newWindow: {
-            name: this.caller,
-            params: {
-              navigateOnClose: this.params.navigateType === 'modal' ? this.params.navigateOnCloseParent : 'mainSubWindow',
-              businessPartner: this.params.businessPartner,
-              navigateType: this.params.navigateType,
-              target: this.params.target
-            }
-          }
-        });
-      }
-      return true;
+      this.$.body.$.edit_createcustomers_impl.$.invLbl.setShowing(false);
+      this.$.body.$.edit_createcustomers_impl.$.shipLbl.setShowing(false);
     }
   },
   body: {
@@ -135,7 +84,7 @@ enyo.kind({
   kind: 'OB.UI.Button',
   name: 'OB.OBPOSPointOfSale.UI.customers.newcustomersave',
   style: 'width: 100px; margin: 0px 5px 8px 19px;',
-  classes: 'btnlink btnlink-small',
+  classes: 'btnlink-yellow btnlink btnlink-small',
   i18nLabel: 'OBPOS_LblSave',
   events: {
     onSaveCustomer: ''
@@ -149,7 +98,7 @@ enyo.kind({
 
 //Header of body
 enyo.kind({
-  name: 'OB.OBPOSPointOfSale.UI.customers.subwindowNewCustomer_bodyheader',
+  name: 'OB.OBPOSPointOfSale.UI.customers.NewCustomer_bodyheader',
   components: [{
     components: [{
       style: 'display: table; margin: 0 auto;',
@@ -161,16 +110,7 @@ enyo.kind({
       }, {
         style: 'display: table-cell;',
         components: [{
-          kind: 'OB.OBPOSPointOfSale.UI.customers.cancelEdit',
-          handlers: {
-            onSetCustomer: 'setCustomer'
-          },
-          setCustomer: function (inSender, inEvent) {
-            this.customer = inEvent.customer;
-          },
-          tap: function () {
-            this.bubble('onCancelClose');
-          }
+          kind: 'OB.OBPOSPointOfSale.UI.customers.cancelEdit'
         }]
       }]
     }]
@@ -181,7 +121,7 @@ enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.customers.edit_createcustomers_impl',
   kind: 'OB.OBPOSPointOfSale.UI.customers.edit_createcustomers',
   style: 'padding: 9px 15px;',
-  windowHeader: 'OB.OBPOSPointOfSale.UI.customers.subwindowNewCustomer_bodyheader',
+  windowHeader: 'OB.OBPOSPointOfSale.UI.customers.NewCustomer_bodyheader',
   newAttributes: [{
     kind: 'OB.UI.CustomerTextProperty',
     name: 'firstName',

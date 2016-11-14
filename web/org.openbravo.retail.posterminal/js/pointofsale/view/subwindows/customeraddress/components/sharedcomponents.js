@@ -87,7 +87,6 @@ enyo.kind({
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.customeraddr.edit_createcustomers',
   handlers: {
-    onSetCustomerAddr: 'setCustomerAddr',
     onSaveCustomerAddr: 'preSaveCustomerAddr'
   },
   events: {
@@ -99,9 +98,9 @@ enyo.kind({
     name: 'customerAddrAttributes',
     style: 'overflow-x:hidden; overflow-y:auto; max-height:622px;'
   }],
-  setCustomerAddr: function (inSender, inEvent) {
-    this.customer = inEvent.customer;
-    this.customerAddr = inEvent.customerAddr;
+  setCustomerAddr: function (customer, customerAddr) {
+    this.customer = customer;
+    this.customerAddr = customerAddr;
     this.waterfall('onLoadValue', {
       customer: this.customer,
       customerAddr: this.customerAddr
@@ -129,8 +128,7 @@ enyo.kind({
     });
   },
   saveCustomerAddr: function (inSender, inEvent) {
-    var me = this,
-        sw = me.subWindow;
+    var me = this;
 
     function getCustomerAddrValues(params) {
       me.waterfall('onSaveChange', {
@@ -139,36 +137,13 @@ enyo.kind({
       });
     }
 
-    function goToViewWindow(sw, params) {
+    function goToViewWindow(params) {
       if (!_.isUndefined(me.customerAddr)) {
         params.customerAddr.set('onlyOneAddress', me.customerAddr.get('onlyOneAddress'));
       }
-      if (sw.params.navigateType === 'modal' && !sw.params.navigateOnCloseParent) {
-        sw.doChangeSubWindow({
-          newWindow: {
-            name: 'mainSubWindow'
-          }
-        });
-        sw.doShowPopup({
-          popup: sw.params.navigateOnClose,
-          args: {
-            target: sw.params.target
-          }
-        });
-      } else {
-        sw.doChangeSubWindow({
-          newWindow: {
-            name: 'customerAddressView',
-            params: {
-              businessPartner: params.customer,
-              bPLocation: params.customerAddr,
-              navigateOnClose: sw.params.navigateType === 'modal' ? sw.params.navigateOnCloseParent : 'mainSubWindow',
-              navigateType: sw.params.navigateType,
-              target: sw.params.target
-            }
-          }
-        });
-      }
+      me.bubble('onCancelClose', {
+        customerAddr: params.customerAddr
+      });
     }
 
     function validateForm(form) {
@@ -209,7 +184,7 @@ enyo.kind({
             return true;
           }
           var callback = function () {
-              goToViewWindow(sw, {
+              goToViewWindow({
                 customer: OB.UTIL.clone(me.customer),
                 customerAddr: OB.UTIL.clone(me.model.get('customerAddr'))
               });
@@ -221,7 +196,7 @@ enyo.kind({
       this.model.get('customerAddr').loadModel(this.customerAddr, function (customerAddr) {
         var callback = function () {
             var i;
-            goToViewWindow(sw, {
+            goToViewWindow({
               customer: me.customer,
               customerAddr: customerAddr
             });

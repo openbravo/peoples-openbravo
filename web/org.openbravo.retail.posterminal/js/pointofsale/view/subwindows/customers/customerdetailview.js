@@ -10,64 +10,60 @@
 /*global OB, enyo, _ */
 
 enyo.kind({
-  kind: 'OB.UI.Subwindow',
+  kind: 'OB.UI.Modal',
   name: 'OB.OBPOSPointOfSale.UI.customers.editcustomer',
+  style: 'width: 90%;',
+  i18nHeader: 'OBPOS_TitleViewCustomer',
+  handlers: {
+    onPressedButton: 'pressedButton'
+  },
   events: {
     onShowPopup: ''
   },
-  beforeSetShowing: function (params) {
-    this.params = params;
-    this.waterfall('onSetCustomer', {
-      customer: params.businessPartner
-    });
+  body: {
+    kind: 'OB.OBPOSPointOfSale.UI.customers.editcustomers_impl'
+  },
+  pressedButton: function () {
+    this.pressedBtn = true;
+    this.hide();
+  },
+  executeOnShow: function () {
+    this.pressedBtn = false;
+    this.$.body.$.editcustomers_impl.setCustomer(this.args.businessPartner);
+    var editCustomerHeader = this.$.body.$.editcustomers_impl.$.bodyheader.$.editCustomerHeader;
+
+    editCustomerHeader.$.assigncustomertoticket.customer = this.args.businessPartner;
+    editCustomerHeader.$.assigncustomertoticket.navigationPath = this.args.navigationPath;
+    editCustomerHeader.$.assigncustomertoticket.target = this.args.target;
+
+    editCustomerHeader.$.managebpaddress.customer = this.args.businessPartner;
+    editCustomerHeader.$.managebpaddress.navigationPath = this.args.navigationPath;
+    editCustomerHeader.$.managebpaddress.target = this.args.target;
+
+    editCustomerHeader.$.editbp.setCustomer(this.args.businessPartner);
+    editCustomerHeader.$.editbp.navigationPath = this.args.navigationPath;
+    editCustomerHeader.$.editbp.target = this.args.target;
 
     // Hide components depending on its displayLogic function
-    _.each(this.$.subWindowBody.$.editcustomers_impl.$.customerAttributes.$, function (attribute) {
+    _.each(this.$.body.$.editcustomers_impl.$.customerAttributes.$, function (attribute) {
       _.each(attribute.$.newAttribute.$, function (attrObject) {
         if (attrObject.displayLogic && !attrObject.displayLogic()) {
           this.hide();
         }
       }, attribute);
     });
-
     return true;
   },
-  defaultNavigateOnClose: 'mainSubWindow',
-  header: {
-    kind: 'OB.UI.SubwindowHeader',
-    i18nHeaderMessage: 'OBPOS_TitleViewCustomer',
-    onTapCloseButton: function () {
-      var subWindow = this.subWindow,
-          params = this.owner.owner.owner.params;
-      if (_.isUndefined(params)) { //For the flow when press the ESC Key. The 'this' changed because is relative. Dependent if press 'X' button or ESC key for closed the Popup.
-        params = this.owner.owner.params;
-      }
-      if (params.navigateType === 'modal') {
-        subWindow.doChangeSubWindow({
-          newWindow: {
-            name: 'mainSubWindow'
-          }
-        });
-        this.owner.owner.owner.doShowPopup({
-          popup: params.navigateOnClose,
-          args: {
-            target: params.target
-          }
-        });
-      } else {
-        subWindow.doChangeSubWindow({
-          newWindow: {
-            name: subWindow.navigateOnClose,
-            params: {
-              navigateOnClose: 'mainSubWindow'
-            }
-          }
-        });
-      }
+  executeOnHide: function () {
+    if (!this.pressedBtn) {
+      this.doShowPopup({
+        popup: this.args.navigationPath[this.args.navigationPath.length - 1],
+        args: {
+          target: this.args.target,
+          navigationPath: OB.UTIL.BusinessPartnerSelector.cloneAndPop(this.args.navigationPath)
+        }
+      });
     }
-  },
-  body: {
-    kind: 'OB.OBPOSPointOfSale.UI.customers.editcustomers_impl'
   }
 });
 
@@ -75,31 +71,17 @@ enyo.kind({
   kind: 'OB.UI.Button',
   name: 'OB.OBPOSPointOfSale.UI.customers.assigncustomertoticket',
   style: 'margin: 0px 0px 8px 5px;',
-  classes: 'btnlink btnlink-small',
-  handlers: {
-    onSetCustomer: 'setCustomer',
-    onSetBPartnerTarget: 'setBPartnerTarget'
-  },
+  classes: 'btnlink-yellow btnlink btnlink-small',
   events: {
-    onChangeBusinessPartner: ''
-  },
-  setCustomer: function (inSender, inEvent) {
-    this.customer = inEvent.customer;
-  },
-  setBPartnerTarget: function (inSender, inEvent) {
-    this.target = inEvent.target;
+    onChangeBusinessPartner: '',
+    onPressedButton: ''
   },
   tap: function () {
-    var sw = this.subWindow;
-    sw.doChangeSubWindow({
-      newWindow: {
-        name: 'mainSubWindow'
-      }
-    });
     this.doChangeBusinessPartner({
       businessPartner: this.customer,
       target: this.target
     });
+    this.doPressedButton();
   },
   init: function (model) {
     this.model = model;
@@ -112,33 +94,18 @@ enyo.kind({
 
 enyo.kind({
   kind: 'OB.UI.Button',
-  name: 'OB.OBPOSPointOfSale.UI.customers.editnewaddress',
+  name: 'OB.OBPOSPointOfSale.UI.customers.managebpaddress',
   style: 'margin: 0px 0px 8px 5px;',
-  classes: 'btnlink btnlink-small',
-  handlers: {
-    onSetCustomer: 'setCustomer',
-    onSetBPartnerTarget: 'setBPartnerTarget'
-  },
+  classes: 'btnlink-yellow btnlink btnlink-small',
   events: {
-    onHideThisPopup: '',
-    onShowPopup: ''
-  },
-  setCustomer: function (inSender, inEvent) {
-    this.customer = inEvent.customer;
-  },
-  setBPartnerTarget: function (inSender, inEvent) {
-    this.target = inEvent.target;
+    onShowPopup: '',
+    onPressedButton: ''
   },
   tap: function () {
     if (this.disabled) {
       return true;
     }
-    var sw = this.subWindow;
-    sw.doChangeSubWindow({
-      newWindow: {
-        name: 'mainSubWindow'
-      }
-    });
+    this.doPressedButton();
     var me = this;
     OB.Dal.get(OB.Model.BusinessPartner, this.customer.get('id'), function (bp) {
       me.doShowPopup({
@@ -146,6 +113,7 @@ enyo.kind({
         args: {
           target: me.target,
           businessPartner: bp,
+          navigationPath: OB.UTIL.BusinessPartnerSelector.cloneAndPush(me.navigationPath, 'customerView'),
           manageAddress: true
         }
       });
@@ -160,82 +128,76 @@ enyo.kind({
   }
 });
 
-/*header of window body*/
 enyo.kind({
-  name: 'OB.OBPOSPointOfSale.UI.customers.EditCustomerWindowHeader',
+  kind: 'OB.UI.Button',
+  name: 'OB.OBPOSPointOfSale.UI.customers.editbp',
+  style: 'width: 100px; margin: 0px 5px 8px 19px;',
+  classes: 'btnlink-orange btnlink btnlink-small',
   events: {
-    onSearchAction: ''
+    onShowPopup: '',
+    onPressedButton: ''
   },
-  components: [{
-    components: [{
-      style: 'display: table; margin: 0 auto;',
-      components: [{
-        components: [{
-          kind: 'OB.UI.Button',
-          handlers: {
-            onSetCustomer: 'setCustomer'
-          },
-          style: 'width: 100px; margin: 0px 5px 8px 19px;',
-          classes: 'btnlink-orange btnlink btnlink-small',
-          setCustomer: function (inSender, inEvent) {
-            this.customer = inEvent.customer;
-            if (!OB.MobileApp.model.hasPermission('OBPOS_retail.editCustomerButton', true)) {
-              this.disabled = true;
-              this.setAttribute("disabled", "disabled");
-            } else {
-              this.disabled = false;
-              this.setAttribute("disabled", null);
-            }
-          },
-          tap: function () {
-            if (this.disabled === false) {
-              var sw = this.subWindow,
-                  params = this.owner.owner.owner.owner.owner.params;
-              this.model.get('subWindowManager').set('currentWindow', {
-                name: 'customerCreateAndEdit',
-                params: {
-                  businessPartner: this.customer,
-                  navigateOnClose: sw.getName(),
-                  navigateOnCloseParent: params.navigateOnClose,
-                  navigateType: params.navigateType,
-                  target: params.target
-                }
-              });
-            }
-          },
-          init: function (model) {
-            this.model = model;
-          },
-          initComponents: function () {
-            this.setContent(OB.I18N.getLabel('OBPOS_LblEdit'));
-          }
-        }]
-      }, {
-        style: 'display: table-cell;',
-        components: [{
-          kind: 'OB.OBPOSPointOfSale.UI.customers.assigncustomertoticket'
-        }]
-      }, {
-        style: 'display: table-cell;',
-        components: [{
-          kind: 'OB.OBPOSPointOfSale.UI.customers.editnewaddress'
-        }]
-      }]
-    }]
-  }],
-  searchAction: function () {
-    this.doSearchAction({
-      bpName: this.$.filterText.getValue()
-    });
+  setCustomer: function (customer) {
+    this.customer = customer;
+    if (!OB.MobileApp.model.hasPermission('OBPOS_retail.editCustomerButton', true)) {
+      this.disabled = true;
+      this.setAttribute("disabled", "disabled");
+    } else {
+      this.disabled = false;
+      this.setAttribute("disabled", null);
+    }
+  },
+  tap: function () {
+    if (this.disabled === false) {
+      var me = this;
+      this.doPressedButton();
+      this.doShowPopup({
+        popup: 'customerCreateAndEdit',
+        args: {
+          businessPartner: this.customer,
+          target: this.target,
+          navigationPath: OB.UTIL.BusinessPartnerSelector.cloneAndPush(me.navigationPath, 'customerView')
+        }
+      });
+    }
+  },
+  init: function (model) {
+    this.model = model;
+  },
+  initComponents: function () {
+    this.setContent(OB.I18N.getLabel('OBPOS_LblEdit'));
   }
 });
 
+/*header of window body*/
+enyo.kind({
+  name: 'OB.OBPOSPointOfSale.UI.customers.EditCustomerHeader',
+  components: [{
+    style: 'display: table; margin: 0 auto;',
+    components: [{
+      style: 'display: table-cell;',
+      components: [{
+        kind: 'OB.OBPOSPointOfSale.UI.customers.editbp'
+      }]
+    }, {
+      style: 'display: table-cell;',
+      components: [{
+        kind: 'OB.OBPOSPointOfSale.UI.customers.assigncustomertoticket'
+      }]
+    }, {
+      style: 'display: table-cell;',
+      components: [{
+        kind: 'OB.OBPOSPointOfSale.UI.customers.managebpaddress'
+      }]
+    }]
+  }]
+});
 
 enyo.kind({
   kind: 'OB.OBPOSPointOfSale.UI.customers.edit_createcustomers',
   name: 'OB.OBPOSPointOfSale.UI.customers.editcustomers_impl',
   style: 'padding: 9px 15px;',
-  windowHeader: 'OB.OBPOSPointOfSale.UI.customers.EditCustomerWindowHeader',
+  windowHeader: 'OB.OBPOSPointOfSale.UI.customers.EditCustomerHeader',
   newAttributes: [{
     kind: 'OB.UI.CustomerTextProperty',
     name: 'customerName',

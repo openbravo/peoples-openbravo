@@ -112,13 +112,10 @@ enyo.kind({
     onButtonStatusChanged: ''
   },
   components: [{
-    name: 'otherSubWindowsContainer',
+    name: 'other_SubWindows_Container',
     components: [{
       kind: 'OB.OBPOSPointOfSale.UI.customers.ModalConfigurationRequiredForCreateCustomers',
       name: 'modalConfigurationRequiredForCreateNewCustomers'
-    }, {
-      kind: 'OB.OBPOSPointOfSale.UI.customers.cas',
-      name: 'customerAdvancedSearch'
     }, {
       kind: 'OB.OBPOSPointOfSale.UI.customers.newcustomer',
       name: 'customerCreateAndEdit'
@@ -126,26 +123,11 @@ enyo.kind({
       kind: 'OB.OBPOSPointOfSale.UI.customers.editcustomer',
       name: 'customerView'
     }, {
-      kind: 'OB.OBPOSPointOfSale.UI.customeraddr.cas',
-      name: 'customerAddressSearch'
-    }, {
       kind: 'OB.OBPOSPointOfSale.UI.customeraddr.newcustomeraddr',
       name: 'customerAddrCreateAndEdit'
     }, {
       kind: 'OB.OBPOSPointOfSale.UI.customeraddr.editcustomeraddr',
       name: 'customerAddressView'
-    }, {
-      kind: 'OB.UI.ModalDeleteReceipt',
-      name: 'modalConfirmReceiptDelete'
-    }, {
-      kind: 'OB.OBPOSPointOfSale.UI.Modals.ModalProductCannotBeGroup',
-      name: 'modalProductCannotBeGroup'
-    }, {
-      kind: 'OB.UI.Modalnoteditableorder',
-      name: 'modalNotEditableOrder'
-    }, {
-      kind: 'OB.UI.ModalNotEditableLine',
-      name: 'modalNotEditableLine'
     }, {
       kind: 'OB.UI.ModalSelectorBusinessPartners',
       name: 'modalcustomer'
@@ -158,6 +140,18 @@ enyo.kind({
     }, {
       kind: 'OB.UI.ModalBPLocationShip',
       name: 'modalcustomershipaddress'
+    }, {
+      kind: 'OB.UI.ModalDeleteReceipt',
+      name: 'modalConfirmReceiptDelete'
+    }, {
+      kind: 'OB.OBPOSPointOfSale.UI.Modals.ModalProductCannotBeGroup',
+      name: 'modalProductCannotBeGroup'
+    }, {
+      kind: 'OB.UI.Modalnoteditableorder',
+      name: 'modalNotEditableOrder'
+    }, {
+      kind: 'OB.UI.ModalNotEditableLine',
+      name: 'modalNotEditableLine'
     }, {
       kind: 'OB.UI.ModalReceipts',
       name: 'modalreceipts'

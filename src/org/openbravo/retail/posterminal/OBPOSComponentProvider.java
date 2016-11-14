@@ -208,13 +208,11 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "pointofsale/view/keyboardorder",
         // Point of sale subwindows
         "pointofsale/view/subwindows/customers/components/sharedcomponents",
-        "pointofsale/view/subwindows/customers/customersadvancedsearch",
         "pointofsale/view/subwindows/customers/editcreatecustomerform",
         "pointofsale/view/subwindows/customers/customerdetailview",
 
         "pointofsale/view/subwindows/customeraddress/components/sharedcomponents",
         "pointofsale/view/subwindows/customeraddress/editcreatecustomeraddress",
-        "pointofsale/view/subwindows/customeraddress/customeraddrsearch",
         "pointofsale/view/subwindows/customeraddress/customeraddrdetailview",
         // Point of sale modals
         "pointofsale/view/modals/modalstockinstore",

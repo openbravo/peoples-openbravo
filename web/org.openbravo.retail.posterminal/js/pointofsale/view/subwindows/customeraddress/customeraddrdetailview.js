@@ -12,56 +12,57 @@
 /*global enyo, $*/
 
 enyo.kind({
-  kind: 'OB.UI.Subwindow',
+  kind: 'OB.UI.Modal',
   name: 'OB.OBPOSPointOfSale.UI.customeraddr.editcustomeraddr',
+  style: 'width: 90%;',
+  i18nHeader: 'OBPOS_TitleViewCustomerAddress',
   events: {
     onShowPopup: ''
   },
-  beforeSetShowing: function (params) {
-    this.params = params;
-    this.waterfall('onAddressChanged', {
-      address: params.bPLocation
-    });
-    this.waterfall('onSetCustomerAddr', {
-      customer: params.businessPartner,
-      customerAddr: params.bPLocation
-    });
-    return true;
-  },
-  defaultNavigateOnClose: 'mainSubWindow',
-  header: {
-    kind: 'OB.UI.SubwindowHeader',
-    i18nHeaderMessage: 'OBPOS_TitleViewCustomerAddress',
-    onTapCloseButton: function () {
-      var subWindow = this.subWindow,
-          params = this.owner.owner.owner.params;
-      if (params.navigateType === 'modal') {
-        subWindow.doChangeSubWindow({
-          newWindow: {
-            name: 'mainSubWindow'
-          }
-        });
-        this.owner.owner.owner.doShowPopup({
-          popup: params.navigateOnClose,
-          args: {
-            businessPartner: params.businessPartner,
-            target: params.target
-          }
-        });
-      } else {
-        subWindow.doChangeSubWindow({
-          newWindow: {
-            name: subWindow.navigateOnClose,
-            params: {
-              navigateOnClose: 'mainSubWindow'
-            }
-          }
-        });
-      }
-    }
+  handlers: {
+    onPressedButton: 'pressedButton'
   },
   body: {
     kind: 'OB.OBPOSPointOfSale.UI.customeraddr.editcustomers_impl'
+  },
+  pressedButton: function () {
+    this.pressedBtn = true;
+    this.hide();
+  },
+  executeOnShow: function () {
+    this.pressedBtn = false;
+    this.$.body.$.editcustomers_impl.setCustomerAddr(this.args.businessPartner, this.args.bPLocation);
+    var editCustomerHeader = this.$.body.$.editcustomers_impl.$.bodyheader.$.editCustomerHeader;
+
+    editCustomerHeader.$.editticketcustomeraddr.setCustomerAddr(this.args.businessPartner, this.args.bPLocation);
+    editCustomerHeader.$.editticketcustomeraddr.navigationPath = this.args.navigationPath;
+    editCustomerHeader.$.editticketcustomeraddr.target = this.args.target;
+
+    editCustomerHeader.$.assigncustomeraddrtoticket.setCustomerAddr(this.args.businessPartner, this.args.bPLocation);
+    editCustomerHeader.$.assigncustomeraddrtoticket.navigationPath = this.args.navigationPath;
+    editCustomerHeader.$.assigncustomeraddrtoticket.target = this.args.target;
+
+    editCustomerHeader.$.assigncustomeraddrtoticketinv.setCustomerAddr(this.args.businessPartner, this.args.bPLocation);
+    editCustomerHeader.$.assigncustomeraddrtoticketinv.navigationPath = this.args.navigationPath;
+    editCustomerHeader.$.assigncustomeraddrtoticketinv.target = this.args.target;
+
+    editCustomerHeader.$.assigncustomeraddrtoticketship.setCustomerAddr(this.args.businessPartner, this.args.bPLocation);
+    editCustomerHeader.$.assigncustomeraddrtoticketship.navigationPath = this.args.navigationPath;
+    editCustomerHeader.$.assigncustomeraddrtoticketship.target = this.args.target;
+
+    return true;
+  },
+  executeOnHide: function () {
+    if (!this.pressedBtn) {
+      this.doShowPopup({
+        popup: this.args.navigationPath[this.args.navigationPath.length - 1],
+        args: {
+          businessPartner: this.args.businessPartner,
+          target: this.args.target,
+          navigationPath: OB.UTIL.BusinessPartnerSelector.cloneAndPop(this.args.navigationPath)
+        }
+      });
+    }
   }
 });
 
@@ -69,22 +70,18 @@ enyo.kind({
   kind: 'OB.UI.Button',
   name: 'OB.OBPOSPointOfSale.UI.customeraddr.AssignAddrButton',
   style: 'margin: 0px 0px 8px 5px;',
-  classes: 'btnlink btnlink-small',
+  classes: 'btnlink-yellow btnlink btnlink-small',
   handlers: {
-    onSetCustomerAddr: 'setCustomerAddr',
-    onAddressChanged: 'addressChanged',
-    onSetBPartnerTarget: 'setBPartnerTarget'
+    onAddressChanged: 'addressChanged'
   },
   events: {
+    onPressedButton: '',
     onChangeBusinessPartner: ''
   },
-  setCustomerAddr: function (inSender, inEvent) {
-    this.customer = inEvent.customer;
-    this.customerAddr = inEvent.customerAddr;
+  setCustomerAddr: function (customer, customerAddr) {
+    this.customer = customer;
+    this.customerAddr = customerAddr;
     this.model.attributes.customerAddr.set('loaded', OB.I18N.formatDateISO(new Date()));
-  },
-  setBPartnerTarget: function (inSender, inEvent) {
-    this.target = inEvent.target;
   },
   init: function (model) {
     this.inherited(arguments);
@@ -102,26 +99,20 @@ enyo.kind({
   kind: 'OB.OBPOSPointOfSale.UI.customeraddr.AssignAddrButton',
   name: 'OB.OBPOSPointOfSale.UI.customeraddr.assigncustomeraddrtoticket',
   tap: function () {
-    var me = this;
-    me.customer.set('locId', me.customerAddr.get('id'));
-    me.customer.set('locName', me.customerAddr.get('name'));
-    me.customer.set('shipLocId', me.customerAddr.get('id'));
-    me.customer.set('shipLocName', me.customerAddr.get('name'));
-    me.customer.set('postalCode', me.customerAddr.get('postalCode'));
-    me.customer.set('cityName', me.customerAddr.get('cityName'));
-    me.customer.set('locationModel', me.customerAddr);
-    me.customer.set('countryName', me.customerAddr.get('countryName'));
-    me.model.get('order').trigger('change:bp', me.model.get('order'));
-    me.doChangeBusinessPartner({
-      businessPartner: me.customer,
+    this.customer.set('locId', this.customerAddr.get('id'));
+    this.customer.set('locName', this.customerAddr.get('name'));
+    this.customer.set('shipLocId', this.customerAddr.get('id'));
+    this.customer.set('shipLocName', this.customerAddr.get('name'));
+    this.customer.set('postalCode', this.customerAddr.get('postalCode'));
+    this.customer.set('cityName', this.customerAddr.get('cityName'));
+    this.customer.set('locationModel', this.customerAddr);
+    this.customer.set('countryName', this.customerAddr.get('countryName'));
+    this.model.get('order').trigger('change:bp', this.model.get('order'));
+    this.doChangeBusinessPartner({
+      businessPartner: this.customer,
       target: this.target
     });
-    var sw = me.subWindow;
-    sw.doChangeSubWindow({
-      newWindow: {
-        name: 'mainSubWindow'
-      }
-    });
+    this.doPressedButton();
   },
   addressChanged: function (inSender, inEvent) {
     var customerAddr = inEvent.address;
@@ -141,24 +132,18 @@ enyo.kind({
   kind: 'OB.OBPOSPointOfSale.UI.customeraddr.AssignAddrButton',
   name: 'OB.OBPOSPointOfSale.UI.customeraddr.assigncustomeraddrtoticketship',
   tap: function () {
-    var me = this;
-    me.customer.set('shipLocId', me.customerAddr.get('id'));
-    me.customer.set('shipLocName', me.customerAddr.get('name'));
-    me.customer.set('postalCode', me.customerAddr.get('postalCode'));
-    me.customer.set('cityName', me.customerAddr.get('cityName'));
-    me.customer.set('locationModel', me.customerAddr);
-    me.customer.set('countryName', me.customerAddr.get('countryName'));
-    me.model.get('order').trigger('change:bp', me.model.get('order'));
-    me.doChangeBusinessPartner({
-      businessPartner: me.customer,
+    this.customer.set('shipLocId', this.customerAddr.get('id'));
+    this.customer.set('shipLocName', this.customerAddr.get('name'));
+    this.customer.set('postalCode', this.customerAddr.get('postalCode'));
+    this.customer.set('cityName', this.customerAddr.get('cityName'));
+    this.customer.set('locationModel', this.customerAddr);
+    this.customer.set('countryName', this.customerAddr.get('countryName'));
+    this.model.get('order').trigger('change:bp', this.model.get('order'));
+    this.doChangeBusinessPartner({
+      businessPartner: this.customer,
       target: this.target
     });
-    var sw = me.subWindow;
-    sw.doChangeSubWindow({
-      newWindow: {
-        name: 'mainSubWindow'
-      }
-    });
+    this.doPressedButton();
   },
   addressChanged: function (inSender, inEvent) {
     var customerAddr = inEvent.address;
@@ -180,24 +165,18 @@ enyo.kind({
   kind: 'OB.OBPOSPointOfSale.UI.customeraddr.AssignAddrButton',
   name: 'OB.OBPOSPointOfSale.UI.customeraddr.assigncustomeraddrtoticketinv',
   tap: function () {
-    var me = this;
-    me.customer.set('locId', me.customerAddr.get('id'));
-    me.customer.set('locName', me.customerAddr.get('name'));
-    me.customer.set('postalCode', me.customerAddr.get('postalCode'));
-    me.customer.set('cityName', me.customerAddr.get('cityName'));
-    me.customer.set('locationModel', me.customerAddr);
-    me.customer.set('countryName', me.customerAddr.get('countryName'));
-    me.model.get('order').trigger('change:bp', me.model.get('order'));
-    me.doChangeBusinessPartner({
-      businessPartner: me.customer,
+    this.customer.set('locId', this.customerAddr.get('id'));
+    this.customer.set('locName', this.customerAddr.get('name'));
+    this.customer.set('postalCode', this.customerAddr.get('postalCode'));
+    this.customer.set('cityName', this.customerAddr.get('cityName'));
+    this.customer.set('locationModel', this.customerAddr);
+    this.customer.set('countryName', this.customerAddr.get('countryName'));
+    this.model.get('order').trigger('change:bp', this.model.get('order'));
+    this.doChangeBusinessPartner({
+      businessPartner: this.customer,
       target: this.target
     });
-    var sw = me.subWindow;
-    sw.doChangeSubWindow({
-      newWindow: {
-        name: 'mainSubWindow'
-      }
-    });
+    this.doPressedButton();
   },
   addressChanged: function (inSender, inEvent) {
     var customerAddr = inEvent.address;
@@ -215,83 +194,82 @@ enyo.kind({
   }
 });
 
-/*header of window body*/
 enyo.kind({
-  name: 'OB.OBPOSPointOfSale.UI.customeraddr.EditCustomerWindowHeader',
+  kind: 'OB.UI.Button',
+  name: 'OB.OBPOSPointOfSale.UI.customeraddr.editticketcustomeraddr',
+  style: 'width: 100px; margin: 0px 5px 8px 19px;',
+  classes: 'btnlink-orange btnlink btnlink-small',
   events: {
-    onSearchAction: ''
+    onShowPopup: '',
+    onPressedButton: ''
   },
-  components: [{
-    components: [{
-      style: 'display: table; margin: 0 auto;',
-      components: [{
-        components: [{
-          kind: 'OB.UI.Button',
-          handlers: {
-            onSetCustomerAddr: 'setCustomerAddr'
-          },
-          style: 'width: 100px; margin: 0px 5px 8px 19px;',
-          classes: 'btnlink-orange btnlink btnlink-small',
-          setCustomerAddr: function (inSender, inEvent) {
-            this.customer = inEvent.customer;
-            this.customerAddr = inEvent.customerAddr;
-            if (!OB.MobileApp.model.hasPermission('OBPOS_retail.editCustomerLocationButton', true)) {
-              this.disabled = true;
-              this.setAttribute("disabled", "disabled");
-            } else {
-              this.disabled = false;
-              this.setAttribute("disabled", null);
-            }
-          },
-          tap: function () {
-            if (this.disabled === false) {
-              var sw = this.subWindow,
-                  params = this.owner.owner.owner.owner.owner.params;
-              this.model.get('subWindowManager').set('currentWindow', {
-                name: 'customerAddrCreateAndEdit',
-                params: {
-                  businessPartner: this.customer,
-                  bPLocation: this.customerAddr,
-                  navigateOnClose: sw.getName(),
-                  navigateOnCloseParent: params.navigateOnClose,
-                  navigateType: params.navigateType,
-                  target: params.target
-                }
-              });
-            }
-          },
-          init: function (model) {
-            this.model = model;
-          },
-          initComponents: function () {
-            this.setContent(OB.I18N.getLabel('OBPOS_LblEdit'));
-          }
-        }]
-      }, {
-        style: 'display: table-cell;',
-        components: [{
-          kind: 'OB.OBPOSPointOfSale.UI.customeraddr.assigncustomeraddrtoticketship'
-        }, {
-          kind: 'OB.OBPOSPointOfSale.UI.customeraddr.assigncustomeraddrtoticketinv'
-        }, {
-          kind: 'OB.OBPOSPointOfSale.UI.customeraddr.assigncustomeraddrtoticket'
-        }]
-      }]
-    }]
-  }],
-  searchAction: function () {
-    this.doSearchAction({
-      bpName: this.$.filterText.getValue()
-    });
+  setCustomerAddr: function (customer, customerAddr) {
+    this.customer = customer;
+    this.customerAddr = customerAddr;
+    if (!OB.MobileApp.model.hasPermission('OBPOS_retail.editCustomerLocationButton', true)) {
+      this.disabled = true;
+      this.setAttribute("disabled", "disabled");
+    } else {
+      this.disabled = false;
+      this.setAttribute("disabled", null);
+    }
+  },
+  tap: function () {
+    if (this.disabled === false) {
+      this.doPressedButton();
+      this.doShowPopup({
+        popup: 'customerAddrCreateAndEdit',
+        args: {
+          businessPartner: this.customer,
+          bPLocation: this.customerAddr,
+          navigationPath: OB.UTIL.BusinessPartnerSelector.cloneAndPush(this.navigationPath, 'customerAddressView'),
+          target: this.target
+        }
+      });
+    }
+  },
+  init: function (model) {
+    this.model = model;
+  },
+  initComponents: function () {
+    this.setContent(OB.I18N.getLabel('OBPOS_LblEdit'));
   }
 });
 
+/*header of window body*/
+enyo.kind({
+  name: 'OB.OBPOSPointOfSale.UI.customeraddr.EditCustomerHeader',
+  components: [{
+    style: 'display: table; margin: 0 auto;',
+    components: [{
+      style: 'display: table-cell;',
+      components: [{
+        kind: 'OB.OBPOSPointOfSale.UI.customeraddr.editticketcustomeraddr'
+      }]
+    }, {
+      style: 'display: table-cell;',
+      components: [{
+        kind: 'OB.OBPOSPointOfSale.UI.customeraddr.assigncustomeraddrtoticketship'
+      }]
+    }, {
+      style: 'display: table-cell;',
+      components: [{
+        kind: 'OB.OBPOSPointOfSale.UI.customeraddr.assigncustomeraddrtoticketinv'
+      }]
+    }, {
+      style: 'display: table-cell;',
+      components: [{
+        kind: 'OB.OBPOSPointOfSale.UI.customeraddr.assigncustomeraddrtoticket'
+      }]
+    }]
+  }]
+});
 
 enyo.kind({
   kind: 'OB.OBPOSPointOfSale.UI.customeraddr.edit_createcustomers',
   name: 'OB.OBPOSPointOfSale.UI.customeraddr.editcustomers_impl',
   style: 'padding: 9px 15px;',
-  windowHeader: 'OB.OBPOSPointOfSale.UI.customeraddr.EditCustomerWindowHeader',
+  windowHeader: 'OB.OBPOSPointOfSale.UI.customeraddr.EditCustomerHeader',
   newAttributes: [{
     kind: 'OB.UI.CustomerAddrTextProperty',
     name: 'customerAddrCustomerName',

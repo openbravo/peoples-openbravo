@@ -12,35 +12,27 @@
 /*global OB, enyo, _ */
 
 enyo.kind({
-  kind: 'OB.UI.Subwindow',
+  kind: 'OB.UI.Modal',
   name: 'OB.OBPOSPointOfSale.UI.customeraddr.newcustomeraddr',
+  style: 'width: 90%;',
   events: {
     onShowPopup: ''
   },
   handlers: {
-    onCancelClose: 'cancelClose',
-    onSetValues: 'setValues',
-    onRetrieveCustomer: 'retrieveCustomers'
+    onCancelClose: 'cancelClose'
   },
-  setValues: function (inSender, inEvent) {
-    this.waterfall('onSetValue', inEvent);
+  cancelClose: function (inSender, inEvent) {
+    this.customerAddr = inEvent.customerAddr;
+    this.hide();
+    return true;
   },
-  retrieveCustomers: function (inSender, inEvent) {
-    var retrievedValues = inEvent || {};
-    this.waterfall('onRetrieveValues', retrievedValues);
-    return retrievedValues;
-  },
-  beforeSetShowing: function (params) {
+  executeOnShow: function () {
     if (OB.MobileApp.model.get('terminal').defaultbp_paymentmethod !== null && OB.MobileApp.model.get('terminal').defaultbp_bpcategory !== null && OB.MobileApp.model.get('terminal').defaultbp_paymentterm !== null && OB.MobileApp.model.get('terminal').defaultbp_invoiceterm !== null && OB.MobileApp.model.get('terminal').defaultbp_bpcountry !== null && OB.MobileApp.model.get('terminal').defaultbp_bporg !== null) {
-      this.params = params;
-      this.waterfall('onSetCustomerAddr', {
-        customer: params.businessPartner,
-        customerAddr: params.bPLocation
-      });
-      if (params.bPLocation) {
-        this.$.subWindowHeader.$['OB.OBPOSPointOfSale.UI.customeraddr.newcustomerheader'].$.headermessage.setContent(OB.I18N.getLabel('OBPOS_TitleEditCustomerAddress'));
+      this.$.body.$.edit_createcustomers_impl.setCustomerAddr(this.args.businessPartner, this.args.bPLocation);
+      if (this.args.bPLocation) {
+        this.$.header.setContent(OB.I18N.getLabel('OBPOS_TitleEditCustomerAddress'));
       } else {
-        this.$.subWindowHeader.$['OB.OBPOSPointOfSale.UI.customeraddr.newcustomerheader'].$.headermessage.setContent(OB.I18N.getLabel('OBPOS_TitleNewCustomerAddress'));
+        this.$.header.setContent(OB.I18N.getLabel('OBPOS_TitleNewCustomerAddress'));
       }
       //show
       return true;
@@ -52,50 +44,16 @@ enyo.kind({
       return false;
     }
   },
-  defaultNavigateOnClose: 'mainSubWindow',
-  header: {
-    kind: 'OB.UI.SubwindowHeader',
-    name: 'OB.OBPOSPointOfSale.UI.customeraddr.newcustomerheader',
-    handlers: {
-      onSetCustomerAddr: 'setCustomerAddr'
-    },
-    i18nHeaderMessage: 'OBPOS_TitleEditNewCustomerAddress',
-    setCustomerAddr: function (inSender, inEvent) {
-      this.customer = inEvent.customer;
-      this.customerAddr = inEvent.customerAddr;
-    },
-    onTapCloseButton: function () {
-      this.bubble('onCancelClose');
-    }
-  },
-  cancelClose: function () {
-    if (this.params.navigateType === 'modal' && !this.params.navigateOnCloseParent) {
-      this.doChangeSubWindow({
-        newWindow: {
-          name: 'mainSubWindow'
-        }
-      });
-      this.doShowPopup({
-        popup: this.params.navigateOnClose,
-        args: {
-          businessPartner: this.params.businessPartner,
-          target: this.params.target
-        }
-      });
-    } else {
-      this.doChangeSubWindow({
-        newWindow: {
-          name: this.caller,
-          params: {
-            businessPartner: this.params.businessPartner,
-            bPLocation: this.params.bPLocation,
-            navigateOnClose: this.params.navigateType === 'modal' ? this.params.navigateOnCloseParent : 'mainSubWindow',
-            navigateType: this.params.navigateType,
-            target: this.params.target
-          }
-        }
-      });
-    }
+  executeOnHide: function () {
+    this.doShowPopup({
+      popup: this.args.navigationPath[this.args.navigationPath.length - 1],
+      args: {
+        businessPartner: this.args.businessPartner,
+        bPLocation: this.customerAddr ? this.customerAddr : this.args.bPLocation,
+        target: this.args.target,
+        navigationPath: OB.UTIL.BusinessPartnerSelector.cloneAndPop(this.args.navigationPath)
+      }
+    });
   },
   body: {
     kind: 'OB.OBPOSPointOfSale.UI.customeraddr.edit_createcustomers_impl'
@@ -107,7 +65,7 @@ enyo.kind({
   kind: 'OB.UI.Button',
   name: 'OB.OBPOSPointOfSale.UI.customeraddr.newcustomeraddrsave',
   style: 'width: 100px; margin: 0px 5px 8px 19px;',
-  classes: 'btnlink btnlink-small',
+  classes: 'btnlink-yellow btnlink btnlink-small',
   i18nLabel: 'OBPOS_LblSave',
   events: {
     onSaveCustomerAddr: ''
