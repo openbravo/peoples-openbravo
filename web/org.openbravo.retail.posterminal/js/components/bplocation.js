@@ -511,7 +511,7 @@ enyo.kind({
       dataBps.set('shipCountryId', bploc.get('countryId'));
 
       //Keep the other address:
-      if (!contextMenu.bPartner.get('locId')) {
+      if (!contextMenu.dialog.owner.owner.args.manageAddress && !contextMenu.bPartner.get('locId')) {
         OB.UTIL.showError(OB.I18N.getLabel('OBPOS_BPartnerNoInvoiceAddress', [contextMenu.bPartner.get('_identifier')]));
         return;
       }
@@ -566,7 +566,7 @@ enyo.kind({
       dataBps.set('countryName', bploc.get('countryName'));
 
       // Keep the other address:
-      if (!contextMenu.bPartner.get('shipLocId')) {
+      if (!contextMenu.dialog.owner.owner.args.manageAddress && !contextMenu.bPartner.get('shipLocId')) {
         OB.UTIL.showError(OB.I18N.getLabel('OBPOS_BPartnerNoShippingAddress', [contextMenu.bPartner.get('_identifier')]));
         return;
       }
