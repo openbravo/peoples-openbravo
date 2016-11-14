@@ -27,7 +27,7 @@ public class Warehouses extends QueryTerminalProperty {
     String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
     return Arrays
         .asList(new String[] { "select ow.warehouse.id as warehouseid, ow.warehouse.name as warehousename, ow.priority as priority "
-            + "from OrganizationWarehouse as ow where ow.$readableSimpleCriteria and ow.$activeCriteria and ow.organization.id = '"
+            + "from OrganizationWarehouse as ow where ow.warehouse.active = true and ow.$readableSimpleCriteria and ow.$activeCriteria and ow.organization.id = '"
             + orgId + "'" + "order by priority asc" });
   }
 
