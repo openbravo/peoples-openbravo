@@ -72,8 +72,8 @@ public class FIN_AddPaymentFromJournalLine extends DalBaseProcess {
 
       // Check restrictions
       OBContext.setAdminMode(false);
-      if (!journalLine.getJournalEntry().isMultigeneralLedger()) {
-        try {
+      try {
+        if (!journalLine.getJournalEntry().isMultigeneralLedger()) {
           final StringBuilder hsqlScript = new StringBuilder();
           hsqlScript.append("select distinct(o.generalLedger) ");
           hsqlScript.append("from Organization o ");
@@ -85,9 +85,9 @@ public class FIN_AddPaymentFromJournalLine extends DalBaseProcess {
           if (query.list().size() != 1) {
             throw new OBException("@FIN_NoMultiAccountingAllowed@");
           }
-        } finally {
-          OBContext.restorePreviousMode();
         }
+      } finally {
+        OBContext.restorePreviousMode();
       }
 
       if (!journalLine.getCurrency().equals(financialAccount.getCurrency())) {
