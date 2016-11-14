@@ -628,7 +628,7 @@
         this.calculateTaxes(function () {
           var gross = me.get('lines').reduce(function (memo, e) {
             var grossLine = e.getGross();
-            if (e.get('promotions')) {
+            if (e.get('qty') !== 0 && e.get('promotions')) {
               grossLine = e.get('promotions').reduce(function (memo, e) {
                 return OB.DEC.sub(memo, e.actualAmt || OB.DEC.toNumber(OB.DEC.toBigDecimal(e.amt), OB.DEC.getScale()) || 0);
               }, grossLine);
@@ -1338,6 +1338,10 @@
             });
 
             lines.forEach(function (line) {
+              if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true) && line.has('obposQtyDeleted') && line.get('obposQtyDeleted') > 0) {
+                line.set('qty', line.get('obposQtyDeleted'));
+                line.set('obposQtyDeleted', 0);
+              }
               me.removeDeleteLine(line);
               me.get('lines').add(line, {
                 at: line.get('undoPosition')
@@ -1609,7 +1613,7 @@
           criteria.params.push(productId);
           criteria.params.push(productCategory);
           criteria.params.push(productCategory);
-          OB.Dal.find(OB.Model.Product, criteria, function (data) {
+          OB.Dal.findUsingCache('productServiceCache', OB.Model.Product, criteria, function (data) {
             if (data) {
               data.hasservices = data.length > 0;
               data.hasmandatoryservices = _.find(data.models, function (model) {
@@ -2199,6 +2203,64 @@
       var me = this,
           undef;
       var i, oldbp = this.get('bp');
+
+      var errorSaveData = function (callback) {
+          if (callback) {
+            callback();
+          }
+          };
+
+      var finishSaveData = function (callback) {
+          // set the undo action
+          if (showNotif === undef || showNotif === true) {
+            this.setUndo('SetBPartner', {
+              text: businessPartner ? OB.I18N.getLabel('OBPOS_SetBP', [businessPartner.get('_identifier')]) : OB.I18N.getLabel('OBPOS_ResetBP'),
+              bp: businessPartner,
+              undo: function () {
+                me.set('bp', oldbp);
+                me.save();
+                me.set('undo', null);
+              }
+            });
+          }
+          if (OB.MobileApp.model.hasPermission('EnableMultiPriceList', true)) {
+            if (oldbp.get('priceList') !== businessPartner.get('priceList')) {
+              me.set('priceList', businessPartner.get('priceList'));
+              var priceIncludesTax = businessPartner.get('priceIncludesTax');
+              if (OB.UTIL.isNullOrUndefined(priceIncludesTax)) {
+                priceIncludesTax = OB.MobileApp.model.get('pricelist').priceIncludesTax;
+              }
+              me.set('priceIncludesTax', priceIncludesTax);
+              me.removeAndInsertLines(function () {
+                me.calculateReceipt(function () {
+                  if (saveChange) {
+                    me.save();
+                  }
+                  if (callback) {
+                    callback();
+                  }
+                });
+              });
+            } else {
+              me.calculateReceipt(function () {
+                if (saveChange) {
+                  me.save();
+                }
+                if (callback) {
+                  callback();
+                }
+              });
+            }
+          } else {
+            if (saveChange) {
+              me.save();
+            }
+            if (callback) {
+              callback();
+            }
+          }
+          };
+
       if (OB.MobileApp.model.get('terminal').businessPartner === businessPartner.id) {
         for (i = 0; i < me.get('lines').models.length; i++) {
           if (!me.get('lines').models[i].get('product').get('oBPOSAllowAnonymousSale')) {
@@ -2245,12 +2307,14 @@
               me.save();
               // copy the modelOrder again, as the get/save are async
               OB.MobileApp.model.orderList.saveCurrent();
+              finishSaveData(callback);
             }, function () {
               OB.error(arguments);
             });
 
           }, function () {
             OB.error(arguments);
+            errorSaveData(callback);
           });
 
         } else if (businessPartner.get('locationModel')) { //Location has changed or we are assigning current bp
@@ -2259,61 +2323,18 @@
             me.save();
             // copy the modelOrder again, as saveIfNew is possibly async
             OB.MobileApp.model.orderList.saveCurrent();
+            finishSaveData(callback);
           }, function () {
             OB.error(arguments);
+            errorSaveData(callback);
           });
+        } else {
+          finishSaveData(callback);
         }
       } else {
         this.set('bp', businessPartner);
         this.save();
-      }
-      // set the undo action
-      if (showNotif === undef || showNotif === true) {
-        this.setUndo('SetBPartner', {
-          text: businessPartner ? OB.I18N.getLabel('OBPOS_SetBP', [businessPartner.get('_identifier')]) : OB.I18N.getLabel('OBPOS_ResetBP'),
-          bp: businessPartner,
-          undo: function () {
-            me.set('bp', oldbp);
-            me.save();
-            me.set('undo', null);
-          }
-        });
-      }
-      if (OB.MobileApp.model.hasPermission('EnableMultiPriceList', true)) {
-        if (oldbp.get('priceList') !== businessPartner.get('priceList')) {
-          me.set('priceList', businessPartner.get('priceList'));
-          var priceIncludesTax = businessPartner.get('priceIncludesTax');
-          if (OB.UTIL.isNullOrUndefined(priceIncludesTax)) {
-            priceIncludesTax = OB.MobileApp.model.get('pricelist').priceIncludesTax;
-          }
-          me.set('priceIncludesTax', priceIncludesTax);
-          me.removeAndInsertLines(function () {
-            me.calculateReceipt(function () {
-              if (saveChange) {
-                me.save();
-              }
-              if (callback) {
-                callback();
-              }
-            });
-          });
-        } else {
-          me.calculateReceipt(function () {
-            if (saveChange) {
-              me.save();
-            }
-            if (callback) {
-              callback();
-            }
-          });
-        }
-      } else {
-        if (saveChange) {
-          this.save();
-        }
-        if (callback) {
-          callback();
-        }
+        finishSaveData(callback);
       }
     },
 
@@ -3903,6 +3924,10 @@
         model.set('obposAppCashup', OB.MobileApp.model.get('terminal').cashUpId);
         for (i = 0; i < model.get('lines').length; i++) {
           model.get('lines').at(i).set('obposIsDeleted', true);
+          model.get('lines').at(i).set('listPrice', 0);
+          model.get('lines').at(i).set('standardPrice', 0);
+          model.get('lines').at(i).set('grossUnitPrice', 0);
+          model.get('lines').at(i).set('lineGrossAmount', 0);
         }
         model.set('hasbeenpaid', 'Y');
         OB.MobileApp.model.updateDocumentSequenceWhenOrderSaved(model.get('documentnoSuffix'), model.get('quotationnoSuffix'), model.get('returnnoSuffix'), function () {
@@ -3927,19 +3952,22 @@
         }
         if (receipt.get('id') && !isPaidQuotation && receipt.get('lines') && receipt.get('lines').length > 0 && receipt.get('isEditable')) {
           if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
-            receipt.set('skipCalculateReceipt', true);
-            _.each(receipt.get('lines').models, function (line) {
-              line.set('obposQtyDeleted', line.get('qty'));
-              line.set('qty', 0);
-            });
-            receipt.set('skipCalculateReceipt', false);
-            // These setIsCalculateReceiptLockState and setIsCalculateGrossLockState calls must be done because this function
-            // may be called out of the pointofsale window, and in order to call the calculateReceipt function, the
-            // isCalculateReceiptLockState and isCalculateGrossLockState properties must be initialized
-            receipt.setIsCalculateReceiptLockState(false);
-            receipt.setIsCalculateGrossLockState(false);
-            receipt.calculateReceipt(function () {
-              markOrderAsDeleted(receipt, orderList, callback);
+            receipt.prepareToSend(function () {
+              receipt.set('skipApplyPromotions', true);
+              receipt.set('skipCalculateReceipt', true);
+              _.each(receipt.get('lines').models, function (line) {
+                line.set('obposQtyDeleted', line.get('qty'));
+                line.set('qty', 0);
+              });
+              receipt.set('skipCalculateReceipt', false);
+              // These setIsCalculateReceiptLockState and setIsCalculateGrossLockState calls must be done because this function
+              // may be called out of the pointofsale window, and in order to call the calculateReceipt function, the
+              // isCalculateReceiptLockState and isCalculateGrossLockState properties must be initialized
+              receipt.setIsCalculateReceiptLockState(false);
+              receipt.setIsCalculateGrossLockState(false);
+              receipt.calculateReceipt(function () {
+                markOrderAsDeleted(receipt, orderList, callback);
+              });
             });
           } else {
             if (orderList) {

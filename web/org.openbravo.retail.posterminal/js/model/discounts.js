@@ -227,6 +227,18 @@
         rule.addManual(receipt, line, promotion);
       });
 
+      receipt.setUndo('AddDiscount', {
+        text: OB.I18N.getLabel('OBPOS_AddedDiscount', [promotion.rule.get('name')]),
+        undo: function () {
+          receipt.get('lines').forEach(function (line) {
+            receipt.removePromotion(line, promotion.rule);
+          });
+          receipt.calculateReceipt();
+          receipt.set('undo', null);
+          receipt.set('multipleUndo', null);
+        }
+      });
+
       if (!promotion.alreadyCalculated) {
         // Recalculate all promotions again
         receipt.calculateReceipt();

@@ -29,7 +29,9 @@ enyo.kind({
         style: 'clear:both;'
       }]
     }]
-  }, {}]
+  }, {
+    style: 'clear:both;'
+  }]
 });
 
 enyo.kind({
@@ -60,7 +62,9 @@ enyo.kind({
         content: '&nbsp;'
       }]
     }]
-  }, {}],
+  }, {
+    style: 'clear:both;'
+  }],
   setValue: function (value) {
     this.value = value;
     this.render();
@@ -120,7 +124,9 @@ enyo.kind({
         content: '&nbsp;'
       }]
     }]
-  }, {}],
+  }, {
+    style: 'clear:both;'
+  }],
   setValue: function (value) {
     this.value = value;
     this.render();
@@ -437,9 +443,14 @@ enyo.kind({
   },
   classes: 'tab-pane',
   components: [{
-    style: 'overflow:auto; height: 612px; margin: 5px; background-color: #ffffff;',
+    kind: 'Scroller',
+    name: 'scrollArea',
+    thumb: true,
+    maxHeight: '612px',
+    horizontal: 'hidden',
+    style: 'margin: 5px; background-color: #ffffff;',
     components: [{
-      style: 'background-color: #ffffff; color: black; padding: 5px;',
+      style: 'padding: 5px;',
       components: [{
         classes: 'row-fluid',
         components: [{
@@ -451,6 +462,8 @@ enyo.kind({
               this.setContent(OB.I18N.getLabel('OBPOS_LblStepNumber', [step, count]) + " " + OB.I18N.getLabel('OBPOS_LblStepPostPrintAndClose') + OB.OBPOSCashUp.UI.CashUp.getTitleExtensions());
             }
           }]
+        }, {
+          style: 'clear:both;'
         }]
       }, {
         classes: 'row-fluid',
@@ -482,6 +495,8 @@ enyo.kind({
               style: 'padding: 0px 0px 10px 0px;'
             }]
           }]
+        }, {
+          style: 'clear:both;'
         }]
       },
       //FIXME: Iterate taxes
@@ -537,32 +552,11 @@ enyo.kind({
           kind: 'OB.OBPOSCashUp.UI.ppc_cashQtyToDepoTable',
           name: 'qtyToDepoTable'
         }]
-      }, {
-        classes: 'row-fluid',
-        components: [{
-          classes: 'span12',
-          components: [{
-            style: 'width: 10%; float: left',
-            components: [{
-              tag: 'span',
-              allowHtml: true,
-              content: '&nbsp;'
-            }]
-          }, {
-            style: 'padding: 5px 0px 0px 5px; float: left; width: 60%; font-weight:bold;'
-          }, {
-            style: 'clear:both;'
-          }]
-        }]
       }]
     }]
   }],
 
   create: function () {
-    //Force removal of wrong css class to enable scrolling in ios
-    if (OB.UTIL.isIOS()) {
-      document.body.classList.remove('webkitOverflowScrolling');
-    }
     this.inherited(arguments);
     this.$.store.setContent(OB.I18N.getLabel('OBPOS_LblStore') + ': ' + OB.MobileApp.model.get('terminal').organization$_identifier);
     this.$.terminal.setContent(OB.I18N.getLabel('OBPOS_LblTerminal') + ': ' + OB.MobileApp.model.get('terminal')._identifier);
@@ -704,5 +698,6 @@ enyo.kind({
     }
     this.setSummary(model.getCountCashSummary());
     this.$.time.setContent(OB.I18N.getLabel('OBPOS_LblTime') + ': ' + OB.I18N.formatDate(new Date()) + ' - ' + OB.I18N.formatHour(new Date()));
+    this.render();
   }
 });

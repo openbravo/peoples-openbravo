@@ -606,7 +606,7 @@ enyo.kind({
           }
         }
         if (this.line) {
-          if (this.line.get('product').get('productType') === 'I' && !this.line.get('product').get('ispack') && OB.MobileApp.model.get('connectedToERP')) {
+          if (this.receipt.get('isEditable') && this.line.get('product').get('productType') === 'I' && !this.line.get('product').get('ispack') && OB.MobileApp.model.get('connectedToERP')) {
             this.$.actionButtonsContainer.$.checkStockButton.show();
           } else {
             this.$.actionButtonsContainer.$.checkStockButton.hide();

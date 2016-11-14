@@ -245,7 +245,7 @@ enyo.kind({
     components: [{
       name: 'rfidIcon',
       showing: false,
-      classes: 'btn-icon-toolbartabrfid btn-icon-rfidoffline'
+      classes: 'btn-icon-toolbartabrfid'
     }]
   }],
   init: function (model) {
@@ -297,6 +297,9 @@ enyo.kind({
     return true;
   },
   pointOfSaleLoad: function (inSender, inEvent) {
+    if (OB.UTIL.RfidController.get('connectionLost')) {
+      this.$.rfidIcon.addClass(this.rfidOfflineIcon);
+    }
     if (!OB.UTIL.RfidController.get('isRFIDEnabled') || !OB.UTIL.RfidController.get('reconnectOnScanningFocus')) {
       this.$.rfidIcon.addClass(this.rfidOffIcon);
     } else {
