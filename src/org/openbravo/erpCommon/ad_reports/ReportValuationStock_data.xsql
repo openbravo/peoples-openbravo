@@ -35,7 +35,7 @@
         FROM (SELECT M_PRODUCT_CATEGORY.NAME AS CATEGORY_NAME, A.M_PRODUCT_ID, AD_COLUMN_IDENTIFIER (to_char('M_Product'),to_char(M_PRODUCT.M_PRODUCT_ID),to_char(?)) AS PRODUCT_NAME, 
               M_PRODUCT.VALUE AS PRODUCT_SEARCHKEY, A.QTY, C_UOM.NAME AS UOM_NAME,
                      CASE a.iscostcalculated
-                       WHEN 'Y' THEN C_CURRENCY_CONVERT_PRECISION (Suma,A.c_currency_id,?,to_date(?),NULL,A.AD_CLIENT_ID,?,'C')
+                       WHEN 'Y' THEN C_CURRENCY_CONVERT_PRECISION (Suma,A.c_currency_id,?,A.MOVEMENTDATE,NULL,A.AD_CLIENT_ID,?,'C')
                        ELSE NULL
                      END AS TOTAL_COST,  A.ISCOSTCALCULATED, A.AD_CLIENT_ID, A.MOVEMENTDATE, A.C_CURRENCY_ID,
                      CASE a.iscostcalculated
@@ -97,7 +97,6 @@
       <Field name="rownum" value="count"/>
       <Parameter name="adLanguage"/>
       <Parameter name="cCurrencyConv"/>
-      <Parameter name="datePlus"/>
       <Parameter name="legalEntity"/>
       <Parameter name="cCurrencyConv"/>
       <Parameter name="datePlus"/>

@@ -118,9 +118,8 @@ public class ReportValuationStock extends HttpSecureAppServlet {
           "ReportValuationStock|Warehouse", IsIDFilter.instance);
       String strCategoryProduct = vars.getRequestGlobalVariable("inpCategoryProduct",
           "ReportValuationStock|CategoryProduct", IsIDFilter.instance);
-      // String strCurrencyId = vars.getGlobalVariable("inpCurrencyId",
-      // "ReportValuationStock|currency", strUserCurrencyId, IsIDFilter.instance);
-      String strCurrencyId = OBCurrencyUtils.getOrgCurrency(strOrganization);
+      String strCurrencyId = vars.getGlobalVariable("inpCurrencyId",
+          "ReportValuationStock|currency", strUserCurrencyId, IsIDFilter.instance);
       String strWarehouseConsolidation = vars.getRequestGlobalVariable("inpWarehouseConsolidation",
           "ReportValuationStock|warehouseConsolidation");
       boolean isWarehouseConsolidation = "on".equals(strWarehouseConsolidation);
@@ -128,8 +127,8 @@ public class ReportValuationStock extends HttpSecureAppServlet {
       buildData(response, vars, strDate, strOrganization, strWarehouse, strCategoryProduct,
           strCurrencyId, isWarehouseConsolidation);
     } else if (vars.commandIn("CURRENCY")) {
-      String strOrg = vars.getRequestGlobalVariable("inpOrg",
-          "ReportValuationStock|Organization", IsIDFilter.instance);
+      String strOrg = vars.getRequestGlobalVariable("inpOrg", "ReportValuationStock|Organization",
+          IsIDFilter.instance);
       if (StringUtils.isEmpty(strOrg)) {
         strOrg = vars.getOrg();
       }
@@ -138,9 +137,9 @@ public class ReportValuationStock extends HttpSecureAppServlet {
       PrintWriter out = response.getWriter();
       out.print(strCurrencyId);
       out.close();
-
-    } else
+    } else {
       pageError(response);
+    }
   }
 
   private void buildData(HttpServletResponse response, VariablesSecureApp vars, String strDate,
@@ -380,9 +379,9 @@ public class ReportValuationStock extends HttpSecureAppServlet {
         Map<String, String> params = new HashMap<String, String>();
         params.put("algorithm", ca.getName());
         String strCostHeader = OBMessageUtils.parseTranslation(
-            OBMessageUtils.messageBD("OBWRVSE_COSTHEADER"), params);
+            OBMessageUtils.messageBD("ValuedStockReport_CostHeader"), params);
         String strValuationHeader = OBMessageUtils.parseTranslation(
-            OBMessageUtils.messageBD("OBWRVSE_VALUATIONHEADER"), params);
+            OBMessageUtils.messageBD("ValuedStockReport_ValuationHeader"), params);
         xmlDocument.setParameter("costTypeCol", strCostHeader);
         xmlDocument.setParameter("valuationTypeCol", strValuationHeader);
       }
@@ -418,9 +417,9 @@ public class ReportValuationStock extends HttpSecureAppServlet {
       Map<String, String> params = new HashMap<String, String>();
       params.put("algorithm", ca.getName());
       strCostHeader = OBMessageUtils.parseTranslation(
-          OBMessageUtils.messageBD("OBWRVSE_COSTHEADER"), params);
+          OBMessageUtils.messageBD("ValuedStockReport_CostHeader"), params);
       strValuationHeader = OBMessageUtils.parseTranslation(
-          OBMessageUtils.messageBD("OBWRVSE_VALUATIONHEADER"), params);
+          OBMessageUtils.messageBD("ValuedStockReport_ValuationHeader"), params);
     }
     parameters.put("ALG_COST", strCostHeader);
     parameters.put("SUM_ALG_COST", strValuationHeader);
@@ -478,9 +477,9 @@ public class ReportValuationStock extends HttpSecureAppServlet {
       Map<String, String> params = new HashMap<String, String>();
       params.put("algorithm", ca.getName());
       strCostHeader = OBMessageUtils.parseTranslation(
-          OBMessageUtils.messageBD("OBWRVSE_COSTHEADER"), params);
+          OBMessageUtils.messageBD("ValuedStockReport_CostHeader"), params);
       strValuationHeader = OBMessageUtils.parseTranslation(
-          OBMessageUtils.messageBD("OBWRVSE_VALUATIONHEADER"), params);
+          OBMessageUtils.messageBD("ValuedStockReport_ValuationHeader"), params);
     }
     parameters.put("TITLE", classInfo.name);
     parameters.put("DATE", strDate);
