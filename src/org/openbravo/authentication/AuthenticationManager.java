@@ -63,6 +63,8 @@ public abstract class AuthenticationManager {
   private static final String REJECTED_SESSION_WEB_SERVICE = "WSR";
   private static final String SUCCESS_SESSION_CONNECTOR = "WSC";
   private static final String FAILED_SESSION = "F";
+  protected static final String LOGIN_PARAM = "user";
+  protected static final String PASSWORD_PARAM = "password";
 
   protected ConnectionProvider conn = null;
   protected String defaultServletUrl = null;
@@ -393,8 +395,14 @@ public abstract class AuthenticationManager {
    *         </ul>
    */
   protected String doWebServiceAuthenticate(HttpServletRequest request) {
-    final String login = request.getParameter(BaseWebServiceServlet.LOGIN_PARAM);
-    final String password = request.getParameter(BaseWebServiceServlet.PASSWORD_PARAM);
+    String login = request.getParameter(BaseWebServiceServlet.LOGIN_PARAM);
+    if (StringUtils.isEmpty(login)) {
+      login = request.getParameter(LOGIN_PARAM);
+    }
+    String password = request.getParameter(BaseWebServiceServlet.PASSWORD_PARAM);
+    if (StringUtils.isEmpty(password)) {
+      password = request.getParameter(PASSWORD_PARAM);
+    }
     String userId = null;
     if (login != null && password != null) {
       username = login;

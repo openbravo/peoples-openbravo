@@ -36,6 +36,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.access.User;
+import org.openbravo.service.web.BaseWebServiceServlet;
 
 /**
  * 
@@ -66,7 +67,6 @@ public class DefaultAuthenticationManager extends AuthenticationManager {
     final String sUserId;
     if (resetPassword) {
       sUserId = vars.getSessionValue("#AD_User_ID");
-
     } else {
       sUserId = (String) request.getSession().getAttribute("#Authenticated_user");
     }
@@ -77,16 +77,22 @@ public class DefaultAuthenticationManager extends AuthenticationManager {
     }
 
     VariablesHistory variables = new VariablesHistory(request);
-    final String user;
-    final String pass;
+    String user;
+    String pass;
     // Begins code related to login process
     if (resetPassword) {
       User userOB = OBDal.getInstance().get(User.class, sUserId);
       user = userOB.getUsername();
     } else {
-      user = vars.getStringParameter("user");
+      user = vars.getStringParameter(LOGIN_PARAM);
+      if (StringUtils.isEmpty(user)) {
+        user = vars.getStringParameter(BaseWebServiceServlet.LOGIN_PARAM);
+      }
     }
-    pass = vars.getStringParameter("password");
+    pass = vars.getStringParameter(PASSWORD_PARAM);
+    if (StringUtils.isEmpty(pass)) {
+      pass = vars.getStringParameter(BaseWebServiceServlet.PASSWORD_PARAM);
+    }
     username = user;
     if (StringUtils.isEmpty(user)) {
       // redirects to the menu or the menu with the target
