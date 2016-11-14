@@ -2,20 +2,10 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD Xhtml 1.0 Transitional//EN" "http://www.w3.org/tr/xhtml1/Dtd/xhtml1-transitional.dtd">
 <!--
  *************************************************************************
- * The contents of this file are subject to the Openbravo  Public  License
- * Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
- * Version 1.1  with a permitted attribution clause; you may not  use this
- * file except in compliance with the License. You  may  obtain  a copy of
- * the License at http://www.openbravo.com/legal/license.html
- * Software distributed under the License  is  distributed  on  an "AS IS"
- * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
- * License for the specific  language  governing  rights  and  limitations
- * under the License.
- * The Original Code is Openbravo ERP.
- * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2016 Openbravo SLU
- * All Rights Reserved.
- * Contributor(s):  ______________________________________.
+ * Copyright (C) 2016 Openbravo S.L.U.
+ * Licensed under the Openbravo Commercial License version 1.0
+ * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
+ * or in the legal folder of this module distribution.
  ************************************************************************
 -->
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -432,54 +422,44 @@ var selecWh=null;
   </table>
   <table cellspacing="0" cellpadding="0" width="100%" class="DataGrid_Header_Table DataGrid_Body_Table" style="table-layout: auto;">
     <tr class="DataGrid_Body_Row"> 
-      <th class="DataGrid_Header_Cell" width="71%"><span>TOTAL</span></th>
-      <th class="DataGrid_Header_Cell" width="9%" style="text-align:right;"><span id="fieldSumCostTotal">XX123456&nbsp;</span></th>
-      <th class="DataGrid_Header_Cell" width="11%"></th>
-      <th class="DataGrid_Header_Cell" width="9%" style="text-align:right;"><span id="fieldSumValuationTypeTotal">XX123456&nbsp;</span></th>
+      <th class="DataGrid_Header_Cell" width="80%"><span>TOTAL</span></th>
+      <th class="DataGrid_Header_Cell" width="20%" style="text-align:right;"><span id="fieldSumCostTotal">XX123456&nbsp;</span></th>
     </tr>
   </table>
   <br></br>
   <div id="sectionWarehouse">      
     <table cellspacing="0" cellpadding="0" width="100%" class="DataGrid_Header_Table DataGrid_Body_Table" style="table-layout: auto;">
       <tr class="DataGrid_Body_Row">
-        <th class="DataGrid_Header_Cell" width="71%" colspan="4"><span id="fieldWarehouse" style="white-space: pre;">xxWH</span></th>
-        <th class="DataGrid_Header_Cell" width="9%" style="text-align:right;"><span id="fieldSumCostWh">XX123456&nbsp;</span></th>
-        <th class="DataGrid_Header_Cell" width="11%"></th>
-        <th class="DataGrid_Header_Cell" width="9%" style="text-align:right;"><span id="fieldSumValuationTypeWh">XX123456&nbsp;</span></th>
+        <th class="DataGrid_Header_Cell" width="80%" colspan="4"><span id="fieldWarehouse" style="white-space: pre;">xxWH</span></th>
+        <th class="DataGrid_Header_Cell" width="20%" style="text-align:right;"><span id="fieldSumCostWh">XX123456&nbsp;</span></th>
       </tr>
     
     <div id="sectionCategoryProduct"> 
       <tr class="DataGrid_Body_Row"> 
-        <th class="DataGrid_Header_Cell" colspan="7">&nbsp;<span id="fieldCategoryName" style="white-space: pre;">xxQuímicos limpieza</span></th> 
+        <th class="DataGrid_Header_Cell" colspan="5">&nbsp;<span id="fieldCategoryName" style="white-space: pre;">xxQuímicos limpieza</span></th> 
       </tr>
     
     
       <tr class="DataGrid_Body_Row">
-        <th class="DataGrid_Header_Cell" width="38%">PRODUCT</th>
+        <th class="DataGrid_Header_Cell" width="58%">PRODUCT</th>
         <th class="DataGrid_Header_Cell" width="12%" style="text-align:right;">QUANTITY</th>
         <th class="DataGrid_Header_Cell" width="10%">UNIT</th>
         <th class="DataGrid_Header_Cell" width="11%" style="text-align:right;">UNIT COST</th>
         <th class="DataGrid_Header_Cell" width="9%" style="text-align:right;">VALUATION</th>
-        <th class="DataGrid_Header_Cell" width="11%" id="fieldCostTypeCol" style="text-align:right;">xxSTANDARD COST</th>
-        <th class="DataGrid_Header_Cell" width="9%" id="fieldValuationTypeCol" style="text-align:right;">xxSTANDARD VALUATION</th>
       </tr>
       <div id="sectionDetail"> 
         <tr class="DataGrid_Body_Row DataGrid_Body_Row_yy" id="funcEvenOddRow1xx"> 
-          <td class="DataGrid_Body_Cell" width="38%"> <a class="LabelLink" href="#" onclick="openCostingTab('xx');return false;" onmouseover="window.status='Costs';return true;" onmouseout="window.status='';return true;" class="Link" id="idfieldmProductId"> 
+          <td class="DataGrid_Body_Cell" width="58%"> <a class="LabelLink" href="#" onclick="openCostingTab('xx');return false;" onmouseover="window.status='Costs';return true;" onmouseout="window.status='';return true;" class="Link" id="idfieldmProductId"> 
             <span id="fieldProductName" style="white-space: pre;">xx24/10/2004</span></a></td>
           <td class="DataGrid_Body_Cell" width="12%"  id="fieldQty" style="text-align:right;">xx24/10/2004</td>
           <td class="DataGrid_Body_Cell" width="10%" id="fieldUomName" >xx12/07/1923</td>
           <td class="DataGrid_Body_Cell" width="11%" id="fieldAverageCost" style="text-align:right;">xx3456&nbsp;</td>
           <td class="DataGrid_Body_Cell" width="9%" id="fieldTotalCost"  style="text-align:right;">xx12345&nbsp;</td>
-          <td class="DataGrid_Body_Cell" width="11%" id="fieldCostType" style="text-align:right;">xx3456&nbsp;</td>
-          <td class="DataGrid_Body_Cell" width="9%" id="fieldValuationType"  style="text-align:right;">xx12345&nbsp;</td>
         </tr>
       </div>
       <tr class="DataGrid_Body_Row"> 
         <td class="DataGrid_Body_Cell" colspan="4" ><span><B>Total stock value</B></span></td>
         <td class="DataGrid_Body_Cell" style="text-align:right;"> <span  id="fieldSumCost">xx23455.56</span></td>
-        <td class="DataGrid_Body_Cell" style="text-align:right;"></td>
-        <td class="DataGrid_Body_Cell" style="text-align:right;"> <span  id="fieldSumValuationType">xx23455.56</span></td>
       </tr>
       </div>
     </table>
