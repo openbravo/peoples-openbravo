@@ -57,6 +57,10 @@ public class DefaultAuthenticationManager extends AuthenticationManager {
   protected String doAuthenticate(HttpServletRequest request, HttpServletResponse response)
       throws AuthenticationException, ServletException, IOException {
 
+    if (request.getSession(false) == null && AuthenticationManager.isStatelessRequest(request)) {
+      return webServiceAuthenticate(request);
+    }
+
     final VariablesSecureApp vars = new VariablesSecureApp(request, false);
     final Boolean resetPassword = Boolean.parseBoolean(vars.getStringParameter("resetPassword"));
     final String sUserId;

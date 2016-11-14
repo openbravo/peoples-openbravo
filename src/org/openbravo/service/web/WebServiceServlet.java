@@ -27,7 +27,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
-import org.openbravo.service.OBServiceException;
 
 /**
  * The default servlet which catches all requests for a webservice. This servlet finds the
@@ -47,7 +46,7 @@ public class WebServiceServlet extends BaseWebServiceServlet {
       ServletException {
     try {
       final String segment = WebServiceUtil.getInstance().getFirstSegment(request.getPathInfo());
-      final WebService ws = getWebService(segment);
+      final WebService ws = getWebService(request);
       if (ws != null) {
         ws.doGet(getRemainingPath(request.getPathInfo(), segment), request, response);
       }
@@ -63,7 +62,7 @@ public class WebServiceServlet extends BaseWebServiceServlet {
       ServletException {
     try {
       final String segment = WebServiceUtil.getInstance().getFirstSegment(request.getPathInfo());
-      final WebService ws = getWebService(segment);
+      final WebService ws = getWebService(request);
       if (ws != null) {
         ws.doPost(getRemainingPath(request.getPathInfo(), segment), request, response);
       }
@@ -79,7 +78,7 @@ public class WebServiceServlet extends BaseWebServiceServlet {
       throws IOException, ServletException {
     try {
       final String segment = WebServiceUtil.getInstance().getFirstSegment(request.getPathInfo());
-      final WebService ws = getWebService(segment);
+      final WebService ws = getWebService(request);
       if (ws != null) {
         ws.doDelete(getRemainingPath(request.getPathInfo(), segment), request, response);
       }
@@ -95,7 +94,7 @@ public class WebServiceServlet extends BaseWebServiceServlet {
       ServletException {
     try {
       final String segment = WebServiceUtil.getInstance().getFirstSegment(request.getPathInfo());
-      final WebService ws = getWebService(segment);
+      final WebService ws = getWebService(request);
       if (ws != null) {
         ws.doPut(getRemainingPath(request.getPathInfo(), segment), request, response);
       }
@@ -104,14 +103,6 @@ public class WebServiceServlet extends BaseWebServiceServlet {
     } catch (final Exception e) {
       throw new OBException(e);
     }
-  }
-
-  private WebService getWebService(String segment) {
-    final Object o = OBProvider.getInstance().get(segment);
-    if (o instanceof WebService) {
-      return (WebService) o;
-    }
-    throw new OBServiceException("No WebService found using the name " + segment);
   }
 
   private String getRemainingPath(String pathInfo, String segment) {

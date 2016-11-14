@@ -16,6 +16,10 @@ import static org.openbravo.base.secureApp.LoginHandler.SUCCESS_SESSION_STANDARD
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -54,6 +58,7 @@ public abstract class AuthenticationManager {
   private static final Logger log4j = Logger.getLogger(AuthenticationManager.class);
   private static final String DEFAULT_AUTH_CLASS = "org.openbravo.authentication.basic.DefaultAuthenticationManager";
 
+  public static final String STATELESS_REQUEST_PARAMETER = "stateless";
   private static final String SUCCESS_SESSION_WEB_SERVICE = "WS";
   private static final String REJECTED_SESSION_WEB_SERVICE = "WSR";
   private static final String SUCCESS_SESSION_CONNECTOR = "WSC";
@@ -63,6 +68,29 @@ public abstract class AuthenticationManager {
   protected String defaultServletUrl = null;
   protected String localAdress = null;
   protected String username = "";
+
+  /**
+   * Is used to determine if the request is a stateless request. A stateless request does not create
+   * a httpsession. This also means that no preferences or other information is present. Stateless
+   * requests should normally be used only for relatively simple logic.
+   * 
+   * A request is stateless if it has a parameter stateless=true or an attribute stateless with the
+   * string value "true".
+   * 
+   * @param request
+   * @return true if this is a stateless request
+   */
+  public static boolean isStatelessRequest(HttpServletRequest request) {
+    return "true".equals(request.getParameter(STATELESS_REQUEST_PARAMETER))
+        || "true".equals(request.getAttribute(STATELESS_REQUEST_PARAMETER));
+  }
+
+  /**
+   * Returns true if the passed class has the Stateless annotation
+   */
+  public static boolean isStatelessService(Class<?> clz) {
+    return null != clz.getAnnotation(Stateless.class);
+  }
 
   /**
    * Returns an instance of AuthenticationManager subclass, based on the authentication.class
@@ -142,6 +170,10 @@ public abstract class AuthenticationManager {
 
     final String userId = doAuthenticate(request, response);
 
+    if (AuthenticationManager.isStatelessRequest(request)) {
+      return userId;
+    }
+
     final VariablesSecureApp vars = new VariablesSecureApp(request, false);
     if (StringUtils.isEmpty(vars.getSessionValue("#AD_SESSION_ID"))) {
       setDBSession(request, userId, SUCCESS_SESSION_STANDARD, true);
@@ -186,7 +218,10 @@ public abstract class AuthenticationManager {
       throws AuthenticationException {
     final String userId = doWebServiceAuthenticate(request);
 
-    final String dbSessionId = setDBSession(request, userId, SUCCESS_SESSION_WEB_SERVICE, false);
+    String dbSessionId = null;
+    if (!AuthenticationManager.isStatelessRequest(request)) {
+      dbSessionId = setDBSession(request, userId, SUCCESS_SESSION_WEB_SERVICE, false);
+    }
 
     return webServicePostAuthenticate(userId, dbSessionId);
   }
@@ -227,15 +262,21 @@ public abstract class AuthenticationManager {
       log4j.warn("Number of webservice calls exceeded today.");
       return userId;
     case EXCEEDED_MAX_WS_CALLS:
-      updateDBSession(dbSessionId, false, REJECTED_SESSION_WEB_SERVICE);
+      if (dbSessionId != null) {
+        updateDBSession(dbSessionId, false, REJECTED_SESSION_WEB_SERVICE);
+      }
       log4j.warn("Cannot use WS, exceeded number of calls");
       throw new AuthenticationException("Exceeded maximum number of allowed calls to web services.");
     case EXPIRED:
-      updateDBSession(dbSessionId, false, REJECTED_SESSION_WEB_SERVICE);
+      if (dbSessionId != null) {
+        updateDBSession(dbSessionId, false, REJECTED_SESSION_WEB_SERVICE);
+      }
       log4j.warn("Cannot use WS, license expired");
       throw new AuthenticationException("Exceeded maximum number of allowed calls to web services.");
     case EXPIRED_MODULES:
-      updateDBSession(dbSessionId, false, REJECTED_SESSION_WEB_SERVICE);
+      if (dbSessionId != null) {
+        updateDBSession(dbSessionId, false, REJECTED_SESSION_WEB_SERVICE);
+      }
       log4j.warn("Cannot use WS, expired modules");
       throw new AuthenticationException("There are expired modules");
     }
@@ -310,8 +351,10 @@ public abstract class AuthenticationManager {
   public final void logout(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
 
-    VariablesBase vars = new VariablesBase(request);
-    vars.clearSession(true);
+    if (request.getSession(false) != null) {
+      VariablesBase vars = new VariablesBase(request);
+      vars.clearSession(true);
+    }
 
     doLogout(request, response);
   }
@@ -452,4 +495,14 @@ public abstract class AuthenticationManager {
     }
   }
 
+  /**
+   * To annotate a certain webservice/service as being stateless, i.e. not creating or keeping a
+   * http session on the server
+   * 
+   * @author mtaal
+   */
+  @Retention(RetentionPolicy.RUNTIME)
+  @Target(ElementType.TYPE)
+  public static @interface Stateless {
+  }
 }
