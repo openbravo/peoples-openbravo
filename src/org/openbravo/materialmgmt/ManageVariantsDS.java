@@ -36,16 +36,20 @@ import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
+import org.openbravo.client.kernel.reference.UIDefinition;
+import org.openbravo.client.kernel.reference.UIDefinitionController;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
+import org.openbravo.model.ad.domain.Reference;
 import org.openbravo.model.common.plm.Characteristic;
 import org.openbravo.model.common.plm.CharacteristicValue;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.common.plm.ProductCharacteristic;
 import org.openbravo.model.common.plm.ProductCharacteristicConf;
 import org.openbravo.model.common.plm.ProductCharacteristicValue;
+import org.openbravo.service.datasource.DataSourceProperty;
 import org.openbravo.service.datasource.ReadOnlyDataSourceService;
 import org.openbravo.service.json.JsonUtils;
 import org.slf4j.Logger;
@@ -56,6 +60,7 @@ public class ManageVariantsDS extends ReadOnlyDataSourceService {
   private static final Logger log = LoggerFactory.getLogger(ManageVariantsDS.class);
   private static final int searchKeyLength = getSearchKeyColumnLength();
   private static final String MANAGE_VARIANTS_TABLE_ID = "147D4D709FAC4AF0B611ABFED328FA12";
+  private static final String ID_REFERENCE_ID = "13";
 
   private List<String> selectedIds = new ArrayList<String>();
   private HashMap<String, List<CharacteristicValue>> selectedChValues = new HashMap<String, List<CharacteristicValue>>();
@@ -442,6 +447,19 @@ public class ManageVariantsDS extends ReadOnlyDataSourceService {
       prChConf = iterator.next();
       return prChConf;
     }
+  }
+
+  @Override
+  public List<DataSourceProperty> getDataSourceProperties(Map<String, Object> parameters) {
+    List<DataSourceProperty> dataSourceProperties = new ArrayList<DataSourceProperty>();
+    final DataSourceProperty dsProperty = new DataSourceProperty();
+    Reference idReference = OBDal.getInstance().get(Reference.class, ID_REFERENCE_ID);
+    UIDefinition uiDefinition = UIDefinitionController.getInstance().getUIDefinition(idReference);
+    dsProperty.setId(true);
+    dsProperty.setName("id");
+    dsProperty.setUIDefinition(uiDefinition);
+    dataSourceProperties.add(dsProperty);
+    return dataSourceProperties;
   }
 
 }
