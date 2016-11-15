@@ -711,12 +711,6 @@
     },
 
     preLogoutActions: function (finalCallback) {
-      if (OB.POS.hwserver !== undefined) {
-        OB.POS.hwserver.print(new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.GoodByeTemplate), {}, null, OB.DS.HWServer.DISPLAY);
-      }
-      if (!OB.MobileApp.model.attributes.permissions || !OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
-        this.cleanSessionInfo();
-      }
       var criteria = {},
           model;
       var me = this;
