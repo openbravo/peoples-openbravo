@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012 Openbravo S.L.U.
+ * Copyright (C) 2016 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -147,22 +147,6 @@ enyo.kind({
     // list all printers
     var printers = OB.POS.modelterminal.get('hardwareURL');
 
-    //    _identifier: "The other printer"
-    //      active: true
-    //      client: "39363B0921BB4293B48383844325E84C"
-    //      client$_identifier: "The White Valley Group"
-    //      creationDate: "2015-09-17T17:38:34+02:00"
-    //      hardwareURL: "http://localhost:8091"
-    //      hasPDFPrinter: true
-    //      hasReceiptPrinter: true
-    //      id: "8AE1BD1A859F451DB184C116901BE219"
-    //      name: "The other printer"
-    //      organization: "D270A5AC50874F8BA67A88EE977F8E3B"
-    //      organization$_identifier: "Vall Blanca Store"
-    //      pOSTerminalType: "BD39916225594B32A88983899CF05F72"
-    //      pOSTerminalType$_identifier: "VBS POS Terminal Type"
-    //      __proto__: Object
-    //      , 
     // Add Main URL
     var editline = this.printerscontainer.createComponent({
       kind: 'SelectPrintersLine',
