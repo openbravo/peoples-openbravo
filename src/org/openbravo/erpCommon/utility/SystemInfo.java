@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -72,8 +72,9 @@ import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.service.db.DalConnectionProvider;
 
 public class SystemInfo {
-
   private static final Logger log4j = Logger.getLogger(SystemInfo.class);
+  private static final String IN_CLUSTER_PROPERTY = "cluster";
+  private static final String CLUSTER = "cluster";
   private static Map<Item, String> systemInfo;
   private static Date firstLogin;
   private static Date lastLogin;
@@ -319,6 +320,12 @@ public class SystemInfo {
    * sorted in this way: loopbacks are sorted at the end, the rest of interfaces are sorted by name.
    */
   private final static String calculateMacIdentifier() {
+    boolean inCluster = OBPropertiesProvider.getInstance().getBooleanProperty(IN_CLUSTER_PROPERTY);
+    if (inCluster) {
+      // If running in clustering, mac cannot be calculated as it might be different for each node
+      return CLUSTER;
+    }
+
     List<NetworkInterface> interfaces = new ArrayList<NetworkInterface>();
     try {
       interfaces = Collections.list(NetworkInterface.getNetworkInterfaces());
