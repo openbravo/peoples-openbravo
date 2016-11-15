@@ -132,44 +132,7 @@
                   args.callback();
                 }
                 };
-            // Create dialog buttons
-            var dialogbuttons = [];
-            dialogbuttons.push({
-              label: OB.I18N.getLabel('OBPOS_LblRetry'),
-              isConfirmButton: true,
-              action: successfunc
-            });
-            if (OB.POS.modelterminal.hasPermission('OBPOS_retail.selectprinter') && _.any(OB.POS.modelterminal.get('hardwareURL'), function (printer) {
-              return printer.hasPDFPrinter;
-            })) {
-              // Show this button entry only if there are             
-              dialogbuttons.push({
-                name: 'selectAnotherPrinterButton',
-                label: OB.I18N.getLabel('OBPOS_SelectAnotherPrinter'),
-                action: function () {
-                  OB.MobileApp.view.$.containerWindow.getRoot().doShowPopup({
-                    popup: 'modalSelectPrinters',
-                    args: {
-                      title: OB.I18N.getLabel('OBPOS_SelectPDFPrintersTitle'),
-                      hasPrinterProperty: 'hasPDFPrinter',
-                      serverURLProperty: 'activepdfurl',
-                      serverURLSetter: 'setActivePDFURL',
-                      onSuccess: successfunc,
-                      onHide: hidefunc
-                    }
-                  });
-                  return true;
-                }
-              });
-            }
-            dialogbuttons.push({
-              label: OB.I18N.getLabel('OBMOBC_LblCancel')
-            });
-            // Display error message
-            OB.UTIL.showConfirmation.display(
-            OB.I18N.getLabel('OBPOS_MsgHardwareServerNotAvailable'), OB.I18N.getLabel('OBPOS_MsgPrintAgain', [OB.POS.hwserver.activeidentifier]), dialogbuttons, {
-              onHideFunction: hidefunc
-            });
+            OB.OBPOS.showSelectPrinterDialog(successfunc, hidefunc, null, true, 'OBPOS_MsgPDFPrintAgain');
           } else {
             // Success. Try to print the pending receipts.
             OB.Model.OfflinePrinter.printPendingJobs();
@@ -218,43 +181,7 @@
                         args.callback();
                       }
                       };
-                  // Create dialog buttons
-                  var dialogbuttons = [];
-                  dialogbuttons.push({
-                    label: OB.I18N.getLabel('OBPOS_LblRetry'),
-                    isConfirmButton: true,
-                    action: successfunc
-                  });
-                  if (OB.POS.modelterminal.hasPermission('OBPOS_retail.selectprinter') && _.any(OB.POS.modelterminal.get('hardwareURL'), function (printer) {
-                    return printer.hasPDFPrinter;
-                  })) {
-                    // Show this button entry only if there are 
-                    dialogbuttons.push({
-                      name: 'selectAnotherPrinterButton',
-                      label: OB.I18N.getLabel('OBPOS_SelectAnotherPrinter'),
-                      action: function () {
-                        OB.MobileApp.view.$.containerWindow.getRoot().doShowPopup({
-                          popup: 'modalSelectPrinters',
-                          args: {
-                            title: OB.I18N.getLabel('OBPOS_SelectPDFPrintersTitle'),
-                            hasPrinterProperty: 'hasPDFPrinter',
-                            serverURLProperty: 'activepdfurl',
-                            serverURLSetter: 'setActivePDFURL',
-                            onSuccess: successfunc,
-                            onHide: hidefunc
-                          }
-                        });
-                        return true;
-                      }
-                    });
-                  }
-                  dialogbuttons.push({
-                    label: OB.I18N.getLabel('OBMOBC_LblCancel')
-                  });
-                  // Display error message
-                  OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_MsgHardwareServerNotAvailable'), OB.I18N.getLabel('OBPOS_MsgPDFPrintAgain', [OB.POS.hwserver.activepdfidentifier]), dialogbuttons, {
-                    onHideFunction: hidefunc
-                  });
+                  OB.OBPOS.showSelectPrinterDialog(successfunc, hidefunc, null, true, 'OBPOS_MsgPDFPrintAgain');
                 } else {
                   i++;
                   if (i < filesArray.length) {
@@ -432,46 +359,7 @@
                     args.callback();
                   }
                   };
-              // Create dialog buttons
-              var dialogbuttons = [];
-              dialogbuttons.push({
-                label: OB.I18N.getLabel('OBPOS_LblRetry'),
-                isConfirmButton: true,
-                action: successfunc
-              });
-              if (OB.POS.modelterminal.hasPermission('OBPOS_retail.selectprinter') && _.any(OB.POS.modelterminal.get('hardwareURL'), function (printer) {
-                return printer.hasReceiptPrinter;
-              })) {
-                // Show this button entry only if there are 
-                dialogbuttons.push({
-                  name: 'selectAnotherPrinterButton',
-                  label: OB.I18N.getLabel('OBPOS_SelectAnotherPrinter'),
-                  action: function () {
-                    OB.MobileApp.view.$.containerWindow.getRoot().doShowPopup({
-                      popup: 'modalSelectPrinters',
-                      args: {
-                        title: OB.I18N.getLabel('OBPOS_SelectPrintersTitle'),
-                        hasPrinterProperty: 'hasReceiptPrinter',
-                        serverURLProperty: 'activeurl',
-                        serverURLSetter: 'setActiveURL',
-                        onSuccess: successfunc,
-                        onCancel: cancelfunc,
-                        onHide: hidefunc
-                      }
-                    });
-                    return true;
-                  }
-                });
-              }
-              dialogbuttons.push({
-                label: OB.I18N.getLabel('OBMOBC_LblCancel'),
-                action: cancelfunc
-              });
-              // Display error message
-              OB.UTIL.showConfirmation.display(
-              OB.I18N.getLabel('OBPOS_MsgHardwareServerNotAvailable'), OB.I18N.getLabel('OBPOS_MsgPrintAgain', [OB.POS.hwserver.activeidentifier]), dialogbuttons, {
-                onHideFunction: hidefunc
-              });
+              OB.OBPOS.showSelectPrinterDialog(successfunc, hidefunc, cancelfunc, false, 'OBPOS_MsgPrintAgain');
             } else {
               // Success. Try to print the pending receipts.
               OB.Model.OfflinePrinter.printPendingJobs();
@@ -519,44 +407,7 @@
                       args.callback();
                     }
                     };
-                // Create dialog buttons
-                var dialogbuttons = [];
-                dialogbuttons.push({
-                  label: OB.I18N.getLabel('OBPOS_LblRetry'),
-                  isConfirmButton: true,
-                  action: successfunc
-                });
-                if (OB.POS.modelterminal.hasPermission('OBPOS_retail.selectprinter') && _.any(OB.POS.modelterminal.get('hardwareURL'), function (printer) {
-                  return printer.hasReceiptPrinter;
-                })) {
-                  // Show this button entry only if there are                 
-                  dialogbuttons.push({
-                    name: 'selectAnotherPrinterButton',
-                    label: OB.I18N.getLabel('OBPOS_SelectAnotherPrinter'),
-                    action: function () {
-                      OB.MobileApp.view.$.containerWindow.getRoot().doShowPopup({
-                        popup: 'modalSelectPrinters',
-                        args: {
-                          title: OB.I18N.getLabel('OBPOS_SelectPrintersTitle'),
-                          hasPrinterProperty: 'hasReceiptPrinter',
-                          serverURLProperty: 'activeurl',
-                          serverURLSetter: 'setActiveURL',
-                          onSuccess: successfunc,
-                          onHide: hidefunc
-                        }
-                      });
-                      return true;
-                    }
-                  });
-                }
-                dialogbuttons.push({
-                  label: OB.I18N.getLabel('OBMOBC_LblCancel')
-                });
-                // Display error message
-                OB.UTIL.showConfirmation.display(
-                OB.I18N.getLabel('OBPOS_MsgHardwareServerNotAvailable'), OB.I18N.getLabel('OBPOS_MsgPrintAgain', [OB.POS.hwserver.activeidentifier]), dialogbuttons, {
-                  onHideFunction: hidefunc
-                });
+                OB.OBPOS.showSelectPrinterDialog(successfunc, hidefunc, null, false, 'OBPOS_MsgPrintAgain');
               } else {
                 // Success. Try to print the pending receipts.
                 OB.Model.OfflinePrinter.printPendingJobs();
@@ -621,6 +472,50 @@
         line: this.line
       }, null, OB.DS.HWServer.DISPLAY);
     }
+  };
+
+  OB.OBPOS = {};
+  OB.OBPOS.showSelectPrinterDialog = function (successfunc, hidefunc, cancelfunc, isPdf, msg) {
+    // Create dialog buttons
+    var dialogbuttons = [];
+    dialogbuttons.push({
+      label: OB.I18N.getLabel('OBPOS_LblRetry'),
+      isConfirmButton: true,
+      action: successfunc
+    });
+    if (OB.POS.modelterminal.hasPermission('OBPOS_retail.selectprinter') && _.any(OB.POS.modelterminal.get('hardwareURL'), function (printer) {
+      return isPdf ? printer.hasPDFPrinter : printer.hasReceiptPrinter;
+    })) {
+      // Show this button entry only if there are 
+      dialogbuttons.push({
+        name: 'selectAnotherPrinterButton',
+        label: OB.I18N.getLabel('OBPOS_SelectAnotherPrinter'),
+        action: function () {
+          OB.MobileApp.view.$.containerWindow.getRoot().doShowPopup({
+            popup: 'modalSelectPrinters',
+            args: {
+              title: isPdf ? OB.I18N.getLabel('OBPOS_SelectPDFPrintersTitle') : OB.I18N.getLabel('OBPOS_SelectPrintersTitle'),
+              hasPrinterProperty: isPdf ? 'hasPDFPrinter' : 'hasReceiptPrinter',
+              serverURLProperty: isPdf ? 'activepdfurl' : 'activeurl',
+              serverURLSetter: isPdf ? 'setActivePDFURL' : 'setActiveURL',
+              onSuccess: successfunc,
+              onCancel: cancelfunc,
+              onHide: hidefunc
+            }
+          });
+          return true;
+        }
+      });
+    }
+    dialogbuttons.push({
+      label: OB.I18N.getLabel('OBMOBC_LblCancel'),
+      action: cancelfunc
+    });
+    // Display error message
+    OB.UTIL.showConfirmation.display(
+    OB.I18N.getLabel('OBPOS_MsgHardwareServerNotAvailable'), OB.I18N.getLabel(msg, isPdf ? [OB.POS.hwserver.activepdfidentifier] : [OB.POS.hwserver.activeidentifier]), dialogbuttons, {
+      onHideFunction: hidefunc
+    });
   };
 
   // Public object definition

@@ -70,50 +70,7 @@
             }
             return true;
             };
-        // Create dialog buttons
-        var dialogbuttons = [];
-        dialogbuttons.push({
-          label: OB.I18N.getLabel('OBPOS_LblRetry'),
-          isConfirmButton: true,
-          action: successfunc
-        });
-        if (OB.POS.modelterminal.hasPermission('OBPOS_retail.selectprinter') && _.any(OB.POS.modelterminal.get('hardwareURL'), function (printer) {
-          return printer.hasReceiptPrinter;
-        })) {
-          // Show this button entry only if there are 
-          dialogbuttons.push({
-            name: 'selectAnotherPrinterButton',
-            label: OB.I18N.getLabel('OBPOS_SelectAnotherPrinter'),
-            action: function () {
-              OB.MobileApp.view.$.containerWindow.getRoot().doShowPopup({
-                popup: 'modalSelectPrinters',
-                args: {
-                  title: OB.I18N.getLabel('OBPOS_SelectPrintersTitle'),
-                  hasPrinterProperty: 'hasReceiptPrinter',
-                  serverURLProperty: 'activeurl',
-                  serverURLSetter: 'setActiveURL',
-                  onSuccess: successfunc,
-                  onCancel: cancelfunc,
-                  onHide: hidefunc
-                }
-              });
-              return true;
-            }
-          });
-        }
-        dialogbuttons.push({
-          label: OB.I18N.getLabel('OBMOBC_LblCancel'),
-          action: cancelfunc
-        });
-
-
-        OB.MobileApp.view.$.confirmationContainer.setAttribute('openedPopup', OB.I18N.getLabel('OBPOS_MsgPrintAgainCashUp'));
-
-        // Display error message
-        OB.UTIL.showConfirmation.display(
-        OB.I18N.getLabel('OBPOS_MsgHardwareServerNotAvailable'), OB.I18N.getLabel('OBPOS_MsgPrintAgainCashUp', [OB.POS.hwserver.activeidentifier]), dialogbuttons, {
-          onHideFunction: hidefunc
-        });
+        OB.OBPOS.showSelectPrinterDialog(successfunc, hidefunc, hidefunc, false, 'OBPOS_MsgPrintAgainCashUp');
       } else {
         if (OB.MobileApp.view.$.confirmationContainer.getCurrentPopup().header !== OB.I18N.getLabel('OBPOS_LblGoodjob')) {
           // Only display the good job message if there are no components displayed
