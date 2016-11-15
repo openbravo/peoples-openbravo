@@ -1113,6 +1113,9 @@ enyo.kind({
     onModalSelectPrinters: ''
   },
   i18nLabel: 'OBPOS_MenuSelectPrinter',
+  init: function (model) {
+    this.displayLogic();
+  },
   tap: function () {
     if (this.disabled) {
       return true;
@@ -1120,6 +1123,15 @@ enyo.kind({
     this.inherited(arguments); // Manual dropdown menu closure
     if (OB.MobileApp.model.hasPermission(this.permission)) {
       this.doModalSelectPrinters();
+    }
+  },
+  displayLogic: function () {
+    if (_.any(OB.POS.modelterminal.get('hardwareURL'), function (printer) {
+      return printer.hasReceiptPrinter;
+    })) {
+      this.show();
+    } else {
+      this.hide();
     }
   }
 });
@@ -1132,6 +1144,9 @@ enyo.kind({
     onModalSelectPDFPrinters: ''
   },
   i18nLabel: 'OBPOS_MenuSelectPDFPrinter',
+  init: function (model) {
+    this.displayLogic();
+  },
   tap: function () {
     if (this.disabled) {
       return true;
@@ -1139,6 +1154,15 @@ enyo.kind({
     this.inherited(arguments); // Manual dropdown menu closure
     if (OB.MobileApp.model.hasPermission(this.permission)) {
       this.doModalSelectPDFPrinters();
+    }
+  },
+  displayLogic: function () {
+    if (_.any(OB.POS.modelterminal.get('hardwareURL'), function (printer) {
+      return printer.hasPDFPrinter;
+    })) {
+      this.show();
+    } else {
+      this.hide();
     }
   }
 });
