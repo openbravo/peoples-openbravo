@@ -37,14 +37,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This class is used as a singleton to keep the value of some preferences in cache during the
- * application life cycle, avoiding the time spent to compute the preference value. The preference
- * values that can be cached by this class are those defined at System level.
- * 
- * This class it is also used by the
- * {@link org.openbravo.client.application.event.PreferenceEventHandler} class to detect changes in
- * the cached preferences values, and it that case it invalidates the stored value. This way the
- * next time it is requested, the current value will be retrieved from database again.
+ * This class is used to keep the value of some preferences in cache during the life cycle of a
+ * session, avoiding the time spent to compute the preference value. The preference values that can
+ * be cached by this class are those defined at System level.
  * 
  */
 @SessionScoped
