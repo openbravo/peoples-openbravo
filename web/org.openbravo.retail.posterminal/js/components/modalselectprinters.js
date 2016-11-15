@@ -18,19 +18,20 @@ enyo.kind({
   },
   components: [{
     name: 'line',
-    style: 'line-height: 23px; width: 100%; border-bottom: 1px solid #ccc;',
+    style: 'line-height: 23px; width: 100%; padding-left: 15px; border-bottom: 1px solid #ccc;',
     components: [{
-      style: 'float: left; width: 15%;',
       components: [{
         kind: 'OB.UI.RadioButton',
         name: 'selected',
+        style: 'float: left; padding-left: 60px; margin: 10px;',
+        components: [{
+          name: 'printer',
+          style: 'padding: 5px 0px 0px 0px; font-size: 125%;'
+        }],
         tap: function () {
           this.bubble('onSelectLine');
         }
       }]
-    }, {
-      style: 'float: left; width: 85%;  padding: 14px 0px  14px 0px;  color: #000; text-align: left;',
-      name: 'printer'
     }, {
       style: 'clear: both;'
     }]
