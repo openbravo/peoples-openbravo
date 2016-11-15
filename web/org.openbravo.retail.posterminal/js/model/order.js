@@ -4342,7 +4342,7 @@
           return currentPayment.paymentId === payment.reversedPaymentId;
         });
         reversalPayment.reversedPaymentId = payment.paymentId;
-        delete payment['reversedPaymentId'];
+        delete payment.reversedPaymentId;
       });
 
       // Call orderLoader plugings to adjust remote model to local model first
