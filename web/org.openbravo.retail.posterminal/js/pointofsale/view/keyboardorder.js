@@ -275,16 +275,10 @@ enyo.kind({
     this.addCommand('line:price', {
       permission: 'OBPOS_order.changePrice',
       action: function (keyboard, txt) {
-        if (!me.validateReceipt(keyboard, false)) {
+        if (!me.validateReceipt(keyboard, true)) {
           return true;
         }
         if (!keyboard.line) {
-          return true;
-        }
-        if (keyboard.line.get('product').get('isEditablePrice') === false) {
-          me.doShowPopup({
-            popup: 'modalNotEditableLine'
-          });
           return true;
         }
         if (keyboard.line) {
