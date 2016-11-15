@@ -29,13 +29,13 @@ OB.DS.HWResource.prototype.getData = function (callback) {
 OB.DS.HWServer = function (urllist, url, scaleurl) {
   this.urllist = urllist;
   this.mainurl = url;
+  this.url = this.mainurl; // keep backward compatibility
   this.scaleurl = scaleurl;
 
   // Remove suffix if needed
   if (this.mainurl && this.mainurl.indexOf('/printer', this.mainurl.length - 8) !== -1) { // endswith '/printer'
     this.mainurl = this.mainurl.substring(0, this.mainurl.length - 8);
   }
-  this.url = this.mainurl; // keep backward compatibility
   // load activeurl from OB.UTIL.localStorage
   this.setActiveURL(OB.UTIL.localStorage.getItem('hw_activeurl'));
   //load activepdfurl from OB.UTIL.localStorage
