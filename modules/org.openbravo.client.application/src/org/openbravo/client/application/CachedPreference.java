@@ -135,7 +135,10 @@ public class CachedPreference implements Serializable {
    *          String with the value assigned to the preference
    */
   public synchronized void setPreferenceValue(String propertyName, String preferenceValue) {
-    this.cachedPreference.put(propertyName, preferenceValue);
+    if (cachedPreference == null) {
+      cachedPreference = new HashMap<String, String>();
+    }
+    cachedPreference.put(propertyName, preferenceValue);
   }
 
   /**
@@ -146,7 +149,9 @@ public class CachedPreference implements Serializable {
    *          The name of the property related to the preference
    */
   public synchronized void invalidatePreferenceValue(String propertyName) {
-    this.cachedPreference.remove(propertyName);
+    if (cachedPreference != null) {
+      cachedPreference.remove(propertyName);
+    }
   }
 
   /**
