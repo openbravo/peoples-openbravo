@@ -24,7 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.SessionScoped;
 
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
@@ -45,12 +45,8 @@ import org.slf4j.LoggerFactory;
  * the cached preferences values, and it that case it invalidates the stored value. This way the
  * next time it is requested, the current value will be retrieved from database again.
  * 
- * This mechanism for automatic refresh the preference value, only works on environments with a
- * single JVM. In case of Tomcat clustering environments (multiple JVM) it will be necessary to
- * restart Tomcat to retrieve the new value of the preference in every JVM.
- * 
  */
-@ApplicationScoped
+@SessionScoped
 public class CachedPreference {
   public static final String ALLOW_UNPAGED_DS_MANUAL_REQUEST = "OBJSON_AllowUnpagedDatasourceManualRequest";
   public static final String ALLOW_UNSECURED_DS_REQUEST = "OBSERDS_AllowUnsecuredDatasourceRequest";
