@@ -136,13 +136,15 @@ enyo.kind({
       return true;
     }
     this.doHideThisPopup();
-    var modalDlg = this.owner.owner.owner.owner.owner.owner;
+    var modalDlg = this.owner.owner.owner.owner.owner.owner,
+        navigationPath = OB.UTIL.BusinessPartnerSelector.cloneAndPush(modalDlg.args.navigationPath, 'modalcustomer');
     this.doShowPopup({
       popup: 'customerCreateAndEdit',
       args: {
         businessPartner: null,
         target: modalDlg.target,
-        navigationPath: OB.UTIL.BusinessPartnerSelector.cloneAndPush(modalDlg.args.navigationPath, 'modalcustomer')
+        navigationPath: OB.UTIL.BusinessPartnerSelector.cloneAndPush(navigationPath, 'customerView'),
+        cancelNavigationPath: navigationPath
       }
     });
   },
@@ -235,7 +237,6 @@ enyo.kind({
       silent: true
     });
     var dialog = this.owner.owner.dialog;
-    dialog.owner.owner.clearResult = false;
     OB.Dal.get(OB.Model.BusinessPartner, bpartner.get('bpartnerId'), function (bp) {
       dialog.bubble('onShowPopup', {
         popup: 'customerView',
@@ -263,7 +264,6 @@ enyo.kind({
       silent: true
     });
     var dialog = this.owner.owner.dialog;
-    dialog.owner.owner.clearResult = false;
     OB.Dal.get(OB.Model.BusinessPartner, bpartner.get('bpartnerId'), function (bp) {
       dialog.bubble('onShowPopup', {
         popup: 'customerCreateAndEdit',
@@ -288,7 +288,6 @@ enyo.kind({
   i18NLabel: 'OBPOS_BPAddress',
   selectItem: function (bpartner) {
     var dialog = this.owner.owner.dialog;
-    dialog.owner.owner.clearResult = true;
     bpartner.set('ignoreSetBP', true, {
       silent: true
     });
@@ -766,6 +765,8 @@ enyo.kind({
       } else {
         this.$.body.$.listBpsSelector.$.stBPAssignToReceipt.bPartner = null;
       }
+    } else if (this.args.makeSearch) {
+      this.$.body.$.listBpsSelector.$.stBPAssignToReceipt.$.theader.$.modalBpSelectorScrollableHeader.$.filterSelector.searchAction();
     }
     return true;
   },

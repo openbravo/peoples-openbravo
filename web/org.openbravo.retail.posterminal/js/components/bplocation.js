@@ -206,13 +206,15 @@ enyo.kind({
     }
 
     function successCallbackBPs(dataBps) {
-      var modalDlg = me.owner.owner.owner.owner.owner.owner;
+      var modalDlg = me.owner.owner.owner.owner.owner.owner,
+          navigationPath = OB.UTIL.BusinessPartnerSelector.cloneAndPush(modalDlg.args.navigationPath, 'modalcustomeraddress');
       me.doShowPopup({
         popup: 'customerAddrCreateAndEdit',
         args: {
           businessPartner: dataBps,
           target: modalDlg.target,
-          navigationPath: OB.UTIL.BusinessPartnerSelector.cloneAndPush(modalDlg.args.navigationPath, 'modalcustomeraddress')
+          navigationPath: OB.UTIL.BusinessPartnerSelector.cloneAndPush(navigationPath, 'customerAddressView'),
+          cancelNavigationPath: navigationPath
         }
       });
     }
@@ -848,9 +850,9 @@ enyo.kind({
 
 /*Modal definition*/
 enyo.kind({
+  kind: 'OB.UI.Modal',
   name: 'OB.UI.ModalBPLocation',
   topPosition: '125px',
-  kind: 'OB.UI.Modal',
   events: {
     onShowPopup: ''
   },
@@ -886,7 +888,8 @@ enyo.kind({
         args: {
           businessPartner: this.args.businessPartner,
           target: this.args.target,
-          navigationPath: OB.UTIL.BusinessPartnerSelector.cloneAndPop(this.args.navigationPath)
+          navigationPath: OB.UTIL.BusinessPartnerSelector.cloneAndPop(this.args.navigationPath),
+          makeSearch: this.args.makeSearch
         }
       });
     }

@@ -75,6 +75,7 @@ enyo.kind({
     }]
   }],
   itemSelected: function (sender, event) {
+    this.owner.contextMenuItemSelected = true;
     event.originator.selectItem(this.model);
     return true;
   }

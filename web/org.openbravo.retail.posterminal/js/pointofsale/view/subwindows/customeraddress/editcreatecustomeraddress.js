@@ -45,13 +45,15 @@ enyo.kind({
     }
   },
   executeOnHide: function () {
+    var navigationPath = this.customerAddr || !this.args.cancelNavigationPath ? this.args.navigationPath : this.args.cancelNavigationPath;
     this.doShowPopup({
-      popup: this.args.navigationPath[this.args.navigationPath.length - 1],
+      popup: navigationPath[navigationPath.length - 1],
       args: {
         businessPartner: this.args.businessPartner,
         bPLocation: this.customerAddr ? this.customerAddr : this.args.bPLocation,
         target: this.args.target,
-        navigationPath: OB.UTIL.BusinessPartnerSelector.cloneAndPop(this.args.navigationPath)
+        navigationPath: OB.UTIL.BusinessPartnerSelector.cloneAndPop(navigationPath),
+        makeSearch: this.customerAddr !== undefined
       }
     });
   },

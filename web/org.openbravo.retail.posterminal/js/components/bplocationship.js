@@ -150,9 +150,9 @@ enyo.kind({
 
 /*Modal definiton*/
 enyo.kind({
+  kind: 'OB.UI.Modal',
   name: 'OB.UI.ModalBPLocationShip',
   topPosition: '125px',
-  kind: 'OB.UI.Modal',
   executeOnShow: function () {
     if (_.isUndefined(this.args.visibilityButtons)) {
       this.args.visibilityButtons = true;
