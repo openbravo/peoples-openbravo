@@ -54,7 +54,7 @@ OB.DS.HWServer.prototype.setActiveURL = function (url) {
   // validate urls
   if (this.urllist) { // Check only in the case urllist is a valid to prevent wrong initializations
     var validprinter = _.find(this.urllist, function (item) {
-      return item.active && item.hasReceiptPrinter && item.hardwareURL === this.activeurl;
+      return item.hasReceiptPrinter && item.hardwareURL === this.activeurl;
     }, this);
     if (validprinter) {
       this.activeidentifier = validprinter._identifier;
@@ -82,7 +82,7 @@ OB.DS.HWServer.prototype.setActivePDFURL = function (url) {
   // validate urls
   if (this.urllist) { // Check only in the case urllist is a valid to prevent wrong initializations
     var validprinter = _.find(this.urllist, function (item) {
-      return item.active && item.hasPDFPrinter && item.hardwareURL === this.activepdfurl;
+      return item.hasPDFPrinter && item.hardwareURL === this.activepdfurl;
     }, this);
     if (validprinter) {
       this.activepdfidentifier = validprinter._identifier;

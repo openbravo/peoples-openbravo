@@ -160,7 +160,7 @@ enyo.kind({
 
     // Add the rest of URLs
     _.each(printers, function (printer) {
-      if (printer.active && printer[this.args.hasPrinterProperty]) {
+      if (printer[this.args.hasPrinterProperty]) {
         this.printerscontainer.createComponent({
           kind: 'SelectPrintersLine',
           name: 'printerLine' + printer.id,

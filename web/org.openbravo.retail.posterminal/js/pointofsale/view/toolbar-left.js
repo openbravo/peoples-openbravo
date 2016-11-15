@@ -648,7 +648,7 @@ enyo.kind({
     });
 
     if (_.any(OB.POS.modelterminal.get('hardwareURL'), function (printer) {
-      return printer.active && printer.hasReceiptPrinter;
+      return printer.hasReceiptPrinter;
     })) {
       // Show this menu entry only if there are 
       this.menuEntries.push({
@@ -657,7 +657,7 @@ enyo.kind({
     }
 
     if (_.any(OB.POS.modelterminal.get('hardwareURL'), function (printer) {
-      return printer.active && printer.hasPDFPrinter;
+      return printer.hasPDFPrinter;
     })) {
       // Show this menu entry only if there are 
       this.menuEntries.push({

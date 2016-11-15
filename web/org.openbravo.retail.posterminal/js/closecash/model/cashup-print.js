@@ -78,7 +78,7 @@
           action: successfunc
         });
         if (OB.POS.modelterminal.hasPermission('OBPOS_retail.selectprinter') && _.any(OB.POS.modelterminal.get('hardwareURL'), function (printer) {
-          return printer.active && printer.hasReceiptPrinter;
+          return printer.hasReceiptPrinter;
         })) {
           // Show this button entry only if there are 
           dialogbuttons.push({
