@@ -270,7 +270,7 @@ enyo.kind({
 enyo.kind({
   name: 'OB.OBPOSCashMgmt.UI.ListDepositsDrops',
   components: [{
-    style: 'overflow:auto; height: 400px; margin: 5px; background-color: white;',
+    style: 'overflow:auto; height: 612px; margin: 5px; background-color: white;',
     components: [{
       style: 'background-color: #ffffff; color: black; padding: 5px;',
       components: [{

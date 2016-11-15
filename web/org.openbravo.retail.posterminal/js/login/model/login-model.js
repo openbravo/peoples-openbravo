@@ -136,7 +136,7 @@
             if (data.exception) {
               handleError(data);
             } else if (data[0]) {
-              // load the OB.MobileApp.model
+              // load the OB.MobileApp.model              
               for (i = 0, max = data.length; i < max; i++) {
                 if (Object.keys(data[i])[0] === "businesspartner") {
                   terminalModel.set(Object.keys(data[i])[0], data[i][Object.keys(data[i])[0]].id);
@@ -326,7 +326,7 @@
           'isbeingprocessed': 'N'
         },
         getIdentifier: function (model) {
-          return model.get('type') + ': ' + model.get('user') + ' - ' + model.get('time');
+          return model.type + ': ' + model.user + ' - ' + OB.I18N.formatDateISO(new Date(model.creationDate));
         }
       });
 
