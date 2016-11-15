@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, $, Backbone, _, enyo, Audio, setTimeout, setInterval, clearTimeout, clearInterval, Promise, localStorage */
+/*global OB, $, Backbone, _, enyo, Audio, setTimeout, setInterval, clearTimeout, clearInterval, Promise */
 
 // HWServer: TODO: this should be implemented in HW Manager module
 OB.DS.HWResource = function (res) {
@@ -36,10 +36,10 @@ OB.DS.HWServer = function (urllist, url, scaleurl) {
     this.mainurl = this.mainurl.substring(0, this.mainurl.length - 8);
   }
   this.url = this.mainurl; // keep backward compatibility
-  // load activeurl from localStorage
-  this.setActiveURL(localStorage.getItem('hw_activeurl'));
-  //load activepdfurl from localStorage
-  this.setActivePDFURL(localStorage.getItem('hw_activepdfurl'));
+  // load activeurl from OB.UTIL.localStorage
+  this.setActiveURL(OB.UTIL.localStorage.getItem('hw_activeurl'));
+  //load activepdfurl from OB.UTIL.localStorage
+  this.setActivePDFURL(OB.UTIL.localStorage.getItem('hw_activepdfurl'));
 };
 
 OB.DS.HWServer.PRINTER = 0;
@@ -66,11 +66,11 @@ OB.DS.HWServer.prototype.setActiveURL = function (url) {
 
   // save
   if (this.activeurl) {
-    localStorage.setItem('hw_activeurl', this.activeurl);
-    localStorage.setItem('hw_activeidentifier', this.activeidentifier);
+    OB.UTIL.localStorage.setItem('hw_activeurl', this.activeurl);
+    OB.UTIL.localStorage.setItem('hw_activeidentifier', this.activeidentifier);
   } else {
-    localStorage.removeItem('hw_activeurl');
-    localStorage.removeItem('hw_activeidentifier');
+    OB.UTIL.localStorage.removeItem('hw_activeurl');
+    OB.UTIL.localStorage.removeItem('hw_activeidentifier');
   }
 };
 
@@ -94,11 +94,11 @@ OB.DS.HWServer.prototype.setActivePDFURL = function (url) {
 
   // save
   if (this.activepdfurl) {
-    localStorage.setItem('hw_activepdfurl', this.activepdfurl);
-    localStorage.setItem('hw_activepdfidentifier', this.activepdfidentifier);
+    OB.UTIL.localStorage.setItem('hw_activepdfurl', this.activepdfurl);
+    OB.UTIL.localStorage.setItem('hw_activepdfidentifier', this.activepdfidentifier);
   } else {
-    localStorage.removeItem('hw_activepdfurl');
-    localStorage.removeItem('hw_activepdfidentifier');
+    OB.UTIL.localStorage.removeItem('hw_activepdfurl');
+    OB.UTIL.localStorage.removeItem('hw_activepdfidentifier');
   }
 };
 
