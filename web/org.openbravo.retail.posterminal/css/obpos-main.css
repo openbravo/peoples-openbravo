@@ -376,23 +376,6 @@ button.btnbp:disabled {
   background-position-y: 0px;	
 }
 
-.listcontextmenu-icon {
-  background-image: url('./../../org.openbravo.retail.posterminal/img/iconContextMenu.png');
-  background-repeat: no-repeat;
-  float: right; 
-  width: 40px; 
-  height: 40px; 
-  cursor: pointer;
-}
-.listcontextmenu-icon:hover {
-  background-image: url('./../../org.openbravo.retail.posterminal/img/iconContextMenu_over.png');
-  background-repeat: no-repeat;
-}
-.listcontextmenu-icon:active {
-  background-image: url('./../../org.openbravo.retail.posterminal/img/iconContextMenu_pressed.png');
-  background-repeat: no-repeat;
-} 
-
 .iconRemove {
   width: 30px;
   height: 30px;
