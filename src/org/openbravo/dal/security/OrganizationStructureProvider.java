@@ -413,7 +413,7 @@ public class OrganizationStructureProvider implements OBNotSingleton {
   /*
    * Returns the legal entities of the selected client.
    */
-  public List<Organization> getLegalEntitiesListForSelectedClient(String clientId) {
+  public List<Organization> getLegalEntitiesListForSelectedClient(String paramClientId) {
     StringBuffer where = new StringBuffer();
     where.append(" as org");
     where.append(" join org." + Organization.PROPERTY_ORGANIZATIONTYPE + " as orgType");
@@ -423,7 +423,7 @@ public class OrganizationStructureProvider implements OBNotSingleton {
         where.toString());
     orgQry.setFilterOnReadableClients(false);
     orgQry.setFilterOnReadableOrganization(false);
-    orgQry.setNamedParameter("client", clientId);
+    orgQry.setNamedParameter("client", paramClientId);
     return orgQry.list();
   }
 
