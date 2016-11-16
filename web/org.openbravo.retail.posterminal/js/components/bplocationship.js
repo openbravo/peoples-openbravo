@@ -72,12 +72,18 @@ enyo.kind({
         me.bpsList.reset();
       }
     }
+
+    var operator = OB.Dal.CONTAINS;
+    if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
+      operator = OB.MobileApp.model.hasPermission('OBPOS_remote.customer_usesContains', true) ? OB.Dal.CONTAINS : OB.Dal.STARTSWITH;
+    }
     criteria.name = {
-      operator: OB.Dal.CONTAINS,
+      operator: operator,
       value: filter
     };
     criteria.bpartner = this.bPartner.get('id');
     criteria.isShipTo = true;
+
     if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
       var filterIdentifier = {
         columns: ['_filter'],
