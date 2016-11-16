@@ -54,40 +54,36 @@ public class BusinessPartner extends ProcessHQLQuery {
     final String operator = lastUpdated == null ? " AND " : " OR ";
     final HQLPropertyList regularBusinessPartnerHQLProperties = ModelExtensionUtils
         .getPropertyExtensions(extensions);
-    final String hql = "SELECT "
-        + regularBusinessPartnerHQLProperties.getHqlSelect() //
-        + "FROM BusinessPartnerLocation AS bpl "
-        + "join bpl.businessPartner AS bp "
-        + "left outer join bp.aDUserList AS ulist "
-        + "join bp.priceList AS plist "
-        + "WHERE $filtersCriteria AND "
+    final String hql = "SELECT " + regularBusinessPartnerHQLProperties.getHqlSelect() //
+        + "FROM BusinessPartnerLocation AS bpl " //
+        + "join bpl.businessPartner AS bp " //
+        + "join bp.priceList AS plist " //
+        + "left outer join bp.aDUserList AS ulist " + "join bp.businessPartnerLocationList AS bpsl " //
+        + "WHERE $filtersCriteria AND " //
         + "bp.customer = true AND "
-        + "bpl.$readableSimpleClientCriteria AND "
-        + "bpl.$naturalOrgCriteria AND "
-        + "(bpl.$incrementalUpdateCriteria"
-        + operator
-        + "bp.$incrementalUpdateCriteria) "
-        + " and bpl.id in (select max(bpls.id) as bpLocId from BusinessPartnerLocation AS bpls where bpls.active=true and bpls.businessPartner.id=bp.id and bpls.$readableSimpleClientCriteria AND "
-        + " bpls.$naturalOrgCriteria group by bpls.businessPartner.id)"
-        + " and (not exists (select 1 from ADUser usr where usr.businessPartner = bp)) "
-        + " ORDER BY bp.name";
-    final String hql2 = "SELECT"
-        + regularBusinessPartnerHQLProperties.getHqlSelect() //
-        + "FROM BusinessPartnerLocation AS bpl "
-        + "join bpl.businessPartner AS bp "
-        + "left outer join bp.aDUserList AS ulist "
-        + "join bp.priceList AS plist "
-        + "WHERE $filtersCriteria AND "
+        + "bpsl.id in (select max(bpls.id) as bpLocId from BusinessPartnerLocation AS bpls where bpls.active=true AND bpls.shipToAddress = true and bpls.businessPartner.id=bp.id and bpls.$readableSimpleClientCriteria AND "
+        + "bpls.$naturalOrgCriteria) AND " //
+        + "bpl.$readableSimpleClientCriteria AND " + "bpl.$naturalOrgCriteria AND "
+        + "(bpl.$incrementalUpdateCriteria" + operator + "bp.$incrementalUpdateCriteria) AND "
+        + "bpl.id in (select max(bpls.id) as bpLocId from BusinessPartnerLocation AS bpls where bpls.active=true and bpls.invoiceToAddress = true and bpls.businessPartner.id=bp.id and bpls.$readableSimpleClientCriteria AND "
+        + "bpls.$naturalOrgCriteria) AND "
+        + "(not exists (select 1 from ADUser usr where usr.businessPartner = bp)) "
+        + "ORDER BY bp.name";
+    final String hql2 = "SELECT" + regularBusinessPartnerHQLProperties.getHqlSelect() //
+        + "FROM BusinessPartnerLocation AS bpl " //
+        + "join bpl.businessPartner AS bp " //
+        + "join bp.priceList AS plist " //
+        + "left outer join bp.aDUserList AS ulist " + "join bp.businessPartnerLocationList AS bpsl " //
+        + "WHERE $filtersCriteria AND " //
         + "bp.customer = true AND "
-        + "bpl.$readableSimpleClientCriteria AND "
-        + "bpl.$naturalOrgCriteria AND "
-        + "(bpl.$incrementalUpdateCriteria"
-        + operator
-        + "bp.$incrementalUpdateCriteria) "
-        + " and bpl.id in (select max(bpls.id) as bpLocId from BusinessPartnerLocation AS bpls where bpls.active=true and bpls.businessPartner.id=bp.id and bpls.$readableSimpleClientCriteria AND "
-        + " bpls.$naturalOrgCriteria group by bpls.businessPartner.id)"
-        + " and (ulist.id in (select max(ulist2.id) from ADUser as ulist2 where ulist2.businessPartner=bp group by ulist2.businessPartner))"
-        + " ORDER BY bp.name";
+        + "bpsl.id in (select max(bpls.id) as bpLocId from BusinessPartnerLocation AS bpls where bpls.active=true AND bpls.shipToAddress = true and bpls.businessPartner.id=bp.id and bpls.$readableSimpleClientCriteria AND "
+        + "bpls.$naturalOrgCriteria) AND " //
+        + "bpl.$readableSimpleClientCriteria AND " + "bpl.$naturalOrgCriteria AND " //
+        + "(bpl.$incrementalUpdateCriteria" + operator + "bp.$incrementalUpdateCriteria) AND "
+        + "bpl.id in (select max(bpls.id) as bpLocId from BusinessPartnerLocation AS bpls where bpls.active=true and bpls.invoiceToAddress = true and bpls.businessPartner.id=bp.id and bpls.$readableSimpleClientCriteria AND "
+        + "bpls.$naturalOrgCriteria) AND "
+        + "(ulist.id = (select max(ulist2.id) from ADUser as ulist2 where ulist2.businessPartner=bp)) "
+        + "ORDER BY bp.name";
     return Arrays.asList(new String[] { hql, hql2 });
   }
 

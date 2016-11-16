@@ -37,24 +37,12 @@ public class BusinessPartnerProperties extends ModelExtension {
         add(new HQLProperty("bp.paymentMethod.id", "paymentMethod"));
         add(new HQLProperty("bp.paymentTerms.id", "paymentTerms"));
         add(new HQLProperty("bp.invoiceTerms", "invoiceTerms"));
+        add(new HQLProperty("bpl.id", "locId"));
+        add(new HQLProperty("bpsl.id", "shipLocId"));
+        add(new HQLProperty("bpl.locationAddress.addressLine1", "locName"));
         add(new HQLProperty(
-            "(select max(bpls.id) as bpLocId from BusinessPartnerLocation AS bpls where bpls.active=true and bpls.businessPartner.id=bp.id and bpls.invoiceToAddress = true "
-                + " group by bpls.businessPartner.id)", "locId"));
-        add(new HQLProperty(
-            "(select max(bpls.id) as bpLocId from BusinessPartnerLocation AS bpls where bpls.active=true and bpls.businessPartner.id=bp.id and bpls.shipToAddress = true "
-                + " group by bpls.businessPartner.id)", "shipLocId"));
-        add(new HQLProperty(
-            "(select COALESCE(invbpls.locationAddress.addressLine1, invbpls.locationAddress.addressLine2, invbpls.locationAddress.postalCode, invbpls.locationAddress.cityName) "
-                + "from BusinessPartnerLocation AS invbpls "
-                + "where invbpls.id = (select max(bpls.id) as bpLocId from BusinessPartnerLocation AS bpls "
-                + "where bpls.active=true and bpls.businessPartner.id=bp.id and bpls.invoiceToAddress = true "
-                + " group by bpls.businessPartner.id))", "locName"));
-        add(new HQLProperty(
-            "(select COALESCE(locbpls.locationAddress.addressLine1, locbpls.locationAddress.addressLine2, locbpls.locationAddress.postalCode, locbpls.locationAddress.cityName) "
-                + "from BusinessPartnerLocation AS locbpls "
-                + "where locbpls.id = (select max(bpls.id) as bpLocId from BusinessPartnerLocation AS bpls "
-                + "where bpls.active=true and bpls.businessPartner.id=bp.id and bpls.shipToAddress = true "
-                + " group by bpls.businessPartner.id))", "shipLocName"));
+            "coalesce(bpsl.locationAddress.addressLine1, bpsl.locationAddress.addressLine2, bpsl.locationAddress.postalCode, bpsl.locationAddress.cityName)",
+            "shipLocName"));
         add(new HQLProperty("ulist.email", "email"));
         add(new HQLProperty("ulist.id", "contactId"));
         add(new HQLProperty("ulist.phone", "phone"));
@@ -62,42 +50,12 @@ public class BusinessPartnerProperties extends ModelExtension {
         add(new HQLProperty("ulist.lastName", "lastName"));
         add(new HQLProperty("plist.priceIncludesTax", "priceIncludesTax"));
         add(new HQLProperty("plist.name", "priceListName"));
-        add(new HQLProperty(
-            "(select invbpls.locationAddress.cityName "
-                + "from BusinessPartnerLocation AS invbpls "
-                + "where invbpls.id = (select max(bpls.id) as bpLocId from BusinessPartnerLocation AS bpls "
-                + "where bpls.active=true and bpls.businessPartner.id=bp.id and bpls.invoiceToAddress = true "
-                + " group by bpls.businessPartner.id))", "cityName"));
-        add(new HQLProperty(
-            "(select locbpls.locationAddress.cityName "
-                + "from BusinessPartnerLocation AS locbpls "
-                + "where locbpls.id = (select max(bpls.id) as bpLocId from BusinessPartnerLocation AS bpls "
-                + "where bpls.active=true and bpls.businessPartner.id=bp.id and bpls.shipToAddress = true "
-                + " group by bpls.businessPartner.id))", "shipCityName"));
-        add(new HQLProperty(
-            "(select invbpls.locationAddress.postalCode "
-                + "from BusinessPartnerLocation AS invbpls "
-                + "where invbpls.id = (select max(bpls.id) as bpLocId from BusinessPartnerLocation AS bpls "
-                + "where bpls.active=true and bpls.businessPartner.id=bp.id and bpls.invoiceToAddress = true "
-                + " group by bpls.businessPartner.id))", "postalCode"));
-        add(new HQLProperty(
-            "(select locbpls.locationAddress.postalCode "
-                + "from BusinessPartnerLocation AS locbpls "
-                + "where locbpls.id = (select max(bpls.id) as bpLocId from BusinessPartnerLocation AS bpls "
-                + "where bpls.active=true and bpls.businessPartner.id=bp.id and bpls.shipToAddress = true "
-                + " group by bpls.businessPartner.id))", "shipPostalCode"));
-        add(new HQLProperty(
-            "(select locbpls.locationAddress.region.id "
-                + "from BusinessPartnerLocation AS locbpls "
-                + "where locbpls.id = (select max(bpls.id) as bpLocId from BusinessPartnerLocation AS bpls "
-                + "where bpls.active=true and bpls.businessPartner.id=bp.id and bpls.shipToAddress = true "
-                + " group by bpls.businessPartner.id))", "shipRegionId"));
-        add(new HQLProperty(
-            "(select locbpls.locationAddress.country.id "
-                + "from BusinessPartnerLocation AS locbpls "
-                + "where locbpls.id = (select max(bpls.id) as bpLocId from BusinessPartnerLocation AS bpls "
-                + "where bpls.active=true and bpls.businessPartner.id=bp.id and bpls.shipToAddress = true "
-                + " group by bpls.businessPartner.id))", "shipCountryId"));
+        add(new HQLProperty("bpl.locationAddress.cityName", "cityName"));
+        add(new HQLProperty("bpsl.locationAddress.cityName", "shipCityName"));
+        add(new HQLProperty("bpl.locationAddress.postalCode", "postalCode"));
+        add(new HQLProperty("bpsl.locationAddress.postalCode", "shipPostalCode"));
+        add(new HQLProperty("bpsl.locationAddress.region.id", "shipRegionId"));
+        add(new HQLProperty("bpl.locationAddress.country.id", "shipCountryId"));
         add(new HQLProperty("bpl.locationAddress.country.name", "countryName"));
         add(new HQLProperty("bp.businessPartnerCategory.id", "businessPartnerCategory"));
         add(new HQLProperty("bp.businessPartnerCategory.name", "businessPartnerCategory_name"));
