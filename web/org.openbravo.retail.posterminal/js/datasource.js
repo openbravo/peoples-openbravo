@@ -46,6 +46,12 @@ OB.DS.HWServer.PRINTER = 0;
 OB.DS.HWServer.DISPLAY = 1;
 OB.DS.HWServer.DRAWER = 2;
 
+OB.DS.HWServer.prototype.showSelected = function () {
+  OB.UTIL.showAlert.display(OB.I18N.getLabel('OBPOS_SelectedReceiptPrinter', [this.activeidentifier]), OB.I18N.getLabel('OBMOBC_LblSuccess'), 'alert-success', false, 'OBPOS_SelectedReceiptPrinter');
+  OB.UTIL.showAlert.display(OB.I18N.getLabel('OBPOS_SelectedPDFPrinter', [this.activepdfidentifier]), OB.I18N.getLabel('OBMOBC_LblSuccess'), 'alert-success', false, 'OBPOS_SelectedPDFPrinter');
+};
+
+
 OB.DS.HWServer.prototype.setActiveURL = function (url) {
 
   // validate urls

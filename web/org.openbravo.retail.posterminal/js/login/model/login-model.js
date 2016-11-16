@@ -670,6 +670,7 @@
             return;
           }
           OB.MobileApp.model.loadModels(null, true);
+          OB.POS.hwserver.showSelected(); // Show the selected printers
         });
       }
 
