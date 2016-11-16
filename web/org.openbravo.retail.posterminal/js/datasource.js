@@ -48,20 +48,21 @@ OB.DS.HWServer.DRAWER = 2;
 
 OB.DS.HWServer.prototype.setActiveURL = function (url) {
 
-  // assign the active url
-  this.activeurl = url;
-
   // validate urls
   if (this.urllist) { // Check only in the case urllist is a valid to prevent wrong initializations
     var validprinter = _.find(this.urllist, function (item) {
-      return item.hasReceiptPrinter && item.hardwareURL === this.activeurl;
+      return item.hasReceiptPrinter && item.hardwareURL === url;
     }, this);
     if (validprinter) {
+      this.activeurl = validprinter.hardwareURL;
       this.activeidentifier = validprinter._identifier;
     } else {
       this.activeurl = this.mainurl;
       this.activeidentifier = OB.I18N.getLabel('OBPOS_MainPrinter');
     }
+  } else {
+    this.activeurl = this.mainurl;
+    this.activeidentifier = OB.I18N.getLabel('OBPOS_MainPrinter');
   }
 
   // save
@@ -76,20 +77,21 @@ OB.DS.HWServer.prototype.setActiveURL = function (url) {
 
 OB.DS.HWServer.prototype.setActivePDFURL = function (url) {
 
-  // assign the active PDF url
-  this.activepdfurl = url;
-
   // validate urls
   if (this.urllist) { // Check only in the case urllist is a valid to prevent wrong initializations
     var validprinter = _.find(this.urllist, function (item) {
-      return item.hasPDFPrinter && item.hardwareURL === this.activepdfurl;
+      return item.hasPDFPrinter && item.hardwareURL === url;
     }, this);
     if (validprinter) {
+      this.activepdfurl = validprinter.hardwareURL;
       this.activepdfidentifier = validprinter._identifier;
     } else {
       this.activepdfurl = this.mainurl;
       this.activepdfidentifier = OB.I18N.getLabel('OBPOS_MainPrinter');
     }
+  } else {
+    this.activepdfurl = this.mainurl;
+    this.activepdfidentifier = OB.I18N.getLabel('OBPOS_MainPrinter');
   }
 
   // save
@@ -398,7 +400,6 @@ OB.DS.HWServer.prototype._send = function (data, callback, device) {
     }
   }
 };
-
 OB.DS.HWServer.prototype._printPDF = function (params, callback) {
   this._sendPDF(JSON.stringify(params), callback);
 };
