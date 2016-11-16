@@ -1907,7 +1907,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
       boolean checkPaidOnCreditChecked = (jsonorder.has("paidOnCredit") && jsonorder
           .getBoolean("paidOnCredit"));
-      if (invoice != null && (creditpaidLayaway || fullypaidLayaway || checkPaidOnCreditChecked)) {
+      if (invoice != null
+          && (creditpaidLayaway || fullypaidLayaway || checkPaidOnCreditChecked || paidReceipt)) {
         for (int j = 0; j < paymentSchedule.getFINPaymentScheduleDetailOrderPaymentScheduleList()
             .size(); j++) {
           if (paymentSchedule.getFINPaymentScheduleDetailOrderPaymentScheduleList().get(j)
