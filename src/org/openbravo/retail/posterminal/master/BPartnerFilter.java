@@ -57,7 +57,7 @@ public class BPartnerFilter extends ProcessHQLQuery {
     List<String> hqlQueries = new ArrayList<String>();
 
     Map<String, Object> params = getParams(jsonsent);
-    final Boolean location = (Boolean) params.get("location");
+    Boolean location = (Boolean) params.get("location");
     HQLPropertyList bpHQLProperties = ModelExtensionUtils.getPropertyExtensions(extensions, params);
 
     String hql = "SELECT " + bpHQLProperties.getHqlSelect();
