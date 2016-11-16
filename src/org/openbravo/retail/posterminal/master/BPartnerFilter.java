@@ -18,6 +18,7 @@ import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
+import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -33,6 +34,7 @@ import org.openbravo.retail.posterminal.ProcessHQLQuery;
 public class BPartnerFilter extends ProcessHQLQuery {
 
   public static final String bPartnerFilterPropertyExtension = "OBPOS_BPartnerFilterExtension";
+  public static final Logger log = Logger.getLogger(BPartnerFilter.class);
 
   @Inject
   @Any
@@ -60,21 +62,16 @@ public class BPartnerFilter extends ProcessHQLQuery {
 
     String hql = "SELECT " + bpHQLProperties.getHqlSelect();
     if (location) {
-      Long lastUpdated = jsonsent.has("lastUpdated")
-          && !jsonsent.get("lastUpdated").equals("undefined")
-          && !jsonsent.get("lastUpdated").equals("null") ? jsonsent.getLong("lastUpdated") : null;
-      String operator = lastUpdated == null ? " AND " : " OR ";
       hql = hql
           + "FROM BusinessPartnerLocation bpl left outer join bpl.businessPartner AS bp join bp.aDUserList AS ulist "
-          + "WHERE $filtersCriteria AND " + "bp.customer = true AND "
-          + "bp.priceList IS NOT NULL AND " + "bpl.$readableSimpleClientCriteria AND "
-          + "bpl.$naturalOrgCriteria AND " + "(bpl.$incrementalUpdateCriteria" + operator
-          + "bp.$incrementalUpdateCriteria) ";
+          + "WHERE $filtersCriteria AND bp.customer = true AND "
+          + "bp.priceList IS NOT NULL AND bpl.$readableSimpleClientCriteria AND "
+          + "bpl.$naturalOrgCriteria ";
     } else {
       hql = hql + "FROM BusinessPartner bp left outer join bp.aDUserList AS ulist "
           + "WHERE $filtersCriteria AND bp.customer = true AND "
           + "bp.priceList IS NOT NULL AND bp.$readableSimpleClientCriteria AND "
-          + "bp.$naturalOrgCriteria AND bp.$incrementalUpdateCriteria ";
+          + "bp.$naturalOrgCriteria ";
     }
     hql = hql + "$orderByCriteria";
 
@@ -90,7 +87,7 @@ public class BPartnerFilter extends ProcessHQLQuery {
           .getOBContext().getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(),
           OBContext.getOBContext().getUser(), OBContext.getOBContext().getRole(), null);
     } catch (PropertyException e1) {
-      ;
+      log.error("Error getting preference OBPOS_FilterAlwaysBPByAddress " + e1.getMessage(), e1);
     }
     if ("N".equals(pref)) {
       try {
@@ -111,7 +108,7 @@ public class BPartnerFilter extends ProcessHQLQuery {
           }
         }
       } catch (JSONException e) {
-        e.printStackTrace();
+        log.error("Error getting parameteres: " + e.getMessage(), e);
       }
     } else {
       location = true;
