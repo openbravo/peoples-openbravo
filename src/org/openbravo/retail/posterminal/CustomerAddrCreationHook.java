@@ -29,7 +29,7 @@ public abstract class CustomerAddrCreationHook {
 // import org.openbravo.retail.posterminal.CustomerLoaderHook;
 //
 // @ApplicationScoped
-// public class CustomerAddrCreationHookTest implements CustomerAddrCreationHook {
+// public class CustomerAddrCreationHookTest extends CustomerAddrCreationHook {
 //
 // @Override
 // public void exec(JSONObject jsonCustomerAddr, BusinessPartner customer, Location location)
