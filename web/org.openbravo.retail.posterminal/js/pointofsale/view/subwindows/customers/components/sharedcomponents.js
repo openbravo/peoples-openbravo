@@ -434,28 +434,34 @@ enyo.kind({
       return true;
     }
 
+    function beforeCustomerSave(customer, isNew) {
+      customer.adjustNames();
+      OB.UTIL.HookManager.executeHooks('OBPOS_BeforeCustomerSave', {
+        customer: customer,
+        isNew: isNew,
+        validations: inEvent.validations
+      }, function (args) {
+        if (args && args.cancellation && args.cancellation === true) {
+          return true;
+        }
+        customerEdited = args.customer;
+        args.customer.saveCustomer(function () {
+          if (!inEvent.silent) {
+            me.bubble('onCancelClose', {
+              customer: customerEdited
+            });
+          }
+        });
+      });
+    }
+
     if (this.customer === undefined) {
       this.model.get('customer').newCustomer();
       this.waterfall('onSaveChange', {
         customer: this.model.get('customer')
       });
       if (validateForm(this)) {
-        this.model.get('customer').adjustNames();
-        OB.UTIL.HookManager.executeHooks('OBPOS_BeforeCustomerSave', {
-          customer: this.model.get('customer'),
-          isNew: true,
-          validations: inEvent.validations
-        }, function (args) {
-          if (args && args.cancellation && args.cancellation === true) {
-            return true;
-          }
-          customerEdited = args.customer;
-          args.customer.saveCustomer(function () {
-            me.bubble('onCancelClose', {
-              customer: customerEdited
-            });
-          });
-        });
+        beforeCustomerSave(this.model.get('customer'), true);
       }
     } else {
       this.model.get('customer').loadModel(this.customer, function (customer) {
@@ -463,24 +469,7 @@ enyo.kind({
           customer: customer
         });
         if (validateForm(me)) {
-          customer.adjustNames();
-          OB.UTIL.HookManager.executeHooks('OBPOS_BeforeCustomerSave', {
-            customer: customer,
-            isNew: false,
-            validations: inEvent.validations
-          }, function (args) {
-            if (args && args.cancellation && args.cancellation === true) {
-              return true;
-            }
-            customerEdited = args.customer;
-            args.customer.saveCustomer(function () {
-              if (!inEvent.silent) {
-                me.bubble('onCancelClose', {
-                  customer: customerEdited
-                });
-              }
-            });
-          });
+          beforeCustomerSave(customer, false);
         }
       });
     }
