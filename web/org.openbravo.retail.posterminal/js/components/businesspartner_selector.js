@@ -11,12 +11,12 @@
 
 OB.UTIL.BusinessPartnerSelector = {
   cloneAndPush: function (list, value) {
-    var result = _.clone(list);
+    var result = _.clone(list || []);
     result.push(value);
     return result;
   },
   cloneAndPop: function (list) {
-    var result = _.clone(list);
+    var result = _.clone(list || []);
     result.pop();
     return result;
   }
@@ -263,14 +263,18 @@ enyo.kind({
     bpartner.set('ignoreSetBP', true, {
       silent: true
     });
-    var dialog = this.owner.owner.dialog;
+
+    var dialog = this.owner.owner.dialog,
+        navigationPath = OB.UTIL.BusinessPartnerSelector.cloneAndPush(dialog.owner.owner.args.navigationPath, 'modalcustomer');
+
     OB.Dal.get(OB.Model.BusinessPartner, bpartner.get('bpartnerId'), function (bp) {
       dialog.bubble('onShowPopup', {
         popup: 'customerCreateAndEdit',
         args: {
           businessPartner: bp,
           target: dialog.target,
-          navigationPath: OB.UTIL.BusinessPartnerSelector.cloneAndPush(dialog.owner.owner.args.navigationPath, 'modalcustomer')
+          navigationPath: OB.UTIL.BusinessPartnerSelector.cloneAndPush(navigationPath, 'customerView'),
+          cancelNavigationPath: navigationPath
         }
       });
     });
