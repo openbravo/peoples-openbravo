@@ -290,7 +290,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
         // We have to check if there is any line in the order which have been already invoiced. If
         // it is the case we will not create the invoice.
-        if (createInvoice && (jsonorder.getBoolean("isLayaway") || paidReceipt)) {
+        if ((createInvoice && jsonorder.getBoolean("isLayaway")) || paidReceipt) {
           List<Invoice> lstInvoice = getInvoicesRelatedToOrder(jsonorder.getString("id"));
           if (lstInvoice != null) {
             // We have found and invoice, so it will be used to assign payments
@@ -1827,35 +1827,38 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           paymentScheduleInvoice = OBProvider.getInstance().get(FIN_PaymentSchedule.class);
           isInvoicePaymentScheduleNew = true;
         }
-        paymentScheduleInvoice.setCurrency(order.getCurrency());
-        paymentScheduleInvoice.setInvoice(invoice);
-        paymentScheduleInvoice.setFinPaymentmethod(order.getPaymentMethod());
-        paymentScheduleInvoice.setAmount(BigDecimal.valueOf(jsonorder.getDouble("gross")).setScale(
-            pricePrecision, RoundingMode.HALF_UP));
-        paymentScheduleInvoice.setOutstandingAmount(BigDecimal
-            .valueOf(jsonorder.getDouble("gross")).setScale(pricePrecision, RoundingMode.HALF_UP));
-        // TODO: If the payment terms is configured to work with fractionated payments, we should
-        // generate several payment schedules
-        if (wasPaidOnCredit) {
-          paymentScheduleInvoice.setDueDate(getCalculatedDueDateBasedOnPaymentTerms(
-              order.getOrderDate(), order.getPaymentTerms()));
-          paymentScheduleInvoice.setExpectedDate(paymentScheduleInvoice.getDueDate());
-        } else {
-          paymentScheduleInvoice.setDueDate(order.getOrderDate());
-          paymentScheduleInvoice.setExpectedDate(order.getOrderDate());
-        }
+        // If is not a reverse payment, set attributes to the paymentScheduleInvoice
+        if (!paidReceipt) {
+          paymentScheduleInvoice.setCurrency(order.getCurrency());
+          paymentScheduleInvoice.setInvoice(invoice);
+          paymentScheduleInvoice.setFinPaymentmethod(order.getPaymentMethod());
+          paymentScheduleInvoice.setAmount(BigDecimal.valueOf(jsonorder.getDouble("gross"))
+              .setScale(pricePrecision, RoundingMode.HALF_UP));
+          paymentScheduleInvoice.setOutstandingAmount(BigDecimal.valueOf(
+              jsonorder.getDouble("gross")).setScale(pricePrecision, RoundingMode.HALF_UP));
+          // TODO: If the payment terms is configured to work with fractionated payments, we should
+          // generate several payment schedules
+          if (wasPaidOnCredit) {
+            paymentScheduleInvoice.setDueDate(getCalculatedDueDateBasedOnPaymentTerms(
+                order.getOrderDate(), order.getPaymentTerms()));
+            paymentScheduleInvoice.setExpectedDate(paymentScheduleInvoice.getDueDate());
+          } else {
+            paymentScheduleInvoice.setDueDate(order.getOrderDate());
+            paymentScheduleInvoice.setExpectedDate(order.getOrderDate());
+          }
 
-        if (ModelProvider.getInstance().getEntity(FIN_PaymentSchedule.class)
-            .hasProperty("origDueDate")) {
-          // This property is checked and set this way to force compatibility with both MP13, MP14
-          // and
-          // later releases of Openbravo. This property is mandatory and must be set. Check issue
-          paymentScheduleInvoice.set("origDueDate", paymentScheduleInvoice.getDueDate());
-        }
-        paymentScheduleInvoice.setFINPaymentPriority(order.getFINPaymentPriority());
-        if (isInvoicePaymentScheduleNew) {
-          invoice.getFINPaymentScheduleList().add(paymentScheduleInvoice);
-          OBDal.getInstance().save(paymentScheduleInvoice);
+          if (ModelProvider.getInstance().getEntity(FIN_PaymentSchedule.class)
+              .hasProperty("origDueDate")) {
+            // This property is checked and set this way to force compatibility with both MP13, MP14
+            // and
+            // later releases of Openbravo. This property is mandatory and must be set. Check issue
+            paymentScheduleInvoice.set("origDueDate", paymentScheduleInvoice.getDueDate());
+          }
+          paymentScheduleInvoice.setFINPaymentPriority(order.getFINPaymentPriority());
+          if (isInvoicePaymentScheduleNew) {
+            invoice.getFINPaymentScheduleList().add(paymentScheduleInvoice);
+            OBDal.getInstance().save(paymentScheduleInvoice);
+          }
         }
       }
 
