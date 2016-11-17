@@ -4108,17 +4108,13 @@ isc.OBViewGrid.addProperties({
   },
 
   processColumnValue: function (rowNum, columnName, columnValue) {
-    var field, newValue;
+    var field;
     if (!columnValue) {
       return;
     }
     field = this.getFieldFromColumnName(columnName);
     if (!field) {
       return;
-    }
-    newValue = {};
-    if (field) {
-      newValue[field.property] = columnValue.value;
     }
     this.setEditValue(rowNum, field.property, columnValue.value);
   },
