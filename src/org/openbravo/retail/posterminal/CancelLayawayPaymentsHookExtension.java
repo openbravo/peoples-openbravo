@@ -28,7 +28,7 @@ public class CancelLayawayPaymentsHookExtension implements CancelLayawayPayments
   public void exec(JSONObject jsonorder, Order inverseOrder) throws Exception {
     OrderLoader orderLoader = WeldUtils.getInstanceFromStaticBeanManager(OrderLoader.class);
     orderLoader.initializeVariables(jsonorder);
-    orderLoader.handlePayments(jsonorder, inverseOrder, null, false);
+    orderLoader.handlePayments(jsonorder, inverseOrder, null, false, false);
   }
 
 }

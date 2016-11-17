@@ -316,6 +316,11 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         if ((!newLayaway && notpaidLayaway) || paidReceipt) {
           order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
           order.setObposAppCashup(jsonorder.getString("obposAppCashup"));
+          if (paidReceipt && createInvoice) {
+            for (OrderLine line : order.getOrderLineList()) {
+              lineReferences.add(line);
+            }
+          }
         } else if (!newLayaway && (creditpaidLayaway || fullypaidLayaway)) {
           order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
           order.setObposAppCashup(jsonorder.getString("obposAppCashup"));
@@ -471,7 +476,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
       if (!isQuotation && !isDeleted) {
         // Payment
-        JSONObject paymentResponse = handlePayments(jsonorder, order, invoice, wasPaidOnCredit);
+        JSONObject paymentResponse = handlePayments(jsonorder, order, invoice, wasPaidOnCredit,
+            createInvoice);
         if (paymentResponse != null) {
           return paymentResponse;
         }
@@ -1767,7 +1773,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
   }
 
   public JSONObject handlePayments(JSONObject jsonorder, Order order, Invoice invoice,
-      Boolean wasPaidOnCredit) throws Exception {
+      boolean wasPaidOnCredit, boolean createInvoice) throws Exception {
     String posTerminalId = jsonorder.getString("posTerminal");
     OBPOSApplications posTerminal = OBDal.getInstance().get(OBPOSApplications.class, posTerminalId);
     if (posTerminal == null) {
@@ -1784,6 +1790,12 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       FIN_PaymentSchedule paymentSchedule = OBProvider.getInstance().get(FIN_PaymentSchedule.class);
       int pricePrecision = order.getCurrency().getObposPosprecision() == null ? order.getCurrency()
           .getPricePrecision().intValue() : order.getCurrency().getObposPosprecision().intValue();
+      BigDecimal amountPaidWithCredit = BigDecimal.ZERO;
+      if (wasPaidOnCredit) {
+        amountPaidWithCredit = (BigDecimal.valueOf(jsonorder.getDouble("gross"))
+            .subtract(BigDecimal.valueOf(jsonorder.getDouble("payment")))).setScale(pricePrecision,
+            RoundingMode.HALF_UP);
+      }
       if ((!newLayaway && (notpaidLayaway || creditpaidLayaway || fullypaidLayaway))
           || partialpaidLayaway || paidReceipt) {
         paymentSchedule = order.getFINPaymentScheduleList().get(0);
@@ -1828,7 +1840,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           isInvoicePaymentScheduleNew = true;
         }
         // If is not a reverse payment, set attributes to the paymentScheduleInvoice
-        if (!paidReceipt) {
+        if (createInvoice) {
           paymentScheduleInvoice.setCurrency(order.getCurrency());
           paymentScheduleInvoice.setInvoice(invoice);
           paymentScheduleInvoice.setFinPaymentmethod(order.getPaymentMethod());
@@ -1850,8 +1862,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           if (ModelProvider.getInstance().getEntity(FIN_PaymentSchedule.class)
               .hasProperty("origDueDate")) {
             // This property is checked and set this way to force compatibility with both MP13, MP14
-            // and
-            // later releases of Openbravo. This property is mandatory and must be set. Check issue
+            // and later releases of Openbravo. This property is mandatory and must be set. Check
+            // issue
             paymentScheduleInvoice.set("origDueDate", paymentScheduleInvoice.getDueDate());
           }
           paymentScheduleInvoice.setFINPaymentPriority(order.getFINPaymentPriority());
@@ -1859,6 +1871,13 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
             invoice.getFINPaymentScheduleList().add(paymentScheduleInvoice);
             OBDal.getInstance().save(paymentScheduleInvoice);
           }
+        } else if (wasPaidOnCredit) {
+          // If the invoice already exists and is paid in credit (by reverse payments), the received
+          // and outstanding amount must be updated with the quantity paid on credit
+          paymentScheduleInvoice.setAmount(paymentScheduleInvoice.getAmount()
+              .subtract(amountPaidWithCredit).setScale(pricePrecision, RoundingMode.HALF_UP));
+          paymentScheduleInvoice.setOutstandingAmount(paymentScheduleInvoice.getOutstandingAmount()
+              .add(amountPaidWithCredit).setScale(pricePrecision, RoundingMode.HALF_UP));
         }
       }
 
@@ -1920,10 +1939,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
                 .setInvoicePaymentSchedule(paymentScheduleInvoice);
           }
         }
-
-        BigDecimal amountPaidWithCredit = (BigDecimal.valueOf(jsonorder.getDouble("gross"))
-            .subtract(BigDecimal.valueOf(jsonorder.getDouble("payment")))).setScale(pricePrecision,
-            RoundingMode.HALF_UP);
 
         invoice.setTotalPaid(invoice.getGrandTotalAmount().subtract(amountPaidWithCredit));
         invoice.setOutstandingAmount(amountPaidWithCredit);
