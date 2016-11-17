@@ -173,8 +173,14 @@
         FROM M_PRODUCT_AUM M, C_UOM C
         WHERE M.M_PRODUCT_ID = ?
         AND M.C_UOM_ID = C.C_UOM_ID
+        UNION
+        SELECT C.C_UOM_ID AS ID, C.NAME AS NAME
+        FROM C_UOM C, M_PRODUCT M
+        WHERE M.M_PRODUCT_ID = ?
+        AND M.C_UOM_ID = C.C_UOM_ID
       ]]>
     </Sql>
+    <Parameter name="productId"/>
     <Parameter name="productId"/>
   </SqlMethod>
   <SqlMethod name="selectAUMDefault" type="preparedStatement" return="multiple">
