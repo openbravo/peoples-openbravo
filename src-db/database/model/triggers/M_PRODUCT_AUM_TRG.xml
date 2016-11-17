@@ -47,60 +47,6 @@ BEGIN
     RAISE_APPLICATION_ERROR(-20000, '@DuplicateBUM@');
   END IF;
 
-  SELECT count(*) 
-  INTO v_Count
-  FROM dual
-  WHERE EXISTS ( SELECT 1 
-                   FROM M_Product_AUM 
-                   WHERE m_product_id = :new.m_product_id 
-                   AND c_uom_id = :new.c_uom_id
-                   AND m_product_aum_id <> :new.m_product_aum_id);
-  IF (v_Count > 0) THEN
-    RAISE_APPLICATION_ERROR(-20000, '@DuplicateAUM@');
-  END IF;
-
-  IF (:new.sales = 'P') THEN
-    SELECT count(*) 
-    INTO v_Count
-    FROM dual
-    WHERE EXISTS ( SELECT 1 
-                     FROM M_Product_AUM 
-                     WHERE m_product_id = :new.m_product_id 
-                     AND sales = :new.sales
-                     AND m_product_aum_id <> :new.m_product_aum_id);
-    IF (v_Count > 0) THEN
-      RAISE_APPLICATION_ERROR(-20000, '@DuplicatePrimarySalesAUM@');
-    END IF;
-  END IF;
-
-  IF (:new.purchase = 'P') THEN
-    SELECT count(*) 
-      INTO v_Count
-      FROM dual
-      WHERE EXISTS ( SELECT 1 
-                     FROM M_Product_AUM 
-                     WHERE m_product_id = :new.m_product_id 
-                     AND purchase = :new.purchase
-                     AND m_product_aum_id <> :new.m_product_aum_id);
-    IF (v_Count > 0) THEN
-      RAISE_APPLICATION_ERROR(-20000, '@DuplicatePrimaryPurchaseAUM@');
-    END IF;
-  END IF;
-
-  IF (:new.logistics = 'P') THEN
-    SELECT count(*) 
-      INTO v_Count
-      FROM dual
-      WHERE EXISTS ( SELECT 1 
-                     FROM M_Product_AUM 
-                     WHERE m_product_id = :new.m_product_id 
-                     AND logistics = :new.logistics
-                     AND m_product_aum_id <> :new.m_product_aum_id);
-    IF (v_Count > 0) THEN
-      RAISE_APPLICATION_ERROR(-20000, '@DuplicatePrimaryLogisticsAUM@');
-    END IF;
-  END IF;
-
   IF (:new.gtin IS NOT NULL) THEN
     FOR I IN 1..length(:new.gtin) LOOP
       IF (instr(v_GTINALLOWEDCHAR, upper(substr(:new.gtin,I,1))) = 0) THEN
