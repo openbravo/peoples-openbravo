@@ -521,7 +521,7 @@ enyo.kind({
           if (!payment.get('isPrePayment') && paymentmethod.paymentMethod.iscash) {
             reversedCash = OB.DEC.sub(reversedPayments[payment.get('kind')] || OB.DEC.Zero, payment.get('origAmount'));
             reversedPayments[payment.get('kind')] = reversedCash;
-            if (selectedPayment !== paymentmethod && OB.DEC.compare(OB.DEC.sub(paymentmethod.currentCash, reversedCash)) <= 0) {
+            if (selectedPayment !== paymentmethod && OB.DEC.compare(OB.DEC.sub(paymentmethod.currentCash, reversedCash)) < 0) {
               hasEnoughCash = false;
             } else {
               currentSelectedPaymentCashAmount = reversedCash;
