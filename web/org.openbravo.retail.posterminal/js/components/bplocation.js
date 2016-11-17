@@ -686,7 +686,7 @@ enyo.kind({
     this.inherited(arguments);
     this.$.identifier.setContent(this.model.get('name'));
     var locId = this.owner.owner.owner.owner.bPartner.get(this.locId);
-    if (locId === this.model.get('id')) {
+    if (locId === OB.MobileApp.model.receipt.get('bp').get('locId')) {
       this.applyStyle('background-color', '#fbf6d1');
     }
     if (this.model.get('isBillTo') && this.model.get('isShipTo')) {
