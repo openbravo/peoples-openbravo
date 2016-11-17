@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2016 Openbravo SLU 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -20,6 +20,8 @@ package org.openbravo.reports.ordersawaitingdelivery.erpCommon.ad_reports;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.HashMap;
 
 import javax.servlet.ServletException;
@@ -36,6 +38,7 @@ import org.openbravo.erpCommon.utility.NavigationBar;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.materialmgmt.CentralBroker;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class ReportOrderNotShipped extends HttpSecureAppServlet {
@@ -164,6 +167,11 @@ public class ReportOrderNotShipped extends HttpSecureAppServlet {
     } catch (Exception ex) {
       throw new ServletException(ex);
     }
+    
+    xmlDocument.setParameter("isUomManagementEnabled", "none");
+    if (CentralBroker.getInstance().isUomManagementEnabled().equals("Y")) {
+      xmlDocument.setParameter("isUomManagementEnabled", "table-cell");
+    }
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());
@@ -178,7 +186,7 @@ public class ReportOrderNotShipped extends HttpSecureAppServlet {
       log4j.debug("Output: print html");
 
     ReportOrderNotShippedData[] data = null;
-
+    
     data = ReportOrderNotShippedData.select(this, vars.getLanguage(),
         Utility.getContext(this, vars, "#User_Client", "ReportOrderNotShipped"),
         Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportOrderNotShipped"), strdateFrom,
@@ -188,6 +196,25 @@ public class ReportOrderNotShipped extends HttpSecureAppServlet {
     // Launch the report as usual, calling the JRXML file
     String strReportName = "@basedesign@/org/openbravo/reports/ordersawaitingdelivery/erpCommon/ad_reports/ReportOrderNotShipped.jrxml";
 
+    String strShowInAUM = vars.getRequestGlobalVariable("inpShowInAumVal",
+        "ReportOrderNotShipped|showInAum");
+    if (!strShowInAUM.isEmpty() && strShowInAUM.equalsIgnoreCase("on")) {
+      DecimalFormat df = Utility.getFormat(vars, "priceEdition");
+      for (int i = 0; i < data.length; i++) {
+        data[i].orderedqty = df.format(CentralBroker.getInstance().getConvertedQty(
+            data[i].mProductId, new BigDecimal(data[i].orderedvalue), data[i].aum, true));
+        data[i].pendingqty = df.format(CentralBroker.getInstance().getConvertedQty(
+            data[i].mProductId, new BigDecimal(data[i].pendingvalue), data[i].aum, true));
+        try {
+          data[i].qtyinstock = CentralBroker.getInstance().getConvertedQty(data[i].mProductId,
+              new BigDecimal(data[i].stockvalue), data[i].aum, true).toString();
+        } catch (NumberFormatException nfe) {
+          data[i].qtyinstock = null;
+          data[i].aumsymbol = " ";
+        }
+      }
+    }
+    
     if (strOutput.equals("pdf"))
       response.setHeader("Content-disposition", "inline; filename=OrdersAwaitingDelivery.pdf");
 
@@ -197,6 +224,7 @@ public class ReportOrderNotShipped extends HttpSecureAppServlet {
 
     HashMap<String, Object> parameters = new HashMap<String, Object>();
     parameters.put("REPORT_SUBTITLE", strSubTitle);
+    parameters.put("showInAUM", !strShowInAUM.isEmpty() && strShowInAUM.equalsIgnoreCase("on"));
     renderJR(vars, response, strReportName, strOutput, parameters, data, null);
   }
 
