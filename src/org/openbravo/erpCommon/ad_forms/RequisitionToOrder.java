@@ -51,6 +51,7 @@ import org.openbravo.erpCommon.utility.PropertyNotFoundException;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.materialmgmt.CentralBroker;
 import org.openbravo.model.procurement.RequisitionLine;
 import org.openbravo.utils.Replace;
 import org.openbravo.xmlEngine.XmlDocument;
@@ -257,8 +258,152 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
       throw new ServletException(ex);
     }
 
-    // Hay que hacer la query del selected.
+    boolean uomManagementPreference = CentralBroker.getInstance().isUomManagementEnabled()
+        .equals("Y");
 
+    boolean strHaveSecDataLines = false;
+    boolean strHaveAumDataLines = false;
+    for (int i = 0; i < datalines.length; i++) {
+      try {
+        if (!datalines[i].quantityorder.isEmpty() && !datalines[i].secuomname.equals("**")) {
+          strHaveSecDataLines = true;
+        }
+        if (uomManagementPreference && !datalines[i].cAum.isEmpty()
+            && !datalines[i].aumqty.equals("**")) {
+          strHaveAumDataLines = true;
+        }
+        if (strHaveSecDataLines && strHaveAumDataLines) {
+          break;
+        }
+      } catch (NullPointerException e) {
+
+      }
+    }
+
+    for (int i = 0; i < datalines.length; i++) {
+
+      if (strHaveSecDataLines && strHaveAumDataLines) {
+        // UOM preference has value "Y" and at least one line has secondary UOM
+        xmlDocument.setParameter("uompreference", "");
+        xmlDocument.setParameter("havesecuom", "");
+        if (datalines[i].cAum.isEmpty() && datalines[i].aumqty.isEmpty()
+            && datalines[i].quantityorder.isEmpty() && datalines[i].secuomname.equals("**")) {
+          RequisitionToOrderData[] defaultAumData = RequisitionToOrderData.selectAUMDefault(this,
+              datalines[i].mProductId);
+          String defaultAum = (defaultAumData.length > 0) ? defaultAumData[0].cAum
+              : datalines[i].cUomId;
+          datalines[i].aumqty = datalines[i].qtytoorder;
+          datalines[i].cAum = defaultAum;
+          datalines[i].aumname = (defaultAumData.length > 0) ? defaultAumData[0].aumname
+              : datalines[i].uomname;
+          if (!defaultAum.equals(datalines[i].cUomId)) {
+            datalines[i].qtytoorder = CentralBroker
+                .getInstance()
+                .getConvertedQty(datalines[i].mProductId, new BigDecimal(datalines[i].aumqty),
+                    datalines[i].cAum).toString();
+          }
+        }
+      } else if (uomManagementPreference && datalines[i].quantityorder.isEmpty()
+          && datalines[i].secuomname.equals("**")) {
+        // UOM preference is Y and no line has secondary UOM
+        datalines[i].havesecuom = "none";
+        xmlDocument.setParameter("uompreference", "");
+        xmlDocument.setParameter("havesecuom", "display:none;");
+        if (datalines[i].cAum.isEmpty() && datalines[i].aumqty.isEmpty()) {
+          RequisitionToOrderData[] defaultAumData = RequisitionToOrderData.selectAUMDefault(this,
+              datalines[i].mProductId);
+          String defaultAum = (defaultAumData.length > 0) ? defaultAumData[0].cAum
+              : datalines[i].cUomId;
+          datalines[i].aumqty = datalines[i].qtytoorder;
+          datalines[i].cAum = defaultAum;
+          datalines[i].aumname = (defaultAumData.length > 0) ? defaultAumData[0].aumname
+              : datalines[i].uomname;
+          if (!defaultAum.equals(datalines[i].cUomId)) {
+            datalines[i].qtytoorder = CentralBroker
+                .getInstance()
+                .getConvertedQty(datalines[i].mProductId, new BigDecimal(datalines[i].aumqty),
+                    datalines[i].cAum).toString();
+          }
+        }
+      } else {
+        // UOM preference is N
+        datalines[i].uompreference = "none";
+        xmlDocument.setParameter("uompreference", "display:none;");
+        xmlDocument.setParameter("havesecuom", "");
+      }
+    }
+
+    boolean strHaveSecDataSelected = false;
+    boolean strHaveAumDataSelected = false;
+    for (int i = 0; i < dataselected.length; i++) {
+      try {
+        if (!dataselected[i].quantityorder.isEmpty() && !dataselected[i].secuomname.equals("**")) {
+          strHaveSecDataSelected = true;
+        }
+        if (uomManagementPreference && !dataselected[i].cAum.isEmpty()
+            && !dataselected[i].aumqty.equals("**")) {
+          strHaveAumDataSelected = true;
+        }
+        if (strHaveSecDataSelected && strHaveAumDataSelected) {
+          break;
+        }
+      } catch (NullPointerException e) {
+
+      }
+    }
+
+    for (int i = 0; i < dataselected.length; i++) {
+
+      if (strHaveSecDataSelected && strHaveAumDataSelected) {
+        // UOM preference is Y and at least one line has secondary UOM
+        xmlDocument.setParameter("uompreferencesel", "");
+        xmlDocument.setParameter("havesecuomsel", "");
+        if (dataselected[i].cAum.isEmpty() && dataselected[i].aumqty.isEmpty()
+            && dataselected[i].quantityorder.isEmpty() && dataselected[i].secuomname.equals("**")) {
+          RequisitionToOrderData[] defaultAumData = RequisitionToOrderData.selectAUMDefault(this,
+              dataselected[i].mProductId);
+          String defaultAum = (defaultAumData.length > 0) ? defaultAumData[0].cAum
+              : dataselected[i].cUomId;
+          dataselected[i].aumqty = dataselected[i].lockqty;
+          dataselected[i].cAum = defaultAum;
+          dataselected[i].aumname = (defaultAumData.length > 0) ? defaultAumData[0].aumname
+              : dataselected[i].uomname;
+          if (!defaultAum.equals(dataselected[i].cUomId)) {
+            dataselected[i].lockqty = CentralBroker
+                .getInstance()
+                .getConvertedQty(dataselected[i].mProductId,
+                    new BigDecimal(dataselected[i].aumqty), dataselected[i].cAum).toString();
+          }
+        }
+      } else if (uomManagementPreference && dataselected[i].quantityorder.isEmpty()
+          && dataselected[i].secuomname.equals("**")) {
+        // UOM preference is Y and no line has secondary UOM
+        dataselected[i].havesecuom = "none";
+        xmlDocument.setParameter("uompreferencesel", "");
+        xmlDocument.setParameter("havesecuomsel", "display:none;");
+        if (dataselected[i].cAum.isEmpty() && dataselected[i].aumqty.isEmpty()) {
+          RequisitionToOrderData[] defaultAumData = RequisitionToOrderData.selectAUMDefault(this,
+              dataselected[i].mProductId);
+          String defaultAum = (defaultAumData.length > 0) ? defaultAumData[0].cAum
+              : dataselected[i].cUomId;
+          dataselected[i].aumqty = dataselected[i].lockqty;
+          dataselected[i].cAum = defaultAum;
+          dataselected[i].aumname = (defaultAumData.length > 0) ? defaultAumData[0].aumname
+              : dataselected[i].uomname;
+          if (!defaultAum.equals(dataselected[i].cUomId)) {
+            dataselected[i].lockqty = CentralBroker
+                .getInstance()
+                .getConvertedQty(dataselected[i].mProductId,
+                    new BigDecimal(dataselected[i].aumqty), dataselected[i].cAum).toString();
+          }
+        }
+      } else {
+        // UOM preference is N
+        dataselected[i].uompreference = "none";
+        xmlDocument.setParameter("uompreferencesel", "display:none;");
+        xmlDocument.setParameter("havesecuomsel", "");
+      }
+    }
     xmlDocument.setData("structureSearch", datalines);
     xmlDocument.setData("structureSelected", dataselected);
     out.println(xmlDocument.print());
@@ -288,11 +433,24 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
         vars.getLanguage(), vars.getUser(),
         Utility.getContext(this, vars, "#User_Client", "RequisitionToOrder"),
         Tree.getMembers(this, strTreeOrg, strOrgId));
+
+    boolean uomManagementPreference = CentralBroker.getInstance().isUomManagementEnabled()
+        .equals("Y");
+
     for (int i = 0; dataselected != null && i < dataselected.length; i++) {
-      String strLockQty = vars.getNumericParameter("inpQty" + dataselected[i].mRequisitionlineId);
+      String strLockQty = "";
+      String strLockAqumQty = null;
+      if (uomManagementPreference && dataselected[i].quantityorder.isEmpty()
+          && dataselected[i].secuomname.equals("**")) {
+        strLockQty = vars.getNumericParameter("inpQty" + dataselected[i].mRequisitionlineId);
+        strLockAqumQty = vars.getNumericParameter("inpAumQty" + dataselected[i].mRequisitionlineId);
+      } else {
+        strLockQty = vars.getNumericParameter("inpQty" + dataselected[i].mRequisitionlineId);
+      }
+
       String strLockPrice = vars.getNumericParameter("inpPrice"
           + dataselected[i].mRequisitionlineId);
-      RequisitionToOrderData.updateLock(this, strLockQty, strLockPrice,
+      RequisitionToOrderData.updateLock(this, strLockQty, strLockPrice, strLockAqumQty,
           dataselected[i].mRequisitionlineId);
     }
   }
@@ -526,6 +684,8 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
           RequisitionToOrderData.cBPartnerLocationId(this, strVendor), cCurrencyId,
           strPriceListVersionId, strSelected);
 
+      boolean uomManagementPreference = CentralBroker.getInstance().isUomManagementEnabled()
+          .equals("Y");
       HashMap<String, String[]> hashLines = new HashMap<String, String[]>();
       int line = 0;
       for (int i = 0; lines != null && i < lines.length; i++) {
@@ -545,21 +705,41 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
             lines[i].mProductUomId);
         String[] hashLine = hashLines.get(strGroupId);
 
+        lines[i].aumqty = lines[i].lockaumqty;
+        if (uomManagementPreference && lines[i].quantityorder.isEmpty()
+            && lines[i].secuomname.equals("**")) {
+          try {
+            if (lines[i].cAum.isEmpty()) {
+              RequisitionToOrderData[] defaultAumData = RequisitionToOrderData.selectAUMDefault(
+                  this, lines[i].mProductId);
+              lines[i].cAum = (defaultAumData.length > 0) ? defaultAumData[0].cAum
+                  : lines[i].cUomId;
+            }
+            if (!lines[i].cUomId.equals(lines[i].cAum)) {
+              lines[i].aumqty = new BigDecimal(CentralBroker
+                  .getInstance()
+                  .getConvertedQty(lines[i].mProductId, new BigDecimal(lines[i].lockaumqty),
+                      lines[i].cAum).toString()).toPlainString();
+            }
+          } catch (NumberFormatException e) {
+          }
+        }
         // Insert new line
         if (hashLine == null) {
           lines[i].cOrderlineId = SequenceIdData.getUUID();
           line += 10;
           hashLines.put(strGroupId, new String[] { lines[i].cOrderlineId, lines[i].lockqty,
-              lines[i].quantityorder });
+              lines[i].quantityorder, lines[i].aumqty });
           try {
             RequisitionToOrderData.insertCOrderline(conn, this, lines[i].cOrderlineId,
                 vars.getClient(), strOrg, vars.getUser(), strCOrderId, Integer.toString(line),
                 strVendor, RequisitionToOrderData.cBPartnerLocationId(this, strVendor),
                 strOrderDate, lines[i].needbydate, lines[i].description, lines[i].mProductId,
                 lines[i].mAttributesetinstanceId, strWarehouse, lines[i].mProductUomId,
-                lines[i].cUomId, lines[i].quantityorder, lines[i].lockqty, cCurrencyId,
-                lines[i].pricelist, lines[i].priceactual, strPriceListId, lines[i].pricelimit,
-                lines[i].tax, "", lines[i].discount, lines[i].grossUnit, lines[i].grossAmt);
+                lines[i].cUomId, lines[i].cAum, lines[i].quantityorder, lines[i].lockqty,
+                lines[i].aumqty, cCurrencyId, lines[i].pricelist, lines[i].priceactual,
+                strPriceListId, lines[i].pricelimit, lines[i].tax, "", lines[i].discount,
+                lines[i].grossUnit, lines[i].grossAmt);
           } catch (ServletException ex) {
             myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
             releaseRollbackConnection(conn);
@@ -575,12 +755,17 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
               : new BigDecimal(hashLine[2]))
               .add(StringUtils.isEmpty(lines[i].quantityorder) ? BigDecimal.ZERO : new BigDecimal(
                   lines[i].quantityorder));
+          BigDecimal qtyAumOrder = (StringUtils.isEmpty(hashLine[3]) ? BigDecimal.ZERO
+              : new BigDecimal(hashLine[3]))
+              .add(StringUtils.isEmpty(lines[i].aumqty) ? BigDecimal.ZERO : new BigDecimal(
+                  lines[i].aumqty));
           hashLine[1] = qtyOrder.toPlainString();
           hashLine[2] = BigDecimal.ZERO.compareTo(quantityOrder) == 0 ? "" : quantityOrder
               .toPlainString();
+          hashLine[3] = qtyAumOrder.toPlainString();
           try {
             RequisitionToOrderData.updateCOrderline(conn, this, hashLine[1], hashLine[2],
-                hashLine[0]);
+                hashLine[3], hashLine[0]);
           } catch (ServletException ex) {
             myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
             releaseRollbackConnection(conn);

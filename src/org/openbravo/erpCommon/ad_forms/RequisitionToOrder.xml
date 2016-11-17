@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -54,6 +54,15 @@
     <ARGUMENT name="parameterListSelected" withId="paramAD_Org_ID"/>
   </SUBREPORT>
   <PARAMETER id="param2" name="param2" default="2"/>
+  
+  <PARAMETER id="headerAumQty" name="uompreference" attribute="style" replace="xx"/>
+  <PARAMETER id="headerAum" name="uompreference" attribute="style" replace="xx"/>
+  <PARAMETER id="headerSecQty" name="havesecuom" attribute="style" replace="xx"/>
+  <PARAMETER id="headerSecUom" name="havesecuom" attribute="style" replace="xx"/>
+  <PARAMETER id="headerSelAumQty" name="uompreferencesel" attribute="style" replace="xx"/>
+  <PARAMETER id="headerSelAum" name="uompreferencesel" attribute="style" replace="xx"/>
+  <PARAMETER id="headerSelSecQty" name="havesecuomsel" attribute="style" replace="xx"/>
+  <PARAMETER id="headerSelSecUom" name="havesecuomsel" attribute="style" replace="xx"/>
 
   <structure name="structureSearch">
     <FIELD id="fieldRownum">rownum</FIELD>
@@ -62,10 +71,16 @@
     <FIELD id="fieldNeedByDate">needbydate</FIELD>
     <FIELD id="fieldProduct" replaceCharacters="html">product</FIELD>
     <FIELD id="fieldAttribute" replaceCharacters="html">attribute</FIELD>
+    <FIELD id="fieldAumQuantity" format="qtyEdition">aumqty</FIELD>
+    <FIELD id="fieldAumQuantity" attribute="style" replace="xx">uompreference</FIELD>
+    <FIELD id="fieldAumUnit" replaceCharacters="html">aumname</FIELD>
+    <FIELD id="fieldAumUnit" attribute="style" replace="xx">uompreference</FIELD>
     <FIELD id="fieldQuantity" format="qtyEdition">qtytoorder</FIELD>
     <FIELD id="fieldUnit" replaceCharacters="html">uomname</FIELD>
     <FIELD id="fieldSecQuantity" format="qtyEdition">quantityorder</FIELD>
+    <FIELD id="fieldSecQuantity" attribute="style" replace="xx">havesecuom</FIELD>
     <FIELD id="fieldSecUnit" replaceCharacters="html">secuomname</FIELD>
+    <FIELD id="fieldSecUnit" attribute="style" replace="xx">havesecuom</FIELD>
     <FIELD id="fieldRequester" replaceCharacters="html">requester</FIELD>
     <FIELD id="fieldVendor" replaceCharacters="html">vendor</FIELD>
     <FIELD id="fieldPriceList" replaceCharacters="html">pricelistid</FIELD>
@@ -82,17 +97,36 @@
     <FIELD id="fieldSelProduct" replaceCharacters="html">product</FIELD>
     <FIELD id="fieldSelAttribute">attribute</FIELD>
     <FIELD id="fieldSelNeedByDate" replaceCharacters="html">needbydate</FIELD>
-    <FIELD id="fieldReqQty" format="qtyEdition">reqqty</FIELD>
+    <FIELD id="fieldReqQty" format="qtyEdition" attribute="value">reqqty</FIELD>
+    <FIELD id="fieldReqQty" attribute="name" replace="xx">mRequisitionlineId</FIELD>
     <FIELD id="fieldMatchedQty" format="qtyEdition">matchedqty</FIELD>
-    <FIELD id="fieldSelQty" format="qtyEdition" attribute="value">lockqty</FIELD>
+    <FIELD id="fieldSelAumQty" format="qtyEdition" attribute="value">aumqty</FIELD>
+    <FIELD id="fieldSelAumQty" attribute="name" replace="xx">mRequisitionlineId</FIELD>
+    <FIELD id="fieldSelAumQty" attribute="onkeyup" replace="yy">mRequisitionlineId</FIELD>
+    <FIELD id="fieldShowAumQty" attribute="style" replace="xx">uompreference</FIELD>
+    <FIELD id="fieldSelAumUnit" replaceCharacters="html">aumname</FIELD>
+    <FIELD id="fieldSelAumUnit" attribute="style" replace="xx">uompreference</FIELD>
     <FIELD id="fieldSelQty" attribute="name" replace="xx">mRequisitionlineId</FIELD>
-    <FIELD id="fieldSelPrice" format="priceEdition" attribute="value">lockprice</FIELD>
+    <FIELD id="fieldSelQty" format="qtyEdition" attribute="value">lockqty</FIELD>
     <FIELD id="fieldSelUnit" replaceCharacters="html">uomname</FIELD>
+    <FIELD id="fieldSelcUomId" attribute="value">cUomId</FIELD>
+    <FIELD id="fieldSelcUomId" attribute="name" replace="xx">mRequisitionlineId</FIELD>
     <FIELD id="fieldSelSecQuantity" format="qtyEdition">quantityorder</FIELD>
+    <FIELD id="fieldSelSecQuantity" attribute="style" replace="xx">havesecuom</FIELD>
     <FIELD id="fieldSelSecUnit" replaceCharacters="html">secuomname</FIELD>
+    <FIELD id="fieldSelSecUnit" attribute="style" replace="xx">havesecuom</FIELD>
+    <FIELD id="fieldSelProductId" attribute="value">mProductId</FIELD>
+    <FIELD id="fieldSelProductId" attribute="name" replace="xx">mRequisitionlineId</FIELD>
+    <FIELD id="fieldSelCAUM" attribute="value">cAum</FIELD>
+    <FIELD id="fieldSelCAUM" attribute="name" replace="xx">mRequisitionlineId</FIELD>
+    <FIELD id="fieldSelCAUM" attribute="style" replace="xx">uompreference</FIELD>
+    <FIELD id="fieldSelPrice" format="priceEdition" attribute="value">lockprice</FIELD>
     <FIELD id="fieldSelPrice" attribute="name" replace="xx">mRequisitionlineId</FIELD>
     <FIELD id="fieldPriceList" format="priceEdition" replaceCharacters="html">pricelist</FIELD>
-
+    <FIELD id="fieldPreference" attribute="name" replace="xx">mRequisitionlineId</FIELD>
+    <FIELD id="fieldPreference" attribute="value" >uompreference</FIELD>
+    <FIELD id="fieldHaveSecUOM" attribute="name" replace="xx">mRequisitionlineId</FIELD>
+    <FIELD id="fieldHaveSecUOM" attribute="value" >havesecuom</FIELD>
     <SECTION id="sectionVendor" field="vendorId"/>
     <SECTION id="sectionPriceList" field="mPricelistId"/>
     <SECTION id="sectionSelectedDetail"/>
