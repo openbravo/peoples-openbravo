@@ -213,7 +213,8 @@ public class PaidReceipts extends JSONProcessSimple {
             + "join scheduleDetail.paymentDetails as paymentDetail "
             + "join paymentDetail.finPayment as finPayment "
             + "join scheduleDetail.orderPaymentSchedule.order as order "
-            + "left join finPayment.reversedPayment as reversedPayment " + "where order.id=? "
+            + "left join finPayment.reversedPayment as reversedPayment "//
+            + "where order.id=? " //
             + "order by finPayment.documentNo";
         Query paidReceiptsPaymentsQuery = OBDal.getInstance().getSession()
             .createQuery(hqlPaymentsIn);
@@ -294,7 +295,7 @@ public class PaidReceipts extends JSONProcessSimple {
               } else {
                 paidReceiptPayment.put("paymentAmount", objPaymentTrx);
               }
-              if (objectIn.has("isReversed") && objectIn.getBoolean("isReversed")) {
+              if (objectIn.has("reversedPaymentId")) {
                 paidReceiptPayment.put("isReversed", true);
               }
               if (objectIn.has("reversedPaymentId")) {
@@ -310,7 +311,8 @@ public class PaidReceipts extends JSONProcessSimple {
             String hqlPaymentType = "select p.paymentMethod.name as name, p.account.id as account, "
                 + "c_currency_rate(p.account.currency, p.organization.currency, null, null, p.client.id, p.organization.id) as rate, "
                 + "c_currency_rate(p.organization.currency, p.account.currency, null, null, p.client.id, p.organization.id) as mulrate, "
-                + "p.account.currency.iSOCode as isocode " + " from FIN_Payment as p where p.id=?)";
+                + "p.account.currency.iSOCode as isocode " //
+                + "from FIN_Payment as p where p.id=?)";
             Query paymentTypeQuery = OBDal.getInstance().getSession().createQuery(hqlPaymentType);
             // paidReceiptsQuery.setString(0, id);
             paymentTypeQuery.setString(0, objectIn.getString("paymentId"));
@@ -349,8 +351,8 @@ public class PaidReceipts extends JSONProcessSimple {
               if (objectIn.has("reversedPaymentId")) {
                 paidReceiptPayment.put("isReversed", true);
               }
-              if (objectIn.has("reversalPayment")) {
-                paidReceiptPayment.put("reversedPaymentId", objectIn.get("paymentId"));
+              if (objectIn.has("reversedPaymentId")) {
+                paidReceiptPayment.put("reversedPaymentId", objectIn.get("reversedPaymentId"));
               }
               added = true;
               listpaidReceiptsPayments.put(paidReceiptPayment);
