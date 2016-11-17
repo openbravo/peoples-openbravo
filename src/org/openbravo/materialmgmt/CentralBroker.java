@@ -33,6 +33,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.common.plm.ProductAUM;
@@ -238,10 +239,9 @@ public class CentralBroker {
   public String isUomManagementEnabled() {
     String propertyValue = "N";
     try {
-      propertyValue = Preferences.getPreferenceValue("UomManagement", true, OBContext
-          .getOBContext().getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(),
-          OBContext.getOBContext().getUser(), OBContext.getOBContext().getRole(), null);
-
+      Client systemClient = OBDal.getInstance().get(Client.class, "0");
+      propertyValue = Preferences.getPreferenceValue("UomManagement", true, systemClient, null,
+          null, null, null);
     } catch (PropertyException e) {
       log4j.debug("Preference UomManagement not found", e);
     }
