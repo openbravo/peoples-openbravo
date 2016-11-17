@@ -222,11 +222,12 @@ public class Terminal extends JSONProcessSimple {
         if (jsonQueryVal.has("data")) {
           JSONArray arrayQueryVal = new JSONArray(new JSONTokener(jsonQueryVal.get("data")
               .toString()));
-          if (arrayQueryVal.length() > 0) {
+
+          if (queryterminal.returnList()) {
             queryaux.put(queryterminal.getProperty(),
-                queryterminal.returnList() ? arrayQueryVal.get(0) : arrayQueryVal);
+                arrayQueryVal.length() > 0 ? arrayQueryVal.get(0) : JSONObject.NULL);
           } else {
-            queryaux.put(queryterminal.getProperty(), JSONObject.NULL);
+            queryaux.put(queryterminal.getProperty(), arrayQueryVal);
           }
         } else {
           throw new OBException("Error while loading query terminal property of "
