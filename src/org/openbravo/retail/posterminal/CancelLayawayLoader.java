@@ -21,14 +21,13 @@ import org.openbravo.mobile.core.process.DataSynchronizationProcess.DataSynchron
 import org.openbravo.model.common.order.Order;
 import org.openbravo.service.json.JsonConstants;
 
-@DataSynchronization(entity = "OBPOS_CancelLayaway")
+@DataSynchronization(entity = "Order")
 public class CancelLayawayLoader extends POSDataSynchronizationProcess implements
     DataSynchronizationImportProcess {
 
   private static final Logger log = Logger.getLogger(CancelLayawayLoader.class);
 
   public JSONObject saveRecord(JSONObject json) throws Exception {
-
     boolean useOrderDocumentNoForRelatedDocs = false;
 
     try {
@@ -59,5 +58,15 @@ public class CancelLayawayLoader extends POSDataSynchronizationProcess implement
 
   protected String getImportQualifier() {
     return "OBPOS_CancelLayaway";
+  }
+
+  @Override
+  protected boolean additionalCheckForDuplicates(JSONObject record) {
+    try {
+      return OBDal.getInstance().get(Order.class, record.get("id")).getCancelledorder() != null;
+    } catch (Exception e) {
+      log.error("CancelLayawayOrder failed when doing additionalCheckForDuplicates", e);
+      return false;
+    }
   }
 }

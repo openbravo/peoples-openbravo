@@ -117,7 +117,7 @@ public class CustomerLoader extends POSDataSynchronizationProcess implements
 
     // customer.setClient(OBDal.getInstance().get(Client.class, jsonCustomer.getString("client")));
     // BP org (required)
-    if (!jsonCustomer.has("organization") && jsonCustomer.getString("organization").equals("null")) {
+    if (!jsonCustomer.has("organization") || "null".equals(jsonCustomer.getString("organization"))) {
       String errorMessage = "Business partner organization is a mandatory field to create a new customer from Web Pos";
       log.error(errorMessage);
       throw new OBException(errorMessage, null);
@@ -132,13 +132,13 @@ public class CustomerLoader extends POSDataSynchronizationProcess implements
     }
     // BP category (required)
     if (!jsonCustomer.has("businessPartnerCategory")
-        && jsonCustomer.getString("businessPartnerCategory").equals("null")) {
+        || "null".equals(jsonCustomer.getString("businessPartnerCategory"))) {
       String errorMessage = "Business partner category is a mandatory field to create a new customer from Web Pos";
       log.error(errorMessage);
       throw new OBException(errorMessage, null);
     }
     // BP search key (required)
-    if (!jsonCustomer.has("searchKey") && jsonCustomer.getString("searchKey").equals("null")) {
+    if (!jsonCustomer.has("searchKey") || "null".equals(jsonCustomer.getString("searchKey"))) {
       String errorMessage = "Business partner search key is a mandatory field to create a new customer from Web Pos";
       log.error(errorMessage);
       throw new OBException(errorMessage, null);
@@ -166,7 +166,7 @@ public class CustomerLoader extends POSDataSynchronizationProcess implements
       customer.setSearchKey(finalSK);
     }
     // BP name (required)
-    if (!jsonCustomer.has("name") && jsonCustomer.getString("name").equals("null")) {
+    if (!jsonCustomer.has("name") || "null".equals(jsonCustomer.getString("name"))) {
       String errorMessage = "Business partner name is a mandatory field to create a new customer from Web Pos";
       log.error(errorMessage);
       throw new OBException(errorMessage, null);

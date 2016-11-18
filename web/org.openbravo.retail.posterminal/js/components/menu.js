@@ -1020,7 +1020,7 @@ enyo.kind({
   kind: 'OB.UI.MenuAction',
   permission: 'OBPOS_retail.disableEnableRFIDReader',
   i18nLabel: 'OBPOS_RFID',
-  classes: 'menu-switch btn-icon-switchoffline',
+  classes: 'menu-switch',
   handlers: {
     onPointOfSaleLoad: 'pointOfSaleLoad'
   },
@@ -1086,6 +1086,9 @@ enyo.kind({
     if (OB.UTIL.RfidController.isRfidConfigured()) {
       var protocol = OB.POS.hwserver.url.split('/')[0];
       if (window.location.protocol === protocol) {
+        if (OB.UTIL.RfidController.get('connectionLost')) {
+          this.addClass('btn-icon-switchoffline');
+        }
         if (!OB.UTIL.RfidController.get('isRFIDEnabled') || !OB.UTIL.RfidController.get('reconnectOnScanningFocus')) {
           this.addClass('btn-icon-switchoff');
         } else {

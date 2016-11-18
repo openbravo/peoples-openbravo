@@ -1239,10 +1239,16 @@ enyo.kind({
       var lineToDelete = model,
           removedId = model.get('id'),
           serviceLinesToCheck = [],
-          text, linesToDelete, relations;
+          text, linesToDelete, relations, deletedQty;
+
+      if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true) && model.has('obposQtyDeleted') && model.get('obposQtyDeleted') > 0) {
+        deletedQty = model.get('obposQtyDeleted');
+      } else {
+        deletedQty = model.get('qty');
+      }
 
       if (!me.order.get('undo')) {
-        text = OB.I18N.getLabel('OBPOS_DeleteLine') + ': ' + model.get('qty') + ' x ' + model.get('product').get('_identifier');
+        text = OB.I18N.getLabel('OBPOS_DeleteLine') + ': ' + deletedQty + ' x ' + model.get('product').get('_identifier');
         linesToDelete = [model];
         relations = [];
         me.order.setUndo('DeleteLine', {
@@ -1258,9 +1264,9 @@ enyo.kind({
         linesToDelete.push(model);
         text = me.order.get('undo').text;
         if (text) {
-          text += ', ' + model.get('qty') + ' x ' + model.get('product').get('_identifier');
+          text += ', ' + deletedQty + ' x ' + model.get('product').get('_identifier');
         } else {
-          text = OB.I18N.getLabel('OBPOS_DeleteLine') + ': ' + model.get('qty') + ' x ' + model.get('product').get('_identifier');
+          text = OB.I18N.getLabel('OBPOS_DeleteLine') + ': ' + deletedQty + ' x ' + model.get('product').get('_identifier');
         }
         relations = me.order.get('undo').relations;
         if (!relations) {
@@ -1292,7 +1298,7 @@ enyo.kind({
             rls.splice(lineToCheck[0].get('relatedLines').indexOf(rl[0]), 1);
             lineToCheck[0].set('relatedLines', rls);
             if (lineToCheck[0].get('product').get('quantityRule') === 'PP') {
-              text += ', ' + model.get('qty') + ' x ' + lineToCheck[0].get('product').get('_identifier');
+              text += ', ' + deletedQty + ' x ' + lineToCheck[0].get('product').get('_identifier');
               me.order.get('undo').text = text;
             }
           } else {

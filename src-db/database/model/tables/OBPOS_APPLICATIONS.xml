@@ -141,7 +141,7 @@
       <index name="OBPOS_APPLICATIONS_MASTER_IDX" unique="false">
         <index-column name="MASTERTERMINAL_ID"/>
       </index>
-      <index name="OBPOS_APPLICATIONS_NAME" unique="true">
+      <index name="OBPOS_APPLICATIONS_NAME" unique="false">
         <index-column name="NAME"/>
       </index>
       <unique name="OBPOS_APP_PREFIX">
