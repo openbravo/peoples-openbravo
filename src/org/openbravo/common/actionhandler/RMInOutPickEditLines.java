@@ -34,7 +34,7 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBDao;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
-import org.openbravo.materialmgmt.CentralBroker;
+import org.openbravo.materialmgmt.UOMUtil;
 import org.openbravo.model.common.enterprise.Locator;
 import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.common.uom.UOM;
@@ -128,15 +128,13 @@ public class RMInOutPickEditLines extends BaseProcessActionHandler {
       newInOutLine.setUOM(orderLine.getUOM());
       // Ordered Quantity = returned quantity.
       BigDecimal qtyReceived = new BigDecimal(selectedLine.getString("receiving"));
-      if (CentralBroker.getInstance().isUomManagementEnabled().equals("Y")) {
-        newInOutLine.setOperativeUOM(
-            OBDal.getInstance().get(UOM.class, selectedLine.getString("alternativeUOM")));
+      if (UOMUtil.isUomManagementEnabled()) {
+        newInOutLine.setOperativeUOM(OBDal.getInstance().get(UOM.class,
+            selectedLine.getString("alternativeUOM")));
         newInOutLine.setOperativeQuantity(qtyReceived);
-        if (selectedLine.getString("alternativeUOM")
-            .equals(selectedLine.getString("returnedUOM"))) {
-          qtyReceived = CentralBroker.getInstance().getConvertedQty(
-              selectedLine.getString("product"), qtyReceived,
-              selectedLine.getString("alternativeUOM"), false);
+        if (selectedLine.getString("alternativeUOM").equals(selectedLine.getString("returnedUOM"))) {
+          qtyReceived = UOMUtil.getConvertedQty(selectedLine.getString("product"),
+              qtyReceived, selectedLine.getString("alternativeUOM"));
         }
       }
       newInOutLine.setMovementQuantity(qtyReceived.negate());

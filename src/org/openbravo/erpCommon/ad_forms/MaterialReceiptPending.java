@@ -54,7 +54,7 @@ import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
-import org.openbravo.materialmgmt.CentralBroker;
+import org.openbravo.materialmgmt.UOMUtil;
 import org.openbravo.model.common.enterprise.Locator;
 import org.openbravo.model.common.enterprise.OrgWarehouse;
 import org.openbravo.model.common.enterprise.Organization;
@@ -151,9 +151,9 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
           DateTimeData.nDaysAfter(this, strDateTo, "1"), strC_BPartner_ID, strDocumentNo);
     }
 
-    String preference = CentralBroker.getInstance().isUomManagementEnabled();
-    xmlDocument.setParameter("paramIsUomEnabled", preference);
-    if (preference.equals("Y")) {
+    boolean preference = UOMUtil.isUomManagementEnabled();
+    xmlDocument.setParameter("paramIsUomEnabled", preference ? "Y" : "N");
+    if (preference) {
       xmlDocument.setParameter("aumVisible", "table-cell");
       xmlDocument.setParameter("paramColSpanDocument", "5");
       xmlDocument.setParameter("paramColSpanDate", "3");
@@ -166,7 +166,7 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
       xmlDocument.setParameter("paramColSpanBPartner", "3");
       xmlDocument.setParameter("paramColSpanCalendar", "1");
     }
-    
+
     MaterialReceiptPendingData[][] dataAum = new MaterialReceiptPendingData[data.length][];
     for (int i = 0; i < data.length; i++) {
       dataAum[i] = MaterialReceiptPendingData.selectAUM(this, data[i].mProductId);
@@ -175,7 +175,7 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
             data[i].cDoctypeId);
       }
     }
-    
+
     ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "MaterialReceiptPending", false, "",
         "", "", false, "ad_forms", strReplaceWith, false, true);
     toolbar.prepareSimpleToolBarTemplate();
@@ -453,14 +453,13 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
               }
             }
           }
-          String propertyValue = CentralBroker.getInstance().isUomManagementEnabled();
-          if (propertyValue.equalsIgnoreCase("Y") && dataLine[0].mProductUomId.isEmpty()) {
+          if (UOMUtil.isUomManagementEnabled() && dataLine[0].mProductUomId.isEmpty()) {
             dataLine[0].aumqty = vars.getStringParameter("inpAumQty" + strOrderlineId);
             strQtyordered = dataLine[0].aumqty;
             String defaultAum = vars.getStringParameter("inpcAUMId" + strOrderlineId);
             dataLine[0].cAum = defaultAum;
             if (!defaultAum.equals(dataLine[0].cUomId)) {
-              strQtyordered = CentralBroker.getInstance().getConvertedQty(dataLine[0].mProductId,
+              strQtyordered = UOMUtil.getConvertedQty(dataLine[0].mProductId,
                   new BigDecimal(dataLine[0].aumqty), defaultAum).toString();
             }
           }

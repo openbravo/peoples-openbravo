@@ -35,14 +35,12 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.businessUtility.PAttributeSet;
 import org.openbravo.erpCommon.businessUtility.PAttributeSetData;
-import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.businessUtility.PriceAdjustment;
 import org.openbravo.erpCommon.businessUtility.Tax;
 import org.openbravo.erpCommon.utility.AccDefUtility;
 import org.openbravo.erpCommon.utility.ComboTableData;
-import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.erpCommon.utility.Utility;
-import org.openbravo.materialmgmt.CentralBroker;
+import org.openbravo.materialmgmt.UOMUtil;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.common.plm.Product;
@@ -242,24 +240,16 @@ public class SL_Invoice_Product extends HttpSecureAppServlet {
 
     }
 
-    String propertyValue = "N";
-    try {
-      propertyValue = Preferences.getPreferenceValue("UomManagement", true, OBContext
-          .getOBContext().getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(),
-          OBContext.getOBContext().getUser(), OBContext.getOBContext().getRole(), null);
-    } catch (PropertyException e) {
-      log4j.debug("Preference UomManagement not found", e);
-    }
-    if (propertyValue.equalsIgnoreCase("Y") && "".equals(strUOMProduct)) {
+    if (UOMUtil.isUomManagementEnabled() && "".equals(strUOMProduct)) {
       // Set AUM based on default
-      String finalAUM = CentralBroker.getInstance().getDefaultAUMForDocument(strMProductID,
-          invoice.getTransactionDocument().getId());
+      String finalAUM = UOMUtil.getDefaultAUMForDocument(strMProductID, invoice
+          .getTransactionDocument().getId());
       if (finalAUM != null) {
         resultado.append(", new Array(\"inpcAum\", \"" + finalAUM + "\")");
       }
     }
     if (strHasSecondaryUOM.equals("1")
-        && (!propertyValue.equalsIgnoreCase("Y") || (propertyValue.equalsIgnoreCase("Y") && !""
+        && (!UOMUtil.isUomManagementEnabled() || (UOMUtil.isUomManagementEnabled() && !""
             .equals(strUOMProduct)))) {
       resultado.append(", new Array(\"inpmProductUomId\", ");
       // if (strUOM.startsWith("\""))

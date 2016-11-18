@@ -51,7 +51,7 @@ import org.openbravo.erpCommon.utility.PropertyNotFoundException;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
-import org.openbravo.materialmgmt.CentralBroker;
+import org.openbravo.materialmgmt.UOMUtil;
 import org.openbravo.model.procurement.RequisitionLine;
 import org.openbravo.utils.Replace;
 import org.openbravo.xmlEngine.XmlDocument;
@@ -258,8 +258,7 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
       throw new ServletException(ex);
     }
 
-    boolean uomManagementPreference = CentralBroker.getInstance().isUomManagementEnabled()
-        .equals("Y");
+    boolean uomManagementPreference = UOMUtil.isUomManagementEnabled();
 
     boolean strHaveSecDataLines = false;
     boolean strHaveAumDataLines = false;
@@ -297,10 +296,8 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
           datalines[i].aumname = (defaultAumData.length > 0) ? defaultAumData[0].aumname
               : datalines[i].uomname;
           if (!defaultAum.equals(datalines[i].cUomId)) {
-            datalines[i].qtytoorder = CentralBroker
-                .getInstance()
-                .getConvertedQty(datalines[i].mProductId, new BigDecimal(datalines[i].aumqty),
-                    datalines[i].cAum).toString();
+            datalines[i].qtytoorder = UOMUtil.getConvertedQty(datalines[i].mProductId,
+                new BigDecimal(datalines[i].aumqty), datalines[i].cAum).toString();
           }
         }
       } else if (uomManagementPreference && datalines[i].quantityorder.isEmpty()
@@ -319,10 +316,8 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
           datalines[i].aumname = (defaultAumData.length > 0) ? defaultAumData[0].aumname
               : datalines[i].uomname;
           if (!defaultAum.equals(datalines[i].cUomId)) {
-            datalines[i].qtytoorder = CentralBroker
-                .getInstance()
-                .getConvertedQty(datalines[i].mProductId, new BigDecimal(datalines[i].aumqty),
-                    datalines[i].cAum).toString();
+            datalines[i].qtytoorder = UOMUtil.getConvertedQty(datalines[i].mProductId,
+                new BigDecimal(datalines[i].aumqty), datalines[i].cAum).toString();
           }
         }
       } else {
@@ -369,10 +364,8 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
           dataselected[i].aumname = (defaultAumData.length > 0) ? defaultAumData[0].aumname
               : dataselected[i].uomname;
           if (!defaultAum.equals(dataselected[i].cUomId)) {
-            dataselected[i].lockqty = CentralBroker
-                .getInstance()
-                .getConvertedQty(dataselected[i].mProductId,
-                    new BigDecimal(dataselected[i].aumqty), dataselected[i].cAum).toString();
+            dataselected[i].lockqty = UOMUtil.getConvertedQty(dataselected[i].mProductId,
+                new BigDecimal(dataselected[i].aumqty), dataselected[i].cAum).toString();
           }
         }
       } else if (uomManagementPreference && dataselected[i].quantityorder.isEmpty()
@@ -391,10 +384,8 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
           dataselected[i].aumname = (defaultAumData.length > 0) ? defaultAumData[0].aumname
               : dataselected[i].uomname;
           if (!defaultAum.equals(dataselected[i].cUomId)) {
-            dataselected[i].lockqty = CentralBroker
-                .getInstance()
-                .getConvertedQty(dataselected[i].mProductId,
-                    new BigDecimal(dataselected[i].aumqty), dataselected[i].cAum).toString();
+            dataselected[i].lockqty = UOMUtil.getConvertedQty(dataselected[i].mProductId,
+                new BigDecimal(dataselected[i].aumqty), dataselected[i].cAum).toString();
           }
         }
       } else {
@@ -434,8 +425,7 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
         Utility.getContext(this, vars, "#User_Client", "RequisitionToOrder"),
         Tree.getMembers(this, strTreeOrg, strOrgId));
 
-    boolean uomManagementPreference = CentralBroker.getInstance().isUomManagementEnabled()
-        .equals("Y");
+    boolean uomManagementPreference = UOMUtil.isUomManagementEnabled();
 
     for (int i = 0; dataselected != null && i < dataselected.length; i++) {
       String strLockQty = "";
@@ -684,8 +674,7 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
           RequisitionToOrderData.cBPartnerLocationId(this, strVendor), cCurrencyId,
           strPriceListVersionId, strSelected);
 
-      boolean uomManagementPreference = CentralBroker.getInstance().isUomManagementEnabled()
-          .equals("Y");
+      boolean uomManagementPreference = UOMUtil.isUomManagementEnabled();
       HashMap<String, String[]> hashLines = new HashMap<String, String[]>();
       int line = 0;
       for (int i = 0; lines != null && i < lines.length; i++) {
@@ -716,10 +705,8 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
                   : lines[i].cUomId;
             }
             if (!lines[i].cUomId.equals(lines[i].cAum)) {
-              lines[i].aumqty = new BigDecimal(CentralBroker
-                  .getInstance()
-                  .getConvertedQty(lines[i].mProductId, new BigDecimal(lines[i].lockaumqty),
-                      lines[i].cAum).toString()).toPlainString();
+              lines[i].aumqty = new BigDecimal(UOMUtil.getConvertedQty(lines[i].mProductId,
+                  new BigDecimal(lines[i].lockaumqty), lines[i].cAum).toString()).toPlainString();
             }
           } catch (NumberFormatException e) {
           }

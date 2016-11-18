@@ -29,18 +29,15 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.businessUtility.PAttributeSet;
 import org.openbravo.erpCommon.businessUtility.PAttributeSetData;
-import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.businessUtility.PriceAdjustment;
 import org.openbravo.erpCommon.businessUtility.Tax;
 import org.openbravo.erpCommon.utility.ComboTableData;
-import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.erpCommon.utility.Utility;
-import org.openbravo.materialmgmt.CentralBroker;
+import org.openbravo.materialmgmt.UOMUtil;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.utils.FormatUtilities;
@@ -87,13 +84,13 @@ public class SL_Order_Product extends HttpSecureAppServlet {
     } else
       pageError(response);
   }
-  
+
   private void printPage(HttpServletResponse response, VariablesSecureApp vars, String _strUOM,
       String strPriceList, String _strPriceStd, String _strPriceLimit, String strCurrency,
       String strMProductID, String strCBPartnerLocationID, String strADOrgID,
       String strMWarehouseID, String strCOrderId, String strIsSOTrx, String strQty,
       String cancelPriceAd, String strUOMProduct) throws IOException, ServletException {
-    
+
     log4j.debug("Output: dataSheet");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
@@ -234,29 +231,19 @@ public class SL_Order_Product extends HttpSecureAppServlet {
     }
 
     strHasSecondaryUOM = SLOrderProductData.hasSecondaryUOM(this, strMProductID);
-    String propertyValue = "N";
-    try {
-      propertyValue = Preferences.getPreferenceValue("UomManagement", true,
-          OBContext.getOBContext().getCurrentClient(),
-          OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
-          OBContext.getOBContext().getRole(), null);
-      
-    } catch (PropertyException e) {
-      log4j.debug("Preference UomManagement not found", e);
-    }
-    
-    if (propertyValue.equalsIgnoreCase("Y")  && "".equals(strUOMProduct)) {
+    if (UOMUtil.isUomManagementEnabled() && "".equals(strUOMProduct)) {
       // Set AUM based on default
       Order order = OBDal.getInstance().get(Order.class, strCOrderId);
-      String finalAUM = CentralBroker.getInstance().getDefaultAUMForDocument(strMProductID,
-          order.getTransactionDocument().getId());
+      String finalAUM = UOMUtil.getDefaultAUMForDocument(strMProductID, order
+          .getTransactionDocument().getId());
       if (finalAUM != null) {
         resultado.append("new Array(\"inpcAum\", \"" + finalAUM + "\"),\n");
       }
     }
 
-    if (strHasSecondaryUOM.equals("1") && (!propertyValue.equalsIgnoreCase("Y")
-        || (propertyValue.equalsIgnoreCase("Y") && !"".equals(strUOMProduct)))) {
+    if (strHasSecondaryUOM.equals("1")
+        && (!UOMUtil.isUomManagementEnabled() || (UOMUtil.isUomManagementEnabled() && !""
+            .equals(strUOMProduct)))) {
       resultado.append("new Array(\"inpmProductUomId\", ");
       // if (strUOM.startsWith("\""))
       // strUOM=strUOM.substring(1,strUOM.length()-1);
@@ -266,9 +253,9 @@ public class SL_Order_Product extends HttpSecureAppServlet {
         FieldProvider[] tld = null;
         try {
           ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "",
-              "M_Product_UOM", "",
-              Utility.getContext(this, vars, "#AccessibleOrgTree", "SLOrderProduct"),
-              Utility.getContext(this, vars, "#User_Client", "SLOrderProduct"), 0);
+              "M_Product_UOM", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
+                  "SLOrderProduct"), Utility.getContext(this, vars, "#User_Client",
+                  "SLOrderProduct"), 0);
           Utility.fillSQLParameters(this, vars, null, comboTableData, "SLOrderProduct", "");
           tld = comboTableData.select(false);
           comboTableData = null;
@@ -294,9 +281,9 @@ public class SL_Order_Product extends HttpSecureAppServlet {
         FieldProvider[] tld = null;
         try {
           ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "",
-              "M_Product_UOM", "",
-              Utility.getContext(this, vars, "#AccessibleOrgTree", "SLOrderProduct"),
-              Utility.getContext(this, vars, "#User_Client", "SLOrderProduct"), 0);
+              "M_Product_UOM", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
+                  "SLOrderProduct"), Utility.getContext(this, vars, "#User_Client",
+                  "SLOrderProduct"), 0);
           Utility.fillSQLParameters(this, vars, null, comboTableData, "SLOrderProduct", "");
           tld = comboTableData.select(false);
           comboTableData = null;

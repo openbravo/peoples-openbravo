@@ -26,7 +26,7 @@ import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.kernel.BaseActionHandler;
-import org.openbravo.materialmgmt.CentralBroker;
+import org.openbravo.materialmgmt.UOMUtil;
 
 public class GetConvertedQtyActionHandler extends BaseActionHandler {
   private static final Logger log4j = Logger.getLogger(GetConvertedQtyActionHandler.class);
@@ -43,7 +43,11 @@ public class GetConvertedQtyActionHandler extends BaseActionHandler {
       final Boolean reverse = jsonData.getBoolean("reverse");
 
       try {
-        result.put("qty", CentralBroker.getInstance().getConvertedQty(mProductId, qty, toUOM, reverse));
+        if (reverse) {
+          result.put("qty", UOMUtil.getConvertedAumQty(mProductId, qty, toUOM));
+        } else {
+          result.put("qty", UOMUtil.getConvertedQty(mProductId, qty, toUOM));
+        }
       } catch (Exception e) {
         result.put("qty", qty);
         log4j.error("Error while converting UOM, exception e", e);

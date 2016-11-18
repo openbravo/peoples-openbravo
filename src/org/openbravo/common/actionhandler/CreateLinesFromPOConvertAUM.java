@@ -27,7 +27,7 @@ import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
-import org.openbravo.materialmgmt.CentralBroker;
+import org.openbravo.materialmgmt.UOMUtil;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,9 +51,11 @@ public class CreateLinesFromPOConvertAUM extends BaseActionHandler {
       final String toUOM = jsonRequest.getString("toUOM");
       final boolean reverse = "Y".equals(jsonRequest.getString("reverse"));
 
-      result.put("amount",
-          CentralBroker.getInstance().getConvertedQty(strProductId, quantity, toUOM, reverse)
-              .toString());
+      if (reverse) {
+        result.put("amount", UOMUtil.getConvertedAumQty(strProductId, quantity, toUOM).toString());
+      } else {
+        result.put("amount", UOMUtil.getConvertedQty(strProductId, quantity, toUOM).toString());
+      }
     } catch (Exception e) {
       log.error("Error in RFCServiceReturnableActionHandler Action Handler", e);
       try {

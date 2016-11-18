@@ -38,7 +38,7 @@ import org.openbravo.erpCommon.utility.NavigationBar;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
-import org.openbravo.materialmgmt.CentralBroker;
+import org.openbravo.materialmgmt.UOMUtil;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class ReportOrderNotShipped extends HttpSecureAppServlet {
@@ -167,9 +167,9 @@ public class ReportOrderNotShipped extends HttpSecureAppServlet {
     } catch (Exception ex) {
       throw new ServletException(ex);
     }
-    
+
     xmlDocument.setParameter("isUomManagementEnabled", "none");
-    if (CentralBroker.getInstance().isUomManagementEnabled().equals("Y")) {
+    if (UOMUtil.isUomManagementEnabled()) {
       xmlDocument.setParameter("isUomManagementEnabled", "table-cell");
     }
     response.setContentType("text/html; charset=UTF-8");
@@ -186,7 +186,7 @@ public class ReportOrderNotShipped extends HttpSecureAppServlet {
       log4j.debug("Output: print html");
 
     ReportOrderNotShippedData[] data = null;
-    
+
     data = ReportOrderNotShippedData.select(this, vars.getLanguage(),
         Utility.getContext(this, vars, "#User_Client", "ReportOrderNotShipped"),
         Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportOrderNotShipped"), strdateFrom,
@@ -201,20 +201,20 @@ public class ReportOrderNotShipped extends HttpSecureAppServlet {
     if (!strShowInAUM.isEmpty() && strShowInAUM.equalsIgnoreCase("on")) {
       DecimalFormat df = Utility.getFormat(vars, "priceEdition");
       for (int i = 0; i < data.length; i++) {
-        data[i].orderedqty = df.format(CentralBroker.getInstance().getConvertedQty(
-            data[i].mProductId, new BigDecimal(data[i].orderedvalue), data[i].aum, true));
-        data[i].pendingqty = df.format(CentralBroker.getInstance().getConvertedQty(
-            data[i].mProductId, new BigDecimal(data[i].pendingvalue), data[i].aum, true));
+        data[i].orderedqty = df.format(UOMUtil.getConvertedAumQty(data[i].mProductId,
+            new BigDecimal(data[i].orderedvalue), data[i].aum));
+        data[i].pendingqty = df.format(UOMUtil.getConvertedAumQty(data[i].mProductId,
+            new BigDecimal(data[i].pendingvalue), data[i].aum));
         try {
-          data[i].qtyinstock = CentralBroker.getInstance().getConvertedQty(data[i].mProductId,
-              new BigDecimal(data[i].stockvalue), data[i].aum, true).toString();
+          data[i].qtyinstock = UOMUtil.getConvertedAumQty(data[i].mProductId,
+              new BigDecimal(data[i].stockvalue), data[i].aum).toString();
         } catch (NumberFormatException nfe) {
           data[i].qtyinstock = null;
           data[i].aumsymbol = " ";
         }
       }
     }
-    
+
     if (strOutput.equals("pdf"))
       response.setHeader("Content-disposition", "inline; filename=OrdersAwaitingDelivery.pdf");
 

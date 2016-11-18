@@ -23,7 +23,7 @@ import java.util.Map;
 
 import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.materialmgmt.CentralBroker;
+import org.openbravo.materialmgmt.UOMUtil;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.service.datasource.hql.HqlQueryTransformer;
 
@@ -55,7 +55,7 @@ public class ReturnToFromCustomerVendorHQLTransformer extends HqlQueryTransforme
   private static final String rfc_tax = "(select e.salesOrderLine.tax.id from MaterialMgmtShipmentInOutLine as e where e.id = iol.id)";
   private static final String rtv_priceIncludeTax = "(select e.salesOrderLine.salesOrder.priceList.priceIncludesTax from ProcurementPOInvoiceMatch as e where e.goodsShipmentLine.id = iol.id)";
   private static final String rfc_priceIncludeTax = "(select e.priceList.priceIncludesTax from Order as e where e.id = :salesOrderId)";
-  
+
   private final static String rm_aum = ""
       + "(case when (select ('Y') from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol) is null "
       + "then " // obSelected = false
@@ -71,7 +71,7 @@ public class ReturnToFromCustomerVendorHQLTransformer extends HqlQueryTransforme
       + "else " // obSelected = true
       + "coalesce ((select ol.operativeQuantity from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol),0) "
       + "end)";
-  
+
   private final static String rm_aum_id = ""
       + "(case when (select ('Y') from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol) is null "
       + "then " // obSelected = false
@@ -92,9 +92,9 @@ public class ReturnToFromCustomerVendorHQLTransformer extends HqlQueryTransforme
       + "else " // obSelected = true
       + "TO_NUMBER(M_GET_CONVERTED_QTY(iol.product.id, 1.0, coalesce ((select ol.operativeUOM.id from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol),''))) "
       + "end)";
-  
+
   private static final String returnedLeftClauseAUM = " coalesce((select ol.operativeQuantity from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol)*-1,0)";
-  
+
   private static final String rm_returnedUOM = ""
       + "(case when (select ('Y') from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol) is null "
       + "then " // obSelected = false
@@ -113,12 +113,12 @@ public class ReturnToFromCustomerVendorHQLTransformer extends HqlQueryTransforme
     queryNamedParameters.put("businessPartnerId", businessPartnerId);
 
     String transformedHqlQuery = null;
-    if(CentralBroker.getInstance().isUomManagementEnabled().equals("Y")){
-      transformedHqlQuery = hqlQuery.replace("@returnedLeftClause@", returnedLeftClauseAUM);      
-    }else{
+    if (UOMUtil.isUomManagementEnabled()) {
+      transformedHqlQuery = hqlQuery.replace("@returnedLeftClause@", returnedLeftClauseAUM);
+    } else {
       transformedHqlQuery = hqlQuery.replace("@returnedLeftClause@", returnedLeftClause);
     }
-    
+
     transformedHqlQuery = transformedHqlQuery.replace("@returnedOthersLeftClause@",
         returnedOthersLeftClause);
     Order order = OBDal.getInstance().get(Order.class, salesOrderId);

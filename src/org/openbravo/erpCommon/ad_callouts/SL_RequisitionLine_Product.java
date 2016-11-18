@@ -35,12 +35,10 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
-import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.DateTimeData;
-import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.erpCommon.utility.Utility;
-import org.openbravo.materialmgmt.CentralBroker;
+import org.openbravo.materialmgmt.UOMUtil;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.plm.AttributeSet;
 import org.openbravo.model.common.plm.Product;
@@ -171,15 +169,7 @@ public class SL_RequisitionLine_Product extends HttpSecureAppServlet {
     }
 
     String strHasSecondaryUOM = SLRequisitionLineProductData.hasSecondaryUOM(this, strMProductID);
-    String propertyValue = "N";
-    try {
-      propertyValue = Preferences.getPreferenceValue("UomManagement", true, OBContext
-          .getOBContext().getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(),
-          OBContext.getOBContext().getUser(), OBContext.getOBContext().getRole(), null);
-    } catch (PropertyException e) {
-      log4j.debug("Preference UomManagement not found", e);
-    }
-    if (propertyValue.equalsIgnoreCase("Y") && "".equals(strUOMProduct)) {
+    if (UOMUtil.isUomManagementEnabled() && "".equals(strUOMProduct)) {
       // Set AUM based on default
       // As Requisition is a purchase document, the document type 'Purchase Order' is used to get
       // the
@@ -188,8 +178,8 @@ public class SL_RequisitionLine_Product extends HttpSecureAppServlet {
       dtCriteria.add(Restrictions.eq("documentCategory", "POO"));
       List<DocumentType> dtList = dtCriteria.list();
       if (dtList.size() > 0) {
-        String finalAUM = CentralBroker.getInstance().getDefaultAUMForDocument(strMProductID,
-            dtList.get(0).getId());
+        String finalAUM = UOMUtil.getDefaultAUMForDocument(strMProductID, dtList.get(0)
+            .getId());
         if (finalAUM != null) {
           strResult.append("new Array(\"inpcAum\", \"" + finalAUM + "\"),\n");
         }
@@ -228,7 +218,7 @@ public class SL_RequisitionLine_Product extends HttpSecureAppServlet {
               .replaceJS(strAttrSetValueType)) + "\"),\n");
       strResult.append("new Array(\"inphasseconduom\", " + strHasSecondaryUOM + "),\n");
       if (strHasSecondaryUOM.equals("1")
-          && (!propertyValue.equalsIgnoreCase("Y") || (propertyValue.equalsIgnoreCase("Y") && !""
+          && (!UOMUtil.isUomManagementEnabled() || (UOMUtil.isUomManagementEnabled() && !""
               .equals(strUOMProduct)))) {
         strResult.append("new Array(\"inpmProductUomId\", ");
         FieldProvider[] tld = null;

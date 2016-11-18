@@ -31,7 +31,7 @@ import org.junit.Test;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.materialmgmt.CentralBroker;
+import org.openbravo.materialmgmt.UOMUtil;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.common.plm.ProductAUM;
 import org.openbravo.model.common.uom.UOM;
@@ -62,31 +62,28 @@ public class CentralBrokerTest extends OBBaseTest {
   @Test
   public void test02() {
     // test method getDefaultAUMForDocument()
-    String aumId = CentralBroker.getInstance().getDefaultAUMForDocument(PRODUCT_ID, DOCUMENT_ID);
+    String aumId = UOMUtil.getDefaultAUMForDocument(PRODUCT_ID, DOCUMENT_ID);
     assertEquals(aumId, "72BA247D31F745F3AF11F74A5E2CCBEF");
   }
 
   @Test
   public void test03() {
     // test method getConvertedQty()
-    BigDecimal convertion = CentralBroker.getInstance().getConvertedQty(PRODUCT_ID,
-        BigDecimal.valueOf(10), UOM1, false);
+    BigDecimal convertion = UOMUtil.getConvertedQty(PRODUCT_ID, BigDecimal.valueOf(10), UOM1);
     assertEquals(convertion.toString(), "20.00");
   }
 
   @Test
   public void test04() {
     // test getConvertedQtyReverse()
-    BigDecimal convertion = CentralBroker.getInstance().getConvertedQty(PRODUCT_ID,
-        BigDecimal.valueOf(100), UOM1, true);
+    BigDecimal convertion = UOMUtil.getConvertedAumQty(PRODUCT_ID, BigDecimal.valueOf(100), UOM1);
     assertEquals(convertion.toString(), "50.00");
   }
 
   @Test
   public void test05() {
     // test method getAvailableUOMsForDocument()
-    List<UOM> aumList = CentralBroker.getInstance().getAvailableUOMsForDocument(PRODUCT_ID,
-        DOCUMENT_ID);
+    List<UOM> aumList = UOMUtil.getAvailableUOMsForDocument(PRODUCT_ID, DOCUMENT_ID);
     assertEquals(aumList.size(), 4);
   }
 

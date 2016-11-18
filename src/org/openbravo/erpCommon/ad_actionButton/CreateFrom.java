@@ -47,7 +47,7 @@ import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.financial.FinancialUtils;
-import org.openbravo.materialmgmt.CentralBroker;
+import org.openbravo.materialmgmt.UOMUtil;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
@@ -532,13 +532,12 @@ public class CreateFrom extends HttpSecureAppServlet {
     }
 
     for (int i = 0; i < data.length; i++) {
-      if (CentralBroker.getInstance().isUomManagementEnabled().equals("Y")) {
+      if (UOMUtil.isUomManagementEnabled()) {
         if (data[i].aumqty.isEmpty()) {
           data[i].aumqty = data[i].qty;
           if (!data[i].cAum.equals(data[i].cUomId)) {
-            data[i].qty = CentralBroker.getInstance()
-                .getConvertedQty(data[i].mProductId, new BigDecimal(data[i].aumqty), data[i].cAum)
-                .toString();
+            data[i].qty = UOMUtil.getConvertedQty(data[i].mProductId,
+                new BigDecimal(data[i].aumqty), data[i].cAum).toString();
           }
         }
         data[i].aumvisible = "table-cell";
@@ -610,8 +609,7 @@ public class CreateFrom extends HttpSecureAppServlet {
       }
     }
 
-    String preferenceUomEnabled = CentralBroker.getInstance().isUomManagementEnabled();
-    if (preferenceUomEnabled.equals("Y")) {
+    if (UOMUtil.isUomManagementEnabled()) {
       xmlDocument.setParameter("aumVisible", "table-cell");
     } else {
       xmlDocument.setParameter("aumVisible", "none");
@@ -763,7 +761,7 @@ public class CreateFrom extends HttpSecureAppServlet {
     if (isSOTrx.equals("N")) {
       final CreateFromShipmentData[][] dataUOM = new CreateFromShipmentData[data.length][];
 
-      final String strUomPreference = CentralBroker.getInstance().isUomManagementEnabled();
+      final boolean strUomPreference = UOMUtil.isUomManagementEnabled();
       boolean strHaveSecUom = false;
       boolean strHaveAum = false;
       for (int i = 0; i < data.length; i++) {
@@ -771,7 +769,7 @@ public class CreateFrom extends HttpSecureAppServlet {
           if (!data[i].havesec.equals("0")) {
             strHaveSecUom = true;
           }
-          if (strUomPreference.equals("Y") && data[i].havesec.equals("0")) {
+          if (strUomPreference && data[i].havesec.equals("0")) {
             strHaveAum = true;
           }
           if (strHaveSecUom && strHaveAum) {
@@ -797,7 +795,7 @@ public class CreateFrom extends HttpSecureAppServlet {
             data[i].havesec = "text";
             data[i].haveuompreference = "hidden";
           }
-          if (strUomPreference.equals("Y") && data[i].havesec.equals("0")) {
+          if (strUomPreference && data[i].havesec.equals("0")) {
             data[i].haveuompreference = "text";
             data[i].havesec = "hidden";
           }
@@ -815,13 +813,11 @@ public class CreateFrom extends HttpSecureAppServlet {
                 : data[i].uomsymbol;
             data[i].mProductUomId = null;
             if (!defaultAum.equals(data[i].cUomId)) {
-              data[i].qty = CentralBroker
-                  .getInstance()
-                  .getConvertedQty(data[i].mProductId, new BigDecimal(data[i].aumqty), data[i].cAum)
-                  .toString();
+              data[i].qty = UOMUtil.getConvertedQty(data[i].mProductId,
+                  new BigDecimal(data[i].aumqty), data[i].cAum).toString();
             }
           }
-        } else if (strUomPreference.equals("Y") && "0".equals(strhavesec)) {
+        } else if (strUomPreference && "0".equals(strhavesec)) {
           // UOM preference is Y and no line has secondary UOM
           data[i].havesec = "hidden";
           data[i].havesecuom = "none";
@@ -839,10 +835,8 @@ public class CreateFrom extends HttpSecureAppServlet {
                 : data[i].uomsymbol;
             data[i].mProductUomId = null;
             if (!defaultAum.equals(data[i].cUomId)) {
-              data[i].qty = CentralBroker
-                  .getInstance()
-                  .getConvertedQty(data[i].mProductId, new BigDecimal(data[i].aumqty), data[i].cAum)
-                  .toString();
+              data[i].qty = UOMUtil.getConvertedQty(data[i].mProductId,
+                  new BigDecimal(data[i].aumqty), data[i].cAum).toString();
             }
           }
         } else {
@@ -1633,19 +1627,16 @@ public class CreateFrom extends HttpSecureAppServlet {
             else
               C_Tax_ID = CreateFromInvoiceData.getTax(this, data[i].cOrderlineId);
 
-            String propertyValue = CentralBroker.getInstance().isUomManagementEnabled();
-            if (propertyValue.equalsIgnoreCase("Y") && data[i].mProductUomId.isEmpty()) {
+            if (UOMUtil.isUomManagementEnabled() && data[i].mProductUomId.isEmpty()) {
               if (data[i].cAum.isEmpty() && data[i].aumqty.isEmpty()) {
-                String defaultAum = CentralBroker.getInstance().getDefaultAUMForDocument(
-                    data[i].mProductId, data[i].cDoctypeId);
+                String defaultAum = UOMUtil.getDefaultAUMForDocument(data[i].mProductId,
+                    data[i].cDoctypeId);
                 data[i].aumqty = data[i].id;
                 data[i].cAum = defaultAum;
                 data[i].mProductUomId = null;
                 if (!defaultAum.equals(data[i].cUomId)) {
-                  data[i].id = CentralBroker
-                      .getInstance()
-                      .getConvertedQty(data[i].mProductId, new BigDecimal(data[i].aumqty),
-                          defaultAum).toString();
+                  data[i].id = UOMUtil.getConvertedQty(data[i].mProductId,
+                      new BigDecimal(data[i].aumqty), defaultAum).toString();
                 }
               }
             }
@@ -1858,7 +1849,6 @@ public class CreateFrom extends HttpSecureAppServlet {
                 .selectFromPOUpdate(conn, this, vars.getLanguage(), ids[k]);
         }
         if (data != null) {
-          String uomManagementPreference = CentralBroker.getInstance().isUomManagementEnabled();
           for (int i = 0; i < data.length; i++) {
 
             // Obtain the values from the window
@@ -1873,7 +1863,7 @@ public class CreateFrom extends HttpSecureAppServlet {
 
             String strMovementqty = "";
             String strAumQty = "";
-            if (uomManagementPreference.equals("Y") && data[i].mProductUomId.isEmpty()) {
+            if (UOMUtil.isUomManagementEnabled() && data[i].mProductUomId.isEmpty()) {
               try {
                 BigDecimal qtyAum = new BigDecimal(
                     vars.getNumericParameter("inpaumqty" + strLineId));
@@ -1886,7 +1876,7 @@ public class CreateFrom extends HttpSecureAppServlet {
                       : data[i].cUomId;
                 }
                 if (!data[i].cUomId.equals(data[i].cAum)) {
-                  strMovementqty = CentralBroker.getInstance()
+                  strMovementqty = UOMUtil
                       .getConvertedQty(data[i].mProductId, qtyAum, data[i].cAum).toString();
                 }
               } catch (NumberFormatException e) {

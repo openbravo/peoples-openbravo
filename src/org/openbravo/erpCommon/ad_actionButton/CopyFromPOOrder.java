@@ -42,7 +42,7 @@ import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.financial.FinancialUtils;
-import org.openbravo.materialmgmt.CentralBroker;
+import org.openbravo.materialmgmt.UOMUtil;
 import org.openbravo.model.ad.process.ProcessInstance;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.service.db.CallProcess;
@@ -119,18 +119,16 @@ public class CopyFromPOOrder extends HttpSecureAppServlet {
       int lineCount = 0;
       for (i = 0; data != null && i < data.length; i++) {
 
-        String propertyValue = CentralBroker.getInstance().isUomManagementEnabled();
-        if (propertyValue.equalsIgnoreCase("Y") && data[i].mProductUomId.isEmpty()) {
+        if (UOMUtil.isUomManagementEnabled() && data[i].mProductUomId.isEmpty()) {
           if (data[i].cAum.isEmpty() && data[i].aumqty.isEmpty()) {
-            String defaultAum = CentralBroker.getInstance().getDefaultAUMForDocument(
-                data[i].mProductId, order.getTransactionDocument().getId());
+            String defaultAum = UOMUtil.getDefaultAUMForDocument(data[i].mProductId, order
+                .getTransactionDocument().getId());
             data[i].aumqty = data[i].qtyordered;
             data[i].cAum = defaultAum;
             data[i].mProductUomId = null;
             if (!defaultAum.equals(data[i].cUomId)) {
-              data[i].qtyordered = CentralBroker.getInstance()
-                  .getConvertedQty(data[i].mProductId, new BigDecimal(data[i].aumqty), defaultAum)
-                  .toString();
+              data[i].qtyordered = UOMUtil.getConvertedQty(data[i].mProductId,
+                  new BigDecimal(data[i].aumqty), defaultAum).toString();
             }
           }
         }

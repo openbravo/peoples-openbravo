@@ -41,7 +41,7 @@ import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.financial.FinancialUtils;
-import org.openbravo.materialmgmt.CentralBroker;
+import org.openbravo.materialmgmt.UOMUtil;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.pricing.pricelist.ProductPrice;
@@ -136,17 +136,17 @@ public class CopyFromOrder extends HttpSecureAppServlet {
         String strcTaxId = vars.getStringParameter("inpcTaxId" + strRownum);
         String strcUOMId = vars.getStringParameter("inpcUOMId" + strRownum);
         String strCOrderlineID = SequenceIdData.getUUID();
-        
-        String propertyValue = CentralBroker.getInstance().isUomManagementEnabled();
+
+        // boolean propertyValue = UOMUtil.isUomManagementEnabled();
         String strAumQty = null;
         String strcAumId = null;
-        if (propertyValue.equalsIgnoreCase("Y")) {
+        if (UOMUtil.isUomManagementEnabled()) {
           strAumQty = vars.getNumericParameter("inpaumquantity" + strRownum);
           strcAumId = vars.getStringParameter("inpcAUMId" + strRownum);
           strQty = strAumQty;
           if (!strcAumId.equals(strcUOMId)) {
-            strQty = CentralBroker.getInstance()
-                .getConvertedQty(strmProductId, new BigDecimal(strAumQty), strcAumId).toString();
+            strQty = UOMUtil.getConvertedQty(strmProductId, new BigDecimal(strAumQty), strcAumId)
+                .toString();
           }
         }
 
@@ -265,7 +265,7 @@ public class CopyFromOrder extends HttpSecureAppServlet {
       Product product = OBDal.getInstance().get(Product.class, data[i].mProductId);
       data[i].lastpriceso = (PriceAdjustment.calculatePriceActual(order, product, new BigDecimal(
           data[i].qty), new BigDecimal(data[i].lastpriceso))).toString();
-      
+
       dataAUM[i] = CopyFromOrderData.selectAUM(this, data[i].mProductId);
       if (dataAUM[i].length == 0) {
         dataAUM[i] = CopyFromOrderData.selectAUMDefault(this, data[i].mProductId,
@@ -309,8 +309,7 @@ public class CopyFromOrder extends HttpSecureAppServlet {
     xmlDocument.setParameter("invoicing", strInvoicing);
     xmlDocument.setParameter("bpartnername", dataOrder[0].bpartnername);
 
-    String propertyValue = CentralBroker.getInstance().isUomManagementEnabled();
-    if (propertyValue.equalsIgnoreCase("Y")) {
+    if (UOMUtil.isUomManagementEnabled()) {
       xmlDocument.setParameter("aumQtyVisible", "table-cell");
       xmlDocument.setParameter("aumVisible", "table-cell");
       xmlDocument.setParameter("uomEnabled", "Y");
@@ -332,7 +331,7 @@ public class CopyFromOrder extends HttpSecureAppServlet {
       strTotalAverage = totalAverage.toPlainString();
       // int intscale = totalAverage.scale();
     }
-    
+
     xmlDocument.setParameter("totalAverage", strTotalAverage);
 
     xmlDocument.setData("structure1", data);

@@ -25,14 +25,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.hibernate.NonUniqueResultException;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.Preferences;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.PropertyException;
-import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.plm.Product;
@@ -42,34 +43,17 @@ import org.openbravo.service.db.DalConnectionProvider;
 
 /**
  * 
+ * Utility class for methods related to Unit of Measure functionality
+ * 
  * @author Nono Carballo
  *
  */
-public class CentralBroker {
+public class UOMUtil {
 
-  private static CentralBroker _instance = null;
-  private final Logger log4j = Logger.getLogger(CentralBroker.class);
-
-  private String[] salesDocuments = { "SOO", // Sales Order
-      "MMS", // Material Delivery
-      "ARI" // AR Invoice
-  };
-  private String[] purchaseDocuments = { "POO", // Purchase Order
-      "MMR", // Material Receipt
-      "API", // AP Invoice
-      "POR" // Purchase Requisition
-  };
-
-  private CentralBroker() {
-    super();
-  }
-
-  public static CentralBroker getInstance() {
-    if (_instance == null) {
-      _instance = new CentralBroker();
-    }
-    return _instance;
-  }
+  private static final Logger log4j = Logger.getLogger(UOMUtil.class);
+  private static final String UOM_PROPERTY = "UomManagement";
+  private static final String UOM_NOT_AVAILABLE = "NA";
+  private static final String UOM_PRIMARY = "P";
 
   /**
    * Get default AUM for a product in a given document
@@ -81,45 +65,20 @@ public class CentralBroker {
    * @return The default AUM for the product for the given document
    */
 
-  public String getDefaultAUMForDocument(String mProductId, String documentTypeId) {
+  public static String getDefaultAUMForDocument(String mProductId, String documentTypeId) {
+    OBContext.setAdminMode();
     DocumentType docType = OBDal.getInstance().get(DocumentType.class, documentTypeId);
-    String docBaseType = docType.getDocumentCategory();
     OBCriteria<ProductAUM> pAUMCriteria = OBDal.getInstance().createCriteria(ProductAUM.class);
-    pAUMCriteria.add(Restrictions.eq("product.id", mProductId));
+    pAUMCriteria.add(Restrictions.and(Restrictions.eq("product.id", mProductId),
+        Restrictions.eq(docType.isSalesTransaction() ? "sales" : "purchase", UOM_PRIMARY)));
     Product product = OBDal.getInstance().get(Product.class, mProductId);
     String finalAUM = product.getUOM().getId();
-    for (ProductAUM pAUM : pAUMCriteria.list()) {
-      if (isSalesDocument(docBaseType)) {
-        if (pAUM.getSales().equals("P")) {
-          finalAUM = pAUM.getUOM().getId();
-          break;
-        }
-      } else if (isPurchaseDocument(docBaseType)) {
-        if (pAUM.getPurchase().equals("P")) {
-          finalAUM = pAUM.getUOM().getId();
-          break;
-        }
-      }
+    ProductAUM primaryAum = (ProductAUM) pAUMCriteria.uniqueResult();
+    if (primaryAum != null) {
+      finalAUM = primaryAum.getUOM().getId();
     }
+    OBContext.restorePreviousMode();
     return finalAUM;
-  }
-
-  private boolean isSalesDocument(String docBaseType) {
-    for (String docBase : salesDocuments) {
-      if (docBase.equals(docBaseType)) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  private boolean isPurchaseDocument(String docBaseType) {
-    for (String docBase : purchaseDocuments) {
-      if (docBase.equals(docBaseType)) {
-        return true;
-      }
-    }
-    return false;
   }
 
   /**
@@ -131,30 +90,24 @@ public class CentralBroker {
    *          The document type id if the parent document
    * @return List of the available UOM
    */
-  public List<UOM> getAvailableUOMsForDocument(String mProductId, String documentTypeId) {
+  public static List<UOM> getAvailableUOMsForDocument(String mProductId, String documentTypeId) {
+    OBContext.setAdminMode();
     List<UOM> lUom = new ArrayList<UOM>();
     DocumentType docType = OBDal.getInstance().get(DocumentType.class, documentTypeId);
-    String docBaseType = docType.getDocumentCategory();
     OBCriteria<ProductAUM> pAUMCriteria = OBDal.getInstance().createCriteria(ProductAUM.class);
-    pAUMCriteria.add(Restrictions.eq("product.id", mProductId));
+    pAUMCriteria.add(Restrictions.and(Restrictions.eq("product.id", mProductId),
+        Restrictions.ne(docType.isSalesTransaction() ? "sales" : "purcase", UOM_NOT_AVAILABLE)));
     Product product = OBDal.getInstance().get(Product.class, mProductId);
     lUom.add(product.getUOM());
     for (ProductAUM pAUM : pAUMCriteria.list()) {
-      if (isSalesDocument(docBaseType)) {
-        if (!pAUM.getSales().equals("NA")) {
-          lUom.add(pAUM.getUOM());
-        }
-      } else if (isPurchaseDocument(docBaseType)) {
-        if (!pAUM.getPurchase().equals("NA")) {
-          lUom.add(pAUM.getUOM());
-        }
-      }
+      lUom.add(pAUM.getUOM());
     }
+    OBContext.restorePreviousMode();
     return lUom;
   }
 
   /**
-   * Performs reverse conversion for quantity
+   * Performs conversion for quantity
    * 
    * @param mProductId
    *          The product
@@ -168,13 +121,14 @@ public class CentralBroker {
    * @throws OBException
    */
 
-  public BigDecimal getConvertedQty(String mProductId, BigDecimal qty, String toUOM, boolean reverse)
-      throws OBException {
+  private static BigDecimal getConvertedQty(String mProductId, BigDecimal qty, String toUOMId,
+      boolean reverse) throws OBException {
 
+    OBContext.setAdminMode();
     BigDecimal strQty = qty;
     Product product = OBDal.getInstance().get(Product.class, mProductId);
 
-    if (toUOM.equals(product.getUOM().getId())) {
+    if (product == null || toUOMId == null || toUOMId.equals(product.getUOM().getId())) {
       return strQty;
     }
 
@@ -183,50 +137,70 @@ public class CentralBroker {
       OBCriteria<ProductAUM> productAUMConversionCriteria = OBDal.getInstance().createCriteria(
           ProductAUM.class);
       productAUMConversionCriteria.add(Restrictions.and(Restrictions.eq("product.id", mProductId),
-          Restrictions.eq("uOM.id", toUOM)));
+          Restrictions.eq("uOM.id", toUOMId)));
 
-      List<ProductAUM> uOmConversionList = productAUMConversionCriteria.list();
-      if (uOmConversionList.size() > 0) {
-        if (uOmConversionList.size() == 1) {
-          ProductAUM conversion = uOmConversionList.get(0);
-          BigDecimal rate = conversion.getConversionRate();
-          UOM uom = OBDal.getInstance().get(UOM.class, conversion.getUOM().getId());
-          if (reverse) {
-            strQty = qty.divide(rate, uom.getStandardPrecision().intValue(), RoundingMode.HALF_UP);
-          } else {
-            strQty = rate.multiply(qty).setScale(uom.getStandardPrecision().intValue(),
-                RoundingMode.HALF_UP);
-          }
-        } else {
-          throw new OBException(Utility.messageBD(new DalConnectionProvider(), "DuplicateAUM",
+      try{
+        ProductAUM conversion = (ProductAUM) productAUMConversionCriteria.uniqueResult();
+        if(conversion == null){
+          OBContext.restorePreviousMode();
+          throw new OBException(OBMessageUtils.messageBD(new DalConnectionProvider(), "NoAUMDefined",
               OBContext.getOBContext().getLanguage().getLanguage()));
         }
-      } else {
-        throw new OBException(Utility.messageBD(new DalConnectionProvider(), "NoAUMDefined",
-            OBContext.getOBContext().getLanguage().getLanguage()));
+        BigDecimal rate = conversion.getConversionRate();
+        UOM uom = OBDal.getInstance().get(UOM.class, conversion.getUOM().getId());
+        if (reverse) {
+          strQty = qty.divide(rate, uom.getStandardPrecision().intValue(), RoundingMode.HALF_UP);
+        } else {
+          strQty = rate.multiply(qty).setScale(uom.getStandardPrecision().intValue(),
+              RoundingMode.HALF_UP);
+        }
+      }catch(NonUniqueResultException e){
+        OBContext.restorePreviousMode();
+        throw new OBException(OBMessageUtils.messageBD(new DalConnectionProvider(),
+            "DuplicateAUM", OBContext.getOBContext().getLanguage().getLanguage()));
       }
     }
-
+    OBContext.restorePreviousMode();
     return strQty;
   }
 
   /**
-   * Performs direct conversion for quantity
+   * Computes base quantity based on alternative quantity
    * 
    * @param mProductId
    *          The product
    * @param qty
-   *          The quantity
+   *          The alternative quantity
    * @param toUOM
    *          The UOM
    * @return
    * @throws OBException
    */
 
-  public BigDecimal getConvertedQty(String mProductId, BigDecimal qty, String toUOM)
+  public static BigDecimal getConvertedQty(String mProductId, BigDecimal qty, String toUOM)
       throws OBException {
 
     BigDecimal strQty = getConvertedQty(mProductId, qty, toUOM, false);
+
+    return strQty;
+  }
+
+  /**
+   * Computes alternative quantity based on base quantity
+   * 
+   * @param mProductId
+   *          The product
+   * @param qty
+   *          The base quantity
+   * @param toUOM
+   *          The UOM
+   * @return
+   * @throws OBException
+   */
+  public static BigDecimal getConvertedAumQty(String mProductId, BigDecimal qty, String toUOM)
+      throws OBException {
+
+    BigDecimal strQty = getConvertedQty(mProductId, qty, toUOM, true);
 
     return strQty;
   }
@@ -236,16 +210,18 @@ public class CentralBroker {
    * 
    * @return 'Y'/ 'N'
    */
-  public String isUomManagementEnabled() {
+  public static boolean isUomManagementEnabled() {
+    OBContext.setAdminMode();
     String propertyValue = "N";
     try {
       Client systemClient = OBDal.getInstance().get(Client.class, "0");
-      propertyValue = Preferences.getPreferenceValue("UomManagement", true, systemClient, null,
-          null, null, null);
+      propertyValue = Preferences.getPreferenceValue(UOM_PROPERTY, true, systemClient, null, null,
+          null, null);
     } catch (PropertyException e) {
       log4j.debug("Preference UomManagement not found", e);
     }
-    return propertyValue;
+    OBContext.restorePreviousMode();
+    return propertyValue.equals("Y");
   }
 
 }

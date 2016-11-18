@@ -28,7 +28,7 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.PropertyException;
-import org.openbravo.materialmgmt.CentralBroker;
+import org.openbravo.materialmgmt.UOMUtil;
 
 public class OperativeQuantity_To_BaseQuantity extends SimpleCallout {
   private static final Logger logger = Logger.getLogger(OperativeQuantity_To_BaseQuantity.class);
@@ -64,7 +64,7 @@ public class OperativeQuantity_To_BaseQuantity extends SimpleCallout {
       if (propertyValue.equalsIgnoreCase("Y")) {
 
         if (!strOperativeUOM.equals(strBaseUOM) && !strOperativeUOM.isEmpty()) {
-          qty = CentralBroker.getInstance().getConvertedQty(mProductId, qty, strOperativeUOM);
+          qty = UOMUtil.getConvertedQty(mProductId, qty, strOperativeUOM);
         } else if (strOperativeUOM.isEmpty()) {
           qty = null;
         }
