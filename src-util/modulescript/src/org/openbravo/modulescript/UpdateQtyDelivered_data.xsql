@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License.
+ * The Original Code is Openbravo ERP.
+ * The Initial Developer of the Original Code is Openbravo SLU
+ * All portions are Copyright (C) 2016 Openbravo SLU
+ * All Rights Reserved.
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+-->
+<SqlClass name="UpdateQtyDeliveredData" package="org.openbravo.modulescript">
+  <SqlMethod name="select" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        select 1 as dummy from dual
+      ]]>
+    </Sql>
+  </SqlMethod>
+  <SqlMethod name="updateQtyDelivered" type="preparedStatement" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+     <![CDATA[
+        update c_orderline ol
+        set qtydelivered = COALESCE((SELECT sum(coalesce(iol.movementqty, 0))
+                                     FROM m_inoutline iol
+                                     JOIN m_inout io ON iol.m_inout_id = io.m_inout_id AND io.processed = 'Y'
+                                     WHERE iol.c_orderline_id = ol.c_orderline_id
+                                     ), 0)
+        where exists (select 1 
+                      from c_order o
+                      inner join c_doctype dt ON o.c_doctypetarget_id = dt.c_doctype_id 
+                      where o.c_order_id = ol.c_order_id
+                      and dt.isreturn = 'Y' 
+                      and o.issotrx = 'N'
+                      and o.processed = 'Y'
+                     )
+        and qtydelivered = 0
+        and exists (select 1 
+                    FROM m_inoutline iol
+                    JOIN m_inout io ON iol.m_inout_id = io.m_inout_id AND io.processed = 'Y'
+                    WHERE iol.c_orderline_id = ol.c_orderline_id)
+      ]]>
+    </Sql>
+  </SqlMethod>
+  <SqlMethod name="updateIsDelivered" type="preparedStatement" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+     <![CDATA[
+        UPDATE C_Order o
+        SET IsDelivered = 'Y'
+        WHERE IsDelivered = 'N'
+        AND o.processed = 'Y'
+        AND EXISTS (SELECT 1
+                    FROM C_ORDERLINE ol
+                    INNER JOIN c_order o2 ON ol.c_order_id = o2.c_order_id
+                    INNER JOIN c_doctype dt ON o2.c_doctypetarget_id = dt.c_doctype_id 
+                    WHERE o.c_order_id = ol.c_order_id
+                    AND (o.issotrx = 'Y' or (dt.isreturn = 'Y' and o.issotrx = 'N'))
+                    GROUP BY ol.C_Order_ID
+                    HAVING SUM(ol.QTYORDERED) = SUM(ol.QTYDELIVERED)
+                   )
+      ]]>
+    </Sql>
+  </SqlMethod>
+</SqlClass>
