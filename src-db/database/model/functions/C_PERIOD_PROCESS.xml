@@ -146,6 +146,14 @@ BEGIN
           END LOOP;
         END IF;
         
+        -- Remove entries from the aggregated table when the Period is opened.
+        -- All entries with a date greater or equal must be deleted
+        DELETE FROM m_valued_stock_agg
+        WHERE datefrom >= (SELECT startdate
+                           FROM c_period
+                           WHERE c_period_id = p_C_Period_ID)
+        AND ad_org_id = p_Organization;
+        
         -- Action: Close if not permanently closed
       ELSIF(p_PeriodAction='C') THEN
         IF (p_IsRecursive='Y') THEN

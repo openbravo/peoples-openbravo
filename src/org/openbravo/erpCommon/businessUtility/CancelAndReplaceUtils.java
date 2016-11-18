@@ -425,6 +425,7 @@ public class CancelAndReplaceUtils {
       // Close inverse order
       inverseOrder.setDocumentStatus("CL");
       inverseOrder.setDocumentAction("--");
+      inverseOrder.setCancelled(true);
       inverseOrder.setProcessed(true);
       inverseOrder.setProcessNow(false);
       OBDal.getInstance().save(inverseOrder);

@@ -20,13 +20,23 @@ package org.openbravo.erpCommon.ad_callouts;
 
 import javax.servlet.ServletException;
 
+import org.apache.commons.lang.StringUtils;
+
 public class SL_Journal_MultiAcctSchema extends SimpleCallout {
 
   @Override
   protected void execute(CalloutInfo info) throws ServletException {
-    String strMultiGL = info.vars.getStringParameter("inpmultiGl");
-    if ("Y".equals(strMultiGL)) {
-      info.addResult("inpcAcctschemaId", null);
+    final String strMultiGL = info.vars.getStringParameter("inpmultiGl");
+    if (StringUtils.equals(strMultiGL, "Y")) {
+      final String lastFieldChanged = info.getLastFieldChanged();
+
+      if (StringUtils.equals(lastFieldChanged, "inpmultiGl")) {
+        info.addResult("inpcAcctschemaId", null);
+      }
+
+      else if (StringUtils.equals(lastFieldChanged, "inpaccountId")) {
+        info.addResult("inpcGlitemId", info.vars.getStringParameter("inpaccountId"));
+      }
     }
   }
 }

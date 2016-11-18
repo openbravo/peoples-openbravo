@@ -53,8 +53,8 @@ OB.CancelAndReplace.ClientSideEventHandlersPreSaveUpdate.showMessage = function 
 OB.EventHandlerRegistry.register(OB.CancelAndReplace.SALES_ORDERLINES_TAB, OB.EventHandlerRegistry.PRESAVE, OB.CancelAndReplace.ClientSideEventHandlersPreSaveUpdate.showMessage, 'OBCancelAndReplace_ShowMessage');
 
 OB.CancelAndReplace.ClientSideEventHandlersPreDelete.showMessage = function (view, form, grid, extraParameters, actions) {
-  var selectedRecords = extraParameters.selectedRecords,
-      record, replacementRecords = [],
+  var recordsToDelete = extraParameters.recordsToDelete,
+      replacementRecords = [],
       record, deliveredQuantity;
 
   view.messageBar.keepOnAutomaticRefresh = true;
@@ -75,8 +75,8 @@ OB.CancelAndReplace.ClientSideEventHandlersPreDelete.showMessage = function (vie
   };
 
   if (view.getParentRecord().documentStatus === 'TMP') {
-    for (i = 0; i < selectedRecords.length; i++) {
-      record = selectedRecords[i];
+    for (i = 0; i < recordsToDelete.length; i++) {
+      record = recordsToDelete[i];
       if (record.replacedorderline) {
         replacementRecords.push(record);
       }

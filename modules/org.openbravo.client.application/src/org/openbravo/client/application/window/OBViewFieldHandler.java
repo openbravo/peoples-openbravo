@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2015 Openbravo SLU
+ * All portions are Copyright (C) 2011-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -25,6 +25,10 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -1543,8 +1547,47 @@ public class OBViewFieldHandler {
       if (field.isShownInStatusBar()) {
         return false;
       } else {
-        return field.isDisplayed() != null && field.isDisplayed();
+        return field.isDisplayed() != null
+            && field.isDisplayed()
+            && evaluateDisplayLogicAtServerLevel(field.getDisplayLogicEvaluatedInTheServer(),
+                field.getId());
       }
+    }
+
+    /**
+     * Evaluates the Display logic at server level and returns true if the field must be shown,
+     * false otherwise
+     * 
+     * @param displayLogicEvaluatedInTheServer
+     *          Display logic to be evaluated
+     * @param fieldId
+     *          Id of the field with the displaylogic to be evaluated
+     * @return True if the field must be shown, false otherwise
+     */
+    private boolean evaluateDisplayLogicAtServerLevel(String displayLogicEvaluatedInTheServer,
+        String fieldId) {
+      if (displayLogicEvaluatedInTheServer == null) {
+        return true;
+      }
+
+      String translatedDisplayLogic = DynamicExpressionParser
+          .replaceSystemPreferencesInDisplayLogic(displayLogicEvaluatedInTheServer);
+
+      final ScriptEngineManager manager = new ScriptEngineManager();
+      final ScriptEngine engine = manager.getEngineByName("js");
+      boolean result;
+
+      DynamicExpressionParser parser = new DynamicExpressionParser(translatedDisplayLogic, tab);
+
+      try {
+        result = (Boolean) engine.eval(parser.getJSExpression());
+      } catch (ScriptException e) {
+        log.error(
+            "Error while evaluating the Display Logic at Server Level. Error in field with id: "
+                + fieldId + " in Tab with id: " + tab.getId(), e);
+        result = true;
+      }
+      return result;
     }
 
     public boolean isStatusBarField() {
@@ -1552,7 +1595,9 @@ public class OBViewFieldHandler {
     }
 
     public boolean isShowInitiallyInGrid() {
-      return field.isShowInGridView();
+      return field.isShowInGridView()
+          && evaluateDisplayLogicAtServerLevel(field.getDisplayLogicEvaluatedInTheServer(),
+              field.getId());
     }
 
     public int getGridSort() {

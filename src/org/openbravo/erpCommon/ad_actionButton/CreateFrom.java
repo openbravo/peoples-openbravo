@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2015 Openbravo SLU
+ * All portions are Copyright (C) 2001-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  Cheli Pineda__________________________.
  ************************************************************************
@@ -31,6 +31,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -47,6 +48,7 @@ import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.financial.FinancialUtils;
 import org.openbravo.model.common.invoice.Invoice;
+import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
 import org.openbravo.model.pricing.pricelist.PriceList;
@@ -1489,6 +1491,13 @@ public class CreateFrom extends HttpSecureAppServlet {
       conn = this.getTransactionConnection();
       for (int k = 0; k < ids.length; k++) {
         if (strType.equals("SHIPMENT")) {
+          String strShipment = vars.getStringParameter("inpShipmentReciept");
+          if (StringUtils.isNotEmpty(strShipment)) {
+            Order order = OBDal.getInstance().get(ShipmentInOut.class, strShipment).getSalesOrder();
+            if (order != null) {
+              strPO = order.getId();
+            }
+          }
           if (isSOTrx.equals("Y"))
             data = CreateFromInvoiceData.selectFromShipmentUpdateSOTrx(conn, this,
                 vars.getLanguage(), ids[k]);

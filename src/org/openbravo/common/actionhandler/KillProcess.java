@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2014-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2014-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -46,10 +46,12 @@ public class KillProcess extends BaseProcessActionHandler {
 
   @Override
   protected JSONObject doExecute(Map<String, Object> parameters, String content) {
-
     JSONObject result = new JSONObject();
-
     try {
+      if (OBScheduler.isNoExecuteBackgroundPolicy()) {
+        return buildResult("error", "Error", "BackgroundPolicyNoExecuteMsg");
+      }
+
       JSONObject request = new JSONObject(content);
       String strProcessRunId = request.getString("inpadProcessRunId");
 

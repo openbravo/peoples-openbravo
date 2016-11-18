@@ -195,6 +195,8 @@ public class SetNewBPCurrency extends BaseProcessActionHandler {
                 + payment1.getDocumentNo());
             payment2.setGeneratedCredit(BigDecimal.ZERO);
             payment2.setUsedCredit(creditAmount);
+            payment2.setFinancialTransactionAmount(paymentCredit.getFinancialTransactionAmount()
+                .negate());
 
             // Create a payment credit to refund the credit
             FIN_Payment_Credit paymentCredit2 = OBProvider.getInstance().get(
@@ -270,6 +272,7 @@ public class SetNewBPCurrency extends BaseProcessActionHandler {
             payment3.setGeneratedCredit(generatedCredit);
             payment3.setUsedCredit(BigDecimal.ZERO);
             payment3.setFinancialTransactionConvertRate(reverseCreditRate);
+            payment3.setFinancialTransactionAmount(generatedCredit);
 
             // Create a payment detail to create the credit with a glitem
             FIN_PaymentDetail paymentDetail3 = OBProvider.getInstance()

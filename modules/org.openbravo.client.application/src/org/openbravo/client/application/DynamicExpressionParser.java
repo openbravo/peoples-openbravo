@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2014 Openbravo SLU
+ * All portions are Copyright (C) 2011-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -82,6 +82,8 @@ public class DynamicExpressionParser {
   private Parameter parameter;
 
   private ApplicationDictionaryCachedStructures cachedStructures;
+
+  public static final String REPLACE_DISPLAY_LOGIC_SERVER_PATTERN = "@(.*?)@";
 
   public DynamicExpressionParser(String code, Process process, boolean parameterDisplayLogic) {
     this.code = code;
@@ -438,6 +440,27 @@ public class DynamicExpressionParser {
     return new DisplayLogicElement(TOKEN_PREFIX
         + (convertedToken.startsWith("#") ? convertedToken.replace("#", "_") : convertedToken),
         isBoolean);
+  }
+
+  /**
+   * Given the Display logic expression, it replaces the preferences properties with its values
+   * 
+   * @param displayLogic
+   *          DisplayLogic to be replaced
+   * @return Returns the Display logic expression with the properties replaced
+   */
+  public static String replaceSystemPreferencesInDisplayLogic(String displayLogic) {
+    String result = displayLogic;
+    CachedPreference cachedPreference = org.openbravo.base.weld.WeldUtils
+        .getInstanceFromStaticBeanManager(CachedPreference.class);
+
+    Pattern pattern = Pattern.compile(REPLACE_DISPLAY_LOGIC_SERVER_PATTERN);
+    Matcher matcher = pattern.matcher(displayLogic);
+    while (matcher.find()) {
+      result = result.replaceAll("@" + matcher.group(1) + "@",
+          "'" + cachedPreference.getPreferenceValueAndStoreInCache(matcher.group(1)) + "'");
+    }
+    return result;
   }
 
   private Field lookForFieldInAncestorTabs(String fieldName) {

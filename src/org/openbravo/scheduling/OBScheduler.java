@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2015 Openbravo SLU
+ * All portions are Copyright (C) 2008-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -52,7 +52,6 @@ import org.slf4j.LoggerFactory;
  * 
  */
 public class OBScheduler {
-
   private static final OBScheduler INSTANCE = new OBScheduler();
 
   private static Logger log = LoggerFactory.getLogger(OBScheduler.class);
@@ -68,6 +67,9 @@ public class OBScheduler {
   public static String dateTimeFormat;
 
   public static String sqlDateTimeFormat;
+
+  private static final String BACKGROUND_POLICY = "background.policy";
+  private static final String NO_EXECUTE_POLICY = "no-execute";
 
   private OBScheduler() {
   }
@@ -182,9 +184,7 @@ public class OBScheduler {
    */
   public void schedule(String requestId, ProcessBundle bundle, Class<? extends Job> jobClass)
       throws SchedulerException, ServletException {
-    String policy = OBPropertiesProvider.getInstance().getOpenbravoProperties()
-        .getProperty("background.policy", "default");
-    if ("no-execute".equals(policy)) {
+    if (isNoExecuteBackgroundPolicy()) {
       log.info("Not scheduling process because current context background policy is 'no-execute'");
       return;
     }
@@ -201,6 +201,16 @@ public class OBScheduler {
     final Trigger trigger = TriggerProvider.newInstance(requestId, bundle, getConnection());
 
     sched.scheduleJob(jobDetail, trigger);
+  }
+
+  /**
+   * Returns whether current node is set with no-execute background policy, which should prevent any
+   * process scheduling.
+   */
+  public static boolean isNoExecuteBackgroundPolicy() {
+    String policy = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+        .getProperty(BACKGROUND_POLICY, "default");
+    return NO_EXECUTE_POLICY.equals(policy);
   }
 
   /**

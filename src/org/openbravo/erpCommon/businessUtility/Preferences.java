@@ -308,9 +308,8 @@ public class Preferences {
    */
   public static List<Preference> getPreferences(String property, boolean isListProperty,
       String clientId, String orgId, String userId, String roleId, String windowId) {
-    List<Preference> prefs = getPreferences(property, isListProperty, clientId, orgId, userId,
-        roleId, windowId, true, true, false);
-    return prefs;
+    return getPreferences(property, isListProperty, clientId, orgId, userId, roleId, windowId,
+        true, true, false);
   }
 
   /**

@@ -58,6 +58,7 @@ import org.openbravo.model.materialmgmt.transaction.InventoryCount;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
 import org.openbravo.model.materialmgmt.transaction.ProductionTransaction;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
+import org.openbravo.model.materialmgmt.transaction.TransactionLast;
 import org.openbravo.model.procurement.ReceiptInvoiceMatch;
 
 /**
@@ -124,6 +125,7 @@ public class CostingServer {
         transaction.setCostingStatus("CC");
         // insert on m_transaction_cost
         createTransactionCost();
+        updateLastTransaction();
         OBDal.getInstance().flush();
 
         setNotPostedTransaction();
@@ -136,6 +138,29 @@ public class CostingServer {
       // Every Transaction must be set as Processed = 'Y' after going through this method
       transaction.setProcessed(true);
       OBDal.getInstance().flush();
+    }
+  }
+
+  private void updateLastTransaction() {
+    TransactionLast lastTransaction = CostAdjustmentUtils.getLastTransaction(transaction,
+        costingRule.isWarehouseDimension());
+    boolean needsUpdate = true;
+    if (lastTransaction == null) {
+      lastTransaction = OBProvider.getInstance().get(TransactionLast.class);
+    } else {
+      needsUpdate = CostAdjustmentUtils.compareToLastTransaction(transaction, lastTransaction,
+          CostingUtils.getCostingRuleStartingDate(costingRule)) > 0;
+    }
+
+    if (needsUpdate) {
+      lastTransaction.setClient(transaction.getClient());
+      lastTransaction.setOrganization(organization);
+      lastTransaction.setInventoryTransaction(transaction);
+      lastTransaction.setProduct(transaction.getProduct());
+      if (costingRule.isWarehouseDimension()) {
+        lastTransaction.setWarehouse(transaction.getStorageBin().getWarehouse());
+      }
+      OBDal.getInstance().save(lastTransaction);
     }
   }
 

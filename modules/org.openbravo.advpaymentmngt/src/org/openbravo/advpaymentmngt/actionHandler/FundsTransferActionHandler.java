@@ -20,7 +20,6 @@ package org.openbravo.advpaymentmngt.actionHandler;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -34,6 +33,7 @@ import org.openbravo.advpaymentmngt.dao.TransactionsDao;
 import org.openbravo.advpaymentmngt.process.FIN_TransactionProcess;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
+import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.client.application.process.BaseProcessActionHandler;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
@@ -115,13 +115,7 @@ public class FundsTransferActionHandler extends BaseProcessActionHandler {
       log.error(ERROR_IN_PROCESS, e);
 
       return createPopUpError(e.getMessage(), true);
-    } catch (JSONException e) {
-      log.error(ERROR_IN_PROCESS, e);
-
-      return createResponse(JsonConstants.RESPONSE_ERROR,
-          OBMessageUtils.messageBD("OBUIAPP_Error"), OBMessageUtils.messageBD("APRM_UnknownError"),
-          false);
-    } catch (ParseException e) {
+    } catch (Exception e) {
       log.error(ERROR_IN_PROCESS, e);
 
       return createResponse(JsonConstants.RESPONSE_ERROR,
@@ -190,9 +184,13 @@ public class FundsTransferActionHandler extends BaseProcessActionHandler {
 
       OBDal.getInstance().flush();
       processTransactions(transactions);
-    } catch (OBException obe) {
-      String message = OBMessageUtils.parseTranslation(obe.getMessage());
-      throw new OBException(message, obe);
+
+      WeldUtils.getInstanceFromStaticBeanManager(FundsTransferHookCaller.class).executeHook(
+          transactions);
+
+    } catch (Exception e) {
+      String message = OBMessageUtils.parseTranslation(e.getMessage());
+      throw new OBException(message, e);
     }
   }
 

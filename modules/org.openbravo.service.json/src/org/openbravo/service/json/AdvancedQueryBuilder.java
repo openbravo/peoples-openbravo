@@ -1626,8 +1626,13 @@ public class AdvancedQueryBuilder {
             joinDefinitions.add(joinDefinition);
           }
         }
-
-        sb.append(createIdentifierLeftClause(newIdentifierProperties, newPrefix + DalUtil.DOT));
+        if (prop.isMandatory()) {
+          sb.append(createIdentifierLeftClause(newIdentifierProperties, newPrefix + DalUtil.DOT));
+        } else {
+          sb.append("COALESCE(to_char("
+              + createIdentifierLeftClause(newIdentifierProperties, newPrefix + DalUtil.DOT)
+              + "),'')");
+        }
       }
     }
 

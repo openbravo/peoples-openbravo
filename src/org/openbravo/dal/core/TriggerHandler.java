@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -65,7 +65,8 @@ public class TriggerHandler {
     PreparedStatement ps = null;
     try {
       ps = con
-          .prepareStatement("INSERT INTO AD_SESSION_STATUS VALUES (get_uuid(), '0', '0', 'Y', now(), '0', now(), '0', 'Y')");
+          .prepareStatement("INSERT INTO AD_SESSION_STATUS (ad_session_status_id, ad_client_id, ad_org_id, isactive, created, createdby, updated, updatedby, isimporting)"
+              + " VALUES (get_uuid(), '0', '0', 'Y', now(), '0', now(), '0', 'Y')");
       ps.executeUpdate();
       sessionStatus.set(Boolean.TRUE);
     } catch (Exception e) {
@@ -104,7 +105,7 @@ public class TriggerHandler {
     Connection con = OBDal.getInstance().getConnection();
     PreparedStatement ps = null;
     try {
-      ps = con.prepareStatement("DELETE FROM AD_SESSION_STATUS");
+      ps = con.prepareStatement("DELETE FROM AD_SESSION_STATUS WHERE isimporting = 'Y'");
       ps.executeUpdate();
     } catch (Exception e) {
       throw new OBException("Couldn't disable triggers: ", e);

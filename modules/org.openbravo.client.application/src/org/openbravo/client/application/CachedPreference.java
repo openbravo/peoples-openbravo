@@ -18,13 +18,14 @@
  */
 package org.openbravo.client.application;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.SessionScoped;
 
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
@@ -36,31 +37,26 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This class is used as a singleton to keep the value of some preferences in cache during the
- * application life cycle, avoiding the time spent to compute the preference value. The preference
- * values that can be cached by this class are those defined at System level.
- * 
- * This class it is also used by the
- * {@link org.openbravo.client.application.event.PreferenceEventHandler} class to detect changes in
- * the cached preferences values, and it that case it invalidates the stored value. This way the
- * next time it is requested, the current value will be retrieved from database again.
- * 
- * This mechanism for automatic refresh the preference value, only works on environments with a
- * single JVM. In case of Tomcat clustering environments (multiple JVM) it will be necessary to
- * restart Tomcat to retrieve the new value of the preference in every JVM.
+ * This class is used to keep the value of some preferences in cache during the life cycle of a
+ * session, avoiding the time spent to compute the preference value. The preference values that can
+ * be cached by this class are those defined at System level.
  * 
  */
-@ApplicationScoped
-public class CachedPreference {
+@SessionScoped
+public class CachedPreference implements Serializable {
+
+  private static final long serialVersionUID = 1L;
+  private static final Logger log = LoggerFactory.getLogger(CachedPreference.class);
+
   public static final String ALLOW_UNPAGED_DS_MANUAL_REQUEST = "OBJSON_AllowUnpagedDatasourceManualRequest";
   public static final String ALLOW_UNSECURED_DS_REQUEST = "OBSERDS_AllowUnsecuredDatasourceRequest";
   public static final String ALLOW_WHERE_PARAMETER = "OBSERDS_AllowWhereParameter";
   public static final String RESTRICT_ERP_ACCESS_IN_STORE_SERVER = "RestrictErpAccessInStoreServer";
 
-  private static final Logger log = LoggerFactory.getLogger(CachedPreference.class);
   private List<String> propertyList = new ArrayList<String>(Arrays.asList(
-      ALLOW_UNPAGED_DS_MANUAL_REQUEST, ALLOW_UNSECURED_DS_REQUEST, ALLOW_WHERE_PARAMETER, RESTRICT_ERP_ACCESS_IN_STORE_SERVER));
-  private Map<String, String> cachedPreference = new HashMap<String, String>();
+      ALLOW_UNPAGED_DS_MANUAL_REQUEST, ALLOW_UNSECURED_DS_REQUEST, ALLOW_WHERE_PARAMETER,
+      RESTRICT_ERP_ACCESS_IN_STORE_SERVER));
+  private transient Map<String, String> cachedPreference;
 
   /**
    * It returns a String with the value of the preference whose related property name is entered as
@@ -74,6 +70,9 @@ public class CachedPreference {
    */
   public String getPreferenceValue(String propertyName) {
     long t = System.nanoTime();
+    if (cachedPreference == null) {
+      cachedPreference = new HashMap<String, String>();
+    }
     if (!cachedPreference.containsKey(propertyName)) {
       try {
         OBContext.setAdminMode(false);
@@ -91,6 +90,21 @@ public class CachedPreference {
     }
     log.debug("preference value retrieved in {} ns", (System.nanoTime() - t));
     return cachedPreference.get(propertyName);
+  }
+
+  /**
+   * Return the Preference value and store it into the cached variable
+   * 
+   * @param propertyName
+   *          The name of the property related to the preference
+   * @param cachePreference
+   *          true if the propertyName must be cached, false if not
+   * @return The preference value of the propertyName given
+   */
+  public String getPreferenceValueAndStoreInCache(String propertyName) {
+    String result = getPreferenceValue(propertyName);
+    addCachedPreference(propertyName);
+    return result;
   }
 
   /**
@@ -116,7 +130,10 @@ public class CachedPreference {
    *          String with the value assigned to the preference
    */
   public synchronized void setPreferenceValue(String propertyName, String preferenceValue) {
-    this.cachedPreference.put(propertyName, preferenceValue);
+    if (cachedPreference == null) {
+      cachedPreference = new HashMap<String, String>();
+    }
+    cachedPreference.put(propertyName, preferenceValue);
   }
 
   /**
@@ -127,7 +144,9 @@ public class CachedPreference {
    *          The name of the property related to the preference
    */
   public synchronized void invalidatePreferenceValue(String propertyName) {
-    this.cachedPreference.remove(propertyName);
+    if (cachedPreference != null) {
+      cachedPreference.remove(propertyName);
+    }
   }
 
   /**

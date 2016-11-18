@@ -18,8 +18,13 @@
  */
 package org.openbravo.client.application;
 
+import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -27,6 +32,7 @@ import javax.inject.Inject;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
+import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.util.OBClassLoader;
@@ -301,10 +307,77 @@ public class ViewComponent extends BaseComponent {
         viewVersions += t.getTable().isFullyAudited() + "|";
       }
       viewVersions += getLastGridConfigurationChange(window) + "|";
+      viewVersions += getLastSystemPrefrenceChage(window) + "|";
       viewVersionHash = DigestUtils.md5Hex(viewVersions);
     } finally {
       OBContext.restorePreviousMode();
     }
     return viewVersionHash;
+  }
+
+  private String getLastSystemPrefrenceChage(Window window) {
+    Date lastModification = new Date(0);
+
+    Set<String> preferences = new HashSet<String>();
+
+    Pattern p = Pattern.compile(DynamicExpressionParser.REPLACE_DISPLAY_LOGIC_SERVER_PATTERN);
+    for (String displayLogic : getFieldsWithDisplayLogicAtServerLevel(window.getId())) {
+      Matcher m = p.matcher(displayLogic);
+      while (m.find()) {
+        preferences.add(m.group(1));
+      }
+    }
+
+    Calendar cal = Calendar.getInstance();
+    cal.set(9999, 9, 9);
+    Date updated = new Date(cal.getTimeInMillis());
+    if (!preferences.isEmpty()) {
+      updated = getLastUpdated(preferences, updated);
+    }
+    if (lastModification.compareTo(updated) < 0) {
+      lastModification = updated;
+    }
+
+    return lastModification.toString();
+  }
+
+  @SuppressWarnings("unchecked")
+  private List<String> getFieldsWithDisplayLogicAtServerLevel(String windowID) {
+    StringBuilder where = new StringBuilder();
+    where.append(" select displayLogicEvaluatedInTheServer");
+    where.append(" from ADField as f");
+    where.append(" where f.displayLogicEvaluatedInTheServer is not null");
+    where.append(" and f.tab.id in (select t.id");
+    where.append("                  from ADTab t");
+    where.append("                  where t.window.id = :windowId)");
+
+    Session session = OBDal.getInstance().getSession();
+    Query query = session.createQuery(where.toString());
+    query.setParameter("windowId", windowID);
+
+    return (List<String>) query.list();
+  }
+
+  private Date getLastUpdated(Set<String> preferenceSet, Date lastUpdatedParam) {
+
+    StringBuilder where = new StringBuilder();
+    where.append(" select max(p.updated)");
+    where.append(" from ADPreference p");
+    where.append(" where p.propertyList = true");
+    where.append(" and p.property in :properties");
+    where.append(" and p.client.id = '0'");
+    where.append(" and p.organization = '0'");
+    where.append(" and coalesce(p.visibleAtClient, '0') = '0'");
+    where.append(" and coalesce(p.visibleAtOrganization, '0') = '0'");
+
+    Session session = OBDal.getInstance().getSession();
+    Query query = session.createQuery(where.toString());
+    query.setParameterList("properties", preferenceSet);
+    Date lastUpdated = (Date) query.uniqueResult();
+    if (lastUpdated == null) {
+      lastUpdated = lastUpdatedParam;
+    }
+    return lastUpdated;
+
   }
 }
