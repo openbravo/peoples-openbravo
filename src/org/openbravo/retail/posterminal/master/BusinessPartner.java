@@ -60,11 +60,11 @@ public class BusinessPartner extends ProcessHQLQuery {
         + "join bpl.businessPartner AS bp " //
         + "join bp.priceList AS plist " //
         + "left outer join bp.aDUserList AS ulist "
-        + "join bp.businessPartnerLocationList AS bpsl " //
+        + "left outer join bp.businessPartnerLocationList AS bpsl " //
         + "WHERE $filtersCriteria AND " //
         + "bp.customer = true AND "
-        + "bpsl.id in (select max(bpls.id) as bpLocId from BusinessPartnerLocation AS bpls where bpls.active=true AND bpls.shipToAddress = true and bpls.businessPartner.id=bp.id and bpls.$readableSimpleClientCriteria AND "
-        + "bpls.$naturalOrgCriteria) AND " //
+        + "(bpsl is null or bpsl.id in (select max(bpls.id) as bpLocId from BusinessPartnerLocation AS bpls where bpls.active=true AND bpls.shipToAddress = true and bpls.businessPartner.id=bp.id and bpls.$readableSimpleClientCriteria AND "
+        + "bpls.$naturalOrgCriteria)) AND " //
         + "bpl.$readableSimpleClientCriteria AND "
         + "bpl.$naturalOrgCriteria AND "
         + "(bpl.$incrementalUpdateCriteria"
@@ -80,11 +80,11 @@ public class BusinessPartner extends ProcessHQLQuery {
         + "join bpl.businessPartner AS bp " //
         + "join bp.priceList AS plist " //
         + "left outer join bp.aDUserList AS ulist "
-        + "join bp.businessPartnerLocationList AS bpsl " //
+        + "left outer join bp.businessPartnerLocationList AS bpsl " //
         + "WHERE $filtersCriteria AND " //
         + "bp.customer = true AND "
-        + "bpsl.id in (select max(bpls.id) as bpLocId from BusinessPartnerLocation AS bpls where bpls.active=true AND bpls.shipToAddress = true and bpls.businessPartner.id=bp.id and bpls.$readableSimpleClientCriteria AND "
-        + "bpls.$naturalOrgCriteria) AND " //
+        + "(bpsl is null or bpsl.id in (select max(bpls.id) as bpLocId from BusinessPartnerLocation AS bpls where bpls.active=true AND bpls.shipToAddress = true and bpls.businessPartner.id=bp.id and bpls.$readableSimpleClientCriteria AND "
+        + "bpls.$naturalOrgCriteria)) AND " //
         + "bpl.$readableSimpleClientCriteria AND "
         + "bpl.$naturalOrgCriteria AND " //
         + "(bpl.$incrementalUpdateCriteria"
