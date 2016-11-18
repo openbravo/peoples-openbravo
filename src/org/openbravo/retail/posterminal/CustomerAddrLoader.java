@@ -84,6 +84,7 @@ public class CustomerAddrLoader extends POSDataSynchronizationProcess implements
 
   private Location createBPartnerAddr(BusinessPartner customer, JSONObject jsonCustomerAddr)
       throws JSONException {
+    Location newLocation = OBProvider.getInstance().get(Location.class);
     try {
       Entity locationEntity = ModelProvider.getInstance().getEntity(Location.class);
       Entity baseLocationEntity = ModelProvider.getInstance().getEntity(
@@ -113,8 +114,6 @@ public class CustomerAddrLoader extends POSDataSynchronizationProcess implements
       rootLocation.setPostalCode(jsonCustomerAddr.getString("postalCode"));
       rootLocation.setCityName(jsonCustomerAddr.getString("cityName"));
       OBDal.getInstance().save(rootLocation);
-
-      Location newLocation = OBProvider.getInstance().get(Location.class);
 
       JSONPropertyToEntity.fillBobFromJSON(locationEntity, newLocation, jsonCustomerAddr);
 
@@ -153,7 +152,7 @@ public class CustomerAddrLoader extends POSDataSynchronizationProcess implements
       log.error("Exception while creating BPartner Address", e);
     }
 
-    return null;
+    return newLocation;
   }
 
   private Location editBPartnerAddr(BusinessPartner customer, Location location,
@@ -186,7 +185,7 @@ public class CustomerAddrLoader extends POSDataSynchronizationProcess implements
     } catch (final Exception e) {
       log.error("Exception while updating BPartner Address", e);
     }
-    return null;
+    return location;
   }
 
   @Override
