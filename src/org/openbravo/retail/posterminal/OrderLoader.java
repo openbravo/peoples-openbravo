@@ -1890,10 +1890,13 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         if (payment.has("isPrePayment") && payment.getBoolean("isPrePayment")) {
           continue;
         }
+        // When doing a reverse payment, normally the reversal payment has the 'paid' property to 0,
+        // because this 'paid' property is the sum of the total amount paid by this payment method
+        // (normally a payment is reversed to set the total quantity of that payment method to 0).
+        // Because of that, the next condition must be ignored to reversal payments
         BigDecimal paid = BigDecimal.valueOf(payment.getDouble("paid"));
-        // This is due to negative cash payments are set as paid = 0
-        BigDecimal paymentAmt = BigDecimal.valueOf(payment.getDouble("amount"));
-        if (paid.compareTo(BigDecimal.ZERO) == 0 && paymentAmt.compareTo(BigDecimal.ZERO) >= 0) {
+        boolean isReversalPayment = payment.has("reversedPaymentId");
+        if (paid.compareTo(BigDecimal.ZERO) == 0 && !isReversalPayment) {
           continue;
         }
         String paymentTypeName = payment.getString("kind");
