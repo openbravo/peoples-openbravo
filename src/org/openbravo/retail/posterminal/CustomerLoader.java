@@ -48,6 +48,10 @@ public class CustomerLoader extends POSDataSynchronizationProcess implements
   @Any
   private Instance<CustomerLoaderHook> customerCreations;
 
+  @Inject
+  @Any
+  private Instance<CustomerAddrLoaderHook> customerAddrCreations;
+
   protected String getImportQualifier() {
     return "BusinessPartner";
   }
@@ -85,6 +89,10 @@ public class CustomerLoader extends POSDataSynchronizationProcess implements
       executeHooks(customerCreations, jsoncustomer, customer);
 
       location = editLocation(customer, jsoncustomer);
+
+      // Call all customerAddrCreations injected.
+      executeHooks(customerAddrCreations, jsoncustomer, customer, location);
+
       editBPartnerContact(customer, jsoncustomer);
       OBDal.getInstance().flush();
     } finally {
@@ -342,6 +350,14 @@ public class CustomerLoader extends POSDataSynchronizationProcess implements
     for (Iterator<CustomerLoaderHook> procIter = hooks.iterator(); procIter.hasNext();) {
       CustomerLoaderHook proc = procIter.next();
       proc.exec(jsonCustomer, customer);
+    }
+  }
+
+  private void executeHooks(Instance<CustomerAddrLoaderHook> hooks, JSONObject jsonCustomerAddr,
+      BusinessPartner customer, Location location) throws Exception {
+    for (Iterator<CustomerAddrLoaderHook> procIter = hooks.iterator(); procIter.hasNext();) {
+      CustomerAddrLoaderHook proc = procIter.next();
+      proc.exec(jsonCustomerAddr, customer, location);
     }
   }
 }
