@@ -325,7 +325,7 @@ public class FIN_PaymentProcess implements org.openbravo.scheduling.Process {
           // Execution Process
           if (!isPosOrder
               && dao.isAutomatedExecutionPayment(payment.getAccount(), payment.getPaymentMethod(),
-                  payment.isReceipt())) {
+                  payment.isReceipt()) && payment.getAmount().compareTo(BigDecimal.ZERO) != 0) {
             try {
               payment.setStatus("RPAE");
 
