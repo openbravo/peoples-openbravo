@@ -2037,7 +2037,8 @@ isc.OBStandardView.addProperties({
 
   refreshCurrentRecord: function (callBackFunction) {
     var me = this,
-        criteria, callback;
+        criteria, callback, requestProperties = {},
+        params = {};
 
     if (!this.viewGrid.getSelectedRecord()) {
       return;
@@ -2073,7 +2074,11 @@ isc.OBStandardView.addProperties({
     } else {
       // Make a request to refresh the grid
       criteria = this.buildCriteriaToRefreshSelectedRecord();
-      this.getDataSource().fetchData(criteria, callback);
+      // Include grid selected properties in the request
+      // This way we retrieve the same record information which is obtained when refreshing the whole grid
+      params._selectedProperties = this.viewGrid.getSelectedProperties();
+      requestProperties.params = params;
+      this.getDataSource().fetchData(criteria, callback, requestProperties);
     }
     this.refreshParentRecord(callBackFunction);
   },

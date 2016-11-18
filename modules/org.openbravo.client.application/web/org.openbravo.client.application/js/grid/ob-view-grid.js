@@ -2262,7 +2262,6 @@ isc.OBViewGrid.addProperties({
   },
 
   getFetchRequestParams: function (params, isExporting) {
-    var i, len, first, selectedProperties;
     params = params || {};
 
     if (this.targetRecordId) {
@@ -2303,28 +2302,34 @@ isc.OBViewGrid.addProperties({
     }
 
     if (!isExporting) {
-      first = true;
-      selectedProperties = '';
-      len = this.requiredGridProperties.length;
-      for (i = 0; i < len; i++) {
-        if (first) {
-          first = false;
-          selectedProperties = selectedProperties + this.requiredGridProperties[i];
-        } else {
-          selectedProperties = selectedProperties + ',' + this.requiredGridProperties[i];
-        }
-      }
-
-      len = this.fields.length;
-      for (i = 0; i < len; i++) {
-        if (this.fields[i].name[0] !== '_') {
-          selectedProperties = selectedProperties + ',';
-          selectedProperties = selectedProperties + this.fields[i].name;
-        }
-      }
-      params._selectedProperties = selectedProperties;
+      params._selectedProperties = this.getSelectedProperties();
     }
     return params;
+  },
+
+  getSelectedProperties: function () {
+    var i, len, selectedProperties = '',
+        first = true;
+
+    len = this.requiredGridProperties.length;
+    for (i = 0; i < len; i++) {
+      if (first) {
+        first = false;
+        selectedProperties = selectedProperties + this.requiredGridProperties[i];
+      } else {
+        selectedProperties = selectedProperties + ',' + this.requiredGridProperties[i];
+      }
+    }
+
+    len = this.fields.length;
+    for (i = 0; i < len; i++) {
+      if (this.fields[i].name[0] !== '_') {
+        selectedProperties = selectedProperties + ',';
+        selectedProperties = selectedProperties + this.fields[i].name;
+      }
+    }
+
+    return selectedProperties;
   },
 
   createNew: function () {
@@ -3134,7 +3139,7 @@ isc.OBViewGrid.addProperties({
     }
   },
 
-  // Checks if there are changes in the other other than a field changing from undefined to not undefined
+  // Checks if there are changes other than a field changing from undefined to not undefined
   // Those kind of changes happen when a row is opened in edit mode, they should not be detected as an actual change
   recordHasActualChanges: function (rowNum, colNum, checkEditor) {
     var newValues, oldValues, changes = false,
