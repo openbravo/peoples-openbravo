@@ -32,15 +32,10 @@ import org.openbravo.model.common.uom.UOMConversion;
 public class AUM_ConversionRate extends SimpleCallout {
 
   /**
-   * 
-   */
-  private static final long serialVersionUID = 1L;
-
-  /**
    * Get the conversion rate between the unit and the base unit of the product, both provided as
    * parameters
    */
-  
+
   @Override
   protected void execute(CalloutInfo info) throws ServletException {
 
@@ -50,8 +45,8 @@ public class AUM_ConversionRate extends SimpleCallout {
     Product product = OBDal.getInstance().get(Product.class, strmProductId);
     String strpUOM = product.getUOM().getId();
 
-    OBCriteria<UOMConversion> uOMConversionCriteria = OBDal.getInstance()
-        .createCriteria(UOMConversion.class);
+    OBCriteria<UOMConversion> uOMConversionCriteria = OBDal.getInstance().createCriteria(
+        UOMConversion.class);
     uOMConversionCriteria.add(Restrictions.and(Restrictions.eq("uOM.id", srtcUOMId),
         Restrictions.eq("toUOM.id", strpUOM)));
     List<UOMConversion> uOmConversionList = uOMConversionCriteria.list();

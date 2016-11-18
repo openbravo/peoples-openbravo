@@ -31,9 +31,8 @@ import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.materialmgmt.CentralBroker;
 
 public class OperativeQuantity_To_BaseQuantity extends SimpleCallout {
-  private static final Logger log4j = Logger.getLogger(OperativeQuantity_To_BaseQuantity.class);
+  private static final Logger logger = Logger.getLogger(OperativeQuantity_To_BaseQuantity.class);
 
-  private static final long serialVersionUID = 1L;
   private static final String ADWINDOW_SalesOrder = "143";
   private static final String ADWINDOW_PurchaseOrder = "181";
   private static final String ADWINDOW_GoodsShipment = "169";
@@ -71,11 +70,11 @@ public class OperativeQuantity_To_BaseQuantity extends SimpleCallout {
         }
       }
     } catch (PropertyException e) {
-      log4j.error("Error while converting UOM. ", e);
+      logger.error("Error while converting UOM. ", e);
       e.printStackTrace();
       qty = null;
     } catch (OBException e) {
-      log4j.error("Error while converting UOM. ", e);
+      logger.error("Error while converting UOM. ", e);
       info.showError(e.getMessage());
       qty = null;
     } finally {

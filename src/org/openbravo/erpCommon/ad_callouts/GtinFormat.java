@@ -24,14 +24,6 @@ import org.openbravo.erpCommon.utility.Utility;
 
 public class GtinFormat extends SimpleCallout {
 
-  /**
-   * 
-   */
-  private static final long serialVersionUID = 1L;
-
-  public GtinFormat() {
-  }
-
   @Override
   protected void execute(CalloutInfo info) throws ServletException {
 

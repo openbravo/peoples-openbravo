@@ -38,15 +38,14 @@ import org.openbravo.client.kernel.freemarker.test.LabelTest;
 import org.openbravo.erpCommon.info.ClassicSelectorTest;
 import org.openbravo.test.accounting.PostDocumentTest;
 import org.openbravo.test.accounting.RecordID2Test;
-import org.openbravo.test.centralbroker.CentralBrokerTest;
 import org.openbravo.test.cancelandreplace.CancelAndReplaceTest;
+import org.openbravo.test.centralbroker.CentralBrokerTest;
 import org.openbravo.test.costing.TestCosting;
 import org.openbravo.test.dal.AdminContextTest;
 import org.openbravo.test.dal.ComputedColumnsTest;
 import org.openbravo.test.dal.DalComplexQueryRequisitionTest;
 import org.openbravo.test.dal.DalComplexQueryTestOrderLine;
 import org.openbravo.test.dal.DalConnectionProviderTest;
-import org.openbravo.test.dal.DalFilterTest;
 import org.openbravo.test.dal.DalPerformanceInventoryLineTest;
 import org.openbravo.test.dal.DalPerformanceProductTest;
 import org.openbravo.test.dal.DalPerformanceProxyTest;
@@ -118,7 +117,7 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
 
-    // dal
+// dal
     DalComplexQueryRequisitionTest.class, //
     DalComplexQueryTestOrderLine.class, //
     DalPerformanceInventoryLineTest.class, //
@@ -249,6 +248,5 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     CancelAndReplaceTest.class
 
 })
-
 public class AllAntTaskTests {
 }
