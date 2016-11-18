@@ -889,6 +889,22 @@
       };
     },
 
+    // returns the quantity amount of the synchronized payments
+    getPrePaymentQty: function () {
+      return _.reduce(_.filter(this.get('payments').models, function (payment) {
+        return payment.get('isPrePayment');
+      }), function (memo, pymnt) {
+        return OB.DEC.add(memo, pymnt.get('origAmount'));
+      }, OB.DEC.Zero)
+    },
+
+    // returns true if there is any reversal payment that is not synchronized
+    isNewReversed: function () {
+      return _.filter(this.get('payments').models, function (payment) {
+        return !payment.get('isPrePayment') && payment.get('isReversePayment');
+      }).length > 0
+    },
+
     // returns true if the order is a Layaway, otherwise false
     isLayaway: function () {
       return this.getOrderType() === 2 || this.getOrderType() === 3 || this.get('isLayaway');
@@ -3148,6 +3164,11 @@
     addPayment: function (payment) {
       var payments, total;
       var i, max, p, order;
+
+      if (this.get('isPaid') && !payment.get('isReversePayment') && !this.get('doCancelAndReplace') && this.getPrePaymentQty() === OB.DEC.sub(this.getTotal(), this.getCredit()) && !this.isNewReversed()) {
+        OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_CannotIntroducePayment'));
+        return;
+      }
 
       if (!OB.DEC.isNumber(payment.get('amount'))) {
         OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_MsgPaymentAmountError'));

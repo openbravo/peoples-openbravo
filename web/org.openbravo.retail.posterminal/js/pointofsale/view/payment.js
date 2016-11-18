@@ -1014,16 +1014,7 @@ enyo.kind({
     // the button 'Done' will be desabled (except for the case of doing a cancel and replace)
     if (!value) {
       if (this.owner.receipt && this.owner.receipt.get('payments') && this.owner.receipt.get('payments').size() > 0) {
-        var prePaymentQty = _.reduce(_.filter(this.owner.receipt.get('payments').models, function (payment) {
-          return payment.get('isPrePayment');
-        }), function (memo, pymnt) {
-          return OB.DEC.add(memo, pymnt.get('origAmount'));
-        }, OB.DEC.Zero),
-            isNewReversed = _.filter(this.owner.receipt.get('payments').models, function (payment) {
-            return !payment.get('isPrePayment') && payment.get('isReversePayment');
-          }).length > 0;
-
-        if (prePaymentQty === OB.DEC.sub(this.owner.receipt.getTotal(), this.owner.receipt.getCredit()) && !isNewReversed && !this.owner.receipt.get('doCancelAndReplace')) {
+        if (!this.owner.receipt.get('doCancelAndReplace') && this.owner.receipt.getPrePaymentQty() === OB.DEC.sub(this.owner.receipt.getTotal(), this.owner.receipt.getCredit()) && !this.owner.receipt.isNewReversed()) {
           value = true;
         }
       }
