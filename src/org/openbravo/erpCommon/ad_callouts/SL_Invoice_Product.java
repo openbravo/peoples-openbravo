@@ -252,10 +252,6 @@ public class SL_Invoice_Product extends HttpSecureAppServlet {
         && (!UOMUtil.isUomManagementEnabled() || (UOMUtil.isUomManagementEnabled() && !""
             .equals(strUOMProduct)))) {
       resultado.append(", new Array(\"inpmProductUomId\", ");
-      // if (strUOM.startsWith("\""))
-      // strUOM=strUOM.substring(1,strUOM.length()-1);
-      // String strmProductUOMId =
-      // SLOrderProductData.strMProductUOMID(this,strMProductID,strUOM);
 
       FieldProvider[] tld = null;
       try {
@@ -275,8 +271,9 @@ public class SL_Invoice_Product extends HttpSecureAppServlet {
         for (int i = 0; i < tld.length; i++) {
           resultado.append("new Array(\"" + tld[i].getField("id") + "\", \""
               + FormatUtilities.replaceJS(tld[i].getField("name")) + "\", \"false\")");
-          if (i < tld.length - 1)
+          if (i < tld.length - 1) {
             resultado.append(",\n");
+          }
         }
         resultado.append("\n)");
       } else
