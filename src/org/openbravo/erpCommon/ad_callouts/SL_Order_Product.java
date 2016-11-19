@@ -245,10 +245,6 @@ public class SL_Order_Product extends HttpSecureAppServlet {
         && (!UOMUtil.isUomManagementEnabled() || (UOMUtil.isUomManagementEnabled() && !""
             .equals(strUOMProduct)))) {
       resultado.append("new Array(\"inpmProductUomId\", ");
-      // if (strUOM.startsWith("\""))
-      // strUOM=strUOM.substring(1,strUOM.length()-1);
-      // String strmProductUOMId =
-      // SLOrderProductData.strMProductUOMID(this,strMProductID,strUOM);
       if (vars.getLanguage().equals("en_US")) {
         FieldProvider[] tld = null;
         try {
