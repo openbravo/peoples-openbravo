@@ -21,25 +21,21 @@ package org.openbravo.erpCommon.ad_callouts;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
-import java.util.List;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
-import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.materialmgmt.UOMUtil;
-import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.plm.AttributeSet;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.pricing.pricelist.PriceList;
@@ -171,19 +167,10 @@ public class SL_RequisitionLine_Product extends HttpSecureAppServlet {
     String strHasSecondaryUOM = SLRequisitionLineProductData.hasSecondaryUOM(this, strMProductID);
     if (UOMUtil.isUomManagementEnabled() && "".equals(strUOMProduct)) {
       // Set AUM based on default
-      // As Requisition is a purchase document, the document type 'Purchase Order' is used to get
-      // the
-      // default AUM
-      OBCriteria<DocumentType> dtCriteria = OBDal.getInstance().createCriteria(DocumentType.class);
-      dtCriteria.add(Restrictions.eq("documentCategory", "POO"));
-      List<DocumentType> dtList = dtCriteria.list();
-      if (dtList.size() > 0) {
-        String finalAUM = UOMUtil.getDefaultAUMForDocument(strMProductID, dtList.get(0)
-            .getId());
+        String finalAUM = UOMUtil.getDefaultAUMForPurchase(strMProductID);
         if (finalAUM != null) {
           strResult.append("new Array(\"inpcAum\", \"" + finalAUM + "\"),\n");
         }
-      }
     }
 
     if (strChanged.equals("inpmProductId")) {

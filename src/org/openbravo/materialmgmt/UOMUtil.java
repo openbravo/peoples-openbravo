@@ -68,9 +68,38 @@ public class UOMUtil {
   public static String getDefaultAUMForDocument(String mProductId, String documentTypeId) {
     OBContext.setAdminMode();
     DocumentType docType = OBDal.getInstance().get(DocumentType.class, documentTypeId);
+    return getDefaultAUMForFlow(mProductId, docType.isSalesTransaction());
+  }
+
+  /**
+   * Get default AUM for a product in a Sales Flow. Used when document does not have set document
+   * type.
+   * 
+   * @param mProductId
+   *          The product Id
+   * @return The default AUM for the product for the Sales Flow
+   */
+  public static String getDefaultAUMForSales(String mProductId) {
+    return getDefaultAUMForFlow(mProductId, true);
+  }
+
+  /**
+   * Get default AUM for a product in a Purchase Flow. Used when document does not have set document
+   * type.
+   * 
+   * @param mProductId
+   *          The product Id
+   * @return The default AUM for the product for the Purchase Flow
+   */
+  public static String getDefaultAUMForPurchase(String mProductId) {
+    return getDefaultAUMForFlow(mProductId, false);
+  }
+
+  private static String getDefaultAUMForFlow(String mProductId, boolean isSoTrx) {
+    OBContext.setAdminMode();
     OBCriteria<ProductAUM> pAUMCriteria = OBDal.getInstance().createCriteria(ProductAUM.class);
     pAUMCriteria.add(Restrictions.and(Restrictions.eq("product.id", mProductId),
-        Restrictions.eq(docType.isSalesTransaction() ? "sales" : "purchase", UOM_PRIMARY)));
+        Restrictions.eq(isSoTrx ? "sales" : "purchase", UOM_PRIMARY)));
     Product product = OBDal.getInstance().get(Product.class, mProductId);
     String finalAUM = product.getUOM().getId();
     ProductAUM primaryAum = (ProductAUM) pAUMCriteria.uniqueResult();
@@ -139,12 +168,12 @@ public class UOMUtil {
       productAUMConversionCriteria.add(Restrictions.and(Restrictions.eq("product.id", mProductId),
           Restrictions.eq("uOM.id", toUOMId)));
 
-      try{
+      try {
         ProductAUM conversion = (ProductAUM) productAUMConversionCriteria.uniqueResult();
-        if(conversion == null){
+        if (conversion == null) {
           OBContext.restorePreviousMode();
-          throw new OBException(OBMessageUtils.messageBD(new DalConnectionProvider(), "NoAUMDefined",
-              OBContext.getOBContext().getLanguage().getLanguage()));
+          throw new OBException(OBMessageUtils.messageBD(new DalConnectionProvider(),
+              "NoAUMDefined", OBContext.getOBContext().getLanguage().getLanguage()));
         }
         BigDecimal rate = conversion.getConversionRate();
         UOM uom = OBDal.getInstance().get(UOM.class, conversion.getUOM().getId());
@@ -154,10 +183,10 @@ public class UOMUtil {
           strQty = rate.multiply(qty).setScale(uom.getStandardPrecision().intValue(),
               RoundingMode.HALF_UP);
         }
-      }catch(NonUniqueResultException e){
+      } catch (NonUniqueResultException e) {
         OBContext.restorePreviousMode();
-        throw new OBException(OBMessageUtils.messageBD(new DalConnectionProvider(),
-            "DuplicateAUM", OBContext.getOBContext().getLanguage().getLanguage()));
+        throw new OBException(OBMessageUtils.messageBD(new DalConnectionProvider(), "DuplicateAUM",
+            OBContext.getOBContext().getLanguage().getLanguage()));
       }
     }
     OBContext.restorePreviousMode();
