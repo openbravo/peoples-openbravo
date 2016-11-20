@@ -37,6 +37,7 @@ import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.data.FieldProvider;
 import org.openbravo.database.SessionInfo;
 import org.openbravo.erpCommon.businessUtility.Tax;
 import org.openbravo.erpCommon.businessUtility.Tree;
@@ -759,7 +760,7 @@ public class CreateFrom extends HttpSecureAppServlet {
     }
 
     if (isSOTrx.equals("N")) {
-      final CreateFromShipmentData[][] dataUOM = new CreateFromShipmentData[data.length][];
+      final FieldProvider[][] dataUOM = new FieldProvider[data.length][];
 
       final boolean strUomPreference = UOMUtil.isUomManagementEnabled();
       boolean strHaveSecUom = false;
@@ -783,7 +784,7 @@ public class CreateFrom extends HttpSecureAppServlet {
       for (int i = 0; i < data.length; i++) {
         // Obtain the specific units for each product
 
-        dataUOM[i] = CreateFromShipmentData.selectUOM(this, data[i].mProductId);
+        dataUOM[i] = UOMUtil.selectAUM(data[i].mProductId, data[i].cDoctypeId);
 
         // Check the hidden fields
 
@@ -803,13 +804,12 @@ public class CreateFrom extends HttpSecureAppServlet {
           xmlDocument.setParameter("havesecuom", "");
           if (data[i].cAum.isEmpty() && data[i].aumqty.isEmpty()
               && data[i].secProductUomId.isEmpty() && data[i].secqty.isEmpty()) {
-            CreateFromShipmentData[] defaultAumData = CreateFromShipmentData.selectAUMDefault(this,
-                data[i].mProductId, data[i].cDoctypeId);
-            String defaultAum = (defaultAumData.length > 0) ? defaultAumData[0].cAum
+            FieldProvider[] defaultAumData = UOMUtil.selectDefaultAUM(data[i].mProductId, data[i].cDoctypeId);
+            String defaultAum = (defaultAumData.length > 0) ? defaultAumData[0].getField(UOMUtil.FIELD_PROVIDER_ID)
                 : data[i].cUomId;
             data[i].aumqty = data[i].qty;
             data[i].cAum = defaultAum;
-            data[i].aumname = (defaultAumData.length > 0) ? defaultAumData[0].aumname
+            data[i].aumname = (defaultAumData.length > 0) ? defaultAumData[0].getField(UOMUtil.FIELD_PROVIDER_NAME)
                 : data[i].uomsymbol;
             data[i].mProductUomId = null;
             if (!defaultAum.equals(data[i].cUomId)) {
@@ -825,13 +825,12 @@ public class CreateFrom extends HttpSecureAppServlet {
           xmlDocument.setParameter("uompreference", "");
           xmlDocument.setParameter("havesecuom", "display:none;");
           if (data[i].cAum.isEmpty() && data[i].aumqty.isEmpty()) {
-            CreateFromShipmentData[] defaultAumData = CreateFromShipmentData.selectAUMDefault(this,
-                data[i].mProductId, data[i].cDoctypeId);
-            String defaultAum = (defaultAumData.length > 0) ? defaultAumData[0].cAum
+            FieldProvider[] defaultAumData = UOMUtil.selectDefaultAUM(data[i].mProductId, data[i].cDoctypeId);
+            String defaultAum = (defaultAumData.length > 0) ? defaultAumData[0].getField(UOMUtil.FIELD_PROVIDER_ID)
                 : data[i].cUomId;
             data[i].aumqty = data[i].qty;
             data[i].cAum = defaultAum;
-            data[i].aumname = (defaultAumData.length > 0) ? defaultAumData[0].aumname
+            data[i].aumname = (defaultAumData.length > 0) ? defaultAumData[0].getField(UOMUtil.FIELD_PROVIDER_NAME)
                 : data[i].uomsymbol;
             data[i].mProductUomId = null;
             if (!defaultAum.equals(data[i].cUomId)) {

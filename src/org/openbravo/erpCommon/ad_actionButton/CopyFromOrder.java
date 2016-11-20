@@ -34,6 +34,7 @@ import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.businessUtility.PriceAdjustment;
 import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.OBError;
@@ -137,7 +138,6 @@ public class CopyFromOrder extends HttpSecureAppServlet {
         String strcUOMId = vars.getStringParameter("inpcUOMId" + strRownum);
         String strCOrderlineID = SequenceIdData.getUUID();
 
-        // boolean propertyValue = UOMUtil.isUomManagementEnabled();
         String strAumQty = null;
         String strcAumId = null;
         if (UOMUtil.isUomManagementEnabled()) {
@@ -260,16 +260,15 @@ public class CopyFromOrder extends HttpSecureAppServlet {
     CopyFromOrderData[] data = CopyFromOrderData.select(this, strBpartner, strmPricelistId,
         dataOrder[0].dateordered, order.getPriceList().isPriceIncludesTax() ? "Y" : "N", strSOTrx,
         dataOrder[0].lastDays.equals("") ? "0" : dataOrder[0].lastDays);
-    CopyFromOrderData[][] dataAUM = new CopyFromOrderData[data.length][];
+    FieldProvider[][] dataAUM = new FieldProvider[data.length][];
     for (int i = 0; i < data.length; i++) {
       Product product = OBDal.getInstance().get(Product.class, data[i].mProductId);
       data[i].lastpriceso = (PriceAdjustment.calculatePriceActual(order, product, new BigDecimal(
           data[i].qty), new BigDecimal(data[i].lastpriceso))).toString();
 
-      dataAUM[i] = CopyFromOrderData.selectAUM(this, data[i].mProductId);
+      dataAUM[i] = UOMUtil.selectAUM(data[i].mProductId, data[i].cDoctypeId);
       if (dataAUM[i].length == 0) {
-        dataAUM[i] = CopyFromOrderData.selectAUMDefault(this, data[i].mProductId,
-            data[i].cDoctypeId);
+        dataAUM[i] = UOMUtil.selectDefaultAUM(data[i].mProductId, data[i].cDoctypeId);
       }
     }
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");

@@ -41,6 +41,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.businessUtility.Tree;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.businessUtility.WindowTabsData;
@@ -167,12 +168,11 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
       xmlDocument.setParameter("paramColSpanCalendar", "1");
     }
 
-    MaterialReceiptPendingData[][] dataAum = new MaterialReceiptPendingData[data.length][];
+    FieldProvider[][] dataAum = new FieldProvider[data.length][];
     for (int i = 0; i < data.length; i++) {
-      dataAum[i] = MaterialReceiptPendingData.selectAUM(this, data[i].mProductId);
+      dataAum[i] = UOMUtil.selectAUM(data[i].mProductId, data[i].cDoctypeId);
       if (dataAum[i].length == 0) {
-        dataAum[i] = MaterialReceiptPendingData.selectAUMDefault(this, data[i].mProductId,
-            data[i].cDoctypeId);
+        dataAum[i] = UOMUtil.selectDefaultAUM(data[i].mProductId, data[i].cDoctypeId);
       }
     }
 

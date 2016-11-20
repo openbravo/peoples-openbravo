@@ -57,10 +57,10 @@ public class UOMUtil {
   private static final Logger log4j = Logger.getLogger(UOMUtil.class);
   private static final String UOM_PROPERTY = "UomManagement";
   private static final String UOM_NOT_APPLICABLE = "NA";
-  private static final String FIELD_PROVIDER_ID = "id";
-  private static final String FIELD_PROVIDER_NAME = "name";
 
   public static final String UOM_PRIMARY = "P";
+  public static final String FIELD_PROVIDER_ID = "id";
+  public static final String FIELD_PROVIDER_NAME = "name";
 
   /**
    * Get default AUM for a product in a given document
