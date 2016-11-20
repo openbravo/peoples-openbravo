@@ -32,6 +32,7 @@ import org.openbravo.client.kernel.event.EntityUpdateEvent;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.materialmgmt.UOMUtil;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.common.plm.ProductAUM;
 import org.openbravo.service.db.DalConnectionProvider;
@@ -65,8 +66,8 @@ public class ProductAumEventHandler extends EntityPersistenceEventObserver {
   }
 
   /**
-   * Checks if the Aum already exists for the product, and if is already set as primary for Sales,
-   * Purchase or Logistic flow.
+   * Checks for duplicate Aum for the product and the uniqueness of a primary Aum for Sales,
+   * Purchase and Logistic flows.
    * 
    * @param event
    */
@@ -81,13 +82,19 @@ public class ProductAumEventHandler extends EntityPersistenceEventObserver {
       if (productAum.getId().equals(target.getId()) && event instanceof EntityNewEvent) {
         throw new OBException(Utility.messageBD(conn, "DuplicateAUM", language));
       }
-      if (target.getSales().equals("P") && productAum.getSales().equals("P")) {
+      if (target.getSales().equals(UOMUtil.UOM_PRIMARY)
+          && productAum.getSales().equals(UOMUtil.UOM_PRIMARY)
+          && !target.getId().equals(productAum.getId())) {
         throw new OBException(Utility.messageBD(conn, "DuplicatePrimarySalesAUM", language));
       }
-      if (target.getPurchase().equals("P") && productAum.getPurchase().equals("P")) {
+      if (target.getPurchase().equals(UOMUtil.UOM_PRIMARY)
+          && productAum.getPurchase().equals(UOMUtil.UOM_PRIMARY)
+          && !target.getId().equals(productAum.getId())) {
         throw new OBException(Utility.messageBD(conn, "DuplicatePrimaryPurchaseAUM", language));
       }
-      if (target.getLogistics().equals("P") && productAum.getLogistics().equals("P")) {
+      if (target.getLogistics().equals(UOMUtil.UOM_PRIMARY)
+          && productAum.getLogistics().equals(UOMUtil.UOM_PRIMARY)
+          && !target.getId().equals(productAum.getId())) {
         throw new OBException(Utility.messageBD(conn, "DuplicatePrimaryLogisticsAUM", language));
       }
     }

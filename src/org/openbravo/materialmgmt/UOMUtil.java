@@ -22,7 +22,9 @@ package org.openbravo.materialmgmt;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.hibernate.NonUniqueResultException;
@@ -31,7 +33,9 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.businessUtility.Preferences;
+import org.openbravo.erpCommon.utility.FieldProviderFactory;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.model.ad.system.Client;
@@ -52,8 +56,11 @@ public class UOMUtil {
 
   private static final Logger log4j = Logger.getLogger(UOMUtil.class);
   private static final String UOM_PROPERTY = "UomManagement";
-  private static final String UOM_NOT_AVAILABLE = "NA";
-  private static final String UOM_PRIMARY = "P";
+  private static final String UOM_NOT_APPLICABLE = "NA";
+  private static final String FIELD_PROVIDER_ID = "id";
+  private static final String FIELD_PROVIDER_NAME = "name";
+
+  public static final String UOM_PRIMARY = "P";
 
   /**
    * Get default AUM for a product in a given document
@@ -98,8 +105,8 @@ public class UOMUtil {
   private static String getDefaultAUMForFlow(String mProductId, boolean isSoTrx) {
     OBContext.setAdminMode();
     OBCriteria<ProductAUM> pAUMCriteria = OBDal.getInstance().createCriteria(ProductAUM.class);
-    pAUMCriteria.add(Restrictions.and(Restrictions.eq("product.id", mProductId),
-        Restrictions.eq(isSoTrx ? "sales" : "purchase", UOM_PRIMARY)));
+    pAUMCriteria.add(Restrictions.and(Restrictions.eq("product.id", mProductId), Restrictions.eq(
+        isSoTrx ? ProductAUM.PROPERTY_SALES : ProductAUM.PROPERTY_PURCHASE, UOM_PRIMARY)));
     Product product = OBDal.getInstance().get(Product.class, mProductId);
     String finalAUM = product.getUOM().getId();
     ProductAUM primaryAum = (ProductAUM) pAUMCriteria.uniqueResult();
@@ -119,18 +126,20 @@ public class UOMUtil {
    *          The document type id if the parent document
    * @return List of the available UOM
    */
-  public static List<UOM> getAvailableUOMsForDocument(String mProductId, String documentTypeId) {
+  public static List<UOM> getAvailableUOMsForDocument(String mProductId, String docTypeId) {
     OBContext.setAdminMode();
+    DocumentType docType = OBDal.getInstance().get(DocumentType.class, docTypeId);
     List<UOM> lUom = new ArrayList<UOM>();
-    DocumentType docType = OBDal.getInstance().get(DocumentType.class, documentTypeId);
     OBCriteria<ProductAUM> pAUMCriteria = OBDal.getInstance().createCriteria(ProductAUM.class);
-    pAUMCriteria.add(Restrictions.and(Restrictions.eq("product.id", mProductId),
-        Restrictions.ne(docType.isSalesTransaction() ? "sales" : "purcase", UOM_NOT_AVAILABLE)));
+    pAUMCriteria.add(Restrictions.and(Restrictions.eq("product.id", mProductId), Restrictions.ne(
+        docType.isSalesTransaction() ? ProductAUM.PROPERTY_SALES : ProductAUM.PROPERTY_PURCHASE,
+        UOM_NOT_APPLICABLE)));
     Product product = OBDal.getInstance().get(Product.class, mProductId);
-    lUom.add(product.getUOM());
-    for (ProductAUM pAUM : pAUMCriteria.list()) {
+    List<ProductAUM> pAUMList = pAUMCriteria.list();
+    for (ProductAUM pAUM : pAUMList) {
       lUom.add(pAUM.getUOM());
     }
+    lUom.add(product.getUOM());
     OBContext.restorePreviousMode();
     return lUom;
   }
@@ -237,7 +246,7 @@ public class UOMUtil {
   /**
    * Returns if the UomManagement preference is enabled
    * 
-   * @return 'Y'/ 'N'
+   * @return true if enabled, false otherwise
    */
   public static boolean isUomManagementEnabled() {
     OBContext.setAdminMode();
@@ -251,6 +260,53 @@ public class UOMUtil {
     }
     OBContext.restorePreviousMode();
     return propertyValue.equals("Y");
+  }
+
+  /**
+   * Returns a FieldProvider array containing the default AUM for a product in a given flow
+   * 
+   * @param productId
+   *          The product Id
+   * @param docTypeId
+   *          The document type Id
+   * @return
+   */
+  public static FieldProvider[] selectDefaultAUM(String productId, String docTypeId) {
+    OBContext.setAdminMode();
+    String id = getDefaultAUMForDocument(productId, docTypeId);
+    UOM uom = OBDal.getInstance().get(UOM.class, id);
+    List<Map<String, String>> result = new ArrayList<>();
+    Map<String, String> resultMap = new HashMap<>();
+    resultMap.put(FIELD_PROVIDER_ID, id);
+    resultMap.put(FIELD_PROVIDER_NAME, uom.getName());
+    result.add(resultMap);
+    FieldProvider[] finalResult = FieldProviderFactory.getFieldProviderArray(result);
+    OBContext.restorePreviousMode();
+    return finalResult;
+  }
+
+  /**
+   * Returns a FieldProvider array containing the availables UOM for a product in a given flow
+   * 
+   * @param productId
+   *          The product Id
+   * @param docTypeId
+   *          The document type Id
+   * @return
+   */
+  public static FieldProvider[] selectAUM(String productId, String docTypeId) {
+    OBContext.setAdminMode();
+    List<UOM> availableUOM = getAvailableUOMsForDocument(productId, docTypeId);
+    List<Map<String, String>> result = new ArrayList<>();
+    for (UOM uom : availableUOM) {
+      Map<String, String> resultMap = new HashMap<>();
+      resultMap.put(FIELD_PROVIDER_ID, uom.getId());
+      resultMap.put(FIELD_PROVIDER_NAME, uom.getName());
+      result.add(resultMap);
+    }
+    FieldProvider[] finalResult = FieldProviderFactory.getFieldProviderArray(result);
+    OBContext.restorePreviousMode();
+    return finalResult;
   }
 
 }
