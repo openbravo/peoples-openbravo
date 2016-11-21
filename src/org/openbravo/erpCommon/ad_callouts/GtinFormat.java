@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -20,16 +20,22 @@ package org.openbravo.erpCommon.ad_callouts;
 
 import javax.servlet.ServletException;
 
-import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 
+/**
+ * Callout to validate GTIN format
+ * 
+ * @author Nono Carballo
+ *
+ */
 public class GtinFormat extends SimpleCallout {
 
   @Override
   protected void execute(CalloutInfo info) throws ServletException {
 
     String gtin = info.getStringParameter("inpgtin", null);
-    if (!gtin.matches("^[a-zA-Z0-9]{1,}$")) {
-      info.showError(Utility.messageBD(this, "InvalidGTINFormat", info.vars.getLanguage()));
+    if (gtin != null && !gtin.matches("^[a-zA-Z0-9]{1,}$")) {
+      info.showError(OBMessageUtils.messageBD(this, "InvalidGTINFormat", info.vars.getLanguage()));
     }
   }
 
