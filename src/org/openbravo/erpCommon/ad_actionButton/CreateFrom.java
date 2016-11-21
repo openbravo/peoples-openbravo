@@ -1869,9 +1869,9 @@ public class CreateFrom extends HttpSecureAppServlet {
                 strAumQty = qtyAum.toString();
                 strMovementqty = qtyAum.toString();
                 if (data[i].cAum.isEmpty()) {
-                  CreateFromShipmentData[] defaultAumData = CreateFromShipmentData
-                      .selectAUMDefault(this, data[i].mProductId, data[i].cDoctypeId);
-                  data[i].cAum = (defaultAumData.length > 0) ? defaultAumData[0].cAum
+                  FieldProvider[] defaultAumData = UOMUtil.selectDefaultAUM(data[i].mProductId, data[i].cDoctypeId);
+                  UOMUtil.selectDefaultAUM(data[i].mProductId, data[i].cDoctypeId);
+                  data[i].cAum = (defaultAumData.length > 0) ? defaultAumData[0].getField(UOMUtil.FIELD_PROVIDER_ID)
                       : data[i].cUomId;
                 }
                 if (!data[i].cUomId.equals(data[i].cAum)) {
