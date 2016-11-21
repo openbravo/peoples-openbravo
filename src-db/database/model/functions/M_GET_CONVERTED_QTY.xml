@@ -25,6 +25,18 @@
 * All portions are Copyright (C) 2016 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
+*
+* This function receives a qty in the AUM defined to a product and returns
+* it transformed in the BUM of the product.
+*
+*  Parameters:
+*    p_mproductid character varying: The product id
+*    p_qty numeric: The quantity to convert
+*    p_touom character varying: The destination unit of measure
+*  Returns:
+*    The quantity converted using the conversion rate between the
+*    alternative unit of measure of the product and the BUM passed at
+*    parameter, or the same qty if any conversion can be applied.
 ************************************************************************/
 
   v_rate NUMBER:= NULL;
@@ -57,9 +69,7 @@ BEGIN
   END IF;
 
   SELECT stdprecision INTO v_precision FROM c_uom WHERE c_uom_id = p_toUOM;
-  IF(v_precision IS NOT NULL) THEN
-    v_result := ROUND(v_result, v_precision);
-  END IF;
+  v_result := ROUND(v_result, v_precision);
 
   RETURN v_result;
 END M_GET_CONVERTED_QTY
