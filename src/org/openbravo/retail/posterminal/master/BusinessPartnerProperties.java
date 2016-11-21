@@ -20,9 +20,9 @@ import org.openbravo.mobile.core.model.ModelExtension;
 public class BusinessPartnerProperties extends ModelExtension {
 
   @Override
-  public List<HQLProperty> getHQLProperties(final Object params) {
+  public List<HQLProperty> getHQLProperties(Object params) {
 
-    final ArrayList<HQLProperty> list = new ArrayList<HQLProperty>() {
+    ArrayList<HQLProperty> list = new ArrayList<HQLProperty>() {
       private static final long serialVersionUID = 1L;
       {
         add(new HQLProperty("bp.id", "id"));
@@ -68,7 +68,7 @@ public class BusinessPartnerProperties extends ModelExtension {
         add(new HQLProperty("bp.birthPlace", "birthPlace"));
         add(new HQLProperty(
             "(case when bpl.active = 'Y' and bp.active = 'Y' then true else false end)", "active"));
-        final String curDbms = OBPropertiesProvider.getInstance().getOpenbravoProperties()
+        String curDbms = OBPropertiesProvider.getInstance().getOpenbravoProperties()
             .getProperty("bbdd.rdbms");
         if (curDbms.equals("POSTGRE")) {
           add(new HQLProperty("now()", "loaded"));
