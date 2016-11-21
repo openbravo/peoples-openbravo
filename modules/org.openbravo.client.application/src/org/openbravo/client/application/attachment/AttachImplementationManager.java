@@ -92,6 +92,9 @@ public class AttachImplementationManager {
   @Inject
   private ApplicationDictionaryCachedStructures adcs;
 
+  private static final int DATA_TYPE_MAX_LENGTH = ModelProvider.getInstance()
+      .getEntity(Attachment.class).getProperty(Attachment.PROPERTY_DATATYPE).getFieldLength();;
+
   /**
    * Method to upload files. This method calls needed handler class
    * 
@@ -152,7 +155,10 @@ public class AttachImplementationManager {
         strDataType = new Tika().detect(file);
       } catch (IOException ignore) {
       }
-      attachment.setDataType(strDataType);
+
+      if (strDataType != null && strDataType.length() <= DATA_TYPE_MAX_LENGTH) {
+        attachment.setDataType(strDataType);
+      }
 
       OBDal.getInstance().save(attachment);
 
