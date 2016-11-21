@@ -2857,6 +2857,7 @@
         }
       }, this);
 
+      this.set('oldId', this.get('id'));
       this.set('id', null);
       this.set('isQuotation', false);
       this.set('orderType', OB.MobileApp.model.get('terminal').terminalType.layawayorder ? 2 : 0);

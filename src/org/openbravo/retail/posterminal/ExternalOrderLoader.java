@@ -331,8 +331,6 @@ public class ExternalOrderLoader extends OrderLoader {
         resolveJsonValue(Currency.ENTITY_NAME, orderJson.getString("currency"), new String[] {
             "id", "iSOCode" }));
 
-    setBusinessPartnerInformation(orderJson);
-
     if (orderJson.has("salesRepresentative")) {
       orderJson.put(
           "salesRepresentative",
@@ -355,8 +353,12 @@ public class ExternalOrderLoader extends OrderLoader {
     copyPropertyValue(orderJson, "grossAmount", "gross");
     copyPropertyValue(orderJson, "netAmount", "net");
 
-    transformTaxes(orderJson.getJSONObject("taxes"));
-    transformLines(orderJson);
+    if ("create".equals(orderJson.getString("step")) || "ship".equals(orderJson.getString("step")) || "all".equals(orderJson.getString("step"))) {
+      setBusinessPartnerInformation(orderJson);
+      transformTaxes(orderJson.getJSONObject("taxes"));
+      transformLines(orderJson);
+    }
+
     transformPayments(orderJson);
   }
 
