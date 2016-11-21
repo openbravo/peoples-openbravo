@@ -24,12 +24,13 @@ import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
 import org.openbravo.base.exception.OBException;
-import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.dal.core.OBContext;
-import org.openbravo.erpCommon.businessUtility.Preferences;
-import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.materialmgmt.UOMUtil;
 
+/**
+ * 
+ * Callout to convert from alternate quantity to base quantity
+ *
+ */
 public class OperativeQuantity_To_BaseQuantity extends SimpleCallout {
   private static final Logger logger = Logger.getLogger(OperativeQuantity_To_BaseQuantity.class);
 
@@ -50,29 +51,18 @@ public class OperativeQuantity_To_BaseQuantity extends SimpleCallout {
   protected void execute(CalloutInfo info) throws ServletException {
 
     String strWindowId = info.getWindowId();
-    VariablesSecureApp vars = info.vars;
-    BigDecimal qty = (vars.getNumericParameter("inpaumqty").isEmpty()) ? null : new BigDecimal(
-        vars.getNumericParameter("inpaumqty"));
-    String strOperativeUOM = vars.getStringParameter("inpcAum");
-    String strBaseUOM = vars.getStringParameter("inpcUomId");
-    String mProductId = vars.getStringParameter("inpmProductId");
-
+    BigDecimal qty = info.getBigDecimalParameter("inpaumqty");
+    String strOperativeUOM = info.getStringParameter("inpcAum");
+    String strBaseUOM = info.getStringParameter("inpcUomId");
+    String mProductId = info.getStringParameter("inpmProductId");
     try {
-      String propertyValue = Preferences.getPreferenceValue("UomManagement", true, OBContext
-          .getOBContext().getCurrentClient(), OBContext.getOBContext().getCurrentOrganization(),
-          OBContext.getOBContext().getUser(), OBContext.getOBContext().getRole(), null);
-      if (propertyValue.equalsIgnoreCase("Y")) {
-
-        if (!strOperativeUOM.equals(strBaseUOM) && !strOperativeUOM.isEmpty()) {
-          qty = UOMUtil.getConvertedQty(mProductId, qty, strOperativeUOM);
-        } else if (strOperativeUOM.isEmpty()) {
+      if (UOMUtil.isUomManagementEnabled()) {
+        if (strOperativeUOM == null || strOperativeUOM.isEmpty()) {
           qty = null;
-        }
+        } else if (!strOperativeUOM.equals(strBaseUOM)) {
+          qty = UOMUtil.getConvertedQty(mProductId, qty, strOperativeUOM);
+        }        
       }
-    } catch (PropertyException e) {
-      logger.error("Error while converting UOM. ", e);
-      e.printStackTrace();
-      qty = null;
     } catch (OBException e) {
       logger.error("Error while converting UOM. ", e);
       info.showError(e.getMessage());
