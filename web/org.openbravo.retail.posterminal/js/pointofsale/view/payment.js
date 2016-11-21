@@ -689,7 +689,7 @@ enyo.kind({
       me.receipt.stopAddingPayments = !_.isEmpty(me.getShowingErrorMessages());
       // Finally set status of buttons
       this.setStatusButtons(resultOK, 'Done');
-      this.setStatusLayawayButton(resultOK);
+      this.setStatusButtons(resultOK, 'Layaway');
     }
     if (resultOK) {
       this.$.noenoughchangelbl.hide();

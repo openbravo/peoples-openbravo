@@ -895,14 +895,14 @@
         return payment.get('isPrePayment');
       }), function (memo, pymnt) {
         return OB.DEC.add(memo, pymnt.get('origAmount'));
-      }, OB.DEC.Zero)
+      }, OB.DEC.Zero);
     },
 
     // returns true if there is any reversal payment that is not synchronized
     isNewReversed: function () {
       return _.filter(this.get('payments').models, function (payment) {
         return !payment.get('isPrePayment') && payment.get('isReversePayment');
-      }).length > 0
+      }).length > 0;
     },
 
     // returns true if the order is a Layaway, otherwise false
