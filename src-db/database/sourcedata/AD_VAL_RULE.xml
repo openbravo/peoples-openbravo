@@ -1324,7 +1324,7 @@ AND MA_Toolset.MA_Toolset_Type_ID IN (SELECT MA_Toolset_Type_ID FROM MA_ToolsetP
 <!--1B7DEBAB23464AE68859B8CA5772D3FC-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1B7DEBAB23464AE68859B8CA5772D3FC-->  <NAME><![CDATA[C_UOM Validation]]></NAME>
 <!--1B7DEBAB23464AE68859B8CA5772D3FC-->  <TYPE><![CDATA[S]]></TYPE>
-<!--1B7DEBAB23464AE68859B8CA5772D3FC-->  <CODE><![CDATA[td0.uom_type is null or td0.uom_type in (select c.uom_type from c_uom c where c.c_uom_id = @C_Uom_ID@) and td0.c_uom_id <> @C_UOM_ID@]]></CODE>
+<!--1B7DEBAB23464AE68859B8CA5772D3FC-->  <CODE><![CDATA[(td0.uom_type is null or td0.uom_type in (select c.uom_type from c_uom c where c.c_uom_id = @C_Uom_ID@)) and td0.c_uom_id <> @C_UOM_ID@]]></CODE>
 <!--1B7DEBAB23464AE68859B8CA5772D3FC-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1B7DEBAB23464AE68859B8CA5772D3FC--></AD_VAL_RULE>
 
