@@ -416,6 +416,7 @@ enyo.kind({
     });
   },
   addProductToOrder: function (inSender, inEvent) {
+    var targetOrder, me = this;
     if (inEvent.product.get('ignoreAddProduct')) {
       inEvent.product.unset('ignoreAddProduct');
       return;

@@ -429,7 +429,9 @@ enyo.kind({
   },
   events: {
     onChangeBusinessPartner: '',
-    onChangeFilterSelector: ''
+    onChangeFilterSelector: '',
+    onHideSelector: '',
+    onShowSelector: ''
   },
   components: [{
     classes: 'span12',
@@ -489,7 +491,48 @@ enyo.kind({
     }
 
     function errorCallback(tx, error) {
-      OB.UTIL.showError("OBDAL error: " + error);
+      me.$.renderLoading.hide();
+      me.$.stBPAssignToReceipt.$.tempty.show();
+      me.doHideSelector();
+      var i, message, tokens;
+
+      function getProperty(property) {
+        return OB.Model.BPartnerFilter.getProperties().find(function (prop) {
+          return prop.name === property;
+        });
+      }
+
+      if (error.message.startsWith('###')) {
+        tokens = error.message.split('###');
+        message = [];
+        for (i = 0; i < tokens.length; i++) {
+          if (tokens[i] !== '') {
+            if (tokens[i] === 'OBMOBC_FilteringNotAllowed' || tokens[i] === 'OBMOBC_SortingNotAllowed') {
+              message.push({
+                content: OB.I18N.getLabel(tokens[i]),
+                style: 'text-align: left; padding-left: 8px;'
+              });
+            } else {
+              var property = getProperty(tokens[i]);
+              if (property) {
+                message.push({
+                  content: OB.I18N.getLabel(property.caption),
+                  style: 'text-align: left; padding-left: 8px;',
+                  tag: 'li'
+                });
+              }
+            }
+          }
+        }
+      } else {
+        message = error.message;
+      }
+
+      OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), message, null, {
+        onHideFunction: function () {
+          me.doShowSelector();
+        }
+      });
     }
 
     function successCallbackBPs(dataBps) {
@@ -547,9 +590,15 @@ enyo.kind({
         criteria._limit = OB.DEC.abs(OB.MobileApp.model.hasPermission('OBPOS_customerLimit', true));
       }
       if (inEvent.orderby) {
-        criteria._orderByClause = inEvent.orderby.serverColumn + ' ' + inEvent.orderby.direction;
+        criteria._orderByProperties = [{
+          property: inEvent.orderby.name,
+          sorting: inEvent.orderby.direction
+        }];
       } else {
-        criteria._orderByClause = 'bp.name asc';
+        criteria._orderByProperties = [{
+          property: 'bpName',
+          sorting: 'asc'
+        }];
       }
       OB.Dal.find(OB.Model.BPartnerFilter, criteria, successCallbackBPs, errorCallback, this);
     } else {
@@ -801,9 +850,10 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.ModalAdvancedFilters',
   name: 'OB.UI.ModalAdvancedFilterBP',
+  model: OB.Model.BPartnerFilter,
   initComponents: function () {
     this.inherited(arguments);
-    _.each(OB.Model.BPartnerFilter.getProperties(), function (prop) {
+    _.each(this.model.getProperties(), function (prop) {
       // Set filter options for bpCategory and taxID
       if (prop.name === 'bpCategory') {
         prop.filter = OB.MobileApp.model.get('terminal').bp_showcategoryselector;
@@ -812,6 +862,6 @@ enyo.kind({
         prop.filter = OB.MobileApp.model.get('terminal').bp_showtaxid;
       }
     }, this);
-    this.setFilters(OB.Model.BPartnerFilter.getProperties());
+    this.setFilters(this.model.getProperties());
   }
 });

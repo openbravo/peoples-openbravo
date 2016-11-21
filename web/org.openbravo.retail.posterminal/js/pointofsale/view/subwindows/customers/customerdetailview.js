@@ -207,7 +207,7 @@ enyo.kind({
     readOnly: true
   }, {
     kind: 'OB.UI.CustomerTextProperty',
-    name: 'lastName',
+    name: 'customerLastName',
     modelProperty: 'lastName',
     i18nLabel: 'OBPOS_LblLastName',
     readOnly: true

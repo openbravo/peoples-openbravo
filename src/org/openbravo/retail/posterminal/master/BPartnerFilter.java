@@ -29,9 +29,9 @@ import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.mobile.core.model.HQLPropertyList;
 import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.mobile.core.model.ModelExtensionUtils;
-import org.openbravo.retail.posterminal.ProcessHQLQuery;
+import org.openbravo.retail.posterminal.ProcessHQLQueryValidated;
 
-public class BPartnerFilter extends ProcessHQLQuery {
+public class BPartnerFilter extends ProcessHQLQueryValidated {
 
   public static final String bPartnerFilterPropertyExtension = "OBPOS_BPartnerFilterExtension";
   public static final Logger log = Logger.getLogger(BPartnerFilter.class);
@@ -53,7 +53,12 @@ public class BPartnerFilter extends ProcessHQLQuery {
   }
 
   @Override
-  protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
+  protected String getFilterEntity() {
+    return "BPartnerFilter";
+  }
+
+  @Override
+  protected List<String> getQueryValidated(JSONObject jsonsent) throws JSONException {
     List<String> hqlQueries = new ArrayList<String>();
 
     Map<String, Object> params = getParams(jsonsent);
