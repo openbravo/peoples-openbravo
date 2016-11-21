@@ -41,6 +41,7 @@ public class OperativeQuantity_To_BaseQuantity extends SimpleCallout {
   private static final String ADWINDOW_SalesInvoice = "167";
   private static final String ADWINDOW_PurchaseInvoice = "183";
   private static final String ADWINDOW_Requisition = "800092";
+  private static final String ADWINDOW_ManageRequisition = "1004400000";
   private static final String ADWINDOW_SalesQuotation = "6CB5B67ED33F47DFA334079D3EA2340E";
 
   /**
@@ -78,6 +79,8 @@ public class OperativeQuantity_To_BaseQuantity extends SimpleCallout {
           || strWindowId.equals(ADWINDOW_PurchaseInvoice)) {
         info.addResult("inpqtyinvoiced", qty);
       } else if (strWindowId.equals(ADWINDOW_Requisition)) {
+        info.addResult("inpqty", qty);
+      }else if (strWindowId.equals(ADWINDOW_ManageRequisition)) {
         info.addResult("inpqty", qty);
       }
     }
