@@ -28,6 +28,10 @@ import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.materialmgmt.UOMUtil;
 
+/**
+ * Action handler to be invoked from javascript for conversions between quantity and aum quantity
+ *
+ */
 public class GetConvertedQtyActionHandler extends BaseActionHandler {
   private static final Logger log4j = Logger.getLogger(GetConvertedQtyActionHandler.class);
 
@@ -35,28 +39,25 @@ public class GetConvertedQtyActionHandler extends BaseActionHandler {
   protected JSONObject execute(Map<String, Object> parameters, String data) {
     JSONObject result = new JSONObject();
 
+    BigDecimal qty = null;
     try {
       final JSONObject jsonData = new JSONObject(data);
       final String mProductId = jsonData.getString("mProductId");
-      final BigDecimal qty = new BigDecimal(jsonData.getString("qty"));
+      qty = new BigDecimal(jsonData.getString("qty"));
       final String toUOM = jsonData.getString("toUOM");
       final Boolean reverse = jsonData.getBoolean("reverse");
 
-      try {
-        if (reverse) {
-          result.put("qty", UOMUtil.getConvertedAumQty(mProductId, qty, toUOM));
-        } else {
-          result.put("qty", UOMUtil.getConvertedQty(mProductId, qty, toUOM));
-        }
-      } catch (Exception e) {
-        result.put("qty", qty);
-        log4j.error("Error while converting UOM, exception e", e);
+      if (reverse) {
+        result.put("qty", UOMUtil.getConvertedAumQty(mProductId, qty, toUOM));
+      } else {
+        result.put("qty", UOMUtil.getConvertedQty(mProductId, qty, toUOM));
       }
-    } catch (Exception e1) {
+    } catch (Exception e) {
+      log4j.error("Error while converting UOM", e);
       try {
-        result.put("qty", "0");
-      } catch (JSONException e) {
-        log4j.error("Error while converting UOM, exception e1", e);
+        result.put("qty", qty);
+      } catch (JSONException e1) {
+        log4j.error(e1.getMessage(), e1);
       }
     }
     return result;
