@@ -54,7 +54,7 @@
 	<parameter name="NUMBERFORMAT" class="java.text.DecimalFormat" isForPrompting="false"/>
 	<parameter name="LOCALE" class="java.util.Locale" isForPrompting="false"/>
 	<parameter name="isUOMManagementEnabled" class="java.lang.Boolean" isForPrompting="false">
-		<defaultValueExpression><![CDATA[org.openbravo.materialmgmt.CentralBroker.getInstance().isUomManagementEnabled().equals("Y")]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[org.openbravo.materialmgmt.UOMUtil.isUomManagementEnabled()]]></defaultValueExpression>
 	</parameter>
 	<queryString>
 		<![CDATA[SELECT M_INOUT.DOCUMENTNO AS DOCUMENTNO, M_INOUT.MOVEMENTDATE AS MOVEMENTDATE, C_BPARTNER.NAME AS CLIENT_NAME, M_PRODUCT.NAME AS PRODUCT_NAME, SUM(M_INOUTLINE.MOVEMENTQTY) AS QUANTITYORDER, C_UOM.NAME AS UOMNAME

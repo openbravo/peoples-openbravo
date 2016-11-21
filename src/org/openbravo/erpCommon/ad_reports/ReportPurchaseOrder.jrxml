@@ -78,7 +78,7 @@
 	<parameter name="USER_CLIENT" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="USER_ORG" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="isUOMManagementEnabled" class="java.lang.Boolean" isForPrompting="false">
-		<defaultValueExpression><![CDATA[org.openbravo.materialmgmt.CentralBroker.getInstance().isUomManagementEnabled().equals("Y")]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[org.openbravo.materialmgmt.UOMUtil.isUomManagementEnabled()]]></defaultValueExpression>
 	</parameter>
 	<queryString language="SQL">
 		<![CDATA[SELECT DOCUMENTNO, DATEORDERED, CLIENT_NAME, SUM(QUANTITYORDER) AS QUANTITYORDER, PRICEACTUAL, CONVPRICEACTUAL,

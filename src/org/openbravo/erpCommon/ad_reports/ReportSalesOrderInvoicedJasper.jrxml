@@ -69,7 +69,7 @@
 	<parameter name="NUMBERFORMAT" class="java.text.DecimalFormat" isForPrompting="false"/>
 	<parameter name="LOCALE" class="java.util.Locale" isForPrompting="false"/>
 	<parameter name="isUomManagementEnabled" class="java.lang.Boolean">
-		<defaultValueExpression><![CDATA[org.openbravo.materialmgmt.CentralBroker.getInstance().isUomManagementEnabled().equals("Y")]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[org.openbravo.materialmgmt.UOMUtil.isUomManagementEnabled()]]></defaultValueExpression>
 	</parameter>
 	<queryString>
 		<![CDATA[SELECT COALESCE(CB.NAME, C_BPARTNER.NAME) AS BPARTNERNAME, C_PROJECT.VALUE||' '||C_PROJECT.NAME AS PROJECTNAME,

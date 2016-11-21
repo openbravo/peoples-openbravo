@@ -74,7 +74,7 @@
 	<parameter name="NUMBERFORMAT" class="java.text.DecimalFormat" isForPrompting="false"/>
 	<parameter name="LOCALE" class="java.util.Locale" isForPrompting="false"/>
 	<parameter name="isUomManagementEnabled" class="java.lang.Boolean">
-		<defaultValueExpression><![CDATA[org.openbravo.materialmgmt.CentralBroker.getInstance().isUomManagementEnabled().equals("Y")]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[org.openbravo.materialmgmt.UOMUtil.isUomManagementEnabled()]]></defaultValueExpression>
 	</parameter>
 	<queryString>
 		<![CDATA[SELECT NAMEBPARTNER,INVOICEID, INVOICEDOCUMENTNO, DOCNOORDER, DESCRIPTIONINVOICE, DATEINVOICED, LINE, NAMEPRODUCT, 
