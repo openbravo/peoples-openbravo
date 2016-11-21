@@ -24,11 +24,17 @@ import java.util.List;
 import javax.servlet.ServletException;
 
 import org.hibernate.criterion.Restrictions;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.common.uom.UOMConversion;
 
+/**
+ * 
+ * Callout to get the conversion rate between the aum and the base unit of the product
+ *
+ */
 public class AUM_ConversionRate extends SimpleCallout {
 
   /**
@@ -42,6 +48,7 @@ public class AUM_ConversionRate extends SimpleCallout {
     String srtcUOMId = info.getStringParameter("inpcUomId", null);
     String strmProductId = info.getStringParameter("inpmProductId", null);
 
+    OBContext.setAdminMode();
     Product product = OBDal.getInstance().get(Product.class, strmProductId);
     String strpUOM = product.getUOM().getId();
 
@@ -49,6 +56,7 @@ public class AUM_ConversionRate extends SimpleCallout {
         UOMConversion.class);
     uOMConversionCriteria.add(Restrictions.and(Restrictions.eq("uOM.id", srtcUOMId),
         Restrictions.eq("toUOM.id", strpUOM)));
+    uOMConversionCriteria.setMaxResults(1);
     List<UOMConversion> uOmConversionList = uOMConversionCriteria.list();
     if (uOmConversionList.size() > 0) {
       UOMConversion conversion = uOmConversionList.get(0);
@@ -58,6 +66,7 @@ public class AUM_ConversionRate extends SimpleCallout {
       uOMConversionCriteria = OBDal.getInstance().createCriteria(UOMConversion.class);
       uOMConversionCriteria.add(Restrictions.and(Restrictions.eq("uOM.id", strpUOM),
           Restrictions.eq("toUOM.id", srtcUOMId)));
+      uOMConversionCriteria.setMaxResults(1);
       uOmConversionList = uOMConversionCriteria.list();
       if (uOmConversionList.size() > 0) {
         UOMConversion conversion = uOmConversionList.get(0);
@@ -67,6 +76,7 @@ public class AUM_ConversionRate extends SimpleCallout {
         info.addResult("inpconversionrate", BigDecimal.ZERO);
       }
     }
+    OBContext.restorePreviousMode();
   }
 
 }
