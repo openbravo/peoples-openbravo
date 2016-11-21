@@ -32,6 +32,10 @@ import org.openbravo.service.db.DalConnectionProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Action handler to be invoked from javascript for conversions between quantity and aum quantity
+ * 
+ */
 public class CreateLinesFromPOConvertAUM extends BaseActionHandler {
 
   private static final Logger log = LoggerFactory.getLogger(CreateLinesFromPOConvertAUM.class);
@@ -39,25 +43,26 @@ public class CreateLinesFromPOConvertAUM extends BaseActionHandler {
   @Override
   protected JSONObject execute(Map<String, Object> parameters, String content) {
     JSONObject jsonRequest = null;
-    OBContext.setAdminMode(true);
     JSONObject errorMessage = new JSONObject();
     JSONObject result = new JSONObject();
+
+    BigDecimal quantity = null;
     try {
       jsonRequest = new JSONObject(content);
       log.debug("{}", jsonRequest);
 
       final String strProductId = jsonRequest.getString("productId");
-      final BigDecimal quantity = new BigDecimal(jsonRequest.getString("quantity"));
+      quantity = new BigDecimal(jsonRequest.getString("quantity"));
       final String toUOM = jsonRequest.getString("toUOM");
       final boolean reverse = "Y".equals(jsonRequest.getString("reverse"));
 
       if (reverse) {
-        result.put("amount", UOMUtil.getConvertedAumQty(strProductId, quantity, toUOM).toString());
+        result.put("amount", UOMUtil.getConvertedAumQty(strProductId, quantity, toUOM));
       } else {
-        result.put("amount", UOMUtil.getConvertedQty(strProductId, quantity, toUOM).toString());
+        result.put("amount", UOMUtil.getConvertedQty(strProductId, quantity, toUOM));
       }
     } catch (Exception e) {
-      log.error("Error in RFCServiceReturnableActionHandler Action Handler", e);
+      log.error("Error in CreateLinesFromPOConvertAUM Action Handler", e);
       try {
         result = new JSONObject();
         String message = OBMessageUtils.parseTranslation(new DalConnectionProvider(false),
@@ -68,11 +73,10 @@ public class CreateLinesFromPOConvertAUM extends BaseActionHandler {
         errorMessage.put("title", "Error");
         errorMessage.put("text", message);
         result.put("message", errorMessage);
+        result.put("amount", quantity);
       } catch (Exception e2) {
         log.error(e.getMessage(), e2);
       }
-    } finally {
-      OBContext.restorePreviousMode();
     }
     return result;
   }
