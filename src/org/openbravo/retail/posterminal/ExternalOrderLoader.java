@@ -331,8 +331,6 @@ public class ExternalOrderLoader extends OrderLoader {
         resolveJsonValue(Currency.ENTITY_NAME, orderJson.getString("currency"), new String[] {
             "id", "iSOCode" }));
 
-    setBusinessPartnerInformation(orderJson);
-
     if (orderJson.has("salesRepresentative")) {
       orderJson.put(
           "salesRepresentative",
@@ -355,8 +353,12 @@ public class ExternalOrderLoader extends OrderLoader {
     copyPropertyValue(orderJson, "grossAmount", "gross");
     copyPropertyValue(orderJson, "netAmount", "net");
 
-    transformTaxes(orderJson.getJSONObject("taxes"));
-    transformLines(orderJson);
+    if ("create".equals(orderJson.getString("step")) || "ship".equals(orderJson.getString("step")) || "all".equals(orderJson.getString("step"))) {
+      setBusinessPartnerInformation(orderJson);
+      transformTaxes(orderJson.getJSONObject("taxes"));
+      transformLines(orderJson);
+    }
+
     transformPayments(orderJson);
   }
 
@@ -462,7 +464,8 @@ public class ExternalOrderLoader extends OrderLoader {
           }
         }
         if (relatedOrderLineId == null) {
-          throw new OBException("Related line information can't be resolved, line " + relatedLine + " of order line " + lineJson + " of order "+ orderJson);
+          throw new OBException("Related line information can't be resolved, line " + relatedLine
+              + " of order line " + lineJson + " of order " + orderJson);
         }
         relatedLine.put("orderlineId", relatedOrderLineId);
       }
@@ -676,8 +679,9 @@ public class ExternalOrderLoader extends OrderLoader {
   }
 
   /**
-   * Can be overridden by subclass to add other specific ways of finding a product. By default returns null. Is only called if a
-   * product could not be found using the standard approach of searching by id, searchKey, name, etc.
+   * Can be overridden by subclass to add other specific ways of finding a product. By default
+   * returns null. Is only called if a product could not be found using the standard approach of
+   * searching by id, searchKey, name, etc.
    * 
    * @param lineJson
    *          the orderline json
@@ -893,8 +897,8 @@ public class ExternalOrderLoader extends OrderLoader {
   }
 
   /**
-   * Search for the id of referenced entity by querying the entities for each of its properties (passed as a parameter) using the
-   * searchValue
+   * Search for the id of referenced entity by querying the entities for each of its properties
+   * (passed as a parameter) using the searchValue
    * 
    * @param entityName
    *          the entity to search for
@@ -914,8 +918,8 @@ public class ExternalOrderLoader extends OrderLoader {
   }
 
   /**
-   * Same as {@link #resolveJsonValue(String, String, String...)}, except will return null if the value does not resolve to an
-   * instance and will not throw an exception in that case.
+   * Same as {@link #resolveJsonValue(String, String, String...)}, except will return null if the
+   * value does not resolve to an instance and will not throw an exception in that case.
    */
   private String resolveJsonValueNoException(String entityName, String searchValue,
       String... properties) {
@@ -957,8 +961,9 @@ public class ExternalOrderLoader extends OrderLoader {
   }
 
   /**
-   * @deprecated by default this one now returns null. It is still called to provide backward compatibility for overriding
-   *             classes. If not overridden then the new logic in the {@link DefaultDataResolver} is used.
+   * @deprecated by default this one now returns null. It is still called to provide backward
+   *             compatibility for overriding classes. If not overridden then the new logic in the
+   *             {@link DefaultDataResolver} is used.
    */
   protected String resolve(String entityName, String property, String value) {
     return null;
@@ -994,11 +999,12 @@ public class ExternalOrderLoader extends OrderLoader {
   }
 
   /**
-   * Interface which can be implemented by modules to resolving data in different ways. Is only called if the ExternalOrderLoader
-   * can not resolve the reference using its own internal logic. The order by which data resolvers are called is undetermined.
+   * Interface which can be implemented by modules to resolving data in different ways. Is only
+   * called if the ExternalOrderLoader can not resolve the reference using its own internal logic.
+   * The order by which data resolvers are called is undetermined.
    * 
-   * A data resolver will be called for all types of entities. So when implementing you should only handle the ones you can handle
-   * and return null in other cases.
+   * A data resolver will be called for all types of entities. So when implementing you should only
+   * handle the ones you can handle and return null in other cases.
    * 
    * @author mtaal
    */
