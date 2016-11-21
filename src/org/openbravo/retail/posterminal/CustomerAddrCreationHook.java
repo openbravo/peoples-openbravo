@@ -28,7 +28,6 @@ public abstract class CustomerAddrCreationHook {
 // import org.openbravo.model.common.businesspartner.Location;
 // import org.openbravo.retail.posterminal.CustomerLoaderHook;
 //
-// @ApplicationScoped
 // public class CustomerAddrCreationHookTest extends CustomerAddrCreationHook {
 //
 // @Override
