@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.0.0.final using JasperReports Library version 6.0.0  -->
-<!-- 2016-07-13T12:32:29 -->
+<!-- 2016-11-21T16:52:09 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ReportSalesOrderProvidedJR" pageWidth="920" pageHeight="595" orientation="Landscape" columnWidth="860" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20" uuid="764f59d0-b626-4a6a-bf2f-036b80c04677">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
@@ -62,7 +62,7 @@
 	<parameter name="NUMBERFORMAT" class="java.text.DecimalFormat" isForPrompting="false"/>
 	<parameter name="LOCALE" class="java.util.Locale" isForPrompting="false"/>
 	<parameter name="isUomManagementEnabled" class="java.lang.Boolean">
-		<defaultValueExpression><![CDATA[org.openbravo.materialmgmt.CentralBroker.getInstance().isUomManagementEnabled().equals("Y")]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[org.openbravo.materialmgmt.UOMUtil.isUomManagementEnabled()]]></defaultValueExpression>
 	</parameter>
 	<queryString>
 		<![CDATA[SELECT C_BPARTNER.NAME AS BPARTNERNAME, C_PROJECT.VALUE||' '||C_PROJECT.NAME AS PROJECTNAME, 
@@ -732,7 +732,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Bitstream Vera Sans" size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[($F{UOMNAME}!=null)?$F{UOMNAME}:new String(" ")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($F{AUM}!=null)?$F{AUM}:new String(" ")]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="false">
 				<reportElement key="textField" style="Detail_Line" x="320" y="0" width="69" height="16" uuid="8380d5e9-5fd1-4a44-be00-efdd8db28b86">
@@ -744,10 +744,10 @@
 					<bottomPen lineWidth="0.0" lineColor="#555555"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
 				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Bitstream Vera Sans" size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[($F{QTYDELIVERED}!=null)?$P{NUMBERFORMAT}.format($F{QTYDELIVERED}):new String(" ")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($F{AUMQTY}!=null)?$P{NUMBERFORMAT}.format($F{AUMQTY}):new String(" ")]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="false">
 				<reportElement key="textField" style="Detail_Line" x="170" y="0" width="150" height="16" uuid="c5e99b1e-6c30-4fcb-95dc-90352329d53f">
@@ -759,13 +759,13 @@
 					<bottomPen lineWidth="0.0" lineColor="#555555"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#FFFFFF"/>
 				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Bitstream Vera Sans" size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[($F{QTYDELIVERED}!=null)?$P{NUMBERFORMAT}.format($F{QTYDELIVERED}):new String(" ")]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="false">
-				<reportElement key="textField" style="Detail_Line" x="320" y="0" width="138" height="16" uuid="cc8b8234-4c76-4ac4-89d4-7d39a6ae82ab">
+				<reportElement key="textField" style="Detail_Line" x="320" y="0" width="139" height="16" uuid="cc8b8234-4c76-4ac4-89d4-7d39a6ae82ab">
 					<printWhenExpression><![CDATA[$P{isUomManagementEnabled} == false]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="2" rightPadding="2">
