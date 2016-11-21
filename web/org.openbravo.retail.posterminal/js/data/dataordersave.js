@@ -155,7 +155,7 @@
           if (receipt.getGross() < 0 || !_.isUndefined(receipt.get('paidInNegativeStatusAmt'))) {
             var paymentTotalAmt = OB.DEC.Zero;
             _.forEach(receipt.get('payments').models, function (item) {
-              if (!item.get('isPrePayment') && !item.get('reversedPaymentId')) {
+              if (!item.get('isPrePayment') && !item.get('reversedPaymentId') && !receipt.get('isPaid')) {
                 item.set('amount', -item.get('amount'));
                 item.set('origAmount', -item.get('origAmount'));
                 item.set('paid', -item.get('paid'));

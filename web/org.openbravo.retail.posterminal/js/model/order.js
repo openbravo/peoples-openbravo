@@ -3103,7 +3103,8 @@
         // When doing a reverse payment in a negative ticket, the payments introduced to pay again the same quantity
         // must be set to negative (Web POS creates payments in positive by default).
         // This doesn't affect to reversal payments but to the payments introduced to add the quantity reversed
-        if (!p.get('isPrePayment') && p.get('orderGross') < 0 && p.get('isPaid') && !p.get('reversedPaymentId')) {
+        if (!p.get('isPrePayment') && this.getGross() < 0 && this.get('isPaid') && !p.get('reversedPaymentId') && !p.get('signChanged')) {
+          p.set('signChanged', true);
           p.set('amount', -p.get('amount'));
           p.set('origAmount', -p.get('origAmount'));
           p.set('paid', -p.get('paid'));
@@ -5003,7 +5004,6 @@
       var pcash;
       var precision;
       var multiCurrencyDifference;
-      var origAmount;
 
       for (i = 0, max = payments.length; i < max; i++) {
         p = payments.at(i);
@@ -5026,19 +5026,18 @@
           p.set('origAmount', p.get('amount'));
         }
         p.set('paid', p.get('origAmount'));
-        origAmount = (p.get('orderGross') < 0 && p.get('isPaid')) ? -p.get('origAmount') : p.get('origAmount');
         if (p.get('kind') === OB.MobileApp.model.get('paymentcash')) {
           // The default cash method
-          cash = OB.DEC.add(cash, origAmount);
+          cash = OB.DEC.add(cash, p.get('origAmount'));
           pcash = p;
-          paidCash = OB.DEC.add(paidCash, origAmount);
+          paidCash = OB.DEC.add(paidCash, p.get('origAmount'));
         } else if (OB.MobileApp.model.hasPayment(p.get('kind')) && OB.MobileApp.model.hasPayment(p.get('kind')).paymentMethod.iscash) {
           // Another cash method
-          origCash = OB.DEC.add(origCash, origAmount);
+          origCash = OB.DEC.add(origCash, p.get('origAmount'));
           pcash = p;
-          paidCash = OB.DEC.add(paidCash, origAmount);
+          paidCash = OB.DEC.add(paidCash, p.get('origAmount'));
         } else {
-          nocash = OB.DEC.add(nocash, origAmount);
+          nocash = OB.DEC.add(nocash, p.get('origAmount'));
         }
       }
 
