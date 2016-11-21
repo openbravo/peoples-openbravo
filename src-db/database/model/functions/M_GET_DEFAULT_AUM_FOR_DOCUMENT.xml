@@ -22,31 +22,39 @@
 * All portions are Copyright (C) 2016 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
+*
+* This function returns the default AUM defined for a product and specific
+* document type.
+*
+*  Parameters:
+*    p_mproductid character varying: The product id
+*    documenttypeid character varying: The document type id.
+*  Returns:
+*    The default AUM defined for the product and document type.
 ************************************************************************/
 
   TYPE RECORD IS REF CURSOR;
   Cur_M_Product_Aum RECORD;
-  v_DocBaseType varchar(60):=''; --OBTG:VARCHAR2--
+  v_isSOTRX char(1);
   v_Default_Aum varchar(32); --OBTG:VARCHAR2--
 BEGIN
 
   SELECT c_uom_id INTO v_Default_Aum FROM m_product WHERE m_product_id = mProductId;
-  SELECT docbasetype INTO v_DocBaseType FROM c_doctype WHERE c_doctype_id = documentTypeId;
-  
-  FOR Cur_M_Product_Aum IN
-    (SELECT * FROM m_product_aum 
-     WHERE m_product_id = mProductId)
-  LOOP
-    IF (v_DocBaseType = 'SOO' OR v_DocBaseType = 'MMS' OR v_DocBaseType = 'ARI') THEN --Sales Documents
-      IF (Cur_M_Product_Aum.sales = 'P') THEN
-        v_Default_Aum := Cur_M_Product_Aum.c_uom_id;
-      END IF;
-    ELSIF (v_DocBaseType = 'POO' OR v_DocBaseType = 'MMR' OR v_DocBaseType = 'API' OR v_DocBaseType = 'POR') THEN --Purchase Documents
-      IF (Cur_M_Product_Aum.purchase = 'P') THEN
-        v_Default_Aum := Cur_M_Product_Aum.c_uom_id;
-      END IF;
-    END IF;
-  END LOOP;
+  SELECT issotrx INTO v_isSOTRX FROM c_doctype WHERE c_doctype_id = documentTypeId;
+
+  IF(v_isSOTRX = 'Y') THEN
+    SELECT c_uom_id
+      INTO v_Default_Aum
+    FROM m_product_aum
+    WHERE m_product_id = mProductId
+    AND sales = 'P';
+  ELSE
+    SELECT c_uom_id
+      INTO v_Default_Aum
+    FROM m_product_aum
+    WHERE m_product_id = mProductId
+    AND purchase = 'P';
+  END IF;
   
   RETURN v_Default_Aum;
 END M_GET_DEFAULT_AUM_FOR_DOCUMENT
