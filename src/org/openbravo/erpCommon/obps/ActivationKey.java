@@ -292,11 +292,7 @@ public class ActivationKey {
    */
   public static synchronized ActivationKey reload() {
     ActivationKey ak = getInstance();
-    org.openbravo.model.ad.system.System sys = OBDal.getInstance().get(
-        org.openbravo.model.ad.system.System.class, "0");
-    ak.loadInfo(sys.getActivationKey());
-    ak.loadRestrictions();
-    ak.lastUpdateTimestamp = sys.getUpdated();
+    ak.loadFromDB();
     return ak;
   }
 
@@ -311,16 +307,19 @@ public class ActivationKey {
   public ActivationKey() {
     OBContext.setAdminMode();
     try {
-      org.openbravo.model.ad.system.System sys = OBDal.getInstance().get(
-          org.openbravo.model.ad.system.System.class, "0");
-      strPublicKey = sys.getInstanceKey();
-      lastUpdateTimestamp = sys.getUpdated();
-      String activationKey = sys.getActivationKey();
-      loadInfo(activationKey);
-      loadRestrictions();
+      loadFromDB();
     } finally {
       OBContext.restorePreviousMode();
     }
+  }
+
+  private void loadFromDB() {
+    org.openbravo.model.ad.system.System sys = OBDal.getInstance().get(
+        org.openbravo.model.ad.system.System.class, "0");
+    strPublicKey = sys.getInstanceKey();
+    lastUpdateTimestamp = sys.getUpdated();
+    loadInfo(sys.getActivationKey());
+    loadRestrictions();
   }
 
   public ActivationKey(String publicKey, String activationKey) {
@@ -330,29 +329,7 @@ public class ActivationKey {
   }
 
   private void loadInfo(String activationKey) {
-    // Reset
-    isActive = false;
-    hasActivationKey = false;
-    errorMessage = "";
-    messageType = "Error";
-    instanceProperties = null;
-    hasExpired = false;
-    subscriptionConvertedProperty = false;
-    subscriptionActuallyConverted = false;
-    tier1Artifacts = null;
-    tier2Artifacts = null;
-    goldenExcludedArtifacts = null;
-    trial = false;
-    golden = false;
-    licenseClass = LicenseClass.COMMUNITY;
-    licenseType = null;
-    startDate = null;
-    endDate = null;
-    pendingTime = null;
-    limitedWsAccess = false;
-    limitNamedUsers = false;
-    outOfPlatform = false;
-    maxUsers = null;
+    reset();
 
     if (strPublicKey == null || activationKey == null || strPublicKey.equals("")
         || activationKey.equals("")) {
@@ -541,6 +518,31 @@ public class ActivationKey {
     }
 
     checkDates();
+  }
+
+  private void reset() {
+    isActive = false;
+    hasActivationKey = false;
+    errorMessage = "";
+    messageType = "Error";
+    instanceProperties = null;
+    hasExpired = false;
+    subscriptionConvertedProperty = false;
+    subscriptionActuallyConverted = false;
+    tier1Artifacts = null;
+    tier2Artifacts = null;
+    goldenExcludedArtifacts = null;
+    trial = false;
+    golden = false;
+    licenseClass = LicenseClass.COMMUNITY;
+    licenseType = null;
+    startDate = null;
+    endDate = null;
+    pendingTime = null;
+    limitedWsAccess = false;
+    limitNamedUsers = false;
+    outOfPlatform = false;
+    maxUsers = null;
   }
 
   private boolean checkInOnDemandPlatform() {
@@ -1511,7 +1513,7 @@ public class ActivationKey {
         if (lastUpdateTimestamp == null
             || !lastUpdateTimestamp.equals(OBDal.getInstance()
                 .get(org.openbravo.model.ad.system.System.class, "0").getUpdated())) {
-          instance = ActivationKey.reload();
+          loadFromDB();
         }
       } catch (Exception e) {
         log.error("Error checking if activation key should be refreshed", e);

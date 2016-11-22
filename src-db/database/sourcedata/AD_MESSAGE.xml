@@ -21197,7 +21197,7 @@ You can upgrade the license of your instance by contacting Openbravo sales staff
 <!--714FC5887F6E4FE08F57D4E69D75DC52-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--714FC5887F6E4FE08F57D4E69D75DC52-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--714FC5887F6E4FE08F57D4E69D75DC52-->  <VALUE><![CDATA[BackgroundPolicyNoExecuteMsg]]></VALUE>
-<!--714FC5887F6E4FE08F57D4E69D75DC52-->  <MSGTEXT><![CDATA[This instance's policy for background processes is not to execute them, therefore it is not allowed to schedule or unschedule processes here. There should be another instance allowing background process execution, it is in that instance where this action should be performed.]]></MSGTEXT>
+<!--714FC5887F6E4FE08F57D4E69D75DC52-->  <MSGTEXT><![CDATA[This instance's policy for background processes is not to execute them, therefore it is not allowed to schedule, unschedule nor kill processes here. There should be another instance allowing background process execution, it is in that instance where this action should be performed.]]></MSGTEXT>
 <!--714FC5887F6E4FE08F57D4E69D75DC52-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
 <!--714FC5887F6E4FE08F57D4E69D75DC52-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--714FC5887F6E4FE08F57D4E69D75DC52-->  <ISINCLUDEINI18N><![CDATA[N]]></ISINCLUDEINI18N>

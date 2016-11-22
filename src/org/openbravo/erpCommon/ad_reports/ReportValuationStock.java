@@ -43,14 +43,12 @@ import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.application.report.ReportingUtils;
-import org.openbravo.costing.CostingBackground;
 import org.openbravo.costing.CostingStatus;
 import org.openbravo.costing.CostingUtils;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
-import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.DateTimeData;
@@ -61,10 +59,8 @@ import org.openbravo.erpCommon.utility.OBCurrencyUtils;
 import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
-import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
-import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.enterprise.Locator;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.plm.Product;
@@ -562,20 +558,6 @@ public class ReportValuationStock extends HttpSecureAppServlet {
     }
     whereQry.setMaxResult(1);
     return whereQry.uniqueResult() != null;
-  }
-
-  private boolean transactionCostDateAcctInitialized() {
-    boolean transactionCostDateacctInitialized = false;
-    Client client = OBDal.getInstance().get(Client.class, "0");
-    Organization organization = OBDal.getInstance().get(Organization.class, "0");
-    try {
-      transactionCostDateacctInitialized = Preferences.getPreferenceValue(
-          CostingBackground.TRANSACTION_COST_DATEACCT_INITIALIZED, false, client, organization,
-          null, null, null).equals(Preferences.YES);
-    } catch (PropertyException e1) {
-      transactionCostDateacctInitialized = false;
-    }
-    return transactionCostDateacctInitialized;
   }
 
   public String getServletInfo() {
