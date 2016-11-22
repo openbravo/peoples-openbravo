@@ -113,7 +113,7 @@ public class JdbcExternalConnectionPool extends ExternalConnectionPool {
 
       DataSource ro = new DataSource();
       ro.setPoolProperties(p);
-      availableDataSources.put("RO", ro);
+      availableDataSources.put(READONLY_POOL, ro);
     }
   }
 

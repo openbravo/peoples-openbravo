@@ -30,6 +30,7 @@ public abstract class ExternalConnectionPool {
 
   static Logger log = Logger.getLogger(ExternalConnectionPool.class);
   public static final String DEFAULT_POOL = "DEFAULT";
+  public static final String READONLY_POOL = "RO";
 
   private static ExternalConnectionPool instance;
 

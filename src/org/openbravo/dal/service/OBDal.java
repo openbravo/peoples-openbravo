@@ -86,6 +86,10 @@ public class OBDal implements OBNotSingleton {
     return instance;
   }
 
+  public static OBDal getReadOnlyInstance() {
+    return getInstance(ExternalConnectionPool.READONLY_POOL);
+  }
+
   public static OBDal getInstance(String pool) {
     if (!otherPoolInstances.containsKey(pool)) {
       OBDal dal = OBProvider.getInstance().get(OBDal.class);
