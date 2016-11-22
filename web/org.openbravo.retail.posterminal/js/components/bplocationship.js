@@ -32,6 +32,7 @@ enyo.kind({
     onClearAction: 'clearAction'
   },
   events: {
+    onChangeFilterSelector: '',
     onChangeBusinessPartner: ''
   },
   components: [{
@@ -137,15 +138,21 @@ enyo.kind({
         dataBps.set('cityName', me.bPartner.get('cityName'));
         dataBps.set('countryName', me.bPartner.get('countryName'));
 
-        if (me.owner.owner.args.flowTrigger) { // The arguments of the modal dialog
-          OB.MobileApp.model.trigger(me.owner.owner.args.flowTrigger, {
-            businessPartner: dataBps
+        if (me.target.startsWith('filterSelectorButton_')) {
+          me.doChangeFilterSelector({
+            selector: {
+              name: me.target.substring('filterSelectorButton_'.length),
+              value: dataBps.get('id'),
+              text: dataBps.get('_identifier'),
+              businessPartner: dataBps
+            }
+          });
+        } else {
+          me.doChangeBusinessPartner({
+            businessPartner: dataBps,
+            target: me.owner.owner.args.target
           });
         }
-        me.doChangeBusinessPartner({
-          businessPartner: dataBps,
-          target: me.owner.owner.args.target
-        });
       }
       if (!model.get('ignoreSetBPLoc')) {
         OB.Dal.get(OB.Model.BusinessPartner, this.bPartner.get('id'), successCallbackBPs, errorCallback);
@@ -156,33 +163,41 @@ enyo.kind({
 
 /*Modal definiton*/
 enyo.kind({
-  kind: 'OB.UI.Modal',
+  kind: 'OB.UI.ModalSelector',
   name: 'OB.UI.ModalBPLocationShip',
   topPosition: '125px',
   executeOnShow: function () {
-    if (_.isUndefined(this.args.visibilityButtons)) {
-      this.args.visibilityButtons = true;
+    if (!this.initialized) {
+      this.inherited(arguments);
+      if (_.isUndefined(this.args.visibilityButtons)) {
+        this.args.visibilityButtons = true;
+      }
+      this.waterfall('onSetShow', {
+        visibility: this.args.visibilityButtons
+      });
+      this.bubble('onSetBusinessPartnerTarget', {
+        target: this.args.target
+      });
+      this.$.body.$.listBpsShipLoc.setBPartner(this.model.get('order').get('bp'));
+      this.$.body.$.listBpsShipLoc.setTarget(this.args.target);
+      this.$.body.$.listBpsShipLoc.$.bpsloclistitemprinter.$.theader.$.modalBpLocScrollableHeader.searchAction();
+      this.$.body.$.listBpsShipLoc.$.bpsloclistitemprinter.$.theader.$.modalBpLocScrollableHeader.$.newAction.putDisabled(!OB.MobileApp.model.hasPermission('OBPOS_retail.createCustomerLocationButton', true));
     }
-    this.waterfall('onSetShow', {
-      visibility: this.args.visibilityButtons
-    });
-    this.bubble('onSetBusinessPartnerTarget', {
-      target: this.args.target
-    });
-    this.$.body.$.listBpsShipLoc.setBPartner(this.model.get('order').get('bp'));
-    this.$.body.$.listBpsShipLoc.setTarget(this.args.target);
-    this.$.body.$.listBpsShipLoc.$.bpsloclistitemprinter.$.theader.$.modalBpLocScrollableHeader.searchAction();
-    this.$.body.$.listBpsShipLoc.$.bpsloclistitemprinter.$.theader.$.modalBpLocScrollableHeader.$.newAction.putDisabled(!OB.MobileApp.model.hasPermission('OBPOS_retail.createCustomerLocationButton', true));
     return true;
   },
   executeOnHide: function () {
+    this.inherited(arguments);
     this.$.body.$.listBpsShipLoc.$.bpsloclistitemprinter.$.theader.$.modalBpLocScrollableHeader.clearAction();
   },
   i18nHeader: 'OBPOS_LblAssignCustomerShipAddress',
   body: {
     kind: 'OB.UI.ListBpsShipLoc'
   },
+  getScrollableTable: function () {
+    return this.$.body.$.listBpsShipLoc.$.bpsloclistitemprinter;
+  },
   init: function (model) {
+    this.inherited(arguments);
     this.model = model;
     this.waterfall('onSetModel', {
       model: this.model

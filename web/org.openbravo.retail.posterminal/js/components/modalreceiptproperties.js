@@ -12,6 +12,10 @@
 enyo.kind({
   name: 'OB.UI.ModalReceiptPropertiesImpl',
   kind: 'OB.UI.ModalReceiptProperties',
+  handlers: {
+    onCloseCancelSelector: 'closeCancelSelector',
+    onUpdateFilterSelector: 'updateFilterSelector'
+  },
   newAttributes: [{
     kind: 'OB.UI.renderTextProperty',
     name: 'receiptDescription',
@@ -92,24 +96,38 @@ enyo.kind({
     permissionOption: 'OBPOS_SR.comboOrModal'
   }, {
     kind: 'OB.UI.Customer',
-    target: 'order',
+    target: 'filterSelectorButton_receiptProperties',
     popup: 'receiptPropertiesDialog',
     name: 'customerbutton',
     i18nLabel: 'OBPOS_LblCustomer'
   }, {
     kind: 'OB.UI.ShipTo',
-    target: 'order',
+    target: 'filterSelectorButton_receiptProperties',
     popup: 'receiptPropertiesDialog',
     name: 'addressshipbutton',
     i18nLabel: 'OBPOS_LblShipAddr'
   }, {
     kind: 'OB.UI.BillTo',
-    target: 'order',
+    target: 'filterSelectorButton_receiptProperties',
     popup: 'receiptPropertiesDialog',
     name: 'addressbillbutton',
     i18nLabel: 'OBPOS_LblBillAddr'
   }],
 
+  closeCancelSelector: function (inSender, inEvent) {
+    if (inEvent.target === 'filterSelectorButton_receiptProperties') {
+      this.show();
+    }
+  },
+  updateFilterSelector: function (inSender, inEvent) {
+    if (inEvent.selector.name === 'receiptProperties') {
+      this.bubble('onChangeBusinessPartner', {
+        businessPartner: inEvent.selector.businessPartner,
+        target: 'order'
+      });
+      this.show();
+    }
+  },
   resetProperties: function () {
     var p, att;
     // reset all properties
@@ -164,10 +182,6 @@ enyo.kind({
 
     this.model.on('paymentAccepted', function () {
       this.resetProperties();
-    }, this);
-
-    OB.MobileApp.model.on('flowReceiptProperties', function (args) {
-      this.show();
     }, this);
   }
 });

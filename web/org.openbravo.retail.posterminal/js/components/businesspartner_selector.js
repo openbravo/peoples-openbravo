@@ -753,17 +753,13 @@ enyo.kind({
         bp.set('locationModel', shipping);
       }
 
-      if (me.owner.owner.args.flowTrigger) { // The arguments of the modal dialog
-        OB.MobileApp.model.trigger(me.owner.owner.args.flowTrigger, {
-          businessPartner: bp
-        });
-      }
       if (me.target.startsWith('filterSelectorButton_')) {
         me.doChangeFilterSelector({
           selector: {
             name: me.target.substring('filterSelectorButton_'.length),
             value: bp.get('id'),
-            text: bp.get('_identifier')
+            text: bp.get('_identifier'),
+            businessPartner: bp
           }
         });
       } else {

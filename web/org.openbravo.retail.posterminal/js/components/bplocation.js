@@ -466,11 +466,6 @@ enyo.kind({
       dataBps.set('shipRegionId', bploc.get('regionId'));
       dataBps.set('shipCountryId', bploc.get('countryId'));
 
-      if (contextMenu.dialog.owner.owner.args.flowTrigger) { // The arguments of the modal dialog
-        OB.MobileApp.model.trigger(contextMenu.dialog.owner.owner.args.flowTrigger, {
-          businessPartner: dataBps
-        });
-      }
       contextMenu.dialog.doChangeBusinessPartner({
         businessPartner: dataBps,
         target: contextMenu.dialog.target
@@ -523,11 +518,6 @@ enyo.kind({
       dataBps.set('cityName', contextMenu.bPartner.get('cityName'));
       dataBps.set('countryName', contextMenu.bPartner.get('countryName'));
 
-      if (contextMenu.dialog.owner.owner.args.flowTrigger) { // The arguments of the modal dialog
-        OB.MobileApp.model.trigger(contextMenu.dialog.owner.owner.args.flowTrigger, {
-          businessPartner: dataBps
-        });
-      }
       contextMenu.dialog.doChangeBusinessPartner({
         businessPartner: dataBps,
         target: contextMenu.dialog.target
@@ -580,11 +570,6 @@ enyo.kind({
         dataBps.set('shipCountryName', contextMenu.bPartner.get('shipCountryName'));
       }
 
-      if (contextMenu.dialog.owner.owner.args.flowTrigger) { // The arguments of the modal dialog
-        OB.MobileApp.model.trigger(contextMenu.dialog.owner.owner.args.flowTrigger, {
-          businessPartner: dataBps
-        });
-      }
       contextMenu.dialog.doChangeBusinessPartner({
         businessPartner: dataBps,
         target: contextMenu.dialog.target
@@ -675,13 +660,6 @@ enyo.kind({
   events: {
     onHideThisPopup: ''
   },
-  tap: function () {
-    if (!this.$.btnContextMenu.dialog.manageAddress || this.$.btnContextMenu.dialog.menuSelected) {
-      this.inherited(arguments);
-      this.doHideThisPopup();
-    }
-    return true;
-  },
   create: function () {
     this.inherited(arguments);
     this.$.identifier.setContent(this.model.get('name'));
@@ -724,6 +702,7 @@ enyo.kind({
     onClearAction: 'clearAction'
   },
   events: {
+    onChangeFilterSelector: '',
     onChangeBusinessPartner: ''
   },
   components: [{
@@ -831,15 +810,21 @@ enyo.kind({
         dataBps.set('shipCityName', me.bPartner.get('shipPostalCode'));
         dataBps.set('shipCountryName', me.bPartner.get('shipCountryName'));
 
-        if (me.owner.owner.args.flowTrigger) { // The arguments of the modal dialog
-          OB.MobileApp.model.trigger(me.owner.owner.args.flowTrigger, {
-            businessPartner: dataBps
+        if (me.target.startsWith('filterSelectorButton_')) {
+          me.doChangeFilterSelector({
+            selector: {
+              name: me.target.substring('filterSelectorButton_'.length),
+              value: dataBps.get('id'),
+              text: dataBps.get('_identifier'),
+              businessPartner: dataBps
+            }
+          });
+        } else {
+          me.doChangeBusinessPartner({
+            businessPartner: dataBps,
+            target: me.owner.owner.args.target
           });
         }
-        me.doChangeBusinessPartner({
-          businessPartner: dataBps,
-          target: me.owner.owner.args.target
-        });
       }
       if (!model.get('ignoreSetBPLoc') && !this.manageAddress) {
         OB.Dal.get(OB.Model.BusinessPartner, this.bPartner.get('id'), successCallbackBPs, errorCallback);
@@ -850,39 +835,44 @@ enyo.kind({
 
 /*Modal definition*/
 enyo.kind({
-  kind: 'OB.UI.Modal',
+  kind: 'OB.UI.ModalSelector',
   name: 'OB.UI.ModalBPLocation',
   topPosition: '125px',
   events: {
     onShowPopup: ''
   },
   executeOnShow: function () {
-    if (_.isUndefined(this.args.visibilityButtons)) {
-      this.args.visibilityButtons = true;
+    if (!this.initialized) {
+      this.inherited(arguments);
+      if (_.isUndefined(this.args.visibilityButtons)) {
+        this.args.visibilityButtons = true;
+      }
+      this.waterfall('onSetShow', {
+        visibility: this.args.visibilityButtons
+      });
+      this.bPartner = this.args.businessPartner ? this.args.businessPartner : this.model.get('order').get('bp');
+      this.waterfall('onSetBusinessPartner', {
+        bPartner: this.bPartner
+      });
+      this.bubble('onSetBusinessPartnerTarget', {
+        target: this.args.target
+      });
+      this.selectorHide = false;
+      this.changedTitle(this.bPartner);
+      this.$.body.$.listBpsLoc.setManageAddress(this.args.manageAddress);
+      this.$.body.$.listBpsLoc.setBPartner(this.bPartner);
+      this.$.body.$.listBpsLoc.setTarget(this.args.target);
+      this.$.body.$.listBpsLoc.setInitialLoad(true);
+      this.$.body.$.listBpsLoc.$.bpsloclistitemprinter.$.theader.$.modalBpLocScrollableHeader.searchAction();
+      this.$.body.$.listBpsLoc.$.bpsloclistitemprinter.$.theader.$.modalBpLocScrollableHeader.$.newAction.putDisabled(!OB.MobileApp.model.hasPermission('OBPOS_retail.createCustomerLocationButton', true));
     }
-    this.waterfall('onSetShow', {
-      visibility: this.args.visibilityButtons
-    });
-    this.bPartner = this.args.businessPartner ? this.args.businessPartner : this.model.get('order').get('bp');
-    this.waterfall('onSetBusinessPartner', {
-      bPartner: this.bPartner
-    });
-    this.bubble('onSetBusinessPartnerTarget', {
-      target: this.args.target
-    });
-    this.selectorHide = false;
-    this.changedTitle(this.bPartner);
-    this.$.body.$.listBpsLoc.setManageAddress(this.args.manageAddress);
-    this.$.body.$.listBpsLoc.setBPartner(this.bPartner);
-    this.$.body.$.listBpsLoc.setTarget(this.args.target);
-    this.$.body.$.listBpsLoc.setInitialLoad(true);
-    this.$.body.$.listBpsLoc.$.bpsloclistitemprinter.$.theader.$.modalBpLocScrollableHeader.searchAction();
-    this.$.body.$.listBpsLoc.$.bpsloclistitemprinter.$.theader.$.modalBpLocScrollableHeader.$.newAction.putDisabled(!OB.MobileApp.model.hasPermission('OBPOS_retail.createCustomerLocationButton', true));
     return true;
   },
   executeOnHide: function () {
+    var selectorHide = this.selectorHide;
+    this.inherited(arguments);
     this.$.body.$.listBpsLoc.$.bpsloclistitemprinter.$.theader.$.modalBpLocScrollableHeader.$.bpsLocationSearchfilterText.setValue('');
-    if (!this.selectorHide && this.args.navigationPath.length > 0) {
+    if (!selectorHide && this.args.navigationPath && this.args.navigationPath.length > 0) {
       this.doShowPopup({
         popup: this.args.navigationPath[this.args.navigationPath.length - 1],
         args: {
@@ -933,7 +923,11 @@ enyo.kind({
   body: {
     kind: 'OB.UI.ListBpsLoc'
   },
+  getScrollableTable: function () {
+    return this.$.body.$.listBpsLoc.$.bpsloclistitemprinter;
+  },
   init: function (model) {
+    this.inherited(arguments);
     this.model = model;
     this.waterfall('onSetModel', {
       model: this.model

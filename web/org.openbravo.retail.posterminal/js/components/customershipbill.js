@@ -50,8 +50,7 @@ enyo.kind({
       this.doShowPopup({
         popup: 'modalcustomer',
         args: {
-          target: this.target,
-          flowTrigger: 'flowReceiptProperties'
+          target: this.target
         }
       });
     }
