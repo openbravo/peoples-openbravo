@@ -84,7 +84,7 @@ public class CustomerLoader extends POSDataSynchronizationProcess implements
       // Call all customerCreations injected.
       executeHooks(customerCreations, jsoncustomer, customer);
 
-      location = editLocation(customer, jsoncustomer);
+      editLocation(customer, jsoncustomer);
       editBPartnerContact(customer, jsoncustomer);
       OBDal.getInstance().flush();
     } finally {
@@ -268,8 +268,7 @@ public class CustomerLoader extends POSDataSynchronizationProcess implements
     }
   }
 
-  private Location editLocation(BusinessPartner customer, JSONObject jsonCustomer)
-      throws JSONException {
+  private void editLocation(BusinessPartner customer, JSONObject jsonCustomer) throws JSONException {
     Entity locationEntity = ModelProvider.getInstance().getEntity(Location.class);
     Entity baseLocationEntity = ModelProvider.getInstance().getEntity(
         org.openbravo.model.common.geography.Location.class);
@@ -288,7 +287,6 @@ public class CustomerLoader extends POSDataSynchronizationProcess implements
       }
 
       OBDal.getInstance().save(rootLocation);
-      return location;
     } else {
       // location not exists > create location and bplocation
       final org.openbravo.model.common.geography.Location rootLocation = OBProvider.getInstance()
@@ -328,7 +326,6 @@ public class CustomerLoader extends POSDataSynchronizationProcess implements
       newLocation.setLocationAddress(rootLocation);
       newLocation.setNewOBObject(true);
       OBDal.getInstance().save(newLocation);
-      return newLocation;
     }
   }
 
