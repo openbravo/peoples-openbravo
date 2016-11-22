@@ -13,7 +13,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2015 Openbravo SLU
+ * All portions are Copyright (C) 2001-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -52,7 +52,14 @@
 
 function onloadFunctions() {
 }
-
+function printReport(type) {
+  if (type === 'PDF') {
+    openPDFFiltered("ReportValuationStock.pdf?Command=PDF","PDF");
+  } else {
+    openPDFFiltered("ReportValuationStock.xls?Command=XLS","XLS");
+  }
+  return true;
+}
 function validate() {
 	var frm=document.frmMain;
 	if (frm.inpCurrencyId.value == null || frm.inpCurrencyId.value == "") {
@@ -60,8 +67,8 @@ function validate() {
 	    showJSMessage(7);
 	    return false;
 	}
-	  if (inputValue(frm.inpmWarehouseId)==null || inputValue(frm.inpmWarehouseId)=="") {
-	      setWindowElementFocus(frm.inpmWarehouseId);
+	  if (inputValue(frm.inpOrg)==null || inputValue(frm.inpOrg)=="") {
+	      setWindowElementFocus(frm.inpOrg);
 	      showJSMessage(7);
 	      return false;
 	  }
@@ -69,6 +76,51 @@ function validate() {
 }
 </script>
 	<script language="JavaScript" type="text/javascript">
+	
+	function selectWarehouse() {
+		var cmbWarehouse = document.frmMain.inpmWarehouseId;
+        var selectedWh = document.frmMain.inpSelectedWh.value;
+        console.log("almacen:" + selectedWh);
+        document.getElementById("inpmWarehouseId").value = selectedWh;
+		return true;
+    }
+	
+	
+	function refreshComboOrgs() {
+        var cmbWarehouse = document.frmMain.inpmWarehouseId;
+        var cmbOrganization = document.frmMain.inpOrg;
+        changeComboData(cmbWarehouse, arrWh, cmbOrganization.options[cmbOrganization.selectedIndex].value, true);
+        return true;
+    }
+
+
+	function callbackCurrency(paramXMLParticular, XMLHttpRequestObj) {
+	    var strText = "";
+	    if (getReadyStateHandler(XMLHttpRequestObj)) {
+	        try {
+	            if (XMLHttpRequestObj.responseText) {
+	                strText = XMLHttpRequestObj.responseText;
+	                if (strText && document.getElementById('inpCurrencyId').value != strText) {
+	                    document.getElementById('inpCurrencyId').value = strText;
+	                    refreshComboOrgs();
+	                }
+	            }
+	       } catch (e) {
+	       }
+	    }
+	    return true;
+	}
+
+	function setDefaultCurrency() {
+	    try {
+	        var paramXMLReq = null;
+	        return submitXmlHttpRequest(callbackCurrency, document.frmMain, "CURRENCY", "ReportValuationStock.html", false, null, paramXMLReq);
+	    } catch (e) {
+	        alert(e);
+	    }
+	}
+
+	
 	function onLoadDo(){
 		this.windowTables = new Array(
 		  new windowTableId('client', 'buttonHTML')
@@ -84,9 +136,9 @@ function validate() {
 		xx();
 		resizeArea();
 		updateMenuIcon('buttonMenu');
-
-		setWindowElementFocus('firstElement');
-	}
+		refreshComboOrgs();
+		selectWarehouse();
+		setWindowElementFocus('firstElement');	}
 
 	function onResizeDo(){
 		resizeArea();
@@ -98,12 +150,23 @@ function validate() {
         }
      }
 	</script>
+	
+
+<script language="JavaScript" type="text/javascript" id="paramArrayWh">
+var arrWh=null;
+</script>
+
+<script language="JavaScript" type="text/javascript" id="paraxxxmWhwh">
+var selecWh=null;
+</script>
+	
 </head>
     <body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="onLoadDo();" onresize="onResizeDo();">
 <form method="post" action="ReportValuationStock.html" name="frmMain" id="form">
   <input type="hidden" name="Command"></input>
   <input type="hidden" name="inpmProductId"></input>
   <input type="hidden" name="inpEntry" value="1"></input>
+  <input type="hidden" id="paramWhwh" name="inpSelectedWh" value="1"></input>
   <table height="100%" border="0" cellpadding="0" cellspacing="0" id="main">
     <tr>
       <td valign="top" id="tdleftTabs"></td>
@@ -256,6 +319,23 @@ function validate() {
                   </table>
                 </td>
                 </tr>
+                
+                <tr>
+                  <td class="TitleCell"><span class="LabelText">Organization</span></td>
+                  <td class="Combo_ContentCell" colspan="2"> 
+                    <select name="inpOrg" id="inpOrg" class="ComboKey Combo_TwoCells_width" required="true" onchange="setDefaultCurrency(); logChanges(this); return true;">
+                      <option value=""> <div id="reportAD_ORGID"></div></option>
+                    </select></td>
+                  <td class="TitleCell"><span class="LabelText">Warehouse</span></td>
+                  <td class="Combo_ContentCell" colspan="2"> 
+                    <select  name="inpmWarehouseId" id="inpmWarehouseId" class="Combo Combo_TwoCells_width" onchange="displayLogic(); return true;" >
+                      <option value=""> <div id="reportM_WAREHOUSEID"></div></option>
+                    </select>
+                  </td>
+                                    
+                  
+                </tr>
+                
                 <tr>
                   <td class="TitleCell"><span class="LabelText">Date</span></td>
                   <td class="TextBox_btn_ContentCell">
@@ -278,16 +358,17 @@ function validate() {
                       </tr>
                     </table>
                  </td>
-                    <td class="TitleCell"></td>
-                  <td class="TitleCell"><span class="LabelText">Warehouse</span></td>
-                  <td class="Combo_ContentCell" colspan="2"> <select  name="inpmWarehouseId" id="inpmWarehouseId" class="ComboKey Combo_TwoCells_width required" required="true">
-                      <option value=""> <div id="reportM_WAREHOUSEID"></div></option>
-                    </select></td>
-                  <td class="ContentCell"></td>
+                 <td></td>
+                 <td class="TitleCell"><span class="LabelText">
+                   Consolidated warehouse </span></td>
+                 <td class="FieldButton_ContentCell"><span class="Checkbox_container_NOT_Focused">
+                   <input type="checkbox" name="inpWarehouseConsolidation" id="inpWarehouseConsolidation"></input></span>
+                 </td>
                 </tr>
                 <tr>
                   <td class="TitleCell"><span class="LabelText">Product Category</span></td>
-                  <td class="Combo_ContentCell" colspan="2"> <select name="inpCategoryProduct" id="inpCategoryProduct" class="Combo Combo_TwoCells_width">
+                  <td class="Combo_ContentCell" colspan="2"> 
+                    <select name="inpCategoryProduct" id="inpCategoryProduct" class="Combo Combo_TwoCells_width">
                       <option value=""> <div id="reportM_PRODUCT_CATEGORYID"></div></option>
                     </select></td>
                   
@@ -322,7 +403,7 @@ function validate() {
                         <button type="button" 
                           id="buttonHTML" 
                           class="ButtonLink" 
-                          onclick="submitCommandForm('FIND',true);return false;" 
+                          onclick="submitCommandForm('FIND', true, frmMain, 'ReportValuationStock.html','_self');return false;"
                           onfocus="buttonEvent('onfocus', this); window.status='View Results in a New Window'; return true;" 
                           onblur="buttonEvent('onblur', this);" 
                           onkeyup="buttonEvent('onkeyup', this);" 
@@ -351,39 +432,56 @@ function validate() {
   </table>
   <table cellspacing="0" cellpadding="0" width="100%" class="DataGrid_Header_Table DataGrid_Body_Table" style="table-layout: auto;">
     <tr class="DataGrid_Body_Row"> 
-      <th class="DataGrid_Header_Cell" width="80%"><span>TOTAL</span></th>
-      <th class="DataGrid_Header_Cell" width="20%" style="text-align:right;"><span id="fieldSumCostTotal">XX123456&nbsp;</span></th>
+      <th class="DataGrid_Header_Cell" width="71%"><span>TOTAL</span></th>
+      <th class="DataGrid_Header_Cell" width="9%" style="text-align:right;"><span id="fieldSumCostTotal">XX123456&nbsp;</span></th>
+      <th class="DataGrid_Header_Cell" width="11%"></th>
+      <th class="DataGrid_Header_Cell" width="9%" style="text-align:right;"><span id="fieldSumValuationTypeTotal">XX123456&nbsp;</span></th>
     </tr>
   </table>
   <br></br>
-  <div id="sectionCategoryProduct"> 
-    <table cellspacing="0" cellpadding="0" width="100%" class="DataGrid_Header_Table DataGrid_Body_Table" style="table-layout: auto;">
-      <tr class="DataGrid_Body_Row"> 
-        <th class="DataGrid_Header_Cell">&nbsp;<span id="fieldCategoryName" style="white-space: pre;">xxQuímicos limpieza</span></th>
-      </tr>
-    </table>
+  <div id="sectionWarehouse">      
     <table cellspacing="0" cellpadding="0" width="100%" class="DataGrid_Header_Table DataGrid_Body_Table" style="table-layout: auto;">
       <tr class="DataGrid_Body_Row">
-        <th class="DataGrid_Header_Cell" width="58%">PRODUCT</th>
+        <th class="DataGrid_Header_Cell" width="71%" colspan="4"><span id="fieldWarehouse" style="white-space: pre;">xxWH</span></th>
+        <th class="DataGrid_Header_Cell" width="9%" style="text-align:right;"><span id="fieldSumCostWh">XX123456&nbsp;</span></th>
+        <th class="DataGrid_Header_Cell" width="11%"></th>
+        <th class="DataGrid_Header_Cell" width="9%" style="text-align:right;"><span id="fieldSumValuationTypeWh">XX123456&nbsp;</span></th>
+      </tr>
+    
+    <div id="sectionCategoryProduct"> 
+      <tr class="DataGrid_Body_Row"> 
+        <th class="DataGrid_Header_Cell" colspan="7">&nbsp;<span id="fieldCategoryName" style="white-space: pre;">xxQuímicos limpieza</span></th> 
+      </tr>
+    
+    
+      <tr class="DataGrid_Body_Row">
+        <th class="DataGrid_Header_Cell" width="38%">PRODUCT</th>
         <th class="DataGrid_Header_Cell" width="12%" style="text-align:right;">QUANTITY</th>
         <th class="DataGrid_Header_Cell" width="10%">UNIT</th>
-        <th class="DataGrid_Header_Cell" width="11%" style="text-align:right;">COST</th>
+        <th class="DataGrid_Header_Cell" width="11%" style="text-align:right;">UNIT COST</th>
         <th class="DataGrid_Header_Cell" width="9%" style="text-align:right;">VALUATION</th>
+        <th class="DataGrid_Header_Cell" width="11%" id="fieldCostTypeCol" style="text-align:right;">xxSTANDARD COST</th>
+        <th class="DataGrid_Header_Cell" width="9%" id="fieldValuationTypeCol" style="text-align:right;">xxSTANDARD VALUATION</th>
       </tr>
       <div id="sectionDetail"> 
         <tr class="DataGrid_Body_Row DataGrid_Body_Row_yy" id="funcEvenOddRow1xx"> 
-          <td class="DataGrid_Body_Cell" width="58%"> <a class="LabelLink" href="#" onclick="openCostingTab('xx');return false;" onmouseover="window.status='Costs';return true;" onmouseout="window.status='';return true;" class="Link" id="idfieldmProductId"> 
+          <td class="DataGrid_Body_Cell" width="38%"> <a class="LabelLink" href="#" onclick="openCostingTab('xx');return false;" onmouseover="window.status='Costs';return true;" onmouseout="window.status='';return true;" class="Link" id="idfieldmProductId"> 
             <span id="fieldProductName" style="white-space: pre;">xx24/10/2004</span></a></td>
           <td class="DataGrid_Body_Cell" width="12%"  id="fieldQty" style="text-align:right;">xx24/10/2004</td>
           <td class="DataGrid_Body_Cell" width="10%" id="fieldUomName" >xx12/07/1923</td>
           <td class="DataGrid_Body_Cell" width="11%" id="fieldAverageCost" style="text-align:right;">xx3456&nbsp;</td>
           <td class="DataGrid_Body_Cell" width="9%" id="fieldTotalCost"  style="text-align:right;">xx12345&nbsp;</td>
+          <td class="DataGrid_Body_Cell" width="11%" id="fieldCostType" style="text-align:right;">xx3456&nbsp;</td>
+          <td class="DataGrid_Body_Cell" width="9%" id="fieldValuationType"  style="text-align:right;">xx12345&nbsp;</td>
         </tr>
       </div>
       <tr class="DataGrid_Body_Row"> 
         <td class="DataGrid_Body_Cell" colspan="4" ><span><B>Total stock value</B></span></td>
         <td class="DataGrid_Body_Cell" style="text-align:right;"> <span  id="fieldSumCost">xx23455.56</span></td>
+        <td class="DataGrid_Body_Cell" style="text-align:right;"></td>
+        <td class="DataGrid_Body_Cell" style="text-align:right;"> <span  id="fieldSumValuationType">xx23455.56</span></td>
       </tr>
+      </div>
     </table>
     <br></br>
   </div>

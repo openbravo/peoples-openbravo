@@ -32,10 +32,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import net.sf.jasperreports.engine.JRDataSource;
-
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
+import org.openbravo.authentication.AuthenticationException;
 import org.openbravo.authentication.AuthenticationManager;
 import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.base.HttpBaseUtils;
@@ -71,6 +70,8 @@ import org.openbravo.model.ad.ui.WindowTrl;
 import org.openbravo.utils.FileUtility;
 import org.openbravo.utils.Replace;
 import org.openbravo.xmlEngine.XmlDocument;
+
+import net.sf.jasperreports.engine.JRDataSource;
 
 public class HttpSecureAppServlet extends HttpBaseServlet {
   private static final long serialVersionUID = 1L;
@@ -194,13 +195,23 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
       OBContext.setAdminMode();
 
       strUserAuth = m_AuthManager.authenticate(request, response);
-      if (strUserAuth == null && "Y".equals(request.getSession().getAttribute("forceLogin"))) {
+      if (strUserAuth == null && request.getSession(false) != null
+          && "Y".equals(request.getSession().getAttribute("forceLogin"))) {
         strUserAuth = "0";
         variables.loggingIn = "Y";
       }
 
       if (strUserAuth == null) {
         // auth-manager return null after redirecting to the login page -> stop request-processing
+        return;
+      }
+
+      // if stateless then stop here, the remaining logic uses the httpsession
+      if (AuthenticationManager.isStatelessRequest(request)) {
+        if (areThereLicenseRestrictions(null)) {
+          throw new AuthenticationException("No valid license");
+        }
+        super.serviceInitialized(request, response);
         return;
       }
 
@@ -214,7 +225,8 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
         // log in process is completed, check whether the session in db is still active
         loggedOK = SeguridadData.loggedOK(this, variables.getDBSession());
         if (!loggedOK) {
-          if ("Y".equals(request.getSession().getAttribute("forceLogin"))) {
+          if (request.getSession(false) != null
+              && "Y".equals(request.getSession().getAttribute("forceLogin"))) {
             variables.loggingIn = "Y";
             loggedOK = true;
           } else {
@@ -241,18 +253,10 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
           final VariablesSecureApp vars = new VariablesSecureApp(request, false);
           boolean onlySystemAdminAvailable = "Y".equals(vars
               .getSessionValue("onlySystemAdminRoleShouldBeAvailableInErp"));
-          LicenseRestriction limitation = ActivationKey.getInstance().checkOPSLimitations(
-              variables.getDBSession());
           // We check if there is a Openbravo Professional Subscription restriction in the license,
           // or if the last rebuild didn't go well. If any of these are true, then the user is
           // allowed to login only as system administrator
-          if (limitation == LicenseRestriction.OPS_INSTANCE_NOT_ACTIVE
-              || limitation == LicenseRestriction.NUMBER_OF_CONCURRENT_USERS_REACHED
-              || limitation == LicenseRestriction.MODULE_EXPIRED
-              || limitation == LicenseRestriction.NOT_MATCHED_INSTANCE
-              || limitation == LicenseRestriction.HB_NOT_ACTIVE
-              || limitation == LicenseRestriction.ON_DEMAND_OFF_PLATFORM
-              || limitation == LicenseRestriction.POS_TERMINALS_EXCEEDED || !correctSystemStatus
+          if (areThereLicenseRestrictions(variables.getDBSession()) || !correctSystemStatus
               || onlySystemAdminAvailable) {
             // it is only allowed to log as system administrator
             strRole = DefaultOptionsData.getDefaultSystemRole(this, strUserAuth);
@@ -478,6 +482,20 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
       else
         bdErrorGeneral(request, response, "Error", e.toString());
     }
+  }
+
+  // We check if there is a Openbravo Professional Subscription restriction in the license,
+  // or if the last rebuild didn't go well. If any of these are true, then the user is
+  // allowed to login only as system administrator
+  private boolean areThereLicenseRestrictions(String sessionId) {
+    LicenseRestriction limitation = ActivationKey.getInstance().checkOPSLimitations(sessionId);
+    return limitation == LicenseRestriction.OPS_INSTANCE_NOT_ACTIVE
+        || limitation == LicenseRestriction.NUMBER_OF_CONCURRENT_USERS_REACHED
+        || limitation == LicenseRestriction.MODULE_EXPIRED
+        || limitation == LicenseRestriction.NOT_MATCHED_INSTANCE
+        || limitation == LicenseRestriction.HB_NOT_ACTIVE
+        || limitation == LicenseRestriction.ON_DEMAND_OFF_PLATFORM
+        || limitation == LicenseRestriction.POS_TERMINALS_EXCEEDED;
   }
 
   /**

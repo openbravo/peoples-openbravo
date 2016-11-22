@@ -36,22 +36,31 @@ import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
+import org.openbravo.client.kernel.reference.UIDefinition;
+import org.openbravo.client.kernel.reference.UIDefinitionController;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
+import org.openbravo.model.ad.domain.Reference;
 import org.openbravo.model.common.plm.Characteristic;
 import org.openbravo.model.common.plm.CharacteristicValue;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.common.plm.ProductCharacteristic;
 import org.openbravo.model.common.plm.ProductCharacteristicConf;
 import org.openbravo.model.common.plm.ProductCharacteristicValue;
+import org.openbravo.service.datasource.DataSourceProperty;
 import org.openbravo.service.datasource.ReadOnlyDataSourceService;
 import org.openbravo.service.json.JsonUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ManageVariantsDS extends ReadOnlyDataSourceService {
+
+  private static final Logger log = LoggerFactory.getLogger(ManageVariantsDS.class);
   private static final int searchKeyLength = getSearchKeyColumnLength();
   private static final String MANAGE_VARIANTS_TABLE_ID = "147D4D709FAC4AF0B611ABFED328FA12";
+  private static final String ID_REFERENCE_ID = "13";
 
   private List<String> selectedIds = new ArrayList<String>();
   private HashMap<String, List<CharacteristicValue>> selectedChValues = new HashMap<String, List<CharacteristicValue>>();
@@ -234,11 +243,12 @@ public class ManageVariantsDS extends ReadOnlyDataSourceService {
         }
         if (StringUtils.isNotEmpty(searchKeyFilter)) {
           includeInResult = includeInResult
-              && StringUtils.contains((String) variantMap.get("searchKey"), searchKeyFilter);
+              && StringUtils.containsIgnoreCase((String) variantMap.get("searchKey"),
+                  searchKeyFilter);
         }
         if (StringUtils.isNotEmpty(nameFilter)) {
           includeInResult = includeInResult
-              && StringUtils.contains((String) variantMap.get("name"), nameFilter);
+              && StringUtils.containsIgnoreCase((String) variantMap.get("name"), nameFilter);
         }
         if (variantCreated != null) {
           includeInResult = includeInResult && variantCreated == (existingProduct != null);
@@ -275,7 +285,7 @@ public class ManageVariantsDS extends ReadOnlyDataSourceService {
       Collections.sort(result, new ResultComparator(strSortBy, ascending));
 
     } catch (JSONException e) {
-      // Do nothing
+      log.error("Error while managing the variant characteristics", e);
     } finally {
       OBContext.restorePreviousMode();
     }
@@ -291,6 +301,7 @@ public class ManageVariantsDS extends ReadOnlyDataSourceService {
     variantCreated = null;
 
     for (int i = 0; i < criteriaArray.length(); i++) {
+      String value = "";
       JSONObject criteria = criteriaArray.getJSONObject(i);
       // Basic advanced criteria handling
       if (criteria.has("_constructor")
@@ -300,8 +311,16 @@ public class ManageVariantsDS extends ReadOnlyDataSourceService {
         criteria = innerCriteriaArray.getJSONObject(0);
       }
       String fieldName = criteria.getString("fieldName");
-      // String operatorName = criteria.getString("operator");
-      String value = criteria.getString("value");
+      String operatorName = criteria.getString("operator");
+      if (criteria.has("value")) {
+        value = criteria.getString("value");
+      }
+      if (fieldName.equals("id") && operatorName.equals("notNull")) {
+        // In the case of having the criteria "fieldName":"id","operator":"notNull" don't do
+        // nothing.
+        // this case is the one which should return every record.
+        continue;
+      }
       if (fieldName.equals("name")) {
         nameFilter = value;
       } else if (fieldName.equals("searchKey")) {
@@ -428,6 +447,19 @@ public class ManageVariantsDS extends ReadOnlyDataSourceService {
       prChConf = iterator.next();
       return prChConf;
     }
+  }
+
+  @Override
+  public List<DataSourceProperty> getDataSourceProperties(Map<String, Object> parameters) {
+    List<DataSourceProperty> dataSourceProperties = new ArrayList<DataSourceProperty>();
+    final DataSourceProperty dsProperty = new DataSourceProperty();
+    Reference idReference = OBDal.getInstance().get(Reference.class, ID_REFERENCE_ID);
+    UIDefinition uiDefinition = UIDefinitionController.getInstance().getUIDefinition(idReference);
+    dsProperty.setId(true);
+    dsProperty.setName("id");
+    dsProperty.setUIDefinition(uiDefinition);
+    dataSourceProperties.add(dsProperty);
+    return dataSourceProperties;
   }
 
 }

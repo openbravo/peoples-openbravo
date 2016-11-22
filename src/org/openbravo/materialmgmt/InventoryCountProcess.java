@@ -80,7 +80,7 @@ public class InventoryCountProcess implements Process {
 
   @Inject
   @Any
-  private Instance<InventoryCountCheckHook> inventoryCountProcesses;
+  private Instance<InventoryCountProcessHook> inventoryCountProcesses;
 
   @Override
   public void execute(ProcessBundle bundle) throws Exception {

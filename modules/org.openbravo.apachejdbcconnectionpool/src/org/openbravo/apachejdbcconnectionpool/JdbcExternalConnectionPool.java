@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2015 Openbravo SLU
+ * All portions are Copyright (C) 2014-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -97,7 +97,6 @@ public class JdbcExternalConnectionPool extends ExternalConnectionPool {
     PoolProperties poolProperties = new PoolProperties();
 
     poolProperties.setJdbcInterceptors("org.apache.tomcat.jdbc.pool.interceptor.ConnectionState;"
-        + "org.apache.tomcat.jdbc.pool.interceptor.StatementFinalizer;"
         + "org.openbravo.apachejdbcconnectionpool.ConnectionInitializerInterceptor;");
 
     if (SessionFactoryController.isJNDIModeOn(poolPropertiesConfig)) {

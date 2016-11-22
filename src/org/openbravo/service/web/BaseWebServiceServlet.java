@@ -31,8 +31,10 @@ import org.apache.log4j.Logger;
 import org.openbravo.authentication.AuthenticationException;
 import org.openbravo.authentication.AuthenticationManager;
 import org.openbravo.base.exception.OBSecurityException;
+import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
+import org.openbravo.service.OBServiceException;
 
 /**
  * This servlet has two main responsibilities: 1) authenticate, 2) set the correct {@link OBContext}
@@ -59,6 +61,19 @@ public class BaseWebServiceServlet extends HttpServlet {
     // do the login action
     AuthenticationManager authManager = AuthenticationManager.getAuthenticationManager(this);
 
+    // if a stateless webservice then set the stateless flag
+    try {
+      final WebService webservice = getWebService(request);
+      if (AuthenticationManager.isStatelessService(webservice.getClass())
+          || AuthenticationManager.isStatelessRequest(request)) {
+        request.setAttribute(AuthenticationManager.STATELESS_REQUEST_PARAMETER, "true");
+      }
+    } catch (Throwable ignore) {
+      // ignore on purpose as subclasses may manage the resolving of webservices in a different
+      // way
+      // ignore also for backward compatibility
+    }
+    
     String userId = null;
     try {
       userId = authManager.webServiceAuthenticate(request);
@@ -77,6 +92,7 @@ public class BaseWebServiceServlet extends HttpServlet {
       OBContext.setOBContextInSession(request, OBContext.getOBContext());
 
       doService(request, response);
+
     } else {
       log.debug("WS accessed by unauthenticated user, requesting authentication");
       // not logged in
@@ -85,6 +101,15 @@ public class BaseWebServiceServlet extends HttpServlet {
       }
       response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
     }
+  }
+
+  protected WebService getWebService(HttpServletRequest request) {
+    final String segment = WebServiceUtil.getInstance().getFirstSegment(request.getPathInfo());
+    final Object o = OBProvider.getInstance().get(segment);
+    if (o instanceof WebService) {
+      return (WebService) o;
+    }
+    throw new OBServiceException("No WebService found using the name " + segment);
   }
 
   protected void callServiceInSuper(HttpServletRequest request, HttpServletResponse response)
