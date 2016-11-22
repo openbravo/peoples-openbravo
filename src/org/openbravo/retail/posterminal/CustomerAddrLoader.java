@@ -9,11 +9,6 @@
 package org.openbravo.retail.posterminal;
 
 import java.util.Date;
-import java.util.Iterator;
-
-import javax.enterprise.inject.Any;
-import javax.enterprise.inject.Instance;
-import javax.inject.Inject;
 
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
@@ -41,10 +36,6 @@ public class CustomerAddrLoader extends POSDataSynchronizationProcess implements
 
   private static final Logger log = Logger.getLogger(CustomerAddrLoader.class);
 
-  @Inject
-  @Any
-  private Instance<CustomerAddrLoaderHook> customerAddrCreations;
-
   protected String getImportQualifier() {
     return "BusinessPartnerLocation";
   }
@@ -71,9 +62,6 @@ public class CustomerAddrLoader extends POSDataSynchronizationProcess implements
         }
         location = editBPartnerAddr(customer, location, jsonCustomerAddr);
       }
-
-      // Call all customerAddrCreations injected.
-      executeHooks(customerAddrCreations, jsonCustomerAddr, customer, location);
 
       OBDal.getInstance().flush();
     } finally {
@@ -203,13 +191,5 @@ public class CustomerAddrLoader extends POSDataSynchronizationProcess implements
   @Override
   protected String getProperty() {
     return "OBPOS_receipt.customers";
-  }
-
-  private void executeHooks(Instance<CustomerAddrLoaderHook> hooks, JSONObject jsonCustomerAddr,
-      BusinessPartner customer, Location location) throws Exception {
-    for (Iterator<CustomerAddrLoaderHook> procIter = hooks.iterator(); procIter.hasNext();) {
-      CustomerAddrLoaderHook proc = procIter.next();
-      proc.exec(jsonCustomerAddr, customer, location);
-    }
   }
 }
