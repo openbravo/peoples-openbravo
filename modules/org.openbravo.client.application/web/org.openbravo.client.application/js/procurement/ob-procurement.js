@@ -24,18 +24,18 @@ OB.PROC = OB.PROC || {};
  */
 
 OB.PROC.CreateLinesOnChangeQuantityAum = function (item, view, form, grid) {
-  var aumQty = new BigDecimal(String(item.getValue()));
+  var aumQty = isc.isA.Number(item.getValue()) ? new BigDecimal(item.getValue()) : 0;
   var record = grid.getSelectionObject().lastSelectionItem;
-  var aum = grid.getEditValues(grid.getRecordIndex(item.record)).aum === undefined ? record.aum : grid.getEditValues(grid.getRecordIndex(item.record)).aum;
+  var aum = grid.getEditValues(grid.getRecordIndex(item.record)).aum;
 
   OB.RemoteCallManager.call('org.openbravo.common.actionhandler.CreateLinesFromPOConvertAUM', {
     productId: record.product,
-    quantity: Number(aumQty),
+    quantity: aumQty,
     toUOM: aum,
-    reverse: 'N'
+    reverse: false
   }, {}, function (response, data, request) {
     if (data.amount) {
-      grid.setEditValue(item.grid.getEditRow(), 'orderedQuantity', Number(data.amount));
+      grid.setEditValue(item.grid.getEditRow(), 'orderedQuantity', data.amount);
     }
   });
 };
@@ -45,18 +45,18 @@ OB.PROC.CreateLinesOnChangeQuantityAum = function (item, view, form, grid) {
  */
 
 OB.PROC.CreateLinesOnChangeQuantity = function (item, view, form, grid) {
-  var qty = new BigDecimal(String(item.getValue()));
+  var qty = isc.isA.Number(item.getValue()) ? new BigDecimal(item.getValue()) : 0;
   var record = grid.getSelectionObject().lastSelectionItem;
-  var aum = grid.getEditValues(grid.getRecordIndex(item.record)).aum === undefined ? record.aum : grid.getEditValues(grid.getRecordIndex(item.record)).aum;
+  var aum = grid.getEditValues(grid.getRecordIndex(item.record)).aum;
 
   OB.RemoteCallManager.call('org.openbravo.common.actionhandler.CreateLinesFromPOConvertAUM', {
     productId: record.product,
-    quantity: Number(qty),
+    quantity: qty,
     toUOM: aum,
-    reverse: 'Y'
+    reverse: true
   }, {}, function (response, data, request) {
     if (data.amount) {
-      grid.setEditValue(item.grid.getEditRow(), 'aumQuantity', Number(data.amount));
+      grid.setEditValue(item.grid.getEditRow(), 'aumQuantity', data.amount);
     }
   });
 };
@@ -73,12 +73,12 @@ OB.PROC.CreateLinesOnChangeAum = function (item, validator, value, record) {
   if (aumQty !== undefined) {
     OB.RemoteCallManager.call('org.openbravo.common.actionhandler.CreateLinesFromPOConvertAUM', {
       productId: changed_record.product,
-      quantity: Number(aumQty),
+      quantity: aumQty,
       toUOM: aum,
-      reverse: 'N'
+      reverse: false
     }, {}, function (response, data, request) {
       if (data.amount) {
-        item.grid.setEditValue(item.grid.getEditRow(), 'orderedQuantity', Number(data.amount));
+        item.grid.setEditValue(item.grid.getEditRow(), 'orderedQuantity', data.amount);
       }
     });
   }

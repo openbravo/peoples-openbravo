@@ -54,7 +54,7 @@ public class CreateLinesFromPOConvertAUM extends BaseActionHandler {
       final String strProductId = jsonRequest.getString("productId");
       quantity = new BigDecimal(jsonRequest.getString("quantity"));
       final String toUOM = jsonRequest.getString("toUOM");
-      final boolean reverse = "Y".equals(jsonRequest.getString("reverse"));
+      final boolean reverse = jsonRequest.getBoolean("reverse");
 
       if (reverse) {
         result.put("amount", UOMUtil.getConvertedAumQty(strProductId, quantity, toUOM));
