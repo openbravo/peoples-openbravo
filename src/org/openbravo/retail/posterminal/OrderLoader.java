@@ -859,7 +859,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     List<Invoice> lstInvoices = new ArrayList<Invoice>();
     StringBuffer involvedInvoicedHqlQueryWhereStr = new StringBuffer();
     involvedInvoicedHqlQueryWhereStr
-        .append("SELECT il.invoice.id FROM InvoiceLine il WHERE il.salesOrderLine.salesOrder.id = :orderid ORDER BY il.invoice.creationDate ASC");
+        .append("SELECT i.id FROM InvoiceLine il JOIN il.invoice i WHERE i.documentStatus = 'CO' AND il.salesOrderLine.salesOrder.id = :orderid ORDER BY i.creationDate ASC");
     Query qryRelatedInvoices = OBDal.getInstance().getSession()
         .createQuery(involvedInvoicedHqlQueryWhereStr.toString());
     qryRelatedInvoices.setParameter("orderid", orderId);
@@ -1874,10 +1874,18 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         } else if (wasPaidOnCredit) {
           // If the invoice already exists and is paid in credit (by reverse payments), the received
           // and outstanding amount must be updated with the quantity paid on credit
-          paymentScheduleInvoice.setAmount(paymentScheduleInvoice.getAmount()
+          paymentScheduleInvoice.setPaidAmount(paymentScheduleInvoice.getAmount()
               .subtract(amountPaidWithCredit).setScale(pricePrecision, RoundingMode.HALF_UP));
-          paymentScheduleInvoice.setOutstandingAmount(paymentScheduleInvoice.getOutstandingAmount()
-              .add(amountPaidWithCredit).setScale(pricePrecision, RoundingMode.HALF_UP));
+          paymentScheduleInvoice.setOutstandingAmount(amountPaidWithCredit.setScale(pricePrecision,
+              RoundingMode.HALF_UP));
+        } else if (notpaidLayaway || partialpaidLayaway || fullypaidLayaway) {
+          // If the order was an existing layaway that previously had an invoice, the received and
+          // outstanding amounts must be updated
+          paymentScheduleInvoice.setPaidAmount(BigDecimal.valueOf(jsonorder.getDouble("payment"))
+              .setScale(pricePrecision, RoundingMode.HALF_UP));
+          paymentScheduleInvoice.setOutstandingAmount(paymentScheduleInvoice.getAmount()
+              .subtract(paymentScheduleInvoice.getPaidAmount())
+              .setScale(pricePrecision, RoundingMode.HALF_UP));
         }
       }
 
