@@ -131,6 +131,7 @@ function updateData(key, mark) {
 	  frm.elements["inpQtyordered" + key].disabled=!mark;
 	}else{
 	  frm.elements["inpAumQty" + key].disabled=!mark;
+	  frm.elements["inpcAUMId" + key].disabled=!mark;
 	}
 	frm.elements["inpmLocatorId_D" + key].disabled=!mark;
 
@@ -140,6 +141,7 @@ function updateData(key, mark) {
       frm.elements["inpQtyordered" + key].className = frm.elements["inpQtyordered" + key].className.replace(' readonly', '');
 	}else{
 	  frm.elements["inpAumQty" + key].className = frm.elements["inpAumQty" + key].className.replace(' readonly', '');
+	  frm.elements["inpcAUMId" + key].className = frm.elements["inpcAUMId" + key].className.replace(' readonly', '');
 	}
     frm.elements["inpmLocatorId_D" + key].className = frm.elements["inpmLocatorId_D" + key].className.replace(' readonly', '');
   } else {
@@ -147,6 +149,7 @@ function updateData(key, mark) {
       frm.elements["inpQtyordered" + key].className += " readonly";
 	}else{
 	  frm.elements["inpAumQty" + key].className += " readonly";
+	  frm.elements["inpcAUMId" + key].className += " readonly";
 	}
     frm.elements["inpmLocatorId_D" + key].className += " readonly";
   }
@@ -211,7 +214,8 @@ function onloadFunctions() {
           window.parent.parent.OB.RemoteCallManager.call('org.openbravo.common.actionhandler.GetConvertedQtyActionHandler', {
             mProductId: frm.elements["inpProductId" + selKey].value,
             qty: frm.elements["inpAumQty" + selKey].value,
-            toUOM: frm.elements["inpcAUMId" + selKey].value
+            toUOM: frm.elements["inpcAUMId" + selKey].value,
+            reverse: false
           }, {}, callback);
         }else {
     	  frm.elements["inpQtyordered" + selKey].value = frm.elements["inpAumQty" + selKey].value;

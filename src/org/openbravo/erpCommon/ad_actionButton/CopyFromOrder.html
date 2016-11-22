@@ -202,7 +202,8 @@ function validate(action) {
         window.parent.parent.OB.RemoteCallManager.call('org.openbravo.common.actionhandler.GetConvertedQtyActionHandler', {
           mProductId: frm.elements["inpmProductId" + selKey].value,
           qty: frm.elements["inpaumquantity" + selKey].value,
-          toUOM: frm.elements["inpcAUMId" + selKey].value
+          toUOM: frm.elements["inpcAUMId" + selKey].value,
+          reverse: false
         }, {}, callback);
       }else {
     	frm.elements["inpquantity" + selKey].value = frm.elements["inpaumquantity" + selKey].value;

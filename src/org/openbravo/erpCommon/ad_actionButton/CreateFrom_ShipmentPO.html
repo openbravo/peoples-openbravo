@@ -166,7 +166,8 @@
 	  window.parent.parent.parent.OB.RemoteCallManager.call('org.openbravo.common.actionhandler.GetConvertedQtyActionHandler', {
 	    mProductId: frm.elements["inpmProductId" + selKey].value,
 	    qty: frm.elements["inpaumqty" + selKey].value,
-	    toUOM: frm.elements["inpCAUM" + selKey].value
+	    toUOM: frm.elements["inpCAUM" + selKey].value,
+	    reverse: false
 	  }, {}, callback);
 	}
   </script>
