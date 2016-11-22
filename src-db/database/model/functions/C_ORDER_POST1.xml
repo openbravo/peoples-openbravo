@@ -547,7 +547,7 @@
           FOR Cur_ResLine IN
             (SELECT l.M_Warehouse_ID, l.M_Product_ID, l.M_AttributeSetInstance_ID, l.C_OrderLine_ID,
                  l.QtyOrdered AS Qty, l.QUANTITYORDER, l.qtyreserved, l.qtydelivered,
-                l.C_UOM_ID, l.M_PRODUCT_UOM_ID, C_AUM
+                l.C_UOM_ID, l.M_PRODUCT_UOM_ID, l.C_AUM
              FROM C_ORDERLINE l, M_PRODUCT p
              WHERE l.C_Order_ID=v_Record_ID  -- Reserve Products (not: services, null products)
                AND l.M_Product_ID=p.M_Product_ID
@@ -697,7 +697,7 @@
 	      M_Warehouse_ID,
 	      M_AttributeSetInstance_ID,
 	      C_UOM_ID,
-              C_AUM,
+             C_AUM,
 	      M_PRODUCT_UOM_ID,
           C_Currency_ID
 	      FROM C_ORDERLINE
@@ -755,7 +755,7 @@
 	        M_Warehouse_ID,
 	        M_AttributeSetInstance_ID,
 	        C_UOM_ID,
-                C_AUM,
+               C_AUM,
 	        M_PRODUCT_UOM_ID,
 	        C_Currency_ID
               FROM C_ORDERLINE
