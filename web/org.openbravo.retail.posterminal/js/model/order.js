@@ -4228,7 +4228,12 @@
                 bp.set('locName', bpLoc.get('name'));
                 bp.set('locId', bpLoc.get('id'));
                 order.trigger('change:bp', order);
-              }, null, null);
+              }, function () {
+                OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_InformationTitle'), OB.I18N.getLabel('OBPOS_NoReceiptLoadedLocation'), [{
+                  label: OB.I18N.getLabel('OBPOS_LblOk'),
+                  isConfirmButton: true
+                }]);
+              });
 
               var linepos = 0,
                   hasDeliveredProducts = false,
