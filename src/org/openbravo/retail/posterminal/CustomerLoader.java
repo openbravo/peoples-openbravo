@@ -48,6 +48,10 @@ public class CustomerLoader extends POSDataSynchronizationProcess implements
   @Any
   private Instance<CustomerLoaderHook> customerCreations;
 
+  @Inject
+  @Any
+  private Instance<CustomerAddrLoaderHook> customerAddrCreations;
+
   protected String getImportQualifier() {
     return "BusinessPartner";
   }
@@ -84,7 +88,11 @@ public class CustomerLoader extends POSDataSynchronizationProcess implements
       // Call all customerCreations injected.
       executeHooks(customerCreations, jsoncustomer, customer);
 
-      editLocation(customer, jsoncustomer);
+      location = editLocation(customer, jsoncustomer);
+
+      // Call all customerAddrCreations injected.
+      executeHooks(customerAddrCreations, jsoncustomer, customer, location);
+
       editBPartnerContact(customer, jsoncustomer);
       OBDal.getInstance().flush();
     } finally {
@@ -268,7 +276,8 @@ public class CustomerLoader extends POSDataSynchronizationProcess implements
     }
   }
 
-  private void editLocation(BusinessPartner customer, JSONObject jsonCustomer) throws JSONException {
+  private Location editLocation(BusinessPartner customer, JSONObject jsonCustomer)
+      throws JSONException {
     Entity locationEntity = ModelProvider.getInstance().getEntity(Location.class);
     Entity baseLocationEntity = ModelProvider.getInstance().getEntity(
         org.openbravo.model.common.geography.Location.class);
@@ -287,6 +296,7 @@ public class CustomerLoader extends POSDataSynchronizationProcess implements
       }
 
       OBDal.getInstance().save(rootLocation);
+      return location;
     } else {
       // location not exists > create location and bplocation
       final org.openbravo.model.common.geography.Location rootLocation = OBProvider.getInstance()
@@ -326,6 +336,7 @@ public class CustomerLoader extends POSDataSynchronizationProcess implements
       newLocation.setLocationAddress(rootLocation);
       newLocation.setNewOBObject(true);
       OBDal.getInstance().save(newLocation);
+      return newLocation;
     }
   }
 
@@ -339,6 +350,14 @@ public class CustomerLoader extends POSDataSynchronizationProcess implements
     for (Iterator<CustomerLoaderHook> procIter = hooks.iterator(); procIter.hasNext();) {
       CustomerLoaderHook proc = procIter.next();
       proc.exec(jsonCustomer, customer);
+    }
+  }
+
+  private void executeHooks(Instance<CustomerAddrLoaderHook> hooks, JSONObject jsonCustomerAddr,
+      BusinessPartner customer, Location location) throws Exception {
+    for (Iterator<CustomerAddrLoaderHook> procIter = hooks.iterator(); procIter.hasNext();) {
+      CustomerAddrLoaderHook proc = procIter.next();
+      proc.exec(jsonCustomerAddr, customer, location);
     }
   }
 }

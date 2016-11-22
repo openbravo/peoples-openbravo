@@ -9,6 +9,11 @@
 package org.openbravo.retail.posterminal;
 
 import java.util.Date;
+import java.util.Iterator;
+
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
 
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
@@ -35,6 +40,10 @@ public class CustomerAddrLoader extends POSDataSynchronizationProcess implements
     DataSynchronizationImportProcess {
 
   private static final Logger log = Logger.getLogger(CustomerAddrLoader.class);
+
+  @Inject
+  @Any
+  private Instance<CustomerAddrLoaderHook> customerAddrCreations;
 
   protected String getImportQualifier() {
     return "BusinessPartnerLocation";
@@ -63,6 +72,9 @@ public class CustomerAddrLoader extends POSDataSynchronizationProcess implements
         location = editBPartnerAddr(customer, location, jsonCustomerAddr);
       }
 
+      // Call all customerAddrCreations injected.
+      executeHooks(customerAddrCreations, jsonCustomerAddr, customer, location);
+
       OBDal.getInstance().flush();
     } finally {
       OBContext.restorePreviousMode();
@@ -84,6 +96,7 @@ public class CustomerAddrLoader extends POSDataSynchronizationProcess implements
 
   private Location createBPartnerAddr(BusinessPartner customer, JSONObject jsonCustomerAddr)
       throws JSONException {
+    Location newLocation = OBProvider.getInstance().get(Location.class);
     try {
       Entity locationEntity = ModelProvider.getInstance().getEntity(Location.class);
       Entity baseLocationEntity = ModelProvider.getInstance().getEntity(
@@ -113,8 +126,6 @@ public class CustomerAddrLoader extends POSDataSynchronizationProcess implements
       rootLocation.setPostalCode(jsonCustomerAddr.getString("postalCode"));
       rootLocation.setCityName(jsonCustomerAddr.getString("cityName"));
       OBDal.getInstance().save(rootLocation);
-
-      Location newLocation = OBProvider.getInstance().get(Location.class);
 
       JSONPropertyToEntity.fillBobFromJSON(locationEntity, newLocation, jsonCustomerAddr);
 
@@ -153,7 +164,7 @@ public class CustomerAddrLoader extends POSDataSynchronizationProcess implements
       log.error("Exception while creating BPartner Address", e);
     }
 
-    return null;
+    return newLocation;
   }
 
   private Location editBPartnerAddr(BusinessPartner customer, Location location,
@@ -186,11 +197,19 @@ public class CustomerAddrLoader extends POSDataSynchronizationProcess implements
     } catch (final Exception e) {
       log.error("Exception while updating BPartner Address", e);
     }
-    return null;
+    return location;
   }
 
   @Override
   protected String getProperty() {
     return "OBPOS_receipt.customers";
+  }
+
+  private void executeHooks(Instance<CustomerAddrLoaderHook> hooks, JSONObject jsonCustomerAddr,
+      BusinessPartner customer, Location location) throws Exception {
+    for (Iterator<CustomerAddrLoaderHook> procIter = hooks.iterator(); procIter.hasNext();) {
+      CustomerAddrLoaderHook proc = procIter.next();
+      proc.exec(jsonCustomerAddr, customer, location);
+    }
   }
 }
