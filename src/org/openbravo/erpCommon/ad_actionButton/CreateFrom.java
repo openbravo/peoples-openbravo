@@ -784,7 +784,7 @@ public class CreateFrom extends HttpSecureAppServlet {
       for (int i = 0; i < data.length; i++) {
         // Obtain the specific units for each product
 
-        dataUOM[i] = UOMUtil.selectAUM(data[i].mProductId, data[i].cDoctypeId);
+        dataUOM[i] = UOMUtil.selectUOM(data[i].mProductId);
 
         // Check the hidden fields
 

@@ -42,6 +42,7 @@ import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.common.plm.ProductAUM;
+import org.openbravo.model.common.plm.ProductUOM;
 import org.openbravo.model.common.uom.UOM;
 import org.openbravo.service.db.DalConnectionProvider;
 
@@ -276,8 +277,6 @@ public class UOMUtil {
     List<Map<String, String>> result = new ArrayList<>();
     Map<String, String> resultMap = new HashMap<>();
     if(productId==null || productId.isEmpty() || docTypeId == null || docTypeId.isEmpty()){
-      resultMap.put(FIELD_PROVIDER_ID, "");
-      resultMap.put(FIELD_PROVIDER_NAME, "");
       return FieldProviderFactory.getFieldProviderArray(result);
     }
     OBContext.setAdminMode();
@@ -305,10 +304,7 @@ public class UOMUtil {
     Map<String, String> resultMap = new HashMap<>();
     List<Map<String, String>> result = new ArrayList<>();
     if(productId==null || productId.isEmpty() || docTypeId == null || docTypeId.isEmpty()){
-      resultMap.put(FIELD_PROVIDER_ID, "");
-      resultMap.put(FIELD_PROVIDER_NAME, "");
-      result.add(resultMap);
-      return FieldProviderFactory.getFieldProviderArray(result);
+     return FieldProviderFactory.getFieldProviderArray(result);
     }
     OBContext.setAdminMode();
     List<UOM> availableUOM = getAvailableUOMsForDocument(productId, docTypeId);
@@ -316,6 +312,28 @@ public class UOMUtil {
       resultMap = new HashMap<>();
       resultMap.put(FIELD_PROVIDER_ID, uom.getId());
       resultMap.put(FIELD_PROVIDER_NAME, uom.getName());
+      result.add(resultMap);
+    }
+    finalResult = FieldProviderFactory.getFieldProviderArray(result);
+    OBContext.restorePreviousMode();
+    return finalResult;
+  }
+  
+  public static FieldProvider[] selectUOM(String productId) {
+    FieldProvider[] finalResult = new FieldProvider[1];
+    List<Map<String, String>> result = new ArrayList<>();
+    Map<String, String> resultMap = new HashMap<>();
+    if(productId==null || productId.isEmpty()){
+      return FieldProviderFactory.getFieldProviderArray(result);
+    }
+    OBContext.setAdminMode();
+    OBCriteria<ProductUOM> pUomCriteria = OBDal.getInstance().createCriteria(ProductUOM.class);
+    pUomCriteria.add(Restrictions.eq("product.id", productId));
+    List<ProductUOM> pUomList = pUomCriteria.list();
+    for(ProductUOM pUom: pUomList){
+      resultMap = new HashMap<>();
+      resultMap.put(FIELD_PROVIDER_ID, pUom.getUOM().getId());
+      resultMap.put(FIELD_PROVIDER_NAME, pUom.getUOM().getName());
       result.add(resultMap);
     }
     finalResult = FieldProviderFactory.getFieldProviderArray(result);
