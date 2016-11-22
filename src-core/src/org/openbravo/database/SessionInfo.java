@@ -111,6 +111,10 @@ public class SessionInfo {
       PreparedStatement psQuery = null;
       PreparedStatement psCreate = null;
       try {
+        if (conn.isReadOnly()) {
+          return;
+        }
+
         psQuery = getPreparedStatement(
             conn,
             "select count(*) from information_schema.tables where table_name='ad_context_info' and table_type = 'LOCAL TEMPORARY'");
@@ -172,6 +176,9 @@ public class SessionInfo {
     PreparedStatement psCleanUp = null;
     PreparedStatement psInsert = null;
     try {
+      if (conn.isReadOnly()) {
+        return;
+      }
       psCleanUp = getPreparedStatement(conn, "delete from ad_context_info");
       psCleanUp.executeUpdate();
 
