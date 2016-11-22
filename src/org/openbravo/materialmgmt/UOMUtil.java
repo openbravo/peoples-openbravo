@@ -272,15 +272,21 @@ public class UOMUtil {
    * @return
    */
   public static FieldProvider[] selectDefaultAUM(String productId, String docTypeId) {
+    FieldProvider[] finalResult = new FieldProvider[1];
+    List<Map<String, String>> result = new ArrayList<>();
+    Map<String, String> resultMap = new HashMap<>();
+    if(productId==null || productId.isEmpty() || docTypeId == null || docTypeId.isEmpty()){
+      resultMap.put(FIELD_PROVIDER_ID, "");
+      resultMap.put(FIELD_PROVIDER_NAME, "");
+      return FieldProviderFactory.getFieldProviderArray(result);
+    }
     OBContext.setAdminMode();
     String id = getDefaultAUMForDocument(productId, docTypeId);
     UOM uom = OBDal.getInstance().get(UOM.class, id);
-    List<Map<String, String>> result = new ArrayList<>();
-    Map<String, String> resultMap = new HashMap<>();
     resultMap.put(FIELD_PROVIDER_ID, id);
     resultMap.put(FIELD_PROVIDER_NAME, uom.getName());
     result.add(resultMap);
-    FieldProvider[] finalResult = FieldProviderFactory.getFieldProviderArray(result);
+    finalResult = FieldProviderFactory.getFieldProviderArray(result);
     OBContext.restorePreviousMode();
     return finalResult;
   }
@@ -295,16 +301,24 @@ public class UOMUtil {
    * @return
    */
   public static FieldProvider[] selectAUM(String productId, String docTypeId) {
+    FieldProvider[] finalResult = new FieldProvider[1];
+    Map<String, String> resultMap = new HashMap<>();
+    List<Map<String, String>> result = new ArrayList<>();
+    if(productId==null || productId.isEmpty() || docTypeId == null || docTypeId.isEmpty()){
+      resultMap.put(FIELD_PROVIDER_ID, "");
+      resultMap.put(FIELD_PROVIDER_NAME, "");
+      result.add(resultMap);
+      return FieldProviderFactory.getFieldProviderArray(result);
+    }
     OBContext.setAdminMode();
     List<UOM> availableUOM = getAvailableUOMsForDocument(productId, docTypeId);
-    List<Map<String, String>> result = new ArrayList<>();
     for (UOM uom : availableUOM) {
-      Map<String, String> resultMap = new HashMap<>();
+      resultMap = new HashMap<>();
       resultMap.put(FIELD_PROVIDER_ID, uom.getId());
       resultMap.put(FIELD_PROVIDER_NAME, uom.getName());
       result.add(resultMap);
     }
-    FieldProvider[] finalResult = FieldProviderFactory.getFieldProviderArray(result);
+    finalResult = FieldProviderFactory.getFieldProviderArray(result);
     OBContext.restorePreviousMode();
     return finalResult;
   }
