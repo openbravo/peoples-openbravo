@@ -34,8 +34,8 @@ OB.PROC.CreateLinesOnChangeQuantityAum = function (item, view, form, grid) {
     toUOM: aum,
     reverse: false
   }, {}, function (response, data, request) {
-    if (data.amount) {
-      grid.setEditValue(item.grid.getEditRow(), 'orderedQuantity', data.amount);
+    if (data.qty) {
+      grid.setEditValue(item.grid.getEditRow(), 'orderedQuantity', data.qty);
     }
   });
 };
@@ -49,14 +49,14 @@ OB.PROC.CreateLinesOnChangeQuantity = function (item, view, form, grid) {
   var record = grid.getSelectionObject().lastSelectionItem;
   var aum = grid.getEditValues(grid.getRecordIndex(item.record)).aum;
 
-  OB.RemoteCallManager.call('org.openbravo.common.actionhandler.CreateLinesFromPOConvertAUM', {
-    productId: record.product,
-    quantity: qty,
+  OB.RemoteCallManager.call('org.openbravo.common.actionhandler.GetConvertedQtyActionHandler', {
+	mProductId: record.product,
+    qty: qty,
     toUOM: aum,
     reverse: true
   }, {}, function (response, data, request) {
-    if (data.amount) {
-      grid.setEditValue(item.grid.getEditRow(), 'aumQuantity', data.amount);
+    if (data.qty) {
+      grid.setEditValue(item.grid.getEditRow(), 'aumQuantity', data.qty);
     }
   });
 };
@@ -71,14 +71,14 @@ OB.PROC.CreateLinesOnChangeAum = function (item, validator, value, record) {
   var aumQty = item.grid.getEditValues(item.grid.getRecordIndex(item.record)).aumQuantity;
 
   if (aumQty !== undefined) {
-    OB.RemoteCallManager.call('org.openbravo.common.actionhandler.CreateLinesFromPOConvertAUM', {
-      productId: changed_record.product,
-      quantity: aumQty,
+    OB.RemoteCallManager.call('org.openbravo.common.actionhandler.GetConvertedQtyActionHandler', {
+      mProductId: changed_record.product,
+      qty: aumQty,
       toUOM: aum,
       reverse: false
     }, {}, function (response, data, request) {
-      if (data.amount) {
-        item.grid.setEditValue(item.grid.getEditRow(), 'orderedQuantity', data.amount);
+      if (data.qty) {
+        item.grid.setEditValue(item.grid.getEditRow(), 'orderedQuantity', data.qty);
       }
     });
   }
