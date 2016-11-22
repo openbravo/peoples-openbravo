@@ -268,7 +268,7 @@ public class JdbcExternalConnectionPool extends ExternalConnectionPool {
 
   /** gets specific property for pool if present, default property if not */
   private String getStringProperty(Properties props, String key, String poolName) {
-    String poolSpecificKey = key.replaceFirst(".", "." + poolName + ".");
+    String poolSpecificKey = key.replaceFirst("\\.", "." + poolName + ".");
     return props.containsKey(poolSpecificKey) ? props.getProperty(poolSpecificKey) : props
         .getProperty(key);
   }
