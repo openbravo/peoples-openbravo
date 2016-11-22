@@ -57,17 +57,19 @@ public class ReturnToFromCustomerVendorHQLTransformer extends HqlQueryTransforme
   private static final String rfc_priceIncludeTax = "(select e.priceList.priceIncludesTax from Order as e where e.id = :salesOrderId)";
 
   private final static String rm_aum = ""
-      + "(case when (select ('Y') from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol) is null "
+      + "(select u.name from UOM as u where u.id in "
+      + "(case when ((select ('Y') from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol) is null) "
       + "then " // obSelected = false
-      + "(case when coalesce (iol.operativeUOM.id, '0') <> '0' then coalesce ((select u.name from UOM as u where u.id = iol.operativeUOM.id),'') else coalesce ((select u.name from UOM as u where u.id = M_GET_DEFAULT_AUM_FOR_DOCUMENT(iol.product.id, dt.id)),'') end) "
+      + "(case when (coalesce (iol.operativeUOM.id, '0') <> '0') then iol.operativeUOM.id else M_GET_DEFAULT_AUM_FOR_DOCUMENT(iol.product.id, dt.id) end) "
+
       + "else " // obSelected = true
-      + "coalesce ((select u.name from UOM as u where u.id in (select ol.operativeUOM.id from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol)),'') "
-      + "end)";
+      + "(coalesce((select ol.operativeUOM.id from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol), 'Y')) "
+      + "end)) ";
 
   private final static String rm_aumqty = ""
       + "(case when (select ('Y') from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol) is null "
       + "then " // obSelected = false
-      + "coalesce (iol.operativeQuantity, m_get_converted_aumqty(iol.product.id, iol.movementQuantity, M_GET_DEFAULT_AUM_FOR_DOCUMENT(iol.product.id, dt.id))) "
+      + "(case when iol.operativeQuantity is not null then iol.operativeQuantity else m_get_converted_aumqty(iol.product.id, iol.movementQuantity, (M_GET_DEFAULT_AUM_FOR_DOCUMENT(iol.product.id, dt.id))) end) "
       + "else " // obSelected = true
       + "coalesce ((select ol.operativeQuantity from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol),0) "
       + "end)";
@@ -75,7 +77,7 @@ public class ReturnToFromCustomerVendorHQLTransformer extends HqlQueryTransforme
   private final static String rm_aum_id = ""
       + "(case when (select ('Y') from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol) is null "
       + "then " // obSelected = false
-      + "coalesce (iol.operativeUOM.id, M_GET_DEFAULT_AUM_FOR_DOCUMENT(iol.product.id, dt.id)) "
+      + "case when iol.operativeUOM.id is not null then iol.operativeUOM.id else M_GET_DEFAULT_AUM_FOR_DOCUMENT(iol.product.id, dt.id) end "
       + "else " // obSelected = true
       + "coalesce ((select ol.operativeUOM.id from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol),'') "
       + "end)";
