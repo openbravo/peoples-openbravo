@@ -51,7 +51,11 @@ public class ConnectionInitializerInterceptor extends JdbcInterceptor implements
       HashMap<Object, Object> attributes = con.getAttributes();
       Boolean connectionInitialized = (Boolean) attributes.get("OB_INITIALIZED");
       if (connectionInitialized == null || connectionInitialized == false) {
-        SessionInfo.initDB(con.getConnection(), rbdms);
+        boolean readOnly = parent != null && parent.getPoolProperties().isDefaultReadOnly() != null
+            && parent.getPoolProperties().isDefaultReadOnly();
+        if (!readOnly) {
+          SessionInfo.initDB(con.getConnection(), rbdms);
+        }
         PreparedStatement pstmt = null;
         try {
           final Properties props = OBPropertiesProvider.getInstance().getOpenbravoProperties();
