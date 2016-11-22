@@ -40,7 +40,7 @@ enyo.kind({
   },
   preSetContentDetail: function (order, docNo) {
     var orderDate = new Date(order.get('orderDate'));
-    if (order.get('isPaid') === 'Y' || order.get('isLayaway')) {
+    if (order.get('isPaid') || order.get('isLayaway')) {
       if (this.order.get('creationDate') !== null) {
         orderDate = new Date(OB.I18N.normalizeDate(this.order.get('creationDate')));
       }
