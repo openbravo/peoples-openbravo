@@ -75,8 +75,16 @@ public class OBCriteria<E extends BaseOBObject> extends CriteriaImpl {
     super(entityOrClassName, (SessionImplementor) SessionHandler.getInstance().getSession());
   }
 
+  public OBCriteria(String entityOrClassName, SessionImplementor session) {
+    super(entityOrClassName, session);
+  }
+
   public OBCriteria(String entityOrClassName, String alias) {
     super(entityOrClassName, alias, (SessionImplementor) SessionHandler.getInstance().getSession());
+  }
+
+  public OBCriteria(String entityOrClassName, String alias, SessionImplementor session) {
+    super(entityOrClassName, alias, session);
   }
 
   /**

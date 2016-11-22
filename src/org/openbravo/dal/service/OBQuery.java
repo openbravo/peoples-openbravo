@@ -76,6 +76,8 @@ public class OBQuery<E extends BaseOBObject> {
 
   private String selectClause;
 
+  private String poolName;
+
   // package visible
   OBQuery() {
   }
@@ -530,7 +532,7 @@ public class OBQuery<E extends BaseOBObject> {
   }
 
   private Session getSession() {
-    return SessionHandler.getInstance().getSession();
+    return SessionHandler.getInstance().getSession(poolName);
   }
 
   /**
@@ -649,5 +651,9 @@ public class OBQuery<E extends BaseOBObject> {
 
   public String getQueryType() {
     return this.queryType;
+  }
+
+  void setPoolName(String poolName) {
+    this.poolName = poolName;
   }
 }
