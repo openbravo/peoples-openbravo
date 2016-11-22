@@ -107,8 +107,10 @@ public class JdbcExternalConnectionPool extends ExternalConnectionPool {
 
     if (isReadonlyPoolDefined()) {
       PoolProperties p = getPoolProperties("readonly");
+      p.setDefaultReadOnly(true);
 
       log.info("Read only pool: " + p.getUrl());
+
       DataSource ro = new DataSource();
       ro.setPoolProperties(p);
       availableDataSources.put("RO", ro);
