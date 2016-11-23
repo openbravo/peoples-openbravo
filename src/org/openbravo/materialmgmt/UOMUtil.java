@@ -75,6 +75,9 @@ public class UOMUtil {
 
   public static String getDefaultAUMForDocument(String mProductId, String documentTypeId) {
     OBContext.setAdminMode();
+    if (mProductId == null || documentTypeId == null) {
+      return null;
+    }
     DocumentType docType = OBDal.getInstance().get(DocumentType.class, documentTypeId);
     return getDefaultAUMForFlow(mProductId, docType.isSalesTransaction());
   }
@@ -104,6 +107,9 @@ public class UOMUtil {
   }
 
   private static String getDefaultAUMForFlow(String mProductId, boolean isSoTrx) {
+    if (mProductId == null) {
+      return null;
+    }
     OBContext.setAdminMode();
     OBCriteria<ProductAUM> pAUMCriteria = OBDal.getInstance().createCriteria(ProductAUM.class);
     pAUMCriteria.add(Restrictions.and(Restrictions.eq("product.id", mProductId), Restrictions.eq(
@@ -129,8 +135,11 @@ public class UOMUtil {
    */
   public static List<UOM> getAvailableUOMsForDocument(String mProductId, String docTypeId) {
     OBContext.setAdminMode();
-    DocumentType docType = OBDal.getInstance().get(DocumentType.class, docTypeId);
     List<UOM> lUom = new ArrayList<UOM>();
+    if (mProductId == null || docTypeId == null) {
+      return lUom;
+    }
+    DocumentType docType = OBDal.getInstance().get(DocumentType.class, docTypeId);
     OBCriteria<ProductAUM> pAUMCriteria = OBDal.getInstance().createCriteria(ProductAUM.class);
     pAUMCriteria.add(Restrictions.and(Restrictions.eq("product.id", mProductId), Restrictions.ne(
         docType.isSalesTransaction() ? ProductAUM.PROPERTY_SALES : ProductAUM.PROPERTY_PURCHASE,
@@ -167,7 +176,8 @@ public class UOMUtil {
     BigDecimal strQty = qty;
     Product product = OBDal.getInstance().get(Product.class, mProductId);
 
-    if (product == null || toUOMId == null || toUOMId.equals(product.getUOM().getId())) {
+    if (product == null || toUOMId == null || toUOMId == ""
+        || toUOMId.equals(product.getUOM().getId())) {
       return strQty;
     }
 
@@ -276,7 +286,7 @@ public class UOMUtil {
     FieldProvider[] finalResult = new FieldProvider[1];
     List<Map<String, String>> result = new ArrayList<>();
     Map<String, String> resultMap = new HashMap<>();
-    if(productId==null || productId.isEmpty() || docTypeId == null || docTypeId.isEmpty()){
+    if (productId == null || productId.isEmpty() || docTypeId == null || docTypeId.isEmpty()) {
       return FieldProviderFactory.getFieldProviderArray(result);
     }
     OBContext.setAdminMode();
@@ -303,8 +313,8 @@ public class UOMUtil {
     FieldProvider[] finalResult = new FieldProvider[1];
     Map<String, String> resultMap = new HashMap<>();
     List<Map<String, String>> result = new ArrayList<>();
-    if(productId==null || productId.isEmpty() || docTypeId == null || docTypeId.isEmpty()){
-     return FieldProviderFactory.getFieldProviderArray(result);
+    if (productId == null || productId.isEmpty() || docTypeId == null || docTypeId.isEmpty()) {
+      return FieldProviderFactory.getFieldProviderArray(result);
     }
     OBContext.setAdminMode();
     List<UOM> availableUOM = getAvailableUOMsForDocument(productId, docTypeId);
@@ -318,19 +328,19 @@ public class UOMUtil {
     OBContext.restorePreviousMode();
     return finalResult;
   }
-  
+
   public static FieldProvider[] selectUOM(String productId) {
     FieldProvider[] finalResult = new FieldProvider[1];
     List<Map<String, String>> result = new ArrayList<>();
     Map<String, String> resultMap = new HashMap<>();
-    if(productId==null || productId.isEmpty()){
+    if (productId == null || productId.isEmpty()) {
       return FieldProviderFactory.getFieldProviderArray(result);
     }
     OBContext.setAdminMode();
     OBCriteria<ProductUOM> pUomCriteria = OBDal.getInstance().createCriteria(ProductUOM.class);
     pUomCriteria.add(Restrictions.eq("product.id", productId));
     List<ProductUOM> pUomList = pUomCriteria.list();
-    for(ProductUOM pUom: pUomList){
+    for (ProductUOM pUom : pUomList) {
       resultMap = new HashMap<>();
       resultMap.put(FIELD_PROVIDER_ID, pUom.getUOM().getId());
       resultMap.put(FIELD_PROVIDER_NAME, pUom.getUOM().getName());
