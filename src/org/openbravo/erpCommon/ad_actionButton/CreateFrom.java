@@ -535,10 +535,11 @@ public class CreateFrom extends HttpSecureAppServlet {
     for (int i = 0; i < data.length; i++) {
       if (UOMUtil.isUomManagementEnabled()) {
         if (data[i].aumqty.isEmpty()) {
-          data[i].aumqty = data[i].qty;
           if (!data[i].cAum.equals(data[i].cUomId)) {
-            data[i].qty = UOMUtil.getConvertedQty(data[i].mProductId,
-                new BigDecimal(data[i].aumqty), data[i].cAum).toString();
+            data[i].aumqty = UOMUtil.getConvertedAumQty(data[i].mProductId,
+                new BigDecimal(data[i].qty), data[i].cAum).toString();
+          } else {
+            data[i].aumqty = data[i].qty;
           }
         }
         data[i].aumvisible = "table-cell";
@@ -804,17 +805,19 @@ public class CreateFrom extends HttpSecureAppServlet {
           xmlDocument.setParameter("havesecuom", "");
           if (data[i].cAum.isEmpty() && data[i].aumqty.isEmpty()
               && data[i].secProductUomId.isEmpty() && data[i].secqty.isEmpty()) {
-            FieldProvider[] defaultAumData = UOMUtil.selectDefaultAUM(data[i].mProductId, data[i].cDoctypeId);
-            String defaultAum = (defaultAumData.length > 0) ? defaultAumData[0].getField(UOMUtil.FIELD_PROVIDER_ID)
-                : data[i].cUomId;
-            data[i].aumqty = data[i].qty;
+            FieldProvider[] defaultAumData = UOMUtil.selectDefaultAUM(data[i].mProductId,
+                data[i].cDoctypeId);
+            String defaultAum = (defaultAumData.length > 0) ? defaultAumData[0]
+                .getField(UOMUtil.FIELD_PROVIDER_ID) : data[i].cUomId;
             data[i].cAum = defaultAum;
-            data[i].aumname = (defaultAumData.length > 0) ? defaultAumData[0].getField(UOMUtil.FIELD_PROVIDER_NAME)
-                : data[i].uomsymbol;
+            data[i].aumname = (defaultAumData.length > 0) ? defaultAumData[0]
+                .getField(UOMUtil.FIELD_PROVIDER_NAME) : data[i].uomsymbol;
             data[i].mProductUomId = null;
             if (!defaultAum.equals(data[i].cUomId)) {
-              data[i].qty = UOMUtil.getConvertedQty(data[i].mProductId,
-                  new BigDecimal(data[i].aumqty), data[i].cAum).toString();
+              data[i].aumqty = UOMUtil.getConvertedAumQty(data[i].mProductId,
+                  new BigDecimal(data[i].qty), defaultAum).toString();
+            } else {
+              data[i].aumqty = data[i].qty;
             }
           }
         } else if (strUomPreference && "0".equals(strhavesec)) {
@@ -825,17 +828,19 @@ public class CreateFrom extends HttpSecureAppServlet {
           xmlDocument.setParameter("uompreference", "");
           xmlDocument.setParameter("havesecuom", "display:none;");
           if (data[i].cAum.isEmpty() && data[i].aumqty.isEmpty()) {
-            FieldProvider[] defaultAumData = UOMUtil.selectDefaultAUM(data[i].mProductId, data[i].cDoctypeId);
-            String defaultAum = (defaultAumData.length > 0) ? defaultAumData[0].getField(UOMUtil.FIELD_PROVIDER_ID)
-                : data[i].cUomId;
-            data[i].aumqty = data[i].qty;
+            FieldProvider[] defaultAumData = UOMUtil.selectDefaultAUM(data[i].mProductId,
+                data[i].cDoctypeId);
+            String defaultAum = (defaultAumData.length > 0) ? defaultAumData[0]
+                .getField(UOMUtil.FIELD_PROVIDER_ID) : data[i].cUomId;
             data[i].cAum = defaultAum;
-            data[i].aumname = (defaultAumData.length > 0) ? defaultAumData[0].getField(UOMUtil.FIELD_PROVIDER_NAME)
-                : data[i].uomsymbol;
+            data[i].aumname = (defaultAumData.length > 0) ? defaultAumData[0]
+                .getField(UOMUtil.FIELD_PROVIDER_NAME) : data[i].uomsymbol;
             data[i].mProductUomId = null;
             if (!defaultAum.equals(data[i].cUomId)) {
-              data[i].qty = UOMUtil.getConvertedQty(data[i].mProductId,
-                  new BigDecimal(data[i].aumqty), data[i].cAum).toString();
+              data[i].aumqty = UOMUtil.getConvertedAumQty(data[i].mProductId,
+                  new BigDecimal(data[i].qty), defaultAum).toString();
+            } else {
+              data[i].aumqty = data[i].qty;
             }
           }
         } else {
@@ -1630,12 +1635,13 @@ public class CreateFrom extends HttpSecureAppServlet {
               if (data[i].cAum.isEmpty() && data[i].aumqty.isEmpty()) {
                 String defaultAum = UOMUtil.getDefaultAUMForDocument(data[i].mProductId,
                     data[i].cDoctypeId);
-                data[i].aumqty = data[i].id;
                 data[i].cAum = defaultAum;
                 data[i].mProductUomId = null;
                 if (!defaultAum.equals(data[i].cUomId)) {
-                  data[i].id = UOMUtil.getConvertedQty(data[i].mProductId,
-                      new BigDecimal(data[i].aumqty), defaultAum).toString();
+                  data[i].aumqty = UOMUtil.getConvertedAumQty(data[i].mProductId,
+                      new BigDecimal(data[i].id), defaultAum).toString();
+                } else {
+                  data[i].aumqty = data[i].id;
                 }
               }
             }
@@ -1866,17 +1872,18 @@ public class CreateFrom extends HttpSecureAppServlet {
               try {
                 BigDecimal qtyAum = new BigDecimal(
                     vars.getNumericParameter("inpaumqty" + strLineId));
-                strAumQty = qtyAum.toString();
-                strMovementqty = qtyAum.toString();
                 if (data[i].cAum.isEmpty()) {
-                  FieldProvider[] defaultAumData = UOMUtil.selectDefaultAUM(data[i].mProductId, data[i].cDoctypeId);
+                  FieldProvider[] defaultAumData = UOMUtil.selectDefaultAUM(data[i].mProductId,
+                      data[i].cDoctypeId);
                   UOMUtil.selectDefaultAUM(data[i].mProductId, data[i].cDoctypeId);
-                  data[i].cAum = (defaultAumData.length > 0) ? defaultAumData[0].getField(UOMUtil.FIELD_PROVIDER_ID)
-                      : data[i].cUomId;
+                  data[i].cAum = (defaultAumData.length > 0) ? defaultAumData[0]
+                      .getField(UOMUtil.FIELD_PROVIDER_ID) : data[i].cUomId;
                 }
                 if (!data[i].cUomId.equals(data[i].cAum)) {
-                  strMovementqty = UOMUtil
-                      .getConvertedQty(data[i].mProductId, qtyAum, data[i].cAum).toString();
+                  strAumQty = UOMUtil.getConvertedAumQty(data[i].mProductId,
+                      new BigDecimal(strMovementqty), data[i].cAum).toString();
+                } else {
+                  strAumQty = qtyAum.toString();
                 }
               } catch (NumberFormatException e) {
               }

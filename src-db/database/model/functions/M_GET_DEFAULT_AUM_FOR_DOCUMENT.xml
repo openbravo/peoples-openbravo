@@ -56,6 +56,13 @@ BEGIN
     AND purchase = 'P';
   END IF;
   
+  IF v_Default_Aum IS NULL THEN
+    SELECT c_uom_id
+    INTO v_Default_Aum
+    FROM m_product
+    WHERE m_product_id = mProductId;
+  END IF;
+  
   RETURN v_Default_Aum;
 END M_GET_DEFAULT_AUM_FOR_DOCUMENT
 ]]></body>
