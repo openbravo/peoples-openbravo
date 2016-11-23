@@ -1866,10 +1866,11 @@ public class CreateFrom extends HttpSecureAppServlet {
               strLineId = data[i].cOrderlineId;
             }
 
-            String strMovementqty = vars.getRequiredNumericParameter("inpmovementqty" + strLineId);
-            String strAumQty = vars.getNumericParameter("inpaumqty" + strLineId);
+            String strMovementqty = "";
+            String strAumQty = "";
             if (UOMUtil.isUomManagementEnabled() && data[i].mProductUomId.isEmpty()) {
               try {
+                strAumQty = vars.getNumericParameter("inpaumqty" + strLineId);
                 BigDecimal qtyAum = new BigDecimal(strAumQty);
                 if (data[i].cAum.isEmpty()) {
                   FieldProvider[] defaultAumData = UOMUtil.selectDefaultAUM(data[i].mProductId,
@@ -1878,8 +1879,8 @@ public class CreateFrom extends HttpSecureAppServlet {
                       .getField(UOMUtil.FIELD_PROVIDER_ID) : data[i].cUomId;
                 }
                 if (!data[i].cUomId.equals(data[i].cAum)) {
-                  strMovementqty = String.valueOf(UOMUtil.getConvertedQty(data[i].mProductId, qtyAum,
-                      data[i].cAum));
+                  strMovementqty = String.valueOf(UOMUtil.getConvertedQty(data[i].mProductId,
+                      qtyAum, data[i].cAum));
                 } else {
                   strMovementqty = qtyAum.toString();
                 }                
