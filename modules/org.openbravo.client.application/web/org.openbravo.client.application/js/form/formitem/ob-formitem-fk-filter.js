@@ -332,8 +332,8 @@ isc.OBFKFilterTextItem.addProperties({
         me = this;
 
     function isInPickAndExecuteGrid() {
-        return (me.grid && me.grid.parentElement && me.grid.parentElement.getClassName() === 'OBPickAndExecuteGrid');
-      }
+      return (me.grid && me.grid.parentElement && me.grid.parentElement.getClassName() === 'OBPickAndExecuteGrid');
+    }
 
     function cleanCriteria(crit, fkItem) {
       var i, criterion, fkFilterOnThisField;
