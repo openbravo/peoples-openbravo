@@ -61,7 +61,7 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.SmallBPButton',
   name: 'OB.UI.BPLocation',
-  classes: 'btnlink-gray',
+  classes: 'btnlink-gray receipt-header-location-button',
   locName: 'locName',
   events: {
     onShowPopup: ''
@@ -72,7 +72,7 @@ enyo.kind({
     showing: false
   }, {
     name: 'identifier',
-    classes: 'addressbilltext'
+    classes: 'addresstext'
   }, {
     style: 'clear: both;'
   }],
@@ -92,7 +92,7 @@ enyo.kind({
 enyo.kind({
   kind: 'OB.UI.SmallBPButton',
   name: 'OB.UI.BPLocationShip',
-  classes: 'btnlink-gray addressshipbutton_fixpadding',
+  classes: 'btnlink-gray receipt-header-location-button',
   showing: false,
   locName: 'shipLocName',
   events: {
@@ -103,7 +103,7 @@ enyo.kind({
     classes: 'addressshipbutton'
   }, {
     name: 'identifier',
-    classes: 'addressshiptext'
+    classes: 'addresstext'
   }, {
     style: 'clear: both;'
   }],
@@ -112,13 +112,9 @@ enyo.kind({
     if (!status) {
       me.setShowing(status);
       me.parent.$.bplocbutton.$.bottomAddrIcon.applyStyle('display', 'none');
-      me.parent.$.bplocbutton.removeClass('addressbillbutton_fixpadding');
-      me.parent.$.bplocbutton.$.identifier.applyStyle('max-width', '200px');
     } else {
       me.setShowing(status);
       me.parent.$.bplocbutton.$.bottomAddrIcon.applyStyle('display', '');
-      me.parent.$.bplocbutton.addClass('addressbillbutton_fixpadding');
-      me.parent.$.bplocbutton.$.identifier.applyStyle('max-width', '70px');
     }
   },
   buttonShowing: function (bp) {

@@ -25,8 +25,7 @@ OB.UTIL.BusinessPartnerSelector = {
 enyo.kind({
   kind: 'OB.UI.SmallButton',
   name: 'OB.UI.BusinessPartnerSelector',
-  classes: 'btnlink-gray',
-  style: 'float: left; text-overflow:ellipsis; white-space: nowrap; overflow: hidden;',
+  classes: 'btnlink-gray receipt-header-customer-button',
   published: {
     order: null
   },
