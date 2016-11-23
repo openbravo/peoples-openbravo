@@ -122,27 +122,76 @@ function refreshComboReports() {
   return true;
 }
 
-function refreshComboOrgs() {
-  var cmbAccountSchema = document.frmMain.inpcAcctSchemaId;
-  var cmbAccountingReports = document.frmMain.inpcElementvalueId;
-  var cmbOrganization = document.frmMain.inpOrganizacion;
-  var cmbYear = document.frmMain.inpAgno;
-  var cmbYearRef = document.frmMain.inpAgnoRef;
-  changeComboData(cmbOrganization, arrOrgs, cmbAccountSchema.options[cmbAccountSchema.selectedIndex].value+cmbAccountingReports.options[cmbAccountingReports.selectedIndex].value.substring(1), true);
-  changeComboData(cmbYear, arrOrgs, "", true);
-  changeComboData(cmbYearRef, arrOrgs, "", true);
+function callbackCmbOrg(paramXMLParticular, XMLHttpRequestObj) {
+  var strText = "";
+  if (getReadyStateHandler(XMLHttpRequestObj)) {
+    try {
+      if (XMLHttpRequestObj.responseText) {
+        strText = XMLHttpRequestObj.responseText;
+        createCombo(document.getElementById('inpOrganizacion'), strText);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  }
   return true;
 }
 
-function refreshComboYears() {
-  var cmbAccountSchema = document.frmMain.inpcAcctSchemaId;
-  var cmbAccountingReports = document.frmMain.inpcElementvalueId;
-  var cmbOrganization = document.frmMain.inpOrganizacion;
-  var cmbYear = document.frmMain.inpAgno;
-  var cmbYearRef = document.frmMain.inpAgnoRef;
-  changeComboData(cmbYear, arrYears, cmbOrganization.options[cmbOrganization.selectedIndex].value, true);
-  changeComboData(cmbYearRef, arrYears, cmbOrganization.options[cmbOrganization.selectedIndex].value, true);
+function callbackCmbYear(paramXMLParticular, XMLHttpRequestObj) {
+  var strText = "";
+  if (getReadyStateHandler(XMLHttpRequestObj)) {
+    try {
+      if (XMLHttpRequestObj.responseText) {
+        strText = XMLHttpRequestObj.responseText;
+        createCombo(document.getElementById('paramAgno'), strText);
+        createCombo(document.getElementById('paramAgnoRef'), strText);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  }
   return true;
+}
+
+function createCombo(node, jsonstring) {
+  try {
+    var objson = eval(jsonstring);
+    node.options.length = 0;
+    if (typeof objson !== undefined) {
+      var rowslength = objson.optionlist.length;
+      for (i=0; i<rowslength; i++) {
+        var option = document.createElement('OPTION');
+        option.setAttribute("value",objson.optionlist[i].value);
+        if (objson.optionlist[i].selected === "true") {
+          option.setAttribute("selected", "selected");
+        }
+        var textin = document.createTextNode(objson.optionlist[i].text);
+        option.appendChild(textin);
+        node.appendChild(option);
+      }
+    }
+  } catch(e) {
+    console.log(e);
+  }
+}
+
+function refreshComboOrgs() {
+  try {
+    var paramXMLReq = null;
+    document.getElementById('inpOrganizacion').innerHTML = '';
+    return submitXmlHttpRequest(callbackCmbOrg, document.frmMain, "CMBORG", "GeneralAccountingReports.html", false, null, paramXMLReq);
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+function refreshComboYears() {
+  try {
+    var paramXMLReq = null;
+    return submitXmlHttpRequest(callbackCmbYear, document.frmMain, "CMBYEAR", "GeneralAccountingReports.html", false, null, paramXMLReq);
+  } catch (e) {
+    console.log(e);
+  }
 }
 
 function callbackLedger(paramXMLParticular, XMLHttpRequestObj) {
