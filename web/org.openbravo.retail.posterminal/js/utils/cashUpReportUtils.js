@@ -697,6 +697,7 @@
     cashUp.at(0).set('lastcashupeportdate', OB.I18N.normalizeDate(new Date()));
     var objToSend = new Backbone.Model({
       posterminal: OB.MobileApp.model.get('terminal').id,
+      posTerminal: OB.MobileApp.model.get('terminal').id,
       id: cashUp.at(0).get('id'),
       isprocessed: cashUp.at(0).get('isprocessed'),
       isbeingprocessed: cashUp.at(0).get('isbeingprocessed'),

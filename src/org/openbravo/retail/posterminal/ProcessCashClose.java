@@ -50,8 +50,10 @@ public class ProcessCashClose extends POSDataSynchronizationProcess implements
     String cashUpId = jsonCashup.getString("id");
     JSONObject jsonData = new JSONObject();
     Date cashUpDate = new Date();
-    OBPOSApplications posTerminal = OBDal.getInstance().get(OBPOSApplications.class,
-        jsonCashup.getString("posterminal"));
+    OBPOSApplications posTerminal = OBDal.getInstance().get(
+        OBPOSApplications.class,
+        jsonCashup.has("posTerminal") ? jsonCashup.getString("posTerminal") : jsonCashup
+            .getString("posterminal"));
 
     // get and prepare the cashUpDate
     if (jsonCashup.has("cashUpDate") && jsonCashup.get("cashUpDate") != null
