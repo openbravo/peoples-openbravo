@@ -28,9 +28,9 @@ OB.PROC.CreateLinesOnChangeQuantityAum = function (item, view, form, grid) {
   var record = grid.getSelectionObject().lastSelectionItem;
   var aum = grid.getEditValues(grid.getRecordIndex(item.record)).aum;
 
-  OB.RemoteCallManager.call('org.openbravo.common.actionhandler.CreateLinesFromPOConvertAUM', {
-    productId: record.product,
-    quantity: aumQty,
+  OB.RemoteCallManager.call('org.openbravo.common.actionhandler.GetConvertedQtyActionHandler', {
+    mProductId: record.product,
+    qty: aumQty,
     toUOM: aum,
     reverse: false
   }, {}, function (response, data, request) {
@@ -50,7 +50,7 @@ OB.PROC.CreateLinesOnChangeQuantity = function (item, view, form, grid) {
   var aum = grid.getEditValues(grid.getRecordIndex(item.record)).aum;
 
   OB.RemoteCallManager.call('org.openbravo.common.actionhandler.GetConvertedQtyActionHandler', {
-	mProductId: record.product,
+    mProductId: record.product,
     qty: qty,
     toUOM: aum,
     reverse: true
