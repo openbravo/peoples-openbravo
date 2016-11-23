@@ -445,6 +445,7 @@ public class OBDal implements OBNotSingleton {
     obQuery.setWhereAndOrderBy(whereOrderByClause);
     obQuery.setEntity(ModelProvider.getInstance().getEntity(entityName));
     obQuery.setParameters(parameters);
+    obQuery.setPoolName(poolName);
     return obQuery;
   }
 
