@@ -1866,26 +1866,25 @@ public class CreateFrom extends HttpSecureAppServlet {
               strLineId = data[i].cOrderlineId;
             }
 
-            String strMovementqty = "";
-            String strAumQty = "";
+            String strMovementqty = vars.getRequiredNumericParameter("inpmovementqty" + strLineId);
+            String strAumQty = vars.getNumericParameter("inpaumqty" + strLineId);
             if (UOMUtil.isUomManagementEnabled() && data[i].mProductUomId.isEmpty()) {
               try {
-                BigDecimal qtyAum = new BigDecimal(
-                    vars.getNumericParameter("inpaumqty" + strLineId));
+                BigDecimal qtyAum = new BigDecimal(strAumQty);
                 if (data[i].cAum.isEmpty()) {
                   FieldProvider[] defaultAumData = UOMUtil.selectDefaultAUM(data[i].mProductId,
                       data[i].cDoctypeId);
-                  UOMUtil.selectDefaultAUM(data[i].mProductId, data[i].cDoctypeId);
                   data[i].cAum = (defaultAumData.length > 0) ? defaultAumData[0]
                       .getField(UOMUtil.FIELD_PROVIDER_ID) : data[i].cUomId;
                 }
                 if (!data[i].cUomId.equals(data[i].cAum)) {
-                  strAumQty = UOMUtil.getConvertedAumQty(data[i].mProductId,
-                      new BigDecimal(strMovementqty), data[i].cAum).toString();
+                  strMovementqty = String.valueOf(UOMUtil.getConvertedQty(data[i].mProductId, qtyAum,
+                      data[i].cAum));
                 } else {
-                  strAumQty = qtyAum.toString();
-                }
+                  strMovementqty = qtyAum.toString();
+                }                
               } catch (NumberFormatException e) {
+                log4j.debug(e.getMessage());
               }
             } else {
               strMovementqty = vars.getRequiredNumericParameter("inpmovementqty" + strLineId);
