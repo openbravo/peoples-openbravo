@@ -32,8 +32,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import net.sf.jasperreports.engine.JRDataSource;
-
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.authentication.AuthenticationManager;
@@ -50,6 +48,8 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.data.ScrollableFieldProvider;
+import org.openbravo.database.ConnectionProvider;
+import org.openbravo.database.ExternalConnectionPool;
 import org.openbravo.database.SessionInfo;
 import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.obps.ActivationKey.FeatureRestriction;
@@ -68,9 +68,12 @@ import org.openbravo.model.ad.ui.Process;
 import org.openbravo.model.ad.ui.ProcessTrl;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.WindowTrl;
+import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.utils.FileUtility;
 import org.openbravo.utils.Replace;
 import org.openbravo.xmlEngine.XmlDocument;
+
+import net.sf.jasperreports.engine.JRDataSource;
 
 public class HttpSecureAppServlet extends HttpBaseServlet {
   private static final long serialVersionUID = 1L;
@@ -1226,16 +1229,20 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
         String localAddress = HttpBaseUtils.getLocalAddress(request);
         localExportParameters.put(ReportingUtils.IMAGES_URI, localAddress
             + "/servlets/image?image={0}");
+        ConnectionProvider readOnlyCP = new DalConnectionProvider(
+            ExternalConnectionPool.READONLY_POOL);
         ReportingUtils.exportJR(localStrReportName, expType, localDesignParameters, os, false,
-            this, data, localExportParameters);
+            readOnlyCP, data, localExportParameters);
       } else if (localStrOutputType.equals("pdf") || localStrOutputType.equalsIgnoreCase("xls")
           || localStrOutputType.equalsIgnoreCase("txt")
           || localStrOutputType.equalsIgnoreCase("csv")) {
         reportId = UUID.randomUUID();
         File outputFile = new File(globalParameters.strFTPDirectory + "/" + localStrFileName + "-"
             + (reportId) + "." + localStrOutputType);
+        ConnectionProvider readOnlyCP = new DalConnectionProvider(
+            ExternalConnectionPool.READONLY_POOL);
         ReportingUtils.exportJR(localStrReportName, expType, localDesignParameters, outputFile,
-            false, this, data, localExportParameters);
+            false, readOnlyCP, data, localExportParameters);
         response.setContentType("text/html;charset=UTF-8");
         response.setHeader("Content-disposition", "inline" + "; filename=" + localStrFileName + "-"
             + (reportId) + ".html");

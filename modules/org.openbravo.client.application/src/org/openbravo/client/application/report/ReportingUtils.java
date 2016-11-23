@@ -943,8 +943,8 @@ public class ReportingUtils {
 
       if (jasperFilePath.endsWith("jrxml")) {
         String strBaseDesign = getBaseDesignPath();
-        JasperReport jReport = getTranslatedJasperReport(new DalConnectionProvider(false),
-            jasperFilePath, language, strBaseDesign);
+        JasperReport jReport = getTranslatedJasperReport(new DalConnectionProvider(
+            ExternalConnectionPool.READONLY_POOL), jasperFilePath, language, strBaseDesign);
         if (connectionProvider != null) {
           if (compileSubreports) {
             processSubReports(jasperFilePath, parameters, strBaseDesign, connectionProvider,
