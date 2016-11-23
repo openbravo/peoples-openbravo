@@ -93,8 +93,9 @@
     v_InOutLine_ID C_InvoiceLine.M_InOutLine_ID%TYPE;
 
     v_uom_preference VARCHAR(1);	
-    v_default_aum VARCHAR(32);
+    v_default_aum C_UOM.C_UOM_ID%TYPE;
     v_aum_qty NUMBER;
+    c_soo_doctype C_DOCTYPE.C_DOCTYPE_ID%TYPE = '01360D369B5F473686354A701A6EA559';
 
     Cur_Bpblocked RECORD;
     
@@ -242,15 +243,15 @@
           END;
         END IF;
       BEGIN --BODY
-
         -- Get UOMPreference value
-        SELECT COUNT(1) INTO v_count
-          FROM ad_preference
-          WHERE property = 'UomManagement';
-        IF (v_count > 0) THEN
+        v_uom_preference := 'N';
+        BEGIN
           v_uom_preference := AD_GET_PREFERENCE_VALUE('UomManagement', 'Y', NULL, v_AD_Org_ID, v_ADUserId, NULL, NULL);
-        END IF;
-		
+          EXCEPTION
+            WHEN OTHERS THEN
+            -- Nothing to do, v_uom_preference = 'N'
+        END;
+        
         /**
         * Order Loop == all not completely invoiced orders == No Summary ==
         */
@@ -656,7 +657,7 @@
 	                  END IF;
 
 	            v_default_aum := CASE WHEN v_uom_preference = 'Y' AND ptr_ol.AUMQTY IS NULL AND ptr_ol.M_Product_Uom_ID IS NULL 
-					 THEN M_GET_DEFAULT_AUM_FOR_DOCUMENT(ptr_ol.M_Product_ID, '01360D369B5F473686354A701A6EA559') 
+					 THEN M_GET_DEFAULT_AUM_FOR_DOCUMENT(ptr_ol.M_Product_ID, c_soo_doctype) 
 					 ELSE ptr_ol.C_AUM 
 					 END;
 		        v_aum_qty := CASE WHEN v_uom_preference = 'Y' AND ptr_ol.AUMQTY IS NULL AND ptr_ol.M_Product_Uom_ID IS NULL 
@@ -693,8 +694,7 @@
 						ptr_ol.PriceList,
                         ptr_ol.PriceActual, ptr_ol.PriceLimit, C_Currency_Round(v_Qty*ptr_ol.PriceActual, Cur_Order.C_Currency_ID, NULL), ptr_ol.C_Charge_ID,
                         ptr_ol.ChargeAmt, ptr_ol.C_UOM_ID,
-                        v_aum_qty, 
-                        v_default_aum,
+                        v_aum_qty, v_default_aum,
                         ptr_ol.C_Tax_ID,  --MODIFIED BY F.IRIAZABAL
                         v_QtyOrder, ptr_ol.M_Product_Uom_ID, ptr_ol.PriceStd,
                         ptr_ol.m_attributesetinstance_id, ptr_ol.taxbaseamt,
@@ -770,7 +770,7 @@
 	                  END IF;
 		    
 		    v_default_aum := CASE WHEN v_uom_preference = 'Y' AND ptr_sl.AUMQTY IS NULL AND ptr_sl.M_Product_Uom_ID IS NULL 
-					 THEN M_GET_DEFAULT_AUM_FOR_DOCUMENT(ptr_sl.M_Product_ID, '01360D369B5F473686354A701A6EA559') 
+					 THEN M_GET_DEFAULT_AUM_FOR_DOCUMENT(ptr_sl.M_Product_ID, c_soo_doctype) 
 					 ELSE ptr_sl.C_AUM 
 					 END;
 		    v_aum_qty := CASE WHEN v_uom_preference = 'Y' AND ptr_sl.AUMQTY IS NULL AND ptr_sl.M_Product_Uom_ID IS NULL 
@@ -1338,7 +1338,7 @@
                 END IF;
 
                 v_default_aum := CASE WHEN v_uom_preference = 'Y' AND Cur_InvoiceSchedule.AUMQTY IS NULL AND Cur_InvoiceSchedule.M_Product_Uom_ID IS NULL 
-					 THEN M_GET_DEFAULT_AUM_FOR_DOCUMENT(Cur_InvoiceSchedule.M_Product_ID, '01360D369B5F473686354A701A6EA559') 
+					 THEN M_GET_DEFAULT_AUM_FOR_DOCUMENT(Cur_InvoiceSchedule.M_Product_ID, c_soo_doctype) 
 					 ELSE Cur_InvoiceSchedule.C_AUM 
 					 END;
 		        v_aum_qty := CASE WHEN v_uom_preference = 'Y' AND Cur_InvoiceSchedule.AUMQTY IS NULL AND Cur_InvoiceSchedule.M_Product_Uom_ID IS NULL 
