@@ -1387,7 +1387,7 @@
             });
 
             lines.forEach(function (line) {
-              if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true) && line.has('obposQtyDeleted') && line.get('obposQtyDeleted') > 0) {
+              if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true) && line.get('obposQtyDeleted') !== 0) {
                 line.set('qty', line.get('obposQtyDeleted'));
                 line.set('obposQtyDeleted', 0);
               }

@@ -1242,7 +1242,7 @@ enyo.kind({
           serviceLinesToCheck = [],
           text, linesToDelete, relations, deletedQty;
 
-      if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true) && model.has('obposQtyDeleted') && model.get('obposQtyDeleted') > 0) {
+      if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true) && model.get('obposQtyDeleted') !== 0) {
         deletedQty = model.get('obposQtyDeleted');
       } else {
         deletedQty = model.get('qty');
