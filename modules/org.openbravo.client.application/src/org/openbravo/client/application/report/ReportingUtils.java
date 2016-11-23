@@ -36,6 +36,25 @@ import java.util.Map.Entry;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 
+import org.openbravo.base.ConfigParameters;
+import org.openbravo.base.exception.OBException;
+import org.openbravo.base.session.OBPropertiesProvider;
+import org.openbravo.client.kernel.reference.UIDefinitionController;
+import org.openbravo.client.kernel.reference.UIDefinitionController.FormatDefinition;
+import org.openbravo.dal.core.DalContextListener;
+import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBDal;
+import org.openbravo.database.ConnectionProvider;
+import org.openbravo.database.ExternalConnectionPool;
+import org.openbravo.erpCommon.utility.JRFormatFactory;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
+import org.openbravo.model.ad.utility.FileType;
+import org.openbravo.service.db.DalConnectionProvider;
+import org.openbravo.uiTranslation.TranslationHandler;
+import org.openbravo.utils.Replace;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRParameter;
@@ -67,24 +86,6 @@ import net.sf.jasperreports.export.SimpleXlsReportConfiguration;
 import net.sf.jasperreports.export.type.HtmlSizeUnitEnum;
 import net.sf.jasperreports.j2ee.servlets.ImageServlet;
 import net.sf.jasperreports.web.util.WebHtmlResourceHandler;
-
-import org.openbravo.base.ConfigParameters;
-import org.openbravo.base.exception.OBException;
-import org.openbravo.base.session.OBPropertiesProvider;
-import org.openbravo.client.kernel.reference.UIDefinitionController;
-import org.openbravo.client.kernel.reference.UIDefinitionController.FormatDefinition;
-import org.openbravo.dal.core.DalContextListener;
-import org.openbravo.dal.core.OBContext;
-import org.openbravo.dal.service.OBDal;
-import org.openbravo.database.ConnectionProvider;
-import org.openbravo.erpCommon.utility.JRFormatFactory;
-import org.openbravo.erpCommon.utility.OBMessageUtils;
-import org.openbravo.model.ad.utility.FileType;
-import org.openbravo.service.db.DalConnectionProvider;
-import org.openbravo.uiTranslation.TranslationHandler;
-import org.openbravo.utils.Replace;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /** Utilities to generate jasper reports */
 public class ReportingUtils {
