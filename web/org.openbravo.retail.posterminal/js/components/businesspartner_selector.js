@@ -298,7 +298,7 @@ enyo.kind({
       OB.MobileApp.view.$.containerWindow.$.pointOfSale.bubble('onShowPopup', {
         popup: 'modalcustomeraddress',
         args: {
-          target: dialog.target,
+          target: 'modal_selector_business_partners',
           businessPartner: bp,
           manageAddress: true,
           navigationPath: OB.UTIL.BusinessPartnerSelector.cloneAndPush(dialog.owner.owner.args.navigationPath, 'modalcustomer')

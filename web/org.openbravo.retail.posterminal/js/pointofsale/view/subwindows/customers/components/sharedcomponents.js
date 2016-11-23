@@ -33,7 +33,7 @@ enyo.kind({
   name: 'OB.UI.CustomerPropertyLine',
   components: [{
     classes: 'customer-property-label',
-    name: 'labelLine',
+    name: 'labelLine'
   }, {
     classes: 'customer-property-text',
     name: 'newAttribute'

@@ -653,8 +653,8 @@ enyo.kind({
       style: 'float: right;'
     }]
   }],
-  events: {
-    onHideThisPopup: ''
+  canHidePopup: function () {
+    return !this.$.btnContextMenu.dialog.manageAddress;
   },
   create: function () {
     this.inherited(arguments);
