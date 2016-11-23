@@ -26,6 +26,7 @@ import org.openbravo.base.weld.test.testinfrastructure.CdiInfrastructure;
 import org.openbravo.base.weld.test.testinfrastructure.DalPersistanceEventTest;
 import org.openbravo.base.weld.test.testinfrastructure.ParameterizedCdi;
 import org.openbravo.client.application.test.ApplicationTest;
+import org.openbravo.client.application.test.DisplayLogicAtServerLevelTest;
 import org.openbravo.client.application.test.DynamicExpressionParserTest;
 import org.openbravo.client.application.test.GenerateTypesJSTest;
 import org.openbravo.client.application.test.MenuTemplateTest;
@@ -70,8 +71,8 @@ import org.openbravo.test.model.TrlColumnsOraTypeTest;
 import org.openbravo.test.model.UniqueConstraintTest;
 import org.openbravo.test.modularity.DBPrefixTest;
 import org.openbravo.test.modularity.DatasetServiceTest;
+import org.openbravo.test.modularity.ExecutionLimitsTest;
 import org.openbravo.test.modularity.MergePropertiesTest;
-import org.openbravo.test.modularity.ModuleScriptsVersions;
 import org.openbravo.test.modularity.TableNameTest;
 import org.openbravo.test.preference.PreferenceTest;
 import org.openbravo.test.reporting.JasperReportsCompilation;
@@ -211,14 +212,15 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     MenuTest.class, //
     MenuTemplateTest.class, //
     DatasourceEventObserver.class, //
+    DisplayLogicAtServerLevelTest.class, //
 
     // client kernel
     FreemarkerTemplateProcessorTest.class, //
     GenerateComponentTest.class, //
     LabelTest.class, //
 
-    // moduleScripts
-    ModuleScriptsVersions.class, //
+    // buildValidations and moduleScripts
+    ExecutionLimitsTest.class, //
 
     // role inheritance
     RoleInheritanceTestSuite.class, //
@@ -241,7 +243,7 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
 
     // others
     DocumentNumberGeneration.class,
-    
+
     // Cancel and Replace Tests
     CancelAndReplaceTest.class
 

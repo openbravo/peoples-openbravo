@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,7 +28,6 @@ import org.apache.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
@@ -52,9 +51,7 @@ public class ScheduleProcess extends HttpSecureAppServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
-    String policy = OBPropertiesProvider.getInstance().getOpenbravoProperties()
-        .getProperty("background.policy", "default");
-    if ("no-execute".equals(policy)) {
+    if (OBScheduler.isNoExecuteBackgroundPolicy()) {
       log.info("Not scheduling process because current context background policy is 'no-execute'");
       advisePopUp(request, response, "ERROR",
           OBMessageUtils.messageBD("BackgroundPolicyNoExecuteTitle"),

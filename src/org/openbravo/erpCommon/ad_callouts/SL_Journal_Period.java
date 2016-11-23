@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -30,6 +30,7 @@ import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.DateTimeData;
+import org.openbravo.erpCommon.utility.OBCurrencyUtils;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.financialmgmt.accounting.coa.AcctSchema;
@@ -51,6 +52,7 @@ public class SL_Journal_Period extends HttpSecureAppServlet {
       String strWindowId = vars.getStringParameter("inpWindowId");
       if (log4j.isDebugEnabled())
         log4j.debug("CHANGED: " + strChanged);
+      String strOrgId = vars.getStringParameter("inpadOrgId");
       String strDateAcct = vars.getStringParameter("inpdateacct");
       String strDateDoc = vars.getStringParameter("inpdatedoc");
       String strcPeriodId = vars.getStringParameter("inpcPeriodId");
@@ -59,8 +61,8 @@ public class SL_Journal_Period extends HttpSecureAppServlet {
       String strAcctSchemaId = vars.getStringParameter("inpcAcctschemaId");
       String strCurrencyRateType = vars.getStringParameter("inpcurrencyratetype", "S");
       try {
-        printPage(response, vars, strDateAcct, strDateDoc, strcPeriodId, strWindowId, strChanged,
-            strTabId, strCurrencyId, strAcctSchemaId, strCurrencyRateType);
+        printPage(response, vars, strOrgId, strDateAcct, strDateDoc, strcPeriodId, strWindowId,
+            strChanged, strTabId, strCurrencyId, strAcctSchemaId, strCurrencyRateType);
       } catch (ServletException ex) {
         pageErrorCallOut(response);
       }
@@ -68,7 +70,7 @@ public class SL_Journal_Period extends HttpSecureAppServlet {
       pageError(response);
   }
 
-  private void printPage(HttpServletResponse response, VariablesSecureApp vars,
+  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strOrgId,
       String strDateAcctNew, String strDateDocNew, String strcPeriodIdNew, String strWindowId,
       String strChanged, String strTabId, String strCurrencyId, String strAcctSchemaId,
       String strCurrencyRateType) throws IOException, ServletException {
@@ -78,7 +80,12 @@ public class SL_Journal_Period extends HttpSecureAppServlet {
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
         "org/openbravo/erpCommon/ad_callouts/CallOut").createXmlDocument();
     String stradClientId = vars.getClient();
-    final String stradOrgId = vars.getGlobalVariable("inpadOrgId", "SL_Journal_Period|adOrgId", "");
+
+    // When organization is changed, update currency
+    String currency = null;
+    if (localStrChanged.equals("inpadOrgId")) {
+      currency = OBCurrencyUtils.getOrgCurrency(strOrgId);
+    }
 
     OBError myMessage = null;
     String currencyRate = null;
@@ -86,7 +93,7 @@ public class SL_Journal_Period extends HttpSecureAppServlet {
       AcctSchema acctSchema = OBDal.getInstance().get(AcctSchema.class, strAcctSchemaId);
       try {
         currencyRate = SLJournalPeriodData.getCurrencyRate(this, strCurrencyId, acctSchema
-            .getCurrency().getId(), strDateAcctNew, strCurrencyRateType, stradClientId, stradOrgId,
+            .getCurrency().getId(), strDateAcctNew, strCurrencyRateType, stradClientId, strOrgId,
             strAcctSchemaId);
       } catch (Exception e) {
         myMessage = Utility.translateError(this, vars, vars.getLanguage(), e.getMessage());
@@ -103,7 +110,7 @@ public class SL_Journal_Period extends HttpSecureAppServlet {
     }
     // When DateAcct is changed, set C_Period_ID
     if (localStrChanged.equals("inpdateacct")) {
-      strcPeriodId = SLJournalPeriodData.period(this, stradClientId, stradOrgId, strDateAcct);
+      strcPeriodId = SLJournalPeriodData.period(this, stradClientId, strOrgId, strDateAcct);
       if (strcPeriodId.equals("")) {
         StringBuffer resultado = new StringBuffer();
         resultado.append("var calloutName='SL_Journal_Period';\n\n");
@@ -143,6 +150,9 @@ public class SL_Journal_Period extends HttpSecureAppServlet {
     resultado.append("var calloutName='SL_Journal_Period';\n\n");
     resultado.append("var respuesta = new Array(");
     resultado.append("new Array(\"inpdateacct\", \"" + strDateAcct + "\"),");
+    if (currency != null) {
+      resultado.append("new Array(\"inpcCurrencyId\", \"" + currency + "\"),");
+    }
     if (!isStandardPeriod) {
       resultado.append("new Array(\"inpdatedoc\", \"" + strDateAcct + "\"),");
     }

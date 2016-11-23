@@ -7859,7 +7859,8 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800050-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800050-->  <NAME><![CDATA[Shipment in]]></NAME>
 <!--800050-->  <DESCRIPTION><![CDATA[Enter Receipts and Vendor Returns where islogistic='Y']]></DESCRIPTION>
-<!--800050-->  <HELP><![CDATA[Enter Receipts and Vendor Returns where islogistic='Y']]></HELP>
+<!--800050-->  <HELP><![CDATA[Enter Receipts and Vendor Returns where islogistic='Y'
+WARNING: This window is not supported anymore and it is only kept for backward compatibility]]></HELP>
 <!--800050-->  <AD_TABLE_ID><![CDATA[319]]></AD_TABLE_ID>
 <!--800050-->  <AD_WINDOW_ID><![CDATA[800013]]></AD_WINDOW_ID>
 <!--800050-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -7892,7 +7893,8 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--800051-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800051-->  <NAME><![CDATA[Shipment out]]></NAME>
 <!--800051-->  <DESCRIPTION><![CDATA[Shipments and Customer Returns where islogistic='Y']]></DESCRIPTION>
-<!--800051-->  <HELP><![CDATA[Shipments and Customer Returns where islogistic='Y']]></HELP>
+<!--800051-->  <HELP><![CDATA[Shipments and Customer Returns where islogistic='Y'
+WARNING: This window is not supported anymore and it is only kept for backward compatibility]]></HELP>
 <!--800051-->  <AD_TABLE_ID><![CDATA[319]]></AD_TABLE_ID>
 <!--800051-->  <AD_WINDOW_ID><![CDATA[800014]]></AD_WINDOW_ID>
 <!--800051-->  <SEQNO><![CDATA[10]]></SEQNO>

@@ -31,6 +31,7 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.QueryTimeoutException;
+import org.openbravo.authentication.AuthenticationManager;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.model.Entity;
@@ -216,9 +217,19 @@ public class JsonUtils {
         log.error(e.getMessage(), e);
       }
 
-      final VariablesSecureApp vars = RequestContext.get().getVariablesSecureApp();
-      final OBError obError = Utility.translateError(new DalConnectionProvider(), vars, OBContext
-          .getOBContext().getLanguage().getLanguage(), localThrowable.getMessage());
+      OBError obError;
+      VariablesSecureApp vars = null;
+
+      // in case of stateless then prevent creation of a http session when an error is reported
+      if (AuthenticationManager.isStatelessRequest(RequestContext.get().getRequest())) {
+        obError = new OBError();
+        obError.setType("Error");
+        obError.setMessage(throwable.getMessage());
+      } else {
+        vars = RequestContext.get().getVariablesSecureApp();
+        obError = Utility.translateError(new DalConnectionProvider(), vars, OBContext
+            .getOBContext().getLanguage().getLanguage(), localThrowable.getMessage());
+      }
 
       if (localThrowable instanceof OBSecurityException) {
         final JSONObject error = new JSONObject();
@@ -230,10 +241,14 @@ public class JsonUtils {
           || (localThrowable.getCause() instanceof PSQLException && PG_QUERY_CANCELED
               .equals(((PSQLException) localThrowable.getCause()).getSQLState()))) {
         final JSONObject error = new JSONObject();
-        error.put(
-            "message",
-            Utility.messageBD(new DalConnectionProvider(false), "OBUIAPP_QueryTimeOut",
-                vars.getLanguage()));
+        if (vars != null) {
+          error.put(
+              "message",
+              Utility.messageBD(new DalConnectionProvider(false), "OBUIAPP_QueryTimeOut",
+                  vars.getLanguage()));
+        } else {
+          error.put("message", "OBUIAPP_QueryTimeOut");
+        }
         error.put("messageType", obError.getType());
         error.put("title", obError.getTitle());
         jsonResponse.put(JsonConstants.RESPONSE_ERROR, error);

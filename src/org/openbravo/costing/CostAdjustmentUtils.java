@@ -40,7 +40,6 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.dal.service.OBQuery;
 import org.openbravo.financial.FinancialUtils;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.DocumentType;
@@ -57,6 +56,7 @@ import org.openbravo.model.materialmgmt.cost.TransactionCost;
 import org.openbravo.model.materialmgmt.transaction.InventoryCount;
 import org.openbravo.model.materialmgmt.transaction.InventoryCountLine;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
+import org.openbravo.model.materialmgmt.transaction.TransactionLast;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -137,73 +137,127 @@ public class CostAdjustmentUtils {
     return costAdjustmentLine;
   }
 
-  /**
-   * Calculates if the given Material Transaction is a beckdated transaction or not.
-   */
   public static boolean isNeededBackdatedCostAdjustment(MaterialTransaction transaction,
       boolean includeWarehouseDimension, Date startingDate) {
+    TransactionLast lastTransaction = CostAdjustmentUtils.getLastTransaction(transaction,
+        includeWarehouseDimension);
+    if (lastTransaction == null) {
+      lastTransaction = CostAdjustmentUtils.insertLastTransaction(transaction,
+          includeWarehouseDimension);
+    }
+    if (lastTransaction != null
+        && CostAdjustmentUtils.compareToLastTransaction(transaction, lastTransaction, startingDate) < 0) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 
-    final String orgLegalId = OBContext.getOBContext()
-        .getOrganizationStructureProvider(transaction.getClient().getId())
-        .getLegalEntity(transaction.getOrganization()).getId();
-    // Get child tree of organizations.
-    Set<String> orgs = OBContext.getOBContext().getOrganizationStructureProvider()
-        .getChildTree(orgLegalId, true);
+  public static TransactionLast getLastTransaction(MaterialTransaction trx,
+      boolean includeWarehouseDimension) {
+    final Organization orgLegal = OBContext.getOBContext()
+        .getOrganizationStructureProvider(trx.getClient().getId())
+        .getLegalEntity(trx.getOrganization());
+    OBCriteria<TransactionLast> obc = OBDal.getInstance().createCriteria(TransactionLast.class);
+    obc.add(Restrictions.eq(TransactionLast.PROPERTY_PRODUCT, trx.getProduct()));
+    obc.add(Restrictions.eq(TransactionLast.PROPERTY_ORGANIZATION, orgLegal));
+    if (includeWarehouseDimension) {
+      obc.add(Restrictions.eq(TransactionLast.PROPERTY_WAREHOUSE, trx.getStorageBin()
+          .getWarehouse()));
+    }
+    obc.setMaxResults(1);
+    return (TransactionLast) obc.uniqueResult();
+  }
+
+  public static int compareToLastTransaction(MaterialTransaction trx,
+      TransactionLast lastTransaction, Date startingDate) {
+    MaterialTransaction lastTrx = lastTransaction.getInventoryTransaction();
+
+    // If trx is the same as lastTransaction or is from previous costing rule, return 0
+    if (trx.getId().equals(lastTrx.getId())
+        || lastTrx.getTransactionProcessDate().compareTo(startingDate) <= 0) {
+      return 0;
+    }
+
+    int compareMovementDate = DateUtils.truncate(trx.getMovementDate(), Calendar.DATE).compareTo(
+        DateUtils.truncate(lastTrx.getMovementDate(), Calendar.DATE));
+    int compareProcessDate = trx.getTransactionProcessDate().compareTo(
+        lastTrx.getTransactionProcessDate());
+    Long trxPrio = CostAdjustmentUtils.getTrxTypePrio(trx.getMovementType());
+    Long lastPrio = CostAdjustmentUtils.getTrxTypePrio(lastTrx.getMovementType());
+    int comparePriority = trxPrio.compareTo(lastPrio);
+    int compareQty = trx.getMovementQuantity().compareTo(lastTrx.getMovementQuantity());
+
+    // If trx was processed after lastTrx
+    if (compareProcessDate > 0
+        || (compareProcessDate == 0 && (comparePriority > 0 || (comparePriority == 0 && compareQty <= 0)))) {
+      if (compareMovementDate < 0) {
+        // Before
+        return -1;
+      } else {
+        // After
+        return 1;
+      }
+    }
+
+    return 0;
+  }
+
+  private static TransactionLast insertLastTransaction(MaterialTransaction trx,
+      boolean includeWarehouseDimension) {
+    OrganizationStructureProvider osp = OBContext.getOBContext().getOrganizationStructureProvider(
+        trx.getClient().getId());
+    final Organization orgLegal = osp.getLegalEntity(trx.getOrganization());
+    Set<String> orgs = osp.getChildTree(orgLegal.getId(), true);
 
     StringBuffer where = new StringBuffer();
-    where.append(" as trx");
+    where.append(" select trx." + MaterialTransaction.PROPERTY_ID);
+    where.append(" from " + MaterialTransaction.ENTITY_NAME + " as trx");
     if (includeWarehouseDimension) {
-      where.append("\n join trx." + MaterialTransaction.PROPERTY_STORAGEBIN + " as locator");
+      where.append(" join trx." + MaterialTransaction.PROPERTY_STORAGEBIN + " as locator");
     }
-    where.append("\n , " + org.openbravo.model.ad.domain.List.ENTITY_NAME + " as trxtype");
-    where.append("\n where trxtype." + propADListReference + ".id = :refid");
-    where.append("  and trxtype." + propADListValue + " = trx."
+    where.append(" , " + org.openbravo.model.ad.domain.List.ENTITY_NAME + " as trxtype");
+    where.append(" where trxtype." + CostAdjustmentUtils.propADListValue + " = trx."
         + MaterialTransaction.PROPERTY_MOVEMENTTYPE);
-    where.append("   and trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE
-        + " > :crStartDate");
-    where.append("   and trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = 'Y' ");
-    // If there are more than one trx on the same trx process date filter out those types with less
-    // priority and / or higher quantity.
-    where.append(" and (");
-    where.append("  trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " < :trxDate");
-    where.append("  or (");
-    where.append("   trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " = :trxDate");
-    where.append("   and trxtype." + propADListPriority + " < :trxtypeprio");
-    where.append("  )");
-    where.append("  or (");
-    where.append("   trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " = :trxDate");
-    where.append("   and trxtype." + propADListPriority + " = :trxtypeprio");
-    where.append("   and trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " >= :trxqty");
-    where.append(" ))");
-
-    where.append("   and trunc(trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE
-        + ") > :movementDate");
-    where.append("   and trx." + MaterialTransaction.PROPERTY_PRODUCT + ".id = :productId");
-    where.append("   and trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgs)");
-
+    where.append(" and trxtype." + CostAdjustmentUtils.propADListReference + ".id = :refId");
+    where.append(" and trx." + MaterialTransaction.PROPERTY_PRODUCT + ".id = :productId");
+    where.append(" and trx." + MaterialTransaction.PROPERTY_ORGANIZATION + ".id in (:orgIds)");
     if (includeWarehouseDimension) {
-      where.append("  and locator." + Locator.PROPERTY_WAREHOUSE + ".id = :warehouse");
+      where.append(" and locator." + Locator.PROPERTY_WAREHOUSE + ".id = :warehouseId");
+    }
+    where.append(" and trx." + MaterialTransaction.PROPERTY_ISCOSTCALCULATED + " = true");
+    where.append(" order by trx." + MaterialTransaction.PROPERTY_MOVEMENTDATE + " desc");
+    where.append(" , trx." + MaterialTransaction.PROPERTY_TRANSACTIONPROCESSDATE + " desc");
+    where.append(" , trxtype." + propADListPriority + " desc");
+    where.append(" , trx." + MaterialTransaction.PROPERTY_MOVEMENTQUANTITY + " asc");
+    where.append(" , trx." + MaterialTransaction.PROPERTY_ID + " desc");
+    Query trxQry = OBDal.getInstance().getSession().createQuery(where.toString());
+    trxQry.setParameter("refId", CostAdjustmentUtils.MovementTypeRefID);
+    trxQry.setParameter("productId", trx.getProduct().getId());
+    trxQry.setParameterList("orgIds", orgs);
+    if (includeWarehouseDimension) {
+      trxQry.setParameter("warehouseId", trx.getStorageBin().getWarehouse().getId());
+    }
+    trxQry.setMaxResults(1);
+    String transactionId = (String) trxQry.uniqueResult();
+
+    TransactionLast lastTransaction = null;
+    if (transactionId != null) {
+      MaterialTransaction transaction = OBDal.getInstance().get(MaterialTransaction.class,
+          transactionId);
+      lastTransaction = OBProvider.getInstance().get(TransactionLast.class);
+      lastTransaction.setClient(transaction.getClient());
+      lastTransaction.setOrganization(orgLegal);
+      lastTransaction.setInventoryTransaction(transaction);
+      lastTransaction.setProduct(transaction.getProduct());
+      if (includeWarehouseDimension) {
+        lastTransaction.setWarehouse(transaction.getStorageBin().getWarehouse());
+      }
+      OBDal.getInstance().save(lastTransaction);
+      OBDal.getInstance().flush();
     }
 
-    OBQuery<MaterialTransaction> trxQry = OBDal.getInstance().createQuery(
-        MaterialTransaction.class, where.toString());
-
-    trxQry.setNamedParameter("refid", MovementTypeRefID);
-    trxQry.setNamedParameter("crStartDate", startingDate);
-    trxQry.setNamedParameter("trxDate", transaction.getTransactionProcessDate());
-    trxQry.setNamedParameter("movementDate", transaction.getMovementDate());
-    trxQry.setNamedParameter("productId", transaction.getProduct().getId());
-    trxQry.setNamedParameter("trxtypeprio",
-        CostAdjustmentUtils.getTrxTypePrio(transaction.getMovementType()));
-    trxQry.setNamedParameter("trxqty", transaction.getMovementQuantity());
-    trxQry.setNamedParameter("orgs", orgs);
-    if (includeWarehouseDimension) {
-      trxQry.setNamedParameter("warehouse", transaction.getStorageBin().getWarehouse().getId());
-    }
-    trxQry.setMaxResult(1);
-    Object res = trxQry.uniqueResult();
-
-    return res != null;
+    return lastTransaction;
   }
 
   private static Long getNewLineNo(CostAdjustment cadj) {

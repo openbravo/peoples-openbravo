@@ -410,6 +410,23 @@ public class OrganizationStructureProvider implements OBNotSingleton {
     return orgQry.list();
   }
 
+  /*
+   * Returns the legal entities of the selected client.
+   */
+  public List<Organization> getLegalEntitiesListForSelectedClient(String paramClientId) {
+    StringBuffer where = new StringBuffer();
+    where.append(" as org");
+    where.append(" join org." + Organization.PROPERTY_ORGANIZATIONTYPE + " as orgType");
+    where.append(" where org." + Organization.PROPERTY_CLIENT + ".id = :client");
+    where.append("   and orgType." + OrganizationType.PROPERTY_LEGALENTITY + " = true");
+    OBQuery<Organization> orgQry = OBDal.getInstance().createQuery(Organization.class,
+        where.toString());
+    orgQry.setFilterOnReadableClients(false);
+    orgQry.setFilterOnReadableOrganization(false);
+    orgQry.setNamedParameter("client", paramClientId);
+    return orgQry.list();
+  }
+
   /**
    * Returns the legal entity of the given organization
    * 
@@ -428,6 +445,30 @@ public class OrganizationStructureProvider implements OBNotSingleton {
         }
       }
       return null;
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
+  /**
+   * Returns the list of legal entities that are children of the given organization
+   * 
+   * @param org
+   *          organization to get its child legal entities
+   * @return legal entity (with or without accounting) organization or null if not found
+   */
+  public List<Organization> getChildLegalEntitesList(final Organization org) {
+    // Admin mode needed to get the Organization type.
+    OBContext.setAdminMode(true);
+    List<Organization> childLegalEntitiesList = new ArrayList<Organization>();
+    try {
+      for (final String orgId : getChildTree(org.getId(), false)) {
+        final Organization childOrg = OBDal.getInstance().get(Organization.class, orgId);
+        if (childOrg.getOrganizationType().isLegalEntity()) {
+          childLegalEntitiesList.add(childOrg);
+        }
+      }
+      return childLegalEntitiesList;
     } finally {
       OBContext.restorePreviousMode();
     }

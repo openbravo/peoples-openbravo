@@ -206,6 +206,9 @@
       <index name="M_TRANSACTION_PRODUCTIONLINE" unique="false">
         <index-column name="M_PRODUCTIONLINE_ID"/>
       </index>
+      <index name="M_TRANSACTION_TRXPROCDATE" unique="false">
+        <index-column name="TRXPROCESSDATE"/>
+      </index>
       <index name="M_TRANSSACTION_PRODUCT" unique="false">
         <index-column name="M_PRODUCT_ID"/>
       </index>

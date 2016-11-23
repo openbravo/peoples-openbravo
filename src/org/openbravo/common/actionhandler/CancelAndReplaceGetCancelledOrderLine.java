@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2015 Openbravo SLU
+ * All portions are Copyright (C) 2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -38,7 +38,7 @@ public class CancelAndReplaceGetCancelledOrderLine extends BaseActionHandler {
     String orderLineId = "";
     try {
       final JSONArray jsonArray = new JSONObject(data).getJSONArray("records");
-      for (int i = 0, size = jsonArray.length(); i < size; i++) {
+      for (int i = 0; i < jsonArray.length(); i++) {
         JSONObject jsonOrderLine = jsonArray.getJSONObject(i);
         orderLineId = jsonOrderLine.getString("replacedorderline");
         OrderLine orderLine = OBDal.getInstance().get(OrderLine.class, orderLineId);

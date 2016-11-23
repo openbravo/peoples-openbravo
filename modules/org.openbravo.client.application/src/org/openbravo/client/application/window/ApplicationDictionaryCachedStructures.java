@@ -326,6 +326,11 @@ public class ApplicationDictionaryCachedStructures implements Serializable {
 
   private void initializeMetadata(Parameter metadata) {
     initializeDALObject(metadata);
+    if (metadata.getApplicationElement() != null) {
+      initializeDALObject(metadata.getApplicationElement().getADElementTrlList());
+    }
+    initializeDALObject(metadata.getOBUIAPPParameterTrlList());
+
     if (metadata.getReference() != null) {
       initializeDALObject(metadata.getReference());
       initializeReference(metadata.getReference());

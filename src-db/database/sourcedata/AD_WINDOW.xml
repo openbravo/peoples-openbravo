@@ -1645,14 +1645,15 @@
 <!--800013-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
 <!--800013-->  <NAME><![CDATA[Incoming Shipment]]></NAME>
 <!--800013-->  <DESCRIPTION><![CDATA[Create and manage goods shipments from our vendors]]></DESCRIPTION>
-<!--800013-->  <HELP><![CDATA[Create and manage goods shipments from our vendors]]></HELP>
+<!--800013-->  <HELP><![CDATA[Create and manage goods shipments from our vendors.
+WARNING: This window is not supported anymore and it is only kept for backward compatibility]]></HELP>
 <!--800013-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--800013-->  <ISSOTRX><![CDATA[N]]></ISSOTRX>
 <!--800013-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800013-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
 <!--800013-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800013-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
-<!--800013-->  <ISADVANCEDFEATURE><![CDATA[Y]]></ISADVANCEDFEATURE>
+<!--800013-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
 <!--800013--></AD_WINDOW>
 
 <!--800014--><AD_WINDOW>
@@ -1662,14 +1663,15 @@
 <!--800014-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
 <!--800014-->  <NAME><![CDATA[Outgoing Shipment]]></NAME>
 <!--800014-->  <DESCRIPTION><![CDATA[Create and manage goods shipments to your customers.]]></DESCRIPTION>
-<!--800014-->  <HELP><![CDATA[Create and manage goods shipments to your customers.]]></HELP>
+<!--800014-->  <HELP><![CDATA[Create and manage goods shipments to your customers.
+WARNING: This window is not supported anymore and it is only kept for backward compatibility]]></HELP>
 <!--800014-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
 <!--800014-->  <ISSOTRX><![CDATA[Y]]></ISSOTRX>
 <!--800014-->  <PROCESSING><![CDATA[N]]></PROCESSING>
 <!--800014-->  <ISDEFAULT><![CDATA[N]]></ISDEFAULT>
 <!--800014-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800014-->  <ISTHREADSAFE><![CDATA[N]]></ISTHREADSAFE>
-<!--800014-->  <ISADVANCEDFEATURE><![CDATA[Y]]></ISADVANCEDFEATURE>
+<!--800014-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
 <!--800014--></AD_WINDOW>
 
 <!--800015--><AD_WINDOW>
