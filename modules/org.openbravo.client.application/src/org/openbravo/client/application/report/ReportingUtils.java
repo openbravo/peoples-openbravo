@@ -45,7 +45,6 @@ import org.openbravo.dal.core.DalContextListener;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
-import org.openbravo.database.ExternalConnectionPool;
 import org.openbravo.erpCommon.utility.JRFormatFactory;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.ad.utility.FileType;
@@ -944,8 +943,9 @@ public class ReportingUtils {
 
       if (jasperFilePath.endsWith("jrxml")) {
         String strBaseDesign = getBaseDesignPath();
-        JasperReport jReport = getTranslatedJasperReport(new DalConnectionProvider(
-            ExternalConnectionPool.READONLY_POOL), jasperFilePath, language, strBaseDesign);
+        JasperReport jReport = getTranslatedJasperReport(
+            DalConnectionProvider.getReadOnlyConnectionProvider(), jasperFilePath, language,
+            strBaseDesign);
         if (connectionProvider != null) {
           if (compileSubreports) {
             processSubReports(jasperFilePath, parameters, strBaseDesign, connectionProvider,

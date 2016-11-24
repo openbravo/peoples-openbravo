@@ -587,7 +587,7 @@ public class PrintController extends HttpSecureAppServlet {
       localStrDocumentId = localStrDocumentId.replaceAll("\\(|\\)|'", "");
     }
     try {
-      ConnectionProvider cp = new DalConnectionProvider("RO");
+      ConnectionProvider cp = DalConnectionProvider.getReadOnlyConnectionProvider();
       report = new Report(cp, documentType, localStrDocumentId, vars.getLanguage(), templateId,
           multiReports, outputType);
     } catch (final ReportingException e) {

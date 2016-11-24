@@ -68,9 +68,13 @@ public class DalConnectionProvider implements ConnectionProvider {
     pool = ExternalConnectionPool.DEFAULT_POOL;
   }
 
-  public DalConnectionProvider(String poolName) {
+  private DalConnectionProvider(String poolName) {
     pool = poolName;
     flush = false;
+  }
+
+  public static DalConnectionProvider getReadOnlyConnectionProvider() {
+    return new DalConnectionProvider(ExternalConnectionPool.READONLY_POOL);
   }
 
   /**
