@@ -135,7 +135,9 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
     // String strMessage =
     // vars.getSessionValue("MaterialReceiptPending|message");
     // vars.removeSessionValue("MaterialReceiptPending|message");
-
+    String tot;
+    int intTotal = 0;
+    int limit = 0;
     MaterialReceiptPendingData[] data = null;
     String strTreeOrg = MaterialReceiptPendingData.treeOrg(this, vars.getClient());
     if (strC_BPartner_ID.equals("") && strAD_Org_ID.equals("")) {
@@ -143,13 +145,20 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
           "org/openbravo/erpCommon/ad_forms/MaterialReceiptPending", discard).createXmlDocument();
       data = MaterialReceiptPendingData.set();
     } else {
+      tot = MaterialReceiptPendingData.countLines(this, vars.getLanguage(),
+          Utility.getContext(this, vars, "#User_Client", "MaterialReceiptPending"),
+          Tree.getMembers(this, strTreeOrg, strAD_Org_ID), strDateFrom,
+          DateTimeData.nDaysAfter(this, strDateTo, "1"), strC_BPartner_ID, strDocumentNo);
+      intTotal = new Integer(tot).intValue();
+      limit = Integer.parseInt(Utility.getPreference(vars, "FormsLimit", ""));
       xmlDocument = xmlEngine.readXmlTemplate(
           "org/openbravo/erpCommon/ad_forms/MaterialReceiptPending").createXmlDocument();
+
       String strDateFormat = vars.getSessionValue("#AD_SqlDateFormat");
       data = MaterialReceiptPendingData.selectLines(this, strDateFormat, vars.getLanguage(),
           Utility.getContext(this, vars, "#User_Client", "MaterialReceiptPending"),
           Tree.getMembers(this, strTreeOrg, strAD_Org_ID), strDateFrom,
-          DateTimeData.nDaysAfter(this, strDateTo, "1"), strC_BPartner_ID, strDocumentNo);
+          DateTimeData.nDaysAfter(this, strDateTo, "1"), strC_BPartner_ID, strDocumentNo, 0, limit);
     }
 
     boolean preference = UOMUtil.isUomManagementEnabled();
@@ -201,6 +210,14 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
     }
     {
       myMessage = vars.getMessage("MaterialReceiptPending");
+      if (intTotal > limit) {
+        myMessage = new OBError();
+        myMessage.setType("Warning");
+        myMessage.setTitle("");
+        String msgbody = Utility.messageBD(this, "OldFormsLimit", vars.getLanguage());
+        msgbody = msgbody.replace("@limit@", Integer.toString(limit));
+        myMessage.setMessage(msgbody);
+      }
       vars.removeMessage("MaterialReceiptPending");
       if (myMessage != null) {
         xmlDocument.setParameter("messageType", myMessage.getType());
