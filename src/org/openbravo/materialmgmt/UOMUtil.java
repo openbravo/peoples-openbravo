@@ -178,6 +178,7 @@ public class UOMUtil {
 
     if (product == null || toUOMId == null || toUOMId == ""
         || toUOMId.equals(product.getUOM().getId())) {
+      OBContext.restorePreviousMode();
       return strQty;
     }
 
