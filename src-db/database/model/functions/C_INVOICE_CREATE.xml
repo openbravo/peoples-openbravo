@@ -95,7 +95,7 @@
     v_uom_preference VARCHAR(1);	
     v_default_aum C_UOM.C_UOM_ID%TYPE;
     v_aum_qty NUMBER;
-    c_soo_doctype C_DOCTYPE.C_DOCTYPE_ID%TYPE = '01360D369B5F473686354A701A6EA559';
+    c_soo_doctype C_DOCTYPE.C_DOCTYPE_ID%TYPE := '01360D369B5F473686354A701A6EA559';
 
     Cur_Bpblocked RECORD;
     
@@ -250,6 +250,7 @@
           EXCEPTION
             WHEN OTHERS THEN
             -- Nothing to do, v_uom_preference = 'N'
+            DBMS_OUTPUT.PUT_LINE('No UomManagement preference found') ;
         END;
         
         /**
