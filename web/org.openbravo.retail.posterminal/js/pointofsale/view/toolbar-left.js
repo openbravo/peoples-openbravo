@@ -266,7 +266,8 @@ enyo.kind({
   disabledChanged: function (isDisabled) {
     // logic decide if the button will be allowed to be enabled
     // the decision to enable the button is made based on several requirements that must be met
-    var requirements, me = this;
+    var requirements, me = this,
+        hasBeenPaid;
 
     function requirementsAreMet(model) {
       // This function is in charge of managing all the requirements of the pay button to be enabled and disabled
@@ -284,7 +285,8 @@ enyo.kind({
         isReceiptLinesLengthGreaterThanZero: undefined,
         isReceiptHasbeenpaidEqualToN: undefined,
         isToolbarEnabled: undefined,
-        isDisabledRequest: undefined
+        isDisabledRequest: undefined,
+        isCreditAndNotPartialCredit: undefined
       };
 
       // If any requirement is not met, return false
@@ -321,7 +323,12 @@ enyo.kind({
       requirements.isReceiptDocnoLengthGreaterThanThree = receipt.get('documentNo').length > 3;
       requirements.isReceiptLinesLengthGreaterThanZero = receipt.get('lines').length > 0;
       requirements.isReceiptHasbeenpaidEqualToN = receipt.get('hasbeenpaid') === 'N';
+      hasBeenPaid = receipt.get('isPaid') && !receipt.get('isQuotation');
       if (OB.UTIL.isNullOrUndefined(requirements.receiptBpId) || !requirements.isReceiptDocnoLengthGreaterThanThree || !requirements.isReceiptLinesLengthGreaterThanZero || !requirements.isReceiptHasbeenpaidEqualToN) {
+        return false;
+      }
+      requirements.isCreditAndNotPartialCredit = receipt.get('paidOnCredit') && !receipt.get('paidPartiallyOnCredit');
+      if (requirements.isCreditAndNotPartialCredit) {
         return false;
       }
       // All requirements are met
@@ -332,13 +339,17 @@ enyo.kind({
     if (requirementsAreMet(this.model)) {
       newIsDisabledState = false;
       this.$.totalPrinter.show();
-      this.$.totalPrinter.addStyles('color: white!important;');
+      if (!hasBeenPaid) {
+        this.$.totalPrinter.removeClass('blackcolor');
+        this.$.totalPrinter.addClass('whitecolor');
+      }
     } else {
       newIsDisabledState = true;
       if (discountEdit) {
         this.$.totalPrinter.hide();
       } else if (OB.MobileApp.model.get('serviceSearchMode')) {
-        this.$.totalPrinter.addStyles('color: black!important;');
+        this.$.totalPrinter.removeClass('whitecolor');
+        this.$.totalPrinter.addClass('blackcolor');
       }
     }
 
@@ -353,7 +364,7 @@ enyo.kind({
     // view of which requirements haven't been met if the button is disabled.
     // The enabling/disabling flow MUST go through this point to ensure that all requests are logged
     var msg = enyo.format("Pay button is %s", (newIsDisabledState ? 'disabled' : 'enabled'));
-    if (newIsDisabledState === true && requirements.isReceiptLinesLengthGreaterThanZero && requirements.isReceiptHasbeenpaidEqualToN) {
+    if (newIsDisabledState === true && requirements.isReceiptLinesLengthGreaterThanZero && requirements.isReceiptHasbeenpaidEqualToN && !requirements.isCreditAndNotPartialCredit) {
       msg += " and should be enabled";
       OB.error(msg, requirements);
       OB.UTIL.Debug.execute(function () {
@@ -365,6 +376,12 @@ enyo.kind({
 
     this.disabled = newIsDisabledState; // for getDisabled() to return the correct value
     this.setAttribute('disabled', newIsDisabledState); // to effectively turn the button enabled or disabled
+    if (hasBeenPaid && !newIsDisabledState) {
+      this.$.totalPrinter.removeClass('whitecolor');
+      this.addClass('btnlink-gray');
+    } else {
+      this.removeClass('btnlink-gray');
+    }
   },
   events: {
     onTabChange: '',
@@ -405,7 +422,7 @@ enyo.kind({
       OB.UTIL.SynchronizationHelper.finished(synchId, 'showPaymentTab');
       return;
     }
-    if (this.model.get('order').get('isEditable') === false && !this.model.get('order').get('isLayaway')) {
+    if (this.model.get('order').get('isEditable') === false && !this.model.get('order').get('isLayaway') && !this.model.get('order').get('isPaid')) {
       OB.UTIL.SynchronizationHelper.finished(synchId, 'showPaymentTab');
       return true;
     }
@@ -473,7 +490,7 @@ enyo.kind({
         criteria.proposalType = 'FMA';
       }
       OB.Dal.find(OB.Model.Product, criteria, function (data) {
-        if (data && data.length > 0) {
+        if (data && data.length > 0 && !me.model.get('order').get('isPaid') && !me.model.get('order').get('isLayaway')) {
           me.model.get('order').trigger('showProductList', null, 'final', function () {
             me.model.completePayment();
             me.doClearUserInput();
@@ -513,7 +530,7 @@ enyo.kind({
     this.model = model;
     this.model.get('order').on('change:isEditable change:isLayaway', function (newValue) {
       if (newValue) {
-        if (newValue.get('isEditable') === false && !newValue.get('isLayaway')) {
+        if (newValue.get('isEditable') === false && !newValue.get('isLayaway') && !newValue.get('isPaid')) {
           this.tabPanel = null;
           this.disabledChanged(true);
           return;

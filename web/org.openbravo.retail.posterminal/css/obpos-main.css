@@ -603,3 +603,11 @@ button.btnbp:disabled {
     width: 64% !important;
   }
 }
+
+.whitecolor {
+  color: white;
+}
+
+.blackecolor {
+  color: black;
+}

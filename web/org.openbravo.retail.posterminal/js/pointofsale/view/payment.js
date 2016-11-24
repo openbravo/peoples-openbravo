@@ -471,7 +471,6 @@ enyo.kind({
         this.$.donebutton.show();
       }
       this.updateCreditSalesAction();
-      //            this.$.layawayaction.hide();
     } else {
       this.setTotalPending(OB.DEC.sub(paymentstatus.get('total'), paymentstatus.get('payment')), rate, symbol, symbolAtRight);
       this.$.totalpending.show();
@@ -507,36 +506,62 @@ enyo.kind({
     }
   },
 
-  checkEnoughCashAvailable: function (paymentstatus, selectedPayment, scope, callback) {
-    var requiredCash, hasEnoughCash, hasAllEnoughCash = true;
+  checkEnoughCashAvailable: function (paymentstatus, selectedPayment, scope, button, callback) {
+    var requiredCash, hasEnoughCash = true,
+        hasAllEnoughCash = true,
+        reversedPayments = [],
+        currentSelectedPaymentCashAmount = OB.DEC.Zero,
+        reversedCash;
     // Check slave cash 
     this.checkSlaveCashAvailable(selectedPayment, this, function (currentCash) {
-      if (OB.UTIL.isNullOrUndefined(selectedPayment) || !selectedPayment.paymentMethod.iscash) {
-        requiredCash = OB.DEC.Zero;
-      } else if (!_.isUndefined(paymentstatus) && paymentstatus.isNegative) {
-        requiredCash = paymentstatus.pendingAmt;
+      // If there are reverse payments search for those of cash payment method. It will be needed to check if there is enough cash to reverse those payments.
+      if (paymentstatus.isReversal) {
         paymentstatus.payments.each(function (payment) {
-          var paymentmethod;
-          if (payment.get('kind') === selectedPayment.payment.searchKey) {
-            requiredCash = OB.DEC.add(requiredCash, payment.get('origAmount'));
-          } else {
-            paymentmethod = OB.POS.terminal.terminal.paymentnames[payment.get('kind')];
-            if (paymentmethod && payment.get('amount') > paymentmethod.currentCash && payment.get('isCash')) {
-              hasAllEnoughCash = false;
+          var paymentmethod = OB.POS.terminal.terminal.paymentnames[payment.get('kind')];
+          if (!payment.get('isPrePayment') && paymentmethod.paymentMethod.iscash) {
+            reversedCash = OB.DEC.sub(reversedPayments[payment.get('kind')] || OB.DEC.Zero, payment.get('origAmount'));
+            reversedPayments[payment.get('kind')] = reversedCash;
+            if (selectedPayment !== paymentmethod && OB.DEC.compare(OB.DEC.sub(paymentmethod.currentCash, reversedCash)) < 0) {
+              hasEnoughCash = false;
+            } else {
+              currentSelectedPaymentCashAmount = reversedCash;
             }
           }
         });
-      } else if (!_.isUndefined(paymentstatus)) {
-        requiredCash = paymentstatus.changeAmt;
       }
 
-      if (!_.isUndefined(requiredCash) && requiredCash === 0) {
-        hasEnoughCash = true;
-      } else if (!_.isUndefined(requiredCash)) {
-        hasEnoughCash = OB.DEC.compare(OB.DEC.sub(currentCash, requiredCash)) >= 0;
+      if (hasEnoughCash) {
+        if (OB.UTIL.isNullOrUndefined(selectedPayment) || !selectedPayment.paymentMethod.iscash) {
+          requiredCash = OB.DEC.Zero;
+        } else if ((button === 'Done' || button === 'Credit') && !_.isUndefined(paymentstatus) && (paymentstatus.isNegative)) {
+          requiredCash = OB.DEC.add(currentSelectedPaymentCashAmount, paymentstatus.pendingAmt);
+          paymentstatus.payments.each(function (payment) {
+            var paymentmethod;
+            if (payment.get('kind') === selectedPayment.payment.searchKey && !payment.get('isPrePayment') && !payment.get('reversedPaymentId')) {
+              requiredCash = OB.DEC.add(requiredCash, payment.get('origAmount'));
+            } else {
+              paymentmethod = OB.POS.terminal.terminal.paymentnames[payment.get('kind')];
+              if (paymentmethod && payment.get('amount') > paymentmethod.currentCash && payment.get('isCash')) {
+                hasAllEnoughCash = false;
+              }
+            }
+          });
+        } else if (!_.isUndefined(paymentstatus)) {
+          if (button === 'Layaway' || button === 'Credit') {
+            requiredCash = OB.DEC.add(currentSelectedPaymentCashAmount, paymentstatus.changeAmt);
+          } else {
+            requiredCash = OB.DEC.sub(OB.DEC.add(currentSelectedPaymentCashAmount, paymentstatus.changeAmt), paymentstatus.pendingAmt);
+          }
+        }
+
+        if (!_.isUndefined(requiredCash) && requiredCash === 0) {
+          hasEnoughCash = true;
+        } else if (!_.isUndefined(requiredCash)) {
+          hasEnoughCash = OB.DEC.compare(OB.DEC.sub(currentCash, requiredCash)) >= 0;
+        }
       }
 
-      if (hasEnoughCash && hasAllEnoughCash) {
+      if (hasEnoughCash && ((button === 'Layaway' || button === 'Credit') || (button === 'Done' && hasAllEnoughCash))) {
         return callback.call(scope, true);
       } else {
         return callback.call(scope, false); // check failed.
@@ -634,8 +659,8 @@ enyo.kind({
     this.receipt.stopAddingPayments = !_.isEmpty(this.getShowingErrorMessages());
     resultOK = !selectedPayment.paymentMethod.iscash || paymentstatus.changeAmt > 0 ? this.checkValidCashOverpayment(paymentstatus, selectedPayment) : undefined;
     if (resultOK || _.isUndefined(resultOK)) {
-      if (!_.isNull(paymentstatus.change) || (paymentstatus.isNegative && !_.isNull(paymentstatus.pending))) {
-        resultOK = this.checkEnoughCashAvailable(paymentstatus, selectedPayment, this, function (success) {
+      if (!_.isNull(paymentstatus.change) || ((paymentstatus.isNegative || paymentstatus.isReversal) && !_.isNull(paymentstatus.pending))) {
+        resultOK = this.checkEnoughCashAvailable(paymentstatus, selectedPayment, this, 'Done', function (success) {
           var lsuccess = success;
           if (lsuccess) {
             lsuccess = this.checkValidPaymentMethod(paymentstatus, selectedPayment);
@@ -645,17 +670,29 @@ enyo.kind({
             this.$.exactbutton.setLocalDisabled(true);
           }
           me.receipt.stopAddingPayments = !_.isEmpty(me.getShowingErrorMessages());
-          this.setStatusButtons(lsuccess);
+          this.setStatusButtons(lsuccess, 'Done');
+          this.checkEnoughCashAvailable(paymentstatus, selectedPayment, this, 'Layaway', function (success) {
+            this.setStatusButtons(success, 'Layaway');
+          });
+          this.checkEnoughCashAvailable(paymentstatus, selectedPayment, this, 'Credit', function (success) {
+            this.setStatusButtons(success, 'Credit');
+          });
         });
       } else if (!this.receipt.stopAddingPayments) {
         this.$.donebutton.setLocalDisabled(false);
         this.$.exactbutton.setLocalDisabled(false);
+        this.$.layawayaction.setLocalDisabled(false);
+        this.$.creditsalesaction.setLocalDisabled(false);
       }
 
     } else {
       me.receipt.stopAddingPayments = !_.isEmpty(me.getShowingErrorMessages());
       // Finally set status of buttons
-      this.setStatusButtons(resultOK);
+      this.setStatusButtons(resultOK, 'Done');
+      this.setStatusButtons(resultOK, 'Layaway');
+    }
+    if (resultOK) {
+      this.$.noenoughchangelbl.hide();
     }
     this.alignErrorMessages();
   },
@@ -777,18 +814,38 @@ enyo.kind({
     }
     return msgToReturn;
   },
-  setStatusButtons: function (resultOK) {
-    if (resultOK) {
-      this.$.donebutton.setLocalDisabled(false);
-      this.$.exactbutton.setLocalDisabled(false);
-    } else {
-      if (this.$.changeexceedlimit.showing || this.$.overpaymentnotavailable.showing || this.$.overpaymentexceedlimit.showing || this.$.onlycashpaymentmethod.showing) {
-        this.$.noenoughchangelbl.hide();
+  setStatusButtons: function (resultOK, button) {
+    if (button === 'Done') {
+      if (resultOK) {
+        this.$.donebutton.setLocalDisabled(false);
+        this.$.exactbutton.setLocalDisabled(false);
       } else {
-        this.$.noenoughchangelbl.show();
+        if (this.$.changeexceedlimit.showing || this.$.overpaymentnotavailable.showing || this.$.overpaymentexceedlimit.showing || this.$.onlycashpaymentmethod.showing) {
+          this.$.noenoughchangelbl.hide();
+        } else {
+          this.$.noenoughchangelbl.show();
+        }
+        this.$.donebutton.setLocalDisabled(true);
+        this.$.exactbutton.setLocalDisabled(true);
       }
-      this.$.donebutton.setLocalDisabled(true);
-      this.$.exactbutton.setLocalDisabled(true);
+    } else if (button === 'Layaway') {
+      if (resultOK) {
+        this.$.layawayaction.setLocalDisabled(false);
+      } else {
+        this.$.layawayaction.setLocalDisabled(true);
+      }
+    } else if (button === 'Credit') {
+      if (resultOK) {
+        this.$.creditsalesaction.setLocalDisabled(false);
+      } else {
+        // If there is not enought cash to return and the user is doing a reverse payment (the negative cash payment has
+        // been introduced), the "Use Credit" button must also be disabled
+        // In a return or a positive ticket with negative payments, the "Use Credit" button can be enabled, because the cash
+        // payment has not been added yet
+        if (this.receipt.getPaymentStatus().isReversal) {
+          this.$.creditsalesaction.setLocalDisabled(true);
+        }
+      }
     }
   },
 
@@ -937,7 +994,7 @@ enyo.kind({
   },
   setDisabled: function (value) {
     this.lasDisabledPetition = value;
-    this.setDisabledIfSynchronized(value);
+    this.setDisabledIfSynchronized();
   },
   setDisabledIfSynchronized: function () {
     var value = this.lasDisabledPetition;
@@ -953,11 +1010,21 @@ enyo.kind({
     if (this.isLocked) {
       value = true;
     }
+    // if there are no not synchronized payments reversed and the full amount qty is paid by prePayment payments,
+    // the button 'Done' will be desabled (except for the case of doing a cancel and replace)
+    if (!value) {
+      if (this.owner.receipt && this.owner.receipt.get('payments') && this.owner.receipt.get('payments').size() > 0) {
+        if (!this.owner.receipt.get('doCancelAndReplace') && this.owner.receipt.getPrePaymentQty() === OB.DEC.sub(this.owner.receipt.getTotal(), this.owner.receipt.getCredit()) && !this.owner.receipt.isNewReversed()) {
+          value = true;
+        }
+      }
+    }
     this.disabled = value; // for getDisabled() to return the correct value
     this.setAttribute('disabled', value); // to effectively turn the button enabled or disabled    
   },
   init: function (model) {
     this.model = model;
+    this.setDisabledIfSynchronized();
     this.setContent(OB.I18N.getLabel('OBPOS_LblDone'));
     this.model.get('order').on('change:openDrawer', function () {
       this.drawerpreference = this.model.get('order').get('openDrawer');
@@ -1157,13 +1224,33 @@ enyo.kind({
         style: 'width: 75%; max-width: 50px; height: 25px; margin-left: 10%;'
       }]
     }, {
+      style: 'float: left; width: 15%; text-align: right;',
+      components: [{
+        name: 'reversePayment',
+        kind: 'OB.OBPOSPointOfSale.UI.ReversePayment',
+        style: 'width: 75%; max-width: 50px; height: 25px; margin-left: 10%;'
+      }]
+    }, {
       style: 'clear: both;'
     }]
   }],
   initComponents: function () {
     this.inherited(arguments);
-    this.$.name.setContent(OB.MobileApp.model.getPaymentName(this.model.get('kind')) || this.model.get('name'));
-    this.$.amount.setContent(this.model.printAmount());
+    this.addStyles('min-height: 29px;');
+    if (this.model.get('reversedPaymentId')) {
+      this.$.name.setContent((OB.MobileApp.model.getPaymentName(this.model.get('kind')) || this.model.get('name')) + OB.I18N.getLabel('OBPOS_ReversedPayment'));
+      this.$.amount.setContent(this.model.printAmount());
+    } else if (this.model.get('isReversed')) {
+      this.$.name.setContent('*' + (OB.MobileApp.model.getPaymentName(this.model.get('kind')) || this.model.get('name')));
+      this.$.amount.setContent(this.model.printAmount());
+    } else {
+      if (this.model.get('isPrePayment') && !this.model.get('paymentAmount')) {
+        this.$.name.setContent(OB.I18N.getLabel('OBPOS_Cancelled'));
+      } else {
+        this.$.name.setContent(OB.MobileApp.model.getPaymentName(this.model.get('kind')) || this.model.get('name'));
+      }
+      this.$.amount.setContent(this.model.printAmountWithSignum());
+    }
     if (this.model.get('rate') && this.model.get('rate') !== '1') {
       this.$.foreignAmount.setContent(this.model.printForeignAmount());
     } else {
@@ -1186,8 +1273,18 @@ enyo.kind({
     if (this.$.foreignAmount.content || this.$.info.content) {
       this.$.removePayment.style = this.$.removePayment.style + ' margin-top: 10px;';
     }
-    if (this.model.get('isPrePayment')) {
-      this.hide();
+    if (this.model.get('isReversed') || (this.model.get('isPrePayment') && (this.model.get('reversedPaymentId') || !this.model.get('paymentAmount') || OB.MobileApp.model.receipt.get('doCancelAndReplace')))) {
+      this.$.removePayment.hide();
+      this.$.reversePayment.hide();
+    } else if (this.model.get('isPrePayment') && OB.MobileApp.model.hasPermission('OBPOS_EnableReversePayments', true)) {
+      this.$.removePayment.hide();
+      this.$.reversePayment.show();
+    } else if (this.model.get('isPrePayment') && !OB.MobileApp.model.hasPermission('OBPOS_EnableReversePayments', true)) {
+      this.$.removePayment.hide();
+      this.$.reversePayment.hide();
+    } else {
+      this.$.removePayment.show();
+      this.$.reversePayment.hide();
     }
   }
 });
@@ -1220,6 +1317,55 @@ enyo.kind({
         }
       });
     }
+  }
+});
+
+enyo.kind({
+  name: 'OB.OBPOSPointOfSale.UI.ReversePayment',
+  events: {
+    onReversePayment: ''
+  },
+  kind: 'OB.UI.SmallButton',
+  classes: 'btnlink-darkgray btnlink-payment-clear btn-icon-small btn-icon-reversePayment',
+  tap: function () {
+    var me = this;
+
+    OB.UTIL.showConfirmation.display(
+    OB.I18N.getLabel('OBPOS_LblReverse'), OB.I18N.getLabel('OBPOS_ReverseConfirm'), [{
+      label: OB.I18N.getLabel('OBPOS_LblOk'),
+      action: function (popup) {
+        if ((_.isUndefined(me.deleting) || me.deleting === false)) {
+          me.deleting = true;
+          me.removeClass('btn-icon-reversePayment');
+          me.addClass('btn-icon-loading');
+          me.bubble('onMaxLimitAmountError', {
+            show: false,
+            maxLimitAmount: 0,
+            currency: '',
+            symbolAtRight: true
+          });
+          me.bubble('onClearPaymentSelect');
+          popup.doHideThisPopup({
+            args: {
+              actionExecuted: true
+            }
+          });
+          me.doReversePayment({
+            payment: me.owner.model,
+            sender: me,
+            reverseCallback: function () {
+              me.deleting = false;
+              me.removeClass('btn-icon-loading');
+              me.addClass('btn-icon-reversePayment');
+            }
+          });
+        }
+      }
+    }, {
+      label: OB.I18N.getLabel('OBMOBC_LblCancel')
+    }]);
+
+
   }
 });
 

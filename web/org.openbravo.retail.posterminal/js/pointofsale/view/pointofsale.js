@@ -38,6 +38,7 @@ enyo.kind({
     onReturnLine: 'returnLine',
     onExactPayment: 'exactPayment',
     onRemovePayment: 'removePayment',
+    onReversePayment: 'reversePayment',
     onChangeCurrentOrder: 'changeCurrentOrder',
     onChangeBusinessPartner: 'changeBusinessPartner',
     onPrintReceipt: 'printReceipt',
@@ -1011,6 +1012,14 @@ enyo.kind({
       });
     } else {
       removeTransaction();
+    }
+  },
+  reversePayment: function (inSender, inEvent) {
+    var me = this;
+    if (me.model.get('leftColumnViewManager').isOrder()) {
+      me.model.get('order').reversePayment(inEvent.payment, inEvent.sender, inEvent.reverseCallback);
+      me.model.get('order').trigger('displayTotal');
+      return;
     }
   },
   changeSubWindow: function (inSender, inEvent) {

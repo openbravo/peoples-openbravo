@@ -103,6 +103,7 @@
       offline: printargs.offline,
       order: order ? order : me.receipt,
       template: template,
+      forcedtemplate: printargs.forcedtemplate,
       callback: printargs.callback
     }, function (args) {
       function printPDF(receipt, args) {
