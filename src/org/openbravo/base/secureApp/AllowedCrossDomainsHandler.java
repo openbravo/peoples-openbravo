@@ -87,6 +87,11 @@ public class AllowedCrossDomainsHandler {
    */
   public void setCORSHeaders(HttpServletRequest request, HttpServletResponse response) {
 
+    // don't do anything if no checkers anyway
+    if (getCheckers().isEmpty()) {
+      return;
+    }
+
     try {
       final String origin = request.getHeader("Origin");
 
