@@ -312,6 +312,7 @@ enyo.kind({
         components: [{
           kind: 'OB.UI.SearchInputAutoFilter',
           name: 'bpsLocationSearchfilterText',
+          minLengthToSearch: 3,
           style: 'width: 100%'
         }]
       }, {
