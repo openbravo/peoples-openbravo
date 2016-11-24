@@ -24,20 +24,22 @@ OB.PROC = OB.PROC || {};
  */
 
 OB.PROC.CreateLinesOnChangeQuantityAum = function (item, view, form, grid) {
-  var aumQty = isc.isA.Number(item.getValue()) ? new BigDecimal(item.getValue()) : 0;
-  var record = grid.getSelectionObject().lastSelectionItem;
-  var aum = grid.getEditValues(grid.getRecordIndex(item.record)).aum;
-
-  OB.RemoteCallManager.call('org.openbravo.common.actionhandler.GetConvertedQtyActionHandler', {
-    mProductId: record.product,
-    qty: aumQty,
-    toUOM: aum,
-    reverse: false
-  }, {}, function (response, data, request) {
-    if (data.qty) {
-      grid.setEditValue(item.grid.getEditRow(), 'orderedQuantity', data.qty);
-    }
-  });
+  var aumQty = item.getValue();
+  var record = item.grid.getSelectionObject().lastSelectionItem;
+  var aum = item.grid.getEditValues(item.grid.getRecordIndex(item.record)).aum;
+  console.log(aum);
+  if (aumQty !== undefined) {
+    OB.RemoteCallManager.call('org.openbravo.common.actionhandler.GetConvertedQtyActionHandler', {
+      mProductId: record.product,
+      qty: aumQty,
+      toUOM: aum,
+      reverse: false
+    }, {}, function (response, data, request) {
+      if (data.qty) {
+        item.grid.setEditValue(item.grid.getEditRow(), 'orderedQuantity', data.qty);
+      }
+    });
+  }
 };
 
 /**
@@ -45,20 +47,21 @@ OB.PROC.CreateLinesOnChangeQuantityAum = function (item, view, form, grid) {
  */
 
 OB.PROC.CreateLinesOnChangeQuantity = function (item, view, form, grid) {
-  var qty = isc.isA.Number(item.getValue()) ? new BigDecimal(item.getValue()) : 0;
+  var qty = item.getValue();
   var record = grid.getSelectionObject().lastSelectionItem;
-  var aum = grid.getEditValues(grid.getRecordIndex(item.record)).aum;
-
-  OB.RemoteCallManager.call('org.openbravo.common.actionhandler.GetConvertedQtyActionHandler', {
-    mProductId: record.product,
-    qty: qty,
-    toUOM: aum,
-    reverse: true
-  }, {}, function (response, data, request) {
-    if (data.qty) {
-      grid.setEditValue(item.grid.getEditRow(), 'aumQuantity', data.qty);
-    }
-  });
+  var aum = item.grid.getEditValues(item.grid.getRecordIndex(item.record)).aum;
+  if (qty !== undefined) {
+    OB.RemoteCallManager.call('org.openbravo.common.actionhandler.GetConvertedQtyActionHandler', {
+      mProductId: record.product,
+      qty: qty,
+      toUOM: aum,
+      reverse: true
+    }, {}, function (response, data, request) {
+      if (data.qty) {
+        item.grid.setEditValue(item.grid.getEditRow(), 'aumQuantity', data.qty);
+      }
+    });
+  }
 };
 
 /**
@@ -66,10 +69,9 @@ OB.PROC.CreateLinesOnChangeQuantity = function (item, view, form, grid) {
  */
 
 OB.PROC.CreateLinesOnChangeAum = function (item, validator, value, record) {
-  var aum = item.getValue();
+  var aum = item.pickList.getSelection()[0].id;
   var changed_record = item.grid.getSelectionObject().lastSelectionItem;
   var aumQty = item.grid.getEditValues(item.grid.getRecordIndex(item.record)).aumQuantity;
-
   if (aumQty !== undefined) {
     OB.RemoteCallManager.call('org.openbravo.common.actionhandler.GetConvertedQtyActionHandler', {
       mProductId: changed_record.product,
@@ -78,7 +80,7 @@ OB.PROC.CreateLinesOnChangeAum = function (item, validator, value, record) {
       reverse: false
     }, {}, function (response, data, request) {
       if (data.qty) {
-        item.grid.setEditValue(item.grid.getEditRow(), 'orderedQuantity', data.qty);
+    	item.grid.setEditValue(item.grid.getEditRow(), 'orderedQuantity', data.qty);
       }
     });
   }
