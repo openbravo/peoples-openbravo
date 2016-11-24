@@ -426,7 +426,7 @@ public class SessionHandler implements OBNotSingleton {
         }
       }
       try {
-        if (con == null || !con.isClosed()) {
+        if (con != null && !con.isClosed()) {
           con.close();
         }
       } catch (SQLException e) {
