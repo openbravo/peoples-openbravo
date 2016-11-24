@@ -759,7 +759,7 @@
 
     postCloseSession: function (session) {
       if (OB.POS.hwserver !== undefined) {
-        OB.POS.hwserver.print(new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.GoodByeTemplate), {});
+        OB.POS.hwserver.print(new OB.DS.HWResource(OB.OBPOSPointOfSale.Print.GoodByeTemplate), {}, null, OB.DS.HWServer.DISPLAY);
       }
       OB.MobileApp.model.triggerLogout();
 
