@@ -14,7 +14,7 @@
 enyo.kind({
   kind: 'OB.UI.Modal',
   name: 'OB.OBPOSPointOfSale.UI.customeraddr.editcustomeraddr',
-  style: 'width: 90%;',
+  classes: 'receipt-customer-selector-editor',
   i18nHeader: 'OBPOS_TitleViewCustomerAddress',
   events: {
     onShowPopup: ''

@@ -12,7 +12,7 @@
 enyo.kind({
   kind: 'OB.UI.Modal',
   name: 'OB.OBPOSPointOfSale.UI.customers.editcustomer',
-  style: 'width: 90%;',
+  classes: 'receipt-customer-selector-editor',
   i18nHeader: 'OBPOS_TitleViewCustomer',
   handlers: {
     onPressedButton: 'pressedButton'

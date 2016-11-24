@@ -12,7 +12,7 @@
 enyo.kind({
   kind: 'OB.UI.Modal',
   name: 'OB.OBPOSPointOfSale.UI.customers.newcustomer',
-  style: 'width: 90%;',
+  classes: 'receipt-customer-selector-editor',
   events: {
     onShowPopup: ''
   },

@@ -776,7 +776,6 @@ enyo.kind({
   kind: 'OB.UI.ModalSelector',
   name: 'OB.UI.ModalSelectorBusinessPartners',
   topPosition: '75px',
-  modalClass: 'modal-bpdialog',
   i18nHeader: 'OBPOS_LblAssignCustomer',
   body: {
     kind: 'OB.UI.ListBpsSelector'

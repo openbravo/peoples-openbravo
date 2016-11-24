@@ -14,7 +14,7 @@
 enyo.kind({
   kind: 'OB.UI.Modal',
   name: 'OB.OBPOSPointOfSale.UI.customeraddr.newcustomeraddr',
-  style: 'width: 90%;',
+  classes: 'receipt-customer-selector-editor',
   events: {
     onShowPopup: ''
   },
@@ -92,6 +92,7 @@ enyo.kind({
         style: 'display: table-cell;',
         components: [{
           kind: 'OB.OBPOSPointOfSale.UI.customeraddr.cancelEdit',
+          name: 'addressEditCancel',
           handlers: {
             onSetCustomerAddr: 'setCustomerAddr'
           },
