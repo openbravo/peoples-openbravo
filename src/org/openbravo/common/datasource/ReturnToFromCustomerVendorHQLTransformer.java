@@ -61,18 +61,12 @@ public class ReturnToFromCustomerVendorHQLTransformer extends HqlQueryTransforme
       + "(case when ((select ('Y') from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol) is null) "
       + "then " // obSelected = false
       + "(case when (coalesce (iol.operativeUOM.id, '0') <> '0') then iol.operativeUOM.id else M_GET_DEFAULT_AUM_FOR_DOCUMENT(iol.product.id, dt.id) end) "
-
       + "else " // obSelected = true
       + "(coalesce((select ol.operativeUOM.id from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol), 'Y')) "
       + "end)) ";
 
   private final static String rm_aumqty = ""
-      + "(case when (select ('Y') from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol) is null "
-      + "then " // obSelected = false
-      + "(case when iol.operativeQuantity is not null then iol.operativeQuantity else m_get_converted_aumqty(iol.product.id, iol.movementQuantity, (M_GET_DEFAULT_AUM_FOR_DOCUMENT(iol.product.id, dt.id))) end) "
-      + "else " // obSelected = true
-      + "coalesce ((select ol.operativeQuantity from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol),0) "
-      + "end)";
+      + "(case when iol.operativeQuantity is not null then iol.operativeQuantity else m_get_converted_aumqty(iol.product.id, iol.movementQuantity, (M_GET_DEFAULT_AUM_FOR_DOCUMENT(iol.product.id, dt.id))) end) ";
 
   private final static String rm_aum_id = ""
       + "(case when (select ('Y') from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol) is null "
@@ -95,7 +89,7 @@ public class ReturnToFromCustomerVendorHQLTransformer extends HqlQueryTransforme
       + "TO_NUMBER(M_GET_CONVERTED_QTY(iol.product.id, 1.0, coalesce ((select ol.operativeUOM.id from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol),''))) "
       + "end)";
 
-  private static final String returnedLeftClauseAUM = " coalesce((select ol.operativeQuantity from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol)*-1,0)";
+  private static final String returnedLeftClauseAUM = " coalesce((select ol.operativeQuantity from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol),0)";
 
   private static final String rm_returnedUOM = ""
       + "(case when (select ('Y') from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol) is null "
