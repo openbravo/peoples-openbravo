@@ -26,8 +26,7 @@ OB.PROC = OB.PROC || {};
 OB.PROC.CreateLinesOnChangeQuantityAum = function (item, view, form, grid) {
   var aumQty = item.getValue();
   var record = item.grid.getSelectionObject().lastSelectionItem;
-  var aum = item.grid.getEditValues(item.grid.getRecordIndex(item.record)).aum;
-  console.log(aum);
+  var aum = item.form.getItems()[item.grid.getColNum('aum')].getValue();
   if (aumQty !== undefined) {
     OB.RemoteCallManager.call('org.openbravo.common.actionhandler.GetConvertedQtyActionHandler', {
       mProductId: record.product,
