@@ -47,7 +47,9 @@ public class Payments extends JSONTerminalProperty {
           + "img.bindaryData as image, img.mimetype as mimetype "
           + "from OBPOS_App_Payment as p left join p.financialAccount as f left join f.currency as c "
           + "left outer join p.paymentMethod as pm left outer join pm.image as img "
-          + "where p.obposApplications.id = :posID  order by p.line, p.commercialName";
+          + "where p.obposApplications.id = :posID  "
+          + "and p.$readableSimpleCriteria and p.$activeCriteria "
+          + "order by p.line, p.commercialName";
 
       SimpleQueryBuilder querybuilder = new SimpleQueryBuilder(hqlPayments, OBContext
           .getOBContext().getCurrentClient().getId(), OBContext.getOBContext()
