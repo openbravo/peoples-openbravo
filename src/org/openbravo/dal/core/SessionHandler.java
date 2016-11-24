@@ -26,7 +26,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
 import org.hibernate.FlushMode;
@@ -248,33 +247,28 @@ public class SessionHandler implements OBNotSingleton {
     return newConnection;
   }
 
-  void closeSession(String pool) {
-    // TODO: review me!
-    try {
-      for (Entry<String, Connection> c : connection.entrySet()) {
-        String p = c.getKey();
-        Connection con = connection.get(p);
-        if (con == null || (con != null && !con.isClosed())) {
-          if (con != null) {
-            con.setAutoCommit(false);
-          }
-          tx.get(p).commit();
-          if (con != null && !con.isClosed()) {
-            con.close();
-          }
-        }
-        tx.remove(p);
-      }
+  protected void closeSession() {
+    closeSession(DEFAULT_POOL);
+  }
 
-      for (Session s : session.values()) {
-        if (s != null && s.isOpen()) {
-          s.close();
-        }
+  void closeSession(String pool) {
+    Session s = session.get(pool);
+    if (s != null) {
+      if (s.isOpen()) {
+        s.close();
       }
-    } catch (SQLException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      session.remove(s);
     }
+  }
+
+  /** Commits all remaining sessions and closes them */
+  void cleanUpSessions() {
+    for (String pool : session.keySet()) {
+      commitAndCloseNoCheck(pool);
+    }
+    session.clear();
+    tx.clear();
+    connection.clear();
   }
 
   /**
@@ -396,20 +390,27 @@ public class SessionHandler implements OBNotSingleton {
   }
 
   public void commitAndClose(String pool) {
+    Check.isFalse(TriggerHandler.getInstance().isDisabled(),
+        "Triggers disabled, commit is not allowed when in triggers-disabled mode, "
+            + "call TriggerHandler.enable() before committing");
+
+    checkInvariant();
+    flushRemainingChanges(pool);
+
+    commitAndCloseNoCheck(pool);
+  }
+
+  private void commitAndCloseNoCheck(String pool) {
     boolean err = true;
     try {
-      Check.isFalse(TriggerHandler.getInstance().isDisabled(),
-          "Triggers disabled, commit is not allowed when in triggers-disabled mode, "
-              + "call TriggerHandler.enable() before committing");
-
-      checkInvariant();
-      flushRemainingChanges(pool);
       if (connection.get(pool) == null
           || (connection.get(pool) != null && !connection.get(pool).isClosed())) {
         if (connection != null) {
           connection.get(pool).setAutoCommit(false);
         }
-        tx.get(pool).commit();
+        if (tx.get(pool).isActive()) {
+          tx.get(pool).commit();
+        }
       }
       tx.remove(pool);
       err = false;
@@ -549,4 +550,5 @@ public class SessionHandler implements OBNotSingleton {
   public boolean doSessionInViewPatter() {
     return true;
   }
+
 }

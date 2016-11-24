@@ -19,6 +19,9 @@
 
 package org.openbravo.dal.core;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Encapsulates a thread so that when the thread returns the session/transaction is
  * closed/committed/rolledback. It also ensures that the OBContext is removed from the thread.
@@ -30,6 +33,7 @@ package org.openbravo.dal.core;
  */
 
 public abstract class DalThreadHandler extends ThreadHandler {
+  private static final Logger log = LoggerFactory.getLogger(DalThreadHandler.class);
 
   /** @see ThreadHandler#doBefore */
   @Override
@@ -39,21 +43,26 @@ public abstract class DalThreadHandler extends ThreadHandler {
   /** @see ThreadHandler#doFinal */
   @Override
   public void doFinal(boolean errorOccured) {
+    SessionHandler sessionHandler = null;
     try {
-      if (SessionHandler.isSessionHandlerPresent()
-          && SessionHandler.getInstance().doSessionInViewPatter()) {
+      sessionHandler = SessionHandler.isSessionHandlerPresent() ? SessionHandler.getInstance()
+          : null;
+      if (sessionHandler != null && sessionHandler.doSessionInViewPatter()) {
         // application software can force a rollback
-        if (SessionHandler.getInstance().getDoRollback()) {
-          SessionHandler.getInstance().rollback();
-        } else if (errorOccured) {
-          SessionHandler.getInstance().rollback();
-        } else if (SessionHandler.getInstance().getSession().getTransaction().isActive()) {
-          SessionHandler.getInstance().commitAndClose();
-        } else {
-          SessionHandler.getInstance().closeSession("DEFAULT");
+        if (sessionHandler.getDoRollback() || errorOccured) {
+          sessionHandler.rollback();
+        } else if (sessionHandler.getSession().getTransaction().isActive()) {
+          sessionHandler.commitAndClose();
         }
       }
     } finally {
+      try {
+        if (sessionHandler != null) {
+          sessionHandler.cleanUpSessions();
+        }
+      } catch (Exception e) {
+        log.error("Error cleaning up dal sessions", e);
+      }
       SessionHandler.deleteSessionHandler();
       // note before the code below was enabled, however for longer running transactions
       // openbravo does multiple http requests, so while the long running transaction
