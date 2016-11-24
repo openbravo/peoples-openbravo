@@ -76,6 +76,8 @@
 
       this.templatetotal = new OB.DS.HWResource(terminal.printDisplayTotalTemplate || OB.OBPOSPointOfSale.Print.DisplayTotal);
       extendHWResource(this.templatetotal, "printDisplayTotalTemplate");
+      this.templatedisplayreceipt = new OB.DS.HWResource(terminal.displayReceiptTemplate || OB.OBPOSPointOfSale.Print.DisplayReceiptTemplate);
+      extendHWResource(this.templatedisplayreceipt, "displayReceiptTemplate");
       this.templateline = new OB.DS.HWResource(terminal.printReceiptLineTemplate || OB.OBPOSPointOfSale.Print.ReceiptLineTemplate);
       extendHWResource(this.templateline, "printReceiptLineTemplate");
 
@@ -422,6 +424,10 @@
         receipt.get('canceledorder').set('negativeDocNo', negativeDocNo);
         me.print(receipt.get('canceledorder'), args);
       }
+
+      OB.POS.hwserver.print(me.templatedisplayreceipt, {
+        order: receipt
+      }, null, OB.DS.HWServer.DISPLAY);
     });
   };
 
@@ -532,6 +538,7 @@
   OB.OBPOSPointOfSale.Print.ReceiptLineTemplate = '../org.openbravo.retail.posterminal/res/printline.xml';
   OB.OBPOSPointOfSale.Print.ReceiptTemplateLayaway = '../org.openbravo.retail.posterminal/res/printlayaway.xml';
   OB.OBPOSPointOfSale.Print.DisplayTotal = '../org.openbravo.retail.posterminal/res/displaytotal.xml';
+  OB.OBPOSPointOfSale.Print.DisplayReceiptTemplate = '../org.openbravo.retail.posterminal/res/displayreceipt.xml';
   OB.OBPOSPointOfSale.Print.CashUpTemplate = '../org.openbravo.retail.posterminal/res/printcashup.xml';
   OB.OBPOSPointOfSale.Print.CashMgmTemplate = '../org.openbravo.retail.posterminal/res/printcashmgmt.xml';
   OB.OBPOSPointOfSale.Print.GoodByeTemplate = '../org.openbravo.retail.posterminal/res/goodbye.xml';
