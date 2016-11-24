@@ -390,12 +390,22 @@ public class SessionHandler implements OBNotSingleton {
   }
 
   public void commitAndClose(String pool) {
-    Check.isFalse(TriggerHandler.getInstance().isDisabled(),
-        "Triggers disabled, commit is not allowed when in triggers-disabled mode, "
-            + "call TriggerHandler.enable() before committing");
+    boolean err = true;
+    try {
+      Check.isFalse(TriggerHandler.getInstance().isDisabled(),
+          "Triggers disabled, commit is not allowed when in triggers-disabled mode, "
+              + "call TriggerHandler.enable() before committing");
 
-    checkInvariant(pool);
-    flushRemainingChanges(pool);
+      checkInvariant(pool);
+      flushRemainingChanges(pool);
+      err = false;
+    } finally {
+      if (err) {
+        // close transaction in case checks or flush failed, other case transaction is closed in
+        // commit
+        closeTransaction(pool, err);
+      }
+    }
 
     commitAndCloseNoCheck(pool);
   }
@@ -418,27 +428,33 @@ public class SessionHandler implements OBNotSingleton {
       log.error("Error while closing the connection in pool " + pool,
           DbUtility.getUnderlyingSQLException(e));
     } finally {
-      if (err && trx != null) {
-        try {
-          trx.rollback();
-        } catch (Throwable t) {
-          // ignore these exception not to hide others
-        }
-      }
-      try {
-        if (con != null && !con.isClosed()) {
-          con.close();
-        }
-      } catch (SQLException e) {
-        log.error("Error while closing the connection in pool " + pool, e);
-      }
-      closeSession(pool);
-      trxs.remove(pool);
-      connections.remove(pool);
-
-      deleteSessionHandler();
+      closeTransaction(pool, err);
     }
     log.debug("Transaction closed, session closed in pool " + pool);
+  }
+
+  private void closeTransaction(String pool, boolean err) {
+    Connection con = connections.get(pool);
+    Transaction trx = trxs.get(pool);
+    if (err && trx != null) {
+      try {
+        trx.rollback();
+      } catch (Throwable t) {
+        // ignore these exception not to hide others
+      }
+    }
+    try {
+      if (con != null && !con.isClosed()) {
+        con.close();
+      }
+    } catch (SQLException e) {
+      log.error("Error while closing the connection in pool " + pool, e);
+    }
+    closeSession(pool);
+    trxs.remove(pool);
+    connections.remove(pool);
+
+    deleteSessionHandler();
   }
 
   /**
