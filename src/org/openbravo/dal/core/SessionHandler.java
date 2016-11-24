@@ -252,12 +252,12 @@ public class SessionHandler implements OBNotSingleton {
   }
 
   void closeSession(String pool) {
-    Session s = sessions.get(pool);
-    if (s != null) {
-      if (s.isOpen()) {
-        s.close();
+    Session session = sessions.get(pool);
+    if (session != null) {
+      if (session.isOpen()) {
+        session.close();
       }
-      sessions.remove(s);
+      sessions.remove(session);
     }
   }
 
@@ -394,7 +394,7 @@ public class SessionHandler implements OBNotSingleton {
         "Triggers disabled, commit is not allowed when in triggers-disabled mode, "
             + "call TriggerHandler.enable() before committing");
 
-    checkInvariant();
+    checkInvariant(pool);
     flushRemainingChanges(pool);
 
     commitAndCloseNoCheck(pool);
@@ -402,41 +402,43 @@ public class SessionHandler implements OBNotSingleton {
 
   private void commitAndCloseNoCheck(String pool) {
     boolean err = true;
+    Connection con = connections.get(pool);
+    Transaction trx = trxs.get(pool);
     try {
-      if (connections.get(pool) == null
-          || (connections.get(pool) != null && !connections.get(pool).isClosed())) {
-        if (connections != null) {
-          connections.get(pool).setAutoCommit(false);
+      if (con == null || !con.isClosed()) {
+        if (con != null) {
+          con.setAutoCommit(false);
         }
-        if (trxs.get(pool).isActive()) {
-          trxs.get(pool).commit();
+        if (trx != null && trx.isActive()) {
+          trx.commit();
         }
       }
-      trxs.remove(pool);
       err = false;
     } catch (SQLException e) {
-      log.error("Error while closing the connection", DbUtility.getUnderlyingSQLException(e));
+      log.error("Error while closing the connection in pool " + pool,
+          DbUtility.getUnderlyingSQLException(e));
     } finally {
-      if (err) {
+      if (err && trx != null) {
         try {
-          trxs.get(pool).rollback();
-          trxs.remove(pool);
+          trx.rollback();
         } catch (Throwable t) {
           // ignore these exception not to hide others
         }
       }
       try {
-        if (connections.get(pool) != null && !connections.get(pool).isClosed()) {
-          connections.get(pool).close();
+        if (con == null || !con.isClosed()) {
+          con.close();
         }
       } catch (SQLException e) {
-        log.error("Error while closing the connection", e);
+        log.error("Error while closing the connection in pool " + pool, e);
       }
-      deleteSessionHandler();
       closeSession(pool);
+      trxs.remove(pool);
+      connections.remove(pool);
+
+      deleteSessionHandler();
     }
-    setSession(null);
-    log.debug("Transaction closed, session closed");
+    log.debug("Transaction closed, session closed in pool " + pool);
   }
 
   /**
@@ -453,8 +455,10 @@ public class SessionHandler implements OBNotSingleton {
 
     checkInvariant();
     flushRemainingChanges(pool);
-    trxs.get(pool).commit();
-    trxs.remove(pool);
+    Transaction trx = trxs.get(pool);
+    if (trx != null) {
+      trx.commit();
+    }
     trxs.put(pool, getSession(pool).beginTransaction());
     log.debug("Committed and started new transaction");
   }
@@ -484,29 +488,30 @@ public class SessionHandler implements OBNotSingleton {
   }
 
   public void rollback(String pool) {
-    log.debug("Rolling back transaction");
+    log.debug("Rolling back transaction in pool " + pool);
+    Connection con = connections.get(pool);
     try {
-      checkInvariant();
-      if (connections.get(pool) == null
-          || (connections.get(pool) != null && !connections.get(pool).isClosed())) {
+      checkInvariant(pool);
+      if (con == null || !con.isClosed()) {
         trxs.get(pool).rollback();
       }
-      trxs.remove(pool);
     } catch (SQLException e) {
-      log.error("Error while closing the connection", e);
+      log.error("Error while closing the connection in pool " + pool, e);
     } finally {
+      trxs.remove(pool);
+      connections.remove(pool);
+
       deleteSessionHandler();
       try {
-        if (connections.get(pool) != null && !connections.get(pool).isClosed()) {
-          connections.get(pool).close();
+        if (con == null || !con.isClosed()) {
+          con.close();
         }
         log.debug("Closing session");
         closeSession(pool);
       } catch (SQLException e) {
-        log.error("Error while closing the connection", e);
+        log.error("Error while closing the connection in pool " + pool, e);
       }
     }
-    setSession(null);
   }
 
   /**
