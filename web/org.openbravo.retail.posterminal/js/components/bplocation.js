@@ -112,9 +112,11 @@ enyo.kind({
     if (!status) {
       me.setShowing(status);
       me.parent.$.bplocbutton.$.bottomAddrIcon.applyStyle('display', 'none');
+      me.parent.$.bplocbutton.$.identifier.addClass('addresstext-onlyone');
     } else {
       me.setShowing(status);
       me.parent.$.bplocbutton.$.bottomAddrIcon.applyStyle('display', '');
+      me.parent.$.bplocbutton.$.identifier.removeClass('addresstext-onlyone');
     }
   },
   buttonShowing: function (bp) {

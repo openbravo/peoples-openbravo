@@ -405,11 +405,14 @@ button.btnbp:disabled {
 
 .receipt-header-location-button {
   margin-left: 0px !important;
-  max-width: 125px;
 }
 
 .receipt-customer-selector-editor {
   width: 870px !important;	
+}
+
+.addresstext-onlyone {
+  max-width: 150px !important;
 }
 
 @media (min-width: 350px) and (max-width: 470px) {
@@ -420,9 +423,6 @@ button.btnbp:disabled {
     width: 145px;
   }
   .receipt-header-customer-button {
-    max-width: 101px;
-  }
-  .receipt-header-location-button {
     max-width: 101px;
   }
   .addresstext {
@@ -442,9 +442,6 @@ button.btnbp:disabled {
   .receipt-header-customer-button {
     max-width: 126px;
   }
-  .receipt-header-location-button {
-    max-width: 126px;
-  }
   .addresstext {
     max-width: 70px;
   }
@@ -462,9 +459,6 @@ button.btnbp:disabled {
   .receipt-header-customer-button {
     max-width: 156px;
   }
-  .receipt-header-location-button {
-    max-width: 156px;
-  }
   .addresstext {
     max-width: 100px;
   }
@@ -480,9 +474,6 @@ button.btnbp:disabled {
     width: 330px;
   }
   .receipt-header-customer-button {
-    max-width: 206px;
-  }
-  .receipt-header-location-button {
     max-width: 206px;
   }
   .addresstext {
@@ -503,9 +494,6 @@ button.btnbp:disabled {
   .receipt-header-customer-button {
     max-width: 96px;
   }
-  .receipt-header-location-button {
-    max-width: 96px;
-  }
   .addresstext {
     max-width: 40px;
   }
@@ -523,9 +511,6 @@ button.btnbp:disabled {
   .receipt-header-customer-button {
     max-width: 106px;
   }
-  .receipt-header-location-button {
-    max-width: 106px;
-  }
   .addresstext {
     max-width: 50px;
   }
@@ -538,9 +523,6 @@ button.btnbp:disabled {
     width: 145px;
   }
   .receipt-header-customer-button {
-    max-width: 126px;
-  }
-  .receipt-header-location-button {
     max-width: 126px;
   }
   .addresstext {
@@ -557,9 +539,6 @@ button.btnbp:disabled {
   .receipt-header-customer-button {
     max-width: 146px;
   }
-  .receipt-header-location-button {
-    max-width: 146px;
-  }
   .addresstext {
     max-width: 90px;
   }
@@ -572,9 +551,6 @@ button.btnbp:disabled {
     width: 260px;
   }
   .receipt-header-customer-button {
-    max-width: 156px;
-  }
-  .receipt-header-location-button {
     max-width: 156px;
   }
   .addresstext {
