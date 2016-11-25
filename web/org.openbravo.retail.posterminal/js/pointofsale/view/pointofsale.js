@@ -897,9 +897,8 @@ enyo.kind({
     return true;
   },
   removePayment: function (inSender, inEvent) {
-    var me = this;
-    var voidTransaction;
-    var voidConfirmation;
+    var me = this,
+        voidTransaction, voidConfirmation;
 
     var removeTransaction = function () {
         //      if (!me.model.get('multiOrders').get('isMultiOrders')) {
@@ -929,10 +928,7 @@ enyo.kind({
           }
         });
 
-
-
         voidTransaction(function (hasError, error) {
-
           me.doHidePopup({
             popup: 'modalpaymentvoid'
           });
@@ -958,6 +954,10 @@ enyo.kind({
       voidConfirmation = inEvent.payment.get('paymentData').voidConfirmation;
 
       if (voidConfirmation === false) {
+        var paymentProvider = eval(OB.MobileApp.model.paymentnames[inEvent.payment.get('kind')].paymentMethod.paymentProvider);
+        if (!voidTransaction && paymentProvider && paymentProvider.prototype.voidTransaction && paymentProvider.prototype.voidTransaction instanceof Function) {
+          voidTransaction = paymentProvider.prototype.voidTransaction;
+        }
         if (voidTransaction !== undefined) {
           callVoidTransaction();
         } else {
