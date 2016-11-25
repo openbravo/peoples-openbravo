@@ -34,6 +34,9 @@ enyo.kind({
     this.$.body.$.editcustomers_impl.setCustomerAddr(this.args.businessPartner, this.args.bPLocation);
     var editCustomerHeader = this.$.body.$.editcustomers_impl.$.bodyheader.$.editCustomerHeader;
 
+
+    editCustomerHeader.$.assigncustomeraddrtoticketmenu.setCustomerAddr(this.args.businessPartner, this.args.bPLocation, this.args.target);
+
     editCustomerHeader.$.editticketcustomeraddr.setCustomerAddr(this.args.businessPartner, this.args.bPLocation);
     editCustomerHeader.$.editticketcustomeraddr.navigationPath = this.args.navigationPath;
     editCustomerHeader.$.editticketcustomeraddr.target = this.args.target;
@@ -50,6 +53,12 @@ enyo.kind({
     editCustomerHeader.$.assigncustomeraddrtoticketship.navigationPath = this.args.navigationPath;
     editCustomerHeader.$.assigncustomeraddrtoticketship.target = this.args.target;
 
+    var invship = this.args.bPLocation.get('isBillTo') && this.args.bPLocation.get('isShipTo');
+    editCustomerHeader.$.assigncustomeraddrtoticketmenu.setShowing(!this.args.bPLocation.get('onlyOneAddress') && invship);
+    editCustomerHeader.$.assigncustomeraddrtoticket.setShowing(this.args.bPLocation.get('onlyOneAddress') && invship);
+    editCustomerHeader.$.assigncustomeraddrtoticketinv.setShowing(!invship && this.args.bPLocation.get('isBillTo'));
+    editCustomerHeader.$.assigncustomeraddrtoticketship.setShowing(!invship && this.args.bPLocation.get('isShipTo'));
+
     return true;
   },
   executeOnHide: function () {
@@ -64,6 +73,66 @@ enyo.kind({
         }
       });
     }
+  }
+});
+
+enyo.kind({
+  kind: 'onyx.MenuDecorator',
+  name: 'OB.OBPOSPointOfSale.UI.customeraddr.assigncustomeraddrtoticketmenu',
+  handlers: {
+    onSelect: 'itemSelected'
+  },
+  events: {
+    onPressedButton: '',
+    onChangeBusinessPartner: ''
+  },
+  components: [{
+    kind: 'OB.UI.Button',
+    style: 'margin: 0px 0px 8px 5px;',
+    classes: 'btnlink-yellow btnlink btnlink-small',
+    components: [{
+      name: 'identifier'
+    }, {
+      classes: 'addressmenuselector'
+    }, {
+      style: 'clear: both;'
+    }]
+  }, {
+    kind: 'OB.UI.ListContextDynamicMenu',
+    name: 'menu'
+  }],
+  itemSelected: function (sender, event) {
+    event.originator.selectItem(this.customerAddr);
+    this.doPressedButton();
+    return true;
+  },
+  setCustomerAddr: function (customer, customerAddr, target) {
+    this.bPartner = customer;
+    this.customerAddr = customerAddr;
+    this.dialog = {
+      menuSelected: false,
+      target: target,
+      component: this
+    };
+  },
+  initComponents: function () {
+    this.inherited(arguments);
+    this.$.identifier.setContent(OB.I18N.getLabel('OBPOS_LblAssignAddressMenu'));
+
+    var menuOptions = [];
+    menuOptions.push({
+      kind: 'OB.UI.BPLocAssignToReceiptContextMenuItem',
+      permission: 'OBPOS_retail.assignToReceiptAddress'
+    });
+    menuOptions.push({
+      kind: 'OB.UI.BPLocAssignToReceiptShippingContextMenuItem',
+      permission: 'OBPOS_retail.assignToReceiptShippingAddress'
+    });
+    menuOptions.push({
+      kind: 'OB.UI.BPLocAssignToReceiptInvoicingContextMenuItem',
+      permission: 'OBPOS_retail.assignToReceiptInvoicingAddress'
+    });
+    this.$.menu.setItems(menuOptions);
   }
 });
 
@@ -246,6 +315,11 @@ enyo.kind({
       style: 'display: table-cell;',
       components: [{
         kind: 'OB.OBPOSPointOfSale.UI.customeraddr.editticketcustomeraddr'
+      }]
+    }, {
+      style: 'display: table-cell;',
+      components: [{
+        kind: 'OB.OBPOSPointOfSale.UI.customeraddr.assigncustomeraddrtoticketmenu'
       }]
     }, {
       style: 'display: table-cell;',

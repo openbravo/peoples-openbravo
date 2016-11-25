@@ -223,25 +223,6 @@
   }
 }
 
-.onyx-menu-item {
-  cursor: pointer;
-  user-select: none;
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-}
-
-.onyx-menu-item:hover {
-  background-color: #e2e2e2 !important;
-}
-
-.onyx-toolbar-inline > * {
-  margin: 0px 6px !important;
-}
-
-.onyx-menu, .onyx.onyx-menu {
-  z-index: 1000 !important; 
-}
-
 .paymentmethoditemstext {
   font-family: 'Helvetica Neue', 'Nimbus Sans L', Arial, sans-serif;
   font-size: 16px;
@@ -354,6 +335,16 @@ button.btnbp:disabled {
   background-position: center 0px;
   width: 28px;
   height: 24px;
+}
+
+.addressmenuselector {
+  background-image: url('./../../org.openbravo.retail.posterminal/img/iconDownArrow.png');
+  background-repeat: no-repeat;
+  background-size: 14px 9px;
+  background-position: 21px 6px;
+  width: 35px;
+  height: 24px;
+  float: right;
 }
 
 .fix-bgposition-y {

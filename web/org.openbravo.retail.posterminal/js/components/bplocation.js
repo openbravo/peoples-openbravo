@@ -439,7 +439,9 @@ enyo.kind({
   selectItem: function (bploc) {
     var contextMenu = this.owner.owner;
     contextMenu.dialog.menuSelected = true;
-    contextMenu.dialog.owner.owner.selectorHide = true;
+    if (contextMenu.dialog.owner) {
+      contextMenu.dialog.owner.owner.selectorHide = true;
+    }
     bploc.set('ignoreSetBPLoc', true, {
       silent: true
     });
@@ -465,7 +467,7 @@ enyo.kind({
       dataBps.set('shipRegionId', bploc.get('regionId'));
       dataBps.set('shipCountryId', bploc.get('countryId'));
 
-      contextMenu.dialog.doChangeBusinessPartner({
+      contextMenu.dialog.component.doChangeBusinessPartner({
         businessPartner: dataBps,
         target: contextMenu.dialog.target
       });
@@ -486,7 +488,9 @@ enyo.kind({
   selectItem: function (bploc) {
     var contextMenu = this.owner.owner;
     contextMenu.dialog.menuSelected = true;
-    contextMenu.dialog.owner.owner.selectorHide = true;
+    if (contextMenu.dialog.owner) {
+      contextMenu.dialog.owner.owner.selectorHide = true;
+    }
     bploc.set('ignoreSetBPLoc', true, {
       silent: true
     });
@@ -507,7 +511,7 @@ enyo.kind({
       dataBps.set('shipCountryId', bploc.get('countryId'));
 
       //Keep the other address:
-      if (!contextMenu.dialog.owner.owner.args.manageAddress && !contextMenu.bPartner.get('locId')) {
+      if (!contextMenu.dialog.manageAddress && !contextMenu.bPartner.get('locId')) {
         OB.UTIL.showError(OB.I18N.getLabel('OBPOS_BPartnerNoInvoiceAddress', [contextMenu.bPartner.get('_identifier')]));
         return;
       }
@@ -517,7 +521,7 @@ enyo.kind({
       dataBps.set('cityName', contextMenu.bPartner.get('cityName'));
       dataBps.set('countryName', contextMenu.bPartner.get('countryName'));
 
-      contextMenu.dialog.doChangeBusinessPartner({
+      contextMenu.dialog.component.doChangeBusinessPartner({
         businessPartner: dataBps,
         target: contextMenu.dialog.target
       });
@@ -539,7 +543,9 @@ enyo.kind({
   selectItem: function (bploc) {
     var contextMenu = this.owner.owner;
     contextMenu.dialog.menuSelected = true;
-    contextMenu.dialog.owner.owner.selectorHide = true;
+    if (contextMenu.dialog.owner) {
+      contextMenu.dialog.owner.owner.selectorHide = true;
+    }
     bploc.set('ignoreSetBPLoc', true, {
       silent: true
     });
@@ -557,7 +563,7 @@ enyo.kind({
       dataBps.set('countryName', bploc.get('countryName'));
 
       // Keep the other address:
-      if (!contextMenu.dialog.owner.owner.args.manageAddress && !contextMenu.bPartner.get('shipLocId')) {
+      if (!contextMenu.dialog.manageAddress && !contextMenu.bPartner.get('shipLocId')) {
         OB.UTIL.showError(OB.I18N.getLabel('OBPOS_BPartnerNoShippingAddress', [contextMenu.bPartner.get('_identifier')]));
         return;
       }
@@ -569,7 +575,7 @@ enyo.kind({
         dataBps.set('shipCountryName', contextMenu.bPartner.get('shipCountryName'));
       }
 
-      contextMenu.dialog.doChangeBusinessPartner({
+      contextMenu.dialog.component.doChangeBusinessPartner({
         businessPartner: dataBps,
         target: contextMenu.dialog.target
       });
@@ -680,6 +686,7 @@ enyo.kind({
     } else {
       this.$.btnContextMenu.setModel(this.model);
       this.$.btnContextMenu.dialog = this.owner.owner.owner.owner;
+      this.$.btnContextMenu.dialog.component = this.owner.owner.owner.owner;
       this.$.btnContextMenu.dialog.menuSelected = false;
       this.$.btnContextMenu.bPartner = new OB.Model.BusinessPartner(this.owner.owner.owner.owner.bPartner);
     }
