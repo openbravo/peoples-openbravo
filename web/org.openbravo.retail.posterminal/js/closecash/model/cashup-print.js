@@ -18,22 +18,6 @@
         OB.POS.navigate('retail.pointofsale');
         OB.MobileApp.view.$.confirmationContainer.setAttribute('openedPopup', '');
       };
-      var me = this;
-      this.cashUpSuccess = function () {
-        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_LblGoodjob'), OB.I18N.getLabel('OBPOS_FinishCloseDialog'), [{
-          label: OB.I18N.getLabel('OBMOBC_LblOk'),
-          isConfirmButton: true,
-          action: function () {
-            me.cancelOrDismiss();
-            return true;
-          }
-        }], {
-          autoDismiss: false,
-          onHideFunction: function () {
-            me.cancelOrDismiss();
-          }
-        });
-      };
       };
 
   PrintCashUp.prototype.print = function (report, sumary, closed) {
@@ -53,29 +37,14 @@
             return true;
             };
         var cancelfunc = function () {
-            if (closed) {
-              me.cashUpSuccess();
-            } else {
-              OB.POS.navigate('retail.pointofsale');
-              OB.MobileApp.view.$.confirmationContainer.setAttribute('openedPopup', '');
-            }
+            me.cancelOrDismiss();
             return true;
             };
         var hidefunc = function () {
-            if (closed) {
-              me.cashUpSuccess();
-            } else {
-              OB.POS.navigate('retail.pointofsale');
-              OB.MobileApp.view.$.confirmationContainer.setAttribute('openedPopup', '');
-            }
+            me.cancelOrDismiss();
             return true;
             };
         OB.OBPOS.showSelectPrinterDialog(successfunc, hidefunc, hidefunc, false, 'OBPOS_MsgPrintAgainCashUp');
-      } else {
-        if (OB.MobileApp.view.$.confirmationContainer.getCurrentPopup().header !== OB.I18N.getLabel('OBPOS_LblGoodjob')) {
-          // Only display the good job message if there are no components displayed
-          me.cashUpSuccess();
-        }
       }
     });
   };
