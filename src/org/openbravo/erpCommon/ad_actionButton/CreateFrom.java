@@ -760,10 +760,38 @@ public class CreateFrom extends HttpSecureAppServlet {
       }
     }
 
-    if (isSOTrx.equals("N")) {
+    final boolean strUomPreference = UOMUtil.isUomManagementEnabled();
+    if (isSOTrx.equals("Y")) {
+      if (strUomPreference) {
+        xmlDocument.setParameter("uompreference", "");
+        for (int i = 0; i < data.length; i++) {
+          // Obtain the specific units for each product
+          data[i].haveuompreference = "";
+          if (data[i].cAum.isEmpty() && data[i].aumqty.isEmpty()) {
+            FieldProvider[] defaultAumData = UOMUtil.selectDefaultAUM(data[i].mProductId,
+                data[i].cDoctypeId);
+            String defaultAum = (defaultAumData.length > 0) ? defaultAumData[0]
+                .getField(UOMUtil.FIELD_PROVIDER_ID) : data[i].cUomId;
+            data[i].cAum = defaultAum;
+            data[i].aumname = (defaultAumData.length > 0) ? defaultAumData[0]
+                .getField(UOMUtil.FIELD_PROVIDER_NAME) : data[i].uomsymbol;
+            data[i].mProductUomId = null;
+            if (!defaultAum.equals(data[i].cUomId)) {
+              data[i].aumqty = UOMUtil.getConvertedAumQty(data[i].mProductId,
+                  new BigDecimal(data[i].qty), defaultAum).toString();
+            } else {
+              data[i].aumqty = data[i].qty;
+            }
+          }
+        }
+      } else {
+        xmlDocument.setParameter("uompreference", "display:none;");
+        for (int i = 0; i < data.length; i++) {
+          data[i].haveuompreference = "display:none;";
+        }
+      }
+    } else {
       final FieldProvider[][] dataUOM = new FieldProvider[data.length][];
-
-      final boolean strUomPreference = UOMUtil.isUomManagementEnabled();
       boolean strHaveSecUom = false;
       boolean strHaveAum = false;
       for (int i = 0; i < data.length; i++) {

@@ -53,6 +53,9 @@
   <PARAMETER id="messageBoxID" name="messageType" attribute="class" replace="yy" default="HIDDEN"/>
   <PARAMETER id="messageBoxIDTitle" name="messageTitle" default=""/>
   <PARAMETER id="messageBoxIDMessage" name="messageMessage" default=""/>
+  
+  <PARAMETER id="headerAumQty" name="uompreference" attribute="style" replace="xx"/>
+  <PARAMETER id="headerAum" name="uompreference" attribute="style" replace="xx"/>
 
     <PARAMETER id="param2" name="param2" default="2"/>
     <PARAMETER id="paramCheck" name="check" default="N"/> 
@@ -68,6 +71,11 @@
         <FIELD id="fieldBomParent" attribute="name" replace="xx">bom_parent_id</FIELD>
         <FIELD id="fieldQuantity" format="euroRelation">qty</FIELD>
         <FIELD id="fieldCuomid" replaceCharacters="html">uomsymbol</FIELD>
+        <FIELD id="fieldAUMQuantity" format="euroRelation">aumqty</FIELD>
+        <FIELD id="fieldAUMQuantity" attribute="style" replace="xx">haveuompreference</FIELD>
+        <FIELD id="fieldAUM" replaceCharacters="html">aumname</FIELD>
+        <FIELD id="fieldAUM" attribute="style" replace="xx">haveuompreference</FIELD>
+        
         <FIELD id="fieldMproductid" replaceCharacters="html">relationName</FIELD>
         <FIELD id="fieldPurchaseorder">line</FIELD>
         <SECTION id="sectionDetail"/>  
