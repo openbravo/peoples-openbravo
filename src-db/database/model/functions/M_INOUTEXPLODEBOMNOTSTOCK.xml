@@ -35,10 +35,10 @@
   v_Line NUMBER:=0;
   v_ResultStr VARCHAR2(2000):='';
   v_result NUMBER:= 1;  
-    v_aum  VARCHAR2(32);
+  v_aum C_ORDERLINE.C_AUM%TYPE;
   v_aumqty NUMBER;
   v_count NUMBER;
-  v_uom_preference CHAR(1);
+  v_uom_preference AD_PREFERENCE.VALUE%TYPE;
   
   BEGIN
   IF (p_PInstance_ID IS NOT NULL) THEN
@@ -78,6 +78,15 @@
     END IF;
     
     v_ResultStr:='Exploding';
+
+    -- Get AUM
+    v_uom_preference := 'N';      
+    BEGIN
+      v_uom_preference := AD_GET_PREFERENCE_VALUE('UomManagement', 'Y', NULL, v_AD_Org_ID, v_ADUserId, NULL, NULL);
+    EXCEPTION
+      WHEN OTHERS THEN
+      -- Nothing to do, v_uom_preference = 'N'
+    END;
  
     -- Replace Lines
     v_ResultStr:='Inserting lines';
@@ -108,16 +117,7 @@
          ORDER BY Line
          )
       LOOP
-
-        -- Get AUM
-        SELECT COUNT(1) INTO v_count
-        FROM ad_preference
-        WHERE property = 'UomManagement';
-      
-        IF (v_count > 0) THEN
-          v_uom_preference := AD_GET_PREFERENCE_VALUE('UomManagement', 'Y', CUR_BOM_Line.ad_client_id, CUR_BOM_Line.ad_org_id, CUR_BOM_Line.createdby, NULL, NULL);
-        END IF;
-      
+  
         v_Aum := NULL;
         v_AumQty := NULL;
         IF (v_uom_preference = 'Y') THEN
