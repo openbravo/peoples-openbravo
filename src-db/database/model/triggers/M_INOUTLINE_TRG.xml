@@ -259,6 +259,9 @@ BEGIN
   END IF;
 
   IF (INSERTING OR UPDATING) THEN
+   IF (:NEW.M_PRODUCT_ID IS NOT NULL AND :NEW.C_AUM IS NOT NULL AND :NEW.AUMQTY IS NOT NULL AND :NEW.M_PRODUCT_UOM_ID IS NOT NULL AND :NEW.QUANTITYORDER IS NOT NULL) THEN
+     RAISE_APPLICATION_ERROR(-20000, '@CannotUseAUMandSecondUOM@');
+   END IF;
    --Does not allow to change the attribute set value
    -- for products which attribute set value type is Fixed
    IF (:NEW.M_PRODUCT_ID IS NOT NULL AND COALESCE(:new.M_AttributeSetInstance_ID,'0')!='0') THEN
