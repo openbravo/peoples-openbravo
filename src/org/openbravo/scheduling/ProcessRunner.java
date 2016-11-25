@@ -27,6 +27,7 @@ import static org.openbravo.scheduling.Process.SUCCESS;
 import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
+import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 
@@ -55,7 +56,7 @@ public class ProcessRunner {
 
     Process process = null;
     try {
-      process = bundle.getProcessClass().newInstance();
+      process = WeldUtils.getInstanceFromStaticBeanManager(bundle.getProcessClass());
 
     } catch (final Exception e) {
       log.error(e.getMessage(), e);
