@@ -963,6 +963,12 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
         context: me,
         caller: caller
       }, function () {
+        me.on('approvalChecked', function (event) {
+          me.off('approvalChecked');
+          if (event.approved) {
+            me.trigger('showPaymentTab');
+          }
+        }, this);
         me.checkPaymentApproval(caller);
       });
     });
