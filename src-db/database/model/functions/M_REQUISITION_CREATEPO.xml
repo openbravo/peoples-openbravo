@@ -62,10 +62,9 @@
   p_Org_ID VARCHAR2(32);
   p_Warehouse_ID VARCHAR2(32);
 
-  v_UomManagement_Pref VARCHAR2(60);
-  v_Aum VARCHAR2(32);
+  v_Aum C_ORDERLINE.C_AUM%TYPE;
   v_AumQty NUMBER;
-  v_uom_preference VARCHAR(1);
+  v_uom_preference AD_PREFERENCE.VALUE%TYPE;
   v_count NUMBER;
   
   --  Parameter
@@ -283,12 +282,14 @@ BEGIN
         END IF;
       END IF;
 
-      SELECT COUNT(1) INTO v_count
-      FROM ad_preference
-      WHERE property = 'UomManagement';
-      IF (v_count > 0) THEN
-        v_uom_preference := AD_GET_PREFERENCE_VALUE('UomManagement', 'Y', v_client_ID, p_org_ID, v_User_ID, NULL, NULL);
-      END IF;
+      -- Get AUM
+      v_uom_preference := 'N';      
+      BEGIN
+        v_uom_preference := AD_GET_PREFERENCE_VALUE('UomManagement', 'Y', NULL, v_AD_Org_ID, v_ADUserId, NULL, NULL);
+      EXCEPTION
+        WHEN OTHERS THEN
+        -- Nothing to do, v_uom_preference = 'N'
+      END;
 
       v_Aum := NULL;
       v_AumQty := NULL;
