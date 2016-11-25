@@ -1870,8 +1870,10 @@ public class CreateFrom extends HttpSecureAppServlet {
             String strAumQty = "";
             if (UOMUtil.isUomManagementEnabled() && data[i].mProductUomId.isEmpty()) {
               try {
-                strAumQty = vars.getNumericParameter("inpaumqty" + strLineId);
-                BigDecimal qtyAum = new BigDecimal(strAumQty);
+                BigDecimal qtyAum = new BigDecimal(
+                    vars.getNumericParameter("inpaumqty" + strLineId));
+                strAumQty = qtyAum.toString();
+                strMovementqty = qtyAum.toString();
                 if (data[i].cAum.isEmpty()) {
                   FieldProvider[] defaultAumData = UOMUtil.selectDefaultAUM(data[i].mProductId,
                       data[i].cDoctypeId);
@@ -1879,13 +1881,10 @@ public class CreateFrom extends HttpSecureAppServlet {
                       .getField(UOMUtil.FIELD_PROVIDER_ID) : data[i].cUomId;
                 }
                 if (!data[i].cUomId.equals(data[i].cAum)) {
-                  strMovementqty = String.valueOf(UOMUtil.getConvertedQty(data[i].mProductId,
-                      qtyAum, data[i].cAum));
-                } else {
-                  strMovementqty = qtyAum.toString();
-                }                
+                  strMovementqty = UOMUtil
+                      .getConvertedQty(data[i].mProductId, qtyAum, data[i].cAum).toString();
+                }
               } catch (NumberFormatException e) {
-                log4j.debug(e.getMessage());
               }
             } else {
               strMovementqty = vars.getRequiredNumericParameter("inpmovementqty" + strLineId);

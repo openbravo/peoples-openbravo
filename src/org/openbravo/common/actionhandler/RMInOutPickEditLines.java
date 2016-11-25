@@ -131,10 +131,10 @@ public class RMInOutPickEditLines extends BaseProcessActionHandler {
       if (UOMUtil.isUomManagementEnabled()) {
         newInOutLine.setOperativeUOM(OBDal.getInstance().get(UOM.class,
             selectedLine.getString("alternativeUOM")));
-        newInOutLine.setOperativeQuantity(qtyReceived);
+        newInOutLine.setOperativeQuantity(qtyReceived.negate());
         if (selectedLine.getString("alternativeUOM").equals(selectedLine.getString("returnedUOM"))) {
-          qtyReceived = UOMUtil.getConvertedQty(selectedLine.getString("product"),
-              qtyReceived, selectedLine.getString("alternativeUOM"));
+          qtyReceived = UOMUtil.getConvertedQty(selectedLine.getString("product"), qtyReceived,
+              selectedLine.getString("alternativeUOM"));
         }
       }
       newInOutLine.setMovementQuantity(qtyReceived.negate());

@@ -182,7 +182,9 @@ public class SRMOPickEditLines extends BaseProcessActionHandler {
       newOrderLine.setAttributeSetValue(asi);
       newOrderLine.setUOM(uom);
       newOrderLine.setOperativeUOM(shipmentLine.getOperativeUOM());
-      newOrderLine.setOperativeQuantity(shipmentLine.getOperativeQuantity());
+      newOrderLine
+          .setOperativeQuantity(shipmentLine.getOperativeQuantity() == null ? BigDecimal.ZERO
+              : shipmentLine.getOperativeQuantity().negate());
 
       BigDecimal qtyReturned = new BigDecimal(selectedLine.getString("returned")).negate();
 
@@ -203,7 +205,8 @@ public class SRMOPickEditLines extends BaseProcessActionHandler {
           qtyReturned = UOMUtil.getConvertedQty(shipmentLine.getProduct().getId(),
               new BigDecimal(selectedLine.getString("returned")), aum.getId()).negate();
         }
-        newOrderLine.setOperativeQuantity(new BigDecimal(selectedLine.getString("returned")));
+        newOrderLine.setOperativeQuantity(new BigDecimal(selectedLine.getString("returned"))
+            .negate());
       }
 
       // Ordered Quantity = returned quantity.

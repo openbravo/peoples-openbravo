@@ -138,7 +138,7 @@ public class RMShipmentPickEditLines extends BaseProcessActionHandler {
       if (UOMUtil.isUomManagementEnabled()) {
         newInOutLine.setOperativeUOM(OBDal.getInstance().get(UOM.class,
             selectedLine.getString("returnedUOM")));
-        newInOutLine.setOperativeQuantity(qtyReceived);
+        newInOutLine.setOperativeQuantity(qtyReceived.negate());
         if (selectedLine.getString("alternativeUOM").equals(selectedLine.getString("returnedUOM"))
             && !selectedLine.getString("alternativeUOM").equals(selectedLine.getString("uOM"))) {
           qtyReceived = UOMUtil.getConvertedQty(selectedLine.getString("product"), qtyReceived,
