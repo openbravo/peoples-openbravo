@@ -481,8 +481,8 @@
           line.set({
             net: OB.UTIL.getFirstValidValue([OB.DEC.toNumber(line.get('discountedNet')), line.get('net'), OB.DEC.div(gross, line.get('linerate'))]),
             pricenet: line.get('qty') !== 0 ? (line.get('discountedNet') ? OB.DEC.div(line.get('discountedNet'), line.get('qty')) : OB.DEC.div(OB.DEC.div(gross, line.get('linerate')), line.get('qty'))) : 0,
-            listPrice: OB.DEC.div(grossListPrice, line.get('linerate')),
-            standardPrice: OB.DEC.div((grossListPrice || price), line.get('linerate')),
+            listPrice: 0,
+            standardPrice: 0,
             grossListPrice: grossListPrice,
             grossUnitPrice: price,
             lineGrossAmount: gross
