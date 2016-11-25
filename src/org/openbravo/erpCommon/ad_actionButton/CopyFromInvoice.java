@@ -112,6 +112,7 @@ public class CopyFromInvoice extends HttpSecureAppServlet {
         myError.setMessage(OBMessageUtils.messageBD("RecordsCopied") + " " + i);
         return myError;
       }
+      boolean isUomManagementEnabled = UOMUtil.isUomManagementEnabled();
       for (i = 0; i < data.length; i++) {
         String strSequence = SequenceIdData.getUUID();
         try {
@@ -134,16 +135,15 @@ public class CopyFromInvoice extends HttpSecureAppServlet {
           String strWharehouse = Utility.getContext(this, vars, "#M_Warehouse_ID", strWindowId);
           String strIsSOTrx = Utility.getContext(this, vars, "isSOTrx", strWindowId);
 
-          if (UOMUtil.isUomManagementEnabled() && data[i].mProductUomId.isEmpty()) {
-            if (data[i].cAum.isEmpty() && data[i].aumqty.isEmpty()) {
-              String defaultAum = UOMUtil.getDefaultAUMForDocument(data[i].productId, invToCopy
-                  .getTransactionDocument().getId());
-              data[i].aumqty = data[i].qtyinvoiced;
-              data[i].cAum = defaultAum;
-              if (!defaultAum.equals(data[i].cUomId)) {
-                data[i].qtyinvoiced = UOMUtil.getConvertedQty(data[i].productId,
-                    new BigDecimal(data[i].aumqty), defaultAum).toString();
-              }
+          if (isUomManagementEnabled && data[i].mProductUomId.isEmpty() && data[i].cAum.isEmpty()
+              && data[i].aumqty.isEmpty()) {
+            String defaultAum = UOMUtil.getDefaultAUMForDocument(data[i].productId, invToCopy
+                .getTransactionDocument().getId());
+            data[i].aumqty = data[i].qtyinvoiced;
+            data[i].cAum = defaultAum;
+            if (!defaultAum.equals(data[i].cUomId)) {
+              data[i].qtyinvoiced = UOMUtil.getConvertedQty(data[i].productId,
+                  new BigDecimal(data[i].aumqty), defaultAum).toString();
             }
           }
 
