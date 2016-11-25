@@ -512,6 +512,7 @@ public class CostingMigrationProcess implements Process {
     try {
       while (icls.next()) {
         InventoryCountLine icl = (InventoryCountLine) icls.get(0);
+        OBDal.getInstance().refresh(icl);
         if (!productId.equals(icl.getProduct().getId())) {
           productId = icl.getProduct().getId();
           HashMap<String, BigDecimal> stock = getCurrentValuedStock(productId, curId, orgs, orgId);
