@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2015 Openbravo SLU
+ * All portions are Copyright (C) 2011-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -360,7 +360,7 @@ isc.OBFKFilterTextItem.addProperties({
 
     function cleanOrCriterion() {
       if (isInPickAndExecuteGrid() && gridCriteria._OrExpression) {
-        //we need to delete _OrExpression parameter in a P&E grid regarding avoid include selection into criteria.
+        // we're in a P&E grid, _OrExpression parameter should also be removed as it is used as part of the selection criteria
         if (gridCriteria.criteria.length > 0) {
           gridCriteria = {
             operator: 'and',
