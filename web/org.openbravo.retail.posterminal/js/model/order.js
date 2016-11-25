@@ -4081,6 +4081,14 @@
 
     canAddAsServices: function (model, product, callback, scope) {
       if (product.get('productType') === 'S') {
+        // do not allow to add not linked services to non editable orders
+        if (product.get('isLinkedToProduct') === false && model.get('order').get('isEditable') === false) {
+          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_modalNoEditableHeader'), OB.I18N.getLabel('OBPOS_modalNoEditableBody'), [{
+            label: OB.I18N.getLabel('OBMOBC_LblOk')
+          }]);
+          callback.call(scope, 'NOT_ALLOW');
+          return;
+        }
         if (!OB.UTIL.isNullOrUndefined(product.get('allowDeferredSell')) && product.get('allowDeferredSell')) {
           if (model.get('order') && model.get('order').get('isQuotation') && model.get('order').get('isEditable') === false) {
             // Not allow deferred sell in quotation under evaluation
