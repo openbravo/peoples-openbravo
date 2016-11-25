@@ -264,6 +264,15 @@
     },
     printForeignAmount: function () {
       return '(' + OB.I18N.formatCurrency(this.get('amount')) + ' ' + this.get('isocode') + ')';
+    },
+    printAmountWithSignum: function () {
+      var paidReturn = this.get('isPaid') && (this.get('orderGross') < 0);
+      // if the ticket is a paid return, new payments must be displayed in negative
+      if (this.get('rate')) {
+        return OB.I18N.formatCurrency(paidReturn ? OB.DEC.mul(OB.DEC.abs(this.get('origAmount') || OB.DEC.mul(this.get('amount'), this.get('rate'))), -1) : this.printAmount());
+      } else {
+        return OB.I18N.formatCurrency(paidReturn ? OB.DEC.mul(OB.DEC.abs(this.get('amount')), -1) : this.printAmount());
+      }
     }
   });
 
@@ -789,15 +798,19 @@
       return this.get('payment');
     },
 
+    getCredit: function () {
+      return this.get('creditAmount');
+    },
+
     getChange: function () {
       return this.get('change');
     },
 
     getPending: function () {
       if (_.isUndefined(this.get('paidInNegativeStatusAmt'))) {
-        return OB.DEC.sub(OB.DEC.abs(this.getTotal()), this.getPayment());
+        return OB.DEC.sub(OB.DEC.abs(OB.DEC.sub(this.getTotal(), this.getCredit())), this.getPayment());
       } else {
-        return OB.DEC.abs(OB.DEC.sub(OB.DEC.abs(this.getTotal()), this.get('paidInNegativeStatusAmt')));
+        return OB.DEC.abs(OB.DEC.sub(OB.DEC.abs(OB.DEC.sub(this.getTotal(), this.getCredit())), this.get('paidInNegativeStatusAmt')));
       }
     },
 
@@ -812,7 +825,10 @@
     getPaymentStatus: function () {
       var total = OB.DEC.abs(this.getTotal()),
           pay = this.getPayment(),
+          credit = this.getCredit(),
+          payAndCredit = OB.DEC.add(pay, credit),
           isReturn = true,
+          isReversal = false,
           processedPaymentsAmount = OB.DEC.Zero,
           paymentsAmount = OB.DEC.Zero,
           isNegative, paidInNegativeStatus, done, pending, overpayment, totalToReturn, pendingAmt;
@@ -829,7 +845,12 @@
         } else {
           paymentsAmount = OB.DEC.add(paymentsAmount, payment.get('origAmount'));
         }
+        if (payment.get('reversedPaymentId') && !payment.get('isPrePayment')) {
+          isReversal = true;
+        }
       });
+      payAndCredit = (this.get('gross') < 0 || (this.get('gross') > 0 && this.get('orderType') === 3)) ? OB.DEC.abs(payAndCredit) : payAndCredit;
+      processedPaymentsAmount = OB.DEC.add(processedPaymentsAmount, credit);
 
       isNegative = this.get('gross') < 0 || (this.get('gross') > 0 && this.get('orderType') === 3 && (!this.get('isPartiallyDelivered') || (this.get('isPartiallyDelivered') && this.get('isDeliveredGreaterThanGross'))));
       // Check if the total amount is lower than the already paid (processed)
@@ -841,10 +862,10 @@
 
       if (_.isUndefined(paidInNegativeStatus)) {
         this.unset('paidInNegativeStatusAmt');
-        done = this.get('lines').length > 0 && OB.DEC.compare(OB.DEC.sub(pay, total)) >= 0;
-        pending = OB.DEC.compare(OB.DEC.sub(pay, total)) >= 0 ? OB.I18N.formatCurrency(OB.DEC.Zero) : OB.I18N.formatCurrency(OB.DEC.sub(total, pay));
-        overpayment = OB.DEC.compare(OB.DEC.sub(pay, total)) > 0 ? OB.I18N.formatCurrency(OB.DEC.sub(pay, total)) : null;
-        pendingAmt = OB.DEC.compare(OB.DEC.sub(pay, total)) >= 0 ? OB.DEC.Zero : OB.DEC.sub(total, pay);
+        done = this.get('lines').length > 0 && OB.DEC.compare(OB.DEC.sub(payAndCredit, total)) >= 0;
+        pending = OB.DEC.compare(OB.DEC.sub(payAndCredit, total)) >= 0 ? OB.I18N.formatCurrency(OB.DEC.Zero) : OB.I18N.formatCurrency(OB.DEC.sub(total, payAndCredit));
+        overpayment = OB.DEC.compare(OB.DEC.sub(payAndCredit, total)) > 0 ? OB.I18N.formatCurrency(OB.DEC.sub(payAndCredit, total)) : null;
+        pendingAmt = OB.DEC.compare(OB.DEC.sub(payAndCredit, total)) >= 0 ? OB.DEC.Zero : OB.DEC.sub(total, payAndCredit);
       } else {
         this.set('paidInNegativeStatusAmt', paidInNegativeStatus);
         done = this.get('lines').length > 0 && OB.DEC.compare(OB.DEC.sub(paymentsAmount, totalToReturn)) >= 0;
@@ -862,9 +883,26 @@
         'isReturn': isReturn,
         'isNegative': isNegative,
         'changeAmt': this.getChange(),
-        'pendingAmt': OB.DEC.compare(OB.DEC.sub(pay, total)) >= 0 ? OB.DEC.Zero : OB.DEC.sub(total, pay),
-        'payments': this.get('payments')
+        'pendingAmt': OB.DEC.compare(OB.DEC.sub(payAndCredit, total)) >= 0 ? OB.DEC.Zero : OB.DEC.sub(total, payAndCredit),
+        'payments': this.get('payments'),
+        'isReversal': isReversal
       };
+    },
+
+    // returns the quantity amount of the synchronized payments
+    getPrePaymentQty: function () {
+      return _.reduce(_.filter(this.get('payments').models, function (payment) {
+        return payment.get('isPrePayment');
+      }), function (memo, pymnt) {
+        return OB.DEC.add(memo, pymnt.get('origAmount'));
+      }, OB.DEC.Zero);
+    },
+
+    // returns true if there is any reversal payment that is not synchronized
+    isNewReversed: function () {
+      return _.filter(this.get('payments').models, function (payment) {
+        return !payment.get('isPrePayment') && payment.get('isReversePayment');
+      }).length > 0;
     },
 
     // returns true if the order is a Layaway, otherwise false
@@ -924,6 +962,8 @@
       this.set('print', true);
       this.set('sendEmail', false);
       this.set('isPaid', false);
+      this.set('creditAmount', OB.DEC.Zero);
+      this.set('paidPartiallyOnCredit', false);
       this.set('paidOnCredit', false);
       this.set('isLayaway', false);
       this.set('isEditable', true);
@@ -953,6 +993,8 @@
       this.set('preventServicesUpdate', true);
 
       this.set('isPaid', _order.get('isPaid'));
+      this.set('creditAmount', _order.get('creditAmount'));
+      this.set('paidPartiallyOnCredit', _order.get('paidPartiallyOnCredit'));
       this.set('paidOnCredit', _order.get('paidOnCredit'));
       this.set('isLayaway', _order.get('isLayaway'));
       this.set('isPartiallyDelivered', _order.get('isPartiallyDelivered'));
@@ -974,6 +1016,13 @@
 
       if (_order.get('replacedorder_documentNo')) {
         this.set('replacedorder_documentNo', _order.get('replacedorder_documentNo'));
+      }
+
+      if (_order.get('replacedorder_documentNo')) {
+        this.set('replacedorder_documentNo', _order.get('replacedorder_documentNo'));
+      }
+      if (_order.get('replacedorder')) {
+        this.set('replacedorder', _order.get('replacedorder'));
       }
 
       // the idExecution is saved so only this execution of clearWith will check cloningReceipt to false
@@ -1338,7 +1387,7 @@
             });
 
             lines.forEach(function (line) {
-              if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true) && line.has('obposQtyDeleted') && line.get('obposQtyDeleted') > 0) {
+              if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true) && line.get('obposQtyDeleted') !== 0) {
                 line.set('qty', line.get('obposQtyDeleted'));
                 line.set('obposQtyDeleted', 0);
               }
@@ -2635,6 +2684,7 @@
       var clonedreceipt = new OB.Model.Order();
       OB.UTIL.clone(me, clonedreceipt);
       me.set('canceledorder', clonedreceipt);
+      me.set('doCancelAndReplace', true);
 
       OB.Dal.remove(this, function () {
         me.get('lines').each(function (line) {
@@ -2703,7 +2753,6 @@
             }
           }, me);
           me.get('payments').reset(me.get('payments').models);
-          me.set('doCancelAndReplace', true);
 
           OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_OrderReplaced', [me.get('replacedorder_documentNo'), me.get('documentNo')]));
           OB.UTIL.HookManager.executeHooks('OBPOS_PostCancelAndReplace', {
@@ -2892,6 +2941,7 @@
         }
       }, this);
       this.set('hasbeenpaid', 'N');
+      this.set('isPaid', false);
       this.set('isEditable', true);
       this.set('createdBy', OB.MobileApp.model.get('orgUserId'));
       this.set('session', OB.MobileApp.model.get('session'));
@@ -3013,6 +3063,7 @@
       var processedPaymentsAmount = OB.DEC.Zero;
       var multiCurrencyDifference;
       var paymentstatus = this.getPaymentStatus();
+      var origAmount;
       var sumCash = function () {
           if (p.get('kind') === OB.MobileApp.model.get('paymentcash')) {
             // The default cash method
@@ -3050,6 +3101,15 @@
           p.set('origAmount', p.get('amount'));
         }
         p.set('paid', p.get('origAmount'));
+        // When doing a reverse payment in a negative ticket, the payments introduced to pay again the same quantity
+        // must be set to negative (Web POS creates payments in positive by default).
+        // This doesn't affect to reversal payments but to the payments introduced to add the quantity reversed
+        if (!p.get('isPrePayment') && this.getGross() < 0 && this.get('isPaid') && !p.get('reversedPaymentId') && !p.get('signChanged')) {
+          p.set('signChanged', true);
+          p.set('amount', -p.get('amount'));
+          p.set('origAmount', -p.get('origAmount'));
+          p.set('paid', -p.get('paid'));
+        }
         if (_.isUndefined(this.get('paidInNegativeStatusAmt'))) {
           sumCash();
         } else {
@@ -3080,24 +3140,22 @@
         }
         if (OB.DEC.compare(nocash - total) > 0) {
           pcash.set('paid', OB.DEC.Zero);
-          this.set('payment', nocash);
+          this.set('payment', OB.DEC.abs(nocash));
           this.set('change', OB.DEC.add(cash, origCash));
         } else if (OB.DEC.compare(OB.DEC.sub(OB.DEC.add(OB.DEC.add(nocash, cash), origCash), total)) > 0) {
           pcash.set('paid', OB.DEC.sub(total, OB.DEC.add(nocash, OB.DEC.sub(paidCash, pcash.get('origAmount')))));
-          this.set('payment', total);
+          this.set('payment', OB.DEC.abs(total));
           //The change value will be computed through a rounded total value, to ensure that the total plus change
           //add up to the paid amount without any kind of precission loss
           this.set('change', OB.DEC.sub(OB.DEC.add(OB.DEC.add(nocash, cash, precision), origCash, precision), OB.Utilities.Number.roundJSNumber(total, 2), precision));
         } else {
           pcash.set('paid', auxCash);
-          this.set('payment', OB.DEC.add(OB.DEC.add(nocash, cash), origCash));
+          this.set('payment', OB.DEC.abs(OB.DEC.add(OB.DEC.add(nocash, cash), origCash)));
           this.set('change', OB.DEC.Zero);
         }
       } else {
         if (payments.length > 0) {
-          if (this.get('payment') === 0 || nocash > 0) {
-            this.set('payment', nocash);
-          }
+          this.set('payment', OB.DEC.abs(nocash));
         } else {
           this.set('payment', OB.DEC.Zero);
         }
@@ -3108,6 +3166,11 @@
     addPayment: function (payment) {
       var payments, total;
       var i, max, p, order;
+
+      if (this.get('isPaid') && !payment.get('isReversePayment') && !this.get('doCancelAndReplace') && this.getPrePaymentQty() === OB.DEC.sub(this.getTotal(), this.getCredit()) && !this.isNewReversed()) {
+        OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_CannotIntroducePayment'));
+        return;
+      }
 
       if (!OB.DEC.isNumber(payment.get('amount'))) {
         OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_MsgPaymentAmountError'));
@@ -3130,13 +3193,20 @@
         paymentToAdd: payment,
         payments: payments,
         receipt: this
-      }, function () {
-        if (!payment.get('paymentData')) {
+      }, function (args) {
+        if (args && args.cancellation) {
+          if (payment.get('reverseCallback')) {
+            var reverseCallback = payment.get('reverseCallback');
+            reverseCallback();
+          }
+          return;
+        }
+        if (!payment.get('paymentData') && !payment.get('reversedPaymentId')) {
           // search for an existing payment only if there is not paymentData info.
           // this avoids to merge for example card payments of different cards.
           for (i = 0, max = payments.length; i < max; i++) {
             p = payments.at(i);
-            if (p.get('kind') === payment.get('kind') && !p.get('isPrePayment')) {
+            if (p.get('kind') === payment.get('kind') && !p.get('isPrePayment') && !p.get('reversedPaymentId')) {
               p.set('amount', OB.DEC.add(payment.get('amount'), p.get('amount')));
               if (p.get('rate') && p.get('rate') !== '1') {
                 p.set('origAmount', OB.DEC.add(payment.get('origAmount'), OB.DEC.mul(p.get('origAmount'), p.get('rate'))));
@@ -3166,7 +3236,15 @@
         }
         payment.set('date', new Date());
         payment.set('id', OB.UTIL.get_UUID());
-        payments.add(payment);
+        payment.set('orderGross', order.getGross());
+        payment.set('isPaid', order.get('isPaid'));
+        payments.add(payment, {
+          at: payment.get('index')
+        });
+        // If there is a reversed payment set isReversed properties
+        if (payment.get('reversedPayment')) {
+          payment.get('reversedPayment').set('isReversed', true);
+        }
         order.adjustPayment();
         order.trigger('displayTotal');
         order.save();
@@ -3178,7 +3256,8 @@
     },
 
     removePayment: function (payment) {
-      var payments = this.get('payments');
+      var payments = this.get('payments'),
+          max, i, p;
       OB.UTIL.HookManager.executeHooks('OBPOS_preRemovePayment', {
         paymentToRem: payment,
         payments: payments,
@@ -3188,12 +3267,139 @@
           return true;
         }
         payments.remove(payment);
+        // Remove isReversed attribute from payment reversed by removed payment
+        if (payment.get('reversedPaymentId')) {
+          for (i = 0, max = payments.length; i < max; i++) {
+            p = payments.at(i);
+            if (p.get('paymentId') === payment.get('reversedPaymentId')) {
+              p.unset('isReversed');
+              break;
+            }
+          }
+        }
         if (payment.get('openDrawer')) {
           args.receipt.set('openDrawer', false);
         }
         args.receipt.adjustPayment();
         args.receipt.save();
       });
+    },
+
+    reversePayment: function (payment, sender, reverseCallback) {
+      var payments = this.get('payments'),
+          me = this,
+          provider, usedPayment;
+
+      function reversePaymentConfirmed() {
+        OB.UTIL.HookManager.executeHooks('OBPOS_preReversePayment', {
+          paymentToReverse: payment,
+          payments: payments,
+          receipt: me
+        }, function (args) {
+          if (args.cancellation) {
+            if (reverseCallback) {
+              reverseCallback();
+            }
+            return true;
+          }
+
+          provider = me.getTotal() > 0 ? OB.MobileApp.model.paymentnames[payment.get('kind')].paymentMethod.paymentProvider : OB.MobileApp.model.paymentnames[payment.get('kind')].paymentMethod.refundProvider;
+
+          if (provider) {
+            OB.MobileApp.view.waterfall('onShowPopup', {
+              popup: 'modalpayment',
+              args: {
+                'receipt': me,
+                'provider': provider,
+                'key': payment.get('key'),
+                'name': payment.get('name'),
+                'paymentMethod': OB.MobileApp.model.paymentnames[payment.get('kind')].paymentMethod,
+                'amount': OB.DEC.sub(0, payment.get('amount')),
+                'rate': payment.get('rate'),
+                'mulrate': payment.get('mulrate'),
+                'isocode': payment.get('isocode'),
+                'allowOpenDrawer': payment.get('allowOpenDrawer'),
+                'isCash': payment.get('isCash'),
+                'openDrawer': payment.get('openDrawer'),
+                'printtwice': payment.get('printtwice'),
+                'origAmount': OB.DEC.sub(0, payment.get('origAmount')),
+                'paid': OB.DEC.sub(0, payment.get('paid')),
+                'reversedPaymentId': payment.get('paymentId'),
+                'reversedPayment': payment,
+                'index': OB.DEC.add(1, payments.indexOf(payment)),
+                'paymentData': payment.get('paymentData') ? payment.get('paymentData') : null,
+                'reverseCallback': reverseCallback,
+                'isReversePayment': true
+              }
+            });
+          } else {
+            me.addPayment(new OB.Model.PaymentLine({
+              'kind': payment.get('kind'),
+              'amount': OB.DEC.sub(0, payment.get('amount')),
+              'name': payment.get('name'),
+              'rate': payment.get('rate'),
+              'mulrate': payment.get('mulrate'),
+              'isocode': payment.get('isocode'),
+              'allowOpenDrawer': payment.get('allowOpenDrawer'),
+              'isCash': payment.get('isCash'),
+              'openDrawer': payment.get('openDrawer'),
+              'printtwice': payment.get('printtwice'),
+              'origAmount': OB.DEC.sub(0, payment.get('origAmount')),
+              'paid': OB.DEC.sub(0, payment.get('paid')),
+              'reversedPaymentId': payment.get('paymentId'),
+              'reversedPayment': payment,
+              'index': OB.DEC.add(1, payments.indexOf(payment)),
+              'paymentData': payment.get('paymentData') ? payment.get('paymentData') : null,
+              'reverseCallback': reverseCallback,
+              'isReversePayment': true
+            }));
+          }
+        });
+      }
+
+      function stopReverse() {
+        sender.deleting = false;
+        sender.removeClass('btn-icon-loading');
+        sender.addClass('btn-icon-reversePayment');
+      }
+
+      usedPayment = _.filter(OB.MobileApp.model.get('payments'), function (paymentType) {
+        return paymentType.payment.searchKey === payment.get('kind');
+      });
+      if (usedPayment.length === 1) {
+        var usedPaymentMethod = usedPayment[0].paymentMethod;
+        if (usedPaymentMethod.isreversable) {
+          var currentDate = new Date();
+          currentDate.setHours(0);
+          currentDate.setMinutes(0);
+          currentDate.setSeconds(0);
+          currentDate.setMilliseconds(0);
+          if (usedPaymentMethod.availableReverseDelay === null || (currentDate.getTime() - usedPaymentMethod.availableReverseDelay * 86400000) <= (new Date(payment.get('paymentDate')).getTime())) {
+            reversePaymentConfirmed();
+          } else {
+            OB.UTIL.Approval.requestApproval(
+            OB.MobileApp.view.$.containerWindow.$.pointOfSale.model, [{
+              approval: 'OBPOS_approval.reversePayment',
+              message: 'OBPOS_approval.reversePayment'
+            }], function (approved, supervisor, approvalType) {
+              if (approved) {
+                reversePaymentConfirmed();
+              } else {
+                stopReverse();
+              }
+            });
+          }
+        } else {
+          stopReverse();
+          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_NotReversablePaymentHeader'), OB.I18N.getLabel('OBPOS_NotReversablePayment'));
+        }
+      } else if (usedPayment.length < 1) {
+        stopReverse();
+        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_NotReversablePayment', [payment.get('name')]));
+      } else {
+        stopReverse();
+        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MoreThanOnePaymentMethod', [payment.get('name')]));
+      }
     },
 
     serializeToJSON: function () {
@@ -4126,6 +4332,8 @@
       order.set('orderDate', OB.I18N.normalizeDate(new Date()));
       order.set('creationDate', null);
       order.set('isPaid', false);
+      order.set('creditAmount', OB.DEC.Zero);
+      order.set('paidPartiallyOnCredit', false);
       order.set('paidOnCredit', false);
       order.set('isLayaway', false);
       order.set('isPartiallyDelivered', false);
@@ -4154,6 +4362,18 @@
           NoFoundCustomer = true,
           isLoadedPartiallyFromBackend = false;
 
+      // Each payment that has been reverted stores the id of the reversal payment
+      // Web POS, instead of that, need to have the information of the payment reverted on the reversal payment
+      // This loop switches the information between them
+      _.each(_.filter(model.receiptPayments, function (payment) {
+        return payment.isReversed;
+      }), function (payment) {
+        var reversalPayment = _.find(model.receiptPayments, function (currentPayment) {
+          return currentPayment.paymentId === payment.reversedPaymentId;
+        });
+        reversalPayment.reversedPaymentId = payment.paymentId;
+        delete payment.reversedPaymentId;
+      });
 
       // Call orderLoader plugings to adjust remote model to local model first
       // ej: sales on credit: Add a new payment if total payment < total receipt
@@ -4170,18 +4390,21 @@
 
       // setting specific properties
       order.set('isbeingprocessed', 'N');
-      order.set('hasbeenpaid', 'Y');
+      order.set('hasbeenpaid', 'N');
       order.set('isEditable', false);
       order.set('checked', model.checked); //TODO: what is this for, where it comes from?
       order.set('orderDate', OB.I18N.normalizeDate(model.orderDate));
       order.set('creationDate', OB.I18N.normalizeDate(model.creationDate));
+      order.set('paidPartiallyOnCredit', false);
       order.set('paidOnCredit', false);
+      order.set('session', OB.MobileApp.model.get('session'));
       order.set('skipApplyPromotions', true);
       if (model.isQuotation) {
         order.set('isQuotation', true);
         order.set('oldId', model.orderid);
         order.set('id', null);
         order.set('documentType', OB.MobileApp.model.get('terminal').terminalType.documentTypeForQuotations);
+        order.set('hasbeenpaid', 'Y');
         // TODO: this commented lines are kept just in case this issue happens again
         // Set creationDate milliseconds to 0, if the date is with milisecond, the date with miliseconds is rounded to seconds:
         // so, the second can change, and the creationDate in quotation should not be changed when quotation is reactivated
@@ -4192,10 +4415,17 @@
         order.set('id', model.orderid);
         order.set('createdBy', OB.MobileApp.model.usermodel.id);
         order.set('hasbeenpaid', 'N');
-        order.set('session', OB.MobileApp.model.get('session'));
       } else {
         order.set('isPaid', true);
-        if (model.receiptPayments.length === 0 && model.totalamount > 0 && !model.isQuotation) {
+        var paidByPayments = 0;
+        _.each(model.receiptPayments, function (receiptPayment) {
+          paidByPayments += receiptPayment.amount;
+        });
+        if (model.totalamount > 0 && model.totalamount > paidByPayments && !model.isQuotation) {
+          order.set('creditAmount', model.totalamount - paidByPayments);
+          if (paidByPayments) {
+            order.set('paidPartiallyOnCredit', true);
+          }
           order.set('paidOnCredit', true);
         }
         order.set('id', model.orderid);
@@ -4217,7 +4447,8 @@
 
               var linepos = 0,
                   hasDeliveredProducts = false,
-                  hasNotDeliveredProducts = false;
+                  hasNotDeliveredProducts = false,
+                  i, sortedPayments = false;
               _.each(model.receiptLines, function (iter) {
                 var price;
                 iter.linepos = linepos;
@@ -4364,6 +4595,39 @@
                   order.set('isDeliveredGreaterThanGross', true);
                 }
               }
+
+              function getReverserPayment(payment, Payments) {
+                return _.filter(model.receiptPayments, function (receiptPayment) {
+                  return receiptPayment.paymentId === payment.reversedPaymentId;
+                })[0];
+              }
+              i = 0;
+              // Sort payments array, puting reverser payments inmediatly after their reversed payment
+              while (i < model.receiptPayments.length) {
+                var payment = model.receiptPayments[i];
+                if (payment.reversedPaymentId && !payment.isSorted) {
+                  var reversed_index = model.receiptPayments.indexOf(getReverserPayment(payment, model.receiptPayments));
+                  payment.isSorted = true;
+                  if (i < reversed_index) {
+                    model.receiptPayments.splice(i, 1);
+                    model.receiptPayments.splice(reversed_index, 0, payment);
+                    sortedPayments = true;
+                  } else if (i > reversed_index + 1) {
+                    model.receiptPayments.splice(i, 1);
+                    model.receiptPayments.splice(reversed_index + 1, 0, payment);
+                    sortedPayments = true;
+                  }
+                } else {
+                  i++;
+                }
+              }
+              if (sortedPayments) {
+                model.receiptPayments.forEach(function (receitPayment) {
+                  if (receitPayment.isSorted) {
+                    delete receitPayment.isSorted;
+                  }
+                });
+              }
               //order.set('payments', model.receiptPayments);
               payments = new PaymentLineList();
               _.each(model.receiptPayments, function (iter) {
@@ -4382,6 +4646,8 @@
                     }
                   }
                 }
+                curPayment.set('orderGross', order.get('gross'));
+                curPayment.set('isPaid', order.get('isPaid'));
                 payments.add(curPayment);
               });
               order.set('payments', payments);
@@ -4402,7 +4668,7 @@
               if (!model.isLayaway && !model.isQuotation) {
                 if (model.totalamount > 0 && order.get('payment') < model.totalamount) {
                   order.set('paidOnCredit', true);
-                } else if (model.totalamount < 0 && (order.get('payment') === 0 || (order.get('payment') > model.totalamount))) {
+                } else if (model.totalamount < 0 && (order.get('payment') === 0 || (OB.DEC.abs(model.totalamount)) > order.get('payment'))) {
                   order.set('paidOnCredit', true);
                 }
               }
@@ -4491,7 +4757,7 @@
       this.unshift(this.current);
       this.loadCurrent(true);
 
-      if (model.get('isLayaway')) {
+      if (!model.get('isQuotation')) {
         synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('addPaidReceipt');
         // OB.Dal.save is done here because we want to force to save with the original id, only this time.
         OB.Dal.save(model, function () {
@@ -4501,8 +4767,8 @@
           OB.error(arguments);
         }, true);
       }
-
     },
+
     addMultiReceipt: function (model) {
       OB.Dal.save(model, function () {}, function () {
         OB.error(arguments);
@@ -4664,8 +4930,8 @@
       this.get('multiOrdersList').off();
     },
     getPaymentStatus: function () {
-      var total = OB.DEC.abs(this.getTotal());
-      var pay = this.getPayment();
+      var total = OB.DEC.abs(this.getTotal()),
+          pay = this.getPayment();
       return {
         'total': OB.I18N.formatCurrency(total),
         'pending': OB.DEC.compare(OB.DEC.sub(pay, total)) >= 0 ? OB.I18N.formatCurrency(OB.DEC.Zero) : OB.I18N.formatCurrency(OB.DEC.sub(total, pay)),

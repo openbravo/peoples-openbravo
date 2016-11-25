@@ -73,7 +73,7 @@ public class VoidLayaway {
       if (jsonorder != null) {
         OrderLoader orderLoader = WeldUtils.getInstanceFromStaticBeanManager(OrderLoader.class);
         orderLoader.initializeVariables(jsonorder);
-        orderLoader.handlePayments(jsonorder, order, null, false);
+        orderLoader.handlePayments(jsonorder, order, null, false, false);
       }
 
       for (int i = 0; i < order.getOrderTaxList().size(); i++) {

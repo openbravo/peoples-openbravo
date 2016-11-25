@@ -255,3 +255,11 @@ button.btnbp:disabled {
   background-color: #f8e859;
   color: #000000;
 }
+
+.whitecolor {
+  color: white;
+}
+
+.blackecolor {
+  color: black;
+}

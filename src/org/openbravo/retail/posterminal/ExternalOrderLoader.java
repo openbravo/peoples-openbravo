@@ -353,7 +353,8 @@ public class ExternalOrderLoader extends OrderLoader {
     copyPropertyValue(orderJson, "grossAmount", "gross");
     copyPropertyValue(orderJson, "netAmount", "net");
 
-    if ("create".equals(orderJson.getString("step")) || "ship".equals(orderJson.getString("step")) || "all".equals(orderJson.getString("step"))) {
+    if ("create".equals(orderJson.getString("step")) || "ship".equals(orderJson.getString("step"))
+        || "all".equals(orderJson.getString("step"))) {
       setBusinessPartnerInformation(orderJson);
       transformTaxes(orderJson.getJSONObject("taxes"));
       transformLines(orderJson);
