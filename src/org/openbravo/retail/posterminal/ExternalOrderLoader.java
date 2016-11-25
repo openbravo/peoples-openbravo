@@ -176,7 +176,6 @@ public class ExternalOrderLoader extends OrderLoader {
   public JSONObject exec(JSONObject json) throws JSONException, ServletException {
     JSONObject jsonIn = json;
     try {
-      jsonIn = transformMessage(json);
       return super.exec(jsonIn);
     } catch (Throwable t) {
       return createErrorJSON(json, t);
@@ -188,7 +187,6 @@ public class ExternalOrderLoader extends OrderLoader {
       ServletException {
     JSONObject jsonIn = json;
     try {
-      jsonIn = transformMessage(json);
       return super.exec(jsonIn, shouldFailWithError);
     } catch (Throwable t) {
       return createErrorJSON(json, t);
