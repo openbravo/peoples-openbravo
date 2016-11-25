@@ -30,25 +30,21 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
      <![CDATA[
-        update c_orderline ol
-        set qtydelivered = COALESCE((SELECT sum(coalesce(iol.movementqty, 0))
+        UPDATE c_orderline ol
+        SET qtydelivered = COALESCE((SELECT SUM(COALESCE(iol.movementqty, 0))
                                      FROM m_inoutline iol
                                      JOIN m_inout io ON iol.m_inout_id = io.m_inout_id AND io.processed = 'Y'
                                      WHERE iol.c_orderline_id = ol.c_orderline_id
                                      ), 0)
-        where exists (select 1 
-                      from c_order o
-                      inner join c_doctype dt ON o.c_doctypetarget_id = dt.c_doctype_id 
-                      where o.c_order_id = ol.c_order_id
-                      and dt.isreturn = 'Y' 
-                      and o.issotrx = 'N'
-                      and o.processed = 'Y'
+        WHERE EXISTS (SELECT 1
+                      FROM c_order o
+                      JOIN c_doctype dt ON o.c_doctypetarget_id = dt.c_doctype_id
+                      WHERE o.c_order_id = ol.c_order_id
+                      AND dt.isreturn = 'Y'
+                      AND o.issotrx = 'N'
+                      AND o.processed = 'Y'
                      )
-        and qtydelivered = 0
-        and exists (select 1 
-                    FROM m_inoutline iol
-                    JOIN m_inout io ON iol.m_inout_id = io.m_inout_id AND io.processed = 'Y'
-                    WHERE iol.c_orderline_id = ol.c_orderline_id)
+        AND ol.qtydelivered = 0
       ]]>
     </Sql>
   </SqlMethod>
@@ -58,14 +54,14 @@
      <![CDATA[
         UPDATE C_Order o
         SET IsDelivered = 'Y'
-        WHERE IsDelivered = 'N'
+        WHERE o.IsDelivered = 'N'
         AND o.processed = 'Y'
         AND EXISTS (SELECT 1
-                    FROM C_ORDERLINE ol
-                    INNER JOIN c_order o2 ON ol.c_order_id = o2.c_order_id
-                    INNER JOIN c_doctype dt ON o2.c_doctypetarget_id = dt.c_doctype_id 
-                    WHERE o.c_order_id = ol.c_order_id
-                    AND (o.issotrx = 'Y' or (dt.isreturn = 'Y' and o.issotrx = 'N'))
+                    FROM c_doctype dt, c_orderline ol
+                    WHERE o.c_doctypetarget_id = dt.c_doctype_id
+                    AND o.c_order_id = ol.c_order_id
+                    AND (o.issotrx = 'Y' OR (o.issotrx = 'N' AND dt.isreturn = 'Y'))
+                    AND ol.c_order_discount_id IS NULL
                     GROUP BY ol.C_Order_ID
                     HAVING SUM(ol.QTYORDERED) = SUM(ol.QTYDELIVERED)
                    )

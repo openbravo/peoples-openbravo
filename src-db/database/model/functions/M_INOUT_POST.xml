@@ -528,7 +528,7 @@
               v_Qty:=- Cur_InOutLine.MovementQty;
               v_QuantityOrder:=-Cur_InOutLine.QuantityOrder;
             END IF;
-            IF(Cur_InOut.IsSOTrx='N' AND v_isreturndoctype='N') THEN
+            IF (Cur_InOut.IsSOTrx='N' AND v_isreturndoctype='N') THEN
               v_QtySO:=0;
               v_QtyPO:=Cur_InOutLine.MovementQty;
             ELSE
@@ -741,7 +741,7 @@
             END IF;
             v_ResultStr:='UpdateOrderLine';
             IF(Cur_InOutLine.C_OrderLine_ID IS NOT NULL) THEN
-              if(Cur_InOut.ISSOTRX='Y' OR (Cur_InOut.ISSOTRX='N' AND v_isreturndoctype='Y')) THEN
+              IF (Cur_InOut.ISSOTRX='Y' OR (Cur_InOut.ISSOTRX='N' AND v_isreturndoctype='Y')) THEN
                 -- Sets DateDelivered with the recent shipment date
                 -- of the shipment/s done for the orderline.
                 SELECT MAX(M.MOVEMENTDATE) INTO v_DateDelivered
@@ -805,15 +805,15 @@
 
          -- Update the C_Order.IsDelivered flag only for Sales or RTV flows
          -- This should be extended for other flows too in the future
-         IF (v_isSoTrx='Y' OR (v_isreturndoctype='Y' AND v_isSoTrx='N')) THEN
+         IF (v_isSoTrx='Y' OR (v_isSoTrx='N' AND v_isreturndoctype='Y')) THEN
            FOR Cur_Order IN
            (SELECT o.c_order_id
             FROM C_Order o
             WHERE EXISTS (SELECT 1
                           FROM C_ORDERLINE ol
-                          INNER JOIN M_INOUTLINE il on (il.C_ORDERLINE_ID = ol.C_ORDERLINE_ID)
+                          JOIN M_INOUTLINE iol ON iol.C_ORDERLINE_ID = ol.C_ORDERLINE_ID
                           WHERE ol.C_Order_ID = o.C_Order_ID
-                          AND il.m_inout_id = CUR_InOut.m_inout_id
+                          AND iol.m_inout_id = CUR_InOut.m_inout_id
                           )
            )
            LOOP
@@ -822,10 +822,11 @@
                UPDATE C_Order o
                SET IsDelivered = 'Y'
                WHERE o.c_order_id = Cur_Order.c_order_id
-               AND IsDelivered = 'N'
+               AND o.IsDelivered = 'N'
                AND EXISTS (SELECT 1
                            FROM C_ORDERLINE ol
                            WHERE ol.C_Order_ID = o.C_Order_ID
+                           AND ol.c_order_discount_id IS NULL
                            GROUP BY ol.C_Order_ID
                            HAVING SUM(ol.QTYORDERED) = SUM(ol.QTYDELIVERED));
              ELSIF (v_IsReversedDoc = 'Y') THEN
@@ -833,10 +834,11 @@
                UPDATE C_Order o
                SET IsDelivered = 'N'
                WHERE o.c_order_id = Cur_Order.c_order_id
-               AND IsDelivered = 'Y'
+               AND o.IsDelivered = 'Y'
                AND EXISTS (SELECT 1
                            FROM C_ORDERLINE ol
                            WHERE ol.C_Order_ID = o.C_Order_ID
+                           AND ol.c_order_discount_id IS NULL
                            AND ol.QTYORDERED <> ol.QTYDELIVERED);
              END IF;
            END LOOP;

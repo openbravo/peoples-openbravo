@@ -54,6 +54,6 @@ public class UpdateQtyDelivered extends ModuleScript {
 
   @Override
   protected ModuleScriptExecutionLimits getModuleScriptExecutionLimits() {
-    return new ModuleScriptExecutionLimits("0", null, new OpenbravoVersion(3, 0, 29000));
+    return new ModuleScriptExecutionLimits("0", null, new OpenbravoVersion(3, 0, 30668));
   }
 }
