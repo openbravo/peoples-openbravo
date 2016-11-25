@@ -148,8 +148,8 @@
   v_DeliveryRule CHAR(1);
   v_isreturn C_Doctype.IsReturn%TYPE;
   v_returnbin M_Warehouse.M_ReturnLocator_ID%TYPE;
-  v_uom_preference VARCHAR(1);
-  v_c_aum VARCHAR2(32);
+  v_uom_preference AD_PREFERENCE.VALUE%TYPE;
+  v_c_aum C_ORDERLINE.C_AUM%TYPE;
   v_aumqty NUMBER;
 
 BEGIN
@@ -584,7 +584,8 @@ BEGIN --BODY
                         QuantityOrder, M_Product_Uom_ID, M_AttributeSetInstance_ID,
                         C_Project_ID, A_Asset_ID, 
                         C_CostCenter_ID, User1_ID, User2_ID, 
-                        explode, bom_parent_id,
+                        explode,
+                        bom_parent_id,
                         c_aum, aumqty)
                       VALUES
                         (v_NextNo, v_lines, p_InOut_ID, ol.C_OrderLine_ID,
@@ -596,10 +597,12 @@ BEGIN --BODY
                         v_ActualQty, v_storage.M_PRODUCT_UOM_ID, v_storage.M_AttributeSetInstance_ID,
                         coalesce(ol.C_Project_ID, Cur_Order.C_Project_ID), coalesce(ol.A_Asset_ID, Cur_Order.A_Asset_ID), 
                         coalesce(ol.C_CostCenter_ID, Cur_Order.C_CostCenter_ID), coalesce(ol.User1_ID, Cur_Order.User1_ID), coalesce(ol.User2_ID, Cur_Order.User2_ID),
-                        ol.explode, (select m_inoutline_id 
-                                     from m_inoutline 
-                                     where m_inout_id = p_InOut_ID
-                                       and c_orderline_id = (SELECT BOM_parent_id from c_orderline WHERE c_orderline_id = ol.C_OrderLine_ID)),
+                        ol.explode,
+                        (select m_inoutline_id 
+                         from m_inoutline 
+                         where m_inout_id = p_InOut_ID
+                           and c_orderline_id = (SELECT BOM_parent_id from c_orderline WHERE c_orderline_id = ol.C_OrderLine_ID)
+                        ),
                         v_c_aum, v_aumqty);
                       v_lines:=v_lines + 10;
                       v_lines_per_orderline:= v_lines_per_orderline + 10;
@@ -659,7 +662,8 @@ BEGIN --BODY
                     QuantityOrder, M_Product_Uom_ID, M_AttributeSetInstance_ID,
                     C_Project_ID, A_Asset_ID, 
                     C_CostCenter_ID, User1_ID, User2_ID,
-                    explode, bom_parent_id,
+                    explode,
+                    bom_parent_id,
                     c_aum, aumqty)
                   VALUES
                     (v_NextNo, v_lines, p_InOut_ID, ol.C_OrderLine_ID,
@@ -671,10 +675,12 @@ BEGIN --BODY
                     v_ActualQty, ol.M_PRODUCT_UOM_ID, ol.M_AttributeSetInstance_ID,
                     coalesce(ol.C_Project_ID, Cur_Order.C_Project_ID), coalesce(ol.A_Asset_ID, Cur_Order.A_Asset_ID), 
                     coalesce(ol.C_CostCenter_ID, Cur_Order.C_CostCenter_ID), coalesce(ol.User1_ID, Cur_Order.User1_ID), coalesce(ol.User2_ID, Cur_Order.User2_ID),
-                    ol.explode, (select m_inoutline_id 
-                                     from m_inoutline 
-                                     where m_inout_id = p_InOut_ID
-                                       and c_orderline_id = (SELECT BOM_parent_id from c_orderline WHERE c_orderline_id = ol.C_OrderLine_ID)),
+                    ol.explode,
+                    (select m_inoutline_id 
+                     from m_inoutline 
+                     where m_inout_id = p_InOut_ID
+                       and c_orderline_id = (SELECT BOM_parent_id from c_orderline WHERE c_orderline_id = ol.C_OrderLine_ID)
+                    ),
                     v_c_aum, v_aumqty);
                   v_lines:=v_lines + 10;
                 ELSIF (v_qty <> 0) THEN
@@ -733,7 +739,8 @@ BEGIN --BODY
                   QuantityOrder, M_Product_Uom_ID, M_AttributeSetInstance_ID,
                   C_Project_ID, A_Asset_ID, 
                   C_CostCenter_ID, User1_ID, User2_ID, 
-                  explode, bom_parent_id,
+                  explode,
+                  bom_parent_id,
                   c_aum, aumqty)
                 VALUES
                   (v_NextNo, v_lines, p_InOut_ID, ol.C_OrderLine_ID,
@@ -745,10 +752,11 @@ BEGIN --BODY
                   v_QtyOrder, ol.M_PRODUCT_UOM_ID, ol.M_ATTRIBUTESETINSTANCE_ID,
                   coalesce(ol.C_Project_ID, Cur_Order.C_Project_ID), coalesce(ol.A_Asset_ID, Cur_Order.A_Asset_ID), 
                   coalesce(ol.C_CostCenter_ID, Cur_Order.C_CostCenter_ID), coalesce(ol.User1_ID, Cur_Order.User1_ID), coalesce(ol.User2_ID, Cur_Order.User2_ID),
-                  ol.explode, (select m_inoutline_id 
-                                     from m_inoutline 
-                                     where m_inout_id = p_InOut_ID
-                                       and c_orderline_id = (SELECT BOM_parent_id from c_orderline WHERE c_orderline_id = ol.C_OrderLine_ID)),
+                  ol.explode,
+                  (select m_inoutline_id 
+                   from m_inoutline 
+                   where m_inout_id = p_InOut_ID
+                     and c_orderline_id = (SELECT BOM_parent_id from c_orderline WHERE c_orderline_id = ol.C_OrderLine_ID)),
                   v_c_aum, v_aumqty);
                 v_lines:=v_lines + 10;
               END IF;
@@ -963,7 +971,8 @@ BEGIN --BODY
             QuantityOrder, M_Product_Uom_ID, M_AttributeSetInstance_ID,
             C_Project_ID, A_Asset_ID, 
             C_CostCenter_ID, User1_ID,
-            User2_ID, explode, bom_parent_id,
+            User2_ID, explode,
+            bom_parent_id,
             c_aum, aumqty
           ) VALUES (
             v_NextNo, Cur_Lines.Line, p_InOut_ID, Cur_Lines.C_OrderLine_ID,
@@ -975,10 +984,11 @@ BEGIN --BODY
             Cur_Lines.QuantityOrder, Cur_Lines.M_Product_Uom_ID, Cur_Lines.M_ATTRIBUTESETINSTANCE_ID,
             coalesce(Cur_Lines.C_Project_ID, Cur_Invoice.C_Project_ID), coalesce(Cur_Lines.A_Asset_ID, Cur_Invoice.A_Asset_ID), 
             coalesce(Cur_Lines.C_CostCenter_ID, Cur_Invoice.C_CostCenter_ID), coalesce(Cur_Lines.User1_ID, Cur_Invoice.User1_ID),
-            coalesce(Cur_Lines.User2_ID, Cur_Invoice.User2_ID), Cur_Lines.explode, (select m_inoutline_id 
-                                     from c_invoiceline
-                                     where c_invoice_id = Cur_Lines.C_Invoice_ID
-                                       and c_invoiceline_id = Cur_Lines.BOM_parent_id),
+            coalesce(Cur_Lines.User2_ID, Cur_Invoice.User2_ID), Cur_Lines.explode,
+            (select m_inoutline_id 
+             from c_invoiceline
+             where c_invoice_id = Cur_Lines.C_Invoice_ID
+               and c_invoiceline_id = Cur_Lines.BOM_parent_id),
             v_c_aum, v_aumqty);
           UPDATE C_INVOICELINE
           SET M_INOUTLINE_ID=v_NextNo,
