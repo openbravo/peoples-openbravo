@@ -8,10 +8,12 @@
  */
 
 OB.UTIL.HookManager.registerHook('OBMOBC_PreScanningFocus', function (args, callbacks) {
-  if (args.scanMode && OB.UTIL.RfidController.isRfidConfigured() && OB.UTIL.RfidController.get('rfidWebsocket') && !OB.UTIL.RfidController.get('isRFIDEnabled') && OB.UTIL.RfidController.get('reconnectOnScanningFocus')) {
-    OB.UTIL.RfidController.connectRFIDDevice();
-  } else if (args.scanMode === false && OB.UTIL.RfidController.isRfidConfigured() && OB.UTIL.RfidController.get('rfidWebsocket') && OB.UTIL.RfidController.get('isRFIDEnabled')) {
-    OB.UTIL.RfidController.disconnectRFIDDevice();
+  if (OB.UTIL.RfidController.isRfidConfigured() && OB.UTIL.RfidController.get('rfidWebsocket')) {
+    if (args.scanMode === true && !OB.UTIL.RfidController.get('isRFIDEnabled') && !OB.MobileApp.view.originalRFIDMode && OB.UTIL.RfidController.get('reconnectOnScanningFocus')) {
+      OB.UTIL.RfidController.connectRFIDDevice();
+    } else if (args.scanMode === false && OB.UTIL.RfidController.get('isRFIDEnabled') && OB.MobileApp.view.originalRFIDMode) {
+      OB.UTIL.RfidController.disconnectRFIDDevice();
+    }
   }
   OB.UTIL.HookManager.callbackExecutor(args, callbacks);
 });
