@@ -127,6 +127,7 @@ public class CopyFromOrder extends HttpSecureAppServlet {
       Order order = OBDal.getInstance().get(Order.class, strKey);
 
       BigDecimal discount, priceActual, priceList, netPriceList, grossPriceList, priceStd, priceLimit, priceGross, amtGross, pricestdgross;
+      boolean isUomManagementEnabled = UOMUtil.isUomManagementEnabled();
       while (st.hasMoreTokens()) {
         String strRownum = st.nextToken().trim();
         String strmProductId = vars.getStringParameter("inpmProductId" + strRownum);
@@ -140,7 +141,7 @@ public class CopyFromOrder extends HttpSecureAppServlet {
 
         String strAumQty = null;
         String strcAumId = null;
-        if (UOMUtil.isUomManagementEnabled()) {
+        if (isUomManagementEnabled) {
           strAumQty = vars.getNumericParameter("inpaumquantity" + strRownum);
           strcAumId = vars.getStringParameter("inpcAUMId" + strRownum);
           strQty = strAumQty;
