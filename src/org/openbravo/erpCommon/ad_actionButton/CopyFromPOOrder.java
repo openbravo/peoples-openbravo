@@ -117,19 +117,19 @@ public class CopyFromPOOrder extends HttpSecureAppServlet {
         OBContext.restorePreviousMode();
       }
       int lineCount = 0;
+      boolean isUomManagementEnabled = UOMUtil.isUomManagementEnabled();
       for (i = 0; data != null && i < data.length; i++) {
 
-        if (UOMUtil.isUomManagementEnabled() && data[i].mProductUomId.isEmpty()) {
-          if (data[i].cAum.isEmpty() && data[i].aumqty.isEmpty()) {
-            String defaultAum = UOMUtil.getDefaultAUMForDocument(data[i].mProductId, order
-                .getTransactionDocument().getId());
-            data[i].aumqty = data[i].qtyordered;
-            data[i].cAum = defaultAum;
-            data[i].mProductUomId = null;
-            if (!defaultAum.equals(data[i].cUomId)) {
-              data[i].qtyordered = UOMUtil.getConvertedQty(data[i].mProductId,
-                  new BigDecimal(data[i].aumqty), defaultAum).toString();
-            }
+        if (isUomManagementEnabled && data[i].mProductUomId.isEmpty() && data[i].cAum.isEmpty()
+            && data[i].aumqty.isEmpty()) {
+          String defaultAum = UOMUtil.getDefaultAUMForDocument(data[i].mProductId, order
+              .getTransactionDocument().getId());
+          data[i].aumqty = data[i].qtyordered;
+          data[i].cAum = defaultAum;
+          data[i].mProductUomId = null;
+          if (!defaultAum.equals(data[i].cUomId)) {
+            data[i].qtyordered = UOMUtil.getConvertedQty(data[i].mProductId,
+                new BigDecimal(data[i].aumqty), defaultAum).toString();
           }
         }
 
