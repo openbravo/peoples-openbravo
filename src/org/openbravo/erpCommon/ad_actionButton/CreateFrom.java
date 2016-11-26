@@ -532,8 +532,8 @@ public class CreateFrom extends HttpSecureAppServlet {
       }
     }
 
-    for (int i = 0; i < data.length; i++) {
-      if (UOMUtil.isUomManagementEnabled()) {
+    if (UOMUtil.isUomManagementEnabled()) {
+      for (int i = 0; i < data.length; i++) {
         if (data[i].aumqty.isEmpty()) {
           if (!data[i].cAum.equals(data[i].cUomId)) {
             data[i].aumqty = UOMUtil.getConvertedAumQty(data[i].mProductId,
@@ -543,8 +543,6 @@ public class CreateFrom extends HttpSecureAppServlet {
           }
         }
         data[i].aumvisible = "table-cell";
-      } else {
-        data[i].aumvisible = "none";
       }
     }
 
@@ -805,7 +803,7 @@ public class CreateFrom extends HttpSecureAppServlet {
           if (strHaveSecUom && strHaveAum) {
             break;
           }
-        } catch (NullPointerException e) {
+        } catch (NullPointerException ignore) {
 
         }
       }
@@ -1647,6 +1645,7 @@ public class CreateFrom extends HttpSecureAppServlet {
                 ids[k]);
         }
         if (data != null) {
+          boolean isUomManagementEnabled = UOMUtil.isUomManagementEnabled();
           for (int i = 0; i < data.length; i++) {
             final String strSequence = SequenceIdData.getUUID();
             BigDecimal qty = new BigDecimal(data[i].id);
@@ -1659,18 +1658,17 @@ public class CreateFrom extends HttpSecureAppServlet {
             else
               C_Tax_ID = CreateFromInvoiceData.getTax(this, data[i].cOrderlineId);
 
-            if (UOMUtil.isUomManagementEnabled() && data[i].mProductUomId.isEmpty()) {
-              if (data[i].cAum.isEmpty() && data[i].aumqty.isEmpty()) {
-                String defaultAum = UOMUtil.getDefaultAUMForDocument(data[i].mProductId,
-                    data[i].cDoctypeId);
-                data[i].cAum = defaultAum;
-                data[i].mProductUomId = null;
-                if (!defaultAum.equals(data[i].cUomId)) {
-                  data[i].aumqty = UOMUtil.getConvertedAumQty(data[i].mProductId,
-                      new BigDecimal(data[i].id), defaultAum).toString();
-                } else {
-                  data[i].aumqty = data[i].id;
-                }
+            if (isUomManagementEnabled && data[i].mProductUomId.isEmpty() && data[i].cAum.isEmpty()
+                && data[i].aumqty.isEmpty()) {
+              String defaultAum = UOMUtil.getDefaultAUMForDocument(data[i].mProductId,
+                  data[i].cDoctypeId);
+              data[i].cAum = defaultAum;
+              data[i].mProductUomId = null;
+              if (!defaultAum.equals(data[i].cUomId)) {
+                data[i].aumqty = UOMUtil.getConvertedAumQty(data[i].mProductId,
+                    new BigDecimal(data[i].id), defaultAum).toString();
+              } else {
+                data[i].aumqty = data[i].id;
               }
             }
 
@@ -1913,6 +1911,7 @@ public class CreateFrom extends HttpSecureAppServlet {
                       .getConvertedQty(data[i].mProductId, qtyAum, data[i].cAum).toString();
                 }
               } catch (NumberFormatException e) {
+                log4j.debug(e.getMessage());
               }
             } else {
               strMovementqty = vars.getRequiredNumericParameter("inpmovementqty" + strLineId);
