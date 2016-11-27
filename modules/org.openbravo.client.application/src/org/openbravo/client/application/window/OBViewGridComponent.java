@@ -28,6 +28,7 @@ import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
+import org.openbravo.client.application.ApplicationConstants;
 import org.openbravo.client.application.ApplicationUtils;
 import org.openbravo.client.application.GCSystem;
 import org.openbravo.client.application.GCTab;
@@ -408,11 +409,12 @@ public class OBViewGridComponent extends BaseTemplateComponent {
   }
 
   /**
-   * Returns true if the grid allows adding summary functions
+   * Returns true if the grid allows adding summary functions. If tab is based on a HQL table,
+   * summary functions are disabled.
    */
   public boolean getAllowSummaryFunctions() {
-    return isConfigurationPropertyEnabled(GCTab.PROPERTY_ALLOWSUMMARYFUNCTIONS,
-        GCSystem.PROPERTY_ALLOWSUMMARYFUNCTIONS, true);
+    return (isHqlTable(this.tab.getTable()) ? false : isConfigurationPropertyEnabled(
+        GCTab.PROPERTY_ALLOWSUMMARYFUNCTIONS, GCSystem.PROPERTY_ALLOWSUMMARYFUNCTIONS, true));
   }
 
   private boolean isConfigurationPropertyEnabled(String propertyNameAtTabLevel,
@@ -459,7 +461,11 @@ public class OBViewGridComponent extends BaseTemplateComponent {
 
   public String getTableAlias() {
     Table table = tab.getTable();
-    return "HQL".equals(table.getDataOriginType()) && !StringUtils.isBlank(table.getEntityAlias()) ? table
+    return isHqlTable(table) && !StringUtils.isBlank(table.getEntityAlias()) ? table
         .getEntityAlias() : "e";
+  }
+
+  private boolean isHqlTable(Table table) {
+    return ApplicationConstants.HQLBASEDTABLE.equals(table.getDataOriginType());
   }
 }
