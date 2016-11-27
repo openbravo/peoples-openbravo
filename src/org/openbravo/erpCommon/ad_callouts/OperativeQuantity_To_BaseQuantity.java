@@ -24,6 +24,7 @@ import javax.servlet.ServletException;
 
 import org.apache.log4j.Logger;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.materialmgmt.UOMUtil;
 
 /**
@@ -57,6 +58,7 @@ public class OperativeQuantity_To_BaseQuantity extends SimpleCallout {
     String strBaseUOM = info.getStringParameter("inpcUomId");
     String mProductId = info.getStringParameter("inpmProductId");
     try {
+      OBContext.setAdminMode();
       if (UOMUtil.isUomManagementEnabled()) {
         if (strOperativeUOM == null || strOperativeUOM.isEmpty()) {
           qty = null;
@@ -69,6 +71,7 @@ public class OperativeQuantity_To_BaseQuantity extends SimpleCallout {
       info.showError(e.getMessage());
       qty = null;
     } finally {
+      OBContext.restorePreviousMode();
       if (strWindowId.equals(ADWINDOW_SalesOrder) || strWindowId.equals(ADWINDOW_PurchaseOrder)
           || strWindowId.equals(ADWINDOW_SalesQuotation)) {
         info.addResult("inpqtyordered", qty);
