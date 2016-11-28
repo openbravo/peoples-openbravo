@@ -874,7 +874,7 @@
     <SqlMethod name="hasSecondaryUOM" type="preparedStatement" return="string">
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
-        SELECT (CASE WHEN (SELECT 1 WHERE EXISTS (SELECT FROM M_PRODUCT_UOM WHERE M_PRODUCT_ID = ? AND ISACTIVE = 'Y')) IS NULL THEN 0 ELSE 1 END) 
+        SELECT (CASE WHEN (SELECT 1 FROM DUAL WHERE EXISTS (SELECT 1 FROM M_PRODUCT_UOM WHERE M_PRODUCT_ID = ? AND ISACTIVE = 'Y')) IS NULL THEN 0 ELSE 1 END) 
       ]]></Sql>
       <Parameter name="mProductId"></Parameter>
    </SqlMethod>
