@@ -101,6 +101,7 @@ public class RMShipmentPickEditLines extends BaseProcessActionHandler {
       return;
     }
     TreeSet<String> rmVendorRefs = new TreeSet<String>();
+    boolean isUomManagementEnabled = UOMUtil.isUomManagementEnabled();
     for (long i = 0; i < selectedLines.length(); i++) {
       JSONObject selectedLine = selectedLines.getJSONObject((int) i);
       log.debug(selectedLine);
@@ -135,14 +136,20 @@ public class RMShipmentPickEditLines extends BaseProcessActionHandler {
       newInOutLine.setUOM(orderLine.getUOM());
       // Ordered Quantity = returned quantity.
       BigDecimal qtyReceived = new BigDecimal(selectedLine.getString("movementQuantity"));
-      if (UOMUtil.isUomManagementEnabled()) {
-        newInOutLine.setOperativeUOM(OBDal.getInstance().get(UOM.class,
-            selectedLine.getString("returnedUOM")));
-        newInOutLine.setOperativeQuantity(qtyReceived.negate());
-        if (selectedLine.getString("alternativeUOM").equals(selectedLine.getString("returnedUOM"))
-            && !selectedLine.getString("alternativeUOM").equals(selectedLine.getString("uOM"))) {
-          qtyReceived = UOMUtil.getConvertedQty(selectedLine.getString("product"), qtyReceived,
-              selectedLine.getString("alternativeUOM"));
+      if (isUomManagementEnabled) {
+        OBContext.setAdminMode(true);
+        try {
+          UOM uom = OBDal.getInstance().get(UOM.class, selectedLine.getString("returnedUOM"));
+          newInOutLine.setOperativeUOM(uom);
+          newInOutLine.setOperativeQuantity(qtyReceived.negate());
+          if (selectedLine.getString("alternativeUOM")
+              .equals(selectedLine.getString("returnedUOM"))
+              && !selectedLine.getString("alternativeUOM").equals(selectedLine.getString("uOM"))) {
+            qtyReceived = UOMUtil.getConvertedQty(selectedLine.getString("product"), qtyReceived,
+                selectedLine.getString("alternativeUOM"));
+          }
+        } finally {
+          OBContext.restorePreviousMode();
         }
       }
       newInOutLine.setMovementQuantity(qtyReceived.negate());
