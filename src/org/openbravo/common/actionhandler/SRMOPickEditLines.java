@@ -137,6 +137,7 @@ public class SRMOPickEditLines extends BaseProcessActionHandler {
       selectedLines.put(selectedLineOrphan);
     }
 
+    boolean isUomManagementEnabled = UOMUtil.isUomManagementEnabled();
     for (long i = 0; i < selectedLines.length(); i++) {
       JSONObject selectedLine = selectedLines.getJSONObject((int) i);
       log.debug(selectedLine);
@@ -188,7 +189,7 @@ public class SRMOPickEditLines extends BaseProcessActionHandler {
 
       BigDecimal qtyReturned = new BigDecimal(selectedLine.getString("returned")).negate();
 
-      boolean applyAUM = UOMUtil.isUomManagementEnabled() && shipmentLine.getOrderUOM() == null;
+      boolean applyAUM = isUomManagementEnabled && shipmentLine.getOrderUOM() == null;
       try {
         selectedLine.getString("aum");
       } catch (JSONException jse) {
