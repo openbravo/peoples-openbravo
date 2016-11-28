@@ -215,7 +215,7 @@ isc.OBParameterWindowView.addProperties({
   handleResponse: function (refreshParent, message, responseActions, retryExecution, data) {
     var window = this.parentWindow,
         tab = OB.MainView.TabSet.getTab(this.viewTabId),
-        i, selectedRecords, afterRefreshCallback, me = this;
+        i, afterRefreshCallback, me = this;
 
     // change title to done
     if (tab) {
@@ -290,13 +290,12 @@ isc.OBParameterWindowView.addProperties({
         }
       };
       if (refreshParent) {
-        if (this.callerField && this.callerField.view && typeof this.callerField.view.onRefreshFunction === 'function') {
-          // In this case we are inside a process called from another process, so we want to refresh the caller process instead of the main window.
-          this.callerField.view.onRefreshFunction(this.callerField.view);
+        if (this.button.multiRecord) {
+          this.buttonOwnerView.refresh(afterRefreshCallback);
         } else {
-
-          if (this.button.multiRecord) {
-            this.buttonOwnerView.refresh(afterRefreshCallback);
+          if (this.callerField && this.callerField.view && typeof this.callerField.view.onRefreshFunction === 'function') {
+            // In this case we are inside a process called from another process, so we want to refresh the caller process instead of the main window.
+            this.callerField.view.onRefreshFunction(this.callerField.view);
           } else {
             this.buttonOwnerView.refreshCurrentRecord(afterRefreshCallback);
           }
@@ -319,7 +318,7 @@ isc.OBParameterWindowView.addProperties({
     var i, tmp, view = this,
         grid, allProperties, selection, len, allRows, params, tab, actionHandlerCall, clientSideValidationFail, selectedRecords, recordIds;
 
-    if (this.button.multiRecord) {
+    if (this.button && this.button.multiRecord) {
       selectedRecords = this.buttonOwnerView.viewGrid.getSelectedRecords();
       recordIds = [];
       for (i = 0; i < selectedRecords.length; i++) {
