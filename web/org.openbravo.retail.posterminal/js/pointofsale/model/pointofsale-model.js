@@ -807,6 +807,8 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
             } else {
               var cancelLayawayObj = receipt.serializeToJSON();
 
+              cancelLayawayObj.posTerminal = OB.MobileApp.model.get('terminal').id;
+
               if (receipt.getPaymentStatus().isNegative) {
                 cancelLayawayObj.gross = OB.DEC.mul(cancelLayawayObj.gross, -1);
               }
