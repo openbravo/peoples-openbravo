@@ -1318,7 +1318,10 @@
           pack = line.isAffectedByPack(),
           productId = line.get('product').id;
 
-
+      //Defensive code: Do not remove non existing line
+      if (!this.get('lines').get(line)) {
+        return;
+      }
       if (me.get('replacedorder') && line.get('remainingQuantity')) {
         OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_CancelReplaceDeleteLine'));
         if (callback) {
