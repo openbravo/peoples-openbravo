@@ -27,6 +27,7 @@ import java.util.HashMap;
 
 import org.junit.Test;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.base.weld.test.WeldBaseTest;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.ui.ProcessRun;
 import org.openbravo.scheduling.Process;
@@ -35,7 +36,6 @@ import org.openbravo.scheduling.ProcessLogger;
 import org.openbravo.scheduling.ProcessRunner;
 import org.openbravo.service.db.DalBaseProcess;
 import org.openbravo.service.db.DalConnectionProvider;
-import org.openbravo.test.base.OBBaseTest;
 
 /**
  * Test cases for process schedule and process runner
@@ -43,7 +43,7 @@ import org.openbravo.test.base.OBBaseTest;
  * @author alostale
  *
  */
-public class ProcessSchedulingTest extends OBBaseTest {
+public class ProcessSchedulingTest extends WeldBaseTest {
   private static final String anyProcessID = "800170";
   private static final String USER_ID = "100";
   private static final String ROLE_ID = "0";
