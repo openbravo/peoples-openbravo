@@ -93,12 +93,7 @@ public class ReturnToFromCustomerVendorHQLTransformer extends HqlQueryTransforme
 
   private static final String rm_returnedUOM = ""
       + "(select u from UOM as u where u.id in "
-      + "(case when ((select ('Y') from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol) is null) "
-      + "then " // obSelected = false
-      + "(case when (coalesce (iol.operativeUOM.id, '0') <> '0') then iol.operativeUOM.id else M_GET_DEFAULT_AUM_FOR_DOCUMENT(iol.product.id, dt.id) end) "
-      + "else " // obSelected = true
-      + "(coalesce((select ol.operativeUOM.id from OrderLine as ol where ol.salesOrder.id = :salesOrderId and ol.goodsShipmentLine = iol), 'Y')) "
-      + "end)) ";
+      + "(case when (coalesce (iol.operativeUOM.id, '0') <> '0') then iol.operativeUOM.id else M_GET_DEFAULT_AUM_FOR_DOCUMENT(iol.product.id, dt.id) end)) ";
 
   @Override
   public String transformHqlQuery(String hqlQuery, Map<String, String> requestParameters,
