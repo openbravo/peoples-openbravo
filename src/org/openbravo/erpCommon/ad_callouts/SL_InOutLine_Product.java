@@ -102,36 +102,40 @@ public class SL_InOutLine_Product extends SimpleCallout {
     // and to modify it with the quantity of product in the warehouse.
     // However, if the delivery-note doesn't come from an order, it modifies
     // the quantity field with the quantity in the warehouse.
+
+    boolean isUomManagementEnabled = UOMUtil.isUomManagementEnabled();
     String fromOrder = SLInOutLineProductData.fromOrder(this, strmInoutlineId);
     if (fromOrder.equals("0")) {
       info.addResult("inpquantityorder", StringUtils.isEmpty(strQtyOrder) ? "\"\""
           : (Object) strQtyOrder);
       if (strHasSecondaryUOM.equals("1")
-          && (!UOMUtil.isUomManagementEnabled() || (UOMUtil.isUomManagementEnabled() && !""
-              .equals(strUOMProduct)))) {
+          && (!isUomManagementEnabled || (isUomManagementEnabled && !"".equals(strUOMProduct)))) {
         info.addResult("inpquantityorder", StringUtils.isEmpty(strQtyOrder) ? "\"\""
             : (Object) strQtyOrder);
       }
       info.addResult("inpmovementqty", StringUtils.isEmpty(strQty) ? "\"\"" : (Object) strQty);
     }
 
-    if (UOMUtil.isUomManagementEnabled() && "".equals(strUOMProduct)) {
+    if (isUomManagementEnabled && "".equals(strUOMProduct)) {
       // Set AUM based on default
-
-      ShipmentInOut mInOut = OBDal.getInstance().get(ShipmentInOut.class,
-          info.vars.getStringParameter("inpmInoutId"));
-      String finalAUM = UOMUtil.getDefaultAUMForDocument(strMProductID, mInOut.getDocumentType()
-          .getId());
-      if (finalAUM != null) {
-        info.addResult("inpcAum", finalAUM);
+      try{
+        OBContext.setAdminMode();
+        ShipmentInOut mInOut = OBDal.getInstance().get(ShipmentInOut.class,
+            info.vars.getStringParameter("inpmInoutId"));
+        String finalAUM = UOMUtil.getDefaultAUMForDocument(strMProductID, mInOut.getDocumentType()
+            .getId());
+        if (finalAUM != null) {
+          info.addResult("inpcAum", finalAUM);
+        }
+      }finally{
+        OBContext.restorePreviousMode();
       }
     }
 
     // Secondary UOM
 
     if (strHasSecondaryUOM.equals("1")
-        && (!UOMUtil.isUomManagementEnabled() || (UOMUtil.isUomManagementEnabled() && !""
-            .equals(strUOMProduct)))) {
+        && (!isUomManagementEnabled || (isUomManagementEnabled && !"".equals(strUOMProduct)))) {
       String strPUOM = info.vars.getStringParameter("inpmProductId_PUOM");
       info.addResult("inphasseconduom", (Object) strHasSecondaryUOM);
 
