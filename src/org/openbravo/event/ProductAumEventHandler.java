@@ -18,10 +18,9 @@
  */
 package org.openbravo.event;
 
-import java.util.List;
-
 import javax.enterprise.event.Observes;
 
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -30,6 +29,8 @@ import org.openbravo.client.kernel.event.EntityPersistenceEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
 import org.openbravo.client.kernel.event.EntityUpdateEvent;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBCriteria;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.materialmgmt.UOMUtil;
@@ -77,26 +78,36 @@ public class ProductAumEventHandler extends EntityPersistenceEventObserver {
 
     ProductAUM target = (ProductAUM) event.getTargetInstance();
     Product product = target.getProduct();
-    List<ProductAUM> productAumList = product.getProductAUMList();
-    for (ProductAUM productAum : productAumList) {
-      if (productAum.getId().equals(target.getId()) && event instanceof EntityNewEvent) {
+
+    if (event instanceof EntityNewEvent) {
+      ProductAUM duplicate = OBDal.getInstance().get(ProductAUM.class, target.getId());
+      if (duplicate != null) {
         throw new OBException(Utility.messageBD(conn, "DuplicateAUM", language));
       }
-      if (target.getSales().equals(UOMUtil.UOM_PRIMARY)
-          && productAum.getSales().equals(UOMUtil.UOM_PRIMARY)
-          && !target.getId().equals(productAum.getId())) {
-        throw new OBException(Utility.messageBD(conn, "DuplicatePrimarySalesAUM", language));
-      }
-      if (target.getPurchase().equals(UOMUtil.UOM_PRIMARY)
-          && productAum.getPurchase().equals(UOMUtil.UOM_PRIMARY)
-          && !target.getId().equals(productAum.getId())) {
-        throw new OBException(Utility.messageBD(conn, "DuplicatePrimaryPurchaseAUM", language));
-      }
-      if (target.getLogistics().equals(UOMUtil.UOM_PRIMARY)
-          && productAum.getLogistics().equals(UOMUtil.UOM_PRIMARY)
-          && !target.getId().equals(productAum.getId())) {
-        throw new OBException(Utility.messageBD(conn, "DuplicatePrimaryLogisticsAUM", language));
-      }
     }
+    OBCriteria<ProductAUM> primarySales = OBDal.getInstance().createCriteria(ProductAUM.class);
+    primarySales.add(Restrictions.and(Restrictions.eq("sales", UOMUtil.UOM_PRIMARY),
+        Restrictions.eq("product", product)));
+    primarySales.setMaxResults(1);
+    if (target.getSales().equals(UOMUtil.UOM_PRIMARY) && primarySales.list().size() == 1) {
+      throw new OBException(Utility.messageBD(conn, "DuplicatePrimarySalesAUM", language));
+    }
+
+    OBCriteria<ProductAUM> primaryPurchase = OBDal.getInstance().createCriteria(ProductAUM.class);
+    primaryPurchase.add(Restrictions.and(Restrictions.eq("purchase", UOMUtil.UOM_PRIMARY),
+        Restrictions.eq("product", product)));
+    primaryPurchase.setMaxResults(1);
+    if (target.getPurchase().equals(UOMUtil.UOM_PRIMARY) && primaryPurchase.list().size() == 1) {
+      throw new OBException(Utility.messageBD(conn, "DuplicatePrimaryPurchaseAUM", language));
+    }
+
+    OBCriteria<ProductAUM> primaryLogistics = OBDal.getInstance().createCriteria(ProductAUM.class);
+    primaryLogistics.add(Restrictions.and(Restrictions.eq("logistics", UOMUtil.UOM_PRIMARY),
+        Restrictions.eq("product", product)));
+    primaryLogistics.setMaxResults(1);
+    if (target.getLogistics().equals(UOMUtil.UOM_PRIMARY) && primaryLogistics.list().size() == 1) {
+      throw new OBException(Utility.messageBD(conn, "DuplicatePrimaryLogisticsAUM", language));
+    }
+
   }
 }
