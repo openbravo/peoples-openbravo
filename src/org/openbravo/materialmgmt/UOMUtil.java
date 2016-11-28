@@ -74,12 +74,16 @@ public class UOMUtil {
    */
 
   public static String getDefaultAUMForDocument(String mProductId, String documentTypeId) {
-    OBContext.setAdminMode();
-    if (mProductId == null || documentTypeId == null) {
-      return null;
+    OBContext.setAdminMode(false);
+    try {
+      if (mProductId == null || documentTypeId == null) {
+        return null;
+      }
+      DocumentType docType = OBDal.getInstance().get(DocumentType.class, documentTypeId);
+      return getDefaultAUMForFlow(mProductId, docType.isSalesTransaction());
+    } finally {
+      OBContext.restorePreviousMode();
     }
-    DocumentType docType = OBDal.getInstance().get(DocumentType.class, documentTypeId);
-    return getDefaultAUMForFlow(mProductId, docType.isSalesTransaction());
   }
 
   /**
@@ -110,17 +114,21 @@ public class UOMUtil {
     if (mProductId == null) {
       return null;
     }
-    OBContext.setAdminMode();
-    OBCriteria<ProductAUM> pAUMCriteria = OBDal.getInstance().createCriteria(ProductAUM.class);
-    pAUMCriteria.add(Restrictions.and(Restrictions.eq("product.id", mProductId), Restrictions.eq(
-        isSoTrx ? ProductAUM.PROPERTY_SALES : ProductAUM.PROPERTY_PURCHASE, UOM_PRIMARY)));
-    Product product = OBDal.getInstance().get(Product.class, mProductId);
-    String finalAUM = product.getUOM().getId();
-    ProductAUM primaryAum = (ProductAUM) pAUMCriteria.uniqueResult();
-    if (primaryAum != null) {
-      finalAUM = primaryAum.getUOM().getId();
+    String finalAUM = "";
+    OBContext.setAdminMode(false);
+    try {
+      OBCriteria<ProductAUM> pAUMCriteria = OBDal.getInstance().createCriteria(ProductAUM.class);
+      pAUMCriteria.add(Restrictions.and(Restrictions.eq("product.id", mProductId), Restrictions.eq(
+          isSoTrx ? ProductAUM.PROPERTY_SALES : ProductAUM.PROPERTY_PURCHASE, UOM_PRIMARY)));
+      Product product = OBDal.getInstance().get(Product.class, mProductId);
+      finalAUM = product.getUOM().getId();
+      ProductAUM primaryAum = (ProductAUM) pAUMCriteria.uniqueResult();
+      if (primaryAum != null) {
+        finalAUM = primaryAum.getUOM().getId();
+      }
+    } finally {
+      OBContext.restorePreviousMode();
     }
-    OBContext.restorePreviousMode();
     return finalAUM;
   }
 
@@ -134,23 +142,26 @@ public class UOMUtil {
    * @return List of the available UOM
    */
   public static List<UOM> getAvailableUOMsForDocument(String mProductId, String docTypeId) {
-    OBContext.setAdminMode();
     List<UOM> lUom = new ArrayList<UOM>();
-    if (mProductId == null || docTypeId == null) {
-      return lUom;
+    OBContext.setAdminMode(false);
+    try {
+      if (mProductId == null || docTypeId == null) {
+        return lUom;
+      }
+      DocumentType docType = OBDal.getInstance().get(DocumentType.class, docTypeId);
+      OBCriteria<ProductAUM> pAUMCriteria = OBDal.getInstance().createCriteria(ProductAUM.class);
+      pAUMCriteria.add(Restrictions.and(Restrictions.eq("product.id", mProductId), Restrictions.ne(
+          docType.isSalesTransaction() ? ProductAUM.PROPERTY_SALES : ProductAUM.PROPERTY_PURCHASE,
+          UOM_NOT_APPLICABLE)));
+      Product product = OBDal.getInstance().get(Product.class, mProductId);
+      List<ProductAUM> pAUMList = pAUMCriteria.list();
+      for (ProductAUM pAUM : pAUMList) {
+        lUom.add(pAUM.getUOM());
+      }
+      lUom.add(product.getUOM());
+    } finally {
+      OBContext.restorePreviousMode();
     }
-    DocumentType docType = OBDal.getInstance().get(DocumentType.class, docTypeId);
-    OBCriteria<ProductAUM> pAUMCriteria = OBDal.getInstance().createCriteria(ProductAUM.class);
-    pAUMCriteria.add(Restrictions.and(Restrictions.eq("product.id", mProductId), Restrictions.ne(
-        docType.isSalesTransaction() ? ProductAUM.PROPERTY_SALES : ProductAUM.PROPERTY_PURCHASE,
-        UOM_NOT_APPLICABLE)));
-    Product product = OBDal.getInstance().get(Product.class, mProductId);
-    List<ProductAUM> pAUMList = pAUMCriteria.list();
-    for (ProductAUM pAUM : pAUMList) {
-      lUom.add(pAUM.getUOM());
-    }
-    lUom.add(product.getUOM());
-    OBContext.restorePreviousMode();
     return lUom;
   }
 
@@ -171,46 +182,45 @@ public class UOMUtil {
 
   private static BigDecimal getConvertedQty(String mProductId, BigDecimal qty, String toUOMId,
       boolean reverse) throws OBException {
-
-    OBContext.setAdminMode();
     BigDecimal strQty = qty;
-    Product product = OBDal.getInstance().get(Product.class, mProductId);
+    OBContext.setAdminMode(false);
+    try {
+      Product product = OBDal.getInstance().get(Product.class, mProductId);
 
-    if (product == null || toUOMId == null || toUOMId == ""
-        || toUOMId.equals(product.getUOM().getId())) {
-      OBContext.restorePreviousMode();
-      return strQty;
-    }
-
-    if (qty != null) {
-
-      OBCriteria<ProductAUM> productAUMConversionCriteria = OBDal.getInstance().createCriteria(
-          ProductAUM.class);
-      productAUMConversionCriteria.add(Restrictions.and(Restrictions.eq("product.id", mProductId),
-          Restrictions.eq("uOM.id", toUOMId)));
-
-      try {
-        ProductAUM conversion = (ProductAUM) productAUMConversionCriteria.uniqueResult();
-        if (conversion == null) {
-          OBContext.restorePreviousMode();
-          throw new OBException(OBMessageUtils.messageBD(new DalConnectionProvider(),
-              "NoAUMDefined", OBContext.getOBContext().getLanguage().getLanguage()));
-        }
-        BigDecimal rate = conversion.getConversionRate();
-        UOM uom = OBDal.getInstance().get(UOM.class, conversion.getUOM().getId());
-        if (reverse) {
-          strQty = qty.divide(rate, uom.getStandardPrecision().intValue(), RoundingMode.HALF_UP);
-        } else {
-          strQty = rate.multiply(qty).setScale(uom.getStandardPrecision().intValue(),
-              RoundingMode.HALF_UP);
-        }
-      } catch (NonUniqueResultException e) {
-        OBContext.restorePreviousMode();
-        throw new OBException(OBMessageUtils.messageBD(new DalConnectionProvider(), "DuplicateAUM",
-            OBContext.getOBContext().getLanguage().getLanguage()));
+      if (product == null || toUOMId == null || toUOMId == ""
+          || toUOMId.equals(product.getUOM().getId())) {
+        return strQty;
       }
+
+      if (qty != null) {
+
+        OBCriteria<ProductAUM> productAUMConversionCriteria = OBDal.getInstance().createCriteria(
+            ProductAUM.class);
+        productAUMConversionCriteria.add(Restrictions.and(
+            Restrictions.eq("product.id", mProductId), Restrictions.eq("uOM.id", toUOMId)));
+
+        try {
+          ProductAUM conversion = (ProductAUM) productAUMConversionCriteria.uniqueResult();
+          if (conversion == null) {
+            throw new OBException(OBMessageUtils.messageBD(new DalConnectionProvider(),
+                "NoAUMDefined", OBContext.getOBContext().getLanguage().getLanguage()));
+          }
+          BigDecimal rate = conversion.getConversionRate();
+          UOM uom = OBDal.getInstance().get(UOM.class, conversion.getUOM().getId());
+          if (reverse) {
+            strQty = qty.divide(rate, uom.getStandardPrecision().intValue(), RoundingMode.HALF_UP);
+          } else {
+            strQty = rate.multiply(qty).setScale(uom.getStandardPrecision().intValue(),
+                RoundingMode.HALF_UP);
+          }
+        } catch (NonUniqueResultException e) {
+          throw new OBException(OBMessageUtils.messageBD(new DalConnectionProvider(),
+              "DuplicateAUM", OBContext.getOBContext().getLanguage().getLanguage()));
+        }
+      }
+    } finally {
+      OBContext.restorePreviousMode();
     }
-    OBContext.restorePreviousMode();
     return strQty;
   }
 
@@ -261,16 +271,19 @@ public class UOMUtil {
    * @return true if enabled, false otherwise
    */
   public static boolean isUomManagementEnabled() {
-    OBContext.setAdminMode();
     String propertyValue = "N";
+    OBContext.setAdminMode(false);
     try {
-      Client systemClient = OBDal.getInstance().get(Client.class, "0");
-      propertyValue = Preferences.getPreferenceValue(UOM_PROPERTY, true, systemClient, null, null,
-          null, null);
-    } catch (PropertyException e) {
-      log4j.debug("Preference UomManagement not found", e);
+      try {
+        Client systemClient = OBDal.getInstance().get(Client.class, "0");
+        propertyValue = Preferences.getPreferenceValue(UOM_PROPERTY, true, systemClient, null,
+            null, null, null);
+      } catch (PropertyException e) {
+        log4j.debug("Preference UomManagement not found", e);
+      }
+    } finally {
+      OBContext.restorePreviousMode();
     }
-    OBContext.restorePreviousMode();
     return propertyValue.equals("Y");
   }
 
@@ -290,14 +303,17 @@ public class UOMUtil {
     if (productId == null || productId.isEmpty() || docTypeId == null || docTypeId.isEmpty()) {
       return FieldProviderFactory.getFieldProviderArray(result);
     }
-    OBContext.setAdminMode();
-    String id = getDefaultAUMForDocument(productId, docTypeId);
-    UOM uom = OBDal.getInstance().get(UOM.class, id);
-    resultMap.put(FIELD_PROVIDER_ID, id);
-    resultMap.put(FIELD_PROVIDER_NAME, uom.getName());
-    result.add(resultMap);
-    finalResult = FieldProviderFactory.getFieldProviderArray(result);
-    OBContext.restorePreviousMode();
+    OBContext.setAdminMode(false);
+    try {
+      String id = getDefaultAUMForDocument(productId, docTypeId);
+      UOM uom = OBDal.getInstance().get(UOM.class, id);
+      resultMap.put(FIELD_PROVIDER_ID, id);
+      resultMap.put(FIELD_PROVIDER_NAME, uom.getName());
+      result.add(resultMap);
+      finalResult = FieldProviderFactory.getFieldProviderArray(result);
+    } finally {
+      OBContext.restorePreviousMode();
+    }
     return finalResult;
   }
 
@@ -317,16 +333,19 @@ public class UOMUtil {
     if (productId == null || productId.isEmpty() || docTypeId == null || docTypeId.isEmpty()) {
       return FieldProviderFactory.getFieldProviderArray(result);
     }
-    OBContext.setAdminMode();
-    List<UOM> availableUOM = getAvailableUOMsForDocument(productId, docTypeId);
-    for (UOM uom : availableUOM) {
-      resultMap = new HashMap<>();
-      resultMap.put(FIELD_PROVIDER_ID, uom.getId());
-      resultMap.put(FIELD_PROVIDER_NAME, uom.getName());
-      result.add(resultMap);
+    OBContext.setAdminMode(false);
+    try {
+      List<UOM> availableUOM = getAvailableUOMsForDocument(productId, docTypeId);
+      for (UOM uom : availableUOM) {
+        resultMap = new HashMap<>();
+        resultMap.put(FIELD_PROVIDER_ID, uom.getId());
+        resultMap.put(FIELD_PROVIDER_NAME, uom.getName());
+        result.add(resultMap);
+      }
+      finalResult = FieldProviderFactory.getFieldProviderArray(result);
+    } finally {
+      OBContext.restorePreviousMode();
     }
-    finalResult = FieldProviderFactory.getFieldProviderArray(result);
-    OBContext.restorePreviousMode();
     return finalResult;
   }
 
@@ -337,18 +356,21 @@ public class UOMUtil {
     if (productId == null || productId.isEmpty()) {
       return FieldProviderFactory.getFieldProviderArray(result);
     }
-    OBContext.setAdminMode();
-    OBCriteria<ProductUOM> pUomCriteria = OBDal.getInstance().createCriteria(ProductUOM.class);
-    pUomCriteria.add(Restrictions.eq("product.id", productId));
-    List<ProductUOM> pUomList = pUomCriteria.list();
-    for (ProductUOM pUom : pUomList) {
-      resultMap = new HashMap<>();
-      resultMap.put(FIELD_PROVIDER_ID, pUom.getUOM().getId());
-      resultMap.put(FIELD_PROVIDER_NAME, pUom.getUOM().getName());
-      result.add(resultMap);
+    OBContext.setAdminMode(false);
+    try {
+      OBCriteria<ProductUOM> pUomCriteria = OBDal.getInstance().createCriteria(ProductUOM.class);
+      pUomCriteria.add(Restrictions.eq("product.id", productId));
+      List<ProductUOM> pUomList = pUomCriteria.list();
+      for (ProductUOM pUom : pUomList) {
+        resultMap = new HashMap<>();
+        resultMap.put(FIELD_PROVIDER_ID, pUom.getUOM().getId());
+        resultMap.put(FIELD_PROVIDER_NAME, pUom.getUOM().getName());
+        result.add(resultMap);
+      }
+      finalResult = FieldProviderFactory.getFieldProviderArray(result);
+    } finally {
+      OBContext.restorePreviousMode();
     }
-    finalResult = FieldProviderFactory.getFieldProviderArray(result);
-    OBContext.restorePreviousMode();
     return finalResult;
   }
 
