@@ -392,7 +392,6 @@ enyo.kind({
         keyboard: false,
         edit: false
       });
-      OB.MobileApp.view.scanningFocus(true);
     }
   },
   initComponents: function () {
