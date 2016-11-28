@@ -874,10 +874,7 @@
     <SqlMethod name="hasSecondaryUOM" type="preparedStatement" return="string">
       <SqlMethodComment></SqlMethodComment>
       <Sql><![CDATA[
-        SELECT (CASE COUNT(*) WHEN 0 THEN 0 ELSE 1 END)
-        FROM M_PRODUCT_UOM
-        WHERE M_PRODUCT_ID = ?
-        AND ISACTIVE = 'Y'
+        SELECT (CASE WHEN (SELECT 1 WHERE EXISTS (SELECT FROM M_PRODUCT_UOM WHERE M_PRODUCT_ID = ? AND ISACTIVE = 'Y')) IS NULL THEN 0 ELSE 1 END) 
       ]]></Sql>
       <Parameter name="mProductId"></Parameter>
    </SqlMethod>
