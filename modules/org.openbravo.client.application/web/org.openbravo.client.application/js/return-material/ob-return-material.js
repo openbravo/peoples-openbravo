@@ -24,16 +24,16 @@ OB.RM = OB.RM || {};
  */
 
 OB.RM.RMReturnedUOMValidate = function (item, validator, value, record) {
-  var movementQty = record.movementQuantity !== null ? new BigDecimal(String(record.movementQuantity)) : BigDecimal.prototype.ZERO,
-      returnedQty = record.returnQtyOtherRM !== null ? new BigDecimal(String(record.returnQtyOtherRM)) : BigDecimal.prototype.ZERO,
-      newReturnedQty = new BigDecimal(String(record.returned));
+  var movementQty = isc.isA.Number(record.movementQuantity) ? new BigDecimal(String(record.movementQuantity)) : BigDecimal.prototype.ZERO,
+      returnedQty = isc.isA.Number(record.returnQtyOtherRM) ? new BigDecimal(String(record.returnQtyOtherRM)) : BigDecimal.prototype.ZERO,
+      newReturnedQty = isc.isA.Number(record.returned) ? new BigDecimal(String(record.returned)) : BigDecimal.prototype.ZERO;
 
   var applyUOM = OB.PropertyStore.get('UomManagement') !== null && OB.PropertyStore.get('UomManagement') === 'Y' && record.returnedUOM !== record.uOM;
 
   if (applyUOM) {
-    newReturnedQty = newReturnedQty.multiply(new BigDecimal(String(record.aumConversionRate)));
+    newReturnedQty = newReturnedQty.multiply(isc.isA.Number(record.aumConversionRate) ? new BigDecimal(String(record.aumConversionRate)) : BigDecimal.prototype.ONE);
   }
-  if ((record.returned !== null) && (newReturnedQty.compareTo(movementQty.subtract(returnedQty))) <= 0 && (record.returned > 0)) {
+  if (newReturnedQty.compareTo(movementQty.subtract(returnedQty)) <= 0 && (record.returned > 0)) {
     item.grid.view.messageBar.hide(true);
     return true;
   } else {
@@ -158,10 +158,11 @@ OB.RM.RMShipmentQtyValidate = function (item, validator, value, record) {
     return false;
   }
   // check shipped total quantity for the order line is below pending qty.
+  var isUomManagementEnabled = OB.PropertyStore.get('UomManagement');
   for (i = 0; i < selectedRecordsLength; i++) {
     editedRecord = isc.addProperties({}, selectedRecords[i], item.grid.getEditedRecord(selectedRecords[i]));
     if (editedRecord.orderLine === orderLine) {
-      if (OB.PropertyStore.get('UomManagement') === 'Y') {
+      if (isUomManagementEnabled === 'Y') {
         if (record.returnedUOM === editedRecord.returnedUOM) {
           pendingQty -= editedRecord.movementQuantity;
         } else {
@@ -172,7 +173,7 @@ OB.RM.RMShipmentQtyValidate = function (item, validator, value, record) {
         }
       }
       if (pendingQty < 0) {
-        if (OB.PropertyStore.get('UomManagement') === 'Y') {
+        if (isUomManagementEnabled === 'Y') {
           item.grid.view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('OBUIAPP_RM_TooMuchShippedInUomManagement', []));
         } else {
           item.grid.view.messageBar.setMessage(isc.OBMessageBar.TYPE_ERROR, null, OB.I18N.getLabel('OBUIAPP_RM_TooMuchShipped', [record.pending]));
@@ -206,10 +207,11 @@ OB.RM.RMShipmentSelectionChange = function (grid, record, state) {
       return false;
     }
     // calculate already shipped qty on grid
+    var isUomManagementEnabled = OB.PropertyStore.get('UomManagement');
     for (i = 0; i < selectedRecords.length; i++) {
       editedRecord = isc.addProperties({}, selectedRecords[i], grid.getEditedRecord(selectedRecords[i]));
       if (editedRecord.orderLine === orderLine && selectedRecords[i].id !== record.id) {
-        if (OB.PropertyStore.get('UomManagement') === 'Y') {
+        if (isUomManagementEnabled === 'Y') {
           if (record.returnedUOM === editedRecord.returnedUOM) {
             shippedQty = shippedQty.add(new BigDecimal(String(editedRecord.movementQuantity)));
           } else {
