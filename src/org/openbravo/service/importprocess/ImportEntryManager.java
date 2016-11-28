@@ -144,9 +144,8 @@ public class ImportEntryManager {
 
   private boolean threadsStarted = false;
 
-  // TODO: make this a preference
   private long initialWaitTime = 10000;
-  private long managerWaitTime = 60000;
+  private long managerWaitTime = 600_000L;
 
   // default to number of processors plus some additionals for the main threads
   private int numberOfThreads = Runtime.getRuntime().availableProcessors() + 3;
@@ -175,6 +174,10 @@ public class ImportEntryManager {
         numberOfThreads, 4);
     maxTaskQueueSize = ImportProcessUtils.getCheckIntProperty(log, "import.max.task.queue.size",
         maxTaskQueueSize, 50);
+    managerWaitTime = ImportProcessUtils.getCheckIntProperty(log, "import.wait.time", 600, 1);
+
+    // property defined in secs, convert to ms
+    managerWaitTime = managerWaitTime * 1000;
   }
 
   public synchronized void start() {
@@ -494,7 +497,7 @@ public class ImportEntryManager {
         try {
           if (!wasNotifiedInParallel) {
             log.debug("Waiting for next cycle or new import entries");
-            monitorObject.wait(10 * manager.managerWaitTime);
+            monitorObject.wait(manager.managerWaitTime);
             log.debug("Woken");
           }
           wasNotifiedInParallel = false;
@@ -637,10 +640,10 @@ public class ImportEntryManager {
           } catch (Throwable t) {
             ImportProcessUtils.logError(log, t);
 
-            // wait otherwise the loop goes wild in case of really severe
+            // wait for 5 min otherwise the loop goes wild in case of really severe
             // system errors like full disk
             try {
-              Thread.sleep(5 * manager.managerWaitTime);
+              Thread.sleep(300_000L);
             } catch (Exception ignored) {
             }
           }
