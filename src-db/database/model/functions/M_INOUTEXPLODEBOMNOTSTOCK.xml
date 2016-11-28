@@ -82,10 +82,11 @@
     -- Get AUM
     v_uom_preference := 'N';      
     BEGIN
-      v_uom_preference := AD_GET_PREFERENCE_VALUE('UomManagement', 'Y', NULL, v_AD_Org_ID, v_ADUserId, NULL, NULL);
+      v_uom_preference := AD_GET_PREFERENCE_VALUE('UomManagement', 'Y', NULL, NULL, NULL, NULL, NULL);
     EXCEPTION
       WHEN OTHERS THEN
       -- Nothing to do, v_uom_preference = 'N'
+      DBMS_OUTPUT.PUT_LINE('The preference UomManagement was not found') ;
     END;
  
     -- Replace Lines
@@ -93,7 +94,7 @@
     FOR CUR_BOM_Line IN
       (SELECT l.*, i.c_doctype_id as io_c_doctype_id
        FROM M_INOUTLINE l
-       JOIN M_INOUT i USING (m_inout_id)
+       JOIN M_INOUT i ON (l.m_inout_id = i.m_inout_id)
        WHERE l.m_inoutline_ID=v_Record_ID
          AND l.IsActive='Y'
          AND EXISTS

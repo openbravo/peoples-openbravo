@@ -112,10 +112,11 @@
     -- Get AUM
     v_uom_preference := 'N';      
     BEGIN
-      v_uom_preference := AD_GET_PREFERENCE_VALUE('UomManagement', 'Y', NULL, v_AD_Org_ID, v_ADUserId, NULL, NULL);
+      v_uom_preference := AD_GET_PREFERENCE_VALUE('UomManagement', 'Y', NULL, NULL, NULL, NULL, NULL);
     EXCEPTION
       WHEN OTHERS THEN
       -- Nothing to do, v_uom_preference = 'N'
+      DBMS_OUTPUT.PUT_LINE('The preference UomManagement was not found') ;
     END;
 
     -- Replace Lines
