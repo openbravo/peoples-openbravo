@@ -409,12 +409,15 @@ public class OBViewGridComponent extends BaseTemplateComponent {
   }
 
   /**
-   * Returns true if the grid allows adding summary functions. If tab is based on a HQL table,
-   * summary functions are disabled.
+   * Returns true if the grid allows adding summary functions. If the tab is based on an HQL table,
+   * this method is returning false because grid summaries are not allowed for this kind of tables.
    */
   public boolean getAllowSummaryFunctions() {
-    return (isHqlTable(this.tab.getTable()) ? false : isConfigurationPropertyEnabled(
-        GCTab.PROPERTY_ALLOWSUMMARYFUNCTIONS, GCSystem.PROPERTY_ALLOWSUMMARYFUNCTIONS, true));
+    if (isHqlBasedTable(tab.getTable())) {
+      return false;
+    }
+    return isConfigurationPropertyEnabled(GCTab.PROPERTY_ALLOWSUMMARYFUNCTIONS,
+        GCSystem.PROPERTY_ALLOWSUMMARYFUNCTIONS, true);
   }
 
   private boolean isConfigurationPropertyEnabled(String propertyNameAtTabLevel,
@@ -461,11 +464,11 @@ public class OBViewGridComponent extends BaseTemplateComponent {
 
   public String getTableAlias() {
     Table table = tab.getTable();
-    return isHqlTable(table) && !StringUtils.isBlank(table.getEntityAlias()) ? table
+    return isHqlBasedTable(table) && !StringUtils.isBlank(table.getEntityAlias()) ? table
         .getEntityAlias() : "e";
   }
 
-  private boolean isHqlTable(Table table) {
+  private boolean isHqlBasedTable(Table table) {
     return ApplicationConstants.HQLBASEDTABLE.equals(table.getDataOriginType());
   }
 }
