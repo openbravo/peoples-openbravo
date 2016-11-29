@@ -1320,6 +1320,9 @@
 
       //Defensive code: Do not remove non existing line
       if (!this.get('lines').get(line)) {
+        if (callback) {
+          callback();
+        }
         return;
       }
       if (me.get('replacedorder') && line.get('remainingQuantity')) {
