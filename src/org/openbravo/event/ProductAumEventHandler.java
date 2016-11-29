@@ -86,27 +86,34 @@ public class ProductAumEventHandler extends EntityPersistenceEventObserver {
       }
     }
     OBCriteria<ProductAUM> primarySales = OBDal.getInstance().createCriteria(ProductAUM.class);
-    primarySales.add(Restrictions.and(Restrictions.eq("sales", UOMUtil.UOM_PRIMARY),
-        Restrictions.eq("product", product)));
+    primarySales.add(Restrictions.and(
+        Restrictions.ne("id", target.getId()),
+        Restrictions.and(Restrictions.eq("sales", UOMUtil.UOM_PRIMARY),
+            Restrictions.eq("product", product))));
     primarySales.setMaxResults(1);
     if (target.getSales().equals(UOMUtil.UOM_PRIMARY) && !primarySales.list().isEmpty()) {
       throw new OBException(OBMessageUtils.messageBD(conn, "DuplicatePrimarySalesAUM", language));
     }
 
     OBCriteria<ProductAUM> primaryPurchase = OBDal.getInstance().createCriteria(ProductAUM.class);
-    primaryPurchase.add(Restrictions.and(Restrictions.eq("purchase", UOMUtil.UOM_PRIMARY),
-        Restrictions.eq("product", product)));
+    primaryPurchase.add(Restrictions.and(
+        Restrictions.ne("id", target.getId()),
+        Restrictions.and(Restrictions.eq("purchase", UOMUtil.UOM_PRIMARY),
+            Restrictions.eq("product", product))));
     primaryPurchase.setMaxResults(1);
     if (target.getPurchase().equals(UOMUtil.UOM_PRIMARY) && !primaryPurchase.list().isEmpty()) {
       throw new OBException(OBMessageUtils.messageBD(conn, "DuplicatePrimaryPurchaseAUM", language));
     }
 
     OBCriteria<ProductAUM> primaryLogistics = OBDal.getInstance().createCriteria(ProductAUM.class);
-    primaryLogistics.add(Restrictions.and(Restrictions.eq("logistics", UOMUtil.UOM_PRIMARY),
-        Restrictions.eq("product", product)));
+    primaryLogistics.add(Restrictions.and(
+        Restrictions.ne("id", target.getId()),
+        Restrictions.and(Restrictions.eq("logistics", UOMUtil.UOM_PRIMARY),
+            Restrictions.eq("product", product))));
     primaryLogistics.setMaxResults(1);
     if (target.getLogistics().equals(UOMUtil.UOM_PRIMARY) && !primaryLogistics.list().isEmpty()) {
-      throw new OBException(OBMessageUtils.messageBD(conn, "DuplicatePrimaryLogisticsAUM", language));
+      throw new OBException(
+          OBMessageUtils.messageBD(conn, "DuplicatePrimaryLogisticsAUM", language));
     }
 
   }
