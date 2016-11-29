@@ -874,9 +874,11 @@ public class CostingMigrationProcess implements Process {
       insert.append(", coalesce(io." + ShipmentInOut.PROPERTY_ACCOUNTINGDATE + ", t."
           + MaterialTransaction.PROPERTY_MOVEMENTDATE + ")");
       insert.append(" from " + MaterialTransaction.ENTITY_NAME + " as t");
+      insert.append(" left join t." + MaterialTransaction.PROPERTY_TRANSACTIONCOSTLIST + " as tc");
       insert.append(" left join t." + MaterialTransaction.PROPERTY_GOODSSHIPMENTLINE + " as iol");
       insert.append(" left join iol." + ShipmentInOutLine.PROPERTY_SHIPMENTRECEIPT + " as io");
       insert.append(" where t." + MaterialTransaction.PROPERTY_TRANSACTIONCOST + " is not null");
+      insert.append(" and tc." + TransactionCost.PROPERTY_ID + " is null");
 
       Query queryInsert = OBDal.getInstance().getSession().createQuery(insert.toString());
       queryInsert.executeUpdate();
