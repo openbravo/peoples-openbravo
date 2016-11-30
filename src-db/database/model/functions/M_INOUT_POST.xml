@@ -1096,7 +1096,7 @@
                 Cur_InOutLine.M_InOutLine_ID, Cur_InOutLine.A_Asset_ID, Cur_InOutLine.C_Project_ID, Cur_InOutLine.C_BPartner_ID,
                 Cur_InOutLine.User1_ID, Cur_InOutLine.User2_ID, Cur_InOutLine.C_CostCenter_ID, 
                 Cur_InOutLine.explode ,
-                Cur_InOutLine.C_AUM, Cur_InOutLine.AUMQTY
+                Cur_InOutLine.C_AUM, Cur_InOutLine.AUMQTY * -1
               )
               ;
 
