@@ -1439,12 +1439,9 @@
             line.set('obposQtyDeleted', line.get('qty'));
             line.set('qty', 0);
             this.set('skipCalculateReceipt', false);
-
-            this.calculateReceipt(function () {
-              me.get('deletedLines').push(new OrderLine(line.attributes));
-              // remove the line
-              finishDelete();
-            });
+            me.get('deletedLines').push(new OrderLine(line.attributes));
+            // remove the line
+            finishDelete();
           } else {
             this.set('skipCalculateReceipt', true);
             line.set('obposIsDeleted', true);
