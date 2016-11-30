@@ -517,9 +517,7 @@
       // Calculate
       return Promise.all(_.map(receipt.get('lines').models, function (line) {
         return calcLineTaxesIncPrice(receipt, line);
-      })).then(function () {
-
-
+      })).then(function (value) {
         var generateTaxGroupId = function (line) {
             var id = '';
             _.each(line.sortedTaxCollection, function (taxRate) {
@@ -534,6 +532,11 @@
         var taxGroups = {};
         var lines = [],
             i;
+        // If the number of original lines are not the same as the actual in the receipt, we interrupt the execution of taxes.
+        if (value.length !== receipt.get('lines').length) {
+          OB.debug('The number of original lines of the receipt has change!');
+          return;
+        }
         //First, lines inside BOMs will be separated as they can be affected by different taxes
         _.forEach(receipt.get('lines').models, function (line) {
           var lineObj;
@@ -559,7 +562,6 @@
             lines.push(lineObj);
           }
         });
-
 
         //Line groups will now be formed, by checking the taxes which were applied to each line.
         _.forEach(lines, function (line) {

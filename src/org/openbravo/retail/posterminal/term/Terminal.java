@@ -230,8 +230,12 @@ public class Terminal extends JSONProcessSimple {
             queryaux.put(queryterminal.getProperty(), arrayQueryVal);
           }
         } else {
-          throw new OBException("Error while loading query terminal property of "
-              + queryterminal.getProperty());
+          String errorMessage = "Error while loading query terminal property of "
+              + queryterminal.getProperty();
+          if (jsonQueryVal.has("error") && ((JSONObject) jsonQueryVal.get("error")).has("message")) {
+            errorMessage = ((JSONObject) jsonQueryVal.get("error")).get("message").toString();
+          }
+          throw new OBException(errorMessage);
         }
         arrayresult.put(queryaux);
       }

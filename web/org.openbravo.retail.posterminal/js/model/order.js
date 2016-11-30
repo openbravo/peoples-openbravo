@@ -481,8 +481,8 @@
           line.set({
             net: OB.UTIL.getFirstValidValue([OB.DEC.toNumber(line.get('discountedNet')), line.get('net'), OB.DEC.div(gross, line.get('linerate'))]),
             pricenet: line.get('qty') !== 0 ? (line.get('discountedNet') ? OB.DEC.div(line.get('discountedNet'), line.get('qty')) : OB.DEC.div(OB.DEC.div(gross, line.get('linerate')), line.get('qty'))) : 0,
-            listPrice: OB.DEC.div(grossListPrice, line.get('linerate')),
-            standardPrice: OB.DEC.div((grossListPrice || price), line.get('linerate')),
+            listPrice: 0,
+            standardPrice: 0,
             grossListPrice: grossListPrice,
             grossUnitPrice: price,
             lineGrossAmount: gross
@@ -1278,10 +1278,10 @@
       idx++;
       if (this.get('lines').get(line)) {
         if (idx < length) {
-          this.deleteLine(line, true);
+          this.deleteLine(line, true, null, false);
           this.deleteLines(lines, idx, length, callback);
         } else {
-          this.deleteLine(line, false, callback);
+          this.deleteLine(line, false, callback, true);
         }
       } else {
         // If there is a line and other related service line selected to delete, the service is deleted when the product is deleted
@@ -1313,12 +1313,18 @@
       line.unset('obposIsDeleted');
     },
 
-    deleteLine: function (line, doNotSave, callback) {
+    deleteLine: function (line, doNotSave, callback, isLastLine) {
       var me = this,
           pack = line.isAffectedByPack(),
           productId = line.get('product').id;
 
-
+      //Defensive code: Do not remove non existing line
+      if (!this.get('lines').get(line)) {
+        if (callback) {
+          callback();
+        }
+        return;
+      }
       if (me.get('replacedorder') && line.get('remainingQuantity')) {
         OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_CancelReplaceDeleteLine'));
         if (callback) {
@@ -1427,16 +1433,24 @@
           this.set('deletedLines', []);
         }
         if (!line.get('hasTaxError')) {
-          line.set('obposIsDeleted', true);
-          this.set('skipCalculateReceipt', true);
-          line.set('obposQtyDeleted', line.get('qty'));
-          line.set('qty', 0);
-          this.set('skipCalculateReceipt', false);
-          this.calculateReceipt(function () {
+          if (OB.UTIL.isNullOrUndefined(isLastLine) || isLastLine) {
+            this.set('skipCalculateReceipt', true);
+            line.set('obposIsDeleted', true);
+            line.set('obposQtyDeleted', line.get('qty'));
+            line.set('qty', 0);
+            this.set('skipCalculateReceipt', false);
             me.get('deletedLines').push(new OrderLine(line.attributes));
             // remove the line
             finishDelete();
-          });
+          } else {
+            this.set('skipCalculateReceipt', true);
+            line.set('obposIsDeleted', true);
+            line.set('obposQtyDeleted', line.get('qty'));
+            line.set('qty', 0);
+            this.get('deletedLines').push(new OrderLine(line.attributes));
+            // remove the line
+            finishDelete();
+          }
         }
       } else {
         // remove the line
@@ -1562,7 +1576,9 @@
                 callback(true, args.orderline);
               }
               };
-          args.orderline.set('hasMandatoryServices', false);
+          if (args.orderline) {
+            args.orderline.set('hasMandatoryServices', false);
+          }
           if (args.newLine && me.get('lines').contains(line) && args.productToAdd.get('productType') !== 'S') {
             var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('HasServices');
             // Display related services after calculate gross, if it is new line and if the line has not been deleted.
@@ -4067,6 +4083,14 @@
 
     canAddAsServices: function (model, product, callback, scope) {
       if (product.get('productType') === 'S') {
+        // do not allow to add not linked services to non editable orders
+        if (product.get('isLinkedToProduct') === false && model.get('order').get('isEditable') === false) {
+          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_modalNoEditableHeader'), OB.I18N.getLabel('OBPOS_modalNoEditableBody'), [{
+            label: OB.I18N.getLabel('OBMOBC_LblOk')
+          }]);
+          callback.call(scope, 'NOT_ALLOW');
+          return;
+        }
         if (!OB.UTIL.isNullOrUndefined(product.get('allowDeferredSell')) && product.get('allowDeferredSell')) {
           if (model.get('order') && model.get('order').get('isQuotation') && model.get('order').get('isEditable') === false) {
             // Not allow deferred sell in quotation under evaluation

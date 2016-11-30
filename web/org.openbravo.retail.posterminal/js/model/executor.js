@@ -183,7 +183,8 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
       }
 
       if (param === 'date') {
-        translatedParams.push(OB.I18N.formatDateISO(new Date()));
+        var date = new Date();
+        translatedParams.push(date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate() + ' 00:00:00.000');
       } else {
         translatedParams.push(model.get(paraTrl.property).id ? model.get(paraTrl.property).id : model.get(paraTrl.property));
       }

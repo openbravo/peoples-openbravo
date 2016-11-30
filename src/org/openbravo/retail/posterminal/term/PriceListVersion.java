@@ -26,10 +26,15 @@ public class PriceListVersion extends QueryTerminalProperty {
         .getString("terminalTime"),
         jsonsent.getJSONObject("parameters").getJSONObject("terminalTimeOffset").getLong("value"));
 
-    String priceListVersionId = POSUtils.getPriceListVersionByTerminalId(
-        RequestContext.get().getSessionAttribute("POSTerminal").toString(), terminalDate).getId();
+    org.openbravo.model.pricing.pricelist.PriceListVersion priceListVersion = POSUtils
+        .getPriceListVersionByTerminalId(RequestContext.get().getSessionAttribute("POSTerminal")
+            .toString(), terminalDate);
+    if (priceListVersion == null) {
+      throw new JSONException("OBPOS_NoPriceListVersion");
+    }
     return Arrays.asList(new String[] { "select plv.id AS id "
-        + "from PricingPriceListVersion AS plv " + "where plv.id ='" + priceListVersionId + "'" });
+        + "from PricingPriceListVersion AS plv " + "where plv.id ='" + priceListVersion.getId()
+        + "'" });
   }
 
   @Override

@@ -65,6 +65,7 @@ public class OtherStoresDetailedStock extends JSONProcessSimple {
           + "where "
           + hqlQueryGetWarehouseList
           + "and ms.product.id = :prodId "
+          + "and ms.storageBin.warehouse.active = true "
           + "group by ms.storageBin.warehouse.id, ms.storageBin.warehouse.name, ms.storageBin.warehouse.id, ms.storageBin.id, ms.storageBin.searchKey "
           + "order by ms.storageBin.warehouse.name";
 

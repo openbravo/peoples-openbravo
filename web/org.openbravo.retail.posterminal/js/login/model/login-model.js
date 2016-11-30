@@ -136,10 +136,29 @@
             if (data.exception) {
               handleError(data);
             } else if (data[0]) {
+              var showTerminalModalError = function (errorMessage) {
+                  OB.UTIL.showConfirmation.display('Error', OB.I18N.getLabel('OBPOS_errorLoadingTerminal') + ' ' + errorMessage, [{
+                    label: OB.I18N.getLabel('OBMOBC_LblOk'),
+                    isConfirmButton: true,
+                    action: function () {
+                      OB.UTIL.showLoggingOut(true);
+                      terminalModel.logout();
+                    }
+                  }], {
+                    onShowFunction: function (popup) {
+                      popup.$.headerCloseButton.hide();
+                    },
+                    autoDismiss: false
+                  });
+                  };
+
               // load the OB.MobileApp.model              
               for (i = 0, max = data.length; i < max; i++) {
                 if (Object.keys(data[i])[0] === "businesspartner") {
                   terminalModel.set(Object.keys(data[i])[0], data[i][Object.keys(data[i])[0]].id);
+                } else if (Object.keys(data[i])[0] === "pricelist" && _.isNull(data[i][Object.keys(data[i])[0]])) {
+                  showTerminalModalError(OB.I18N.getLabel('OBPOS_NoPriceList'));
+                  return;
                 } else {
                   terminalModel.set(Object.keys(data[i])[0], data[i][Object.keys(data[i])[0]]);
                 }
@@ -154,6 +173,7 @@
 
               OB.UTIL.localStorage.setItem('terminalId', data[0].terminal.id);
               terminalModel.set('useBarcode', terminalModel.get('terminal').terminalType.usebarcodescanner);
+              OB.MobileApp.view.scanMode = true;
               OB.MobileApp.view.scanningFocus(true);
               if (!terminalModel.usermodel) {
                 OB.MobileApp.model.loadingErrorsActions("The terminal.usermodel should be loaded at this point");

@@ -807,6 +807,8 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
             } else {
               var cancelLayawayObj = receipt.serializeToJSON();
 
+              cancelLayawayObj.posTerminal = OB.MobileApp.model.get('terminal').id;
+
               if (receipt.getPaymentStatus().isNegative) {
                 cancelLayawayObj.gross = OB.DEC.mul(cancelLayawayObj.gross, -1);
               }
@@ -963,6 +965,12 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
         context: me,
         caller: caller
       }, function () {
+        me.on('approvalChecked', function (event) {
+          me.off('approvalChecked');
+          if (event.approved) {
+            me.trigger('showPaymentTab');
+          }
+        }, this);
         me.checkPaymentApproval(caller);
       });
     });

@@ -33,6 +33,9 @@ public class ProductCharacteristicHQLCriteria extends HQLCriteriaProcess {
     } else {
       sql = getProdCategoryQuery();
     }
+    if (array_params.length >= 3 && !array_params[3].equals("")) {
+      sql += " and pli.product.brand.id in ('" + getIds(array_params, 3) + "') ";
+    }
     if (array_params.length > 2 && !array_params[2].equals("")) {
       sql = sql + getCharacteristics(array_params[2]);
     }
@@ -57,8 +60,8 @@ public class ProductCharacteristicHQLCriteria extends HQLCriteriaProcess {
     String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
     final OBRETCOProductList productList = POSUtils.getProductListByOrgId(orgId);
     return "   exists (select 1 from ProductCharacteristicValue as pchv , OBRETCO_Prol_Product pli"
-        + " where pchv.product.id=pli.product.id and cv.characteristic = pchv.characteristic and  cv.id = pchv.characteristicValue.id "
-        + " and   pli.obretcoProductlist.id='" + productList.getId()
+        + " where pchv.product.id=pli.product.id and cv.characteristic = pchv.characteristic and cv.id = pchv.characteristicValue.id "
+        + " and pli.obretcoProductlist.id='" + productList.getId()
         + "' and upper(pchv.product.name) like upper('$1') ";
   }
 
@@ -67,9 +70,9 @@ public class ProductCharacteristicHQLCriteria extends HQLCriteriaProcess {
     final OBRETCOProductList productList = POSUtils.getProductListByOrgId(orgId);
     return "   exists (select 1 from ProductCharacteristicValue as pchv , OBRETCO_Prol_Product pli"
         + " where pchv.product.id=pli.product.id and cv.characteristic = pchv.characteristic and  cv.id = pchv.characteristicValue.id"
-        + " and   pli.obretcoProductlist.id='"
+        + " and pli.obretcoProductlist.id='"
         + productList.getId()
-        + "'  and upper(pchv.product.name) like upper('$1') and pchv.product.productCategory.id in ( '$2')  ";
+        + "' and upper(pchv.product.name) like upper('$1') and pchv.product.productCategory.id in ('$2') ";
   }
 
   public String getBestsellers() {
@@ -77,7 +80,7 @@ public class ProductCharacteristicHQLCriteria extends HQLCriteriaProcess {
     final OBRETCOProductList productList = POSUtils.getProductListByOrgId(orgId);
     return "  exists (select 1 from ProductCharacteristicValue as pchv , OBRETCO_Prol_Product pli "
         + " where pchv.product.id=pli.product.id "
-        + " and cv.characteristic = pchv.characteristic  and  cv.id = pchv.characteristicValue.id  and pli.bestseller = true  and   pli.obretcoProductlist.id='"
+        + " and cv.characteristic = pchv.characteristic and cv.id = pchv.characteristicValue.id and pli.bestseller = true and pli.obretcoProductlist.id = '"
         + productList.getId() + "' " + " and upper(pchv.product.name) like upper('$1') ";
   }
 

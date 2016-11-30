@@ -448,11 +448,8 @@ enyo.kind({
       colNum: 1
     });
 
-    OB.MobileApp.view.scanningFocus(true);
+    OB.MobileApp.view.scanningFocus(false);
 
-    if (OB.UTIL.RfidController.isRfidConfigured()) {
-      OB.UTIL.RfidController.disconnectRFIDDevice();
-    }
     OB.UTIL.SynchronizationHelper.finished(synchId, 'showPaymentTab');
   },
   tap: function () {
@@ -464,11 +461,9 @@ enyo.kind({
         return;
       }
       var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('toolbarButtonTabTap');
-      this.model.on('approvalChecked', function (event) {
-        this.model.off('approvalChecked');
-        if (event.approved) {
-          this.showPaymentTab();
-        }
+      this.model.on('showPaymentTab', function (event) {
+        this.model.off('showPaymentTab');
+        this.showPaymentTab();
       }, this);
 
       if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
