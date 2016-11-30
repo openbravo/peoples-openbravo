@@ -141,6 +141,19 @@ OB.DS.HWServer.prototype.getWeight = function (callback) {
   }
 };
 
+OB.DS.HWServer.prototype.cleanDisplay = function () {
+
+  if (!this.cleanDisplayTemplate) {
+    this.cleanDisplayTemplate = new OB.DS.HWResource('res/cleandisplay.xml');
+  }
+
+  this.print(this.cleanDisplayTemplate, null, function (args) {
+    if (args && args.exception && args.exception.message) {
+      OB.info('Error cleaning display.');
+    }
+  }, OB.DS.HWServer.DISPLAY);
+};
+
 OB.DS.HWServer.prototype.openDrawerTemplate = 'res/opendrawer.xml';
 OB.DS.HWServer.prototype.openDrawer = function (popup, timeout) {
   var template = new OB.DS.HWResource(this.openDrawerTemplate);

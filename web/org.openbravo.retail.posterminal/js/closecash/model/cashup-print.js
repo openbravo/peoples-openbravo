@@ -22,6 +22,7 @@
 
   PrintCashUp.prototype.print = function (report, sumary, closed) {
     var me = this;
+    OB.POS.hwserver.cleanDisplay();
     OB.POS.hwserver.print(this.templatecashup, {
       cashup: {
         closed: closed,

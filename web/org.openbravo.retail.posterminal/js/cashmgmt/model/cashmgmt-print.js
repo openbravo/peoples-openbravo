@@ -33,6 +33,7 @@
 
   PrintCashMgmt.prototype.print = function (depsdropstosave) {
 
+    OB.POS.hwserver.cleanDisplay();
     OB.POS.hwserver.print(this.templatecashmgmt, {
       cashmgmt: depsdropstosave
     }, function (result) {
