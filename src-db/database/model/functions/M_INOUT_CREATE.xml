@@ -92,7 +92,7 @@
       SELECT sd.m_product_id, sd.m_locator_id, sd.m_attributesetinstance_id,
           sd.c_uom_id, sd.m_product_uom_id, u.stdprecision,
           ms.quantity - COALESCE(SUM(iol.movementqty), 0) AS qtyonhand, ms.qtyorder AS qtyorder,
-          ms.priority, iol.c_aum, iol.aumqty
+          ms.priority
       FROM m_stock_proposed ms 
             LEFT JOIN m_storage_detail sd ON ms.m_storage_detail_id = sd.m_storage_detail_id
             LEFT JOIN m_product_uom pu ON sd.m_product_uom_id = pu.m_product_uom_id
@@ -560,18 +560,13 @@ BEGIN --BODY
                       DBMS_OUTPUT.PUT_LINE('    Line ' || ol.Line || '  Qty=' || v_LocatorQty) ;
                       v_ResultStr:='CreateInOutLine';
 
-                      v_aumqty := v_storage.aumqty;
-                      v_c_aum := v_storage.c_aum;
-
                       IF (v_uom_preference = 'Y' AND v_storage.M_Product_UOM_ID IS NULL) THEN
-                        IF (v_storage.c_aum IS NULL AND v_storage.aumqty IS NULL) THEN
-                          IF (ol.c_aum IS NULL) THEN
-                            v_c_aum := M_GET_DEFAULT_AUM_FOR_DOCUMENT(ol.M_Product_ID, v_DocType_ID);
-                          ELSE
-                            v_c_aum := ol.c_aum;
-                          END IF;
-                          v_aumqty := M_GET_CONVERTED_AUMQTY(ol.M_Product_ID, v_LocatorQty, v_c_aum);
+                        IF (ol.c_aum IS NULL) THEN
+                          v_c_aum := M_GET_DEFAULT_AUM_FOR_DOCUMENT(ol.M_Product_ID, v_DocType_ID);
+                        ELSE
+                          v_c_aum := ol.c_aum;
                         END IF;
+                        v_aumqty := M_GET_CONVERTED_AUMQTY(ol.M_Product_ID, v_LocatorQty, v_c_aum);
                       END IF;
 
                       INSERT INTO M_INOUTLINE
