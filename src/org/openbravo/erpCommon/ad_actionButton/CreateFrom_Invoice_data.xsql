@@ -42,7 +42,10 @@
         COALESCE(l.C_Costcenter_ID, o.C_Costcenter_ID) AS C_Costcenter_ID,
         COALESCE(l.User1_ID, o.User1_ID) AS User1_ID, COALESCE(l.User2_ID, o.User2_ID) AS User2_ID, l.explode, '' as isOrder, CASE WHEN l.Bom_parent_id is null then 'Y' else 'N' END as isparent, l.bom_parent_id,
         (CASE WHEN L.C_AUM IS NULL THEN M_GET_DEFAULT_AUM_FOR_DOCUMENT(L.M_PRODUCT_ID, o.C_DOCTYPE_ID) ELSE l.C_AUM END) AS C_AUM, 
-        l.AUMQTY, o.C_DOCTYPE_ID, 
+        l.AUMQTY-SUM(COALESCE(M_GET_CONVERTED_AUMQTY(l.m_product_id, m.Qty, l.c_aum),0))-COALESCE((SELECT SUM(COALESCE(M_GET_CONVERTED_AUMQTY(l.m_product_id, CI.QtyINVOICED, l.c_aum), 0))  
+                                                                                                FROM C_ORDERLINE CO LEFT JOIN C_INVOICELINE CI ON CI.C_ORDERLINE_ID = CO.C_ORDERLINE_ID
+                                                                                                WHERE  CI.C_INVOICE_ID=? AND CO.C_ORDERLINE_ID = l.c_orderline_id
+                                                                                                GROUP BY CI.C_orderline_id , CO.QtyORDERED),0) AS AUMQTY, o.C_DOCTYPE_ID, 
         (CASE WHEN L.C_AUM IS NOT NULL THEN (SELECT UOMSYMBOL FROM C_UOM WHERE C_UOM_ID = L.C_AUM) ELSE (SELECT UOMSYMBOL FROM C_UOM WHERE C_UOM_ID = M_GET_DEFAULT_AUM_FOR_DOCUMENT(L.M_PRODUCT_ID, o.C_DOCTYPE_ID)) END) AS AUMSYMBOL,
         'none' AS AUMVISIBLE
         FROM C_ORDERLINE l left join M_MATCHPO m on  l.C_OrderLine_ID=m.C_OrderLine_ID
@@ -74,6 +77,7 @@
     <Parameter name="language"/>
     <Parameter name="piId"/>
     <Parameter name="language"/>
+    <Parameter name="piId"/>
     <Parameter name="adUserClient" type="replace" optional="true" after="o.AD_Client_ID IN (" text="'1'"/>
     <Parameter name="adOrgClient" type="replace" optional="true" after="o.AD_Org_ID IN (" text="'1'"/>
     <Parameter name="poId"/>
@@ -119,7 +123,7 @@
         COALESCE(l.User1_ID, o.User1_ID) AS User1_ID, COALESCE(l.User2_ID, o.User2_ID) AS User2_ID, l.explode, l.Bom_parent_id, 
          CASE WHEN l.Bom_parent_id is null then 'Y' else 'N' END as isparent,
         (CASE WHEN L.C_AUM IS NULL THEN M_GET_DEFAULT_AUM_FOR_DOCUMENT(L.M_PRODUCT_ID, o.C_DOCTYPE_ID) ELSE l.C_AUM END) AS C_AUM, 
-        l.AUMQTY, o.C_DOCTYPE_ID, 
+        l.AUMQTY - SUM(COALESCE(M_GET_CONVERTED_AUMQTY(l.m_product_id, l.QTYINVOICED, l.c_aum), 0)) AS AUMQTY, o.C_DOCTYPE_ID, 
         (CASE WHEN L.C_AUM IS NOT NULL THEN (SELECT UOMSYMBOL FROM C_UOM WHERE C_UOM_ID = L.C_AUM) ELSE (SELECT UOMSYMBOL FROM C_UOM WHERE C_UOM_ID = M_GET_DEFAULT_AUM_FOR_DOCUMENT(L.M_PRODUCT_ID, o.C_DOCTYPE_ID)) END) AS AUMSYMBOL,
         'none' AS AUMVISIBLE
         FROM C_INVOICE_CANDIDATE_V ic, C_UOM uom, C_ORDER o, C_ORDERLINE l, M_PRODUCT p 
@@ -183,7 +187,10 @@
         COALESCE(l.A_Asset_ID, o.A_Asset_ID) AS A_Asset_ID, COALESCE(l.C_Project_ID, o.C_Project_ID) AS C_Project_ID, COALESCE(l.C_Costcenter_ID, o.C_Costcenter_ID) AS C_Costcenter_ID,
         COALESCE(l.User1_ID, o.User1_ID) AS User1_ID, COALESCE(l.User2_ID, o.User2_ID) AS User2_ID,
         (CASE WHEN L.C_AUM IS NULL THEN M_GET_DEFAULT_AUM_FOR_DOCUMENT(L.M_PRODUCT_ID, o.C_DOCTYPE_ID) ELSE l.C_AUM END) AS C_AUM, 
-        l.AUMQTY, o.C_DOCTYPE_ID, 
+        l.AUMQTY-SUM(COALESCE(M_GET_CONVERTED_AUMQTY(l.m_product_id, m.Qty, l.c_aum),0))-COALESCE((SELECT SUM(COALESCE(M_GET_CONVERTED_AUMQTY(l.m_product_id, CI.QtyINVOICED, l.c_aum), 0))  
+                                                                                                FROM C_ORDERLINE CO LEFT JOIN C_INVOICELINE CI ON CI.C_ORDERLINE_ID = CO.C_ORDERLINE_ID
+                                                                                                WHERE  CI.C_INVOICE_ID=? AND CO.C_ORDERLINE_ID = l.c_orderline_id
+                                                                                                GROUP BY CI.C_orderline_id , CO.QtyORDERED),0) AS AUMQTY, o.C_DOCTYPE_ID, 
         (CASE WHEN L.C_AUM IS NOT NULL THEN (SELECT UOMSYMBOL FROM C_UOM WHERE C_UOM_ID = L.C_AUM) ELSE (SELECT UOMSYMBOL FROM C_UOM WHERE C_UOM_ID = M_GET_DEFAULT_AUM_FOR_DOCUMENT(L.M_PRODUCT_ID, o.C_DOCTYPE_ID)) END) AS AUMSYMBOL,
         'none' AS AUMVISIBLE
         FROM C_UOM uom left join  C_UOM_TRL uomt on uom.C_UOM_ID = uomt.C_UOM_ID
@@ -217,6 +224,7 @@
     <Parameter name="adLanguage"/>
     <Parameter name="piId"/>
     <Parameter name="adLanguage"/>
+    <Parameter name="piId"/>
     <Parameter name="adLanguage"/>
     <Parameter name="adUserClient" type="replace" optional="true" after="o.AD_Client_ID IN (" text="'1'"/>
     <Parameter name="adOrgClient" type="replace" optional="true" after="o.AD_Org_ID IN (" text="'1'"/>
@@ -233,7 +241,7 @@
         COALESCE(l.A_Asset_ID, o.A_Asset_ID) AS A_Asset_ID, COALESCE(l.C_Project_ID, o.C_Project_ID) AS C_Project_ID, COALESCE(l.C_Costcenter_ID, o.C_Costcenter_ID) AS C_Costcenter_ID,
         COALESCE(l.User1_ID, o.User1_ID) AS User1_ID, COALESCE(l.User2_ID, o.User2_ID) AS User2_ID,
         (CASE WHEN L.C_AUM IS NULL THEN M_GET_DEFAULT_AUM_FOR_DOCUMENT(L.M_PRODUCT_ID, o.C_DOCTYPE_ID) ELSE l.C_AUM END) AS C_AUM, 
-        l.AUMQTY, o.C_DOCTYPE_ID, 
+        l.AUMQTY - SUM(COALESCE(M_GET_CONVERTED_AUMQTY(l.m_product_id, l.QTYINVOICED, l.c_aum), 0)) AS AUMQTY, o.C_DOCTYPE_ID, 
         (CASE WHEN L.C_AUM IS NOT NULL THEN (SELECT UOMSYMBOL FROM C_UOM WHERE C_UOM_ID = L.C_AUM) ELSE (SELECT UOMSYMBOL FROM C_UOM WHERE C_UOM_ID = M_GET_DEFAULT_AUM_FOR_DOCUMENT(L.M_PRODUCT_ID, o.C_DOCTYPE_ID)) END) AS AUMSYMBOL,
         'none' AS AUMVISIBLE
         FROM C_UOM uom left join C_UOM_TRL uomt on uom.C_UOM_ID = uomt.C_UOM_ID
@@ -358,7 +366,7 @@
         COALESCE(l.User1_ID, s.User1_ID) AS User1_ID, COALESCE(l.User2_ID, s.User2_ID) AS User2_ID, l.explode, l.Bom_parent_id, 
         CASE WHEN l.Bom_parent_id is null then 'Y' else 'N' END as isparent,
         (CASE WHEN L.C_AUM IS NULL THEN M_GET_DEFAULT_AUM_FOR_DOCUMENT(L.M_PRODUCT_ID, s.C_DOCTYPE_ID) ELSE l.C_AUM END) AS C_AUM, 
-        l.AUMQTY, s.C_DOCTYPE_ID,  
+        l.AUMQTY - SUM(COALESCE(M_GET_CONVERTED_AUMQTY(l.m_product_id, mi.Qty, l.c_aum), 0)) AS AUMQTY, s.C_DOCTYPE_ID,  
         (CASE WHEN L.C_AUM IS NOT NULL THEN (SELECT UOMSYMBOL FROM C_UOM WHERE C_UOM_ID = L.C_AUM) ELSE (SELECT UOMSYMBOL FROM C_UOM WHERE C_UOM_ID = M_GET_DEFAULT_AUM_FOR_DOCUMENT(L.M_PRODUCT_ID, s.C_DOCTYPE_ID)) END) AS AUMSYMBOL,
         'none' AS AUMVISIBLE
         FROM M_INOUTLINE l left join M_ATTRIBUTESETINSTANCE ma on l.M_ATTRIBUTESETINSTANCE_ID = ma.M_ATTRIBUTESETINSTANCE_ID
@@ -438,7 +446,7 @@
         COALESCE(l.User1_ID, s.User1_ID) AS User1_ID, COALESCE(l.User2_ID, s.User2_ID) AS User2_ID, l.explode, l.Bom_parent_id, 
         CASE WHEN l.Bom_parent_id is null then 'Y' else 'N' END as isparent,
         (CASE WHEN L.C_AUM IS NULL THEN M_GET_DEFAULT_AUM_FOR_DOCUMENT(L.M_PRODUCT_ID, s.C_DOCTYPE_ID) ELSE l.C_AUM END) AS C_AUM, 
-        l.AUMQTY, s.C_DOCTYPE_ID, 
+        l.AUMQTY - SUM(COALESCE(CASE WHEN i.docstatus = 'CO' THEN M_GET_CONVERTED_AUMQTY(l.m_product_id, il.qtyinvoiced, l.c_aum) ELSE 0 END, 0)) AS AUMQTY, s.C_DOCTYPE_ID, 
         (CASE WHEN L.C_AUM IS NOT NULL THEN (SELECT UOMSYMBOL FROM C_UOM WHERE C_UOM_ID = L.C_AUM) ELSE (SELECT UOMSYMBOL FROM C_UOM WHERE C_UOM_ID = M_GET_DEFAULT_AUM_FOR_DOCUMENT(L.M_PRODUCT_ID, s.C_DOCTYPE_ID)) END) AS AUMSYMBOL,
         'none' AS AUMVISIBLE        
         FROM M_INOUTLINE l
@@ -531,7 +539,7 @@
         COALESCE(l.C_Costcenter_ID, s.C_Costcenter_ID) AS C_Costcenter_ID,
         COALESCE(l.User1_ID, s.User1_ID) AS User1_ID, COALESCE(l.User2_ID, s.User2_ID) AS User2_ID,
         (CASE WHEN L.C_AUM IS NULL THEN M_GET_DEFAULT_AUM_FOR_DOCUMENT(L.M_PRODUCT_ID, s.C_DOCTYPE_ID) ELSE l.C_AUM END) AS C_AUM, 
-        l.AUMQTY, s.C_DOCTYPE_ID,  
+        l.AUMQTY - SUM(COALESCE(M_GET_CONVERTED_AUMQTY(l.m_product_id, mi.Qty, l.c_aum), 0)) AS AUMQTY, s.C_DOCTYPE_ID,  
         (CASE WHEN L.C_AUM IS NOT NULL THEN (SELECT UOMSYMBOL FROM C_UOM WHERE C_UOM_ID = L.C_AUM) ELSE (SELECT UOMSYMBOL FROM C_UOM WHERE C_UOM_ID = M_GET_DEFAULT_AUM_FOR_DOCUMENT(L.M_PRODUCT_ID, s.C_DOCTYPE_ID)) END) AS AUMSYMBOL,
         'none' AS AUMVISIBLE
         FROM M_INOUTLINE l
@@ -581,7 +589,7 @@
         COALESCE(l.C_Costcenter_ID, s.C_Costcenter_ID) AS C_Costcenter_ID,
         COALESCE(l.User1_ID, s.User1_ID) AS User1_ID, COALESCE(l.User2_ID, s.User2_ID) AS User2_ID,
         (CASE WHEN L.C_AUM IS NULL THEN M_GET_DEFAULT_AUM_FOR_DOCUMENT(L.M_PRODUCT_ID, s.C_DOCTYPE_ID) ELSE l.C_AUM END) AS C_AUM, 
-        l.AUMQTY, s.C_DOCTYPE_ID,  
+        l.AUMQTY - SUM(COALESCE(CASE WHEN i.docstatus = 'CO' THEN M_GET_CONVERTED_AUMQTY(l.m_product_id, il.qtyinvoiced, l.c_aum) ELSE 0 END, 0)) AS AUMQTY, s.C_DOCTYPE_ID,  
         (CASE WHEN L.C_AUM IS NOT NULL THEN (SELECT UOMSYMBOL FROM C_UOM WHERE C_UOM_ID = L.C_AUM) ELSE (SELECT UOMSYMBOL FROM C_UOM WHERE C_UOM_ID = M_GET_DEFAULT_AUM_FOR_DOCUMENT(L.M_PRODUCT_ID, s.C_DOCTYPE_ID)) END) AS AUMSYMBOL,
         'none' AS AUMVISIBLE
         FROM M_INOUTLINE l
@@ -632,7 +640,7 @@
       COALESCE(l.C_Costcenter_ID, s.C_Costcenter_ID) AS C_Costcenter_ID,
       COALESCE(l.User1_ID, s.User1_ID) AS User1_ID, COALESCE(l.User2_ID, s.User2_ID) AS User2_ID,
       l.explode, 'N' as isOrder,
-      l.C_AUM, l.AUMQTY, s.C_DOCTYPE_ID
+      l.C_AUM, l.AUMQTY - SUM(COALESCE(M_GET_CONVERTED_AUMQTY(l.m_product_id, mi.Qty, l.c_aum), 0)) AS AUMQTY, s.C_DOCTYPE_ID
       FROM M_INOUTLINE l left join M_MATCHINV mi on l.M_InOutLine_ID=mi.M_InOutLine_ID
             left join C_ORDERLINE co ON co.C_ORDERLINE_ID=l.C_ORDERLINE_ID,
       C_UOM uom,  M_PRODUCT p, M_InOut s
@@ -662,7 +670,7 @@
         COALESCE(l.C_Costcenter_ID, s.C_Costcenter_ID) AS C_Costcenter_ID,
         COALESCE(l.User1_ID, s.User1_ID) AS User1_ID, COALESCE(l.User2_ID, s.User2_ID) AS User2_ID, 
         l.explode, 'N' as isOrder,
-        l.C_AUM, l.AUMQTY, s.C_DOCTYPE_ID
+        l.C_AUM, l.AUMQTY - SUM(COALESCE(CASE WHEN i.docstatus = 'CO' THEN M_GET_CONVERTED_AUMQTY(l.m_product_id, il.qtyinvoiced, l.c_aum) ELSE 0 END, 0)) AS AUMQTY, s.C_DOCTYPE_ID
         FROM C_UOM uom, M_INOUTLINE l
           left join c_invoiceline il on l.m_inoutline_id = il.m_inoutline_id
           left join c_invoice i on il.c_invoice_id = i.c_invoice_id 
