@@ -197,9 +197,12 @@ enyo.kind({
 
     criteria = {
       forceRemote: true,
-      _orderByClause: orderByClause,
-      _limit: OB.DEC.abs(OB.MobileApp.model.hasPermission("OBPOS_orderLimit", true))
+      _orderByClause: orderByClause
     };
+
+    if (OB.MobileApp.model.hasPermission("OBPOS_orderLimit", true)) {
+      criteria._limit = OB.DEC.abs(OB.MobileApp.model.hasPermission("OBPOS_orderLimit", true));
+    }
 
     criteria.remoteFilters = [];
 
