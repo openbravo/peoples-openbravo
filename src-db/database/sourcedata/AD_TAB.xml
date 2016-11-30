@@ -11843,7 +11843,7 @@ WARNING: This window is not supported anymore and it is only kept for backward c
 <!--800241-->  <AD_TAB_ID><![CDATA[800241]]></AD_TAB_ID>
 <!--800241-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800241-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800241-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800241-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
 <!--800241-->  <NAME><![CDATA[Manufacturing]]></NAME>
 <!--800241-->  <DESCRIPTION><![CDATA[Define specific characteristics which allow this product to be used in an organization.]]></DESCRIPTION>
 <!--800241-->  <HELP><![CDATA[Manufacturing tab is used for products that are planned by the manufacturing plan.]]></HELP>
