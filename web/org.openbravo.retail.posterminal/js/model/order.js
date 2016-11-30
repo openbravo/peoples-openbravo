@@ -1579,7 +1579,9 @@
                 callback(true, args.orderline);
               }
               };
-          args.orderline.set('hasMandatoryServices', false);
+          if (args.orderline) {
+            args.orderline.set('hasMandatoryServices', false);
+          }
           if (args.newLine && me.get('lines').contains(line) && args.productToAdd.get('productType') !== 'S') {
             var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('HasServices');
             // Display related services after calculate gross, if it is new line and if the line has not been deleted.
