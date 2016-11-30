@@ -168,7 +168,7 @@ enyo.kind({
   events: {
     onChangeSubWindow: '',
     onShowPopup: '',
-    onHideThisPopup: ''
+    onHideSelector: ''
   },
   disabled: false,
   style: 'width: 170px; margin: 0px 5px 8px 19px;',
@@ -195,7 +195,7 @@ enyo.kind({
     if (this.disabled) {
       return true;
     }
-    this.doHideThisPopup();
+    this.doHideSelector();
     var me = this;
 
     function errorCallback(tx, error) {
