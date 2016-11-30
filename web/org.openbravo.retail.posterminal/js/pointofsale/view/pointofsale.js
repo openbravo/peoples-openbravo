@@ -163,6 +163,12 @@ enyo.kind({
       kind: 'OB.UI.ModalPaidReceipts',
       name: 'modalPaidReceipts'
     }, {
+      kind: 'OBPOS.UI.ReceiptSelector',
+      name: 'modalReceiptSelector'
+    }, {
+      kind: 'OB.UI.ModalAdvancedFilterReceipts',
+      name: 'OB_UI_ModalAdvancedFilterReceipts'
+    }, {
       kind: 'OB.UI.ModalMultiOrders',
       name: 'modalMultiOrders'
     }, {

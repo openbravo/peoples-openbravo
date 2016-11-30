@@ -902,6 +902,39 @@ enyo.kind({
 });
 
 enyo.kind({
+  name: 'OB.UI.MenuReceiptSelector',
+  kind: 'OB.UI.MenuAction',
+  permission: 'OBPOS_retail.menuReceiptSelector',
+  events: {
+    onShowPopup: ''
+  },
+  i18nLabel: 'OBPOS_OpenReceipt',
+  tap: function () {
+    var me = this;
+    var connectedCallback = function () {
+        if (OB.MobileApp.model.hasPermission(me.permission)) {
+          me.doShowPopup({
+            popup: 'modalReceiptSelector'
+          });
+        }
+        };
+    var notConnectedCallback = function () {
+        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_OfflineWindowRequiresOnline'));
+        return;
+        };
+    if (this.disabled) {
+      return true;
+    }
+    this.inherited(arguments); // Manual dropdown menu closure
+    if (!OB.MobileApp.model.get('connectedToERP')) {
+      OB.UTIL.checkOffLineConnectivity(500, connectedCallback, notConnectedCallback);
+    } else {
+      connectedCallback();
+    }
+  }
+});
+
+enyo.kind({
   name: 'OB.UI.MenuQuotations',
   kind: 'OB.UI.MenuAction',
   permission: 'OBPOS_retail.quotations',
