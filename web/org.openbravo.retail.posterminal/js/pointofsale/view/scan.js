@@ -21,38 +21,87 @@ enyo.kind({
   doShowHeader: function (inSender, inEvent) {
     this.show();
   },
-
   components: [{
     name: 'innerDiv',
     style: 'text-align: center; font-size: 30px; padding: 5px; padding-top: 0px;',
     components: [{
       name: 'headerText',
-      kind: 'OB.UI.SmallButton',
-      classes: 'span12 ' + (OB.UTIL.Debug.isDebug() && OB.UTIL.Debug.getDebugCauses().isTestEnvironment ? 'btnlink-orange' : 'btnlink-red'),
-      style: '  height: 50px; margin: 5px 5px 0px 0px; font-size: 20px; cursor: pointer; font-weight: bold',
+      kind: 'OB.UI.Button',
+      classes: 'span12',
+      style: 'height: 50px; margin: 5px 5px 0px 0px; font-size: 20px; cursor: pointer; font-weight: bold',
+      components: [{
+        name: 'headerImg1',
+        kind: 'Image',
+        style: 'float: left; margin-left: 5px;',
+        src: '../org.openbravo.mobile.core/assets/img/Warning.png'
+      }, {
+        tag: 'span',
+        name: 'headerContent',
+        style: 'line-height: normal;'
+      }, {
+        name: 'headerImg2',
+        kind: 'Image',
+        style: 'float: right; margin-right: 5px;',
+        src: '../org.openbravo.mobile.core/assets/img/Warning.png'
+      }],
       tap: function () {
-        this.owner.doShowPopup({
-          popup: 'modalModulesInDev'
-        });
+        if (OB.MobileApp.model.get('errorInPopup')) {
+          OB.UTIL.showConfirmation.display(
+          OB.I18N.getLabel('OBPOS_ProblemWithPopups'), OB.I18N.getLabel('OBPOS_ProblemWithPopupInfo'), [{
+            isConfirmButton: true,
+            label: OB.I18N.getLabel('OBMOBC_Reload'),
+            action: function () {
+              window.location.reload();
+            }
+          }, {
+            label: OB.I18N.getLabel('OBMOBC_Continue')
+          }], {
+            style: 'background-color: red;'
+          });
+        } else {
+          this.owner.doShowPopup({
+            popup: 'modalModulesInDev'
+          });
+        }
       },
-      content: '',
-      init: function () {
-        if (!OB.UTIL.isHTTPSAvailable()) {
-          this.setContent(OB.I18N.getLabel('OBPOS_NonSecureConnection'));
-        } else if (OB.UTIL.Debug.isDebug()) {
-          var ifInDevelopment = 'OBPOS_ModulesInDevelopment';
-          var ifInTestEnvironment = 'OBPOS_ApplicationInTestEnvironment';
-          var i18nLabel = 'OBMOBC_Debug';
-          if (OB.UTIL.Debug.getDebugCauses().isInDevelopment) {
-            i18nLabel = ifInDevelopment;
-          } else if (OB.UTIL.Debug.getDebugCauses().isTestEnvironment) {
-            i18nLabel = ifInTestEnvironment;
-          }
-          this.setContent(OB.I18N.getLabel(i18nLabel));
+      content: ''
+    }]
+  }],
+  showHeaderContent: function () {
+    var i18nLabel = 'OBMOBC_Debug';
+    this.$.headerText.removeClass('btnlink-orange btnlink-red');
+    this.$.headerText.addClass(OB.UTIL.Debug.isDebug() && OB.UTIL.Debug.getDebugCauses().isTestEnvironment && !OB.MobileApp.model.get('errorInPopup') ? 'btnlink-orange' : 'btnlink-red');
+    if (OB.MobileApp.model.get('errorInPopup')) {
+      i18nLabel = 'OBPOS_NotWorkingPopups';
+      this.$.headerImg1.show();
+      this.$.headerImg2.show();
+      this.$.headerContent.addStyles('width: calc(100% - 90px);');
+    } else {
+      this.$.headerImg1.hide();
+      this.$.headerImg2.hide();
+      this.$.headerContent.addStyles('width: 100%;');
+      if (!OB.UTIL.isHTTPSAvailable()) {
+        i18nLabel = 'OBPOS_NonSecureConnection';
+      } else if (OB.UTIL.Debug.isDebug()) {
+        if (OB.UTIL.Debug.getDebugCauses().isInDevelopment) {
+          i18nLabel = 'OBPOS_ModulesInDevelopment';
+        } else if (OB.UTIL.Debug.getDebugCauses().isTestEnvironment) {
+          i18nLabel = 'OBPOS_ApplicationInTestEnvironment';
         }
       }
-    }]
-  }]
+    }
+    this.$.headerContent.setContent(OB.I18N.getLabel(i18nLabel));
+  },
+  initComponents: function () {
+    var me = this;
+    this.inherited(arguments);
+    OB.MobileApp.model.set('errorInPopup', false);
+    this.showHeaderContent();
+    OB.MobileApp.model.on('change:errorInPopup', function (model) {
+      me.showHeaderContent();
+      me.$.headerText.tap();
+    });
+  }
 });
 
 enyo.kind({
