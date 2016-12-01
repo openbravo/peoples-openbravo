@@ -22,21 +22,37 @@
     saveCustomer: function (callback) {
       var nameLength, newSk;
 
-      if (!this.get("name")) {
-        OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_BPartnerNameRequired'));
+      if (!this.get('name')) {
+        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_BPartnerNameRequired'));
         return false;
       }
 
-      if (!this.get('locName')) {
-        OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_BPartnerAddressRequired'));
-        return false;
+      if (!this.get('id')) {
+        if (this.get('useSameAddrForShipAndInv')) {
+          //Create 1 address for shipping and invoicing
+          if (!this.get('locName')) {
+            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_BPartnerAddressRequired'));
+            return false;
+          }
+          this.set('locId', OB.UTIL.get_UUID());
+          this.set('shipLocId', this.get('locId'));
+          this.set('shipLocName', this.get('locName'));
+          this.set('shipPostalCode', this.get('postalCode'));
+          this.set('shipCityName', this.get('cityName'));
+          this.set('shipCountryName', this.get('countryName'));
+          this.set('shipCountryId', this.get('countryId'));
+        } else {
+          //Create 1 address for shipping and 1 for invoicing
+          if (!this.get('locName') || !this.get('shipLocName')) {
+            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_BPartnerAddressRequired'));
+            return false;
+          }
+          this.set('locId', OB.UTIL.get_UUID());
+          this.set('shipLocId', OB.UTIL.get_UUID());
+        }
       }
 
-      if (!this.get("locId")) {
-        this.set('locId', OB.UTIL.get_UUID());
-      }
-
-      if (!this.get("contactId")) {
+      if (!this.get('contactId')) {
         this.set('contactId', OB.UTIL.get_UUID());
       }
 
@@ -47,6 +63,15 @@
           newSk = this.get('name').substring(0, 30);
         }
         this.set('searchKey', newSk);
+      }
+
+      if (this.get('birthDay') && typeof this.get('birthDay') !== 'object') {
+        return;
+      }
+
+      if (this.get('birthDay') && !OB.UTIL.isInThePast(OB.I18N.formatDate(this.get('birthDay')))) {
+        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_BPartnerBirthDayIncorrect'));
+        return false;
       }
 
       this.set('_identifier', this.get('name'));
@@ -67,12 +92,15 @@
         if (!customerCol || customerCol.length === 0) {
           me.clearModelWith(null);
           userCallback(me);
-        } else {
-          OB.Dal.get(OB.Model.BPLocation, customerCol.get('locId'), function (location) { //OB.Dal.find success
+        } else if (!_.isNull(customerCol.get('shipLocId'))) {
+          OB.Dal.get(OB.Model.BPLocation, customerCol.get('shipLocId'), function (location) { //OB.Dal.find success
             customerCol.set('locationModel', location);
             me.clearModelWith(customerCol);
             userCallback(me);
           });
+        } else {
+          me.clearModelWith(customerCol);
+          userCallback(me);
         }
       });
     },
@@ -113,8 +141,6 @@
         this.set('paymentTerms', OB.MobileApp.model.get('terminal').defaultbp_paymentterm);
         this.set('invoiceTerms', OB.MobileApp.model.get('terminal').defaultbp_invoiceterm);
         this.set('priceList', OB.MobileApp.model.get('pricelist').id);
-        this.set('country', OB.MobileApp.model.get('terminal').defaultbp_bpcountry);
-        this.set('countryName', OB.MobileApp.model.get('terminal').defaultbp_bpcountry_name);
         this.set('client', OB.MobileApp.model.get('terminal').client);
         this.set('organization', OB.MobileApp.model.get('terminal').defaultbp_bporg);
         this.set('creditLimit', OB.DEC.Zero);
@@ -161,7 +187,11 @@
       editedBp.set('posTerminal', this.get('posTerminal'));
       //Set only form attributes
       _.each(OB.OBPOSPointOfSale.UI.customers.edit_createcustomers_impl.prototype.newAttributes, function (model) {
-        editedBp.set(model.modelProperty, me.get(model.modelProperty));
+        if (model.setEditedProperties) {
+          model.setEditedProperties(me, editedBp);
+        } else {
+          editedBp.set(model.modelProperty, me.get(model.modelProperty));
+        }
       });
       editedBp.adjustNames();
       return JSON.parse(JSON.stringify(editedBp.toJSON()));
@@ -245,14 +275,43 @@
   }, {
     name: 'postalCode',
     column: 'postalCode',
+    filter: true,
     type: 'TEXT'
   }, {
     name: 'cityName',
     column: 'cityName',
+    filter: true,
     type: 'TEXT'
   }, {
     name: 'countryName',
     column: 'countryName',
+    type: 'TEXT'
+  }, {
+    name: 'shipLocId',
+    column: 'shipLocId',
+    type: 'TEXT'
+  }, {
+    name: 'shipLocName',
+    column: 'shipLocName',
+    filter: true,
+    type: 'TEXT'
+  }, {
+    name: 'shipPostalCode',
+    column: 'shipPostalCode',
+    filter: true,
+    type: 'TEXT'
+  }, {
+    name: 'shipCityName',
+    column: 'shipCityName',
+    filter: true,
+    type: 'TEXT'
+  }, {
+    name: 'shipRegionId',
+    column: 'shipRegionId',
+    type: 'TEXT'
+  }, {
+    name: 'shipCountryId',
+    column: 'shipCountryId',
     type: 'TEXT'
   }, {
     name: 'contactId',
@@ -309,6 +368,14 @@
   }, {
     name: 'loaded',
     column: 'loaded',
+    type: 'TEXT'
+  }, {
+    name: 'birthDay',
+    column: 'birthDay',
+    type: 'TEXT'
+  }, {
+    name: 'birthPlace',
+    column: 'birthPlace',
     type: 'TEXT'
   }]);
 

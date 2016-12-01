@@ -36,6 +36,7 @@ public class PaidReceiptProperties extends ModelExtension {
         add(new HQLProperty("ord.creationDate", "creationDate"));
         add(new HQLProperty("ord.businessPartner.id", "bp"));
         add(new HQLProperty("ord.partnerAddress.id", "bpLocId"));
+        add(new HQLProperty("ord.invoiceAddress.id", "bpBillLocId"));
         add(new HQLProperty("ord.grandTotalAmount", "totalamount"));
         add(new HQLProperty("salesRepresentative.name", "salesRepresentative$_identifier"));
         add(new HQLProperty("ord.documentType.id", "documentType"));

@@ -9,6 +9,11 @@
 package org.openbravo.retail.posterminal;
 
 import java.util.Date;
+import java.util.Iterator;
+
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
 
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
@@ -36,6 +41,10 @@ public class CustomerAddrLoader extends POSDataSynchronizationProcess implements
 
   private static final Logger log = Logger.getLogger(CustomerAddrLoader.class);
 
+  @Inject
+  @Any
+  private Instance<CustomerAddrCreationHook> customerAddrCreations;
+
   protected String getImportQualifier() {
     return "BusinessPartnerLocation";
   }
@@ -62,6 +71,8 @@ public class CustomerAddrLoader extends POSDataSynchronizationProcess implements
         }
         location = editBPartnerAddr(customer, location, jsonCustomerAddr);
       }
+
+      executeAddrHooks(customerAddrCreations, jsonCustomerAddr, customer, location);
 
       OBDal.getInstance().flush();
     } finally {
@@ -140,6 +151,8 @@ public class CustomerAddrLoader extends POSDataSynchronizationProcess implements
         log.error(errorMessage);
         throw new OBException(errorMessage, null);
       }
+      newLocation.setInvoiceToAddress(jsonCustomerAddr.getBoolean("isBillTo"));
+      newLocation.setShipToAddress(jsonCustomerAddr.getBoolean("isShipTo"));
       // don't set phone of location, the phone is set in contact
       newLocation.setPhone(null);
 
@@ -171,7 +184,10 @@ public class CustomerAddrLoader extends POSDataSynchronizationProcess implements
         }
         rootLocation.setPostalCode(jsonCustomerAddr.getString("postalCode"));
         rootLocation.setCityName(jsonCustomerAddr.getString("cityName"));
-
+        rootLocation.setCountry(OBDal.getInstance().get(Country.class,
+            jsonCustomerAddr.getString("countryId")));
+        location.setInvoiceToAddress(jsonCustomerAddr.getBoolean("isBillTo"));
+        location.setShipToAddress(jsonCustomerAddr.getBoolean("isShipTo"));
         Entity baseLocationEntity = ModelProvider.getInstance().getEntity(
             org.openbravo.model.common.geography.Location.class);
         JSONPropertyToEntity.fillBobFromJSON(baseLocationEntity, rootLocation, jsonCustomerAddr);
@@ -191,5 +207,13 @@ public class CustomerAddrLoader extends POSDataSynchronizationProcess implements
   @Override
   protected String getProperty() {
     return "OBPOS_receipt.customers";
+  }
+
+  private void executeAddrHooks(Instance<CustomerAddrCreationHook> hooks,
+      JSONObject jsonCustomerAddr, BusinessPartner customer, Location location) throws Exception {
+    for (Iterator<CustomerAddrCreationHook> procIter = hooks.iterator(); procIter.hasNext();) {
+      CustomerAddrCreationHook proc = procIter.next();
+      proc.exec(jsonCustomerAddr, customer, location);
+    }
   }
 }

@@ -2371,7 +2371,7 @@
             });
           }
 
-          OB.Dal.get(OB.Model.BPLocation, businessPartner.get('locId'), function (location) {
+          OB.Dal.get(OB.Model.BPLocation, businessPartner.get('shipLocId'), function (location) {
 
             OB.Dal.saveIfNew(location, function () {
               businessPartner.set('locationModel', location);
@@ -2389,19 +2389,29 @@
             errorSaveData(callback);
           });
 
-        } else if (businessPartner.get('locationModel')) { //Location has changed or we are assigning current bp
-          OB.Dal.saveIfNew(businessPartner.get('locationModel'), function () {
-            me.set('bp', businessPartner);
-            me.save();
-            // copy the modelOrder again, as saveIfNew is possibly async
-            OB.MobileApp.model.orderList.saveCurrent();
-            finishSaveData(callback);
-          }, function () {
-            OB.error(arguments);
-            errorSaveData(callback);
-          });
         } else {
-          finishSaveData(callback);
+          if (businessPartner.get('locationModel')) { //Location has changed or we are assigning current bp
+            OB.Dal.saveIfNew(businessPartner.get('locationModel'), function () {
+              me.set('bp', businessPartner);
+              me.save();
+              // copy the modelOrder again, as saveIfNew is possibly async
+              OB.MobileApp.model.orderList.saveCurrent();
+              finishSaveData(callback);
+            }, function () {
+              OB.UTIL.showError('Error removing');
+            });
+          } else {
+            OB.Dal.get(OB.Model.BPLocation, businessPartner.get('shipLocId'), function (location) {
+              OB.Dal.saveIfNew(location, function () {}, function () {
+                OB.error(arguments);
+              });
+              businessPartner.set('locationModel', location);
+              me.set('bp', businessPartner);
+              me.save();
+            }, function () {
+              OB.error(arguments);
+            });
+          }
         }
       } else {
         this.set('bp', businessPartner);
@@ -4380,7 +4390,7 @@
       var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('newPaidReceipt');
       enyo.$.scrim.show();
       var order = new Order(),
-          lines, newline, payments, curPayment, taxes, bpId, bpLocId, bpLoc, numberOfLines = model.receiptLines.length,
+          lines, newline, payments, curPayment, taxes, bpId, bpLocId, bpLoc, bpBillLocId, numberOfLines = model.receiptLines.length,
           orderQty = 0,
           NoFoundProduct = true,
           NoFoundCustomer = true,
@@ -4459,15 +4469,26 @@
         }
       }
       bpLocId = model.bpLocId;
+      bpBillLocId = model.bpBillLocId;
       bpId = model.bp;
       var bpartnerForProduct = function (bp) {
           var locationForBpartner = function (bpLoc) {
-              bp.set('locName', bpLoc.get('name'));
-              bp.set('locId', bpLoc.get('id'));
+              bp.set('shipLocName', bpLoc.get('name'));
+              bp.set('shipLocId', bpLoc.get('id'));
               bp.set('locationModel', bpLoc);
               order.set('bp', bp);
               order.set('gross', model.totalamount);
               order.set('net', model.totalNetAmount);
+              OB.Dal.get(OB.Model.BPLocation, bpBillLocId, function (bpLoc) {
+                bp.set('locName', bpLoc.get('name'));
+                bp.set('locId', bpLoc.get('id'));
+                order.trigger('change:bp', order);
+              }, function () {
+                OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_InformationTitle'), OB.I18N.getLabel('OBPOS_NoReceiptLoadedLocation'), [{
+                  label: OB.I18N.getLabel('OBPOS_LblOk'),
+                  isConfirmButton: true
+                }]);
+              });
 
               var linepos = 0,
                   hasDeliveredProducts = false,

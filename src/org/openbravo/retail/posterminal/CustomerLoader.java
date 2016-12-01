@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012 Openbravo S.L.U.
+ * Copyright (C) 2012-2016 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -35,6 +35,7 @@ import org.openbravo.mobile.core.utils.OBMOBCUtils;
 import org.openbravo.model.ad.access.User;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.businesspartner.Location;
+import org.openbravo.model.common.geography.Country;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.json.JsonConstants;
 
@@ -47,6 +48,10 @@ public class CustomerLoader extends POSDataSynchronizationProcess implements
   @Inject
   @Any
   private Instance<CustomerLoaderHook> customerCreations;
+
+  @Inject
+  @Any
+  private Instance<CustomerAddrCreationHook> customerAddrCreations;
 
   protected String getImportQualifier() {
     return "BusinessPartner";
@@ -268,65 +273,93 @@ public class CustomerLoader extends POSDataSynchronizationProcess implements
     }
   }
 
-  private void editLocation(BusinessPartner customer, JSONObject jsonCustomer) throws JSONException {
-    Entity locationEntity = ModelProvider.getInstance().getEntity(Location.class);
-    Entity baseLocationEntity = ModelProvider.getInstance().getEntity(
-        org.openbravo.model.common.geography.Location.class);
+  private void editLocation(BusinessPartner customer, JSONObject jsonCustomer) throws Exception {
+
     final Location location = OBDal.getInstance().get(Location.class,
         jsonCustomer.getString("locId"));
-    if (location != null) {
-      // location exist > modify it
-      final org.openbravo.model.common.geography.Location rootLocation = location
-          .getLocationAddress();
-
-      JSONPropertyToEntity.fillBobFromJSON(baseLocationEntity, rootLocation, jsonCustomer);
-
-      if (jsonCustomer.has("locName") && jsonCustomer.getString("locName") != null
-          && !jsonCustomer.getString("locName").equals("")) {
-        rootLocation.setAddressLine1(jsonCustomer.getString("locName"));
-      }
-
-      OBDal.getInstance().save(rootLocation);
-    } else {
-      // location not exists > create location and bplocation
+    if (location == null) {
+      // location doesn't exist > create location(s) and bplocation(s)
       final org.openbravo.model.common.geography.Location rootLocation = OBProvider.getInstance()
           .get(org.openbravo.model.common.geography.Location.class);
+      final org.openbravo.model.common.geography.Location rootShippingLocation = OBProvider
+          .getInstance().get(org.openbravo.model.common.geography.Location.class);
 
-      JSONPropertyToEntity.fillBobFromJSON(baseLocationEntity, rootLocation, jsonCustomer);
-
-      if (jsonCustomer.has("locName") && jsonCustomer.getString("locName") != null
-          && !jsonCustomer.getString("locName").equals("")) {
-        rootLocation.setAddressLine1(jsonCustomer.getString("locName"));
-      }
-
-      OBDal.getInstance().save(rootLocation);
-
-      Location newLocation = OBProvider.getInstance().get(Location.class);
-
-      JSONPropertyToEntity.fillBobFromJSON(locationEntity, newLocation, jsonCustomer);
-
-      if (jsonCustomer.has("locId")) {
-        newLocation.setId(jsonCustomer.getString("locId"));
+      if (!jsonCustomer.has("useSameAddrForShipAndInv")
+          || (jsonCustomer.has("useSameAddrForShipAndInv") && jsonCustomer
+              .getBoolean("useSameAddrForShipAndInv"))) {
+        createBPLoc(rootLocation, customer, jsonCustomer, true, true);
       } else {
-        String errorMessage = "Business partner Location ID is a mandatory field to create a new customer from Web Pos";
-        log.error(errorMessage);
-        throw new OBException(errorMessage, null);
+        createBPLoc(rootLocation, customer, jsonCustomer, true, false);
+        createBPLoc(rootShippingLocation, customer, jsonCustomer, false, true);
       }
-      if (jsonCustomer.has("locName") && jsonCustomer.getString("locName") != null
-          && !jsonCustomer.getString("locName").equals("")) {
-        newLocation.setName(jsonCustomer.getString("locName"));
-      } else {
-        newLocation.setName(jsonCustomer.getString("searchKey"));
-      }
-
-      // don't set phone of location, the phone is set in contact
-      newLocation.setPhone(null);
-
-      newLocation.setBusinessPartner(customer);
-      newLocation.setLocationAddress(rootLocation);
-      newLocation.setNewOBObject(true);
-      OBDal.getInstance().save(newLocation);
     }
+  }
+
+  private void createBPLoc(org.openbravo.model.common.geography.Location location,
+      BusinessPartner customer, JSONObject jsonCustomer, Boolean isInvoicing, Boolean isShipping)
+      throws Exception {
+    Entity baseLocationEntity = ModelProvider.getInstance().getEntity(
+        org.openbravo.model.common.geography.Location.class);
+    Entity locationEntity = ModelProvider.getInstance().getEntity(Location.class);
+    // Field mapping:
+    String locName = (isInvoicing ? "locName" : "shipLocName");
+    String locId = (isInvoicing ? "locId" : "shipLocId");
+    String postalCode = (isInvoicing ? "postalCode" : "shipPostalCode");
+    String cityName = (isInvoicing ? "cityName" : "shipCityName");
+    String country = (isInvoicing ? "countryId" : "shipCountryId");
+
+    JSONPropertyToEntity.fillBobFromJSON(baseLocationEntity, location, jsonCustomer);
+
+    if (jsonCustomer.has(locName) && jsonCustomer.getString(locName) != null
+        && !jsonCustomer.getString(locName).equals("")) {
+      location.setAddressLine1(jsonCustomer.getString(locName));
+    }
+
+    if (jsonCustomer.has(postalCode) && jsonCustomer.getString(postalCode) != null
+        && !jsonCustomer.getString(postalCode).equals("")) {
+      location.setPostalCode(jsonCustomer.getString(postalCode));
+    }
+
+    if (jsonCustomer.has(cityName) && jsonCustomer.getString(cityName) != null
+        && !jsonCustomer.getString(cityName).equals("")) {
+      location.setCityName(jsonCustomer.getString(cityName));
+    }
+
+    location.setCountry(OBDal.getInstance().get(Country.class, jsonCustomer.getString(country)));
+
+    OBDal.getInstance().save(location);
+
+    Location newLocation = OBProvider.getInstance().get(Location.class);
+
+    JSONPropertyToEntity.fillBobFromJSON(locationEntity, newLocation, jsonCustomer);
+
+    if (jsonCustomer.has(locId)) {
+      newLocation.setId(jsonCustomer.getString(locId));
+    } else {
+      String errorMessage = "Business partner Location ID is a mandatory field to create a new customer from Web Pos";
+      log.error(errorMessage);
+      throw new OBException(errorMessage, null);
+    }
+    if (jsonCustomer.has(locName) && jsonCustomer.getString(locName) != null
+        && !jsonCustomer.getString(locName).equals("")) {
+      newLocation.setName(jsonCustomer.getString(locName));
+    } else {
+      newLocation.setName(jsonCustomer.getString("searchKey"));
+    }
+
+    // don't set phone of location, the phone is set in contact
+    newLocation.setPhone(null);
+
+    newLocation.setInvoiceToAddress(isInvoicing);
+    newLocation.setShipToAddress(isShipping);
+
+    newLocation.setBusinessPartner(customer);
+    newLocation.setLocationAddress(location);
+    newLocation.setNewOBObject(true);
+    OBDal.getInstance().save(newLocation);
+
+    executeAddrHooks(customerAddrCreations, jsonCustomer, customer, newLocation);
+
   }
 
   @Override
@@ -339,6 +372,14 @@ public class CustomerLoader extends POSDataSynchronizationProcess implements
     for (Iterator<CustomerLoaderHook> procIter = hooks.iterator(); procIter.hasNext();) {
       CustomerLoaderHook proc = procIter.next();
       proc.exec(jsonCustomer, customer);
+    }
+  }
+
+  private void executeAddrHooks(Instance<CustomerAddrCreationHook> hooks, JSONObject jsonCustomer,
+      BusinessPartner customer, Location location) throws Exception {
+    for (Iterator<CustomerAddrCreationHook> procIter = hooks.iterator(); procIter.hasNext();) {
+      CustomerAddrCreationHook proc = procIter.next();
+      proc.exec(jsonCustomer, customer, location);
     }
   }
 }

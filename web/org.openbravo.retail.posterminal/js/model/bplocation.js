@@ -23,7 +23,14 @@
     remote: 'OBPOS_remote.customer',
     saveCustomerAddr: function (callback) {
       var nameLength, newSk;
-
+      if (!this.get('isBillTo') && !this.get('isShipTo')) {
+        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_shippedOrInvoicedNotChekedOff'));
+        return;
+      }
+      if (this.get('name') === '') {
+        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_NameReqForBPAddress'));
+        return false;
+      }
       this.set('_identifier', this.get('name'));
 
       if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
@@ -75,8 +82,6 @@
 
         OB.UTIL.clone(new OB.Model.BPLocation(), this);
 
-        this.set('countryId', OB.MobileApp.model.get('terminal').defaultbp_bpcountry);
-        this.set('countryName', OB.MobileApp.model.get('terminal').defaultbp_bpcountry_name);
         this.set('client', OB.MobileApp.model.get('terminal').client);
         this.set('organization', OB.MobileApp.model.get('terminal').defaultbp_bporg);
       } else {
@@ -137,6 +142,18 @@
   }, {
     name: 'regionId',
     column: 'regionId',
+    type: 'TEXT'
+  }, {
+    name: 'isBillTo',
+    column: 'isBillTo',
+    primaryKey: false,
+    filter: false,
+    type: 'TEXT'
+  }, {
+    name: 'isShipTo',
+    column: 'isShipTo',
+    primaryKey: false,
+    filter: false,
     type: 'TEXT'
   }, {
     name: '_identifier',

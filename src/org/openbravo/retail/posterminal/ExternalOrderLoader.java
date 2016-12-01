@@ -791,15 +791,27 @@ public class ExternalOrderLoader extends OrderLoader {
     final DataToJsonConverter jsonConverter = new DataToJsonConverter();
     final JSONObject bpJson = jsonConverter.toJsonObject(bp, DataResolvingMode.FULL);
     String addressId = null;
-    if (orderJson.has("address")) {
+    String shipAddressId = null;
+    if (orderJson.has("locId") && orderJson.has("shipLocId")) {
+      addressId = orderJson.getString("locId");
+      shipAddressId = orderJson.getString("shipLocId");
+    } else if (orderJson.has("locId") && !orderJson.has("shipLocId")) {
+      addressId = orderJson.getString("locId");
+      shipAddressId = addressId;
+    } else if (!orderJson.has("locId") && orderJson.has("shipLocId")) {
+      throw new OBException("Invoice location is missing for bp " + bpId + " for order json "
+          + orderJson + " while shipping location is defined");
+    } else if (orderJson.has("address")) {
       addressId = resolveJsonValue(Location.ENTITY_NAME, orderJson.getString("address"),
           new String[] { "id", "name" });
 
       if (addressId == null) {
         addressId = getAddressIdFromBP(bpId);
       }
+      shipAddressId = addressId;
     } else {
       addressId = getAddressIdFromBP(bpId);
+      shipAddressId = addressId;
     }
     if (addressId == null && posTerminal.getObposCBpartnerLoc() != null) {
       addressId = posTerminal.getObposCBpartnerLoc().getId();
@@ -812,6 +824,7 @@ public class ExternalOrderLoader extends OrderLoader {
           + orderJson);
     }
     bpJson.put("locId", addressId);
+    bpJson.put("shipLocId", shipAddressId);
     orderJson.put("bp", bpJson);
 
   }

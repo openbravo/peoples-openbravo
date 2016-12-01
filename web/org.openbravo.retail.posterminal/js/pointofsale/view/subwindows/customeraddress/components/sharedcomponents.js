@@ -29,24 +29,6 @@ enyo.kind({
 });
 
 enyo.kind({
-  name: 'OB.UI.CustomerPropertyLine',
-  components: [{
-    name: 'labelLine',
-    style: 'font-size: 15px; color: black; text-align: right; border: 1px solid #FFFFFF; background-color: #E2E2E2; width: 20%; height: 28px; padding: 12px 5px 1px 0; float: left;'
-  }, {
-    style: 'border: 1px solid #FFFFFF; float: left; width: 75%;',
-    name: 'newAttribute'
-  }, {
-    style: 'clear: both'
-  }],
-  initComponents: function () {
-    this.inherited(arguments);
-    this.$.newAttribute.createComponent(this.newAttribute);
-    this.$.labelLine.content = this.newAttribute.i18nLabel ? OB.I18N.getLabel(this.newAttribute.i18nLabel) : this.newAttribute.label;
-  }
-});
-
-enyo.kind({
   name: 'OB.UI.CustomerAddrTextProperty',
   kind: 'enyo.Input',
   type: 'text',
@@ -54,10 +36,28 @@ enyo.kind({
   style: 'width: 100%; height: 30px; margin:0;',
   handlers: {
     onLoadValue: 'loadValue',
-    onSaveChange: 'saveChange'
+    onSaveChange: 'saveChange',
+    onblur: 'blur',
+    onchange: 'change',
+    oninput: 'input',
+    onSetValue: 'valueSet',
+    onRetrieveValues: 'retrieveValue'
   },
   events: {
-    onSaveProperty: ''
+    onSaveProperty: '',
+    onRetrieveCustomer: '',
+    onSetValues: ''
+  },
+  blur: function () {},
+  input: function () {},
+  change: function () {},
+  valueSet: function (inSender, inEvent) {
+    if (inEvent.data.hasOwnProperty(this.modelProperty)) {
+      this.setValue(inEvent.data[this.modelProperty]);
+    }
+  },
+  retrieveValue: function (inSender, inEvent) {
+    inEvent[this.modelProperty] = this.getValue();
   },
   loadValue: function (inSender, inEvent) {
     if (inEvent.customerAddr !== undefined) {
@@ -66,9 +66,6 @@ enyo.kind({
       }
     } else {
       this.setValue('');
-      if (this.modelProperty === 'countryName') {
-        this.setValue(OB.MobileApp.model.get('terminal').defaultbp_bpcountry_name);
-      }
     }
     if (this.modelProperty === 'customerName' && inEvent.customer !== undefined && inEvent.customer.get('name') !== undefined) {
       this.setValue(inEvent.customer.get('name'));
@@ -90,7 +87,6 @@ enyo.kind({
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.customeraddr.edit_createcustomers',
   handlers: {
-    onSetCustomerAddr: 'setCustomerAddr',
     onSaveCustomerAddr: 'preSaveCustomerAddr'
   },
   events: {
@@ -102,9 +98,9 @@ enyo.kind({
     name: 'customerAddrAttributes',
     style: 'overflow-x:hidden; overflow-y:auto; max-height:622px;'
   }],
-  setCustomerAddr: function (inSender, inEvent) {
-    this.customer = inEvent.customer;
-    this.customerAddr = inEvent.customerAddr;
+  setCustomerAddr: function (customer, customerAddr) {
+    this.customer = customer;
+    this.customerAddr = customerAddr;
     this.waterfall('onLoadValue', {
       customer: this.customer,
       customerAddr: this.customerAddr
@@ -121,6 +117,9 @@ enyo.kind({
       error: '',
       meObject: me
     }, function (args) {
+      if (args.cancellation) {
+        return;
+      }
       if (args.passValidation) {
         args.meObject.saveCustomerAddr(args.inSender, args.inEvent);
       } else {
@@ -129,8 +128,7 @@ enyo.kind({
     });
   },
   saveCustomerAddr: function (inSender, inEvent) {
-    var me = this,
-        sw = me.subWindow;
+    var me = this;
 
     function getCustomerAddrValues(params) {
       me.waterfall('onSaveChange', {
@@ -139,30 +137,36 @@ enyo.kind({
       });
     }
 
-    function goToViewWindow(sw, params) {
-      if (sw.caller === 'mainSubWindow') {
-        sw.doChangeSubWindow({
-          newWindow: {
-            name: 'customerAddressView',
-            params: {
-              navigateOnClose: 'mainSubWindow',
-              businessPartner: params.customer,
-              bPLocation: params.customerAddr
-            }
-          }
-        });
-      } else {
-        sw.doChangeSubWindow({
-          newWindow: {
-            name: 'customerAddressView',
-            params: {
-              navigateOnClose: 'customerAddressSearch',
-              businessPartner: params.customer,
-              bPLocation: params.customerAddr
-            }
-          }
-        });
+    function goToViewWindow(params) {
+      if (!_.isUndefined(me.customerAddr)) {
+        params.customerAddr.set('onlyOneAddress', me.customerAddr.get('onlyOneAddress'));
       }
+      me.bubble('onCancelClose', {
+        customerAddr: params.customerAddr
+      });
+    }
+
+    function validateForm(form) {
+      if (inEvent.validations) {
+        var errors = '',
+            customerAddr = form.model.get('customerAddr');
+        _.each(form.$.customerAddrAttributes.children, function (item) {
+          if (item.newAttribute.mandatory) {
+            var value = customerAddr.get(item.newAttribute.modelProperty);
+            if (!value) {
+              if (errors) {
+                errors += ', ';
+              }
+              errors += OB.I18N.getLabel(item.newAttribute.i18nLabel);
+            }
+          }
+        });
+        if (errors) {
+          OB.UTIL.showError(OB.I18N.getLabel('OBPOS_BPartnerRequiredFields', [errors]));
+          return false;
+        }
+      }
+      return true;
     }
 
     if (this.customerAddr === undefined) {
@@ -171,48 +175,135 @@ enyo.kind({
       this.waterfall('onSaveChange', {
         customerAddr: this.model.get('customerAddr')
       });
-      if (this.model.get('customerAddr').get('name') === '') {
-        OB.UTIL.showWarning('Address is required for BPartner');
-        return false;
-      } else {
-        var callback = function () {
-            goToViewWindow(sw, {
-              customer: OB.UTIL.clone(me.customer),
-              customerAddr: OB.UTIL.clone(me.model.get('customerAddr'))
-            });
-            };
-        this.model.get('customerAddr').saveCustomerAddr(callback);
+      if (validateForm(this)) {
+        OB.UTIL.HookManager.executeHooks('OBPOS_BeforeCustomerAddrSave', {
+          customerAddr: this.model.get('customerAddr'),
+          isNew: true
+        }, function (args) {
+          if (args && args.cancellation && args.cancellation === true) {
+            return true;
+          }
+          var callback = function () {
+              goToViewWindow({
+                customer: OB.UTIL.clone(me.customer),
+                customerAddr: OB.UTIL.clone(me.model.get('customerAddr'))
+              });
+              };
+          me.model.get('customerAddr').saveCustomerAddr(callback);
+        });
       }
     } else {
       this.model.get('customerAddr').loadModel(this.customerAddr, function (customerAddr) {
-        if (customerAddr.get('name') === "") {
-          OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_BPartnerAddressRequired'));
-          return false;
-        } else {
-          var callback = function () {
-              goToViewWindow(sw, {
-                customer: me.customer,
-                customerAddr: customerAddr
-              });
-              if (customerAddr.get('id') === me.customer.get("locId")) {
+        var callback = function () {
+            var i;
+            goToViewWindow({
+              customer: me.customer,
+              customerAddr: customerAddr
+            });
+            if (customerAddr.get('id') === me.customer.get('locId') || customerAddr.get('id') === me.customer.get('shipLocId')) {
+              if (!customerAddr.get('isBillTo')) {
+                me.customer.set('locId', null);
+                me.customer.set('locName', null);
+                me.customer.set('postalCode', null);
+                me.customer.set('cityName', null);
+                me.customer.set('countryName', null);
+              } else {
                 me.customer.set('locId', customerAddr.get('id'));
                 me.customer.set('locName', customerAddr.get('name'));
-                me.customer.set('locationModel', customerAddr);
-                OB.Dal.save(me.customer, function success(tx) {
-                  me.doChangeBusinessPartner({
-                    businessPartner: me.customer
-                  });
-                }, function error(tx) {
-                  OB.error(tx);
-                });
-
+                me.customer.set('postalCode', customerAddr.get('postalCode'));
+                me.customer.set('cityName', customerAddr.get('cityName'));
+                me.customer.set('countryName', customerAddr.get('countryName'));
               }
+              if (!customerAddr.get('isShipTo')) {
+                me.customer.set('shipLocId', null);
+                me.customer.set('shipLocName', null);
+                me.customer.set('shipPostalCode', null);
+                me.customer.set('shipCityName', null);
+                me.customer.set('shipRegionId', null);
+                me.customer.set('shipCountryId', null);
+                me.customer.set('shipCountryName', null);
+              } else {
+                me.customer.set('shipLocId', customerAddr.get('id'));
+                me.customer.set('shipLocName', customerAddr.get('name'));
+                me.customer.set('shipPostalCode', customerAddr.get('postalCode'));
+                me.customer.set('shipCityName', customerAddr.get('cityName'));
+                me.customer.set('shipRegionId', customerAddr.get('regionId'));
+                me.customer.set('shipCountryId', customerAddr.get('countryId'));
+                me.customer.set('shipCountryName', customerAddr.get('countryName'));
+              }
+              me.customer.set('locationModel', customerAddr);
+              if (me.model.get('orderList').length > 1) {
+                for (i = 0; i < me.model.get('orderList').length; i++) {
+                  if (me.model.get('orderList').models[i].get('bp').get('id') === me.customer.get('id')) {
+                    me.model.get('orderList').models[i].set('bp', me.customer);
+                  }
+                }
+              }
+              OB.Dal.save(me.customer, function success(tx) {
+                me.doChangeBusinessPartner({
+                  businessPartner: me.customer,
+                  target: 'order'
+                });
+              }, function error(tx) {
+                OB.error(tx);
+              });
+            }
+            };
 
-              };
-          getCustomerAddrValues({
-            customerAddr: customerAddr
-          });
-          customerAddr.saveCustomerAddr(callback);
+        getCustomerAddrValues({
+          customerAddr: customerAddr
+        });
+
+        if (validateForm(me)) {
+          if (OB.MobileApp.model.receipt.get('lines').length > 0 && OB.MobileApp.model.receipt.get('bp').get('shipLocId') === customerAddr.get('id') && !customerAddr.get('isShipTo')) {
+            OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_InformationTitle'), OB.I18N.getLabel('OBPOS_UncheckShipToText'), [{
+              label: OB.I18N.getLabel('OBPOS_LblOk'),
+              isConfirmButton: true,
+              action: function () {
+                OB.UTIL.HookManager.executeHooks('OBPOS_BeforeCustomerAddrSave', {
+                  customerAddr: me.model.get('customerAddr'),
+                  isNew: true
+                }, function (args) {
+                  var receipt = OB.MobileApp.model.receipt,
+                      orderlines = [];
+                  if (args && args.cancellation && args.cancellation === true) {
+                    return true;
+                  }
+                  receipt.set('skipCalculateReceipt', true);
+                  receipt.set('preventServicesUpdate', true);
+                  receipt.set('deleting', true);
+                  _.each(receipt.get('lines').models, function (line) {
+                    orderlines.push(line);
+                  });
+                  _.each(orderlines, function (line) {
+                    receipt.deleteLine(line, true);
+                  });
+                  receipt.unset('preventServicesUpdate');
+                  receipt.unset('deleting');
+                  receipt.calculateGross();
+                  args.customerAddr.saveCustomerAddr(callback);
+                  receipt.set('skipCalculateReceipt', false);
+                });
+              }
+            }, {
+              label: OB.I18N.getLabel('OBMOBC_LblCancel')
+            }], {
+              autoDismiss: false,
+              onHideFunction: function () {
+                return;
+              }
+            });
+          } else {
+            OB.UTIL.HookManager.executeHooks('OBPOS_BeforeCustomerAddrSave', {
+              customerAddr: me.model.get('customerAddr'),
+              isNew: true
+            }, function (args) {
+              if (args && args.cancellation && args.cancellation === true) {
+                return true;
+              }
+              args.customerAddr.saveCustomerAddr(callback);
+            });
+          }
         }
       });
     }
@@ -244,5 +335,157 @@ enyo.kind({
   },
   init: function (model) {
     this.model = model;
+  }
+});
+
+enyo.kind({
+  name: 'OB.UI.CustomerAddrCheckProperty',
+  kind: 'OB.UI.CheckboxButton',
+  style: 'margin: 5px 0px 0px 5px;',
+  handlers: {
+    onLoadValue: 'loadValue',
+    onSaveChange: 'saveChange',
+    onSetValue: 'valueSet',
+    onRetrieveValues: 'retrieveValue'
+  },
+  events: {
+    onSaveProperty: ''
+  },
+  valueSet: function (inSender, inEvent) {
+    if (inEvent.data.hasOwnProperty(this.modelProperty)) {
+      if (inEvent.data[this.modelProperty]) {
+        this.check();
+      } else {
+        this.unCheck();
+      }
+    }
+  },
+  retrieveValue: function (inSender, inEvent) {
+    inEvent[this.modelProperty] = this.checked;
+  },
+  loadValue: function (inSender, inEvent) {
+    var me = this;
+    if (inEvent.customerAddr !== undefined) {
+      if (inEvent.customerAddr.get(me.modelProperty) !== undefined) {
+        me.checked = inEvent.customerAddr.get(me.modelProperty);
+      }
+      if (me.checked) {
+        me.addClass('active');
+      } else {
+        me.removeClass('active');
+      }
+    } else {
+      me.checked = true;
+      me.addClass('active');
+    }
+  },
+  saveChange: function (inSender, inEvent) {
+    var me = this;
+    inEvent.customerAddr.set(me.modelProperty, me.checked);
+  },
+  initComponents: function () {
+    if (this.readOnly) {
+      this.setAttribute('readonly', 'readonly');
+    }
+    if (this.maxlength) {
+      this.setAttribute('maxlength', this.maxlength);
+    }
+  }
+});
+
+enyo.kind({
+  name: 'OB.UI.CustomerAddrComboProperty',
+  handlers: {
+    onLoadValue: 'loadValue',
+    onSaveChange: 'saveChange',
+    onSetValue: 'valueSet',
+    onRetrieveValues: 'retrieveValue'
+  },
+  events: {
+    onSaveProperty: ''
+  },
+  components: [{
+    kind: 'OB.UI.List',
+    name: 'customerAddrCombo',
+    classes: 'combo',
+    style: 'width: 101%; margin:0;',
+    renderLine: enyo.kind({
+      kind: 'enyo.Option',
+      initComponents: function () {
+        this.inherited(arguments);
+        this.setValue(this.model.get(this.parent.parent.retrievedPropertyForValue));
+        this.setContent(this.model.get(this.parent.parent.retrievedPropertyForText));
+      }
+    }),
+    renderEmpty: 'enyo.Control'
+  }],
+  valueSet: function (inSender, inEvent) {
+    var i;
+    if (inEvent.data.hasOwnProperty(this.modelProperty)) {
+      for (i = 0; i < this.$.customerAddrCombo.getCollection().length; i++) {
+        if (this.$.customerAddrCombo.getCollection().models[i].get('id') === inEvent.data[this.modelProperty]) {
+          this.$.customerAddrCombo.setSelected(i);
+          break;
+        }
+      }
+    }
+  },
+  retrieveValue: function (inSender, inEvent) {
+    inEvent[this.modelProperty] = this.$.customerAddrCombo.getValue();
+  },
+  loadValue: function (inSender, inEvent) {
+    this.$.customerAddrCombo.setCollection(this.collection);
+    this.fetchDataFunction(inEvent);
+  },
+  dataReadyFunction: function (data, inEvent) {
+    var index = 0,
+        result = null;
+    if (this.destroyed) {
+      return;
+    }
+    if (data) {
+      this.collection.reset(data.models);
+    } else {
+      this.collection.reset(null);
+      return;
+    }
+
+    result = _.find(this.collection.models, function (categ) {
+      if (inEvent.customerAddr) {
+        //Edit: select actual value
+        if (categ.get(this.retrievedPropertyForValue) === inEvent.customerAddr.get(this.modelProperty)) {
+          return true;
+        }
+      } else {
+        //New: select default value
+        if (categ.get(this.retrievedPropertyForValue) === this.defaultValue()) {
+          return true;
+        }
+      }
+      index += 1;
+    }, this);
+    if (result) {
+      this.$.customerAddrCombo.setSelected(index);
+    } else {
+      this.$.customerAddrCombo.setSelected(0);
+    }
+  },
+  saveChange: function (inSender, inEvent) {
+    var selected = this.collection.at(this.$.customerAddrCombo.getSelected());
+    inEvent.customerAddr.set(this.modelProperty, selected.get(this.retrievedPropertyForValue));
+    if (this.modelPropertyText) {
+      inEvent.customerAddr.set(this.modelPropertyText, selected.get(this.retrievedPropertyForText));
+    }
+  },
+  initComponents: function () {
+    if (this.collectionName && OB && OB.Collection && OB.Collection[this.collectionName]) {
+      this.collection = new OB.Collection[this.collectionName]();
+    } else {
+      OB.info('OB.UI.CustomerAddrComboProperty: Collection is required');
+    }
+    this.inherited(arguments);
+    if (this.readOnly) {
+      this.setAttribute('readonly', 'readonly');
+    }
   }
 });

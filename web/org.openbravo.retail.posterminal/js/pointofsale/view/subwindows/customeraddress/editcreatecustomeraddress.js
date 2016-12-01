@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012 Openbravo S.L.U.
+ * Copyright (C) 2012-2016 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -12,17 +12,28 @@
 /*global OB, enyo, _ */
 
 enyo.kind({
-  kind: 'OB.UI.Subwindow',
+  kind: 'OB.UI.Modal',
   name: 'OB.OBPOSPointOfSale.UI.customeraddr.newcustomeraddr',
+  classes: 'receipt-customer-selector-editor',
   events: {
     onShowPopup: ''
   },
-  beforeSetShowing: function (params) {
+  handlers: {
+    onCancelClose: 'cancelClose'
+  },
+  cancelClose: function (inSender, inEvent) {
+    this.customerAddr = inEvent.customerAddr;
+    this.hide();
+    return true;
+  },
+  executeOnShow: function () {
     if (OB.MobileApp.model.get('terminal').defaultbp_paymentmethod !== null && OB.MobileApp.model.get('terminal').defaultbp_bpcategory !== null && OB.MobileApp.model.get('terminal').defaultbp_paymentterm !== null && OB.MobileApp.model.get('terminal').defaultbp_invoiceterm !== null && OB.MobileApp.model.get('terminal').defaultbp_bpcountry !== null && OB.MobileApp.model.get('terminal').defaultbp_bporg !== null) {
-      this.waterfall('onSetCustomerAddr', {
-        customer: params.businessPartner,
-        customerAddr: params.bPLocation
-      });
+      this.$.body.$.edit_createcustomers_impl.setCustomerAddr(this.args.businessPartner, this.args.bPLocation);
+      if (this.args.bPLocation) {
+        this.$.header.setContent(OB.I18N.getLabel('OBPOS_TitleEditCustomerAddress'));
+      } else {
+        this.$.header.setContent(OB.I18N.getLabel('OBPOS_TitleNewCustomerAddress'));
+      }
       //show
       return true;
     } else {
@@ -33,47 +44,18 @@ enyo.kind({
       return false;
     }
   },
-  defaultNavigateOnClose: 'customerAddressView',
-  header: {
-    kind: 'OB.UI.SubwindowHeader',
-    name: 'OB.OBPOSPointOfSale.UI.customeraddr.newcustomerheader',
-    handlers: {
-      onSetCustomerAddr: 'setCustomerAddr'
-    },
-    i18nHeaderMessage: 'OBPOS_TitleEditNewCustomerAddress',
-    setCustomerAddr: function (inSender, inEvent) {
-      this.customer = inEvent.customer;
-      this.customerAddr = inEvent.customerAddr;
-    },
-    onTapCloseButton: function () {
-      var subWindow = this.subWindow;
-      var customer, customerAddr;
-      if (this.headerContainer) {
-        customer = this.headerContainer.customer;
-        customerAddr = this.headerContainer.customerAddr;
-      } else {
-        customer = this.customer;
-        customerAddr = this.customerAddr;
+  executeOnHide: function () {
+    var navigationPath = this.customerAddr || !this.args.cancelNavigationPath ? this.args.navigationPath : this.args.cancelNavigationPath;
+    this.doShowPopup({
+      popup: navigationPath[navigationPath.length - 1],
+      args: {
+        businessPartner: this.args.businessPartner,
+        bPLocation: this.customerAddr ? this.customerAddr : this.args.bPLocation,
+        target: this.args.target,
+        navigationPath: OB.UTIL.BusinessPartnerSelector.cloneAndPop(navigationPath),
+        makeSearch: this.customerAddr !== undefined
       }
-      if (subWindow.caller === 'mainSubWindow') {
-        subWindow.doChangeSubWindow({
-          newWindow: {
-            name: subWindow.caller
-          }
-        });
-      } else {
-        subWindow.doChangeSubWindow({
-          newWindow: {
-            name: subWindow.caller,
-            params: {
-              navigateOnClose: 'customerAddressSearch',
-              businessPartner: customer,
-              bPLocation: customerAddr
-            }
-          }
-        });
-      }
-    }
+    });
   },
   body: {
     kind: 'OB.OBPOSPointOfSale.UI.customeraddr.edit_createcustomers_impl'
@@ -85,7 +67,7 @@ enyo.kind({
   kind: 'OB.UI.Button',
   name: 'OB.OBPOSPointOfSale.UI.customeraddr.newcustomeraddrsave',
   style: 'width: 100px; margin: 0px 5px 8px 19px;',
-  classes: 'btnlink btnlink-small',
+  classes: 'btnlink-yellow btnlink btnlink-small',
   i18nLabel: 'OBPOS_LblSave',
   events: {
     onSaveCustomerAddr: ''
@@ -110,6 +92,7 @@ enyo.kind({
         style: 'display: table-cell;',
         components: [{
           kind: 'OB.OBPOSPointOfSale.UI.customeraddr.cancelEdit',
+          name: 'addressEditCancel',
           handlers: {
             onSetCustomerAddr: 'setCustomerAddr'
           },
@@ -118,25 +101,7 @@ enyo.kind({
             this.customerAddr = inEvent.customerAddr;
           },
           tap: function () {
-            var subWindow = this.subWindow;
-            if (subWindow.caller === 'mainSubWindow') {
-              subWindow.doChangeSubWindow({
-                newWindow: {
-                  name: subWindow.caller
-                }
-              });
-            } else {
-              subWindow.doChangeSubWindow({
-                newWindow: {
-                  name: subWindow.caller,
-                  params: {
-                    navigateOnClose: 'customerAddressSearch',
-                    businessPartner: this.customer,
-                    bPLocation: this.customerAddr
-                  }
-                }
-              });
-            }
+            this.bubble('onCancelClose');
           }
         }]
       }]
@@ -160,7 +125,8 @@ enyo.kind({
     name: 'customerAddrName',
     modelProperty: 'name',
     i18nLabel: 'OBPOS_LblAddress',
-    maxlength: 60
+    maxlength: 60,
+    mandatory: true
   }, {
     kind: 'OB.UI.CustomerAddrTextProperty',
     name: 'customerAddrPostalCode',
@@ -174,10 +140,45 @@ enyo.kind({
     i18nLabel: 'OBPOS_LblCity',
     maxlength: 60
   }, {
-    kind: 'OB.UI.CustomerAddrTextProperty',
+    kind: 'OB.UI.CustomerAddrComboProperty',
     name: 'customerAddrCountry',
-    modelProperty: 'countryName',
+    modelProperty: 'countryId',
+    modelPropertyText: 'countryName',
+    collectionName: 'CountryList',
     i18nLabel: 'OBPOS_LblCountry',
-    readOnly: true
+    defaultValue: function () {
+      return OB.MobileApp.model.get('terminal').defaultbp_bpcountry;
+    },
+    //Default value for new lines
+    retrievedPropertyForValue: 'id',
+    //property of the retrieved model to get the value of the combo item
+    retrievedPropertyForText: '_identifier',
+    //property of the retrieved model to get the text of the combo item
+    //function to retrieve the data
+    fetchDataFunction: function (args) {
+      var me = this,
+          criteria;
+      criteria = {
+        _orderByClause: '_identifier asc'
+      };
+      OB.Dal.find(OB.Model.Country, criteria, function (data, args) {
+        //This function must be called when the data is ready
+        me.dataReadyFunction(data, args);
+      }, function (error) {
+        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_ErrorGettingCountries'));
+        //This function must be called when the data is ready
+        me.dataReadyFunction(null, args);
+      }, args);
+    }
+  }, {
+    kind: 'OB.UI.CustomerAddrCheckProperty',
+    name: 'customerAddrShip',
+    modelProperty: 'isShipTo',
+    i18nLabel: 'OBPOS_LblShipAddr'
+  }, {
+    kind: 'OB.UI.CustomerAddrCheckProperty',
+    name: 'customerAddrBill',
+    modelProperty: 'isBillTo',
+    i18nLabel: 'OBPOS_LblBillAddr'
   }]
 });

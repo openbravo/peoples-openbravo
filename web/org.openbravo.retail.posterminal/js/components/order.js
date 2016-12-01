@@ -101,11 +101,14 @@ enyo.kind({
     style: 'clear: both;'
   }],
   newButtonComponents: [{
-    kind: 'OB.UI.BusinessPartner',
+    kind: 'OB.UI.BusinessPartnerSelector',
     name: 'bpbutton'
   }, {
     kind: 'OB.UI.BPLocation',
     name: 'bplocbutton'
+  }, {
+    kind: 'OB.UI.BPLocationShip',
+    name: 'bplocshipbutton'
   }],
   style: 'border-bottom: 1px solid #cccccc;',
   components: [{
