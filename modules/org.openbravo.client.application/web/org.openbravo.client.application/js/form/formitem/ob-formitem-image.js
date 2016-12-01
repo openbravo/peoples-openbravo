@@ -230,6 +230,7 @@ isc.OBImageItem.addProperties({
   init: function () {
     this.canvasProperties = this.canvasProperties || {};
     this.canvasProperties.parentItem = this;
+    this.canvasProperties.canFocus = true;
     this.Super('init', arguments);
   },
   //This formitem will never be disabled, so even if the form is readonly, click events will still be triggered

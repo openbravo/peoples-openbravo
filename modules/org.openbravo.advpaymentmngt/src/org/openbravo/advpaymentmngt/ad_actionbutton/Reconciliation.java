@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2014 Openbravo SLU
+ * All portions are Copyright (C) 2010-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -195,8 +195,8 @@ public class Reconciliation extends HttpSecureAppServlet {
           account, "Y");
 
       reconciliation.setEndingBalance(new BigDecimal(strEndBalance));
-      reconciliation.setTransactionDate(FIN_Utility.getDateTime(strStatementDate));
-      reconciliation.setEndingDate(FIN_Utility.getDateTime(strStatementDate));
+      reconciliation.setTransactionDate(FIN_Utility.getDate(strStatementDate));
+      reconciliation.setEndingDate(FIN_Utility.getDate(strStatementDate));
       reconciliation.setDocumentStatus("DR");
       reconciliation.setProcessed(false);
       reconciliation.setAPRMProcessReconciliation("P");

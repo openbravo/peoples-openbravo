@@ -37,7 +37,11 @@
         <weld:exclude name="org.openbravo.model.**"/>
         <weld:exclude name="org.openbravo.examples.**"/>
         <weld:exclude name="org.openbravo.authentication.**"/>
-        <weld:exclude name="org.openbravo.**.ad_*.**"/>
+        <weld:exclude name="org.openbravo.**.ad_callouts.**"/>
+        <weld:exclude name="org.openbravo.**.ad_combos.**"/>
+        <weld:exclude name="org.openbravo.**.ad_forms.**"/>
+        <weld:exclude name="org.openbravo.**.ad_help.**"/>
+        <weld:exclude name="org.openbravo.**.ad_reports.**"/>
         <weld:exclude name="org.openbravo.**.test.**">
           <weld:if-class-available name="!org.jboss.ejb3.api.spi.EJBContainerWrapper"/>
         </weld:exclude>

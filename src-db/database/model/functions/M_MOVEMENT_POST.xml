@@ -190,8 +190,8 @@
         LOOP
           v_ResultStr:='Transaction for line' || Cur_MoveLine.Line;
 
-          IF (Cur_MoveLine.MovementQty = 0) THEN
-             RAISE_APPLICATION_ERROR(-20000,'@GoodsMovementsWithZeroQty@' || ' @Inline@ ' || Cur_MoveLine.line) ;
+          IF (Cur_MoveLine.MovementQty <= 0) THEN
+            RAISE_APPLICATION_ERROR(-20000,'@GoodsMovementsWithNegativeQty@' || ' @Inline@ ' || Cur_MoveLine.line) ;
           END IF;
           
           IF (cur_moveline.m_reservation_id IS NOT NULL) THEN
