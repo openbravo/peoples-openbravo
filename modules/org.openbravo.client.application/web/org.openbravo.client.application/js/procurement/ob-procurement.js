@@ -79,7 +79,7 @@ OB.PROC.CreateLinesOnChangeAum = function (item, validator, value, record) {
       reverse: false
     }, {}, function (response, data, request) {
       if (data.qty) {
-    	item.grid.setEditValue(item.grid.getEditRow(), 'orderedQuantity', data.qty);
+        item.grid.setEditValue(item.grid.getEditRow(), 'orderedQuantity', data.qty);
       }
     });
   }
