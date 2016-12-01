@@ -241,60 +241,6 @@ enyo.kind({
 });
 
 enyo.kind({
-  kind: 'OB.UI.Button',
-  name: 'OB.UI.SearchCustomerAddressWindowButton',
-  style: 'width: 170px; margin: 0px 0px 8px 5px;',
-  classes: 'btnlink-yellow btnlink btnlink-small',
-  i18nLabel: 'OBPOS_LblAdvancedSearch',
-  disabled: false,
-  handlers: {
-    onSetModel: 'setModel',
-    onNewBPLocDisabled: 'doDisableNewBPLoc',
-    onSetBusinessPartner: 'setBusinessPartner'
-  },
-  doDisableNewBPLoc: function (inSender, inEvent) {
-    this.putDisabled(inEvent.status);
-  },
-  setModel: function (inSender, inEvent) {
-    this.model = inEvent.model;
-  },
-  setBusinessPartner: function (inSender, inEvent) {
-    this.bPartner = inEvent.bPartner;
-  },
-  events: {
-    onHideThisPopup: ''
-  },
-  tap: function () {
-    if (this.disabled) {
-      return true;
-    }
-    this.doHideThisPopup();
-    this.model.get('subWindowManager').set('currentWindow', {
-      name: 'customerAddressSearch',
-      params: {
-        caller: 'mainSubWindow',
-        bPartner: this.bPartner ? this.bPartner.get('id') : this.model.get('order').get('bp').get('id')
-      }
-    });
-  },
-  putDisabled: function (status) {
-    if (status === false) {
-      this.setDisabled(false);
-      this.removeClass('disabled');
-      this.disabled = false;
-      return;
-    }
-    this.setDisabled(true);
-    this.addClass('disabled');
-    this.disabled = true;
-  },
-  initComponents: function () {
-    this.inherited(arguments);
-    this.putDisabled(!OB.MobileApp.model.hasPermission('OBPOS_receipt.customers'));
-  }
-});
-
-enyo.kind({
   name: 'OB.UI.ModalBpLocScrollableHeader',
   kind: 'OB.UI.ScrollableTableHeader',
   events: {
@@ -469,7 +415,7 @@ enyo.kind({
 
       contextMenu.dialog.component.doChangeBusinessPartner({
         businessPartner: dataBps,
-        target: contextMenu.dialog.target
+        target: 'order'
       });
     }
     OB.Dal.get(OB.Model.BusinessPartner, contextMenu.bPartner.get('id'), successCallbackBPs, errorCallback);
@@ -523,7 +469,7 @@ enyo.kind({
 
       contextMenu.dialog.component.doChangeBusinessPartner({
         businessPartner: dataBps,
-        target: contextMenu.dialog.target
+        target: 'order'
       });
     }
 
@@ -577,7 +523,7 @@ enyo.kind({
 
       contextMenu.dialog.component.doChangeBusinessPartner({
         businessPartner: dataBps,
-        target: contextMenu.dialog.target
+        target: 'order'
       });
     }
     OB.Dal.get(OB.Model.BusinessPartner, contextMenu.bPartner.get('id'), successCallbackBPs, errorCallback);

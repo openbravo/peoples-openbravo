@@ -180,7 +180,7 @@ enyo.kind({
     this.model.get('order').trigger('change:bp', this.model.get('order'));
     this.doChangeBusinessPartner({
       businessPartner: this.customer,
-      target: this.target
+      target: 'order'
     });
     this.doPressedButton();
   },
@@ -211,7 +211,7 @@ enyo.kind({
     this.model.get('order').trigger('change:bp', this.model.get('order'));
     this.doChangeBusinessPartner({
       businessPartner: this.customer,
-      target: this.target
+      target: 'order'
     });
     this.doPressedButton();
   },
@@ -244,7 +244,7 @@ enyo.kind({
     this.model.get('order').trigger('change:bp', this.model.get('order'));
     this.doChangeBusinessPartner({
       businessPartner: this.customer,
-      target: this.target
+      target: 'order'
     });
     this.doPressedButton();
   },
