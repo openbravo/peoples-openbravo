@@ -21,6 +21,7 @@ package org.openbravo.costing;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -270,7 +271,7 @@ public class CostingMigrationProcess implements Process {
             phqlWhere.toString());
         phql.setFilterOnReadableClients(false);
         phql.setFilterOnReadableOrganization(false);
-        phql.setNamedParameter("date", new Date());
+        phql.setNamedParameter("date", DateUtils.truncate(new Date(), Calendar.DATE));
         phql.setNamedParameter("org", organization);
         phql.setMaxResult(1);
         PeriodControl period = phql.uniqueResult();
