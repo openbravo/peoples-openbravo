@@ -129,7 +129,11 @@ public class OrderCreatePOLines extends BaseProcessActionHandler {
       newOrderLine.setOperativeUOM(aum);
       // Ordered Quantity = returned quantity.
       BigDecimal qtyOrdered = new BigDecimal(selectedLine.getString("orderedQuantity"));
-      BigDecimal aumQty = new BigDecimal(selectedLine.getString("aumQuantity"));
+      BigDecimal aumQty = null;
+      String strAumQty = selectedLine.getString("aumQuantity");
+      if (strAumQty != null && !"".equals(strAumQty) && !"null".equals(strAumQty)) {
+        aumQty = new BigDecimal(selectedLine.getString("aumQuantity"));
+      }
       newOrderLine.setOrderedQuantity(qtyOrdered);
       newOrderLine.setOperativeQuantity(aumQty);
 
