@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2013-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2013-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -90,8 +90,7 @@ public class LogCleanUpProcess extends DalBaseProcess {
         long t = System.currentTimeMillis();
         // force reload of log clean up configuration to prevent LazyInitializationException
         config = OBDal.getInstance().get(LogCleanUpConfig.class, config.getId());
-        Entity entity = ModelProvider.getInstance().getEntityByTableId(
-            config.getTable().getId());
+        Entity entity = ModelProvider.getInstance().getEntityByTableId(config.getTable().getId());
 
         if (config.isTruncateTable()) {
           // tables to be truncated don't use CleanEntity
@@ -221,14 +220,14 @@ public class LogCleanUpProcess extends DalBaseProcess {
         }
       }
     } catch (SQLException e1) {
-      log.error("Errer executing vacuum", e1);
-      bgLogger.equals("Error executing vacuum: " + e1.getMessage());
+      log.error("Error executing vacuum", e1);
+      bgLogger.log("Error executing vacuum: " + e1.getMessage());
     } finally {
       // resetting auto commit to properly release DAL trx
       try {
         con.setAutoCommit(false);
       } catch (SQLException e) {
-        log.error("Errer executing vacuum", e);
+        log.error("Error executing vacuum", e);
       }
     }
   }
