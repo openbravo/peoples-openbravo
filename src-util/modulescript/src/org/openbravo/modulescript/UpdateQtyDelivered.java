@@ -36,6 +36,7 @@ public class UpdateQtyDelivered extends ModuleScript {
   public void execute() {
     try {
       ConnectionProvider cp = getConnectionProvider();
+      log4j.info("This moduleScript can take long to finish. Please be patient...");
 
       int orderLinesUpdated = UpdateQtyDeliveredData.updateQtyDelivered(cp);
       if (orderLinesUpdated > 0) {
