@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2014 Openbravo SLU
+ * All portions are Copyright (C) 2010-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -121,7 +121,7 @@ public class QuickLaunchDataSource extends ReadOnlyDataSourceService {
         } else if (menuOption.isForm()) {
           data.put(OPTION_TYPE, OPTION_TYPE_URL);
           data.put(FORM_ID, menuOption.getFormId());
-        } else if (menuOption.isReport()) {
+        } else if (menuOption.isReport() && !menuOption.isProcessDefinition()) {
           data.put(OPTION_TYPE, OPTION_TYPE_URL);
           data.put(PROCESS_ID, menuOption.getMenu().getProcess().getId());
         } else if (menuOption.isProcessDefinition()) {
