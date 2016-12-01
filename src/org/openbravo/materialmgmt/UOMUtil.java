@@ -284,7 +284,7 @@ public class UOMUtil {
     } finally {
       OBContext.restorePreviousMode();
     }
-    return propertyValue.equals("Y");
+    return (propertyValue!= null && propertyValue.equals("Y"));
   }
 
   /**
