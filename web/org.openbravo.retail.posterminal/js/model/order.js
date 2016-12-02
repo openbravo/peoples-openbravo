@@ -1506,6 +1506,14 @@
           options: options,
           newLine: newLine
         }, function (args) {
+          var callbackAddProduct = function () {
+              if (callback) {
+                callback(true, args.orderline);
+              }
+              };
+          if (args.orderline) {
+            args.orderline.set('hasMandatoryServices', false);
+          }
           if (args.newLine && me.get('lines').contains(line) && args.productToAdd.get('productType') !== 'S') {
             var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('HasServices');
             // Display related services after calculate gross, if it is new line and if the line has not been deleted.
@@ -1525,17 +1533,17 @@
                   if (!splitline) {
                     args.receipt.trigger('showProductList', args.orderline, 'mandatory');
                   }
+                  args.orderline.set('hasMandatoryServices', true);
+                  callbackAddProduct();
+                } else {
+                  callbackAddProduct();
                 }
               }
               OB.UTIL.SynchronizationHelper.finished(synchId, 'HasServices');
-              if (callback) {
-                callback(true, args.orderline);
-              }
+              callbackAddProduct();
             }, args.orderline);
           } else {
-            if (callback) {
-              callback(true, args.orderline);
-            }
+            callbackAddProduct();
           }
         });
       } // End addProductToOrder
@@ -1751,7 +1759,7 @@
         if (args && args.options && args.options.line && args.options.line.get('replacedorderline') && args.options.line.get('qty') < 0) {
           OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), OB.I18N.getLabel('OBPOS_CancelReplaceQtyEditReturn'));
           if (callback) {
-            callback(false);
+            callback(false, null);
           }
           return;
         }
@@ -1777,7 +1785,7 @@
         if (args && args.useLines) {
           me._drawLinesDistribution(args);
           if (callback) {
-            callback(false);
+            callback(false, null);
           }
           return;
         }
