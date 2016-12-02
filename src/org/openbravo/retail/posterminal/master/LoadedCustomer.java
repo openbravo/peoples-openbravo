@@ -65,14 +65,19 @@ public class LoadedCustomer extends ProcessHQLQuery {
         .getPropertyExtensions(extensionsLoc);
     String hql = "SELECT "
         + bpartnerHQLProperties.getHqlSelect() //
-        + "FROM BusinessPartnerLocation AS bpl left outer join bpl.businessPartner.aDUserList AS ulist "
-        + "left outer join bpl.businessPartner.priceList AS plist "
-        + "Where bpl.businessPartner.id= :businessPartnerId "
-        + " and bpl.id in (select max(bpls.id) as bpLocId from BusinessPartnerLocation AS bpls where bpls.businessPartner.id=bpl.businessPartner.id and bpls.invoiceToAddress = true "
+        + "FROM BusinessPartnerLocation AS bpl "
+        + "join bpl.businessPartner as bp "
+        + "left outer join bp.aDUserList AS ulist "
+        + "left outer join bp.priceList AS plist "
+        + "left outer join bp.businessPartnerLocationList AS bpsl " //
+        + "Where bp.id= :businessPartnerId "
+        + " and bpl.id in (select max(bpls.id) as bpLocId from BusinessPartnerLocation AS bpls where bpls.businessPartner.id=bp.id and bpls.invoiceToAddress = true "
         + " and bpls.$readableSimpleClientCriteria AND "
         + " bpls.$naturalOrgCriteria group by bpls.businessPartner.id)"
-        + " and (ulist.id in (select max(ulist2.id) from ADUser as ulist2 where ulist2.businessPartner=bpl.businessPartner  group by ulist2.businessPartner))"
-        + " ORDER BY bpl.businessPartner.name";
+        + " and (ulist.id in (select max(ulist2.id) from ADUser as ulist2 where ulist2.businessPartner=bp  group by ulist2.businessPartner))"
+        + " and (bpsl is null or bpsl.id in (select max(bpls.id) as bpLocId from BusinessPartnerLocation AS bpls where bpls.active=true AND bpls.shipToAddress = true and bpls.businessPartner.id=bp.id and bpls.$readableSimpleClientCriteria AND "
+        + " bpls.$naturalOrgCriteria)) " //
+        + " ORDER BY bp.name";
     customers.add(hql);
     hql = " select" + bpartnerLocHQLProperties.getHqlSelect()
         + " from BusinessPartnerLocation AS bploc " + "Where bploc.id= :bplocId"

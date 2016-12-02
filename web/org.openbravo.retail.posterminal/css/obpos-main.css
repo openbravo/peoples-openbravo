@@ -111,8 +111,44 @@
   background-color: #fff;
   height: 34px;
   color: black;
+}
+
+.width6 {
+  width: 6% !important;
+}
+
+.width40 {
+  width: 40% !important;
+}
+
+.width52 {
+  width: 52% !important;
+}
+
+.twoAddrLayout {
+  width: 50%;
+  float: left;
+}
+
+.twoAddrLayoutHeader {
+  float: left;
+  font-weight: bold;
+  font-size: 22px;
+  line-height: 30px;
   font-size: 16px;
   padding-top: 1px;
+}
+
+@media all and (max-width: 800px) {
+  .twoAddrLayout {
+    width: 100%;
+  }     
+  .width40 {
+   width: 20% !important;
+  }
+  .width52 {
+    width: 75% !important;
+  }
 }
 
 .splitline-info-label {
@@ -186,6 +222,7 @@
     max-height: 110px !important;
   }
 }
+
 .paymentmethoditemstext {
   font-family: 'Helvetica Neue', 'Nimbus Sans L', Arial, sans-serif;
   font-size: 16px;
@@ -211,7 +248,6 @@
   font-size: 20px;
   font-weight:bold;
 }
-
 .iconServices_unreviewed {
   width: 27px;
   height: 26px;
@@ -254,6 +290,309 @@ button.btnbp:disabled {
 .product_category_search li.selected>button.btnselect-browse {
   background-color: #f8e859;
   color: #000000;
+}
+
+.addressbillbutton {
+  background-image: url('./../../org.openbravo.retail.posterminal/img/iconInvoicingAddress.png');
+  background-repeat: no-repeat;
+  background-size: 22px 22px;
+  background-position: 0px -1px;
+  width: 26px;
+  height: 22px;
+}
+
+.addressshipbutton {
+  background-image: url('./../../org.openbravo.retail.posterminal/img/iconShippingAddress.png');
+  background-repeat: no-repeat;
+  background-size: 22px 22px;
+  background-position: 0px -1px;
+  width: 26px;
+  height: 22px;
+}
+
+.addresstext {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  max-width: 70px;
+}
+
+.addresshipitems {
+  display: table-cell;
+  background-image: url('./../../org.openbravo.retail.posterminal/img/iconShippingAddress.png');
+  background-repeat: no-repeat;
+  background-size: 22px 22px;
+  background-position: 12px 3px;
+  width: 35px;
+  height: 24px;
+}
+
+.addressbillitems {
+  display: table-cell;
+  background-image: url('./../../org.openbravo.retail.posterminal/img/iconInvoicingAddress.png');
+  background-repeat: no-repeat;
+  background-size: 22px 22px;
+  background-position: center 0px;
+  width: 28px;
+  height: 24px;
+}
+
+.addressmenuselector {
+  background-image: url('./../../org.openbravo.retail.posterminal/img/iconDownArrow.png');
+  background-repeat: no-repeat;
+  background-size: 14px 9px;
+  background-position: 21px 6px;
+  width: 35px;
+  height: 24px;
+  float: right;
+}
+
+.fix-bgposition-y {
+  background-position-y: 0px;	
+}
+
+.iconRemove {
+  width: 30px;
+  height: 30px;
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconSelectorRemove.png');
+  background-repeat: no-repeat;
+  background-position: 3px 3px;
+}
+
+.iconSortNone {
+  width: 58px;
+  height: 30px;
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconSelectorSortDisabled.png');
+  background-repeat: no-repeat;
+}
+
+.iconSortAsc {
+  width: 58px;
+  height: 30px;
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconSelectorSortAscending.png');
+  background-repeat: no-repeat;
+}
+
+.iconSortDesc {
+  width: 58px;
+  height: 30px;
+  background-image: url('./../../org.openbravo.mobile.core/assets/img/iconSelectorSortDescending.png');
+  background-repeat: no-repeat;
+}
+
+@media all and (max-width: 800px) {
+  div[id*=stBPAssignToReceipt_scrollArea] {
+    max-height: 497px !important;
+  }
+}
+
+.receipt-header-customer-button {
+  max-width: 125px;
+  float: left; 
+  text-overflow: ellipsis; 
+  white-space: nowrap; 
+  overflow: hidden;
+}
+
+.receipt-header-location-button {
+  margin-left: 0px !important;
+}
+
+.receipt-customer-selector-editor {
+  width: 870px !important;	
+}
+
+.addresstext-onlyone {
+  max-width: 150px !important;
+}
+
+@media (min-width: 350px) and (max-width: 470px) {
+  .taskBrowserHeader .label {
+    display: none;
+  }
+  .taskBrowserHeader .value {
+    width: 145px;
+  }
+  .receipt-header-customer-button {
+    max-width: 101px;
+  }
+  .addresstext {
+    max-width: 45px;
+  }
+  .receipt-customer-selector-editor {
+    width: calc(100% - 24px) !important; 
+  }
+}
+@media (min-width: 471px) and (max-width: 549px) {
+  .taskBrowserHeader .label {
+    display: none;
+  }
+  .taskBrowserHeader .value {
+    width: 220px;
+  }
+  .receipt-header-customer-button {
+    max-width: 126px;
+  }
+  .addresstext {
+    max-width: 70px;
+  }
+  .receipt-customer-selector-editor {
+    width: calc(100% - 24px) !important; 
+  }
+}
+@media (min-width: 550px) and (max-width: 649px) {
+  .taskBrowserHeader .label {
+    display: inline-block;
+  }
+  .taskBrowserHeader .value {
+    width: 230px;
+  }
+  .receipt-header-customer-button {
+    max-width: 156px;
+  }
+  .addresstext {
+    max-width: 100px;
+  }
+  .receipt-customer-selector-editor {
+    width: calc(100% - 24px) !important; 
+  }
+}
+@media (min-width: 650px) and (max-width: 800px) {
+  .taskBrowserHeader .label {
+    display: inline-block;
+  }
+  .taskBrowserHeader .value {
+    width: 330px;
+  }
+  .receipt-header-customer-button {
+    max-width: 206px;
+  }
+  .addresstext {
+    max-width: 150px;
+  }
+  .receipt-customer-selector-editor {
+    width: calc(100% - 24px) !important; 
+  }
+}
+
+@media (min-width: 801px) and (max-width: 899px) {
+  .taskBrowserHeader .label {
+    display: none;
+  }
+  .taskBrowserHeader .value {
+    width: 145px;
+  }
+  .receipt-header-customer-button {
+    max-width: 96px;
+  }
+  .addresstext {
+    max-width: 40px;
+  }
+  .receipt-customer-selector-editor {
+    width: 780px !important; 
+  }
+}
+@media (min-width: 900px) and (max-width: 979px) {
+  .taskBrowserHeader .label {
+    display: none;
+  }
+  .taskBrowserHeader .value {
+    width: 200px;
+  }
+  .receipt-header-customer-button {
+    max-width: 106px;
+  }
+  .addresstext {
+    max-width: 50px;
+  }
+}
+@media (min-width: 980px) and (max-width: 1119px) {
+  .taskBrowserHeader .label {
+    display: inline-block;
+  }
+  .taskBrowserHeader .value {
+    width: 145px;
+  }
+  .receipt-header-customer-button {
+    max-width: 126px;
+  }
+  .addresstext {
+    max-width: 70px;
+  }
+}
+@media (min-width: 1120px) and (max-width: 1199px) {
+  .taskBrowserHeader .label {
+    display: inline-block;
+  }
+  .taskBrowserHeader .value {
+    width: 185px;
+  }
+  .receipt-header-customer-button {
+    max-width: 146px;
+  }
+  .addresstext {
+    max-width: 90px;
+  }
+}
+@media (min-width: 1200px) {
+  .taskBrowserHeader .label {
+    display: inline-block;
+  }
+  .taskBrowserHeader .value {
+    width: 260px;
+  }
+  .receipt-header-customer-button {
+    max-width: 156px;
+  }
+  .addresstext {
+    max-width: 100px;
+  }
+}
+
+.customer-property-label {
+  font-size: 15px; 
+  color: black; 
+  text-align: right; 
+  border: 1px solid #FFFFFF; 
+  background-color: #E2E2E2; 
+  width: 20%; 
+  height: 28px; 
+  padding: 12px 5px 1px 0; 
+  float: left;
+}
+.customer-property-text {
+  border: 1px solid #FFFFFF; 
+  float: left; 
+  width: 75%;
+}
+
+@media (min-width: 350px) and (max-width: 520px) {
+  .customer-property-label {
+    width: 40%;
+  }
+  .width40 {
+    width: 40% !important;
+  }
+  .customer-property-text {
+    width: 54%;
+  }
+  .width52 {
+    width: 54% !important;
+  }
+}
+@media (min-width: 521px) and (max-width: 800px) {
+  .customer-property-label {
+    width: 30%;
+  }
+  .width40 {
+    width: 30% !important;
+  }
+  .customer-property-text {
+    width: 64%;
+  }
+  .width52 {
+    width: 64% !important;
+  }
 }
 
 .whitecolor {

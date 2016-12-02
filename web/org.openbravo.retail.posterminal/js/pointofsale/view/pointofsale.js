@@ -94,11 +94,20 @@ enyo.kind({
     onSetMultiSelectionItems: 'setMultiSelectionItems',
     onToggleLineSelection: 'toggleLineSelection',
     onFinishServiceProposal: 'finishServiceProposal',
+    onSetBusinessPartnerTarget: 'setBusinessPartnerTarget',
+    onPreSetCustomer: 'preSetCustomer',
+    onPreSaveCustomer: 'preSaveCustomer',
     onkeydown: 'keyDownHandler',
     onkeyup: 'keyUpHandler',
     onRearrangeEditButtonBar: 'rearrangeEditButtonBar',
     onModalSelectPrinters: 'modalSelectPrinters',
-    onModalSelectPDFPrinters: 'modalSelectPDFPrinters'
+    onModalSelectPDFPrinters: 'modalSelectPDFPrinters',
+    onChangeFilterSelector: 'changeFilterSelector',
+    onClearAllFilterSelector: 'clearAllFilterSelector',
+    onCheckPresetFilterSelector: 'checkPresetFilterSelector',
+    onAdvancedFilterSelector: 'advancedFilterSelector',
+    onSetSelectorAdvancedSearch: 'setSelectorAdvancedSearch',
+    onCloseSelector: 'closeSelector'
   },
   events: {
     onShowPopup: '',
@@ -106,13 +115,10 @@ enyo.kind({
     onButtonStatusChanged: ''
   },
   components: [{
-    name: 'otherSubWindowsContainer',
+    name: 'other_SubWindows_Container',
     components: [{
       kind: 'OB.OBPOSPointOfSale.UI.customers.ModalConfigurationRequiredForCreateCustomers',
       name: 'modalConfigurationRequiredForCreateNewCustomers'
-    }, {
-      kind: 'OB.OBPOSPointOfSale.UI.customers.cas',
-      name: 'customerAdvancedSearch'
     }, {
       kind: 'OB.OBPOSPointOfSale.UI.customers.newcustomer',
       name: 'customerCreateAndEdit'
@@ -120,14 +126,23 @@ enyo.kind({
       kind: 'OB.OBPOSPointOfSale.UI.customers.editcustomer',
       name: 'customerView'
     }, {
-      kind: 'OB.OBPOSPointOfSale.UI.customeraddr.cas',
-      name: 'customerAddressSearch'
-    }, {
       kind: 'OB.OBPOSPointOfSale.UI.customeraddr.newcustomeraddr',
       name: 'customerAddrCreateAndEdit'
     }, {
       kind: 'OB.OBPOSPointOfSale.UI.customeraddr.editcustomeraddr',
       name: 'customerAddressView'
+    }, {
+      kind: 'OB.UI.ModalSelectorBusinessPartners',
+      name: 'modalcustomer'
+    }, {
+      kind: 'OB.UI.ModalAdvancedFilterBP',
+      name: 'modalAdvancedFilterBP'
+    }, {
+      kind: 'OB.UI.ModalBPLocation',
+      name: 'modalcustomeraddress'
+    }, {
+      kind: 'OB.UI.ModalBPLocationShip',
+      name: 'modalcustomershipaddress'
     }, {
       kind: 'OB.UI.ModalDeleteReceipt',
       name: 'modalConfirmReceiptDelete'
@@ -140,12 +155,6 @@ enyo.kind({
     }, {
       kind: 'OB.UI.ModalNotEditableLine',
       name: 'modalNotEditableLine'
-    }, {
-      kind: 'OB.UI.ModalBusinessPartners',
-      name: "modalcustomer"
-    }, {
-      kind: 'OB.UI.ModalBPLocation',
-      name: "modalcustomeraddress"
     }, {
       kind: 'OB.UI.ModalReceipts',
       name: 'modalreceipts'
@@ -414,6 +423,10 @@ enyo.kind({
   },
   addProductToOrder: function (inSender, inEvent) {
     var targetOrder, me = this;
+    if (inEvent.product.get('ignoreAddProduct')) {
+      inEvent.product.unset('ignoreAddProduct');
+      return;
+    }
     if (inEvent && inEvent.targetOrder) {
       targetOrder = inEvent.targetOrder;
     } else {
@@ -592,14 +605,18 @@ enyo.kind({
     return true;
   },
   changeBusinessPartner: function (inSender, inEvent) {
-    if (this.model.get('order').get('isEditable') === false) {
-      this.doShowPopup({
-        popup: 'modalNotEditableOrder'
-      });
-      return true;
+    if (inEvent.target === 'order' || inEvent.target === undefined) {
+      if (this.model.get('order').get('isEditable') === false) {
+        this.doShowPopup({
+          popup: 'modalNotEditableOrder'
+        });
+        return true;
+      }
+      this.model.get('order').setBPandBPLoc(inEvent.businessPartner, false, true);
+      this.model.get('orderList').saveCurrent();
+    } else {
+      this.waterfall('onChangeBPartner', inEvent);
     }
-    this.model.get('order').setBPandBPLoc(inEvent.businessPartner, false, true);
-    this.model.get('orderList').saveCurrent();
     return true;
   },
   receiptToInvoice: function () {
@@ -1223,6 +1240,21 @@ enyo.kind({
   pricelistChanged: function (inSender, inEvent) {
     this.waterfall('onChangePricelist', inEvent);
   },
+  changeFilterSelector: function (inSender, inEvent) {
+    this.waterfall('onUpdateFilterSelector', inEvent);
+  },
+  clearAllFilterSelector: function (inSender, inEvent) {
+    this.waterfall('onClearFilterSelector', inEvent);
+  },
+  checkPresetFilterSelector: function (inSender, inEvent) {
+    this.waterfall('onHasPresetFilterSelector', inEvent);
+  },
+  advancedFilterSelector: function (inSender, inEvent) {
+    this.waterfall('onGetAdvancedFilterSelector', inEvent);
+  },
+  setSelectorAdvancedSearch: function (inSender, inEvent) {
+    this.waterfall('onSetAdvancedSearchMode', inEvent);
+  },
   receiptLineSelected: function (inSender, inEvent) {
     var enableButton = true,
         selectedLines = this.$.multiColumn.$.rightPanel.$.keyboard.selectedModels,
@@ -1278,6 +1310,15 @@ enyo.kind({
   finishServiceProposal: function (inSender, inEvent) {
     this.waterfallDown('onFinishServiceProposal', inEvent);
   },
+  setBusinessPartnerTarget: function (inSender, inEvent) {
+    this.waterfallDown('onSetBPartnerTarget', inEvent);
+  },
+  preSetCustomer: function (inSender, inEvent) {
+    this.waterfallDown('onSetCustomer', inEvent);
+  },
+  preSaveCustomer: function (inSender, inEvent) {
+    this.waterfallDown('onSaveCustomer', inEvent);
+  },
   setMultiSelection: function (inSender, inEvent) {
     this.waterfall('onSetMultiSelected', inEvent);
   },
@@ -1286,6 +1327,9 @@ enyo.kind({
   },
   setMultiSelectionItems: function (inSender, inEvent) {
     this.waterfall('onTableMultiSelectedItems', inEvent);
+  },
+  closeSelector: function (inSender, inEvent) {
+    this.waterfall('onCloseCancelSelector', inEvent);
   },
   rearrangeEditButtonBar: function (inSender, inEvent) {
     this.waterfall('onRearrangedEditButtonBar', inEvent);

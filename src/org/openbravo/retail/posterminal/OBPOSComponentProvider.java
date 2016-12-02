@@ -90,10 +90,12 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         // "model/terminal",
         // "model/user",
         "utils/ob-utilitiesuipos",
+        "model/bpartnerfilter",
         "model/bpcategory",
         "model/bplocation", // Model for Customer
                             // Address
         "model/currencypanel",
+        "model/country",
         "model/salesrepresentative",
         "model/productcharacteristicvalue",
         "model/characteristicvalue",
@@ -140,8 +142,10 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/order",
         "components/orderdetails",
         "components/businesspartner",
-        "components/bplocation", // Button for selecting customer
-                                 // address
+        "components/businesspartner_selector",
+        "components/bplocation", // Button for selecting customer address
+        "components/bplocationship",
+        "components/customershipbill",
         "components/salesrepresentative",
         "components/listreceiptscounter",
         "components/menu",
@@ -204,13 +208,11 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "pointofsale/view/keyboardorder",
         // Point of sale subwindows
         "pointofsale/view/subwindows/customers/components/sharedcomponents",
-        "pointofsale/view/subwindows/customers/customersadvancedsearch",
         "pointofsale/view/subwindows/customers/editcreatecustomerform",
         "pointofsale/view/subwindows/customers/customerdetailview",
 
         "pointofsale/view/subwindows/customeraddress/components/sharedcomponents",
         "pointofsale/view/subwindows/customeraddress/editcreatecustomeraddress",
-        "pointofsale/view/subwindows/customeraddress/customeraddrsearch",
         "pointofsale/view/subwindows/customeraddress/customeraddrdetailview",
         // Point of sale modals
         "pointofsale/view/modals/modalstockinstore",

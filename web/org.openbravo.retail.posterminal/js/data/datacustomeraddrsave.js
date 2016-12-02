@@ -28,7 +28,7 @@
       var customerAddrList, customerAddrId = this.customerAddr.get('id'),
           isNew = false,
           bpLocToSave = new OB.Model.ChangedBPlocation(),
-          updateLocally;
+          customerAddrListToChange, updateLocally, me = this;
 
       bpLocToSave.set('isbeingprocessed', 'N');
       customerAddr.set('createdBy', OB.MobileApp.model.get('orgUserId'));
@@ -43,8 +43,9 @@
       } else {
         isNew = true;
       }
-      if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) { //With high volume we only save adress we it is assigned to the order
+      if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) { //With high volume we only save address we it is assigned to the order
         if (isNew) {
+          me.receipt.get('bp').set('moreaddress', true); // For to show two address buttons in receipt
           customerAddr.set('posTerminal', OB.MobileApp.model.get('terminal').id);
           var uuid = OB.UTIL.get_UUID();
           customerAddr.set('id', uuid);
@@ -52,6 +53,7 @@
           bpLocToSave.set('json', JSON.stringify(customerAddr.serializeToJSON()));
           bpLocToSave.set('id', customerAddr.get('id'));
         }
+        me.receipt.trigger('change:bp', me.receipt);
         bpLocToSave.set('isbeingprocessed', 'Y');
         OB.Dal.save(bpLocToSave, function () {
           bpLocToSave.set('json', JSON.stringify(customerAddr.serializeToJSON()));
@@ -81,6 +83,8 @@
             }
             OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_customerAddrSaved', [customerAddr.get('_identifier')]));
           };
+          customerAddrListToChange = new OB.Collection.ChangedBPlocationList();
+          customerAddrListToChange.add(bpLocToSave);
           OB.MobileApp.model.runSyncProcess(successCallback);
         }, function () {
           //error saving BP changes with changes in changedbusinesspartners
@@ -97,30 +101,7 @@
         //save that the customer address is being processed by server
         customerAddr.set('loaded', OB.I18N.normalizeDate(new Date()));
         OB.Dal.save(customerAddr, function () {
-          // Update Default Address
-
-          function errorCallback(tx, error) {
-            OB.error(tx);
-          }
-
-          function successCallbackBPs(dataBps) {
-            if (dataBps.length === 0) {
-              OB.Dal.get(OB.Model.BusinessPartner, customerAddr.get('bpartner'), function success(dataBps) {
-                dataBps.set('locId', customerAddr.get('id'));
-                dataBps.set('locName', customerAddr.get('name'));
-                OB.Dal.save(dataBps, function () {}, function (tx) {
-                  OB.error(tx);
-                });
-              }, function error(tx) {
-                OB.error(tx);
-              });
-            }
-          }
-          var criteria = {};
-          criteria._whereClause = "where c_bpartner_id = '" + customerAddr.get('bpartner') + "' and c_bpartnerlocation_id > '" + customerAddr.get('id') + "'";
-          criteria.params = [];
-          OB.Dal.find(OB.Model.BusinessPartner, criteria, successCallbackBPs, errorCallback);
-
+          me.receipt.trigger('change:bp', me.receipt);
           if (isNew) {
             customerAddr.set('posTerminal', OB.MobileApp.model.get('terminal').id);
             bpLocToSave.set('json', JSON.stringify(customerAddr.serializeToJSON()));
@@ -128,6 +109,7 @@
           }
           bpLocToSave.set('isbeingprocessed', 'Y');
           OB.Dal.save(bpLocToSave, function () {
+            bpLocToSave.set('json', customerAddr.serializeToJSON());
             var successCallback, errorCallback, List;
             successCallback = function () {
               if (callback) {
@@ -154,6 +136,8 @@
               }
               OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_customerAddrSaved', [customerAddr.get('_identifier')]));
             };
+            customerAddrListToChange = new OB.Collection.ChangedBPlocationList();
+            customerAddrListToChange.add(bpLocToSave);
             if (!OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
               OB.MobileApp.model.runSyncProcess(successCallback);
             }

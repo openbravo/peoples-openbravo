@@ -1401,7 +1401,12 @@ enyo.kind({
     if (this.disabled) {
       return true;
     }
-
+    if (!_.isNull(this.model.get('order').get('bp')) && _.isNull(this.model.get('order').get('bp').get('locId'))) {
+      OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_InformationTitle'), OB.I18N.getLabel('OBPOS_EmptyAddrBillToText'), [{
+        label: OB.I18N.getLabel('OBPOS_LblOk')
+      }]);
+      return true;
+    }
     var process = new OB.DS.Process('org.openbravo.retail.posterminal.CheckBusinessPartnerCredit');
     var me = this;
     var paymentstatus = this.model.get('order').getPaymentStatus();
@@ -1499,6 +1504,13 @@ enyo.kind({
         negativeLines, me = this,
         myModel = this.owner.model,
         payments;
+    if (!_.isNull(this.model.get('order').get('bp')) && _.isNull(myModel.get('order').get('bp').get('locId'))) {
+      OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_InformationTitle'), OB.I18N.getLabel('OBPOS_EmptyAddrBillToText'), [{
+        label: OB.I18N.getLabel('OBPOS_LblOk')
+      }]);
+      return;
+    }
+
     this.allowOpenDrawer = false;
 
     if (receipt.get('bp').id === OB.MobileApp.model.get('terminal').businessPartner && !OB.MobileApp.model.get('terminal').layaway_anonymouscustomer) {
