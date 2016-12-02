@@ -107,6 +107,7 @@ enyo.kind({
     OB.UTIL.HookManager.executeHooks('OBPOS_RenderListReceiptLine', {
       listReceiptLine: this
     });
+    OB.UTIL.calculateFontSizes();
   }
 });
 

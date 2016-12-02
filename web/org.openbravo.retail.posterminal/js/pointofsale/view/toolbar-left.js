@@ -503,10 +503,10 @@ enyo.kind({
     }
   },
   attributes: {
-    style: 'text-align: center; font-size: 30px;'
+    style: 'text-align: center; font-size: 30px; padding: 0px 5px 0px 5px;'
   },
   components: [{
-    style: 'font-weight: bold; margin: 0px 5px 0px 0px;',
+    style: 'font-weight: bold; margin: 0px 5px 0px 5px; display: initial;',
     kind: 'OB.UI.Total',
     name: 'totalPrinter'
   }],
@@ -516,6 +516,7 @@ enyo.kind({
   initComponents: function () {
     this.inherited(arguments);
     this.removeClass('btnlink-gray');
+    this.addClass('buttonText');
   },
   renderTotal: function (inSender, inEvent) {
     this.$.totalPrinter.renderTotal(inEvent.newTotal);
