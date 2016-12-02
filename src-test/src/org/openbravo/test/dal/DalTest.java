@@ -22,17 +22,23 @@
 
 package org.openbravo.test.dal;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.hibernate.ObjectNotFoundException;
 import org.hibernate.criterion.Restrictions;
 import org.junit.FixMethodOrder;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runners.MethodSorters;
 import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.model.Property;
@@ -44,6 +50,7 @@ import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.system.SystemInformation;
+import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.businesspartner.Category;
 import org.openbravo.model.common.businesspartner.CategoryAccounts;
 import org.openbravo.model.common.currency.Currency;
@@ -64,6 +71,9 @@ import org.openbravo.test.base.OBBaseTest;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class DalTest extends OBBaseTest {
   private static final Logger log = Logger.getLogger(DalTest.class);
+
+  @Rule
+  public ExpectedException thrown = ExpectedException.none();
 
   /**
    * Test to assert save false in a null char(1) column - Part I
@@ -393,5 +403,30 @@ public class DalTest extends OBBaseTest {
   public void testNGetPropertyFromColumnName() {
     final Property property = DalUtil.getProperty("AD_COLUMN", "AD_COLUMN_ID");
     assertNotNull(property);
+  }
+
+  @Test
+  public void getInexistentObjShouldBeNull() {
+    BusinessPartner bp = OBDal.getInstance().get(BusinessPartner.class, "DummyId");
+
+    assertThat(bp, is(nullValue()));
+  }
+
+  @Test
+  public void getInexistentObjShouldBeNullEvenIfItWasProxied() {
+    @SuppressWarnings("unused")
+    BusinessPartner bpProxy = OBDal.getInstance().getProxy(BusinessPartner.class, "DummyId");
+    BusinessPartner bp = OBDal.getInstance().get(BusinessPartner.class, "DummyId");
+
+    assertThat(bp, is(nullValue()));
+  }
+
+  @Test
+  public void populatingProxyOfInexistentObjShouldFail() {
+    BusinessPartner bpProxy = OBDal.getInstance().getProxy(BusinessPartner.class, "DummyId");
+
+    thrown.expect(ObjectNotFoundException.class);
+    // getting any property causes proxy population from db
+    bpProxy.getName();
   }
 }

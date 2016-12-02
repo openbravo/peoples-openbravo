@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013 Openbravo SLU
+ * All portions are Copyright (C) 2013-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -155,7 +155,7 @@ public class GlobalMenu {
   }
 
   /**
-   * Each menu option is configured with additional paramters
+   * Each menu option is configured with additional parameters
    * 
    */
   private void linkMenus(List<Menu> menus, List<MenuOption> menuOptions, String language) {
@@ -236,6 +236,10 @@ public class GlobalMenu {
               && menu.getOBUIAPPProcessDefinition().isActive()) {
             foundOption.setType(MenuEntryType.ProcessDefinition);
             foundOption.setObjectId(menu.getOBUIAPPProcessDefinition().getId());
+            if (ApplicationConstants.REPORT_UI_PATTERN.equals(menu.getOBUIAPPProcessDefinition()
+                .getUIPattern())) {
+              foundOption.setReport(true);
+            }
           } else if (menu.getWindow() != null && menu.getWindow().isActive()) {
             boolean found = false;
             for (Tab tab : menu.getWindow().getADTabList()) {
