@@ -28,11 +28,13 @@ import java.util.Map;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Query;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
+import org.openbravo.erpCommon.businessUtility.CloneOrderHookCaller;
 import org.openbravo.model.ad.access.User;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
@@ -88,6 +90,10 @@ public class CloneOrderActionHandler extends BaseActionHandler {
       objCloneOrder.setScheduledDeliveryDate(cal.getTime());
       objCloneOrder.setGrandTotalAmount(BigDecimal.ZERO);
       objCloneOrder.setSummedLineAmount(BigDecimal.ZERO);
+
+      // Calling Clone Order Hook
+      WeldUtils.getInstanceFromStaticBeanManager(CloneOrderHookCaller.class).executeHook(
+          objCloneOrder);
 
       // save the cloned order object
       OBDal.getInstance().save(objCloneOrder);
