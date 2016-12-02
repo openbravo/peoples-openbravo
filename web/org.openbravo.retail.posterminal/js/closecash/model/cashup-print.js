@@ -20,7 +20,7 @@
       };
       };
 
-  PrintCashUp.prototype.print = function (report, sumary, closed) {
+  PrintCashUp.prototype.print = function (report, sumary, closed, callback) {
     var me = this;
     OB.POS.hwserver.cleanDisplay();
     OB.POS.hwserver.print(this.templatecashup, {
@@ -34,7 +34,7 @@
         // callbacks definition
         var successfunc = function () {
             var printCashUp = new OB.OBPOSCashUp.Print.CashUp();
-            printCashUp.print(report, sumary, closed);
+            printCashUp.print(report, sumary, closed, me.cancelOrDismiss);
             return true;
             };
         var cancelfunc = function () {
@@ -46,6 +46,10 @@
             return true;
             };
         OB.OBPOS.showSelectPrinterDialog(successfunc, hidefunc, hidefunc, false, 'OBPOS_MsgPrintAgainCashUp');
+      } else {
+        if (callback) {
+          callback();
+        }
       }
     });
   };
