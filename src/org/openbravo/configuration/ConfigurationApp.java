@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2014 - 2015 Openbravo SLU
+ * All portions are Copyright (C) 2014 - 2016 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -51,6 +51,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
 
   private final static String BASEDIR = getUserDir();
   private final static String BASEDIR_CONFIG = BASEDIR + "/config/";
+  private final static String BASEDIR_TEST = BASEDIR + "/src-test/";
   private final static String SUFFIX_AUX = ".aux";
   private final static String OPENBRAVO_PROPERTIES = BASEDIR_CONFIG + "Openbravo.properties";
   private final static String OPENBRAVO_PROPERTIES_AUX = BASEDIR_CONFIG + "Openbravo.properties"
@@ -740,6 +741,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     fileCopyTemplate(LOG4J_LCF + ".template", LOG4J_LCF, p);
     fileCopyTemplate(USERCONFIG_XML + ".template", USERCONFIG_XML, p);
     fileCopyTemplate(CLASSPATH + ".template", CLASSPATH, p);
+    fileCopyTemplate(BASEDIR_TEST + CLASSPATH + ".template", BASEDIR_TEST + CLASSPATH, p);
   }
 
   /**
