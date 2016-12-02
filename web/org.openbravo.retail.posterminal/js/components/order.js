@@ -244,21 +244,32 @@ enyo.kind({
   style: 'position: relative; padding: 10px; height: 35px',
   components: [{
     name: 'lblTotal',
-    style: 'float: left; width: 40%;'
+    classes: 'order-total-label'
   }, {
-    name: 'totalqty',
-    style: 'float: left; width: 20%; text-align:right; font-weight:bold;'
+    kind: 'OB.UI.FitText',
+    classes: 'order-total-qty fitText',
+    components: [{
+      tag: 'span',
+      name: 'totalqty'
+    }]
   }, {
-    name: 'totalgross',
-    style: 'float: left; width: 40%; text-align:right; font-weight:bold;'
+    kind: 'OB.UI.FitText',
+    classes: 'order-total-gross fitText',
+    components: [{
+      tag: 'span',
+      name: 'totalgross'
+    }]
   }, {
     style: 'clear: both;'
   }],
   renderTotal: function (newTotal) {
-    this.$.totalgross.setContent(OB.I18N.formatCurrency(newTotal));
-    OB.UTIL.HookManager.executeHooks('OBPOS_UpdateTotalReceiptLine', {
-      totalline: this
-    });
+    if (newTotal !== this.$.totalgross.getContent()) {
+      this.$.totalgross.setContent(OB.I18N.formatCurrency(newTotal));
+      OB.UTIL.HookManager.executeHooks('OBPOS_UpdateTotalReceiptLine', {
+        totalline: this
+      });
+      OB.UTIL.calculateFontSizes();
+    }
   },
   renderQty: function (newQty) {
     this.$.totalqty.setContent(newQty);
