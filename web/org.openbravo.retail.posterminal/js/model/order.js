@@ -1220,10 +1220,10 @@
       idx++;
       if (this.get('lines').get(line)) {
         if (idx < length) {
-          this.deleteLine(line, true);
+          this.deleteLine(line, true, null, false);
           this.deleteLines(lines, idx, length, callback);
         } else {
-          this.deleteLine(line, false, callback);
+          this.deleteLine(line, false, callback, true);
         }
       } else {
         // If there is a line and other related service line selected to delete, the service is deleted when the product is deleted
@@ -1255,7 +1255,7 @@
       line.unset('obposIsDeleted');
     },
 
-    deleteLine: function (line, doNotSave, callback) {
+    deleteLine: function (line, doNotSave, callback, isLastLine) {
       var me = this,
           pack = line.isAffectedByPack(),
           productId = line.get('product').id;
@@ -1365,16 +1365,27 @@
           this.set('deletedLines', []);
         }
         if (!line.get('hasTaxError')) {
-          line.set('obposIsDeleted', true);
-          this.set('skipCalculateReceipt', true);
-          line.set('obposQtyDeleted', line.get('qty'));
-          line.set('qty', 0);
-          this.set('skipCalculateReceipt', false);
-          this.calculateReceipt(function () {
-            me.get('deletedLines').push(new OrderLine(line.attributes));
+          if (OB.UTIL.isNullOrUndefined(isLastLine) || isLastLine) {
+            this.set('skipCalculateReceipt', true);
+            line.set('obposIsDeleted', true);
+            line.set('obposQtyDeleted', line.get('qty'));
+            line.set('qty', 0);
+            this.set('skipCalculateReceipt', false);
+
+            this.calculateReceipt(function () {
+              me.get('deletedLines').push(new OrderLine(line.attributes));
+              // remove the line
+              finishDelete();
+            });
+          } else {
+            this.set('skipCalculateReceipt', true);
+            line.set('obposIsDeleted', true);
+            line.set('obposQtyDeleted', line.get('qty'));
+            line.set('qty', 0);
+            this.get('deletedLines').push(new OrderLine(line.attributes));
             // remove the line
             finishDelete();
-          });
+          }
         }
       } else {
         // remove the line
