@@ -1310,7 +1310,7 @@
       if (((options && options.line) ? options.line.get('qty') + qty : qty) < 0 && p.get('productType') === 'S' && !p.get('returnable')) {
         OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_UnreturnableProduct'), OB.I18N.getLabel('OBPOS_UnreturnableProductMessage', [p.get('_identifier')]));
         if (callback) {
-          callback(false);
+          callback(false, null);
         }
         return;
       }
@@ -1319,7 +1319,7 @@
         if (me.get('isQuotation') && me.get('hasbeenpaid') === 'Y') {
           OB.UTIL.showError(OB.I18N.getLabel('OBPOS_QuotationClosed'));
           if (callback) {
-            callback(false);
+            callback(false, null);
           }
           return false;
         }
@@ -1361,7 +1361,7 @@
             }, function (args) {
               if (args && args.cancelOperation) {
                 if (callback) {
-                  callback(false);
+                  callback(false, null);
                 }
                 return;
               }
@@ -1408,6 +1408,14 @@
           options: options,
           newLine: newLine
         }, function (args) {
+          var callbackAddProduct = function () {
+              if (callback) {
+                callback(true, args.orderline);
+              }
+              };
+          if (args.orderline) {
+            args.orderline.set('hasMandatoryServices', false);
+          }
           if (args.newLine && me.get('lines').contains(line) && args.productToAdd.get('productType') !== 'S') {
             var synchId = OB.UTIL.SynchronizationHelper.busyUntilFinishes('HasServices');
             // Display related services after calculate gross, if it is new line and if the line has not been deleted.
@@ -1424,17 +1432,17 @@
                 args.receipt.save();
                 if (data.hasmandatoryservices) {
                   args.receipt.trigger('showProductList', args.orderline, 'mandatory');
+                  args.orderline.set('hasMandatoryServices', true);
+                  callbackAddProduct();
+                } else {
+                  callbackAddProduct();
                 }
               }
               OB.UTIL.SynchronizationHelper.finished(synchId, 'HasServices');
-              if (callback) {
-                callback(true);
-              }
+              callbackAddProduct();
             }, args.orderline);
           } else {
-            if (callback) {
-              callback(true);
-            }
+            callbackAddProduct();
           }
         });
       }
@@ -1605,27 +1613,27 @@
               p.set('standardPrice', productPrices.at(0).get('pricestd'));
               p.set('listPrice', productPrices.at(0).get('pricelist'));
             }
-            me.addProductToOrder(p, qty, options, attrs, function (success) {
+            me.addProductToOrder(p, qty, options, attrs, function (success, orderline) {
               if (callback) {
-                callback(success);
+                callback(success, orderline);
               }
             });
           } else {
             OB.UTIL.showI18NWarning('OBPOS_ProductNotFoundInPriceList');
             if (callback) {
-              callback(false);
+              callback(false, null);
             }
           }
         }, function () {
           OB.UTIL.showI18NWarning('OBPOS_ProductNotFoundInPriceList');
           if (callback) {
-            callback(false);
+            callback(false, null);
           }
         });
       } else {
-        me.addProductToOrder(p, qty, options, attrs, function (success) {
+        me.addProductToOrder(p, qty, options, attrs, function (success, orderline) {
           if (callback) {
-            callback(success);
+            callback(success, orderline);
           }
         });
       }
@@ -1643,7 +1651,7 @@
         if (args && args.productToAdd && args.productToAdd.get('isGeneric')) {
           OB.UTIL.showI18NWarning('OBPOS_GenericNotAllowed');
           if (callback) {
-            callback(false);
+            callback(false, null);
           }
           return;
         }
@@ -1658,7 +1666,7 @@
           }
 
           if (callback) {
-            callback(false);
+            callback(false, null);
           }
           return;
         }
@@ -1670,13 +1678,13 @@
         if (args && args.useLines) {
           me._drawLinesDistribution(args);
           if (callback) {
-            callback(false);
+            callback(false, null);
           }
           return;
         }
-        me._addProduct(p, qty, options, attrs, function (success) {
+        me._addProduct(p, qty, options, attrs, function (success, orderline) {
           if (callback) {
-            callback(success);
+            callback(success, orderline);
           }
         });
       });
