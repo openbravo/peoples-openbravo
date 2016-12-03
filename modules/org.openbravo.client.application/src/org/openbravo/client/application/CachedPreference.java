@@ -97,8 +97,6 @@ public class CachedPreference implements Serializable {
    * 
    * @param propertyName
    *          The name of the property related to the preference
-   * @param cachePreference
-   *          true if the propertyName must be cached, false if not
    * @return The preference value of the propertyName given
    */
   public String getPreferenceValueAndStoreInCache(String propertyName) {

@@ -137,7 +137,7 @@ public class UOMUtil {
    * 
    * @param mProductId
    *          The product id
-   * @param documentTypeId
+   * @param docTypeId
    *          The document type id if the parent document
    * @return List of the available UOM
    */
@@ -176,7 +176,6 @@ public class UOMUtil {
    *          The UOM
    * @param reverse
    *          true if reverse, false otherwise
-   * @return
    * @throws OBException
    */
 
@@ -233,7 +232,6 @@ public class UOMUtil {
    *          The alternative quantity
    * @param toUOM
    *          The UOM
-   * @return
    * @throws OBException
    */
 
@@ -254,7 +252,6 @@ public class UOMUtil {
    *          The base quantity
    * @param toUOM
    *          The UOM
-   * @return
    * @throws OBException
    */
   public static BigDecimal getConvertedAumQty(String mProductId, BigDecimal qty, String toUOM)
@@ -294,7 +291,6 @@ public class UOMUtil {
    *          The product Id
    * @param docTypeId
    *          The document type Id
-   * @return
    */
   public static FieldProvider[] selectDefaultAUM(String productId, String docTypeId) {
     FieldProvider[] finalResult = new FieldProvider[1];
@@ -318,13 +314,12 @@ public class UOMUtil {
   }
 
   /**
-   * Returns a FieldProvider array containing the availables UOM for a product in a given flow
+   * Returns a FieldProvider array containing the available UOM for a product in a given flow
    * 
    * @param productId
    *          The product Id
    * @param docTypeId
    *          The document type Id
-   * @return
    */
   public static FieldProvider[] selectAUM(String productId, String docTypeId) {
     FieldProvider[] finalResult = new FieldProvider[1];

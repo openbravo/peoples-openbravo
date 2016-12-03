@@ -544,7 +544,6 @@ public class BaseReportActionHandler extends BaseProcessActionHandler {
    * @param parameters
    *          map with the parameters of the call that can be used to generate the report data
    *
-   * @return
    */
   protected JRDataSource getReportData(Map<String, Object> parameters) {
     return null;
@@ -554,7 +553,6 @@ public class BaseReportActionHandler extends BaseProcessActionHandler {
    * Get the connection provider to use in report generation. Override this method to put logic for
    * getting the connection provider
    *
-   * @return
    */
   protected ConnectionProvider getReportConnectionProvider() {
     return null;

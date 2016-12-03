@@ -28,8 +28,12 @@ import java.util.Map;
  * the checkNodeMovement method must be implemented to determine whether a node movement is valid.
  * Also this annotations must be added for the class to be used using dependency injection:
  * 
- * @ApplicationScoped
- * @Qualifier("entityName"), entityName being the name of the DAL entity associated with the tree
+ * <code>
+ * <p>
+ * &#64;ApplicationScoped
+ * <p>
+ * &#64;Qualifier("entityName"), entityName being the name of the DAL entity associated with the tree
+ * </code>
  * 
  */
 public abstract class CheckTreeOperationManager {

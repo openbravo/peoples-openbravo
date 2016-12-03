@@ -96,7 +96,6 @@ public class CancelAndReplaceUtils {
    * 
    * @param oldOrder
    *          Order that will be cancelled and replaced
-   * @return
    */
   public static Order createReplacementOrder(Order oldOrder) {
     // Create new Order header
@@ -161,7 +160,6 @@ public class CancelAndReplaceUtils {
    * @param useOrderDocumentNoForRelatedDocs
    *          flag coming from Web POS. If it is true, it will set the same document of the order to
    *          netting payment.
-   * @return
    */
   public static Order cancelOrder(String newOrderId, JSONObject jsonorder,
       boolean useOrderDocumentNoForRelatedDocs) {
@@ -179,7 +177,6 @@ public class CancelAndReplaceUtils {
    * @param useOrderDocumentNoForRelatedDocs
    *          . flag coming from Web POS. If it is true, it will set the same document of the order
    *          to netting payment.
-   * @return
    */
   public static Order cancelAndReplaceOrder(String newOrderId, JSONObject jsonorder,
       boolean useOrderDocumentNoForRelatedDocs) {
@@ -205,7 +202,6 @@ public class CancelAndReplaceUtils {
    * @param replaceOrder
    *          If replaceOrder == true, the original order will be cancelled and replaced with a new
    *          one, if == false, it will only be cancelled
-   * @return
    */
   private static Order cancelAndReplaceOrder(String orderId, JSONObject jsonorder,
       boolean useOrderDocumentNoForRelatedDocs, boolean replaceOrder) {
@@ -659,7 +655,6 @@ public class CancelAndReplaceUtils {
    *          Movement quantity of the shipment line.
    * @param triggersDisabled
    *          Flag that tells if triggers are disabled or not while executing this method.
-   * @return
    */
   private static ShipmentInOutLine createNettingShipmentLine(ShipmentInOut nettingGoodsShipment,
       OrderLine orderLine, long lineNoCounter, BigDecimal movementQty, boolean triggersDisabled) {
