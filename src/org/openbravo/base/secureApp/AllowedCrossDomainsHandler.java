@@ -54,16 +54,6 @@ public class AllowedCrossDomainsHandler {
   private Collection<AllowedCrossDomainsChecker> checkers = null;
 
   /**
-   * Returns true if the origin is allowed, in that case the cors headers can be set (
-   * {@link #setCORSHeaders(HttpServletRequest, HttpServletResponse)}.
-   * 
-   * @param request
-   * @param origin
-   *          , the origin can be obtained from the request
-   * @return
-   */
-
-  /**
    * Returns true if the origin of the request is allowed, in that case the cors headers can be set
    * ( {@link #setCORSHeaders(HttpServletRequest, HttpServletResponse)}.
    * 
