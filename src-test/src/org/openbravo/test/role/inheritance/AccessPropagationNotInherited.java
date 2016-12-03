@@ -58,7 +58,6 @@ public class AccessPropagationNotInherited extends WeldBaseTest {
   private final List<String> ALERTS = Arrays.asList("Alert Taxes: Inversión del Sujeto Pasivo");
   private final List<String> PREFERENCES = Arrays.asList("AllowAttachment");
 
-  @SuppressWarnings("unchecked")
   private final List<List<String>> ACCESSES = Arrays.asList(ORGANIZATIONS, WINDOWS, TABS, FIELDS,
       REPORTS, FORMS, WIDGETS, VIEWS, PROCESSES, TABLES, ALERTS, PREFERENCES);
   private static int testCounter = 0;
