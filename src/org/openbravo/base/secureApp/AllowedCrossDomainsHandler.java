@@ -62,7 +62,16 @@ public class AllowedCrossDomainsHandler {
    *          , the origin can be obtained from the request
    * @return
    */
-  private boolean isAllowedOrigin(HttpServletRequest request, String origin) {
+
+  /**
+   * Returns true if the origin of the request is allowed, in that case the cors headers can be set
+   * ( {@link #setCORSHeaders(HttpServletRequest, HttpServletResponse)}.
+   * 
+   * @param request
+   * @return true if the origin if the request is in the list of allowed domains
+   */
+  public boolean fromAllowedOrigin(HttpServletRequest request) {
+    final String origin = request.getHeader("Origin");
     for (AllowedCrossDomainsChecker checker : getCheckers()) {
       if (checker.isAllowedOrigin(request, origin)) {
         return true;
@@ -105,7 +114,7 @@ public class AllowedCrossDomainsHandler {
 
       if (origin != null && !origin.equals("")) {
 
-        if (!isAllowedOrigin(request, origin)) {
+        if (!fromAllowedOrigin(request)) {
           return;
         }
 
