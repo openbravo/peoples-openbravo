@@ -580,6 +580,9 @@ public class Preferences {
       boolean isCurrentPreference = pref.isPropertyList() == listPref.isPropertyList()
           && ((pref.isPropertyList() && pref.getProperty().equals(listPref.getProperty())) || (!pref
               .isPropertyList() && pref.getAttribute().equals(listPref.getAttribute())));
+      if (!isCurrentPreference) {
+        continue;
+      }
       boolean winVisbilityNotDefined = (pref.getWindow() == null && listPref.getWindow() == null);
       boolean sameWinVisibility = (pref.getWindow() != null && pref.getWindow().equals(
           listPref.getWindow()))
