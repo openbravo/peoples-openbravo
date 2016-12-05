@@ -15,8 +15,9 @@ enyo.kind({
   components: [{
     name: 'productImage',
     style: 'max-width: 100%;',
+    classes: 'standardFlexContainer',
     components: [{
-      style: 'display: table-cell; vertical-align: top;  width: 50px;',
+      style: 'vertical-align: top;  width: 50px; ',
       components: [{
         tag: 'div',
         classes: 'image-wrap',
@@ -32,42 +33,42 @@ enyo.kind({
         name: 'thumbnail'
       }]
     }, {
-      style: 'display: table-cell; min-width: 10px;'
-    }, {
-      style: 'display: table-cell; vertical-align: top; width: 100%; word-break: break-word;',
-      name: 'identifierContainer',
+      name: 'productInfo',
+      style: 'width: 100%; flex-wrap: wrap; padding-left: 5px;',
+      classes: 'standardFlexContainer',
       components: [{
-        name: 'identifier',
-        style: 'max-height: 70px; overflow: hidden;'
-      }, {
-        style: 'color: #888888',
-        name: 'filterAttr',
-        allowHtml: true
-      }]
-    }, {
-      style: 'display: table-cell; min-width: 10px;'
-    }, {
-      name: 'icons',
-      minWidth: 0,
-      style: 'display: table-cell; vertical-align: top;',
-      components: [{
-        name: 'bestseller',
-        style: 'height: 16px; width: 16px; padding: 0px 2px; float: left;',
-        kind: 'OB.UI.Thumbnail.Bestseller',
-        'default': 'img/iconBestsellerSmall.png',
-        showing: false
-      }]
-    }, {
-      name: 'priceBox',
-      style: 'display: table-cell; vertical-align: top; ',
-      components: [{
-        style: 'width: 100%;',
+        style: 'vertical-align: top; width: 100%; word-break: break-word;',
+        name: 'identifierContainer',
         components: [{
-          name: 'price',
-          style: 'float: right; text-align: right; font-weight: bold;'
+          name: 'identifier',
+          style: 'max-height: 70px; overflow: hidden;'
         }, {
-          name: 'priceList',
-          style: 'width: 100%; text-align: right; font-weight: bold; color: grey; font-size: 14px;'
+          style: 'color: #888888',
+          name: 'filterAttr',
+          allowHtml: true
+        }]
+      }, {
+        name: 'icons',
+        minWidth: 0,
+        style: 'vertical-align: top;',
+        components: [{
+          name: 'bestseller',
+          style: 'height: 16px; width: 16px; padding: 0px 2px; float: left;',
+          kind: 'OB.UI.Thumbnail.Bestseller',
+          'default': 'img/iconBestsellerSmall.png',
+          showing: false
+        }]
+      }, {
+        name: 'priceBox',
+        style: 'vertical-align: top;',
+        components: [{
+          components: [{
+            name: 'price',
+            style: 'text-align: right; font-weight: bold;'
+          }, {
+            name: 'priceList',
+            style: 'text-align: right; font-weight: bold; color: grey; font-size: 14px;'
+          }]
         }]
       }]
     }]
@@ -87,6 +88,7 @@ enyo.kind({
     this.inherited(arguments);
     // Build filter info from filter attributes
     var filterTxt = '',
+        searchTab = false,
         filterAttr = this.model.get("filterAttr"),
         maxWidthCalc;
     if (filterAttr && _.isArray(filterAttr) && filterAttr.length > 0) {
@@ -97,18 +99,30 @@ enyo.kind({
         filterTxt = filterTxt + attr.value;
       });
     }
+    if (this.id.indexOf('searchCharacteristic') !== -1) {
+      searchTab = true;
+    }
     this.$.identifierContainer.addStyles('width: 38%;');
     this.$.identifier.setContent(this.setIdentifierContent());
     this.$.filterAttr.setContent(filterTxt);
     if (this.model.get('showchdesc')) {
       this.$.bottonLine.setContent(this.model.get('characteristicDescription'));
     }
+
     if (this.model.get('currentStandardPrice') && this.model.get('currentStandardPrice') !== "undefined") {
       if (OB.MobileApp.model.hasPermission('ShowStandardPriceOnSearchAndBrowse', true)) {
+        if (OB.I18N.formatCurrency(this.model.get('currentStandardPrice')).length > 11 && !searchTab) {
+          this.$.priceList.addStyles('font-size: 11px;');
+        }
         this.$.priceList.setContent(OB.I18N.formatCurrency(this.model.get('currentStandardPrice')));
       }
       this.$.price.setContent(OB.I18N.formatCurrency(this.model.get('standardPrice')));
     } else {
+      if (this.model.get('standardPrice')) {
+        if (OB.I18N.formatCurrency(this.model.get('standardPrice')).length > 11 && !searchTab) {
+          this.$.price.addStyles('font-size: 11px;');
+        }
+      }
       this.$.price.setContent(OB.I18N.formatCurrency(this.model.get('standardPrice')));
     }
 
@@ -142,8 +156,10 @@ enyo.kind({
     if (this.model.get('bestseller') !== true) {
       this.$.icons.applyStyle('min-width', this.$.icons.minWidth + 'px');
       this.$.icons.applyStyle('width', '0px');
+      this.$.priceBox.applyStyle('margin-left', 'auto');
       this.$.bestseller.$.image.hide();
     } else {
+      this.$.icons.applyStyle('margin-left', 'auto');
       this.$.icons.minWidth += 20;
       this.$.icons.applyStyle('min-width', this.$.icons.minWidth + 'px');
       this.$.bestseller.addStyles('display: block');
