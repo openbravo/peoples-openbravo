@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2015 Openbravo SLU 
+ * All portions are Copyright (C) 2015-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -88,10 +88,12 @@ public class ConversionRateEventHandler extends EntityPersistenceEventObserver {
     hql.append(" AND :client = t. " + ConversionRate.PROPERTY_CLIENT);
     hql.append(" AND :currencyFrom = t. " + ConversionRate.PROPERTY_CURRENCY);
     hql.append(" AND :currencyTo = t. " + ConversionRate.PROPERTY_TOCURRENCY);
-    hql.append(" AND (:validFrom between t." + ConversionRate.PROPERTY_VALIDFROMDATE + " AND t."
+    hql.append(" AND ((:validFrom between t." + ConversionRate.PROPERTY_VALIDFROMDATE + " AND t."
         + ConversionRate.PROPERTY_VALIDTODATE);
     hql.append(" OR :validTo between t." + ConversionRate.PROPERTY_VALIDFROMDATE + " AND t."
         + ConversionRate.PROPERTY_VALIDTODATE + ")");
+    hql.append(" OR (:validFrom < t." + ConversionRate.PROPERTY_VALIDFROMDATE
+        + " AND :validTo > t." + ConversionRate.PROPERTY_VALIDTODATE + "))");
 
     final Query query = OBDal.getInstance().getSession().createQuery(hql.toString());
     query.setParameter("id", id);
