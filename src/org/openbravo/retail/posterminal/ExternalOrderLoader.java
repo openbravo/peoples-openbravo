@@ -918,7 +918,6 @@ public class ExternalOrderLoader extends OrderLoader {
    *          the value to search with
    * @param properties
    *          the properties of the entity which are one-by-one used to query
-   * @return
    */
   protected String resolveJsonValue(String entityName, String searchValue, String... properties) {
     final String id = resolveJsonValueNoException(entityName, searchValue, properties);

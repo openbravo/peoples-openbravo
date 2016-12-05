@@ -44,19 +44,6 @@ public class ProductProperties extends ModelExtension {
 
   @Override
   public List<HQLProperty> getHQLProperties(Object params) {
-    // Calculate POS Precision
-    String localPosPrecision = "";
-    try {
-      if (params != null) {
-        @SuppressWarnings("unchecked")
-        HashMap<String, Object> localParams = (HashMap<String, Object>) params;
-        localPosPrecision = (String) localParams.get("posPrecision");
-
-      }
-    } catch (Exception e) {
-      log.error("Error getting posPrecision: " + e.getMessage(), e);
-    }
-    final String posPrecision = localPosPrecision;
 
     List<HQLProperty> list = ProductProperties.getMainProductHQLProperties(params);
 
