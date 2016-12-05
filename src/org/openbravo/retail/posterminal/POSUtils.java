@@ -761,19 +761,24 @@ public class POSUtils {
    */
   public static void setDefaultPaymentType(JSONObject jsonorder, Order order) {
     try {
-      OBQuery<OBPOSAppPayment> paymentQuery = OBDal.getInstance().createQuery(OBPOSAppPayment.class,
-          "as e where e.obposApplications = :terminal and e.financialAccount.currency = :currency order by e.id");
-      paymentQuery.setNamedParameter("terminal", order.getObposApplications());
+      OBQuery<OBPOSAppPayment> paymentQuery = OBDal
+          .getInstance()
+          .createQuery(
+              OBPOSAppPayment.class,
+              "as e where e.obposApplications = :terminal and e.financialAccount.currency = :currency order by e.id");
+      OBPOSApplications posTerminal = OBDal.getInstance().get(OBPOSApplications.class,
+          jsonorder.getString("posTerminal"));
+      paymentQuery.setNamedParameter("terminal", posTerminal);
       paymentQuery.setNamedParameter("currency", order.getOrganization().getCurrency());
       paymentQuery.setMaxResult(1);
       OBPOSAppPayment defaultPaymentType = (OBPOSAppPayment) paymentQuery.uniqueResult();
 
       if (defaultPaymentType != null) {
         JSONObject paymentTypeValues = new JSONObject();
-        paymentTypeValues.put("paymentMethodId",
-            defaultPaymentType.getPaymentMethod().getPaymentMethod().getId());
-        paymentTypeValues.put("financialAccountId",
-            defaultPaymentType.getFinancialAccount().getId());
+        paymentTypeValues.put("paymentMethodId", defaultPaymentType.getPaymentMethod()
+            .getPaymentMethod().getId());
+        paymentTypeValues.put("financialAccountId", defaultPaymentType.getFinancialAccount()
+            .getId());
         jsonorder.put("defaultPaymentType", paymentTypeValues);
       }
     } catch (JSONException e) {

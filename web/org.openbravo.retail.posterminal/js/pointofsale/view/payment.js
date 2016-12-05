@@ -1123,7 +1123,7 @@ enyo.kind({
               me.owner.model.get('order').trigger('paymentDone', false);
             }
             this.drawerOpened = false;
-            this.setContent(OB.I18N.getLabel('OBPOS_LblOpen'));
+            this.setDisabled(true);
           } else {
             OB.POS.hwserver.openDrawer({
               openFirst: true,
