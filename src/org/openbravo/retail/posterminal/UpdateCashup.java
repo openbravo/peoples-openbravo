@@ -299,8 +299,7 @@ public class UpdateCashup {
     OBDal.getInstance().save(newTax);
   }
 
-  private synchronized static void associateMasterSlave(OBPOSAppCashup cashUp,
-      OBPOSApplications posTerminal) {
+  public static void associateMasterSlave(OBPOSAppCashup cashUp, OBPOSApplications posTerminal) {
     if (posTerminal.isMaster()) {
       // Find slaves cashup
       String query = OBPOSAppCashup.PROPERTY_POSTERMINAL + "."
