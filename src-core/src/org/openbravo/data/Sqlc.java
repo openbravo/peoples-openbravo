@@ -466,6 +466,8 @@ public class Sqlc extends DefaultHandler {
           sql.sqlImport = amap.getValue(i);
         } else if (amap.getQName(i).equals("useQueryProfile")) {
           sql.useQueryProfile = "true".equalsIgnoreCase(amap.getValue(i));
+        } else if (amap.getQName(i).equals("saveContextInfo")) {
+          sql.saveContextInfo = "true".equalsIgnoreCase(amap.getValue(i));
         }
       }
       if (sqlPackage != null)
@@ -1395,7 +1397,7 @@ public class Sqlc extends DefaultHandler {
     printSQLBody();
     printSQLParameters();
 
-    if (!"executeQuery".equals(sql.executeType)) {
+    if (sql.saveContextInfo && !"executeQuery".equals(sql.executeType)) {
       out2.append("      SessionInfo.saveContextInfoIntoDB(");
       if (sql.sqlConnection.equals("true")) {
         out2.append("conn");
