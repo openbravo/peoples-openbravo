@@ -174,7 +174,6 @@ public class DalSessionFactory implements SessionFactory {
       Connection conn = ((SessionImplementor) session).connection();
       // When a connection is obtained using the DAL pool it is necessary to call the initDB method.
       SessionInfo.initDB(conn, props.getProperty("bbdd.rdbms"));
-      SessionInfo.setDBSessionInfo(conn);
       PreparedStatement pstmt = null;
       try {
         final String dbSessionConfig = props.getProperty("bbdd.sessionConfig");
@@ -222,7 +221,6 @@ public class DalSessionFactory implements SessionFactory {
     try {
       Thread.currentThread().setContextClassLoader(BorrowedConnectionProxy.class.getClassLoader());
       Connection conn = ((SessionImplementor) session).connection();
-      SessionInfo.setDBSessionInfo(conn);
     } finally {
       Thread.currentThread().setContextClassLoader(currentLoader);
     }
@@ -274,7 +272,6 @@ public class DalSessionFactory implements SessionFactory {
       Thread.currentThread().setContextClassLoader(BorrowedConnectionProxy.class.getClassLoader());
       SessionInfo.initDB(conn, OBPropertiesProvider.getInstance().getOpenbravoProperties()
           .getProperty("bbdd.rdbms"));
-      SessionInfo.setDBSessionInfo(conn);
     } finally {
       Thread.currentThread().setContextClassLoader(currentLoader);
     }
