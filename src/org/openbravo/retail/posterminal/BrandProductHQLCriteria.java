@@ -31,6 +31,9 @@ public class BrandProductHQLCriteria extends HQLCriteriaProcess {
     } else {
       sql = getProdCategoryQuery();
     }
+    if (array_params.length >= 2 && !array_params[2].equals("")) {
+      sql = " (brand.id in ('" + getIds(array_params, 2) + "') or " + sql + ")";
+    }
     return sql;
   }
 
@@ -57,6 +60,10 @@ public class BrandProductHQLCriteria extends HQLCriteriaProcess {
 
   public String getBestsellers() {
     return " exists (select 1 from OBRETCO_Prol_Product pli where pli.product.brand.id = brand.id  and pli.bestseller = true and upper(pli.product.name) like upper ('$1')) ";
+  }
+
+  private String getIds(String[] array, int i) {
+    return array[i].replace(",", "','");
   }
 
 }
