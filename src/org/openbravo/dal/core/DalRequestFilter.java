@@ -89,14 +89,14 @@ public class DalRequestFilter implements Filter {
           OBContext.setOBContextInSession((HttpServletRequest) request, OBContext.getOBContext());
         }
 
-        // set to null all the session info
-        SessionInfo.init();
-
         OBContext.clearAdminModeStack();
 
         OBInterceptor.setPreventUpdateInfoChange(false);
 
         super.doFinal(errorOccured);
+
+        // set to null all the session info
+        SessionInfo.init();
       }
     };
 
