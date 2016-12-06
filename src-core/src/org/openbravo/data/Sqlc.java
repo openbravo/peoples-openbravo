@@ -1395,6 +1395,16 @@ public class Sqlc extends DefaultHandler {
     printSQLBody();
     printSQLParameters();
 
+    if (!"executeQuery".equals(sql.executeType)) {
+      out2.append("      SessionInfo.saveContextInfoIntoDB(");
+      if (sql.sqlConnection.equals("true")) {
+        out2.append("conn");
+      } else {
+        out2.append("connectionProvider.getConnection()");
+      }
+      out2.append(");\n");
+    }
+
     if (sql.executeType.equals("executeQuery")) {
       out2.append("      result = st." + sql.executeType + "(");
       if (sql.sqlType.equals("statement"))
