@@ -48,6 +48,7 @@ public class Category extends ProcessHQLQuery {
   protected Map<String, Object> getParameterValues(JSONObject jsonsent) throws JSONException {
     try {
       OBContext.setAdminMode(true);
+      String clientId = OBContext.getOBContext().getCurrentClient().getId();
       String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
       final OBRETCOProductList productList = POSUtils.getProductListByOrgId(orgId);
       boolean isRemote = false;
@@ -84,6 +85,7 @@ public class Category extends ProcessHQLQuery {
       Calendar now = Calendar.getInstance();
       paramValues.put("endingDate", now.getTime());
       paramValues.put("startingDate", now.getTime());
+      paramValues.put("clientId", clientId);
       paramValues.put("orgId", orgId);
       return paramValues;
     } finally {
@@ -165,7 +167,7 @@ public class Category extends ProcessHQLQuery {
         + "  and exists (select 1"//
         + "                from PricingAdjustment p " //
         + "               where p.discountType.active = true " //
-        + "                 and p.active = true"//
+        + "                 and p.active = true and p.client.id = :clientId "//
         + "                 and p.discountType = pt"//
         + "                 and (p.endingDate is null or p.endingDate >=  :endingDate )" //
         + "                 and p.startingDate <= :startingDate "
