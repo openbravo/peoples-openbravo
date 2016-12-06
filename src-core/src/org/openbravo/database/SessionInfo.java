@@ -177,7 +177,7 @@ public class SessionInfo {
     PreparedStatement psCleanUp = null;
     PreparedStatement psInsert = null;
     try {
-      if (Boolean.FALSE.equals(changedInfo.get() && conn.equals(sessionConnection.get()))) {
+      if (Boolean.FALSE.equals(changedInfo.get()) && conn.equals(sessionConnection.get())) {
         return;
       }
 
