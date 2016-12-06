@@ -173,15 +173,20 @@ public class SessionInfo {
     if (!isAuditActive) {
       return;
     }
-    if (log4j.isDebugEnabled()) {
-      log4j.debug("saving DB context info " + SessionInfo.getUserId() + " - "
-          + SessionInfo.getSessionId() + " - " + SessionInfo.getProcessType() + " - "
-          + SessionInfo.getProcessId());
-    }
 
     PreparedStatement psCleanUp = null;
     PreparedStatement psInsert = null;
     try {
+      if (Boolean.FALSE.equals(changedInfo.get() && conn.equals(sessionConnection.get()))) {
+        return;
+      }
+
+      if (log4j.isDebugEnabled()) {
+        log4j.debug("saving DB context info " + SessionInfo.getUserId() + " - "
+            + SessionInfo.getSessionId() + " - " + SessionInfo.getProcessType() + " - "
+            + SessionInfo.getProcessId());
+      }
+
       psCleanUp = getPreparedStatement(conn, "delete from ad_context_info");
       psCleanUp.executeUpdate();
 
