@@ -96,7 +96,6 @@ public abstract class BaseProcessActionHandler extends BaseActionHandler {
       // Set information for audit trail
       SessionInfo.setProcessType("PD");
       SessionInfo.setProcessId(processId);
-      SessionInfo.setDBSessionInfo(OBDal.getInstance().getConnection(false));
 
       // Adds compatibility with legacy process definitions
       // If the handler of the process definition has not been updated, then it expects the
