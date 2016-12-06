@@ -420,7 +420,26 @@
         OB.MobileApp.model.addSyncCheckpointModel(OB.Model.CashUp);
 
         var terminal = this.get('terminal');
-        OB.UTIL.initCashUp(OB.UTIL.calculateCurrentCash);
+        OB.UTIL.initCashUp(OB.UTIL.calculateCurrentCash, function () {
+          //There was an error when retrieving the cashup from the backend.
+          // This means that there is a cashup saved as an error, and we don't have
+          //the necessary information to have a working cashup in the client side.
+          //We therefore need to logout
+          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_CashupErrors'), OB.I18N.getLabel('OBPOS_CashupErrorsMsg'), [{
+            label: OB.I18N.getLabel('OBMOBC_LblOk'),
+            isConfirmButton: true,
+            action: function () {
+              OB.UTIL.showLoading(true);
+              me.logout();
+            }
+          }], {
+            onHideFunction: function () {
+              OB.UTIL.showLoading(true);
+              me.logout();
+            }
+          });
+
+        });
         // Set Hardware..
         OB.POS.hwserver = new OB.DS.HWServer(this.get('hardwareURL'), terminal.hardwareurl, terminal.scaleurl);
 

@@ -460,7 +460,9 @@
             isprocessedbo: 'N'
           }, function (data) {
             // Found non processed cashups
-            if (data[0]) {
+            if (data.exception) {
+              errorCallback();
+            } else if (data[0]) {
               cashUp = new OB.Model.CashUp();
               cashUp.set(data[0]);
               var cashUpCollection = new Backbone.Collection();
