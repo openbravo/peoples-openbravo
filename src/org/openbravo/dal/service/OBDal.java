@@ -49,6 +49,7 @@ import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.security.SecurityChecker;
+import org.openbravo.database.SessionInfo;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.enterprise.Organization;
 
@@ -203,6 +204,9 @@ public class OBDal implements OBSingleton {
   public void flush() {
     if (SessionHandler.isSessionHandlerPresent()) {
       long s1 = System.currentTimeMillis();
+      if (SessionHandler.getInstance().getSession().isDirty()) {
+        SessionInfo.saveContextInfoIntoDB(getConnection(false));
+      }
       SessionHandler.getInstance().getSession().flush();
       if (log.isDebugEnabled()) {
         long s2 = System.currentTimeMillis();

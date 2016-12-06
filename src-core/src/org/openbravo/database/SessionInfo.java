@@ -136,15 +136,8 @@ public class SessionInfo {
   }
 
   /**
-   * Inserts in the session table the information about the Openbravo session.
-   * 
-   * This methods optimizes the ad_context_info update away, if the 'user'-info associated with a
-   * connection didn't change
-   * 
-   * @param conn
-   *          Connection where the session information will be stored in
-   * @param onlyIfChanged
-   *          Updates database info only in case there are changes since the last time it was set
+   * @deprecated In most of the cases this method is no longer required to be invoked
+   * @see #saveContextInfoIntoDB(Connection)
    */
   static void setDBSessionInfo(Connection conn, boolean onlyIfChanged) {
     if (!isAuditActive || (onlyIfChanged && (changedInfo.get() == null || !changedInfo.get()))) {
@@ -154,21 +147,38 @@ public class SessionInfo {
       }
       return;
     }
-    setDBSessionInfo(conn);
+    saveContextInfoIntoDB(conn);
   }
 
   /**
-   * Inserts in the session table the information about the Openbravo session.
-   * 
-   * @param conn
-   *          Connection where the session information will be stored in
+   * @deprecated In most of the cases this method is no longer required to be invoked
+   * @see #saveContextInfoIntoDB(Connection)
    */
   public static void setDBSessionInfo(Connection conn) {
+    saveContextInfoIntoDB(conn);
+  }
+
+  /**
+   * Saves currently stored context information into DB. Generally, this method shouldn't be
+   * directly invoked, as the Platform already does it when flushing changes to DB. Only in case
+   * Openbravo platform is bypassed (ie. DB operations performed on a manually obtained connection),
+   * this method must be manually invoked.
+   * 
+   * @param conn
+   *          The connection where the session information will be stored in, note it must the same
+   *          one performing DB modifications so audit trail triggers can retrieve the session
+   *          information.
+   */
+  public static void saveContextInfoIntoDB(Connection conn) {
     if (!isAuditActive) {
       return;
     }
-    log4j.debug("set session info");
-    // Clean up temporary table
+    if (log4j.isDebugEnabled()) {
+      log4j.debug("saving DB context info " + SessionInfo.getUserId() + " - "
+          + SessionInfo.getSessionId() + " - " + SessionInfo.getProcessType() + " - "
+          + SessionInfo.getProcessId());
+    }
+
     PreparedStatement psCleanUp = null;
     PreparedStatement psInsert = null;
     try {
