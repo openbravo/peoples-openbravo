@@ -33,14 +33,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.sf.jasperreports.engine.JRDataSource;
-import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JasperCompileManager;
-import net.sf.jasperreports.engine.JasperReport;
-import net.sf.jasperreports.engine.data.ListOfArrayDataSource;
-import net.sf.jasperreports.engine.design.JasperDesign;
-import net.sf.jasperreports.engine.xml.JRXmlLoader;
-
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.hibernate.Query;
@@ -56,54 +48,57 @@ import org.openbravo.retail.posterminal.OBPOSAppCashReconcil;
 import org.openbravo.retail.posterminal.OBPOSAppCashup;
 import org.openbravo.retail.posterminal.OBPOSAppPayment;
 
+import net.sf.jasperreports.engine.JRDataSource;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.data.ListOfArrayDataSource;
+import net.sf.jasperreports.engine.design.JasperDesign;
+import net.sf.jasperreports.engine.xml.JRXmlLoader;
+
 public class CashUpReport extends HttpSecureAppServlet {
   @Inject
   @Any
   private Instance<CashupReportHook> cashupReportHooks;
 
   private static final long serialVersionUID = 1L;
-  FieldProvider[] data;
-  VariablesSecureApp vars;
-  HashMap<String, String> psData;
-  String reconIds;
-  String cashupId;
-  String processId;
-  String outputType;
-
   private static final Logger log = Logger.getLogger(CashUpReport.class);
-
-  OBPOSAppCashup cashup;
-  BigDecimal cashToDeposit;
-  BigDecimal conversionRate;
-  String isoCode;
-  BigDecimal totalDrops;
-  BigDecimal totalDeposits;
-  BigDecimal expected;
-  BigDecimal taxAmount;
-  String hqlWhere;
-
-  List<HashMap<String, String>> hashMapList;
-  List<HashMap<String, String>> hashMapStartingsList;
-  List<HashMap<String, String>> hashMapSalesList;
-  List<HashMap<String, String>> hashMapWithdrawalsList;
-  List<HashMap<String, String>> hashMapCountedList;
-  List<HashMap<String, String>> hashMapExpectedList;
-  List<HashMap<String, String>> hashMapDifferenceList;
-  List<HashMap<String, String>> hashMapCashToKeepList;
-  List<HashMap<String, String>> hashMapCashToDepositList;
 
   @Override
   @SuppressWarnings("unchecked")
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-  ServletException {
+      ServletException {
+    FieldProvider[] data;
+    VariablesSecureApp vars;
+    HashMap<String, String> psData;
+    String reconIds;
+    String cashupId;
+    String processId;
+    String outputType;
+
+    OBPOSAppCashup cashup;
+    BigDecimal cashToDeposit;
+    BigDecimal conversionRate;
+    String isoCode;
+    BigDecimal totalDrops;
+    BigDecimal totalDeposits;
+    BigDecimal expected;
+
+    List<HashMap<String, String>> hashMapList;
+    List<HashMap<String, String>> hashMapStartingsList;
+    List<HashMap<String, String>> hashMapSalesList;
+    List<HashMap<String, String>> hashMapWithdrawalsList;
+    List<HashMap<String, String>> hashMapCountedList;
+    List<HashMap<String, String>> hashMapExpectedList;
+    List<HashMap<String, String>> hashMapDifferenceList;
+    List<HashMap<String, String>> hashMapCashToKeepList;
+    List<HashMap<String, String>> hashMapCashToDepositList;
     final HashMap<String, Object> parameters = new HashMap<String, Object>();
     cashToDeposit = BigDecimal.ZERO;
     conversionRate = BigDecimal.ONE;
     isoCode = new String();
     totalDrops = BigDecimal.ZERO;
     totalDeposits = BigDecimal.ZERO;
-    taxAmount = BigDecimal.ZERO;
-    hqlWhere = new String();
 
     hashMapList = new ArrayList<HashMap<String, String>>();
     hashMapStartingsList = new ArrayList<HashMap<String, String>>();
@@ -119,10 +114,10 @@ public class CashUpReport extends HttpSecureAppServlet {
     vars = new VariablesSecureApp(request);
     cashupId = vars.getStringParameter("inpobposAppCashupId");
     processId = vars.getStringParameter("inpProcessId");
-    if (processId.equals("7AB6243FC4764B85996E5B61DBCF7884")) { 
-       outputType = "xls";
-    } else { 
-       outputType = "pdf";
+    if (processId.equals("7AB6243FC4764B85996E5B61DBCF7884")) {
+      outputType = "xls";
+    } else {
+      outputType = "pdf";
     }
 
     OBContext.setAdminMode(false);
@@ -207,7 +202,7 @@ public class CashUpReport extends HttpSecureAppServlet {
                 .getPaymentType().getPaymentMethod().isShared()));
         psData.put("VALUE",
             startingbalance.multiply(conversionRate).setScale(2, BigDecimal.ROUND_HALF_UP)
-            .toString());
+                .toString());
         if (conversionRate.compareTo(BigDecimal.ONE) != 0) {
           psData.put("FOREIGN_VALUE", startingbalance.toString());
           psData.put("ISOCODE", isoCode);
@@ -316,7 +311,7 @@ public class CashUpReport extends HttpSecureAppServlet {
               psData = new HashMap<String, String>();
               psData.put("GROUPFIELD", "WITHDRAWAL");
               psData
-              .put("SEARCHKEY", "WITHDRAWAL_" + recons.get(i).getPaymentType().getSearchKey());
+                  .put("SEARCHKEY", "WITHDRAWAL_" + recons.get(i).getPaymentType().getSearchKey());
               psData.put("LABEL",
                   getPaymentNameLabel(obja[0].toString(), isMaster, (Boolean) obja[5]));
               psData.put("VALUE",
@@ -335,7 +330,7 @@ public class CashUpReport extends HttpSecureAppServlet {
               psData = new HashMap<String, String>();
               psData.put("GROUPFIELD", "WITHDRAWAL");
               psData
-              .put("SEARCHKEY", "WITHDRAWAL_" + recons.get(i).getPaymentType().getSearchKey());
+                  .put("SEARCHKEY", "WITHDRAWAL_" + recons.get(i).getPaymentType().getSearchKey());
               psData.put("LABEL",
                   getPaymentNameLabel(obja[0].toString(), isMaster, (Boolean) obja[5]));
               psData.put("VALUE", BigDecimal.ZERO.toString());
@@ -358,9 +353,9 @@ public class CashUpReport extends HttpSecureAppServlet {
               psData.put("LABEL",
                   getPaymentNameLabel(obja[0].toString(), isMaster, (Boolean) obja[5]));
               psData
-              .put("VALUE",
-                  deposit.multiply(conversionRate).setScale(2, BigDecimal.ROUND_HALF_UP)
-                  .toString());
+                  .put("VALUE",
+                      deposit.multiply(conversionRate).setScale(2, BigDecimal.ROUND_HALF_UP)
+                          .toString());
               if (conversionRate.compareTo(BigDecimal.ONE) != 0) {
                 psData.put("FOREIGN_VALUE", deposit.toString());
                 psData.put("ISOCODE", isoCode);
@@ -381,9 +376,9 @@ public class CashUpReport extends HttpSecureAppServlet {
               psData.put("LABEL",
                   getPaymentNameLabel(obja[0].toString(), isMaster, (Boolean) obja[5]));
               psData
-              .put("VALUE",
-                  deposit.multiply(conversionRate).setScale(2, BigDecimal.ROUND_HALF_UP)
-                  .toString());
+                  .put("VALUE",
+                      deposit.multiply(conversionRate).setScale(2, BigDecimal.ROUND_HALF_UP)
+                          .toString());
               if (conversionRate.compareTo(BigDecimal.ONE) != 0) {
                 psData.put("FOREIGN_VALUE", BigDecimal.ZERO.toString());
                 psData.put("ISOCODE", isoCode);
@@ -495,7 +490,7 @@ public class CashUpReport extends HttpSecureAppServlet {
         psData.put(
             "VALUE",
             (expected.add(differenceDeposit)).multiply(conversionRate)
-            .setScale(2, BigDecimal.ROUND_HALF_UP).toString());
+                .setScale(2, BigDecimal.ROUND_HALF_UP).toString());
         if (conversionRate.compareTo(BigDecimal.ONE) != 0) {
           psData.put("FOREIGN_VALUE", expected.add(differenceDeposit).toString());
           psData.put("ISOCODE", isoCode);
@@ -519,7 +514,7 @@ public class CashUpReport extends HttpSecureAppServlet {
                     .getPaymentType().getPaymentMethod().isShared()));
         psData.put("VALUE",
             differenceDeposit.multiply(conversionRate).setScale(2, BigDecimal.ROUND_HALF_UP)
-            .toString());
+                .toString());
         if (conversionRate.compareTo(BigDecimal.ONE) != 0) {
           psData.put("FOREIGN_VALUE", differenceDeposit.toString());
           psData.put("ISOCODE", isoCode);
@@ -566,9 +561,9 @@ public class CashUpReport extends HttpSecureAppServlet {
             getPaymentNameLabel(recons.get(i).getPaymentType().getCommercialName(), isMaster,
                 recons.get(i).getPaymentType().getPaymentMethod().isShared()));
         psData
-        .put("VALUE",
-            cashToDeposit.multiply(conversionRate).setScale(2, BigDecimal.ROUND_HALF_UP)
-            .toString());
+            .put("VALUE",
+                cashToDeposit.multiply(conversionRate).setScale(2, BigDecimal.ROUND_HALF_UP)
+                    .toString());
         if (conversionRate.compareTo(BigDecimal.ONE) != 0) {
           psData.put("FOREIGN_VALUE", cashToDeposit.toString());
           psData.put("ISOCODE", isoCode);
@@ -590,7 +585,7 @@ public class CashUpReport extends HttpSecureAppServlet {
                 recons.get(i).getPaymentType().getPaymentMethod().isShared()));
         psData.put("VALUE",
             (expected.add(differenceDeposit).subtract(cashToDeposit)).multiply(conversionRate)
-            .setScale(2, BigDecimal.ROUND_HALF_UP).toString());
+                .setScale(2, BigDecimal.ROUND_HALF_UP).toString());
         if (conversionRate.compareTo(BigDecimal.ONE) != 0) {
           psData.put("FOREIGN_VALUE", expected.add(differenceDeposit).subtract(cashToDeposit)
               .toString());
