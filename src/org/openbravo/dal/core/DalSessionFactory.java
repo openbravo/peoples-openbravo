@@ -204,8 +204,7 @@ public class DalSessionFactory implements SessionFactory {
     // NOTE: workaround for this issue:
     // http://opensource.atlassian.com/projects/hibernate/browse/HHH-3529
     final Session session = delegateSessionFactory.openSession(connection, interceptor);
-    Connection conn = ((SessionImplementor) session).connection();
-    initializeDBSessionInfo(conn);
+    initializeDBSessionInfo((SessionImplementor) session);
     return session;
   }
 
@@ -214,16 +213,8 @@ public class DalSessionFactory implements SessionFactory {
    */
   @Override
   public Session openSession(Connection connection) {
-    // NOTE: workaround for this issue:
-    // http://opensource.atlassian.com/projects/hibernate/browse/HHH-3529
     final Session session = delegateSessionFactory.openSession(connection);
-    final ClassLoader currentLoader = Thread.currentThread().getContextClassLoader();
-    try {
-      Thread.currentThread().setContextClassLoader(BorrowedConnectionProxy.class.getClassLoader());
-      Connection conn = ((SessionImplementor) session).connection();
-    } finally {
-      Thread.currentThread().setContextClassLoader(currentLoader);
-    }
+    initializeDBSessionInfo((SessionImplementor) session);
     return session;
   }
 
@@ -232,11 +223,8 @@ public class DalSessionFactory implements SessionFactory {
    */
   @Override
   public Session openSession(Interceptor interceptor) throws HibernateException {
-    // NOTE: workaround for this issue:
-    // http://opensource.atlassian.com/projects/hibernate/browse/HHH-3529
     final Session session = delegateSessionFactory.openSession(interceptor);
-    Connection conn = ((SessionImplementor) session).connection();
-    initializeDBSessionInfo(conn);
+    initializeDBSessionInfo((SessionImplementor) session);
     return session;
   }
 
@@ -245,11 +233,8 @@ public class DalSessionFactory implements SessionFactory {
    */
   @Override
   public StatelessSession openStatelessSession() {
-    // NOTE: workaround for this issue:
-    // http://opensource.atlassian.com/projects/hibernate/browse/HHH-3529
     final StatelessSession session = delegateSessionFactory.openStatelessSession();
-    Connection conn = ((SessionImplementor) session).connection();
-    initializeDBSessionInfo(conn);
+    initializeDBSessionInfo((SessionImplementor) session);
     return session;
   }
 
@@ -258,15 +243,15 @@ public class DalSessionFactory implements SessionFactory {
    */
   @Override
   public StatelessSession openStatelessSession(Connection connection) {
-    // NOTE: workaround for this issue:
-    // http://opensource.atlassian.com/projects/hibernate/browse/HHH-3529
     final StatelessSession session = delegateSessionFactory.openStatelessSession(connection);
-    Connection conn = ((SessionImplementor) session).connection();
-    initializeDBSessionInfo(conn);
+    initializeDBSessionInfo((SessionImplementor) session);
     return session;
   }
 
-  private void initializeDBSessionInfo(Connection conn) {
+  private void initializeDBSessionInfo(SessionImplementor session) {
+    // NOTE: workaround for this issue:
+    // http://opensource.atlassian.com/projects/hibernate/browse/HHH-3529
+    Connection conn = session.connection();
     final ClassLoader currentLoader = Thread.currentThread().getContextClassLoader();
     try {
       Thread.currentThread().setContextClassLoader(BorrowedConnectionProxy.class.getClassLoader());
