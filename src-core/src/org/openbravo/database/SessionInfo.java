@@ -66,6 +66,8 @@ public class SessionInfo {
    */
   private static ThreadLocal<String> moduleId = new ThreadLocal<String>();
 
+  private static ThreadLocal<Boolean> auditThisThread = new ThreadLocal<Boolean>();
+
   /**
    * Sets all session information to null. Called at the end of http-request handling, to reset the
    * audit information for that thread.
@@ -79,6 +81,7 @@ public class SessionInfo {
     moduleId.set(null);
     command.set(null);
     queryProfile.set(null);
+    auditThisThread.set(true);
     // if there is an open connection associated to get current request, close it
     Connection conn = sessionConnection.get();
     try {
@@ -177,7 +180,8 @@ public class SessionInfo {
     PreparedStatement psCleanUp = null;
     PreparedStatement psInsert = null;
     try {
-      if (Boolean.FALSE.equals(changedInfo.get()) && conn.equals(sessionConnection.get())) {
+      if (Boolean.FALSE.equals(auditThisThread.get())
+          || (Boolean.FALSE.equals(changedInfo.get()) && conn.equals(sessionConnection.get()))) {
         return;
       }
 
@@ -368,5 +372,10 @@ public class SessionInfo {
 
   public static void setUsageAuditActive(boolean usageAuditActive) {
     SessionInfo.usageAuditActive = usageAuditActive;
+  }
+
+  /** Set this value to {@code false} to prevent context info to be set in DB */
+  public static void auditThisThread(boolean shouldAudit) {
+    auditThisThread.set(shouldAudit);
   }
 }
