@@ -122,7 +122,7 @@ public class SessionInfo {
           sql.append("(AD_USER_ID VARCHAR(32), ");
           sql.append("  AD_SESSION_ID VARCHAR(32),");
           sql.append("  PROCESSTYPE VARCHAR(60), ");
-          sql.append("  PROCESSID VARCHAR(32)) on commit delete rows");
+          sql.append("  PROCESSID VARCHAR(32)) on commit preserve rows");
           psCreate = getPreparedStatement(conn, sql.toString());
           psCreate.execute();
         }
