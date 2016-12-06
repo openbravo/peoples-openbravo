@@ -107,6 +107,7 @@ public class ProcessCashMgmt extends POSDataSynchronizationProcess implements
     } else {
       log.debug("Error processing cash close (2): error retrieving cashUp date. Using current server date");
     }
+    cashMgmtTrxDate = OBMOBCUtils.stripTime(cashMgmtTrxDate);
 
     FIN_FinancialAccount account = paymentMethod.getFinancialAccount();
 
