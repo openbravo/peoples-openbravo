@@ -698,24 +698,50 @@
         }, sessionTimeoutMilliseconds);
       }
 
-      if ((minTotalRefresh || minIncRefresh) && (lastTotalRefresh || lastIncRefresh)) {
-        OB.MobileApp.model.set('minIncRefreshSynchronized', false);
-        OB.MobileApp.model.on('synchronized', function () {
-          if (OB.MobileApp.model.get('minIncRefreshSynchronized')) {
-            return;
-          }
-          OB.MobileApp.model.set('minIncRefreshSynchronized', true);
-          if (OB.MobileApp.model.get('FullRefreshWasDone')) {
-            return;
-          }
-          OB.MobileApp.model.loadModels(null, true);
-          OB.POS.hwserver.showSelected(); // Show the selected printers
-        });
-      }
-
+      OB.POS.hwserver.showSelected(); // Show the selected printers
       if (minIncRefresh) {
         loadModelsIncFunc = function () {
-          OB.MobileApp.model.loadModels(null, true);
+          OB.MobileApp.model.set('secondsToRefreshMasterdata', 3);
+          var counterIntervalId = null;
+          counterIntervalId = setInterval(function () {
+            OB.MobileApp.model.set('secondsToRefreshMasterdata', OB.MobileApp.model.get('secondsToRefreshMasterdata') - 1);
+            if (OB.MobileApp.model.get('secondsToRefreshMasterdata') === 0) {
+              clearInterval(counterIntervalId);
+
+              OB.UTIL.startLoadingSteps();
+              OB.MobileApp.model.set('isLoggingIn', true);
+              OB.UTIL.showLoading(true);
+              OB.MobileApp.model.on('incrementalModelsLoaded', function () {
+                OB.MobileApp.model.off('incrementalModelsLoaded');
+                OB.UTIL.showLoading(false);
+                OB.MobileApp.model.set('isLoggingIn', false);
+              });
+
+              OB.MobileApp.model.loadModels(null, true);
+            }
+          }, 1000);
+
+          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_MasterdataNeedsToBeRefreshed'), OB.I18N.getLabel('OBMOBC_MasterdataNeedsToBeRefreshedMessage', [OB.MobileApp.model.get('secondsToRefreshMasterdata')]), [{
+            label: OB.I18N.getLabel('OBMOBC_LblCancel'),
+            action: function () {
+              OB.MobileApp.model.off('change:secondsToRefreshMasterdata');
+              clearInterval(counterIntervalId);
+            }
+          }], {
+            autoDismiss: false,
+            hideCloseButton: true,
+            onShowFunction: function (popup) {
+              var thePopup = popup;
+              OB.MobileApp.model.on('change:secondsToRefreshMasterdata', function () {
+                thePopup.$.bodyContent.$.control.setContent(OB.I18N.getLabel('OBMOBC_MasterdataNeedsToBeRefreshedMessage', [OB.MobileApp.model.get('secondsToRefreshMasterdata')]));
+                if (OB.MobileApp.model.get('secondsToRefreshMasterdata') === 0) {
+                  thePopup.hide();
+                  OB.MobileApp.model.off('change:secondsToRefreshMasterdata');
+                }
+              });
+            }
+          });
+
         };
         setInterval(loadModelsIncFunc, minIncRefresh);
       }
