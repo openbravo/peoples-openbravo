@@ -83,6 +83,7 @@ enyo.kind({
               tap: function () {
                 if (!item.disabled) {
                   var dialog = this.owner.owner.owner;
+                  dialog.doHideThisPopup();
                   dialog.bubble('onStatusChanged', {
                     payment: this.payment,
                     status: this.payment.payment.searchKey,
@@ -94,7 +95,6 @@ enyo.kind({
                     status: this.payment.payment.searchKey,
                     amount: dialog.args.amount
                   });
-                  dialog.doHideThisPopup();
                 }
               },
               initComponents: function () {
