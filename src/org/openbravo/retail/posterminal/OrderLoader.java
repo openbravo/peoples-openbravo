@@ -1278,10 +1278,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       }
       orderline.setActive(true);
       orderline.setSalesOrder(order);
-      if (jsonOrderLine.has("obposIsDeleted") && jsonOrderLine.getBoolean("obposIsDeleted")) {
-        orderline.setObposQtyDeleted(orderline.getOrderedQuantity());
-        orderline.setOrderedQuantity(BigDecimal.ZERO);
-      }
       orderline.setLineNetAmount(BigDecimal.valueOf(jsonOrderLine.getDouble("net")).setScale(
           pricePrecision, RoundingMode.HALF_UP));
 
@@ -1504,8 +1500,6 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     if (jsonorder.has("obposIsDeleted") && jsonorder.has("isQuotation")
         && jsonorder.getBoolean("obposIsDeleted")) {
       order.setDocumentStatus("CL");
-      order.setGrandTotalAmount(BigDecimal.ZERO);
-      order.setSummedLineAmount(BigDecimal.ZERO);
     } else if (isQuotation) {
       order.setDocumentStatus("UE");
     } else {
