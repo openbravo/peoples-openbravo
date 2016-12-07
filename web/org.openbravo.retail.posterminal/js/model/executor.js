@@ -184,7 +184,7 @@ OB.Model.DiscountsExecutor = OB.Model.Executor.extend({
 
       if (param === 'date') {
         var date = new Date();
-        translatedParams.push(date.toISOString().substring(0, 10) + ' 00:00:00.000');
+        translatedParams.push(OB.Utilities.Date.JSToOB(new Date(), 'yyyy-MM-dd') + ' 00:00:00.000');
       } else {
         translatedParams.push(model.get(paraTrl.property).id ? model.get(paraTrl.property).id : model.get(paraTrl.property));
       }
