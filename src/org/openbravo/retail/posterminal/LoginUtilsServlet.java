@@ -30,7 +30,6 @@ import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.mobile.core.MobileServerDefinition;
-import org.openbravo.mobile.core.MobileServerOrganization;
 import org.openbravo.mobile.core.login.MobileCoreLoginUtilsServlet;
 import org.openbravo.mobile.core.servercontroller.MobileServerUtils;
 import org.openbravo.model.ad.access.FormAccess;
@@ -367,20 +366,7 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
 
     List<MobileServerDefinition> serversList = servers.list();
     for (MobileServerDefinition server : serversList) {
-      if (server.isAllorgs()) {
-        respArray.put(createServerJSON(server));
-      } else {
-        Query filterQuery = OBDal
-            .getInstance()
-            .getSession()
-            .createFilter(server.getOBMOBCSERVERORGSList(),
-                "where this." + MobileServerOrganization.PROPERTY_SERVERORG + "=:org");
-        filterQuery.setParameter("org", terminal.getOrganization());
-        if (filterQuery.list().size() > 0) {
-          final JSONObject serverJson = createServerJSON(server);
-          respArray.put(serverJson);
-        }
-      }
+      respArray.put(createServerJSON(server));
     }
 
     return respArray;
