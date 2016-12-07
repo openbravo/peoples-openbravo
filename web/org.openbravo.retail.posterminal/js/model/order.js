@@ -3880,12 +3880,12 @@
                     return lp.ruleId === promotion.ruleId && lp.discountType === promotion.discountType && !lp.hidden;
                   });
                   if (linePromo) {
-                    return sum + OB.DEC.toNumber(OB.DEC.toBigDecimal(OB.I18N.formatCurrency(linePromo.amt)));
+                    return sum + OB.DEC.toNumber(OB.DEC.toBigDecimal(linePromo.amt));
                   }
                   return sum;
                 }, 0);
-                var bdSplittedAmount = OB.DEC.toBigDecimal(OB.I18N.formatCurrency(splittedAmount)),
-                    bdPromoAmount = OB.DEC.toBigDecimal(OB.I18N.formatCurrency(promotion.amt));
+                var bdSplittedAmount = OB.DEC.toBigDecimal(splittedAmount),
+                    bdPromoAmount = OB.DEC.toBigDecimal(promotion.amt);
                 if (bdPromoAmount.compareTo(bdSplittedAmount) !== 0) {
                   var linePromo = _.find(linesToApply.map(function (lta) {
                     return lta.get('promotions').find(function (lp) {
@@ -3895,7 +3895,7 @@
                     return ltapromo;
                   });
                   if (linePromo) {
-                    var amount = OB.DEC.toNumber(bdPromoAmount.subtract(bdSplittedAmount).add(OB.DEC.toBigDecimal(OB.I18N.formatCurrency(linePromo.amt))));
+                    var amount = OB.DEC.toNumber(bdPromoAmount.subtract(bdSplittedAmount).add(OB.DEC.toBigDecimal(linePromo.amt)));
                     linePromo.amt = amount;
                     linePromo.displayedTotalAmount = amount;
                     linePromo.fullAmt = amount;

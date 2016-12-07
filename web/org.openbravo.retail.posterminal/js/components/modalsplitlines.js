@@ -438,13 +438,13 @@ enyo.kind({
               return lp.discountType === promo.discountType;
             });
             if (linePromo) {
-              return sum + OB.DEC.toNumber(OB.DEC.toBigDecimal(OB.I18N.formatCurrency(linePromo.amt)));
+              return sum + OB.DEC.toNumber(OB.DEC.toBigDecimal(linePromo.amt));
             }
             return sum;
           }, 0);
-          var bdSplittedAmount = OB.DEC.toBigDecimal(OB.I18N.formatCurrency(splittedAmount)),
-              bdPromoAmount = OB.DEC.toBigDecimal(OB.I18N.formatCurrency(promo.amt));
-          if (bdPromoAmount.compareTo(bdSplittedAmount.add(OB.DEC.toBigDecimal(OB.I18N.formatCurrency(adjustedPromotion.amt)))) !== 0) {
+          var bdSplittedAmount = OB.DEC.toBigDecimal(splittedAmount),
+              bdPromoAmount = OB.DEC.toBigDecimal(promo.amt);
+          if (bdPromoAmount.compareTo(bdSplittedAmount.add(OB.DEC.toBigDecimal(adjustedPromotion.amt))) !== 0) {
             var amount = OB.DEC.toNumber(bdPromoAmount.subtract(bdSplittedAmount));
             adjustedPromotion.amt = amount;
             adjustedPromotion.displayedTotalAmount = amount;
