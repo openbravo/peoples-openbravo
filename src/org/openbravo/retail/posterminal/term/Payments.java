@@ -22,7 +22,10 @@ import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.businessUtility.Preferences;
+import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.mobile.core.process.SimpleQueryBuilder;
+import org.openbravo.retail.posterminal.OBPOSAppPayment;
 import org.openbravo.service.json.DataResolvingMode;
 import org.openbravo.service.json.DataToJsonConverter;
 import org.openbravo.service.json.JsonConstants;
@@ -46,12 +49,7 @@ public class Payments extends JSONTerminalProperty {
           + "img.bindaryData as image, img.mimetype as mimetype "
           + "from OBPOS_App_Payment as p left join p.financialAccount as f left join f.currency as c "
           + "left outer join p.paymentMethod as pm left outer join pm.image as img "
-          + "where p.obposApplications.id=? and p.$readableSimpleCriteria and p.$activeCriteria "
-          + "and not exists (from ADPreference as prf where prf.property = p.searchKey and prf.active = true "
-          + "and to_char(prf.searchKey) = 'N' and (prf.visibleAtClient is null or prf.visibleAtClient = p.client) "
-          + "and (prf.visibleAtOrganization = p.organization or ad_isorgincluded(p.organization.id, prf.visibleAtOrganization.id, p.client.id) <> -1 or prf.visibleAtOrganization is null) "
-          + "and (prf.userContact is null or prf.userContact.id=?) and (prf.visibleAtRole is null or exists (from ADUserRoles r where r.role = prf.visibleAtRole and r.userContact.id=?))) "
-          + "order by p.line, p.commercialName";
+          + "where p.obposApplications.id = :posID  order by p.line, p.commercialName";
 
       SimpleQueryBuilder querybuilder = new SimpleQueryBuilder(hqlPayments, OBContext
           .getOBContext().getCurrentClient().getId(), OBContext.getOBContext()
@@ -59,59 +57,69 @@ public class Payments extends JSONTerminalProperty {
 
       final Session session = OBDal.getInstance().getSession();
       final Query paymentsquery = session.createQuery(querybuilder.getHQLQuery());
-      paymentsquery.setString(0, posId);
-      paymentsquery.setString(1, OBContext.getOBContext().getUser().getId());
-      paymentsquery.setString(2, OBContext.getOBContext().getUser().getId());
+      paymentsquery.setString("posID", posId);
 
       DataToJsonConverter converter = new DataToJsonConverter();
 
       for (Object objLine : paymentsquery.list()) {
         Object[] objPayment = (Object[]) objLine;
-        JSONObject payment = new JSONObject();
-        JSONObject pay = converter.toJsonObject((BaseOBObject) objPayment[0],
-            DataResolvingMode.FULL);
-        JSONObject pMethod = converter.toJsonObject((BaseOBObject) objPayment[1],
-            DataResolvingMode.FULL);
-        if (pay.getBoolean("overrideconfiguration")) {
-          pMethod.put("cashDifferences", pay.get("cashDifferences"));
-          pMethod.put("cashDifferences$_identifier", pay.get("cashDifferences$_identifier"));
-          pMethod.put("glitemDropdep", pay.get("gLItemForCashDropDeposit"));
-          pMethod.put("glitemDropdep$_identifier", pay.get("gLItemForCashDropDeposit$_identifier"));
-          pMethod.put("automatemovementtoother", pay.get("automateMovementToOtherAccount"));
-          pMethod.put("keepfixedamount", pay.get("keepFixedAmount"));
-          pMethod.put("amount", pay.get("amount"));
-          pMethod.put("allowvariableamount", pay.get("allowVariableAmount"));
-          pMethod.put("allowdontmove", pay.get("allowNotToMove"));
-          pMethod.put("allowmoveeverything", pay.get("allowMoveEverything"));
-          pMethod.put("countcash", pay.get("countCash"));
-        }
-        payment.put("payment", pay);
-        payment.put("paymentMethod", pMethod);
-
-        payment.put("rate", objPayment[2]);
-        BigDecimal mulrate = BigDecimal.ZERO;
-        BigDecimal rate = new BigDecimal((String) objPayment[2]);
-        if (rate.compareTo(BigDecimal.ZERO) != 0) {
-          mulrate = BigDecimal.ONE.divide(rate, 12, 4);
-        }
-        payment.put("mulrate", mulrate.toPlainString());
-
-        payment.put("isocode", objPayment[4]);
-        payment.put("symbol", objPayment[5]);
-        payment.put("currencySymbolAtTheRight", objPayment[6]);
-        payment.put("currentBalance", objPayment[7]);
-        payment.put("obposPosprecision", objPayment[8]);
-        if (objPayment[9] != null && objPayment[10] != null) {
-          payment.put(
-              "image",
-              "data:" + objPayment[10] + ";base64,"
-                  + Base64.encodeBase64String((byte[]) objPayment[9]));
-        } else {
-          payment.put("image", objPayment[9]);
+        OBPOSAppPayment appPayment = (OBPOSAppPayment) objPayment[0];
+        boolean preferenveValue = true;
+        try {
+          preferenveValue = "Y".equals(Preferences.getPreferenceValue(appPayment.getSearchKey(),
+              true, OBContext.getOBContext().getCurrentClient(), OBContext.getOBContext()
+                  .getCurrentOrganization(), OBContext.getOBContext().getUser(), OBContext
+                  .getOBContext().getRole(), null));
+        } catch (PropertyException e) {
+          // There is no preference for the payment method, load them with all permission
         }
 
-        respArray.put(payment);
+        if (preferenveValue) {
+          JSONObject payment = new JSONObject();
+          JSONObject pay = converter.toJsonObject(appPayment, DataResolvingMode.FULL);
+          JSONObject pMethod = converter.toJsonObject((BaseOBObject) objPayment[1],
+              DataResolvingMode.FULL);
+          if (pay.getBoolean("overrideconfiguration")) {
+            pMethod.put("cashDifferences", pay.get("cashDifferences"));
+            pMethod.put("cashDifferences$_identifier", pay.get("cashDifferences$_identifier"));
+            pMethod.put("glitemDropdep", pay.get("gLItemForCashDropDeposit"));
+            pMethod.put("glitemDropdep$_identifier",
+                pay.get("gLItemForCashDropDeposit$_identifier"));
+            pMethod.put("automatemovementtoother", pay.get("automateMovementToOtherAccount"));
+            pMethod.put("keepfixedamount", pay.get("keepFixedAmount"));
+            pMethod.put("amount", pay.get("amount"));
+            pMethod.put("allowvariableamount", pay.get("allowVariableAmount"));
+            pMethod.put("allowdontmove", pay.get("allowNotToMove"));
+            pMethod.put("allowmoveeverything", pay.get("allowMoveEverything"));
+            pMethod.put("countcash", pay.get("countCash"));
+          }
+          payment.put("payment", pay);
+          payment.put("paymentMethod", pMethod);
 
+          payment.put("rate", objPayment[2]);
+          BigDecimal mulrate = BigDecimal.ZERO;
+          BigDecimal rate = new BigDecimal((String) objPayment[2]);
+          if (rate.compareTo(BigDecimal.ZERO) != 0) {
+            mulrate = BigDecimal.ONE.divide(rate, 12, 4);
+          }
+          payment.put("mulrate", mulrate.toPlainString());
+
+          payment.put("isocode", objPayment[4]);
+          payment.put("symbol", objPayment[5]);
+          payment.put("currencySymbolAtTheRight", objPayment[6]);
+          payment.put("currentBalance", objPayment[7]);
+          payment.put("obposPosprecision", objPayment[8]);
+          if (objPayment[9] != null && objPayment[10] != null) {
+            payment.put(
+                "image",
+                "data:" + objPayment[10] + ";base64,"
+                    + Base64.encodeBase64String((byte[]) objPayment[9]));
+          } else {
+            payment.put("image", objPayment[9]);
+          }
+
+          respArray.put(payment);
+        }
       }
 
       result.put(JsonConstants.RESPONSE_DATA, respArray);
