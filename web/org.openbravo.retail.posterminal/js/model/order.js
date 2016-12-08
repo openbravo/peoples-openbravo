@@ -1301,6 +1301,9 @@
           // remove the line
           finishDelete();
         }
+      } else {
+        // remove the line
+        finishDelete();
       }
     },
 
@@ -1456,7 +1459,6 @@
                 }
               }
               OB.UTIL.SynchronizationHelper.finished(synchId, 'HasServices');
-              callbackAddProduct();
             }, args.orderline);
           } else {
             callbackAddProduct();
