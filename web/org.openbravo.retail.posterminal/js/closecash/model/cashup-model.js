@@ -375,6 +375,10 @@ OB.OBPOSCashUp.Model.CashUp = OB.Model.TerminalWindowModel.extend({
         pendingOrderList.remove(orderToRemove);
       });
 
+      _.each(pendingOrderList.models, function (order) {
+        order.set('ignoreCheckIfIsActiveOrder', true);
+      });
+
       me.get('orderlist').reset(pendingOrderList.models);
       var indexStepPendingOrders = me.stepIndex('OB.CashUp.StepPendingOrders');
       me.cashupStepsDefinition[indexStepPendingOrders].active = pendingOrderList.length > 0;
