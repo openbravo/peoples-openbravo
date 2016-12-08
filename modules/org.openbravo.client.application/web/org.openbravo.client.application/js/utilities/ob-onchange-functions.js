@@ -41,3 +41,19 @@ OB.OnChange.processDefinitionUIPattern = function (item, view, form, grid) {
     classNameItem.setValue('org.openbravo.client.application.report.BaseReportActionHandler');
   }
 };
+
+//**  {{{OB.OnChange.agingProcessDefinitionOverdue}}}**
+//Used by the parameters Overdue Days in Payable and Receivables Aging Balance Process Definition Reports.
+//A warning message is shown if the range of overdue days is not correct.
+OB.OnChange.agingProcessDefinitionOverdue = function (item, view, form, grid) {
+  var column1 = form.getItem('Column1').getValue();
+  var column2 = form.getItem('Column2').getValue();
+  var column3 = form.getItem('Column3').getValue();
+  var column4 = form.getItem('Column4').getValue();
+  if (column1 && column2 && column3 && column4 && !((column1 < column2 && column2 < column3 && column3 < column4))) {
+    item.setValue('');
+    view.messageBar.setMessage(isc.OBMessageBar.TYPE_WARNING, null, OB.I18N.getLabel('OBUIAPP_OverdueNotValid'));
+  } else {
+    view.messageBar.hide();
+  }
+};
