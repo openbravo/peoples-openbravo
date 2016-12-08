@@ -1457,6 +1457,8 @@
                 } else {
                   callbackAddProduct();
                 }
+              } else {
+                callbackAddProduct();
               }
               OB.UTIL.SynchronizationHelper.finished(synchId, 'HasServices');
             }, args.orderline);
