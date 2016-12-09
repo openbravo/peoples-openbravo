@@ -3933,6 +3933,12 @@
               _.each(receipt.get('lines').models, function (line) {
                 line.set('obposQtyDeleted', line.get('qty'));
                 line.set('qty', 0);
+                if (line.get('promotions')) {
+                  line.get('promotions').forEach(function (promotion) {
+                  promotion.actualAmt = 0;
+                  promotion.amt = 0;
+                });
+               }
               });
               receipt.set('skipCalculateReceipt', false);
               // These setIsCalculateReceiptLockState and setIsCalculateGrossLockState calls must be done because this function
