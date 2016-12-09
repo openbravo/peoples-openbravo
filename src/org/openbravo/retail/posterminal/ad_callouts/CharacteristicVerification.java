@@ -23,8 +23,6 @@ import org.openbravo.model.pricing.priceadjustment.Characteristic;
 
 public class CharacteristicVerification extends SimpleCallout {
 
-  private static final long serialVersionUID = 1L;
-
   @Override
   protected void execute(CalloutInfo info) throws ServletException {
 
