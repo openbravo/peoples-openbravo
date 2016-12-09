@@ -86,6 +86,7 @@
         <unique-column name="M_PRODUCT_ID"/>
         <unique-column name="C_UOM_ID"/>
       </unique>
+      <check name="M_PRODUCT_AUM_RATE_CHECK"><![CDATA[CONVERSIONRATE > 0]]></check>
       <check name="M_PRODUCT_UOM_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>
