@@ -159,12 +159,8 @@ public class Category extends ProcessHQLQuery {
         + " as name, img.bindaryData as img, "
         + promoNameTrl
         + " as _identifier, "
-        + "'N' as realCategory "
-        + " from PromotionType as pt left outer join pt.obposImage img " //
-        + " where pt.obposIsCategory = true "//
-        + "  and pt.$readableSimpleClientCriteria" //
-        + "  and (pt.$incrementalUpdateCriteria)"//
-        + "  and exists (select 1"//
+        // Discount
+        + " (case when exists (select 1"//
         + "                from PricingAdjustment p " //
         + "               where p.discountType.active = true " //
         + "                 and p.active = true and p.client.id = :clientId "//
@@ -185,7 +181,11 @@ public class Category extends ProcessHQLQuery {
         + "   or (p.includedOrganizations='N' " + "  and  exists (select 1 "
         + "         from PricingAdjustmentOrganization o" + "        where active = true"
         + "          and o.priceAdjustment = p" + "          and o.organization.id = :orgId )) "
-        + "    ) " + ")");
+        + "    ) " + ")" + " then true else false end) as active, " //
+        + "'N' as realCategory " //
+        + " from PromotionType as pt left outer join pt.obposImage img " //
+        + " where pt.obposIsCategory = true "//
+        + "  and pt.$readableSimpleClientCriteria");
     return hqlQueries;
   }
 

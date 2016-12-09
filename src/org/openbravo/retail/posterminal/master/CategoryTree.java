@@ -119,12 +119,9 @@ public class CategoryTree extends ProcessHQLQuery {
               + "order by tn.sequenceNumber");
     }
     // Discounts marked as category
-    hqlQueries.add("select pt.id as id, pt.id as categoryId, '0' as parentId, 999999999 as seqNo "
-        + "from PromotionType as pt left outer join pt.obposImage img " //
-        + "where pt.obposIsCategory = true "//
-        + "  and pt.$readableSimpleClientCriteria" //
-        + "  and (pt.$incrementalUpdateCriteria)"//
-        + "  and exists (select 1"//
+    hqlQueries.add("select pt.id as id, pt.id as categoryId, '0' as parentId, 999999999 as seqNo, "//
+        // Discount
+        + " (case when exists (select 1"//
         + "                from PricingAdjustment p " //
         + "               where p.discountType.active = true " //
         + "                 and p.active = true"//
@@ -132,14 +129,22 @@ public class CategoryTree extends ProcessHQLQuery {
         + "                 and (p.endingDate is null or p.endingDate >= :endingDate ) " //
         + "                 and p.startingDate <= :startingDate "
         // organization
-        + "and ((p.includedOrganizations='Y' " + "  and not exists (select 1 "
-        + "         from PricingAdjustmentOrganization o" + "        where active = true"
-        + "          and o.priceAdjustment = p" + "          and o.organization.id = :orgId )) "
-        + "   or (p.includedOrganizations='N' " + "  and  exists (select 1 "
-        + "         from PricingAdjustmentOrganization o" + "        where active = true"
+        + "and ((p.includedOrganizations='Y' "
+        + "  and not exists (select 1 "
+        + "         from PricingAdjustmentOrganization o"
+        + "        where active = true"
+        + "          and o.priceAdjustment = p"
+        + "          and o.organization.id = :orgId )) "
+        + "   or (p.includedOrganizations='N' "
+        + "  and  exists (select 1 "
+        + "         from PricingAdjustmentOrganization o"
+        + "        where active = true"
         + "          and o.priceAdjustment = p" + "          and o.organization.id = :orgId )) " //
         + "    ) "//
-        + ")");
+        + ")" + " then true else false end) as active " //
+        + "from PromotionType as pt left outer join pt.obposImage img " //
+        + "where pt.obposIsCategory = true "//
+        + "  and pt.$readableSimpleClientCriteria");
 
     return hqlQueries;
   }

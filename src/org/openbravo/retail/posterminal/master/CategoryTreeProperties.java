@@ -26,6 +26,7 @@ public class CategoryTreeProperties extends ModelExtension {
     list.add(new HQLProperty("tn.node", "categoryId"));
     list.add(new HQLProperty("tn.reportSet", "parentId"));
     list.add(new HQLProperty("tn.sequenceNumber", "seqNo"));
+    list.add(new HQLProperty("pc.active", "active"));
     return list;
   }
 

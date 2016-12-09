@@ -76,6 +76,7 @@ public class ProductDiscProperties extends ModelExtension {
         add(new HQLProperty("round(p.obdiscPrice, " + posPrecision + ")", "standardPrice"));
         add(new HQLProperty("p.obdiscUpc", "uPCEAN"));
         add(new HQLProperty("img.bindaryData", "img"));
+        add(new HQLProperty("p.active", "active"));
         add(new HQLProperty("'[[null]]'", "generic_product_id"));
         add(new HQLProperty("'false'", "showchdesc"));
         add(new HQLProperty("'true'", "ispack"));
