@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -99,20 +99,6 @@
           and iskey='Y'
       ]]></Sql>
       <Parameter name="tab"/>
-  </SqlMethod>
-  <SqlMethod name="parentsColumnNameSortTab" type="preparedStatement" return="multiple">
-      <SqlMethodComment>Name of the columns parent of the tab</SqlMethodComment>
-      <Sql><![CDATA[
-        SELECT AD_FIELD.AD_FIELD_ID, ColumnName AS NAME, AD_REFERENCE_id AS reference, ad_reference_value_id AS referencevalue,
-        (SELECT tableNAME FROM AD_TABLE, AD_TAB WHERE AD_TABLE.ad_table_id = AD_TAB.ad_table_id
-        AND AD_TAB.ad_tab_id=?) AS tablename,
-        (SELECT P.ad_module_id FROM AD_TABLE T, AD_PACKAGE P WHERE T.ad_table_id = AD_COLUMN.ad_table_id AND T.AD_PACKAGE_ID = P.AD_PACKAGE_ID) as tableModule,
-        AD_COLUMN.AD_Module_ID as columnModule
-        FROM AD_FIELD, AD_COLUMN 
-        WHERE AD_FIELD.ad_column_id = AD_COLUMN.ad_column_id AND ad_table_id = ? AND isParent='Y' 
-      ]]></Sql>
-      <Parameter name="parentTab"/>
-      <Parameter name="adTableId"/>
   </SqlMethod>
 
 <!-- method copied to src/src/org/openbravo/erpCommon/businessUtility/AuditTrailPopup_data.xsql, both copies need to stay in sync -->

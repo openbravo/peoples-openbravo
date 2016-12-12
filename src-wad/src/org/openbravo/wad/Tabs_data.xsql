@@ -40,7 +40,7 @@
         AND AD_TABLE.DataOriginType = 'Table'
         AND AD_WINDOW.IsActive = 'Y'
         AND AD_WINDOW.WindowType IN ('M', 'Q', 'T')
-        AND UPPER(AD_WINDOW.NAME) LIKE '%' || UPPER(?) || '%' 
+        AND UPPER(AD_WINDOW.NAME) LIKE '%' || UPPER(?) || '%'
         AND AD_TAB.ad_table_id IN
         (SELECT AD_TABLE.ad_table_id FROM AD_COLUMN, AD_TABLE 
          WHERE AD_COLUMN.ad_table_id = AD_TABLE.ad_table_id

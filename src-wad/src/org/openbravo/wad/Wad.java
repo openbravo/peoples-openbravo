@@ -454,6 +454,13 @@ public class Wad extends DefaultHandler {
 
       boolean needToCompile = tabJavaNeededforActionButtons(conn, tab.getField("tabid"));
 
+      if (needToCompile && "Y".equals(tab.getField("issorttab"))) {
+        log4j.warn("2.50 Sort Tab no longer supported (it will be skipped): "
+            + tab.getField("tabname") + ",id: " + tab.getField("tabid"));
+        res.put(tab.getField("tabid"), Boolean.FALSE);
+        continue;
+      }
+
       if (needToCompile) {
         log4j.info("Need to generate tab: " + tab.getField("tabname") + ",id: "
             + tab.getField("tabid") + ", level: " + tab.getField("tablevel"));
@@ -946,13 +953,8 @@ public class Wad extends DefaultHandler {
         parentTabIndex = parentTabId(allTabs, tabsData.tabid);
       FieldsData[] parentsFieldsData = null;
 
-      if (tabsData.issorttab.equals("Y")) {
-        parentsFieldsData = FieldsData.parentsColumnNameSortTab(pool,
-            (parentTabIndex != -1 ? allTabs[parentTabIndex].tabid : ""), tabsData.tableId);
-      } else {
-        parentsFieldsData = FieldsData.parentsColumnName(pool,
-            (parentTabIndex != -1 ? allTabs[parentTabIndex].tabid : ""), tabsData.tabid);
-      }
+      parentsFieldsData = FieldsData.parentsColumnName(pool,
+          (parentTabIndex != -1 ? allTabs[parentTabIndex].tabid : ""), tabsData.tabid);
 
       if (parentTabIndex != -1 && (parentsFieldsData == null || parentsFieldsData.length == 0)) {
         parentsFieldsData = FieldsData.parentsColumnReal(pool, allTabs[parentTabIndex].tabid,
@@ -1115,46 +1117,27 @@ public class Wad extends DefaultHandler {
         gridProps.setProperty("inpKeyName", "inp" + Sqlc.TransformaNombreColumna(keyColumnName));
         gridControl = new WADGrid(gridProps);
       }
-      if (tabsData.issorttab.equals("Y")) {
-        /************************************************
-         * XSQL of the SORT TAB
-         *************************************************/
-        processTabXSQLSortTab(parentsFieldsData, fileDir, tabsData.tabid, tabName, tableName,
-            windowName, keyColumnName, tabsData.adColumnsortorderId, tabsData.adColumnsortyesnoId,
-            vecParameters, vecTableParameters, tabsData.javapackage, strWhere.toString(),
-            strOrder.toString());
-        /************************************************
-         * JAVA of the SORT TAB
-         *************************************************/
-        processTabJavaSortTab(parentsFieldsData, fileDir, tabsData.tabid, tabName, tableName,
-            windowName, keyColumnName, strTables.toString(), strOrder.toString(),
-            strWhere.toString(), vecFields, isSOTrx, allTabs, tabsData.key, tabsData.accesslevel,
-            selCol, isSecondaryKey, grandfatherField, tabsData.tablevel, tabsData.tableId,
-            tabsData.windowtype, tabsData.adColumnsortorderId, whereClauseParams,
-            parentwhereclause, strProcess, strDirectPrint, !tabsData.uipattern.equals("STD"),
-            vecParameters, vecTableParameters, tabsData.javapackage, tabsData.tabmodule);
-      } else {
-        /************************************************
-         * JAVA
-         *************************************************/
-        processTabJava(efd, efdauxiliar, parentsFieldsData, fileDir, tabsData.tabid, tabName,
-            tableName, windowName, keyColumnName, strTables.toString(), strOrder.toString(),
-            strWhere.toString(), tabsData.filterclause, vecFields, vecParameters, isSOTrx, allTabs,
-            tabsData.key, tabsData.accesslevel, selCol, isSecondaryKey, grandfatherField,
-            tabsData.tablevel, tabsData.tableId, tabsData.windowtype, tabsData.uipattern,
-            whereClauseParams, parentwhereclause, tabsData.editreference, strProcess,
-            strDirectPrint, vecTableParameters, fieldsData, gridControl, tabsData.javapackage,
-            "Y".equals(tabsData.isdeleteable), tabsData.tabmodule);
 
-        /************************************************
-         * XSQL
-         *************************************************/
-        processTabXSQL(parentsFieldsData, fileDir, tabsData.tabid, tabName, tableName, windowName,
-            keyColumnName, strFields.toString(), strTables.toString(), strOrder.toString(),
-            strWhere.toString(), vecParameters, tabsData.filterclause, selCol, tabsData.tablevel,
-            tabsData.windowtype, vecTableParameters, fieldsData, isSecondaryKey,
-            tabsData.javapackage, vecFieldParameters);
-      }
+      /************************************************
+       * JAVA
+       *************************************************/
+      processTabJava(efd, efdauxiliar, parentsFieldsData, fileDir, tabsData.tabid, tabName,
+          tableName, windowName, keyColumnName, strTables.toString(), strOrder.toString(),
+          strWhere.toString(), tabsData.filterclause, vecFields, vecParameters, isSOTrx, allTabs,
+          tabsData.key, tabsData.accesslevel, selCol, isSecondaryKey, grandfatherField,
+          tabsData.tablevel, tabsData.tableId, tabsData.windowtype, tabsData.uipattern,
+          whereClauseParams, parentwhereclause, tabsData.editreference, strProcess, strDirectPrint,
+          vecTableParameters, fieldsData, gridControl, tabsData.javapackage,
+          "Y".equals(tabsData.isdeleteable), tabsData.tabmodule);
+
+      /************************************************
+       * XSQL
+       *************************************************/
+      processTabXSQL(parentsFieldsData, fileDir, tabsData.tabid, tabName, tableName, windowName,
+          keyColumnName, strFields.toString(), strTables.toString(), strOrder.toString(),
+          strWhere.toString(), vecParameters, tabsData.filterclause, selCol, tabsData.tablevel,
+          tabsData.windowtype, vecTableParameters, fieldsData, isSecondaryKey,
+          tabsData.javapackage, vecFieldParameters);
 
     } catch (final ServletException e) {
       e.printStackTrace();
@@ -1297,200 +1280,6 @@ public class Wad extends DefaultHandler {
         return aux[1];
     }
     return "";
-  }
-
-  /**
-   * Generates the java files for a sort tab type.
-   * 
-   * @param parentsFieldsData
-   *          Array with the parents fields.
-   * @param fileDir
-   *          Path where is gonna be created the file.
-   * @param strTab
-   *          The id of the tab.
-   * @param tabName
-   *          The name of the tab.
-   * @param tableName
-   *          The name of the tab's table.
-   * @param windowName
-   *          The name of the window.
-   * @param keyColumnName
-   *          The name of the key column.
-   * @param strTables
-   *          String with from clause of the query.
-   * @param strOrder
-   *          String with the order clause of the query.
-   * @param strWhere
-   *          String with the where clause of the query.
-   * @param vecFields
-   *          Vector with the fields of the query.
-   * @param isSOTrx
-   *          String that indicates if is a Sales Order tab or not (Y | N).
-   * @param allTabs
-   *          Array with the tabs.
-   * @param strWindow
-   *          The window id.
-   * @param accesslevel
-   *          The access level defined for this tab.
-   * @param selCol
-   *          Array with selection columns.
-   * @param isSecondaryKey
-   *          Boolean that indicates if the tab key is a secondary key.
-   * @param grandfatherField
-   *          The grandfather field of this tab.
-   * @param tablevel
-   *          The tab level.
-   * @param tableId
-   *          The id of the tab's table.
-   * @param windowType
-   *          The type of window.
-   * @param strColumnSortOrderId
-   *          The id of the column defined for the sort order.
-   * @param whereClauseParams
-   *          Array with the where clause's parameters.
-   * @param parentwhereclause
-   *          The where clause of the parent tab.
-   * @param strProcess
-   *          The id of the process associated to the tab.
-   * @param strDirectPrint
-   *          If is a direct print process (Y | N).
-   * @param strReadOnly
-   *          If is a readonly tab (Y | N)
-   * @param vecParametersTop
-   *          Array of query's parameters for the where clause.
-   * @param vecTableParametersTop
-   *          Array of query's parameters for from clause.
-   * @param tabmodule
-   * @throws ServletException
-   * @throws IOException
-   */
-  private void processTabJavaSortTab(FieldsData[] parentsFieldsData, File fileDir, String strTab,
-      String tabName, String tableName, String windowName, String keyColumnName, String strTables,
-      String strOrder, String strWhere, Vector<Object> vecFields, String isSOTrx,
-      TabsData[] allTabs, String strWindow, String accesslevel, EditionFieldsData[] selCol,
-      boolean isSecondaryKey, String grandfatherField, String tablevel, String tableId,
-      String windowType, String strColumnSortOrderId, String whereClauseParams,
-      String parentwhereclause, String strProcess, String strDirectPrint, boolean strReadOnly,
-      Vector<Object> vecParametersTop, Vector<Object> vecTableParametersTop, String javaPackage,
-      String tabmodule) throws ServletException, IOException {
-    log4j.debug("Processing Sort Tab java: " + strTab + ", " + tabName);
-    XmlDocument xmlDocument;
-    final int parentTab = parentTabId(allTabs, strTab);
-    final String hasTree = TableLinkData.hasTree(pool, strTab);
-
-    final String[] discard = { "", "", "" };
-    if (parentsFieldsData == null || parentsFieldsData.length == 0) {
-      discard[0] = "parent"; // remove the parent tags
-    }
-    // if (tableName.toUpperCase().startsWith("M_PRODUCT") ||
-    // tableName.toUpperCase().startsWith("C_BP") ||
-    // tableName.toUpperCase().startsWith("AD_ORG")) discard[1] = "org";
-    if (grandfatherField.equals(""))
-      discard[2] = "grandfather";
-    xmlDocument = xmlEngine.readXmlTemplate("org/openbravo/wad/javasourceSortTab", discard)
-        .createXmlDocument();
-
-    fileDir.mkdirs();
-    xmlDocument.setParameter("class", tabName);
-    xmlDocument.setParameter("package", (!javaPackage.equals("") ? javaPackage + "." : "")
-        + windowName);
-    xmlDocument.setParameter("path", (!javaPackage.equals("") ? javaPackage + "/" : "")
-        + windowName);
-    xmlDocument.setParameter("windowName", windowName);
-    xmlDocument.setParameter("key", keyColumnName);
-    xmlDocument.setParameter("grandfatherName", grandfatherField);
-    xmlDocument.setParameter("ShowName", FieldsData.columnName(pool, strColumnSortOrderId));
-    xmlDocument.setParameter("accessLevel", accesslevel);
-    xmlDocument.setParameter("moduleId", tabmodule);
-    if (parentsFieldsData.length > 0) {
-      xmlDocument.setParameter("keyParent", parentsFieldsData[0].name);
-      xmlDocument.setParameter("keyParentINP",
-          Sqlc.TransformaNombreColumna(parentsFieldsData[0].name));
-    }
-    xmlDocument.setParameter("keyData", Sqlc.TransformaNombreColumna(keyColumnName));
-    xmlDocument.setParameter("windowId", strWindow);
-    xmlDocument.setParameter("tabId", strTab);
-    xmlDocument.setParameter("whereClauseParams", whereClauseParams);
-    xmlDocument.setParameter("parentwhereclause", parentwhereclause);
-    xmlDocument.setParameter("reportPDF", strProcess);
-    xmlDocument.setParameter("reportDirectPrint", strDirectPrint);
-    xmlDocument.setParameter("hasTree", hasTree);
-    xmlDocument.setParameter("isReadOnly", (strReadOnly ? "Y" : "N"));
-    if (WadUtility.findField(vecFields, "adClientId"))
-      xmlDocument.setParameter("clientId", "data.adClientId");
-    else
-      xmlDocument.setParameter("clientId",
-          "Utility.getContext(this, vars, \"#AD_Client_ID\", windowId)");
-
-    if (WadUtility.findField(vecFields, "adOrgId"))
-      xmlDocument.setParameter("orgId", "data.adOrgId");
-    else
-      xmlDocument.setParameter("orgId", "Utility.getContext(this, vars, \"#AD_Org_ID\", windowId)");
-
-    // Parent field language
-    if (parentsFieldsData != null && parentsFieldsData.length > 0) {
-      final Vector<Object> vecCounters2 = new Vector<Object>();
-      final Vector<Object> vecFields2 = new Vector<Object>();
-      final Vector<Object> vecTable2 = new Vector<Object>();
-      final Vector<Object> vecWhere2 = new Vector<Object>();
-      final Vector<Object> vecParameters2 = new Vector<Object>();
-      final Vector<Object> vecTableParameters2 = new Vector<Object>();
-      vecCounters2.addElement("0");
-      vecCounters2.addElement("0");
-      WadUtility.columnIdentifier(pool, parentsFieldsData[0].tablename, true, parentsFieldsData[0],
-          vecCounters2, true, vecFields2, vecTable2, vecWhere2, vecParameters2,
-          vecTableParameters2, sqlDateFormat);
-
-      xmlDocument.setParameter("parentLanguage", (vecParameters2.size() > 0 || vecTableParameters2
-          .size() > 0) ? ", vars.getLanguage()" : "");
-    }
-    // Fields of the parent Session
-    FieldsData[] fieldsParentSession = null;
-    FieldsData[] auxiliarPFields = null;
-    if (parentTab != -1) {
-      xmlDocument.setParameter("parentClass", FormatUtilities.replace(allTabs[parentTab].tabname)
-          + (allTabs[parentTab].tabmodule.equals("0") ? "" : allTabs[parentTab].tabid));
-      fieldsParentSession = FieldsData.selectSession(pool, allTabs[parentTab].tabid);
-      for (int i = 0; i < fieldsParentSession.length; i++) {
-        fieldsParentSession[i].name = Sqlc.TransformaNombreColumna(fieldsParentSession[i].name);
-        if (fieldsParentSession[i].reference.equals("20")) {
-          fieldsParentSession[i].xmltext = ", \"N\"";
-        } else {
-          fieldsParentSession[i].xmltext = "";
-        }
-      }
-      // Auxiliary fields of the parent
-      final Vector<Object> vecAuxiliarPFields = new Vector<Object>();
-      auxiliarPFields = FieldsData.selectAuxiliar(pool, "", allTabs[parentTab].tabid);
-      if (auxiliarPFields != null) {
-        for (int i = 0; i < auxiliarPFields.length; i++) {
-          auxiliarPFields[i].columnname = Sqlc
-              .TransformaNombreColumna(auxiliarPFields[i].columnname);
-          if (auxiliarPFields[i].defaultvalue.toUpperCase().startsWith("@SQL=")) {
-            auxiliarPFields[i].defaultvalue = FormatUtilities.replace(allTabs[parentTab].tabname)
-                + "Data.selectAux"
-                + auxiliarPFields[i].reference
-                + "(this"
-                + WadUtility.getWadContext(auxiliarPFields[i].defaultvalue, vecFields,
-                    vecAuxiliarPFields, parentsFieldsData, false, isSOTrx, strWindow) + ")";
-          } else if (auxiliarPFields[i].defaultvalue.indexOf("@") != -1) {
-            auxiliarPFields[i].defaultvalue = WadUtility.getTextWadContext(
-                auxiliarPFields[i].defaultvalue, vecFields, vecAuxiliarPFields, parentsFieldsData,
-                false, isSOTrx, strWindow);
-          } else {
-            auxiliarPFields[i].defaultvalue = "\"" + auxiliarPFields[i].defaultvalue + "\"";
-          }
-          vecAuxiliarPFields.addElement(auxiliarPFields[i].name);
-        }
-      }
-    } else {
-      fieldsParentSession = FieldsData.set();
-      auxiliarPFields = FieldsData.set();
-    }
-
-    xmlDocument.setData("structure8", fieldsParentSession);
-    xmlDocument.setData("structure11", auxiliarPFields);
-    WadUtility.writeFile(fileDir, tabName + ".java", xmlDocument.print());
   }
 
   /**
@@ -2305,212 +2094,6 @@ public class Wad extends DefaultHandler {
     ;
     result.append(strWhere);
     return result.toString();
-  }
-
-  /**
-   * Generates the xsql file for a sort tab type.
-   * 
-   * @param parentsFieldsData
-   *          Array with the parents fields.
-   * @param fileDir
-   *          Path where to generate the file
-   * @param strTab
-   *          Id of the tab.
-   * @param tabName
-   *          Name of the tab.
-   * @param tableName
-   *          Name of the tab's table.
-   * @param windowName
-   *          Name of the window.
-   * @param keyColumnName
-   *          Name of the key column.
-   * @param strColumnSortOrderId
-   *          Column that makes the sorting.
-   * @param strColumnSortYNId
-   *          Column to know if has to be in shown listbox.
-   * @param vecParametersTop
-   *          Vector with the where clause parameters.
-   * @param vecTableParametersTop
-   *          Vector with the from clause parameters.
-   * @param whereClause
-   * @param _orderBy
-   * @throws ServletException
-   * @throws IOException
-   */
-  private void processTabXSQLSortTab(FieldsData[] parentsFieldsData, File fileDir, String strTab,
-      String tabName, String tableName, String windowName, String keyColumnName,
-      String strColumnSortOrderId, String strColumnSortYNId, Vector<Object> vecParametersTop,
-      Vector<Object> vecTableParametersTop, String javaPackage, String whereClause, String _orderBy)
-      throws ServletException, IOException {
-    log4j.debug("Processing Sort Tab xsql: " + strTab + ", " + tabName);
-    String orderBy = _orderBy;
-    XmlDocument xmlDocumentXsql;
-    final String[] discard = { "", "", "hasOrgKey" };
-    if (parentsFieldsData == null || parentsFieldsData.length == 0)
-      discard[0] = "parent"; // remove the parent tags
-    xmlDocumentXsql = xmlEngine.readXmlTemplate("org/openbravo/wad/datasourceSortTab", discard)
-        .createXmlDocument();
-
-    xmlDocumentXsql.ignoreTranslation = true;
-    xmlDocumentXsql.setParameter("class", tabName + "Data");
-    xmlDocumentXsql.setParameter("package", "org.openbravo.erpWindows." + windowName);
-    xmlDocumentXsql.setParameter("package", "org.openbravo.erpWindows."
-        + (!javaPackage.equals("") ? javaPackage + "." : "") + windowName);
-    xmlDocumentXsql.setParameter("table", tableName);
-    xmlDocumentXsql.setParameter("key", tableName + "." + keyColumnName);
-    xmlDocumentXsql.setParameter("SortConditionField",
-        FieldsData.columnName(pool, strColumnSortYNId));
-    final String strSortField = FieldsData.columnName(pool, strColumnSortOrderId);
-    xmlDocumentXsql.setParameter("SortField", strSortField);
-    xmlDocumentXsql.setParameter("SortFieldInp", Sqlc.TransformaNombreColumna(strSortField));
-    if (parentsFieldsData.length > 0) {
-      xmlDocumentXsql.setParameter("keyParent", tableName + "." + parentsFieldsData[0].name);
-    }
-    xmlDocumentXsql.setParameter("paramKey", Sqlc.TransformaNombreColumna(keyColumnName));
-    if (parentsFieldsData.length > 0) {
-      xmlDocumentXsql.setParameter("paramKeyParent",
-          Sqlc.TransformaNombreColumna(parentsFieldsData[0].name));
-    }
-    String strOrder = " ORDER BY " + tableName + "." + strSortField;
-
-    orderBy = orderBy.replace("ORDER BY 1", "").trim();
-    orderBy = orderBy.replace("ORDER BY", "");
-    if (!orderBy.isEmpty()) {
-      strOrder += ", " + orderBy;
-    }
-
-    String strFields = "";
-    String strTables = "";
-    String strWhere = "";
-    {
-      final Vector<Object> vecCounters = new Vector<Object>();
-      final Vector<Object> vecFields = new Vector<Object>();
-      final Vector<Object> vecTable = new Vector<Object>();
-      final Vector<Object> vecWhere = new Vector<Object>();
-      final FieldsData[] data = FieldsData.identifierColumns(pool, tableName);
-      if (data == null)
-        strFields = "''";
-      log4j.debug("Total Identifiers for " + tableName + ": " + data.length);
-      vecCounters.addElement("0");
-      vecCounters.addElement("0");
-      for (int i = 0; i < data.length; i++) {
-        if (i != 0)
-          strFields += " || ' - ' || ";
-        strFields += WadUtility.columnIdentifier(pool, tableName, true, data[i], vecCounters,
-            false, vecFields, vecTable, vecWhere, vecParametersTop, vecTableParametersTop,
-            sqlDateFormat);
-      }
-      for (int i = 0; i < vecTable.size(); i++) {
-        final String strAux = (String) vecTable.elementAt(i);
-        strTables += (strAux.trim().toLowerCase().startsWith("left join") ? " " : ", ") + strAux;
-      }
-      for (int i = 0; i < vecWhere.size(); i++) {
-        strWhere += "\n AND " + vecWhere.elementAt(i).toString();
-      }
-
-      if (!strWhere.isEmpty()) {
-        strWhere += "\n AND ";
-      }
-      strWhere += whereClause;
-
-    }
-
-    xmlDocumentXsql.setParameter("fields", strFields);
-
-    // Relation select
-    xmlDocumentXsql.setParameter("tables", strTables);
-    xmlDocumentXsql.setParameter("where", strWhere);
-    xmlDocumentXsql.setParameter("order", strOrder);
-    final StringBuffer strParameters = new StringBuffer();
-    for (int i = 0; i < vecTableParametersTop.size(); i++) {
-      strParameters.append(vecTableParametersTop.elementAt(i).toString()).append("\n");
-    }
-    for (int i = 0; i < vecParametersTop.size(); i++) {
-      strParameters.append(vecParametersTop.elementAt(i).toString()).append("\n");
-    }
-    xmlDocumentXsql.setParameter("parameters", strParameters.toString());
-    // Parent field
-    if (parentsFieldsData != null && parentsFieldsData.length > 0) {
-      final Vector<Object> vecCounters = new Vector<Object>();
-      final Vector<Object> vecFields = new Vector<Object>();
-      final Vector<Object> vecTable = new Vector<Object>();
-      final Vector<Object> vecWhere = new Vector<Object>();
-      final Vector<Object> vecParameters = new Vector<Object>();
-      final Vector<Object> vecTableParameters = new Vector<Object>();
-      vecCounters.addElement("0");
-      vecCounters.addElement("0");
-      final String strText = WadUtility.columnIdentifier(pool, parentsFieldsData[0].tablename,
-          true, parentsFieldsData[0], vecCounters, false, vecFields, vecTable, vecWhere,
-          vecParameters, vecTableParameters, sqlDateFormat);
-      final FieldsData[] fieldsParent = new FieldsData[1];
-      fieldsParent[0] = new FieldsData();
-      fieldsParent[0].defaultvalue = "SELECT (" + strText + ") AS NAME FROM ";
-      fieldsParent[0].defaultvalue += parentsFieldsData[0].tablename;
-      for (int s = 0; s < vecTable.size(); s++) {
-        final String strAux = (String) vecTable.elementAt(s);
-        fieldsParent[0].defaultvalue += (strAux.trim().toLowerCase().startsWith("left join") ? " "
-            : ", ") + strAux;
-      }
-      fieldsParent[0].defaultvalue += " WHERE " + parentsFieldsData[0].tablename + "."
-          + parentsFieldsData[0].name + " = ? ";
-      for (int s = 0; s < vecWhere.size(); s++) {
-        fieldsParent[0].defaultvalue += " AND " + vecWhere.elementAt(s).toString();
-      }
-      fieldsParent[0].whereclause = "";
-      for (int s = 0; s < vecTableParameters.size(); s++) {
-        fieldsParent[0].whereclause += vecTableParameters.elementAt(s).toString() + "\n";
-      }
-      fieldsParent[0].whereclause += "<Parameter name=\""
-          + Sqlc.TransformaNombreColumna(parentsFieldsData[0].name) + "\"/>\n";
-      for (int s = 0; s < vecParameters.size(); s++) {
-        fieldsParent[0].whereclause += vecParameters.elementAt(s).toString() + "\n";
-      }
-      xmlDocumentXsql.setData("structure14", fieldsParent);
-    } else {
-      xmlDocumentXsql.setData("structure14", null);
-    }
-    // Parent field translated
-    if (parentsFieldsData != null && parentsFieldsData.length > 0) {
-      final Vector<Object> vecCounters = new Vector<Object>();
-      final Vector<Object> vecFields = new Vector<Object>();
-      final Vector<Object> vecTable = new Vector<Object>();
-      final Vector<Object> vecWhere = new Vector<Object>();
-      final Vector<Object> vecParameters = new Vector<Object>();
-      final Vector<Object> vecTableParameters = new Vector<Object>();
-      vecCounters.addElement("0");
-      vecCounters.addElement("0");
-      final String strText = WadUtility.columnIdentifier(pool, parentsFieldsData[0].tablename,
-          true, parentsFieldsData[0], vecCounters, true, vecFields, vecTable, vecWhere,
-          vecParameters, vecTableParameters, sqlDateFormat);
-      final FieldsData[] fieldsParent = new FieldsData[1];
-      fieldsParent[0] = new FieldsData();
-      fieldsParent[0].defaultvalue = "SELECT (" + strText + ") AS NAME FROM "
-          + parentsFieldsData[0].tablename;
-      for (int s = 0; s < vecTable.size(); s++) {
-        final String strAux = (String) vecTable.elementAt(s);
-        fieldsParent[0].defaultvalue += (strAux.trim().toLowerCase().startsWith("left join") ? " "
-            : ", ") + strAux;
-      }
-      fieldsParent[0].defaultvalue += " WHERE " + parentsFieldsData[0].tablename + "."
-          + parentsFieldsData[0].name + " = ? ";
-      for (int s = 0; s < vecWhere.size(); s++) {
-        fieldsParent[0].defaultvalue += " AND " + vecWhere.elementAt(s).toString();
-      }
-      fieldsParent[0].whereclause = "";
-      for (int s = 0; s < vecTableParameters.size(); s++) {
-        fieldsParent[0].whereclause += vecTableParameters.elementAt(s).toString() + "\n";
-      }
-      fieldsParent[0].whereclause += "<Parameter name=\""
-          + Sqlc.TransformaNombreColumna(parentsFieldsData[0].name) + "\"/>\n";
-      for (int s = 0; s < vecParameters.size(); s++) {
-        fieldsParent[0].whereclause += vecParameters.elementAt(s).toString() + "\n";
-      }
-      xmlDocumentXsql.setData("structure15", fieldsParent);
-    } else {
-      xmlDocumentXsql.setData("structure15", null);
-    }
-    WadUtility.writeFile(fileDir, tabName + "_data.xsql",
-        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + xmlDocumentXsql.print());
   }
 
   /**
