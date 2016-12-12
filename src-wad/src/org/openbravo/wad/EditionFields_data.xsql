@@ -170,17 +170,6 @@
     <Parameter name="tab"/>
   </SqlMethod>
 
-  <SqlMethod name="fieldGroupName" type="preparedStatement" return="String" default="">
-    <SqlMethodComment>Names of the columns and name of the fields of a tab</SqlMethodComment>
-    <Sql>
-      select name 
-      from ad_fieldgroup 
-      where ad_fieldgroup_id=? 
-      and isactive='Y'
-    </Sql>
-    <Parameter name="adFieldgroupId"/>
-  </SqlMethod>
-  
   <SqlMethod name="selectSerchFieldsSelection" type="preparedStatement" return="multiple">
       <SqlMethodComment>Campos de búsqueda</SqlMethodComment>
       <Sql> <![CDATA[
@@ -253,22 +242,6 @@
     ]]></Sql>
     <Parameter name="columntype"/>
     <Parameter name="searchId"/>
-  </SqlMethod>
-  
-   <SqlMethod name="selectFirstFocused" type="preparedStatement" return="multiple">
-    <Sql><![CDATA[
-        select c.columnname, c.ad_reference_id as reference
-          from ad_column c,
-               ad_field f
-        where c.isactive = 'Y'
-          and f.isactive = 'Y'
-          and f.isdisplayed = 'Y'
-          and c.ad_column_id = f.ad_column_id
-          and f.ad_tab_id = ?
-          and f.isfirstFocusedField='Y'
-        order by f.seqno
-    ]]></Sql>
-    <Parameter name="adTabId"/>
   </SqlMethod>
   
   <SqlMethod name="isOrgKey" type="preparedStatement" return="string">

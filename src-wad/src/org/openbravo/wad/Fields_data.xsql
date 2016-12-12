@@ -463,26 +463,6 @@
     </Sql>
     <Parameter name="tab"/>
   </SqlMethod>
-  <SqlMethod name="selectValidationTab" type="preparedStatement" return="multiple">
-    <SqlMethodComment>Method need to be synchronized with src/org/openbravo/erpCommon/businessUtility/Buscador_data.xsql::selectValidationTab</SqlMethodComment>
-    <Sql>
-      <![CDATA[
-        SELECT c.ad_column_id as id, c.columnname, t.WHERECLAUSE as whereClause, v.code as referencevalue, c.ad_reference_id as reference,
-        c.ad_reference_value_id as NameRef, c.ad_val_rule_id as defaultvalue, f.isdisplayed, c.istranslated, c.columnname as name,
-        (case when t.whereclause is not null or v.code is not null then 'C' else 'R' end) as type /*Combo reaload or Reference*/ 
-        FROM AD_FIELD f, 
-             AD_COLUMN c left join  AD_VAL_RULE v on c.AD_VAL_RULE_ID = v.AD_VAL_RULE_ID
-                         left join AD_REF_TABLE t on (CASE c.ad_reference_id WHEN '18' THEN c.AD_REFERENCE_VALUE_ID ELSE '0' END) = t.AD_REFERENCE_ID     
-        WHERE f.AD_COLUMN_ID = c.ad_column_id
-        AND f.ad_tab_id = ? 
-        AND f.ignoreinwad='N'
-        AND (t.whereclause IS NOT NULL
-            OR v.code IS NOT NULL
-            OR c.ad_reference_id in ('19','18','17'))
-      ]]>
-    </Sql>
-    <Parameter name="tab"/>
-  </SqlMethod>
   
   <SqlMethod name="selectProcessesWithReloads" type="preparedStatement" return="multiple">
     <SqlMethodComment>Obtains all processes that might require combo reload</SqlMethodComment>
@@ -528,27 +508,6 @@
     <Parameter name="processId"/>
   </SqlMethod>
   
-  <SqlMethod name="selectColumnTable" type="preparedStatement" return="multiple">
-    <SqlMethodComment>Fields of reference table in a tab</SqlMethodComment>
-    <Sql>
-      SELECT ColumnName As Name, 'x' as xmltext, ad_reference_value_id as referencevalue, 
-      ad_val_rule.CODE as defaultValue, ad_val_rule.AD_VAL_RULE_ID as columnname,
-      ad_ref_table.WHERECLAUSE, ad_table.tablename, 'TableList' as tablenametrl, ad_table.name as nameref, 
-      '18' as reference, 'Y' as required, ad_column.istranslated 
-      FROM ad_field, ad_column left join ad_val_rule on ad_column.AD_VAL_RULE_ID = ad_val_rule.AD_VAL_RULE_ID, ad_ref_table, ad_table 
-      WHERE ad_field.ad_column_id = ad_column.ad_column_id 
-      AND ad_ref_table.ad_table_id = ad_table.ad_table_id 
-      AND ad_column.AD_REFERENCE_VALUE_ID = ad_ref_table.AD_REFERENCE_ID  
-      and ad_field.ISDISPLAYED = 'Y'
-      AND ad_field.ad_tab_id = ?
-      AND ad_field.ignoreinwad='N'
-      AND ad_column.ad_column_id = ? 
-      AND ad_column.ad_reference_id = '18'
-    </Sql>
-    <Parameter name="adTabId"/>
-    <Parameter name="adColumnId"/>
-  </SqlMethod>
-  
   <SqlMethod name="selectColumnTableProcess" type="preparedStatement" return="multiple">
     <Sql>
       SELECT ColumnName As Name, 'x' as xmltext, ad_reference_value_id as referencevalue, 
@@ -564,25 +523,6 @@
       AND p.ad_reference_id = '18'
     </Sql>
     <Parameter name="processParaId"/>
-  </SqlMethod>
-  
-  <SqlMethod name="selectColumnTableDir" type="preparedStatement" return="multiple">
-    <SqlMethodComment>Fields of reference table in a tab</SqlMethodComment>
-    <Sql>
-      SELECT ColumnName As Name, 'x' as xmltext, ColumnName as referencevalue, 
-      ad_val_rule.CODE as defaultValue, ad_val_rule.AD_VAL_RULE_ID as columnname, ad_table.tablename, 
-      'TableDir' as tablenametrl, '' as WHERECLAUSE, '19' as reference, ad_column.istranslated 
-      FROM ad_field, ad_column left join ad_val_rule on ad_column.AD_VAL_RULE_ID = ad_val_rule.AD_VAL_RULE_ID , ad_table 
-      WHERE ad_field.ad_column_id = ad_column.ad_column_id 
-      and ad_column.ad_table_id = ad_table.ad_table_id 
-      and ad_field.ISDISPLAYED = 'Y'
-      AND ad_field.ad_tab_id = ?
-      AND ad_field.ignoreinwad='N'
-      AND ad_column.ad_column_id = ? 
-      AND ad_reference_id = '19'
-    </Sql>
-    <Parameter name="adTabId"/>
-    <Parameter name="adColumnId"/>
   </SqlMethod>
   
   <SqlMethod name="selectColumnTableDirProcess" type="preparedStatement" return="multiple">

@@ -21,48 +21,6 @@
 
 
 <SqlClass name="TableLinkData" package="org.openbravo.wad">
-  <SqlMethod name="select" type="preparedStatement" return="multiple">
-    <SqlMethodComment>Names of the columns and name of the fields of a tab</SqlMethodComment>
-    <Sql>
-      SELECT W.AD_WINDOW_ID, '' AS PO_WINDOW_ID, W.NAME AS WINDOWNAME, T.NAME AS TABNAME 
-      FROM AD_WINDOW W, AD_TAB T 
-      WHERE W.AD_WINDOW_ID = T.AD_WINDOW_ID 
-      AND W.ISACTIVE = 'Y' 
-      AND T.ISACTIVE = 'Y' 
-      AND W.AD_WINDOW_ID = ? 
-      AND T.AD_TABLE_ID = ? 
-    </Sql>
-    <Parameter name="adWindowId"/>
-    <Parameter name="adTableId"/>
-  </SqlMethod>
-  <SqlMethod name="selectWindow" type="preparedStatement" return="multiple">
-    <SqlMethodComment>Names of the columns and name of the fields of a tab</SqlMethodComment>
-    <Sql>
-      SELECT AD_WINDOW_ID, PO_WINDOW_ID 
-      FROM AD_TABLE 
-      WHERE AD_TABLE_ID=?
-    </Sql>
-    <Parameter name="adTableId"/>
-  </SqlMethod>
-  
-  <SqlMethod name="tableId" type="preparedStatement" return="String" default="">
-    <Sql>
-      SELECT AD_TABLE_ID 
-      FROM AD_COLUMN
-      WHERE AD_COLUMN_ID = ?
-    </Sql>
-    <Parameter name="adColumnId"/>
-  </SqlMethod>
-  
-  <SqlMethod name="columnName" type="preparedStatement" return="String" default="">
-    <SqlMethodComment>Names of the columns and name of the fields of a tab</SqlMethodComment>
-    <Sql>
-      SELECT C.COLUMNNAME 
-      FROM AD_COLUMN C 
-      WHERE C.AD_COLUMN_ID = ? 
-    </Sql>
-    <Parameter name="adColumnId"/>
-  </SqlMethod>
   
   <SqlMethod name="hasTree" type="preparedStatement" return="String" default="">
     <SqlMethodComment>Names of the columns and name of the fields of a tab</SqlMethodComment>
