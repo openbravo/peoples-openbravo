@@ -29,26 +29,20 @@ import org.openbravo.erpCommon.reference.*;
 import org.openbravo.erpCommon.ad_actionButton.*;
 </PARAMETER_TMP>
 
-import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.erpCommon.utility.*;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.utils.FormatUtilities;
-import org.openbravo.utils.Replace;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.scheduling.ProcessRunner;
-import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.xmlEngine.XmlDocument;
-import java.util.Vector;
-import java.util.StringTokenizer;
 import org.openbravo.database.SessionInfo;
 import java.io.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
 import java.util.*;
-import java.sql.Connection;
 
 // Generated old code, not worth to make i.e. java imports perfect
 @SuppressWarnings("unused")
@@ -57,7 +51,6 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
   
   private static final String windowId = "<PARAMETER_TMP id="windowId">Almacen</PARAMETER_TMP>";
   private static final String tabId = "<PARAMETER_TMP id="tabId">Almacen</PARAMETER_TMP>";
-  private static final String defaultTabView = "<PARAMETER_TMP id="defaultView">RELATION</PARAMETER_TMP>";
   private static final int accesslevel = <PARAMETER_TMP id="accessLevel">xx</PARAMETER_TMP>;
   private static final String moduleId = "<PARAMETER_TMP id="moduleId">xx</PARAMETER_TMP>";
   
@@ -398,34 +391,6 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
       pageErrorPopUp(response);
     } else pageError(response);
   }
-
-<PARAMETER_TMP id="parent">  private void refreshParentSession(VariablesSecureApp vars, String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>) throws IOException,ServletException {
-      <PARENT_TMP id="parentSecondaryKey">String strParentId=getActualParentId(strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>);</PARENT_TMP>
-      <PARENT_TMP id="parentClass">Almacen</PARENT_TMP>Data[] data = <PARENT_TMP id="parentClass">Almacen</PARENT_TMP>Data.selectEdit(this, vars.getSessionValue("#AD_SqlDateTimeFormat"), vars.getLanguage()<PARAMETER_TMP id="parentwhereclause"></PARAMETER_TMP><PARAMETER_TMP id="grandfather">, vars.getSessionValue(windowId + "|<PARAMETER_TMP id="grandfatherName">xx</PARAMETER_TMP>")</PARAMETER_TMP>, strP<PARENT_TMP id="keyParentColName">Almacen</PARENT_TMP><PARENT_TMP id="parentAccess">, Utility.getContext(this, vars, "#User_Client", windowId), Utility.getContext(this, vars, "#AccessibleOrgTree", windowId, accesslevel)</PARENT_TMP>);
-      if (data==null || data.length==0) return;
-      <FIELDS_TMP id="sectionDetailParentSession">    vars.setSessionValue(windowId + "|<FIELD_TMP id="fieldRealName8">claveAlmacen</FIELD_TMP>", data[0].<FIELD_TMP id="fieldName8">claveAlmacen</FIELD_TMP>);</FIELDS_TMP>
-      vars.setSessionValue(windowId + "|<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>", strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>); //to ensure key parent is set for EM_* cols
-
-      FieldProvider dataField = null; // Define this so that auxiliar inputs using SQL will work
-      <LISTS_TMP id="sectionDetailParentParams">
-      vars.setSessionValue(windowId + "|<LIST_TMP id="fieldParentNameParam">Almacen</LIST_TMP>", <LIST_TMP id="paramParentCode">dd</LIST_TMP>);
-      </LISTS_TMP>
-  }
-  
-  <PARENT_TMP id="parentSecondaryKey">
-  private String getActualParentId(String secondaryKeyName) throws ServletException {
-    return <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>Data.selectParentSecondaryKeyID(this, secondaryKeyName);
-  }
-  
-  </PARENT_TMP>
-  private String getParentID(VariablesSecureApp vars, String str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>) throws ServletException {
-    String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP> = <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>Data.selectParentID(this, str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>);
-    if (strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>.equals("")) {
-      log4j.error("Parent record not found for id: " + str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>);
-      throw new ServletException("Parent record not found");
-    }
-    return strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>;
-  }</PARAMETER_TMP>
 
   private void printPageButtonFS(HttpServletResponse response, VariablesSecureApp vars, String strProcessId, String path) throws IOException, ServletException {
     log4j.debug("Output: Frames action button");
