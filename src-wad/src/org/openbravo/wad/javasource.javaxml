@@ -165,279 +165,42 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
     }
 
     if (vars.commandIn("DEFAULT")) {
-<PARAMETER_TMP id="parent">      String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP> = vars.getGlobalVariable("inp<PARENT_TMP id="keyParentINP">Almacen</PARENT_TMP>", windowId + "|<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>", "");
-</PARAMETER_TMP>
-      String str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP> = vars.getGlobalVariable("inp<KEY_TMP id="keyData">PosicionAlmacen</KEY_TMP>", windowId + "|<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>", "");
-      <PARAMETER_TMP id="parent">      if (strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>.equals("")) {
-        strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP> = getParentID(vars, str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>);
-        if (strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>.equals("")) throw new ServletException("Required parameter :" + windowId + "|<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>");
-        vars.setSessionValue(windowId + "|<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>", strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>);
-<PARAMETER_TMP id="grandfather">      vars.removeSessionValue(windowId + "|<PARAMETER_TMP id="grandfatherName">xx</PARAMETER_TMP>");</PARAMETER_TMP>
-        refreshParentSession(vars, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>);
-      }
-</PARAMETER_TMP>
-
-      String strView = vars.getSessionValue(tabId + "|<PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>.view");
-      if (strView.equals("")) {
-        strView = defaultTabView;
-<PARAMETERS_TMP id="NothasReference">
-        if (strView.equals("EDIT")) {
-<PARAMETERS_TMP id="sectionNotIsHighVolume">          if (str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>.equals("")) str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP> = firstElement(vars, tableSQL);
-          if (str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>.equals("")) strView = "RELATION";</PARAMETERS_TMP>
-        }</PARAMETERS_TMP>
-      }
-      if (strView.equals("EDIT")) 
-<PARAMETERS_TMP id="NothasReference">
-        printPageEdit(response, request, vars, false, str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP><PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>, tableSQL);
-</PARAMETERS_TMP><PARAMETERS_TMP id="hasReference">
-        response.sendRedirect(strDireccion + "<PARAMETER_TMP id="paramEditReference">xx</PARAMETER_TMP>");
-</PARAMETERS_TMP>
-      else printPageDataSheet(response, vars<PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>, str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>, tableSQL);
+          throw new OBException("2.50 style command is no longer supported: " + vars.getCommand());
     } else if (vars.commandIn("DIRECT")) {
-      String str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP> = vars.getStringParameter("inpDirectKey");
-      
-      <PARAMETER_TMP id="withSecondaryKey">  
-      //Double pk, inpDirectKey is useless
-      String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP> = vars.getGlobalVariable("inp<PARENT_TMP id="keyParentINP">Almacen</PARENT_TMP>", windowId + "|<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>", "");
-      </PARAMETER_TMP>  
-      if (str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>.equals("")) str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP> = vars.getRequiredGlobalVariable("inp<KEY_TMP id="keyData">PosicionAlmacen</KEY_TMP>", windowId + "|<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>");
-      else vars.setSessionValue(windowId + "|<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>", str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>);
-      <PARAMETER_TMP id="parent">
-      <PARAMETER_TMP id="keySequence">
-      String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP> = getParentID(vars, str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>);
-      </PARAMETER_TMP>
-      vars.setSessionValue(windowId + "|<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>", strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>);
-      vars.setSessionValue("<PARENT_TMP id="parentTab">xxtabId</PARENT_TMP>|<PARAMETER_TMP id="parentTabName">xxparentTabName</PARAMETER_TMP>.view", "EDIT");
-<PARAMETER_TMP id="grandfather">      vars.removeSessionValue(windowId + "|<PARAMETER_TMP id="grandfatherName">xx</PARAMETER_TMP>");</PARAMETER_TMP>
-      refreshParentSession(vars, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>);
-</PARAMETER_TMP>
-      vars.setSessionValue(tabId + "|<PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>.view", "EDIT");
-<PARAMETERS_TMP id="NothasReference">
-      printPageEdit(response, request, vars, false, str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP><PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>, tableSQL);
-</PARAMETERS_TMP><PARAMETERS_TMP id="hasReference">
-        response.sendRedirect(strDireccion + "<PARAMETER_TMP id="paramEditReference">xx</PARAMETER_TMP>");
-</PARAMETERS_TMP>
+          throw new OBException("2.50 style command is no longer supported: " + vars.getCommand());
     } else if (vars.commandIn("TAB")) {
-<PARAMETER_TMP id="parent">      String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP> = vars.getGlobalVariable("inp<PARENT_TMP id="keyParentTabINP">Almacen</PARENT_TMP>", windowId + "|<PARENT_TMP id="keyParentSimple">Almacen</PARENT_TMP>", false, false, true, "");
-      vars.removeSessionValue(windowId + "|<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>");
-      <PARAMETER_TMP id="refreshTabParentSession">refreshParentSession(vars, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>);</PARAMETER_TMP>
-</PARAMETER_TMP>
-
-      String strView = vars.getSessionValue(tabId + "|<PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>.view");
-      String str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP> = "";
-      if (strView.equals("")) {
-        strView = defaultTabView;
-        if (strView.equals("EDIT")) {
-<PARAMETERS_TMP id="sectionNotIsHighVolume">          str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP> = firstElement(vars, tableSQL);
-          if (str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>.equals("")) strView = "RELATION";</PARAMETERS_TMP>
-        }
-      }
-      if (strView.equals("EDIT")) {
-<PARAMETERS_TMP id="NothasReference">
-        if (str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>.equals("")) str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP> = firstElement(vars, tableSQL);
-        printPageEdit(response, request, vars, false, str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP><PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>, tableSQL);
-</PARAMETERS_TMP><PARAMETERS_TMP id="hasReference">
-        response.sendRedirect(strDireccion + "<PARAMETER_TMP id="paramEditReference">xx</PARAMETER_TMP>");
-</PARAMETERS_TMP>
-      } else printPageDataSheet(response, vars<PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>, "", tableSQL);
+          throw new OBException("2.50 style command is no longer supported: " + vars.getCommand());
 <FIELDS_TMP id="sectionIsHighVolume4">    } else if (vars.commandIn("SEARCH")) {
-<PARAMETER_TMP id="sectionIsHighVolume5">vars.getRequestGlobalVariable("inpParam<FIELD_TMP id="searchName5">xx</FIELD_TMP>", tabId + "|param<FIELD_TMP id="searchName5">xx</FIELD_TMP>");
-</PARAMETER_TMP>
-        vars.getRequestGlobalVariable("inpParamUpdated", tabId + "|paramUpdated");
-        vars.getRequestGlobalVariable("inpParamUpdatedBy", tabId + "|paramUpdatedBy");
-        vars.getRequestGlobalVariable("inpParamCreated", tabId + "|paramCreated");
-        vars.getRequestGlobalVariable("inpparamCreatedBy", tabId + "|paramCreatedBy");
-      <PARAMETER_TMP id="parent">      String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP> = vars.getGlobalVariable("inp<PARENT_TMP id="keyParentINP">Almacen</PARENT_TMP>", windowId + "|<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>");
-</PARAMETER_TMP>
-      
-      vars.removeSessionValue(windowId + "|<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>");
-      String str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>="";
-
-      String strView = vars.getSessionValue(tabId + "|<PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>.view");
-      if (strView.equals("")) strView=defaultTabView;
-<PARAMETERS_TMP id="NothasReference">
-      if (strView.equals("EDIT")) {
-        str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP> = firstElement(vars, tableSQL);
-        if (str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>.equals("")) {
-          // filter returns empty set
-          strView = "RELATION";
-          // switch to grid permanently until the user changes the view again
-          vars.setSessionValue(tabId + "|<PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>.view", strView);
-        }
-      }
-</PARAMETERS_TMP>
-      if (strView.equals("EDIT")) 
-<PARAMETERS_TMP id="NothasReference">
-        printPageEdit(response, request, vars, false, str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP><PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>, tableSQL);
-</PARAMETERS_TMP><PARAMETERS_TMP id="hasReference">
-        response.sendRedirect(strDireccion + "<PARAMETER_TMP id="paramEditReference">xx</PARAMETER_TMP>");
-</PARAMETERS_TMP>
-      else printPageDataSheet(response, vars<PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>, str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>, tableSQL);</FIELDS_TMP>
+          throw new OBException("2.50 style command is no longer supported: " + vars.getCommand());
+</FIELDS_TMP>
     } else if (vars.commandIn("RELATION")) {
-      <PARAMETER_TMP id="parent">      String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP> = vars.getGlobalVariable("inp<PARENT_TMP id="keyParentINP">Almacen</PARENT_TMP>", windowId + "|<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>");
-      </PARAMETER_TMP>
-
-      String str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP> = vars.getGlobalVariable("inp<KEY_TMP id="keyData">PosicionAlmacen</KEY_TMP>", windowId + "|<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>", "");
-      vars.setSessionValue(tabId + "|<PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>.view", "RELATION");
-      printPageDataSheet(response, vars<PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>, str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>, tableSQL);
+          throw new OBException("2.50 style command is no longer supported: " + vars.getCommand());
     } else if (vars.commandIn("NEW")) {
-<PARAMETER_TMP id="parent">      String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP> = vars.getGlobalVariable("inp<PARENT_TMP id="keyParentINP">Almacen</PARENT_TMP>", windowId + "|<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>");
-</PARAMETER_TMP>
-<PARAMETERS_TMP id="NothasReference">
-      printPageEdit(response, request, vars, true, ""<PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>, tableSQL);
-</PARAMETERS_TMP><PARAMETERS_TMP id="hasReference">
-      response.sendRedirect(strDireccion + "<PARAMETER_TMP id="paramEditReference">xx</PARAMETER_TMP>?Command=NEW");
-</PARAMETERS_TMP>
+          throw new OBException("2.50 style command is no longer supported: " + vars.getCommand());
     } else if (vars.commandIn("EDIT")) {
-<PARAMETER_TMP id="parent">      String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP> = vars.getGlobalVariable("inp<PARENT_TMP id="keyParentINP">Almacen</PARENT_TMP>", windowId + "|<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>");
-</PARAMETER_TMP>
-      String str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP> = vars.getGlobalVariable("inp<KEY_TMP id="keyData">PosicionAlmacen</KEY_TMP>", windowId + "|<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>", "");
-      vars.setSessionValue(tabId + "|<PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>.view", "EDIT");
-<PARAMETERS_TMP id="NothasReference">
-      setHistoryCommand(request, "EDIT");
-      printPageEdit(response, request, vars, false, str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP><PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>, tableSQL);
-</PARAMETERS_TMP><PARAMETERS_TMP id="hasReference">
-      response.sendRedirect(strDireccion + "<PARAMETER_TMP id="paramEditReference">xx</PARAMETER_TMP>?Command=EDIT");
-</PARAMETERS_TMP>
+          throw new OBException("2.50 style command is no longer supported: " + vars.getCommand());
     } else if (vars.commandIn("NEXT")) {
-<PARAMETER_TMP id="parent">      String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP> = vars.getGlobalVariable("inp<PARENT_TMP id="keyParentINP">Almacen</PARENT_TMP>", windowId + "|<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>");</PARAMETER_TMP>
-      String str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP> = vars.getRequiredStringParameter("inp<KEY_TMP id="keyData">PosicionAlmacen</KEY_TMP>");
-      
-      String strNext = nextElement(vars, str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>, tableSQL);
-
-      printPageEdit(response, request, vars, false, strNext<PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>, tableSQL);
+          throw new OBException("2.50 style command is no longer supported: " + vars.getCommand());
     } else if (vars.commandIn("PREVIOUS")) {
-<PARAMETER_TMP id="parent">      String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP> = vars.getGlobalVariable("inp<PARENT_TMP id="keyParentINP">Almacen</PARENT_TMP>", windowId + "|<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>");</PARAMETER_TMP>
-      String str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP> = vars.getRequiredStringParameter("inp<KEY_TMP id="keyData">PosicionAlmacen</KEY_TMP>");
-      
-      String strPrevious = previousElement(vars, str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>, tableSQL);
-
-      printPageEdit(response, request, vars, false, strPrevious<PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>, tableSQL);
+          throw new OBException("2.50 style command is no longer supported: " + vars.getCommand());
     } else if (vars.commandIn("FIRST_RELATION")) {
-<PARAMETER_TMP id="parent">vars.getGlobalVariable("inp<PARENT_TMP id="keyParentINP">Almacen</PARENT_TMP>", windowId + "|<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>");
-</PARAMETER_TMP>
-      vars.setSessionValue(tabId + "|<PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>.initRecordNumber", "0");
-      response.sendRedirect(strDireccion + request.getServletPath() + "?Command=RELATION");
+          throw new OBException("2.50 style command is no longer supported: " + vars.getCommand());
     } else if (vars.commandIn("PREVIOUS_RELATION")) {
-<PARAMETER_TMP id="parent">      String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP> = vars.getGlobalVariable("inp<PARENT_TMP id="keyParentINP">Almacen</PARENT_TMP>", windowId + "|<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>");
-</PARAMETER_TMP>
-      String strInitRecord = vars.getSessionValue(tabId + "|<PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>.initRecordNumber");
-      String strRecordRange = Utility.getContext(this, vars, "#RecordRange", windowId);
-      int intRecordRange = strRecordRange.equals("")?0:Integer.parseInt(strRecordRange);
-      if (strInitRecord.equals("") || strInitRecord.equals("0")) {
-        vars.setSessionValue(tabId + "|<PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>.initRecordNumber", "0");
-      } else {
-        int initRecord = (strInitRecord.equals("")?0:Integer.parseInt(strInitRecord));
-        initRecord -= intRecordRange;
-        strInitRecord = ((initRecord&#60;0)?"0":Integer.toString(initRecord));
-        vars.setSessionValue(tabId + "|<PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>.initRecordNumber", strInitRecord);
-      }
-      vars.removeSessionValue(windowId + "|<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>");
-<PARAMETER_TMP id="parent">      vars.setSessionValue(windowId + "|<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>", strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>);</PARAMETER_TMP>
-      response.sendRedirect(strDireccion + request.getServletPath() + "?Command=RELATION");
+          throw new OBException("2.50 style command is no longer supported: " + vars.getCommand());
     } else if (vars.commandIn("NEXT_RELATION")) {
-<PARAMETER_TMP id="parent">      String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP> = vars.getGlobalVariable("inp<PARENT_TMP id="keyParentINP">Almacen</PARENT_TMP>", windowId + "|<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>");
-</PARAMETER_TMP>
-      String strInitRecord = vars.getSessionValue(tabId + "|<PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>.initRecordNumber");
-      String strRecordRange = Utility.getContext(this, vars, "#RecordRange", windowId);
-      int intRecordRange = strRecordRange.equals("")?0:Integer.parseInt(strRecordRange);
-      int initRecord = (strInitRecord.equals("")?0:Integer.parseInt(strInitRecord));
-      if (initRecord==0) initRecord=1;
-      initRecord += intRecordRange;
-      strInitRecord = ((initRecord&#60;0)?"0":Integer.toString(initRecord));
-      vars.setSessionValue(tabId + "|<PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>.initRecordNumber", strInitRecord);
-      vars.removeSessionValue(windowId + "|<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>");
-<PARAMETER_TMP id="parent">      vars.setSessionValue(windowId + "|<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>", strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>);</PARAMETER_TMP>
-      response.sendRedirect(strDireccion + request.getServletPath() + "?Command=RELATION");
+          throw new OBException("2.50 style command is no longer supported: " + vars.getCommand());
     } else if (vars.commandIn("FIRST")) {
-<PARAMETER_TMP id="parent">      String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP> = vars.getGlobalVariable("inp<PARENT_TMP id="keyParentINP">Almacen</PARENT_TMP>", windowId + "|<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>");</PARAMETER_TMP>
-      
-      String strFirst = firstElement(vars, tableSQL);
-
-      printPageEdit(response, request, vars, false, strFirst<PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>, tableSQL);
+          throw new OBException("2.50 style command is no longer supported: " + vars.getCommand());
     } else if (vars.commandIn("LAST_RELATION")) {
-<PARAMETER_TMP id="parent">      String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP> = vars.getGlobalVariable("inp<PARENT_TMP id="keyParentINP">Almacen</PARENT_TMP>", windowId + "|<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>");
-</PARAMETER_TMP>
-      String strLast = lastElement(vars, tableSQL);
-      printPageDataSheet(response, vars<PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>, strLast, tableSQL);
+          throw new OBException("2.50 style command is no longer supported: " + vars.getCommand());
     } else if (vars.commandIn("LAST")) {
-<PARAMETER_TMP id="parent">      String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP> = vars.getGlobalVariable("inp<PARENT_TMP id="keyParentINP">Almacen</PARENT_TMP>", windowId + "|<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>");</PARAMETER_TMP>
-      
-      String strLast = lastElement(vars, tableSQL);
-
-      printPageEdit(response, request, vars, false, strLast<PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>, tableSQL);
+          throw new OBException("2.50 style command is no longer supported: " + vars.getCommand());
     } else if (vars.commandIn("SAVE_NEW_RELATION", "SAVE_NEW_NEW", "SAVE_NEW_EDIT")) {
-<PARAMETER_TMP id="parent">      String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP> = vars.getGlobalVariable("inp<PARENT_TMP id="keyParentINP">Almacen</PARENT_TMP>", windowId + "|<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>");</PARAMETER_TMP>
-      OBError myError = new OBError();      
-      int total = saveRecord(vars, myError, 'I'<PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>);      
-      if (!myError.isEmpty()) {        
-        response.sendRedirect(strDireccion + request.getServletPath() + "?Command=NEW");
-      } 
-      else {
-		if (myError.isEmpty()) {
-		  myError = Utility.translateError(this, vars, vars.getLanguage(), "@CODE=RowsInserted");
-		  myError.setMessage(total + " " + myError.getMessage());
-		  vars.setMessage(tabId, myError);
-		}        
-        if (vars.commandIn("SAVE_NEW_NEW")) response.sendRedirect(strDireccion + request.getServletPath() + "?Command=NEW");
-        else if (vars.commandIn("SAVE_NEW_EDIT")) response.sendRedirect(strDireccion + request.getServletPath() + "?Command=EDIT");
-        else response.sendRedirect(strDireccion + request.getServletPath() + "?Command=RELATION");
-      }
+          throw new OBException("2.50 style command is no longer supported: " + vars.getCommand());
     } else if (vars.commandIn("SAVE_EDIT_RELATION", "SAVE_EDIT_NEW", "SAVE_EDIT_EDIT", "SAVE_EDIT_NEXT")) {
-<PARAMETER_TMP id="parent">      String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP> = vars.getGlobalVariable("inp<PARENT_TMP id="keyParentINP">Almacen</PARENT_TMP>", windowId + "|<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>");</PARAMETER_TMP>
-      String str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP> = vars.getRequiredGlobalVariable("inp<KEY_TMP id="keyData">PosicionAlmacen</KEY_TMP>", windowId + "|<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>");
-      OBError myError = new OBError();
-      int total = saveRecord(vars, myError, 'U'<PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>);      
-      if (!myError.isEmpty()) {
-        response.sendRedirect(strDireccion + request.getServletPath() + "?Command=EDIT");
-      } 
-      else {
-        if (myError.isEmpty()) {
-          myError = Utility.translateError(this, vars, vars.getLanguage(), "@CODE=RowsUpdated");
-          myError.setMessage(total + " " + myError.getMessage());
-          vars.setMessage(tabId, myError);
-        }
-        if (vars.commandIn("SAVE_EDIT_NEW")) response.sendRedirect(strDireccion + request.getServletPath() + "?Command=NEW");
-        else if (vars.commandIn("SAVE_EDIT_EDIT")) response.sendRedirect(strDireccion + request.getServletPath() + "?Command=EDIT");
-        else if (vars.commandIn("SAVE_EDIT_NEXT")) {
-          String strNext = nextElement(vars, str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>, tableSQL);
-          vars.setSessionValue(windowId + "|<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>", strNext);
-          response.sendRedirect(strDireccion + request.getServletPath() + "?Command=EDIT");
-        } else response.sendRedirect(strDireccion + request.getServletPath() + "?Command=RELATION");
-      }
+          throw new OBException("2.50 style command is no longer supported: " + vars.getCommand());
     } else if (vars.commandIn("DELETE")) {
-<PARAMETER_TMP id="parent">      String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP> = vars.getGlobalVariable("inp<PARENT_TMP id="keyParentINP">Almacen</PARENT_TMP>", windowId + "|<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>");
-</PARAMETER_TMP>
-      String str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP> = vars.getRequiredStringParameter("inp<KEY_TMP id="keyData">PosicionAlmacen</KEY_TMP>");
-      //<PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>Data data = getEditVariables(vars<PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>);
-      int total = 0;
-      OBError myError = null;
-      if (org.openbravo.erpCommon.utility.WindowAccessData.hasNotDeleteAccess(this, vars.getRole(), tabId)) {
-        myError = Utility.translateError(this, vars, vars.getLanguage(), Utility.messageBD(this, "NoWriteAccess", vars.getLanguage()));
-        vars.setMessage(tabId, myError);
-      } else {
-        try {
-          total = <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>Data.delete(this, str<KEY_TMP id="key">PosicionAlmacen</KEY_TMP><PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP><PARAMETER_TMP id="client">, Utility.getContext(this, vars, "#User_Client", windowId, accesslevel), Utility.getContext(this, vars, "#User_Org", windowId, accesslevel)</PARAMETER_TMP>);
-        } catch(ServletException ex) {
-          myError = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
-          if (!myError.isConnectionAvailable()) {
-            bdErrorConnection(response);
-            return;
-          } else vars.setMessage(tabId, myError);
-        }
-        if (myError==null &amp;&amp; total==0) {
-          myError = Utility.translateError(this, vars, vars.getLanguage(), Utility.messageBD(this, "NoWriteAccess", vars.getLanguage()));
-          vars.setMessage(tabId, myError);
-        }
-        vars.removeSessionValue(windowId + "|<KEY_TMP id="keyData">PosicionAlmacen</KEY_TMP>");
-        vars.setSessionValue(tabId + "|<PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>.view", "RELATION");
-      }
-      if (myError==null) {
-        myError = Utility.translateError(this, vars, vars.getLanguage(), "@CODE=RowsDeleted");
-        myError.setMessage(total + " " + myError.getMessage());
-        vars.setMessage(tabId, myError);
-      }
-      response.sendRedirect(strDireccion + request.getServletPath());
+          throw new OBException("2.50 style command is no longer supported: " + vars.getCommand());
 <FIELDS_TMP id="sectionActionButtons1">
      } else if (vars.commandIn("BUTTON<FIELD_TMP id="ButtonRealName1">button</FIELD_TMP><FIELD_TMP id="ProcessID1">button</FIELD_TMP>")) {
         vars.setSessionValue("button<FIELD_TMP id="ProcessID1">xx</FIELD_TMP>.str<FIELD_TMP id="ButtonName1">name</FIELD_TMP>", vars.getStringParameter("inp<FIELD_TMP id="ButtonName1">name</FIELD_TMP>"));
