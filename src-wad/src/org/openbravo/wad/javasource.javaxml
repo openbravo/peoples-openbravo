@@ -507,9 +507,5 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
       out.close();
     }
 </FIELDS_TMP>
-
-  public String getServletInfo() {
-    return "Servlet <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>. This Servlet was made by Wad constructor";
-  } // End of getServletInfo() method
 }
 </java_TMP>
