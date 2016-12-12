@@ -209,8 +209,8 @@ public class Wad extends DefaultHandler {
       if (argv.length <= 15)
         module = "%";
       else
-        module = argv[15].equals("%") ? "%"
-            : "'" + argv[15].replace(", ", ",").replace(",", "', '") + "'";
+        module = argv[15].equals("%") ? "%" : "'"
+            + argv[15].replace(", ", ",").replace(",", "', '") + "'";
 
       // Check for quick build
       if (argv.length <= 16)
@@ -417,14 +417,18 @@ public class Wad extends DefaultHandler {
         boolean res = TabsData.selectShowWindowIn250ClassicMode(conn, tab.getField("key"));
         if (res) {
           // TODO: final test
-          log4j.error("Window: " + tab.getField("windowname")
-              + " is needed in classic 2.50 mode. This is no longer supported. The module containing the window must be fixed.");
+          log4j
+              .error("Window: "
+                  + tab.getField("windowname")
+                  + " is needed in classic 2.50 mode. This is no longer supported. The module containing the window must be fixed.");
         } else {
           res = TabsData.selectShowWindowIn250ClassicModePreference(conn, tab.getField("key"));
           if (res) {
             // TODO: what about those pref users? build validation?
-            log4j.error("Window: " + tab.getField("windowname")
-                + " is configured for classic 2.50 mode via preferences. This is no longer supported...");
+            log4j
+                .error("Window: "
+                    + tab.getField("windowname")
+                    + " is configured for classic 2.50 mode via preferences. This is no longer supported...");
           }
         }
         oldWindowId = tab.getField("key");
@@ -480,7 +484,8 @@ public class Wad extends DefaultHandler {
     ActionButtonRelationData[] actBtns = ActionButtonRelationData.select(conn, tabId);
     ActionButtonRelationData[] actBtnsJava = ActionButtonRelationData.selectJava(conn, tabId);
 
-    if ((actBtns == null || actBtns.length == 0) && (actBtnsJava == null || actBtnsJava.length == 0)
+    if ((actBtns == null || actBtns.length == 0)
+        && (actBtnsJava == null || actBtnsJava.length == 0)
         && FieldsData.hasPostedButton(conn, tabId).equals("0")) {
       // No action buttons
       return false;
@@ -513,8 +518,8 @@ public class Wad extends DefaultHandler {
   private void processActionButton(File fileReference) {
     try {
       log4j.info("Processing ActionButton_data.xml");
-      final XmlDocument xmlDocumentData = xmlEngine
-          .readXmlTemplate("org/openbravo/wad/ActionButton_data").createXmlDocument();
+      final XmlDocument xmlDocumentData = xmlEngine.readXmlTemplate(
+          "org/openbravo/wad/ActionButton_data").createXmlDocument();
       final ProcessRelationData ard[] = ProcessRelationData.select(pool);
 
       xmlDocumentData.setData("structure1", ard);
@@ -576,9 +581,8 @@ public class Wad extends DefaultHandler {
           if (dataReload != null && dataReload.length > 0) {
             for (int z = 0; z < dataReload.length; z++) {
               String code = dataReload[z].whereclause
-                  + ((!dataReload[z].whereclause.equals("")
-                      && !dataReload[z].referencevalue.equals("")) ? " AND " : "")
-                  + dataReload[z].referencevalue;
+                  + ((!dataReload[z].whereclause.equals("") && !dataReload[z].referencevalue
+                      .equals("")) ? " AND " : "") + dataReload[z].referencevalue;
 
               if (code.equals("") && dataReload[z].type.equals("R"))
                 code = "@AD_Org_ID@";
@@ -612,8 +616,8 @@ public class Wad extends DefaultHandler {
     try {
       // Generic action button for jasper and PL
       log4j.info("Processing ActionButton_Responser.xml");
-      XmlDocument xmlDocumentData = xmlEngine
-          .readXmlTemplate("org/openbravo/wad/ActionButton_Responser").createXmlDocument();
+      XmlDocument xmlDocumentData = xmlEngine.readXmlTemplate(
+          "org/openbravo/wad/ActionButton_Responser").createXmlDocument();
 
       ActionButtonRelationData[] abrd = WadActionButton.buildActionButtonCallGenerics(pool);
       xmlDocumentData.setData("structure1", abrd);
@@ -669,8 +673,8 @@ public class Wad extends DefaultHandler {
           }
           defaults[i].whereclause = parametros.toString();
         }
-        XmlDocument xmlDocumentData = xmlEngine
-            .readXmlTemplate("org/openbravo/wad/ActionButtonDefault_data").createXmlDocument();
+        XmlDocument xmlDocumentData = xmlEngine.readXmlTemplate(
+            "org/openbravo/wad/ActionButtonDefault_data").createXmlDocument();
         xmlDocumentData.setData("structure16", defaults);
 
         WadUtility.writeFile(fileReference, "ActionButtonSQLDefault_data.xsql",
@@ -728,9 +732,8 @@ public class Wad extends DefaultHandler {
           if (dataReload != null && dataReload.length > 0) {
             for (int z = 0; z < dataReload.length; z++) {
               String code = dataReload[z].whereclause
-                  + ((!dataReload[z].whereclause.equals("")
-                      && !dataReload[z].referencevalue.equals("")) ? " AND " : "")
-                  + dataReload[z].referencevalue;
+                  + ((!dataReload[z].whereclause.equals("") && !dataReload[z].referencevalue
+                      .equals("")) ? " AND " : "") + dataReload[z].referencevalue;
 
               if (code.equals("") && dataReload[z].type.equals("R"))
                 code = "@AD_Org_ID@";
@@ -880,8 +883,8 @@ public class Wad extends DefaultHandler {
         continue;
       }
 
-      String prefix = "/" + ("0".equals(tab.windowmodule) ? "" : tab.windowpackage) + tab.windowname
-          + "/" + tab.tabname + ("0".equals(tab.tabmodule) ? "" : tab.tabid);
+      String prefix = "/" + ("0".equals(tab.windowmodule) ? "" : tab.windowpackage)
+          + tab.windowname + "/" + tab.tabname + ("0".equals(tab.tabmodule) ? "" : tab.tabid);
 
       // Keeping mapping to *_Edition.html because it is the mapping used for processes
       WadData mapping2 = new WadData();
@@ -917,8 +920,8 @@ public class Wad extends DefaultHandler {
           Integer.valueOf(tabsData.tablevel).intValue(), HEIGHT_TABS, INCR_TABS);
       final FieldsData[] fieldsData = FieldsData.select(pool, tabsData.tabid);
       final EditionFieldsData efd[] = EditionFieldsData.select(pool, tabsData.tabid);
-      final EditionFieldsData efdauxiliar[] = EditionFieldsData.selectAuxiliar(pool,
-          tabsData.tabid);
+      final EditionFieldsData efdauxiliar[] = EditionFieldsData
+          .selectAuxiliar(pool, tabsData.tabid);
 
       /************************************************
        * The 2 tab lines generation
@@ -1003,8 +1006,8 @@ public class Wad extends DefaultHandler {
           ArrayList<String> usedParameters = new ArrayList<String>();
           for (int h = totalParameters; h < vecTotalParameters.size(); h++) {
             String strParam = WadUtility.getWhereParameter(vecTotalParameters.elementAt(h), false);
-            vecParameters
-                .addElement(WadUtility.getWhereParameter(vecTotalParameters.elementAt(h), true));
+            vecParameters.addElement(WadUtility.getWhereParameter(vecTotalParameters.elementAt(h),
+                true));
             if (!usedParameters.contains(strParam)) {
               usedParameters.add(strParam);
               whereClauseParams += ", Utility.getContext(this, vars, \"" + strParam
@@ -1040,10 +1043,11 @@ public class Wad extends DefaultHandler {
         selCol = EditionFieldsData.selectSerchFields(pool, "", tabsData.tabid);
       selCol = processSelCol(selCol, tableName);
 
-      final String javaPackage = (!tabsData.javapackage.equals("")
-          ? tabsData.javapackage.replace(".", "/") + "/" : "") + windowName; // Take into account
-                                                                             // java packages for
-                                                                             // modules
+      final String javaPackage = (!tabsData.javapackage.equals("") ? tabsData.javapackage.replace(
+          ".", "/") + "/" : "")
+          + windowName; // Take into account
+                        // java packages for
+                        // modules
       final File fileDir = new File(fileFin, javaPackage);
 
       int grandfatherTabIndex = -1;
@@ -1126,9 +1130,9 @@ public class Wad extends DefaultHandler {
             windowName, keyColumnName, strTables.toString(), strOrder.toString(),
             strWhere.toString(), vecFields, isSOTrx, allTabs, tabsData.key, tabsData.accesslevel,
             selCol, isSecondaryKey, grandfatherField, tabsData.tablevel, tabsData.tableId,
-            tabsData.windowtype, tabsData.adColumnsortorderId, whereClauseParams, parentwhereclause,
-            strProcess, strDirectPrint, !tabsData.uipattern.equals("STD"), vecParameters,
-            vecTableParameters, tabsData.javapackage, tabsData.tabmodule);
+            tabsData.windowtype, tabsData.adColumnsortorderId, whereClauseParams,
+            parentwhereclause, strProcess, strDirectPrint, !tabsData.uipattern.equals("STD"),
+            vecParameters, vecTableParameters, tabsData.javapackage, tabsData.tabmodule);
       } else {
         /************************************************
          * JAVA
@@ -1225,10 +1229,10 @@ public class Wad extends DefaultHandler {
    * @throws ServletException
    * @throws IOException
    */
-  private void processTable(FieldsData[] parentsFieldsData, String strTab, Vector<Object> vecFields,
-      Vector<Object> vecTables, Vector<Object> vecWhere, Vector<Object> vecOrder,
-      Vector<Object> vecParameters, String tableName, String windowType, String tablevel,
-      Vector<Object> vecTableParameters, FieldsData[] fieldsDataSelectAux,
+  private void processTable(FieldsData[] parentsFieldsData, String strTab,
+      Vector<Object> vecFields, Vector<Object> vecTables, Vector<Object> vecWhere,
+      Vector<Object> vecOrder, Vector<Object> vecParameters, String tableName, String windowType,
+      String tablevel, Vector<Object> vecTableParameters, FieldsData[] fieldsDataSelectAux,
       Vector<String> vecFieldParameters) throws ServletException, IOException {
     int ilist = 0;
     final int itable = 0;
@@ -1252,8 +1256,8 @@ public class Wad extends DefaultHandler {
           vecFields.addElement("COALESCE(" + tableName + "." + fieldsData[i].name + ", 'N') AS "
               + fieldsData[i].name);
         } else if (fieldsData[i].reference.equals("16")) { // datetime
-          vecFields.addElement(
-              "TO_CHAR(" + tableName + "." + fieldsData[i].name + ", ?) AS " + fieldsData[i].name);
+          vecFields.addElement("TO_CHAR(" + tableName + "." + fieldsData[i].name + ", ?) AS "
+              + fieldsData[i].name);
           vecFieldParameters.addElement("<Parameter name=\"dateTimeFormat\"/>");
         } else {
           vecFields.addElement(tableName + "." + fieldsData[i].name);
@@ -1388,10 +1392,10 @@ public class Wad extends DefaultHandler {
 
     fileDir.mkdirs();
     xmlDocument.setParameter("class", tabName);
-    xmlDocument.setParameter("package",
-        (!javaPackage.equals("") ? javaPackage + "." : "") + windowName);
-    xmlDocument.setParameter("path",
-        (!javaPackage.equals("") ? javaPackage + "/" : "") + windowName);
+    xmlDocument.setParameter("package", (!javaPackage.equals("") ? javaPackage + "." : "")
+        + windowName);
+    xmlDocument.setParameter("path", (!javaPackage.equals("") ? javaPackage + "/" : "")
+        + windowName);
     xmlDocument.setParameter("windowName", windowName);
     xmlDocument.setParameter("key", keyColumnName);
     xmlDocument.setParameter("grandfatherName", grandfatherField);
@@ -1434,12 +1438,11 @@ public class Wad extends DefaultHandler {
       vecCounters2.addElement("0");
       vecCounters2.addElement("0");
       WadUtility.columnIdentifier(pool, parentsFieldsData[0].tablename, true, parentsFieldsData[0],
-          vecCounters2, true, vecFields2, vecTable2, vecWhere2, vecParameters2, vecTableParameters2,
-          sqlDateFormat);
+          vecCounters2, true, vecFields2, vecTable2, vecWhere2, vecParameters2,
+          vecTableParameters2, sqlDateFormat);
 
-      xmlDocument.setParameter("parentLanguage",
-          (vecParameters2.size() > 0 || vecTableParameters2.size() > 0) ? ", vars.getLanguage()"
-              : "");
+      xmlDocument.setParameter("parentLanguage", (vecParameters2.size() > 0 || vecTableParameters2
+          .size() > 0) ? ", vars.getLanguage()" : "");
     }
     // Fields of the parent Session
     FieldsData[] fieldsParentSession = null;
@@ -1465,10 +1468,11 @@ public class Wad extends DefaultHandler {
               .TransformaNombreColumna(auxiliarPFields[i].columnname);
           if (auxiliarPFields[i].defaultvalue.toUpperCase().startsWith("@SQL=")) {
             auxiliarPFields[i].defaultvalue = FormatUtilities.replace(allTabs[parentTab].tabname)
-                + "Data.selectAux" + auxiliarPFields[i].reference + "(this"
+                + "Data.selectAux"
+                + auxiliarPFields[i].reference
+                + "(this"
                 + WadUtility.getWadContext(auxiliarPFields[i].defaultvalue, vecFields,
-                    vecAuxiliarPFields, parentsFieldsData, false, isSOTrx, strWindow)
-                + ")";
+                    vecAuxiliarPFields, parentsFieldsData, false, isSOTrx, strWindow) + ")";
           } else if (auxiliarPFields[i].defaultvalue.indexOf("@") != -1) {
             auxiliarPFields[i].defaultvalue = WadUtility.getTextWadContext(
                 auxiliarPFields[i].defaultvalue, vecFields, vecAuxiliarPFields, parentsFieldsData,
@@ -1565,13 +1569,13 @@ public class Wad extends DefaultHandler {
    * @throws IOException
    */
   private void processTabJava(EditionFieldsData[] allfields, EditionFieldsData[] auxiliarsData,
-      FieldsData[] parentsFieldsData, File fileDir, String strTab, String tabName, String tableName,
-      String windowName, String keyColumnName, String strTables, String strOrder, String strWhere,
-      String strFilter, Vector<Object> vecFields, Vector<Object> vecParametersTop, String isSOTrx,
-      TabsData[] allTabs, String strWindow, String accesslevel, EditionFieldsData[] selCol,
-      boolean isSecondaryKey, String grandfatherField, String tablevel, String tableId,
-      String windowType, String uiPattern, String whereClauseParams, String parentwhereclause,
-      String editReference, String strProcess, String strDirectPrint,
+      FieldsData[] parentsFieldsData, File fileDir, String strTab, String tabName,
+      String tableName, String windowName, String keyColumnName, String strTables, String strOrder,
+      String strWhere, String strFilter, Vector<Object> vecFields, Vector<Object> vecParametersTop,
+      String isSOTrx, TabsData[] allTabs, String strWindow, String accesslevel,
+      EditionFieldsData[] selCol, boolean isSecondaryKey, String grandfatherField, String tablevel,
+      String tableId, String windowType, String uiPattern, String whereClauseParams,
+      String parentwhereclause, String editReference, String strProcess, String strDirectPrint,
       Vector<Object> vecTableParametersTop, FieldsData[] fieldsDataSelectAux,
       WADControl relationControl, String javaPackage, boolean deleteable, String tabmodule)
       throws ServletException, IOException {
@@ -1599,10 +1603,12 @@ public class Wad extends DefaultHandler {
       for (int i = 0; i < auxiliarFields.length; i++) {
         auxiliarFields[i].columnname = Sqlc.TransformaNombreColumna(auxiliarFields[i].columnname);
         if (auxiliarFields[i].defaultvalue.toUpperCase().startsWith("@SQL=")) {
-          auxiliarFields[i].defaultvalue = tabName + "Data.selectAux" + auxiliarFields[i].reference
-              + "(this" + WadUtility.getWadContext(auxiliarFields[i].defaultvalue, vecFields,
-                  vecAuxiliarFields, parentsFieldsData, false, isSOTrx, strWindow)
-              + ")";
+          auxiliarFields[i].defaultvalue = tabName
+              + "Data.selectAux"
+              + auxiliarFields[i].reference
+              + "(this"
+              + WadUtility.getWadContext(auxiliarFields[i].defaultvalue, vecFields,
+                  vecAuxiliarFields, parentsFieldsData, false, isSOTrx, strWindow) + ")";
         } else if (auxiliarFields[i].defaultvalue.indexOf("@") != -1) {
           auxiliarFields[i].defaultvalue = WadUtility.getTextWadContext(
               auxiliarFields[i].defaultvalue, vecFields, vecAuxiliarFields, parentsFieldsData,
@@ -1645,8 +1651,8 @@ public class Wad extends DefaultHandler {
       final EditionFieldsData[] efd = EditionFieldsData.selectReadOnlyLogic(pool, strTab);
       if (efd != null) {
         for (int i = 0; i < efd.length; i++)
-          WadUtility.displayLogic(efd[i].readonlylogic, vecDL, parentsFieldsData, vecAuxiliarFields,
-              vecFields, strWindow, vecContext);
+          WadUtility.displayLogic(efd[i].readonlylogic, vecDL, parentsFieldsData,
+              vecAuxiliarFields, vecFields, strWindow, vecContext);
       }
       for (int i = 0; i < vecContext.size(); i++) {
         readOnlyLogic.append("var str");
@@ -1756,10 +1762,10 @@ public class Wad extends DefaultHandler {
 
     fileDir.mkdirs();
     xmlDocument.setParameter("class", tabName);
-    xmlDocument.setParameter("package",
-        (!javaPackage.equals("") ? javaPackage + "." : "") + windowName);
-    xmlDocument.setParameter("path",
-        (!javaPackage.equals("") ? javaPackage.replace(".", "/") + "/" : "") + windowName);
+    xmlDocument.setParameter("package", (!javaPackage.equals("") ? javaPackage + "." : "")
+        + windowName);
+    xmlDocument.setParameter("path", (!javaPackage.equals("") ? javaPackage.replace(".", "/") + "/"
+        : "") + windowName);
     xmlDocument.setParameter("windowName", windowName);
     xmlDocument.setParameter("key", keyColumnName);
     xmlDocument.setParameter("from", generateStaticWhere(strTables, vecTableParametersTop));
@@ -1804,12 +1810,12 @@ public class Wad extends DefaultHandler {
         keyTabName = parentsFieldsData[0].name;
       }
 
-      xmlDocument.setParameter("keyParentTabINP",
-          Sqlc.TransformaNombreColumna(WadUtility.columnName(keyTabName,
-              parentsFieldsData[0].tablemodule, parentsFieldsData[0].columnmodule)));
-      xmlDocument.setParameter("keyParentINP",
-          Sqlc.TransformaNombreColumna(WadUtility.columnName(parentsFieldsData[0].name,
-              parentsFieldsData[0].tablemodule, parentsFieldsData[0].columnmodule)));
+      xmlDocument.setParameter("keyParentTabINP", Sqlc.TransformaNombreColumna(WadUtility
+          .columnName(keyTabName, parentsFieldsData[0].tablemodule,
+              parentsFieldsData[0].columnmodule)));
+      xmlDocument.setParameter("keyParentINP", Sqlc.TransformaNombreColumna(WadUtility.columnName(
+          parentsFieldsData[0].name, parentsFieldsData[0].tablemodule,
+          parentsFieldsData[0].columnmodule)));
 
       xmlDocument.setParameter("parentTab", parentsFieldsData[0].adTabId);
       xmlDocument.setParameter("parentTabName", parentsFieldsData[0].parentTabName);
@@ -1853,7 +1859,7 @@ public class Wad extends DefaultHandler {
 
         strParamHighVolume += "String strParam" + selCol[i].columnname
 
-            + " = vars.getSessionValue(tabId + \"|param" + selCol[i].columnname + "\");\n";
+        + " = vars.getSessionValue(tabId + \"|param" + selCol[i].columnname + "\");\n";
         strHighVolumeComp += selCol[i].xmltext;
       }
     }
@@ -1885,12 +1891,11 @@ public class Wad extends DefaultHandler {
       vecCounters2.addElement("0");
       vecCounters2.addElement("0");
       WadUtility.columnIdentifier(pool, parentsFieldsData[0].tablename, true, parentsFieldsData[0],
-          vecCounters2, true, vecFields2, vecTable2, vecWhere2, vecParameters2, vecTableParameters2,
-          sqlDateFormat);
+          vecCounters2, true, vecFields2, vecTable2, vecWhere2, vecParameters2,
+          vecTableParameters2, sqlDateFormat);
 
-      xmlDocument.setParameter("parentLanguage",
-          (vecParameters2.size() > 0 || vecTableParameters2.size() > 0) ? ", vars.getLanguage()"
-              : "");
+      xmlDocument.setParameter("parentLanguage", (vecParameters2.size() > 0 || vecTableParameters2
+          .size() > 0) ? ", vars.getLanguage()" : "");
     }
     FieldsData[] fieldsData = null;
     boolean defaultValue;
@@ -2026,10 +2031,11 @@ public class Wad extends DefaultHandler {
           if (auxiliarPFields[i].defaultvalue.toUpperCase().startsWith("@SQL=")) {
             auxiliarPFields[i].defaultvalue = FormatUtilities.replace(allTabs[parentTab].tabname)
                 + (allTabs[parentTab].tabmodule.equals("0") ? "" : allTabs[parentTab].tabid)
-                + "Data.selectAux" + auxiliarPFields[i].reference + "(this"
+                + "Data.selectAux"
+                + auxiliarPFields[i].reference
+                + "(this"
                 + WadUtility.getWadContext(auxiliarPFields[i].defaultvalue, vecFields,
-                    vecAuxiliarPFields, parentsFieldsData, false, isSOTrx, strWindow)
-                + ")";
+                    vecAuxiliarPFields, parentsFieldsData, false, isSOTrx, strWindow) + ")";
           } else if (auxiliarPFields[i].defaultvalue.indexOf("@") != -1) {
             auxiliarPFields[i].defaultvalue = WadUtility.getTextWadContext(
                 auxiliarPFields[i].defaultvalue, vecFields, vecAuxiliarPFields, parentsFieldsData,
@@ -2192,15 +2198,17 @@ public class Wad extends DefaultHandler {
     for (int i = 0; i < sfd.length; i++) {
       if (!hasParentsFields || !parentsFieldsData[0].name.equalsIgnoreCase(sfd[i].columnname)) {
         if (sfd[i].defaultvalue.toUpperCase().startsWith("@SQL=")) {
-          sfd[i].defaultvalue = tabName + "Data.selectDef" + sfd[i].adcolumnid + "(this"
+          sfd[i].defaultvalue = tabName
+              + "Data.selectDef"
+              + sfd[i].adcolumnid
+              + "(this"
               + WadUtility.getWadContext(sfd[i].defaultvalue, vecFields, vecAuxiliarFields,
-                  parentsFieldsData, true, isSOTrx, strWindow)
-              + ")";
+                  parentsFieldsData, true, isSOTrx, strWindow) + ")";
         } else if (sfd[i].columnname.equalsIgnoreCase("isActive")) {
           sfd[i].defaultvalue = "\"Y\"";
         } else if (sfd[i].accesslevel.equals("4")
-            && (sfd[i].columnname.equalsIgnoreCase("AD_CLIENT_ID")
-                || sfd[i].columnname.equalsIgnoreCase("AD_ORG_ID"))) {
+            && (sfd[i].columnname.equalsIgnoreCase("AD_CLIENT_ID") || sfd[i].columnname
+                .equalsIgnoreCase("AD_ORG_ID"))) {
           sfd[i].defaultvalue = "\"0\"";
         } else if (sfd[i].accesslevel.equals("6")
             && sfd[i].columnname.equalsIgnoreCase("AD_ORG_ID")) {
@@ -2237,8 +2245,8 @@ public class Wad extends DefaultHandler {
         needsComboTableData = true;
         controlsJavaSource.append("    try {\n      ComboTableData comboTableData = null;\n");
       }
-      controlsJavaSource.append(auxControl.toJava())
-          .append((auxControl.toJava().equals("") ? "" : "\n"));
+      controlsJavaSource.append(auxControl.toJava()).append(
+          (auxControl.toJava().equals("") ? "" : "\n"));
 
       if ((auxControl instanceof WADButton) && (auxControl.getData("IsDisplayed").equals("Y"))) {
         ((WADButton) auxControl).setShortcuts(shortcuts);
@@ -2258,8 +2266,8 @@ public class Wad extends DefaultHandler {
     xmlDocument.setData("structure38", FieldsData.explicitAccessProcess(pool, strTab));
 
     if (needsComboTableData)
-      controlsJavaSource.append(
-          "    } catch (Exception ex) {\n      ex.printStackTrace();\n      throw new ServletException(ex);\n    }\n");
+      controlsJavaSource
+          .append("    } catch (Exception ex) {\n      ex.printStackTrace();\n      throw new ServletException(ex);\n    }\n");
     xmlDocument.setParameter("controlsJavaCode", controlsJavaSource.toString());
     xmlDocument.setParameter("defaultValues", strDefaultValues.toString());
     WadUtility.writeFile(fileDir, tabName + ".java", xmlDocument.print());
@@ -2290,8 +2298,8 @@ public class Wad extends DefaultHandler {
       if (strParam.equalsIgnoreCase("paramLanguage"))
         result.append(" '\" + vars.getLanguage() + \"' ");
       else
-        result
-            .append(" '\" + Utility.getContext(this, vars, \"" + strParam + "\", windowId) + \"' ");
+        result.append(" '\" + Utility.getContext(this, vars, \"" + strParam
+            + "\", windowId) + \"' ");
       pos = strWhere.indexOf("?");
     }
     ;
@@ -2388,8 +2396,9 @@ public class Wad extends DefaultHandler {
       for (int i = 0; i < data.length; i++) {
         if (i != 0)
           strFields += " || ' - ' || ";
-        strFields += WadUtility.columnIdentifier(pool, tableName, true, data[i], vecCounters, false,
-            vecFields, vecTable, vecWhere, vecParametersTop, vecTableParametersTop, sqlDateFormat);
+        strFields += WadUtility.columnIdentifier(pool, tableName, true, data[i], vecCounters,
+            false, vecFields, vecTable, vecWhere, vecParametersTop, vecTableParametersTop,
+            sqlDateFormat);
       }
       for (int i = 0; i < vecTable.size(); i++) {
         final String strAux = (String) vecTable.elementAt(i);
@@ -2430,9 +2439,9 @@ public class Wad extends DefaultHandler {
       final Vector<Object> vecTableParameters = new Vector<Object>();
       vecCounters.addElement("0");
       vecCounters.addElement("0");
-      final String strText = WadUtility.columnIdentifier(pool, parentsFieldsData[0].tablename, true,
-          parentsFieldsData[0], vecCounters, false, vecFields, vecTable, vecWhere, vecParameters,
-          vecTableParameters, sqlDateFormat);
+      final String strText = WadUtility.columnIdentifier(pool, parentsFieldsData[0].tablename,
+          true, parentsFieldsData[0], vecCounters, false, vecFields, vecTable, vecWhere,
+          vecParameters, vecTableParameters, sqlDateFormat);
       final FieldsData[] fieldsParent = new FieldsData[1];
       fieldsParent[0] = new FieldsData();
       fieldsParent[0].defaultvalue = "SELECT (" + strText + ") AS NAME FROM ";
@@ -2470,9 +2479,9 @@ public class Wad extends DefaultHandler {
       final Vector<Object> vecTableParameters = new Vector<Object>();
       vecCounters.addElement("0");
       vecCounters.addElement("0");
-      final String strText = WadUtility.columnIdentifier(pool, parentsFieldsData[0].tablename, true,
-          parentsFieldsData[0], vecCounters, true, vecFields, vecTable, vecWhere, vecParameters,
-          vecTableParameters, sqlDateFormat);
+      final String strText = WadUtility.columnIdentifier(pool, parentsFieldsData[0].tablename,
+          true, parentsFieldsData[0], vecCounters, true, vecFields, vecTable, vecWhere,
+          vecParameters, vecTableParameters, sqlDateFormat);
       final FieldsData[] fieldsParent = new FieldsData[1];
       fieldsParent[0] = new FieldsData();
       fieldsParent[0].defaultvalue = "SELECT (" + strText + ") AS NAME FROM "
@@ -2647,9 +2656,9 @@ public class Wad extends DefaultHandler {
       final Vector<Object> vecTableParameters = new Vector<Object>();
       vecCounters.addElement("0");
       vecCounters.addElement("0");
-      final String strText = WadUtility.columnIdentifier(pool, parentsFieldsData[0].tablename, true,
-          parentsFieldsData[0], vecCounters, false, vecFields, vecTable, vecWhere, vecParameters,
-          vecTableParameters, sqlDateFormat);
+      final String strText = WadUtility.columnIdentifier(pool, parentsFieldsData[0].tablename,
+          true, parentsFieldsData[0], vecCounters, false, vecFields, vecTable, vecWhere,
+          vecParameters, vecTableParameters, sqlDateFormat);
       final FieldsData[] fieldsParent = new FieldsData[1];
       fieldsParent[0] = new FieldsData();
       fieldsParent[0].defaultvalue = "SELECT (" + strText + ") AS NAME FROM ";
@@ -2694,9 +2703,9 @@ public class Wad extends DefaultHandler {
       final Vector<Object> vecTableParameters = new Vector<Object>();
       vecCounters.addElement("0");
       vecCounters.addElement("0");
-      final String strText = WadUtility.columnIdentifier(pool, parentsFieldsData[0].tablename, true,
-          parentsFieldsData[0], vecCounters, true, vecFields, vecTable, vecWhere, vecParameters,
-          vecTableParameters, sqlDateFormat);
+      final String strText = WadUtility.columnIdentifier(pool, parentsFieldsData[0].tablename,
+          true, parentsFieldsData[0], vecCounters, true, vecFields, vecTable, vecWhere,
+          vecParameters, vecTableParameters, sqlDateFormat);
       final FieldsData[] fieldsParent = new FieldsData[1];
       fieldsParent[0] = new FieldsData();
       fieldsParent[0].defaultvalue = "SELECT (" + strText + ") AS NAME FROM "
@@ -2835,8 +2844,8 @@ public class Wad extends DefaultHandler {
           // does not save time
           fieldsDataUpdate[i].xmlFormat = "TO_TIMESTAMP(?, ?)";
         } else
-          fieldsDataUpdate[i].xmlFormat = WadUtility.sqlCasting(pool, fieldsDataUpdate[i].reference,
-              fieldsDataUpdate[i].referencevalue) + "(?)";
+          fieldsDataUpdate[i].xmlFormat = WadUtility.sqlCasting(pool,
+              fieldsDataUpdate[i].reference, fieldsDataUpdate[i].referencevalue) + "(?)";
       }
       xmlDocumentXsql.setData("structure3", fieldsDataUpdate);
     }
@@ -2890,8 +2899,9 @@ public class Wad extends DefaultHandler {
             // text) does not save time
             fieldsDataValue[i].name = ((i > 0) ? ", " : "") + "TO_TIMESTAMP(?, ?)";
           } else {
-            fieldsDataValue[i].name = ((i > 0) ? ", " : "") + WadUtility.sqlCasting(pool,
-                fieldsDataValue[i].reference, fieldsDataValue[i].referencevalue) + "(?)";
+            fieldsDataValue[i].name = ((i > 0) ? ", " : "")
+                + WadUtility.sqlCasting(pool, fieldsDataValue[i].reference,
+                    fieldsDataValue[i].referencevalue) + "(?)";
           }
         } else
           fieldsDataValue[i].name = "";
@@ -2947,20 +2957,20 @@ public class Wad extends DefaultHandler {
                 tabName, 0) != 0) {
 
           final FieldsData f = new FieldsData();
-          f.name = (modified ? fieldsDataDefaults[i].name
-              : Sqlc.TransformaNombreColumna(fieldsDataDefaults[i].name)) + "r";
-          f.columnname = (modified ? fieldsDataDefaults[i].columnname
-              : Sqlc.TransformaNombreColumna(fieldsDataDefaults[i].columnname)) + "r";
+          f.name = (modified ? fieldsDataDefaults[i].name : Sqlc
+              .TransformaNombreColumna(fieldsDataDefaults[i].name)) + "r";
+          f.columnname = (modified ? fieldsDataDefaults[i].columnname : Sqlc
+              .TransformaNombreColumna(fieldsDataDefaults[i].columnname)) + "r";
           vecDDef.addElement(f);
         } else if (fieldsDataDefaults[i].reference.equals("28")
             && fieldsDataDefaults[i].isdisplayed.equals("Y")
             && !fieldsDataDefaults[i].referencevalue.equals("")) {
           // Button special case
           final FieldsData f = new FieldsData();
-          f.name = (modified ? fieldsDataDefaults[i].name
-              : Sqlc.TransformaNombreColumna(fieldsDataDefaults[i].name)) + "Btn";
-          f.columnname = (modified ? fieldsDataDefaults[i].columnname
-              : Sqlc.TransformaNombreColumna(fieldsDataDefaults[i].columnname)) + "Btn";
+          f.name = (modified ? fieldsDataDefaults[i].name : Sqlc
+              .TransformaNombreColumna(fieldsDataDefaults[i].name)) + "Btn";
+          f.columnname = (modified ? fieldsDataDefaults[i].columnname : Sqlc
+              .TransformaNombreColumna(fieldsDataDefaults[i].columnname)) + "Btn";
           vecDDef.addElement(f);
         }
       }
@@ -3027,8 +3037,7 @@ public class Wad extends DefaultHandler {
 
         final String code = data[i].whereclause
             + ((!data[i].whereclause.equals("") && !data[i].referencevalue.equals("")) ? " AND "
-                : "")
-            + data[i].referencevalue;
+                : "") + data[i].referencevalue;
         data[i].columnname = "inp" + Sqlc.TransformaNombreColumna(data[i].columnname);
         data[i].whereclause = WadUtility.getComboReloadText(code, null, null, vecReloads, "inp");
         if (data[i].whereclause.equals("") && data[i].type.equals("R")) {
@@ -3041,8 +3050,9 @@ public class Wad extends DefaultHandler {
         }
         if (data[i].reference.equals("17") && data[i].whereclause.equals(""))
           data[i].whereclause = "\"inp" + data[i].columnname + "\"";
-        if (!data[i].whereclause.equals("") && (data[i].reference.equals("17")
-            || data[i].reference.equals("18") || data[i].reference.equals("19"))) {
+        if (!data[i].whereclause.equals("")
+            && (data[i].reference.equals("17") || data[i].reference.equals("18") || data[i].reference
+                .equals("19"))) {
 
           data[i].orgcode = "Utility.getReferenceableOrg(vars, vars.getStringParameter(\"inpadOrgId\"))";
 
@@ -3058,8 +3068,8 @@ public class Wad extends DefaultHandler {
           } else if (data[i].reference.equals("18")) { // Table
             final FieldsData[] tables = FieldsData.selectColumnTableProcess(pool, data[i].id);
             if (tables == null || tables.length == 0)
-              throw new ServletException(
-                  "No se ha encontrado la Table para la columnId: " + data[i].id);
+              throw new ServletException("No se ha encontrado la Table para la columnId: "
+                  + data[i].id);
             final StringBuffer where = new StringBuffer();
             final Vector<Object> vecFields1 = new Vector<Object>();
             final Vector<Object> vecTables = new Vector<Object>();
@@ -3101,8 +3111,8 @@ public class Wad extends DefaultHandler {
           } else if (data[i].reference.equals("19")) { // TableDir
             final FieldsData[] tableDir = FieldsData.selectColumnTableDirProcess(pool, data[i].id);
             if (tableDir == null || tableDir.length == 0)
-              throw new ServletException(
-                  "No se ha encontrado la TableDir para la columnId: " + data[i].id);
+              throw new ServletException("No se ha encontrado la TableDir para la columnId: "
+                  + data[i].id);
             data[i].tablename = "TableDir";
             data[i].htmltext = "select" + tableDir[0].referencevalue;
             final String table_Name = tableDir[0].name.substring(0, tableDir[0].name.length() - 3);
@@ -3152,8 +3162,8 @@ public class Wad extends DefaultHandler {
     }
     if (generatedProcesses.size() > 0) {
       // create the helper class, it is a servlet that manages all combo reloads
-      XmlDocument xmlDocumentHelper = xmlEngine
-          .readXmlTemplate("org/openbravo/wad/ComboReloadsProcessHelper").createXmlDocument();
+      XmlDocument xmlDocumentHelper = xmlEngine.readXmlTemplate(
+          "org/openbravo/wad/ComboReloadsProcessHelper").createXmlDocument();
       FieldsData[] processesGenerated = new FieldsData[generatedProcesses.size()];
       generatedProcesses.copyInto(processesGenerated);
       FieldsData[][] processData = new FieldsData[generatedProcesses.size()][];
@@ -3270,8 +3280,8 @@ public class Wad extends DefaultHandler {
       if ((level + 1) >= Integer.valueOf(tab.tablevel).intValue())
         tab.href = "submitCommandForm('"
             + ((level > Integer.valueOf(tab.tablevel).intValue()) ? "DEFAULT" : "TAB") + "', "
-            + ((level >= Integer.valueOf(tab.tablevel).intValue()) ? "false" : "true") + ", null, '"
-            + tabName + "_Relation.html', 'appFrame');return false;";
+            + ((level >= Integer.valueOf(tab.tablevel).intValue()) ? "false" : "true")
+            + ", null, '" + tabName + "_Relation.html', 'appFrame');return false;";
       else
         tab.href = "return false;";
     }
