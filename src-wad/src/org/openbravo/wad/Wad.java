@@ -1129,18 +1129,6 @@ public class Wad extends DefaultHandler {
             tabsData.windowtype, tabsData.adColumnsortorderId, whereClauseParams, parentwhereclause,
             strProcess, strDirectPrint, !tabsData.uipattern.equals("STD"), vecParameters,
             vecTableParameters, tabsData.javapackage, tabsData.tabmodule);
-
-        // TODO: ALO please check xml+html of sorttab i assume we just forgot that last time
-        /************************************************
-         * XML of the SORT TAB
-         *************************************************/
-        processTabXmlSortTab(parentsFieldsData, fileDir, tabsData.tabid, tabName, keyColumnName);
-        /************************************************
-         * HTML of the SORT TAB
-         *************************************************/
-        processTabHtmlSortTab(parentsFieldsData, fileDir, tabsData.tabid, tabName,
-            tabsData.realwindowname, keyColumnName, tabNamePresentation, allTabs, strProcess,
-            strDirectPrint, windowName, "");
       } else {
         /************************************************
          * JAVA
@@ -3179,107 +3167,6 @@ public class Wad extends DefaultHandler {
       WadUtility.writeFile(fileDir, "ComboReloadsProcessHelper.java", xmlDocumentHelper.print());
       log4j.debug("created :" + fileDir + "/ComboReloadsProcessHelper.java");
     }
-  }
-
-  /**
-   * Generates the xml file for a sort type tab.
-   * 
-   * @param parentsFieldsData
-   *          Array with the parent fields.
-   * @param fileDir
-   *          Path where is gonna be created the file.
-   * @param strTab
-   *          Id of the tab.
-   * @param tabName
-   *          The name of the tab.
-   * @param keyColumnName
-   *          The name of the tab's key column.
-   * @throws ServletException
-   * @throws IOException
-   */
-  private void processTabXmlSortTab(FieldsData[] parentsFieldsData, File fileDir, String strTab,
-      String tabName, String keyColumnName) throws ServletException, IOException {
-    log4j.debug("Procesig relation sort tab xml: " + strTab + ", " + tabName);
-    final String[] discard = { "" };
-    if (parentsFieldsData == null || parentsFieldsData.length == 0)
-      discard[0] = new String("sectionParent");
-    final XmlDocument xmlDocumentRXml = xmlEngine
-        .readXmlTemplate("org/openbravo/wad/ConfigurationSortTab_Relation", discard)
-        .createXmlDocument();
-    xmlDocumentRXml.setParameter("class", tabName + "_Relation.html");
-    xmlDocumentRXml.setParameter("key", keyColumnName);
-    if (parentsFieldsData != null && parentsFieldsData.length > 0) {
-      xmlDocumentRXml.setParameter("parent", parentsFieldsData[0].name);
-    }
-    WadUtility.writeFile(fileDir, tabName + "_Relation.xml",
-        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + xmlDocumentRXml.print());
-  }
-
-  /**
-   * Generates the html file for a sort type tab.
-   * 
-   * @param parentsFieldsData
-   *          Array with the parent fields.
-   * @param fileDir
-   *          Path where is gonna be created the file.
-   * @param strTab
-   *          Id of the tab.
-   * @param tabName
-   *          The name of the tab.
-   * @param windowName
-   *          The name of the window.
-   * @param keyColumnName
-   *          The name of the key column.
-   * @param tabNamePresentation
-   *          The human name of the tab.
-   * @param allTabs
-   *          Array with all the tabs of the window.
-   * @param strProcess
-   *          Id of the process associated to the tab.
-   * @param strDirectPrint
-   *          Indicate if the process is a direct print or has a preview mode.
-   * @param WindowPathName
-   *          The name of the window for the path.
-   * @param strLanguage
-   *          The language for which is gonna be created the file.
-   * @throws ServletException
-   * @throws IOException
-   */
-  private void processTabHtmlSortTab(FieldsData[] parentsFieldsData, File fileDir, String strTab,
-      String tabName, String windowName, String keyColumnName, String tabNamePresentation,
-      TabsData[] allTabs, String strProcess, String strDirectPrint, String WindowPathName,
-      String strLanguage) throws ServletException, IOException {
-    log4j.debug("Procesig relation sort tab html: " + strTab + ", " + tabName);
-    XmlDocument xmlDocumentRHtml;
-    final String[] discard = new String[3];
-    if (strProcess.equals("")) {
-      discard[0] = new String("printButton");
-    } else {
-      discard[0] = new String("");
-    }
-    if (allTabs.length <= NUM_TABS)
-      discard[1] = new String("tabButton");
-    else
-      discard[1] = new String("");
-    if (parentsFieldsData.length == 0)
-      discard[2] = new String("parent");
-    else
-      discard[2] = new String("");
-
-    xmlDocumentRHtml = xmlEngine
-        .readXmlTemplate("org/openbravo/wad/TemplateSortTab_Relation", discard).createXmlDocument();
-    xmlDocumentRHtml.setParameter("tab", tabNamePresentation);
-    xmlDocumentRHtml.setParameter("form", tabName + "_Relation.html");
-    xmlDocumentRHtml.setParameter("key", "inp" + Sqlc.TransformaNombreColumna(keyColumnName));
-    xmlDocumentRHtml.setParameter("tabId", strTab);
-    if (parentsFieldsData.length > 0) {
-      xmlDocumentRHtml.setParameter("keyParent",
-          "inp" + Sqlc.TransformaNombreColumna(parentsFieldsData[0].name));
-      xmlDocumentRHtml.setParameter("parentKeyName", parentsFieldsData[0].name);
-    }
-
-    xmlDocumentRHtml.setParameter("subtabKey", tabName);
-    WadUtility.writeFile(fileDir, tabName + "_Relation.html", xmlDocumentRHtml.print());
   }
 
   /*
