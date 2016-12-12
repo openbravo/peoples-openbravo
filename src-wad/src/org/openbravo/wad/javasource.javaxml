@@ -125,31 +125,7 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
     Boolean saveRequest = (Boolean) request.getAttribute("autosave");
     
     if(saveRequest != null &amp;&amp; saveRequest){
-      String currentOrg = vars.getStringParameter("inpadOrgId");
-      String currentClient = vars.getStringParameter("inpadClientId");
-      boolean editableTab = (!org.openbravo.erpCommon.utility.WindowAccessData.hasReadOnlyAccess(this, vars.getRole(), tabId)
-                            &amp;&amp; (currentOrg.equals("") || Utility.isElementInList(Utility.getContext(this, vars,"#User_Org", windowId, accesslevel), currentOrg)) 
-                            &amp;&amp; (currentClient.equals("") || Utility.isElementInList(Utility.getContext(this, vars, "#User_Client", windowId, accesslevel),currentClient)));
-    
-        OBError myError = new OBError();
-        String commandType = request.getParameter("inpCommandType");
-        String str<KEY_TMP id="keyData">Almacen</KEY_TMP> = request.getParameter("inp<KEY_TMP id="keyData">Almacen</KEY_TMP>");
-        <PARAMETER_TMP id="parent"> String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP> = vars.getGlobalVariable("inp<PARENT_TMP id="keyParentINP">Almacen</PARENT_TMP>", windowId + "|<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>");</PARAMETER_TMP>
-        if (editableTab) {
-          int total = 0;
-          
-          if(commandType.equalsIgnoreCase("EDIT") &amp;&amp; !str<KEY_TMP id="keyData">Almacen</KEY_TMP>.equals(""))
-              total = saveRecord(vars, myError, 'U'<PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>);
-          else
-              total = saveRecord(vars, myError, 'I'<PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>);
-          
-          if (!myError.isEmpty() &amp;&amp; total == 0)     
-            throw new OBException(myError.getMessage());
-        }
-        vars.setSessionValue(request.getParameter("mappingName") +"|hash", vars.getPostDataHash());
-        vars.setSessionValue(tabId + "|Header.view", "EDIT");
-        
-        return;
+      throw new OBException("2.50 style request.autosave is no longer supported: " + vars.getCommand());
     }
     
     String strOrderBy = vars.getSessionValue(tabId + "|orderby");
@@ -417,68 +393,11 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
         printPageClosePopUp(response, vars);
 </FIELDS_TMP>
     } else if (vars.commandIn("SAVE_XHR")) {
-      <PARAMETER_TMP id="parent">String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP> = vars.getGlobalVariable("inp<PARENT_TMP id="keyParentINP">Almacen</PARENT_TMP>", windowId + "|<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>");</PARAMETER_TMP>
-      OBError myError = new OBError();
-      JSONObject result = new JSONObject();
-      String commandType = vars.getStringParameter("inpCommandType");
-      char saveType = "NEW".equals(commandType) ? 'I' : 'U';
-      try {
-        int total = saveRecord(vars, myError, saveType<PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>);
-        if (myError.isEmpty()) {
-          myError = Utility.translateError(this, vars, vars.getLanguage(), "@CODE=RowsUpdated");
-          myError.setMessage(total + " " + myError.getMessage());
-          myError.setType("Success");
-        }
-        result.put("oberror", myError.toMap());
-        result.put("tabid", vars.getStringParameter("tabID"));
-        result.put("redirect", strDireccion + request.getServletPath() + "?Command=" + commandType);
-      } catch (Exception e) {
-        log4j.error("Error saving record (XHR request): " + e.getMessage(), e);
-        myError.setType("Error");
-        myError.setMessage(e.getMessage());
-      }
-
-      response.setContentType("application/json");
-      PrintWriter out = response.getWriter();
-      out.print(result.toString());
-      out.flush();
-      out.close();
+          throw new OBException("2.50 style command is no longer supported: " + vars.getCommand());
     } else if (vars.getCommand().toUpperCase().startsWith("BUTTON") || vars.getCommand().toUpperCase().startsWith("SAVE_BUTTON")) {
       pageErrorPopUp(response);
     } else pageError(response);
   }
-  private <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>Data getEditVariables(Connection con, VariablesSecureApp vars<PARAMETER_TMP id="parent">, String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>) throws IOException,ServletException {
-    <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>Data data = new <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>Data();
-    ServletException ex = null;
-    try {
-<FIELDS_TMP id="sectionDetailgetEditVariables">  <FIELD_TMP id="fieldTry">claveAlmacen</FIELD_TMP>  data.<FIELD_TMP id="fieldName">claveAlmacen</FIELD_TMP> = <FIELD_TMP id="fieldEncryption">FormatUtilities.encryptDecrypt(</FIELD_TMP>vars.get<FIELD_TMP id="fieldType">StringParameter</FIELD_TMP>("inp<FIELD_TMP id="fieldName1">claveAlmacen</FIELD_TMP>"<FIELD_TMP id="fieldDefault">, "D"</FIELD_TMP>)<FIELD_TMP id="fieldEndEncryption">, true)</FIELD_TMP>; <FIELD_TMP id="fieldCatch">claveAlmacen</FIELD_TMP></FIELDS_TMP>
-      data.createdby = vars.getUser();
-      data.updatedby = vars.getUser();
-      data.adUserClient = Utility.getContext(this, vars, "#User_Client", windowId, accesslevel);
-      data.adOrgClient = Utility.getContext(this, vars, "#AccessibleOrgTree", windowId, accesslevel);
-      data.updatedTimeStamp = vars.getStringParameter("updatedTimestamp");
-
-<PARAMETER_TMP id="parent">      data.<PARENT_TMP id="keyParentT">Almacen</PARENT_TMP> = vars.getGlobalVariable("inp<PARENT_TMP id="keyParentINP">Almacen</PARENT_TMP>", windowId + "|<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>");
-</PARAMETER_TMP>
-<PARAMETER_TMP id="hasOrgKey">      data.currentAdOrgId=vars.getStringParameter("inpCurrentOrgId");</PARAMETER_TMP>
-    <LISTS_TMP id="sectionDetailParams2">      vars.getGlobalVariable("inp<LIST_TMP id="fieldInputNameParam2">Almacen</LIST_TMP>", windowId + "|<LIST_TMP id="fieldNameParam2">Almacen</LIST_TMP>", "");
-    </LISTS_TMP>
-    <LISTS_TMP id="sectionDetailDocumentsNew">     if (data.<LIST_TMP id="fieldNameDocNew">dd</LIST_TMP>.startsWith("&#60;")) data.<LIST_TMP id="fieldNameDocNew">dd</LIST_TMP> = <LIST_TMP id="fieldValueDocNew">dd</LIST_TMP>;</LISTS_TMP>
-
-    <LISTS_TMP id="sectionIdentifyValues">      if (data.<LIST_TMP id="fieldIdentifyColumn">dd</LIST_TMP>.equals("")) data.<LIST_TMP id="fieldIdentifyColumn">dd</LIST_TMP> = <LIST_TMP id="fieldIdentifyValue">dd</LIST_TMP>;</LISTS_TMP>
-    }
-    catch(ServletException e) {
-    	vars.setEditionData(tabId, data);
-    	throw e;
-    }
-    // Behavior with exception for numeric fields is to catch last one if we have multiple ones
-    if(ex != null) {
-      vars.setEditionData(tabId, data);
-      throw ex;
-    }
-    return data;
-  }
-
 
 <PARAMETER_TMP id="parent">  private void refreshParentSession(VariablesSecureApp vars, String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>) throws IOException,ServletException {
       <PARENT_TMP id="parentSecondaryKey">String strParentId=getActualParentId(strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP>);</PARENT_TMP>
@@ -623,84 +542,6 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
       out.close();
     }
 </FIELDS_TMP>
-
-  private int saveRecord(VariablesSecureApp vars, OBError myError, char type<PARAMETER_TMP id="parent">, String strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>) throws IOException, ServletException {
-    <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>Data data = null;
-    int total = 0;
-    if (org.openbravo.erpCommon.utility.WindowAccessData.hasReadOnlyAccess(this, vars.getRole(), tabId)) {
-        OBError newError = Utility.translateError(this, vars, vars.getLanguage(), Utility.messageBD(this, "NoWriteAccess", vars.getLanguage()));
-        myError.setError(newError);
-        vars.setMessage(tabId, myError);
-    }
-    else {
-        Connection con = null;
-        try {
-            con = this.getTransactionConnection();
-            data = getEditVariables(con, vars<PARAMETER_TMP id="parent">, strP<PARENT_TMP id="keyParent">Almacen</PARENT_TMP></PARAMETER_TMP>);
-            data.dateTimeFormat = vars.getSessionValue("#AD_SqlDateTimeFormat");            
-            String strSequence = "";
-            if(type == 'I') {                
-<PARAMETER_TMP id="keySequence">        strSequence = SequenceIdData.getUUID();
-                if(log4j.isDebugEnabled()) log4j.debug("Sequence: " + strSequence);
-                data.<KEY_TMP id="keyData">Almacen</KEY_TMP> = strSequence;</PARAMETER_TMP>  
-            }
-            <PARAMETER_TMP id="client">if (Utility.isElementInList(Utility.getContext(this, vars, "#User_Client", windowId, accesslevel),data.adClientId) <FIELDS_TMP id="sectionOrganizationCheck"> &amp;&amp; Utility.isElementInList(Utility.getContext(this, vars, "#User_Org", windowId, accesslevel),data.adOrgId)</FIELDS_TMP>){</PARAMETER_TMP>
-		     if(type == 'I') {
-		       total = data.insert(con, this);
-		     } else {
-		       //Check the version of the record we are saving is the one in DB
-		       if (<PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>Data.getCurrentDBTimestamp(this, data.<KEY_TMP id="keyData">Almacen</KEY_TMP>).equals(
-                vars.getStringParameter("updatedTimestamp"))) {
-                total = data.update(con, this);
-               } else {
-                 myError.setMessage(Replace.replace(Replace.replace(Utility.messageBD(this,
-                    "SavingModifiedRecord", vars.getLanguage()), "\\n", "&lt;br/&gt;"), "&amp;quot;", "\""));
-                 myError.setType("Error");
-                 vars.setSessionValue(tabId + "|concurrentSave", "true");
-               } 
-		     }		            
-          <PARAMETER_TMP id="client">
-            }
-                else {
-            OBError newError = Utility.translateError(this, vars, vars.getLanguage(), Utility.messageBD(this, "NoWriteAccess", vars.getLanguage()));
-            myError.setError(newError);            
-          }</PARAMETER_TMP>
-          releaseCommitConnection(con);
-        } catch(Exception ex) {
-            OBError newError = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
-            myError.setError(newError);   
-            try {
-              releaseRollbackConnection(con);
-            } catch (final Exception e) { //do nothing 
-            }           
-        }
-            
-        if (myError.isEmpty() &amp;&amp; total == 0) {
-            OBError newError = Utility.translateError(this, vars, vars.getLanguage(), "@CODE=DBExecuteError");
-            myError.setError(newError);
-        }
-        vars.setMessage(tabId, myError);
-            
-        if(!myError.isEmpty()){
-            if(data != null ) {
-                if(type == 'I') {            			
-                    data.<KEY_TMP id="keyData">Almacen</KEY_TMP> = "";
-                }
-                else {                    
-                    <PARAMETERS_TMP id="sectionButtonText">
-                        //BUTTON TEXT FILLING
-                    data.<FIELD_TMP id="fieldButtonText"/> = ActionButtonDefaultData.getText(this, vars.getLanguage(), "<FIELD_TMP id="fieldButtonListID"/>", data.getField("<FIELD_TMP id="fieldButtonID"/>"));
-                    </PARAMETERS_TMP>
-                }
-                vars.setEditionData(tabId, data);
-            }            	
-        }
-        else {
-            vars.setSessionValue(windowId + "|<KEY_TMP id="key">PosicionAlmacen</KEY_TMP>", data.<KEY_TMP id="keyData">Almacen</KEY_TMP>);
-        }
-    }
-    return total;
-  }
 
   public String getServletInfo() {
     return "Servlet <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP>. This Servlet was made by Wad constructor";
