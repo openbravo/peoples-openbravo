@@ -90,9 +90,9 @@ public class ReportValuationStock extends HttpSecureAppServlet {
       String strDate = vars.getGlobalVariable("inpDate", "ReportValuationStock|Date",
           DateTimeData.today(this));
       String strOrganization = vars.getGlobalVariable("inpOrg",
-          "ReportValuationStock|Organization", "", IsIDFilter.instance);
+          "ReportValuationStock|Organization", vars.getOrg(), IsIDFilter.instance);
       String strWarehouse = vars.getGlobalVariable("inpmWarehouseId",
-          "ReportValuationStock|Warehouse", "", IsIDFilter.instance);
+          "ReportValuationStock|Warehouse", vars.getWarehouse(), IsIDFilter.instance);
       String strCategoryProduct = vars.getGlobalVariable("inpCategoryProduct",
           "ReportValuationStock|CategoryProduct", "", IsIDFilter.instance);
       String strCurrencyId = OBCurrencyUtils.getOrgCurrency(vars.getOrg());

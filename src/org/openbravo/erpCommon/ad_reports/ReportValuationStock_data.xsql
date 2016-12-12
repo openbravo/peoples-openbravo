@@ -486,9 +486,9 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-       SELECT  AD_ORG_ID AS PADRE, M_WAREHOUSE_ID AS ID, NAME 
-       FROM M_WAREHOUSE
-       WHERE ad_client_id = ?
+       SELECT O.AD_ORG_ID AS PADRE, W.M_WAREHOUSE_ID AS ID, W.NAME 
+       FROM AD_ORG O, M_WAREHOUSE W
+       WHERE ad_org_isinnaturaltree(O.AD_ORG_ID, W.AD_ORG_ID, ?) = 'Y'
       ]]>
     </Sql>
     <Parameter name="adClient"/>
