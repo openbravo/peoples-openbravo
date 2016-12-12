@@ -121,11 +121,6 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
       throw new OBException("2.50 style request.autosave is no longer supported: " + vars.getCommand());
     }
     
-    String strOrderBy = vars.getSessionValue(tabId + "|orderby");
-    if (!strOrderBy.equals("")) {
-      vars.setSessionValue(tabId + "|newOrder", "1");
-    }
-
     if (vars.commandIn("DEFAULT")) {
           throw new OBException("2.50 style command is no longer supported: " + vars.getCommand());
     } else if (vars.commandIn("DIRECT")) {
