@@ -121,43 +121,11 @@ public class <PARAMETER_TMP id="class">Almacen</PARAMETER_TMP> extends HttpSecur
       throw new OBException("2.50 style request.autosave is no longer supported: " + vars.getCommand());
     }
     
-    if (vars.commandIn("DEFAULT")) {
-          throw new OBException("2.50 style command is no longer supported: " + vars.getCommand());
-    } else if (vars.commandIn("DIRECT")) {
-          throw new OBException("2.50 style command is no longer supported: " + vars.getCommand());
-    } else if (vars.commandIn("TAB")) {
-          throw new OBException("2.50 style command is no longer supported: " + vars.getCommand());
-<FIELDS_TMP id="sectionIsHighVolume4">    } else if (vars.commandIn("SEARCH")) {
-          throw new OBException("2.50 style command is no longer supported: " + vars.getCommand());
-</FIELDS_TMP>
-    } else if (vars.commandIn("RELATION")) {
-          throw new OBException("2.50 style command is no longer supported: " + vars.getCommand());
-    } else if (vars.commandIn("NEW")) {
-          throw new OBException("2.50 style command is no longer supported: " + vars.getCommand());
-    } else if (vars.commandIn("EDIT")) {
-          throw new OBException("2.50 style command is no longer supported: " + vars.getCommand());
-    } else if (vars.commandIn("NEXT")) {
-          throw new OBException("2.50 style command is no longer supported: " + vars.getCommand());
-    } else if (vars.commandIn("PREVIOUS")) {
-          throw new OBException("2.50 style command is no longer supported: " + vars.getCommand());
-    } else if (vars.commandIn("FIRST_RELATION")) {
-          throw new OBException("2.50 style command is no longer supported: " + vars.getCommand());
-    } else if (vars.commandIn("PREVIOUS_RELATION")) {
-          throw new OBException("2.50 style command is no longer supported: " + vars.getCommand());
-    } else if (vars.commandIn("NEXT_RELATION")) {
-          throw new OBException("2.50 style command is no longer supported: " + vars.getCommand());
-    } else if (vars.commandIn("FIRST")) {
-          throw new OBException("2.50 style command is no longer supported: " + vars.getCommand());
-    } else if (vars.commandIn("LAST_RELATION")) {
-          throw new OBException("2.50 style command is no longer supported: " + vars.getCommand());
-    } else if (vars.commandIn("LAST")) {
-          throw new OBException("2.50 style command is no longer supported: " + vars.getCommand());
-    } else if (vars.commandIn("SAVE_NEW_RELATION", "SAVE_NEW_NEW", "SAVE_NEW_EDIT")) {
-          throw new OBException("2.50 style command is no longer supported: " + vars.getCommand());
-    } else if (vars.commandIn("SAVE_EDIT_RELATION", "SAVE_EDIT_NEW", "SAVE_EDIT_EDIT", "SAVE_EDIT_NEXT")) {
-          throw new OBException("2.50 style command is no longer supported: " + vars.getCommand());
-    } else if (vars.commandIn("DELETE")) {
-          throw new OBException("2.50 style command is no longer supported: " + vars.getCommand());
+    if (vars.commandIn("DEFAULT", "DIRECT", "TAB", "SEARCH", "RELATION", "NEW", "EDIT", "NEXT",
+        "PREVIOUS", "FIRST_RELATION", "PREVIOUS_RELATION", "NEXT_RELATION", "LAST_RELATION",
+        "LAST", "SAVE_NEW_RELATION", "SAVE_NEW_NEW", "SAVE_NEW_EDIT", "SAVE_EDIT_RELATION",
+        "SAVE_EDIT_NEW", "SAVE_EDIT_EDIT", "SAVE_EDIT_NEXT", "DELETE")) {
+      throw new OBException("2.50 style command is no longer supported: " + vars.getCommand());
 <FIELDS_TMP id="sectionActionButtons1">
      } else if (vars.commandIn("BUTTON<FIELD_TMP id="ButtonRealName1">button</FIELD_TMP><FIELD_TMP id="ProcessID1">button</FIELD_TMP>")) {
         vars.setSessionValue("button<FIELD_TMP id="ProcessID1">xx</FIELD_TMP>.str<FIELD_TMP id="ButtonName1">name</FIELD_TMP>", vars.getStringParameter("inp<FIELD_TMP id="ButtonName1">name</FIELD_TMP>"));
