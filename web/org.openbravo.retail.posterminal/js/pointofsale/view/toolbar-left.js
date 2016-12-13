@@ -286,7 +286,8 @@ enyo.kind({
         isReceiptHasbeenpaidEqualToN: undefined,
         isToolbarEnabled: undefined,
         isDisabledRequest: undefined,
-        isCreditAndNotPartialCredit: undefined
+        isCreditAndNotPartialCredit: undefined,
+        isLocallyGeneratedPayments: undefined
       };
 
       // If any requirement is not met, return false
@@ -324,7 +325,10 @@ enyo.kind({
       requirements.isReceiptLinesLengthGreaterThanZero = receipt.get('lines').length > 0;
       requirements.isReceiptHasbeenpaidEqualToN = receipt.get('hasbeenpaid') === 'N';
       hasBeenPaid = receipt.get('isPaid') && !receipt.get('isQuotation');
-      if (OB.UTIL.isNullOrUndefined(requirements.receiptBpId) || !requirements.isReceiptDocnoLengthGreaterThanThree || !requirements.isReceiptLinesLengthGreaterThanZero || !requirements.isReceiptHasbeenpaidEqualToN) {
+      requirements.isLocallyGeneratedPayments = !OB.UTIL.isNullOrUndefined(receipt.get('payments').find(function (payment) {
+          return !payment.get('isPrePayment');
+        }));
+      if (OB.UTIL.isNullOrUndefined(requirements.receiptBpId) || !requirements.isReceiptDocnoLengthGreaterThanThree || (!requirements.isReceiptLinesLengthGreaterThanZero && !requirements.isLocallyGeneratedPayments) || !requirements.isReceiptHasbeenpaidEqualToN) {
         return false;
       }
       requirements.isCreditAndNotPartialCredit = receipt.get('paidOnCredit') && !receipt.get('paidPartiallyOnCredit');
