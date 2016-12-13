@@ -194,9 +194,8 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
   deleteMultiOrderList: function () {
     var i;
     for (i = 0; this.get('multiOrders').get('multiOrdersList').length > i; i++) {
-      if (!this.get('multiOrders').get('multiOrdersList').at(i).get('isLayaway')) { //if it is not true, means that iti is a new order (not a loaded layaway)
+      if (!this.get('multiOrders').get('multiOrdersList').at(i).get('isLayaway')) { //if it is not true, it means that this is either a new order or a newly generated layaway (not a loaded layaway)
         this.get('multiOrders').get('multiOrdersList').at(i).unset('amountToLayaway');
-        this.get('multiOrders').get('multiOrdersList').at(i).set('orderType', 0);
         continue;
       }
       this.get('orderList').current = this.get('multiOrders').get('multiOrdersList').at(i);
