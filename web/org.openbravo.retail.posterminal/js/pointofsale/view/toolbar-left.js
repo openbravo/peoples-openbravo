@@ -326,8 +326,8 @@ enyo.kind({
       requirements.isReceiptHasbeenpaidEqualToN = receipt.get('hasbeenpaid') === 'N';
       hasBeenPaid = receipt.get('isPaid') && !receipt.get('isQuotation');
       requirements.isLocallyGeneratedPayments = !OB.UTIL.isNullOrUndefined(receipt.get('payments').find(function (payment) {
-          return !payment.get('isPrePayment');
-        }));
+        return !payment.get('isPrePayment');
+      }));
       if (OB.UTIL.isNullOrUndefined(requirements.receiptBpId) || !requirements.isReceiptDocnoLengthGreaterThanThree || (!requirements.isReceiptLinesLengthGreaterThanZero && !requirements.isLocallyGeneratedPayments) || !requirements.isReceiptHasbeenpaidEqualToN) {
         return false;
       }
