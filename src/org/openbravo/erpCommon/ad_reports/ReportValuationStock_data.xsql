@@ -486,9 +486,10 @@
     <SqlMethodComment></SqlMethodComment>
     <Sql>
       <![CDATA[
-       SELECT O.AD_ORG_ID AS PADRE, W.M_WAREHOUSE_ID AS ID, W.NAME 
-       FROM AD_ORG O, M_WAREHOUSE W
-       WHERE ad_org_isinnaturaltree(O.AD_ORG_ID, W.AD_ORG_ID, ?) = 'Y'
+       SELECT o.AD_ORG_ID AS PADRE, w.M_WAREHOUSE_ID AS ID, w.NAME
+       FROM AD_ORG o, M_WAREHOUSE w
+       WHERE ad_isorgincluded(w.AD_ORG_ID, o.AD_ORG_ID, o.AD_CLIENT_ID) <> -1
+       AND o.AD_CLIENT_ID = ?
       ]]>
     </Sql>
     <Parameter name="adClient"/>
