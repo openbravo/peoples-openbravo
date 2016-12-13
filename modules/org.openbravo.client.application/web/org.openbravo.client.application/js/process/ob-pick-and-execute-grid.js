@@ -675,9 +675,9 @@ isc.OBPickAndExecuteGrid.addProperties({
       }
     }
 
+    rows = this.data.allRows || this.data.localData || [];
     if (selectedLen === 0) {
       // push all *selected* rows into selectedIds cache
-      rows = this.data.allRows || this.data.localData || [];
       len = rows.length;
       for (i = 0; i < len; i++) {
         if (rows[i] && rows[i][this.selectionProperty]) {
@@ -693,6 +693,9 @@ isc.OBPickAndExecuteGrid.addProperties({
     if (this.onGridLoadFunction && this.isDataLoaded()) {
       this.onGridLoadFunction(this);
       this.view.handleButtonsStatus();
+    }
+    if (rows.length > 0) {
+      this.updateCheckboxHeaderState();
     }
   },
 
