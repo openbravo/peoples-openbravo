@@ -72,7 +72,6 @@ public class HorizontalInheritance extends WeldBaseTest {
   private final List<String> PREFERENCES = Arrays.asList("AllowAttachment", "AllowDelete",
       "AllowMultiTab", "OBSERDS_CSVTextEncoding", "StartPage");
 
-  @SuppressWarnings("unchecked")
   private final List<List<String>> ACCESSES = Arrays.asList(ORGANIZATIONS, WINDOWS, TABS, FIELDS,
       REPORTS, FORMS, WIDGETS, VIEWS, PROCESSES, TABLES, ALERTS, PREFERENCES);
   private static int testCounter = 0;

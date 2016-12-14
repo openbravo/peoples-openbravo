@@ -38,7 +38,6 @@ import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.FieldProviderFactory;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.PropertyException;
-import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.common.plm.ProductAUM;
@@ -74,6 +73,7 @@ public class UOMUtil {
    */
 
   public static String getDefaultAUMForDocument(String mProductId, String documentTypeId) {
+    // Do not check Organization access
     OBContext.setAdminMode(false);
     try {
       if (mProductId == null || documentTypeId == null) {
@@ -115,11 +115,13 @@ public class UOMUtil {
       return null;
     }
     String finalAUM = "";
+    // Do not check Organization access
     OBContext.setAdminMode(false);
     try {
       OBCriteria<ProductAUM> pAUMCriteria = OBDal.getInstance().createCriteria(ProductAUM.class);
-      pAUMCriteria.add(Restrictions.and(Restrictions.eq("product.id", mProductId), Restrictions.eq(
-          isSoTrx ? ProductAUM.PROPERTY_SALES : ProductAUM.PROPERTY_PURCHASE, UOM_PRIMARY)));
+      pAUMCriteria.add(Restrictions.eq("product.id", mProductId));
+      pAUMCriteria.add(Restrictions.eq(isSoTrx ? ProductAUM.PROPERTY_SALES
+          : ProductAUM.PROPERTY_PURCHASE, UOM_PRIMARY));
       Product product = OBDal.getInstance().get(Product.class, mProductId);
       finalAUM = product.getUOM().getId();
       ProductAUM primaryAum = (ProductAUM) pAUMCriteria.uniqueResult();
@@ -143,6 +145,7 @@ public class UOMUtil {
    */
   public static List<UOM> getAvailableUOMsForDocument(String mProductId, String docTypeId) {
     List<UOM> lUom = new ArrayList<UOM>();
+    // Do not check Organization access
     OBContext.setAdminMode(false);
     try {
       if (mProductId == null || docTypeId == null) {
@@ -150,9 +153,10 @@ public class UOMUtil {
       }
       DocumentType docType = OBDal.getInstance().get(DocumentType.class, docTypeId);
       OBCriteria<ProductAUM> pAUMCriteria = OBDal.getInstance().createCriteria(ProductAUM.class);
-      pAUMCriteria.add(Restrictions.and(Restrictions.eq("product.id", mProductId), Restrictions.ne(
-          docType.isSalesTransaction() ? ProductAUM.PROPERTY_SALES : ProductAUM.PROPERTY_PURCHASE,
-          UOM_NOT_APPLICABLE)));
+      pAUMCriteria.add(Restrictions.eq("product.id", mProductId));
+      pAUMCriteria.add(Restrictions.ne(docType.isSalesTransaction() ? ProductAUM.PROPERTY_SALES
+          : ProductAUM.PROPERTY_PURCHASE, UOM_NOT_APPLICABLE));
+      pAUMCriteria.addOrderBy("uOM.name", true);
       Product product = OBDal.getInstance().get(Product.class, mProductId);
       List<ProductAUM> pAUMList = pAUMCriteria.list();
       for (ProductAUM pAUM : pAUMList) {
@@ -182,6 +186,7 @@ public class UOMUtil {
   private static BigDecimal getConvertedQty(String mProductId, BigDecimal qty, String toUOMId,
       boolean reverse) throws OBException {
     BigDecimal strQty = qty;
+    // Do not check Organization access
     OBContext.setAdminMode(false);
     try {
       Product product = OBDal.getInstance().get(Product.class, mProductId);
@@ -201,11 +206,11 @@ public class UOMUtil {
         try {
           ProductAUM conversion = (ProductAUM) productAUMConversionCriteria.uniqueResult();
           if (conversion == null) {
-            throw new OBException(OBMessageUtils.messageBD(new DalConnectionProvider(),
+            throw new OBException(OBMessageUtils.messageBD(new DalConnectionProvider(false),
                 "NoAUMDefined", OBContext.getOBContext().getLanguage().getLanguage()));
           }
           BigDecimal rate = conversion.getConversionRate();
-          UOM uom = OBDal.getInstance().get(UOM.class, conversion.getUOM().getId());
+          UOM uom = conversion.getUOM();
           if (reverse) {
             strQty = qty.divide(rate, uom.getStandardPrecision().intValue(), RoundingMode.HALF_UP);
           } else {
@@ -213,7 +218,7 @@ public class UOMUtil {
                 RoundingMode.HALF_UP);
           }
         } catch (NonUniqueResultException e) {
-          throw new OBException(OBMessageUtils.messageBD(new DalConnectionProvider(),
+          throw new OBException(OBMessageUtils.messageBD(new DalConnectionProvider(false),
               "DuplicateAUM", OBContext.getOBContext().getLanguage().getLanguage()));
         }
       }
@@ -269,19 +274,13 @@ public class UOMUtil {
    */
   public static boolean isUomManagementEnabled() {
     String propertyValue = "N";
-    OBContext.setAdminMode(false);
     try {
-      try {
-        Client systemClient = OBDal.getInstance().get(Client.class, "0");
-        propertyValue = Preferences.getPreferenceValue(UOM_PROPERTY, true, systemClient, null,
-            null, null, null);
-      } catch (PropertyException e) {
-        log4j.debug("Preference UomManagement not found", e);
-      }
-    } finally {
-      OBContext.restorePreviousMode();
+      propertyValue = Preferences.getPreferenceValue(UOM_PROPERTY, true, "0", null, null, null,
+          null);
+    } catch (PropertyException e) {
+      log4j.debug("Preference UomManagement not found", e);
     }
-    return (propertyValue!= null && propertyValue.equals("Y"));
+    return (propertyValue != null && propertyValue.equals("Y"));
   }
 
   /**
@@ -299,6 +298,7 @@ public class UOMUtil {
     if (productId == null || productId.isEmpty() || docTypeId == null || docTypeId.isEmpty()) {
       return FieldProviderFactory.getFieldProviderArray(result);
     }
+    // Do not check Organization access
     OBContext.setAdminMode(false);
     try {
       String id = getDefaultAUMForDocument(productId, docTypeId);
@@ -328,6 +328,7 @@ public class UOMUtil {
     if (productId == null || productId.isEmpty() || docTypeId == null || docTypeId.isEmpty()) {
       return FieldProviderFactory.getFieldProviderArray(result);
     }
+    // Do not check Organization access
     OBContext.setAdminMode(false);
     try {
       List<UOM> availableUOM = getAvailableUOMsForDocument(productId, docTypeId);
@@ -351,10 +352,12 @@ public class UOMUtil {
     if (productId == null || productId.isEmpty()) {
       return FieldProviderFactory.getFieldProviderArray(result);
     }
+    // Do not check Organization access
     OBContext.setAdminMode(false);
     try {
       OBCriteria<ProductUOM> pUomCriteria = OBDal.getInstance().createCriteria(ProductUOM.class);
       pUomCriteria.add(Restrictions.eq("product.id", productId));
+      pUomCriteria.addOrderBy("uOM.name", true);
       List<ProductUOM> pUomList = pUomCriteria.list();
       for (ProductUOM pUom : pUomList) {
         resultMap = new HashMap<>();

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2013 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -53,9 +53,9 @@ public class UIDefinitionController extends BaseTemplateComponent {
 
   private static UIDefinitionController instance = new UIDefinitionController();
 
-  public static String SHORTFORMAT_QUALIFIER = "Relation";
-  public static String INPUTFORMAT_QUALIFIER = "Edition";
-  public static String NORMALFORMAT_QUALIFIER = "Inform";
+  public static final String SHORTFORMAT_QUALIFIER = "Relation";
+  public static final String INPUTFORMAT_QUALIFIER = "Edition";
+  public static final String NORMALFORMAT_QUALIFIER = "Inform";
 
   private static final String EncryptedStringReferenceID = "16EC6DF4A59747749FDF256B7FBBB058";
   private static final String HashedStringReferenecID = "C5C21C28B39E4683A91779F16C112E40";

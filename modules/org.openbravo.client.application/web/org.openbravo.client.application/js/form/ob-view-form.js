@@ -1589,6 +1589,9 @@ OB.ViewFormProperties = {
     this.view.messageBar.hide();
     if (this.isNew) {
       this.view.refreshChildViews();
+      // after closing the form, we mark it as not new. In other case, back in grid view this flag
+      // would avoid the required FIC call in 'SETSESSION' mode when selecting a record
+      this.isNew = false;
     }
 
     if (this.view.directNavigation) {
