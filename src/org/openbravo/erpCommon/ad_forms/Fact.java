@@ -11,7 +11,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SLU
- * Contributions are Copyright (C) 2001-2015 Openbravo S.L.U.
+ * Contributions are Copyright (C) 2001-2016 Openbravo S.L.U.
  ******************************************************************************
  */
 package org.openbravo.erpCommon.ad_forms;
@@ -20,7 +20,10 @@ import java.math.BigDecimal;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 import javax.servlet.ServletException;
 
@@ -28,6 +31,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.erpCommon.utility.Utility;
 
 public class Fact {
   static Logger log4jFact = Logger.getLogger(Fact.class);
@@ -289,6 +293,13 @@ public class Fact {
         + " -  m_lines.size() - " + m_lines.size());
 
     line.roundToCurrencyPrecision();
+    String Record_ID2 = null;
+    if (docLine != null)
+      Record_ID2 = docLine.m_Record_Id2;
+    if (Record_ID2 == null || Record_ID2.equals(""))
+      Record_ID2 = m_doc.m_Record_Id2;
+    line.setM_RecordID2(Record_ID2);
+    log4jFact.debug("Fact - createLine - Record_ID2 = " + Record_ID2);
 
     m_lines.add(line);
     return line;
@@ -467,15 +478,42 @@ public class Fact {
     log4jFact.debug(" Fact - save() - m_lines.size - " + m_lines.size());
     if (m_lines.size() == 0)
       return true;
+    Set<String> recordID2Set = new HashSet<String>();
     for (int i = 0; i < m_lines.size(); i++) {
       FactLine fl = (FactLine) m_lines.get(i);
       if (!fl.save(con, conn, vars)) { // abort on first error
         log4jFact.warn("Save (fact): aborted. i=" + i);
         return false;
       }
+      if (fl.getM_RecordID2() != null && !StringUtils.isEmpty(fl.getM_RecordID2())) {
+        recordID2Set.add(fl.getM_RecordID2());
+      }
+    }
+    if (!recordID2Set.isEmpty()) {
+      for (Set<String> recordID2 : splitRecordID2Set(recordID2Set, 1000)) {
+        String recordID2In = Utility.getInStrSet(recordID2);
+        // Update Balancing Date [Open Balances project]
+        FactLineData.updateDateBalanced(con, conn, recordID2In);
+      }
     }
     return true;
   } // commit
+
+  public List<Set<String>> splitRecordID2Set(Set<String> recordID2Set, int maxSize) {
+    List<Set<String>> recordIDSetList = new ArrayList<Set<String>>();
+    Set<String> recordIDSet = new HashSet<String>();
+    for (String recordID2 : recordID2Set) {
+      recordIDSet.add(recordID2);
+      if (recordIDSet.size() == maxSize) {
+        recordIDSetList.add(recordIDSet);
+        recordIDSet = new HashSet<String>();
+      }
+    }
+    if (!recordIDSet.isEmpty()) {
+      recordIDSetList.add(recordIDSet);
+    }
+    return recordIDSetList;
+  }
 
   /**
    * Are all segments balanced
