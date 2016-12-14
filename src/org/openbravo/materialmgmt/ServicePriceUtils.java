@@ -52,13 +52,13 @@ import org.slf4j.LoggerFactory;
 public class ServicePriceUtils {
   private static final Logger log = LoggerFactory.getLogger(ServicePriceUtils.class);
   private static final String PERCENTAGE = "P";
-  private static String SERVICEPRODUCT = "S";
   public static final String UNIQUE_QUANTITY = "UQ";
 
   /**
    * Method to obtain Service Amount to be added for a certain service order line based on selected
    * product lines amount
    */
+
   public static BigDecimal getServiceAmount(OrderLine orderline, BigDecimal linesTotalAmount,
       BigDecimal totalDiscounts, BigDecimal totalPrice, BigDecimal relatedQty,
       BigDecimal unitDiscountsAmt) {
@@ -371,55 +371,10 @@ public class ServicePriceUtils {
    * Method that returns a warning message if a service of a Return From Customer is not Returnable
    * of the return period is expired.
    */
+  @Deprecated
   public static JSONObject serviceReturnAllowedRFC(ShipmentInOutLine shipmentLine,
       Product serviceProduct, Date rfcOrderDate) {
-    JSONObject result = null;
-    OBContext.setAdminMode(true);
-    try {
-      if (SERVICEPRODUCT.equals(serviceProduct.getProductType())) {
-        if (!serviceProduct.isReturnable()) {
-          throw new OBException("@Service@ '" + serviceProduct.getIdentifier()
-              + "' @ServiceIsNotReturnable@");
-        } else {
-          try {
-            final Date orderDate = shipmentLine != null && shipmentLine.getSalesOrderLine() != null ? OBDateUtils
-                .getDate(OBDateUtils.formatDate(shipmentLine.getSalesOrderLine().getOrderDate()))
-                : null;
-            Date returnDate = null;
-            String message = null;
-            if (orderDate != null && serviceProduct.getOverdueReturnDays() != null) {
-              returnDate = DateUtils.addDays(orderDate, serviceProduct.getOverdueReturnDays()
-                  .intValue());
-            }
-            if (serviceProduct.getOverdueReturnDays() != null && returnDate != null
-                && rfcOrderDate.after(returnDate)) {
-              message = "@Service@ '" + serviceProduct.getIdentifier()
-                  + "' @ServiceReturnExpired@: " + OBDateUtils.formatDate(returnDate);
-            }
-            if (serviceProduct.getOverdueReturnDays() != null && returnDate == null) {
-              message = "@Service@ '" + serviceProduct.getIdentifier()
-                  + "' @ServiceMissingReturnDate@";
-            }
-            if (message != null) {
-              message = OBMessageUtils.parseTranslation(new DalConnectionProvider(false),
-                  RequestContext.get().getVariablesSecureApp(), OBContext.getOBContext()
-                      .getLanguage().getLanguage(), message);
-              result = new JSONObject();
-              result.put("severity", "warning");
-              result.put("title", "Warning");
-              result.put("text", message);
-            }
-          } catch (ParseException e) {
-            log.error(e.getMessage(), e);
-          } catch (JSONException e) {
-            log.error(e.getMessage(), e);
-          }
-        }
-      }
-      return result;
-    } finally {
-      OBContext.restorePreviousMode();
-    }
+    return ProductPriceUtils.productReturnAllowedRFC(shipmentLine, serviceProduct, rfcOrderDate);
   }
 
   /**
