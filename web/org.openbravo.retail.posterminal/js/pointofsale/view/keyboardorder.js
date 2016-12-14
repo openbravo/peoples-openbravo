@@ -844,7 +844,7 @@ enyo.kind({
       criteria.remoteFilters = remoteCriteria;
     }
 
-    OB.Dal.find(OB.Model.Product, criteria, function (data) {
+    OB.Dal.findUsingCache('productSearch', OB.Model.Product, criteria, function (data) {
       me.searchProductCallback(data, code, callback, attrs);
     }, me.errorCallback, this);
   },
@@ -884,6 +884,7 @@ enyo.kind({
   addProductToReceipt: function (keyboard, product, attrs) {
     keyboard.doAddProduct({
       product: product,
+      qty: attrs.unitsToAdd,
       ignoreStockTab: true,
       attrs: attrs
     });
