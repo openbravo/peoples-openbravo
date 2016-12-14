@@ -68,7 +68,8 @@ enyo.kind({
     classes: 'orderline-price fitText',
     components: [{
       tag: 'span',
-      name: 'price'
+      name: 'price',
+      style: 'padding-left: 8px;'
 
     }]
   }, {
@@ -76,7 +77,8 @@ enyo.kind({
     classes: 'orderline-gross fitText',
     components: [{
       tag: 'span',
-      name: 'gross'
+      name: 'gross',
+      style: 'padding-left: 8px;'
     }]
   }, {
     style: 'clear: both;'
@@ -355,7 +357,8 @@ enyo.kind({
     classes: 'order-tax-total fitText',
     components: [{
       tag: 'span',
-      name: 'totaltax'
+      name: 'totaltax',
+      style: 'padding-left: 8px;'
 
     }]
   }, {
