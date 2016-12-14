@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014 Openbravo SLU
+ * All portions are Copyright (C) 2014-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,6 +21,7 @@ package org.openbravo.advpaymentmngt.actionHandler;
 
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
@@ -49,7 +50,9 @@ public class AddPaymentOnProcessActionHandler extends BaseActionHandler {
       FIN_FinancialAccount finFinancialAccount = OBDal.getInstance().get(
           FIN_FinancialAccount.class, strFinFinancialAccountId);
       String strBusinessPartnerId = null;
+
       if (jsonData.get("receivedFrom") != JSONObject.NULL) {
+
         strBusinessPartnerId = jsonData.getString("receivedFrom");
         BusinessPartner businessPartner = OBDal.getInstance().get(BusinessPartner.class,
             strBusinessPartnerId);
@@ -64,6 +67,22 @@ public class AddPaymentOnProcessActionHandler extends BaseActionHandler {
           result.put("message", errorMessage);
           return result;
         }
+
+        // If the payment uses or generates credit, payment currency should map bp currency
+        String currencyId = jsonData.getString("currencyId");
+        boolean usesCredit = jsonData.getBoolean("usesCredit");
+        boolean generatesCredit = jsonData.getBoolean("generatesCredit");
+        if ((usesCredit || generatesCredit)
+            && !StringUtils.equals(currencyId, businessPartner.getCurrency().getId())) {
+          String message = String.format(OBMessageUtils.messageBD("APRM_CreditCurrency"),
+              businessPartner.getCurrency().getISOCode());
+          errorMessage.put("severity", "error");
+          errorMessage.put("title", "Error");
+          errorMessage.put("text", message);
+          result.put("message", errorMessage);
+          return result;
+        }
+
       } else {
         JSONArray selectedPSDs = jsonData.getJSONArray("selectedRecords");
         for (int i = 0; i < selectedPSDs.length(); i++) {
