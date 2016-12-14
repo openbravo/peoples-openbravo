@@ -286,7 +286,7 @@ enyo.kind({
           order = this.owner.owner.receipt;
       for (i = 0; i < this.owner.owner.selectedModels.length; i++) {
         line = this.owner.owner.selectedModels[i];
-        if (line.get('product').get('productType') === 'S' && !line.isReturnable()) {
+        if (!line.isReturnable()) {
           OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_UnreturnableProduct'), OB.I18N.getLabel('OBPOS_UnreturnableProductMessage', [line.get('product').get('_identifier')]));
           return;
         } else {
