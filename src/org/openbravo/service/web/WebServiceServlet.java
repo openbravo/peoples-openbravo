@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
+import org.openbravo.service.OBServiceException;
 
 /**
  * The default servlet which catches all requests for a webservice. This servlet finds the
@@ -103,6 +104,15 @@ public class WebServiceServlet extends BaseWebServiceServlet {
     } catch (final Exception e) {
       throw new OBException(e);
     }
+  }
+
+  protected WebService getWebService(HttpServletRequest request) {
+    final WebService webService = super.getWebService(request);
+    if (webService == null) {
+      throw new OBServiceException(
+          "No WebService found using the path info " + request.getPathInfo());
+    }
+    return webService;
   }
 
   private String getRemainingPath(String pathInfo, String segment) {

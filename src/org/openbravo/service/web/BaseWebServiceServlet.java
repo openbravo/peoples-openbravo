@@ -34,7 +34,6 @@ import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
-import org.openbravo.service.OBServiceException;
 
 /**
  * This servlet has two main responsibilities: 1) authenticate, 2) set the correct {@link OBContext}
@@ -64,8 +63,8 @@ public class BaseWebServiceServlet extends HttpServlet {
     // if a stateless webservice then set the stateless flag
     try {
       final WebService webservice = getWebService(request);
-      if (AuthenticationManager.isStatelessService(webservice.getClass())
-          || AuthenticationManager.isStatelessRequest(request)) {
+      if (webservice != null && (AuthenticationManager.isStatelessService(webservice.getClass())
+          || AuthenticationManager.isStatelessRequest(request))) {
         request.setAttribute(AuthenticationManager.STATELESS_REQUEST_PARAMETER, "true");
       }
     } catch (Throwable ignore) {
@@ -109,7 +108,7 @@ public class BaseWebServiceServlet extends HttpServlet {
     if (o instanceof WebService) {
       return (WebService) o;
     }
-    throw new OBServiceException("No WebService found using the name " + segment);
+    return null;
   }
 
   protected void callServiceInSuper(HttpServletRequest request, HttpServletResponse response)
