@@ -262,14 +262,16 @@ public class TransactionAddPaymentDefaultValues extends AddPaymentDefaultValuesH
     if (context.has("depositamt") && context.has("withdrawalamt")
         && context.get("depositamt") != JSONObject.NULL
         && context.get("withdrawalamt") != JSONObject.NULL) {
-      return new BigDecimal(context.getString("depositamt")).subtract(
-          new BigDecimal(context.getString("withdrawalamt"))).toString();
+      return new BigDecimal(convertToSafeDecimalString(context.getString("depositamt"))).subtract(
+          new BigDecimal(convertToSafeDecimalString(context.getString("withdrawalamt"))))
+          .toString();
     }
     if (context.has("inpdepositamt") && context.has("inppaymentamt")
         && context.get("inpdepositamt") != JSONObject.NULL
         && context.get("inppaymentamt") != JSONObject.NULL) {
-      return new BigDecimal(context.getString("inpdepositamt")).subtract(
-          new BigDecimal(context.getString("inppaymentamt"))).toString();
+      return new BigDecimal(convertToSafeDecimalString(context.getString("inpdepositamt")))
+          .subtract(new BigDecimal(convertToSafeDecimalString(context.getString("inppaymentamt"))))
+          .toString();
     }
     return BigDecimal.ZERO.toPlainString();
   }
