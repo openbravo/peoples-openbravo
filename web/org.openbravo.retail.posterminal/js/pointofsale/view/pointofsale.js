@@ -950,7 +950,7 @@ enyo.kind({
           }
         });
 
-        voidTransaction(me.model.get('order'), inEvent.payment, function (hasError, error) {
+        voidTransaction(function (hasError, error) {
           me.doHidePopup({
             popup: 'modalpaymentvoid'
           });
@@ -968,7 +968,7 @@ enyo.kind({
           } else {
             removeTransaction();
           }
-        });
+        }, me.model.get('order'), inEvent.payment);
         };
 
     if (inEvent.payment.get('paymentData')) {
