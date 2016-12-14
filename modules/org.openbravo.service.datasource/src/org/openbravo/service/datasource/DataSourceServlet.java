@@ -53,6 +53,7 @@ import org.hibernate.exception.SQLGrammarException;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.model.Entity;
+import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.model.domaintype.EnumerateDomainType;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -61,6 +62,7 @@ import org.openbravo.client.application.Parameter;
 import org.openbravo.client.application.Process;
 import org.openbravo.client.application.RefWindow;
 import org.openbravo.client.application.process.BaseProcessActionHandler;
+import org.openbravo.client.application.window.ApplicationDictionaryCachedStructures;
 import org.openbravo.client.application.window.OBViewUtil;
 import org.openbravo.client.kernel.BaseKernelServlet;
 import org.openbravo.client.kernel.KernelUtils;
@@ -117,6 +119,9 @@ public class DataSourceServlet extends BaseKernelServlet {
 
   @Inject
   private DataSourceServiceProvider dataSourceServiceProvider;
+
+  @Inject
+  private ApplicationDictionaryCachedStructures cachedStructures;
 
   @Override
   public void init(ServletConfig config) {
@@ -254,8 +259,8 @@ public class DataSourceServlet extends BaseKernelServlet {
           response.setHeader("Content-Disposition", "attachment; filename=ExportedData.csv");
           QueryJSONWriterToCSV writer;
           if (getDataSource(request) instanceof DefaultDataSourceService) {
-            writer = new QueryJSONWriterToCSV(request, response, parameters, getDataSource(request)
-                .getEntity());
+            writer = new QueryJSONWriterToCSV(request, response, parameters, getDataSourceEntity(
+                request, parameters));
             // when exporting a OB grid, the isActive filter should not be set
             parameters.put(JsonConstants.NO_ACTIVE_FILTER, "true");
             ((DefaultDataSourceService) getDataSource(request)).fetch(parameters, writer);
@@ -263,8 +268,8 @@ public class DataSourceServlet extends BaseKernelServlet {
             String result = getDataSource(request).fetch(parameters);
             JSONObject jsonResult = new JSONObject(result);
             JSONArray data = jsonResult.getJSONObject("response").getJSONArray("data");
-            writer = new QueryJSONWriterToCSV(request, response, parameters, getDataSource(request)
-                .getEntity());
+            writer = new QueryJSONWriterToCSV(request, response, parameters, getDataSourceEntity(
+                request, parameters));
             for (int i = 0; i < data.length(); i++) {
               writer.write(data.getJSONObject(i));
             }
@@ -283,6 +288,19 @@ public class DataSourceServlet extends BaseKernelServlet {
     } catch (Exception e) {
       handleException(e, response);
     }
+  }
+
+  private Entity getDataSourceEntity(HttpServletRequest request, Map<String, String> parameters) {
+    Entity entity = getDataSource(request).getEntity();
+    if (entity == null && !JsonUtils.isValueEmpty(parameters.get("tabId"))) {
+      Tab tab = cachedStructures.getTab(parameters.get("tabId"));
+      if (tab.getTable() != null) {
+        return ModelProvider.getInstance().getEntityByTableId(tab.getTable().getId());
+      } else {
+        log.error("Could not find the table for the tab with id: " + tab.getId());
+      }
+    }
+    return entity;
   }
 
   private class QueryJSONWriterToCSV extends DefaultJsonDataService.QueryResultWriter {

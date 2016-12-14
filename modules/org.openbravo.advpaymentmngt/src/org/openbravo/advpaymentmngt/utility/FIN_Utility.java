@@ -359,7 +359,8 @@ public class FIN_Utility {
     return null;
   }
 
-  public static String getDocumentNo(boolean updateNext, Sequence seq) {
+  public static String getDocumentNo(boolean updateNext, Sequence seqParam) {
+    Sequence seq = seqParam;
     if (seq != null) {
       if (updateNext) {
         // We lock the sequence with a select for update to avoid duplicates

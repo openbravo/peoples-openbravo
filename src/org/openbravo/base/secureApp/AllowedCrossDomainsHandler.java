@@ -62,6 +62,11 @@ public class AllowedCrossDomainsHandler {
    */
   public boolean fromAllowedOrigin(HttpServletRequest request) {
     final String origin = request.getHeader("Origin");
+
+    if (origin == null) {
+      return false;
+    }
+
     for (AllowedCrossDomainsChecker checker : getCheckers()) {
       if (checker.isAllowedOrigin(request, origin)) {
         return true;
