@@ -733,3 +733,10 @@ button.btnbp:disabled {
     width: 80px;
   }
 }
+.productLine {
+  padding: 6px !important;
+}
+
+.productLine .productImgContainer {
+  margin: 0px 8px 0px 0px;
+}

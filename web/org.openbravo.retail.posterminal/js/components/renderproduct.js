@@ -8,37 +8,53 @@
  */
 
 /*global enyo, _ */
-
 enyo.kind({
   name: 'OB.UI.RenderProduct',
   kind: 'OB.UI.listItemButton',
+  resizeHandler: function () {
+    if (!this.model) {
+      return true;
+    }
+    if (!this.debounceRedraw) {
+      this.debounceRedraw = _.debounce(this.drawPriceBasedOnSize, 500);
+    }
+    this.inherited(arguments);
+    this.debounceRedraw();
+    return true;
+  },
+  classes: 'productLine standardFlexContainer flexColumn',
   components: [{
-    name: 'productImage',
-    style: 'max-width: 100%;',
-    classes: 'standardFlexContainer',
+    classes: 'standardFlexContainer flexAllWidth',
     components: [{
-      style: 'vertical-align: top;  width: 50px; ',
+      name: 'productImgContainer',
+      classes: 'productImgContainer',
       components: [{
-        tag: 'div',
-        classes: 'image-wrap',
-        contentType: 'image/png',
-        style: 'width: 49px; height: 49px;',
+        name: 'productImage',
+        style: 'max-width: 100%;',
+        classes: 'standardFlexContainer',
         components: [{
-          tag: 'img',
-          name: 'icon',
-          style: 'margin: auto; height: 100%; width: 100%; background-size: contain; background-repeat:no-repeat; background-position:center;'
+          style: 'vertical-align: top;  width: 50px; ',
+          components: [{
+            tag: 'div',
+            classes: 'image-wrap',
+            contentType: 'image/png',
+            style: 'width: 49px; height: 49px;',
+            components: [{
+              tag: 'img',
+              name: 'icon',
+              style: 'margin: auto; height: 100%; width: 100%; background-size: contain; background-repeat:no-repeat; background-position:center;'
+            }]
+          }]
         }]
       }, {
         kind: 'OB.UI.Thumbnail',
         name: 'thumbnail'
       }]
     }, {
-      name: 'productInfo',
-      style: 'width: 100%; flex-wrap: wrap; padding-left: 5px;',
-      classes: 'standardFlexContainer',
+      classes: 'standardFlexContainer flexColumn flexAllWidth',
       components: [{
-        style: 'vertical-align: top; width: 100%; word-break: break-word;',
         name: 'identifierContainer',
+        classes: 'standardFlexContainer flexColumn',
         components: [{
           name: 'identifier',
           style: 'max-height: 70px; overflow: hidden;'
@@ -48,42 +64,79 @@ enyo.kind({
           allowHtml: true
         }]
       }, {
-        name: 'icons',
-        minWidth: 0,
-        style: 'vertical-align: top;',
+        classes: 'standardFlexContainer flexwrap flexend',
         components: [{
-          name: 'bestseller',
-          style: 'height: 16px; width: 16px; padding: 0px 2px; float: left;',
-          kind: 'OB.UI.Thumbnail.Bestseller',
-          'default': 'img/iconBestsellerSmall.png',
-          showing: false
-        }]
-      }, {
-        name: 'priceBox',
-        style: 'vertical-align: top;',
-        components: [{
+          name: 'icons',
+          minWidth: 0,
+          style: 'vertical-align: top;',
           components: [{
-            name: 'price',
-            style: 'text-align: right; font-weight: bold;'
-          }, {
-            name: 'priceList',
-            style: 'text-align: right; font-weight: bold; color: grey; font-size: 14px;'
+            name: 'bestseller',
+            style: 'height: 16px; width: 16px; padding: 0px 2px; float: left;',
+            kind: 'OB.UI.Thumbnail.Bestseller',
+            'default': 'img/iconBestsellerSmall.png',
+            showing: false
+          }]
+        }, {
+          name: 'priceBox',
+          style: 'vertical-align: top;',
+          components: [{
+            components: [{
+              name: 'price',
+              style: 'text-align: right; font-weight: bold;'
+            }, {
+              name: 'priceList',
+              style: 'text-align: right; font-weight: bold; color: grey;'
+            }]
           }]
         }]
       }]
     }]
   }, {
-    style: 'clear:both;'
-  }, {
     name: 'generic',
-    style: 'float: right; width: 30%; text-align: right; font-style: italic; color: grey; font-weight: bold;',
+    style: 'text-align: right; font-style: italic; color: grey; font-weight: bold;',
     showing: false
   }, {
-    style: 'clear:both;'
-  }, {
-    style: 'color: #888888; float: left; width: 100%; text-align: left; font-style: italic; color: grey; font-size: 13px; padding-top: 10px;',
+    style: 'color: #888888; text-align: left; font-style: italic; color: grey; font-size: 13px; padding-top: 10px;',
     name: 'bottonLine'
   }],
+  drawPriceBasedOnSize: function () {
+    var shouldResizeWork = ((enyo.Panels.isScreenNarrow() && document.body.clientWidth <= 445) || (!enyo.Panels.isScreenNarrow() && document.body.clientWidth <= 874));
+    var hideProductImages = (OB.MobileApp.model.hasPermission('OBPOS_HideProductImages', true) || OB.MobileApp.model.hasPermission('OBPOS_HideProductImagesInSearchAndBrowse', true));
+    var searchTab = false;
+    if (_.isUndefined(this.$.price) || _.isUndefined(this.$.priceList) || _.isUndefined(this.model)) {
+      //Probably this event was raised during destroy and we want to ignore it.
+      return true;
+    }
+    if (this.id.indexOf('searchCharacteristic') !== -1) {
+      searchTab = true;
+    }
+    if (this.model.get('currentStandardPrice') && this.model.get('currentStandardPrice') !== "undefined") {
+      this.$.priceList.addStyles('font-size: 16px;');
+      if (OB.MobileApp.model.hasPermission('ShowStandardPriceOnSearchAndBrowse', true)) {
+        if (OB.I18N.formatCurrency(this.model.get('currentStandardPrice')).length > 11 && !searchTab && !hideProductImages && shouldResizeWork) {
+          this.$.priceList.addStyles('font-size: 12px;');
+        }
+        this.$.priceList.setContent(OB.I18N.formatCurrency(this.model.get('currentStandardPrice')));
+      }
+      if (this.model.get('standardPrice')) {
+        this.$.price.addStyles('font-size: 16px;');
+        if (OB.I18N.formatCurrency(this.model.get('standardPrice')).length > 11 && !searchTab && !hideProductImages && shouldResizeWork) {
+          this.$.price.addStyles('font-size: 12px;');
+        }
+      }
+      this.$.price.setContent(OB.I18N.formatCurrency(this.model.get('standardPrice')));
+    } else {
+      if (this.model.get('standardPrice')) {
+        this.$.price.addStyles('font-size: 16px;');
+        if (OB.I18N.formatCurrency(this.model.get('standardPrice')).length > 11 && !searchTab && !hideProductImages && shouldResizeWork) {
+          if ((enyo.Panels.isScreenNarrow() && document.body.clientWidth <= 445) || (!enyo.Panels.isScreenNarrow() && document.body.clientWidth <= 874)) {
+            this.$.price.addStyles('font-size: 12px;');
+          }
+        }
+      }
+      this.$.price.setContent(OB.I18N.formatCurrency(this.model.get('standardPrice')));
+    }
+  },
   initComponents: function () {
     this.inherited(arguments);
     // Build filter info from filter attributes
@@ -91,6 +144,7 @@ enyo.kind({
         searchTab = false,
         filterAttr = this.model.get("filterAttr"),
         maxWidthCalc;
+
     if (filterAttr && _.isArray(filterAttr) && filterAttr.length > 0) {
       filterAttr.forEach(function (attr) {
         if (filterTxt !== '') {
@@ -102,29 +156,12 @@ enyo.kind({
     if (this.id.indexOf('searchCharacteristic') !== -1) {
       searchTab = true;
     }
-    this.$.identifierContainer.addStyles('width: 38%;');
     this.$.identifier.setContent(this.setIdentifierContent());
     this.$.filterAttr.setContent(filterTxt);
     if (this.model.get('showchdesc')) {
       this.$.bottonLine.setContent(this.model.get('characteristicDescription'));
     }
-
-    if (this.model.get('currentStandardPrice') && this.model.get('currentStandardPrice') !== "undefined") {
-      if (OB.MobileApp.model.hasPermission('ShowStandardPriceOnSearchAndBrowse', true)) {
-        if (OB.I18N.formatCurrency(this.model.get('currentStandardPrice')).length > 11 && !searchTab) {
-          this.$.priceList.addStyles('font-size: 11px;');
-        }
-        this.$.priceList.setContent(OB.I18N.formatCurrency(this.model.get('currentStandardPrice')));
-      }
-      this.$.price.setContent(OB.I18N.formatCurrency(this.model.get('standardPrice')));
-    } else {
-      if (this.model.get('standardPrice')) {
-        if (OB.I18N.formatCurrency(this.model.get('standardPrice')).length > 11 && !searchTab) {
-          this.$.price.addStyles('font-size: 11px;');
-        }
-      }
-      this.$.price.setContent(OB.I18N.formatCurrency(this.model.get('standardPrice')));
-    }
+    this.drawPriceBasedOnSize(searchTab);
 
     if (OB.MobileApp.model.get('permissions')["OBPOS_retail.productImages"]) {
       this.$.icon.applyStyle('background-image', 'url(' + OB.UTIL.getImageURL(this.model.get('id')) + '), url(' + "../org.openbravo.mobile.core/assets/img/box.png" + ')');
@@ -152,23 +189,18 @@ enyo.kind({
     }
     maxWidthCalc = Math.floor(maxWidthCalc / 20) * 20 >= 20 ? Math.floor(maxWidthCalc / 20) * 20 : 20;
     this.$.icons.addStyles('max-width: ' + maxWidthCalc + 'px');
-    //this.$.icons.addStyles('max-width: 16px');
     if (this.model.get('bestseller') !== true) {
       this.$.icons.applyStyle('min-width', this.$.icons.minWidth + 'px');
       this.$.icons.applyStyle('width', '0px');
-      this.$.priceBox.applyStyle('margin-left', 'auto');
       this.$.bestseller.$.image.hide();
     } else {
-      this.$.icons.applyStyle('margin-left', 'auto');
       this.$.icons.minWidth += 20;
       this.$.icons.applyStyle('min-width', this.$.icons.minWidth + 'px');
       this.$.bestseller.addStyles('display: block');
     }
 
     if (OB.MobileApp.model.hasPermission('OBPOS_HideProductImages', true) || OB.MobileApp.model.hasPermission('OBPOS_HideProductImagesInSearchAndBrowse', true)) {
-      this.$.thumbnail.hide();
-      this.$.icon.parent.hide();
-      this.$.identifierContainer.addStyles('width: 70%;');
+      this.$.productImgContainer.hide();
     }
 
     if (this.model.get('isGeneric')) {
