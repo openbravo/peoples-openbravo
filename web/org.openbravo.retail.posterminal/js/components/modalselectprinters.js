@@ -17,7 +17,6 @@ enyo.kind({
     onSelectLine: 'selectLine'
   },
   components: [{
-    name: 'line',
     style: 'line-height: 23px; width: 100%; padding-left: 15px; border-bottom: 1px solid #ccc;',
     components: [{
       components: [{
@@ -120,7 +119,7 @@ enyo.kind({
   },
 
   applyChanges: function (inSender, inEvent) {
-    OB.POS.hwserver[this.args.serverURLSetter](this.printerscontainer.getActiveURL());
+    OB.POS.hwserver['setActiveURL'](this.printerscontainer.getActiveURL());
     this.args.actionExecuted = true;
     if (this.args.onSuccess) {
       this.args.onSuccess();
@@ -138,12 +137,8 @@ enyo.kind({
   initComponents: function () {
     this.inherited(arguments);
     this.printerscontainer = this.$.bodyContent.$.printerslist;
-  },
-
-  executeOnShow: function () {
-
     this.autoDismiss = false;
-    this.setHeader(this.args.title);
+    this.setHeader(OB.I18N.getLabel('OBPOS_SelectPrintersTitle'));
 
     // list all printers
     var printers = OB.POS.modelterminal.get('hardwareURL');
@@ -161,7 +156,7 @@ enyo.kind({
 
     // Add the rest of URLs
     _.each(printers, function (printer) {
-      if (printer[this.args.hasPrinterProperty]) {
+      if (printer['hasReceiptPrinter']) {
         this.printerscontainer.createComponent({
           kind: 'SelectPrintersLine',
           name: 'printerLine' + printer.id,
@@ -172,13 +167,113 @@ enyo.kind({
     }, this);
 
     // Select the active URL
-    this.printerscontainer.selectURL(OB.POS.hwserver[this.args.serverURLProperty]);
+    this.printerscontainer.selectURL(OB.POS.hwserver['activeurl']);
   },
   executeOnHide: function () {
+    if (!this.args.actionExecuted && this.args.onHide) {
+      this.args.onHide();
+    }
+  }
+});
 
-    // Clear printers list
-    this.printerscontainer.destroyComponents();
+enyo.kind({
+  name: 'OB.UI.ModalSelectPDFPrinters',
+  kind: 'OB.UI.ModalAction',
+  handlers: {
+    onApplyChanges: 'applyChanges',
+    onCancelChanges: 'cancelChanges'
+  },
+  bodyContent: {
+    kind: 'Scroller',
+    maxHeight: '225px',
+    style: 'background-color: #ffffff;',
+    thumb: true,
+    horizontal: 'hidden',
+    components: [{
+      name: 'printerslist',
+      selectURL: function (url) {
+        var isalreadychecked = false;
 
+        // check radio of activeurl radio
+        _.each(this.$, function (value, key, list) {
+          if (!isalreadychecked && value.printer.hardwareURL === url) {
+            value.$.selected.activeRadio();
+            isalreadychecked = true;
+          } else {
+            value.$.selected.disableRadio();
+          }
+        }, this);
+      },
+      getActiveURL: function () {
+
+        // check radio of activeurl radio
+        var selected = _.find(this.$, function (value, key, list) {
+          return value.$.selected.checked;
+        }, this);
+        return selected.printer.hardwareURL;
+      }
+    }]
+  },
+  bodyButtons: {
+    components: [{
+      kind: 'SelectPrintersApply'
+    }, {
+      kind: 'SelectPrintersCancel'
+    }]
+  },
+
+  applyChanges: function (inSender, inEvent) {
+    OB.POS.hwserver['setActivePDFURL'](this.printerscontainer.getActiveURL());
+    this.args.actionExecuted = true;
+    if (this.args.onSuccess) {
+      this.args.onSuccess();
+    }
+    return true;
+  },
+
+  cancelChanges: function (inSender, inEvent) {
+    this.args.actionExecuted = true;
+    if (this.args.onCancel) {
+      this.args.onCancel();
+    }
+  },
+
+  initComponents: function () {
+    this.inherited(arguments);
+    this.printerscontainer = this.$.bodyContent.$.printerslist;
+    this.autoDismiss = false;
+    this.setHeader(OB.I18N.getLabel('OBPOS_SelectPDFPrintersTitle'));
+
+    // list all printers
+    var printers = OB.POS.modelterminal.get('hardwareURL');
+
+    // Add Main URL
+    var editline = this.printerscontainer.createComponent({
+      kind: 'SelectPrintersLine',
+      name: 'printerMain',
+      printerscontainer: this.printerscontainer,
+      printer: {
+        _identifier: OB.I18N.getLabel('OBPOS_MainPrinter'),
+        hardwareURL: OB.POS.hwserver.mainurl
+      }
+    }).render();
+
+    // Add the rest of URLs
+    _.each(printers, function (printer) {
+      if (printer['hasPDFPrinter']) {
+        this.printerscontainer.createComponent({
+          kind: 'SelectPrintersLine',
+          name: 'printerLine' + printer.id,
+          printerscontainer: this.printerscontainer,
+          printer: printer
+        }).render();
+      }
+    }, this);
+
+    // Select the active URL
+    this.printerscontainer.selectURL(OB.POS.hwserver['activepdfurl']);
+  },
+  executeOnHide: function () {
     if (!this.args.actionExecuted && this.args.onHide) {
       this.args.onHide();
     }

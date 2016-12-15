@@ -130,8 +130,7 @@ enyo.kind({
       name: 'modaldropevents',
       type: 'cashMgmtDropEvents'
     }, {
-      kind: 'OB.UI.ModalSelectPrinters',
-      name: 'modalSelectPrinters'
+      kind: 'OB.UI.ModalSelectPrinters'
     }]
   }],
 
