@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -121,8 +121,8 @@ public class HeartbeatProcess implements Process {
     }
 
     logger.logln("Hearbeat process starting...");
+    String beatType = UNKNOWN_BEAT;
     try {
-      String beatType = UNKNOWN_BEAT;
 
       if (this.channel == Channel.SCHEDULED) {
         beatType = SCHEDULED_BEAT;
@@ -153,6 +153,11 @@ public class HeartbeatProcess implements Process {
         parseResponse(response);
       }
 
+    } catch (Exception e) {
+      logger.logln(e.getMessage());
+      log.error(e.getMessage(), e);
+      throw new Exception(e.getMessage());
+    } finally {
       if ("S".equals(beatType)) {
         // Background scheduled beats require explicit commit
         try {
@@ -162,10 +167,6 @@ public class HeartbeatProcess implements Process {
           OBContext.restorePreviousMode();
         }
       }
-    } catch (Exception e) {
-      logger.logln(e.getMessage());
-      log.error(e.getMessage(), e);
-      throw new Exception(e.getMessage());
     }
   }
 
