@@ -240,6 +240,9 @@ enyo.kind({
     }, {
       kind: 'OB.UI.ModalSplitLine',
       name: 'OBPOS_modalSplitLine'
+    }, {
+      kind: 'OB.UI.ModalDeleteDiscount',
+      name: 'modalDeleteDiscount'
     }]
   }, {
     name: 'mainSubWindow',

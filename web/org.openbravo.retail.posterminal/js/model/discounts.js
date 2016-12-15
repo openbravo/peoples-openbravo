@@ -274,6 +274,36 @@
       }
     },
 
+    /**
+     * Gets the list of promotions which are calculated automatically when can be added to receipt from Discounts. 
+     * If asArray param is true, it is returned
+     * as an array, other case, as a comma separated string to be used in sql statements
+     */
+    getAutoCalculatedPromotions: function (asList) {
+      var p, promos = [],
+          promosSql = '';
+      for (p in this.discountRules) {
+        if (this.discountRules.hasOwnProperty(p)) {
+          if (this.discountRules[p].isAutoCalculated) {
+            promos.push(p);
+          }
+        }
+      }
+
+      if (asList) {
+        return promos;
+      } else {
+        // generate sql
+        for (p = 0; p < promos.length; p++) {
+          if (promosSql !== '') {
+            promosSql += ', ';
+          }
+          promosSql += "'" + promos[p] + "'";
+        }
+        return promosSql;
+      }
+    },
+
     registerRule: function (name, rule) {
       this.discountRules[name] = rule;
     },
