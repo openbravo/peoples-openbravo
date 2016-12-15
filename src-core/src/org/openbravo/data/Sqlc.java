@@ -92,6 +92,8 @@ public class Sqlc extends DefaultHandler {
 
   static Logger log4j = Logger.getLogger(Sqlc.class); // log4j
   private static boolean includeQueryTimeOut;
+  private static boolean modifiesDB;
+  private boolean sessionInfoImported;
 
   private List<String> scrollableFunctionNames = new ArrayList<String>();
   private boolean hasCountField;
@@ -109,6 +111,7 @@ public class Sqlc extends DefaultHandler {
     sqlcAccessModifier = "";
     scrollableFunctionNames = new ArrayList<String>();
     hasCountField = false;
+    sessionInfoImported = false;
   }
 
   public static void main(String argv[]) throws Exception {
@@ -777,7 +780,9 @@ public class Sqlc extends DefaultHandler {
     out1.append("import org.openbravo.data.UtilSql;\n");
     if (includeQueryTimeOut) {
       out1.append("import org.openbravo.service.db.QueryTimeOutUtil;\n");
-      out1.append("import org.openbravo.database.SessionInfo;\n");
+      if (!sessionInfoImported) {
+        out1.append("import org.openbravo.database.SessionInfo;\n");
+      }
     }
 
     if (sql.sqlImport != null) {
@@ -1398,6 +1403,10 @@ public class Sqlc extends DefaultHandler {
     printSQLParameters();
 
     if (sql.saveContextInfo && !"executeQuery".equals(sql.executeType)) {
+      if (!sessionInfoImported) {
+        out1.append("import org.openbravo.database.SessionInfo;\n");
+        sessionInfoImported = true;
+      }
       out2.append("      SessionInfo.saveContextInfoIntoDB(");
       if (sql.sqlConnection.equals("true")) {
         out2.append("conn");
