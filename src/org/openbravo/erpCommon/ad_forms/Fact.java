@@ -294,10 +294,12 @@ public class Fact {
 
     line.roundToCurrencyPrecision();
     String Record_ID2 = null;
-    if (docLine != null)
+    if (docLine != null) {
       Record_ID2 = docLine.m_Record_Id2;
-    if (Record_ID2 == null || Record_ID2.equals(""))
+    }
+    if (StringUtils.isEmpty(Record_ID2)) {
       Record_ID2 = m_doc.m_Record_Id2;
+    }
     line.setM_RecordID2(Record_ID2);
     log4jFact.debug("Fact - createLine - Record_ID2 = " + Record_ID2);
 
@@ -485,15 +487,14 @@ public class Fact {
         log4jFact.warn("Save (fact): aborted. i=" + i);
         return false;
       }
-      if (fl.getM_RecordID2() != null && !StringUtils.isEmpty(fl.getM_RecordID2())) {
+      if (StringUtils.isNotEmpty(fl.getM_RecordID2())) {
         recordID2Set.add(fl.getM_RecordID2());
       }
     }
     if (!recordID2Set.isEmpty()) {
       for (Set<String> recordID2 : splitRecordID2Set(recordID2Set, 1000)) {
-        String recordID2In = Utility.getInStrSet(recordID2);
         // Update Balancing Date [Open Balances project]
-        FactLineData.updateDateBalanced(con, conn, recordID2In);
+        FactLineData.updateDateBalanced(con, conn, Utility.getInStrSet(recordID2));
       }
     }
     return true;
@@ -501,16 +502,17 @@ public class Fact {
 
   public List<Set<String>> splitRecordID2Set(Set<String> recordID2Set, int maxSize) {
     List<Set<String>> recordIDSetList = new ArrayList<Set<String>>();
-    Set<String> recordIDSet = new HashSet<String>();
-    for (String recordID2 : recordID2Set) {
-      recordIDSet.add(recordID2);
-      if (recordIDSet.size() == maxSize) {
-        recordIDSetList.add(recordIDSet);
-        recordIDSet = new HashSet<String>();
-      }
+    int recordID2SetSize = recordID2Set.size();
+
+    if (recordID2SetSize <= maxSize) {
+      recordIDSetList.add(recordID2Set);
+      return recordIDSetList;
     }
-    if (!recordIDSet.isEmpty()) {
-      recordIDSetList.add(recordIDSet);
+
+    List<String> recordID2List = new ArrayList<String>(recordID2Set);
+    for (int i = 0; i < recordID2SetSize; i += maxSize) {
+      recordIDSetList.add(new HashSet<String>(recordID2List.subList(i,
+          Math.min(recordID2SetSize, i + maxSize))));
     }
     return recordIDSetList;
   }
