@@ -217,7 +217,7 @@ public class AverageAlgorithm extends CostingAlgorithm {
     where.append("  and " + Costing.PROPERTY_ENDINGDATE + " > :endingDate");
     where.append("  and " + Costing.PROPERTY_COSTTYPE + " = 'AVA'");
     where.append("  and " + Costing.PROPERTY_COST + " is not null");
-    if (costDimensions.get(CostDimension.Warehouse) != null) {
+    if (costDimensions.get(CostDimension.Warehouse) != null && !product.isProduction()) {
       where.append("  and " + Costing.PROPERTY_WAREHOUSE + ".id = :warehouse");
     } else {
       where.append("  and " + Costing.PROPERTY_WAREHOUSE + " is null");
@@ -233,7 +233,7 @@ public class AverageAlgorithm extends CostingAlgorithm {
     costQry.setNamedParameter("product", product.getId());
     costQry.setNamedParameter("startingDate", date);
     costQry.setNamedParameter("endingDate", date);
-    if (costDimensions.get(CostDimension.Warehouse) != null) {
+    if (costDimensions.get(CostDimension.Warehouse) != null && !product.isProduction()) {
       costQry.setNamedParameter("warehouse", costDimensions.get(CostDimension.Warehouse).getId());
     }
     // FIXME: remove when manufacturing costs are fully migrated
@@ -266,7 +266,7 @@ public class AverageAlgorithm extends CostingAlgorithm {
     where.append("  and " + Costing.PROPERTY_COST + " is not null");
     where.append("  and " + Costing.PROPERTY_TOTALMOVEMENTQUANTITY + " is not null");
     where.append("  and " + Costing.PROPERTY_TOTALSTOCKVALUATION + " is not null");
-    if (costDimensions.get(CostDimension.Warehouse) != null) {
+    if (costDimensions.get(CostDimension.Warehouse) != null && !product.isProduction()) {
       where.append("  and " + Costing.PROPERTY_WAREHOUSE + ".id = :warehouse");
     } else {
       where.append("  and " + Costing.PROPERTY_WAREHOUSE + " is null");
@@ -283,7 +283,7 @@ public class AverageAlgorithm extends CostingAlgorithm {
     costQry.setFilterOnReadableOrganization(false);
     costQry.setNamedParameter("product", product.getId());
     costQry.setNamedParameter("startingDate", date);
-    if (costDimensions.get(CostDimension.Warehouse) != null) {
+    if (costDimensions.get(CostDimension.Warehouse) != null && !product.isProduction()) {
       costQry.setNamedParameter("warehouse", costDimensions.get(CostDimension.Warehouse).getId());
     }
     // FIXME: remove when manufacturing costs are fully migrated

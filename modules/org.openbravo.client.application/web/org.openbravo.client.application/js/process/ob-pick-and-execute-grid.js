@@ -249,6 +249,19 @@ isc.OBPickAndExecuteGrid.addProperties({
     return ret;
   },
 
+  // overridden to support hover on the header for the checkbox field
+  setFieldProperties: function (field, properties) {
+    var localField = field;
+    if (isc.isA.Number(localField)) {
+      localField = this.fields[localField];
+    }
+    if (this.isCheckboxField(localField) && properties) {
+      properties.showHover = this.checkboxFieldProperties.showHover;
+      properties.prompt = this.checkboxFieldProperties.prompt;
+    }
+    return this.Super('setFieldProperties', arguments);
+  },
+
   overrideFilterItemOnBlur: function () {
     var i, filterFields, filterItem, me = this,
         updatedBlur;
