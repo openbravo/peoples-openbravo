@@ -65,4 +65,5 @@
     <excludedFunction name="TEMP_FINDINARRAY"/>
     <excludedFunction name="AD_EXECUTE_FUNCTION"/>
     <excludedFunction name="ADD_HMS"/>
+    <excludedTrigger name="AU\_%"/> <!-- Audit trail triggers -->
   </vector>
