@@ -326,8 +326,8 @@ public class BaseReportActionHandler extends BaseProcessActionHandler {
     }
     final String jrTemplatePath = DalContextListener.getServletContext().getRealPath(strJRPath);
 
-    HashMap<String, Object> allParametersMap = new HashMap<String, Object>();
-    HashMap<String, Object> jrParams = new HashMap<String, Object>();
+    Map<String, Object> allParametersMap = new HashMap<>();
+    Map<String, Object> jrParams = new HashMap<>();
     loadFilterParams(jrParams, report, params);
     loadReportParams(jrParams, report, jrTemplatePath, jsonContent);
     // Include the HTTP session into the parameters that are sent to the report
@@ -388,7 +388,7 @@ public class BaseReportActionHandler extends BaseProcessActionHandler {
    * @param params
    *          JSONObject with the values set in the filter parameters.
    */
-  private void loadFilterParams(HashMap<String, Object> jrParams, ReportDefinition report,
+  private void loadFilterParams(Map<String, Object> jrParams, ReportDefinition report,
       JSONObject params) throws JSONException {
     for (Parameter param : report.getProcessDefintion().getOBUIAPPParameterList()) {
       String paramName = param.getDBColumnName();
@@ -493,7 +493,7 @@ public class BaseReportActionHandler extends BaseProcessActionHandler {
    * @param jsonContent
    *          JSONObject with the values set in the filter parameters.
    */
-  private void loadReportParams(HashMap<String, Object> jrParams, ReportDefinition report,
+  private void loadReportParams(Map<String, Object> jrParams, ReportDefinition report,
       String jrTemplatePath, JSONObject jsonContent) {
 
     final int lastSegmentIndex = jrTemplatePath.lastIndexOf("/");
