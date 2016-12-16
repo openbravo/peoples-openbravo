@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2012-2013 Openbravo SLU 
+ * All portions are Copyright (C) 2012-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -98,7 +98,8 @@ public class DoubtFulDebtPickEditLines extends BaseProcessActionHandler {
 
   private JSONObject createDoubtfulDebt(DoubtfulDebtRun doubtfulDebtRun, JSONObject jsonRequest,
       List<String> idList) throws JSONException {
-    final JSONArray selectedLines = jsonRequest.getJSONArray("_selection");
+    final JSONArray selectedLines = jsonRequest.getJSONObject("_params").getJSONObject("grid")
+        .getJSONArray("_selection");
     DocumentType documentType = null;
     Currency currency = null;
     JSONObject message = new JSONObject();

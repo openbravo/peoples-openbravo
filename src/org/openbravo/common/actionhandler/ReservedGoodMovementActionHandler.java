@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2014 Openbravo SLU 
+ * All portions are Copyright (C) 2014-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -53,7 +53,8 @@ public class ReservedGoodMovementActionHandler extends BaseProcessActionHandler 
     try {
       jsonRequest = new JSONObject(content);
       log.debug("{}", jsonRequest);
-      JSONArray selectedLines = jsonRequest.getJSONArray("_selection");
+      JSONArray selectedLines = jsonRequest.getJSONObject("_params").getJSONObject("grid")
+          .getJSONArray("_selection");
       if (selectedLines.length() == 0) {
         return jsonRequest;
       }
