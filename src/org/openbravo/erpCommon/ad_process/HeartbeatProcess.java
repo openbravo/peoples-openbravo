@@ -154,20 +154,26 @@ public class HeartbeatProcess implements Process {
       }
 
     } catch (Exception e) {
-      logger.logln(e.getMessage());
-      log.error(e.getMessage(), e);
-      throw new Exception(e.getMessage());
+      handleException(e);
     } finally {
       if ("S".equals(beatType)) {
         // Background scheduled beats require explicit commit
         try {
           OBContext.setAdminMode();
           OBDal.getInstance().commitAndClose();
+        } catch (Exception e) {
+          handleException(e);
         } finally {
           OBContext.restorePreviousMode();
         }
       }
     }
+  }
+
+  private void handleException(Exception e) throws Exception {
+    logger.logln(e.getMessage());
+    log.error(e.getMessage(), e);
+    throw new Exception(e.getMessage());
   }
 
   private void updateHeartbeatStatus(String beatType) throws Exception {
