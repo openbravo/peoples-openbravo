@@ -3387,13 +3387,19 @@ isc.OBViewGrid.addProperties({
           me.selection.deselect(selectedRecord);
         }
         totalRows = me.data.totalRows;
-        this.showGridSummary = false;
-        this.isBeingCancelled = true;
-        me.data.handleUpdate('remove', [{
-          id: record.id
-        }]);
-        this.setShowGridSummary(true);
-        delete this.isBeingCancelled;
+        if (this.showGridSummary) {
+          this.showGridSummary = false;
+          this.isBeingCancelled = true;
+          me.data.handleUpdate('remove', [{
+            id: record.id
+          }]);
+          this.setShowGridSummary(true);
+          delete this.isBeingCancelled;
+        } else {
+          me.data.handleUpdate('remove', [{
+            id: record.id
+          }]);
+        }
         // the total rows should be decreased
         if (me.data.totalRows === totalRows) {
           me.data.totalRows = me.data.totalRows - 1;
