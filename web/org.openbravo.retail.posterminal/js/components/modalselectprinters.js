@@ -216,8 +216,10 @@ enyo.kind({
   },
   bodyButtons: {
     components: [{
+      name: "SelectPDFPrintersApply",
       kind: 'SelectPrintersApply'
     }, {
+      name: "SelectPDFPrintersCancel",
       kind: 'SelectPrintersCancel'
     }]
   },
@@ -250,7 +252,7 @@ enyo.kind({
     // Add Main URL
     var editline = this.printerscontainer.createComponent({
       kind: 'SelectPrintersLine',
-      name: 'printerMain',
+      name: 'PDFprinterMain',
       printerscontainer: this.printerscontainer,
       printer: {
         _identifier: OB.I18N.getLabel('OBPOS_MainPrinter'),
@@ -263,7 +265,7 @@ enyo.kind({
       if (printer['hasPDFPrinter']) {
         this.printerscontainer.createComponent({
           kind: 'SelectPrintersLine',
-          name: 'printerLine' + printer.id,
+          name: 'PDFprinterLine' + printer.id,
           printerscontainer: this.printerscontainer,
           printer: printer
         }).render();
