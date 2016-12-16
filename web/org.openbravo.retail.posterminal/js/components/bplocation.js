@@ -614,8 +614,7 @@ enyo.kind({
   create: function () {
     this.inherited(arguments);
     this.$.identifier.setContent(this.model.get('name'));
-    var locId = this.owner.owner.owner.owner.bPartner.get(this.locId);
-    if (locId === OB.MobileApp.model.receipt.get('bp').get('locId')) {
+    if (this.model.get('id') === OB.MobileApp.model.receipt.get('bp').get(this.locId)) {
       this.applyStyle('background-color', '#fbf6d1');
     }
     if (this.model.get('isBillTo') && this.model.get('isShipTo')) {
@@ -817,6 +816,8 @@ enyo.kind({
       this.$.body.$.listBpsLoc.setInitialLoad(true);
       this.$.body.$.listBpsLoc.$.bpsloclistitemprinter.$.theader.$.modalBpLocScrollableHeader.searchAction();
       this.$.body.$.listBpsLoc.$.bpsloclistitemprinter.$.theader.$.modalBpLocScrollableHeader.$.newAction.putDisabled(!OB.MobileApp.model.hasPermission('OBPOS_retail.createCustomerLocationButton', true));
+    } else if (this.args.makeSearch) {
+      this.$.body.$.listBpsLoc.$.bpsloclistitemprinter.$.theader.$.modalBpLocScrollableHeader.searchAction();
     }
     return true;
   },
