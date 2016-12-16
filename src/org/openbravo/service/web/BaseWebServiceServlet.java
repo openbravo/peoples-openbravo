@@ -63,8 +63,9 @@ public class BaseWebServiceServlet extends HttpServlet {
     // if a stateless webservice then set the stateless flag
     try {
       final WebService webservice = getWebService(request);
-      if (webservice != null && (AuthenticationManager.isStatelessService(webservice.getClass())
-          || AuthenticationManager.isStatelessRequest(request))) {
+      if (webservice != null
+          && (AuthenticationManager.isStatelessService(webservice.getClass()) || AuthenticationManager
+              .isStatelessRequest(request))) {
         request.setAttribute(AuthenticationManager.STATELESS_REQUEST_PARAMETER, "true");
       }
     } catch (Throwable ignore) {
@@ -72,7 +73,7 @@ public class BaseWebServiceServlet extends HttpServlet {
       // way
       // ignore also for backward compatibility
     }
-    
+
     String userId = null;
     try {
       userId = authManager.webServiceAuthenticate(request);
