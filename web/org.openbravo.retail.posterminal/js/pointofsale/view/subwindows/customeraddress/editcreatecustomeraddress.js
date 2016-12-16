@@ -19,7 +19,17 @@ enyo.kind({
     onShowPopup: ''
   },
   handlers: {
+    onSetValues: 'setValues',
+    onRetrieveCustomer: 'retrieveCustomers',
     onCancelClose: 'cancelClose'
+  },
+  setValues: function (inSender, inEvent) {
+    this.waterfall('onSetValue', inEvent);
+  },
+  retrieveCustomers: function (inSender, inEvent) {
+    var retrievedValues = inEvent || {};
+    this.waterfall('onRetrieveValues', retrievedValues);
+    return retrievedValues;
   },
   cancelClose: function (inSender, inEvent) {
     this.customerAddr = inEvent.customerAddr;
