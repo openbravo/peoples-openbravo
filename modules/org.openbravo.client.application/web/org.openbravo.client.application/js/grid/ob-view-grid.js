@@ -977,17 +977,28 @@ isc.OBViewGrid.addProperties({
   },
 
   reorderField: function (fieldNum, moveToPosition) {
+    var res;
+    if (this.showGridSummary) {
+      res = this.handleSummaryFunctionGrid(fieldNum, moveToPosition);
+    } else {
+      res = this.Super('reorderField', arguments);
+    }
+    this.view.standardWindow.storeViewState();
+    return res;
+  },
+
+  handleSummaryFunctionGrid: function (oldPosition, newPosition) {
+    var res;
     this.summaryRowProperties = {};
     this.summaryRowProperties.isBeingReordered = true;
-    this.summaryRowProperties.oldPosition = fieldNum;
-    this.summaryRowProperties.newPosition = moveToPosition;
+    this.summaryRowProperties.oldPosition = oldPosition;
+    this.summaryRowProperties.newPosition = newPosition;
     this.showGridSummary = false;
-    var res = this.Super('reorderField', arguments);
+    res = this.Super('reorderField', arguments);
     this.setShowGridSummary(true);
     delete this.summaryRowProperties.isBeingReordered;
     delete this.summaryRowProperties.oldPosition;
     delete this.summaryRowProperties.newPosition;
-    this.view.standardWindow.storeViewState();
     return res;
   },
 
