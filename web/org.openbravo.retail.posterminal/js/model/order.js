@@ -2400,6 +2400,31 @@
           }, function () {
             OB.error(arguments);
             errorSaveData(callback);
+          }, function () {
+            // Is the result is empty the location is not valid or not exits
+            // Call LoadedCustomer to find the customer and location
+            // if not exist show the information and break the process
+            new OB.DS.Request('org.openbravo.retail.posterminal.master.LoadedCustomer').exec({
+              bpartnerId: businessPartner.id,
+              bpLocationId: businessPartner.get('shipLocId')
+            }, function (data) {
+              var bpLoc = OB.Dal.transform(OB.Model.BPLocation, data[1]);
+              OB.Dal.saveIfNew(bpLoc, function () {
+                businessPartner.set('locationModel', bpLoc);
+                me.set('bp', businessPartner);
+                me.save();
+                // copy the modelOrder again, as the get/save are async
+                OB.MobileApp.model.orderList.saveCurrent();
+                finishSaveData(callback);
+              }, function () {
+                OB.error(arguments);
+              });
+            }, function () {
+              OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_InformationTitle'), OB.I18N.getLabel('OBPOS_NoReceiptLoadedLocation'), [{
+                label: OB.I18N.getLabel('OBPOS_LblOk'),
+                isConfirmButton: true
+              }]);
+            });
           });
 
         } else {
