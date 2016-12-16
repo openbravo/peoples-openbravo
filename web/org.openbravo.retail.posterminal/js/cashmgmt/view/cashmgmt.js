@@ -181,6 +181,10 @@ enyo.kind({
         }
       });
     }, this);
+    // Disconnect RFID
+    if (OB.UTIL.RfidController.isRfidConfigured()) {
+      OB.UTIL.RfidController.disconnectRFIDDevice();
+    }
   }
 });
 

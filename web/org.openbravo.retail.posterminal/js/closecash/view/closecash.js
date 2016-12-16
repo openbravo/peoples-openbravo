@@ -450,6 +450,10 @@ enyo.kind({
       me.refreshButtons();
     });
 
+    // Disconnect RFID
+    if (OB.UTIL.RfidController.isRfidConfigured()) {
+      OB.UTIL.RfidController.disconnectRFIDDevice();
+    }
   },
 
   rendered: function () {
