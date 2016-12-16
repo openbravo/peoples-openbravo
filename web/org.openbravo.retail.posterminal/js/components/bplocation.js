@@ -358,7 +358,10 @@ enyo.kind({
     bploc.set('ignoreSetBPLoc', true, {
       silent: true
     });
-    var contextMenu = this.owner.owner;
+    var contextMenu = this.owner.owner,
+        returnTo = contextMenu.dialog.kind === 'OB.UI.ListBpsShipLoc' ? 'modalcustomershipaddress' : 'modalcustomeraddress',
+        navigationPath = OB.UTIL.BusinessPartnerSelector.cloneAndPush(contextMenu.dialog.owner.owner.args.navigationPath, returnTo);
+
     contextMenu.dialog.menuSelected = true;
     contextMenu.dialog.owner.owner.selectorHide = true;
     contextMenu.dialog.bubble('onShowPopup', {
@@ -366,8 +369,9 @@ enyo.kind({
       args: {
         businessPartner: contextMenu.bPartner,
         bPLocation: bploc,
-        navigationPath: OB.UTIL.BusinessPartnerSelector.cloneAndPush(contextMenu.dialog.owner.owner.args.navigationPath, contextMenu.owner.locId === 'locId' ? 'modalcustomeraddress' : 'modalcustomershipaddress'),
-        target: contextMenu.dialog.target
+        target: contextMenu.dialog.target,
+        navigationPath: OB.UTIL.BusinessPartnerSelector.cloneAndPush(navigationPath, 'customerAddressView'),
+        cancelNavigationPath: navigationPath
       }
     });
     return true;
