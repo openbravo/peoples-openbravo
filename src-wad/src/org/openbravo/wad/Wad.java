@@ -2229,54 +2229,6 @@ public class Wad extends DefaultHandler {
     xmlDocumentXsql.setParameter("parameterFields", strParametersFields.toString());
     xmlDocumentXsql.setParameter("parameters", strParameters.toString());
 
-    // Parent field
-    if (parentsFieldsData != null && parentsFieldsData.length > 0) {
-      final Vector<Object> vecCounters = new Vector<Object>();
-      final Vector<Object> vecFields = new Vector<Object>();
-      final Vector<Object> vecTable = new Vector<Object>();
-      final Vector<Object> vecWhere = new Vector<Object>();
-      final Vector<Object> vecParameters = new Vector<Object>();
-      final Vector<Object> vecTableParameters = new Vector<Object>();
-      vecCounters.addElement("0");
-      vecCounters.addElement("0");
-      final String strText = WadUtility.columnIdentifier(pool, parentsFieldsData[0].tablename,
-          true, parentsFieldsData[0], vecCounters, false, vecFields, vecTable, vecWhere,
-          vecParameters, vecTableParameters, sqlDateFormat);
-      final FieldsData[] fieldsParent = new FieldsData[1];
-      fieldsParent[0] = new FieldsData();
-      fieldsParent[0].defaultvalue = "SELECT (" + strText + ") AS NAME FROM ";
-      fieldsParent[0].defaultvalue += parentsFieldsData[0].tablename;
-      for (int s = 0; s < vecTable.size(); s++) {
-        final String strAux = (String) vecTable.elementAt(s);
-        fieldsParent[0].defaultvalue += (strAux.trim().toLowerCase().startsWith("left join") ? " "
-            : ", ") + strAux;
-      }
-
-      fieldsParent[0].defaultvalue += " WHERE " + parentsFieldsData[0].tablename + "."
-          + parentsFieldsData[0].name + " = ? ";
-      for (int s = 0; s < vecWhere.size(); s++) {
-        fieldsParent[0].defaultvalue += " AND " + vecWhere.elementAt(s).toString();
-      }
-      fieldsParent[0].whereclause = "";
-      for (int s = 0; s < vecTableParameters.size(); s++) {
-        fieldsParent[0].whereclause += vecTableParameters.elementAt(s).toString() + "\n";
-      }
-      fieldsParent[0].whereclause += "<Parameter name=\""
-          + Sqlc.TransformaNombreColumna(parentsFieldsData[0].name) + "\"/>\n";
-      for (int s = 0; s < vecParameters.size(); s++) {
-        fieldsParent[0].whereclause += vecParameters.elementAt(s).toString() + "\n";
-      }
-
-      if ("Y".equals(parentsFieldsData[0].issecondarykey)) {
-        xmlDocumentXsql.setParameter("parentTableName", parentsFieldsData[0].tablename);
-        xmlDocumentXsql.setParameter("keySecondary", parentsFieldsData[0].name);
-      }
-
-      xmlDocumentXsql.setData("structure14", fieldsParent);
-    } else {
-      xmlDocumentXsql.setData("structure14", null);
-    }
-
     // Auxiliar Fields
     {
       final FieldsData fieldsAux[] = FieldsData.selectAuxiliar(pool, "@SQL=", strTab);
