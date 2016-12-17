@@ -523,16 +523,6 @@
     <Parameter name="processParaId"/>
   </SqlMethod>
   
-  <SqlMethod name="columnName" type="preparedStatement" return="String" default="">
-    <SqlMethodComment>Names of the columns of the fields of a tab</SqlMethodComment>
-    <Sql>
-      <![CDATA[
-      SELECT columnname FROM AD_column 
-      WHERE ad_column_id=?
-      ]]>
-    </Sql>
-    <Parameter name="adColumnId"/>
-  </SqlMethod>
   <SqlMethod name="selectIdentify" type="preparedStatement" return="multiple">
     <SqlMethodComment>Names of the columns of the fields of a tab</SqlMethodComment>
     <Sql>
