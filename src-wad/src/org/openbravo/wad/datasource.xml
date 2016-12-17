@@ -105,12 +105,6 @@
   <SECTION id="sectionParent"/>
 </structure>
 
-<structure name="structure15">
-  <FIELD id="SelectParentTrl">defaultvalue</FIELD>
-  <FIELD id="paramsParentTrl">whereclause</FIELD>
-  <SECTION id="sectionParentTrl"/>
-</structure>
-
 <structure name="structure16">
   <FIELD id="Reference16">reference</FIELD>
   <FIELD id="Select16">defaultvalue</FIELD>
