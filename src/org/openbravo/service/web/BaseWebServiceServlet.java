@@ -36,11 +36,10 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
 
 /**
- * This servlet has two main responsibilities: 1) authenticate, 2) set the correct {@link OBContext}
- * , and 3) translate Exceptions into the correct Http response code.
+ * This servlet has two main responsibilities: 1) authenticate, 2) set the correct {@link OBContext} , and 3) translate Exceptions
+ * into the correct Http response code.
  * <p/>
- * In regard to authentication: there is support for basic-authentication as well as url parameter
- * based authentication.
+ * In regard to authentication: there is support for basic-authentication as well as url parameter based authentication.
  * 
  * @author mtaal
  */
@@ -62,11 +61,13 @@ public class BaseWebServiceServlet extends HttpServlet {
 
     // if a stateless webservice then set the stateless flag
     try {
-      final WebService webservice = getWebService(request);
-      if (webservice != null
-          && (AuthenticationManager.isStatelessService(webservice.getClass()) || AuthenticationManager
-              .isStatelessRequest(request))) {
+      if (AuthenticationManager.isStatelessRequest(request)) {
         request.setAttribute(AuthenticationManager.STATELESS_REQUEST_PARAMETER, "true");
+      } else {
+        final WebService webservice = getWebService(request);
+        if (webservice != null && AuthenticationManager.isStatelessService(webservice.getClass())) {
+          request.setAttribute(AuthenticationManager.STATELESS_REQUEST_PARAMETER, "true");
+        }
       }
     } catch (Throwable ignore) {
       // ignore on purpose as subclasses may manage the resolving of webservices in a different
@@ -131,8 +132,8 @@ public class BaseWebServiceServlet extends HttpServlet {
           log.error("User " + OBContext.getOBContext().getUser() + " with role "
               + OBContext.getOBContext().getRole()
               + " is trying to access to non granted web service " + request.getRequestURL());
-          throw new OBSecurityException("Web Services are not granted to "
-              + OBContext.getOBContext().getRole() + " role");
+          throw new OBSecurityException(
+              "Web Services are not granted to " + OBContext.getOBContext().getRole() + " role");
         }
       }
       super.service(request, response);
