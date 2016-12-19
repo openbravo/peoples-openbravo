@@ -47,10 +47,11 @@ public class DatabaseDecimalNumberCheck extends BuildValidation {
         returnedNumber = DatabaseDecimalNumberCheckData.checkToNumberORA(cp, numberString);
       }
       if (!ORIGINAL_NUMBER.equals(returnedNumber)) {
-        errors.add("The decimal numbers are not being retrieved properly from the database. "
-            + "This could be caused because the current database locale uses a decimal separator different from a period(.). "
-            + "For more information, please visit the following url: "
-            + "http://wiki.openbravo.com/wiki/Installation/Custom/PostgreSQL_Database");
+        errors
+            .add("The decimal numbers are not being retrieved properly from the database. "
+                + "This could be caused because the current database locale uses a decimal separator different from a period(.). "
+                + "For more information, please visit the following url: "
+                + "http://wiki.openbravo.com/wiki/Installation/Custom/PostgreSQL_Database");
       }
     } catch (Exception e) {
       return handleError(e);
