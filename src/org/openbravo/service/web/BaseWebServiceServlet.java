@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -36,10 +36,11 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
 
 /**
- * This servlet has two main responsibilities: 1) authenticate, 2) set the correct {@link OBContext} , and 3) translate Exceptions
- * into the correct Http response code.
+ * This servlet has two main responsibilities: 1) authenticate, 2) set the correct {@link OBContext}
+ * , and 3) translate Exceptions into the correct Http response code.
  * <p/>
- * In regard to authentication: there is support for basic-authentication as well as url parameter based authentication.
+ * In regard to authentication: there is support for basic-authentication as well as url parameter
+ * based authentication.
  * 
  * @author mtaal
  */
@@ -132,8 +133,8 @@ public class BaseWebServiceServlet extends HttpServlet {
           log.error("User " + OBContext.getOBContext().getUser() + " with role "
               + OBContext.getOBContext().getRole()
               + " is trying to access to non granted web service " + request.getRequestURL());
-          throw new OBSecurityException(
-              "Web Services are not granted to " + OBContext.getOBContext().getRole() + " role");
+          throw new OBSecurityException("Web Services are not granted to "
+              + OBContext.getOBContext().getRole() + " role");
         }
       }
       super.service(request, response);
