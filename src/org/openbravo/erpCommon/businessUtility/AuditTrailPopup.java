@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -1188,37 +1188,53 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
       return " ";
     }
 
-    if ("X".equals(processType)) {
+    switch (processType) {
+    case "X":
       String formLabel = getTranslatedMessage(adMessageIdForForm);
       return formLabel + ": " + getTranslatedFormName(process);
-    }
-    if ("P".equals(processType) || "R".equals(processType)) {
+    case "P":
       String processLabel = getTranslatedMessage(adMessageIdForProcess);
       return processLabel + ": " + getTranslatedProcessName(process);
-    }
-    if ("S".equals(processType)) {
+    case "S":
       return "Reference: " + OBDal.getInstance().get(Reference.class, process).getName();
-    }
-    if ("C".equals(processType)) {
+    case "C":
       String calloutLabel = getTranslatedMessage(adMessageIdForCallout);
       return calloutLabel + ": " + OBDal.getInstance().get(Callout.class, process).getName();
-    }
-    if ("CF".equals(processType)) {
+    case "CF":
       String processCFLabel = getTranslatedMessage(adMessageIdForCF);
       return processCFLabel + ": " + OBDal.getInstance().get(Table.class, process).getDBTableName();
-    }
-    if ("PD".equals(processType)) {
-      String processCFLabel = getTranslatedMessage(adMessageIdForProcess);
-      return processCFLabel + ": "
+    case "PD":
+      String processPDLabel = getTranslatedMessage(adMessageIdForProcess);
+      return processPDLabel + ": "
           + OBDal.getInstance().get(Process.class, process).getIdentifier();
+    case "W":
+      String windowLabel = getTranslatedMessage(adMessageIdForWindow);
+      return windowLabel + ": " + getTranslatedWindowName(process);
+    default:
+      return getTranslatedMessageByValue(processType)
+          + (!processType.equals(process) ? ": " + getTranslatedMessageByValue(process) : "");
     }
-    // all other cases -> Tab
-    String windowLabel = getTranslatedMessage(adMessageIdForWindow);
-    return windowLabel + ": " + getTranslatedWindowName(process);
+  }
+
+  private String getTranslatedMessageByValue(String value) {
+    OBCriteria<Message> c = OBDal.getInstance().createCriteria(Message.class);
+    c.add(Restrictions.eq(Message.PROPERTY_SEARCHKEY, value));
+    Message msg = (Message) c.uniqueResult();
+    if (msg == null) {
+      return value;
+    }
+    return getTranslatedMessage(msg);
   }
 
   private String getTranslatedMessage(String msgId) {
     Message msg = OBDal.getInstance().get(Message.class, msgId);
+    if (msg == null) {
+      return msgId;
+    }
+    return getTranslatedMessage(msg);
+  }
+
+  private String getTranslatedMessage(Message msg) {
     OBCriteria<MessageTrl> c = OBDal.getInstance().createCriteria(MessageTrl.class);
     c.add(Restrictions.eq(MessageTrl.PROPERTY_MESSAGE, msg));
     c.add(Restrictions.eq(MessageTrl.PROPERTY_LANGUAGE, OBContext.getOBContext().getLanguage()));

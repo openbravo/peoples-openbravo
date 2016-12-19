@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -106,11 +106,12 @@ public class WebServiceServlet extends BaseWebServiceServlet {
     }
   }
 
+  @Override
   protected WebService getWebService(HttpServletRequest request) {
     final WebService webService = super.getWebService(request);
     if (webService == null) {
-      throw new OBServiceException(
-          "No WebService found using the path info " + request.getPathInfo());
+      throw new OBServiceException("No WebService found using the path info "
+          + request.getPathInfo());
     }
     return webService;
   }

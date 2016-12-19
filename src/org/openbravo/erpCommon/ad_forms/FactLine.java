@@ -11,7 +11,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SLU
- * Contributions are Copyright (C) 2001-2014 Openbravo S.L.U.
+ * Contributions are Copyright (C) 2001-2016 Openbravo S.L.U.
  ******************************************************************************
  */
 package org.openbravo.erpCommon.ad_forms;
@@ -65,6 +65,7 @@ public class FactLine {
   // Doc ID
   private String m_AD_Table_ID;
   private String m_Record_ID;
+  private String m_Record_ID2;
   private String m_Line_ID;
   /**
    * Public variables are set by Fact.createLine
@@ -569,12 +570,7 @@ public class FactLine {
     if (DateAcct == null || DateAcct.equals(""))
       DateAcct = m_docVO.DateAcct;
     log4jFactLine.debug("FactLine - save - before Record_ID2 " + m_Record_ID);
-    String Record_ID2 = "";
-    if (m_docLine != null)
-      Record_ID2 = m_docLine.m_Record_Id2;
-    if (Record_ID2 == null || Record_ID2.equals(""))
-      Record_ID2 = m_docVO.m_Record_Id2;
-    log4jFactLine.debug("FactLine - save - after Record_ID2 = " + Record_ID2);
+
     String C_Period_ID = "";
     if (m_docLine != null)
       C_Period_ID = setC_Period_ID(m_docVO, m_docLine.m_DateAcct, conn);
@@ -815,7 +811,7 @@ public class FactLine {
         log4jFactLine.debug("FactLine - m_Fact_Acct_Group_ID " + m_Fact_Acct_Group_ID
             + " - m_SeqNo " + m_SeqNo);
         log4jFactLine.debug("FactLine - m_DocBaseType " + m_DocBaseType + " - Record_ID2 "
-            + Record_ID2);
+            + m_Record_ID2);
         log4jFactLine.debug("FactLine - m_A_Asset_ID "
             + ((m_docLine != null) ? m_docLine.m_A_Asset_ID : ""));
         log4jFactLine.debug("FactLine - m_C_WithHolding_ID "
@@ -828,14 +824,10 @@ public class FactLine {
             m_AmtSourceCr, m_AmtAcctDr, m_AmtAcctCr, C_UOM_ID, Qty, m_M_Locator_ID, M_Product_ID,
             C_BPartner_ID, AD_OrgTrx_ID, C_LocFrom_ID, C_LocTo_ID, C_SalesRegion_ID, C_Project_ID,
             C_Campaign_ID, C_Activity_ID, User1_ID, User2_ID, description.toString(),
-            m_Fact_Acct_Group_ID, m_SeqNo, m_DocBaseType, Record_ID2,
+            m_Fact_Acct_Group_ID, m_SeqNo, m_DocBaseType, m_Record_ID2,
             (m_docLine != null) ? m_docLine.m_A_Asset_ID : "",
             (m_docLine != null) ? m_docLine.m_C_WithHolding_ID : "", m_docVO.C_DocType_ID,
             C_Costcenter_ID, (m_docVO.m_IsOpening.equals("Y")) ? "O" : "N");
-        // Update Balancing Date [Open Balances project]
-        if (Record_ID2 != null && !"".equals(Record_ID2)) {
-          FactLineData.updateDateBalanced(con, conn, Record_ID2);
-        }
         log4jFactLine.debug("FactLine - After insertFactAct");
       }
       // if (m_docVO.m_IsOpening.equals("Y"))
@@ -1122,4 +1114,21 @@ public class FactLine {
     return m_C_Currency_ID;
   }
 
+  /**
+   * @return the record_ID2
+   */
+  public String getM_RecordID2() {
+    return m_Record_ID2;
+  }
+
+  /**
+   * Set Record_ID2 from docLine or docVo
+   * 
+   * @param record_ID2
+   *          m_RecordID2
+   * 
+   */
+  public void setM_RecordID2(String record_ID2) {
+    m_Record_ID2 = record_ID2;
+  }
 }
