@@ -10,7 +10,7 @@
 /*global, WebSocket, _ Backbone */
 
 OB.UTIL.RfidController = new Backbone.Model({
-  connected: true
+  connected: false
 });
 
 OB.UTIL.RfidController.isRfidConfigured = function () {
@@ -47,6 +47,7 @@ OB.UTIL.RfidController.startRfidWebsocket = function startRfidWebsocket(websocke
     }
     OB.UTIL.RfidController.set('barcodeActionHandler', new OB.UI.BarcodeActionHandler());
     OB.UTIL.RfidController.removeAllEpcs();
+    OB.UTIL.RfidController.set('connected', true);
     OB.UTIL.RfidController.set('connectionLost', false);
   };
 
@@ -55,6 +56,7 @@ OB.UTIL.RfidController.startRfidWebsocket = function startRfidWebsocket(websocke
     var data, ean, i, line;
     if (event.data.startsWith('doNotReconnect')) {
       OB.UTIL.RfidController.get('rfidWebsocket').onclose = function () {};
+      OB.UTIL.RfidController.set('connected', false);
       OB.UTIL.RfidController.set('connectionLost', true);
       OB.UTIL.RfidController.get('rfidWebsocket').close();
       return;
@@ -105,6 +107,7 @@ OB.UTIL.RfidController.startRfidWebsocket = function startRfidWebsocket(websocke
     setTimeout(function () {
       OB.UTIL.RfidController.startRfidWebsocket(websocketServerLocation, reconnectTimeout, currentRetrials, retrialsBeforeWarning);
     }, reconnectTimeout);
+    OB.UTIL.RfidController.set('connected', false);
     OB.UTIL.RfidController.set('connectionLost', true);
   };
 
@@ -401,3 +404,7 @@ OB.UTIL.RfidController.sendTestEpc = function (epc, callback, errorCallback) {
     }, 2000, OB.UTIL.get_UUID(), 5);
   }
 };
+
+OB.UTIL.RfidController.on('change:isRFIDEnabled', function (model) {
+  OB.MobileApp.view.originalRFIDMode = OB.UTIL.RfidController.get('isRFIDEnabled');
+}, this);
