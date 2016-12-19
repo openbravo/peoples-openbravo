@@ -24,27 +24,31 @@ import java.util.List;
 import org.openbravo.database.ConnectionProvider;
 
 /**
- * This validation is related to Issue 27056: It is possible to assign more than once the same warehouse to one organization
+ * This validation is related to Issue 27056: It is possible to assign more than once the same
+ * warehouse to one organization
  */
 
-public class DuplicatedOrgWarehouse extends BuildValidation{
+public class DuplicatedOrgWarehouse extends BuildValidation {
   @Override
   public List<String> execute() {
     ConnectionProvider cp = getConnectionProvider();
     ArrayList<String> errors = new ArrayList<String>();
-    try{
+    try {
       if (DuplicatedOrgWarehouseData.existOrgWarehouseTable(cp)) {
         if (DuplicatedOrgWarehouseData.existsDuplicatedOrgWarehouse(cp)) {
-          DuplicatedOrgWarehouseData[] orgWarehouse =  DuplicatedOrgWarehouseData.DuplicatedOrganizationWarehouse(cp);
-          errors.add("Due to a database constraint modification, is no longer allowed to "+
-    	            "assign the same Warehouse more than once in each Organization. "+
-    	            "There exists data in your database that do not fit this new constraint. Please review following:- ");
-          for(int i = 0; i < orgWarehouse.length ;i++) {
-            errors.add(" Client: " + orgWarehouse[i].client + ", Organization: " + orgWarehouse[i].organization + ", Warehouse: " + orgWarehouse[i].warehouse);
+          DuplicatedOrgWarehouseData[] orgWarehouse = DuplicatedOrgWarehouseData
+              .DuplicatedOrganizationWarehouse(cp);
+          errors
+              .add("Due to a database constraint modification, is no longer allowed to "
+                  + "assign the same Warehouse more than once in each Organization. "
+                  + "There exists data in your database that do not fit this new constraint. Please review following:- ");
+          for (int i = 0; i < orgWarehouse.length; i++) {
+            errors.add(" Client: " + orgWarehouse[i].client + ", Organization: "
+                + orgWarehouse[i].organization + ", Warehouse: " + orgWarehouse[i].warehouse);
           }
         }
-      } 
-    }catch (Exception e) {
+      }
+    } catch (Exception e) {
       return handleError(e);
     }
     return errors;
