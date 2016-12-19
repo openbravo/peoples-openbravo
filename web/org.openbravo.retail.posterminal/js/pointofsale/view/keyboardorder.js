@@ -873,7 +873,9 @@ enyo.kind({
         }
         // If the preference to show that the 'UPC/EAN code has not been found is enabled'
         if (OB.MobileApp.model.hasPermission('OBPOS_showPopupEANNotFound', true)) {
-          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_KbUPCEANCodeNotFound', [args.code]));
+          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_KbUPCEANCodeNotFound', [args.code]), undefined, undefined, {
+            defaultAction: false
+          });
         } else {
           OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_KbUPCEANCodeNotFound', [args.code]));
         }
