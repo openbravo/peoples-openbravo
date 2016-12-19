@@ -260,9 +260,9 @@ public class ProcessInvoice extends HttpSecureAppServlet {
                   .getFINPaymentScheduleDetailInvoicePaymentScheduleList();
               for (FIN_PaymentScheduleDetail psd : psdl) {
                 FIN_PaymentDetail pd = psd.getPaymentDetails();
-                if (pd != null) {
-                  if (pd.getFinPayment().getStatus().equals("RPAE")
-                      || pd.getFinPayment().getStatus().equals("RPAP")) {
+                if (pd != null
+                    && (pd.getFinPayment().getStatus().equals("RPAE") || pd.getFinPayment()
+                        .getStatus().equals("RPAP"))) {
                     msg = new OBError();
                     msg.setType("Error");
                     msg.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
@@ -271,7 +271,6 @@ public class ProcessInvoice extends HttpSecureAppServlet {
                     vars.setMessage(strTabId, msg);
                     printPageClosePopUp(response, vars, Utility.getTabURL(strTabId, "R", true));
                     return;
-                  }
                 }
               }
             }
