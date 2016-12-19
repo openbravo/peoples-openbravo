@@ -119,7 +119,7 @@ enyo.kind({
   },
 
   applyChanges: function (inSender, inEvent) {
-    OB.POS.hwserver['setActiveURL'](this.printerscontainer.getActiveURL());
+    OB.POS.hwserver.setActiveURL(this.printerscontainer.getActiveURL());
     this.args.actionExecuted = true;
     if (this.args.onSuccess) {
       this.args.onSuccess();
@@ -156,7 +156,7 @@ enyo.kind({
 
     // Add the rest of URLs
     _.each(printers, function (printer) {
-      if (printer['hasReceiptPrinter']) {
+      if (printer.hasReceiptPrinter) {
         this.printerscontainer.createComponent({
           kind: 'SelectPrintersLine',
           name: 'printerLine' + printer.id,
@@ -167,7 +167,7 @@ enyo.kind({
     }, this);
 
     // Select the active URL
-    this.printerscontainer.selectURL(OB.POS.hwserver['activeurl']);
+    this.printerscontainer.selectURL(OB.POS.hwserver.activeurl);
   },
   executeOnHide: function () {
     if (!this.args.actionExecuted && this.args.onHide) {
@@ -225,7 +225,7 @@ enyo.kind({
   },
 
   applyChanges: function (inSender, inEvent) {
-    OB.POS.hwserver['setActivePDFURL'](this.printerscontainer.getActiveURL());
+    OB.POS.hwserver.setActivePDFURL(this.printerscontainer.getActiveURL());
     this.args.actionExecuted = true;
     if (this.args.onSuccess) {
       this.args.onSuccess();
@@ -262,7 +262,7 @@ enyo.kind({
 
     // Add the rest of URLs
     _.each(printers, function (printer) {
-      if (printer['hasPDFPrinter']) {
+      if (printer.hasPDFPrinter) {
         this.printerscontainer.createComponent({
           kind: 'SelectPrintersLine',
           name: 'PDFprinterLine' + printer.id,
@@ -273,7 +273,7 @@ enyo.kind({
     }, this);
 
     // Select the active URL
-    this.printerscontainer.selectURL(OB.POS.hwserver['activepdfurl']);
+    this.printerscontainer.selectURL(OB.POS.hwserver.activepdfurl);
   },
   executeOnHide: function () {
     if (!this.args.actionExecuted && this.args.onHide) {
