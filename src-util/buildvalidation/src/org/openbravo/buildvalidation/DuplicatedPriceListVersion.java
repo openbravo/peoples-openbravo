@@ -24,8 +24,8 @@ import java.util.List;
 import org.openbravo.database.ConnectionProvider;
 
 /**
- * This validation is related to this issue: 23164: It is possible to create a 
- * two price list versions with same name and same valid from date
+ * This validation is related to this issue: 23164: It is possible to create a two price list
+ * versions with same name and same valid from date
  */
 public class DuplicatedPriceListVersion extends BuildValidation {
 
@@ -35,13 +35,12 @@ public class DuplicatedPriceListVersion extends BuildValidation {
     ArrayList<String> errors = new ArrayList<String>();
     try {
       if (DuplicatedPriceListVersionData.existsDuplicatedPriceListVersion(cp)) {
-        errors
-            .add("Due to a database constraint modification, is no longer allowed " +
-            		"to create two price list versions with same name and same valid from date" +
-            		" to one price list. " +
-            		"There exists data in your database that do not fit this new constraint. " +
-            		"Please fix it in M_PRICELIST_VERSION table as M_PRICELIST_ID, NAME AND " +
-            		"VALIDFROM columns have not got duplicated values");
+        errors.add("Due to a database constraint modification, is no longer allowed "
+            + "to create two price list versions with same name and same valid from date"
+            + " to one price list. "
+            + "There exists data in your database that do not fit this new constraint. "
+            + "Please fix it in M_PRICELIST_VERSION table as M_PRICELIST_ID, NAME AND "
+            + "VALIDFROM columns have not got duplicated values");
       }
     } catch (Exception e) {
       return handleError(e);
