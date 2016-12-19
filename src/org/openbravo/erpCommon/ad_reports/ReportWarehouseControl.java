@@ -71,11 +71,23 @@ public class ReportWarehouseControl extends HttpSecureAppServlet {
     PrintWriter out = response.getWriter();
     XmlDocument xmlDocument = null;
 
-    ReportWarehouseControlData[] data = ReportWarehouseControlData.select(this,
+    ReportWarehouseControlData[] data = null;
+    int limit = 0;
+    int countLines = 0;
+    if(!vars.commandIn("DEFAULT")){
+      limit = Integer.parseInt(Utility.getPreference(vars, "ReportsLimit", ""));
+      if(limit > 0){
+        countLines = Integer.valueOf(ReportWarehouseControlData.countLines(this,
+          Utility.getContext(this, vars, "#User_Client", "ReportWarehouseControl"),
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportWarehouseControl"),
+            strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strReferential));
+      }
+      data = ReportWarehouseControlData.select(this,
         Utility.getContext(this, vars, "#User_Client", "ReportWarehouseControl"),
         Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportWarehouseControl"),
-        strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strReferential);
-
+        strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"), strReferential, 0, limit);
+    }
+    
     if (data == null || data.length == 0 || vars.commandIn("DEFAULT")) {
       String discard[] = { "sectionDescription" };
       xmlDocument = xmlEngine.readXmlTemplate(
@@ -119,6 +131,15 @@ public class ReportWarehouseControl extends HttpSecureAppServlet {
     }
     {
       OBError myMessage = vars.getMessage("ReportWarehouseControl");
+      if (limit > 0 && countLines > limit) {
+        myMessage = new OBError();
+        myMessage.setType("Warning");
+        myMessage.setTitle("");
+        String msgbody = Utility.messageBD(this, "ReportsLimitBody", vars.getLanguage());
+        msgbody = msgbody.replace("@limit@", String.valueOf(limit));
+        msgbody = msgbody.replace("@rows@", String.valueOf(countLines));
+        myMessage.setMessage(msgbody);
+      }
       vars.removeMessage("ReportWarehouseControl");
       if (myMessage != null) {
         xmlDocument.setParameter("messageType", myMessage.getType());
@@ -140,6 +161,7 @@ public class ReportWarehouseControl extends HttpSecureAppServlet {
     xmlDocument.setData("structure1", data);
     out.println(xmlDocument.print());
     out.close();
+    
   }
 
   public String getServletInfo() {
