@@ -2238,8 +2238,10 @@
       } else {
         line.get('product').set('ignorePromotions', false);
       }
+      this.set('skipCalculateReceipt', true);
+
       line.set('qty', -line.get('qty'));
-      if (line.get('qty') > 0 && line.get('product').get('groupProduct')) {
+      if (line.get('qty') > 0 && line.get('product').get('groupProduct') && !line.get('splitline')) {
         this.mergeLines(line);
       }
 
@@ -2280,8 +2282,10 @@
       if (line.get('promotions')) {
         line.unset('promotions');
       }
-      this.save();
-
+      this.set('skipCalculateReceipt', false);
+      this.calculateReceipt(function () {
+        me.save();
+      });
     },
 
     setBPandBPLoc: function (businessPartner, showNotif, saveChange, callback) {
