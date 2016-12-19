@@ -37,18 +37,16 @@ import org.openbravo.database.ConnectionProvider;
 
 /**
  * This build validation prevents a bad behaviour updating to PR15Q4 by taking into account the
- * following scenarios: 
- *      - Update from < 3.0PR15Q4 using defaults connection pools.
- *      - Update from < 3.0PR15Q4 using Apache JDBC Connection Pool module or another external
- *      connection pool.
+ * following scenarios: - Update from < 3.0PR15Q4 using defaults connection pools. - Update from <
+ * 3.0PR15Q4 using Apache JDBC Connection Pool module or another external connection pool.
  * 
  * It must be ensured that if an enviroment did not use "Apache JDBC Connection Pool" module, it
  * must continue without using the connection pool. On the other hand, environments that used the
  * module continue to use the Apache JDBC Connection pool. It will try to retrieve the configuration
  * of the module. The new instances will start using the new connection pool.
- *
+ * 
  * @author inigo.sanchez
- *
+ * 
  */
 public class CheckUpdateConnectionPoolMerge extends BuildValidation {
 
@@ -78,7 +76,8 @@ public class CheckUpdateConnectionPoolMerge extends BuildValidation {
         if (versionOfModule == null) {
           File fileW = new File(openbravoPropertiesPath);
           // removes value of property that merge in Openbravo.properties
-          replaceProperty(fileW, openbravoPropertiesPath + SUFFIX_AUX, PROPERTY_CONNECTION_POOL, "=");
+          replaceProperty(fileW, openbravoPropertiesPath + SUFFIX_AUX, PROPERTY_CONNECTION_POOL,
+              "=");
           try {
             fileW.delete();
             File fileAux = new File(openbravoPropertiesPath + SUFFIX_AUX);
@@ -104,7 +103,7 @@ public class CheckUpdateConnectionPoolMerge extends BuildValidation {
 
   /**
    * Checks version of the module.
-   *
+   * 
    * @return true if it is necessary to merge.
    */
   private boolean isNecessaryMerge(String version, String targetVersion) {
@@ -127,10 +126,10 @@ public class CheckUpdateConnectionPoolMerge extends BuildValidation {
    * When updating core and it is include Apache JDBC Connection Pool into distribution in some
    * cases is necessary to update Openbravo.properties taking into account
    * connectionPool.properties.
-   *
+   * 
    * This connectionPool.properties file exists in instances with Apache JDBC Connection Pool
    * module.
-   *
+   * 
    * @return false in case no changes were needed, true in case the merge includes some changes
    */
   private static boolean mergeOpenbravoPropertiesConnectionPool(String OpenbravoPropertiesPath,
@@ -187,7 +186,7 @@ public class CheckUpdateConnectionPoolMerge extends BuildValidation {
    * 
    * Extract from original method in org.openbravo.erpCommon.utility.Utility.java. It is necessary
    * because build validations can not work with external methods.
-   *
+   * 
    * @param pathFile
    *          properties file path
    * @param propertyName
@@ -212,7 +211,7 @@ public class CheckUpdateConnectionPoolMerge extends BuildValidation {
    * 
    * Extract from original method in org.openbravo.configuration.ConfigurationApp.java. It is
    * necessary because build validations can not work with external methods.
-   *
+   * 
    * @param fileR
    *          old file to read
    * @param addressFilePath
@@ -253,7 +252,7 @@ public class CheckUpdateConnectionPoolMerge extends BuildValidation {
    * 
    * Extract from original method in org.openbravo.configuration.ConfigurationApp.java. It is
    * necessary because build validations can not work with external methods.
-   *
+   * 
    * @param filePath
    *          Path of file
    * @param searchOption
