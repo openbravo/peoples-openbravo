@@ -26,6 +26,7 @@ import org.openbravo.service.importprocess.ImportEntryProcessor;
 @ImportEntryQualifier(entity = "BusinessPartner")
 @ApplicationScoped
 public class CustomerImportEntryProcessor extends ImportEntryProcessor {
+  static final String BP_LOADER_AUDIT_TYPE = "OBPOS_BP_Loader";
 
   @Override
   protected ImportEntryProcessRunnable createImportEntryProcessRunnable() {
@@ -47,6 +48,11 @@ public class CustomerImportEntryProcessor extends ImportEntryProcessor {
     @Override
     protected Class<? extends DataSynchronizationProcess> getDataSynchronizationClass() {
       return CustomerLoader.class;
+    }
+
+    @Override
+    protected String getProcessIdForAudit() {
+      return BP_LOADER_AUDIT_TYPE;
     }
   }
 

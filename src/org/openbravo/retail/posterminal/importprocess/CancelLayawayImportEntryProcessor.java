@@ -38,8 +38,15 @@ public class CancelLayawayImportEntryProcessor extends ImportEntryProcessor {
   }
 
   private static class CancelLayawayRunnable extends MobileImportEntryProcessorRunnable {
+    private static final String CANCEL_LAYAWAY_AUDIT_TYPE = "OBPOS_CancelLayaway";
+
     protected Class<? extends DataSynchronizationProcess> getDataSynchronizationClass() {
       return CancelLayawayLoader.class;
+    }
+
+    @Override
+    protected String getProcessIdForAudit() {
+      return CANCEL_LAYAWAY_AUDIT_TYPE;
     }
   }
 
