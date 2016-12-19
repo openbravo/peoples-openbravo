@@ -493,6 +493,7 @@ enyo.kind({
               if (currentLine[0].get('promotions')) {
                 relatedLine.promotions = currentLine[0].get('promotions').slice();
               }
+              relatedLine.obposCanbedelivered = currentLine[0].get('obposCanbedelivered');
             });
 
             // Select open ticket or create a new one

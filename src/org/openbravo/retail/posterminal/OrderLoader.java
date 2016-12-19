@@ -193,7 +193,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
     isDeleted = jsonorder.has("obposIsDeleted") && jsonorder.getBoolean("obposIsDeleted");
     isModified = jsonorder.has("isModified") && jsonorder.getBoolean("isModified");
 
-    createShipment = !isQuotation && !notpaidLayaway && !paidReceipt && !isDeleted;
+    createShipment = !isQuotation && !paidReceipt && !isDeleted;
     if (jsonorder.has("generateShipment")) {
       createShipment &= jsonorder.getBoolean("generateShipment");
     }
@@ -324,13 +324,30 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           t111 = System.currentTimeMillis();
         }
 
-        if ((!newLayaway && notpaidLayaway) || paidReceipt) {
+        if (paidReceipt) {
           order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
           order.setObposAppCashup(jsonorder.getString("obposAppCashup"));
-          if (paidReceipt && createInvoice) {
+          if (createInvoice) {
             for (OrderLine line : order.getOrderLineList()) {
               lineReferences.add(line);
             }
+          }
+        } else if ((!newLayaway && notpaidLayaway)) {
+          order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
+          order.setObposAppCashup(jsonorder.getString("obposAppCashup"));
+
+          for (int i = 0; i < order.getOrderLineList().size(); i++) {
+            JSONObject jsonOrderLine = orderlines.getJSONObject(i);
+            OrderLine ol = order.getOrderLineList().get(i);
+            ol.setObposCanbedelivered(jsonOrderLine.getBoolean("obposCanbedelivered"));
+            BigDecimal qtyToDeliver = jsonOrderLine.has("availableQtyToDeliver") ? new BigDecimal(
+                jsonOrderLine.getDouble("availableQtyToDeliver")) : (jsonOrderLine
+                .has("obposQtytodeliver") ? new BigDecimal(
+                jsonOrderLine.getDouble("obposQtytodeliver")) : ol.getOrderedQuantity());
+            if (ol.isObposCanbedelivered()) {
+              ol.setDeliveredQuantity(qtyToDeliver);
+            }
+            lineReferences.add(ol);
           }
         } else if (!newLayaway && (creditpaidLayaway || fullypaidLayaway)) {
 
@@ -349,8 +366,9 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
           for (int i = 0; i < lstResultOL.size(); i++) {
             orderLine = lstResultOL.get(i);
             JSONObject jsonOrderLine = orderlines.getJSONObject(i);
-            BigDecimal qtyToDeliver = jsonOrderLine.has("obposQtytodeliver") ? new BigDecimal(
-                jsonOrderLine.getDouble("obposQtytodeliver")) : orderLine.getOrderedQuantity();
+            BigDecimal qtyToDeliver = jsonOrderLine.has("obposQtytodeliver") ? BigDecimal
+                .valueOf(jsonOrderLine.getDouble("obposQtytodeliver")) : orderLine
+                .getOrderedQuantity();
             orderLine.setDeliveredQuantity(qtyToDeliver);
             lineReferences.add(orderLine);
           }
@@ -409,28 +427,48 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
         if (log.isDebugEnabled()) {
           t113 = System.currentTimeMillis();
         }
+
         createShipment = createShipment && goodsToDeliver(order);
         final ShipmentInOut_Utils su = new ShipmentInOut_Utils();
         if (createShipment) {
 
-          OBCriteria<Locator> locators = OBDal.getInstance().createCriteria(Locator.class);
-          locators.add(Restrictions.eq(Locator.PROPERTY_ACTIVE, true));
-          locators.add(Restrictions.eq(Locator.PROPERTY_WAREHOUSE, order.getWarehouse()));
-          locators.addOrderBy(Locator.PROPERTY_RELATIVEPRIORITY, true);
-          locators.setMaxResults(2);
-          List<Locator> locatorList = locators.list();
-
-          if (locatorList.isEmpty()) {
-            throw new OBException(Utility.messageBD(new DalConnectionProvider(false),
-                "OBPOS_WarehouseNotStorageBin", OBContext.getOBContext().getLanguage()
-                    .getLanguage()));
+          BigDecimal pendingQtyToDeliver = BigDecimal.ZERO;
+          for (int i = 0; i < order.getOrderLineList().size(); i++) {
+            OrderLine ol = order.getOrderLineList().get(i);
+            BigDecimal pendingLineQty = ol.getDeliveredQuantity();
+            if (pendingLineQty != null) {
+              pendingLineQty = pendingLineQty.abs();
+              if (orderlines.getJSONObject(i).has("deliveredQuantity")
+                  && orderlines.getJSONObject(i).get("deliveredQuantity") != JSONObject.NULL) {
+                pendingLineQty = pendingLineQty.subtract(new BigDecimal(orderlines.getJSONObject(i)
+                    .getLong("deliveredQuantity")));
+              }
+              pendingQtyToDeliver = pendingQtyToDeliver.add(pendingLineQty);
+            }
           }
 
-          shipment = OBProvider.getInstance().get(ShipmentInOut.class);
-          su.createShipment(shipment, order, jsonorder, useOrderDocumentNoForRelatedDocs);
-          OBDal.getInstance().save(shipment);
-          su.createShipmentLines(shipment, order, jsonorder, orderlines, lineReferences,
-              locatorList);
+          if (pendingQtyToDeliver.compareTo(BigDecimal.ZERO) != 0) {
+            OBCriteria<Locator> locators = OBDal.getInstance().createCriteria(Locator.class);
+            locators.add(Restrictions.eq(Locator.PROPERTY_ACTIVE, true));
+            locators.add(Restrictions.eq(Locator.PROPERTY_WAREHOUSE, order.getWarehouse()));
+            locators.addOrderBy(Locator.PROPERTY_RELATIVEPRIORITY, true);
+            locators.setMaxResults(2);
+            List<Locator> locatorList = locators.list();
+
+            if (locatorList.isEmpty()) {
+              throw new OBException(Utility.messageBD(new DalConnectionProvider(false),
+                  "OBPOS_WarehouseNotStorageBin", OBContext.getOBContext().getLanguage()
+                      .getLanguage()));
+            }
+
+            shipment = OBProvider.getInstance().get(ShipmentInOut.class);
+            su.createShipment(shipment, order, jsonorder, useOrderDocumentNoForRelatedDocs);
+            OBDal.getInstance().save(shipment);
+            su.createShipmentLines(shipment, order, jsonorder, orderlines, lineReferences,
+                locatorList);
+          } else {
+            createShipment = false;
+          }
         }
         if (log.isDebugEnabled()) {
           t115 = System.currentTimeMillis();
@@ -829,7 +867,7 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
       orderline.setLineNetAmount(BigDecimal.valueOf(jsonOrderLine.getDouble("net")).setScale(
           pricePrecision, RoundingMode.HALF_UP));
 
-      if (createShipment
+      if ((createShipment && orderline.isObposCanbedelivered())
           || (doCancelAndReplace && !newLayaway && !notpaidLayaway && !partialpaidLayaway)) {
         // shipment is created or is a C&R and is not a layaway, so all is delivered
         orderline
@@ -2013,8 +2051,8 @@ public class OrderLoader extends POSDataSynchronizationProcess implements
 
   protected boolean goodsToDeliver(Order order) {
     for (OrderLine line : order.getOrderLineList()) {
-      if ((paidReceipt && line.getObposQtytodeliver().compareTo(line.getDeliveredQuantity()) == 0)
-          || (!paidReceipt && line.getObposQtytodeliver().compareTo(BigDecimal.ZERO) == 0)) {
+      if (line.getObposQtytodeliver().compareTo(BigDecimal.ZERO) == 0
+          || !line.isObposCanbedelivered()) {
         continue;
       } else {
         return true;

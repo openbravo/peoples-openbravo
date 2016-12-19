@@ -189,6 +189,30 @@
           frozenReceipt.set('undo', null);
           frozenReceipt.set('multipleUndo', null);
 
+          if (Math.abs(receipt.get('payment')) === Math.abs(receipt.get('gross')) || receipt.get('paidOnCredit')) {
+            receipt.get('lines').forEach(function (line) {
+              line.set('obposCanbedelivered', true);
+            });
+          }
+
+          receipt.get('lines').forEach(function (line) {
+            if (line.get('product').get('productType') === 'S' && line.get('product').get('isLinkedToProduct') && !line.has('obposQtytodeliver') && line.get('qty') > 0) {
+              var qtyToDeliver = OB.DEC.Zero;
+              line.get('relatedLines').forEach(function (relatedLine) {
+                var orderline = receipt.get('lines').get(relatedLine.orderlineId);
+                if (orderline && orderline.get('obposIspaid')) {
+                  qtyToDeliver += orderline.get('qty');
+                } else if (relatedLine.obposIspaid) {
+                  qtyToDeliver += relatedLine.qty;
+                }
+              });
+              line.set('obposQtytodeliver', qtyToDeliver);
+              if (qtyToDeliver) {
+                line.set('obposCanbedelivered', true);
+              }
+            }
+          });
+
           frozenReceipt.set('paymentMethodKind', null);
           if (frozenReceipt.get('payments').length === 1 && (frozenReceipt.get('orderType') === 0 || frozenReceipt.get('orderType') === 1 || (frozenReceipt.get('orderType') === 2 && frozenReceipt.getPayment() >= frozenReceipt.getTotal())) && !frozenReceipt.get('isQuotation') && !frozenReceipt.get('paidOnCredit')) {
             var payment = frozenReceipt.get('payments').models[0];
@@ -489,6 +513,13 @@
             // be sure that the active terminal is the one set as the order proprietary
             currentReceipt.set('posTerminal', OB.MobileApp.model.get('terminal').id);
             currentReceipt.set('posTerminal' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER, OB.MobileApp.model.get('terminal')._identifier);
+
+            if (Math.abs(currentReceipt.get('payment')) === Math.abs(currentReceipt.get('gross')) || currentReceipt.get('paidOnCredit')) {
+              currentReceipt.get('lines').forEach(function (line) {
+                line.set('obposCanbedelivered', true);
+              });
+            }
+
             me.context.get('multiOrders').trigger('integrityOk', currentReceipt);
 
             OB.UTIL.calculateCurrentCash();

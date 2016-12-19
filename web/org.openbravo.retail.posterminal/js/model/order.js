@@ -41,7 +41,8 @@
       gross: OB.DEC.Zero,
       net: OB.DEC.Zero,
       description: '',
-      attributeValue: ''
+      attributeValue: '',
+      obposCanbedelivered: false
     },
 
     // When copying a line coming from servers these properties are copied
@@ -89,6 +90,7 @@
         this.set('priceIncludesTax', attributes.priceIncludesTax);
         this.set('description', attributes.description);
         this.set('attributeValue', attributes.attributeValue);
+        this.set('obposCanbedelivered', attributes.obposCanbedelivered);
         if (!attributes.grossListPrice && attributes.product && _.isNumber(attributes.priceList)) {
           this.set('grossListPrice', attributes.priceList);
         }

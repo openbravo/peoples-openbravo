@@ -37,10 +37,14 @@ public class PaidReceiptRelatedLinesProperties extends ModelExtension {
         add(new HQLProperty("olsr.orderlineRelated.salesOrder.id", "orderId"));
         add(new HQLProperty("olsr.orderlineRelated.orderedQuantity", "qty"));
         add(new HQLProperty(
-            "olsr.orderlineRelated.baseGrossUnitPrice*olsr.orderlineRelated.orderedQuantity",
+            "olsr.orderlineRelated.baseGrossUnitPrice * olsr.orderlineRelated.orderedQuantity",
             "gross"));
         add(new HQLProperty(
-            "olsr.orderlineRelated.standardPrice*olsr.orderlineRelated.orderedQuantity", "net"));
+            "olsr.orderlineRelated.standardPrice * olsr.orderlineRelated.orderedQuantity", "net"));
+        add(new HQLProperty(
+            "(case when olsr.salesOrderLine.salesOrder.id != olsr.orderlineRelated.salesOrder.id "
+                + "then true else false end)", "deferred"));
+        add(new HQLProperty("olsr.orderlineRelated.obposCanbedelivered", "obposCanbedelivered"));
       }
     };
 

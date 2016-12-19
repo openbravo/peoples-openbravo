@@ -85,7 +85,13 @@ public class ShipmentInOut_Utils {
     JSONPropertyToEntity.fillBobFromJSON(shpEntity, shipment, jsonorder,
         jsonorder.getLong("timezoneOffset"));
     if (jsonorder.has("id")) {
-      shipment.setId(jsonorder.getString("id"));
+      ShipmentInOut oldShipment = OBDal.getInstance().get(ShipmentInOut.class,
+          jsonorder.getString("id"));
+      if (oldShipment == null) {
+        shipment.setId(jsonorder.getString("id"));
+      } else {
+        shipment.setId(SequenceIdData.getUUID());
+      }
       shipment.setNewOBObject(true);
     }
     shipment.setDocumentType(getShipmentDocumentType(order.getDocumentType().getId()));
@@ -132,6 +138,11 @@ public class ShipmentInOut_Utils {
     for (int i = 0; i < orderlines.length(); i++) {
 
       OrderLine orderLine = lineReferences.get(i);
+
+      if (!orderLine.isObposCanbedelivered()) {
+        continue;
+      }
+
       BigDecimal pendingQty = orderLine.getDeliveredQuantity().abs();
       if (orderlines.getJSONObject(i).has("deliveredQuantity")
           && orderlines.getJSONObject(i).get("deliveredQuantity") != JSONObject.NULL) {
@@ -355,16 +366,11 @@ public class ShipmentInOut_Utils {
     String orderOrganizationId = jsonorder.getString("organization");
 
     ShipmentInOutLine line = OBProvider.getInstance().get(ShipmentInOutLine.class);
-    String shipmentLineId = OBMOBCUtils.getUUIDbyString(orderLine.getId() + lineNo + i);
-    line.setId(shipmentLineId);
-    line.setNewOBObject(true);
     JSONPropertyToEntity.fillBobFromJSON(shplineentity, line, jsonOrderLine,
         jsonorder.getLong("timezoneOffset"));
     JSONPropertyToEntity.fillBobFromJSON(
         ModelProvider.getInstance().getEntity(ShipmentInOutLine.class), line, jsonorder,
         jsonorder.getLong("timezoneOffset"));
-    line.setId(shipmentLineId);
-    line.setNewOBObject(true);
     line.setLineNo(lineNo);
     line.setShipmentReceipt(shipment);
     line.setSalesOrderLine(orderLine);
