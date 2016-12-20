@@ -262,7 +262,7 @@ public class JdbcExternalConnectionPool extends ExternalConnectionPool {
   }
 
   private int getIntProperty(Properties properties, String propertyName, String poolName) {
-    return Integer.parseInt(getStringProperty(properties, propertyName, poolName));
+    return Integer.parseInt(getStringProperty(properties, propertyName, poolName).trim());
   }
 
   /** gets specific property for pool if present, default property if not */
