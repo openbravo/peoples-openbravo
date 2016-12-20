@@ -25,8 +25,10 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.openbravo.base.ExecutionLimits;
 import org.openbravo.buildvalidation.BuildValidation;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.modulescript.OpenbravoVersion;
 
 /**
  * This validation prevents system to be built in unsupported database versions.
@@ -116,5 +118,10 @@ public class DatabaseVersionCheck extends BuildValidation {
       version = matcher.group();
     }
     return version;
+  }
+  
+  @Override
+  protected ExecutionLimits getBuildValidationLimits() {
+    return new ExecutionLimits("0", null, new OpenbravoVersion(3, 0, 27370));
   }
 }
