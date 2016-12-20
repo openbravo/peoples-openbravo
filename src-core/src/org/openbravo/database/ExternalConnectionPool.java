@@ -78,6 +78,17 @@ public abstract class ExternalConnectionPool {
    */
   public abstract Connection getConnection();
 
+  /**
+   * This method is intended to be overridden by external connection multi-pools. This kind of pools
+   * can handle several datasources and this method allows to select from which of them the
+   * connection should be taken.
+   * 
+   * @param poolName
+   *          The name of the external connection pool
+   * 
+   * @return A Connection from the external connection pool whose name is passed as parameter
+   * 
+   */
   public Connection getConnection(String poolName) {
     return getConnection();
   }
