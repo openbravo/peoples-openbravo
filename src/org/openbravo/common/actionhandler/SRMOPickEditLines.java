@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2011-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2011-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -41,6 +41,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBDao;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.financial.FinancialUtils;
+import org.openbravo.materialmgmt.UOMUtil;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.common.order.ReturnReason;
@@ -136,6 +137,7 @@ public class SRMOPickEditLines extends BaseProcessActionHandler {
       selectedLines.put(selectedLineOrphan);
     }
 
+    boolean isUomManagementEnabled = UOMUtil.isUomManagementEnabled();
     for (long i = 0; i < selectedLines.length(); i++) {
       JSONObject selectedLine = selectedLines.getJSONObject((int) i);
       log.debug(selectedLine);
@@ -180,8 +182,35 @@ public class SRMOPickEditLines extends BaseProcessActionHandler {
       newOrderLine.setProduct(product);
       newOrderLine.setAttributeSetValue(asi);
       newOrderLine.setUOM(uom);
-      // Ordered Quantity = returned quantity.
+      newOrderLine.setOperativeUOM(shipmentLine.getOperativeUOM());
+      newOrderLine
+          .setOperativeQuantity(shipmentLine.getOperativeQuantity() == null ? BigDecimal.ZERO
+              : shipmentLine.getOperativeQuantity().negate());
+
       BigDecimal qtyReturned = new BigDecimal(selectedLine.getString("returned")).negate();
+
+      boolean applyAUM = isUomManagementEnabled && shipmentLine.getOrderUOM() == null;
+      try {
+        selectedLine.getString("aum");
+      } catch (JSONException jse) {
+        /**
+         * The line is an orphan line, no AUM logic is applied
+         */
+        applyAUM = false;
+      }
+      if (applyAUM) {
+        String aumId = selectedLine.getString("returnedUOM");
+        UOM aum = OBDal.getInstance().get(UOM.class, aumId);
+        newOrderLine.setOperativeUOM(aum);
+        if (!aum.getId().equals(shipmentLine.getUOM().getId())) {
+          qtyReturned = UOMUtil.getConvertedQty(shipmentLine.getProduct().getId(),
+              new BigDecimal(selectedLine.getString("returned")), aum.getId()).negate();
+        }
+        newOrderLine.setOperativeQuantity(new BigDecimal(selectedLine.getString("returned"))
+            .negate());
+      }
+
+      // Ordered Quantity = returned quantity.
       newOrderLine.setOrderedQuantity(qtyReturned);
 
       TaxRate tax = null;

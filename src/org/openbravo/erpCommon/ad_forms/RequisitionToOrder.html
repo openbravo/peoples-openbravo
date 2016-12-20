@@ -13,7 +13,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2008-2010 Openbravo SLU
+ * All portions are Copyright (C) 2008-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -72,15 +72,26 @@
       function updateData(key, mark) {
         if (mark==null) mark=false;
         var frm = document.frmMain;
+        if(frm.elements["inpPreference" + key].value == "" && frm.elements["inpAumQty" + key].value != ""){
+          frm.elements["inpAumQty" + key].disabled=!mark;
+        }
         frm.elements["inpQty" + key].disabled=!mark;
         frm.elements["inpPrice" + key].disabled=!mark;
 
         if (mark)
         {
-          frm.elements["inpQty" + key].className = frm.elements["inpQty" + key].className.replace(' readonly', '');
+          if(frm.elements["inpPreference" + key].value == "" && frm.elements["inpAumQty" + key].value != ""){
+        	frm.elements["inpAumQty" + key].className = frm.elements["inpAumQty" + key].className.replace(' readonly', '');
+          } else {
+          	frm.elements["inpQty" + key].className = frm.elements["inpQty" + key].className.replace(' readonly', '');
+          }
           frm.elements["inpPrice" + key].className = frm.elements["inpPrice" + key].className.replace(' readonly', '');
         } else {
-          frm.elements["inpQty" + key].className += " readonly";
+        	if(frm.elements["inpPreference" + key].value == "block" && frm.elements["inpAumQty" + key].value != ""){
+        	frm.elements["inpAumQty" + key].className += " readonly";
+          } else {
+          	frm.elements["inpQty" + key].className += " readonly";
+          }
           frm.elements["inpPrice" + key].className += " readonly";
         }
         return true;
@@ -98,6 +109,27 @@
         var filtertablew = document.getElementById("filtertablew");
         linestable.style.width = filtertablew.clientWidth + 42;
         selectedtable.style.width = filtertablew.clientWidth + 14;
+      }
+      
+      function updateQty(selKey) {
+   	    var frm = document.frmMain;
+   	    if(frm.elements["inpCAUM" + selKey].value != frm.elements["inpCUomId" + selKey].value){
+          callback = function (response, data, request) {
+        	frm.elements["inpQty" + selKey].value = data.qty;
+        	frm.elements["inpReqQty" + selKey].value = data.qty;
+       	  };
+       	
+   	      window.parent.parent.OB.RemoteCallManager.call('org.openbravo.common.actionhandler.GetConvertedQtyActionHandler', {
+   	        mProductId: frm.elements["inpMProductId" + selKey].value,
+   	        qty: frm.elements["inpAumQty" + selKey].value,
+   	        toUOM: frm.elements["inpCAUM" + selKey].value,
+   	        reverse: false
+   	      }, {}, callback);
+        }
+   	    else {
+   	    	frm.elements["inpQty" + selKey].value = frm.elements["inpAumQty" + selKey].value;
+   	    	frm.elements["inpReqQty" + selKey].value = frm.elements["inpAumQty" + selKey].value;
+   	    }
       }
 
       function onloadFunctions() {
@@ -415,23 +447,35 @@
                                       </td>
                                       <th class="DataGrid_Header_Cell" width="80">Need by date</th>
                                       <th class="DataGrid_Header_Cell" width="195">Product</th>
-                                      <th class="DataGrid_Header_Cell" width="70">Quantity</th>
-                                      <th class="DataGrid_Header_Cell" width="70">Unit</th>
-                                      <th class="DataGrid_Header_Cell" width="71">Secondary Quantity</th>
-                                      <th class="DataGrid_Header_Cell" width="71">Secondary Unit</th>
+                                      <th class="DataGrid_Header_Cell" width="71">Quantity</th>
+                                      <th class="DataGrid_Header_Cell" width="71">Unit</th>
+                                      <th width="71" class="DataGrid_Header_Cell" id="headerAumQty"
+										style="xx">Quantity in Alternative UOM</th>
+									  <th width="71" class="DataGrid_Header_Cell" id="headerAum"
+										style="xx">Alternative UOM</th>
+									  <th width="71" class="DataGrid_Header_Cell" id="headerSecQty"
+										style="xx">Secondary Quantity</th>
+									  <th width="71" class="DataGrid_Header_Cell" id="headerSecUom"
+										style="xx">Secondary Unit</th>
                                       <th class="DataGrid_Header_Cell" width="120">Requester</th>
                                       <th class="DataGrid_Header_Cell" width="230">Vendor - PriceList</th>
-                                      <th class="DataGrid_Header_Cell" >Price</th>
+                                      <th class="DataGrid_Header_Cell" width="70">Price</th>
                                     </tr>
                                     <div id="sectionLinesDetail"> 
                                       <tr id="funcEvenOddRow" class="DataGrid_Body_Row DataGrid_Body_Row_xx"> 
                                         <td class="DataGrid_Body_LineNoCell"> <input type="checkbox" name="inpRequisitionLine" value="" id="fieldRequisitionLineId"></input></td>
                                         <td class="DataGrid_Body_Cell" id="fieldNeedByDate">xx29-02-2008</td>
                                         <td class="DataGrid_Body_Cell"><span id="fieldProduct">xxBeer</span> - <span id="fieldAttribute">xxAttribute</span></td>
-                                        <td class="DataGrid_Body_Cell" id="fieldQuantity">xx1000000</td>
-                                        <td class="DataGrid_Body_Cell" id="fieldUnit">xxUnit</td>
-                                        <td class="DataGrid_Body_Cell" id="fieldSecQuantity">xx1000001</td>
-                                        <td class="DataGrid_Body_Cell" id="fieldSecUnit">xxSecUnit</td>
+                                        
+                                        <td class="DataGrid_Body_Cell" id="fieldQuantity">xx1000001</td>
+                                        <td class="DataGrid_Body_Cell" id="fieldUnit">xxSecUnit</td>
+
+                                        <td class="DataGrid_Body_Cell" id="fieldAumQuantity" style="display:xx;">xx1000000</td>
+                                        <td class="DataGrid_Body_Cell" id="fieldAumUnit" style="display:xx;">xxUnit</td>
+                                        
+                                        <td class="DataGrid_Body_Cell" id="fieldSecQuantity" style="display:xx;">xx1000001</td>
+                                        <td class="DataGrid_Body_Cell" id="fieldSecUnit" style="display:xx;">xxSecUnit</td>
+
                                         <td class="DataGrid_Body_Cell" id="fieldRequester">xxOpenbravo</td>
                                         <td class="DataGrid_Body_Cell"><span id="fieldVendor">xxGuiness</span> - <span id="fieldPriceList">xxPricelist</span></td>
                                         <td class="DataGrid_Body_Cell" id="fieldPrice">xx3</td>
@@ -521,17 +565,23 @@
                                 <div id="sectionPriceList">
                                   <table cellspacing="0" cellpadding="0" width="100%" class="DataGrid_Header_Table DataGrid_Body_Table" style="table-layout: auto;">
                                     <tr class="DataGrid_Body_Row">
-                                      <th class="DataGrid_Header_Cell" colspan="11"><span id="fieldVendor">xxVendor</span> - <span id="fieldPricelist">xxPricelistId</span></th>
+                                      <th class="DataGrid_Header_Cell" colspan="13"><span id="fieldVendor">xxVendor</span> - <span id="fieldPricelist">xxPricelistId</span></th>
                                     </tr>
                                     <tr class="DataGrid_Body_Row">
                                       <th class="DataGrid_Header_Cell" colspan="2">Product</th>
                                       <th class="DataGrid_Header_Cell" width="80">NeedByDate</th>
                                       <th class="DataGrid_Header_Cell" width="70">Req. Qty</th>
                                       <th class="DataGrid_Header_Cell" width="70">Matched</th>
-                                      <th class="DataGrid_Header_Cell" width="100">Qty</th>
-                                      <th class="DataGrid_Header_Cell" width="70">Unit</th>
-                                      <th class="DataGrid_Header_Cell" width="71">Secondary Quantity</th>
-                                      <th class="DataGrid_Header_Cell" width="71">Secondary Unit</th>
+                                      <th class="DataGrid_Header_Cell" width="71">Quantity</th>
+                                      <th class="DataGrid_Header_Cell" width="71">Unit</th>
+                                      <th width="71" class="DataGrid_Header_Cell" id="headerSelAumQty"
+										style="xx">Quantity in Alternative UOM</th>
+									  <th width="71" class="DataGrid_Header_Cell" id="headerSelAum"
+										style="xx">Alternative UOM</th>
+									  <th width="71" class="DataGrid_Header_Cell" id="headerSelSecQty"
+										style="xx">Secondary Quantity</th>
+									  <th width="71" class="DataGrid_Header_Cell" id="headerSelSecUom"
+										style="xx">Secondary Unit</th>
                                       <th class="DataGrid_Header_Cell" width="100">Price</th>
                                       <th class="DataGrid_Header_Cell" width="70">Price list</th>
                                     </tr>
@@ -541,14 +591,24 @@
                                         </td>
                                         <td class="DataGrid_Body_Cell"><span id="fieldSelProduct">xxDonuts</span> - <span id="fieldSelAttribute">xxAttribute</span></td>
                                         <td class="DataGrid_Body_Cell" id="fieldSelNeedByDate">xx02-02-2010</td>
-                                        <td class="DataGrid_Body_Cell" id="fieldReqQty">xx30.00</td>
+                                        <td class="TextBox_ContentCell"> <input name="inpReqQtyxx" id="fieldReqQty" type="text" size="5" on value="" class="dojoValidateValid readonly" disabled></input></td>
                                         <td class="DataGrid_Body_Cell" id="fieldMatchedQty">xx30.00</td>
-                                        <td class="TextBox_ContentCell"> <input name="inpQtyxx" id="fieldSelQty" type="text" size="5" value="" outputformat="qtyEdition" class="dojoValidateValid readonly" disabled onfocus="numberInputEvent('onfocus', this);" onblur="numberInputEvent('onblur', this);" onkeydown="numberInputEvent('onkeydown', this, event);" onchange="numberInputEvent('onchange', this);" ></input></td>
+                                        <td class="TextBox_ContentCell"><input name="inpQtyxx" id="fieldSelQty" type="text" size="5" value="" outputformat="qtyEdition" class="dojoValidateValid readonly" disabled onfocus="numberInputEvent('onfocus', this);" onblur="numberInputEvent('onblur', this);" onkeydown="numberInputEvent('onkeydown', this, event);" onchange="numberInputEvent('onchange', this);" ></input></td>
                                         <td class="DataGrid_Body_Cell" id="fieldSelUnit">xxSelUnit</td>
-                                        <td class="DataGrid_Body_Cell" id="fieldSelSecQuantity">xxSelSecQuantity</td>
-                                        <td class="DataGrid_Body_Cell" id="fieldSelSecUnit">xxSelSecUnit</td>
+                                        
+                                        <td class="TextBox_ContentCell"id="fieldShowAumQty" style="display:xx;"><input name="inpAumQtyxx" id="fieldSelAumQty" type="text" size="5" value="" outputformat="qtyEdition" class="dojoValidateValid readonly" disabled onfocus="numberInputEvent('onfocus', this);" onblur="numberInputEvent('onblur', this);" onkeydown="numberInputEvent('onkeydown', this, event);" onchange="numberInputEvent('onchange', this);" onkeyup="updateQty('yy');" ></input></td>
+                                        <td class="DataGrid_Body_Cell" id="fieldSelAumUnit" style="display:xx;">xxSelUnit</td>
+                                        
+                                        <td class="DataGrid_Body_Cell" id="fieldSelSecQuantity" style="display:xx;">xxSelSecQuantity</td>
+                                        <td class="DataGrid_Body_Cell" id="fieldSelSecUnit" style="display:xx;">xxSelSecUnit</td>
+                                        
                                         <td class="TextBox_ContentCell"> <input name="inpPricexx" id="fieldSelPrice" type="text" size="5" value="" outputformat="priceEdition" class="dojoValidateValid readonly" disabled onfocus="numberInputEvent('onfocus', this);" onblur="numberInputEvent('onblur', this);" onkeydown="numberInputEvent('onkeydown', this, event);" onchange="numberInputEvent('onchange', this);" ></input></td>
                                         <td class="DataGrid_Body_Cell" id="fieldPriceList">xx300</td>
+                                        <input type="hidden" name="inpMProductIdxx" id="fieldSelProductId" value="" ></input>
+                                        <input type="hidden" name="inpCAUMxx" id="fieldSelCAUM" value="" ></input>
+                                        <input type="hidden" name="inpPreferencexx" id="fieldPreference" value="" ></input>
+                                        <input type="hidden" name="inpHaveSecUOMxx" id="fieldHaveSecUOM" value="" ></input>
+                                        <input type="hidden" name="inpCUomIdxx" id="fieldSelcUomId" value="" ></input>
                                       </tr>
                                     </div>
                                   </table>

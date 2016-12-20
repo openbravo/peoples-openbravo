@@ -42,29 +42,29 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class ReportInvoiceDiscountJR extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     // Get user Client's base currency
     String strUserCurrencyId = Utility.stringBaseCurrencyId(this, vars.getClient());
     if (vars.commandIn("DEFAULT")) {
-      String strDateFrom = vars.getGlobalVariable("inpDateFrom",
-          "ReportInvoiceDiscountJR|dateFrom", "");
+      String strDateFrom = vars.getGlobalVariable("inpDateFrom", "ReportInvoiceDiscountJR|dateFrom",
+          "");
       String strDateTo = vars.getGlobalVariable("inpDateTo", "ReportInvoiceDiscountJR|dateTo", "");
       String strcBpartnerId = vars.getInGlobalVariable("inpcBPartnerId_IN",
           "ReportInvoiceDiscountJR|partner", "", IsIDFilter.instance);
 
-      String strDiscount = vars.getGlobalVariable("inpDiscount",
-          "ReportInvoiceDiscountJR|discount", "N");
+      String strDiscount = vars.getGlobalVariable("inpDiscount", "ReportInvoiceDiscountJR|discount",
+          "N");
       String strCurrencyId = vars.getGlobalVariable("inpCurrencyId",
           "ReportInvoiceDiscountJR|currency", strUserCurrencyId);
       printPageDataSheet(response, vars, strDateFrom, strDateTo, strcBpartnerId, strCurrencyId,
           strDiscount);
 
     } else if (vars.commandIn("FIND")) {
-      String strDateFrom = vars.getGlobalVariable("inpDateFrom",
-          "ReportInvoiceDiscountJR|dateFrom", "");
+      String strDateFrom = vars.getGlobalVariable("inpDateFrom", "ReportInvoiceDiscountJR|dateFrom",
+          "");
       String strDateTo = vars.getGlobalVariable("inpDateTo", "ReportInvoiceDiscountJR|dateTo", "");
       String strcBpartnerId = vars.getRequestInGlobalVariable("inpcBPartnerId_IN",
           "ReportInvoiceDiscountJR|partner", IsIDFilter.instance);
@@ -117,9 +117,8 @@ public class ReportInvoiceDiscountJR extends HttpSecureAppServlet {
             strConvRateErrorMsg);
       } else { // Launch the report as usual, calling the JRXML file
         HashMap<String, Object> parameters = new HashMap<String, Object>();
-        String strSubTitle = Utility.messageBD(this, "From", vars.getLanguage()) + " "
-            + strDateFrom + " " + Utility.messageBD(this, "To", vars.getLanguage()) + " "
-            + strDateTo;
+        String strSubTitle = Utility.messageBD(this, "From", vars.getLanguage()) + " " + strDateFrom
+            + " " + Utility.messageBD(this, "To", vars.getLanguage()) + " " + strDateTo;
         parameters.put("REPORT_SUBTITLE", strSubTitle);
 
         renderJR(vars, response, strReportName, null, strOutput, parameters, data, null);

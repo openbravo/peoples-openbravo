@@ -92,6 +92,10 @@
     v_period_inv C_InvoiceLine.c_period_id%TYPE;
     v_InOutLine_ID C_InvoiceLine.M_InOutLine_ID%TYPE;
 
+    v_uom_preference VARCHAR(1);	
+    v_default_aum C_UOM.C_UOM_ID%TYPE;
+    v_aum_qty NUMBER;
+    c_soo_doctype C_DOCTYPE.C_DOCTYPE_ID%TYPE := '01360D369B5F473686354A701A6EA559';
 
     Cur_Bpblocked RECORD;
     
@@ -124,6 +128,8 @@
           ol.C_Charge_ID,
           ol.ChargeAmt,
           COALESCE(sl.C_UOM_ID, ol.C_UOM_ID) AS C_UOM_ID,
+          sl.AUMQTY,
+          sl.C_AUM,
           --MODIFIED BY F.IRIAZABAL
           sl.M_PRODUCT_UOM_ID,
           ol.C_Tax_ID, --ol.IsTaxIncluded,
@@ -237,6 +243,16 @@
           END;
         END IF;
       BEGIN --BODY
+        -- Get UOMPreference value
+        v_uom_preference := 'N';
+        BEGIN
+          v_uom_preference := AD_GET_PREFERENCE_VALUE('UomManagement', 'Y', NULL, v_AD_Org_ID, v_ADUserId, NULL, NULL);
+          EXCEPTION
+            WHEN OTHERS THEN
+            -- Nothing to do, v_uom_preference = 'N'
+            DBMS_OUTPUT.PUT_LINE('No UomManagement preference found') ;
+        END;
+        
         /**
         * Order Loop == all not completely invoiced orders == No Summary ==
         */
@@ -540,6 +556,7 @@
                     Description, M_Product_ID, QtyInvoiced, PriceList,
                     PriceActual, PriceLimit, LineNetAmt, C_Charge_ID,
                     ChargeAmt, C_UOM_ID, C_Tax_ID, PriceStd, 
+                    AUMQTY, C_AUM,
                     explode, bom_parent_id,
                     C_Project_ID, C_Bpartner_ID, A_Asset_ID,
                     C_Costcenter_ID, User1_ID, User2_ID
@@ -552,6 +569,7 @@
                     v_Reference, NULL, 0, 0,
                     0, 0, 0, NULL,
                     0, NULL, NULL, 0, 
+                    NULL, NULL,
                     ptr_sl.explode, (SELECT c_invoiceline_id 
                                             FROM c_invoiceline 
                                             WHERE c_invoice_id=p_Invoice_ID 
@@ -638,6 +656,15 @@
 												END IF;
 											END IF;
 	                  END IF;
+
+	            v_default_aum := CASE WHEN v_uom_preference = 'Y' AND ptr_ol.AUMQTY IS NULL AND ptr_ol.M_Product_Uom_ID IS NULL 
+					 THEN M_GET_DEFAULT_AUM_FOR_DOCUMENT(ptr_ol.M_Product_ID, c_soo_doctype) 
+					 ELSE ptr_ol.C_AUM 
+					 END;
+		        v_aum_qty := CASE WHEN v_uom_preference = 'Y' AND ptr_ol.AUMQTY IS NULL AND ptr_ol.M_Product_Uom_ID IS NULL 
+				     THEN M_GET_CONVERTED_AUMQTY(ptr_ol.M_Product_ID,v_Qty,v_default_aum) 
+				     ELSE ptr_ol.AUMQTY 
+				     END;					
                     INSERT
                     INTO C_INVOICELINE
                       (
@@ -647,6 +674,7 @@
                         Description, M_Product_ID, QtyInvoiced, PriceList,
                         PriceActual, PriceLimit, LineNetAmt, C_Charge_ID,
                         ChargeAmt, C_UOM_ID,
+                        AUMQTY, C_AUM,
                         C_Tax_ID,  --MODIFIED BY F.IRIAZABAL
                         QuantityOrder, M_Product_Uom_ID, PriceStd,
                         m_attributesetinstance_id, taxbaseamt,
@@ -662,9 +690,12 @@
                         v_NextNo, ptr_ol.AD_Client_ID, ptr_ol.AD_Org_ID, 'Y',
                         now(), v_ADUserId, now(), v_ADUserId,
                         p_Invoice_ID, ptr_ol.C_OrderLine_ID, v_InOutLine_ID, v_LineNo,
-                        ptr_ol.Description, ptr_ol.M_Product_ID, v_Qty, ptr_ol.PriceList,
+                        ptr_ol.Description, ptr_ol.M_Product_ID,
+						v_Qty, 
+						ptr_ol.PriceList,
                         ptr_ol.PriceActual, ptr_ol.PriceLimit, C_Currency_Round(v_Qty*ptr_ol.PriceActual, Cur_Order.C_Currency_ID, NULL), ptr_ol.C_Charge_ID,
                         ptr_ol.ChargeAmt, ptr_ol.C_UOM_ID,
+                        v_aum_qty, v_default_aum,
                         ptr_ol.C_Tax_ID,  --MODIFIED BY F.IRIAZABAL
                         v_QtyOrder, ptr_ol.M_Product_Uom_ID, ptr_ol.PriceStd,
                         ptr_ol.m_attributesetinstance_id, ptr_ol.taxbaseamt,
@@ -738,7 +769,16 @@
 												END IF;
 											END IF;
 	                  END IF;
-
+		    
+		    v_default_aum := CASE WHEN v_uom_preference = 'Y' AND ptr_sl.AUMQTY IS NULL AND ptr_sl.M_Product_Uom_ID IS NULL 
+					 THEN M_GET_DEFAULT_AUM_FOR_DOCUMENT(ptr_sl.M_Product_ID, c_soo_doctype) 
+					 ELSE ptr_sl.C_AUM 
+					 END;
+		    v_aum_qty := CASE WHEN v_uom_preference = 'Y' AND ptr_sl.AUMQTY IS NULL AND ptr_sl.M_Product_Uom_ID IS NULL 
+				     THEN M_GET_CONVERTED_AUMQTY(ptr_sl.M_Product_ID,ptr_sl.MovementQty,v_default_aum) 
+				     ELSE ptr_sl.AUMQTY 
+				     END;
+				
                     INSERT
                     INTO C_INVOICELINE
                       (
@@ -748,6 +788,7 @@
                         Description, M_Product_ID, QtyInvoiced, PriceList,
                         PriceActual, PriceLimit, LineNetAmt, C_Charge_ID,
                         ChargeAmt, C_UOM_ID,
+                        AUMQTY, C_AUM,
                         C_Tax_ID,  --MODIFIED BY F.IRIAZABAL
                         QuantityOrder, M_Product_Uom_ID, PriceStd,
                         m_attributesetinstance_id, 
@@ -767,6 +808,7 @@
                         ptr_sl.Description, ptr_sl.M_Product_ID, ptr_sl.MovementQty, ptr_sl.PriceList,
                         ptr_sl.PriceActual, ptr_sl.PriceLimit, C_Currency_Round(ptr_sl.MovementQty*ptr_sl.PriceActual, Cur_Order.C_Currency_ID, NULL), ptr_sl.C_Charge_ID,
                         ptr_sl.ChargeAmt, ptr_sl.C_UOM_ID,
+                        v_aum_qty, v_default_aum,
                         ptr_sl.C_Tax_ID,  --MODIFIED BY F.IRIAZABAL
                         ptr_sl.QuantityOrder, ptr_sl.M_Product_Uom_ID, ptr_sl.PriceStd,
                         ptr_sl.m_attributesetinstance_id,
@@ -916,6 +958,8 @@
                 sl.C_UOM_ID,
                 sl.MovementQty,
                 --MODIFIED BY F.IRIAZABAL
+                sl.AUMQTY,
+                sl.C_AUM,
                 sl.QuantityOrder,
                 sl.M_Product_UOM_ID,
                 COALESCE(ol.PriceList, 0) AS PriceList,
@@ -1293,6 +1337,16 @@
 										v_periodnumber_inv := NULL;
 									END IF;
                 END IF;
+
+                v_default_aum := CASE WHEN v_uom_preference = 'Y' AND Cur_InvoiceSchedule.AUMQTY IS NULL AND Cur_InvoiceSchedule.M_Product_Uom_ID IS NULL 
+					 THEN M_GET_DEFAULT_AUM_FOR_DOCUMENT(Cur_InvoiceSchedule.M_Product_ID, c_soo_doctype) 
+					 ELSE Cur_InvoiceSchedule.C_AUM 
+					 END;
+		        v_aum_qty := CASE WHEN v_uom_preference = 'Y' AND Cur_InvoiceSchedule.AUMQTY IS NULL AND Cur_InvoiceSchedule.M_Product_Uom_ID IS NULL 
+				     THEN M_GET_CONVERTED_AUMQTY(Cur_InvoiceSchedule.M_Product_ID,Cur_InvoiceSchedule.MovementQty,v_default_aum) 
+				     ELSE Cur_InvoiceSchedule.AUMQTY 
+				     END;
+				     
                 INSERT
                 INTO C_INVOICELINE
                   (
@@ -1302,6 +1356,7 @@
                     Description, M_Product_ID, QtyInvoiced, PriceList,
                     PriceActual, PriceLimit, LineNetAmt, C_Charge_ID,
                     ChargeAmt, C_UOM_ID,
+                    AUMQTY, C_AUM,
                     C_Tax_ID,  --MODIFIED BY F.IRIAZABAL
                     QuantityOrder, M_Product_Uom_ID, PriceStd,
                     m_attributesetinstance_id, 
@@ -1321,6 +1376,7 @@
                     Cur_InvoiceSchedule.Line_Description, Cur_InvoiceSchedule.M_Product_ID, Cur_InvoiceSchedule.MovementQty, Cur_InvoiceSchedule.PriceList,
                     Cur_InvoiceSchedule.PriceActual, Cur_InvoiceSchedule.PriceLimit, C_Currency_Round(Cur_InvoiceSchedule.MovementQty*Cur_InvoiceSchedule.PriceActual, Cur_InvoiceSchedule.C_Currency_ID, NULL), Cur_InvoiceSchedule.Line_C_Charge_ID,
                     Cur_InvoiceSchedule.Line_ChargeAmt, Cur_InvoiceSchedule.C_UOM_ID,
+                    v_aum_qty, v_default_aum,
                     Cur_InvoiceSchedule.C_Tax_ID,  --MODIFIED BY F.IRIAZABAL
                     Cur_InvoiceSchedule.QuantityOrder, Cur_InvoiceSchedule.M_Product_Uom_ID, Cur_InvoiceSchedule.PriceStd,
                     Cur_InvoiceSchedule.m_attributesetinstance_id, 

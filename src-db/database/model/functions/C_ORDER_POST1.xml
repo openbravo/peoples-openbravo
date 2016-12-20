@@ -547,7 +547,7 @@
           FOR Cur_ResLine IN
             (SELECT l.M_Warehouse_ID, l.M_Product_ID, l.M_AttributeSetInstance_ID, l.C_OrderLine_ID,
                  l.QtyOrdered AS Qty, l.QUANTITYORDER, l.qtyreserved, l.qtydelivered,
-                l.C_UOM_ID, l.M_PRODUCT_UOM_ID
+                l.C_UOM_ID, l.M_PRODUCT_UOM_ID, l.C_AUM
              FROM C_ORDERLINE l, M_PRODUCT p
              WHERE l.C_Order_ID=v_Record_ID  -- Reserve Products (not: services, null products)
                AND l.M_Product_ID=p.M_Product_ID
@@ -563,7 +563,7 @@
               v_QtyOrderPO:=NULL;
               IF (Cur_ResLine.QtyDelivered=0) THEN
                 v_QtyOrderPO := -Cur_ResLine.QuantityOrder;
-              ELSIF Cur_ResLine.M_Product_UOM_ID IS NOT NULL THEN
+              ELSIF Cur_ResLine.C_AUM IS NULL AND Cur_ResLine.M_Product_UOM_ID IS NOT NULL THEN
                 SELECT c_uom_id
                 INTO v_UOM_ID
                 FROM m_product_uom
@@ -574,7 +574,7 @@
               v_QtySO:=-Cur_ResLine.QtyReserved;
               IF (Cur_ResLine.QtyReserved=Cur_ResLine.Qty) THEN
                 v_QtyOrderSO := -Cur_ResLine.QuantityOrder;
-              ELSIF Cur_ResLine.M_Product_UOM_ID IS NOT NULL THEN
+              ELSIF Cur_ResLine.C_AUM IS NULL AND Cur_ResLine.M_Product_UOM_ID IS NOT NULL THEN
                 SELECT c_uom_id
                 INTO v_UOM_ID
                 FROM m_product_uom
@@ -697,6 +697,7 @@
 	      M_Warehouse_ID,
 	      M_AttributeSetInstance_ID,
 	      C_UOM_ID,
+             C_AUM,
 	      M_PRODUCT_UOM_ID,
           C_Currency_ID
 	      FROM C_ORDERLINE
@@ -716,9 +717,9 @@
               INTO v_ProductUOM
               FROM M_PRODUCT_UOM UOM 
               WHERE UOM.M_PRODUCT_UOM_ID=Cur_Inventory.M_PRODUCT_UOM_ID;
-              v_QuantityOrder := CASE WHEN Cur_Inventory.M_PRODUCT_UOM_ID IS NULL THEN Cur_Inventory.QuantityOrder
-                                ELSE (c_uom_convert((CASE WHEN (Cur_Inventory.QtyDelivered < 0) THEN LEAST(Cur_Inventory.QtyDelivered, Cur_Inventory.QtyInvoiced) ELSE GREATEST(Cur_Inventory.QtyDelivered, Cur_Inventory.QtyInvoiced) END),
-                    Cur_Inventory.C_UOM_ID, v_ProductUOM,'Y')) END;
+              v_QuantityOrder := CASE WHEN Cur_Inventory.C_AUM IS NOT NULL OR (Cur_Inventory.C_AUM IS NULL AND Cur_Inventory.M_PRODUCT_UOM_ID IS NULL) THEN Cur_Inventory.QuantityOrder
+                                 ELSE (c_uom_convert((CASE WHEN (Cur_Inventory.QtyDelivered < 0) THEN LEAST(Cur_Inventory.QtyDelivered, Cur_Inventory.QtyInvoiced) ELSE GREATEST(Cur_Inventory.QtyDelivered, Cur_Inventory.QtyInvoiced) END), 
+              Cur_Inventory.C_UOM_ID, v_ProductUOM,'Y')) END;
 
               IF (Cur_Inventory.QtyOrdered <> v_QtyOrdered) THEN
                 M_UPDATE_STORAGE_PENDING(v_Client_ID, v_Org_ID, v_UpdatedBy, Cur_Inventory.M_Product_ID, Cur_Inventory.M_Warehouse_ID, Cur_Inventory.M_AttributeSetInstance_ID,
@@ -754,6 +755,7 @@
 	        M_Warehouse_ID,
 	        M_AttributeSetInstance_ID,
 	        C_UOM_ID,
+               C_AUM,
 	        M_PRODUCT_UOM_ID,
 	        C_Currency_ID
               FROM C_ORDERLINE
@@ -776,13 +778,14 @@
               v_QtyOrdered := COALESCE(CASE WHEN (Cur_Inventory.QtyDelivered < 0) THEN LEAST(Cur_Inventory.QtyDelivered, Cur_Inventory.QtyInvoiced) ELSE GREATEST(Cur_Inventory.QtyDelivered, Cur_Inventory.QtyInvoiced) END, 0);
               v_linenetamt := ROUND(COALESCE(v_QtyOrdered, 0) * Cur_Inventory.priceactual, C_GET_CURRENCY_PRECISION(Cur_Inventory.C_Currency_ID, 'A'));
               v_linegrossamt := ROUND(COALESCE(v_QtyOrdered, 0) * Cur_Inventory.gross_unit_price, C_GET_CURRENCY_PRECISION(Cur_Inventory.C_Currency_ID, 'A'));
+
               SELECT MAX(UOM.C_UOM_ID)
               INTO v_ProductUOM
               FROM M_PRODUCT_UOM UOM 
               WHERE UOM.M_PRODUCT_UOM_ID=Cur_Inventory.M_PRODUCT_UOM_ID;
-              v_QuantityOrder := CASE WHEN Cur_Inventory.M_PRODUCT_UOM_ID IS NULL THEN Cur_Inventory.QuantityOrder
-                                ELSE (COALESCE(c_uom_convert((CASE WHEN (Cur_Inventory.QtyDelivered < 0) THEN LEAST(Cur_Inventory.QtyDelivered, Cur_Inventory.QtyInvoiced) ELSE GREATEST(Cur_Inventory.QtyDelivered, Cur_Inventory.QtyInvoiced) END),
-                    Cur_Inventory.C_UOM_ID, v_ProductUOM,'Y'), 0)) END;
+              v_QuantityOrder := CASE WHEN Cur_Inventory.C_AUM IS NOT NULL OR (Cur_Inventory.C_AUM IS NULL AND Cur_Inventory.M_PRODUCT_UOM_ID IS NULL) THEN Cur_Inventory.QuantityOrder
+                                 ELSE (COALESCE(c_uom_convert((CASE WHEN (Cur_Inventory.QtyDelivered < 0) THEN LEAST(Cur_Inventory.QtyDelivered, Cur_Inventory.QtyInvoiced) ELSE GREATEST(Cur_Inventory.QtyDelivered, Cur_Inventory.QtyInvoiced) END),
+              Cur_Inventory.C_UOM_ID, v_ProductUOM,'Y'), 0)) END;
               IF (Cur_Inventory.QtyOrdered <> v_QtyOrdered) THEN
                 M_UPDATE_STORAGE_PENDING(v_Client_ID, v_Org_ID, v_UpdatedBy, Cur_Inventory.M_Product_ID, Cur_Inventory.M_Warehouse_ID, Cur_Inventory.M_AttributeSetInstance_ID,
                 Cur_Inventory.C_UOM_ID, Cur_Inventory.M_PRODUCT_UOM_ID, 0, null, -(Cur_Inventory.QtyOrdered - v_QtyOrdered), -(Cur_Inventory.QuantityOrder - v_QuantityOrder));
@@ -824,7 +827,7 @@
         UPDATE C_ORDERLINE
           SET QtyOrdered=0,
           --MODIFIED BY F.IRIAZABAL
-          QuantityOrder = CASE WHEN M_PRODUCT_UOM_ID IS NULL THEN NULL ELSE 0 END,
+          QuantityOrder = CASE WHEN C_AUM IS NOT NULL OR (C_AUM IS NULL AND M_PRODUCT_UOM_ID IS NULL) THEN NULL ELSE 0 END,
           LineNetAmt=0,
           Updated=now()
         WHERE C_Order_ID=v_Record_ID
@@ -999,7 +1002,7 @@
                   qtyreserved, qtydelivered, qtyinvoiced, m_shipper_id, c_currency_id,
                   pricelist, priceactual, pricelimit, linenetamt, discount, freightamt,
                   c_charge_id, chargeamt, c_tax_id, s_resourceassignment_id, ref_orderline_id,
-                  m_attributesetinstance_id, isdescription, quantityorder, m_product_uom_id,
+                  m_attributesetinstance_id, isdescription, quantityorder, m_product_uom_id, aumqty, c_aum,
                   m_offer_id, pricestd, C_ORDER_DISCOUNT_ID,
                   gross_unit_price, taxbaseamt,line_gross_amount
                 )
@@ -1012,7 +1015,7 @@
                   0, 0, 0, NULL, v_c_currency_id,
                   ROUND(v_Discount,v_precision), ROUND(v_Discount,v_precision), ROUND(v_Discount,v_precision), ROUND(v_Discount,v_precision), 0, 0,
                   NULL, NULL, Cur_TaxDiscount.C_TAX_ID, NULL, NULL,
-                  NULL, 'N', NULL, NULL,
+                  NULL, 'N', NULL, NULL, NULL, NULL,
                   NULL, ROUND(v_Discount,v_precision), NULL,
                   ROUND(v_gross_unit_price, v_precision), ROUND(v_Discount,v_precision),ROUND(v_line_gross_amount, v_precision)
                 );
@@ -1150,7 +1153,7 @@
                 -- Target Level = 0 if DirectShip='Y' or Binding='N'
                 (CASE l.DirectShip WHEN 'Y' THEN 0 ELSE (CASE v_IsBinding WHEN 'N' THEN 0 ELSE l.QtyOrdered END) END)
                  -l.QtyReserved-l.QtyDelivered AS Qty, l.QUANTITYORDER,
-                l.QtyReserved, l.QtyDelivered, l.DatePromised, l.C_UOM_ID,
+                l.QtyReserved, l.QtyDelivered, l.DatePromised, l.C_UOM_ID, l.C_AUM,
                 l.M_PRODUCT_UOM_ID
               FROM C_ORDERLINE l, M_PRODUCT p
               WHERE l.C_Order_ID=v_Record_ID
@@ -1168,7 +1171,7 @@
               v_QtyOrderSO := NULL;
               IF (Cur_ResLine.QtyReserved = 0 AND Cur_ResLine.QtyDelivered = 0) THEN
                 v_QtyOrderSO := Cur_ResLine.QuantityOrder;
-              ELSIF (Cur_ResLine.M_Product_UOM_ID IS NOT NULL) THEN
+              ELSIF (Cur_ResLine.C_AUM IS NULL AND Cur_ResLine.M_Product_UOM_ID IS NOT NULL) THEN
                 SELECT c_uom_id
                 INTO v_UOM_ID
                 FROM m_product_uom
@@ -1184,7 +1187,7 @@
               v_QtyOrderPO := NULL;
               IF (Cur_ResLine.QtyReserved = 0 AND Cur_ResLine.QtyDelivered = 0) THEN
                 v_QtyOrderPO := Cur_ResLine.QuantityOrder;
-              ELSIF (Cur_ResLine.M_Product_UOM_ID IS NOT NULL) THEN
+              ELSIF (Cur_ResLine.C_AUM IS NULL AND Cur_ResLine.M_Product_UOM_ID IS NOT NULL) THEN
                 SELECT c_uom_id
                 INTO v_UOM_ID
                 FROM m_product_uom

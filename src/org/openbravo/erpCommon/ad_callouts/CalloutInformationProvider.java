@@ -49,7 +49,6 @@ public interface CalloutInformationProvider {
   /**
    * Retrieves the next element of the collection to manage all values updated by callouts.
    * 
-   * @return
    */
   public Object getNextElement();
 

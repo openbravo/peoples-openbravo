@@ -21,6 +21,7 @@ package org.openbravo.costing;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -270,7 +271,7 @@ public class CostingMigrationProcess implements Process {
             phqlWhere.toString());
         phql.setFilterOnReadableClients(false);
         phql.setFilterOnReadableOrganization(false);
-        phql.setNamedParameter("date", new Date());
+        phql.setNamedParameter("date", DateUtils.truncate(new Date(), Calendar.DATE));
         phql.setNamedParameter("org", organization);
         phql.setMaxResult(1);
         PeriodControl period = phql.uniqueResult();
@@ -511,6 +512,7 @@ public class CostingMigrationProcess implements Process {
     try {
       while (icls.next()) {
         InventoryCountLine icl = (InventoryCountLine) icls.get(0);
+        OBDal.getInstance().refresh(icl);
         if (!productId.equals(icl.getProduct().getId())) {
           productId = icl.getProduct().getId();
           HashMap<String, BigDecimal> stock = getCurrentValuedStock(productId, curId, orgs, orgId);
@@ -872,9 +874,11 @@ public class CostingMigrationProcess implements Process {
       insert.append(", coalesce(io." + ShipmentInOut.PROPERTY_ACCOUNTINGDATE + ", t."
           + MaterialTransaction.PROPERTY_MOVEMENTDATE + ")");
       insert.append(" from " + MaterialTransaction.ENTITY_NAME + " as t");
+      insert.append(" left join t." + MaterialTransaction.PROPERTY_TRANSACTIONCOSTLIST + " as tc");
       insert.append(" left join t." + MaterialTransaction.PROPERTY_GOODSSHIPMENTLINE + " as iol");
       insert.append(" left join iol." + ShipmentInOutLine.PROPERTY_SHIPMENTRECEIPT + " as io");
       insert.append(" where t." + MaterialTransaction.PROPERTY_TRANSACTIONCOST + " is not null");
+      insert.append(" and tc." + TransactionCost.PROPERTY_ID + " is null");
 
       Query queryInsert = OBDal.getInstance().getSession().createQuery(insert.toString());
       queryInsert.executeUpdate();

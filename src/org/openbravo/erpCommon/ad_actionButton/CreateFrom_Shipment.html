@@ -443,8 +443,12 @@
 
             <tr class="Popup_Client_Selector_DataGrid_HeaderRow"> 
               <th width="29" class="DataGrid_Header_LineNoCell DataGrid_Body_Cell_CheckBox"> <span class="Checkbox_container_NOT_Focused"><input type="checkbox" name="inpTodos" onclick="markAll(document.frmMain.inpId, this.checked);return true;"></input></span></th>
-              <th width="97" class="DataGrid_Header_Cell">Quantity</th>
-              <th width="185" class="DataGrid_Header_Cell">Unit</th>
+              <th width="70" class="DataGrid_Header_Cell">Quantity</th>
+              <th width="70" class="DataGrid_Header_Cell">Unit</th>
+              <th width="70" class="DataGrid_Header_Cell" id="headerAumQty"
+                  style="xx">Operative Qty</th>
+              <th width="70" class="DataGrid_Header_Cell" id="headerAum"
+                  style="xx">Alternative UOM</th>
               <th width="129" class="DataGrid_Header_Cell">Product</th>
               <th width="127" class="DataGrid_Header_Cell">Line No</th>
               <th width="124" class="DataGrid_Header_Cell">Shipment/Receipt</th>
@@ -455,6 +459,8 @@
                 <td class="DataGrid_Body_LineNoCell DataGrid_Body_Cell_CheckBox"> <span class="Checkbox_container_NOT_Focused"><input type="checkbox" disabled="disabled" id="inpfieldIDxx" name="inpId" value="" onclick="checkchilds(document.frmMain['inpBomParent'+this.value], this.checked)"></input><input type="hidden" id="fieldBomParent" name="inpBomParentxx" value=""></input></span></td>
                 <td class="DataGrid_Body_Cell" onmouseover="HoverCell(this);" onmouseout="unHoverCell(this);" id="fieldQuantity">xxQuantity</td>
                 <td class="DataGrid_Body_Cell" onmouseover="HoverCell(this);" onmouseout="unHoverCell(this);" id="fieldCuomid">xxUOM</td>
+                <td class="DataGrid_Body_Cell" onmouseover="HoverCell(this);" onmouseout="unHoverCell(this);" id="fieldAUMQuantity" style="xx">xxAUMQty</td>
+                <td class="DataGrid_Body_Cell" onmouseover="HoverCell(this);" onmouseout="unHoverCell(this);" id="fieldAUM" style="xx">xxSelUnit</td>
                 <td class="DataGrid_Body_Cell" onmouseover="HoverCell(this);" onmouseout="unHoverCell(this);" id="fieldMproductid">xxProduct</td>
                 <td class="DataGrid_Body_Cell" onmouseover="HoverCell(this);" onmouseout="unHoverCell(this);" id="fieldPurchaseorder">xxPurchase Order</td>
                 <td class="DataGrid_Body_Cell"></td>

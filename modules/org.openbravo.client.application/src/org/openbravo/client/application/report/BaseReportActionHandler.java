@@ -80,6 +80,7 @@ import net.sf.jasperreports.engine.JRDataSource;
 public class BaseReportActionHandler extends BaseProcessActionHandler {
   private static final Logger log = LoggerFactory.getLogger(BaseReportActionHandler.class);
   private static final String JASPER_PARAM_PROCESS = "jasper_process";
+  protected static final String JASPER_REPORT_PARAMETERS = "JASPER_REPORT_PARAMETERS";
 
   /**
    * execute() method overridden to add the logic to download or display the report file stored in
@@ -324,15 +325,20 @@ public class BaseReportActionHandler extends BaseProcessActionHandler {
       strJRPath = "/" + strJRPath;
     }
     final String jrTemplatePath = DalContextListener.getServletContext().getRealPath(strJRPath);
-    HashMap<String, Object> jrParams = new HashMap<String, Object>();
+
+    Map<String, Object> allParametersMap = new HashMap<>();
+    Map<String, Object> jrParams = new HashMap<>();
     loadFilterParams(jrParams, report, params);
     loadReportParams(jrParams, report, jrTemplatePath, jsonContent);
     // Include the HTTP session into the parameters that are sent to the report
     jrParams.put("HTTP_SESSION", parameters.get(KernelConstants.HTTP_SESSION));
+    allParametersMap.putAll(parameters);
+    allParametersMap.put(JASPER_REPORT_PARAMETERS, jrParams);
+
     log.debug("Report: {}. Start export JR process.", report.getId());
     long t1 = System.currentTimeMillis();
     doJRExport(jrTemplatePath, expType, jrParams, strTmpFileName, getReportConnectionProvider(),
-        getReportData(parameters));
+        getReportData(allParametersMap));
     log.debug("Report: {}. Finish export JR process. Elapsed time: {}", report.getId(),
         System.currentTimeMillis() - t1);
 
@@ -382,7 +388,7 @@ public class BaseReportActionHandler extends BaseProcessActionHandler {
    * @param params
    *          JSONObject with the values set in the filter parameters.
    */
-  private void loadFilterParams(HashMap<String, Object> jrParams, ReportDefinition report,
+  private void loadFilterParams(Map<String, Object> jrParams, ReportDefinition report,
       JSONObject params) throws JSONException {
     for (Parameter param : report.getProcessDefintion().getOBUIAPPParameterList()) {
       String paramName = param.getDBColumnName();
@@ -487,7 +493,7 @@ public class BaseReportActionHandler extends BaseProcessActionHandler {
    * @param jsonContent
    *          JSONObject with the values set in the filter parameters.
    */
-  private void loadReportParams(HashMap<String, Object> jrParams, ReportDefinition report,
+  private void loadReportParams(Map<String, Object> jrParams, ReportDefinition report,
       String jrTemplatePath, JSONObject jsonContent) {
 
     final int lastSegmentIndex = jrTemplatePath.lastIndexOf("/");
@@ -539,12 +545,13 @@ public class BaseReportActionHandler extends BaseProcessActionHandler {
 
   /**
    * Get the data to pass to the report generation method. Override this method to put logic for
-   * getting the data
+   * getting the data. The map received as argument contains parameters that can be used to create
+   * some logic to build the report data
    * 
    * @param parameters
-   *          map with the parameters of the call that can be used to generate the report data
+   *          map that contains the parameters of the HTTP request and the parameters that will be
+   *          sent to the jasper report
    *
-   * @return
    */
   protected JRDataSource getReportData(Map<String, Object> parameters) {
     return null;
@@ -554,7 +561,6 @@ public class BaseReportActionHandler extends BaseProcessActionHandler {
    * Get the connection provider to use in report generation. Override this method to put logic for
    * getting the connection provider
    *
-   * @return
    */
   protected ConnectionProvider getReportConnectionProvider() {
     return null;

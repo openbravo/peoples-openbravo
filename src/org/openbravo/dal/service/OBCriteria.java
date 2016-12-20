@@ -68,6 +68,8 @@ public class OBCriteria<E extends BaseOBObject> extends CriteriaImpl {
   private boolean filterOnReadableOrganization = true;
   private boolean filterOnActive = true;
   private List<OrderBy> orderBys = new ArrayList<OrderBy>();
+  private boolean initialized = false;
+  private boolean modified = false;
 
   // package visible
 
@@ -144,6 +146,14 @@ public class OBCriteria<E extends BaseOBObject> extends CriteriaImpl {
   }
 
   void initialize() {
+    if (initialized) {
+      if (!modified) {
+        return;
+      }
+      log.warn("Detected multiple calls to initialize() in the same OBCriteria instance. "
+          + "This should be fixed in order to prevent adding duplicated filters in the query.",
+          new Exception());
+    }
     final OBContext obContext = OBContext.getOBContext();
     final Entity e = getEntity();
 
@@ -188,6 +198,8 @@ public class OBCriteria<E extends BaseOBObject> extends CriteriaImpl {
     if (SessionInfo.getQueryProfile() != null) {
       QueryTimeOutUtil.getInstance().setQueryTimeOut(this, SessionInfo.getQueryProfile());
     }
+    initialized = true;
+    modified = false;
   }
 
   /**
@@ -200,6 +212,7 @@ public class OBCriteria<E extends BaseOBObject> extends CriteriaImpl {
    */
   public void addOrderBy(String orderOn, boolean ascending) {
     orderBys.add(new OrderBy(orderOn, ascending));
+    modified = true;
   }
 
   /**
@@ -234,6 +247,7 @@ public class OBCriteria<E extends BaseOBObject> extends CriteriaImpl {
    */
   public void setFilterOnReadableOrganization(boolean filterOnReadableOrganization) {
     this.filterOnReadableOrganization = filterOnReadableOrganization;
+    modified = true;
   }
 
   /**
@@ -255,6 +269,7 @@ public class OBCriteria<E extends BaseOBObject> extends CriteriaImpl {
    */
   public void setFilterOnActive(boolean filterOnActive) {
     this.filterOnActive = filterOnActive;
+    modified = true;
   }
 
   /**
@@ -278,6 +293,7 @@ public class OBCriteria<E extends BaseOBObject> extends CriteriaImpl {
    */
   public void setFilterOnReadableClients(boolean filterOnReadableClients) {
     this.filterOnReadableClients = filterOnReadableClients;
+    modified = true;
   }
 
   // OrderBy to support multiple orderby clauses

@@ -47,8 +47,8 @@ import org.openbravo.model.common.enterprise.Organization;
 public class Preferences {
   private static final Logger log4j = Logger.getLogger(Preferences.class);
   private static final String SYSTEM = "0";
-  public static String YES = "Y";
-  public static String NO = "N";
+  public static final String YES = "Y";
+  public static final String NO = "N";
 
   /**
    * Obtains a list of all preferences that are applicable at the given visibility level (client,
@@ -580,6 +580,9 @@ public class Preferences {
       boolean isCurrentPreference = pref.isPropertyList() == listPref.isPropertyList()
           && ((pref.isPropertyList() && pref.getProperty().equals(listPref.getProperty())) || (!pref
               .isPropertyList() && pref.getAttribute().equals(listPref.getAttribute())));
+      if (!isCurrentPreference) {
+        continue;
+      }
       boolean winVisbilityNotDefined = (pref.getWindow() == null && listPref.getWindow() == null);
       boolean sameWinVisibility = (pref.getWindow() != null && pref.getWindow().equals(
           listPref.getWindow()))

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2013 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -40,6 +40,7 @@ import org.openbravo.erpCommon.businessUtility.Tax;
 import org.openbravo.erpCommon.utility.AccDefUtility;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.materialmgmt.UOMUtil;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.common.plm.Product;
@@ -74,6 +75,7 @@ public class SL_Invoice_Product extends HttpSecureAppServlet {
       String strWindowId = vars.getStringParameter("inpwindowId");
       String strIsSOTrx = Utility.getContext(this, vars, "isSOTrx", strWindowId);
       String strWharehouse = Utility.getContext(this, vars, "#M_Warehouse_ID", strWindowId);
+      String strUOMProduct = vars.getStringParameter("inpmProductUomId");
       String strWarehouseOrg = SLOrderProductData.getWarehouseOrg(this, strWharehouse);
       String strWarehouseForOrg = "";
       final OrganizationStructureProvider osp = OBContext.getOBContext()
@@ -93,7 +95,8 @@ public class SL_Invoice_Product extends HttpSecureAppServlet {
 
       try {
         printPage(response, vars, strUOM, strPriceList, strPriceStd, strPriceLimit, strCurrency,
-            strMProductID, strADOrgID, strCInvoiceID, strIsSOTrx, strWharehouse, strTabId, strQty);
+            strMProductID, strADOrgID, strCInvoiceID, strIsSOTrx, strWharehouse, strTabId, strQty,
+            strUOMProduct);
       } catch (ServletException ex) {
         pageErrorCallOut(response);
       }
@@ -104,7 +107,8 @@ public class SL_Invoice_Product extends HttpSecureAppServlet {
   private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strUOM,
       String strPriceList, String strPriceStd, String strPriceLimit, String strCurrency,
       String strMProductID, String strADOrgID, String strCInvoiceID, String strIsSOTrx,
-      String strWharehouse, String strTabId, String strQty) throws IOException, ServletException {
+      String strWharehouse, String strTabId, String strQty, String strUOMProduct)
+      throws IOException, ServletException {
     if (log4j.isDebugEnabled())
       log4j.debug("Output: dataSheet");
     XmlDocument xmlDocument = xmlEngine.readXmlTemplate(
@@ -235,37 +239,49 @@ public class SL_Invoice_Product extends HttpSecureAppServlet {
       resultado.append(", new Array(\"inpcPeriodId\", \"" + cPeriodId + "\")");
 
     }
-    resultado.append(", new Array(\"inpmProductUomId\", ");
-    // if (strUOM.startsWith("\""))
-    // strUOM=strUOM.substring(1,strUOM.length()-1);
-    // String strmProductUOMId =
-    // SLOrderProductData.strMProductUOMID(this,strMProductID,strUOM);
 
-    FieldProvider[] tld = null;
-    try {
-      ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "", "M_Product_UOM",
-          "", Utility.getContext(this, vars, "#AccessibleOrgTree", "SLOrderProduct"),
-          Utility.getContext(this, vars, "#User_Client", "SLOrderProduct"), 0);
-      Utility.fillSQLParameters(this, vars, null, comboTableData, "SLOrderProduct", "");
-      tld = comboTableData.select(false);
-      comboTableData = null;
-    } catch (Exception ex) {
-      throw new ServletException(ex);
+    if (UOMUtil.isUomManagementEnabled() && "".equals(strUOMProduct)) {
+      // Set AUM based on default
+      String finalAUM = UOMUtil.getDefaultAUMForDocument(strMProductID, invoice
+          .getTransactionDocument().getId());
+      if (finalAUM != null) {
+        resultado.append(", new Array(\"inpcAum\", \"" + finalAUM + "\")");
+      }
+    }
+    if (strHasSecondaryUOM.equals("1")
+        && (!UOMUtil.isUomManagementEnabled() || (UOMUtil.isUomManagementEnabled() && !""
+            .equals(strUOMProduct)))) {
+      resultado.append(", new Array(\"inpmProductUomId\", ");
+
+      FieldProvider[] tld = null;
+      try {
+        ComboTableData comboTableData = new ComboTableData(vars, this, "TABLE", "",
+            "M_Product_UOM", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
+                "SLOrderProduct"),
+            Utility.getContext(this, vars, "#User_Client", "SLOrderProduct"), 0);
+        Utility.fillSQLParameters(this, vars, null, comboTableData, "SLOrderProduct", "");
+        tld = comboTableData.select(false);
+        comboTableData = null;
+      } catch (Exception ex) {
+        throw new ServletException(ex);
+      }
+
+      if (tld != null && tld.length > 0) {
+        resultado.append("new Array(");
+        for (int i = 0; i < tld.length; i++) {
+          resultado.append("new Array(\"" + tld[i].getField("id") + "\", \""
+              + FormatUtilities.replaceJS(tld[i].getField("name")) + "\", \"false\")");
+          if (i < tld.length - 1) {
+            resultado.append(",\n");
+          }
+        }
+        resultado.append("\n)");
+      } else
+        resultado.append("null");
+      resultado.append("\n)");
     }
 
-    if (tld != null && tld.length > 0) {
-      resultado.append("new Array(");
-      for (int i = 0; i < tld.length; i++) {
-        resultado.append("new Array(\"" + tld[i].getField("id") + "\", \""
-            + FormatUtilities.replaceJS(tld[i].getField("name")) + "\", \"false\")");
-        if (i < tld.length - 1)
-          resultado.append(",\n");
-      }
-      resultado.append("\n)");
-    } else
-      resultado.append("null");
-    resultado.append("\n),");
-    resultado.append("new Array(\"EXECUTE\", \"displayLogic();\")\n");
+    resultado.append(", new Array(\"EXECUTE\", \"displayLogic();\")\n");
 
     resultado.append(");");
     xmlDocument.setParameter("array", resultado.toString());

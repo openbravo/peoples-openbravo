@@ -166,6 +166,15 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
   @Override
   public void service(HttpServletRequest request, HttpServletResponse response) throws IOException,
       ServletException {
+
+    AllowedCrossDomainsHandler.getInstance().setCORSHeaders(request, response);
+
+    // don't process any further requests otherwise sessions are created for OPTIONS
+    // requests, the cors headers have already been set so can return
+    if (request.getMethod().equals("OPTIONS")) {
+      return;
+    }
+
     Variables variables = new Variables(request);
 
     // VariablesSecureApp vars = new VariablesSecureApp(request);

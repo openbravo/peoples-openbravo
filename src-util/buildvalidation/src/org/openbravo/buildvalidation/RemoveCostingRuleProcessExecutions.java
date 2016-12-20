@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2015 Openbravo SLU
+ * All portions are Copyright (C) 2015-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -23,7 +23,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.openbravo.base.ExecutionLimits;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.modulescript.OpenbravoVersion;
 
 /**
  * This build validation prevents issue #29127 by deleting rows in ad_process_run for executions of
@@ -40,7 +42,7 @@ import org.openbravo.database.ConnectionProvider;
  * allowing better plans.
  * 
  * @author alostale
- *
+ * 
  */
 public class RemoveCostingRuleProcessExecutions extends BuildValidation {
   private static Logger log = Logger.getLogger(RemoveCostingRuleProcessExecutions.class);
@@ -63,5 +65,10 @@ public class RemoveCostingRuleProcessExecutions extends BuildValidation {
     }
 
     return new ArrayList<String>();
+  }
+
+  @Override
+  protected ExecutionLimits getBuildValidationLimits() {
+    return new ExecutionLimits("0", null, new OpenbravoVersion(3, 0, 26130));
   }
 }

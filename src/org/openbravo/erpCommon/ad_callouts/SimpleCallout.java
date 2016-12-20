@@ -328,7 +328,6 @@ public abstract class SimpleCallout extends DelegateConnectionProvider {
      *          The name of the field to get the value.
      * @param value
      *          The value to assign to the field.
-     * @throws JSONException
      */
     public void addResult(String param, Object value) {
       JSONObject columnValue = new JSONObject();
@@ -361,7 +360,6 @@ public abstract class SimpleCallout extends DelegateConnectionProvider {
      *          The name of the field to get the value.
      * @param value
      *          The value to assign to the field.
-     * @throws JSONException
      */
     public void addResult(String param, String value) {
       addResult(param, (Object) (value == null ? null : value));

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2014 Openbravo SLU
+ * All portions are Copyright (C) 2010-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -45,7 +45,7 @@ isc.OBApplicationMenuButton.create({
         , type: 'processManual'
         , manualUrl: '${menuOption.id?js_string}'
         , manualProcessId: '${menuOption.menu.process.id}'
-    <#elseif menuOption.report>
+    <#elseif menuOption.report && !menuOption.processDefinition>
         , type: 'report'
         , manualUrl: '${menuOption.id?js_string}'
         , manualProcessId: '${menuOption.menu.process.id}'
@@ -64,6 +64,7 @@ isc.OBApplicationMenuButton.create({
     <#elseif menuOption.processDefinition>
         , type: 'processDefinition'
         , viewId: 'processDefinition_${menuOption.menu.oBUIAPPProcessDefinition.id}'
+        , uiPattern: '${menuOption.menu.oBUIAPPProcessDefinition.uIPattern?js_string}'
     </#if>
     , singleRecord: ${menuOption.singleRecordStringValue}
     , readOnly: ${menuOption.readOnlyStringValue}

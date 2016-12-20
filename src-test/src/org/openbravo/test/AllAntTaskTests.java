@@ -39,13 +39,13 @@ import org.openbravo.erpCommon.info.ClassicSelectorTest;
 import org.openbravo.test.accounting.PostDocumentTest;
 import org.openbravo.test.accounting.RecordID2Test;
 import org.openbravo.test.cancelandreplace.CancelAndReplaceTest;
+import org.openbravo.test.centralbroker.CentralBrokerTest;
 import org.openbravo.test.costing.TestCosting;
 import org.openbravo.test.dal.AdminContextTest;
 import org.openbravo.test.dal.ComputedColumnsTest;
 import org.openbravo.test.dal.DalComplexQueryRequisitionTest;
 import org.openbravo.test.dal.DalComplexQueryTestOrderLine;
 import org.openbravo.test.dal.DalConnectionProviderTest;
-import org.openbravo.test.dal.DalFilterTest;
 import org.openbravo.test.dal.DalPerformanceInventoryLineTest;
 import org.openbravo.test.dal.DalPerformanceProductTest;
 import org.openbravo.test.dal.DalPerformanceProxyTest;
@@ -124,8 +124,8 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     DalPerformanceProductTest.class, //
     DalPerformanceProxyTest.class, //
     DalQueryTest.class, //
-    DalFilterTest.class, //
     DalTest.class, //
+    CentralBrokerTest.class, //
     DalUtilTest.class, //
     IssuesTest.class, //
     DalConnectionProviderTest.class, //

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -42,6 +42,7 @@ import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.financial.FinancialUtils;
+import org.openbravo.materialmgmt.UOMUtil;
 import org.openbravo.model.ad.process.ProcessInstance;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.service.db.CallProcess;
@@ -116,7 +117,22 @@ public class CopyFromPOOrder extends HttpSecureAppServlet {
         OBContext.restorePreviousMode();
       }
       int lineCount = 0;
+      boolean isUomManagementEnabled = UOMUtil.isUomManagementEnabled();
       for (i = 0; data != null && i < data.length; i++) {
+
+        if (isUomManagementEnabled && data[i].mProductUomId.isEmpty() && data[i].cAum.isEmpty()
+            && data[i].aumqty.isEmpty()) {
+          String defaultAum = UOMUtil.getDefaultAUMForDocument(data[i].mProductId, order
+              .getTransactionDocument().getId());
+          data[i].aumqty = data[i].qtyordered;
+          data[i].cAum = defaultAum;
+          data[i].mProductUomId = null;
+          if (!defaultAum.equals(data[i].cUomId)) {
+            data[i].qtyordered = UOMUtil.getConvertedQty(data[i].mProductId,
+                new BigDecimal(data[i].aumqty), defaultAum).toString();
+          }
+        }
+
         CopyFromPOOrderData[] data3 = CopyFromPOOrderData.selectPriceForProduct(this,
             data[i].mProductId,
             orderData[0].mPricelistId.equals("") ? CopyFromPOOrderData.defaultPriceList(this)
@@ -234,7 +250,8 @@ public class CopyFromPOOrder extends HttpSecureAppServlet {
                 strPriceLimit, strCTaxID, strDiscount, data[i].mProductUomId, data[i].orderline,
                 data[i].mAttributesetinstanceId, strGrossPriceList, strGrossUnitPrice,
                 strGrossAmount, strGrossBaseUnitPrice, data[i].cProjectId, data[i].user1Id,
-                data[i].user2Id, data[i].cCostcenterId, data[i].aAssetId);
+                data[i].user2Id, data[i].cCostcenterId, data[i].aAssetId, data[i].cAum,
+                data[i].aumqty);
             lineCount++;
             if (data[i].explode.equals("Y")) {
               strOrderLineList.add(strCOrderlineID);

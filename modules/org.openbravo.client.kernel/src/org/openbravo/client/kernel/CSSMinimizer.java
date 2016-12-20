@@ -72,8 +72,6 @@ class CSSMinimizer {
    * 
    * @param input
    *          Where to read the CSS from
-   * @param out
-   *          Where to write the result to
    */
   public static String formatString(String input) {
     StringBuffer generatedSB = new StringBuffer();
@@ -176,7 +174,7 @@ class Selector {
    * 
    * @param selector
    *          The selector; for example, "div { border: solid 1px red; color: blue; }"
-   * @throws Exception
+   * @throws IncompleteSelectorException
    *           If the selector is incomplete and cannot be parsed.
    */
   public Selector(String selector) throws IncompleteSelectorException,

@@ -65,4 +65,6 @@
     <excludedFunction name="TEMP_FINDINARRAY"/>
     <excludedFunction name="AD_EXECUTE_FUNCTION"/>
     <excludedFunction name="ADD_HMS"/>
+    <excludedFunction name="PG\_%"/> <!-- PostgreSQL extension functions -->
+    <excludedTrigger name="AU\_%"/> <!-- Audit trail triggers -->
   </vector>

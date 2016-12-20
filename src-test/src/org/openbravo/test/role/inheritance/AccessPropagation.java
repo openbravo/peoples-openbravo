@@ -62,7 +62,6 @@ public class AccessPropagation extends WeldBaseTest {
       "CUSTOMER WITHOUT ACCOUNTING");
   private final List<String> PREFERENCES = Arrays.asList("AllowAttachment", "AllowDelete");
 
-  @SuppressWarnings("unchecked")
   private final List<List<String>> ACCESSES = Arrays.asList(ORGANIZATIONS, WINDOWS, TABS, FIELDS,
       REPORTS, FORMS, WIDGETS, VIEWS, PROCESSES, TABLES, ALERTS, PREFERENCES);
   private static int testCounter = 0;

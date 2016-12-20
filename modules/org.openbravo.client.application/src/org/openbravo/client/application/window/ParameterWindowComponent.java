@@ -30,6 +30,7 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
+import org.openbravo.client.application.ApplicationConstants;
 import org.openbravo.client.application.Parameter;
 import org.openbravo.client.application.Process;
 import org.openbravo.client.application.ReportDefinition;
@@ -158,7 +159,7 @@ public class ParameterWindowComponent extends BaseTemplateComponent {
   }
 
   public boolean isReport() {
-    return "OBUIAPP_Report".equals(process.getUIPattern());
+    return ApplicationConstants.REPORT_UI_PATTERN.equals(process.getUIPattern());
   }
 
   public String getReportId() {

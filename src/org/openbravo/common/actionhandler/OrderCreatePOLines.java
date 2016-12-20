@@ -121,13 +121,21 @@ public class OrderCreatePOLines extends BaseProcessActionHandler {
         newOrderLine.setAttributeSetValue(product.getAttributeSetValue());
       }
       UOM uom = OBDal.getInstance().get(UOM.class, selectedLine.get("product$uOM"));
+      UOM aum = OBDal.getInstance().get(UOM.class, selectedLine.get("aum"));
 
       newOrderLine.setProduct(product);
 
       newOrderLine.setUOM(uom);
+      newOrderLine.setOperativeUOM(aum);
       // Ordered Quantity = returned quantity.
       BigDecimal qtyOrdered = new BigDecimal(selectedLine.getString("orderedQuantity"));
+      BigDecimal aumQty = null;
+      String strAumQty = selectedLine.getString("aumQuantity");
+      if (strAumQty != null && !"".equals(strAumQty) && !"null".equals(strAumQty)) {
+        aumQty = new BigDecimal(selectedLine.getString("aumQuantity"));
+      }
       newOrderLine.setOrderedQuantity(qtyOrdered);
+      newOrderLine.setOperativeQuantity(aumQty);
 
       List<Object> parameters = new ArrayList<Object>();
       parameters.add(product.getId());

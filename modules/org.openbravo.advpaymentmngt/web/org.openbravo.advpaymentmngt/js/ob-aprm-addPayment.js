@@ -1089,6 +1089,7 @@ OB.APRM.AddPayment.reloadLabels = function (form) {
 OB.APRM.AddPayment.onProcess = function (view, actionHandlerCall, clientSideValidationFail) {
   var orderInvoiceGrid = view.theForm.getItem('order_invoice').canvas.viewGrid,
       receivedFrom = view.theForm.getItem('received_from').getValue(),
+      currencyId = view.theForm.getItem('c_currency_id').getValue(),
       issotrx = view.theForm.getItem('issotrx').getValue(),
       finFinancialAccount = view.theForm.getItem('fin_financial_account_id').getValue(),
       amountInvOrds = new BigDecimal(String(view.theForm.getItem('amount_inv_ords').getValue() || 0)),
@@ -1186,6 +1187,9 @@ OB.APRM.AddPayment.onProcess = function (view, actionHandlerCall, clientSideVali
   OB.RemoteCallManager.call('org.openbravo.advpaymentmngt.actionHandler.AddPaymentOnProcessActionHandler', {
     issotrx: issotrx,
     receivedFrom: receivedFrom,
+    currencyId: currencyId,
+    usesCredit: creditTotalItem.compareTo(BigDecimal.prototype.ZERO) !== 0,
+    generatesCredit: overpaymentField.isVisible() && overpaymentAction === 'CR',
     selectedRecords: selectedRecords,
     finFinancialAccount: finFinancialAccount
   }, {}, callbackOnProcessActionHandler);

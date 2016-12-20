@@ -362,7 +362,8 @@
                 gross_unit_price, line_gross_amount,
                 grosspricestd, grosspricelist,
                 isdeferred, defplantype, periodnumber, c_period_id,
-                c_project_id, user1_id, user2_id, c_costcenter_id, a_asset_id
+                c_project_id, user1_id, user2_id, c_costcenter_id, a_asset_id,
+                c_aum, aumqty
               )
               VALUES
               (
@@ -381,7 +382,8 @@
                 coalesce(CUR_ShipmentLines.user1_id, CUR_Shipment.user1_id),
                 coalesce(CUR_ShipmentLines.user2_id, CUR_Shipment.user2_id),
                 coalesce(CUR_ShipmentLines.c_costcenter_id, CUR_Shipment.c_costcenter_id),
-                coalesce(CUR_ShipmentLines.a_asset_id, CUR_Shipment.a_asset_id)
+                coalesce(CUR_ShipmentLines.a_asset_id, CUR_Shipment.a_asset_id),
+                CUR_ShipmentLines.c_aum, CUR_ShipmentLines.aumqty
               )
               ;
             v_TotalNet:=v_TotalNet + v_LineNetAmt;

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2015 Openbravo SLU
+ * All portions are Copyright (C) 2011-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -331,6 +331,10 @@ isc.OBFKFilterTextItem.addProperties({
         gridCriteria, criteriaFieldName = this.getCriteriaFieldName(),
         me = this;
 
+    function isInPickAndExecuteGrid() {
+      return (me.grid && me.grid.parentElement && me.grid.parentElement.getClassName() === 'OBPickAndExecuteGrid');
+    }
+
     function cleanCriteria(crit, fkItem) {
       var i, criterion, fkFilterOnThisField;
       for (i = crit.length - 1; i >= 0; i--) {
@@ -347,9 +351,25 @@ isc.OBFKFilterTextItem.addProperties({
           crit.removeAt(i);
         }
 
-        if (me.grid && me.grid.parentElement && me.grid.parentElement.getClassName() === 'OBPickAndExecuteGrid' && criterion.fieldName === 'id') {
+        if (isInPickAndExecuteGrid() && criterion.fieldName === 'id') {
           // we're in a P&E grid, selected ids should also be removed from criteria
           crit.removeAt(i);
+        }
+      }
+    }
+
+    function cleanOrCriterion() {
+      if (isInPickAndExecuteGrid() && gridCriteria._OrExpression) {
+        // we're in a P&E grid, _OrExpression parameter should also be removed as it is used as part of the selection criteria
+        if (gridCriteria.criteria.length > 0) {
+          gridCriteria = {
+            operator: 'and',
+            _constructor: 'AdvancedCriteria',
+            criteria: gridCriteria.criteria
+          };
+        } else {
+          gridCriteria = {};
+          gridCriteria.criteria = [];
         }
       }
     }
@@ -371,6 +391,7 @@ isc.OBFKFilterTextItem.addProperties({
     // remove from criteria the field used for current filter so drop down doesn't
     // restrict its values
     cleanCriteria(gridCriteria.criteria);
+    cleanOrCriterion();
 
     if (this.form.grid.sourceWidget && this.form.grid.sourceWidget.dataSource) {
       gridCriteria = this.form.grid.sourceWidget.dataSource.convertRelativeDates(gridCriteria);

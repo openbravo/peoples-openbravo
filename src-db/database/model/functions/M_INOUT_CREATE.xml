@@ -85,7 +85,7 @@
       l.M_Product_ID IS NULL)) -- Don't include Direct Ship's
       AND
       DirectShip='N' 
-    ORDER BY l.line, l.M_Product_ID, l.M_Warehouse_id, l.c_uom_id, l.m_attributesetinstance_id, 
+    ORDER BY l.line, l.M_Product_ID, l.M_Warehouse_id, l.c_uom_id, l.c_aum, l.m_attributesetinstance_id, 
       l.m_product_uom_id, qtyordered-qtydelivered;
     ol Cur_OrderLine%ROWTYPE;
     CURSOR Cur_Storage (v_ad_pinstance_id varchar, v_inout_id varchar) IS
@@ -105,7 +105,7 @@
                                          AND iol.m_inout_id = v_inout_id
       WHERE ms.ad_pinstance_id = v_ad_pinstance_id
       GROUP BY sd.m_product_id, sd.m_locator_id, sd.m_attributesetinstance_id, sd.c_uom_id,
-          sd.m_product_uom_id, u.stdprecision, ms.quantity, ms.qtyorder, ms.priority
+          sd.m_product_uom_id, u.stdprecision, ms.quantity, ms.qtyorder, ms.priority, iol.c_aum, iol.aumqty
       HAVING ms.quantity - COALESCE(SUM(iol.movementqty), 0) > 0
       ORDER BY ms.priority;
 
@@ -148,6 +148,9 @@
   v_DeliveryRule CHAR(1);
   v_isreturn C_Doctype.IsReturn%TYPE;
   v_returnbin M_Warehouse.M_ReturnLocator_ID%TYPE;
+  v_uom_preference AD_PREFERENCE.VALUE%TYPE;
+  v_c_aum C_ORDERLINE.C_AUM%TYPE;
+  v_aumqty NUMBER;
 
 BEGIN
   -- Process Parameters
@@ -208,6 +211,13 @@ BEGIN
     AND c_order_id = v_record_id;
   END IF;
 BEGIN --BODY
+
+  -- Get UOMPreference value
+  SELECT COUNT(1) INTO v_count FROM ad_preference WHERE property = 'UomManagement';
+  IF (v_count > 0) THEN
+    v_uom_preference := AD_GET_PREFERENCE_VALUE('UomManagement', 'Y', NULL, v_AD_Org_ID, v_User_ID, NULL, NULL);
+  END IF;
+
   IF(NOT CREATE_FROM_INVOICE) THEN
     -- May be NULL or 0
     IF(v_Record_ID IS NULL) THEN
@@ -454,6 +464,7 @@ BEGIN --BODY
             IF (v_Qty=0 AND ol.M_Product_ID IS NOT NULL) THEN
               Next_Line:=true;
             END IF;
+
             IF (NOT Next_Line) THEN
               -- Is it a standard stocked product?
               v_isstocked := 0;
@@ -464,6 +475,7 @@ BEGIN --BODY
                   AND IsStocked='Y'
                   AND ProductType='I';
               END IF;
+
               -- Item is stocked - check availability
               IF (v_IsStocked <> 0) THEN
                 -- check every locator availability and if qty available
@@ -524,6 +536,7 @@ BEGIN --BODY
                   CLOSE Cur_Storage;
                   Cur_Storage_ISOPEN:=false;
                 END IF;
+
                 IF (NOT NEXT_PRODUCT) THEN
                   v_QtyStorage:=v_storage.QtyOnHand;
                   LOOP
@@ -539,12 +552,23 @@ BEGIN --BODY
                     IF (v_storage.M_Product_UOM_ID IS NOT NULL) THEN
                       v_ActualQty:=ROUND(v_storage.QtyOrder*(v_LocatorQty/v_storage.QtyOnHand), v_storage.stdprecision) ;
                     END IF;
+
                     IF (v_LocatorQty <> 0) THEN
                       -- Create InOut Line
                       Ad_Sequence_Next('M_InOutLine', Cur_Order.C_Order_ID, v_NextNo) ;
                       --
                       DBMS_OUTPUT.PUT_LINE('    Line ' || ol.Line || '  Qty=' || v_LocatorQty) ;
                       v_ResultStr:='CreateInOutLine';
+
+                      IF (v_uom_preference = 'Y' AND v_storage.M_Product_UOM_ID IS NULL) THEN
+                        IF (ol.c_aum IS NULL) THEN
+                          v_c_aum := M_GET_DEFAULT_AUM_FOR_DOCUMENT(ol.M_Product_ID, v_DocType_ID);
+                        ELSE
+                          v_c_aum := ol.c_aum;
+                        END IF;
+                        v_aumqty := M_GET_CONVERTED_AUMQTY(ol.M_Product_ID, v_LocatorQty, v_c_aum);
+                      END IF;
+
                       INSERT INTO M_INOUTLINE
                         (M_InOutLine_ID, Line, M_InOut_ID, C_OrderLine_ID,
                         AD_Client_ID, AD_Org_ID, IsActive, Created,
@@ -555,7 +579,9 @@ BEGIN --BODY
                         QuantityOrder, M_Product_Uom_ID, M_AttributeSetInstance_ID,
                         C_Project_ID, A_Asset_ID, 
                         C_CostCenter_ID, User1_ID, User2_ID, 
-                        explode, bom_parent_id)
+                        explode,
+                        bom_parent_id,
+                        c_aum, aumqty)
                       VALUES
                         (v_NextNo, v_lines, p_InOut_ID, ol.C_OrderLine_ID,
                         ol.AD_Client_ID, ol.AD_Org_ID, 'Y', now(),
@@ -566,10 +592,13 @@ BEGIN --BODY
                         v_ActualQty, v_storage.M_PRODUCT_UOM_ID, v_storage.M_AttributeSetInstance_ID,
                         coalesce(ol.C_Project_ID, Cur_Order.C_Project_ID), coalesce(ol.A_Asset_ID, Cur_Order.A_Asset_ID), 
                         coalesce(ol.C_CostCenter_ID, Cur_Order.C_CostCenter_ID), coalesce(ol.User1_ID, Cur_Order.User1_ID), coalesce(ol.User2_ID, Cur_Order.User2_ID),
-                        ol.explode, (select m_inoutline_id 
-                                     from m_inoutline 
-                                     where m_inout_id = p_InOut_ID
-                                       and c_orderline_id = (SELECT BOM_parent_id from c_orderline WHERE c_orderline_id = ol.C_OrderLine_ID)));
+                        ol.explode,
+                        (select m_inoutline_id 
+                         from m_inoutline 
+                         where m_inout_id = p_InOut_ID
+                           and c_orderline_id = (SELECT BOM_parent_id from c_orderline WHERE c_orderline_id = ol.C_OrderLine_ID)
+                        ),
+                        v_c_aum, v_aumqty);
                       v_lines:=v_lines + 10;
                       v_lines_per_orderline:= v_lines_per_orderline + 10;
                       DBMS_OUTPUT.PUT_LINE('v_lines' || v_lines) ;
@@ -608,6 +637,16 @@ BEGIN --BODY
 
                   DBMS_OUTPUT.PUT_LINE('    Line ' || ol.Line || '  Qty=' || v_LocatorQty) ;
                   v_ResultStr:='CreateInOutLine';
+
+                  v_aumqty := ol.aumqty;
+                  v_c_aum := ol.c_aum;
+                  IF (v_uom_preference = 'Y' AND ol.M_PRODUCT_UOM_ID IS NULL) THEN
+                    IF (ol.c_aum IS NULL AND ol.aumqty IS NULL) THEN
+                      v_c_aum := M_GET_DEFAULT_AUM_FOR_DOCUMENT(ol.M_Product_ID, v_DocType_ID);
+                      v_aumqty := M_GET_CONVERTED_AUMQTY(ol.M_Product_ID, v_Qty, v_c_aum);
+                    END IF;
+                  END IF;
+
                   INSERT INTO M_INOUTLINE
                     (M_InOutLine_ID, Line, M_InOut_ID, C_OrderLine_ID,
                     AD_Client_ID, AD_Org_ID, IsActive, Created,
@@ -618,7 +657,9 @@ BEGIN --BODY
                     QuantityOrder, M_Product_Uom_ID, M_AttributeSetInstance_ID,
                     C_Project_ID, A_Asset_ID, 
                     C_CostCenter_ID, User1_ID, User2_ID,
-                    explode, bom_parent_id)
+                    explode,
+                    bom_parent_id,
+                    c_aum, aumqty)
                   VALUES
                     (v_NextNo, v_lines, p_InOut_ID, ol.C_OrderLine_ID,
                     ol.AD_Client_ID, ol.AD_Org_ID, 'Y', now(),
@@ -629,10 +670,13 @@ BEGIN --BODY
                     v_ActualQty, ol.M_PRODUCT_UOM_ID, ol.M_AttributeSetInstance_ID,
                     coalesce(ol.C_Project_ID, Cur_Order.C_Project_ID), coalesce(ol.A_Asset_ID, Cur_Order.A_Asset_ID), 
                     coalesce(ol.C_CostCenter_ID, Cur_Order.C_CostCenter_ID), coalesce(ol.User1_ID, Cur_Order.User1_ID), coalesce(ol.User2_ID, Cur_Order.User2_ID),
-                    ol.explode, (select m_inoutline_id 
-                                     from m_inoutline 
-                                     where m_inout_id = p_InOut_ID
-                                       and c_orderline_id = (SELECT BOM_parent_id from c_orderline WHERE c_orderline_id = ol.C_OrderLine_ID)));
+                    ol.explode,
+                    (select m_inoutline_id 
+                     from m_inoutline 
+                     where m_inout_id = p_InOut_ID
+                       and c_orderline_id = (SELECT BOM_parent_id from c_orderline WHERE c_orderline_id = ol.C_OrderLine_ID)
+                    ),
+                    v_c_aum, v_aumqty);
                   v_lines:=v_lines + 10;
                 ELSIF (v_qty <> 0) THEN
                   IF (v_DeliveryRule = 'O') THEN
@@ -670,6 +714,16 @@ BEGIN --BODY
                 --
                 DBMS_OUTPUT.PUT_LINE('    Line* ' || ol.Line || '  Qty=' || v_Qty) ;
                 v_ResultStr:='CreateInOutLine*2 '||ol.c_order_id||'-'||ol.line||'-'||ol.m_product_id;
+
+                v_aumqty := ol.aumqty;
+                v_c_aum := ol.c_aum;
+                IF (v_uom_preference = 'Y' AND ol.M_PRODUCT_UOM_ID IS NULL) THEN
+                  IF (ol.c_aum IS NULL AND ol.aumqty IS NULL) THEN
+                    v_c_aum := M_GET_DEFAULT_AUM_FOR_DOCUMENT(ol.M_Product_ID, v_DocType_ID);
+                    v_aumqty := M_GET_CONVERTED_AUMQTY(ol.M_Product_ID, v_Qty, v_c_aum);
+                  END IF;
+                END IF;
+
                 INSERT INTO M_INOUTLINE
                   (M_InOutLine_ID, Line, M_InOut_ID, C_OrderLine_ID,
                   AD_Client_ID, AD_Org_ID, IsActive, Created,
@@ -680,7 +734,9 @@ BEGIN --BODY
                   QuantityOrder, M_Product_Uom_ID, M_AttributeSetInstance_ID,
                   C_Project_ID, A_Asset_ID, 
                   C_CostCenter_ID, User1_ID, User2_ID, 
-                  explode, bom_parent_id)
+                  explode,
+                  bom_parent_id,
+                  c_aum, aumqty)
                 VALUES
                   (v_NextNo, v_lines, p_InOut_ID, ol.C_OrderLine_ID,
                   ol.AD_Client_ID, ol.AD_Org_ID, 'Y', now(),
@@ -691,10 +747,12 @@ BEGIN --BODY
                   v_QtyOrder, ol.M_PRODUCT_UOM_ID, ol.M_ATTRIBUTESETINSTANCE_ID,
                   coalesce(ol.C_Project_ID, Cur_Order.C_Project_ID), coalesce(ol.A_Asset_ID, Cur_Order.A_Asset_ID), 
                   coalesce(ol.C_CostCenter_ID, Cur_Order.C_CostCenter_ID), coalesce(ol.User1_ID, Cur_Order.User1_ID), coalesce(ol.User2_ID, Cur_Order.User2_ID),
-                  ol.explode, (select m_inoutline_id 
-                                     from m_inoutline 
-                                     where m_inout_id = p_InOut_ID
-                                       and c_orderline_id = (SELECT BOM_parent_id from c_orderline WHERE c_orderline_id = ol.C_OrderLine_ID)));
+                  ol.explode,
+                  (select m_inoutline_id 
+                   from m_inoutline 
+                   where m_inout_id = p_InOut_ID
+                     and c_orderline_id = (SELECT BOM_parent_id from c_orderline WHERE c_orderline_id = ol.C_OrderLine_ID)),
+                  v_c_aum, v_aumqty);
                 v_lines:=v_lines + 10;
               END IF;
             END IF;--Next_Line
@@ -888,6 +946,16 @@ BEGIN --BODY
           Ad_Sequence_Next('M_InOutLine', Cur_Invoice.C_Invoice_ID, v_NextNo) ;
           DBMS_OUTPUT.PUT_LINE('    Line* ' || Cur_Lines.Line) ;
           v_ResultStr:='CreateInOutLine*3';
+
+           v_aumqty := Cur_Lines.aumqty;
+          v_c_aum := Cur_Lines.c_aum;
+          IF (v_uom_preference = 'Y' AND Cur_Lines.M_Product_Uom_ID IS NULL) THEN
+            IF (Cur_Lines.c_aum IS NULL AND Cur_Lines.aumqty IS NULL) THEN
+              v_c_aum := M_GET_DEFAULT_AUM_FOR_DOCUMENT(Cur_Lines.M_Product_ID, v_DocType_ID);
+              v_aumqty := M_GET_CONVERTED_AUMQTY(Cur_Lines.M_Product_ID, Cur_Lines.QtyInvoiced, v_c_aum);
+            END IF;
+          END IF;
+
           INSERT INTO M_INOUTLINE (
             M_InOutLine_ID, Line, M_InOut_ID, C_OrderLine_ID,
             AD_Client_ID, AD_Org_ID, IsActive, Created,
@@ -898,7 +966,9 @@ BEGIN --BODY
             QuantityOrder, M_Product_Uom_ID, M_AttributeSetInstance_ID,
             C_Project_ID, A_Asset_ID, 
             C_CostCenter_ID, User1_ID,
-            User2_ID, explode, bom_parent_id
+            User2_ID, explode,
+            bom_parent_id,
+            c_aum, aumqty
           ) VALUES (
             v_NextNo, Cur_Lines.Line, p_InOut_ID, Cur_Lines.C_OrderLine_ID,
             Cur_Lines.AD_Client_ID, Cur_Lines.AD_Org_ID, 'Y', now(),
@@ -909,10 +979,12 @@ BEGIN --BODY
             Cur_Lines.QuantityOrder, Cur_Lines.M_Product_Uom_ID, Cur_Lines.M_ATTRIBUTESETINSTANCE_ID,
             coalesce(Cur_Lines.C_Project_ID, Cur_Invoice.C_Project_ID), coalesce(Cur_Lines.A_Asset_ID, Cur_Invoice.A_Asset_ID), 
             coalesce(Cur_Lines.C_CostCenter_ID, Cur_Invoice.C_CostCenter_ID), coalesce(Cur_Lines.User1_ID, Cur_Invoice.User1_ID),
-            coalesce(Cur_Lines.User2_ID, Cur_Invoice.User2_ID), Cur_Lines.explode, (select m_inoutline_id 
-                                     from c_invoiceline
-                                     where c_invoice_id = Cur_Lines.C_Invoice_ID
-                                       and c_invoiceline_id = Cur_Lines.BOM_parent_id));
+            coalesce(Cur_Lines.User2_ID, Cur_Invoice.User2_ID), Cur_Lines.explode,
+            (select m_inoutline_id 
+             from c_invoiceline
+             where c_invoice_id = Cur_Lines.C_Invoice_ID
+               and c_invoiceline_id = Cur_Lines.BOM_parent_id),
+            v_c_aum, v_aumqty);
           UPDATE C_INVOICELINE
           SET M_INOUTLINE_ID=v_NextNo,
               Updated=now(),

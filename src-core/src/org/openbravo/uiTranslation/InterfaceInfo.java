@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2008-2010 Openbravo S.L.U.
+ * Copyright (C) 2008-2016 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -14,7 +14,7 @@ package org.openbravo.uiTranslation;
 
 class InterfaceInfo {
 
-  public static int TAB = 0, PROCESS = 1, FORM = 2;
+  public static final int TAB = 0, PROCESS = 1, FORM = 2;
 
   private String title = "";
   private String description = "";

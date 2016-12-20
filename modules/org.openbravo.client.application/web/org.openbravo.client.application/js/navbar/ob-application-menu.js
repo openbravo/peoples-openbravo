@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2014 Openbravo SLU
+ * All portions are Copyright (C) 2011-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -262,27 +262,31 @@ isc.OBApplicationMenuButton.addProperties({
     this.Super('showMenu', arguments);
   },
 
-  getNodeIcon: function (type) {
+  getNodeIcon: function (node) {
     var iconPath;
-    if (type === 'window') {
+    if (node.type === 'window') {
       iconPath = this.nodeIcons.Window;
-    } else if (type === 'process') {
+    } else if (node.type === 'process') {
       iconPath = this.nodeIcons.Process;
-    } else if (type === 'processManual') {
+    } else if (node.type === 'processManual') {
       iconPath = this.nodeIcons.ProcessManual;
-    } else if (type === 'report') {
+    } else if (node.type === 'report') {
       iconPath = this.nodeIcons.Report;
-    } else if (type === 'task') {
+    } else if (node.type === 'task') {
       iconPath = this.nodeIcons.Task;
-    } else if (type === 'form') {
+    } else if (node.type === 'form') {
       iconPath = this.nodeIcons.Form;
-    } else if (type === 'external') {
+    } else if (node.type === 'external') {
       iconPath = this.nodeIcons.ExternalLink;
-    } else if (type === 'view') {
+    } else if (node.type === 'view') {
       iconPath = this.nodeIcons.View;
-    } else if (type === 'processDefinition') {
-      iconPath = this.nodeIcons.Process;
-    } else if (type === 'folder') {
+    } else if (node.type === 'processDefinition') {
+      if (node.uiPattern === 'OBUIAPP_Report') {
+        iconPath = this.nodeIcons.Report;
+      } else {
+        iconPath = this.nodeIcons.Process;
+      }
+    } else if (node.type === 'folder') {
       iconPath = this.nodeIcons.Folder;
     }
     return iconPath;
@@ -293,7 +297,7 @@ isc.OBApplicationMenuButton.addProperties({
       var i, length = node.length;
       for (i = 0; i < length; i++) {
         if (node[i].type) {
-          node[i].icon = this.getNodeIcon(node[i].type);
+          node[i].icon = this.getNodeIcon(node[i]);
           if (node[i].submenu) {
             this.setNodeIcons(node[i].submenu);
           }

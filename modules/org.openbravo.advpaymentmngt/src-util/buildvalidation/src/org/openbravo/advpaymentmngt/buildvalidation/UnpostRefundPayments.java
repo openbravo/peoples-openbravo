@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2011 Openbravo SLU
+ * All portions are Copyright (C) 2010-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,8 +21,10 @@ package org.openbravo.advpaymentmngt.buildvalidation;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.openbravo.base.ExecutionLimits;
 import org.openbravo.buildvalidation.BuildValidation;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.modulescript.OpenbravoVersion;
 
 public class UnpostRefundPayments extends BuildValidation {
 
@@ -86,6 +88,12 @@ public class UnpostRefundPayments extends BuildValidation {
       }
 
     }
+  }
+
+  @Override
+  protected ExecutionLimits getBuildValidationLimits() {
+    return new ExecutionLimits("A918E3331C404B889D69AA9BFAFB23AC", null, new OpenbravoVersion(3, 0,
+        13005));
   }
 
 }

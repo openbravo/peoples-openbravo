@@ -66,6 +66,7 @@ import org.openbravo.financial.FinancialUtils;
 import org.openbravo.model.ad.process.ProcessInstance;
 import org.openbravo.model.ad.ui.Process;
 import org.openbravo.model.common.currency.ConversionRate;
+import org.openbravo.model.common.currency.ConversionRateDoc;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.common.invoice.ReversedInvoice;
@@ -291,8 +292,23 @@ public class ProcessInvoice extends HttpSecureAppServlet {
               OBDal.getInstance().save(psd);
             }
             dummyPayment.setFINPaymentDetailList(paymentDetails);
-            OBDal.getInstance().save(dummyPayment);
 
+            // Copy exchange rate from invoice
+            for (ConversionRateDoc conversionRateDoc : invoice.getCurrencyConversionRateDocList()) {
+              ConversionRateDoc newConversionRateDoc = OBProvider.getInstance().get(
+                  ConversionRateDoc.class);
+              newConversionRateDoc.setClient(conversionRateDoc.getClient());
+              newConversionRateDoc.setOrganization(conversionRateDoc.getOrganization());
+              newConversionRateDoc.setCurrency(conversionRateDoc.getCurrency());
+              newConversionRateDoc.setToCurrency(conversionRateDoc.getToCurrency());
+              newConversionRateDoc.setRate(conversionRateDoc.getRate());
+              newConversionRateDoc.setForeignAmount(BigDecimal.ZERO);
+              newConversionRateDoc.setPayment(dummyPayment);
+              dummyPayment.getCurrencyConversionRateDocList().add(newConversionRateDoc);
+              OBDal.getInstance().save(newConversionRateDoc);
+            }
+
+            OBDal.getInstance().save(dummyPayment);
           } catch (final Exception e) {
             log4j.error("Exception while creating dummy payment for the invoice: "
                 + strC_Invoice_ID);

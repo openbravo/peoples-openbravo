@@ -1304,7 +1304,7 @@ public class FIN_AddPayment {
    * @param writeOffAmount
    *          Write off amount, null or 0 if not applicable.
    * 
-   * @Deprecated This method doesn't support Cash VAT flow, so it's better to use
+   * @deprecated This method doesn't support Cash VAT flow, so it's better to use
    *             {@link #updatePaymentDetail(FIN_PaymentScheduleDetail, FIN_Payment, BigDecimal, boolean)}
    */
   @Deprecated

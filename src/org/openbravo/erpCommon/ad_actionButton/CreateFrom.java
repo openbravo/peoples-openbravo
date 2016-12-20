@@ -37,6 +37,7 @@ import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.data.FieldProvider;
 import org.openbravo.database.SessionInfo;
 import org.openbravo.erpCommon.businessUtility.Tax;
 import org.openbravo.erpCommon.businessUtility.Tree;
@@ -47,6 +48,7 @@ import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.financial.FinancialUtils;
+import org.openbravo.materialmgmt.UOMUtil;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
@@ -530,6 +532,20 @@ public class CreateFrom extends HttpSecureAppServlet {
       }
     }
 
+    if (UOMUtil.isUomManagementEnabled()) {
+      for (int i = 0; i < data.length; i++) {
+        if (data[i].aumqty.isEmpty()) {
+          if (!data[i].cAum.equals(data[i].cUomId)) {
+            data[i].aumqty = UOMUtil.getConvertedAumQty(data[i].mProductId,
+                new BigDecimal(data[i].qty), data[i].cAum).toString();
+          } else {
+            data[i].aumqty = data[i].qty;
+          }
+        }
+        data[i].aumvisible = "table-cell";
+      }
+    }
+
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
     xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
     xmlDocument.setParameter("theme", vars.getTheme());
@@ -591,6 +607,12 @@ public class CreateFrom extends HttpSecureAppServlet {
         xmlDocument.setParameter("messageMessage",
             Utility.messageBD(this, "CreateFromMatchPOQtys", vars.getLanguage()));
       }
+    }
+
+    if (UOMUtil.isUomManagementEnabled()) {
+      xmlDocument.setParameter("aumVisible", "table-cell");
+    } else {
+      xmlDocument.setParameter("aumVisible", "none");
     }
 
     xmlDocument.setData("structure1", data);
@@ -736,24 +758,124 @@ public class CreateFrom extends HttpSecureAppServlet {
       }
     }
 
-    if (isSOTrx.equals("N")) {
-      final CreateFromShipmentData[][] dataUOM = new CreateFromShipmentData[data.length][];
+    final boolean strUomPreference = UOMUtil.isUomManagementEnabled();
+    if (isSOTrx.equals("Y")) {
+      if (strUomPreference) {
+        xmlDocument.setParameter("uompreference", "");
+        for (int i = 0; i < data.length; i++) {
+          // Obtain the specific units for each product
+          data[i].haveuompreference = "";
+          if (data[i].cAum.isEmpty() && data[i].aumqty.isEmpty()) {
+            FieldProvider[] defaultAumData = UOMUtil.selectDefaultAUM(data[i].mProductId,
+                data[i].cDoctypeId);
+            String defaultAum = (defaultAumData.length > 0) ? defaultAumData[0]
+                .getField(UOMUtil.FIELD_PROVIDER_ID) : data[i].cUomId;
+            data[i].cAum = defaultAum;
+            data[i].aumname = (defaultAumData.length > 0) ? defaultAumData[0]
+                .getField(UOMUtil.FIELD_PROVIDER_NAME) : data[i].uomsymbol;
+            data[i].mProductUomId = null;
+            if (!defaultAum.equals(data[i].cUomId)) {
+              data[i].aumqty = UOMUtil.getConvertedAumQty(data[i].mProductId,
+                  new BigDecimal(data[i].qty), defaultAum).toString();
+            } else {
+              data[i].aumqty = data[i].qty;
+            }
+          }
+        }
+      } else {
+        xmlDocument.setParameter("uompreference", "display:none;");
+        for (int i = 0; i < data.length; i++) {
+          data[i].haveuompreference = "display:none;";
+        }
+      }
+    } else {
+      final FieldProvider[][] dataUOM = new FieldProvider[data.length][];
+      boolean strHaveSecUom = false;
+      boolean strHaveAum = false;
+      for (int i = 0; i < data.length; i++) {
+        try {
+          if (!data[i].havesec.equals("0")) {
+            strHaveSecUom = true;
+          }
+          if (strUomPreference && data[i].havesec.equals("0")) {
+            strHaveAum = true;
+          }
+          if (strHaveSecUom && strHaveAum) {
+            break;
+          }
+        } catch (NullPointerException ignore) {
+
+        }
+      }
 
       for (int i = 0; i < data.length; i++) {
         // Obtain the specific units for each product
 
-        dataUOM[i] = CreateFromShipmentData.selectUOM(this, data[i].mProductId);
+        dataUOM[i] = UOMUtil.selectUOM(data[i].mProductId);
 
         // Check the hidden fields
 
         final String strhavesec = data[i].havesec;
 
-        if ("0".equals(strhavesec)) {
+        if (strHaveSecUom && strHaveAum) {
+          // UOM preference is Y and at least one line has secondary UOM
+          if (!data[i].havesec.equals("0")) {
+            data[i].havesec = "text";
+            data[i].haveuompreference = "hidden";
+          }
+          if (strUomPreference && data[i].havesec.equals("0")) {
+            data[i].haveuompreference = "text";
+            data[i].havesec = "hidden";
+          }
+          xmlDocument.setParameter("uompreference", "");
+          xmlDocument.setParameter("havesecuom", "");
+          if (data[i].cAum.isEmpty() && data[i].aumqty.isEmpty()
+              && data[i].secProductUomId.isEmpty() && data[i].secqty.isEmpty()) {
+            FieldProvider[] defaultAumData = UOMUtil.selectDefaultAUM(data[i].mProductId,
+                data[i].cDoctypeId);
+            String defaultAum = (defaultAumData.length > 0) ? defaultAumData[0]
+                .getField(UOMUtil.FIELD_PROVIDER_ID) : data[i].cUomId;
+            data[i].cAum = defaultAum;
+            data[i].aumname = (defaultAumData.length > 0) ? defaultAumData[0]
+                .getField(UOMUtil.FIELD_PROVIDER_NAME) : data[i].uomsymbol;
+            data[i].mProductUomId = null;
+            if (!defaultAum.equals(data[i].cUomId)) {
+              data[i].aumqty = UOMUtil.getConvertedAumQty(data[i].mProductId,
+                  new BigDecimal(data[i].qty), defaultAum).toString();
+            } else {
+              data[i].aumqty = data[i].qty;
+            }
+          }
+        } else if (strUomPreference && "0".equals(strhavesec)) {
+          // UOM preference is Y and no line has secondary UOM
           data[i].havesec = "hidden";
           data[i].havesecuom = "none";
+          data[i].haveuompreference = "text";
+          xmlDocument.setParameter("uompreference", "");
+          xmlDocument.setParameter("havesecuom", "display:none;");
+          if (data[i].cAum.isEmpty() && data[i].aumqty.isEmpty()) {
+            FieldProvider[] defaultAumData = UOMUtil.selectDefaultAUM(data[i].mProductId,
+                data[i].cDoctypeId);
+            String defaultAum = (defaultAumData.length > 0) ? defaultAumData[0]
+                .getField(UOMUtil.FIELD_PROVIDER_ID) : data[i].cUomId;
+            data[i].cAum = defaultAum;
+            data[i].aumname = (defaultAumData.length > 0) ? defaultAumData[0]
+                .getField(UOMUtil.FIELD_PROVIDER_NAME) : data[i].uomsymbol;
+            data[i].mProductUomId = null;
+            if (!defaultAum.equals(data[i].cUomId)) {
+              data[i].aumqty = UOMUtil.getConvertedAumQty(data[i].mProductId,
+                  new BigDecimal(data[i].qty), defaultAum).toString();
+            } else {
+              data[i].aumqty = data[i].qty;
+            }
+          }
         } else {
+          // UOM preference is N
           data[i].havesec = "text";
-          data[i].havesecuom = "block";
+          data[i].uompreference = "none";
+          data[i].haveuompreference = "hidden";
+          xmlDocument.setParameter("uompreference", "display:none;");
+          xmlDocument.setParameter("havesecuom", "");
         }
       }
       xmlDocument.setDataArray("reportM_Product_Uom_To_ID", "liststructure", dataUOM);
@@ -1523,6 +1645,7 @@ public class CreateFrom extends HttpSecureAppServlet {
                 ids[k]);
         }
         if (data != null) {
+          boolean isUomManagementEnabled = UOMUtil.isUomManagementEnabled();
           for (int i = 0; i < data.length; i++) {
             final String strSequence = SequenceIdData.getUUID();
             BigDecimal qty = new BigDecimal(data[i].id);
@@ -1534,6 +1657,20 @@ public class CreateFrom extends HttpSecureAppServlet {
                   .selectProject(this, strKey), isSOTrx.equals("Y") ? true : false);
             else
               C_Tax_ID = CreateFromInvoiceData.getTax(this, data[i].cOrderlineId);
+
+            if (isUomManagementEnabled && data[i].mProductUomId.isEmpty() && data[i].cAum.isEmpty()
+                && data[i].aumqty.isEmpty()) {
+              String defaultAum = UOMUtil.getDefaultAUMForDocument(data[i].mProductId,
+                  data[i].cDoctypeId);
+              data[i].cAum = defaultAum;
+              data[i].mProductUomId = null;
+              if (!defaultAum.equals(data[i].cUomId)) {
+                data[i].aumqty = UOMUtil.getConvertedAumQty(data[i].mProductId,
+                    new BigDecimal(data[i].id), defaultAum).toString();
+              } else {
+                data[i].aumqty = data[i].id;
+              }
+            }
 
             final int curPrecision;
             if (strType.equals("SHIPMENT")) {
@@ -1651,7 +1788,7 @@ public class CreateFrom extends HttpSecureAppServlet {
                   startingPeriodId, data[i].aAssetId, data[i].cProjectId, data[i].cCostcenterId,
                   data[i].user1Id, data[i].user2Id, data[i].explode,
                   data[i].mInoutlineId.equals("") || data[i].mInoutlineId == null ? data[i].isorder
-                      : "N");
+                      : "N", data[i].cAum, data[i].aumqty);
 
               if (!data[i].mInoutlineId.isEmpty() && strType.equals("SHIPMENT")) {
                 CreateFromInvoiceData.insertShipmentAcctDimension(conn, this, strSequence,
@@ -1755,8 +1892,30 @@ public class CreateFrom extends HttpSecureAppServlet {
               strLineId = data[i].cOrderlineId;
             }
 
-            final String strMovementqty = vars.getRequiredNumericParameter("inpmovementqty"
-                + strLineId);
+            String strMovementqty = "";
+            String strAumQty = "";
+            if (UOMUtil.isUomManagementEnabled() && data[i].mProductUomId.isEmpty()) {
+              try {
+                BigDecimal qtyAum = new BigDecimal(
+                    vars.getNumericParameter("inpaumqty" + strLineId));
+                strAumQty = qtyAum.toString();
+                strMovementqty = qtyAum.toString();
+                if (data[i].cAum.isEmpty()) {
+                  FieldProvider[] defaultAumData = UOMUtil.selectDefaultAUM(data[i].mProductId,
+                      data[i].cDoctypeId);
+                  data[i].cAum = (defaultAumData.length > 0) ? defaultAumData[0]
+                      .getField(UOMUtil.FIELD_PROVIDER_ID) : data[i].cUomId;
+                }
+                if (!data[i].cUomId.equals(data[i].cAum)) {
+                  strMovementqty = UOMUtil
+                      .getConvertedQty(data[i].mProductId, qtyAum, data[i].cAum).toString();
+                }
+              } catch (NumberFormatException e) {
+                log4j.debug(e.getMessage());
+              }
+            } else {
+              strMovementqty = vars.getRequiredNumericParameter("inpmovementqty" + strLineId);
+            }
             String strQuantityorder = "";
             String strProductUomId = "";
             String strLocator = vars.getStringParameter("inpmLocatorId" + strLineId);
@@ -1848,7 +2007,7 @@ public class CreateFrom extends HttpSecureAppServlet {
                   CreateFromShipmentData.insert(conn, this, strSequence, strKey, vars.getClient(),
                       data[i].adOrgId, vars.getUser(), data[i].description, data[i].mProductId,
                       data[i].cUomId, (qtyIsNegative ? "-" + strConversion : strConversion),
-                      data[i].cOrderlineId, strLocator,
+                      strAumQty, data[i].cAum, data[i].cOrderlineId, strLocator,
                       CreateFromShipmentData.isInvoiced(conn, this, data[i].cInvoicelineId),
                       (qtyIsNegative ? "-" + total : total), data[i].mProductUomId,
                       strmAttributesetinstanceId, data[i].aAssetId, data[i].cProjectId,
@@ -1880,7 +2039,8 @@ public class CreateFrom extends HttpSecureAppServlet {
               try {
                 CreateFromShipmentData.insert(conn, this, strSequence, strKey, vars.getClient(),
                     data[i].adOrgId, vars.getUser(), data[i].description, data[i].mProductId,
-                    data[i].cUomId, strMovementqty, data[i].cOrderlineId, strLocator,
+                    data[i].cUomId, strMovementqty, strAumQty, data[i].cAum, data[i].cOrderlineId,
+                    strLocator,
                     CreateFromShipmentData.isInvoiced(conn, this, data[i].cInvoicelineId),
                     strQuantityorder, strProductUomId, strmAttributesetinstanceId,
                     data[i].aAssetId, data[i].cProjectId, data[i].cCostcenterId, data[i].user1Id,
@@ -2060,7 +2220,7 @@ public class CreateFrom extends HttpSecureAppServlet {
                   CreateFromShipmentData.insert(conn, this, strSequence, strKey, vars.getClient(),
                       data[i].adOrgId, vars.getUser(), data[i].description, data[i].mProductId,
                       data[i].cUomId, (qtyIsNegative ? "-" + strConversion : strConversion),
-                      data[i].cOrderlineId, strLocator,
+                      data[i].aumqty, data[i].cAum, data[i].cOrderlineId, strLocator,
                       CreateFromShipmentData.isInvoiced(conn, this, data[i].cInvoicelineId),
                       (qtyIsNegative ? "-" + total : total), data[i].mProductUomId,
                       data[i].mAttributesetinstanceId, data[i].aAssetId, data[i].cProjectId,
@@ -2093,7 +2253,8 @@ public class CreateFrom extends HttpSecureAppServlet {
               try {
                 CreateFromShipmentData.insert(conn, this, strSequence, strKey, vars.getClient(),
                     data[i].adOrgId, vars.getUser(), data[i].description, data[i].mProductId,
-                    data[i].cUomId, data[i].id, data[i].cOrderlineId, strLocator,
+                    data[i].cUomId, data[i].id, data[i].aumqty, data[i].cAum, data[i].cOrderlineId,
+                    strLocator,
                     CreateFromShipmentData.isInvoiced(conn, this, data[i].cInvoicelineId),
                     data[i].quantityorder, data[i].mProductUomId, data[i].mAttributesetinstanceId,
                     data[i].aAssetId, data[i].cProjectId, data[i].cCostcenterId, data[i].user1Id,

@@ -77,7 +77,7 @@ public class DocLineCashVATReady_PaymentTransactionReconciliation extends DocLin
 
   /**
    * 
-   * @deprecated Use {@link #setInvoiceTaxCashVAT_V_IDs()}
+   * @deprecated Use {@link #setInvoiceTaxCashVAT_V_IDs(List)}
    */
   public void setInvoiceTaxCashVAT_V(List<InvoiceTaxCashVAT_V> invoiceTaxCashVAT_V) {
     for (InvoiceTaxCashVAT_V itcv : invoiceTaxCashVAT_V) {

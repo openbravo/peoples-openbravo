@@ -705,7 +705,8 @@ IF (NOT FINISH_PROCESS) THEN
               gross_unit_price, line_gross_amount,
               isdeferred, defplantype, periodnumber, c_period_id,
               c_bpartner_id, c_project_id, c_projectline_id, a_asset_id,
-              user1_id, user2_id, c_costcenter_id)
+              user1_id, user2_id, c_costcenter_id,
+              C_AUM, AUMQTY)
             VALUES
             (
               v_NextNo, Cur_InvoiceLine.AD_Client_ID, Cur_InvoiceLine.AD_Org_ID, 'Y',
@@ -718,7 +719,8 @@ IF (NOT FINISH_PROCESS) THEN
               Cur_InvoiceLine.gross_unit_price, Cur_InvoiceLine.line_gross_amount * -1,
               Cur_InvoiceLine.isdeferred, Cur_InvoiceLine.defplantype, Cur_InvoiceLine.periodnumber, Cur_InvoiceLine.c_period_id,
               Cur_InvoiceLine.c_bpartner_id, Cur_InvoiceLine.c_project_id, Cur_InvoiceLine.c_projectline_id, Cur_InvoiceLine.a_asset_id,
-              Cur_InvoiceLine.user1_id, Cur_InvoiceLine.user2_id, Cur_InvoiceLine.C_CostCenter_ID
+              Cur_InvoiceLine.user1_id, Cur_InvoiceLine.user2_id, Cur_InvoiceLine.C_CostCenter_ID,
+              Cur_InvoiceLine.C_AUM, Cur_InvoiceLine.AUMQTY
             );
           INSERT INTO M_MATCHINV
             (M_MATCHINV_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY,
@@ -1282,7 +1284,8 @@ IF (NOT FINISH_PROCESS) THEN
            TAXAMT, M_ATTRIBUTESETINSTANCE_ID, ISDESCRIPTION,
            QUANTITYORDER, M_PRODUCT_UOM_ID, PRICESTD,
            GROSS_UNIT_PRICE, TAXBASEAMT, LINE_GROSS_AMOUNT,
-           ISDEFERRED, DEFPLANTYPE, PERIODNUMBER, C_PERIOD_ID
+           ISDEFERRED, DEFPLANTYPE, PERIODNUMBER, C_PERIOD_ID,
+           C_AUM, AUMQTY
           )
           VALUES
           (
@@ -1295,7 +1298,8 @@ IF (NOT FINISH_PROCESS) THEN
            NULL, NULL, 'N' ,
            NULL, NULL, v_Discount,
            ROUND(v_gross_unit_price, v_precision), v_Discount  ,ROUND(v_line_gross_amount, v_precision),
-           v_isdeferred_inv, v_defplantype_inv, v_periodnumber_inv, v_period_inv
+           v_isdeferred_inv, v_defplantype_inv, v_periodnumber_inv, v_period_inv,
+           NULL, NULL
           );
         --v_InvoiceDiscount:=Ad_Sequence_Nextno('C_InvoiceLine');
         UPDATE C_INVOICELINE

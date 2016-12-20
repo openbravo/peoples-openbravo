@@ -43,6 +43,7 @@ import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.financial.FinancialUtils;
+import org.openbravo.materialmgmt.UOMUtil;
 import org.openbravo.model.common.businesspartner.Location;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.common.invoice.InvoiceLine;
@@ -111,6 +112,7 @@ public class CopyFromInvoice extends HttpSecureAppServlet {
         myError.setMessage(OBMessageUtils.messageBD("RecordsCopied") + " " + i);
         return myError;
       }
+      boolean isUomManagementEnabled = UOMUtil.isUomManagementEnabled();
       for (i = 0; i < data.length; i++) {
         String strSequence = SequenceIdData.getUUID();
         try {
@@ -132,6 +134,18 @@ public class CopyFromInvoice extends HttpSecureAppServlet {
           String strWindowId = vars.getStringParameter("inpwindowId");
           String strWharehouse = Utility.getContext(this, vars, "#M_Warehouse_ID", strWindowId);
           String strIsSOTrx = Utility.getContext(this, vars, "isSOTrx", strWindowId);
+
+          if (isUomManagementEnabled && data[i].mProductUomId.isEmpty() && data[i].cAum.isEmpty()
+              && data[i].aumqty.isEmpty()) {
+            String defaultAum = UOMUtil.getDefaultAUMForDocument(data[i].productId, invToCopy
+                .getTransactionDocument().getId());
+            data[i].aumqty = data[i].qtyinvoiced;
+            data[i].cAum = defaultAum;
+            if (!defaultAum.equals(data[i].cUomId)) {
+              data[i].qtyinvoiced = UOMUtil.getConvertedQty(data[i].productId,
+                  new BigDecimal(data[i].aumqty), defaultAum).toString();
+            }
+          }
 
           String strCTaxID = Tax.get(this, data[i].productId, dataInvoice[0].dateinvoiced,
               dataInvoice[0].adOrgId, strWharehouse, dataInvoice[0].cBpartnerLocationId,
@@ -206,10 +220,10 @@ public class CopyFromInvoice extends HttpSecureAppServlet {
                 dataInvoice[0].cBpartnerLocationId);
           }
           CopyFromInvoiceData.insert(conn, this, strSequence, strKey, dataInvoice[0].adClientId,
-              dataInvoice[0].adOrgId, vars.getUser(), priceList.toString(), priceActual.toString(),
-              priceLimit.toString(), lineNetAmt.toString(), strCTaxID, priceGross.toString(),
-              lineGrossAmt.toString(), priceListGross.toString(), priceStdGross.toString(),
-              data[i].cInvoicelineId);
+              dataInvoice[0].adOrgId, vars.getUser(), data[i].qtyinvoiced, priceList.toString(),
+              priceActual.toString(), priceLimit.toString(), lineNetAmt.toString(), strCTaxID,
+              priceGross.toString(), lineGrossAmt.toString(), priceListGross.toString(),
+              priceStdGross.toString(), data[i].cAum, data[i].aumqty, data[i].cInvoicelineId);
 
           // Copy accounting dimensions
           CopyFromInvoiceData.insertAcctDimension(conn, this, dataInvoice[0].adClientId,

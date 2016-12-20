@@ -61,6 +61,11 @@
   p_PriceList_ID VARCHAR2(32);
   p_Org_ID VARCHAR2(32);
   p_Warehouse_ID VARCHAR2(32);
+
+  v_Aum C_ORDERLINE.C_AUM%TYPE;
+  v_AumQty NUMBER;
+  v_uom_preference AD_PREFERENCE.VALUE%TYPE;
+  v_count NUMBER;
   
   --  Parameter
   TYPE RECORD IS REF CURSOR;
@@ -277,6 +282,23 @@ BEGIN
         END IF;
       END IF;
 
+      -- Get AUM
+      v_uom_preference := 'N';      
+      BEGIN
+        v_uom_preference := AD_GET_PREFERENCE_VALUE('UomManagement', 'Y', NULL, NULL, NULL, NULL, NULL);
+      EXCEPTION
+        WHEN OTHERS THEN
+        -- Nothing to do, v_uom_preference = 'N'
+        DBMS_OUTPUT.PUT_LINE('The preference UomManagement was not found') ;
+      END;
+
+      v_Aum := NULL;
+      v_AumQty := NULL;
+      IF (v_uom_preference = 'Y') THEN
+        v_Aum := Cur_Lines.c_aum;
+        v_AumQty := Cur_Lines.aumqty;
+      END IF;
+
       v_Description := COALESCE(Cur_Lines.DESCRIPTION, '');
       IF (Cur_Lines.SUPPLIERNOTES IS NOT NULL) THEN
         v_Description := v_Description || ' ' || Cur_Lines.SUPPLIERNOTES;
@@ -291,7 +313,8 @@ BEGIN
           M_WAREHOUSE_ID, C_UOM_ID, QTYORDERED, C_CURRENCY_ID,
           PRICELIST, PRICEACTUAL, PRICELIMIT,
           PRICESTD, LINENETAMT, DISCOUNT,
-          C_TAX_ID, M_PRODUCT_UOM_ID, QUANTITYORDER, GROSS_UNIT_PRICE, LINE_GROSS_AMOUNT
+          C_TAX_ID, M_PRODUCT_UOM_ID, QUANTITYORDER, GROSS_UNIT_PRICE, LINE_GROSS_AMOUNT,
+          C_AUM, AUMQTY
       ) VALUES (
           v_COrderLine_ID,v_Client_ID, p_Org_ID,'Y',
           now(), v_User_ID, now(), v_User_ID,
@@ -301,7 +324,8 @@ BEGIN
           p_Warehouse_ID, Cur_Lines.C_UOM_ID, Cur_Lines.QTY - Cur_Lines.ORDEREDQTY, v_Currency_ID,
           v_PriceList, v_PriceActual, v_PriceLimit,
           v_PriceStd, v_LineNetAmt,v_Discount,
-          v_Tax_ID, Cur_Lines.M_Product_UOM_ID, Cur_Lines.QuantityOrder, v_gross_unit_price, v_line_gross_amount
+          v_Tax_ID, Cur_Lines.M_Product_UOM_ID, Cur_Lines.QuantityOrder, v_gross_unit_price, v_line_gross_amount,
+          v_Aum, v_AumQty
       );
 
       Ad_Sequence_Next('M_RequisitionOrder', v_User_ID, v_RequisitionOrder_ID);

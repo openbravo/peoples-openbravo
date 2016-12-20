@@ -88,7 +88,6 @@ public class MInOutLineEventHandler extends EntityPersistenceEventObserver {
       if (shipmentInOut != null) {
         shipmentInOut.setSalesOrder(null);
         OBDal.getInstance().save(shipmentInOut);
-        OBDal.getInstance().flush();
       }
     }
   }

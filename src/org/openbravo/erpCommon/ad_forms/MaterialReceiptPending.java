@@ -41,6 +41,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.businessUtility.Tree;
 import org.openbravo.erpCommon.businessUtility.WindowTabs;
 import org.openbravo.erpCommon.businessUtility.WindowTabsData;
@@ -54,6 +55,7 @@ import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.materialmgmt.UOMUtil;
 import org.openbravo.model.common.enterprise.Locator;
 import org.openbravo.model.common.enterprise.OrgWarehouse;
 import org.openbravo.model.common.enterprise.Organization;
@@ -133,7 +135,9 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
     // String strMessage =
     // vars.getSessionValue("MaterialReceiptPending|message");
     // vars.removeSessionValue("MaterialReceiptPending|message");
-
+    String tot;
+    int intTotal = 0;
+    int limit = 0;
     MaterialReceiptPendingData[] data = null;
     String strTreeOrg = MaterialReceiptPendingData.treeOrg(this, vars.getClient());
     if (strC_BPartner_ID.equals("") && strAD_Org_ID.equals("")) {
@@ -141,13 +145,44 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
           "org/openbravo/erpCommon/ad_forms/MaterialReceiptPending", discard).createXmlDocument();
       data = MaterialReceiptPendingData.set();
     } else {
+      tot = MaterialReceiptPendingData.countLines(this, vars.getLanguage(),
+          Utility.getContext(this, vars, "#User_Client", "MaterialReceiptPending"),
+          Tree.getMembers(this, strTreeOrg, strAD_Org_ID), strDateFrom,
+          DateTimeData.nDaysAfter(this, strDateTo, "1"), strC_BPartner_ID, strDocumentNo);
+      intTotal = new Integer(tot).intValue();
+      limit = Integer.parseInt(Utility.getPreference(vars, "FormsLimit", ""));
       xmlDocument = xmlEngine.readXmlTemplate(
           "org/openbravo/erpCommon/ad_forms/MaterialReceiptPending").createXmlDocument();
+
       String strDateFormat = vars.getSessionValue("#AD_SqlDateFormat");
       data = MaterialReceiptPendingData.selectLines(this, strDateFormat, vars.getLanguage(),
           Utility.getContext(this, vars, "#User_Client", "MaterialReceiptPending"),
           Tree.getMembers(this, strTreeOrg, strAD_Org_ID), strDateFrom,
-          DateTimeData.nDaysAfter(this, strDateTo, "1"), strC_BPartner_ID, strDocumentNo);
+          DateTimeData.nDaysAfter(this, strDateTo, "1"), strC_BPartner_ID, strDocumentNo, 0, limit);
+    }
+
+    boolean preference = UOMUtil.isUomManagementEnabled();
+    xmlDocument.setParameter("paramIsUomEnabled", preference ? "Y" : "N");
+    if (preference) {
+      xmlDocument.setParameter("aumVisible", "table-cell");
+      xmlDocument.setParameter("paramColSpanDocument", "5");
+      xmlDocument.setParameter("paramColSpanDate", "3");
+      xmlDocument.setParameter("paramColSpanBPartner", "4");
+      xmlDocument.setParameter("paramColSpanCalendar", "2");
+    } else {
+      xmlDocument.setParameter("aumVisible", "none");
+      xmlDocument.setParameter("paramColSpanDocument", "4");
+      xmlDocument.setParameter("paramColSpanDate", "2");
+      xmlDocument.setParameter("paramColSpanBPartner", "3");
+      xmlDocument.setParameter("paramColSpanCalendar", "1");
+    }
+
+    FieldProvider[][] dataAum = new FieldProvider[data.length][];
+    for (int i = 0; i < data.length; i++) {
+      dataAum[i] = UOMUtil.selectAUM(data[i].mProductId, data[i].cDoctypeId);
+      if (dataAum[i].length == 0) {
+        dataAum[i] = UOMUtil.selectDefaultAUM(data[i].mProductId, data[i].cDoctypeId);
+      }
     }
 
     ToolBar toolbar = new ToolBar(this, vars.getLanguage(), "MaterialReceiptPending", false, "",
@@ -175,6 +210,14 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
     }
     {
       myMessage = vars.getMessage("MaterialReceiptPending");
+      if (intTotal > limit) {
+        myMessage = new OBError();
+        myMessage.setType("Warning");
+        myMessage.setTitle("");
+        String msgbody = Utility.messageBD(this, "OldFormsLimit", vars.getLanguage());
+        msgbody = msgbody.replace("@limit@", Integer.toString(limit));
+        myMessage.setMessage(msgbody);
+      }
       vars.removeMessage("MaterialReceiptPending");
       if (myMessage != null) {
         xmlDocument.setParameter("messageType", myMessage.getType());
@@ -250,13 +293,14 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
     }
 
     xmlDocument.setData("structure1", data);
+    xmlDocument.setDataArray("reportAUM_ID", "liststructure", dataAum);
     out.println(xmlDocument.print());
     out.close();
   }
 
-  private OBError processPurchaseOrder(VariablesSecureApp vars, String strcOrderLineId)
+  private OBError processPurchaseOrder(VariablesSecureApp vars, String strcOrderLineIdParam)
       throws IOException, ServletException {
-    String localStrcOrderLineId = strcOrderLineId;
+    String localStrcOrderLineId = strcOrderLineIdParam;
     String strMessageResult = "";
     String strMessageType = "Success";
     String strWindowName = WindowTabsData.selectWindowInfo(this, vars.getLanguage(), "184");
@@ -426,6 +470,16 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
               }
             }
           }
+          if (UOMUtil.isUomManagementEnabled() && dataLine[0].mProductUomId.isEmpty()) {
+            dataLine[0].aumqty = vars.getStringParameter("inpAumQty" + strOrderlineId);
+            strQtyordered = dataLine[0].aumqty;
+            String defaultAum = vars.getStringParameter("inpcAUMId" + strOrderlineId);
+            dataLine[0].cAum = defaultAum;
+            if (!defaultAum.equals(dataLine[0].cUomId)) {
+              strQtyordered = UOMUtil.getConvertedQty(dataLine[0].mProductId,
+                  new BigDecimal(dataLine[0].aumqty), defaultAum).toString();
+            }
+          }
           try {
             MaterialReceiptPendingLinesData.insert(conn, this, strSequenceLine, vars.getClient(),
                 dataLine[0].adOrgId, "Y", vars.getUser(), vars.getUser(), String.valueOf(line),
@@ -434,7 +488,7 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
                 new BigDecimal(strQtyordered).toString(), "N", dataLine[0].mAttributesetinstanceId,
                 "N", qtyorder, dataLine[0].mProductUomId, dataLine[0].cProjectId,
                 dataLine[0].user1Id, dataLine[0].user2Id, dataLine[0].cCostcenterId,
-                dataLine[0].aAssetId);
+                dataLine[0].aAssetId, dataLine[0].cAum, dataLine[0].aumqty);
             MaterialReceiptPendingLinesData.updateInvoiceOrder(conn, this, strSequenceLine,
                 strOrderlineId);
           } catch (ServletException ex) {

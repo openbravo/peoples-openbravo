@@ -33,6 +33,8 @@ import org.apache.log4j.Logger;
 public class SessionInfo {
   private static final Logger log4j = Logger.getLogger(SessionInfo.class);
 
+  public static final String IMPORT_ENTRY_PROCESS = "IE";
+
   /**
    * updated on context start and via SL_AuditTable. used to switch on/off the audit trail system
    */

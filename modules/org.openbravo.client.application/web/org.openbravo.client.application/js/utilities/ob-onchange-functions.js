@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2015 Openbravo SLU
+ * All portions are Copyright (C) 2014-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -22,8 +22,7 @@
 OB = window.OB || {};
 OB.OnChange = window.OB.OnChange || {};
 
-
-//** {{{OB.OnChange.organizationCurrency}}} **
+// ** {{{OB.OnChange.organizationCurrency}}} **
 // Used in the 'Organization' window, in the 'Currency' onchange field
 // It shows a warning dialog when currency is changed
 OB.OnChange.organizationCurrency = function (item, view, form, grid) {
@@ -32,10 +31,10 @@ OB.OnChange.organizationCurrency = function (item, view, form, grid) {
   }
 };
 
-//** {{{OB.OnChange.processDefinitionUIPattern}}} **
-//Used in the 'Process Definition' window, in the 'UI Pattern' field
-//When OBUIAPP_Report is selected and the Action Handler is empty it sets
-//the BaseReportActionHandler as default value.
+// ** {{{OB.OnChange.processDefinitionUIPattern}}} **
+// Used in the 'Process Definition' window, in the 'UI Pattern' field
+// When OBUIAPP_Report is selected and the Action Handler is empty it sets
+// the BaseReportActionHandler as default value.
 OB.OnChange.processDefinitionUIPattern = function (item, view, form, grid) {
   var classNameItem = form.getItem('javaClassName');
   if (item.getValue() === 'OBUIAPP_Report' && !classNameItem.getValue()) {

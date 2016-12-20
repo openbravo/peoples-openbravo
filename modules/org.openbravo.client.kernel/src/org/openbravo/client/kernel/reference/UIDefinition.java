@@ -243,7 +243,7 @@ public abstract class UIDefinition {
    *          String with the name of the column that has the default value.
    * @param defaultValueExpression
    *          String with the default value expression.
-   * @param window
+   * @param windowId
    *          String with the window id.
    * @return String with the calculated default value.
    */

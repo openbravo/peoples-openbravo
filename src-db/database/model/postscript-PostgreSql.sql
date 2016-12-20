@@ -375,7 +375,7 @@ $BODY1$ DECLARE
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2009-2012 Openbravo SLU
+* All portions are Copyright (C) 2009-2016 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -415,6 +415,7 @@ BEGIN
                        from ad_table
                       where isfullyaudited = 'Y'
                       AND ISVIEW='N'
+                      and dataOriginType = 'Table'
                       order by tablename) loop
     
     triggerName := 'AU_'||SUBSTR(cur_tables.tablename,1,23)||'_TRG';

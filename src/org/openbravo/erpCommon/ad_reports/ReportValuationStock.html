@@ -323,7 +323,7 @@ var selecWh=null;
                 <tr>
                   <td class="TitleCell"><span class="LabelText">Organization</span></td>
                   <td class="Combo_ContentCell" colspan="2"> 
-                    <select name="inpOrg" id="inpOrg" class="ComboKey Combo_TwoCells_width" required="true" onchange="setDefaultCurrency(); logChanges(this); return true;">
+                    <select name="inpOrg" id="inpOrg" class="ComboKey Combo_TwoCells_width" required="true" onchange="refreshComboOrgs(); setDefaultCurrency(); logChanges(this); return true;">
                       <option value=""> <div id="reportAD_ORGID"></div></option>
                     </select></td>
                   <td class="TitleCell"><span class="LabelText">Warehouse</span></td>

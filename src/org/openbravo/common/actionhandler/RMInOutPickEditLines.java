@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2011-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2011-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -34,8 +34,10 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBDao;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
+import org.openbravo.materialmgmt.UOMUtil;
 import org.openbravo.model.common.enterprise.Locator;
 import org.openbravo.model.common.order.OrderLine;
+import org.openbravo.model.common.uom.UOM;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 import org.openbravo.model.sales.ConditionGoods;
@@ -100,6 +102,7 @@ public class RMInOutPickEditLines extends BaseProcessActionHandler {
       return;
     }
 
+    boolean isUomManagementEnabled = UOMUtil.isUomManagementEnabled();
     for (long i = 0; i < selectedLines.length(); i++) {
       JSONObject selectedLine = selectedLines.getJSONObject((int) i);
       log.debug(selectedLine);
@@ -126,7 +129,24 @@ public class RMInOutPickEditLines extends BaseProcessActionHandler {
       newInOutLine.setUOM(orderLine.getUOM());
       // Ordered Quantity = returned quantity.
       BigDecimal qtyReceived = new BigDecimal(selectedLine.getString("receiving"));
+      if (isUomManagementEnabled) {
+        try {
+          OBContext.setAdminMode(true);
+          UOM operativeUOM = OBDal.getInstance().get(UOM.class,
+              selectedLine.getString("alternativeUOM"));
+          newInOutLine.setOperativeUOM(operativeUOM);
+          newInOutLine.setOperativeQuantity(qtyReceived.negate());
+          if (selectedLine.getString("alternativeUOM")
+              .equals(selectedLine.getString("returnedUOM"))) {
+            qtyReceived = UOMUtil.getConvertedQty(selectedLine.getString("product"), qtyReceived,
+                selectedLine.getString("alternativeUOM"));
+          }
+        } finally {
+          OBContext.restorePreviousMode();
+        }
+      }
       newInOutLine.setMovementQuantity(qtyReceived.negate());
+
       if (selectedLine.getString("conditionGoods") != null
           && !selectedLine.getString("conditionGoods").equals("null")) {
         newInOutLine.setConditionGoods(OBDal.getInstance().get(ConditionGoods.class,

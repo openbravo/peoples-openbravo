@@ -12,7 +12,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SLU
- * Contributions are Copyright (C) 2001-2014 Openbravo S.L.U.
+ * Contributions are Copyright (C) 2001-2016 Openbravo S.L.U.
  ******************************************************************************
 -->
 
@@ -144,7 +144,7 @@
                                    group by financialm1_.Record_ID2 
                                    having sum(financialm1_.AmtAcctCr-financialm1_.AmtAcctDr)=0) 
         where 
-        Record_ID2 = ?
+        Record_ID2 IN ('1')
         and Datebalanced is null 
         and exists (select 1 
                        from Fact_Acct financialm2_ 
@@ -155,7 +155,7 @@
                        having sum(financialm2_.AmtAcctCr-financialm2_.AmtAcctDr)=0)
      ]]>
      </Sql>
-     <Parameter name="recordID2"/>
+     <Parameter name="recordID2" optional="false" type="replace" after="Record_ID2 IN (" text="'1'"/>
    </SqlMethod>
   <SqlMethod name="updateFactAcct" type="preparedStatement" connection="true" return="rowCount">
     <SqlMethodComment></SqlMethodComment>

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -35,6 +35,7 @@ import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.DateTimeData;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.materialmgmt.UOMUtil;
 import org.openbravo.model.common.plm.AttributeSet;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.pricing.pricelist.PriceList;
@@ -64,10 +65,11 @@ public class SL_RequisitionLine_Product extends HttpSecureAppServlet {
       String strPriceListId = vars.getStringParameter("inpmPricelistId");
       String strAttributeSetInstance = vars.getStringParameter("inpmProductId_ATR");
       String strUOM = vars.getStringParameter("inpmProductId_UOM");
+      String strUOMProduct = vars.getStringParameter("inpmProductUomId");
 
       try {
         printPage(response, vars, strMProductID, strWindowId, strTabId, strAttributeSetInstance,
-            strUOM, strRequisition, strPriceListId, strChanged);
+            strUOM, strRequisition, strPriceListId, strChanged, strUOMProduct);
       } catch (ServletException ex) {
         pageErrorCallOut(response);
       }
@@ -77,8 +79,8 @@ public class SL_RequisitionLine_Product extends HttpSecureAppServlet {
 
   private void printPage(HttpServletResponse response, VariablesSecureApp vars,
       String strMProductID, String strWindowId, String strTabId, String strAttribute,
-      String strUOM, String strRequisition, String strPriceListId, String strChanged)
-      throws IOException, ServletException {
+      String strUOM, String strRequisition, String strPriceListId, String strChanged,
+      String strUOMProduct) throws IOException, ServletException {
     String localStrPriceListId = strPriceListId;
     String localStrAttribute = strAttribute;
     if (log4j.isDebugEnabled())
@@ -162,6 +164,15 @@ public class SL_RequisitionLine_Product extends HttpSecureAppServlet {
       }
     }
 
+    String strHasSecondaryUOM = SLRequisitionLineProductData.hasSecondaryUOM(this, strMProductID);
+    if (UOMUtil.isUomManagementEnabled() && "".equals(strUOMProduct)) {
+      // Set AUM based on default
+        String finalAUM = UOMUtil.getDefaultAUMForPurchase(strMProductID);
+        if (finalAUM != null) {
+          strResult.append("new Array(\"inpcAum\", \"" + finalAUM + "\"),\n");
+        }
+    }
+
     if (strChanged.equals("inpmProductId")) {
       strResult.append("new Array(\"inpcUomId\", "
           + (strUOM.equals("") ? "\"\"" : "\"" + strUOM + "\"") + "),\n");
@@ -192,34 +203,38 @@ public class SL_RequisitionLine_Product extends HttpSecureAppServlet {
       strResult.append("new Array(\"inpattrsetvaluetype\", \""
           + (strAttrSetValueType == null || strAttrSetValueType.equals("") ? "" : FormatUtilities
               .replaceJS(strAttrSetValueType)) + "\"),\n");
-      String strHasSecondaryUOM = SLRequisitionLineProductData.hasSecondaryUOM(this, strMProductID);
       strResult.append("new Array(\"inphasseconduom\", " + strHasSecondaryUOM + "),\n");
-      strResult.append("new Array(\"inpmProductUomId\", ");
-      FieldProvider[] tld = null;
-      try {
-        ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR",
-            "M_Product_UOM_ID", "", "M_Product_UOM_ID", Utility.getContext(this, vars,
-                "#AccessibleOrgTree", "SLRequisitionLineProduct"), Utility.getContext(this, vars,
-                "#User_Client", "SLRequisitionLineProduct"), 0);
-        Utility.fillSQLParameters(this, vars, null, comboTableData, strTabId, "");
-        tld = comboTableData.select(false);
-        comboTableData = null;
-      } catch (Exception ex) {
-        throw new ServletException(ex);
+      if (strHasSecondaryUOM.equals("1")
+          && (!UOMUtil.isUomManagementEnabled() || (UOMUtil.isUomManagementEnabled() && !""
+              .equals(strUOMProduct)))) {
+        strResult.append("new Array(\"inpmProductUomId\", ");
+        FieldProvider[] tld = null;
+        try {
+          ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR",
+              "M_Product_UOM_ID", "", "M_Product_UOM_ID", Utility.getContext(this, vars,
+                  "#AccessibleOrgTree", "SLRequisitionLineProduct"), Utility.getContext(this, vars,
+                  "#User_Client", "SLRequisitionLineProduct"), 0);
+          Utility.fillSQLParameters(this, vars, null, comboTableData, strTabId, "");
+          tld = comboTableData.select(false);
+          comboTableData = null;
+        } catch (Exception ex) {
+          throw new ServletException(ex);
+        }
+
+        if (tld != null && tld.length > 0) {
+          strResult.append("new Array(");
+          for (int i = 0; i < tld.length; i++) {
+            strResult.append("\n\tnew Array(\"" + tld[i].getField("id") + "\", \""
+                + FormatUtilities.replaceJS(tld[i].getField("name")) + "\", \"false\")");
+            if (i < tld.length - 1)
+              strResult.append(",");
+          }
+          strResult.append(")");
+        } else
+          strResult.append("null");
+        strResult.append("),\n");
       }
 
-      if (tld != null && tld.length > 0) {
-        strResult.append("new Array(");
-        for (int i = 0; i < tld.length; i++) {
-          strResult.append("\n\tnew Array(\"" + tld[i].getField("id") + "\", \""
-              + FormatUtilities.replaceJS(tld[i].getField("name")) + "\", \"false\")");
-          if (i < tld.length - 1)
-            strResult.append(",");
-        }
-        strResult.append(")");
-      } else
-        strResult.append("null");
-      strResult.append("),\n");
       // To set the cursor focus in the amount field
       if (!strMProductID.equals("")) {
         strResult.append("new Array(\"CURSOR_FIELD\", \"inpqty\"),\n");

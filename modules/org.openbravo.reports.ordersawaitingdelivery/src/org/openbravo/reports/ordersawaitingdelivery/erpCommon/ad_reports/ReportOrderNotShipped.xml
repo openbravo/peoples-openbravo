@@ -12,7 +12,7 @@
 * under the License. 
 * The Original Code is Openbravo ERP. 
 * The Initial Developer of the Original Code is Openbravo SLU 
-* All portions are Copyright (C) 2009 Openbravo SLU 
+* All portions are Copyright (C) 20016 Openbravo SLU 
 * All Rights Reserved. 
 * Contributor(s):  ______________________________________.
 ************************************************************************
@@ -50,5 +50,7 @@
   <SUBREPORT id="reportAD_ORGID" name="reportAD_ORGID" report="org/openbravo/erpCommon/reference/List">
     <ARGUMENT name="parameterListSelected" withId="paramAD_ORGID"/>
   </SUBREPORT>
+  <PARAMETER id="showInAumLabel" name="isUomManagementEnabled" attribute="style" replace="xx"/>
+  <PARAMETER id="showInAumVal" name="isUomManagementEnabled" attribute="style" replace="xx"/>
   <DISCARD id="discard"/>
 </REPORT>

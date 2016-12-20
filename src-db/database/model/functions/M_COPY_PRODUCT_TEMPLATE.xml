@@ -49,6 +49,10 @@
     v_Issotrx CHAR;
     v_NoOfLines NUMBER:=0;
     v_projectID varchar2(32);
+    v_doctypeID C_ORDER.C_DOCTYPE_ID%TYPE;
+    v_aum C_ORDERLINE.C_AUM%TYPE;
+    v_aumQty NUMBER:=0;
+    v_rate NUMBER:=1;
     -- Copy
     Cur_ProductTemplate RECORD;
   BEGIN
@@ -78,10 +82,10 @@
     v_ResultStr:='ReadingOrder';
     SELECT AD_CLIENT_ID, AD_ORG_ID, CREATEDBY, DATEORDERED,
       C_BPARTNER_ID, BILLTO_ID, C_BPARTNER_LOCATION_ID, C_CURRENCY_ID,
-      M_WAREHOUSE_ID, M_PRICELIST_ID, C_PROJECT_ID, ISSOTRX
+      M_WAREHOUSE_ID, M_PRICELIST_ID, C_PROJECT_ID, ISSOTRX, C_DOCTYPE_ID
     INTO v_client, v_org, v_Createdby, v_Dateordered,
       v_Bpartner, v_BillTo, v_BpartnerLocation, v_Currency,
-      v_Warehouse, v_Mpricelist, v_projectID, v_Issotrx
+      v_Warehouse, v_Mpricelist, v_projectID, v_Issotrx, v_doctypeID
     FROM C_ORDER
     WHERE C_Order_ID=v_Record_ID;
     SELECT COALESCE(MAX(C_ORDERLINE.line), 10)
@@ -126,6 +130,23 @@
       INTO v_tax
       FROM DUAL;
       v_Discount:=(v_Pricelist - v_Pricestd) /v_Pricelist;
+      
+      --Get Default AUM
+      v_aum := M_GET_DEFAULT_AUM_FOR_DOCUMENT(Cur_ProductTemplate.M_PRODUCT_ID, v_DocTypeID);
+
+      --Calculate the aumqty if the AUM is different than the BUM
+      IF(v_aum = Cur_ProductTemplate.C_UOM_ID) THEN
+        v_aumQty:= Cur_ProductTemplate.QTY;
+      ELSE
+        --Find the AUM conversion rate and use it to calcule the aumQty
+        SELECT CONVERSIONRATE
+          INTO v_rate
+        FROM m_product_aum
+        WHERE m_product_aum_id = v_aum;
+
+        v_aumQty:= Cur_ProductTemplate.QTY / v_rate;
+      END IF;
+
       -- Get next no
       Ad_Sequence_Next('C_OrderLine', v_client, v_CorderId) ;
       -- Insert
@@ -143,7 +164,7 @@
           FREIGHTAMT, C_CHARGE_ID, CHARGEAMT, C_TAX_ID,
           S_RESOURCEASSIGNMENT_ID, REF_ORDERLINE_ID,
           M_ATTRIBUTESETINSTANCE_ID, ISDESCRIPTION, QUANTITYORDER, M_PRODUCT_UOM_ID,
-          PriceStd
+          PriceStd, c_aum, aumqty
         )
         VALUES
         (
@@ -158,9 +179,8 @@
           0, NULL, 0, v_tax,
           NULL, NULL,
           NULL, 'N', NULL, NULL,
-          v_Pricestd
-        )
-        ;
+          v_Pricestd, v_aum, v_aumQty
+        );
       -- update translation
       --
       v_SeqNo:=v_SeqNo + 10;

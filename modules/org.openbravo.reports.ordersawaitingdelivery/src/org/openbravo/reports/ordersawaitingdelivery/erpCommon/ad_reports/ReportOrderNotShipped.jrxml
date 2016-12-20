@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.0.0.final using JasperReports Library version 6.0.0  -->
+<!-- 2016-07-13T22:59:47 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ReportOrderNotShipped" pageWidth="842" pageHeight="595" columnWidth="782" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20" uuid="b2108c38-f573-4cc5-8aee-4725a42348b0">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
@@ -37,7 +39,9 @@
 	<style name="Total_Gray" mode="Opaque" forecolor="#000000" backcolor="#CCCCCC"/>
 	<parameter name="REPORT_TITLE" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="REPORT_SUBTITLE" class="java.lang.String" isForPrompting="false"/>
-	<queryString>
+	<parameter name="NUMBERFORMAT" class="java.text.DecimalFormat" isForPrompting="false"/>
+	<parameter name="showInAUM" class="java.lang.Boolean" isForPrompting="false"/>
+	<queryString language="SQL">
 		<![CDATA[SELECT ORG.NAME AS ORGNAME, BP.NAME AS BPNAME,
 O.DOCUMENTNO, O.POREFERENCE, TO_DATE(O.DATEORDERED) AS DATEORDERED, TO_DATE(O.DATEPROMISED) AS DATEPROMISED,
 REFLISTV.NAME AS DELIVERYRULE, COALESCE(DLOC.NAME, BPADD.NAME) AS DELIVERYLOCATION,
@@ -98,6 +102,9 @@ ORDER BY ORGNAME, BPNAME, DOCUMENTNO]]>
 	<field name="orderedqty" class="java.lang.String"/>
 	<field name="pendingqty" class="java.lang.String"/>
 	<field name="qtyinstock" class="java.lang.String"/>
+	<field name="aumsymbol" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
 	<group name="orgname">
 		<groupExpression><![CDATA[$F{orgname}]]></groupExpression>
 		<groupHeader>
@@ -135,7 +142,12 @@ ORDER BY ORGNAME, BPNAME, DOCUMENTNO]]>
 		<groupFooter>
 			<band height="10" splitType="Stretch">
 				<line>
-					<reportElement key="line-6" x="0" y="9" width="782" height="1" forecolor="#555555" uuid="29106dfd-c1be-45d1-ac29-f830c90b2186"/>
+					<reportElement key="line-6" x="1" y="9" width="780" height="1" forecolor="#555555" uuid="29106dfd-c1be-45d1-ac29-f830c90b2186">
+						<property name="local_mesure_unitx" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+						<property name="local_mesure_unitwidth" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					</reportElement>
 				</line>
 				<line>
 					<reportElement key="line-17" stretchType="RelativeToBandHeight" x="0" y="0" width="1" height="10" forecolor="#555555" uuid="087d9158-0fe9-4a01-a7c9-e4b1d1037584"/>
@@ -201,7 +213,12 @@ ORDER BY ORGNAME, BPNAME, DOCUMENTNO]]>
 					<reportElement key="line-19" stretchType="RelativeToBandHeight" x="781" y="0" width="1" height="10" forecolor="#555555" uuid="40b3b316-9823-4dea-9e8d-9154dd8d9020"/>
 				</line>
 				<line>
-					<reportElement key="line-21" x="20" y="9" width="762" height="1" forecolor="#555555" uuid="1d92dfc8-554f-44c4-adad-2ed3d6e7a549"/>
+					<reportElement key="line-21" x="21" y="9" width="760" height="1" forecolor="#555555" uuid="1d92dfc8-554f-44c4-adad-2ed3d6e7a549">
+						<property name="local_mesure_unitx" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+						<property name="local_mesure_unitwidth" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					</reportElement>
 				</line>
 				<line>
 					<reportElement key="line-23" stretchType="RelativeToBandHeight" x="20" y="0" width="1" height="10" forecolor="#555555" uuid="b36ef598-0de5-4fa6-843b-08a61d37aeab"/>
@@ -213,6 +230,8 @@ ORDER BY ORGNAME, BPNAME, DOCUMENTNO]]>
 		<groupExpression><![CDATA[$F{documentno}]]></groupExpression>
 		<groupHeader>
 			<band height="60" splitType="Stretch">
+				<property name="local_mesure_unitheight" value="pixel"/>
+				<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				<staticText>
 					<reportElement key="staticText" style="GroupHeader_DarkGray" x="39" y="0" width="159" height="20" forecolor="#FFFFFF" uuid="f6c1bbcd-938d-4d6f-876b-31c117009da7"/>
 					<box>
@@ -349,7 +368,7 @@ ORDER BY ORGNAME, BPNAME, DOCUMENTNO]]>
 					<text><![CDATA[Delivery Location]]></text>
 				</staticText>
 				<staticText>
-					<reportElement key="staticText" style="GroupHeader_DarkGray" x="62" y="40" width="214" height="20" forecolor="#FFFFFF" uuid="8a4b8527-7a8b-4c0b-82a1-7a2a8db30030"/>
+					<reportElement key="staticText" style="GroupHeader_DarkGray" x="61" y="40" width="215" height="20" forecolor="#FFFFFF" uuid="8a4b8527-7a8b-4c0b-82a1-7a2a8db30030"/>
 					<box leftPadding="5">
 						<pen lineWidth="0.0"/>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -363,7 +382,7 @@ ORDER BY ORGNAME, BPNAME, DOCUMENTNO]]>
 					<text><![CDATA[Product]]></text>
 				</staticText>
 				<staticText>
-					<reportElement key="staticText" style="GroupHeader_DarkGray" x="276" y="40" width="161" height="20" forecolor="#FFFFFF" uuid="12e657ab-c95c-4bb0-a3f0-4ea66c6a5f87"/>
+					<reportElement key="staticText" style="GroupHeader_DarkGray" x="276" y="40" width="144" height="20" forecolor="#FFFFFF" uuid="12e657ab-c95c-4bb0-a3f0-4ea66c6a5f87"/>
 					<box>
 						<pen lineWidth="0.0"/>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -377,7 +396,7 @@ ORDER BY ORGNAME, BPNAME, DOCUMENTNO]]>
 					<text><![CDATA[Ordered Quantity]]></text>
 				</staticText>
 				<staticText>
-					<reportElement key="staticText" style="GroupHeader_DarkGray" x="437" y="40" width="151" height="20" forecolor="#FFFFFF" uuid="7333cea3-abaf-4a3e-bc5c-c373cf253d70"/>
+					<reportElement key="staticText" style="GroupHeader_DarkGray" x="420" y="40" width="130" height="20" forecolor="#FFFFFF" uuid="7333cea3-abaf-4a3e-bc5c-c373cf253d70"/>
 					<box>
 						<pen lineWidth="0.0"/>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -391,7 +410,10 @@ ORDER BY ORGNAME, BPNAME, DOCUMENTNO]]>
 					<text><![CDATA[Pending Quantity]]></text>
 				</staticText>
 				<staticText>
-					<reportElement key="staticText" style="GroupHeader_DarkGray" x="588" y="40" width="194" height="20" forecolor="#FFFFFF" uuid="5e1d0a2b-7ec5-4229-87ac-66f99550f6c6"/>
+					<reportElement key="staticText" style="GroupHeader_DarkGray" x="550" y="40" width="170" height="20" forecolor="#FFFFFF" uuid="5e1d0a2b-7ec5-4229-87ac-66f99550f6c6">
+						<property name="local_mesure_unitwidth" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					</reportElement>
 					<box>
 						<pen lineWidth="0.0"/>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -416,10 +438,57 @@ ORDER BY ORGNAME, BPNAME, DOCUMENTNO]]>
 				<line>
 					<reportElement key="line-13" stretchType="RelativeToBandHeight" x="781" y="20" width="1" height="20" forecolor="#555555" uuid="b96c6afe-79e1-44e5-826a-292c2dcfb286"/>
 				</line>
+				<line>
+					<reportElement key="line-26" stretchType="RelativeToBandHeight" x="781" y="40" width="1" height="20" forecolor="#555555" uuid="a42679da-b29e-4450-a1c5-c9786720dd4d"/>
+				</line>
+				<staticText>
+					<reportElement key="staticText" style="GroupHeader_DarkGray" positionType="FixRelativeToBottom" x="720" y="40" width="61" height="20" forecolor="#FFFFFF" uuid="0efad178-dc21-4bcd-b219-bae0adb342cb">
+						<property name="local_mesure_unitwidth" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<printWhenExpression><![CDATA[$P{showInAUM}==true]]></printWhenExpression>
+					</reportElement>
+					<box>
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Bitstream Vera Sans" size="10" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Unit]]></text>
+				</staticText>
+				<line>
+					<reportElement key="line-8" stretchType="RelativeToBandHeight" x="60" y="40" width="1" height="20" forecolor="#555555" uuid="7ca66ccd-2a54-439f-b8a1-4634046bd4ff"/>
+				</line>
+				<staticText>
+					<reportElement key="staticText" style="GroupHeader_DarkGray" x="550" y="40" width="231" height="20" forecolor="#FFFFFF" uuid="0e18d02c-d9d8-410b-9370-fb2f05e4ff84">
+						<property name="local_mesure_unitwidth" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<property name="local_mesure_unitx" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+						<property name="local_mesure_unity" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+						<printWhenExpression><![CDATA[$P{showInAUM}==false]]></printWhenExpression>
+					</reportElement>
+					<box>
+						<pen lineWidth="0.0"/>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Bitstream Vera Sans" size="10" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Quantity in Stock]]></text>
+				</staticText>
 			</band>
 		</groupHeader>
 		<groupFooter>
 			<band height="10" splitType="Stretch">
+				<property name="local_mesure_unitheight" value="pixel"/>
 				<line>
 					<reportElement key="line-15" stretchType="RelativeToBandHeight" x="0" y="0" width="1" height="10" forecolor="#555555" uuid="47ea2eca-d4d8-4a25-8672-f3f1e00cc8e7"/>
 				</line>
@@ -433,10 +502,22 @@ ORDER BY ORGNAME, BPNAME, DOCUMENTNO]]>
 					<reportElement key="line-24" stretchType="RelativeToBandHeight" x="39" y="0" width="1" height="10" forecolor="#555555" uuid="d8b0e0fb-f55d-4449-bcb5-f76902bb3ff2"/>
 				</line>
 				<line>
-					<reportElement key="line-25" x="39" y="9" width="742" height="1" forecolor="#555555" uuid="73752f52-4456-400a-ab96-8892dec30ce3"/>
+					<reportElement key="line-25" x="40" y="9" width="741" height="1" forecolor="#555555" uuid="73752f52-4456-400a-ab96-8892dec30ce3">
+						<property name="local_mesure_unitx" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+						<property name="local_mesure_unitwidth" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					</reportElement>
 				</line>
 				<line>
-					<reportElement key="line-27" x="60" y="0" width="722" height="1" forecolor="#555555" uuid="e9d4f804-36a6-47a9-998a-572e739381aa"/>
+					<reportElement key="line-27" x="61" y="0" width="720" height="1" forecolor="#555555" uuid="e9d4f804-36a6-47a9-998a-572e739381aa">
+						<property name="local_mesure_unitx" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+						<property name="local_mesure_unitwidth" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<property name="local_mesure_unity" value="pixel"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					</reportElement>
 				</line>
 			</band>
 		</groupFooter>
@@ -486,8 +567,10 @@ ORDER BY ORGNAME, BPNAME, DOCUMENTNO]]>
 	</columnHeader>
 	<detail>
 		<band height="20" splitType="Stretch">
+			<property name="local_mesure_unitheight" value="pixel"/>
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
 			<textField pattern="" isBlankWhenNull="false">
-				<reportElement key="textField" style="Detail_Task" x="62" y="0" width="214" height="20" forecolor="#000000" uuid="1704bcd6-5519-4584-a72e-559a0c5bda4d"/>
+				<reportElement key="textField" style="Detail_Task" x="61" y="0" width="215" height="20" forecolor="#000000" uuid="1704bcd6-5519-4584-a72e-559a0c5bda4d"/>
 				<box leftPadding="5">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -500,7 +583,7 @@ ORDER BY ORGNAME, BPNAME, DOCUMENTNO]]>
 				<textFieldExpression><![CDATA[$F{prodname}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="false">
-				<reportElement key="textField" style="Detail_Task" x="276" y="0" width="161" height="20" forecolor="#000000" uuid="d5dfd9df-9bef-4534-b7dc-ef4524bf09a1"/>
+				<reportElement key="textField" style="Detail_Task" x="276" y="0" width="144" height="20" forecolor="#000000" uuid="d5dfd9df-9bef-4534-b7dc-ef4524bf09a1"/>
 				<box rightPadding="5">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -513,7 +596,7 @@ ORDER BY ORGNAME, BPNAME, DOCUMENTNO]]>
 				<textFieldExpression><![CDATA[$F{orderedqty}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="false">
-				<reportElement key="textField" style="Detail_Task" x="437" y="0" width="151" height="20" forecolor="#000000" uuid="9fe4f1f8-849b-446f-8aad-a702f97532a4"/>
+				<reportElement key="textField" style="Detail_Task" x="420" y="0" width="130" height="20" forecolor="#000000" uuid="9fe4f1f8-849b-446f-8aad-a702f97532a4"/>
 				<box rightPadding="5">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -526,7 +609,9 @@ ORDER BY ORGNAME, BPNAME, DOCUMENTNO]]>
 				<textFieldExpression><![CDATA[$F{pendingqty}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="false">
-				<reportElement key="textField" style="Detail_Task" x="588" y="0" width="192" height="20" forecolor="#000000" uuid="bc400d8e-f7c9-4a15-a321-b9b3f7a80feb"/>
+				<reportElement key="textField" style="Detail_Task" x="550" y="0" width="170" height="20" forecolor="#000000" uuid="bc400d8e-f7c9-4a15-a321-b9b3f7a80feb">
+					<printWhenExpression><![CDATA[$P{showInAUM}==true]]></printWhenExpression>
+				</reportElement>
 				<box rightPadding="5">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -539,20 +624,66 @@ ORDER BY ORGNAME, BPNAME, DOCUMENTNO]]>
 				<textFieldExpression><![CDATA[($F{qtyinstock}!=null)?$F{qtyinstock}:new String(" ")]]></textFieldExpression>
 			</textField>
 			<line>
-				<reportElement key="line-5" stretchType="RelativeToBandHeight" x="0" y="-2" width="1" height="22" forecolor="#555555" uuid="797cfc33-4975-4047-af18-c34c3a551856"/>
+				<reportElement key="line-5" stretchType="RelativeToBandHeight" x="0" y="0" width="1" height="20" forecolor="#555555" uuid="797cfc33-4975-4047-af18-c34c3a551856">
+					<property name="local_mesure_unitheight" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="local_mesure_unity" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
 			</line>
 			<line>
 				<reportElement key="line-8" stretchType="RelativeToBandHeight" x="39" y="0" width="1" height="20" forecolor="#555555" uuid="8c871f52-989e-416f-9a35-20d4ce1c4c1b"/>
 			</line>
 			<line>
-				<reportElement key="line-9" stretchType="RelativeToBandHeight" x="60" y="-20" width="1" height="40" forecolor="#555555" uuid="ebe986df-8d25-4b21-9736-4286979e872b"/>
-			</line>
-			<line>
-				<reportElement key="line-12" stretchType="RelativeToBandHeight" x="20" y="-2" width="1" height="22" forecolor="#555555" uuid="f2bc874f-009b-48fd-bb92-603034693de0"/>
+				<reportElement key="line-12" stretchType="RelativeToBandHeight" x="20" y="0" width="1" height="20" forecolor="#555555" uuid="f2bc874f-009b-48fd-bb92-603034693de0">
+					<property name="local_mesure_unity" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="local_mesure_unitheight" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
 			</line>
 			<line>
 				<reportElement key="line-26" stretchType="RelativeToBandHeight" x="781" y="0" width="1" height="20" forecolor="#555555" uuid="1b0001f6-cbb1-4e30-bd3c-ee69a14713c9"/>
 			</line>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement key="textField" style="Detail_Task" x="720" y="0" width="61" height="20" forecolor="#000000" uuid="affab195-eb89-42f0-b576-d39ea85f4a60">
+					<printWhenExpression><![CDATA[$P{showInAUM}==true]]></printWhenExpression>
+				</reportElement>
+				<box rightPadding="5">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Bitstream Vera Sans" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{aumsymbol}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement key="line-8" stretchType="RelativeToBandHeight" x="60" y="0" width="1" height="20" forecolor="#555555" uuid="55f2d804-357e-49c2-9efe-5c25a802e588"/>
+			</line>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement key="textField" style="Detail_Task" x="550" y="0" width="231" height="20" forecolor="#000000" uuid="dea74cff-1396-482d-b3c5-c9ce80e22013">
+					<property name="local_mesure_unitx" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="local_mesure_unity" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="local_mesure_unitwidth" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<printWhenExpression><![CDATA[$P{showInAUM}==false]]></printWhenExpression>
+				</reportElement>
+				<box rightPadding="5">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Bitstream Vera Sans" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{qtyinstock}!=null)?$F{qtyinstock}:new String(" ")]]></textFieldExpression>
+			</textField>
 		</band>
 	</detail>
 	<columnFooter>

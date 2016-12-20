@@ -220,10 +220,7 @@ public abstract class AuthenticationManager {
       throws AuthenticationException {
     final String userId = doWebServiceAuthenticate(request);
 
-    String dbSessionId = null;
-    if (!AuthenticationManager.isStatelessRequest(request)) {
-      dbSessionId = setDBSession(request, userId, SUCCESS_SESSION_WEB_SERVICE, false);
-    }
+    String dbSessionId = setDBSession(request, userId, SUCCESS_SESSION_WEB_SERVICE, false);
 
     return webServicePostAuthenticate(userId, dbSessionId);
   }
@@ -330,11 +327,16 @@ public abstract class AuthenticationManager {
 
   private String setDBSession(HttpServletRequest request, String userId, String successSessionType,
       boolean setSession) {
-    final VariablesSecureApp vars = new VariablesSecureApp(request, false);
-    String dbSessionId = vars.getSessionValue("#AD_SESSION_ID");
+
+    String dbSessionId = null;
+    VariablesSecureApp vars = null;
+    if (!AuthenticationManager.isStatelessRequest(request)) {
+      vars = new VariablesSecureApp(request, false);
+      dbSessionId = vars.getSessionValue("#AD_SESSION_ID");
+    }
     if (StringUtils.isEmpty(dbSessionId)) {
       dbSessionId = createDBSession(request, username, userId, successSessionType);
-      if (setSession) {
+      if (setSession && vars != null) {
         vars.setSessionValue("#AD_SESSION_ID", dbSessionId);
         if (userId != null) {
           HttpSession session = request.getSession(false);

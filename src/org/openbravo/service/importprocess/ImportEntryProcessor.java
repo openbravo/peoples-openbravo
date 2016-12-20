@@ -40,6 +40,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.core.TriggerHandler;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.database.SessionInfo;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.service.importprocess.ImportEntryManager.ImportEntryProcessorSelector;
 
@@ -475,6 +476,26 @@ public abstract class ImportEntryProcessor {
 
       // and start with a new clean session
       OBDal.getInstance().getSession().clear();
+
+      setAuditContextInfo(userId);
+    }
+
+    private void setAuditContextInfo(String userId) {
+      SessionInfo.setUserId(userId);
+      SessionInfo.setProcessType(SessionInfo.IMPORT_ENTRY_PROCESS);
+      SessionInfo.setProcessId(getProcessIdForAudit());
+      SessionInfo.setDBSessionInfo(OBDal.getInstance().getConnection(false));
+    }
+
+    /**
+     * Returns the identifier to be set for this process for audit trail:
+     * <ul>
+     * <li>It can be, at most, 32 characters length
+     * <li>If an {@code AD_Message} entry with the same value exists, it will be used in UI
+     * </ul>
+     */
+    protected String getProcessIdForAudit() {
+      return SessionInfo.IMPORT_ENTRY_PROCESS;
     }
 
     protected void setVariablesSecureApp(OBContext obContext) {

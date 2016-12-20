@@ -35,6 +35,11 @@
   v_Line NUMBER:=0;
   v_ResultStr VARCHAR2(2000):='';
   v_result NUMBER:= 1;  
+  v_aum C_ORDERLINE.C_AUM%TYPE;
+  v_aumqty NUMBER;
+  v_count NUMBER;
+  v_uom_preference AD_PREFERENCE.VALUE%TYPE;
+  
   BEGIN
   IF (p_PInstance_ID IS NOT NULL) THEN
       --  Update AD_PInstance
@@ -73,14 +78,25 @@
     END IF;
     
     v_ResultStr:='Exploding';
+
+    -- Get AUM
+    v_uom_preference := 'N';      
+    BEGIN
+      v_uom_preference := AD_GET_PREFERENCE_VALUE('UomManagement', 'Y', NULL, NULL, NULL, NULL, NULL);
+    EXCEPTION
+      WHEN OTHERS THEN
+      -- Nothing to do, v_uom_preference = 'N'
+      DBMS_OUTPUT.PUT_LINE('The preference UomManagement was not found') ;
+    END;
  
     -- Replace Lines
     v_ResultStr:='Inserting lines';
     FOR CUR_BOM_Line IN
-      (SELECT *
+      (SELECT l.*, i.c_doctype_id as io_c_doctype_id
        FROM M_INOUTLINE l
+       JOIN M_INOUT i ON (l.m_inout_id = i.m_inout_id)
        WHERE l.m_inoutline_ID=v_Record_ID
-         AND IsActive='Y'
+         AND l.IsActive='Y'
          AND EXISTS
            (SELECT *
             FROM M_PRODUCT p
@@ -102,6 +118,14 @@
          ORDER BY Line
          )
       LOOP
+  
+        v_Aum := NULL;
+        v_AumQty := NULL;
+        IF (v_uom_preference = 'Y') THEN
+          v_aum := M_GET_DEFAULT_AUM_FOR_DOCUMENT(CUR_BOM.M_ProductBOM_ID, CUR_BOM_Line.io_c_doctype_id);
+          v_aumqty := M_GET_CONVERTED_QTY(CUR_BOM.M_ProductBOM_ID, CUR_BOM_Line.movementqty, v_aum); 
+        END IF;      
+
         v_Line:=v_Line + 1;
         INSERT
         INTO M_INOUTLINE
@@ -112,7 +136,8 @@
             C_UOM_ID,MovementQty,
             IsInvoiced, QuantityOrder, M_PRODUCT_UOM_ID,
             A_ASSET_ID, C_PROJECT_ID, C_COSTCENTER_ID,
-            USER1_ID, USER2_ID, C_BPARTNER_ID, bom_parent_id
+            USER1_ID, USER2_ID, C_BPARTNER_ID, bom_parent_id,
+            c_aum, aumqty
           )
         VALUES
           (
@@ -122,7 +147,8 @@
             CUR_BOM.C_UOM_ID, CUR_BOM_Line.MovementQty*CUR_BOM.BOMQty, 
             'N', CUR_BOM_Line.QuantityOrder, CUR_BOM_Line.M_Product_UOM_ID,
             CUR_BOM_Line.a_asset_id, CUR_BOM_Line.c_project_id, CUR_BOM_Line.c_costcenter_id,
-            CUR_BOM_Line.user1_id, CUR_BOM_Line.user2_id, CUR_BOM_Line.C_BPartner_ID, v_Record_ID
+            CUR_BOM_Line.user1_id, CUR_BOM_Line.user2_id, CUR_BOM_Line.C_BPartner_ID, v_Record_ID, 
+            v_aum, v_aumqty*CUR_BOM.BOMQty
           );
       END LOOP; -- Create New Lines
     END LOOP; -- Replace Lines

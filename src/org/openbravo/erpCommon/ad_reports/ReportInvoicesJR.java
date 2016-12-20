@@ -41,8 +41,8 @@ import org.openbravo.xmlEngine.XmlDocument;
 public class ReportInvoicesJR extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
 
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException,
-      ServletException {
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
 
     // Get user Client's base currency
@@ -110,12 +110,13 @@ public class ReportInvoicesJR extends HttpSecureAppServlet {
     OBError myMessage = null;
     myMessage = new OBError();
     try {
-      data = ReportInvoicesData.select(this, strCurrencyId, Utility.getContext(this, vars,
-          "#User_Client", "ReportInvoices"), Utility.getContext(this, vars, "#AccessibleOrgTree",
-          "ReportInvoices"), strC_BpGroup_ID, strM_Product_Category_ID, strC_BPartner_ID,
-          strM_Product_ID, strDateFrom, DateTimeData.nDaysAfter(this, strDateTo, "1"),
-          strDocumentNo, (strOrder.equals("PurchaseOrder")) ? "" : "sales", (strOrder
-              .equals("PurchaseOrder")) ? "purchase" : "");
+      data = ReportInvoicesData.select(this, strCurrencyId,
+          Utility.getContext(this, vars, "#User_Client", "ReportInvoices"),
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportInvoices"), strC_BpGroup_ID,
+          strM_Product_Category_ID, strC_BPartner_ID, strM_Product_ID, strDateFrom,
+          DateTimeData.nDaysAfter(this, strDateTo, "1"), strDocumentNo,
+          (strOrder.equals("PurchaseOrder")) ? "" : "sales",
+          (strOrder.equals("PurchaseOrder")) ? "purchase" : "");
     } catch (ServletException ex) {
       myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
     }
@@ -206,8 +207,8 @@ public class ReportInvoicesJR extends HttpSecureAppServlet {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR", "C_BP_Group_ID",
           "", "", Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportInvoices"),
           Utility.getContext(this, vars, "#User_Client", "ReportInvoices"), 0);
-      Utility
-          .fillSQLParameters(this, vars, null, comboTableData, "ReportInvoices", strC_BpGroup_ID);
+      Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportInvoices",
+          strC_BpGroup_ID);
       xmlDocument.setData("reportC_Bp_Group", "liststructure", comboTableData.select(false));
       comboTableData = null;
     } catch (Exception ex) {
@@ -216,13 +217,13 @@ public class ReportInvoicesJR extends HttpSecureAppServlet {
 
     try {
       ComboTableData comboTableData = new ComboTableData(vars, this, "TABLEDIR",
-          "M_Product_Category_ID", "", "", Utility.getContext(this, vars, "#AccessibleOrgTree",
-              "ReportInvoices"), Utility.getContext(this, vars, "#User_Client", "ReportInvoices"),
-          0);
+          "M_Product_Category_ID", "", "",
+          Utility.getContext(this, vars, "#AccessibleOrgTree", "ReportInvoices"),
+          Utility.getContext(this, vars, "#User_Client", "ReportInvoices"), 0);
       Utility.fillSQLParameters(this, vars, null, comboTableData, "ReportInvoices",
           strM_Product_Category_ID);
-      xmlDocument
-          .setData("reportM_Product_Category", "liststructure", comboTableData.select(false));
+      xmlDocument.setData("reportM_Product_Category", "liststructure",
+          comboTableData.select(false));
       comboTableData = null;
     } catch (Exception ex) {
       throw new ServletException(ex);

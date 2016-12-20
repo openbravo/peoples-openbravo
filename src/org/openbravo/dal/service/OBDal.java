@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.log4j.Logger;
+import org.hibernate.ObjectNotFoundException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.dialect.Dialect;
@@ -317,7 +318,14 @@ public class OBDal implements OBNotSingleton {
    */
   public <T extends Object> T get(Class<T> clazz, Object id) {
     checkReadAccess(clazz);
-    return SessionHandler.getInstance().find(poolName, clazz, id);
+    try {
+      return SessionHandler.getInstance().find(poolName, clazz, id);
+    } catch (ObjectNotFoundException ignore) {
+      // ObjectNotFoundException is thrown when there was a proxy in cache for this id but the
+      // record does not exist in DB. As if there was no proxy, the same invokation would return
+      // null, let's be consistent and return null also in this case.
+      return null;
+    }
   }
 
   /**
@@ -362,7 +370,6 @@ public class OBDal implements OBNotSingleton {
    *          the id of the object
    * @return the object, or null if none found
    */
-
   public BaseOBObject getProxy(String entityName, Object id) {
     return (BaseOBObject) ((SessionImplementor) getSession()).internalLoad(entityName,
         (Serializable) id, false, false);

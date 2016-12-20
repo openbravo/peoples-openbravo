@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2016 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -64,13 +64,29 @@ function loadData(value, enable) {
   } else if ( !document.frmMain.elements["inpLastpriceso" + value].enable ){
     document.frmMain.elements["inpLastpriceso" + value].className += " readonly";
   }
-  document.frmMain.elements["inpquantity" + value].disabled = !enable;
-  if ( !document.frmMain.elements["inpquantity" + value].disabled )
-  {
-    document.frmMain.elements["inpquantity" + value].className = document.frmMain.elements["inpquantity" + value].className.replace(' readonly', '');
-  } else if ( !document.frmMain.elements["inpquantity" + value].enable ){
-    document.frmMain.elements["inpquantity" + value].className += " readonly";
+  if(document.frmMain.elements["inpUomEnabled"].value == 'Y'){
+	document.frmMain.elements["inpaumquantity" + value].disabled = !enable;
+    if ( !document.frmMain.elements["inpaumquantity" + value].disabled ){
+      document.frmMain.elements["inpaumquantity" + value].className = document.frmMain.elements["inpaumquantity" + value].className.replace(' readonly', '');
+    } else if ( !document.frmMain.elements["inpaumquantity" + value].enable ){
+      document.frmMain.elements["inpaumquantity" + value].className += " readonly";
+    } 
+    document.frmMain.elements["inpcAUMId" + value].disabled = !enable;
+    if ( !document.frmMain.elements["inpcAUMId" + value].disabled ){
+        document.frmMain.elements["inpcAUMId" + value].className = document.frmMain.elements["inpcAUMId" + value].className.replace(' readonly', '');
+      } else if ( !document.frmMain.elements["inpcAUMId" + value].enable ){
+        document.frmMain.elements["inpcAUMId" + value].className += " readonly";
+      } 
+  }else{
+    document.frmMain.elements["inpquantity" + value].disabled = !enable;
+    if ( !document.frmMain.elements["inpquantity" + value].disabled )
+    {
+      document.frmMain.elements["inpquantity" + value].className = document.frmMain.elements["inpquantity" + value].className.replace(' readonly', '');
+    } else if ( !document.frmMain.elements["inpquantity" + value].enable ){
+      document.frmMain.elements["inpquantity" + value].className += " readonly";
+    }
   }
+  
   return true;
 }
 
@@ -82,7 +98,9 @@ function validate(action) {
 	  var numRow = frm.elements[i].id.slice("CheckNum".length);
 	  var lp =document.getElementsByName('inpLastpriceso'+ numRow)[0];
 	  var qty = document.getElementsByName('inpquantity'+ numRow)[0];
-	  if ((!isValidNumber(lp, 'inpLastpriceso', 'lpinvalid')) || (!isValidNumber(qty, 'inpquantity', 'qtyinvalid'))) {
+	  var aumqty = document.getElementsByName('inpaumquantity'+ numRow)[0];
+	  if ((!isValidNumber(lp, 'inpLastpriceso', 'lpinvalid')) || (!isValidNumber(qty, 'inpquantity', 'qtyinvalid')) ||
+			  (!isValidNumber(aumqty, 'inpaumquantity', 'aumqtyinvalid'))) {
 	    setWindowElementFocus(frm.elements[i]);
 	 	showJSMessage('APRM_NotValidNumber');
 	 	return false;
@@ -172,6 +190,26 @@ function validate(action) {
       return true;
     } 
   </script>  
+  
+  <script language="JavaScript" type="text/javascript">
+    function updateQty(selKey) {
+      var frm = document.frmMain;
+      if(frm.elements["inpcUOMId" + selKey].value != frm.elements["inpcAUMId" + selKey].value){
+        callback = function (response, data, request) {
+    	  frm.elements["inpquantity" + selKey].value = data.qty;
+   	    };
+   	
+        window.parent.parent.OB.RemoteCallManager.call('org.openbravo.common.actionhandler.GetConvertedQtyActionHandler', {
+          mProductId: frm.elements["inpmProductId" + selKey].value,
+          qty: frm.elements["inpaumquantity" + selKey].value,
+          toUOM: frm.elements["inpcAUMId" + selKey].value,
+          reverse: false
+        }, {}, callback);
+      }else {
+    	frm.elements["inpquantity" + selKey].value = frm.elements["inpaumquantity" + selKey].value;
+      }
+    }
+  </script>
 </head>
 
 
@@ -183,6 +221,7 @@ function validate(action) {
   <input type="hidden" name="inpWindowId" value="" id="paramWindowId"/>
   <input type="hidden" name="inpTabId" value="" id="paramTabId"/>
   <input type="hidden" name="inpissotrx" value="" id="paramisSOTrx"/>
+  <input type="hidden" name="inpUomEnabled" value="xx" id="paramUomEnabled"/>
 
   <div class="Popup_ContentPane_CircleLogo">
     <div class="Popup_WindowLogo">
@@ -456,6 +495,8 @@ function validate(action) {
                       <th width="9%"  class="DataGrid_Header_Cell">Last price</th>
                       <th width="7%"  class="DataGrid_Header_Cell">Quantity</th>
                       <th width="13%" class="DataGrid_Header_Cell">UOM</th>
+                      <th width="7%"  class="DataGrid_Header_Cell" id="paramAumQtyVisible" style="display:xx;">Quantity in Alternative UOM</th>                      
+                      <th width="13%" class="DataGrid_Header_Cell" id="paramAumVisible" style="display:xx;">Alternative UOM</th>                      
                       <th width="11%" class="DataGrid_Header_Cell">Tax</th>
                     </tr>
                     <div id="sectionDetail">
@@ -493,6 +534,22 @@ function validate(action) {
                           		</table>
                        		 </span>
                         </td><td width="13%" class="DataGrid_Body_Cell" onmouseover="HoverCell(this);" onmouseout="unHoverCell(this);"><input type="hidden" name="inpcUOMIdxx" id="fieldUomid" value=""/><span id="fieldUomsymbol">xxKg</span></td>
+                        <td id="paramAumQtyVisible" style="display:xx" width="7%" class="DataGrid_Body_Cell" onmouseover="HoverCell(this);" onmouseout="unHoverCell(this);"><input class="dojoValidateValid readonly" id="fieldAumQty" style="font-weight: normal;" name="inpaumquantityxx" type="text" size="5" value="0" outputformat="euroEdition" onfocus="numberInputEvent('onfocus', this);" onblur="numberInputEvent('onblur', this);" onkeydown="numberInputEvent('onkeydown', this, event);" onchange="isValidNumber(this, 'inpaumquantity','aumqtyinvalid');"  onkeyup="updateQty('yy');" disabled="" />
+                         	<span class="TextBox_MsgContainer_span" id="aumqtyinvalidxx" style="display: none;">
+                       		 	<table class="TextBox_MsgContainer_table">
+                           			 <tbody><tr class="TextBox_MsgContainer_tr">
+                           			   <td class="TextBox_MsgContainer_td"><div class="TextBox_MsgContainer_div"></div></td><td></td>
+                           			 </tr>
+                           			 <tr>
+                             			 <td class="invalid" colspan="2"><div name="invalidText" id="aumqtyinvalidText" class="TextBox_MsgContainer_div2">* The value entered is not valid.</div></td>
+                           			 </tr>
+                          			</tbody>
+                          		</table>
+                       		 </span>
+                        </td>
+                        <td id="paramAumVisible" style="display:xx;" width="13%" class="DataGrid_Body_Cell" onmouseover="HoverCell(this);" onmouseout="unHoverCell(this);">
+                          <select class="DataGrid_Body_Cell" name="inpcAUMIdxx" id="fieldAumCombo" disabled="true" onchange="updateQty('yy');return true;"><div id="reportAUM_ID"></div></select>
+                        </td>
                         <td width="11%" class="DataGrid_Body_Cell" onmouseover="HoverCell(this);" onmouseout="unHoverCell(this);"><input type="hidden" name="inpcTaxIdxx" id="fieldTaxid" value=""/><span id="fieldNametax">xx16%</span></td>
                       </tr>
                     </div>

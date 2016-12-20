@@ -26,6 +26,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.ServletException;
@@ -33,6 +34,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
+import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
@@ -147,11 +151,80 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
       PrintWriter out = response.getWriter();
       out.print(strcAcctSchemaId);
       out.close();
-    }
-
-    else {
+    } else if (vars.commandIn("CMBORG")) {
+      String strAccSchema = vars.getStringParameter("inpcAcctSchemaId");
+      String strAcctRpt = vars.getStringParameter("inpcElementvalueId", "");
+      if (!strAcctRpt.isEmpty()) {
+        strAcctRpt = strAcctRpt.substring(1);
+      }
+      String strOrg = vars.getStringParameter("inpOrganizacion", "");
+      String strOrgList = "";
+      List<String> orgList = getRoleOrganizationList(OBContext.getOBContext().getRole().getId());
+      int i = 0;
+      for (String org : orgList) {
+        if (i == 0) {
+          strOrgList += "'" + org + "'";
+        } else {
+          strOrgList += ",'" + org + "'";
+        }
+        i++;
+      }
+      GeneralAccountingReportsData[] data = GeneralAccountingReportsData.selectOrgsDouble(this,
+          vars.getClient(), strOrgList, strAccSchema, strAcctRpt);
+      String combobox = getJSONComboBox(data, strOrg, false);
+      response.setContentType("text/html; charset=UTF-8");
+      PrintWriter out = response.getWriter();
+      out.println("objson = " + combobox);
+      out.close();
+    } else if (vars.commandIn("CMBYEAR")) {
+      String strOrg = vars.getStringParameter("inpOrganizacion", "");
+      String strAgno = vars.getStringParameter("inpAgno", "");
+      GeneralAccountingReportsData[] data = GeneralAccountingReportsData.selectYearsDouble(this,
+          vars.getUserClient(), strOrg);
+      String combobox = getJSONComboBox(data, strAgno, false);
+      response.setContentType("text/html; charset=UTF-8");
+      PrintWriter out = response.getWriter();
+      out.println("objson = " + combobox);
+      out.close();
+    } else {
       pageError(response);
     }
+  }
+
+  private String getJSONComboBox(GeneralAccountingReportsData[] data, String selectedValue,
+      boolean isMandatory) {
+    JSONObject json = new JSONObject();
+    JSONArray select = new JSONArray();
+    Map<String, String> attr = null;
+    Set<String> orgs = new HashSet<String>();
+    try {
+      int i = 0;
+      if (!isMandatory) {
+        attr = new HashMap<String, String>();
+        attr.put("value", "");
+        attr.put("selected", "false");
+        attr.put("text", "");
+        select.put(i, attr);
+        json.put("optionlist", select);
+        i++;
+      }
+      for (GeneralAccountingReportsData obj : data) {
+        if (!orgs.contains(obj.id)) {
+          orgs.add(obj.id);
+          attr = new HashMap<String, String>();
+          attr.put("value", obj.id);
+          attr.put("selected", ((obj.name).equals(selectedValue)) ? "true" : "false");
+          attr.put("text", obj.name);
+          select.put(i, attr);
+          json.put("optionlist", select);
+          i++;
+        }
+      }
+      json.put("ismandatory", String.valueOf(isMandatory));
+    } catch (JSONException e) {
+      log4j.error("Error creating JSON object for representing combo option", e);
+    }
+    return json.toString();
   }
 
   private void printPagePDF(HttpServletRequest request, HttpServletResponse response,
@@ -596,31 +669,12 @@ public class GeneralAccountingReports extends HttpSecureAppServlet {
     } catch (Exception ex) {
       throw new ServletException(ex);
     }
-
-    String strOrgList = "";
-    List<String> orgList = getRoleOrganizationList(OBContext.getOBContext().getRole().getId());
-    int i = 0;
-    for (String org : orgList) {
-      if (i == 0) {
-        strOrgList += "'" + org + "'";
-      } else {
-        strOrgList += ",'" + org + "'";
-      }
-      i++;
-    }
-
-    xmlDocument.setParameter(
-        "orgs",
-        Utility.arrayDobleEntrada("arrOrgs",
-            GeneralAccountingReportsData.selectOrgsDouble(this, vars.getClient(), strOrgList)));
+    xmlDocument.setParameter("orgs", Utility.arrayDobleEntrada("arrOrgs", new FieldProvider[0]));
     xmlDocument.setParameter(
         "accountingReports",
         Utility.arrayDobleEntrada("arrAccountingReports",
             GeneralAccountingReportsData.selectRptDouble(this)));
-    xmlDocument.setParameter(
-        "years",
-        Utility.arrayDobleEntrada("arrYears",
-            GeneralAccountingReportsData.selectYearsDouble(this, vars.getUserClient())));
+    xmlDocument.setParameter("years", Utility.arrayDobleEntrada("arrYears", new FieldProvider[0]));
     response.setContentType("text/html; charset=UTF-8");
     PrintWriter out = response.getWriter();
     out.println(xmlDocument.print());
