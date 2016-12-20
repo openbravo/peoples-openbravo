@@ -27,6 +27,7 @@ import java.util.Properties;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.tomcat.jdbc.pool.DataSource;
 import org.apache.tomcat.jdbc.pool.PoolProperties;
 import org.openbravo.base.exception.OBException;
@@ -267,6 +268,10 @@ public class JdbcExternalConnectionPool extends ExternalConnectionPool {
 
   /** gets specific property for pool if present, default property if not */
   private String getStringProperty(Properties props, String key, String poolName) {
+    if (StringUtils.isEmpty(poolName)) {
+      // return default property if the pool name is not provided
+      return props.getProperty(key);
+    }
     String poolSpecificKey = key.replaceFirst("\\.", "." + poolName + ".");
     return props.containsKey(poolSpecificKey) ? props.getProperty(poolSpecificKey) : props
         .getProperty(key);
