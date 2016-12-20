@@ -14,6 +14,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -39,7 +40,7 @@ import org.openbravo.model.ad.access.UserRoles;
 import org.openbravo.service.db.DalConnectionProvider;
 
 public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
-
+  public static final Logger log = Logger.getLogger(LoginUtilsServlet.class);
   private static final long serialVersionUID = 1L;
 
   private String[] getClientOrgIds(String terminalName) {
@@ -296,8 +297,11 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
           terminal.setCurrentCacheSession(cacheSessionId);
 
           OBDal.getInstance().save(terminal);
+
           try {
             OBDal.getInstance().getConnection().commit();
+            log.info("[termAuth] Terminal " + terminal.getIdentifier() + "("
+                + terminal.getCurrentCacheSession() + ") has been linked");
           } catch (SQLException e) {
             throw new JSONException(e);
           }

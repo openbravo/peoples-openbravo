@@ -1071,9 +1071,11 @@
     },
     linkTerminal: function (terminalData, callback) {
       var params = this.get('loginUtilsParams') || {},
-          me = this;
+          me = this,
+          parsedTerminalData = JSON.parse(terminalData);
       params.command = 'preLoginActions';
       params.params = terminalData;
+      OB.warn('[TermAuth] Request to link terminal "' + parsedTerminalData.terminalKeyIdentifier + '" using user "' + parsedTerminalData.username + '" with cache session id "' + parsedTerminalData.cacheSessionId + '"');
       new OB.OBPOSLogin.UI.LoginRequest({
         url: OB.MobileApp.model.get('loginUtilsUrl')
       }).response(this, function (inSender, inResponse) {
@@ -1113,6 +1115,7 @@
           }
           OB.UTIL.localStorage.setItem('terminalName', inResponse.terminalName);
           OB.UTIL.localStorage.setItem('terminalKeyIdentifier', inResponse.terminalKeyIdentifier);
+          OB.warn('[TermAuth] Terminal "' + parsedTerminalData.terminalKeyIdentifier + '" was successfully linked using user "' + parsedTerminalData.username + '" with cache session id "' + parsedTerminalData.cacheSessionId + '"');
           callback();
         }
 
