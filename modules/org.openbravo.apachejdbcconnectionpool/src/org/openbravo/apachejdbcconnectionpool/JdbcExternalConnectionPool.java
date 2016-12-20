@@ -47,6 +47,7 @@ public class JdbcExternalConnectionPool extends ExternalConnectionPool {
   final static private Logger log = LoggerFactory.getLogger(JdbcExternalConnectionPool.class);
 
   private Map<String, DataSource> availableDataSources = null;
+  private DataSource defaultDataSource = null;
 
   /**
    * This method loads all the interceptors of apache jdbc connection pool injected with weld.
@@ -64,7 +65,10 @@ public class JdbcExternalConnectionPool extends ExternalConnectionPool {
    * Gets the data source of apache jdbc connection pool.
    */
   public DataSource getDataSource() {
-    return availableDataSources.get(DEFAULT_POOL);
+    if (defaultDataSource == null) {
+      defaultDataSource = availableDataSources.get(DEFAULT_POOL);
+    }
+    return defaultDataSource;
   }
 
   /**
@@ -81,6 +85,12 @@ public class JdbcExternalConnectionPool extends ExternalConnectionPool {
 
   @Override
   public Connection getConnection(String poolName) {
+    if (DEFAULT_POOL.equals(poolName)) {
+      return getConnection();
+    }
+    if (availableDataSources == null) {
+      initPool();
+    }
     DataSource ds = availableDataSources.get(poolName);
     return getConnectionFromDS(ds);
   }
