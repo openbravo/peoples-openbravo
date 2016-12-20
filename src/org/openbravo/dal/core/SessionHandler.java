@@ -149,12 +149,89 @@ public class SessionHandler implements OBNotSingleton {
     sessions.put(pool, thisSession);
   }
 
-  public void setConnection(Connection newConnection) {
-    setConnection(DEFAULT_POOL, newConnection);
+  protected Session createSession() {
+    return createSession(DEFAULT_POOL);
   }
 
-  private void setConnection(String pool, Connection newConnection) {
-    connections.put(pool, newConnection);
+  private Session createSession(String pool) {
+    SessionFactory sf = SessionFactoryController.getInstance().getSessionFactory();
+    // Checks if the session connection has to be obtained using an external connection pool
+    if (externalConnectionPool != null && getConnection(pool) == null) {
+      Connection externalConnection;
+      try {
+        externalConnection = getNewConnection(pool);
+        setConnection(pool, externalConnection);
+      } catch (SQLException e) {
+        throw new OBException("Could not get connection to create DAL session", e);
+      }
+    }
+
+    Connection connection = getConnection(pool);
+    if (connection != null) {
+      // If the connection has been obtained using an external connection pool it is passed to
+      // openSession, to prevent a new connection to be created using the Hibernate default
+      // connection pool
+      return sf.openSession(connection);
+    } else {
+      return sf.openSession();
+    }
+  }
+
+  protected void closeSession() {
+    closeSession(DEFAULT_POOL);
+  }
+
+  void closeSession(String pool) {
+    Session session = sessions.get(pool);
+    if (session != null) {
+      if (session.isOpen()) {
+        session.close();
+      }
+      removeSession(pool);
+    }
+  }
+
+  /** Commits all remaining sessions and closes them */
+  void cleanUpSessions() {
+    for (String pool : sessions.keySet()) {
+      commitAndCloseNoCheck(pool);
+    }
+    clearSessions();
+    clearTransactions();
+    clearConnections();
+  }
+
+  private void removeSession(String pool) {
+    sessions.remove(pool);
+  }
+
+  private void clearSessions() {
+    sessions.clear();
+  }
+
+  /** Gets a new {@code Connection} from the connection pool. */
+  public Connection getNewConnection() throws SQLException {
+    return getNewConnection(DEFAULT_POOL);
+  }
+
+  public Connection getNewConnection(String pool) throws SQLException {
+    Connection newConnection;
+    if (externalConnectionPool != null) {
+      newConnection = externalConnectionPool.getConnection(pool);
+      try {
+        // Autocommit is disabled because DAL is taking into account his logical and DAL is setting
+        // autoCommint to false to maintain transactional way of working.
+        newConnection.setAutoCommit(false);
+      } catch (SQLException e) {
+        log.error("Error setting connection to auto-commit mode", e);
+      }
+    } else {
+      // getting connection from Hibernate pool
+      newConnection = ((DalSessionFactory) SessionFactoryController.getInstance()
+          .getSessionFactory()).getConnectionProvider().getConnection();
+      SessionInfo.initDB(newConnection, rbdms);
+    }
+    return newConnection;
   }
 
   /** Gets current session's {@code Connection} if it's set, {@code null} if not. */
@@ -166,31 +243,36 @@ public class SessionHandler implements OBNotSingleton {
     return connections.get(pool);
   }
 
-  protected Session createSession() {
-    return createSession(DEFAULT_POOL);
+  public void setConnection(Connection newConnection) {
+    setConnection(DEFAULT_POOL, newConnection);
   }
 
-  private Session createSession(String pool) {
-    SessionFactory sf = SessionFactoryController.getInstance().getSessionFactory();
-    // Checks if the session connection has to be obtained using an external connection pool
-    if (externalConnectionPool != null && connections.get(pool) == null) {
-      Connection externalConnection;
-      try {
-        externalConnection = getNewConnection(pool);
-        setConnection(pool, externalConnection);
-      } catch (SQLException e) {
-        throw new OBException("Could not get connection to create DAL session", e);
-      }
-    }
+  private void setConnection(String pool, Connection newConnection) {
+    connections.put(pool, newConnection);
+  }
 
-    if (connections.get(pool) != null) {
-      // If the connection has been obtained using an external connection pool it is passed to
-      // openSession, to prevent a new connection to be created using the Hibernate default
-      // connection pool
-      return sf.openSession(connections.get(pool));
-    } else {
-      return sf.openSession();
-    }
+  private void removeConnection(String pool) {
+    connections.remove(pool);
+  }
+
+  private void clearConnections() {
+    connections.clear();
+  }
+
+  private Transaction getTransaction(String pool) {
+    return trxs.get(pool);
+  }
+
+  private void setTransaction(String pool, Transaction newTransaction) {
+    trxs.put(pool, newTransaction);
+  }
+
+  private void removeTransaction(String pool) {
+    trxs.remove(pool);
+  }
+
+  private void clearTransactions() {
+    trxs.clear();
   }
 
   /**
@@ -219,56 +301,7 @@ public class SessionHandler implements OBNotSingleton {
       throw new OBException(
           "Not possible to start a new transaction while there is still one active.");
     }
-    trxs.put(pool, getSession(pool).beginTransaction());
-  }
-
-  /** Gets a new {@code Connection} from the connection pool. */
-  public Connection getNewConnection() throws SQLException {
-    return getNewConnection(DEFAULT_POOL);
-  }
-
-  public Connection getNewConnection(String pool) throws SQLException {
-    Connection newConnection;
-    if (externalConnectionPool != null) {
-      newConnection = externalConnectionPool.getConnection(pool);
-      try {
-        // Autocommit is disabled because DAL is taking into account his logical and DAL is setting
-        // autoCommint to false to maintain transactional way of working.
-        newConnection.setAutoCommit(false);
-      } catch (SQLException e) {
-        log.error("Error setting connection to auto-commit mode", e);
-      }
-    } else {
-      // getting connection from Hibernate pool
-      newConnection = ((DalSessionFactory) SessionFactoryController.getInstance()
-          .getSessionFactory()).getConnectionProvider().getConnection();
-      SessionInfo.initDB(newConnection, rbdms);
-    }
-    return newConnection;
-  }
-
-  protected void closeSession() {
-    closeSession(DEFAULT_POOL);
-  }
-
-  void closeSession(String pool) {
-    Session session = sessions.get(pool);
-    if (session != null) {
-      if (session.isOpen()) {
-        session.close();
-      }
-      sessions.remove(session);
-    }
-  }
-
-  /** Commits all remaining sessions and closes them */
-  void cleanUpSessions() {
-    for (String pool : sessions.keySet()) {
-      commitAndCloseNoCheck(pool);
-    }
-    sessions.clear();
-    trxs.clear();
-    connections.clear();
+    setTransaction(pool, getSession(pool).beginTransaction());
   }
 
   /**
@@ -376,8 +409,8 @@ public class SessionHandler implements OBNotSingleton {
     Check.isTrue(sessions.get(pool) == null, "Session must be null before begin");
     setSession(pool, createSession(pool));
     getSession(pool).setFlushMode(FlushMode.COMMIT);
-    Check.isTrue(trxs.get(pool) == null, "tx must be null before begin");
-    trxs.put(pool, getSession(pool).beginTransaction());
+    Check.isTrue(getTransaction(pool) == null, "tx must be null before begin");
+    setTransaction(pool, getSession(pool).beginTransaction());
     log.debug("Transaction started");
   }
 
@@ -412,8 +445,8 @@ public class SessionHandler implements OBNotSingleton {
 
   private void commitAndCloseNoCheck(String pool) {
     boolean err = true;
-    Connection con = connections.get(pool);
-    Transaction trx = trxs.get(pool);
+    Connection con = getConnection(pool);
+    Transaction trx = getTransaction(pool);
     try {
       if (con == null || !con.isClosed()) {
         if (con != null) {
@@ -434,8 +467,8 @@ public class SessionHandler implements OBNotSingleton {
   }
 
   private void closeTransaction(String pool, boolean err) {
-    Connection con = connections.get(pool);
-    Transaction trx = trxs.get(pool);
+    Connection con = getConnection(pool);
+    Transaction trx = getTransaction(pool);
     if (err && trx != null) {
       try {
         trx.rollback();
@@ -451,8 +484,8 @@ public class SessionHandler implements OBNotSingleton {
       log.error("Error while closing the connection in pool " + pool, e);
     }
     closeSession(pool);
-    trxs.remove(pool);
-    connections.remove(pool);
+    removeTransaction(pool);
+    removeConnection(pool);
 
     deleteSessionHandler();
   }
@@ -471,11 +504,11 @@ public class SessionHandler implements OBNotSingleton {
 
     checkInvariant();
     flushRemainingChanges(pool);
-    Transaction trx = trxs.get(pool);
+    Transaction trx = getTransaction(pool);
     if (trx != null) {
       trx.commit();
     }
-    trxs.put(pool, getSession(pool).beginTransaction());
+    setTransaction(pool, getSession(pool).beginTransaction());
     log.debug("Committed and started new transaction");
   }
 
@@ -505,17 +538,17 @@ public class SessionHandler implements OBNotSingleton {
 
   public void rollback(String pool) {
     log.debug("Rolling back transaction in pool " + pool);
-    Connection con = connections.get(pool);
+    Connection con = getConnection(pool);
     try {
       checkInvariant(pool);
       if (con == null || !con.isClosed()) {
-        trxs.get(pool).rollback();
+        getTransaction(pool).rollback();
       }
     } catch (SQLException e) {
       log.error("Error while closing the connection in pool " + pool, e);
     } finally {
-      trxs.remove(pool);
-      connections.remove(pool);
+      removeTransaction(pool);
+      removeConnection(pool);
 
       deleteSessionHandler();
       try {
@@ -539,7 +572,7 @@ public class SessionHandler implements OBNotSingleton {
 
   private void checkInvariant(String pool) {
     Check.isNotNull(getSession(pool), "Session is null");
-    Transaction theTx = trxs.get(pool);
+    Transaction theTx = getTransaction(pool);
     Check.isNotNull(theTx, "Tx is null");
     Check.isTrue(theTx.isActive(), "Tx is not active");
   }
