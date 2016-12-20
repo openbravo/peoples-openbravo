@@ -85,14 +85,24 @@ public class JdbcExternalConnectionPool extends ExternalConnectionPool {
 
   @Override
   public Connection getConnection(String poolName) {
-    if (DEFAULT_POOL.equals(poolName)) {
-      return getConnection();
-    }
     if (availableDataSources == null) {
       initPool();
     }
-    DataSource ds = availableDataSources.get(poolName);
+    DataSource ds = getDataSourceByName(poolName);
+    if (ds == null) {
+      log.debug(
+          "Connection pool with name {} is not available, using default connection pool to retrieve the connection",
+          poolName);
+      ds = getDataSource();
+    }
     return getConnectionFromDS(ds);
+  }
+
+  private DataSource getDataSourceByName(String poolName) {
+    if (DEFAULT_POOL.equals(poolName)) {
+      return getDataSource();
+    }
+    return availableDataSources.get(poolName);
   }
 
   private Connection getConnectionFromDS(DataSource datasource) {
