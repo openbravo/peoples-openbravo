@@ -375,6 +375,13 @@ enyo.kind({
         me.updateVisibility(true);
       }
     }, this);
+    receipt.on('change:orderType', function (model) {
+      if (model.get('orderType') === 1 || model.get('orderType') === 2) {
+        me.updateVisibility(false);
+      } else {
+        me.updateVisibility(true);
+      }
+    }, this);
     receipt.on('change:isEditable change:replacedorder', function (newValue) {
       if (newValue) {
         if (newValue.get('isEditable') === false) {
