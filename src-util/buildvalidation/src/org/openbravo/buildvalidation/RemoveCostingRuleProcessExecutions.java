@@ -40,7 +40,7 @@ import org.openbravo.database.ConnectionProvider;
  * allowing better plans.
  * 
  * @author alostale
- *
+ * 
  */
 public class RemoveCostingRuleProcessExecutions extends BuildValidation {
   private static Logger log = Logger.getLogger(RemoveCostingRuleProcessExecutions.class);
