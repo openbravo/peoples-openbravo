@@ -135,7 +135,6 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/rendercategory",
         "components/renderproduct",
         "components/renderproductch",
-        "components/total",
         "components/modalpayment",
         "components/renderorderline",
         "components/rendermultiorderline",

@@ -513,11 +513,23 @@ enyo.kind({
     style: 'text-align: center; font-size: 30px;'
   },
   components: [{
+    kind: 'OB.UI.FitText',
+    name: 'totalButtonDiv',
+    minFontSize: 15,
+    maxFontSize: 30,
+    maxHeight: 57,
     classes: 'buttonText',
     style: 'font-weight: bold; display: initial;',
     components: [{
-      kind: 'OB.UI.Total',
-      name: 'totalPrinter'
+      tag: 'span',
+      name: 'totalPrinter',
+      renderTotal: function (total) {
+        this.setContent(OB.I18N.formatCurrency(total));
+        //It needs an small asynch to be rendered and then we can calculateFonSize
+        setTimeout(function (me) {
+          me.parent.rendered();
+        }, 0, this);
+      }
     }]
   }],
   getLabel: function () {

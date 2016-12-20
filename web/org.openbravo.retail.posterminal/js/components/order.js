@@ -268,7 +268,6 @@ enyo.kind({
       OB.UTIL.HookManager.executeHooks('OBPOS_UpdateTotalReceiptLine', {
         totalline: this
       });
-      OB.UTIL.calculateFontSizes();
     }
   },
   renderQty: function (newQty) {
