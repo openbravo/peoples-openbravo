@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2015 Openbravo SLU
+ * All portions are Copyright (C) 2015-2016 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,7 +21,10 @@ package org.openbravo.buildvalidation;
 import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.ServletException;
+
+import org.openbravo.base.ExecutionLimits;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.modulescript.OpenbravoVersion;
 
 /**
  * This validation is related to this issue: https://issues.openbravo.com/view.php?id=29222
@@ -81,5 +84,10 @@ public class GLJournalAccountingCheck extends BuildValidation {
             document.glJournalId);
       }
     }
+  }
+
+  @Override
+  protected ExecutionLimits getBuildValidationLimits() {
+    return new ExecutionLimits("0", null, new OpenbravoVersion(3, 0, 26688));
   }
 }
