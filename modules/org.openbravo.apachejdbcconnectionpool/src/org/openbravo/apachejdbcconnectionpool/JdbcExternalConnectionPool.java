@@ -292,11 +292,12 @@ public class JdbcExternalConnectionPool extends ExternalConnectionPool {
    */
   @Override
   public void closePool() {
-    DataSource ds = getDataSource();
-    if (ds != null) {
-      // Closes the pool and all idle connections. true parameter is for close the active
-      // connections too.
-      ds.close(true);
+    for (DataSource ds : availableDataSources.values()) {
+      if (ds != null) {
+        // Closes the pool and all idle connections. true parameter is for close the active
+        // connections too.
+        ds.close(true);
+      }
     }
     super.closePool();
   }
