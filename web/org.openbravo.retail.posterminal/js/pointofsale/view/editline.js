@@ -193,6 +193,25 @@ enyo.kind({
         this.$.propertyValue.setContent(OB.MobileApp.model.get('warehouses')[0].warehousename);
       }
     }
+  }, {
+    kind: 'OB.OBPOSPointOfSale.UI.LineProperty',
+    position: 70,
+    name: 'canBeDeliveredLine',
+    I18NLabel: 'OBPOS_LineCanBeDelivered',
+    render: function (line) {
+      if (this.owner.owner.hideDeliveryButton) {
+        this.hide();
+      } else {
+        this.show();
+        if (line && line.get('obposCanbedelivered')) {
+          this.$.propertyValue.setContent(OB.I18N.getLabel('OBMOBC_LblYes'));
+          this.owner.owner.$.actionButtonsContainer.$.canDeliver.setContent(OB.I18N.getLabel('OBPOS_CannotBeDelivered'))
+        } else {
+          this.$.propertyValue.setContent(OB.I18N.getLabel('OBMOBC_LblNo'));
+          this.owner.owner.$.actionButtonsContainer.$.canDeliver.setContent(OB.I18N.getLabel('OBPOS_CanBeDelivered'))
+        }
+      }
+    }
   }],
   actionButtons: [{
     kind: 'OB.UI.SmallButton',
@@ -416,6 +435,39 @@ enyo.kind({
     kind: 'OB.OBPOSPointOfSale.UI.EditLine.OpenAttributeButton',
     name: 'openAttributeButton',
     showing: false
+  }, {
+    kind: 'OB.UI.SmallButton',
+    name: 'canDeliver',
+    classes: 'btnlink-orange',
+    content: '-',
+    tap: function (inSender, inEvent) {
+      var me = this,
+          deliveredLines = _.filter(this.owner.owner.selectedModels, function (line) {
+          return line.get('deliveredQuantity');
+        });
+      if (!deliveredLines.length) {
+        OB.UTIL.Approval.requestApproval(
+        me.owner.owner.model, 'OBPOS_approval.canBeDelivered', function (approved, supervisor, approvalType) {
+          if (approved) {
+            _.each(me.owner.owner.selectedModels, function (line) {
+              if (line.get('obposCanbedelivered')) {
+                line.unset('obposCanbedelivered');
+              } else {
+                line.set('obposCanbedelivered', true);
+              }
+            });
+            me.owner.owner.render();
+            me.owner.owner.model.get('order').save();
+          }
+        });
+      } else {
+        var linesNames = [OB.I18N.getLabel('OBPOS_NotAllowUndeliverable')];
+        _.each(deliveredLines, function (line) {
+          linesNames.push(OB.I18N.getLabel('OBMOBC_Character')[1] + ' ' + line.get('product').get('_identifier'));
+        });
+        OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBMOBC_Error'), linesNames);
+      }
+    }
   }],
   published: {
     receipt: null
@@ -650,6 +702,7 @@ enyo.kind({
     }
   },
   setMultiSelected: function (inSender, inEvent) {
+    var serviceSelected, isLayaway;
     if (inEvent.models && inEvent.models.length > 0 && !(inEvent.models[0] instanceof OB.Model.OrderLine)) {
       return;
     }
@@ -662,6 +715,39 @@ enyo.kind({
     }
     this.$.linePropertiesContainer.$.discountedAmountLine.multiSelection = inEvent.models.length > 1;
     this.selectedListener(this.selectedModels.length > 0 ? this.selectedModels[0] : undefined);
+    serviceSelected = _.find(inEvent.models, function (line) {
+      return line.get('product').get('productType') === 'S';
+    });
+    isLayaway = this.owner.owner.model.get('order').get('isLayaway') || this.owner.owner.model.get('order').get('orderType') ? true : false;
+    this.hideDeliveryButton = serviceSelected || !isLayaway ? true : false;
+    if (inEvent.models.length > 1) {
+      var selectedLinesToDeliver;
+      selectedLinesToDeliver = _.filter(inEvent.models, function (line) {
+        return line.get('obposCanbedelivered');
+      });
+      this.hideDeliveryButton = this.hideDeliveryButton ? true : selectedLinesToDeliver.length && selectedLinesToDeliver.length < inEvent.models.length;
+      if (this.hideDeliveryButton) {
+        this.$.actionButtonsContainer.$.canDeliver.hide();
+      } else {
+        this.$.actionButtonsContainer.$.canDeliver.show();
+        if (!selectedLinesToDeliver.length) {
+          this.$.actionButtonsContainer.$.canDeliver.setContent(OB.I18N.getLabel('OBPOS_CanBeDelivered'));
+        } else {
+          this.$.actionButtonsContainer.$.canDeliver.setContent(OB.I18N.getLabel('OBPOS_CannotBeDelivered'));
+        }
+      }
+    } else if (inEvent.models.length === 1) {
+      if (this.hideDeliveryButton) {
+        this.$.actionButtonsContainer.$.canDeliver.hide();
+      } else {
+        this.$.actionButtonsContainer.$.canDeliver.show();
+        if (inEvent.models[0].get('obposCanbedelivered')) {
+          this.$.actionButtonsContainer.$.canDeliver.setContent(OB.I18N.getLabel('OBPOS_CannotBeDelivered'));
+        } else {
+          this.$.actionButtonsContainer.$.canDeliver.setContent(OB.I18N.getLabel('OBPOS_CanBeDelivered'));
+        }
+      }
+    }
     this.render();
   },
   isLineInSelection: function (line) {
@@ -934,6 +1020,7 @@ enyo.kind({
       }
       this.$.linePropertiesContainer.$.discountedAmountLine.render(orderLine);
       this.$.linePropertiesContainer.$.warehouseLine.render(orderLine);
+      this.$.linePropertiesContainer.$.canBeDeliveredLine.render(orderLine);
       orderLine.get('product').set('standardPrice', priceTotal);
       orderLine.set('price', priceTotal);
       if (!orderLine.get('priceIncludesTax')) {
