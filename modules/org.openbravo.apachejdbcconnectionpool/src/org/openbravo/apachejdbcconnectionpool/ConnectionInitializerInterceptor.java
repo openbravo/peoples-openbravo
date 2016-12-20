@@ -38,6 +38,8 @@ import org.openbravo.database.SessionInfo;
 public class ConnectionInitializerInterceptor extends JdbcInterceptor implements
     PoolInterceptorProvider {
 
+  private static final String INITIALIZED = "OB_INITIALIZED";
+
   String rbdms = (String) OBPropertiesProvider.getInstance().getOpenbravoProperties()
       .get("bbdd.rdbms");
 
@@ -49,7 +51,7 @@ public class ConnectionInitializerInterceptor extends JdbcInterceptor implements
   public void reset(ConnectionPool parent, PooledConnection con) {
     if (con != null) {
       HashMap<Object, Object> attributes = con.getAttributes();
-      Boolean connectionInitialized = (Boolean) attributes.get("OB_INITIALIZED");
+      Boolean connectionInitialized = (Boolean) attributes.get(INITIALIZED);
       if (connectionInitialized == null || connectionInitialized == false) {
         if (!isReadOnlyPool(parent)) {
           SessionInfo.initDB(con.getConnection(), rbdms);
@@ -71,7 +73,7 @@ public class ConnectionInitializerInterceptor extends JdbcInterceptor implements
             throw new OBException(e);
           }
         }
-        attributes.put("OB_INITIALIZED", true);
+        attributes.put(INITIALIZED, true);
       }
     }
   }
