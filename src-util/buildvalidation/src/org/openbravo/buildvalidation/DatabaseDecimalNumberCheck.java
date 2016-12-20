@@ -22,7 +22,9 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.openbravo.base.ExecutionLimits;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.modulescript.OpenbravoVersion;
 
 /**
  * This validation is related to this issue: https://issues.openbravo.com/view.php?id=30069 It
@@ -57,5 +59,10 @@ public class DatabaseDecimalNumberCheck extends BuildValidation {
       return handleError(e);
     }
     return errors;
+  }
+
+  @Override
+  protected ExecutionLimits getBuildValidationLimits() {
+    return new ExecutionLimits("0", null, new OpenbravoVersion(3, 0, 29596));
   }
 }
