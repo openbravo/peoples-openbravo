@@ -31,9 +31,8 @@ public class WrongPaymentScheduleDetailsCheck extends BuildValidation {
     ConnectionProvider cp = getConnectionProvider();
     ArrayList<String> errors = new ArrayList<String>();
     try {
-      //Verify if it is necessary execute the buildvalidation
-      if (WrongPaymentScheduleDetailsCheckData.before30MP3(cp))
-      {
+      // Verify if it is necessary execute the buildvalidation
+      if (WrongPaymentScheduleDetailsCheckData.before30MP3(cp)) {
         // Prevent error when upgrading from a pure 2.50 (MP0)
         if (WrongPaymentScheduleDetailsCheckData.existAPRMbasetables(cp)) {
           if (WrongPaymentScheduleDetailsCheckData.existWrongPaymentSchedules(cp)) {
