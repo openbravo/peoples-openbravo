@@ -102,9 +102,9 @@ class ProcessMonitor implements SchedulerListener, JobListener, TriggerListener 
         // ignore: exception while trying to log
       }
       ProcessRequestData.update(getConnection(), ctx.getUser(), ctx.getUser(), SCHEDULED, bundle
-          .getChannel().toString(), format(trigger.getPreviousFireTime()),
-          OBScheduler.sqlDateTimeFormat, format(trigger.getNextFireTime()), format(trigger
-              .getFinalFireTime()), ctx.toString(), trigger.getName());
+          .getChannel().toString(), format(trigger.getPreviousFireTime()), OBScheduler
+          .getInstance().getSqlDateTimeFormat(), format(trigger.getNextFireTime()), format(trigger
+          .getFinalFireTime()), ctx.toString(), trigger.getName());
 
     } catch (final ServletException e) {
       log.error(e.getMessage(), e);
