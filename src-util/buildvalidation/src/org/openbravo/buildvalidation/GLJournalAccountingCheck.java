@@ -25,38 +25,38 @@ import org.openbravo.database.ConnectionProvider;
 
 /**
  * This validation is related to this issue: https://issues.openbravo.com/view.php?id=29222
- *  
- * G/L Journal accounting records could have wrong amounts, if document rate is not the same 
- * than current system rate
+ * 
+ * G/L Journal accounting records could have wrong amounts, if document rate is not the same than
+ * current system rate
  */
 public class GLJournalAccountingCheck extends BuildValidation {
- 
+
   final static private int Q1_VERSION = 25704;
-  final static private int Q1_1_VERSION = 25735 ;
+  final static private int Q1_1_VERSION = 25735;
   final static private String ALERT_RULE = "Wrong G/L Journal Accounting amounts";
-  final static private String ALERT_NAME = ALERT_RULE + ". Please reset accounting of G/L Journal %s document";
+  final static private String ALERT_NAME = ALERT_RULE
+      + ". Please reset accounting of G/L Journal %s document";
   final static private String AD_WINDOW = "132";
   final static private String AD_TAB = "160";
-  final static private String ERROR_MSG = "Wrong G/L Journal accounting data. Please review alerts (Alert Rule: " + ALERT_RULE + ") and reset accounting of wrong entries to fix the data"; 
-  
-  public List<String> execute() {    
+  final static private String ERROR_MSG = "Wrong G/L Journal accounting data. Please review alerts (Alert Rule: "
+      + ALERT_RULE + ") and reset accounting of wrong entries to fix the data";
+
+  public List<String> execute() {
     ArrayList<String> errors = new ArrayList<String>();
     try {
-      ConnectionProvider cp = getConnectionProvider(); 
+      ConnectionProvider cp = getConnectionProvider();
       String version = GLJournalAccountingCheckData.getModuleVersion(cp);
       int intVersion = Integer.valueOf(version.substring(version.lastIndexOf('.') + 1));
-      if (intVersion >= Q1_VERSION && intVersion <= Q1_1_VERSION)
-      {
-        if (!GLJournalAccountingCheckData.hasPreference(cp))
-        {    
-          GLJournalAccountingCheckData[] documentList = GLJournalAccountingCheckData.getWrongGLJournalAccountingClients(cp);        
+      if (intVersion >= Q1_VERSION && intVersion <= Q1_1_VERSION) {
+        if (!GLJournalAccountingCheckData.hasPreference(cp)) {
+          GLJournalAccountingCheckData[] documentList = GLJournalAccountingCheckData
+              .getWrongGLJournalAccountingClients(cp);
           for (GLJournalAccountingCheckData document : documentList) {
             createAlert(cp, document.adClientId);
           }
           if (documentList != null && documentList.length > 0) {
-            errors.add(ERROR_MSG);          
-          }        
-          else {
+            errors.add(ERROR_MSG);
+          } else {
             GLJournalAccountingCheckData.createPreference(cp);
           }
         }
@@ -66,15 +66,19 @@ public class GLJournalAccountingCheck extends BuildValidation {
     }
     return errors;
   }
-    
-  private void createAlert(ConnectionProvider cp, String clientId) throws ServletException {    
+
+  private void createAlert(ConnectionProvider cp, String clientId) throws ServletException {
     if (!GLJournalAccountingCheckData.existsAlertRule(cp, ALERT_RULE, clientId)) {
       GLJournalAccountingCheckData.insertAlertRule(cp, clientId, ALERT_RULE, AD_TAB);
     }
-    final String alertRuleId = GLJournalAccountingCheckData.getAlertRuleId(cp, ALERT_RULE, clientId);
-    for (GLJournalAccountingCheckData document : GLJournalAccountingCheckData.getWrongGLJournalAccountingDocuments(cp, clientId)) {
+    final String alertRuleId = GLJournalAccountingCheckData
+        .getAlertRuleId(cp, ALERT_RULE, clientId);
+    for (GLJournalAccountingCheckData document : GLJournalAccountingCheckData
+        .getWrongGLJournalAccountingDocuments(cp, clientId)) {
       if (!GLJournalAccountingCheckData.existsAlert(cp, alertRuleId, document.glJournalId)) {
-        GLJournalAccountingCheckData.insertAlert(cp, clientId, String.format(ALERT_NAME, document.recordinfo), alertRuleId, document.recordinfo, document.glJournalId);
+        GLJournalAccountingCheckData.insertAlert(cp, clientId,
+            String.format(ALERT_NAME, document.recordinfo), alertRuleId, document.recordinfo,
+            document.glJournalId);
       }
     }
   }
