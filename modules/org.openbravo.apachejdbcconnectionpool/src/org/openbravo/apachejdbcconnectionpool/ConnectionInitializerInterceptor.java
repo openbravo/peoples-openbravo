@@ -51,9 +51,7 @@ public class ConnectionInitializerInterceptor extends JdbcInterceptor implements
       HashMap<Object, Object> attributes = con.getAttributes();
       Boolean connectionInitialized = (Boolean) attributes.get("OB_INITIALIZED");
       if (connectionInitialized == null || connectionInitialized == false) {
-        boolean readOnly = parent != null && parent.getPoolProperties().isDefaultReadOnly() != null
-            && parent.getPoolProperties().isDefaultReadOnly();
-        if (!readOnly) {
+        if (!isReadOnlyPool(parent)) {
           SessionInfo.initDB(con.getConnection(), rbdms);
         }
         PreparedStatement pstmt = null;
@@ -76,6 +74,13 @@ public class ConnectionInitializerInterceptor extends JdbcInterceptor implements
         attributes.put("OB_INITIALIZED", true);
       }
     }
+  }
+
+  private boolean isReadOnlyPool(ConnectionPool connectionPool) {
+    if (connectionPool == null || connectionPool.getPoolProperties().isDefaultReadOnly() == null) {
+      return false;
+    }
+    return connectionPool.getPoolProperties().isDefaultReadOnly();
   }
 
   @Override
