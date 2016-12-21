@@ -80,8 +80,9 @@ public class ApplicationDictionaryCachedStructures implements Serializable {
   @PostConstruct
   private void init() {
     // The cache will only be active when there are no modules in development in the system
-    final String query = "select m from ADModule m where m.inDevelopment=true";
+    final String query = "select 1 from ADModule m where m.inDevelopment=true";
     final Query indevelMods = OBDal.getInstance().getSession().createQuery(query);
+    indevelMods.setMaxResults(1);
     useCache = indevelMods.list().size() == 0;
     log.debug("ADCS initialized, use cache: {}", useCache);
   }
