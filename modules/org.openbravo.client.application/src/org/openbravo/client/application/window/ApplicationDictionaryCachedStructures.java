@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import javax.enterprise.context.SessionScoped;
+import javax.enterprise.context.ApplicationScoped;
 
 import org.hibernate.Hibernate;
 import org.hibernate.Query;
@@ -58,7 +58,7 @@ import org.slf4j.LoggerFactory;
  * caching occurs to obtain better performance in FIC computations. For this cache to be used, the
  * system needs to be on 'production' mode, that is, all the modules need to be not in development
  */
-@SessionScoped
+@ApplicationScoped
 public class ApplicationDictionaryCachedStructures implements Serializable {
   private static final long serialVersionUID = 1L;
 
