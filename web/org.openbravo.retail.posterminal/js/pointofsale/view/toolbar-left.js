@@ -455,14 +455,9 @@ enyo.kind({
   tap: function () {
     var me = this,
         criteria = {},
-        paymentModels = OB.MobileApp.model.get('payments'),
-        currentOrder = this.model.get('order');
+        paymentModels = OB.MobileApp.model.get('payments');
     if (this.disabled === false) {
-      // for Return Order(all lines are negative) if all payments are not refundable throw error
-      var negativeLines = _.filter(currentOrder.get('lines').models, function (line) {
-        return line.get('qty') < 0;
-      }).length;
-      if (negativeLines === currentOrder.get('lines').models.length) {
+      if (this.model.get('order').getTotal() < 0) {
         var hasNoRefundablePayment = _.filter(paymentModels, function (payment) {
           return !payment.paymentMethod.refundPayment;
         }).length === paymentModels.length;
