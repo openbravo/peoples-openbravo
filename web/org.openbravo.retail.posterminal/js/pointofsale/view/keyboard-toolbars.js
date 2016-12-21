@@ -262,14 +262,17 @@ enyo.kind({
             label: payment.paymentMethod.paymentMethodCategory$_identifier,
             stateless: false,
             action: function (keyboard, txt) {
-              var options = {};
-              if (_.last(txt) === '%') {
-                options.percentaje = true;
-              }
-              var amount = OB.DEC.number(OB.I18N.parseNumber(txt));
-              if (_.isNaN(amount)) {
-                OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_NotValidNumber', [txt]));
-                return;
+              var options = {},
+                  amount = 0;
+              if (txt) {
+                if (_.last(txt) === '%') {
+                  options.percentaje = true;
+                }
+                amount = OB.DEC.number(OB.I18N.parseNumber(txt));
+                if (_.isNaN(amount)) {
+                  OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_NotValidNumber', [txt]));
+                  return;
+                }
               }
               var buttonClass = keyboard.buttons['paymentMethodCategory.showitems.' + payment.paymentMethod.paymentMethodCategory].attributes['class'];
               if (me.currentPayment && buttonClass.indexOf('btnactive-green') > 0) {
