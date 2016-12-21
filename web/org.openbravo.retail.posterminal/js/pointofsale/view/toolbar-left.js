@@ -525,7 +525,7 @@ enyo.kind({
       name: 'totalPrinter',
       renderTotal: function (total) {
         this.setContent(OB.I18N.formatCurrency(total));
-        //It needs an small asynch to be rendered and then we can calculateFonSize
+        //It needs an small asynch to be rendered and then we can adaptFontSize
         setTimeout(function (me) {
           me.parent.rendered();
         }, 0, this);
