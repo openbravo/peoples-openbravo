@@ -92,7 +92,6 @@ public class Sqlc extends DefaultHandler {
 
   static Logger log4j = Logger.getLogger(Sqlc.class); // log4j
   private static boolean includeQueryTimeOut;
-  private static boolean modifiesDB;
   private boolean sessionInfoImported;
 
   private List<String> scrollableFunctionNames = new ArrayList<String>();
