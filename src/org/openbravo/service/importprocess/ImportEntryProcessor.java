@@ -484,7 +484,6 @@ public abstract class ImportEntryProcessor {
       SessionInfo.setUserId(userId);
       SessionInfo.setProcessType(SessionInfo.IMPORT_ENTRY_PROCESS);
       SessionInfo.setProcessId(getProcessIdForAudit());
-      SessionInfo.setDBSessionInfo(OBDal.getInstance().getConnection(false));
     }
 
     /**
