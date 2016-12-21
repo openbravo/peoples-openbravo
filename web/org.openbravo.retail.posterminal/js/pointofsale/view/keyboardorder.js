@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, enyo, _, Backbone */
+/*global OB, enyo, _, Audio, Backbone */
 
 
 enyo.kind({
@@ -863,6 +863,13 @@ enyo.kind({
       if (args.cancellation) {
         return;
       }
+      var reproduceErrorSound = function () {
+          //scanMode is disable, raise an error sound only if the preference allows it.
+          if (OB.MobileApp.model.hasPermission('OBMOBC_ReproduceErrorSoundOnFailedScan', true)) {
+            var error_sound = new Audio('../org.openbravo.mobile.core/sounds/Computer_Error.mp3');
+            error_sound.play();
+          }
+          };
       if (args.dataProducts && args.dataProducts.length > 0) {
         OB.debug('productfound');
         args.callback(args.dataProducts.at(0), args.attrs);
@@ -873,8 +880,12 @@ enyo.kind({
         }
         // If the preference to show that the 'UPC/EAN code has not been found is enabled'
         if (OB.MobileApp.model.hasPermission('OBPOS_showPopupEANNotFound', true)) {
-          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_KbUPCEANCodeNotFound', [args.code]));
+          reproduceErrorSound();
+          OB.UTIL.showConfirmation.display(OB.I18N.getLabel('OBPOS_KbUPCEANCodeNotFound', [args.code]), undefined, undefined, {
+            defaultAction: false
+          });
         } else {
+          reproduceErrorSound();
           OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_KbUPCEANCodeNotFound', [args.code]));
         }
       }

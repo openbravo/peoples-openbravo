@@ -297,7 +297,7 @@
         className: 'org.openbravo.retail.posterminal.CustomerLoader',
         criteria: {},
         getIdentifier: function (model) {
-          return JSON.parse(model.get('json'))._identifier;
+          return model.businessPartnerCategory_name + ' : ' + model._identifier;
         }
       });
 
@@ -308,7 +308,7 @@
         className: 'org.openbravo.retail.posterminal.CustomerAddrLoader',
         criteria: {},
         getIdentifier: function (model) {
-          return JSON.parse(model.get('json'))._identifier;
+          return model.customerName + ' : ' + model.name;
         }
       });
 

@@ -237,6 +237,9 @@ enyo.kind({
       kind: 'OB.UI.ModalSelectPrinters',
       name: 'modalSelectPrinters'
     }, {
+      kind: 'OB.UI.ModalSelectPDFPrinters',
+      name: 'modalSelectPDFPrinters'
+    }, {
       kind: 'OB.UI.ModalModulesInDev',
       name: 'modalModulesInDev'
     }, {
@@ -1044,25 +1047,13 @@ enyo.kind({
   },
   modalSelectPrinters: function (inSender, inEvent) {
     this.doShowPopup({
-      popup: 'modalSelectPrinters',
-      args: {
-        title: OB.I18N.getLabel('OBPOS_SelectPrintersTitle'),
-        hasPrinterProperty: 'hasReceiptPrinter',
-        serverURLProperty: 'activeurl',
-        serverURLSetter: 'setActiveURL'
-      }
+      popup: 'modalSelectPrinters'
     });
     return true;
   },
   modalSelectPDFPrinters: function (inSender, inEvent) {
     this.doShowPopup({
-      popup: 'modalSelectPrinters',
-      args: {
-        title: OB.I18N.getLabel('OBPOS_SelectPDFPrintersTitle'),
-        hasPrinterProperty: 'hasPDFPrinter',
-        serverURLProperty: 'activepdfurl',
-        serverURLSetter: 'setActivePDFURL'
-      }
+      popup: 'modalSelectPDFPrinters'
     });
     return true;
   },
