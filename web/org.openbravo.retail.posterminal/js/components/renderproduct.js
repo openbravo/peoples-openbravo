@@ -36,7 +36,7 @@ enyo.kind({
           style: 'vertical-align: top;  width: 50px; ',
           components: [{
             tag: 'div',
-            classes: 'image-wrap',
+            classes: 'flex-image-wrap',
             contentType: 'image/png',
             style: 'width: 49px; height: 49px;',
             components: [{
@@ -48,7 +48,8 @@ enyo.kind({
         }]
       }, {
         kind: 'OB.UI.Thumbnail',
-        name: 'thumbnail'
+        name: 'thumbnail',
+        cssClass: 'flex-image-wrap'
       }]
     }, {
       classes: 'standardFlexContainer flexColumn flexAllWidth',
