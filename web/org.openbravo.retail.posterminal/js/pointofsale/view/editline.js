@@ -205,10 +205,10 @@ enyo.kind({
         this.show();
         if (line && line.get('obposCanbedelivered')) {
           this.$.propertyValue.setContent(OB.I18N.getLabel('OBMOBC_LblYes'));
-          this.owner.owner.$.actionButtonsContainer.$.canDeliver.setContent(OB.I18N.getLabel('OBPOS_CannotBeDelivered'))
+          this.owner.owner.$.actionButtonsContainer.$.canDeliver.setContent(OB.I18N.getLabel('OBPOS_CannotBeDelivered'));
         } else {
           this.$.propertyValue.setContent(OB.I18N.getLabel('OBMOBC_LblNo'));
-          this.owner.owner.$.actionButtonsContainer.$.canDeliver.setContent(OB.I18N.getLabel('OBPOS_CanBeDelivered'))
+          this.owner.owner.$.actionButtonsContainer.$.canDeliver.setContent(OB.I18N.getLabel('OBPOS_CanBeDelivered'));
         }
       }
     }
