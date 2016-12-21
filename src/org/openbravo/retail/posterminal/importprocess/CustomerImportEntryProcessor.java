@@ -43,8 +43,7 @@ public class CustomerImportEntryProcessor extends ImportEntryProcessor {
     return importEntry.getOrganization().getId();
   }
 
-  private static class BusinessPartnerRunnable
-      extends SerializedByTermImportEntryProcessorRunnable {
+  private static class BusinessPartnerRunnable extends SerializedByTermImportEntryProcessorRunnable {
     @Override
     protected Class<? extends DataSynchronizationProcess> getDataSynchronizationClass() {
       return CustomerLoader.class;
