@@ -1612,6 +1612,8 @@
                     args.receipt.trigger('showProductList', args.orderline, 'mandatory');
                     args.orderline.set('hasMandatoryServices', true);
                     callbackAddProduct();
+                  } else {
+                    callbackAddProduct();
                   }
                 } else {
                   callbackAddProduct();
