@@ -487,7 +487,9 @@ public class SessionHandler implements OBNotSingleton {
     removeTransaction(pool);
     removeConnection(pool);
 
-    deleteSessionHandler();
+    if (isSessionHandlerPresent()) {
+      deleteSessionHandler();
+    }
   }
 
   /**
