@@ -263,14 +263,14 @@ public class ProcessInvoice extends HttpSecureAppServlet {
                 if (pd != null
                     && (pd.getFinPayment().getStatus().equals("RPAE") || pd.getFinPayment()
                         .getStatus().equals("RPAP"))) {
-                    msg = new OBError();
-                    msg.setType("Error");
-                    msg.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
-                    msg.setMessage(OBMessageUtils
-                        .messageBD("APRM_InvoiceAwaitingExcutionPaymentRelated"));
-                    vars.setMessage(strTabId, msg);
-                    printPageClosePopUp(response, vars, Utility.getTabURL(strTabId, "R", true));
-                    return;
+                  msg = new OBError();
+                  msg.setType("Error");
+                  msg.setTitle(Utility.messageBD(this, "Error", vars.getLanguage()));
+                  msg.setMessage(OBMessageUtils
+                      .messageBD("APRM_InvoiceAwaitingExcutionPaymentRelated"));
+                  vars.setMessage(strTabId, msg);
+                  printPageClosePopUp(response, vars, Utility.getTabURL(strTabId, "R", true));
+                  return;
                 }
               }
             }
