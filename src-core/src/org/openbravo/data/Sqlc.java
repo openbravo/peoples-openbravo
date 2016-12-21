@@ -781,6 +781,7 @@ public class Sqlc extends DefaultHandler {
       out1.append("import org.openbravo.service.db.QueryTimeOutUtil;\n");
       if (!sessionInfoImported) {
         out1.append("import org.openbravo.database.SessionInfo;\n");
+        sessionInfoImported = true;
       }
     }
 
