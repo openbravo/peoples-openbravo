@@ -57,6 +57,7 @@ public class DefaultJob implements Job {
       SessionInfo.setUserId(bundle.getContext().getUser());
       SessionInfo.setProcessType("P");
       SessionInfo.setProcessId(bundle.getProcessId());
+      SessionInfo.saveContextInfoIntoDB(bundle.getConnection().getConnection());
       SessionInfo.setQueryProfile("scheduledProcess");
 
       processInstance.execute(bundle);
