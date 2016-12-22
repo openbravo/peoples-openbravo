@@ -647,7 +647,7 @@ public class SessionHandler implements OBNotSingleton {
   }
 
   private void checkInvariant(String pool) {
-    Check.isNotNull(getSession(pool), "Session is null");
+    Check.isNotNull(sessions.get(pool), "Session is null");
     Transaction theTx = getTransaction(pool);
     Check.isNotNull(theTx, "Tx is null");
     Check.isTrue(theTx.isActive(), "Tx is not active");
