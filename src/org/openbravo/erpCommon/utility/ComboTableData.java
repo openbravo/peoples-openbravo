@@ -30,12 +30,14 @@ import javax.servlet.ServletException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.base.model.Entity;
+import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.kernel.RequestContext;
-import org.openbravo.dal.core.OBContext;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.data.UtilSql;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.ad.ui.Field;
 import org.openbravo.reference.Reference;
 import org.openbravo.reference.ui.UIReference;
@@ -64,6 +66,8 @@ public class ComboTableData {
   private Vector<QueryFieldStructure> orderBy = new Vector<QueryFieldStructure>();
   private boolean canBeCached;
   public int index = 0;
+  private String windowId;
+  private int accessLevel;
 
   /**
    * Constructor
@@ -72,17 +76,23 @@ public class ComboTableData {
   }
 
   public static ComboTableData getTableComboDataFor(Field field) throws Exception {
-    String ref = field.getColumn().getReference().getId();
+    Column col = field.getColumn();
+    String ref = col.getReference().getId();
     String objectReference = "";
-    if (field.getColumn().getReferenceSearchKey() != null) {
-      objectReference = field.getColumn().getReferenceSearchKey().getId();
+    if (col.getReferenceSearchKey() != null) {
+      objectReference = col.getReferenceSearchKey().getId();
     }
     String validation = "";
-    if (field.getColumn().getValidation() != null) {
-      validation = field.getColumn().getValidation().getId();
+    if (col.getValidation() != null) {
+      validation = col.getValidation().getId();
     }
-    return new ComboTableData(null, null, ref, field.getColumn().getDBColumnName(),
+    ComboTableData ctd = new ComboTableData(null, null, ref, field.getColumn().getDBColumnName(),
         objectReference, validation, null, null, 0);
+
+    ctd.windowId = field.getTab().getWindow().getId();
+    Entity entity = ModelProvider.getInstance().getEntityByTableId(col.getTable().getId());
+    ctd.accessLevel = entity.getAccessLevel().getDbValue();
+    return ctd;
   }
 
   /**
@@ -306,7 +316,8 @@ public class ComboTableData {
     } else if ("AD_CLIENT_ID".equalsIgnoreCase(getObjectName())) {
       return null;
     } else if ("AD_ORG_ID".equalsIgnoreCase(getObjectName())) {
-      return null; // TODO
+      return Utility.getContext(new DalConnectionProvider(false), getVars(), "#User_Org", windowId,
+          accessLevel);
     } else {
       return Utility.getReferenceableOrg(getVars(), getVars().getStringParameter("inpadOrgId"));
     }
@@ -329,34 +340,24 @@ public class ComboTableData {
    * @return String with the granted clients list.
    */
   public String getClientList() {
-    String cachedList = getParameter(internalPrefix + "clientList");
-    if (cachedList != null) {
-      return cachedList;
-    } else if ("AD_CLIENT_ID".equalsIgnoreCase(getObjectName())) {
-      return "'" + OBContext.getOBContext().getCurrentClient().getId() + "'"; // TODO
-      // Utility.getContext(new DalConnectionProvider(false), vars, "#User_Client", field.getTab()
-      // .getWindow().getId());
-    } else {
-      return "'" + OBContext.getOBContext().getCurrentClient().getId() + "'";
+    String clientList = getParameter(internalPrefix + "clientList");
+    if (clientList != null) {
+      return clientList;
     }
 
-    // String orgList = Utility.getReferenceableOrg(vars, vars.getStringParameter("inpadOrgId"));
-    // String clientList = Utility.getContext(new DalConnectionProvider(false), vars,
-    // "#User_Client", windowId);
-    // int accessLevel = targetEntity.getAccessLevel().getDbValue();
-    // if (column.getDBColumnName().equalsIgnoreCase("AD_CLIENT_ID")) {
-    // clientList = Utility.getContext(new DalConnectionProvider(false), vars, "#User_Client",
-    // windowId, accessLevel);
-    // if (clientList == null) {
-    // clientList = vars.getSessionValue("#User_Client");
-    // }
-    // orgList = null;
-    // }
-    //
-    // if (column.getDBColumnName().equalsIgnoreCase("AD_ORG_ID")) {
-    // orgList = Utility.getContext(new DalConnectionProvider(false), vars, "#User_Org", windowId,
-    // accessLevel);
-    // }
+    VariablesSecureApp vars = getVars();
+    if ("AD_CLIENT_ID".equalsIgnoreCase(getObjectName())) {
+      clientList = Utility.getContext(new DalConnectionProvider(false), vars, "#User_Client",
+          windowId, accessLevel);
+      if (clientList == null) {
+        clientList = getVars().getSessionValue("#User_Client");
+      }
+    } else {
+      clientList = Utility.getContext(new DalConnectionProvider(false), vars, "#User_Client",
+          windowId);
+    }
+
+    return clientList;
   }
 
   /**
