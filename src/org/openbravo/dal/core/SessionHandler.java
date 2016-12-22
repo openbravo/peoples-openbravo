@@ -395,7 +395,7 @@ public class SessionHandler implements OBNotSingleton {
   }
 
   private Query createQuery(String pool, String qryStr) {
-    return getSession().createQuery(qryStr);
+    return getSession(pool).createQuery(qryStr);
   }
 
   /**
